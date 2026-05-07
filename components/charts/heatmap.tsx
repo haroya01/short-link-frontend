@@ -37,7 +37,9 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div>
+      <p className="mb-2 text-[10px] text-slate-400 sm:hidden">← scroll →</p>
+      <div className="overflow-x-auto">
       <div className="min-w-[640px]">
         <div className="grid grid-cols-[36px_repeat(24,minmax(0,1fr))] gap-px">
           <div className="h-6" />
@@ -111,6 +113,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
             <span>{t("more")}</span>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -170,6 +170,11 @@
     },
     "device": { "mobile": "モバイル", "desktop": "デスクトップ", "tablet": "タブレット", "bot": "ボット", "unknown": "その他" },
     "country": { "unknown": "Unknown" },
+    "countryTable": {
+      "country": "国",
+      "clicks": "クリック",
+      "share": "比率"
+    },
     "heatmap": {
       "less": "少",
       "more": "多",

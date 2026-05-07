@@ -21,8 +21,11 @@ export function BreakdownList({ items }: Props) {
         const ratio = item.count / total;
         const pct = (ratio * 100).toFixed(1);
         return (
-          <li key={item.label} className="flex items-center gap-3 text-sm">
-            <span className="w-32 shrink-0 truncate text-slate-700" title={item.label}>
+          <li key={item.label} className="flex items-center gap-2 text-sm sm:gap-3">
+            <span
+              className="w-20 shrink-0 truncate text-slate-700 sm:w-32"
+              title={item.label}
+            >
               {item.label}
             </span>
             <div className="flex-1">
@@ -36,10 +39,10 @@ export function BreakdownList({ items }: Props) {
                 />
               </div>
             </div>
-            <span className="w-16 text-right font-mono text-xs tabular-nums text-slate-600">
+            <span className="w-12 shrink-0 text-right font-mono text-xs tabular-nums text-slate-600 sm:w-16">
               {formatNumber(item.count)}
             </span>
-            <span className="w-12 text-right font-mono text-[11px] tabular-nums text-slate-500">
+            <span className="hidden w-12 text-right font-mono text-[11px] tabular-nums text-slate-500 sm:inline">
               {pct}%
             </span>
           </li>
