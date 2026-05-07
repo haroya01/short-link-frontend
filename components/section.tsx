@@ -19,11 +19,11 @@ export function Section({ id, title, description, action, className, children }:
       )}
     >
       <header className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4">
-        <div>
+        <div className="min-w-0 flex-1">
           <h3 className="text-sm font-semibold tracking-tight text-slate-900">{title}</h3>
           {description && <p className="mt-0.5 text-xs text-slate-500">{description}</p>}
         </div>
-        {action}
+        {action && <div className="shrink-0">{action}</div>}
       </header>
       <div className="p-5">{children}</div>
     </section>

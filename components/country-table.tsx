@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { CountryClick } from "@/types";
 import { countryFlag, countryName, formatNumber } from "@/lib/utils";
 import { Table, TBody, TD, TH, THead, TR } from "./ui/table";
@@ -7,17 +8,18 @@ import { Table, TBody, TD, TH, THead, TR } from "./ui/table";
 type Props = { data: CountryClick[] };
 
 export function CountryTable({ data }: Props) {
+  const t = useTranslations("stats");
   if (data.length === 0) {
-    return <p className="py-8 text-center text-xs text-slate-500">국가 데이터 없음</p>;
+    return <p className="py-8 text-center text-xs text-slate-500">{t("noData")}</p>;
   }
   const total = data.reduce((a, b) => a + b.count, 0) || 1;
   return (
     <Table>
       <THead>
         <TR>
-          <TH className="w-[50%]">국가</TH>
-          <TH className="text-right">클릭</TH>
-          <TH className="text-right">비중</TH>
+          <TH className="w-[50%]">{t("countryTable.country")}</TH>
+          <TH className="text-right">{t("countryTable.clicks")}</TH>
+          <TH className="text-right">{t("countryTable.share")}</TH>
         </TR>
       </THead>
       <TBody>
