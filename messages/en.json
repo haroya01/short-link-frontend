@@ -1,0 +1,234 @@
+{
+  "meta": {
+    "title": "kurl · URL shortener with click analytics",
+    "description": "Shorten long URLs. Analyze clicks by device, channel, and country."
+  },
+  "nav": {
+    "shorten": "Shorten",
+    "myLinks": "My Links",
+    "admin": "Admin",
+    "login": "Sign in",
+    "logout": "Sign out"
+  },
+  "footer": {
+    "copyright": "© {year} kurl"
+  },
+  "home": {
+    "tagline": "kurl · v1",
+    "headline1": "Long URLs become",
+    "headline2": "one short line.",
+    "subhead": "See who clicked from where — by device, OS, browser, channel, country.",
+    "anonymousHint": "No login required. Stats need login though.",
+    "ctaSeeLinks": "See all my links",
+    "loginCta": "Sign in to save and analyze <clickStats>click stats</clickStats> for this link.",
+    "features": {
+      "realtime": { "title": "Real-time analytics", "desc": "Hour, day-of-week, device, OS, browser — all aggregated." },
+      "geo": { "title": "Country / channel", "desc": "GeoLite2 IP lookup and referrer classification show traffic origin." },
+      "safety": { "title": "Malicious URL block", "desc": "Safe Browsing prevents misuse for phishing." }
+    }
+  },
+  "shortenForm": {
+    "placeholder": "https://your-very-long-url.com/path?with=query",
+    "submit": "Shorten",
+    "advancedToggle": "Advanced options",
+    "customCodeLabel": "Custom code (3-16 letters/digits only)",
+    "customCodePlaceholder": "myLink2026",
+    "expiresAtLabel": "Expires at (optional)",
+    "errors": {
+      "empty": "Please enter a URL.",
+      "invalid": "URL must start with http:// or https://.",
+      "malicious": "This URL was flagged as malicious or phishing.",
+      "duplicate": "This custom code is already in use. Try another.",
+      "customCodeFormat": "Custom code must be 3-16 letters or digits only.",
+      "urlScheme": "URL must start with http:// or https://.",
+      "urlBlank": "Please enter a URL.",
+      "urlGeneric": "Invalid URL.",
+      "generic": "Failed to shorten.",
+      "validation": "Invalid input."
+    }
+  },
+  "result": {
+    "completed": "Shortened",
+    "originalUrl": "Original",
+    "copy": "Copy",
+    "copied": "Copied",
+    "open": "Open"
+  },
+  "login": {
+    "title": "Sign in",
+    "subtitle": "Sign in to manage your links and view analytics.",
+    "google": "Continue with Google",
+    "or": "or",
+    "devTokenToggle": "Paste developer access token",
+    "devTokenPlaceholder": "eyJhbGciOi...",
+    "devTokenSubmit": "Sign in with token",
+    "devTokenHint": "Temporary workaround until OAuth callback redirect is fully wired.",
+    "loggedIn": "Signed in",
+    "securityNote": "Tokens are stored in browser local storage. Server verifies with RS256 JWT. Refresh token is held in HttpOnly cookie.",
+    "anonymousAlt": "You can also <shorten>shorten URLs</shorten> without signing in."
+  },
+  "auth": {
+    "callbackProcessing": "Signing you in...",
+    "callbackFailed": "Sign-in failed",
+    "tokenMissing": "No token information.",
+    "tokenInvalid": "Could not read token.",
+    "oauthFailed": "Google sign-in failed ({reason}).",
+    "backToLogin": "Back to sign in"
+  },
+  "dashboard": {
+    "label": "dashboard",
+    "title": "My Links",
+    "subtitle": "{count} links. Click a short code to see analytics.",
+    "newLink": "New link",
+    "searchPlaceholder": "Search by original URL or short code",
+    "loginRequired": "Sign-in required",
+    "loginRequiredDesc": "My links and click stats are visible only after sign-in.",
+    "goToLogin": "Go to sign in",
+    "emptyTitle": "No links yet",
+    "emptyDesc": "Create your first short link from home.",
+    "emptyCta": "Shorten now",
+    "noResultTitle": "No matches",
+    "noResultDesc": "Could not find any link matching \"{query}\".",
+    "table": {
+      "shortUrl": "Short URL",
+      "originalUrl": "Original URL",
+      "createdAt": "Created",
+      "expiresAt": "Expires",
+      "clicks": "Clicks",
+      "actions": "Actions"
+    },
+    "actions": {
+      "stats": "Stats",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "deleteConfirmTitle": "Delete this link?",
+    "deleteConfirmDesc": "Deleted links cannot be recovered. Click stats are also lost.",
+    "deleteOk": "Delete",
+    "deleted": "Deleted",
+    "deleteFailed": "Delete failed"
+  },
+  "edit": {
+    "title": "Edit link",
+    "originalUrl": "Original URL",
+    "expiresAt": "Expires at (leave blank for no expiry)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Saved",
+    "saveFailed": "Save failed",
+    "invalidUrl": "URL must start with http:// or https://.",
+    "maliciousUrl": "URL flagged as malicious or phishing."
+  },
+  "stats": {
+    "back": "Back",
+    "shortCode": "short code",
+    "loginRequired": "Sign-in required",
+    "loginRequiredDesc": "Stats are visible to the link owner only.",
+    "notFound": "Link not found",
+    "notFoundDesc": "It may have been deleted or never existed.",
+    "backToDashboard": "Back to my links",
+    "kpi": {
+      "totalClicks": "Total clicks",
+      "unique": "Unique",
+      "human": "Human",
+      "bot": "Bots",
+      "velocityHot": "🔥 Click surge",
+      "velocityHour": "Last hour",
+      "ttfc": "First click after",
+      "noActivity": "Activity",
+      "noData": "Insufficient data",
+      "uniqueOfHuman": "{ratio}% of human",
+      "vsBaseline": "vs 24h average",
+      "afterCreation": "after creation"
+    },
+    "section": {
+      "heatmap": { "title": "Hour × day-of-week heatmap", "desc": "{tz} · darker = more clicks" },
+      "daily": { "title": "Daily clicks", "desc": "Last 30 days · {tz}" },
+      "hourly": { "title": "Hour of day", "desc": "0-23 distribution" },
+      "device": { "title": "Device", "desc": "mobile · desktop · tablet · bot" },
+      "channel": { "title": "Channel", "desc": "Referrer domain classification" },
+      "os": { "title": "OS", "desc": "Operating system distribution" },
+      "browser": { "title": "Browser", "desc": "Browser distribution" },
+      "referrerHost": { "title": "Referrer hosts", "desc": "Aggregated by host" },
+      "referrerUrl": { "title": "Top referrer URLs", "desc": "Most common sources" },
+      "utm": { "title": "UTM campaigns", "desc": "Aggregated by utm_campaign" },
+      "bots": { "title": "Bot types", "desc": "Googlebot · Slackbot etc." },
+      "country": { "title": "Country", "desc": "GeoLite2-City IP lookup" },
+      "region": { "title": "Region", "desc": "State / province" },
+      "city": { "title": "City", "desc": "City level" },
+      "language": { "title": "Language", "desc": "Browser Accept-Language" }
+    },
+    "noData": "No data",
+    "noClicks": "No clicks yet",
+    "noUtm": "No UTM campaign data",
+    "noBot": "No bot clicks",
+    "weekday": {
+      "MONDAY": "Mon", "TUESDAY": "Tue", "WEDNESDAY": "Wed",
+      "THURSDAY": "Thu", "FRIDAY": "Fri", "SATURDAY": "Sat", "SUNDAY": "Sun"
+    },
+    "device": { "mobile": "Mobile", "desktop": "Desktop", "tablet": "Tablet", "bot": "Bot", "unknown": "Other" },
+    "country": { "unknown": "Unknown" },
+    "heatmap": {
+      "less": "Less",
+      "more": "More",
+      "tooltip": "{day} {hour}h — {count} clicks"
+    }
+  },
+  "admin": {
+    "label": "admin",
+    "title": "Service overview",
+    "subtitle": "Last 30 days · 5min cache",
+    "notAdminTitle": "Admin only",
+    "loginNeeded": "Sign-in required.",
+    "needAdmin": "This page requires ADMIN role.",
+    "backToDashboard": "To my links",
+    "goToLogin": "Sign in",
+    "kpi": {
+      "users": "Users",
+      "links": "Links",
+      "clicks": "Clicks",
+      "anonymousRatio": "Anonymous %",
+      "expiredRatio": "Expired %",
+      "clicklessRatio": "Click 0 %",
+      "delta7d": "+{count} (7d)",
+      "ofAllLinks": "of all links"
+    },
+    "section": {
+      "trend": { "title": "Daily trend", "desc": "30 days · signup / link / click" },
+      "topUsersByLinks": { "title": "Top users (by links)", "desc": "Top 10 link creators" },
+      "topUsersByClicks": { "title": "Top users (by clicks)", "desc": "Top 10 click receivers" },
+      "topLinks": { "title": "Top links", "desc": "Top 10 most clicked" }
+    },
+    "trend": { "signups": "Signups", "links": "Links", "clicks": "Clicks" },
+    "table": {
+      "user": "User",
+      "shortCode": "Short code",
+      "owner": "Owner",
+      "anonymous": "Anonymous",
+      "links": "links",
+      "clicks": "clicks"
+    },
+    "noData": "No data"
+  },
+  "common": {
+    "errorTitle": "Something went wrong",
+    "errorDesc": "Please try again later.",
+    "retry": "Retry",
+    "loading": "Loading..."
+  },
+  "qr": {
+    "title": "qr code",
+    "copyUrl": "Copy URL",
+    "copied": "Copied",
+    "downloadPng": "Download PNG",
+    "close": "Close"
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "ko": "한국어",
+    "ja": "日本語"
+  }
+}

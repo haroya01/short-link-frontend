@@ -1,0 +1,234 @@
+{
+  "meta": {
+    "title": "kurl · URL短縮とクリック分析",
+    "description": "長いURLを一行に。デバイス、チャネル、国別のクリック分析まで。"
+  },
+  "nav": {
+    "shorten": "短縮",
+    "myLinks": "マイリンク",
+    "admin": "管理者",
+    "login": "ログイン",
+    "logout": "ログアウト"
+  },
+  "footer": {
+    "copyright": "© {year} kurl"
+  },
+  "home": {
+    "tagline": "kurl · v1",
+    "headline1": "長いURLを一行に、",
+    "headline2": "クリックは統計で。",
+    "subhead": "デバイス、OS、ブラウザ、チャネル、国まで — 誰がどこからクリックしたか一目で。",
+    "anonymousHint": "ログイン不要で短縮できます。統計はログイン後に確認できます。",
+    "ctaSeeLinks": "マイリンクをすべて見る",
+    "loginCta": "ログインすると、このリンクの<clickStats>クリック統計</clickStats>を永続保存して分析できます。",
+    "features": {
+      "realtime": { "title": "リアルタイム分析", "desc": "時間帯・曜日・デバイス・OS・ブラウザまで集計" },
+      "geo": { "title": "国 / チャネル", "desc": "GeoLite2 IPルックアップとリファラー分類で流入元を把握" },
+      "safety": { "title": "悪性URLブロック", "desc": "Safe Browsingでフィッシング悪用を防止" }
+    }
+  },
+  "shortenForm": {
+    "placeholder": "https://your-very-long-url.com/path?with=query",
+    "submit": "短縮する",
+    "advancedToggle": "詳細オプション",
+    "customCodeLabel": "カスタムコード (3-16文字、英数字のみ)",
+    "customCodePlaceholder": "myLink2026",
+    "expiresAtLabel": "有効期限 (任意)",
+    "errors": {
+      "empty": "URLを入力してください。",
+      "invalid": "http:// または https:// で始まる正しいURLが必要です。",
+      "malicious": "悪性/フィッシングと判定されたため短縮できません。",
+      "duplicate": "既に使用中のカスタムコードです。別の名前を試してください。",
+      "customCodeFormat": "カスタムコードは英数字3〜16文字のみ可能です。",
+      "urlScheme": "URLは http:// または https:// で始まる必要があります。",
+      "urlBlank": "URLを入力してください。",
+      "urlGeneric": "正しいURLではありません。",
+      "generic": "短縮に失敗しました。",
+      "validation": "入力値が正しくありません。"
+    }
+  },
+  "result": {
+    "completed": "短縮完了",
+    "originalUrl": "元のURL",
+    "copy": "コピー",
+    "copied": "コピー済み",
+    "open": "開く"
+  },
+  "login": {
+    "title": "ログイン",
+    "subtitle": "ログインするとリンク管理とクリック分析が利用できます。",
+    "google": "Googleで続ける",
+    "or": "または",
+    "devTokenToggle": "開発用 access tokenを直接入力",
+    "devTokenPlaceholder": "eyJhbGciOi...",
+    "devTokenSubmit": "トークンでログイン",
+    "devTokenHint": "OAuthコールバックがJSONを返す暫定対応。本番リリース前に削除予定。",
+    "loggedIn": "ログイン済み",
+    "securityNote": "認証トークンはブラウザのlocalStorageに保存され、サーバーはRS256 JWTで検証します。リフレッシュトークンはHttpOnly Cookieで別途管理。",
+    "anonymousAlt": "ログインなしでも<shorten>URL短縮は可能</shorten>です。"
+  },
+  "auth": {
+    "callbackProcessing": "ログイン処理中...",
+    "callbackFailed": "ログイン失敗",
+    "tokenMissing": "トークン情報がありません。",
+    "tokenInvalid": "トークンを読み取れません。",
+    "oauthFailed": "Googleログインに失敗しました ({reason})。",
+    "backToLogin": "ログインページへ"
+  },
+  "dashboard": {
+    "label": "dashboard",
+    "title": "マイリンク",
+    "subtitle": "短縮したリンク {count}件。短縮コードをクリックして統計を確認。",
+    "newLink": "新規リンク",
+    "searchPlaceholder": "元のURLまたは短縮コードで検索",
+    "loginRequired": "ログインが必要です",
+    "loginRequiredDesc": "マイリンクとクリック統計はログイン後に表示されます。",
+    "goToLogin": "ログインへ",
+    "emptyTitle": "まだ短縮したリンクがありません",
+    "emptyDesc": "ホームから最初のリンクを作成してください。",
+    "emptyCta": "今すぐ短縮",
+    "noResultTitle": "該当する結果がありません",
+    "noResultDesc": "「{query}」と一致するリンクが見つかりませんでした。",
+    "table": {
+      "shortUrl": "短縮URL",
+      "originalUrl": "元のURL",
+      "createdAt": "作成日",
+      "expiresAt": "有効期限",
+      "clicks": "クリック",
+      "actions": "操作"
+    },
+    "actions": {
+      "stats": "統計",
+      "edit": "編集",
+      "delete": "削除"
+    },
+    "deleteConfirmTitle": "このリンクを削除しますか?",
+    "deleteConfirmDesc": "削除されたリンクは復旧できません。クリック統計も失われます。",
+    "deleteOk": "削除",
+    "deleted": "削除しました",
+    "deleteFailed": "削除に失敗しました"
+  },
+  "edit": {
+    "title": "リンク編集",
+    "originalUrl": "元のURL",
+    "expiresAt": "有効期限 (空欄なら無期限)",
+    "clear": "クリア",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "saving": "保存中...",
+    "saved": "保存しました",
+    "saveFailed": "保存に失敗しました。",
+    "invalidUrl": "http:// または https:// で始まる正しいURLが必要です。",
+    "maliciousUrl": "悪性/フィッシングと判定されたため保存できません。"
+  },
+  "stats": {
+    "back": "戻る",
+    "shortCode": "short code",
+    "loginRequired": "ログインが必要です",
+    "loginRequiredDesc": "統計はリンクの所有者のみ表示できます。",
+    "notFound": "リンクが見つかりません",
+    "notFoundDesc": "削除されたか存在しないリンクの可能性があります。",
+    "backToDashboard": "マイリンクへ戻る",
+    "kpi": {
+      "totalClicks": "総クリック",
+      "unique": "ユニーク",
+      "human": "人間",
+      "bot": "ボット",
+      "velocityHot": "🔥 クリック急増",
+      "velocityHour": "直近1時間",
+      "ttfc": "初回クリックまで",
+      "noActivity": "活動",
+      "noData": "データ不足",
+      "uniqueOfHuman": "{ratio}% of human",
+      "vsBaseline": "vs 24h 平均",
+      "afterCreation": "作成後"
+    },
+    "section": {
+      "heatmap": { "title": "時間帯 × 曜日 ヒートマップ", "desc": "{tz} · 濃いほどクリック多" },
+      "daily": { "title": "日別クリック", "desc": "直近30日 · {tz}" },
+      "hourly": { "title": "時間帯", "desc": "0〜23時の分布" },
+      "device": { "title": "デバイス", "desc": "mobile · desktop · tablet · bot" },
+      "channel": { "title": "チャネル", "desc": "リファラードメイン分類" },
+      "os": { "title": "OS", "desc": "OS別の分布" },
+      "browser": { "title": "ブラウザ", "desc": "ブラウザ別の分布" },
+      "referrerHost": { "title": "リファラーホスト", "desc": "ホスト単位の集計" },
+      "referrerUrl": { "title": "リファラーURL TOP", "desc": "最も流入の多い出所" },
+      "utm": { "title": "UTM キャンペーン", "desc": "utm_campaign 別集計" },
+      "bots": { "title": "ボット種別", "desc": "Googlebot · Slackbot 等の分離" },
+      "country": { "title": "国", "desc": "GeoLite2-City IPルックアップ" },
+      "region": { "title": "地域", "desc": "state / province 単位" },
+      "city": { "title": "都市", "desc": "city 単位" },
+      "language": { "title": "言語", "desc": "ブラウザ Accept-Language 第1項目" }
+    },
+    "noData": "データなし",
+    "noClicks": "まだクリックがありません",
+    "noUtm": "UTMキャンペーンデータなし",
+    "noBot": "ボットクリックなし",
+    "weekday": {
+      "MONDAY": "月", "TUESDAY": "火", "WEDNESDAY": "水",
+      "THURSDAY": "木", "FRIDAY": "金", "SATURDAY": "土", "SUNDAY": "日"
+    },
+    "device": { "mobile": "モバイル", "desktop": "デスクトップ", "tablet": "タブレット", "bot": "ボット", "unknown": "その他" },
+    "country": { "unknown": "Unknown" },
+    "heatmap": {
+      "less": "少",
+      "more": "多",
+      "tooltip": "{day} {hour}時 — {count}回"
+    }
+  },
+  "admin": {
+    "label": "admin",
+    "title": "サービス overview",
+    "subtitle": "直近30日の推移 · 5分キャッシュ",
+    "notAdminTitle": "管理者専用",
+    "loginNeeded": "ログインが必要です。",
+    "needAdmin": "このページにはADMIN権限が必要です。",
+    "backToDashboard": "マイリンクへ",
+    "goToLogin": "ログイン",
+    "kpi": {
+      "users": "ユーザー",
+      "links": "リンク",
+      "clicks": "クリック",
+      "anonymousRatio": "匿名比率",
+      "expiredRatio": "期限切れ比率",
+      "clicklessRatio": "クリック0比率",
+      "delta7d": "+{count} (7d)",
+      "ofAllLinks": "of all links"
+    },
+    "section": {
+      "trend": { "title": "日別推移", "desc": "直近30日 · 登録 / リンク作成 / クリック" },
+      "topUsersByLinks": { "title": "Top ユーザー (リンク数)", "desc": "リンクを最も多く作成した10人" },
+      "topUsersByClicks": { "title": "Top ユーザー (クリック数)", "desc": "クリックを最も多く受けた10人" },
+      "topLinks": { "title": "Top リンク", "desc": "クリックの多い10件" }
+    },
+    "trend": { "signups": "登録", "links": "リンク", "clicks": "クリック" },
+    "table": {
+      "user": "ユーザー",
+      "shortCode": "短縮コード",
+      "owner": "所有者",
+      "anonymous": "匿名",
+      "links": "件",
+      "clicks": "回"
+    },
+    "noData": "データなし"
+  },
+  "common": {
+    "errorTitle": "問題が発生しました",
+    "errorDesc": "しばらくしてから再試行してください。",
+    "retry": "再試行",
+    "loading": "読み込み中..."
+  },
+  "qr": {
+    "title": "qr code",
+    "copyUrl": "URLコピー",
+    "copied": "コピー済み",
+    "downloadPng": "PNGダウンロード",
+    "close": "閉じる"
+  },
+  "languageSwitcher": {
+    "label": "言語",
+    "en": "English",
+    "ko": "한국어",
+    "ja": "日本語"
+  }
+}

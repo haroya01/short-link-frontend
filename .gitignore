@@ -1,0 +1,22 @@
+node_modules/
+.next/
+out/
+.env
+.env.local
+.env.*
+!.env.example
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+# Playwright / test artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+
+# IDE
+.idea/
+.vscode/
+
+# Local agent state
+.claude/

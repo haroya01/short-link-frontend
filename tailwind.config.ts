@@ -1,0 +1,68 @@
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  theme: {
+    container: {
+      center: true,
+      padding: "1.25rem",
+      screens: { "2xl": "1280px" },
+    },
+    extend: {
+      colors: {
+        accent: {
+          DEFAULT: "#059669",
+          50: "#ECFDF5",
+          100: "#D1FAE5",
+          200: "#A7F3D0",
+          300: "#6EE7B7",
+          400: "#34D399",
+          500: "#10B981",
+          600: "#059669",
+          700: "#047857",
+          800: "#065F46",
+          900: "#064E3B",
+        },
+      },
+      fontFamily: {
+        sans: [
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "-apple-system",
+          "Pretendard",
+          "Apple SD Gothic Neo",
+          "Noto Sans KR",
+          "sans-serif",
+        ],
+        mono: [
+          "ui-monospace",
+          "SF Mono",
+          "JetBrains Mono",
+          "Menlo",
+          "Consolas",
+          "monospace",
+        ],
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(circle, var(--tw-gradient-stops))",
+      },
+      keyframes: {
+        "fade-in": {
+          from: { opacity: "0", transform: "translateY(2px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        shimmer: {
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
+      animation: {
+        "fade-in": "fade-in 180ms ease-out",
+        shimmer: "shimmer 1.5s infinite",
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;

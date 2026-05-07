@@ -1,0 +1,234 @@
+{
+  "meta": {
+    "title": "kurl · URL 단축과 클릭 분석",
+    "description": "긴 URL을 한 줄로. 디바이스, 채널, 국가별 클릭 분석까지."
+  },
+  "nav": {
+    "shorten": "단축",
+    "myLinks": "내 링크",
+    "admin": "관리자",
+    "login": "로그인",
+    "logout": "로그아웃"
+  },
+  "footer": {
+    "copyright": "© {year} kurl"
+  },
+  "home": {
+    "tagline": "kurl · v1",
+    "headline1": "긴 URL을 한 줄로,",
+    "headline2": "클릭은 통계로.",
+    "subhead": "디바이스, OS, 브라우저, 채널, 국가까지 — 누가 어디서 클릭했는지 한눈에.",
+    "anonymousHint": "로그인 없이도 단축 가능. 통계는 로그인 후 확인할 수 있어요.",
+    "ctaSeeLinks": "내 링크 전체 보기",
+    "loginCta": "로그인하면 이 링크의 <clickStats>클릭 통계</clickStats>를 영구 저장하고 분석할 수 있어요.",
+    "features": {
+      "realtime": { "title": "실시간 분석", "desc": "시간대 · 요일 · 디바이스 · OS · 브라우저까지 모두 집계" },
+      "geo": { "title": "국가 / 채널", "desc": "GeoLite2 IP 룩업과 레퍼러 분류로 트래픽 출처 파악" },
+      "safety": { "title": "악성 URL 차단", "desc": "Safe Browsing 검사로 phishing 운반책으로 악용 방지" }
+    }
+  },
+  "shortenForm": {
+    "placeholder": "https://your-very-long-url.com/path?with=query",
+    "submit": "단축하기",
+    "advancedToggle": "고급 옵션",
+    "customCodeLabel": "커스텀 코드 (3-16자, 영문/숫자만)",
+    "customCodePlaceholder": "myLink2026",
+    "expiresAtLabel": "만료 일시 (선택)",
+    "errors": {
+      "empty": "URL을 입력해 주세요.",
+      "invalid": "http:// 또는 https:// 로 시작하는 올바른 URL이 필요해요.",
+      "malicious": "악성/피싱으로 분류된 URL이라 단축할 수 없어요.",
+      "duplicate": "이미 사용 중인 커스텀 코드예요. 다른 이름을 시도해 보세요.",
+      "customCodeFormat": "커스텀 코드는 영문·숫자 3~16자만 가능해요.",
+      "urlScheme": "URL은 http:// 또는 https:// 로 시작해야 해요.",
+      "urlBlank": "URL을 입력해 주세요.",
+      "urlGeneric": "올바른 URL이 아니에요.",
+      "generic": "단축에 실패했습니다.",
+      "validation": "입력값이 올바르지 않아요."
+    }
+  },
+  "result": {
+    "completed": "단축 완료",
+    "originalUrl": "원본",
+    "copy": "복사",
+    "copied": "복사됨",
+    "open": "열기"
+  },
+  "login": {
+    "title": "로그인",
+    "subtitle": "로그인하면 내 링크 관리와 클릭 통계 분석을 사용할 수 있어요.",
+    "google": "Google로 계속하기",
+    "or": "또는",
+    "devTokenToggle": "개발용 access token 직접 입력",
+    "devTokenPlaceholder": "eyJhbGciOi...",
+    "devTokenSubmit": "토큰으로 로그인",
+    "devTokenHint": "OAuth 콜백이 토큰을 JSON으로 반환하던 임시 단계라 추가한 우회 입력. 운영 배포 전에 제거 예정.",
+    "loggedIn": "로그인됨",
+    "securityNote": "인증 토큰은 브라우저 로컬에 저장되며, 서버는 RS256 JWT로 검증합니다. 리프레시 토큰은 HttpOnly 쿠키로 별도 관리.",
+    "anonymousAlt": "로그인 없이도 <shorten>URL 단축은 가능</shorten> 해요."
+  },
+  "auth": {
+    "callbackProcessing": "로그인 처리 중...",
+    "callbackFailed": "로그인 실패",
+    "tokenMissing": "토큰 정보가 없습니다.",
+    "tokenInvalid": "토큰을 읽을 수 없습니다.",
+    "oauthFailed": "Google 로그인에 실패했습니다 ({reason}).",
+    "backToLogin": "로그인 페이지로"
+  },
+  "dashboard": {
+    "label": "dashboard",
+    "title": "내 링크",
+    "subtitle": "단축한 링크 {count}개. 짧은 코드를 클릭해 통계 확인.",
+    "newLink": "새 링크",
+    "searchPlaceholder": "원본 URL 또는 짧은 코드로 검색",
+    "loginRequired": "로그인이 필요해요",
+    "loginRequiredDesc": "내 링크와 클릭 통계는 로그인 후에 볼 수 있어요.",
+    "goToLogin": "로그인하러 가기",
+    "emptyTitle": "아직 단축한 링크가 없어요",
+    "emptyDesc": "홈에서 첫 링크를 만들어 보세요.",
+    "emptyCta": "지금 단축하기",
+    "noResultTitle": "검색 결과가 없어요",
+    "noResultDesc": "\"{query}\"와 일치하는 링크를 찾지 못했어요.",
+    "table": {
+      "shortUrl": "짧은 URL",
+      "originalUrl": "원본 URL",
+      "createdAt": "생성일",
+      "expiresAt": "만료",
+      "clicks": "클릭",
+      "actions": "액션"
+    },
+    "actions": {
+      "stats": "통계",
+      "edit": "편집",
+      "delete": "삭제"
+    },
+    "deleteConfirmTitle": "링크를 삭제할까요?",
+    "deleteConfirmDesc": "삭제된 링크는 복구할 수 없어요. 클릭 통계도 함께 사라져요.",
+    "deleteOk": "삭제",
+    "deleted": "삭제됨",
+    "deleteFailed": "삭제 실패"
+  },
+  "edit": {
+    "title": "링크 편집",
+    "originalUrl": "원본 URL",
+    "expiresAt": "만료 일시 (비워두면 만료 없음)",
+    "clear": "지우기",
+    "cancel": "취소",
+    "save": "저장",
+    "saving": "저장 중...",
+    "saved": "저장됨",
+    "saveFailed": "저장에 실패했습니다.",
+    "invalidUrl": "http:// 또는 https:// 로 시작하는 올바른 URL이 필요해요.",
+    "maliciousUrl": "악성/피싱으로 분류된 URL이라 저장할 수 없어요."
+  },
+  "stats": {
+    "back": "뒤로",
+    "shortCode": "short code",
+    "loginRequired": "로그인이 필요해요",
+    "loginRequiredDesc": "통계는 링크 소유자만 볼 수 있어요.",
+    "notFound": "링크를 찾을 수 없어요",
+    "notFoundDesc": "삭제되었거나 존재하지 않는 링크일 수 있어요.",
+    "backToDashboard": "내 링크로 돌아가기",
+    "kpi": {
+      "totalClicks": "총 클릭",
+      "unique": "유니크",
+      "human": "사람",
+      "bot": "봇",
+      "velocityHot": "🔥 클릭 가속",
+      "velocityHour": "최근 1시간",
+      "ttfc": "첫 클릭까지",
+      "noActivity": "활동",
+      "noData": "데이터 부족",
+      "uniqueOfHuman": "{ratio}% of human",
+      "vsBaseline": "vs 24h 평균",
+      "afterCreation": "생성 후"
+    },
+    "section": {
+      "heatmap": { "title": "시간대 × 요일 히트맵", "desc": "{tz} · 진할수록 클릭 많음" },
+      "daily": { "title": "일별 클릭", "desc": "최근 30일 · {tz}" },
+      "hourly": { "title": "시간대", "desc": "0~23시 분포" },
+      "device": { "title": "디바이스", "desc": "mobile · desktop · tablet · bot" },
+      "channel": { "title": "채널", "desc": "레퍼러 도메인 분류" },
+      "os": { "title": "OS", "desc": "운영체제별 분포" },
+      "browser": { "title": "브라우저", "desc": "브라우저별 분포" },
+      "referrerHost": { "title": "레퍼러 호스트", "desc": "유입 도메인 단위 집계" },
+      "referrerUrl": { "title": "레퍼러 URL TOP", "desc": "가장 많이 유입된 출처" },
+      "utm": { "title": "UTM 캠페인", "desc": "utm_campaign 별 집계" },
+      "bots": { "title": "봇 종류", "desc": "Googlebot · Slackbot 등 분리" },
+      "country": { "title": "국가", "desc": "GeoLite2-City IP 룩업" },
+      "region": { "title": "지역", "desc": "state / province 단위" },
+      "city": { "title": "도시", "desc": "city 단위" },
+      "language": { "title": "언어", "desc": "브라우저 Accept-Language 첫 항목" }
+    },
+    "noData": "데이터 없음",
+    "noClicks": "아직 클릭이 없어요",
+    "noUtm": "UTM 캠페인 데이터 없음",
+    "noBot": "봇 클릭 없음",
+    "weekday": {
+      "MONDAY": "월", "TUESDAY": "화", "WEDNESDAY": "수",
+      "THURSDAY": "목", "FRIDAY": "금", "SATURDAY": "토", "SUNDAY": "일"
+    },
+    "device": { "mobile": "모바일", "desktop": "데스크톱", "tablet": "태블릿", "bot": "봇", "unknown": "기타" },
+    "country": { "unknown": "Unknown" },
+    "heatmap": {
+      "less": "적음",
+      "more": "많음",
+      "tooltip": "{day} {hour}시 — {count}회"
+    }
+  },
+  "admin": {
+    "label": "admin",
+    "title": "서비스 overview",
+    "subtitle": "최근 30일 추세 · 5분 캐시",
+    "notAdminTitle": "관리자 전용",
+    "loginNeeded": "로그인이 필요해요.",
+    "needAdmin": "이 페이지는 ADMIN 권한이 필요해요.",
+    "backToDashboard": "내 링크로",
+    "goToLogin": "로그인",
+    "kpi": {
+      "users": "사용자",
+      "links": "링크",
+      "clicks": "클릭",
+      "anonymousRatio": "익명 비율",
+      "expiredRatio": "만료 비율",
+      "clicklessRatio": "클릭 0 비율",
+      "delta7d": "+{count} (7d)",
+      "ofAllLinks": "of all links"
+    },
+    "section": {
+      "trend": { "title": "일별 추세", "desc": "최근 30일 · 가입 / 링크 생성 / 클릭" },
+      "topUsersByLinks": { "title": "Top 사용자 (링크 수)", "desc": "가장 많은 링크를 만든 사용자 10명" },
+      "topUsersByClicks": { "title": "Top 사용자 (클릭 수)", "desc": "가장 많은 클릭을 받은 사용자 10명" },
+      "topLinks": { "title": "Top 링크", "desc": "가장 많이 클릭된 링크 10개" }
+    },
+    "trend": { "signups": "가입", "links": "링크", "clicks": "클릭" },
+    "table": {
+      "user": "사용자",
+      "shortCode": "짧은 코드",
+      "owner": "소유자",
+      "anonymous": "익명",
+      "links": "개",
+      "clicks": "회"
+    },
+    "noData": "데이터 없음"
+  },
+  "common": {
+    "errorTitle": "문제가 발생했어요",
+    "errorDesc": "잠시 후 다시 시도해 주세요.",
+    "retry": "다시 시도",
+    "loading": "로딩 중..."
+  },
+  "qr": {
+    "title": "qr code",
+    "copyUrl": "URL 복사",
+    "copied": "복사됨",
+    "downloadPng": "PNG 다운로드",
+    "close": "닫기"
+  },
+  "languageSwitcher": {
+    "label": "언어",
+    "en": "English",
+    "ko": "한국어",
+    "ja": "日本語"
+  }
+}
