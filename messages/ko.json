@@ -170,6 +170,11 @@
     },
     "device": { "mobile": "모바일", "desktop": "데스크톱", "tablet": "태블릿", "bot": "봇", "unknown": "기타" },
     "country": { "unknown": "Unknown" },
+    "countryTable": {
+      "country": "국가",
+      "clicks": "클릭",
+      "share": "비중"
+    },
     "heatmap": {
       "less": "적음",
       "more": "많음",

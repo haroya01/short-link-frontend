@@ -170,6 +170,11 @@
     },
     "device": { "mobile": "Mobile", "desktop": "Desktop", "tablet": "Tablet", "bot": "Bot", "unknown": "Other" },
     "country": { "unknown": "Unknown" },
+    "countryTable": {
+      "country": "Country",
+      "clicks": "Clicks",
+      "share": "Share"
+    },
     "heatmap": {
       "less": "Less",
       "more": "More",
