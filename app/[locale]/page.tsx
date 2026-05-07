@@ -44,16 +44,16 @@ export default function HomePage() {
               {!authenticated && (
                 <Link
                   href="/login"
-                  className="flex items-center justify-between rounded-lg border border-accent-200 bg-accent-50/40 px-4 py-3 text-sm transition hover:bg-accent-50"
+                  className="group flex items-center justify-between rounded-lg bg-slate-900 px-4 py-3 text-sm text-slate-100 shadow-sm transition hover:bg-slate-800"
                 >
-                  <span className="text-slate-700">
+                  <span>
                     {t.rich("loginCta", {
                       clickStats: (chunks: React.ReactNode) => (
-                        <span className="font-semibold text-accent-700">{chunks}</span>
+                        <span className="font-semibold text-accent-300">{chunks}</span>
                       ),
                     })}
                   </span>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-accent-700" />
+                  <ArrowRight className="h-4 w-4 shrink-0 text-accent-300 transition group-hover:translate-x-0.5" />
                 </Link>
               )}
             </div>
