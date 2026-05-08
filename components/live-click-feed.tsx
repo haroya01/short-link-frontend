@@ -37,9 +37,14 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
 
     function open() {
       if (cancelled) return;
-      es = new EventSource(
-        `/api/v1/links/${shortCode}/stream?token=${encodeURIComponent(token!)}`,
-      );
+      // Next.js dev rewrites buffer chunked responses — bypass the proxy in dev by hitting the
+      // backend host directly. In prod we go same-origin.
+      const base =
+        process.env.NEXT_PUBLIC_BACKEND_URL ?? (process.env.NODE_ENV === "development"
+          ? "http://localhost:8080"
+          : "");
+      const url = `${base}/api/v1/links/${shortCode}/stream?token=${encodeURIComponent(token!)}`;
+      es = new EventSource(url);
       es.addEventListener("ready", () => setConnected(true));
       es.addEventListener("click", (event) => {
         try {
