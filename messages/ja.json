@@ -238,6 +238,18 @@
       "connected": "ライブ",
       "waiting": "クリックがあるとここに表示されます。"
     },
+    "quality": {
+      "title": "クリック品質",
+      "returning": "再訪問率",
+      "returningHint": "{count} 名が2回以上",
+      "clicksPerUnique": "ユニーク当たり平均",
+      "clicksPerUniqueHint": "ユニーク {unique} 名",
+      "realVsPreview": "実 / プレビュー",
+      "realVsPreviewHint": "プレビュー比率 {ratio}",
+      "peakHour": "ピーク時間",
+      "peakHourHint": "この時間に最も多くクリック",
+      "peakHourEmpty": "データ不足"
+    },
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "統計はリンクの所有者のみ表示できます。",
     "notFound": "リンクが見つかりません",
@@ -268,6 +280,9 @@
       "referrerHost": { "title": "リファラーホスト", "desc": "ホスト単位の集計" },
       "referrerUrl": { "title": "リファラーURL TOP", "desc": "最も流入の多い出所" },
       "utm": { "title": "UTM キャンペーン", "desc": "utm_campaign 別集計" },
+      "utmSource": { "title": "UTM ソース", "desc": "utm_source 別集計 (instagram, naver…)" },
+      "utmMedium": { "title": "UTM メディア", "desc": "utm_medium 別集計 (bio, ad, email…)" },
+      "utmContent": { "title": "UTM コンテンツ", "desc": "utm_content 別集計 (バナー / A-B 区分)" },
       "bots": { "title": "ボット種別", "desc": "Googlebot · Slackbot 等の分離" },
       "country": { "title": "国", "desc": "GeoLite2-City IPルックアップ" },
       "region": { "title": "地域", "desc": "state / province 単位" },

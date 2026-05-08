@@ -238,6 +238,18 @@
       "connected": "라이브",
       "waiting": "들어오는 클릭이 여기에 표시됩니다."
     },
+    "quality": {
+      "title": "클릭 품질",
+      "returning": "재방문 비율",
+      "returningHint": "{count}명이 2회 이상",
+      "clicksPerUnique": "유니크당 평균 클릭",
+      "clicksPerUniqueHint": "유니크 {unique}명",
+      "realVsPreview": "실제 / 프리뷰",
+      "realVsPreviewHint": "프리뷰 비중 {ratio}",
+      "peakHour": "피크 시간",
+      "peakHourHint": "이 시간에 가장 많이 클릭됨",
+      "peakHourEmpty": "데이터 부족"
+    },
     "loginRequired": "로그인이 필요해요",
     "loginRequiredDesc": "통계는 링크 소유자만 볼 수 있어요.",
     "notFound": "링크를 찾을 수 없어요",
@@ -268,6 +280,9 @@
       "referrerHost": { "title": "레퍼러 호스트", "desc": "유입 도메인 단위 집계" },
       "referrerUrl": { "title": "레퍼러 URL TOP", "desc": "가장 많이 유입된 출처" },
       "utm": { "title": "UTM 캠페인", "desc": "utm_campaign 별 집계" },
+      "utmSource": { "title": "UTM 소스", "desc": "utm_source 별 집계 (instagram, naver 등)" },
+      "utmMedium": { "title": "UTM 매체", "desc": "utm_medium 별 집계 (bio, ad, email 등)" },
+      "utmContent": { "title": "UTM 콘텐츠", "desc": "utm_content 별 집계 (배너, A/B 슬롯 구분)" },
       "bots": { "title": "봇 종류", "desc": "Googlebot · Slackbot 등 분리" },
       "country": { "title": "국가", "desc": "GeoLite2-City IP 룩업" },
       "region": { "title": "지역", "desc": "state / province 단위" },
