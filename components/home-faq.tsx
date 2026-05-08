@@ -23,11 +23,13 @@ export function HomeFaq() {
   };
 
   return (
-    <section className="container max-w-3xl py-16">
-      <h2 className="text-center text-2xl font-semibold tracking-tight text-slate-900">
-        {t("title")}
-      </h2>
-      <ul className="mt-8 divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
+    <div>
+      <div className="mb-8 text-center">
+        <h2 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+          {t("title")}
+        </h2>
+      </div>
+      <ul className="divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
         {items.map((item, idx) => (
           <FaqItem key={idx} q={item.q} a={item.a} />
         ))}
@@ -37,7 +39,7 @@ export function HomeFaq() {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-    </section>
+    </div>
   );
 }
 

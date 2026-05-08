@@ -57,7 +57,16 @@
       "realtime": { "title": "リアルタイム分析", "desc": "時間帯・曜日・デバイス・OS・ブラウザまで集計" },
       "geo": { "title": "国 / チャネル", "desc": "GeoLite2 IPルックアップとリファラー分類で流入元を把握" },
       "safety": { "title": "悪性URLブロック", "desc": "Safe Browsingでフィッシング悪用を防止" }
-    }
+    },
+    "recentEyebrow": "最近",
+    "recentTitle": "直近で作ったリンク",
+    "recentSubhead": "このブラウザに24時間保存されます。ログインすれば永続化されます。",
+    "statsEyebrow": "live",
+    "statsTitle": "kurl 全体で",
+    "statsSubhead": "これまでに短縮されたリンクと分析されたクリック数。",
+    "featuresEyebrow": "what you get",
+    "featuresTitle": "データで読み解くクリック",
+    "featuresSubhead": "時間帯・国・チャネル・デバイス — 誰がどこで押したか一目で。"
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
