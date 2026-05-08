@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
+import { ApiKeysSection } from "@/components/api-keys-section";
 import type { Me } from "@/types";
 
 const COMMON_TIMEZONES = [
@@ -150,6 +151,10 @@ export default function SettingsPage() {
           </div>
           <p className="text-xs text-slate-500">{t("languageHint")}</p>
         </div>
+      </Section>
+
+      <Section title={t("apiKeys.title")}>
+        <ApiKeysSection />
       </Section>
 
       <Section title={t("dataTitle")}>

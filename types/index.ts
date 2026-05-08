@@ -146,6 +146,23 @@ export type AdminOverview = {
   topLinksByClicks: { shortCode: string; clickCount: number; ownerEmail: string | null }[];
 };
 
+export type ApiKeySummary = {
+  id: number;
+  prefix: string;
+  name: string | null;
+  lastUsedAt: string | null;
+  createdAt: string;
+  revokedAt: string | null;
+};
+
+export type IssuedApiKey = {
+  id: number;
+  rawKey: string;
+  prefix: string;
+  name: string | null;
+  createdAt: string;
+};
+
 export type ProblemDetail = {
   status: number;
   title?: string;
