@@ -514,6 +514,6 @@
     "q5": "악성 URL은 어떻게 차단되나요?",
     "a5": "Google Safe Browsing API로 단축 시점에 검사합니다. 차단된 URL은 단축이 거절됩니다.",
     "q6": "API가 있나요?",
-    "a6": "Swagger UI에서 \\\"Authorize\\\" 버튼으로 JWT를 입력하면 모든 API를 시도해볼 수 있어요. /swagger-ui 참고."
+    "a6": "네 — 단축은 POST /api/v1/links 한 줄이면 됩니다. 인증이 필요한 엔드포인트는 설정 > API 키 에서 발급한 키로 호출하세요. (전체 OpenAPI 문서는 운영자만 접근 가능)"
   }
 }
