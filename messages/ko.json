@@ -340,6 +340,19 @@
     "cancel": "취소",
     "deleting": "삭제 중..."
   },
+  "homeStats": {
+    "linksLabel": "단축된 링크",
+    "clicksLabel": "분석된 클릭"
+  },
+  "publicStats": {
+    "title": "공개 통계",
+    "publicBadge": "공개",
+    "privateBadge": "비공개",
+    "shareButton": "공개 링크 복사",
+    "shareCopied": "복사됨",
+    "togglePublic": "통계 공개로 전환",
+    "togglePrivate": "통계 비공개로 전환"
+  },
   "homeFaq": {
     "title": "자주 묻는 질문",
     "q1": "단축 링크는 영구 보존되나요?",

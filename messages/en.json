@@ -340,6 +340,19 @@
     "cancel": "Cancel",
     "deleting": "Deleting..."
   },
+  "homeStats": {
+    "linksLabel": "links shortened",
+    "clicksLabel": "clicks analyzed"
+  },
+  "publicStats": {
+    "title": "Public stats",
+    "publicBadge": "public",
+    "privateBadge": "private",
+    "shareButton": "Copy public link",
+    "shareCopied": "Copied",
+    "togglePublic": "Make stats public",
+    "togglePrivate": "Make stats private"
+  },
   "homeFaq": {
     "title": "Frequently asked questions",
     "q1": "Are shortened links permanent?",
