@@ -12,7 +12,7 @@ const nextConfig = {
       { source: "/api/v1/:path*", destination: `${BACKEND}/api/v1/:path*` },
       { source: "/oauth2/:path*", destination: `${BACKEND}/oauth2/:path*` },
       { source: "/login/oauth2/:path*", destination: `${BACKEND}/login/oauth2/:path*` },
-      { source: "/:code([0-9A-Za-z]{7})", destination: `${BACKEND}/:code` },
+      { source: "/:code([0-9A-Za-z]{3,16})", destination: `${BACKEND}/:code` },
     ];
   },
 };

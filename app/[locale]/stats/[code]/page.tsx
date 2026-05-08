@@ -10,6 +10,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CopyButton } from "@/components/copy-button";
+import { PublicStatsToggle } from "@/components/public-stats-toggle";
 import { QrButton } from "@/components/qr-button";
 import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
@@ -313,9 +314,12 @@ function Header({
           <span className="truncate">{display}</span>
         </a>
       </div>
-      <div className="flex items-center gap-1">
-        <CopyButton variant="outline" size="sm" value={display} onCopied={onCopy} />
-        <QrButton value={display} filename={`${data.shortCode}.png`} />
+      <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
+        <PublicStatsToggle shortCode={data.shortCode} />
+        <div className="flex items-center gap-1">
+          <CopyButton variant="outline" size="sm" value={display} onCopied={onCopy} />
+          <QrButton value={display} filename={`${data.shortCode}.png`} />
+        </div>
       </div>
     </div>
   );
