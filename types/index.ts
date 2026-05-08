@@ -107,6 +107,25 @@ export type UtmSourceClick = { source: string; count: number };
 export type UtmMediumClick = { medium: string; count: number };
 export type UtmContentClick = { content: string; count: number };
 export type SourceChannelClick = { source: string; count: number };
+
+export type WebhookSummary = {
+  id: number;
+  url: string;
+  name: string | null;
+  enabled: boolean;
+  createdAt: string;
+  lastCalledAt: string | null;
+  lastStatusCode: number | null;
+  lastError: string | null;
+};
+
+export type IssuedWebhook = {
+  id: number;
+  url: string;
+  secret: string;
+  name: string | null;
+  createdAt: string;
+};
 export type CountryClick = { country: string; count: number };
 export type RegionClick = { region: string; count: number };
 export type CityClick = { city: string; count: number };
