@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { claimAnonymousLinks, getMe, logout as apiLogout, readToken } from "./api";
 import { clearClaimTokens, readPendingClaimTokens } from "./recent-links";
 import type { Me } from "@/types";
@@ -11,13 +11,35 @@ type AuthState = {
   me: Me | null;
 };
 
+// Module-level guard so that multiple useAuth instances mounting concurrently after login
+// (Nav + page + dashboard, etc.) don't all race to claim the same tokens.
+let claimAttempted = false;
+
+async function tryClaimPendingLinks() {
+  if (claimAttempted) return;
+  claimAttempted = true;
+  const tokens = readPendingClaimTokens();
+  if (tokens.length === 0) return;
+  try {
+    const result = await claimAnonymousLinks(tokens);
+    if (result.claimed > 0 && typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("kurl:claimed", { detail: { count: result.claimed } }),
+      );
+    }
+  } catch {
+    // best-effort; still clear local tokens below to avoid retry storms
+  } finally {
+    clearClaimTokens(tokens);
+  }
+}
+
 export function useAuth() {
   const [state, setState] = useState<AuthState>({
     authenticated: false,
     ready: false,
     me: null,
   });
-  const claimedRef = useRef(false);
 
   useEffect(() => {
     const sync = async () => {
@@ -29,19 +51,7 @@ export function useAuth() {
       try {
         const me = await getMe();
         setState({ authenticated: true, ready: true, me });
-        if (!claimedRef.current) {
-          claimedRef.current = true;
-          const tokens = readPendingClaimTokens();
-          if (tokens.length > 0) {
-            try {
-              await claimAnonymousLinks(tokens);
-            } catch {
-              // best-effort; still clear local tokens to avoid retry storms
-            } finally {
-              clearClaimTokens(tokens);
-            }
-          }
-        }
+        tryClaimPendingLinks();
       } catch {
         setState({ authenticated: false, ready: true, me: null });
       }

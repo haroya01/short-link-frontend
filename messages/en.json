@@ -334,7 +334,8 @@
     "empty": "Nothing yet — shorten one above.",
     "viewStats": "View stats",
     "claimCta": "Sign up to keep these links permanently in your account.",
-    "anonymousNote": "Anonymous links auto-expire after 24h."
+    "anonymousNote": "Anonymous links auto-expire after 24h. Sign in and they move into your account permanently — no expiration.",
+    "claimedToast": "Saved {count} link(s) to your account"
   },
   "statsEmpty": {
     "title": "No clicks yet",
