@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { ApiKeysSection } from "@/components/api-keys-section";
+import { TwoFactorSection } from "@/components/two-factor-section";
 import type { Me } from "@/types";
 
 const COMMON_TIMEZONES = [
@@ -146,6 +147,10 @@ export default function SettingsPage() {
           </div>
           <p className="text-xs text-slate-500">{t("languageHint")}</p>
         </div>
+      </Section>
+
+      <Section title={t("twofa.title")}>
+        <TwoFactorSection />
       </Section>
 
       <Section title={t("apiKeys.title")}>
