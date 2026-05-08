@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { FileUp, Plus, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listMyLinks } from "@/lib/api";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { LinksTable } from "@/components/links-table";
+import { BulkImportDialog } from "@/components/bulk-import-dialog";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
 import type { MyLink } from "@/types";
@@ -23,6 +24,7 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [reload, setReload] = useState(0);
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   useEffect(() => {
     if (!ready) return;
@@ -83,12 +85,23 @@ export default function DashboardPage() {
             {t("subtitle", { count: items?.length ?? 0 })}
           </p>
         </div>
-        <Link href="/">
-          <Button variant="accent">
-            <Plus className="h-4 w-4" /> {t("newLink")}
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => setBulkOpen(true)}>
+            <FileUp className="h-4 w-4" /> {t("bulkImport.button")}
           </Button>
-        </Link>
+          <Link href="/">
+            <Button variant="accent">
+              <Plus className="h-4 w-4" /> {t("newLink")}
+            </Button>
+          </Link>
+        </div>
       </div>
+
+      <BulkImportDialog
+        open={bulkOpen}
+        onClose={() => setBulkOpen(false)}
+        onImported={() => setReload((n) => n + 1)}
+      />
 
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />

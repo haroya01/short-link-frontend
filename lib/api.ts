@@ -1,6 +1,8 @@
 import type {
   AdminOverview,
   ApiKeySummary,
+  BulkImportSummary,
+  ClaimResult,
   CreateLinkRequest,
   CreateLinkResponse,
   IssuedApiKey,
@@ -231,6 +233,42 @@ export async function issueApiKey(name: string): Promise<IssuedApiKey> {
 
 export async function revokeApiKey(id: number): Promise<void> {
   await request(`/api/v1/users/me/api-keys/${id}`, { method: "DELETE" });
+}
+
+export async function claimAnonymousLinks(claimTokens: string[]): Promise<ClaimResult> {
+  return request<ClaimResult>("/api/v1/users/me/claim-anonymous", {
+    method: "POST",
+    body: { claimTokens },
+  });
+}
+
+export async function bulkImportLinks(file: File): Promise<BulkImportSummary> {
+  const form = new FormData();
+  form.append("file", file);
+  const token = readToken();
+  const headers = new Headers();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  const res = await fetch("/api/v1/links/bulk", {
+    method: "POST",
+    credentials: "include",
+    headers,
+    body: form,
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    let parsed: ProblemDetail;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = { status: res.status, detail: text || res.statusText };
+    }
+    throw new ApiError(res.status, parsed);
+  }
+  return {
+    ok: Number(res.headers.get("X-Bulk-Ok") ?? 0),
+    failed: Number(res.headers.get("X-Bulk-Failed") ?? 0),
+    resultCsv: text,
+  };
 }
 
 export async function logout(): Promise<void> {
