@@ -7,11 +7,9 @@
     "shorten": "Shorten",
     "myLinks": "My Links",
     "admin": "Admin",
+    "settings": "Settings",
     "login": "Sign in",
     "logout": "Sign out"
-  },
-  "footer": {
-    "copyright": "© {year} kurl"
   },
   "home": {
     "tagline": "kurl · v1",
@@ -313,6 +311,34 @@
     "p8": "One HttpOnly + Secure + SameSite=Strict cookie for the JWT refresh token. No analytics or ad cookies.",
     "h8": "8. Contact",
     "p9": "Data inquiries: GitHub issues or the operator's email."
+  },
+  "settings": {
+    "title": "Settings",
+    "profileTitle": "Profile",
+    "email": "Email",
+    "provider": "Sign-in provider",
+    "joinedAt": "Joined",
+    "role": "Role",
+    "preferencesTitle": "Preferences",
+    "timezoneLabel": "Time zone",
+    "timezoneHint": "Used as the report time zone on stats pages.",
+    "save": "Save",
+    "saved": "Saved",
+    "saveFailed": "Save failed.",
+    "interfaceLanguage": "Interface language",
+    "languageHint": "You can also change this from the language switcher in the header.",
+    "dataTitle": "Data",
+    "exportButton": "Download my data (JSON)",
+    "exportHint": "User info + all links + click events (IPs are masked).",
+    "dangerTitle": "Danger zone",
+    "deleteHint": "Permanently deletes your account and all links/stats. Anonymous links are not affected.",
+    "deleteButton": "Delete my account",
+    "deleteConfirmTitle": "Really delete?",
+    "deleteConfirmDesc": "This cannot be undone. Type \"DELETE\" to confirm.",
+    "deleteConfirmPlaceholder": "DELETE",
+    "deleteOk": "Delete forever",
+    "cancel": "Cancel",
+    "deleting": "Deleting..."
   },
   "homeFaq": {
     "title": "Frequently asked questions",
