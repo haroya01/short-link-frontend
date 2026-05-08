@@ -220,6 +220,20 @@ export type Me = {
   createdAt: string;
 };
 
+export type TwoFactorStatus = {
+  enabled: boolean;
+  lastUsedAt: string | null;
+};
+
+export type TwoFactorSetup = {
+  secret: string;
+  provisioningUri: string;
+};
+
+export type TwoFactorRecoveryCodes = {
+  recoveryCodes: string[];
+};
+
 export type AdminOverview = {
   totals: { users: number; links: number; clicks: number };
   newUsers7d: number;
