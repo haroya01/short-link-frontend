@@ -3,7 +3,7 @@ import { routing } from "@/i18n/routing";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kurl.me";
 
-const PUBLIC_PATHS = ["", "/login"] as const;
+const PUBLIC_PATHS = ["", "/login", "/about", "/pricing", "/terms", "/privacy"] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

@@ -1,0 +1,46 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "privacy" });
+  return { title: t("title") };
+}
+
+export default async function PrivacyPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "privacy" });
+  const sections = [
+    { h: t("h1"), p: t("p2") },
+    { h: t("h2"), p: t("p3") },
+    { h: t("h3"), p: t("p4") },
+    { h: t("h4"), p: t("p5") },
+    { h: t("h5"), p: t("p6") },
+    { h: t("h6"), p: t("p7") },
+    { h: t("h7"), p: t("p8") },
+    { h: t("h8"), p: t("p9") },
+  ];
+  return (
+    <article className="container max-w-3xl space-y-8 py-16">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
+        <p className="text-xs text-slate-500">{t("updatedAt")}</p>
+      </header>
+      <p className="text-sm leading-relaxed text-slate-600">{t("p1")}</p>
+      {sections.map((s) => (
+        <section key={s.h} className="space-y-2">
+          <h2 className="text-lg font-semibold text-slate-900">{s.h}</h2>
+          <p className="text-sm leading-relaxed text-slate-600">{s.p}</p>
+        </section>
+      ))}
+    </article>
+  );
+}
