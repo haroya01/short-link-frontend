@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { deleteMyAccount, exportMyDataUrl, getMe, updateMyTimezone } from "@/lib/api";
+import { deleteMyAccount, downloadMyData, getMe, updateMyTimezone } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -96,8 +96,7 @@ export default function SettingsPage() {
 
       <Section title={t("profileTitle")}>
         <Row label={t("email")}>{me.email}</Row>
-        <Row label={t("provider")}>{me.oauthProvider}</Row>
-        <Row label={t("role")}>{me.role}</Row>
+        {me.role === "ADMIN" && <Row label={t("role")}>{me.role}</Row>}
         <Row label={t("joinedAt")}>{me.createdAt?.slice(0, 10) ?? "—"}</Row>
       </Section>
 
@@ -155,12 +154,20 @@ export default function SettingsPage() {
 
       <Section title={t("dataTitle")}>
         <p className="text-xs text-slate-500">{t("exportHint")}</p>
-        <a
-          href={exportMyDataUrl()}
-          className="mt-2 inline-flex items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50"
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-2"
+          onClick={async () => {
+            try {
+              await downloadMyData();
+            } catch (err) {
+              toast(errorMessage(err, t("saveFailed")), "error");
+            }
+          }}
         >
           {t("exportButton")}
-        </a>
+        </Button>
       </Section>
 
       <Section title={t("dangerTitle")} variant="danger">
