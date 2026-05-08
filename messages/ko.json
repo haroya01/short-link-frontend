@@ -420,7 +420,25 @@
       "trend": { "title": "일별 추세", "desc": "최근 30일 · 가입 / 링크 생성 / 클릭" },
       "topUsersByLinks": { "title": "Top 사용자 (링크 수)", "desc": "가장 많은 링크를 만든 사용자 10명" },
       "topUsersByClicks": { "title": "Top 사용자 (클릭 수)", "desc": "가장 많은 클릭을 받은 사용자 10명" },
-      "topLinks": { "title": "Top 링크", "desc": "가장 많이 클릭된 링크 10개" }
+      "topLinks": { "title": "Top 링크", "desc": "가장 많이 클릭된 링크 10개" },
+      "redirectPerf": {
+        "title": "리다이렉트 성능",
+        "desc": "단축 URL → 원본/도착지 처리 지연. 전체 인스턴스가 처음 시작된 이후 누적치.",
+        "p50": "p50 지연",
+        "p95": "p95 지연",
+        "p99": "p99 지연",
+        "median": "중앙값",
+        "tail": "5% 가 더 느림",
+        "outlier": "1% 가 더 느림",
+        "total": "총 처리",
+        "totalSub": "redirect+preview 등 전체",
+        "notFound": "404",
+        "notFoundSub": "존재하지 않는 코드",
+        "expired": "만료",
+        "expiredSub": "만료 후 접근",
+        "preview": "프리뷰",
+        "previewSub": "Slack/카카오 미리보기"
+      }
     },
     "trend": { "signups": "가입", "links": "링크", "clicks": "클릭" },
     "table": {

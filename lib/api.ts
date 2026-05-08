@@ -1,4 +1,5 @@
 import type {
+  AdminHealthMetrics,
   AdminOverview,
   ApiKeySummary,
   BulkImportSummary,
@@ -361,6 +362,10 @@ export async function setLinkVisibility(
     method: "PATCH",
     body: { statsPublic },
   });
+}
+
+export async function getAdminHealthMetrics(): Promise<AdminHealthMetrics> {
+  return request<AdminHealthMetrics>("/api/v1/admin/health-metrics", { method: "GET" });
 }
 
 export async function getAdminOverview(): Promise<AdminOverview> {

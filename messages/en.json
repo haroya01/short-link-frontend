@@ -420,7 +420,25 @@
       "trend": { "title": "Daily trend", "desc": "30 days · signup / link / click" },
       "topUsersByLinks": { "title": "Top users (by links)", "desc": "Top 10 link creators" },
       "topUsersByClicks": { "title": "Top users (by clicks)", "desc": "Top 10 click receivers" },
-      "topLinks": { "title": "Top links", "desc": "Top 10 most clicked" }
+      "topLinks": { "title": "Top links", "desc": "Top 10 most clicked" },
+      "redirectPerf": {
+        "title": "Redirect performance",
+        "desc": "Short-URL → destination latency. Cumulative since this instance started.",
+        "p50": "p50 latency",
+        "p95": "p95 latency",
+        "p99": "p99 latency",
+        "median": "Median",
+        "tail": "5% slower than this",
+        "outlier": "1% slower than this",
+        "total": "Total processed",
+        "totalSub": "All outcomes",
+        "notFound": "404",
+        "notFoundSub": "Unknown codes",
+        "expired": "Expired",
+        "expiredSub": "Hits past expiry",
+        "preview": "Preview",
+        "previewSub": "Slack/social unfurls"
+      }
     },
     "trend": { "signups": "Signups", "links": "Links", "clicks": "Clicks" },
     "table": {
