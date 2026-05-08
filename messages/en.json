@@ -1,4 +1,9 @@
 {
+  "tags": {
+    "inputPlaceholder": "Enter or , to add",
+    "removeTag": "Remove tag {name}",
+    "maxReached": "Up to {max} tags"
+  },
   "errors": {
     "LINK_NOT_FOUND": "Link not found.",
     "LINK_EXPIRED": "This link has expired.",
@@ -134,6 +139,8 @@
     "deleteOk": "Delete",
     "deleted": "Deleted",
     "deleteFailed": "Delete failed",
+    "tagFilterLabel": "Tag:",
+    "clearTagFilter": "Clear tag filter",
     "bulkSelectAll": "Select all links on this page",
     "bulkSelectRow": "Select /{code}",
     "bulkSelectedCount": "{count} selected",
@@ -175,8 +182,12 @@
     "maliciousUrl": "URL flagged as malicious or phishing.",
     "tabs": {
       "basic": "Basic",
+      "tags": "Tags",
       "og": "Share card",
       "protection": "Protection"
+    },
+    "tags": {
+      "description": "Type tags for this link. New names are created automatically."
     },
     "og": {
       "description": "Override the preview shown when this link is pasted on KakaoTalk, Slack, Twitter, etc. Leave fields blank to use the auto-scraped values from the destination page.",

@@ -21,9 +21,10 @@ type SortDir = "asc" | "desc";
 type Props = {
   items: MyLink[];
   onChanged: () => void;
+  onTagClick?: (tag: string) => void;
 };
 
-export function LinksTable({ items, onChanged }: Props) {
+export function LinksTable({ items, onChanged, onTagClick }: Props) {
   const t = useTranslations("dashboard");
   const [sortKey, setSortKey] = useState<SortKey>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -204,16 +205,34 @@ export function LinksTable({ items, onChanged }: Props) {
                   </div>
                 </TD>
                 <TD className="max-w-[360px]">
-                  <a
-                    href={item.originalUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900"
-                    title={item.originalUrl}
-                  >
-                    <span className="truncate text-xs">{truncateMiddle(item.originalUrl, 56)}</span>
-                    <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
-                  </a>
+                  <div className="flex flex-col gap-1">
+                    <a
+                      href={item.originalUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900"
+                      title={item.originalUrl}
+                    >
+                      <span className="truncate text-xs">
+                        {truncateMiddle(item.originalUrl, 56)}
+                      </span>
+                      <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
+                    </a>
+                    {item.tags && item.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {item.tags.map((tag) => (
+                          <button
+                            key={tag}
+                            type="button"
+                            onClick={() => onTagClick?.(tag)}
+                            className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600 hover:bg-slate-200"
+                          >
+                            {tag}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </TD>
                 <TD className="whitespace-nowrap text-xs text-slate-500">
                   {formatDate(item.createdAt)}
