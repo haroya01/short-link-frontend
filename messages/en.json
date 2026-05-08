@@ -514,6 +514,6 @@
     "q5": "How are malicious URLs blocked?",
     "a5": "We screen with Google Safe Browsing at shorten time. Flagged URLs are rejected.",
     "q6": "Is there an API?",
-    "a6": "Yes — Swagger UI at /swagger-ui. Click Authorize and paste your JWT to try any endpoint."
+    "a6": "Yes — shortening is one POST to /api/v1/links. For authenticated endpoints, issue a key under Settings > API keys. (The full OpenAPI doc is gated to operators.)"
   }
 }
