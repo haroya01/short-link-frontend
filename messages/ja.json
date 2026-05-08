@@ -232,6 +232,12 @@
   "stats": {
     "back": "戻る",
     "shortCode": "short code",
+    "live": {
+      "title": "リアルタイムクリック",
+      "connecting": "接続中…",
+      "connected": "ライブ",
+      "waiting": "クリックがあるとここに表示されます。"
+    },
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "統計はリンクの所有者のみ表示できます。",
     "notFound": "リンクが見つかりません",
