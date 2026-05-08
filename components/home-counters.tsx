@@ -6,10 +6,8 @@ import { useCountUp } from "@/lib/animations";
 import { getPublicTotals } from "@/lib/api";
 import { formatNumber } from "@/lib/utils";
 
-export function HomeCounters() {
-  const t = useTranslations("homeStats");
+export function usePublicTotals() {
   const [totals, setTotals] = useState<{ links: number; clicks: number } | null>(null);
-
   useEffect(() => {
     let cancelled = false;
     getPublicTotals()
@@ -21,12 +19,17 @@ export function HomeCounters() {
       cancelled = true;
     };
   }, []);
+  return totals;
+}
 
-  const links = useCountUp(totals?.links ?? 0, 1200, totals !== null);
-  const clicks = useCountUp(totals?.clicks ?? 0, 1200, totals !== null);
-
-  if (!totals) return null;
-  if (totals.links === 0 && totals.clicks === 0) return null;
+export function HomeCounters({
+  totals,
+}: {
+  totals: { links: number; clicks: number };
+}) {
+  const t = useTranslations("homeStats");
+  const links = useCountUp(totals.links, 1200, true);
+  const clicks = useCountUp(totals.clicks, 1200, true);
 
   return (
     <dl className="grid grid-cols-2 divide-x divide-slate-100 text-center">
