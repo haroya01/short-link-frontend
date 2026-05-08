@@ -420,7 +420,25 @@
       "trend": { "title": "日別推移", "desc": "直近30日 · 登録 / リンク作成 / クリック" },
       "topUsersByLinks": { "title": "Top ユーザー (リンク数)", "desc": "リンクを最も多く作成した10人" },
       "topUsersByClicks": { "title": "Top ユーザー (クリック数)", "desc": "クリックを最も多く受けた10人" },
-      "topLinks": { "title": "Top リンク", "desc": "クリックの多い10件" }
+      "topLinks": { "title": "Top リンク", "desc": "クリックの多い10件" },
+      "redirectPerf": {
+        "title": "リダイレクト性能",
+        "desc": "短縮 URL → 遷移先までの処理遅延。インスタンス起動以降の累計。",
+        "p50": "p50 レイテンシ",
+        "p95": "p95 レイテンシ",
+        "p99": "p99 レイテンシ",
+        "median": "中央値",
+        "tail": "5% がこれより遅い",
+        "outlier": "1% がこれより遅い",
+        "total": "総処理数",
+        "totalSub": "全結果合計",
+        "notFound": "404",
+        "notFoundSub": "存在しないコード",
+        "expired": "期限切れ",
+        "expiredSub": "期限後のアクセス",
+        "preview": "プレビュー",
+        "previewSub": "Slack/SNS のプレビュー"
+      }
     },
     "trend": { "signups": "登録", "links": "リンク", "clicks": "クリック" },
     "table": {

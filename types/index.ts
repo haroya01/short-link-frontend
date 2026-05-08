@@ -235,6 +235,29 @@ export type TwoFactorRecoveryCodes = {
   recoveryCodes: string[];
 };
 
+export type AdminHealthMetrics = {
+  httpLatency: { p50Millis: number; p95Millis: number; p99Millis: number; sampleCount: number };
+  httpStatusCounts: { count2xx: number; count4xx: number; count5xx: number };
+  rateLimitExceeded: number;
+  safeBrowsingMalicious: number;
+  authFailures: number;
+  dbPool: { active: number; idle: number; waiting: number; max: number };
+  cache: { gets: number; hits: number; misses: number; hitRatio: number };
+  redirect: {
+    p50Millis: number;
+    p95Millis: number;
+    p99Millis: number;
+    total: number;
+    redirects: number;
+    previews: number;
+    notFound: number;
+    expired: number;
+    viewLimit: number;
+    passwordRequired: number;
+    errors: number;
+  };
+};
+
 export type AdminOverview = {
   totals: { users: number; links: number; clicks: number };
   newUsers7d: number;
