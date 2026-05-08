@@ -43,9 +43,11 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
 
     function open() {
       if (cancelled) return;
-      // Next.js dev rewrites buffer chunked responses — bypass the proxy in dev by hitting the
-      // backend host directly. In prod we go same-origin.
+      // Always hit the backend host directly — Next.js rewrites buffer chunked responses in dev,
+      // and in prod the SPA lives on a different origin (e.g., app.kurl.md → kurl.md). Falls back
+      // to localhost:8080 only when neither env var is set.
       const base =
+        process.env.NEXT_PUBLIC_API_BASE ??
         process.env.NEXT_PUBLIC_BACKEND_URL ??
         (process.env.NODE_ENV === "development" ? "http://localhost:8080" : "");
       const url = `${base}/api/v1/links/${shortCode}/stream?token=${encodeURIComponent(token!)}`;
