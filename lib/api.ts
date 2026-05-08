@@ -20,6 +20,7 @@ import type {
   ProblemDetail,
   TagSummary,
   UpdateLinkRequest,
+  WebhookConfigPatch,
   WebhookSummary,
 } from "@/types";
 
@@ -201,6 +202,17 @@ export async function toggleWebhook(
 
 export async function deleteWebhook(shortCode: string, id: number): Promise<void> {
   await request(`/api/v1/links/${shortCode}/webhooks/${id}`, { method: "DELETE" });
+}
+
+export async function updateWebhookConfig(
+  shortCode: string,
+  id: number,
+  patch: WebhookConfigPatch,
+): Promise<WebhookSummary> {
+  return request<WebhookSummary>(`/api/v1/links/${shortCode}/webhooks/${id}/config`, {
+    method: "PUT",
+    body: patch,
+  });
 }
 
 export async function listDestinations(shortCode: string): Promise<DestinationSummary[]> {
