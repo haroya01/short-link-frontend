@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { ShortenForm } from "@/components/shorten-form";
 import { ResultCard } from "@/components/result-card";
 import { FeatureCarousel } from "@/components/feature-carousel";
+import { HomeFaq } from "@/components/home-faq";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import type { CreateLinkResponse } from "@/types";
@@ -80,6 +81,8 @@ export default function HomePage() {
       <section className="container max-w-5xl py-16">
         <FeatureCarousel />
       </section>
+
+      <HomeFaq />
     </div>
   );
 }

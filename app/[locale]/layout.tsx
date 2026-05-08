@@ -3,6 +3,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import "../globals.css";
+import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
 import { ToastProvider } from "@/components/ui/toast";
 import { routing } from "@/i18n/routing";
@@ -61,7 +62,6 @@ export default async function RootLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "footer" });
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -93,9 +93,7 @@ export default async function RootLayout({
           <ToastProvider>
             <Nav />
             <main className="flex-1">{children}</main>
-            <footer className="border-t border-slate-200 py-6 text-center text-xs text-slate-500">
-              {t("copyright", { year: new Date().getFullYear() })}
-            </footer>
+            <Footer />
           </ToastProvider>
         </NextIntlClientProvider>
         <script
