@@ -54,9 +54,30 @@
     "ctaSeeLinks": "내 링크 전체 보기",
     "loginCta": "로그인하면 이 링크의 <clickStats>클릭 통계</clickStats>를 영구 저장하고 분석할 수 있어요.",
     "features": {
-      "realtime": { "title": "실시간 분석", "desc": "시간대 · 요일 · 디바이스 · OS · 브라우저까지 모두 집계" },
-      "geo": { "title": "국가 / 채널", "desc": "GeoLite2 IP 룩업과 레퍼러 분류로 트래픽 출처 파악" },
-      "safety": { "title": "악성 URL 차단", "desc": "Safe Browsing 검사로 phishing 운반책으로 악용 방지" }
+      "realtime": {
+        "title": "실시간 클릭 피드 (SSE)",
+        "desc": "통계 페이지에서 클릭이 들어오는 순간 시간/국가/채널/디바이스가 라이브로 흐름"
+      },
+      "abtest": {
+        "title": "A/B 분배 + 국가별 라우팅",
+        "desc": "한 단축 URL → 가중치로 분산 + 방문자 국가에 맞춘 페이지로 자동 분기 (링크당 4개)"
+      },
+      "insights": {
+        "title": "자동 인사이트",
+        "desc": "피크 시간 / 재방문율 / Half-life / Velocity — 별도 설정 없이 즉시 노출"
+      },
+      "webhooks": {
+        "title": "HMAC 서명 웹훅 + 비용 절감",
+        "desc": "클릭마다 Slack/사내 endpoint 로 SHA-256 서명 POST. 봇 제외/샘플링/배치/quota 로 호출 -98%까지"
+      },
+      "safety": {
+        "title": "다층 어뷰즈 방어",
+        "desc": "Google Safe Browsing + 익명 단축 PoW + 데이터센터 ASN 자동 봇 분류"
+      },
+      "twofa": {
+        "title": "2FA TOTP + 복구 코드",
+        "desc": "Google Authenticator 등록 → 로그인에 6자리 단계 추가. 복구 코드 10개 BCrypt 해시 저장"
+      }
     },
     "recentEyebrow": "최근 단축",
     "recentTitle": "방금 만든 링크",
@@ -65,8 +86,8 @@
     "statsTitle": "kurl 전체에서",
     "statsSubhead": "지금까지 단축된 링크와 분석된 클릭 수.",
     "featuresEyebrow": "what you get",
-    "featuresTitle": "데이터로 보는 클릭",
-    "featuresSubhead": "시간대 · 국가 · 채널 · 디바이스 — 누가 어디서 눌렀는지 한눈에."
+    "featuresTitle": "단순 단축이 아닙니다",
+    "featuresSubhead": "실시간 클릭 피드 · A/B + 국가 분기 · HMAC 웹훅 · 2FA · 자동 인사이트 — 운영에 필요한 게 전부 들어 있어요."
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
@@ -374,7 +395,12 @@
       "country": { "title": "국가", "desc": "GeoLite2-City IP 룩업" },
       "region": { "title": "지역", "desc": "state / province 단위" },
       "city": { "title": "도시", "desc": "city 단위" },
-      "language": { "title": "언어", "desc": "브라우저 Accept-Language 첫 항목" }
+      "language": { "title": "언어", "desc": "브라우저 Accept-Language 첫 항목" },
+      "asn": {
+        "title": "네트워크 / ASN",
+        "desc": "유입 IP 의 자율 시스템 (ISP / 클라우드 사업자) 분포. 데이터센터 클릭 {dc}건은 봇으로 자동 분류됨.",
+        "empty": "ASN 데이터 없음 (GeoLite2-ASN 미설치)"
+      }
     },
     "noData": "데이터 없음",
     "noClicks": "아직 클릭이 없어요",

@@ -167,6 +167,7 @@ export type CountryClick = { country: string; count: number };
 export type RegionClick = { region: string; count: number };
 export type CityClick = { city: string; count: number };
 export type LanguageClick = { language: string; count: number };
+export type AsnClick = { asn: number | null; organization: string; count: number };
 
 export type Velocity = {
   currentHour: number;
@@ -209,6 +210,8 @@ export type LinkStats = {
   regionClicks: RegionClick[];
   cityClicks: CityClick[];
   languageClicks: LanguageClick[];
+  asnClicks: AsnClick[];
+  datacenterClicks: number;
 };
 
 export type Me = {

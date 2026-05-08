@@ -54,9 +54,30 @@
     "ctaSeeLinks": "See all my links",
     "loginCta": "Sign in to save and analyze <clickStats>click stats</clickStats> for this link.",
     "features": {
-      "realtime": { "title": "Real-time analytics", "desc": "Hour, day-of-week, device, OS, browser — all aggregated." },
-      "geo": { "title": "Country / channel", "desc": "GeoLite2 IP lookup and referrer classification show traffic origin." },
-      "safety": { "title": "Malicious URL block", "desc": "Safe Browsing prevents misuse for phishing." }
+      "realtime": {
+        "title": "Live click feed (SSE)",
+        "desc": "Watch clicks arrive in real time on the stats page — time / country / channel / device, streaming"
+      },
+      "abtest": {
+        "title": "A/B split + geo-routing",
+        "desc": "One short URL → weighted variants and per-country destinations (up to 4 per link)"
+      },
+      "insights": {
+        "title": "Automatic insights",
+        "desc": "Peak hour, return rate, half-life, velocity — surfaced without any setup"
+      },
+      "webhooks": {
+        "title": "HMAC-signed webhooks",
+        "desc": "Signed JSON POST per click to Slack / your endpoint. Skip bots / sample / batch / quota cuts cost up to 98%"
+      },
+      "safety": {
+        "title": "Layered abuse defence",
+        "desc": "Google Safe Browsing + anonymous-shorten PoW + datacenter ASN auto-bot classification"
+      },
+      "twofa": {
+        "title": "2FA TOTP + recovery codes",
+        "desc": "Pair an authenticator app and add a 6-digit step to sign-in. 10 single-use codes, BCrypt-hashed"
+      }
     },
     "recentEyebrow": "recent",
     "recentTitle": "Just shortened",
@@ -65,8 +86,8 @@
     "statsTitle": "Across kurl",
     "statsSubhead": "Total links shortened and clicks tracked so far.",
     "featuresEyebrow": "what you get",
-    "featuresTitle": "Clicks, decoded",
-    "featuresSubhead": "Hour, country, channel, device — who clicked where, at a glance."
+    "featuresTitle": "More than just shortening",
+    "featuresSubhead": "Live click feed · A/B + geo routing · HMAC webhooks · 2FA · auto-insights — everything you need to run links."
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
@@ -374,7 +395,12 @@
       "country": { "title": "Country", "desc": "GeoLite2-City IP lookup" },
       "region": { "title": "Region", "desc": "State / province" },
       "city": { "title": "City", "desc": "City level" },
-      "language": { "title": "Language", "desc": "Browser Accept-Language" }
+      "language": { "title": "Language", "desc": "Browser Accept-Language" },
+      "asn": {
+        "title": "Network / ASN",
+        "desc": "Autonomous system (ISP / cloud provider) distribution. {dc} datacenter clicks were auto-flagged as bots.",
+        "empty": "No ASN data (GeoLite2-ASN not bundled)"
+      }
     },
     "noData": "No data",
     "noClicks": "No clicks yet",
