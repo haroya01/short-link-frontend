@@ -18,6 +18,7 @@ import { Section } from "@/components/section";
 import { StatsCards } from "@/components/stats-cards";
 import { LiveClickFeed } from "@/components/live-click-feed";
 import { ClickQualitySummary } from "@/components/click-quality-summary";
+import { LinkWebhooksSection } from "@/components/link-webhooks-section";
 import { DailyChart } from "@/components/charts/daily-chart";
 import { HourChart } from "@/components/charts/hour-chart";
 import { Heatmap } from "@/components/charts/heatmap";
@@ -148,6 +149,8 @@ export default function StatsPage() {
           <ClickQualitySummary data={data} />
 
           <LiveClickFeed shortCode={data.shortCode} onTick={() => setTick((n) => n + 1)} />
+
+          <LinkWebhooksSection shortCode={data.shortCode} />
 
           <Reveal>
             <Section
