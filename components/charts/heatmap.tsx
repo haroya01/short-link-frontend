@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { HeatmapCell } from "@/types";
@@ -55,12 +55,11 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
               {h}
             </div>
           ))}
-          {DAYS.map((day, i) => {
+          {DAYS.map((day) => {
             const isWeekend = day === "SATURDAY" || day === "SUNDAY";
             return (
-              <>
+              <Fragment key={day}>
                 <div
-                  key={`label-${day}`}
                   className={cn(
                     "flex h-6 items-center justify-end pr-2 text-[11px]",
                     isWeekend ? "font-semibold text-slate-700" : "text-slate-500",
@@ -90,7 +89,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                     />
                   );
                 })}
-              </>
+              </Fragment>
             );
           })}
         </div>
