@@ -1,7 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { getMe, logout as apiLogout, readToken, setToken } from "./api";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  claimAnonymousLinks,
+  getMe,
+  logout as apiLogout,
+  readToken,
+  setToken,
+} from "./api";
+import { clearClaimTokens, readPendingClaimTokens } from "./recent-links";
 import type { Me } from "@/types";
 
 type AuthState = {
@@ -16,6 +23,7 @@ export function useAuth() {
     ready: false,
     me: null,
   });
+  const claimedRef = useRef(false);
 
   useEffect(() => {
     const sync = async () => {
@@ -27,6 +35,19 @@ export function useAuth() {
       try {
         const me = await getMe();
         setState({ authenticated: true, ready: true, me });
+        if (!claimedRef.current) {
+          claimedRef.current = true;
+          const tokens = readPendingClaimTokens();
+          if (tokens.length > 0) {
+            try {
+              await claimAnonymousLinks(tokens);
+            } catch {
+              // best-effort; still clear local tokens to avoid retry storms
+            } finally {
+              clearClaimTokens(tokens);
+            }
+          }
+        }
       } catch {
         setState({ authenticated: false, ready: true, me: null });
       }

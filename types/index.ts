@@ -7,6 +7,18 @@ export type CreateLinkRequest = {
 export type CreateLinkResponse = {
   shortCode: string;
   shortUrl: string;
+  claimToken: string | null;
+};
+
+export type ClaimResult = {
+  claimed: number;
+  skipped: number;
+};
+
+export type BulkImportSummary = {
+  ok: number;
+  failed: number;
+  resultCsv: string;
 };
 
 export type MyLink = {

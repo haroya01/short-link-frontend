@@ -46,6 +46,7 @@ export default function HomePage() {
                 shortUrl: res.shortUrl,
                 originalUrl: original,
                 createdAt: Date.now(),
+                claimToken: res.claimToken,
               });
             }}
           />
