@@ -117,7 +117,31 @@
     "saved": "Saved",
     "saveFailed": "Save failed",
     "invalidUrl": "URL must start with http:// or https://.",
-    "maliciousUrl": "URL flagged as malicious or phishing."
+    "maliciousUrl": "URL flagged as malicious or phishing.",
+    "tabs": {
+      "basic": "Basic",
+      "og": "Share card",
+      "protection": "Protection"
+    },
+    "og": {
+      "description": "Override the preview shown when this link is pasted on KakaoTalk, Slack, Twitter, etc. Leave fields blank to use the auto-scraped values from the destination page.",
+      "titleLabel": "Title override",
+      "titlePlaceholder": "e.g., Our service",
+      "descriptionLabel": "Description override",
+      "descriptionPlaceholder": "e.g., One-click URL shortener with click analytics",
+      "imageLabel": "Image URL override"
+    },
+    "protection": {
+      "description": "Set a password and a maximum view count to protect this link.",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Leave blank for no password",
+      "passwordSetHint": "Password already set (type a new one to change)",
+      "removePassword": "Remove password",
+      "maxViewsLabel": "Max views (optional)",
+      "maxViewsPlaceholder": "e.g., 100",
+      "maxViewsInvalid": "Max views must be a positive integer.",
+      "viewCountHint": "Currently {current}/{max} views"
+    }
   },
   "stats": {
     "back": "Back",
