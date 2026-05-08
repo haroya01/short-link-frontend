@@ -233,6 +233,36 @@
     "downloadPng": "Download PNG",
     "close": "Close"
   },
+  "share": {
+    "label": "Share",
+    "copiedFallback": "URL copied"
+  },
+  "recent": {
+    "title": "Recent shortenings",
+    "empty": "Nothing yet — shorten one above.",
+    "viewStats": "View stats",
+    "claimCta": "Sign up to keep these links permanently in your account.",
+    "anonymousNote": "Anonymous links auto-expire after 24h."
+  },
+  "statsEmpty": {
+    "title": "No clicks yet",
+    "description": "Share this short link on KakaoTalk / Slack / social — analytics will start the moment someone clicks.",
+    "shareCta": "Copy short link",
+    "shareCopied": "Copied"
+  },
+  "utm": {
+    "toggle": "Add UTM parameters",
+    "source": "Source",
+    "medium": "Medium",
+    "campaign": "Campaign",
+    "term": "Term",
+    "content": "Content",
+    "preview": "Final URL",
+    "placeholderSource": "e.g. newsletter",
+    "placeholderMedium": "e.g. email",
+    "placeholderCampaign": "e.g. spring2026",
+    "remember": "Remember these values"
+  },
   "languageSwitcher": {
     "label": "Language",
     "en": "English",
