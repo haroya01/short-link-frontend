@@ -82,8 +82,10 @@ export type LinkStats = {
 export type Me = {
   id: number;
   email: string;
-  provider: string;
+  provider?: string;
+  oauthProvider?: string;
   role: "USER" | "ADMIN";
+  timezone?: string;
   createdAt: string;
 };
 
