@@ -35,6 +35,22 @@ Commit the regenerated PNGs under `e2e/visual.spec.ts-snapshots/`.
 `.github/workflows/e2e.yml` clones the backend repo, boots both servers, and runs the full
 suite on every PR/push to main. Failures upload `playwright-report/` as an artifact.
 
+### One-time setup
+
+The workflow needs to clone the (private) backend repo. Set a Personal Access Token with
+`repo` scope as a secret on this repo:
+
+```
+gh secret set SUB_TOKEN --repo haroya01/short-link-frontend
+# paste a PAT (classic) with repo scope, or a fine-grained PAT scoped to haroya01/short-link
+```
+
+Without `SUB_TOKEN`, the workflow gracefully skips with a warning instead of failing.
+
+Optional secrets (otherwise generated/defaulted at runtime):
+- `E2E_JWT_PRIVATE_KEY`, `E2E_JWT_PUBLIC_KEY` — RSA PEM for JWT signing (auto-generated otherwise)
+- `E2E_DB_PASSWORD`, `E2E_REDIS_PASSWORD` — overrides for docker-compose passwords
+
 ## Coverage map
 
 | Spec | Covers |
