@@ -106,6 +106,7 @@ export type UtmCampaignClick = { campaign: string; count: number };
 export type UtmSourceClick = { source: string; count: number };
 export type UtmMediumClick = { medium: string; count: number };
 export type UtmContentClick = { content: string; count: number };
+export type SourceChannelClick = { source: string; count: number };
 export type CountryClick = { country: string; count: number };
 export type RegionClick = { region: string; count: number };
 export type CityClick = { city: string; count: number };
@@ -146,6 +147,7 @@ export type LinkStats = {
   utmSourceClicks: UtmSourceClick[];
   utmMediumClicks: UtmMediumClick[];
   utmContentClicks: UtmContentClick[];
+  sourceChannelClicks: SourceChannelClick[];
   countryClicks: CountryClick[];
   regionClicks: RegionClick[];
   cityClicks: CityClick[];

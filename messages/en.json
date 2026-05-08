@@ -283,6 +283,11 @@
       "utmSource": { "title": "UTM source", "desc": "By utm_source (instagram, naver, ...)" },
       "utmMedium": { "title": "UTM medium", "desc": "By utm_medium (bio, ad, email, ...)" },
       "utmContent": { "title": "UTM content", "desc": "By utm_content (banner / A-B slot)" },
+      "srcChannel": {
+        "title": "Share channel (?src)",
+        "desc": "Tracked via the ?src= hint on the short URL itself — covers QR scans, KakaoTalk, offline channels where the referrer header is missing.",
+        "empty": "No clicks carried a ?src parameter."
+      },
       "bots": { "title": "Bot types", "desc": "Googlebot · Slackbot etc." },
       "country": { "title": "Country", "desc": "GeoLite2-City IP lookup" },
       "region": { "title": "Region", "desc": "State / province" },

@@ -283,6 +283,11 @@
       "utmSource": { "title": "UTM 소스", "desc": "utm_source 별 집계 (instagram, naver 등)" },
       "utmMedium": { "title": "UTM 매체", "desc": "utm_medium 별 집계 (bio, ad, email 등)" },
       "utmContent": { "title": "UTM 콘텐츠", "desc": "utm_content 별 집계 (배너, A/B 슬롯 구분)" },
+      "srcChannel": {
+        "title": "공유 채널 (?src)",
+        "desc": "단축 URL 자체에 실은 ?src= 파라미터로 추적 (QR/카톡/오프라인 등 referrer 비어있는 경로)",
+        "empty": "?src 파라미터로 들어온 클릭 없음"
+      },
       "bots": { "title": "봇 종류", "desc": "Googlebot · Slackbot 등 분리" },
       "country": { "title": "국가", "desc": "GeoLite2-City IP 룩업" },
       "region": { "title": "지역", "desc": "state / province 단위" },

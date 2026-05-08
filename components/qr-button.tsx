@@ -10,8 +10,24 @@ import { truncateMiddle } from "@/lib/utils";
 
 type Props = { url?: string; value?: string; filename?: string };
 
+/**
+ * QR target gets a {@code ?src=qr} hint so stats can attribute scans separately from regular
+ * clicks (referrer is empty for camera scans). If the URL already carries a query, append; if it
+ * already has src, keep the user's value.
+ */
+function withQrSrc(url: string): string {
+  if (!url) return url;
+  try {
+    const u = new URL(url);
+    if (!u.searchParams.has("src")) u.searchParams.set("src", "qr");
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 export function QrButton({ url, value, filename = "qrcode.png" }: Props) {
-  const target = url ?? value ?? "";
+  const target = withQrSrc(url ?? value ?? "");
   const [open, setOpen] = useState(false);
 
   return (
