@@ -2,10 +2,15 @@ import type {
   AdminOverview,
   CreateLinkRequest,
   CreateLinkResponse,
+  LinkDetail,
+  LinkProtectionRequest,
+  LinkProtectionResponse,
   LinkStats,
   Me,
   MyLink,
   MyLinksPage,
+  OgOverrideRequest,
+  OgOverrideResponse,
   ProblemDetail,
   UpdateLinkRequest,
 } from "@/types";
@@ -144,6 +149,30 @@ export async function updateLink(
 
 export async function deleteLink(shortCode: string): Promise<void> {
   await request(`/api/v1/links/${shortCode}`, { method: "DELETE" });
+}
+
+export async function getLinkDetail(shortCode: string): Promise<LinkDetail> {
+  return request<LinkDetail>(`/api/v1/links/${shortCode}/detail`, { method: "GET" });
+}
+
+export async function setLinkOgOverride(
+  shortCode: string,
+  payload: OgOverrideRequest,
+): Promise<OgOverrideResponse> {
+  return request<OgOverrideResponse>(`/api/v1/links/${shortCode}/og`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export async function setLinkProtection(
+  shortCode: string,
+  payload: LinkProtectionRequest,
+): Promise<LinkProtectionResponse> {
+  return request<LinkProtectionResponse>(`/api/v1/links/${shortCode}/protection`, {
+    method: "PATCH",
+    body: payload,
+  });
 }
 
 export async function getMe(): Promise<Me> {

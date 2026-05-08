@@ -28,6 +28,47 @@ export type UpdateLinkRequest = {
   expiresAt?: string | null;
 };
 
+export type LinkDetail = {
+  shortCode: string;
+  originalUrl: string;
+  expiresAt: string | null;
+  ogTitle: string | null;
+  ogDescription: string | null;
+  ogImage: string | null;
+  ogTitleOverride: string | null;
+  ogDescriptionOverride: string | null;
+  ogImageOverride: string | null;
+  passwordProtected: boolean;
+  maxViews: number | null;
+  viewCount: number;
+  statsPublic: boolean;
+};
+
+export type OgOverrideRequest = {
+  ogTitle?: string | null;
+  ogDescription?: string | null;
+  ogImage?: string | null;
+};
+
+export type OgOverrideResponse = {
+  shortCode: string;
+  ogTitle: string | null;
+  ogDescription: string | null;
+  ogImage: string | null;
+};
+
+export type LinkProtectionRequest = {
+  password?: string | null;
+  maxViews?: number | null;
+};
+
+export type LinkProtectionResponse = {
+  shortCode: string;
+  passwordProtected: boolean;
+  maxViews: number | null;
+  viewCount: number;
+};
+
 export type DailyClick = { date: string; count: number };
 export type HourClick = { hour: number; count: number };
 export type DayOfWeekClick = { dayOfWeek: string; count: number };
