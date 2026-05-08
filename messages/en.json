@@ -310,8 +310,10 @@
       "consecutiveFailures": "{n} consecutive failures"
     },
     "destinations": {
-      "title": "A/B split (multiple destinations)",
-      "description": "Distribute incoming clicks across multiple destinations by weight. Changes apply instantly. If all variants are disabled, traffic falls back to the original URL. Up to 4 per link.",
+      "title": "A/B split / geo-targeting",
+      "description": "Distribute clicks across destinations by weight, or send visitors from specific countries to a tailored page. Country-tagged variants only fire for matching visitors; otherwise traffic falls back to country-agnostic variants, then the original URL. Up to 4 per link.",
+      "countryLabel": "Target country",
+      "countryAny": "🌐 Any country",
       "weight": "Weight",
       "labelPlaceholder": "Label (optional, e.g. variant-A)",
       "controlLabel": "Default (original URL)",
