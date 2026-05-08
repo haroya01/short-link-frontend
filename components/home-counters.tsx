@@ -26,9 +26,10 @@ export function HomeCounters() {
   const clicks = useCountUp(totals?.clicks ?? 0, 1200, totals !== null);
 
   if (!totals) return null;
+  if (totals.links === 0 && totals.clicks === 0) return null;
 
   return (
-    <dl className="grid grid-cols-2 gap-3">
+    <dl className="grid grid-cols-2 divide-x divide-slate-100 text-center">
       <Stat value={formatNumber(links)} label={t("linksLabel")} />
       <Stat value={formatNumber(clicks)} label={t("clicksLabel")} />
     </dl>
@@ -37,11 +38,11 @@ export function HomeCounters() {
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 text-center">
-      <dd className="font-mono text-3xl font-semibold tracking-tight tabular-nums text-slate-900">
+    <div className="px-6 py-2">
+      <dd className="font-mono text-4xl font-semibold tracking-tight tabular-nums text-slate-900 sm:text-5xl">
         {value}
       </dd>
-      <dt className="mt-1 text-xs uppercase tracking-wider text-slate-500">{label}</dt>
+      <dt className="mt-2 text-xs uppercase tracking-wider text-slate-500">{label}</dt>
     </div>
   );
 }
