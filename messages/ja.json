@@ -1,4 +1,9 @@
 {
+  "tags": {
+    "inputPlaceholder": "Enter または , で追加",
+    "removeTag": "タグ {name} を削除",
+    "maxReached": "最大{max}個まで"
+  },
   "errors": {
     "LINK_NOT_FOUND": "リンクが見つかりません。",
     "LINK_EXPIRED": "期限切れのリンクです。",
@@ -134,6 +139,8 @@
     "deleteOk": "削除",
     "deleted": "削除しました",
     "deleteFailed": "削除に失敗しました",
+    "tagFilterLabel": "タグ:",
+    "clearTagFilter": "タグフィルタを解除",
     "bulkSelectAll": "このページの全リンクを選択",
     "bulkSelectRow": "/{code} を選択",
     "bulkSelectedCount": "{count}件選択中",
@@ -175,8 +182,12 @@
     "maliciousUrl": "悪性/フィッシングと判定されたため保存できません。",
     "tabs": {
       "basic": "基本",
+      "tags": "タグ",
       "og": "共有カード",
       "protection": "保護"
+    },
+    "tags": {
+      "description": "このリンクに付けるタグを入力してください。新しい名前は自動で作成されます。"
     },
     "og": {
       "description": "LINE・Slack・X などに貼り付けた時のプレビューを上書きできます。空欄にすると自動取得した値を使います。",
