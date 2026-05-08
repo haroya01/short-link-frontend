@@ -11,6 +11,19 @@ body {
   @apply bg-white text-slate-900 antialiased;
 }
 
+/* Avoid orphans (single-character last lines). Modern browsers (Chrome 117+, Safari 17.4+, FF 121+). */
+h1, h2, h3, p {
+  text-wrap: pretty;
+}
+
+/* CJK: don't split mid-phrase. Browsers break Japanese/Korean anywhere by default,
+   which produces awkward single-character last lines like "이." or "で。" */
+:lang(ko) h1, :lang(ko) h2, :lang(ko) h3, :lang(ko) p, :lang(ko) li, :lang(ko) span,
+:lang(ja) h1, :lang(ja) h2, :lang(ja) h3, :lang(ja) p, :lang(ja) li, :lang(ja) span {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
 * {
   -webkit-tap-highlight-color: transparent;
 }

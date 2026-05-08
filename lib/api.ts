@@ -165,6 +165,24 @@ export function exportMyDataUrl(): string {
   return "/api/v1/users/me/export";
 }
 
+export async function getPublicTotals(): Promise<{ links: number; clicks: number }> {
+  return request("/api/v1/public/stats", { method: "GET" });
+}
+
+export async function getPublicLinkStats(shortCode: string): Promise<LinkStats> {
+  return request<LinkStats>(`/api/v1/links/${shortCode}/public-stats`, { method: "GET" });
+}
+
+export async function setLinkVisibility(
+  shortCode: string,
+  statsPublic: boolean,
+): Promise<{ shortCode: string; statsPublic: boolean }> {
+  return request(`/api/v1/links/${shortCode}/visibility`, {
+    method: "PATCH",
+    body: JSON.stringify({ statsPublic }),
+  });
+}
+
 export async function getAdminOverview(): Promise<AdminOverview> {
   return request<AdminOverview>("/api/v1/admin/overview", { method: "GET" });
 }

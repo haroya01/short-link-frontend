@@ -341,6 +341,19 @@
     "cancel": "キャンセル",
     "deleting": "削除中..."
   },
+  "homeStats": {
+    "linksLabel": "短縮されたリンク",
+    "clicksLabel": "分析されたクリック"
+  },
+  "publicStats": {
+    "title": "公開統計",
+    "publicBadge": "公開",
+    "privateBadge": "非公開",
+    "shareButton": "公開リンクをコピー",
+    "shareCopied": "コピーしました",
+    "togglePublic": "統計を公開",
+    "togglePrivate": "統計を非公開"
+  },
   "homeFaq": {
     "title": "よくある質問",
     "q1": "短縮リンクは永続的に保存されますか?",

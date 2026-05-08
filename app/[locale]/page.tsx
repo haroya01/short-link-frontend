@@ -7,6 +7,7 @@ import { ShortenForm } from "@/components/shorten-form";
 import { ResultCard } from "@/components/result-card";
 import { FeatureCarousel } from "@/components/feature-carousel";
 import { HomeFaq } from "@/components/home-faq";
+import { HomeCounters } from "@/components/home-counters";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import type { CreateLinkResponse } from "@/types";
@@ -77,6 +78,8 @@ export default function HomePage() {
           )}
         </div>
       </section>
+
+      <HomeCounters />
 
       <section className="container max-w-5xl py-16">
         <FeatureCarousel />
