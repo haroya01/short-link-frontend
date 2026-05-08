@@ -3,6 +3,35 @@
     "title": "kurl · URL 단축과 클릭 분석",
     "description": "긴 URL을 한 줄로. 디바이스, 채널, 국가별 클릭 분석까지."
   },
+  "errors": {
+    "LINK_NOT_FOUND": "링크를 찾을 수 없어요.",
+    "LINK_EXPIRED": "만료된 링크예요.",
+    "LINK_VIEW_LIMIT_EXCEEDED": "조회 한도를 모두 사용한 링크예요.",
+    "LINK_NOT_OWNED": "이 링크에 권한이 없어요.",
+    "LINK_QUOTA_EXCEEDED": "링크 생성 한도({limit}개)에 도달했어요.",
+    "DUPLICATE_SHORT_CODE": "이미 사용 중인 짧은 코드예요.",
+    "RESERVED_SHORT_CODE": "예약된 코드라 사용할 수 없어요.",
+    "MALICIOUS_URL": "악성/피싱으로 분류된 URL이라 사용할 수 없어요.",
+    "SHORT_CODE_EXHAUSTED": "코드 생성에 실패했어요. 잠시 후 다시 시도해 주세요.",
+    "BULK_IMPORT_TOO_LARGE": "한 번에 {limit}줄까지 가능해요. ({rows}줄 시도)",
+    "OPTIMISTIC_LOCK": "다른 곳에서 먼저 수정됐어요. 새로 고침 후 다시 시도해 주세요.",
+    "INVALID_REFRESH_TOKEN": "세션이 만료됐어요. 다시 로그인해 주세요.",
+    "USER_NOT_FOUND": "계정을 찾을 수 없어요.",
+    "INVALID_CURSOR": "잘못된 페이지 커서예요.",
+    "INVALID_EXPORT_DIMENSION": "지원하지 않는 export 옵션이에요.",
+    "INVALID_TIMEZONE": "잘못된 타임존이에요.",
+    "INVALID_ACTIVE_PERIOD": "조회 기간이 올바르지 않아요.",
+    "VALIDATION_FAILED": "입력값이 올바르지 않아요.",
+    "MALFORMED_REQUEST": "요청 형식이 잘못됐어요.",
+    "UNAUTHORIZED": "로그인이 필요해요.",
+    "NOT_FOUND": "찾을 수 없어요.",
+    "INTERNAL_ERROR": "서버 오류가 발생했어요. 잠시 후 다시 시도해 주세요."
+  },
+  "cookieConsent": {
+    "message": "이 사이트는 로그인 유지(refresh token)를 위한 필수 쿠키만 사용합니다. 분석/광고 쿠키는 사용하지 않아요.",
+    "accept": "확인",
+    "learnMore": "자세히"
+  },
   "nav": {
     "shorten": "단축",
     "myLinks": "내 링크",
@@ -458,7 +487,8 @@
     "shareButton": "공개 링크 복사",
     "shareCopied": "복사됨",
     "togglePublic": "통계 공개로 전환",
-    "togglePrivate": "통계 비공개로 전환"
+    "togglePrivate": "통계 비공개로 전환",
+    "toggleFailed": "공개 설정에 실패했어요."
   },
   "homeFaq": {
     "title": "자주 묻는 질문",

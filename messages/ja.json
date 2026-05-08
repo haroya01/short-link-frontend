@@ -1,4 +1,33 @@
 {
+  "errors": {
+    "LINK_NOT_FOUND": "リンクが見つかりません。",
+    "LINK_EXPIRED": "期限切れのリンクです。",
+    "LINK_VIEW_LIMIT_EXCEEDED": "閲覧上限に達したリンクです。",
+    "LINK_NOT_OWNED": "このリンクを操作する権限がありません。",
+    "LINK_QUOTA_EXCEEDED": "リンク作成上限 ({limit}件) に達しました。",
+    "DUPLICATE_SHORT_CODE": "そのショートコードは既に使われています。",
+    "RESERVED_SHORT_CODE": "予約済みのコードのため使用できません。",
+    "MALICIOUS_URL": "悪性/フィッシングと判定されたURLです。",
+    "SHORT_CODE_EXHAUSTED": "コード生成に失敗しました。少し待って再試行してください。",
+    "BULK_IMPORT_TOO_LARGE": "一度に最大{limit}行までです ({rows}行)。",
+    "OPTIMISTIC_LOCK": "他から先に更新されました。再読み込み後にお試しください。",
+    "INVALID_REFRESH_TOKEN": "セッションの有効期限が切れました。再度ログインしてください。",
+    "USER_NOT_FOUND": "アカウントが見つかりません。",
+    "INVALID_CURSOR": "ページネーションのカーソルが不正です。",
+    "INVALID_EXPORT_DIMENSION": "サポートされていない export オプションです。",
+    "INVALID_TIMEZONE": "タイムゾーンが正しくありません。",
+    "INVALID_ACTIVE_PERIOD": "期間指定が正しくありません。",
+    "VALIDATION_FAILED": "入力値に誤りがあります。",
+    "MALFORMED_REQUEST": "リクエスト形式が不正です。",
+    "UNAUTHORIZED": "ログインが必要です。",
+    "NOT_FOUND": "見つかりません。",
+    "INTERNAL_ERROR": "サーバエラーが発生しました。後でもう一度お試しください。"
+  },
+  "cookieConsent": {
+    "message": "ログイン保持 (refresh token) のための必須クッキーのみを使用します。分析/広告用は使いません。",
+    "accept": "了解",
+    "learnMore": "詳細"
+  },
   "meta": {
     "title": "kurl · URL短縮とクリック分析",
     "description": "長いURLを一行に。デバイス、チャネル、国別のクリック分析まで。"
@@ -459,7 +488,8 @@
     "shareButton": "公開リンクをコピー",
     "shareCopied": "コピーしました",
     "togglePublic": "統計を公開",
-    "togglePrivate": "統計を非公開"
+    "togglePrivate": "統計を非公開",
+    "toggleFailed": "公開設定の更新に失敗しました。"
   },
   "homeFaq": {
     "title": "よくある質問",

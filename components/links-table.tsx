@@ -10,7 +10,8 @@ import { CopyButton } from "./copy-button";
 import { ConfirmDialog } from "./ui/dialog";
 import { EditLinkDialog } from "./edit-link-dialog";
 import { useToast } from "./ui/toast";
-import { ApiError, deleteLink } from "@/lib/api";
+import { deleteLink } from "@/lib/api";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import { cn, formatDate, formatNumber, truncateMiddle } from "@/lib/utils";
 import type { MyLink } from "@/types";
 
@@ -32,6 +33,7 @@ export function LinksTable({ items, onChanged }: Props) {
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
 
   const sorted = useMemo(
     () =>
@@ -86,8 +88,7 @@ export function LinksTable({ items, onChanged }: Props) {
       toast(t("deleted"), "success");
       onChanged();
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : t("deleteFailed");
-      toast(msg, "error");
+      toast(errorMessage(err, t("deleteFailed")), "error");
     }
   }
 
