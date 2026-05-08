@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ApiError, isValidUrl, shortenUrl } from "@/lib/api";
+import { getPowToken } from "@/lib/pow";
 import type { CreateLinkResponse } from "@/types";
 
 type Props = {
@@ -21,6 +22,14 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Pre-warm proof-of-work for anonymous users so submit doesn't pay the mining cost. Authenticated
+  // users skip PoW server-side, so don't bother computing.
+  useEffect(() => {
+    if (!authenticated) {
+      getPowToken().catch(() => {});
+    }
+  }, [authenticated]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
