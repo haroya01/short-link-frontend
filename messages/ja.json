@@ -233,6 +233,36 @@
     "downloadPng": "PNGダウンロード",
     "close": "閉じる"
   },
+  "share": {
+    "label": "共有",
+    "copiedFallback": "URLをコピーしました"
+  },
+  "recent": {
+    "title": "最近の短縮",
+    "empty": "まだありません。上から短縮してみてください。",
+    "viewStats": "統計を見る",
+    "claimCta": "サインアップすると、これらのリンクをアカウントに永続保存できます。",
+    "anonymousNote": "匿名リンクは24時間後に自動失効します。"
+  },
+  "statsEmpty": {
+    "title": "まだクリックがありません",
+    "description": "このリンクをカカオ / Slack / SNS で共有すると、誰かがクリックした瞬間から分析が始まります。",
+    "shareCta": "短縮リンクをコピー",
+    "shareCopied": "コピー済み"
+  },
+  "utm": {
+    "toggle": "UTMパラメータを追加",
+    "source": "Source",
+    "medium": "Medium",
+    "campaign": "Campaign",
+    "term": "Term",
+    "content": "Content",
+    "preview": "最終URL",
+    "placeholderSource": "例: newsletter",
+    "placeholderMedium": "例: email",
+    "placeholderCampaign": "例: spring2026",
+    "remember": "次回もこの値を使う"
+  },
   "languageSwitcher": {
     "label": "言語",
     "en": "English",

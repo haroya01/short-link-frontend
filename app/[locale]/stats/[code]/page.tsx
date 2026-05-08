@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CopyButton } from "@/components/copy-button";
 import { PublicStatsToggle } from "@/components/public-stats-toggle";
 import { QrButton } from "@/components/qr-button";
+import { ShareButton } from "@/components/share-button";
 import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
 import { StatsCards } from "@/components/stats-cards";
@@ -124,6 +125,8 @@ export default function StatsPage() {
             shortCodeLabel={t("shortCode")}
             onCopy={() => toast(tResult("copied"), "success")}
           />
+
+          {data.totalClicks === 0 && <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />}
 
           <StatsCards
             total={data.totalClicks}
@@ -331,6 +334,27 @@ function HeaderSkeleton() {
       <Skeleton className="h-3 w-16" />
       <Skeleton className="mt-2 h-6 w-48" />
       <Skeleton className="mt-2 h-3 w-72" />
+    </div>
+  );
+}
+
+function StatsEmptyState({ shortUrl }: { shortUrl: string }) {
+  const t = useTranslations("statsEmpty");
+  const { toast } = useToast();
+  return (
+    <div className="rounded-lg border border-dashed border-accent-300 bg-accent-50/40 p-8 text-center">
+      <h3 className="text-lg font-semibold text-slate-900">{t("title")}</h3>
+      <p className="mx-auto mt-2 max-w-md text-sm text-slate-600">{t("description")}</p>
+      <div className="mt-5 flex justify-center gap-2">
+        <CopyButton
+          size="sm"
+          variant="accent"
+          label={t("shareCta")}
+          value={shortUrl}
+          onCopied={() => toast(t("shareCopied"), "success")}
+        />
+        <ShareButton url={shortUrl} title={shortUrl} />
+      </div>
     </div>
   );
 }

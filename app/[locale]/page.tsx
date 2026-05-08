@@ -8,7 +8,9 @@ import { ResultCard } from "@/components/result-card";
 import { FeatureCarousel } from "@/components/feature-carousel";
 import { HomeFaq } from "@/components/home-faq";
 import { HomeCounters } from "@/components/home-counters";
+import { RecentLinks } from "@/components/recent-links";
 import { useAuth } from "@/lib/auth";
+import { recordRecent } from "@/lib/recent-links";
 import { Link } from "@/i18n/navigation";
 import type { CreateLinkResponse } from "@/types";
 
@@ -37,7 +39,15 @@ export default function HomePage() {
 
           <ShortenForm
             authenticated={authenticated}
-            onShortened={(res, original) => setResult({ res, original })}
+            onShortened={(res, original) => {
+              setResult({ res, original });
+              recordRecent({
+                shortCode: res.shortCode,
+                shortUrl: res.shortUrl,
+                originalUrl: original,
+                createdAt: Date.now(),
+              });
+            }}
           />
 
           {result && (
@@ -64,6 +74,10 @@ export default function HomePage() {
           {!authenticated && !result && (
             <p className="mt-4 text-center text-xs text-slate-500">{t("anonymousHint")}</p>
           )}
+
+          <div className="mt-8">
+            <RecentLinks />
+          </div>
 
           {authenticated && (
             <div className="mt-8 flex justify-center">

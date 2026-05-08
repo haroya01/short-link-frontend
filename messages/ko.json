@@ -233,6 +233,36 @@
     "downloadPng": "PNG 다운로드",
     "close": "닫기"
   },
+  "share": {
+    "label": "공유",
+    "copiedFallback": "URL이 복사됐어요"
+  },
+  "recent": {
+    "title": "최근 단축",
+    "empty": "아직 없어요. 위에서 단축해보세요.",
+    "viewStats": "통계 보기",
+    "claimCta": "가입하면 이 링크들을 본인 계정에 영구 보관할 수 있어요.",
+    "anonymousNote": "익명 링크는 24시간 후 자동 만료됩니다."
+  },
+  "statsEmpty": {
+    "title": "아직 클릭이 없어요",
+    "description": "이 링크를 카톡 / 슬랙 / SNS 등에 공유하면, 클릭이 발생하는 즉시 분석이 시작됩니다.",
+    "shareCta": "단축 링크 복사",
+    "shareCopied": "복사됨"
+  },
+  "utm": {
+    "toggle": "UTM 파라미터 추가",
+    "source": "Source",
+    "medium": "Medium",
+    "campaign": "Campaign",
+    "term": "Term",
+    "content": "Content",
+    "preview": "최종 URL",
+    "placeholderSource": "예: newsletter",
+    "placeholderMedium": "예: email",
+    "placeholderCampaign": "예: spring2026",
+    "remember": "다음에도 같은 값으로 채우기"
+  },
   "languageSwitcher": {
     "label": "언어",
     "en": "English",
