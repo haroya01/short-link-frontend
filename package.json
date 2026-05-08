@@ -24,6 +24,7 @@
     "tailwind-merge": "^2.5.2"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@playwright/test": "^1.59.1",
     "@types/node": "^20.16.5",
     "@types/qrcode": "^1.5.5",
