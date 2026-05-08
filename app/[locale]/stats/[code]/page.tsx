@@ -16,6 +16,7 @@ import { ShareButton } from "@/components/share-button";
 import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
 import { StatsCards } from "@/components/stats-cards";
+import { LiveClickFeed } from "@/components/live-click-feed";
 import { DailyChart } from "@/components/charts/daily-chart";
 import { HourChart } from "@/components/charts/hour-chart";
 import { Heatmap } from "@/components/charts/heatmap";
@@ -136,6 +137,8 @@ export default function StatsPage() {
             timeToFirstClickMinutes={data.timeToFirstClickMinutes}
             velocityRatio={data.velocity?.ratio ?? 0}
           />
+
+          <LiveClickFeed shortCode={data.shortCode} onTick={() => setTick((n) => n + 1)} />
 
           <Reveal>
             <Section

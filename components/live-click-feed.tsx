@@ -1,0 +1,137 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { readToken } from "@/lib/api";
+
+type LiveClick = {
+  id: number;
+  occurredAt: string;
+  countryCode: string;
+  deviceClass: string;
+  channel: string;
+  bot: boolean;
+};
+
+const MAX_FEED = 30;
+
+/**
+ * Subscribes to {@code /api/v1/links/{code}/stream} via EventSource and shows the most recent
+ * clicks on the stats page in real time. Auto-reconnects with backoff. Closed when the component
+ * unmounts.
+ */
+export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick?: () => void }) {
+  const t = useTranslations("stats.live");
+  const [items, setItems] = useState<LiveClick[]>([]);
+  const [connected, setConnected] = useState(false);
+  const seqRef = useRef(0);
+
+  useEffect(() => {
+    const token = readToken();
+    if (!token) return;
+
+    let es: EventSource | null = null;
+    let cancelled = false;
+    let backoff = 1000;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    function open() {
+      if (cancelled) return;
+      es = new EventSource(
+        `/api/v1/links/${shortCode}/stream?token=${encodeURIComponent(token!)}`,
+      );
+      es.addEventListener("ready", () => setConnected(true));
+      es.addEventListener("click", (event) => {
+        try {
+          const payload = JSON.parse((event as MessageEvent).data);
+          const id = ++seqRef.current;
+          setItems((prev) =>
+            [{ id, ...payload } as LiveClick, ...prev].slice(0, MAX_FEED),
+          );
+          onTick?.();
+        } catch {
+          // ignore malformed payloads
+        }
+      });
+      es.onerror = () => {
+        setConnected(false);
+        es?.close();
+        if (cancelled) return;
+        timer = setTimeout(() => {
+          backoff = Math.min(backoff * 2, 30_000);
+          open();
+        }, backoff);
+      };
+    }
+
+    open();
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+      es?.close();
+    };
+  }, [shortCode, onTick]);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-slate-900">{t("title")}</h3>
+        <div className="flex items-center gap-1.5 text-xs">
+          <span
+            className={
+              "inline-block h-2 w-2 rounded-full " +
+              (connected ? "animate-pulse bg-emerald-500" : "bg-slate-300")
+            }
+            aria-hidden
+          />
+          <span className={connected ? "text-emerald-700" : "text-slate-500"}>
+            {connected ? t("connected") : t("connecting")}
+          </span>
+        </div>
+      </div>
+
+      {items.length === 0 ? (
+        <p className="rounded-md border border-dashed border-slate-200 px-4 py-8 text-center text-xs text-slate-500">
+          {t("waiting")}
+        </p>
+      ) : (
+        <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
+          {items.map((item) => (
+            <li key={item.id} className="flex items-center gap-3 px-3 py-2 text-xs">
+              <span className="font-mono text-slate-500" suppressHydrationWarning>
+                {formatTime(item.occurredAt)}
+              </span>
+              {item.countryCode && (
+                <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
+                  {item.countryCode}
+                </span>
+              )}
+              {item.deviceClass && (
+                <span className="text-slate-600">{item.deviceClass}</span>
+              )}
+              {item.channel && (
+                <span className="truncate text-slate-500" title={item.channel}>
+                  · {item.channel}
+                </span>
+              )}
+              {item.bot && (
+                <span className="ml-auto rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium uppercase text-amber-700">
+                  bot
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function formatTime(iso: string): string {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleTimeString();
+  } catch {
+    return iso;
+  }
+}
