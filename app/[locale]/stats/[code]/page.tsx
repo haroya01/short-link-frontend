@@ -289,6 +289,23 @@ export default function StatsPage() {
                 )}
               </Section>
               <Section
+                title={t("section.srcChannel.title")}
+                description={t("section.srcChannel.desc")}
+              >
+                {data.sourceChannelClicks.length === 0 ? (
+                  <p className="py-8 text-center text-xs text-slate-500">
+                    {t("section.srcChannel.empty")}
+                  </p>
+                ) : (
+                  <BreakdownList
+                    items={data.sourceChannelClicks.map((s) => ({
+                      label: s.source,
+                      count: s.count,
+                    }))}
+                  />
+                )}
+              </Section>
+              <Section
                 id="section-bots"
                 title={t("section.bots.title")}
                 description={t("section.bots.desc")}
