@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FileUp, Plus, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { listMyLinks } from "@/lib/api";
+import { listMyLinks, listTags, type MyLinksFilters } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { LinksTable } from "@/components/links-table";
 import { BulkImportDialog } from "@/components/bulk-import-dialog";
+import { MyLinksFiltersBar } from "@/components/my-links-filters";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
 import type { MyLink } from "@/types";
@@ -23,9 +24,17 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [filters, setFilters] = useState<MyLinksFilters>({ page: 1, size: 50 });
+  const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [reload, setReload] = useState(0);
   const [bulkOpen, setBulkOpen] = useState(false);
+
+  useEffect(() => {
+    if (!ready || !authenticated) return;
+    listTags()
+      .then((tags) => setTagOptions(tags.map((t) => t.name)))
+      .catch(() => {});
+  }, [ready, authenticated]);
 
   useEffect(() => {
     if (!ready) return;
@@ -36,7 +45,7 @@ export default function DashboardPage() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    listMyLinks(tagFilter ? { tag: tagFilter } : undefined)
+    listMyLinks(filters)
       .then((data) => {
         if (!cancelled) setItems(data.items);
       })
@@ -49,8 +58,10 @@ export default function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [ready, authenticated, reload, tagFilter]);
+  }, [ready, authenticated, reload, filters]);
 
+  // Free-text search is client-side over the (server-filtered) page; backend already covers q,
+  // domain, tag, expiry, and date — this just adds an instant in-page narrow.
   const filtered = useMemo(() => {
     if (!items) return [];
     if (!query.trim()) return items;
@@ -114,22 +125,11 @@ export default function DashboardPage() {
         />
       </div>
 
-      {tagFilter && (
-        <div className="flex items-center gap-2 text-xs text-slate-600">
-          <span>{t("tagFilterLabel")}</span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-900 px-2 py-0.5 font-medium text-white">
-            {tagFilter}
-            <button
-              type="button"
-              onClick={() => setTagFilter(null)}
-              className="text-slate-300 hover:text-white"
-              aria-label={t("clearTagFilter")}
-            >
-              ×
-            </button>
-          </span>
-        </div>
-      )}
+      <MyLinksFiltersBar
+        filters={filters}
+        onChange={setFilters}
+        tagOptions={tagOptions}
+      />
 
       {loading ? (
         <LoadingTable t={t} />
@@ -154,7 +154,7 @@ export default function DashboardPage() {
         <LinksTable
           items={filtered}
           onChanged={() => setReload((n) => n + 1)}
-          onTagClick={(tag) => setTagFilter(tag)}
+          onTagClick={(tag) => setFilters((f) => ({ ...f, tag, page: 1 }))}
         />
       )}
     </div>

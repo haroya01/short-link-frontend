@@ -143,6 +143,24 @@
     "deleteFailed": "Delete failed",
     "tagFilterLabel": "Tag:",
     "clearTagFilter": "Clear tag filter",
+    "filters": {
+      "toggle": "Filters",
+      "any": "Any",
+      "domain": "Domain",
+      "tag": "Tag",
+      "tagPlaceholder": "e.g. work",
+      "expiryLabel": "Expiry",
+      "dateRange": "Created between",
+      "after": "From",
+      "before": "Until",
+      "clearAll": "Clear all",
+      "expiry": {
+        "ACTIVE": "Active only",
+        "NEVER": "No expiry",
+        "HAS_EXPIRY": "Has expiry",
+        "EXPIRED": "Expired"
+      }
+    },
     "bulkSelectAll": "Select all links on this page",
     "bulkSelectRow": "Select /{code}",
     "bulkSelectedCount": "{count} selected",
