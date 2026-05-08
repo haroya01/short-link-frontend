@@ -126,6 +126,25 @@ export type IssuedWebhook = {
   name: string | null;
   createdAt: string;
 };
+
+export type DestinationSummary = {
+  id: number;
+  url: string;
+  weight: number;
+  label: string | null;
+  enabled: boolean;
+  createdAt: string;
+};
+
+export type DestinationClick = {
+  destinationId: number | null;
+  url: string;
+  label: string | null;
+  weight: number;
+  enabled: boolean;
+  count: number;
+};
+
 export type CountryClick = { country: string; count: number };
 export type RegionClick = { region: string; count: number };
 export type CityClick = { city: string; count: number };
@@ -167,6 +186,7 @@ export type LinkStats = {
   utmMediumClicks: UtmMediumClick[];
   utmContentClicks: UtmContentClick[];
   sourceChannelClicks: SourceChannelClick[];
+  destinationClicks: DestinationClick[];
   countryClicks: CountryClick[];
   regionClicks: RegionClick[];
   cityClicks: CityClick[];
