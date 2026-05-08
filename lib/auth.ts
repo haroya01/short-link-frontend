@@ -67,7 +67,8 @@ export function useAuth() {
   }, []);
 
   const signInWithGoogle = useCallback(() => {
-    window.location.href = "/oauth2/authorization/google";
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE ?? "";
+    window.location.href = apiBase + "/oauth2/authorization/google";
   }, []);
 
   const signOut = useCallback(async () => {
