@@ -99,13 +99,6 @@
     "title": "Sign in",
     "subtitle": "Sign in to manage your links and view analytics.",
     "google": "Continue with Google",
-    "or": "or",
-    "devTokenToggle": "Paste developer access token",
-    "devTokenPlaceholder": "eyJhbGciOi...",
-    "devTokenSubmit": "Sign in with token",
-    "devTokenHint": "Temporary workaround until OAuth callback redirect is fully wired.",
-    "loggedIn": "Signed in",
-    "securityNote": "Tokens are stored in browser local storage. Server verifies with RS256 JWT. Refresh token is held in HttpOnly cookie.",
     "anonymousAlt": "You can also <shorten>shorten URLs</shorten> without signing in."
   },
   "auth": {
