@@ -10,9 +10,11 @@ type DialogProps = {
   title: string;
   description?: string;
   confirmLabel?: string;
+  confirmDisabled?: boolean;
   cancelLabel?: string;
   destructive?: boolean;
   onConfirm: () => void | Promise<void>;
+  children?: React.ReactNode;
 };
 
 export function ConfirmDialog({
@@ -21,9 +23,11 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel = "확인",
+  confirmDisabled,
   cancelLabel = "취소",
   destructive,
   onConfirm,
+  children,
 }: DialogProps) {
   const [busy, setBusy] = React.useState(false);
 
@@ -57,13 +61,14 @@ export function ConfirmDialog({
         {description && (
           <p className="mt-2 text-sm leading-relaxed text-slate-600">{description}</p>
         )}
+        {children && <div className="mt-3">{children}</div>}
         <div className="mt-6 flex justify-end gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>
             {cancelLabel}
           </Button>
           <Button
             variant={destructive ? "destructive" : "default"}
-            disabled={busy}
+            disabled={busy || confirmDisabled}
             onClick={async () => {
               setBusy(true);
               try {

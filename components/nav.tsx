@@ -66,6 +66,11 @@ export function Nav() {
                 {t("admin")}
               </NavLink>
             )}
+            {authenticated && (
+              <NavLink href="/settings" active={pathname.startsWith("/settings")}>
+                {t("settings")}
+              </NavLink>
+            )}
           </nav>
         </div>
 
@@ -112,6 +117,11 @@ export function Nav() {
             {isAdmin && (
               <MobileNavLink href="/admin" active={pathname.startsWith("/admin")}>
                 {t("admin")}
+              </MobileNavLink>
+            )}
+            {authenticated && (
+              <MobileNavLink href="/settings" active={pathname.startsWith("/settings")}>
+                {t("settings")}
               </MobileNavLink>
             )}
           </nav>

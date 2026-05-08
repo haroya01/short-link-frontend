@@ -7,11 +7,9 @@
     "shorten": "短縮",
     "myLinks": "マイリンク",
     "admin": "管理者",
+    "settings": "設定",
     "login": "ログイン",
     "logout": "ログアウト"
-  },
-  "footer": {
-    "copyright": "© {year} kurl"
   },
   "home": {
     "tagline": "kurl · v1",
@@ -314,6 +312,34 @@
     "p8": "JWT refresh token保存用のHttpOnly + Secure + SameSite=Strictクッキー1個のみ使用。分析/広告クッキーなし。",
     "h8": "8. お問い合わせ",
     "p9": "データに関する問合せ: GitHub issueまたは運営者メール。"
+  },
+  "settings": {
+    "title": "設定",
+    "profileTitle": "プロフィール",
+    "email": "メール",
+    "provider": "ログイン方法",
+    "joinedAt": "登録日",
+    "role": "権限",
+    "preferencesTitle": "環境設定",
+    "timezoneLabel": "タイムゾーン",
+    "timezoneHint": "統計ページの時間基準になります。",
+    "save": "保存",
+    "saved": "保存しました",
+    "saveFailed": "保存に失敗しました。",
+    "interfaceLanguage": "インターフェース言語",
+    "languageHint": "ヘッダー右上の言語切替でも変更できます。",
+    "dataTitle": "データ",
+    "exportButton": "自分のデータをダウンロード (JSON)",
+    "exportHint": "ユーザー情報 + すべてのリンク + クリックイベント (IPはマスク済み)。",
+    "dangerTitle": "危険な操作",
+    "deleteHint": "アカウントとすべてのリンク・統計が完全削除されます。匿名リンクには影響しません。",
+    "deleteButton": "アカウントを完全削除",
+    "deleteConfirmTitle": "本当に削除しますか?",
+    "deleteConfirmDesc": "復元できません。\"DELETE\" と入力して確認してください。",
+    "deleteConfirmPlaceholder": "DELETE",
+    "deleteOk": "完全に削除",
+    "cancel": "キャンセル",
+    "deleting": "削除中..."
   },
   "homeFaq": {
     "title": "よくある質問",

@@ -150,6 +150,21 @@ export async function getMe(): Promise<Me> {
   return request<Me>("/api/v1/users/me", { method: "GET" });
 }
 
+export async function updateMyTimezone(timezone: string): Promise<Me> {
+  return request<Me>("/api/v1/users/me/preferences", {
+    method: "PUT",
+    body: JSON.stringify({ timezone }),
+  });
+}
+
+export async function deleteMyAccount(): Promise<void> {
+  await request("/api/v1/users/me", { method: "DELETE" });
+}
+
+export function exportMyDataUrl(): string {
+  return "/api/v1/users/me/export";
+}
+
 export async function getAdminOverview(): Promise<AdminOverview> {
   return request<AdminOverview>("/api/v1/admin/overview", { method: "GET" });
 }
