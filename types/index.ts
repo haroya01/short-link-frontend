@@ -150,6 +150,7 @@ export type DestinationSummary = {
   weight: number;
   label: string | null;
   enabled: boolean;
+  countryCode: string | null;
   createdAt: string;
 };
 

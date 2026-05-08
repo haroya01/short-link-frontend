@@ -35,6 +35,7 @@ export function LinkDestinationsSection({
   const [url, setUrl] = useState("");
   const [weight, setWeight] = useState(50);
   const [label, setLabel] = useState("");
+  const [country, setCountry] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -65,10 +66,17 @@ export function LinkDestinationsSection({
     e.preventDefault();
     setBusy(true);
     try {
-      await addDestination(shortCode, url.trim(), weight, label.trim() || undefined);
+      await addDestination(
+        shortCode,
+        url.trim(),
+        weight,
+        label.trim() || undefined,
+        country || undefined,
+      );
       setUrl("");
       setLabel("");
       setWeight(50);
+      setCountry("");
       await refresh();
     } catch (err) {
       toast(errorMessage(err, t("addFailed")), "error");
@@ -112,7 +120,7 @@ export function LinkDestinationsSection({
         <p className="mt-1 text-xs text-slate-500">{t("description")}</p>
       </div>
 
-      <form onSubmit={handleAdd} className="grid gap-2 sm:grid-cols-[1fr_120px_140px_auto]">
+      <form onSubmit={handleAdd} className="grid gap-2 sm:grid-cols-[1fr_100px_120px_120px_auto]">
         <Input
           type="url"
           value={url}
@@ -138,6 +146,7 @@ export function LinkDestinationsSection({
           maxLength={40}
           disabled={busy}
         />
+        <CountrySelect value={country} onChange={setCountry} disabled={busy} t={t} />
         <Button type="submit" size="sm" variant="accent" disabled={busy || !url.trim()}>
           {busy ? t("adding") : t("add")}
         </Button>
@@ -168,8 +177,10 @@ export function LinkDestinationsSection({
               total={totalClicks}
               weight={d.weight}
               enabled={d.enabled}
+              countryCode={d.countryCode}
               onToggle={() => patch(d.id, { enabled: !d.enabled })}
               onWeightChange={(next) => patch(d.id, { weight: next })}
+              onCountryChange={(next) => patch(d.id, { countryCode: next })}
               onDelete={() => handleDelete(d.id)}
             />
           ))
@@ -186,9 +197,11 @@ function DestinationRow({
   total,
   weight,
   enabled,
+  countryCode,
   isControl,
   onToggle,
   onWeightChange,
+  onCountryChange,
   onDelete,
 }: {
   label: string;
@@ -197,9 +210,11 @@ function DestinationRow({
   total: number;
   weight?: number;
   enabled?: boolean;
+  countryCode?: string | null;
   isControl?: boolean;
   onToggle?: () => void;
   onWeightChange?: (n: number) => void;
+  onCountryChange?: (next: string | null) => void;
   onDelete?: () => void;
 }) {
   const t = useTranslations("stats.destinations");
@@ -223,6 +238,11 @@ function DestinationRow({
         {weight != null && (
           <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
             w {weight}
+          </span>
+        )}
+        {countryCode && (
+          <span className="rounded bg-blue-50 px-1.5 py-0.5 font-mono text-[10px] text-blue-700">
+            {countryFlag(countryCode)} {countryCode}
           </span>
         )}
         {enabled === false && (
@@ -249,7 +269,7 @@ function DestinationRow({
         />
       </div>
       {!isControl && (onToggle || onWeightChange || onDelete) && (
-        <div className="mt-2 flex items-center gap-2">
+        <div className="mt-2 flex flex-wrap items-center gap-2">
           {onWeightChange && weight != null && (
             <input
               type="range"
@@ -259,6 +279,13 @@ function DestinationRow({
               onChange={(e) => onWeightChange(Number(e.target.value))}
               className="h-1 flex-1 cursor-pointer accent-slate-900"
               aria-label={t("weight")}
+            />
+          )}
+          {onCountryChange && (
+            <RowCountrySelect
+              value={countryCode ?? ""}
+              onChange={(v) => onCountryChange(v || null)}
+              t={t}
             />
           )}
           {onToggle && (
@@ -280,5 +307,85 @@ function DestinationRow({
         </div>
       )}
     </div>
+  );
+}
+
+const COUNTRY_OPTIONS: { code: string; flag: string }[] = [
+  { code: "KR", flag: "🇰🇷" },
+  { code: "JP", flag: "🇯🇵" },
+  { code: "US", flag: "🇺🇸" },
+  { code: "CN", flag: "🇨🇳" },
+  { code: "TW", flag: "🇹🇼" },
+  { code: "HK", flag: "🇭🇰" },
+  { code: "SG", flag: "🇸🇬" },
+  { code: "VN", flag: "🇻🇳" },
+  { code: "TH", flag: "🇹🇭" },
+  { code: "ID", flag: "🇮🇩" },
+  { code: "IN", flag: "🇮🇳" },
+  { code: "GB", flag: "🇬🇧" },
+  { code: "DE", flag: "🇩🇪" },
+  { code: "FR", flag: "🇫🇷" },
+  { code: "CA", flag: "🇨🇦" },
+  { code: "AU", flag: "🇦🇺" },
+  { code: "BR", flag: "🇧🇷" },
+];
+
+function countryFlag(code: string): string {
+  const found = COUNTRY_OPTIONS.find((c) => c.code === code.toUpperCase());
+  return found ? found.flag : "🏳️";
+}
+
+function CountrySelect({
+  value,
+  onChange,
+  disabled,
+  t,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  disabled?: boolean;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-50"
+      aria-label={t("countryLabel")}
+    >
+      <option value="">{t("countryAny")}</option>
+      {COUNTRY_OPTIONS.map((c) => (
+        <option key={c.code} value={c.code}>
+          {c.flag} {c.code}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function RowCountrySelect({
+  value,
+  onChange,
+  t,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[11px]"
+      aria-label={t("countryLabel")}
+    >
+      <option value="">{t("countryAny")}</option>
+      {COUNTRY_OPTIONS.map((c) => (
+        <option key={c.code} value={c.code}>
+          {c.flag} {c.code}
+        </option>
+      ))}
+    </select>
   );
 }
