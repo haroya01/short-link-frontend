@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import "../globals.css";
 import { Footer } from "@/components/footer";
+import { CookieConsent } from "@/components/cookie-consent";
 import { Nav } from "@/components/nav";
 import { ToastProvider } from "@/components/ui/toast";
 import { routing } from "@/i18n/routing";
@@ -94,6 +95,7 @@ export default async function RootLayout({
             <Nav />
             <main className="flex-1">{children}</main>
             <Footer />
+            <CookieConsent />
           </ToastProvider>
         </NextIntlClientProvider>
         <script

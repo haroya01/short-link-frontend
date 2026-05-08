@@ -5,12 +5,14 @@ import { Globe, Lock } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
-import { ApiError, setLinkVisibility } from "@/lib/api";
+import { setLinkVisibility } from "@/lib/api";
+import { useApiErrorMessage } from "@/lib/error-messages";
 
 export function PublicStatsToggle({ shortCode }: { shortCode: string }) {
   const t = useTranslations("publicStats");
   const locale = useLocale();
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
   const [busy, setBusy] = useState(false);
   const [isPublic, setIsPublic] = useState<boolean | null>(null);
 
@@ -22,7 +24,7 @@ export function PublicStatsToggle({ shortCode }: { shortCode: string }) {
       const res = await setLinkVisibility(shortCode, next);
       setIsPublic(res.statsPublic);
     } catch (err) {
-      toast(err instanceof ApiError ? err.message : "failed", "error");
+      toast(errorMessage(err, t("toggleFailed")), "error");
     } finally {
       setBusy(false);
     }
