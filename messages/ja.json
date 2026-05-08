@@ -54,9 +54,30 @@
     "ctaSeeLinks": "マイリンクをすべて見る",
     "loginCta": "ログインすると、このリンクの<clickStats>クリック統計</clickStats>を永続保存して分析できます。",
     "features": {
-      "realtime": { "title": "リアルタイム分析", "desc": "時間帯・曜日・デバイス・OS・ブラウザまで集計" },
-      "geo": { "title": "国 / チャネル", "desc": "GeoLite2 IPルックアップとリファラー分類で流入元を把握" },
-      "safety": { "title": "悪性URLブロック", "desc": "Safe Browsingでフィッシング悪用を防止" }
+      "realtime": {
+        "title": "ライブクリックフィード (SSE)",
+        "desc": "統計ページでクリックがリアルタイムに流れる — 時刻 / 国 / チャネル / デバイス"
+      },
+      "abtest": {
+        "title": "A/B 振り分け + 国別ルーティング",
+        "desc": "1 つの短縮 URL → 重み配分 + 国に合わせた遷移先 (リンクあたり 4 件)"
+      },
+      "insights": {
+        "title": "自動インサイト",
+        "desc": "ピーク時間 / 再訪率 / Half-life / Velocity — 設定なしで即可視化"
+      },
+      "webhooks": {
+        "title": "HMAC 署名 Webhook",
+        "desc": "クリック毎に Slack / 自社 endpoint へ署名付き POST。ボット除外/サンプル/バッチ/quota で最大 -98%"
+      },
+      "safety": {
+        "title": "多層の不正対策",
+        "desc": "Google Safe Browsing + 匿名短縮 PoW + データセンター ASN の自動ボット判定"
+      },
+      "twofa": {
+        "title": "2FA TOTP + リカバリコード",
+        "desc": "認証アプリと連携してログインに 6 桁を追加。10 件の 1 回限りコードを BCrypt 保管"
+      }
     },
     "recentEyebrow": "最近",
     "recentTitle": "直近で作ったリンク",
@@ -65,8 +86,8 @@
     "statsTitle": "kurl 全体で",
     "statsSubhead": "これまでに短縮されたリンクと分析されたクリック数。",
     "featuresEyebrow": "what you get",
-    "featuresTitle": "データで読み解くクリック",
-    "featuresSubhead": "時間帯・国・チャネル・デバイス — 誰がどこで押したか一目で。"
+    "featuresTitle": "ただの短縮ではありません",
+    "featuresSubhead": "ライブクリックフィード · A/B + 国別ルーティング · HMAC Webhook · 2FA · 自動インサイト — 運用に必要なすべて。"
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
@@ -374,7 +395,12 @@
       "country": { "title": "国", "desc": "GeoLite2-City IPルックアップ" },
       "region": { "title": "地域", "desc": "state / province 単位" },
       "city": { "title": "都市", "desc": "city 単位" },
-      "language": { "title": "言語", "desc": "ブラウザ Accept-Language 第1項目" }
+      "language": { "title": "言語", "desc": "ブラウザ Accept-Language 第1項目" },
+      "asn": {
+        "title": "ネットワーク / ASN",
+        "desc": "流入 IP の自律システム (ISP / クラウド) 分布。データセンター由来 {dc} 件は自動でボット扱いされます。",
+        "empty": "ASN データなし (GeoLite2-ASN 未導入)"
+      }
     },
     "noData": "データなし",
     "noClicks": "まだクリックがありません",
