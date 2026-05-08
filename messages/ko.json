@@ -143,6 +143,24 @@
     "deleteFailed": "삭제 실패",
     "tagFilterLabel": "태그 필터:",
     "clearTagFilter": "태그 필터 해제",
+    "filters": {
+      "toggle": "필터",
+      "any": "전체",
+      "domain": "도메인",
+      "tag": "태그",
+      "tagPlaceholder": "예: work",
+      "expiryLabel": "만료 상태",
+      "dateRange": "생성일 범위",
+      "after": "이후",
+      "before": "이전",
+      "clearAll": "필터 모두 해제",
+      "expiry": {
+        "ACTIVE": "유효한 링크만",
+        "NEVER": "만료 없음",
+        "HAS_EXPIRY": "만료가 있는 것",
+        "EXPIRED": "만료된 링크"
+      }
+    },
     "bulkSelectAll": "이 페이지의 모든 링크 선택",
     "bulkSelectRow": "/{code} 선택",
     "bulkSelectedCount": "{count}개 선택됨",

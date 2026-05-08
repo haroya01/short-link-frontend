@@ -128,17 +128,27 @@ export async function shortenUrl(payload: CreateLinkRequest): Promise<CreateLink
   return request<CreateLinkResponse>("/api/v1/links", { method: "POST", body: payload });
 }
 
-export async function listMyLinks(params?: {
+export type MyLinksFilters = {
   page?: number;
   size?: number;
   q?: string;
   tag?: string;
-}): Promise<MyLinksPage> {
+  domain?: string;
+  expiry?: "NEVER" | "ACTIVE" | "EXPIRED" | "HAS_EXPIRY";
+  createdAfter?: string;
+  createdBefore?: string;
+};
+
+export async function listMyLinks(params?: MyLinksFilters): Promise<MyLinksPage> {
   const qs = new URLSearchParams();
   if (params?.page) qs.set("page", String(params.page));
   if (params?.size) qs.set("size", String(params.size));
   if (params?.q) qs.set("q", params.q);
   if (params?.tag) qs.set("tag", params.tag);
+  if (params?.domain) qs.set("domain", params.domain);
+  if (params?.expiry) qs.set("expiry", params.expiry);
+  if (params?.createdAfter) qs.set("createdAfter", params.createdAfter);
+  if (params?.createdBefore) qs.set("createdBefore", params.createdBefore);
   const suffix = qs.toString() ? `?${qs}` : "";
   return request<MyLinksPage>(`/api/v1/links/me${suffix}`, { method: "GET" });
 }

@@ -143,6 +143,24 @@
     "deleteFailed": "削除に失敗しました",
     "tagFilterLabel": "タグ:",
     "clearTagFilter": "タグフィルタを解除",
+    "filters": {
+      "toggle": "フィルタ",
+      "any": "すべて",
+      "domain": "ドメイン",
+      "tag": "タグ",
+      "tagPlaceholder": "例: work",
+      "expiryLabel": "有効期限",
+      "dateRange": "作成日範囲",
+      "after": "以降",
+      "before": "以前",
+      "clearAll": "フィルタをすべて解除",
+      "expiry": {
+        "ACTIVE": "有効なものだけ",
+        "NEVER": "期限なし",
+        "HAS_EXPIRY": "期限あり",
+        "EXPIRED": "期限切れ"
+      }
+    },
     "bulkSelectAll": "このページの全リンクを選択",
     "bulkSelectRow": "/{code} を選択",
     "bulkSelectedCount": "{count}件選択中",
