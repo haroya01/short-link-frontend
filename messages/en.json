@@ -57,7 +57,16 @@
       "realtime": { "title": "Real-time analytics", "desc": "Hour, day-of-week, device, OS, browser — all aggregated." },
       "geo": { "title": "Country / channel", "desc": "GeoLite2 IP lookup and referrer classification show traffic origin." },
       "safety": { "title": "Malicious URL block", "desc": "Safe Browsing prevents misuse for phishing." }
-    }
+    },
+    "recentEyebrow": "recent",
+    "recentTitle": "Just shortened",
+    "recentSubhead": "Kept on this browser for 24 hours. Sign in to keep them forever.",
+    "statsEyebrow": "live",
+    "statsTitle": "Across kurl",
+    "statsSubhead": "Total links shortened and clicks tracked so far.",
+    "featuresEyebrow": "what you get",
+    "featuresTitle": "Clicks, decoded",
+    "featuresSubhead": "Hour, country, channel, device — who clicked where, at a glance."
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
