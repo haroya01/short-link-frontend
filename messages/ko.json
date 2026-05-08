@@ -57,7 +57,16 @@
       "realtime": { "title": "실시간 분석", "desc": "시간대 · 요일 · 디바이스 · OS · 브라우저까지 모두 집계" },
       "geo": { "title": "국가 / 채널", "desc": "GeoLite2 IP 룩업과 레퍼러 분류로 트래픽 출처 파악" },
       "safety": { "title": "악성 URL 차단", "desc": "Safe Browsing 검사로 phishing 운반책으로 악용 방지" }
-    }
+    },
+    "recentEyebrow": "최근 단축",
+    "recentTitle": "방금 만든 링크",
+    "recentSubhead": "이 브라우저에서 24시간 동안 보관됩니다. 로그인하면 영구 저장돼요.",
+    "statsEyebrow": "live",
+    "statsTitle": "kurl 전체에서",
+    "statsSubhead": "지금까지 단축된 링크와 분석된 클릭 수.",
+    "featuresEyebrow": "what you get",
+    "featuresTitle": "데이터로 보는 클릭",
+    "featuresSubhead": "시간대 · 국가 · 채널 · 디바이스 — 누가 어디서 눌렀는지 한눈에."
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",

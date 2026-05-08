@@ -28,12 +28,10 @@ export function HomeCounters() {
   if (!totals) return null;
 
   return (
-    <div className="container max-w-3xl py-8">
-      <dl className="grid grid-cols-2 gap-3">
-        <Stat value={formatNumber(links)} label={t("linksLabel")} />
-        <Stat value={formatNumber(clicks)} label={t("clicksLabel")} />
-      </dl>
-    </div>
+    <dl className="grid grid-cols-2 gap-3">
+      <Stat value={formatNumber(links)} label={t("linksLabel")} />
+      <Stat value={formatNumber(clicks)} label={t("clicksLabel")} />
+    </dl>
   );
 }
 
