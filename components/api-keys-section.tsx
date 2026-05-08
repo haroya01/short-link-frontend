@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ApiError, issueApiKey, listApiKeys, revokeApiKey } from "@/lib/api";
+import { issueApiKey, listApiKeys, revokeApiKey } from "@/lib/api";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/toast";
@@ -10,6 +11,7 @@ import type { ApiKeySummary, IssuedApiKey } from "@/types";
 
 export function ApiKeysSection() {
   const t = useTranslations("settings.apiKeys");
+  const errorMessage = useApiErrorMessage();
   const { toast } = useToast();
   const [keys, setKeys] = useState<ApiKeySummary[] | null>(null);
   const [name, setName] = useState("");
@@ -53,7 +55,7 @@ export function ApiKeysSection() {
       setName("");
       await refresh();
     } catch (err) {
-      toast(err instanceof ApiError ? err.message : t("issueFailed"), "error");
+      toast(errorMessage(err, t("issueFailed")), "error");
     } finally {
       setIssuing(false);
     }
@@ -67,7 +69,7 @@ export function ApiKeysSection() {
       await refresh();
       toast(t("revoked"), "success");
     } catch (err) {
-      toast(err instanceof ApiError ? err.message : t("revokeFailed"), "error");
+      toast(errorMessage(err, t("revokeFailed")), "error");
     } finally {
       setRevoking(null);
     }

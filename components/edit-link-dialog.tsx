@@ -6,13 +6,13 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/toast";
 import {
-  ApiError,
   getLinkDetail,
   isValidUrl,
   setLinkOgOverride,
   setLinkProtection,
   updateLink,
 } from "@/lib/api";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import type { LinkDetail, MyLink } from "@/types";
 
 type Props = {
@@ -25,6 +25,7 @@ type Section = "basic" | "og" | "protection";
 
 export function EditLinkDialog({ link, onClose, onSaved }: Props) {
   const t = useTranslations("edit");
+  const errorMessage = useApiErrorMessage();
   const [section, setSection] = useState<Section>("basic");
   const [originalUrl, setOriginalUrl] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
@@ -111,15 +112,7 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
       toast(t("saved"), "success");
       onSaved();
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail.code === "MALICIOUS_URL"
-            ? t("maliciousUrl")
-            : (err.detail.detail ?? err.message)
-          : err instanceof Error
-            ? err.message
-            : t("saveFailed");
-      setError(msg);
+      setError(errorMessage(err, t("saveFailed")));
     } finally {
       setBusy(false);
     }

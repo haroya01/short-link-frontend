@@ -1,4 +1,33 @@
 {
+  "errors": {
+    "LINK_NOT_FOUND": "Link not found.",
+    "LINK_EXPIRED": "This link has expired.",
+    "LINK_VIEW_LIMIT_EXCEEDED": "This link has reached its view limit.",
+    "LINK_NOT_OWNED": "You don't have permission to manage this link.",
+    "LINK_QUOTA_EXCEEDED": "You've reached the link quota ({limit}).",
+    "DUPLICATE_SHORT_CODE": "That short code is already in use.",
+    "RESERVED_SHORT_CODE": "That short code is reserved.",
+    "MALICIOUS_URL": "URL flagged as malicious or phishing.",
+    "SHORT_CODE_EXHAUSTED": "Couldn't generate a short code. Please try again.",
+    "BULK_IMPORT_TOO_LARGE": "Up to {limit} rows per upload — got {rows}.",
+    "OPTIMISTIC_LOCK": "Modified elsewhere. Reload and retry.",
+    "INVALID_REFRESH_TOKEN": "Your session expired. Please sign in again.",
+    "USER_NOT_FOUND": "Account not found.",
+    "INVALID_CURSOR": "Bad pagination cursor.",
+    "INVALID_EXPORT_DIMENSION": "Unsupported export option.",
+    "INVALID_TIMEZONE": "Invalid time zone.",
+    "INVALID_ACTIVE_PERIOD": "Invalid active period.",
+    "VALIDATION_FAILED": "Some fields are invalid.",
+    "MALFORMED_REQUEST": "Malformed request body.",
+    "UNAUTHORIZED": "Please sign in.",
+    "NOT_FOUND": "Not found.",
+    "INTERNAL_ERROR": "Something went wrong on our side. Please try again."
+  },
+  "cookieConsent": {
+    "message": "We only use strictly-necessary cookies to keep you signed in (refresh token). No analytics or ad cookies.",
+    "accept": "Got it",
+    "learnMore": "Learn more"
+  },
   "meta": {
     "title": "kurl · URL shortener with click analytics",
     "description": "Shorten long URLs. Analyze clicks by device, channel, and country."
@@ -458,7 +487,8 @@
     "shareButton": "Copy public link",
     "shareCopied": "Copied",
     "togglePublic": "Make stats public",
-    "togglePrivate": "Make stats private"
+    "togglePrivate": "Make stats private",
+    "toggleFailed": "Failed to update visibility."
   },
   "homeFaq": {
     "title": "Frequently asked questions",

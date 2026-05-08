@@ -4,13 +4,8 @@ import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import {
-  ApiError,
-  deleteMyAccount,
-  exportMyDataUrl,
-  getMe,
-  updateMyTimezone,
-} from "@/lib/api";
+import { deleteMyAccount, exportMyDataUrl, getMe, updateMyTimezone } from "@/lib/api";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
@@ -38,6 +33,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const { authenticated, ready, signOut } = useAuth();
   const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
   const [me, setMe] = useState<Me | null>(null);
   const [tz, setTz] = useState("");
   const [saving, setSaving] = useState(false);
@@ -72,7 +68,7 @@ export default function SettingsPage() {
       setMe(updated);
       toast(t("saved"), "success");
     } catch (err) {
-      toast(err instanceof ApiError ? err.message : t("saveFailed"), "error");
+      toast(errorMessage(err, t("saveFailed")), "error");
     } finally {
       setSaving(false);
     }
@@ -85,7 +81,7 @@ export default function SettingsPage() {
       await signOut();
       router.push(`/${locale}`);
     } catch (err) {
-      toast(err instanceof ApiError ? err.message : t("saveFailed"), "error");
+      toast(errorMessage(err, t("saveFailed")), "error");
       setDeleting(false);
     }
   }

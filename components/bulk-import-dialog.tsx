@@ -4,8 +4,8 @@ import { useRef, useState } from "react";
 import { Upload, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
-import { useToast } from "./ui/toast";
-import { ApiError, bulkImportLinks } from "@/lib/api";
+import { bulkImportLinks } from "@/lib/api";
+import { useApiErrorMessage } from "@/lib/error-messages";
 import type { BulkImportSummary } from "@/types";
 
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
 
 export function BulkImportDialog({ open, onClose, onImported }: Props) {
   const t = useTranslations("dashboard.bulkImport");
-  const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -49,8 +49,7 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
       setResult(summary);
       onImported();
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : t("uploadFailed");
-      setError(msg);
+      setError(errorMessage(err, t("uploadFailed")));
     } finally {
       setBusy(false);
     }
