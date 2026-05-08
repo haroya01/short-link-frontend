@@ -58,7 +58,11 @@ export default function StatsPage() {
     }
     if (!code) return;
     let cancelled = false;
-    setLoading(true);
+    // Only the first fetch shows the loading skeleton; subsequent refreshes (e.g., the live-click
+    // feed bumping `tick` on every incoming SSE event) update silently in the background so the
+    // already-rendered page — including LiveClickFeed's accumulated items — doesn't unmount.
+    const isInitial = data === null;
+    if (isInitial) setLoading(true);
     setError(null);
     getStats(code)
       .then((res) => {
@@ -75,11 +79,13 @@ export default function StatsPage() {
         }
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled && isInitial) setLoading(false);
       });
     return () => {
       cancelled = true;
     };
+    // data omitted from deps on purpose — only auth/code/tick should trigger refetch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, authenticated, code, tick]);
 
   if (ready && !authenticated) {
