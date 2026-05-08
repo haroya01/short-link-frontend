@@ -223,6 +223,11 @@
     "retry": "Retry",
     "loading": "Loading..."
   },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The address may be wrong, the short link may have expired, or the page may not exist.",
+    "cta": "Back to home"
+  },
   "qr": {
     "title": "qr code",
     "copyUrl": "Copy URL",

@@ -223,6 +223,11 @@
     "retry": "다시 시도",
     "loading": "로딩 중..."
   },
+  "notFound": {
+    "title": "이 페이지를 찾을 수 없어요",
+    "description": "주소를 잘못 입력했거나, 단축 링크가 만료됐거나, 존재하지 않는 페이지일 수 있어요.",
+    "cta": "홈으로 돌아가기"
+  },
   "qr": {
     "title": "qr code",
     "copyUrl": "URL 복사",
