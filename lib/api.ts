@@ -204,7 +204,7 @@ export async function getMe(): Promise<Me> {
 export async function updateMyTimezone(timezone: string): Promise<Me> {
   return request<Me>("/api/v1/users/me/preferences", {
     method: "PUT",
-    body: JSON.stringify({ timezone }),
+    body: { timezone },
   });
 }
 
@@ -212,8 +212,32 @@ export async function deleteMyAccount(): Promise<void> {
   await request("/api/v1/users/me", { method: "DELETE" });
 }
 
-export function exportMyDataUrl(): string {
-  return "/api/v1/users/me/export";
+export async function downloadMyData(): Promise<void> {
+  const token = readToken();
+  const headers = new Headers();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  const res = await fetch("/api/v1/users/me/export", {
+    method: "GET",
+    credentials: "include",
+    headers,
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    let parsed: ProblemDetail;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = { status: res.status, detail: text || res.statusText };
+    }
+    throw new ApiError(res.status, parsed);
+  }
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kurl-data.json";
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 export async function getPublicTotals(): Promise<{ links: number; clicks: number }> {
@@ -230,7 +254,7 @@ export async function setLinkVisibility(
 ): Promise<{ shortCode: string; statsPublic: boolean }> {
   return request(`/api/v1/links/${shortCode}/visibility`, {
     method: "PATCH",
-    body: JSON.stringify({ statsPublic }),
+    body: { statsPublic },
   });
 }
 
