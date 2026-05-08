@@ -359,6 +359,24 @@ export default function StatsPage() {
               />
             </Section>
           </Reveal>
+
+          <Reveal>
+            <Section
+              title={t("section.asn.title")}
+              description={t("section.asn.desc", { dc: data.datacenterClicks })}
+            >
+              {data.asnClicks.length === 0 ? (
+                <p className="py-8 text-center text-xs text-slate-500">{t("section.asn.empty")}</p>
+              ) : (
+                <BreakdownList
+                  items={data.asnClicks.map((a) => ({
+                    label: a.organization + (a.asn ? ` (AS${a.asn})` : ""),
+                    count: a.count,
+                  }))}
+                />
+              )}
+            </Section>
+          </Reveal>
         </>
       )}
     </div>
