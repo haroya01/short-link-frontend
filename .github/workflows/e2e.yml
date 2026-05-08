@@ -12,7 +12,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - id: check
+        env:
+          HAS_SUB_TOKEN: ${{ secrets.SUB_TOKEN != '' }}
+        run: |
+          if [ "$HAS_SUB_TOKEN" = "true" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::SUB_TOKEN secret not set on this repo; skipping e2e. See e2e/README.md for setup."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
   e2e:
+    needs: preflight
+    if: needs.preflight.outputs.ready == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
