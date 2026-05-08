@@ -7,7 +7,7 @@ import { ShortenForm } from "@/components/shorten-form";
 import { ResultCard } from "@/components/result-card";
 import { FeatureCarousel } from "@/components/feature-carousel";
 import { HomeFaq } from "@/components/home-faq";
-import { HomeCounters } from "@/components/home-counters";
+import { HomeCounters, usePublicTotals } from "@/components/home-counters";
 import { RecentLinks } from "@/components/recent-links";
 import { useAuth } from "@/lib/auth";
 import { recordRecent, useRecentLinks } from "@/lib/recent-links";
@@ -19,6 +19,8 @@ export default function HomePage() {
   const t = useTranslations("home");
   const [result, setResult] = useState<{ res: CreateLinkResponse; original: string } | null>(null);
   const recent = useRecentLinks();
+  const totals = usePublicTotals();
+  const showStats = totals != null && (totals.links > 0 || totals.clicks > 0);
 
   return (
     <div>
@@ -93,13 +95,15 @@ export default function HomePage() {
         </Section>
       )}
 
-      <Section
-        eyebrow={t("statsEyebrow")}
-        title={t("statsTitle")}
-        subhead={t("statsSubhead")}
-      >
-        <HomeCounters />
-      </Section>
+      {showStats && (
+        <Section
+          eyebrow={t("statsEyebrow")}
+          title={t("statsTitle")}
+          subhead={t("statsSubhead")}
+        >
+          <HomeCounters totals={totals} />
+        </Section>
+      )}
 
       <Section
         wide
