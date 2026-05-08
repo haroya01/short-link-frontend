@@ -16,6 +16,7 @@ import type {
   OgOverrideRequest,
   OgOverrideResponse,
   ProblemDetail,
+  TagSummary,
   UpdateLinkRequest,
 } from "@/types";
 
@@ -131,13 +132,30 @@ export async function listMyLinks(params?: {
   page?: number;
   size?: number;
   q?: string;
+  tag?: string;
 }): Promise<MyLinksPage> {
   const qs = new URLSearchParams();
   if (params?.page) qs.set("page", String(params.page));
   if (params?.size) qs.set("size", String(params.size));
   if (params?.q) qs.set("q", params.q);
+  if (params?.tag) qs.set("tag", params.tag);
   const suffix = qs.toString() ? `?${qs}` : "";
   return request<MyLinksPage>(`/api/v1/links/me${suffix}`, { method: "GET" });
+}
+
+export async function listTags(): Promise<TagSummary[]> {
+  return request<TagSummary[]>("/api/v1/tags", { method: "GET" });
+}
+
+export async function deleteTag(id: number): Promise<void> {
+  await request(`/api/v1/tags/${id}`, { method: "DELETE" });
+}
+
+export async function setLinkTags(shortCode: string, tags: string[]): Promise<void> {
+  await request(`/api/v1/links/${shortCode}/tags`, {
+    method: "PUT",
+    body: { tags },
+  });
 }
 
 export async function getStats(shortCode: string): Promise<LinkStats> {

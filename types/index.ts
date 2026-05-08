@@ -28,6 +28,15 @@ export type MyLink = {
   createdAt: string;
   expiresAt: string | null;
   clickCount: number;
+  tags: string[];
+};
+
+export type TagSummary = {
+  id: number;
+  name: string;
+  color: string | null;
+  linkCount: number;
+  createdAt: string;
 };
 
 export type MyLinksPage = {
@@ -54,6 +63,7 @@ export type LinkDetail = {
   maxViews: number | null;
   viewCount: number;
   statsPublic: boolean;
+  tags: string[];
 };
 
 export type OgOverrideRequest = {

@@ -23,6 +23,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
   const [bulkOpen, setBulkOpen] = useState(false);
 
@@ -35,7 +36,7 @@ export default function DashboardPage() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    listMyLinks()
+    listMyLinks(tagFilter ? { tag: tagFilter } : undefined)
       .then((data) => {
         if (!cancelled) setItems(data.items);
       })
@@ -48,7 +49,7 @@ export default function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [ready, authenticated, reload]);
+  }, [ready, authenticated, reload, tagFilter]);
 
   const filtered = useMemo(() => {
     if (!items) return [];
@@ -113,6 +114,23 @@ export default function DashboardPage() {
         />
       </div>
 
+      {tagFilter && (
+        <div className="flex items-center gap-2 text-xs text-slate-600">
+          <span>{t("tagFilterLabel")}</span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-slate-900 px-2 py-0.5 font-medium text-white">
+            {tagFilter}
+            <button
+              type="button"
+              onClick={() => setTagFilter(null)}
+              className="text-slate-300 hover:text-white"
+              aria-label={t("clearTagFilter")}
+            >
+              ×
+            </button>
+          </span>
+        </div>
+      )}
+
       {loading ? (
         <LoadingTable t={t} />
       ) : error ? (
@@ -133,7 +151,11 @@ export default function DashboardPage() {
           description={t("noResultDesc", { query })}
         />
       ) : (
-        <LinksTable items={filtered} onChanged={() => setReload((n) => n + 1)} />
+        <LinksTable
+          items={filtered}
+          onChanged={() => setReload((n) => n + 1)}
+          onTagClick={(tag) => setTagFilter(tag)}
+        />
       )}
     </div>
   );

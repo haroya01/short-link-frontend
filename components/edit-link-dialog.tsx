@@ -8,11 +8,14 @@ import { useToast } from "./ui/toast";
 import {
   getLinkDetail,
   isValidUrl,
+  listTags,
   setLinkOgOverride,
   setLinkProtection,
+  setLinkTags,
   updateLink,
 } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
+import { TagInput } from "./tag-input";
 import type { LinkDetail, MyLink } from "@/types";
 
 type Props = {
@@ -21,7 +24,7 @@ type Props = {
   onSaved: () => void;
 };
 
-type Section = "basic" | "og" | "protection";
+type Section = "basic" | "tags" | "og" | "protection";
 
 export function EditLinkDialog({ link, onClose, onSaved }: Props) {
   const t = useTranslations("edit");
@@ -35,6 +38,8 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
   const [password, setPassword] = useState("");
   const [removePassword, setRemovePassword] = useState(false);
   const [maxViewsInput, setMaxViewsInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
   const [detail, setDetail] = useState<LinkDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -52,18 +57,25 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     setPassword("");
     setRemovePassword(false);
     setMaxViewsInput("");
+    setTags(link.tags ?? []);
+    setTagSuggestions([]);
     setDetail(null);
     setError(null);
     let cancelled = false;
     setLoadingDetail(true);
-    getLinkDetail(link.shortCode)
-      .then((d) => {
+    Promise.all([
+      getLinkDetail(link.shortCode),
+      listTags().catch(() => []),
+    ])
+      .then(([d, allTags]) => {
         if (cancelled) return;
         setDetail(d);
         setOgTitle(d.ogTitleOverride ?? "");
         setOgDescription(d.ogDescriptionOverride ?? "");
         setOgImage(d.ogImageOverride ?? "");
         setMaxViewsInput(d.maxViews != null ? String(d.maxViews) : "");
+        setTags(d.tags ?? []);
+        setTagSuggestions(allTags.map((t) => t.name));
       })
       .catch(() => {
         if (cancelled) return;
@@ -107,6 +119,7 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     setBusy(true);
     try {
       await applyBasic();
+      await applyTags();
       await applyOgOverride();
       await applyProtection();
       toast(t("saved"), "success");
@@ -130,6 +143,14 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
       originalUrl: urlChanged ? trimmed : undefined,
       expiresAt: expiresChanged ? afterIso : undefined,
     });
+  }
+
+  async function applyTags() {
+    if (!link || !detail) return;
+    const before = (detail.tags ?? []).slice().sort().join("|");
+    const after = tags.slice().sort().join("|");
+    if (before === after) return;
+    await setLinkTags(link.shortCode, tags);
   }
 
   async function applyOgOverride() {
@@ -193,6 +214,9 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
           <TabButton active={section === "basic"} onClick={() => setSection("basic")}>
             {t("tabs.basic")}
           </TabButton>
+          <TabButton active={section === "tags"} onClick={() => setSection("tags")}>
+            {t("tabs.tags")}
+          </TabButton>
           <TabButton active={section === "og"} onClick={() => setSection("og")}>
             {t("tabs.og")}
           </TabButton>
@@ -200,6 +224,18 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
             {t("tabs.protection")}
           </TabButton>
         </div>
+
+        {section === "tags" && (
+          <div className="space-y-2">
+            <p className="text-xs text-slate-500">{t("tags.description")}</p>
+            <TagInput
+              value={tags}
+              onChange={setTags}
+              suggestions={tagSuggestions}
+              disabled={busy || loadingDetail}
+            />
+          </div>
+        )}
 
         {section === "basic" && (
           <div className="space-y-3">
