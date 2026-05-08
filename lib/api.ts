@@ -5,7 +5,9 @@ import type {
   ClaimResult,
   CreateLinkRequest,
   CreateLinkResponse,
+  DestinationSummary,
   IssuedApiKey,
+  IssuedWebhook,
   LinkDetail,
   LinkProtectionRequest,
   LinkProtectionResponse,
@@ -15,7 +17,6 @@ import type {
   MyLinksPage,
   OgOverrideRequest,
   OgOverrideResponse,
-  IssuedWebhook,
   ProblemDetail,
   TagSummary,
   UpdateLinkRequest,
@@ -200,6 +201,39 @@ export async function toggleWebhook(
 
 export async function deleteWebhook(shortCode: string, id: number): Promise<void> {
   await request(`/api/v1/links/${shortCode}/webhooks/${id}`, { method: "DELETE" });
+}
+
+export async function listDestinations(shortCode: string): Promise<DestinationSummary[]> {
+  return request<DestinationSummary[]>(`/api/v1/links/${shortCode}/destinations`, {
+    method: "GET",
+  });
+}
+
+export async function addDestination(
+  shortCode: string,
+  url: string,
+  weight: number,
+  label?: string,
+): Promise<DestinationSummary> {
+  return request<DestinationSummary>(`/api/v1/links/${shortCode}/destinations`, {
+    method: "POST",
+    body: { url, weight, label: label ?? null },
+  });
+}
+
+export async function updateDestination(
+  shortCode: string,
+  id: number,
+  payload: { url?: string; weight?: number; label?: string | null; enabled?: boolean },
+): Promise<DestinationSummary> {
+  return request<DestinationSummary>(`/api/v1/links/${shortCode}/destinations/${id}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export async function deleteDestination(shortCode: string, id: number): Promise<void> {
+  await request(`/api/v1/links/${shortCode}/destinations/${id}`, { method: "DELETE" });
 }
 
 export async function getStats(shortCode: string): Promise<LinkStats> {
