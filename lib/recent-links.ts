@@ -11,6 +11,7 @@ export type RecentLink = {
   shortUrl: string;
   originalUrl: string;
   createdAt: number;
+  claimToken?: string | null;
 };
 
 function read(): RecentLink[] {
@@ -40,6 +41,23 @@ export function recordRecent(link: RecentLink) {
   if (typeof window === "undefined") return;
   const current = read();
   const next = [link, ...current.filter((c) => c.shortCode !== link.shortCode)].slice(0, MAX_ITEMS);
+  write(next);
+  window.dispatchEvent(new CustomEvent("kurl:recent-changed"));
+}
+
+export function readPendingClaimTokens(): string[] {
+  return read()
+    .map((r) => r.claimToken)
+    .filter((t): t is string => typeof t === "string" && t.length > 0);
+}
+
+export function clearClaimTokens(claimedTokens: Iterable<string>) {
+  const claimedSet = new Set(claimedTokens);
+  if (claimedSet.size === 0) return;
+  const current = read();
+  const next = current.map((item) =>
+    item.claimToken && claimedSet.has(item.claimToken) ? { ...item, claimToken: null } : item,
+  );
   write(next);
   window.dispatchEvent(new CustomEvent("kurl:recent-changed"));
 }
