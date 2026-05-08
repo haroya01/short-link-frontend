@@ -25,6 +25,12 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
   const [items, setItems] = useState<LiveClick[]>([]);
   const [connected, setConnected] = useState(false);
   const seqRef = useRef(0);
+  // Stash the latest onTick in a ref so the EventSource useEffect doesn't re-run (and tear down
+  // the connection) every time the parent re-renders with a fresh callback identity.
+  const onTickRef = useRef(onTick);
+  useEffect(() => {
+    onTickRef.current = onTick;
+  }, [onTick]);
 
   useEffect(() => {
     const token = readToken();
@@ -40,9 +46,8 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
       // Next.js dev rewrites buffer chunked responses — bypass the proxy in dev by hitting the
       // backend host directly. In prod we go same-origin.
       const base =
-        process.env.NEXT_PUBLIC_BACKEND_URL ?? (process.env.NODE_ENV === "development"
-          ? "http://localhost:8080"
-          : "");
+        process.env.NEXT_PUBLIC_BACKEND_URL ??
+        (process.env.NODE_ENV === "development" ? "http://localhost:8080" : "");
       const url = `${base}/api/v1/links/${shortCode}/stream?token=${encodeURIComponent(token!)}`;
       es = new EventSource(url);
       es.addEventListener("ready", () => setConnected(true));
@@ -50,10 +55,8 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
         try {
           const payload = JSON.parse((event as MessageEvent).data);
           const id = ++seqRef.current;
-          setItems((prev) =>
-            [{ id, ...payload } as LiveClick, ...prev].slice(0, MAX_FEED),
-          );
-          onTick?.();
+          setItems((prev) => [{ id, ...payload } as LiveClick, ...prev].slice(0, MAX_FEED));
+          onTickRef.current?.();
         } catch {
           // ignore malformed payloads
         }
@@ -75,7 +78,7 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
       if (timer) clearTimeout(timer);
       es?.close();
     };
-  }, [shortCode, onTick]);
+  }, [shortCode]);
 
   return (
     <div className="space-y-3">
