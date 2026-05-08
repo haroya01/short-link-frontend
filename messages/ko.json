@@ -232,6 +232,12 @@
   "stats": {
     "back": "뒤로",
     "shortCode": "short code",
+    "live": {
+      "title": "실시간 클릭",
+      "connecting": "연결 중...",
+      "connected": "라이브",
+      "waiting": "들어오는 클릭이 여기에 표시됩니다."
+    },
     "loginRequired": "로그인이 필요해요",
     "loginRequiredDesc": "통계는 링크 소유자만 볼 수 있어요.",
     "notFound": "링크를 찾을 수 없어요",

@@ -232,6 +232,12 @@
   "stats": {
     "back": "Back",
     "shortCode": "short code",
+    "live": {
+      "title": "Live clicks",
+      "connecting": "Connecting…",
+      "connected": "Live",
+      "waiting": "Clicks will appear here as they come in."
+    },
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "Stats are visible to the link owner only.",
     "notFound": "Link not found",
