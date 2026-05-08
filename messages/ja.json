@@ -283,6 +283,11 @@
       "utmSource": { "title": "UTM ソース", "desc": "utm_source 別集計 (instagram, naver…)" },
       "utmMedium": { "title": "UTM メディア", "desc": "utm_medium 別集計 (bio, ad, email…)" },
       "utmContent": { "title": "UTM コンテンツ", "desc": "utm_content 別集計 (バナー / A-B 区分)" },
+      "srcChannel": {
+        "title": "共有チャネル (?src)",
+        "desc": "短縮URL自体に乗せた ?src= ヒントで追跡 (QR/LINE/オフライン等 referrer が空の経路)",
+        "empty": "?src パラメータで来たクリックはありません"
+      },
       "bots": { "title": "ボット種別", "desc": "Googlebot · Slackbot 等の分離" },
       "country": { "title": "国", "desc": "GeoLite2-City IPルックアップ" },
       "region": { "title": "地域", "desc": "state / province 単位" },
