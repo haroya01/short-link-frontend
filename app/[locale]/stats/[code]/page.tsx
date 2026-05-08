@@ -17,6 +17,7 @@ import { Reveal } from "@/components/reveal";
 import { Section } from "@/components/section";
 import { StatsCards } from "@/components/stats-cards";
 import { LiveClickFeed } from "@/components/live-click-feed";
+import { ClickQualitySummary } from "@/components/click-quality-summary";
 import { DailyChart } from "@/components/charts/daily-chart";
 import { HourChart } from "@/components/charts/hour-chart";
 import { Heatmap } from "@/components/charts/heatmap";
@@ -144,6 +145,8 @@ export default function StatsPage() {
             velocityRatio={data.velocity?.ratio ?? 0}
           />
 
+          <ClickQualitySummary data={data} />
+
           <LiveClickFeed shortCode={data.shortCode} onTick={() => setTick((n) => n + 1)} />
 
           <Reveal>
@@ -228,6 +231,36 @@ export default function StatsPage() {
 
           <Reveal delay={60}>
             <div className="grid gap-4 lg:grid-cols-2">
+              <Section
+                title={t("section.utmSource.title")}
+                description={t("section.utmSource.desc")}
+              >
+                {data.utmSourceClicks.length === 0 ? (
+                  <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
+                ) : (
+                  <BreakdownList
+                    items={data.utmSourceClicks.map((u) => ({
+                      label: u.source,
+                      count: u.count,
+                    }))}
+                  />
+                )}
+              </Section>
+              <Section
+                title={t("section.utmMedium.title")}
+                description={t("section.utmMedium.desc")}
+              >
+                {data.utmMediumClicks.length === 0 ? (
+                  <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
+                ) : (
+                  <BreakdownList
+                    items={data.utmMediumClicks.map((u) => ({
+                      label: u.medium,
+                      count: u.count,
+                    }))}
+                  />
+                )}
+              </Section>
               <Section title={t("section.utm.title")} description={t("section.utm.desc")}>
                 {data.utmCampaignClicks.length === 0 ? (
                   <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
@@ -235,6 +268,21 @@ export default function StatsPage() {
                   <BreakdownList
                     items={data.utmCampaignClicks.map((u) => ({
                       label: u.campaign,
+                      count: u.count,
+                    }))}
+                  />
+                )}
+              </Section>
+              <Section
+                title={t("section.utmContent.title")}
+                description={t("section.utmContent.desc")}
+              >
+                {data.utmContentClicks.length === 0 ? (
+                  <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
+                ) : (
+                  <BreakdownList
+                    items={data.utmContentClicks.map((u) => ({
+                      label: u.content,
                       count: u.count,
                     }))}
                   />
