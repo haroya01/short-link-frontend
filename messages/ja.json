@@ -223,6 +223,11 @@
     "retry": "再試行",
     "loading": "読み込み中..."
   },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "description": "URLが間違っているか、短縮リンクが期限切れか、存在しないページの可能性があります。",
+    "cta": "ホームへ戻る"
+  },
   "qr": {
     "title": "qr code",
     "copyUrl": "URLコピー",
