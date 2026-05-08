@@ -238,6 +238,18 @@
       "connected": "Live",
       "waiting": "Clicks will appear here as they come in."
     },
+    "quality": {
+      "title": "Click quality",
+      "returning": "Returning ratio",
+      "returningHint": "{count} visitors returned",
+      "clicksPerUnique": "Clicks per unique",
+      "clicksPerUniqueHint": "{unique} unique visitors",
+      "realVsPreview": "Real / preview",
+      "realVsPreviewHint": "Previews are {ratio} of total",
+      "peakHour": "Peak hour",
+      "peakHourHint": "Most clicks land in this hour",
+      "peakHourEmpty": "Not enough data"
+    },
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "Stats are visible to the link owner only.",
     "notFound": "Link not found",
@@ -268,6 +280,9 @@
       "referrerHost": { "title": "Referrer hosts", "desc": "Aggregated by host" },
       "referrerUrl": { "title": "Top referrer URLs", "desc": "Most common sources" },
       "utm": { "title": "UTM campaigns", "desc": "Aggregated by utm_campaign" },
+      "utmSource": { "title": "UTM source", "desc": "By utm_source (instagram, naver, ...)" },
+      "utmMedium": { "title": "UTM medium", "desc": "By utm_medium (bio, ad, email, ...)" },
+      "utmContent": { "title": "UTM content", "desc": "By utm_content (banner / A-B slot)" },
       "bots": { "title": "Bot types", "desc": "Googlebot · Slackbot etc." },
       "country": { "title": "Country", "desc": "GeoLite2-City IP lookup" },
       "region": { "title": "Region", "desc": "State / province" },
