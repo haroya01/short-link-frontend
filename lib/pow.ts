@@ -8,7 +8,8 @@
  * modern device — invisible to humans, costly at bot scale.
  */
 
-const CHALLENGE_ENDPOINT = "/api/v1/pow/challenge";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
+const CHALLENGE_ENDPOINT = API_BASE + "/api/v1/pow/challenge";
 
 export type PowToken = {
   challenge: string;

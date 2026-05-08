@@ -30,6 +30,18 @@ import type {
 
 const ACCESS_TOKEN_KEY = "short-link:access-token";
 
+/**
+ * Absolute backend origin in production (e.g., https://kurl.md). When the frontend runs on a
+ * different subdomain (Vercel-hosted app.kurl.md), every API call must go directly to the apex
+ * so the browser sends the refresh-token cookie. Empty string in dev — Next.js rewrites pick it up.
+ */
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
+
+function withBase(path: string): string {
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  return API_BASE + path;
+}
+
 export class ApiError extends Error {
   constructor(
     public status: number,
@@ -62,7 +74,7 @@ async function tryRefresh(): Promise<string | null> {
   if (refreshInFlight) return refreshInFlight;
   refreshInFlight = (async () => {
     try {
-      const res = await fetch("/api/v1/auth/refresh", {
+      const res = await fetch(withBase("/api/v1/auth/refresh"), {
         method: "POST",
         credentials: "include",
       });
@@ -95,7 +107,7 @@ async function request<T>(
   const token = readToken();
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
-  const res = await fetch(path, {
+  const res = await fetch(withBase(path), {
     ...init,
     credentials: "include",
     headers,
@@ -339,7 +351,7 @@ export async function downloadMyData(): Promise<void> {
   const token = readToken();
   const headers = new Headers();
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  const res = await fetch("/api/v1/users/me/export", {
+  const res = await fetch(withBase("/api/v1/users/me/export"), {
     method: "GET",
     credentials: "include",
     headers,
@@ -417,7 +429,7 @@ export async function bulkImportLinks(file: File): Promise<BulkImportSummary> {
   const token = readToken();
   const headers = new Headers();
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  const res = await fetch("/api/v1/links/bulk", {
+  const res = await fetch(withBase("/api/v1/links/bulk"), {
     method: "POST",
     credentials: "include",
     headers,
