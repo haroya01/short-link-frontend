@@ -14,7 +14,7 @@ import {
 } from "recharts";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { ApiError, getAdminOverview } from "@/lib/api";
+import { ApiError, getAdminHealthMetrics, getAdminOverview } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
@@ -22,12 +22,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { ErrorState } from "@/components/error-state";
 import { formatNumber } from "@/lib/utils";
-import type { AdminOverview } from "@/types";
+import type { AdminHealthMetrics, AdminOverview } from "@/types";
 
 export default function AdminPage() {
   const t = useTranslations("admin");
   const { ready, authenticated, isAdmin } = useAuth();
   const [data, setData] = useState<AdminOverview | null>(null);
+  const [health, setHealth] = useState<AdminHealthMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
@@ -41,9 +42,12 @@ export default function AdminPage() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    getAdminOverview()
-      .then((d) => {
-        if (!cancelled) setData(d);
+    Promise.all([getAdminOverview(), getAdminHealthMetrics()])
+      .then(([d, h]) => {
+        if (!cancelled) {
+          setData(d);
+          setHealth(h);
+        }
       })
       .catch((err) => {
         if (!cancelled) {
@@ -215,6 +219,62 @@ export default function AdminPage() {
           <UserStatTable rows={data.topUsersByClicks} unit={t("table.clicks")} t={t} />
         </Section>
       </div>
+
+      {health && (
+        <Section
+          title={t("section.redirectPerf.title")}
+          description={t("section.redirectPerf.desc")}
+        >
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 sm:grid-cols-4 lg:grid-cols-7">
+            <Kpi
+              label={t("section.redirectPerf.p50")}
+              value={`${health.redirect.p50Millis.toFixed(1)}ms`}
+              sub={t("section.redirectPerf.median")}
+              icon={Activity}
+            />
+            <Kpi
+              label={t("section.redirectPerf.p95")}
+              value={`${health.redirect.p95Millis.toFixed(1)}ms`}
+              sub={t("section.redirectPerf.tail")}
+              icon={Activity}
+              accent
+            />
+            <Kpi
+              label={t("section.redirectPerf.p99")}
+              value={`${health.redirect.p99Millis.toFixed(1)}ms`}
+              sub={t("section.redirectPerf.outlier")}
+              icon={Activity}
+            />
+            <Kpi
+              label={t("section.redirectPerf.total")}
+              value={formatNumber(health.redirect.total)}
+              sub={t("section.redirectPerf.totalSub")}
+              icon={MousePointerClick}
+            />
+            <Kpi
+              label={t("section.redirectPerf.notFound")}
+              value={formatNumber(health.redirect.notFound)}
+              sub={t("section.redirectPerf.notFoundSub")}
+              icon={Activity}
+              muted
+            />
+            <Kpi
+              label={t("section.redirectPerf.expired")}
+              value={formatNumber(health.redirect.expired)}
+              sub={t("section.redirectPerf.expiredSub")}
+              icon={Activity}
+              muted
+            />
+            <Kpi
+              label={t("section.redirectPerf.preview")}
+              value={formatNumber(health.redirect.previews)}
+              sub={t("section.redirectPerf.previewSub")}
+              icon={Activity}
+              muted
+            />
+          </div>
+        </Section>
+      )}
 
       <Section title={t("section.topLinks.title")} description={t("section.topLinks.desc")}>
         <Table>
