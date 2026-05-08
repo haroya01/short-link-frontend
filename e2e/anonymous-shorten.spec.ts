@@ -41,4 +41,19 @@ test.describe("anonymous shorten flow", () => {
     await page.getByRole("button", { name: "단축하기" }).click();
     await expect(page.getByText(/로그인하면.*클릭 통계/)).toBeVisible({ timeout: 10000 });
   });
+
+  test("home counters render numbers", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByText("단축된 링크")).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("분석된 클릭")).toBeVisible();
+  });
+
+  test("FAQ accordion expands", async ({ page }) => {
+    await page.goto("/");
+    const faq = page.getByRole("heading", { name: "자주 묻는 질문" });
+    await expect(faq).toBeVisible();
+    const firstQ = page.getByRole("button", { name: /단축 링크는 영구 보존되나요/ });
+    await firstQ.click();
+    await expect(page.getByText(/24시간 후 자동 만료/)).toBeVisible();
+  });
 });
