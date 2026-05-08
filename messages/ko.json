@@ -117,7 +117,31 @@
     "saved": "저장됨",
     "saveFailed": "저장에 실패했습니다.",
     "invalidUrl": "http:// 또는 https:// 로 시작하는 올바른 URL이 필요해요.",
-    "maliciousUrl": "악성/피싱으로 분류된 URL이라 저장할 수 없어요."
+    "maliciousUrl": "악성/피싱으로 분류된 URL이라 저장할 수 없어요.",
+    "tabs": {
+      "basic": "기본",
+      "og": "공유 카드",
+      "protection": "보호"
+    },
+    "og": {
+      "description": "카카오·슬랙·트위터에 링크를 붙였을 때 보이는 미리보기를 직접 지정할 수 있어요. 비우면 원본 페이지에서 자동으로 가져온 값을 사용해요.",
+      "titleLabel": "제목 덮어쓰기",
+      "titlePlaceholder": "예: 우리 서비스 소개",
+      "descriptionLabel": "설명 덮어쓰기",
+      "descriptionPlaceholder": "예: 한 줄로 줄이는 URL 단축 서비스",
+      "imageLabel": "이미지 URL 덮어쓰기"
+    },
+    "protection": {
+      "description": "비밀번호와 최대 조회수를 설정해 링크를 보호할 수 있어요.",
+      "passwordLabel": "비밀번호",
+      "passwordPlaceholder": "비워두면 비밀번호 없이 접속",
+      "passwordSetHint": "비밀번호가 이미 설정됨 (변경하려면 새 비밀번호 입력)",
+      "removePassword": "비밀번호 해제",
+      "maxViewsLabel": "최대 조회수 (선택)",
+      "maxViewsPlaceholder": "예: 100",
+      "maxViewsInvalid": "최대 조회수는 1 이상의 정수여야 해요.",
+      "viewCountHint": "현재 {current}/{max} 회 조회됨"
+    }
   },
   "stats": {
     "back": "뒤로",

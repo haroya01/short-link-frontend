@@ -117,7 +117,31 @@
     "saved": "保存しました",
     "saveFailed": "保存に失敗しました。",
     "invalidUrl": "http:// または https:// で始まる正しいURLが必要です。",
-    "maliciousUrl": "悪性/フィッシングと判定されたため保存できません。"
+    "maliciousUrl": "悪性/フィッシングと判定されたため保存できません。",
+    "tabs": {
+      "basic": "基本",
+      "og": "共有カード",
+      "protection": "保護"
+    },
+    "og": {
+      "description": "LINE・Slack・X などに貼り付けた時のプレビューを上書きできます。空欄にすると自動取得した値を使います。",
+      "titleLabel": "タイトル上書き",
+      "titlePlaceholder": "例: サービス紹介",
+      "descriptionLabel": "説明上書き",
+      "descriptionPlaceholder": "例: ワンクリックURL短縮 + クリック分析",
+      "imageLabel": "画像URL上書き"
+    },
+    "protection": {
+      "description": "パスワードと最大閲覧回数を設定してリンクを保護できます。",
+      "passwordLabel": "パスワード",
+      "passwordPlaceholder": "空欄ならパスワードなし",
+      "passwordSetHint": "パスワード設定済み (変更するには新しいパスワードを入力)",
+      "removePassword": "パスワードを解除",
+      "maxViewsLabel": "最大閲覧数 (任意)",
+      "maxViewsPlaceholder": "例: 100",
+      "maxViewsInvalid": "最大閲覧数は1以上の整数である必要があります。",
+      "viewCountHint": "現在 {current}/{max} 回閲覧"
+    }
   },
   "stats": {
     "back": "戻る",
