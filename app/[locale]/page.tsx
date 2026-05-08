@@ -94,7 +94,6 @@ export default function HomePage() {
       )}
 
       <Section
-        bg="muted"
         eyebrow={t("statsEyebrow")}
         title={t("statsTitle")}
         subhead={t("statsSubhead")}
@@ -102,13 +101,16 @@ export default function HomePage() {
         <HomeCounters />
       </Section>
 
-      <Section eyebrow={t("featuresEyebrow")} title={t("featuresTitle")} subhead={t("featuresSubhead")}>
-        <div className="mx-auto max-w-5xl">
-          <FeatureCarousel />
-        </div>
+      <Section
+        wide
+        eyebrow={t("featuresEyebrow")}
+        title={t("featuresTitle")}
+        subhead={t("featuresSubhead")}
+      >
+        <FeatureCarousel />
       </Section>
 
-      <Section bg="muted">
+      <Section>
         <HomeFaq />
       </Section>
     </div>
@@ -120,24 +122,20 @@ function Section({
   eyebrow,
   title,
   subhead,
-  bg,
+  wide,
 }: {
   children: React.ReactNode;
   eyebrow?: string;
   title?: string;
   subhead?: string;
-  bg?: "muted";
+  wide?: boolean;
 }) {
   const hasHeader = eyebrow || title || subhead;
   return (
-    <section
-      className={
-        "border-t border-slate-100 " + (bg === "muted" ? "bg-slate-50/60" : "bg-white")
-      }
-    >
-      <div className="container max-w-3xl py-20">
+    <section className="border-t border-slate-100 bg-white">
+      <div className={"container py-20 " + (wide ? "max-w-5xl" : "max-w-3xl")}>
         {hasHeader && (
-          <div className="mb-10 space-y-2 text-center">
+          <div className="mb-12 space-y-2 text-center">
             {eyebrow && (
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-700">
                 {eyebrow}
