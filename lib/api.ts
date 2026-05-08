@@ -1,7 +1,9 @@
 import type {
   AdminOverview,
+  ApiKeySummary,
   CreateLinkRequest,
   CreateLinkResponse,
+  IssuedApiKey,
   LinkDetail,
   LinkProtectionRequest,
   LinkProtectionResponse,
@@ -214,6 +216,21 @@ export async function setLinkVisibility(
 
 export async function getAdminOverview(): Promise<AdminOverview> {
   return request<AdminOverview>("/api/v1/admin/overview", { method: "GET" });
+}
+
+export async function listApiKeys(): Promise<ApiKeySummary[]> {
+  return request<ApiKeySummary[]>("/api/v1/users/me/api-keys", { method: "GET" });
+}
+
+export async function issueApiKey(name: string): Promise<IssuedApiKey> {
+  return request<IssuedApiKey>("/api/v1/users/me/api-keys", {
+    method: "POST",
+    body: { name: name.trim() || null },
+  });
+}
+
+export async function revokeApiKey(id: number): Promise<void> {
+  await request(`/api/v1/users/me/api-keys/${id}`, { method: "DELETE" });
 }
 
 export async function logout(): Promise<void> {
