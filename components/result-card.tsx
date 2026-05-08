@@ -4,6 +4,7 @@ import { ExternalLink, CheckCircle2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "./copy-button";
 import { QrButton } from "./qr-button";
+import { ShareButton } from "./share-button";
 import { useToast } from "./ui/toast";
 import { truncateMiddle } from "@/lib/utils";
 import type { CreateLinkResponse } from "@/types";
@@ -42,6 +43,7 @@ export function ResultCard({ result, originalUrl }: Props) {
               value={result.shortUrl}
               onCopied={() => toast(t("copied"), "success")}
             />
+            <ShareButton url={result.shortUrl} title={result.shortUrl} iconOnly />
             <QrButton url={result.shortUrl} />
             <a
               href={result.shortUrl}
