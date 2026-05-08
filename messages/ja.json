@@ -99,13 +99,6 @@
     "title": "ログイン",
     "subtitle": "ログインするとリンク管理とクリック分析が利用できます。",
     "google": "Googleで続ける",
-    "or": "または",
-    "devTokenToggle": "開発用 access tokenを直接入力",
-    "devTokenPlaceholder": "eyJhbGciOi...",
-    "devTokenSubmit": "トークンでログイン",
-    "devTokenHint": "OAuthコールバックがJSONを返す暫定対応。本番リリース前に削除予定。",
-    "loggedIn": "ログイン済み",
-    "securityNote": "認証トークンはブラウザのlocalStorageに保存され、サーバーはRS256 JWTで検証します。リフレッシュトークンはHttpOnly Cookieで別途管理。",
     "anonymousAlt": "ログインなしでも<shorten>URL短縮は可能</shorten>です。"
   },
   "auth": {

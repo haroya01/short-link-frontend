@@ -1,13 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  claimAnonymousLinks,
-  getMe,
-  logout as apiLogout,
-  readToken,
-  setToken,
-} from "./api";
+import { claimAnonymousLinks, getMe, logout as apiLogout, readToken } from "./api";
 import { clearClaimTokens, readPendingClaimTokens } from "./recent-links";
 import type { Me } from "@/types";
 
@@ -66,10 +60,6 @@ export function useAuth() {
     window.location.href = "/oauth2/authorization/google";
   }, []);
 
-  const signInWithToken = useCallback((token: string) => {
-    setToken(token.trim());
-  }, []);
-
   const signOut = useCallback(async () => {
     await apiLogout();
   }, []);
@@ -78,7 +68,6 @@ export function useAuth() {
     ...state,
     isAdmin: state.me?.role === "ADMIN",
     signInWithGoogle,
-    signInWithToken,
     signOut,
   };
 }
