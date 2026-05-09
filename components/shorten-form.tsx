@@ -161,7 +161,7 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
           <div className="mt-2 space-y-3 rounded-md border border-slate-200 bg-slate-50/50 p-3">
             {authenticated && (
               <div className="grid gap-2 sm:grid-cols-2">
-                <label className="space-y-1">
+                <label className="block min-w-0 space-y-1">
                   <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
                     {t("customCodeLabel")}
                   </span>
@@ -175,7 +175,7 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
                     disabled={busy || channels.size > 0}
                   />
                 </label>
-                <label className="space-y-1">
+                <label className="block min-w-0 space-y-1">
                   <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
                     {t("expiresAtLabel")}
                   </span>
