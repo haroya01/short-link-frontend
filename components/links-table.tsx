@@ -243,37 +243,43 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
                 <TD className="hidden whitespace-nowrap text-xs text-slate-500 lg:table-cell">
                   {item.expiresAt ? formatDate(item.expiresAt) : "—"}
                 </TD>
-                <TD className="text-right">
-                  <div className="flex items-center justify-end gap-2">
+                <TD className="whitespace-nowrap text-right">
+                  <div className="inline-flex items-center gap-2">
                     <Sparkline
                       values={item.clicksLast7d ?? []}
-                      className="hidden text-slate-400 sm:inline-block"
+                      className="hidden text-slate-400 lg:inline-block"
                     />
                     <span className="tabular-nums font-medium text-slate-900">
                       {formatNumber(item.clickCount)}
                     </span>
                   </div>
                 </TD>
-                <TD className="text-right">
-                  <div className="flex items-center justify-end gap-1">
+                <TD className="whitespace-nowrap text-right">
+                  <div className="inline-flex flex-nowrap items-center gap-0.5">
                     <Link href={`/stats/${item.shortCode}`}>
-                      <Button variant="ghost" size="sm" aria-label={t("actions.stats")}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t("actions.stats")}
+                        title={t("actions.stats")}
+                      >
                         <BarChart3 className="h-3.5 w-3.5" />
-                        <span className="hidden md:inline">{t("actions.stats")}</span>
                       </Button>
                     </Link>
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="icon"
                       aria-label={t("actions.edit")}
+                      title={t("actions.edit")}
                       onClick={() => setEditing(item)}
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
                     <Button
                       variant="ghost"
-                      size="sm"
+                      size="icon"
                       aria-label={t("actions.delete")}
+                      title={t("actions.delete")}
                       onClick={() => setConfirmCode(item.shortCode)}
                       className="text-slate-500 hover:bg-red-50 hover:text-red-600"
                     >
