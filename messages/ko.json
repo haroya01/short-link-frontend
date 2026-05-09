@@ -158,6 +158,7 @@
     "subtitle": "단축한 링크 {count}개. 짧은 코드를 클릭해 통계 확인.",
     "newLink": "새 링크",
     "searchPlaceholder": "원본 URL 또는 짧은 코드로 검색",
+    "clearSearch": "검색 지우기",
     "loginRequired": "로그인이 필요해요",
     "loginRequiredDesc": "내 링크와 클릭 통계는 로그인 후에 볼 수 있어요.",
     "goToLogin": "로그인하러 가기",
@@ -717,6 +718,13 @@
   },
   "settings": {
     "title": "설정",
+    "tabs": {
+      "aria": "설정 섹션",
+      "account": "계정",
+      "security": "보안",
+      "domains": "도메인",
+      "data": "데이터"
+    },
     "profileTitle": "프로필",
     "email": "이메일",
     "provider": "로그인 방식",

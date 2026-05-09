@@ -158,6 +158,7 @@
     "subtitle": "{count} links. Click a short code to see analytics.",
     "newLink": "New link",
     "searchPlaceholder": "Search by original URL or short code",
+    "clearSearch": "Clear search",
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "My links and click stats are visible only after sign-in.",
     "goToLogin": "Go to sign in",
@@ -803,6 +804,13 @@
   },
   "settings": {
     "title": "Settings",
+    "tabs": {
+      "aria": "Settings sections",
+      "account": "Account",
+      "security": "Security",
+      "domains": "Domains",
+      "data": "Data"
+    },
     "profileTitle": "Profile",
     "email": "Email",
     "provider": "Sign-in provider",

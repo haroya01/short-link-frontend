@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { FileUp, Plus, Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FileUp, Plus, Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listMyLinks, listTags, type MyLinksFilters } from "@/lib/api";
@@ -32,6 +32,19 @@ export default function DashboardPage() {
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [reload, setReload] = useState(0);
   const [bulkOpen, setBulkOpen] = useState(false);
+
+  // Debounce the search box into the server-side `q` filter so the user doesn't have to wait for
+  // each keystroke to round-trip and the query covers the full link set, not just the first page.
+  useEffect(() => {
+    const id = setTimeout(() => {
+      setFilters((f) => {
+        const trimmed = query.trim() || undefined;
+        if (f.q === trimmed) return f;
+        return { ...f, q: trimmed, page: 1 };
+      });
+    }, 300);
+    return () => clearTimeout(id);
+  }, [query]);
 
   useEffect(() => {
     if (!ready || !authenticated) return;
@@ -74,17 +87,6 @@ export default function DashboardPage() {
       cancelled = true;
     };
   }, [ready, authenticated, reload, filters]);
-
-  // Free-text search is client-side over the (server-filtered) page; backend already covers q,
-  // domain, tag, expiry, and date — this just adds an instant in-page narrow.
-  const filtered = useMemo(() => {
-    if (!items) return [];
-    if (!query.trim()) return items;
-    const q = query.toLowerCase();
-    return items.filter(
-      (i) => i.originalUrl.toLowerCase().includes(q) || i.shortCode.toLowerCase().includes(q),
-    );
-  }, [items, query]);
 
   if (ready && !authenticated) {
     return (
@@ -132,44 +134,55 @@ export default function DashboardPage() {
 
       <WeeklyInsightsCard />
 
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t("searchPlaceholder")}
-          className="pl-9"
+      <div className="space-y-3">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("searchPlaceholder")}
+            className="pl-9 pr-9"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label={t("clearSearch")}
+              className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+
+        <MyLinksFiltersBar
+          filters={filters}
+          onChange={setFilters}
+          tagOptions={tagOptions}
         />
       </div>
-
-      <MyLinksFiltersBar
-        filters={filters}
-        onChange={setFilters}
-        tagOptions={tagOptions}
-      />
 
       {loading ? (
         <LoadingTable t={t} />
       ) : error ? (
         <ErrorState message={error} onRetry={() => setReload((n) => n + 1)} />
       ) : items && items.length === 0 ? (
-        <EmptyState
-          title={t("emptyTitle")}
-          description={t("emptyDesc")}
-          action={
-            <Link href="/">
-              <Button>{t("emptyCta")}</Button>
-            </Link>
-          }
-        />
-      ) : filtered.length === 0 ? (
-        <EmptyState
-          title={t("noResultTitle")}
-          description={t("noResultDesc", { query })}
-        />
+        query.trim() || filters.tag || filters.domain || filters.expiry ? (
+          <EmptyState title={t("noResultTitle")} description={t("noResultDesc", { query })} />
+        ) : (
+          <EmptyState
+            title={t("emptyTitle")}
+            description={t("emptyDesc")}
+            action={
+              <Link href="/">
+                <Button>{t("emptyCta")}</Button>
+              </Link>
+            }
+          />
+        )
       ) : (
         <LinksTable
-          items={filtered}
+          items={items ?? []}
           onChanged={() => setReload((n) => n + 1)}
           onTagClick={(tag) => setFilters((f) => ({ ...f, tag, page: 1 }))}
         />
@@ -186,8 +199,8 @@ function LoadingTable({ t }: { t: (k: string) => string }) {
           <TR>
             <TH>{t("table.shortUrl")}</TH>
             <TH>{t("table.originalUrl")}</TH>
-            <TH>{t("table.createdAt")}</TH>
-            <TH>{t("table.expiresAt")}</TH>
+            <TH className="hidden md:table-cell">{t("table.createdAt")}</TH>
+            <TH className="hidden lg:table-cell">{t("table.expiresAt")}</TH>
             <TH className="text-right">{t("table.clicks")}</TH>
             <TH className="text-right">{t("table.actions")}</TH>
           </TR>
@@ -201,10 +214,10 @@ function LoadingTable({ t }: { t: (k: string) => string }) {
               <TD>
                 <Skeleton className="h-4 w-64" />
               </TD>
-              <TD>
+              <TD className="hidden md:table-cell">
                 <Skeleton className="h-4 w-20" />
               </TD>
-              <TD>
+              <TD className="hidden lg:table-cell">
                 <Skeleton className="h-4 w-16" />
               </TD>
               <TD className="text-right">

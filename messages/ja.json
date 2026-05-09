@@ -158,6 +158,7 @@
     "subtitle": "短縮したリンク {count}件。短縮コードをクリックして統計を確認。",
     "newLink": "新規リンク",
     "searchPlaceholder": "元のURLまたは短縮コードで検索",
+    "clearSearch": "検索をクリア",
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "マイリンクとクリック統計はログイン後に表示されます。",
     "goToLogin": "ログインへ",
@@ -803,6 +804,13 @@
   },
   "settings": {
     "title": "設定",
+    "tabs": {
+      "aria": "設定セクション",
+      "account": "アカウント",
+      "security": "セキュリティ",
+      "domains": "ドメイン",
+      "data": "データ"
+    },
     "profileTitle": "プロフィール",
     "email": "メール",
     "provider": "ログイン方法",

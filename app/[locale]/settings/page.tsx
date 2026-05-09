@@ -93,104 +93,123 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="container max-w-2xl space-y-8 py-12">
+    <div className="container max-w-2xl space-y-6 py-12">
       <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
 
-      <Section title={t("profileTitle")}>
-        <Row label={t("email")}>{me.email}</Row>
-        {me.role === "ADMIN" && <Row label={t("role")}>{me.role}</Row>}
-        <Row label={t("joinedAt")}>{me.createdAt?.slice(0, 10) ?? "—"}</Row>
-      </Section>
+      <SettingsTabs t={t}>
+        {(tab) => (
+          <>
+            {tab === "account" && (
+              <div className="space-y-6">
+                <Section title={t("profileTitle")}>
+                  <Row label={t("email")}>{me.email}</Row>
+                  {me.role === "ADMIN" && <Row label={t("role")}>{me.role}</Row>}
+                  <Row label={t("joinedAt")}>{me.createdAt?.slice(0, 10) ?? "—"}</Row>
+                </Section>
 
-      <Section title={t("preferencesTitle")}>
-        <div className="space-y-3">
-          <label className="block space-y-1.5">
-            <span className="text-xs font-medium uppercase tracking-wider text-slate-500">
-              {t("timezoneLabel")}
-            </span>
-            <select
-              value={tz}
-              onChange={(e) => setTz(e.target.value)}
-              className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
-            >
-              {COMMON_TIMEZONES.map((z) => (
-                <option key={z} value={z}>
-                  {z}
-                </option>
-              ))}
-            </select>
-            <p className="text-xs text-slate-500">{t("timezoneHint")}</p>
-          </label>
-          <Button onClick={handleSaveTimezone} disabled={saving} size="sm">
-            {t("save")}
-          </Button>
-        </div>
+                <Section title={t("preferencesTitle")}>
+                  <div className="space-y-3">
+                    <label className="block space-y-1.5">
+                      <span className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                        {t("timezoneLabel")}
+                      </span>
+                      <select
+                        value={tz}
+                        onChange={(e) => setTz(e.target.value)}
+                        className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+                      >
+                        {COMMON_TIMEZONES.map((z) => (
+                          <option key={z} value={z}>
+                            {z}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-xs text-slate-500">{t("timezoneHint")}</p>
+                    </label>
+                    <Button onClick={handleSaveTimezone} disabled={saving} size="sm">
+                      {t("save")}
+                    </Button>
+                  </div>
 
-        <div className="mt-6 space-y-2 border-t border-slate-100 pt-4">
-          <span className="text-xs font-medium uppercase tracking-wider text-slate-500">
-            {t("interfaceLanguage")}
-          </span>
-          <div className="flex gap-2">
-            {routing.locales.map((l) => (
-              <Link
-                key={l}
-                href={pathname}
-                locale={l}
-                className={
-                  l === locale
-                    ? "rounded-md bg-slate-900 px-3 py-1.5 text-xs text-white"
-                    : "rounded-md border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
-                }
-              >
-                {l.toUpperCase()}
-              </Link>
-            ))}
-          </div>
-          <p className="text-xs text-slate-500">{t("languageHint")}</p>
-        </div>
-      </Section>
+                  <div className="mt-6 space-y-2 border-t border-slate-100 pt-4">
+                    <span className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                      {t("interfaceLanguage")}
+                    </span>
+                    <div className="flex gap-2">
+                      {routing.locales.map((l) => (
+                        <Link
+                          key={l}
+                          href={pathname}
+                          locale={l}
+                          className={
+                            l === locale
+                              ? "rounded-md bg-slate-900 px-3 py-1.5 text-xs text-white"
+                              : "rounded-md border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
+                          }
+                        >
+                          {l.toUpperCase()}
+                        </Link>
+                      ))}
+                    </div>
+                    <p className="text-xs text-slate-500">{t("languageHint")}</p>
+                  </div>
+                </Section>
+              </div>
+            )}
 
-      <Section title={t("twofa.title")}>
-        <TwoFactorSection />
-      </Section>
+            {tab === "security" && (
+              <div className="space-y-6">
+                <Section title={t("twofa.title")}>
+                  <TwoFactorSection />
+                </Section>
+                <Section title={t("apiKeys.title")}>
+                  <ApiKeysSection />
+                </Section>
+              </div>
+            )}
 
-      <Section title={t("customDomains.title")}>
-        <CustomDomainsSection />
-      </Section>
+            {tab === "domains" && (
+              <Section title={t("customDomains.title")}>
+                <CustomDomainsSection />
+              </Section>
+            )}
 
-      <Section title={t("apiKeys.title")}>
-        <ApiKeysSection />
-      </Section>
+            {tab === "data" && (
+              <div className="space-y-6">
+                <Section title={t("dataTitle")}>
+                  <p className="text-xs text-slate-500">{t("exportHint")}</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={async () => {
+                      try {
+                        await downloadMyData();
+                      } catch (err) {
+                        toast(errorMessage(err, t("saveFailed")), "error");
+                      }
+                    }}
+                  >
+                    {t("exportButton")}
+                  </Button>
+                </Section>
 
-      <Section title={t("dataTitle")}>
-        <p className="text-xs text-slate-500">{t("exportHint")}</p>
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-2"
-          onClick={async () => {
-            try {
-              await downloadMyData();
-            } catch (err) {
-              toast(errorMessage(err, t("saveFailed")), "error");
-            }
-          }}
-        >
-          {t("exportButton")}
-        </Button>
-      </Section>
-
-      <Section title={t("dangerTitle")} variant="danger">
-        <p className="text-xs text-slate-500">{t("deleteHint")}</p>
-        <Button
-          variant="destructive"
-          size="sm"
-          className="mt-2"
-          onClick={() => setConfirmOpen(true)}
-        >
-          {t("deleteButton")}
-        </Button>
-      </Section>
+                <Section title={t("dangerTitle")} variant="danger">
+                  <p className="text-xs text-slate-500">{t("deleteHint")}</p>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="mt-2"
+                    onClick={() => setConfirmOpen(true)}
+                  >
+                    {t("deleteButton")}
+                  </Button>
+                </Section>
+              </div>
+            )}
+          </>
+        )}
+      </SettingsTabs>
 
       <ConfirmDialog
         open={confirmOpen}
@@ -214,6 +233,77 @@ export default function SettingsPage() {
       </ConfirmDialog>
     </div>
   );
+}
+
+type SettingsTab = "account" | "security" | "domains" | "data";
+
+function SettingsTabs({
+  t,
+  children,
+}: {
+  t: ReturnType<typeof useTranslations<"settings">>;
+  children: (tab: SettingsTab) => React.ReactNode;
+}) {
+  const [tab, setTab] = useState<SettingsTab>(() => initialSettingsTab());
+
+  useEffect(() => {
+    const onHash = () => setTab(initialSettingsTab());
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  function selectTab(next: SettingsTab) {
+    setTab(next);
+    if (typeof window !== "undefined") {
+      history.replaceState(null, "", `#${next}`);
+    }
+  }
+
+  const tabs: { key: SettingsTab; label: string }[] = [
+    { key: "account", label: t("tabs.account") },
+    { key: "security", label: t("tabs.security") },
+    { key: "domains", label: t("tabs.domains") },
+    { key: "data", label: t("tabs.data") },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <div
+        role="tablist"
+        aria-label={t("tabs.aria")}
+        className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+      >
+        {tabs.map((it) => {
+          const active = tab === it.key;
+          return (
+            <button
+              key={it.key}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => selectTab(it.key)}
+              className={
+                "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition " +
+                (active
+                  ? "bg-slate-900 text-white"
+                  : "bg-white text-slate-600 ring-1 ring-inset ring-slate-200 hover:bg-slate-50")
+              }
+            >
+              {it.label}
+            </button>
+          );
+        })}
+      </div>
+      {children(tab)}
+    </div>
+  );
+}
+
+function initialSettingsTab(): SettingsTab {
+  if (typeof window === "undefined") return "account";
+  const h = window.location.hash.replace("#", "");
+  if (h === "security" || h === "domains" || h === "data") return h;
+  return "account";
 }
 
 function Section({

@@ -152,7 +152,7 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
               </TH>
               <TH>{t("table.shortUrl")}</TH>
               <TH>{t("table.originalUrl")}</TH>
-              <TH>
+              <TH className="hidden md:table-cell">
                 <SortHeader
                   active={sortKey === "createdAt"}
                   dir={sortDir}
@@ -161,7 +161,7 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
                   {t("table.createdAt")}
                 </SortHeader>
               </TH>
-              <TH>{t("table.expiresAt")}</TH>
+              <TH className="hidden lg:table-cell">{t("table.expiresAt")}</TH>
               <TH className="text-right">
                 <SortHeader
                   active={sortKey === "clickCount"}
@@ -234,10 +234,10 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
                     )}
                   </div>
                 </TD>
-                <TD className="whitespace-nowrap text-xs text-slate-500">
+                <TD className="hidden whitespace-nowrap text-xs text-slate-500 md:table-cell">
                   {formatDate(item.createdAt)}
                 </TD>
-                <TD className="whitespace-nowrap text-xs text-slate-500">
+                <TD className="hidden whitespace-nowrap text-xs text-slate-500 lg:table-cell">
                   {item.expiresAt ? formatDate(item.expiresAt) : "—"}
                 </TD>
                 <TD className="text-right tabular-nums font-medium text-slate-900">
