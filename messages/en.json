@@ -275,6 +275,14 @@
   "stats": {
     "back": "Back",
     "shortCode": "short code",
+    "tabs": {
+      "aria": "Stats sections",
+      "overview": "Overview",
+      "traffic": "Traffic",
+      "sources": "Sources",
+      "audience": "Audience",
+      "settings": "Settings"
+    },
     "live": {
       "title": "Live clicks",
       "connecting": "Connecting…",

@@ -275,6 +275,14 @@
   "stats": {
     "back": "뒤로",
     "shortCode": "short code",
+    "tabs": {
+      "aria": "통계 섹션",
+      "overview": "개요",
+      "traffic": "트래픽",
+      "sources": "유입",
+      "audience": "방문자",
+      "settings": "설정"
+    },
     "live": {
       "title": "실시간 클릭",
       "connecting": "연결 중...",
