@@ -469,6 +469,26 @@
         "expiredSub": "期限後のアクセス",
         "preview": "プレビュー",
         "previewSub": "Slack/SNS のプレビュー"
+      },
+      "activeUsers": {
+        "title": "アクティブユーザー (DAU / WAU / MAU)",
+        "desc": "選択した期間にアクティブだったユーザー数の推移"
+      },
+      "lifecycle": {
+        "title": "リンクのライフサイクル",
+        "desc": "リンク作成から N 日目に発生したクリックの分布 (~30 日)"
+      },
+      "cohort": {
+        "title": "コホートリテンション",
+        "desc": "週毎の登録ユーザーのうち、その後の週に再びアクティブだった割合 (%)。色が濃いほど高い。",
+        "cohortCol": "登録週",
+        "sizeCol": "規模",
+        "empty": "コホートデータが不足"
+      },
+      "recentErrors": {
+        "title": "最近のエラーログ",
+        "desc": "バックエンドの ERROR/WARN ログ (in-memory、最大 200 件)",
+        "empty": "最近のエラーなし ✨"
       }
     },
     "trend": { "signups": "登録", "links": "リンク", "clicks": "クリック" },
