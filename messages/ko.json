@@ -123,6 +123,8 @@
     "anonymousAlt": "로그인 없이도 <shorten>URL 단축은 가능</shorten> 해요."
   },
   "auth": {
+    "signedIn": "로그인되었어요",
+    "signedInWith": "{email} 로 로그인되었어요",
     "callbackProcessing": "로그인 처리 중...",
     "callbackFailed": "로그인 실패",
     "tokenMissing": "토큰 정보가 없습니다.",
