@@ -123,6 +123,8 @@
     "anonymousAlt": "ログインなしでも<shorten>URL短縮は可能</shorten>です。"
   },
   "auth": {
+    "signedIn": "ログインしました",
+    "signedInWith": "{email} でログインしました",
     "callbackProcessing": "ログイン処理中...",
     "callbackFailed": "ログイン失敗",
     "tokenMissing": "トークン情報がありません。",
