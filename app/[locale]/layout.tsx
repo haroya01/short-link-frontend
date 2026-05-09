@@ -10,7 +10,14 @@ import { Nav } from "@/components/nav";
 import { ToastProvider } from "@/components/ui/toast";
 import { routing } from "@/i18n/routing";
 
+// SITE_URL is the canonical brand domain (used in og:url, canonical, JSON-LD).
+// FRONTEND_URL is where the SPA actually lives — Next.js generates opengraph-image at this host,
+// so it MUST be the metadataBase. When sharing kurl.me in Slack/Kakao, the scraper follows the
+// 302 to app.kurl.me/{locale} where it finds these tags; the og:image is absolute and reachable.
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kurl.me";
+const FRONTEND_URL =
+  process.env.NEXT_PUBLIC_FRONTEND_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://app.kurl.me");
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -29,8 +36,11 @@ export async function generateMetadata({
     routing.locales.map((l) => [l, `${SITE_URL}/${l}`]),
   );
 
+  // Resolve opengraph-image to FRONTEND_URL so scrapers (Kakao/Slack) can actually fetch it —
+  // the apex kurl.me serves redirects, not images.
+  const ogImageUrl = `${FRONTEND_URL}/${locale}/opengraph-image`;
   return {
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(FRONTEND_URL),
     title,
     description,
     alternates: {
@@ -44,11 +54,13 @@ export async function generateMetadata({
       title,
       description,
       locale: locale === "ko" ? "ko_KR" : locale === "ja" ? "ja_JP" : "en_US",
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [ogImageUrl],
     },
     robots: { index: true, follow: true },
   };
