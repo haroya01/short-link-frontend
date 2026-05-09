@@ -622,6 +622,10 @@
     "label": "共有",
     "copiedFallback": "URLをコピーしました"
   },
+  "publicProfile": {
+    "empty": "このユーザーはまだリンクを公開していません。",
+    "madeWith": "kurl.me で作成"
+  },
   "weeklyInsights": {
     "eyebrow": "直近 7 日のインサイト",
     "emptyDesc": "今週はまだクリックがありません。チャネルに UTM を付けてキャンペーンを試してみてください。",
@@ -810,9 +814,26 @@
     "tabs": {
       "aria": "設定セクション",
       "account": "アカウント",
+      "profile": "プロフィール",
       "security": "セキュリティ",
       "domains": "ドメイン",
       "data": "データ"
+    },
+    "profile": {
+      "title": "公開プロフィール",
+      "intro": "短縮リンクを 1 つのページにまとめて共有 — SNS の bio にぴったり。",
+      "usernameLabel": "username",
+      "usernameHint": "3〜16 文字、英小文字/数字/アンダースコア。一度のみ設定可能。",
+      "bioLabel": "自己紹介",
+      "bioPlaceholder": "例: フルスタック開発者 · サイドプロジェクト製作中",
+      "save": "保存",
+      "saved": "保存しました",
+      "saveFailed": "保存に失敗しました。",
+      "linksTitle": "公開するリンクを選ぶ",
+      "linksHint": "オンにしたリンクがプロフィールに表示されます。",
+      "loading": "読み込み中...",
+      "noLinks": "まだリンクがありません。",
+      "toggleFailed": "変更に失敗しました。"
     },
     "profileTitle": "プロフィール",
     "email": "メール",

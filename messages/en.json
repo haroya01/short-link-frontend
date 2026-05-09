@@ -622,6 +622,10 @@
     "label": "Share",
     "copiedFallback": "URL copied"
   },
+  "publicProfile": {
+    "empty": "This user hasn't featured any links yet.",
+    "madeWith": "Made with kurl.me"
+  },
   "weeklyInsights": {
     "eyebrow": "Last 7 days",
     "emptyDesc": "No clicks yet this week. Try tagging channels with UTM to start filling this in.",
@@ -810,9 +814,26 @@
     "tabs": {
       "aria": "Settings sections",
       "account": "Account",
+      "profile": "Profile",
       "security": "Security",
       "domains": "Domains",
       "data": "Data"
+    },
+    "profile": {
+      "title": "Public profile",
+      "intro": "Bundle your short links into one shareable page — perfect for an SNS bio.",
+      "usernameLabel": "Username",
+      "usernameHint": "3–16 lowercase letters / digits / underscore. Choose once, can't change later.",
+      "bioLabel": "Short bio",
+      "bioPlaceholder": "e.g. fullstack dev / building side projects",
+      "save": "Save",
+      "saved": "Saved",
+      "saveFailed": "Failed to save.",
+      "linksTitle": "Pick links to feature",
+      "linksHint": "Toggled links show up on your public profile page.",
+      "loading": "Loading...",
+      "noLinks": "No links yet.",
+      "toggleFailed": "Failed to update."
     },
     "profileTitle": "Profile",
     "email": "Email",

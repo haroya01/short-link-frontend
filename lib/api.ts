@@ -29,6 +29,8 @@ import type {
   TwoFactorSetup,
   TwoFactorStatus,
   UpdateLinkRequest,
+  MyProfile,
+  PublicProfile,
   WebhookConfigPatch,
   WebhookSummary,
   WeeklyInsights,
@@ -359,6 +361,31 @@ export async function startBillingCheckout(): Promise<{ url: string }> {
 
 export async function openBillingPortal(): Promise<{ url: string }> {
   return request<{ url: string }>("/api/v1/billing/portal", { method: "POST" });
+}
+
+export async function getMyProfile(): Promise<MyProfile> {
+  return request<MyProfile>("/api/v1/users/me/profile", { method: "GET" });
+}
+
+export async function updateMyProfile(payload: {
+  username?: string;
+  bio?: string;
+}): Promise<MyProfile> {
+  return request<MyProfile>("/api/v1/users/me/profile", { method: "PUT", body: payload });
+}
+
+export async function toggleLinkOnProfile(
+  shortCode: string,
+  show: boolean,
+): Promise<{ show: boolean }> {
+  return request<{ show: boolean }>(`/api/v1/links/${shortCode}/profile`, {
+    method: "PUT",
+    body: { show },
+  });
+}
+
+export async function getPublicProfile(username: string): Promise<PublicProfile> {
+  return request<PublicProfile>(`/api/v1/public/profiles/${username}`, { method: "GET" });
 }
 
 export async function deleteMyAccount(): Promise<void> {
