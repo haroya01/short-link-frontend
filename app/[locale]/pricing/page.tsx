@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Shield } from "lucide-react";
+import { PricingCta } from "@/components/pricing-cta";
 
 export async function generateMetadata({
   params,
@@ -58,18 +59,20 @@ export default async function PricingPage({
           </ul>
         </section>
 
-        <section className="rounded-lg border border-dashed border-slate-300 bg-slate-50/40 p-6">
-          <h2 className="text-lg font-semibold text-slate-700">{t("paidTitle")}</h2>
-          <p className="mt-1 font-mono text-2xl font-semibold text-slate-700">{t("paidPrice")}</p>
-          <p className="mt-1 text-xs italic text-slate-500">{t("paidStatus")}</p>
-          <ul className="mt-4 space-y-2 text-sm text-slate-500">
+        <section className="rounded-lg border border-slate-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-slate-900">{t("paidTitle")}</h2>
+          <p className="mt-1 font-mono text-2xl font-semibold text-slate-900">{t("paidPrice")}</p>
+          <ul className="mt-4 space-y-2 text-sm text-slate-600">
             {paid.map((f) => (
               <li key={f} className="flex items-start gap-2">
-                <span className="mt-0.5 text-slate-400">○</span>
+                <span className="mt-0.5 text-accent-600">✓</span>
                 <span>{f}</span>
               </li>
             ))}
           </ul>
+          <div className="mt-5">
+            <PricingCta />
+          </div>
         </section>
       </div>
 

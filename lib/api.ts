@@ -353,6 +353,14 @@ export async function getWeeklyInsights(): Promise<WeeklyInsights> {
   return request<WeeklyInsights>("/api/v1/users/me/insights/week", { method: "GET" });
 }
 
+export async function startBillingCheckout(): Promise<{ url: string }> {
+  return request<{ url: string }>("/api/v1/billing/checkout", { method: "POST" });
+}
+
+export async function openBillingPortal(): Promise<{ url: string }> {
+  return request<{ url: string }>("/api/v1/billing/portal", { method: "POST" });
+}
+
 export async function deleteMyAccount(): Promise<void> {
   await request("/api/v1/users/me", { method: "DELETE" });
 }
