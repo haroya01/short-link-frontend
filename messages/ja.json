@@ -275,6 +275,14 @@
   "stats": {
     "back": "戻る",
     "shortCode": "short code",
+    "tabs": {
+      "aria": "統計セクション",
+      "overview": "概要",
+      "traffic": "トラフィック",
+      "sources": "流入",
+      "audience": "オーディエンス",
+      "settings": "設定"
+    },
     "live": {
       "title": "リアルタイムクリック",
       "connecting": "接続中…",

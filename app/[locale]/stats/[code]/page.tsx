@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -132,37 +132,120 @@ export default function StatsPage() {
           }
         />
       ) : (
-        <>
-          <Header
-            data={data}
-            shortUrl={shortUrl}
-            shortCodeLabel={t("shortCode")}
-            onCopy={() => toast(tResult("copied"), "success")}
-          />
+        <StatsBody
+          data={data}
+          shortUrl={shortUrl}
+          onCopy={() => toast(tResult("copied"), "success")}
+          onTick={() => setTick((n) => n + 1)}
+          shortCodeLabel={t("shortCode")}
+        />
+      )}
+    </div>
+  );
+}
 
-          {data.totalClicks === 0 && <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />}
+type TabKey = "overview" | "traffic" | "sources" | "audience" | "settings";
 
-          <StatsCards
-            total={data.totalClicks}
-            human={data.humanClicks}
-            bot={data.botClicks}
-            unique={data.uniqueClicks}
-            timeToFirstClickMinutes={data.timeToFirstClickMinutes}
-            velocityRatio={data.velocity?.ratio ?? 0}
-          />
+function StatsBody({
+  data,
+  shortUrl,
+  shortCodeLabel,
+  onCopy,
+  onTick,
+}: {
+  data: LinkStats;
+  shortUrl: string;
+  shortCodeLabel: string;
+  onCopy: () => void;
+  onTick: () => void;
+}) {
+  const t = useTranslations("stats");
+  const [tab, setTab] = useState<TabKey>(() => initialTab());
 
+  // Sync the active tab to the URL hash so refreshes / sharing land on the same view. Hash is
+  // single source of truth — pop and explicit clicks both flow through setTab().
+  useEffect(() => {
+    const onHash = () => setTab(initialTab());
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  function selectTab(next: TabKey) {
+    setTab(next);
+    if (typeof window !== "undefined") {
+      history.replaceState(null, "", `#${next}`);
+    }
+  }
+
+  const utmHasAny =
+    data.utmSourceClicks.length +
+      data.utmMediumClicks.length +
+      data.utmCampaignClicks.length +
+      data.utmContentClicks.length >
+    0;
+
+  const tabs: { key: TabKey; label: string }[] = useMemo(
+    () => [
+      { key: "overview", label: t("tabs.overview") },
+      { key: "traffic", label: t("tabs.traffic") },
+      { key: "sources", label: t("tabs.sources") },
+      { key: "audience", label: t("tabs.audience") },
+      { key: "settings", label: t("tabs.settings") },
+    ],
+    [t],
+  );
+
+  return (
+    <>
+      <Header
+        data={data}
+        shortUrl={shortUrl}
+        shortCodeLabel={shortCodeLabel}
+        onCopy={onCopy}
+      />
+
+      {data.totalClicks === 0 && <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />}
+
+      <StatsCards
+        total={data.totalClicks}
+        human={data.humanClicks}
+        bot={data.botClicks}
+        unique={data.uniqueClicks}
+        timeToFirstClickMinutes={data.timeToFirstClickMinutes}
+        velocityRatio={data.velocity?.ratio ?? 0}
+      />
+
+      <div
+        role="tablist"
+        aria-label={t("tabs.aria")}
+        className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+      >
+        {tabs.map((it) => {
+          const active = tab === it.key;
+          return (
+            <button
+              key={it.key}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => selectTab(it.key)}
+              className={
+                "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition " +
+                (active
+                  ? "bg-slate-900 text-white"
+                  : "bg-white text-slate-600 ring-1 ring-inset ring-slate-200 hover:bg-slate-50")
+              }
+            >
+              {it.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {tab === "overview" && (
+        <div className="space-y-5">
           <ClickQualitySummary data={data} />
-
-          <LiveClickFeed shortCode={data.shortCode} onTick={() => setTick((n) => n + 1)} />
-
-          <LinkDestinationsSection
-            shortCode={data.shortCode}
-            destinationClicks={data.destinationClicks}
-            onChanged={() => setTick((n) => n + 1)}
-          />
-
-          <LinkWebhooksSection shortCode={data.shortCode} />
-
+          <LiveClickFeed shortCode={data.shortCode} onTick={onTick} />
           <Reveal>
             <Section
               title={t("section.heatmap.title")}
@@ -171,8 +254,12 @@ export default function StatsPage() {
               <Heatmap data={data.heatmap} />
             </Section>
           </Reveal>
+        </div>
+      )}
 
-          <Reveal delay={80}>
+      {tab === "traffic" && (
+        <div className="space-y-5">
+          <Reveal>
             <div className="grid gap-4 lg:grid-cols-3">
               <Section
                 id="section-daily"
@@ -191,200 +278,206 @@ export default function StatsPage() {
               </Section>
             </div>
           </Reveal>
-
           <Reveal delay={60}>
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Section
-                id="section-device"
-                title={t("section.device.title")}
-                description={t("section.device.desc")}
-              >
-                <DeviceChart data={data.deviceClicks} />
-              </Section>
-              <Section title={t("section.channel.title")} description={t("section.channel.desc")}>
-                <BreakdownList
-                  items={data.channelClicks.map((c) => ({ label: c.channel, count: c.count }))}
-                />
-              </Section>
-            </div>
+            <Section title={t("section.country.title")} description={t("section.country.desc")}>
+              <CountryTable data={data.countryClicks} />
+            </Section>
           </Reveal>
+        </div>
+      )}
 
-          <Reveal delay={60}>
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Section title={t("section.os.title")} description={t("section.os.desc")}>
-                <BreakdownList
-                  items={data.osClicks.map((o) => ({ label: o.os, count: o.count }))}
-                />
-              </Section>
-              <Section title={t("section.browser.title")} description={t("section.browser.desc")}>
-                <BreakdownList
-                  items={data.browserClicks.map((b) => ({ label: b.browser, count: b.count }))}
-                />
-              </Section>
-            </div>
-          </Reveal>
+      {tab === "sources" && (
+        <div className="space-y-4">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Section
+              title={t("section.referrerHost.title")}
+              description={t("section.referrerHost.desc")}
+            >
+              <BreakdownList
+                items={data.referrerHostClicks.map((r) => ({ label: r.host, count: r.count }))}
+              />
+            </Section>
+            <Section
+              title={t("section.referrerUrl.title")}
+              description={t("section.referrerUrl.desc")}
+            >
+              <ReferrerChart data={data.referrerClicks} />
+            </Section>
+          </div>
 
-          <Reveal delay={60}>
+          {!utmHasAny ? (
+            <Section title={t("section.utm.title")} description={t("section.utm.desc")}>
+              <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
+            </Section>
+          ) : (
             <div className="grid gap-4 lg:grid-cols-2">
-              <Section
-                title={t("section.referrerHost.title")}
-                description={t("section.referrerHost.desc")}
-              >
-                <BreakdownList
-                  items={data.referrerHostClicks.map((r) => ({ label: r.host, count: r.count }))}
-                />
-              </Section>
-              <Section
-                title={t("section.referrerUrl.title")}
-                description={t("section.referrerUrl.desc")}
-              >
-                <ReferrerChart data={data.referrerClicks} />
-              </Section>
-            </div>
-          </Reveal>
-
-          <Reveal delay={60}>
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Section
-                title={t("section.utmSource.title")}
-                description={t("section.utmSource.desc")}
-              >
-                {data.utmSourceClicks.length === 0 ? (
-                  <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
-                ) : (
+              {data.utmSourceClicks.length > 0 && (
+                <Section
+                  title={t("section.utmSource.title")}
+                  description={t("section.utmSource.desc")}
+                >
                   <BreakdownList
                     items={data.utmSourceClicks.map((u) => ({
                       label: u.source,
                       count: u.count,
                     }))}
                   />
-                )}
-              </Section>
-              <Section
-                title={t("section.utmMedium.title")}
-                description={t("section.utmMedium.desc")}
-              >
-                {data.utmMediumClicks.length === 0 ? (
-                  <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
-                ) : (
+                </Section>
+              )}
+              {data.utmMediumClicks.length > 0 && (
+                <Section
+                  title={t("section.utmMedium.title")}
+                  description={t("section.utmMedium.desc")}
+                >
                   <BreakdownList
                     items={data.utmMediumClicks.map((u) => ({
                       label: u.medium,
                       count: u.count,
                     }))}
                   />
-                )}
-              </Section>
-              <Section title={t("section.utm.title")} description={t("section.utm.desc")}>
-                {data.utmCampaignClicks.length === 0 ? (
-                  <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
-                ) : (
+                </Section>
+              )}
+              {data.utmCampaignClicks.length > 0 && (
+                <Section title={t("section.utm.title")} description={t("section.utm.desc")}>
                   <BreakdownList
                     items={data.utmCampaignClicks.map((u) => ({
                       label: u.campaign,
                       count: u.count,
                     }))}
                   />
-                )}
-              </Section>
-              <Section
-                title={t("section.utmContent.title")}
-                description={t("section.utmContent.desc")}
-              >
-                {data.utmContentClicks.length === 0 ? (
-                  <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
-                ) : (
+                </Section>
+              )}
+              {data.utmContentClicks.length > 0 && (
+                <Section
+                  title={t("section.utmContent.title")}
+                  description={t("section.utmContent.desc")}
+                >
                   <BreakdownList
                     items={data.utmContentClicks.map((u) => ({
                       label: u.content,
                       count: u.count,
                     }))}
                   />
-                )}
-              </Section>
-              <Section
-                title={t("section.srcChannel.title")}
-                description={t("section.srcChannel.desc")}
-              >
-                {data.sourceChannelClicks.length === 0 ? (
-                  <p className="py-8 text-center text-xs text-slate-500">
-                    {t("section.srcChannel.empty")}
-                  </p>
-                ) : (
-                  <BreakdownList
-                    items={data.sourceChannelClicks.map((s) => ({
-                      label: s.source,
-                      count: s.count,
-                    }))}
-                  />
-                )}
-              </Section>
-              <Section
-                id="section-bots"
-                title={t("section.bots.title")}
-                description={t("section.bots.desc")}
-              >
-                {data.botClicks2.length === 0 ? (
-                  <p className="py-8 text-center text-xs text-slate-500">{t("noBot")}</p>
-                ) : (
-                  <BreakdownList
-                    items={data.botClicks2.map((b) => ({ label: b.bot, count: b.count }))}
-                  />
-                )}
-              </Section>
+                </Section>
+              )}
             </div>
-          </Reveal>
+          )}
 
-          <Reveal>
-            <Section title={t("section.country.title")} description={t("section.country.desc")}>
-              <CountryTable data={data.countryClicks} />
-            </Section>
-          </Reveal>
-
-          <Reveal delay={60}>
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Section title={t("section.region.title")} description={t("section.region.desc")}>
-                <BreakdownList
-                  items={data.regionClicks.map((r) => ({ label: r.region, count: r.count }))}
-                />
-              </Section>
-              <Section title={t("section.city.title")} description={t("section.city.desc")}>
-                <BreakdownList
-                  items={data.cityClicks.map((c) => ({ label: c.city, count: c.count }))}
-                />
-              </Section>
-            </div>
-          </Reveal>
-
-          <Reveal>
-            <Section title={t("section.language.title")} description={t("section.language.desc")}>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Section title={t("section.channel.title")} description={t("section.channel.desc")}>
               <BreakdownList
-                items={data.languageClicks.map((l) => ({ label: l.language, count: l.count }))}
+                items={data.channelClicks.map((c) => ({ label: c.channel, count: c.count }))}
               />
             </Section>
-          </Reveal>
-
-          <Reveal>
             <Section
-              title={t("section.asn.title")}
-              description={t("section.asn.desc", { dc: data.datacenterClicks })}
+              title={t("section.srcChannel.title")}
+              description={t("section.srcChannel.desc")}
             >
-              {data.asnClicks.length === 0 ? (
-                <p className="py-8 text-center text-xs text-slate-500">{t("section.asn.empty")}</p>
+              {data.sourceChannelClicks.length === 0 ? (
+                <p className="py-8 text-center text-xs text-slate-500">
+                  {t("section.srcChannel.empty")}
+                </p>
               ) : (
                 <BreakdownList
-                  items={data.asnClicks.map((a) => ({
-                    label: a.organization + (a.asn ? ` (AS${a.asn})` : ""),
-                    count: a.count,
+                  items={data.sourceChannelClicks.map((s) => ({
+                    label: s.source,
+                    count: s.count,
                   }))}
                 />
               )}
             </Section>
-          </Reveal>
-        </>
+          </div>
+        </div>
       )}
-    </div>
+
+      {tab === "audience" && (
+        <div className="space-y-4">
+          <div className="grid gap-4 lg:grid-cols-3">
+            <Section
+              id="section-device"
+              title={t("section.device.title")}
+              description={t("section.device.desc")}
+            >
+              <DeviceChart data={data.deviceClicks} />
+            </Section>
+            <Section title={t("section.os.title")} description={t("section.os.desc")}>
+              <BreakdownList
+                items={data.osClicks.map((o) => ({ label: o.os, count: o.count }))}
+              />
+            </Section>
+            <Section title={t("section.browser.title")} description={t("section.browser.desc")}>
+              <BreakdownList
+                items={data.browserClicks.map((b) => ({ label: b.browser, count: b.count }))}
+              />
+            </Section>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Section title={t("section.region.title")} description={t("section.region.desc")}>
+              <BreakdownList
+                items={data.regionClicks.map((r) => ({ label: r.region, count: r.count }))}
+              />
+            </Section>
+            <Section title={t("section.city.title")} description={t("section.city.desc")}>
+              <BreakdownList
+                items={data.cityClicks.map((c) => ({ label: c.city, count: c.count }))}
+              />
+            </Section>
+          </div>
+          <Section title={t("section.language.title")} description={t("section.language.desc")}>
+            <BreakdownList
+              items={data.languageClicks.map((l) => ({ label: l.language, count: l.count }))}
+            />
+          </Section>
+          <Section
+            id="section-bots"
+            title={t("section.bots.title")}
+            description={t("section.bots.desc")}
+          >
+            {data.botClicks2.length === 0 ? (
+              <p className="py-8 text-center text-xs text-slate-500">{t("noBot")}</p>
+            ) : (
+              <BreakdownList
+                items={data.botClicks2.map((b) => ({ label: b.bot, count: b.count }))}
+              />
+            )}
+          </Section>
+          <Section
+            title={t("section.asn.title")}
+            description={t("section.asn.desc", { dc: data.datacenterClicks })}
+          >
+            {data.asnClicks.length === 0 ? (
+              <p className="py-8 text-center text-xs text-slate-500">{t("section.asn.empty")}</p>
+            ) : (
+              <BreakdownList
+                items={data.asnClicks.map((a) => ({
+                  label: a.organization + (a.asn ? ` (AS${a.asn})` : ""),
+                  count: a.count,
+                }))}
+              />
+            )}
+          </Section>
+        </div>
+      )}
+
+      {tab === "settings" && (
+        <div className="space-y-5">
+          <LinkDestinationsSection
+            shortCode={data.shortCode}
+            destinationClicks={data.destinationClicks}
+            onChanged={onTick}
+          />
+          <LinkWebhooksSection shortCode={data.shortCode} />
+        </div>
+      )}
+    </>
   );
+}
+
+function initialTab(): TabKey {
+  if (typeof window === "undefined") return "overview";
+  const h = window.location.hash.replace("#", "");
+  if (h === "traffic" || h === "sources" || h === "audience" || h === "settings") return h;
+  return "overview";
 }
 
 function Header({
