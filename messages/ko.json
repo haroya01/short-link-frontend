@@ -469,6 +469,26 @@
         "expiredSub": "만료 후 접근",
         "preview": "프리뷰",
         "previewSub": "Slack/카카오 미리보기"
+      },
+      "activeUsers": {
+        "title": "활성 사용자 (DAU / WAU / MAU)",
+        "desc": "선택한 주기에 한 번 이상 활동한 사용자 수 추이"
+      },
+      "lifecycle": {
+        "title": "링크 생애주기",
+        "desc": "링크 생성 후 N일째에 발생한 클릭 수 분포 (~30일)"
+      },
+      "cohort": {
+        "title": "코호트 리텐션",
+        "desc": "주차별 가입자 N명 중 이후 주에 다시 활동한 비율 (%). 진할수록 리텐션 높음.",
+        "cohortCol": "가입 주",
+        "sizeCol": "규모",
+        "empty": "코호트 데이터 부족 (가입자 더 모이면 채워짐)"
+      },
+      "recentErrors": {
+        "title": "최근 에러 로그",
+        "desc": "백엔드 ERROR/WARN 로그 (in-memory, 최대 200건)",
+        "empty": "최근 에러 없음 ✨"
       }
     },
     "trend": { "signups": "가입", "links": "링크", "clicks": "클릭" },

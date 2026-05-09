@@ -1,6 +1,10 @@
 import type {
+  AdminActiveUsers,
+  AdminCohort,
   AdminHealthMetrics,
+  AdminLifecycle,
   AdminOverview,
+  AdminRecentError,
   ApiKeySummary,
   BulkImportSummary,
   ClaimResult,
@@ -395,6 +399,28 @@ export async function setLinkVisibility(
 
 export async function getAdminHealthMetrics(): Promise<AdminHealthMetrics> {
   return request<AdminHealthMetrics>("/api/v1/admin/health-metrics", { method: "GET" });
+}
+
+export async function getAdminCohort(weeks = 8): Promise<AdminCohort> {
+  return request<AdminCohort>(`/api/v1/admin/cohort?weeks=${weeks}`, { method: "GET" });
+}
+
+export async function getAdminLifecycle(days = 30): Promise<AdminLifecycle> {
+  return request<AdminLifecycle>(`/api/v1/admin/lifecycle?days=${days}`, { method: "GET" });
+}
+
+export async function getAdminActiveUsers(
+  period: "DAU" | "WAU" | "MAU" = "DAU",
+): Promise<AdminActiveUsers> {
+  return request<AdminActiveUsers>(`/api/v1/admin/active-users?period=${period}`, {
+    method: "GET",
+  });
+}
+
+export async function getAdminRecentErrors(limit = 50): Promise<AdminRecentError[]> {
+  return request<AdminRecentError[]>(`/api/v1/admin/recent-errors?limit=${limit}`, {
+    method: "GET",
+  });
 }
 
 export async function getAdminOverview(): Promise<AdminOverview> {

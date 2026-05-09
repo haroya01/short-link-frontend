@@ -238,6 +238,33 @@ export type TwoFactorRecoveryCodes = {
   recoveryCodes: string[];
 };
 
+export type AdminActiveUsers = {
+  period: string;
+  buckets: { bucket: string; active: number }[];
+};
+
+export type AdminCohort = {
+  weeks: number;
+  rows: {
+    cohortWeek: string;
+    size: number;
+    cells: { weekOffset: number; active: number; ratio: number }[];
+  }[];
+};
+
+export type AdminLifecycle = {
+  maxDay: number;
+  days: { day: number; clicks: number; contributingLinks: number }[];
+};
+
+export type AdminRecentError = {
+  occurredAt: string;
+  level: string;
+  logger: string;
+  message: string;
+  requestId: string | null;
+};
+
 export type AdminHealthMetrics = {
   httpLatency: { p50Millis: number; p95Millis: number; p99Millis: number; sampleCount: number };
   httpStatusCounts: { count2xx: number; count4xx: number; count5xx: number };

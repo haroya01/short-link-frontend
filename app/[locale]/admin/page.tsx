@@ -15,6 +15,7 @@ import {
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError, getAdminHealthMetrics, getAdminOverview } from "@/lib/api";
+import { AdminDeepStats } from "@/components/admin-deep-stats";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
@@ -275,6 +276,8 @@ export default function AdminPage() {
           </div>
         </Section>
       )}
+
+      <AdminDeepStats />
 
       <Section title={t("section.topLinks.title")} description={t("section.topLinks.desc")}>
         <Table>

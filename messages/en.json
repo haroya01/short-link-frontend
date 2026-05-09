@@ -469,6 +469,26 @@
         "expiredSub": "Hits past expiry",
         "preview": "Preview",
         "previewSub": "Slack/social unfurls"
+      },
+      "activeUsers": {
+        "title": "Active users (DAU / WAU / MAU)",
+        "desc": "Distinct users active in the selected window."
+      },
+      "lifecycle": {
+        "title": "Link lifecycle",
+        "desc": "Click distribution by day-since-link-creation, up to ~30 days."
+      },
+      "cohort": {
+        "title": "Cohort retention",
+        "desc": "% of each weekly signup cohort active in subsequent weeks. Darker = higher retention.",
+        "cohortCol": "Cohort week",
+        "sizeCol": "Size",
+        "empty": "Not enough data (need more signups)."
+      },
+      "recentErrors": {
+        "title": "Recent errors",
+        "desc": "Backend ERROR/WARN logs (in-memory ring, last 200).",
+        "empty": "No recent errors ✨"
       }
     },
     "trend": { "signups": "Signups", "links": "Links", "clicks": "Clicks" },
