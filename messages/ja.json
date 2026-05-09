@@ -567,7 +567,7 @@
       "recentErrors": {
         "title": "最近のエラーログ",
         "desc": "バックエンドの ERROR/WARN ログ (in-memory、最大 200 件)",
-        "empty": "最近のエラーなし ✨"
+        "empty": "最近のエラーなし"
       }
     },
     "trend": {
@@ -855,7 +855,7 @@
     },
     "customDomains": {
       "title": "カスタムドメイン",
-      "description": "自分のドメイン (例: go.brand.com) で短縮 URL を配信できます。TXT 検証 + CNAME の 2 ステップで設定完了。TLS は Cloudflare 無料プランを前段に置くのが最も簡単。",
+      "description": "自分のドメイン (例: go.brand.com) で短縮 URL を配信できます。TXT + CNAME を追加するとバックグラウンドで自動検証 (最大 10 分間 DNS をポーリング)。TLS は Cloudflare 無料プランを前段に置くのが最も簡単。",
       "register": "登録",
       "registering": "登録中...",
       "registerFailed": "ドメインの登録に失敗しました。",
@@ -863,17 +863,17 @@
       "empty": "登録されたドメインはありません。上のフォームから始めてください。",
       "statusPending": "検証待ち",
       "statusVerified": "検証完了",
+      "statusAutoChecking": "自動確認中 · {time}",
       "verify": "検証",
+      "verifyNow": "今すぐ確認",
       "verified": "検証完了",
       "verifyFailed": "TXT レコードが見つかりませんでした。伝播に 1〜5 分かかる場合があります。",
       "delete": "削除",
       "deleted": "削除しました",
       "deleteConfirm": "このドメインを削除しますか？該当ドメインの短縮 URL は即座に動作停止します。",
       "deleteFailed": "削除に失敗しました。",
-      "step1": "1. DNS プロバイダで TXT レコードを追加:",
-      "step2": "2. 検証完了後、CNAME レコードを追加:",
-      "showInstructions": "DNS 設定を表示",
-      "hideInstructions": "DNS 設定を隠す"
+      "dnsTxtHint": "ドメイン所有確認用 — DNS に TXT レコードを追加",
+      "dnsCnameHint": "トラフィック転送用 — 同じ DNS に CNAME も追加"
     }
   },
   "homeStats": {

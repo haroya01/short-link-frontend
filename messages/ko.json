@@ -488,7 +488,7 @@
       "recentErrors": {
         "title": "최근 에러 로그",
         "desc": "백엔드 ERROR/WARN 로그 (in-memory, 최대 200건)",
-        "empty": "최근 에러 없음 ✨"
+        "empty": "최근 에러 없음"
       }
     },
     "trend": { "signups": "가입", "links": "링크", "clicks": "클릭" },
@@ -742,7 +742,7 @@
     },
     "customDomains": {
       "title": "커스텀 도메인",
-      "description": "본인 도메인 (예: go.brand.com) 으로 단축 URL 을 서빙할 수 있어요. TXT 검증 + CNAME 두 단계 거치면 끝. TLS 는 도메인 앞에 Cloudflare 무료 plan 두는 방식이 가장 쉬움.",
+      "description": "본인 도메인 (예: go.brand.com) 으로 단축 URL 을 서빙할 수 있어요. TXT + CNAME 추가 후 자동 검증 (최대 10분 폴링). TLS 는 도메인 앞에 Cloudflare 무료 plan 두는 방식이 가장 쉬움.",
       "register": "등록",
       "registering": "등록 중...",
       "registerFailed": "도메인 등록에 실패했어요.",
@@ -750,17 +750,17 @@
       "empty": "등록된 도메인이 없어요. 위 입력란에 본인 도메인을 입력해서 시작하세요.",
       "statusPending": "검증 대기",
       "statusVerified": "검증 완료",
+      "statusAutoChecking": "자동 확인 중 · {time}",
       "verify": "검증",
+      "verifyNow": "지금 확인",
       "verified": "검증되었어요",
       "verifyFailed": "TXT 레코드를 찾지 못했어요. 전파에 1~5분 걸릴 수 있어요.",
       "delete": "삭제",
       "deleted": "삭제됨",
       "deleteConfirm": "이 도메인을 제거할까요? 해당 도메인의 단축 URL 은 즉시 작동 중지됩니다.",
       "deleteFailed": "삭제에 실패했어요.",
-      "step1": "1. DNS 에 TXT 레코드 추가:",
-      "step2": "2. 검증 완료 후, 같은 DNS 에 CNAME 레코드도 추가:",
-      "showInstructions": "DNS 설정 보기",
-      "hideInstructions": "DNS 설정 숨기기"
+      "dnsTxtHint": "도메인 소유 확인용 — DNS 에 TXT 레코드 추가",
+      "dnsCnameHint": "트래픽 전달용 — 같은 DNS 에 CNAME 도 추가"
     },
     "apiKeys": {
       "title": "API 키",

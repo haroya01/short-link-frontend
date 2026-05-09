@@ -233,6 +233,7 @@ export type CustomDomain = {
   verifiedAt: string | null;
   lastCheckedAt: string | null;
   createdAt: string;
+  autoVerifyUntil: string | null;
 };
 
 export type TwoFactorStatus = {

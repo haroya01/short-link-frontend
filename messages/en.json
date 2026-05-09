@@ -567,7 +567,7 @@
       "recentErrors": {
         "title": "Recent errors",
         "desc": "Backend ERROR/WARN logs (in-memory ring, last 200).",
-        "empty": "No recent errors ✨"
+        "empty": "No recent errors"
       }
     },
     "trend": {
@@ -855,7 +855,7 @@
     },
     "customDomains": {
       "title": "Custom domains",
-      "description": "Serve short links from your own domain (e.g. go.brand.com). TXT verification + CNAME, two steps. Easiest TLS path: front your domain with Cloudflare free plan.",
+      "description": "Serve short links from your own domain (e.g. go.brand.com). Add TXT + CNAME records — we auto-verify in the background (polls DNS for up to 10 min). Easiest TLS path: front your domain with Cloudflare free plan.",
       "register": "Register",
       "registering": "Registering...",
       "registerFailed": "Failed to register domain.",
@@ -863,17 +863,17 @@
       "empty": "No domains yet. Enter your domain above to start.",
       "statusPending": "Pending",
       "statusVerified": "Verified",
+      "statusAutoChecking": "Auto-checking · {time}",
       "verify": "Verify",
+      "verifyNow": "Check now",
       "verified": "Verified",
       "verifyFailed": "TXT record not found. DNS may take 1–5 min to propagate.",
       "delete": "Delete",
       "deleted": "Deleted",
       "deleteConfirm": "Remove this domain? Short URLs on this domain will stop working immediately.",
       "deleteFailed": "Failed to delete.",
-      "step1": "1. Add this TXT record at your DNS provider:",
-      "step2": "2. After verification, add this CNAME record:",
-      "showInstructions": "Show DNS setup",
-      "hideInstructions": "Hide DNS setup"
+      "dnsTxtHint": "Ownership check — add this TXT record at your DNS provider",
+      "dnsCnameHint": "Traffic routing — add this CNAME record at the same provider"
     }
   },
   "homeStats": {
