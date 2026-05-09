@@ -224,6 +224,17 @@ export type Me = {
   createdAt: string;
 };
 
+export type CustomDomain = {
+  id: number;
+  domain: string;
+  verificationToken: string;
+  verificationHost: string;
+  verified: boolean;
+  verifiedAt: string | null;
+  lastCheckedAt: string | null;
+  createdAt: string;
+};
+
 export type TwoFactorStatus = {
   enabled: boolean;
   lastUsedAt: string | null;

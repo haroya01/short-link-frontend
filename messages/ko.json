@@ -740,6 +740,28 @@
       "recoveryCopyFailed": "복사 실패",
       "recoveryDismiss": "확인했어요, 닫기"
     },
+    "customDomains": {
+      "title": "커스텀 도메인",
+      "description": "본인 도메인 (예: go.brand.com) 으로 단축 URL 을 서빙할 수 있어요. TXT 검증 + CNAME 두 단계 거치면 끝. TLS 는 도메인 앞에 Cloudflare 무료 plan 두는 방식이 가장 쉬움.",
+      "register": "등록",
+      "registering": "등록 중...",
+      "registerFailed": "도메인 등록에 실패했어요.",
+      "loading": "불러오는 중...",
+      "empty": "등록된 도메인이 없어요. 위 입력란에 본인 도메인을 입력해서 시작하세요.",
+      "statusPending": "검증 대기",
+      "statusVerified": "검증 완료",
+      "verify": "검증",
+      "verified": "검증되었어요",
+      "verifyFailed": "TXT 레코드를 찾지 못했어요. 전파에 1~5분 걸릴 수 있어요.",
+      "delete": "삭제",
+      "deleted": "삭제됨",
+      "deleteConfirm": "이 도메인을 제거할까요? 해당 도메인의 단축 URL 은 즉시 작동 중지됩니다.",
+      "deleteFailed": "삭제에 실패했어요.",
+      "step1": "1. DNS 에 TXT 레코드 추가:",
+      "step2": "2. 검증 완료 후, 같은 DNS 에 CNAME 레코드도 추가:",
+      "showInstructions": "DNS 설정 보기",
+      "hideInstructions": "DNS 설정 숨기기"
+    },
     "apiKeys": {
       "title": "API 키",
       "description": "스크립트나 자동화에서 kurl API를 호출할 때 사용해요. 발급된 키는 한 번만 표시되니 즉시 안전한 곳에 저장하세요.",

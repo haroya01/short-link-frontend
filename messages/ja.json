@@ -378,29 +378,83 @@
       "afterCreation": "作成後"
     },
     "section": {
-      "heatmap": { "title": "時間帯 × 曜日 ヒートマップ", "desc": "{tz} · 濃いほどクリック多" },
-      "daily": { "title": "日別クリック", "desc": "直近30日 · {tz}" },
-      "hourly": { "title": "時間帯", "desc": "0〜23時の分布" },
-      "device": { "title": "デバイス", "desc": "mobile · desktop · tablet · bot" },
-      "channel": { "title": "チャネル", "desc": "リファラードメイン分類" },
-      "os": { "title": "OS", "desc": "OS別の分布" },
-      "browser": { "title": "ブラウザ", "desc": "ブラウザ別の分布" },
-      "referrerHost": { "title": "リファラーホスト", "desc": "ホスト単位の集計" },
-      "referrerUrl": { "title": "リファラーURL TOP", "desc": "最も流入の多い出所" },
-      "utm": { "title": "UTM キャンペーン", "desc": "utm_campaign 別集計" },
-      "utmSource": { "title": "UTM ソース", "desc": "utm_source 別集計 (instagram, naver…)" },
-      "utmMedium": { "title": "UTM メディア", "desc": "utm_medium 別集計 (bio, ad, email…)" },
-      "utmContent": { "title": "UTM コンテンツ", "desc": "utm_content 別集計 (バナー / A-B 区分)" },
+      "heatmap": {
+        "title": "時間帯 × 曜日 ヒートマップ",
+        "desc": "{tz} · 濃いほどクリック多"
+      },
+      "daily": {
+        "title": "日別クリック",
+        "desc": "直近30日 · {tz}"
+      },
+      "hourly": {
+        "title": "時間帯",
+        "desc": "0〜23時の分布"
+      },
+      "device": {
+        "title": "デバイス",
+        "desc": "mobile · desktop · tablet · bot"
+      },
+      "channel": {
+        "title": "チャネル",
+        "desc": "リファラードメイン分類"
+      },
+      "os": {
+        "title": "OS",
+        "desc": "OS別の分布"
+      },
+      "browser": {
+        "title": "ブラウザ",
+        "desc": "ブラウザ別の分布"
+      },
+      "referrerHost": {
+        "title": "リファラーホスト",
+        "desc": "ホスト単位の集計"
+      },
+      "referrerUrl": {
+        "title": "リファラーURL TOP",
+        "desc": "最も流入の多い出所"
+      },
+      "utm": {
+        "title": "UTM キャンペーン",
+        "desc": "utm_campaign 別集計"
+      },
+      "utmSource": {
+        "title": "UTM ソース",
+        "desc": "utm_source 別集計 (instagram, naver…)"
+      },
+      "utmMedium": {
+        "title": "UTM メディア",
+        "desc": "utm_medium 別集計 (bio, ad, email…)"
+      },
+      "utmContent": {
+        "title": "UTM コンテンツ",
+        "desc": "utm_content 別集計 (バナー / A-B 区分)"
+      },
       "srcChannel": {
         "title": "共有チャネル (?src)",
         "desc": "短縮URL自体に乗せた ?src= ヒントで追跡 (QR/LINE/オフライン等 referrer が空の経路)",
         "empty": "?src パラメータで来たクリックはありません"
       },
-      "bots": { "title": "ボット種別", "desc": "Googlebot · Slackbot 等の分離" },
-      "country": { "title": "国", "desc": "GeoLite2-City IPルックアップ" },
-      "region": { "title": "地域", "desc": "state / province 単位" },
-      "city": { "title": "都市", "desc": "city 単位" },
-      "language": { "title": "言語", "desc": "ブラウザ Accept-Language 第1項目" },
+      "bots": {
+        "title": "ボット種別",
+        "desc": "Googlebot · Slackbot 等の分離"
+      },
+      "country": {
+        "title": "国",
+        "desc": "GeoLite2-City IPルックアップ"
+      },
+      "region": {
+        "title": "地域",
+        "desc": "state / province 単位"
+      },
+      "city": {
+        "title": "都市",
+        "desc": "city 単位"
+      },
+      "language": {
+        "title": "言語",
+        "desc": "ブラウザ Accept-Language 第1項目"
+      },
       "asn": {
         "title": "ネットワーク / ASN",
         "desc": "流入 IP の自律システム (ISP / クラウド) 分布。データセンター由来 {dc} 件は自動でボット扱いされます。",
@@ -412,11 +466,24 @@
     "noUtm": "UTMキャンペーンデータなし",
     "noBot": "ボットクリックなし",
     "weekday": {
-      "MONDAY": "月", "TUESDAY": "火", "WEDNESDAY": "水",
-      "THURSDAY": "木", "FRIDAY": "金", "SATURDAY": "土", "SUNDAY": "日"
+      "MONDAY": "月",
+      "TUESDAY": "火",
+      "WEDNESDAY": "水",
+      "THURSDAY": "木",
+      "FRIDAY": "金",
+      "SATURDAY": "土",
+      "SUNDAY": "日"
     },
-    "device": { "mobile": "モバイル", "desktop": "デスクトップ", "tablet": "タブレット", "bot": "ボット", "unknown": "その他" },
-    "country": { "unknown": "Unknown" },
+    "device": {
+      "mobile": "モバイル",
+      "desktop": "デスクトップ",
+      "tablet": "タブレット",
+      "bot": "ボット",
+      "unknown": "その他"
+    },
+    "country": {
+      "unknown": "Unknown"
+    },
     "countryTable": {
       "country": "国",
       "clicks": "クリック",
@@ -448,10 +515,22 @@
       "ofAllLinks": "of all links"
     },
     "section": {
-      "trend": { "title": "日別推移", "desc": "直近30日 · 登録 / リンク作成 / クリック" },
-      "topUsersByLinks": { "title": "Top ユーザー (リンク数)", "desc": "リンクを最も多く作成した10人" },
-      "topUsersByClicks": { "title": "Top ユーザー (クリック数)", "desc": "クリックを最も多く受けた10人" },
-      "topLinks": { "title": "Top リンク", "desc": "クリックの多い10件" },
+      "trend": {
+        "title": "日別推移",
+        "desc": "直近30日 · 登録 / リンク作成 / クリック"
+      },
+      "topUsersByLinks": {
+        "title": "Top ユーザー (リンク数)",
+        "desc": "リンクを最も多く作成した10人"
+      },
+      "topUsersByClicks": {
+        "title": "Top ユーザー (クリック数)",
+        "desc": "クリックを最も多く受けた10人"
+      },
+      "topLinks": {
+        "title": "Top リンク",
+        "desc": "クリックの多い10件"
+      },
       "redirectPerf": {
         "title": "リダイレクト性能",
         "desc": "短縮 URL → 遷移先までの処理遅延。インスタンス起動以降の累計。",
@@ -491,7 +570,11 @@
         "empty": "最近のエラーなし ✨"
       }
     },
-    "trend": { "signups": "登録", "links": "リンク", "clicks": "クリック" },
+    "trend": {
+      "signups": "登録",
+      "links": "リンク",
+      "clicks": "クリック"
+    },
     "table": {
       "user": "ユーザー",
       "shortCode": "短縮コード",
@@ -558,7 +641,10 @@
     "ja": "日本語"
   },
   "whyKurl": {
-    "th": { "feature": "機能", "others": "一般的な無料短縮" },
+    "th": {
+      "feature": "機能",
+      "others": "一般的な無料短縮"
+    },
     "paidTier": "有料プラン",
     "disclaimer": "比較対象: bit.ly / short.io / rebrandly / TinyURL の無料プラン (2026 時点)。",
     "rows": {
@@ -766,6 +852,28 @@
       "revokeFailed": "失効に失敗しました。",
       "revokeConfirm": "このキーを失効するとすぐに使えなくなります。続行しますか?",
       "revokedLabel": "失効済み"
+    },
+    "customDomains": {
+      "title": "カスタムドメイン",
+      "description": "自分のドメイン (例: go.brand.com) で短縮 URL を配信できます。TXT 検証 + CNAME の 2 ステップで設定完了。TLS は Cloudflare 無料プランを前段に置くのが最も簡単。",
+      "register": "登録",
+      "registering": "登録中...",
+      "registerFailed": "ドメインの登録に失敗しました。",
+      "loading": "読み込み中...",
+      "empty": "登録されたドメインはありません。上のフォームから始めてください。",
+      "statusPending": "検証待ち",
+      "statusVerified": "検証完了",
+      "verify": "検証",
+      "verified": "検証完了",
+      "verifyFailed": "TXT レコードが見つかりませんでした。伝播に 1〜5 分かかる場合があります。",
+      "delete": "削除",
+      "deleted": "削除しました",
+      "deleteConfirm": "このドメインを削除しますか？該当ドメインの短縮 URL は即座に動作停止します。",
+      "deleteFailed": "削除に失敗しました。",
+      "step1": "1. DNS プロバイダで TXT レコードを追加:",
+      "step2": "2. 検証完了後、CNAME レコードを追加:",
+      "showInstructions": "DNS 設定を表示",
+      "hideInstructions": "DNS 設定を隠す"
     }
   },
   "homeStats": {
