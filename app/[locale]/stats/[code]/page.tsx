@@ -49,7 +49,11 @@ export default function StatsPage() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setShortUrl(`${window.location.protocol}//${window.location.host}/${code}`);
+      const base =
+        process.env.NEXT_PUBLIC_SITE_URL ??
+        process.env.NEXT_PUBLIC_API_BASE ??
+        `${window.location.protocol}//${window.location.host}`;
+      setShortUrl(`${base.replace(/\/$/, "")}/${code}`);
     }
   }, [code]);
 
