@@ -29,6 +29,7 @@ export type MyLink = {
   expiresAt: string | null;
   clickCount: number;
   tags: string[];
+  clicksLast7d: number[];
 };
 
 export type TagSummary = {
