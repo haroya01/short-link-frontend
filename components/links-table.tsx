@@ -9,6 +9,8 @@ import { Table, TBody, TD, TH, THead, TR } from "./ui/table";
 import { CopyButton } from "./copy-button";
 import { ConfirmDialog } from "./ui/dialog";
 import { EditLinkDialog } from "./edit-link-dialog";
+import { Favicon } from "./favicon";
+import { Sparkline } from "./sparkline";
 import { useToast } from "./ui/toast";
 import { deleteLink } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -213,6 +215,7 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
                       className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900"
                       title={item.originalUrl}
                     >
+                      <Favicon url={item.originalUrl} />
                       <span className="truncate text-xs">
                         {truncateMiddle(item.originalUrl, 56)}
                       </span>
@@ -240,8 +243,16 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
                 <TD className="hidden whitespace-nowrap text-xs text-slate-500 lg:table-cell">
                   {item.expiresAt ? formatDate(item.expiresAt) : "—"}
                 </TD>
-                <TD className="text-right tabular-nums font-medium text-slate-900">
-                  {formatNumber(item.clickCount)}
+                <TD className="text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <Sparkline
+                      values={item.clicksLast7d ?? []}
+                      className="hidden text-slate-400 sm:inline-block"
+                    />
+                    <span className="tabular-nums font-medium text-slate-900">
+                      {formatNumber(item.clickCount)}
+                    </span>
+                  </div>
                 </TD>
                 <TD className="text-right">
                   <div className="flex items-center justify-end gap-1">

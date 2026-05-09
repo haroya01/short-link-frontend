@@ -34,7 +34,7 @@ export function WeeklyInsightsCard() {
   if (loading) {
     return (
       <div className="rounded-lg border border-slate-200 bg-white p-5">
-        <Skeleton className="h-3 w-20" />
+        <Skeleton className="h-4 w-24" />
         <Skeleton className="mt-3 h-7 w-32" />
         <Skeleton className="mt-2 h-3 w-48" />
       </div>
@@ -43,11 +43,9 @@ export function WeeklyInsightsCard() {
 
   if (!data || data.totalClicks === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/50 p-5 text-center">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
-          {t("eyebrow")}
-        </p>
-        <p className="mt-2 text-sm text-slate-600">{t("emptyDesc")}</p>
+      <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/50 p-5">
+        <p className="text-sm font-medium text-slate-700">{t("eyebrow")}</p>
+        <p className="mt-1 text-xs text-slate-500">{t("emptyDesc")}</p>
       </div>
     );
   }
@@ -55,9 +53,7 @@ export function WeeklyInsightsCard() {
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-5">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
-          {t("eyebrow")}
-        </p>
+        <p className="text-sm font-medium text-slate-700">{t("eyebrow")}</p>
         <DeltaBadge delta={data.deltaPercent} t={t} fmt={fmt} />
       </div>
 
@@ -155,7 +151,7 @@ function Stat({
 }) {
   const content = (
     <>
-      <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">{label}</p>
+      <p className="text-xs text-slate-500">{label}</p>
       <p
         className={
           (mono ? "font-mono " : "") +

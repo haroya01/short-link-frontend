@@ -495,14 +495,12 @@ function Header({
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
-          {shortCodeLabel}
-        </p>
         <a
           href={display}
           target="_blank"
           rel="noreferrer"
-          className="group mt-1 block truncate font-mono text-lg font-semibold text-slate-900 hover:text-accent-700 hover:underline"
+          aria-label={shortCodeLabel}
+          className="group block truncate font-mono text-lg font-semibold text-slate-900 hover:text-accent-700 hover:underline"
         >
           /{data.shortCode}
         </a>
