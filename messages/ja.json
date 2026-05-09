@@ -613,6 +613,30 @@
     "label": "共有",
     "copiedFallback": "URLをコピーしました"
   },
+  "weeklyInsights": {
+    "eyebrow": "直近 7 日のインサイト",
+    "emptyDesc": "今週はまだクリックがありません。チャネルに UTM を付けてキャンペーンを試してみてください。",
+    "humanClicks": "人間クリック",
+    "humanRatio": "全体の {percent}%",
+    "topLink": "トップリンク",
+    "topLinkSub": "{count} クリック · {source}",
+    "noUtm": "直接流入",
+    "peak": "ピーク時間",
+    "peakValue": "{day} {hour}時",
+    "peakSub": "この時間帯 {count} クリック",
+    "compareLabel": "前の 7 日",
+    "compareSub": "比較基準",
+    "noBaseline": "比較データなし",
+    "days": {
+      "sun": "日",
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土"
+    }
+  },
   "recent": {
     "title": "最近の短縮",
     "empty": "まだありません。上から短縮してみてください。",
