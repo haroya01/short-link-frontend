@@ -18,7 +18,9 @@ import type { CreateLinkResponse } from "@/types";
 export default function HomePage() {
   const { authenticated } = useAuth();
   const t = useTranslations("home");
-  const [result, setResult] = useState<{ res: CreateLinkResponse; original: string } | null>(null);
+  const [results, setResults] = useState<
+    { res: CreateLinkResponse; original: string; channel?: string }[] | null
+  >(null);
   const recent = useRecentLinks();
   const totals = usePublicTotals();
   const showStats = totals != null && (totals.links > 0 || totals.clicks > 0);
@@ -43,22 +45,37 @@ export default function HomePage() {
 
           <ShortenForm
             authenticated={authenticated}
-            onShortened={(res, original) => {
-              setResult({ res, original });
-              recordRecent({
-                shortCode: res.shortCode,
-                shortUrl: res.shortUrl,
-                originalUrl: original,
-                createdAt: Date.now(),
-                claimToken: res.claimToken,
-              });
+            onShortened={(items) => {
+              setResults(
+                items.map((it) => ({
+                  res: it.res,
+                  original: it.originalUrl,
+                  channel: it.channel,
+                })),
+              );
+              for (const it of items) {
+                recordRecent({
+                  shortCode: it.res.shortCode,
+                  shortUrl: it.res.shortUrl,
+                  originalUrl: it.originalUrl,
+                  createdAt: Date.now(),
+                  claimToken: it.res.claimToken,
+                });
+              }
             }}
           />
 
           <div className="mt-6 min-h-[64px]">
-            {result ? (
+            {results && results.length > 0 ? (
               <div className="space-y-3">
-                <ResultCard result={result.res} originalUrl={result.original} />
+                {results.map((r) => (
+                  <ResultCard
+                    key={r.res.shortCode}
+                    result={r.res}
+                    originalUrl={r.original}
+                    channel={r.channel}
+                  />
+                ))}
                 {!authenticated ? (
                   <Link
                     href="/login"
