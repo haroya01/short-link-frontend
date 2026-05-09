@@ -227,6 +227,26 @@ export type Me = {
   subscriptionCurrentPeriodEnd?: string | null;
 };
 
+export type MyProfile = {
+  username: string | null;
+  bio: string | null;
+  publicUrl: string | null;
+};
+
+export type PublicProfile = {
+  username: string;
+  bio: string | null;
+  links: PublicProfileLink[];
+};
+
+export type PublicProfileLink = {
+  shortCode: string;
+  shortUrl: string;
+  originalUrl: string;
+  ogTitle: string | null;
+  clickCount: number;
+};
+
 export type WeeklyInsights = {
   from: string;
   to: string;

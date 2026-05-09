@@ -539,6 +539,10 @@
     "label": "공유",
     "copiedFallback": "URL이 복사됐어요"
   },
+  "publicProfile": {
+    "empty": "이 사용자가 아직 공개한 링크가 없어요.",
+    "madeWith": "kurl.me 로 만들었어요"
+  },
   "weeklyInsights": {
     "eyebrow": "지난 7일 인사이트",
     "emptyDesc": "이번 주 클릭이 아직 없어요. 채널별 utm 을 붙여 캠페인을 돌려보세요.",
@@ -724,9 +728,26 @@
     "tabs": {
       "aria": "설정 섹션",
       "account": "계정",
+      "profile": "프로필",
       "security": "보안",
       "domains": "도메인",
       "data": "데이터"
+    },
+    "profile": {
+      "title": "공개 프로필",
+      "intro": "본인 단축 링크를 한 페이지로 모아 공유하세요. SNS bio 에 박는 1 개 링크.",
+      "usernameLabel": "username",
+      "usernameHint": "3~16자 영문 소문자 / 숫자 / 언더스코어. 한 번만 정할 수 있어요.",
+      "bioLabel": "한 줄 소개",
+      "bioPlaceholder": "예: 풀스택 개발자 · 사이드 프로젝트 만드는 중",
+      "save": "저장",
+      "saved": "저장됐어요",
+      "saveFailed": "저장에 실패했어요.",
+      "linksTitle": "공개할 링크 선택",
+      "linksHint": "토글 켠 링크가 프로필 페이지에 노출됩니다.",
+      "loading": "불러오는 중...",
+      "noLinks": "단축한 링크가 아직 없어요.",
+      "toggleFailed": "변경에 실패했어요."
     },
     "profileTitle": "프로필",
     "email": "이메일",
