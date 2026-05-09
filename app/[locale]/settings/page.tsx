@@ -14,6 +14,7 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { ApiKeysSection } from "@/components/api-keys-section";
 import { TwoFactorSection } from "@/components/two-factor-section";
+import { CustomDomainsSection } from "@/components/custom-domains-section";
 import type { Me } from "@/types";
 
 const COMMON_TIMEZONES = [
@@ -151,6 +152,10 @@ export default function SettingsPage() {
 
       <Section title={t("twofa.title")}>
         <TwoFactorSection />
+      </Section>
+
+      <Section title={t("customDomains.title")}>
+        <CustomDomainsSection />
       </Section>
 
       <Section title={t("apiKeys.title")}>

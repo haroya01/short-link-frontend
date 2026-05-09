@@ -10,6 +10,7 @@ import type {
   ClaimResult,
   CreateLinkRequest,
   CreateLinkResponse,
+  CustomDomain,
   DestinationSummary,
   IssuedApiKey,
   IssuedWebhook,
@@ -476,6 +477,25 @@ export async function bulkImportLinks(file: File): Promise<BulkImportSummary> {
     failed: Number(res.headers.get("X-Bulk-Failed") ?? 0),
     resultCsv: text,
   };
+}
+
+export async function listCustomDomains(): Promise<CustomDomain[]> {
+  return request<CustomDomain[]>("/api/v1/custom-domains", { method: "GET" });
+}
+
+export async function registerCustomDomain(domain: string): Promise<CustomDomain> {
+  return request<CustomDomain>("/api/v1/custom-domains", {
+    method: "POST",
+    body: { domain },
+  });
+}
+
+export async function verifyCustomDomain(id: number): Promise<CustomDomain> {
+  return request<CustomDomain>(`/api/v1/custom-domains/${id}/verify`, { method: "POST" });
+}
+
+export async function deleteCustomDomain(id: number): Promise<void> {
+  await request(`/api/v1/custom-domains/${id}`, { method: "DELETE" });
 }
 
 export async function getTwoFactorStatus(): Promise<TwoFactorStatus> {

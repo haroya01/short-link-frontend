@@ -378,29 +378,83 @@
       "afterCreation": "after creation"
     },
     "section": {
-      "heatmap": { "title": "Hour × day-of-week heatmap", "desc": "{tz} · darker = more clicks" },
-      "daily": { "title": "Daily clicks", "desc": "Last 30 days · {tz}" },
-      "hourly": { "title": "Hour of day", "desc": "0-23 distribution" },
-      "device": { "title": "Device", "desc": "mobile · desktop · tablet · bot" },
-      "channel": { "title": "Channel", "desc": "Referrer domain classification" },
-      "os": { "title": "OS", "desc": "Operating system distribution" },
-      "browser": { "title": "Browser", "desc": "Browser distribution" },
-      "referrerHost": { "title": "Referrer hosts", "desc": "Aggregated by host" },
-      "referrerUrl": { "title": "Top referrer URLs", "desc": "Most common sources" },
-      "utm": { "title": "UTM campaigns", "desc": "Aggregated by utm_campaign" },
-      "utmSource": { "title": "UTM source", "desc": "By utm_source (instagram, naver, ...)" },
-      "utmMedium": { "title": "UTM medium", "desc": "By utm_medium (bio, ad, email, ...)" },
-      "utmContent": { "title": "UTM content", "desc": "By utm_content (banner / A-B slot)" },
+      "heatmap": {
+        "title": "Hour × day-of-week heatmap",
+        "desc": "{tz} · darker = more clicks"
+      },
+      "daily": {
+        "title": "Daily clicks",
+        "desc": "Last 30 days · {tz}"
+      },
+      "hourly": {
+        "title": "Hour of day",
+        "desc": "0-23 distribution"
+      },
+      "device": {
+        "title": "Device",
+        "desc": "mobile · desktop · tablet · bot"
+      },
+      "channel": {
+        "title": "Channel",
+        "desc": "Referrer domain classification"
+      },
+      "os": {
+        "title": "OS",
+        "desc": "Operating system distribution"
+      },
+      "browser": {
+        "title": "Browser",
+        "desc": "Browser distribution"
+      },
+      "referrerHost": {
+        "title": "Referrer hosts",
+        "desc": "Aggregated by host"
+      },
+      "referrerUrl": {
+        "title": "Top referrer URLs",
+        "desc": "Most common sources"
+      },
+      "utm": {
+        "title": "UTM campaigns",
+        "desc": "Aggregated by utm_campaign"
+      },
+      "utmSource": {
+        "title": "UTM source",
+        "desc": "By utm_source (instagram, naver, ...)"
+      },
+      "utmMedium": {
+        "title": "UTM medium",
+        "desc": "By utm_medium (bio, ad, email, ...)"
+      },
+      "utmContent": {
+        "title": "UTM content",
+        "desc": "By utm_content (banner / A-B slot)"
+      },
       "srcChannel": {
         "title": "Share channel (?src)",
         "desc": "Tracked via the ?src= hint on the short URL itself — covers QR scans, KakaoTalk, offline channels where the referrer header is missing.",
         "empty": "No clicks carried a ?src parameter."
       },
-      "bots": { "title": "Bot types", "desc": "Googlebot · Slackbot etc." },
-      "country": { "title": "Country", "desc": "GeoLite2-City IP lookup" },
-      "region": { "title": "Region", "desc": "State / province" },
-      "city": { "title": "City", "desc": "City level" },
-      "language": { "title": "Language", "desc": "Browser Accept-Language" },
+      "bots": {
+        "title": "Bot types",
+        "desc": "Googlebot · Slackbot etc."
+      },
+      "country": {
+        "title": "Country",
+        "desc": "GeoLite2-City IP lookup"
+      },
+      "region": {
+        "title": "Region",
+        "desc": "State / province"
+      },
+      "city": {
+        "title": "City",
+        "desc": "City level"
+      },
+      "language": {
+        "title": "Language",
+        "desc": "Browser Accept-Language"
+      },
       "asn": {
         "title": "Network / ASN",
         "desc": "Autonomous system (ISP / cloud provider) distribution. {dc} datacenter clicks were auto-flagged as bots.",
@@ -412,11 +466,24 @@
     "noUtm": "No UTM campaign data",
     "noBot": "No bot clicks",
     "weekday": {
-      "MONDAY": "Mon", "TUESDAY": "Tue", "WEDNESDAY": "Wed",
-      "THURSDAY": "Thu", "FRIDAY": "Fri", "SATURDAY": "Sat", "SUNDAY": "Sun"
+      "MONDAY": "Mon",
+      "TUESDAY": "Tue",
+      "WEDNESDAY": "Wed",
+      "THURSDAY": "Thu",
+      "FRIDAY": "Fri",
+      "SATURDAY": "Sat",
+      "SUNDAY": "Sun"
     },
-    "device": { "mobile": "Mobile", "desktop": "Desktop", "tablet": "Tablet", "bot": "Bot", "unknown": "Other" },
-    "country": { "unknown": "Unknown" },
+    "device": {
+      "mobile": "Mobile",
+      "desktop": "Desktop",
+      "tablet": "Tablet",
+      "bot": "Bot",
+      "unknown": "Other"
+    },
+    "country": {
+      "unknown": "Unknown"
+    },
     "countryTable": {
       "country": "Country",
       "clicks": "Clicks",
@@ -448,10 +515,22 @@
       "ofAllLinks": "of all links"
     },
     "section": {
-      "trend": { "title": "Daily trend", "desc": "30 days · signup / link / click" },
-      "topUsersByLinks": { "title": "Top users (by links)", "desc": "Top 10 link creators" },
-      "topUsersByClicks": { "title": "Top users (by clicks)", "desc": "Top 10 click receivers" },
-      "topLinks": { "title": "Top links", "desc": "Top 10 most clicked" },
+      "trend": {
+        "title": "Daily trend",
+        "desc": "30 days · signup / link / click"
+      },
+      "topUsersByLinks": {
+        "title": "Top users (by links)",
+        "desc": "Top 10 link creators"
+      },
+      "topUsersByClicks": {
+        "title": "Top users (by clicks)",
+        "desc": "Top 10 click receivers"
+      },
+      "topLinks": {
+        "title": "Top links",
+        "desc": "Top 10 most clicked"
+      },
       "redirectPerf": {
         "title": "Redirect performance",
         "desc": "Short-URL → destination latency. Cumulative since this instance started.",
@@ -491,7 +570,11 @@
         "empty": "No recent errors ✨"
       }
     },
-    "trend": { "signups": "Signups", "links": "Links", "clicks": "Clicks" },
+    "trend": {
+      "signups": "Signups",
+      "links": "Links",
+      "clicks": "Clicks"
+    },
     "table": {
       "user": "User",
       "shortCode": "Short code",
@@ -558,7 +641,10 @@
     "ja": "日本語"
   },
   "whyKurl": {
-    "th": { "feature": "Feature", "others": "Typical free shortener" },
+    "th": {
+      "feature": "Feature",
+      "others": "Typical free shortener"
+    },
     "paidTier": "Paid tier",
     "disclaimer": "Compared against bit.ly / short.io / rebrandly / TinyURL free tiers (2026).",
     "rows": {
@@ -766,6 +852,28 @@
       "revokeFailed": "Failed to revoke.",
       "revokeConfirm": "Revoking this key disables it immediately. Continue?",
       "revokedLabel": "Revoked"
+    },
+    "customDomains": {
+      "title": "Custom domains",
+      "description": "Serve short links from your own domain (e.g. go.brand.com). TXT verification + CNAME, two steps. Easiest TLS path: front your domain with Cloudflare free plan.",
+      "register": "Register",
+      "registering": "Registering...",
+      "registerFailed": "Failed to register domain.",
+      "loading": "Loading...",
+      "empty": "No domains yet. Enter your domain above to start.",
+      "statusPending": "Pending",
+      "statusVerified": "Verified",
+      "verify": "Verify",
+      "verified": "Verified",
+      "verifyFailed": "TXT record not found. DNS may take 1–5 min to propagate.",
+      "delete": "Delete",
+      "deleted": "Deleted",
+      "deleteConfirm": "Remove this domain? Short URLs on this domain will stop working immediately.",
+      "deleteFailed": "Failed to delete.",
+      "step1": "1. Add this TXT record at your DNS provider:",
+      "step2": "2. After verification, add this CNAME record:",
+      "showInstructions": "Show DNS setup",
+      "hideInstructions": "Hide DNS setup"
     }
   },
   "homeStats": {
