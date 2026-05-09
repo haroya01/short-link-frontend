@@ -616,7 +616,9 @@
     "downloadPng": "PNGダウンロード",
     "close": "閉じる",
     "srcLabel": "トラッキングタグ (任意)",
-    "srcPlaceholder": "例: poster, offline-card"
+    "srcPlaceholder": "例: poster, offline-card",
+    "colorLabel": "色",
+    "logoLabel": "中央に遷移先 favicon を配置"
   },
   "share": {
     "label": "共有",

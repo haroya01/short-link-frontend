@@ -533,7 +533,9 @@
     "downloadPng": "PNG 다운로드",
     "close": "닫기",
     "srcLabel": "추적 태그 (선택)",
-    "srcPlaceholder": "예: poster, offline-card"
+    "srcPlaceholder": "예: poster, offline-card",
+    "colorLabel": "색상",
+    "logoLabel": "도착지 favicon 가운데에 박기"
   },
   "share": {
     "label": "공유",

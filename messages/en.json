@@ -616,7 +616,9 @@
     "downloadPng": "Download PNG",
     "close": "Close",
     "srcLabel": "Tracking tag (optional)",
-    "srcPlaceholder": "e.g. poster, offline-card"
+    "srcPlaceholder": "e.g. poster, offline-card",
+    "colorLabel": "Color",
+    "logoLabel": "Drop the destination favicon in the center"
   },
   "share": {
     "label": "Share",
