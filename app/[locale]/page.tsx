@@ -96,15 +96,28 @@ export default function HomePage() {
         </Section>
       )}
 
-      {showStats && (
-        <Section
-          eyebrow={t("statsEyebrow")}
-          title={t("statsTitle")}
-          subhead={t("statsSubhead")}
-        >
+      {/*
+       * Counters always render so the layout doesn't shift when usePublicTotals resolves —
+       * skeleton placeholders claim the same height as the final value, dropping CLS to ~0.
+       */}
+      <Section
+        eyebrow={t("statsEyebrow")}
+        title={t("statsTitle")}
+        subhead={t("statsSubhead")}
+      >
+        {totals != null && showStats ? (
           <HomeCounters totals={totals} />
-        </Section>
-      )}
+        ) : (
+          <dl className="grid grid-cols-2 divide-x divide-slate-100 text-center" aria-hidden>
+            {[0, 1].map((i) => (
+              <div key={i} className="px-6 py-2">
+                <div className="mx-auto h-12 w-24 animate-pulse rounded bg-slate-100 sm:h-14" />
+                <div className="mx-auto mt-2 h-3 w-16 rounded bg-slate-50" />
+              </div>
+            ))}
+          </dl>
+        )}
+      </Section>
 
       <Section
         wide
