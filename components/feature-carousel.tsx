@@ -70,7 +70,7 @@ export function FeatureCarousel() {
         visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
       )}
     >
-      <div className="grid items-stretch gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 lg:grid-cols-[1fr_1.4fr]">
+      <div className="grid items-stretch gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 lg:grid-cols-[1fr_1.6fr]">
         <div className="flex flex-col bg-white">
           {FEATURES.map((f, i) => {
             const Icon = f.icon;
@@ -84,8 +84,8 @@ export function FeatureCarousel() {
                   setPaused(true);
                 }}
                 className={cn(
-                  "relative flex items-start gap-3 border-b border-slate-100 px-5 py-3.5 text-left transition-colors last:border-b-0",
-                  isActive ? "bg-accent-50/60" : "hover:bg-slate-50",
+                  "relative flex items-start gap-3 border-b border-slate-100 px-4 text-left transition-all last:border-b-0",
+                  isActive ? "bg-accent-50/60 py-3" : "py-2.5 hover:bg-slate-50",
                 )}
               >
                 <span
@@ -96,24 +96,26 @@ export function FeatureCarousel() {
                 />
                 <span
                   className={cn(
-                    "mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-md transition-colors",
+                    "mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-md transition-colors",
                     isActive ? "bg-accent-600 text-white" : "bg-slate-100 text-slate-500",
                   )}
                 >
-                  <Icon className="h-3.5 w-3.5" />
+                  <Icon className="h-3 w-3" />
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <h3
                     className={cn(
-                      "text-sm font-semibold transition-colors",
+                      "text-[13px] font-semibold leading-tight transition-colors",
                       isActive ? "text-accent-800" : "text-slate-900",
                     )}
                   >
                     {t(`${f.key}.title`)}
                   </h3>
-                  <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                    {t(`${f.key}.desc`)}
-                  </p>
+                  {isActive && (
+                    <p className="mt-1 text-[11px] leading-snug text-slate-500">
+                      {t(`${f.key}.desc`)}
+                    </p>
+                  )}
                 </div>
               </button>
             );
@@ -136,7 +138,7 @@ export function FeatureCarousel() {
           </div>
         </div>
 
-        <div className="relative min-h-[320px] overflow-hidden bg-white">
+        <div className="relative min-h-[420px] overflow-hidden bg-white">
           <div key={active} className="absolute inset-0 flex animate-fade-in flex-col p-6">
             <div className="mb-4 flex items-center gap-2 text-xs text-slate-500">
               <ActiveIcon className="h-3.5 w-3.5 text-accent-600" />
