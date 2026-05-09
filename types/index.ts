@@ -223,6 +223,8 @@ export type Me = {
   role: "USER" | "ADMIN";
   timezone?: string;
   createdAt: string;
+  tier?: "FREE" | "PRO";
+  subscriptionCurrentPeriodEnd?: string | null;
 };
 
 export type WeeklyInsights = {
