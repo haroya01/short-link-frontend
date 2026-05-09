@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Copy, Download, Loader2, QrCode, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import QRCode from "qrcode";
@@ -10,6 +10,17 @@ import { useToast } from "./ui/toast";
 import { truncateMiddle } from "@/lib/utils";
 
 type Props = { url?: string; value?: string; filename?: string };
+
+type Palette = { id: string; dark: string; light: string };
+
+const PALETTES: Palette[] = [
+  { id: "slate", dark: "#0F172A", light: "#FFFFFF" },
+  { id: "ink", dark: "#000000", light: "#FFFFFF" },
+  { id: "ocean", dark: "#0369A1", light: "#F0F9FF" },
+  { id: "forest", dark: "#15803D", light: "#F0FDF4" },
+  { id: "rose", dark: "#BE123C", light: "#FFF1F2" },
+  { id: "violet", dark: "#6D28D9", light: "#F5F3FF" },
+];
 
 /**
  * Apply a {@code ?src=…} hint to the QR target so stats attribute scans separately from regular
@@ -27,6 +38,15 @@ function withQrSrc(url: string, hint: string): string {
     return u.toString();
   } catch {
     return url;
+  }
+}
+
+function destinationFaviconUrl(url: string): string | null {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    return `https://www.google.com/s2/favicons?domain=${host}&sz=128`;
+  } catch {
+    return null;
   }
 }
 
@@ -58,24 +78,47 @@ function QrModal({
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [srcHint, setSrcHint] = useState("");
+  const [paletteId, setPaletteId] = useState<string>(PALETTES[0].id);
+  const [withLogo, setWithLogo] = useState(false);
   const { toast } = useToast();
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const target = useMemo(() => withQrSrc(baseUrl, srcHint), [baseUrl, srcHint]);
+  const palette = PALETTES.find((p) => p.id === paletteId) ?? PALETTES[0];
+  const logoUrl = useMemo(() => (withLogo ? destinationFaviconUrl(baseUrl) : null), [
+    baseUrl,
+    withLogo,
+  ]);
 
+  // Render QR onto a canvas. When a logo is requested, we draw it center-cropped over a small
+  // white square so the underlying modules stay readable; bumped error-correction to H to absorb
+  // the obstruction. The same canvas drives both preview and download.
   useEffect(() => {
     let cancelled = false;
-    QRCode.toDataURL(target, {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    QRCode.toCanvas(canvas, target, {
       width: 512,
       margin: 1,
-      color: { dark: "#0F172A", light: "#FFFFFF" },
-      errorCorrectionLevel: "M",
-    }).then((url) => {
-      if (!cancelled) setDataUrl(url);
-    });
+      color: { dark: palette.dark, light: palette.light },
+      errorCorrectionLevel: withLogo ? "H" : "M",
+    })
+      .then(async () => {
+        if (cancelled) return;
+        if (logoUrl) {
+          await drawLogo(canvas, logoUrl, palette.light);
+        }
+        if (!cancelled) setDataUrl(canvas.toDataURL("image/png"));
+      })
+      .catch(() => {
+        if (!cancelled) setDataUrl(null);
+      });
+
     return () => {
       cancelled = true;
     };
-  }, [target]);
+  }, [target, palette.dark, palette.light, logoUrl, withLogo]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -123,20 +166,13 @@ function QrModal({
         </button>
 
         <div className="flex flex-col items-center px-6 py-6">
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
-            {t("title")}
-          </p>
-          <div className="mt-3 flex h-64 w-64 items-center justify-center rounded-md border border-slate-200 bg-white p-2">
-            {dataUrl ? (
-              <img
-                src={dataUrl}
-                alt="QR code"
-                className="h-full w-full"
-                draggable={false}
-              />
-            ) : (
-              <Loader2 className="h-6 w-6 animate-spin text-slate-300" />
-            )}
+          <p className="text-sm font-medium text-slate-700">{t("title")}</p>
+          <div
+            className="mt-3 flex h-64 w-64 items-center justify-center rounded-md border border-slate-200 p-2"
+            style={{ backgroundColor: palette.light }}
+          >
+            <canvas ref={canvasRef} className="h-full w-full" />
+            {!dataUrl && <Loader2 className="absolute h-6 w-6 animate-spin text-slate-300" />}
           </div>
           <p
             className="mt-3 max-w-full truncate text-center text-xs text-slate-500"
@@ -145,10 +181,51 @@ function QrModal({
             {truncateMiddle(target, 48)}
           </p>
 
-          <label className="mt-4 w-full space-y-1">
-            <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
-              {t("srcLabel")}
-            </span>
+          <div className="mt-4 w-full space-y-2">
+            <p className="text-xs text-slate-500">{t("colorLabel")}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {PALETTES.map((p) => {
+                const active = p.id === paletteId;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    aria-label={p.id}
+                    onClick={() => setPaletteId(p.id)}
+                    className={
+                      "h-7 w-7 rounded-full border transition " +
+                      (active ? "ring-2 ring-offset-1 ring-slate-900" : "border-slate-200")
+                    }
+                    style={{ backgroundColor: p.dark }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+
+          <label className="mt-3 flex w-full items-center justify-between gap-2 text-xs text-slate-700">
+            <span>{t("logoLabel")}</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={withLogo}
+              onClick={() => setWithLogo((v) => !v)}
+              className={
+                "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition " +
+                (withLogo ? "bg-slate-900" : "bg-slate-200")
+              }
+            >
+              <span
+                className={
+                  "inline-block h-4 w-4 transform rounded-full bg-white shadow transition " +
+                  (withLogo ? "translate-x-4" : "translate-x-0.5")
+                }
+              />
+            </button>
+          </label>
+
+          <label className="mt-3 w-full space-y-1">
+            <span className="text-xs text-slate-500">{t("srcLabel")}</span>
             <Input
               type="text"
               value={srcHint}
@@ -189,4 +266,25 @@ function QrModal({
       </div>
     </div>
   );
+}
+
+async function drawLogo(canvas: HTMLCanvasElement, logoUrl: string, bgColor: string) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error("logo load failed"));
+    img.src = logoUrl;
+  }).catch(() => null);
+  if (!img.complete || img.naturalWidth === 0) return;
+  const size = canvas.width;
+  const logoSize = Math.round(size * 0.18);
+  const padding = Math.round(logoSize * 0.18);
+  const x = (size - logoSize) / 2;
+  const y = (size - logoSize) / 2;
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(x - padding, y - padding, logoSize + padding * 2, logoSize + padding * 2);
+  ctx.drawImage(img, x, y, logoSize, logoSize);
 }
