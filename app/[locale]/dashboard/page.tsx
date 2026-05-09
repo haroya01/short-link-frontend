@@ -13,6 +13,7 @@ import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { LinksTable } from "@/components/links-table";
 import { BulkImportDialog } from "@/components/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/my-links-filters";
+import { WeeklyInsightsCard } from "@/components/weekly-insights-card";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
 import { useToast } from "@/components/ui/toast";
@@ -128,6 +129,8 @@ export default function DashboardPage() {
         onClose={() => setBulkOpen(false)}
         onImported={() => setReload((n) => n + 1)}
       />
+
+      <WeeklyInsightsCard />
 
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />

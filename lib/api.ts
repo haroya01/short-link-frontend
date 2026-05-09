@@ -31,6 +31,7 @@ import type {
   UpdateLinkRequest,
   WebhookConfigPatch,
   WebhookSummary,
+  WeeklyInsights,
 } from "@/types";
 
 const ACCESS_TOKEN_KEY = "short-link:access-token";
@@ -346,6 +347,10 @@ export async function updateMyTimezone(timezone: string): Promise<Me> {
     method: "PUT",
     body: { timezone },
   });
+}
+
+export async function getWeeklyInsights(): Promise<WeeklyInsights> {
+  return request<WeeklyInsights>("/api/v1/users/me/insights/week", { method: "GET" });
 }
 
 export async function deleteMyAccount(): Promise<void> {

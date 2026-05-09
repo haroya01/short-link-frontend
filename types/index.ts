@@ -224,6 +224,27 @@ export type Me = {
   createdAt: string;
 };
 
+export type WeeklyInsights = {
+  from: string;
+  to: string;
+  totalClicks: number;
+  humanClicks: number;
+  previousHumanClicks: number;
+  deltaPercent: number | null;
+  humanRatio: number | null;
+  topLink: {
+    shortCode: string;
+    originalUrl: string;
+    clicks: number;
+    topUtmSource: string | null;
+  } | null;
+  peak: {
+    dayOfWeek: number;
+    hour: number;
+    clicks: number;
+  } | null;
+};
+
 export type CustomDomain = {
   id: number;
   domain: string;

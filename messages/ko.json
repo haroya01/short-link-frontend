@@ -530,6 +530,30 @@
     "label": "공유",
     "copiedFallback": "URL이 복사됐어요"
   },
+  "weeklyInsights": {
+    "eyebrow": "지난 7일 인사이트",
+    "emptyDesc": "이번 주 클릭이 아직 없어요. 채널별 utm 을 붙여 캠페인을 돌려보세요.",
+    "humanClicks": "사람 클릭",
+    "humanRatio": "전체의 {percent}%",
+    "topLink": "탑 링크",
+    "topLinkSub": "{count} 클릭 · {source}",
+    "noUtm": "직접 유입",
+    "peak": "피크 시간",
+    "peakValue": "{day} {hour}시",
+    "peakSub": "이 시간대 {count} 클릭",
+    "compareLabel": "그 전 7일",
+    "compareSub": "비교 기준",
+    "noBaseline": "비교 데이터 없음",
+    "days": {
+      "sun": "일",
+      "mon": "월",
+      "tue": "화",
+      "wed": "수",
+      "thu": "목",
+      "fri": "금",
+      "sat": "토"
+    }
+  },
   "recent": {
     "title": "최근 단축",
     "empty": "아직 없어요. 위에서 단축해보세요.",

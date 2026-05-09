@@ -613,6 +613,30 @@
     "label": "Share",
     "copiedFallback": "URL copied"
   },
+  "weeklyInsights": {
+    "eyebrow": "Last 7 days",
+    "emptyDesc": "No clicks yet this week. Try tagging channels with UTM to start filling this in.",
+    "humanClicks": "Human clicks",
+    "humanRatio": "{percent}% of total",
+    "topLink": "Top link",
+    "topLinkSub": "{count} clicks · {source}",
+    "noUtm": "direct",
+    "peak": "Peak time",
+    "peakValue": "{day} {hour}:00",
+    "peakSub": "{count} clicks at peak",
+    "compareLabel": "Previous 7d",
+    "compareSub": "Comparison baseline",
+    "noBaseline": "No baseline yet",
+    "days": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    }
+  },
   "recent": {
     "title": "Recent shortenings",
     "empty": "Nothing yet — shorten one above.",
