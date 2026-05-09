@@ -12,17 +12,25 @@ import type { CreateLinkResponse } from "@/types";
 type Props = {
   result: CreateLinkResponse;
   originalUrl: string;
+  channel?: string;
 };
 
-export function ResultCard({ result, originalUrl }: Props) {
+export function ResultCard({ result, originalUrl, channel }: Props) {
   const t = useTranslations("result");
   const { toast } = useToast();
 
   return (
     <div className="animate-fade-in rounded-lg border border-accent-200 bg-accent-50/40 p-5">
-      <div className="mb-3 flex items-center gap-1.5 text-xs font-medium text-accent-700">
-        <CheckCircle2 className="h-3.5 w-3.5" />
-        {t("completed")}
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 text-xs font-medium text-accent-700">
+          <CheckCircle2 className="h-3.5 w-3.5" />
+          {t("completed")}
+        </div>
+        {channel && (
+          <span className="rounded-full bg-accent-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent-700">
+            {channel}
+          </span>
+        )}
       </div>
 
       <div className="space-y-3">

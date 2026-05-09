@@ -1,25 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Copy, Download, Loader2, QrCode, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import QRCode from "qrcode";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { useToast } from "./ui/toast";
 import { truncateMiddle } from "@/lib/utils";
 
 type Props = { url?: string; value?: string; filename?: string };
 
 /**
- * QR target gets a {@code ?src=qr} hint so stats can attribute scans separately from regular
- * clicks (referrer is empty for camera scans). If the URL already carries a query, append; if it
- * already has src, keep the user's value.
+ * Apply a {@code ?src=…} hint to the QR target so stats attribute scans separately from regular
+ * clicks (referrer is empty for camera scans). The user can override the hint to tag specific
+ * placements ({@code poster}, {@code offline-card}, etc) — empty falls back to {@code qr}, and a
+ * pre-existing {@code ?src=} on the URL takes priority over both.
  */
-function withQrSrc(url: string): string {
+function withQrSrc(url: string, hint: string): string {
   if (!url) return url;
   try {
     const u = new URL(url);
-    if (!u.searchParams.has("src")) u.searchParams.set("src", "qr");
+    if (u.searchParams.has("src")) return u.toString();
+    const cleaned = hint.trim().replace(/[^A-Za-z0-9_-]/g, "").slice(0, 32);
+    u.searchParams.set("src", cleaned ? `qr-${cleaned}` : "qr");
     return u.toString();
   } catch {
     return url;
@@ -27,33 +31,36 @@ function withQrSrc(url: string): string {
 }
 
 export function QrButton({ url, value, filename = "qrcode.png" }: Props) {
-  const target = withQrSrc(url ?? value ?? "");
+  const baseUrl = url ?? value ?? "";
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <Button variant="outline" size="sm" onClick={() => setOpen(true)} disabled={!target}>
+      <Button variant="outline" size="sm" onClick={() => setOpen(true)} disabled={!baseUrl}>
         <QrCode className="h-3.5 w-3.5" />
         <span className="hidden sm:inline">QR</span>
       </Button>
-      {open && <QrModal target={target} filename={filename} onClose={() => setOpen(false)} />}
+      {open && <QrModal baseUrl={baseUrl} filename={filename} onClose={() => setOpen(false)} />}
     </>
   );
 }
 
 function QrModal({
-  target,
+  baseUrl,
   filename,
   onClose,
 }: {
-  target: string;
+  baseUrl: string;
   filename: string;
   onClose: () => void;
 }) {
   const t = useTranslations("qr");
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [srcHint, setSrcHint] = useState("");
   const { toast } = useToast();
+
+  const target = useMemo(() => withQrSrc(baseUrl, srcHint), [baseUrl, srcHint]);
 
   useEffect(() => {
     let cancelled = false;
@@ -137,6 +144,20 @@ function QrModal({
           >
             {truncateMiddle(target, 48)}
           </p>
+
+          <label className="mt-4 w-full space-y-1">
+            <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+              {t("srcLabel")}
+            </span>
+            <Input
+              type="text"
+              value={srcHint}
+              onChange={(e) => setSrcHint(e.target.value)}
+              placeholder={t("srcPlaceholder")}
+              className="h-8 font-mono text-xs"
+              maxLength={32}
+            />
+          </label>
         </div>
 
         <div className="grid grid-cols-2 gap-px border-t border-slate-100 bg-slate-100">

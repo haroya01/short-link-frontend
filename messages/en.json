@@ -95,10 +95,14 @@
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
     "submit": "Shorten",
+    "submitBatch": "Make {count} variants",
     "advancedToggle": "Advanced options",
     "customCodeLabel": "Custom code (3-16 letters/digits only)",
     "customCodePlaceholder": "myLink2026",
     "expiresAtLabel": "Expires at (optional)",
+    "utmTitle": "Campaign / channels (optional)",
+    "utmHint": "Auto-appends utm_* params",
+    "campaignPlaceholder": "Campaign name (e.g. spring-event)",
     "errors": {
       "empty": "Please enter a URL.",
       "invalid": "URL must start with http:// or https://.",
@@ -601,7 +605,9 @@
     "copyUrl": "Copy URL",
     "copied": "Copied",
     "downloadPng": "Download PNG",
-    "close": "Close"
+    "close": "Close",
+    "srcLabel": "Tracking tag (optional)",
+    "srcPlaceholder": "e.g. poster, offline-card"
   },
   "share": {
     "label": "Share",

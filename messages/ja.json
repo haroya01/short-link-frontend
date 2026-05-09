@@ -95,10 +95,14 @@
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
     "submit": "短縮する",
+    "submitBatch": "{count}個のチャネルを作成",
     "advancedToggle": "詳細オプション",
     "customCodeLabel": "カスタムコード (3-16文字、英数字のみ)",
     "customCodePlaceholder": "myLink2026",
     "expiresAtLabel": "有効期限 (任意)",
+    "utmTitle": "キャンペーン / チャネル (任意)",
+    "utmHint": "選択時に utm_* パラメータを自動追加",
+    "campaignPlaceholder": "キャンペーン名 (例: spring-event)",
     "errors": {
       "empty": "URLを入力してください。",
       "invalid": "http:// または https:// で始まる正しいURLが必要です。",
@@ -601,7 +605,9 @@
     "copyUrl": "URLコピー",
     "copied": "コピー済み",
     "downloadPng": "PNGダウンロード",
-    "close": "閉じる"
+    "close": "閉じる",
+    "srcLabel": "トラッキングタグ (任意)",
+    "srcPlaceholder": "例: poster, offline-card"
   },
   "share": {
     "label": "共有",
