@@ -87,7 +87,10 @@
     "statsSubhead": "Total links shortened and clicks tracked so far.",
     "featuresEyebrow": "what you get",
     "featuresTitle": "More than just shortening",
-    "featuresSubhead": "Live click feed · A/B + geo routing · HMAC webhooks · 2FA · auto-insights — everything you need to run links."
+    "featuresSubhead": "Live click feed · A/B + geo routing · HMAC webhooks · 2FA · auto-insights — everything you need to run links.",
+    "whyEyebrow": "why kurl",
+    "whyTitle": "Why don't other shorteners ship this?",
+    "whySubhead": "Features usually gated behind enterprise tiers — free here, on by default."
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
@@ -533,6 +536,45 @@
     "en": "English",
     "ko": "한국어",
     "ja": "日本語"
+  },
+  "whyKurl": {
+    "th": { "feature": "Feature", "others": "Typical free shortener" },
+    "paidTier": "Paid tier",
+    "disclaimer": "Compared against bit.ly / short.io / rebrandly / TinyURL free tiers (2026).",
+    "rows": {
+      "abtest": {
+        "label": "A/B split (weighted routing)",
+        "note": "One short URL → multiple destinations by weight. Usually enterprise-only."
+      },
+      "geoRouting": {
+        "label": "Per-country destinations",
+        "note": "Auto-route visitors to a page tailored to their country. Almost no free shortener offers this."
+      },
+      "webhooks": {
+        "label": "HMAC-signed webhooks",
+        "note": "SHA-256 signed POST per click + cost controls (batch / sample / quota)."
+      },
+      "realtime": {
+        "label": "Live click feed (SSE)",
+        "note": "Watch clicks arrive on the stats page in real time. Rare in this category."
+      },
+      "insights": {
+        "label": "Automatic insights",
+        "note": "Peak hour, return rate, half-life, velocity — surfaced without setup."
+      },
+      "asnTracking": {
+        "label": "ASN / datacenter IP classification",
+        "note": "Auto-flags cloud egress (AWS/GCP/Azure) as bots — kurl-specific."
+      },
+      "botDefense": {
+        "label": "Layered bot defence",
+        "note": "Safe Browsing + anonymous-shorten PoW + ASN auto-classification."
+      },
+      "twofa": {
+        "label": "2FA TOTP + recovery codes",
+        "note": "Google Authenticator + 10 single-use recovery codes. Often paid elsewhere."
+      }
+    }
   },
   "footer": {
     "copyright": "© {year} kurl",

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { ShortenForm } from "@/components/shorten-form";
 import { ResultCard } from "@/components/result-card";
 import { FeatureCarousel } from "@/components/feature-carousel";
+import { WhyKurl } from "@/components/why-kurl";
 import { HomeFaq } from "@/components/home-faq";
 import { HomeCounters, usePublicTotals } from "@/components/home-counters";
 import { RecentLinks } from "@/components/recent-links";
@@ -112,6 +113,15 @@ export default function HomePage() {
         subhead={t("featuresSubhead")}
       >
         <FeatureCarousel />
+      </Section>
+
+      <Section
+        wide
+        eyebrow={t("whyEyebrow")}
+        title={t("whyTitle")}
+        subhead={t("whySubhead")}
+      >
+        <WhyKurl />
       </Section>
 
       <Section>
