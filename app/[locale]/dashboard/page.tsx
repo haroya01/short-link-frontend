@@ -15,11 +15,14 @@ import { BulkImportDialog } from "@/components/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/my-links-filters";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
+import { useToast } from "@/components/ui/toast";
 import type { MyLink } from "@/types";
 
 export default function DashboardPage() {
-  const { authenticated, ready } = useAuth();
+  const { authenticated, ready, me } = useAuth();
   const t = useTranslations("dashboard");
+  const tAuth = useTranslations("auth");
+  const { toast } = useToast();
   const [items, setItems] = useState<MyLink[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +38,17 @@ export default function DashboardPage() {
       .then((tags) => setTagOptions(tags.map((t) => t.name)))
       .catch(() => {});
   }, [ready, authenticated]);
+
+  // Welcome toast set by /auth/callback after a successful sign-in. Read once and clear so the
+  // toast only fires on the post-OAuth landing — page reloads or in-app navigation stay silent.
+  useEffect(() => {
+    if (!ready || !authenticated) return;
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem("kurl:just-signed-in") !== "1") return;
+    sessionStorage.removeItem("kurl:just-signed-in");
+    const email = me?.email;
+    toast(email ? tAuth("signedInWith", { email }) : tAuth("signedIn"), "success");
+  }, [ready, authenticated, me, toast, tAuth]);
 
   useEffect(() => {
     if (!ready) return;

@@ -30,6 +30,9 @@ export default function AuthCallbackPage() {
       return;
     }
     setToken(token);
+    // Drop a flag the dashboard reads on first render and clears, so the welcome toast appears
+    // *after* navigation completes — putting it here would flash and disappear with the redirect.
+    sessionStorage.setItem("kurl:just-signed-in", "1");
     window.history.replaceState(null, "", "/auth/callback");
     router.replace("/dashboard");
   }, [router, t]);

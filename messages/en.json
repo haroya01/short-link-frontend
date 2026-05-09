@@ -123,6 +123,8 @@
     "anonymousAlt": "You can also <shorten>shorten URLs</shorten> without signing in."
   },
   "auth": {
+    "signedIn": "Signed in",
+    "signedInWith": "Signed in as {email}",
     "callbackProcessing": "Signing you in...",
     "callbackFailed": "Sign-in failed",
     "tokenMissing": "No token information.",
