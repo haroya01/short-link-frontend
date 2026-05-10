@@ -104,6 +104,12 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
+      </head>
       <body className="min-h-screen flex flex-col">
         <NextIntlClientProvider locale={locale}>
           <ToastProvider>

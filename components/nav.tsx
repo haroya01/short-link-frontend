@@ -21,10 +21,6 @@ export function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobileRef = useRef<HTMLDivElement>(null);
 
-  // Public profile pages render without site chrome — they're meant to feel like a standalone
-  // bio link, the way Linktree pages do. Same logic in <Footer>.
-  if (pathname.startsWith("/u/")) return null;
-
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
@@ -39,6 +35,11 @@ export function Nav() {
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, [mobileOpen]);
+
+  // Public profile pages render without site chrome — they're meant to feel like a standalone
+  // bio link, the way Linktree pages do. Same logic in <Footer>. Must come AFTER all hooks per
+  // React rules-of-hooks.
+  if (pathname.startsWith("/u/")) return null;
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
