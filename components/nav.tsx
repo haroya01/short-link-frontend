@@ -21,6 +21,10 @@ export function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobileRef = useRef<HTMLDivElement>(null);
 
+  // Public profile pages render without site chrome — they're meant to feel like a standalone
+  // bio link, the way Linktree pages do. Same logic in <Footer>.
+  if (pathname.startsWith("/u/")) return null;
+
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);

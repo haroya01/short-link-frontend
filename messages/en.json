@@ -187,6 +187,19 @@
     "emptyTitle": "Make your first link",
     "emptyDesc": "Shorten one URL and within a minute the clicks / countries / channels / devices view fills in. Takes 30 seconds.",
     "emptyCta": "Shorten now",
+    "onboarding": {
+      "eyebrow": "Welcome",
+      "title": "Three steps, you're set",
+      "subtitle": "Shorten → share → see stats. First click within 60 seconds is normal.",
+      "step1Title": "Shorten in a minute",
+      "step1Desc": "Paste a URL on the home page and hit Shorten. Get a short link instantly.",
+      "step2Title": "Share it",
+      "step2Desc": "Instagram bio, KakaoTalk, business card — anywhere. QR code in one click.",
+      "step3Title": "See the stats",
+      "step3Desc": "Clicks come in → channel / country / device / time-of-day automatic.",
+      "primaryCta": "Make your first link",
+      "secondaryCta": "Or preview the analytics screen →"
+    },
     "noResultTitle": "No matches",
     "noResultDesc": "Could not find any link matching \"{query}\".",
     "table": {

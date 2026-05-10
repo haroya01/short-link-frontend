@@ -187,6 +187,19 @@
     "emptyTitle": "最初のリンクを作りましょう",
     "emptyDesc": "URL を 1 つ短縮するだけで、1 分以内にクリック / 国 / チャネル / デバイスの分析が埋まり始めます。所要 30 秒。",
     "emptyCta": "今すぐ短縮",
+    "onboarding": {
+      "eyebrow": "ようこそ",
+      "title": "3 ステップで完了",
+      "subtitle": "短縮 → 共有 → 統計確認。30 秒で最初のクリックが入ります。",
+      "step1Title": "1 分で短縮",
+      "step1Desc": "ホームで URL を貼り付け → 短縮ボタン。すぐに短縮 URL が生成。",
+      "step2Title": "共有",
+      "step2Desc": "Instagram bio、KakaoTalk、名刺どこでも。QR コードもワンタップ。",
+      "step3Title": "統計を確認",
+      "step3Desc": "クリックが入ると自動でチャネル/国/デバイス/時間帯を分析。",
+      "primaryCta": "最初のリンクを作る",
+      "secondaryCta": "分析画面をデモで見る →"
+    },
     "noResultTitle": "該当する結果がありません",
     "noResultDesc": "「{query}」と一致するリンクが見つかりませんでした。",
     "table": {

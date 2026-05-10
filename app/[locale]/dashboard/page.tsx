@@ -14,6 +14,7 @@ import { LinksTable } from "@/components/links-table";
 import { BulkImportDialog } from "@/components/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/my-links-filters";
 import { WeeklyInsightsCard } from "@/components/weekly-insights-card";
+import { DashboardOnboarding } from "@/components/dashboard-onboarding";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
 import { useToast } from "@/components/ui/toast";
@@ -165,15 +166,7 @@ export default function DashboardPage() {
         query.trim() || filters.tag || filters.domain || filters.expiry ? (
           <EmptyState title={t("noResultTitle")} description={t("noResultDesc", { query })} />
         ) : (
-          <EmptyState
-            title={t("emptyTitle")}
-            description={t("emptyDesc")}
-            action={
-              <Link href="/">
-                <Button>{t("emptyCta")}</Button>
-              </Link>
-            }
-          />
+          <DashboardOnboarding />
         )
       ) : (
         <LinksTable
