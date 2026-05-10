@@ -16,6 +16,7 @@ import {
 } from "@/lib/api";
 import type { MyLink, MyProfile, ProfileTheme } from "@/types";
 import { ProfileQuickAdd } from "./profile-quick-add";
+import { QrButton } from "./qr-button";
 
 const THEMES: { id: ProfileTheme; label: string; swatch: string }[] = [
   { id: "light", label: "Light", swatch: "#F8FAFC" },
@@ -259,7 +260,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
                   : t("autosaveHint")}
             </span>
           )}
-        {profile?.publicUrl && <PublicUrlPill url={profile.publicUrl} t={t} />}
+        {profile?.publicUrl && (
+          <div className="flex items-center gap-2">
+            <PublicUrlPill url={profile.publicUrl} t={t} />
+            <QrButton url={profile.publicUrl} filename={`${profile.username}.png`} />
+          </div>
+        )}
       </div>
     </div>
   );

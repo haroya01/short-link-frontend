@@ -4,6 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Favicon } from "@/components/favicon";
 import { ProfileOwnerFab } from "@/components/profile-owner-fab";
+import { ProfileShareFab } from "@/components/profile-share-fab";
 import type { ProfileTheme, PublicProfile } from "@/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -153,6 +154,10 @@ export default async function PublicProfilePage({
 
         <p className={`mt-10 text-center text-[11px] ${colors.muted}`}>{t("madeWith")}</p>
       </div>
+      <ProfileShareFab
+        url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://kurl.me"}/u/${profile.username}`}
+        filename={`${profile.username}.png`}
+      />
       <ProfileOwnerFab username={profile.username} />
     </div>
   );
