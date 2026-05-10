@@ -13,6 +13,11 @@ const THEMES: { id: ProfileTheme; label: string; swatch: string }[] = [
   { id: "light", label: "Light", swatch: "#F8FAFC" },
   { id: "dark", label: "Dark", swatch: "#0F172A" },
   { id: "accent", label: "Accent", swatch: "#0EA5E9" },
+  { id: "sunset", label: "Sunset", swatch: "linear-gradient(135deg,#FB923C,#F43F5E)" },
+  { id: "ocean", label: "Ocean", swatch: "linear-gradient(135deg,#06B6D4,#0284C7)" },
+  { id: "forest", label: "Forest", swatch: "linear-gradient(135deg,#10B981,#0D9488)" },
+  { id: "mono", label: "Mono", swatch: "#000000" },
+  { id: "neon", label: "Neon", swatch: "linear-gradient(135deg,#D946EF,#22D3EE)" },
 ];
 
 type Props = {
@@ -108,7 +113,11 @@ export function ProfileMetaForm({
               >
                 <span
                   className="h-3 w-3 rounded-full border border-slate-200"
-                  style={{ backgroundColor: tm.swatch }}
+                  style={
+                    tm.swatch.startsWith("linear-gradient")
+                      ? { backgroundImage: tm.swatch }
+                      : { backgroundColor: tm.swatch }
+                  }
                 />
                 {tm.label}
               </button>
