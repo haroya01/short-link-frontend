@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { MobilePreviewSheet } from "@/components/mobile-preview-sheet";
 import { ProfileSection, type ProfileDraft } from "@/components/profile-section";
 import { ProfilePreview } from "@/components/profile-preview";
 
@@ -45,7 +46,7 @@ export default function ProfileEditPage() {
         <div>
           <ProfileSection onDraft={handleDraft} />
         </div>
-        <aside className="lg:sticky lg:top-20 lg:self-start">
+        <aside className="hidden lg:sticky lg:top-20 lg:block lg:self-start">
           <ProfilePreview
             username={draft.username}
             bio={draft.bio}
@@ -56,6 +57,17 @@ export default function ProfileEditPage() {
           />
         </aside>
       </div>
+
+      <MobilePreviewSheet>
+        <ProfilePreview
+          username={draft.username}
+          bio={draft.bio}
+          theme={draft.theme}
+          avatarUrl={draft.avatarUrl}
+          featuredShortCodes={draft.featured}
+          links={draft.links}
+        />
+      </MobilePreviewSheet>
     </div>
   );
 }
