@@ -48,6 +48,12 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
   const urlInputRef = useRef<HTMLInputElement | null>(null);
 
   function applyTemplate(tpl: Template) {
+    // Don't overwrite an in-progress URL — chips are for filling an empty field. If the user
+    // already typed something, just give the URL field focus so they can keep editing.
+    if (url.trim()) {
+      urlInputRef.current?.focus();
+      return;
+    }
     const filled = tpl.urlTemplate.replace("{h}", tpl.placeholder);
     setUrl(filled);
     if (!label) setLabel(tpl.label);

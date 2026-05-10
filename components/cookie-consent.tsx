@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 
 const STORAGE_KEY = "kurl:cookie-consent:v1";
 
 export function CookieConsent() {
   const t = useTranslations("cookieConsent");
+  const pathname = usePathname();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -16,6 +17,9 @@ export function CookieConsent() {
     setShow(true);
   }, []);
 
+  // Suppress on chrome-less surfaces (public profile pages) — visitors who land via someone's
+  // bio link expect a clean preview, not a banner from a service they've never used.
+  if (pathname.startsWith("/u/")) return null;
   if (!show) return null;
 
   function accept() {
