@@ -115,6 +115,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      <Previews t={t} />
+
       {!authenticated && recent.length > 0 && (
         <Section eyebrow={t("recentEyebrow")} title={t("recentTitle")} subhead={t("recentSubhead")}>
           <RecentLinks />
@@ -166,6 +168,44 @@ export default function HomePage() {
         <HomeFaq />
       </Section>
     </div>
+  );
+}
+
+/**
+ * Pre-signup taster strip: four labelled cards spelling out what the user actually gets after
+ * shortening. Each card links to a place where they can see it for real (demo, public profile,
+ * pricing). No screenshots — just iconified labels with one-line context, so the strip stays
+ * honest about being a teaser rather than pretending to be the full UI.
+ */
+function Previews({ t }: { t: ReturnType<typeof useTranslations<"home">> }) {
+  const items = [
+    { key: "stats", href: "/demo", label: t("previews.stats.title"), desc: t("previews.stats.desc") },
+    { key: "viral", href: "/demo", label: t("previews.viral.title"), desc: t("previews.viral.desc") },
+    { key: "profile", href: "/demo", label: t("previews.profile.title"), desc: t("previews.profile.desc") },
+    { key: "domain", href: "/pricing", label: t("previews.domain.title"), desc: t("previews.domain.desc") },
+  ];
+  return (
+    <section className="border-t border-slate-100 bg-slate-50/50">
+      <div className="container max-w-5xl py-12">
+        <p className="mb-4 text-center text-xs text-slate-500">{t("previews.eyebrow")}</p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((it) => (
+            <Link
+              key={it.key}
+              href={it.href}
+              className="group rounded-lg border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:bg-slate-50"
+            >
+              <p className="text-sm font-medium text-slate-900">{it.label}</p>
+              <p className="mt-1 text-xs leading-relaxed text-slate-500">{it.desc}</p>
+              <span className="mt-2 inline-flex items-center gap-1 text-[11px] text-accent-700">
+                {t("previews.see")}
+                <ArrowRight className="h-2.5 w-2.5 transition group-hover:translate-x-0.5" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 

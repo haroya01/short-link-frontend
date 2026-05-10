@@ -53,6 +53,26 @@
     "subhead": "デバイス、OS、ブラウザ、チャネル、国まで — 誰がどこからクリックしたか一目で。",
     "anonymousHint": "ログイン不要で短縮できます。統計はログイン後に確認できます。",
     "demoLink": "分析画面をデモで先に見る",
+    "previews": {
+      "eyebrow": "短縮後 60 秒以内に見える画面",
+      "see": "見る",
+      "stats": {
+        "title": "分析ダッシュボード",
+        "desc": "人/ボット分離、チャネル、国、時間帯まで自動。30 日トレンド + ヒートマップ。"
+      },
+      "viral": {
+        "title": "共有 OG カード",
+        "desc": "KakaoTalk/X に共有するとプレビューにリアルタイムのクリック数が表示。"
+      },
+      "profile": {
+        "title": "公開プロフィール",
+        "desc": "kurl.me/u/{your-id} — Instagram bio に貼る 1 ページ。"
+      },
+      "domain": {
+        "title": "自分のドメイン",
+        "desc": "go.brand.com で短縮。TXT + CNAME 自動検証。"
+      }
+    },
     "ctaSeeLinks": "マイリンクをすべて見る",
     "loginCta": "ログインすると、このリンクの<clickStats>クリック統計</clickStats>を永続保存して分析できます。",
     "features": {
@@ -284,7 +304,14 @@
       "traffic": "トラフィック",
       "sources": "流入",
       "audience": "オーディエンス",
-      "settings": "設定"
+      "settings": "設定",
+      "descriptions": {
+        "overview": "本質だけ — クリック品質 / ライブクリック / 曜日×時間ヒートマップ。",
+        "traffic": "量の流れ — 日別トレンド、時間帯分布、国別分布。",
+        "sources": "どこから来たか — Referrer、UTM 4 種、チャネル/src タグ。",
+        "audience": "誰が来たか — デバイス、OS、ブラウザ、地域、言語、ボット。",
+        "settings": "このリンクの設定 — A/B 遷移先、Webhook 通知。"
+      }
     },
     "live": {
       "title": "リアルタイムクリック",
@@ -847,7 +874,14 @@
       "profile": "プロフィール",
       "security": "セキュリティ",
       "domains": "ドメイン",
-      "data": "データ"
+      "data": "データ",
+      "descriptions": {
+        "account": "メール / 登録日 / タイムゾーン / UI 言語。",
+        "profile": "公開プロフィール (kurl.me/u/{id}) — SNS bio に貼る 1 ページ。",
+        "security": "2FA TOTP + リカバリコード / API キーの発行・失効。",
+        "domains": "短縮 URL を自分のドメイン (go.brand.com) から配信。",
+        "data": "データエクスポート (JSON) / アカウント完全削除。"
+      }
     },
     "profile": {
       "title": "公開プロフィール",

@@ -214,6 +214,7 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
                       type="button"
                       onClick={() => toggleChannel(p.id)}
                       disabled={busy}
+                      title={`utm_source=${p.source} · utm_medium=${p.medium}`}
                       className={
                         "rounded-full border px-2.5 py-1 text-[11px] font-medium transition " +
                         (on
