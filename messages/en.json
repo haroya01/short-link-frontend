@@ -185,6 +185,8 @@
     "title": "My Links",
     "subtitle": "{count} links. Click a short code to see analytics.",
     "newLink": "New link",
+    "loadMore": "Load more",
+    "loadingMore": "Loading...",
     "searchPlaceholder": "Search by original URL or short code",
     "clearSearch": "Clear search",
     "loginRequired": "Sign-in required",

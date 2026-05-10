@@ -29,11 +29,11 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
   const activeCount = countActive(filters);
 
   function patch(p: Partial<MyLinksFilters>) {
-    onChange({ ...filters, ...p, page: 1 });
+    onChange({ ...filters, ...p, after: undefined });
   }
 
   function clearAll() {
-    onChange({ page: 1, size: filters.size });
+    onChange({ size: filters.size });
   }
 
   return (

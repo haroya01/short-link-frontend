@@ -27,10 +27,13 @@ export default function DashboardPage() {
   const tAuth = useTranslations("auth");
   const { toast } = useToast();
   const [items, setItems] = useState<MyLink[] | null>(null);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState<MyLinksFilters>({ page: 1, size: 50 });
+  const [filters, setFilters] = useState<MyLinksFilters>({ size: 50 });
   const [tagOptions, setTagOptions] = useState<string[]>([]);
   const [reload, setReload] = useState(0);
   const [bulkOpen, setBulkOpen] = useState(false);
@@ -42,7 +45,7 @@ export default function DashboardPage() {
       setFilters((f) => {
         const trimmed = query.trim() || undefined;
         if (f.q === trimmed) return f;
-        return { ...f, q: trimmed, page: 1 };
+        return { ...f, q: trimmed, after: undefined };
       });
     }, 300);
     return () => clearTimeout(id);
@@ -66,6 +69,8 @@ export default function DashboardPage() {
     toast(email ? tAuth("signedInWith", { email }) : tAuth("signedIn"), "success");
   }, [ready, authenticated, me, toast, tAuth]);
 
+  // First-page fetch — always starts at the cursorless top. Refires on filter / search /
+  // reload changes and resets the accumulated list so old rows don't bleed across filter switches.
   useEffect(() => {
     if (!ready) return;
     if (!authenticated) {
@@ -75,9 +80,12 @@ export default function DashboardPage() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    listMyLinks(filters)
+    listMyLinks({ ...filters, after: undefined })
       .then((data) => {
-        if (!cancelled) setItems(data.items);
+        if (cancelled) return;
+        setItems(data.items);
+        setNextCursor(data.nextCursor);
+        setHasMore(data.hasMore);
       })
       .catch((err) => {
         if (!cancelled) setError(err instanceof Error ? err.message : "load failed");
@@ -89,6 +97,21 @@ export default function DashboardPage() {
       cancelled = true;
     };
   }, [ready, authenticated, reload, filters]);
+
+  async function loadMore() {
+    if (!nextCursor || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const data = await listMyLinks({ ...filters, after: nextCursor });
+      setItems((prev) => [...(prev ?? []), ...data.items]);
+      setNextCursor(data.nextCursor);
+      setHasMore(data.hasMore);
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "load failed", "error");
+    } finally {
+      setLoadingMore(false);
+    }
+  }
 
   if (ready && !authenticated) {
     return (
@@ -175,11 +198,20 @@ export default function DashboardPage() {
           <DashboardOnboarding />
         )
       ) : (
-        <LinksTable
-          items={items ?? []}
-          onChanged={() => setReload((n) => n + 1)}
-          onTagClick={(tag) => setFilters((f) => ({ ...f, tag, page: 1 }))}
-        />
+        <>
+          <LinksTable
+            items={items ?? []}
+            onChanged={() => setReload((n) => n + 1)}
+            onTagClick={(tag) => setFilters((f) => ({ ...f, tag, after: undefined }))}
+          />
+          {hasMore && (
+            <div className="flex justify-center pt-2">
+              <Button variant="outline" onClick={loadMore} disabled={loadingMore}>
+                {loadingMore ? t("loadingMore") : t("loadMore")}
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

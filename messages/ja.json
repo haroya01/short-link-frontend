@@ -185,6 +185,8 @@
     "title": "マイリンク",
     "subtitle": "短縮したリンク {count}件。短縮コードをクリックして統計を確認。",
     "newLink": "新規リンク",
+    "loadMore": "もっと見る",
+    "loadingMore": "読み込み中...",
     "searchPlaceholder": "元のURLまたは短縮コードで検索",
     "clearSearch": "検索をクリア",
     "loginRequired": "ログインが必要です",
