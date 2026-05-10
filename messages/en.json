@@ -52,6 +52,7 @@
     "headline2": "one short line.",
     "subhead": "See who clicked from where — by device, OS, browser, channel, country.",
     "anonymousHint": "No login required. Stats need login though.",
+    "demoLink": "Preview the analytics dashboard",
     "ctaSeeLinks": "See all my links",
     "loginCta": "Sign in to save and analyze <clickStats>click stats</clickStats> for this link.",
     "features": {
@@ -163,8 +164,8 @@
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "My links and click stats are visible only after sign-in.",
     "goToLogin": "Go to sign in",
-    "emptyTitle": "No links yet",
-    "emptyDesc": "Create your first short link from home.",
+    "emptyTitle": "Make your first link",
+    "emptyDesc": "Shorten one URL and within a minute the clicks / countries / channels / devices view fills in. Takes 30 seconds.",
     "emptyCta": "Shorten now",
     "noResultTitle": "No matches",
     "noResultDesc": "Could not find any link matching \"{query}\".",
@@ -624,6 +625,32 @@
   "share": {
     "label": "Share",
     "copiedFallback": "URL copied"
+  },
+  "demo": {
+    "metaTitle": "kurl demo — see exactly what you get after shortening",
+    "metaDescription": "Live preview of the analytics dashboard, no sign-up required.",
+    "eyebrow": "Live demo",
+    "title": "One short link, this much insight",
+    "lead": "The numbers below are seeded for the demo, but the layout fills in for real on your own links — bot/human split, UTM channels, geo, time-of-day, all automatic.",
+    "ctaPrimary": "Sign up — your stats start in 60s",
+    "ctaSecondary": "Just shorten one first →",
+    "daily": {
+      "title": "Daily clicks",
+      "desc": "Last 30 days — weekday/weekend pattern + campaign spikes at a glance."
+    },
+    "heatmap": {
+      "title": "Day × hour heatmap",
+      "desc": "See which slots are empty (where to schedule the next campaign)."
+    },
+    "source": {
+      "title": "Channels (utm_source)",
+      "desc": "Instagram bio, KakaoTalk shares, QR scans — auto-tagged on every click."
+    },
+    "country": {
+      "title": "Country split",
+      "desc": "Where clicks come from, resolved via GeoIP. Spot international traffic share."
+    },
+    "footerLead": "Your real link fills in this layout within 60 seconds of the first click."
   },
   "publicProfile": {
     "empty": "This user hasn't featured any links yet.",

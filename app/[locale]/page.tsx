@@ -101,7 +101,15 @@ export default function HomePage() {
                 )}
               </div>
             ) : !authenticated ? (
-              <p className="text-center text-xs text-slate-500">{t("anonymousHint")}</p>
+              <div className="space-y-2 text-center">
+                <p className="text-xs text-slate-500">{t("anonymousHint")}</p>
+                <Link
+                  href="/demo"
+                  className="inline-flex items-center gap-1 text-xs text-accent-700 hover:text-accent-800"
+                >
+                  {t("demoLink")} <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
             ) : null}
           </div>
         </div>
