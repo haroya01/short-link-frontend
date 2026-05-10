@@ -856,6 +856,7 @@
       "usernameChangeHint": "변경 시 이전 URL은 30일간 자동 redirect 후 만료돼요.",
       "usernameChangeConfirm": "@{prev} → @{next} 로 변경할까요? 이전 URL은 30일간만 유효해요.",
       "usernameChangeAction": "변경",
+      "usernameUnsaved": "username 저장 안 됨",
       "bioLabel": "한 줄 소개",
       "bioPlaceholder": "예: 풀스택 개발자 · 사이드 프로젝트 만드는 중",
       "themeLabel": "테마",

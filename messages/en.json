@@ -942,6 +942,7 @@
       "usernameChangeHint": "Renaming auto-redirects the old handle for 30 days, then it expires.",
       "usernameChangeConfirm": "Change @{prev} → @{next}? The old URL keeps working for 30 days only.",
       "usernameChangeAction": "Rename",
+      "usernameUnsaved": "Username unsaved",
       "bioLabel": "Short bio",
       "bioPlaceholder": "e.g. fullstack dev / building side projects",
       "themeLabel": "Theme",
