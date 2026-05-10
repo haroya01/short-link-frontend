@@ -1,12 +1,15 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import {
+  ArrowUp,
   ChevronDown,
   ChevronUp,
   GripVertical,
   ImageIcon,
   Minus,
   Pencil,
+  Plus,
   Star,
   Type,
   X,
@@ -78,17 +81,12 @@ export function ProfileFeedEditor({
           <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
           <p className="text-[11px] text-slate-500">{t("featuredHint")}</p>
         </div>
-        <div className="flex items-center gap-1.5">
-          <AddBlockButton onClick={onAddText} icon={<Type className="h-3 w-3" />}>
-            {t("addHeader")}
-          </AddBlockButton>
-          <AddBlockButton onClick={onAddDivider} icon={<Minus className="h-3 w-3" />}>
-            {t("addDivider")}
-          </AddBlockButton>
-          <AddBlockButton onClick={onAddImage} icon={<ImageIcon className="h-3 w-3" />}>
-            {t("addImage")}
-          </AddBlockButton>
-        </div>
+        <AddMenu
+          onAddText={onAddText}
+          onAddDivider={onAddDivider}
+          onAddImage={onAddImage}
+          t={t}
+        />
       </div>
 
       {links === null ? (
@@ -96,9 +94,11 @@ export function ProfileFeedEditor({
       ) : (
         <>
           {items.length === 0 ? (
-            <p className="rounded-md border border-dashed border-slate-200 bg-slate-50/40 p-3 text-center text-[11px] text-slate-500">
-              {t("featuredEmpty")}
-            </p>
+            <FeedEmptyState
+              hasOtherLinks={otherLinks.length > 0}
+              otherCount={otherLinks.length}
+              t={t}
+            />
           ) : (
             <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
               {items.map((item, idx) => (
@@ -166,7 +166,79 @@ export function ProfileFeedEditor({
   );
 }
 
-function AddBlockButton({
+/**
+ * Single "+" button that opens a small menu of block kinds. Replaces the row of three separate
+ * "+ 헤더 / + 구분선 / + 이미지" pills — same affordance, less visual noise. Closes on outside
+ * click or Escape so it doesn't trap focus.
+ */
+function AddMenu({
+  onAddText,
+  onAddDivider,
+  onAddImage,
+  t,
+}: {
+  onAddText: () => void;
+  onAddDivider: () => void;
+  onAddImage: () => void;
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("click", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("click", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  function fire(handler: () => void) {
+    setOpen(false);
+    handler();
+  }
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+      >
+        <Plus className="h-3.5 w-3.5" />
+        {t("addBlockMenu")}
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-full z-20 mt-1 w-40 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg"
+        >
+          <MenuItem onClick={() => fire(onAddText)} icon={<Type className="h-3.5 w-3.5" />}>
+            {t("addHeader")}
+          </MenuItem>
+          <MenuItem onClick={() => fire(onAddDivider)} icon={<Minus className="h-3.5 w-3.5" />}>
+            {t("addDivider")}
+          </MenuItem>
+          <MenuItem onClick={() => fire(onAddImage)} icon={<ImageIcon className="h-3.5 w-3.5" />}>
+            {t("addImage")}
+          </MenuItem>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MenuItem({
   onClick,
   icon,
   children,
@@ -178,12 +250,40 @@ function AddBlockButton({
   return (
     <button
       type="button"
+      role="menuitem"
       onClick={onClick}
-      className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:border-slate-300"
+      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-slate-700 hover:bg-slate-50"
     >
       {icon}
       {children}
     </button>
+  );
+}
+
+/**
+ * Empty-feed state with an arrow pointing toward the existing "Add link" form above. When the
+ * user has unfeatured links, surfaces the count + a hint that the disclosure below is the way
+ * to add them — clearer than the previous one-line dashed box.
+ */
+function FeedEmptyState({
+  hasOtherLinks,
+  otherCount,
+  t,
+}: {
+  hasOtherLinks: boolean;
+  otherCount: number;
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  return (
+    <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50/50 px-4 py-8 text-center">
+      <ArrowUp className="mx-auto h-4 w-4 text-slate-400" />
+      <p className="mt-2 text-sm font-medium text-slate-700">{t("featuredEmptyTitle")}</p>
+      <p className="mt-1 text-[11px] text-slate-500">
+        {hasOtherLinks
+          ? t("featuredEmptyHasOthers", { count: otherCount })
+          : t("featuredEmpty")}
+      </p>
+    </div>
   );
 }
 
@@ -245,17 +345,20 @@ function FeedItemRow({
   const dragHandle = <DragHandle idx={idx} totalCount={totalCount} onMove={onMove} />;
 
   if (item.kind === "BLOCK" && item.type === "DIVIDER") {
+    // Slim row — a divider on the public profile is a thin horizontal rule, so the editor row
+    // shouldn't pretend it's a heavy item. Compact padding + a centered hr communicates that.
+    const slimRow =
+      "flex items-center gap-2 px-3 py-1 transition " +
+      (isDragging ? "opacity-40 " : "") +
+      (isOver ? "border-t-2 border-t-accent-500 " : "");
     return (
-      <li {...dndProps} className={baseRow}>
+      <li {...dndProps} className={slimRow}>
         {dragHandle}
-        <div className="flex min-w-0 flex-1 items-center gap-2 text-slate-400">
-          <Minus className="h-3.5 w-3.5" />
-          <span className="text-[11px]">{t("dividerLabel")}</span>
-        </div>
+        <hr className="flex-1 border-t border-slate-300" aria-label={t("dividerLabel")} />
         <button
           type="button"
           onClick={() => onDeleteBlock(item.id)}
-          className="text-slate-400 hover:text-red-600"
+          className="text-slate-300 hover:text-red-600"
           aria-label={t("remove")}
         >
           <X className="h-3.5 w-3.5" />
