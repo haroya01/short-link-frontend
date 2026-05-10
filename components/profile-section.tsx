@@ -188,70 +188,68 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     .filter((l): l is MyLink => Boolean(l));
   const otherLinks = (links ?? []).filter((l) => !featured.includes(l.shortCode));
 
-  return (
-    <div className="space-y-5">
-      <div className="space-y-3">
-        <p className="text-xs text-slate-500">{t("intro")}</p>
-        <label className="block space-y-1">
-          <span className="text-xs font-medium text-slate-500">{t("usernameLabel")}</span>
-          <Input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="haroya"
-            pattern="^[a-z0-9][a-z0-9_]{2,15}$"
-            maxLength={16}
-            disabled={Boolean(profile?.username)}
-          />
-          <p className="text-[11px] text-slate-400">{t("usernameHint")}</p>
-        </label>
+  const profileInfoBlock = (
+    <div className="space-y-3">
+      <label className="block space-y-1">
+        <span className="text-xs font-medium text-slate-500">{t("usernameLabel")}</span>
+        <Input
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="haroya"
+          pattern="^[a-z0-9][a-z0-9_]{2,15}$"
+          maxLength={16}
+          disabled={Boolean(profile?.username)}
+        />
+        <p className="text-[11px] text-slate-400">{t("usernameHint")}</p>
+      </label>
 
-        <label className="block space-y-1">
-          <span className="text-xs font-medium text-slate-500">{t("bioLabel")}</span>
-          <textarea
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            maxLength={280}
-            rows={3}
-            placeholder={t("bioPlaceholder")}
-            className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
-          />
-          <p className="text-[11px] text-slate-400">{bio.length}/280</p>
-        </label>
+      <label className="block space-y-1">
+        <span className="text-xs font-medium text-slate-500">{t("bioLabel")}</span>
+        <textarea
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          maxLength={280}
+          rows={3}
+          placeholder={t("bioPlaceholder")}
+          className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+        />
+        <p className="text-[11px] text-slate-400">{bio.length}/280</p>
+      </label>
 
-        <div className="space-y-1">
-          <span className="text-xs font-medium text-slate-500">{t("themeLabel")}</span>
-          <div className="flex flex-wrap gap-1.5">
-            {THEMES.map((tm) => {
-              const active = theme === tm.id;
-              return (
-                <button
-                  key={tm.id}
-                  type="button"
-                  onClick={() => setTheme(tm.id)}
-                  className={
-                    "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition " +
-                    (active
-                      ? "border-accent-300 bg-accent-50 text-accent-800"
-                      : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")
-                  }
-                >
-                  <span
-                    className="h-3 w-3 rounded-full border border-slate-200"
-                    style={{ backgroundColor: tm.swatch }}
-                  />
-                  {tm.label}
-                </button>
-              );
-            })}
-          </div>
+      <div className="space-y-1">
+        <span className="text-xs font-medium text-slate-500">{t("themeLabel")}</span>
+        <div className="flex flex-wrap gap-1.5">
+          {THEMES.map((tm) => {
+            const active = theme === tm.id;
+            return (
+              <button
+                key={tm.id}
+                type="button"
+                onClick={() => setTheme(tm.id)}
+                className={
+                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition " +
+                  (active
+                    ? "border-accent-300 bg-accent-50 text-accent-800"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")
+                }
+              >
+                <span
+                  className="h-3 w-3 rounded-full border border-slate-200"
+                  style={{ backgroundColor: tm.swatch }}
+                />
+                {tm.label}
+              </button>
+            );
+          })}
         </div>
+      </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {!profile?.username && (
-            <Button onClick={handleSaveProfile} disabled={savingProfile} size="sm">
-              {t("claim")}
-            </Button>
-          )}
+      <div className="flex flex-wrap items-center gap-3">
+        {!profile?.username && (
+          <Button onClick={handleSaveProfile} disabled={savingProfile} size="sm">
+            {t("claim")}
+          </Button>
+        )}
           {profile?.username && (
             <span className="text-[11px] text-slate-400">
               {autoSaveStatus === "saving"
@@ -261,18 +259,30 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
                   : t("autosaveHint")}
             </span>
           )}
-          {profile?.publicUrl && <PublicUrlPill url={profile.publicUrl} t={t} />}
-        </div>
+        {profile?.publicUrl && <PublicUrlPill url={profile.publicUrl} t={t} />}
       </div>
+    </div>
+  );
 
-      {profile?.username && (
-        <div className="space-y-5 border-t border-slate-100 pt-5">
-          <ProfileQuickAdd onAdded={refresh} />
-          <div className="space-y-3">
-            <div>
-              <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
-              <p className="text-[11px] text-slate-500">{t("featuredHint")}</p>
-            </div>
+  // No username yet → just show the claim flow.
+  if (!profile?.username) {
+    return (
+      <div className="space-y-5">
+        <p className="text-xs text-slate-500">{t("intro")}</p>
+        {profileInfoBlock}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      <ProfileQuickAdd onAdded={refresh} highlightEmpty={featuredLinks.length === 0} />
+
+      <div className="space-y-3">
+        <div>
+          <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
+          <p className="text-[11px] text-slate-500">{t("featuredHint")}</p>
+        </div>
           {links === null ? (
             <p className="text-xs text-slate-400">{t("loading")}</p>
           ) : (
@@ -357,9 +367,14 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
               )}
             </>
           )}
-          </div>
-        </div>
-      )}
+      </div>
+
+      <details className="rounded-lg border border-slate-200 bg-white">
+        <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+          {t("profileInfoToggle")}
+        </summary>
+        <div className="border-t border-slate-100 p-4">{profileInfoBlock}</div>
+      </details>
     </div>
   );
 }

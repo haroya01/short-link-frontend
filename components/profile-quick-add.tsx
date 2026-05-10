@@ -32,9 +32,11 @@ const TEMPLATES: Template[] = [
 
 type Props = {
   onAdded: () => void;
+  /** Renders the "first link" emphasis when the user hasn't featured anything yet. */
+  highlightEmpty?: boolean;
 };
 
-export function ProfileQuickAdd({ onAdded }: Props) {
+export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
   const t = useTranslations("settings.profile.quickAdd");
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
@@ -84,10 +86,21 @@ export function ProfileQuickAdd({ onAdded }: Props) {
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4">
+    <div
+      className={
+        "space-y-3 rounded-lg border p-4 " +
+        (highlightEmpty
+          ? "border-accent-300 bg-accent-50/40 ring-1 ring-accent-200"
+          : "border-slate-200 bg-white")
+      }
+    >
       <div>
-        <p className="text-sm font-medium text-slate-900">{t("title")}</p>
-        <p className="text-[11px] text-slate-500">{t("hint")}</p>
+        <p className={highlightEmpty ? "text-base font-semibold text-slate-900" : "text-sm font-medium text-slate-900"}>
+          {highlightEmpty ? t("firstTitle") : t("title")}
+        </p>
+        <p className="text-[11px] text-slate-500">
+          {highlightEmpty ? t("firstHint") : t("hint")}
+        </p>
       </div>
 
       <div className="space-y-2">
