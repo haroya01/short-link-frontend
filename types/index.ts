@@ -249,7 +249,7 @@ export type PublicProfile = {
 };
 
 export type PublicProfileEntry = {
-  kind: "LINK" | "TEXT" | "DIVIDER";
+  kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE";
   id: number | null;
   shortCode: string | null;
   shortUrl: string | null;
@@ -263,7 +263,7 @@ export type PublicProfileEntry = {
 
 export type ProfileBlock = {
   id: number;
-  type: "TEXT" | "DIVIDER";
+  type: "TEXT" | "DIVIDER" | "IMAGE";
   content: string | null;
   profileOrder: number;
 };

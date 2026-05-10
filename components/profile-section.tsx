@@ -8,6 +8,7 @@ import {
   Copy,
   ExternalLink,
   GripVertical,
+  ImageIcon,
   Minus,
   Pencil,
   Star,
@@ -34,7 +35,7 @@ import type { MyLink, MyProfile, ProfileReorderItem, ProfileTheme } from "@/type
 
 type FeedItem =
   | { kind: "LINK"; code: string }
-  | { kind: "BLOCK"; id: number; type: "TEXT" | "DIVIDER"; content: string | null };
+  | { kind: "BLOCK"; id: number; type: "TEXT" | "DIVIDER" | "IMAGE"; content: string | null };
 import { ProfileQuickAdd } from "./profile-quick-add";
 import { QrButton } from "./qr-button";
 
@@ -152,7 +153,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       .then((data) => {
         if (cancelled || !data) return;
         const entries = (data.entries ?? []) as Array<{
-          kind: "LINK" | "TEXT" | "DIVIDER";
+          kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE";
           id: number | null;
           shortCode: string | null;
           highlighted?: boolean | null;
@@ -166,6 +167,8 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             next.push({ kind: "BLOCK", id: e.id, type: "TEXT", content: e.content ?? "" });
           } else if (e.kind === "DIVIDER" && e.id != null) {
             next.push({ kind: "BLOCK", id: e.id, type: "DIVIDER", content: null });
+          } else if (e.kind === "IMAGE" && e.id != null) {
+            next.push({ kind: "BLOCK", id: e.id, type: "IMAGE", content: e.content ?? "" });
           }
         }
         setItems(next);
@@ -308,8 +311,24 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
+  async function handleAddImage() {
+    const url = window.prompt(t("addImagePrompt"), "https://");
+    if (!url || !url.trim()) return;
+    try {
+      const block = await createProfileBlock({ type: "IMAGE", content: url.trim() });
+      setItems((prev) => [
+        ...prev,
+        { kind: "BLOCK", id: block.id, type: "IMAGE", content: block.content ?? "" },
+      ]);
+    } catch (err) {
+      toast(errorMessage(err, t("toggleFailed")), "error");
+    }
+  }
+
   async function handleEditBlock(blockId: number, current: string) {
-    const next = window.prompt(t("editTextPrompt"), current);
+    const item = items.find((i) => i.kind === "BLOCK" && i.id === blockId);
+    const isImage = item?.kind === "BLOCK" && item.type === "IMAGE";
+    const next = window.prompt(isImage ? t("editImagePrompt") : t("editTextPrompt"), current);
     if (next === null) return;
     const trimmed = next.trim();
     if (!trimmed) return;
@@ -468,6 +487,14 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
               <Minus className="h-3 w-3" />
               {t("addDivider")}
             </button>
+            <button
+              type="button"
+              onClick={handleAddImage}
+              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:border-slate-300"
+            >
+              <ImageIcon className="h-3 w-3" />
+              {t("addImage")}
+            </button>
           </div>
         </div>
           {links === null ? (
@@ -559,6 +586,46 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
                           >
                             <X className="h-3.5 w-3.5" />
                           </button>
+                        </li>
+                      );
+                    }
+                    if (item.kind === "BLOCK" && item.type === "IMAGE") {
+                      return (
+                        <li key={rowKey} {...dndProps} className={baseRow}>
+                          {dragHandle}
+                          <div className="flex min-w-0 flex-1 items-center gap-2">
+                            {item.content ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={item.content}
+                                alt=""
+                                className="h-10 w-10 shrink-0 rounded object-cover"
+                              />
+                            ) : (
+                              <ImageIcon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                            )}
+                            <span className="truncate text-[11px] text-slate-500">
+                              {item.content || t("addImagePlaceholder")}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleEditBlock(item.id, item.content ?? "")}
+                              className="text-slate-400 hover:text-slate-900"
+                              aria-label={t("editTextAction")}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteBlock(item.id)}
+                              className="text-slate-400 hover:text-red-600"
+                              aria-label={t("remove")}
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
                         </li>
                       );
                     }
