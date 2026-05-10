@@ -18,6 +18,7 @@ export default function ProfileEditPage() {
     bio: "",
     theme: null,
     avatarUrl: null,
+    bannerUrl: null,
     featured: [],
     links: [],
   });
@@ -52,6 +53,7 @@ export default function ProfileEditPage() {
             bio={draft.bio}
             theme={draft.theme}
             avatarUrl={draft.avatarUrl}
+            bannerUrl={draft.bannerUrl}
             featuredShortCodes={draft.featured}
             links={draft.links}
           />
@@ -64,6 +66,7 @@ export default function ProfileEditPage() {
           bio={draft.bio}
           theme={draft.theme}
           avatarUrl={draft.avatarUrl}
+          bannerUrl={draft.bannerUrl}
           featuredShortCodes={draft.featured}
           links={draft.links}
         />

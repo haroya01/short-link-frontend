@@ -2,6 +2,7 @@
 
 import type { useTranslations } from "next-intl";
 import { AvatarPicker } from "../avatar-picker";
+import { BannerPicker } from "../banner-picker";
 import { QrButton } from "../qr-button";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -25,6 +26,7 @@ type Props = {
   onBioChange: (next: string) => void;
   onThemeChange: (next: ProfileTheme | null) => void;
   onAvatarChange: (avatarUrl: string | null) => void;
+  onBannerChange: (bannerUrl: string | null) => void;
   onSave: () => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 };
@@ -45,6 +47,7 @@ export function ProfileMetaForm({
   onBioChange,
   onThemeChange,
   onAvatarChange,
+  onBannerChange,
   onSave,
   t,
 }: Props) {
@@ -53,6 +56,7 @@ export function ProfileMetaForm({
 
   return (
     <div className="space-y-3">
+      <BannerPicker currentUrl={profile?.bannerUrl ?? null} onChange={onBannerChange} />
       <AvatarPicker
         currentUrl={profile?.avatarUrl ?? null}
         initialChar={(username[0] ?? "·").toUpperCase()}

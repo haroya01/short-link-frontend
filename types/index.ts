@@ -242,6 +242,7 @@ export type MyProfile = {
   theme: ProfileTheme | null;
   publicUrl: string | null;
   avatarUrl: string | null;
+  bannerUrl: string | null;
 };
 
 export type PublicProfile = {
@@ -249,6 +250,7 @@ export type PublicProfile = {
   bio: string | null;
   theme: ProfileTheme | null;
   avatarUrl: string | null;
+  bannerUrl: string | null;
   entries: PublicProfileEntry[];
 };
 

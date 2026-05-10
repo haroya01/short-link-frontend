@@ -65,6 +65,7 @@ export default async function PublicProfilePage({
           username={profile.username}
           bio={profile.bio}
           avatarUrl={profile.avatarUrl}
+          bannerUrl={profile.bannerUrl}
           colors={colors}
         />
         <EntryList

@@ -26,6 +26,7 @@ export type ProfileDraft = {
   bio: string;
   theme: ProfileTheme | null;
   avatarUrl: string | null;
+  bannerUrl: string | null;
   featured: string[];
   links: MyLink[];
 };
@@ -74,10 +75,20 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       bio,
       theme,
       avatarUrl: profile?.avatarUrl ?? null,
+      bannerUrl: profile?.bannerUrl ?? null,
       featured,
       links: links ?? [],
     });
-  }, [username, bio, theme, profile?.avatarUrl, featured, links, onDraft]);
+  }, [
+    username,
+    bio,
+    theme,
+    profile?.avatarUrl,
+    profile?.bannerUrl,
+    featured,
+    links,
+    onDraft,
+  ]);
 
   // After the username is claimed, bio + theme silently auto-save 600ms after the last change.
   // Username keeps its explicit Save button because changing it costs the user their old URL —
@@ -388,6 +399,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       onBioChange={setBio}
       onThemeChange={setTheme}
       onAvatarChange={(avatarUrl) => setProfile((p) => (p ? { ...p, avatarUrl } : p))}
+      onBannerChange={(bannerUrl) => setProfile((p) => (p ? { ...p, bannerUrl } : p))}
       onSave={handleSaveProfile}
       t={t}
     />
