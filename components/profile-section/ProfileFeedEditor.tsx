@@ -129,7 +129,9 @@ export function ProfileFeedEditor({
           )}
 
           {otherLinks.length > 0 && (
-            <details className="group">
+            // Default-expand for first-timers (no featured items yet) — they often miss the
+            // collapsed disclosure and don't realize how to add their existing links to the feed.
+            <details className="group" open={items.length === 0}>
               <summary className="cursor-pointer text-[11px] text-slate-500 hover:text-slate-900">
                 {t("addMore")} ({otherLinks.length})
               </summary>
