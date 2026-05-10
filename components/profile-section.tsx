@@ -50,6 +50,7 @@ export type ProfileDraft = {
   username: string;
   bio: string;
   theme: ProfileTheme | null;
+  avatarUrl: string | null;
   featured: string[];
   links: MyLink[];
 };
@@ -79,8 +80,15 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   // without round-tripping. Saved profile state stays separate — the draft IS the source of truth
   // for what visitors will see post-save.
   useEffect(() => {
-    onDraft?.({ username, bio, theme, featured, links: links ?? [] });
-  }, [username, bio, theme, featured, links, onDraft]);
+    onDraft?.({
+      username,
+      bio,
+      theme,
+      avatarUrl: profile?.avatarUrl ?? null,
+      featured,
+      links: links ?? [],
+    });
+  }, [username, bio, theme, profile?.avatarUrl, featured, links, onDraft]);
 
   const [reload, setReload] = useState(0);
   const refresh = () => setReload((n) => n + 1);
