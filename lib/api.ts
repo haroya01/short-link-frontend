@@ -30,6 +30,8 @@ import type {
   TwoFactorStatus,
   UpdateLinkRequest,
   MyProfile,
+  ProfileBlock,
+  ProfileReorderItem,
   PublicProfile,
   WebhookConfigPatch,
   WebhookSummary,
@@ -375,11 +377,32 @@ export async function updateMyProfile(payload: {
   return request<MyProfile>("/api/v1/users/me/profile", { method: "PUT", body: payload });
 }
 
-export async function reorderProfileLinks(shortCodes: string[]): Promise<MyProfile> {
+export async function reorderProfileItems(items: ProfileReorderItem[]): Promise<MyProfile> {
   return request<MyProfile>("/api/v1/users/me/profile/order", {
     method: "PUT",
-    body: { shortCodes },
+    body: { items },
   });
+}
+
+export async function createProfileBlock(payload: {
+  type: "TEXT" | "DIVIDER";
+  content?: string;
+}): Promise<ProfileBlock> {
+  return request<ProfileBlock>("/api/v1/users/me/profile/blocks", {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export async function updateProfileBlock(id: number, content: string): Promise<ProfileBlock> {
+  return request<ProfileBlock>(`/api/v1/users/me/profile/blocks/${id}`, {
+    method: "PATCH",
+    body: { content },
+  });
+}
+
+export async function deleteProfileBlock(id: number): Promise<void> {
+  await request(`/api/v1/users/me/profile/blocks/${id}`, { method: "DELETE" });
 }
 
 export async function toggleLinkOnProfile(

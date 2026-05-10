@@ -245,17 +245,33 @@ export type PublicProfile = {
   username: string;
   bio: string | null;
   theme: ProfileTheme | null;
-  links: PublicProfileLink[];
+  entries: PublicProfileEntry[];
 };
 
-export type PublicProfileLink = {
-  shortCode: string;
-  shortUrl: string;
-  originalUrl: string;
+export type PublicProfileEntry = {
+  kind: "LINK" | "TEXT" | "DIVIDER";
+  id: number | null;
+  shortCode: string | null;
+  shortUrl: string | null;
+  originalUrl: string | null;
   ogTitle: string | null;
   ogImage: string | null;
-  clickCount: number;
-  highlighted: boolean;
+  clickCount: number | null;
+  highlighted: boolean | null;
+  content: string | null;
+};
+
+export type ProfileBlock = {
+  id: number;
+  type: "TEXT" | "DIVIDER";
+  content: string | null;
+  profileOrder: number;
+};
+
+export type ProfileReorderItem = {
+  kind: "LINK" | "BLOCK";
+  /** shortCode for LINK, block id (as string) for BLOCK */
+  id: string;
 };
 
 export type WeeklyInsights = {
