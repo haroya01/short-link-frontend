@@ -207,10 +207,10 @@ function ProfileNavLink({
       </NavLink>
     );
   }
-  const target = "/settings";
+  const target = "/profile/edit";
   return (
     <Link
-      href="/settings#profile"
+      href="/profile/edit"
       className={cn(
         "rounded-md px-2.5 py-1.5 text-sm transition-colors",
         pathname === target
@@ -230,7 +230,7 @@ function ProfileMobileLink({
   username: string | null;
   t: ReturnType<typeof useTranslations<"nav">>;
 }) {
-  const href = username ? `/u/${username}` : "/settings#profile";
+  const href = username ? `/u/${username}` : "/profile/edit";
   return (
     <Link
       href={href}

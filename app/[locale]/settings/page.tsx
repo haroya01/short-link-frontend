@@ -15,7 +15,6 @@ import { useToast } from "@/components/ui/toast";
 import { ApiKeysSection } from "@/components/api-keys-section";
 import { TwoFactorSection } from "@/components/two-factor-section";
 import { CustomDomainsSection } from "@/components/custom-domains-section";
-import { ProfileSection } from "@/components/profile-section";
 import type { Me } from "@/types";
 
 const COMMON_TIMEZONES = [
@@ -158,12 +157,6 @@ export default function SettingsPage() {
               </div>
             )}
 
-            {tab === "profile" && (
-              <Section title={t("profile.title")}>
-                <ProfileSection />
-              </Section>
-            )}
-
             {tab === "security" && (
               <div className="space-y-6">
                 <Section title={t("twofa.title")}>
@@ -242,7 +235,7 @@ export default function SettingsPage() {
   );
 }
 
-type SettingsTab = "account" | "profile" | "security" | "domains" | "data";
+type SettingsTab = "account" | "security" | "domains" | "data";
 
 function SettingsTabs({
   t,
@@ -268,7 +261,6 @@ function SettingsTabs({
 
   const tabs: { key: SettingsTab; label: string }[] = [
     { key: "account", label: t("tabs.account") },
-    { key: "profile", label: t("tabs.profile") },
     { key: "security", label: t("tabs.security") },
     { key: "domains", label: t("tabs.domains") },
     { key: "data", label: t("tabs.data") },
@@ -313,7 +305,7 @@ function SettingsTabs({
 function initialSettingsTab(): SettingsTab {
   if (typeof window === "undefined") return "account";
   const h = window.location.hash.replace("#", "");
-  if (h === "profile" || h === "security" || h === "domains" || h === "data") return h;
+  if (h === "security" || h === "domains" || h === "data") return h;
   return "account";
 }
 

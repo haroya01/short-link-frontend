@@ -48,6 +48,8 @@ export type MyLinksPage = {
 export type UpdateLinkRequest = {
   originalUrl?: string;
   expiresAt?: string | null;
+  note?: string;
+  expiredMessage?: string;
 };
 
 export type LinkDetail = {
@@ -65,6 +67,8 @@ export type LinkDetail = {
   viewCount: number;
   statsPublic: boolean;
   tags: string[];
+  note: string | null;
+  expiredMessage: string | null;
 };
 
 export type OgOverrideRequest = {
@@ -228,15 +232,19 @@ export type Me = {
   username?: string | null;
 };
 
+export type ProfileTheme = "light" | "dark" | "accent";
+
 export type MyProfile = {
   username: string | null;
   bio: string | null;
+  theme: ProfileTheme | null;
   publicUrl: string | null;
 };
 
 export type PublicProfile = {
   username: string;
   bio: string | null;
+  theme: ProfileTheme | null;
   links: PublicProfileLink[];
 };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -10,16 +10,18 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 import {
   getMyProfile,
   listMyLinks,
+  reorderProfileLinks,
   toggleLinkOnProfile,
   updateMyProfile,
 } from "@/lib/api";
-import type { MyLink, MyProfile } from "@/types";
+import type { MyLink, MyProfile, ProfileTheme } from "@/types";
 
-/**
- * Public-profile editor: claim a username (one-shot for now), set a short bio, then toggle which
- * of the user's existing links appear on `/u/{username}`. Toggle state isn't part of the link list
- * payload, so we keep a local Set seeded from the profile fetch and PUT the diff per click.
- */
+const THEMES: { id: ProfileTheme; label: string; swatch: string }[] = [
+  { id: "light", label: "Light", swatch: "#F8FAFC" },
+  { id: "dark", label: "Dark", swatch: "#0F172A" },
+  { id: "accent", label: "Accent", swatch: "#0EA5E9" },
+];
+
 export function ProfileSection() {
   const t = useTranslations("settings.profile");
   const { toast } = useToast();
@@ -27,9 +29,10 @@ export function ProfileSection() {
   const [profile, setProfile] = useState<MyProfile | null>(null);
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
+  const [theme, setTheme] = useState<ProfileTheme | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
   const [links, setLinks] = useState<MyLink[] | null>(null);
-  const [shown, setShown] = useState<Set<string>>(new Set());
+  const [featured, setFeatured] = useState<string[]>([]);
   const [pendingShortCode, setPendingShortCode] = useState<string | null>(null);
 
   useEffect(() => {
@@ -40,6 +43,7 @@ export function ProfileSection() {
         setProfile(prof);
         setUsername(prof.username ?? "");
         setBio(prof.bio ?? "");
+        setTheme(prof.theme ?? null);
         setLinks(page.items);
       })
       .catch(() => {
@@ -50,10 +54,14 @@ export function ProfileSection() {
     };
   }, []);
 
-  // Profile fetch doesn't carry per-link toggle state, so we ask the public endpoint once a
-  // username exists. Avoids a separate "list profile members" backend route.
+  // The bare profile fetch doesn't carry per-link toggle state, so we hit the public endpoint
+  // once a username exists to seed the featured-list order. Future toggle/reorder calls keep the
+  // local list authoritative — no need to refetch.
   useEffect(() => {
-    if (!profile?.username) return;
+    if (!profile?.username) {
+      setFeatured([]);
+      return;
+    }
     let cancelled = false;
     fetch(
       `${process.env.NEXT_PUBLIC_API_BASE ?? ""}/api/v1/public/profiles/${encodeURIComponent(
@@ -63,10 +71,7 @@ export function ProfileSection() {
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (cancelled || !data) return;
-        const codes = new Set<string>(
-          (data.links as { shortCode: string }[]).map((l) => l.shortCode),
-        );
-        setShown(codes);
+        setFeatured((data.links as { shortCode: string }[]).map((l) => l.shortCode));
       })
       .catch(() => {});
     return () => {
@@ -80,6 +85,7 @@ export function ProfileSection() {
       const updated = await updateMyProfile({
         username: username.trim() || undefined,
         bio: bio.trim(),
+        theme: theme ?? undefined,
       });
       setProfile(updated);
       toast(t("saved"), "success");
@@ -94,18 +100,37 @@ export function ProfileSection() {
     setPendingShortCode(shortCode);
     try {
       await toggleLinkOnProfile(shortCode, next);
-      setShown((prev) => {
-        const out = new Set(prev);
-        if (next) out.add(shortCode);
-        else out.delete(shortCode);
-        return out;
-      });
+      setFeatured((prev) =>
+        next ? [...prev.filter((c) => c !== shortCode), shortCode] : prev.filter((c) => c !== shortCode),
+      );
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     } finally {
       setPendingShortCode(null);
     }
   }
+
+  async function move(shortCode: string, direction: -1 | 1) {
+    const idx = featured.indexOf(shortCode);
+    if (idx < 0) return;
+    const swap = idx + direction;
+    if (swap < 0 || swap >= featured.length) return;
+    const next = featured.slice();
+    [next[idx], next[swap]] = [next[swap], next[idx]];
+    setFeatured(next);
+    try {
+      await reorderProfileLinks(next);
+    } catch (err) {
+      // Rollback optimistic state on save failure so the UI doesn't drift from the server's view.
+      setFeatured(featured);
+      toast(errorMessage(err, t("toggleFailed")), "error");
+    }
+  }
+
+  const featuredLinks = featured
+    .map((code) => links?.find((l) => l.shortCode === code))
+    .filter((l): l is MyLink => Boolean(l));
+  const otherLinks = (links ?? []).filter((l) => !featured.includes(l.shortCode));
 
   return (
     <div className="space-y-5">
@@ -137,6 +162,34 @@ export function ProfileSection() {
           <p className="text-[11px] text-slate-400">{bio.length}/280</p>
         </label>
 
+        <div className="space-y-1">
+          <span className="text-xs font-medium text-slate-500">{t("themeLabel")}</span>
+          <div className="flex flex-wrap gap-1.5">
+            {THEMES.map((tm) => {
+              const active = theme === tm.id;
+              return (
+                <button
+                  key={tm.id}
+                  type="button"
+                  onClick={() => setTheme(tm.id)}
+                  className={
+                    "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition " +
+                    (active
+                      ? "border-accent-300 bg-accent-50 text-accent-800"
+                      : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")
+                  }
+                >
+                  <span
+                    className="h-3 w-3 rounded-full border border-slate-200"
+                    style={{ backgroundColor: tm.swatch }}
+                  />
+                  {tm.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="flex items-center gap-3">
           <Button onClick={handleSaveProfile} disabled={savingProfile} size="sm">
             {t("save")}
@@ -156,51 +209,94 @@ export function ProfileSection() {
       </div>
 
       {profile?.username && (
-        <div className="space-y-2 border-t border-slate-100 pt-5">
-          <p className="text-xs font-medium text-slate-700">{t("linksTitle")}</p>
-          <p className="text-[11px] text-slate-500">{t("linksHint")}</p>
+        <div className="space-y-3 border-t border-slate-100 pt-5">
+          <div>
+            <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
+            <p className="text-[11px] text-slate-500">{t("featuredHint")}</p>
+          </div>
           {links === null ? (
             <p className="text-xs text-slate-400">{t("loading")}</p>
-          ) : links.length === 0 ? (
-            <p className="text-xs text-slate-500">{t("noLinks")}</p>
           ) : (
-            <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
-              {links.map((link) => {
-                const on = shown.has(link.shortCode);
-                const pending = pendingShortCode === link.shortCode;
-                return (
-                  <li
-                    key={link.shortCode}
-                    className="flex items-center justify-between gap-3 px-3 py-2"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate font-mono text-sm text-slate-900">
-                        /{link.shortCode}
-                      </p>
-                      <p className="truncate text-[11px] text-slate-500">{link.originalUrl}</p>
-                    </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={on}
-                      disabled={pending}
-                      onClick={() => handleToggle(link.shortCode, !on)}
-                      className={
-                        "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition " +
-                        (on ? "bg-slate-900" : "bg-slate-200")
-                      }
+            <>
+              {featuredLinks.length === 0 ? (
+                <p className="rounded-md border border-dashed border-slate-200 bg-slate-50/40 p-3 text-center text-[11px] text-slate-500">
+                  {t("featuredEmpty")}
+                </p>
+              ) : (
+                <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
+                  {featuredLinks.map((link, idx) => (
+                    <li
+                      key={link.shortCode}
+                      className="flex items-center justify-between gap-3 px-3 py-2"
                     >
-                      <span
-                        className={
-                          "inline-block h-4 w-4 transform rounded-full bg-white shadow transition " +
-                          (on ? "translate-x-4" : "translate-x-0.5")
-                        }
-                      />
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+                      <div className="flex min-w-0 items-center gap-2">
+                        <div className="flex flex-col">
+                          <button
+                            type="button"
+                            aria-label="up"
+                            disabled={idx === 0}
+                            onClick={() => move(link.shortCode, -1)}
+                            className="text-slate-400 hover:text-slate-900 disabled:opacity-30"
+                          >
+                            <ChevronUp className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            aria-label="down"
+                            disabled={idx === featuredLinks.length - 1}
+                            onClick={() => move(link.shortCode, 1)}
+                            className="text-slate-400 hover:text-slate-900 disabled:opacity-30"
+                          >
+                            <ChevronDown className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="truncate font-mono text-sm text-slate-900">/{link.shortCode}</p>
+                          <p className="truncate text-[11px] text-slate-500">{link.originalUrl}</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleToggle(link.shortCode, false)}
+                        disabled={pendingShortCode === link.shortCode}
+                        className="text-[11px] text-slate-500 hover:text-red-600"
+                      >
+                        {t("remove")}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {otherLinks.length > 0 && (
+                <details className="group">
+                  <summary className="cursor-pointer text-[11px] text-slate-500 hover:text-slate-900">
+                    {t("addMore")} ({otherLinks.length})
+                  </summary>
+                  <ul className="mt-2 divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
+                    {otherLinks.map((link) => (
+                      <li
+                        key={link.shortCode}
+                        className="flex items-center justify-between gap-3 px-3 py-2"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate font-mono text-sm text-slate-900">/{link.shortCode}</p>
+                          <p className="truncate text-[11px] text-slate-500">{link.originalUrl}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleToggle(link.shortCode, true)}
+                          disabled={pendingShortCode === link.shortCode}
+                          className="text-[11px] text-accent-700 hover:text-accent-800"
+                        >
+                          {t("add")}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+            </>
           )}
         </div>
       )}

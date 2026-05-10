@@ -32,6 +32,8 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
   const [section, setSection] = useState<Section>("basic");
   const [originalUrl, setOriginalUrl] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
+  const [note, setNote] = useState("");
+  const [expiredMessage, setExpiredMessage] = useState("");
   const [ogTitle, setOgTitle] = useState("");
   const [ogDescription, setOgDescription] = useState("");
   const [ogImage, setOgImage] = useState("");
@@ -76,6 +78,8 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
         setMaxViewsInput(d.maxViews != null ? String(d.maxViews) : "");
         setTags(d.tags ?? []);
         setTagSuggestions(allTags.map((t) => t.name));
+        setNote(d.note ?? "");
+        setExpiredMessage(d.expiredMessage ?? "");
       })
       .catch(() => {
         if (cancelled) return;
@@ -138,10 +142,14 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     const beforeIso = link.expiresAt ?? null;
     const afterIso = expiresAt ? new Date(expiresAt).toISOString() : null;
     const expiresChanged = beforeIso !== afterIso;
-    if (!urlChanged && !expiresChanged) return;
+    const noteChanged = (detail?.note ?? "") !== note;
+    const expiredChanged = (detail?.expiredMessage ?? "") !== expiredMessage;
+    if (!urlChanged && !expiresChanged && !noteChanged && !expiredChanged) return;
     await updateLink(link.shortCode, {
       originalUrl: urlChanged ? trimmed : undefined,
       expiresAt: expiresChanged ? afterIso : undefined,
+      note: noteChanged ? note : undefined,
+      expiredMessage: expiredChanged ? expiredMessage : undefined,
     });
   }
 
@@ -277,6 +285,35 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
                   </Button>
                 )}
               </div>
+            </label>
+            <label className="block space-y-1">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+                {t("noteLabel")}
+              </span>
+              <Input
+                type="text"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder={t("notePlaceholder")}
+                maxLength={280}
+                disabled={busy || loadingDetail}
+              />
+              <p className="text-[10px] text-slate-400">{t("noteHint")}</p>
+            </label>
+            <label className="block space-y-1">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+                {t("expiredMessageLabel")}
+              </span>
+              <textarea
+                value={expiredMessage}
+                onChange={(e) => setExpiredMessage(e.target.value)}
+                placeholder={t("expiredMessagePlaceholder")}
+                maxLength={500}
+                disabled={busy || loadingDetail}
+                rows={2}
+                className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300 disabled:bg-slate-50 disabled:text-slate-500"
+              />
+              <p className="text-[10px] text-slate-400">{t("expiredMessageHint")}</p>
             </label>
           </div>
         )}
