@@ -192,7 +192,7 @@ function QrModal({
             className="mt-3 flex h-64 w-64 items-center justify-center rounded-md border border-slate-200 p-2"
             style={{ backgroundColor: palette.light }}
           >
-            <canvas ref={canvasRef} className="h-full w-full" />
+            <canvas ref={canvasRef} className="qr-canvas-fit h-full w-full" />
             {!dataUrl && <Loader2 className="absolute h-6 w-6 animate-spin text-slate-300" />}
           </div>
           <p

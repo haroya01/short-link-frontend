@@ -69,3 +69,14 @@ h1, h2, h3, p {
     transform: scaleX(1);
   }
 }
+
+/*
+ * The `qrcode` lib sets inline `style.width: 512px` on the canvas after toCanvas() runs, which
+ * beats Tailwind's stylesheet `.h-full .w-full` rules. Result: the canvas momentarily renders
+ * at 512px and bursts out of its 256px wrapper. !important here pins the canvas to its parent
+ * regardless of what the lib writes inline.
+ */
+canvas.qr-canvas-fit {
+  width: 100% !important;
+  height: 100% !important;
+}
