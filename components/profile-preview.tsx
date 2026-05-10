@@ -57,6 +57,8 @@ type Props = {
   username: string;
   bio: string;
   theme: ProfileTheme | null;
+  /** Saved avatar URL — when null, the preview falls back to the username initial. */
+  avatarUrl: string | null;
   /** Ordered short codes that appear on the profile. */
   featuredShortCodes: string[];
   /** All of the user's links — used to look up url + originalUrl per featured code. */
@@ -69,7 +71,14 @@ type Props = {
  * on the right side equals what visitors will see, but it's a phone-frame preview to make the
  * "share to bio" intent obvious.
  */
-export function ProfilePreview({ username, bio, theme, featuredShortCodes, links }: Props) {
+export function ProfilePreview({
+  username,
+  bio,
+  theme,
+  avatarUrl,
+  featuredShortCodes,
+  links,
+}: Props) {
   const t = useTranslations("publicProfile");
   const tEditor = useTranslations("settings.profile");
   const colors = THEME_TABLE[theme ?? "default"];
@@ -87,11 +96,22 @@ export function ProfilePreview({ username, bio, theme, featuredShortCodes, links
         <div className={`overflow-hidden rounded-[34px] ${colors.page}`}>
           <div className="space-y-3 px-4 pb-5 pt-9">
             <div className="flex flex-col items-center gap-2 text-center">
-              <div
-                className={`grid h-14 w-14 place-items-center rounded-full text-lg font-semibold ${colors.avatar} ${colors.avatarText}`}
-              >
-                {initial}
-              </div>
+              {avatarUrl ? (
+                <div className="h-14 w-14 overflow-hidden rounded-full">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={avatarUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div
+                  className={`grid h-14 w-14 place-items-center rounded-full text-lg font-semibold ${colors.avatar} ${colors.avatarText}`}
+                >
+                  {initial}
+                </div>
+              )}
               <p className={`font-mono text-xs ${colors.primary}`}>
                 @{username || tEditor("previewUsernamePlaceholder")}
               </p>

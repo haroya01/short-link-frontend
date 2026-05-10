@@ -16,6 +16,7 @@ export default function ProfileEditPage() {
     username: "",
     bio: "",
     theme: null,
+    avatarUrl: null,
     featured: [],
     links: [],
   });
@@ -49,6 +50,7 @@ export default function ProfileEditPage() {
             username={draft.username}
             bio={draft.bio}
             theme={draft.theme}
+            avatarUrl={draft.avatarUrl}
             featuredShortCodes={draft.featured}
             links={draft.links}
           />
