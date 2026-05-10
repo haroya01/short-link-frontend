@@ -82,10 +82,10 @@ export async function generateMetadata({
   const { username } = await params;
   const profile = await fetchProfile(username).catch(() => null);
   if (!profile) return { title: `@${username}` };
+  const entries = profile.entries ?? [];
   return {
     title: `@${profile.username} · kurl`,
-    description:
-      profile.bio ?? `${profile.entries.filter((e) => e.kind === "LINK").length} links`,
+    description: profile.bio ?? `${entries.filter((e) => e.kind === "LINK").length} links`,
     openGraph: {
       title: `@${profile.username} · kurl`,
       description: profile.bio ?? undefined,
@@ -128,14 +128,16 @@ export default async function PublicProfilePage({
         </div>
 
         <ul className="mt-8 space-y-2.5">
-          {profile.entries.length === 0 ? (
+          {(profile.entries ?? []).length === 0 ? (
             <li
               className={`rounded-xl border border-dashed ${colors.cardBorder} p-6 text-center text-xs ${colors.muted}`}
             >
               {t("empty")}
             </li>
           ) : (
-            profile.entries.map((entry, idx) => renderEntry(entry, idx, profile.username, colors))
+            (profile.entries ?? []).map((entry, idx) =>
+              renderEntry(entry, idx, profile.username, colors),
+            )
           )}
         </ul>
 
