@@ -63,8 +63,10 @@ const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
 };
 
 async function fetchProfile(username: string): Promise<PublicProfile | null> {
+  // Short revalidate so owner edits show up within ~30s without smashing the backend per visit.
+  // The backend layers a 5min Redis cache that auto-evicts on profile/toggle/reorder writes.
   const res = await fetch(`${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}`, {
-    next: { revalidate: 300 },
+    next: { revalidate: 30 },
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("profile fetch failed");
