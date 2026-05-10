@@ -174,6 +174,12 @@
       "missingChallenge": "challenge 정보가 없습니다. 다시 로그인해 주세요."
     }
   },
+  "expiringBanner": {
+    "title": "{count}개 링크가 3일 안에 만료돼요",
+    "hint": "필요한 링크는 만료일을 연장하거나 삭제해두세요.",
+    "showAll": "모두 보기",
+    "dismiss": "닫기"
+  },
   "dashboard": {
     "label": "dashboard",
     "title": "내 링크",
@@ -237,6 +243,7 @@
         "ACTIVE": "유효한 링크만",
         "NEVER": "만료 없음",
         "HAS_EXPIRY": "만료가 있는 것",
+        "EXPIRING_SOON": "3 일 내 만료",
         "EXPIRED": "만료된 링크"
       }
     },

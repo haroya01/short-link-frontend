@@ -174,6 +174,12 @@
       "missingChallenge": "challenge 情報がありません。再度ログインしてください。"
     }
   },
+  "expiringBanner": {
+    "title": "{count} 件のリンクが 3 日以内に期限切れ",
+    "hint": "必要なリンクは期限を延長するか、不要なものは削除してください。",
+    "showAll": "すべて表示",
+    "dismiss": "閉じる"
+  },
   "dashboard": {
     "label": "dashboard",
     "title": "マイリンク",
@@ -237,6 +243,7 @@
         "ACTIVE": "有効なものだけ",
         "NEVER": "期限なし",
         "HAS_EXPIRY": "期限あり",
+        "EXPIRING_SOON": "3 日以内に期限切れ",
         "EXPIRED": "期限切れ"
       }
     },
