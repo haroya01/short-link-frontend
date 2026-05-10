@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, ChevronUp, Copy, ExternalLink, GripVertical } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  ExternalLink,
+  GripVertical,
+  Star,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -11,6 +19,7 @@ import {
   getMyProfile,
   listMyLinks,
   reorderProfileLinks,
+  setLinkHighlight,
   toggleLinkOnProfile,
   updateMyProfile,
 } from "@/lib/api";
@@ -48,6 +57,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const [savingProfile, setSavingProfile] = useState(false);
   const [links, setLinks] = useState<MyLink[] | null>(null);
   const [featured, setFeatured] = useState<string[]>([]);
+  const [highlightedShortCode, setHighlightedShortCode] = useState<string | null>(null);
   const [pendingShortCode, setPendingShortCode] = useState<string | null>(null);
 
   // Bubble local edit state up to the parent on every change so a preview pane can update live
@@ -128,7 +138,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (cancelled || !data) return;
-        setFeatured((data.links as { shortCode: string }[]).map((l) => l.shortCode));
+        const links = data.links as { shortCode: string; highlighted?: boolean }[];
+        setFeatured(links.map((l) => l.shortCode));
+        const hl = links.find((l) => l.highlighted);
+        setHighlightedShortCode(hl ? hl.shortCode : null);
       })
       .catch(() => {});
     return () => {
@@ -150,6 +163,18 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       toast(errorMessage(err, t("saveFailed")), "error");
     } finally {
       setSavingProfile(false);
+    }
+  }
+
+  async function handleHighlight(shortCode: string) {
+    const wasHighlighted = highlightedShortCode === shortCode;
+    const next = wasHighlighted ? null : shortCode;
+    setHighlightedShortCode(next);
+    try {
+      await setLinkHighlight(shortCode, !wasHighlighted);
+    } catch (err) {
+      setHighlightedShortCode(highlightedShortCode);
+      toast(errorMessage(err, t("toggleFailed")), "error");
     }
   }
 
@@ -406,14 +431,37 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
                             </p>
                           </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleToggle(link.shortCode, false)}
-                          disabled={pendingShortCode === link.shortCode}
-                          className="text-[11px] text-slate-500 hover:text-red-600"
-                        >
-                          {t("remove")}
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleHighlight(link.shortCode)}
+                            aria-pressed={highlightedShortCode === link.shortCode}
+                            title={t("highlight")}
+                            className={
+                              "transition " +
+                              (highlightedShortCode === link.shortCode
+                                ? "text-amber-500"
+                                : "text-slate-300 hover:text-slate-700")
+                            }
+                          >
+                            <Star
+                              className="h-3.5 w-3.5"
+                              fill={
+                                highlightedShortCode === link.shortCode
+                                  ? "currentColor"
+                                  : "none"
+                              }
+                            />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleToggle(link.shortCode, false)}
+                            disabled={pendingShortCode === link.shortCode}
+                            className="text-[11px] text-slate-500 hover:text-red-600"
+                          >
+                            {t("remove")}
+                          </button>
+                        </div>
                       </li>
                     );
                   })}
