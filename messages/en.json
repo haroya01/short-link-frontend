@@ -904,11 +904,17 @@
         "inputLabel": "{label} handle",
         "add": "Add",
         "added": "{label} added",
-        "addFailed": "Failed to add."
+        "addFailed": "Failed to add.",
+        "alreadyAdded": "{label} is already on your profile"
       },
       "save": "Save",
+      "claim": "Claim username",
       "saved": "Saved",
       "saveFailed": "Failed to save.",
+      "autosaving": "Auto-saving...",
+      "autosaved": "Auto-saved ✓",
+      "autosaveHint": "Changes save automatically",
+      "copyPublicUrl": "Copy public URL",
       "featuredTitle": "Featured links",
       "featuredHint": "Use ↑↓ to reorder, 'Remove' to drop.",
       "featuredEmpty": "Add a link from below to feature it.",

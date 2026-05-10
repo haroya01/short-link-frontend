@@ -904,11 +904,17 @@
         "inputLabel": "{label} ハンドル",
         "add": "追加",
         "added": "{label} を追加しました",
-        "addFailed": "追加に失敗しました。"
+        "addFailed": "追加に失敗しました。",
+        "alreadyAdded": "{label} は既にプロフィールに追加されています"
       },
       "save": "保存",
+      "claim": "username 登録",
       "saved": "保存しました",
       "saveFailed": "保存に失敗しました。",
+      "autosaving": "自動保存中...",
+      "autosaved": "自動保存しました ✓",
+      "autosaveHint": "変更は自動保存されます",
+      "copyPublicUrl": "公開 URL をコピー",
       "featuredTitle": "公開ページに表示するリンク",
       "featuredHint": "↑↓ で並び替え、'削除' で外す。",
       "featuredEmpty": "下のリストからリンクを追加してください。",
