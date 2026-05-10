@@ -1,8 +1,17 @@
+import type { CSSProperties } from "react";
 import type { ThemeColors } from "../_lib/theme";
 
-export function ImageEntryCard({ url, colors }: { url: string; colors: ThemeColors }) {
+export function ImageEntryCard({
+  url,
+  colors,
+  fadeStyle,
+}: {
+  url: string;
+  colors: ThemeColors;
+  fadeStyle?: CSSProperties;
+}) {
   return (
-    <li>
+    <li className="profile-fade" style={fadeStyle}>
       <a
         href={url}
         target="_blank"

@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { ExternalLink } from "lucide-react";
 import { Favicon } from "@/components/favicon";
 import type { PublicProfileEntry } from "@/types";
@@ -8,6 +9,7 @@ type Props = {
   entry: PublicProfileEntry;
   username: string;
   colors: ThemeColors;
+  fadeStyle?: CSSProperties;
 };
 
 /**
@@ -25,14 +27,14 @@ type Props = {
  * The fallthrough order matters — image and highlighted both pre-empt YouTube because a hero
  * banner is more visually weighty than a thumbnail.
  */
-export function LinkEntryCard({ entry, username, colors }: Props) {
+export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
   const originalUrl = entry.originalUrl ?? "";
   // src=profile-{username} so analytics can split profile-driven clicks from direct kurl.me hits.
   const href = `${entry.shortUrl}?src=profile-${username}`;
 
   if (isImageUrl(originalUrl)) {
     return (
-      <li>
+      <li className="profile-fade" style={fadeStyle}>
         <a
           href={href}
           target="_blank"
@@ -60,7 +62,7 @@ export function LinkEntryCard({ entry, username, colors }: Props) {
 
   if (entry.highlighted && entry.ogImage) {
     return (
-      <li>
+      <li className="profile-fade" style={fadeStyle}>
         <a
           href={href}
           target="_blank"
@@ -99,7 +101,7 @@ export function LinkEntryCard({ entry, username, colors }: Props) {
   const ytId = youtubeId(originalUrl);
   if (ytId) {
     return (
-      <li>
+      <li className="profile-fade" style={fadeStyle}>
         <a
           href={href}
           target="_blank"
@@ -136,7 +138,7 @@ export function LinkEntryCard({ entry, username, colors }: Props) {
   }
 
   return (
-    <li>
+    <li className="profile-fade" style={fadeStyle}>
       <a
         href={href}
         target="_blank"

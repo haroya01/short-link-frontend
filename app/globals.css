@@ -41,12 +41,52 @@ h1, h2, h3, p {
     background-size: 32px 32px;
   }
 
-  /* Subtle hover lift for clickable cards. Pairs with `transition` to glide. */
+  /*
+   * Hover lift for clickable cards. Pairs with `transition` (250ms ease) to glide. Active state
+   * snaps the card back down so the click feels tactile. Reduced-motion users get the shadow
+   * change but no transform.
+   */
   .hover-lift {
-    @apply transition will-change-transform;
+    @apply transition-all duration-200 ease-out will-change-transform;
   }
   .hover-lift:hover {
     @apply -translate-y-0.5 shadow-md;
+  }
+  .hover-lift:active {
+    @apply translate-y-0 shadow-sm;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hover-lift:hover {
+      transform: none;
+    }
+  }
+
+  /*
+   * Stagger fade-in for the public profile feed. Each entry sets `--idx` inline (0,1,2,…) and
+   * the animation delay derives from it so the items cascade in. Header / footer use the same
+   * keyframe with no delay. Reduced-motion users skip the animation entirely.
+   */
+  .profile-fade {
+    opacity: 0;
+    animation: profile-fade-in 360ms ease-out forwards;
+    animation-delay: calc(var(--idx, 0) * 50ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .profile-fade {
+      animation: none;
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes profile-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

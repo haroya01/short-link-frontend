@@ -1,8 +1,15 @@
+import type { CSSProperties } from "react";
 import type { ThemeColors } from "../_lib/theme";
 
-export function DividerEntry({ colors }: { colors: ThemeColors }) {
+export function DividerEntry({
+  colors,
+  fadeStyle,
+}: {
+  colors: ThemeColors;
+  fadeStyle?: CSSProperties;
+}) {
   return (
-    <li className="py-1.5" aria-hidden="true">
+    <li className="profile-fade py-1.5" style={fadeStyle} aria-hidden="true">
       <hr className={`border-0 border-t ${colors.cardBorder}`} />
     </li>
   );
