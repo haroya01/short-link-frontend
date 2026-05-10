@@ -263,7 +263,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         {profile?.publicUrl && (
           <div className="flex items-center gap-2">
             <PublicUrlPill url={profile.publicUrl} t={t} />
-            <QrButton url={profile.publicUrl} filename={`${profile.username}.png`} />
+            <QrButton
+              url={profile.publicUrl}
+              filename={`${profile.username}.png`}
+              logoSrc="/icon.svg"
+            />
           </div>
         )}
       </div>
