@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Favicon } from "@/components/favicon";
+import { ProfileOwnerFab } from "@/components/profile-owner-fab";
 import type { ProfileTheme, PublicProfile } from "@/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -150,6 +151,7 @@ export default async function PublicProfilePage({
 
         <p className={`mt-10 text-center text-[11px] ${colors.muted}`}>{t("madeWith")}</p>
       </div>
+      <ProfileOwnerFab username={profile.username} />
     </div>
   );
 }

@@ -617,7 +617,8 @@
   },
   "publicProfile": {
     "empty": "이 사용자가 아직 공개한 링크가 없어요.",
-    "madeWith": "kurl.me 로 만들었어요"
+    "madeWith": "kurl.me 로 만들었어요",
+    "editFab": "편집"
   },
   "weeklyInsights": {
     "eyebrow": "지난 7일 인사이트",

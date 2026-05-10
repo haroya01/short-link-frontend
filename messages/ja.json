@@ -700,7 +700,8 @@
   },
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",
-    "madeWith": "kurl.me で作成"
+    "madeWith": "kurl.me で作成",
+    "editFab": "編集"
   },
   "weeklyInsights": {
     "eyebrow": "直近 7 日のインサイト",

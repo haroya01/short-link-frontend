@@ -700,7 +700,8 @@
   },
   "publicProfile": {
     "empty": "This user hasn't featured any links yet.",
-    "madeWith": "Made with kurl.me"
+    "madeWith": "Made with kurl.me",
+    "editFab": "Edit"
   },
   "weeklyInsights": {
     "eyebrow": "Last 7 days",
