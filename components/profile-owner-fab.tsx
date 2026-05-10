@@ -15,13 +15,15 @@ export function ProfileOwnerFab({ username }: { username: string }) {
   const t = useTranslations("publicProfile");
   const { authenticated, ready, me } = useAuth();
   if (!ready || !authenticated) return null;
-  if ((me?.username ?? null) !== username) return null;
+  // Normalize both sides — backend lowercases on save but the URL segment can be in any case.
+  const mineLc = (me?.username ?? "").toLowerCase();
+  if (!mineLc || mineLc !== username.toLowerCase()) return null;
   return (
     <Link
       href="/profile/edit"
-      className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl"
+      className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 z-[60] inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-xl ring-1 ring-white/10 transition hover:-translate-y-0.5 hover:shadow-2xl active:scale-95"
     >
-      <Pencil className="h-3.5 w-3.5" />
+      <Pencil className="h-4 w-4" />
       {t("editFab")}
     </Link>
   );
