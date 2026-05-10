@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 import { useToast } from "./ui/toast";
 import {
   getLinkDetail,
@@ -15,7 +14,12 @@ import {
   updateLink,
 } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
-import { TagInput } from "./tag-input";
+import { SectionTabs } from "./edit-link-dialog/SectionTabs";
+import { BasicSection } from "./edit-link-dialog/sections/BasicSection";
+import { OgOverrideSection } from "./edit-link-dialog/sections/OgOverrideSection";
+import { ProtectionSection } from "./edit-link-dialog/sections/ProtectionSection";
+import { TagsSection } from "./edit-link-dialog/sections/TagsSection";
+import { blankToNull, toLocalInput, type Section } from "./edit-link-dialog/utils";
 import type { LinkDetail, MyLink } from "@/types";
 
 type Props = {
@@ -24,8 +28,12 @@ type Props = {
   onSaved: () => void;
 };
 
-type Section = "basic" | "tags" | "og" | "protection";
-
+/**
+ * Modal dialog for editing a link's metadata. Drives four sub-sections (basic / tags / OG override
+ * / protection) and saves them in a single submit, calling each backend endpoint only when its
+ * slice actually changed. Each sub-section is a pure presentational component — all state +
+ * change-detection is owned here.
+ */
 export function EditLinkDialog({ link, onClose, onSaved }: Props) {
   const t = useTranslations("edit");
   const errorMessage = useApiErrorMessage();
@@ -65,10 +73,7 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     setError(null);
     let cancelled = false;
     setLoadingDetail(true);
-    Promise.all([
-      getLinkDetail(link.shortCode),
-      listTags().catch(() => []),
-    ])
+    Promise.all([getLinkDetail(link.shortCode), listTags().catch(() => [])])
       .then(([d, allTags]) => {
         if (cancelled) return;
         setDetail(d);
@@ -218,213 +223,62 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
           <span className="font-mono text-xs text-slate-500">/{link.shortCode}</span>
         </div>
 
-        <div className="mb-4 flex gap-1 rounded-md bg-slate-100 p-1 text-xs">
-          <TabButton active={section === "basic"} onClick={() => setSection("basic")}>
-            {t("tabs.basic")}
-          </TabButton>
-          <TabButton active={section === "tags"} onClick={() => setSection("tags")}>
-            {t("tabs.tags")}
-          </TabButton>
-          <TabButton active={section === "og"} onClick={() => setSection("og")}>
-            {t("tabs.og")}
-          </TabButton>
-          <TabButton active={section === "protection"} onClick={() => setSection("protection")}>
-            {t("tabs.protection")}
-          </TabButton>
-        </div>
-
-        {section === "tags" && (
-          <div className="space-y-2">
-            <p className="text-xs text-slate-500">{t("tags.description")}</p>
-            <TagInput
-              value={tags}
-              onChange={setTags}
-              suggestions={tagSuggestions}
-              disabled={busy || loadingDetail}
-            />
-          </div>
-        )}
+        <SectionTabs active={section} onSelect={setSection} t={t} />
 
         {section === "basic" && (
-          <div className="space-y-3">
-            <label className="block space-y-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                {t("originalUrl")}
-              </span>
-              <Input
-                type="url"
-                inputMode="url"
-                value={originalUrl}
-                onChange={(e) => setOriginalUrl(e.target.value)}
-                placeholder="https://..."
-                disabled={busy}
-                autoFocus
-              />
-            </label>
-            <label className="block space-y-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                {t("expiresAt")}
-              </span>
-              <div className="flex gap-2">
-                <Input
-                  type="datetime-local"
-                  value={expiresAt}
-                  onChange={(e) => setExpiresAt(e.target.value)}
-                  disabled={busy}
-                  className="flex-1"
-                />
-                {expiresAt && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setExpiresAt("")}
-                    disabled={busy}
-                  >
-                    {t("clear")}
-                  </Button>
-                )}
-              </div>
-            </label>
-            <label className="block space-y-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                {t("noteLabel")}
-              </span>
-              <Input
-                type="text"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder={t("notePlaceholder")}
-                maxLength={280}
-                disabled={busy || loadingDetail}
-              />
-              <p className="text-[10px] text-slate-400">{t("noteHint")}</p>
-            </label>
-            <label className="block space-y-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                {t("expiredMessageLabel")}
-              </span>
-              <textarea
-                value={expiredMessage}
-                onChange={(e) => setExpiredMessage(e.target.value)}
-                placeholder={t("expiredMessagePlaceholder")}
-                maxLength={500}
-                disabled={busy || loadingDetail}
-                rows={2}
-                className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300 disabled:bg-slate-50 disabled:text-slate-500"
-              />
-              <p className="text-[10px] text-slate-400">{t("expiredMessageHint")}</p>
-            </label>
-          </div>
+          <BasicSection
+            originalUrl={originalUrl}
+            expiresAt={expiresAt}
+            note={note}
+            expiredMessage={expiredMessage}
+            busy={busy}
+            loadingDetail={loadingDetail}
+            onOriginalUrlChange={setOriginalUrl}
+            onExpiresAtChange={setExpiresAt}
+            onNoteChange={setNote}
+            onExpiredMessageChange={setExpiredMessage}
+            t={t}
+          />
         )}
-
+        {section === "tags" && (
+          <TagsSection
+            tags={tags}
+            suggestions={tagSuggestions}
+            busy={busy}
+            loadingDetail={loadingDetail}
+            onChange={setTags}
+            t={t}
+          />
+        )}
         {section === "og" && (
-          <div className="space-y-3">
-            <p className="text-xs text-slate-500">{t("og.description")}</p>
-            <label className="block space-y-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                {t("og.titleLabel")}
-              </span>
-              <Input
-                type="text"
-                value={ogTitle}
-                onChange={(e) => setOgTitle(e.target.value)}
-                placeholder={ogPlaceholders.title || t("og.titlePlaceholder")}
-                maxLength={300}
-                disabled={busy || loadingDetail}
-              />
-            </label>
-            <label className="block space-y-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                {t("og.descriptionLabel")}
-              </span>
-              <textarea
-                value={ogDescription}
-                onChange={(e) => setOgDescription(e.target.value)}
-                placeholder={ogPlaceholders.description || t("og.descriptionPlaceholder")}
-                maxLength={800}
-                disabled={busy || loadingDetail}
-                rows={3}
-                className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300 disabled:bg-slate-50 disabled:text-slate-500"
-              />
-            </label>
-            <label className="block space-y-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                {t("og.imageLabel")}
-              </span>
-              <Input
-                type="url"
-                value={ogImage}
-                onChange={(e) => setOgImage(e.target.value)}
-                placeholder={ogPlaceholders.image || "https://..."}
-                maxLength={1024}
-                disabled={busy || loadingDetail}
-              />
-            </label>
-          </div>
+          <OgOverrideSection
+            ogTitle={ogTitle}
+            ogDescription={ogDescription}
+            ogImage={ogImage}
+            placeholders={ogPlaceholders}
+            busy={busy}
+            loadingDetail={loadingDetail}
+            onTitleChange={setOgTitle}
+            onDescriptionChange={setOgDescription}
+            onImageChange={setOgImage}
+            t={t}
+          />
         )}
-
         {section === "protection" && (
-          <div className="space-y-3">
-            <p className="text-xs text-slate-500">{t("protection.description")}</p>
-            <div className="space-y-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                {t("protection.passwordLabel")}
-              </span>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (e.target.value) setRemovePassword(false);
-                }}
-                placeholder={
-                  detail?.passwordProtected
-                    ? t("protection.passwordSetHint")
-                    : t("protection.passwordPlaceholder")
-                }
-                maxLength={200}
-                disabled={busy || loadingDetail || removePassword}
-                autoComplete="new-password"
-              />
-              {detail?.passwordProtected && (
-                <label className="flex items-center gap-2 text-xs text-slate-600">
-                  <input
-                    type="checkbox"
-                    checked={removePassword}
-                    onChange={(e) => {
-                      setRemovePassword(e.target.checked);
-                      if (e.target.checked) setPassword("");
-                    }}
-                    disabled={busy || loadingDetail}
-                  />
-                  {t("protection.removePassword")}
-                </label>
-              )}
-            </div>
-            <label className="block space-y-1">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                {t("protection.maxViewsLabel")}
-              </span>
-              <Input
-                type="number"
-                inputMode="numeric"
-                min={1}
-                value={maxViewsInput}
-                onChange={(e) => setMaxViewsInput(e.target.value)}
-                placeholder={t("protection.maxViewsPlaceholder")}
-                disabled={busy || loadingDetail}
-              />
-              {detail && detail.maxViews != null && (
-                <p className="text-xs text-slate-500">
-                  {t("protection.viewCountHint", {
-                    current: detail.viewCount,
-                    max: detail.maxViews,
-                  })}
-                </p>
-              )}
-            </label>
-          </div>
+          <ProtectionSection
+            password={password}
+            removePassword={removePassword}
+            passwordProtected={Boolean(detail?.passwordProtected)}
+            maxViewsInput={maxViewsInput}
+            viewCount={detail?.viewCount ?? 0}
+            maxViews={detail?.maxViews ?? null}
+            busy={busy}
+            loadingDetail={loadingDetail}
+            onPasswordChange={setPassword}
+            onRemovePasswordChange={setRemovePassword}
+            onMaxViewsChange={setMaxViewsInput}
+            t={t}
+          />
         )}
 
         {error && (
@@ -444,40 +298,4 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
       </form>
     </div>
   );
-}
-
-function TabButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={
-        "flex-1 rounded px-2 py-1.5 text-center transition " +
-        (active
-          ? "bg-white font-medium text-slate-900 shadow-sm"
-          : "text-slate-600 hover:text-slate-900")
-      }
-    >
-      {children}
-    </button>
-  );
-}
-
-function blankToNull(s: string): string | null {
-  const trimmed = s.trim();
-  return trimmed.length === 0 ? null : trimmed;
-}
-
-function toLocalInput(iso: string): string {
-  const d = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
