@@ -17,7 +17,7 @@ export function Nav() {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("nav");
-  const { authenticated, ready, isAdmin, signOut } = useAuth();
+  const { authenticated, ready, isAdmin, me, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobileRef = useRef<HTMLDivElement>(null);
 
@@ -60,6 +60,9 @@ export function Nav() {
               <NavLink href="/dashboard" active={pathname.startsWith("/dashboard")}>
                 {t("myLinks")}
               </NavLink>
+            )}
+            {authenticated && (
+              <ProfileNavLink username={me?.username ?? null} pathname={pathname} t={t} />
             )}
             {isAdmin && (
               <NavLink href="/admin" active={pathname.startsWith("/admin")}>
@@ -113,6 +116,9 @@ export function Nav() {
               <MobileNavLink href="/dashboard" active={pathname.startsWith("/dashboard")}>
                 {t("myLinks")}
               </MobileNavLink>
+            )}
+            {authenticated && (
+              <ProfileMobileLink username={me?.username ?? null} t={t} />
             )}
             {isAdmin && (
               <MobileNavLink href="/admin" active={pathname.startsWith("/admin")}>
@@ -175,6 +181,62 @@ function MobileNavLink({
       )}
     >
       {children}
+    </Link>
+  );
+}
+
+/**
+ * Routes to the user's public profile when they've claimed a username, otherwise nudges them to
+ * the settings page where they can claim one. Keeps a single nav slot regardless of state so the
+ * layout doesn't shift between sign-in and first profile setup.
+ */
+function ProfileNavLink({
+  username,
+  pathname,
+  t,
+}: {
+  username: string | null;
+  pathname: string;
+  t: ReturnType<typeof useTranslations<"nav">>;
+}) {
+  if (username) {
+    const target = `/u/${username}`;
+    return (
+      <NavLink href={target} active={pathname === target}>
+        {t("profile")}
+      </NavLink>
+    );
+  }
+  const target = "/settings";
+  return (
+    <Link
+      href="/settings#profile"
+      className={cn(
+        "rounded-md px-2.5 py-1.5 text-sm transition-colors",
+        pathname === target
+          ? "bg-slate-100 text-slate-900"
+          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
+      )}
+    >
+      {t("profile")}
+    </Link>
+  );
+}
+
+function ProfileMobileLink({
+  username,
+  t,
+}: {
+  username: string | null;
+  t: ReturnType<typeof useTranslations<"nav">>;
+}) {
+  const href = username ? `/u/${username}` : "/settings#profile";
+  return (
+    <Link
+      href={href}
+      className="rounded-md px-3 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
+    >
+      {t("profile")}
     </Link>
   );
 }
