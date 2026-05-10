@@ -453,7 +453,8 @@ export async function getAdminLifecycle(days = 30): Promise<AdminLifecycle> {
 export async function getAdminActiveUsers(
   period: "DAU" | "WAU" | "MAU" = "DAU",
 ): Promise<AdminActiveUsers> {
-  return request<AdminActiveUsers>(`/api/v1/admin/active-users?period=${period}`, {
+  const backendPeriod = period === "DAU" ? "day" : period === "WAU" ? "week" : "month";
+  return request<AdminActiveUsers>(`/api/v1/admin/active-users?period=${backendPeriod}`, {
     method: "GET",
   });
 }
