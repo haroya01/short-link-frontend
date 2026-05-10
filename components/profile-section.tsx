@@ -1,23 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Check,
-  ChevronDown,
-  ChevronUp,
-  Copy,
-  ExternalLink,
-  GripVertical,
-  ImageIcon,
-  Minus,
-  Pencil,
-  Star,
-  Type,
-  X,
-} from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 import { useToast } from "./ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import {
@@ -32,19 +16,10 @@ import {
   updateProfileBlock,
 } from "@/lib/api";
 import type { MyLink, MyProfile, ProfileReorderItem, ProfileTheme } from "@/types";
-
-type FeedItem =
-  | { kind: "LINK"; code: string }
-  | { kind: "BLOCK"; id: number; type: "TEXT" | "DIVIDER" | "IMAGE"; content: string | null };
-import { AvatarPicker } from "./avatar-picker";
+import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
+import { ProfileMetaForm } from "./profile-section/ProfileMetaForm";
+import type { FeedItem } from "./profile-section/types";
 import { ProfileQuickAdd } from "./profile-quick-add";
-import { QrButton } from "./qr-button";
-
-const THEMES: { id: ProfileTheme; label: string; swatch: string }[] = [
-  { id: "light", label: "Light", swatch: "#F8FAFC" },
-  { id: "dark", label: "Dark", swatch: "#0F172A" },
-  { id: "accent", label: "Accent", swatch: "#0EA5E9" },
-];
 
 export type ProfileDraft = {
   username: string;
@@ -60,6 +35,12 @@ type ProfileSectionProps = {
   onDraft?: (draft: ProfileDraft) => void;
 };
 
+/**
+ * Stateful orchestrator for the profile editor. Owns the network state (profile / links / items),
+ * handlers (save / toggle / reorder / block CRUD), and HTML5 drag-and-drop indices. The two child
+ * components ({@link ProfileMetaForm} and {@link ProfileFeedEditor}) are pure render — every
+ * mutation routes back through props so the optimistic state stays in one place.
+ */
 export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const t = useTranslations("settings.profile");
   const { toast } = useToast();
@@ -73,7 +54,15 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [highlightedShortCode, setHighlightedShortCode] = useState<string | null>(null);
   const [pendingShortCode, setPendingShortCode] = useState<string | null>(null);
-  const featured = items.filter((i): i is { kind: "LINK"; code: string } => i.kind === "LINK")
+  const [reload, setReload] = useState(0);
+  const refresh = () => setReload((n) => n + 1);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const lastSavedRef = useRef<{ bio: string; theme: ProfileTheme | null } | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [overIndex, setOverIndex] = useState<number | null>(null);
+
+  const featured = items
+    .filter((i): i is { kind: "LINK"; code: string } => i.kind === "LINK")
     .map((i) => i.code);
 
   // Bubble local edit state up to the parent on every change so a preview pane can update live
@@ -90,14 +79,9 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     });
   }, [username, bio, theme, profile?.avatarUrl, featured, links, onDraft]);
 
-  const [reload, setReload] = useState(0);
-  const refresh = () => setReload((n) => n + 1);
-  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
-  const lastSavedRef = useRef<{ bio: string; theme: ProfileTheme | null } | null>(null);
-
   // After the username is claimed, bio + theme silently auto-save 600ms after the last change.
-  // Username keeps its explicit Save button because it's immutable once set — we want intent for
-  // that, but everything else should "just save" so the editor feels alive.
+  // Username keeps its explicit Save button because changing it costs the user their old URL —
+  // we want intent for that, but everything else should "just save" so the editor feels alive.
   useEffect(() => {
     if (!profile?.username) return;
     if (lastSavedRef.current === null) {
@@ -247,10 +231,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     try {
       await toggleLinkOnProfile(shortCode, show);
       const nextItems: FeedItem[] = show
-        ? [...items.filter((i) => !(i.kind === "LINK" && i.code === shortCode)), {
-            kind: "LINK",
-            code: shortCode,
-          }]
+        ? [
+            ...items.filter((i) => !(i.kind === "LINK" && i.code === shortCode)),
+            { kind: "LINK", code: shortCode },
+          ]
         : items.filter((i) => !(i.kind === "LINK" && i.code === shortCode));
       setItems(nextItems);
       // Toggling-on appends to the end and the server already assigned a fresh order, so we
@@ -270,12 +254,6 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     void commitOrder(next);
   }
 
-  // HTML5 drag-and-drop state. dragIndex = the row currently being dragged; overIndex = the row
-  // we'd drop into. Two-phase render so the dragged row gets a faded look and the target shows
-  // a leading drop indicator. Persists via reorderProfileItems on drop, with optimistic UI.
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [overIndex, setOverIndex] = useState<number | null>(null);
-
   async function commitOrder(next: FeedItem[]) {
     const prev = items;
     setItems(next);
@@ -287,7 +265,29 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
-  function handleDrop(toIndex: number) {
+  function handleDragStart(idx: number, e: React.DragEvent) {
+    setDragIndex(idx);
+    e.dataTransfer.effectAllowed = "move";
+    // Some browsers refuse to start the drag without a payload.
+    const item = items[idx];
+    e.dataTransfer.setData(
+      "text/plain",
+      item.kind === "LINK" ? `link:${item.code}` : `block:${item.id}`,
+    );
+  }
+
+  function handleDragOver(idx: number, e: React.DragEvent) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (overIndex !== idx) setOverIndex(idx);
+  }
+
+  function handleDragLeave(idx: number) {
+    if (overIndex === idx) setOverIndex(null);
+  }
+
+  function handleDrop(toIndex: number, e: React.DragEvent) {
+    e.preventDefault();
     if (dragIndex === null || dragIndex === toIndex) {
       setDragIndex(null);
       setOverIndex(null);
@@ -299,6 +299,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     setDragIndex(null);
     setOverIndex(null);
     void commitOrder(next);
+  }
+
+  function handleDragEnd() {
+    setDragIndex(null);
+    setOverIndex(null);
   }
 
   async function handleAddText() {
@@ -371,106 +376,21 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
-  const otherLinks = (links ?? []).filter((l) => !featured.includes(l.shortCode));
-
-  const profileInfoBlock = (
-    <div className="space-y-3">
-      <AvatarPicker
-        currentUrl={profile?.avatarUrl ?? null}
-        initialChar={(username[0] ?? "·").toUpperCase()}
-        onChange={(avatarUrl) =>
-          setProfile((p) => (p ? { ...p, avatarUrl } : p))
-        }
-      />
-      <label className="block space-y-1">
-        <span className="text-xs font-medium text-slate-500">{t("usernameLabel")}</span>
-        <Input
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="haroya"
-          pattern="^[a-z0-9][a-z0-9_]{2,15}$"
-          maxLength={16}
-        />
-        <p className="text-[11px] text-slate-400">
-          {profile?.username ? t("usernameChangeHint") : t("usernameHint")}
-        </p>
-      </label>
-
-      <label className="block space-y-1">
-        <span className="text-xs font-medium text-slate-500">{t("bioLabel")}</span>
-        <textarea
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-          maxLength={280}
-          rows={3}
-          placeholder={t("bioPlaceholder")}
-          className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
-        />
-        <p className="text-[11px] text-slate-400">{bio.length}/280</p>
-      </label>
-
-      <div className="space-y-1">
-        <span className="text-xs font-medium text-slate-500">{t("themeLabel")}</span>
-        <div className="flex flex-wrap gap-1.5">
-          {THEMES.map((tm) => {
-            const active = theme === tm.id;
-            return (
-              <button
-                key={tm.id}
-                type="button"
-                onClick={() => setTheme(tm.id)}
-                className={
-                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition " +
-                  (active
-                    ? "border-accent-300 bg-accent-50 text-accent-800"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")
-                }
-              >
-                <span
-                  className="h-3 w-3 rounded-full border border-slate-200"
-                  style={{ backgroundColor: tm.swatch }}
-                />
-                {tm.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-3">
-        {!profile?.username && (
-          <Button onClick={handleSaveProfile} disabled={savingProfile} size="sm">
-            {t("claim")}
-          </Button>
-        )}
-        {profile?.username &&
-          username.trim().toLowerCase() !== profile.username.toLowerCase() && (
-            <Button onClick={handleSaveProfile} disabled={savingProfile} size="sm">
-              {t("usernameChangeAction")}
-            </Button>
-          )}
-        {profile?.username &&
-          username.trim().toLowerCase() === profile.username.toLowerCase() && (
-            <span className="text-[11px] text-slate-400">
-              {autoSaveStatus === "saving"
-                ? t("autosaving")
-                : autoSaveStatus === "saved"
-                  ? t("autosaved")
-                  : t("autosaveHint")}
-            </span>
-          )}
-        {profile?.publicUrl && (
-          <div className="flex items-center gap-2">
-            <PublicUrlPill url={profile.publicUrl} t={t} />
-            <QrButton
-              url={profile.publicUrl}
-              filename={`${profile.username}.png`}
-              logoSrc="/icon.svg"
-            />
-          </div>
-        )}
-      </div>
-    </div>
+  const metaForm = (
+    <ProfileMetaForm
+      profile={profile}
+      username={username}
+      bio={bio}
+      theme={theme}
+      savingProfile={savingProfile}
+      autoSaveStatus={autoSaveStatus}
+      onUsernameChange={setUsername}
+      onBioChange={setBio}
+      onThemeChange={setTheme}
+      onAvatarChange={(avatarUrl) => setProfile((p) => (p ? { ...p, avatarUrl } : p))}
+      onSave={handleSaveProfile}
+      t={t}
+    />
   );
 
   // No username yet → just show the claim flow.
@@ -478,7 +398,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     return (
       <div className="space-y-5">
         <p className="text-xs text-slate-500">{t("intro")}</p>
-        {profileInfoBlock}
+        {metaForm}
       </div>
     );
   }
@@ -487,331 +407,35 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     <div className="space-y-5">
       <ProfileQuickAdd onAdded={refresh} highlightEmpty={items.length === 0} />
 
-      <div className="space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
-            <p className="text-[11px] text-slate-500">{t("featuredHint")}</p>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={handleAddText}
-              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:border-slate-300"
-            >
-              <Type className="h-3 w-3" />
-              {t("addHeader")}
-            </button>
-            <button
-              type="button"
-              onClick={handleAddDivider}
-              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:border-slate-300"
-            >
-              <Minus className="h-3 w-3" />
-              {t("addDivider")}
-            </button>
-            <button
-              type="button"
-              onClick={handleAddImage}
-              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:border-slate-300"
-            >
-              <ImageIcon className="h-3 w-3" />
-              {t("addImage")}
-            </button>
-          </div>
-        </div>
-          {links === null ? (
-            <p className="text-xs text-slate-400">{t("loading")}</p>
-          ) : (
-            <>
-              {items.length === 0 ? (
-                <p className="rounded-md border border-dashed border-slate-200 bg-slate-50/40 p-3 text-center text-[11px] text-slate-500">
-                  {t("featuredEmpty")}
-                </p>
-              ) : (
-                <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
-                  {items.map((item, idx) => {
-                    const isDragging = dragIndex === idx;
-                    const isOver = overIndex === idx && dragIndex !== null && dragIndex !== idx;
-                    const rowKey =
-                      item.kind === "LINK" ? `link:${item.code}` : `block:${item.id}`;
-                    const dragHandle = (
-                      <div className="flex min-w-0 items-center gap-2">
-                        <span
-                          aria-label="drag handle"
-                          className="cursor-grab touch-none text-slate-300 hover:text-slate-700 active:cursor-grabbing"
-                        >
-                          <GripVertical className="h-4 w-4" />
-                        </span>
-                        <div className="flex flex-col sm:hidden">
-                          <button
-                            type="button"
-                            aria-label="up"
-                            disabled={idx === 0}
-                            onClick={() => move(idx, -1)}
-                            className="text-slate-400 hover:text-slate-900 disabled:opacity-30"
-                          >
-                            <ChevronUp className="h-3.5 w-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            aria-label="down"
-                            disabled={idx === items.length - 1}
-                            onClick={() => move(idx, 1)}
-                            className="text-slate-400 hover:text-slate-900 disabled:opacity-30"
-                          >
-                            <ChevronDown className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                    const dndProps = {
-                      draggable: true,
-                      onDragStart: (e: React.DragEvent) => {
-                        setDragIndex(idx);
-                        e.dataTransfer.effectAllowed = "move";
-                        e.dataTransfer.setData("text/plain", rowKey);
-                      },
-                      onDragOver: (e: React.DragEvent) => {
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = "move";
-                        if (overIndex !== idx) setOverIndex(idx);
-                      },
-                      onDragLeave: () => {
-                        if (overIndex === idx) setOverIndex(null);
-                      },
-                      onDrop: (e: React.DragEvent) => {
-                        e.preventDefault();
-                        handleDrop(idx);
-                      },
-                      onDragEnd: () => {
-                        setDragIndex(null);
-                        setOverIndex(null);
-                      },
-                    };
-                    const baseRow =
-                      "flex items-center justify-between gap-3 px-3 py-2 transition " +
-                      (isDragging ? "opacity-40 " : "") +
-                      (isOver ? "border-t-2 border-t-accent-500 " : "");
-                    if (item.kind === "BLOCK" && item.type === "DIVIDER") {
-                      return (
-                        <li key={rowKey} {...dndProps} className={baseRow}>
-                          {dragHandle}
-                          <div className="flex min-w-0 flex-1 items-center gap-2 text-slate-400">
-                            <Minus className="h-3.5 w-3.5" />
-                            <span className="text-[11px]">{t("dividerLabel")}</span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteBlock(item.id)}
-                            className="text-slate-400 hover:text-red-600"
-                            aria-label={t("remove")}
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </button>
-                        </li>
-                      );
-                    }
-                    if (item.kind === "BLOCK" && item.type === "IMAGE") {
-                      return (
-                        <li key={rowKey} {...dndProps} className={baseRow}>
-                          {dragHandle}
-                          <div className="flex min-w-0 flex-1 items-center gap-2">
-                            {item.content ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={item.content}
-                                alt=""
-                                className="h-10 w-10 shrink-0 rounded object-cover"
-                              />
-                            ) : (
-                              <ImageIcon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                            )}
-                            <span className="truncate text-[11px] text-slate-500">
-                              {item.content || t("addImagePlaceholder")}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleEditBlock(item.id, item.content ?? "")}
-                              className="text-slate-400 hover:text-slate-900"
-                              aria-label={t("editTextAction")}
-                            >
-                              <Pencil className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteBlock(item.id)}
-                              className="text-slate-400 hover:text-red-600"
-                              aria-label={t("remove")}
-                            >
-                              <X className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        </li>
-                      );
-                    }
-                    if (item.kind === "BLOCK" && item.type === "TEXT") {
-                      return (
-                        <li key={rowKey} {...dndProps} className={baseRow}>
-                          {dragHandle}
-                          <div className="flex min-w-0 flex-1 items-center gap-2">
-                            <Type className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                            <span className="truncate text-sm font-semibold text-slate-900">
-                              {item.content || t("addTextPlaceholder")}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleEditBlock(item.id, item.content ?? "")}
-                              className="text-slate-400 hover:text-slate-900"
-                              aria-label={t("editTextAction")}
-                            >
-                              <Pencil className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteBlock(item.id)}
-                              className="text-slate-400 hover:text-red-600"
-                              aria-label={t("remove")}
-                            >
-                              <X className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        </li>
-                      );
-                    }
-                    // LINK row
-                    if (item.kind !== "LINK") return null;
-                    const link = links?.find((l) => l.shortCode === item.code);
-                    if (!link) return null;
-                    return (
-                      <li key={rowKey} {...dndProps} className={baseRow}>
-                        {dragHandle}
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate font-mono text-sm text-slate-900">
-                            /{link.shortCode}
-                          </p>
-                          <p className="truncate text-[11px] text-slate-500">{link.originalUrl}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleHighlight(link.shortCode)}
-                            aria-pressed={highlightedShortCode === link.shortCode}
-                            title={t("highlight")}
-                            className={
-                              "transition " +
-                              (highlightedShortCode === link.shortCode
-                                ? "text-amber-500"
-                                : "text-slate-300 hover:text-slate-700")
-                            }
-                          >
-                            <Star
-                              className="h-3.5 w-3.5"
-                              fill={
-                                highlightedShortCode === link.shortCode
-                                  ? "currentColor"
-                                  : "none"
-                              }
-                            />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleToggle(link.shortCode, false)}
-                            disabled={pendingShortCode === link.shortCode}
-                            className="text-[11px] text-slate-500 hover:text-red-600"
-                          >
-                            {t("remove")}
-                          </button>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-
-              {otherLinks.length > 0 && (
-                <details className="group">
-                  <summary className="cursor-pointer text-[11px] text-slate-500 hover:text-slate-900">
-                    {t("addMore")} ({otherLinks.length})
-                  </summary>
-                  <ul className="mt-2 divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
-                    {otherLinks.map((link) => (
-                      <li
-                        key={link.shortCode}
-                        className="flex items-center justify-between gap-3 px-3 py-2"
-                      >
-                        <div className="min-w-0">
-                          <p className="truncate font-mono text-sm text-slate-900">/{link.shortCode}</p>
-                          <p className="truncate text-[11px] text-slate-500">{link.originalUrl}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleToggle(link.shortCode, true)}
-                          disabled={pendingShortCode === link.shortCode}
-                          className="text-[11px] text-accent-700 hover:text-accent-800"
-                        >
-                          {t("add")}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              )}
-            </>
-          )}
-      </div>
+      <ProfileFeedEditor
+        items={items}
+        links={links}
+        highlightedShortCode={highlightedShortCode}
+        pendingShortCode={pendingShortCode}
+        dragIndex={dragIndex}
+        overIndex={overIndex}
+        onAddText={handleAddText}
+        onAddDivider={handleAddDivider}
+        onAddImage={handleAddImage}
+        onMove={move}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        onDragEnd={handleDragEnd}
+        onHighlight={handleHighlight}
+        onToggle={handleToggle}
+        onEditBlock={handleEditBlock}
+        onDeleteBlock={handleDeleteBlock}
+        t={t}
+      />
 
       <details className="rounded-lg border border-slate-200 bg-white">
         <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
           {t("profileInfoToggle")}
         </summary>
-        <div className="border-t border-slate-100 p-4">{profileInfoBlock}</div>
+        <div className="border-t border-slate-100 p-4">{metaForm}</div>
       </details>
     </div>
-  );
-}
-
-function PublicUrlPill({
-  url,
-  t,
-}: {
-  url: string;
-  t: ReturnType<typeof useTranslations<"settings.profile">>;
-}) {
-  const [copied, setCopied] = useState(false);
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* clipboard unavailable — silently no-op */
-    }
-  }
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs">
-      <a
-        href={url}
-        target="_blank"
-        rel="noreferrer"
-        className="inline-flex items-center gap-1 text-slate-600 hover:text-slate-900"
-      >
-        <ExternalLink className="h-3 w-3" />
-        {url.replace(/^https?:\/\//, "")}
-      </a>
-      <button
-        type="button"
-        onClick={copy}
-        aria-label={t("copyPublicUrl")}
-        title={t("copyPublicUrl")}
-        className="text-slate-400 hover:text-slate-700"
-      >
-        {copied ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
-      </button>
-    </span>
   );
 }
