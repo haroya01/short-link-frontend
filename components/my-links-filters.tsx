@@ -18,6 +18,7 @@ const EXPIRY_OPTIONS: NonNullable<MyLinksFilters["expiry"]>[] = [
   "ACTIVE",
   "NEVER",
   "HAS_EXPIRY",
+  "EXPIRING_SOON",
   "EXPIRED",
 ];
 

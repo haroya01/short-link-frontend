@@ -181,7 +181,7 @@ export type MyLinksFilters = {
   q?: string;
   tag?: string;
   domain?: string;
-  expiry?: "NEVER" | "ACTIVE" | "EXPIRED" | "HAS_EXPIRY";
+  expiry?: "NEVER" | "ACTIVE" | "EXPIRED" | "HAS_EXPIRY" | "EXPIRING_SOON";
   createdAfter?: string;
   createdBefore?: string;
 };

@@ -14,6 +14,7 @@ import { LinksTable } from "@/components/links-table";
 import { BulkImportDialog } from "@/components/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/my-links-filters";
 import { WeeklyInsightsCard } from "@/components/weekly-insights-card";
+import { ExpiringSoonBanner } from "@/components/expiring-soon-banner";
 import { DashboardOnboarding } from "@/components/dashboard-onboarding";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
@@ -126,6 +127,11 @@ export default function DashboardPage() {
         open={bulkOpen}
         onClose={() => setBulkOpen(false)}
         onImported={() => setReload((n) => n + 1)}
+      />
+
+      <ExpiringSoonBanner
+        reloadKey={reload}
+        onShowAll={() => setFilters((f) => ({ ...f, expiry: "EXPIRING_SOON", page: 1 }))}
       />
 
       <WeeklyInsightsCard />
