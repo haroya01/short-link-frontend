@@ -131,6 +131,43 @@ export default async function PublicProfilePage({
             profile.links.map((link) => {
               const ytId = youtubeId(link.originalUrl);
               const href = `${link.shortUrl}?src=profile-${profile.username}`;
+              if (link.highlighted && link.ogImage) {
+                return (
+                  <li key={link.shortCode}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+                    >
+                      <div
+                        className="relative aspect-[1.91/1] w-full bg-slate-100"
+                        style={{
+                          backgroundImage: `url(${link.ogImage})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                      >
+                        <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+                          ★ Featured
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 px-4 py-3.5">
+                        <Favicon url={link.originalUrl} size={20} className="shrink-0" />
+                        <span className="min-w-0 flex-1">
+                          <span className={`block truncate text-base font-semibold ${colors.primary}`}>
+                            {link.ogTitle ?? hostOf(link.originalUrl)}
+                          </span>
+                          <span className={`block truncate text-[11px] ${colors.muted}`}>
+                            {hostOf(link.originalUrl)}
+                          </span>
+                        </span>
+                        <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
+                      </div>
+                    </a>
+                  </li>
+                );
+              }
               if (ytId) {
                 return (
                   <li key={link.shortCode}>

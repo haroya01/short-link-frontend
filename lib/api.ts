@@ -392,6 +392,16 @@ export async function toggleLinkOnProfile(
   });
 }
 
+export async function setLinkHighlight(
+  shortCode: string,
+  highlighted: boolean,
+): Promise<{ highlighted: boolean }> {
+  return request<{ highlighted: boolean }>(`/api/v1/links/${shortCode}/profile/highlight`, {
+    method: "PUT",
+    body: { highlighted },
+  });
+}
+
 export async function getPublicProfile(username: string): Promise<PublicProfile> {
   return request<PublicProfile>(`/api/v1/public/profiles/${username}`, { method: "GET" });
 }

@@ -253,7 +253,9 @@ export type PublicProfileLink = {
   shortUrl: string;
   originalUrl: string;
   ogTitle: string | null;
+  ogImage: string | null;
   clickCount: number;
+  highlighted: boolean;
 };
 
 export type WeeklyInsights = {
