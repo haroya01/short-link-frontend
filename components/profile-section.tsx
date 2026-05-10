@@ -22,7 +22,20 @@ const THEMES: { id: ProfileTheme; label: string; swatch: string }[] = [
   { id: "accent", label: "Accent", swatch: "#0EA5E9" },
 ];
 
-export function ProfileSection() {
+export type ProfileDraft = {
+  username: string;
+  bio: string;
+  theme: ProfileTheme | null;
+  featured: string[];
+  links: MyLink[];
+};
+
+type ProfileSectionProps = {
+  /** Fires on every local change so a parent can render a live preview alongside. */
+  onDraft?: (draft: ProfileDraft) => void;
+};
+
+export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const t = useTranslations("settings.profile");
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
@@ -34,6 +47,13 @@ export function ProfileSection() {
   const [links, setLinks] = useState<MyLink[] | null>(null);
   const [featured, setFeatured] = useState<string[]>([]);
   const [pendingShortCode, setPendingShortCode] = useState<string | null>(null);
+
+  // Bubble local edit state up to the parent on every change so a preview pane can update live
+  // without round-tripping. Saved profile state stays separate — the draft IS the source of truth
+  // for what visitors will see post-save.
+  useEffect(() => {
+    onDraft?.({ username, bio, theme, featured, links: links ?? [] });
+  }, [username, bio, theme, featured, links, onDraft]);
 
   useEffect(() => {
     let cancelled = false;
