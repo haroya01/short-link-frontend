@@ -650,7 +650,14 @@
   "publicProfile": {
     "empty": "이 사용자가 아직 공개한 링크가 없어요.",
     "madeWith": "kurl.me 로 만들었어요",
-    "editFab": "편집"
+    "editFab": "편집",
+    "share": {
+      "x": "X 에 공유",
+      "line": "LINE 에 공유",
+      "more": "공유",
+      "copy": "URL 복사",
+      "copied": "복사됨"
+    }
   },
   "weeklyInsights": {
     "eyebrow": "지난 7일 인사이트",

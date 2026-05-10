@@ -6,6 +6,7 @@ import { ProfileShareFab } from "@/components/profile-share-fab";
 import type { PublicProfile } from "@/types";
 import { EntryList } from "./_components/EntryList";
 import { ProfileHeader } from "./_components/ProfileHeader";
+import { ShareRow } from "./_components/ShareRow";
 import { THEME_TABLE } from "./_lib/theme";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -74,7 +75,19 @@ export default async function PublicProfilePage({
           colors={colors}
           emptyLabel={t("empty")}
         />
-        <p className={`mt-10 text-center text-[11px] ${colors.muted}`}>{t("madeWith")}</p>
+        <ShareRow
+          url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://app.kurl.me"}/u/${profile.username}`}
+          username={profile.username}
+          colors={colors}
+          labels={{
+            shareOnX: t("share.x"),
+            shareOnLine: t("share.line"),
+            shareMore: t("share.more"),
+            copy: t("share.copy"),
+            copied: t("share.copied"),
+          }}
+        />
+        <p className={`mt-6 text-center text-[11px] ${colors.muted}`}>{t("madeWith")}</p>
       </div>
       <ProfileShareFab
         url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://kurl.me"}/u/${profile.username}`}
