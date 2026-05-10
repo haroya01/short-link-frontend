@@ -128,27 +128,70 @@ export default async function PublicProfilePage({
               {t("empty")}
             </li>
           ) : (
-            profile.links.map((link) => (
-              <li key={link.shortCode}>
-                <a
-                  href={`${link.shortUrl}?src=profile-${profile.username}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`hover-lift group flex items-center gap-3 rounded-xl border px-4 py-3.5 ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
-                >
-                  <Favicon url={link.originalUrl} size={20} className="shrink-0" />
-                  <span className="min-w-0 flex-1">
-                    <span className={`block truncate text-sm font-medium ${colors.primary}`}>
-                      {link.ogTitle ?? hostOf(link.originalUrl)}
+            profile.links.map((link) => {
+              const ytId = youtubeId(link.originalUrl);
+              const href = `${link.shortUrl}?src=profile-${profile.username}`;
+              if (ytId) {
+                return (
+                  <li key={link.shortCode}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+                    >
+                      <div className="relative aspect-video w-full bg-slate-100">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`}
+                          alt=""
+                          loading="lazy"
+                          className="h-full w-full object-cover"
+                        />
+                        <span className="absolute inset-0 grid place-items-center">
+                          <span className="grid h-12 w-12 place-items-center rounded-full bg-black/60 text-white shadow-lg backdrop-blur-sm">
+                            ▶
+                          </span>
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 px-4 py-3">
+                        <Favicon url={link.originalUrl} size={20} className="shrink-0" />
+                        <span className="min-w-0 flex-1">
+                          <span className={`block truncate text-sm font-medium ${colors.primary}`}>
+                            {link.ogTitle ?? "YouTube"}
+                          </span>
+                          <span className={`block truncate text-[11px] ${colors.muted}`}>
+                            youtube.com
+                          </span>
+                        </span>
+                        <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
+                      </div>
+                    </a>
+                  </li>
+                );
+              }
+              return (
+                <li key={link.shortCode}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`hover-lift group flex items-center gap-3 rounded-xl border px-4 py-3.5 ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+                  >
+                    <Favicon url={link.originalUrl} size={20} className="shrink-0" />
+                    <span className="min-w-0 flex-1">
+                      <span className={`block truncate text-sm font-medium ${colors.primary}`}>
+                        {link.ogTitle ?? hostOf(link.originalUrl)}
+                      </span>
+                      <span className={`block truncate text-[11px] ${colors.muted}`}>
+                        {hostOf(link.originalUrl)}
+                      </span>
                     </span>
-                    <span className={`block truncate text-[11px] ${colors.muted}`}>
-                      {hostOf(link.originalUrl)}
-                    </span>
-                  </span>
-                  <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
-                </a>
-              </li>
-            ))
+                    <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
+                  </a>
+                </li>
+              );
+            })
           )}
         </ul>
 
@@ -168,5 +211,30 @@ function hostOf(url: string): string {
     return new URL(url).hostname.replace(/^www\./, "");
   } catch {
     return url;
+  }
+}
+
+/**
+ * Extract a YouTube video ID from any of the common URL shapes (watch, youtu.be, shorts, embed).
+ * Returns null for non-YouTube URLs so callers can fall back to the generic link card.
+ */
+function youtubeId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, "");
+    if (host === "youtu.be") {
+      const id = u.pathname.replace(/^\//, "").split("/")[0];
+      return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null;
+    }
+    if (host !== "youtube.com" && host !== "m.youtube.com") return null;
+    const v = u.searchParams.get("v");
+    if (v && /^[A-Za-z0-9_-]{11}$/.test(v)) return v;
+    const shorts = u.pathname.match(/^\/shorts\/([A-Za-z0-9_-]{11})/);
+    if (shorts) return shorts[1];
+    const embed = u.pathname.match(/^\/embed\/([A-Za-z0-9_-]{11})/);
+    if (embed) return embed[1];
+    return null;
+  } catch {
+    return null;
   }
 }
