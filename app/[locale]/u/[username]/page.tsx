@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Favicon } from "@/components/favicon";
@@ -101,6 +101,12 @@ export default async function PublicProfilePage({
   const t = await getTranslations({ locale, namespace: "publicProfile" });
   const profile = await fetchProfile(username);
   if (!profile) notFound();
+  // Old-handle redirect: backend resolves the requested handle through history within the
+  // 30d grace window, returning the current owner. Surface it as a 308 to the canonical URL
+  // so old SNS bio links keep working without leaving stale handles in browser address bars.
+  if (profile.username.toLowerCase() !== username.toLowerCase()) {
+    redirect(`/${locale}/u/${profile.username}`);
+  }
 
   const initial = (profile.username[0] ?? "·").toUpperCase();
   const colors = THEME_TABLE[profile.theme ?? "default"];
