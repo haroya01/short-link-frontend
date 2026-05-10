@@ -812,8 +812,11 @@
       "previewTitle": "공개 페이지 미리보기 (실시간)",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "한 줄 소개를 입력하면 여기에 보여요",
+      "profileInfoToggle": "프로필 정보 (username · 한 줄 소개 · 테마)",
       "quickAdd": {
         "title": "링크 추가",
+        "firstTitle": "첫 링크를 추가해보세요 ↓",
+        "firstHint": "Instagram, 블로그, 유튜브 등 어떤 URL 이든 라벨과 함께 추가하세요. SNS bio 에 박을 수 있어요.",
         "hint": "URL + 라벨 입력 → 단축 + 프로필 노출까지 자동. 연달아 여러 개 추가 가능.",
         "urlPlaceholder": "https://... 또는 mailto:...",
         "labelPlaceholder": "라벨 (예: 📝 블로그)",

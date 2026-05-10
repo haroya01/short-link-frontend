@@ -898,8 +898,11 @@
       "previewTitle": "Live preview",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "Your bio will appear here",
+      "profileInfoToggle": "Profile info (username · bio · theme)",
       "quickAdd": {
         "title": "Add link",
+        "firstTitle": "Add your first link ↓",
+        "firstHint": "Any URL — Instagram, blog, YouTube, etc. Add it with a label and it shows up on your bio link.",
         "hint": "Paste any URL + a label. We shorten it and feature it. Add as many as you want.",
         "urlPlaceholder": "https://... or mailto:...",
         "labelPlaceholder": "Label (e.g. 📝 Blog)",

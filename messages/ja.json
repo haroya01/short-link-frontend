@@ -898,8 +898,11 @@
       "previewTitle": "公開ページのライブプレビュー",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "ここに自己紹介が表示されます",
+      "profileInfoToggle": "プロフィール情報 (username · 自己紹介 · テーマ)",
       "quickAdd": {
         "title": "リンクを追加",
+        "firstTitle": "最初のリンクを追加 ↓",
+        "firstHint": "Instagram、ブログ、YouTube 等どんな URL でも、ラベルと一緒に追加して bio 用 1 ページに表示。",
         "hint": "URL + ラベルを入力 → 短縮 + プロフィール表示まで自動。連続で何個でも追加できます。",
         "urlPlaceholder": "https://... または mailto:...",
         "labelPlaceholder": "ラベル (例: 📝 ブログ)",
