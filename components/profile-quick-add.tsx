@@ -83,6 +83,22 @@ const PLATFORMS: Platform[] = [
     matches: matchHost("github.com"),
   },
   {
+    id: "kakao-channel",
+    label: "카카오톡 채널",
+    urlTemplate: "https://pf.kakao.com/_{h}",
+    placeholder: "abcDEF (채널 ID)",
+    normalize: (h) => h.trim().replace(/^_/, "").replace(/^@/, ""),
+    matches: matchHost("pf.kakao.com"),
+  },
+  {
+    id: "kakao-openchat",
+    label: "오픈채팅",
+    urlTemplate: "https://open.kakao.com/o/{h}",
+    placeholder: "g1ABC2dE",
+    normalize: (h) => h.trim().replace(/^\/+/, ""),
+    matches: matchHost("open.kakao.com"),
+  },
+  {
     id: "naver-blog",
     label: "네이버 블로그",
     urlTemplate: "https://blog.naver.com/{h}",
