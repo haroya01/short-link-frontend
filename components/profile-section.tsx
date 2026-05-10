@@ -416,38 +416,54 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   }
 
   return (
-    <div className="space-y-5">
-      <ProfileQuickAdd onAdded={refresh} highlightEmpty={items.length === 0} />
+    <div className="space-y-6">
+      <Section label={t("sectionProfile")}>
+        <div className="rounded-lg border border-slate-200 bg-white p-4">{metaForm}</div>
+      </Section>
 
-      <ProfileFeedEditor
-        items={items}
-        links={links}
-        highlightedShortCode={highlightedShortCode}
-        pendingShortCode={pendingShortCode}
-        dragIndex={dragIndex}
-        overIndex={overIndex}
-        onAddText={handleAddText}
-        onAddDivider={handleAddDivider}
-        onAddImage={handleAddImage}
-        onMove={move}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onDragEnd={handleDragEnd}
-        onHighlight={handleHighlight}
-        onToggle={handleToggle}
-        onEditBlock={handleEditBlock}
-        onDeleteBlock={handleDeleteBlock}
-        t={t}
-      />
+      <Section label={t("sectionAddLink")}>
+        <ProfileQuickAdd onAdded={refresh} highlightEmpty={items.length === 0} />
+      </Section>
 
-      <details className="rounded-lg border border-slate-200 bg-white">
-        <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
-          {t("profileInfoToggle")}
-        </summary>
-        <div className="border-t border-slate-100 p-4">{metaForm}</div>
-      </details>
+      <Section label={t("sectionFeed")}>
+        <ProfileFeedEditor
+          items={items}
+          links={links}
+          highlightedShortCode={highlightedShortCode}
+          pendingShortCode={pendingShortCode}
+          dragIndex={dragIndex}
+          overIndex={overIndex}
+          onAddText={handleAddText}
+          onAddDivider={handleAddDivider}
+          onAddImage={handleAddImage}
+          onMove={move}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onDragEnd={handleDragEnd}
+          onHighlight={handleHighlight}
+          onToggle={handleToggle}
+          onEditBlock={handleEditBlock}
+          onDeleteBlock={handleDeleteBlock}
+          t={t}
+        />
+      </Section>
+    </div>
+  );
+}
+
+/**
+ * Small uppercase label above a section block. Visually anchors each card so the page reads as
+ * "profile / add link / feed" instead of three undifferentiated cards stacked together.
+ */
+function Section({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-2">
+      <p className="px-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+        {label}
+      </p>
+      {children}
     </div>
   );
 }

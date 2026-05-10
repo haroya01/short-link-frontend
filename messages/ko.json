@@ -863,6 +863,9 @@
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "한 줄 소개를 입력하면 여기에 보여요",
       "profileInfoToggle": "프로필 정보 (username · 한 줄 소개 · 테마)",
+      "sectionProfile": "프로필",
+      "sectionAddLink": "링크 추가",
+      "sectionFeed": "공개 페이지 피드",
       "quickAdd": {
         "title": "링크 추가",
         "firstTitle": "첫 링크를 추가해보세요 ↓",
@@ -871,6 +874,7 @@
         "urlPlaceholder": "https://... 또는 mailto:...",
         "labelPlaceholder": "라벨 (예: 📝 블로그)",
         "templatesLabel": "또는 빠른 URL 채우기 (라벨은 본인이 입력)",
+        "templatesMore": "+{count} 더보기",
         "add": "추가",
         "added": "{label} 추가됨",
         "addFailed": "추가에 실패했어요.",

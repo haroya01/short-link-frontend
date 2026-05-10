@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Loader2, Plus } from "lucide-react";
+import { ChevronDown, Loader2, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -162,20 +162,55 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <p className="text-[11px] text-slate-500">{t("templatesLabel")}</p>
-        <div className="flex flex-wrap gap-1.5">
-          {TEMPLATES.map((tpl) => (
-            <button
-              key={tpl.id}
-              type="button"
-              onClick={() => applyTemplate(tpl)}
-              className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
-            >
-              {tpl.label}
-            </button>
-          ))}
-        </div>
+      <TemplatesRow templates={TEMPLATES} onPick={applyTemplate} t={t} />
+    </div>
+  );
+}
+
+/**
+ * 9 social-template chips would otherwise eat 2 wrapped rows on every page load even after a user
+ * has memorized which one they want. Show {@code DEFAULT_VISIBLE} most-common chips by default
+ * and gate the rest behind a "+ N" toggle. State is local; collapses again on profile reload.
+ */
+const DEFAULT_VISIBLE = 4;
+
+function TemplatesRow({
+  templates,
+  onPick,
+  t,
+}: {
+  templates: Template[];
+  onPick: (tpl: Template) => void;
+  t: ReturnType<typeof useTranslations<"settings.profile.quickAdd">>;
+}) {
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? templates : templates.slice(0, DEFAULT_VISIBLE);
+  const hidden = templates.length - DEFAULT_VISIBLE;
+
+  return (
+    <div className="space-y-1.5">
+      <p className="text-[11px] text-slate-500">{t("templatesLabel")}</p>
+      <div className="flex flex-wrap gap-1.5">
+        {visible.map((tpl) => (
+          <button
+            key={tpl.id}
+            type="button"
+            onClick={() => onPick(tpl)}
+            className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            {tpl.label}
+          </button>
+        ))}
+        {!showAll && hidden > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowAll(true)}
+            className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-700 transition hover:border-slate-300"
+          >
+            <ChevronDown className="h-3 w-3" />
+            {t("templatesMore", { count: hidden })}
+          </button>
+        )}
       </div>
     </div>
   );
