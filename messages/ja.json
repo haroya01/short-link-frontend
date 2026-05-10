@@ -942,6 +942,7 @@
       "usernameChangeHint": "変更すると、旧 URL は 30 日間自動 redirect された後に失効します。",
       "usernameChangeConfirm": "@{prev} → @{next} に変更しますか？旧 URL は 30 日間のみ有効です。",
       "usernameChangeAction": "変更",
+      "usernameUnsaved": "username が未保存",
       "bioLabel": "自己紹介",
       "bioPlaceholder": "例: フルスタック開発者 · サイドプロジェクト製作中",
       "themeLabel": "テーマ",

@@ -1,5 +1,6 @@
 "use client";
 
+import { Check, Loader2 } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { AvatarPicker } from "../avatar-picker";
 import { BannerPicker } from "../banner-picker";
@@ -172,30 +173,64 @@ export function ProfileMetaForm({
           </Button>
         )}
         {profile?.username && !usernameUnchanged && (
-          <Button onClick={onSave} disabled={savingProfile} size="sm">
-            {t("usernameChangeAction")}
-          </Button>
-        )}
-        {profile?.username && usernameUnchanged && (
-          <span className="text-[11px] text-slate-400">
-            {autoSaveStatus === "saving"
-              ? t("autosaving")
-              : autoSaveStatus === "saved"
-                ? t("autosaved")
-                : t("autosaveHint")}
-          </span>
-        )}
-        {profile?.publicUrl && (
-          <div className="flex items-center gap-2">
-            <PublicUrlPill url={profile.publicUrl} t={t} />
-            <QrButton
-              url={profile.publicUrl}
-              filename={`${profile.username}.png`}
-              logoSrc="/icon.svg"
-            />
+          // Sticky on mobile so the button is reachable even when the user has scrolled the
+          // username field out of view. Desktop keeps the inline button — sidebar layout means
+          // the button is rarely far from the field.
+          <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-end gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm sm:relative sm:inset-auto sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-none">
+            <span className="text-[11px] text-slate-500 sm:hidden">
+              {t("usernameUnsaved")}
+            </span>
+            <Button onClick={onSave} disabled={savingProfile} size="sm">
+              {t("usernameChangeAction")}
+            </Button>
           </div>
         )}
+        {profile?.username && usernameUnchanged && <AutoSaveIndicator status={autoSaveStatus} t={t} />}
       </div>
+
+      {profile?.publicUrl && (
+        // Promoted to its own row so it doesn't compete with the save button / autosave hint —
+        // share-my-profile is a separate intent from "did my edit save".
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2">
+          <PublicUrlPill url={profile.publicUrl} t={t} />
+          <QrButton
+            url={profile.publicUrl}
+            filename={`${profile.username}.png`}
+            logoSrc="/icon.svg"
+          />
+        </div>
+      )}
     </div>
   );
+}
+
+/**
+ * Inline autosave feedback. The previous text-only "자동 저장됨" was easy to miss; now the
+ * "saved" state animates a green checkmark so the eye catches it. Idle state shows a static
+ * hint so users know they don't need to hit Save.
+ */
+function AutoSaveIndicator({
+  status,
+  t,
+}: {
+  status: "idle" | "saving" | "saved";
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  if (status === "saving") {
+    return (
+      <span className="inline-flex items-center gap-1 text-[11px] text-slate-500">
+        <Loader2 className="h-3 w-3 animate-spin" />
+        {t("autosaving")}
+      </span>
+    );
+  }
+  if (status === "saved") {
+    return (
+      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 animate-fade-in">
+        <Check className="h-3 w-3" />
+        {t("autosaved")}
+      </span>
+    );
+  }
+  return <span className="text-[11px] text-slate-400">{t("autosaveHint")}</span>;
 }
