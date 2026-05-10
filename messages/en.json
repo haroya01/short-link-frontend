@@ -53,6 +53,26 @@
     "subhead": "See who clicked from where — by device, OS, browser, channel, country.",
     "anonymousHint": "No login required. Stats need login though.",
     "demoLink": "Preview the analytics dashboard",
+    "previews": {
+      "eyebrow": "What you get within 60 seconds",
+      "see": "See",
+      "stats": {
+        "title": "Analytics dashboard",
+        "desc": "Human/bot split, channel, country, time-of-day — automatic. 30-day trend + heatmap."
+      },
+      "viral": {
+        "title": "Share OG card",
+        "desc": "Share on KakaoTalk/X and the preview shows the live click count baked in."
+      },
+      "profile": {
+        "title": "Public profile",
+        "desc": "kurl.me/u/{your-id} — the one link for your Instagram bio."
+      },
+      "domain": {
+        "title": "Your own domain",
+        "desc": "Route through go.brand.com. TXT + CNAME auto-verified."
+      }
+    },
     "ctaSeeLinks": "See all my links",
     "loginCta": "Sign in to save and analyze <clickStats>click stats</clickStats> for this link.",
     "features": {
@@ -284,7 +304,14 @@
       "traffic": "Traffic",
       "sources": "Sources",
       "audience": "Audience",
-      "settings": "Settings"
+      "settings": "Settings",
+      "descriptions": {
+        "overview": "The essentials — click quality, live feed, day×hour heatmap.",
+        "traffic": "Volume shape — daily trend, hour-of-day, country split.",
+        "sources": "Where it came from — referrers, UTM (4), channel/src tags.",
+        "audience": "Who came — device, OS, browser, region, language, bots.",
+        "settings": "Per-link config — A/B destinations, webhook delivery."
+      }
     },
     "live": {
       "title": "Live clicks",
@@ -847,7 +874,14 @@
       "profile": "Profile",
       "security": "Security",
       "domains": "Domains",
-      "data": "Data"
+      "data": "Data",
+      "descriptions": {
+        "account": "Email / joined date / timezone / UI language.",
+        "profile": "Public profile (kurl.me/u/{id}) — the one link for your SNS bio.",
+        "security": "2FA TOTP + recovery codes / API key issue & revoke.",
+        "domains": "Route short URLs through your own domain (go.brand.com).",
+        "data": "Data export (JSON) / permanent account deletion."
+      }
     },
     "profile": {
       "title": "Public profile",

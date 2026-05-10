@@ -215,31 +215,34 @@ function StatsBody({
         velocityRatio={data.velocity?.ratio ?? 0}
       />
 
-      <div
-        role="tablist"
-        aria-label={t("tabs.aria")}
-        className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
-      >
-        {tabs.map((it) => {
-          const active = tab === it.key;
-          return (
-            <button
-              key={it.key}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => selectTab(it.key)}
-              className={
-                "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition " +
-                (active
-                  ? "bg-slate-900 text-white"
-                  : "bg-white text-slate-600 ring-1 ring-inset ring-slate-200 hover:bg-slate-50")
-              }
-            >
-              {it.label}
-            </button>
-          );
-        })}
+      <div className="space-y-2">
+        <div
+          role="tablist"
+          aria-label={t("tabs.aria")}
+          className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+        >
+          {tabs.map((it) => {
+            const active = tab === it.key;
+            return (
+              <button
+                key={it.key}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => selectTab(it.key)}
+                className={
+                  "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition " +
+                  (active
+                    ? "bg-slate-900 text-white"
+                    : "bg-white text-slate-600 ring-1 ring-inset ring-slate-200 hover:bg-slate-50")
+                }
+              >
+                {it.label}
+              </button>
+            );
+          })}
+        </div>
+        <p className="text-xs text-slate-500">{t(`tabs.descriptions.${tab}`)}</p>
       </div>
 
       {tab === "overview" && (
