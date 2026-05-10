@@ -9,7 +9,13 @@ import { Input } from "./ui/input";
 import { useToast } from "./ui/toast";
 import { truncateMiddle } from "@/lib/utils";
 
-type Props = { url?: string; value?: string; filename?: string };
+type Props = {
+  url?: string;
+  value?: string;
+  filename?: string;
+  /** Override the center logo with a specific image (e.g., the kurl mark for profile QRs). */
+  logoSrc?: string;
+};
 
 type Palette = { id: string; dark: string; light: string };
 
@@ -50,7 +56,7 @@ function destinationFaviconUrl(url: string): string | null {
   }
 }
 
-export function QrButton({ url, value, filename = "qrcode.png" }: Props) {
+export function QrButton({ url, value, filename = "qrcode.png", logoSrc }: Props) {
   const baseUrl = url ?? value ?? "";
   const [open, setOpen] = useState(false);
 
@@ -60,7 +66,14 @@ export function QrButton({ url, value, filename = "qrcode.png" }: Props) {
         <QrCode className="h-3.5 w-3.5" />
         <span className="hidden sm:inline">QR</span>
       </Button>
-      {open && <QrModal baseUrl={baseUrl} filename={filename} onClose={() => setOpen(false)} />}
+      {open && (
+        <QrModal
+          baseUrl={baseUrl}
+          filename={filename}
+          logoSrc={logoSrc}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </>
   );
 }
@@ -68,10 +81,12 @@ export function QrButton({ url, value, filename = "qrcode.png" }: Props) {
 function QrModal({
   baseUrl,
   filename,
+  logoSrc,
   onClose,
 }: {
   baseUrl: string;
   filename: string;
+  logoSrc?: string;
   onClose: () => void;
 }) {
   const t = useTranslations("qr");
@@ -79,16 +94,18 @@ function QrModal({
   const [copied, setCopied] = useState(false);
   const [srcHint, setSrcHint] = useState("");
   const [paletteId, setPaletteId] = useState<string>(PALETTES[0].id);
-  const [withLogo, setWithLogo] = useState(false);
+  // Default logo on when caller supplied one (typical: branded profile QR) — for plain link QRs
+  // we leave it off so the user opts in.
+  const [withLogo, setWithLogo] = useState(Boolean(logoSrc));
   const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const target = useMemo(() => withQrSrc(baseUrl, srcHint), [baseUrl, srcHint]);
   const palette = PALETTES.find((p) => p.id === paletteId) ?? PALETTES[0];
-  const logoUrl = useMemo(() => (withLogo ? destinationFaviconUrl(baseUrl) : null), [
-    baseUrl,
-    withLogo,
-  ]);
+  const logoUrl = useMemo(
+    () => (withLogo ? (logoSrc ?? destinationFaviconUrl(baseUrl)) : null),
+    [baseUrl, withLogo, logoSrc],
+  );
 
   // Render QR onto a canvas. When a logo is requested, we draw it center-cropped over a small
   // white square so the underlying modules stay readable; bumped error-correction to H to absorb

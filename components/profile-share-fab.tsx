@@ -10,7 +10,7 @@ import { QrButton } from "./qr-button";
 export function ProfileShareFab({ url, filename }: { url: string; filename: string }) {
   return (
     <div className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-5 z-[55]">
-      <QrButton url={url} filename={filename} />
+      <QrButton url={url} filename={filename} logoSrc="/icon.svg" />
     </div>
   );
 }
