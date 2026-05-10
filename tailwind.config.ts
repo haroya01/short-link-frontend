@@ -26,11 +26,12 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
+          "Pretendard Variable",
+          "Pretendard",
           "Inter",
           "ui-sans-serif",
           "system-ui",
           "-apple-system",
-          "Pretendard",
           "Apple SD Gothic Neo",
           "Noto Sans KR",
           "sans-serif",
@@ -52,12 +53,17 @@ const config: Config = {
           from: { opacity: "0", transform: "translateY(2px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "toast-in": {
+          from: { opacity: "0", transform: "translateY(8px) scale(0.98)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
       },
       animation: {
         "fade-in": "fade-in 180ms ease-out",
+        "toast-in": "toast-in 220ms cubic-bezier(0.16, 1, 0.3, 1)",
         shimmer: "shimmer 1.5s infinite",
       },
     },

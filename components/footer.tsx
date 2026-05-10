@@ -1,8 +1,15 @@
+"use client";
+
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 
 export function Footer() {
   const t = useTranslations("footer");
+  const pathname = usePathname();
+
+  // Public profile pages render chrome-less — same skip rule as <Nav>.
+  if (pathname.startsWith("/u/")) return null;
+
   return (
     <footer className="border-t border-slate-200 py-6">
       <div className="container flex flex-col items-center justify-between gap-2 text-xs text-slate-500 sm:flex-row">

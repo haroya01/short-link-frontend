@@ -81,9 +81,11 @@ export function ProfilePreview({ username, bio, theme, featuredShortCodes, links
   return (
     <div className="space-y-2">
       <p className="text-[11px] font-medium text-slate-500">{tEditor("previewTitle")}</p>
-      <div className="overflow-hidden rounded-[28px] border border-slate-300 bg-slate-200 p-2 shadow-sm">
-        <div className={`overflow-hidden rounded-[22px] ${colors.page}`}>
-          <div className="space-y-3 p-5">
+      <div className="relative mx-auto w-full max-w-[280px] overflow-hidden rounded-[42px] border border-slate-800/30 bg-slate-900 p-1.5 shadow-xl shadow-slate-300/40">
+        {/* Dynamic-Island style notch */}
+        <div className="absolute left-1/2 top-2 z-10 h-5 w-20 -translate-x-1/2 rounded-full bg-slate-900" />
+        <div className={`overflow-hidden rounded-[34px] ${colors.page}`}>
+          <div className="space-y-3 px-4 pb-5 pt-9">
             <div className="flex flex-col items-center gap-2 text-center">
               <div
                 className={`grid h-14 w-14 place-items-center rounded-full text-lg font-semibold ${colors.avatar} ${colors.avatarText}`}
@@ -128,6 +130,8 @@ export function ProfilePreview({ username, bio, theme, featuredShortCodes, links
                 ))
               )}
             </ul>
+            {/* Home indicator */}
+            <div className="mx-auto mt-3 h-1 w-24 rounded-full bg-slate-300/60" />
           </div>
         </div>
       </div>

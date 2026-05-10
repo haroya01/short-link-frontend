@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Favicon } from "@/components/favicon";
 import type { ProfileTheme, PublicProfile } from "@/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -101,24 +102,24 @@ export default async function PublicProfilePage({
   const colors = THEME_TABLE[profile.theme ?? "default"];
 
   return (
-    <div className={`-mt-14 min-h-screen pt-14 ${colors.page}`}>
+    <div className={`min-h-screen ${colors.page}`}>
       <div className="container max-w-md py-12">
         <div className="flex flex-col items-center gap-3 text-center">
           <div
-            className={`grid h-20 w-20 place-items-center rounded-full text-2xl font-semibold ${colors.avatar} ${colors.avatarText}`}
+            className={`grid h-20 w-20 place-items-center rounded-full text-2xl font-semibold shadow-sm ${colors.avatar} ${colors.avatarText}`}
           >
             {initial}
           </div>
-          <p className={`font-mono text-sm ${colors.primary}`}>@{profile.username}</p>
+          <p className={`text-sm font-medium ${colors.primary}`}>@{profile.username}</p>
           {profile.bio && (
             <p className={`text-sm leading-relaxed ${colors.muted}`}>{profile.bio}</p>
           )}
         </div>
 
-        <ul className="mt-8 space-y-2">
+        <ul className="mt-8 space-y-2.5">
           {profile.links.length === 0 ? (
             <li
-              className={`rounded-md border border-dashed ${colors.cardBorder} p-6 text-center text-xs ${colors.muted}`}
+              className={`rounded-xl border border-dashed ${colors.cardBorder} p-6 text-center text-xs ${colors.muted}`}
             >
               {t("empty")}
             </li>
@@ -129,14 +130,15 @@ export default async function PublicProfilePage({
                   href={`${link.shortUrl}?src=profile-${profile.username}`}
                   target="_blank"
                   rel="noreferrer"
-                  className={`group flex items-center justify-between gap-3 rounded-md border px-4 py-3 transition ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+                  className={`hover-lift group flex items-center gap-3 rounded-xl border px-4 py-3.5 ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
                 >
+                  <Favicon url={link.originalUrl} size={20} className="shrink-0" />
                   <span className="min-w-0 flex-1">
                     <span className={`block truncate text-sm font-medium ${colors.primary}`}>
                       {link.ogTitle ?? hostOf(link.originalUrl)}
                     </span>
                     <span className={`block truncate text-[11px] ${colors.muted}`}>
-                      /{link.shortCode}
+                      {hostOf(link.originalUrl)}
                     </span>
                   </span>
                   <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
