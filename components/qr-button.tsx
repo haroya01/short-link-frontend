@@ -127,6 +127,10 @@ function QrModal({
           await drawLogo(canvas, logoUrl, palette.light);
         }
         if (!cancelled) setDataUrl(canvas.toDataURL("image/png"));
+        // qrcode 라이브러리가 canvas.style 에 inline 512px 박아서 Tailwind h-full/w-full 을
+        // 무력화시킴. 인라인 클리어해서 wrapper 에 맞게 축소되게 (intrinsic 512 은 download 용으로 유지).
+        canvas.style.width = "";
+        canvas.style.height = "";
       })
       .catch(() => {
         if (!cancelled) setDataUrl(null);
