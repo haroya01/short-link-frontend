@@ -185,6 +185,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   async function handleSaveProfile() {
     const next = username.trim().toLowerCase();
     const prev = (profile?.username ?? "").toLowerCase();
+    // Mirror the backend regex so non-ASCII (한글 등) / too short / illegal char inputs fail fast
+    // with a proper toast instead of round-tripping into a generic 500 — backend remains the
+    // source of truth, this is just early feedback.
+    if (next && !/^[a-z0-9][a-z0-9_]{2,15}$/.test(next)) {
+      toast(t("usernameInvalid"), "error");
+      return;
+    }
     // Username changes give up the previous handle into a 30d grace window — make the user
     // ack that explicitly so they don't accidentally lose the link they put in their bio.
     if (prev && next && prev !== next) {
