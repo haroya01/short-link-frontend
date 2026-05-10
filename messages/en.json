@@ -733,7 +733,14 @@
   "publicProfile": {
     "empty": "This user hasn't featured any links yet.",
     "madeWith": "Made with kurl.me",
-    "editFab": "Edit"
+    "editFab": "Edit",
+    "share": {
+      "x": "Share on X",
+      "line": "Share on LINE",
+      "more": "Share",
+      "copy": "Copy URL",
+      "copied": "Copied"
+    }
   },
   "weeklyInsights": {
     "eyebrow": "Last 7 days",

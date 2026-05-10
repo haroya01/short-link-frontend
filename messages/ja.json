@@ -733,7 +733,14 @@
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",
     "madeWith": "kurl.me で作成",
-    "editFab": "編集"
+    "editFab": "編集",
+    "share": {
+      "x": "X で共有",
+      "line": "LINE で共有",
+      "more": "共有",
+      "copy": "URL コピー",
+      "copied": "コピー済み"
+    }
   },
   "weeklyInsights": {
     "eyebrow": "直近 7 日のインサイト",
