@@ -130,7 +130,36 @@ export default async function PublicProfilePage({
           ) : (
             profile.links.map((link) => {
               const ytId = youtubeId(link.originalUrl);
+              const isImage = isImageUrl(link.originalUrl);
+              const isSpotify = isSpotifyUrl(link.originalUrl);
               const href = `${link.shortUrl}?src=profile-${profile.username}`;
+              if (isImage) {
+                return (
+                  <li key={link.shortCode}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={link.originalUrl}
+                        alt={link.ogTitle ?? ""}
+                        loading="lazy"
+                        className="block max-h-80 w-full bg-slate-100 object-cover"
+                      />
+                      {link.ogTitle && (
+                        <div className="px-4 py-2.5">
+                          <span className={`block truncate text-sm font-medium ${colors.primary}`}>
+                            {link.ogTitle}
+                          </span>
+                        </div>
+                      )}
+                    </a>
+                  </li>
+                );
+              }
               if (link.highlighted && link.ogImage) {
                 return (
                   <li key={link.shortCode}>
@@ -224,6 +253,11 @@ export default async function PublicProfilePage({
                         {hostOf(link.originalUrl)}
                       </span>
                     </span>
+                    {isSpotify && (
+                      <span className="shrink-0 rounded-full bg-[#1DB954] px-2 py-0.5 text-[10px] font-medium text-white">
+                        ▶ Spotify
+                      </span>
+                    )}
                     <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
                   </a>
                 </li>
@@ -248,6 +282,25 @@ function hostOf(url: string): string {
     return new URL(url).hostname.replace(/^www\./, "");
   } catch {
     return url;
+  }
+}
+
+/** Treat any URL whose path ends in a common image extension as an inline-image card. */
+function isImageUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    return /\.(jpe?g|png|webp|gif|avif|svg)(\?.*)?$/i.test(u.pathname);
+  } catch {
+    return false;
+  }
+}
+
+function isSpotifyUrl(url: string): boolean {
+  try {
+    const h = new URL(url).hostname.replace(/^www\./, "");
+    return h === "open.spotify.com" || h === "spotify.com";
+  } catch {
+    return false;
   }
 }
 
