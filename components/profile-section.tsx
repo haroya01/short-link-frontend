@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Check, ChevronDown, ChevronUp, Copy, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -58,6 +58,37 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
 
   const [reload, setReload] = useState(0);
   const refresh = () => setReload((n) => n + 1);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const lastSavedRef = useRef<{ bio: string; theme: ProfileTheme | null } | null>(null);
+
+  // After the username is claimed, bio + theme silently auto-save 600ms after the last change.
+  // Username keeps its explicit Save button because it's immutable once set — we want intent for
+  // that, but everything else should "just save" so the editor feels alive.
+  useEffect(() => {
+    if (!profile?.username) return;
+    if (lastSavedRef.current === null) {
+      lastSavedRef.current = { bio: profile.bio ?? "", theme: profile.theme ?? null };
+      return;
+    }
+    if (lastSavedRef.current.bio === bio && lastSavedRef.current.theme === theme) return;
+    setAutoSaveStatus("saving");
+    const timer = setTimeout(async () => {
+      try {
+        const updated = await updateMyProfile({
+          bio: bio.trim(),
+          theme: theme ?? undefined,
+        });
+        setProfile(updated);
+        lastSavedRef.current = { bio, theme };
+        setAutoSaveStatus("saved");
+        setTimeout(() => setAutoSaveStatus("idle"), 1500);
+      } catch (err) {
+        toast(errorMessage(err, t("saveFailed")), "error");
+        setAutoSaveStatus("idle");
+      }
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [bio, theme, profile?.username, profile?.bio, profile?.theme, errorMessage, t, toast]);
 
   useEffect(() => {
     let cancelled = false;
@@ -215,27 +246,28 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button onClick={handleSaveProfile} disabled={savingProfile} size="sm">
-            {t("save")}
-          </Button>
-          {profile?.publicUrl && (
-            <a
-              href={profile.publicUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900"
-            >
-              <ExternalLink className="h-3 w-3" />
-              {profile.publicUrl}
-            </a>
+        <div className="flex flex-wrap items-center gap-3">
+          {!profile?.username && (
+            <Button onClick={handleSaveProfile} disabled={savingProfile} size="sm">
+              {t("claim")}
+            </Button>
           )}
+          {profile?.username && (
+            <span className="text-[11px] text-slate-400">
+              {autoSaveStatus === "saving"
+                ? t("autosaving")
+                : autoSaveStatus === "saved"
+                  ? t("autosaved")
+                  : t("autosaveHint")}
+            </span>
+          )}
+          {profile?.publicUrl && <PublicUrlPill url={profile.publicUrl} t={t} />}
         </div>
       </div>
 
       {profile?.username && (
         <div className="space-y-5 border-t border-slate-100 pt-5">
-          <ProfileQuickAdd onAdded={refresh} />
+          <ProfileQuickAdd onAdded={refresh} addedUrls={featuredLinks.map((l) => l.originalUrl)} />
           <div className="space-y-3">
             <div>
               <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
@@ -329,5 +361,46 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         </div>
       )}
     </div>
+  );
+}
+
+function PublicUrlPill({
+  url,
+  t,
+}: {
+  url: string;
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard unavailable — silently no-op */
+    }
+  }
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs">
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-center gap-1 text-slate-600 hover:text-slate-900"
+      >
+        <ExternalLink className="h-3 w-3" />
+        {url.replace(/^https?:\/\//, "")}
+      </a>
+      <button
+        type="button"
+        onClick={copy}
+        aria-label={t("copyPublicUrl")}
+        title={t("copyPublicUrl")}
+        className="text-slate-400 hover:text-slate-700"
+      >
+        {copied ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
+      </button>
+    </span>
   );
 }

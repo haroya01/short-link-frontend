@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Plus } from "lucide-react";
+import { Check, Loader2, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -18,9 +18,20 @@ type Platform = {
   placeholder: string;
   /** Strip @, leading slash, etc. before substitution. */
   normalize?: (raw: string) => string;
+  /** Detects whether a featured URL belongs to this platform — used to render ✓ on chips. */
+  matches: (url: string) => boolean;
 };
 
 const stripAt = (h: string) => h.trim().replace(/^@/, "").replace(/^\/+/, "");
+
+const matchHost = (host: string) => (url: string) => {
+  try {
+    const h = new URL(url).hostname.replace(/^www\./, "").toLowerCase();
+    return h === host || h.endsWith("." + host);
+  } catch {
+    return false;
+  }
+};
 
 const PLATFORMS: Platform[] = [
   {
@@ -29,6 +40,7 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "https://instagram.com/{h}",
     placeholder: "haroya",
     normalize: stripAt,
+    matches: matchHost("instagram.com"),
   },
   {
     id: "x",
@@ -36,6 +48,7 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "https://x.com/{h}",
     placeholder: "haroya",
     normalize: stripAt,
+    matches: (u) => matchHost("x.com")(u) || matchHost("twitter.com")(u),
   },
   {
     id: "youtube",
@@ -43,6 +56,7 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "https://youtube.com/@{h}",
     placeholder: "haroya",
     normalize: stripAt,
+    matches: (u) => matchHost("youtube.com")(u) || matchHost("youtu.be")(u),
   },
   {
     id: "tiktok",
@@ -50,6 +64,7 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "https://tiktok.com/@{h}",
     placeholder: "haroya",
     normalize: stripAt,
+    matches: matchHost("tiktok.com"),
   },
   {
     id: "threads",
@@ -57,6 +72,7 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "https://threads.net/@{h}",
     placeholder: "haroya",
     normalize: stripAt,
+    matches: matchHost("threads.net"),
   },
   {
     id: "github",
@@ -64,6 +80,7 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "https://github.com/{h}",
     placeholder: "haroya",
     normalize: stripAt,
+    matches: matchHost("github.com"),
   },
   {
     id: "naver-blog",
@@ -71,6 +88,7 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "https://blog.naver.com/{h}",
     placeholder: "haroya",
     normalize: stripAt,
+    matches: matchHost("blog.naver.com"),
   },
   {
     id: "velog",
@@ -78,6 +96,7 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "https://velog.io/@{h}",
     placeholder: "haroya",
     normalize: stripAt,
+    matches: matchHost("velog.io"),
   },
   {
     id: "tistory",
@@ -85,6 +104,7 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "https://{h}.tistory.com",
     placeholder: "haroya",
     normalize: stripAt,
+    matches: matchHost("tistory.com"),
   },
   {
     id: "linkedin",
@@ -92,6 +112,7 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "https://linkedin.com/in/{h}",
     placeholder: "haroya",
     normalize: stripAt,
+    matches: matchHost("linkedin.com"),
   },
   {
     id: "email",
@@ -99,15 +120,18 @@ const PLATFORMS: Platform[] = [
     urlTemplate: "mailto:{h}",
     placeholder: "you@example.com",
     normalize: (h) => h.trim(),
+    matches: (u) => u.toLowerCase().startsWith("mailto:"),
   },
 ];
 
 type Props = {
   /** Called after a new link is shortened + toggled on. Lets the parent refresh its lists. */
   onAdded: () => void;
+  /** Featured links' destination URLs — used to mark chips as already-added. */
+  addedUrls?: string[];
 };
 
-export function ProfileQuickAdd({ onAdded }: Props) {
+export function ProfileQuickAdd({ onAdded, addedUrls = [] }: Props) {
   const t = useTranslations("settings.profile.quickAdd");
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
@@ -151,19 +175,23 @@ export function ProfileQuickAdd({ onAdded }: Props) {
       <div className="flex flex-wrap gap-1.5">
         {PLATFORMS.map((p) => {
           const active = openId === p.id;
+          const alreadyAdded = addedUrls.some((u) => p.matches(u));
           return (
             <button
               key={p.id}
               type="button"
               onClick={() => pick(p.id)}
+              title={alreadyAdded ? t("alreadyAdded", { label: p.label }) : undefined}
               className={
                 "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition " +
                 (active
                   ? "border-accent-300 bg-accent-50 text-accent-800"
-                  : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900")
+                  : alreadyAdded
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900")
               }
             >
-              <Plus className="h-2.5 w-2.5" />
+              {alreadyAdded ? <Check className="h-2.5 w-2.5" /> : <Plus className="h-2.5 w-2.5" />}
               {p.label}
             </button>
           );
