@@ -370,8 +370,16 @@ export async function getMyProfile(): Promise<MyProfile> {
 export async function updateMyProfile(payload: {
   username?: string;
   bio?: string;
+  theme?: "light" | "dark" | "accent" | null;
 }): Promise<MyProfile> {
   return request<MyProfile>("/api/v1/users/me/profile", { method: "PUT", body: payload });
+}
+
+export async function reorderProfileLinks(shortCodes: string[]): Promise<MyProfile> {
+  return request<MyProfile>("/api/v1/users/me/profile/order", {
+    method: "PUT",
+    body: { shortCodes },
+  });
 }
 
 export async function toggleLinkOnProfile(
