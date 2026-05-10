@@ -16,7 +16,10 @@ type Props = {
 export function ProfileHeader({ username, bio, avatarUrl, bannerUrl, colors }: Props) {
   const initial = (username[0] ?? "·").toUpperCase();
   return (
-    <div className="flex flex-col items-center gap-3 text-center">
+    <div
+      className="profile-fade flex flex-col items-center gap-3 text-center"
+      style={{ "--idx": 0 } as React.CSSProperties}
+    >
       {bannerUrl && (
         <div className="-mx-4 mb-2 aspect-[3/1] w-[calc(100%+2rem)] overflow-hidden sm:mx-0 sm:w-full sm:rounded-xl">
           {/* eslint-disable-next-line @next/next/no-img-element */}

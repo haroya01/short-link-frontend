@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { PublicProfileEntry } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
 import { DividerEntry } from "./DividerEntry";
@@ -11,6 +12,11 @@ type Props = {
   colors: ThemeColors;
   emptyLabel: string;
 };
+
+/** Header is at index 0 (handled outside this component), so feed items start at idx + 1. */
+function fadeStyle(idx: number): CSSProperties {
+  return { "--idx": idx + 1 } as CSSProperties;
+}
 
 /**
  * Maps each backend entry to its rendering component by {@code kind}. Anything unrecognized falls
@@ -33,11 +39,22 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
     <ul className="mt-8 space-y-2.5">
       {entries.map((entry, idx) => {
         const key = entry.id != null ? `${entry.kind}-${entry.id}` : `${entry.kind}-${idx}`;
-        if (entry.kind === "DIVIDER") return <DividerEntry key={key} colors={colors} />;
+        const style = fadeStyle(idx);
+        if (entry.kind === "DIVIDER")
+          return <DividerEntry key={key} colors={colors} fadeStyle={style} />;
         if (entry.kind === "TEXT")
-          return <TextEntryHeader key={key} content={entry.content ?? ""} colors={colors} />;
+          return (
+            <TextEntryHeader
+              key={key}
+              content={entry.content ?? ""}
+              colors={colors}
+              fadeStyle={style}
+            />
+          );
         if (entry.kind === "IMAGE" && entry.content)
-          return <ImageEntryCard key={key} url={entry.content} colors={colors} />;
+          return (
+            <ImageEntryCard key={key} url={entry.content} colors={colors} fadeStyle={style} />
+          );
         if (entry.kind === "LINK")
           return (
             <LinkEntryCard
@@ -45,6 +62,7 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
               entry={entry}
               username={username}
               colors={colors}
+              fadeStyle={style}
             />
           );
         return null;
