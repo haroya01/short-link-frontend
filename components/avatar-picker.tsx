@@ -13,7 +13,12 @@ import { useToast } from "./ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
 const ACCEPT = "image/jpeg,image/png,image/webp";
-const MAX_BYTES = 5 * 1024 * 1024;
+const MAX_INPUT_BYTES = 10 * 1024 * 1024;
+/** Aim for a square that fills the largest place we render an avatar (80px @ 3x DPR ≈ 240px,
+ *  so 512 has comfortable headroom for retina + future card layouts). */
+const TARGET_DIM = 512;
+const OUTPUT_TYPE = "image/jpeg";
+const OUTPUT_QUALITY = 0.9;
 
 type Props = {
   currentUrl: string | null;
@@ -37,19 +42,23 @@ export function AvatarPicker({ currentUrl, initialChar, onChange }: Props) {
       toast(t("invalidType"), "error");
       return;
     }
-    if (file.size > MAX_BYTES) {
+    // Loose pre-check on the original — even a 10MP camera shot is fine here because the
+    // canvas resize step shrinks everything to ~50–100KB before upload.
+    if (file.size > MAX_INPUT_BYTES) {
       toast(t("tooBig"), "error");
       return;
     }
     setBusy(true);
     try {
-      const presign = await presignAvatarUpload(file.type);
-      // Server can override our local cap (e.g. config bump) so honor whichever is smaller.
-      if (file.size > presign.maxBytes) {
+      const resized = await resizeToSquareJpeg(file, TARGET_DIM);
+      const presign = await presignAvatarUpload(OUTPUT_TYPE);
+      // Server still has the authoritative size cap (HEAD-checked on commit) — this is just
+      // a defensive client check so we don't waste an S3 PUT we know will be rejected.
+      if (resized.size > presign.maxBytes) {
         toast(t("tooBig"), "error");
         return;
       }
-      await uploadAvatarToS3(presign.uploadUrl, file, file.type);
+      await uploadAvatarToS3(presign.uploadUrl, resized, OUTPUT_TYPE);
       const committed = await commitAvatarUpload(presign.key);
       onChange(committed.avatarUrl);
       toast(t("uploaded"), "success");
@@ -118,4 +127,49 @@ export function AvatarPicker({ currentUrl, initialChar, onChange }: Props) {
       />
     </div>
   );
+}
+
+/**
+ * Loads `file` into an Image, draws the largest centered square crop into a `dim x dim` canvas,
+ * and exports as JPEG. Always returns the same dimensions regardless of input — keeps avatars
+ * uniform on the public profile and caps the storage / bandwidth blast radius from huge uploads.
+ */
+async function resizeToSquareJpeg(file: File, dim: number): Promise<File> {
+  const dataUrl = await readFileAsDataURL(file);
+  const img = await loadImage(dataUrl);
+  const side = Math.min(img.width, img.height);
+  const sx = (img.width - side) / 2;
+  const sy = (img.height - side) / 2;
+  const canvas = document.createElement("canvas");
+  canvas.width = dim;
+  canvas.height = dim;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("canvas 2d unavailable");
+  ctx.drawImage(img, sx, sy, side, side, 0, 0, dim, dim);
+  const blob: Blob = await new Promise((resolve, reject) =>
+    canvas.toBlob(
+      (b) => (b ? resolve(b) : reject(new Error("toBlob returned null"))),
+      OUTPUT_TYPE,
+      OUTPUT_QUALITY,
+    ),
+  );
+  return new File([blob], "avatar.jpg", { type: OUTPUT_TYPE });
+}
+
+function readFileAsDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result as string);
+    r.onerror = () => reject(r.error ?? new Error("read failed"));
+    r.readAsDataURL(file);
+  });
+}
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("image decode failed"));
+    img.src = src;
+  });
 }
