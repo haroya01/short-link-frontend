@@ -27,7 +27,9 @@ const TEMPLATES: Template[] = [
   { id: "kakao", label: "카카오톡 채널", urlTemplate: "https://pf.kakao.com/_{h}", placeholder: "abcDEF" },
   { id: "naver-blog", label: "네이버 블로그", urlTemplate: "https://blog.naver.com/{h}", placeholder: "haroya" },
   { id: "velog", label: "Velog", urlTemplate: "https://velog.io/@{h}", placeholder: "haroya" },
-  { id: "email", label: "Email", urlTemplate: "mailto:{h}", placeholder: "you@example.com" },
+  // Email is a special case — we don't show the technical "mailto:" prefix in the field; the
+  // input is just an address and we add the scheme on submit (see normalizeScheme).
+  { id: "email", label: "Email", urlTemplate: "{h}", placeholder: "you@example.com" },
 ];
 
 type Props = {
@@ -61,13 +63,14 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
   async function submit() {
     const trimmedUrl = url.trim();
     if (!trimmedUrl) return;
-    if (!/^https?:\/\/|^mailto:/i.test(trimmedUrl)) {
+    const normalized = normalizeScheme(trimmedUrl);
+    if (!normalized) {
       toast(t("invalidUrl"), "error");
       return;
     }
     setBusy(true);
     try {
-      const created = await shortenUrl({ url: trimmedUrl });
+      const created = await shortenUrl({ url: normalized });
       const trimmedLabel = label.trim();
       if (trimmedLabel) {
         await setLinkOgOverride(created.shortCode, { ogTitle: trimmedLabel });
@@ -170,4 +173,21 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
       </div>
     </div>
   );
+}
+
+/**
+ * Accepts a fairly free-form input and returns a usable URL. Rules in order:
+ * - Already has http(s):// or mailto: → return as-is
+ * - Looks like an email (has @ and a TLD) → prefix mailto:
+ * - Looks like a domain or path (has a dot, no scheme) → prefix https://
+ * - Otherwise → null (caller surfaces an error)
+ */
+function normalizeScheme(input: string): string | null {
+  const v = input.trim();
+  if (!v) return null;
+  if (/^https?:\/\//i.test(v)) return v;
+  if (/^mailto:/i.test(v)) return v;
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return "mailto:" + v;
+  if (/\./.test(v) && !/\s/.test(v)) return "https://" + v;
+  return null;
 }
