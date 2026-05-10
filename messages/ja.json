@@ -899,13 +899,15 @@
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "ここに自己紹介が表示されます",
       "quickAdd": {
-        "title": "ワンタップで追加",
-        "hint": "ハンドルを入力するだけで自動で短縮 + プロフィールに表示。",
-        "inputLabel": "{label} ハンドル",
+        "title": "リンクを追加",
+        "hint": "URL + ラベルを入力 → 短縮 + プロフィール表示まで自動。連続で何個でも追加できます。",
+        "urlPlaceholder": "https://... または mailto:...",
+        "labelPlaceholder": "ラベル (例: 📝 ブログ)",
+        "templatesLabel": "または URL のみクイック入力 (ラベルは自分で入力)",
         "add": "追加",
         "added": "{label} を追加しました",
         "addFailed": "追加に失敗しました。",
-        "alreadyAdded": "{label} は既にプロフィールに追加されています"
+        "invalidUrl": "URL は http(s):// または mailto: で始まる必要があります。"
       },
       "save": "保存",
       "claim": "username 登録",
