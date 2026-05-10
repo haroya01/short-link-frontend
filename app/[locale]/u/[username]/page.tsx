@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { Favicon } from "@/components/favicon";
 import { ProfileOwnerFab } from "@/components/profile-owner-fab";
 import { ProfileShareFab } from "@/components/profile-share-fab";
-import type { ProfileTheme, PublicProfile } from "@/types";
+import type { ProfileTheme, PublicProfile, PublicProfileEntry } from "@/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
@@ -84,7 +84,8 @@ export async function generateMetadata({
   if (!profile) return { title: `@${username}` };
   return {
     title: `@${profile.username} · kurl`,
-    description: profile.bio ?? `${profile.links.length} links`,
+    description:
+      profile.bio ?? `${profile.entries.filter((e) => e.kind === "LINK").length} links`,
     openGraph: {
       title: `@${profile.username} · kurl`,
       description: profile.bio ?? undefined,
@@ -127,148 +128,14 @@ export default async function PublicProfilePage({
         </div>
 
         <ul className="mt-8 space-y-2.5">
-          {profile.links.length === 0 ? (
+          {profile.entries.length === 0 ? (
             <li
               className={`rounded-xl border border-dashed ${colors.cardBorder} p-6 text-center text-xs ${colors.muted}`}
             >
               {t("empty")}
             </li>
           ) : (
-            profile.links.map((link) => {
-              const ytId = youtubeId(link.originalUrl);
-              const isImage = isImageUrl(link.originalUrl);
-              const isSpotify = isSpotifyUrl(link.originalUrl);
-              const href = `${link.shortUrl}?src=profile-${profile.username}`;
-              if (isImage) {
-                return (
-                  <li key={link.shortCode}>
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={link.originalUrl}
-                        alt={link.ogTitle ?? ""}
-                        loading="lazy"
-                        className="block max-h-80 w-full bg-slate-100 object-cover"
-                      />
-                      {link.ogTitle && (
-                        <div className="px-4 py-2.5">
-                          <span className={`block truncate text-sm font-medium ${colors.primary}`}>
-                            {link.ogTitle}
-                          </span>
-                        </div>
-                      )}
-                    </a>
-                  </li>
-                );
-              }
-              if (link.highlighted && link.ogImage) {
-                return (
-                  <li key={link.shortCode}>
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
-                    >
-                      <div
-                        className="relative aspect-[1.91/1] w-full bg-slate-100"
-                        style={{
-                          backgroundImage: `url(${link.ogImage})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                        }}
-                      >
-                        <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
-                          ★ Featured
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3 px-4 py-3.5">
-                        <Favicon url={link.originalUrl} size={20} className="shrink-0" />
-                        <span className="min-w-0 flex-1">
-                          <span className={`block truncate text-base font-semibold ${colors.primary}`}>
-                            {link.ogTitle ?? hostOf(link.originalUrl)}
-                          </span>
-                          <span className={`block truncate text-[11px] ${colors.muted}`}>
-                            {hostOf(link.originalUrl)}
-                          </span>
-                        </span>
-                        <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
-                      </div>
-                    </a>
-                  </li>
-                );
-              }
-              if (ytId) {
-                return (
-                  <li key={link.shortCode}>
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
-                    >
-                      <div className="relative aspect-video w-full bg-slate-100">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={`https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`}
-                          alt=""
-                          loading="lazy"
-                          className="h-full w-full object-cover"
-                        />
-                        <span className="absolute inset-0 grid place-items-center">
-                          <span className="grid h-12 w-12 place-items-center rounded-full bg-black/60 text-white shadow-lg backdrop-blur-sm">
-                            ▶
-                          </span>
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3 px-4 py-3">
-                        <Favicon url={link.originalUrl} size={20} className="shrink-0" />
-                        <span className="min-w-0 flex-1">
-                          <span className={`block truncate text-sm font-medium ${colors.primary}`}>
-                            {link.ogTitle ?? "YouTube"}
-                          </span>
-                          <span className={`block truncate text-[11px] ${colors.muted}`}>
-                            youtube.com
-                          </span>
-                        </span>
-                        <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
-                      </div>
-                    </a>
-                  </li>
-                );
-              }
-              return (
-                <li key={link.shortCode}>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={`hover-lift group flex items-center gap-3 rounded-xl border px-4 py-3.5 ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
-                  >
-                    <Favicon url={link.originalUrl} size={20} className="shrink-0" />
-                    <span className="min-w-0 flex-1">
-                      <span className={`block truncate text-sm font-medium ${colors.primary}`}>
-                        {link.ogTitle ?? hostOf(link.originalUrl)}
-                      </span>
-                      <span className={`block truncate text-[11px] ${colors.muted}`}>
-                        {hostOf(link.originalUrl)}
-                      </span>
-                    </span>
-                    {isSpotify && (
-                      <span className="shrink-0 rounded-full bg-[#1DB954] px-2 py-0.5 text-[10px] font-medium text-white">
-                        ▶ Spotify
-                      </span>
-                    )}
-                    <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
-                  </a>
-                </li>
-              );
-            })
+            profile.entries.map((entry, idx) => renderEntry(entry, idx, profile.username, colors))
           )}
         </ul>
 
@@ -280,6 +147,161 @@ export default async function PublicProfilePage({
       />
       <ProfileOwnerFab username={profile.username} />
     </div>
+  );
+}
+
+function renderEntry(
+  entry: PublicProfileEntry,
+  idx: number,
+  username: string,
+  colors: ThemeColors,
+) {
+  if (entry.kind === "DIVIDER") {
+    return (
+      <li key={`divider-${entry.id ?? idx}`} className="py-1.5" aria-hidden="true">
+        <hr className={`border-0 border-t ${colors.cardBorder}`} />
+      </li>
+    );
+  }
+  if (entry.kind === "TEXT") {
+    return (
+      <li key={`text-${entry.id ?? idx}`} className="pt-3 pb-1">
+        <h2 className={`text-sm font-semibold ${colors.primary}`}>{entry.content}</h2>
+      </li>
+    );
+  }
+  // LINK
+  const originalUrl = entry.originalUrl ?? "";
+  const ytId = youtubeId(originalUrl);
+  const isImage = isImageUrl(originalUrl);
+  const isSpotify = isSpotifyUrl(originalUrl);
+  const href = `${entry.shortUrl}?src=profile-${username}`;
+  if (isImage) {
+    return (
+      <li key={entry.shortCode}>
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={originalUrl}
+            alt={entry.ogTitle ?? ""}
+            loading="lazy"
+            className="block max-h-80 w-full bg-slate-100 object-cover"
+          />
+          {entry.ogTitle && (
+            <div className="px-4 py-2.5">
+              <span className={`block truncate text-sm font-medium ${colors.primary}`}>
+                {entry.ogTitle}
+              </span>
+            </div>
+          )}
+        </a>
+      </li>
+    );
+  }
+  if (entry.highlighted && entry.ogImage) {
+    return (
+      <li key={entry.shortCode}>
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+        >
+          <div
+            className="relative aspect-[1.91/1] w-full bg-slate-100"
+            style={{
+              backgroundImage: `url(${entry.ogImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+              ★ Featured
+            </span>
+          </div>
+          <div className="flex items-center gap-3 px-4 py-3.5">
+            <Favicon url={originalUrl} size={20} className="shrink-0" />
+            <span className="min-w-0 flex-1">
+              <span className={`block truncate text-base font-semibold ${colors.primary}`}>
+                {entry.ogTitle ?? hostOf(originalUrl)}
+              </span>
+              <span className={`block truncate text-[11px] ${colors.muted}`}>
+                {hostOf(originalUrl)}
+              </span>
+            </span>
+            <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
+          </div>
+        </a>
+      </li>
+    );
+  }
+  if (ytId) {
+    return (
+      <li key={entry.shortCode}>
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+        >
+          <div className="relative aspect-video w-full bg-slate-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+            <span className="absolute inset-0 grid place-items-center">
+              <span className="grid h-12 w-12 place-items-center rounded-full bg-black/60 text-white shadow-lg backdrop-blur-sm">
+                ▶
+              </span>
+            </span>
+          </div>
+          <div className="flex items-center gap-3 px-4 py-3">
+            <Favicon url={originalUrl} size={20} className="shrink-0" />
+            <span className="min-w-0 flex-1">
+              <span className={`block truncate text-sm font-medium ${colors.primary}`}>
+                {entry.ogTitle ?? "YouTube"}
+              </span>
+              <span className={`block truncate text-[11px] ${colors.muted}`}>youtube.com</span>
+            </span>
+            <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
+          </div>
+        </a>
+      </li>
+    );
+  }
+  return (
+    <li key={entry.shortCode}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+        className={`hover-lift group flex items-center gap-3 rounded-xl border px-4 py-3.5 ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+      >
+        <Favicon url={originalUrl} size={20} className="shrink-0" />
+        <span className="min-w-0 flex-1">
+          <span className={`block truncate text-sm font-medium ${colors.primary}`}>
+            {entry.ogTitle ?? hostOf(originalUrl)}
+          </span>
+          <span className={`block truncate text-[11px] ${colors.muted}`}>
+            {hostOf(originalUrl)}
+          </span>
+        </span>
+        {isSpotify && (
+          <span className="shrink-0 rounded-full bg-[#1DB954] px-2 py-0.5 text-[10px] font-medium text-white">
+            ▶ Spotify
+          </span>
+        )}
+        <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${colors.muted}`} />
+      </a>
+    </li>
   );
 }
 

@@ -8,7 +8,11 @@ import {
   Copy,
   ExternalLink,
   GripVertical,
+  Minus,
+  Pencil,
   Star,
+  Type,
+  X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "./ui/button";
@@ -16,14 +20,21 @@ import { Input } from "./ui/input";
 import { useToast } from "./ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import {
+  createProfileBlock,
+  deleteProfileBlock,
   getMyProfile,
   listMyLinks,
-  reorderProfileLinks,
+  reorderProfileItems,
   setLinkHighlight,
   toggleLinkOnProfile,
   updateMyProfile,
+  updateProfileBlock,
 } from "@/lib/api";
-import type { MyLink, MyProfile, ProfileTheme } from "@/types";
+import type { MyLink, MyProfile, ProfileReorderItem, ProfileTheme } from "@/types";
+
+type FeedItem =
+  | { kind: "LINK"; code: string }
+  | { kind: "BLOCK"; id: number; type: "TEXT" | "DIVIDER"; content: string | null };
 import { ProfileQuickAdd } from "./profile-quick-add";
 import { QrButton } from "./qr-button";
 
@@ -56,9 +67,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const [theme, setTheme] = useState<ProfileTheme | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
   const [links, setLinks] = useState<MyLink[] | null>(null);
-  const [featured, setFeatured] = useState<string[]>([]);
+  const [items, setItems] = useState<FeedItem[]>([]);
   const [highlightedShortCode, setHighlightedShortCode] = useState<string | null>(null);
   const [pendingShortCode, setPendingShortCode] = useState<string | null>(null);
+  const featured = items.filter((i): i is { kind: "LINK"; code: string } => i.kind === "LINK")
+    .map((i) => i.code);
 
   // Bubble local edit state up to the parent on every change so a preview pane can update live
   // without round-tripping. Saved profile state stays separate — the draft IS the source of truth
@@ -120,12 +133,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     };
   }, [reload]);
 
-  // The bare profile fetch doesn't carry per-link toggle state, so we hit the public endpoint
-  // once a username exists to seed the featured-list order. Future toggle/reorder calls keep the
-  // local list authoritative — no need to refetch.
+  // The bare profile fetch doesn't carry order or block state, so we hit the public endpoint
+  // once a username exists to seed the unified items list. Future toggle/reorder/block calls
+  // keep the local list authoritative — no need to refetch.
   useEffect(() => {
     if (!profile?.username) {
-      setFeatured([]);
+      setItems([]);
       return;
     }
     let cancelled = false;
@@ -138,10 +151,26 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (cancelled || !data) return;
-        const links = data.links as { shortCode: string; highlighted?: boolean }[];
-        setFeatured(links.map((l) => l.shortCode));
-        const hl = links.find((l) => l.highlighted);
-        setHighlightedShortCode(hl ? hl.shortCode : null);
+        const entries = (data.entries ?? []) as Array<{
+          kind: "LINK" | "TEXT" | "DIVIDER";
+          id: number | null;
+          shortCode: string | null;
+          highlighted?: boolean | null;
+          content?: string | null;
+        }>;
+        const next: FeedItem[] = [];
+        for (const e of entries) {
+          if (e.kind === "LINK" && e.shortCode) {
+            next.push({ kind: "LINK", code: e.shortCode });
+          } else if (e.kind === "TEXT" && e.id != null) {
+            next.push({ kind: "BLOCK", id: e.id, type: "TEXT", content: e.content ?? "" });
+          } else if (e.kind === "DIVIDER" && e.id != null) {
+            next.push({ kind: "BLOCK", id: e.id, type: "DIVIDER", content: null });
+          }
+        }
+        setItems(next);
+        const hl = entries.find((e) => e.kind === "LINK" && e.highlighted);
+        setHighlightedShortCode(hl?.shortCode ?? null);
       })
       .catch(() => {});
     return () => {
@@ -186,13 +215,27 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
-  async function handleToggle(shortCode: string, next: boolean) {
+  function toReorderTokens(arr: FeedItem[]): ProfileReorderItem[] {
+    return arr.map((it) =>
+      it.kind === "LINK"
+        ? { kind: "LINK", id: it.code }
+        : { kind: "BLOCK", id: String(it.id) },
+    );
+  }
+
+  async function handleToggle(shortCode: string, show: boolean) {
     setPendingShortCode(shortCode);
     try {
-      await toggleLinkOnProfile(shortCode, next);
-      setFeatured((prev) =>
-        next ? [...prev.filter((c) => c !== shortCode), shortCode] : prev.filter((c) => c !== shortCode),
-      );
+      await toggleLinkOnProfile(shortCode, show);
+      const nextItems: FeedItem[] = show
+        ? [...items.filter((i) => !(i.kind === "LINK" && i.code === shortCode)), {
+            kind: "LINK",
+            code: shortCode,
+          }]
+        : items.filter((i) => !(i.kind === "LINK" && i.code === shortCode));
+      setItems(nextItems);
+      // Toggling-on appends to the end and the server already assigned a fresh order, so we
+      // don't need to call reorder. Toggling-off just removes; remaining items keep their order.
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     } finally {
@@ -200,40 +243,27 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
-  async function move(shortCode: string, direction: -1 | 1) {
-    const idx = featured.indexOf(shortCode);
-    if (idx < 0) return;
-    const swap = idx + direction;
-    if (swap < 0 || swap >= featured.length) return;
-    const next = featured.slice();
-    [next[idx], next[swap]] = [next[swap], next[idx]];
-    setFeatured(next);
-    try {
-      await reorderProfileLinks(next);
-    } catch (err) {
-      // Rollback optimistic state on save failure so the UI doesn't drift from the server's view.
-      setFeatured(featured);
-      toast(errorMessage(err, t("toggleFailed")), "error");
-    }
+  async function move(itemIdx: number, direction: -1 | 1) {
+    const swap = itemIdx + direction;
+    if (swap < 0 || swap >= items.length) return;
+    const next = items.slice();
+    [next[itemIdx], next[swap]] = [next[swap], next[itemIdx]];
+    void commitOrder(next);
   }
-
-  const featuredLinks = featured
-    .map((code) => links?.find((l) => l.shortCode === code))
-    .filter((l): l is MyLink => Boolean(l));
-  const otherLinks = (links ?? []).filter((l) => !featured.includes(l.shortCode));
 
   // HTML5 drag-and-drop state. dragIndex = the row currently being dragged; overIndex = the row
   // we'd drop into. Two-phase render so the dragged row gets a faded look and the target shows
-  // a leading drop indicator. Persists via reorderProfileLinks on drop, with optimistic UI.
+  // a leading drop indicator. Persists via reorderProfileItems on drop, with optimistic UI.
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
-  async function commitOrder(next: string[]) {
-    setFeatured(next);
+  async function commitOrder(next: FeedItem[]) {
+    const prev = items;
+    setItems(next);
     try {
-      await reorderProfileLinks(next);
+      await reorderProfileItems(toReorderTokens(next));
     } catch (err) {
-      setFeatured(featured);
+      setItems(prev);
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
   }
@@ -244,13 +274,69 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       setOverIndex(null);
       return;
     }
-    const next = featured.slice();
+    const next = items.slice();
     const [moved] = next.splice(dragIndex, 1);
     next.splice(toIndex, 0, moved);
     setDragIndex(null);
     setOverIndex(null);
     void commitOrder(next);
   }
+
+  async function handleAddText() {
+    const content = window.prompt(t("addTextPrompt"), "");
+    if (!content || !content.trim()) return;
+    try {
+      const block = await createProfileBlock({ type: "TEXT", content: content.trim() });
+      setItems((prev) => [
+        ...prev,
+        { kind: "BLOCK", id: block.id, type: "TEXT", content: block.content ?? "" },
+      ]);
+    } catch (err) {
+      toast(errorMessage(err, t("toggleFailed")), "error");
+    }
+  }
+
+  async function handleAddDivider() {
+    try {
+      const block = await createProfileBlock({ type: "DIVIDER" });
+      setItems((prev) => [
+        ...prev,
+        { kind: "BLOCK", id: block.id, type: "DIVIDER", content: null },
+      ]);
+    } catch (err) {
+      toast(errorMessage(err, t("toggleFailed")), "error");
+    }
+  }
+
+  async function handleEditBlock(blockId: number, current: string) {
+    const next = window.prompt(t("editTextPrompt"), current);
+    if (next === null) return;
+    const trimmed = next.trim();
+    if (!trimmed) return;
+    try {
+      const updated = await updateProfileBlock(blockId, trimmed);
+      setItems((prev) =>
+        prev.map((i) =>
+          i.kind === "BLOCK" && i.id === blockId
+            ? { ...i, content: updated.content ?? "" }
+            : i,
+        ),
+      );
+    } catch (err) {
+      toast(errorMessage(err, t("toggleFailed")), "error");
+    }
+  }
+
+  async function handleDeleteBlock(blockId: number) {
+    try {
+      await deleteProfileBlock(blockId);
+      setItems((prev) => prev.filter((i) => !(i.kind === "BLOCK" && i.id === blockId)));
+    } catch (err) {
+      toast(errorMessage(err, t("toggleFailed")), "error");
+    }
+  }
+
+  const otherLinks = (links ?? []).filter((l) => !featured.includes(l.shortCode));
 
   const profileInfoBlock = (
     <div className="space-y-3">
@@ -357,95 +443,168 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
 
   return (
     <div className="space-y-5">
-      <ProfileQuickAdd onAdded={refresh} highlightEmpty={featuredLinks.length === 0} />
+      <ProfileQuickAdd onAdded={refresh} highlightEmpty={items.length === 0} />
 
       <div className="space-y-3">
-        <div>
-          <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
-          <p className="text-[11px] text-slate-500">{t("featuredHint")}</p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
+            <p className="text-[11px] text-slate-500">{t("featuredHint")}</p>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={handleAddText}
+              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:border-slate-300"
+            >
+              <Type className="h-3 w-3" />
+              {t("addHeader")}
+            </button>
+            <button
+              type="button"
+              onClick={handleAddDivider}
+              className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:border-slate-300"
+            >
+              <Minus className="h-3 w-3" />
+              {t("addDivider")}
+            </button>
+          </div>
         </div>
           {links === null ? (
             <p className="text-xs text-slate-400">{t("loading")}</p>
           ) : (
             <>
-              {featuredLinks.length === 0 ? (
+              {items.length === 0 ? (
                 <p className="rounded-md border border-dashed border-slate-200 bg-slate-50/40 p-3 text-center text-[11px] text-slate-500">
                   {t("featuredEmpty")}
                 </p>
               ) : (
                 <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
-                  {featuredLinks.map((link, idx) => {
+                  {items.map((item, idx) => {
                     const isDragging = dragIndex === idx;
                     const isOver = overIndex === idx && dragIndex !== null && dragIndex !== idx;
-                    return (
-                      <li
-                        key={link.shortCode}
-                        draggable
-                        onDragStart={(e) => {
-                          setDragIndex(idx);
-                          e.dataTransfer.effectAllowed = "move";
-                          // Some browsers refuse to start the drag without a payload.
-                          e.dataTransfer.setData("text/plain", link.shortCode);
-                        }}
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          e.dataTransfer.dropEffect = "move";
-                          if (overIndex !== idx) setOverIndex(idx);
-                        }}
-                        onDragLeave={() => {
-                          if (overIndex === idx) setOverIndex(null);
-                        }}
-                        onDrop={(e) => {
-                          e.preventDefault();
-                          handleDrop(idx);
-                        }}
-                        onDragEnd={() => {
-                          setDragIndex(null);
-                          setOverIndex(null);
-                        }}
-                        className={
-                          "flex items-center justify-between gap-3 px-3 py-2 transition " +
-                          (isDragging ? "opacity-40 " : "") +
-                          (isOver ? "border-t-2 border-t-accent-500 " : "")
-                        }
-                      >
-                        <div className="flex min-w-0 items-center gap-2">
-                          <span
-                            aria-label="drag handle"
-                            className="cursor-grab touch-none text-slate-300 hover:text-slate-700 active:cursor-grabbing"
-                            onPointerDown={(e) => e.currentTarget.parentElement?.parentElement}
+                    const rowKey =
+                      item.kind === "LINK" ? `link:${item.code}` : `block:${item.id}`;
+                    const dragHandle = (
+                      <div className="flex min-w-0 items-center gap-2">
+                        <span
+                          aria-label="drag handle"
+                          className="cursor-grab touch-none text-slate-300 hover:text-slate-700 active:cursor-grabbing"
+                        >
+                          <GripVertical className="h-4 w-4" />
+                        </span>
+                        <div className="flex flex-col sm:hidden">
+                          <button
+                            type="button"
+                            aria-label="up"
+                            disabled={idx === 0}
+                            onClick={() => move(idx, -1)}
+                            className="text-slate-400 hover:text-slate-900 disabled:opacity-30"
                           >
-                            <GripVertical className="h-4 w-4" />
-                          </span>
-                          {/* Up/down buttons stay as keyboard / a11y / mobile fallback. */}
-                          <div className="flex flex-col sm:hidden">
+                            <ChevronUp className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            aria-label="down"
+                            disabled={idx === items.length - 1}
+                            onClick={() => move(idx, 1)}
+                            className="text-slate-400 hover:text-slate-900 disabled:opacity-30"
+                          >
+                            <ChevronDown className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                    const dndProps = {
+                      draggable: true,
+                      onDragStart: (e: React.DragEvent) => {
+                        setDragIndex(idx);
+                        e.dataTransfer.effectAllowed = "move";
+                        e.dataTransfer.setData("text/plain", rowKey);
+                      },
+                      onDragOver: (e: React.DragEvent) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                        if (overIndex !== idx) setOverIndex(idx);
+                      },
+                      onDragLeave: () => {
+                        if (overIndex === idx) setOverIndex(null);
+                      },
+                      onDrop: (e: React.DragEvent) => {
+                        e.preventDefault();
+                        handleDrop(idx);
+                      },
+                      onDragEnd: () => {
+                        setDragIndex(null);
+                        setOverIndex(null);
+                      },
+                    };
+                    const baseRow =
+                      "flex items-center justify-between gap-3 px-3 py-2 transition " +
+                      (isDragging ? "opacity-40 " : "") +
+                      (isOver ? "border-t-2 border-t-accent-500 " : "");
+                    if (item.kind === "BLOCK" && item.type === "DIVIDER") {
+                      return (
+                        <li key={rowKey} {...dndProps} className={baseRow}>
+                          {dragHandle}
+                          <div className="flex min-w-0 flex-1 items-center gap-2 text-slate-400">
+                            <Minus className="h-3.5 w-3.5" />
+                            <span className="text-[11px]">{t("dividerLabel")}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteBlock(item.id)}
+                            className="text-slate-400 hover:text-red-600"
+                            aria-label={t("remove")}
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </li>
+                      );
+                    }
+                    if (item.kind === "BLOCK" && item.type === "TEXT") {
+                      return (
+                        <li key={rowKey} {...dndProps} className={baseRow}>
+                          {dragHandle}
+                          <div className="flex min-w-0 flex-1 items-center gap-2">
+                            <Type className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                            <span className="truncate text-sm font-semibold text-slate-900">
+                              {item.content || t("addTextPlaceholder")}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
                             <button
                               type="button"
-                              aria-label="up"
-                              disabled={idx === 0}
-                              onClick={() => move(link.shortCode, -1)}
-                              className="text-slate-400 hover:text-slate-900 disabled:opacity-30"
+                              onClick={() => handleEditBlock(item.id, item.content ?? "")}
+                              className="text-slate-400 hover:text-slate-900"
+                              aria-label={t("editTextAction")}
                             >
-                              <ChevronUp className="h-3.5 w-3.5" />
+                              <Pencil className="h-3.5 w-3.5" />
                             </button>
                             <button
                               type="button"
-                              aria-label="down"
-                              disabled={idx === featuredLinks.length - 1}
-                              onClick={() => move(link.shortCode, 1)}
-                              className="text-slate-400 hover:text-slate-900 disabled:opacity-30"
+                              onClick={() => handleDeleteBlock(item.id)}
+                              className="text-slate-400 hover:text-red-600"
+                              aria-label={t("remove")}
                             >
-                              <ChevronDown className="h-3.5 w-3.5" />
+                              <X className="h-3.5 w-3.5" />
                             </button>
                           </div>
-                          <div className="min-w-0">
-                            <p className="truncate font-mono text-sm text-slate-900">
-                              /{link.shortCode}
-                            </p>
-                            <p className="truncate text-[11px] text-slate-500">
-                              {link.originalUrl}
-                            </p>
-                          </div>
+                        </li>
+                      );
+                    }
+                    // LINK row
+                    if (item.kind !== "LINK") return null;
+                    const link = links?.find((l) => l.shortCode === item.code);
+                    if (!link) return null;
+                    return (
+                      <li key={rowKey} {...dndProps} className={baseRow}>
+                        {dragHandle}
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-mono text-sm text-slate-900">
+                            /{link.shortCode}
+                          </p>
+                          <p className="truncate text-[11px] text-slate-500">{link.originalUrl}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <button
