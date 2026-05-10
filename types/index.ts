@@ -225,6 +225,7 @@ export type Me = {
   createdAt: string;
   tier?: "FREE" | "PRO";
   subscriptionCurrentPeriodEnd?: string | null;
+  username?: string | null;
 };
 
 export type MyProfile = {
