@@ -186,6 +186,17 @@
     "invalidType": "JPG, PNG, WebP 만 업로드할 수 있어요",
     "tooBig": "5MB 를 넘는 파일은 업로드할 수 없어요"
   },
+  "banner": {
+    "label": "배너 이미지",
+    "change": "배너 변경",
+    "remove": "배너 제거",
+    "hint": "3:1 가로형 권장. JPG / PNG / WebP",
+    "addCta": "배너 추가",
+    "uploaded": "배너가 업데이트됐어요",
+    "uploadFailed": "배너 업로드에 실패했어요",
+    "invalidType": "JPG, PNG, WebP 만 가능해요",
+    "tooBig": "이미지가 너무 큽니다"
+  },
   "expiringBanner": {
     "title": "{count}개 링크가 3일 안에 만료돼요",
     "hint": "필요한 링크는 만료일을 연장하거나 삭제해두세요.",

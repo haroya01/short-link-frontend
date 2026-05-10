@@ -186,6 +186,17 @@
     "invalidType": "Only JPG, PNG, WebP are allowed",
     "tooBig": "Files over 5MB aren't allowed"
   },
+  "banner": {
+    "label": "Banner image",
+    "change": "Change banner",
+    "remove": "Remove banner",
+    "hint": "3:1 landscape recommended. JPG / PNG / WebP",
+    "addCta": "Add a banner",
+    "uploaded": "Banner updated",
+    "uploadFailed": "Banner upload failed",
+    "invalidType": "Only JPG, PNG, WebP are allowed",
+    "tooBig": "Image is too large"
+  },
   "expiringBanner": {
     "title": "{count} links expire in the next 3 days",
     "hint": "Extend the expiry or delete the ones you don't need.",

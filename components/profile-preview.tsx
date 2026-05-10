@@ -59,6 +59,8 @@ type Props = {
   theme: ProfileTheme | null;
   /** Saved avatar URL — when null, the preview falls back to the username initial. */
   avatarUrl: string | null;
+  /** Saved banner URL — when null, the avatar sits standalone above the handle. */
+  bannerUrl: string | null;
   /** Ordered short codes that appear on the profile. */
   featuredShortCodes: string[];
   /** All of the user's links — used to look up url + originalUrl per featured code. */
@@ -76,6 +78,7 @@ export function ProfilePreview({
   bio,
   theme,
   avatarUrl,
+  bannerUrl,
   featuredShortCodes,
   links,
 }: Props) {
@@ -94,20 +97,31 @@ export function ProfilePreview({
         {/* Dynamic-Island style notch */}
         <div className="absolute left-1/2 top-2 z-10 h-5 w-20 -translate-x-1/2 rounded-full bg-slate-900" />
         <div className={`overflow-hidden rounded-[34px] ${colors.page}`}>
-          <div className="space-y-3 px-4 pb-5 pt-9">
+          {bannerUrl && (
+            <div className="aspect-[3/1] w-full overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={bannerUrl} alt="" className="h-full w-full object-cover" />
+            </div>
+          )}
+          <div className={`space-y-3 px-4 pb-5 ${bannerUrl ? "pt-2" : "pt-9"}`}>
             <div className="flex flex-col items-center gap-2 text-center">
               {avatarUrl ? (
-                <div className="h-14 w-14 overflow-hidden rounded-full">
+                <div
+                  className={
+                    "h-14 w-14 overflow-hidden rounded-full ring-2 " +
+                    (bannerUrl ? "-mt-9 ring-white/95" : "ring-transparent")
+                  }
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={avatarUrl}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
+                  <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
                 </div>
               ) : (
                 <div
-                  className={`grid h-14 w-14 place-items-center rounded-full text-lg font-semibold ${colors.avatar} ${colors.avatarText}`}
+                  className={
+                    "grid h-14 w-14 place-items-center rounded-full text-lg font-semibold ring-2 " +
+                    (bannerUrl ? "-mt-9 ring-white/95 " : "ring-transparent ") +
+                    `${colors.avatar} ${colors.avatarText}`
+                  }
                 >
                   {initial}
                 </div>

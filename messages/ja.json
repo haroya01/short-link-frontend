@@ -186,6 +186,17 @@
     "invalidType": "JPG, PNG, WebP のみアップロードできます",
     "tooBig": "5MB を超えるファイルはアップロードできません"
   },
+  "banner": {
+    "label": "バナー画像",
+    "change": "バナーを変更",
+    "remove": "バナーを削除",
+    "hint": "3:1 横長推奨。JPG / PNG / WebP",
+    "addCta": "バナーを追加",
+    "uploaded": "バナーを更新しました",
+    "uploadFailed": "バナーのアップロードに失敗しました",
+    "invalidType": "JPG, PNG, WebP のみ可能です",
+    "tooBig": "画像が大きすぎます"
+  },
   "expiringBanner": {
     "title": "{count} 件のリンクが 3 日以内に期限切れ",
     "hint": "必要なリンクは期限を延長するか、不要なものは削除してください。",
