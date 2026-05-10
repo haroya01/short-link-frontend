@@ -898,6 +898,14 @@
       "previewTitle": "Live preview",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "Your bio will appear here",
+      "quickAdd": {
+        "title": "One-tap add",
+        "hint": "Type your handle, we shorten the URL and feature it for you.",
+        "inputLabel": "{label} handle",
+        "add": "Add",
+        "added": "{label} added",
+        "addFailed": "Failed to add."
+      },
       "save": "Save",
       "saved": "Saved",
       "saveFailed": "Failed to save.",

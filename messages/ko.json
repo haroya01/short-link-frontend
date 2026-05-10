@@ -812,6 +812,14 @@
       "previewTitle": "공개 페이지 미리보기 (실시간)",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "한 줄 소개를 입력하면 여기에 보여요",
+      "quickAdd": {
+        "title": "한 번에 추가",
+        "hint": "핸들/아이디만 입력하면 자동으로 단축 + 프로필에 노출됩니다.",
+        "inputLabel": "{label} 핸들",
+        "add": "추가",
+        "added": "{label} 추가됨",
+        "addFailed": "추가에 실패했어요."
+      },
       "save": "저장",
       "saved": "저장됐어요",
       "saveFailed": "저장에 실패했어요.",
