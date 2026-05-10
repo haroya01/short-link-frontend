@@ -174,6 +174,15 @@
       "missingChallenge": "challenge 情報がありません。再度ログインしてください。"
     }
   },
+  "avatar": {
+    "change": "プロフィール写真を変更",
+    "remove": "写真を削除",
+    "hint": "JPG / PNG / WebP、最大 5MB",
+    "uploaded": "写真を更新しました",
+    "uploadFailed": "アップロードに失敗しました",
+    "invalidType": "JPG, PNG, WebP のみアップロードできます",
+    "tooBig": "5MB を超えるファイルはアップロードできません"
+  },
   "expiringBanner": {
     "title": "{count} 件のリンクが 3 日以内に期限切れ",
     "hint": "必要なリンクは期限を延長するか、不要なものは削除してください。",

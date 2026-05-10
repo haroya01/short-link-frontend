@@ -116,11 +116,22 @@ export default async function PublicProfilePage({
     <div className={`min-h-screen ${colors.page}`}>
       <div className="container max-w-md py-12">
         <div className="flex flex-col items-center gap-3 text-center">
-          <div
-            className={`grid h-20 w-20 place-items-center rounded-full text-2xl font-semibold shadow-sm ${colors.avatar} ${colors.avatarText}`}
-          >
-            {initial}
-          </div>
+          {profile.avatarUrl ? (
+            <div className="h-20 w-20 overflow-hidden rounded-full shadow-sm">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={profile.avatarUrl}
+                alt={profile.username}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <div
+              className={`grid h-20 w-20 place-items-center rounded-full text-2xl font-semibold shadow-sm ${colors.avatar} ${colors.avatarText}`}
+            >
+              {initial}
+            </div>
+          )}
           <p className={`text-sm font-medium ${colors.primary}`}>@{profile.username}</p>
           {profile.bio && (
             <p className={`text-sm leading-relaxed ${colors.muted}`}>{profile.bio}</p>
