@@ -52,6 +52,7 @@
     "headline2": "클릭은 통계로.",
     "subhead": "디바이스, OS, 브라우저, 채널, 국가까지 — 누가 어디서 클릭했는지 한눈에.",
     "anonymousHint": "로그인 없이도 단축 가능. 통계는 로그인 후 확인할 수 있어요.",
+    "demoLink": "통계가 어떻게 보이는지 데모로 미리 보기",
     "ctaSeeLinks": "내 링크 전체 보기",
     "loginCta": "로그인하면 이 링크의 <clickStats>클릭 통계</clickStats>를 영구 저장하고 분석할 수 있어요.",
     "features": {
@@ -163,8 +164,8 @@
     "loginRequired": "로그인이 필요해요",
     "loginRequiredDesc": "내 링크와 클릭 통계는 로그인 후에 볼 수 있어요.",
     "goToLogin": "로그인하러 가기",
-    "emptyTitle": "아직 단축한 링크가 없어요",
-    "emptyDesc": "홈에서 첫 링크를 만들어 보세요.",
+    "emptyTitle": "첫 링크를 만들어볼까요",
+    "emptyDesc": "URL 한 개만 단축하면 1 분 안에 클릭/국가/채널/디바이스 분석이 채워지기 시작해요. 1 회 단축에 30 초 안 걸립니다.",
     "emptyCta": "지금 단축하기",
     "noResultTitle": "검색 결과가 없어요",
     "noResultDesc": "\"{query}\"와 일치하는 링크를 찾지 못했어요.",
@@ -541,6 +542,32 @@
   "share": {
     "label": "공유",
     "copiedFallback": "URL이 복사됐어요"
+  },
+  "demo": {
+    "metaTitle": "kurl 데모 — 단축 후 무엇이 보이는지 직접 만져보기",
+    "metaDescription": "가입 없이 단축 링크 분석 화면을 그대로 보여드려요.",
+    "eyebrow": "라이브 데모",
+    "title": "단축 링크 1 개로 이만큼 보여요",
+    "lead": "여기 숫자는 시범용 가짜 데이터지만, 가입하면 본인 링크에 맞춰 똑같이 채워져요. 봇/사람 분리, UTM 채널, 국가, 시간대 다 자동으로 잡혀요.",
+    "ctaPrimary": "1 분 가입하고 내 링크 분석하기",
+    "ctaSecondary": "먼저 단축만 해볼래요 →",
+    "daily": {
+      "title": "일자별 클릭",
+      "desc": "최근 30 일. 평일 / 주말 패턴 + 캠페인 spike 가 한눈에."
+    },
+    "heatmap": {
+      "title": "요일·시간 히트맵",
+      "desc": "어느 시간대가 비어 있는지 (= 그 시간에 다음 캠페인 돌리면 됨) 즉시 보임."
+    },
+    "source": {
+      "title": "유입 채널 (utm_source)",
+      "desc": "Instagram bio · 카카오톡 공유 · QR 등 어디서 들어왔는지 자동 분류."
+    },
+    "country": {
+      "title": "국가별 분포",
+      "desc": "GeoIP 로 추정한 클릭 출처. 해외 트래픽 비중 확인용."
+    },
+    "footerLead": "본인 링크에서도 1 분 안에 위 화면이 채워지기 시작합니다."
   },
   "publicProfile": {
     "empty": "이 사용자가 아직 공개한 링크가 없어요.",
