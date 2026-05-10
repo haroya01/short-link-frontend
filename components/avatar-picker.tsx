@@ -9,14 +9,12 @@ import {
   presignAvatarUpload,
   uploadAvatarToS3,
 } from "@/lib/api";
+import { resizeImage } from "@/lib/image-resize";
 import { useToast } from "./ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
 const ACCEPT = "image/jpeg,image/png,image/webp";
 const MAX_INPUT_BYTES = 10 * 1024 * 1024;
-/** Aim for a square that fills the largest place we render an avatar (80px @ 3x DPR ≈ 240px,
- *  so 512 has comfortable headroom for retina + future card layouts). */
-const TARGET_DIM = 512;
 const OUTPUT_TYPE = "image/jpeg";
 const OUTPUT_QUALITY = 0.9;
 
@@ -25,9 +23,23 @@ type Props = {
   /** Used as a fallback initial when no avatar is set yet. */
   initialChar: string;
   onChange: (avatarUrl: string | null) => void;
+  /**
+   * Longer-edge ceiling for the canvas resize step. Default 512 — the avatar use case never
+   * renders larger than 80px @ 3x DPR. Other surfaces (e.g. profile background) call with their
+   * own ceiling.
+   */
+  maxDim?: number;
+  /** Center-crop to a square of {@code maxDim × maxDim}. Default true (avatar). */
+  square?: boolean;
 };
 
-export function AvatarPicker({ currentUrl, initialChar, onChange }: Props) {
+export function AvatarPicker({
+  currentUrl,
+  initialChar,
+  onChange,
+  maxDim = 512,
+  square = true,
+}: Props) {
   const t = useTranslations("avatar");
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
@@ -50,7 +62,13 @@ export function AvatarPicker({ currentUrl, initialChar, onChange }: Props) {
     }
     setBusy(true);
     try {
-      const resized = await resizeToSquareJpeg(file, TARGET_DIM);
+      const resized = await resizeImage(file, {
+        maxDim,
+        square,
+        type: OUTPUT_TYPE,
+        quality: OUTPUT_QUALITY,
+        filename: "avatar.jpg",
+      });
       const presign = await presignAvatarUpload(OUTPUT_TYPE);
       // Server still has the authoritative size cap (HEAD-checked on commit) — this is just
       // a defensive client check so we don't waste an S3 PUT we know will be rejected.
@@ -127,49 +145,4 @@ export function AvatarPicker({ currentUrl, initialChar, onChange }: Props) {
       />
     </div>
   );
-}
-
-/**
- * Loads `file` into an Image, draws the largest centered square crop into a `dim x dim` canvas,
- * and exports as JPEG. Always returns the same dimensions regardless of input — keeps avatars
- * uniform on the public profile and caps the storage / bandwidth blast radius from huge uploads.
- */
-async function resizeToSquareJpeg(file: File, dim: number): Promise<File> {
-  const dataUrl = await readFileAsDataURL(file);
-  const img = await loadImage(dataUrl);
-  const side = Math.min(img.width, img.height);
-  const sx = (img.width - side) / 2;
-  const sy = (img.height - side) / 2;
-  const canvas = document.createElement("canvas");
-  canvas.width = dim;
-  canvas.height = dim;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("canvas 2d unavailable");
-  ctx.drawImage(img, sx, sy, side, side, 0, 0, dim, dim);
-  const blob: Blob = await new Promise((resolve, reject) =>
-    canvas.toBlob(
-      (b) => (b ? resolve(b) : reject(new Error("toBlob returned null"))),
-      OUTPUT_TYPE,
-      OUTPUT_QUALITY,
-    ),
-  );
-  return new File([blob], "avatar.jpg", { type: OUTPUT_TYPE });
-}
-
-function readFileAsDataURL(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(r.result as string);
-    r.onerror = () => reject(r.error ?? new Error("read failed"));
-    r.readAsDataURL(file);
-  });
-}
-
-function loadImage(src: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error("image decode failed"));
-    img.src = src;
-  });
 }
