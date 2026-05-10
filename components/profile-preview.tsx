@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { BatteryFull, ExternalLink, Signal, Wifi } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { MyLink, ProfileTheme } from "@/types";
 
@@ -96,6 +96,15 @@ const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     avatar: "bg-gradient-to-br from-fuchsia-500 to-cyan-400",
     avatarText: "text-slate-950",
   },
+  aurora: {
+    page: "theme-aurora-anim",
+    card: "bg-white/85",
+    cardBorder: "border border-violet-200",
+    primary: "text-slate-900",
+    muted: "text-slate-600",
+    avatar: "bg-gradient-to-br from-violet-500 to-fuchsia-500",
+    avatarText: "text-white",
+  },
 };
 
 type Props = {
@@ -141,14 +150,28 @@ export function ProfilePreview({
       <div className="relative mx-auto w-full max-w-[280px] overflow-hidden rounded-[42px] border border-slate-800/30 bg-slate-900 p-1.5 shadow-xl shadow-slate-300/40">
         {/* Dynamic-Island style notch */}
         <div className="absolute left-1/2 top-2 z-10 h-5 w-20 -translate-x-1/2 rounded-full bg-slate-900" />
-        <div className={`overflow-hidden rounded-[34px] ${colors.page}`}>
+        <div
+          className={`relative aspect-[390/844] overflow-hidden overflow-y-auto rounded-[34px] ${colors.page}`}
+        >
+          {/* iOS-style status bar — sits above the content; keeps the same color tokens so the
+              text stays legible on light/dark/animated themes alike. */}
+          <div
+            className={`pointer-events-none sticky top-0 z-10 flex items-center justify-between px-7 pt-2 pb-1 text-[9px] font-semibold ${colors.primary}`}
+          >
+            <span>9:41</span>
+            <div className="flex items-center gap-0.5 opacity-80">
+              <Signal className="h-2.5 w-2.5" />
+              <Wifi className="h-2.5 w-2.5" />
+              <BatteryFull className="h-2.5 w-2.5" />
+            </div>
+          </div>
           {bannerUrl && (
             <div className="aspect-[3/1] w-full overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={bannerUrl} alt="" className="h-full w-full object-cover" />
             </div>
           )}
-          <div className={`space-y-3 px-4 pb-5 ${bannerUrl ? "pt-2" : "pt-9"}`}>
+          <div className={`space-y-3 px-4 pb-8 ${bannerUrl ? "pt-2" : "pt-3"}`}>
             <div className="flex flex-col items-center gap-2 text-center">
               {avatarUrl ? (
                 <div

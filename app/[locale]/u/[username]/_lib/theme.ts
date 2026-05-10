@@ -106,4 +106,15 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     avatar: "bg-gradient-to-br from-fuchsia-500 to-cyan-400",
     avatarText: "text-slate-950",
   },
+  aurora: {
+    // Animated gradient (defined in globals.css with prefers-reduced-motion fallback).
+    page: "theme-aurora-anim",
+    card: "bg-white/85 backdrop-blur-sm",
+    cardBorder: "border border-violet-200",
+    cardHover: "hover:bg-white hover:border-violet-300",
+    primary: "text-slate-900",
+    muted: "text-slate-600",
+    avatar: "bg-gradient-to-br from-violet-500 to-fuchsia-500",
+    avatarText: "text-white",
+  },
 };

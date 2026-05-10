@@ -242,7 +242,8 @@ export type ProfileTheme =
   | "ocean"
   | "forest"
   | "mono"
-  | "neon";
+  | "neon"
+  | "aurora";
 
 export type MyProfile = {
   username: string | null;

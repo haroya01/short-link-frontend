@@ -9,15 +9,52 @@ import { Input } from "../ui/input";
 import type { MyProfile, ProfileTheme } from "@/types";
 import { PublicUrlPill } from "./PublicUrlPill";
 
-const THEMES: { id: ProfileTheme; label: string; swatch: string }[] = [
-  { id: "light", label: "Light", swatch: "#F8FAFC" },
-  { id: "dark", label: "Dark", swatch: "#0F172A" },
-  { id: "accent", label: "Accent", swatch: "#0EA5E9" },
-  { id: "sunset", label: "Sunset", swatch: "linear-gradient(135deg,#FB923C,#F43F5E)" },
-  { id: "ocean", label: "Ocean", swatch: "linear-gradient(135deg,#06B6D4,#0284C7)" },
-  { id: "forest", label: "Forest", swatch: "linear-gradient(135deg,#10B981,#0D9488)" },
-  { id: "mono", label: "Mono", swatch: "#000000" },
-  { id: "neon", label: "Neon", swatch: "linear-gradient(135deg,#D946EF,#22D3EE)" },
+/**
+ * Picker preview classes — each theme renders as a mini-card showing the actual page bg + a
+ * sample link card inside. Kept self-contained (not imported from THEME_TABLE) so the picker
+ * is visually accurate without dragging in /u page's full color tokens; the small duplication
+ * is the price of decoupling.
+ */
+const THEMES: { id: ProfileTheme; label: string; page: string; card: string }[] = [
+  { id: "light", label: "Light", page: "bg-slate-50", card: "bg-white border border-slate-200" },
+  { id: "dark", label: "Dark", page: "bg-slate-950", card: "bg-slate-900 border border-slate-800" },
+  {
+    id: "accent",
+    label: "Accent",
+    page: "bg-gradient-to-b from-accent-50 to-white",
+    card: "bg-white border border-accent-200",
+  },
+  {
+    id: "sunset",
+    label: "Sunset",
+    page: "bg-gradient-to-b from-orange-100 via-rose-50 to-amber-50",
+    card: "bg-white/90 border border-rose-200",
+  },
+  {
+    id: "ocean",
+    label: "Ocean",
+    page: "bg-gradient-to-b from-sky-100 via-cyan-50 to-blue-50",
+    card: "bg-white/90 border border-sky-200",
+  },
+  {
+    id: "forest",
+    label: "Forest",
+    page: "bg-gradient-to-b from-emerald-100 via-green-50 to-teal-50",
+    card: "bg-white/90 border border-emerald-200",
+  },
+  { id: "mono", label: "Mono", page: "bg-white", card: "bg-white border-2 border-black" },
+  {
+    id: "neon",
+    label: "Neon",
+    page: "bg-slate-950",
+    card: "bg-slate-900/80 border border-fuchsia-500/40",
+  },
+  {
+    id: "aurora",
+    label: "Aurora",
+    page: "theme-aurora-anim",
+    card: "bg-white/85 backdrop-blur-sm border border-violet-200",
+  },
 ];
 
 type Props = {
@@ -94,9 +131,9 @@ export function ProfileMetaForm({
         <p className="text-[11px] text-slate-400">{bio.length}/280</p>
       </label>
 
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <span className="text-xs font-medium text-slate-500">{t("themeLabel")}</span>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           {THEMES.map((tm) => {
             const active = theme === tm.id;
             return (
@@ -104,22 +141,24 @@ export function ProfileMetaForm({
                 key={tm.id}
                 type="button"
                 onClick={() => onThemeChange(tm.id)}
+                aria-pressed={active}
                 className={
-                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition " +
+                  "group relative aspect-[3/4] overflow-hidden rounded-lg ring-2 ring-offset-1 transition " +
                   (active
-                    ? "border-accent-300 bg-accent-50 text-accent-800"
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")
+                    ? "ring-accent-500"
+                    : "ring-transparent hover:ring-slate-300")
                 }
               >
-                <span
-                  className="h-3 w-3 rounded-full border border-slate-200"
-                  style={
-                    tm.swatch.startsWith("linear-gradient")
-                      ? { backgroundImage: tm.swatch }
-                      : { backgroundColor: tm.swatch }
-                  }
-                />
-                {tm.label}
+                <div className={`absolute inset-0 ${tm.page}`}>
+                  {/* Mini sample cards — visualise what an actual link card looks like in this theme. */}
+                  <div className="absolute inset-x-2 bottom-2 space-y-1">
+                    <div className={`h-2 rounded-sm ${tm.card}`} />
+                    <div className={`h-2 rounded-sm ${tm.card}`} />
+                  </div>
+                </div>
+                <div className="relative px-1 py-1 text-[9px] font-medium leading-none text-white mix-blend-difference">
+                  {tm.label}
+                </div>
               </button>
             );
           })}
