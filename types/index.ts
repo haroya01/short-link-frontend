@@ -234,7 +234,15 @@ export type Me = {
   username?: string | null;
 };
 
-export type ProfileTheme = "light" | "dark" | "accent";
+export type ProfileTheme =
+  | "light"
+  | "dark"
+  | "accent"
+  | "sunset"
+  | "ocean"
+  | "forest"
+  | "mono"
+  | "neon";
 
 export type MyProfile = {
   username: string | null;

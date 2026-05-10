@@ -32,6 +32,7 @@ import type {
   MyProfile,
   ProfileBlock,
   ProfileReorderItem,
+  ProfileTheme,
   PublicProfile,
   WebhookConfigPatch,
   WebhookSummary,
@@ -373,7 +374,7 @@ export async function getMyProfile(): Promise<MyProfile> {
 export async function updateMyProfile(payload: {
   username?: string;
   bio?: string;
-  theme?: "light" | "dark" | "accent" | null;
+  theme?: ProfileTheme | null;
 }): Promise<MyProfile> {
   return request<MyProfile>("/api/v1/users/me/profile", { method: "PUT", body: payload });
 }
