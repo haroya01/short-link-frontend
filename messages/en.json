@@ -174,6 +174,15 @@
       "missingChallenge": "Missing challenge token. Please sign in again."
     }
   },
+  "avatar": {
+    "change": "Change profile photo",
+    "remove": "Remove photo",
+    "hint": "JPG / PNG / WebP, max 5MB",
+    "uploaded": "Photo updated",
+    "uploadFailed": "Upload failed",
+    "invalidType": "Only JPG, PNG, WebP are allowed",
+    "tooBig": "Files over 5MB aren't allowed"
+  },
   "expiringBanner": {
     "title": "{count} links expire in the next 3 days",
     "hint": "Extend the expiry or delete the ones you don't need.",

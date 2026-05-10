@@ -241,12 +241,14 @@ export type MyProfile = {
   bio: string | null;
   theme: ProfileTheme | null;
   publicUrl: string | null;
+  avatarUrl: string | null;
 };
 
 export type PublicProfile = {
   username: string;
   bio: string | null;
   theme: ProfileTheme | null;
+  avatarUrl: string | null;
   entries: PublicProfileEntry[];
 };
 

@@ -430,6 +430,49 @@ export async function getPublicProfile(username: string): Promise<PublicProfile>
   return request<PublicProfile>(`/api/v1/public/profiles/${username}`, { method: "GET" });
 }
 
+export type AvatarPresign = {
+  uploadUrl: string;
+  publicUrl: string;
+  key: string;
+  contentType: string;
+  maxBytes: number;
+  expiresIn: number;
+};
+
+export async function presignAvatarUpload(contentType: string): Promise<AvatarPresign> {
+  return request<AvatarPresign>("/api/v1/users/me/avatar/presigned-url", {
+    method: "POST",
+    body: { contentType },
+  });
+}
+
+export async function commitAvatarUpload(key: string): Promise<{ avatarUrl: string }> {
+  return request<{ avatarUrl: string }>("/api/v1/users/me/avatar", {
+    method: "PUT",
+    body: { key },
+  });
+}
+
+export async function deleteAvatar(): Promise<void> {
+  await request("/api/v1/users/me/avatar", { method: "DELETE" });
+}
+
+/** Direct PUT to S3 with the presigned URL — sets Content-Type so S3 accepts it. */
+export async function uploadAvatarToS3(
+  uploadUrl: string,
+  file: File,
+  contentType: string,
+): Promise<void> {
+  const res = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: { "Content-Type": contentType },
+    body: file,
+  });
+  if (!res.ok) {
+    throw new Error(`s3 upload failed: ${res.status}`);
+  }
+}
+
 export async function deleteMyAccount(): Promise<void> {
   await request("/api/v1/users/me", { method: "DELETE" });
 }

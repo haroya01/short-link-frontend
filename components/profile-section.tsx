@@ -36,6 +36,7 @@ import type { MyLink, MyProfile, ProfileReorderItem, ProfileTheme } from "@/type
 type FeedItem =
   | { kind: "LINK"; code: string }
   | { kind: "BLOCK"; id: number; type: "TEXT" | "DIVIDER" | "IMAGE"; content: string | null };
+import { AvatarPicker } from "./avatar-picker";
 import { ProfileQuickAdd } from "./profile-quick-add";
 import { QrButton } from "./qr-button";
 
@@ -359,6 +360,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
 
   const profileInfoBlock = (
     <div className="space-y-3">
+      <AvatarPicker
+        currentUrl={profile?.avatarUrl ?? null}
+        initialChar={(username[0] ?? "·").toUpperCase()}
+        onChange={(avatarUrl) =>
+          setProfile((p) => (p ? { ...p, avatarUrl } : p))
+        }
+      />
       <label className="block space-y-1">
         <span className="text-xs font-medium text-slate-500">{t("usernameLabel")}</span>
         <Input
