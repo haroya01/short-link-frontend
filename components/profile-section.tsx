@@ -15,6 +15,7 @@ import {
   updateMyProfile,
 } from "@/lib/api";
 import type { MyLink, MyProfile, ProfileTheme } from "@/types";
+import { ProfileQuickAdd } from "./profile-quick-add";
 
 const THEMES: { id: ProfileTheme; label: string; swatch: string }[] = [
   { id: "light", label: "Light", swatch: "#F8FAFC" },
@@ -55,6 +56,9 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     onDraft?.({ username, bio, theme, featured, links: links ?? [] });
   }, [username, bio, theme, featured, links, onDraft]);
 
+  const [reload, setReload] = useState(0);
+  const refresh = () => setReload((n) => n + 1);
+
   useEffect(() => {
     let cancelled = false;
     Promise.all([getMyProfile(), listMyLinks({ page: 1, size: 100 })])
@@ -72,7 +76,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [reload]);
 
   // The bare profile fetch doesn't carry per-link toggle state, so we hit the public endpoint
   // once a username exists to seed the featured-list order. Future toggle/reorder calls keep the
@@ -87,6 +91,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       `${process.env.NEXT_PUBLIC_API_BASE ?? ""}/api/v1/public/profiles/${encodeURIComponent(
         profile.username,
       )}`,
+      { cache: "no-store" },
     )
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
@@ -97,7 +102,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     return () => {
       cancelled = true;
     };
-  }, [profile?.username]);
+  }, [profile?.username, reload]);
 
   async function handleSaveProfile() {
     setSavingProfile(true);
@@ -229,11 +234,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       </div>
 
       {profile?.username && (
-        <div className="space-y-3 border-t border-slate-100 pt-5">
-          <div>
-            <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
-            <p className="text-[11px] text-slate-500">{t("featuredHint")}</p>
-          </div>
+        <div className="space-y-5 border-t border-slate-100 pt-5">
+          <ProfileQuickAdd onAdded={refresh} />
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>
+              <p className="text-[11px] text-slate-500">{t("featuredHint")}</p>
+            </div>
           {links === null ? (
             <p className="text-xs text-slate-400">{t("loading")}</p>
           ) : (
@@ -318,6 +325,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
               )}
             </>
           )}
+          </div>
         </div>
       )}
     </div>
