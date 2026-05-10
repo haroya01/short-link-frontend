@@ -176,8 +176,9 @@ export async function shortenUrl(payload: CreateLinkRequest): Promise<CreateLink
 }
 
 export type MyLinksFilters = {
-  page?: number;
   size?: number;
+  /** Opaque cursor from a previous page's nextCursor; omit for the first page. */
+  after?: string;
   q?: string;
   tag?: string;
   domain?: string;
@@ -188,8 +189,8 @@ export type MyLinksFilters = {
 
 export async function listMyLinks(params?: MyLinksFilters): Promise<MyLinksPage> {
   const qs = new URLSearchParams();
-  if (params?.page) qs.set("page", String(params.page));
   if (params?.size) qs.set("size", String(params.size));
+  if (params?.after) qs.set("after", params.after);
   if (params?.q) qs.set("q", params.q);
   if (params?.tag) qs.set("tag", params.tag);
   if (params?.domain) qs.set("domain", params.domain);

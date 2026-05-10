@@ -117,7 +117,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([getMyProfile(), listMyLinks({ page: 1, size: 100 })])
+    Promise.all([getMyProfile(), listMyLinks({ size: 100 })])
       .then(([prof, page]) => {
         if (cancelled) return;
         setProfile(prof);

@@ -185,6 +185,8 @@
     "title": "내 링크",
     "subtitle": "단축한 링크 {count}개. 짧은 코드를 클릭해 통계 확인.",
     "newLink": "새 링크",
+    "loadMore": "더 보기",
+    "loadingMore": "불러오는 중...",
     "searchPlaceholder": "원본 URL 또는 짧은 코드로 검색",
     "clearSearch": "검색 지우기",
     "loginRequired": "로그인이 필요해요",

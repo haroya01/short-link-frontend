@@ -42,7 +42,9 @@ export type TagSummary = {
 
 export type MyLinksPage = {
   items: MyLink[];
-  total: number;
+  /** Opaque cursor for the next page; null when no more results. */
+  nextCursor: string | null;
+  hasMore: boolean;
 };
 
 export type UpdateLinkRequest = {
