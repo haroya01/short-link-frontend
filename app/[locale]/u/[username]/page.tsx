@@ -172,6 +172,26 @@ function renderEntry(
       </li>
     );
   }
+  if (entry.kind === "IMAGE" && entry.content) {
+    return (
+      <li key={`image-${entry.id ?? idx}`}>
+        <a
+          href={entry.content}
+          target="_blank"
+          rel="noreferrer"
+          className={`block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder}`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={entry.content}
+            alt=""
+            loading="lazy"
+            className="block w-full bg-slate-100 object-cover"
+          />
+        </a>
+      </li>
+    );
+  }
   // LINK
   const originalUrl = entry.originalUrl ?? "";
   const ytId = youtubeId(originalUrl);
