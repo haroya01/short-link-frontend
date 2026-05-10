@@ -99,12 +99,21 @@ export function ProfileMetaForm({
 
   return (
     <div className="space-y-3">
-      <BannerPicker currentUrl={profile?.bannerUrl ?? null} onChange={onBannerChange} />
-      <AvatarPicker
-        currentUrl={profile?.avatarUrl ?? null}
-        initialChar={(username[0] ?? "·").toUpperCase()}
-        onChange={onAvatarChange}
-      />
+      {/* Mobile: stack (banner above, avatar below). md+ : banner takes 2/3 of the row and the
+          avatar picker sits in the right 1/3 — saves ~150px of vertical space and keeps the
+          identity controls visually grouped. */}
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <div className="md:col-span-2">
+          <BannerPicker currentUrl={profile?.bannerUrl ?? null} onChange={onBannerChange} />
+        </div>
+        <div className="md:col-span-1">
+          <AvatarPicker
+            currentUrl={profile?.avatarUrl ?? null}
+            initialChar={(username[0] ?? "·").toUpperCase()}
+            onChange={onAvatarChange}
+          />
+        </div>
+      </div>
       <label className="block space-y-1">
         <span className="text-xs font-medium text-slate-500">{t("usernameLabel")}</span>
         <Input
