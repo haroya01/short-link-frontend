@@ -267,7 +267,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
 
       {profile?.username && (
         <div className="space-y-5 border-t border-slate-100 pt-5">
-          <ProfileQuickAdd onAdded={refresh} addedUrls={featuredLinks.map((l) => l.originalUrl)} />
+          <ProfileQuickAdd onAdded={refresh} />
           <div className="space-y-3">
             <div>
               <p className="text-xs font-medium text-slate-700">{t("featuredTitle")}</p>

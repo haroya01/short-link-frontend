@@ -813,13 +813,15 @@
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "한 줄 소개를 입력하면 여기에 보여요",
       "quickAdd": {
-        "title": "한 번에 추가",
-        "hint": "핸들/아이디만 입력하면 자동으로 단축 + 프로필에 노출됩니다.",
-        "inputLabel": "{label} 핸들",
+        "title": "링크 추가",
+        "hint": "URL + 라벨 입력 → 단축 + 프로필 노출까지 자동. 연달아 여러 개 추가 가능.",
+        "urlPlaceholder": "https://... 또는 mailto:...",
+        "labelPlaceholder": "라벨 (예: 📝 블로그)",
+        "templatesLabel": "또는 빠른 URL 채우기 (라벨은 본인이 입력)",
         "add": "추가",
         "added": "{label} 추가됨",
         "addFailed": "추가에 실패했어요.",
-        "alreadyAdded": "{label} 는 이미 추가됨"
+        "invalidUrl": "URL 은 http(s):// 또는 mailto: 로 시작해야 해요."
       },
       "save": "저장",
       "claim": "username 등록",

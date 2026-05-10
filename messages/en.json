@@ -899,13 +899,15 @@
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "Your bio will appear here",
       "quickAdd": {
-        "title": "One-tap add",
-        "hint": "Type your handle, we shorten the URL and feature it for you.",
-        "inputLabel": "{label} handle",
+        "title": "Add link",
+        "hint": "Paste any URL + a label. We shorten it and feature it. Add as many as you want.",
+        "urlPlaceholder": "https://... or mailto:...",
+        "labelPlaceholder": "Label (e.g. 📝 Blog)",
+        "templatesLabel": "Or quick-fill URL (you still type the label)",
         "add": "Add",
         "added": "{label} added",
         "addFailed": "Failed to add.",
-        "alreadyAdded": "{label} is already on your profile"
+        "invalidUrl": "URL must start with http(s):// or mailto:"
       },
       "save": "Save",
       "claim": "Claim username",
