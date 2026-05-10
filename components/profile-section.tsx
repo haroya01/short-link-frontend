@@ -150,10 +150,18 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   }, [profile?.username, reload]);
 
   async function handleSaveProfile() {
+    const next = username.trim().toLowerCase();
+    const prev = (profile?.username ?? "").toLowerCase();
+    // Username changes give up the previous handle into a 30d grace window — make the user
+    // ack that explicitly so they don't accidentally lose the link they put in their bio.
+    if (prev && next && prev !== next) {
+      const ok = window.confirm(t("usernameChangeConfirm", { prev, next }));
+      if (!ok) return;
+    }
     setSavingProfile(true);
     try {
       const updated = await updateMyProfile({
-        username: username.trim() || undefined,
+        username: next || undefined,
         bio: bio.trim(),
         theme: theme ?? undefined,
       });
@@ -254,9 +262,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           placeholder="haroya"
           pattern="^[a-z0-9][a-z0-9_]{2,15}$"
           maxLength={16}
-          disabled={Boolean(profile?.username)}
         />
-        <p className="text-[11px] text-slate-400">{t("usernameHint")}</p>
+        <p className="text-[11px] text-slate-400">
+          {profile?.username ? t("usernameChangeHint") : t("usernameHint")}
+        </p>
       </label>
 
       <label className="block space-y-1">
@@ -306,7 +315,14 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             {t("claim")}
           </Button>
         )}
-          {profile?.username && (
+        {profile?.username &&
+          username.trim().toLowerCase() !== profile.username.toLowerCase() && (
+            <Button onClick={handleSaveProfile} disabled={savingProfile} size="sm">
+              {t("usernameChangeAction")}
+            </Button>
+          )}
+        {profile?.username &&
+          username.trim().toLowerCase() === profile.username.toLowerCase() && (
             <span className="text-[11px] text-slate-400">
               {autoSaveStatus === "saving"
                 ? t("autosaving")
