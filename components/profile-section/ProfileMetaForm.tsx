@@ -151,7 +151,10 @@ export function ProfileMetaForm({
 
       <div className="space-y-1.5">
         <span className="text-xs font-medium text-slate-500">{t("themeLabel")}</span>
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+        {/* max-w-md so cards don't stretch into 150×200 blocks when the editor pane is wide
+            (lg+ : ~640px). Capped width also makes the picker read as "swatches" rather than a
+            full-width hero strip. */}
+        <div className="grid max-w-md grid-cols-3 gap-2 sm:grid-cols-4">
           {THEMES.map((tm) => {
             const active = theme === tm.id;
             return (
@@ -214,7 +217,7 @@ export function ProfileMetaForm({
       {profile?.publicUrl && (
         // Promoted to its own row so it doesn't compete with the save button / autosave hint —
         // share-my-profile is a separate intent from "did my edit save".
-        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2">
+        <div className="flex w-fit max-w-full flex-wrap items-center gap-2 rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2">
           <PublicUrlPill url={profile.publicUrl} t={t} />
           <QrButton
             url={profile.publicUrl}
