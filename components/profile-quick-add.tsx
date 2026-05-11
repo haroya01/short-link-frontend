@@ -16,21 +16,103 @@ import { setLinkOgOverride, shortenUrl, toggleLinkOnProfile } from "@/lib/api";
  * completes (the placeholder portion is pre-selected), and the user still types their own label.
  */
 
-type Template = { id: string; label: string; urlTemplate: string; placeholder: string };
+type Template = {
+  id: string;
+  label: string;
+  urlTemplate: string;
+  placeholder: string;
+  /**
+   * Single capture-group regex used in two directions: to pull the handle out of an existing URL
+   * (so "github.com/haroya" + Instagram chip → "instagram.com/haroya"), and to detect "what
+   * platform is this URL on" for chip-to-chip swaps.
+   */
+  handleRegex: RegExp;
+};
 
 const TEMPLATES: Template[] = [
-  { id: "instagram", label: "Instagram", urlTemplate: "https://instagram.com/{h}", placeholder: "haroya" },
-  { id: "x", label: "X", urlTemplate: "https://x.com/{h}", placeholder: "haroya" },
-  { id: "youtube", label: "YouTube", urlTemplate: "https://youtube.com/@{h}", placeholder: "haroya" },
-  { id: "tiktok", label: "TikTok", urlTemplate: "https://tiktok.com/@{h}", placeholder: "haroya" },
-  { id: "github", label: "GitHub", urlTemplate: "https://github.com/{h}", placeholder: "haroya" },
-  { id: "kakao", label: "카카오톡 채널", urlTemplate: "https://pf.kakao.com/_{h}", placeholder: "abcDEF" },
-  { id: "naver-blog", label: "네이버 블로그", urlTemplate: "https://blog.naver.com/{h}", placeholder: "haroya" },
-  { id: "velog", label: "Velog", urlTemplate: "https://velog.io/@{h}", placeholder: "haroya" },
+  {
+    id: "instagram",
+    label: "Instagram",
+    urlTemplate: "https://instagram.com/{h}",
+    placeholder: "haroya",
+    handleRegex: /^https?:\/\/(?:www\.)?instagram\.com\/([^/?#]+)/i,
+  },
+  {
+    id: "x",
+    label: "X",
+    urlTemplate: "https://x.com/{h}",
+    placeholder: "haroya",
+    handleRegex: /^https?:\/\/(?:www\.)?(?:x|twitter)\.com\/([^/?#]+)/i,
+  },
+  {
+    id: "youtube",
+    label: "YouTube",
+    urlTemplate: "https://youtube.com/@{h}",
+    placeholder: "haroya",
+    handleRegex: /^https?:\/\/(?:www\.)?youtube\.com\/@?([^/?#]+)/i,
+  },
+  {
+    id: "tiktok",
+    label: "TikTok",
+    urlTemplate: "https://tiktok.com/@{h}",
+    placeholder: "haroya",
+    handleRegex: /^https?:\/\/(?:www\.)?tiktok\.com\/@([^/?#]+)/i,
+  },
+  {
+    id: "github",
+    label: "GitHub",
+    urlTemplate: "https://github.com/{h}",
+    placeholder: "haroya",
+    handleRegex: /^https?:\/\/(?:www\.)?github\.com\/([^/?#]+)/i,
+  },
+  {
+    id: "kakao",
+    label: "카카오톡 채널",
+    urlTemplate: "https://pf.kakao.com/_{h}",
+    placeholder: "abcDEF",
+    handleRegex: /^https?:\/\/pf\.kakao\.com\/_([^/?#]+)/i,
+  },
+  {
+    id: "naver-blog",
+    label: "네이버 블로그",
+    urlTemplate: "https://blog.naver.com/{h}",
+    placeholder: "haroya",
+    handleRegex: /^https?:\/\/blog\.naver\.com\/([^/?#]+)/i,
+  },
+  {
+    id: "velog",
+    label: "Velog",
+    urlTemplate: "https://velog.io/@{h}",
+    placeholder: "haroya",
+    handleRegex: /^https?:\/\/velog\.io\/@([^/?#]+)/i,
+  },
   // Email is a special case — we don't show the technical "mailto:" prefix in the field; the
   // input is just an address and we add the scheme on submit (see normalizeScheme).
-  { id: "email", label: "Email", urlTemplate: "{h}", placeholder: "you@example.com" },
+  {
+    id: "email",
+    label: "Email",
+    urlTemplate: "{h}",
+    placeholder: "you@example.com",
+    handleRegex: /^(?:mailto:)?([^\s@]+@[^\s@]+\.[^\s@]+)$/i,
+  },
 ];
+
+const KNOWN_LABELS = new Set(TEMPLATES.map((t) => t.label));
+
+/**
+ * If the field already has a recognizable platform URL, pull out the handle so it can be
+ * re-applied to a different platform's template. Returns null when the current URL doesn't match
+ * any known shape — caller falls back to the new template's placeholder.
+ */
+function extractHandle(url: string): string | null {
+  const v = url.trim();
+  if (!v) return null;
+  for (const tpl of TEMPLATES) {
+    const m = tpl.handleRegex.exec(v);
+    if (m && m[1]) return m[1];
+  }
+  return null;
+}
 
 type Props = {
   onAdded: () => void;
@@ -48,21 +130,23 @@ export function ProfileQuickAdd({ onAdded, highlightEmpty = false }: Props) {
   const urlInputRef = useRef<HTMLInputElement | null>(null);
 
   function applyTemplate(tpl: Template) {
-    // Don't overwrite an in-progress URL — chips are for filling an empty field. If the user
-    // already typed something, just give the URL field focus so they can keep editing.
-    if (url.trim()) {
-      urlInputRef.current?.focus();
-      return;
-    }
-    const filled = tpl.urlTemplate.replace("{h}", tpl.placeholder);
+    // Preserve the handle the user already typed (or extracted from a different platform's URL).
+    // e.g. "github.com/haroya" + Instagram chip → "instagram.com/haroya". Falls back to the new
+    // template's placeholder when the field is empty or doesn't match any known shape.
+    const handle = extractHandle(url) ?? tpl.placeholder;
+    const filled = tpl.urlTemplate.replace("{h}", handle);
     setUrl(filled);
-    if (!label) setLabel(tpl.label);
+    // Swap the label too when it's still empty or matches some known template's label — meaning
+    // the user hasn't customized it. A user-typed label stays.
+    if (!label.trim() || KNOWN_LABELS.has(label.trim())) {
+      setLabel(tpl.label);
+    }
     requestAnimationFrame(() => {
       const el = urlInputRef.current;
       if (!el) return;
       el.focus();
       const start = tpl.urlTemplate.indexOf("{h}");
-      if (start >= 0) el.setSelectionRange(start, start + tpl.placeholder.length);
+      if (start >= 0) el.setSelectionRange(start, start + handle.length);
     });
   }
 
