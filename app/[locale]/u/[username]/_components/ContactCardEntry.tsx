@@ -202,6 +202,13 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
 
   return (
     <li className="profile-fade" style={fadeStyle}>
+      {/* Wrapper used to be {@code role="button"} for tap-to-flip, but the card already contains
+          real interactive controls (mailto / tel / Call / Share / Save) — nesting them inside a
+          button violates WCAG 4.1.2 (axe: {@code nested-interactive}). Solution: wrapper stays a
+          plain {@code <div>} with a click handler so mouse/touch users still get tap-anywhere
+          flip, and a visually-hidden focusable button below provides the same flip action for
+          keyboard / screen-reader users. The {@code sr-only focus:not-sr-only} button reveals
+          itself on focus (with a visible ring) so keyboard navigation isn't a dead end. */}
       <div
         ref={cardRef}
         onPointerMove={handlePointerMove}
@@ -210,18 +217,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
           setFlipped((v) => !v);
           playCardFlipSound();
         }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            setFlipped((v) => !v);
-            playCardFlipSound();
-          }
-        }}
-        role="button"
-        tabIndex={0}
-        aria-pressed={flipped}
-        aria-label={flipped ? t("flipToFront") : t("flipToBack")}
-        className="relative cursor-pointer select-none [perspective:1200px] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded-2xl"
+        className="relative cursor-pointer select-none rounded-2xl [perspective:1200px]"
         style={
           {
             "--foil-c1": palette.colors[0],
@@ -236,6 +232,22 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
           } as CSSProperties
         }
       >
+        {/* Keyboard / screen-reader flip control. Visually hidden by default; reveals itself on
+            focus with a visible ring so keyboard navigation isn't a dead end. Mouse/touch users
+            don't see it — they tap anywhere on the card. */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setFlipped((v) => !v);
+            playCardFlipSound();
+          }}
+          aria-pressed={flipped}
+          className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-30 focus:rounded-md focus:bg-white focus:px-2 focus:py-1 focus:text-xs focus:font-medium focus:text-slate-900 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent-400"
+        >
+          {flipped ? t("flipToFront") : t("flipToBack")}
+        </button>
+
         {/* Two wrappers so flip (slow, 600ms) and tilt (fast, 80ms) can have separate transition
             curves. The outer "flip" wrapper handles the 0/180° rotateY for the flip; the inner
             "tilt" wrapper handles the small rotateX/rotateY from pointer + scroll. Previously

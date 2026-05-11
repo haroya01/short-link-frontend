@@ -28,22 +28,22 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      // Skip the visual suite from the default project — it has its own dedicated project so
-      // visual-only CI runs can target it without booting backend / DB.
-      testIgnore: /visual\./,
+      // Skip the no-backend fixture suites (visual snapshots + fixture-level a11y) from the
+      // default project — they have their own dedicated "visual" project so the no-backend CI
+      // workflow can run them without booting Spring + DB.
+      testIgnore: /(visual|a11y-fixtures)\./,
       use: { ...devices["Desktop Chrome"] },
     },
     {
-      // Visual snapshots — runs against fixture pages under /visual-fixtures/, no backend
-      // required. Pinned to Desktop Chrome 1280×800 + deviceScaleFactor 1 so screenshots
-      // are deterministic across machines. {@code snapshotPathTemplate} drops Playwright's
-      // default {@code -<platform>} suffix so the same baseline file is used on macOS dev
-      // and Linux CI — combined with the 2% pixel tolerance + tightly-cropped fixture
-      // regions, cross-OS font subpixel rendering stays within budget.
+      // No-backend fixture project — runs both visual snapshots ({@code visual.spec.ts}) and
+      // component-level a11y ({@code a11y-fixtures.spec.ts}) against the static fixture pages
+      // under {@code /visual-fixtures/}. Pinned to Desktop Chrome 1280×800 +
+      // deviceScaleFactor 1 so screenshots are deterministic across machines.
+      // {@code snapshotPathTemplate} drops Playwright's default {@code -<platform>} suffix so
+      // the same baseline file is used on macOS dev and Linux CI.
       name: "visual",
-      testMatch: /visual\./,
-      snapshotPathTemplate:
-        "{testDir}/{testFilePath}-snapshots/{arg}{ext}",
+      testMatch: /(visual|a11y-fixtures)\./,
+      snapshotPathTemplate: "{testDir}/{testFilePath}-snapshots/{arg}{ext}",
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1280, height: 800 },
