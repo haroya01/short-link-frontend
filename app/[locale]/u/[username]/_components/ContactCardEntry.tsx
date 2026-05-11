@@ -452,15 +452,18 @@ function CardFace({
           mixBlendMode: "color-dodge",
         }}
       />
-      {/* Sharp diagonal foil stripe — codingapple's foil example pushed harder: tighter color
-          stops (40%→60%), saturated yellow/purple/cyan triplet, 1.5× pointer-parallax. Back face
-          flips the parallax direction so the stripe drift matches the visitor's pointer side. */}
+      {/* Full-coverage iridescent base — was a narrow diagonal stripe (transparent 38%→62%) that
+          left half the card uncolored, looking "끊긴" / cut off. Now the rainbow spreads across
+          the entire gradient with NO transparent stops, so every part of the card surface
+          carries some color. backgroundSize 220% + the parallax shift continues to drive the
+          "moving light" feel — as the position shifts, the visible color palette slides through
+          the rainbow, even though every pixel always has some color. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-60"
+        className="pointer-events-none absolute inset-0 opacity-55"
         style={{
           backgroundImage:
-            "linear-gradient(105deg, transparent 38%, rgba(255,219,112,0.85) 45%, rgba(132,50,255,0.7) 50%, rgba(119,198,255,0.75) 55%, transparent 62%)",
+            "linear-gradient(105deg, rgba(132,50,255,0.35) 0%, rgba(255,119,198,0.45) 18%, rgba(255,219,112,0.55) 35%, rgba(255,255,255,0.45) 50%, rgba(119,198,255,0.55) 65%, rgba(132,200,255,0.45) 82%, rgba(255,119,198,0.35) 100%)",
           backgroundSize: "220% 220%",
           backgroundPosition: back
             ? "calc(50% - (var(--mx, 50%) - 50%) * 1.5) calc(50% + (var(--my, 50%) - 50%) * 1.5)"
