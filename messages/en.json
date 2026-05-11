@@ -758,7 +758,10 @@
       "dockCall": "Call",
       "dockShare": "Share",
       "dockSave": "Save",
-      "qrAlt": "Scan QR to add this contact"
+      "qrAlt": "Scan QR to add this contact",
+      "flipToBack": "Flip (show QR)",
+      "flipToFront": "Flip back",
+      "backTagline": "Scan to save contact"
     },
     "emailForm": {
       "submit": "Sign up",

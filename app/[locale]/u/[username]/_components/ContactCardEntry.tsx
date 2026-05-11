@@ -9,7 +9,7 @@ import {
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { Download, Mail, MapPin, Phone, Share2 } from "lucide-react";
+import { Download, Mail, MapPin, Phone, RefreshCw, Share2 } from "lucide-react";
 import QRCode from "qrcode";
 import { useTranslations } from "next-intl";
 import type { ContactCardConfig } from "@/types";
@@ -17,44 +17,41 @@ import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
   content: string;
-  /**
-   * Theme colors accepted for API parity with sibling entry cards; intentionally ignored. The
-   * contact card sets its own dark holographic surface so it reads as a physical object, not as
-   * "another feed row" — that's the design intent of the 명함 vertical.
-   */
   colors: ThemeColors;
   fadeStyle?: CSSProperties;
 };
 
 /**
- * Holographic digital business card — the centerpiece of the 명함 vertical.
+ * Holographic digital business card — pushed toward Pokemon-TCG-foil territory. Four layered
+ * tricks that compose into the "this is a physical object" feeling:
  *
- * <p>Three concerns layered intentionally:
  * <ul>
- *   <li><b>Material:</b> radial gradient tracks pointer position, blended via {@code color-dodge}
- *       over a metallic base + diagonal rainbow stripe + faint grain. Card also tilts 8° on
- *       perspective transform — pointer pivots feel physical without dropping into 60fps churn
- *       (transitions debounce via `transition-transform 240ms`).</li>
- *   <li><b>Action dock:</b> three big bottom buttons (Call / Share / Save). Web Share Sheet on
- *       phones surfaces KakaoTalk, iMessage, etc. without any SDK integration.</li>
- *   <li><b>vCard QR:</b> visitors with a second phone scan the embedded QR and add the contact
- *       directly via the OS camera intent. Encodes the full vCard payload (~200 chars typical,
- *       inside QR `M` ECC headroom).</li>
+ *   <li><b>3D flip:</b> taps on the flip button rotate the card 180° around Y so visitors see
+ *       a "back" face — a giant scannable vCard QR. The pointer-tilt still works on both faces,
+ *       so the back stays alive too.</li>
+ *   <li><b>Sharper foil stripe:</b> tight color stops (yellow → purple → cyan, 38%→62%) make the
+ *       diagonal highlight feel like a real foil light catch, vs. the softer multi-stop rainbow
+ *       it was before. Stripe position scales with pointer at ~1.5× for an exaggerated parallax.</li>
+ *   <li><b>Cross-hatch foil texture:</b> two stacked {@code repeating-linear-gradient}s at ±45°
+ *       paint the etched diagonal grid you see on holographic cards in person. Overlay
+ *       blend-mode + low opacity keeps it as texture, not pattern.</li>
+ *   <li><b>Inner bevel ring:</b> {@code box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08)} adds
+ *       a faint inner edge highlight — the card looks like it has thickness.</li>
  * </ul>
+ *
+ * Action dock + QR + vCard download from the previous version are preserved; what changed is
+ * the material on the surface and the flip mechanic.
  */
 export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
-  // colors accepted for parity with siblings; not used because the card sets its own surface.
   void colors;
   const t = useTranslations("publicProfile.contactCard");
   const card = useMemo(() => parseConfig(content), [content]);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [flipped, setFlipped] = useState(false);
 
   const vcard = useMemo(() => (card.name ? buildVcard(card) : ""), [card]);
 
-  // Generate the QR once we have a vCard payload. QR `M` ECC at ~v6 fits ~250 chars; typical
-  // cards are ~200 — plenty of headroom. Fail-silent on the unlikely error so the rest of the
-  // card stays usable.
   useEffect(() => {
     if (!vcard) {
       setQrDataUrl(null);
@@ -64,7 +61,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
     QRCode.toDataURL(vcard, {
       errorCorrectionLevel: "M",
       margin: 1,
-      width: 200,
+      width: 360,
       color: { dark: "#0f172a", light: "#ffffff" },
     })
       .then((url) => {
@@ -84,7 +81,6 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
     const rect = el.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
-    // Tilt pivots from center — pointer at corner ≈ 8° lean.
     const rx = ((x - 50) / 50) * 8;
     const ry = ((y - 50) / 50) * -8;
     el.style.setProperty("--mx", `${x}%`);
@@ -114,8 +110,6 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
   }
 
   async function shareCard() {
-    // Web Share opens the OS share sheet — picker for KakaoTalk / iMessage / SMS / etc. on
-    // phones. Desktop browsers usually no-op, so fall back to copying the profile URL.
     const url = typeof window !== "undefined" ? window.location.href : "";
     const shareData: ShareData = { title: card.name, text: shareText(card), url };
     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
@@ -141,149 +135,224 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
         ref={cardRef}
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
-        className="contact-card group relative overflow-hidden rounded-2xl border border-slate-700/40 bg-slate-950 text-white shadow-2xl shadow-slate-900/40"
-        style={
-          {
-            transform:
-              "perspective(1000px) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg))",
-            transition: "transform 240ms cubic-bezier(0.22, 1, 0.36, 1)",
-            backgroundImage:
-              "radial-gradient(120% 80% at 0% 0%, rgba(99, 102, 241, 0.35) 0%, transparent 50%)," +
-              "radial-gradient(120% 80% at 100% 100%, rgba(236, 72, 153, 0.25) 0%, transparent 55%)," +
-              "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)",
-          } as CSSProperties
-        }
+        className="relative [perspective:1200px]"
       >
-        {/* Holo light — radial gradient at pointer position, additive-blended. Falls back to
-            a centered rest position when the pointer leaves the card. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-70"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.1) 18%, transparent 35%)",
-            mixBlendMode: "color-dodge",
-          }}
-        />
-        {/* Diagonal rainbow band — the saturated holographic stripe; offset by pointer for
-            a "look at it from a different angle" effect. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-25"
-          style={{
-            backgroundImage:
-              "linear-gradient(105deg, transparent 30%, rgba(255,119,198,0.7) 42%, rgba(119,198,255,0.7) 50%, rgba(255,200,119,0.7) 58%, transparent 70%)",
-            backgroundSize: "200% 200%",
-            backgroundPosition:
-              "calc(50% + (var(--mx, 50%) - 50%) * 0.6) calc(50% + (var(--my, 50%) - 50%) * 0.6)",
-            mixBlendMode: "color-dodge",
-          }}
-        />
-        {/* Faint grain so the surface doesn't read as flat — only really visible up close. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-overlay"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")",
-          }}
-        />
+        {/* Flip toggle pinned outside the rotating face so it doesn't disappear when the card
+            shows its back. The button itself controls the flip, the tilt JS is on the wrapper. */}
+        <button
+          type="button"
+          onClick={() => setFlipped((v) => !v)}
+          aria-label={flipped ? t("flipToFront") : t("flipToBack")}
+          className="absolute right-3 top-3 z-30 grid h-8 w-8 place-items-center rounded-full bg-white/10 text-white/80 backdrop-blur-sm transition hover:bg-white/20 hover:text-white"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+        </button>
 
-        <div className="relative z-10 px-6 pt-6">
-          <p className="text-2xl font-semibold leading-tight tracking-tight">{card.name}</p>
-          {(card.title || card.company) && (
-            <p className="mt-1 text-sm text-slate-300">
-              {[card.title, card.company].filter(Boolean).join(" · ")}
-            </p>
-          )}
-        </div>
-
-        <ul className="relative z-10 mt-4 space-y-2 px-6">
-          {card.email && (
-            <Row icon={<Mail className="h-3.5 w-3.5" />}>
-              <a href={`mailto:${card.email}`} className="truncate hover:underline">
-                {card.email}
-              </a>
-            </Row>
-          )}
-          {card.phone && (
-            <Row icon={<Phone className="h-3.5 w-3.5" />}>
-              <a
-                href={`tel:${card.phone.replace(/\s/g, "")}`}
-                className="truncate hover:underline"
-              >
-                {card.phone}
-              </a>
-            </Row>
-          )}
-          {card.website && (
-            <Row icon={<Globe />}>
-              <a
-                href={card.website}
-                target="_blank"
-                rel="noreferrer"
-                className="truncate hover:underline"
-              >
-                {hostWithoutScheme(card.website)}
-              </a>
-            </Row>
-          )}
-          {card.address && (
-            <Row icon={<MapPin className="h-3.5 w-3.5" />}>
-              <span className="truncate">{card.address}</span>
-            </Row>
-          )}
-        </ul>
-
-        {qrDataUrl && (
-          <div className="relative z-10 mt-5 flex justify-end px-6">
-            <div className="rounded-lg bg-white/95 p-1.5 shadow-md">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={qrDataUrl}
-                alt={t("qrAlt")}
-                width={72}
-                height={72}
-                className="block h-[72px] w-[72px]"
-              />
+        <div
+          className="relative [transform-style:preserve-3d]"
+          style={{
+            transform: `rotateX(var(--ry, 0deg)) rotateY(calc(var(--rx, 0deg) + ${
+              flipped ? 180 : 0
+            }deg))`,
+            transition:
+              "transform 600ms cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        >
+          {/* FRONT */}
+          <CardFace>
+            <div className="relative z-10 px-6 pt-6">
+              <p className="text-2xl font-semibold leading-tight tracking-tight">
+                {card.name}
+              </p>
+              {(card.title || card.company) && (
+                <p className="mt-1 text-sm text-slate-300">
+                  {[card.title, card.company].filter(Boolean).join(" · ")}
+                </p>
+              )}
             </div>
-          </div>
-        )}
 
-        <div className="relative z-10 mt-5 grid grid-cols-3 divide-x divide-white/10 border-t border-white/10">
-          {card.phone ? (
-            <a
-              href={`tel:${card.phone.replace(/\s/g, "")}`}
-              className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
-            >
-              <Phone className="h-4 w-4" />
-              <span>{t("dockCall")}</span>
-            </a>
-          ) : (
-            <span className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white/30">
-              <Phone className="h-4 w-4" />
-              <span>{t("dockCall")}</span>
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={shareCard}
-            className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
-          >
-            <Share2 className="h-4 w-4" />
-            <span>{t("dockShare")}</span>
-          </button>
-          <button
-            type="button"
-            onClick={downloadVcard}
-            className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
-          >
-            <Download className="h-4 w-4" />
-            <span>{t("dockSave")}</span>
-          </button>
+            <ul className="relative z-10 mt-4 space-y-2 px-6">
+              {card.email && (
+                <Row icon={<Mail className="h-3.5 w-3.5" />}>
+                  <a
+                    href={`mailto:${card.email}`}
+                    className="truncate hover:underline"
+                  >
+                    {card.email}
+                  </a>
+                </Row>
+              )}
+              {card.phone && (
+                <Row icon={<Phone className="h-3.5 w-3.5" />}>
+                  <a
+                    href={`tel:${card.phone.replace(/\s/g, "")}`}
+                    className="truncate hover:underline"
+                  >
+                    {card.phone}
+                  </a>
+                </Row>
+              )}
+              {card.website && (
+                <Row icon={<Globe />}>
+                  <a
+                    href={card.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="truncate hover:underline"
+                  >
+                    {hostWithoutScheme(card.website)}
+                  </a>
+                </Row>
+              )}
+              {card.address && (
+                <Row icon={<MapPin className="h-3.5 w-3.5" />}>
+                  <span className="truncate">{card.address}</span>
+                </Row>
+              )}
+            </ul>
+
+            <div className="relative z-10 mt-5 grid grid-cols-3 divide-x divide-white/10 border-t border-white/10">
+              {card.phone ? (
+                <a
+                  href={`tel:${card.phone.replace(/\s/g, "")}`}
+                  className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
+                >
+                  <Phone className="h-4 w-4" />
+                  <span>{t("dockCall")}</span>
+                </a>
+              ) : (
+                <span className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white/30">
+                  <Phone className="h-4 w-4" />
+                  <span>{t("dockCall")}</span>
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={shareCard}
+                className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
+              >
+                <Share2 className="h-4 w-4" />
+                <span>{t("dockShare")}</span>
+              </button>
+              <button
+                type="button"
+                onClick={downloadVcard}
+                className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
+              >
+                <Download className="h-4 w-4" />
+                <span>{t("dockSave")}</span>
+              </button>
+            </div>
+          </CardFace>
+
+          {/* BACK — same material, content is a hero QR sized for scan-from-across-the-table. */}
+          <CardFace back>
+            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-4 p-8">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-300">
+                {t("backTagline")}
+              </p>
+              {qrDataUrl ? (
+                <div className="rounded-xl bg-white/95 p-3 shadow-2xl shadow-black/40">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={qrDataUrl}
+                    alt={t("qrAlt")}
+                    className="h-44 w-44 sm:h-52 sm:w-52"
+                  />
+                </div>
+              ) : (
+                <div className="h-44 w-44 animate-pulse rounded-xl bg-white/10 sm:h-52 sm:w-52" />
+              )}
+              <p className="max-w-[18ch] text-center text-[12px] text-slate-300">
+                {card.name}
+              </p>
+            </div>
+          </CardFace>
         </div>
       </div>
     </li>
+  );
+}
+
+/**
+ * One face of the flip-card. Stacked layers (back-to-front):
+ * 1. Base dark gradient — the substrate.
+ * 2. Pointer-tracking radial gradient (color-dodge) — the moving "light catch".
+ * 3. Sharp diagonal foil stripe (color-dodge) — the holographic highlight, parallaxes with pointer.
+ * 4. Cross-hatch etched grid (overlay) — texture so the foil reads as material, not gradient.
+ * 5. Grain noise (overlay) — subpixel jitter so the surface doesn't look perfectly clean.
+ * 6. Inner bevel ring (box-shadow inset) — fake card-edge depth.
+ * 7. Content layer — text / dock / QR (whatever the caller passes as children).
+ */
+function CardFace({
+  back,
+  children,
+}: {
+  back?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={
+        "contact-card relative overflow-hidden rounded-2xl border border-slate-700/40 bg-slate-950 text-white shadow-2xl shadow-slate-900/40 [backface-visibility:hidden] " +
+        (back ? "absolute inset-0 [transform:rotateY(180deg)]" : "relative")
+      }
+      style={{
+        backgroundImage:
+          "radial-gradient(120% 80% at 0% 0%, rgba(99, 102, 241, 0.35) 0%, transparent 50%)," +
+          "radial-gradient(120% 80% at 100% 100%, rgba(236, 72, 153, 0.25) 0%, transparent 55%)," +
+          "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)",
+        boxShadow:
+          "inset 0 0 0 1px rgba(255,255,255,0.08), 0 25px 50px -12px rgba(0,0,0,0.45)",
+      }}
+    >
+      {/* Pointer-tracked radial highlight. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-70"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.1) 18%, transparent 35%)",
+          mixBlendMode: "color-dodge",
+        }}
+      />
+      {/* Sharp diagonal foil stripe — codingapple's foil example pushed harder: tighter color
+          stops (40%→60%), saturated yellow/purple/cyan triplet, 1.5× pointer-parallax. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          backgroundImage:
+            "linear-gradient(105deg, transparent 38%, rgba(255,219,112,0.85) 45%, rgba(132,50,255,0.7) 50%, rgba(119,198,255,0.75) 55%, transparent 62%)",
+          backgroundSize: "220% 220%",
+          backgroundPosition:
+            "calc(50% + (var(--mx, 50%) - 50%) * 1.5) calc(50% + (var(--my, 50%) - 50%) * 1.5)",
+          mixBlendMode: "color-dodge",
+        }}
+      />
+      {/* Cross-hatch etched foil pattern — two repeating gradients at ±45° make the visible
+          grain of real Pokemon-TCG holographic cards. Overlay blend keeps it subtle. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 4px), " +
+            "repeating-linear-gradient(-45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 4px)",
+        }}
+      />
+      {/* Faint grain — surface doesn't read as glass-clean. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")",
+        }}
+      />
+
+      {children}
+    </div>
   );
 }
 
