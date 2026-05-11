@@ -250,8 +250,8 @@ function GalleryLightbox({ images, initialIdx, onClose, t }: LightboxProps) {
   return (
     <div
       className={
-        "fixed inset-0 z-50 bg-black transition-opacity duration-200 " +
-        (entered ? "bg-opacity-95 opacity-100" : "bg-opacity-95 opacity-0")
+        "fixed inset-0 z-50 bg-black/55 backdrop-blur-2xl backdrop-saturate-150 transition-opacity duration-200 " +
+        (entered ? "opacity-100" : "opacity-0")
       }
       onClick={onClose}
       role="dialog"
@@ -287,11 +287,13 @@ function GalleryLightbox({ images, initialIdx, onClose, t }: LightboxProps) {
               onClick={(e) => e.stopPropagation()}
               style={{
                 transition:
-                  "transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms ease-out",
-                transform: entered ? "scale(1)" : "scale(0.92)",
+                  "transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease-out",
+                transform: entered
+                  ? "translateY(0) scale(1)"
+                  : "translateY(12px) scale(0.94)",
                 opacity: entered ? 1 : 0,
               }}
-              className="max-h-[78vh] max-w-[88vw] rounded-lg object-contain shadow-2xl sm:max-h-[80vh] sm:max-w-[78vw]"
+              className="max-h-[78vh] max-w-[88vw] rounded-xl object-contain shadow-2xl shadow-black/40 ring-1 ring-white/10 sm:max-h-[80vh] sm:max-w-[78vw]"
             />
           </div>
         ))}
