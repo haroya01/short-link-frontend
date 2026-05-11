@@ -295,7 +295,8 @@ export type PublicProfileEntry = {
     | "EMAIL_FORM"
     | "CONTACT_CARD"
     | "GALLERY"
-    | "PRODUCT_CARD";
+    | "PRODUCT_CARD"
+    | "BOOKING";
   id: number | null;
   shortCode: string | null;
   shortUrl: string | null;
@@ -321,7 +322,8 @@ export type ProfileBlock = {
     | "EMAIL_FORM"
     | "CONTACT_CARD"
     | "GALLERY"
-    | "PRODUCT_CARD";
+    | "PRODUCT_CARD"
+    | "BOOKING";
   content: string | null;
   profileOrder: number;
 };
@@ -376,6 +378,33 @@ export type ContactCardConfig = {
 export type GalleryConfig = {
   images: string[];
 };
+
+/**
+ * BOOKING JSON shape — external scheduling/reservation link. Backend whitelists the host
+ * (Calendly / Cal.com / 네이버예약 / 카카오 톡채널 / MS Bookings / Google Calendar appointment /
+ * TidyCal / Acuity / 캐치테이블).
+ */
+export type BookingConfig = {
+  url: string;
+  title: string | null;
+  description: string | null;
+  ctaLabel: string | null;
+};
+
+/**
+ * Provider id values mirror {@code Booking.Provider.id()} on the backend — used to pick the right
+ * icon / label without re-parsing the URL on the client.
+ */
+export type BookingProvider =
+  | "calendly"
+  | "cal_com"
+  | "google_calendar"
+  | "naver_booking"
+  | "kakao_channel"
+  | "microsoft_bookings"
+  | "tidycal"
+  | "acuity"
+  | "catchtable";
 
 /**
  * Trimmed oembed response from the backend proxy. Fields mirror the provider's payload but only

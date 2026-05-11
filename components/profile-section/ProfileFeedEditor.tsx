@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowUp,
+  CalendarDays,
   ChevronDown,
   ChevronUp,
   Contact,
@@ -40,6 +41,7 @@ type Props = {
   onAddGallery: () => void;
   onAddProductCard: () => void;
   onAddEmailForm: () => void;
+  onAddBooking: () => void;
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
@@ -77,6 +79,7 @@ export function ProfileFeedEditor({
   onAddGallery,
   onAddProductCard,
   onAddEmailForm,
+  onAddBooking,
   onMove,
   onDragStart,
   onDragOver,
@@ -111,6 +114,7 @@ export function ProfileFeedEditor({
           onAddGallery={onAddGallery}
           onAddProductCard={onAddProductCard}
           onAddEmailForm={onAddEmailForm}
+          onAddBooking={onAddBooking}
           t={t}
         />
       </div>
@@ -213,6 +217,7 @@ function AddMenu({
   onAddGallery,
   onAddProductCard,
   onAddEmailForm,
+  onAddBooking,
   t,
 }: {
   onAddText: () => void;
@@ -223,6 +228,7 @@ function AddMenu({
   onAddGallery: () => void;
   onAddProductCard: () => void;
   onAddEmailForm: () => void;
+  onAddBooking: () => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   const [open, setOpen] = useState(false);
@@ -301,6 +307,12 @@ function AddMenu({
             icon={<Mail className="h-3.5 w-3.5" />}
           >
             {t("addEmailForm")}
+          </MenuItem>
+          <MenuItem
+            onClick={() => fire(onAddBooking)}
+            icon={<CalendarDays className="h-3.5 w-3.5" />}
+          >
+            {t("addBooking")}
           </MenuItem>
         </div>
       )}
@@ -555,6 +567,25 @@ function FeedItemRow({
       </li>
     );
   }
+  if (item.kind === "BLOCK" && item.type === "BOOKING") {
+    const summary = bookingSummary(item.content);
+    return (
+      <li {...dndProps} className={baseRow}>
+        {dragHandle}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <CalendarDays className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          <span className="truncate text-sm font-medium text-slate-900">
+            {summary || t("addBookingPlaceholder")}
+          </span>
+        </div>
+        <BlockActions
+          onEdit={() => onEditBlock(item.id, item.content ?? "")}
+          onDelete={() => onDeleteBlock(item.id)}
+          t={t}
+        />
+      </li>
+    );
+  }
   if (item.kind === "BLOCK" && item.type === "EMBED") {
     return (
       <li {...dndProps} className={baseRow}>
@@ -732,6 +763,25 @@ function productCardSummary(content: string | null): string {
         ? parsed.items[0].name
         : "";
     return first ? `${first} 외 ${count - 1}건` : "";
+  } catch {
+    return "";
+  }
+}
+
+/** Title (or provider name fallback) for the editor's BOOKING row summary. */
+function bookingSummary(content: string | null): string {
+  if (!content) return "";
+  try {
+    const parsed = JSON.parse(content);
+    const title = typeof parsed?.title === "string" ? parsed.title.trim() : "";
+    if (title) return title;
+    const url = typeof parsed?.url === "string" ? parsed.url.trim() : "";
+    if (!url) return "";
+    try {
+      return new URL(url).host.replace(/^www\./, "");
+    } catch {
+      return url;
+    }
   } catch {
     return "";
   }

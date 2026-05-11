@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type { PublicProfileEntry } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
+import { BookingEntryCard } from "./BookingEntryCard";
 import { ContactCardEntry } from "./ContactCardEntry";
 import { DividerEntry } from "./DividerEntry";
 import { EmailFormEntryCard } from "./EmailFormEntryCard";
@@ -95,6 +96,15 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
         if (entry.kind === "PRODUCT_CARD" && entry.content)
           return (
             <ProductCardEntry
+              key={key}
+              content={entry.content}
+              colors={colors}
+              fadeStyle={style}
+            />
+          );
+        if (entry.kind === "BOOKING" && entry.content)
+          return (
+            <BookingEntryCard
               key={key}
               content={entry.content}
               colors={colors}
