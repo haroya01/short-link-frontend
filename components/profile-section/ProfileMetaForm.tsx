@@ -107,14 +107,14 @@ export function ProfileMetaForm({
 
   return (
     <div className="space-y-3">
-      {/* Mobile: stack (banner above, avatar below). md+ : banner takes 2/3 of the row and the
-          avatar picker sits in the right 1/3 — saves ~150px of vertical space and keeps the
-          identity controls visually grouped. */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-        <div className="md:col-span-2">
+      {/* Stack on small / sidebar widths. lg+ : banner takes 2/3 of the row, avatar 1/3. Using
+          `lg:` (not `md:`) keeps the breakpoint comfortably above the editor's natural width so a
+          scrollbar appearing / vanishing doesn't make the grid flip columns and visibly jolt. */}
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+        <div className="lg:col-span-2">
           <BannerPicker currentUrl={profile?.bannerUrl ?? null} onChange={onBannerChange} />
         </div>
-        <div className="md:col-span-1">
+        <div className="lg:col-span-1">
           <AvatarPicker
             currentUrl={profile?.avatarUrl ?? null}
             initialChar={(username[0] ?? "·").toUpperCase()}
