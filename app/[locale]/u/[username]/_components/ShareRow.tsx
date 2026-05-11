@@ -2,22 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { Check, Copy, Share2 } from "lucide-react";
-import type { ShareChannel } from "@/types";
+import type { ShareChannel, Social } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
   url: string;
   username: string;
   colors: ThemeColors;
-  /** Channels the profile owner enabled in the editor, in their chosen order. */
-  channels: ShareChannel[];
+  /** Channel + the owner's own URL pairs. Each renders as a button linking to {@link Social#url}. */
+  socials: Social[];
   labels: {
     /**
-     * Per-channel aria-label, pre-resolved server-side. Has to be a plain Record (not a function)
-     * because server components can't serialize functions to client components — Next.js rejects
-     * any function in a client component's props at SSR.
+     * Per-channel aria-label ("Visit X", "Visit LINE", …), pre-resolved server-side. Has to be a
+     * plain Record (not a function) because server components can't serialize functions to client
+     * components — Next.js rejects any function in a client component's props at SSR.
      */
-    shareOn: Record<ShareChannel, string>;
+    visitOn: Record<ShareChannel, string>;
     shareMore: string;
     copy: string;
     copied: string;
@@ -25,19 +25,22 @@ type Props = {
 };
 
 /**
- * Visitor-facing share row. The branded channels (X / LINE / Threads / Facebook / KakaoTalk) are
- * opt-in per profile owner — if they didn't enable any, only Copy + (mobile) native share appear.
- * Caps at 2 explicit channels for visual balance + to avoid the "20 social buttons" Linktree look.
+ * Visitor-facing action row at the bottom of the public profile. Two intents share the layout:
+ *
+ * <ul>
+ *   <li><b>Visit owner's socials</b> — branded channel buttons (X / LINE / Threads / Facebook /
+ *       KakaoTalk). Each anchor points to the owner's profile on that channel (set in the editor);
+ *       not a share-intent. Capped at 2 in the editor for visual balance.</li>
+ *   <li><b>Share this profile</b> — Copy + (mobile) native share. Operate on the kurl profile URL.</li>
+ * </ul>
  */
-export function ShareRow({ url, username, colors, channels, labels }: Props) {
+export function ShareRow({ url, colors, socials, labels }: Props) {
   const [copied, setCopied] = useState(false);
   const [canShare, setCanShare] = useState(false);
 
   useEffect(() => {
     setCanShare(typeof navigator !== "undefined" && typeof navigator.share === "function");
   }, []);
-
-  const shareText = `@${username} · kurl`;
 
   async function copyUrl() {
     try {
@@ -51,24 +54,24 @@ export function ShareRow({ url, username, colors, channels, labels }: Props) {
 
   function nativeShare() {
     if (typeof navigator === "undefined" || !navigator.share) return;
-    void navigator.share({ title: shareText, url }).catch(() => {});
+    void navigator.share({ url }).catch(() => {});
   }
 
   const buttonClass = `inline-flex h-9 w-9 items-center justify-center rounded-full border ${colors.cardBorder} ${colors.card} ${colors.cardHover} transition-colors`;
 
   return (
     <div className="mt-6 flex items-center justify-center gap-2">
-      {channels.map((ch) => (
+      {socials.map((s) => (
         <a
-          key={ch}
-          href={channelIntent(ch, url, shareText)}
+          key={s.channel}
+          href={s.url}
           target="_blank"
           rel="noreferrer"
-          aria-label={labels.shareOn[ch]}
-          title={labels.shareOn[ch]}
+          aria-label={labels.visitOn[s.channel]}
+          title={labels.visitOn[s.channel]}
           className={buttonClass}
         >
-          <ChannelIcon channel={ch} className={`h-3.5 w-3.5 ${colors.muted}`} />
+          <ChannelIcon channel={s.channel} className={`h-3.5 w-3.5 ${colors.muted}`} />
         </a>
       ))}
       {canShare && (
@@ -97,27 +100,6 @@ export function ShareRow({ url, username, colors, channels, labels }: Props) {
       </button>
     </div>
   );
-}
-
-/**
- * Direct intent URL per channel. All work without SDK / API keys — they're the same URLs the
- * native "share to" buttons across the web use.
- */
-function channelIntent(channel: ShareChannel, url: string, text: string): string {
-  switch (channel) {
-    case "x":
-      return `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-    case "line":
-      return `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`;
-    case "threads":
-      return `https://www.threads.net/intent/post?text=${encodeURIComponent(text + " " + url)}`;
-    case "facebook":
-      return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-    case "kakao":
-      // KakaoTalk web share without an app key — open Kakao web with the URL as redirect target.
-      // Real KakaoTalk integration would need a Kakao Developers app + JS SDK.
-      return `https://kakaocorp.com/page/redirect?url=${encodeURIComponent(url)}`;
-  }
 }
 
 export function ChannelIcon({

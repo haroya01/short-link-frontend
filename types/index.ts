@@ -247,6 +247,15 @@ export type ProfileTheme =
 
 export type ShareChannel = "x" | "line" | "threads" | "facebook" | "kakao";
 
+/**
+ * A channel + the owner's own URL on that channel. Used both server-side (persisted as JSON) and
+ * client-side. Visitors clicking the X button land on {@link Social#url} — the owner's X account.
+ */
+export type Social = {
+  channel: ShareChannel;
+  url: string;
+};
+
 export type MyProfile = {
   username: string | null;
   bio: string | null;
@@ -254,7 +263,7 @@ export type MyProfile = {
   publicUrl: string | null;
   avatarUrl: string | null;
   bannerUrl: string | null;
-  shareChannels: ShareChannel[];
+  socials: Social[];
 };
 
 export type PublicProfile = {
@@ -263,7 +272,7 @@ export type PublicProfile = {
   theme: ProfileTheme | null;
   avatarUrl: string | null;
   bannerUrl: string | null;
-  shareChannels: ShareChannel[];
+  socials: Social[];
   entries: PublicProfileEntry[];
 };
 

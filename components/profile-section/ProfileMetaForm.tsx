@@ -7,12 +7,12 @@ import { BannerPicker } from "../banner-picker";
 import { QrButton } from "../qr-button";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import type { MyProfile, ProfileTheme, ShareChannel } from "@/types";
+import type { MyProfile, ProfileTheme, ShareChannel, Social } from "@/types";
 import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/ShareRow";
 import { PublicUrlPill } from "./PublicUrlPill";
 
 const SHARE_CHANNELS: ShareChannel[] = ["x", "line", "threads", "facebook", "kakao"];
-const MAX_SHARE_CHANNELS = 2;
+const MAX_SOCIALS = 2;
 
 /**
  * Picker preview classes — each theme renders as a mini-card showing the actual page bg + a
@@ -74,8 +74,8 @@ type Props = {
   onThemeChange: (next: ProfileTheme | null) => void;
   onAvatarChange: (avatarUrl: string | null) => void;
   onBannerChange: (bannerUrl: string | null) => void;
-  shareChannels: ShareChannel[];
-  onShareChannelsChange: (next: ShareChannel[]) => void;
+  socials: Social[];
+  onSocialsChange: (next: Social[]) => void;
   onSave: () => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 };
@@ -97,8 +97,8 @@ export function ProfileMetaForm({
   onThemeChange,
   onAvatarChange,
   onBannerChange,
-  shareChannels,
-  onShareChannelsChange,
+  socials,
+  onSocialsChange,
   onSave,
   t,
 }: Props) {
@@ -186,11 +186,7 @@ export function ProfileMetaForm({
         </div>
       </div>
 
-      <ShareChannelsPicker
-        selected={shareChannels}
-        onChange={onShareChannelsChange}
-        t={t}
-      />
+      <SocialsPicker socials={socials} onChange={onSocialsChange} t={t} />
 
       <div className="flex flex-wrap items-center gap-3">
         {!profile?.username && (
@@ -264,42 +260,53 @@ function AutoSaveIndicator({
 }
 
 /**
- * Chip toggles for the public-profile share row. Click adds the channel (selection order is
- * preserved → that's the render order on /u). Click again removes. Capped at {@link
- * MAX_SHARE_CHANNELS}; selecting beyond the cap is a no-op (chip stays inactive).
+ * Editor block for {@link Social} entries. Chip click toggles the channel; an active chip exposes
+ * a URL input — the visitor lands there when they tap that button on the public profile. Capped at
+ * {@link MAX_SOCIALS}; selecting beyond the cap is a no-op (chip stays inactive).
+ *
+ * <p>Order matters: chips are rendered in the order the user picked them, and that order survives
+ * into the public profile's share row. We don't validate URLs here — the autosave path strips
+ * blank URLs (so users can leave a chip active while drafting) and the backend rejects malformed
+ * ones at save time.
  */
-function ShareChannelsPicker({
-  selected,
+function SocialsPicker({
+  socials,
   onChange,
   t,
 }: {
-  selected: ShareChannel[];
-  onChange: (next: ShareChannel[]) => void;
+  socials: Social[];
+  onChange: (next: Social[]) => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   function toggle(ch: ShareChannel) {
-    if (selected.includes(ch)) {
-      onChange(selected.filter((c) => c !== ch));
-    } else if (selected.length < MAX_SHARE_CHANNELS) {
-      onChange([...selected, ch]);
+    const idx = socials.findIndex((s) => s.channel === ch);
+    if (idx >= 0) {
+      onChange(socials.filter((s) => s.channel !== ch));
+    } else if (socials.length < MAX_SOCIALS) {
+      onChange([...socials, { channel: ch, url: "" }]);
     }
   }
-  const remaining = MAX_SHARE_CHANNELS - selected.length;
+
+  function updateUrl(ch: ShareChannel, url: string) {
+    onChange(socials.map((s) => (s.channel === ch ? { channel: ch, url } : s)));
+  }
+
+  const remaining = MAX_SOCIALS - socials.length;
 
   return (
     <div className="space-y-1.5">
       <div className="flex items-baseline justify-between">
-        <span className="text-xs font-medium text-slate-500">{t("shareChannelsLabel")}</span>
+        <span className="text-xs font-medium text-slate-500">{t("socialsLabel")}</span>
         <span className="text-[10px] text-slate-400">
-          {t("shareChannelsCount", { count: selected.length, max: MAX_SHARE_CHANNELS })}
+          {t("socialsCount", { count: socials.length, max: MAX_SOCIALS })}
         </span>
       </div>
-      <p className="text-[11px] text-slate-500">{t("shareChannelsHint")}</p>
+      <p className="text-[11px] text-slate-500">{t("socialsHint")}</p>
       <div className="flex flex-wrap gap-1.5">
         {SHARE_CHANNELS.map((ch) => {
-          const active = selected.includes(ch);
+          const active = socials.some((s) => s.channel === ch);
           const disabled = !active && remaining === 0;
-          const order = selected.indexOf(ch) + 1;
+          const order = socials.findIndex((s) => s.channel === ch) + 1;
           return (
             <button
               key={ch}
@@ -323,6 +330,26 @@ function ShareChannelsPicker({
           );
         })}
       </div>
+      {socials.length > 0 && (
+        <div className="mt-2 space-y-1.5 rounded-md border border-slate-100 bg-slate-50/60 p-2">
+          {socials.map((s) => (
+            <label key={s.channel} className="flex items-center gap-2">
+              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-slate-200">
+                <ChannelIcon channel={s.channel} className="h-3 w-3" />
+              </span>
+              <Input
+                type="url"
+                inputMode="url"
+                value={s.url}
+                onChange={(e) => updateUrl(s.channel, e.target.value)}
+                placeholder={urlPlaceholderKey(s.channel, t)}
+                maxLength={256}
+                className="h-8 flex-1 text-xs"
+              />
+            </label>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -339,5 +366,23 @@ function channelLabel(channel: ShareChannel): string {
       return "Facebook";
     case "kakao":
       return "KakaoTalk";
+  }
+}
+
+function urlPlaceholderKey(
+  channel: ShareChannel,
+  t: ReturnType<typeof useTranslations<"settings.profile">>,
+): string {
+  switch (channel) {
+    case "x":
+      return t("socialUrlPlaceholderX");
+    case "line":
+      return t("socialUrlPlaceholderLine");
+    case "threads":
+      return t("socialUrlPlaceholderThreads");
+    case "facebook":
+      return t("socialUrlPlaceholderFacebook");
+    case "kakao":
+      return t("socialUrlPlaceholderKakao");
   }
 }

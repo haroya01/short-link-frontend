@@ -743,6 +743,13 @@
       "more": "Share",
       "copy": "Copy URL",
       "copied": "Copied"
+    },
+    "visit": {
+      "x": "Visit X profile",
+      "line": "Open in LINE",
+      "threads": "Visit Threads profile",
+      "facebook": "Visit Facebook profile",
+      "kakao": "Open in KakaoTalk"
     }
   },
   "weeklyInsights": {
@@ -956,9 +963,15 @@
       "bioLabel": "Short bio",
       "bioPlaceholder": "e.g. fullstack dev / building side projects",
       "themeLabel": "Theme",
-      "shareChannelsLabel": "Share buttons",
-      "shareChannelsHint": "Pick which share buttons appear at the bottom of your public profile. Up to 2, shown in the order you select.",
-      "shareChannelsCount": "{count}/{max} selected",
+      "socialsLabel": "Social buttons",
+      "socialsHint": "Pick which channels appear at the bottom of your public profile. For each, paste the URL of your own account — visitors who tap the button land there. Up to 2, shown in the order you pick.",
+      "socialsCount": "{count}/{max} selected",
+      "socialUrlPlaceholderX": "https://x.com/yourhandle",
+      "socialUrlPlaceholderLine": "https://line.me/ti/p/...",
+      "socialUrlPlaceholderThreads": "https://threads.net/@yourhandle",
+      "socialUrlPlaceholderFacebook": "https://facebook.com/yourhandle",
+      "socialUrlPlaceholderKakao": "https://open.kakao.com/o/...",
+      "socialUrlInvalid": "Please paste a valid http(s) URL.",
       "previewTitle": "Live preview",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "Your bio will appear here",
