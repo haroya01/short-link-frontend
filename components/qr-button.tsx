@@ -15,6 +15,15 @@ type Props = {
   filename?: string;
   /** Override the center logo with a specific image (e.g., the kurl mark for profile QRs). */
   logoSrc?: string;
+  /**
+   * Show the {@code ?src=qr-…} attribution input. True for short links (user can tag separate
+   * placements like {@code poster}, {@code business-card}). False for profile QRs — there's no
+   * campaign to attribute and the field just confuses the user. When hidden, the URL still gets
+   * a default {@code ?src=qr-profile} hint baked in.
+   */
+  showSrcInput?: boolean;
+  /** Default value for the src hint when {@link showSrcInput} is false. */
+  defaultSrcHint?: string;
 };
 
 type Palette = { id: string; dark: string; light: string };
@@ -56,7 +65,14 @@ function destinationFaviconUrl(url: string): string | null {
   }
 }
 
-export function QrButton({ url, value, filename = "qrcode.png", logoSrc }: Props) {
+export function QrButton({
+  url,
+  value,
+  filename = "qrcode.png",
+  logoSrc,
+  showSrcInput = true,
+  defaultSrcHint = "",
+}: Props) {
   const baseUrl = url ?? value ?? "";
   const [open, setOpen] = useState(false);
 
@@ -71,6 +87,8 @@ export function QrButton({ url, value, filename = "qrcode.png", logoSrc }: Props
           baseUrl={baseUrl}
           filename={filename}
           logoSrc={logoSrc}
+          showSrcInput={showSrcInput}
+          defaultSrcHint={defaultSrcHint}
           onClose={() => setOpen(false)}
         />
       )}
@@ -82,17 +100,21 @@ function QrModal({
   baseUrl,
   filename,
   logoSrc,
+  showSrcInput,
+  defaultSrcHint,
   onClose,
 }: {
   baseUrl: string;
   filename: string;
   logoSrc?: string;
+  showSrcInput: boolean;
+  defaultSrcHint: string;
   onClose: () => void;
 }) {
   const t = useTranslations("qr");
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [srcHint, setSrcHint] = useState("");
+  const [srcHint, setSrcHint] = useState(defaultSrcHint);
   const [paletteId, setPaletteId] = useState<string>(PALETTES[0].id);
   // Default logo on when caller supplied one (typical: branded profile QR) — for plain link QRs
   // we leave it off so the user opts in.
@@ -245,17 +267,19 @@ function QrModal({
             </button>
           </label>
 
-          <label className="mt-3 w-full space-y-1">
-            <span className="text-xs text-slate-500">{t("srcLabel")}</span>
-            <Input
-              type="text"
-              value={srcHint}
-              onChange={(e) => setSrcHint(e.target.value)}
-              placeholder={t("srcPlaceholder")}
-              className="h-8 font-mono text-xs"
-              maxLength={32}
-            />
-          </label>
+          {showSrcInput && (
+            <label className="mt-3 w-full space-y-1">
+              <span className="text-xs text-slate-500">{t("srcLabel")}</span>
+              <Input
+                type="text"
+                value={srcHint}
+                onChange={(e) => setSrcHint(e.target.value)}
+                placeholder={t("srcPlaceholder")}
+                className="h-8 font-mono text-xs"
+                maxLength={32}
+              />
+            </label>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-px border-t border-slate-100 bg-slate-100">
