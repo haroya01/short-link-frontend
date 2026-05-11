@@ -15,11 +15,16 @@ type Props = {
 };
 
 /**
- * Renders an oembed-able URL (YouTube / Vimeo / Spotify) as a thumbnail card. Tapping the card
- * mounts the provider's iframe in place — deferred load keeps the profile feed light (no third-
- * party JS until the visitor opts in) and side-steps the privacy + LCP cost of auto-embedding
- * every block. While the oembed proxy is fetching, the card falls back to a bare host pill so it
- * never blanks out.
+ * Renders an oembed-able URL (YouTube / Vimeo / Spotify / SoundCloud) as a thumbnail card.
+ * Tapping the card mounts the provider's iframe in place — deferred load keeps the profile feed
+ * light (no third-party JS until the visitor opts in) and side-steps the privacy + LCP cost of
+ * auto-embedding every block. On click we rewrite the iframe src to include the provider's
+ * autoplay flag, so the visitor's one tap on our thumbnail starts playback immediately instead
+ * of dropping them onto a second-tier "▶" inside the YouTube / Vimeo player. Each provider uses
+ * a different param name, so {@link withAutoplay} dispatches on host.
+ *
+ * <p>While the oembed proxy is fetching, the card falls back to a bare host pill so it never
+ * blanks out.
  */
 export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
   const [meta, setMeta] = useState<Oembed | null>(null);
@@ -43,7 +48,9 @@ export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
 
   if (active && meta?.html) {
     // Provider-authored iframe. Trusted because the backend only proxies whitelisted hosts
-    // (YouTube/Vimeo/Spotify); we render it raw so embeds keep working as providers tweak attrs.
+    // (YouTube/Vimeo/Spotify/SoundCloud); we render it raw so embeds keep working as providers
+    // tweak attrs. The autoplay rewrite is purely a query-param swap on iframe src — doesn't
+    // touch any other attribute or script.
     return (
       <li className="profile-fade" style={fadeStyle}>
         <div
@@ -51,7 +58,7 @@ export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
         >
           <div
             className="oembed-frame [&_iframe]:block [&_iframe]:aspect-video [&_iframe]:w-full"
-            dangerouslySetInnerHTML={{ __html: meta.html }}
+            dangerouslySetInnerHTML={{ __html: withAutoplay(meta.html) }}
           />
           <div className="flex items-center gap-3 px-4 py-3">
             <span className="min-w-0 flex-1">
@@ -114,4 +121,46 @@ export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
       </button>
     </li>
   );
+}
+
+/**
+ * Inject the provider's "autoplay" query param into the iframe src so the visitor's tap on our
+ * thumbnail starts playback immediately. Each provider uses a different param name — wrong name
+ * is a silent no-op, never an error. Spotify is intentionally skipped: their embed API ignores
+ * autoplay for non-Premium-logged-in viewers and shows a single big play button anyway, so
+ * adding the param adds nothing.
+ *
+ * <p>Only mutates iframe src attributes — script blocks and other tags pass through untouched.
+ * The replacement is idempotent: if the param is already present we don't duplicate it.
+ */
+function withAutoplay(html: string): string {
+  return html.replace(
+    /<iframe([^>]*?)\ssrc="([^"]+)"([^>]*)>/gi,
+    (_match, before, src, after) => {
+      const next = injectAutoplay(src);
+      return `<iframe${before} src="${next}"${after}>`;
+    },
+  );
+}
+
+function injectAutoplay(src: string): string {
+  let host: string;
+  try {
+    host = new URL(src).host.toLowerCase();
+  } catch {
+    return src;
+  }
+  const param = autoplayParamFor(host);
+  if (!param) return src;
+  if (new RegExp(`[?&]${param.name}=`, "i").test(src)) return src;
+  const sep = src.includes("?") ? "&" : "?";
+  return `${src}${sep}${param.name}=${param.value}`;
+}
+
+function autoplayParamFor(host: string): { name: string; value: string } | null {
+  if (host.endsWith("youtube.com") || host.endsWith("youtu.be"))
+    return { name: "autoplay", value: "1" };
+  if (host.endsWith("vimeo.com")) return { name: "autoplay", value: "1" };
+  if (host.endsWith("soundcloud.com")) return { name: "auto_play", value: "true" };
+  return null;
 }
