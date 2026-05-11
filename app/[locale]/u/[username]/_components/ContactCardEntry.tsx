@@ -435,19 +435,20 @@ function CardFace({
           "inset 0 0 0 1px rgba(255,255,255,0.08), 0 25px 50px -12px rgba(0,0,0,0.45)",
       }}
     >
-      {/* Pointer-tracked radial highlight. Wider falloff (out to ~75% radius) so the light
-          actually reaches the card edges when the pointer is at a corner — the prior 35%
-          falloff made the corners feel dim even when directly touched.
-          The back face is `transform: rotateY(180deg)`, which mirrors its content. So when --mx
+      {/* Pointer-tracked radial highlight. Default gradient size is farthest-corner — we let
+          the fade extend ALL THE WAY to 100% (the corner) instead of clamping at 75%, so the
+          light truly reaches every edge of the card. With 75% the corners stayed flat-dark and
+          the light looked "끊긴" / clipped, especially with low-intensity stops past 50%. The
+          back face is `transform: rotateY(180deg)`, which mirrors its content. So when --mx
           says "70% from left," the back face would render the highlight at "30% from left of the
           viewer." We compensate by inverting the X axis on the back face only. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-70"
+        className="pointer-events-none absolute inset-0 opacity-80"
         style={{
           backgroundImage: back
-            ? "radial-gradient(circle at calc(100% - var(--mx, 50%)) var(--my, 50%), rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.25) 20%, rgba(255,255,255,0.08) 45%, transparent 75%)"
-            : "radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.25) 20%, rgba(255,255,255,0.08) 45%, transparent 75%)",
+            ? "radial-gradient(circle at calc(100% - var(--mx, 50%)) var(--my, 50%), rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.35) 25%, rgba(255,255,255,0.15) 55%, rgba(255,255,255,0.05) 80%, transparent 100%)"
+            : "radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.35) 25%, rgba(255,255,255,0.15) 55%, rgba(255,255,255,0.05) 80%, transparent 100%)",
           mixBlendMode: "color-dodge",
         }}
       />
