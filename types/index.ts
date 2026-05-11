@@ -279,7 +279,7 @@ export type PublicProfile = {
 };
 
 export type PublicProfileEntry = {
-  kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE";
+  kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE" | "EMBED";
   id: number | null;
   shortCode: string | null;
   shortUrl: string | null;
@@ -293,9 +293,25 @@ export type PublicProfileEntry = {
 
 export type ProfileBlock = {
   id: number;
-  type: "TEXT" | "DIVIDER" | "IMAGE";
+  type: "TEXT" | "DIVIDER" | "IMAGE" | "EMBED";
   content: string | null;
   profileOrder: number;
+};
+
+/**
+ * Trimmed oembed response from the backend proxy. Fields mirror the provider's payload but only
+ * the bits the public-profile UI actually renders. {@code html} is provider-authored iframe markup
+ * — safe to render because the backend only proxies whitelisted providers.
+ */
+export type Oembed = {
+  provider: string;
+  type: string | null;
+  title: string | null;
+  authorName: string | null;
+  thumbnailUrl: string | null;
+  html: string | null;
+  width: number | null;
+  height: number | null;
 };
 
 export type ProfileReorderItem = {

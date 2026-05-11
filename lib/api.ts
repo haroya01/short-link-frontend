@@ -392,7 +392,7 @@ export async function reorderProfileItems(items: ProfileReorderItem[]): Promise<
 }
 
 export async function createProfileBlock(payload: {
-  type: "TEXT" | "DIVIDER" | "IMAGE";
+  type: "TEXT" | "DIVIDER" | "IMAGE" | "EMBED";
   content?: string;
 }): Promise<ProfileBlock> {
   return request<ProfileBlock>("/api/v1/users/me/profile/blocks", {

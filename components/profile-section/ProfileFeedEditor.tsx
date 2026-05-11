@@ -10,6 +10,7 @@ import {
   Minus,
   Pencil,
   Plus,
+  Play,
   Star,
   Type,
   X,
@@ -28,6 +29,7 @@ type Props = {
   onAddText: () => void;
   onAddDivider: () => void;
   onAddImage: () => void;
+  onAddEmbed: () => void;
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
@@ -57,6 +59,7 @@ export function ProfileFeedEditor({
   onAddText,
   onAddDivider,
   onAddImage,
+  onAddEmbed,
   onMove,
   onDragStart,
   onDragOver,
@@ -85,6 +88,7 @@ export function ProfileFeedEditor({
           onAddText={onAddText}
           onAddDivider={onAddDivider}
           onAddImage={onAddImage}
+          onAddEmbed={onAddEmbed}
           t={t}
         />
       </div>
@@ -175,11 +179,13 @@ function AddMenu({
   onAddText,
   onAddDivider,
   onAddImage,
+  onAddEmbed,
   t,
 }: {
   onAddText: () => void;
   onAddDivider: () => void;
   onAddImage: () => void;
+  onAddEmbed: () => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   const [open, setOpen] = useState(false);
@@ -231,6 +237,9 @@ function AddMenu({
           </MenuItem>
           <MenuItem onClick={() => fire(onAddImage)} icon={<ImageIcon className="h-3.5 w-3.5" />}>
             {t("addImage")}
+          </MenuItem>
+          <MenuItem onClick={() => fire(onAddEmbed)} icon={<Play className="h-3.5 w-3.5" />}>
+            {t("addEmbed")}
           </MenuItem>
         </div>
       )}
@@ -383,6 +392,24 @@ function FeedItemRow({
           )}
           <span className="truncate text-[11px] text-slate-500">
             {item.content || t("addImagePlaceholder")}
+          </span>
+        </div>
+        <BlockActions
+          onEdit={() => onEditBlock(item.id, item.content ?? "")}
+          onDelete={() => onDeleteBlock(item.id)}
+          t={t}
+        />
+      </li>
+    );
+  }
+  if (item.kind === "BLOCK" && item.type === "EMBED") {
+    return (
+      <li {...dndProps} className={baseRow}>
+        {dragHandle}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <Play className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          <span className="truncate text-[11px] text-slate-500">
+            {item.content || t("addEmbedPlaceholder")}
           </span>
         </div>
         <BlockActions
