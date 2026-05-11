@@ -25,6 +25,7 @@ import type {
   Social,
 } from "@/types";
 import { ContactCardBlockDialog } from "./profile-section/ContactCardBlockDialog";
+import { EmailFormBlockDialog } from "./profile-section/EmailFormBlockDialog";
 import { GalleryBlockDialog } from "./profile-section/GalleryBlockDialog";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
 import { ProfileMetaForm } from "./profile-section/ProfileMetaForm";
@@ -87,6 +88,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     initialJson: string | null;
   }>({ open: false, blockId: null, initialJson: null });
   const [galleryDialog, setGalleryDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialJson: string | null;
+  }>({ open: false, blockId: null, initialJson: null });
+  const [emailFormDialog, setEmailFormDialog] = useState<{
     open: boolean;
     blockId: number | null;
     initialJson: string | null;
@@ -274,7 +280,15 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       .then((data) => {
         if (cancelled || !data) return;
         const entries = (data.entries ?? []) as Array<{
-          kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE" | "EMBED" | "CONTACT_CARD" | "GALLERY";
+          kind:
+            | "LINK"
+            | "TEXT"
+            | "DIVIDER"
+            | "IMAGE"
+            | "EMBED"
+            | "EMAIL_FORM"
+            | "CONTACT_CARD"
+            | "GALLERY";
           id: number | null;
           shortCode: string | null;
           ogTitle?: string | null;
@@ -298,6 +312,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             next.push({ kind: "BLOCK", id: e.id, type: "IMAGE", content: e.content ?? "" });
           } else if (e.kind === "EMBED" && e.id != null) {
             next.push({ kind: "BLOCK", id: e.id, type: "EMBED", content: e.content ?? "" });
+          } else if (e.kind === "EMAIL_FORM" && e.id != null) {
+            next.push({
+              kind: "BLOCK",
+              id: e.id,
+              type: "EMAIL_FORM",
+              content: e.content ?? "",
+            });
           } else if (e.kind === "CONTACT_CARD" && e.id != null) {
             next.push({
               kind: "BLOCK",
@@ -506,8 +527,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     setGalleryDialog({ open: true, blockId: null, initialJson: null });
   }
 
+  function handleAddEmailForm() {
+    setEmailFormDialog({ open: true, blockId: null, initialJson: null });
+  }
+
   async function persistJsonBlock(
-    type: "CONTACT_CARD" | "GALLERY",
+    type: "CONTACT_CARD" | "GALLERY" | "EMAIL_FORM",
     blockId: number | null,
     configJson: string,
   ) {
@@ -558,6 +583,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
     if (blockType === "GALLERY") {
       setGalleryDialog({ open: true, blockId, initialJson: current });
+      return;
+    }
+    if (blockType === "EMAIL_FORM") {
+      setEmailFormDialog({ open: true, blockId, initialJson: current });
       return;
     }
     const promptKey =
@@ -673,6 +702,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onAddEmbed={handleAddEmbed}
           onAddContactCard={handleAddContactCard}
           onAddGallery={handleAddGallery}
+          onAddEmailForm={handleAddEmailForm}
           onMove={move}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
@@ -706,6 +736,17 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           setGalleryDialog((s) => (open ? s : { ...s, open: false }))
         }
         onSubmit={(json) => persistJsonBlock("GALLERY", galleryDialog.blockId, json)}
+        t={t}
+      />
+      <EmailFormBlockDialog
+        open={emailFormDialog.open}
+        initialJson={emailFormDialog.initialJson}
+        onOpenChange={(open) =>
+          setEmailFormDialog((s) => (open ? s : { ...s, open: false }))
+        }
+        onSubmit={(json) =>
+          persistJsonBlock("EMAIL_FORM", emailFormDialog.blockId, json)
+        }
         t={t}
       />
     </div>

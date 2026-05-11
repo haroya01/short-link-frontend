@@ -61,13 +61,34 @@ export default async function PublicProfilePage({
 
   return (
     <div className={`min-h-screen ${colors.page}`}>
-      <div className="container max-w-md py-12">
+      {profile.bannerUrl && (
+        // Full-bleed banner above the container so it reaches the top + side edges of the viewport.
+        // `mask-image` softly fades the bottom 25% into transparent → the page bg shows through
+        // regardless of theme color, no extra overlay needed. Same effect on mobile and desktop.
+        <div
+          className="aspect-[3/1] w-full overflow-hidden sm:aspect-[4/1] md:aspect-[5/1]"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to bottom, black 75%, transparent 100%)",
+            maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={profile.bannerUrl}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        </div>
+      )}
+      <div className={`container max-w-md ${profile.bannerUrl ? "-mt-12 pb-12" : "py-12"}`}>
         <ProfileHeader
           username={profile.username}
           bio={profile.bio}
           avatarUrl={profile.avatarUrl}
           bannerUrl={profile.bannerUrl}
           colors={colors}
+          bannerInline={false}
         />
         <EntryList
           entries={profile.entries ?? []}

@@ -12,6 +12,7 @@ import type {
   CreateLinkResponse,
   CustomDomain,
   DestinationSummary,
+  EmailLeadPage,
   IssuedApiKey,
   IssuedWebhook,
   LinkDetail,
@@ -392,7 +393,14 @@ export async function reorderProfileItems(items: ProfileReorderItem[]): Promise<
 }
 
 export async function createProfileBlock(payload: {
-  type: "TEXT" | "DIVIDER" | "IMAGE" | "EMBED" | "CONTACT_CARD" | "GALLERY";
+  type:
+    | "TEXT"
+    | "DIVIDER"
+    | "IMAGE"
+    | "EMBED"
+    | "EMAIL_FORM"
+    | "CONTACT_CARD"
+    | "GALLERY";
   content?: string;
 }): Promise<ProfileBlock> {
   return request<ProfileBlock>("/api/v1/users/me/profile/blocks", {
@@ -410,6 +418,26 @@ export async function updateProfileBlock(id: number, content: string): Promise<P
 
 export async function deleteProfileBlock(id: number): Promise<void> {
   await request(`/api/v1/users/me/profile/blocks/${id}`, { method: "DELETE" });
+}
+
+export async function submitEmailLead(blockId: number, email: string): Promise<void> {
+  await request("/api/v1/public/email-leads", {
+    method: "POST",
+    body: { blockId, email },
+  });
+}
+
+export async function listEmailLeads(page: number, size: number): Promise<EmailLeadPage> {
+  return request<EmailLeadPage>(`/api/v1/users/me/email-leads?page=${page}&size=${size}`);
+}
+
+export async function deleteEmailLead(id: number): Promise<void> {
+  await request(`/api/v1/users/me/email-leads/${id}`, { method: "DELETE" });
+}
+
+/** Absolute URL for the owner-only CSV export — anchor `download` triggers a browser save. */
+export function emailLeadsExportUrl(): string {
+  return `${API_BASE}/api/v1/users/me/email-leads/export.csv`;
 }
 
 export async function toggleLinkOnProfile(
