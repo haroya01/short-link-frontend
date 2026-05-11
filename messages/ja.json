@@ -749,7 +749,9 @@
       "line": "LINE を開く",
       "threads": "Threads プロフィールへ",
       "facebook": "Facebook プロフィールへ",
-      "kakao": "カカオトークを開く"
+      "kakao": "カカオトークチャンネルへ",
+      "instagram": "Instagram プロフィールへ",
+      "linkedin": "LinkedIn プロフィールへ"
     },
     "contactCard": {
       "save": "連絡先に保存"
@@ -970,10 +972,12 @@
       "socialsHint": "公開ページの下に表示するチャンネルを選んでください。それぞれにご自身のアカウント URL を入れると、訪問者がそのまま遷移します。最大 2 つ、選んだ順に表示されます。",
       "socialsCount": "{count}/{max} 選択",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
-      "socialUrlPlaceholderLine": "https://line.me/ti/p/...",
+      "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
       "socialUrlPlaceholderThreads": "https://threads.net/@yourhandle",
       "socialUrlPlaceholderFacebook": "https://facebook.com/yourhandle",
-      "socialUrlPlaceholderKakao": "https://open.kakao.com/o/...",
+      "socialUrlPlaceholderKakao": "https://pf.kakao.com/_yourChannelID",
+      "socialUrlPlaceholderInstagram": "https://instagram.com/yourhandle",
+      "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "有効な http(s) URL を入力してください。",
       "previewTitle": "公開ページのライブプレビュー",
       "previewUsernamePlaceholder": "username",

@@ -87,6 +87,8 @@ export default async function PublicProfilePage({
               threads: t("visit.threads"),
               facebook: t("visit.facebook"),
               kakao: t("visit.kakao"),
+              instagram: t("visit.instagram"),
+              linkedin: t("visit.linkedin"),
             },
             shareMore: t("share.more"),
             copy: t("share.copy"),

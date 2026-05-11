@@ -749,7 +749,9 @@
       "line": "Open in LINE",
       "threads": "Visit Threads profile",
       "facebook": "Visit Facebook profile",
-      "kakao": "Open in KakaoTalk"
+      "kakao": "Open KakaoTalk channel",
+      "instagram": "Visit Instagram profile",
+      "linkedin": "Visit LinkedIn profile"
     },
     "contactCard": {
       "save": "Save to contacts"
@@ -970,10 +972,12 @@
       "socialsHint": "Pick which channels appear at the bottom of your public profile. For each, paste the URL of your own account — visitors who tap the button land there. Up to 2, shown in the order you pick.",
       "socialsCount": "{count}/{max} selected",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
-      "socialUrlPlaceholderLine": "https://line.me/ti/p/...",
+      "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
       "socialUrlPlaceholderThreads": "https://threads.net/@yourhandle",
       "socialUrlPlaceholderFacebook": "https://facebook.com/yourhandle",
-      "socialUrlPlaceholderKakao": "https://open.kakao.com/o/...",
+      "socialUrlPlaceholderKakao": "https://pf.kakao.com/_yourChannelID",
+      "socialUrlPlaceholderInstagram": "https://instagram.com/yourhandle",
+      "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "Please paste a valid http(s) URL.",
       "previewTitle": "Live preview",
       "previewUsernamePlaceholder": "username",

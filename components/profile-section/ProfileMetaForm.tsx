@@ -12,7 +12,15 @@ import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/ShareRow";
 import { PublicUrlPill } from "./PublicUrlPill";
 import { socialUrlPrefix } from "./socials-templates";
 
-const SHARE_CHANNELS: ShareChannel[] = ["x", "line", "threads", "facebook", "kakao"];
+const SHARE_CHANNELS: ShareChannel[] = [
+  "instagram",
+  "x",
+  "linkedin",
+  "threads",
+  "facebook",
+  "kakao",
+  "line",
+];
 const MAX_SOCIALS = 2;
 
 /**
@@ -379,7 +387,11 @@ function channelLabel(channel: ShareChannel): string {
     case "facebook":
       return "Facebook";
     case "kakao":
-      return "KakaoTalk";
+      return "카카오톡 채널";
+    case "instagram":
+      return "Instagram";
+    case "linkedin":
+      return "LinkedIn";
   }
 }
 
@@ -398,5 +410,9 @@ function urlPlaceholderKey(
       return t("socialUrlPlaceholderFacebook");
     case "kakao":
       return t("socialUrlPlaceholderKakao");
+    case "instagram":
+      return t("socialUrlPlaceholderInstagram");
+    case "linkedin":
+      return t("socialUrlPlaceholderLinkedin");
   }
 }
