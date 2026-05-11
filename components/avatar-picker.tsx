@@ -107,7 +107,7 @@ export function AvatarPicker({
         onClick={() => fileInput.current?.click()}
         disabled={busy}
         aria-label={t("change")}
-        className="group relative grid h-16 w-16 place-items-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 transition hover:border-accent-300"
+        className="group relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 transition-colors hover:border-accent-300"
       >
         {currentUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -115,7 +115,7 @@ export function AvatarPicker({
         ) : (
           <span className="text-lg font-semibold text-slate-700">{initialChar}</span>
         )}
-        <span className="absolute inset-0 grid place-items-center bg-black/40 text-white opacity-0 transition group-hover:opacity-100">
+        <span className="absolute inset-0 grid place-items-center bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100">
           {busy ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
