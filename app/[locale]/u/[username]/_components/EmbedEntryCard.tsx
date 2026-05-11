@@ -3,6 +3,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { ExternalLink } from "lucide-react";
 import type { Oembed } from "@/types";
+import { withAutoplay } from "@/lib/embed-autoplay";
 import type { ThemeColors } from "../_lib/theme";
 import { hostOf } from "../_lib/url-helpers";
 
@@ -123,44 +124,3 @@ export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
   );
 }
 
-/**
- * Inject the provider's "autoplay" query param into the iframe src so the visitor's tap on our
- * thumbnail starts playback immediately. Each provider uses a different param name — wrong name
- * is a silent no-op, never an error. Spotify is intentionally skipped: their embed API ignores
- * autoplay for non-Premium-logged-in viewers and shows a single big play button anyway, so
- * adding the param adds nothing.
- *
- * <p>Only mutates iframe src attributes — script blocks and other tags pass through untouched.
- * The replacement is idempotent: if the param is already present we don't duplicate it.
- */
-function withAutoplay(html: string): string {
-  return html.replace(
-    /<iframe([^>]*?)\ssrc="([^"]+)"([^>]*)>/gi,
-    (_match, before, src, after) => {
-      const next = injectAutoplay(src);
-      return `<iframe${before} src="${next}"${after}>`;
-    },
-  );
-}
-
-function injectAutoplay(src: string): string {
-  let host: string;
-  try {
-    host = new URL(src).host.toLowerCase();
-  } catch {
-    return src;
-  }
-  const param = autoplayParamFor(host);
-  if (!param) return src;
-  if (new RegExp(`[?&]${param.name}=`, "i").test(src)) return src;
-  const sep = src.includes("?") ? "&" : "?";
-  return `${src}${sep}${param.name}=${param.value}`;
-}
-
-function autoplayParamFor(host: string): { name: string; value: string } | null {
-  if (host.endsWith("youtube.com") || host.endsWith("youtu.be"))
-    return { name: "autoplay", value: "1" };
-  if (host.endsWith("vimeo.com")) return { name: "autoplay", value: "1" };
-  if (host.endsWith("soundcloud.com")) return { name: "auto_play", value: "true" };
-  return null;
-}
