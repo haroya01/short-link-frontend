@@ -79,9 +79,9 @@ export default async function PublicProfilePage({
           url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://app.kurl.me"}/u/${profile.username}`}
           username={profile.username}
           colors={colors}
+          channels={profile.shareChannels ?? []}
           labels={{
-            shareOnX: t("share.x"),
-            shareOnLine: t("share.line"),
+            shareOn: (ch) => t(`share.${ch}`),
             shareMore: t("share.more"),
             copy: t("share.copy"),
             copied: t("share.copied"),

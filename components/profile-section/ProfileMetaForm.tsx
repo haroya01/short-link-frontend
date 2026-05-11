@@ -7,8 +7,12 @@ import { BannerPicker } from "../banner-picker";
 import { QrButton } from "../qr-button";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import type { MyProfile, ProfileTheme } from "@/types";
+import type { MyProfile, ProfileTheme, ShareChannel } from "@/types";
+import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/ShareRow";
 import { PublicUrlPill } from "./PublicUrlPill";
+
+const SHARE_CHANNELS: ShareChannel[] = ["x", "line", "threads", "facebook", "kakao"];
+const MAX_SHARE_CHANNELS = 2;
 
 /**
  * Picker preview classes — each theme renders as a mini-card showing the actual page bg + a
@@ -70,6 +74,8 @@ type Props = {
   onThemeChange: (next: ProfileTheme | null) => void;
   onAvatarChange: (avatarUrl: string | null) => void;
   onBannerChange: (bannerUrl: string | null) => void;
+  shareChannels: ShareChannel[];
+  onShareChannelsChange: (next: ShareChannel[]) => void;
   onSave: () => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 };
@@ -91,6 +97,8 @@ export function ProfileMetaForm({
   onThemeChange,
   onAvatarChange,
   onBannerChange,
+  shareChannels,
+  onShareChannelsChange,
   onSave,
   t,
 }: Props) {
@@ -175,6 +183,12 @@ export function ProfileMetaForm({
         </div>
       </div>
 
+      <ShareChannelsPicker
+        selected={shareChannels}
+        onChange={onShareChannelsChange}
+        t={t}
+      />
+
       <div className="flex flex-wrap items-center gap-3">
         {!profile?.username && (
           <Button onClick={onSave} disabled={savingProfile} size="sm">
@@ -244,4 +258,83 @@ function AutoSaveIndicator({
     );
   }
   return <span className="text-[11px] text-slate-400">{t("autosaveHint")}</span>;
+}
+
+/**
+ * Chip toggles for the public-profile share row. Click adds the channel (selection order is
+ * preserved → that's the render order on /u). Click again removes. Capped at {@link
+ * MAX_SHARE_CHANNELS}; selecting beyond the cap is a no-op (chip stays inactive).
+ */
+function ShareChannelsPicker({
+  selected,
+  onChange,
+  t,
+}: {
+  selected: ShareChannel[];
+  onChange: (next: ShareChannel[]) => void;
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  function toggle(ch: ShareChannel) {
+    if (selected.includes(ch)) {
+      onChange(selected.filter((c) => c !== ch));
+    } else if (selected.length < MAX_SHARE_CHANNELS) {
+      onChange([...selected, ch]);
+    }
+  }
+  const remaining = MAX_SHARE_CHANNELS - selected.length;
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-baseline justify-between">
+        <span className="text-xs font-medium text-slate-500">{t("shareChannelsLabel")}</span>
+        <span className="text-[10px] text-slate-400">
+          {t("shareChannelsCount", { count: selected.length, max: MAX_SHARE_CHANNELS })}
+        </span>
+      </div>
+      <p className="text-[11px] text-slate-500">{t("shareChannelsHint")}</p>
+      <div className="flex flex-wrap gap-1.5">
+        {SHARE_CHANNELS.map((ch) => {
+          const active = selected.includes(ch);
+          const disabled = !active && remaining === 0;
+          const order = selected.indexOf(ch) + 1;
+          return (
+            <button
+              key={ch}
+              type="button"
+              onClick={() => toggle(ch)}
+              disabled={disabled}
+              aria-pressed={active}
+              className={
+                "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors " +
+                (active
+                  ? "border-accent-300 bg-accent-50 text-accent-800"
+                  : disabled
+                    ? "border-slate-100 bg-white text-slate-300"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300")
+              }
+            >
+              <ChannelIcon channel={ch} className="h-3 w-3" />
+              {channelLabel(ch)}
+              {active && <span className="text-[9px] text-accent-600">#{order}</span>}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function channelLabel(channel: ShareChannel): string {
+  switch (channel) {
+    case "x":
+      return "X";
+    case "line":
+      return "LINE";
+    case "threads":
+      return "Threads";
+    case "facebook":
+      return "Facebook";
+    case "kakao":
+      return "KakaoTalk";
+  }
 }

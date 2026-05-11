@@ -245,6 +245,8 @@ export type ProfileTheme =
   | "neon"
   | "aurora";
 
+export type ShareChannel = "x" | "line" | "threads" | "facebook" | "kakao";
+
 export type MyProfile = {
   username: string | null;
   bio: string | null;
@@ -252,6 +254,7 @@ export type MyProfile = {
   publicUrl: string | null;
   avatarUrl: string | null;
   bannerUrl: string | null;
+  shareChannels: ShareChannel[];
 };
 
 export type PublicProfile = {
@@ -260,6 +263,7 @@ export type PublicProfile = {
   theme: ProfileTheme | null;
   avatarUrl: string | null;
   bannerUrl: string | null;
+  shareChannels: ShareChannel[];
   entries: PublicProfileEntry[];
 };
 

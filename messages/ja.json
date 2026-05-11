@@ -737,6 +737,9 @@
     "share": {
       "x": "X で共有",
       "line": "LINE で共有",
+      "threads": "Threads で共有",
+      "facebook": "Facebook で共有",
+      "kakao": "カカオトーク共有",
       "more": "共有",
       "copy": "URL コピー",
       "copied": "コピー済み"
@@ -953,6 +956,9 @@
       "bioLabel": "自己紹介",
       "bioPlaceholder": "例: フルスタック開発者 · サイドプロジェクト製作中",
       "themeLabel": "テーマ",
+      "shareChannelsLabel": "共有ボタン",
+      "shareChannelsHint": "公開ページの下に表示する共有ボタンを選んでください。最大 2 つ、選んだ順に表示されます。",
+      "shareChannelsCount": "{count}/{max} 選択",
       "previewTitle": "公開ページのライブプレビュー",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "ここに自己紹介が表示されます",

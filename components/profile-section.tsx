@@ -15,7 +15,13 @@ import {
   updateMyProfile,
   updateProfileBlock,
 } from "@/lib/api";
-import type { MyLink, MyProfile, ProfileReorderItem, ProfileTheme } from "@/types";
+import type {
+  MyLink,
+  MyProfile,
+  ProfileReorderItem,
+  ProfileTheme,
+  ShareChannel,
+} from "@/types";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
 import { ProfileMetaForm } from "./profile-section/ProfileMetaForm";
 import type { FeedItem } from "./profile-section/types";
@@ -27,6 +33,7 @@ export type ProfileDraft = {
   theme: ProfileTheme | null;
   avatarUrl: string | null;
   bannerUrl: string | null;
+  shareChannels: ShareChannel[];
   featured: string[];
   links: MyLink[];
 };
@@ -50,6 +57,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [theme, setTheme] = useState<ProfileTheme | null>(null);
+  const [shareChannels, setShareChannels] = useState<ShareChannel[]>([]);
   const [savingProfile, setSavingProfile] = useState(false);
   const [links, setLinks] = useState<MyLink[] | null>(null);
   const [items, setItems] = useState<FeedItem[]>([]);
@@ -58,7 +66,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const [reload, setReload] = useState(0);
   const refresh = () => setReload((n) => n + 1);
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
-  const lastSavedRef = useRef<{ bio: string; theme: ProfileTheme | null } | null>(null);
+  const lastSavedRef = useRef<{
+    bio: string;
+    theme: ProfileTheme | null;
+    shareChannels: string;
+  } | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
@@ -76,6 +88,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       theme,
       avatarUrl: profile?.avatarUrl ?? null,
       bannerUrl: profile?.bannerUrl ?? null,
+      shareChannels,
       featured,
       links: links ?? [],
     });
@@ -85,6 +98,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     theme,
     profile?.avatarUrl,
     profile?.bannerUrl,
+    shareChannels,
     featured,
     links,
     onDraft,
@@ -95,20 +109,31 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   // we want intent for that, but everything else should "just save" so the editor feels alive.
   useEffect(() => {
     if (!profile?.username) return;
+    const channelsCsv = shareChannels.join(",");
     if (lastSavedRef.current === null) {
-      lastSavedRef.current = { bio: profile.bio ?? "", theme: profile.theme ?? null };
+      lastSavedRef.current = {
+        bio: profile.bio ?? "",
+        theme: profile.theme ?? null,
+        shareChannels: (profile.shareChannels ?? []).join(","),
+      };
       return;
     }
-    if (lastSavedRef.current.bio === bio && lastSavedRef.current.theme === theme) return;
+    if (
+      lastSavedRef.current.bio === bio &&
+      lastSavedRef.current.theme === theme &&
+      lastSavedRef.current.shareChannels === channelsCsv
+    )
+      return;
     setAutoSaveStatus("saving");
     const timer = setTimeout(async () => {
       try {
         const updated = await updateMyProfile({
           bio: bio.trim(),
           theme: theme ?? undefined,
+          shareChannels: channelsCsv,
         });
         setProfile(updated);
-        lastSavedRef.current = { bio, theme };
+        lastSavedRef.current = { bio, theme, shareChannels: channelsCsv };
         setAutoSaveStatus("saved");
         setTimeout(() => setAutoSaveStatus("idle"), 1500);
       } catch (err) {
@@ -117,7 +142,18 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       }
     }, 600);
     return () => clearTimeout(timer);
-  }, [bio, theme, profile?.username, profile?.bio, profile?.theme, errorMessage, t, toast]);
+  }, [
+    bio,
+    theme,
+    shareChannels,
+    profile?.username,
+    profile?.bio,
+    profile?.theme,
+    profile?.shareChannels,
+    errorMessage,
+    t,
+    toast,
+  ]);
 
   useEffect(() => {
     let cancelled = false;
@@ -128,6 +164,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         setUsername(prof.username ?? "");
         setBio(prof.bio ?? "");
         setTheme(prof.theme ?? null);
+        setShareChannels(prof.shareChannels ?? []);
         setLinks(page.items);
       })
       .catch(() => {
@@ -207,6 +244,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         username: next || undefined,
         bio: bio.trim(),
         theme: theme ?? undefined,
+        shareChannels: shareChannels.join(","),
       });
       setProfile(updated);
       toast(t("saved"), "success");
@@ -400,6 +438,8 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       onThemeChange={setTheme}
       onAvatarChange={(avatarUrl) => setProfile((p) => (p ? { ...p, avatarUrl } : p))}
       onBannerChange={(bannerUrl) => setProfile((p) => (p ? { ...p, bannerUrl } : p))}
+      shareChannels={shareChannels}
+      onShareChannelsChange={setShareChannels}
       onSave={handleSaveProfile}
       t={t}
     />
