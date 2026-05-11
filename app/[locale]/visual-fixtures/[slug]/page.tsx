@@ -60,8 +60,15 @@ export default function VisualFixturePage({
   const renderer = FIXTURES[params.slug];
   if (!renderer) notFound();
   return (
-    <main className="mx-auto max-w-md p-6">
-      <div data-testid="fixture">{renderer()}</div>
+    <main className="flex min-h-screen justify-center bg-white py-12">
+      {/* Fixed width (no padding-based subtraction) so the snapshot has identical pixel
+          dimensions across OSes — padding-derived widths rounded differently between macOS dev
+          (400px) and Linux CI (401px), and Playwright's toHaveScreenshot requires the size to
+          match exactly before pixel ratios are even computed. Pin width directly to remove the
+          source of variance entirely. */}
+      <div data-testid="fixture" className="w-[400px]">
+        {renderer()}
+      </div>
     </main>
   );
 }

@@ -12,10 +12,11 @@ export default defineConfig({
   expect: {
     timeout: 10_000,
     // Visual snapshots: small tolerance so font subpixel / anti-alias differences across
-    // platforms (macOS dev vs Linux CI) don't flake the suite. 2% matches a common ballpark
-    // for cross-OS visual regression — permissive enough for AA noise, tight enough to catch
-    // layout shifts / color changes / missing elements.
-    toHaveScreenshot: { maxDiffPixelRatio: 0.02 },
+    // platforms (macOS dev vs Linux CI) don't flake the suite. 5% accounts for cross-OS font
+    // rendering on text-dense fixtures (the Korean glyphs in CONTACT_CARD render slightly
+    // differently between Apple SD Gothic and Noto). Tight enough to still catch real layout
+    // shifts / color changes / missing elements.
+    toHaveScreenshot: { maxDiffPixelRatio: 0.05 },
   },
   reporter: isCI ? [["github"], ["html", { open: "never" }]] : [["list"]],
   use: {
