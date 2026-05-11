@@ -14,6 +14,6 @@ export type FeedItem =
   | {
       kind: "BLOCK";
       id: number;
-      type: "TEXT" | "DIVIDER" | "IMAGE";
+      type: "TEXT" | "DIVIDER" | "IMAGE" | "EMBED";
       content: string | null;
     };

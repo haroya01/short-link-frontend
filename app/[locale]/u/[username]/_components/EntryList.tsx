@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import type { PublicProfileEntry } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
 import { DividerEntry } from "./DividerEntry";
+import { EmbedEntryCard } from "./EmbedEntryCard";
 import { ImageEntryCard } from "./ImageEntryCard";
 import { LinkEntryCard } from "./LinkEntryCard";
 import { TextEntryHeader } from "./TextEntryHeader";
@@ -54,6 +55,10 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
         if (entry.kind === "IMAGE" && entry.content)
           return (
             <ImageEntryCard key={key} url={entry.content} colors={colors} fadeStyle={style} />
+          );
+        if (entry.kind === "EMBED" && entry.content)
+          return (
+            <EmbedEntryCard key={key} url={entry.content} colors={colors} fadeStyle={style} />
           );
         if (entry.kind === "LINK")
           return (

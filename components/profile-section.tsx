@@ -239,7 +239,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       .then((data) => {
         if (cancelled || !data) return;
         const entries = (data.entries ?? []) as Array<{
-          kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE";
+          kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE" | "EMBED";
           id: number | null;
           shortCode: string | null;
           ogTitle?: string | null;
@@ -261,6 +261,8 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             next.push({ kind: "BLOCK", id: e.id, type: "DIVIDER", content: null });
           } else if (e.kind === "IMAGE" && e.id != null) {
             next.push({ kind: "BLOCK", id: e.id, type: "IMAGE", content: e.content ?? "" });
+          } else if (e.kind === "EMBED" && e.id != null) {
+            next.push({ kind: "BLOCK", id: e.id, type: "EMBED", content: e.content ?? "" });
           }
         }
         setItems(next);
@@ -449,10 +451,30 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
+  async function handleAddEmbed() {
+    const url = window.prompt(t("addEmbedPrompt"), "https://");
+    if (!url || !url.trim()) return;
+    try {
+      const block = await createProfileBlock({ type: "EMBED", content: url.trim() });
+      setItems((prev) => [
+        ...prev,
+        { kind: "BLOCK", id: block.id, type: "EMBED", content: block.content ?? "" },
+      ]);
+    } catch (err) {
+      toast(errorMessage(err, t("toggleFailed")), "error");
+    }
+  }
+
   async function handleEditBlock(blockId: number, current: string) {
     const item = items.find((i) => i.kind === "BLOCK" && i.id === blockId);
-    const isImage = item?.kind === "BLOCK" && item.type === "IMAGE";
-    const next = window.prompt(isImage ? t("editImagePrompt") : t("editTextPrompt"), current);
+    const blockType = item?.kind === "BLOCK" ? item.type : null;
+    const promptKey =
+      blockType === "IMAGE"
+        ? "editImagePrompt"
+        : blockType === "EMBED"
+          ? "editEmbedPrompt"
+          : "editTextPrompt";
+    const next = window.prompt(t(promptKey), current);
     if (next === null) return;
     const trimmed = next.trim();
     if (!trimmed) return;
@@ -530,6 +552,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onAddText={handleAddText}
           onAddDivider={handleAddDivider}
           onAddImage={handleAddImage}
+          onAddEmbed={handleAddEmbed}
           onMove={move}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
