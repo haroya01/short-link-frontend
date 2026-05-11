@@ -3,6 +3,7 @@ import type { PublicProfileEntry } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
 import { ContactCardEntry } from "./ContactCardEntry";
 import { DividerEntry } from "./DividerEntry";
+import { EmailFormEntryCard } from "./EmailFormEntryCard";
 import { EmbedEntryCard } from "./EmbedEntryCard";
 import { GalleryEntryCard } from "./GalleryEntryCard";
 import { ProductCardEntry } from "./ProductCardEntry";
@@ -62,6 +63,16 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
         if (entry.kind === "EMBED" && entry.content)
           return (
             <EmbedEntryCard key={key} url={entry.content} colors={colors} fadeStyle={style} />
+          );
+        if (entry.kind === "EMAIL_FORM" && entry.id != null && entry.content)
+          return (
+            <EmailFormEntryCard
+              key={key}
+              id={entry.id}
+              content={entry.content}
+              colors={colors}
+              fadeStyle={style}
+            />
           );
         if (entry.kind === "CONTACT_CARD" && entry.content)
           return (

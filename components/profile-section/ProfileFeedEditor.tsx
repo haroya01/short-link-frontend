@@ -8,6 +8,7 @@ import {
   Contact,
   GalleryHorizontal,
   ShoppingBag,
+  Mail,
   GripVertical,
   ImageIcon,
   Minus,
@@ -38,6 +39,7 @@ type Props = {
   onAddContactCard: () => void;
   onAddGallery: () => void;
   onAddProductCard: () => void;
+  onAddEmailForm: () => void;
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
@@ -74,6 +76,7 @@ export function ProfileFeedEditor({
   onAddContactCard,
   onAddGallery,
   onAddProductCard,
+  onAddEmailForm,
   onMove,
   onDragStart,
   onDragOver,
@@ -107,6 +110,7 @@ export function ProfileFeedEditor({
           onAddContactCard={onAddContactCard}
           onAddGallery={onAddGallery}
           onAddProductCard={onAddProductCard}
+          onAddEmailForm={onAddEmailForm}
           t={t}
         />
       </div>
@@ -208,6 +212,7 @@ function AddMenu({
   onAddContactCard,
   onAddGallery,
   onAddProductCard,
+  onAddEmailForm,
   t,
 }: {
   onAddText: () => void;
@@ -217,6 +222,7 @@ function AddMenu({
   onAddContactCard: () => void;
   onAddGallery: () => void;
   onAddProductCard: () => void;
+  onAddEmailForm: () => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   const [open, setOpen] = useState(false);
@@ -289,6 +295,12 @@ function AddMenu({
             icon={<ShoppingBag className="h-3.5 w-3.5" />}
           >
             {t("addProductCard")}
+          </MenuItem>
+          <MenuItem
+            onClick={() => fire(onAddEmailForm)}
+            icon={<Mail className="h-3.5 w-3.5" />}
+          >
+            {t("addEmailForm")}
           </MenuItem>
         </div>
       )}
@@ -514,6 +526,25 @@ function FeedItemRow({
           <ShoppingBag className="h-3.5 w-3.5 shrink-0 text-slate-400" />
           <span className="truncate text-sm font-medium text-slate-900">
             {summary || t("addProductCardPlaceholder")}
+          </span>
+        </div>
+        <BlockActions
+          onEdit={() => onEditBlock(item.id, item.content ?? "")}
+          onDelete={() => onDeleteBlock(item.id)}
+          t={t}
+        />
+      </li>
+    );
+  }
+  if (item.kind === "BLOCK" && item.type === "EMAIL_FORM") {
+    const summary = summarizeJsonField(item.content, "title");
+    return (
+      <li {...dndProps} className={baseRow}>
+        {dragHandle}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <Mail className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          <span className="truncate text-sm font-medium text-slate-900">
+            {summary || t("addEmailFormPlaceholder")}
           </span>
         </div>
         <BlockActions
