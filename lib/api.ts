@@ -375,6 +375,8 @@ export async function updateMyProfile(payload: {
   username?: string;
   bio?: string;
   theme?: ProfileTheme | null;
+  /** CSV (max 2) of share channels. Backend validates against the allowed list. */
+  shareChannels?: string;
 }): Promise<MyProfile> {
   return request<MyProfile>("/api/v1/users/me/profile", { method: "PUT", body: payload });
 }

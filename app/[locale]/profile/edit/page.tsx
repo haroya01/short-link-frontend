@@ -19,6 +19,7 @@ export default function ProfileEditPage() {
     theme: null,
     avatarUrl: null,
     bannerUrl: null,
+    shareChannels: [],
     featured: [],
     links: [],
   });

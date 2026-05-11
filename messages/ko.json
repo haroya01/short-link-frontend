@@ -654,6 +654,9 @@
     "share": {
       "x": "X 에 공유",
       "line": "LINE 에 공유",
+      "threads": "Threads 에 공유",
+      "facebook": "Facebook 에 공유",
+      "kakao": "카카오톡 공유",
       "more": "공유",
       "copy": "URL 복사",
       "copied": "복사됨"
@@ -867,6 +870,9 @@
       "bioLabel": "한 줄 소개",
       "bioPlaceholder": "예: 풀스택 개발자 · 사이드 프로젝트 만드는 중",
       "themeLabel": "테마",
+      "shareChannelsLabel": "공유 버튼",
+      "shareChannelsHint": "공개 페이지 하단에 표시할 공유 버튼을 골라주세요. 최대 2개, 선택한 순서대로 노출돼요.",
+      "shareChannelsCount": "{count}/{max} 선택",
       "previewTitle": "공개 페이지 미리보기 (실시간)",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "한 줄 소개를 입력하면 여기에 보여요",

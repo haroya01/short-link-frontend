@@ -737,6 +737,9 @@
     "share": {
       "x": "Share on X",
       "line": "Share on LINE",
+      "threads": "Share on Threads",
+      "facebook": "Share on Facebook",
+      "kakao": "Share on KakaoTalk",
       "more": "Share",
       "copy": "Copy URL",
       "copied": "Copied"
@@ -953,6 +956,9 @@
       "bioLabel": "Short bio",
       "bioPlaceholder": "e.g. fullstack dev / building side projects",
       "themeLabel": "Theme",
+      "shareChannelsLabel": "Share buttons",
+      "shareChannelsHint": "Pick which share buttons appear at the bottom of your public profile. Up to 2, shown in the order you select.",
+      "shareChannelsCount": "{count}/{max} selected",
       "previewTitle": "Live preview",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "Your bio will appear here",
