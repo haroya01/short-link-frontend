@@ -754,7 +754,11 @@
       "linkedin": "Visit LinkedIn profile"
     },
     "contactCard": {
-      "save": "Save to contacts"
+      "save": "Save to contacts",
+      "dockCall": "Call",
+      "dockShare": "Share",
+      "dockSave": "Save",
+      "qrAlt": "Scan QR to add this contact"
     }
   },
   "weeklyInsights": {

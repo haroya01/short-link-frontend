@@ -754,7 +754,11 @@
       "linkedin": "LinkedIn プロフィールへ"
     },
     "contactCard": {
-      "save": "連絡先に保存"
+      "save": "連絡先に保存",
+      "dockCall": "電話",
+      "dockShare": "共有",
+      "dockSave": "保存",
+      "qrAlt": "QR をスキャンして連絡先を追加"
     }
   },
   "weeklyInsights": {
