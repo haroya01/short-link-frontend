@@ -76,58 +76,81 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
     };
   }, [vcard]);
 
-  // Tracks whether the pointer is currently over the card. While true the rAF "idle"
-  // animation pauses and the values set by handlePointerMove are authoritative; while false the
-  // loop drives a gentle orbit + scroll-based light position so the card feels alive at rest.
+  // Pointer + scroll → CSS variables driving the holographic layers. We follow the simeydotme
+  // /pokemon-cards-css technique end-to-end (https://github.com/simeydotme/pokemon-cards-css):
+  // each pointer move sets six derived custom properties (--pointer-x/y, --pointer-from-center,
+  // --pointer-from-left/top, --background-x/y, --card-opacity) which downstream gradient layers
+  // read to compute their position, intensity, and parallax. The previous "one stripe + one
+  // radial highlight" approach left half the card uncolored ("끊긴" feedback); the simey approach
+  // stacks multiple shine layers with `filter: contrast()` so the WHOLE surface is iridescent.
   const pointerOverRef = useRef(false);
 
-  const handlePointerMove = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
-    const el = cardRef.current;
-    if (!el) return;
-    pointerOverRef.current = true;
-    const rect = el.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    // Both axes "look TOWARD pointer" — pointer on left → left edge comes forward, pointer on
-    // top → top edge comes forward. Previously the Y axis had its sign flipped so the card
-    // tilted the opposite direction vertically vs. horizontally, which felt off.
-    const rx = ((x - 50) / 50) * -8; // feeds rotateY
-    const ry = ((y - 50) / 50) * 8; // feeds rotateX
-    el.style.setProperty("--mx", `${x}%`);
-    el.style.setProperty("--my", `${y}%`);
-    el.style.setProperty("--rx", `${rx}deg`);
-    el.style.setProperty("--ry", `${ry}deg`);
-  }, []);
+  const applyVars = useCallback(
+    (x: number, y: number, opacity: number) => {
+      const el = cardRef.current;
+      if (!el) return;
+      const fromCenter = Math.min(
+        1,
+        Math.sqrt((x - 50) * (x - 50) + (y - 50) * (y - 50)) / 50,
+      );
+      // background-x/y is mapped to a narrow band (37-63% / 33-67%) so the rainbow scroll is
+      // subtle, not wild — same range as simey's adjust(0, 100, 37, 63).
+      const bgX = 37 + (x / 100) * 26;
+      const bgY = 33 + (y / 100) * 34;
+      // Pointer-following tilt: same axis convention ("look toward pointer") as simey, ±8°.
+      const rotateY = -((x - 50) / 50) * 8;
+      const rotateX = ((y - 50) / 50) * 8;
+      el.style.setProperty("--pointer-x", `${x}%`);
+      el.style.setProperty("--pointer-y", `${y}%`);
+      el.style.setProperty("--pointer-from-center", `${fromCenter}`);
+      el.style.setProperty("--pointer-from-left", `${x / 100}`);
+      el.style.setProperty("--pointer-from-top", `${y / 100}`);
+      el.style.setProperty("--background-x", `${bgX}%`);
+      el.style.setProperty("--background-y", `${bgY}%`);
+      el.style.setProperty("--card-opacity", `${opacity}`);
+      el.style.setProperty("--rotate-x", `${rotateY}deg`);
+      el.style.setProperty("--rotate-y", `${rotateX}deg`);
+    },
+    [],
+  );
 
-  // Light position responds to page scroll when the pointer isn't engaged — simulates a fixed
-  // light source overhead while the card moves through the viewport. Card high in viewport →
-  // light at the bottom (we're "looking up at it"); card low → light at the top. No continuous
-  // animation: position is static unless the user actually scrolls.
-  const applyScrollLight = useCallback(() => {
+  const handlePointerMove = useCallback(
+    (e: ReactPointerEvent<HTMLDivElement>) => {
+      const el = cardRef.current;
+      if (!el) return;
+      pointerOverRef.current = true;
+      const rect = el.getBoundingClientRect();
+      const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+      const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+      applyVars(x, y, 1);
+    },
+    [applyVars],
+  );
+
+  // Pseudo-pointer position based on scroll — simulates the visitor's "look angle" changing as
+  // the card moves through the viewport. Tying the holo to scroll instead of a continuous
+  // animation matches what the user asked for ("자동으로 움직이는게 아니라 스크롤에 따라").
+  const applyScrollVars = useCallback(() => {
     const el = cardRef.current;
     if (!el || pointerOverRef.current) return;
     const rect = el.getBoundingClientRect();
     const vh = window.innerHeight || 1;
     const cardMid = rect.top + rect.height / 2;
-    // -0.5 (card center at top of viewport) → +0.5 (at bottom)
-    const scrollPct = cardMid / vh - 0.5;
-    // Card at bottom of viewport → light at top of card (my small). At top → light at bottom.
-    const my = Math.max(10, Math.min(90, 50 - scrollPct * 80));
-    el.style.setProperty("--mx", `50%`);
-    el.style.setProperty("--my", `${my}%`);
-    el.style.setProperty("--rx", `0deg`);
-    // Tiny tilt matched to the light shift so the card has a subtle "facing the light" pose.
-    el.style.setProperty("--ry", `${((my - 50) / 50) * 4}deg`);
-  }, []);
+    // 0 (card center at top of viewport) → 100 (at bottom)
+    const yPct = Math.max(0, Math.min(100, ((cardMid / vh) * 100)));
+    // X stays centered — vertical scroll only drives Y. Light still moves as the card scrolls,
+    // and the rainbow visibly slides because background-y feeds the gradient position.
+    applyVars(50, yPct, 0.55);
+  }, [applyVars]);
 
   useEffect(() => {
-    applyScrollLight();
+    applyScrollVars();
     let rafId = 0;
     const onScroll = () => {
       if (rafId) return;
       rafId = requestAnimationFrame(() => {
         rafId = 0;
-        applyScrollLight();
+        applyScrollVars();
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -137,14 +160,12 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
       window.removeEventListener("resize", onScroll);
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [applyScrollLight]);
+  }, [applyScrollVars]);
 
   const handlePointerLeave = useCallback(() => {
     pointerOverRef.current = false;
-    // Hand control back to scroll-driven positioning so the highlight doesn't stick where the
-    // pointer last was — the card returns to whatever the viewport position says is "natural."
-    applyScrollLight();
-  }, [applyScrollLight]);
+    applyScrollVars();
+  }, [applyScrollVars]);
 
   function downloadVcard() {
     const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
@@ -216,7 +237,8 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
         <div
           className="relative [transform-style:preserve-3d]"
           style={{
-            transform: "rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg))",
+            transform:
+              "rotateX(var(--rotate-y, 0deg)) rotateY(var(--rotate-x, 0deg))",
             transition: "transform 80ms ease-out",
           }}
         >
@@ -435,51 +457,62 @@ function CardFace({
           "inset 0 0 0 1px rgba(255,255,255,0.08), 0 25px 50px -12px rgba(0,0,0,0.45)",
       }}
     >
-      {/* Pointer-tracked radial highlight. Default gradient size is farthest-corner — we let
-          the fade extend ALL THE WAY to 100% (the corner) instead of clamping at 75%, so the
-          light truly reaches every edge of the card. With 75% the corners stayed flat-dark and
-          the light looked "끊긴" / clipped, especially with low-intensity stops past 50%. The
-          back face is `transform: rotateY(180deg)`, which mirrors its content. So when --mx
-          says "70% from left," the back face would render the highlight at "30% from left of the
-          viewer." We compensate by inverting the X axis on the back face only. */}
+      {/* SHINE layer 1 — dense repeating rainbow scrolling with pointer/scroll position. The
+          background-size 400% 400% means the gradient is much larger than the card, so only a
+          slice is visible; as background-position moves (linked to --background-x/y mapped to
+          37-63% / 33-67%), the visible color palette slides through the full rainbow.
+          `filter: contrast(2) saturate(...)` is the metallic key — without it, color-dodge just
+          leaves a soft tint, with it the surface reads as foil. Back face flips X so the visual
+          direction matches the visitor's pointer side. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-80"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(110deg, hsl(283,100%,73%) 0%, hsl(228,100%,74%) 10%, hsl(176,100%,76%) 20%, hsl(93,100%,69%) 30%, hsl(53,100%,69%) 40%, hsl(2,100%,73%) 50%, hsl(283,100%,73%) 60%)",
+          backgroundSize: "400% 400%",
+          backgroundPosition: back
+            ? "calc(100% - var(--background-x, 50%)) var(--background-y, 50%)"
+            : "var(--background-x, 50%) var(--background-y, 50%)",
+          filter: "brightness(0.95) contrast(2) saturate(1)",
+          mixBlendMode: "color-dodge",
+          opacity: "calc(var(--card-opacity, 0.55) * 0.95)",
+          transition: "opacity 220ms ease-out",
+        }}
+      />
+      {/* SHINE layer 2 — second rainbow at a different angle (-30°) offset by RAW pointer
+          position. Stacking two gradients at different angles and offsets is what gives the
+          surface its 3D-ish shimmer: as the two layers slide independently they cross over each
+          other producing the iridescent depth real foil has. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(-30deg, hsl(2,100%,73%) 0%, hsl(53,100%,69%) 15%, hsl(93,100%,69%) 30%, hsl(176,100%,76%) 45%, hsl(228,100%,74%) 60%, hsl(283,100%,73%) 75%, hsl(2,100%,73%) 100%)",
+          backgroundSize: "400% 400%",
+          backgroundPosition: back
+            ? "calc(100% - var(--pointer-x, 50%)) var(--pointer-y, 50%)"
+            : "var(--pointer-x, 50%) var(--pointer-y, 50%)",
+          filter: "brightness(0.95) contrast(1.5) saturate(0.9)",
+          mixBlendMode: "color-dodge",
+          opacity: "calc(var(--card-opacity, 0.55) * 0.6)",
+          transition: "opacity 220ms ease-out",
+        }}
+      />
+      {/* GLARE — radial highlight at pointer position, OVERLAY blend so it brightens the shine
+          layers rather than washing them out. Opacity has a floor (0.2) so the surface always
+          has a hint of glare even at rest, and scales up with --card-opacity when active. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage: back
-            ? "radial-gradient(circle at calc(100% - var(--mx, 50%)) var(--my, 50%), rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.35) 25%, rgba(255,255,255,0.15) 55%, rgba(255,255,255,0.05) 80%, transparent 100%)"
-            : "radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.35) 25%, rgba(255,255,255,0.15) 55%, rgba(255,255,255,0.05) 80%, transparent 100%)",
-          mixBlendMode: "color-dodge",
-        }}
-      />
-      {/* Full-coverage iridescent base — was a narrow diagonal stripe (transparent 38%→62%) that
-          left half the card uncolored, looking "끊긴" / cut off. Now the rainbow spreads across
-          the entire gradient with NO transparent stops, so every part of the card surface
-          carries some color. backgroundSize 220% + the parallax shift continues to drive the
-          "moving light" feel — as the position shifts, the visible color palette slides through
-          the rainbow, even though every pixel always has some color. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-55"
-        style={{
-          backgroundImage:
-            "linear-gradient(105deg, rgba(132,50,255,0.35) 0%, rgba(255,119,198,0.45) 18%, rgba(255,219,112,0.55) 35%, rgba(255,255,255,0.45) 50%, rgba(119,198,255,0.55) 65%, rgba(132,200,255,0.45) 82%, rgba(255,119,198,0.35) 100%)",
-          backgroundSize: "220% 220%",
-          backgroundPosition: back
-            ? "calc(50% - (var(--mx, 50%) - 50%) * 1.5) calc(50% + (var(--my, 50%) - 50%) * 1.5)"
-            : "calc(50% + (var(--mx, 50%) - 50%) * 1.5) calc(50% + (var(--my, 50%) - 50%) * 1.5)",
-          mixBlendMode: "color-dodge",
-        }}
-      />
-      {/* Cross-hatch etched foil pattern — two repeating gradients at ±45° make the visible
-          grain of real Pokemon-TCG holographic cards. Overlay blend keeps it subtle. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 4px), " +
-            "repeating-linear-gradient(-45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 4px)",
+            ? "radial-gradient(farthest-corner circle at calc(100% - var(--pointer-x, 50%)) var(--pointer-y, 50%), hsla(0,0%,100%,0.7) 8%, hsla(0,0%,100%,0.3) 22%, hsla(0,0%,0%,0.35) 90%)"
+            : "radial-gradient(farthest-corner circle at var(--pointer-x, 50%) var(--pointer-y, 50%), hsla(0,0%,100%,0.7) 8%, hsla(0,0%,100%,0.3) 22%, hsla(0,0%,0%,0.35) 90%)",
+          mixBlendMode: "overlay",
+          opacity: "calc(var(--card-opacity, 0.55) * 0.7 + 0.2)",
+          transition: "opacity 220ms ease-out",
         }}
       />
       {/* Faint grain — surface doesn't read as glass-clean. */}
