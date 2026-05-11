@@ -200,14 +200,24 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
         aria-label={flipped ? t("flipToFront") : t("flipToBack")}
         className="relative cursor-pointer select-none [perspective:1200px] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded-2xl"
       >
+        {/* Two wrappers so flip (slow, 600ms) and tilt (fast, 80ms) can have separate transition
+            curves. The outer "flip" wrapper handles the 0/180° rotateY for the flip; the inner
+            "tilt" wrapper handles the small rotateX/rotateY from pointer + scroll. Previously
+            both rode on the same 600ms transition, which made the scroll-driven tilt lag the
+            light position (which has no transition — radial-gradient updates instantly), looking
+            "끊긴" / disconnected as the user scrolled. */}
         <div
           className="relative [transform-style:preserve-3d]"
           style={{
-            transform: `rotateX(var(--ry, 0deg)) rotateY(calc(var(--rx, 0deg) + ${
-              flipped ? 180 : 0
-            }deg))`,
-            transition:
-              "transform 600ms cubic-bezier(0.22, 1, 0.36, 1)",
+            transform: `rotateY(${flipped ? 180 : 0}deg)`,
+            transition: "transform 600ms cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        >
+        <div
+          className="relative [transform-style:preserve-3d]"
+          style={{
+            transform: "rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg))",
+            transition: "transform 80ms ease-out",
           }}
         >
           {/* FRONT */}
@@ -378,6 +388,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
               </div>
             </div>
           </CardFace>
+        </div>
         </div>
       </div>
     </li>
