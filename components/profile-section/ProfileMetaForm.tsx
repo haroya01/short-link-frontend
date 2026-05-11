@@ -206,6 +206,8 @@ export function ProfileMetaForm({
             url={profile.publicUrl}
             filename={`${profile.username}.png`}
             logoSrc="/icon.svg"
+            showSrcInput={false}
+            defaultSrcHint="profile"
           />
         </div>
       )}
