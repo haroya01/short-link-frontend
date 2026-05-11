@@ -22,6 +22,7 @@ export type FeedItem =
         | "EMAIL_FORM"
         | "CONTACT_CARD"
         | "GALLERY"
-        | "PRODUCT_CARD";
+        | "PRODUCT_CARD"
+        | "BOOKING";
       content: string | null;
     };
