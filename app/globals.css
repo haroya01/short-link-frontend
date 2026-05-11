@@ -6,6 +6,15 @@
   color-scheme: light;
 }
 
+/*
+ * Reserve gutter for the scrollbar at the root so layout doesn't reflow when content grows past
+ * the viewport height. Previously the scrollbar appearance was shrinking viewport width by ~15px,
+ * flipping `md:`/`lg:` breakpoints, and visibly resizing the banner / avatar grid.
+ */
+html {
+  scrollbar-gutter: stable;
+}
+
 html,
 body {
   @apply bg-white text-slate-900 antialiased;
