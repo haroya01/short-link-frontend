@@ -376,7 +376,22 @@ export type ContactCardConfig = {
   website: string | null;
   /** Public URL of the company / personal logo uploaded via profile-images. */
   logoUrl: string | null;
+  /**
+   * Holographic foil preset id. Null = use default (amethyst). Mapped to a 6-color HSL palette
+   * on the public profile renderer. Backend whitelists the value so only known ids reach here.
+   */
+  palette: ContactCardPalette | null;
 };
+
+export type ContactCardPalette =
+  | "amethyst"
+  | "rose-gold"
+  | "emerald"
+  | "sapphire"
+  | "sunset"
+  | "midnight"
+  | "champagne"
+  | "aurora";
 
 /** GALLERY JSON shape. Backend caps at 6 image URLs. */
 export type GalleryConfig = {
