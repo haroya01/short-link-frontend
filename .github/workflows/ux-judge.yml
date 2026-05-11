@@ -1,0 +1,50 @@
+name: Daily UX Judge
+
+on:
+  schedule:
+    # Daily at 21:00 UTC = 06:00 KST. Fires once per day; the script dedupes so re-runs
+    # within the same day don't spam issues.
+    - cron: "0 21 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ux-judge
+  cancel-in-progress: false
+
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      issues: write
+      contents: read
+    env:
+      NEXT_PUBLIC_API_BASE: http://localhost:0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright chromium
+        run: npx playwright install --with-deps chromium
+      - name: Build Next.js
+        run: npm run build
+      - name: Start Next.js
+        run: |
+          PORT=3001 npm start &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3001/ko >/dev/null; then
+              echo "next is up"
+              break
+            fi
+            sleep 1
+          done
+      - name: Run UX judge
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LLM_JUDGE_BASE_URL: http://localhost:3001
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: node scripts/ux-judge.mjs
