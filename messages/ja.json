@@ -743,6 +743,13 @@
       "more": "共有",
       "copy": "URL コピー",
       "copied": "コピー済み"
+    },
+    "visit": {
+      "x": "X プロフィールへ",
+      "line": "LINE を開く",
+      "threads": "Threads プロフィールへ",
+      "facebook": "Facebook プロフィールへ",
+      "kakao": "カカオトークを開く"
     }
   },
   "weeklyInsights": {
@@ -956,9 +963,15 @@
       "bioLabel": "自己紹介",
       "bioPlaceholder": "例: フルスタック開発者 · サイドプロジェクト製作中",
       "themeLabel": "テーマ",
-      "shareChannelsLabel": "共有ボタン",
-      "shareChannelsHint": "公開ページの下に表示する共有ボタンを選んでください。最大 2 つ、選んだ順に表示されます。",
-      "shareChannelsCount": "{count}/{max} 選択",
+      "socialsLabel": "SNS / 共有ボタン",
+      "socialsHint": "公開ページの下に表示するチャンネルを選んでください。それぞれにご自身のアカウント URL を入れると、訪問者がそのまま遷移します。最大 2 つ、選んだ順に表示されます。",
+      "socialsCount": "{count}/{max} 選択",
+      "socialUrlPlaceholderX": "https://x.com/yourhandle",
+      "socialUrlPlaceholderLine": "https://line.me/ti/p/...",
+      "socialUrlPlaceholderThreads": "https://threads.net/@yourhandle",
+      "socialUrlPlaceholderFacebook": "https://facebook.com/yourhandle",
+      "socialUrlPlaceholderKakao": "https://open.kakao.com/o/...",
+      "socialUrlInvalid": "有効な http(s) URL を入力してください。",
       "previewTitle": "公開ページのライブプレビュー",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "ここに自己紹介が表示されます",
