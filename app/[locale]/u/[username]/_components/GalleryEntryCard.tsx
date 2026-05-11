@@ -29,7 +29,7 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
           {config.images.map((url, idx) => (
             <div
               key={idx}
-              className="relative aspect-[4/3] w-full shrink-0 snap-start bg-slate-100"
+              className="relative aspect-square w-full shrink-0 snap-start bg-slate-100"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
