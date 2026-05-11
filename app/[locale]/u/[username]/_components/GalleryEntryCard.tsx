@@ -278,7 +278,7 @@ function GalleryLightbox({ images, initialIdx, onClose, t }: LightboxProps) {
         {images.map((url, idx) => (
           <div
             key={idx}
-            className="grid h-full w-full shrink-0 snap-start place-items-center p-6"
+            className="grid h-full w-full shrink-0 snap-start place-items-center px-6 py-16 sm:px-12 sm:py-20"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -291,7 +291,7 @@ function GalleryLightbox({ images, initialIdx, onClose, t }: LightboxProps) {
                 transform: entered ? "scale(1)" : "scale(0.92)",
                 opacity: entered ? 1 : 0,
               }}
-              className="max-h-full max-w-full object-contain"
+              className="max-h-[78vh] max-w-[88vw] rounded-lg object-contain shadow-2xl sm:max-h-[80vh] sm:max-w-[78vw]"
             />
           </div>
         ))}
