@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "../ui/dialog";
 import { Input } from "../ui/input";
+import { ImageUploader } from "./ImageUploader";
 
 type Config = {
   name: string;
@@ -13,6 +14,7 @@ type Config = {
   phone: string;
   address: string;
   website: string;
+  logoUrl: string | null;
 };
 
 const EMPTY: Config = {
@@ -23,6 +25,7 @@ const EMPTY: Config = {
   phone: "",
   address: "",
   website: "",
+  logoUrl: null,
 };
 
 type Props = {
@@ -54,6 +57,7 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
           phone: parsed.phone ?? "",
           address: parsed.address ?? "",
           website: parsed.website ?? "",
+          logoUrl: typeof parsed.logoUrl === "string" ? parsed.logoUrl : null,
         });
         return;
       } catch {
@@ -84,10 +88,24 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
             phone: config.phone.trim() || null,
             address: config.address.trim() || null,
             website: config.website.trim() || null,
+            logoUrl: config.logoUrl,
           }),
         );
       }}
     >
+      <div className="mb-3 flex items-center gap-3">
+        <div className="w-20">
+          <ImageUploader
+            value={config.logoUrl}
+            onChange={(url) => setConfig((c) => ({ ...c, logoUrl: url }))}
+            aspectClass="aspect-square"
+          />
+        </div>
+        <div className="text-[11px] text-slate-500">
+          <p className="font-medium text-slate-700">{t("contactFieldLogo")}</p>
+          <p className="mt-0.5 text-slate-400">{t("contactFieldLogoHint")}</p>
+        </div>
+      </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label={t("contactFieldName")} required>
           <Input
