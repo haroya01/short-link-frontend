@@ -88,15 +88,27 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
                 type="button"
                 key={idx}
                 onClick={() => setLightboxIdx(idx)}
-                className="relative aspect-square w-full shrink-0 snap-start bg-slate-100"
+                className="relative aspect-square w-full shrink-0 snap-start overflow-hidden bg-slate-100"
                 aria-label={t("openImage", { idx: idx + 1 })}
               >
+                {/* Same photo, blurred + zoomed as a fill-the-square backdrop. Tall and wide
+                    photos get a themed letterbox that matches the photo's color palette
+                    automatically — Instagram / iOS Photos pattern. The contain layer above shows
+                    the whole image without crop. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt=""
+                  aria-hidden
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full scale-110 object-cover opacity-50 blur-2xl"
+                />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={url}
                   alt=""
                   loading="lazy"
-                  className="h-full w-full object-cover"
+                  className="relative h-full w-full object-contain"
                 />
               </button>
             ))}
@@ -174,6 +186,10 @@ type LightboxProps = {
 function GalleryLightbox({ images, initialIdx, onClose, t }: LightboxProps) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const [currentIdx, setCurrentIdx] = useState(initialIdx);
+  // Mounts hidden, then flips to "entered" after the first paint so CSS transitions
+  // (backdrop fade + image scale) actually run. requestAnimationFrame is the canonical way to
+  // wait one paint without a flickery setTimeout(0).
+  const [entered, setEntered] = useState(false);
 
   // Jump to the tapped slide on mount (instant, no scroll-smooth so it doesn't animate from idx 0).
   useEffect(() => {
@@ -181,6 +197,8 @@ function GalleryLightbox({ images, initialIdx, onClose, t }: LightboxProps) {
     if (!el) return;
     const child = el.children[initialIdx] as HTMLElement | undefined;
     if (child) el.scrollLeft = child.offsetLeft;
+    const raf = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(raf);
   }, [initialIdx]);
 
   useEffect(() => {
@@ -231,7 +249,10 @@ function GalleryLightbox({ images, initialIdx, onClose, t }: LightboxProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/95"
+      className={
+        "fixed inset-0 z-50 bg-black transition-opacity duration-200 " +
+        (entered ? "bg-opacity-95 opacity-100" : "bg-opacity-95 opacity-0")
+      }
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -264,6 +285,12 @@ function GalleryLightbox({ images, initialIdx, onClose, t }: LightboxProps) {
               src={url}
               alt=""
               onClick={(e) => e.stopPropagation()}
+              style={{
+                transition:
+                  "transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms ease-out",
+                transform: entered ? "scale(1)" : "scale(0.92)",
+                opacity: entered ? 1 : 0,
+              }}
               className="max-h-full max-w-full object-contain"
             />
           </div>
