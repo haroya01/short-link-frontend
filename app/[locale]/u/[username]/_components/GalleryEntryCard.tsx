@@ -9,9 +9,10 @@ import {
   type CSSProperties,
 } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { GalleryConfig } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
+import { PhotoLightbox } from "./PhotoLightbox";
 
 type Props = {
   content: string;
@@ -20,18 +21,14 @@ type Props = {
 };
 
 /**
- * Two-tier gallery: a scannable 1:1 cropped carousel inline + a full-screen lightbox on tap that
- * shows each photo at its natural aspect (object-contain). The crop on the inline view keeps the
- * profile feed visually consistent — every gallery card is the same height regardless of which
- * mix of portrait/landscape photos the host uploaded — while the lightbox is the visitor's
- * escape hatch for "show me the actual photo".
+ * Inline 1:1 carousel + tap-to-open shared {@link PhotoLightbox}. The inline view always shows
+ * each photo at its natural aspect (object-contain) with a blurred copy of the same image as a
+ * letterbox backdrop (Instagram / iOS Photos pattern) — visitors see the whole photo without
+ * cropping, and the empty padding takes the photo's own color so it never looks like a hole.
+ * The lightbox is the "show me bigger" escape hatch.
  *
- * <p>Inline scroller uses CSS scroll-snap (pure-CSS swipe). We additionally track which slide is
- * currently visible to drive the page-dot indicator + sync the lightbox open-at-index. On
- * desktop, we render ← → buttons since trackpad scroll into a snap container can feel sluggish.
- *
- * <p>Lightbox locks body scroll on open, listens for Escape + arrow keys, and reuses the same
- * scroll-snap pattern internally so swipe between photos feels identical to the inline view.
+ * <p>Page-dots and ← → buttons (desktop only) drive horizontal navigation. Touch users rely on
+ * native CSS scroll-snap which gives the same physical-feeling swipe.
  */
 export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
   const t = useTranslations("publicProfile.gallery");
@@ -40,7 +37,6 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
-  // Track which slide is centered as the visitor scrolls — drives page dots + lightbox open-at.
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -88,13 +84,9 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
                 type="button"
                 key={idx}
                 onClick={() => setLightboxIdx(idx)}
-                className="relative aspect-square w-full shrink-0 snap-start overflow-hidden bg-slate-100"
+                className="relative aspect-square w-full shrink-0 cursor-zoom-in snap-start overflow-hidden bg-slate-100"
                 aria-label={t("openImage", { idx: idx + 1 })}
               >
-                {/* Same photo, blurred + zoomed as a fill-the-square backdrop. Tall and wide
-                    photos get a themed letterbox that matches the photo's color palette
-                    automatically — Instagram / iOS Photos pattern. The contain layer above shows
-                    the whole image without crop. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={url}
@@ -115,7 +107,6 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
           </div>
           {multi && (
             <>
-              {/* Desktop ← → buttons — overlaid on the carousel, hidden on touch devices. */}
               <button
                 type="button"
                 onClick={() => scrollToIdx(Math.max(0, activeIdx - 1))}
@@ -159,175 +150,13 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
       </li>
 
       {lightboxIdx !== null && (
-        <GalleryLightbox
+        <PhotoLightbox
           images={config.images}
           initialIdx={lightboxIdx}
           onClose={() => setLightboxIdx(null)}
-          t={t}
         />
       )}
     </>
-  );
-}
-
-type LightboxProps = {
-  images: string[];
-  initialIdx: number;
-  onClose: () => void;
-  t: ReturnType<typeof useTranslations<"publicProfile.gallery">>;
-};
-
-/**
- * Full-screen image viewer. Black backdrop, photos at natural aspect (object-contain), horizontal
- * snap scroll for swipe between, ESC + arrow keys + tap-backdrop to close. We lock body scroll
- * while open so the page underneath doesn't shift, and restore the previous overflow on close
- * (so we don't trample another component's lock).
- */
-function GalleryLightbox({ images, initialIdx, onClose, t }: LightboxProps) {
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
-  const [currentIdx, setCurrentIdx] = useState(initialIdx);
-  // Mounts hidden, then flips to "entered" after the first paint so CSS transitions
-  // (backdrop fade + image scale) actually run. requestAnimationFrame is the canonical way to
-  // wait one paint without a flickery setTimeout(0).
-  const [entered, setEntered] = useState(false);
-
-  // Jump to the tapped slide on mount (instant, no scroll-smooth so it doesn't animate from idx 0).
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const child = el.children[initialIdx] as HTMLElement | undefined;
-    if (child) el.scrollLeft = child.offsetLeft;
-    const raf = requestAnimationFrame(() => setEntered(true));
-    return () => cancelAnimationFrame(raf);
-  }, [initialIdx]);
-
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    let raf = 0;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const idx = Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
-        setCurrentIdx(Math.max(0, Math.min(images.length - 1, idx)));
-      });
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      el.removeEventListener("scroll", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [images.length]);
-
-  const nav = useCallback(
-    (dir: -1 | 1) => {
-      const el = scrollerRef.current;
-      if (!el) return;
-      const next = Math.max(0, Math.min(images.length - 1, currentIdx + dir));
-      const child = el.children[next] as HTMLElement | undefined;
-      if (child) el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
-    },
-    [currentIdx, images.length],
-  );
-
-  // ESC / arrow keys + body-scroll lock.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowLeft") nav(-1);
-      else if (e.key === "ArrowRight") nav(1);
-    };
-    document.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [onClose, nav]);
-
-  return (
-    <div
-      className={
-        "fixed inset-0 z-50 bg-black/55 backdrop-blur-2xl backdrop-saturate-150 transition-opacity duration-200 " +
-        (entered ? "opacity-100" : "opacity-0")
-      }
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-    >
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label={t("close")}
-        className="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-white/10 text-white backdrop-blur-sm transition hover:bg-white/20"
-      >
-        <X className="h-5 w-5" />
-      </button>
-      {images.length > 1 && (
-        <span className="absolute left-1/2 top-4 z-10 -translate-x-1/2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
-          {currentIdx + 1} / {images.length}
-        </span>
-      )}
-
-      <div
-        ref={scrollerRef}
-        className="flex h-full snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {images.map((url, idx) => (
-          <div
-            key={idx}
-            className="grid h-full w-full shrink-0 snap-start place-items-center px-6 py-16 sm:px-12 sm:py-20"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={url}
-              alt=""
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                transition:
-                  "transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease-out",
-                transform: entered
-                  ? "translateY(0) scale(1)"
-                  : "translateY(12px) scale(0.94)",
-                opacity: entered ? 1 : 0,
-              }}
-              className="max-h-[78vh] max-w-[88vw] rounded-xl object-contain shadow-2xl shadow-black/40 ring-1 ring-white/10 sm:max-h-[80vh] sm:max-w-[78vw]"
-            />
-          </div>
-        ))}
-      </div>
-
-      {images.length > 1 && (
-        <>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              nav(-1);
-            }}
-            disabled={currentIdx === 0}
-            aria-label={t("previous")}
-            className="absolute left-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white backdrop-blur-sm transition hover:bg-white/20 disabled:opacity-30 md:grid"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              nav(1);
-            }}
-            disabled={currentIdx === images.length - 1}
-            aria-label={t("next")}
-            className="absolute right-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white backdrop-blur-sm transition hover:bg-white/20 disabled:opacity-30 md:grid"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </>
-      )}
-    </div>
   );
 }
 
