@@ -777,6 +777,13 @@
       "outlook": "Outlook",
       "appleIcs": "Apple / .ics download",
       "moreInfo": "Details"
+    },
+    "gallery": {
+      "openImage": "Open photo {idx}",
+      "goTo": "Go to photo {idx}",
+      "previous": "Previous photo",
+      "next": "Next photo",
+      "close": "Close"
     }
   },
   "weeklyInsights": {
