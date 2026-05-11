@@ -119,7 +119,7 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
         <p className="mb-1.5 text-xs font-medium text-slate-700">
           {t("contactFieldPalette")}
         </p>
-        <div className="grid grid-cols-4 gap-1.5">
+        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
           {PALETTES.map((p) => {
             const active = (config.palette ?? "amethyst") === p.id;
             const previewBg = `linear-gradient(110deg, ${p.colors[0]}, ${p.colors[1]}, ${p.colors[2]}, ${p.colors[3]}, ${p.colors[4]}, ${p.colors[5]})`;
