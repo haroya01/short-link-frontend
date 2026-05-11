@@ -777,6 +777,13 @@
       "outlook": "Outlook",
       "appleIcs": "Apple / .ics ダウンロード",
       "moreInfo": "詳細"
+    },
+    "gallery": {
+      "openImage": "{idx} 番目の写真を拡大",
+      "goTo": "{idx} 番目へ移動",
+      "previous": "前の写真",
+      "next": "次の写真",
+      "close": "閉じる"
     }
   },
   "weeklyInsights": {
