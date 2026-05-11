@@ -154,10 +154,15 @@ export function ProfileFeedEditor({
                     className="flex items-center justify-between gap-3 px-3 py-2"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-mono text-sm text-slate-900">
-                        /{link.shortCode}
+                      <LinkLabelField
+                        shortCode={link.shortCode}
+                        currentLabel={labelByShortCode[link.shortCode] ?? ""}
+                        onSave={onEditLabel}
+                        t={t}
+                      />
+                      <p className="truncate font-mono text-[11px] text-slate-400">
+                        /{link.shortCode} · {link.originalUrl}
                       </p>
-                      <p className="truncate text-[11px] text-slate-500">{link.originalUrl}</p>
                     </div>
                     <button
                       type="button"
