@@ -294,7 +294,8 @@ export type PublicProfileEntry = {
     | "EMBED"
     | "EMAIL_FORM"
     | "CONTACT_CARD"
-    | "GALLERY";
+    | "GALLERY"
+    | "PRODUCT_CARD";
   id: number | null;
   shortCode: string | null;
   shortUrl: string | null;
@@ -312,9 +313,30 @@ export type PublicProfileEntry = {
 
 export type ProfileBlock = {
   id: number;
-  type: "TEXT" | "DIVIDER" | "IMAGE" | "EMBED" | "EMAIL_FORM" | "CONTACT_CARD" | "GALLERY";
+  type:
+    | "TEXT"
+    | "DIVIDER"
+    | "IMAGE"
+    | "EMBED"
+    | "EMAIL_FORM"
+    | "CONTACT_CARD"
+    | "GALLERY"
+    | "PRODUCT_CARD";
   content: string | null;
   profileOrder: number;
+};
+
+/** PRODUCT_CARD JSON shape. Items rendered as a horizontal carousel; backend caps at 8. */
+export type ProductCardConfig = {
+  title: string | null;
+  items: Array<{
+    name: string;
+    image: string | null;
+    price: string | null;
+    description: string | null;
+    ctaLabel: string | null;
+    ctaUrl: string | null;
+  }>;
 };
 
 /**

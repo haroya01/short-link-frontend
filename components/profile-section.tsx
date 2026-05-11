@@ -27,6 +27,7 @@ import type {
 import { ContactCardBlockDialog } from "./profile-section/ContactCardBlockDialog";
 import { EmailFormBlockDialog } from "./profile-section/EmailFormBlockDialog";
 import { GalleryBlockDialog } from "./profile-section/GalleryBlockDialog";
+import { ProductCardBlockDialog } from "./profile-section/ProductCardBlockDialog";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
 import { ProfileMetaForm } from "./profile-section/ProfileMetaForm";
 import { socialUrlPrefix } from "./profile-section/socials-templates";
@@ -88,6 +89,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     initialJson: string | null;
   }>({ open: false, blockId: null, initialJson: null });
   const [galleryDialog, setGalleryDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialJson: string | null;
+  }>({ open: false, blockId: null, initialJson: null });
+  const [productCardDialog, setProductCardDialog] = useState<{
     open: boolean;
     blockId: number | null;
     initialJson: string | null;
@@ -288,7 +294,8 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             | "EMBED"
             | "EMAIL_FORM"
             | "CONTACT_CARD"
-            | "GALLERY";
+            | "GALLERY"
+            | "PRODUCT_CARD";
           id: number | null;
           shortCode: string | null;
           ogTitle?: string | null;
@@ -328,6 +335,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             });
           } else if (e.kind === "GALLERY" && e.id != null) {
             next.push({ kind: "BLOCK", id: e.id, type: "GALLERY", content: e.content ?? "" });
+          } else if (e.kind === "PRODUCT_CARD" && e.id != null) {
+            next.push({
+              kind: "BLOCK",
+              id: e.id,
+              type: "PRODUCT_CARD",
+              content: e.content ?? "",
+            });
           }
         }
         setItems(next);
@@ -527,12 +541,16 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     setGalleryDialog({ open: true, blockId: null, initialJson: null });
   }
 
+  function handleAddProductCard() {
+    setProductCardDialog({ open: true, blockId: null, initialJson: null });
+  }
+
   function handleAddEmailForm() {
     setEmailFormDialog({ open: true, blockId: null, initialJson: null });
   }
 
   async function persistJsonBlock(
-    type: "CONTACT_CARD" | "GALLERY" | "EMAIL_FORM",
+    type: "CONTACT_CARD" | "GALLERY" | "PRODUCT_CARD" | "EMAIL_FORM",
     blockId: number | null,
     configJson: string,
   ) {
@@ -583,6 +601,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
     if (blockType === "GALLERY") {
       setGalleryDialog({ open: true, blockId, initialJson: current });
+      return;
+    }
+    if (blockType === "PRODUCT_CARD") {
+      setProductCardDialog({ open: true, blockId, initialJson: current });
       return;
     }
     if (blockType === "EMAIL_FORM") {
@@ -702,6 +724,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onAddEmbed={handleAddEmbed}
           onAddContactCard={handleAddContactCard}
           onAddGallery={handleAddGallery}
+          onAddProductCard={handleAddProductCard}
           onAddEmailForm={handleAddEmailForm}
           onMove={move}
           onDragStart={handleDragStart}
@@ -736,6 +759,17 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           setGalleryDialog((s) => (open ? s : { ...s, open: false }))
         }
         onSubmit={(json) => persistJsonBlock("GALLERY", galleryDialog.blockId, json)}
+        t={t}
+      />
+      <ProductCardBlockDialog
+        open={productCardDialog.open}
+        initialJson={productCardDialog.initialJson}
+        onOpenChange={(open) =>
+          setProductCardDialog((s) => (open ? s : { ...s, open: false }))
+        }
+        onSubmit={(json) =>
+          persistJsonBlock("PRODUCT_CARD", productCardDialog.blockId, json)
+        }
         t={t}
       />
       <EmailFormBlockDialog
