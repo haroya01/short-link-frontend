@@ -694,6 +694,13 @@
       "outlook": "Outlook",
       "appleIcs": "Apple / .ics 다운로드",
       "moreInfo": "자세히"
+    },
+    "gallery": {
+      "openImage": "{idx}번째 사진 크게 보기",
+      "goTo": "{idx}번째로 이동",
+      "previous": "이전 사진",
+      "next": "다음 사진",
+      "close": "닫기"
     }
   },
   "weeklyInsights": {
