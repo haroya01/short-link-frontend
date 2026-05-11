@@ -19,9 +19,10 @@ export default function ProfileEditPage() {
     theme: null,
     avatarUrl: null,
     bannerUrl: null,
-    shareChannels: [],
+    socials: [],
     featured: [],
     links: [],
+    labelByShortCode: {},
   });
 
   useEffect(() => {
@@ -57,6 +58,8 @@ export default function ProfileEditPage() {
             bannerUrl={draft.bannerUrl}
             featuredShortCodes={draft.featured}
             links={draft.links}
+            socials={draft.socials}
+            labelByShortCode={draft.labelByShortCode}
           />
         </aside>
       </div>
@@ -70,6 +73,8 @@ export default function ProfileEditPage() {
           bannerUrl={draft.bannerUrl}
           featuredShortCodes={draft.featured}
           links={draft.links}
+          socials={draft.socials}
+          labelByShortCode={draft.labelByShortCode}
         />
       </MobilePreviewSheet>
     </div>

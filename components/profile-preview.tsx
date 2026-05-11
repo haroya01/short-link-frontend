@@ -2,7 +2,8 @@
 
 import { BatteryFull, ExternalLink, Signal, Wifi } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { MyLink, ProfileTheme } from "@/types";
+import type { MyLink, ProfileTheme, Social } from "@/types";
+import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/ShareRow";
 
 type ThemeColors = {
   page: string;
@@ -119,6 +120,13 @@ type Props = {
   featuredShortCodes: string[];
   /** All of the user's links — used to look up url + originalUrl per featured code. */
   links: MyLink[];
+  /** Channel + URL pairs to render as a mini share row at the bottom of the preview. */
+  socials: Social[];
+  /**
+   * Per-shortCode label override. When present, the link row shows the user's typed label
+   * ("📝 Blog") instead of the bare hostname — same precedence the public profile uses.
+   */
+  labelByShortCode: Record<string, string>;
 };
 
 /**
@@ -135,6 +143,8 @@ export function ProfilePreview({
   bannerUrl,
   featuredShortCodes,
   links,
+  socials,
+  labelByShortCode,
 }: Props) {
   const t = useTranslations("publicProfile");
   const tEditor = useTranslations("settings.profile");
@@ -214,24 +224,41 @@ export function ProfilePreview({
                   {t("empty")}
                 </li>
               ) : (
-                featured.map((link) => (
-                  <li
-                    key={link.shortCode}
-                    className={`flex items-center justify-between gap-2 rounded-md border px-3 py-2 ${colors.card} ${colors.cardBorder}`}
-                  >
-                    <span className="min-w-0 flex-1">
-                      <span className={`block truncate text-[11px] font-medium ${colors.primary}`}>
-                        {hostOf(link.originalUrl)}
+                featured.map((link) => {
+                  const label = labelByShortCode[link.shortCode];
+                  return (
+                    <li
+                      key={link.shortCode}
+                      className={`flex items-center justify-between gap-2 rounded-md border px-3 py-2 ${colors.card} ${colors.cardBorder}`}
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span className={`block truncate text-[11px] font-medium ${colors.primary}`}>
+                          {label || hostOf(link.originalUrl)}
+                        </span>
+                        <span className={`block truncate text-[10px] ${colors.muted}`}>
+                          {label ? hostOf(link.originalUrl) : `/${link.shortCode}`}
+                        </span>
                       </span>
-                      <span className={`block truncate text-[10px] ${colors.muted}`}>
-                        /{link.shortCode}
-                      </span>
-                    </span>
-                    <ExternalLink className={`h-3 w-3 shrink-0 ${colors.muted}`} />
-                  </li>
-                ))
+                      <ExternalLink className={`h-3 w-3 shrink-0 ${colors.muted}`} />
+                    </li>
+                  );
+                })
               )}
             </ul>
+            {(socials.length > 0 || featured.length > 0) && (
+              // Mini share row — mirrors the public profile's ShareRow visually. URL-less chips
+              // still show up so the user can preview chip placement while drafting the URL.
+              <div className="mt-3 flex items-center justify-center gap-1">
+                {socials.map((s) => (
+                  <span
+                    key={s.channel}
+                    className={`inline-flex h-6 w-6 items-center justify-center rounded-full border ${colors.cardBorder} ${colors.card}`}
+                  >
+                    <ChannelIcon channel={s.channel} className={`h-2.5 w-2.5 ${colors.muted}`} />
+                  </span>
+                ))}
+              </div>
+            )}
             {/* Home indicator */}
             <div className="mx-auto mt-3 h-1 w-24 rounded-full bg-slate-300/60" />
           </div>

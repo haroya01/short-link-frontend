@@ -20,7 +20,7 @@ import type {
   MyProfile,
   ProfileReorderItem,
   ProfileTheme,
-  ShareChannel,
+  Social,
 } from "@/types";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
 import { ProfileMetaForm } from "./profile-section/ProfileMetaForm";
@@ -33,9 +33,15 @@ export type ProfileDraft = {
   theme: ProfileTheme | null;
   avatarUrl: string | null;
   bannerUrl: string | null;
-  shareChannels: ShareChannel[];
+  socials: Social[];
   featured: string[];
   links: MyLink[];
+  /**
+   * Per-shortCode label override. The link list itself only carries originalUrl, but the public
+   * profile feed enriches each LINK with its effective OG title (= user's label). We thread it
+   * down so the preview can show "📝 Blog" instead of "blog.example.com".
+   */
+  labelByShortCode: Record<string, string>;
 };
 
 type ProfileSectionProps = {
@@ -57,10 +63,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [theme, setTheme] = useState<ProfileTheme | null>(null);
-  const [shareChannels, setShareChannels] = useState<ShareChannel[]>([]);
+  const [socials, setSocials] = useState<Social[]>([]);
   const [savingProfile, setSavingProfile] = useState(false);
   const [links, setLinks] = useState<MyLink[] | null>(null);
   const [items, setItems] = useState<FeedItem[]>([]);
+  const [labelByShortCode, setLabelByShortCode] = useState<Record<string, string>>({});
   const [highlightedShortCode, setHighlightedShortCode] = useState<string | null>(null);
   const [pendingShortCode, setPendingShortCode] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
@@ -69,7 +76,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const lastSavedRef = useRef<{
     bio: string;
     theme: ProfileTheme | null;
-    shareChannels: string;
+    socials: string;
   } | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
@@ -88,9 +95,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       theme,
       avatarUrl: profile?.avatarUrl ?? null,
       bannerUrl: profile?.bannerUrl ?? null,
-      shareChannels,
+      socials,
       featured,
       links: links ?? [],
+      labelByShortCode,
     });
   }, [
     username,
@@ -98,9 +106,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     theme,
     profile?.avatarUrl,
     profile?.bannerUrl,
-    shareChannels,
+    socials,
     featured,
     links,
+    labelByShortCode,
     onDraft,
   ]);
 
@@ -109,19 +118,22 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   // we want intent for that, but everything else should "just save" so the editor feels alive.
   useEffect(() => {
     if (!profile?.username) return;
-    const channelsCsv = shareChannels.join(",");
+    // Drop entries with empty URL so the user can leave a chip enabled while still drafting the
+    // URL — only complete pairs trigger a save. Empty string later signals "clear all" to the API.
+    const socialsCleaned = socials.filter((s) => s.url.trim().length > 0);
+    const socialsJson = socialsCleaned.length === 0 ? "" : JSON.stringify(socialsCleaned);
     if (lastSavedRef.current === null) {
       lastSavedRef.current = {
         bio: profile.bio ?? "",
         theme: profile.theme ?? null,
-        shareChannels: (profile.shareChannels ?? []).join(","),
+        socials: (profile.socials ?? []).length === 0 ? "" : JSON.stringify(profile.socials),
       };
       return;
     }
     if (
       lastSavedRef.current.bio === bio &&
       lastSavedRef.current.theme === theme &&
-      lastSavedRef.current.shareChannels === channelsCsv
+      lastSavedRef.current.socials === socialsJson
     )
       return;
     setAutoSaveStatus("saving");
@@ -130,10 +142,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         const updated = await updateMyProfile({
           bio: bio.trim(),
           theme: theme ?? undefined,
-          shareChannels: channelsCsv,
+          socials: socialsJson,
         });
         setProfile(updated);
-        lastSavedRef.current = { bio, theme, shareChannels: channelsCsv };
+        lastSavedRef.current = { bio, theme, socials: socialsJson };
         setAutoSaveStatus("saved");
         setTimeout(() => setAutoSaveStatus("idle"), 1500);
       } catch (err) {
@@ -145,11 +157,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   }, [
     bio,
     theme,
-    shareChannels,
+    socials,
     profile?.username,
     profile?.bio,
     profile?.theme,
-    profile?.shareChannels,
+    profile?.socials,
     errorMessage,
     t,
     toast,
@@ -164,7 +176,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         setUsername(prof.username ?? "");
         setBio(prof.bio ?? "");
         setTheme(prof.theme ?? null);
-        setShareChannels(prof.shareChannels ?? []);
+        setSocials(prof.socials ?? []);
         setLinks(page.items);
       })
       .catch(() => {
@@ -197,13 +209,16 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE";
           id: number | null;
           shortCode: string | null;
+          ogTitle?: string | null;
           highlighted?: boolean | null;
           content?: string | null;
         }>;
         const next: FeedItem[] = [];
+        const labels: Record<string, string> = {};
         for (const e of entries) {
           if (e.kind === "LINK" && e.shortCode) {
             next.push({ kind: "LINK", code: e.shortCode });
+            if (e.ogTitle) labels[e.shortCode] = e.ogTitle;
           } else if (e.kind === "TEXT" && e.id != null) {
             next.push({ kind: "BLOCK", id: e.id, type: "TEXT", content: e.content ?? "" });
           } else if (e.kind === "DIVIDER" && e.id != null) {
@@ -213,6 +228,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           }
         }
         setItems(next);
+        setLabelByShortCode(labels);
         const hl = entries.find((e) => e.kind === "LINK" && e.highlighted);
         setHighlightedShortCode(hl?.shortCode ?? null);
       })
@@ -240,11 +256,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
     setSavingProfile(true);
     try {
+      const cleanedSocials = socials.filter((s) => s.url.trim().length > 0);
       const updated = await updateMyProfile({
         username: next || undefined,
         bio: bio.trim(),
         theme: theme ?? undefined,
-        shareChannels: shareChannels.join(","),
+        socials: cleanedSocials.length === 0 ? "" : JSON.stringify(cleanedSocials),
       });
       setProfile(updated);
       toast(t("saved"), "success");
@@ -438,8 +455,8 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       onThemeChange={setTheme}
       onAvatarChange={(avatarUrl) => setProfile((p) => (p ? { ...p, avatarUrl } : p))}
       onBannerChange={(bannerUrl) => setProfile((p) => (p ? { ...p, bannerUrl } : p))}
-      shareChannels={shareChannels}
-      onShareChannelsChange={setShareChannels}
+      socials={socials}
+      onSocialsChange={setSocials}
       onSave={handleSaveProfile}
       t={t}
     />
