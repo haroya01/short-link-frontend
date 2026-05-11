@@ -81,7 +81,13 @@ export default async function PublicProfilePage({
           colors={colors}
           channels={profile.shareChannels ?? []}
           labels={{
-            shareOn: (ch) => t(`share.${ch}`),
+            shareOn: {
+              x: t("share.x"),
+              line: t("share.line"),
+              threads: t("share.threads"),
+              facebook: t("share.facebook"),
+              kakao: t("share.kakao"),
+            },
             shareMore: t("share.more"),
             copy: t("share.copy"),
             copied: t("share.copied"),

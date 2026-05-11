@@ -12,7 +12,12 @@ type Props = {
   /** Channels the profile owner enabled in the editor, in their chosen order. */
   channels: ShareChannel[];
   labels: {
-    shareOn: (channel: ShareChannel) => string;
+    /**
+     * Per-channel aria-label, pre-resolved server-side. Has to be a plain Record (not a function)
+     * because server components can't serialize functions to client components — Next.js rejects
+     * any function in a client component's props at SSR.
+     */
+    shareOn: Record<ShareChannel, string>;
     shareMore: string;
     copy: string;
     copied: string;
@@ -59,8 +64,8 @@ export function ShareRow({ url, username, colors, channels, labels }: Props) {
           href={channelIntent(ch, url, shareText)}
           target="_blank"
           rel="noreferrer"
-          aria-label={labels.shareOn(ch)}
-          title={labels.shareOn(ch)}
+          aria-label={labels.shareOn[ch]}
+          title={labels.shareOn[ch]}
           className={buttonClass}
         >
           <ChannelIcon channel={ch} className={`h-3.5 w-3.5 ${colors.muted}`} />
