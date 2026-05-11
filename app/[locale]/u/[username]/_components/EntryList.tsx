@@ -5,6 +5,7 @@ import { ContactCardEntry } from "./ContactCardEntry";
 import { DividerEntry } from "./DividerEntry";
 import { EmbedEntryCard } from "./EmbedEntryCard";
 import { GalleryEntryCard } from "./GalleryEntryCard";
+import { ProductCardEntry } from "./ProductCardEntry";
 import { ImageEntryCard } from "./ImageEntryCard";
 import { LinkEntryCard } from "./LinkEntryCard";
 import { TextEntryHeader } from "./TextEntryHeader";
@@ -74,6 +75,15 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
         if (entry.kind === "GALLERY" && entry.content)
           return (
             <GalleryEntryCard
+              key={key}
+              content={entry.content}
+              colors={colors}
+              fadeStyle={style}
+            />
+          );
+        if (entry.kind === "PRODUCT_CARD" && entry.content)
+          return (
+            <ProductCardEntry
               key={key}
               content={entry.content}
               colors={colors}

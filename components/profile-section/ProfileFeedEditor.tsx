@@ -7,6 +7,7 @@ import {
   ChevronUp,
   Contact,
   GalleryHorizontal,
+  ShoppingBag,
   GripVertical,
   ImageIcon,
   Minus,
@@ -36,6 +37,7 @@ type Props = {
   onAddEmbed: () => void;
   onAddContactCard: () => void;
   onAddGallery: () => void;
+  onAddProductCard: () => void;
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
@@ -71,6 +73,7 @@ export function ProfileFeedEditor({
   onAddEmbed,
   onAddContactCard,
   onAddGallery,
+  onAddProductCard,
   onMove,
   onDragStart,
   onDragOver,
@@ -103,6 +106,7 @@ export function ProfileFeedEditor({
           onAddEmbed={onAddEmbed}
           onAddContactCard={onAddContactCard}
           onAddGallery={onAddGallery}
+          onAddProductCard={onAddProductCard}
           t={t}
         />
       </div>
@@ -203,6 +207,7 @@ function AddMenu({
   onAddEmbed,
   onAddContactCard,
   onAddGallery,
+  onAddProductCard,
   t,
 }: {
   onAddText: () => void;
@@ -211,6 +216,7 @@ function AddMenu({
   onAddEmbed: () => void;
   onAddContactCard: () => void;
   onAddGallery: () => void;
+  onAddProductCard: () => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   const [open, setOpen] = useState(false);
@@ -277,6 +283,12 @@ function AddMenu({
             icon={<GalleryHorizontal className="h-3.5 w-3.5" />}
           >
             {t("addGallery")}
+          </MenuItem>
+          <MenuItem
+            onClick={() => fire(onAddProductCard)}
+            icon={<ShoppingBag className="h-3.5 w-3.5" />}
+          >
+            {t("addProductCard")}
           </MenuItem>
         </div>
       )}
@@ -493,6 +505,25 @@ function FeedItemRow({
       </li>
     );
   }
+  if (item.kind === "BLOCK" && item.type === "PRODUCT_CARD") {
+    const summary = productCardSummary(item.content);
+    return (
+      <li {...dndProps} className={baseRow}>
+        {dragHandle}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <ShoppingBag className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          <span className="truncate text-sm font-medium text-slate-900">
+            {summary || t("addProductCardPlaceholder")}
+          </span>
+        </div>
+        <BlockActions
+          onEdit={() => onEditBlock(item.id, item.content ?? "")}
+          onDelete={() => onDeleteBlock(item.id)}
+          t={t}
+        />
+      </li>
+    );
+  }
   if (item.kind === "BLOCK" && item.type === "EMBED") {
     return (
       <li {...dndProps} className={baseRow}>
@@ -652,6 +683,24 @@ function summarizeJsonField(content: string | null, field: string): string {
   try {
     const parsed = JSON.parse(content);
     return typeof parsed?.[field] === "string" ? parsed[field] : "";
+  } catch {
+    return "";
+  }
+}
+
+/** Title (or first item's name) + count for the editor row preview. */
+function productCardSummary(content: string | null): string {
+  if (!content) return "";
+  try {
+    const parsed = JSON.parse(content);
+    const title = typeof parsed?.title === "string" ? parsed.title : "";
+    const count = Array.isArray(parsed?.items) ? parsed.items.length : 0;
+    if (title) return `${title} · ${count}`;
+    const first =
+      Array.isArray(parsed?.items) && typeof parsed.items[0]?.name === "string"
+        ? parsed.items[0].name
+        : "";
+    return first ? `${first} 외 ${count - 1}건` : "";
   } catch {
     return "";
   }

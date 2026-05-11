@@ -26,6 +26,7 @@ import type {
 } from "@/types";
 import { ContactCardBlockDialog } from "./profile-section/ContactCardBlockDialog";
 import { GalleryBlockDialog } from "./profile-section/GalleryBlockDialog";
+import { ProductCardBlockDialog } from "./profile-section/ProductCardBlockDialog";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
 import { ProfileMetaForm } from "./profile-section/ProfileMetaForm";
 import { socialUrlPrefix } from "./profile-section/socials-templates";
@@ -87,6 +88,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     initialJson: string | null;
   }>({ open: false, blockId: null, initialJson: null });
   const [galleryDialog, setGalleryDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialJson: string | null;
+  }>({ open: false, blockId: null, initialJson: null });
+  const [productCardDialog, setProductCardDialog] = useState<{
     open: boolean;
     blockId: number | null;
     initialJson: string | null;
@@ -274,7 +280,15 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       .then((data) => {
         if (cancelled || !data) return;
         const entries = (data.entries ?? []) as Array<{
-          kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE" | "EMBED" | "CONTACT_CARD" | "GALLERY";
+          kind:
+            | "LINK"
+            | "TEXT"
+            | "DIVIDER"
+            | "IMAGE"
+            | "EMBED"
+            | "CONTACT_CARD"
+            | "GALLERY"
+            | "PRODUCT_CARD";
           id: number | null;
           shortCode: string | null;
           ogTitle?: string | null;
@@ -307,6 +321,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             });
           } else if (e.kind === "GALLERY" && e.id != null) {
             next.push({ kind: "BLOCK", id: e.id, type: "GALLERY", content: e.content ?? "" });
+          } else if (e.kind === "PRODUCT_CARD" && e.id != null) {
+            next.push({
+              kind: "BLOCK",
+              id: e.id,
+              type: "PRODUCT_CARD",
+              content: e.content ?? "",
+            });
           }
         }
         setItems(next);
@@ -506,8 +527,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     setGalleryDialog({ open: true, blockId: null, initialJson: null });
   }
 
+  function handleAddProductCard() {
+    setProductCardDialog({ open: true, blockId: null, initialJson: null });
+  }
+
   async function persistJsonBlock(
-    type: "CONTACT_CARD" | "GALLERY",
+    type: "CONTACT_CARD" | "GALLERY" | "PRODUCT_CARD",
     blockId: number | null,
     configJson: string,
   ) {
@@ -558,6 +583,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
     if (blockType === "GALLERY") {
       setGalleryDialog({ open: true, blockId, initialJson: current });
+      return;
+    }
+    if (blockType === "PRODUCT_CARD") {
+      setProductCardDialog({ open: true, blockId, initialJson: current });
       return;
     }
     const promptKey =
@@ -673,6 +702,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onAddEmbed={handleAddEmbed}
           onAddContactCard={handleAddContactCard}
           onAddGallery={handleAddGallery}
+          onAddProductCard={handleAddProductCard}
           onMove={move}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
@@ -706,6 +736,17 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           setGalleryDialog((s) => (open ? s : { ...s, open: false }))
         }
         onSubmit={(json) => persistJsonBlock("GALLERY", galleryDialog.blockId, json)}
+        t={t}
+      />
+      <ProductCardBlockDialog
+        open={productCardDialog.open}
+        initialJson={productCardDialog.initialJson}
+        onOpenChange={(open) =>
+          setProductCardDialog((s) => (open ? s : { ...s, open: false }))
+        }
+        onSubmit={(json) =>
+          persistJsonBlock("PRODUCT_CARD", productCardDialog.blockId, json)
+        }
         t={t}
       />
     </div>
