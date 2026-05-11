@@ -291,11 +291,19 @@ function CardFace({
   back?: boolean;
   children: React.ReactNode;
 }) {
+  // Front sits in-flow and defines the rotating wrapper's height. Back is positioned absolutely
+  // on top, rotated 180° so its visible side is the "back". Two separate position classes —
+  // putting both `relative` and `absolute` on the same node lets the browser pick whichever the
+  // generated stylesheet orders last, which was making the back face render in-flow underneath
+  // the front (double-stacked card on initial render).
+  const positionClass = back
+    ? "absolute inset-0 [transform:rotateY(180deg)]"
+    : "relative";
   return (
     <div
       className={
-        "contact-card relative overflow-hidden rounded-2xl border border-slate-700/40 bg-slate-950 text-white shadow-2xl shadow-slate-900/40 [backface-visibility:hidden] " +
-        (back ? "absolute inset-0 [transform:rotateY(180deg)]" : "relative")
+        "contact-card overflow-hidden rounded-2xl border border-slate-700/40 bg-slate-950 text-white shadow-2xl shadow-slate-900/40 [backface-visibility:hidden] " +
+        positionClass
       }
       style={{
         backgroundImage:
