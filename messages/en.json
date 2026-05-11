@@ -1121,7 +1121,16 @@
       "addGalleryTitle": "Add gallery",
       "editGalleryTitle": "Edit gallery",
       "addGalleryDescription": "Image URLs to display as a swipeable carousel. Up to {max} images.",
+      "addGalleryDescriptionUpload": "Upload images directly. Up to {max} — visitors swipe horizontally to browse.",
       "addGalleryPlaceholder": "(no gallery)",
+      "imageUploader": {
+        "emptyHint": "Add image",
+        "replace": "Replace",
+        "remove": "Remove",
+        "invalidType": "Only JPEG / PNG / WebP allowed.",
+        "tooBig": "Image is too large.",
+        "uploadFailed": "Upload failed."
+      },
       "galleryAddRow": "Add image",
       "galleryRowSummary": "{count} images",
       "save": "Save",
