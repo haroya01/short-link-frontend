@@ -11,6 +11,7 @@ import {
   listMyLinks,
   reorderProfileItems,
   setLinkHighlight,
+  setLinkOgOverride,
   toggleLinkOnProfile,
   updateMyProfile,
   updateProfileBlock,
@@ -492,6 +493,31 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
+  async function handleEditLabel(shortCode: string, label: string) {
+    const trimmed = label.trim();
+    const prev = labelByShortCode[shortCode];
+    // Optimistic: paint immediately so the preview updates without waiting for the round-trip.
+    setLabelByShortCode((m) => {
+      const next = { ...m };
+      if (trimmed) next[shortCode] = trimmed;
+      else delete next[shortCode];
+      return next;
+    });
+    try {
+      // Empty string clears the override → public profile falls back to the host.
+      await setLinkOgOverride(shortCode, { ogTitle: trimmed || null });
+    } catch (err) {
+      // Roll back optimistic update on failure so the editor doesn't lie about what's saved.
+      setLabelByShortCode((m) => {
+        const next = { ...m };
+        if (prev != null) next[shortCode] = prev;
+        else delete next[shortCode];
+        return next;
+      });
+      toast(errorMessage(err, t("saveFailed")), "error");
+    }
+  }
+
   async function handleDeleteBlock(blockId: number) {
     try {
       await deleteProfileBlock(blockId);
@@ -549,6 +575,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           pendingShortCode={pendingShortCode}
           dragIndex={dragIndex}
           overIndex={overIndex}
+          labelByShortCode={labelByShortCode}
           onAddText={handleAddText}
           onAddDivider={handleAddDivider}
           onAddImage={handleAddImage}
@@ -563,6 +590,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onToggle={handleToggle}
           onEditBlock={handleEditBlock}
           onDeleteBlock={handleDeleteBlock}
+          onEditLabel={handleEditLabel}
           t={t}
         />
       </Section>
