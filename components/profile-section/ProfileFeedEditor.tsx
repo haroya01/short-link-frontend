@@ -141,7 +141,7 @@ export function ProfileFeedEditor({
                     key={link.shortCode}
                     className="flex items-center justify-between gap-3 px-3 py-2"
                   >
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="truncate font-mono text-sm text-slate-900">
                         /{link.shortCode}
                       </p>
