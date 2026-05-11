@@ -758,7 +758,10 @@
       "dockCall": "電話",
       "dockShare": "共有",
       "dockSave": "保存",
-      "qrAlt": "QR をスキャンして連絡先を追加"
+      "qrAlt": "QR をスキャンして連絡先を追加",
+      "flipToBack": "裏返す (QR 表示)",
+      "flipToFront": "表に戻す",
+      "backTagline": "スキャンして連絡先保存"
     },
     "emailForm": {
       "submit": "登録",
