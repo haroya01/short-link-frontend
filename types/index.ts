@@ -374,6 +374,8 @@ export type ContactCardConfig = {
   phone: string | null;
   address: string | null;
   website: string | null;
+  /** Public URL of the company / personal logo uploaded via profile-images. */
+  logoUrl: string | null;
 };
 
 /** GALLERY JSON shape. Backend caps at 6 image URLs. */
