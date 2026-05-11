@@ -65,7 +65,9 @@ export function playCardFlipSound(): void {
 
   const noiseGain = audio.createGain();
   noiseGain.gain.setValueAtTime(0, now);
-  noiseGain.gain.linearRampToValueAtTime(0.12, now + 0.02);
+  // Reduced peak (was 0.12) — the swish was overpowering the tap; this puts the two roughly
+  // at parity so the "swipe then land" rhythm reads more like a real card flip.
+  noiseGain.gain.linearRampToValueAtTime(0.07, now + 0.02);
   noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
 
   noise.connect(filter);

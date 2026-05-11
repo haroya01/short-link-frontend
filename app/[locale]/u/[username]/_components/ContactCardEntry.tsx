@@ -76,14 +76,23 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
     };
   }, [vcard]);
 
+  // Tracks whether the pointer is currently over the card. While true the rAF "idle"
+  // animation pauses and the values set by handlePointerMove are authoritative; while false the
+  // loop drives a gentle orbit + scroll-based light position so the card feels alive at rest.
+  const pointerOverRef = useRef(false);
+
   const handlePointerMove = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
     const el = cardRef.current;
     if (!el) return;
+    pointerOverRef.current = true;
     const rect = el.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
-    const rx = ((x - 50) / 50) * 8;
-    const ry = ((y - 50) / 50) * -8;
+    // Both axes "look TOWARD pointer" — pointer on left → left edge comes forward, pointer on
+    // top → top edge comes forward. Previously the Y axis had its sign flipped so the card
+    // tilted the opposite direction vertically vs. horizontally, which felt off.
+    const rx = ((x - 50) / 50) * -8; // feeds rotateY
+    const ry = ((y - 50) / 50) * 8; // feeds rotateX
     el.style.setProperty("--mx", `${x}%`);
     el.style.setProperty("--my", `${y}%`);
     el.style.setProperty("--rx", `${rx}deg`);
@@ -91,12 +100,51 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
   }, []);
 
   const handlePointerLeave = useCallback(() => {
-    const el = cardRef.current;
-    if (!el) return;
-    el.style.setProperty("--mx", `50%`);
-    el.style.setProperty("--my", `50%`);
-    el.style.setProperty("--rx", `0deg`);
-    el.style.setProperty("--ry", `0deg`);
+    pointerOverRef.current = false;
+    // Don't reset to center — the idle rAF loop will take over from the last pointer position
+    // and smoothly orbit from there, no jarring snap-to-center.
+  }, []);
+
+  // Idle animation: when pointer isn't over the card, slowly orbit the highlight position and
+  // bias it vertically based on the card's scroll position in the viewport. The combination
+  // simulates a fixed light source while the card moves — the holographic catch shifts as the
+  // visitor scrolls, the way it would if you tilted a real foil card. rAF runs continuously while
+  // mounted; the inner branch makes it a no-op when the pointer is engaged.
+  useEffect(() => {
+    let rafId = 0;
+    const start = performance.now();
+    const loop = () => {
+      const el = cardRef.current;
+      if (el && !pointerOverRef.current) {
+        const t = (performance.now() - start) / 1000;
+        // Slow elliptical orbit (~12s period for x, ~9s for y → drifting Lissajous, never repeats
+        // exactly so the eye doesn't latch onto a loop).
+        const orbitX = 50 + 28 * Math.cos(t * 0.52);
+        const orbitY = 50 + 18 * Math.sin(t * 0.71);
+
+        // Card's vertical position in the viewport, mapped to a ±15% Y bias on the highlight.
+        const rect = el.getBoundingClientRect();
+        const vh = window.innerHeight || 1;
+        const cardMid = rect.top + rect.height / 2;
+        // -0.5 (card at top of viewport) → +0.5 (card at bottom)
+        const scrollPct = cardMid / vh - 0.5;
+        const scrollBiasY = Math.max(-15, Math.min(15, scrollPct * 30));
+
+        const my = Math.max(5, Math.min(95, orbitY + scrollBiasY));
+        el.style.setProperty("--mx", `${orbitX}%`);
+        el.style.setProperty("--my", `${my}%`);
+        // Subtle idle tilt — half intensity of pointer-driven so the card breathes without
+        // looking like it's being aggressively manipulated.
+        el.style.setProperty(
+          "--rx",
+          `${((orbitX - 50) / 50) * -3}deg`,
+        );
+        el.style.setProperty("--ry", `${((my - 50) / 50) * 3}deg`);
+      }
+      rafId = requestAnimationFrame(loop);
+    };
+    rafId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
   function downloadVcard() {
@@ -165,14 +213,26 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
         >
           {/* FRONT */}
           <CardFace>
-            <div className="relative z-10 px-6 pt-6">
-              <p className="text-2xl font-semibold leading-tight tracking-tight">
-                {card.name}
-              </p>
-              {(card.title || card.company) && (
-                <p className="mt-1 text-sm text-slate-300">
-                  {[card.title, card.company].filter(Boolean).join(" · ")}
+            <div className="relative z-10 flex items-start justify-between gap-3 px-6 pt-6">
+              <div className="min-w-0 flex-1">
+                <p className="text-2xl font-semibold leading-tight tracking-tight">
+                  {card.name}
                 </p>
+                {(card.title || card.company) && (
+                  <p className="mt-1 text-sm text-slate-300">
+                    {[card.title, card.company].filter(Boolean).join(" · ")}
+                  </p>
+                )}
+              </div>
+              {card.logoUrl && (
+                <div className="shrink-0 rounded-lg bg-white/95 p-1 shadow-md shadow-black/30">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={card.logoUrl}
+                    alt=""
+                    className="h-10 w-10 rounded-md object-contain"
+                  />
+                </div>
               )}
             </div>
 
@@ -263,27 +323,60 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
             </div>
           </CardFace>
 
-          {/* BACK — same material, content is a hero QR sized for scan-from-across-the-table. */}
+          {/* BACK — smaller QR with decorated frame so the back face reads as a designed object,
+              not a giant block of black-and-white. Brand mark (logo or initial) anchors the top,
+              QR centered, name + scan caption below. */}
           <CardFace back>
-            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-4 p-8">
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-300">
-                {t("backTagline")}
-              </p>
+            <div className="relative z-10 flex h-full flex-col items-center justify-between gap-4 p-6">
+              {/* Header band — logo (if any) + tagline */}
+              <div className="flex w-full items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {card.logoUrl ? (
+                    <div className="rounded-md bg-white/95 p-0.5 shadow-md shadow-black/30">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={card.logoUrl}
+                        alt=""
+                        className="h-6 w-6 rounded object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <span className="grid h-6 w-6 place-items-center rounded-md bg-white/10 text-[10px] font-bold uppercase text-white/90">
+                      {card.name.slice(0, 1)}
+                    </span>
+                  )}
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-slate-300">
+                    {card.company || t("backTagline")}
+                  </p>
+                </div>
+                <span className="text-[9px] uppercase tracking-[0.18em] text-slate-400">
+                  kurl.me
+                </span>
+              </div>
+
+              {/* QR — framed in a soft white plate with subtle inner ring */}
               {qrDataUrl ? (
-                <div className="rounded-xl bg-white/95 p-3 shadow-2xl shadow-black/40">
+                <div className="rounded-2xl bg-white/95 p-3 shadow-2xl shadow-black/50 ring-1 ring-white/30">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={qrDataUrl}
                     alt={t("qrAlt")}
-                    className="h-44 w-44 sm:h-52 sm:w-52"
+                    className="h-32 w-32 sm:h-36 sm:w-36"
                   />
                 </div>
               ) : (
-                <div className="h-44 w-44 animate-pulse rounded-xl bg-white/10 sm:h-52 sm:w-52" />
+                <div className="h-32 w-32 animate-pulse rounded-2xl bg-white/10 sm:h-36 sm:w-36" />
               )}
-              <p className="max-w-[18ch] text-center text-[12px] text-slate-300">
-                {card.name}
-              </p>
+
+              {/* Footer — name + instruction */}
+              <div className="flex w-full flex-col items-center gap-0.5">
+                <p className="max-w-[18ch] text-center text-[14px] font-semibold text-white">
+                  {card.name}
+                </p>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-slate-400">
+                  {t("backScanHint")}
+                </p>
+              </div>
             </div>
           </CardFace>
         </div>
@@ -332,18 +425,25 @@ function CardFace({
           "inset 0 0 0 1px rgba(255,255,255,0.08), 0 25px 50px -12px rgba(0,0,0,0.45)",
       }}
     >
-      {/* Pointer-tracked radial highlight. */}
+      {/* Pointer-tracked radial highlight. Wider falloff (out to ~75% radius) so the light
+          actually reaches the card edges when the pointer is at a corner — the prior 35%
+          falloff made the corners feel dim even when directly touched.
+          The back face is `transform: rotateY(180deg)`, which mirrors its content. So when --mx
+          says "70% from left," the back face would render the highlight at "30% from left of the
+          viewer." We compensate by inverting the X axis on the back face only. */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-70"
         style={{
-          backgroundImage:
-            "radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.1) 18%, transparent 35%)",
+          backgroundImage: back
+            ? "radial-gradient(circle at calc(100% - var(--mx, 50%)) var(--my, 50%), rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.25) 20%, rgba(255,255,255,0.08) 45%, transparent 75%)"
+            : "radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.25) 20%, rgba(255,255,255,0.08) 45%, transparent 75%)",
           mixBlendMode: "color-dodge",
         }}
       />
       {/* Sharp diagonal foil stripe — codingapple's foil example pushed harder: tighter color
-          stops (40%→60%), saturated yellow/purple/cyan triplet, 1.5× pointer-parallax. */}
+          stops (40%→60%), saturated yellow/purple/cyan triplet, 1.5× pointer-parallax. Back face
+          flips the parallax direction so the stripe drift matches the visitor's pointer side. */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-60"
@@ -351,8 +451,9 @@ function CardFace({
           backgroundImage:
             "linear-gradient(105deg, transparent 38%, rgba(255,219,112,0.85) 45%, rgba(132,50,255,0.7) 50%, rgba(119,198,255,0.75) 55%, transparent 62%)",
           backgroundSize: "220% 220%",
-          backgroundPosition:
-            "calc(50% + (var(--mx, 50%) - 50%) * 1.5) calc(50% + (var(--my, 50%) - 50%) * 1.5)",
+          backgroundPosition: back
+            ? "calc(50% - (var(--mx, 50%) - 50%) * 1.5) calc(50% + (var(--my, 50%) - 50%) * 1.5)"
+            : "calc(50% + (var(--mx, 50%) - 50%) * 1.5) calc(50% + (var(--my, 50%) - 50%) * 1.5)",
           mixBlendMode: "color-dodge",
         }}
       />
@@ -421,6 +522,7 @@ function parseConfig(raw: string): ContactCardConfig {
       phone: typeof parsed.phone === "string" ? parsed.phone : null,
       address: typeof parsed.address === "string" ? parsed.address : null,
       website: typeof parsed.website === "string" ? parsed.website : null,
+      logoUrl: typeof parsed.logoUrl === "string" ? parsed.logoUrl : null,
     };
   } catch {
     return {
@@ -431,6 +533,7 @@ function parseConfig(raw: string): ContactCardConfig {
       phone: null,
       address: null,
       website: null,
+      logoUrl: null,
     };
   }
 }

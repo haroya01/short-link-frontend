@@ -678,7 +678,8 @@
       "qrAlt": "연락처를 추가하려면 QR 을 스캔하세요",
       "flipToBack": "뒤집기 (QR 보기)",
       "flipToFront": "앞으로 돌리기",
-      "backTagline": "스캔해서 연락처 저장"
+      "backTagline": "디지털 명함",
+      "backScanHint": "QR 스캔 → 연락처 추가"
     },
     "emailForm": {
       "submit": "등록",
@@ -1063,6 +1064,8 @@
       "contactFieldWebsite": "웹사이트",
       "contactFieldAddress": "주소",
       "contactFieldAddressPlaceholder": "서울특별시 ...",
+      "contactFieldLogo": "로고 (옵션)",
+      "contactFieldLogoHint": "회사/개인 로고 — 명함 앞·뒷면에 작게 표시됩니다.",
       "addGalleryTitle": "갤러리 추가",
       "editGalleryTitle": "갤러리 수정",
       "addGalleryDescription": "이미지 URL 을 입력하세요. 최대 {max}장 — 방문자는 좌우로 스와이프하며 볼 수 있어요.",

@@ -761,7 +761,8 @@
       "qrAlt": "Scan QR to add this contact",
       "flipToBack": "Flip (show QR)",
       "flipToFront": "Flip back",
-      "backTagline": "Scan to save contact"
+      "backTagline": "Digital card",
+      "backScanHint": "Scan QR → add contact"
     },
     "emailForm": {
       "submit": "Sign up",
@@ -1149,6 +1150,8 @@
       "contactFieldWebsite": "Website",
       "contactFieldAddress": "Address",
       "contactFieldAddressPlaceholder": "City, Country",
+      "contactFieldLogo": "Logo (optional)",
+      "contactFieldLogoHint": "Company / personal logo — shown small on both sides of the card.",
       "addGalleryTitle": "Add gallery",
       "editGalleryTitle": "Edit gallery",
       "addGalleryDescription": "Image URLs to display as a swipeable carousel. Up to {max} images.",
