@@ -279,7 +279,15 @@ export type PublicProfile = {
 };
 
 export type PublicProfileEntry = {
-  kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE" | "EMBED";
+  kind:
+    | "LINK"
+    | "TEXT"
+    | "DIVIDER"
+    | "IMAGE"
+    | "EMBED"
+    | "EMAIL_FORM"
+    | "CONTACT_CARD"
+    | "GALLERY";
   id: number | null;
   shortCode: string | null;
   shortUrl: string | null;
@@ -288,14 +296,34 @@ export type PublicProfileEntry = {
   ogImage: string | null;
   clickCount: number | null;
   highlighted: boolean | null;
+  /**
+   * For LINK: null. For TEXT: header text. For IMAGE/EMBED: URL. For EMAIL_FORM / CONTACT_CARD /
+   * GALLERY: JSON config — each renderer parses its own shape.
+   */
   content: string | null;
 };
 
 export type ProfileBlock = {
   id: number;
-  type: "TEXT" | "DIVIDER" | "IMAGE" | "EMBED";
+  type: "TEXT" | "DIVIDER" | "IMAGE" | "EMBED" | "EMAIL_FORM" | "CONTACT_CARD" | "GALLERY";
   content: string | null;
   profileOrder: number;
+};
+
+/** CONTACT_CARD JSON shape. {@link name} required, rest optional. */
+export type ContactCardConfig = {
+  name: string;
+  title: string | null;
+  company: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  website: string | null;
+};
+
+/** GALLERY JSON shape. Backend caps at 6 image URLs. */
+export type GalleryConfig = {
+  images: string[];
 };
 
 /**

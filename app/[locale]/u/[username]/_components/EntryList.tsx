@@ -1,8 +1,10 @@
 import type { CSSProperties } from "react";
 import type { PublicProfileEntry } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
+import { ContactCardEntry } from "./ContactCardEntry";
 import { DividerEntry } from "./DividerEntry";
 import { EmbedEntryCard } from "./EmbedEntryCard";
+import { GalleryEntryCard } from "./GalleryEntryCard";
 import { ImageEntryCard } from "./ImageEntryCard";
 import { LinkEntryCard } from "./LinkEntryCard";
 import { TextEntryHeader } from "./TextEntryHeader";
@@ -59,6 +61,24 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
         if (entry.kind === "EMBED" && entry.content)
           return (
             <EmbedEntryCard key={key} url={entry.content} colors={colors} fadeStyle={style} />
+          );
+        if (entry.kind === "CONTACT_CARD" && entry.content)
+          return (
+            <ContactCardEntry
+              key={key}
+              content={entry.content}
+              colors={colors}
+              fadeStyle={style}
+            />
+          );
+        if (entry.kind === "GALLERY" && entry.content)
+          return (
+            <GalleryEntryCard
+              key={key}
+              content={entry.content}
+              colors={colors}
+              fadeStyle={style}
+            />
           );
         if (entry.kind === "LINK")
           return (
