@@ -155,8 +155,61 @@ canvas.qr-canvas-fit {
   0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
 }
+
+/*
+ * Wave — sky/cyan/deep-ocean stack with a vertical position oscillation. The eye reads the slow
+ * top-to-bottom shift as a swell on the sea surface; faster than aurora (8s vs 18s) so the motion
+ * feels like water, not weather.
+ */
+.theme-wave-anim,
+.theme-wave-static {
+  background-image: linear-gradient(
+    180deg,
+    #bae6fd 0%,
+    #7dd3fc 25%,
+    #0ea5e9 55%,
+    #0369a1 80%,
+    #075985 100%
+  );
+  background-size: 100% 300%;
+}
+.theme-wave-anim {
+  animation: wave-shift 8s ease-in-out infinite;
+}
+@keyframes wave-shift {
+  0%, 100% { background-position: 50% 0%; }
+  50% { background-position: 50% 100%; }
+}
+
+/*
+ * Ember — warm amber→orange→crimson diagonal flicker. Diagonal shift (vs wave's vertical) plus a
+ * tighter color range keeps it from reading as "another aurora"; 14s sits between aurora's calm
+ * and wave's lively pace.
+ */
+.theme-ember-anim,
+.theme-ember-static {
+  background-image: linear-gradient(
+    135deg,
+    #fde68a 0%,
+    #fbbf24 25%,
+    #f97316 55%,
+    #dc2626 80%,
+    #7c2d12 100%
+  );
+  background-size: 300% 300%;
+}
+.theme-ember-anim {
+  animation: ember-shift 14s ease-in-out infinite;
+}
+@keyframes ember-shift {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .theme-aurora-anim {
+  .theme-aurora-anim,
+  .theme-wave-anim,
+  .theme-ember-anim {
     animation: none;
   }
 }

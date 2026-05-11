@@ -243,7 +243,9 @@ export type ProfileTheme =
   | "forest"
   | "mono"
   | "neon"
-  | "aurora";
+  | "aurora"
+  | "wave"
+  | "ember";
 
 export type ShareChannel = "x" | "line" | "threads" | "facebook" | "kakao";
 
