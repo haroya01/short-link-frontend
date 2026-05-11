@@ -271,12 +271,12 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                 )}
               </div>
               {card.logoUrl && (
-                <div className="shrink-0 rounded-lg bg-white/95 p-1 shadow-md shadow-black/30">
+                <div className="shrink-0 grid h-12 w-12 place-items-center rounded-xl bg-black/30 p-1.5 ring-1 ring-white/20 backdrop-blur-sm">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={card.logoUrl}
                     alt=""
-                    className="h-10 w-10 rounded-md object-contain"
+                    className="h-full w-full rounded-lg object-contain"
                   />
                 </div>
               )}
@@ -374,28 +374,31 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
               QR centered, name + scan caption below. */}
           <CardFace back>
             <div className="relative z-10 flex h-full flex-col items-center justify-between gap-4 p-6">
-              {/* Header band — logo (if any) + tagline */}
-              <div className="flex w-full items-center justify-between">
-                <div className="flex items-center gap-2">
+              {/* Header band — logo + company name on the left (truncated when long),
+                  kurl.me wordmark on the right. min-w-0 on the left flex group + truncate on
+                  the company text fixes the previous bug where a long company name pushed past
+                  the wordmark / wrapped onto a second line. */}
+              <div className="flex w-full items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-2">
                   {card.logoUrl ? (
-                    <div className="rounded-md bg-white/95 p-0.5 shadow-md shadow-black/30">
+                    <div className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-black/30 p-0.5 ring-1 ring-white/20">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={card.logoUrl}
                         alt=""
-                        className="h-6 w-6 rounded object-contain"
+                        className="h-full w-full rounded object-contain"
                       />
                     </div>
                   ) : (
-                    <span className="grid h-6 w-6 place-items-center rounded-md bg-white/10 text-[10px] font-bold uppercase text-white/90">
+                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-white/10 text-[10px] font-bold uppercase text-white/90">
                       {card.name.slice(0, 1)}
                     </span>
                   )}
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-slate-300">
+                  <p className="truncate text-[10px] uppercase tracking-[0.18em] text-slate-300">
                     {card.company || t("backTagline")}
                   </p>
                 </div>
-                <span className="text-[9px] uppercase tracking-[0.18em] text-slate-400">
+                <span className="shrink-0 text-[9px] uppercase tracking-[0.18em] text-slate-400">
                   kurl.me
                 </span>
               </div>
