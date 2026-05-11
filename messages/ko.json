@@ -687,6 +687,13 @@
     "booking": {
       "defaultTitle": "예약하기",
       "defaultCta": "예약 페이지로"
+    },
+    "event": {
+      "addToCalendar": "내 캘린더에 추가",
+      "google": "Google 캘린더",
+      "outlook": "Outlook",
+      "appleIcs": "Apple / .ics 다운로드",
+      "moreInfo": "자세히"
     }
   },
   "weeklyInsights": {
@@ -984,6 +991,20 @@
       "editBookingTitle": "예약 블록 수정",
       "addBookingDescription": "Calendly · Cal.com · 네이버예약 · 카카오 톡채널 등 외부 예약 페이지를 카드로 노출합니다.",
       "addBookingPlaceholder": "(예약 미설정)",
+      "addEvent": "+ 이벤트",
+      "addEventTitle": "이벤트 추가",
+      "editEventTitle": "이벤트 수정",
+      "addEventDescription": "워크샵 / 팝업 / 마감일 등 일회성 이벤트. 방문자가 자기 캘린더에 바로 추가할 수 있어요.",
+      "addEventPlaceholder": "(이벤트 미설정)",
+      "eventFieldTitle": "이벤트 제목",
+      "eventFieldTitlePlaceholder": "예: 팀 워크샵",
+      "eventFieldStartsAt": "시작",
+      "eventFieldEndsAt": "종료 (옵션)",
+      "eventFieldLocation": "장소 (옵션)",
+      "eventFieldLocationPlaceholder": "예: 서울 강남",
+      "eventFieldDescription": "설명 (옵션)",
+      "eventFieldDescriptionPlaceholder": "이벤트 안내",
+      "eventFieldUrl": "관련 URL (옵션)",
       "bookingFieldUrl": "예약 페이지 URL",
       "bookingFieldTitle": "제목 (옵션)",
       "bookingFieldTitlePlaceholder": "예: 30분 무료 상담",

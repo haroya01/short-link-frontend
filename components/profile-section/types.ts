@@ -23,6 +23,7 @@ export type FeedItem =
         | "CONTACT_CARD"
         | "GALLERY"
         | "PRODUCT_CARD"
-        | "BOOKING";
+        | "BOOKING"
+        | "EVENT";
       content: string | null;
     };

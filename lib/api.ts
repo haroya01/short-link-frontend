@@ -402,7 +402,8 @@ export async function createProfileBlock(payload: {
     | "CONTACT_CARD"
     | "GALLERY"
     | "PRODUCT_CARD"
-    | "BOOKING";
+    | "BOOKING"
+    | "EVENT";
   content?: string;
 }): Promise<ProfileBlock> {
   return request<ProfileBlock>("/api/v1/users/me/profile/blocks", {
