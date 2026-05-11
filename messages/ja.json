@@ -1010,7 +1010,7 @@
       "remove": "削除",
       "highlight": "ヒーローカードとして強調 (1 つのみ)",
       "labelEdit": "ラベルを編集 (訪問者に表示)",
-      "labelEmpty": "(ラベル未設定 — ホスト名表示)",
+      "labelEmpty": "ラベル追加",
       "labelPlaceholder": "例: 📝 ブログ",
       "addMore": "他のリンクから追加",
       "add": "追加",

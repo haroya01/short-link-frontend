@@ -364,19 +364,31 @@ function FeedItemRow({
     onDrop: (e: React.DragEvent) => onDrop(idx, e),
     onDragEnd,
   };
+  // Drop-zone indicator: a fat accent bar with glow that sits between rows where the dragged item
+  // would land. The `mt-4` adds real layout space when isOver — combined with `transition-all`
+  // the surrounding rows visibly *push apart* to make room, which is the "items shifting" feel
+  // the user expects from a drag-drop UI (similar to dnd-kit / sortable.js feedback).
+  const dropIndicator = isOver
+    ? "relative mt-4 before:pointer-events-none before:absolute before:inset-x-2 before:-top-[9px] before:h-1.5 before:rounded-full before:bg-accent-500 before:shadow-[0_0_12px_rgba(99,102,241,0.5)] "
+    : "";
+  // Lifted/transparent state while being dragged so the user perceives the dragged row as "in
+  // their hand" rather than just half-faded in place.
+  const draggingState = isDragging
+    ? "scale-[0.98] opacity-30 ring-2 ring-accent-400 rounded-md "
+    : "";
   const baseRow =
-    "flex items-center justify-between gap-3 px-3 py-2 transition " +
-    (isDragging ? "opacity-40 " : "") +
-    (isOver ? "border-t-2 border-t-accent-500 " : "");
+    "flex items-center justify-between gap-3 px-3 py-2 transition-all duration-150 " +
+    draggingState +
+    dropIndicator;
   const dragHandle = <DragHandle idx={idx} totalCount={totalCount} onMove={onMove} />;
 
   if (item.kind === "BLOCK" && item.type === "DIVIDER") {
     // Slim row — a divider on the public profile is a thin horizontal rule, so the editor row
     // shouldn't pretend it's a heavy item. Compact padding + a centered hr communicates that.
     const slimRow =
-      "flex items-center gap-2 px-3 py-1 transition " +
-      (isDragging ? "opacity-40 " : "") +
-      (isOver ? "border-t-2 border-t-accent-500 " : "");
+      "flex items-center gap-2 px-3 py-1 transition-all duration-150 " +
+      draggingState +
+      dropIndicator;
     return (
       <li {...dndProps} className={slimRow}>
         {dragHandle}
@@ -558,11 +570,16 @@ function LinkLabelField({
       }}
       title={t("labelEdit")}
       className={
-        "block w-full truncate text-left text-sm font-medium hover:text-accent-700 " +
-        (currentLabel ? "text-slate-900" : "italic text-slate-400")
+        "group inline-flex max-w-full items-center gap-1.5 rounded text-left text-sm font-medium transition " +
+        (currentLabel
+          ? "text-slate-900 hover:text-accent-700"
+          : "text-accent-700 hover:text-accent-800")
       }
     >
-      {currentLabel || t("labelEmpty")}
+      <span className="truncate underline decoration-dotted decoration-slate-300 underline-offset-2 group-hover:decoration-accent-400">
+        {currentLabel || t("labelEmpty")}
+      </span>
+      <Pencil className="h-3 w-3 shrink-0 text-slate-300 transition group-hover:text-accent-500" />
     </button>
   );
 }
