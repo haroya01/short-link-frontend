@@ -13,6 +13,7 @@ import { Download, Mail, MapPin, Phone, Share2 } from "lucide-react";
 import QRCode from "qrcode";
 import { useTranslations } from "next-intl";
 import type { ContactCardConfig } from "@/types";
+import { playCardFlipSound } from "@/lib/card-flip-sound";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
@@ -135,11 +136,15 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
         ref={cardRef}
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
-        onClick={() => setFlipped((v) => !v)}
+        onClick={() => {
+          setFlipped((v) => !v);
+          playCardFlipSound();
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             setFlipped((v) => !v);
+            playCardFlipSound();
           }
         }}
         role="button"
