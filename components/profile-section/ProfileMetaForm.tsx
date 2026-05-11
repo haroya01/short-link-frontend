@@ -10,6 +10,7 @@ import { Input } from "../ui/input";
 import type { MyProfile, ProfileTheme, ShareChannel, Social } from "@/types";
 import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/ShareRow";
 import { PublicUrlPill } from "./PublicUrlPill";
+import { socialUrlPrefix } from "./socials-templates";
 
 const SHARE_CHANNELS: ShareChannel[] = ["x", "line", "threads", "facebook", "kakao"];
 const MAX_SOCIALS = 2;
@@ -295,7 +296,8 @@ function SocialsPicker({
     if (idx >= 0) {
       onChange(socials.filter((s) => s.channel !== ch));
     } else if (socials.length < MAX_SOCIALS) {
-      onChange([...socials, { channel: ch, url: "" }]);
+      // Prefill the channel's URL prefix so the user only types their handle.
+      onChange([...socials, { channel: ch, url: socialUrlPrefix(ch) }]);
     }
   }
 

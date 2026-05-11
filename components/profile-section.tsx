@@ -26,6 +26,7 @@ import type {
 } from "@/types";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
 import { ProfileMetaForm } from "./profile-section/ProfileMetaForm";
+import { socialUrlPrefix } from "./profile-section/socials-templates";
 import type { FeedItem } from "./profile-section/types";
 import { ProfileQuickAdd } from "./profile-quick-add";
 
@@ -164,7 +165,15 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     if (!profile?.username) return;
     // Drop entries with empty URL so the user can leave a chip enabled while still drafting the
     // URL — only complete pairs trigger a save. Empty string later signals "clear all" to the API.
-    const socialsCleaned = socials.filter((s) => s.url.trim().length > 0);
+    // Drafting-aware filter: blank URLs OR "just the channel prefix" (https://x.com/ etc — left
+    // after the chip prefill but before the user typed their handle) both count as in-progress.
+    // We don't push them so a half-completed chip doesn't ship a useless URL to the public profile.
+    const socialsCleaned = socials.filter((s) => {
+      const url = s.url.trim();
+      if (url.length === 0) return false;
+      if (url === socialUrlPrefix(s.channel)) return false;
+      return true;
+    });
     const socialsJson = socialsCleaned.length === 0 ? "" : JSON.stringify(socialsCleaned);
     if (lastSavedRef.current === null) {
       lastSavedRef.current = {
@@ -306,7 +315,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
     setSavingProfile(true);
     try {
-      const cleanedSocials = socials.filter((s) => s.url.trim().length > 0);
+      const cleanedSocials = socials.filter((s) => {
+        const url = s.url.trim();
+        return url.length > 0 && url !== socialUrlPrefix(s.channel);
+      });
       const updated = await updateMyProfile({
         username: next || undefined,
         bio: bio.trim(),
