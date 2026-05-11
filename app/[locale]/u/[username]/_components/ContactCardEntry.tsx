@@ -122,7 +122,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
       const rect = el.getBoundingClientRect();
       const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
       const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
-      applyVars(x, y, 1);
+      applyVars(x, y, 0.75);
     },
     [applyVars],
   );
@@ -140,7 +140,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
     const yPct = Math.max(0, Math.min(100, ((cardMid / vh) * 100)));
     // X stays centered — vertical scroll only drives Y. Light still moves as the card scrolls,
     // and the rainbow visibly slides because background-y feeds the gradient position.
-    applyVars(50, yPct, 0.55);
+    applyVars(50, yPct, 0.4);
   }, [applyVars]);
 
   useEffect(() => {
@@ -450,9 +450,9 @@ function CardFace({
       }
       style={{
         backgroundImage:
-          "radial-gradient(120% 80% at 0% 0%, rgba(99, 102, 241, 0.35) 0%, transparent 50%)," +
-          "radial-gradient(120% 80% at 100% 100%, rgba(236, 72, 153, 0.25) 0%, transparent 55%)," +
-          "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%)",
+          "radial-gradient(120% 80% at 0% 0%, rgba(67, 56, 202, 0.18) 0%, transparent 50%)," +
+          "radial-gradient(120% 80% at 100% 100%, rgba(157, 23, 77, 0.14) 0%, transparent 55%)," +
+          "linear-gradient(135deg, #04060b 0%, #0a0e1a 60%, #04060b 100%)",
         boxShadow:
           "inset 0 0 0 1px rgba(255,255,255,0.08), 0 25px 50px -12px rgba(0,0,0,0.45)",
       }}
@@ -469,14 +469,14 @@ function CardFace({
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(110deg, hsl(283,100%,73%) 0%, hsl(228,100%,74%) 10%, hsl(176,100%,76%) 20%, hsl(93,100%,69%) 30%, hsl(53,100%,69%) 40%, hsl(2,100%,73%) 50%, hsl(283,100%,73%) 60%)",
+            "repeating-linear-gradient(110deg, hsl(283,55%,45%) 0%, hsl(228,55%,42%) 10%, hsl(176,50%,40%) 20%, hsl(93,40%,38%) 30%, hsl(53,55%,42%) 40%, hsl(2,55%,45%) 50%, hsl(283,55%,45%) 60%)",
           backgroundSize: "400% 400%",
           backgroundPosition: back
             ? "calc(100% - var(--background-x, 50%)) var(--background-y, 50%)"
             : "var(--background-x, 50%) var(--background-y, 50%)",
-          filter: "brightness(0.95) contrast(2) saturate(1)",
+          filter: "brightness(0.7) contrast(2.4) saturate(0.7)",
           mixBlendMode: "color-dodge",
-          opacity: "calc(var(--card-opacity, 0.55) * 0.95)",
+          opacity: "calc(var(--card-opacity, 0.4) * 0.95)",
           transition: "opacity 220ms ease-out",
         }}
       />
@@ -489,14 +489,14 @@ function CardFace({
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(-30deg, hsl(2,100%,73%) 0%, hsl(53,100%,69%) 15%, hsl(93,100%,69%) 30%, hsl(176,100%,76%) 45%, hsl(228,100%,74%) 60%, hsl(283,100%,73%) 75%, hsl(2,100%,73%) 100%)",
+            "repeating-linear-gradient(-30deg, hsl(2,55%,45%) 0%, hsl(53,55%,42%) 15%, hsl(93,40%,38%) 30%, hsl(176,50%,40%) 45%, hsl(228,55%,42%) 60%, hsl(283,55%,45%) 75%, hsl(2,55%,45%) 100%)",
           backgroundSize: "400% 400%",
           backgroundPosition: back
             ? "calc(100% - var(--pointer-x, 50%)) var(--pointer-y, 50%)"
             : "var(--pointer-x, 50%) var(--pointer-y, 50%)",
-          filter: "brightness(0.95) contrast(1.5) saturate(0.9)",
+          filter: "brightness(0.7) contrast(1.8) saturate(0.65)",
           mixBlendMode: "color-dodge",
-          opacity: "calc(var(--card-opacity, 0.55) * 0.6)",
+          opacity: "calc(var(--card-opacity, 0.4) * 0.55)",
           transition: "opacity 220ms ease-out",
         }}
       />
@@ -508,10 +508,10 @@ function CardFace({
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage: back
-            ? "radial-gradient(farthest-corner circle at calc(100% - var(--pointer-x, 50%)) var(--pointer-y, 50%), hsla(0,0%,100%,0.7) 8%, hsla(0,0%,100%,0.3) 22%, hsla(0,0%,0%,0.35) 90%)"
-            : "radial-gradient(farthest-corner circle at var(--pointer-x, 50%) var(--pointer-y, 50%), hsla(0,0%,100%,0.7) 8%, hsla(0,0%,100%,0.3) 22%, hsla(0,0%,0%,0.35) 90%)",
+            ? "radial-gradient(farthest-corner circle at calc(100% - var(--pointer-x, 50%)) var(--pointer-y, 50%), hsla(0,0%,100%,0.5) 8%, hsla(0,0%,100%,0.2) 22%, hsla(0,0%,0%,0.45) 90%)"
+            : "radial-gradient(farthest-corner circle at var(--pointer-x, 50%) var(--pointer-y, 50%), hsla(0,0%,100%,0.5) 8%, hsla(0,0%,100%,0.2) 22%, hsla(0,0%,0%,0.45) 90%)",
           mixBlendMode: "overlay",
-          opacity: "calc(var(--card-opacity, 0.55) * 0.7 + 0.2)",
+          opacity: "calc(var(--card-opacity, 0.4) * 0.6 + 0.15)",
           transition: "opacity 220ms ease-out",
         }}
       />
