@@ -666,7 +666,9 @@
       "line": "LINE 으로 이동",
       "threads": "Threads 프로필로 이동",
       "facebook": "Facebook 프로필로 이동",
-      "kakao": "카카오톡으로 이동"
+      "kakao": "카카오톡 채널로 이동",
+      "instagram": "Instagram 프로필로 이동",
+      "linkedin": "LinkedIn 프로필로 이동"
     },
     "contactCard": {
       "save": "연락처에 저장"
@@ -884,10 +886,12 @@
       "socialsHint": "공개 페이지 하단에 표시할 채널을 골라주세요. 각 채널마다 본인 계정 URL 을 함께 입력하면 방문자가 그 URL 로 이동해요. 최대 2개, 선택한 순서대로 노출돼요.",
       "socialsCount": "{count}/{max} 선택",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
-      "socialUrlPlaceholderLine": "https://line.me/ti/p/...",
+      "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
       "socialUrlPlaceholderThreads": "https://threads.net/@yourhandle",
       "socialUrlPlaceholderFacebook": "https://facebook.com/yourhandle",
-      "socialUrlPlaceholderKakao": "https://open.kakao.com/o/...",
+      "socialUrlPlaceholderKakao": "https://pf.kakao.com/_yourChannelID",
+      "socialUrlPlaceholderInstagram": "https://instagram.com/yourhandle",
+      "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "올바른 http(s) URL 을 입력해주세요.",
       "previewTitle": "공개 페이지 미리보기 (실시간)",
       "previewUsernamePlaceholder": "username",
