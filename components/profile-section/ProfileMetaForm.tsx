@@ -60,6 +60,18 @@ const THEMES: { id: ProfileTheme; label: string; page: string; card: string }[] 
     page: "theme-aurora-anim",
     card: "bg-white/85 backdrop-blur-sm border border-violet-200",
   },
+  {
+    id: "wave",
+    label: "Wave",
+    page: "theme-wave-anim",
+    card: "bg-white/85 backdrop-blur-sm border border-sky-200",
+  },
+  {
+    id: "ember",
+    label: "Ember",
+    page: "theme-ember-anim",
+    card: "bg-white/85 backdrop-blur-sm border border-orange-200",
+  },
 ];
 
 type Props = {

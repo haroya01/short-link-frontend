@@ -117,4 +117,26 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     avatar: "bg-gradient-to-br from-violet-500 to-fuchsia-500",
     avatarText: "text-white",
   },
+  wave: {
+    // Animated vertical wave (sky → cyan → deep ocean). See .theme-wave-anim in globals.css.
+    page: "theme-wave-anim",
+    card: "bg-white/85 backdrop-blur-sm",
+    cardBorder: "border border-sky-200",
+    cardHover: "hover:bg-white hover:border-sky-300",
+    primary: "text-slate-900",
+    muted: "text-sky-900/70",
+    avatar: "bg-gradient-to-br from-sky-500 to-cyan-500",
+    avatarText: "text-white",
+  },
+  ember: {
+    // Animated warm flicker (amber → orange → crimson). See .theme-ember-anim in globals.css.
+    page: "theme-ember-anim",
+    card: "bg-white/85 backdrop-blur-sm",
+    cardBorder: "border border-orange-200",
+    cardHover: "hover:bg-white hover:border-orange-300",
+    primary: "text-slate-900",
+    muted: "text-orange-900/70",
+    avatar: "bg-gradient-to-br from-amber-500 to-rose-600",
+    avatarText: "text-white",
+  },
 };
