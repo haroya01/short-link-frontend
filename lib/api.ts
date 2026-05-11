@@ -400,7 +400,8 @@ export async function createProfileBlock(payload: {
     | "EMBED"
     | "EMAIL_FORM"
     | "CONTACT_CARD"
-    | "GALLERY";
+    | "GALLERY"
+    | "PRODUCT_CARD";
   content?: string;
 }): Promise<ProfileBlock> {
   return request<ProfileBlock>("/api/v1/users/me/profile/blocks", {
