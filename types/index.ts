@@ -247,7 +247,14 @@ export type ProfileTheme =
   | "wave"
   | "ember";
 
-export type ShareChannel = "x" | "line" | "threads" | "facebook" | "kakao";
+export type ShareChannel =
+  | "x"
+  | "line"
+  | "threads"
+  | "facebook"
+  | "kakao"
+  | "instagram"
+  | "linkedin";
 
 /**
  * A channel + the owner's own URL on that channel. Used both server-side (persisted as JSON) and
