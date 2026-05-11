@@ -146,7 +146,7 @@ export function ProfilePreview({
 
   return (
     <div className="space-y-2">
-      <p className="text-[11px] font-medium text-slate-500">{tEditor("previewTitle")}</p>
+      <p className="text-center text-[11px] font-medium text-slate-500">{tEditor("previewTitle")}</p>
       <div className="relative mx-auto w-full max-w-[280px] overflow-hidden rounded-[42px] border border-slate-800/30 bg-slate-900 p-1.5 shadow-xl shadow-slate-300/40">
         {/* Dynamic-Island style notch */}
         <div className="absolute left-1/2 top-2 z-10 h-5 w-20 -translate-x-1/2 rounded-full bg-slate-900" />
