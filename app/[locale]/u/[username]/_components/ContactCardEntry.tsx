@@ -9,7 +9,7 @@ import {
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { Download, Mail, MapPin, Phone, RefreshCw, Share2 } from "lucide-react";
+import { Download, Mail, MapPin, Phone, Share2 } from "lucide-react";
 import QRCode from "qrcode";
 import { useTranslations } from "next-intl";
 import type { ContactCardConfig } from "@/types";
@@ -135,19 +135,19 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
         ref={cardRef}
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
-        className="relative [perspective:1200px]"
+        onClick={() => setFlipped((v) => !v)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setFlipped((v) => !v);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-pressed={flipped}
+        aria-label={flipped ? t("flipToFront") : t("flipToBack")}
+        className="relative cursor-pointer select-none [perspective:1200px] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded-2xl"
       >
-        {/* Flip toggle pinned outside the rotating face so it doesn't disappear when the card
-            shows its back. The button itself controls the flip, the tilt JS is on the wrapper. */}
-        <button
-          type="button"
-          onClick={() => setFlipped((v) => !v)}
-          aria-label={flipped ? t("flipToFront") : t("flipToBack")}
-          className="absolute right-3 top-3 z-30 grid h-8 w-8 place-items-center rounded-full bg-white/10 text-white/80 backdrop-blur-sm transition hover:bg-white/20 hover:text-white"
-        >
-          <RefreshCw className="h-3.5 w-3.5" />
-        </button>
-
         <div
           className="relative [transform-style:preserve-3d]"
           style={{
@@ -171,11 +171,15 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
               )}
             </div>
 
+            {/* Interactive elements stop click propagation so they fire their own action (open
+                mail / dial / navigate / share / download) WITHOUT also flipping the card. The
+                rest of the card surface stays clickable to flip. */}
             <ul className="relative z-10 mt-4 space-y-2 px-6">
               {card.email && (
                 <Row icon={<Mail className="h-3.5 w-3.5" />}>
                   <a
                     href={`mailto:${card.email}`}
+                    onClick={(e) => e.stopPropagation()}
                     className="truncate hover:underline"
                   >
                     {card.email}
@@ -186,6 +190,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                 <Row icon={<Phone className="h-3.5 w-3.5" />}>
                   <a
                     href={`tel:${card.phone.replace(/\s/g, "")}`}
+                    onClick={(e) => e.stopPropagation()}
                     className="truncate hover:underline"
                   >
                     {card.phone}
@@ -198,6 +203,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                     href={card.website}
                     target="_blank"
                     rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     className="truncate hover:underline"
                   >
                     {hostWithoutScheme(card.website)}
@@ -215,6 +221,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
               {card.phone ? (
                 <a
                   href={`tel:${card.phone.replace(/\s/g, "")}`}
+                  onClick={(e) => e.stopPropagation()}
                   className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
                 >
                   <Phone className="h-4 w-4" />
@@ -228,7 +235,10 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
               )}
               <button
                 type="button"
-                onClick={shareCard}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  shareCard();
+                }}
                 className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
               >
                 <Share2 className="h-4 w-4" />
@@ -236,7 +246,10 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
               </button>
               <button
                 type="button"
-                onClick={downloadVcard}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  downloadVcard();
+                }}
                 className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
               >
                 <Download className="h-4 w-4" />
