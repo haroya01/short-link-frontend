@@ -29,6 +29,7 @@ import { ContactCardBlockDialog } from "./profile-section/ContactCardBlockDialog
 import { EmailFormBlockDialog } from "./profile-section/EmailFormBlockDialog";
 import { EventBlockDialog } from "./profile-section/EventBlockDialog";
 import { GalleryBlockDialog } from "./profile-section/GalleryBlockDialog";
+import { ImageBlockDialog } from "./profile-section/ImageBlockDialog";
 import { ProductCardBlockDialog } from "./profile-section/ProductCardBlockDialog";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
 import { ProfileMetaForm } from "./profile-section/ProfileMetaForm";
@@ -115,6 +116,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     blockId: number | null;
     initialJson: string | null;
   }>({ open: false, blockId: null, initialJson: null });
+  const [imageDialog, setImageDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialUrl: string | null;
+  }>({ open: false, blockId: null, initialUrl: null });
   const [reload, setReload] = useState(0);
   const refresh = () => setReload((n) => n + 1);
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
@@ -547,15 +553,28 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
-  async function handleAddImage() {
-    const url = window.prompt(t("addImagePrompt"), "https://");
-    if (!url || !url.trim()) return;
+  function handleAddImage() {
+    setImageDialog({ open: true, blockId: null, initialUrl: null });
+  }
+
+  async function persistImageBlock(blockId: number | null, url: string) {
     try {
-      const block = await createProfileBlock({ type: "IMAGE", content: url.trim() });
-      setItems((prev) => [
-        ...prev,
-        { kind: "BLOCK", id: block.id, type: "IMAGE", content: block.content ?? "" },
-      ]);
+      if (blockId != null) {
+        const updated = await updateProfileBlock(blockId, url);
+        setItems((prev) =>
+          prev.map((i) =>
+            i.kind === "BLOCK" && i.id === blockId
+              ? { ...i, content: updated.content ?? "" }
+              : i,
+          ),
+        );
+      } else {
+        const block = await createProfileBlock({ type: "IMAGE", content: url });
+        setItems((prev) => [
+          ...prev,
+          { kind: "BLOCK", id: block.id, type: "IMAGE", content: block.content ?? "" },
+        ]);
+      }
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
@@ -655,12 +674,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       setEventDialog({ open: true, blockId, initialJson: current });
       return;
     }
+    if (blockType === "IMAGE") {
+      setImageDialog({ open: true, blockId, initialUrl: current || null });
+      return;
+    }
     const promptKey =
-      blockType === "IMAGE"
-        ? "editImagePrompt"
-        : blockType === "EMBED"
-          ? "editEmbedPrompt"
-          : "editTextPrompt";
+      blockType === "EMBED" ? "editEmbedPrompt" : "editTextPrompt";
     const next = window.prompt(t(promptKey), current);
     if (next === null) return;
     const trimmed = next.trim();
@@ -843,6 +862,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         initialJson={eventDialog.initialJson}
         onOpenChange={(open) => setEventDialog((s) => (open ? s : { ...s, open: false }))}
         onSubmit={(json) => persistJsonBlock("EVENT", eventDialog.blockId, json)}
+        t={t}
+      />
+      <ImageBlockDialog
+        open={imageDialog.open}
+        initialUrl={imageDialog.initialUrl}
+        onOpenChange={(open) => setImageDialog((s) => (open ? s : { ...s, open: false }))}
+        onSubmit={(url) => persistImageBlock(imageDialog.blockId, url)}
         t={t}
       />
     </div>
