@@ -24,6 +24,8 @@ import type {
   PublicProfileEntry,
   Social,
 } from "@/types";
+import { ContactCardBlockDialog } from "./profile-section/ContactCardBlockDialog";
+import { GalleryBlockDialog } from "./profile-section/GalleryBlockDialog";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
 import { ProfileMetaForm } from "./profile-section/ProfileMetaForm";
 import { socialUrlPrefix } from "./profile-section/socials-templates";
@@ -76,6 +78,19 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const [ogImageByShortCode, setOgImageByShortCode] = useState<Record<string, string>>({});
   const [highlightedShortCode, setHighlightedShortCode] = useState<string | null>(null);
   const [pendingShortCode, setPendingShortCode] = useState<string | null>(null);
+  // CONTACT_CARD / GALLERY dialogs share the same shape: either creating (blockId === null) or
+  // editing an existing block (blockId set + initialJson populated). Each block type has its own
+  // dialog component because their forms are very different (7-field card vs URL list).
+  const [contactCardDialog, setContactCardDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialJson: string | null;
+  }>({ open: false, blockId: null, initialJson: null });
+  const [galleryDialog, setGalleryDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialJson: string | null;
+  }>({ open: false, blockId: null, initialJson: null });
   const [reload, setReload] = useState(0);
   const refresh = () => setReload((n) => n + 1);
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
@@ -259,7 +274,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       .then((data) => {
         if (cancelled || !data) return;
         const entries = (data.entries ?? []) as Array<{
-          kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE" | "EMBED";
+          kind: "LINK" | "TEXT" | "DIVIDER" | "IMAGE" | "EMBED" | "CONTACT_CARD" | "GALLERY";
           id: number | null;
           shortCode: string | null;
           ogTitle?: string | null;
@@ -283,6 +298,15 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             next.push({ kind: "BLOCK", id: e.id, type: "IMAGE", content: e.content ?? "" });
           } else if (e.kind === "EMBED" && e.id != null) {
             next.push({ kind: "BLOCK", id: e.id, type: "EMBED", content: e.content ?? "" });
+          } else if (e.kind === "CONTACT_CARD" && e.id != null) {
+            next.push({
+              kind: "BLOCK",
+              id: e.id,
+              type: "CONTACT_CARD",
+              content: e.content ?? "",
+            });
+          } else if (e.kind === "GALLERY" && e.id != null) {
+            next.push({ kind: "BLOCK", id: e.id, type: "GALLERY", content: e.content ?? "" });
           }
         }
         setItems(next);
@@ -474,6 +498,41 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
+  function handleAddContactCard() {
+    setContactCardDialog({ open: true, blockId: null, initialJson: null });
+  }
+
+  function handleAddGallery() {
+    setGalleryDialog({ open: true, blockId: null, initialJson: null });
+  }
+
+  async function persistJsonBlock(
+    type: "CONTACT_CARD" | "GALLERY",
+    blockId: number | null,
+    configJson: string,
+  ) {
+    try {
+      if (blockId != null) {
+        const updated = await updateProfileBlock(blockId, configJson);
+        setItems((prev) =>
+          prev.map((i) =>
+            i.kind === "BLOCK" && i.id === blockId
+              ? { ...i, content: updated.content ?? "" }
+              : i,
+          ),
+        );
+      } else {
+        const block = await createProfileBlock({ type, content: configJson });
+        setItems((prev) => [
+          ...prev,
+          { kind: "BLOCK", id: block.id, type, content: block.content ?? "" },
+        ]);
+      }
+    } catch (err) {
+      toast(errorMessage(err, t("toggleFailed")), "error");
+    }
+  }
+
   async function handleAddEmbed() {
     const url = window.prompt(t("addEmbedPrompt"), "https://");
     if (!url || !url.trim()) return;
@@ -491,6 +550,16 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   async function handleEditBlock(blockId: number, current: string) {
     const item = items.find((i) => i.kind === "BLOCK" && i.id === blockId);
     const blockType = item?.kind === "BLOCK" ? item.type : null;
+    // CONTACT_CARD / GALLERY have multi-field configs stored as JSON — open their dedicated
+    // dialogs instead of a single window.prompt where the user would face raw JSON.
+    if (blockType === "CONTACT_CARD") {
+      setContactCardDialog({ open: true, blockId, initialJson: current });
+      return;
+    }
+    if (blockType === "GALLERY") {
+      setGalleryDialog({ open: true, blockId, initialJson: current });
+      return;
+    }
     const promptKey =
       blockType === "IMAGE"
         ? "editImagePrompt"
@@ -602,6 +671,8 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onAddDivider={handleAddDivider}
           onAddImage={handleAddImage}
           onAddEmbed={handleAddEmbed}
+          onAddContactCard={handleAddContactCard}
+          onAddGallery={handleAddGallery}
           onMove={move}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
@@ -616,6 +687,27 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           t={t}
         />
       </Section>
+
+      <ContactCardBlockDialog
+        open={contactCardDialog.open}
+        initialJson={contactCardDialog.initialJson}
+        onOpenChange={(open) =>
+          setContactCardDialog((s) => (open ? s : { ...s, open: false }))
+        }
+        onSubmit={(json) =>
+          persistJsonBlock("CONTACT_CARD", contactCardDialog.blockId, json)
+        }
+        t={t}
+      />
+      <GalleryBlockDialog
+        open={galleryDialog.open}
+        initialJson={galleryDialog.initialJson}
+        onOpenChange={(open) =>
+          setGalleryDialog((s) => (open ? s : { ...s, open: false }))
+        }
+        onSubmit={(json) => persistJsonBlock("GALLERY", galleryDialog.blockId, json)}
+        t={t}
+      />
     </div>
   );
 }
