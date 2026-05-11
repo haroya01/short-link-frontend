@@ -20,6 +20,7 @@ import type {
   MyProfile,
   ProfileReorderItem,
   ProfileTheme,
+  PublicProfileEntry,
   Social,
 } from "@/types";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
@@ -34,14 +35,12 @@ export type ProfileDraft = {
   avatarUrl: string | null;
   bannerUrl: string | null;
   socials: Social[];
-  featured: string[];
-  links: MyLink[];
   /**
-   * Per-shortCode label override. The link list itself only carries originalUrl, but the public
-   * profile feed enriches each LINK with its effective OG title (= user's label). We thread it
-   * down so the preview can show "📝 Blog" instead of "blog.example.com".
+   * The exact shape the public profile receives from the API, synthesized from the editor's local
+   * state (items + links + per-link meta + highlight flag). Letting the preview render the same
+   * {@link EntryList} this way means the highlighted hero / image / YouTube variants never drift.
    */
-  labelByShortCode: Record<string, string>;
+  entries: PublicProfileEntry[];
 };
 
 type ProfileSectionProps = {
@@ -68,6 +67,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const [links, setLinks] = useState<MyLink[] | null>(null);
   const [items, setItems] = useState<FeedItem[]>([]);
   const [labelByShortCode, setLabelByShortCode] = useState<Record<string, string>>({});
+  // OG image per featured link — captured on the initial public-profile fetch so the preview can
+  // render the highlighted "hero card" variant identically. New links the user just added won't
+  // have an entry here until the next refresh; the card silently falls back to the generic
+  // variant, which is the same behavior the live page exhibits before the OG scrape lands.
+  const [ogImageByShortCode, setOgImageByShortCode] = useState<Record<string, string>>({});
   const [highlightedShortCode, setHighlightedShortCode] = useState<string | null>(null);
   const [pendingShortCode, setPendingShortCode] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
@@ -81,9 +85,42 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
 
-  const featured = items
-    .filter((i): i is { kind: "LINK"; code: string } => i.kind === "LINK")
-    .map((i) => i.code);
+  // Build the same {@link PublicProfileEntry} shape the public profile endpoint returns from local
+  // editor state. The preview consumes this directly through the real {@link EntryList} component,
+  // so a highlighted link with an OG image renders as the hero card, image-URL destinations render
+  // inline, YouTube gets the play-overlay thumbnail, etc. — no parallel rendering logic.
+  const entries: PublicProfileEntry[] = items
+    .map((it): PublicProfileEntry | null => {
+      if (it.kind === "LINK") {
+        const link = (links ?? []).find((l) => l.shortCode === it.code);
+        if (!link) return null;
+        return {
+          kind: "LINK",
+          id: null,
+          shortCode: link.shortCode,
+          shortUrl: link.shortUrl,
+          originalUrl: link.originalUrl,
+          ogTitle: labelByShortCode[link.shortCode] ?? null,
+          ogImage: ogImageByShortCode[link.shortCode] ?? null,
+          clickCount: link.clickCount ?? null,
+          highlighted: highlightedShortCode === link.shortCode,
+          content: null,
+        };
+      }
+      return {
+        kind: it.type,
+        id: it.id,
+        shortCode: null,
+        shortUrl: null,
+        originalUrl: null,
+        ogTitle: null,
+        ogImage: null,
+        clickCount: null,
+        highlighted: null,
+        content: it.content,
+      };
+    })
+    .filter((e): e is PublicProfileEntry => e !== null);
 
   // Bubble local edit state up to the parent on every change so a preview pane can update live
   // without round-tripping. Saved profile state stays separate — the draft IS the source of truth
@@ -96,9 +133,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       avatarUrl: profile?.avatarUrl ?? null,
       bannerUrl: profile?.bannerUrl ?? null,
       socials,
-      featured,
-      links: links ?? [],
-      labelByShortCode,
+      entries,
     });
   }, [
     username,
@@ -107,9 +142,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     profile?.avatarUrl,
     profile?.bannerUrl,
     socials,
-    featured,
-    links,
-    labelByShortCode,
+    entries,
     onDraft,
   ]);
 
@@ -210,15 +243,18 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           id: number | null;
           shortCode: string | null;
           ogTitle?: string | null;
+          ogImage?: string | null;
           highlighted?: boolean | null;
           content?: string | null;
         }>;
         const next: FeedItem[] = [];
         const labels: Record<string, string> = {};
+        const ogImages: Record<string, string> = {};
         for (const e of entries) {
           if (e.kind === "LINK" && e.shortCode) {
             next.push({ kind: "LINK", code: e.shortCode });
             if (e.ogTitle) labels[e.shortCode] = e.ogTitle;
+            if (e.ogImage) ogImages[e.shortCode] = e.ogImage;
           } else if (e.kind === "TEXT" && e.id != null) {
             next.push({ kind: "BLOCK", id: e.id, type: "TEXT", content: e.content ?? "" });
           } else if (e.kind === "DIVIDER" && e.id != null) {
@@ -229,6 +265,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         }
         setItems(next);
         setLabelByShortCode(labels);
+        setOgImageByShortCode(ogImages);
         const hl = entries.find((e) => e.kind === "LINK" && e.highlighted);
         setHighlightedShortCode(hl?.shortCode ?? null);
       })
