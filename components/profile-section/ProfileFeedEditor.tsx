@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowUp,
+  CalendarClock,
   CalendarDays,
   ChevronDown,
   ChevronUp,
@@ -42,6 +43,7 @@ type Props = {
   onAddProductCard: () => void;
   onAddEmailForm: () => void;
   onAddBooking: () => void;
+  onAddEvent: () => void;
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
@@ -80,6 +82,7 @@ export function ProfileFeedEditor({
   onAddProductCard,
   onAddEmailForm,
   onAddBooking,
+  onAddEvent,
   onMove,
   onDragStart,
   onDragOver,
@@ -115,6 +118,7 @@ export function ProfileFeedEditor({
           onAddProductCard={onAddProductCard}
           onAddEmailForm={onAddEmailForm}
           onAddBooking={onAddBooking}
+          onAddEvent={onAddEvent}
           t={t}
         />
       </div>
@@ -218,6 +222,7 @@ function AddMenu({
   onAddProductCard,
   onAddEmailForm,
   onAddBooking,
+  onAddEvent,
   t,
 }: {
   onAddText: () => void;
@@ -229,6 +234,7 @@ function AddMenu({
   onAddProductCard: () => void;
   onAddEmailForm: () => void;
   onAddBooking: () => void;
+  onAddEvent: () => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   const [open, setOpen] = useState(false);
@@ -313,6 +319,12 @@ function AddMenu({
             icon={<CalendarDays className="h-3.5 w-3.5" />}
           >
             {t("addBooking")}
+          </MenuItem>
+          <MenuItem
+            onClick={() => fire(onAddEvent)}
+            icon={<CalendarClock className="h-3.5 w-3.5" />}
+          >
+            {t("addEvent")}
           </MenuItem>
         </div>
       )}
@@ -586,6 +598,25 @@ function FeedItemRow({
       </li>
     );
   }
+  if (item.kind === "BLOCK" && item.type === "EVENT") {
+    const summary = eventSummary(item.content);
+    return (
+      <li {...dndProps} className={baseRow}>
+        {dragHandle}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <CalendarClock className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          <span className="truncate text-sm font-medium text-slate-900">
+            {summary || t("addEventPlaceholder")}
+          </span>
+        </div>
+        <BlockActions
+          onEdit={() => onEditBlock(item.id, item.content ?? "")}
+          onDelete={() => onDeleteBlock(item.id)}
+          t={t}
+        />
+      </li>
+    );
+  }
   if (item.kind === "BLOCK" && item.type === "EMBED") {
     return (
       <li {...dndProps} className={baseRow}>
@@ -763,6 +794,24 @@ function productCardSummary(content: string | null): string {
         ? parsed.items[0].name
         : "";
     return first ? `${first} 외 ${count - 1}건` : "";
+  } catch {
+    return "";
+  }
+}
+
+/** Event title + start date for the editor's EVENT row summary. */
+function eventSummary(content: string | null): string {
+  if (!content) return "";
+  try {
+    const parsed = JSON.parse(content);
+    const title = typeof parsed?.title === "string" ? parsed.title.trim() : "";
+    const startsAt = typeof parsed?.startsAt === "string" ? parsed.startsAt : "";
+    if (!title && !startsAt) return "";
+    if (!startsAt) return title;
+    const d = new Date(startsAt);
+    if (Number.isNaN(d.getTime())) return title;
+    const label = d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    return title ? `${title} · ${label}` : label;
   } catch {
     return "";
   }

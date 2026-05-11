@@ -770,6 +770,13 @@
     "booking": {
       "defaultTitle": "予約する",
       "defaultCta": "予約ページへ"
+    },
+    "event": {
+      "addToCalendar": "カレンダーに追加",
+      "google": "Google カレンダー",
+      "outlook": "Outlook",
+      "appleIcs": "Apple / .ics ダウンロード",
+      "moreInfo": "詳細"
     }
   },
   "weeklyInsights": {
@@ -1065,6 +1072,20 @@
       "editBookingTitle": "予約ブロックを編集",
       "addBookingDescription": "Calendly · Cal.com · Microsoft Bookings 等の外部予約ページをカードとして表示します。",
       "addBookingPlaceholder": "(予約未設定)",
+      "addEvent": "+ イベント",
+      "addEventTitle": "イベント追加",
+      "editEventTitle": "イベント編集",
+      "addEventDescription": "ワークショップ / ポップアップ / 締切などの単発イベント。訪問者が自分のカレンダーにすぐ追加できます。",
+      "addEventPlaceholder": "(イベント未設定)",
+      "eventFieldTitle": "イベント名",
+      "eventFieldTitlePlaceholder": "例: チームワークショップ",
+      "eventFieldStartsAt": "開始",
+      "eventFieldEndsAt": "終了 (任意)",
+      "eventFieldLocation": "場所 (任意)",
+      "eventFieldLocationPlaceholder": "例: 東京",
+      "eventFieldDescription": "説明 (任意)",
+      "eventFieldDescriptionPlaceholder": "イベントの案内",
+      "eventFieldUrl": "関連URL (任意)",
       "bookingFieldUrl": "予約ページURL",
       "bookingFieldTitle": "タイトル (任意)",
       "bookingFieldTitlePlaceholder": "例: 30分相談",

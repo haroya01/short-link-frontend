@@ -27,6 +27,7 @@ import type {
 import { BookingBlockDialog } from "./profile-section/BookingBlockDialog";
 import { ContactCardBlockDialog } from "./profile-section/ContactCardBlockDialog";
 import { EmailFormBlockDialog } from "./profile-section/EmailFormBlockDialog";
+import { EventBlockDialog } from "./profile-section/EventBlockDialog";
 import { GalleryBlockDialog } from "./profile-section/GalleryBlockDialog";
 import { ProductCardBlockDialog } from "./profile-section/ProductCardBlockDialog";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
@@ -105,6 +106,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     initialJson: string | null;
   }>({ open: false, blockId: null, initialJson: null });
   const [bookingDialog, setBookingDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialJson: string | null;
+  }>({ open: false, blockId: null, initialJson: null });
+  const [eventDialog, setEventDialog] = useState<{
     open: boolean;
     blockId: number | null;
     initialJson: string | null;
@@ -302,7 +308,8 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             | "CONTACT_CARD"
             | "GALLERY"
             | "PRODUCT_CARD"
-            | "BOOKING";
+            | "BOOKING"
+            | "EVENT";
           id: number | null;
           shortCode: string | null;
           ogTitle?: string | null;
@@ -354,6 +361,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
               kind: "BLOCK",
               id: e.id,
               type: "BOOKING",
+              content: e.content ?? "",
+            });
+          } else if (e.kind === "EVENT" && e.id != null) {
+            next.push({
+              kind: "BLOCK",
+              id: e.id,
+              type: "EVENT",
               content: e.content ?? "",
             });
           }
@@ -567,8 +581,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     setBookingDialog({ open: true, blockId: null, initialJson: null });
   }
 
+  function handleAddEvent() {
+    setEventDialog({ open: true, blockId: null, initialJson: null });
+  }
+
   async function persistJsonBlock(
-    type: "CONTACT_CARD" | "GALLERY" | "PRODUCT_CARD" | "EMAIL_FORM" | "BOOKING",
+    type: "CONTACT_CARD" | "GALLERY" | "PRODUCT_CARD" | "EMAIL_FORM" | "BOOKING" | "EVENT",
     blockId: number | null,
     configJson: string,
   ) {
@@ -631,6 +649,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
     if (blockType === "BOOKING") {
       setBookingDialog({ open: true, blockId, initialJson: current });
+      return;
+    }
+    if (blockType === "EVENT") {
+      setEventDialog({ open: true, blockId, initialJson: current });
       return;
     }
     const promptKey =
@@ -749,6 +771,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onAddProductCard={handleAddProductCard}
           onAddEmailForm={handleAddEmailForm}
           onAddBooking={handleAddBooking}
+          onAddEvent={handleAddEvent}
           onMove={move}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
@@ -813,6 +836,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           setBookingDialog((s) => (open ? s : { ...s, open: false }))
         }
         onSubmit={(json) => persistJsonBlock("BOOKING", bookingDialog.blockId, json)}
+        t={t}
+      />
+      <EventBlockDialog
+        open={eventDialog.open}
+        initialJson={eventDialog.initialJson}
+        onOpenChange={(open) => setEventDialog((s) => (open ? s : { ...s, open: false }))}
+        onSubmit={(json) => persistJsonBlock("EVENT", eventDialog.blockId, json)}
         t={t}
       />
     </div>

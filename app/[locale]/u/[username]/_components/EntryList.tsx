@@ -6,6 +6,7 @@ import { ContactCardEntry } from "./ContactCardEntry";
 import { DividerEntry } from "./DividerEntry";
 import { EmailFormEntryCard } from "./EmailFormEntryCard";
 import { EmbedEntryCard } from "./EmbedEntryCard";
+import { EventEntryCard } from "./EventEntryCard";
 import { GalleryEntryCard } from "./GalleryEntryCard";
 import { ProductCardEntry } from "./ProductCardEntry";
 import { ImageEntryCard } from "./ImageEntryCard";
@@ -106,6 +107,16 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
           return (
             <BookingEntryCard
               key={key}
+              content={entry.content}
+              colors={colors}
+              fadeStyle={style}
+            />
+          );
+        if (entry.kind === "EVENT" && entry.id != null && entry.content)
+          return (
+            <EventEntryCard
+              key={key}
+              id={entry.id}
               content={entry.content}
               colors={colors}
               fadeStyle={style}
