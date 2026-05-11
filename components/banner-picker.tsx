@@ -97,11 +97,19 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
         onClick={() => fileInput.current?.click()}
         disabled={busy}
         aria-label={t("change")}
-        className="group relative block aspect-[3/1] w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100 transition hover:border-accent-300"
+        // aspect-ratio + relative + min-h-0 keeps the button locked to 3:1 regardless of an
+        // unstyled image flash during reflow. transition-colors instead of `transition` so the
+        // size doesn't animate on layout shifts (which produced the "엄청 커지는" jitter).
+        className="group relative block w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100 transition-colors hover:border-accent-300"
+        style={{ aspectRatio: "3 / 1" }}
       >
         {currentUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={currentUrl} alt="" className="h-full w-full object-cover" />
+          <img
+            src={currentUrl}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         ) : (
           <span className="absolute inset-0 grid place-items-center text-xs text-slate-500">
             <span className="inline-flex items-center gap-1.5">
@@ -110,7 +118,7 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
             </span>
           </span>
         )}
-        <span className="absolute inset-0 grid place-items-center bg-black/40 text-white opacity-0 transition group-hover:opacity-100">
+        <span className="absolute inset-0 grid place-items-center bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100">
           {busy ? (
             <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
