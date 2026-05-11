@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useToast } from "./ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -90,8 +90,16 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   // editor state. The preview consumes this directly through the real {@link EntryList} component,
   // so a highlighted link with an OG image renders as the hero card, image-URL destinations render
   // inline, YouTube gets the play-overlay thumbnail, etc. — no parallel rendering logic.
-  const entries: PublicProfileEntry[] = items
-    .map((it): PublicProfileEntry | null => {
+  //
+  // Memoized so the array reference is stable across renders where the inputs didn't change —
+  // otherwise the parent's `onDraft` useEffect (deps include `entries`) fires every render, the
+  // parent calls setDraft, ProfileSection re-renders, entries is a new ref again → infinite loop
+  // that React surfaces as "Maximum update depth exceeded" and detaches event handlers, making
+  // the whole page unresponsive (logo / language switcher click 시 무반응 증상).
+  const entries: PublicProfileEntry[] = useMemo(
+    () =>
+      items
+        .map((it): PublicProfileEntry | null => {
       if (it.kind === "LINK") {
         const link = (links ?? []).find((l) => l.shortCode === it.code);
         if (!link) return null;
@@ -121,7 +129,9 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         content: it.content,
       };
     })
-    .filter((e): e is PublicProfileEntry => e !== null);
+    .filter((e): e is PublicProfileEntry => e !== null),
+    [items, links, labelByShortCode, ogImageByShortCode, highlightedShortCode],
+  );
 
   // Bubble local edit state up to the parent on every change so a preview pane can update live
   // without round-tripping. Saved profile state stays separate — the draft IS the source of truth
