@@ -5,6 +5,8 @@ import {
   ArrowUp,
   ChevronDown,
   ChevronUp,
+  Contact,
+  GalleryHorizontal,
   GripVertical,
   ImageIcon,
   Minus,
@@ -32,6 +34,8 @@ type Props = {
   onAddDivider: () => void;
   onAddImage: () => void;
   onAddEmbed: () => void;
+  onAddContactCard: () => void;
+  onAddGallery: () => void;
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
@@ -65,6 +69,8 @@ export function ProfileFeedEditor({
   onAddDivider,
   onAddImage,
   onAddEmbed,
+  onAddContactCard,
+  onAddGallery,
   onMove,
   onDragStart,
   onDragOver,
@@ -95,6 +101,8 @@ export function ProfileFeedEditor({
           onAddDivider={onAddDivider}
           onAddImage={onAddImage}
           onAddEmbed={onAddEmbed}
+          onAddContactCard={onAddContactCard}
+          onAddGallery={onAddGallery}
           t={t}
         />
       </div>
@@ -193,12 +201,16 @@ function AddMenu({
   onAddDivider,
   onAddImage,
   onAddEmbed,
+  onAddContactCard,
+  onAddGallery,
   t,
 }: {
   onAddText: () => void;
   onAddDivider: () => void;
   onAddImage: () => void;
   onAddEmbed: () => void;
+  onAddContactCard: () => void;
+  onAddGallery: () => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   const [open, setOpen] = useState(false);
@@ -253,6 +265,18 @@ function AddMenu({
           </MenuItem>
           <MenuItem onClick={() => fire(onAddEmbed)} icon={<Play className="h-3.5 w-3.5" />}>
             {t("addEmbed")}
+          </MenuItem>
+          <MenuItem
+            onClick={() => fire(onAddContactCard)}
+            icon={<Contact className="h-3.5 w-3.5" />}
+          >
+            {t("addContactCard")}
+          </MenuItem>
+          <MenuItem
+            onClick={() => fire(onAddGallery)}
+            icon={<GalleryHorizontal className="h-3.5 w-3.5" />}
+          >
+            {t("addGallery")}
           </MenuItem>
         </div>
       )}
@@ -419,6 +443,44 @@ function FeedItemRow({
       </li>
     );
   }
+  if (item.kind === "BLOCK" && item.type === "CONTACT_CARD") {
+    const summary = summarizeJsonField(item.content, "name");
+    return (
+      <li {...dndProps} className={baseRow}>
+        {dragHandle}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <Contact className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          <span className="truncate text-sm font-medium text-slate-900">
+            {summary || t("addContactCardPlaceholder")}
+          </span>
+        </div>
+        <BlockActions
+          onEdit={() => onEditBlock(item.id, item.content ?? "")}
+          onDelete={() => onDeleteBlock(item.id)}
+          t={t}
+        />
+      </li>
+    );
+  }
+  if (item.kind === "BLOCK" && item.type === "GALLERY") {
+    const count = countGalleryImages(item.content);
+    return (
+      <li {...dndProps} className={baseRow}>
+        {dragHandle}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <GalleryHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          <span className="truncate text-sm text-slate-700">
+            {count > 0 ? t("galleryRowSummary", { count }) : t("addGalleryPlaceholder")}
+          </span>
+        </div>
+        <BlockActions
+          onEdit={() => onEditBlock(item.id, item.content ?? "")}
+          onDelete={() => onDeleteBlock(item.id)}
+          t={t}
+        />
+      </li>
+    );
+  }
   if (item.kind === "BLOCK" && item.type === "EMBED") {
     return (
       <li {...dndProps} className={baseRow}>
@@ -565,6 +627,27 @@ function LinkLabelField({
       {currentLabel || t("labelEmpty")}
     </button>
   );
+}
+
+/** Pulls a single string field out of the block's JSON content for a row-summary preview. */
+function summarizeJsonField(content: string | null, field: string): string {
+  if (!content) return "";
+  try {
+    const parsed = JSON.parse(content);
+    return typeof parsed?.[field] === "string" ? parsed[field] : "";
+  } catch {
+    return "";
+  }
+}
+
+function countGalleryImages(content: string | null): number {
+  if (!content) return 0;
+  try {
+    const parsed = JSON.parse(content);
+    return Array.isArray(parsed?.images) ? parsed.images.length : 0;
+  } catch {
+    return 0;
+  }
 }
 
 function DragHandle({
