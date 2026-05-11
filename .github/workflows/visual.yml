@@ -1,0 +1,76 @@
+name: Visual Snapshots
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      update_snapshots:
+        description: "Regenerate baseline PNGs from this CI environment and upload as artifact"
+        type: boolean
+        default: false
+
+concurrency:
+  group: visual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Visual fixtures are static — don't need a real backend. Build still expects this var
+      # to be defined; pointing at a noop URL keeps the build happy.
+      NEXT_PUBLIC_API_BASE: http://localhost:0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: Build Next.js
+        run: npm run build
+      - name: Start Next.js
+        run: |
+          PORT=3001 npm start &
+          # Wait until the dev server is responding before kicking off Playwright.
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3001/ko >/dev/null; then
+              echo "next is up"
+              break
+            fi
+            sleep 1
+          done
+      - name: Run visual snapshot tests
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3001
+        run: |
+          if [ "${{ inputs.update_snapshots }}" = "true" ]; then
+            echo "Bootstrapping baselines (workflow_dispatch update_snapshots=true)"
+            npx playwright test --project=visual --update-snapshots
+          else
+            npx playwright test --project=visual
+          fi
+      - name: Upload baseline PNGs (workflow_dispatch update_snapshots=true)
+        if: inputs.update_snapshots == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-baselines-linux
+          path: e2e/visual.spec.ts-snapshots/
+          retention-days: 14
+      - name: Upload diff artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-visual-diff
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
