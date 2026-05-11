@@ -296,7 +296,8 @@ export type PublicProfileEntry = {
     | "CONTACT_CARD"
     | "GALLERY"
     | "PRODUCT_CARD"
-    | "BOOKING";
+    | "BOOKING"
+    | "EVENT";
   id: number | null;
   shortCode: string | null;
   shortUrl: string | null;
@@ -323,7 +324,8 @@ export type ProfileBlock = {
     | "CONTACT_CARD"
     | "GALLERY"
     | "PRODUCT_CARD"
-    | "BOOKING";
+    | "BOOKING"
+    | "EVENT";
   content: string | null;
   profileOrder: number;
 };
@@ -389,6 +391,20 @@ export type BookingConfig = {
   title: string | null;
   description: string | null;
   ctaLabel: string | null;
+};
+
+/**
+ * EVENT JSON shape — a user-authored calendar event. Times are ISO 8601 strings with offset
+ * (e.g. {@code 2026-06-15T14:00:00+09:00}). ICS / Google Calendar URLs are generated on the
+ * client; backend just stores + validates the fields.
+ */
+export type EventConfig = {
+  title: string;
+  startsAt: string;
+  endsAt: string | null;
+  location: string | null;
+  description: string | null;
+  url: string | null;
 };
 
 /**

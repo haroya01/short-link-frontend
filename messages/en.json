@@ -770,6 +770,13 @@
     "booking": {
       "defaultTitle": "Book a time",
       "defaultCta": "Open booking page"
+    },
+    "event": {
+      "addToCalendar": "Add to calendar",
+      "google": "Google Calendar",
+      "outlook": "Outlook",
+      "appleIcs": "Apple / .ics download",
+      "moreInfo": "Details"
     }
   },
   "weeklyInsights": {
@@ -1065,6 +1072,20 @@
       "editBookingTitle": "Edit booking block",
       "addBookingDescription": "Surface an external booking page (Calendly, Cal.com, Microsoft Bookings, etc.) as a card on your profile.",
       "addBookingPlaceholder": "(no booking set)",
+      "addEvent": "+ Event",
+      "addEventTitle": "Add event",
+      "editEventTitle": "Edit event",
+      "addEventDescription": "A workshop, popup, or deadline. Visitors can add it to their own calendar in one tap.",
+      "addEventPlaceholder": "(no event set)",
+      "eventFieldTitle": "Event title",
+      "eventFieldTitlePlaceholder": "e.g. Team workshop",
+      "eventFieldStartsAt": "Starts at",
+      "eventFieldEndsAt": "Ends at (optional)",
+      "eventFieldLocation": "Location (optional)",
+      "eventFieldLocationPlaceholder": "e.g. Seoul",
+      "eventFieldDescription": "Description (optional)",
+      "eventFieldDescriptionPlaceholder": "Event notes",
+      "eventFieldUrl": "Related URL (optional)",
       "bookingFieldUrl": "Booking page URL",
       "bookingFieldTitle": "Title (optional)",
       "bookingFieldTitlePlaceholder": "e.g. 30-min consult",
