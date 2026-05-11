@@ -1152,6 +1152,7 @@
       "contactFieldAddressPlaceholder": "東京都 ...",
       "contactFieldLogo": "ロゴ (任意)",
       "contactFieldLogoHint": "会社 / 個人ロゴ — 名刺の表・裏に小さく表示されます。",
+      "contactFieldPalette": "ホログラフィック パレット",
       "addGalleryTitle": "ギャラリー追加",
       "editGalleryTitle": "ギャラリー編集",
       "addGalleryDescription": "画像 URL を入力してください。最大 {max} 枚 — 訪問者は左右にスワイプして見られます。",

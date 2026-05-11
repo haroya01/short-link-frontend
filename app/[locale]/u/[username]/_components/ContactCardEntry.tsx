@@ -15,6 +15,7 @@ import { useTranslations } from "next-intl";
 import type { ContactCardConfig } from "@/types";
 import { playCardFlipSound } from "@/lib/card-flip-sound";
 import type { ThemeColors } from "../_lib/theme";
+import { getPalette } from "./contact-card-palettes";
 
 type Props = {
   content: string;
@@ -47,6 +48,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
   void colors;
   const t = useTranslations("publicProfile.contactCard");
   const card = useMemo(() => parseConfig(content), [content]);
+  const palette = useMemo(() => getPalette(card.palette), [card.palette]);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
@@ -220,6 +222,19 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
         aria-pressed={flipped}
         aria-label={flipped ? t("flipToFront") : t("flipToBack")}
         className="relative cursor-pointer select-none [perspective:1200px] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 rounded-2xl"
+        style={
+          {
+            "--foil-c1": palette.colors[0],
+            "--foil-c2": palette.colors[1],
+            "--foil-c3": palette.colors[2],
+            "--foil-c4": palette.colors[3],
+            "--foil-c5": palette.colors[4],
+            "--foil-c6": palette.colors[5],
+            "--foil-substrate": palette.substrate,
+            "--foil-ambient-1": palette.ambient[0],
+            "--foil-ambient-2": palette.ambient[1],
+          } as CSSProperties
+        }
       >
         {/* Two wrappers so flip (slow, 600ms) and tilt (fast, 80ms) can have separate transition
             curves. The outer "flip" wrapper handles the 0/180° rotateY for the flip; the inner
@@ -450,9 +465,9 @@ function CardFace({
       }
       style={{
         backgroundImage:
-          "radial-gradient(120% 80% at 0% 0%, rgba(67, 56, 202, 0.25) 0%, transparent 50%)," +
-          "radial-gradient(120% 80% at 100% 100%, rgba(157, 23, 77, 0.18) 0%, transparent 55%)," +
-          "linear-gradient(135deg, #0a0e1c 0%, #131a30 60%, #0a0e1c 100%)",
+          "radial-gradient(120% 80% at 0% 0%, var(--foil-ambient-1, rgba(67, 56, 202, 0.25)) 0%, transparent 50%)," +
+          "radial-gradient(120% 80% at 100% 100%, var(--foil-ambient-2, rgba(157, 23, 77, 0.18)) 0%, transparent 55%)," +
+          "linear-gradient(135deg, var(--foil-substrate, #0a0e1c) 0%, var(--foil-substrate, #131a30) 60%, var(--foil-substrate, #0a0e1c) 100%)",
         boxShadow:
           "inset 0 0 0 1px rgba(255,255,255,0.08), 0 25px 50px -12px rgba(0,0,0,0.45)",
       }}
@@ -469,7 +484,7 @@ function CardFace({
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(110deg, hsl(283,70%,58%) 0%, hsl(228,70%,55%) 10%, hsl(176,60%,52%) 20%, hsl(93,55%,48%) 30%, hsl(53,75%,55%) 40%, hsl(2,75%,58%) 50%, hsl(283,70%,58%) 60%)",
+            "repeating-linear-gradient(110deg, var(--foil-c1) 0%, var(--foil-c2) 10%, var(--foil-c3) 20%, var(--foil-c4) 30%, var(--foil-c5) 40%, var(--foil-c6) 50%, var(--foil-c1) 60%)",
           backgroundSize: "400% 400%",
           backgroundPosition: back
             ? "calc(100% - var(--background-x, 50%)) var(--background-y, 50%)"
@@ -489,7 +504,7 @@ function CardFace({
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "repeating-linear-gradient(-30deg, hsl(2,75%,58%) 0%, hsl(53,75%,55%) 15%, hsl(93,55%,48%) 30%, hsl(176,60%,52%) 45%, hsl(228,70%,55%) 60%, hsl(283,70%,58%) 75%, hsl(2,75%,58%) 100%)",
+            "repeating-linear-gradient(-30deg, var(--foil-c6) 0%, var(--foil-c5) 15%, var(--foil-c4) 30%, var(--foil-c3) 45%, var(--foil-c2) 60%, var(--foil-c1) 75%, var(--foil-c6) 100%)",
           backgroundSize: "400% 400%",
           backgroundPosition: back
             ? "calc(100% - var(--pointer-x, 50%)) var(--pointer-y, 50%)"
@@ -570,6 +585,9 @@ function parseConfig(raw: string): ContactCardConfig {
       address: typeof parsed.address === "string" ? parsed.address : null,
       website: typeof parsed.website === "string" ? parsed.website : null,
       logoUrl: typeof parsed.logoUrl === "string" ? parsed.logoUrl : null,
+      palette: typeof parsed.palette === "string"
+        ? (parsed.palette as ContactCardConfig["palette"])
+        : null,
     };
   } catch {
     return {
@@ -581,6 +599,7 @@ function parseConfig(raw: string): ContactCardConfig {
       address: null,
       website: null,
       logoUrl: null,
+      palette: null,
     };
   }
 }
