@@ -65,8 +65,15 @@ test.describe("visual: component fixtures", () => {
       // Settle: let fonts + initial paint complete. The contact card has scroll-driven CSS
       // variables — we leave them at rest (no scroll triggered) for deterministic capture.
       await page.waitForTimeout(300);
-      await expect(target).toHaveScreenshot(`${slug}.png`, {
+      // Viewport-level capture (not element-level) so the screenshot dimensions are pinned to
+      // 1280×800 by the playwright project config — no boundingClientRect rounding (which gave
+      // 400 on macOS / 401 on Linux even with explicit w-[400px], failing toHaveScreenshot's
+      // size-must-match-exactly precondition). The fixture renders centered on a white
+      // background; the surrounding white pixels are stable across OSes, so the 5% tolerance
+      // is effectively focused on the card area itself.
+      await expect(page).toHaveScreenshot(`${slug}.png`, {
         animations: "disabled",
+        fullPage: false,
       });
     });
   }
