@@ -99,53 +99,52 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
     el.style.setProperty("--ry", `${ry}deg`);
   }, []);
 
+  // Light position responds to page scroll when the pointer isn't engaged — simulates a fixed
+  // light source overhead while the card moves through the viewport. Card high in viewport →
+  // light at the bottom (we're "looking up at it"); card low → light at the top. No continuous
+  // animation: position is static unless the user actually scrolls.
+  const applyScrollLight = useCallback(() => {
+    const el = cardRef.current;
+    if (!el || pointerOverRef.current) return;
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight || 1;
+    const cardMid = rect.top + rect.height / 2;
+    // -0.5 (card center at top of viewport) → +0.5 (at bottom)
+    const scrollPct = cardMid / vh - 0.5;
+    // Card at bottom of viewport → light at top of card (my small). At top → light at bottom.
+    const my = Math.max(10, Math.min(90, 50 - scrollPct * 80));
+    el.style.setProperty("--mx", `50%`);
+    el.style.setProperty("--my", `${my}%`);
+    el.style.setProperty("--rx", `0deg`);
+    // Tiny tilt matched to the light shift so the card has a subtle "facing the light" pose.
+    el.style.setProperty("--ry", `${((my - 50) / 50) * 4}deg`);
+  }, []);
+
+  useEffect(() => {
+    applyScrollLight();
+    let rafId = 0;
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        applyScrollLight();
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [applyScrollLight]);
+
   const handlePointerLeave = useCallback(() => {
     pointerOverRef.current = false;
-    // Don't reset to center — the idle rAF loop will take over from the last pointer position
-    // and smoothly orbit from there, no jarring snap-to-center.
-  }, []);
-
-  // Idle animation: when pointer isn't over the card, slowly orbit the highlight position and
-  // bias it vertically based on the card's scroll position in the viewport. The combination
-  // simulates a fixed light source while the card moves — the holographic catch shifts as the
-  // visitor scrolls, the way it would if you tilted a real foil card. rAF runs continuously while
-  // mounted; the inner branch makes it a no-op when the pointer is engaged.
-  useEffect(() => {
-    let rafId = 0;
-    const start = performance.now();
-    const loop = () => {
-      const el = cardRef.current;
-      if (el && !pointerOverRef.current) {
-        const t = (performance.now() - start) / 1000;
-        // Slow elliptical orbit (~12s period for x, ~9s for y → drifting Lissajous, never repeats
-        // exactly so the eye doesn't latch onto a loop).
-        const orbitX = 50 + 28 * Math.cos(t * 0.52);
-        const orbitY = 50 + 18 * Math.sin(t * 0.71);
-
-        // Card's vertical position in the viewport, mapped to a ±15% Y bias on the highlight.
-        const rect = el.getBoundingClientRect();
-        const vh = window.innerHeight || 1;
-        const cardMid = rect.top + rect.height / 2;
-        // -0.5 (card at top of viewport) → +0.5 (card at bottom)
-        const scrollPct = cardMid / vh - 0.5;
-        const scrollBiasY = Math.max(-15, Math.min(15, scrollPct * 30));
-
-        const my = Math.max(5, Math.min(95, orbitY + scrollBiasY));
-        el.style.setProperty("--mx", `${orbitX}%`);
-        el.style.setProperty("--my", `${my}%`);
-        // Subtle idle tilt — half intensity of pointer-driven so the card breathes without
-        // looking like it's being aggressively manipulated.
-        el.style.setProperty(
-          "--rx",
-          `${((orbitX - 50) / 50) * -3}deg`,
-        );
-        el.style.setProperty("--ry", `${((my - 50) / 50) * 3}deg`);
-      }
-      rafId = requestAnimationFrame(loop);
-    };
-    rafId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(rafId);
-  }, []);
+    // Hand control back to scroll-driven positioning so the highlight doesn't stick where the
+    // pointer last was — the card returns to whatever the viewport position says is "natural."
+    applyScrollLight();
+  }, [applyScrollLight]);
 
   function downloadVcard() {
     const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
