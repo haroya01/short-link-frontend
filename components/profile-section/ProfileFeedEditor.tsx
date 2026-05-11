@@ -24,6 +24,8 @@ type Props = {
   links: MyLink[] | null;
   highlightedShortCode: string | null;
   pendingShortCode: string | null;
+  /** Current label (OG title override) per short code — what visitors see on the public profile. */
+  labelByShortCode: Record<string, string>;
   dragIndex: number | null;
   overIndex: number | null;
   onAddText: () => void;
@@ -40,6 +42,8 @@ type Props = {
   onToggle: (shortCode: string, show: boolean) => void;
   onEditBlock: (blockId: number, current: string) => void;
   onDeleteBlock: (blockId: number) => void;
+  /** Save the visible label (== OG title override). Pass empty string to clear back to host fallback. */
+  onEditLabel: (shortCode: string, label: string) => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 };
 
@@ -54,6 +58,7 @@ export function ProfileFeedEditor({
   links,
   highlightedShortCode,
   pendingShortCode,
+  labelByShortCode,
   dragIndex,
   overIndex,
   onAddText,
@@ -70,6 +75,7 @@ export function ProfileFeedEditor({
   onToggle,
   onEditBlock,
   onDeleteBlock,
+  onEditLabel,
   t,
 }: Props) {
   const featuredCodes = items
@@ -114,6 +120,7 @@ export function ProfileFeedEditor({
                   links={links}
                   highlightedShortCode={highlightedShortCode}
                   pendingShortCode={pendingShortCode}
+                  labelByShortCode={labelByShortCode}
                   isDragging={dragIndex === idx}
                   isOver={overIndex === idx && dragIndex !== null && dragIndex !== idx}
                   onMove={onMove}
@@ -126,6 +133,7 @@ export function ProfileFeedEditor({
                   onToggle={onToggle}
                   onEditBlock={onEditBlock}
                   onDeleteBlock={onDeleteBlock}
+                  onEditLabel={onEditLabel}
                   t={t}
                 />
               ))}
@@ -303,6 +311,7 @@ type RowProps = {
   links: MyLink[];
   highlightedShortCode: string | null;
   pendingShortCode: string | null;
+  labelByShortCode: Record<string, string>;
   isDragging: boolean;
   isOver: boolean;
   onMove: (idx: number, direction: -1 | 1) => void;
@@ -315,6 +324,7 @@ type RowProps = {
   onToggle: (shortCode: string, show: boolean) => void;
   onEditBlock: (blockId: number, current: string) => void;
   onDeleteBlock: (blockId: number) => void;
+  onEditLabel: (shortCode: string, label: string) => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 };
 
@@ -325,6 +335,7 @@ function FeedItemRow({
   links,
   highlightedShortCode,
   pendingShortCode,
+  labelByShortCode,
   isDragging,
   isOver,
   onMove,
@@ -337,6 +348,7 @@ function FeedItemRow({
   onToggle,
   onEditBlock,
   onDeleteBlock,
+  onEditLabel,
   t,
 }: RowProps) {
   const dndProps = {
@@ -447,8 +459,15 @@ function FeedItemRow({
     <li {...dndProps} className={baseRow}>
       {dragHandle}
       <div className="min-w-0 flex-1">
-        <p className="truncate font-mono text-sm text-slate-900">/{link.shortCode}</p>
-        <p className="truncate text-[11px] text-slate-500">{link.originalUrl}</p>
+        <LinkLabelField
+          shortCode={link.shortCode}
+          currentLabel={labelByShortCode[link.shortCode] ?? ""}
+          onSave={onEditLabel}
+          t={t}
+        />
+        <p className="truncate font-mono text-[11px] text-slate-400">
+          /{link.shortCode} · {link.originalUrl}
+        </p>
       </div>
       <div className="flex items-center gap-2">
         <button
@@ -473,6 +492,73 @@ function FeedItemRow({
         </button>
       </div>
     </li>
+  );
+}
+
+/**
+ * Click-to-edit field for the visible label on the public profile. Empty saves clear the override
+ * (falls back to the host on the public page). Esc cancels, Enter / blur commits — same shape as
+ * the bio input above, so muscle memory transfers.
+ */
+function LinkLabelField({
+  shortCode,
+  currentLabel,
+  onSave,
+  t,
+}: {
+  shortCode: string;
+  currentLabel: string;
+  onSave: (shortCode: string, label: string) => void;
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(currentLabel);
+
+  function commit() {
+    setEditing(false);
+    if (draft === currentLabel) return;
+    onSave(shortCode, draft.trim());
+  }
+
+  if (editing) {
+    return (
+      <input
+        type="text"
+        value={draft}
+        autoFocus
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            (e.target as HTMLInputElement).blur();
+          } else if (e.key === "Escape") {
+            setDraft(currentLabel);
+            setEditing(false);
+          }
+        }}
+        maxLength={120}
+        placeholder={t("labelPlaceholder")}
+        className="block w-full truncate border-b border-accent-300 bg-transparent text-sm font-medium text-slate-900 outline-none"
+      />
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        setDraft(currentLabel);
+        setEditing(true);
+      }}
+      title={t("labelEdit")}
+      className={
+        "block w-full truncate text-left text-sm font-medium hover:text-accent-700 " +
+        (currentLabel ? "text-slate-900" : "italic text-slate-400")
+      }
+    >
+      {currentLabel || t("labelEmpty")}
+    </button>
   );
 }
 
