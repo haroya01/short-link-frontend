@@ -1066,6 +1066,7 @@
       "contactFieldAddressPlaceholder": "서울특별시 ...",
       "contactFieldLogo": "로고 (옵션)",
       "contactFieldLogoHint": "회사/개인 로고 — 명함 앞·뒷면에 작게 표시됩니다.",
+      "contactFieldPalette": "홀로그래픽 팔레트",
       "addGalleryTitle": "갤러리 추가",
       "editGalleryTitle": "갤러리 수정",
       "addGalleryDescription": "이미지 URL 을 입력하세요. 최대 {max}장 — 방문자는 좌우로 스와이프하며 볼 수 있어요.",

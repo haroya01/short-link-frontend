@@ -1152,6 +1152,7 @@
       "contactFieldAddressPlaceholder": "City, Country",
       "contactFieldLogo": "Logo (optional)",
       "contactFieldLogoHint": "Company / personal logo — shown small on both sides of the card.",
+      "contactFieldPalette": "Holographic palette",
       "addGalleryTitle": "Add gallery",
       "editGalleryTitle": "Edit gallery",
       "addGalleryDescription": "Image URLs to display as a swipeable carousel. Up to {max} images.",
