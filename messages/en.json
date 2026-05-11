@@ -766,6 +766,10 @@
       "error": "Couldn't sign up. Please try again.",
       "defaultPlaceholder": "you@example.com",
       "defaultSuccess": "You're in. Thanks!"
+    },
+    "booking": {
+      "defaultTitle": "Book a time",
+      "defaultCta": "Open booking page"
     }
   },
   "weeklyInsights": {
@@ -1056,6 +1060,20 @@
       "productCardFieldCtaLabelPlaceholder": "e.g. Order",
       "productCardFieldCtaUrl": "Button URL",
       "productCardAddItem": "Add item",
+      "addBooking": "+ Booking",
+      "addBookingTitle": "Add booking block",
+      "editBookingTitle": "Edit booking block",
+      "addBookingDescription": "Surface an external booking page (Calendly, Cal.com, Microsoft Bookings, etc.) as a card on your profile.",
+      "addBookingPlaceholder": "(no booking set)",
+      "bookingFieldUrl": "Booking page URL",
+      "bookingFieldTitle": "Title (optional)",
+      "bookingFieldTitlePlaceholder": "e.g. 30-min consult",
+      "bookingFieldDescription": "Description (optional)",
+      "bookingFieldDescriptionPlaceholder": "e.g. Online or in-person",
+      "bookingFieldCtaLabel": "Button label (optional)",
+      "bookingFieldCtaLabelPlaceholder": "e.g. Book a time",
+      "bookingUnsupportedProvider": "This domain isn't supported yet.",
+      "bookingSupportedProviders": "Supported providers",
       "addEmailForm": "+ Email signup",
       "addEmailFormTitle": "Add email signup form",
       "editEmailFormTitle": "Edit email signup form",

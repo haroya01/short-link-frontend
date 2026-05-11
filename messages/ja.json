@@ -766,6 +766,10 @@
       "error": "登録に失敗しました。しばらくしてからお試しください。",
       "defaultPlaceholder": "you@example.com",
       "defaultSuccess": "登録完了。ありがとうございます。"
+    },
+    "booking": {
+      "defaultTitle": "予約する",
+      "defaultCta": "予約ページへ"
     }
   },
   "weeklyInsights": {
@@ -1056,6 +1060,20 @@
       "productCardFieldCtaLabelPlaceholder": "例: 注文",
       "productCardFieldCtaUrl": "ボタン URL",
       "productCardAddItem": "アイテムを追加",
+      "addBooking": "+ 予約",
+      "addBookingTitle": "予約ブロックを追加",
+      "editBookingTitle": "予約ブロックを編集",
+      "addBookingDescription": "Calendly · Cal.com · Microsoft Bookings 等の外部予約ページをカードとして表示します。",
+      "addBookingPlaceholder": "(予約未設定)",
+      "bookingFieldUrl": "予約ページURL",
+      "bookingFieldTitle": "タイトル (任意)",
+      "bookingFieldTitlePlaceholder": "例: 30分相談",
+      "bookingFieldDescription": "説明 (任意)",
+      "bookingFieldDescriptionPlaceholder": "例: オンラインまたは対面",
+      "bookingFieldCtaLabel": "ボタンラベル (任意)",
+      "bookingFieldCtaLabelPlaceholder": "例: 予約する",
+      "bookingUnsupportedProvider": "対応していないドメインです。",
+      "bookingSupportedProviders": "対応サービス",
       "addEmailForm": "+ メール収集",
       "addEmailFormTitle": "メール収集フォームを追加",
       "editEmailFormTitle": "メール収集フォームを編集",

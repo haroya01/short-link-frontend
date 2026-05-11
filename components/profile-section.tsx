@@ -24,6 +24,7 @@ import type {
   PublicProfileEntry,
   Social,
 } from "@/types";
+import { BookingBlockDialog } from "./profile-section/BookingBlockDialog";
 import { ContactCardBlockDialog } from "./profile-section/ContactCardBlockDialog";
 import { EmailFormBlockDialog } from "./profile-section/EmailFormBlockDialog";
 import { GalleryBlockDialog } from "./profile-section/GalleryBlockDialog";
@@ -99,6 +100,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     initialJson: string | null;
   }>({ open: false, blockId: null, initialJson: null });
   const [emailFormDialog, setEmailFormDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialJson: string | null;
+  }>({ open: false, blockId: null, initialJson: null });
+  const [bookingDialog, setBookingDialog] = useState<{
     open: boolean;
     blockId: number | null;
     initialJson: string | null;
@@ -295,7 +301,8 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             | "EMAIL_FORM"
             | "CONTACT_CARD"
             | "GALLERY"
-            | "PRODUCT_CARD";
+            | "PRODUCT_CARD"
+            | "BOOKING";
           id: number | null;
           shortCode: string | null;
           ogTitle?: string | null;
@@ -340,6 +347,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
               kind: "BLOCK",
               id: e.id,
               type: "PRODUCT_CARD",
+              content: e.content ?? "",
+            });
+          } else if (e.kind === "BOOKING" && e.id != null) {
+            next.push({
+              kind: "BLOCK",
+              id: e.id,
+              type: "BOOKING",
               content: e.content ?? "",
             });
           }
@@ -549,8 +563,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     setEmailFormDialog({ open: true, blockId: null, initialJson: null });
   }
 
+  function handleAddBooking() {
+    setBookingDialog({ open: true, blockId: null, initialJson: null });
+  }
+
   async function persistJsonBlock(
-    type: "CONTACT_CARD" | "GALLERY" | "PRODUCT_CARD" | "EMAIL_FORM",
+    type: "CONTACT_CARD" | "GALLERY" | "PRODUCT_CARD" | "EMAIL_FORM" | "BOOKING",
     blockId: number | null,
     configJson: string,
   ) {
@@ -609,6 +627,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
     if (blockType === "EMAIL_FORM") {
       setEmailFormDialog({ open: true, blockId, initialJson: current });
+      return;
+    }
+    if (blockType === "BOOKING") {
+      setBookingDialog({ open: true, blockId, initialJson: current });
       return;
     }
     const promptKey =
@@ -726,6 +748,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onAddGallery={handleAddGallery}
           onAddProductCard={handleAddProductCard}
           onAddEmailForm={handleAddEmailForm}
+          onAddBooking={handleAddBooking}
           onMove={move}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
@@ -781,6 +804,15 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         onSubmit={(json) =>
           persistJsonBlock("EMAIL_FORM", emailFormDialog.blockId, json)
         }
+        t={t}
+      />
+      <BookingBlockDialog
+        open={bookingDialog.open}
+        initialJson={bookingDialog.initialJson}
+        onOpenChange={(open) =>
+          setBookingDialog((s) => (open ? s : { ...s, open: false }))
+        }
+        onSubmit={(json) => persistJsonBlock("BOOKING", bookingDialog.blockId, json)}
         t={t}
       />
     </div>

@@ -683,6 +683,10 @@
       "error": "등록에 실패했어요. 잠시 후 다시 시도해 주세요.",
       "defaultPlaceholder": "you@example.com",
       "defaultSuccess": "등록 완료. 감사합니다."
+    },
+    "booking": {
+      "defaultTitle": "예약하기",
+      "defaultCta": "예약 페이지로"
     }
   },
   "weeklyInsights": {
@@ -975,6 +979,20 @@
       "editEmailFormTitle": "이메일 수집 폼 수정",
       "addEmailFormDescription": "방문자가 이메일을 남길 수 있는 작은 폼이에요. 모인 주소는 대시보드에서 확인 / CSV 로 받기.",
       "addEmailFormPlaceholder": "(이메일 폼 미설정)",
+      "addBooking": "+ 예약",
+      "addBookingTitle": "예약 블록 추가",
+      "editBookingTitle": "예약 블록 수정",
+      "addBookingDescription": "Calendly · Cal.com · 네이버예약 · 카카오 톡채널 등 외부 예약 페이지를 카드로 노출합니다.",
+      "addBookingPlaceholder": "(예약 미설정)",
+      "bookingFieldUrl": "예약 페이지 URL",
+      "bookingFieldTitle": "제목 (옵션)",
+      "bookingFieldTitlePlaceholder": "예: 30분 무료 상담",
+      "bookingFieldDescription": "설명 (옵션)",
+      "bookingFieldDescriptionPlaceholder": "예: 온라인 또는 대면",
+      "bookingFieldCtaLabel": "버튼 라벨 (옵션)",
+      "bookingFieldCtaLabelPlaceholder": "예: 예약하기",
+      "bookingUnsupportedProvider": "지원하지 않는 도메인이에요.",
+      "bookingSupportedProviders": "지원 서비스",
       "emailFormFieldTitle": "안내 문구",
       "emailFormFieldTitlePlaceholder": "예: 새 소식 받기",
       "emailFormFieldPlaceholder": "입력란 안내",
