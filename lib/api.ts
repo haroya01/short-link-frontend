@@ -511,6 +511,27 @@ export async function deleteBanner(): Promise<void> {
   await request("/api/v1/users/me/banner", { method: "DELETE" });
 }
 
+/**
+ * Profile-block image upload — used inside gallery / product card editor for images that go into
+ * a block's JSON content (not user avatar / banner). Same presign + PUT + commit dance as banner,
+ * but the commit returns {@code imageUrl} (no user-entity mutation).
+ */
+export async function presignProfileImageUpload(contentType: string): Promise<AvatarPresign> {
+  return request<AvatarPresign>("/api/v1/users/me/profile/images/presigned-url", {
+    method: "POST",
+    body: { contentType },
+  });
+}
+
+export async function commitProfileImageUpload(
+  key: string,
+): Promise<{ imageUrl: string; key: string }> {
+  return request<{ imageUrl: string; key: string }>("/api/v1/users/me/profile/images", {
+    method: "PUT",
+    body: { key },
+  });
+}
+
 /** Direct PUT to S3 with the presigned URL — same shape as avatar, kept separate for clarity. */
 export async function uploadBannerToS3(
   uploadUrl: string,
