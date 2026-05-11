@@ -317,6 +317,28 @@ export type ProfileBlock = {
   profileOrder: number;
 };
 
+/**
+ * EMAIL_FORM block config — stored as JSON in {@link ProfileBlock.content}. Title required;
+ * other fields fall back to sensible defaults on the public form.
+ */
+export type EmailFormConfig = {
+  title: string;
+  placeholder: string | null;
+  successMessage: string | null;
+};
+
+export type EmailLead = {
+  id: number;
+  blockId: number;
+  email: string;
+  submittedAt: string;
+};
+
+export type EmailLeadPage = {
+  items: EmailLead[];
+  total: number;
+};
+
 /** CONTACT_CARD JSON shape. {@link name} required, rest optional. */
 export type ContactCardConfig = {
   name: string;
