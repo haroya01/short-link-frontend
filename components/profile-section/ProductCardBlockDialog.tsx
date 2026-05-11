@@ -5,6 +5,7 @@ import { Plus, Trash2 } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "../ui/dialog";
 import { Input } from "../ui/input";
+import { ImageUploader } from "./ImageUploader";
 
 const MAX_ITEMS = 8;
 
@@ -163,13 +164,13 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
                   />
                 </Field>
                 <Field label={t("productCardFieldImage")} className="sm:col-span-2">
-                  <Input
-                    type="url"
-                    value={item.image}
-                    maxLength={512}
-                    placeholder="https://images.example.com/cake.jpg"
-                    onChange={(e) => updateItem(idx, { image: e.target.value })}
-                  />
+                  <div className="w-32">
+                    <ImageUploader
+                      value={item.image || null}
+                      onChange={(url) => updateItem(idx, { image: url ?? "" })}
+                      aspectClass="aspect-[4/3]"
+                    />
+                  </div>
                 </Field>
                 <Field label={t("productCardFieldDescription")} className="sm:col-span-2">
                   <Input

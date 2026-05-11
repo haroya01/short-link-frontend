@@ -1035,7 +1035,16 @@
       "addGalleryTitle": "갤러리 추가",
       "editGalleryTitle": "갤러리 수정",
       "addGalleryDescription": "이미지 URL 을 입력하세요. 최대 {max}장 — 방문자는 좌우로 스와이프하며 볼 수 있어요.",
+      "addGalleryDescriptionUpload": "이미지를 직접 올리세요. 최대 {max}장 — 방문자는 좌우로 스와이프하며 볼 수 있어요.",
       "addGalleryPlaceholder": "(갤러리 미설정)",
+      "imageUploader": {
+        "emptyHint": "이미지 추가",
+        "replace": "변경",
+        "remove": "제거",
+        "invalidType": "JPEG / PNG / WebP 만 가능해요.",
+        "tooBig": "이미지가 너무 커요.",
+        "uploadFailed": "업로드에 실패했어요."
+      },
       "galleryAddRow": "이미지 추가",
       "galleryRowSummary": "이미지 {count}장",
       "save": "저장",

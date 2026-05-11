@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "../ui/dialog";
-import { Input } from "../ui/input";
+import { ImageUploader } from "./ImageUploader";
 
 const MAX_IMAGES = 6;
 
@@ -17,12 +17,13 @@ type Props = {
 };
 
 /**
- * Image-URL list editor for a GALLERY block. Backend caps at 6; we mirror the cap here so the
- * user gets immediate feedback when they hit it instead of a 400 after Save. URLs are validated
- * on the server — we just shape them and leave the fail-fast UX to the response toast.
+ * File-upload editor for a GALLERY block — replaces the prior URL-input version. Each slot is an
+ * {@link ImageUploader} that handles resize → presign → S3 PUT → commit and reports the public
+ * URL back to this dialog. The slot's URL is the persisted value, so the rendered carousel + the
+ * backend validators (which expect http(s) URLs) need no changes. Backend caps at 6 images.
  */
 export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, t }: Props) {
-  const [urls, setUrls] = useState<string[]>([""]);
+  const [urls, setUrls] = useState<(string | null)[]>([null]);
 
   useEffect(() => {
     if (!open) return;
@@ -33,29 +34,29 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
           const cleaned = parsed.images.filter(
             (v: unknown): v is string => typeof v === "string",
           );
-          setUrls(cleaned.length > 0 ? cleaned : [""]);
+          setUrls(cleaned.length > 0 ? cleaned : [null]);
           return;
         }
       } catch {
         /* fall through */
       }
     }
-    setUrls([""]);
+    setUrls([null]);
   }, [open, initialJson]);
 
-  function updateUrl(idx: number, value: string) {
+  function updateSlot(idx: number, value: string | null) {
     setUrls((prev) => prev.map((u, i) => (i === idx ? value : u)));
   }
 
   function addRow() {
-    setUrls((prev) => (prev.length >= MAX_IMAGES ? prev : [...prev, ""]));
+    setUrls((prev) => (prev.length >= MAX_IMAGES ? prev : [...prev, null]));
   }
 
   function removeRow(idx: number) {
-    setUrls((prev) => (prev.length === 1 ? [""] : prev.filter((_, i) => i !== idx)));
+    setUrls((prev) => (prev.length === 1 ? [null] : prev.filter((_, i) => i !== idx)));
   }
 
-  const cleaned = urls.map((u) => u.trim()).filter((u) => u.length > 0);
+  const cleaned = urls.filter((u): u is string => typeof u === "string" && u.length > 0);
   const canSave = cleaned.length > 0;
 
   return (
@@ -63,7 +64,7 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
       open={open}
       onOpenChange={onOpenChange}
       title={initialJson ? t("editGalleryTitle") : t("addGalleryTitle")}
-      description={t("addGalleryDescription", { max: MAX_IMAGES })}
+      description={t("addGalleryDescriptionUpload", { max: MAX_IMAGES })}
       confirmLabel={t("save")}
       confirmDisabled={!canSave}
       cancelLabel={t("cancel")}
@@ -71,29 +72,29 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
         await onSubmit(JSON.stringify({ images: cleaned }));
       }}
     >
-      <div className="space-y-2">
-        {urls.map((url, idx) => (
-          <div key={idx} className="flex items-center gap-2">
-            <span className="w-5 shrink-0 text-center text-[11px] text-slate-400">
-              {idx + 1}
-            </span>
-            <Input
-              type="url"
-              value={url}
-              maxLength={256}
-              placeholder="https://images.example.com/photo.jpg"
-              onChange={(e) => updateUrl(idx, e.target.value)}
-            />
-            <button
-              type="button"
-              onClick={() => removeRow(idx)}
-              aria-label={t("remove")}
-              className="text-slate-400 hover:text-red-600"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        ))}
+      <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {urls.map((url, idx) => (
+            <div key={idx} className="relative">
+              <ImageUploader
+                value={url}
+                onChange={(next) => updateSlot(idx, next)}
+                aspectClass="aspect-square"
+                removable={false}
+              />
+              {urls.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeRow(idx)}
+                  aria-label={t("remove")}
+                  className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-black/60 text-white opacity-80 transition hover:opacity-100"
+                >
+                  <Trash2 className="h-2.5 w-2.5" />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
         <button
           type="button"
           onClick={addRow}

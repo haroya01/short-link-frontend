@@ -1121,7 +1121,16 @@
       "addGalleryTitle": "ギャラリー追加",
       "editGalleryTitle": "ギャラリー編集",
       "addGalleryDescription": "画像 URL を入力してください。最大 {max} 枚 — 訪問者は左右にスワイプして見られます。",
+      "addGalleryDescriptionUpload": "画像を直接アップロード。最大 {max} 枚 — 訪問者は左右にスワイプして見られます。",
       "addGalleryPlaceholder": "(ギャラリー未設定)",
+      "imageUploader": {
+        "emptyHint": "画像を追加",
+        "replace": "変更",
+        "remove": "削除",
+        "invalidType": "JPEG / PNG / WebP のみ対応です。",
+        "tooBig": "画像が大きすぎます。",
+        "uploadFailed": "アップロードに失敗しました。"
+      },
       "galleryAddRow": "画像を追加",
       "galleryRowSummary": "画像 {count}枚",
       "save": "保存",
