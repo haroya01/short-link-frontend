@@ -129,6 +129,12 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
 
   if (config.items.length === 0) return null;
 
+  // Single item — render as a regular full-width card matching the other feed entries. No
+  // horizontal scroller, no dots, no peek of an adjacent item that doesn't exist. This is
+  // the design language: one item should look like a sibling of LinkEntry / EventEntry /
+  // PlaceEntry, not a carousel of one.
+  const singleItem = config.items.length === 1;
+
   return (
     <li ref={wrapperRef} className="profile-fade" style={fadeStyle}>
       {config.title && (
@@ -136,68 +142,77 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
       )}
       <div
         ref={scrollerRef}
-        className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className={
+          singleItem
+            ? ""
+            : "-mx-4 flex snap-x snap-mandatory overflow-x-auto scroll-smooth px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        }
       >
         {config.items.map((item, idx) => {
-          const isActive = idx === activeIdx;
-          const baseStyle: CSSProperties = {
-            // Stagger entrance: each card delayed by 80ms, only kicks in once `entered` is true.
-            transitionDelay: entered ? `${idx * 80}ms` : "0ms",
-            transform: entered
-              ? isActive
-                ? "translateY(0) scale(1)"
-                : "translateY(0) scale(0.94)"
-              : "translateY(20px) scale(0.92)",
-            opacity: entered ? (isActive ? 1 : 0.7) : 0,
-          };
+          const isActive = singleItem || idx === activeIdx;
+          const baseStyle: CSSProperties = singleItem
+            ? {}
+            : {
+                // Stagger entrance: each card delayed by 80ms, only kicks in once `entered` is true.
+                transitionDelay: entered ? `${idx * 80}ms` : "0ms",
+                transform: entered
+                  ? "translateY(0) scale(1)"
+                  : "translateY(12px) scale(0.97)",
+                opacity: entered ? 1 : 0,
+              };
+          // Per-card outer wrapper: in single mode it's a plain block; in carousel mode it's a
+          // full-width snap page (one item per visible page — matches the other cards' width
+          // exactly, no peek, swipe to the next page like Instagram stories).
+          const itemWrapperClass = singleItem
+            ? ""
+            : "w-full shrink-0 snap-center pr-3 last:pr-0";
           return (
-            <article
-              key={idx}
-              data-card
-              style={baseStyle}
-              className={
-                `shrink-0 snap-center overflow-hidden rounded-2xl border transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${colors.card} ${colors.cardBorder} ` +
-                (isActive
-                  ? "shadow-[0_8px_24px_rgba(15,23,42,0.10)]"
-                  : "shadow-[0_1px_2px_rgba(15,23,42,0.04)]") +
-                " w-[88%] max-w-[360px] sm:w-[300px]"
-              }
-            >
-              <CardImages images={item.images} />
-              <div className="space-y-1.5 px-4 pb-3 pt-3">
-                <p className={`text-[15px] font-semibold leading-tight ${colors.primary}`}>
-                  {item.name}
-                </p>
-                {item.price && (
-                  <p className="text-sm font-medium text-accent-700">{item.price}</p>
-                )}
-                {item.description && (
-                  <p className={`line-clamp-2 text-[12px] leading-snug ${colors.muted}`}>
-                    {item.description}
+            <div key={idx} data-card style={baseStyle} className={itemWrapperClass}>
+              <article
+                className={
+                  `overflow-hidden rounded-2xl border ${colors.card} ${colors.cardBorder} ` +
+                  (isActive
+                    ? "shadow-[0_4px_16px_rgba(15,23,42,0.08)]"
+                    : "shadow-[0_1px_2px_rgba(15,23,42,0.04)]") +
+                  " transition-shadow duration-300"
+                }
+              >
+                <CardImages images={item.images} />
+                <div className="space-y-1.5 px-4 pb-3 pt-3">
+                  <p className={`text-[15px] font-semibold leading-tight ${colors.primary}`}>
+                    {item.name}
                   </p>
-                )}
-              </div>
-              {item.ctaUrl && (
-                <a
-                  href={item.ctaUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={() => {
-                    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-                      try {
-                        navigator.vibrate(10);
-                      } catch {
-                        /* ignore */
+                  {item.price && (
+                    <p className="text-sm font-medium text-accent-700">{item.price}</p>
+                  )}
+                  {item.description && (
+                    <p className={`line-clamp-2 text-[12px] leading-snug ${colors.muted}`}>
+                      {item.description}
+                    </p>
+                  )}
+                </div>
+                {item.ctaUrl && (
+                  <a
+                    href={item.ctaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => {
+                      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+                        try {
+                          navigator.vibrate(10);
+                        } catch {
+                          /* ignore */
+                        }
                       }
-                    }
-                  }}
-                  className={`flex items-center justify-center gap-1 border-t px-4 py-3 text-sm font-medium transition active:scale-[0.97] ${colors.cardBorder} ${colors.primary} ${colors.cardHover}`}
-                >
-                  <span>{item.ctaLabel || "자세히"}</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </a>
-              )}
-            </article>
+                    }}
+                    className={`flex items-center justify-center gap-1 border-t px-4 py-3 text-sm font-medium transition active:scale-[0.97] ${colors.cardBorder} ${colors.primary} ${colors.cardHover}`}
+                  >
+                    <span>{item.ctaLabel || "자세히"}</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </a>
+                )}
+              </article>
+            </div>
           );
         })}
       </div>
