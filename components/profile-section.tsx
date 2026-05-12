@@ -27,6 +27,7 @@ import type {
 import { BookingBlockDialog } from "./profile-section/BookingBlockDialog";
 import { ContactCardBlockDialog } from "./profile-section/ContactCardBlockDialog";
 import { EmailFormBlockDialog } from "./profile-section/EmailFormBlockDialog";
+import { EmbedBlockDialog } from "./profile-section/EmbedBlockDialog";
 import { EventBlockDialog } from "./profile-section/EventBlockDialog";
 import { GalleryBlockDialog } from "./profile-section/GalleryBlockDialog";
 import { ImageBlockDialog } from "./profile-section/ImageBlockDialog";
@@ -117,6 +118,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     initialJson: string | null;
   }>({ open: false, blockId: null, initialJson: null });
   const [imageDialog, setImageDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialUrl: string | null;
+  }>({ open: false, blockId: null, initialUrl: null });
+  const [embedDialog, setEmbedDialog] = useState<{
     open: boolean;
     blockId: number | null;
     initialUrl: string | null;
@@ -503,10 +509,6 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     if (overIndex !== idx) setOverIndex(idx);
   }
 
-  function handleDragLeave(idx: number) {
-    if (overIndex === idx) setOverIndex(null);
-  }
-
   function handleDrop(toIndex: number, e: React.DragEvent) {
     e.preventDefault();
     if (dragIndex === null || dragIndex === toIndex) {
@@ -631,15 +633,28 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
-  async function handleAddEmbed() {
-    const url = window.prompt(t("addEmbedPrompt"), "https://");
-    if (!url || !url.trim()) return;
+  function handleAddEmbed() {
+    setEmbedDialog({ open: true, blockId: null, initialUrl: null });
+  }
+
+  async function persistEmbedBlock(blockId: number | null, url: string) {
     try {
-      const block = await createProfileBlock({ type: "EMBED", content: url.trim() });
-      setItems((prev) => [
-        ...prev,
-        { kind: "BLOCK", id: block.id, type: "EMBED", content: block.content ?? "" },
-      ]);
+      if (blockId != null) {
+        const updated = await updateProfileBlock(blockId, url);
+        setItems((prev) =>
+          prev.map((i) =>
+            i.kind === "BLOCK" && i.id === blockId
+              ? { ...i, content: updated.content ?? "" }
+              : i,
+          ),
+        );
+      } else {
+        const block = await createProfileBlock({ type: "EMBED", content: url });
+        setItems((prev) => [
+          ...prev,
+          { kind: "BLOCK", id: block.id, type: "EMBED", content: block.content ?? "" },
+        ]);
+      }
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
@@ -678,9 +693,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       setImageDialog({ open: true, blockId, initialUrl: current || null });
       return;
     }
-    const promptKey =
-      blockType === "EMBED" ? "editEmbedPrompt" : "editTextPrompt";
-    const next = window.prompt(t(promptKey), current);
+    if (blockType === "EMBED") {
+      setEmbedDialog({ open: true, blockId, initialUrl: current || null });
+      return;
+    }
+    const next = window.prompt(t("editTextPrompt"), current);
     if (next === null) return;
     const trimmed = next.trim();
     if (!trimmed) return;
@@ -794,7 +811,6 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onMove={move}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onDragEnd={handleDragEnd}
           onHighlight={handleHighlight}
@@ -869,6 +885,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         initialUrl={imageDialog.initialUrl}
         onOpenChange={(open) => setImageDialog((s) => (open ? s : { ...s, open: false }))}
         onSubmit={(url) => persistImageBlock(imageDialog.blockId, url)}
+        t={t}
+      />
+      <EmbedBlockDialog
+        open={embedDialog.open}
+        initialUrl={embedDialog.initialUrl}
+        onOpenChange={(open) => setEmbedDialog((s) => (open ? s : { ...s, open: false }))}
+        onSubmit={(url) => persistEmbedBlock(embedDialog.blockId, url)}
         t={t}
       />
     </div>
