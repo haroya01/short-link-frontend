@@ -9,9 +9,14 @@ import type {
   ProductBadge,
   ProductCardConfig,
   ProductCardImage,
+  TextAccent,
+  TextBlockConfig,
+  TextLayout,
 } from "@/types";
 
 const PRODUCT_BADGES: readonly ProductBadge[] = ["NEW", "BEST", "LIMITED", "SOLD_OUT"];
+const TEXT_LAYOUTS: readonly TextLayout[] = ["inline", "card", "quote"];
+const TEXT_ACCENTS: readonly TextAccent[] = ["blue", "amber", "green", "red", "violet"];
 
 /**
  * Shared parsers for the JSON payload each ProfileBlock kind persists in {@code
@@ -57,6 +62,41 @@ function safeJsonParse(raw: string): unknown {
   } catch {
     return null;
   }
+}
+
+// ── TEXT ──────────────────────────────────────────────────────────────────────
+
+/**
+ * Parses a TEXT block payload. Accepts the new JSON shape {@code {body, layout, accent, icon}}
+ * or a legacy plain markdown string (pre-{@code TextBlockBody} migration). On legacy input or
+ * any parsing failure, returns a config with the raw input as the body and {@code inline}
+ * layout — so old blocks always render exactly as before.
+ *
+ * <p>Unknown {@code layout} → {@code inline}, unknown {@code accent} → {@code null}, matching
+ * the backend's {@link com.example.short_link.profile.contact.TextBlockBody} normalization.
+ */
+export function parseTextBlockConfig(raw: string): TextBlockConfig {
+  const fallback: TextBlockConfig = { body: raw, layout: "inline", accent: null, icon: null };
+  if (typeof raw !== "string" || raw.trim().length === 0) {
+    return { ...fallback, body: "" };
+  }
+  if (!raw.trim().startsWith("{")) return fallback;
+  const parsed = safeJsonParse(raw) as Record<string, unknown> | null;
+  if (!parsed || typeof parsed.body !== "string") return fallback;
+  return {
+    body: parsed.body,
+    layout:
+      typeof parsed.layout === "string" &&
+      (TEXT_LAYOUTS as readonly string[]).includes(parsed.layout)
+        ? (parsed.layout as TextLayout)
+        : "inline",
+    accent:
+      typeof parsed.accent === "string" &&
+      (TEXT_ACCENTS as readonly string[]).includes(parsed.accent)
+        ? (parsed.accent as TextAccent)
+        : null,
+    icon: typeof parsed.icon === "string" && parsed.icon.trim().length > 0 ? parsed.icon : null,
+  };
 }
 
 // ── BOOKING ───────────────────────────────────────────────────────────────────
