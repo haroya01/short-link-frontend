@@ -8,7 +8,8 @@ import {
   useState,
   type CSSProperties,
 } from "react";
-import type { ProductCardConfig, ProductCardImage } from "@/types";
+import type { ProductCardImage } from "@/types";
+import { parseProductCardConfig } from "@/lib/block-config-parsers";
 import { useAutoSlide } from "@/lib/use-auto-slide";
 import type { ThemeColors } from "../_lib/theme";
 import { CardCtaBar } from "./CardCtaBar";
@@ -50,7 +51,7 @@ type Props = {
  * so finger gestures on the outer carousel stay unambiguous.
  */
 export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
-  const config = useMemo(() => parseConfig(content), [content]);
+  const config = useMemo(() => parseProductCardConfig(content), [content]);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLLIElement | null>(null);
   const [activeIdx, setActiveIdx] = useState(0);
@@ -317,57 +318,3 @@ function CardImages({ images }: { images: ProductCardImage[] }) {
   );
 }
 
-/**
- * Parses the block's JSON content, normalizing the per-item image field to the new {@code
- * images: ProductCardImage[]} shape. Backward compat: an item with the legacy {@code image:
- * string} field (one URL, no focal point) is wrapped into a one-element images array with the
- * default 50/50 focal — same fallback the backend does on read, so what the editor sees and what
- * the server stores stay consistent.
- */
-function parseConfig(raw: string): ProductCardConfig {
-  try {
-    const parsed = JSON.parse(raw);
-    const items = Array.isArray(parsed?.items)
-      ? parsed.items
-          .filter((v: unknown): v is Record<string, unknown> => !!v && typeof v === "object")
-          .map((v: Record<string, unknown>) => ({
-            name: typeof v.name === "string" ? v.name : "",
-            images: parseImages(v),
-            price: typeof v.price === "string" ? v.price : null,
-            description: typeof v.description === "string" ? v.description : null,
-            ctaLabel: typeof v.ctaLabel === "string" ? v.ctaLabel : null,
-            ctaUrl: typeof v.ctaUrl === "string" ? v.ctaUrl : null,
-          }))
-          .filter((it: { name: string }) => it.name.length > 0)
-      : [];
-    return {
-      title: typeof parsed?.title === "string" ? parsed.title : null,
-      items,
-    };
-  } catch {
-    return { title: null, items: [] };
-  }
-}
-
-function parseImages(item: Record<string, unknown>): ProductCardImage[] {
-  if (Array.isArray(item.images)) {
-    return item.images
-      .filter((v): v is Record<string, unknown> => !!v && typeof v === "object")
-      .map((v) => ({
-        url: typeof v.url === "string" ? v.url : "",
-        focalX: typeof v.focalX === "number" ? clampFocal(v.focalX) : 50,
-        focalY: typeof v.focalY === "number" ? clampFocal(v.focalY) : 50,
-      }))
-      .filter((img) => img.url.length > 0);
-  }
-  if (typeof item.image === "string" && item.image.length > 0) {
-    return [{ url: item.image, focalX: 50, focalY: 50 }];
-  }
-  return [];
-}
-
-function clampFocal(v: number) {
-  if (v < 0) return 0;
-  if (v > 100) return 100;
-  return v;
-}

@@ -8,8 +8,8 @@ import {
   downloadIcs,
   googleCalendarUrl,
   outlookCalendarUrl,
-  type CalendarEvent,
 } from "@/lib/calendar-export";
+import { parseEventConfig } from "@/lib/block-config-parsers";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
@@ -36,7 +36,7 @@ type Props = {
 export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
   const t = useTranslations("publicProfile.event");
   const locale = useLocale();
-  const config = useMemo(() => parseConfig(content), [content]);
+  const config = useMemo(() => parseEventConfig(content), [content]);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -174,22 +174,6 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
   );
 }
 
-function parseConfig(raw: string): (CalendarEvent & EventConfig) | null {
-  try {
-    const parsed = JSON.parse(raw);
-    if (typeof parsed?.title !== "string" || typeof parsed?.startsAt !== "string") return null;
-    return {
-      title: parsed.title,
-      startsAt: parsed.startsAt,
-      endsAt: typeof parsed.endsAt === "string" ? parsed.endsAt : null,
-      location: typeof parsed.location === "string" ? parsed.location : null,
-      description: typeof parsed.description === "string" ? parsed.description : null,
-      url: typeof parsed.url === "string" ? parsed.url : null,
-    };
-  } catch {
-    return null;
-  }
-}
 
 function formatDateBadge(
   start: Date,

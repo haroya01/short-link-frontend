@@ -4,6 +4,7 @@ import { useMemo, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { CalendarDays, ArrowRight, ExternalLink } from "lucide-react";
 import type { BookingConfig } from "@/types";
+import { parseBookingConfig } from "@/lib/block-config-parsers";
 import { resolveBookingProvider } from "@/components/profile-section/booking-providers";
 import type { ThemeColors } from "../_lib/theme";
 
@@ -24,7 +25,7 @@ type Props = {
  */
 export function BookingEntryCard({ content, colors, fadeStyle }: Props) {
   const t = useTranslations("publicProfile.booking");
-  const config = useMemo(() => parseConfig(content), [content]);
+  const config = useMemo(() => parseBookingConfig(content), [content]);
   const provider = useMemo(() => resolveBookingProvider(config.url), [config.url]);
 
   if (!config.url) return null;
@@ -85,16 +86,3 @@ export function BookingEntryCard({ content, colors, fadeStyle }: Props) {
   );
 }
 
-function parseConfig(raw: string): BookingConfig {
-  try {
-    const parsed = JSON.parse(raw);
-    return {
-      url: typeof parsed?.url === "string" ? parsed.url : "",
-      title: typeof parsed?.title === "string" ? parsed.title : null,
-      description: typeof parsed?.description === "string" ? parsed.description : null,
-      ctaLabel: typeof parsed?.ctaLabel === "string" ? parsed.ctaLabel : null,
-    };
-  } catch {
-    return { url: "", title: null, description: null, ctaLabel: null };
-  }
-}

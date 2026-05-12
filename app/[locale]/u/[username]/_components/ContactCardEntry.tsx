@@ -13,6 +13,7 @@ import { Download, Mail, MapPin, Phone, Share2 } from "lucide-react";
 import QRCode from "qrcode";
 import { useTranslations } from "next-intl";
 import type { ContactCardConfig } from "@/types";
+import { parseContactCardConfig } from "@/lib/block-config-parsers";
 import { playCardFlipSound } from "@/lib/card-flip-sound";
 import type { ThemeColors } from "../_lib/theme";
 import { getPalette } from "./contact-card-palettes";
@@ -47,7 +48,7 @@ type Props = {
 export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
   void colors;
   const t = useTranslations("publicProfile.contactCard");
-  const card = useMemo(() => parseConfig(content), [content]);
+  const card = useMemo(() => parseContactCardConfig(content), [content]);
   const palette = useMemo(() => getPalette(card.palette), [card.palette]);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
@@ -597,36 +598,6 @@ function Globe() {
   );
 }
 
-function parseConfig(raw: string): ContactCardConfig {
-  try {
-    const parsed = JSON.parse(raw);
-    return {
-      name: typeof parsed.name === "string" ? parsed.name : "",
-      title: typeof parsed.title === "string" ? parsed.title : null,
-      company: typeof parsed.company === "string" ? parsed.company : null,
-      email: typeof parsed.email === "string" ? parsed.email : null,
-      phone: typeof parsed.phone === "string" ? parsed.phone : null,
-      address: typeof parsed.address === "string" ? parsed.address : null,
-      website: typeof parsed.website === "string" ? parsed.website : null,
-      logoUrl: typeof parsed.logoUrl === "string" ? parsed.logoUrl : null,
-      palette: typeof parsed.palette === "string"
-        ? (parsed.palette as ContactCardConfig["palette"])
-        : null,
-    };
-  } catch {
-    return {
-      name: "",
-      title: null,
-      company: null,
-      email: null,
-      phone: null,
-      address: null,
-      website: null,
-      logoUrl: null,
-      palette: null,
-    };
-  }
-}
 
 function buildVcard(card: ContactCardConfig): string {
   const lines = ["BEGIN:VCARD", "VERSION:3.0", `FN:${escapeVcard(card.name)}`];

@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { GalleryConfig } from "@/types";
+import { parseGalleryConfig } from "@/lib/block-config-parsers";
 import { useAutoSlide } from "@/lib/use-auto-slide";
 import type { ThemeColors } from "../_lib/theme";
 import { PhotoLightbox } from "./PhotoLightbox";
@@ -33,7 +33,7 @@ type Props = {
  */
 export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
   const t = useTranslations("publicProfile.gallery");
-  const config = useMemo(() => parseConfig(content), [content]);
+  const config = useMemo(() => parseGalleryConfig(content), [content]);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
@@ -173,16 +173,3 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
   );
 }
 
-function parseConfig(raw: string): GalleryConfig {
-  try {
-    const parsed = JSON.parse(raw);
-    const images = Array.isArray(parsed?.images)
-      ? parsed.images.filter(
-          (v: unknown): v is string => typeof v === "string" && v.length > 0,
-        )
-      : [];
-    return { images };
-  } catch {
-    return { images: [] };
-  }
-}
