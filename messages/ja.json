@@ -755,9 +755,8 @@
     },
     "contactCard": {
       "save": "連絡先に保存",
-      "dockCall": "電話",
       "dockShare": "共有",
-      "dockSave": "保存"
+      "dockSave": "連絡先に保存"
     },
     "emailForm": {
       "submit": "登録",
@@ -779,7 +778,6 @@
     },
     "place": {
       "directions": "経路",
-      "call": "電話",
       "copy": "住所をコピー",
       "copied": "コピー済み",
       "share": "共有",

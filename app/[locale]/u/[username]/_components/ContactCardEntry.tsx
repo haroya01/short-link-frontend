@@ -104,8 +104,19 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
           }}
         >
           <CardFace>
+            {/* Share button — small ghost icon top-right. Moved here from the old 3-button dock at
+                the bottom. Visually present but secondary, freeing the bottom of the card for the
+                single primary action (vCard save). */}
+            <button
+              type="button"
+              onClick={shareCard}
+              aria-label={t("dockShare")}
+              className="focus-ring absolute right-3 top-3 z-20 grid h-7 w-7 place-items-center rounded-full bg-white/10 text-white/80 backdrop-blur-sm transition hover:bg-white/20 hover:text-white"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+            </button>
             <div className="relative z-10 flex items-start justify-between gap-3 px-6 pt-6">
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 pr-8">
                 <p className="text-2xl font-semibold leading-tight tracking-tight">
                   {card.name}
                 </p>
@@ -170,33 +181,16 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
               )}
             </ul>
 
-            <div className="relative z-10 mt-5 grid grid-cols-3 divide-x divide-white/10 border-t border-white/10">
-              {card.phone ? (
-                <a
-                  href={`tel:${card.phone.replace(/\s/g, "")}`}
-                  className="focus-ring flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
-                >
-                  <Phone className="h-4 w-4" />
-                  <span>{t("dockCall")}</span>
-                </a>
-              ) : (
-                <span className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white/30">
-                  <Phone className="h-4 w-4" />
-                  <span>{t("dockCall")}</span>
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={shareCard}
-                className="focus-ring flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
-              >
-                <Share2 className="h-4 w-4" />
-                <span>{t("dockShare")}</span>
-              </button>
+            {/* Single primary action — vCard save. Call and Share were dropped from the dock and
+                moved closer to the info they relate to: phone is its own tappable `tel:` row above
+                (no separate Call button needed), share is a small icon in the top-right corner of
+                the card. This matches the cross-card "1 primary button" rule that Place/Link/Event
+                cards already follow — Contact card was the outlier with 3 equal-weight buttons. */}
+            <div className="relative z-10 mt-5 border-t border-white/10">
               <button
                 type="button"
                 onClick={downloadVcard}
-                className="focus-ring flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
+                className="focus-ring flex w-full items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
               >
                 <Download className="h-4 w-4" />
                 <span>{t("dockSave")}</span>

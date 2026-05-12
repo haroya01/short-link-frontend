@@ -755,9 +755,8 @@
     },
     "contactCard": {
       "save": "Save to contacts",
-      "dockCall": "Call",
       "dockShare": "Share",
-      "dockSave": "Save"
+      "dockSave": "Save to contacts"
     },
     "emailForm": {
       "submit": "Sign up",
@@ -779,7 +778,6 @@
     },
     "place": {
       "directions": "Directions",
-      "call": "Call",
       "copy": "Copy address",
       "copied": "Copied",
       "share": "Share",

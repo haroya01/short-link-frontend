@@ -672,9 +672,8 @@
     },
     "contactCard": {
       "save": "연락처에 저장",
-      "dockCall": "전화",
       "dockShare": "공유",
-      "dockSave": "저장"
+      "dockSave": "연락처 저장"
     },
     "emailForm": {
       "submit": "등록",
@@ -696,7 +695,6 @@
     },
     "place": {
       "directions": "길찾기",
-      "call": "전화",
       "copy": "주소 복사",
       "copied": "복사됨",
       "share": "공유",

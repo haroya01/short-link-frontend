@@ -102,81 +102,84 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
       <article
         className={`profile-card-static overflow-hidden ${colors.card} ${colors.cardBorder}`}
       >
+        {/* COVER = primary action. The directions anchor stretches over the whole 5:3 photo/map
+            via {@code absolute inset-0}, so a single tap anywhere on the most visually prominent
+            element does what the visitor is most likely to want ("이 가게 어떻게 가지?"). The
+            "길찾기 →" pill at the bottom-right is the affordance — without it the tap target reads
+            as a passive image. The share button is a sibling (not nested inside the anchor —
+            nested-interactive is a WCAG violation), positioned ABOVE the anchor via z-index so
+            tapping it doesn't also trigger directions. */}
         <div className="relative aspect-[5/3] w-full bg-slate-100">
           {heroSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={heroSrc}
-              alt={config.name}
+              alt=""
               loading="lazy"
               className="h-full w-full object-cover"
             />
           ) : null}
+          <a
+            href={directions}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={t("directions")}
+            className="absolute inset-0 focus-ring"
+          >
+            <span className="sr-only">{t("directions")}</span>
+          </a>
           {CategoryIcon && (
-            <CardFloatingChip position="top-right" icon={<CategoryIcon className="h-3 w-3" />}>
+            <CardFloatingChip position="top-left" icon={<CategoryIcon className="h-3 w-3" />}>
               {t(`category_${config.category}` as const)}
             </CardFloatingChip>
           )}
+          <span className="pointer-events-none absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
+            <Navigation className="h-3 w-3" />
+            {t("directions")}
+          </span>
+          <button
+            type="button"
+            onClick={share}
+            aria-label={t("share")}
+            className="absolute right-2 top-2 z-10 grid h-7 w-7 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60"
+          >
+            <Share2 className="h-3.5 w-3.5" />
+          </button>
         </div>
 
         <div className="space-y-1.5 px-4 py-3">
           <h3 className={`text-[15px] font-semibold leading-tight ${colors.primary}`}>
             {config.name}
           </h3>
-          <p className={`flex items-start gap-1.5 text-[12px] leading-snug ${colors.muted}`}>
+          <div className={`flex items-start gap-1.5 text-[12px] leading-snug ${colors.muted}`}>
             <MapPin className="mt-0.5 h-3 w-3 shrink-0" />
             <span className="min-w-0 flex-1 truncate">{config.address}</span>
-          </p>
+            <button
+              type="button"
+              onClick={copyAddress}
+              aria-label={copied ? t("copied") : t("copy")}
+              className="focus-ring shrink-0 rounded p-0.5 text-slate-400 transition hover:text-slate-700"
+            >
+              <Copy className="h-3 w-3" />
+            </button>
+          </div>
+          {config.phone && (
+            <p className={`flex items-start gap-1.5 text-[12px] leading-snug ${colors.muted}`}>
+              <Phone className="mt-0.5 h-3 w-3 shrink-0" />
+              <a
+                href={`tel:${config.phone}`}
+                className="min-w-0 flex-1 truncate hover:underline"
+              >
+                {config.phone}
+              </a>
+            </p>
+          )}
           {config.hoursText && (
             <p className={`flex items-start gap-1.5 text-[12px] leading-snug ${colors.muted}`}>
               <Clock className="mt-0.5 h-3 w-3 shrink-0" />
               <span className="whitespace-pre-line">{config.hoursText}</span>
             </p>
           )}
-        </div>
-
-        <div className={`border-t px-3 pb-3 pt-2 ${colors.cardBorder}`}>
-          <a
-            href={directions}
-            target="_blank"
-            rel="noreferrer"
-            className={`flex h-10 w-full items-center justify-center gap-2 rounded-xl text-[13px] font-medium transition active:scale-[0.98] ${colors.ctaPrimary}`}
-          >
-            <Navigation className="h-4 w-4" />
-            {t("directions")}
-          </a>
-          <div className="mt-1.5 grid grid-cols-3 gap-1.5">
-            {config.phone ? (
-              <a
-                href={`tel:${config.phone}`}
-                className="focus-ring flex h-9 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-              >
-                <Phone className="h-3 w-3" />
-                {t("call")}
-              </a>
-            ) : (
-              <span className="flex h-9 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-slate-300">
-                <Phone className="h-3 w-3" />
-                {t("call")}
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={copyAddress}
-              className="focus-ring flex h-9 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-            >
-              <Copy className="h-3 w-3" />
-              {copied ? t("copied") : t("copy")}
-            </button>
-            <button
-              type="button"
-              onClick={share}
-              className="focus-ring flex h-9 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-            >
-              <Share2 className="h-3 w-3" />
-              {t("share")}
-            </button>
-          </div>
         </div>
       </article>
     </li>
