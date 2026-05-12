@@ -173,15 +173,15 @@
 | LinkEntry | B | — | 전체 카드 = link, 우측 ExternalLink | favicon + host |
 | HighlightLink | A | 1.91/1 | 전체 카드 = link | ★ Featured 뱃지 (좌상단 floating) |
 | EmbedEntry | A | 16/9 | iframe (autoplay) | Play overlay (▶) 클릭 시 iframe 마운트 |
-| ImageEntry | A | 4/3 (letterbox) | 탭 → lightbox | 자연 비율 보존 (object-contain + blur backdrop) |
-| GalleryEntry | A | 4/3 | 탭 → lightbox | dots + 자동 슬라이드 5s |
-| ProductCardEntry | A | 4/3 | 하단 CTA 바 (border-t) | hero + 가격 + paginated swipe (1 아이템 = 풀폭 단일, 2+ = 풀폭 페이지) |
-| ContactCardEntry | D | 정사각 | 3-grid dock (call / share / save) | foil texture + flip + 8 palette |
+| ImageEntry | A | 4/3 | 탭 → lightbox | 자연 비율 보존 (object-contain) — 정적 단일 사진 |
+| GalleryEntry | A | 4/3 | 탭 → lightbox | object-cover 크롭 + dots + 자동 슬라이드 5s (다중 사진 캐러셀) |
+| ProductCardEntry | A | 4/3 | 하단 CTA 바 (CardCtaBar) | hero + 가격 + paginated swipe + 가격·배지 위계 (originalPrice strikethrough + 할인율 칩 + NEW/BEST/LIMITED/SOLD_OUT 배지) |
+| ContactCardEntry | D | 정사각 | 단일 primary "연락처 저장" (하단) + share 코너 + 본문 행 인라인 `tel:` / `mailto:` / `http` | foil texture + flip + 8 palette + 정사각 로고 focal point + QR 뒷면 |
 | EmailFormEntry | B | — | 인라인 폼 | input + submit |
-| BookingEntry | B | — | 하단 CTA 바 | provider 뱃지 (Calendly 등) |
+| BookingEntry | B | — | 하단 CTA 바 (전체 카드 anchor) | provider 뱃지 (Calendly 등) |
 | EventEntry | C | — | dropdown 보조 | **date pill** (좌측 h-16 w-16 accent-50) |
-| PlaceEntry | A | 5/3 | 1 primary + 3 ghost | static map 폴백 + 카테고리 칩 (우상단) |
-| TextEntry | C | — | inline link 만 | 마크다운 노션 타이포 (`.prose-text-block`) |
+| PlaceEntry | A | 5/3 | 단일 primary "길찾기" (하단 풀폭) + share 코너 + 본문 행 인라인 `tel:` / copy 아이콘 | static map 폴백 + 카테고리 칩 (좌상단) |
+| TextEntry | C | — | 레이아웃 옵션 (inline / card / quote) + 5 accent + emoji icon | 마크다운 노션 타이포 (`.prose-text-block`) — JSON 페이로드 |
 | DividerEntry | C (Spacer) | — | — | 얇은 가로 선 |
 
 ---
@@ -207,9 +207,35 @@
 
 ---
 
-## 4. Archetype 내부 일관성 규칙
+## 4. Action Position Rules (cross-archetype)
 
-archetype 안의 카드끼리는 다음 규칙을 공유. 새로 만들 때 이걸 어기지 말 것.
+archetype 과 무관하게 **모든 카드** 가 따르는 액션 버튼 위치 룰. archetype 별 룰보다 우선.
+
+| 액션 타입 | 위치 | 스타일 | 구현 예시 |
+|---|---|---|---|
+| **주요 CTA** (길찾기 / 연락처 저장 / 자세히 / 예약하기) | 카드 하단 풀-폭 버튼 | `h-10 w-full rounded-xl ${colors.ctaPrimary}` + 아이콘 `h-4 w-4` + 라벨 `text-[13px] font-medium` | PlaceEntry / ContactCardEntry / ProductCardEntry (`<CardCtaBar>`) |
+| **공유** | 카드 우상단 코너 오버레이 | `absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full backdrop-blur-sm` + Share2 `h-3.5 w-3.5`. 어두운 cover 위면 `bg-black/40 text-white`, 밝은 배경이면 `bg-white/10 text-white/80` | PlaceEntry / ContactCardEntry |
+| **외부 링크 indicator** | "전체 카드 = 링크" 패턴 카드의 정보 행 우측 (top-right OR bottom-right inline) | ExternalLink `h-3.5 w-3.5 ${colors.muted}` | LinkEntry / BookingEntry |
+| **영상 재생** | 썸네일 정중앙 오버레이 | `absolute inset-0 grid place-items-center` + Play `h-12 w-12 fill-white` | EmbedEntry |
+| **캐러셀 좌/우 이동** (md+) | 이미지 영역 좌우 중앙 | `absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/40` + Chevron `h-4 w-4` | GalleryEntry |
+| **페이지 인디케이터 dots** | 이미지 영역 하단 가운데 | `absolute bottom-2 left-1/2 -translate-x-1/2` + 활성 `w-4 bg-white`, 비활성 `w-1.5 bg-white/40` | GalleryEntry (이미지 위), ProductCard (카드 아래 — 본문 영역 있는 경우 예외) |
+| **카테고리 / 뱃지 칩** (수동) | 이미지 좌상단 (primary) 또는 우상단 (secondary) | `<CardFloatingChip position icon>` 프리미티브 | PlaceEntry 카테고리, ProductCard 배지 |
+| **단일 항목 인라인 액션** (전화 / 이메일 / 주소 복사) | 본문 정보 행 안에 인라인 | 텍스트 자체 = `<a href="tel:">` / `<a href="mailto:">` 또는 행 우측 `h-3 w-3` 작은 아이콘 버튼 | PlaceEntry, ContactCardEntry |
+
+**두 가지 카드 패턴 — 선택 가이드:**
+
+- **"전체 카드 = 링크"** (LinkEntry / BookingEntry / HighlightLink): 카드 wrapper 자체가 `<a href>`. 외부 링크 indicator 만 표시. 하단 버튼 X. 본질이 "한 가지 행선지로 이동" 인 카드.
+- **"본문 + 하단 풀-폭 버튼"** (PlaceEntry / ContactCardEntry / ProductCardEntry): 본문에 정보 + 하단에 명시적 액션 버튼. 본문에 여러 정보 (주소 / 전화 / 시간 등) + 한 가지 주요 액션이 있는 카드.
+
+**금지:**
+- 같은 카드 안에 같은 위계의 액션 버튼 2개 이상 (1 primary 룰 위반). 다른 액션이 필요하면 작은 코너 아이콘 또는 본문 인라인으로.
+- 주요 CTA 를 커버 위 탭 핸들러로 만들기 — 발견성 떨어짐 + 다른 카드와 어긋남 (PR #138 에서 PlaceEntry 가 이 경로로 갔다가 룰 위반으로 되돌림).
+
+---
+
+## 4.1 Archetype 내부 일관성 규칙
+
+archetype 안의 카드끼리는 다음 규칙을 공유. 위 cross-archetype 룰을 보충.
 
 ### A. Visual-first 공통 규칙
 
