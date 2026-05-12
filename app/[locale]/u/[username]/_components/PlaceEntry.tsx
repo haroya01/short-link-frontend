@@ -18,7 +18,8 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { PlaceCategory, PlaceConfig } from "@/types";
+import type { PlaceCategory } from "@/types";
+import { parsePlaceConfig } from "@/lib/block-config-parsers";
 import { directionsUrl, staticMapUrl } from "@/lib/google-maps-static";
 import type { ThemeColors } from "../_lib/theme";
 import { CardFloatingChip } from "./CardFloatingChip";
@@ -55,7 +56,7 @@ const CATEGORY_ICONS: Record<PlaceCategory, typeof Coffee> = {
  */
 export function PlaceEntry({ content, colors, fadeStyle }: Props) {
   const t = useTranslations("publicProfile.place");
-  const config = useMemo(() => parseConfig(content), [content]);
+  const config = useMemo(() => parsePlaceConfig(content), [content]);
   const [copied, setCopied] = useState(false);
 
   if (!config) return null;
@@ -182,43 +183,3 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
   );
 }
 
-function parseConfig(raw: string): PlaceConfig | null {
-  try {
-    const parsed = JSON.parse(raw);
-    if (
-      typeof parsed?.name !== "string" ||
-      typeof parsed?.address !== "string" ||
-      typeof parsed?.lat !== "number" ||
-      typeof parsed?.lng !== "number"
-    ) {
-      return null;
-    }
-    return {
-      name: parsed.name,
-      address: parsed.address,
-      lat: parsed.lat,
-      lng: parsed.lng,
-      placeId: typeof parsed.placeId === "string" ? parsed.placeId : null,
-      phone: typeof parsed.phone === "string" ? parsed.phone : null,
-      coverUrl: typeof parsed.coverUrl === "string" ? parsed.coverUrl : null,
-      category: isPlaceCategory(parsed.category) ? parsed.category : null,
-      hoursText: typeof parsed.hoursText === "string" ? parsed.hoursText : null,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function isPlaceCategory(v: unknown): v is PlaceCategory {
-  return (
-    typeof v === "string" &&
-    (v === "cafe" ||
-      v === "bakery" ||
-      v === "restaurant" ||
-      v === "retail" ||
-      v === "studio" ||
-      v === "gallery" ||
-      v === "popup" ||
-      v === "space")
-  );
-}
