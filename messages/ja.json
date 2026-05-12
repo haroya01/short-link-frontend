@@ -756,7 +756,12 @@
     "contactCard": {
       "save": "連絡先に保存",
       "dockShare": "共有",
-      "dockSave": "連絡先に保存"
+      "dockSave": "連絡先に保存",
+      "flipToBack": "裏返す",
+      "flipToFront": "表に戻す",
+      "qrAlt": "QR をスキャンして連絡先を追加",
+      "backTagline": "デジタル名刺",
+      "backScanHint": "タップで表に戻す"
     },
     "emailForm": {
       "submit": "登録",

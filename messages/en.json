@@ -756,7 +756,12 @@
     "contactCard": {
       "save": "Save to contacts",
       "dockShare": "Share",
-      "dockSave": "Save to contacts"
+      "dockSave": "Save to contacts",
+      "flipToBack": "Flip",
+      "flipToFront": "Flip back",
+      "qrAlt": "Scan QR to add this contact",
+      "backTagline": "Digital card",
+      "backScanHint": "Tap to flip back"
     },
     "emailForm": {
       "submit": "Sign up",
