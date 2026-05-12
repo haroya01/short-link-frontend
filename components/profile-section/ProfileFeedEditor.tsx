@@ -47,7 +47,6 @@ type Props = {
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
-  onDragLeave: (idx: number) => void;
   onDrop: (idx: number, e: React.DragEvent) => void;
   onDragEnd: () => void;
   onHighlight: (shortCode: string) => void;
@@ -86,7 +85,6 @@ export function ProfileFeedEditor({
   onMove,
   onDragStart,
   onDragOver,
-  onDragLeave,
   onDrop,
   onDragEnd,
   onHighlight,
@@ -150,7 +148,6 @@ export function ProfileFeedEditor({
                   onMove={onMove}
                   onDragStart={onDragStart}
                   onDragOver={onDragOver}
-                  onDragLeave={onDragLeave}
                   onDrop={onDrop}
                   onDragEnd={onDragEnd}
                   onHighlight={onHighlight}
@@ -394,7 +391,6 @@ type RowProps = {
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
-  onDragLeave: (idx: number) => void;
   onDrop: (idx: number, e: React.DragEvent) => void;
   onDragEnd: () => void;
   onHighlight: (shortCode: string) => void;
@@ -418,7 +414,6 @@ function FeedItemRow({
   onMove,
   onDragStart,
   onDragOver,
-  onDragLeave,
   onDrop,
   onDragEnd,
   onHighlight,
@@ -432,24 +427,29 @@ function FeedItemRow({
     draggable: true,
     onDragStart: (e: React.DragEvent) => onDragStart(idx, e),
     onDragOver: (e: React.DragEvent) => onDragOver(idx, e),
-    onDragLeave: () => onDragLeave(idx),
     onDrop: (e: React.DragEvent) => onDrop(idx, e),
     onDragEnd,
   };
-  // Drop-zone indicator: a fat accent bar with glow that sits between rows where the dragged item
-  // would land. The `mt-4` adds real layout space when isOver — combined with `transition-all`
-  // the surrounding rows visibly *push apart* to make room, which is the "items shifting" feel
-  // the user expects from a drag-drop UI (similar to dnd-kit / sortable.js feedback).
+  // Drop-zone indicator: a thin accent bar that hovers just above the target row. Positioned
+  // absolutely so it takes *zero* layout space — earlier versions added `mt-4` to push rows apart,
+  // which combined with `transition-all` and the bubbling dragleave/dragover events made the row
+  // animate open/closed at ~60Hz as the cursor crossed child elements ("엄청 깜빡거림"). The fix is
+  // twofold: (1) drop the per-row onDragLeave handler at the call site so child-element traversal
+  // no longer clears overIndex, (2) keep the indicator out of the layout flow so siblings don't
+  // shift even when isOver flips quickly.
   const dropIndicator = isOver
-    ? "relative mt-4 before:pointer-events-none before:absolute before:inset-x-2 before:-top-[9px] before:h-1.5 before:rounded-full before:bg-accent-500 before:shadow-[0_0_12px_rgba(99,102,241,0.5)] "
+    ? "before:pointer-events-none before:absolute before:inset-x-2 before:-top-[2px] before:h-1 before:rounded-full before:bg-accent-500 before:shadow-[0_0_10px_rgba(99,102,241,0.6)] "
     : "";
   // Lifted/transparent state while being dragged so the user perceives the dragged row as "in
   // their hand" rather than just half-faded in place.
   const draggingState = isDragging
     ? "scale-[0.98] opacity-30 ring-2 ring-accent-400 rounded-md "
     : "";
+  // `relative` is permanent (not gated on isOver) so toggling the indicator doesn't reflow the row.
+  // Transitions only animate properties that don't affect layout — opacity / transform / box-shadow —
+  // so the dragged row fades smoothly without dragging siblings into a transition loop.
   const baseRow =
-    "flex items-center justify-between gap-3 px-3 py-2 transition-all duration-150 " +
+    "relative flex items-center justify-between gap-3 px-3 py-2 transition-[opacity,transform,box-shadow] duration-150 " +
     draggingState +
     dropIndicator;
   const dragHandle = <DragHandle idx={idx} totalCount={totalCount} onMove={onMove} />;
@@ -458,7 +458,7 @@ function FeedItemRow({
     // Slim row — a divider on the public profile is a thin horizontal rule, so the editor row
     // shouldn't pretend it's a heavy item. Compact padding + a centered hr communicates that.
     const slimRow =
-      "flex items-center gap-2 px-3 py-1 transition-all duration-150 " +
+      "relative flex items-center gap-2 px-3 py-1 transition-[opacity,transform,box-shadow] duration-150 " +
       draggingState +
       dropIndicator;
     return (
