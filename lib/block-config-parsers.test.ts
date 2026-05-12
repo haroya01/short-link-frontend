@@ -165,6 +165,45 @@ describe("parseProductCardConfig", () => {
   it("returns empty defaults on malformed JSON", () => {
     expect(parseProductCardConfig("not json")).toEqual({ title: null, items: [] });
   });
+
+  it("parses originalPrice + badge for strikethrough/chip display", () => {
+    const out = parseProductCardConfig(
+      JSON.stringify({
+        items: [
+          {
+            name: "x",
+            price: "36,000원",
+            originalPrice: "45,000원",
+            badge: "BEST",
+          },
+        ],
+      }),
+    );
+    expect(out.items[0].originalPrice).toBe("45,000원");
+    expect(out.items[0].badge).toBe("BEST");
+  });
+
+  it("defaults originalPrice + badge to null when omitted", () => {
+    const out = parseProductCardConfig(JSON.stringify({ items: [{ name: "x" }] }));
+    expect(out.items[0].originalPrice).toBeNull();
+    expect(out.items[0].badge).toBeNull();
+  });
+
+  it("drops unknown badge id to null", () => {
+    const out = parseProductCardConfig(
+      JSON.stringify({ items: [{ name: "x", badge: "futureBadge" }] }),
+    );
+    expect(out.items[0].badge).toBeNull();
+  });
+
+  it("accepts all four badge ids", () => {
+    for (const badge of ["NEW", "BEST", "LIMITED", "SOLD_OUT"] as const) {
+      const out = parseProductCardConfig(
+        JSON.stringify({ items: [{ name: "x", badge }] }),
+      );
+      expect(out.items[0].badge).toBe(badge);
+    }
+  });
 });
 
 describe("parseContactCardConfig", () => {

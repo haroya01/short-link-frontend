@@ -7,13 +7,27 @@ import {
   useState,
   type CSSProperties,
 } from "react";
-import type { ProductCardImage } from "@/types";
+import { useTranslations } from "next-intl";
+import type { ProductBadge, ProductCardImage } from "@/types";
 import { parseProductCardConfig } from "@/lib/block-config-parsers";
 import { useAutoSlide } from "@/lib/use-auto-slide";
 import { useCardCarousel } from "@/lib/use-card-carousel";
 import type { ThemeColors } from "../_lib/theme";
 import { CardCtaBar } from "./CardCtaBar";
 import { PhotoLightbox } from "./PhotoLightbox";
+
+/**
+ * Per-badge chip color. The label text comes from i18n; the color is fixed in the design system
+ * so the visual cue is consistent across locales (NEW always blue, BEST always amber, etc.).
+ * SOLD_OUT also triggers a grayscale + dim treatment on the rest of the card — handled at the
+ * item-render level, not here.
+ */
+const BADGE_COLOR: Record<ProductBadge, string> = {
+  NEW: "bg-sky-500 text-white",
+  BEST: "bg-amber-500 text-white",
+  LIMITED: "bg-red-500 text-white",
+  SOLD_OUT: "bg-slate-700 text-white",
+};
 
 type Props = {
   content: string;
@@ -51,6 +65,7 @@ type Props = {
  * so finger gestures on the outer carousel stay unambiguous.
  */
 export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
+  const t = useTranslations("publicProfile.productCard");
   const config = useMemo(() => parseProductCardConfig(content), [content]);
   const wrapperRef = useRef<HTMLLIElement | null>(null);
   const [entered, setEntered] = useState(false);
@@ -123,6 +138,8 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
           const itemWrapperClass = singleItem
             ? ""
             : "w-full shrink-0 snap-center pr-3 last:pr-0";
+          const soldOut = item.badge === "SOLD_OUT";
+          const discountPct = computeDiscountPercent(item.price, item.originalPrice);
           return (
             <div key={idx} data-card style={baseStyle} className={itemWrapperClass}>
               <article
@@ -131,16 +148,42 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                   (isActive
                     ? "shadow-[0_4px_16px_rgba(15,23,42,0.08)]"
                     : "shadow-[0_1px_2px_rgba(15,23,42,0.04)]") +
-                  " transition-shadow duration-300"
+                  " transition-shadow duration-300 " +
+                  // Sold-out items dim the whole article so the visitor immediately sees "not
+                  // available now" without having to read the badge. Image grayscale is applied
+                  // inside CardImages so the seller's chosen focal point still drives the crop.
+                  (soldOut ? "opacity-70" : "")
                 }
               >
-                <CardImages images={item.images} />
+                <CardImages images={item.images} badge={item.badge} t={t} />
                 <div className="space-y-1.5 px-4 pb-3 pt-3">
                   <p className={`text-[15px] font-semibold leading-tight ${colors.primary}`}>
                     {item.name}
                   </p>
-                  {item.price && (
-                    <p className="text-sm font-medium text-accent-700">{item.price}</p>
+                  {(item.price || item.originalPrice) && (
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                      {item.price && (
+                        <p
+                          className={
+                            soldOut
+                              ? "text-base font-bold text-slate-400 line-through"
+                              : "text-base font-bold text-accent-700"
+                          }
+                        >
+                          {item.price}
+                        </p>
+                      )}
+                      {item.originalPrice && !soldOut && (
+                        <p className="text-[12px] text-slate-400 line-through">
+                          {item.originalPrice}
+                        </p>
+                      )}
+                      {discountPct != null && !soldOut && (
+                        <span className="rounded bg-red-50 px-1.5 py-0.5 text-[11px] font-semibold text-red-600">
+                          {t("discount", { pct: discountPct })}
+                        </span>
+                      )}
+                    </div>
                   )}
                   {item.description && (
                     <p className={`line-clamp-2 text-[12px] leading-snug ${colors.muted}`}>
@@ -148,10 +191,10 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                     </p>
                   )}
                 </div>
-                {item.ctaUrl && (
+                {item.ctaUrl && !soldOut && (
                   <CardCtaBar
                     href={item.ctaUrl}
-                    label={item.ctaLabel || "자세히"}
+                    label={item.ctaLabel || t("defaultCta")}
                     colors={colors}
                     onClick={() => {
                       if (typeof navigator !== "undefined" && "vibrate" in navigator) {
@@ -163,6 +206,13 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                       }
                     }}
                   />
+                )}
+                {item.ctaUrl && soldOut && (
+                  <div
+                    className={`border-t px-3 py-3 text-center text-[13px] font-medium text-slate-400 ${colors.cardBorder}`}
+                  >
+                    {t("badge.SOLD_OUT")}
+                  </div>
                 )}
               </article>
             </div>
@@ -202,11 +252,20 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
  * touch / lightbox open / tab hidden — same contract as {@link GalleryEntryCard}. Tapping the
  * hero opens the shared {@link PhotoLightbox} for fullscreen zoom + swipe between images.
  */
-function CardImages({ images }: { images: ProductCardImage[] }) {
+function CardImages({
+  images,
+  badge,
+  t,
+}: {
+  images: ProductCardImage[];
+  badge: ProductBadge | null;
+  t: ReturnType<typeof useTranslations<"publicProfile.productCard">>;
+}) {
   const [heroIdx, setHeroIdx] = useState(0);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   const safeIdx = heroIdx < images.length ? heroIdx : images.length - 1;
+  const soldOut = badge === "SOLD_OUT";
 
   const { pause: pauseAutoplay, resume: resumeAutoplay } = useAutoSlide({
     intervalMs: 5000,
@@ -220,21 +279,39 @@ function CardImages({ images }: { images: ProductCardImage[] }) {
   return (
     <>
       <div onMouseEnter={pauseAutoplay} onMouseLeave={resumeAutoplay} onTouchStart={pauseAutoplay}>
-        <button
-          type="button"
-          onClick={() => setLightboxIdx(safeIdx)}
-          aria-label="Open image"
-          className="block aspect-[4/3] w-full cursor-zoom-in overflow-hidden bg-slate-100"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={hero.url}
-            alt=""
-            loading="lazy"
-            className="h-full w-full object-cover transition-opacity duration-500"
-            style={{ objectPosition: `${hero.focalX}% ${hero.focalY}%` }}
-          />
-        </button>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setLightboxIdx(safeIdx)}
+            aria-label="Open image"
+            className="block aspect-[4/3] w-full cursor-zoom-in overflow-hidden bg-slate-100"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={hero.url}
+              alt=""
+              loading="lazy"
+              className={
+                "h-full w-full object-cover transition-opacity duration-500 " +
+                (soldOut ? "grayscale" : "")
+              }
+              style={{ objectPosition: `${hero.focalX}% ${hero.focalY}%` }}
+            />
+          </button>
+          {/* Badge chip top-left — color from the design-system map, label from i18n. The chip is
+              absolute-positioned so the focal-point image crop stays untouched. SOLD_OUT also
+              grayscales the hero (above) so the badge isn't the only signal. */}
+          {badge && (
+            <span
+              className={
+                "pointer-events-none absolute left-2 top-2 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider shadow-sm " +
+                BADGE_COLOR[badge]
+              }
+            >
+              {t(`badge.${badge}` as const)}
+            </span>
+          )}
+        </div>
         {images.length > 1 && (
           <div className="flex gap-1 border-t border-slate-100 bg-slate-50/50 px-2 py-1.5">
             {images.map((image, idx) => (
@@ -274,3 +351,30 @@ function CardImages({ images }: { images: ProductCardImage[] }) {
   );
 }
 
+/**
+ * Best-effort discount calculation from two free-form price strings. Returns a rounded percent
+ * when both strings parse cleanly to the same scale and {@code originalPrice > price}; otherwise
+ * null so we silently skip the chip rather than show a nonsense number (e.g. "$45" vs "45,000원"
+ * → null because the parser pulls 45 vs 45000 and we don't know which is the displayed-as price).
+ *
+ * <p>Parser: strip everything except digits + decimal point, then parseFloat. Works for "45,000원"
+ * → 45000, "$45.99" → 45.99, "₩1,234,560" → 1234560. Fails cleanly to null when the strings
+ * share no digits (e.g. "Inquire" + "Limited") — exactly when we don't want a discount chip.
+ */
+function computeDiscountPercent(
+  price: string | null,
+  originalPrice: string | null,
+): number | null {
+  if (!price || !originalPrice) return null;
+  const a = parsePriceNumber(price);
+  const b = parsePriceNumber(originalPrice);
+  if (a == null || b == null || b <= 0 || a >= b) return null;
+  return Math.round((1 - a / b) * 100);
+}
+
+function parsePriceNumber(raw: string): number | null {
+  const cleaned = raw.replace(/[^\d.]/g, "");
+  if (!cleaned) return null;
+  const n = parseFloat(cleaned);
+  return Number.isFinite(n) ? n : null;
+}

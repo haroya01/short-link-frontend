@@ -33,10 +33,16 @@ const UPLOAD_OUTPUT_TYPE = "image/jpeg";
 const UPLOAD_QUALITY = 0.9;
 const UPLOAD_MAX_DIM = 1600;
 
+type Badge = "" | "NEW" | "BEST" | "LIMITED" | "SOLD_OUT";
+
+const BADGES: readonly Exclude<Badge, "">[] = ["NEW", "BEST", "LIMITED", "SOLD_OUT"];
+
 type Item = {
   name: string;
   images: ProductCardImage[];
   price: string;
+  originalPrice: string;
+  badge: Badge;
   description: string;
   ctaLabel: string;
   ctaUrl: string;
@@ -46,6 +52,8 @@ const EMPTY_ITEM: Item = {
   name: "",
   images: [],
   price: "",
+  originalPrice: "",
+  badge: "",
   description: "",
   ctaLabel: "",
   ctaUrl: "",
@@ -87,6 +95,11 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
               name: typeof v.name === "string" ? v.name : "",
               images: parseImagesField(v),
               price: typeof v.price === "string" ? v.price : "",
+              originalPrice: typeof v.originalPrice === "string" ? v.originalPrice : "",
+              badge:
+                typeof v.badge === "string" && (BADGES as readonly string[]).includes(v.badge)
+                  ? (v.badge as Exclude<Badge, "">)
+                  : "",
               description: typeof v.description === "string" ? v.description : "",
               ctaLabel: typeof v.ctaLabel === "string" ? v.ctaLabel : "",
               ctaUrl: typeof v.ctaUrl === "string" ? v.ctaUrl : "",
@@ -123,6 +136,8 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
       name: it.name.trim(),
       images: it.images.filter((img) => img.url.trim().length > 0),
       price: it.price.trim() || null,
+      originalPrice: it.originalPrice.trim() || null,
+      badge: it.badge || null,
       description: it.description.trim() || null,
       ctaLabel: it.ctaLabel.trim() || null,
       ctaUrl: it.ctaUrl.trim() || null,
@@ -196,8 +211,26 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
                   <Input
                     value={item.price}
                     maxLength={30}
-                    placeholder="45,000원"
+                    placeholder={t("productCardFieldPricePlaceholder")}
                     onChange={(e) => updateItem(idx, { price: e.target.value })}
+                  />
+                </FormField>
+                <FormField label={t("productCardFieldOriginalPrice")}>
+                  <Input
+                    value={item.originalPrice}
+                    maxLength={30}
+                    placeholder={t("productCardFieldOriginalPricePlaceholder")}
+                    onChange={(e) => updateItem(idx, { originalPrice: e.target.value })}
+                  />
+                </FormField>
+                <FormField
+                  label={t("productCardFieldBadge")}
+                  className="sm:col-span-2"
+                >
+                  <BadgeSelector
+                    value={item.badge}
+                    onChange={(badge) => updateItem(idx, { badge })}
+                    t={t}
                   />
                 </FormField>
                 <FormField
@@ -254,6 +287,65 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
         </button>
       </div>
     </ConfirmDialog>
+  );
+}
+
+/**
+ * Row of pills — one per badge id plus a "none" pill at the start. Same visual shape as the
+ * preview chip the public card will render so the seller sees the actual treatment they're
+ * picking. Single-select; tapping the current selection clears it (toggle).
+ */
+function BadgeSelector({
+  value,
+  onChange,
+  t,
+}: {
+  value: Badge;
+  onChange: (badge: Badge) => void;
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  const publicT = useTranslations("publicProfile.productCard.badge");
+  const colorByBadge: Record<Exclude<Badge, "">, string> = {
+    NEW: "bg-sky-500 text-white",
+    BEST: "bg-amber-500 text-white",
+    LIMITED: "bg-red-500 text-white",
+    SOLD_OUT: "bg-slate-700 text-white",
+  };
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      <button
+        type="button"
+        onClick={() => onChange("")}
+        aria-pressed={value === ""}
+        className={
+          "rounded-full border px-3 py-1 text-[11px] font-medium transition " +
+          (value === ""
+            ? "border-slate-900 bg-slate-900 text-white"
+            : "border-slate-200 bg-white text-slate-500 hover:border-slate-300")
+        }
+      >
+        {t("productCardBadgeNone")}
+      </button>
+      {BADGES.map((badge) => {
+        const active = value === badge;
+        return (
+          <button
+            key={badge}
+            type="button"
+            onClick={() => onChange(active ? "" : badge)}
+            aria-pressed={active}
+            className={
+              "rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wider transition " +
+              (active
+                ? "border-transparent " + colorByBadge[badge]
+                : "border-slate-200 bg-white text-slate-500 hover:border-slate-300")
+            }
+          >
+            {publicT(badge)}
+          </button>
+        );
+      })}
+    </div>
   );
 }
 

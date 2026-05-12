@@ -801,6 +801,16 @@
       "previous": "前の写真",
       "next": "次の写真",
       "close": "閉じる"
+    },
+    "productCard": {
+      "defaultCta": "詳細",
+      "discount": "-{pct}%",
+      "badge": {
+        "NEW": "新着",
+        "BEST": "BEST",
+        "LIMITED": "限定",
+        "SOLD_OUT": "完売"
+      }
     }
   },
   "weeklyInsights": {
@@ -1095,6 +1105,12 @@
       "productCardImageMoveRight": "右へ",
       "productCardPreviewLabel": "プレビュー",
       "productCardFieldPrice": "価格",
+      "productCardFieldPricePlaceholder": "例: 3,800円",
+      "productCardFieldOriginalPrice": "通常価格 (任意)",
+      "productCardFieldOriginalPriceHint": "通常価格を入れると割引額と割引率が自動表示されます。",
+      "productCardFieldOriginalPricePlaceholder": "例: 4,500円",
+      "productCardFieldBadge": "バッジ (任意)",
+      "productCardBadgeNone": "なし",
       "productCardFieldDescription": "説明",
       "productCardFieldDescriptionPlaceholder": "例: 1号、24h 前予約",
       "productCardFieldCtaLabel": "ボタンラベル",
