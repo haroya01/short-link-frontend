@@ -449,10 +449,39 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   }
 
   async function move(itemIdx: number, direction: -1 | 1) {
-    const swap = itemIdx + direction;
-    if (swap < 0 || swap >= items.length) return;
+    const moved = items[itemIdx];
+    const isSectionMove = moved.kind === "BLOCK" && moved.type === "TEXT";
+    if (!isSectionMove) {
+      // Single-item swap — same as before. Non-header items only jump one slot at a time so the
+      // mobile arrow buttons feel granular for individual rows.
+      const swap = itemIdx + direction;
+      if (swap < 0 || swap >= items.length) return;
+      const next = items.slice();
+      [next[itemIdx], next[swap]] = [next[swap], next[itemIdx]];
+      void commitOrder(next);
+      return;
+    }
+    // Section move: the dragged unit is [itemIdx, sectionEnd) — header + its children.
+    const sectionEnd = findNextTextHeader(items, itemIdx + 1);
+    const myRange = sectionEnd - itemIdx;
+    if (direction === -1) {
+      if (itemIdx === 0) return;
+      // The "unit above" is either a single non-header row or the entire preceding section. Land
+      // at the start of that unit so a section hop = swap of two adjacent units.
+      const prevUnitStart = findUnitStartBefore(items, itemIdx);
+      const next = items.slice();
+      const range = next.splice(itemIdx, myRange);
+      next.splice(prevUnitStart, 0, ...range);
+      void commitOrder(next);
+      return;
+    }
+    if (sectionEnd >= items.length) return;
+    // The "unit below" begins at sectionEnd. Its end is the next header (or list end) when it's
+    // itself a section, or sectionEnd + 1 when it's a single item.
+    const nextUnitEnd = findUnitEndAfter(items, sectionEnd);
     const next = items.slice();
-    [next[itemIdx], next[swap]] = [next[swap], next[itemIdx]];
+    const range = next.splice(itemIdx, myRange);
+    next.splice(nextUnitEnd - myRange, 0, ...range);
     void commitOrder(next);
   }
 
@@ -515,19 +544,6 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     setDragIndex(null);
     setOverIndex(null);
     void commitOrder(next);
-  }
-
-  /**
-   * Returns the exclusive upper-bound index of the section that starts at {@code from} — i.e.
-   * the index of the next TEXT block, or {@code items.length} if none follows. The caller uses
-   * this to splice out the [header, ...children] range as one contiguous block.
-   */
-  function findNextTextHeader(arr: FeedItem[], from: number): number {
-    for (let i = from; i < arr.length; i++) {
-      const it = arr[i];
-      if (it.kind === "BLOCK" && it.type === "TEXT") return i;
-    }
-    return arr.length;
   }
 
   function handleDragEnd() {
@@ -941,4 +957,48 @@ function Section({ label, children }: { label: string; children: React.ReactNode
       {children}
     </div>
   );
+}
+
+/**
+ * Exclusive upper-bound index of the section that starts at {@code from} — i.e. the index of the
+ * next TEXT block, or {@code arr.length} if none follows. Used by both drag-and-drop and the
+ * mobile ↑↓ buttons to splice out the [header, ...children] range as one contiguous block.
+ */
+function findNextTextHeader(arr: FeedItem[], from: number): number {
+  for (let i = from; i < arr.length; i++) {
+    const it = arr[i];
+    if (it.kind === "BLOCK" && it.type === "TEXT") return i;
+  }
+  return arr.length;
+}
+
+/**
+ * Start index of the "unit" that ends just before {@code idx}. A unit is either a single
+ * non-header row or an entire TEXT-anchored section. When the row directly above {@code idx} is
+ * itself inside a section, the unit start is that section's TEXT header — otherwise it's just
+ * the row above. Powers the section-aware mobile ↑ button.
+ */
+function findUnitStartBefore(arr: FeedItem[], idx: number): number {
+  if (idx <= 0) return 0;
+  const above = arr[idx - 1];
+  if (above.kind === "BLOCK" && above.type === "TEXT") return idx - 1;
+  for (let j = idx - 1; j >= 0; j--) {
+    const it = arr[j];
+    if (it.kind === "BLOCK" && it.type === "TEXT") return j;
+  }
+  return idx - 1;
+}
+
+/**
+ * Exclusive end index of the unit that starts at {@code idx}. Mirrors {@link findUnitStartBefore}
+ * looking downward — a TEXT header consumes its children, a non-header consumes only itself.
+ * Used by the section-aware mobile ↓ button to know where to land the moved section.
+ */
+function findUnitEndAfter(arr: FeedItem[], idx: number): number {
+  if (idx >= arr.length) return arr.length;
+  const first = arr[idx];
+  if (first.kind === "BLOCK" && first.type === "TEXT") {
+    return findNextTextHeader(arr, idx + 1);
+  }
+  return idx + 1;
 }
