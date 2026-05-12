@@ -9,14 +9,14 @@ import {
   presignBannerUpload,
   uploadBannerToS3,
 } from "@/lib/api";
-import { resizeImage } from "@/lib/image-resize";
 import { useToast } from "./ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
+import { ImageCropperDialog } from "./ui/image-cropper-dialog";
 
 const ACCEPT = "image/jpeg,image/png,image/webp";
 const MAX_INPUT_BYTES = 15 * 1024 * 1024;
 /** Long-edge ceiling — banners are landscape, so 2K width preserves crispness on retina laptops
- *  while keeping JPEG payload bounded. Aspect is preserved (not square-cropped). */
+ *  while keeping JPEG payload bounded. */
 const TARGET_DIM = 2048;
 const OUTPUT_TYPE = "image/jpeg";
 const OUTPUT_QUALITY = 0.88;
@@ -27,19 +27,19 @@ type Props = {
 };
 
 /**
- * Wide hero image picker for the public profile. Same upload pipeline as AvatarPicker (presign →
- * direct S3 PUT → commit) with two differences: aspect is preserved (no center-crop), and the
- * preview is a 3:1 strip rather than a circle. The HEAD-and-reject backend guard catches anything
- * that bypasses the canvas resize.
+ * Wide hero image picker for the public profile. File pick → {@link ImageCropperDialog} at 3:1
+ * → presigned S3 PUT → commit. The cropper replaced the old "shrink to fit, no preview" flow so
+ * users can choose which slice of a landscape (or portrait) photo lands in the 3:1 banner frame.
  */
 export function BannerPicker({ currentUrl, onChange }: Props) {
   const t = useTranslations("banner");
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [busy, setBusy] = useState(false);
+  const [pickedFile, setPickedFile] = useState<File | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
-  async function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
+  function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
@@ -51,21 +51,19 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
       toast(t("tooBig"), "error");
       return;
     }
+    setPickedFile(file);
+  }
+
+  async function handleCropped(cropped: File) {
+    setPickedFile(null);
     setBusy(true);
     try {
-      const resized = await resizeImage(file, {
-        maxDim: TARGET_DIM,
-        square: false,
-        type: OUTPUT_TYPE,
-        quality: OUTPUT_QUALITY,
-        filename: "banner.jpg",
-      });
       const presign = await presignBannerUpload(OUTPUT_TYPE);
-      if (resized.size > presign.maxBytes) {
+      if (cropped.size > presign.maxBytes) {
         toast(t("tooBig"), "error");
         return;
       }
-      await uploadBannerToS3(presign.uploadUrl, resized, OUTPUT_TYPE);
+      await uploadBannerToS3(presign.uploadUrl, cropped, OUTPUT_TYPE);
       const committed = await commitBannerUpload(presign.key);
       onChange(committed.bannerUrl);
       toast(t("uploaded"), "success");
@@ -98,8 +96,7 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
         disabled={busy}
         aria-label={t("change")}
         // aspect-ratio + relative + min-h-0 keeps the button locked to 3:1 regardless of an
-        // unstyled image flash during reflow. transition-colors instead of `transition` so the
-        // size doesn't animate on layout shifts (which produced the "엄청 커지는" jitter).
+        // unstyled image flash during reflow.
         className="group relative block w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100 transition-colors hover:border-accent-300"
         style={{ aspectRatio: "3 / 1" }}
       >
@@ -145,6 +142,17 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
         accept={ACCEPT}
         onChange={handlePick}
         className="hidden"
+      />
+      <ImageCropperDialog
+        open={pickedFile !== null}
+        file={pickedFile}
+        aspect={3}
+        cropShape="rect"
+        outputMaxDim={TARGET_DIM}
+        outputType={OUTPUT_TYPE}
+        outputQuality={OUTPUT_QUALITY}
+        onCancel={() => setPickedFile(null)}
+        onConfirm={handleCropped}
       />
     </div>
   );
