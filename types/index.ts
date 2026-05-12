@@ -297,7 +297,8 @@ export type PublicProfileEntry = {
     | "GALLERY"
     | "PRODUCT_CARD"
     | "BOOKING"
-    | "EVENT";
+    | "EVENT"
+    | "PLACE";
   id: number | null;
   shortCode: string | null;
   shortUrl: string | null;
@@ -325,7 +326,8 @@ export type ProfileBlock = {
     | "GALLERY"
     | "PRODUCT_CARD"
     | "BOOKING"
-    | "EVENT";
+    | "EVENT"
+    | "PLACE";
   content: string | null;
   profileOrder: number;
 };
@@ -360,6 +362,33 @@ export type ProductCardConfig = {
  * EMAIL_FORM block config — stored as JSON in {@link ProfileBlock.content}. Title required;
  * other fields fall back to sensible defaults on the public form.
  */
+/**
+ * PLACE block JSON shape — single business / venue / 매장 promo card. Mirrors the backend
+ * {@code Place.java} record. {@code coverUrl} = uploaded storefront photo (preferred visual);
+ * absent → frontend falls back to a Static Maps PNG.
+ */
+export type PlaceConfig = {
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  placeId: string | null;
+  phone: string | null;
+  coverUrl: string | null;
+  category: PlaceCategory | null;
+  hoursText: string | null;
+};
+
+export type PlaceCategory =
+  | "cafe"
+  | "bakery"
+  | "restaurant"
+  | "retail"
+  | "studio"
+  | "gallery"
+  | "popup"
+  | "space";
+
 export type EmailFormConfig = {
   title: string;
   placeholder: string | null;
