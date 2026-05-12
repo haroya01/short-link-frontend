@@ -757,12 +757,7 @@
       "save": "Save to contacts",
       "dockCall": "Call",
       "dockShare": "Share",
-      "dockSave": "Save",
-      "qrAlt": "Scan QR to add this contact",
-      "flipToBack": "Flip (show QR)",
-      "flipToFront": "Flip back",
-      "backTagline": "Digital card",
-      "backScanHint": "Scan QR → add contact"
+      "dockSave": "Save"
     },
     "emailForm": {
       "submit": "Sign up",
@@ -1198,7 +1193,8 @@
       "contactFieldAddress": "Address",
       "contactFieldAddressPlaceholder": "City, Country",
       "contactFieldLogo": "Logo (optional)",
-      "contactFieldLogoHint": "Company / personal logo — shown small on both sides of the card.",
+      "contactFieldLogoHint": "Company / personal logo — displayed as a square on the card.",
+      "contactFieldLogoFocalHint": "Drag the image to pick which part fills the square.",
       "contactFieldPalette": "Holographic palette",
       "addGalleryTitle": "Add gallery",
       "editGalleryTitle": "Edit gallery",

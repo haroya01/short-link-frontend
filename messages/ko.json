@@ -674,12 +674,7 @@
       "save": "연락처에 저장",
       "dockCall": "전화",
       "dockShare": "공유",
-      "dockSave": "저장",
-      "qrAlt": "연락처를 추가하려면 QR 을 스캔하세요",
-      "flipToBack": "뒤집기 (QR 보기)",
-      "flipToFront": "앞으로 돌리기",
-      "backTagline": "디지털 명함",
-      "backScanHint": "QR 스캔 → 연락처 추가"
+      "dockSave": "저장"
     },
     "emailForm": {
       "submit": "등록",
@@ -1112,7 +1107,8 @@
       "contactFieldAddress": "주소",
       "contactFieldAddressPlaceholder": "서울특별시 ...",
       "contactFieldLogo": "로고 (옵션)",
-      "contactFieldLogoHint": "회사/개인 로고 — 명함 앞·뒷면에 작게 표시됩니다.",
+      "contactFieldLogoHint": "회사/개인 로고 — 명함에 정사각형으로 표시됩니다.",
+      "contactFieldLogoFocalHint": "이미지를 끌어 정사각형에 담길 위치를 조정하세요.",
       "contactFieldPalette": "홀로그래픽 팔레트",
       "addGalleryTitle": "갤러리 추가",
       "editGalleryTitle": "갤러리 수정",
