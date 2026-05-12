@@ -345,7 +345,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                 <a
                   href={`tel:${card.phone.replace(/\s/g, "")}`}
                   onClick={(e) => e.stopPropagation()}
-                  className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
+                  className="focus-ring flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
                 >
                   <Phone className="h-4 w-4" />
                   <span>{t("dockCall")}</span>
@@ -362,7 +362,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                   e.stopPropagation();
                   shareCard();
                 }}
-                className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
+                className="focus-ring flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
               >
                 <Share2 className="h-4 w-4" />
                 <span>{t("dockShare")}</span>
@@ -373,7 +373,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                   e.stopPropagation();
                   downloadVcard();
                 }}
-                className="flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
+                className="focus-ring flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium text-white transition hover:bg-white/5 active:bg-white/10"
               >
                 <Download className="h-4 w-4" />
                 <span>{t("dockSave")}</span>
