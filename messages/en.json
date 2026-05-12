@@ -755,9 +755,13 @@
     },
     "contactCard": {
       "save": "Save to contacts",
-      "dockCall": "Call",
       "dockShare": "Share",
-      "dockSave": "Save"
+      "dockSave": "Save to contacts",
+      "flipToBack": "Flip",
+      "flipToFront": "Flip back",
+      "qrAlt": "Scan QR to add this contact",
+      "backTagline": "Digital card",
+      "backScanHint": "Tap to flip back"
     },
     "emailForm": {
       "submit": "Sign up",
@@ -779,7 +783,6 @@
     },
     "place": {
       "directions": "Directions",
-      "call": "Call",
       "copy": "Copy address",
       "copied": "Copied",
       "share": "Share",
