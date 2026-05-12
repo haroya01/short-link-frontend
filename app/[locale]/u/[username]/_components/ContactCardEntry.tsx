@@ -1,20 +1,13 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-  type PointerEvent as ReactPointerEvent,
-} from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Download, Mail, MapPin, Phone, Share2 } from "lucide-react";
 import QRCode from "qrcode";
 import { useTranslations } from "next-intl";
 import type { ContactCardConfig } from "@/types";
 import { parseContactCardConfig } from "@/lib/block-config-parsers";
 import { playCardFlipSound } from "@/lib/card-flip-sound";
+import { useCardTilt } from "@/lib/use-card-tilt";
 import type { ThemeColors } from "../_lib/theme";
 import { getPalette } from "./contact-card-palettes";
 
@@ -50,7 +43,8 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
   const t = useTranslations("publicProfile.contactCard");
   const card = useMemo(() => parseContactCardConfig(content), [content]);
   const palette = useMemo(() => getPalette(card.palette), [card.palette]);
-  const cardRef = useRef<HTMLDivElement | null>(null);
+  const { cardRef, onPointerMove: handlePointerMove, onPointerLeave: handlePointerLeave } =
+    useCardTilt();
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
 
@@ -79,96 +73,6 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
     };
   }, [vcard]);
 
-  // Pointer + scroll → CSS variables driving the holographic layers. We follow the simeydotme
-  // /pokemon-cards-css technique end-to-end (https://github.com/simeydotme/pokemon-cards-css):
-  // each pointer move sets six derived custom properties (--pointer-x/y, --pointer-from-center,
-  // --pointer-from-left/top, --background-x/y, --card-opacity) which downstream gradient layers
-  // read to compute their position, intensity, and parallax. The previous "one stripe + one
-  // radial highlight" approach left half the card uncolored ("끊긴" feedback); the simey approach
-  // stacks multiple shine layers with `filter: contrast()` so the WHOLE surface is iridescent.
-  const pointerOverRef = useRef(false);
-
-  const applyVars = useCallback(
-    (x: number, y: number, opacity: number) => {
-      const el = cardRef.current;
-      if (!el) return;
-      const fromCenter = Math.min(
-        1,
-        Math.sqrt((x - 50) * (x - 50) + (y - 50) * (y - 50)) / 50,
-      );
-      // background-x/y is mapped to a narrow band (37-63% / 33-67%) so the rainbow scroll is
-      // subtle, not wild — same range as simey's adjust(0, 100, 37, 63).
-      const bgX = 37 + (x / 100) * 26;
-      const bgY = 33 + (y / 100) * 34;
-      // Pointer-following tilt: same axis convention ("look toward pointer") as simey, ±8°.
-      const rotateY = -((x - 50) / 50) * 8;
-      const rotateX = ((y - 50) / 50) * 8;
-      el.style.setProperty("--pointer-x", `${x}%`);
-      el.style.setProperty("--pointer-y", `${y}%`);
-      el.style.setProperty("--pointer-from-center", `${fromCenter}`);
-      el.style.setProperty("--pointer-from-left", `${x / 100}`);
-      el.style.setProperty("--pointer-from-top", `${y / 100}`);
-      el.style.setProperty("--background-x", `${bgX}%`);
-      el.style.setProperty("--background-y", `${bgY}%`);
-      el.style.setProperty("--card-opacity", `${opacity}`);
-      el.style.setProperty("--rotate-x", `${rotateY}deg`);
-      el.style.setProperty("--rotate-y", `${rotateX}deg`);
-    },
-    [],
-  );
-
-  const handlePointerMove = useCallback(
-    (e: ReactPointerEvent<HTMLDivElement>) => {
-      const el = cardRef.current;
-      if (!el) return;
-      pointerOverRef.current = true;
-      const rect = el.getBoundingClientRect();
-      const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-      const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
-      applyVars(x, y, 0.9);
-    },
-    [applyVars],
-  );
-
-  // Pseudo-pointer position based on scroll — simulates the visitor's "look angle" changing as
-  // the card moves through the viewport. Tying the holo to scroll instead of a continuous
-  // animation matches what the user asked for ("자동으로 움직이는게 아니라 스크롤에 따라").
-  const applyScrollVars = useCallback(() => {
-    const el = cardRef.current;
-    if (!el || pointerOverRef.current) return;
-    const rect = el.getBoundingClientRect();
-    const vh = window.innerHeight || 1;
-    const cardMid = rect.top + rect.height / 2;
-    // 0 (card center at top of viewport) → 100 (at bottom)
-    const yPct = Math.max(0, Math.min(100, ((cardMid / vh) * 100)));
-    // X stays centered — vertical scroll only drives Y. Light still moves as the card scrolls,
-    // and the rainbow visibly slides because background-y feeds the gradient position.
-    applyVars(50, yPct, 0.55);
-  }, [applyVars]);
-
-  useEffect(() => {
-    applyScrollVars();
-    let rafId = 0;
-    const onScroll = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = 0;
-        applyScrollVars();
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, [applyScrollVars]);
-
-  const handlePointerLeave = useCallback(() => {
-    pointerOverRef.current = false;
-    applyScrollVars();
-  }, [applyScrollVars]);
 
   function downloadVcard() {
     const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
