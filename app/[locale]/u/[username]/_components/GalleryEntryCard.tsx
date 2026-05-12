@@ -16,11 +16,12 @@ type Props = {
 };
 
 /**
- * Inline 1:1 carousel + tap-to-open shared {@link PhotoLightbox}. The inline view always shows
- * each photo at its natural aspect (object-contain) with a blurred copy of the same image as a
- * letterbox backdrop (Instagram / iOS Photos pattern) — visitors see the whole photo without
- * cropping, and the empty padding takes the photo's own color so it never looks like a hole.
- * The lightbox is the "show me bigger" escape hatch.
+ * Inline 4:3 carousel + tap-to-open shared {@link PhotoLightbox}. The inline view crops each
+ * photo to {@code object-cover} at a fixed 4:3 aspect — same fit as ProductCard so the two
+ * "horizontal image card" surfaces read with identical density and visual weight, instead of the
+ * previous {@code object-contain} + blurred-backdrop letterbox which made portrait shots look
+ * tiny and sparse next to landscape ones (사용자 피드백: "어떤 이미지는 중앙에 작게 들어감 /
+ * 콘텐츠 밀도가 낮아 보임"). Visitors who want the original framing tap into the lightbox.
  *
  * <p>Page-dots and ← → buttons (desktop only) drive horizontal navigation. Touch users rely on
  * native CSS scroll-snap which gives the same physical-feeling swipe.
@@ -72,16 +73,8 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
                 <img
                   src={url}
                   alt=""
-                  aria-hidden
                   loading="lazy"
-                  className="absolute inset-0 h-full w-full scale-110 object-cover opacity-50 blur-2xl"
-                />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={url}
-                  alt=""
-                  loading="lazy"
-                  className="relative h-full w-full object-contain"
+                  className="h-full w-full object-cover"
                 />
               </button>
             ))}
