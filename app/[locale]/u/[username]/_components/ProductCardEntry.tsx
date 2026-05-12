@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -11,6 +10,7 @@ import {
 import type { ProductCardImage } from "@/types";
 import { parseProductCardConfig } from "@/lib/block-config-parsers";
 import { useAutoSlide } from "@/lib/use-auto-slide";
+import { useCardCarousel } from "@/lib/use-card-carousel";
 import type { ThemeColors } from "../_lib/theme";
 import { CardCtaBar } from "./CardCtaBar";
 import { PhotoLightbox } from "./PhotoLightbox";
@@ -52,10 +52,14 @@ type Props = {
  */
 export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
   const config = useMemo(() => parseProductCardConfig(content), [content]);
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLLIElement | null>(null);
-  const [activeIdx, setActiveIdx] = useState(0);
   const [entered, setEntered] = useState(false);
+  // Carousel uses "start" alignment now that each item is a full-width snap page (the old
+  // "center" mode with peek was replaced when we standardized card widths — see PR #105).
+  const { scrollerRef, activeIdx, scrollToIdx } = useCardCarousel({
+    itemCount: config.items.length,
+    behavior: "start",
+  });
 
   // Trigger the entrance stagger when the whole block first enters the viewport. We only fire
   // once — once visible, cards stay visible. Disconnects to avoid leaks on profiles with many
@@ -78,54 +82,6 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
     );
     observer.observe(wrapper);
     return () => observer.disconnect();
-  }, []);
-
-  // Track which card is currently snapped to center. rAF throttle keeps the scroll listener cheap
-  // on long swipes; comparing rect centers handles non-uniform card widths (e.g. last card on
-  // narrow screens snapping to start instead of center).
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    let raf = 0;
-    const measure = () => {
-      raf = 0;
-      const containerRect = el.getBoundingClientRect();
-      const containerMid = containerRect.left + containerRect.width / 2;
-      const children = Array.from(el.querySelectorAll<HTMLElement>("[data-card]"));
-      let best = 0;
-      let bestDist = Infinity;
-      children.forEach((child, idx) => {
-        const r = child.getBoundingClientRect();
-        const mid = r.left + r.width / 2;
-        const d = Math.abs(mid - containerMid);
-        if (d < bestDist) {
-          bestDist = d;
-          best = idx;
-        }
-      });
-      setActiveIdx(best);
-    };
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(measure);
-    };
-    measure();
-    el.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      el.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [config.items.length]);
-
-  const scrollToIdx = useCallback((idx: number) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const child = el.querySelectorAll<HTMLElement>("[data-card]")[idx];
-    if (!child) return;
-    const left = child.offsetLeft - (el.clientWidth - child.clientWidth) / 2;
-    el.scrollTo({ left, behavior: "smooth" });
   }, []);
 
   if (config.items.length === 0) return null;

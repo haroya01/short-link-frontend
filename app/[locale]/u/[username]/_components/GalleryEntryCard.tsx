@@ -1,17 +1,11 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { parseGalleryConfig } from "@/lib/block-config-parsers";
 import { useAutoSlide } from "@/lib/use-auto-slide";
+import { useCardCarousel } from "@/lib/use-card-carousel";
 import type { ThemeColors } from "../_lib/theme";
 import { PhotoLightbox } from "./PhotoLightbox";
 
@@ -34,37 +28,11 @@ type Props = {
 export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
   const t = useTranslations("publicProfile.gallery");
   const config = useMemo(() => parseGalleryConfig(content), [content]);
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
-  const [activeIdx, setActiveIdx] = useState(0);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
-
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    let raf = 0;
-    const measure = () => {
-      raf = 0;
-      const idx = Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
-      setActiveIdx(Math.max(0, Math.min(config.images.length - 1, idx)));
-    };
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(measure);
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      el.removeEventListener("scroll", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [config.images.length]);
-
-  const scrollToIdx = useCallback((idx: number) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const child = el.children[idx] as HTMLElement | undefined;
-    if (!child) return;
-    el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
-  }, []);
+  const { scrollerRef, activeIdx, scrollToIdx } = useCardCarousel({
+    itemCount: config.images.length,
+    behavior: "start",
+  });
 
   // Auto-advance 5 s — feels like a slow Instagram story. Pauses while the lightbox is open (the
   // visitor's clearly engaging with one specific image), while the tab is backgrounded (handled
