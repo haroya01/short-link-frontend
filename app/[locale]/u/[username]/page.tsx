@@ -31,12 +31,32 @@ export async function generateMetadata({
   const profile = await fetchProfile(username).catch(() => null);
   if (!profile) return { title: `@${username}` };
   const entries = profile.entries ?? [];
+  // OG image: banner (3:1 / 4:1 — already a hero shape) > avatar (square fallback) > nothing.
+  // KakaoTalk / Discord / Slack crawlers all read og:image; without it the preview shows just the
+  // title text with no thumbnail (which is why pasting kurl.me/u/<handle> into KakaoTalk showed
+  // no image before this).
+  //
+  // <p>Crawler caching note: once a URL has been scraped without an image, KakaoTalk pins that
+  // result for ~24h. Telling the owner to retest after deploy + use Kakao's 공유 디버거
+  // (https://developers.kakao.com/tool/debugger/sharing) to force-refresh.
+  const ogImage = profile.bannerUrl ?? profile.avatarUrl ?? null;
   return {
     title: `@${profile.username} · kurl`,
     description: profile.bio ?? `${entries.filter((e) => e.kind === "LINK").length} links`,
     openGraph: {
       title: `@${profile.username} · kurl`,
       description: profile.bio ?? undefined,
+      images: ogImage
+        ? [{ url: ogImage, width: 1200, height: 630, alt: `@${profile.username}` }]
+        : undefined,
+      type: "profile",
+      siteName: "kurl",
+    },
+    twitter: {
+      card: ogImage ? "summary_large_image" : "summary",
+      title: `@${profile.username} · kurl`,
+      description: profile.bio ?? undefined,
+      images: ogImage ? [ogImage] : undefined,
     },
   };
 }
