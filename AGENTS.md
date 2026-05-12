@@ -197,6 +197,12 @@
 | `colors.ctaPrimary` (token) | `_lib/theme.ts` | Primary CTA 버튼 배경+텍스트+hover. 직접 `bg-slate-900` 하드코딩 ❌. 12 개 테마별로 정의돼 있어 다크 / 브랜드 테마 자동 대응 |
 | `.focus-ring` (utility) | `globals.css` | `.profile-card-static` 안의 inner button 의 키보드 focus outline. 한 클래스로 일관 |
 | `<FormField label required className>` | `components/profile-section/FormField.tsx` | BlockDialog 의 라벨 + required 마커 (다이얼로그 전용) |
+| `<Textarea>` | `components/ui/textarea.tsx` | Input 과 같은 톤의 multi-line input (다이얼로그 전용) |
+| `parseXConfig(raw)` | `lib/block-config-parsers.ts` | 블록 JSON 파서 — 모든 entry 컴포넌트가 사용. 신규 카드 추가 시 여기에 parser 추가 |
+| `useCardTilt()` | `lib/use-card-tilt.ts` | Pointer + scroll → 7 개 CSS custom property. holographic surface 용 (현재 ContactCardEntry 만 사용) |
+| `useCardCarousel({ itemCount, behavior })` | `lib/use-card-carousel.ts` | Scroll-snap carousel 의 scrollerRef + activeIdx + scrollToIdx. behavior: "start" (paginated) / "center" (peek). GalleryEntryCard + ProductCardEntry 가 사용 |
+| `useAutoSlide({ intervalMs, enabled, onTick })` | `lib/use-auto-slide.ts` | 5 s 자동 슬라이드. pause / resume / 자동 visibility 처리. 갤러리 / 상품 카드 |
+| `useBlockDialog<T>()` | `components/profile-section/use-block-dialog.ts` | 10 개 BlockDialog state 한 줄로. {open, blockId, initialPayload, show, close} |
 | `<Textarea>` | `components/ui/textarea.tsx` | Input 과 같은 톤의 multi-line (다이얼로그 전용) |
 
 ---
@@ -489,3 +495,8 @@ Identity archetype 은 `ContactCardEntry` 1 개로 충분. 신규 추가 시 foi
 - 2026-05: 디자인 토큰 + Google Maps URL builder 단위 테스트 추가 (44 → 86 tests, #116)
 - 2026-05: 키보드 포커스 ring 통일 — `.profile-card:focus-visible` 자동 + `.focus-ring` 유틸 (#118)
 - 2026-05: `<CardFloatingChip>` + `<CardCtaBar>` 공유 프리미티브 추출 — Visual-first 카드의 반복 패턴 캡슐화 (#120)
+- 2026-05: `lib/block-config-parsers.ts` 추출 — 7 개 entry 의 parseConfig dedup + 25 단위 테스트 (#123)
+- 2026-05: `useCardTilt` hook 추출 — ContactCardEntry 95 줄 감소 (#125)
+- 2026-05: `useBlockDialog` hook — 10 개 다이얼로그 state 보일러플레이트 → 1 줄 (#127)
+- 2026-05: ContactCard 모바일 backface — iOS Safari overflow + preserve-3d 평탄화 워크어라운드 (#128)
+- 2026-05: `useCardCarousel` hook 추출 — Gallery + ProductCard scroll-snap 통합, 합계 ~90 줄 감소 (#130)
