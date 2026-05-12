@@ -757,12 +757,7 @@
       "save": "連絡先に保存",
       "dockCall": "電話",
       "dockShare": "共有",
-      "dockSave": "保存",
-      "qrAlt": "QR をスキャンして連絡先を追加",
-      "flipToBack": "裏返す (QR 表示)",
-      "flipToFront": "表に戻す",
-      "backTagline": "デジタル名刺",
-      "backScanHint": "QR スキャン → 連絡先追加"
+      "dockSave": "保存"
     },
     "emailForm": {
       "submit": "登録",
@@ -1198,7 +1193,8 @@
       "contactFieldAddress": "住所",
       "contactFieldAddressPlaceholder": "東京都 ...",
       "contactFieldLogo": "ロゴ (任意)",
-      "contactFieldLogoHint": "会社 / 個人ロゴ — 名刺の表・裏に小さく表示されます。",
+      "contactFieldLogoHint": "会社 / 個人ロゴ — 名刺に正方形で表示されます。",
+      "contactFieldLogoFocalHint": "画像をドラッグして正方形に収まる位置を決めます。",
       "contactFieldPalette": "ホログラフィック パレット",
       "addGalleryTitle": "ギャラリー追加",
       "editGalleryTitle": "ギャラリー編集",

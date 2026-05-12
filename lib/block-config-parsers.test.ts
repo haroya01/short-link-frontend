@@ -197,6 +197,20 @@ describe("parseContactCardConfig", () => {
     expect(out.email).toBeNull();
     expect(out.phone).toBeNull();
   });
+
+  it("defaults logo focal point to 50/50 when omitted (legacy data)", () => {
+    const out = parseContactCardConfig(JSON.stringify({ name: "x", logoUrl: "x.png" }));
+    expect(out.logoFocalX).toBe(50);
+    expect(out.logoFocalY).toBe(50);
+  });
+
+  it("parses and clamps logo focal point to [0, 100]", () => {
+    const out = parseContactCardConfig(
+      JSON.stringify({ name: "x", logoFocalX: 120, logoFocalY: -10 }),
+    );
+    expect(out.logoFocalX).toBe(100);
+    expect(out.logoFocalY).toBe(0);
+  });
 });
 
 describe("parsePlaceConfig", () => {

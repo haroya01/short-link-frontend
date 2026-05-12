@@ -186,6 +186,10 @@ export function parseContactCardConfig(raw: string): ContactCardConfig {
     address: asString(parsed.address),
     website: asString(parsed.website),
     logoUrl: asString(parsed.logoUrl),
+    logoFocalX:
+      typeof parsed.logoFocalX === "number" ? clampFocal(parsed.logoFocalX) : 50,
+    logoFocalY:
+      typeof parsed.logoFocalY === "number" ? clampFocal(parsed.logoFocalY) : 50,
     palette:
       typeof parsed.palette === "string"
         ? (parsed.palette as ContactCardConfig["palette"])
@@ -202,6 +206,8 @@ const EMPTY_CONTACT_CARD: ContactCardConfig = {
   address: null,
   website: null,
   logoUrl: null,
+  logoFocalX: 50,
+  logoFocalY: 50,
   palette: null,
 };
 

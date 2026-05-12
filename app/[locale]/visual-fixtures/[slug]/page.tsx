@@ -24,6 +24,8 @@ const SAMPLE_CONTACT_CARD: ContactCardConfig = {
   address: "서울",
   website: "https://kurl.me",
   logoUrl: null,
+  logoFocalX: 50,
+  logoFocalY: 50,
   palette: null,
 };
 

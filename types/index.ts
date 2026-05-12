@@ -419,6 +419,13 @@ export type ContactCardConfig = {
   /** Public URL of the company / personal logo uploaded via profile-images. */
   logoUrl: string | null;
   /**
+   * Focal point (0..100 on each axis) used as `object-position` when the logo is rendered inside
+   * a square crop. The uploaded file keeps its native aspect — the focal point lets the user
+   * pick which part stays visible after the square center-crop done at display time.
+   */
+  logoFocalX: number;
+  logoFocalY: number;
+  /**
    * Holographic foil preset id. Null = use default (amethyst). Mapped to a 6-color HSL palette
    * on the public profile renderer. Backend whitelists the value so only known ids reach here.
    */
