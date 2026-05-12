@@ -32,15 +32,49 @@
 | Information | `px-4 py-4` | EventEntry / EmailFormEntry — 정보 행이 많음 |
 | Meta strip | `px-4 py-3` | hero + meta 구조의 meta 영역 |
 
-### 타이포
+### 타이포 스케일 (6 단계)
 
-| 역할 | Tailwind | 사용처 |
+| 레벨 | Tailwind | 픽셀 | 용도 |
+|---|---|---|---|
+| 1 | `text-[10px] uppercase tracking-wider` | 10 px | floating pill / date pill 월 라벨 — 매우 작은 라벨 / 뱃지 |
+| 2 | `text-[11px] font-medium` | 11 px | 카드 위 floating 칩, 인라인 단일 라인 메타 (호스트 등) |
+| 3 | `text-[12px] leading-snug` | 12 px | 다중 라인 메타 / 설명 / 주소 / 시간 / 영업시간 |
+| 4 | `text-[13px] font-medium` | 13 px | CTA 라벨 (bottom bar / primary 버튼) — 일관 적용 |
+| 5 | `text-sm` (14 px) | 14 px | Action 카드 제목 (LinkEntry), Information 카드 제목 (EventEntry) |
+| 6 | `text-[15px] font-semibold leading-tight` | 15 px | Visual-first 카드 제목 (Place / Product / Gallery) |
+| 7 | `text-base / text-xl` | 16 / 20 px | hero 강조 (HighlightLink), date pill 의 일 숫자, ContactCard 이름 (특수) |
+
+색상은 `${colors.primary}` / `${colors.muted}` / `text-accent-700` (가격/강조) 만 사용. 슬레이트 / 슬레이트-500 직접 사용 ❌.
+
+### 버튼 스케일 (4 단계)
+
+| 종류 | Tailwind | 사용처 |
 |---|---|---|
-| 카드 제목 (primary) | `text-[15px] font-semibold leading-tight ${colors.primary}` | 모든 카드의 주 라벨 |
-| 메타 / 보조 텍스트 | `text-[12px] leading-snug ${colors.muted}` | 주소 / 호스트 / 시간 / 설명 |
-| 강조 / 가격 / accent | `text-sm font-medium text-accent-700` | 가격, 강조 라벨 |
-| 카테고리 칩 / 뱃지 | `text-[11px] font-medium` | 카드 위 floating 칩 |
-| floating pill 텍스트 | `text-[10px] uppercase tracking-wider` | 영업상태 / Featured 등 |
+| **Primary CTA** | `h-10 rounded-xl text-[13px] font-medium ${colors.ctaPrimary}` (배경+텍스트+hover 조합 토큰) | PlaceEntry 길찾기, EmailForm submit. **신규 primary 버튼은 반드시 `colors.ctaPrimary` 사용** |
+| **CTA Bar** (border-t) | `flex items-center justify-between border-t px-4 py-2.5 text-[13px] font-medium ${colors.cardBorder} ${colors.primary}` | ProductCardEntry / BookingEntry 의 하단 액션 바 — 본질이 "한 줄 링크" 라 별도 색 없음 |
+| **Ghost** | `h-9 rounded-lg px-3 text-[12px] font-medium ${colors.muted} hover:bg-slate-100 hover:${colors.primary}` | PlaceEntry 의 전화/복사/공유, 보조 액션 |
+| **Dock Button** (3-grid) | `flex items-center justify-center gap-1.5 px-3 py-3.5 text-sm font-medium` | ContactCardEntry 의 call/share/save dock — Identity 전용 |
+
+### 아이콘 스케일 (5 단계)
+
+| 레벨 | Tailwind | 용도 |
+|---|---|---|
+| `h-2.5 w-2.5` | 10 px | 매우 작은 inline (뱃지 안의 별 / 작은 메타 아이콘) |
+| `h-3 w-3` | 12 px | 카테고리 칩 / floating pill / date pill 안 |
+| `h-3.5 w-3.5` | 14 px | 카드 메인 anchor + CTA 마커 (ArrowRight / ExternalLink) — **기본값** |
+| `h-4 w-4` | 16 px | primary 버튼 내 아이콘 (Navigation 길찾기 등) |
+| `h-5 w-5` | 20 px | Favicon / 큰 강조 |
+
+### Spacing 스케일
+
+| 종류 | Tailwind | 용도 |
+|---|---|---|
+| gap micro | `gap-1` (4 px) | 페이지 dots, 카드 안 매우 좁은 묶음 |
+| gap 메타 | `gap-1.5` (6 px) | 인라인 메타 행 (`<Icon /> 라벨`), CTA 내부 (`<Icon /> 텍스트`) — **메타 행 기본값** |
+| gap 카드 | `gap-2` (8 px) | 작은 영역 (아이콘 + 라벨 묶음 두 개) |
+| gap 섹션 | `gap-3` (12 px) | 카드 안 큰 영역 분리 (header + body) |
+| stack 카드 | `space-y-1.5` (6 px) | 카드 내부 정보 행 stack |
+| stack 폼 | `space-y-3` (12 px) | 다이얼로그 폼 필드 stack |
 
 ### 마이크로 인터랙션 (모든 카드 공통)
 
@@ -435,3 +469,4 @@ Identity archetype 은 `ContactCardEntry` 1 개로 충분. 신규 추가 시 foi
 - 2026-05: PLACE archetype 신규 추가 (#102, #103)
 - 2026-05: ImageEntry 자연 비율 → `aspect-[4/3]` letterbox 통일 (#108)
 - 2026-05: `FormField` / `Textarea` 공유 프리미티브 추출, 6 개 다이얼로그의 로컬 `Field` 중복 제거 (#110)
+- 2026-05: `ThemeColors.ctaPrimary` 토큰 추가 — 12 개 테마별 primary CTA 배경/텍스트/hover. 타이포/버튼/아이콘/spacing 스케일 명시 (#114)

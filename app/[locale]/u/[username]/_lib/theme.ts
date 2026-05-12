@@ -9,6 +9,15 @@ export type ThemeColors = {
   muted: string;
   avatar: string;
   avatarText: string;
+  /**
+   * Primary CTA button — combined bg + text + hover classes. Use for the main call-to-action
+   * button in a card (e.g. PlaceEntry "길찾기", EmailFormEntry submit). Light themes get a near-
+   * black button, dark themes get an inverted white button so the CTA stays the strongest
+   * visual on the card across all themes. Themes with their own accent color hue (sunset / ocean
+   * / forest / aurora / wave / ember) keep the slate primary so the CTA reads as "action button"
+   * universally rather than a color statement that competes with the page gradient.
+   */
+  ctaPrimary: string;
 };
 
 /**
@@ -25,6 +34,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-slate-500",
     avatar: "bg-slate-900",
     avatarText: "text-white",
+    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
   },
   light: {
     page: "bg-slate-50",
@@ -35,6 +45,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-slate-500",
     avatar: "bg-slate-900",
     avatarText: "text-white",
+    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
   },
   dark: {
     page: "bg-slate-950",
@@ -45,6 +56,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-slate-400",
     avatar: "bg-slate-100",
     avatarText: "text-slate-900",
+    ctaPrimary: "bg-white text-slate-900 hover:bg-slate-100 active:bg-slate-200",
   },
   accent: {
     page: "bg-gradient-to-b from-accent-50 to-white",
@@ -55,6 +67,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-slate-600",
     avatar: "bg-accent-600",
     avatarText: "text-white",
+    ctaPrimary: "bg-accent-600 text-white hover:bg-accent-700 active:bg-accent-700",
   },
   sunset: {
     page: "bg-gradient-to-b from-orange-100 via-rose-50 to-amber-50",
@@ -65,6 +78,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-rose-900/70",
     avatar: "bg-gradient-to-br from-orange-400 to-rose-500",
     avatarText: "text-white",
+    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
   },
   ocean: {
     page: "bg-gradient-to-b from-sky-100 via-cyan-50 to-blue-50",
@@ -75,6 +89,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-sky-900/70",
     avatar: "bg-gradient-to-br from-cyan-500 to-sky-600",
     avatarText: "text-white",
+    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
   },
   forest: {
     page: "bg-gradient-to-b from-emerald-100 via-green-50 to-teal-50",
@@ -85,6 +100,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-emerald-900/70",
     avatar: "bg-gradient-to-br from-emerald-500 to-teal-600",
     avatarText: "text-white",
+    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
   },
   mono: {
     page: "bg-white",
@@ -95,6 +111,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-slate-700",
     avatar: "bg-black",
     avatarText: "text-white",
+    ctaPrimary: "bg-black text-white hover:bg-slate-800 active:bg-slate-800",
   },
   neon: {
     page: "bg-slate-950",
@@ -105,6 +122,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-fuchsia-300/70",
     avatar: "bg-gradient-to-br from-fuchsia-500 to-cyan-400",
     avatarText: "text-slate-950",
+    ctaPrimary: "bg-fuchsia-500 text-white hover:bg-fuchsia-400 active:bg-fuchsia-600",
   },
   aurora: {
     // Animated gradient (defined in globals.css with prefers-reduced-motion fallback).
@@ -116,6 +134,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-slate-600",
     avatar: "bg-gradient-to-br from-violet-500 to-fuchsia-500",
     avatarText: "text-white",
+    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
   },
   wave: {
     // Animated vertical wave (sky → cyan → deep ocean). See .theme-wave-anim in globals.css.
@@ -127,6 +146,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-sky-900/70",
     avatar: "bg-gradient-to-br from-sky-500 to-cyan-500",
     avatarText: "text-white",
+    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
   },
   ember: {
     // Animated warm flicker (amber → orange → crimson). See .theme-ember-anim in globals.css.
@@ -138,5 +158,6 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     muted: "text-orange-900/70",
     avatar: "bg-gradient-to-br from-amber-500 to-rose-600",
     avatarText: "text-white",
+    ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
   },
 };
