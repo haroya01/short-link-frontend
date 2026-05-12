@@ -65,7 +65,11 @@ async function judgeOne(b64Image, slug) {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: "claude-3-5-sonnet-latest",
+      // Sonnet 4.6 — flagship mid-tier in the Claude 4.x family. Better at catching subtle
+      // UX / a11y issues than Haiku without paying Opus prices (~$1/month for our 1× daily
+      // 4-page cron). Swap to claude-haiku-4-5-20251001 to cut cost ~3× or claude-opus-4-7
+      // for sharper judgment at ~5× cost.
+      model: "claude-sonnet-4-6",
       max_tokens: 1024,
       messages: [
         {
