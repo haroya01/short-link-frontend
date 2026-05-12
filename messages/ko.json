@@ -3,6 +3,14 @@
     "title": "kurl · URL 단축과 클릭 분석",
     "description": "긴 URL을 한 줄로. 디바이스, 채널, 국가별 클릭 분석까지."
   },
+  "imageCropper": {
+    "title": "이미지 자르기",
+    "cancel": "취소",
+    "apply": "적용",
+    "applying": "적용 중...",
+    "hint": "드래그로 위치 조정 · 핀치 / 휠로 확대",
+    "zoom": "확대"
+  },
   "tags": {
     "inputPlaceholder": "Enter 또는 , 로 추가",
     "removeTag": "태그 {name} 제거",
