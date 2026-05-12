@@ -125,7 +125,7 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
                 onClick={() => scrollToIdx(Math.max(0, activeIdx - 1))}
                 disabled={activeIdx === 0}
                 aria-label={t("previous")}
-                className="absolute left-2 top-1/2 hidden h-8 w-8 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60 disabled:opacity-0 md:grid"
+                className="focus-ring absolute left-2 top-1/2 hidden h-8 w-8 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60 disabled:opacity-0 md:grid"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -136,7 +136,7 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
                 }
                 disabled={activeIdx === config.images.length - 1}
                 aria-label={t("next")}
-                className="absolute right-2 top-1/2 hidden h-8 w-8 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60 disabled:opacity-0 md:grid"
+                className="focus-ring absolute right-2 top-1/2 hidden h-8 w-8 -translate-y-1/2 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60 disabled:opacity-0 md:grid"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>

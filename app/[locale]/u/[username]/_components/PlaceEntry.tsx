@@ -148,7 +148,7 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
             {config.phone ? (
               <a
                 href={`tel:${config.phone}`}
-                className="flex h-9 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                className="focus-ring flex h-9 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
               >
                 <Phone className="h-3 w-3" />
                 {t("call")}
@@ -162,7 +162,7 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
             <button
               type="button"
               onClick={copyAddress}
-              className="flex h-9 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+              className="focus-ring flex h-9 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
             >
               <Copy className="h-3 w-3" />
               {copied ? t("copied") : t("copy")}
@@ -170,7 +170,7 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
             <button
               type="button"
               onClick={share}
-              className="flex h-9 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+              className="focus-ring flex h-9 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
             >
               <Share2 className="h-3 w-3" />
               {t("share")}

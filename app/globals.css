@@ -112,6 +112,32 @@ h1, h2, h3, p {
     transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
   }
+  /* Keyboard focus — every interactive card gets the same accent ring so visitors tabbing through
+   * the feed always see where focus landed. Scoped to :focus-visible (not :focus) so mouse clicks
+   * don't trigger the ring. `outline-offset` keeps the ring 2 px outside the card border so it
+   * never clips against the rounded-2xl corner. Using `outline` instead of `box-shadow` because
+   * the wrapper already uses box-shadow for its baseline + hover lift — combining them is fragile,
+   * outline sits on its own paint layer. */
+  .profile-card:focus-visible {
+    outline: 2px solid theme(colors.accent.500);
+    outline-offset: 2px;
+  }
+
+  /* Shared focus ring for inner buttons inside .profile-card-static wrappers (Gallery nav,
+   * Contact dock, Place action grid, Event calendar dropdown, etc.). These widgets aren't on the
+   * card wrapper itself so they don't pick up the .profile-card:focus-visible rule — applying
+   * .focus-ring directly to the button gives them the same accent outline.
+   *
+   * <p>Single utility instead of typing out `focus-visible:outline focus-visible:outline-2 ...`
+   * on every clickable inside a card — repeated 6+ times across the entry components, easy to
+   * forget on a new one. */
+  .focus-ring {
+    @apply focus-visible:outline-none;
+  }
+  .focus-ring:focus-visible {
+    outline: 2px solid theme(colors.accent.500);
+    outline-offset: 2px;
+  }
   .profile-card:active {
     /* Press feedback — Stan Store pattern (scale 0.98). Combined translateY(0) cancels the hover
      * lift mid-press, so the cursor and the card track each other instead of fighting. */
