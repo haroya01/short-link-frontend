@@ -715,6 +715,16 @@
       "previous": "이전 사진",
       "next": "다음 사진",
       "close": "닫기"
+    },
+    "productCard": {
+      "defaultCta": "자세히",
+      "discount": "-{pct}%",
+      "badge": {
+        "NEW": "신상",
+        "BEST": "BEST",
+        "LIMITED": "한정",
+        "SOLD_OUT": "품절"
+      }
     }
   },
   "weeklyInsights": {
@@ -1006,6 +1016,12 @@
       "productCardImageMoveRight": "오른쪽으로",
       "productCardPreviewLabel": "미리보기",
       "productCardFieldPrice": "가격",
+      "productCardFieldPricePlaceholder": "예: 36,000원",
+      "productCardFieldOriginalPrice": "정가 (할인 전, 옵션)",
+      "productCardFieldOriginalPriceHint": "정가를 적으면 할인 금액 + 할인율이 자동 표시돼요",
+      "productCardFieldOriginalPricePlaceholder": "예: 45,000원",
+      "productCardFieldBadge": "배지 (옵션)",
+      "productCardBadgeNone": "없음",
       "productCardFieldDescription": "설명",
       "productCardFieldDescriptionPlaceholder": "예: 1호, 24h 전 예약",
       "productCardFieldCtaLabel": "버튼 라벨",

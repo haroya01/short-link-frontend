@@ -346,12 +346,28 @@ export type ProductCardImage = {
   focalY: number;
 };
 
+/**
+ * Whitelisted badge ids — visual chip on the product image that signals "이번 주만" / "이게 잘
+ * 나가요" / "곧 끝" / "다 팔림" without forcing the seller to write the same copy on every item.
+ * Backend ({@code ProductCardCarousel#BADGE_IDS}) is the source of truth; the frontend renders a
+ * fixed color (NEW → blue, BEST → amber, LIMITED → red, SOLD_OUT → gray + grayscale overlay).
+ */
+export type ProductBadge = "NEW" | "BEST" | "LIMITED" | "SOLD_OUT";
+
 export type ProductCardConfig = {
   title: string | null;
   items: Array<{
     name: string;
     images: ProductCardImage[];
     price: string | null;
+    /**
+     * Pre-discount price for strikethrough display. Free-form string like {@code price} — when
+     * both are parseable as the same currency we also render a "-N%" chip; otherwise just the
+     * strikethrough survives.
+     */
+    originalPrice: string | null;
+    /** One of {@link ProductBadge}, or null. Unknown values are dropped to null at parse time. */
+    badge: ProductBadge | null;
     description: string | null;
     ctaLabel: string | null;
     ctaUrl: string | null;
