@@ -441,11 +441,9 @@ function ImageGalleryEditor({
           className="hidden"
         />
       </div>
-      {images.length > 0 && (
-        <p className="text-[10px] leading-snug text-slate-500">
-          {t("productCardImageFocalHint")}
-        </p>
-      )}
+      <p className="text-[10px] leading-snug text-slate-500">
+        {images.length > 0 ? t("productCardImageFocalHint") : t("productCardImageSizeHint")}
+      </p>
     </div>
   );
 }

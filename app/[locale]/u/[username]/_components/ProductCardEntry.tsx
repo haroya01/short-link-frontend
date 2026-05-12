@@ -10,7 +10,9 @@ import {
 } from "react";
 import { ArrowRight } from "lucide-react";
 import type { ProductCardConfig, ProductCardImage } from "@/types";
+import { useAutoSlide } from "@/lib/use-auto-slide";
 import type { ThemeColors } from "../_lib/theme";
+import { PhotoLightbox } from "./PhotoLightbox";
 
 type Props = {
   content: string;
@@ -158,7 +160,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                 (isActive
                   ? "shadow-[0_8px_24px_rgba(15,23,42,0.10)]"
                   : "shadow-[0_1px_2px_rgba(15,23,42,0.04)]") +
-                " w-[78%] max-w-[300px] sm:w-[260px]"
+                " w-[88%] max-w-[360px] sm:w-[300px]"
               }
             >
               <CardImages images={item.images} />
@@ -227,54 +229,80 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
  * swipe carousel here — the outer card carousel already owns horizontal swipe gestures, so an
  * inner swipe would force the user to fight gesture disambiguation on every drag. Tap-only
  * thumbs sidestep it.
+ *
+ * <p>Auto-slide cycles the hero every 5 s when more than one image is present. Pauses on hover /
+ * touch / lightbox open / tab hidden — same contract as {@link GalleryEntryCard}. Tapping the
+ * hero opens the shared {@link PhotoLightbox} for fullscreen zoom + swipe between images.
  */
 function CardImages({ images }: { images: ProductCardImage[] }) {
   const [heroIdx, setHeroIdx] = useState(0);
-  if (images.length === 0) return null;
-  // Guard against the hero index pointing past the array if `images` shrinks (e.g. re-render after
-  // an edit). Clamp to the last available index.
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+
   const safeIdx = heroIdx < images.length ? heroIdx : images.length - 1;
+
+  const { pause: pauseAutoplay, resume: resumeAutoplay } = useAutoSlide({
+    intervalMs: 5000,
+    enabled: images.length > 1 && lightboxIdx === null,
+    onTick: () => setHeroIdx((i) => (i + 1) % images.length),
+  });
+
+  if (images.length === 0) return null;
   const hero = images[safeIdx];
+
   return (
-    <div>
-      <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={hero.url}
-          alt=""
-          loading="lazy"
-          className="h-full w-full object-cover"
-          style={{ objectPosition: `${hero.focalX}% ${hero.focalY}%` }}
-        />
+    <>
+      <div onMouseEnter={pauseAutoplay} onMouseLeave={resumeAutoplay} onTouchStart={pauseAutoplay}>
+        <button
+          type="button"
+          onClick={() => setLightboxIdx(safeIdx)}
+          aria-label="Open image"
+          className="block aspect-[4/3] w-full cursor-zoom-in overflow-hidden bg-slate-100"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={hero.url}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover transition-opacity duration-500"
+            style={{ objectPosition: `${hero.focalX}% ${hero.focalY}%` }}
+          />
+        </button>
+        {images.length > 1 && (
+          <div className="flex gap-1 border-t border-slate-100 bg-slate-50/50 px-2 py-1.5">
+            {images.map((image, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setHeroIdx(idx)}
+                aria-label={`Image ${idx + 1}`}
+                className={
+                  "h-10 w-12 shrink-0 overflow-hidden rounded border transition " +
+                  (idx === safeIdx
+                    ? "border-accent-500 ring-1 ring-accent-300"
+                    : "border-slate-200 opacity-70 hover:opacity-100")
+                }
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={image.url}
+                  alt=""
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: `${image.focalX}% ${image.focalY}%` }}
+                />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-      {images.length > 1 && (
-        <div className="flex gap-1 border-t border-slate-100 bg-slate-50/50 px-2 py-1.5">
-          {images.map((image, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => setHeroIdx(idx)}
-              aria-label={`Image ${idx + 1}`}
-              className={
-                "h-10 w-12 shrink-0 overflow-hidden rounded border transition " +
-                (idx === safeIdx
-                  ? "border-accent-500 ring-1 ring-accent-300"
-                  : "border-slate-200 opacity-70 hover:opacity-100")
-              }
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={image.url}
-                alt=""
-                loading="lazy"
-                className="h-full w-full object-cover"
-                style={{ objectPosition: `${image.focalX}% ${image.focalY}%` }}
-              />
-            </button>
-          ))}
-        </div>
+      {lightboxIdx !== null && (
+        <PhotoLightbox
+          images={images.map((i) => i.url)}
+          initialIdx={lightboxIdx}
+          onClose={() => setLightboxIdx(null)}
+        />
       )}
-    </div>
+    </>
   );
 }
 

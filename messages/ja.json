@@ -1074,6 +1074,7 @@
       "productCardImagesEmpty": "画像を追加してください",
       "productCardImageAdd": "画像を追加",
       "productCardImageFocalHint": "サムネイルの点をドラッグして、重要な部分を中央に合わせてください。公開ページで切り取られないように表示されます。",
+      "productCardImageSizeHint": "推奨: 4:3 比率 (例: 800×600)、1 枚 5MB 以下。JPG · PNG · WebP 対応。",
       "productCardImageMoveLeft": "左へ",
       "productCardImageMoveRight": "右へ",
       "productCardPreviewLabel": "プレビュー",

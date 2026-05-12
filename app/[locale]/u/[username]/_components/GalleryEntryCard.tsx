@@ -11,6 +11,7 @@ import {
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { GalleryConfig } from "@/types";
+import { useAutoSlide } from "@/lib/use-auto-slide";
 import type { ThemeColors } from "../_lib/theme";
 import { PhotoLightbox } from "./PhotoLightbox";
 
@@ -65,6 +66,15 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
     el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
   }, []);
 
+  // Auto-advance 5 s — feels like a slow Instagram story. Pauses while the lightbox is open (the
+  // visitor's clearly engaging with one specific image), while the tab is backgrounded (handled
+  // inside the hook via visibilityState), and on hover / touch (handlers below).
+  const { pause: pauseAutoplay, resume: resumeAutoplay } = useAutoSlide({
+    intervalMs: 5000,
+    enabled: config.images.length > 1 && lightboxIdx === null,
+    onTick: () => scrollToIdx((activeIdx + 1) % config.images.length),
+  });
+
   if (config.images.length === 0) return null;
 
   const multi = config.images.length > 1;
@@ -74,6 +84,9 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
       <li className="profile-fade" style={fadeStyle}>
         <div
           className={`profile-card-static relative overflow-hidden ${colors.card} ${colors.cardBorder}`}
+          onMouseEnter={pauseAutoplay}
+          onMouseLeave={resumeAutoplay}
+          onTouchStart={pauseAutoplay}
         >
           <div
             ref={scrollerRef}
@@ -84,7 +97,7 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
                 type="button"
                 key={idx}
                 onClick={() => setLightboxIdx(idx)}
-                className="relative aspect-square w-full shrink-0 cursor-zoom-in snap-start overflow-hidden bg-slate-100"
+                className="relative aspect-[4/3] w-full shrink-0 cursor-zoom-in snap-start overflow-hidden bg-slate-100"
                 aria-label={t("openImage", { idx: idx + 1 })}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
