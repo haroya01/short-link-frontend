@@ -801,6 +801,16 @@
       "previous": "Previous photo",
       "next": "Next photo",
       "close": "Close"
+    },
+    "productCard": {
+      "defaultCta": "Details",
+      "discount": "-{pct}%",
+      "badge": {
+        "NEW": "NEW",
+        "BEST": "BEST",
+        "LIMITED": "Limited",
+        "SOLD_OUT": "Sold out"
+      }
     }
   },
   "weeklyInsights": {
@@ -1095,6 +1105,12 @@
       "productCardImageMoveRight": "Move right",
       "productCardPreviewLabel": "Preview",
       "productCardFieldPrice": "Price",
+      "productCardFieldPricePlaceholder": "e.g. $36",
+      "productCardFieldOriginalPrice": "Original price (optional)",
+      "productCardFieldOriginalPriceHint": "Fill this in and the discount amount + percent show automatically.",
+      "productCardFieldOriginalPricePlaceholder": "e.g. $45",
+      "productCardFieldBadge": "Badge (optional)",
+      "productCardBadgeNone": "None",
       "productCardFieldDescription": "Description",
       "productCardFieldDescriptionPlaceholder": "e.g. 1lb, 24h notice",
       "productCardFieldCtaLabel": "Button label",

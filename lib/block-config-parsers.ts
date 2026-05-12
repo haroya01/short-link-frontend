@@ -6,9 +6,12 @@ import type {
   GalleryConfig,
   PlaceCategory,
   PlaceConfig,
+  ProductBadge,
   ProductCardConfig,
   ProductCardImage,
 } from "@/types";
+
+const PRODUCT_BADGES: readonly ProductBadge[] = ["NEW", "BEST", "LIMITED", "SOLD_OUT"];
 
 /**
  * Shared parsers for the JSON payload each ProfileBlock kind persists in {@code
@@ -155,6 +158,11 @@ export function parseProductCardConfig(raw: string): ProductCardConfig {
           name: asStringOr(v.name, ""),
           images: parseProductCardImages(v),
           price: asString(v.price),
+          originalPrice: asString(v.originalPrice),
+          badge:
+            typeof v.badge === "string" && (PRODUCT_BADGES as readonly string[]).includes(v.badge)
+              ? (v.badge as ProductBadge)
+              : null,
           description: asString(v.description),
           ctaLabel: asString(v.ctaLabel),
           ctaUrl: asString(v.ctaUrl),
