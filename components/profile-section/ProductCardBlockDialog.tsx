@@ -1,17 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
-import type { useTranslations } from "next-intl";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ImagePlus,
+  Loader2,
+  Plus,
+  Trash2,
+} from "lucide-react";
+import { useTranslations } from "next-intl";
+import {
+  commitProfileImageUpload,
+  presignProfileImageUpload,
+  uploadAvatarToS3,
+} from "@/lib/api";
+import { resizeImage } from "@/lib/image-resize";
+import { useApiErrorMessage } from "@/lib/error-messages";
+import type { ProductCardImage } from "@/types";
 import { ConfirmDialog } from "../ui/dialog";
 import { Input } from "../ui/input";
-import { ImageUploader } from "./ImageUploader";
+import { useToast } from "../ui/toast";
 
 const MAX_ITEMS = 8;
+const MAX_IMAGES_PER_ITEM = 5;
+const FOCAL_DEFAULT = 50;
+
+const UPLOAD_ACCEPT = "image/jpeg,image/png,image/webp";
+const UPLOAD_MAX_BYTES = 10 * 1024 * 1024;
+const UPLOAD_OUTPUT_TYPE = "image/jpeg";
+const UPLOAD_QUALITY = 0.9;
+const UPLOAD_MAX_DIM = 1600;
 
 type Item = {
   name: string;
-  image: string;
+  images: ProductCardImage[];
   price: string;
   description: string;
   ctaLabel: string;
@@ -20,7 +43,7 @@ type Item = {
 
 const EMPTY_ITEM: Item = {
   name: "",
-  image: "",
+  images: [],
   price: "",
   description: "",
   ctaLabel: "",
@@ -37,37 +60,45 @@ type Props = {
 
 /**
  * Multi-item editor for a PRODUCT_CARD block. Vertical list of expandable item rows — each row
- * holds 6 optional fields except `name`. Backend caps at 8 items; we mirror the cap here so the
- * user gets immediate feedback instead of a 400 after Save.
+ * holds optional fields except {@code name}. Backend caps at 8 items and 5 images per item; we
+ * mirror those caps here so the user gets immediate feedback instead of a 400 after Save.
+ *
+ * <p>Each image has a focal point (0..100 % on each axis) stored alongside the URL. The dialog
+ * exposes it as a draggable dot on the thumbnail — the seller drags it onto the part of the image
+ * that must stay visible after {@code object-cover} crops the image on the public card. Live
+ * preview at the top reflects the current draft so the seller sees the framing they'll get.
+ *
+ * <p>Backward compat: payloads with the legacy {@code image: string} field (one image per item,
+ * no focal point) parse cleanly — handled in {@link parseImagesField}.
  */
 export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubmit, t }: Props) {
   const [title, setTitle] = useState("");
-  const [items, setItems] = useState<Item[]>([{ ...EMPTY_ITEM }]);
+  const [items, setItems] = useState<Item[]>([{ ...EMPTY_ITEM, images: [] }]);
 
   useEffect(() => {
     if (!open) return;
     if (initialJson) {
       try {
         const parsed = JSON.parse(initialJson);
-        setTitle(parsed.title ?? "");
+        setTitle(typeof parsed.title === "string" ? parsed.title : "");
         const next: Item[] = Array.isArray(parsed.items)
           ? parsed.items.map((v: Record<string, unknown>) => ({
               name: typeof v.name === "string" ? v.name : "",
-              image: typeof v.image === "string" ? v.image : "",
+              images: parseImagesField(v),
               price: typeof v.price === "string" ? v.price : "",
               description: typeof v.description === "string" ? v.description : "",
               ctaLabel: typeof v.ctaLabel === "string" ? v.ctaLabel : "",
               ctaUrl: typeof v.ctaUrl === "string" ? v.ctaUrl : "",
             }))
           : [];
-        setItems(next.length > 0 ? next : [{ ...EMPTY_ITEM }]);
+        setItems(next.length > 0 ? next : [{ ...EMPTY_ITEM, images: [] }]);
         return;
       } catch {
         /* fall through */
       }
     }
     setTitle("");
-    setItems([{ ...EMPTY_ITEM }]);
+    setItems([{ ...EMPTY_ITEM, images: [] }]);
   }, [open, initialJson]);
 
   function updateItem(idx: number, patch: Partial<Item>) {
@@ -75,18 +106,21 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
   }
 
   function addItem() {
-    setItems((prev) => (prev.length >= MAX_ITEMS ? prev : [...prev, { ...EMPTY_ITEM }]));
+    setItems((prev) =>
+      prev.length >= MAX_ITEMS ? prev : [...prev, { ...EMPTY_ITEM, images: [] }],
+    );
   }
 
   function removeItem(idx: number) {
-    setItems((prev) => (prev.length === 1 ? [{ ...EMPTY_ITEM }] : prev.filter((_, i) => i !== idx)));
+    setItems((prev) =>
+      prev.length === 1 ? [{ ...EMPTY_ITEM, images: [] }] : prev.filter((_, i) => i !== idx),
+    );
   }
 
-  // Items missing a name aren't sent — same rule the backend enforces.
   const cleanedItems = items
     .map((it) => ({
       name: it.name.trim(),
-      image: it.image.trim() || null,
+      images: it.images.filter((img) => img.url.trim().length > 0),
       price: it.price.trim() || null,
       description: it.description.trim() || null,
       ctaLabel: it.ctaLabel.trim() || null,
@@ -115,6 +149,8 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
       }}
     >
       <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
+        <PreviewPane title={title} items={items} t={t} />
+
         <label className="block space-y-1">
           <span className="text-xs font-medium text-slate-700">
             {t("productCardFieldBlockTitle")}
@@ -163,14 +199,15 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
                     onChange={(e) => updateItem(idx, { price: e.target.value })}
                   />
                 </Field>
-                <Field label={t("productCardFieldImage")} className="sm:col-span-2">
-                  <div className="w-32">
-                    <ImageUploader
-                      value={item.image || null}
-                      onChange={(url) => updateItem(idx, { image: url ?? "" })}
-                      aspectClass="aspect-[4/3]"
-                    />
-                  </div>
+                <Field
+                  label={t("productCardFieldImages", { max: MAX_IMAGES_PER_ITEM })}
+                  className="sm:col-span-2"
+                >
+                  <ImageGalleryEditor
+                    images={item.images}
+                    onChange={(images) => updateItem(idx, { images })}
+                    t={t}
+                  />
                 </Field>
                 <Field label={t("productCardFieldDescription")} className="sm:col-span-2">
                   <Input
@@ -217,6 +254,335 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
       </div>
     </ConfirmDialog>
   );
+}
+
+/**
+ * Compact mini-carousel that mirrors how each item will render on the public page — first image
+ * with focal point applied, plus name and price. Updates live as the seller edits below, so they
+ * can see exactly how their focal-point drag affects the cropped frame they'll ship.
+ */
+function PreviewPane({
+  title,
+  items,
+  t,
+}: {
+  title: string;
+  items: Item[];
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  const visibleItems = useMemo(
+    () => items.filter((it) => it.name.trim().length > 0),
+    [items],
+  );
+  if (visibleItems.length === 0) return null;
+
+  return (
+    <div className="rounded-md border border-slate-200 bg-white p-3">
+      <p className="mb-2 flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+        {t("productCardPreviewLabel")}
+      </p>
+      {title.trim().length > 0 && (
+        <p className="mb-2 px-0.5 text-[12px] font-semibold text-slate-900">{title.trim()}</p>
+      )}
+      <div className="-mx-1 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {visibleItems.map((item, idx) => {
+          const hero = item.images[0];
+          return (
+            <div
+              key={idx}
+              className="w-[140px] shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
+            >
+              <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100">
+                {hero ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={hero.url}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    style={{ objectPosition: `${hero.focalX}% ${hero.focalY}%` }}
+                  />
+                ) : null}
+              </div>
+              <div className="space-y-0.5 px-2 pb-2 pt-1.5">
+                <p className="truncate text-[11px] font-semibold text-slate-900">{item.name}</p>
+                {item.price.trim() && (
+                  <p className="truncate text-[10px] font-medium text-accent-700">
+                    {item.price.trim()}
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Per-item image gallery: thumbnails laid out horizontally, each with a draggable focal-point dot
+ * and reorder / delete affordances. Trailing slot is an empty uploader until the per-item cap is
+ * reached. The list owns its own state shape (ProductCardImage[]); persistence happens via the
+ * onChange callback so the parent dialog keeps its single source of truth for the items array.
+ */
+function ImageGalleryEditor({
+  images,
+  onChange,
+  t,
+}: {
+  images: ProductCardImage[];
+  onChange: (next: ProductCardImage[]) => void;
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  const { toast } = useToast();
+  const errorMessage = useApiErrorMessage();
+  const uploadT = useTranslations("settings.profile.imageUploader");
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+
+  function addImage(image: ProductCardImage) {
+    if (images.length >= MAX_IMAGES_PER_ITEM) return;
+    onChange([...images, image]);
+  }
+
+  function patchImage(idx: number, patch: Partial<ProductCardImage>) {
+    onChange(images.map((img, i) => (i === idx ? { ...img, ...patch } : img)));
+  }
+
+  function removeImage(idx: number) {
+    onChange(images.filter((_, i) => i !== idx));
+  }
+
+  function moveImage(idx: number, direction: -1 | 1) {
+    const swap = idx + direction;
+    if (swap < 0 || swap >= images.length) return;
+    const next = images.slice();
+    [next[idx], next[swap]] = [next[swap], next[idx]];
+    onChange(next);
+  }
+
+  async function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (!UPLOAD_ACCEPT.split(",").includes(file.type)) {
+      toast(uploadT("invalidType"), "error");
+      return;
+    }
+    if (file.size > UPLOAD_MAX_BYTES) {
+      toast(uploadT("tooBig"), "error");
+      return;
+    }
+    setBusy(true);
+    try {
+      const resized = await resizeImage(file, {
+        maxDim: UPLOAD_MAX_DIM,
+        square: false,
+        type: UPLOAD_OUTPUT_TYPE,
+        quality: UPLOAD_QUALITY,
+        filename: "product-card.jpg",
+      });
+      const presign = await presignProfileImageUpload(UPLOAD_OUTPUT_TYPE);
+      if (resized.size > presign.maxBytes) {
+        toast(uploadT("tooBig"), "error");
+        return;
+      }
+      await uploadAvatarToS3(presign.uploadUrl, resized, UPLOAD_OUTPUT_TYPE);
+      const committed = await commitProfileImageUpload(presign.key);
+      addImage({ url: committed.imageUrl, focalX: FOCAL_DEFAULT, focalY: FOCAL_DEFAULT });
+    } catch (err) {
+      toast(errorMessage(err, uploadT("uploadFailed")), "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-1.5">
+      <div className="-mx-1 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {images.map((image, idx) => (
+          <ImageThumbEditor
+            key={idx}
+            image={image}
+            idx={idx}
+            total={images.length}
+            onFocalChange={(focalX, focalY) => patchImage(idx, { focalX, focalY })}
+            onRemove={() => removeImage(idx)}
+            onMove={(direction) => moveImage(idx, direction)}
+            t={t}
+          />
+        ))}
+        {images.length < MAX_IMAGES_PER_ITEM && (
+          <button
+            type="button"
+            onClick={() => fileInput.current?.click()}
+            disabled={busy}
+            className="flex aspect-[4/3] w-32 shrink-0 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-slate-300 bg-slate-50/50 text-slate-500 transition hover:border-slate-400 hover:text-slate-700 disabled:opacity-50"
+          >
+            {busy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <ImagePlus className="h-4 w-4" />
+                <span className="text-[11px]">
+                  {images.length === 0
+                    ? t("productCardImagesEmpty")
+                    : t("productCardImageAdd")}
+                </span>
+              </>
+            )}
+          </button>
+        )}
+        <input
+          ref={fileInput}
+          type="file"
+          accept={UPLOAD_ACCEPT}
+          onChange={handlePick}
+          className="hidden"
+        />
+      </div>
+      {images.length > 0 && (
+        <p className="text-[10px] leading-snug text-slate-500">
+          {t("productCardImageFocalHint")}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Single thumbnail with the focal-point dot rendered on top. Pointer events drive the drag (covers
+ * touch + mouse + pen with one path) and the dot's position is clamped to the thumbnail's bounds
+ * via {@link clamp}. The dot is positioned with percentages so it stays accurate across re-renders
+ * even if the thumb's rendered size changes (e.g. font size affecting parent height).
+ */
+function ImageThumbEditor({
+  image,
+  idx,
+  total,
+  onFocalChange,
+  onRemove,
+  onMove,
+  t,
+}: {
+  image: ProductCardImage;
+  idx: number;
+  total: number;
+  onFocalChange: (focalX: number, focalY: number) => void;
+  onRemove: () => void;
+  onMove: (direction: -1 | 1) => void;
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [dragging, setDragging] = useState(false);
+
+  function pointerToFocal(clientX: number, clientY: number) {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = clamp(((clientX - rect.left) / rect.width) * 100);
+    const y = clamp(((clientY - rect.top) / rect.height) * 100);
+    onFocalChange(Math.round(x), Math.round(y));
+  }
+
+  return (
+    <div className="w-32 shrink-0 space-y-1">
+      <div
+        ref={ref}
+        className={`relative aspect-[4/3] w-full select-none overflow-hidden rounded-md border bg-slate-100 ${
+          dragging ? "border-accent-400 ring-2 ring-accent-300" : "border-slate-200"
+        }`}
+        onPointerDown={(e) => {
+          (e.target as Element).setPointerCapture?.(e.pointerId);
+          setDragging(true);
+          pointerToFocal(e.clientX, e.clientY);
+        }}
+        onPointerMove={(e) => {
+          if (!dragging) return;
+          pointerToFocal(e.clientX, e.clientY);
+        }}
+        onPointerUp={(e) => {
+          (e.target as Element).releasePointerCapture?.(e.pointerId);
+          setDragging(false);
+        }}
+        onPointerCancel={() => setDragging(false)}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={image.url}
+          alt=""
+          draggable={false}
+          className="pointer-events-none h-full w-full object-cover"
+          style={{ objectPosition: `${image.focalX}% ${image.focalY}%` }}
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-accent-500 shadow-[0_0_0_2px_rgba(0,0,0,0.25)]"
+          style={{ left: `${image.focalX}%`, top: `${image.focalY}%` }}
+        />
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label={t("remove")}
+          className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-black/60 text-white opacity-80 transition hover:bg-red-600 hover:opacity-100"
+        >
+          <Trash2 className="h-2.5 w-2.5" />
+        </button>
+      </div>
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => onMove(-1)}
+          disabled={idx === 0}
+          aria-label={t("productCardImageMoveLeft")}
+          className="grid h-5 w-5 place-items-center rounded text-slate-400 transition hover:text-slate-700 disabled:opacity-30"
+        >
+          <ArrowLeft className="h-3 w-3" />
+        </button>
+        <span className="text-[10px] text-slate-400">
+          {idx + 1}/{total}
+        </span>
+        <button
+          type="button"
+          onClick={() => onMove(1)}
+          disabled={idx === total - 1}
+          aria-label={t("productCardImageMoveRight")}
+          className="grid h-5 w-5 place-items-center rounded text-slate-400 transition hover:text-slate-700 disabled:opacity-30"
+        >
+          <ArrowRight className="h-3 w-3" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function clamp(v: number) {
+  if (v < 0) return 0;
+  if (v > 100) return 100;
+  return v;
+}
+
+/**
+ * Parses the {@code images} array out of a stored item, accepting either the new shape (array of
+ * {url, focalX, focalY}) or the legacy single {@code image: string} field. Legacy single images
+ * are wrapped into a one-element images array with default focal point — same logic the backend
+ * runs on read, so the editor's view of a saved block matches what gets persisted.
+ */
+function parseImagesField(item: Record<string, unknown>): ProductCardImage[] {
+  if (Array.isArray(item.images)) {
+    return item.images
+      .filter((v): v is Record<string, unknown> => !!v && typeof v === "object")
+      .map((v) => ({
+        url: typeof v.url === "string" ? v.url : "",
+        focalX: typeof v.focalX === "number" ? clamp(v.focalX) : FOCAL_DEFAULT,
+        focalY: typeof v.focalY === "number" ? clamp(v.focalY) : FOCAL_DEFAULT,
+      }))
+      .filter((img) => img.url.length > 0);
+  }
+  if (typeof item.image === "string" && item.image.length > 0) {
+    return [{ url: item.image, focalX: FOCAL_DEFAULT, focalY: FOCAL_DEFAULT }];
+  }
+  return [];
 }
 
 function Field({
