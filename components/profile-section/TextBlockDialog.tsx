@@ -6,6 +6,8 @@ import type { useTranslations } from "next-intl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ConfirmDialog } from "../ui/dialog";
+import { Textarea } from "../ui/textarea";
+import { FormField } from "./FormField";
 
 const MAX_CHARS = 2000;
 
@@ -62,15 +64,13 @@ export function TextBlockDialog({ open, initialContent, onOpenChange, onSubmit, 
       }}
     >
       <div className="space-y-3">
-        <label className="block space-y-1">
-          <span className="text-xs font-medium text-slate-700">{t("textFieldContent")}</span>
-          <textarea
+        <FormField label={t("textFieldContent")}>
+          <Textarea
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder={t("textFieldPlaceholder")}
             rows={6}
             maxLength={MAX_CHARS + 100}
-            className="block w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 text-sm leading-relaxed text-slate-900 outline-none ring-accent-500 placeholder:text-slate-400 focus:ring-2"
           />
           <div className="flex items-center justify-between text-[11px]">
             <span className="flex items-center gap-1 text-slate-500">
@@ -81,7 +81,7 @@ export function TextBlockDialog({ open, initialContent, onOpenChange, onSubmit, 
               {charCount}/{MAX_CHARS}
             </span>
           </div>
-        </label>
+        </FormField>
 
         <div>
           <p className="mb-1 text-[11px] font-medium uppercase tracking-wider text-slate-500">

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "../ui/dialog";
 import { Input } from "../ui/input";
+import { FormField } from "./FormField";
 
 type Config = {
   title: string;
@@ -93,51 +94,51 @@ export function EventBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
       }}
     >
       <div className="space-y-3">
-        <Field label={t("eventFieldTitle")} required>
+        <FormField label={t("eventFieldTitle")} required>
           <Input
             value={config.title}
             maxLength={80}
             onChange={(e) => setConfig((c) => ({ ...c, title: e.target.value }))}
             placeholder={t("eventFieldTitlePlaceholder")}
           />
-        </Field>
+        </FormField>
         {/* datetime-local needs ~240 px of comfortable width for the native picker UI not to clip
          * the placeholder ("yyyy-mm-dd hh:mm") or overlap the dropdown caret. The earlier
          * 2-col grid inside a max-w-md dialog gave each field ~200 px which broke the rendering
          * on Safari iOS + Chrome Android. Stacking vertically gives each input full width and is
          * less visually noisy for a 2-field pair. */}
-        <Field label={t("eventFieldStartsAt")} required>
+        <FormField label={t("eventFieldStartsAt")} required>
           <Input
             type="datetime-local"
             value={config.startsAt}
             onChange={(e) => setConfig((c) => ({ ...c, startsAt: e.target.value }))}
           />
-        </Field>
-        <Field label={t("eventFieldEndsAt")}>
+        </FormField>
+        <FormField label={t("eventFieldEndsAt")}>
           <Input
             type="datetime-local"
             value={config.endsAt}
             min={config.startsAt || undefined}
             onChange={(e) => setConfig((c) => ({ ...c, endsAt: e.target.value }))}
           />
-        </Field>
-        <Field label={t("eventFieldLocation")}>
+        </FormField>
+        <FormField label={t("eventFieldLocation")}>
           <Input
             value={config.location}
             maxLength={120}
             onChange={(e) => setConfig((c) => ({ ...c, location: e.target.value }))}
             placeholder={t("eventFieldLocationPlaceholder")}
           />
-        </Field>
-        <Field label={t("eventFieldDescription")}>
+        </FormField>
+        <FormField label={t("eventFieldDescription")}>
           <Input
             value={config.description}
             maxLength={500}
             onChange={(e) => setConfig((c) => ({ ...c, description: e.target.value }))}
             placeholder={t("eventFieldDescriptionPlaceholder")}
           />
-        </Field>
-        <Field label={t("eventFieldUrl")}>
+        </FormField>
+        <FormField label={t("eventFieldUrl")}>
           <Input
             type="url"
             value={config.url}
@@ -145,31 +146,12 @@ export function EventBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
             onChange={(e) => setConfig((c) => ({ ...c, url: e.target.value }))}
             placeholder="https://"
           />
-        </Field>
+        </FormField>
       </div>
     </ConfirmDialog>
   );
 }
 
-function Field({
-  label,
-  required,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block space-y-1">
-      <span className="text-xs font-medium text-slate-700">
-        {label}
-        {required && <span className="ml-1 text-red-500">*</span>}
-      </span>
-      {children}
-    </label>
-  );
-}
 
 /**
  * datetime-local input → ISO 8601 with browser-local offset. {@code 2026-06-15T14:00} → e.g.
