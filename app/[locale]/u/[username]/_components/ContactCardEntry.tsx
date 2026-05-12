@@ -469,9 +469,16 @@ function CardFace({
   // putting both `relative` and `absolute` on the same node lets the browser pick whichever the
   // generated stylesheet orders last, which was making the back face render in-flow underneath
   // the front (double-stacked card on initial render).
+  //
+  // Min-height on the front: the back face's QR (h-32 sm:h-36) + decorated frame + header band +
+  // footer adds up to ~288 px. When a visitor has filled in only name + 1–2 fields the front's
+  // natural height falls below that, and since the back is `absolute inset-0` (fills front's
+  // box) the back content overflows the rounded clip — QR pushes the footer out, kurl wordmark
+  // sits on top of the QR, etc. Pinning the front to a 340 px floor guarantees the back layout
+  // has room regardless of how spartan the contact card data is.
   const positionClass = back
     ? "absolute inset-0 [transform:rotateY(180deg)]"
-    : "relative";
+    : "relative min-h-[340px]";
   return (
     <div
       className={
