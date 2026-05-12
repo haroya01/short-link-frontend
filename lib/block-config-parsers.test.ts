@@ -7,7 +7,75 @@ import {
   parseGalleryConfig,
   parsePlaceConfig,
   parseProductCardConfig,
+  parseTextBlockConfig,
 } from "./block-config-parsers";
+
+describe("parseTextBlockConfig", () => {
+  it("parses full JSON payload with all four fields", () => {
+    const out = parseTextBlockConfig(
+      JSON.stringify({ body: "Heads up!", layout: "card", accent: "amber", icon: "💡" }),
+    );
+    expect(out).toEqual({
+      body: "Heads up!",
+      layout: "card",
+      accent: "amber",
+      icon: "💡",
+    });
+  });
+
+  it("treats legacy plain markdown as inline body with no accent/icon", () => {
+    const out = parseTextBlockConfig("## Hello\n\nworld");
+    expect(out).toEqual({
+      body: "## Hello\n\nworld",
+      layout: "inline",
+      accent: null,
+      icon: null,
+    });
+  });
+
+  it("falls back to inline body for JSON without a body field", () => {
+    const out = parseTextBlockConfig(JSON.stringify({ layout: "card" }));
+    expect(out.body).toBe(JSON.stringify({ layout: "card" }));
+    expect(out.layout).toBe("inline");
+  });
+
+  it("unknown layout falls back to inline", () => {
+    const out = parseTextBlockConfig(
+      JSON.stringify({ body: "x", layout: "futureLayout" }),
+    );
+    expect(out.layout).toBe("inline");
+  });
+
+  it("unknown accent drops to null", () => {
+    const out = parseTextBlockConfig(
+      JSON.stringify({ body: "x", accent: "futureColor" }),
+    );
+    expect(out.accent).toBeNull();
+  });
+
+  it("blank icon becomes null", () => {
+    const out = parseTextBlockConfig(JSON.stringify({ body: "x", icon: "   " }));
+    expect(out.icon).toBeNull();
+  });
+
+  it("accepts all three layouts and five accents", () => {
+    for (const layout of ["inline", "card", "quote"] as const) {
+      expect(parseTextBlockConfig(JSON.stringify({ body: "x", layout })).layout).toBe(layout);
+    }
+    for (const accent of ["blue", "amber", "green", "red", "violet"] as const) {
+      expect(parseTextBlockConfig(JSON.stringify({ body: "x", accent })).accent).toBe(accent);
+    }
+  });
+
+  it("empty string yields empty body in inline layout", () => {
+    expect(parseTextBlockConfig("")).toEqual({
+      body: "",
+      layout: "inline",
+      accent: null,
+      icon: null,
+    });
+  });
+});
 
 describe("parseBookingConfig", () => {
   it("returns full config from valid JSON", () => {
