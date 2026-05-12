@@ -72,7 +72,7 @@
 |---|---|---|
 | EmbedEntry (영상) | `aspect-video` (16/9) | 영상 필수 비율 |
 | PlaceEntry | `aspect-[5/3]` | hero 사진 또는 static map — 양쪽 다 자연스러운 비율 |
-| GalleryEntry / ImageEntry / ProductCardEntry | `aspect-[4/3]` | 모바일 우선 시각 무게 |
+| ImageEntry / GalleryEntry / ProductCardEntry | `aspect-[4/3]` (letterbox: object-contain + blur backdrop) | 모바일 우선 시각 무게. 세로/가로/정사각 모두 같은 카드 높이 |
 | HighlightLink | `aspect-[1.91/1]` | 페이스북 OG 표준 |
 
 **액션 패턴**
@@ -138,7 +138,7 @@
 | LinkEntry | B | — | 전체 카드 = link, 우측 ExternalLink | favicon + host |
 | HighlightLink | A | 1.91/1 | 전체 카드 = link | ★ Featured 뱃지 (좌상단 floating) |
 | EmbedEntry | A | 16/9 | iframe (autoplay) | Play overlay (▶) 클릭 시 iframe 마운트 |
-| ImageEntry | A | natural | 탭 → lightbox | 줌 인터랙션 |
+| ImageEntry | A | 4/3 (letterbox) | 탭 → lightbox | 자연 비율 보존 (object-contain + blur backdrop) |
 | GalleryEntry | A | 4/3 | 탭 → lightbox | dots + 자동 슬라이드 5s |
 | ProductCardEntry | A | 4/3 | 하단 CTA 바 (border-t) | hero + 가격 + paginated swipe (1 아이템 = 풀폭 단일, 2+ = 풀폭 페이지) |
 | ContactCardEntry | D | 정사각 | 3-grid dock (call / share / save) | foil texture + flip + 8 palette |
@@ -380,3 +380,4 @@ Identity archetype 은 `ContactCardEntry` 1 개로 충분. 신규 추가 시 foi
 - 2026-05: `rounded-2xl` 통일, `.profile-card` / `.profile-card-static` CSS 클래스 도입 (#94, #95)
 - 2026-05: 상품 카드 paginated swipe — 1 아이템 = 풀폭, 2+ = 풀폭 페이지 (#104, #105)
 - 2026-05: PLACE archetype 신규 추가 (#102, #103)
+- 2026-05: ImageEntry 자연 비율 → `aspect-[4/3]` letterbox 통일 (#108)
