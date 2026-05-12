@@ -383,16 +383,25 @@ function CardFace({
   // room regardless of how spartan the contact card data is — and shrunk from the earlier 340 px
   // floor because that left a noticeable empty gap below the dock on densely-filled cards
   // ("아래로 길어짐" 사용자 피드백).
-  const positionClass = back
-    ? "absolute inset-0 [transform:rotateY(180deg)]"
-    : "relative min-h-[260px]";
+  const positionClass = back ? "absolute inset-0" : "relative min-h-[260px]";
   return (
     <div
       className={
-        "contact-card overflow-hidden rounded-2xl border border-slate-700/40 bg-slate-950 text-white shadow-2xl shadow-slate-900/40 [backface-visibility:hidden] " +
+        "contact-card overflow-hidden rounded-2xl border border-slate-700/40 bg-slate-950 text-white shadow-2xl shadow-slate-900/40 " +
         positionClass
       }
       style={{
+        // backface-visibility hidden is critical for the flip — without it the visitor sees the
+        // back face through the front during the 180° rotation. Tailwind's arbitrary value
+        // `[backface-visibility:hidden]` only writes the unprefixed property; iOS Safari (≤ 17)
+        // sometimes ignores the unprefixed rule when the element also has `overflow: hidden`
+        // (overflow + transform-style:preserve-3d ancestor collapses the 3D context). Setting
+        // both via inline style — plus a `translateZ(0)` to force a fresh GPU layer — works
+        // around the bug on every device we've tested.
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+        // For the back face, combine the 180° flip with the translateZ(0) GPU-layer hint.
+        transform: back ? "rotateY(180deg) translateZ(0)" : "translateZ(0)",
         backgroundImage:
           "radial-gradient(120% 80% at 0% 0%, var(--foil-ambient-1, rgba(67, 56, 202, 0.25)) 0%, transparent 50%)," +
           "radial-gradient(120% 80% at 100% 100%, var(--foil-ambient-2, rgba(157, 23, 77, 0.18)) 0%, transparent 55%)," +
