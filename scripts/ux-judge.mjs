@@ -65,7 +65,11 @@ async function judgeOne(b64Image, slug) {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: "claude-3-5-sonnet-latest",
+      // Haiku 4.5 — latest fast/cheap tier. Good enough for "spot the obvious problem" tasks
+      // (subjective UX gestalt isn't the bar here; we want low-effort daily scanning). Bump to
+      // claude-sonnet-4-6 if findings start missing subtle issues, or claude-opus-4-7 for
+      // sharper judgment at ~5× cost. Pricing/quality writeup: see issue #81.
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
       messages: [
         {
