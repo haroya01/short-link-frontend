@@ -21,6 +21,7 @@ import type { ProductCardImage } from "@/types";
 import { ConfirmDialog } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { useToast } from "../ui/toast";
+import { FormField } from "./FormField";
 
 const MAX_ITEMS = 8;
 const MAX_IMAGES_PER_ITEM = 5;
@@ -183,23 +184,23 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
                 </button>
               </div>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <Field label={t("productCardFieldName")} required>
+                <FormField label={t("productCardFieldName")} required>
                   <Input
                     value={item.name}
                     maxLength={60}
                     placeholder={t("productCardFieldNamePlaceholder")}
                     onChange={(e) => updateItem(idx, { name: e.target.value })}
                   />
-                </Field>
-                <Field label={t("productCardFieldPrice")}>
+                </FormField>
+                <FormField label={t("productCardFieldPrice")}>
                   <Input
                     value={item.price}
                     maxLength={30}
                     placeholder="45,000원"
                     onChange={(e) => updateItem(idx, { price: e.target.value })}
                   />
-                </Field>
-                <Field
+                </FormField>
+                <FormField
                   label={t("productCardFieldImages", { max: MAX_IMAGES_PER_ITEM })}
                   className="sm:col-span-2"
                 >
@@ -208,24 +209,24 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
                     onChange={(images) => updateItem(idx, { images })}
                     t={t}
                   />
-                </Field>
-                <Field label={t("productCardFieldDescription")} className="sm:col-span-2">
+                </FormField>
+                <FormField label={t("productCardFieldDescription")} className="sm:col-span-2">
                   <Input
                     value={item.description}
                     maxLength={200}
                     placeholder={t("productCardFieldDescriptionPlaceholder")}
                     onChange={(e) => updateItem(idx, { description: e.target.value })}
                   />
-                </Field>
-                <Field label={t("productCardFieldCtaLabel")}>
+                </FormField>
+                <FormField label={t("productCardFieldCtaLabel")}>
                   <Input
                     value={item.ctaLabel}
                     maxLength={30}
                     placeholder={t("productCardFieldCtaLabelPlaceholder")}
                     onChange={(e) => updateItem(idx, { ctaLabel: e.target.value })}
                   />
-                </Field>
-                <Field label={t("productCardFieldCtaUrl")}>
+                </FormField>
+                <FormField label={t("productCardFieldCtaUrl")}>
                   <Input
                     type="url"
                     value={item.ctaUrl}
@@ -233,7 +234,7 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
                     placeholder="https://pf.kakao.com/_..."
                     onChange={(e) => updateItem(idx, { ctaUrl: e.target.value })}
                   />
-                </Field>
+                </FormField>
               </div>
             </div>
           ))}
@@ -583,24 +584,3 @@ function parseImagesField(item: Record<string, unknown>): ProductCardImage[] {
   return [];
 }
 
-function Field({
-  label,
-  required,
-  className,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  className?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className={`block space-y-1 ${className ?? ""}`}>
-      <span className="text-[11px] font-medium text-slate-700">
-        {label}
-        {required && <span className="ml-1 text-red-500">*</span>}
-      </span>
-      {children}
-    </label>
-  );
-}

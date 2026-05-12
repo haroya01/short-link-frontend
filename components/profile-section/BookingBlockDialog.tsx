@@ -5,6 +5,7 @@ import { Calendar, CheckCircle2, AlertCircle } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "../ui/dialog";
 import { Input } from "../ui/input";
+import { FormField } from "./FormField";
 import { BOOKING_PROVIDERS, resolveBookingProvider } from "./booking-providers";
 
 type Config = {
@@ -77,7 +78,7 @@ export function BookingBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
       }}
     >
       <div className="space-y-3">
-        <Field label={t("bookingFieldUrl")} required>
+        <FormField label={t("bookingFieldUrl")} required>
           <Input
             type="url"
             value={config.url}
@@ -105,34 +106,34 @@ export function BookingBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
               )}
             </p>
           )}
-        </Field>
+        </FormField>
 
-        <Field label={t("bookingFieldTitle")}>
+        <FormField label={t("bookingFieldTitle")}>
           <Input
             value={config.title}
             maxLength={60}
             placeholder={t("bookingFieldTitlePlaceholder")}
             onChange={(e) => setConfig((c) => ({ ...c, title: e.target.value }))}
           />
-        </Field>
+        </FormField>
 
-        <Field label={t("bookingFieldDescription")}>
+        <FormField label={t("bookingFieldDescription")}>
           <Input
             value={config.description}
             maxLength={160}
             placeholder={t("bookingFieldDescriptionPlaceholder")}
             onChange={(e) => setConfig((c) => ({ ...c, description: e.target.value }))}
           />
-        </Field>
+        </FormField>
 
-        <Field label={t("bookingFieldCtaLabel")}>
+        <FormField label={t("bookingFieldCtaLabel")}>
           <Input
             value={config.ctaLabel}
             maxLength={30}
             placeholder={t("bookingFieldCtaLabelPlaceholder")}
             onChange={(e) => setConfig((c) => ({ ...c, ctaLabel: e.target.value }))}
           />
-        </Field>
+        </FormField>
 
         <div className="rounded-md border border-slate-200 bg-slate-50/60 px-3 py-2">
           <p className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600">
@@ -148,22 +149,3 @@ export function BookingBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
   );
 }
 
-function Field({
-  label,
-  required,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block space-y-1">
-      <span className="text-xs font-medium text-slate-700">
-        {label}
-        {required && <span className="ml-1 text-red-500">*</span>}
-      </span>
-      {children}
-    </label>
-  );
-}
