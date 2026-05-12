@@ -9,7 +9,7 @@ import {
   type CSSProperties,
 } from "react";
 import { ArrowRight } from "lucide-react";
-import type { ProductCardConfig } from "@/types";
+import type { ProductCardConfig, ProductCardImage } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
@@ -38,6 +38,12 @@ type Props = {
  * </ul>
  * Scroll-snap is CSS only — `scroll-snap-type: x mandatory` keeps swipes feeling physical without
  * a JS-driven carousel library.
+ *
+ * <p>Each item carries up to 5 images. The first acts as the hero (rendered with the user's
+ * per-image focal point as {@code object-position} so the chosen part of the image stays in view
+ * after {@code object-cover}). When an item has more than one image, a tap-only thumbnail strip
+ * below the hero lets the visitor swap which one fills the hero slot — no nested swipe carousel,
+ * so finger gestures on the outer carousel stay unambiguous.
  */
 export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
   const config = useMemo(() => parseConfig(content), [content]);
@@ -151,17 +157,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                 " w-[78%] max-w-[300px] sm:w-[260px]"
               }
             >
-              {item.image && (
-                <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.image}
-                    alt=""
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              )}
+              <CardImages images={item.images} />
               <div className="space-y-1.5 px-4 pb-3 pt-3">
                 <p className="text-[15px] font-semibold leading-tight text-slate-900">
                   {item.name}
@@ -221,6 +217,70 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
   );
 }
 
+/**
+ * Hero + thumb-strip renderer for a single card's images. The hero slot is the only image actually
+ * visible at full size; tapping a thumbnail swaps which entry is featured. We avoid a nested
+ * swipe carousel here — the outer card carousel already owns horizontal swipe gestures, so an
+ * inner swipe would force the user to fight gesture disambiguation on every drag. Tap-only
+ * thumbs sidestep it.
+ */
+function CardImages({ images }: { images: ProductCardImage[] }) {
+  const [heroIdx, setHeroIdx] = useState(0);
+  if (images.length === 0) return null;
+  // Guard against the hero index pointing past the array if `images` shrinks (e.g. re-render after
+  // an edit). Clamp to the last available index.
+  const safeIdx = heroIdx < images.length ? heroIdx : images.length - 1;
+  const hero = images[safeIdx];
+  return (
+    <div>
+      <div className="aspect-[4/3] w-full overflow-hidden bg-slate-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={hero.url}
+          alt=""
+          loading="lazy"
+          className="h-full w-full object-cover"
+          style={{ objectPosition: `${hero.focalX}% ${hero.focalY}%` }}
+        />
+      </div>
+      {images.length > 1 && (
+        <div className="flex gap-1 border-t border-slate-100 bg-slate-50/50 px-2 py-1.5">
+          {images.map((image, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setHeroIdx(idx)}
+              aria-label={`Image ${idx + 1}`}
+              className={
+                "h-10 w-12 shrink-0 overflow-hidden rounded border transition " +
+                (idx === safeIdx
+                  ? "border-accent-500 ring-1 ring-accent-300"
+                  : "border-slate-200 opacity-70 hover:opacity-100")
+              }
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={image.url}
+                alt=""
+                loading="lazy"
+                className="h-full w-full object-cover"
+                style={{ objectPosition: `${image.focalX}% ${image.focalY}%` }}
+              />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Parses the block's JSON content, normalizing the per-item image field to the new {@code
+ * images: ProductCardImage[]} shape. Backward compat: an item with the legacy {@code image:
+ * string} field (one URL, no focal point) is wrapped into a one-element images array with the
+ * default 50/50 focal — same fallback the backend does on read, so what the editor sees and what
+ * the server stores stay consistent.
+ */
 function parseConfig(raw: string): ProductCardConfig {
   try {
     const parsed = JSON.parse(raw);
@@ -229,7 +289,7 @@ function parseConfig(raw: string): ProductCardConfig {
           .filter((v: unknown): v is Record<string, unknown> => !!v && typeof v === "object")
           .map((v: Record<string, unknown>) => ({
             name: typeof v.name === "string" ? v.name : "",
-            image: typeof v.image === "string" ? v.image : null,
+            images: parseImages(v),
             price: typeof v.price === "string" ? v.price : null,
             description: typeof v.description === "string" ? v.description : null,
             ctaLabel: typeof v.ctaLabel === "string" ? v.ctaLabel : null,
@@ -244,4 +304,27 @@ function parseConfig(raw: string): ProductCardConfig {
   } catch {
     return { title: null, items: [] };
   }
+}
+
+function parseImages(item: Record<string, unknown>): ProductCardImage[] {
+  if (Array.isArray(item.images)) {
+    return item.images
+      .filter((v): v is Record<string, unknown> => !!v && typeof v === "object")
+      .map((v) => ({
+        url: typeof v.url === "string" ? v.url : "",
+        focalX: typeof v.focalX === "number" ? clampFocal(v.focalX) : 50,
+        focalY: typeof v.focalY === "number" ? clampFocal(v.focalY) : 50,
+      }))
+      .filter((img) => img.url.length > 0);
+  }
+  if (typeof item.image === "string" && item.image.length > 0) {
+    return [{ url: item.image, focalX: 50, focalY: 50 }];
+  }
+  return [];
+}
+
+function clampFocal(v: number) {
+  if (v < 0) return 0;
+  if (v > 100) return 100;
+  return v;
 }
