@@ -11,6 +11,7 @@ import {
   GalleryHorizontal,
   ShoppingBag,
   Mail,
+  MapPin,
   GripVertical,
   ImageIcon,
   Minus,
@@ -44,6 +45,7 @@ type Props = {
   onAddEmailForm: () => void;
   onAddBooking: () => void;
   onAddEvent: () => void;
+  onAddPlace: () => void;
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
@@ -82,6 +84,7 @@ export function ProfileFeedEditor({
   onAddEmailForm,
   onAddBooking,
   onAddEvent,
+  onAddPlace,
   onMove,
   onDragStart,
   onDragOver,
@@ -117,6 +120,7 @@ export function ProfileFeedEditor({
           onAddEmailForm={onAddEmailForm}
           onAddBooking={onAddBooking}
           onAddEvent={onAddEvent}
+          onAddPlace={onAddPlace}
           t={t}
         />
       </div>
@@ -220,6 +224,7 @@ function AddMenu({
   onAddEmailForm,
   onAddBooking,
   onAddEvent,
+  onAddPlace,
   t,
 }: {
   onAddText: () => void;
@@ -232,6 +237,7 @@ function AddMenu({
   onAddEmailForm: () => void;
   onAddBooking: () => void;
   onAddEvent: () => void;
+  onAddPlace: () => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
   const [open, setOpen] = useState(false);
@@ -322,6 +328,12 @@ function AddMenu({
             icon={<CalendarClock className="h-3.5 w-3.5" />}
           >
             {t("addEvent")}
+          </MenuItem>
+          <MenuItem
+            onClick={() => fire(onAddPlace)}
+            icon={<MapPin className="h-3.5 w-3.5" />}
+          >
+            {t("addPlace")}
           </MenuItem>
         </div>
       )}
@@ -617,6 +629,25 @@ function FeedItemRow({
       </li>
     );
   }
+  if (item.kind === "BLOCK" && item.type === "PLACE") {
+    const summary = placeSummary(item.content);
+    return (
+      <li {...dndProps} className={baseRow}>
+        {dragHandle}
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <MapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          <span className="truncate text-sm font-medium text-slate-900">
+            {summary || t("addPlacePlaceholder")}
+          </span>
+        </div>
+        <BlockActions
+          onEdit={() => onEditBlock(item.id, item.content ?? "")}
+          onDelete={() => onDeleteBlock(item.id)}
+          t={t}
+        />
+      </li>
+    );
+  }
   if (item.kind === "BLOCK" && item.type === "EMBED") {
     return (
       <li {...dndProps} className={baseRow}>
@@ -831,6 +862,20 @@ function bookingSummary(content: string | null): string {
     } catch {
       return url;
     }
+  } catch {
+    return "";
+  }
+}
+
+/** Name (or address fallback) for the editor's PLACE row summary. */
+function placeSummary(content: string | null): string {
+  if (!content) return "";
+  try {
+    const parsed = JSON.parse(content);
+    const name = typeof parsed?.name === "string" ? parsed.name.trim() : "";
+    if (name) return name;
+    const address = typeof parsed?.address === "string" ? parsed.address.trim() : "";
+    return address;
   } catch {
     return "";
   }
