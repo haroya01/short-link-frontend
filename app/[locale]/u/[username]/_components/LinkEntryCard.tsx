@@ -49,7 +49,7 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
             className="block max-h-80 w-full bg-slate-100 object-cover"
           />
           {entry.ogTitle && (
-            <div className="px-4 py-2.5">
+            <div className="px-4 py-3">
               <span className={`block truncate text-sm font-medium ${colors.primary}`}>
                 {entry.ogTitle}
               </span>
@@ -77,11 +77,11 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
               backgroundPosition: "center",
             }}
           >
-            <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">
+            <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
               ★ Featured
             </span>
           </div>
-          <div className="flex items-center gap-3 px-4 py-3.5">
+          <div className="flex items-center gap-3 px-4 py-3">
             <Favicon url={originalUrl} size={20} className="shrink-0" />
             <span className="min-w-0 flex-1">
               <span className={`block truncate text-base font-semibold ${colors.primary}`}>

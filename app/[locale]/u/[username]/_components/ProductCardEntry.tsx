@@ -205,7 +205,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                         }
                       }
                     }}
-                    className={`flex items-center justify-center gap-1 border-t px-4 py-3 text-sm font-medium transition active:scale-[0.97] ${colors.cardBorder} ${colors.primary} ${colors.cardHover}`}
+                    className={`flex items-center justify-between border-t px-4 py-2.5 text-[13px] font-medium transition active:scale-[0.97] ${colors.cardBorder} ${colors.primary} ${colors.cardHover}`}
                   >
                     <span>{item.ctaLabel || "자세히"}</span>
                     <ArrowRight className="h-3.5 w-3.5" />
