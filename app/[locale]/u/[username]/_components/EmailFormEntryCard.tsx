@@ -68,7 +68,7 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
             <button
               type="submit"
               disabled={status === "submitting"}
-              className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-60"
+              className={`rounded-md px-3 py-2 text-[13px] font-medium transition disabled:opacity-60 ${colors.ctaPrimary}`}
             >
               {status === "submitting" ? t("submitting") : t("submit")}
             </button>
