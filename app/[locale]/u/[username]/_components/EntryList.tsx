@@ -11,7 +11,7 @@ import { GalleryEntryCard } from "./GalleryEntryCard";
 import { ProductCardEntry } from "./ProductCardEntry";
 import { ImageEntryCard } from "./ImageEntryCard";
 import { LinkEntryCard } from "./LinkEntryCard";
-import { TextEntryHeader } from "./TextEntryHeader";
+import { TextEntry } from "./TextEntry";
 
 type Props = {
   entries: PublicProfileEntry[];
@@ -51,7 +51,7 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
           return <DividerEntry key={key} colors={colors} fadeStyle={style} />;
         if (entry.kind === "TEXT")
           return (
-            <TextEntryHeader
+            <TextEntry
               key={key}
               content={entry.content ?? ""}
               colors={colors}

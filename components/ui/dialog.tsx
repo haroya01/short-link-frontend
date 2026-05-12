@@ -15,6 +15,13 @@ type DialogProps = {
   destructive?: boolean;
   onConfirm: () => void | Promise<void>;
   children?: React.ReactNode;
+  /**
+   * Override the panel's max width. Defaults to <code>max-w-md</code> (28rem / 448px) which fits
+   * single-input dialogs (embed URL, image upload, etc.). Override to <code>max-w-2xl</code> when
+   * the body needs a textarea + preview pane side-by-side, or wider when the dialog renders a
+   * multi-column form.
+   */
+  maxWidthClass?: string;
 };
 
 export function ConfirmDialog({
@@ -28,6 +35,7 @@ export function ConfirmDialog({
   destructive,
   onConfirm,
   children,
+  maxWidthClass = "max-w-md",
 }: DialogProps) {
   const [busy, setBusy] = React.useState(false);
 
@@ -53,7 +61,8 @@ export function ConfirmDialog({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-xl",
+          "relative w-full rounded-lg border border-slate-200 bg-white p-6 shadow-xl",
+          maxWidthClass,
           "animate-fade-in",
         )}
       >
