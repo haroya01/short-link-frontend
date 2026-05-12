@@ -672,9 +672,13 @@
     },
     "contactCard": {
       "save": "연락처에 저장",
-      "dockCall": "전화",
       "dockShare": "공유",
-      "dockSave": "저장"
+      "dockSave": "연락처 저장",
+      "flipToBack": "뒤집기",
+      "flipToFront": "앞으로 돌리기",
+      "qrAlt": "연락처를 추가하려면 QR 을 스캔하세요",
+      "backTagline": "디지털 명함",
+      "backScanHint": "탭하여 앞면으로"
     },
     "emailForm": {
       "submit": "등록",
@@ -696,7 +700,6 @@
     },
     "place": {
       "directions": "길찾기",
-      "call": "전화",
       "copy": "주소 복사",
       "copied": "복사됨",
       "share": "공유",
