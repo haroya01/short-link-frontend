@@ -21,6 +21,7 @@ import { useTranslations } from "next-intl";
 import type { PlaceCategory, PlaceConfig } from "@/types";
 import { directionsUrl, staticMapUrl } from "@/lib/google-maps-static";
 import type { ThemeColors } from "../_lib/theme";
+import { CardFloatingChip } from "./CardFloatingChip";
 
 type Props = {
   content: string;
@@ -111,10 +112,9 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
             />
           ) : null}
           {CategoryIcon && (
-            <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
-              <CategoryIcon className="h-3 w-3" />
+            <CardFloatingChip position="top-right" icon={<CategoryIcon className="h-3 w-3" />}>
               {t(`category_${config.category}` as const)}
-            </span>
+            </CardFloatingChip>
           )}
         </div>
 

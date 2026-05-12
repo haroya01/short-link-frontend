@@ -4,6 +4,7 @@ import { Favicon } from "@/components/favicon";
 import type { PublicProfileEntry } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
 import { hostOf, isImageUrl, isSpotifyUrl, youtubeId } from "../_lib/url-helpers";
+import { CardFloatingChip } from "./CardFloatingChip";
 
 type Props = {
   entry: PublicProfileEntry;
@@ -77,9 +78,7 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
               backgroundPosition: "center",
             }}
           >
-            <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
-              ★ Featured
-            </span>
+            <CardFloatingChip position="top-left">★ Featured</CardFloatingChip>
           </div>
           <div className="flex items-center gap-3 px-4 py-3">
             <Favicon url={originalUrl} size={20} className="shrink-0" />
