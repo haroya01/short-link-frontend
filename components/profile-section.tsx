@@ -36,6 +36,7 @@ import { ImageBlockDialog } from "./profile-section/ImageBlockDialog";
 import { ProductCardBlockDialog } from "./profile-section/ProductCardBlockDialog";
 import { ProfileFeedEditor } from "./profile-section/ProfileFeedEditor";
 import { ProfileMetaForm } from "./profile-section/ProfileMetaForm";
+import { useBlockDialog } from "./profile-section/use-block-dialog";
 import { socialUrlPrefix } from "./profile-section/socials-templates";
 import type { FeedItem } from "./profile-section/types";
 import { ProfileQuickAdd } from "./profile-quick-add";
@@ -86,59 +87,20 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const [ogImageByShortCode, setOgImageByShortCode] = useState<Record<string, string>>({});
   const [highlightedShortCode, setHighlightedShortCode] = useState<string | null>(null);
   const [pendingShortCode, setPendingShortCode] = useState<string | null>(null);
-  // CONTACT_CARD / GALLERY dialogs share the same shape: either creating (blockId === null) or
-  // editing an existing block (blockId set + initialJson populated). Each block type has its own
-  // dialog component because their forms are very different (7-field card vs URL list).
-  const [contactCardDialog, setContactCardDialog] = useState<{
-    open: boolean;
-    blockId: number | null;
-    initialJson: string | null;
-  }>({ open: false, blockId: null, initialJson: null });
-  const [galleryDialog, setGalleryDialog] = useState<{
-    open: boolean;
-    blockId: number | null;
-    initialJson: string | null;
-  }>({ open: false, blockId: null, initialJson: null });
-  const [productCardDialog, setProductCardDialog] = useState<{
-    open: boolean;
-    blockId: number | null;
-    initialJson: string | null;
-  }>({ open: false, blockId: null, initialJson: null });
-  const [emailFormDialog, setEmailFormDialog] = useState<{
-    open: boolean;
-    blockId: number | null;
-    initialJson: string | null;
-  }>({ open: false, blockId: null, initialJson: null });
-  const [bookingDialog, setBookingDialog] = useState<{
-    open: boolean;
-    blockId: number | null;
-    initialJson: string | null;
-  }>({ open: false, blockId: null, initialJson: null });
-  const [eventDialog, setEventDialog] = useState<{
-    open: boolean;
-    blockId: number | null;
-    initialJson: string | null;
-  }>({ open: false, blockId: null, initialJson: null });
-  const [placeDialog, setPlaceDialog] = useState<{
-    open: boolean;
-    blockId: number | null;
-    initialJson: string | null;
-  }>({ open: false, blockId: null, initialJson: null });
-  const [imageDialog, setImageDialog] = useState<{
-    open: boolean;
-    blockId: number | null;
-    initialUrl: string | null;
-  }>({ open: false, blockId: null, initialUrl: null });
-  const [embedDialog, setEmbedDialog] = useState<{
-    open: boolean;
-    blockId: number | null;
-    initialUrl: string | null;
-  }>({ open: false, blockId: null, initialUrl: null });
-  const [textDialog, setTextDialog] = useState<{
-    open: boolean;
-    blockId: number | null;
-    initialContent: string | null;
-  }>({ open: false, blockId: null, initialContent: null });
+  // Ten block-editor dialogs sharing the same {open, blockId, initialPayload} shape — each block
+  // type opens its own dialog component (forms are very different: 7-field contact card vs URL
+  // list vs markdown). `useBlockDialog` collapses 50+ lines of identical useState boilerplate to
+  // one line each + gives them a uniform `show()` / `close()` surface.
+  const contactCardDialog = useBlockDialog<string>(); // initial JSON
+  const galleryDialog = useBlockDialog<string>();
+  const productCardDialog = useBlockDialog<string>();
+  const emailFormDialog = useBlockDialog<string>();
+  const bookingDialog = useBlockDialog<string>();
+  const eventDialog = useBlockDialog<string>();
+  const placeDialog = useBlockDialog<string>();
+  const imageDialog = useBlockDialog<string>(); // initial URL
+  const embedDialog = useBlockDialog<string>();
+  const textDialog = useBlockDialog<string>(); // initial markdown content
   const [reload, setReload] = useState(0);
   const refresh = () => setReload((n) => n + 1);
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
@@ -543,7 +505,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   }
 
   function handleAddText() {
-    setTextDialog({ open: true, blockId: null, initialContent: null });
+    textDialog.show(null, null);
   }
 
   async function persistTextBlock(blockId: number | null, content: string) {
@@ -582,7 +544,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   }
 
   function handleAddImage() {
-    setImageDialog({ open: true, blockId: null, initialUrl: null });
+    imageDialog.show(null, null);
   }
 
   async function persistImageBlock(blockId: number | null, url: string) {
@@ -609,31 +571,31 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   }
 
   function handleAddContactCard() {
-    setContactCardDialog({ open: true, blockId: null, initialJson: null });
+    contactCardDialog.show(null, null);
   }
 
   function handleAddGallery() {
-    setGalleryDialog({ open: true, blockId: null, initialJson: null });
+    galleryDialog.show(null, null);
   }
 
   function handleAddProductCard() {
-    setProductCardDialog({ open: true, blockId: null, initialJson: null });
+    productCardDialog.show(null, null);
   }
 
   function handleAddEmailForm() {
-    setEmailFormDialog({ open: true, blockId: null, initialJson: null });
+    emailFormDialog.show(null, null);
   }
 
   function handleAddBooking() {
-    setBookingDialog({ open: true, blockId: null, initialJson: null });
+    bookingDialog.show(null, null);
   }
 
   function handleAddEvent() {
-    setEventDialog({ open: true, blockId: null, initialJson: null });
+    eventDialog.show(null, null);
   }
 
   function handleAddPlace() {
-    setPlaceDialog({ open: true, blockId: null, initialJson: null });
+    placeDialog.show(null, null);
   }
 
   async function persistJsonBlock(
@@ -664,7 +626,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   }
 
   function handleAddEmbed() {
-    setEmbedDialog({ open: true, blockId: null, initialUrl: null });
+    embedDialog.show(null, null);
   }
 
   async function persistEmbedBlock(blockId: number | null, url: string) {
@@ -696,43 +658,43 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     // CONTACT_CARD / GALLERY have multi-field configs stored as JSON — open their dedicated
     // dialogs instead of a single window.prompt where the user would face raw JSON.
     if (blockType === "CONTACT_CARD") {
-      setContactCardDialog({ open: true, blockId, initialJson: current });
+      contactCardDialog.show(blockId, current);
       return;
     }
     if (blockType === "GALLERY") {
-      setGalleryDialog({ open: true, blockId, initialJson: current });
+      galleryDialog.show(blockId, current);
       return;
     }
     if (blockType === "PRODUCT_CARD") {
-      setProductCardDialog({ open: true, blockId, initialJson: current });
+      productCardDialog.show(blockId, current);
       return;
     }
     if (blockType === "EMAIL_FORM") {
-      setEmailFormDialog({ open: true, blockId, initialJson: current });
+      emailFormDialog.show(blockId, current);
       return;
     }
     if (blockType === "BOOKING") {
-      setBookingDialog({ open: true, blockId, initialJson: current });
+      bookingDialog.show(blockId, current);
       return;
     }
     if (blockType === "EVENT") {
-      setEventDialog({ open: true, blockId, initialJson: current });
+      eventDialog.show(blockId, current);
       return;
     }
     if (blockType === "PLACE") {
-      setPlaceDialog({ open: true, blockId, initialJson: current });
+      placeDialog.show(blockId, current);
       return;
     }
     if (blockType === "IMAGE") {
-      setImageDialog({ open: true, blockId, initialUrl: current || null });
+      imageDialog.show(blockId, current || null);
       return;
     }
     if (blockType === "EMBED") {
-      setEmbedDialog({ open: true, blockId, initialUrl: current || null });
+      embedDialog.show(blockId, current || null);
       return;
     }
     if (blockType === "TEXT") {
-      setTextDialog({ open: true, blockId, initialContent: current || null });
+      textDialog.show(blockId, current || null);
       return;
     }
   }
@@ -847,9 +809,9 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
 
       <ContactCardBlockDialog
         open={contactCardDialog.open}
-        initialJson={contactCardDialog.initialJson}
+        initialJson={contactCardDialog.initialPayload}
         onOpenChange={(open) =>
-          setContactCardDialog((s) => (open ? s : { ...s, open: false }))
+          !open && contactCardDialog.close()
         }
         onSubmit={(json) =>
           persistJsonBlock("CONTACT_CARD", contactCardDialog.blockId, json)
@@ -858,18 +820,18 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       />
       <GalleryBlockDialog
         open={galleryDialog.open}
-        initialJson={galleryDialog.initialJson}
+        initialJson={galleryDialog.initialPayload}
         onOpenChange={(open) =>
-          setGalleryDialog((s) => (open ? s : { ...s, open: false }))
+          !open && galleryDialog.close()
         }
         onSubmit={(json) => persistJsonBlock("GALLERY", galleryDialog.blockId, json)}
         t={t}
       />
       <ProductCardBlockDialog
         open={productCardDialog.open}
-        initialJson={productCardDialog.initialJson}
+        initialJson={productCardDialog.initialPayload}
         onOpenChange={(open) =>
-          setProductCardDialog((s) => (open ? s : { ...s, open: false }))
+          !open && productCardDialog.close()
         }
         onSubmit={(json) =>
           persistJsonBlock("PRODUCT_CARD", productCardDialog.blockId, json)
@@ -878,9 +840,9 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       />
       <EmailFormBlockDialog
         open={emailFormDialog.open}
-        initialJson={emailFormDialog.initialJson}
+        initialJson={emailFormDialog.initialPayload}
         onOpenChange={(open) =>
-          setEmailFormDialog((s) => (open ? s : { ...s, open: false }))
+          !open && emailFormDialog.close()
         }
         onSubmit={(json) =>
           persistJsonBlock("EMAIL_FORM", emailFormDialog.blockId, json)
@@ -889,45 +851,45 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       />
       <BookingBlockDialog
         open={bookingDialog.open}
-        initialJson={bookingDialog.initialJson}
+        initialJson={bookingDialog.initialPayload}
         onOpenChange={(open) =>
-          setBookingDialog((s) => (open ? s : { ...s, open: false }))
+          !open && bookingDialog.close()
         }
         onSubmit={(json) => persistJsonBlock("BOOKING", bookingDialog.blockId, json)}
         t={t}
       />
       <EventBlockDialog
         open={eventDialog.open}
-        initialJson={eventDialog.initialJson}
-        onOpenChange={(open) => setEventDialog((s) => (open ? s : { ...s, open: false }))}
+        initialJson={eventDialog.initialPayload}
+        onOpenChange={(open) => !open && eventDialog.close()}
         onSubmit={(json) => persistJsonBlock("EVENT", eventDialog.blockId, json)}
         t={t}
       />
       <PlaceBlockDialog
         open={placeDialog.open}
-        initialJson={placeDialog.initialJson}
-        onOpenChange={(open) => setPlaceDialog((s) => (open ? s : { ...s, open: false }))}
+        initialJson={placeDialog.initialPayload}
+        onOpenChange={(open) => !open && placeDialog.close()}
         onSubmit={(json) => persistJsonBlock("PLACE", placeDialog.blockId, json)}
         t={t}
       />
       <ImageBlockDialog
         open={imageDialog.open}
-        initialUrl={imageDialog.initialUrl}
-        onOpenChange={(open) => setImageDialog((s) => (open ? s : { ...s, open: false }))}
+        initialUrl={imageDialog.initialPayload}
+        onOpenChange={(open) => !open && imageDialog.close()}
         onSubmit={(url) => persistImageBlock(imageDialog.blockId, url)}
         t={t}
       />
       <EmbedBlockDialog
         open={embedDialog.open}
-        initialUrl={embedDialog.initialUrl}
-        onOpenChange={(open) => setEmbedDialog((s) => (open ? s : { ...s, open: false }))}
+        initialUrl={embedDialog.initialPayload}
+        onOpenChange={(open) => !open && embedDialog.close()}
         onSubmit={(url) => persistEmbedBlock(embedDialog.blockId, url)}
         t={t}
       />
       <TextBlockDialog
         open={textDialog.open}
-        initialContent={textDialog.initialContent}
-        onOpenChange={(open) => setTextDialog((s) => (open ? s : { ...s, open: false }))}
+        initialContent={textDialog.initialPayload}
+        onOpenChange={(open) => !open && textDialog.close()}
         onSubmit={(content) => persistTextBlock(textDialog.blockId, content)}
         t={t}
       />
