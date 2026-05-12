@@ -330,12 +330,25 @@ export type ProfileBlock = {
   profileOrder: number;
 };
 
-/** PRODUCT_CARD JSON shape. Items rendered as a horizontal carousel; backend caps at 8. */
+/**
+ * PRODUCT_CARD JSON shape. Items rendered as a horizontal carousel; backend caps at 8 items, and
+ * each item carries up to 5 images. Each image has a focal point (0..100% on each axis) that's
+ * applied as CSS `object-position` on the public card so the seller can control which part of a
+ * cropped image stays in view.
+ */
+export type ProductCardImage = {
+  url: string;
+  /** 0..100, horizontal focal point as a percentage of image width. Default 50 = center. */
+  focalX: number;
+  /** 0..100, vertical focal point as a percentage of image height. Default 50 = center. */
+  focalY: number;
+};
+
 export type ProductCardConfig = {
   title: string | null;
   items: Array<{
     name: string;
-    image: string | null;
+    images: ProductCardImage[];
     price: string | null;
     description: string | null;
     ctaLabel: string | null;
