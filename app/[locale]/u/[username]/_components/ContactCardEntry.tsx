@@ -385,7 +385,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
               not a giant block of black-and-white. Brand mark (logo or initial) anchors the top,
               QR centered, name + scan caption below. */}
           <CardFace back>
-            <div className="relative z-10 flex h-full flex-col items-center justify-between gap-4 p-6">
+            <div className="relative z-10 flex h-full flex-col items-center justify-between gap-3 p-5">
               {/* Header band — logo + company name on the left (truncated when long),
                   kurl.me wordmark on the right. min-w-0 on the left flex group + truncate on
                   the company text fixes the previous bug where a long company name pushed past
@@ -422,11 +422,11 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                   <img
                     src={qrDataUrl}
                     alt={t("qrAlt")}
-                    className="h-32 w-32 sm:h-36 sm:w-36"
+                    className="h-28 w-28 sm:h-32 sm:w-32"
                   />
                 </div>
               ) : (
-                <div className="h-32 w-32 animate-pulse rounded-2xl bg-white/10 sm:h-36 sm:w-36" />
+                <div className="h-28 w-28 animate-pulse rounded-2xl bg-white/10 sm:h-32 sm:w-32" />
               )}
 
               {/* Footer — name + instruction */}
@@ -470,15 +470,17 @@ function CardFace({
   // generated stylesheet orders last, which was making the back face render in-flow underneath
   // the front (double-stacked card on initial render).
   //
-  // Min-height on the front: the back face's QR (h-32 sm:h-36) + decorated frame + header band +
-  // footer adds up to ~288 px. When a visitor has filled in only name + 1–2 fields the front's
-  // natural height falls below that, and since the back is `absolute inset-0` (fills front's
-  // box) the back content overflows the rounded clip — QR pushes the footer out, kurl wordmark
-  // sits on top of the QR, etc. Pinning the front to a 340 px floor guarantees the back layout
-  // has room regardless of how spartan the contact card data is.
+  // Min-height on the front: the back face's QR + decorated frame + header band + footer adds up
+  // to ~240 px after we compressed the back layout (smaller QR — h-28 sm:h-32, tighter p-5 + gap-3).
+  // When a visitor has filled in only name + 1–2 fields the front's natural height falls below
+  // that, and since the back is `absolute inset-0` (fills front's box) the back content would
+  // overflow the rounded clip. Pinning the front to a 260 px floor guarantees the back layout has
+  // room regardless of how spartan the contact card data is — and shrunk from the earlier 340 px
+  // floor because that left a noticeable empty gap below the dock on densely-filled cards
+  // ("아래로 길어짐" 사용자 피드백).
   const positionClass = back
     ? "absolute inset-0 [transform:rotateY(180deg)]"
-    : "relative min-h-[340px]";
+    : "relative min-h-[260px]";
   return (
     <div
       className={
