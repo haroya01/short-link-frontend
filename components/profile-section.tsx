@@ -28,6 +28,7 @@ import { BookingBlockDialog } from "./profile-section/BookingBlockDialog";
 import { ContactCardBlockDialog } from "./profile-section/ContactCardBlockDialog";
 import { EmailFormBlockDialog } from "./profile-section/EmailFormBlockDialog";
 import { EmbedBlockDialog } from "./profile-section/EmbedBlockDialog";
+import { TextBlockDialog } from "./profile-section/TextBlockDialog";
 import { EventBlockDialog } from "./profile-section/EventBlockDialog";
 import { GalleryBlockDialog } from "./profile-section/GalleryBlockDialog";
 import { ImageBlockDialog } from "./profile-section/ImageBlockDialog";
@@ -127,6 +128,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     blockId: number | null;
     initialUrl: string | null;
   }>({ open: false, blockId: null, initialUrl: null });
+  const [textDialog, setTextDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialContent: string | null;
+  }>({ open: false, blockId: null, initialContent: null });
   const [reload, setReload] = useState(0);
   const refresh = () => setReload((n) => n + 1);
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
@@ -529,15 +535,28 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     setOverIndex(null);
   }
 
-  async function handleAddText() {
-    const content = window.prompt(t("addTextPrompt"), "");
-    if (!content || !content.trim()) return;
+  function handleAddText() {
+    setTextDialog({ open: true, blockId: null, initialContent: null });
+  }
+
+  async function persistTextBlock(blockId: number | null, content: string) {
     try {
-      const block = await createProfileBlock({ type: "TEXT", content: content.trim() });
-      setItems((prev) => [
-        ...prev,
-        { kind: "BLOCK", id: block.id, type: "TEXT", content: block.content ?? "" },
-      ]);
+      if (blockId != null) {
+        const updated = await updateProfileBlock(blockId, content);
+        setItems((prev) =>
+          prev.map((i) =>
+            i.kind === "BLOCK" && i.id === blockId
+              ? { ...i, content: updated.content ?? "" }
+              : i,
+          ),
+        );
+      } else {
+        const block = await createProfileBlock({ type: "TEXT", content });
+        setItems((prev) => [
+          ...prev,
+          { kind: "BLOCK", id: block.id, type: "TEXT", content: block.content ?? "" },
+        ]);
+      }
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
@@ -697,21 +716,9 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       setEmbedDialog({ open: true, blockId, initialUrl: current || null });
       return;
     }
-    const next = window.prompt(t("editTextPrompt"), current);
-    if (next === null) return;
-    const trimmed = next.trim();
-    if (!trimmed) return;
-    try {
-      const updated = await updateProfileBlock(blockId, trimmed);
-      setItems((prev) =>
-        prev.map((i) =>
-          i.kind === "BLOCK" && i.id === blockId
-            ? { ...i, content: updated.content ?? "" }
-            : i,
-        ),
-      );
-    } catch (err) {
-      toast(errorMessage(err, t("toggleFailed")), "error");
+    if (blockType === "TEXT") {
+      setTextDialog({ open: true, blockId, initialContent: current || null });
+      return;
     }
   }
 
@@ -892,6 +899,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         initialUrl={embedDialog.initialUrl}
         onOpenChange={(open) => setEmbedDialog((s) => (open ? s : { ...s, open: false }))}
         onSubmit={(url) => persistEmbedBlock(embedDialog.blockId, url)}
+        t={t}
+      />
+      <TextBlockDialog
+        open={textDialog.open}
+        initialContent={textDialog.initialContent}
+        onOpenChange={(open) => setTextDialog((s) => (open ? s : { ...s, open: false }))}
+        onSubmit={(content) => persistTextBlock(textDialog.blockId, content)}
         t={t}
       />
     </div>

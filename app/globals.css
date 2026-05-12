@@ -143,6 +143,81 @@ h1, h2, h3, p {
   }
 }
 
+  /*
+   * Notion-style typography for the TEXT block's markdown body. Scoped to .prose-text-block so it
+   * doesn't bleed into other markdown surfaces (we may add a long-form bio editor later that wants
+   * different sizing). Specificity is per-element under the wrapper — easier to tweak in isolation
+   * than building a full @tailwindcss/typography custom plugin for one block type.
+   *
+   * <p>Sizing scaled down vs. a typical Notion document because the TEXT block sits inside a
+   * 600-ish-px profile column on mobile and shouldn't dominate the feed.
+   */
+  .prose-text-block > :first-child {
+    margin-top: 0;
+  }
+  .prose-text-block > :last-child {
+    margin-bottom: 0;
+  }
+  .prose-text-block h1 {
+    @apply mb-1 mt-3 text-xl font-bold leading-tight;
+  }
+  .prose-text-block h2 {
+    @apply mb-1 mt-3 text-lg font-bold leading-tight;
+  }
+  .prose-text-block h3 {
+    @apply mb-1 mt-2 text-base font-semibold leading-tight;
+  }
+  .prose-text-block p {
+    @apply mb-1.5 text-sm leading-relaxed;
+  }
+  .prose-text-block ul {
+    @apply mb-1.5 list-disc pl-5;
+  }
+  .prose-text-block ol {
+    @apply mb-1.5 list-decimal pl-5;
+  }
+  .prose-text-block li {
+    @apply mb-0.5 text-sm leading-relaxed;
+  }
+  .prose-text-block li > p {
+    @apply mb-0;
+  }
+  .prose-text-block strong {
+    @apply font-semibold;
+  }
+  .prose-text-block em {
+    @apply italic;
+  }
+  .prose-text-block code {
+    @apply rounded bg-slate-100 px-1 py-0.5 text-[12px] font-mono;
+  }
+  .prose-text-block pre {
+    @apply mb-1.5 overflow-x-auto rounded-md bg-slate-900 p-3 text-[12px] text-slate-100;
+  }
+  .prose-text-block pre code {
+    @apply bg-transparent p-0 text-slate-100;
+  }
+  .prose-text-block a {
+    @apply text-accent-700 underline-offset-2 hover:underline;
+  }
+  .prose-text-block blockquote {
+    @apply mb-1.5 border-l-2 border-slate-300 pl-3 italic text-slate-600;
+  }
+  .prose-text-block hr {
+    @apply my-3 border-slate-200;
+  }
+  .prose-text-block table {
+    @apply mb-1.5 w-full border-collapse text-[12px];
+  }
+  .prose-text-block th,
+  .prose-text-block td {
+    @apply border border-slate-200 px-2 py-1;
+  }
+  .prose-text-block th {
+    @apply bg-slate-50 font-semibold;
+  }
+}
+
 @keyframes profile-fade-in {
   from {
     opacity: 0;
