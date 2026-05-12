@@ -988,6 +988,7 @@
       "productCardImagesEmpty": "이미지를 추가해 주세요",
       "productCardImageAdd": "이미지 추가",
       "productCardImageFocalHint": "썸네일 위의 점을 드래그해 중요한 부분을 중심에 맞춰주세요. 공개 페이지에서 잘리지 않게 보여집니다.",
+      "productCardImageSizeHint": "권장: 4:3 비율 (예: 800×600), 한 장당 5MB 이하. JPG · PNG · WebP 지원.",
       "productCardImageMoveLeft": "왼쪽으로",
       "productCardImageMoveRight": "오른쪽으로",
       "productCardPreviewLabel": "미리보기",

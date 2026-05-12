@@ -1074,6 +1074,7 @@
       "productCardImagesEmpty": "Add an image",
       "productCardImageAdd": "Add image",
       "productCardImageFocalHint": "Drag the dot on the thumbnail to center the important part. That spot stays in view when the image is cropped on your public page.",
+      "productCardImageSizeHint": "Recommended: 4:3 ratio (e.g. 800×600), under 5MB each. JPG / PNG / WebP supported.",
       "productCardImageMoveLeft": "Move left",
       "productCardImageMoveRight": "Move right",
       "productCardPreviewLabel": "Preview",
