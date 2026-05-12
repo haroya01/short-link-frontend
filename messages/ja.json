@@ -1,4 +1,12 @@
 {
+  "imageCropper": {
+    "title": "画像を切り抜く",
+    "cancel": "キャンセル",
+    "apply": "適用",
+    "applying": "適用中...",
+    "hint": "ドラッグで位置調整 · ピンチ / スクロールで拡大",
+    "zoom": "拡大"
+  },
   "tags": {
     "inputPlaceholder": "Enter または , で追加",
     "removeTag": "タグ {name} を削除",

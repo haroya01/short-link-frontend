@@ -9,9 +9,9 @@ import {
   presignAvatarUpload,
   uploadAvatarToS3,
 } from "@/lib/api";
-import { resizeImage } from "@/lib/image-resize";
 import { useToast } from "./ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
+import { ImageCropperDialog } from "./ui/image-cropper-dialog";
 
 const ACCEPT = "image/jpeg,image/png,image/webp";
 const MAX_INPUT_BYTES = 10 * 1024 * 1024;
@@ -24,29 +24,31 @@ type Props = {
   initialChar: string;
   onChange: (avatarUrl: string | null) => void;
   /**
-   * Longer-edge ceiling for the canvas resize step. Default 512 — the avatar use case never
-   * renders larger than 80px @ 3x DPR. Other surfaces (e.g. profile background) call with their
-   * own ceiling.
+   * Longer-edge ceiling for the cropper output. Default 512 — avatar renders at 80px @ 3x DPR max.
    */
   maxDim?: number;
-  /** Center-crop to a square of {@code maxDim × maxDim}. Default true (avatar). */
-  square?: boolean;
 };
 
+/**
+ * Avatar picker — file pick → {@link ImageCropperDialog} (1:1 round crop, drag + pinch + zoom) →
+ * presigned S3 upload → commit. The cropper replaced the old "center-crop without preview" flow
+ * so users can pick which part of a phone photo lands in the round avatar frame. cropShape={round}
+ * + aspect=1 because avatars render as circles everywhere they appear.
+ */
 export function AvatarPicker({
   currentUrl,
   initialChar,
   onChange,
   maxDim = 512,
-  square = true,
 }: Props) {
   const t = useTranslations("avatar");
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [busy, setBusy] = useState(false);
+  const [pickedFile, setPickedFile] = useState<File | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
-  async function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
+  function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = ""; // allow re-selecting the same file later
     if (!file) return;
@@ -54,29 +56,27 @@ export function AvatarPicker({
       toast(t("invalidType"), "error");
       return;
     }
-    // Loose pre-check on the original — even a 10MP camera shot is fine here because the
-    // canvas resize step shrinks everything to ~50–100KB before upload.
+    // Pre-check on the raw file before the cropper opens — even a 10MP camera shot is fine here
+    // because the cropper resize step shrinks the output well below this cap.
     if (file.size > MAX_INPUT_BYTES) {
       toast(t("tooBig"), "error");
       return;
     }
+    setPickedFile(file);
+  }
+
+  async function handleCropped(cropped: File) {
+    setPickedFile(null);
     setBusy(true);
     try {
-      const resized = await resizeImage(file, {
-        maxDim,
-        square,
-        type: OUTPUT_TYPE,
-        quality: OUTPUT_QUALITY,
-        filename: "avatar.jpg",
-      });
       const presign = await presignAvatarUpload(OUTPUT_TYPE);
       // Server still has the authoritative size cap (HEAD-checked on commit) — this is just
       // a defensive client check so we don't waste an S3 PUT we know will be rejected.
-      if (resized.size > presign.maxBytes) {
+      if (cropped.size > presign.maxBytes) {
         toast(t("tooBig"), "error");
         return;
       }
-      await uploadAvatarToS3(presign.uploadUrl, resized, OUTPUT_TYPE);
+      await uploadAvatarToS3(presign.uploadUrl, cropped, OUTPUT_TYPE);
       const committed = await commitAvatarUpload(presign.key);
       onChange(committed.avatarUrl);
       toast(t("uploaded"), "success");
@@ -142,6 +142,17 @@ export function AvatarPicker({
         accept={ACCEPT}
         onChange={handlePick}
         className="hidden"
+      />
+      <ImageCropperDialog
+        open={pickedFile !== null}
+        file={pickedFile}
+        aspect={1}
+        cropShape="round"
+        outputMaxDim={maxDim}
+        outputType={OUTPUT_TYPE}
+        outputQuality={OUTPUT_QUALITY}
+        onCancel={() => setPickedFile(null)}
+        onConfirm={handleCropped}
       />
     </div>
   );

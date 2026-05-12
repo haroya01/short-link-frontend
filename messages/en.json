@@ -1,4 +1,12 @@
 {
+  "imageCropper": {
+    "title": "Crop image",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "applying": "Applying...",
+    "hint": "Drag to position · pinch / scroll to zoom",
+    "zoom": "Zoom"
+  },
   "tags": {
     "inputPlaceholder": "Enter or , to add",
     "removeTag": "Remove tag {name}",
