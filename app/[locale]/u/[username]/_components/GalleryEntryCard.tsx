@@ -73,7 +73,7 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
     <>
       <li className="profile-fade" style={fadeStyle}>
         <div
-          className={`relative overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder}`}
+          className={`profile-card-static relative overflow-hidden ${colors.card} ${colors.cardBorder}`}
         >
           <div
             ref={scrollerRef}

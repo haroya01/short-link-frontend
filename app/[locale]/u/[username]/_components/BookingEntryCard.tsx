@@ -47,7 +47,7 @@ export function BookingEntryCard({ content, colors, fadeStyle }: Props) {
             }
           }
         }}
-        className={`group block overflow-hidden rounded-xl border transition active:scale-[0.99] ${colors.card} ${colors.cardBorder}`}
+        className={`profile-card group block overflow-hidden ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
       >
         <div className="flex items-start gap-3 px-4 py-3.5">
           <div

@@ -39,7 +39,7 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
           href={href}
           target="_blank"
           rel="noreferrer"
-          className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+          className={`profile-card group block overflow-hidden ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -67,7 +67,7 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
           href={href}
           target="_blank"
           rel="noreferrer"
-          className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+          className={`profile-card group block overflow-hidden ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
         >
           <div
             className="relative aspect-[1.91/1] w-full bg-slate-100"
@@ -106,7 +106,7 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
           href={href}
           target="_blank"
           rel="noreferrer"
-          className={`hover-lift group block overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+          className={`profile-card group block overflow-hidden ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
         >
           <div className="relative aspect-video w-full bg-slate-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -143,7 +143,7 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
         href={href}
         target="_blank"
         rel="noreferrer"
-        className={`hover-lift group flex items-center gap-3 rounded-xl border px-4 py-3.5 ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
+        className={`profile-card group flex items-center gap-3 px-4 py-3.5 ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
       >
         <Favicon url={originalUrl} size={20} className="shrink-0" />
         <span className="min-w-0 flex-1">
