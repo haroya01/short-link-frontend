@@ -83,7 +83,8 @@
 | Fade-in 스태거 | `.profile-fade` + `--idx` 인라인 스타일 | 모든 카드 wrapper `<li>` |
 | Hover lift | `.profile-card` 클래스 안에 내장 | interactive wrapper |
 | Press tactile | `.profile-card` `:active` 또는 inner button 의 `active:scale-[0.97]` | clickable 요소 |
-| Focus ring | `focus-visible:ring-2 focus-visible:ring-accent-500` | 키보드 사용자 |
+| Focus ring (wrapper 자동) | `.profile-card:focus-visible` (globals.css) — outline 2px accent + offset 2px | interactive 카드 wrapper — 자동 적용 |
+| Focus ring (inner button) | `.focus-ring` 유틸 (globals.css) — 같은 outline | `.profile-card-static` 안의 inner button (Gallery nav / Contact dock / Place ghost trio 등) |
 | Image hover (when applicable) | scale-110 + 600ms ease-out | 갤러리 / 이미지 |
 
 ---
@@ -182,6 +183,21 @@
 | PlaceEntry | A | 5/3 | 1 primary + 3 ghost | static map 폴백 + 카테고리 칩 (우상단) |
 | TextEntry | C | — | inline link 만 | 마크다운 노션 타이포 (`.prose-text-block`) |
 | DividerEntry | C (Spacer) | — | — | 얇은 가로 선 |
+
+---
+
+## 3.5. 공유 카드 프리미티브
+
+신규 카드 만들 때 다음 컴포넌트 우선 사용 — Tailwind 클래스 직접 복붙 ❌.
+
+| 프리미티브 | 위치 | 용도 |
+|---|---|---|
+| `<CardFloatingChip position icon>` | `_components/CardFloatingChip.tsx` | Visual-first 카드의 cover 위에 떠 있는 칩 (Featured 뱃지 / 카테고리 칩). `position`: `top-left` (primary) 또는 `top-right` (secondary) |
+| `<CardCtaBar href label colors onClick? external?>` | `_components/CardCtaBar.tsx` | 카드 하단 단일 CTA 바 — border-t + ArrowRight 마커 자동. wrapper 가 별도 `<a>` 아닌 경우에만 사용 가능 (anchor 중첩 회피) |
+| `colors.ctaPrimary` (token) | `_lib/theme.ts` | Primary CTA 버튼 배경+텍스트+hover. 직접 `bg-slate-900` 하드코딩 ❌. 12 개 테마별로 정의돼 있어 다크 / 브랜드 테마 자동 대응 |
+| `.focus-ring` (utility) | `globals.css` | `.profile-card-static` 안의 inner button 의 키보드 focus outline. 한 클래스로 일관 |
+| `<FormField label required className>` | `components/profile-section/FormField.tsx` | BlockDialog 의 라벨 + required 마커 (다이얼로그 전용) |
+| `<Textarea>` | `components/ui/textarea.tsx` | Input 과 같은 톤의 multi-line (다이얼로그 전용) |
 
 ---
 
@@ -470,3 +486,6 @@ Identity archetype 은 `ContactCardEntry` 1 개로 충분. 신규 추가 시 foi
 - 2026-05: ImageEntry 자연 비율 → `aspect-[4/3]` letterbox 통일 (#108)
 - 2026-05: `FormField` / `Textarea` 공유 프리미티브 추출, 6 개 다이얼로그의 로컬 `Field` 중복 제거 (#110)
 - 2026-05: `ThemeColors.ctaPrimary` 토큰 추가 — 12 개 테마별 primary CTA 배경/텍스트/hover. 타이포/버튼/아이콘/spacing 스케일 명시 (#114)
+- 2026-05: 디자인 토큰 + Google Maps URL builder 단위 테스트 추가 (44 → 86 tests, #116)
+- 2026-05: 키보드 포커스 ring 통일 — `.profile-card:focus-visible` 자동 + `.focus-ring` 유틸 (#118)
+- 2026-05: `<CardFloatingChip>` + `<CardCtaBar>` 공유 프리미티브 추출 — Visual-first 카드의 반복 패턴 캡슐화 (#120)
