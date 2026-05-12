@@ -101,23 +101,26 @@ export function EventBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
             placeholder={t("eventFieldTitlePlaceholder")}
           />
         </Field>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <Field label={t("eventFieldStartsAt")} required>
-            <Input
-              type="datetime-local"
-              value={config.startsAt}
-              onChange={(e) => setConfig((c) => ({ ...c, startsAt: e.target.value }))}
-            />
-          </Field>
-          <Field label={t("eventFieldEndsAt")}>
-            <Input
-              type="datetime-local"
-              value={config.endsAt}
-              min={config.startsAt || undefined}
-              onChange={(e) => setConfig((c) => ({ ...c, endsAt: e.target.value }))}
-            />
-          </Field>
-        </div>
+        {/* datetime-local needs ~240 px of comfortable width for the native picker UI not to clip
+         * the placeholder ("yyyy-mm-dd hh:mm") or overlap the dropdown caret. The earlier
+         * 2-col grid inside a max-w-md dialog gave each field ~200 px which broke the rendering
+         * on Safari iOS + Chrome Android. Stacking vertically gives each input full width and is
+         * less visually noisy for a 2-field pair. */}
+        <Field label={t("eventFieldStartsAt")} required>
+          <Input
+            type="datetime-local"
+            value={config.startsAt}
+            onChange={(e) => setConfig((c) => ({ ...c, startsAt: e.target.value }))}
+          />
+        </Field>
+        <Field label={t("eventFieldEndsAt")}>
+          <Input
+            type="datetime-local"
+            value={config.endsAt}
+            min={config.startsAt || undefined}
+            onChange={(e) => setConfig((c) => ({ ...c, endsAt: e.target.value }))}
+          />
+        </Field>
         <Field label={t("eventFieldLocation")}>
           <Input
             value={config.location}
