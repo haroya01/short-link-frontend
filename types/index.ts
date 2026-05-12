@@ -333,6 +333,32 @@ export type ProfileBlock = {
 };
 
 /**
+ * TEXT block visual hint — controls how {@code body} markdown is rendered on the public page.
+ * - {@code inline}: bare markdown in the existing card surface (the v1 behavior).
+ * - {@code card}: a tinted highlight box (Toss-style "notice / tip" treatment).
+ * - {@code quote}: an accent-color left rail + indent for short callout-like text.
+ */
+export type TextLayout = "inline" | "card" | "quote";
+
+/**
+ * Accent palette ids shared by {@code card} + {@code quote} layouts. Each maps to a fixed Tailwind
+ * shade on the renderer so the visual language is consistent across locales and themes.
+ */
+export type TextAccent = "blue" | "amber" | "green" | "red" | "violet";
+
+/**
+ * TEXT block JSON shape. Stored markdown body plus optional visual hints. Backward-compat: a
+ * legacy plain-string {@code content} parses as {@code {body: content, layout: "inline"}}.
+ */
+export type TextBlockConfig = {
+  body: string;
+  layout: TextLayout;
+  accent: TextAccent | null;
+  /** Single emoji or short symbol — used as the visual hook on the {@code card} layout. */
+  icon: string | null;
+};
+
+/**
  * PRODUCT_CARD JSON shape. Items rendered as a horizontal carousel; backend caps at 8 items, and
  * each item carries up to 5 images. Each image has a focal point (0..100% on each axis) that's
  * applied as CSS `object-position` on the public card so the seller can control which part of a

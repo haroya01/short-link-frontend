@@ -849,7 +849,7 @@ function FeedItemRow({
             <Type className="h-3.5 w-3.5 shrink-0 text-slate-400" />
           )}
           <span className="truncate text-sm font-semibold text-slate-900">
-            {item.content || t("addTextPlaceholder")}
+            {summarizeTextBody(item.content) || t("addTextPlaceholder")}
           </span>
           {sectionInfo && sectionInfo.count > 0 && (
             <span className="shrink-0 rounded-full bg-slate-200/70 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">
@@ -980,6 +980,24 @@ function LinkLabelField({
       <Pencil className="h-3 w-3 shrink-0 text-slate-300 transition group-hover:text-accent-500" />
     </button>
   );
+}
+
+/**
+ * Best-effort body extraction for TEXT rows in the editor list. Mirrors {@code parseTextBlockConfig}
+ * but trimmed to just what the row preview needs — so an editor list never shows a raw JSON blob
+ * after the {@code TextBlockBody} migration. Legacy plain-markdown strings pass through unchanged.
+ */
+function summarizeTextBody(content: string | null): string {
+  if (!content) return "";
+  const trimmed = content.trim();
+  if (!trimmed.startsWith("{")) return trimmed;
+  try {
+    const parsed = JSON.parse(trimmed) as { body?: unknown };
+    if (typeof parsed?.body === "string") return parsed.body;
+    return trimmed;
+  } catch {
+    return trimmed;
+  }
 }
 
 /** Pulls a single string field out of the block's JSON content for a row-summary preview. */
