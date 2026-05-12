@@ -24,6 +24,7 @@ export type FeedItem =
         | "GALLERY"
         | "PRODUCT_CARD"
         | "BOOKING"
-        | "EVENT";
+        | "EVENT"
+        | "PLACE";
       content: string | null;
     };

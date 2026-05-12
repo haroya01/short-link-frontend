@@ -30,6 +30,7 @@ import { EmailFormBlockDialog } from "./profile-section/EmailFormBlockDialog";
 import { EmbedBlockDialog } from "./profile-section/EmbedBlockDialog";
 import { TextBlockDialog } from "./profile-section/TextBlockDialog";
 import { EventBlockDialog } from "./profile-section/EventBlockDialog";
+import { PlaceBlockDialog } from "./profile-section/PlaceBlockDialog";
 import { GalleryBlockDialog } from "./profile-section/GalleryBlockDialog";
 import { ImageBlockDialog } from "./profile-section/ImageBlockDialog";
 import { ProductCardBlockDialog } from "./profile-section/ProductCardBlockDialog";
@@ -114,6 +115,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     initialJson: string | null;
   }>({ open: false, blockId: null, initialJson: null });
   const [eventDialog, setEventDialog] = useState<{
+    open: boolean;
+    blockId: number | null;
+    initialJson: string | null;
+  }>({ open: false, blockId: null, initialJson: null });
+  const [placeDialog, setPlaceDialog] = useState<{
     open: boolean;
     blockId: number | null;
     initialJson: string | null;
@@ -327,7 +333,8 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
             | "GALLERY"
             | "PRODUCT_CARD"
             | "BOOKING"
-            | "EVENT";
+            | "EVENT"
+            | "PLACE";
           id: number | null;
           shortCode: string | null;
           ogTitle?: string | null;
@@ -625,8 +632,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     setEventDialog({ open: true, blockId: null, initialJson: null });
   }
 
+  function handleAddPlace() {
+    setPlaceDialog({ open: true, blockId: null, initialJson: null });
+  }
+
   async function persistJsonBlock(
-    type: "CONTACT_CARD" | "GALLERY" | "PRODUCT_CARD" | "EMAIL_FORM" | "BOOKING" | "EVENT",
+    type: "CONTACT_CARD" | "GALLERY" | "PRODUCT_CARD" | "EMAIL_FORM" | "BOOKING" | "EVENT" | "PLACE",
     blockId: number | null,
     configJson: string,
   ) {
@@ -706,6 +717,10 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
     if (blockType === "EVENT") {
       setEventDialog({ open: true, blockId, initialJson: current });
+      return;
+    }
+    if (blockType === "PLACE") {
+      setPlaceDialog({ open: true, blockId, initialJson: current });
       return;
     }
     if (blockType === "IMAGE") {
@@ -815,6 +830,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           onAddEmailForm={handleAddEmailForm}
           onAddBooking={handleAddBooking}
           onAddEvent={handleAddEvent}
+          onAddPlace={handleAddPlace}
           onMove={move}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
@@ -885,6 +901,13 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         initialJson={eventDialog.initialJson}
         onOpenChange={(open) => setEventDialog((s) => (open ? s : { ...s, open: false }))}
         onSubmit={(json) => persistJsonBlock("EVENT", eventDialog.blockId, json)}
+        t={t}
+      />
+      <PlaceBlockDialog
+        open={placeDialog.open}
+        initialJson={placeDialog.initialJson}
+        onOpenChange={(open) => setPlaceDialog((s) => (open ? s : { ...s, open: false }))}
+        onSubmit={(json) => persistJsonBlock("PLACE", placeDialog.blockId, json)}
         t={t}
       />
       <ImageBlockDialog
