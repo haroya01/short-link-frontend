@@ -8,10 +8,10 @@ import {
   useState,
   type CSSProperties,
 } from "react";
-import { ArrowRight } from "lucide-react";
 import type { ProductCardConfig, ProductCardImage } from "@/types";
 import { useAutoSlide } from "@/lib/use-auto-slide";
 import type { ThemeColors } from "../_lib/theme";
+import { CardCtaBar } from "./CardCtaBar";
 import { PhotoLightbox } from "./PhotoLightbox";
 
 type Props = {
@@ -192,10 +192,10 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                   )}
                 </div>
                 {item.ctaUrl && (
-                  <a
+                  <CardCtaBar
                     href={item.ctaUrl}
-                    target="_blank"
-                    rel="noreferrer"
+                    label={item.ctaLabel || "자세히"}
+                    colors={colors}
                     onClick={() => {
                       if (typeof navigator !== "undefined" && "vibrate" in navigator) {
                         try {
@@ -205,11 +205,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                         }
                       }
                     }}
-                    className={`flex items-center justify-between border-t px-4 py-2.5 text-[13px] font-medium transition active:scale-[0.97] ${colors.cardBorder} ${colors.primary} ${colors.cardHover}`}
-                  >
-                    <span>{item.ctaLabel || "자세히"}</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </a>
+                  />
                 )}
               </article>
             </div>
