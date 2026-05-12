@@ -491,12 +491,43 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       setOverIndex(null);
       return;
     }
+    // When the user drags a TEXT block, treat it as a section-level move: pick up the header
+    // plus the contiguous run of non-TEXT rows that follow (up to the next TEXT or the end of
+    // the list). This is how a "section" gets reordered as one unit instead of forcing the user
+    // to drag each item individually. Non-TEXT rows fall back to the simple one-item splice.
+    const dragged = items[dragIndex];
+    const sectionEndExclusive =
+      dragged.kind === "BLOCK" && dragged.type === "TEXT"
+        ? findNextTextHeader(items, dragIndex + 1)
+        : dragIndex + 1;
+    // Drop targets that fall inside the source range are a no-op — moving a section onto itself
+    // doesn't make sense and would otherwise produce a confusing splice.
+    if (toIndex >= dragIndex && toIndex < sectionEndExclusive) {
+      setDragIndex(null);
+      setOverIndex(null);
+      return;
+    }
     const next = items.slice();
-    const [moved] = next.splice(dragIndex, 1);
-    next.splice(toIndex, 0, moved);
+    const moved = next.splice(dragIndex, sectionEndExclusive - dragIndex);
+    // Account for the shift from removing items above the drop target.
+    const adjustedTo = toIndex > dragIndex ? toIndex - moved.length : toIndex;
+    next.splice(adjustedTo, 0, ...moved);
     setDragIndex(null);
     setOverIndex(null);
     void commitOrder(next);
+  }
+
+  /**
+   * Returns the exclusive upper-bound index of the section that starts at {@code from} — i.e.
+   * the index of the next TEXT block, or {@code items.length} if none follows. The caller uses
+   * this to splice out the [header, ...children] range as one contiguous block.
+   */
+  function findNextTextHeader(arr: FeedItem[], from: number): number {
+    for (let i = from; i < arr.length; i++) {
+      const it = arr[i];
+      if (it.kind === "BLOCK" && it.type === "TEXT") return i;
+    }
+    return arr.length;
   }
 
   function handleDragEnd() {
