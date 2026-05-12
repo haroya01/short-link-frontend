@@ -5,6 +5,7 @@ import { Play, CheckCircle2, AlertCircle } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "../ui/dialog";
 import { Input } from "../ui/input";
+import { FormField } from "./FormField";
 import { EMBED_PROVIDERS, resolveEmbedProvider } from "./embed-providers";
 
 type Props = {
@@ -51,11 +52,7 @@ export function EmbedBlockDialog({ open, initialUrl, onOpenChange, onSubmit, t }
       }}
     >
       <div className="space-y-3">
-        <label className="block space-y-1">
-          <span className="text-xs font-medium text-slate-700">
-            {t("embedFieldUrl")}
-            <span className="ml-1 text-red-500">*</span>
-          </span>
+        <FormField label={t("embedFieldUrl")} required>
           <Input
             type="url"
             value={value}
@@ -83,7 +80,7 @@ export function EmbedBlockDialog({ open, initialUrl, onOpenChange, onSubmit, t }
               )}
             </p>
           )}
-        </label>
+        </FormField>
 
         <div className="rounded-md border border-slate-200 bg-slate-50/60 px-3 py-2">
           <p className="flex items-center gap-1.5 text-[11px] font-medium text-slate-600">

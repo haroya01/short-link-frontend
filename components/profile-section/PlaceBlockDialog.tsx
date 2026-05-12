@@ -23,6 +23,8 @@ import {
 } from "@/lib/google-places";
 import { ConfirmDialog } from "../ui/dialog";
 import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { FormField } from "./FormField";
 import { ImageUploader } from "./ImageUploader";
 
 const NAME_MAX = 80;
@@ -149,7 +151,7 @@ export function PlaceBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
       }}
     >
       <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
-        <Field label={t("placeFieldSearch")} required>
+        <FormField label={t("placeFieldSearch")} required>
           <PlaceAutocompleteInput
             sessionToken={sessionToken}
             initialValue={config.name}
@@ -172,27 +174,27 @@ export function PlaceBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
               {config.address}
             </p>
           )}
-        </Field>
+        </FormField>
 
-        <Field label={t("placeFieldName")}>
+        <FormField label={t("placeFieldName")}>
           <Input
             value={config.name}
             maxLength={NAME_MAX}
             onChange={(e) => setConfig((c) => ({ ...c, name: e.target.value }))}
             placeholder={t("placeFieldNamePlaceholder")}
           />
-        </Field>
+        </FormField>
 
-        <Field label={t("placeFieldAddress")}>
+        <FormField label={t("placeFieldAddress")}>
           <Input
             value={config.address}
             maxLength={ADDRESS_MAX}
             onChange={(e) => setConfig((c) => ({ ...c, address: e.target.value }))}
             placeholder={t("placeFieldAddressPlaceholder")}
           />
-        </Field>
+        </FormField>
 
-        <Field label={t("placeFieldCategory")}>
+        <FormField label={t("placeFieldCategory")}>
           <div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
             {CATEGORIES.map(({ slug, icon: Icon }) => {
               const active = config.category === slug;
@@ -217,9 +219,9 @@ export function PlaceBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
               );
             })}
           </div>
-        </Field>
+        </FormField>
 
-        <Field label={t("placeFieldCover")}>
+        <FormField label={t("placeFieldCover")}>
           <div className="w-48">
             <ImageUploader
               value={config.coverUrl}
@@ -228,9 +230,9 @@ export function PlaceBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
               emptyHint={t("placeCoverHint")}
             />
           </div>
-        </Field>
+        </FormField>
 
-        <Field label={t("placeFieldPhone")}>
+        <FormField label={t("placeFieldPhone")}>
           <Input
             type="tel"
             value={config.phone}
@@ -238,18 +240,17 @@ export function PlaceBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
             placeholder="02-1234-5678"
             onChange={(e) => setConfig((c) => ({ ...c, phone: e.target.value }))}
           />
-        </Field>
+        </FormField>
 
-        <Field label={t("placeFieldHours")}>
-          <textarea
+        <FormField label={t("placeFieldHours")}>
+          <Textarea
             value={config.hoursText}
             maxLength={HOURS_MAX}
             rows={2}
             placeholder={t("placeFieldHoursPlaceholder")}
             onChange={(e) => setConfig((c) => ({ ...c, hoursText: e.target.value }))}
-            className="block w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 text-sm leading-relaxed text-slate-900 outline-none ring-accent-500 placeholder:text-slate-400 focus:ring-2"
           />
-        </Field>
+        </FormField>
       </div>
     </ConfirmDialog>
   );
@@ -383,22 +384,3 @@ function isPlaceCategory(v: unknown): v is PlaceCategory {
   );
 }
 
-function Field({
-  label,
-  required,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block space-y-1">
-      <span className="text-xs font-medium text-slate-700">
-        {label}
-        {required && <span className="ml-1 text-red-500">*</span>}
-      </span>
-      {children}
-    </label>
-  );
-}

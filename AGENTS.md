@@ -374,10 +374,64 @@ Identity archetype 은 `ContactCardEntry` 1 개로 충분. 신규 추가 시 foi
 
 ---
 
-## 9. 변경 이력
+---
+
+## 9. 입력 다이얼로그 (BlockDialog) 공통 패턴
+
+모든 카드 추가/수정 다이얼로그가 따르는 패턴. 신규 BlockDialog 만들 때 이 절을 참조.
+
+### 9.1 공통 프리미티브
+
+| 용도 | 컴포넌트 | 위치 |
+|---|---|---|
+| 다이얼로그 wrapper | `ConfirmDialog` | `components/ui/dialog.tsx` |
+| 필드 라벨 + required 마커 | `FormField` | `components/profile-section/FormField.tsx` |
+| 한 줄 입력 | `Input` | `components/ui/input.tsx` |
+| 다중 라인 입력 | `Textarea` | `components/ui/textarea.tsx` |
+| 단일 이미지 업로드 | `ImageUploader` | `components/profile-section/ImageUploader.tsx` |
+
+**절대 local 에서 재구현 ❌**. 새 다이얼로그에서 직접 `<label>` / `<textarea>` 를 만들면 디자인 드리프트의 원인. 모두 위 프리미티브 사용.
+
+### 9.2 ConfirmDialog props
+
+| prop | 의미 | 기본값 / 권장 |
+|---|---|---|
+| `title` | 다이얼로그 헤더 | `t("add{Name}Title")` 또는 `t("edit{Name}Title")` |
+| `description` | 헤더 하단 안내 | `t("add{Name}Description")` |
+| `confirmLabel` | 저장 버튼 라벨 | `t("save")` (전역 공통) |
+| `cancelLabel` | 취소 버튼 라벨 | `t("cancel")` (전역 공통) |
+| `confirmDisabled` | 저장 비활성화 조건 | `!canSave` boolean |
+| `maxWidthClass` | 패널 폭 override | 기본 `max-w-md` (단일 입력) / `max-w-lg` (멀티 필드) / `max-w-2xl` (preview 동반) |
+
+### 9.3 폭 선택 가이드
+
+| 다이얼로그 형태 | maxWidthClass | 예 |
+|---|---|---|
+| 단일 입력 (URL / 이미지 / 텍스트) | 기본 `max-w-md` | ImageBlockDialog, EmbedBlockDialog |
+| 멀티 필드 (3-7 개 필드) | `max-w-lg` | EmailFormBlockDialog, BookingBlockDialog, EventBlockDialog, ContactCardBlockDialog, PlaceBlockDialog |
+| 멀티 필드 + 라이브 preview | `max-w-2xl` | TextBlockDialog, ProductCardBlockDialog |
+
+### 9.4 라이브 preview 영역
+
+미리보기 동반 다이얼로그 (Text / ProductCard) 의 preview 영역:
+- 다이얼로그 body 상단 또는 하단에 별도 섹션
+- 배경: `rounded-2xl border-slate-200 bg-slate-50/50 px-4 py-3` (또는 `.profile-card-static` + override)
+- 라벨: `text-[11px] font-medium uppercase tracking-wider text-slate-500` + 아이콘
+- 미입력 상태: italic `text-slate-400` 안내 (`textPreviewEmpty` 같은 i18n key)
+
+### 9.5 폼 검증 흐름
+
+- 클라이언트에서 `canSave` boolean 계산 → `confirmDisabled={!canSave}` 로 저장 버튼 비활성화
+- 백엔드는 source of truth — `normalize()` 에서 길이 / URL 화이트리스트 / enum 화이트리스트 검증
+- 다이얼로그는 UX 힌트 (예: EmbedBlockDialog 의 ✓/✗ 제공자, BookingBlockDialog 의 ✓ Calendly), 백엔드는 hard validation
+
+---
+
+## 10. 변경 이력
 
 이 가이드는 카드 구조가 바뀌면 함께 업데이트해야 함. 최근 토큰 변경:
 - 2026-05: `rounded-2xl` 통일, `.profile-card` / `.profile-card-static` CSS 클래스 도입 (#94, #95)
 - 2026-05: 상품 카드 paginated swipe — 1 아이템 = 풀폭, 2+ = 풀폭 페이지 (#104, #105)
 - 2026-05: PLACE archetype 신규 추가 (#102, #103)
 - 2026-05: ImageEntry 자연 비율 → `aspect-[4/3]` letterbox 통일 (#108)
+- 2026-05: `FormField` / `Textarea` 공유 프리미티브 추출, 6 개 다이얼로그의 로컬 `Field` 중복 제거 (#110)

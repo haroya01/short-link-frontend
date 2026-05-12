@@ -6,6 +6,7 @@ import type { ContactCardPalette } from "@/types";
 import { PALETTES } from "@/app/[locale]/u/[username]/_components/contact-card-palettes";
 import { ConfirmDialog } from "../ui/dialog";
 import { Input } from "../ui/input";
+import { FormField } from "./FormField";
 import { ImageUploader } from "./ImageUploader";
 
 type Config = {
@@ -153,39 +154,39 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
         </div>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Field label={t("contactFieldName")} required>
+        <FormField label={t("contactFieldName")} required>
           <Input
             value={config.name}
             maxLength={60}
             onChange={(e) => setConfig((c) => ({ ...c, name: e.target.value }))}
             placeholder={t("contactFieldNamePlaceholder")}
           />
-        </Field>
-        <Field label={t("contactFieldTitle")}>
+        </FormField>
+        <FormField label={t("contactFieldTitle")}>
           <Input
             value={config.title}
             maxLength={80}
             onChange={(e) => setConfig((c) => ({ ...c, title: e.target.value }))}
             placeholder={t("contactFieldTitlePlaceholder")}
           />
-        </Field>
-        <Field label={t("contactFieldCompany")}>
+        </FormField>
+        <FormField label={t("contactFieldCompany")}>
           <Input
             value={config.company}
             maxLength={80}
             onChange={(e) => setConfig((c) => ({ ...c, company: e.target.value }))}
             placeholder={t("contactFieldCompanyPlaceholder")}
           />
-        </Field>
-        <Field label={t("contactFieldPhone")}>
+        </FormField>
+        <FormField label={t("contactFieldPhone")}>
           <Input
             value={config.phone}
             maxLength={30}
             onChange={(e) => setConfig((c) => ({ ...c, phone: e.target.value }))}
             placeholder="+82 10-0000-0000"
           />
-        </Field>
-        <Field label={t("contactFieldEmail")}>
+        </FormField>
+        <FormField label={t("contactFieldEmail")}>
           <Input
             type="email"
             value={config.email}
@@ -193,8 +194,8 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
             onChange={(e) => setConfig((c) => ({ ...c, email: e.target.value }))}
             placeholder="you@example.com"
           />
-        </Field>
-        <Field label={t("contactFieldWebsite")}>
+        </FormField>
+        <FormField label={t("contactFieldWebsite")}>
           <Input
             type="url"
             value={config.website}
@@ -202,38 +203,17 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
             onChange={(e) => setConfig((c) => ({ ...c, website: e.target.value }))}
             placeholder="https://example.com"
           />
-        </Field>
-        <Field label={t("contactFieldAddress")} className="sm:col-span-2">
+        </FormField>
+        <FormField label={t("contactFieldAddress")} className="sm:col-span-2">
           <Input
             value={config.address}
             maxLength={200}
             onChange={(e) => setConfig((c) => ({ ...c, address: e.target.value }))}
             placeholder={t("contactFieldAddressPlaceholder")}
           />
-        </Field>
+        </FormField>
       </div>
     </ConfirmDialog>
   );
 }
 
-function Field({
-  label,
-  required,
-  className,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  className?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className={`block space-y-1 ${className ?? ""}`}>
-      <span className="text-xs font-medium text-slate-700">
-        {label}
-        {required && <span className="ml-1 text-red-500">*</span>}
-      </span>
-      {children}
-    </label>
-  );
-}

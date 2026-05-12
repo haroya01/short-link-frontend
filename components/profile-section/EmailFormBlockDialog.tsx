@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "../ui/dialog";
 import { Input } from "../ui/input";
+import { FormField } from "./FormField";
 
 type Config = { title: string; placeholder: string; successMessage: string };
 
@@ -69,51 +70,32 @@ export function EmailFormBlockDialog({ open, initialJson, onOpenChange, onSubmit
       }}
     >
       <div className="space-y-3">
-        <Field label={t("emailFormFieldTitle")} required>
+        <FormField label={t("emailFormFieldTitle")} required>
           <Input
             value={config.title}
             maxLength={60}
             onChange={(e) => setConfig((c) => ({ ...c, title: e.target.value }))}
             placeholder={t("emailFormFieldTitlePlaceholder")}
           />
-        </Field>
-        <Field label={t("emailFormFieldPlaceholder")}>
+        </FormField>
+        <FormField label={t("emailFormFieldPlaceholder")}>
           <Input
             value={config.placeholder}
             maxLength={60}
             onChange={(e) => setConfig((c) => ({ ...c, placeholder: e.target.value }))}
             placeholder="you@example.com"
           />
-        </Field>
-        <Field label={t("emailFormFieldSuccess")}>
+        </FormField>
+        <FormField label={t("emailFormFieldSuccess")}>
           <Input
             value={config.successMessage}
             maxLength={120}
             onChange={(e) => setConfig((c) => ({ ...c, successMessage: e.target.value }))}
             placeholder={t("emailFormFieldSuccessPlaceholder")}
           />
-        </Field>
+        </FormField>
       </div>
     </ConfirmDialog>
   );
 }
 
-function Field({
-  label,
-  required,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block space-y-1">
-      <span className="text-xs font-medium text-slate-700">
-        {label}
-        {required && <span className="ml-1 text-red-500">*</span>}
-      </span>
-      {children}
-    </label>
-  );
-}
