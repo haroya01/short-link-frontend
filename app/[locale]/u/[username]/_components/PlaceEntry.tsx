@@ -42,12 +42,17 @@ const CATEGORY_ICONS: Record<PlaceCategory, typeof Coffee> = {
 };
 
 /**
- * PLACE block — single business / venue card. Visual hierarchy follows the deep market-research
- * pass (see PR #...): cover photo (or Static Map fallback) on top at 5:3, then name + address +
- * hours, then a primary "길찾기" CTA with three ghost actions below (call / copy address / share).
- * Korean F&B / retail / studio sellers think of their storefront photo as their identity, so when
- * a cover photo is uploaded we feature it; only if none is set do we fall back to a Static Maps
- * PNG of the location.
+ * PLACE block — single business / venue card. Visual hierarchy: 5:3 cover photo (or Static Map
+ * fallback) on top, then name + address + phone + hours, then a primary bottom CTA bar for 길찾기.
+ * Korean F&B / retail / studio sellers think of their storefront photo as their identity, so
+ * when a cover photo is uploaded we feature it; only if none is set do we fall back to a Static
+ * Maps PNG of the location.
+ *
+ * <p>Follows the cross-card "Action Position Rules" — primary CTA lives in a full-width bottom
+ * bar (same slot as ContactCard 연락처 저장 / Product 자세히 / Booking 예약하기), share is a small
+ * ghost icon in the cover's top-right corner. Earlier revisions made the whole cover the
+ * directions tap target, which broke the rule by putting the primary action somewhere PlaceEntry
+ * was the only outlier in.
  *
  * <p>Google Maps interactions are link-outs, not embeds: the iframe Embed API has no dark-mode
  * scheme and creates touch-scroll conflicts on mobile. A Static Map {@code <img>} is faster,
@@ -102,13 +107,6 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
       <article
         className={`profile-card-static overflow-hidden ${colors.card} ${colors.cardBorder}`}
       >
-        {/* COVER = primary action. The directions anchor stretches over the whole 5:3 photo/map
-            via {@code absolute inset-0}, so a single tap anywhere on the most visually prominent
-            element does what the visitor is most likely to want ("이 가게 어떻게 가지?"). The
-            "길찾기 →" pill at the bottom-right is the affordance — without it the tap target reads
-            as a passive image. The share button is a sibling (not nested inside the anchor —
-            nested-interactive is a WCAG violation), positioned ABOVE the anchor via z-index so
-            tapping it doesn't also trigger directions. */}
         <div className="relative aspect-[5/3] w-full bg-slate-100">
           {heroSrc ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -119,35 +117,22 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
               className="h-full w-full object-cover"
             />
           ) : null}
-          <a
-            href={directions}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={t("directions")}
-            className="absolute inset-0 focus-ring"
-          >
-            <span className="sr-only">{t("directions")}</span>
-          </a>
           {CategoryIcon && (
             <CardFloatingChip position="top-left" icon={<CategoryIcon className="h-3 w-3" />}>
               {t(`category_${config.category}` as const)}
             </CardFloatingChip>
           )}
-          <span className="pointer-events-none absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-black/70 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
-            <Navigation className="h-3 w-3" />
-            {t("directions")}
-          </span>
           <button
             type="button"
             onClick={share}
             aria-label={t("share")}
-            className="absolute right-2 top-2 z-10 grid h-7 w-7 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60"
+            className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60"
           >
             <Share2 className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        <div className="space-y-1.5 px-4 py-3">
+        <div className="space-y-1.5 px-4 pt-3">
           <h3 className={`text-[15px] font-semibold leading-tight ${colors.primary}`}>
             {config.name}
           </h3>
@@ -180,6 +165,18 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
               <span className="whitespace-pre-line">{config.hoursText}</span>
             </p>
           )}
+        </div>
+
+        <div className={`mt-3 border-t px-3 pb-3 pt-3 ${colors.cardBorder}`}>
+          <a
+            href={directions}
+            target="_blank"
+            rel="noreferrer"
+            className={`flex h-10 w-full items-center justify-center gap-2 rounded-xl text-[13px] font-medium transition active:scale-[0.98] ${colors.ctaPrimary}`}
+          >
+            <Navigation className="h-4 w-4" />
+            {t("directions")}
+          </a>
         </div>
       </article>
     </li>
