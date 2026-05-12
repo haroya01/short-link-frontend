@@ -71,6 +71,61 @@ h1, h2, h3, p {
   }
 
   /*
+   * Unified public-profile card surface — single source of truth for every block on the public
+   * page (link / embed / image / gallery / product / booking / event / email form). Border,
+   * radius, baseline shadow, and the transition contract are owned here so the page reads as one
+   * design language. Individual entries layer their own inner layout (aspect ratios, padding,
+   * meta strips) on top, but never override the wrapper-level tokens.
+   *
+   * <p>Shape choice: <code>rounded-2xl</code> (16px). Twelve is too rigid for a creator profile,
+   * twenty-four reads as casual / playful — the 16 px sweet spot matches Stan Store's commerce
+   * cards and Beacons' default surface, both of which target the same Korean creator audience
+   * short-link does.
+   *
+   * <p>Shadow contract: nearly-flat at rest (1 px of falloff is enough for separation when the
+   * border is doing the bulk of the work), then a soft 4-by-16 spread on hover that maps the
+   * card visually closer to the cursor. This pattern survives dark themes — a heavy resting
+   * shadow on a dark surface reads as a stain — and keeps the page feeling premium without the
+   * material-design "every card is a paper sheet" look.
+   *
+   * <p>Interactive feedback: the hover lift (<code>-translate-y-0.5</code>) is shared with the
+   * legacy <code>.hover-lift</code> class so existing instances behave consistently. We
+   * deliberately scope the transition to <code>transform</code>, <code>box-shadow</code>, and
+   * <code>border-color</code> only — a blanket <code>transition-all</code> kicked in during the
+   * embed-card swap and made the card visibly judder (see PR #91).
+   *
+   * <p>Use <code>.profile-card-static</code> for non-interactive surfaces (e.g. the email-form
+   * card body that wraps its own input + button) — same resting visual, no hover transform so
+   * the wrapper doesn't fight the inner controls' own focus states.
+   */
+  .profile-card,
+  .profile-card-static {
+    @apply rounded-2xl border;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition:
+      transform 200ms ease-out,
+      box-shadow 200ms ease-out,
+      border-color 200ms ease-out;
+    will-change: transform;
+  }
+  .profile-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+  }
+  .profile-card:active {
+    /* Press feedback — Stan Store pattern (scale 0.98). Combined translateY(0) cancels the hover
+     * lift mid-press, so the cursor and the card track each other instead of fighting. */
+    transform: scale(0.98) translateY(0);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .profile-card:hover,
+    .profile-card:active {
+      transform: none;
+    }
+  }
+
+  /*
    * Stagger fade-in for the public profile feed. Each entry sets `--idx` inline (0,1,2,…) and
    * the animation delay derives from it so the items cascade in. Header / footer use the same
    * keyframe with no delay. Reduced-motion users skip the animation entirely.

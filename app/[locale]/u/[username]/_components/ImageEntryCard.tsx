@@ -31,7 +31,7 @@ export function ImageEntryCard({
           type="button"
           onClick={() => setOpen(true)}
           aria-label={t("openImage", { idx: 1 })}
-          className={`block w-full cursor-zoom-in overflow-hidden rounded-xl border bg-slate-100 ${colors.card} ${colors.cardBorder}`}
+          className={`profile-card block w-full cursor-zoom-in overflow-hidden bg-slate-100 ${colors.card} ${colors.cardBorder}`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={url} alt="" loading="lazy" className="block w-full" />

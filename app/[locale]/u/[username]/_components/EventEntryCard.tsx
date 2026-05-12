@@ -71,16 +71,18 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
 
   return (
     <li className="profile-fade" style={fadeStyle}>
-      <div className={`rounded-xl border px-4 py-4 ${colors.card} ${colors.cardBorder}`}>
+      <div className={`profile-card-static px-4 py-4 ${colors.card} ${colors.cardBorder}`}>
         <div className="flex items-start gap-3">
           <div
-            className={`grid h-14 w-14 shrink-0 place-items-center rounded-lg border ${colors.cardBorder} bg-white/80 text-center leading-tight`}
+            className="grid h-16 w-16 shrink-0 place-items-center rounded-xl border border-accent-200/60 bg-accent-50/70 text-center leading-tight"
           >
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-wider text-accent-700">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-accent-700">
                 {dateBadge.month}
               </p>
-              <p className="text-lg font-bold text-slate-900">{dateBadge.day}</p>
+              <p className="text-xl font-bold leading-none text-accent-900">
+                {dateBadge.day}
+              </p>
             </div>
           </div>
           <div className="min-w-0 flex-1">

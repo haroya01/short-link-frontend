@@ -34,7 +34,7 @@ export function EntryList({ entries, username, colors, emptyLabel }: Props) {
     return (
       <ul className="mt-8 space-y-2.5">
         <li
-          className={`rounded-xl border border-dashed ${colors.cardBorder} p-6 text-center text-xs ${colors.muted}`}
+          className={`rounded-2xl border border-dashed ${colors.cardBorder} p-6 text-center text-xs ${colors.muted}`}
         >
           {emptyLabel}
         </li>
