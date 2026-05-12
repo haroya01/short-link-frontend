@@ -3,6 +3,7 @@
 import { useState, type CSSProperties, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { submitEmailLead } from "@/lib/api";
+import { parseEmailFormConfig } from "@/lib/block-config-parsers";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
@@ -11,12 +12,6 @@ type Props = {
   content: string;
   colors: ThemeColors;
   fadeStyle?: CSSProperties;
-};
-
-type Config = {
-  title: string;
-  placeholder: string | null;
-  successMessage: string | null;
 };
 
 /**
@@ -29,7 +24,7 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle");
 
-  const config = parseConfig(content);
+  const config = parseEmailFormConfig(content);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -82,16 +77,3 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
   );
 }
 
-function parseConfig(raw: string): Config {
-  try {
-    const parsed = JSON.parse(raw);
-    return {
-      title: typeof parsed.title === "string" ? parsed.title : "",
-      placeholder: typeof parsed.placeholder === "string" ? parsed.placeholder : null,
-      successMessage:
-        typeof parsed.successMessage === "string" ? parsed.successMessage : null,
-    };
-  } catch {
-    return { title: raw, placeholder: null, successMessage: null };
-  }
-}
