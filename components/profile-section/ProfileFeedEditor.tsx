@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUp,
   CalendarClock,
   CalendarDays,
   ChevronDown,
+  ChevronRight,
   ChevronUp,
   Contact,
   GalleryHorizontal,
@@ -24,7 +25,48 @@ import {
 } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import type { MyLink } from "@/types";
+import { useCollapsedSections } from "@/lib/use-collapsed-sections";
 import type { FeedItem } from "./types";
+
+type SectionMeta = {
+  /** Index of the TEXT header that anchors this section, or null when the row sits above the
+   *  first header (the "ungrouped prefix"). */
+  headerIdx: number | null;
+  /** profile_block id of the section header — the stable key used in localStorage so a header
+   *  stays collapsed across reorders that change its array position. */
+  headerId: number | null;
+  /** Items in this section excluding the header itself. Shown as "3 items" on the header chip. */
+  count: number;
+};
+
+/**
+ * Walks the flat feed once and returns, per row, which TEXT header it belongs to plus the
+ * section's body count. The returned array is index-aligned with {@code items}, so callers can do
+ * {@code sectionByIdx[idx]} during a render loop without re-scanning the array per row.
+ */
+function computeSectionMeta(items: FeedItem[]): SectionMeta[] {
+  const meta: { headerIdx: number | null; headerId: number | null }[] = [];
+  let currentIdx: number | null = null;
+  let currentId: number | null = null;
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    if (it.kind === "BLOCK" && it.type === "TEXT") {
+      currentIdx = i;
+      currentId = it.id;
+    }
+    meta.push({ headerIdx: currentIdx, headerId: currentId });
+  }
+  const counts = new Map<number, number>();
+  for (const m of meta) {
+    if (m.headerIdx !== null) counts.set(m.headerIdx, (counts.get(m.headerIdx) ?? 0) + 1);
+  }
+  return meta.map((m) => ({
+    headerIdx: m.headerIdx,
+    headerId: m.headerId,
+    // Subtract 1 because the count includes the header row itself.
+    count: m.headerIdx !== null ? (counts.get(m.headerIdx) ?? 1) - 1 : 0,
+  }));
+}
 
 type Props = {
   items: FeedItem[];
@@ -136,33 +178,26 @@ export function ProfileFeedEditor({
               t={t}
             />
           ) : (
-            <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
-              {items.map((item, idx) => (
-                <FeedItemRow
-                  key={item.kind === "LINK" ? `link:${item.code}` : `block:${item.id}`}
-                  item={item}
-                  idx={idx}
-                  totalCount={items.length}
-                  links={links}
-                  highlightedShortCode={highlightedShortCode}
-                  pendingShortCode={pendingShortCode}
-                  labelByShortCode={labelByShortCode}
-                  isDragging={dragIndex === idx}
-                  isOver={overIndex === idx && dragIndex !== null && dragIndex !== idx}
-                  onMove={onMove}
-                  onDragStart={onDragStart}
-                  onDragOver={onDragOver}
-                  onDrop={onDrop}
-                  onDragEnd={onDragEnd}
-                  onHighlight={onHighlight}
-                  onToggle={onToggle}
-                  onEditBlock={onEditBlock}
-                  onDeleteBlock={onDeleteBlock}
-                  onEditLabel={onEditLabel}
-                  t={t}
-                />
-              ))}
-            </ul>
+            <FeedItemList
+              items={items}
+              links={links}
+              highlightedShortCode={highlightedShortCode}
+              pendingShortCode={pendingShortCode}
+              labelByShortCode={labelByShortCode}
+              dragIndex={dragIndex}
+              overIndex={overIndex}
+              onMove={onMove}
+              onDragStart={onDragStart}
+              onDragOver={onDragOver}
+              onDrop={onDrop}
+              onDragEnd={onDragEnd}
+              onHighlight={onHighlight}
+              onToggle={onToggle}
+              onEditBlock={onEditBlock}
+              onDeleteBlock={onDeleteBlock}
+              onEditLabel={onEditLabel}
+              t={t}
+            />
           )}
 
           {otherLinks.length > 0 && (
@@ -390,6 +425,111 @@ function FeedEmptyState({
   );
 }
 
+/**
+ * Section-aware wrapper around the flat item list. Computes which TEXT header anchors each row,
+ * hides rows inside a collapsed section (everything except the header itself), and renders a
+ * thin accent-color left rail on indented rows so the visual grouping is obvious without an
+ * extra wrapper element that would have broken the existing drag-and-drop flat-index contract.
+ */
+function FeedItemList({
+  items,
+  links,
+  highlightedShortCode,
+  pendingShortCode,
+  labelByShortCode,
+  dragIndex,
+  overIndex,
+  onMove,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
+  onHighlight,
+  onToggle,
+  onEditBlock,
+  onDeleteBlock,
+  onEditLabel,
+  t,
+}: {
+  items: FeedItem[];
+  links: MyLink[];
+  highlightedShortCode: string | null;
+  pendingShortCode: string | null;
+  labelByShortCode: Record<string, string>;
+  dragIndex: number | null;
+  overIndex: number | null;
+  onMove: (idx: number, direction: -1 | 1) => void;
+  onDragStart: (idx: number, e: React.DragEvent) => void;
+  onDragOver: (idx: number, e: React.DragEvent) => void;
+  onDrop: (idx: number, e: React.DragEvent) => void;
+  onDragEnd: () => void;
+  onHighlight: (shortCode: string) => void;
+  onToggle: (shortCode: string, show: boolean) => void;
+  onEditBlock: (blockId: number, current: string) => void;
+  onDeleteBlock: (blockId: number) => void;
+  onEditLabel: (shortCode: string, label: string) => void;
+  t: ReturnType<typeof useTranslations<"settings.profile">>;
+}) {
+  const { collapsed, toggle } = useCollapsedSections();
+  const sectionByIdx = useMemo(() => computeSectionMeta(items), [items]);
+
+  return (
+    <ul className="divide-y divide-slate-100 rounded-md border border-slate-200 bg-white">
+      {items.map((item, idx) => {
+        const meta = sectionByIdx[idx];
+        const isHeader = item.kind === "BLOCK" && item.type === "TEXT";
+        const sectionId = meta.headerId;
+        const isCollapsed = sectionId != null && collapsed.has(sectionId);
+        // Hide non-header rows that live inside a collapsed section. The header itself always
+        // renders so the user can still toggle it back open.
+        if (isCollapsed && !isHeader) return null;
+        const sectionInfo =
+          isHeader && sectionId != null
+            ? {
+                collapsed: collapsed.has(sectionId),
+                count: meta.count,
+                onToggle: () => toggle(sectionId),
+              }
+            : null;
+        const indented = !isHeader && meta.headerId != null;
+        return (
+          <FeedItemRow
+            key={item.kind === "LINK" ? `link:${item.code}` : `block:${item.id}`}
+            item={item}
+            idx={idx}
+            totalCount={items.length}
+            links={links}
+            highlightedShortCode={highlightedShortCode}
+            pendingShortCode={pendingShortCode}
+            labelByShortCode={labelByShortCode}
+            isDragging={dragIndex === idx}
+            isOver={overIndex === idx && dragIndex !== null && dragIndex !== idx}
+            sectionInfo={sectionInfo}
+            indented={indented}
+            onMove={onMove}
+            onDragStart={onDragStart}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onDragEnd={onDragEnd}
+            onHighlight={onHighlight}
+            onToggle={onToggle}
+            onEditBlock={onEditBlock}
+            onDeleteBlock={onDeleteBlock}
+            onEditLabel={onEditLabel}
+            t={t}
+          />
+        );
+      })}
+    </ul>
+  );
+}
+
+type SectionHeaderInfo = {
+  collapsed: boolean;
+  count: number;
+  onToggle: () => void;
+};
+
 type RowProps = {
   item: FeedItem;
   idx: number;
@@ -400,6 +540,11 @@ type RowProps = {
   labelByShortCode: Record<string, string>;
   isDragging: boolean;
   isOver: boolean;
+  /** Non-null only on TEXT header rows — drives the collapse chevron + count chip. */
+  sectionInfo: SectionHeaderInfo | null;
+  /** True when this row sits inside a section (any non-TEXT row that follows a TEXT header).
+   *  Drives the left rail + indent that signals "this belongs to the section above". */
+  indented: boolean;
   onMove: (idx: number, direction: -1 | 1) => void;
   onDragStart: (idx: number, e: React.DragEvent) => void;
   onDragOver: (idx: number, e: React.DragEvent) => void;
@@ -423,6 +568,8 @@ function FeedItemRow({
   labelByShortCode,
   isDragging,
   isOver,
+  sectionInfo,
+  indented,
   onMove,
   onDragStart,
   onDragOver,
@@ -457,11 +604,17 @@ function FeedItemRow({
   const draggingState = isDragging
     ? "scale-[0.98] opacity-30 ring-2 ring-accent-400 rounded-md "
     : "";
+  // Indented rows (items that follow a TEXT header) get a thin accent-color rail on the left and
+  // extra padding so the user can see "this belongs to the section above" without breaking the
+  // flat-index drag layout — the rail is a left border, not a wrapping element, so drop indices
+  // stay 1:1 with the flat items array.
+  const indentRail = indented ? "border-l-2 border-accent-200 pl-4 " : "";
   // `relative` is permanent (not gated on isOver) so toggling the indicator doesn't reflow the row.
   // Transitions only animate properties that don't affect layout — opacity / transform / box-shadow —
   // so the dragged row fades smoothly without dragging siblings into a transition loop.
   const baseRow =
     "relative flex items-center justify-between gap-3 px-3 py-2 transition-[opacity,transform,box-shadow] duration-150 " +
+    indentRail +
     draggingState +
     dropIndicator;
   const dragHandle = <DragHandle idx={idx} totalCount={totalCount} onMove={onMove} />;
@@ -471,6 +624,7 @@ function FeedItemRow({
     // shouldn't pretend it's a heavy item. Compact padding + a centered hr communicates that.
     const slimRow =
       "relative flex items-center gap-2 px-3 py-1 transition-[opacity,transform,box-shadow] duration-150 " +
+      indentRail +
       draggingState +
       dropIndicator;
     return (
@@ -667,14 +821,41 @@ function FeedItemRow({
     );
   }
   if (item.kind === "BLOCK" && item.type === "TEXT") {
+    // TEXT is the section anchor: heavier background tint, chevron toggle on the left side of the
+    // label so the disclosure affordance is sibling to the title, and an item-count chip on the
+    // right side near the edit/delete actions. The chevron + count are decorations on top of the
+    // existing row — drag, edit, and delete affordances stay identical to other blocks.
+    const headerRow = baseRow + " bg-slate-50/60";
+    const collapsed = sectionInfo?.collapsed ?? false;
     return (
-      <li {...dndProps} className={baseRow}>
+      <li {...dndProps} className={headerRow}>
         {dragHandle}
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <Type className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          {sectionInfo ? (
+            <button
+              type="button"
+              onClick={sectionInfo.onToggle}
+              aria-expanded={!collapsed}
+              aria-label={collapsed ? t("sectionExpand") : t("sectionCollapse")}
+              className="grid h-5 w-5 shrink-0 place-items-center rounded text-slate-500 transition hover:bg-slate-200 hover:text-slate-900"
+            >
+              {collapsed ? (
+                <ChevronRight className="h-3.5 w-3.5" />
+              ) : (
+                <ChevronDown className="h-3.5 w-3.5" />
+              )}
+            </button>
+          ) : (
+            <Type className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          )}
           <span className="truncate text-sm font-semibold text-slate-900">
             {item.content || t("addTextPlaceholder")}
           </span>
+          {sectionInfo && sectionInfo.count > 0 && (
+            <span className="shrink-0 rounded-full bg-slate-200/70 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">
+              {t("sectionItemCount", { count: sectionInfo.count })}
+            </span>
+          )}
         </div>
         <BlockActions
           onEdit={() => onEditBlock(item.id, item.content ?? "")}
