@@ -2,7 +2,7 @@
 
 import { useMemo, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
-import { CalendarDays, ArrowRight, ExternalLink } from "lucide-react";
+import { CalendarDays, ExternalLink } from "lucide-react";
 import type { BookingConfig } from "@/types";
 import { parseBookingConfig } from "@/lib/block-config-parsers";
 import { resolveBookingProvider } from "@/components/profile-section/booking-providers";
@@ -67,19 +67,20 @@ export function BookingEntryCard({ content, colors, fadeStyle }: Props) {
               <p
                 className={`mt-1.5 inline-flex items-center gap-1 rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-medium ${colors.muted}`}
               >
-                <ExternalLink className="h-2.5 w-2.5" />
                 {provider.name}
               </p>
             )}
           </div>
         </div>
+        {/* Bottom row mirrors LinkEntryCard's "new-tab indicator": ExternalLink on the right side
+            of the card signals "tap to open in a new tab" instead of ArrowRight which would imply
+            same-tab/forward navigation. Booking opens the provider page in a new window — same
+            semantic as Link / Embed cards — so they all share the ExternalLink icon. */}
         <div
           className={`flex items-center justify-between border-t px-4 py-2.5 ${colors.cardBorder}`}
         >
           <span className={`text-[13px] font-medium ${colors.primary}`}>{ctaLabel}</span>
-          <ArrowRight
-            className={`h-3.5 w-3.5 transition group-hover:translate-x-0.5 ${colors.primary}`}
-          />
+          <ExternalLink className={`h-3.5 w-3.5 ${colors.muted}`} />
         </div>
       </a>
     </li>
