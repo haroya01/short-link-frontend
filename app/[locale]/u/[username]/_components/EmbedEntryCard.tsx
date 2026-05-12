@@ -54,7 +54,7 @@ export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
   return (
     <li className="profile-fade" style={fadeStyle}>
       <div
-        className={`overflow-hidden rounded-xl border ${colors.card} ${colors.cardBorder}`}
+        className={`profile-card-static overflow-hidden ${colors.card} ${colors.cardBorder}`}
       >
         <div className="relative aspect-video w-full bg-slate-100">
           {meta?.thumbnailUrl ? (

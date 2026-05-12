@@ -15,9 +15,11 @@ import type { ThemeColors } from "../_lib/theme";
 type Props = {
   content: string;
   /**
-   * Theme colors accepted for parity; the carousel cards use a fixed white modern surface to
-   * stay readable across all themes and feel like discrete "product cards" rather than
-   * blending into the page background. Title text + dots respect the theme.
+   * Theme colors drive the wrapper border + background so the product carousel reads as part of
+   * the same surface family as the link / event / email blocks. The snapped (centered) card gets a
+   * stronger shadow as visual emphasis — that's the only style deviation from the rest of the
+   * feed, and it's intentional: a horizontal scroller without one card popping forward feels
+   * inert.
    */
   colors: ThemeColors;
   fadeStyle?: CSSProperties;
@@ -152,21 +154,23 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
               data-card
               style={baseStyle}
               className={
-                "shrink-0 snap-center overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] " +
-                (isActive ? "shadow-xl shadow-slate-300/50" : "shadow-md shadow-slate-200/40") +
+                `shrink-0 snap-center overflow-hidden rounded-2xl border transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${colors.card} ${colors.cardBorder} ` +
+                (isActive
+                  ? "shadow-[0_8px_24px_rgba(15,23,42,0.10)]"
+                  : "shadow-[0_1px_2px_rgba(15,23,42,0.04)]") +
                 " w-[78%] max-w-[300px] sm:w-[260px]"
               }
             >
               <CardImages images={item.images} />
               <div className="space-y-1.5 px-4 pb-3 pt-3">
-                <p className="text-[15px] font-semibold leading-tight text-slate-900">
+                <p className={`text-[15px] font-semibold leading-tight ${colors.primary}`}>
                   {item.name}
                 </p>
                 {item.price && (
                   <p className="text-sm font-medium text-accent-700">{item.price}</p>
                 )}
                 {item.description && (
-                  <p className="line-clamp-2 text-[12px] leading-snug text-slate-500">
+                  <p className={`line-clamp-2 text-[12px] leading-snug ${colors.muted}`}>
                     {item.description}
                   </p>
                 )}
@@ -185,7 +189,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                       }
                     }
                   }}
-                  className="flex items-center justify-center gap-1 border-t border-slate-100 px-4 py-3 text-sm font-medium text-slate-900 transition active:scale-[0.97] hover:bg-slate-50"
+                  className={`flex items-center justify-center gap-1 border-t px-4 py-3 text-sm font-medium transition active:scale-[0.97] ${colors.cardBorder} ${colors.primary} ${colors.cardHover}`}
                 >
                   <span>{item.ctaLabel || "자세히"}</span>
                   <ArrowRight className="h-3.5 w-3.5" />

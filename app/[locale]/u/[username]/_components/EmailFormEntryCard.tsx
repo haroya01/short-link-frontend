@@ -46,7 +46,7 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
   return (
     <li className="profile-fade" style={fadeStyle}>
       <div
-        className={`rounded-xl border px-4 py-4 ${colors.card} ${colors.cardBorder}`}
+        className={`profile-card-static px-4 py-4 ${colors.card} ${colors.cardBorder}`}
       >
         <p className={`text-sm font-semibold ${colors.primary}`}>{config.title}</p>
         {status === "done" ? (
