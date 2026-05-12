@@ -216,7 +216,6 @@ h1, h2, h3, p {
   .prose-text-block th {
     @apply bg-slate-50 font-semibold;
   }
-}
 
 @keyframes profile-fade-in {
   from {
