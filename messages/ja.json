@@ -776,7 +776,8 @@
       "submitting": "登録中...",
       "error": "登録に失敗しました。しばらくしてからお試しください。",
       "defaultPlaceholder": "you@example.com",
-      "defaultSuccess": "登録完了。ありがとうございます。"
+      "defaultSuccess": "登録完了。ありがとうございます。",
+      "trustHint": "このページのオーナーにのみ届きます。スパムは送りません。"
     },
     "booking": {
       "defaultTitle": "予約する",
@@ -1190,9 +1191,15 @@
       "addEmailFormPlaceholder": "(メールフォーム未設定)",
       "emailFormFieldTitle": "案内文",
       "emailFormFieldTitlePlaceholder": "例: ニュースレター登録",
+      "emailFormFieldSubtitle": "サブテキスト (任意)",
+      "emailFormFieldSubtitlePlaceholder": "例: 新作・講座開催・限定メニュー — いち早くお届けします。",
+      "emailFormFieldSubtitleHint": "なぜメールを残すべきか、訪問者が分かるよう一言添えてください。",
       "emailFormFieldPlaceholder": "入力欄ヒント",
       "emailFormFieldSuccess": "送信後メッセージ",
       "emailFormFieldSuccessPlaceholder": "例: 登録完了。ありがとうございます :)",
+      "emailFormHowItWorks": "訪問者が残したメールはオーナーだけが見られる 'leads' ダッシュボードに集約されます。CSV エクスポートで Mailchimp などに取り込めます。",
+      "emailFormViewLeadsCta": "収集したメールを見る",
+      "leadsLink": "収集したメール",
       "leads": {
         "title": "収集したメール",
         "intro": "合計 {count} 件",

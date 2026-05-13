@@ -2,22 +2,28 @@
 
 import { useState, type CSSProperties, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
+import { Lock } from "lucide-react";
 import { submitEmailLead } from "@/lib/api";
 import { parseEmailFormConfig } from "@/lib/block-config-parsers";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
   id: number;
-  /** JSON config persisted by the backend ({@code {title, placeholder, successMessage}}). */
+  /** JSON config persisted by the backend ({@code {title, subtitle, placeholder, successMessage}}). */
   content: string;
   colors: ThemeColors;
   fadeStyle?: CSSProperties;
 };
 
 /**
- * Visitor-facing email capture form. Renders the EMAIL_FORM block as a single-input + submit
- * button. On success it swaps to the success message permanently (per-render only — no localStorage)
- * so the visitor doesn't accidentally resubmit. Errors keep the form available with an inline note.
+ * Visitor-facing email capture form. Renders the EMAIL_FORM block as
+ * title → optional subtitle → input + submit → small trust footer. On success it swaps to the
+ * success message permanently (per-render only — no localStorage) so the visitor doesn't
+ * accidentally resubmit. Errors keep the form available with an inline note.
+ *
+ * <p>The trust footer is a deliberate addition (PR #...) — sellers were collecting emails without
+ * any visitor-side reassurance about where the address goes, and visitors hesitated to submit.
+ * The footer makes the implicit "this goes to {profile owner}" explicit + signals no spam.
  */
 export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
   const t = useTranslations("publicProfile.emailForm");
@@ -44,30 +50,41 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
         className={`profile-card-static px-4 py-3.5 ${colors.card} ${colors.cardBorder}`}
       >
         <p className={`text-sm font-semibold ${colors.primary}`}>{config.title}</p>
+        {config.subtitle && (
+          <p className={`mt-1 whitespace-pre-line text-[12px] leading-snug ${colors.muted}`}>
+            {config.subtitle}
+          </p>
+        )}
         {status === "done" ? (
           <p className={`mt-2 text-[12px] ${colors.muted}`}>
             {config.successMessage ?? t("defaultSuccess")}
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-2 sm:flex-row">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={config.placeholder ?? t("defaultPlaceholder")}
-              maxLength={254}
-              disabled={status === "submitting"}
-              className={`flex-1 rounded-md border bg-white/90 px-3 py-2 text-sm text-slate-900 outline-none ring-accent-500 placeholder:text-slate-400 focus:ring-2 ${colors.cardBorder}`}
-            />
-            <button
-              type="submit"
-              disabled={status === "submitting"}
-              className={`rounded-md px-3 py-2 text-[13px] font-medium transition disabled:opacity-60 ${colors.ctaPrimary}`}
-            >
-              {status === "submitting" ? t("submitting") : t("submit")}
-            </button>
-          </form>
+          <>
+            <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-2 sm:flex-row">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={config.placeholder ?? t("defaultPlaceholder")}
+                maxLength={254}
+                disabled={status === "submitting"}
+                className={`flex-1 rounded-md border bg-white/90 px-3 py-2 text-sm text-slate-900 outline-none ring-accent-500 placeholder:text-slate-400 focus:ring-2 ${colors.cardBorder}`}
+              />
+              <button
+                type="submit"
+                disabled={status === "submitting"}
+                className={`rounded-md px-3 py-2 text-[13px] font-medium transition disabled:opacity-60 ${colors.ctaPrimary}`}
+              >
+                {status === "submitting" ? t("submitting") : t("submit")}
+              </button>
+            </form>
+            <p className={`mt-1.5 flex items-center gap-1 text-[10px] ${colors.muted}`}>
+              <Lock className="h-2.5 w-2.5" aria-hidden />
+              {t("trustHint")}
+            </p>
+          </>
         )}
         {status === "error" && (
           <p className="mt-2 text-[11px] text-red-500">{t("error")}</p>
@@ -76,4 +93,3 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
     </li>
   );
 }
-

@@ -137,13 +137,32 @@ describe("parseEmailFormConfig", () => {
       parseEmailFormConfig(
         JSON.stringify({ title: "구독", placeholder: "이메일", successMessage: "감사" }),
       ),
-    ).toEqual({ title: "구독", placeholder: "이메일", successMessage: "감사" });
+    ).toEqual({
+      title: "구독",
+      subtitle: null,
+      placeholder: "이메일",
+      successMessage: "감사",
+    });
+  });
+
+  it("parses subtitle when present", () => {
+    expect(
+      parseEmailFormConfig(
+        JSON.stringify({ title: "구독", subtitle: "신상품 출시 시 가장 먼저 알려드려요." }),
+      ),
+    ).toEqual({
+      title: "구독",
+      subtitle: "신상품 출시 시 가장 먼저 알려드려요.",
+      placeholder: null,
+      successMessage: null,
+    });
   });
 
   it("falls back to {title: raw} for malformed JSON (legacy v0 shape compat)", () => {
     // Old EMAIL_FORM blocks stored a plain title string before we moved to JSON.
     expect(parseEmailFormConfig("plain old title")).toEqual({
       title: "plain old title",
+      subtitle: null,
       placeholder: null,
       successMessage: null,
     });
