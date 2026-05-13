@@ -22,7 +22,10 @@ import { cn } from "@/lib/utils";
  * extra scaling — that's the same width a real iPhone 14 Pro browser renders at.
  */
 const ROW_DURATION_SECONDS = 90;
-const DEVICE_SCALE = 0.65;
+// 0.8 keeps the contact-card foil readable on desktop. Below ~0.7 the repeating-linear-gradient
+// foil pattern starts to alias and lose its iridescent quality — the showcase ended up looking
+// worse than the real /u/<handle> page even though it uses identical components.
+const DEVICE_SCALE = 0.8;
 const DEVICE_NATIVE_W = 428;
 const DEVICE_NATIVE_H = 868;
 
