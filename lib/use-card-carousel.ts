@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
+import { useCallback, useRef, useState, type RefObject } from "react";
+import { useRafThrottledListener } from "./use-raf-throttled-listener";
 
 type Behavior = "center" | "start";
 
@@ -48,12 +49,11 @@ export function useCardCarousel({ itemCount, behavior = "start" }: Options): Car
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
 
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    let raf = 0;
-    const measure = () => {
-      raf = 0;
+  useRafThrottledListener(
+    () => scrollerRef.current,
+    () => {
+      const el = scrollerRef.current;
+      if (!el) return;
       if (behavior === "start") {
         const idx = Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
         setActiveIdx(Math.max(0, Math.min(itemCount - 1, idx)));
@@ -76,20 +76,9 @@ export function useCardCarousel({ itemCount, behavior = "start" }: Options): Car
         }
       });
       setActiveIdx(best);
-    };
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(measure);
-    };
-    measure();
-    el.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      el.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [itemCount, behavior]);
+    },
+    [itemCount, behavior],
+  );
 
   const scrollToIdx = useCallback(
     (idx: number) => {

@@ -2,11 +2,11 @@
 
 import {
   useCallback,
-  useEffect,
   useRef,
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from "react";
+import { useRafThrottledListener } from "./use-raf-throttled-listener";
 
 /**
  * Pointer + scroll driven CSS-variable controller for the holographic card surface. Encapsulates
@@ -92,24 +92,9 @@ export function useCardTilt(): {
     applyVars(50, yPct, 0.55);
   }, [applyVars]);
 
-  useEffect(() => {
-    applyScrollVars();
-    let rafId = 0;
-    const onScroll = () => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = 0;
-        applyScrollVars();
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, [applyScrollVars]);
+  // Target getter (not `window` directly) so SSR doesn't trip on the global lookup at render
+  // time — useEffect runs client-side only, where the getter resolves safely.
+  useRafThrottledListener(() => window, applyScrollVars, [applyScrollVars]);
 
   const onPointerLeave = useCallback(() => {
     pointerOverRef.current = false;
