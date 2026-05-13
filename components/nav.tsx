@@ -61,16 +61,20 @@ export function Nav() {
             <NavLink href="/" active={pathname === "/"}>
               {t("shorten")}
             </NavLink>
-            <NavLink href="/showcase" active={pathname.startsWith("/showcase")}>
-              {t("showcase")}
-            </NavLink>
+            {/* Single profile slot — anonymous visitors see the marketing showcase, signed-in
+                users go straight to their own /u/<handle>. Avoids having two adjacent
+                "프로필" / "내 프로필" links that visually compete. */}
+            {authenticated ? (
+              <ProfileNavLink username={me?.username ?? null} pathname={pathname} t={t} />
+            ) : (
+              <NavLink href="/showcase" active={pathname.startsWith("/showcase")}>
+                {t("showcase")}
+              </NavLink>
+            )}
             {authenticated && (
               <NavLink href="/dashboard" active={pathname.startsWith("/dashboard")}>
                 {t("myLinks")}
               </NavLink>
-            )}
-            {authenticated && (
-              <ProfileNavLink username={me?.username ?? null} pathname={pathname} t={t} />
             )}
             {isAdmin && (
               <NavLink href="/admin" active={pathname.startsWith("/admin")}>
@@ -120,16 +124,18 @@ export function Nav() {
             <MobileNavLink href="/" active={pathname === "/"}>
               {t("shorten")}
             </MobileNavLink>
-            <MobileNavLink href="/showcase" active={pathname.startsWith("/showcase")}>
-              {t("showcase")}
-            </MobileNavLink>
+            {/* Mirror of the desktop slot logic — see nav above. */}
+            {authenticated ? (
+              <ProfileMobileLink username={me?.username ?? null} t={t} />
+            ) : (
+              <MobileNavLink href="/showcase" active={pathname.startsWith("/showcase")}>
+                {t("showcase")}
+              </MobileNavLink>
+            )}
             {authenticated && (
               <MobileNavLink href="/dashboard" active={pathname.startsWith("/dashboard")}>
                 {t("myLinks")}
               </MobileNavLink>
-            )}
-            {authenticated && (
-              <ProfileMobileLink username={me?.username ?? null} t={t} />
             )}
             {isAdmin && (
               <MobileNavLink href="/admin" active={pathname.startsWith("/admin")}>

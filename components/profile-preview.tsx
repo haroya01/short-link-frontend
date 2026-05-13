@@ -2,12 +2,12 @@
 
 import { BatteryFull, Signal, Wifi } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { PublicProfileEntry, Social } from "@/types";
+import type { ProfileTheme, PublicProfileEntry, Social } from "@/types";
 import { EntryList } from "@/app/[locale]/u/[username]/_components/EntryList";
 import { ProfileHeader } from "@/app/[locale]/u/[username]/_components/ProfileHeader";
 import { ShareRow } from "@/app/[locale]/u/[username]/_components/ShareRow";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
-import type { ProfileTheme } from "@/types";
+import { cn } from "@/lib/utils";
 
 type Props = {
   username: string;
@@ -30,11 +30,19 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
   "https://kurl.me";
 
+// devices.css iPhone 14 Pro native size. Scale the whole device so the editor sidebar can fit
+// it without overflowing. Inside the screen viewport (390×830) the public-profile components
+// render at iPhone-viewport width — same as a real phone visit.
+const DEVICE_NATIVE_W = 428;
+const DEVICE_NATIVE_H = 868;
+const DEVICE_SCALE = 0.75;
+
 /**
  * Live profile preview — uses the exact same {@link ProfileHeader} / {@link EntryList} /
- * {@link ShareRow} components the public page renders, just framed inside a phone mockup. Source
- * of truth is the editor's draft state, threaded through as a {@link PublicProfileEntry} list so
- * highlight / image / YouTube card variants render identically without duplicating logic here.
+ * {@link ShareRow} components the public page renders, framed inside an iPhone 14 Pro shell
+ * from the open-source {@code devices.css} library. The status-bar simulation (time + signal +
+ * wifi + battery) is hand-drawn on top of the device-screen to nudge the preview from "design
+ * mockup" toward "this is what your phone visitors actually see".
  */
 export function ProfilePreview({
   username,
@@ -55,68 +63,114 @@ export function ProfilePreview({
       <p className="text-center text-[11px] font-medium text-slate-500">
         {tEditor("previewTitle")}
       </p>
-      <div className="relative mx-auto w-full max-w-[320px] overflow-hidden rounded-[42px] border border-slate-800/30 bg-slate-900 p-1.5 shadow-xl shadow-slate-300/40">
-        {/* Dynamic-Island style notch */}
-        <div className="absolute left-1/2 top-2 z-10 h-5 w-20 -translate-x-1/2 rounded-full bg-slate-900" />
+
+      {/* Outer wrapper claims the scaled-down layout size — devices.css uses CSS transform
+          which doesn't affect flow, so without this the editor sidebar would reserve the
+          unscaled 428×868 footprint. */}
+      <div
+        className="mx-auto"
+        style={{
+          width: DEVICE_NATIVE_W * DEVICE_SCALE,
+          height: DEVICE_NATIVE_H * DEVICE_SCALE,
+        }}
+      >
         <div
-          className={`relative flex aspect-[390/844] flex-col overflow-hidden rounded-[34px] ${colors.page}`}
+          className="device device-iphone-14-pro origin-top-left"
+          style={{ transform: `scale(${DEVICE_SCALE})` }}
         >
-          {/* Scroll area: status bar + the real public-profile body. Home indicator sits outside
-              so it stays pinned to the phone's bottom edge even when content is short. */}
-          <div className="flex-1 overflow-y-auto">
-            <div
-              className={`pointer-events-none sticky top-0 z-10 flex items-center justify-between px-7 pt-2 pb-1 text-[9px] font-semibold ${colors.primary}`}
-            >
-              <span>9:41</span>
-              <div className="flex items-center gap-0.5 opacity-80">
-                <Signal className="h-2.5 w-2.5" />
-                <Wifi className="h-2.5 w-2.5" />
-                <BatteryFull className="h-2.5 w-2.5" />
+          <div className="device-frame">
+            <div className={cn("device-screen overflow-y-auto", colors.page)}>
+              {/* Status bar pinned to the top of the scrollable screen so it tracks the visible
+                  area. Same 9:41 time / signal-wifi-battery iconography as iOS. */}
+              <div
+                className={cn(
+                  "pointer-events-none sticky top-0 z-10 flex items-center justify-between px-7 pt-2 pb-1 text-[11px] font-semibold",
+                  colors.primary,
+                )}
+              >
+                <span>9:41</span>
+                <div className="flex items-center gap-0.5 opacity-80">
+                  <Signal className="h-3 w-3" />
+                  <Wifi className="h-3 w-3" />
+                  <BatteryFull className="h-3 w-3" />
+                </div>
               </div>
-            </div>
-            <div className="px-4 pb-6 pt-2">
-              <ProfileHeader
-                username={displayUsername}
-                bio={bio || null}
-                avatarUrl={avatarUrl}
-                bannerUrl={bannerUrl}
-                colors={colors}
-              />
-              <EntryList
-                entries={entries}
-                username={displayUsername}
-                colors={colors}
-                emptyLabel={t("empty")}
-              />
-              {(socials.length > 0 || entries.length > 0) && (
-                <ShareRow
-                  url={`${SITE_URL}/u/${displayUsername}`}
+
+              {/* Body: identical to /u/[username]/page.tsx — full-bleed banner with mask fade,
+                  container with -mt-12 overlap, ProfileHeader + EntryList + ShareRow. */}
+              {bannerUrl && (
+                <div
+                  className="aspect-[3/1] w-full overflow-hidden"
+                  style={{
+                    WebkitMaskImage:
+                      "linear-gradient(to bottom, black 75%, transparent 100%)",
+                    maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={bannerUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
+              <div
+                className={cn(
+                  "mx-auto w-full max-w-md px-4",
+                  bannerUrl ? "-mt-12 pb-6" : "py-6",
+                )}
+              >
+                <ProfileHeader
+                  username={displayUsername}
+                  bio={bio || null}
+                  avatarUrl={avatarUrl}
+                  bannerUrl={bannerUrl}
+                  colors={colors}
+                  bannerInline={false}
+                />
+                <EntryList
+                  entries={entries}
                   username={displayUsername}
                   colors={colors}
-                  socials={socials}
-                  labels={{
-                    visitOn: {
-                      x: t("visit.x"),
-                      line: t("visit.line"),
-                      threads: t("visit.threads"),
-                      facebook: t("visit.facebook"),
-                      kakao: t("visit.kakao"),
-                      instagram: t("visit.instagram"),
-                      linkedin: t("visit.linkedin"),
-                    },
-                    shareMore: t("share.more"),
-                    copy: t("share.copy"),
-                    copied: t("share.copied"),
-                  }}
+                  emptyLabel={t("empty")}
                 />
-              )}
-              <p className={`mt-6 text-center text-[11px] ${colors.muted}`}>{t("madeWith")}</p>
+                {(socials.length > 0 || entries.length > 0) && (
+                  <ShareRow
+                    url={`${SITE_URL}/u/${displayUsername}`}
+                    username={displayUsername}
+                    colors={colors}
+                    socials={socials}
+                    labels={{
+                      visitOn: {
+                        x: t("visit.x"),
+                        line: t("visit.line"),
+                        threads: t("visit.threads"),
+                        facebook: t("visit.facebook"),
+                        kakao: t("visit.kakao"),
+                        instagram: t("visit.instagram"),
+                        linkedin: t("visit.linkedin"),
+                      },
+                      shareMore: t("share.more"),
+                      copy: t("share.copy"),
+                      copied: t("share.copied"),
+                    }}
+                  />
+                )}
+                <p className={cn("mt-6 text-center text-[11px]", colors.muted)}>
+                  {t("madeWith")}
+                </p>
+              </div>
             </div>
           </div>
-          {/* Home indicator — pinned to the phone's bottom edge regardless of content height. */}
-          <div className="mx-auto mb-1.5 h-1 w-24 shrink-0 rounded-full bg-slate-300/60" />
+          <div className="device-stripe" />
+          <div className="device-header" />
+          <div className="device-sensors" />
+          <div className="device-btns" />
+          <div className="device-power" />
         </div>
       </div>
+
       <p className="text-center text-[10px] text-slate-400">kurl.me/u/{username || "..."}</p>
     </div>
   );
