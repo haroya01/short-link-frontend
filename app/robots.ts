@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
-  "https://app.kurl.me";
+  "https://kurl.me";
 
 export default function robots(): MetadataRoute.Robots {
   return {

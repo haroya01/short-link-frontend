@@ -12,15 +12,15 @@ import { Nav } from "@/components/nav";
 import { ToastProvider } from "@/components/ui/toast";
 import { routing } from "@/i18n/routing";
 
-// One canonical domain. app.kurl.me is where the Next.js app lives and where every share/og/seo
-// URL resolves; the apex kurl.me only handles short-code redirects on the backend. Splitting
-// canonical (kurl.me) from frontend (app.kurl.me) historically produced og:url host-mismatch
-// drops in KakaoTalk and SEO canonicals that pointed at 404 pages — collapsed to a single
-// SITE_URL on 2026-05-13.
+// Single canonical domain. Cloudflare Worker (kurl-router) routes kurl.me/* to either the
+// backend (short-codes + /api/*) or Vercel (frontend pages) so users only ever see the apex
+// brand domain. og:url / canonical / sitemap all align with what visitors share — Kakao
+// previously dropped previews when og:url host mismatched, and SEO canonicals pointed at
+// 404 pages on the host that didn't actually serve the path. Worker landed 2026-05-13.
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://app.kurl.me");
+  "https://kurl.me";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
