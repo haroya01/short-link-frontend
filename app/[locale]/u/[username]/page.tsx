@@ -86,9 +86,33 @@ export default async function PublicProfilePage({
   }
 
   const colors = THEME_TABLE[profile.theme ?? "default"];
+  const profileUrl = `${SITE_URL}/${locale}/u/${profile.username}`;
+  // ProfilePage > Person — gives Google a structured signal for rich snippets (name + image +
+  // bio + linked social profiles). sameAs propagates trust between this page and the verified
+  // accounts the visitor lists in their socials.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    url: profileUrl,
+    mainEntity: {
+      "@type": "Person",
+      name: profile.username,
+      alternateName: `@${profile.username}`,
+      url: profileUrl,
+      ...(profile.bio ? { description: profile.bio } : {}),
+      ...(profile.avatarUrl ? { image: profile.avatarUrl } : {}),
+      ...(profile.socials && profile.socials.length > 0
+        ? { sameAs: profile.socials.map((s) => s.url) }
+        : {}),
+    },
+  };
 
   return (
     <div className={`min-h-screen ${colors.page}`}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {profile.bannerUrl && (
         // Full-bleed banner above the container so it reaches the top + side edges of the viewport.
         // `mask-image` softly fades the bottom 25% into transparent → the page bg shows through
