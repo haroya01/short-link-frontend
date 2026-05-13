@@ -15,10 +15,10 @@ import {
   presignProfileImageUpload,
   uploadAvatarToS3,
 } from "@/lib/api";
-import { resizeImage } from "@/lib/image-resize";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import type { ProductCardImage } from "@/types";
 import { ConfirmDialog } from "../ui/dialog";
+import { ImageCropperDialog } from "../ui/image-cropper-dialog";
 import { Input } from "../ui/input";
 import { useToast } from "../ui/toast";
 import { FormField } from "./FormField";
@@ -431,15 +431,12 @@ function ImageGalleryEditor({
   const errorMessage = useApiErrorMessage();
   const uploadT = useTranslations("settings.profile.imageUploader");
   const fileInput = useRef<HTMLInputElement>(null);
+  const [pickedFile, setPickedFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
 
   function addImage(image: ProductCardImage) {
     if (images.length >= MAX_IMAGES_PER_ITEM) return;
     onChange([...images, image]);
-  }
-
-  function patchImage(idx: number, patch: Partial<ProductCardImage>) {
-    onChange(images.map((img, i) => (i === idx ? { ...img, ...patch } : img)));
   }
 
   function removeImage(idx: number) {
@@ -454,7 +451,7 @@ function ImageGalleryEditor({
     onChange(next);
   }
 
-  async function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
+  function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
@@ -466,22 +463,23 @@ function ImageGalleryEditor({
       toast(uploadT("tooBig"), "error");
       return;
     }
+    setPickedFile(file);
+  }
+
+  async function handleCropped(cropped: File) {
+    setPickedFile(null);
     setBusy(true);
     try {
-      const resized = await resizeImage(file, {
-        maxDim: UPLOAD_MAX_DIM,
-        square: false,
-        type: UPLOAD_OUTPUT_TYPE,
-        quality: UPLOAD_QUALITY,
-        filename: "product-card.jpg",
-      });
       const presign = await presignProfileImageUpload(UPLOAD_OUTPUT_TYPE);
-      if (resized.size > presign.maxBytes) {
+      if (cropped.size > presign.maxBytes) {
         toast(uploadT("tooBig"), "error");
         return;
       }
-      await uploadAvatarToS3(presign.uploadUrl, resized, UPLOAD_OUTPUT_TYPE);
+      await uploadAvatarToS3(presign.uploadUrl, cropped, UPLOAD_OUTPUT_TYPE);
       const committed = await commitProfileImageUpload(presign.key);
+      // Focal point fields are kept on the data model for backend compat but always 50/50 now —
+      // the cropper produced an image that's already framed at the target aspect, so
+      // {@code object-position: 50% 50%} on the public card matches exactly what the seller saw.
       addImage({ url: committed.imageUrl, focalX: FOCAL_DEFAULT, focalY: FOCAL_DEFAULT });
     } catch (err) {
       toast(errorMessage(err, uploadT("uploadFailed")), "error");
@@ -499,7 +497,6 @@ function ImageGalleryEditor({
             image={image}
             idx={idx}
             total={images.length}
-            onFocalChange={(focalX, focalY) => patchImage(idx, { focalX, focalY })}
             onRemove={() => removeImage(idx)}
             onMove={(direction) => moveImage(idx, direction)}
             t={t}
@@ -535,23 +532,33 @@ function ImageGalleryEditor({
         />
       </div>
       <p className="text-[10px] leading-snug text-slate-500">
-        {images.length > 0 ? t("productCardImageFocalHint") : t("productCardImageSizeHint")}
+        {t("productCardImageSizeHint")}
       </p>
+      <ImageCropperDialog
+        open={pickedFile !== null}
+        file={pickedFile}
+        aspect={4 / 3}
+        cropShape="rect"
+        outputMaxDim={UPLOAD_MAX_DIM}
+        outputType={UPLOAD_OUTPUT_TYPE}
+        outputQuality={UPLOAD_QUALITY}
+        onCancel={() => setPickedFile(null)}
+        onConfirm={handleCropped}
+      />
     </div>
   );
 }
 
 /**
- * Single thumbnail with the focal-point dot rendered on top. Pointer events drive the drag (covers
- * touch + mouse + pen with one path) and the dot's position is clamped to the thumbnail's bounds
- * via {@link clamp}. The dot is positioned with percentages so it stays accurate across re-renders
- * even if the thumb's rendered size changes (e.g. font size affecting parent height).
+ * Single thumbnail showing the uploaded image at the public-card aspect (4:3 cover). Focal point
+ * editing was removed when the upload flow moved to {@link ImageCropperDialog} — the cropper now
+ * produces an image already framed at this aspect, so {@code object-cover} with center origin is
+ * the WYSIWYG outcome. Reorder + remove controls stay so the seller can curate the carousel.
  */
 function ImageThumbEditor({
   image,
   idx,
   total,
-  onFocalChange,
   onRemove,
   onMove,
   t,
@@ -559,57 +566,19 @@ function ImageThumbEditor({
   image: ProductCardImage;
   idx: number;
   total: number;
-  onFocalChange: (focalX: number, focalY: number) => void;
   onRemove: () => void;
   onMove: (direction: -1 | 1) => void;
   t: ReturnType<typeof useTranslations<"settings.profile">>;
 }) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [dragging, setDragging] = useState(false);
-
-  function pointerToFocal(clientX: number, clientY: number) {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = clamp(((clientX - rect.left) / rect.width) * 100);
-    const y = clamp(((clientY - rect.top) / rect.height) * 100);
-    onFocalChange(Math.round(x), Math.round(y));
-  }
-
   return (
     <div className="w-32 shrink-0 space-y-1">
-      <div
-        ref={ref}
-        className={`relative aspect-[4/3] w-full select-none overflow-hidden rounded-md border bg-slate-100 ${
-          dragging ? "border-accent-400 ring-2 ring-accent-300" : "border-slate-200"
-        }`}
-        onPointerDown={(e) => {
-          (e.target as Element).setPointerCapture?.(e.pointerId);
-          setDragging(true);
-          pointerToFocal(e.clientX, e.clientY);
-        }}
-        onPointerMove={(e) => {
-          if (!dragging) return;
-          pointerToFocal(e.clientX, e.clientY);
-        }}
-        onPointerUp={(e) => {
-          (e.target as Element).releasePointerCapture?.(e.pointerId);
-          setDragging(false);
-        }}
-        onPointerCancel={() => setDragging(false)}
-      >
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md border border-slate-200 bg-slate-100">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={image.url}
           alt=""
           draggable={false}
-          className="pointer-events-none h-full w-full object-cover"
-          style={{ objectPosition: `${image.focalX}% ${image.focalY}%` }}
-        />
-        <span
-          aria-hidden
-          className="pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-accent-500 shadow-[0_0_0_2px_rgba(0,0,0,0.25)]"
-          style={{ left: `${image.focalX}%`, top: `${image.focalY}%` }}
+          className="h-full w-full object-cover"
         />
         <button
           type="button"
