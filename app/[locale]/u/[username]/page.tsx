@@ -14,7 +14,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://app.kurl.me");
+  "https://kurl.me";
 
 async function fetchProfile(username: string): Promise<PublicProfile | null> {
   // Short revalidate so owner edits show up within ~30s without smashing the backend per visit.
