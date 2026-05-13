@@ -1210,6 +1210,29 @@
       "emailFormHowItWorks": "訪問者が残したメールはオーナーだけが見られる 'leads' ダッシュボードに集約されます。CSV エクスポートで Mailchimp などに取り込めます。",
       "emailFormViewLeadsCta": "収集したメールを見る",
       "leadsLink": "収集したメール",
+      "stats": {
+        "title": "プロフィール訪問統計",
+        "intro": "/u/<handle> を誰がどこから見たか — 短縮リンクの統計と同じ深さで。",
+        "backToEditor": "編集に戻る",
+        "loadFailed": "統計を読み込めませんでした。",
+        "summary": {
+          "title": "プロフィール訪問",
+          "today": "今日",
+          "week": "7 日",
+          "month": "30 日",
+          "allTime": "累計",
+          "viewAll": "グラフを見る"
+        },
+        "daily": { "title": "直近 30 日", "desc": "日別の人による訪問数 (ボット除外)" },
+        "heatmap": { "title": "曜日 × 時間ヒートマップ", "desc": "訪問が集中する曜日/時間帯" },
+        "countries": { "title": "国別", "desc": "上位 50 ヶ国" },
+        "devices": { "title": "デバイス", "desc": "モバイル / デスクトップ / タブレット" },
+        "browsers": { "title": "ブラウザ", "desc": "上位 10" },
+        "referrers": { "title": "リファラ", "desc": "どのサイトから来たか" },
+        "channels": { "title": "共有チャネル", "desc": "?src= で追跡" },
+        "utmCampaigns": { "title": "キャンペーン (utm_campaign)", "desc": "キャンペーンビルダー / 外部送信" },
+        "utmSources": { "title": "UTM source", "desc": "メール / SNS など" }
+      },
       "leads": {
         "title": "収集したメール",
         "intro": "合計 {count} 件",

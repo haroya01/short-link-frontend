@@ -1210,6 +1210,29 @@
       "emailFormHowItWorks": "Emails visitors leave land in your private 'leads' dashboard. Export to CSV and import into Mailchimp / your email tool.",
       "emailFormViewLeadsCta": "View collected emails",
       "leadsLink": "Collected emails",
+      "stats": {
+        "title": "My profile visit stats",
+        "intro": "Who's reading your /u/<handle> page, and from where. Same depth as your short-link stats.",
+        "backToEditor": "Back to editor",
+        "loadFailed": "Couldn't load stats.",
+        "summary": {
+          "title": "Profile visits",
+          "today": "Today",
+          "week": "7d",
+          "month": "30d",
+          "allTime": "All time",
+          "viewAll": "See charts"
+        },
+        "daily": { "title": "Last 30 days", "desc": "Daily human visits (bots excluded)" },
+        "heatmap": { "title": "Day × hour heatmap", "desc": "When visitors land on your page" },
+        "countries": { "title": "By country", "desc": "Top 50" },
+        "devices": { "title": "Devices", "desc": "Mobile / desktop / tablet" },
+        "browsers": { "title": "Browsers", "desc": "Top 10" },
+        "referrers": { "title": "Referrers", "desc": "Which sites sent the visitor" },
+        "channels": { "title": "Share channels", "desc": "Tracked via ?src=" },
+        "utmCampaigns": { "title": "Campaigns (utm_campaign)", "desc": "From the campaign builder or external sends" },
+        "utmSources": { "title": "UTM source", "desc": "Email / SNS / etc." }
+      },
       "leads": {
         "title": "Collected emails",
         "intro": "{count} total",

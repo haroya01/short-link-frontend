@@ -9,12 +9,13 @@ import { useAuth } from "@/lib/auth";
 import { MobilePreviewSheet } from "@/components/mobile-preview-sheet";
 import { ProfileSection, type ProfileDraft } from "@/components/profile-section";
 import { ProfilePreview } from "@/components/profile-preview";
+import { ProfileVisitSummaryCard } from "@/components/profile-visit-summary-card";
 
 export default function ProfileEditPage() {
   const t = useTranslations("settings.profile");
   const router = useRouter();
   const locale = useLocale();
-  const { authenticated, ready } = useAuth();
+  const { authenticated, ready, me } = useAuth();
   const [draft, setDraft] = useState<ProfileDraft>({
     username: "",
     bio: "",
@@ -61,6 +62,10 @@ export default function ProfileEditPage() {
           </Link>
         )}
       </div>
+
+      {/* Visit-stats summary — only renders when the user has claimed a username AND has at
+          least one recorded visit. Click-through takes them to /profile/stats for full charts. */}
+      <ProfileVisitSummaryCard hasUsername={Boolean(me?.username)} />
 
       {/*
         `minmax(0, 1fr)` (not bare `1fr`, which is `minmax(auto, 1fr)`) is what caps the left

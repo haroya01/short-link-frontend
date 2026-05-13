@@ -6,6 +6,7 @@ import { ProfileShareFab } from "@/components/profile-share-fab";
 import type { PublicProfile } from "@/types";
 import { EntryList } from "./_components/EntryList";
 import { ProfileHeader } from "./_components/ProfileHeader";
+import { ProfileVisitBeacon } from "./_components/ProfileVisitBeacon";
 import { ShareRow } from "./_components/ShareRow";
 import { THEME_TABLE } from "./_lib/theme";
 
@@ -175,6 +176,7 @@ export default async function PublicProfilePage({
         filename={`${profile.username}.png`}
       />
       <ProfileOwnerFab username={profile.username} />
+      <ProfileVisitBeacon username={profile.username} />
     </div>
   );
 }

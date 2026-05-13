@@ -34,7 +34,9 @@ import type {
   MyProfile,
   ProfileBlock,
   ProfileReorderItem,
+  ProfileStats,
   ProfileTheme,
+  ProfileVisitSummary,
   PublicProfile,
   WebhookConfigPatch,
   WebhookSummary,
@@ -309,6 +311,32 @@ export async function deleteDestination(shortCode: string, id: number): Promise<
 
 export async function getStats(shortCode: string): Promise<LinkStats> {
   return request<LinkStats>(`/api/v1/links/${shortCode}/stats`, { method: "GET" });
+}
+
+export async function getProfileStats(): Promise<ProfileStats> {
+  return request<ProfileStats>(`/api/v1/users/me/profile/stats`, { method: "GET" });
+}
+
+export async function getProfileStatsSummary(): Promise<ProfileVisitSummary> {
+  return request<ProfileVisitSummary>(`/api/v1/users/me/profile/stats/summary`, { method: "GET" });
+}
+
+/** Fire-and-forget beacon called by the public profile page on mount. Never blocks paint. */
+export function postProfileVisit(username: string): void {
+  if (typeof window === "undefined") return;
+  const url = `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/visit${window.location.search}`;
+  // `navigator.sendBeacon` is the modern way to fire-and-forget — works even if the page is
+  // unloading. Falls back to fetch with keepalive for browsers/contexts where sendBeacon is
+  // unavailable.
+  try {
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(url, new Blob([""], { type: "text/plain" }));
+      return;
+    }
+  } catch {
+    // sendBeacon throws on some Safari versions when the body is empty — fall through to fetch.
+  }
+  void fetch(url, { method: "POST", keepalive: true, credentials: "omit" }).catch(() => {});
 }
 
 export async function updateLink(
