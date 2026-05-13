@@ -12,10 +12,11 @@ import { Nav } from "@/components/nav";
 import { ToastProvider } from "@/components/ui/toast";
 import { routing } from "@/i18n/routing";
 
-// SITE_URL is the canonical brand domain (used in og:url, canonical, JSON-LD).
-// FRONTEND_URL is where the SPA actually lives — Next.js generates opengraph-image at this host,
-// so it MUST be the metadataBase. When sharing kurl.me in Slack/Kakao, the scraper follows the
-// 302 to app.kurl.me/{locale} where it finds these tags; the og:image is absolute and reachable.
+// SITE_URL is the canonical brand domain (alternates.canonical + JSON-LD only).
+// FRONTEND_URL is where the SPA actually lives. og:url MUST point at FRONTEND_URL — when a
+// visitor shares app.kurl.me, KakaoTalk validates og:url against the shared URL and silently
+// drops the preview on host mismatch; pointing og:url at kurl.me also chases a 301 back to
+// app.kurl.me, so canonical-but-mismatched og:url offered the worst of both worlds.
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kurl.me";
 const FRONTEND_URL =
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
@@ -51,7 +52,7 @@ export async function generateMetadata({
     },
     openGraph: {
       type: "website",
-      url: `${SITE_URL}/${locale}`,
+      url: `${FRONTEND_URL}/${locale}`,
       siteName: "kurl",
       title,
       description,
