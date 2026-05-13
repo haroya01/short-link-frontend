@@ -121,7 +121,10 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
             const article = (
               <article
                 className={
-                  `overflow-hidden rounded-xl border transition ${colors.card} ${colors.cardBorder} ` +
+                  // rounded-2xl matches the cross-card design token (PlaceEntry / LinkEntry /
+                  // BookingEntry / etc.); grid mode previously used the smaller rounded-xl which
+                  // was a system violation — caught in the consistency audit, this is the fix.
+                  `overflow-hidden rounded-2xl border transition ${colors.card} ${colors.cardBorder} ` +
                   (soldOut ? "opacity-70" : `${colors.cardHover}`)
                 }
               >
@@ -153,19 +156,26 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                   >
                     {item.name}
                   </p>
-                  {item.price && (
-                    <div className="flex items-baseline gap-1.5">
-                      <p
-                        className={
-                          soldOut
-                            ? "text-[12px] font-bold text-slate-400 line-through"
-                            : "text-[12px] font-bold text-accent-700"
-                        }
-                      >
-                        {item.price}
-                      </p>
+                  {(item.price || item.originalPrice) && (
+                    <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                      {item.price && (
+                        <p
+                          className={
+                            soldOut
+                              ? "text-[12px] font-bold text-slate-400 line-through"
+                              : "text-[12px] font-bold text-accent-700"
+                          }
+                        >
+                          {item.price}
+                        </p>
+                      )}
+                      {item.originalPrice && !soldOut && (
+                        <p className="text-[10px] text-slate-400 line-through">
+                          {item.originalPrice}
+                        </p>
+                      )}
                       {discountPct != null && !soldOut && (
-                        <span className="text-[10px] font-semibold text-red-600">
+                        <span className="rounded bg-red-50 px-1 py-0 text-[9px] font-semibold text-red-600">
                           {t("discount", { pct: discountPct })}
                         </span>
                       )}
