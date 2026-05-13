@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { ShortenForm } from "@/components/shorten-form";
 import { ResultCard } from "@/components/result-card";
 import { FeatureCarousel } from "@/components/feature-carousel";
+import { ProfileShowcase } from "@/components/profile-showcase";
 import { WhyKurl } from "@/components/why-kurl";
 import { HomeFaq } from "@/components/home-faq";
 import { HomeCounters, usePublicTotals } from "@/components/home-counters";
@@ -114,6 +115,34 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {!authenticated && (
+        <section className="overflow-hidden border-t border-slate-100 bg-white">
+          <div className="container max-w-7xl py-16 sm:py-20">
+            <div className="mb-10 space-y-2 text-center">
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-700">
+                {t("showcase.eyebrow")}
+              </p>
+              <h2 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+                {t("showcase.title")}
+              </h2>
+              <p className="mx-auto max-w-md text-sm leading-relaxed text-slate-500">
+                {t("showcase.subhead")}
+              </p>
+            </div>
+          </div>
+          <ProfileShowcase />
+          <div className="container max-w-3xl py-12 text-center">
+            <Link
+              href="/login"
+              className="group inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
+            >
+              {t("showcase.cta")}
+              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+        </section>
+      )}
 
       <Previews t={t} />
 
