@@ -26,6 +26,15 @@ import {
 import type { useTranslations } from "next-intl";
 import type { MyLink } from "@/types";
 import { useCollapsedSections } from "@/lib/use-collapsed-sections";
+import {
+  bookingSummary,
+  countGalleryImages,
+  eventSummary,
+  placeSummary,
+  productCardSummary,
+  summarizeJsonField,
+  summarizeTextBody,
+} from "@/lib/feed-summarizers";
 import type { FeedItem } from "./types";
 
 type SectionMeta = {
@@ -980,114 +989,6 @@ function LinkLabelField({
       <Pencil className="h-3 w-3 shrink-0 text-slate-300 transition group-hover:text-accent-500" />
     </button>
   );
-}
-
-/**
- * Best-effort body extraction for TEXT rows in the editor list. Mirrors {@code parseTextBlockConfig}
- * but trimmed to just what the row preview needs — so an editor list never shows a raw JSON blob
- * after the {@code TextBlockBody} migration. Legacy plain-markdown strings pass through unchanged.
- */
-function summarizeTextBody(content: string | null): string {
-  if (!content) return "";
-  const trimmed = content.trim();
-  if (!trimmed.startsWith("{")) return trimmed;
-  try {
-    const parsed = JSON.parse(trimmed) as { body?: unknown };
-    if (typeof parsed?.body === "string") return parsed.body;
-    return trimmed;
-  } catch {
-    return trimmed;
-  }
-}
-
-/** Pulls a single string field out of the block's JSON content for a row-summary preview. */
-function summarizeJsonField(content: string | null, field: string): string {
-  if (!content) return "";
-  try {
-    const parsed = JSON.parse(content);
-    return typeof parsed?.[field] === "string" ? parsed[field] : "";
-  } catch {
-    return "";
-  }
-}
-
-/** Title (or first item's name) + count for the editor row preview. */
-function productCardSummary(content: string | null): string {
-  if (!content) return "";
-  try {
-    const parsed = JSON.parse(content);
-    const title = typeof parsed?.title === "string" ? parsed.title : "";
-    const count = Array.isArray(parsed?.items) ? parsed.items.length : 0;
-    if (title) return `${title} · ${count}`;
-    const first =
-      Array.isArray(parsed?.items) && typeof parsed.items[0]?.name === "string"
-        ? parsed.items[0].name
-        : "";
-    return first ? `${first} 외 ${count - 1}건` : "";
-  } catch {
-    return "";
-  }
-}
-
-/** Event title + start date for the editor's EVENT row summary. */
-function eventSummary(content: string | null): string {
-  if (!content) return "";
-  try {
-    const parsed = JSON.parse(content);
-    const title = typeof parsed?.title === "string" ? parsed.title.trim() : "";
-    const startsAt = typeof parsed?.startsAt === "string" ? parsed.startsAt : "";
-    if (!title && !startsAt) return "";
-    if (!startsAt) return title;
-    const d = new Date(startsAt);
-    if (Number.isNaN(d.getTime())) return title;
-    const label = d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-    return title ? `${title} · ${label}` : label;
-  } catch {
-    return "";
-  }
-}
-
-/** Title (or provider name fallback) for the editor's BOOKING row summary. */
-function bookingSummary(content: string | null): string {
-  if (!content) return "";
-  try {
-    const parsed = JSON.parse(content);
-    const title = typeof parsed?.title === "string" ? parsed.title.trim() : "";
-    if (title) return title;
-    const url = typeof parsed?.url === "string" ? parsed.url.trim() : "";
-    if (!url) return "";
-    try {
-      return new URL(url).host.replace(/^www\./, "");
-    } catch {
-      return url;
-    }
-  } catch {
-    return "";
-  }
-}
-
-/** Name (or address fallback) for the editor's PLACE row summary. */
-function placeSummary(content: string | null): string {
-  if (!content) return "";
-  try {
-    const parsed = JSON.parse(content);
-    const name = typeof parsed?.name === "string" ? parsed.name.trim() : "";
-    if (name) return name;
-    const address = typeof parsed?.address === "string" ? parsed.address.trim() : "";
-    return address;
-  } catch {
-    return "";
-  }
-}
-
-function countGalleryImages(content: string | null): number {
-  if (!content) return 0;
-  try {
-    const parsed = JSON.parse(content);
-    return Array.isArray(parsed?.images) ? parsed.images.length : 0;
-  } catch {
-    return 0;
-  }
 }
 
 function DragHandle({
