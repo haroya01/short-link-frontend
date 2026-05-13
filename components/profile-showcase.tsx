@@ -12,24 +12,19 @@ import { cn } from "@/lib/utils";
 
 /**
  * Landing-page profile showcase. Renders the real {@link ProfileHeader} + {@link EntryList}
- * components used on /u/&lt;handle&gt; inside an iPhone 14 Pro frame (from the open-source
- * {@code devices.css} library). Same code that powers actual user profiles — what visitors see
- * in the showcase is exactly what they'll build after signing up.
+ * inside an iPhone 14 Pro frame (devices.css). The inner content tree exactly mirrors the
+ * public {@code /u/[username]/page.tsx} layout — same banner aspect ratio, same mask-image
+ * fade, same {@code -mt-12} container overlap — so what visitors see in the showcase is what
+ * they'd see if they viewed the real profile page on their phone.
  *
- * Marquee scrolls left continuously; pauses on hover/touch. Each card is a link to /demo so a
- * click hands off to an interactive profile rather than a static dead-end.
+ * The device itself is CSS-scaled to fit multiple phones in the carousel, but the inner
+ * content is rendered at iPhone-viewport size (390px, devices.css's screen width) without
+ * extra scaling — that's the same width a real iPhone 14 Pro browser renders at.
  */
 const ROW_DURATION_SECONDS = 90;
-
-// devices.css iPhone 14 Pro is 428×868 (frame) with a 390×830 screen viewport. We scale the
-// whole device down so multiple phones fit in the carousel. Inside the screen, we render the
-// native-width (448px) profile content and scale that to match the device's 390px screen.
 const DEVICE_SCALE = 0.65;
 const DEVICE_NATIVE_W = 428;
 const DEVICE_NATIVE_H = 868;
-const SCREEN_NATIVE_W = 390;
-const CONTENT_NATIVE_W = 448; // matches the public /u/[username] page's max-w-md container
-const CONTENT_SCALE = SCREEN_NATIVE_W / CONTENT_NATIVE_W;
 
 export function ProfileShowcase() {
   const t = useTranslations("showcase");
@@ -111,9 +106,9 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
       className="group block shrink-0 transition-transform hover:-translate-y-1"
       aria-label={`@${profile.username} — ${demoCta}`}
     >
-      {/* Outer wrapper takes the device's scaled-down dimensions so the carousel knows the real
-          layout size — important because the device itself uses CSS transform which doesn't
-          affect layout flow. */}
+      {/* Wrapper takes the post-scale layout size so flex parent allocates the right slot.
+          devices.css uses CSS transform which doesn't affect layout, so without this the
+          carousel would lay phones out at their unscaled 428×868 footprint. */}
       <div
         style={{
           width: DEVICE_NATIVE_W * DEVICE_SCALE,
@@ -125,47 +120,11 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
           style={{ transform: `scale(${DEVICE_SCALE})` }}
         >
           <div className="device-frame">
-            <div
-              className={cn(
-                "device-screen pointer-events-none overflow-hidden",
-                colors.page,
-              )}
-            >
-              {/* Profile rendered at native size, then scaled to the device's screen width */}
-              <div
-                className="origin-top-left"
-                style={{
-                  width: `${CONTENT_NATIVE_W}px`,
-                  transform: `scale(${CONTENT_SCALE})`,
-                }}
-              >
-                {profile.bannerUrl && (
-                  <div className="aspect-[3/1] w-full overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={profile.bannerUrl}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
-                <div className="px-4 pb-6">
-                  <ProfileHeader
-                    username={profile.username}
-                    bio={profile.bio}
-                    avatarUrl={profile.avatarUrl}
-                    bannerUrl={profile.bannerUrl}
-                    colors={colors}
-                    bannerInline={false}
-                  />
-                  <EntryList
-                    entries={profile.entries ?? []}
-                    username={profile.username}
-                    colors={colors}
-                    emptyLabel=""
-                  />
-                </div>
-              </div>
+            <div className={cn("device-screen pointer-events-none overflow-y-auto", colors.page)}>
+              {/* This subtree is byte-for-byte identical to /u/[username]/page.tsx's body
+                  (banner-then-container-with-overlap), so the showcase displays exactly what
+                  the visitor would see if they navigated to the real profile on a phone. */}
+              <ProfilePreviewBody profile={profile} colors={colors} />
             </div>
           </div>
           <div className="device-stripe" />
@@ -176,5 +135,61 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
         </div>
       </div>
     </Link>
+  );
+}
+
+/**
+ * Mirror of the body markup in {@code app/[locale]/u/[username]/page.tsx}. Kept in sync by
+ * hand — when the real page's banner/overlap structure changes, update both. The duplication
+ * is intentional: importing the page component would pull in server-only metadata helpers
+ * and the share-fab interactivity that doesn't belong inside the marquee preview.
+ */
+function ProfilePreviewBody({
+  profile,
+  colors,
+}: {
+  profile: PublicProfile;
+  colors: (typeof THEME_TABLE)[keyof typeof THEME_TABLE];
+}) {
+  return (
+    <div className="min-h-full">
+      {profile.bannerUrl && (
+        <div
+          className="aspect-[3/1] w-full overflow-hidden"
+          style={{
+            WebkitMaskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
+            maskImage: "linear-gradient(to bottom, black 75%, transparent 100%)",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={profile.bannerUrl}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        </div>
+      )}
+      <div
+        className={cn(
+          "mx-auto w-full max-w-md px-4",
+          profile.bannerUrl ? "-mt-12 pb-12" : "py-12",
+        )}
+      >
+        <ProfileHeader
+          username={profile.username}
+          bio={profile.bio}
+          avatarUrl={profile.avatarUrl}
+          bannerUrl={profile.bannerUrl}
+          colors={colors}
+          bannerInline={false}
+        />
+        <EntryList
+          entries={profile.entries ?? []}
+          username={profile.username}
+          colors={colors}
+          emptyLabel=""
+        />
+      </div>
+    </div>
   );
 }
