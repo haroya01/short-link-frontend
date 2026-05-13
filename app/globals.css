@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* devices.css — open-source CSS-only phone/laptop frames used by the landing-page profile
+   showcase. Only the iPhone variants render; the rest is dead CSS but the whole file is ~5KB
+   minified so we don't bother tree-shaking. */
+@import "devices.css/dist/devices.min.css";
+
 :root {
   color-scheme: light;
 }

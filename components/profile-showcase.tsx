@@ -12,22 +12,24 @@ import { cn } from "@/lib/utils";
 
 /**
  * Landing-page profile showcase. Renders the real {@link ProfileHeader} + {@link EntryList}
- * components used on /u/&lt;handle&gt; inside an iPhone-shaped frame, scaled down to fit. Same
- * code that powers actual user profiles — what visitors see in the showcase is exactly what
- * they'll build after signing up.
+ * components used on /u/&lt;handle&gt; inside an iPhone 14 Pro frame (from the open-source
+ * {@code devices.css} library). Same code that powers actual user profiles — what visitors see
+ * in the showcase is exactly what they'll build after signing up.
  *
  * Marquee scrolls left continuously; pauses on hover/touch. Each card is a link to /demo so a
  * click hands off to an interactive profile rather than a static dead-end.
  */
 const ROW_DURATION_SECONDS = 90;
 
-// iPhone 16 / 16 Pro physical screen is 19.5:9 (1179×2556 / 1320×2868). Express as 9:19.5
-// portrait so Tailwind aspect-[9/19.5] holds the right rectangle at any width.
-const PHONE_WIDTH_PX = 240;
-// Native profile-page content is rendered at the real container width (matches `max-w-md` =
-// 28rem = 448px) and scaled down. The scale factor times native width = phone width.
-const NATIVE_CONTENT_WIDTH_PX = 448;
-const CONTENT_SCALE = PHONE_WIDTH_PX / NATIVE_CONTENT_WIDTH_PX;
+// devices.css iPhone 14 Pro is 428×868 (frame) with a 390×830 screen viewport. We scale the
+// whole device down so multiple phones fit in the carousel. Inside the screen, we render the
+// native-width (448px) profile content and scale that to match the device's 390px screen.
+const DEVICE_SCALE = 0.65;
+const DEVICE_NATIVE_W = 428;
+const DEVICE_NATIVE_H = 868;
+const SCREEN_NATIVE_W = 390;
+const CONTENT_NATIVE_W = 448; // matches the public /u/[username] page's max-w-md container
+const CONTENT_SCALE = SCREEN_NATIVE_W / CONTENT_NATIVE_W;
 
 export function ProfileShowcase() {
   const t = useTranslations("showcase");
@@ -60,7 +62,7 @@ export function ProfileShowcase() {
 
       <div
         className={cn(
-          "showcase-marquee flex w-max gap-5 py-2 transition-opacity duration-700",
+          "showcase-marquee flex w-max gap-6 py-2 transition-opacity duration-700",
           visible ? "opacity-100" : "opacity-0",
         )}
         style={{ animationDuration: `${ROW_DURATION_SECONDS}s` }}
@@ -103,73 +105,74 @@ export function ProfileShowcase() {
 
 function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: string }) {
   const colors = THEME_TABLE[profile.theme ?? "default"];
-  // Phone inner aspect: 9 / 19.5 → height = width * 19.5 / 9
-  const phoneInnerHeight = (PHONE_WIDTH_PX * 19.5) / 9;
   return (
     <Link
       href="/demo"
-      className="group relative shrink-0 transition-transform hover:-translate-y-1"
+      className="group block shrink-0 transition-transform hover:-translate-y-1"
       aria-label={`@${profile.username} — ${demoCta}`}
     >
-      {/* Outer bezel — thick black phone body */}
-      <div className="rounded-[40px] bg-slate-900 p-2 shadow-xl shadow-slate-900/15 group-hover:shadow-2xl group-hover:shadow-slate-900/25">
-        {/* Inner screen — actual profile content scaled into iPhone proportions. The frame is
-            sized in raw pixels so the scale math stays exact regardless of viewport zoom. */}
+      {/* Outer wrapper takes the device's scaled-down dimensions so the carousel knows the real
+          layout size — important because the device itself uses CSS transform which doesn't
+          affect layout flow. */}
+      <div
+        style={{
+          width: DEVICE_NATIVE_W * DEVICE_SCALE,
+          height: DEVICE_NATIVE_H * DEVICE_SCALE,
+        }}
+      >
         <div
-          className={cn("relative overflow-hidden rounded-[32px]", colors.page)}
-          style={{ width: `${PHONE_WIDTH_PX}px`, height: `${phoneInnerHeight}px` }}
+          className="device device-iphone-14-pro origin-top-left"
+          style={{ transform: `scale(${DEVICE_SCALE})` }}
         >
-          {/* Dynamic island / notch suggestion */}
-          <div className="absolute left-1/2 top-2 z-20 h-5 w-20 -translate-x-1/2 rounded-full bg-slate-900" />
-
-          {/* Top status-bar safe area */}
-          <div className="h-7 w-full" />
-
-          {/* Scaled real-profile content */}
-          <div
-            className="pointer-events-none origin-top-left"
-            style={{
-              width: `${NATIVE_CONTENT_WIDTH_PX}px`,
-              transform: `scale(${CONTENT_SCALE})`,
-            }}
-          >
-            <div className="px-4 pb-6">
-              {profile.bannerUrl && (
-                <div className="-mx-4 mb-2 aspect-[3/1] overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={profile.bannerUrl}
-                    alt=""
-                    className="h-full w-full object-cover"
+          <div className="device-frame">
+            <div
+              className={cn(
+                "device-screen pointer-events-none overflow-hidden",
+                colors.page,
+              )}
+            >
+              {/* Profile rendered at native size, then scaled to the device's screen width */}
+              <div
+                className="origin-top-left"
+                style={{
+                  width: `${CONTENT_NATIVE_W}px`,
+                  transform: `scale(${CONTENT_SCALE})`,
+                }}
+              >
+                {profile.bannerUrl && (
+                  <div className="aspect-[3/1] w-full overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={profile.bannerUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="px-4 pb-6">
+                  <ProfileHeader
+                    username={profile.username}
+                    bio={profile.bio}
+                    avatarUrl={profile.avatarUrl}
+                    bannerUrl={profile.bannerUrl}
+                    colors={colors}
+                    bannerInline={false}
+                  />
+                  <EntryList
+                    entries={profile.entries ?? []}
+                    username={profile.username}
+                    colors={colors}
+                    emptyLabel=""
                   />
                 </div>
-              )}
-              <ProfileHeader
-                username={profile.username}
-                bio={profile.bio}
-                avatarUrl={profile.avatarUrl}
-                bannerUrl={profile.bannerUrl}
-                colors={colors}
-                bannerInline={false}
-              />
-              <EntryList
-                entries={profile.entries ?? []}
-                username={profile.username}
-                colors={colors}
-                emptyLabel=""
-              />
+              </div>
             </div>
           </div>
-
-          {/* Bottom fade — smooths the cut-off when entries spill past the screen */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent"
-            style={{
-              backgroundImage:
-                "linear-gradient(to top, var(--phone-fade-bg, white) 30%, transparent 100%)",
-            }}
-          />
+          <div className="device-stripe" />
+          <div className="device-header" />
+          <div className="device-sensors" />
+          <div className="device-btns" />
+          <div className="device-power" />
         </div>
       </div>
     </Link>
