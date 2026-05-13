@@ -64,6 +64,13 @@
     "subhead": "See who clicked from where — by device, OS, browser, channel, country.",
     "anonymousHint": "No login required. Stats need login though.",
     "demoLink": "Preview the analytics dashboard",
+    "showcase": {
+      "eyebrow": "Public profiles · real examples",
+      "title": "Built your way",
+      "subhead": "Cafés, developers, instructors, photographers, shop owners, DJs — six tones that turn the link in your bio into a living business card.",
+      "demoCta": "See it live",
+      "cta": "Make your profile"
+    },
     "previews": {
       "eyebrow": "What you get within 60 seconds",
       "see": "See",
