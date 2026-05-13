@@ -198,6 +198,8 @@
 | `.focus-ring` (utility) | `globals.css` | `.profile-card-static` 안의 inner button 의 키보드 focus outline. 한 클래스로 일관 |
 | `<FormField label required className>` | `components/profile-section/FormField.tsx` | BlockDialog 의 라벨 + required 마커 (다이얼로그 전용) |
 | `<Textarea>` | `components/ui/textarea.tsx` | Input 과 같은 톤의 multi-line input (다이얼로그 전용) |
+| `<ImageCropperDialog open file aspect cropShape? outputMaxDim? outputType? outputQuality? onCancel onConfirm>` | `components/ui/image-cropper-dialog.tsx` | 모든 이미지 업로드 진입점의 공유 cropper. `react-easy-crop` 기반 (드래그 + 핀치 + 휠/슬라이더 줌, 회전 없음). 모바일 풀스크린 sheet / 데스크탑 520×620. 다크 캔버스 + 격자 인터랙션-only. 출력은 크롭된 `File` (caller 가 받아서 presigned S3 PUT). 새 이미지 입력 추가 시 직접 file input 대신 이걸 통하기 |
+| `<ImageUploader value onChange aspectClass? cropAspect? emptyHint? removable?>` | `components/profile-section/ImageUploader.tsx` | 다이얼로그 안 단일 이미지 슬롯 — 파일 선택 → `<ImageCropperDialog>` → 업로드. `cropAspect` 가 비면 `aspectClass` 에서 자동 추론 (`aspect-square` → 1 / `aspect-[5/3]` → 5/3 등). Image / Place / Contact-logo 다이얼로그가 사용 |
 | `parseXConfig(raw)` | `lib/block-config-parsers.ts` | 블록 JSON 파서 — 모든 entry 컴포넌트가 사용. 신규 카드 추가 시 여기에 parser 추가 |
 | `useCardTilt()` | `lib/use-card-tilt.ts` | Pointer + scroll → 7 개 CSS custom property. holographic surface 용 (현재 ContactCardEntry 만 사용) |
 | `useCardCarousel({ itemCount, behavior })` | `lib/use-card-carousel.ts` | Scroll-snap carousel 의 scrollerRef + activeIdx + scrollToIdx. behavior: "start" (paginated) / "center" (peek). GalleryEntryCard + ProductCardEntry 가 사용 |
@@ -231,6 +233,26 @@ archetype 과 무관하게 **모든 카드** 가 따르는 액션 버튼 위치 
 **금지:**
 - 같은 카드 안에 같은 위계의 액션 버튼 2개 이상 (1 primary 룰 위반). 다른 액션이 필요하면 작은 코너 아이콘 또는 본문 인라인으로.
 - 주요 CTA 를 커버 위 탭 핸들러로 만들기 — 발견성 떨어짐 + 다른 카드와 어긋남 (PR #138 에서 PlaceEntry 가 이 경로로 갔다가 룰 위반으로 되돌림).
+
+---
+
+## 4.05 이미지 입력 룰 (cross-archetype)
+
+모든 이미지 업로드 진입점은 동일한 cropper UX 를 통과. 새 진입점 추가 시 직접 `<input type="file">` + `resizeImage` 조합 ❌ — 아래 둘 중 하나 사용.
+
+| 진입점 | aspect | 사용처 | 권장 컴포넌트 |
+|---|---|---|---|
+| 아바타 | 1/1 (round 마스크) | 프로필 사진 | `<ImageCropperDialog cropShape="round">` 직접 (AvatarPicker) |
+| 배너 | 3/1 | 프로필 상단 hero | `<ImageCropperDialog>` 직접 (BannerPicker) |
+| Contact 로고 | 1/1 | 명함 카드 우상단 | `<ImageUploader cropAspect={1} aspectClass="aspect-square">` |
+| Product 아이템 이미지 | 4/3 | 상품 카드 hero | `<ImageCropperDialog>` 직접 (ProductCardBlockDialog 의 ImageGalleryEditor) |
+| Gallery 사진 | 4/3 | 사진 캐러셀 | `<ImageCropperDialog>` 직접 (GalleryBlockDialog), 다중 파일은 sequential queue |
+| Image 블록 | 4/3 | 단일 사진 카드 | `<ImageUploader aspectClass="aspect-[4/3]">` |
+| Place 커버 | 5/3 | 매장 커버 | `<ImageUploader aspectClass="aspect-[5/3]">` |
+
+**Focal point 사용 금지:** PR #144 이전엔 ContactCard 로고 / ProductCard 아이템 이미지에 `focalX / focalY` 드래그 UI 가 있었지만, cropper 가 이미 원하는 aspect 로 framing 한 결과를 출력하므로 `object-position: 50% 50%` (중앙) 이면 WYSIWYG. 백엔드 record 에 필드는 남아 있지만 항상 `50/50` 으로 저장. 새 카드에 추가 ❌.
+
+**출력 사이즈:** 진입점별 `outputMaxDim` 으로 longer-edge cap (avatar 512, banner 2048, 그 외 1600). JPEG @ 0.88–0.9 로 고정. 백엔드 HEAD-check 가 authoritative size guard.
 
 ---
 
