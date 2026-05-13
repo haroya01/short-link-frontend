@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { readStorageJson, writeStorageJson } from "./storage-json";
 
 const STORAGE_KEY = "kurl:recent-links:v1";
 const MAX_ITEMS = 10;
@@ -14,27 +15,27 @@ export type RecentLink = {
   claimToken?: string | null;
 };
 
+function isRecentLinkArray(value: unknown): value is RecentLink[] {
+  if (!Array.isArray(value)) return false;
+  return value.every(
+    (item) =>
+      !!item &&
+      typeof item === "object" &&
+      typeof (item as RecentLink).shortCode === "string" &&
+      typeof (item as RecentLink).shortUrl === "string" &&
+      typeof (item as RecentLink).originalUrl === "string" &&
+      typeof (item as RecentLink).createdAt === "number",
+  );
+}
+
 function read(): RecentLink[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as RecentLink[];
-    if (!Array.isArray(parsed)) return [];
-    const now = Date.now();
-    return parsed.filter((item) => now - item.createdAt < ANONYMOUS_TTL_MS);
-  } catch {
-    return [];
-  }
+  const all = readStorageJson<RecentLink[]>(STORAGE_KEY, isRecentLinkArray, []);
+  const now = Date.now();
+  return all.filter((item) => now - item.createdAt < ANONYMOUS_TTL_MS);
 }
 
 function write(items: RecentLink[]) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  } catch {
-    /* ignore storage errors */
-  }
+  writeStorageJson(STORAGE_KEY, items);
 }
 
 export function recordRecent(link: RecentLink) {
