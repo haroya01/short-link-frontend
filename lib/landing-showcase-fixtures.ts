@@ -1,114 +1,337 @@
 /**
- * Fixture profile data for the landing-page profile showcase carousel. These are not real users
- * — they're curated examples that cover the 4 archetype categories (Visual-first / Action /
- * Information / Identity) and the major ProfileEntry kinds, so a non-logged-in visitor sees
- * concretely "this is the kind of page kurl makes" within the first scroll.
+ * Fixture profiles for the landing-page showcase carousel. Built in the same {@link PublicProfile}
+ * shape the backend returns so the real {@link ProfileHeader} + {@link EntryList} renderers can be
+ * dropped in directly — no parallel "mini" components, no design drift. Each profile covers a
+ * different theme + archetype mix so the marquee demonstrates the product's range honestly.
  *
- * Kept deliberately small (avatar URLs as data URIs are forbidden — use unsplash thumbnail-
- * grade CDN URLs sparingly) and self-contained so a backend outage never breaks the landing.
+ * Images use picsum.photos with stable seeds — same URL → same image, no broken thumbnails on
+ * reload + no S3 cost. If we ever want curated visuals we can swap in CDN URLs without changing
+ * any renderer code.
  */
+import type {
+  ContactCardConfig,
+  EmailFormConfig,
+  EventConfig,
+  GalleryConfig,
+  PlaceConfig,
+  ProductCardConfig,
+  ProfileTheme,
+  PublicProfile,
+  PublicProfileEntry,
+} from "@/types";
 
-import type { ProfileTheme } from "@/types";
+const img = (seed: string, w = 800, h = 600) =>
+  `https://picsum.photos/seed/${seed}/${w}/${h}`;
 
-export type ShowcaseEntry =
-  | { kind: "bio"; text: string }
-  | { kind: "link"; label: string; href: string }
-  | { kind: "highlight"; label: string; href: string }
-  | { kind: "place"; name: string; address: string; coverColor: string }
-  | { kind: "product"; title: string; price: string; coverColor: string }
-  | { kind: "event"; title: string; date: string; location: string }
-  | { kind: "embed"; provider: "youtube" | "soundcloud" | "spotify"; title: string }
-  | { kind: "gallery"; colors: [string, string, string] }
-  | { kind: "contact"; title: string; company: string };
+const banner = (seed: string) => img(`banner-${seed}`, 1200, 400);
+const avatar = (seed: string) => img(`avatar-${seed}`, 240, 240);
 
-export type ShowcaseProfile = {
-  handle: string;
-  displayName: string;
-  bio: string;
-  theme: ProfileTheme;
-  bannerColor: string;
-  avatarSeed: string;
-  entries: ShowcaseEntry[];
+type EntryInput = {
+  kind: PublicProfileEntry["kind"];
+  id?: number;
+  shortCode?: string;
+  originalUrl?: string;
+  ogTitle?: string;
+  ogImage?: string;
+  clickCount?: number;
+  highlighted?: boolean;
+  content?:
+    | string
+    | ContactCardConfig
+    | PlaceConfig
+    | GalleryConfig
+    | ProductCardConfig
+    | EventConfig
+    | EmailFormConfig;
 };
 
-export const SHOWCASE_PROFILES: ShowcaseProfile[] = [
+function entry(input: EntryInput, idx: number): PublicProfileEntry {
+  return {
+    kind: input.kind,
+    id: input.id ?? idx + 1,
+    shortCode: input.shortCode ?? null,
+    shortUrl: input.shortCode ? `https://kurl.me/${input.shortCode}` : null,
+    originalUrl: input.originalUrl ?? null,
+    ogTitle: input.ogTitle ?? null,
+    ogImage: input.ogImage ?? null,
+    clickCount: input.clickCount ?? null,
+    highlighted: input.highlighted ?? null,
+    content:
+      typeof input.content === "string"
+        ? input.content
+        : input.content
+        ? JSON.stringify(input.content)
+        : null,
+  };
+}
+
+type ProfileSpec = {
+  username: string;
+  bio: string;
+  theme: ProfileTheme;
+  avatarSeed: string;
+  bannerSeed: string;
+  entries: EntryInput[];
+};
+
+const SPECS: ProfileSpec[] = [
   {
-    handle: "dohyun.coffee",
-    displayName: "도현 커피",
+    username: "dohyun.coffee",
     bio: "성수동 골목 안 8석짜리 스페셜티 카페",
     theme: "sunset",
-    bannerColor: "linear-gradient(135deg, #fed7aa 0%, #fdba74 60%, #fb923c 100%)",
-    avatarSeed: "DH",
+    avatarSeed: "dohyun-coffee",
+    bannerSeed: "dohyun-coffee",
     entries: [
-      { kind: "place", name: "성수 본점", address: "서울 성동구 성수이로 12", coverColor: "#fb923c" },
-      { kind: "gallery", colors: ["#fed7aa", "#fdba74", "#fb923c"] },
-      { kind: "highlight", label: "메뉴 보기", href: "#" },
+      {
+        kind: "CONTACT_CARD",
+        content: {
+          name: "도현 커피",
+          title: null,
+          company: "도현 커피 · 성수",
+          email: "hello@dohyun.coffee",
+          phone: "02-1234-5678",
+          address: "서울 성동구 성수이로 12",
+          website: null,
+          logoUrl: null,
+          logoFocalX: 50,
+          logoFocalY: 50,
+          palette: "sunset",
+        } satisfies ContactCardConfig,
+      },
+      {
+        kind: "PLACE",
+        content: {
+          name: "도현 커피 성수 본점",
+          address: "서울 성동구 성수이로 12",
+          lat: 37.5447,
+          lng: 127.0556,
+          placeId: null,
+          phone: "02-1234-5678",
+          coverUrl: img("dohyun-place", 800, 500),
+          category: "cafe",
+          hoursText: "매일 08:00 – 21:00",
+        } satisfies PlaceConfig,
+      },
+      {
+        kind: "GALLERY",
+        content: {
+          images: [img("dohyun-1"), img("dohyun-2"), img("dohyun-3")],
+        } satisfies GalleryConfig,
+      },
     ],
   },
   {
-    handle: "haruka.dev",
-    displayName: "@haruka.dev",
+    username: "haruka.dev",
     bio: "Backend engineer · open to freelance / consulting",
     theme: "mono",
-    bannerColor: "linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%)",
-    avatarSeed: "H",
+    avatarSeed: "haruka",
+    bannerSeed: "haruka",
     entries: [
-      { kind: "contact", title: "Engineer", company: "Freelance" },
-      { kind: "link", label: "GitHub", href: "#" },
-      { kind: "link", label: "Portfolio (2024 →)", href: "#" },
-      { kind: "highlight", label: "프로젝트 의뢰하기", href: "#" },
+      {
+        kind: "CONTACT_CARD",
+        content: {
+          name: "Haruka",
+          title: "Backend Engineer",
+          company: "Freelance",
+          email: "hi@haruka.dev",
+          phone: null,
+          address: null,
+          website: "https://haruka.dev",
+          logoUrl: null,
+          logoFocalX: 50,
+          logoFocalY: 50,
+          palette: "midnight",
+        } satisfies ContactCardConfig,
+      },
+      {
+        kind: "LINK",
+        shortCode: "hgh",
+        originalUrl: "https://github.com/haruka",
+        ogTitle: "GitHub · @haruka",
+        ogImage: img("haruka-gh", 400, 300),
+        clickCount: 124,
+      },
+      {
+        kind: "LINK",
+        shortCode: "hpf",
+        originalUrl: "https://haruka.dev",
+        ogTitle: "Portfolio · 2024 →",
+        ogImage: img("haruka-pf", 400, 300),
+        clickCount: 86,
+        highlighted: true,
+      },
     ],
   },
   {
-    handle: "yoga.minji",
-    displayName: "민지 요가",
-    bio: "5년차 빈야사 인스트럭터 · 주 3회 클래스 진행",
+    username: "yoga.minji",
+    bio: "5년차 빈야사 인스트럭터 · 주 3 회 클래스",
     theme: "forest",
-    bannerColor: "linear-gradient(135deg, #bbf7d0 0%, #86efac 60%, #4ade80 100%)",
-    avatarSeed: "MJ",
+    avatarSeed: "minji",
+    bannerSeed: "minji",
     entries: [
-      { kind: "event", title: "주말 빈야사 워크샵", date: "5월 18일 토 10:00", location: "을지로" },
-      { kind: "highlight", label: "1:1 클래스 예약", href: "#" },
-      { kind: "gallery", colors: ["#bbf7d0", "#86efac", "#4ade80"] },
+      {
+        kind: "EVENT",
+        content: {
+          title: "주말 빈야사 워크샵",
+          startsAt: "2026-05-18T10:00:00+09:00",
+          endsAt: "2026-05-18T12:00:00+09:00",
+          location: "을지로 5층 스튜디오",
+          description: "전 레벨 환영 · 매트는 준비돼 있어요.",
+          url: null,
+        } satisfies EventConfig,
+      },
+      {
+        kind: "LINK",
+        shortCode: "ymj1",
+        originalUrl: "https://example.com/booking",
+        ogTitle: "1:1 클래스 예약",
+        ogImage: img("minji-booking", 400, 300),
+        clickCount: 42,
+        highlighted: true,
+      },
+      {
+        kind: "GALLERY",
+        content: {
+          images: [img("minji-1"), img("minji-2"), img("minji-3"), img("minji-4")],
+        } satisfies GalleryConfig,
+      },
     ],
   },
   {
-    handle: "shotby.sora",
-    displayName: "Sora Shoots",
+    username: "shotby.sora",
     bio: "Film photography · 35mm only",
     theme: "ocean",
-    bannerColor: "linear-gradient(135deg, #bae6fd 0%, #7dd3fc 60%, #38bdf8 100%)",
-    avatarSeed: "S",
+    avatarSeed: "sora",
+    bannerSeed: "sora",
     entries: [
-      { kind: "gallery", colors: ["#bae6fd", "#7dd3fc", "#0ea5e9"] },
-      { kind: "link", label: "Instagram @shotby.sora", href: "#" },
-      { kind: "highlight", label: "촬영 문의하기", href: "#" },
+      {
+        kind: "GALLERY",
+        content: {
+          images: [
+            img("sora-1"),
+            img("sora-2"),
+            img("sora-3"),
+            img("sora-4"),
+            img("sora-5"),
+            img("sora-6"),
+          ],
+        } satisfies GalleryConfig,
+      },
+      {
+        kind: "LINK",
+        shortCode: "soig",
+        originalUrl: "https://instagram.com/shotby.sora",
+        ogTitle: "Instagram @shotby.sora",
+        ogImage: img("sora-ig", 400, 300),
+        clickCount: 312,
+      },
+      {
+        kind: "LINK",
+        shortCode: "soct",
+        originalUrl: "mailto:sora@shotby.com",
+        ogTitle: "촬영 문의하기",
+        ogImage: img("sora-ct", 400, 300),
+        highlighted: true,
+      },
     ],
   },
   {
-    handle: "moon.studio",
-    displayName: "Moon Studio",
-    bio: "월 1회 신상 드롭하는 작은 굿즈 스튜디오",
+    username: "moon.studio",
+    bio: "월 1 회 신상 드롭 · 작은 굿즈 스튜디오",
     theme: "aurora",
-    bannerColor: "linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 50%, #818cf8 100%)",
-    avatarSeed: "🌙",
+    avatarSeed: "moon",
+    bannerSeed: "moon",
     entries: [
-      { kind: "product", title: "여름 한정 — Linen Tote", price: "₩28,000", coverColor: "#818cf8" },
-      { kind: "product", title: "Moon Ceramic Mug", price: "₩22,000", coverColor: "#a5b4fc" },
-      { kind: "highlight", label: "이메일로 드롭 알림 받기", href: "#" },
+      {
+        kind: "PRODUCT_CARD",
+        content: {
+          title: "여름 신상",
+          layout: "carousel",
+          items: [
+            {
+              name: "Linen Tote",
+              images: [{ url: img("moon-tote", 600, 600), focalX: 50, focalY: 50 }],
+              price: "₩28,000",
+              originalPrice: null,
+              description: null,
+              ctaLabel: null,
+              ctaUrl: null,
+              badge: "NEW",
+            },
+            {
+              name: "Moon Ceramic Mug",
+              images: [{ url: img("moon-mug", 600, 600), focalX: 50, focalY: 50 }],
+              price: "₩22,000",
+              originalPrice: null,
+              description: null,
+              ctaLabel: null,
+              ctaUrl: null,
+              badge: "BEST",
+            },
+            {
+              name: "Brass Bookmark",
+              images: [{ url: img("moon-mark", 600, 600), focalX: 50, focalY: 50 }],
+              price: "₩9,000",
+              originalPrice: null,
+              description: null,
+              ctaLabel: null,
+              ctaUrl: null,
+              badge: null,
+            },
+          ],
+        } satisfies ProductCardConfig,
+      },
+      {
+        kind: "EMAIL_FORM",
+        content: {
+          title: "드롭 알림 받기",
+          subtitle: "월 1 회, 신상 드롭 전날 메일 1 통.",
+          placeholder: "you@example.com",
+          successMessage: "고마워요! 다음 드롭 때 만나요.",
+        } satisfies EmailFormConfig,
+      },
     ],
   },
   {
-    handle: "kazuki.dj",
-    displayName: "Kazuki",
+    username: "kazuki.dj",
     bio: "House / Techno · Tokyo-based",
     theme: "neon",
-    bannerColor: "linear-gradient(135deg, #1e1b4b 0%, #a855f7 50%, #f472b6 100%)",
-    avatarSeed: "K",
+    avatarSeed: "kazuki",
+    bannerSeed: "kazuki",
     entries: [
-      { kind: "embed", provider: "soundcloud", title: "Latest Mix · April 2026" },
-      { kind: "event", title: "Vent Tokyo", date: "5월 24일 금 23:00", location: "Aoyama" },
-      { kind: "link", label: "Spotify Artist", href: "#" },
+      {
+        kind: "EMBED",
+        content: "https://soundcloud.com/example/latest-mix-april-2026",
+      },
+      {
+        kind: "EVENT",
+        content: {
+          title: "Vent Tokyo",
+          startsAt: "2026-05-24T23:00:00+09:00",
+          endsAt: "2026-05-25T05:00:00+09:00",
+          location: "Aoyama · Vent",
+          description: null,
+          url: null,
+        } satisfies EventConfig,
+      },
+      {
+        kind: "LINK",
+        shortCode: "ksp",
+        originalUrl: "https://open.spotify.com/artist/example",
+        ogTitle: "Spotify Artist",
+        ogImage: img("kazuki-sp", 400, 300),
+        clickCount: 218,
+      },
     ],
   },
 ];
+
+export const SHOWCASE_PROFILES: PublicProfile[] = SPECS.map((spec) => ({
+  username: spec.username,
+  bio: spec.bio,
+  theme: spec.theme,
+  avatarUrl: avatar(spec.avatarSeed),
+  bannerUrl: banner(spec.bannerSeed),
+  socials: [],
+  entries: spec.entries.map((e, i) => entry(e, i)),
+}));
