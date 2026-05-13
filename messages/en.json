@@ -1203,6 +1203,7 @@
       "leads": {
         "title": "Collected emails",
         "intro": "{count} total",
+        "csvExcludesOptedOut": "Entries marked as opted-out are automatically excluded from the CSV.",
         "loading": "Loading...",
         "loadFailed": "Couldn't load leads.",
         "downloadCsv": "Download CSV",
@@ -1215,6 +1216,10 @@
         "delete": "Delete",
         "deleteFailed": "Couldn't delete.",
         "confirmDelete": "Delete this email?",
+        "optOut": "Opt out",
+        "undoOptOut": "Undo opt-out",
+        "optedOut": "Opted out",
+        "optOutFailed": "Couldn't update status.",
         "prev": "Prev",
         "next": "Next",
         "pageLabel": "{page} / {total}"

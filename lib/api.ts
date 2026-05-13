@@ -12,6 +12,7 @@ import type {
   CreateLinkResponse,
   CustomDomain,
   DestinationSummary,
+  EmailLead,
   EmailLeadPage,
   IssuedApiKey,
   IssuedWebhook,
@@ -437,6 +438,13 @@ export async function listEmailLeads(page: number, size: number): Promise<EmailL
 
 export async function deleteEmailLead(id: number): Promise<void> {
   await request(`/api/v1/users/me/email-leads/${id}`, { method: "DELETE" });
+}
+
+export async function setEmailLeadOptedOut(id: number, optedOut: boolean): Promise<EmailLead> {
+  return request<EmailLead>(`/api/v1/users/me/email-leads/${id}`, {
+    method: "PATCH",
+    body: { optedOut },
+  });
 }
 
 /** Absolute URL for the owner-only CSV export — anchor `download` triggers a browser save. */
