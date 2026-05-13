@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { BatteryFull, Signal, Wifi } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PublicProfile } from "@/types";
 import { Link } from "@/i18n/navigation";
@@ -156,6 +157,23 @@ function ProfilePreviewBody({
 }) {
   return (
     <div className="min-h-full">
+      {/* iOS status bar simulation. devices.css's Dynamic Island sits at screen y=10..45, so a
+          48px-tall bar pushes any content past the island cutout — exactly mirroring the
+          safe-area-inset-top that real iPhone Safari adds when a page declares viewport-fit. */}
+      <div
+        className={cn(
+          "pointer-events-none sticky top-0 z-10 flex h-12 items-center justify-between px-7 text-[11px] font-semibold",
+          colors.primary,
+        )}
+      >
+        <span>9:41</span>
+        <div className="flex items-center gap-0.5 opacity-80">
+          <Signal className="h-3 w-3" />
+          <Wifi className="h-3 w-3" />
+          <BatteryFull className="h-3 w-3" />
+        </div>
+      </div>
+
       {profile.bannerUrl && (
         <div
           className="aspect-[3/1] w-full overflow-hidden"
