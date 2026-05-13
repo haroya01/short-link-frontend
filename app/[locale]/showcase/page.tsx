@@ -41,30 +41,18 @@ export default async function ShowcasePage({
 
   return (
     <div className="overflow-hidden">
+      {/* CTA-first hero: visitors see the value prop + sign-in button before they even start
+          scrolling the examples. Keeps the page friendly for non-developers who want one
+          straightforward path rather than a tour. */}
       <section className="border-b border-slate-100 bg-white">
         <div className="container max-w-3xl py-16 text-center sm:py-20">
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-700">
             {t("eyebrow")}
           </p>
           <h1 className="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            {t("title")}
+            {t("ctaTitle")}
           </h1>
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-500">
-            {t("subhead")}
-          </p>
-        </div>
-      </section>
-
-      <section className="bg-white pb-16">
-        <ProfileShowcase />
-      </section>
-
-      <section className="border-t border-slate-100 bg-slate-50/50">
-        <div className="container max-w-3xl py-16 text-center">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            {t("ctaTitle")}
-          </h2>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate-500">
             {t("ctaSubhead")}
           </p>
           <Link
@@ -75,6 +63,18 @@ export default async function ShowcasePage({
             <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
           </Link>
         </div>
+      </section>
+
+      <section className="bg-white py-12 sm:py-16">
+        <div className="container max-w-3xl mb-8 text-center">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            {t("title")}
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate-500">
+            {t("subhead")}
+          </p>
+        </div>
+        <ProfileShowcase />
       </section>
     </div>
   );

@@ -90,6 +90,10 @@ export function ProfileShowcase() {
   );
 }
 
+// iPhone-like portrait phone frame. Modern iPhones are ~19.5:9 but a flat aspect-[9/16] reads
+// as "phone screen" to most viewers and the slightly-shorter ratio keeps the bottom of the card
+// from feeling stretched/empty when the content (banner + avatar + bio + 3 entries) is shorter
+// than the frame. Outer wrapper adds the thick-bezel + notch suggestion + side rounded corners.
 function ShowcaseCard({ profile, demoCta }: { profile: ShowcaseProfile; demoCta: string }) {
   const colors = THEME_TABLE[profile.theme];
   return (
@@ -98,27 +102,38 @@ function ShowcaseCard({ profile, demoCta }: { profile: ShowcaseProfile; demoCta:
       className="group relative shrink-0 transition-transform hover:-translate-y-0.5"
       aria-label={`${profile.displayName} — ${demoCta}`}
     >
-      <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-slate-100 shadow-lg shadow-slate-900/5 group-hover:shadow-xl group-hover:shadow-slate-900/10">
-        <div className={cn("w-[280px] sm:w-[300px]", colors.page)}>
-          <div className="h-20" style={{ background: profile.bannerColor }} />
-          <div className="px-5 pb-5">
-            <div className="-mt-7 flex items-end gap-3">
-              <div
-                className={cn(
-                  "grid h-14 w-14 place-items-center rounded-full text-xl font-semibold ring-4 ring-white",
-                  colors.avatar,
-                  colors.avatarText,
-                )}
-              >
-                {profile.avatarSeed}
-              </div>
+      {/* Phone frame: dark bezel + rounded corners + soft shadow */}
+      <div className="rounded-[36px] bg-slate-900 p-1.5 shadow-xl shadow-slate-900/15 group-hover:shadow-2xl group-hover:shadow-slate-900/25">
+        <div
+          className={cn(
+            "relative aspect-[9/16] w-[220px] overflow-hidden rounded-[30px] sm:w-[240px]",
+            colors.page,
+          )}
+        >
+          {/* Notch suggestion */}
+          <div className="absolute left-1/2 top-1.5 z-10 h-4 w-16 -translate-x-1/2 rounded-full bg-slate-900" />
+
+          <div className="h-16" style={{ background: profile.bannerColor }} />
+          <div className="px-4 pb-4">
+            <div
+              className={cn(
+                "-mt-6 grid h-12 w-12 place-items-center rounded-full text-base font-semibold ring-4 ring-white",
+                colors.avatar,
+                colors.avatarText,
+              )}
+            >
+              {profile.avatarSeed}
             </div>
-            <div className="mt-3">
-              <p className={cn("text-sm font-semibold", colors.primary)}>{profile.displayName}</p>
-              <p className={cn("text-[11px]", colors.muted)}>@{profile.handle}</p>
-              <p className={cn("mt-2 text-xs leading-relaxed", colors.muted)}>{profile.bio}</p>
+            <div className="mt-2">
+              <p className={cn("text-[13px] font-semibold leading-tight", colors.primary)}>
+                {profile.displayName}
+              </p>
+              <p className={cn("text-[10px]", colors.muted)}>@{profile.handle}</p>
+              <p className={cn("mt-1.5 line-clamp-2 text-[11px] leading-snug", colors.muted)}>
+                {profile.bio}
+              </p>
             </div>
-            <div className="mt-4 space-y-2">
+            <div className="mt-3 space-y-1.5">
               {profile.entries.slice(0, 3).map((entry, i) => (
                 <MiniEntry key={i} entry={entry} colors={colors} />
               ))}
