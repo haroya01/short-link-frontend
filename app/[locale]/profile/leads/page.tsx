@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Ban, Download, Trash2, Undo2 } from "lucide-react";
+import { Ban, Download, Sparkles, Trash2, Undo2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -110,6 +110,12 @@ export default function ProfileLeadsPage() {
               {t("downloadCsv")}
             </Button>
           </a>
+          <Link href={`/${locale}/profile/leads/campaign`}>
+            <Button>
+              <Sparkles className="mr-1 h-4 w-4" />
+              {t("buildCampaign")}
+            </Button>
+          </Link>
         </div>
       </div>
 
