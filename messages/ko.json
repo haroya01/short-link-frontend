@@ -1117,6 +1117,7 @@
       "leads": {
         "title": "수집된 이메일",
         "intro": "총 {count} 건",
+        "csvExcludesOptedOut": "수신 거부로 표시한 항목은 CSV 에서 자동 제외됩니다.",
         "loading": "불러오는 중...",
         "loadFailed": "불러오기에 실패했어요.",
         "downloadCsv": "CSV 다운로드",
@@ -1129,6 +1130,10 @@
         "delete": "삭제",
         "deleteFailed": "삭제에 실패했어요.",
         "confirmDelete": "이 이메일을 삭제할까요?",
+        "optOut": "수신 거부",
+        "undoOptOut": "거부 해제",
+        "optedOut": "거부됨",
+        "optOutFailed": "상태 변경에 실패했어요.",
         "prev": "이전",
         "next": "다음",
         "pageLabel": "{page} / {total}"

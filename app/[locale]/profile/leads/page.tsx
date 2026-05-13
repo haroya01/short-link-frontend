@@ -3,11 +3,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Download, Trash2 } from "lucide-react";
+import { Ban, Download, Trash2, Undo2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
-import { deleteEmailLead, emailLeadsExportUrl, listEmailLeads } from "@/lib/api";
+import {
+  deleteEmailLead,
+  emailLeadsExportUrl,
+  listEmailLeads,
+  setEmailLeadOptedOut,
+} from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import type { EmailLead } from "@/types";
@@ -63,6 +68,21 @@ export default function ProfileLeadsPage() {
     }
   }
 
+  // Owner-only opt-out toggle. Opted-out rows stay visible (so the owner can re-include them or
+  // tell why a campaign skipped someone) but are excluded from CSV export by default — see
+  // `?includeOptedOut=true` on the backend. We optimistically update before the request returns
+  // so the toggle feels instant; rollback on error.
+  async function handleToggleOptOut(lead: EmailLead) {
+    const next = !lead.optedOut;
+    setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, optedOut: next } : l)));
+    try {
+      await setEmailLeadOptedOut(lead.id, next);
+    } catch (err) {
+      setLeads((prev) => prev.map((l) => (l.id === lead.id ? { ...l, optedOut: lead.optedOut } : l)));
+      toast(errorMessage(err, t("optOutFailed")), "error");
+    }
+  }
+
   if (!ready || !authenticated) {
     return <div className="container max-w-3xl py-16 text-sm text-slate-500">…</div>;
   }
@@ -75,6 +95,7 @@ export default function ProfileLeadsPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
           <p className="mt-1 text-sm text-slate-500">{t("intro", { count: total })}</p>
+          <p className="mt-1 text-[11px] text-slate-400">{t("csvExcludesOptedOut")}</p>
         </div>
         <div className="flex items-center gap-2">
           <Link
@@ -107,16 +128,49 @@ export default function ProfileLeadsPage() {
                 <th className="px-4 py-2 font-medium">{t("colEmail")}</th>
                 <th className="px-4 py-2 font-medium">{t("colBlock")}</th>
                 <th className="px-4 py-2 font-medium">{t("colSubmittedAt")}</th>
+                <th className="w-20 px-4 py-2"></th>
                 <th className="w-12 px-4 py-2"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {leads.map((lead) => (
-                <tr key={lead.id}>
-                  <td className="truncate px-4 py-2 font-medium text-slate-900">{lead.email}</td>
+                <tr key={lead.id} className={lead.optedOut ? "bg-slate-50/60" : undefined}>
+                  <td
+                    className={
+                      lead.optedOut
+                        ? "truncate px-4 py-2 font-medium text-slate-400 line-through"
+                        : "truncate px-4 py-2 font-medium text-slate-900"
+                    }
+                  >
+                    {lead.email}
+                  </td>
                   <td className="px-4 py-2 text-[11px] text-slate-500">#{lead.blockId}</td>
                   <td className="px-4 py-2 text-[11px] text-slate-500">
                     {new Date(lead.submittedAt).toLocaleString(locale)}
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleOptOut(lead)}
+                      className={
+                        lead.optedOut
+                          ? "inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700 hover:bg-amber-100"
+                          : "inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-medium text-slate-500 hover:bg-slate-50"
+                      }
+                      aria-label={lead.optedOut ? t("undoOptOut") : t("optOut")}
+                    >
+                      {lead.optedOut ? (
+                        <>
+                          <Undo2 className="h-3 w-3" />
+                          {t("optedOut")}
+                        </>
+                      ) : (
+                        <>
+                          <Ban className="h-3 w-3" />
+                          {t("optOut")}
+                        </>
+                      )}
+                    </button>
                   </td>
                   <td className="px-4 py-2 text-right">
                     <button
