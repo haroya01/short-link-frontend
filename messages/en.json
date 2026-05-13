@@ -1036,6 +1036,9 @@
     "profile": {
       "title": "Public profile",
       "intro": "Bundle your short links into one shareable page — perfect for an SNS bio.",
+      "onboardingEyebrow": "Welcome",
+      "onboardingTitle": "Start building right away!",
+      "onboardingSubhead": "Pick the username you want and you're in. Add photos, links, your store address, and contact info — it builds into a polished card as you go.",
       "usernameLabel": "Username",
       "usernameHint": "3–16 lowercase letters / digits / underscore.",
       "usernameInvalid": "Username must be 3–16 lowercase letters / digits / underscore.",

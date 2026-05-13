@@ -950,6 +950,9 @@
     "profile": {
       "title": "공개 프로필",
       "intro": "본인 단축 링크를 한 페이지로 모아 공유하세요. SNS bio 에 박는 1 개 링크.",
+      "onboardingEyebrow": "환영합니다",
+      "onboardingTitle": "지금 바로 만들어보세요!",
+      "onboardingSubhead": "원하는 이름 (username) 만 정하면 시작이에요. 사진 · 링크 · 가게 주소 · 연락처를 차곡차곡 추가하면 명함이 완성됩니다.",
       "usernameLabel": "username",
       "usernameHint": "3~16자 영문 소문자 / 숫자 / 언더스코어.",
       "usernameInvalid": "username 은 3~16 자 영문 소문자 / 숫자 / 언더스코어만 가능해요.",
