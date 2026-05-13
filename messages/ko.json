@@ -693,7 +693,8 @@
       "submitting": "등록 중...",
       "error": "등록에 실패했어요. 잠시 후 다시 시도해 주세요.",
       "defaultPlaceholder": "you@example.com",
-      "defaultSuccess": "등록 완료. 감사합니다."
+      "defaultSuccess": "등록 완료. 감사합니다.",
+      "trustHint": "이 페이지의 운영자에게만 전달돼요. 스팸 보내지 않아요."
     },
     "booking": {
       "defaultTitle": "예약하기",
@@ -1104,9 +1105,15 @@
       "bookingSupportedProviders": "지원 서비스",
       "emailFormFieldTitle": "안내 문구",
       "emailFormFieldTitlePlaceholder": "예: 새 소식 받기",
+      "emailFormFieldSubtitle": "부가 설명 (옵션)",
+      "emailFormFieldSubtitlePlaceholder": "예: 신상품 출시 / 강의 오픈 / 한정 메뉴 — 가장 먼저 알려드려요.",
+      "emailFormFieldSubtitleHint": "방문자가 '왜 이메일을 남겨야 할지' 알 수 있게 한두 문장 적어주세요.",
       "emailFormFieldPlaceholder": "입력란 안내",
       "emailFormFieldSuccess": "제출 후 메시지",
       "emailFormFieldSuccessPlaceholder": "예: 등록 완료. 감사합니다 :)",
+      "emailFormHowItWorks": "방문자가 이메일을 남기면 본인만 볼 수 있는 'leads' 페이지에 모입니다. CSV 로 받아 Mailchimp / 스티비 / 채널톡 등으로 가져가세요.",
+      "emailFormViewLeadsCta": "수집된 이메일 보기",
+      "leadsLink": "수집된 이메일",
       "leads": {
         "title": "수집된 이메일",
         "intro": "총 {count} 건",

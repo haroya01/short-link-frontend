@@ -776,7 +776,8 @@
       "submitting": "Signing up...",
       "error": "Couldn't sign up. Please try again.",
       "defaultPlaceholder": "you@example.com",
-      "defaultSuccess": "You're in. Thanks!"
+      "defaultSuccess": "You're in. Thanks!",
+      "trustHint": "Goes only to the owner of this page. No spam."
     },
     "booking": {
       "defaultTitle": "Book a time",
@@ -1190,9 +1191,15 @@
       "addEmailFormPlaceholder": "(no email form yet)",
       "emailFormFieldTitle": "Form title",
       "emailFormFieldTitlePlaceholder": "e.g. Get my newsletter",
+      "emailFormFieldSubtitle": "Subtitle (optional)",
+      "emailFormFieldSubtitlePlaceholder": "e.g. New product launches, class openings, limited menus — you'll hear it first.",
+      "emailFormFieldSubtitleHint": "One or two sentences telling visitors why they should leave their email.",
       "emailFormFieldPlaceholder": "Input placeholder",
       "emailFormFieldSuccess": "Success message",
       "emailFormFieldSuccessPlaceholder": "e.g. Thanks for signing up :)",
+      "emailFormHowItWorks": "Emails visitors leave land in your private 'leads' dashboard. Export to CSV and import into Mailchimp / your email tool.",
+      "emailFormViewLeadsCta": "View collected emails",
+      "leadsLink": "Collected emails",
       "leads": {
         "title": "Collected emails",
         "intro": "{count} total",
