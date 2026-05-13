@@ -8,7 +8,7 @@ import {
   presignProfileImageUpload,
   uploadAvatarToS3,
 } from "@/lib/api";
-import { resizeImage } from "@/lib/image-resize";
+import { ImageCropperDialog } from "../ui/image-cropper-dialog";
 import { useToast } from "../ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
@@ -28,13 +28,20 @@ type Props = {
   emptyHint?: string;
   /** Aspect-ratio class for the preview tile (e.g. {@code aspect-square} / {@code aspect-[4/3]}). */
   aspectClass?: string;
+  /**
+   * Target aspect ratio (width / height) for the cropper. Default matches {@link aspectClass}
+   * (4/3 → 4/3). Pass an explicit number when {@link aspectClass} is a Tailwind arbitrary value the
+   * cropper can't introspect (e.g. {@code aspect-[5/3]} → 5/3).
+   */
+  cropAspect?: number;
 };
 
 /**
- * File-input image uploader for profile-block images (gallery / product card). Picks a file →
- * client-side resize (max 1600px longer edge, JPEG @0.9) → backend presigned PUT → S3 upload →
- * commit → onChange with the public URL. Backend HEAD-checks the size on commit, so the
- * client-side resize is purely a UX optimization.
+ * File-input image uploader for profile-block images (gallery / product card / image / place
+ * cover). Pick a file → {@link ImageCropperDialog} (drag + pinch + zoom at the target aspect) →
+ * presigned S3 PUT → commit → onChange with the public URL. The cropper replaced the old
+ * "resize-to-fit, no preview" flow so users frame their photos before upload; backend HEAD-checks
+ * the size on commit so the client-side resize is purely a UX optimization.
  *
  * <p>Renders as a square (or custom-aspect) tile: empty state shows an upload prompt; filled
  * shows the image with a hover-revealed re-pick button + an explicit remove button below.
@@ -45,14 +52,18 @@ export function ImageUploader({
   removable = true,
   emptyHint,
   aspectClass = "aspect-square",
+  cropAspect,
 }: Props) {
   const t = useTranslations("settings.profile.imageUploader");
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [busy, setBusy] = useState(false);
+  const [pickedFile, setPickedFile] = useState<File | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
-  async function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
+  const effectiveAspect = cropAspect ?? aspectClassToRatio(aspectClass);
+
+  function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
@@ -64,22 +75,20 @@ export function ImageUploader({
       toast(t("tooBig"), "error");
       return;
     }
+    setPickedFile(file);
+  }
+
+  async function handleCropped(cropped: File) {
+    setPickedFile(null);
     setBusy(true);
     try {
-      const resized = await resizeImage(file, {
-        maxDim: MAX_DIM,
-        square: false,
-        type: OUTPUT_TYPE,
-        quality: OUTPUT_QUALITY,
-        filename: "profile-image.jpg",
-      });
       const presign = await presignProfileImageUpload(OUTPUT_TYPE);
-      if (resized.size > presign.maxBytes) {
+      if (cropped.size > presign.maxBytes) {
         toast(t("tooBig"), "error");
         return;
       }
       // S3 PUT shape is identical for any presigned upload — reuse the avatar helper.
-      await uploadAvatarToS3(presign.uploadUrl, resized, OUTPUT_TYPE);
+      await uploadAvatarToS3(presign.uploadUrl, cropped, OUTPUT_TYPE);
       const committed = await commitProfileImageUpload(presign.key);
       onChange(committed.imageUrl);
     } catch (err) {
@@ -88,6 +97,20 @@ export function ImageUploader({
       setBusy(false);
     }
   }
+
+  const cropper = (
+    <ImageCropperDialog
+      open={pickedFile !== null}
+      file={pickedFile}
+      aspect={effectiveAspect}
+      cropShape="rect"
+      outputMaxDim={MAX_DIM}
+      outputType={OUTPUT_TYPE}
+      outputQuality={OUTPUT_QUALITY}
+      onCancel={() => setPickedFile(null)}
+      onConfirm={handleCropped}
+    />
+  );
 
   if (value) {
     return (
@@ -127,6 +150,7 @@ export function ImageUploader({
           onChange={handlePick}
           className="hidden"
         />
+        {cropper}
       </div>
     );
   }
@@ -153,6 +177,25 @@ export function ImageUploader({
         onChange={handlePick}
         className="hidden"
       />
+      {cropper}
     </>
   );
+}
+
+/**
+ * Heuristic: parse the common {@code aspect-square} / {@code aspect-[W/H]} / {@code aspect-video}
+ * Tailwind classes into a numeric aspect ratio for the cropper. Falls back to 4/3 when the class
+ * isn't recognized so the cropper still functions — caller can override via the explicit
+ * {@code cropAspect} prop when in doubt.
+ */
+function aspectClassToRatio(className: string): number {
+  if (className.includes("aspect-square")) return 1;
+  if (className.includes("aspect-video")) return 16 / 9;
+  const match = className.match(/aspect-\[(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)\]/);
+  if (match) {
+    const w = parseFloat(match[1]);
+    const h = parseFloat(match[2]);
+    if (h > 0) return w / h;
+  }
+  return 4 / 3;
 }
