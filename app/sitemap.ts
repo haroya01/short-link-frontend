@@ -1,7 +1,10 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kurl.me";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.NEXT_PUBLIC_FRONTEND_URL ??
+  "https://app.kurl.me";
 
 const PUBLIC_PATHS = ["", "/login", "/about", "/pricing", "/terms", "/privacy"] as const;
 
