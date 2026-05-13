@@ -80,8 +80,12 @@ type Props = {
  * <p>Backward compat: payloads with the legacy {@code image: string} field (one image per item,
  * no focal point) parse cleanly — handled in {@link parseImagesField}.
  */
+type Layout = "carousel" | "grid";
+const LAYOUTS: readonly Layout[] = ["carousel", "grid"];
+
 export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubmit, t }: Props) {
   const [title, setTitle] = useState("");
+  const [layout, setLayout] = useState<Layout>("carousel");
   const [items, setItems] = useState<Item[]>([{ ...EMPTY_ITEM, images: [] }]);
 
   useEffect(() => {
@@ -90,6 +94,11 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
       try {
         const parsed = JSON.parse(initialJson);
         setTitle(typeof parsed.title === "string" ? parsed.title : "");
+        setLayout(
+          typeof parsed.layout === "string" && (LAYOUTS as readonly string[]).includes(parsed.layout)
+            ? (parsed.layout as Layout)
+            : "carousel",
+        );
         const next: Item[] = Array.isArray(parsed.items)
           ? parsed.items.map((v: Record<string, unknown>) => ({
               name: typeof v.name === "string" ? v.name : "",
@@ -112,6 +121,7 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
       }
     }
     setTitle("");
+    setLayout("carousel");
     setItems([{ ...EMPTY_ITEM, images: [] }]);
   }, [open, initialJson]);
 
@@ -159,6 +169,7 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
         await onSubmit(
           JSON.stringify({
             title: title.trim() || null,
+            layout,
             items: cleanedItems,
           }),
         );
@@ -178,6 +189,33 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
             placeholder={t("productCardFieldBlockTitlePlaceholder")}
           />
         </label>
+
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-slate-700">{t("productCardFieldLayout")}</p>
+          <div className="flex flex-wrap gap-1.5">
+            {LAYOUTS.map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => setLayout(l)}
+                aria-pressed={layout === l}
+                className={
+                  "rounded-full border px-3 py-1 text-[11px] font-medium transition " +
+                  (layout === l
+                    ? "border-slate-900 bg-slate-900 text-white"
+                    : "border-slate-200 bg-white text-slate-500 hover:border-slate-300")
+                }
+              >
+                {t(`productCardLayout_${l}`)}
+              </button>
+            ))}
+          </div>
+          <p className="text-[10px] text-slate-400">
+            {layout === "grid"
+              ? t("productCardLayoutGridHint")
+              : t("productCardLayoutCarouselHint")}
+          </p>
+        </div>
 
         <div className="space-y-3">
           {items.map((item, idx) => (

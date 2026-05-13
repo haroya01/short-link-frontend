@@ -380,8 +380,16 @@ export type ProductCardImage = {
  */
 export type ProductBadge = "NEW" | "BEST" | "LIMITED" | "SOLD_OUT";
 
+/**
+ * Block-level layout — controls how the PRODUCT_CARD block renders. {@code carousel} is the v1
+ * horizontal swipe; {@code grid} is a 2-column vertical list (denser, better when you have 5+
+ * items and want all of them visible without swiping). Unknown values fall back to carousel.
+ */
+export type ProductCardLayout = "carousel" | "grid";
+
 export type ProductCardConfig = {
   title: string | null;
+  layout: ProductCardLayout;
   items: Array<{
     name: string;
     images: ProductCardImage[];
