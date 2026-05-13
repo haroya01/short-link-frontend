@@ -455,6 +455,7 @@ export type EmailLead = {
   blockId: number;
   email: string;
   submittedAt: string;
+  optedOut: boolean;
 };
 
 export type EmailLeadPage = {
