@@ -50,6 +50,7 @@
   },
   "nav": {
     "shorten": "短縮",
+    "showcase": "実例",
     "myLinks": "マイリンク",
     "profile": "プロフィール",
     "admin": "管理者",
@@ -64,13 +65,6 @@
     "subhead": "デバイス、OS、ブラウザ、チャネル、国まで — 誰がどこからクリックしたか一目で。",
     "anonymousHint": "ログイン不要で短縮できます。統計はログイン後に確認できます。",
     "demoLink": "分析画面をデモで先に見る",
-    "showcase": {
-      "eyebrow": "公開プロフィール · 実例",
-      "title": "あなたらしいスタイルで",
-      "subhead": "カフェオーナー · 開発者 · 講師 · 写真家 · クリエイター · DJ — 6 つのトーンで、bio のリンクを生きた名刺に。",
-      "demoCta": "実例を見る",
-      "cta": "プロフィールを作る"
-    },
     "previews": {
       "eyebrow": "短縮後 60 秒以内に見える画面",
       "see": "見る",
@@ -131,6 +125,15 @@
     "whyEyebrow": "why kurl",
     "whyTitle": "なぜ他では提供されないのか",
     "whySubhead": "通常 enterprise プランで提供される機能を、ここでは無料 + 標準で。"
+  },
+  "showcase": {
+    "eyebrow": "公開プロフィール · 実例",
+    "title": "あなたらしいスタイルで",
+    "subhead": "カフェオーナー · 開発者 · 講師 · 写真家 · クリエイター · DJ — 6 つのトーンで、bio のリンクを生きた名刺に。",
+    "demoCta": "実例を見る",
+    "ctaTitle": "あなたのプロフィールも 5 分で",
+    "ctaSubhead": "ログイン → ユーザー名を決めるだけ。上の例と同じエディタですぐスタート。",
+    "cta": "プロフィールを作る"
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",

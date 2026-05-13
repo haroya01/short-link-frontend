@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 const ROW_DURATION_SECONDS = 60;
 
 export function ProfileShowcase() {
-  const t = useTranslations("home.showcase");
+  const t = useTranslations("showcase");
   // Duplicate the list so the marquee can scroll infinitely (translate from 0 to -50%).
   const tiles = [...SHOWCASE_PROFILES, ...SHOWCASE_PROFILES];
   const containerRef = useRef<HTMLDivElement | null>(null);

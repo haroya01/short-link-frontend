@@ -61,6 +61,9 @@ export function Nav() {
             <NavLink href="/" active={pathname === "/"}>
               {t("shorten")}
             </NavLink>
+            <NavLink href="/showcase" active={pathname.startsWith("/showcase")}>
+              {t("showcase")}
+            </NavLink>
             {authenticated && (
               <NavLink href="/dashboard" active={pathname.startsWith("/dashboard")}>
                 {t("myLinks")}
@@ -116,6 +119,9 @@ export function Nav() {
           <nav className="container flex flex-col py-2">
             <MobileNavLink href="/" active={pathname === "/"}>
               {t("shorten")}
+            </MobileNavLink>
+            <MobileNavLink href="/showcase" active={pathname.startsWith("/showcase")}>
+              {t("showcase")}
             </MobileNavLink>
             {authenticated && (
               <MobileNavLink href="/dashboard" active={pathname.startsWith("/dashboard")}>
