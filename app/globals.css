@@ -38,6 +38,20 @@ h1, h2, h3, p {
   overflow-wrap: anywhere;
 }
 
+/* Bobbing scroll cue on /showcase — anchors the CTA to the carousel below so visitors who land
+   on the hero don't think they've seen everything. Subtle 6px bob, paused under
+   prefers-reduced-motion. */
+.showcase-scroll-cue-icon {
+  animation: showcase-scroll-cue 1.8s ease-in-out infinite;
+}
+@keyframes showcase-scroll-cue {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcase-scroll-cue-icon { animation: none; }
+}
+
 * {
   -webkit-tap-highlight-color: transparent;
 }
