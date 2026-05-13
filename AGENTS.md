@@ -479,6 +479,21 @@ Identity archetype 은 `ContactCardEntry` 1 개로 충분. 신규 추가 시 foi
 
 ---
 
+## 8.5 EMAIL_FORM → leads → campaign 흐름
+
+EMAIL_FORM 블록은 다른 카드와 다르게 **사용자 입력을 수집**한다. 수집된 데이터의 lifecycle:
+
+1. **수집**: 공개 프로필의 `EmailFormEntryCard` 에서 방문자가 이메일 제출 → `POST /api/v1/public/email-leads`
+2. **확인**: 소유자 전용 `/profile/leads` 페이지에서 newest-first 로 표시
+3. **opt-out**: 거부 의사를 표현한 행을 owner 가 토글 표시 (`PATCH /api/v1/users/me/email-leads/{id}`). 행은 DB 에 그대로 남되 CSV export 기본값에서 제외돼 외부 발송 시 자동 존중됨
+4. **발송 준비**: `/profile/leads/campaign` 빌더에서 메시지 본문의 모든 링크를 kurl 단축링크 + `utm_source=email&utm_campaign=<slug>&utm_medium=email` 로 자동 변환
+5. **발송**: 외부 도구 (Gmail / Mailchimp / 스티비 등) 에 변환된 본문 붙여넣어 발송. **kurl 자체는 메일을 보내지 않는다** — 외부 도구로 보낸 클릭만 dashboard 의 utm_campaign 필터로 집계
+
+**유지 시 주의**
+- opt-out 된 행은 절대 DB 에서 삭제하지 않는다. 같은 사용자가 form 으로 재등록할 때 owner 가 흐름을 추적할 수 있어야 한다
+- CSV export 의 기본 동작은 "opt-out 제외" — `?includeOptedOut=true` 만 전체 archive 를 받는다 (GDPR 응답 용도)
+- 캠페인 빌더는 발송 기능을 절대 추가하지 않는다. 비즈니스 모델 / 스팸 책임 분리 / 인프라 부담 모두 외부 도구에 위임
+
 ---
 
 ## 9. 입력 다이얼로그 (BlockDialog) 공통 패턴
