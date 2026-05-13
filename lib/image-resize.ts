@@ -65,7 +65,14 @@ export async function resizeImage(file: File, options: ResizeOptions): Promise<F
   return new File([blob], filename, { type });
 }
 
-function computeBox(
+/**
+ * Geometry for the canvas {@code drawImage} call inside {@link resizeImage}. Exported only for
+ * the unit test — production code calls {@link resizeImage} and never touches this directly.
+ * The four source rect outputs ({@code sx} / {@code sy} / {@code sw} / {@code sh}) describe what
+ * part of the source image to draw; the two dest dims ({@code dw} / {@code dh}) describe the
+ * destination canvas size. Together they let the caller crop + downscale in one drawImage call.
+ */
+export function computeBox(
   iw: number,
   ih: number,
   maxDim: number,
