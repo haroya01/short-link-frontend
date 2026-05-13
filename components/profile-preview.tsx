@@ -28,7 +28,7 @@ type Props = {
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
-  "https://app.kurl.me";
+  "https://kurl.me";
 
 /**
  * Live profile preview — uses the exact same {@link ProfileHeader} / {@link EntryList} /

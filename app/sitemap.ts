@@ -4,7 +4,7 @@ import { routing } from "@/i18n/routing";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
-  "https://app.kurl.me";
+  "https://kurl.me";
 
 const PUBLIC_PATHS = ["", "/login", "/about", "/pricing", "/terms", "/privacy"] as const;
 
