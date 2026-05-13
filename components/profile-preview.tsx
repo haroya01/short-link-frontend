@@ -25,7 +25,10 @@ type Props = {
   entries: PublicProfileEntry[];
 };
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kurl.me";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.NEXT_PUBLIC_FRONTEND_URL ??
+  "https://app.kurl.me";
 
 /**
  * Live profile preview — uses the exact same {@link ProfileHeader} / {@link EntryList} /

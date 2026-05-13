@@ -40,8 +40,10 @@ export default function StatsPage() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      // Short codes live on the backend host (kurl.me/{code}), not on the frontend (app.kurl.me).
+      // API_BASE points at the backend, which is what we display + share. Fallback to the page
+      // origin only for local dev where everything runs on one host.
       const base =
-        process.env.NEXT_PUBLIC_SITE_URL ??
         process.env.NEXT_PUBLIC_API_BASE ??
         `${window.location.protocol}//${window.location.host}`;
       setShortUrl(`${base.replace(/\/$/, "")}/${code}`);

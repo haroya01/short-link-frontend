@@ -12,13 +12,13 @@ import { Nav } from "@/components/nav";
 import { ToastProvider } from "@/components/ui/toast";
 import { routing } from "@/i18n/routing";
 
-// SITE_URL is the canonical brand domain (alternates.canonical + JSON-LD only).
-// FRONTEND_URL is where the SPA actually lives. og:url MUST point at FRONTEND_URL — when a
-// visitor shares app.kurl.me, KakaoTalk validates og:url against the shared URL and silently
-// drops the preview on host mismatch; pointing og:url at kurl.me also chases a 301 back to
-// app.kurl.me, so canonical-but-mismatched og:url offered the worst of both worlds.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://kurl.me";
-const FRONTEND_URL =
+// One canonical domain. app.kurl.me is where the Next.js app lives and where every share/og/seo
+// URL resolves; the apex kurl.me only handles short-code redirects on the backend. Splitting
+// canonical (kurl.me) from frontend (app.kurl.me) historically produced og:url host-mismatch
+// drops in KakaoTalk and SEO canonicals that pointed at 404 pages — collapsed to a single
+// SITE_URL on 2026-05-13.
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXT_PUBLIC_FRONTEND_URL ??
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://app.kurl.me");
 
@@ -39,11 +39,9 @@ export async function generateMetadata({
     routing.locales.map((l) => [l, `${SITE_URL}/${l}`]),
   );
 
-  // Resolve opengraph-image to FRONTEND_URL so scrapers (Kakao/Slack) can actually fetch it —
-  // the apex kurl.me serves redirects, not images.
-  const ogImageUrl = `${FRONTEND_URL}/${locale}/opengraph-image`;
+  const ogImageUrl = `${SITE_URL}/${locale}/opengraph-image`;
   return {
-    metadataBase: new URL(FRONTEND_URL),
+    metadataBase: new URL(SITE_URL),
     title,
     description,
     alternates: {
@@ -52,7 +50,7 @@ export async function generateMetadata({
     },
     openGraph: {
       type: "website",
-      url: `${FRONTEND_URL}/${locale}`,
+      url: `${SITE_URL}/${locale}`,
       siteName: "kurl",
       title,
       description,

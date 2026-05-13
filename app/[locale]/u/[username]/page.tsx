@@ -11,6 +11,11 @@ import { THEME_TABLE } from "./_lib/theme";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.NEXT_PUBLIC_FRONTEND_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://app.kurl.me");
+
 async function fetchProfile(username: string): Promise<PublicProfile | null> {
   // Short revalidate so owner edits show up within ~30s without smashing the backend per visit.
   // The backend layers a 5min Redis cache that auto-evicts on profile/toggle/reorder writes.
@@ -40,20 +45,15 @@ export async function generateMetadata({
   // result for ~24h. Telling the owner to retest after deploy + use Kakao's 공유 디버거
   // (https://developers.kakao.com/tool/debugger/sharing) to force-refresh.
   const ogImage = profile.bannerUrl ?? profile.avatarUrl ?? null;
-  // og:url must match the host the visitor actually shared (app.kurl.me). Inheriting from the
-  // root layout would point at kurl.me/{locale}, which 404s for /u/<handle> — Kakao drops the
-  // preview when og:url resolves to a different host or status code than the shared URL.
-  const frontendUrl =
-    process.env.NEXT_PUBLIC_FRONTEND_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://app.kurl.me");
-  const ogUrl = `${frontendUrl}/${locale}/u/${profile.username}`;
+  const profileUrl = `${SITE_URL}/${locale}/u/${profile.username}`;
   return {
     title: `@${profile.username} · kurl`,
     description: profile.bio ?? `${entries.filter((e) => e.kind === "LINK").length} links`,
+    alternates: { canonical: profileUrl },
     openGraph: {
       title: `@${profile.username} · kurl`,
       description: profile.bio ?? undefined,
-      url: ogUrl,
+      url: profileUrl,
       images: ogImage
         ? [{ url: ogImage, width: 1200, height: 630, alt: `@${profile.username}` }]
         : undefined,
@@ -125,7 +125,7 @@ export default async function PublicProfilePage({
           emptyLabel={t("empty")}
         />
         <ShareRow
-          url={`${process.env.NEXT_PUBLIC_FRONTEND_URL ?? "https://app.kurl.me"}/u/${profile.username}`}
+          url={`${SITE_URL}/u/${profile.username}`}
           username={profile.username}
           colors={colors}
           socials={profile.socials ?? []}
@@ -147,7 +147,7 @@ export default async function PublicProfilePage({
         <p className={`mt-6 text-center text-[11px] ${colors.muted}`}>{t("madeWith")}</p>
       </div>
       <ProfileShareFab
-        url={`${process.env.NEXT_PUBLIC_FRONTEND_URL ?? "https://app.kurl.me"}/u/${profile.username}`}
+        url={`${SITE_URL}/u/${profile.username}`}
         filename={`${profile.username}.png`}
       />
       <ProfileOwnerFab username={profile.username} />
