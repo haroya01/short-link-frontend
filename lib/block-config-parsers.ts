@@ -9,12 +9,14 @@ import type {
   ProductBadge,
   ProductCardConfig,
   ProductCardImage,
+  ProductCardLayout,
   TextAccent,
   TextBlockConfig,
   TextLayout,
 } from "@/types";
 
 const PRODUCT_BADGES: readonly ProductBadge[] = ["NEW", "BEST", "LIMITED", "SOLD_OUT"];
+const PRODUCT_LAYOUTS: readonly ProductCardLayout[] = ["carousel", "grid"];
 const TEXT_LAYOUTS: readonly TextLayout[] = ["inline", "card", "quote"];
 const TEXT_ACCENTS: readonly TextAccent[] = ["blue", "amber", "green", "red", "violet"];
 
@@ -190,7 +192,7 @@ function parseProductCardImages(item: Record<string, unknown>): ProductCardImage
 
 export function parseProductCardConfig(raw: string): ProductCardConfig {
   const parsed = safeJsonParse(raw) as Record<string, unknown> | null;
-  if (!parsed) return { title: null, items: [] };
+  if (!parsed) return { title: null, layout: "carousel", items: [] };
   const items = Array.isArray(parsed.items)
     ? parsed.items
         .filter((v): v is Record<string, unknown> => !!v && typeof v === "object")
@@ -211,6 +213,11 @@ export function parseProductCardConfig(raw: string): ProductCardConfig {
     : [];
   return {
     title: asString(parsed.title),
+    layout:
+      typeof parsed.layout === "string" &&
+      (PRODUCT_LAYOUTS as readonly string[]).includes(parsed.layout)
+        ? (parsed.layout as ProductCardLayout)
+        : "carousel",
     items,
   };
 }

@@ -231,7 +231,11 @@ describe("parseProductCardConfig", () => {
   });
 
   it("returns empty defaults on malformed JSON", () => {
-    expect(parseProductCardConfig("not json")).toEqual({ title: null, items: [] });
+    expect(parseProductCardConfig("not json")).toEqual({
+      title: null,
+      layout: "carousel",
+      items: [],
+    });
   });
 
   it("parses originalPrice + badge for strikethrough/chip display", () => {
@@ -271,6 +275,27 @@ describe("parseProductCardConfig", () => {
       );
       expect(out.items[0].badge).toBe(badge);
     }
+  });
+
+  it("layout defaults to carousel when omitted", () => {
+    const out = parseProductCardConfig(JSON.stringify({ items: [{ name: "x" }] }));
+    expect(out.layout).toBe("carousel");
+  });
+
+  it("accepts carousel + grid layouts", () => {
+    for (const layout of ["carousel", "grid"] as const) {
+      const out = parseProductCardConfig(
+        JSON.stringify({ layout, items: [{ name: "x" }] }),
+      );
+      expect(out.layout).toBe(layout);
+    }
+  });
+
+  it("unknown layout falls back to carousel", () => {
+    const out = parseProductCardConfig(
+      JSON.stringify({ layout: "futureLayout", items: [{ name: "x" }] }),
+    );
+    expect(out.layout).toBe("carousel");
   });
 });
 

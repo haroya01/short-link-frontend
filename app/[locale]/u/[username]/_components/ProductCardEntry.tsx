@@ -101,6 +101,94 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
 
   if (config.items.length === 0) return null;
 
+  // Grid layout — 2-column (3 on sm+) vertical grid. Used when the seller wants every item
+  // visible at once instead of behind a swipe. Each tile is a compact card (1:1 image + name +
+  // price). Renders as an early return so the heavier carousel state (scroller / dots) doesn't
+  // mount when not needed.
+  if (config.layout === "grid") {
+    return (
+      <li ref={wrapperRef} className="profile-fade" style={fadeStyle}>
+        {config.title && (
+          <p className={`mb-2 px-1 text-[13px] font-semibold ${colors.primary}`}>
+            {config.title}
+          </p>
+        )}
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {config.items.map((item, idx) => {
+            const soldOut = item.badge === "SOLD_OUT";
+            const discountPct = computeDiscountPercent(item.price, item.originalPrice);
+            const hero = item.images[0];
+            const article = (
+              <article
+                className={
+                  `overflow-hidden rounded-xl border transition ${colors.card} ${colors.cardBorder} ` +
+                  (soldOut ? "opacity-70" : `${colors.cardHover}`)
+                }
+              >
+                <div className="relative aspect-square bg-slate-100">
+                  {hero ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={hero.url}
+                      alt=""
+                      loading="lazy"
+                      className={`h-full w-full object-cover ${soldOut ? "grayscale" : ""}`}
+                      style={{ objectPosition: `${hero.focalX}% ${hero.focalY}%` }}
+                    />
+                  ) : null}
+                  {item.badge && (
+                    <span
+                      className={
+                        "pointer-events-none absolute left-1.5 top-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider shadow-sm " +
+                        BADGE_COLOR[item.badge]
+                      }
+                    >
+                      {t(`badge.${item.badge}` as const)}
+                    </span>
+                  )}
+                </div>
+                <div className="space-y-0.5 px-2 py-1.5">
+                  <p
+                    className={`line-clamp-1 text-[12px] font-semibold leading-tight ${colors.primary}`}
+                  >
+                    {item.name}
+                  </p>
+                  {item.price && (
+                    <div className="flex items-baseline gap-1.5">
+                      <p
+                        className={
+                          soldOut
+                            ? "text-[12px] font-bold text-slate-400 line-through"
+                            : "text-[12px] font-bold text-accent-700"
+                        }
+                      >
+                        {item.price}
+                      </p>
+                      {discountPct != null && !soldOut && (
+                        <span className="text-[10px] font-semibold text-red-600">
+                          {t("discount", { pct: discountPct })}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </article>
+            );
+            // Whole tile is the link when ctaUrl is set — grid tiles are too small for a separate
+            // bottom CTA bar, and a tap-anywhere affordance matches Instagram Shop / Beacons.
+            return item.ctaUrl && !soldOut ? (
+              <a key={idx} href={item.ctaUrl} target="_blank" rel="noreferrer" className="block">
+                {article}
+              </a>
+            ) : (
+              <div key={idx}>{article}</div>
+            );
+          })}
+        </div>
+      </li>
+    );
+  }
+
   // Single item — render as a regular full-width card matching the other feed entries. No
   // horizontal scroller, no dots, no peek of an adjacent item that doesn't exist. This is
   // the design language: one item should look like a sibling of LinkEntry / EventEntry /
