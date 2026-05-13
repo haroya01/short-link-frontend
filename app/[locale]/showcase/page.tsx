@@ -1,0 +1,81 @@
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ArrowRight } from "lucide-react";
+import { ProfileShowcase } from "@/components/profile-showcase";
+import { Link } from "@/i18n/navigation";
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.NEXT_PUBLIC_FRONTEND_URL ??
+  "https://kurl.me";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "showcase" });
+  return {
+    title: `${t("title")} · kurl`,
+    description: t("subhead"),
+    alternates: { canonical: `${SITE_URL}/${locale}/showcase` },
+    openGraph: {
+      title: `${t("title")} · kurl`,
+      description: t("subhead"),
+      url: `${SITE_URL}/${locale}/showcase`,
+      type: "website",
+      siteName: "kurl",
+    },
+  };
+}
+
+export default async function ShowcasePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "showcase" });
+
+  return (
+    <div className="overflow-hidden">
+      <section className="border-b border-slate-100 bg-white">
+        <div className="container max-w-3xl py-16 text-center sm:py-20">
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-700">
+            {t("eyebrow")}
+          </p>
+          <h1 className="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            {t("title")}
+          </h1>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-500">
+            {t("subhead")}
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-white pb-16">
+        <ProfileShowcase />
+      </section>
+
+      <section className="border-t border-slate-100 bg-slate-50/50">
+        <div className="container max-w-3xl py-16 text-center">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            {t("ctaTitle")}
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate-500">
+            {t("ctaSubhead")}
+          </p>
+          <Link
+            href="/login"
+            className="group mt-6 inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
+          >
+            {t("cta")}
+            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}
