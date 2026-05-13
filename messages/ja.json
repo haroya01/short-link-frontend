@@ -133,7 +133,10 @@
     "demoCta": "実例を見る",
     "ctaTitle": "あなたのプロフィールも 5 分で完成",
     "ctaSubhead": "登録してお好きな名前を決めるだけ。写真 · リンク · お店の住所 · 連絡先を入れれば、下の例のように仕上がります。",
-    "cta": "プロフィールを作る"
+    "cta": "プロフィールを作る",
+    "metaSuffix": "サンプル",
+    "sampleBanner": "サンプルページ — 登録後、あなたのページもこのように作れます",
+    "sampleCta": "プロフィールを作る"
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",

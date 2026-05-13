@@ -133,7 +133,10 @@
     "demoCta": "See it live",
     "ctaTitle": "Your profile, ready in 5 minutes",
     "ctaSubhead": "Sign in and pick a name — then drop in your photos, links, address, and contact info, just like the examples below.",
-    "cta": "Make your profile"
+    "cta": "Make your profile",
+    "metaSuffix": "sample",
+    "sampleBanner": "Sample page — after signing up, your profile can look like this",
+    "sampleCta": "Make my profile"
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
