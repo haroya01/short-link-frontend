@@ -8,8 +8,8 @@ import {
   presignProfileImageUpload,
   uploadAvatarToS3,
 } from "@/lib/api";
-import { resizeImage } from "@/lib/image-resize";
 import { ConfirmDialog } from "../ui/dialog";
+import { ImageCropperDialog } from "../ui/image-cropper-dialog";
 import { useToast } from "../ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 
@@ -56,6 +56,11 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [overIdx, setOverIdx] = useState<number | null>(null);
   const [dropzoneHot, setDropzoneHot] = useState(false);
+  // Sequential cropper queue. The user can pick N files at once via the dropzone; we crop them
+  // one at a time so each photo gets the framing it deserves rather than a center-crop. The head
+  // of the queue is shown in the cropper; on confirm/cancel we shift and advance to the next.
+  const [cropQueue, setCropQueue] = useState<File[]>([]);
+  const currentCropFile = cropQueue[0] ?? null;
 
   useEffect(() => {
     if (!open) return;
@@ -89,18 +94,11 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
 
   async function uploadOne(file: File, slotId: string) {
     try {
-      const resized = await resizeImage(file, {
-        maxDim: MAX_DIM,
-        square: false,
-        type: OUTPUT_TYPE,
-        quality: OUTPUT_QUALITY,
-        filename: "gallery.jpg",
-      });
       const presign = await presignProfileImageUpload(OUTPUT_TYPE);
-      if (resized.size > presign.maxBytes) {
+      if (file.size > presign.maxBytes) {
         throw new Error("tooBig");
       }
-      await uploadAvatarToS3(presign.uploadUrl, resized, OUTPUT_TYPE);
+      await uploadAvatarToS3(presign.uploadUrl, file, OUTPUT_TYPE);
       const committed = await commitProfileImageUpload(presign.key);
       setSlots((prev) =>
         prev.map((s) =>
@@ -122,7 +120,7 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
     const files = Array.from(fileList);
     if (files.length === 0) return;
     const accepted = ACCEPT.split(",");
-    const room = MAX_IMAGES - slots.length;
+    const room = MAX_IMAGES - slots.length - cropQueue.length;
     if (room <= 0) {
       toast(t("galleryFullToast", { max: MAX_IMAGES }), "error");
       return;
@@ -144,14 +142,22 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
     if (files.length > room) {
       toast(t("galleryTruncatedToast", { max: MAX_IMAGES }));
     }
-    const newSlots: Slot[] = valid.map((_, i) => ({
-      id: `up-${Date.now()}-${i}-${Math.random().toString(36).slice(2, 7)}`,
-      status: "uploading",
-    }));
-    setSlots((prev) => [...prev, ...newSlots]);
-    valid.forEach((file, i) => {
-      void uploadOne(file, newSlots[i].id);
-    });
+    // Push picked files into the cropper queue. The cropper dialog opens for the first one;
+    // confirming each one shifts the queue and advances to the next, so users can crop a batch in
+    // a single flow without re-opening the file picker.
+    setCropQueue((prev) => [...prev, ...valid]);
+  }
+
+  function handleCropConfirm(cropped: File) {
+    setCropQueue((prev) => prev.slice(1));
+    const slotId = `up-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    setSlots((prev) => [...prev, { id: slotId, status: "uploading" }]);
+    void uploadOne(cropped, slotId);
+  }
+
+  function handleCropCancel() {
+    // Cancel discards just the current file (head of the queue), keeping the rest of the batch.
+    setCropQueue((prev) => prev.slice(1));
   }
 
   function handlePick(e: React.ChangeEvent<HTMLInputElement>) {
@@ -315,6 +321,17 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
           </div>
         )}
       </div>
+      <ImageCropperDialog
+        open={currentCropFile !== null}
+        file={currentCropFile}
+        aspect={4 / 3}
+        cropShape="rect"
+        outputMaxDim={MAX_DIM}
+        outputType={OUTPUT_TYPE}
+        outputQuality={OUTPUT_QUALITY}
+        onCancel={handleCropCancel}
+        onConfirm={handleCropConfirm}
+      />
     </ConfirmDialog>
   );
 }
