@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Mail } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { MobilePreviewSheet } from "@/components/mobile-preview-sheet";
@@ -36,11 +38,28 @@ export default function ProfileEditPage() {
     return <div className="container max-w-2xl py-16 text-sm text-slate-500">…</div>;
   }
 
+  const hasEmailForm = draft.entries.some((e) => e.kind === "EMAIL_FORM");
+
   return (
     <div className="container max-w-5xl space-y-6 py-12">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
-        <p className="mt-1 text-sm text-slate-500">{t("intro")}</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
+          <p className="mt-1 text-sm text-slate-500">{t("intro")}</p>
+        </div>
+        {/* Only surface the leads link when there's at least one EMAIL_FORM block on the
+            profile — keeps the header clean for sellers who aren't collecting emails. The page
+            was previously orphan (no nav entry anywhere), so sellers who built a form often
+            didn't know the dashboard existed. */}
+        {hasEmailForm && (
+          <Link
+            href={`/${locale}/profile/leads`}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            <Mail className="h-3.5 w-3.5" />
+            {t("leadsLink")}
+          </Link>
+        )}
       </div>
 
       {/*

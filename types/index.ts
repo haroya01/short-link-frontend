@@ -441,6 +441,11 @@ export type PlaceCategory =
 
 export type EmailFormConfig = {
   title: string;
+  /**
+   * Short value-prop paragraph that sits between the title and the input — "왜 이메일을 남겨야
+   * 할지" 안내. Null when the seller didn't write one; renderer skips the slot.
+   */
+  subtitle: string | null;
   placeholder: string | null;
   successMessage: string | null;
 };

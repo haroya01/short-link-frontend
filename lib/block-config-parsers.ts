@@ -140,9 +140,10 @@ export function parseEventConfig(raw: string): EventConfig | null {
  */
 export function parseEmailFormConfig(raw: string): EmailFormConfig {
   const parsed = safeJsonParse(raw) as Record<string, unknown> | null;
-  if (!parsed) return { title: raw, placeholder: null, successMessage: null };
+  if (!parsed) return { title: raw, subtitle: null, placeholder: null, successMessage: null };
   return {
     title: asStringOr(parsed.title, ""),
+    subtitle: asString(parsed.subtitle),
     placeholder: asString(parsed.placeholder),
     successMessage: asString(parsed.successMessage),
   };
