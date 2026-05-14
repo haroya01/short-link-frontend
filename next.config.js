@@ -1,4 +1,5 @@
 const createNextIntlPlugin = require("next-intl/plugin");
+const { withSentryConfig } = require("@sentry/nextjs");
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -23,4 +24,11 @@ const nextConfig = {
   },
 };
 
-module.exports = withNextIntl(nextConfig);
+module.exports = withSentryConfig(withNextIntl(nextConfig), {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+});
