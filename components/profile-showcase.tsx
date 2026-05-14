@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import AutoplayPlugin from "embla-carousel-autoplay";
 import { useTranslations } from "next-intl";
@@ -19,10 +19,16 @@ import { cn } from "@/lib/utils";
  * fade, same {@code -mt-12} container overlap — so what visitors see in the showcase is what
  * they'd see if they viewed the real profile page on their phone.
  *
- * Carousel uses Embla — touch-swipe on mobile, drag on desktop, with autoplay that pauses on
- * user interaction. Previous CSS marquee couldn't intercept touch since it ran on transform
- * keyframes; switching to Embla means the carousel feels like a native phone gallery while
- * still progressing on its own.
+ * Two pieces of "the carousel doesn't get the real interactive treatment" handled here:
+ *
+ *  1. Carousel is Embla — touch-swipe on mobile, drag on desktop, autoplay that pauses on
+ *     hover so users can read a card without it sliding past.
+ *  2. Foil shimmer on {@link ContactCardEntry} normally rides on pointer-move; inside the
+ *     marquee the screen is {@code pointer-events:none} so the cards would sit dim and flat.
+ *     The {@code showcase-foil-drift} keyframes below animate the four CSS vars the foil
+ *     shader reads ({@code --background-x/y}, {@code --pointer-x/y}) so the holographic
+ *     pattern keeps moving even with no pointer — the showcase ends up looking as alive as
+ *     the real card on a real device tilt.
  */
 const DEVICE_SCALE = 0.8;
 const DEVICE_NATIVE_W = 428;
@@ -56,6 +62,75 @@ export function ProfileShowcase() {
           ))}
         </div>
       </div>
+
+      {/* @property declarations are what make the CSS vars animatable — without them the
+          browser treats them as opaque strings and skips interpolation, so the keyframes
+          would snap between values instead of drifting. Chrome 85+, Safari 16.4+, FF 128+
+          all support this. Older browsers fall back to the static `--card-opacity` bump
+          set inline on the screen below, which already shows the foil pattern; just not
+          moving. */}
+      <style jsx global>{`
+        @property --background-x {
+          syntax: "<percentage>";
+          initial-value: 50%;
+          inherits: true;
+        }
+        @property --background-y {
+          syntax: "<percentage>";
+          initial-value: 50%;
+          inherits: true;
+        }
+        @property --pointer-x {
+          syntax: "<percentage>";
+          initial-value: 50%;
+          inherits: true;
+        }
+        @property --pointer-y {
+          syntax: "<percentage>";
+          initial-value: 50%;
+          inherits: true;
+        }
+        @keyframes showcase-foil-drift {
+          0% {
+            --background-x: 20%;
+            --background-y: 30%;
+            --pointer-x: 30%;
+            --pointer-y: 70%;
+          }
+          25% {
+            --background-x: 80%;
+            --background-y: 30%;
+            --pointer-x: 75%;
+            --pointer-y: 35%;
+          }
+          50% {
+            --background-x: 75%;
+            --background-y: 75%;
+            --pointer-x: 70%;
+            --pointer-y: 80%;
+          }
+          75% {
+            --background-x: 30%;
+            --background-y: 70%;
+            --pointer-x: 25%;
+            --pointer-y: 55%;
+          }
+          100% {
+            --background-x: 20%;
+            --background-y: 30%;
+            --pointer-x: 30%;
+            --pointer-y: 70%;
+          }
+        }
+        .showcase-shimmer {
+          animation: showcase-foil-drift 9s ease-in-out infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .showcase-shimmer {
+            animation: none;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -81,14 +156,11 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
           <div className="device-frame">
             <div
               className={cn(
-                "device-screen pointer-events-none overflow-y-auto",
+                "device-screen pointer-events-none overflow-y-auto showcase-shimmer",
                 colors.page,
               )}
-              // Foil shimmer relies on pointer-move to animate the shine. Inside the carousel
-              // the screen is pointer-events:none (taps go to the wrapper Link), so the foil
-              // would otherwise sit flat at its dim default. Raising --card-opacity makes the
-              // static shine layers visible without interaction — same shader, just baseline
-              // brightness lifted so the carousel previews look like the real card on tilt.
+              // --card-opacity 0.95 lifts the foil layers to near-full brightness so the
+              // animated shine drift reads clearly even at the marquee's reduced scale.
               style={{ ["--card-opacity" as string]: "0.95" }}
             >
               <ProfilePreviewBody profile={profile} colors={colors} />
