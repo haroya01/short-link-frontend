@@ -493,7 +493,9 @@
       "noData": "Insufficient data",
       "uniqueOfHuman": "{ratio}% of human",
       "vsBaseline": "vs 24h average",
-      "afterCreation": "after creation"
+      "afterCreation": "after creation",
+      "profile": "From profile",
+      "profileSub": "{ratio}% of human"
     },
     "section": {
       "heatmap": {
