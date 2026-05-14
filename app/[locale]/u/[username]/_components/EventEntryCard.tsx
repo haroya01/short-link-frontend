@@ -191,7 +191,7 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
                   <CalendarPlus className="h-3.5 w-3.5" />
                   {t("addToCalendar")}
                   <ChevronDown
-                    className={`h-3.5 w-3.5 opacity-70 transition-transform ${
+                    className={`h-3.5 w-3.5 opacity-70 transition-transform duration-200 ${
                       menuOpen ? "rotate-180" : ""
                     }`}
                   />
@@ -214,7 +214,7 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
                         left: menuPos.left,
                         width: menuPos.width,
                       }}
-                      className="z-[100] overflow-hidden rounded-lg border border-slate-200 bg-white text-left shadow-xl"
+                      className="z-[100] origin-top overflow-hidden rounded-lg border border-slate-200 bg-white text-left shadow-xl animate-dropdown-in"
                     >
                       {gcalHref && (
                         <a

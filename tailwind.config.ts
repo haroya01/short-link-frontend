@@ -53,6 +53,10 @@ const config: Config = {
           from: { opacity: "0", transform: "translateY(2px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "dropdown-in": {
+          from: { opacity: "0", transform: "translateY(-6px) scale(0.96)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
         "toast-in": {
           from: { opacity: "0", transform: "translateY(8px) scale(0.98)" },
           to: { opacity: "1", transform: "translateY(0) scale(1)" },
@@ -63,6 +67,7 @@ const config: Config = {
       },
       animation: {
         "fade-in": "fade-in 180ms ease-out",
+        "dropdown-in": "dropdown-in 200ms cubic-bezier(0.16, 1, 0.3, 1)",
         "toast-in": "toast-in 220ms cubic-bezier(0.16, 1, 0.3, 1)",
         shimmer: "shimmer 1.5s infinite",
       },
