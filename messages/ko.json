@@ -724,7 +724,13 @@
       "google": "Google 캘린더",
       "outlook": "Outlook",
       "appleIcs": "Apple / .ics 다운로드",
-      "moreInfo": "자세히"
+      "moreInfo": "자세히",
+      "today": "오늘",
+      "tomorrow": "내일",
+      "inDays": "{days}일 후",
+      "inWeeks": "{weeks}주 후",
+      "ended": "종료",
+      "eventEnded": "종료된 이벤트"
     },
     "place": {
       "directions": "길찾기",

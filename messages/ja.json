@@ -807,7 +807,13 @@
       "google": "Google カレンダー",
       "outlook": "Outlook",
       "appleIcs": "Apple / .ics ダウンロード",
-      "moreInfo": "詳細"
+      "moreInfo": "詳細",
+      "today": "今日",
+      "tomorrow": "明日",
+      "inDays": "{days}日後",
+      "inWeeks": "{weeks}週間後",
+      "ended": "終了",
+      "eventEnded": "終了したイベント"
     },
     "place": {
       "directions": "経路",
