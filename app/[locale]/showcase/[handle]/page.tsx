@@ -65,13 +65,15 @@ export default async function ShowcaseHandlePage({
           explicit enough that visitors don't think this is a real user's page. */}
       <div className="sticky top-0 z-30 border-b border-amber-200/60 bg-amber-50/80 backdrop-blur">
         <div className="container flex max-w-md items-center justify-between gap-3 py-2 text-[11px]">
-          <span className="inline-flex items-center gap-1.5 font-medium text-amber-900">
-            <Sparkles className="h-3 w-3" />
-            {t("sampleBanner")}
+          {/* min-w-0 + truncate keeps the banner to one line on narrow viewports —
+              previously the long copy wrapped to two rows on phone. */}
+          <span className="inline-flex min-w-0 items-center gap-1.5 font-medium text-amber-900">
+            <Sparkles className="h-3 w-3 shrink-0" />
+            <span className="truncate">{t("sampleBanner")}</span>
           </span>
           <Link
             href="/login?next=/profile/auto"
-            className="inline-flex items-center gap-1 rounded-md bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-white transition hover:bg-slate-800"
+            className="inline-flex shrink-0 items-center gap-1 rounded-md bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-white transition hover:bg-slate-800"
           >
             {t("sampleCta")}
             <ArrowRight className="h-3 w-3" />
