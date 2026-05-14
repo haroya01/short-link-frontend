@@ -1136,6 +1136,8 @@
       "autosaveHint": "変更は自動保存されます",
       "copyPublicUrl": "公開 URL をコピー",
       "openProfile": "公開プロフィールを開く",
+      "openShort": "開く",
+      "yourPage": "あなたのページ",
       "featuredTitle": "公開ページのフィード",
       "featuredHint": "ドラッグで並び替え (モバイル ↑↓)、★ で 1 つを大きなヒーローカードに、'削除' で外す。ヘッダーでセクションを作ると、折りたたみや一括移動ができます。",
       "sectionExpand": "セクションを開く",

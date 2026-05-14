@@ -1136,6 +1136,8 @@
       "autosaveHint": "Changes save automatically",
       "copyPublicUrl": "Copy public URL",
       "openProfile": "Open my live profile",
+      "openShort": "Open",
+      "yourPage": "Your page",
       "featuredTitle": "Profile feed",
       "featuredHint": "Drag to reorder (mobile uses ↑↓), ★ to highlight one as a hero card, 'Remove' to drop. Add a header to group items into a section — collapsible and movable as one.",
       "sectionExpand": "Expand section",
