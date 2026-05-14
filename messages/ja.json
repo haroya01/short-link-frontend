@@ -136,7 +136,8 @@
     "cta": "プロフィールを作る",
     "metaSuffix": "サンプル",
     "sampleBanner": "サンプルページ — 登録後、あなたのページもこのように作れます",
-    "sampleCta": "プロフィールを作る"
+    "sampleCta": "プロフィールを作る",
+    "scrollCue": "実例を見る"
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",

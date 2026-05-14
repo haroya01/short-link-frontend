@@ -136,7 +136,8 @@
     "cta": "Make your profile",
     "metaSuffix": "sample",
     "sampleBanner": "Sample page — after signing up, your profile can look like this",
-    "sampleCta": "Make my profile"
+    "sampleCta": "Make my profile",
+    "scrollCue": "See real examples"
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
