@@ -16,6 +16,7 @@ import {
   updateMyProfile,
   updateProfileBlock,
 } from "@/lib/api";
+import { track } from "@/components/posthog-provider";
 import type {
   MyLink,
   MyProfile,
@@ -399,7 +400,11 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         theme: theme ?? undefined,
         socials: cleanedSocials.length === 0 ? "" : JSON.stringify(cleanedSocials),
       });
+      const usernameJustClaimed = !profile?.username && Boolean(updated.username);
       setProfile(updated);
+      if (usernameJustClaimed && updated.username) {
+        track("username_claimed", { username: updated.username });
+      }
       toast(t("saved"), "success");
     } catch (err) {
       toast(errorMessage(err, t("saveFailed")), "error");
@@ -585,6 +590,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         ...prev,
         { kind: "BLOCK", id: block.id, type: "TEXT", content: block.content ?? "" },
       ]);
+      track("block_added", { type: "TEXT" });
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
@@ -597,6 +603,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         ...prev,
         { kind: "BLOCK", id: block.id, type: "DIVIDER", content: null },
       ]);
+      track("block_added", { type: "DIVIDER" });
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
@@ -617,6 +624,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         ...prev,
         { kind: "BLOCK", id: block.id, type: "IMAGE", content: block.content ?? "" },
       ]);
+      track("block_added", { type: "IMAGE" });
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
@@ -665,6 +673,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         ...prev,
         { kind: "BLOCK", id: block.id, type, content: block.content ?? "" },
       ]);
+      track("block_added", { type });
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
@@ -685,6 +694,7 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         ...prev,
         { kind: "BLOCK", id: block.id, type: "EMBED", content: block.content ?? "" },
       ]);
+      track("block_added", { type: "EMBED" });
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }

@@ -10,6 +10,7 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { ClaimToastListener } from "@/components/claim-toast-listener";
 import { Nav } from "@/components/nav";
 import { ToastProvider } from "@/components/ui/toast";
+import { PostHogProvider } from "@/components/posthog-provider";
 import { routing } from "@/i18n/routing";
 
 // Single canonical domain. Cloudflare Worker (kurl-router) routes kurl.me/* to either the
@@ -111,13 +112,15 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <NextIntlClientProvider locale={locale}>
-          <ToastProvider>
-            <Nav />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <CookieConsent />
-            <ClaimToastListener />
-          </ToastProvider>
+          <PostHogProvider>
+            <ToastProvider>
+              <Nav />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <CookieConsent />
+              <ClaimToastListener />
+            </ToastProvider>
+          </PostHogProvider>
         </NextIntlClientProvider>
         <script
           type="application/ld+json"
