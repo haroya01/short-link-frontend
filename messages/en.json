@@ -46,7 +46,10 @@
   },
   "meta": {
     "title": "kurl · URL shortener with click analytics",
-    "description": "Shorten long URLs. Analyze clicks by device, channel, and country."
+    "description": "Shorten long URLs. Analyze clicks by device, channel, and country.",
+    "ogHeadlineTop": "Short URLs +",
+    "ogHeadlineBottom": "Click analytics",
+    "ogSubline": "Device · channel · country · time — see who clicks from where, at a glance"
   },
   "nav": {
     "shorten": "Shorten",

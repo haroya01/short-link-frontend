@@ -1,7 +1,10 @@
 {
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
-    "description": "긴 URL을 한 줄로. 디바이스, 채널, 국가별 클릭 분석까지."
+    "description": "긴 URL을 한 줄로. 디바이스, 채널, 국가별 클릭 분석까지.",
+    "ogHeadlineTop": "URL 단축 +",
+    "ogHeadlineBottom": "클릭 분석",
+    "ogSubline": "디바이스 · 채널 · 국가 · 시간대 — 누가 어디서 클릭했는지 한눈에"
   },
   "imageCropper": {
     "title": "이미지 자르기",

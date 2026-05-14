@@ -1,11 +1,19 @@
 import { ImageResponse } from "next/og";
+import { getTranslations } from "next-intl/server";
 
 export const runtime = "edge";
 export const alt = "kurl · URL shortener with click analytics";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default async function OgImage() {
+export default async function OgImage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+
   return new ImageResponse(
     (
       <div
@@ -44,7 +52,7 @@ export default async function OgImage() {
               letterSpacing: -3,
             }}
           >
-            URL 단축 +
+            {t("ogHeadlineTop")}
           </div>
           <div
             style={{
@@ -55,10 +63,10 @@ export default async function OgImage() {
               color: "#94a3b8",
             }}
           >
-            클릭 분석
+            {t("ogHeadlineBottom")}
           </div>
           <div style={{ marginTop: 16, fontSize: 28, color: "#cbd5e1" }}>
-            디바이스 · 채널 · 국가 · 시간대 — 누가 어디서 클릭했는지 한눈에
+            {t("ogSubline")}
           </div>
         </div>
 
