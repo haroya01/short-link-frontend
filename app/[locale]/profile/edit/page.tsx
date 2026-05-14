@@ -10,7 +10,6 @@ import { MobilePreviewSheet } from "@/components/mobile-preview-sheet";
 import { ProfileSection, type ProfileDraft } from "@/components/profile-section";
 import { ProfilePreview } from "@/components/profile-preview";
 import { ProfileVisitSummaryCard } from "@/components/profile-visit-summary-card";
-import { ProfileStatsVisibilityToggle } from "@/components/profile-stats-visibility-toggle";
 import { ProfilePublicUrlBanner } from "@/components/profile-public-url-banner";
 
 export default function ProfileEditPage() {
@@ -95,12 +94,11 @@ export default function ProfileEditPage() {
       </div>
 
       {/* Visit-stats summary — only renders when the user has claimed a username AND has at
-          least one recorded visit. Click-through takes them to /profile/stats for full charts. */}
+          least one recorded visit. Click-through takes them to /profile/stats for full charts.
+          Visit stats are owner-only — the previous public-visibility toggle was removed: there's
+          no compelling reason for visitors to see who else came by, and the absence of the
+          control keeps owners from worrying about whether their numbers leak. */}
       <ProfileVisitSummaryCard hasUsername={Boolean(me?.username)} />
-
-      {/* Opt-in switch for /u/<username>/stats public visibility. Sits below the numbers card
-          so the decision is anchored next to the data it'd expose. */}
-      <ProfileStatsVisibilityToggle hasUsername={Boolean(me?.username)} />
 
       {/*
         `minmax(0, 1fr)` (not bare `1fr`, which is `minmax(auto, 1fr)`) is what caps the left
