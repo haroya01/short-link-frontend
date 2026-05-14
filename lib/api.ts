@@ -357,9 +357,12 @@ export async function getProfileStatsVisibility(): Promise<ProfileStatsVisibilit
 export async function setProfileStatsVisibility(
   isPublic: boolean,
 ): Promise<ProfileStatsVisibility> {
+  // Pass the body as a plain object — {@link request} only adds the JSON Content-Type header
+  // when it sees an object body (so it can both stringify and tag it). Pre-stringifying here
+  // bypassed that branch and the BE rejected the call as text/plain.
   return request<ProfileStatsVisibility>(`/api/v1/users/me/profile/stats/visibility`, {
     method: "PATCH",
-    body: JSON.stringify({ isPublic }),
+    body: { isPublic },
   });
 }
 
