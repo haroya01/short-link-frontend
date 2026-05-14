@@ -382,16 +382,21 @@ function UserStatTable({
 type TrendRow = { date: string; signups: number; links: number; clicks: number };
 
 function mergeTrends(d: AdminOverview): TrendRow[] {
+  // BE returns the daily* arrays as null when a fresh DB has no events yet — iterating
+  // {@code for (const p of null)} throws TypeError "undefined is not iterable" and tanks
+  // the whole admin page through global-error.tsx (the recent /ko/admin "Application
+  // error" reports). Null-coalesce to [] so empty state renders an empty chart rather than
+  // crashing the route.
   const map = new Map<string, TrendRow>();
-  for (const p of d.dailySignups) {
+  for (const p of d.dailySignups ?? []) {
     map.set(p.date, { date: p.date, signups: p.count, links: 0, clicks: 0 });
   }
-  for (const p of d.dailyLinks) {
+  for (const p of d.dailyLinks ?? []) {
     const row = map.get(p.date) ?? { date: p.date, signups: 0, links: 0, clicks: 0 };
     row.links = p.count;
     map.set(p.date, row);
   }
-  for (const p of d.dailyClicks) {
+  for (const p of d.dailyClicks ?? []) {
     const row = map.get(p.date) ?? { date: p.date, signups: 0, links: 0, clicks: 0 };
     row.clicks = p.count;
     map.set(p.date, row);
