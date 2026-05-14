@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import AutoplayPlugin from "embla-carousel-autoplay";
 import { useTranslations } from "next-intl";
 import type { PublicProfile } from "@/types";
 import { Link } from "@/i18n/navigation";
@@ -17,38 +19,27 @@ import { cn } from "@/lib/utils";
  * fade, same {@code -mt-12} container overlap — so what visitors see in the showcase is what
  * they'd see if they viewed the real profile page on their phone.
  *
- * The device itself is CSS-scaled to fit multiple phones in the carousel, but the inner
- * content is rendered at iPhone-viewport size (390px, devices.css's screen width) without
- * extra scaling — that's the same width a real iPhone 14 Pro browser renders at.
+ * Carousel uses Embla — touch-swipe on mobile, drag on desktop, with autoplay that pauses on
+ * user interaction. Previous CSS marquee couldn't intercept touch since it ran on transform
+ * keyframes; switching to Embla means the carousel feels like a native phone gallery while
+ * still progressing on its own.
  */
-const ROW_DURATION_SECONDS = 90;
-// 0.8 keeps the contact-card foil readable on desktop. Below ~0.7 the repeating-linear-gradient
-// foil pattern starts to alias and lose its iridescent quality — the showcase ended up looking
-// worse than the real /u/<handle> page even though it uses identical components.
 const DEVICE_SCALE = 0.8;
 const DEVICE_NATIVE_W = 428;
 const DEVICE_NATIVE_H = 868;
 
 export function ProfileShowcase() {
   const t = useTranslations("showcase");
-  const tiles = [...SHOWCASE_PROFILES, ...SHOWCASE_PROFILES];
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) if (e.isIntersecting) setVisible(true);
-      },
-      { threshold: 0.1 },
-    );
-    obs.observe(containerRef.current);
-    return () => obs.disconnect();
-  }, []);
+  const autoplayRef = useRef(
+    AutoplayPlugin({ delay: 3500, stopOnInteraction: false, stopOnMouseEnter: true }),
+  );
+  const [emblaRef] = useEmblaCarousel(
+    { loop: true, dragFree: false, align: "center", containScroll: false },
+    [autoplayRef.current],
+  );
 
   return (
-    <div ref={containerRef} className="relative">
+    <div className="relative">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-white to-transparent sm:w-24"
@@ -58,45 +49,13 @@ export function ProfileShowcase() {
         className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-white to-transparent sm:w-24"
       />
 
-      <div
-        className={cn(
-          "showcase-marquee flex w-max gap-6 py-2 transition-opacity duration-700",
-          visible ? "opacity-100" : "opacity-0",
-        )}
-        style={{ animationDuration: `${ROW_DURATION_SECONDS}s` }}
-      >
-        {tiles.map((profile, i) => (
-          <ShowcaseCard
-            key={`${profile.username}-${i}`}
-            profile={profile}
-            demoCta={t("demoCta")}
-          />
-        ))}
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-6 py-2">
+          {SHOWCASE_PROFILES.map((profile) => (
+            <ShowcaseCard key={profile.username} profile={profile} demoCta={t("demoCta")} />
+          ))}
+        </div>
       </div>
-
-      <style jsx>{`
-        .showcase-marquee {
-          animation-name: showcase-scroll;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-        }
-        .showcase-marquee:hover {
-          animation-play-state: paused;
-        }
-        @keyframes showcase-scroll {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .showcase-marquee {
-            animation: none;
-          }
-        }
-      `}</style>
     </div>
   );
 }
@@ -109,9 +68,6 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
       className="group block shrink-0 transition-transform hover:-translate-y-1"
       aria-label={`@${profile.username} — ${demoCta}`}
     >
-      {/* Wrapper takes the post-scale layout size so flex parent allocates the right slot.
-          devices.css uses CSS transform which doesn't affect layout, so without this the
-          carousel would lay phones out at their unscaled 428×868 footprint. */}
       <div
         style={{
           width: DEVICE_NATIVE_W * DEVICE_SCALE,
@@ -123,10 +79,18 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
           style={{ transform: `scale(${DEVICE_SCALE})` }}
         >
           <div className="device-frame">
-            <div className={cn("device-screen pointer-events-none overflow-y-auto", colors.page)}>
-              {/* This subtree is byte-for-byte identical to /u/[username]/page.tsx's body
-                  (banner-then-container-with-overlap), so the showcase displays exactly what
-                  the visitor would see if they navigated to the real profile on a phone. */}
+            <div
+              className={cn(
+                "device-screen pointer-events-none overflow-y-auto",
+                colors.page,
+              )}
+              // Foil shimmer relies on pointer-move to animate the shine. Inside the carousel
+              // the screen is pointer-events:none (taps go to the wrapper Link), so the foil
+              // would otherwise sit flat at its dim default. Raising --card-opacity makes the
+              // static shine layers visible without interaction — same shader, just baseline
+              // brightness lifted so the carousel previews look like the real card on tilt.
+              style={{ ["--card-opacity" as string]: "0.95" }}
+            >
               <ProfilePreviewBody profile={profile} colors={colors} />
             </div>
           </div>
@@ -141,12 +105,6 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
   );
 }
 
-/**
- * Mirror of the body markup in {@code app/[locale]/u/[username]/page.tsx}. Kept in sync by
- * hand — when the real page's banner/overlap structure changes, update both. The duplication
- * is intentional: importing the page component would pull in server-only metadata helpers
- * and the share-fab interactivity that doesn't belong inside the marquee preview.
- */
 function ProfilePreviewBody({
   profile,
   colors,
@@ -156,10 +114,6 @@ function ProfilePreviewBody({
 }) {
   return (
     <div className="min-h-full">
-      {/* Safe-area spacer — devices.css's Dynamic Island sits at screen y=10..45, so a 48px
-          spacer pushes content past the cutout without rendering fake iOS chrome. The full
-          9:41 + signal/wifi/battery simulation was noisy in the marquee context (12 cards all
-          showing the same fake status icons), so we keep only the offset. */}
       <div aria-hidden className="h-12 w-full" />
 
       {profile.bannerUrl && (
