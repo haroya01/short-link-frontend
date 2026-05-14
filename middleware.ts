@@ -11,6 +11,6 @@ export const config = {
   // happened to fit the 3-16 alnum pattern (/showcase, /about, /login, /pricing → all 404'd
   // because middleware skipped them and `/showcase` doesn't exist without the locale prefix).
   matcher: [
-    "/((?!api|_next|_vercel|favicon.ico|.*\\..*|oauth2|login/oauth2).*)",
+    "/((?!api|_next|_vercel|favicon.ico|.*\\..*|oauth2|login/oauth2|monitoring).*)",
   ],
 };
