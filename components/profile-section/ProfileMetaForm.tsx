@@ -9,7 +9,6 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import type { MyProfile, ProfileTheme, ShareChannel, Social } from "@/types";
 import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/ShareRow";
-import { PublicUrlPill } from "./PublicUrlPill";
 import { socialUrlPrefix } from "./socials-templates";
 
 const SHARE_CHANNELS: ShareChannel[] = [
@@ -232,10 +231,11 @@ export function ProfileMetaForm({
       </div>
 
       {profile?.publicUrl && (
-        // Promoted to its own row so it doesn't compete with the save button / autosave hint —
-        // share-my-profile is a separate intent from "did my edit save".
+        // QR sticks here next to the meta form — the "open my profile" link itself was promoted
+        // to {@link ProfilePublicUrlBanner} at the top of /profile/edit so visitors can see
+        // their live URL the second the editor loads. QR is a secondary action (someone
+        // physically scanning the printed URL) and stays inline with the other share affordances.
         <div className="flex w-fit max-w-full flex-wrap items-center gap-2 rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2">
-          <PublicUrlPill url={profile.publicUrl} t={t} />
           <QrButton
             url={profile.publicUrl}
             filename={`${profile.username}.png`}
