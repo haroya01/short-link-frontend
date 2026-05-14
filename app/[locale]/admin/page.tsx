@@ -119,38 +119,38 @@ export default function AdminPage() {
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 sm:grid-cols-3 lg:grid-cols-6">
         <Kpi
           label={t("kpi.users")}
-          value={formatNumber(data.totals.users)}
-          sub={t("kpi.delta7d", { count: data.newUsers7d })}
+          value={formatNumber(data.totals?.users ?? 0)}
+          sub={t("kpi.delta7d", { count: data.newUsers7d ?? 0 })}
           icon={Users}
         />
         <Kpi
           label={t("kpi.links")}
-          value={formatNumber(data.totals.links)}
-          sub={t("kpi.delta7d", { count: data.newLinks7d })}
+          value={formatNumber(data.totals?.links ?? 0)}
+          sub={t("kpi.delta7d", { count: data.newLinks7d ?? 0 })}
           icon={Link2}
         />
         <Kpi
           label={t("kpi.clicks")}
-          value={formatNumber(data.totals.clicks)}
-          sub={t("kpi.delta7d", { count: formatNumber(data.clicks7d) })}
+          value={formatNumber(data.totals?.clicks ?? 0)}
+          sub={t("kpi.delta7d", { count: formatNumber(data.clicks7d ?? 0) })}
           icon={MousePointerClick}
           accent
         />
         <Kpi
           label={t("kpi.anonymousRatio")}
-          value={`${(data.anonymousLinkRatio * 100).toFixed(1)}%`}
+          value={`${((data.anonymousLinkRatio ?? 0) * 100).toFixed(1)}%`}
           sub={t("kpi.ofAllLinks")}
           icon={Activity}
         />
         <Kpi
           label={t("kpi.expiredRatio")}
-          value={`${(data.expiredLinkRatio * 100).toFixed(1)}%`}
+          value={`${((data.expiredLinkRatio ?? 0) * 100).toFixed(1)}%`}
           sub={t("kpi.ofAllLinks")}
           icon={Activity}
         />
         <Kpi
           label={t("kpi.clicklessRatio")}
-          value={`${(data.clicklessLinkRatio * 100).toFixed(1)}%`}
+          value={`${((data.clicklessLinkRatio ?? 0) * 100).toFixed(1)}%`}
           sub={t("kpi.ofAllLinks")}
           icon={Activity}
           muted
@@ -221,7 +221,7 @@ export default function AdminPage() {
         </Section>
       </div>
 
-      {health && (
+      {health?.redirect && (
         <Section
           title={t("section.redirectPerf.title")}
           description={t("section.redirectPerf.desc")}
@@ -229,46 +229,46 @@ export default function AdminPage() {
           <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 sm:grid-cols-4 lg:grid-cols-7">
             <Kpi
               label={t("section.redirectPerf.p50")}
-              value={`${health.redirect.p50Millis.toFixed(1)}ms`}
+              value={`${(health.redirect.p50Millis ?? 0).toFixed(1)}ms`}
               sub={t("section.redirectPerf.median")}
               icon={Activity}
             />
             <Kpi
               label={t("section.redirectPerf.p95")}
-              value={`${health.redirect.p95Millis.toFixed(1)}ms`}
+              value={`${(health.redirect.p95Millis ?? 0).toFixed(1)}ms`}
               sub={t("section.redirectPerf.tail")}
               icon={Activity}
               accent
             />
             <Kpi
               label={t("section.redirectPerf.p99")}
-              value={`${health.redirect.p99Millis.toFixed(1)}ms`}
+              value={`${(health.redirect.p99Millis ?? 0).toFixed(1)}ms`}
               sub={t("section.redirectPerf.outlier")}
               icon={Activity}
             />
             <Kpi
               label={t("section.redirectPerf.total")}
-              value={formatNumber(health.redirect.total)}
+              value={formatNumber(health.redirect.total ?? 0)}
               sub={t("section.redirectPerf.totalSub")}
               icon={MousePointerClick}
             />
             <Kpi
               label={t("section.redirectPerf.notFound")}
-              value={formatNumber(health.redirect.notFound)}
+              value={formatNumber(health.redirect.notFound ?? 0)}
               sub={t("section.redirectPerf.notFoundSub")}
               icon={Activity}
               muted
             />
             <Kpi
               label={t("section.redirectPerf.expired")}
-              value={formatNumber(health.redirect.expired)}
+              value={formatNumber(health.redirect.expired ?? 0)}
               sub={t("section.redirectPerf.expiredSub")}
               icon={Activity}
               muted
             />
             <Kpi
               label={t("section.redirectPerf.preview")}
-              value={formatNumber(health.redirect.previews)}
+              value={formatNumber(health.redirect.previews ?? 0)}
               sub={t("section.redirectPerf.previewSub")}
               icon={Activity}
               muted

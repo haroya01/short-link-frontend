@@ -620,7 +620,8 @@
       "links": "개",
       "clicks": "회"
     },
-    "noData": "데이터 없음"
+    "noData": "데이터 없음",
+    "loading": "불러오는 중..."
   },
   "common": {
     "errorTitle": "문제가 발생했어요",
