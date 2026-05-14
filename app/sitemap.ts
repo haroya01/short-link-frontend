@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
+import { SHOWCASE_PROFILES } from "@/lib/landing-showcase-fixtures";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -71,6 +72,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       alternates: {
         languages: Object.fromEntries(
           routing.locales.map((l) => [l, `${SITE_URL}/${l}/u/${username}`]),
+        ),
+      },
+    });
+  }
+
+  // Showcase demo pages — fixture profiles rendered at /showcase/<handle>. Lower priority than
+  // real user profiles so search results favor actual users, but indexed so the marketing pages
+  // can pull SEO weight too.
+  for (const profile of SHOWCASE_PROFILES) {
+    entries.push({
+      url: `${SITE_URL}/${routing.defaultLocale}/showcase/${profile.username}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.4,
+      alternates: {
+        languages: Object.fromEntries(
+          routing.locales.map((l) => [l, `${SITE_URL}/${l}/showcase/${profile.username}`]),
         ),
       },
     });

@@ -106,7 +106,7 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
   const colors = THEME_TABLE[profile.theme ?? "default"];
   return (
     <Link
-      href="/demo"
+      href={`/showcase/${profile.username}`}
       className="group block shrink-0 transition-transform hover:-translate-y-1"
       aria-label={`@${profile.username} — ${demoCta}`}
     >
