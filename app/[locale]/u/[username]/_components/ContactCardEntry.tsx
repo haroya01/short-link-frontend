@@ -263,8 +263,10 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
               </ul>
 
               {/* Single primary action — vCard save. Call/share moved to inline tel: link /
-                  corner ghost icon to match the cross-card "1 primary button" rule. */}
-              <div className="relative z-10 mt-5 border-t border-white/10">
+                  corner ghost icon to match the cross-card "1 primary button" rule.
+                  {@code mt-auto} pushes this to the bottom of the flex-col parent so the
+                  button hugs the card's bottom edge no matter how many info rows precede. */}
+              <div className="relative z-10 mt-auto border-t border-white/10">
                 <button
                   type="button"
                   onClick={(e) => {
@@ -368,7 +370,14 @@ function CardFace({
   // Min-height on the front guarantees the back layout has room when a visitor filled in only
   // name + 1–2 fields — the back is `absolute inset-0` so without a floor on the front its
   // content would overflow the rounded clip.
-  const positionClass = back ? "absolute inset-0" : "relative min-h-[260px]";
+  // flex flex-col on the front face so children stack as a column and the save-vCard dock
+  // (the only child with {@code mt-auto} in the consumer) gets pushed to the bottom edge
+  // regardless of how many fields the card has. Without flex-col, a sparse card (e.g. only
+  // name + email) would render the dock right under the rows with empty space below — the
+  // "save sits too high" report.
+  const positionClass = back
+    ? "absolute inset-0"
+    : "relative flex min-h-[260px] flex-col";
   return (
     <div
       className={
