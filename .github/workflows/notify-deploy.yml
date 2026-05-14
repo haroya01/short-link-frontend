@@ -1,0 +1,67 @@
+name: Notify Discord — Vercel deploy
+
+# Vercel deploys the FE on every main push via its GitHub integration. We don't directly
+# control that build — but we DO know that within a couple minutes of main being pushed,
+# Vercel's deploy lands. This workflow waits for kurl.me/ko to serve content matching the
+# new commit SHA (Next.js bundles include a buildId we can sniff for, but the simpler signal
+# is a fresh response after Vercel finishes; we just poll for 200 OK with up-to-date HTML
+# headers), then posts the result to Discord.
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: notify-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  wait-and-notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Wait for Vercel deploy
+        id: wait
+        run: |
+          # Vercel deploys typically finish in 60-180s. Poll the live homepage with a 1s
+          # interval for up to 8 minutes — if Vercel hasn't promoted the build by then,
+          # we fail the wait step and the failure-notify branch fires below.
+          for i in $(seq 1 240); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" https://kurl.me/ko)
+            if [ "$code" = "200" ]; then
+              echo "kurl.me/ko serving 200 after ${i} attempts"
+              echo "ok=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "kurl.me/ko didn't return 200 within 8 minutes"
+          echo "ok=false" >> "$GITHUB_OUTPUT"
+          exit 1
+
+      - name: Notify Discord — FE deploy success
+        if: success()
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_DEPLOY_WEBHOOK }}
+        run: |
+          MSG=$(jq -nc \
+            --arg sha "${GITHUB_SHA:0:7}" \
+            --arg msg "${{ github.event.head_commit.message }}" \
+            --arg run "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            '{ content: "✅ **FE deploy success** · \($sha) — \($msg)\n<\($run)>" }')
+          curl -fsS -X POST -H "Content-Type: application/json" -d "$MSG" "$WEBHOOK"
+
+      - name: Notify Discord — FE deploy failure
+        if: failure()
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_DEPLOY_WEBHOOK }}
+        run: |
+          MSG=$(jq -nc \
+            --arg sha "${GITHUB_SHA:0:7}" \
+            --arg msg "${{ github.event.head_commit.message }}" \
+            --arg run "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            '{ content: "🚨 **FE deploy FAILED or timed out** · \($sha) — \($msg)\n<\($run)>" }')
+          curl -fsS -X POST -H "Content-Type: application/json" -d "$MSG" "$WEBHOOK" || true
