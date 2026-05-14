@@ -36,9 +36,9 @@ export default async function OgImage({
               gap: 6,
             }}
           >
-            <div style={{ width: 96, height: 12, borderRadius: 6, background: "#0ea5e9" }} />
-            <div style={{ width: 140, height: 12, borderRadius: 6, background: "#0ea5e9" }} />
-            <div style={{ width: 84, height: 12, borderRadius: 6, background: "#0ea5e9" }} />
+            <div style={{ width: 96, height: 12, borderRadius: 6, background: "#10b981" }} />
+            <div style={{ width: 140, height: 12, borderRadius: 6, background: "#10b981" }} />
+            <div style={{ width: 84, height: 12, borderRadius: 6, background: "#10b981" }} />
           </div>
           <div style={{ fontSize: 56, fontWeight: 700, letterSpacing: -2 }}>kurl</div>
         </div>
