@@ -46,7 +46,10 @@
   },
   "meta": {
     "title": "kurl · URL短縮とクリック分析",
-    "description": "長いURLを一行に。デバイス、チャネル、国別のクリック分析まで。"
+    "description": "長いURLを一行に。デバイス、チャネル、国別のクリック分析まで。",
+    "ogHeadlineTop": "URL短縮 +",
+    "ogHeadlineBottom": "クリック分析",
+    "ogSubline": "デバイス · チャネル · 国 · 時間 — 誰がどこからクリックしたかひと目で"
   },
   "nav": {
     "shorten": "短縮",
