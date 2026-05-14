@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { ProfileShowcase } from "@/components/profile-showcase";
 import { Link } from "@/i18n/navigation";
 
@@ -62,10 +62,21 @@ export default async function ShowcasePage({
             {t("cta")}
             <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
           </Link>
+
+          {/* Scroll cue — anchors the hero to the carousel below so visitors don't think the
+              CTA is the entire page. The down-chevron bobs gently to signal "more below" */}
+          <a
+            href="#showcase-examples"
+            className="mt-10 inline-flex flex-col items-center gap-1 text-[11px] text-slate-400 transition hover:text-slate-600"
+            aria-label={t("scrollCue")}
+          >
+            <span>{t("scrollCue")}</span>
+            <ChevronDown className="h-3.5 w-3.5 showcase-scroll-cue-icon" />
+          </a>
         </div>
       </section>
 
-      <section className="bg-white py-12 sm:py-16">
+      <section id="showcase-examples" className="bg-white py-12 sm:py-16">
         <div className="container max-w-3xl mb-8 text-center">
           <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             {t("title")}

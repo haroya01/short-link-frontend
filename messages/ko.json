@@ -136,7 +136,8 @@
     "cta": "내 프로필 만들기",
     "metaSuffix": "예시",
     "sampleBanner": "예시 페이지 — 가입 후 본인 페이지를 이렇게 만들 수 있어요",
-    "sampleCta": "내 프로필 만들기"
+    "sampleCta": "내 프로필 만들기",
+    "scrollCue": "실제 예시 보기"
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
