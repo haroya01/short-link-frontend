@@ -160,7 +160,7 @@ function CohortSection({ t }: { t: T }) {
     <Section title={t("section.cohort.title")} description={t("section.cohort.desc")}>
       {!data ? (
         <p className="py-8 text-center text-xs text-slate-500">{t("loading")}</p>
-      ) : data.rows.length === 0 ? (
+      ) : (data.rows ?? []).length === 0 ? (
         <p className="py-8 text-center text-xs text-slate-500">{t("section.cohort.empty")}</p>
       ) : (
         <div className="overflow-x-auto">
@@ -181,7 +181,7 @@ function CohortSection({ t }: { t: T }) {
               </tr>
             </thead>
             <tbody>
-              {data.rows.map((row) => (
+              {(data.rows ?? []).map((row) => (
                 <tr key={row.cohortWeek} className="border-t border-slate-100">
                   <td className="px-2 py-1.5 font-mono text-[11px] text-slate-700">
                     {row.cohortWeek}
@@ -190,7 +190,7 @@ function CohortSection({ t }: { t: T }) {
                     {row.size}
                   </td>
                   {Array.from({ length: data.weeks }).map((_, i) => {
-                    const cell = row.cells.find((c) => c.weekOffset === i);
+                    const cell = (row.cells ?? []).find((c) => c.weekOffset === i);
                     if (!cell) return <td key={i} />;
                     const intensity = Math.min(1, cell.ratio);
                     return (
