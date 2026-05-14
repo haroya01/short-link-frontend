@@ -253,10 +253,10 @@ function RecentErrorsSection({ t }: { t: T }) {
                   {e.level}
                 </span>
                 <span className="font-mono text-[11px] text-slate-500">
-                  {e.occurredAt.replace("T", " ").slice(0, 19)}
+                  {(e.occurredAt ?? "").replace("T", " ").slice(0, 19)}
                 </span>
                 <span className="truncate font-mono text-[10px] text-slate-500">
-                  {e.logger.split(".").pop()}
+                  {e.logger?.split(".").pop() ?? ""}
                 </span>
               </div>
               <p className="mt-1 line-clamp-2 break-all font-mono text-[11px] text-slate-700">

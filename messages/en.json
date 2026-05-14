@@ -703,7 +703,8 @@
       "links": "links",
       "clicks": "clicks"
     },
-    "noData": "No data"
+    "noData": "No data",
+    "loading": "Loading..."
   },
   "common": {
     "errorTitle": "Something went wrong",
