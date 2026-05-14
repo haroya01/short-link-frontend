@@ -65,13 +65,19 @@ export function ConfirmDialog({
       <div
         role="dialog"
         aria-modal="true"
+        // min-h pins the panel at a consistent height regardless of body content. Without it,
+        // a 3-field dialog (e.g. contact card with only email filled) would shrink the panel
+        // to ~200px tall and pull the Save button up toward the screen middle; a 7-field
+        // dialog would push Save back down. The vertical position jumping disorients users
+        // navigating between dialogs. Floor at min(540px, viewport-4rem) so phones with very
+        // short viewports don't get squeezed below their natural content height.
         className={cn(
-          "relative mx-auto flex max-h-[calc(100vh-4rem)] w-full flex-col rounded-lg border border-slate-200 bg-white shadow-xl",
+          "relative mx-auto flex max-h-[calc(100vh-4rem)] min-h-[min(540px,calc(100vh-4rem))] w-full flex-col rounded-lg border border-slate-200 bg-white shadow-xl",
           maxWidthClass,
           "animate-fade-in",
         )}
       >
-        <div className="overflow-y-auto px-6 py-6">
+        <div className="flex-1 overflow-y-auto px-6 py-6">
           <h2 className="text-base font-semibold text-slate-900">{title}</h2>
           {description && (
             <p className="mt-2 text-sm leading-relaxed text-slate-600">{description}</p>
