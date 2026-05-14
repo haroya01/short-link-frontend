@@ -957,6 +957,40 @@
     "section3Body": "Spring Boot · MySQL · Redis · Next.js 14 · AWS ECS Fargate. Source on GitHub.",
     "ctaShorten": "Shorten one now"
   },
+  "learn": {
+    "metaTitle": "Short links · URL shortener · Link in bio guide · kurl",
+    "metaDescription": "What URL shortening is, how short links differ from link-in-bio pages, and how kurl combines both — answered in one place.",
+    "eyebrow": "Guide · FAQ",
+    "title": "Short links and link-in-bio, explained for first-time users",
+    "lead": "What URL shortening is, what kurl does, how a profile page differs from a single short link — the questions people search for, in one page.",
+    "q1": {
+      "q": "What is URL shortening?",
+      "a": "URL shortening replaces a long address (e.g. https://example.com/very/long/path?utm_source=...) with a short one (e.g. kurl.me/abc1234). Short link and shortened URL mean the same thing.\n\nIt's useful where character limits matter (social posts), where people type the URL by hand (business cards, posters), and as an attribution layer — most shortener services track clicks so you can see which channels actually drive traffic."
+    },
+    "q2": {
+      "q": "How is a short link different from a link-in-bio page?",
+      "a": "A short link is a 1:1 mapping: one long URL → one short URL. Best for a single destination — Twitter post, Instagram comment, business card.\n\nA link-in-bio page collects many links behind one URL. Since Instagram lets you put only one link in your profile, creators use kurl.me/<handle> as that one link, pointing visitors to a mini page with their email, booking, store, blog, and socials.\n\nkurl does both — shorten individual URLs, and build a profile page that bundles them."
+    },
+    "q3": {
+      "q": "What is kurl?",
+      "a": "kurl is a free URL shortener + link-in-bio service. No ads, no required signup to shorten, and free analytics: device, country, channel, time-of-day.\n\nSign in with Google in one click and your shortened links persist, plus you can build a profile page at kurl.me/<handle> in five minutes."
+    },
+    "q4": {
+      "q": "What can a profile page contain?",
+      "a": "Eight block types: photo + bio + contacts (phone/email/address) + socials + events + galleries + product cards + calendar embeds. Mix and match per persona.\n\nA cafe owner might show: map + hours + Instagram/reservation links + menu gallery. An instructor: workshop events + 1:1 booking link + portfolio. A DJ: upcoming gigs + Spotify Artist link + photos. All on one page."
+    },
+    "q5": {
+      "q": "How deep do the analytics go?",
+      "a": "Per short link: total / human vs bot / unique visitors / daily + hourly charts / day-of-week × hour heatmap / country + city / device / browser / OS / referrer hosts / UTM campaigns. Same depth as Bitly Pro, but free.\n\nProfile pages get a parallel /profile/stats dashboard for visit counts and the same demographic breakdowns."
+    },
+    "q6": {
+      "q": "Is it paid?",
+      "a": "All core features are free — shortening, analytics, profile pages, all eight block types.\n\nThe Pro plan adds custom domains with auto-TLS, unlimited links, and indefinite stats retention. See the pricing page for details."
+    },
+    "ctaTitle": "Shorten one now",
+    "ctaSubtitle": "No signup needed — sign in to keep your stats forever",
+    "ctaButton": "Start shortening"
+  },
   "pricing": {
     "title": "Pricing",
     "lead": "Free covers shortening + full analytics. Pro adds custom-domain auto-TLS, unlimited links, permanent stats.",

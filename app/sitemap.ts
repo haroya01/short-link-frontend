@@ -9,7 +9,7 @@ const SITE_URL =
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? SITE_URL;
 
-const PUBLIC_PATHS = ["", "/showcase", "/login", "/about", "/pricing", "/terms", "/privacy"] as const;
+const PUBLIC_PATHS = ["", "/showcase", "/learn", "/login", "/about", "/pricing", "/terms", "/privacy"] as const;
 
 // Cap profile entries inserted into the sitemap. 5000 is the per-sitemap-file limit Google
 // recommends; if we ever exceed it we'd switch to a sitemap index. The backend listing endpoint
