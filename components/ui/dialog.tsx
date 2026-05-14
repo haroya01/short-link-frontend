@@ -51,9 +51,14 @@ export function ConfirmDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center p-4">
+    // Top-anchored, scrollable backdrop — previously {@code grid place-items-center} which
+    // vertically centered the panel. Centering meant the Save button visibly "jumped up" when
+    // the user toggled into a dialog with fewer fields (contact card, etc.) because the panel
+    // shrunk and re-centered around the smaller content. Anchoring to top + a fixed top
+    // offset keeps the Save button position predictable regardless of body length.
+    <div className="fixed inset-0 z-50 overflow-y-auto p-4 pt-12 sm:pt-16">
       <div
-        className="absolute inset-0 bg-slate-900/50"
+        className="fixed inset-0 bg-slate-900/50"
         onClick={() => !busy && onOpenChange(false)}
         aria-hidden
       />
@@ -61,17 +66,22 @@ export function ConfirmDialog({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative w-full rounded-lg border border-slate-200 bg-white p-6 shadow-xl",
+          "relative mx-auto flex max-h-[calc(100vh-4rem)] w-full flex-col rounded-lg border border-slate-200 bg-white shadow-xl",
           maxWidthClass,
           "animate-fade-in",
         )}
       >
-        <h2 className="text-base font-semibold text-slate-900">{title}</h2>
-        {description && (
-          <p className="mt-2 text-sm leading-relaxed text-slate-600">{description}</p>
-        )}
-        {children && <div className="mt-3">{children}</div>}
-        <div className="mt-6 flex justify-end gap-2">
+        <div className="overflow-y-auto px-6 py-6">
+          <h2 className="text-base font-semibold text-slate-900">{title}</h2>
+          {description && (
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">{description}</p>
+          )}
+          {children && <div className="mt-3">{children}</div>}
+        </div>
+        {/* Sticky footer — actions always at the bottom of the panel regardless of body
+            scroll position. Border separates it visually from the body so the user knows
+            it's a fixed control rather than another field. */}
+        <div className="flex justify-end gap-2 border-t border-slate-100 bg-white px-6 py-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>
             {cancelLabel}
           </Button>
