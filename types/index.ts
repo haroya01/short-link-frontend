@@ -190,6 +190,7 @@ export type LinkStats = {
   botClicks: number;
   uniqueClicks: number;
   previewClicks: number;
+  profileClicks: number;
   firstClickAt: string | null;
   lastClickAt: string | null;
   timeToFirstClickMinutes: number | null;

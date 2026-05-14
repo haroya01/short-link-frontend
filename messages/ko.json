@@ -493,7 +493,9 @@
       "noData": "데이터 부족",
       "uniqueOfHuman": "{ratio}% of human",
       "vsBaseline": "vs 24h 평균",
-      "afterCreation": "생성 후"
+      "afterCreation": "생성 후",
+      "profile": "프로필 유입",
+      "profileSub": "사람 클릭의 {ratio}%"
     },
     "section": {
       "heatmap": { "title": "시간대 × 요일 히트맵", "desc": "{tz} · 진할수록 클릭 많음" },
