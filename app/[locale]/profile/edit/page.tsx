@@ -11,6 +11,7 @@ import { ProfileSection, type ProfileDraft } from "@/components/profile-section"
 import { ProfilePreview } from "@/components/profile-preview";
 import { ProfileVisitSummaryCard } from "@/components/profile-visit-summary-card";
 import { ProfileStatsVisibilityToggle } from "@/components/profile-stats-visibility-toggle";
+import { ProfilePublicUrlBanner } from "@/components/profile-public-url-banner";
 
 export default function ProfileEditPage() {
   const t = useTranslations("settings.profile");
@@ -62,6 +63,15 @@ export default function ProfileEditPage() {
             {t("onboardingSubhead")}
           </p>
         </div>
+      )}
+
+      {/* Prominent CTA to the user's live profile — placed before the title so as soon as the
+          editor opens, the owner sees the link they're editing and can one-tap into the public
+          view. Hidden until username is claimed (the URL doesn't exist before then). */}
+      {me?.username && (
+        <ProfilePublicUrlBanner
+          url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://kurl.me"}/u/${me.username}`}
+        />
       )}
 
       <div className="flex items-start justify-between gap-4">
