@@ -324,7 +324,7 @@ const SPECS: ProfileSpec[] = [
     username: "kazuki.dj",
     bio: "House / Techno · Tokyo-based",
     theme: "neon",
-    bannerPhotoId: "1571266028253-6c1e8a48b16f", // dj turntable
+    bannerPhotoId: "1518609878373-06d740f60d8b", // dj booth — replaces previously broken id
     avatarPhotoId: "1493225457124-a3eb161ffa5f", // vinyl
     // EMBED removed — the showcase shouldn't reference SoundCloud URLs that don't exist. Other
     // fixtures cover the major entry kinds; this persona showcases EVENT + LINK + GALLERY.
@@ -333,7 +333,7 @@ const SPECS: ProfileSpec[] = [
         kind: "GALLERY",
         content: {
           images: [
-            unsplash("1571266028253-6c1e8a48b16f", 800, 600),
+            unsplash("1518609878373-06d740f60d8b", 800, 600),
             unsplash("1493225457124-a3eb161ffa5f", 800, 600),
             unsplash("1470225620780-dba8ba36b745", 800, 600),
           ],
