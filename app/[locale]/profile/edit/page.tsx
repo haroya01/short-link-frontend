@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail } from "lucide-react";
+import { Mail, Sparkles } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { MobilePreviewSheet } from "@/components/mobile-preview-sheet";
@@ -14,7 +14,7 @@ export default function ProfileEditPage() {
   const t = useTranslations("settings.profile");
   const router = useRouter();
   const locale = useLocale();
-  const { authenticated, ready } = useAuth();
+  const { authenticated, ready, me } = useAuth();
   const [draft, setDraft] = useState<ProfileDraft>({
     username: "",
     bio: "",
@@ -24,6 +24,11 @@ export default function ProfileEditPage() {
     socials: [],
     entries: [],
   });
+
+  // First-time onboarding signal: the signed-in user hasn't claimed a username yet. Drives a
+  // welcome banner + the "give your profile a name first" emphasis so new sellers aren't
+  // dropped into an empty editor without context.
+  const isNewProfile = ready && authenticated && !me?.username;
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -42,6 +47,21 @@ export default function ProfileEditPage() {
 
   return (
     <div className="container max-w-5xl space-y-6 py-12">
+      {isNewProfile && (
+        <div className="rounded-lg border border-accent-200 bg-accent-50/60 p-5">
+          <div className="flex items-center gap-2 text-xs font-medium text-accent-700">
+            <Sparkles className="h-3.5 w-3.5" />
+            {t("onboardingEyebrow")}
+          </div>
+          <h2 className="mt-1 text-lg font-semibold tracking-tight text-slate-900">
+            {t("onboardingTitle")}
+          </h2>
+          <p className="mt-1 text-sm leading-relaxed text-slate-600">
+            {t("onboardingSubhead")}
+          </p>
+        </div>
+      )}
+
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>

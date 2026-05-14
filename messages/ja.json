@@ -133,7 +133,10 @@
     "demoCta": "実例を見る",
     "ctaTitle": "あなたのプロフィールも 5 分で完成",
     "ctaSubhead": "登録してお好きな名前を決めるだけ。写真 · リンク · お店の住所 · 連絡先を入れれば、下の例のように仕上がります。",
-    "cta": "プロフィールを作る"
+    "cta": "プロフィールを作る",
+    "metaSuffix": "サンプル",
+    "sampleBanner": "サンプルページ — 登録後、あなたのページもこのように作れます",
+    "sampleCta": "プロフィールを作る"
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
@@ -1033,6 +1036,9 @@
     "profile": {
       "title": "公開プロフィール",
       "intro": "短縮リンクを 1 つのページにまとめて共有 — SNS の bio にぴったり。",
+      "onboardingEyebrow": "ようこそ",
+      "onboardingTitle": "今すぐ作ってみましょう！",
+      "onboardingSubhead": "お好きな username を決めるだけでスタートです。写真 · リンク · お店の住所 · 連絡先を順に入れていけば、立派な名刺が完成します。",
       "usernameLabel": "username",
       "usernameHint": "3〜16 文字、英小文字/数字/アンダースコア。",
       "usernameInvalid": "username は 3〜16 文字の英小文字 / 数字 / アンダースコアのみ使えます。",
