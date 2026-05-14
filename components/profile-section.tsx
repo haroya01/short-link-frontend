@@ -555,24 +555,36 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     textDialog.show(null, null);
   }
 
+  /**
+   * Optimistic edit for an existing block — update local items first so the preview reflects
+   * the new content immediately, then sync to BE in the background. On API failure, refresh
+   * from the server to recover the canonical state. Previous flow awaited the API roundtrip
+   * (100–500ms over mobile networks) before touching state, which made the live preview
+   * feel laggy — user types in dialog, hits Save, then waits to see the change land.
+   */
+  function applyBlockEditOptimistic(blockId: number, newContent: string) {
+    setItems((prev) =>
+      prev.map((i) =>
+        i.kind === "BLOCK" && i.id === blockId ? { ...i, content: newContent } : i,
+      ),
+    );
+    updateProfileBlock(blockId, newContent).catch((err) => {
+      toast(errorMessage(err, t("toggleFailed")), "error");
+      refresh(); // pulls canonical state back so the optimistic UI doesn't lie indefinitely
+    });
+  }
+
   async function persistTextBlock(blockId: number | null, content: string) {
+    if (blockId != null) {
+      applyBlockEditOptimistic(blockId, content);
+      return;
+    }
     try {
-      if (blockId != null) {
-        const updated = await updateProfileBlock(blockId, content);
-        setItems((prev) =>
-          prev.map((i) =>
-            i.kind === "BLOCK" && i.id === blockId
-              ? { ...i, content: updated.content ?? "" }
-              : i,
-          ),
-        );
-      } else {
-        const block = await createProfileBlock({ type: "TEXT", content });
-        setItems((prev) => [
-          ...prev,
-          { kind: "BLOCK", id: block.id, type: "TEXT", content: block.content ?? "" },
-        ]);
-      }
+      const block = await createProfileBlock({ type: "TEXT", content });
+      setItems((prev) => [
+        ...prev,
+        { kind: "BLOCK", id: block.id, type: "TEXT", content: block.content ?? "" },
+      ]);
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
@@ -595,23 +607,16 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   }
 
   async function persistImageBlock(blockId: number | null, url: string) {
+    if (blockId != null) {
+      applyBlockEditOptimistic(blockId, url);
+      return;
+    }
     try {
-      if (blockId != null) {
-        const updated = await updateProfileBlock(blockId, url);
-        setItems((prev) =>
-          prev.map((i) =>
-            i.kind === "BLOCK" && i.id === blockId
-              ? { ...i, content: updated.content ?? "" }
-              : i,
-          ),
-        );
-      } else {
-        const block = await createProfileBlock({ type: "IMAGE", content: url });
-        setItems((prev) => [
-          ...prev,
-          { kind: "BLOCK", id: block.id, type: "IMAGE", content: block.content ?? "" },
-        ]);
-      }
+      const block = await createProfileBlock({ type: "IMAGE", content: url });
+      setItems((prev) => [
+        ...prev,
+        { kind: "BLOCK", id: block.id, type: "IMAGE", content: block.content ?? "" },
+      ]);
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
@@ -650,23 +655,16 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     blockId: number | null,
     configJson: string,
   ) {
+    if (blockId != null) {
+      applyBlockEditOptimistic(blockId, configJson);
+      return;
+    }
     try {
-      if (blockId != null) {
-        const updated = await updateProfileBlock(blockId, configJson);
-        setItems((prev) =>
-          prev.map((i) =>
-            i.kind === "BLOCK" && i.id === blockId
-              ? { ...i, content: updated.content ?? "" }
-              : i,
-          ),
-        );
-      } else {
-        const block = await createProfileBlock({ type, content: configJson });
-        setItems((prev) => [
-          ...prev,
-          { kind: "BLOCK", id: block.id, type, content: block.content ?? "" },
-        ]);
-      }
+      const block = await createProfileBlock({ type, content: configJson });
+      setItems((prev) => [
+        ...prev,
+        { kind: "BLOCK", id: block.id, type, content: block.content ?? "" },
+      ]);
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
@@ -677,23 +675,16 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   }
 
   async function persistEmbedBlock(blockId: number | null, url: string) {
+    if (blockId != null) {
+      applyBlockEditOptimistic(blockId, url);
+      return;
+    }
     try {
-      if (blockId != null) {
-        const updated = await updateProfileBlock(blockId, url);
-        setItems((prev) =>
-          prev.map((i) =>
-            i.kind === "BLOCK" && i.id === blockId
-              ? { ...i, content: updated.content ?? "" }
-              : i,
-          ),
-        );
-      } else {
-        const block = await createProfileBlock({ type: "EMBED", content: url });
-        setItems((prev) => [
-          ...prev,
-          { kind: "BLOCK", id: block.id, type: "EMBED", content: block.content ?? "" },
-        ]);
-      }
+      const block = await createProfileBlock({ type: "EMBED", content: url });
+      setItems((prev) => [
+        ...prev,
+        { kind: "BLOCK", id: block.id, type: "EMBED", content: block.content ?? "" },
+      ]);
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
