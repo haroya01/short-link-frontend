@@ -81,8 +81,12 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
 
   return (
     <li className="profile-fade" style={fadeStyle}>
+      {/* No overflow-hidden on the card — the "Add to Calendar" dropdown is positioned
+          absolute below the button and was getting clipped by the card's bounds when the
+          card itself was overflow-hidden. The date tile keeps its own overflow-hidden for
+          the colored month band; the outer card doesn't need to clip anything. */}
       <div
-        className={`profile-card-static overflow-hidden ${colors.card} ${colors.cardBorder} ${
+        className={`profile-card-static ${colors.card} ${colors.cardBorder} ${
           isPast ? "opacity-60" : ""
         }`}
       >
