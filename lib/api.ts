@@ -160,6 +160,25 @@ function safeParse(text: string): unknown {
 }
 
 export async function shortenUrl(payload: CreateLinkRequest): Promise<CreateLinkResponse> {
+  try {
+    return await shortenUrlOnce(payload);
+  } catch (e) {
+    // Stale token edge case: localStorage still has an access token whose backing session has
+    // expired. We sent it as Bearer, backend rejected it silently, then the link-create endpoint
+    // saw the request as anonymous and demanded a PoW token we didn't attach (because we thought
+    // we were authenticated). Clear the dead token + retry on the anonymous path with a fresh
+    // PoW. The standard 401 -> refresh dance in {@link request} can't help here because it
+    // refreshes the access token but the original {@link shortenUrl} already committed to the
+    // authenticated branch when it decided whether to compute PoW.
+    if (e instanceof ApiError && e.status === 401 && e.detail.code === "POW_REQUIRED") {
+      setToken(null);
+      return shortenUrlOnce(payload);
+    }
+    throw e;
+  }
+}
+
+async function shortenUrlOnce(payload: CreateLinkRequest): Promise<CreateLinkResponse> {
   const headers: Record<string, string> = {};
   // Anonymous shorten requires a fresh PoW token; authenticated users skip it (they're
   // identified by access token + per-user rate limit).
