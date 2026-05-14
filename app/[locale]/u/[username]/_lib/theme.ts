@@ -106,7 +106,12 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     page: "bg-white",
     card: "bg-white",
     cardBorder: "border-2 border-black",
-    cardHover: "hover:bg-black hover:text-white",
+    // Previous hover was {@code bg-black + text-white} — the bg flipped but each child's
+    // explicit {@code text-black} / {@code text-slate-900} override won the cascade, leaving
+    // black text on a black background and making the link unreadable on tap/hover. Switching
+    // to a paper-style offset shadow keeps the mono aesthetic (strong black border, no color
+    // hue) while leaving text readable.
+    cardHover: "hover:bg-slate-50 hover:shadow-[3px_3px_0_0_#000]",
     primary: "text-black",
     muted: "text-slate-700",
     avatar: "bg-black",
