@@ -30,6 +30,10 @@ if (typeof window !== "undefined" && POSTHOG_KEY && !(posthog as unknown as { __
     capture_pageleave: true,
     person_profiles: "identified_only",
     autocapture: true,
+    // Disable session replay — rrweb posts to /s/ every few seconds per active tab, which
+    // floods the network panel and burns the PostHog quota. Autocapture + explicit track()
+    // events already give us the behavioral signal we want without the per-frame DOM diffing.
+    disable_session_recording: true,
   });
 }
 

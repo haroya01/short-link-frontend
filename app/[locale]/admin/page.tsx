@@ -211,13 +211,13 @@ export default function AdminPage() {
           title={t("section.topUsersByLinks.title")}
           description={t("section.topUsersByLinks.desc")}
         >
-          <UserStatTable rows={data.topUsersByLinks} unit={t("table.links")} t={t} />
+          <UserStatTable rows={data.topUsersByLinks ?? []} unit={t("table.links")} t={t} />
         </Section>
         <Section
           title={t("section.topUsersByClicks.title")}
           description={t("section.topUsersByClicks.desc")}
         >
-          <UserStatTable rows={data.topUsersByClicks} unit={t("table.clicks")} t={t} />
+          <UserStatTable rows={data.topUsersByClicks ?? []} unit={t("table.clicks")} t={t} />
         </Section>
       </div>
 
@@ -289,7 +289,7 @@ export default function AdminPage() {
             </TR>
           </THead>
           <TBody>
-            {data.topLinksByClicks.map((l) => (
+            {(data.topLinksByClicks ?? []).map((l) => (
               <TR key={l.shortCode}>
                 <TD>
                   <Link
