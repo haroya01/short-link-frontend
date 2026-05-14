@@ -221,6 +221,39 @@ export type LinkStats = {
   datacenterClicks: number;
 };
 
+/**
+ * Aggregated visit stats for one profile owner — backend {@code ProfileStats} 의 JSON shape.
+ * LinkStats 와 비슷한 차트용 sub-records 를 공유하지만 link-only 필드 (destinations / preview /
+ * lifecycle / return rate / insights) 는 제외.
+ */
+export type ProfileStats = {
+  timezone: string;
+  totalVisits: number;
+  humanVisits: number;
+  botVisits: number;
+  uniqueVisits: number;
+  firstVisitAt: string | null;
+  lastVisitAt: string | null;
+  peakHour: number | null;
+  dailyVisits: DailyClick[];
+  hourVisits: HourClick[];
+  heatmap: HeatmapCell[];
+  countryVisits: CountryClick[];
+  deviceVisits: DeviceClick[];
+  browserVisits: BrowserClick[];
+  referrerHostVisits: ReferrerHostClick[];
+  sourceChannelVisits: SourceChannelClick[];
+  utmCampaignVisits: UtmCampaignClick[];
+  utmSourceVisits: UtmSourceClick[];
+};
+
+export type ProfileVisitSummary = {
+  today: number;
+  week: number;
+  month: number;
+  allTime: number;
+};
+
 export type Me = {
   id: number;
   email: string;

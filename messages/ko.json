@@ -1130,6 +1130,29 @@
       "emailFormHowItWorks": "방문자가 이메일을 남기면 본인만 볼 수 있는 'leads' 페이지에 모입니다. CSV 로 받아 Mailchimp / 스티비 / 채널톡 등으로 가져가세요.",
       "emailFormViewLeadsCta": "수집된 이메일 보기",
       "leadsLink": "수집된 이메일",
+      "stats": {
+        "title": "내 프로필 방문 통계",
+        "intro": "내 /u/<handle> 페이지를 누가 어디서 봤는지. 단축링크 통계와 같은 깊이로.",
+        "backToEditor": "편집으로 돌아가기",
+        "loadFailed": "통계를 불러오지 못했어요.",
+        "summary": {
+          "title": "프로필 방문",
+          "today": "오늘",
+          "week": "7 일",
+          "month": "30 일",
+          "allTime": "누적",
+          "viewAll": "차트 보기"
+        },
+        "daily": { "title": "최근 30 일 방문 추이", "desc": "일별 사람 방문 수 (봇 제외)" },
+        "heatmap": { "title": "요일 × 시간 히트맵", "desc": "방문이 몰리는 요일/시간대" },
+        "countries": { "title": "국가별 방문", "desc": "상위 50 개국까지" },
+        "devices": { "title": "기기", "desc": "모바일 / 데스크탑 / 태블릿" },
+        "browsers": { "title": "브라우저", "desc": "상위 10 개까지" },
+        "referrers": { "title": "유입 도메인", "desc": "어떤 사이트에서 왔는지" },
+        "channels": { "title": "공유 채널", "desc": "?src= 로 추적된 출처" },
+        "utmCampaigns": { "title": "캠페인 (utm_campaign)", "desc": "캠페인 빌더 / 외부 발송 추적" },
+        "utmSources": { "title": "UTM source", "desc": "이메일 / SNS 등 출처" }
+      },
       "leads": {
         "title": "수집된 이메일",
         "intro": "총 {count} 건",
