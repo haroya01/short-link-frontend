@@ -69,24 +69,26 @@ export default async function ShowcasePage({
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-500">
             {t("ctaSubhead")}
           </p>
-          <Link
-            href="/login?next=/profile/auto"
-            className="group mt-6 inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
-          >
-            {t("cta")}
-            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-          </Link>
+          <div className="mt-6 flex flex-col items-center gap-8">
+            <Link
+              href="/login?next=/profile/auto"
+              className="group inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
+            >
+              {t("cta")}
+              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+            </Link>
 
-          {/* Scroll cue — anchors the hero to the carousel below so visitors don't think the
-              CTA is the entire page. The down-chevron bobs gently to signal "more below" */}
-          <a
-            href="#showcase-examples"
-            className="mt-10 inline-flex flex-col items-center gap-1 text-[11px] text-slate-400 transition hover:text-slate-600"
-            aria-label={t("scrollCue")}
-          >
-            <span>{t("scrollCue")}</span>
-            <ChevronDown className="h-3.5 w-3.5 showcase-scroll-cue-icon" />
-          </a>
+            {/* Scroll cue — anchors the hero to the carousel below so visitors don't think the
+                CTA is the entire page. The down-chevron bobs gently to signal "more below" */}
+            <a
+              href="#showcase-examples"
+              className="flex flex-col items-center gap-1 text-[11px] text-slate-400 transition hover:text-slate-600"
+              aria-label={t("scrollCue")}
+            >
+              <span>{t("scrollCue")}</span>
+              <ChevronDown className="h-3.5 w-3.5 showcase-scroll-cue-icon" />
+            </a>
+          </div>
         </div>
       </section>
 
