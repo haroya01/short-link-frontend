@@ -166,9 +166,16 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
                   />
                 </button>
                 {menuOpen && (
+                  // Opens upward (bottom-full + mb-1) rather than downward — opening down
+                  // pushed the menu into the next entry below the card, and the sibling
+                  // card's own paint/stacking won the layer comparison so the menu ended
+                  // up partially clipped. Upward keeps it inside the card's own paint area
+                  // (lots of empty space between description and CTA), eliminating the
+                  // sibling collision entirely. z-[60] is well above any other interactive
+                  // element on the public profile so we're not playing z-index tetris.
                   <div
                     role="menu"
-                    className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-lg border border-slate-200 bg-white text-left shadow-lg"
+                    className="absolute bottom-full left-0 right-0 z-[60] mb-1 overflow-hidden rounded-lg border border-slate-200 bg-white text-left shadow-xl"
                   >
                     {gcalHref && (
                       <a
