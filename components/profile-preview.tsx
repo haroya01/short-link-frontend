@@ -1,6 +1,5 @@
 "use client";
 
-import { BatteryFull, Signal, Wifi } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ProfileTheme, PublicProfileEntry, Social } from "@/types";
 import { EntryList } from "@/app/[locale]/u/[username]/_components/EntryList";
@@ -80,21 +79,14 @@ export function ProfilePreview({
         >
           <div className="device-frame">
             <div className={cn("device-screen overflow-y-auto", colors.page)}>
-              {/* Status bar pinned to the top of the scrollable screen so it tracks the visible
-                  area. Same 9:41 time / signal-wifi-battery iconography as iOS. */}
-              <div
-                className={cn(
-                  "pointer-events-none sticky top-0 z-10 flex items-center justify-between px-7 pt-2 pb-1 text-[11px] font-semibold",
-                  colors.primary,
-                )}
-              >
-                <span>9:41</span>
-                <div className="flex items-center gap-0.5 opacity-80">
-                  <Signal className="h-3 w-3" />
-                  <Wifi className="h-3 w-3" />
-                  <BatteryFull className="h-3 w-3" />
-                </div>
-              </div>
+              {/* Safe-area spacer for the Dynamic Island cutout — devices.css renders the
+                  notch at screen y=10..45. The previous fake 9:41 / signal / wifi / battery
+                  status-bar overlay used {@code colors.primary} as its text color, which on
+                  light + mono themes (text-slate-900 / text-black) painted dark glyphs over
+                  the banner area and read as "the top is grey/black even on a white theme."
+                  Stripped it — the safe-area spacer below pushes content past the cutout the
+                  same way the real iOS device does. */}
+              <div aria-hidden className="h-10 w-full" />
 
               {/* Body: identical to /u/[username]/page.tsx — full-bleed banner with mask fade,
                   container with -mt-12 overlap, ProfileHeader + EntryList + ShareRow. */}
