@@ -807,7 +807,13 @@
       "google": "Google Calendar",
       "outlook": "Outlook",
       "appleIcs": "Apple / .ics download",
-      "moreInfo": "Details"
+      "moreInfo": "Details",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "inDays": "in {days} days",
+      "inWeeks": "in {weeks} weeks",
+      "ended": "Ended",
+      "eventEnded": "Event has ended"
     },
     "place": {
       "directions": "Directions",
