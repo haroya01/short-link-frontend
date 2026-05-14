@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { Calendar, CalendarPlus, ChevronDown, Clock, MapPin } from "lucide-react";
 import type { EventConfig } from "@/types";
@@ -46,12 +47,30 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
   const locale = useLocale();
   const config = useMemo(() => parseEventConfig(content), [content]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number; width: number } | null>(
+    null,
+  );
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // Measure the trigger button on every open so the portaled menu sits exactly under it.
+  // Two PRs of in-DOM positioning got partly clipped by sibling cards' stacking contexts
+  // (profile-card-static uses will-change:transform which makes z-index unreliable across
+  // siblings). Rendering the menu via portal to document.body bypasses all of that — the
+  // menu lives outside the entry list entirely so there's nothing to clip or layer it.
+  useLayoutEffect(() => {
+    if (!menuOpen || !buttonRef.current) return;
+    const r = buttonRef.current.getBoundingClientRect();
+    setMenuPos({ top: r.bottom + 4, left: r.left, width: r.width });
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!menuOpen) return;
     const onClick = (e: MouseEvent) => {
-      if (!menuRef.current?.contains(e.target as Node)) setMenuOpen(false);
+      const target = e.target as Node;
+      if (menuRef.current?.contains(target)) return;
+      if (buttonRef.current?.contains(target)) return;
+      setMenuOpen(false);
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setMenuOpen(false);
@@ -148,9 +167,10 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
               {t("eventEnded")}
             </div>
           ) : (
-            <div className="flex items-center gap-2" ref={menuRef}>
+            <div className="flex items-center gap-2">
               <div className="relative flex-1">
                 <button
+                  ref={buttonRef}
                   type="button"
                   onClick={() => setMenuOpen((v) => !v)}
                   aria-haspopup="menu"
@@ -165,55 +185,64 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
                     }`}
                   />
                 </button>
-                {menuOpen && (
-                  // Opens upward (bottom-full + mb-1) rather than downward — opening down
-                  // pushed the menu into the next entry below the card, and the sibling
-                  // card's own paint/stacking won the layer comparison so the menu ended
-                  // up partially clipped. Upward keeps it inside the card's own paint area
-                  // (lots of empty space between description and CTA), eliminating the
-                  // sibling collision entirely. z-[60] is well above any other interactive
-                  // element on the public profile so we're not playing z-index tetris.
-                  <div
-                    role="menu"
-                    className="absolute bottom-full left-0 right-0 z-[60] mb-1 overflow-hidden rounded-lg border border-slate-200 bg-white text-left shadow-xl"
-                  >
-                    {gcalHref && (
-                      <a
-                        href={gcalHref}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={() => setMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 hover:bg-slate-50"
-                      >
-                        <Calendar className="h-3 w-3" />
-                        {t("google")}
-                      </a>
-                    )}
-                    {outlookHref && (
-                      <a
-                        href={outlookHref}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={() => setMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 hover:bg-slate-50"
-                      >
-                        <Calendar className="h-3 w-3" />
-                        {t("outlook")}
-                      </a>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        downloadIcs(config, `event-${id}.ics`, `event-${id}@kurl.me`);
-                        setMenuOpen(false);
+                {menuOpen &&
+                  menuPos &&
+                  typeof document !== "undefined" &&
+                  createPortal(
+                    // Rendered into document.body so no ancestor's overflow / transform /
+                    // stacking-context can clip or layer below it. {@code position: fixed}
+                    // with measured viewport coordinates is the price of leaving the entry
+                    // list subtree, but it's the only way to be immune from sibling cards'
+                    // own paint layers.
+                    <div
+                      ref={menuRef}
+                      role="menu"
+                      style={{
+                        position: "fixed",
+                        top: menuPos.top,
+                        left: menuPos.left,
+                        width: menuPos.width,
                       }}
-                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] text-slate-700 hover:bg-slate-50"
+                      className="z-[100] overflow-hidden rounded-lg border border-slate-200 bg-white text-left shadow-xl"
                     >
-                      <Calendar className="h-3 w-3" />
-                      {t("appleIcs")}
-                    </button>
-                  </div>
-                )}
+                      {gcalHref && (
+                        <a
+                          href={gcalHref}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 hover:bg-slate-50"
+                        >
+                          <Calendar className="h-3 w-3" />
+                          {t("google")}
+                        </a>
+                      )}
+                      {outlookHref && (
+                        <a
+                          href={outlookHref}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 hover:bg-slate-50"
+                        >
+                          <Calendar className="h-3 w-3" />
+                          {t("outlook")}
+                        </a>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          downloadIcs(config, `event-${id}.ics`, `event-${id}@kurl.me`);
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] text-slate-700 hover:bg-slate-50"
+                      >
+                        <Calendar className="h-3 w-3" />
+                        {t("appleIcs")}
+                      </button>
+                    </div>,
+                    document.body,
+                  )}
               </div>
               {config.url && (
                 <a
