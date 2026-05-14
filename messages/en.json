@@ -1241,7 +1241,21 @@
         "referrers": { "title": "Referrers", "desc": "Which sites sent the visitor" },
         "channels": { "title": "Share channels", "desc": "Tracked via ?src=" },
         "utmCampaigns": { "title": "Campaigns (utm_campaign)", "desc": "From the campaign builder or external sends" },
-        "utmSources": { "title": "UTM source", "desc": "Email / SNS / etc." }
+        "utmSources": { "title": "UTM source", "desc": "Email / SNS / etc." },
+        "publicTitle": "@{username} — public visit stats",
+        "publicIntro": "Aggregated stats the profile owner chose to share publicly.",
+        "publicNotAvailable": {
+          "title": "Stats aren't public",
+          "body": "This profile owner has kept their visit stats private."
+        },
+        "visibility": {
+          "title": "Show visit stats publicly",
+          "publicHint": "Anyone can view aggregated stats at /u/{username}/stats. Individual visitor data is never exposed.",
+          "privateHint": "Only you can see these for now. Turn on to let visitors view your charts.",
+          "savedPublic": "Visit stats are now public.",
+          "savedPrivate": "Visit stats are now private.",
+          "saveFailed": "Couldn't save the change."
+        }
       },
       "leads": {
         "title": "Collected emails",

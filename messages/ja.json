@@ -1241,7 +1241,21 @@
         "referrers": { "title": "リファラ", "desc": "どのサイトから来たか" },
         "channels": { "title": "共有チャネル", "desc": "?src= で追跡" },
         "utmCampaigns": { "title": "キャンペーン (utm_campaign)", "desc": "キャンペーンビルダー / 外部送信" },
-        "utmSources": { "title": "UTM source", "desc": "メール / SNS など" }
+        "utmSources": { "title": "UTM source", "desc": "メール / SNS など" },
+        "publicTitle": "@{username} の訪問統計",
+        "publicIntro": "プロフィール所有者が公開を選んだ集計統計です。",
+        "publicNotAvailable": {
+          "title": "統計は公開されていません",
+          "body": "このプロフィールの所有者は訪問統計を非公開にしています。"
+        },
+        "visibility": {
+          "title": "訪問統計を公開する",
+          "publicHint": "/u/{username}/stats で誰でも集計を見られます。個別の訪問者情報は公開されません。",
+          "privateHint": "今はあなたのみが閲覧できます。ONにすると訪問者がチャートを見られます。",
+          "savedPublic": "訪問統計を公開しました。",
+          "savedPrivate": "訪問統計を非公開にしました。",
+          "saveFailed": "保存に失敗しました。"
+        }
       },
       "leads": {
         "title": "収集したメール",
