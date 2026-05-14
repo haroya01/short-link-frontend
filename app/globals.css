@@ -387,3 +387,22 @@ canvas.qr-canvas-fit {
     animation: none;
   }
 }
+
+/*
+ * Mono-theme contact card — descendant overrides for children authored for the foil
+ * (dark-substrate) parent. Reuses the same JSX in ContactCardEntry but maps the near-white
+ * text variants (text-slate-300/200, text-white) to readable dark variants, and the
+ * border-white/10 borders to black variants matching the mono aesthetic.
+ */
+.mono-card .text-white { color: rgb(15 23 42); /* slate-900 */ }
+.mono-card .text-slate-300 { color: rgb(71 85 105); /* slate-600 */ }
+.mono-card .text-slate-200 { color: rgb(51 65 85); /* slate-700 */ }
+.mono-card .text-slate-400 { color: rgb(100 116 139); /* slate-500 */ }
+.mono-card .border-white\/10 { border-color: rgb(0 0 0 / 0.12); }
+.mono-card .border-white\/20 { border-color: rgb(0 0 0 / 0.18); }
+.mono-card .bg-white\/5,
+.mono-card .bg-white\/10 { background-color: rgb(0 0 0 / 0.04); }
+.mono-card .bg-white\/20 { background-color: rgb(0 0 0 / 0.08); }
+.mono-card .ring-white\/20 { --tw-ring-color: rgb(0 0 0 / 0.18); }
+.mono-card .bg-black\/30 { background-color: rgb(0 0 0 / 0.08); }
+.mono-card button:hover { background-color: rgb(0 0 0 / 0.04); }

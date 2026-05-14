@@ -43,10 +43,15 @@ type Props = {
  * holding the visitor's phone in front of them.
  */
 export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
-  void colors;
   const t = useTranslations("publicProfile.contactCard");
   const card = useMemo(() => parseContactCardConfig(content), [content]);
   const palette = useMemo(() => getPalette(card.palette), [card.palette]);
+  // mono theme is the only one whose primary text is plain {@code text-black} (others use
+  // text-slate-900 / text-slate-100). We use this fingerprint to switch the contact card
+  // into a flat black-and-white render — no foil shine, no dark substrate — because the
+  // page itself is pure white-with-thick-black-border in mono and the dark holographic
+  // card looked dropped-in from a different design system.
+  const isMono = colors.primary === "text-black";
   const { cardRef, onPointerMove: handlePointerMove, onPointerLeave: handlePointerLeave } =
     useCardTilt();
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
@@ -177,7 +182,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
             }}
           >
             {/* FRONT */}
-            <CardFace>
+            <CardFace mono={isMono}>
               {/* Share button — small ghost icon top-right. stopPropagation so tapping it doesn't
                   also flip the card. */}
               <button
@@ -285,7 +290,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
             {/* BACK — scannable vCard QR framed by brand mark (logo or initial) and name.
                 Tapping the back face anywhere flips it back to the front (the wrapper's
                 onClick handles it). */}
-            <CardFace back>
+            <CardFace back mono={isMono}>
               <div className="relative z-10 flex h-full flex-col items-center justify-between gap-3 p-5">
                 <div className="flex w-full items-center justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-2">
@@ -357,11 +362,27 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
  */
 function CardFace({
   back,
+  mono,
   children,
 }: {
   back?: boolean;
+  /** When true, render flat B&W card matching the mono page theme — no foil layers, no
+   *  dark substrate, just white bg + thick black border + dark text. */
+  mono?: boolean;
   children: React.ReactNode;
 }) {
+  if (mono) {
+    // Mono variant — completely separate render path. No foil, no shine, no glare, no grain.
+    // The dark holographic look is the antithesis of the mono theme aesthetic ("nothing but
+    // black on white"), so we skip the entire foil stack and emit a flat card. Children
+    // (info rows, save dock, QR) still mount; we adjust their colors via CSS-cascade by
+    // setting a {@code .mono-card} class that overrides the text-white descendants the
+    // foil-mode children expect.
+    return (
+      <MonoCardFace back={back}>{children}</MonoCardFace>
+    );
+  }
+  // Original foil card below.
   // Front sits in-flow and defines the rotating wrapper's height. Back is positioned absolutely
   // on top, rotated 180° so its visible side is the "back". Two separate position classes —
   // putting both `relative` and `absolute` on the same node lets the browser pick whichever the
@@ -517,6 +538,31 @@ function escapeVcard(value: string): string {
 function shareText(card: ContactCardConfig): string {
   const parts = [card.title, card.company].filter(Boolean);
   return parts.length > 0 ? `${card.name} — ${parts.join(", ")}` : card.name;
+}
+
+/**
+ * Mono-theme variant of {@link CardFace}. Strips every foil layer (shine 1/2, glare, noise) and
+ * the dark substrate; instead renders a flat white card with a thick black border to match the
+ * mono page theme's visual language. Children come from the same call sites as the foil mode,
+ * which means they were authored assuming dark substrate (text-white, text-slate-300, etc.).
+ * The {@code .mono-card} class below uses descendant selectors in {@code globals.css} to flip
+ * those near-white text colors to readable dark variants without forking the children's JSX.
+ */
+function MonoCardFace({ back, children }: { back?: boolean; children: React.ReactNode }) {
+  const positionClass = back ? "absolute inset-0" : "relative flex flex-col";
+  return (
+    <div
+      className={`mono-card overflow-hidden rounded-2xl border-2 border-black bg-white text-black ${positionClass}`}
+      style={{
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+        transform: back ? "rotateY(180deg) translateZ(0)" : "translateZ(0)",
+        boxShadow: "3px 3px 0 0 #000",
+      }}
+    >
+      {children}
+    </div>
+  );
 }
 
 function slug(name: string): string {
