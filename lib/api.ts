@@ -340,6 +340,29 @@ export async function getProfileStatsSummary(): Promise<ProfileVisitSummary> {
   return request<ProfileVisitSummary>(`/api/v1/users/me/profile/stats/summary`, { method: "GET" });
 }
 
+export async function getPublicProfileStats(username: string): Promise<ProfileStats> {
+  return request<ProfileStats>(`/api/v1/public/profiles/${encodeURIComponent(username)}/stats`, {
+    method: "GET",
+  });
+}
+
+export type ProfileStatsVisibility = { isPublic: boolean };
+
+export async function getProfileStatsVisibility(): Promise<ProfileStatsVisibility> {
+  return request<ProfileStatsVisibility>(`/api/v1/users/me/profile/stats/visibility`, {
+    method: "GET",
+  });
+}
+
+export async function setProfileStatsVisibility(
+  isPublic: boolean,
+): Promise<ProfileStatsVisibility> {
+  return request<ProfileStatsVisibility>(`/api/v1/users/me/profile/stats/visibility`, {
+    method: "PATCH",
+    body: JSON.stringify({ isPublic }),
+  });
+}
+
 /** Fire-and-forget beacon called by the public profile page on mount. Never blocks paint. */
 export function postProfileVisit(username: string): void {
   if (typeof window === "undefined") return;

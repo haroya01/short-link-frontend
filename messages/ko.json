@@ -1155,7 +1155,21 @@
         "referrers": { "title": "유입 도메인", "desc": "어떤 사이트에서 왔는지" },
         "channels": { "title": "공유 채널", "desc": "?src= 로 추적된 출처" },
         "utmCampaigns": { "title": "캠페인 (utm_campaign)", "desc": "캠페인 빌더 / 외부 발송 추적" },
-        "utmSources": { "title": "UTM source", "desc": "이메일 / SNS 등 출처" }
+        "utmSources": { "title": "UTM source", "desc": "이메일 / SNS 등 출처" },
+        "publicTitle": "@{username} 의 프로필 방문 통계",
+        "publicIntro": "프로필 소유자가 공개해 둔 집계 통계입니다.",
+        "publicNotAvailable": {
+          "title": "통계가 공개되어 있지 않아요",
+          "body": "이 프로필 소유자가 방문 통계를 비공개로 설정했습니다."
+        },
+        "visibility": {
+          "title": "방문 통계를 공개합니다",
+          "publicHint": "/u/{username}/stats 에서 누구나 집계 통계를 볼 수 있어요. 개별 방문자 정보는 공개되지 않습니다.",
+          "privateHint": "지금은 본인만 볼 수 있습니다. 켜면 방문자가 차트를 볼 수 있어요.",
+          "savedPublic": "방문 통계를 공개로 전환했어요.",
+          "savedPrivate": "방문 통계를 비공개로 되돌렸어요.",
+          "saveFailed": "변경에 실패했어요."
+        }
       },
       "leads": {
         "title": "수집된 이메일",
