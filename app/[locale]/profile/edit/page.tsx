@@ -10,6 +10,7 @@ import { MobilePreviewSheet } from "@/components/mobile-preview-sheet";
 import { ProfileSection, type ProfileDraft } from "@/components/profile-section";
 import { ProfilePreview } from "@/components/profile-preview";
 import { ProfileVisitSummaryCard } from "@/components/profile-visit-summary-card";
+import { ProfileStatsVisibilityToggle } from "@/components/profile-stats-visibility-toggle";
 
 export default function ProfileEditPage() {
   const t = useTranslations("settings.profile");
@@ -86,6 +87,10 @@ export default function ProfileEditPage() {
       {/* Visit-stats summary — only renders when the user has claimed a username AND has at
           least one recorded visit. Click-through takes them to /profile/stats for full charts. */}
       <ProfileVisitSummaryCard hasUsername={Boolean(me?.username)} />
+
+      {/* Opt-in switch for /u/<username>/stats public visibility. Sits below the numbers card
+          so the decision is anchored next to the data it'd expose. */}
+      <ProfileStatsVisibilityToggle hasUsername={Boolean(me?.username)} />
 
       {/*
         `minmax(0, 1fr)` (not bare `1fr`, which is `minmax(auto, 1fr)`) is what caps the left

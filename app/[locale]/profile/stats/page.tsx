@@ -9,23 +9,16 @@ import { useAuth } from "@/lib/auth";
 import { getProfileStats } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { useToast } from "@/components/ui/toast";
-import { StatsCards } from "@/components/stats-cards";
-import { DailyChart } from "@/components/charts/daily-chart";
-import { Heatmap } from "@/components/charts/heatmap";
-import { CountryTable } from "@/components/country-table";
-import { BreakdownList } from "@/components/breakdown-list";
-import { Section } from "@/components/section";
+import { ProfileStatsDashboard } from "@/components/profile-stats-dashboard";
 import type { ProfileStats } from "@/types";
 
 /**
- * Owner's profile visit stats — same chart components as the per-link {@code /stats/[code]}
- * page, fed from {@code GET /api/v1/users/me/profile/stats}. Single page covers daily / hourly
- * heatmap / country / device / referrer / source channel / UTM breakdowns so the owner sees
- * the same depth they get for short links.
+ * Owner's profile visit stats — chart dashboard fed from {@code GET /api/v1/users/me/profile/stats}.
+ * The visual breakdown is now inside {@link ProfileStatsDashboard} so the same view also powers
+ * the anonymous {@code /u/<username>/stats} public page when the owner opts in.
  */
 export default function ProfileStatsPage() {
   const t = useTranslations("settings.profile.stats");
-  const tBreak = useTranslations("stats.breakdown");
   const router = useRouter();
   const locale = useLocale();
   const { authenticated, ready } = useAuth();
@@ -78,64 +71,7 @@ export default function ProfileStatsPage() {
         <p className="mt-1 text-sm text-slate-500">{t("intro")}</p>
       </div>
 
-      <StatsCards
-        total={data.totalVisits}
-        human={data.humanVisits}
-        bot={data.botVisits}
-        unique={data.uniqueVisits}
-      />
-
-      <Section title={t("daily.title")} description={t("daily.desc")}>
-        <DailyChart data={data.dailyVisits} />
-      </Section>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Section title={t("heatmap.title")} description={t("heatmap.desc")}>
-          <Heatmap data={data.heatmap} />
-        </Section>
-        <Section title={t("countries.title")} description={t("countries.desc")}>
-          <CountryTable data={data.countryVisits} />
-        </Section>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Section title={t("devices.title")} description={t("devices.desc")}>
-          <BreakdownList
-            items={data.deviceVisits.map((d) => ({ label: d.device || tBreak("unknown"), count: d.count }))}
-          />
-        </Section>
-        <Section title={t("browsers.title")} description={t("browsers.desc")}>
-          <BreakdownList
-            items={data.browserVisits.map((b) => ({ label: b.browser || tBreak("unknown"), count: b.count }))}
-          />
-        </Section>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Section title={t("referrers.title")} description={t("referrers.desc")}>
-          <BreakdownList
-            items={data.referrerHostVisits.map((r) => ({ label: r.host || tBreak("direct"), count: r.count }))}
-          />
-        </Section>
-        <Section title={t("channels.title")} description={t("channels.desc")}>
-          <BreakdownList
-            items={data.sourceChannelVisits.map((s) => ({ label: s.source || tBreak("unknown"), count: s.count }))}
-          />
-        </Section>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Section title={t("utmCampaigns.title")} description={t("utmCampaigns.desc")}>
-          <BreakdownList
-            items={data.utmCampaignVisits.map((u) => ({ label: u.campaign, count: u.count }))}
-          />
-        </Section>
-        <Section title={t("utmSources.title")} description={t("utmSources.desc")}>
-          <BreakdownList
-            items={data.utmSourceVisits.map((u) => ({ label: u.source, count: u.count }))}
-          />
-        </Section>
-      </div>
+      <ProfileStatsDashboard data={data} />
     </div>
   );
 }
