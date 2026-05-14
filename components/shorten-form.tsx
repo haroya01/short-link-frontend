@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ApiError, isValidUrl, shortenUrl } from "@/lib/api";
 import { getPowToken } from "@/lib/pow";
+import { track } from "@/components/posthog-provider";
 import type { CreateLinkResponse } from "@/types";
 
 type ShortenedItem = {
@@ -108,6 +109,14 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
       const firstErr = settled.find((s) => s.kind === "err");
 
       if (ok.length > 0) {
+        track("link_shortened", {
+          count: ok.length,
+          authenticated,
+          has_custom_code: Boolean(codeForSingle),
+          has_expiry: Boolean(expiry),
+          has_campaign: Boolean(campaign),
+          channels: variants.length,
+        });
         onShortened(ok);
         setUrl("");
         setCustomCode("");
