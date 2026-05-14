@@ -58,10 +58,21 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
   // (profile-card-static uses will-change:transform which makes z-index unreliable across
   // siblings). Rendering the menu via portal to document.body bypasses all of that — the
   // menu lives outside the entry list entirely so there's nothing to clip or layer it.
+  //
+  // Auto-flip: if there's < 160px below the button (rough menu height with the three items)
+  // the menu would extend below the viewport on mobile. Position it above the button in
+  // that case so the visitor doesn't have to scroll to see the options.
   useLayoutEffect(() => {
     if (!menuOpen || !buttonRef.current) return;
     const r = buttonRef.current.getBoundingClientRect();
-    setMenuPos({ top: r.bottom + 4, left: r.left, width: r.width });
+    const MENU_HEIGHT = 160;
+    const viewportH = window.innerHeight;
+    const spaceBelow = viewportH - r.bottom;
+    const top =
+      spaceBelow < MENU_HEIGHT && r.top > MENU_HEIGHT
+        ? r.top - MENU_HEIGHT - 4
+        : r.bottom + 4;
+    setMenuPos({ top, left: r.left, width: r.width });
   }, [menuOpen]);
 
   useEffect(() => {
