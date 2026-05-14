@@ -165,6 +165,7 @@ function StatsBody({
         human={data.humanClicks}
         bot={data.botClicks}
         unique={data.uniqueClicks}
+        profileClicks={data.profileClicks}
         timeToFirstClickMinutes={data.timeToFirstClickMinutes}
         velocityRatio={data.velocity?.ratio ?? 0}
       />

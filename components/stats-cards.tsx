@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, Clock, MousePointerClick, TrendingUp, Users } from "lucide-react";
+import { Bot, Clock, IdCard, MousePointerClick, TrendingUp, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCountUp } from "@/lib/animations";
 import { cn, formatNumber } from "@/lib/utils";
@@ -10,6 +10,12 @@ type Props = {
   human: number;
   bot: number;
   unique?: number | null;
+  /**
+   * Clicks attributed to the owner's public profile page (sourceChannel LIKE 'profile-%').
+   * Renders an extra KPI card only when {@code > 0} — most short links aren't on a profile
+   * and don't need the slot.
+   */
+  profileClicks?: number | null;
   timeToFirstClickMinutes?: number | null;
   velocityRatio?: number | null;
 };
@@ -19,6 +25,7 @@ export function StatsCards({
   human,
   bot,
   unique,
+  profileClicks,
   timeToFirstClickMinutes,
   velocityRatio,
 }: Props) {
@@ -27,10 +34,13 @@ export function StatsCards({
   const hasVelocity = typeof velocityRatio === "number" && Number.isFinite(velocityRatio);
   const hasLatency =
     typeof timeToFirstClickMinutes === "number" && Number.isFinite(timeToFirstClickMinutes);
+  const showProfile =
+    typeof profileClicks === "number" && Number.isFinite(profileClicks) && profileClicks > 0;
 
   const humanRatio = total > 0 ? (human / total) * 100 : 0;
   const botRatio = total > 0 ? (bot / total) * 100 : 0;
   const uniqueRatio = hasUnique && human > 0 ? ((unique as number) / human) * 100 : 0;
+  const profileRatio = showProfile && human > 0 ? ((profileClicks as number) / human) * 100 : 0;
 
   const showVelocity = hasVelocity && (velocityRatio as number) > 0;
   const showLatency = !showVelocity && hasLatency;
@@ -38,7 +48,14 @@ export function StatsCards({
   const animatedTotal = useCountUp(total, 900);
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
+    <div
+      className={cn(
+        "grid gap-4",
+        showProfile
+          ? "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr]"
+          : "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]",
+      )}
+    >
       <button
         type="button"
         onClick={() => {
@@ -88,6 +105,15 @@ export function StatsCards({
         muted
         jumpTo="section-bots"
       />
+      {showProfile && (
+        <CountStat
+          label={t("profile")}
+          target={profileClicks as number}
+          icon={IdCard}
+          sub={t("profileSub", { ratio: profileRatio.toFixed(0) })}
+          jumpTo="section-sources"
+        />
+      )}
       <Stat
         label={
           showVelocity && (velocityRatio as number) >= 1.5
