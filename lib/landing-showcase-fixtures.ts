@@ -5,9 +5,10 @@
  * signed-up user can fill in via the editor. No exclusive features, no fields the editor doesn't
  * expose, no marketing-only flourishes.
  *
- * Images use Unsplash with stable photo ids curated per persona — cafe shots for the cafe owner,
- * yoga shots for the yoga instructor, etc. — so the visual context matches the persona instead of
- * the random landscapes picsum.photos returns.
+ * Images are self-hosted under {@code public/showcase/<id>.jpg} (originally sourced from Unsplash
+ * but frozen as static assets so a photographer pulling a photo can't break the landing page).
+ * Each id encodes the persona context — cafe shots for the cafe owner, yoga shots for the yoga
+ * instructor, etc.
  */
 import type {
   ContactCardConfig,
@@ -21,11 +22,15 @@ import type {
   PublicProfileEntry,
 } from "@/types";
 
-// Unsplash photo-id URLs. Photo ids are immutable so these URLs never break or shift content.
-// Crop params come from Unsplash's image CDN: `?w=&h=&fit=crop` produces a center-crop at the
-// requested size, cached at the edge.
-const unsplash = (id: string, w: number, h: number) =>
-  `https://images.unsplash.com/photo-${id}?w=${w}&h=${h}&fit=crop&auto=format`;
+// Showcase images are self-hosted under `public/showcase/<id>.jpg`. Originally we hot-linked
+// Unsplash via `images.unsplash.com/photo-<id>` but a photographer pulled one of the photos
+// (id 1571266028253... — dj turntable) and our cards 404'd. Self-hosting freezes the asset:
+// once it's in the public/ tree it can't disappear out from under us, and Vercel serves it
+// from the same edge as everything else. Crop sizes from the old `unsplash(id, w, h)` helper
+// are dropped here because browsers downscale a single 1200×900 JPEG to whatever the card
+// renders at — the bandwidth delta is small (~3.4 MB total across 24 images) and we don't
+// need responsive variants for an above-the-fold marquee.
+const local = (id: string) => `/showcase/${id}.jpg`;
 
 type EntryInput = {
   kind: PublicProfileEntry["kind"];
@@ -108,7 +113,7 @@ const SPECS: ProfileSpec[] = [
           lng: 127.0556,
           placeId: null,
           phone: "02-1234-5678",
-          coverUrl: unsplash("1559925393-8be0ec4767c8", 800, 500),
+          coverUrl: local("1559925393-8be0ec4767c8"),
           category: "cafe",
           hoursText: "매일 08:00 – 21:00",
         } satisfies PlaceConfig,
@@ -117,9 +122,9 @@ const SPECS: ProfileSpec[] = [
         kind: "GALLERY",
         content: {
           images: [
-            unsplash("1495474472287-4d71bcdd2085", 800, 600),
-            unsplash("1509042239860-f550ce710b93", 800, 600),
-            unsplash("1442975631115-c4f7b05b8a2c", 800, 600),
+            local("1495474472287-4d71bcdd2085"),
+            local("1509042239860-f550ce710b93"),
+            local("1442975631115-c4f7b05b8a2c"),
           ],
         } satisfies GalleryConfig,
       },
@@ -153,7 +158,7 @@ const SPECS: ProfileSpec[] = [
         shortCode: "hgh",
         originalUrl: "https://github.com/haruka",
         ogTitle: "GitHub · @haruka",
-        ogImage: unsplash("1556075798-4825dfaaf498", 400, 300),
+        ogImage: local("1556075798-4825dfaaf498"),
         clickCount: 124,
       },
       {
@@ -161,7 +166,7 @@ const SPECS: ProfileSpec[] = [
         shortCode: "hpf",
         originalUrl: "https://haruka.dev",
         ogTitle: "Portfolio · 2024 →",
-        ogImage: unsplash("1517694712202-14dd9538aa97", 400, 300),
+        ogImage: local("1517694712202-14dd9538aa97"),
         clickCount: 86,
         highlighted: true,
       },
@@ -190,7 +195,7 @@ const SPECS: ProfileSpec[] = [
         shortCode: "ymj1",
         originalUrl: "https://example.com/booking",
         ogTitle: "1:1 클래스 예약",
-        ogImage: unsplash("1544367567-0f2fcb009e0b", 400, 300),
+        ogImage: local("1544367567-0f2fcb009e0b"),
         clickCount: 42,
         highlighted: true,
       },
@@ -198,10 +203,10 @@ const SPECS: ProfileSpec[] = [
         kind: "GALLERY",
         content: {
           images: [
-            unsplash("1544367567-0f2fcb009e0b", 800, 600),
-            unsplash("1599901860904-17e6ed7083a0", 800, 600),
-            unsplash("1593810451137-5dc55105dace", 800, 600),
-            unsplash("1545389336-cf090694435e", 800, 600),
+            local("1544367567-0f2fcb009e0b"),
+            local("1599901860904-17e6ed7083a0"),
+            local("1593810451137-5dc55105dace"),
+            local("1545389336-cf090694435e"),
           ],
         } satisfies GalleryConfig,
       },
@@ -218,12 +223,12 @@ const SPECS: ProfileSpec[] = [
         kind: "GALLERY",
         content: {
           images: [
-            unsplash("1500530855697-b586d89ba3ee", 800, 600),
-            unsplash("1452587925148-ce544e77e70d", 800, 600),
-            unsplash("1502920917128-1aa500764cbd", 800, 600),
-            unsplash("1485631906441-91f54180c1f9", 800, 600),
-            unsplash("1426604966848-d7adac402bff", 800, 600),
-            unsplash("1503023345310-bd7c1de61c7d", 800, 600),
+            local("1500530855697-b586d89ba3ee"),
+            local("1452587925148-ce544e77e70d"),
+            local("1502920917128-1aa500764cbd"),
+            local("1487611459768-bd414656ea10"),
+            local("1426604966848-d7adac402bff"),
+            local("1503023345310-bd7c1de61c7d"),
           ],
         } satisfies GalleryConfig,
       },
@@ -232,7 +237,7 @@ const SPECS: ProfileSpec[] = [
         shortCode: "soig",
         originalUrl: "https://instagram.com/shotby.sora",
         ogTitle: "Instagram @shotby.sora",
-        ogImage: unsplash("1500530855697-b586d89ba3ee", 400, 300),
+        ogImage: local("1500530855697-b586d89ba3ee"),
         clickCount: 312,
       },
       {
@@ -240,7 +245,7 @@ const SPECS: ProfileSpec[] = [
         shortCode: "soct",
         originalUrl: "mailto:sora@shotby.com",
         ogTitle: "촬영 문의하기",
-        ogImage: unsplash("1452587925148-ce544e77e70d", 400, 300),
+        ogImage: local("1452587925148-ce544e77e70d"),
         highlighted: true,
       },
     ],
@@ -262,7 +267,7 @@ const SPECS: ProfileSpec[] = [
               name: "Linen Tote",
               images: [
                 {
-                  url: unsplash("1591561954557-26941169b49e", 600, 600),
+                  url: local("1591561954557-26941169b49e"),
                   focalX: 50,
                   focalY: 50,
                 },
@@ -278,7 +283,7 @@ const SPECS: ProfileSpec[] = [
               name: "Moon Ceramic Mug",
               images: [
                 {
-                  url: unsplash("1567696911980-2eed69a46042", 600, 600),
+                  url: local("1567696911980-2eed69a46042"),
                   focalX: 50,
                   focalY: 50,
                 },
@@ -294,7 +299,7 @@ const SPECS: ProfileSpec[] = [
               name: "Brass Bookmark",
               images: [
                 {
-                  url: unsplash("1532153975070-2e9ab71f1b14", 600, 600),
+                  url: local("1532153975070-2e9ab71f1b14"),
                   focalX: 50,
                   focalY: 50,
                 },
@@ -333,9 +338,9 @@ const SPECS: ProfileSpec[] = [
         kind: "GALLERY",
         content: {
           images: [
-            unsplash("1518609878373-06d740f60d8b", 800, 600),
-            unsplash("1493225457124-a3eb161ffa5f", 800, 600),
-            unsplash("1470225620780-dba8ba36b745", 800, 600),
+            local("1518609878373-06d740f60d8b"),
+            local("1493225457124-a3eb161ffa5f"),
+            local("1470225620780-dba8ba36b745"),
           ],
         } satisfies GalleryConfig,
       },
@@ -355,7 +360,7 @@ const SPECS: ProfileSpec[] = [
         shortCode: "ksp",
         originalUrl: "https://open.spotify.com/artist/example",
         ogTitle: "Spotify Artist",
-        ogImage: unsplash("1493225457124-a3eb161ffa5f", 400, 300),
+        ogImage: local("1493225457124-a3eb161ffa5f"),
         clickCount: 218,
       },
     ],
@@ -366,8 +371,8 @@ export const SHOWCASE_PROFILES: PublicProfile[] = SPECS.map((spec) => ({
   username: spec.username,
   bio: spec.bio,
   theme: spec.theme,
-  avatarUrl: unsplash(spec.avatarPhotoId, 240, 240),
-  bannerUrl: unsplash(spec.bannerPhotoId, 1200, 400),
+  avatarUrl: local(spec.avatarPhotoId),
+  bannerUrl: local(spec.bannerPhotoId),
   socials: [],
   entries: spec.entries.map((e, i) => entry(e, i)),
 }));
