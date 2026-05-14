@@ -65,7 +65,7 @@ export function Nav() {
                 users go straight to their own /u/<handle>. Avoids having two adjacent
                 "프로필" / "내 프로필" links that visually compete. */}
             {authenticated ? (
-              <ProfileNavLink username={me?.username ?? null} pathname={pathname} t={t} />
+              <ProfileNavLink pathname={pathname} t={t} />
             ) : (
               <NavLink href="/showcase" active={pathname.startsWith("/showcase")}>
                 {t("showcase")}
@@ -126,7 +126,7 @@ export function Nav() {
             </MobileNavLink>
             {/* Mirror of the desktop slot logic — see nav above. */}
             {authenticated ? (
-              <ProfileMobileLink username={me?.username ?? null} t={t} />
+              <ProfileMobileLink t={t} />
             ) : (
               <MobileNavLink href="/showcase" active={pathname.startsWith("/showcase")}>
                 {t("showcase")}
@@ -203,54 +203,38 @@ function MobileNavLink({
 }
 
 /**
- * Routes to the user's public profile when they've claimed a username, otherwise nudges them to
- * the settings page where they can claim one. Keeps a single nav slot regardless of state so the
- * layout doesn't shift between sign-in and first profile setup.
+ * Routes to /profile/edit regardless of username state. Tapping "Profile" in the nav while
+ * signed in used to jump straight to {@code /u/<handle>} — which is the *visitor*-facing view
+ * of the page the owner is trying to edit. Owners almost always want the editor when they
+ * click "Profile" from the nav (to add a block, change the bio, etc.); going to the read-only
+ * public view forces them to bounce back through /profile/edit. /profile/edit also handles the
+ * not-yet-claimed-username case (onboarding banner), so a single destination covers both
+ * states and the nav layout doesn't shift.
  */
 function ProfileNavLink({
-  username,
   pathname,
   t,
 }: {
-  username: string | null;
   pathname: string;
   t: ReturnType<typeof useTranslations<"nav">>;
 }) {
-  if (username) {
-    const target = `/u/${username}`;
-    return (
-      <NavLink href={target} active={pathname === target}>
-        {t("profile")}
-      </NavLink>
-    );
-  }
   const target = "/profile/edit";
   return (
-    <Link
-      href="/profile/edit"
-      className={cn(
-        "rounded-md px-2.5 py-1.5 text-sm transition-colors",
-        pathname === target
-          ? "bg-slate-100 text-slate-900"
-          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
-      )}
-    >
+    <NavLink href={target} active={pathname === target || pathname === "/profile/stats"}>
       {t("profile")}
-    </Link>
+    </NavLink>
   );
 }
 
 function ProfileMobileLink({
-  username,
   t,
 }: {
-  username: string | null;
   t: ReturnType<typeof useTranslations<"nav">>;
 }) {
-  const href = username ? `/u/${username}` : "/profile/edit";
+  // Same intent as the desktop ProfileNavLink — owners want the editor, not the public view.
   return (
     <Link
-      href={href}
+      href="/profile/edit"
       className="rounded-md px-3 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
     >
       {t("profile")}
