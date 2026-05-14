@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -31,20 +31,29 @@ export default function ProfileStatsPage() {
     if (ready && !authenticated) router.replace(`/${locale}/login`);
   }, [ready, authenticated, locale, router]);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      setData(await getProfileStats());
-    } catch (err) {
-      toast(errorMessage(err, t("loadFailed")), "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [errorMessage, t, toast]);
-
+  // Fetch once when the user becomes authenticated. errorMessage/t/toast are intentionally
+  // omitted from deps — they get re-created on every render (next-intl t, useToast, etc.), and
+  // having them in deps spun an infinite fetch loop here. Re-running on locale or toast identity
+  // change would re-fetch unnecessarily anyway.
   useEffect(() => {
-    if (authenticated) void load();
-  }, [authenticated, load]);
+    if (!authenticated) return;
+    let cancelled = false;
+    setLoading(true);
+    getProfileStats()
+      .then((d) => {
+        if (!cancelled) setData(d);
+      })
+      .catch((err) => {
+        if (!cancelled) toast(errorMessage(err, t("loadFailed")), "error");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticated]);
 
   if (!ready || !authenticated) {
     return <div className="container max-w-3xl py-16 text-sm text-slate-500">…</div>;
