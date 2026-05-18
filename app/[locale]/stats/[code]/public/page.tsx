@@ -58,7 +58,7 @@ export default function PublicStatsPage() {
     return (
       <div className="container max-w-6xl space-y-5 py-10">
         <Skeleton className="h-7 w-48" />
-        <Skeleton className="h-32 rounded-lg" />
+        <Skeleton className="h-32 rounded-2xl" />
       </div>
     );
   }
@@ -89,16 +89,16 @@ export default function PublicStatsPage() {
 
   return (
     <div className="container max-w-6xl space-y-5 py-10">
-      <header className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-5">
+      <header className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-accent-700">
             {tPublic("title")}
           </p>
-          <h1 className="mt-1 font-mono text-lg font-semibold text-slate-900">
+          <h1 className="mt-1.5 font-mono text-xl font-bold tracking-tight text-slate-900">
             /{data.shortCode}
           </h1>
         </div>
-        <span className="rounded-md bg-emerald-50 px-2 py-1 text-[11px] font-medium text-emerald-700">
+        <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
           {tPublic("publicBadge")}
         </span>
       </header>
