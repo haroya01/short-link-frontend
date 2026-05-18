@@ -50,7 +50,10 @@ export function StatsCards({
   return (
     <div
       className={cn(
-        "grid gap-4",
+        // Mobile: 2-col so KPI cards stack densely on iPhone; the hero "total" card spans both
+        // columns (col-span-2 below). Tablet: 3-col, hero spans 3. Desktop keeps the bespoke
+        // explicit track widths so the hero is 1.5x the others.
+        "grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4",
         showProfile
           ? "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr]"
           : "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]",
@@ -61,7 +64,7 @@ export function StatsCards({
         onClick={() => {
           document.getElementById("section-daily")?.scrollIntoView({ behavior: "smooth" });
         }}
-        className="group relative overflow-hidden rounded-lg border border-accent-200 bg-gradient-to-br from-accent-50 via-accent-50/40 to-white p-5 text-left transition-all hover:border-accent-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+        className="group relative col-span-2 overflow-hidden rounded-lg border border-accent-200 bg-gradient-to-br from-accent-50 via-accent-50/40 to-white p-5 text-left transition-all hover:border-accent-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 sm:col-span-3 lg:col-span-1"
       >
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-medium uppercase tracking-wider text-accent-700">

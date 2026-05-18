@@ -81,7 +81,7 @@
       },
       "profile": {
         "title": "Public profile",
-        "desc": "kurl.me/u/{your-id} — the one link for your Instagram bio."
+        "desc": "kurl.me/u/'{'your-id'}' — the one link for your Instagram bio."
       },
       "domain": {
         "title": "Your own domain",
