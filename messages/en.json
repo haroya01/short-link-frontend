@@ -75,10 +75,6 @@
         "title": "Analytics dashboard",
         "desc": "Human/bot split, channel, country, time-of-day — automatic. 30-day trend + heatmap."
       },
-      "viral": {
-        "title": "Share OG card",
-        "desc": "Share on KakaoTalk/X and the preview shows the live click count baked in."
-      },
       "profile": {
         "title": "Public profile",
         "desc": "kurl.me/u/'{'your-id'}' — the one link for your Instagram bio."
@@ -735,65 +731,12 @@
   "demo": {
     "metaTitle": "kurl demo — see exactly what you get after shortening",
     "metaDescription": "Live preview of the analytics dashboard, no sign-up required.",
-    "eyebrow": "Live demo",
-    "title": "One short link, this much insight",
-    "lead": "The numbers below are seeded for the demo, but the layout fills in for real on your own links — bot/human split, UTM channels, geo, time-of-day, all automatic.",
-    "ctaPrimary": "Sign up — your stats start in 60s",
-    "ctaSecondary": "Just shorten one first →",
-    "dataBadge": "Sample data",
-    "tocLabel": "What you'll see here",
-    "groupEngagement": "Engagement",
-    "groupAudience": "Audience",
-    "groupReach": "Reach",
-    "groupShowcase": "Public profile",
-    "groupEngagementLead": "Total clicks, human/bot split, weekday/weekend pattern — the first view that fills in the moment your first click lands.",
-    "groupAudienceLead": "Who, where, and when. The evidence base for the next campaign's timing, channel, and geo.",
-    "groupReachLead": "Paste your short link anywhere — KakaoTalk, X, Slack — and the OG card unfurls the same way. Preview how the eye catches it.",
-    "groupShowcaseLead": "Behind each handle (kurl.me/u/...) is a one-page surface. It rides along with the short link.",
-    "stepLabel": "{i} / {total}",
-    "daily": {
-      "title": "Daily clicks",
-      "desc": "Last 30 days — weekday/weekend pattern + campaign spikes at a glance."
-    },
-    "heatmap": {
-      "title": "Day × hour heatmap",
-      "desc": "See which slots are empty (where to schedule the next campaign)."
-    },
-    "source": {
-      "title": "Channels (utm_source)",
-      "desc": "Instagram bio, KakaoTalk shares, QR scans — auto-tagged on every click."
-    },
-    "country": {
-      "title": "Country split",
-      "desc": "Where clicks come from, resolved via GeoIP. Spot international traffic share."
-    },
-    "viral": {
-      "title": "Share cards · live clicks",
-      "desc": "Your OG card unfurls the same way on KakaoTalk, X, and Slack — and the click count ticks up next to it in real time.",
-      "ping": "Active right now",
-      "channels": {
-        "x": "X",
-        "kakao": "KakaoTalk",
-        "slack": "Slack",
-        "instagram": "Instagram",
-        "direct": "Direct"
-      },
-      "clicksLabel": "clicks"
-    },
-    "profile": {
-      "title": "Public profile page",
-      "desc": "Every short link comes with a one-page home you can share as a single handle — menus, interviews, storefronts, and contact card in one place.",
-      "handlePrefix": "kurl.me/u/",
-      "viewCta": "Preview the full profile",
-      "shapes": {
-        "highlight": "Featured",
-        "embed": "Video",
-        "place": "Place",
-        "contact": "Card"
-      }
-    },
-    "footerLead": "Your real link fills in this layout within 60 seconds of the first click.",
-    "footerKicker": "Data is seeded. The fill-in speed is real."
+    "sampleBanner": "Sample data — your own links fill in the same layout for real.",
+    "sampleCta": "Make my link",
+    "settingsNotice": {
+      "title": "Settings unlock after sign-up",
+      "desc": "A/B destinations and webhooks are managed per-link. After signing up, this exact tab opens on your own link's stats page."
+    }
   },
   "publicProfile": {
     "empty": "This user hasn't featured any links yet.",
