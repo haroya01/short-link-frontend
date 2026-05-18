@@ -17,7 +17,7 @@ export function SourcesTab({ data }: { data: LinkStats }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section
           title={t("section.referrerHost.title")}
           description={t("section.referrerHost.desc")}
@@ -39,7 +39,7 @@ export function SourcesTab({ data }: { data: LinkStats }) {
           <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
         </Section>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {data.utmSourceClicks.length > 0 && (
             <Section
               title={t("section.utmSource.title")}
@@ -83,7 +83,7 @@ export function SourcesTab({ data }: { data: LinkStats }) {
         </div>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("section.channel.title")} description={t("section.channel.desc")}>
           <BreakdownList
             items={data.channelClicks.map((c) => ({ label: c.channel, count: c.count }))}

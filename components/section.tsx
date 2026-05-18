@@ -14,7 +14,12 @@ export function Section({ id, title, description, action, className, children }:
     <section
       id={id}
       className={cn(
-        "rounded-lg border border-slate-200 bg-white scroll-mt-20",
+        // {@code min-w-0} stops the section from forcing its grid track wider than the
+        // available column. Without it, an item that legitimately needs horizontal scroll
+        // (e.g. the 640px-wide {@code Heatmap}) propagates its min-content up to the parent
+        // grid track, and on viewports narrower than 640px the body ends up wider than the
+        // viewport → horizontal page scroll, huge right-side gutter. Issue #222.
+        "min-w-0 rounded-lg border border-slate-200 bg-white scroll-mt-20",
         className,
       )}
     >
@@ -25,7 +30,7 @@ export function Section({ id, title, description, action, className, children }:
         </div>
         {action && <div className="shrink-0">{action}</div>}
       </header>
-      <div className="p-5">{children}</div>
+      <div className="min-w-0 p-5">{children}</div>
     </section>
   );
 }

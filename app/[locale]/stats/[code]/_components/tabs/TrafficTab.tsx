@@ -13,7 +13,7 @@ export function TrafficTab({ data }: { data: LinkStats }) {
   return (
     <div className="space-y-5">
       <Reveal>
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <Section
             id="section-daily"
             title={t("section.daily.title")}

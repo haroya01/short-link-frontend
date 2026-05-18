@@ -10,7 +10,7 @@ export function AudienceTab({ data }: { data: LinkStats }) {
   const t = useTranslations("stats");
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Section
           id="section-device"
           title={t("section.device.title")}
@@ -27,7 +27,7 @@ export function AudienceTab({ data }: { data: LinkStats }) {
           />
         </Section>
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("section.region.title")} description={t("section.region.desc")}>
           <BreakdownList
             items={data.regionClicks.map((r) => ({ label: r.region, count: r.count }))}

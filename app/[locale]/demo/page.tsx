@@ -74,7 +74,7 @@ export default async function DemoPage({
         <DailyChart data={data.dailyClicks} />
       </Section>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("heatmap.title")} description={t("heatmap.desc")}>
           <Heatmap data={data.heatmap} />
         </Section>
