@@ -7,11 +7,20 @@ import type { HeatmapCell } from "@/types";
 
 const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
 
+const MOBILE_BUCKET_HOURS = 4;
+const MOBILE_BUCKETS = 24 / MOBILE_BUCKET_HOURS;
+const MOBILE_BUCKET_STARTS = Array.from(
+  { length: MOBILE_BUCKETS },
+  (_, i) => i * MOBILE_BUCKET_HOURS,
+);
+
+type Hover = { day: string; hour: number; count: number; span: number };
+
 export function Heatmap({ data }: { data: HeatmapCell[] }) {
   const t = useTranslations("stats.heatmap");
   const tDay = useTranslations("stats.weekday");
   const tShared = useTranslations("stats");
-  const [hover, setHover] = useState<{ day: string; hour: number; count: number } | null>(null);
+  const [hover, setHover] = useState<Hover | null>(null);
 
   if (data.length === 0) {
     return <p className="py-8 text-center text-xs text-slate-500">{tShared("noData")}</p>;
@@ -26,18 +35,25 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
     if (cell.count > max) max = cell.count;
   }
 
-  /**
-   * Six-step ramp from a barely-tinted "off" cell up to a saturated accent for the hottest hour.
-   * Empty / zero cells get {@code bg-slate-50} (instead of {@code bg-slate-100}) so the resting
-   * grid reads as a quiet substrate, not a separate visual layer competing with the accent
-   * cells. The early steps (50 → 100 → 200) are deliberately small so a thin band of activity
-   * — e.g. a quiet 03:00 hour with a single click — still distinguishes itself from a truly
-   * empty hour.
-   */
-  function colorFor(count: number): string {
+  const mobileGrid: Record<string, number[]> = {};
+  let mobileMax = 0;
+  for (const day of DAYS) {
+    const buckets: number[] = [];
+    for (const start of MOBILE_BUCKET_STARTS) {
+      let sum = 0;
+      for (let h = start; h < start + MOBILE_BUCKET_HOURS; h += 1) {
+        sum += grid[day]?.[h] ?? 0;
+      }
+      buckets.push(sum);
+      if (sum > mobileMax) mobileMax = sum;
+    }
+    mobileGrid[day] = buckets;
+  }
+
+  function colorFor(count: number, scale: number): string {
     if (count === 0) return "bg-slate-50";
-    if (max === 0) return "bg-slate-50";
-    const intensity = Math.min(1, count / max);
+    if (scale === 0) return "bg-slate-50";
+    const intensity = Math.min(1, count / scale);
     if (intensity < 0.15) return "bg-accent-50";
     if (intensity < 0.3) return "bg-accent-100";
     if (intensity < 0.5) return "bg-accent-300";
@@ -48,19 +64,73 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
 
   return (
     <div>
-      <p className="mb-2 text-[10px] text-slate-400 sm:hidden">← scroll →</p>
-      <div className="overflow-x-auto">
-      <div className="min-w-[640px]">
-        <div className="grid grid-cols-[36px_repeat(24,minmax(0,1fr))] gap-px">
-          <div className="h-6" />
-          {Array.from({ length: 24 }, (_, h) => (
+      <div className="hidden md:block">
+        <div className="overflow-x-auto">
+          <div className="min-w-[640px]">
+            <div className="grid grid-cols-[36px_repeat(24,minmax(0,1fr))] gap-px">
+              <div className="h-6" />
+              {Array.from({ length: 24 }, (_, h) => (
+                <div
+                  key={h}
+                  className={cn(
+                    "text-center font-mono text-[10px]",
+                    h % 6 === 0 ? "text-slate-700 font-medium" : "text-slate-500",
+                  )}
+                  style={{ visibility: h % 3 === 0 ? "visible" : "hidden" }}
+                >
+                  {h}
+                </div>
+              ))}
+              {DAYS.map((day) => {
+                const isWeekend = day === "SATURDAY" || day === "SUNDAY";
+                return (
+                  <Fragment key={day}>
+                    <div
+                      className={cn(
+                        "flex h-6 items-center justify-end pr-2 text-[11px]",
+                        isWeekend ? "font-semibold text-slate-700" : "text-slate-500",
+                      )}
+                    >
+                      {tDay(day)}
+                    </div>
+                    {Array.from({ length: 24 }, (_, h) => {
+                      const count = grid[day]?.[h] ?? 0;
+                      const isHover =
+                        hover && hover.day === day && hover.hour === h && hover.span === 1;
+                      return (
+                        <button
+                          key={`${day}-${h}`}
+                          type="button"
+                          tabIndex={count > 0 ? 0 : -1}
+                          onMouseEnter={() => setHover({ day, hour: h, count, span: 1 })}
+                          onMouseLeave={() => setHover(null)}
+                          onFocus={() => setHover({ day, hour: h, count, span: 1 })}
+                          onBlur={() => setHover(null)}
+                          aria-label={t("tooltip", { day: tDay(day), hour: h, count })}
+                          className={cn(
+                            "h-6 rounded-md transition-all duration-150 ease-out",
+                            colorFor(count, max),
+                            count === 0 && "ring-1 ring-inset ring-slate-200/70",
+                            isHover && "scale-110 ring-2 ring-accent-700 ring-offset-1",
+                          )}
+                        />
+                      );
+                    })}
+                  </Fragment>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="block md:hidden">
+        <div className="grid grid-cols-[36px_repeat(6,minmax(0,1fr))] gap-px">
+          <div className="h-5" />
+          {MOBILE_BUCKET_STARTS.map((h) => (
             <div
               key={h}
-              className={cn(
-                "text-center font-mono text-[10px]",
-                h % 6 === 0 ? "text-slate-700 font-medium" : "text-slate-500",
-              )}
-              style={{ visibility: h % 3 === 0 ? "visible" : "hidden" }}
+              className="text-center font-mono text-[10px] font-medium text-slate-700"
             >
               {h}
             </div>
@@ -71,34 +141,43 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
               <Fragment key={day}>
                 <div
                   className={cn(
-                    "flex h-6 items-center justify-end pr-2 text-[11px]",
+                    "flex h-7 items-center justify-end pr-2 text-[11px]",
                     isWeekend ? "font-semibold text-slate-700" : "text-slate-500",
                   )}
                 >
                   {tDay(day)}
                 </div>
-                {Array.from({ length: 24 }, (_, h) => {
-                  const count = grid[day]?.[h] ?? 0;
+                {MOBILE_BUCKET_STARTS.map((startHour, idx) => {
+                  const count = mobileGrid[day]?.[idx] ?? 0;
                   const isHover =
-                    hover && hover.day === day && hover.hour === h;
+                    hover &&
+                    hover.day === day &&
+                    hover.hour === startHour &&
+                    hover.span === MOBILE_BUCKET_HOURS;
                   return (
                     <button
-                      key={`${day}-${h}`}
+                      key={`${day}-m-${startHour}`}
                       type="button"
                       tabIndex={count > 0 ? 0 : -1}
-                      onMouseEnter={() => setHover({ day, hour: h, count })}
+                      onMouseEnter={() =>
+                        setHover({ day, hour: startHour, count, span: MOBILE_BUCKET_HOURS })
+                      }
                       onMouseLeave={() => setHover(null)}
-                      onFocus={() => setHover({ day, hour: h, count })}
+                      onFocus={() =>
+                        setHover({ day, hour: startHour, count, span: MOBILE_BUCKET_HOURS })
+                      }
                       onBlur={() => setHover(null)}
-                      aria-label={t("tooltip", { day: tDay(day), hour: h, count })}
+                      aria-label={t("tooltipBucket", {
+                        day: tDay(day),
+                        from: startHour,
+                        to: startHour + MOBILE_BUCKET_HOURS - 1,
+                        count,
+                      })}
                       className={cn(
-                        "h-6 rounded-md transition-all duration-150 ease-out",
-                        colorFor(count),
-                        // Empty cells get a thin inset ring so the grid stays legible — without
-                        // it, bg-slate-50 vanishes against the card's white surface and the row
-                        // looks half-broken.
+                        "h-7 rounded-md transition-all duration-150 ease-out",
+                        colorFor(count, mobileMax),
                         count === 0 && "ring-1 ring-inset ring-slate-200/70",
-                        isHover && "scale-110 ring-2 ring-accent-700 ring-offset-1",
+                        isHover && "scale-105 ring-2 ring-accent-700 ring-offset-1",
                       )}
                     />
                   );
@@ -107,26 +186,30 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
             );
           })}
         </div>
-
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
-          <div className="min-h-[1rem]">
-            {hover && hover.count > 0 && (
-              <span className="font-mono">
-                {tDay(hover.day)} {String(hover.hour).padStart(2, "0")}:00 — {hover.count}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span>{t("less")}</span>
-            <div className="h-2.5 w-2.5 rounded-sm bg-slate-50 ring-1 ring-inset ring-slate-200" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-100" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-300" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-500" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-700" />
-            <span>{t("more")}</span>
-          </div>
-        </div>
       </div>
+
+      <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500">
+        <div className="min-h-[1rem]">
+          {hover && hover.count > 0 && (
+            <span className="font-mono">
+              {tDay(hover.day)}{" "}
+              {hover.span === 1
+                ? `${String(hover.hour).padStart(2, "0")}:00`
+                : `${String(hover.hour).padStart(2, "0")}–${String(hover.hour + hover.span - 1).padStart(2, "0")}:59`}
+              {" — "}
+              {hover.count}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span>{t("less")}</span>
+          <div className="h-2.5 w-2.5 rounded-[3px] bg-slate-50 ring-1 ring-inset ring-slate-200" />
+          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-100" />
+          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-300" />
+          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-500" />
+          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-700" />
+          <span>{t("more")}</span>
+        </div>
       </div>
     </div>
   );

@@ -66,29 +66,27 @@ test.describe("mobile horizontal overflow", () => {
 });
 
 /**
- * The heatmap on {@code /ko/demo} is the smoking gun that caused issue #222 — its
- * {@code min-w-[640px]} grid lives inside an {@code overflow-x-auto} wrapper so it can scroll
- * sideways on narrow screens. When the fix lands we must keep the internal horizontal scroll
- * (the chart genuinely needs 640px to show 24 hour columns), only stop it from pushing the
- * page body wider than the viewport. This separate check guards the {@code overflow-x-auto}
- * contract isn't accidentally regressed (e.g. by replacing {@code min-w-[640px]} with
- * {@code w-full} which would visually collapse the chart).
+ * 모바일에서 heatmap 은 4h aggregate 로 한 화면에 fit 한다 (6 cols × 7 rows). 이전엔 24 cols 가
+ * {@code overflow-x-auto} 안에서 옆으로 스크롤됐는데 사용자가 "어느 시간대 비어있는지 즉시" 보려고
+ * 했을 때 swipe 가 막혀 의도가 죽었다. 이 spec 은 모바일 viewport 에서 heatmap 의 표시 grid 가
+ * 가로 스크롤 없이 viewport 안에 들어오는지 검증한다 (데스크탑 24h 검증은 e2e/heatmap-responsive
+ * 에서).
  */
-test.describe("heatmap internal horizontal scroll preserved", () => {
+test.describe("heatmap mobile fits viewport without horizontal scroll", () => {
   test.use({ viewport: { width: 375, height: 667 } });
-  test("heatmap on /ko/demo has internal scrollWidth > clientWidth", async ({ page }) => {
+  test("heatmap on /ko/demo: mobile grid <= viewport width", async ({ page }) => {
     await page.goto("/ko/demo");
     await page.waitForLoadState("networkidle");
     const dims = await page.evaluate(() => {
-      const grid = document.querySelector('[class*="grid-cols-[36px_repeat"]');
-      const inner = grid?.parentElement;
-      const wrap = inner?.parentElement;
-      return wrap
-        ? { clientWidth: wrap.clientWidth, scrollWidth: wrap.scrollWidth }
-        : null;
+      // The mobile heatmap uses the 6-bucket grid template.
+      const grid = document.querySelector('[class*="grid-cols-[36px_repeat(6"]');
+      if (!grid) return null;
+      const rect = grid.getBoundingClientRect();
+      return { width: rect.width, viewport: window.innerWidth };
     });
     expect(dims).not.toBeNull();
-    expect(dims!.scrollWidth).toBeGreaterThan(dims!.clientWidth);
+    // The grid itself must not exceed viewport width (1px sub-pixel tolerance).
+    expect(dims!.width).toBeLessThanOrEqual(dims!.viewport + 1);
   });
 });
 

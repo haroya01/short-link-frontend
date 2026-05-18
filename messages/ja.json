@@ -608,7 +608,8 @@
     "heatmap": {
       "less": "少",
       "more": "多",
-      "tooltip": "{day} {hour}時 — {count}回"
+      "tooltip": "{day} {hour}時 — {count}回",
+      "tooltipBucket": "{day} {from}–{to}時 — {count}回"
     }
   },
   "admin": {
