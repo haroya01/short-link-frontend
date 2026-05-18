@@ -149,6 +149,7 @@
     "utmTitle": "キャンペーン / チャネル (任意)",
     "utmHint": "選択時に utm_* パラメータを自動追加",
     "campaignPlaceholder": "キャンペーン名 (例: spring-event)",
+    "anonymousNotice": "未ログインのリンクは 24 時間後に自動失効します。永続保存にはサインインしてください。",
     "errors": {
       "empty": "URLを入力してください。",
       "invalid": "http:// または https:// で始まる正しいURLが必要です。",
@@ -167,7 +168,11 @@
     "originalUrl": "元のURL",
     "copy": "コピー",
     "copied": "コピー済み",
-    "open": "開く"
+    "open": "開く",
+    "anonymousExpiryTitle": "未ログインのリンクは 24 時間後に自動失効します",
+    "anonymousExpiryAt": "失効: {when}",
+    "anonymousExpirySignup": "サインインで永久保存",
+    "anonymousExpirySignupHint": "サインインすれば失効せず、クリック統計まで永続保存できます。"
   },
   "login": {
     "title": "ログイン",
@@ -609,7 +614,13 @@
       "less": "少",
       "more": "多",
       "tooltip": "{day} {hour}時 — {count}回",
-      "tooltipBucket": "{day} {from}–{to}時 — {count}回"
+      "tooltipBucket": "{day} {from}–{to}時 — {count}回",
+      "detailHourly": "{day} {hour}:00–{hour}:59",
+      "detailBucket": "{day} {from}:00–{to}:59",
+      "detailClicks": "{count} 回",
+      "detailShare": "全体の {share}%",
+      "detailClose": "閉じる",
+      "detailHint": "もう一度同じセルを押すと閉じます。"
     }
   },
   "admin": {
@@ -1008,7 +1019,10 @@
     "rightsLead": "GDPR / 個人情報保護法に基づく保証。プランに関係なく常に利用できます。",
     "right1": "自分のデータをエクスポート (JSON)",
     "right2": "アカウントの完全削除 + 関連データの cascade 削除",
-    "right3": "クッキーはログイン保持の 1 個のみ — 分析/広告なし"
+    "right3": "クッキーはログイン保持の 1 個のみ — 分析/広告なし",
+    "proHoldBadge": "近日公開",
+    "proHoldNotice": "Pro プランは決済まわりの整備中につき一時停止しています。Free プランの 200 リンク · 8 種類の分析 · Webhook 5 件 · 2FA はすべて引き続きお使いいただけます。",
+    "proHoldCta": "準備中"
   },
   "terms": {
     "title": "利用規約",
