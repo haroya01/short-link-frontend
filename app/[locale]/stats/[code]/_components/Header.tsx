@@ -10,16 +10,25 @@ type Props = {
   shortUrl: string;
   shortCodeLabel: string;
   onCopy: () => void;
+  /**
+   * Public {@code /demo} route renders this header against synthetic data — visibility toggle
+   * (which calls {@code PATCH /api/v1/links/{code}/visibility}) would 401 without a session, so
+   * it's suppressed there. Copy + QR still work because they read from the local value.
+   */
+  demo?: boolean;
 };
 
 /**
  * Stats hero card. Distinct from the body sections: an accent eyebrow + an oversized URL serves
  * as the typographic anchor so the page has a clear "this is the link you're looking at" landing
  * pad before the dense KPI grid. The ambient {@code from-accent-50/40} bleed is restrained —
- * dominant luxury / refined direction (vault decision 2026-05-18), accent appears as a hairline
- * of brand identity rather than competing with the data.
+ * accent appears as a hairline of brand identity rather than competing with the data.
+ *
+ * <p>The {@code demo} flag suppresses {@link PublicStatsToggle} — the toggle calls
+ * {@code PATCH /api/v1/links/{code}/visibility} which would 401 on the public {@code /demo} route.
+ * Copy + QR still work because they read from the local value.
  */
-export function Header({ data, shortUrl, shortCodeLabel, onCopy }: Props) {
+export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }: Props) {
   const display = shortUrl || `/${data.shortCode}`;
   return (
     <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
@@ -57,7 +66,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy }: Props) {
           </a>
         </div>
         <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-          <PublicStatsToggle shortCode={data.shortCode} />
+          {!demo && <PublicStatsToggle shortCode={data.shortCode} />}
           <div className="flex items-center gap-1.5">
             <CopyButton variant="outline" size="sm" value={display} onCopied={onCopy} />
             <QrButton value={display} filename={`${data.shortCode}.png`} />
