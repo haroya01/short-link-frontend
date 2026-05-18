@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -14,13 +15,20 @@ import type { DailyClick } from "@/types";
 type Props = { data: DailyClick[] };
 
 export function DailyChart({ data }: Props) {
+  // On mobile (< 640 px) the recharts default Y-axis tick label needs the full computed track
+  // width — pulling the chart back with `left: -16` cuts off "100" / "1k" on narrow viewports.
+  // Desktop keeps the original tighter offset because the wider parent absorbs the axis cleanly.
+  const isMobile = useIsMobile();
   if (data.length === 0) {
     return <p className="py-12 text-center text-xs text-slate-500">아직 클릭이 없어요</p>;
   }
   return (
     <div className="h-72 w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
+        <AreaChart
+          data={data}
+          margin={{ top: 8, right: 8, bottom: 0, left: isMobile ? 0 : -16 }}
+        >
           <defs>
             <linearGradient id="dailyFill" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#059669" stopOpacity={0.25} />
@@ -68,4 +76,16 @@ export function DailyChart({ data }: Props) {
       </ResponsiveContainer>
     </div>
   );
+}
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return isMobile;
 }

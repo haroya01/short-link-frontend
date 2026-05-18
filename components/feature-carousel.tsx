@@ -200,9 +200,12 @@ function RealtimePreview() {
 }
 
 function AbTestPreview() {
+  // Three weights, three shades of the brand green — no off-brand blue. The 400/600/200 ramp
+  // is borrowed from accent-* so the visual still reads as "three different routes" without
+  // dragging in a second color family.
   const variants = [
     { label: "🇰🇷 KR variant", url: "/landing/kr", weight: 70, hits: 1247, color: "bg-accent-600" },
-    { label: "🇯🇵 JP variant", url: "/landing/jp", weight: 30, hits: 312, color: "bg-blue-500" },
+    { label: "🇯🇵 JP variant", url: "/landing/jp", weight: 30, hits: 312, color: "bg-accent-400" },
     { label: "🌐 default", url: "/landing/en", weight: 0, hits: 86, color: "bg-slate-400" },
   ];
   const total = variants.reduce((s, v) => s + v.hits, 0);
@@ -368,7 +371,7 @@ function SafetyPreview() {
 
 function TwoFactorPreview() {
   return (
-    <div className="grid h-full grid-cols-[160px_1fr] gap-3 font-mono">
+    <div className="grid h-full grid-cols-1 gap-3 font-mono sm:grid-cols-[140px_1fr]">
       <div className="rounded-md border border-slate-200 bg-white p-2">
         <div
           className="grid h-[140px] place-items-center bg-[length:8px_8px] text-[9px] text-slate-300"

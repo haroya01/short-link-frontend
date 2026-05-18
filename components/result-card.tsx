@@ -39,11 +39,11 @@ export function ResultCard({ result, originalUrl, channel }: Props) {
             href={result.shortUrl}
             target="_blank"
             rel="noreferrer"
-            className="font-mono text-sm font-semibold text-slate-900 hover:underline"
+            className="block min-w-0 truncate font-mono text-sm font-semibold text-slate-900 hover:underline"
           >
             {result.shortUrl}
           </a>
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5 sm:flex-nowrap">
             <CopyButton
               size="sm"
               variant="accent"
