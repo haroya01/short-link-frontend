@@ -45,9 +45,11 @@ export function DeviceChart({ data }: Props) {
             </Pie>
             <Tooltip
               contentStyle={{
-                borderRadius: 6,
+                borderRadius: 12,
                 border: "1px solid #e2e8f0",
                 fontSize: 12,
+                boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
+                padding: "8px 12px",
               }}
               formatter={(value: number, _name, ctx) => [
                 `${formatNumber(value)}회 (${((value / total) * 100).toFixed(1)}%)`,
@@ -62,7 +64,7 @@ export function DeviceChart({ data }: Props) {
           <li key={d.device} className="flex items-center justify-between text-xs">
             <span className="flex items-center gap-2 text-slate-700">
               <span
-                className="h-2 w-2 rounded-sm"
+                className="h-2.5 w-2.5 rounded-[3px]"
                 style={{ background: COLORS[i % COLORS.length] }}
               />
               {LABELS[d.device] ?? d.device}

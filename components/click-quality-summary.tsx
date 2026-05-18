@@ -4,9 +4,11 @@ import { useTranslations } from "next-intl";
 import type { LinkStats } from "@/types";
 
 /**
- * Compact \"how is this link being used\" summary that distills the data the page already has into
+ * Compact "how is this link being used" summary that distills the data the page already has into
  * the four numbers people actually look at: returning ratio, clicks per unique, peak hour, and
- * social-preview hits separated from real clicks.
+ * social-preview hits separated from real clicks. Cards use {@code rounded-xl} (12 px) — nested
+ * one tier below the {@code rounded-2xl} Section wrapper so the radii read concentric when this
+ * summary lives inside the overview tab.
  */
 export function ClickQualitySummary({ data }: { data: LinkStats }) {
   const t = useTranslations("stats.quality");
@@ -47,18 +49,22 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
 
   return (
     <section>
-      <h2 className="mb-3 text-sm font-semibold text-slate-900">{t("title")}</h2>
+      <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700">
+        {t("title")}
+      </h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
           <div
             key={c.label}
-            className="rounded-md border border-slate-200 bg-white px-4 py-3"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
           >
-            <div className="text-[11px] uppercase tracking-wider text-slate-500">{c.label}</div>
-            <div className="mt-1 font-mono text-2xl font-semibold tabular-nums text-slate-900">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+              {c.label}
+            </div>
+            <div className="mt-1.5 font-mono text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900">
               {c.value}
             </div>
-            {c.hint && <div className="mt-1 text-[11px] text-slate-500">{c.hint}</div>}
+            {c.hint && <div className="mt-2 text-[11px] text-slate-500">{c.hint}</div>}
           </div>
         ))}
       </div>

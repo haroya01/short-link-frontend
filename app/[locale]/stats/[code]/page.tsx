@@ -104,7 +104,7 @@ export default function StatsPage() {
     <div className="container max-w-6xl space-y-5 py-10">
       <button
         onClick={() => router.back()}
-        className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900"
+        className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12px] text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         {t("back")}

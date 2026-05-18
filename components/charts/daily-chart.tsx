@@ -54,10 +54,11 @@ export function DailyChart({ data }: Props) {
           <Tooltip
             cursor={{ stroke: "#059669", strokeWidth: 1, strokeDasharray: "3 3" }}
             contentStyle={{
-              borderRadius: 6,
+              borderRadius: 12,
               border: "1px solid #e2e8f0",
               fontSize: 12,
-              boxShadow: "0 4px 12px rgba(15,23,42,0.06)",
+              boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
+              padding: "8px 12px",
             }}
             formatter={(value) => [`${value}회`, "클릭"]}
             labelFormatter={(label: string) => label}

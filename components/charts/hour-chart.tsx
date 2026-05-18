@@ -38,14 +38,20 @@ export function HourChart({ data }: Props) {
           />
           <Tooltip
             cursor={{ fill: "rgba(15,23,42,0.04)" }}
-            contentStyle={{ borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 12 }}
+            contentStyle={{
+              borderRadius: 12,
+              border: "1px solid #e2e8f0",
+              fontSize: 12,
+              boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
+              padding: "8px 12px",
+            }}
             formatter={(value) => [value, ""]}
             labelFormatter={(label: number) => `${label}:00`}
           />
           <Bar
             dataKey="count"
-            fill="#475569"
-            radius={[2, 2, 0, 0]}
+            fill="#059669"
+            radius={[3, 3, 0, 0]}
             maxBarSize={14}
             isAnimationActive
             animationDuration={700}

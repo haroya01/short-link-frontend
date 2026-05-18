@@ -40,7 +40,7 @@ export default async function DemoPage({
 
   return (
     <div className="container max-w-5xl space-y-6 py-10">
-      <div className="rounded-lg border border-accent-200 bg-accent-50/40 p-5">
+      <div className="rounded-2xl border border-accent-200 bg-accent-50/40 p-5">
         <div className="flex items-center gap-2 text-xs font-medium text-accent-700">
           <Sparkles className="h-3.5 w-3.5" />
           {t("eyebrow")}
@@ -89,7 +89,7 @@ export default async function DemoPage({
         <CountryTable data={data.countryClicks} />
       </Section>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-5 text-center">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 text-center">
         <p className="text-sm text-slate-700">{t("footerLead")}</p>
         <Link href="/login" className="mt-3 inline-block">
           <Button variant="accent">
