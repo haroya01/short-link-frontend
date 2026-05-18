@@ -33,7 +33,7 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
         <DailyChart data={data.dailyVisits} />
       </Section>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("heatmap.title")} description={t("heatmap.desc")}>
           <Heatmap data={data.heatmap} />
         </Section>
@@ -42,7 +42,7 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
         </Section>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("devices.title")} description={t("devices.desc")}>
           <BreakdownList
             items={data.deviceVisits.map((d) => ({
@@ -61,7 +61,7 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
         </Section>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("referrers.title")} description={t("referrers.desc")}>
           <BreakdownList
             items={data.referrerHostVisits.map((r) => ({
@@ -80,7 +80,7 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
         </Section>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("utmCampaigns.title")} description={t("utmCampaigns.desc")}>
           <BreakdownList
             items={data.utmCampaignVisits.map((u) => ({ label: u.campaign, count: u.count }))}
