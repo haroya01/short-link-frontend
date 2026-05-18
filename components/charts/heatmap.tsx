@@ -26,13 +26,23 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
     if (cell.count > max) max = cell.count;
   }
 
+  /**
+   * Six-step ramp from a barely-tinted "off" cell up to a saturated accent for the hottest hour.
+   * Empty / zero cells get {@code bg-slate-50} (instead of {@code bg-slate-100}) so the resting
+   * grid reads as a quiet substrate, not a separate visual layer competing with the accent
+   * cells. The early steps (50 → 100 → 200) are deliberately small so a thin band of activity
+   * — e.g. a quiet 03:00 hour with a single click — still distinguishes itself from a truly
+   * empty hour.
+   */
   function colorFor(count: number): string {
-    if (count === 0) return "bg-slate-100";
+    if (count === 0) return "bg-slate-50";
+    if (max === 0) return "bg-slate-50";
     const intensity = Math.min(1, count / max);
-    if (intensity < 0.2) return "bg-accent-100";
-    if (intensity < 0.4) return "bg-accent-300";
-    if (intensity < 0.6) return "bg-accent-500";
-    if (intensity < 0.8) return "bg-accent-600";
+    if (intensity < 0.15) return "bg-accent-50";
+    if (intensity < 0.3) return "bg-accent-100";
+    if (intensity < 0.5) return "bg-accent-300";
+    if (intensity < 0.7) return "bg-accent-500";
+    if (intensity < 0.85) return "bg-accent-600";
     return "bg-accent-700";
   }
 
@@ -84,6 +94,10 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                       className={cn(
                         "h-6 rounded-sm transition-all",
                         colorFor(count),
+                        // Empty cells get a thin inset ring so the grid stays legible — without
+                        // it, bg-slate-50 vanishes against the card's white surface and the row
+                        // looks half-broken.
+                        count === 0 && "ring-1 ring-inset ring-slate-200/70",
                         isHover && "scale-110 ring-2 ring-slate-900 ring-offset-1",
                       )}
                     />
@@ -94,7 +108,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
           })}
         </div>
 
-        <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
           <div className="min-h-[1rem]">
             {hover && hover.count > 0 && (
               <span className="font-mono">
@@ -104,10 +118,10 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
           </div>
           <div className="flex items-center gap-1.5">
             <span>{t("less")}</span>
-            <div className="h-2.5 w-2.5 rounded-sm bg-slate-100" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-200" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-400" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-600" />
+            <div className="h-2.5 w-2.5 rounded-sm bg-slate-50 ring-1 ring-inset ring-slate-200" />
+            <div className="h-2.5 w-2.5 rounded-sm bg-accent-100" />
+            <div className="h-2.5 w-2.5 rounded-sm bg-accent-300" />
+            <div className="h-2.5 w-2.5 rounded-sm bg-accent-500" />
             <div className="h-2.5 w-2.5 rounded-sm bg-accent-700" />
             <span>{t("more")}</span>
           </div>

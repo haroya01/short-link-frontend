@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { DemoShareChannel, DemoSharedLink } from "@/lib/demo-data";
-import { formatNumber } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 
 type Props = {
   shares: DemoSharedLink[];
@@ -29,51 +29,68 @@ type Props = {
  */
 export function ViralPreview({ shares }: Props) {
   const t = useTranslations("demo.viral");
+  // Top click count drives the leader-highlight on the click number — the same `accent-700 vs
+  // slate-900` cue we use elsewhere on /demo (CountryTable / BreakdownList). Without it all
+  // three cards' counts read at equal weight even though the first is the "hot" share.
+  const topClicks = shares.reduce((m, s) => Math.max(m, s.clicks), 0);
   return (
     <ul className="grid gap-3 sm:gap-4 lg:grid-cols-3">
-      {shares.map((s, idx) => (
-        <li key={s.slug} className="profile-fade" style={{ "--idx": idx } as React.CSSProperties}>
-          <article className="profile-card-static h-full overflow-hidden border-slate-200 bg-white">
-            <header className="flex items-center gap-2 border-b border-slate-100 bg-slate-50/60 px-4 py-2.5">
-              <span className="font-mono text-[11px] font-medium text-slate-500">
-                kurl.me/
-              </span>
-              <span className="font-mono text-[11px] font-semibold text-accent-700">
-                {s.slug}
-              </span>
-              <ChannelBadge channel={s.channel} t={t} />
-            </header>
-
-            <div className="px-4 py-3.5">
-              <p className="line-clamp-2 text-[14px] font-semibold leading-snug text-slate-900">
-                {s.ogTitle}
-              </p>
-              <p className="mt-1 line-clamp-2 text-[12px] leading-snug text-slate-600">
-                {s.ogDescription}
-              </p>
-              <p className="mt-2 truncate font-mono text-[11px] text-slate-400">{s.host}</p>
-            </div>
-
-            <footer className="flex items-center justify-between border-t border-slate-100 px-4 py-2.5">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
-                <span className="relative flex h-1.5 w-1.5">
-                  {s.hot && (
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-500 opacity-75" />
-                  )}
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-500" />
+      {shares.map((s, idx) => {
+        const isLeader = s.clicks === topClicks && topClicks > 0;
+        return (
+          <li key={s.slug} className="profile-fade" style={{ "--idx": idx } as React.CSSProperties}>
+            <article
+              className={cn(
+                "profile-card-static h-full overflow-hidden bg-white",
+                isLeader ? "border-accent-200 ring-1 ring-accent-100" : "border-slate-200",
+              )}
+            >
+              <header className="flex items-center gap-2 border-b border-slate-100 bg-slate-50/60 px-4 py-2.5">
+                <span className="font-mono text-[11px] font-medium text-slate-500">
+                  kurl.me/
                 </span>
-                {t("ping")}
-              </span>
-              <span className="inline-flex items-baseline gap-1 font-mono tabular-nums">
-                <span className="text-[15px] font-semibold text-slate-900">
-                  {formatNumber(s.clicks)}
+                <span className="font-mono text-[11px] font-semibold text-accent-700">
+                  {s.slug}
                 </span>
-                <span className="text-[11px] text-slate-500">{t("clicksLabel")}</span>
-              </span>
-            </footer>
-          </article>
-        </li>
-      ))}
+                <ChannelBadge channel={s.channel} t={t} />
+              </header>
+
+              <div className="px-4 py-3.5">
+                <p className="line-clamp-2 text-[14px] font-semibold leading-snug text-slate-900">
+                  {s.ogTitle}
+                </p>
+                <p className="mt-1 line-clamp-2 text-[12px] leading-snug text-slate-600">
+                  {s.ogDescription}
+                </p>
+                <p className="mt-2 truncate font-mono text-[11px] text-slate-400">{s.host}</p>
+              </div>
+
+              <footer className="flex items-center justify-between border-t border-slate-100 px-4 py-2.5">
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
+                  <span className="relative flex h-1.5 w-1.5">
+                    {s.hot && (
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-500 opacity-75" />
+                    )}
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-500" />
+                  </span>
+                  {t("ping")}
+                </span>
+                <span className="inline-flex items-baseline gap-1 font-mono tabular-nums">
+                  <span
+                    className={cn(
+                      "text-[15px] font-semibold",
+                      isLeader ? "text-accent-700" : "text-slate-900",
+                    )}
+                  >
+                    {formatNumber(s.clicks)}
+                  </span>
+                  <span className="text-[11px] text-slate-500">{t("clicksLabel")}</span>
+                </span>
+              </footer>
+            </article>
+          </li>
+        );
+      })}
     </ul>
   );
 }

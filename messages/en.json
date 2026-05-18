@@ -740,10 +740,17 @@
     "lead": "The numbers below are seeded for the demo, but the layout fills in for real on your own links — bot/human split, UTM channels, geo, time-of-day, all automatic.",
     "ctaPrimary": "Sign up — your stats start in 60s",
     "ctaSecondary": "Just shorten one first →",
+    "dataBadge": "Sample data",
+    "tocLabel": "What you'll see here",
     "groupEngagement": "Engagement",
     "groupAudience": "Audience",
     "groupReach": "Reach",
     "groupShowcase": "Public profile",
+    "groupEngagementLead": "Total clicks, human/bot split, weekday/weekend pattern — the first view that fills in the moment your first click lands.",
+    "groupAudienceLead": "Who, where, and when. The evidence base for the next campaign's timing, channel, and geo.",
+    "groupReachLead": "Paste your short link anywhere — KakaoTalk, X, Slack — and the OG card unfurls the same way. Preview how the eye catches it.",
+    "groupShowcaseLead": "Behind each handle (kurl.me/u/...) is a one-page surface. It rides along with the short link.",
+    "stepLabel": "{i} / {total}",
     "daily": {
       "title": "Daily clicks",
       "desc": "Last 30 days — weekday/weekend pattern + campaign spikes at a glance."

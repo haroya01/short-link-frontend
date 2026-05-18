@@ -657,10 +657,17 @@
     "lead": "여기 숫자는 시범용 가짜 데이터지만, 가입하면 본인 링크에 맞춰 똑같이 채워져요. 봇/사람 분리, UTM 채널, 국가, 시간대 다 자동으로 잡혀요.",
     "ctaPrimary": "1 분 가입하고 내 링크 분석하기",
     "ctaSecondary": "먼저 단축만 해볼래요 →",
+    "dataBadge": "샘플 데이터",
+    "tocLabel": "이 페이지에서 보이는 것",
     "groupEngagement": "참여",
     "groupAudience": "오디언스",
     "groupReach": "확산",
     "groupShowcase": "공개 프로필",
+    "groupEngagementLead": "총 클릭, 사람 / 봇 분리, 평일 / 주말 패턴 — 가입 후 첫 클릭이 들어온 순간 채워지는 첫 화면.",
+    "groupAudienceLead": "누가 어디서 어느 시간대에 누르는지. 다음 캠페인의 시간 / 채널 / 지역을 정하는 근거.",
+    "groupReachLead": "단축 URL 을 어디 붙여도 OG 카드는 같은 모양. 카톡 · X · Slack 에서 시선이 어떻게 잡히는지 미리보기.",
+    "groupShowcaseLead": "한 줄 주소 (kurl.me/u/...) 뒤에 펼쳐지는 한 페이지. 단축 링크와 한 묶음으로 따라옵니다.",
+    "stepLabel": "{i} / {total}",
     "daily": {
       "title": "일자별 클릭",
       "desc": "최근 30 일. 평일 / 주말 패턴 + 캠페인 spike 가 한눈에."

@@ -193,6 +193,24 @@ function buildDaily(days: number): DailyClick[] {
   return out;
 }
 
+/**
+ * Day-of-week labels matching the backend's {@code java.time.DayOfWeek} enum names. The real
+ * LinkStats payload serializes those names directly ("MONDAY", "TUESDAY", …) and the Heatmap
+ * component keys its render grid by them — emitting a numeric string here means every cell
+ * resolves to {@code undefined → 0 → bg-slate-100}, which is exactly the "히트맵 비어있잖아"
+ * report from the /demo preview. Index 0 = MONDAY, matching ISO-8601 weekday ordering and the
+ * DAYS constant in {@code components/charts/heatmap.tsx}.
+ */
+const DOW_LABELS = [
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+  "SUNDAY",
+] as const;
+
 function buildHeatmap(): HeatmapCell[] {
   const out: HeatmapCell[] = [];
   let seed = 0x4242;
@@ -200,16 +218,39 @@ function buildHeatmap(): HeatmapCell[] {
     seed = (seed * 1103515245 + 12345) & 0x7fffffff;
     return seed / 0x7fffffff;
   };
+  // Distribution targets a Korean creator audience: evening prime-time 19~23 dominates,
+  // lunchtime 11~14 shows a secondary bump, dead-zone 02~06 stays sparse. Friday gets a small
+  // weekend-eve boost; Saturday / Sunday lift the prime-time band slightly (people scroll more
+  // on weekend evenings) but stay quieter during the work-hour secondary band. The combined
+  // shape gives the heatmap a visible "two horizontal stripes + weekend pop" pattern instead of
+  // a flat noise field.
   for (let dow = 0; dow < 7; dow++) {
+    const isWeekend = dow === 5 || dow === 6; // SATURDAY / SUNDAY (Mon-indexed)
+    const isFriday = dow === 4;
     for (let hour = 0; hour < 24; hour++) {
-      // Korean prime-time bump 19~23, business-hour secondary 11~14, dead zone 02~06
-      let weight = 1;
-      if (hour >= 19 && hour <= 23) weight = 6;
-      else if (hour >= 11 && hour <= 14) weight = 3;
-      else if (hour >= 2 && hour <= 6) weight = 0.2;
-      const weekendDrop = dow === 0 || dow === 6 ? 0.6 : 1;
-      const count = Math.round(weight * weekendDrop * (3 + rand() * 5));
-      out.push({ dayOfWeek: String(dow), hour, count });
+      let weight: number;
+      if (hour >= 19 && hour <= 23) {
+        // Prime-time. Weekend evenings push higher (more leisure scrolling).
+        weight = isWeekend ? 9 : isFriday ? 7.5 : 6;
+      } else if (hour >= 11 && hour <= 14) {
+        // Lunch-time secondary. Drops on weekends (no office routine).
+        weight = isWeekend ? 1.2 : 3;
+      } else if (hour >= 2 && hour <= 6) {
+        // Dead zone — keep noticeably empty so the contrast reads.
+        weight = 0.25;
+      } else if (hour >= 7 && hour <= 10) {
+        // Morning commute / first coffee — light but non-zero.
+        weight = isWeekend ? 0.9 : 1.4;
+      } else if (hour >= 15 && hour <= 18) {
+        // Afternoon plateau — between lunch and prime-time.
+        weight = isWeekend ? 1.5 : 1.8;
+      } else {
+        // Late night 00~01 — tail of prime-time, still active.
+        weight = isWeekend ? 2 : 1.2;
+      }
+      const jitter = 0.75 + rand() * 0.5;
+      const count = Math.max(0, Math.round(weight * jitter * 4));
+      out.push({ dayOfWeek: DOW_LABELS[dow], hour, count });
     }
   }
   return out;

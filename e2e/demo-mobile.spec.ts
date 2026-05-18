@@ -10,9 +10,9 @@ import path from "node:path";
  * screenshot of each, and writes the PNG to `test-results/demo/<viewport>/<section>.png` so PR
  * reviewers can inspect the full demo without booting the dashboard.
  *
- * <p>Not a regression baseline — these are saved artifacts, not `toHaveScreenshot` snapshots,
- * so the suite never fails on small drift. The horizontal-overflow guard is the only hard
- * assertion.
+ * <p>The horizontal-overflow guard plus a small set of structural assertions (heatmap renders
+ * accent cells, group eyebrows show the 1/4 … 4/4 step labels) are the only hard checks —
+ * everything else is saved as a PNG artifact so visual drift never flakes the suite.
  */
 
 const SECTIONS: { id: string; selector: string }[] = [
@@ -65,4 +65,59 @@ test.describe("demo page artifacts", () => {
       expect(overflow).toBeLessThanOrEqual(2);
     });
   }
+
+  /**
+   * Structural assertions — these catch the exact "히트맵 비어있다" and "국가별 분포가 다르게
+   *뜬다" regressions reported on Vercel preview. Visual drift stays in the artifact PNGs above;
+   * these tests fail loudly when the chart machinery is wired up wrong.
+   */
+  test("heatmap renders accent cells (not all empty)", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/ko/demo", { waitUntil: "networkidle" });
+    const heatmapSection = page.locator('section:has-text("요일·시간 히트맵")').first();
+    await heatmapSection.scrollIntoViewIfNeeded();
+    // The Heatmap renders 7×24 = 168 button cells. If the dayOfWeek labels in the synthetic
+    // data drift away from the {@code java.time.DayOfWeek} enum names the renderer expects,
+    // every grid cell falls back to count=0 → bg-slate-50 → the chart looks empty. Asserting
+    // that at least a quarter of the cells got an accent class catches that regression.
+    const cells = heatmapSection.locator("button[aria-label]");
+    const total = await cells.count();
+    expect(total).toBeGreaterThanOrEqual(168);
+    const accentSelectors = [
+      "button.bg-accent-50",
+      "button.bg-accent-100",
+      "button.bg-accent-300",
+      "button.bg-accent-500",
+      "button.bg-accent-600",
+      "button.bg-accent-700",
+    ];
+    let accentCount = 0;
+    for (const sel of accentSelectors) {
+      accentCount += await heatmapSection.locator(sel).count();
+    }
+    expect(accentCount).toBeGreaterThanOrEqual(40);
+  });
+
+  test("country table renders 8 rows with progress bars + leader highlight", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/ko/demo", { waitUntil: "networkidle" });
+    const countrySection = page.locator('section:has-text("국가별 분포")').first();
+    await countrySection.scrollIntoViewIfNeeded();
+    const rows = countrySection.locator("tbody tr");
+    expect(await rows.count()).toBe(8);
+    // Leader row gets accent-700 (the rest accent-500) — this is the new "다르게 뜨는" cue
+    // that the first row owns the audience. If a future refactor strips the leader class, the
+    // visual hierarchy breaks silently; this catches it.
+    const leaderBars = countrySection.locator("div.bg-accent-700");
+    expect(await leaderBars.count()).toBeGreaterThanOrEqual(1);
+  });
+
+  test("group eyebrows expose step labels 1/4 … 4/4", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/ko/demo", { waitUntil: "networkidle" });
+    for (const i of [1, 2, 3, 4]) {
+      const label = page.locator(`text=${i} / 4`).first();
+      await expect(label).toBeVisible();
+    }
+  });
 });

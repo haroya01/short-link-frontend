@@ -740,10 +740,17 @@
     "lead": "下の数字はデモ用ですが、サインアップすると同じレイアウトで自分のリンクが埋まります。ボット/人の分離、UTM チャネル、国、時間帯まですべて自動。",
     "ctaPrimary": "1 分でサインアップ",
     "ctaSecondary": "まずは短縮してみる →",
+    "dataBadge": "サンプルデータ",
+    "tocLabel": "このページで見えるもの",
     "groupEngagement": "エンゲージメント",
     "groupAudience": "オーディエンス",
     "groupReach": "拡散",
     "groupShowcase": "公開プロフィール",
+    "groupEngagementLead": "総クリック、人/ボットの分離、平日/週末パターン — 最初のクリックが届いた瞬間に埋まる最初の画面。",
+    "groupAudienceLead": "誰がどこで何時に押したか。次のキャンペーンの時間 · チャネル · 地域を決める根拠。",
+    "groupReachLead": "短縮 URL をどこに貼っても OG カードは同じ形。KakaoTalk · X · Slack での見え方をプレビュー。",
+    "groupShowcaseLead": "ハンドル (kurl.me/u/...) の奥に広がる 1 ページ。短縮リンクとセットで付いてきます。",
+    "stepLabel": "{i} / {total}",
     "daily": {
       "title": "日別クリック",
       "desc": "直近 30 日 — 平日/週末パターンとキャンペーンスパイクが一目で分かります。"

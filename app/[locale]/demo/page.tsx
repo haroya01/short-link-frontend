@@ -38,8 +38,8 @@ export async function generateMetadata({
  *     <li><b>Reach</b> — viral share-card preview (how it looks when shared)</li>
  *     <li><b>Showcase</b> — public profile silhouette (what visitors land on)</li>
  *   </ol>
- *   Each group gets an eyebrow + a short prose lead so the chart reading is anchored to the
- *   user story rather than presented as a free-floating panel.
+ *   Each group gets a numbered eyebrow + a short prose lead so the chart reading is anchored to
+ *   the user story rather than presented as a free-floating panel.
  */
 export default async function DemoPage({
   params,
@@ -55,13 +55,21 @@ export default async function DemoPage({
       {/* Hero — refined / luxury surface: tight radius, single accent gradient sliver, no
           decorative blocks competing with the page content below. Larger title typography
           (sm:text-3xl) anchors the page; lead text wraps under, never overflows the gradient
-          band. */}
+          band. The "sample data" pill sits beside the eyebrow so visitors know up front the
+          numbers are seeded — without that, the count-up KPIs read as live metrics and the
+          tone of the rest of the tour breaks. */}
       <section className="relative overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50 via-white to-white p-6 sm:p-8">
-        <span className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-accent-100/50 blur-3xl" />
+        <span className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-accent-100/50 blur-3xl" />
+        <span className="pointer-events-none absolute -left-16 bottom-0 h-32 w-32 rounded-full bg-accent-50 blur-3xl" />
         <div className="relative">
-          <div className="inline-flex items-center gap-2 rounded-full border border-accent-200 bg-white/70 px-3 py-1 text-[11px] font-medium text-accent-700 backdrop-blur-sm">
-            <Sparkles className="h-3.5 w-3.5" />
-            {t("eyebrow")}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-2 rounded-full border border-accent-200 bg-white/70 px-3 py-1 text-[11px] font-medium text-accent-700 backdrop-blur-sm">
+              <Sparkles className="h-3.5 w-3.5" />
+              {t("eyebrow")}
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white/70 px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-wider text-slate-500 backdrop-blur-sm">
+              {t("dataBadge")}
+            </span>
           </div>
           <h1 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             {t("title")}
@@ -86,7 +94,13 @@ export default async function DemoPage({
       </section>
 
       {/* Group 1 — Engagement */}
-      <GroupHeader eyebrow={t("groupEngagement")} />
+      <GroupHeader
+        step={1}
+        total={4}
+        eyebrow={t("groupEngagement")}
+        lead={t("groupEngagementLead")}
+        stepLabel={(i, total) => t("stepLabel", { i, total })}
+      />
       <StatsCards
         total={data.totalClicks}
         human={data.humanClicks}
@@ -95,7 +109,7 @@ export default async function DemoPage({
         timeToFirstClickMinutes={data.timeToFirstClickMinutes}
         velocityRatio={data.velocityRatio}
       />
-      <Section title={t("daily.title")} description={t("daily.desc")}>
+      <Section id="section-daily" title={t("daily.title")} description={t("daily.desc")}>
         <DailyChart data={data.dailyClicks} />
       </Section>
 
@@ -105,7 +119,13 @@ export default async function DemoPage({
           which lets the inner min-content blow the column out — the whole page then gains
           300+ px of horizontal scroll on mobile. Forcing the min to 0 makes the grid item
           respect its `overflow-x-auto` descendant. */}
-      <GroupHeader eyebrow={t("groupAudience")} />
+      <GroupHeader
+        step={2}
+        total={4}
+        eyebrow={t("groupAudience")}
+        lead={t("groupAudienceLead")}
+        stepLabel={(i, total) => t("stepLabel", { i, total })}
+      />
       <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Section title={t("heatmap.title")} description={t("heatmap.desc")}>
           <Heatmap data={data.heatmap} />
@@ -121,13 +141,25 @@ export default async function DemoPage({
       </Section>
 
       {/* Group 3 — Reach (viral / share cards) */}
-      <GroupHeader eyebrow={t("groupReach")} />
+      <GroupHeader
+        step={3}
+        total={4}
+        eyebrow={t("groupReach")}
+        lead={t("groupReachLead")}
+        stepLabel={(i, total) => t("stepLabel", { i, total })}
+      />
       <Section title={t("viral.title")} description={t("viral.desc")}>
         <ViralPreview shares={data.sharedLinks} />
       </Section>
 
       {/* Group 4 — Public profile silhouette */}
-      <GroupHeader eyebrow={t("groupShowcase")} />
+      <GroupHeader
+        step={4}
+        total={4}
+        eyebrow={t("groupShowcase")}
+        lead={t("groupShowcaseLead")}
+        stepLabel={(i, total) => t("stepLabel", { i, total })}
+      />
       <Section title={t("profile.title")} description={t("profile.desc")}>
         <ProfilePreview profile={data.profile} />
       </Section>
@@ -152,19 +184,42 @@ export default async function DemoPage({
 }
 
 /**
- * Small eyebrow band that introduces each of the four /demo groups (Engagement / Audience /
- * Reach / Showcase). Visually quiet — no heading-level competition with the Section titles
- * below — so scanning still lands on the chart. Tracking wider so it reads as a label, not a
- * paragraph.
+ * Eyebrow band that introduces each of the four /demo groups (Engagement / Audience / Reach /
+ * Showcase). Numbered step (1/4 … 4/4) plus a short prose lead so each section opens with a
+ * mini-narrative instead of dropping the visitor straight into a chart. The accent rule on
+ * either side keeps the band visually quiet — no heading-level competition with the Section
+ * titles below — so scanning still lands on the chart.
+ *
+ * <p>Falls back to a single-line rule + label when no lead is provided, but on /demo we always
+ * pass one so the four groups read as a guided tour.
  */
-function GroupHeader({ eyebrow }: { eyebrow: string }) {
+function GroupHeader({
+  step,
+  total,
+  eyebrow,
+  lead,
+  stepLabel,
+}: {
+  step: number;
+  total: number;
+  eyebrow: string;
+  lead?: string;
+  stepLabel: (i: number, total: number) => string;
+}) {
   return (
-    <div className="flex items-center gap-3 pt-2">
-      <span className="h-px flex-1 bg-gradient-to-r from-transparent to-accent-200" />
-      <span className="font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-accent-700">
-        {eyebrow}
-      </span>
-      <span className="h-px flex-1 bg-gradient-to-l from-transparent to-accent-200" />
+    <div className="pt-2">
+      <div className="flex items-center gap-3">
+        <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-accent-600">
+          {stepLabel(step, total)}
+        </span>
+        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-accent-700">
+          {eyebrow}
+        </span>
+        <span className="h-px flex-1 bg-gradient-to-r from-accent-200/80 to-transparent" />
+      </div>
+      {lead && (
+        <p className="mt-2 max-w-2xl text-[12.5px] leading-relaxed text-slate-500">{lead}</p>
+      )}
     </div>
   );
 }
