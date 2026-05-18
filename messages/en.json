@@ -608,7 +608,8 @@
     "heatmap": {
       "less": "Less",
       "more": "More",
-      "tooltip": "{day} {hour}h — {count} clicks"
+      "tooltip": "{day} {hour}h — {count} clicks",
+      "tooltipBucket": "{day} {from}–{to}h — {count} clicks"
     }
   },
   "admin": {
