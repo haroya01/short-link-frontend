@@ -57,18 +57,28 @@ export function ProfilePreview({ profile }: Props) {
         </Link>
       </div>
 
-      {/* Right rail — phone-shaped silhouette */}
-      <div className="mx-auto w-full max-w-[320px]">
+      {/* Right rail — phone-shaped silhouette. On mobile the phone frame can drift toward the
+          left edge when the section padding compresses; mx-auto + a soft accent ground-glow
+          re-anchors it as the visual focus. */}
+      <div className="relative mx-auto w-full max-w-[320px]">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-6 bottom-0 -z-10 h-24 rounded-full bg-accent-100/60 blur-3xl"
+        />
         <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-slate-50 p-3 shadow-[0_24px_60px_-24px_rgba(15,23,42,0.25)]">
           <div className="overflow-hidden rounded-[20px] bg-white">
-            {/* URL bar */}
+            {/* URL bar — three dots stand in for a chrome window control row so the silhouette
+                reads as "a browser window", not a generic card. The accent-50 tinted address
+                pill mirrors the kurl wordmark color without using a separate color. */}
             <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-3 py-2">
               <span className="h-2 w-2 rounded-full bg-slate-200" />
               <span className="h-2 w-2 rounded-full bg-slate-200" />
               <span className="h-2 w-2 rounded-full bg-slate-200" />
-              <span className="ml-2 truncate font-mono text-[10px] text-slate-500">
-                {t("handlePrefix")}
-                <span className="text-slate-900">{profile.handle}</span>
+              <span className="ml-1 inline-flex min-w-0 flex-1 items-center truncate rounded-full border border-slate-200 bg-white px-2 py-0.5 font-mono text-[10px] text-slate-500">
+                <span className="truncate">
+                  {t("handlePrefix")}
+                  <span className="text-slate-900">{profile.handle}</span>
+                </span>
               </span>
             </div>
 
