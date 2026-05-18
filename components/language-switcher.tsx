@@ -25,6 +25,12 @@ export function LanguageSwitcher() {
 
   function switchTo(next: string) {
     setOpen(false);
+    // Persist the choice in NEXT_LOCALE so middleware honors it on unprefixed entries (`/`,
+    // 404 → `/`, OAuth callbacks). Client-side `router.replace` updates the URL only; without
+    // the cookie write the next request that hits middleware without a locale prefix would
+    // fall back to the previously-detected locale and silently bounce the user back.
+    // 1 year matches next-intl's default `localeCookie` lifetime.
+    document.cookie = `NEXT_LOCALE=${next}; Max-Age=31536000; Path=/; SameSite=Lax`;
     router.replace(pathname, { locale: next as never });
   }
 
