@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { formatNumber } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 
 type Props = {
   items: { label: string; count: number }[];
@@ -14,16 +14,24 @@ export function BreakdownList({ items }: Props) {
   }
   const total = items.reduce((a, b) => a + b.count, 0) || 1;
   const top = [...items].sort((a, b) => b.count - a.count).slice(0, 10);
+  // Same leader-highlight convention used by CountryTable so the two side-by-side rails on
+  // /demo's Audience group read as one consistent visual language — the row that owns the
+  // category steps a shade darker than the long-tail.
+  const topCount = top.length > 0 ? top[0].count : 0;
 
   return (
-    <ul className="space-y-2">
+    <ul className="space-y-2.5">
       {top.map((item, i) => {
         const ratio = item.count / total;
-        const pct = (ratio * 100).toFixed(1);
+        const pct = ratio >= 0.1 ? (ratio * 100).toFixed(0) : (ratio * 100).toFixed(1);
+        const isLeader = item.count === topCount && topCount > 0;
         return (
           <li key={item.label} className="flex items-center gap-2 text-sm sm:gap-3">
             <span
-              className="w-20 shrink-0 truncate text-slate-700 sm:w-32"
+              className={cn(
+                "w-20 shrink-0 truncate text-[13px] sm:w-32",
+                isLeader ? "font-medium text-slate-900" : "text-slate-700",
+              )}
               title={item.label}
             >
               {item.label}
@@ -31,7 +39,10 @@ export function BreakdownList({ items }: Props) {
             <div className="flex-1">
               <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
                 <div
-                  className="h-full rounded-full bg-accent-600"
+                  className={cn(
+                    "h-full rounded-full",
+                    isLeader ? "bg-accent-700" : "bg-accent-500",
+                  )}
                   style={{
                     width: `${pct}%`,
                     animation: `bdGrow 600ms ${i * 50}ms ease-out backwards`,
