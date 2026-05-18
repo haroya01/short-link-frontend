@@ -204,14 +204,17 @@ function ProfileVisual() {
  * essence (branded short URL) without leaking unimplemented UI.
  */
 function DomainVisual() {
+  // min-w-0 on the flex row lets the URL <span> actually honor `truncate` instead of pushing
+  // the DNS pill into a narrow column at laptop-1280 widths (4-col grid → ~210 px card). The
+  // pill itself needs shrink-0 + whitespace-nowrap so its three letters never vertical-stack.
   return (
     <div className="absolute inset-0 flex flex-col justify-center gap-2 px-4">
-      <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-2.5 py-1.5">
+      <div className="flex min-w-0 items-center gap-2 rounded-md border border-slate-200 bg-white px-2.5 py-1.5">
         <LinkIcon className="h-3 w-3 shrink-0 text-slate-400" />
-        <span className="truncate font-mono text-[11px] font-medium text-slate-900">
+        <span className="min-w-0 flex-1 truncate font-mono text-[11px] font-medium text-slate-900">
           go.brand.com/spring
         </span>
-        <span className="ml-auto inline-flex h-4 items-center gap-1 rounded-full bg-accent-50 px-1.5 font-mono text-[9px] font-medium uppercase tracking-wider text-accent-700">
+        <span className="ml-auto inline-flex h-4 shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-accent-50 px-1.5 font-mono text-[9px] font-medium uppercase tracking-wider text-accent-700">
           <span className="h-1 w-1 rounded-full bg-accent-500" />
           DNS
         </span>
@@ -220,7 +223,7 @@ function DomainVisual() {
         <span>TXT</span>
         <span className="text-slate-300">·</span>
         <span>CNAME</span>
-        <span className="ml-auto text-accent-700">verified</span>
+        <span className="ml-auto whitespace-nowrap text-accent-700">verified</span>
       </div>
     </div>
   );
