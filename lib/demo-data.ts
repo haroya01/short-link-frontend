@@ -12,6 +12,41 @@ import type {
 
 const TODAY_UTC = new Date(Date.UTC(2026, 4, 10));
 
+export type DemoShareChannel = "x" | "kakao" | "slack" | "instagram" | "direct";
+
+export type DemoSharedLink = {
+  /** Short slug shown under the kurl.me/ host. */
+  slug: string;
+  /** OG title surfaced on the unfurl card. */
+  ogTitle: string;
+  /** OG description — second line of the unfurl. */
+  ogDescription: string;
+  /** Source host displayed under the title (e.g. "open.spotify.com"). */
+  host: string;
+  /** Where the visitor shared it. Drives the channel badge + colored dot. */
+  channel: DemoShareChannel;
+  /** Click count rendered with a ping pulse. */
+  clicks: number;
+  /** Hot links (>= baseline) animate the ping; cold ones stay static. */
+  hot: boolean;
+};
+
+export type DemoProfileLink = {
+  /** Visible label on the link row. */
+  label: string;
+  /** Host shown under the label (truncated). */
+  host: string;
+  /** 4-archetype shape so the silhouette telegraphs surface variety. */
+  shape: "highlight" | "link" | "embed" | "place" | "contact";
+};
+
+export type DemoProfile = {
+  handle: string;
+  displayName: string;
+  tagline: string;
+  links: DemoProfileLink[];
+};
+
 export type DemoStats = {
   totalClicks: number;
   humanClicks: number;
@@ -23,6 +58,10 @@ export type DemoStats = {
   heatmap: HeatmapCell[];
   utmSourceClicks: UtmSourceClick[];
   countryClicks: CountryClick[];
+  /** Cards rendered by the viral / share-card preview section. */
+  sharedLinks: DemoSharedLink[];
+  /** Silhouette data for the public-profile preview section. */
+  profile: DemoProfile;
 };
 
 export function buildDemoStats(): DemoStats {
@@ -54,6 +93,80 @@ export function buildDemoStats(): DemoStats {
       { country: "GB", count: Math.round(total * 0.03) },
       { country: "VN", count: Math.round(total * 0.02) },
       { country: "FR", count: Math.round(total * 0.02) },
+    ],
+    sharedLinks: buildSharedLinks(),
+    profile: buildProfile(),
+  };
+}
+
+/**
+ * Three fake short links shown in the viral / share-card section. Hosts and titles are picked
+ * from neutral surfaces (Spotify, Notion, an indie shop) so nothing implies endorsement of a real
+ * brand. Click counts decay across the list so the first card reads as the "hot" share.
+ */
+function buildSharedLinks(): DemoSharedLink[] {
+  return [
+    {
+      slug: "spring-drop",
+      ogTitle: "봄 컬렉션 — 한정 100개",
+      ogDescription: "5월 11일 18시 오픈. 카톡 채널 친구만 먼저.",
+      host: "shop.haruatelier.com",
+      channel: "kakao",
+      clicks: 312,
+      hot: true,
+    },
+    {
+      slug: "launch-thread",
+      ogTitle: "사이드 프로젝트 1년 회고 — 무엇이 통했고 무엇이 빗나갔나",
+      ogDescription: "수익 0 에서 시작해 월 매출이 들어오기까지의 12개월.",
+      host: "haru.notion.site",
+      channel: "x",
+      clicks: 147,
+      hot: true,
+    },
+    {
+      slug: "club-mix",
+      ogTitle: "주말 작업용 플레이리스트 — 47곡 · 3h 12m",
+      ogDescription: "딥하우스부터 LoFi 까지. 매주 금요일 갱신.",
+      host: "open.spotify.com",
+      channel: "slack",
+      clicks: 64,
+      hot: false,
+    },
+  ];
+}
+
+function buildProfile(): DemoProfile {
+  return {
+    handle: "haruatelier",
+    displayName: "Haru Atelier",
+    tagline: "메이커 · 작은 브랜드 운영",
+    links: [
+      {
+        label: "봄 컬렉션 둘러보기",
+        host: "shop.haruatelier.com",
+        shape: "highlight",
+      },
+      {
+        label: "신상 공지 카카오 채널 추가",
+        host: "pf.kakao.com",
+        shape: "link",
+      },
+      {
+        label: "작업실 인터뷰 — 7분",
+        host: "youtube.com",
+        shape: "embed",
+      },
+      {
+        label: "성수동 쇼룸",
+        host: "naver.me",
+        shape: "place",
+      },
+      {
+        label: "디지털 명함",
+        host: "kurl.me",
+        shape: "contact",
+      },
     ],
   };
 }

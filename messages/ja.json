@@ -740,6 +740,10 @@
     "lead": "下の数字はデモ用ですが、サインアップすると同じレイアウトで自分のリンクが埋まります。ボット/人の分離、UTM チャネル、国、時間帯まですべて自動。",
     "ctaPrimary": "1 分でサインアップ",
     "ctaSecondary": "まずは短縮してみる →",
+    "groupEngagement": "エンゲージメント",
+    "groupAudience": "オーディエンス",
+    "groupReach": "拡散",
+    "groupShowcase": "公開プロフィール",
     "daily": {
       "title": "日別クリック",
       "desc": "直近 30 日 — 平日/週末パターンとキャンペーンスパイクが一目で分かります。"
@@ -756,7 +760,33 @@
       "title": "国別分布",
       "desc": "GeoIP で推定したクリック元。海外トラフィック比率の確認に。"
     },
-    "footerLead": "本物のリンクでも、最初のクリックから 60 秒以内に同じレイアウトが埋まり始めます。"
+    "viral": {
+      "title": "シェアカード · ライブクリック",
+      "desc": "OG カードは KakaoTalk · X · Slack どこに貼っても同じ形で展開。横でクリック数がリアルタイムに伸びます。",
+      "ping": "今クリック中",
+      "channels": {
+        "x": "X",
+        "kakao": "KakaoTalk",
+        "slack": "Slack",
+        "instagram": "Instagram",
+        "direct": "直接"
+      },
+      "clicksLabel": "クリック"
+    },
+    "profile": {
+      "title": "公開プロフィールページ",
+      "desc": "短縮リンクひとつで一緒に付いてくるページ。メニュー · インタビュー · 店舗 · 名刺を 1 行のアドレスにまとめて共有。",
+      "handlePrefix": "kurl.me/u/",
+      "viewCta": "プロフィール全体をプレビュー",
+      "shapes": {
+        "highlight": "Featured",
+        "embed": "動画",
+        "place": "場所",
+        "contact": "名刺"
+      }
+    },
+    "footerLead": "本物のリンクでも、最初のクリックから 60 秒以内に同じレイアウトが埋まり始めます。",
+    "footerKicker": "データはデモ用、埋まる速度は本物。"
   },
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",
