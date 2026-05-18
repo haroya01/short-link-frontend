@@ -150,7 +150,13 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
           aria-invalid={!!error}
           className="h-12 sm:flex-1"
         />
-        <Button type="submit" size="lg" variant="accent" disabled={busy} className="sm:w-auto sm:min-w-32">
+        <Button
+          type="submit"
+          size="lg"
+          variant="accent"
+          disabled={busy}
+          className="h-12 w-full sm:h-11 sm:w-auto sm:min-w-32"
+        >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : submitLabel}
         </Button>
       </div>

@@ -81,7 +81,7 @@
       },
       "profile": {
         "title": "公開プロフィール",
-        "desc": "kurl.me/u/{your-id} — Instagram bio に貼る 1 ページ。"
+        "desc": "kurl.me/u/'{'your-id'}' — Instagram bio に貼る 1 ページ。"
       },
       "domain": {
         "title": "自分のドメイン",

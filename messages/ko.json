@@ -81,7 +81,7 @@
       },
       "profile": {
         "title": "공개 프로필",
-        "desc": "kurl.me/u/{your-id} — Instagram bio 에 박을 1 페이지."
+        "desc": "kurl.me/u/'{'your-id'}' — Instagram bio 에 박을 1 페이지."
       },
       "domain": {
         "title": "본인 도메인",
