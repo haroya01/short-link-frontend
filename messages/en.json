@@ -696,6 +696,20 @@
         "title": "Recent errors",
         "desc": "Backend ERROR/WARN logs (in-memory ring, last 200).",
         "empty": "No recent errors"
+      },
+      "routeMetrics": {
+        "title": "Per-route traffic & latency",
+        "desc": "Requests, p50/p95/p99 (ms), and 5xx rate grouped by URI/method. Cumulative since instance start. Click column headers to sort.",
+        "empty": "No traffic recorded yet",
+        "cols": {
+          "uri": "URI",
+          "method": "Method",
+          "count": "Count",
+          "p50": "p50",
+          "p95": "p95",
+          "p99": "p99",
+          "errorRate": "5xx %"
+        }
       }
     },
     "trend": {

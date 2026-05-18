@@ -617,6 +617,20 @@
         "title": "최근 에러 로그",
         "desc": "백엔드 ERROR/WARN 로그 (in-memory, 최대 200건)",
         "empty": "최근 에러 없음"
+      },
+      "routeMetrics": {
+        "title": "라우트별 트래픽 · 지연",
+        "desc": "URI/method 기준 요청 수, p50/p95/p99(ms), 5xx 비율. 인스턴스 시작 이후 누적치. 컬럼 헤더로 정렬.",
+        "empty": "수집된 트래픽이 아직 없어요",
+        "cols": {
+          "uri": "URI",
+          "method": "Method",
+          "count": "Count",
+          "p50": "p50",
+          "p95": "p95",
+          "p99": "p99",
+          "errorRate": "5xx %"
+        }
       }
     },
     "trend": { "signups": "가입", "links": "링크", "clicks": "클릭" },

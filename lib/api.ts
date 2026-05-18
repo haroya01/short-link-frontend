@@ -5,6 +5,7 @@ import type {
   AdminLifecycle,
   AdminOverview,
   AdminRecentError,
+  AdminRouteMetric,
   ApiKeySummary,
   BulkImportSummary,
   ClaimResult,
@@ -726,6 +727,10 @@ export async function getAdminRecentErrors(limit = 50): Promise<AdminRecentError
 
 export async function getAdminOverview(): Promise<AdminOverview> {
   return request<AdminOverview>("/api/v1/admin/overview", { method: "GET" });
+}
+
+export async function getAdminRouteMetrics(): Promise<AdminRouteMetric[]> {
+  return request<AdminRouteMetric[]>("/api/v1/admin/route-metrics", { method: "GET" });
 }
 
 export async function listApiKeys(): Promise<ApiKeySummary[]> {
