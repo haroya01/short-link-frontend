@@ -76,6 +76,37 @@ describe("buildDemoStats", () => {
     expect(stats.countryClicks[0].country).toBe("KR");
     expect(stats.countryClicks[0].count).toBeGreaterThan(stats.humanClicks * 0.5);
   });
+
+  it("sharedLinks renders at least one hot card so the ping pulse is visible on /demo", () => {
+    const stats = buildDemoStats();
+    // Ping animation is gated on `hot` — locking this contract keeps the viral section from
+    // silently rendering an all-static silhouette when the synthetic data is tuned.
+    expect(stats.sharedLinks.length).toBeGreaterThanOrEqual(2);
+    expect(stats.sharedLinks.some((s) => s.hot)).toBe(true);
+    for (const s of stats.sharedLinks) {
+      expect(s.slug).toMatch(/^[a-z0-9-]+$/);
+      expect(s.clicks).toBeGreaterThan(0);
+    }
+  });
+
+  it("sharedLinks click counts decrease so the first card reads as the hottest share", () => {
+    const stats = buildDemoStats();
+    const clicks = stats.sharedLinks.map((s) => s.clicks);
+    const sorted = [...clicks].sort((a, b) => b - a);
+    expect(clicks).toEqual(sorted);
+  });
+
+  it("profile silhouette exposes a handle plus all four archetype shapes for the /demo preview", () => {
+    const stats = buildDemoStats();
+    expect(stats.profile.handle).toMatch(/^[a-z0-9-]+$/);
+    expect(stats.profile.links.length).toBeGreaterThanOrEqual(4);
+    const shapes = new Set(stats.profile.links.map((l) => l.shape));
+    // At minimum: the four AGENTS.md archetypes the silhouette is meant to telegraph.
+    expect(shapes.has("highlight")).toBe(true);
+    expect(shapes.has("embed")).toBe(true);
+    expect(shapes.has("place")).toBe(true);
+    expect(shapes.has("contact")).toBe(true);
+  });
 });
 
 function avg(nums: number[]): number {

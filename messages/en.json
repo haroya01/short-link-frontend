@@ -740,6 +740,10 @@
     "lead": "The numbers below are seeded for the demo, but the layout fills in for real on your own links — bot/human split, UTM channels, geo, time-of-day, all automatic.",
     "ctaPrimary": "Sign up — your stats start in 60s",
     "ctaSecondary": "Just shorten one first →",
+    "groupEngagement": "Engagement",
+    "groupAudience": "Audience",
+    "groupReach": "Reach",
+    "groupShowcase": "Public profile",
     "daily": {
       "title": "Daily clicks",
       "desc": "Last 30 days — weekday/weekend pattern + campaign spikes at a glance."
@@ -756,7 +760,33 @@
       "title": "Country split",
       "desc": "Where clicks come from, resolved via GeoIP. Spot international traffic share."
     },
-    "footerLead": "Your real link fills in this layout within 60 seconds of the first click."
+    "viral": {
+      "title": "Share cards · live clicks",
+      "desc": "Your OG card unfurls the same way on KakaoTalk, X, and Slack — and the click count ticks up next to it in real time.",
+      "ping": "Active right now",
+      "channels": {
+        "x": "X",
+        "kakao": "KakaoTalk",
+        "slack": "Slack",
+        "instagram": "Instagram",
+        "direct": "Direct"
+      },
+      "clicksLabel": "clicks"
+    },
+    "profile": {
+      "title": "Public profile page",
+      "desc": "Every short link comes with a one-page home you can share as a single handle — menus, interviews, storefronts, and contact card in one place.",
+      "handlePrefix": "kurl.me/u/",
+      "viewCta": "Preview the full profile",
+      "shapes": {
+        "highlight": "Featured",
+        "embed": "Video",
+        "place": "Place",
+        "contact": "Card"
+      }
+    },
+    "footerLead": "Your real link fills in this layout within 60 seconds of the first click.",
+    "footerKicker": "Data is seeded. The fill-in speed is real."
   },
   "publicProfile": {
     "empty": "This user hasn't featured any links yet.",

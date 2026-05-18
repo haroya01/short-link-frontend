@@ -657,6 +657,10 @@
     "lead": "여기 숫자는 시범용 가짜 데이터지만, 가입하면 본인 링크에 맞춰 똑같이 채워져요. 봇/사람 분리, UTM 채널, 국가, 시간대 다 자동으로 잡혀요.",
     "ctaPrimary": "1 분 가입하고 내 링크 분석하기",
     "ctaSecondary": "먼저 단축만 해볼래요 →",
+    "groupEngagement": "참여",
+    "groupAudience": "오디언스",
+    "groupReach": "확산",
+    "groupShowcase": "공개 프로필",
     "daily": {
       "title": "일자별 클릭",
       "desc": "최근 30 일. 평일 / 주말 패턴 + 캠페인 spike 가 한눈에."
@@ -673,7 +677,33 @@
       "title": "국가별 분포",
       "desc": "GeoIP 로 추정한 클릭 출처. 해외 트래픽 비중 확인용."
     },
-    "footerLead": "본인 링크에서도 1 분 안에 위 화면이 채워지기 시작합니다."
+    "viral": {
+      "title": "공유 카드 · 라이브 클릭",
+      "desc": "OG 카드 그대로 — 카톡 · X · Slack 어디에서든 같은 모양으로 펼쳐져요. 옆에 클릭 수가 실시간으로 차오릅니다.",
+      "ping": "지금 클릭 중",
+      "channels": {
+        "x": "X",
+        "kakao": "카카오톡",
+        "slack": "Slack",
+        "instagram": "Instagram",
+        "direct": "직접"
+      },
+      "clicksLabel": "클릭"
+    },
+    "profile": {
+      "title": "공개 프로필 페이지",
+      "desc": "단축 링크 하나만 만들어도 함께 따라오는 한 페이지. 메뉴 · 인터뷰 · 매장 · 명함을 한 곳에 모아 한 줄 주소로 공유.",
+      "handlePrefix": "kurl.me/u/",
+      "viewCta": "전체 프로필 미리보기",
+      "shapes": {
+        "highlight": "Featured",
+        "embed": "영상",
+        "place": "장소",
+        "contact": "명함"
+      }
+    },
+    "footerLead": "본인 링크에서도 1 분 안에 위 화면이 채워지기 시작합니다.",
+    "footerKicker": "데이터는 시범용. 채워지는 속도는 진짜."
   },
   "publicProfile": {
     "empty": "이 사용자가 아직 공개한 링크가 없어요.",
