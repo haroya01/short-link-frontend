@@ -119,7 +119,7 @@ export default function PublicStatsPage() {
         <Heatmap data={data.heatmap} />
       </Section>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Section
           title={t("section.daily.title")}
           description={t("section.daily.desc", { tz: data.timezone })}
@@ -132,7 +132,7 @@ export default function PublicStatsPage() {
         </Section>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("section.channel.title")} description={t("section.channel.desc")}>
           <BreakdownList
             items={data.channelClicks.map((c) => ({ label: c.channel, count: c.count }))}
