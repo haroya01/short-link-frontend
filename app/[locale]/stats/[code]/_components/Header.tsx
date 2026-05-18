@@ -10,10 +10,16 @@ type Props = {
   shortUrl: string;
   shortCodeLabel: string;
   onCopy: () => void;
+  /**
+   * Public {@code /demo} route renders this header against synthetic data — visibility toggle
+   * (which calls {@code PATCH /api/v1/links/{code}/visibility}) would 401 without a session, so
+   * it's suppressed there. Copy + QR still work because they read from the local value.
+   */
+  demo?: boolean;
 };
 
 /** Top-of-page card showing the short URL, copy/QR/public-stats controls, and a link out. */
-export function Header({ data, shortUrl, shortCodeLabel, onCopy }: Props) {
+export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }: Props) {
   const display = shortUrl || `/${data.shortCode}`;
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -38,7 +44,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy }: Props) {
         </a>
       </div>
       <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center">
-        <PublicStatsToggle shortCode={data.shortCode} />
+        {!demo && <PublicStatsToggle shortCode={data.shortCode} />}
         <div className="flex items-center gap-1">
           <CopyButton variant="outline" size="sm" value={display} onCopied={onCopy} />
           <QrButton value={display} filename={`${data.shortCode}.png`} />

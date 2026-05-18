@@ -1,14 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { buildDemoStats } from "./demo-data";
+import { buildDemoLinkStats } from "./demo-data";
 
 /**
- * The demo data is rendered by the public /demo page using the same chart components as real
- * LinkStats. These tests lock in the shape invariants so a future refactor doesn't silently
- * break the demo (e.g. a new required field on DailyClick / HeatmapCell would render as NaN).
+ * /demo renders the same {@code StatsBody} the dashboard's stats page does — 100% mirror, only
+ * data and the sample banner differ. These tests lock in the shape invariants so a future
+ * refactor doesn't silently break the demo (e.g. a missing required field would render as NaN
+ * or crash the chart machinery).
  */
-describe("buildDemoStats", () => {
+describe("buildDemoLinkStats", () => {
   it("returns 30 days of daily clicks in chronological order", () => {
-    const stats = buildDemoStats();
+    const stats = buildDemoLinkStats();
     expect(stats.dailyClicks).toHaveLength(30);
     const dates = stats.dailyClicks.map((d) => d.date);
     const sorted = [...dates].sort();
@@ -16,35 +17,35 @@ describe("buildDemoStats", () => {
   });
 
   it("yields identical numbers across calls — seeded LCG is deterministic", () => {
-    const a = buildDemoStats();
-    const b = buildDemoStats();
+    const a = buildDemoLinkStats();
+    const b = buildDemoLinkStats();
     expect(a).toEqual(b);
   });
 
-  it("totalClicks = humanClicks + botClicks bot floor", () => {
-    const stats = buildDemoStats();
+  it("totalClicks = humanClicks + botClicks", () => {
+    const stats = buildDemoLinkStats();
     expect(stats.totalClicks).toBe(stats.humanClicks + stats.botClicks);
     // Bot floor is hardcoded; if we ever make it configurable, this asserts the current contract.
     expect(stats.botClicks).toBe(184);
   });
 
   it("humanClicks equals the sum of dailyClicks counts", () => {
-    const stats = buildDemoStats();
+    const stats = buildDemoLinkStats();
     const sum = stats.dailyClicks.reduce((s, d) => s + d.count, 0);
     expect(stats.humanClicks).toBe(sum);
   });
 
   it("uniqueClicks is bounded by humanClicks", () => {
-    const stats = buildDemoStats();
+    const stats = buildDemoLinkStats();
     expect(stats.uniqueClicks).toBeLessThanOrEqual(stats.humanClicks);
     expect(stats.uniqueClicks).toBeGreaterThan(0);
   });
 
   it("heatmap has 7×24 = 168 cells with DayOfWeek enum labels (not numeric strings)", () => {
-    const stats = buildDemoStats();
+    const stats = buildDemoLinkStats();
     expect(stats.heatmap).toHaveLength(168);
     // The Heatmap renderer keys its grid by Java DayOfWeek enum names. If we ever drift back to
-    // numeric strings ("0".."6") every cell will resolve to undefined → 0 → bg-slate-100 and the
+    // numeric strings ("0".."6") every cell will resolve to undefined → 0 → bg-slate-50 and the
     // /demo heatmap renders empty — the regression that triggered this rewrite.
     const validDays = new Set([
       "MONDAY",
@@ -64,29 +65,31 @@ describe("buildDemoStats", () => {
   });
 
   it("heatmap covers all 7 days × 24 hours uniquely (no duplicates, no gaps)", () => {
-    const stats = buildDemoStats();
+    const stats = buildDemoLinkStats();
     const keys = new Set(stats.heatmap.map((c) => `${c.dayOfWeek}-${c.hour}`));
     expect(keys.size).toBe(168);
   });
 
   it("heatmap reflects Korean prime-time bump (19–23h has higher counts than dead-zone 02–06h)", () => {
-    const stats = buildDemoStats();
-    // Average count across the prime-time band vs the dead-zone band — chart trustworthiness
-    // depends on this shape, not absolute numbers.
-    const primeAvg = avg(stats.heatmap.filter((c) => c.hour >= 19 && c.hour <= 23).map((c) => c.count));
-    const deadAvg = avg(stats.heatmap.filter((c) => c.hour >= 2 && c.hour <= 6).map((c) => c.count));
+    const stats = buildDemoLinkStats();
+    const primeAvg = avg(
+      stats.heatmap.filter((c) => c.hour >= 19 && c.hour <= 23).map((c) => c.count),
+    );
+    const deadAvg = avg(
+      stats.heatmap.filter((c) => c.hour >= 2 && c.hour <= 6).map((c) => c.count),
+    );
     expect(primeAvg).toBeGreaterThan(deadAvg * 3);
   });
 
   it("heatmap weekend evenings (Sat/Sun 19–23h) read hotter than weekday lunch (Mon–Fri 11–14h)", () => {
-    const stats = buildDemoStats();
-    // Locks the "weekend evening pop" — visually the heatmap should have two distinct hot bands
-    // (weekday lunch + weekend evening) with the latter winning by a clear margin. If a future
-    // tuning flattens the weekend curve, this test catches the regression.
+    const stats = buildDemoLinkStats();
     const weekendEve = avg(
       stats.heatmap
         .filter(
-          (c) => (c.dayOfWeek === "SATURDAY" || c.dayOfWeek === "SUNDAY") && c.hour >= 19 && c.hour <= 23,
+          (c) =>
+            (c.dayOfWeek === "SATURDAY" || c.dayOfWeek === "SUNDAY") &&
+            c.hour >= 19 &&
+            c.hour <= 23,
         )
         .map((c) => c.count),
     );
@@ -104,50 +107,34 @@ describe("buildDemoStats", () => {
     expect(weekendEve).toBeGreaterThan(weekdayLunch);
   });
 
-  it("utmSourceClicks sums to ~100% of humanClicks (fractions sum to 1, rounding tolerated)", () => {
-    const stats = buildDemoStats();
-    const sum = stats.utmSourceClicks.reduce((s, u) => s + u.count, 0);
-    // Six independent Math.round calls of fractional bucket counts — total can drift a few
-    // counts in either direction. Lock the chart-trustworthiness invariant ("the breakdown
-    // matches roughly the whole") rather than asserting exact equality.
-    expect(Math.abs(sum - stats.humanClicks)).toBeLessThan(stats.humanClicks * 0.02);
-  });
-
   it("countryClicks puts KR first and >50% of human clicks (Korean-focused demo)", () => {
-    const stats = buildDemoStats();
+    const stats = buildDemoLinkStats();
     expect(stats.countryClicks[0].country).toBe("KR");
     expect(stats.countryClicks[0].count).toBeGreaterThan(stats.humanClicks * 0.5);
   });
 
-  it("sharedLinks renders at least one hot card so the ping pulse is visible on /demo", () => {
-    const stats = buildDemoStats();
-    // Ping animation is gated on `hot` — locking this contract keeps the viral section from
-    // silently rendering an all-static silhouette when the synthetic data is tuned.
-    expect(stats.sharedLinks.length).toBeGreaterThanOrEqual(2);
-    expect(stats.sharedLinks.some((s) => s.hot)).toBe(true);
-    for (const s of stats.sharedLinks) {
-      expect(s.slug).toMatch(/^[a-z0-9-]+$/);
-      expect(s.clicks).toBeGreaterThan(0);
-    }
-  });
-
-  it("sharedLinks click counts decrease so the first card reads as the hottest share", () => {
-    const stats = buildDemoStats();
-    const clicks = stats.sharedLinks.map((s) => s.clicks);
-    const sorted = [...clicks].sort((a, b) => b - a);
-    expect(clicks).toEqual(sorted);
-  });
-
-  it("profile silhouette exposes a handle plus all four archetype shapes for the /demo preview", () => {
-    const stats = buildDemoStats();
-    expect(stats.profile.handle).toMatch(/^[a-z0-9-]+$/);
-    expect(stats.profile.links.length).toBeGreaterThanOrEqual(4);
-    const shapes = new Set(stats.profile.links.map((l) => l.shape));
-    // At minimum: the four AGENTS.md archetypes the silhouette is meant to telegraph.
-    expect(shapes.has("highlight")).toBe(true);
-    expect(shapes.has("embed")).toBe(true);
-    expect(shapes.has("place")).toBe(true);
-    expect(shapes.has("contact")).toBe(true);
+  it("exposes the full LinkStats surface so StatsBody can render it without branching", () => {
+    const stats = buildDemoLinkStats();
+    // Sanity: every chart fed by /stats/[code] reads from one of these arrays — if any drops to
+    // undefined, the dashboard 'demo' route would crash. A non-empty assertion is enough; the
+    // shape contract is enforced by TypeScript on buildDemoLinkStats's return type.
+    expect(stats.shortCode).toBeTruthy();
+    expect(stats.timezone).toBeTruthy();
+    expect(stats.hourClicks).toHaveLength(24);
+    expect(stats.dayOfWeekClicks).toHaveLength(7);
+    expect(stats.referrerHostClicks.length).toBeGreaterThan(0);
+    expect(stats.channelClicks.length).toBeGreaterThan(0);
+    expect(stats.deviceClicks.length).toBeGreaterThan(0);
+    expect(stats.osClicks.length).toBeGreaterThan(0);
+    expect(stats.browserClicks.length).toBeGreaterThan(0);
+    expect(stats.botClicks2.length).toBeGreaterThan(0);
+    expect(stats.utmSourceClicks.length).toBeGreaterThan(0);
+    expect(stats.destinationClicks.length).toBeGreaterThan(0);
+    expect(stats.regionClicks.length).toBeGreaterThan(0);
+    expect(stats.cityClicks.length).toBeGreaterThan(0);
+    expect(stats.languageClicks.length).toBeGreaterThan(0);
+    expect(stats.asnClicks.length).toBeGreaterThan(0);
+    expect(stats.velocity.ratio).toBeGreaterThan(0);
   });
 });
 

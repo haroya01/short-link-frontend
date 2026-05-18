@@ -1,27 +1,35 @@
 "use client";
 
-import { ArrowRight, IdCard, LinkIcon, Share2 } from "lucide-react";
+import { ArrowRight, IdCard, LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 /**
- * Pre-signup taster strip on the landing page. Four cards spelling out what the user actually
- * gets after shortening. Each card pairs an iconified, in-card mini-visual with one line of
- * context, so the strip stays honest about being a teaser (no fake screenshots) while still
- * telegraphing the shape of each surface.
+ * Pre-signup taster strip on the landing page. Three cards spelling out what the user actually
+ * gets after shortening, each linked to the surface the card describes. The "보기" target is
+ * always a real, signed-out-accessible page rendered with the same components a logged-in user
+ * sees — only the data (and the small sample banner on top) differs.
  *
- * Visual anchor choices (one per card):
+ * Cards + targets:
  *
- *  - stats: tiny sparkline that mirrors the 30-day trend on the real stats page
- *  - viral: stacked OG card silhouette with a live "147 clicks" pill
- *  - profile: contact-card silhouette with a "kurl.me/u/…" handle
- *  - domain: monospace go.brand.com row with a "verified" dot
+ *  - <b>stats</b> → {@code /demo}. The dashboard's {@code /stats/[code]} surface rendered against
+ *    synthetic data. Same Header, same 5 tabs, same charts.
+ *  - <b>profile</b> → {@code /showcase/dohyun.coffee}. One of the landing-carousel fixtures
+ *    rendered as a full-screen public profile, identical to {@code /u/[username]}.
+ *  - <b>domain</b> → {@code /pricing}. The TXT + CNAME verification flow ships under the PRO
+ *    plan; pricing is the page that explains it.
  *
- * Layout follows the AGENTS.md Information archetype (essence = "알려준다"): each card is a
- * `.profile-card-static`-style surface with `rounded-2xl`, fixed padding rhythm, and the
- * brand-green accent token (no purple/blue gradients, no off-brand color blocks). Labels and
- * descriptions follow the AGENTS.md typo scale (level 5 title / level 3 desc) so the strip
- * reads at the same density as the public-profile feed.
+ * A previous version of this strip had a fourth card ("viral / OG share card") but the live
+ * OG-card-with-click-counter surface promised by the visual doesn't exist as a standalone
+ * page yet. Pointing it at {@code /demo} or {@code /pricing} would either lie about what's
+ * there or duplicate the stats card; per the "100% mirror" rule (cards point to real pages)
+ * we dropped it until that surface ships.
+ *
+ * Layout follows the AGENTS.md Information archetype: each card is a
+ * {@code .profile-card-static}-style surface with {@code rounded-2xl}, fixed padding rhythm,
+ * and the brand-green accent token. Labels and descriptions follow the AGENTS.md typo scale
+ * (level 5 title / level 3 desc) so the strip reads at the same density as the public-profile
+ * feed below.
  */
 export function LandingPreviews() {
   const t = useTranslations("home");
@@ -35,15 +43,8 @@ export function LandingPreviews() {
       visual: <StatsVisual />,
     },
     {
-      key: "viral",
-      href: "/demo",
-      label: t("previews.viral.title"),
-      desc: t("previews.viral.desc"),
-      visual: <ViralVisual />,
-    },
-    {
       key: "profile",
-      href: "/demo",
+      href: "/showcase/dohyun.coffee",
       label: t("previews.profile.title"),
       desc: t("previews.profile.desc"),
       visual: <ProfileVisual />,
@@ -63,7 +64,7 @@ export function LandingPreviews() {
         <p className="mb-6 text-center font-mono text-[11px] tracking-wider text-accent-700">
           {t("previews.eyebrow")}
         </p>
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {items.map((it) => (
             <li key={it.key}>
               <Link
@@ -142,37 +143,6 @@ function StatsVisual() {
         <path d={areaPath} fill="url(#preview-stats-fill)" />
         <path d={linePath} fill="none" stroke="#059669" strokeWidth={1.5} />
       </svg>
-    </div>
-  );
-}
-
-/**
- * OG-card silhouette stack. The front card carries a tiny "live clicks" pill; the back card
- * is a faint offset shadow to telegraph "shared and re-shared". Mirrors what an actual Open
- * Graph preview looks like on KakaoTalk / X.
- */
-function ViralVisual() {
-  return (
-    <div className="absolute inset-0 grid place-items-center px-4">
-      <div className="relative h-16 w-full max-w-[180px]">
-        <div className="absolute inset-x-2 top-2 h-full rounded-md border border-slate-200 bg-white/60 opacity-60" />
-        <div className="absolute inset-0 flex items-center gap-2 rounded-md border border-slate-200 bg-white p-2 shadow-sm">
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-accent-600 text-white">
-            <Share2 className="h-3.5 w-3.5" />
-          </div>
-          <div className="min-w-0 flex-1 space-y-0.5">
-            <div className="h-1.5 w-12 rounded-full bg-slate-200" />
-            <div className="h-1.5 w-20 rounded-full bg-slate-100" />
-            <span className="inline-flex items-center gap-1 rounded-full bg-accent-50 px-1.5 py-0.5 font-mono text-[9px] font-medium text-accent-700">
-              <span className="relative flex h-1 w-1">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-500 opacity-75" />
-                <span className="relative inline-flex h-1 w-1 rounded-full bg-accent-500" />
-              </span>
-              147 clicks
-            </span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

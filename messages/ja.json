@@ -75,10 +75,6 @@
         "title": "分析ダッシュボード",
         "desc": "人/ボット分離、チャネル、国、時間帯まで自動。30 日トレンド + ヒートマップ。"
       },
-      "viral": {
-        "title": "共有 OG カード",
-        "desc": "KakaoTalk/X に共有するとプレビューにリアルタイムのクリック数が表示。"
-      },
       "profile": {
         "title": "公開プロフィール",
         "desc": "kurl.me/u/'{'your-id'}' — Instagram bio に貼る 1 ページ。"
@@ -735,65 +731,12 @@
   "demo": {
     "metaTitle": "kurl デモ — 短縮後に何が見えるかを実際に触る",
     "metaDescription": "サインアップ不要で分析画面をそのままご覧いただけます。",
-    "eyebrow": "ライブデモ",
-    "title": "1 つの短縮リンクでここまで見える",
-    "lead": "下の数字はデモ用ですが、サインアップすると同じレイアウトで自分のリンクが埋まります。ボット/人の分離、UTM チャネル、国、時間帯まですべて自動。",
-    "ctaPrimary": "1 分でサインアップ",
-    "ctaSecondary": "まずは短縮してみる →",
-    "dataBadge": "サンプルデータ",
-    "tocLabel": "このページで見えるもの",
-    "groupEngagement": "エンゲージメント",
-    "groupAudience": "オーディエンス",
-    "groupReach": "拡散",
-    "groupShowcase": "公開プロフィール",
-    "groupEngagementLead": "総クリック、人/ボットの分離、平日/週末パターン — 最初のクリックが届いた瞬間に埋まる最初の画面。",
-    "groupAudienceLead": "誰がどこで何時に押したか。次のキャンペーンの時間 · チャネル · 地域を決める根拠。",
-    "groupReachLead": "短縮 URL をどこに貼っても OG カードは同じ形。KakaoTalk · X · Slack での見え方をプレビュー。",
-    "groupShowcaseLead": "ハンドル (kurl.me/u/...) の奥に広がる 1 ページ。短縮リンクとセットで付いてきます。",
-    "stepLabel": "{i} / {total}",
-    "daily": {
-      "title": "日別クリック",
-      "desc": "直近 30 日 — 平日/週末パターンとキャンペーンスパイクが一目で分かります。"
-    },
-    "heatmap": {
-      "title": "曜日×時間ヒートマップ",
-      "desc": "どの時間帯が空いているか (次のキャンペーンを入れる時間) すぐ見える。"
-    },
-    "source": {
-      "title": "流入チャネル (utm_source)",
-      "desc": "Instagram bio · KakaoTalk · QR など、自動で分類。"
-    },
-    "country": {
-      "title": "国別分布",
-      "desc": "GeoIP で推定したクリック元。海外トラフィック比率の確認に。"
-    },
-    "viral": {
-      "title": "シェアカード · ライブクリック",
-      "desc": "OG カードは KakaoTalk · X · Slack どこに貼っても同じ形で展開。横でクリック数がリアルタイムに伸びます。",
-      "ping": "今クリック中",
-      "channels": {
-        "x": "X",
-        "kakao": "KakaoTalk",
-        "slack": "Slack",
-        "instagram": "Instagram",
-        "direct": "直接"
-      },
-      "clicksLabel": "クリック"
-    },
-    "profile": {
-      "title": "公開プロフィールページ",
-      "desc": "短縮リンクひとつで一緒に付いてくるページ。メニュー · インタビュー · 店舗 · 名刺を 1 行のアドレスにまとめて共有。",
-      "handlePrefix": "kurl.me/u/",
-      "viewCta": "プロフィール全体をプレビュー",
-      "shapes": {
-        "highlight": "Featured",
-        "embed": "動画",
-        "place": "場所",
-        "contact": "名刺"
-      }
-    },
-    "footerLead": "本物のリンクでも、最初のクリックから 60 秒以内に同じレイアウトが埋まり始めます。",
-    "footerKicker": "データはデモ用、埋まる速度は本物。"
+    "sampleBanner": "サンプルデータです。サインアップすると自分のリンクで同じ画面が埋まります。",
+    "sampleCta": "リンクを作る",
+    "settingsNotice": {
+      "title": "設定はサインアップ後に触れます",
+      "desc": "A/B 振り分けの配信先と Webhook は自分のリンクでのみ登録できます。サインアップ後に自分のリンクの統計ページで同じ画面が開きます。"
+    }
   },
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",

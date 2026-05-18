@@ -10,18 +10,10 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/error-state";
 import { EmptyState } from "@/components/empty-state";
-import { StatsCards } from "@/components/stats-cards";
 import { useToast } from "@/components/ui/toast";
 import type { LinkStats } from "@/types";
-import { Header, HeaderSkeleton } from "./_components/Header";
-import { StatsEmptyState } from "./_components/StatsEmptyState";
-import { TabBar } from "./_components/TabBar";
-import { AudienceTab } from "./_components/tabs/AudienceTab";
-import { OverviewTab } from "./_components/tabs/OverviewTab";
-import { SettingsTab } from "./_components/tabs/SettingsTab";
-import { SourcesTab } from "./_components/tabs/SourcesTab";
-import { TrafficTab } from "./_components/tabs/TrafficTab";
-import { useTabHash } from "./_lib/use-tab-hash";
+import { HeaderSkeleton } from "./_components/Header";
+import { StatsBody } from "./_components/StatsBody";
 
 export default function StatsPage() {
   const params = useParams<{ code: string }>();
@@ -134,47 +126,5 @@ export default function StatsPage() {
         />
       )}
     </div>
-  );
-}
-
-function StatsBody({
-  data,
-  shortUrl,
-  shortCodeLabel,
-  onCopy,
-  onTick,
-}: {
-  data: LinkStats;
-  shortUrl: string;
-  shortCodeLabel: string;
-  onCopy: () => void;
-  onTick: () => void;
-}) {
-  const [tab, setTab] = useTabHash();
-  return (
-    <>
-      <Header
-        data={data}
-        shortUrl={shortUrl}
-        shortCodeLabel={shortCodeLabel}
-        onCopy={onCopy}
-      />
-      {data.totalClicks === 0 && <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />}
-      <StatsCards
-        total={data.totalClicks}
-        human={data.humanClicks}
-        bot={data.botClicks}
-        unique={data.uniqueClicks}
-        profileClicks={data.profileClicks}
-        timeToFirstClickMinutes={data.timeToFirstClickMinutes}
-        velocityRatio={data.velocity?.ratio ?? 0}
-      />
-      <TabBar active={tab} onSelect={setTab} />
-      {tab === "overview" && <OverviewTab data={data} onTick={onTick} />}
-      {tab === "traffic" && <TrafficTab data={data} />}
-      {tab === "sources" && <SourcesTab data={data} />}
-      {tab === "audience" && <AudienceTab data={data} />}
-      {tab === "settings" && <SettingsTab data={data} onTick={onTick} />}
-    </>
   );
 }
