@@ -200,13 +200,21 @@ function ProfileVisual() {
 }
 
 /**
- * Custom-domain row — monospace "go.brand.com/spring" with a verified dot. Communicates the
- * essence (branded short URL) without leaking unimplemented UI.
+ * Custom-domain row — monospace branded URL anchored by a small brand-green status dot, with
+ * the DNS-record provenance ("DNS · TXT · CNAME ... verified") spelled out underneath in
+ * muted mono. Communicates the essence (branded short URL + auto-verified) without leaking
+ * unimplemented UI.
+ *
+ * Layout rationale — the earlier two-column row (URL on the left, "DNS" pill on the right)
+ * could not survive the laptop-1280 4-col grid, where the card collapses to ~210 px and the
+ * pill + URL fight for the same axis. At that width the URL gets clipped to "go.brand…"
+ * (hiding the entire value prop) or, in unstyled fallback, the pill stack-wraps its letters
+ * into D / N / S. Solution: drop the competing pill, give the URL the whole row with a small
+ * status dot in its place, and demote the record metadata to a second, lower-density line.
+ * Every span in the meta row gets `whitespace-nowrap` + `shrink-0` so no individual token can
+ * vertical-stack even if a wider Korean font fallback pushes the line past its container.
  */
 function DomainVisual() {
-  // min-w-0 on the flex row lets the URL <span> actually honor `truncate` instead of pushing
-  // the DNS pill into a narrow column at laptop-1280 widths (4-col grid → ~210 px card). The
-  // pill itself needs shrink-0 + whitespace-nowrap so its three letters never vertical-stack.
   return (
     <div className="absolute inset-0 flex flex-col justify-center gap-2 px-4">
       <div className="flex min-w-0 items-center gap-2 rounded-md border border-slate-200 bg-white px-2.5 py-1.5">
@@ -214,16 +222,17 @@ function DomainVisual() {
         <span className="min-w-0 flex-1 truncate font-mono text-[11px] font-medium text-slate-900">
           go.brand.com/spring
         </span>
-        <span className="ml-auto inline-flex h-4 shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-accent-50 px-1.5 font-mono text-[9px] font-medium uppercase tracking-wider text-accent-700">
-          <span className="h-1 w-1 rounded-full bg-accent-500" />
+        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden />
+      </div>
+      <div className="flex min-w-0 items-center gap-1.5 px-1 font-mono text-[10px] text-slate-500">
+        <span className="shrink-0 whitespace-nowrap uppercase tracking-wider text-accent-700">
           DNS
         </span>
-      </div>
-      <div className="flex items-center gap-2 px-1 font-mono text-[10px] text-slate-500">
-        <span>TXT</span>
-        <span className="text-slate-300">·</span>
-        <span>CNAME</span>
-        <span className="ml-auto whitespace-nowrap text-accent-700">verified</span>
+        <span className="shrink-0 text-slate-300">·</span>
+        <span className="shrink-0 whitespace-nowrap">TXT</span>
+        <span className="shrink-0 text-slate-300">·</span>
+        <span className="shrink-0 whitespace-nowrap">CNAME</span>
+        <span className="ml-auto shrink-0 whitespace-nowrap text-accent-700">verified</span>
       </div>
     </div>
   );
