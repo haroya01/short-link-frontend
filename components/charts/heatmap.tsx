@@ -82,9 +82,9 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                       onBlur={() => setHover(null)}
                       aria-label={t("tooltip", { day: tDay(day), hour: h, count })}
                       className={cn(
-                        "h-6 rounded-sm transition-all",
+                        "h-6 rounded-md transition-all duration-150 ease-out",
                         colorFor(count),
-                        isHover && "scale-110 ring-2 ring-slate-900 ring-offset-1",
+                        isHover && "scale-110 ring-2 ring-accent-700 ring-offset-1",
                       )}
                     />
                   );
@@ -104,11 +104,11 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
           </div>
           <div className="flex items-center gap-1.5">
             <span>{t("less")}</span>
-            <div className="h-2.5 w-2.5 rounded-sm bg-slate-100" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-200" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-400" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-600" />
-            <div className="h-2.5 w-2.5 rounded-sm bg-accent-700" />
+            <div className="h-2.5 w-2.5 rounded-[3px] bg-slate-100" />
+            <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-200" />
+            <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-400" />
+            <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-600" />
+            <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-700" />
             <span>{t("more")}</span>
           </div>
         </div>

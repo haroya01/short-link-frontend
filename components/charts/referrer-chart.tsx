@@ -48,15 +48,21 @@ export function ReferrerChart({ data }: Props) {
             axisLine={false}
           />
           <Tooltip
-            cursor={{ fill: "rgba(245,158,11,0.06)" }}
-            contentStyle={{ borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 12 }}
+            cursor={{ fill: "rgba(5,150,105,0.06)" }}
+            contentStyle={{
+              borderRadius: 12,
+              border: "1px solid #e2e8f0",
+              fontSize: 12,
+              boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
+              padding: "8px 12px",
+            }}
             formatter={(value) => [value, ""]}
             labelFormatter={(_l, payload) => payload?.[0]?.payload?.referrer ?? ""}
           />
           <Bar
             dataKey="count"
-            fill="#f59e0b"
-            radius={[0, 3, 3, 0]}
+            fill="#10B981"
+            radius={[0, 4, 4, 0]}
             barSize={12}
             isAnimationActive
             animationDuration={800}

@@ -114,10 +114,10 @@ export function LinkDestinationsSection({
   }
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-5">
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
       <div className="mb-3">
-        <h2 className="text-sm font-semibold text-slate-900">{t("title")}</h2>
-        <p className="mt-1 text-xs text-slate-500">{t("description")}</p>
+        <h2 className="text-[15px] font-semibold tracking-tight text-slate-900">{t("title")}</h2>
+        <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("description")}</p>
       </div>
 
       <form onSubmit={handleAdd} className="grid gap-2 sm:grid-cols-[1fr_100px_120px_120px_auto]">
@@ -241,7 +241,7 @@ function DestinationRow({
           </span>
         )}
         {countryCode && (
-          <span className="rounded bg-blue-50 px-1.5 py-0.5 font-mono text-[10px] text-blue-700">
+          <span className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
             {countryFlag(countryCode)} {countryCode}
           </span>
         )}
