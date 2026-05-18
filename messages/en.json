@@ -149,6 +149,7 @@
     "utmTitle": "Campaign / channels (optional)",
     "utmHint": "Auto-appends utm_* params",
     "campaignPlaceholder": "Campaign name (e.g. spring-event)",
+    "anonymousNotice": "Anonymous links auto-expire after 24 hours. Sign in to keep them forever.",
     "errors": {
       "empty": "Please enter a URL.",
       "invalid": "URL must start with http:// or https://.",
@@ -167,7 +168,11 @@
     "originalUrl": "Original",
     "copy": "Copy",
     "copied": "Copied",
-    "open": "Open"
+    "open": "Open",
+    "anonymousExpiryTitle": "Anonymous links expire in 24 hours",
+    "anonymousExpiryAt": "Expires: {when}",
+    "anonymousExpirySignup": "Keep it forever — sign in",
+    "anonymousExpirySignupHint": "Sign in to keep your link and analyze every click — no expiry."
   },
   "login": {
     "title": "Sign in",
@@ -609,7 +614,13 @@
       "less": "Less",
       "more": "More",
       "tooltip": "{day} {hour}h — {count} clicks",
-      "tooltipBucket": "{day} {from}–{to}h — {count} clicks"
+      "tooltipBucket": "{day} {from}–{to}h — {count} clicks",
+      "detailHourly": "{day} {hour}:00–{hour}:59",
+      "detailBucket": "{day} {from}:00–{to}:59",
+      "detailClicks": "{count} clicks",
+      "detailShare": "{share}% of total",
+      "detailClose": "Close",
+      "detailHint": "Tap the same cell again to close."
     }
   },
   "admin": {
@@ -1008,7 +1019,10 @@
     "rightsLead": "GDPR / privacy-law guarantees — available to every user regardless of plan.",
     "right1": "Export my data (JSON)",
     "right2": "Permanent account deletion + cascade",
-    "right3": "Only one cookie (sign-in) — no analytics or ad cookies"
+    "right3": "Only one cookie (sign-in) — no analytics or ad cookies",
+    "proHoldBadge": "Coming soon",
+    "proHoldNotice": "Pro is on hold while we finish the billing pipeline. The Free plan still ships 200 links, 8 analytics dimensions, 5 webhooks per link, and 2FA — every feature listed below is live today.",
+    "proHoldCta": "Not available yet"
   },
   "terms": {
     "title": "Terms of Service",

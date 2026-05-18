@@ -75,6 +75,7 @@ export default function HomePage() {
                     result={r.res}
                     originalUrl={r.original}
                     channel={r.channel}
+                    authenticated={authenticated}
                   />
                 ))}
                 {!authenticated ? (

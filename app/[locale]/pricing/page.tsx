@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Shield } from "lucide-react";
-import { PricingCta } from "@/components/pricing-cta";
+import { Shield, Lock } from "lucide-react";
 
 export async function generateMetadata({
   params,
@@ -13,6 +12,14 @@ export async function generateMetadata({
   return { title: t("title"), description: t("lead") };
 }
 
+/**
+ * Pricing page — Pro 결제는 아직 출시 전이라 PricingCta (checkout / portal) 를 노출하지 않는다.
+ * Free 플랜 정보 (200 링크 / 8종 분석 / 웹훅 5개 / 2FA) 는 그대로 두고, Pro 섹션은 "추후 출시"
+ * disabled 상태로 둬서 "어떤 기능이 Pro 에 들어올지" 정보만 전달.
+ *
+ * domain card (landing previews) 가 이 페이지로 보내기 때문에 Pro 섹션 정보를 완전 제거하면
+ * 사용자가 "왜 도메인 카드가 빈 페이지로 보내지?" 라고 느낄 수 있어 정보는 유지 + 결제 진입만 차단.
+ */
 export default async function PricingPage({
   params,
 }: {
@@ -45,6 +52,21 @@ export default async function PricingPage({
         <p className="text-sm text-slate-500">{t("lead")}</p>
       </header>
 
+      <section
+        className="rounded-lg border border-accent-200 bg-accent-50/50 px-5 py-4"
+        aria-label={t("proHoldBadge")}
+      >
+        <div className="flex items-start gap-3">
+          <Lock className="mt-0.5 h-4 w-4 shrink-0 text-accent-700" />
+          <div className="min-w-0 flex-1">
+            <p className="font-mono text-[11px] uppercase tracking-wider text-accent-700">
+              {t("proHoldBadge")}
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-slate-700">{t("proHoldNotice")}</p>
+          </div>
+        </div>
+      </section>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <section className="rounded-lg border border-slate-200 bg-white p-6">
           <h2 className="text-lg font-semibold text-slate-900">{t("freeTitle")}</h2>
@@ -59,19 +81,35 @@ export default async function PricingPage({
           </ul>
         </section>
 
-        <section className="rounded-lg border border-slate-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-slate-900">{t("paidTitle")}</h2>
-          <p className="mt-1 font-mono text-2xl font-semibold text-slate-900">{t("paidPrice")}</p>
-          <ul className="mt-4 space-y-2 text-sm text-slate-600">
+        <section
+          className="relative rounded-lg border border-slate-200 bg-slate-50/40 p-6"
+          aria-label={`${t("paidTitle")} — ${t("proHoldBadge")}`}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-lg font-semibold text-slate-500">{t("paidTitle")}</h2>
+            <span className="rounded-full border border-accent-200 bg-white px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-accent-700">
+              {t("proHoldBadge")}
+            </span>
+          </div>
+          <p className="mt-1 font-mono text-2xl font-semibold text-slate-400">{t("paidPrice")}</p>
+          <ul className="mt-4 space-y-2 text-sm text-slate-500">
             {paid.map((f) => (
               <li key={f} className="flex items-start gap-2">
-                <span className="mt-0.5 text-accent-600">✓</span>
+                <span className="mt-0.5 text-slate-400">✓</span>
                 <span>{f}</span>
               </li>
             ))}
           </ul>
           <div className="mt-5">
-            <PricingCta />
+            <button
+              type="button"
+              disabled
+              aria-disabled
+              className="inline-flex h-10 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white px-4 text-sm font-medium text-slate-400"
+            >
+              <Lock className="h-3.5 w-3.5" />
+              {t("proHoldCta")}
+            </button>
           </div>
         </section>
       </div>
