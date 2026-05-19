@@ -93,7 +93,7 @@ export default function ProfileLeadsPage() {
     <div className="container max-w-3xl space-y-6 py-12">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
+          <h1 className="text-2xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
           <p className="mt-1 text-sm text-slate-500">{t("intro", { count: total })}</p>
           <p className="mt-1 text-[11px] text-slate-400">{t("csvExcludesOptedOut")}</p>
         </div>

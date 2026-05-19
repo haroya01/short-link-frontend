@@ -110,10 +110,10 @@ export default function AdminPage() {
   return (
     <div className="container max-w-6xl space-y-5 py-10">
       <div>
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-slate-500">
+        <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500">
           {t("label")}
         </p>
-        <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h2>
+        <h2 className="mt-1 text-2xl font-semibold tracking-headline text-slate-900">{t("title")}</h2>
         <p className="mt-1 text-sm text-slate-500">{t("subtitle")}</p>
       </div>
 
