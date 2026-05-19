@@ -22,20 +22,20 @@ test.describe("mobile navigation", () => {
     await page.waitForTimeout(320);
     const settled = await drawer.evaluate((el) => {
       const rect = el.getBoundingClientRect();
-      return { right: rect.right, viewportWidth: window.innerWidth };
+      return { left: rect.left };
     });
-    // The drawer should rest fully inside the viewport (right edge at or just past the right wall).
-    expect(Math.abs(settled.right - settled.viewportWidth)).toBeLessThanOrEqual(1);
+    // The drawer should rest fully inside the viewport (left edge at or just past the left wall).
+    expect(Math.abs(settled.left)).toBeLessThanOrEqual(1);
 
     await page.keyboard.press("Escape");
     await page.waitForTimeout(320);
-    // After dismissal the drawer translates back off-screen — its left edge should sit at or past
-    // the viewport right edge.
+    // After dismissal the drawer translates back off-screen — its right edge should sit at or before
+    // the viewport left edge.
     const closed = await drawer.evaluate((el) => {
       const rect = el.getBoundingClientRect();
-      return { left: rect.left, viewportWidth: window.innerWidth };
+      return { right: rect.right };
     });
-    expect(closed.left).toBeGreaterThanOrEqual(closed.viewportWidth - 1);
+    expect(closed.right).toBeLessThanOrEqual(1);
   });
 
   test("home renders without horizontal overflow on iPhone", async ({ page }) => {
