@@ -126,4 +126,48 @@ test.describe("demo page artifacts", () => {
       await expect(tab).toBeVisible();
     }
   });
+
+  test("Audience tab renders region + city + language + bot + ASN sections (100% mirror)", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/ko/demo", { waitUntil: "networkidle" });
+    await page.getByRole("tab", { name: "방문자" }).click();
+    // Section titles in ko — pulled from messages/ko.json stats.section.*
+    for (const title of ["지역", "도시", "언어", "봇 종류", "네트워크 / ASN"]) {
+      const section = page.locator(`section:has-text("${title}")`).first();
+      await expect(section).toBeVisible();
+    }
+    // Region + city must show the leading KR metro entry, not be empty.
+    const regionSection = page.locator('section:has-text("지역")').first();
+    await expect(regionSection).toContainText("Seoul");
+    const citySection = page.locator('section:has-text("도시")').first();
+    await expect(citySection).toContainText("Seoul");
+  });
+
+  test("Settings tab demo shows A/B + Webhook preview with disabled controls", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/ko/demo", { waitUntil: "networkidle" });
+    await page.getByRole("tab", { name: "설정" }).click();
+
+    // A/B destinations mirror — title + sample rows visible
+    const destSection = page.locator('section:has-text("A/B")').first();
+    await expect(destSection).toBeVisible();
+    await expect(destSection).toContainText("variant-A");
+    await expect(destSection).toContainText("variant-B");
+
+    // Webhooks mirror — title + sample row visible
+    const webhookSection = page.locator('section:has-text("웹훅")').first();
+    await expect(webhookSection).toBeVisible();
+    await expect(webhookSection).toContainText("slack-#alerts");
+    await expect(webhookSection).toContainText("X-Kurl-Signature");
+
+    // Controls disabled — the "추가" (Add) and "등록" (Register) submit buttons
+    const addButton = destSection.getByRole("button", { name: "추가" });
+    await expect(addButton).toBeDisabled();
+    const registerButton = webhookSection.getByRole("button", { name: "등록" });
+    await expect(registerButton).toBeDisabled();
+  });
 });
