@@ -729,6 +729,32 @@ export type AdminRouteMetric = {
 
 export type AdminRouteMetricsWindow = "all" | "1h" | "24h" | "7d";
 
+/**
+ * Per-short_code redirect performance. Backed by an in-memory rolling sample ring on the
+ * backend — `windowedRedirects` and the latency / outcome fields reflect only the requested
+ * window, while `totalRedirects` is the lifetime count from the DB. `outcomeCounts` carries
+ * one of: `redirect`, `preview`, `not_found`, `expired`, `view_limit`, `blocked`,
+ * `password_required`, `error`, `other`. The recorder is bounded LRU (top N hot codes) so
+ * cold links may be missing entirely.
+ */
+export type AdminLinkMetric = {
+  shortCode: string;
+  originalUrl: string | null;
+  userId: number | null;
+  ownerEmail: string | null;
+  totalRedirects: number;
+  windowedRedirects: number;
+  p50Millis: number;
+  p95Millis: number;
+  p99Millis: number;
+  errorRate: number;
+  outcomeCounts: Record<string, number>;
+  lastRedirectAt: string | null;
+};
+
+export type AdminLinkMetricsWindow = "1h" | "24h" | "7d" | "all";
+export type AdminLinkMetricsSort = "count" | "latency" | "error";
+
 export type AdminOverview = {
   totals: { users: number; links: number; clicks: number };
   newUsers7d: number;

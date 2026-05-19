@@ -748,6 +748,52 @@
           "p99": "p99",
           "errorRate": "5xx %"
         }
+      },
+      "linkMetrics": {
+        "title": "リンク別パフォーマンス",
+        "desc": "short_code ごとの redirect 遅延 (p50/p95/p99)、ウィンドウ内クリック数、エラー率。メモリ上限のため最近アクティブな上位 500 コードのみ追跡します。▶ クリックで outcome 分布 (redirect / not_found / expired / blocked など)。",
+        "empty": "このウィンドウでは redirect が捕捉されたリンクがありません",
+        "expandOutcomes": "Outcome 分布を表示",
+        "collapseOutcomes": "Outcome 分布を隠す",
+        "outcomes": "Outcome 分布:",
+        "noOwner": "匿名",
+        "noOriginal": "(オリジナル URL なし)",
+        "windowSort": "ウィンドウ",
+        "sortLabel": "並び順",
+        "window": {
+          "1h": "1時間",
+          "24h": "24時間",
+          "7d": "7日",
+          "all": "全期間"
+        },
+        "sort": {
+          "count": "クリック数",
+          "latency": "p95 遅延",
+          "error": "エラー率"
+        },
+        "outcome": {
+          "redirect": "リダイレクト",
+          "preview": "プレビュー",
+          "not_found": "404",
+          "expired": "期限切れ",
+          "view_limit": "閲覧上限",
+          "blocked": "ブロック",
+          "password_required": "パスワード必須",
+          "error": "エラー",
+          "other": "その他"
+        },
+        "cols": {
+          "shortCode": "Short code",
+          "owner": "所有者",
+          "original": "オリジナル URL",
+          "total": "総クリック",
+          "windowed": "ウィンドウ内",
+          "p50": "p50 (ms)",
+          "p95": "p95 (ms)",
+          "p99": "p99 (ms)",
+          "errorRate": "エラー率",
+          "lastAt": "最終"
+        }
       }
     },
     "trend": {

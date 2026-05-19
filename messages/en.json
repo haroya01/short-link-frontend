@@ -748,6 +748,52 @@
           "p99": "p99",
           "errorRate": "5xx %"
         }
+      },
+      "linkMetrics": {
+        "title": "Per-link performance",
+        "desc": "Redirect latency (p50/p95/p99), in-window click count, and error rate per short_code. The in-memory ring tracks up to the top 500 recently active codes. Click ▶ on a row to see its outcome breakdown (redirect / not_found / expired / blocked / ...).",
+        "empty": "No redirects captured for any link in this window",
+        "expandOutcomes": "Show outcome breakdown",
+        "collapseOutcomes": "Hide outcome breakdown",
+        "outcomes": "Outcomes:",
+        "noOwner": "Anonymous",
+        "noOriginal": "(no original URL)",
+        "windowSort": "Window",
+        "sortLabel": "Sort",
+        "window": {
+          "1h": "1h",
+          "24h": "24h",
+          "7d": "7d",
+          "all": "All"
+        },
+        "sort": {
+          "count": "Clicks",
+          "latency": "p95 latency",
+          "error": "Error rate"
+        },
+        "outcome": {
+          "redirect": "Redirect",
+          "preview": "Preview",
+          "not_found": "404",
+          "expired": "Expired",
+          "view_limit": "View limit",
+          "blocked": "Blocked",
+          "password_required": "Password",
+          "error": "Error",
+          "other": "Other"
+        },
+        "cols": {
+          "shortCode": "Short code",
+          "owner": "Owner",
+          "original": "Original URL",
+          "total": "Total clicks",
+          "windowed": "In-window",
+          "p50": "p50 (ms)",
+          "p95": "p95 (ms)",
+          "p99": "p99 (ms)",
+          "errorRate": "Error %",
+          "lastAt": "Last"
+        }
       }
     },
     "trend": {
