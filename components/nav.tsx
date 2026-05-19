@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+
+// `useLayoutEffect` runs on the server too (React stubs it as a no-op) and prints a noisy
+// warning in development. Fall back to `useEffect` during SSR; the indicator stays opacity-0
+// until the first client measurement so the swap is invisible. Pattern lifted from React docs +
+// react-redux's `useIsomorphicLayoutEffect`.
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 import { LogOut, Menu, X } from "lucide-react";
 
 import { useLocale, useTranslations } from "next-intl";
@@ -12,12 +19,19 @@ import { LanguageSwitcher } from "./language-switcher";
 import { Logo } from "./logo";
 import { cn } from "@/lib/utils";
 
+type NavEntry = {
+  href: string;
+  label: string;
+  /** Matcher receives the current pathname and decides whether the tab is the active one. */
+  active: (pathname: string) => boolean;
+};
+
 export function Nav() {
   const pathname = usePathname();
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("nav");
-  const { authenticated, ready, isAdmin, me, signOut } = useAuth();
+  const { authenticated, ready, isAdmin, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobileRef = useRef<HTMLDivElement>(null);
 
@@ -32,8 +46,17 @@ export function Nav() {
         setMobileOpen(false);
       }
     };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
   }, [mobileOpen]);
 
   // Public profile pages render without site chrome — they're meant to feel like a standalone
@@ -41,14 +64,58 @@ export function Nav() {
   // React rules-of-hooks.
   if (pathname.startsWith("/u/")) return null;
 
+  /*
+   * Single source of truth for desktop + mobile entries. Compose dynamically based on auth /
+   * admin state so the floating-accent indicator and the mobile drawer both render the same
+   * label set without drift — every time we used to add an item to the desktop nav we had to
+   * remember to mirror it in the mobile branch, and the two slid apart on /profile/edit.
+   */
+  const entries: NavEntry[] = [
+    { href: "/", label: t("shorten"), active: (p) => p === "/" },
+  ];
+  if (authenticated) {
+    entries.push({
+      href: "/profile/edit",
+      label: t("profile"),
+      active: (p) => p === "/profile/edit" || p === "/profile/stats",
+    });
+  } else {
+    entries.push({
+      href: "/showcase",
+      label: t("showcase"),
+      active: (p) => p.startsWith("/showcase"),
+    });
+  }
+  if (authenticated) {
+    entries.push({
+      href: "/dashboard",
+      label: t("myLinks"),
+      active: (p) => p.startsWith("/dashboard"),
+    });
+  }
+  if (isAdmin) {
+    entries.push({
+      href: "/admin",
+      label: t("admin"),
+      active: (p) => p.startsWith("/admin"),
+    });
+  }
+  if (authenticated) {
+    entries.push({
+      href: "/settings",
+      label: t("settings"),
+      active: (p) => p.startsWith("/settings"),
+    });
+  }
+
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
       <div className="container flex h-14 items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-3 sm:gap-6">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-7">
           <button
             type="button"
             onClick={() => setMobileOpen((v) => !v)}
-            className="-ml-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-700 hover:bg-slate-100 sm:hidden"
+            className="-ml-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-700 transition-colors hover:bg-slate-100 sm:hidden"
             aria-label={mobileOpen ? "close menu" : "open menu"}
             aria-expanded={mobileOpen}
           >
@@ -57,36 +124,7 @@ export function Nav() {
           <Link href="/" aria-label="kurl" className="shrink-0">
             <Logo />
           </Link>
-          <nav className="hidden items-center gap-1 sm:flex">
-            <NavLink href="/" active={pathname === "/"}>
-              {t("shorten")}
-            </NavLink>
-            {/* Single profile slot — anonymous visitors see the marketing showcase, signed-in
-                users go straight to their own /u/<handle>. Avoids having two adjacent
-                "프로필" / "내 프로필" links that visually compete. */}
-            {authenticated ? (
-              <ProfileNavLink pathname={pathname} t={t} />
-            ) : (
-              <NavLink href="/showcase" active={pathname.startsWith("/showcase")}>
-                {t("showcase")}
-              </NavLink>
-            )}
-            {authenticated && (
-              <NavLink href="/dashboard" active={pathname.startsWith("/dashboard")}>
-                {t("myLinks")}
-              </NavLink>
-            )}
-            {isAdmin && (
-              <NavLink href="/admin" active={pathname.startsWith("/admin")}>
-                {t("admin")}
-              </NavLink>
-            )}
-            {authenticated && (
-              <NavLink href="/settings" active={pathname.startsWith("/settings")}>
-                {t("settings")}
-              </NavLink>
-            )}
-          </nav>
+          <DesktopNav entries={entries} pathname={pathname} />
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
@@ -115,129 +153,189 @@ export function Nav() {
         </div>
       </div>
 
-      {mobileOpen && (
-        <div
-          ref={mobileRef}
-          className="border-t border-slate-200 bg-white sm:hidden"
-        >
-          <nav className="container flex flex-col py-2">
-            <MobileNavLink href="/" active={pathname === "/"}>
-              {t("shorten")}
-            </MobileNavLink>
-            {/* Mirror of the desktop slot logic — see nav above. */}
-            {authenticated ? (
-              <ProfileMobileLink t={t} />
-            ) : (
-              <MobileNavLink href="/showcase" active={pathname.startsWith("/showcase")}>
-                {t("showcase")}
-              </MobileNavLink>
-            )}
-            {authenticated && (
-              <MobileNavLink href="/dashboard" active={pathname.startsWith("/dashboard")}>
-                {t("myLinks")}
-              </MobileNavLink>
-            )}
-            {isAdmin && (
-              <MobileNavLink href="/admin" active={pathname.startsWith("/admin")}>
-                {t("admin")}
-              </MobileNavLink>
-            )}
-            {authenticated && (
-              <MobileNavLink href="/settings" active={pathname.startsWith("/settings")}>
-                {t("settings")}
-              </MobileNavLink>
-            )}
-          </nav>
-        </div>
-      )}
+      <MobileDrawer
+        open={mobileOpen}
+        entries={entries}
+        pathname={pathname}
+        onClose={() => setMobileOpen(false)}
+        drawerRef={mobileRef}
+      />
     </header>
   );
 }
 
-function NavLink({
-  href,
-  active,
-  children,
-}: {
-  href: string;
-  active: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "rounded-md px-2.5 py-1.5 text-sm transition-colors",
-        active
-          ? "bg-slate-100 text-slate-900"
-          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
-      )}
-    >
-      {children}
-    </Link>
-  );
-}
-
-function MobileNavLink({
-  href,
-  active,
-  children,
-}: {
-  href: string;
-  active: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "rounded-md px-3 py-2 text-sm transition-colors",
-        active
-          ? "bg-slate-100 text-slate-900"
-          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
-      )}
-    >
-      {children}
-    </Link>
-  );
-}
-
-/**
- * Routes to /profile/edit regardless of username state. Tapping "Profile" in the nav while
- * signed in used to jump straight to {@code /u/<handle>} — which is the *visitor*-facing view
- * of the page the owner is trying to edit. Owners almost always want the editor when they
- * click "Profile" from the nav (to add a block, change the bio, etc.); going to the read-only
- * public view forces them to bounce back through /profile/edit. /profile/edit also handles the
- * not-yet-claimed-username case (onboarding banner), so a single destination covers both
- * states and the nav layout doesn't shift.
+/*
+ * Desktop nav with a floating accent indicator. Restrained, text-only — no icons next to labels
+ * (we tried that and the icons piled on AI-template visual weight that the AGENTS.md "luxury /
+ * refined" direction explicitly avoids). The indicator is a single 1.5 px accent bar that slides
+ * between active tabs, so the dynamism comes from one element moving rather than every link
+ * decorating itself. The bar position/width is measured from the rendered <a> elements so we
+ * don't have to hard-code link widths (which would break in JA / EN where the label widths shift
+ * vs. the KO baseline).
  */
-function ProfileNavLink({
+function DesktopNav({
+  entries,
   pathname,
-  t,
 }: {
+  entries: NavEntry[];
   pathname: string;
-  t: ReturnType<typeof useTranslations<"nav">>;
 }) {
-  const target = "/profile/edit";
+  const listRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
+
+  const activeIndex = entries.findIndex((e) => e.active(pathname));
+
+  useIsomorphicLayoutEffect(() => {
+    const list = listRef.current;
+    const el = activeIndex >= 0 ? itemRefs.current[activeIndex] : null;
+    if (!list || !el) {
+      setIndicator(null);
+      return;
+    }
+    const listRect = list.getBoundingClientRect();
+    const itemRect = el.getBoundingClientRect();
+    setIndicator({ left: itemRect.left - listRect.left, width: itemRect.width });
+  }, [pathname, activeIndex, entries.length]);
+
+  // Re-measure on viewport resize + on the list's own resize (font subset loads, locale changes
+  // that swap KO ↔ EN ↔ JA label widths, container width breakpoints). Without ResizeObserver
+  // the indicator stuck to the pre-Pretendard measurement on cold loads — the served fallback
+  // (system sans) is ~6 px narrower per CJK glyph than Pretendard Variable.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const measure = () => {
+      const list = listRef.current;
+      const el = activeIndex >= 0 ? itemRefs.current[activeIndex] : null;
+      if (!list || !el) return;
+      const listRect = list.getBoundingClientRect();
+      const itemRect = el.getBoundingClientRect();
+      setIndicator({ left: itemRect.left - listRect.left, width: itemRect.width });
+    };
+    window.addEventListener("resize", measure);
+    const list = listRef.current;
+    let ro: ResizeObserver | undefined;
+    if (list && typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(() => measure());
+      ro.observe(list);
+    }
+    return () => {
+      window.removeEventListener("resize", measure);
+      ro?.disconnect();
+    };
+  }, [activeIndex]);
+
   return (
-    <NavLink href={target} active={pathname === target || pathname === "/profile/stats"}>
-      {t("profile")}
-    </NavLink>
+    <div ref={listRef} className="relative hidden items-center sm:flex">
+      <nav className="flex items-center gap-1">
+        {entries.map((entry, i) => (
+          <Link
+            key={entry.href}
+            href={entry.href}
+            ref={(el) => {
+              itemRefs.current[i] = el;
+            }}
+            aria-current={entry.active(pathname) ? "page" : undefined}
+            className={cn(
+              "relative px-2.5 py-1.5 text-[13px] font-medium transition-colors",
+              entry.active(pathname)
+                ? "text-slate-900"
+                : "text-slate-500 hover:text-slate-900",
+            )}
+          >
+            {entry.label}
+          </Link>
+        ))}
+      </nav>
+      {/* Floating accent indicator — single 1.5px bar that slides between active tabs.
+          Off-screen (opacity 0) until the first measurement so we don't flash at left:0 on mount. */}
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute bottom-[-13px] h-px bg-accent-600",
+          "transition-[left,width,opacity] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          indicator ? "opacity-100" : "opacity-0",
+        )}
+        style={
+          indicator
+            ? { left: indicator.left, width: indicator.width }
+            : { left: 0, width: 0 }
+        }
+      />
+    </div>
   );
 }
 
-function ProfileMobileLink({
-  t,
+/*
+ * Mobile drawer — slides in from the right with a backdrop. Single render path (CSS transform
+ * driven) so we can keep the drawer in the DOM and animate open/close without unmount jitter.
+ * Body scroll is locked while open; Escape and outside-click both dismiss.
+ */
+function MobileDrawer({
+  open,
+  entries,
+  pathname,
+  onClose,
+  drawerRef,
 }: {
-  t: ReturnType<typeof useTranslations<"nav">>;
+  open: boolean;
+  entries: NavEntry[];
+  pathname: string;
+  onClose: () => void;
+  drawerRef: React.RefObject<HTMLDivElement>;
 }) {
-  // Same intent as the desktop ProfileNavLink — owners want the editor, not the public view.
   return (
-    <Link
-      href="/profile/edit"
-      className="rounded-md px-3 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
-    >
-      {t("profile")}
-    </Link>
+    <>
+      {/* Backdrop */}
+      <div
+        aria-hidden
+        onClick={onClose}
+        className={cn(
+          "fixed inset-0 top-14 z-20 bg-slate-900/20 backdrop-blur-[2px] transition-opacity duration-200 sm:hidden",
+          open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
+        )}
+      />
+      {/* Drawer */}
+      <div
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="navigation"
+        className={cn(
+          "fixed right-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-l border-slate-200 bg-white shadow-xl transition-transform duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)] sm:hidden",
+          open ? "translate-x-0" : "translate-x-full",
+        )}
+      >
+        <nav className="flex flex-col gap-0.5 px-3 py-4">
+          {entries.map((entry) => {
+            const active = entry.active(pathname);
+            return (
+              <Link
+                key={entry.href}
+                href={entry.href}
+                onClick={onClose}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "relative flex items-center rounded-lg px-3 py-2.5 text-sm transition-colors",
+                  active
+                    ? "bg-accent-50 font-medium text-slate-900"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+                )}
+              >
+                {/* Inline accent bar on the active item — mirrors the desktop indicator language
+                    so the design vocabulary stays consistent across breakpoints. */}
+                {active && (
+                  <span
+                    aria-hidden
+                    className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full bg-accent-600"
+                  />
+                )}
+                {entry.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+    </>
   );
 }
