@@ -21,8 +21,8 @@ type Props = {
 /**
  * Stats hero card. Distinct from the body sections: an accent eyebrow + an oversized URL serves
  * as the typographic anchor so the page has a clear "this is the link you're looking at" landing
- * pad before the dense KPI grid. The ambient {@code from-accent-50/40} bleed is restrained —
- * accent appears as a hairline of brand identity rather than competing with the data.
+ * pad before the dense KPI grid. Surface stays flat — no halo, no gradient hairline — so the data
+ * grid below carries the weight without competing accents.
  *
  * <p>The {@code demo} flag suppresses {@link PublicStatsToggle} — the toggle calls
  * {@code PATCH /api/v1/links/{code}/visibility} which would 401 on the public {@code /demo} route.
@@ -31,16 +31,8 @@ type Props = {
 export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }: Props) {
   const display = shortUrl || `/${data.shortCode}`;
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent-300/40 to-transparent"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-accent-200/20 blur-3xl"
-      />
-      <div className="relative flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+      <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-tagline text-accent-700">
             <Link2 className="h-3 w-3" />
