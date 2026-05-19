@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Ban, Download, Sparkles, Trash2, Undo2 } from "lucide-react";
@@ -40,22 +40,38 @@ export default function ProfileLeadsPage() {
     if (ready && !authenticated) router.replace(`/${locale}/login`);
   }, [ready, authenticated, locale, router]);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const data = await listEmailLeads(page, PAGE_SIZE);
-      setLeads(data.items);
-      setTotal(data.total);
-    } catch (err) {
-      toast(errorMessage(err, t("loadFailed")), "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, errorMessage, t, toast]);
-
+  // Inline-effect form — the previous `useCallback(load, [page, errorMessage, t, toast])` +
+  // `useEffect([authenticated, load])` setup hit an infinite render loop because next-intl's
+  // `t` and the toast/error-message hooks all return a fresh reference each render. That made
+  // `load`'s identity churn, which fired the effect on every render, which called setState,
+  // which re-rendered, which… (in prod: rate_limit on the listEmailLeads endpoint). Effect now
+  // depends only on the values that actually need to refetch; the cancelled flag protects
+  // against late responses overwriting state after a quick page-flip or unmount.
   useEffect(() => {
-    if (authenticated) void load();
-  }, [authenticated, load]);
+    if (!authenticated) return;
+    let cancelled = false;
+    setLoading(true);
+    listEmailLeads(page, PAGE_SIZE)
+      .then((data) => {
+        if (cancelled) return;
+        setLeads(data.items);
+        setTotal(data.total);
+      })
+      .catch((err) => {
+        if (!cancelled) toast(errorMessage(err, t("loadFailed")), "error");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // toast / errorMessage / t intentionally omitted — they churn identity each render and
+    // putting them in deps recreates the infinite loop. The effect already captures the
+    // current render's closure of them, which is fine because the request fires once per
+    // (authenticated, page) transition.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticated, page]);
 
   async function handleDelete(id: number) {
     if (!window.confirm(t("confirmDelete"))) return;
