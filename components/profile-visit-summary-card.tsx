@@ -39,7 +39,7 @@ export function ProfileVisitSummaryCard({ hasUsername }: { hasUsername: boolean 
   return (
     <Link
       href={`/${locale}/profile/stats`}
-      className="group block rounded-lg border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:bg-slate-50/60"
+      className="group block rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition hover:border-slate-300 hover:bg-slate-50/60"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-xs font-medium text-slate-700">
