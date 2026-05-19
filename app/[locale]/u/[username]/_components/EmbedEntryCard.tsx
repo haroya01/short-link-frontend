@@ -94,7 +94,7 @@ export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
         </div>
         <div className="flex items-center gap-3 px-4 py-3">
           <span className="min-w-0 flex-1">
-            <span className={`block truncate text-sm font-medium ${colors.primary}`}>
+            <span className={`block truncate text-[15px] font-semibold ${colors.primary}`}>
               {title}
             </span>
             <span className={`block truncate text-[11px] ${colors.muted}`}>{host}</span>
