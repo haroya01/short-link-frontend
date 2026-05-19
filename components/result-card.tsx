@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, CheckCircle2, ArrowRight, Clock } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "./copy-button";
 import { QrButton } from "./qr-button";
@@ -25,6 +25,26 @@ type Props = {
 
 const ANONYMOUS_TTL_HOURS = 24;
 
+/**
+ * Three-tier visual hierarchy.
+ *
+ * <ol>
+ *   <li><b>Primary</b> — the new short URL. Owns its own white row, mono semibold, full-bleed
+ *       click target (the URL string itself is the {@code target="_blank"} anchor so we don't
+ *       double-up with a separate "open" icon button).</li>
+ *   <li><b>Secondary</b> — Copy / Share / QR action trio, kept on a single dedicated row so the
+ *       three buttons share size + spacing instead of fighting for inline real estate with the
+ *       URL. Copy stays the only filled (accent) button per the AGENTS.md "one primary CTA per
+ *       card" rule; Share + QR are outline-tier siblings.</li>
+ *   <li><b>Meta</b> — the original URL is prefixed by a {@code Link2} icon to anchor it as a
+ *       "source" line instead of a floating text fragment, matching the Information-archetype
+ *       inline-icon convention.</li>
+ * </ol>
+ *
+ * The 24h-TTL strip stays as the last child (PR #229) but moves from translucent
+ * {@code bg-white/70} to solid {@code bg-white} so it reads as a distinct CTA card on the
+ * tinted parent surface instead of "fading out".
+ */
 export function ResultCard({ result, originalUrl, channel, authenticated }: Props) {
   const t = useTranslations("result");
   const { toast } = useToast();
@@ -35,7 +55,7 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
 
   return (
     <div className="animate-fade-in rounded-lg border border-accent-200 bg-accent-50/40 p-5">
-      <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="mb-4 flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 text-xs font-medium text-accent-700">
           <CheckCircle2 className="h-3.5 w-3.5" />
           {t("completed")}
@@ -48,43 +68,44 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
       </div>
 
       <div className="space-y-3">
-        <div className="flex flex-col gap-2 rounded-md border border-slate-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
-          <a
-            href={result.shortUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="block min-w-0 truncate font-mono text-sm font-semibold text-slate-900 hover:underline"
-          >
+        {/* Tier 1 — primary: the new short URL */}
+        <a
+          href={result.shortUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3.5 py-3 transition hover:border-accent-300 hover:bg-accent-50/30"
+          aria-label={t("open")}
+        >
+          <span className="min-w-0 flex-1 truncate font-mono text-[15px] font-semibold text-slate-900">
             {result.shortUrl}
-          </a>
-          <div className="flex flex-wrap items-center gap-1.5 sm:flex-nowrap">
-            <CopyButton
-              size="sm"
-              variant="accent"
-              label={t("copy")}
-              value={result.shortUrl}
-              onCopied={() => toast(t("copied"), "success")}
-            />
-            <ShareButton url={result.shortUrl} title={result.shortUrl} iconOnly />
-            <QrButton url={result.shortUrl} />
-            <a
-              href={result.shortUrl}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={t("open")}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-            >
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          </div>
+          </span>
+        </a>
+
+        {/* Tier 2 — secondary: Copy (primary CTA) + Share + QR siblings on a single row */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <CopyButton
+            size="sm"
+            variant="accent"
+            label={t("copy")}
+            value={result.shortUrl}
+            onCopied={() => toast(t("copied"), "success")}
+          />
+          <ShareButton url={result.shortUrl} title={result.shortUrl} variant="outline" />
+          <QrButton url={result.shortUrl} />
         </div>
 
-        <p className="truncate text-xs text-slate-600" title={originalUrl}>
-          {t("originalUrl")}: {truncateMiddle(originalUrl, 80)}
-        </p>
+        {/* Tier 3 — meta: anchored source row */}
+        <div className="flex items-start gap-1.5 text-[12px] text-slate-500" title={originalUrl}>
+          <Link2 className="mt-0.5 h-3 w-3 shrink-0 text-slate-400" aria-hidden />
+          <span className="min-w-0 flex-1 truncate">
+            <span className="text-slate-400">{t("originalUrl")}</span>
+            <span className="mx-1 text-slate-300">·</span>
+            <span className="text-slate-600">{truncateMiddle(originalUrl, 72)}</span>
+          </span>
+        </div>
 
         {expiresAt && (
-          <div className="rounded-md border-l-2 border-accent-500 bg-white/70 px-3 py-2.5">
+          <div className="rounded-md border border-accent-100 border-l-2 border-l-accent-500 bg-white px-3 py-2.5">
             <div className="flex items-start gap-2">
               <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent-700" />
               <div className="min-w-0 flex-1 space-y-1">
