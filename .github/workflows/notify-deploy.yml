@@ -42,15 +42,25 @@ jobs:
           echo "ok=false" >> "$GITHUB_OUTPUT"
           exit 1
 
+      # Commit message / run URL go through `env:` so GitHub Actions injects them as shell
+      # environment variables, not as raw text inside the inline shell script. The previous
+      # `--arg msg "${{ github.event.head_commit.message }}"` interpolated the commit body
+      # verbatim into the shell command — quotes / backticks / Korean smart-quotes inside a
+      # commit subject broke `jq` (e.g. a subject containing `"왜 여기?"` truncated the
+      # script mid-string and crashed the step with "command not found: 어디든"). Reading the
+      # same value through `$COMMIT_MSG` makes it just a string the shell hands to jq's
+      # `--arg`, which JSON-encodes safely on its own.
       - name: Notify Discord — FE deploy success
         if: success()
         env:
           WEBHOOK: ${{ secrets.DISCORD_DEPLOY_WEBHOOK }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           MSG=$(jq -nc \
             --arg sha "${GITHUB_SHA:0:7}" \
-            --arg msg "${{ github.event.head_commit.message }}" \
-            --arg run "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --arg msg "$COMMIT_MSG" \
+            --arg run "$RUN_URL" \
             '{ content: "✅ **FE deploy success** · \($sha) — \($msg)\n<\($run)>" }')
           curl -fsS -X POST -H "Content-Type: application/json" -d "$MSG" "$WEBHOOK"
 
@@ -58,10 +68,12 @@ jobs:
         if: failure()
         env:
           WEBHOOK: ${{ secrets.DISCORD_DEPLOY_WEBHOOK }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           MSG=$(jq -nc \
             --arg sha "${GITHUB_SHA:0:7}" \
-            --arg msg "${{ github.event.head_commit.message }}" \
-            --arg run "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --arg msg "$COMMIT_MSG" \
+            --arg run "$RUN_URL" \
             '{ content: "🚨 **FE deploy FAILED or timed out** · \($sha) — \($msg)\n<\($run)>" }')
           curl -fsS -X POST -H "Content-Type: application/json" -d "$MSG" "$WEBHOOK" || true
