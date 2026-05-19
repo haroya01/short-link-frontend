@@ -7,6 +7,9 @@ import type {
   AdminLifecycle,
   AdminOverview,
   AdminRecentError,
+  AdminLinkMetric,
+  AdminLinkMetricsSort,
+  AdminLinkMetricsWindow,
   AdminRouteMetric,
   AdminRouteMetricsWindow,
   ApiKeySummary,
@@ -757,6 +760,16 @@ export async function getAdminRouteMetrics(
 ): Promise<AdminRouteMetric[]> {
   const qs = window === "all" ? "" : `?window=${window}`;
   return request<AdminRouteMetric[]>(`/api/v1/admin/route-metrics${qs}`, { method: "GET" });
+}
+
+export async function getAdminLinkMetrics(
+  window: AdminLinkMetricsWindow = "24h",
+  sort: AdminLinkMetricsSort = "count",
+): Promise<AdminLinkMetric[]> {
+  const params = new URLSearchParams({ window, sort });
+  return request<AdminLinkMetric[]>(`/api/v1/admin/link-metrics?${params.toString()}`, {
+    method: "GET",
+  });
 }
 
 export async function listApiKeys(): Promise<ApiKeySummary[]> {
