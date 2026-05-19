@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, Sparkles } from "lucide-react";
+import { Check, Mail, Sparkles } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { MobilePreviewSheet } from "@/components/mobile-preview-sheet";
@@ -27,10 +27,16 @@ export default function ProfileEditPage() {
     entries: [],
   });
 
-  // First-time onboarding signal: the signed-in user hasn't claimed a username yet. Drives a
-  // welcome banner + the "give your profile a name first" emphasis so new sellers aren't
-  // dropped into an empty editor without context.
-  const isNewProfile = ready && authenticated && !me?.username;
+  // First-time onboarding signal — three concrete milestones the user needs to hit before the
+  // page reads as "ready to share". The banner stays until all three are done so the user
+  // never wonders "what's next" while editing.
+  const steps = {
+    username: Boolean(me?.username),
+    identity: Boolean(draft.bio?.trim() || draft.avatarUrl),
+    firstBlock: draft.entries.length > 0,
+  };
+  const completedSteps = Object.values(steps).filter(Boolean).length;
+  const isOnboarding = ready && authenticated && completedSteps < 3;
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -49,7 +55,7 @@ export default function ProfileEditPage() {
 
   return (
     <div className="container max-w-5xl space-y-6 py-12">
-      {isNewProfile && (
+      {isOnboarding && (
         <div className="rounded-2xl border border-accent-200 bg-accent-50/60 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           <div className="flex items-center gap-2 text-xs font-medium text-accent-700">
             <Sparkles className="h-3.5 w-3.5" />
@@ -61,6 +67,28 @@ export default function ProfileEditPage() {
           <p className="mt-1 text-[15px] leading-relaxed text-slate-600">
             {t("onboardingSubhead")}
           </p>
+          {/* Three-step progress — each step's bullet is filled (●) once detected. The bar
+              keeps showing until all three are done so the user has a clear sense of "what's
+              next" while editing. Hidden once everything's set so the editor doesn't carry
+              residual onboarding noise. */}
+          <ol className="mt-4 space-y-2 text-sm">
+            <OnboardingStep
+              done={steps.username}
+              index={1}
+              label={t("onboardingStep1")}
+              required
+            />
+            <OnboardingStep
+              done={steps.identity}
+              index={2}
+              label={t("onboardingStep2")}
+            />
+            <OnboardingStep
+              done={steps.firstBlock}
+              index={3}
+              label={t("onboardingStep3")}
+            />
+          </ol>
         </div>
       )}
 
@@ -142,5 +170,37 @@ export default function ProfileEditPage() {
         />
       </MobilePreviewSheet>
     </div>
+  );
+}
+
+function OnboardingStep({
+  done,
+  index,
+  label,
+  required,
+}: {
+  done: boolean;
+  index: number;
+  label: string;
+  required?: boolean;
+}) {
+  return (
+    <li className="flex items-center gap-2">
+      <span
+        className={
+          "grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-semibold transition " +
+          (done
+            ? "bg-emerald-500 text-white"
+            : "border border-accent-300 bg-white text-accent-700")
+        }
+        aria-hidden
+      >
+        {done ? <Check className="h-3 w-3" /> : index}
+      </span>
+      <span className={done ? "text-slate-400 line-through" : "text-slate-700"}>
+        {label}
+        {required && !done && <span className="ml-1 text-accent-700">*</span>}
+      </span>
+    </li>
   );
 }
