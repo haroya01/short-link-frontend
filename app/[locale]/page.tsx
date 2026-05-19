@@ -32,10 +32,11 @@ export default function HomePage() {
        * Hero — flat white surface (no mesh, no noise) so the typography carries the page on its
        * own. The earlier version layered `hero-mesh + hero-noise + grid-bg` over a centered
        * eyebrow / h1 / subhead, and the cumulative ornament read as busy rather than refined.
-       * Luxury / refined surfaces work through restraint — type hierarchy + spacing + a single
-       * editorial moment (the serif italic on line one). The hairline eyebrow on either side of
-       * the tagline stays as a subtle grid-break, and the cascade-in still fires through
-       * `.hero-stagger`, now opacity-only.
+       * Luxury / refined surfaces work through restraint — type hierarchy + spacing carry the
+       * page. Headline is Pretendard semibold across both lines (single family, no display
+       * swap) — the contrast between solid slate-900 line one and slate-500 line two is the
+       * editorial moment. The hairline eyebrow on either side of the tagline stays as a subtle
+       * grid-break, and the cascade-in still fires through `.hero-stagger`, opacity-only.
        */}
       <section className="relative isolate overflow-hidden bg-white">
         <div className="container relative z-10 max-w-3xl py-20 sm:py-28">
@@ -51,12 +52,12 @@ export default function HomePage() {
               <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
             </div>
             <h1
-              className="text-balance text-center text-[40px] leading-[1.04] tracking-headline text-slate-900 sm:text-[60px]"
+              className="text-balance text-center text-[40px] font-semibold leading-[1.04] tracking-headline text-slate-900 sm:text-[60px]"
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
-              <span className="font-display italic">{t("headline1")}</span>
+              <span>{t("headline1")}</span>
               <br />
-              <span className="font-semibold text-slate-500">{t("headline2")}</span>
+              <span className="text-slate-500">{t("headline2")}</span>
             </h1>
             <p
               className="mx-auto max-w-md text-balance text-center text-[15px] leading-relaxed text-slate-500"
@@ -210,8 +211,8 @@ export default function HomePage() {
  * Section primitive — earlier version stacked a centered eyebrow / h2 / subhead on every block.
  * Now each section opens with the shared `.section-divider` (hairline + accent dot) so the
  * transition between blocks reads as a deliberate page break, then the eyebrow / title use the
- * same headline tracking + serif-italic display swap as the hero. Tracking and weight pulled to
- * match the hero typography rather than re-stating Tailwind defaults.
+ * same Pretendard semibold + `.tracking-headline` (−0.025em) as the hero. Single sans family
+ * across the app, no display-serif swap — weight and tracking carry the editorial moment.
  */
 function Section({
   children,

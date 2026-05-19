@@ -138,21 +138,11 @@ h1, h2, h3, p {
   }
 
   /*
-   * Display serif — opt-in for hero headlines and editorial blocks. Body never gets this; the
-   * point is to set up one or two strong typographic moments per surface, not to swap the entire
-   * font stack. Letter-spacing pulled tight (-0.02em) because Instrument Serif's display weights
-   * read slightly loose at 48-72px otherwise.
-   */
-  .font-display {
-    font-family: var(--font-display-serif), ui-serif, Georgia, serif;
-    letter-spacing: -0.02em;
-    font-feature-settings: "kern", "liga";
-  }
-
-  /*
    * Tighter tracking utility for the Pretendard headline path — Pretendard's default tracking
    * is generous for body comfort, which makes large headlines feel airy. Applying -0.025em on
-   * h1/h2 size only restores the editorial density without affecting body comfort.
+   * h1/h2 size only restores the editorial density without affecting body comfort. Pretendard
+   * is the single sans family across the app (Korean + Latin); headlines lean on weight + this
+   * tracking utility for editorial density rather than a display-serif swap.
    */
   .tracking-headline {
     letter-spacing: -0.025em;
