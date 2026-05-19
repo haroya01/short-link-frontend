@@ -10,10 +10,15 @@ export function Logo({ className, showText = true }: Props) {
     <span className={cn("inline-flex items-center gap-2 text-accent-600", className)}>
       <Mark className="h-4" />
       {showText && (
-        // Wordmark in the display serif. Pretendard's bold reads as a generic logo at 16px;
-        // mixing in the serif gives the wordmark a fixed editorial signature that survives at
-        // any size and matches the hero headline's serif accent.
-        <span className="font-display text-[18px] font-normal leading-none">kurl</span>
+        // Wordmark in Pretendard 700 — one sans family across the app keeps the brand voice
+        // consistent with the hero headline (also Pretendard). Tight tracking (-0.04em) gives
+        // the four-letter mark the density a logo needs at 18px without a separate display face.
+        <span
+          className="text-[18px] font-bold leading-none"
+          style={{ letterSpacing: "-0.04em" }}
+        >
+          kurl
+        </span>
       )}
     </span>
   );

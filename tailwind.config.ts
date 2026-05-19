@@ -25,10 +25,16 @@ const config: Config = {
         },
       },
       fontFamily: {
+        /*
+         * One sans family across the entire app — Pretendard for both Korean and Latin. The
+         * earlier setup paired Pretendard with an Instrument Serif display slot for hero
+         * headlines, but the western serif italic read as out-of-place on a Korean-first
+         * surface. Pretendard's 700/800 weights at tight tracking carry the editorial moment
+         * on their own; no display swap needed.
+         */
         sans: [
           "Pretendard Variable",
           "Pretendard",
-          "Inter",
           "ui-sans-serif",
           "system-ui",
           "-apple-system",
@@ -44,16 +50,6 @@ const config: Config = {
           "Menlo",
           "Consolas",
           "monospace",
-        ],
-        /*
-         * Display serif slot — opt-in via `font-display` for hero headlines / signature blocks.
-         * Stays out of the default `font-sans` cascade so existing copy keeps Pretendard.
-         */
-        display: [
-          "var(--font-display-serif)",
-          "ui-serif",
-          "Georgia",
-          "serif",
         ],
       },
       backgroundImage: {
