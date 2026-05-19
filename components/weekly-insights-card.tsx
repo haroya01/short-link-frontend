@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowDownRight, ArrowRight, ArrowUpRight, Minus } from "lucide-react";
+import { ArrowDownRight, ArrowRight, ArrowUpRight, ChevronDown, Minus } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getWeeklyInsights } from "@/lib/api";
 import type { WeeklyInsights } from "@/types";
+import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
 
 const DAY_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
@@ -15,6 +16,10 @@ export function WeeklyInsightsCard() {
   const fmt = useFormatter();
   const [data, setData] = useState<WeeklyInsights | null>(null);
   const [loading, setLoading] = useState(true);
+  // Collapsed on mobile so the dashboard table sits one viewport away instead of three.
+  // The delta badge + eyebrow stays visible — the high-signal "did this week go better" question
+  // is answerable without expanding. Desktop ignores this; the card is always open on sm+.
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -51,13 +56,32 @@ export function WeeklyInsightsCard() {
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5">
-      <div className="flex items-baseline justify-between gap-3">
+    <div className="rounded-lg border border-slate-200 bg-white">
+      <button
+        type="button"
+        onClick={() => setMobileOpen((v) => !v)}
+        aria-expanded={mobileOpen}
+        className="flex w-full items-baseline justify-between gap-3 p-5 text-left sm:cursor-default"
+      >
         <p className="text-sm font-medium text-slate-700">{t("eyebrow")}</p>
-        <DeltaBadge delta={data.deltaPercent} t={t} fmt={fmt} />
-      </div>
+        <div className="flex items-center gap-2">
+          <DeltaBadge delta={data.deltaPercent} t={t} fmt={fmt} />
+          <ChevronDown
+            aria-hidden
+            className={cn(
+              "h-4 w-4 text-slate-400 transition-transform sm:hidden",
+              mobileOpen && "rotate-180",
+            )}
+          />
+        </div>
+      </button>
 
-      <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div
+        className={cn(
+          "grid gap-4 px-5 pb-5 sm:grid-cols-2 sm:!grid lg:grid-cols-4",
+          mobileOpen ? "grid" : "hidden",
+        )}
+      >
         <Stat
           label={t("humanClicks")}
           value={fmt.number(data.humanClicks)}
