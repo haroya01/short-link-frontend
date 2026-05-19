@@ -13,7 +13,7 @@ import {
   updateWebhookConfig,
 } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
-import type { IssuedWebhook, WebhookConfigPatch, WebhookSummary } from "@/types";
+import type { IssuedWebhook, WebhookConfigPatch, WebhookFormat, WebhookSummary } from "@/types";
 
 /**
  * Per-link webhook management. Sits on the stats page so the owner can wire Slack/Discord/own
@@ -152,8 +152,17 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
 
       {issued && (
         <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-          <p className="font-medium">{t("issuedTitle")}</p>
-          <p className="mt-1">{t("issuedHint")}</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-medium">{t("issuedTitle")}</p>
+            <FormatBadge format={issued.format} t={t} />
+          </div>
+          {issued.format === "DISCORD" ? (
+            <p className="mt-1">{t("issuedFormatDiscord")}</p>
+          ) : issued.format === "SLACK" ? (
+            <p className="mt-1">{t("issuedFormatSlack")}</p>
+          ) : (
+            <p className="mt-1">{t("issuedHint")}</p>
+          )}
           <div className="mt-2 flex gap-2">
             <code className="flex-1 break-all rounded bg-white px-2 py-1.5 font-mono text-[11px] text-slate-900">
               {revealed ? issued.secret : "•".repeat(48)}
@@ -207,6 +216,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
                   </code>
                   <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
                     <StatusPill hook={hook} t={t} />
+                    <FormatBadge format={hook.format} t={t} />
                     {!hook.includeBots && (
                       <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-600">
                         {t("badgeSkipBots")}
@@ -395,6 +405,30 @@ function ConfigForm({
         </Button>
       </div>
     </form>
+  );
+}
+
+function FormatBadge({
+  format,
+  t,
+}: {
+  format: WebhookFormat;
+  t: (k: string) => string;
+}) {
+  // Stay within the slate scale — the brand reserves color for the accent green. Detected
+  // managed receivers (Discord/Slack) get a slightly darker slate to read as "this is special",
+  // generic stays the neutral light slate.
+  if (format === "DISCORD" || format === "SLACK") {
+    return (
+      <span className="rounded bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium text-white">
+        {format === "DISCORD" ? t("formatBadgeDiscord") : t("formatBadgeSlack")}
+      </span>
+    );
+  }
+  return (
+    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">
+      {t("formatBadgeGeneric")}
+    </span>
   );
 }
 
