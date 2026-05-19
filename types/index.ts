@@ -667,11 +667,25 @@ export type AdminLifecycle = {
 };
 
 export type AdminRecentError = {
-  occurredAt: string;
+  // Renamed from occurredAt → timestamp to match the backend record field. Old field kept
+  // optional for backwards-compat during a rolling deploy where the API may briefly emit
+  // either shape.
+  timestamp: string;
+  occurredAt?: string;
   level: string;
   logger: string;
+  thread: string | null;
   message: string;
+  exceptionClass: string | null;
+  exceptionMessage: string | null;
+  causeChain: string[] | null;
+  stackTrace: string | null;
   requestId: string | null;
+  requestUri: string | null;
+  requestMethod: string | null;
+  userId: string | null;
+  clientIp: string | null;
+  taskName: string | null;
 };
 
 export type AdminHealthMetrics = {

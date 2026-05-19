@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { claimAnonymousLinks, getMe, logout as apiLogout, readToken } from "./api";
 import { clearClaimTokens, readPendingClaimTokens } from "./recent-links";
 import type { Me } from "@/types";
@@ -51,9 +52,15 @@ export function useAuth() {
       try {
         const me = await getMe();
         setState({ authenticated: true, ready: true, me });
+        // Attach the user to Sentry so captured errors / breadcrumbs are tied back to a real
+        // account when triaging. Email kept out — id + role is enough for cross-referencing the
+        // admin "recent errors" pane (which already exposes the numeric userId).
+        Sentry.setUser({ id: String(me.id) });
+        Sentry.setTag("role", me.role);
         tryClaimPendingLinks();
       } catch {
         setState({ authenticated: false, ready: true, me: null });
+        Sentry.setUser(null);
       }
     };
     sync();
@@ -73,6 +80,7 @@ export function useAuth() {
 
   const signOut = useCallback(async () => {
     await apiLogout();
+    Sentry.setUser(null);
   }, []);
 
   return {
