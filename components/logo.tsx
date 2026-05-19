@@ -10,7 +10,10 @@ export function Logo({ className, showText = true }: Props) {
     <span className={cn("inline-flex items-center gap-2 text-accent-600", className)}>
       <Mark className="h-4" />
       {showText && (
-        <span className="font-sans text-base font-bold tracking-tight leading-none">kurl</span>
+        // Wordmark in the display serif. Pretendard's bold reads as a generic logo at 16px;
+        // mixing in the serif gives the wordmark a fixed editorial signature that survives at
+        // any size and matches the hero headline's serif accent.
+        <span className="font-display text-[18px] font-normal leading-none">kurl</span>
       )}
     </span>
   );

@@ -4,7 +4,41 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "../globals.css";
+
+/*
+ * Display serif for English-leaning hero headlines and brand statements. Picked over Inter /
+ * Geist / system sans because the landing page was reading as a generic SaaS template — the
+ * recurring "AI slop" report. A single distinctive serif weight, locked to the hero copy, gives
+ * the page an editorial anchor without overspending the typographic budget elsewhere (Pretendard
+ * still owns Korean body and most UI chrome). Loaded via next/font/google so it self-hosts on
+ * Vercel, ships as woff2, and emits the font-face with `font-display: swap` automatically — no
+ * FOIT, no layout shift from the variable-width fallback because we limit usage to display sizes
+ * where the metrics adjustment is imperceptible.
+ */
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-display-serif",
+  display: "swap",
+});
+
+/*
+ * Distinctive mono for eyebrows, URLs, tabular numerics, and `<code>` chrome. Previously these
+ * fell through to system mono (SF Mono on macOS, generic monospace elsewhere) which gave each OS
+ * a different look — the same shorten-result card rendered noticeably different on Windows vs
+ * macOS. JetBrains Mono ships a tighter glyph rhythm than Menlo and the ligatures stay off by
+ * default, so the mono surfaces (live click feed timestamps, status pills, custom-domain rows)
+ * read consistently regardless of the visitor's OS.
+ */
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
+  display: "swap",
+});
 import { Footer } from "@/components/footer";
 import { CookieConsent } from "@/components/cookie-consent";
 import { ClaimToastListener } from "@/components/claim-toast-listener";
@@ -103,8 +137,14 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={locale}>
+    <html
+      lang={locale}
+      className={`${instrumentSerif.variable} ${jetbrainsMono.variable}`}
+    >
       <head>
+        {/* Preconnect to the Pretendard CDN ahead of the stylesheet request — saves the TLS
+            handshake (~150ms on mobile) for the Korean body font, which is on the LCP path. */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
