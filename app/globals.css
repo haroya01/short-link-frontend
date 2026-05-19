@@ -70,41 +70,6 @@ h1, h2, h3, p {
   }
 
   /*
-   * Hero gradient mesh — three radial pools (one accent-green, two near-white) layered on top of
-   * each other to fake the "off-center bloom" that landing pages with hand-painted illustrations
-   * have. Each pool is positioned at a fractional anchor so the eye reads a soft asymmetry
-   * instead of a centered halo (centered radial gradients are the #1 tell of cookie-cutter
-   * landing pages). Layered behind `grid-bg` via stacking — both classes can co-exist on the
-   * same element.
-   *
-   * <p>Tones kept inside the brand-green family (accent-100 / -200) plus warm white so the
-   * mesh never reads as "purple SaaS gradient". Opacity stays under 35% so body text contrast
-   * survives WCAG AA.
-   */
-  .hero-mesh {
-    background-image:
-      radial-gradient(60% 50% at 18% 22%, rgba(167, 243, 208, 0.55) 0%, transparent 65%),
-      radial-gradient(45% 40% at 82% 18%, rgba(255, 247, 237, 0.7) 0%, transparent 70%),
-      radial-gradient(70% 55% at 68% 82%, rgba(209, 250, 229, 0.45) 0%, transparent 70%);
-  }
-
-  /*
-   * SVG noise overlay — multiply-blended grain over flat hero areas. Pre-rendered as a data
-   * URI (4kb) so we do not ship an extra HTTP request. The opacity stays low (5-8%) — enough to
-   * break the perfectly-flat surface that screams "default Tailwind component" without making the
-   * page look like it has dust on the screen. Anchored to top so it composes with hero-mesh.
-   */
-  .hero-noise::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.06;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  /*
    * Section divider — replaces the recurring `border-t border-slate-100`. Hairline rule with a
    * single accent-green dot in the centre, kept off the visual center by a deliberate 4px shift
    * so the eye reads it as an editorial mark, not a UI artifact. Width is generous (260px) on
@@ -135,15 +100,17 @@ h1, h2, h3, p {
   }
 
   /*
-   * Hero stagger — pairs the existing `.profile-fade` keyframe with a longer base delay so hero
-   * elements (eyebrow → headline → subhead → form → trust strip) cascade in over ~600ms instead
-   * of the 50ms-per-step rhythm used by the profile feed. Each child reads `--hi` (hero index)
-   * via inline style.
+   * Hero stagger — opacity-only fade cascade for hero children (eyebrow → headline → subhead →
+   * form). The earlier version paired this with the shared `profile-fade-in` keyframe, which
+   * also slid each child up 6 px; restrained / luxury surfaces don't need motion that the eye
+   * has to parse on top of the typography. Each child reads `--hi` (hero index) via inline
+   * style, animation-delay scales from that, and we keep the cascade short so the cue lands
+   * before visitors have a chance to wonder "is the page loading".
    */
   .hero-stagger > * {
     opacity: 0;
-    animation: profile-fade-in 520ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: calc(var(--hi, 0) * 90ms);
+    animation: hero-fade-in 420ms ease-out forwards;
+    animation-delay: calc(var(--hi, 0) * 70ms);
   }
   @media (prefers-reduced-motion: reduce) {
     .hero-stagger > * {
@@ -151,24 +118,23 @@ h1, h2, h3, p {
       opacity: 1;
     }
   }
+  @keyframes hero-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 
   /*
-   * Inner highlight — a 1px white top inset that fakes a glass-edge bevel on cards sitting on a
-   * tinted parent. Pairs with the existing `.profile-card` shadow contract. Used on landing
-   * preview cards / result card / pricing tiers where the surface needs that "premium printed
-   * card" cue that the AGENTS.md note (#94) called out as missing on the original flat surface.
+   * Card surface — single soft 1px falloff at rest, a slightly deeper falloff on hover. The
+   * earlier version layered three shadows (inner highlight + near + far) to fake a printed-card
+   * bevel; on a luxury / refined surface that read as ornament rather than depth. We keep the
+   * class so existing call sites do not have to change, but the shadow is now a single near
+   * layer that pairs with the card's own border for separation.
    */
   .card-highlight {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.8),
-      0 1px 2px rgba(15, 23, 42, 0.04),
-      0 8px 24px -8px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   }
   .card-highlight:hover {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.9),
-      0 4px 12px rgba(15, 23, 42, 0.06),
-      0 16px 36px -12px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.08);
   }
 
   /*

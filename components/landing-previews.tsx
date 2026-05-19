@@ -60,12 +60,6 @@ export function LandingPreviews() {
 
   return (
     <section className="relative isolate overflow-hidden bg-slate-50/60">
-      {/* Subtle bottom-anchored radial bloom — mirrors the hero mesh palette so the page reads
-          as one continuous surface instead of a hard rectangle handoff. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 -top-12 h-32 bg-gradient-to-b from-white to-transparent"
-      />
       <div className="container max-w-5xl py-16 sm:py-20">
         <div className="mb-10 flex items-center gap-3">
           <span aria-hidden className="h-px flex-1 bg-slate-200" />
