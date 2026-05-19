@@ -1277,6 +1277,7 @@
       "featuredEmptyTitle": "Your profile feed is empty",
       "featuredEmptyHasOthers": "Use the 'Add link' form above, or pick from your other links ({count}) below.",
       "addBlockMenu": "Add",
+      "addMoreBlocks": "More blocks",
       "remove": "Remove",
       "highlight": "Highlight as hero card (only one)",
       "labelEdit": "Edit label (what visitors see)",
