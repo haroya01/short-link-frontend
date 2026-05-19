@@ -7,6 +7,19 @@
    minified so we don't bother tree-shaking. */
 @import "devices.css/dist/devices.min.css";
 
+/*
+ * devices.css ships {@code .device-screen { background-color: #000 }} to simulate the bare phone
+ * screen. The ProfilePreview puts the actual page colors on the same element via a Tailwind
+ * {@code bg-*} utility, but Tailwind utilities have the same selector specificity as the
+ * devices.css rule and are emitted earlier in the cascade — devices.css wins and light/mono
+ * themes paint a black background under their content. Resetting to transparent here lets the
+ * page-color utility take effect again. Dark/neon themes look unchanged because their page
+ * color was already near-black.
+ */
+.device-screen {
+  background-color: transparent;
+}
+
 :root {
   color-scheme: light;
 }
