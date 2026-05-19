@@ -40,7 +40,7 @@ export function EmptyState({ icon: Icon = Inbox, title, description, action, cla
           <circle cx="4" cy="4" r="2" />
         </svg>
       </div>
-      <p className="text-sm font-semibold text-slate-900">{title}</p>
+      <p className="text-sm font-semibold tracking-headline text-slate-900">{title}</p>
       {description && (
         <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-slate-500">{description}</p>
       )}

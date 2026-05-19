@@ -34,7 +34,7 @@ export default async function TermsPage({
       <p className="text-sm leading-relaxed text-slate-600">{t("p1")}</p>
       {sections.map((s) => (
         <section key={s.h} className="space-y-2">
-          <h2 className="text-lg font-semibold text-slate-900">{s.h}</h2>
+          <h2 className="text-lg font-semibold tracking-headline text-slate-900">{s.h}</h2>
           <p className="text-sm leading-relaxed text-slate-600">{s.p}</p>
         </section>
       ))}

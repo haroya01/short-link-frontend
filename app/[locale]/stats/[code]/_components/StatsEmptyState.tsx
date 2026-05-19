@@ -30,7 +30,7 @@ export function StatsEmptyState({ shortUrl }: { shortUrl: string }) {
         <span className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-white text-accent-700 shadow-sm">
           <Send className="h-4 w-4" />
         </span>
-        <h3 className="mt-3 text-base font-semibold tracking-tight text-slate-900">{t("title")}</h3>
+        <h3 className="mt-3 text-base font-semibold tracking-headline text-slate-900">{t("title")}</h3>
         <p className="mx-auto mt-1.5 max-w-md text-[13px] leading-relaxed text-slate-600">
           {t("description")}
         </p>
