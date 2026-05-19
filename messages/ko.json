@@ -80,7 +80,7 @@
       },
       "profile": {
         "title": "공개 프로필",
-        "desc": "kurl.me/u/'{'your-id'}' — Instagram bio 에 박을 1 페이지."
+        "desc": "링크 모두 모은 한 페이지. Instagram bio, 트위터, 어디든 그대로 붙임."
       },
       "domain": {
         "title": "본인 도메인",
@@ -759,6 +759,7 @@
   },
   "qr": {
     "title": "qr code",
+    "triggerAria": "QR 코드 열기",
     "copyUrl": "URL 복사",
     "copied": "복사됨",
     "downloadPng": "PNG 다운로드",

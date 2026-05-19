@@ -24,6 +24,11 @@ type Props = {
   showSrcInput?: boolean;
   /** Default value for the src hint when {@link showSrcInput} is false. */
   defaultSrcHint?: string;
+  /**
+   * Renders as a single icon-only button (no "QR" label). Used when slotting into a tight share
+   * row where surrounding icons already establish the "copy / open / qr" vocabulary.
+   */
+  iconOnly?: boolean;
 };
 
 type Palette = { id: string; dark: string; light: string };
@@ -72,16 +77,31 @@ export function QrButton({
   logoSrc,
   showSrcInput = true,
   defaultSrcHint = "",
+  iconOnly = false,
 }: Props) {
+  const t = useTranslations("qr");
   const baseUrl = url ?? value ?? "";
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <Button variant="outline" size="sm" onClick={() => setOpen(true)} disabled={!baseUrl}>
-        <QrCode className="h-3.5 w-3.5" />
-        <span className="hidden sm:inline">QR</span>
-      </Button>
+      {iconOnly ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          disabled={!baseUrl}
+          aria-label={t("triggerAria")}
+          title={t("triggerAria")}
+          className="grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50"
+        >
+          <QrCode className="h-3.5 w-3.5" />
+        </button>
+      ) : (
+        <Button variant="outline" size="sm" onClick={() => setOpen(true)} disabled={!baseUrl}>
+          <QrCode className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">QR</span>
+        </Button>
+      )}
       {open && (
         <QrModal
           baseUrl={baseUrl}

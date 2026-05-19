@@ -1,12 +1,13 @@
 "use client";
 
-import { Check, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { Check, ChevronDown, Eye, Loader2 } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { AvatarPicker } from "../avatar-picker";
 import { BannerPicker } from "../banner-picker";
-import { QrButton } from "../qr-button";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { cn } from "@/lib/utils";
 import type { MyProfile, ProfileTheme, ShareChannel, Social } from "@/types";
 import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/ShareRow";
 import { socialUrlPrefix } from "./socials-templates";
@@ -124,6 +125,10 @@ export function ProfileMetaForm({
 }: Props) {
   const usernameUnchanged =
     profile?.username && username.trim().toLowerCase() === profile.username.toLowerCase();
+  // Theme picker is collapsed by default for first-time editors — it was the largest visual
+  // block on the page (9 swatch cards, 3-col grid) for a setting most users won't change. Stays
+  // open once expanded so the user can swatch-compare without re-toggling each time.
+  const [themeOpen, setThemeOpen] = useState<boolean>(theme != null);
 
   return (
     <div className="space-y-3">
@@ -170,40 +175,60 @@ export function ProfileMetaForm({
       </label>
 
       <div className="space-y-1.5">
-        <span className="text-xs font-medium text-slate-500">{t("themeLabel")}</span>
-        {/* max-w-md so cards don't stretch into 150×200 blocks when the editor pane is wide
-            (lg+ : ~640px). Capped width also makes the picker read as "swatches" rather than a
-            full-width hero strip. */}
-        <div className="grid max-w-md grid-cols-3 gap-2 sm:grid-cols-4">
-          {THEMES.map((tm) => {
-            const active = theme === tm.id;
-            return (
-              <button
-                key={tm.id}
-                type="button"
-                onClick={() => onThemeChange(tm.id)}
-                aria-pressed={active}
-                className={
-                  "group relative aspect-[3/4] overflow-hidden rounded-lg ring-2 ring-offset-1 transition " +
-                  (active
-                    ? "ring-accent-500"
-                    : "ring-transparent hover:ring-slate-300")
-                }
-              >
-                <div className={`absolute inset-0 ${tm.page}`}>
-                  {/* Mini sample cards — visualise what an actual link card looks like in this theme. */}
-                  <div className="absolute inset-x-2 bottom-2 space-y-1">
-                    <div className={`h-2 rounded-sm ${tm.card}`} />
-                    <div className={`h-2 rounded-sm ${tm.card}`} />
+        <button
+          type="button"
+          onClick={() => setThemeOpen((v) => !v)}
+          aria-expanded={themeOpen}
+          className="flex w-full items-center justify-between rounded-md px-1 py-1 text-left transition hover:bg-slate-50"
+        >
+          <span className="text-xs font-medium text-slate-500">
+            {t("themeLabel")}
+            {theme && (
+              <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-700">
+                {THEMES.find((tm) => tm.id === theme)?.label ?? theme}
+              </span>
+            )}
+          </span>
+          <ChevronDown
+            className={cn(
+              "h-3.5 w-3.5 text-slate-400 transition-transform",
+              themeOpen && "rotate-180",
+            )}
+          />
+        </button>
+        {themeOpen && (
+          // max-w-md so cards don't stretch into 150×200 blocks when the editor pane is wide
+          // (lg+ : ~640px). Capped width also makes the picker read as "swatches" rather than a
+          // full-width hero strip.
+          <div className="grid max-w-md grid-cols-3 gap-2 sm:grid-cols-4">
+            {THEMES.map((tm) => {
+              const active = theme === tm.id;
+              return (
+                <button
+                  key={tm.id}
+                  type="button"
+                  onClick={() => onThemeChange(tm.id)}
+                  aria-pressed={active}
+                  className={
+                    "group relative aspect-[3/4] overflow-hidden rounded-lg ring-2 ring-offset-1 transition " +
+                    (active ? "ring-accent-500" : "ring-transparent hover:ring-slate-300")
+                  }
+                >
+                  <div className={`absolute inset-0 ${tm.page}`}>
+                    {/* Mini sample cards — visualise what an actual link card looks like in this theme. */}
+                    <div className="absolute inset-x-2 bottom-2 space-y-1">
+                      <div className={`h-2 rounded-sm ${tm.card}`} />
+                      <div className={`h-2 rounded-sm ${tm.card}`} />
+                    </div>
                   </div>
-                </div>
-                <div className="relative px-1 py-1 text-[9px] font-medium leading-none text-white mix-blend-difference">
-                  {tm.label}
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                  <div className="relative px-1 py-1 text-[9px] font-medium leading-none text-white mix-blend-difference">
+                    {tm.label}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <SocialsPicker socials={socials} onChange={onSocialsChange} t={t} />
@@ -230,21 +255,6 @@ export function ProfileMetaForm({
         {profile?.username && usernameUnchanged && <AutoSaveIndicator status={autoSaveStatus} t={t} />}
       </div>
 
-      {profile?.publicUrl && (
-        // QR sticks here next to the meta form — the "open my profile" link itself was promoted
-        // to {@link ProfilePublicUrlBanner} at the top of /profile/edit so visitors can see
-        // their live URL the second the editor loads. QR is a secondary action (someone
-        // physically scanning the printed URL) and stays inline with the other share affordances.
-        <div className="flex w-fit max-w-full flex-wrap items-center gap-2 rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-2">
-          <QrButton
-            url={profile.publicUrl}
-            filename={`${profile.username}.png`}
-            logoSrc="/icon.svg"
-            showSrcInput={false}
-            defaultSrcHint="profile"
-          />
-        </div>
-      )}
     </div>
   );
 }
@@ -316,9 +326,12 @@ function SocialsPicker({
   const remaining = MAX_SOCIALS - socials.length;
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1.5 rounded-lg border border-dashed border-slate-200 bg-slate-50/30 p-3">
       <div className="flex items-baseline justify-between">
-        <span className="text-xs font-medium text-slate-500">{t("socialsLabel")}</span>
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700">
+          <Eye className="h-3 w-3 text-slate-400" />
+          {t("socialsLabel")}
+        </span>
         <span className="text-[10px] text-slate-400">
           {t("socialsCount", { count: socials.length, max: MAX_SOCIALS })}
         </span>
