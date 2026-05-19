@@ -125,7 +125,11 @@ export function ProfileShowcase() {
         .showcase-shimmer {
           animation: showcase-foil-drift 9s ease-in-out infinite;
         }
-        @media (prefers-reduced-motion: reduce) {
+        /* Disable shimmer on mobile + reduce-motion. The 9s keyframe animates four custom
+           properties through @property interpolation across N concurrent slides — on phones
+           that compounds into noticeable jank during embla's loop reset (slide N → slide 1
+           transform jump). Desktop GPUs handle it fine, so keep it there. */
+        @media (max-width: 768px), (prefers-reduced-motion: reduce) {
           .showcase-shimmer {
             animation: none;
           }
