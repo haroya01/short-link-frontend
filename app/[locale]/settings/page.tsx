@@ -94,7 +94,7 @@ export default function SettingsPage() {
 
   return (
     <div className="container max-w-2xl space-y-6 py-12">
-      <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
+      <h1 className="text-2xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
 
       <SettingsTabs t={t}>
         {(tab) => (
