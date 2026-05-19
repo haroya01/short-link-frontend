@@ -25,7 +25,7 @@ export function HomeFaq() {
   return (
     <div>
       <div className="mb-8 text-center">
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+        <h2 className="text-2xl font-semibold tracking-headline text-slate-900 sm:text-3xl">
           {t("title")}
         </h2>
       </div>

@@ -568,11 +568,6 @@
     "label": "admin",
     "title": "서비스 overview",
     "subtitle": "최근 30일 추세 · 5분 캐시",
-    "notAdminTitle": "관리자 전용",
-    "loginNeeded": "로그인이 필요해요.",
-    "needAdmin": "이 페이지는 ADMIN 권한이 필요해요.",
-    "backToDashboard": "내 링크로",
-    "goToLogin": "로그인",
     "kpi": {
       "users": "사용자",
       "links": "링크",

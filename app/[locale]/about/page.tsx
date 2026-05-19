@@ -27,15 +27,15 @@ export default async function AboutPage({
       </header>
 
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold text-slate-900">{t("section1Title")}</h2>
+        <h2 className="text-lg font-semibold tracking-headline text-slate-900">{t("section1Title")}</h2>
         <p className="text-sm leading-relaxed text-slate-600">{t("section1Body")}</p>
       </section>
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold text-slate-900">{t("section2Title")}</h2>
+        <h2 className="text-lg font-semibold tracking-headline text-slate-900">{t("section2Title")}</h2>
         <p className="text-sm leading-relaxed text-slate-600">{t("section2Body")}</p>
       </section>
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold text-slate-900">{t("section3Title")}</h2>
+        <h2 className="text-lg font-semibold tracking-headline text-slate-900">{t("section3Title")}</h2>
         <p className="text-sm leading-relaxed text-slate-600">{t("section3Body")}</p>
       </section>
 

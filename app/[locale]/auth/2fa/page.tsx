@@ -52,7 +52,7 @@ export default function TwoFactorChallengePage() {
   if (!challenge && error) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-xl font-semibold text-slate-900">{t("title")}</h1>
+        <h1 className="text-xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
         <p className="mt-2 text-sm text-red-600">{error}</p>
         <Link href="/login" className="mt-6 inline-block">
           <Button variant="outline">{t("backToLogin")}</Button>
@@ -63,7 +63,7 @@ export default function TwoFactorChallengePage() {
 
   return (
     <div className="container max-w-md py-16">
-      <h1 className="text-xl font-semibold text-slate-900">{t("title")}</h1>
+      <h1 className="text-xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
       <p className="mt-2 text-sm text-slate-500">
         {recovery ? t("descRecovery") : t("desc")}
       </p>

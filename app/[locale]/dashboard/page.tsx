@@ -116,7 +116,7 @@ export default function DashboardPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-xl font-semibold text-slate-900">{t("loginRequired")}</h1>
+        <h1 className="text-xl font-semibold tracking-headline text-slate-900">{t("loginRequired")}</h1>
         <p className="mt-2 text-sm text-slate-500">{t("loginRequiredDesc")}</p>
         <Link href="/login" className="mt-6 inline-block">
           <Button>{t("goToLogin")}</Button>

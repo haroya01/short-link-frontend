@@ -83,6 +83,16 @@ test.describe("admin per-link metrics panel", () => {
     expect(res.status()).toBe(401);
   });
 
+  test("anonymous users see 404 instead of a sign-in prompt on the admin page", async ({
+    page,
+  }) => {
+    // Security regression guard — surfacing "Sign-in required" / "Admin only" copy reveals that
+    // /admin exists. The localized 404 page is rendered instead so the route is indistinguishable
+    // from any made-up path.
+    await page.goto("/ko/admin");
+    await expect(page.getByRole("heading", { name: "이 페이지를 찾을 수 없어요" })).toBeVisible();
+  });
+
   test.describe("rendered panel", () => {
     test.beforeEach(async ({ page, context }) => {
       // Inject a JWT-shaped admin claim — the dev profile bypasses signature verification when

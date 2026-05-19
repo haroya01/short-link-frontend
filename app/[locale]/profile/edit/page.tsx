@@ -55,7 +55,7 @@ export default function ProfileEditPage() {
             <Sparkles className="h-3.5 w-3.5" />
             {t("onboardingEyebrow")}
           </div>
-          <h2 className="mt-1 text-lg font-semibold tracking-tight text-slate-900">
+          <h2 className="mt-1 text-lg font-semibold tracking-headline text-slate-900">
             {t("onboardingTitle")}
           </h2>
           <p className="mt-1 text-sm leading-relaxed text-slate-600">

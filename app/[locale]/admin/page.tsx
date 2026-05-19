@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { notFound } from "next/navigation";
 import { Activity, Link2, MousePointerClick, Users } from "lucide-react";
 import {
   CartesianGrid,
@@ -18,10 +19,9 @@ import { ApiError, getAdminHealthMetrics, getAdminOverview } from "@/lib/api";
 import { AdminDeepStats } from "@/components/admin-deep-stats";
 import { AdminLinkMetrics } from "@/components/admin-link-metrics";
 import { AdminRouteMetrics } from "@/components/admin-route-metrics";
-import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "@/i18n/navigation";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { ErrorState } from "@/components/error-state";
 import { formatNumber } from "@/lib/utils";
@@ -54,8 +54,15 @@ export default function AdminPage() {
       })
       .catch((err) => {
         if (!cancelled) {
-          if (err instanceof ApiError && err.status === 403) setError(t("needAdmin"));
-          else setError(err instanceof Error ? err.message : "load failed");
+          // 401/403 means the client believed the user was admin but the backend disagrees —
+          // expired token, role just revoked, or a tampered local claim. Either way, surface
+          // the same 404 the unauthenticated path uses so we never leak "admin exists" to
+          // someone whose access was just rejected by the server.
+          if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+            notFound();
+          } else {
+            setError(err instanceof Error ? err.message : "load failed");
+          }
         }
       })
       .finally(() => {
@@ -66,20 +73,14 @@ export default function AdminPage() {
     };
   }, [ready, authenticated, isAdmin, tick, t]);
 
+  // Security: the admin surface exists only for ADMIN-role users. Anyone else — anonymous or
+  // signed-in non-admin — must see the standard 404, never a "sign in required" or "admin only"
+  // message. Leaking the existence of an admin route gives attackers a target to spray
+  // credentials against; rendering 404 makes the route indistinguishable from any made-up path.
+  // The auth check runs client-side (useAuth hits /me), so we keep the skeleton until `ready`
+  // resolves to avoid a flash-of-404 for legitimate admins on slow networks.
   if (ready && (!authenticated || !isAdmin)) {
-    return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-xl font-semibold text-slate-900">{t("notAdminTitle")}</h1>
-        <p className="mt-2 text-sm text-slate-500">
-          {!authenticated ? t("loginNeeded") : t("needAdmin")}
-        </p>
-        <Link href={authenticated ? "/dashboard" : "/login"} className="mt-6 inline-block">
-          <Button variant="outline">
-            {authenticated ? t("backToDashboard") : t("goToLogin")}
-          </Button>
-        </Link>
-      </div>
-    );
+    notFound();
   }
 
   if (loading) {

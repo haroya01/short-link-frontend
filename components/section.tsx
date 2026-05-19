@@ -47,11 +47,11 @@ export function Section({
       <header className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4">
         <div className="min-w-0 flex-1">
           {eyebrow && (
-            <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700">
+            <p className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-tagline text-accent-700">
               {eyebrow}
             </p>
           )}
-          <h3 className="text-[15px] font-semibold tracking-tight text-slate-900">{title}</h3>
+          <h3 className="text-[15px] font-semibold tracking-headline text-slate-900">{title}</h3>
           {description && (
             <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{description}</p>
           )}
