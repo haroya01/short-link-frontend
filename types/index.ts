@@ -697,6 +697,17 @@ export type AdminHealthMetrics = {
   };
 };
 
+export type AdminRouteMetric = {
+  uri: string;
+  method: string;
+  count: number;
+  p50Millis: number;
+  p95Millis: number;
+  p99Millis: number;
+  errorRate: number;
+  error5xxCount: number;
+};
+
 export type AdminOverview = {
   totals: { users: number; links: number; clicks: number };
   newUsers7d: number;
