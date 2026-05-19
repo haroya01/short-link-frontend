@@ -697,8 +697,29 @@
       },
       "recentErrors": {
         "title": "最近のエラーログ",
-        "desc": "バックエンドの ERROR/WARN ログ (in-memory、最大 200 件)",
-        "empty": "最近のエラーなし"
+        "desc": "バックエンドの ERROR/WARN ログ (in-memory、最大 200 件)。行をクリックでスタックトレース・原因チェーン・リクエスト情報を展開。",
+        "empty": "最近のエラーなし",
+        "emptyFiltered": "条件に一致するエラーはありません",
+        "reload": "再読込",
+        "searchPlaceholder": "メッセージ / 例外 / ルート / task を検索",
+        "filter": { "all": "ALL" },
+        "detail": {
+          "thread": "thread",
+          "requestId": "requestId",
+          "userId": "userId",
+          "clientIp": "clientIp",
+          "exception": "exception",
+          "causeChain": "原因チェーン",
+          "stackTrace": "スタックトレース",
+          "copy": "コピー"
+        },
+        "relative": {
+          "justNow": "たった今",
+          "secAgo": "{n}秒前",
+          "minAgo": "{n}分前",
+          "hourAgo": "{n}時間前",
+          "dayAgo": "{n}日前"
+        }
       },
       "routeMetrics": {
         "title": "ルート別トラフィック・遅延",

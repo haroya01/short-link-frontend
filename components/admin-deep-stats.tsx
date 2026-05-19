@@ -219,53 +219,263 @@ function CohortSection({ t }: { t: T }) {
 
 function RecentErrorsSection({ t }: { t: T }) {
   const [data, setData] = useState<AdminRecentError[] | null>(null);
+  const [reloadTick, setReloadTick] = useState(0);
+  const [levelFilter, setLevelFilter] = useState<"ALL" | "ERROR" | "WARN">("ALL");
+  const [search, setSearch] = useState("");
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+
   useEffect(() => {
-    getAdminRecentErrors(20).then(setData).catch(() => {});
-  }, []);
+    let cancelled = false;
+    getAdminRecentErrors(100)
+      .then((d) => !cancelled && setData(d))
+      .catch(() => !cancelled && setData([]));
+    return () => {
+      cancelled = true;
+    };
+  }, [reloadTick]);
+
+  const filtered = (data ?? []).filter((e) => {
+    if (levelFilter !== "ALL" && e.level !== levelFilter) return false;
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (
+      (e.message ?? "").toLowerCase().includes(q) ||
+      (e.exceptionClass ?? "").toLowerCase().includes(q) ||
+      (e.logger ?? "").toLowerCase().includes(q) ||
+      (e.taskName ?? "").toLowerCase().includes(q) ||
+      (e.requestUri ?? "").toLowerCase().includes(q)
+    );
+  });
+
+  const toggle = (i: number) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) next.delete(i);
+      else next.add(i);
+      return next;
+    });
+  };
 
   return (
-    <Section title={t("section.recentErrors.title")} description={t("section.recentErrors.desc")}>
+    <Section
+      title={t("section.recentErrors.title")}
+      description={t("section.recentErrors.desc")}
+    >
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div className="inline-flex items-center gap-0.5 rounded-md border border-slate-200 bg-white p-0.5">
+          {(["ALL", "ERROR", "WARN"] as const).map((lv) => (
+            <button
+              key={lv}
+              type="button"
+              onClick={() => setLevelFilter(lv)}
+              className={cn(
+                "rounded px-2.5 py-1 font-mono text-[11px] transition",
+                levelFilter === lv
+                  ? "bg-slate-900 text-white"
+                  : "text-slate-600 hover:bg-slate-50",
+              )}
+            >
+              {lv === "ALL" ? t("section.recentErrors.filter.all") : lv}
+            </button>
+          ))}
+        </div>
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={t("section.recentErrors.searchPlaceholder")}
+          className="h-7 min-w-0 flex-1 rounded-md border border-slate-200 bg-white px-2 font-mono text-[11px] text-slate-700 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none"
+        />
+        <button
+          type="button"
+          onClick={() => setReloadTick((n) => n + 1)}
+          className="rounded-md border border-slate-200 bg-white px-2.5 py-1 font-mono text-[11px] text-slate-600 hover:bg-slate-50"
+        >
+          {t("section.recentErrors.reload")}
+        </button>
+      </div>
+
       {!data ? (
         <p className="py-8 text-center text-xs text-slate-500">{t("loading")}</p>
-      ) : data.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <p className="py-8 text-center text-xs text-emerald-600">
-          {t("section.recentErrors.empty")}
+          {data.length === 0
+            ? t("section.recentErrors.empty")
+            : t("section.recentErrors.emptyFiltered")}
         </p>
       ) : (
         <div className="space-y-1.5">
-          {data.map((e, i) => (
-            <div
-              key={i}
-              className={cn(
-                "rounded-md border px-3 py-2 text-xs",
-                e.level === "ERROR"
-                  ? "border-red-200 bg-red-50"
-                  : "border-amber-200 bg-amber-50",
-              )}
-            >
-              <div className="flex items-center gap-2">
-                <span
-                  className={cn(
-                    "rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold",
-                    e.level === "ERROR" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700",
-                  )}
+          {filtered.map((e, i) => {
+            const ts = e.timestamp ?? e.occurredAt ?? "";
+            const isOpen = expanded.has(i);
+            return (
+              <div
+                key={i}
+                className={cn(
+                  "rounded-md border bg-white text-xs",
+                  e.level === "ERROR" ? "border-slate-300" : "border-slate-200",
+                )}
+              >
+                <button
+                  type="button"
+                  onClick={() => toggle(i)}
+                  className="flex w-full items-start gap-2 px-3 py-2 text-left hover:bg-slate-50"
                 >
-                  {e.level}
-                </span>
-                <span className="font-mono text-[11px] text-slate-500">
-                  {(e.occurredAt ?? "").replace("T", " ").slice(0, 19)}
-                </span>
-                <span className="truncate font-mono text-[10px] text-slate-500">
-                  {e.logger?.split(".").pop() ?? ""}
-                </span>
+                  <span
+                    className={cn(
+                      "mt-0.5 inline-flex h-1.5 w-1.5 shrink-0 rounded-full",
+                      e.level === "ERROR" ? "bg-slate-900" : "bg-amber-500",
+                    )}
+                    aria-hidden
+                  />
+                  <span
+                    className={cn(
+                      "shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold",
+                      e.level === "ERROR"
+                        ? "bg-slate-900 text-white"
+                        : "bg-amber-100 text-amber-800",
+                    )}
+                  >
+                    {e.level}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                      <span className="font-mono text-[11px] text-slate-700" title={ts}>
+                        {formatAbsolute(ts)}
+                      </span>
+                      <span className="font-mono text-[10px] text-slate-500">
+                        ({formatRelative(ts, t)})
+                      </span>
+                      {e.exceptionClass && (
+                        <span className="font-mono text-[10px] text-slate-700">
+                          {shortClassName(e.exceptionClass)}
+                        </span>
+                      )}
+                      {e.taskName && (
+                        <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
+                          task={e.taskName}
+                        </span>
+                      )}
+                      {e.requestMethod && e.requestUri && (
+                        <span className="font-mono text-[10px] text-slate-500">
+                          {e.requestMethod} {e.requestUri}
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-0.5 line-clamp-2 break-all font-mono text-[11px] text-slate-800">
+                      {e.message}
+                    </p>
+                    <p className="mt-0.5 truncate font-mono text-[10px] text-slate-500">
+                      {e.logger}
+                    </p>
+                  </div>
+                  <span className="mt-0.5 shrink-0 font-mono text-[10px] text-slate-400">
+                    {isOpen ? "−" : "+"}
+                  </span>
+                </button>
+
+                {isOpen && (
+                  <div className="space-y-2 border-t border-slate-100 px-3 py-2 text-[11px]">
+                    <DetailGrid e={e} t={t} />
+                    {e.causeChain && e.causeChain.length > 0 && (
+                      <div>
+                        <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
+                          {t("section.recentErrors.detail.causeChain")}
+                        </p>
+                        <ol className="mt-1 space-y-0.5 font-mono text-[11px] text-slate-700">
+                          {e.causeChain.map((c, idx) => (
+                            <li key={idx} className="break-all">
+                              {idx + 1}. {c}
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+                    {e.stackTrace && (
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
+                            {t("section.recentErrors.detail.stackTrace")}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              void navigator.clipboard.writeText(e.stackTrace ?? "");
+                            }}
+                            className="rounded border border-slate-200 px-1.5 py-0.5 font-mono text-[10px] text-slate-600 hover:bg-slate-50"
+                          >
+                            {t("section.recentErrors.detail.copy")}
+                          </button>
+                        </div>
+                        <pre className="mt-1 max-h-60 overflow-auto rounded bg-slate-50 p-2 font-mono text-[10px] leading-snug text-slate-800">
+                          {e.stackTrace}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
-              <p className="mt-1 line-clamp-2 break-all font-mono text-[11px] text-slate-700">
-                {e.message}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </Section>
   );
+}
+
+function DetailGrid({ e, t }: { e: AdminRecentError; t: T }) {
+  const rows: { label: string; value: string | null | undefined }[] = [
+    { label: t("section.recentErrors.detail.thread"), value: e.thread },
+    { label: t("section.recentErrors.detail.requestId"), value: e.requestId },
+    { label: t("section.recentErrors.detail.userId"), value: e.userId },
+    { label: t("section.recentErrors.detail.clientIp"), value: e.clientIp },
+    {
+      label: t("section.recentErrors.detail.exception"),
+      value: e.exceptionClass
+        ? `${e.exceptionClass}${e.exceptionMessage ? ": " + e.exceptionMessage : ""}`
+        : null,
+    },
+  ];
+  const present = rows.filter((r) => r.value);
+  if (present.length === 0) return null;
+  return (
+    <dl className="grid grid-cols-[max-content_1fr] gap-x-3 gap-y-0.5 font-mono">
+      {present.map((r) => (
+        <div key={r.label} className="contents">
+          <dt className="text-[10px] uppercase tracking-wider text-slate-500">{r.label}</dt>
+          <dd className="break-all text-[11px] text-slate-800">{r.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function shortClassName(fqcn: string): string {
+  const idx = fqcn.lastIndexOf(".");
+  return idx === -1 ? fqcn : fqcn.substring(idx + 1);
+}
+
+function formatAbsolute(iso: string): string {
+  if (!iso) return "—";
+  // Use the operator's local timezone — admin viewer is always a human, not a parser. ISO output
+  // (yyyy-mm-dd HH:mm:ss) keeps the column scannable and grep-friendly.
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso.replace("T", " ").slice(0, 19);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+function formatRelative(iso: string, t: T): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
+  if (seconds < 5) return t("section.recentErrors.relative.justNow");
+  if (seconds < 60) return t("section.recentErrors.relative.secAgo", { n: seconds });
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return t("section.recentErrors.relative.minAgo", { n: minutes });
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return t("section.recentErrors.relative.hourAgo", { n: hours });
+  const days = Math.floor(hours / 24);
+  return t("section.recentErrors.relative.dayAgo", { n: days });
 }

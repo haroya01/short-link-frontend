@@ -618,8 +618,29 @@
       },
       "recentErrors": {
         "title": "최근 에러 로그",
-        "desc": "백엔드 ERROR/WARN 로그 (in-memory, 최대 200건)",
-        "empty": "최근 에러 없음"
+        "desc": "백엔드 ERROR/WARN 로그 (in-memory, 최대 200건). 행을 클릭하면 스택 트레이스 / 원인 / 요청 정보가 펼쳐집니다.",
+        "empty": "최근 에러 없음",
+        "emptyFiltered": "조건에 맞는 에러가 없어요",
+        "reload": "새로고침",
+        "searchPlaceholder": "메시지 / 예외 / 라우트 / task 검색",
+        "filter": { "all": "ALL" },
+        "detail": {
+          "thread": "thread",
+          "requestId": "requestId",
+          "userId": "userId",
+          "clientIp": "clientIp",
+          "exception": "exception",
+          "causeChain": "원인 체인",
+          "stackTrace": "스택 트레이스",
+          "copy": "복사"
+        },
+        "relative": {
+          "justNow": "방금",
+          "secAgo": "{n}초 전",
+          "minAgo": "{n}분 전",
+          "hourAgo": "{n}시간 전",
+          "dayAgo": "{n}일 전"
+        }
       },
       "routeMetrics": {
         "title": "라우트별 트래픽 · 지연",

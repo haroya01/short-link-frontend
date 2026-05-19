@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/nextjs";
+
 import type {
   AdminActiveUsers,
   AdminCohort,
@@ -146,6 +148,26 @@ async function request<T>(
       body && typeof body === "object"
         ? { status: res.status, ...(body as object) }
         : { status: res.status, detail: text || res.statusText };
+    // Leave a Sentry breadcrumb so the next captured exception (e.g. a React render that
+    // dereferences a failed response) carries the API context that produced it. requestId comes
+    // from the backend MdcFilter response header, so admin "recent errors" + Sentry can be
+    // cross-referenced on the same id.
+    // res.headers may be undefined under test fetch mocks — guard so a breadcrumb never breaks
+    // the request path.
+    const requestId = res.headers?.get?.("X-Request-Id") ?? null;
+    Sentry.addBreadcrumb({
+      category: "api",
+      type: "http",
+      level: res.status >= 500 ? "error" : "warning",
+      message: `${(init.method ?? "GET").toUpperCase()} ${path} → ${res.status}`,
+      data: {
+        status: res.status,
+        path,
+        method: (init.method ?? "GET").toUpperCase(),
+        code: (detail as { code?: string }).code,
+        requestId,
+      },
+    });
     throw new ApiError(res.status, detail);
   }
 
