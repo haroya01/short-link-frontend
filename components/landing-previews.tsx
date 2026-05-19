@@ -59,26 +59,67 @@ export function LandingPreviews() {
   ];
 
   return (
-    <section className="border-t border-slate-100 bg-slate-50/50">
-      <div className="container max-w-5xl py-12 sm:py-16">
-        <p className="mb-6 text-center font-mono text-[11px] tracking-wider text-accent-700">
-          {t("previews.eyebrow")}
-        </p>
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-          {items.map((it) => (
-            <li key={it.key}>
+    <section className="relative isolate overflow-hidden bg-slate-50/60">
+      {/* Subtle bottom-anchored radial bloom — mirrors the hero mesh palette so the page reads
+          as one continuous surface instead of a hard rectangle handoff. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 -top-12 h-32 bg-gradient-to-b from-white to-transparent"
+      />
+      <div className="container max-w-5xl py-16 sm:py-20">
+        <div className="mb-10 flex items-center gap-3">
+          <span aria-hidden className="h-px flex-1 bg-slate-200" />
+          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+            {t("previews.eyebrow")}
+          </p>
+          <span aria-hidden className="h-px flex-1 bg-slate-200" />
+        </div>
+        {/*
+         * Asymmetric grid — featured card spans 2 columns on desktop, the remaining two stack to
+         * the right. Per AGENTS.md 1-primary rule we keep the same archetype (Information) but
+         * grid-break the first card so the page stops reading as "three identical tiles" which
+         * was the largest "AI slop" tell in the original layout. On mobile the cards collapse
+         * to a single stack so nothing fights for width.
+         */}
+        <ul className="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-3 lg:grid-rows-2">
+          {items.map((it, i) => (
+            <li
+              key={it.key}
+              className={
+                i === 0
+                  ? "profile-fade lg:col-span-2 lg:row-span-2"
+                  : "profile-fade"
+              }
+              style={{ ["--idx" as string]: i } as React.CSSProperties}
+            >
               <Link
                 href={it.href}
-                className="profile-card group flex h-full flex-col gap-3 border border-slate-200 bg-white p-4 sm:p-5"
+                className={
+                  "profile-card card-highlight group flex h-full flex-col gap-4 border border-slate-200 bg-white p-5 sm:p-6"
+                }
               >
-                <div className="relative h-24 w-full overflow-hidden rounded-xl bg-gradient-to-br from-accent-50 via-accent-50/40 to-white">
+                <div
+                  className={
+                    "relative w-full overflow-hidden rounded-xl border border-accent-100 bg-gradient-to-br from-accent-50 via-white to-white " +
+                    (i === 0 ? "h-44 sm:h-56" : "h-24 sm:h-28")
+                  }
+                >
                   {it.visual}
                 </div>
-                <div className="flex-1 space-y-1">
-                  <h3 className="text-sm font-semibold leading-tight text-slate-900">
+                <div className="flex-1 space-y-1.5">
+                  <h3
+                    className={
+                      "leading-tight tracking-headline text-slate-900 " +
+                      (i === 0
+                        ? "text-lg font-semibold sm:text-xl"
+                        : "text-sm font-semibold")
+                    }
+                  >
                     {it.label}
                   </h3>
-                  <p className="text-[12px] leading-snug text-slate-600">{it.desc}</p>
+                  <p className="text-[12px] leading-snug text-slate-600 sm:text-[13px]">
+                    {it.desc}
+                  </p>
                 </div>
                 <span className="inline-flex items-center gap-1 text-[12px] font-medium text-accent-700">
                   {t("previews.see")}

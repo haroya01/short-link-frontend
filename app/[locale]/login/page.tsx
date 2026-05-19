@@ -59,17 +59,29 @@ function LoginShell() {
   const t = useTranslations("login");
   const { signInWithGoogle } = useAuth();
   return (
-    <div className="grid-bg">
-      <div className="container flex min-h-[calc(100vh-3.5rem-3rem)] max-w-md flex-col justify-center py-16">
-        <div className="rounded-lg border border-slate-200 bg-white p-8">
-          <h1 className="font-mono text-xl font-semibold tracking-tight text-slate-900">
+    /*
+     * Login is a single-purpose conversion surface — most visitors just hit Google and bounce.
+     * The hero treatment (mesh + noise) carries the brand language onto the page so the auth
+     * step doesn't feel like a different app. Card sits on top with a card-highlight + soft
+     * accent-glow halo so it lifts above the tinted hero plate.
+     */
+    <div className="relative isolate overflow-hidden grid-bg hero-mesh hero-noise">
+      <span
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-24 -z-0 h-72 w-72 -translate-x-1/2 rounded-full bg-accent-200/30 blur-3xl"
+      />
+      <div className="container relative z-10 flex min-h-[calc(100vh-3.5rem-3rem)] max-w-md flex-col justify-center py-16">
+        <div className="card-highlight rounded-2xl border border-slate-200 bg-white p-8">
+          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
             {t("title")}
+          </p>
+          <h1 className="mt-3 text-balance text-[26px] leading-tight tracking-headline text-slate-900">
+            <span className="font-display italic">{t("subtitle")}</span>
           </h1>
-          <p className="mt-1 text-sm text-slate-500">{t("subtitle")}</p>
 
           <Button
             variant="outline"
-            className="mt-6 h-11 w-full justify-center"
+            className="mt-7 h-11 w-full justify-center"
             onClick={signInWithGoogle}
           >
             <GoogleIcon className="h-4 w-4" />
@@ -77,7 +89,7 @@ function LoginShell() {
           </Button>
         </div>
 
-        <p className="mt-6 text-center text-xs text-slate-500">
+        <p className="mt-6 text-center text-[12px] text-slate-500">
           {t.rich("anonymousAlt", {
             shorten: (chunks) => (
               <Link href="/" className="text-slate-700 underline underline-offset-4">

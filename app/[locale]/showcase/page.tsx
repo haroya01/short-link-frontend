@@ -55,51 +55,73 @@ export default async function ShowcasePage({
 
   return (
     <div className="overflow-hidden">
-      {/* CTA-first hero: visitors see the value prop + sign-in button before they even start
-          scrolling the examples. Keeps the page friendly for non-developers who want one
-          straightforward path rather than a tour. */}
-      <section className="border-b border-slate-100 bg-white">
-        <div className="container max-w-3xl py-16 text-center sm:py-20">
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-700">
-            {t("eyebrow")}
-          </p>
-          <h1 className="mt-2 text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            {t("ctaTitle")}
-          </h1>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-500">
-            {t("ctaSubhead")}
-          </p>
-          <div className="mt-6 flex flex-col items-center gap-8">
-            <Link
-              href="/login?next=/profile/auto"
-              className="group inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
+      {/* CTA-first hero — re-typeset to share the landing's editorial language: hairline-anchored
+          eyebrow, mixed serif + Pretendard headline, gradient mesh background. Keeps the same
+          single-CTA discipline (one slate-900 primary, one scroll cue) so the surface direction
+          doesn't drift across pages. */}
+      <section className="relative isolate overflow-hidden bg-white hero-mesh hero-noise">
+        <div className="container relative z-10 max-w-3xl py-20 text-center sm:py-28">
+          <div className="hero-stagger space-y-4">
+            <div
+              className="flex items-center justify-center gap-3"
+              style={{ ["--hi" as string]: 0 } as React.CSSProperties}
             >
-              {t("cta")}
-              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-            </Link>
+              <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
+              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+                {t("eyebrow")}
+              </p>
+              <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
+            </div>
+            <h1
+              className="text-balance text-[34px] leading-[1.05] tracking-headline text-slate-900 sm:text-[48px]"
+              style={{ ["--hi" as string]: 1 } as React.CSSProperties}
+            >
+              <span className="font-display italic">{t("ctaTitle")}</span>
+            </h1>
+            <p
+              className="mx-auto max-w-md text-balance text-[15px] leading-relaxed text-slate-500"
+              style={{ ["--hi" as string]: 2 } as React.CSSProperties}
+            >
+              {t("ctaSubhead")}
+            </p>
+            <div
+              className="flex flex-col items-center gap-8 pt-2"
+              style={{ ["--hi" as string]: 3 } as React.CSSProperties}
+            >
+              <Link
+                href="/login?next=/profile/auto"
+                className="group inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-5 py-3 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(15,23,42,0.5)] transition hover:bg-slate-800 hover:shadow-[0_12px_32px_-8px_rgba(15,23,42,0.6)]"
+              >
+                {t("cta")}
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              </Link>
 
-            {/* Scroll cue — anchors the hero to the carousel below so visitors don't think the
-                CTA is the entire page. The down-chevron bobs gently to signal "more below" */}
-            <a
-              href="#showcase-examples"
-              className="flex flex-col items-center gap-1 text-[11px] text-slate-400 transition hover:text-slate-600"
-              aria-label={t("scrollCue")}
-            >
-              <span>{t("scrollCue")}</span>
-              <ChevronDown className="h-3.5 w-3.5 showcase-scroll-cue-icon" />
-            </a>
+              {/* Scroll cue — anchors the hero to the carousel below so visitors don't think the
+                  CTA is the entire page. The down-chevron bobs gently to signal "more below" */}
+              <a
+                href="#showcase-examples"
+                className="flex flex-col items-center gap-1 text-[11px] text-slate-400 transition hover:text-slate-600"
+                aria-label={t("scrollCue")}
+              >
+                <span>{t("scrollCue")}</span>
+                <ChevronDown className="h-3.5 w-3.5 showcase-scroll-cue-icon" />
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="showcase-examples" className="bg-white py-12 sm:py-16">
-        <div className="container max-w-3xl mb-8 text-center">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-            {t("title")}
-          </h2>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-slate-500">
-            {t("subhead")}
-          </p>
+      <section id="showcase-examples" className="bg-white py-16 sm:py-20">
+        <div className="container max-w-3xl mb-10">
+          <div className="section-divider mx-auto mb-10 w-full max-w-xl" aria-hidden />
+          <div className="text-center">
+            <h2 className="text-balance text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+              {t("title")}
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-balance text-[14px] leading-relaxed text-slate-500">
+              {t("subhead")}
+            </p>
+          </div>
         </div>
         <ProfileShowcase />
       </section>

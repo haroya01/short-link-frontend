@@ -54,29 +54,36 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
     : new Date(Date.now() + ANONYMOUS_TTL_HOURS * 60 * 60 * 1000);
 
   return (
-    <div className="animate-fade-in rounded-lg border border-accent-200 bg-accent-50/40 p-5">
-      <div className="mb-4 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 text-xs font-medium text-accent-700">
+    <div className="animate-fade-in card-highlight relative overflow-hidden rounded-2xl border border-accent-200 bg-accent-50/40 p-5">
+      {/* Decorative accent-glow in the top-right — pulls the eye to the new short URL row and
+          breaks the otherwise-flat tinted rectangle. Pure CSS, no extra DOM cost on the LCP path. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-accent-200/40 blur-2xl"
+      />
+      <div className="relative mb-4 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-tagline text-accent-700">
           <CheckCircle2 className="h-3.5 w-3.5" />
           {t("completed")}
         </div>
         {channel && (
-          <span className="rounded-full bg-accent-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent-700">
+          <span className="rounded-full border border-accent-200 bg-white/80 px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-accent-700">
             {channel}
           </span>
         )}
       </div>
 
-      <div className="space-y-3">
-        {/* Tier 1 — primary: the new short URL */}
+      <div className="relative space-y-3">
+        {/* Tier 1 — primary: the new short URL. Rounded-xl + accent border-left bar pulls the row
+            forward from the tinted parent surface; the URL itself stays the click target. */}
         <a
           href={result.shortUrl}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3.5 py-3 transition hover:border-accent-300 hover:bg-accent-50/30"
+          className="group flex items-center gap-2 rounded-xl border border-slate-200 border-l-2 border-l-accent-500 bg-white px-3.5 py-3 transition hover:border-accent-300 hover:border-l-accent-600 hover:bg-accent-50/30"
           aria-label={t("open")}
         >
-          <span className="min-w-0 flex-1 truncate font-mono text-[15px] font-semibold text-slate-900">
+          <span className="min-w-0 flex-1 truncate font-mono text-[15px] font-semibold tracking-tight text-slate-900">
             {result.shortUrl}
           </span>
         </a>

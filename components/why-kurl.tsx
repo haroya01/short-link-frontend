@@ -38,42 +38,52 @@ export function WhyKurl() {
 
   return (
     <div className="space-y-6">
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <div className="card-highlight overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-slate-50 text-left">
-              <th className="px-4 py-3 text-xs font-medium uppercase tracking-wider text-slate-500">
+            {/*
+             * Header palette pulls the kurl column out — it sits on a soft accent tint with a
+             * 2px accent bottom-bar so the eye reads it as the "ours" column without us having
+             * to rely on column-level borders, which read as spreadsheet chrome and were the
+             * single biggest "this is a Tailwind UI table" tell in the previous version.
+             */}
+            <tr className="text-left">
+              <th className="bg-slate-50/70 px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-tagline text-slate-500">
                 {t("th.feature")}
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-accent-700">
+              <th className="border-b-2 border-accent-500 bg-accent-50/60 px-4 py-3 text-center font-mono text-[10px] font-semibold uppercase tracking-tagline text-accent-700">
                 kurl
               </th>
-              <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-slate-500">
+              <th className="bg-slate-50/70 px-4 py-3 text-center font-mono text-[10px] font-semibold uppercase tracking-tagline text-slate-500">
                 {t("th.others")}
               </th>
             </tr>
           </thead>
           <tbody>
-            {ROWS.map((row) => (
-              <tr key={row.key} className="border-t border-slate-100">
-                <td className="px-4 py-3.5">
+            {ROWS.map((row, i) => (
+              <tr
+                key={row.key}
+                className="border-t border-slate-100 transition-colors hover:bg-slate-50/40"
+                style={{ animation: `rowFadeIn 360ms ${i * 40}ms ease-out backwards` }}
+              >
+                <td className="px-4 py-4">
                   <div className="font-medium text-slate-900">{t(`rows.${row.key}.label`)}</div>
-                  <div className="mt-0.5 text-xs text-slate-500">
+                  <div className="mt-0.5 text-[12px] text-slate-500">
                     {t(`rows.${row.key}.note`)}
                   </div>
                 </td>
-                <td className="px-4 py-3.5 text-center">
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-                    <Check className="h-3.5 w-3.5" />
+                <td className="bg-accent-50/30 px-4 py-4 text-center">
+                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-accent-100 text-accent-700 ring-1 ring-inset ring-accent-200">
+                    <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
                   </span>
                 </td>
-                <td className="px-4 py-3.5 text-center">
+                <td className="px-4 py-4 text-center">
                   {row.others === "limited" ? (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-medium text-amber-700">
                       {t("paidTier")}
                     </span>
                   ) : (
-                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-400">
                       <Minus className="h-3.5 w-3.5" />
                     </span>
                   )}
@@ -83,7 +93,15 @@ export function WhyKurl() {
           </tbody>
         </table>
       </div>
-      <p className="text-center text-xs text-slate-500">{t("disclaimer")}</p>
+      <p className="text-center text-[12px] text-slate-500">{t("disclaimer")}</p>
+      <style jsx>{`
+        @keyframes rowFadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+        }
+      `}</style>
     </div>
   );
 }
