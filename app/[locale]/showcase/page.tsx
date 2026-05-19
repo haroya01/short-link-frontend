@@ -57,9 +57,8 @@ export default async function ShowcasePage({
     <div className="overflow-hidden">
       {/* CTA-first hero — flat white surface (no mesh / no noise) so the page reads as restrained
           rather than busy. Single-CTA discipline (one slate-900 primary + scroll cue) kept so the
-          surface direction matches the landing. Headline stays in Pretendard semibold here — the
-          serif italic is reserved for the landing hero's single editorial moment, and repeating
-          it on every page drains the cue. */}
+          surface direction matches the landing. Headline is Pretendard semibold with
+          `.tracking-headline` (−0.025em) — same family/treatment as the landing hero. */}
       <section className="relative isolate overflow-hidden bg-white">
         <div className="container relative z-10 max-w-3xl py-20 text-center sm:py-28">
           <div className="hero-stagger space-y-4">
