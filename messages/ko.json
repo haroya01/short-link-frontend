@@ -669,6 +669,52 @@
           "p99": "p99",
           "errorRate": "5xx %"
         }
+      },
+      "linkMetrics": {
+        "title": "링크별 성능",
+        "desc": "short_code 별 redirect 지연 (p50/p95/p99), 윈도우 내 클릭 수, 에러 비율. 메모리 상한 때문에 최근 활동이 있던 상위 500개 코드만 추적해요. ▶ 클릭으로 outcome 분포 (redirect / not_found / expired / blocked / 등).",
+        "empty": "이 윈도우 안에 redirect 가 잡힌 링크가 없어요",
+        "expandOutcomes": "Outcome 분포 보기",
+        "collapseOutcomes": "Outcome 분포 숨기기",
+        "outcomes": "Outcome 분포:",
+        "noOwner": "익명",
+        "noOriginal": "(원본 URL 없음)",
+        "windowSort": "윈도우",
+        "sortLabel": "정렬",
+        "window": {
+          "1h": "1시간",
+          "24h": "24시간",
+          "7d": "7일",
+          "all": "전체"
+        },
+        "sort": {
+          "count": "클릭 수",
+          "latency": "p95 지연",
+          "error": "에러율"
+        },
+        "outcome": {
+          "redirect": "리다이렉트",
+          "preview": "프리뷰",
+          "not_found": "404",
+          "expired": "만료",
+          "view_limit": "조회 한도 초과",
+          "blocked": "차단됨",
+          "password_required": "비밀번호 필요",
+          "error": "에러",
+          "other": "기타"
+        },
+        "cols": {
+          "shortCode": "Short code",
+          "owner": "소유자",
+          "original": "원본 URL",
+          "total": "총 클릭",
+          "windowed": "윈도우 클릭",
+          "p50": "p50 (ms)",
+          "p95": "p95 (ms)",
+          "p99": "p99 (ms)",
+          "errorRate": "에러율",
+          "lastAt": "마지막"
+        }
       }
     },
     "trend": { "signups": "가입", "links": "링크", "clicks": "클릭" },
