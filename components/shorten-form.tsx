@@ -232,20 +232,26 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
             )}
 
             <div className="space-y-2">
-              <div className="flex items-baseline justify-between">
+              <div>
                 <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
                   {t("utmTitle")}
                 </span>
-                <span className="text-[10px] text-slate-400">{t("utmHint")}</span>
+                <p className="mt-1 text-[11px] leading-snug text-slate-500">{t("utmHint")}</p>
+                <p className="mt-0.5 text-[11px] leading-snug text-slate-400">
+                  {t("utmExample")}
+                </p>
               </div>
-              <Input
-                type="text"
-                value={campaign}
-                onChange={(e) => setCampaign(e.target.value)}
-                placeholder={t("campaignPlaceholder")}
-                className="h-9 text-sm"
-                disabled={busy}
-              />
+              <label className="block space-y-1">
+                <span className="text-[11px] text-slate-500">{t("campaignLabel")}</span>
+                <Input
+                  type="text"
+                  value={campaign}
+                  onChange={(e) => setCampaign(e.target.value)}
+                  placeholder={t("campaignPlaceholder")}
+                  className="h-9 text-sm"
+                  disabled={busy}
+                />
+              </label>
               <div className="flex flex-wrap gap-1.5">
                 {CHANNEL_PRESETS.map((p) => {
                   const on = channels.has(p.id);
@@ -268,6 +274,20 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
                   );
                 })}
               </div>
+              {/* Inline result preview — once the user picks at least one channel, surface how
+                  many short URLs will be generated so the "this is one input but it'll make
+                  multiple links" mental model is explicit before they submit. Zero-state
+                  (no channels picked) stays quiet — submit will produce exactly one URL. */}
+              {channels.size > 0 && (
+                <p
+                  className="rounded-md bg-accent-50 px-2.5 py-1.5 text-[11px] font-medium text-accent-800"
+                  data-testid="variants-preview"
+                >
+                  {channels.size === 1
+                    ? t("variantsCount", { count: 1 })
+                    : t("variantsCountPlural", { count: channels.size })}
+                </p>
+              )}
             </div>
             </div>
           </div>
