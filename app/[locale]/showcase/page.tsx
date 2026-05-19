@@ -55,11 +55,12 @@ export default async function ShowcasePage({
 
   return (
     <div className="overflow-hidden">
-      {/* CTA-first hero — re-typeset to share the landing's editorial language: hairline-anchored
-          eyebrow, mixed serif + Pretendard headline, gradient mesh background. Keeps the same
-          single-CTA discipline (one slate-900 primary, one scroll cue) so the surface direction
-          doesn't drift across pages. */}
-      <section className="relative isolate overflow-hidden bg-white hero-mesh hero-noise">
+      {/* CTA-first hero — flat white surface (no mesh / no noise) so the page reads as restrained
+          rather than busy. Single-CTA discipline (one slate-900 primary + scroll cue) kept so the
+          surface direction matches the landing. Headline stays in Pretendard semibold here — the
+          serif italic is reserved for the landing hero's single editorial moment, and repeating
+          it on every page drains the cue. */}
+      <section className="relative isolate overflow-hidden bg-white">
         <div className="container relative z-10 max-w-3xl py-20 text-center sm:py-28">
           <div className="hero-stagger space-y-4">
             <div
@@ -73,10 +74,10 @@ export default async function ShowcasePage({
               <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
             </div>
             <h1
-              className="text-balance text-[34px] leading-[1.05] tracking-headline text-slate-900 sm:text-[48px]"
+              className="text-balance text-[34px] font-semibold leading-[1.05] tracking-headline text-slate-900 sm:text-[48px]"
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
-              <span className="font-display italic">{t("ctaTitle")}</span>
+              {t("ctaTitle")}
             </h1>
             <p
               className="mx-auto max-w-md text-balance text-[15px] leading-relaxed text-slate-500"

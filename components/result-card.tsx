@@ -55,12 +55,6 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
 
   return (
     <div className="animate-fade-in card-highlight relative overflow-hidden rounded-2xl border border-accent-200 bg-accent-50/40 p-5">
-      {/* Decorative accent-glow in the top-right — pulls the eye to the new short URL row and
-          breaks the otherwise-flat tinted rectangle. Pure CSS, no extra DOM cost on the LCP path. */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-accent-200/40 blur-2xl"
-      />
       <div className="relative mb-4 flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-tagline text-accent-700">
           <CheckCircle2 className="h-3.5 w-3.5" />
