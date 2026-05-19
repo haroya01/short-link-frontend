@@ -1697,10 +1697,10 @@
     "q3": "Where do I see stats?",
     "a3": "On the My Links page click any short code to open the 8-dimension stats page.",
     "q4": "Will previews show in KakaoTalk / Slack?",
-    "a4": "Yes. kurl detects social bot User-Agents and serves an OG-tagged HTML page instead of a redirect, so previews render correctly.",
+    "a4": "Yes — preview cards work on KakaoTalk / Slack / Discord. When those apps fetch the link to build a card, kurl returns a preview page with title, description, and image — instead of an immediate redirect.",
     "q5": "How are malicious URLs blocked?",
     "a5": "We screen with Google Safe Browsing at shorten time. Flagged URLs are rejected.",
     "q6": "Is there an API?",
-    "a6": "Yes — shortening is one POST to /api/v1/links. For authenticated endpoints, issue a key under Settings > API keys. (The full OpenAPI doc is gated to operators.)"
+    "a6": "Yes — kurl offers a developer API. Get a key under Settings > API keys and call the shorten / stats endpoints from your own code."
   }
 }
