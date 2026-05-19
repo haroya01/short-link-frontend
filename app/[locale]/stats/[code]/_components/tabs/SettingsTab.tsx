@@ -128,7 +128,7 @@ function DemoLinkDestinationsPreview() {
       <div className="mb-3">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-[15px] font-semibold tracking-tight text-slate-900">
+            <h2 className="text-[15px] font-semibold tracking-headline text-slate-900">
               {t("title")}
             </h2>
             <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("description")}</p>
@@ -294,7 +294,7 @@ function DemoLinkWebhooksPreview() {
       <div className="mb-3">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-[15px] font-semibold tracking-tight text-slate-900">
+            <h2 className="text-[15px] font-semibold tracking-headline text-slate-900">
               {t("title")}
             </h2>
             <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("description")}</p>

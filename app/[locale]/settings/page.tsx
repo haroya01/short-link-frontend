@@ -327,7 +327,7 @@ function Section({
     >
       <h2
         className={
-          "text-sm font-semibold tracking-tight " +
+          "text-sm font-semibold tracking-headline " +
           (variant === "danger" ? "text-red-700" : "text-slate-900")
         }
       >

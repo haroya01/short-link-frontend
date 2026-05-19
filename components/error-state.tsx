@@ -17,7 +17,7 @@ export function ErrorState({ title, message, onRetry }: Props) {
       <div className="mb-4 grid h-10 w-10 place-items-center rounded-full bg-red-100 text-red-600">
         <AlertTriangle className="h-4 w-4" />
       </div>
-      <p className="text-sm font-semibold text-slate-900">{title ?? t("errorTitle")}</p>
+      <p className="text-sm font-semibold tracking-headline text-slate-900">{title ?? t("errorTitle")}</p>
       <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-slate-500">
         {message ?? t("errorDesc")}
       </p>

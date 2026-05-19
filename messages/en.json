@@ -635,11 +635,6 @@
     "label": "admin",
     "title": "Service overview",
     "subtitle": "Last 30 days · 5min cache",
-    "notAdminTitle": "Admin only",
-    "loginNeeded": "Sign-in required.",
-    "needAdmin": "This page requires ADMIN role.",
-    "backToDashboard": "To my links",
-    "goToLogin": "Sign in",
     "kpi": {
       "users": "Users",
       "links": "Links",

@@ -67,7 +67,7 @@ export default async function LearnPage({
 
       {sections.map((id) => (
         <section key={id} className="space-y-2">
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">{t(`${id}.q`)}</h2>
+          <h2 className="text-xl font-semibold tracking-headline text-slate-900">{t(`${id}.q`)}</h2>
           <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
             {t(`${id}.a`)}
           </p>

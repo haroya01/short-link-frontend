@@ -24,7 +24,7 @@ export function DashboardOnboarding() {
         <Sparkles className="h-3.5 w-3.5" />
         {t("eyebrow")}
       </div>
-      <h2 className="mt-1 text-xl font-semibold tracking-tight text-slate-900">{t("title")}</h2>
+      <h2 className="mt-1 text-xl font-semibold tracking-headline text-slate-900">{t("title")}</h2>
       <p className="mt-1 text-sm text-slate-600">{t("subtitle")}</p>
 
       <ol className="mt-5 grid gap-3 sm:grid-cols-3">
