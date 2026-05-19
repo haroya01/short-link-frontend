@@ -43,8 +43,12 @@ export function LandingPreviews() {
       visual: <StatsVisual />,
     },
     {
+      // Profile card lands on `min.links` — the pure Linktree-style sample (LINK entries only,
+      // light theme). The previous target was `dohyun.coffee`, a fully tricked-out café
+      // persona with PLACE / CONTACT_CARD / GALLERY — beautiful but not the entry-level "all
+      // my links in one tap" use case the landing visitor expects to see.
       key: "profile",
-      href: "/showcase/dohyun.coffee",
+      href: "/showcase/min.links",
       label: t("previews.profile.title"),
       desc: t("previews.profile.desc"),
       visual: <ProfileVisual />,
