@@ -635,11 +635,6 @@
     "label": "admin",
     "title": "サービス overview",
     "subtitle": "直近30日の推移 · 5分キャッシュ",
-    "notAdminTitle": "管理者専用",
-    "loginNeeded": "ログインが必要です。",
-    "needAdmin": "このページにはADMIN権限が必要です。",
-    "backToDashboard": "マイリンクへ",
-    "goToLogin": "ログイン",
     "kpi": {
       "users": "ユーザー",
       "links": "リンク",
