@@ -56,10 +56,10 @@ export default async function LearnPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <header className="space-y-3">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-emerald-700">
+        <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
           {t("eyebrow")}
         </p>
-        <h1 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+        <h1 className="text-balance text-3xl font-semibold tracking-headline text-slate-900 sm:text-4xl">
           {t("title")}
         </h1>
         <p className="text-base leading-relaxed text-slate-600">{t("lead")}</p>

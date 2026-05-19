@@ -75,7 +75,7 @@ export default function ProfileEditPage() {
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
+          <h1 className="text-2xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
           <p className="mt-1 text-sm text-slate-500">{t("intro")}</p>
         </div>
         {/* Only surface the leads link when there's at least one EMAIL_FORM block on the

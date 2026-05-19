@@ -42,7 +42,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }:
       />
       <div className="relative flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
         <div className="min-w-0">
-          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-accent-700">
+          <p className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-tagline text-accent-700">
             <Link2 className="h-3 w-3" />
             {shortCodeLabel}
           </p>

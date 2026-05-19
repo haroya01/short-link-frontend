@@ -28,7 +28,7 @@ export default async function TermsPage({
   return (
     <article className="container max-w-3xl space-y-8 py-16">
       <header className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
+        <h1 className="text-3xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
         <p className="text-xs text-slate-500">{t("updatedAt")}</p>
       </header>
       <p className="text-sm leading-relaxed text-slate-600">{t("p1")}</p>

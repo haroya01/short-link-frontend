@@ -48,7 +48,7 @@ export default async function PricingPage({
   return (
     <article className="container max-w-3xl space-y-10 py-16">
       <header className="space-y-3 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">{t("title")}</h1>
+        <h1 className="text-3xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
         <p className="text-sm text-slate-500">{t("lead")}</p>
       </header>
 
