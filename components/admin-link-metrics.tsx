@@ -148,6 +148,110 @@ export function AdminLinkMetrics() {
           {t("section.linkMetrics.empty")}
         </p>
       ) : (
+        <>
+          {/* Mobile card list — 11 columns don't survive a phone viewport. Each card stacks the
+              identity row (shortCode + window count), origin / owner meta, metric strip
+              (p95 / p99 / err), and the optional outcome breakdown under an inline disclosure. */}
+          <div className="space-y-2 sm:hidden">
+            {sorted.map((r) => {
+              const id = r.shortCode;
+              const hot = topFiveIds.has(id);
+              const highError = r.errorRate >= HIGH_ERROR_THRESHOLD;
+              const isExpanded = expanded.has(id);
+              const hasOutcomes =
+                r.outcomeCounts && Object.keys(r.outcomeCounts).length > 0;
+              return (
+                <div
+                  key={id}
+                  className="rounded-lg border border-slate-200 bg-white p-3"
+                  data-testid="link-metric-card"
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={cn(
+                        "truncate font-mono text-[12px]",
+                        hot && "font-semibold text-slate-900",
+                      )}
+                    >
+                      /{r.shortCode}
+                    </span>
+                    <span className="ml-auto inline-flex shrink-0 items-baseline gap-1 text-sm tabular-nums">
+                      <span className={cn("font-mono", hot && "font-semibold text-slate-900")}>
+                        {formatNumber(r.windowedRedirects)}
+                      </span>
+                      <span className="font-mono text-[11px] text-slate-400">
+                        /{formatNumber(r.totalRedirects)}
+                      </span>
+                    </span>
+                  </div>
+                  {r.originalUrl && (
+                    <p
+                      className="mt-2 truncate text-xs text-slate-600"
+                      title={r.originalUrl ?? undefined}
+                    >
+                      → {r.originalUrl}
+                    </p>
+                  )}
+                  <div className="mt-1 flex items-center justify-between text-[11px] text-slate-500">
+                    <span className="truncate">
+                      {r.ownerEmail ?? t("section.linkMetrics.noOwner")}
+                    </span>
+                    <span className="shrink-0 tabular-nums">
+                      {formatRelative(r.lastRedirectAt)}
+                    </span>
+                  </div>
+                  <div className="mt-2 grid grid-cols-3 gap-2 text-[11px]">
+                    <LinkStat
+                      label={t("section.linkMetrics.cols.p95")}
+                      value={`${r.p95Millis}`}
+                    />
+                    <LinkStat
+                      label={t("section.linkMetrics.cols.p99")}
+                      value={`${r.p99Millis}`}
+                    />
+                    <LinkStat
+                      label={t("section.linkMetrics.cols.errorRate")}
+                      value={`${(r.errorRate * 100).toFixed(2)}%`}
+                      emphasized={highError}
+                      icon={highError ? <AlertTriangle className="h-3 w-3" /> : null}
+                    />
+                  </div>
+                  {hasOutcomes && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setExpanded((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(id)) next.delete(id);
+                          else next.add(id);
+                          return next;
+                        });
+                      }}
+                      className="mt-2 inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-900"
+                    >
+                      {isExpanded ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      )}
+                      {t("section.linkMetrics.outcomes")}
+                    </button>
+                  )}
+                  {isExpanded && hasOutcomes && (
+                    <div className="mt-2 rounded-md bg-slate-50 p-2">
+                      <OutcomeBreakdown
+                        counts={r.outcomeCounts}
+                        total={r.windowedRedirects}
+                        t={t}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="hidden sm:block">
         <Table>
           <THead>
             <TR>
@@ -309,8 +413,37 @@ export function AdminLinkMetrics() {
             })}
           </TBody>
         </Table>
+          </div>
+        </>
       )}
     </Section>
+  );
+}
+
+function LinkStat({
+  label,
+  value,
+  emphasized,
+  icon,
+}: {
+  label: string;
+  value: string;
+  emphasized?: boolean;
+  icon?: React.ReactNode;
+}) {
+  return (
+    <div>
+      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400">{label}</p>
+      <p
+        className={cn(
+          "mt-0.5 inline-flex items-center gap-1 font-mono tabular-nums",
+          emphasized ? "rounded bg-slate-900 px-1 text-white" : "text-slate-700",
+        )}
+      >
+        {icon}
+        {value}
+      </p>
+    </div>
   );
 }
 
