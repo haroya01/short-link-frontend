@@ -16,6 +16,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError, getAdminHealthMetrics, getAdminOverview } from "@/lib/api";
 import { AdminDeepStats } from "@/components/admin-deep-stats";
+import { AdminRouteMetrics } from "@/components/admin-route-metrics";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
@@ -276,6 +277,8 @@ export default function AdminPage() {
           </div>
         </Section>
       )}
+
+      <AdminRouteMetrics />
 
       <AdminDeepStats />
 

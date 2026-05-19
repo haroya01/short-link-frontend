@@ -699,6 +699,20 @@
         "title": "最近のエラーログ",
         "desc": "バックエンドの ERROR/WARN ログ (in-memory、最大 200 件)",
         "empty": "最近のエラーなし"
+      },
+      "routeMetrics": {
+        "title": "ルート別トラフィック・遅延",
+        "desc": "URI/method ごとのリクエスト数、p50/p95/p99 (ms)、5xx 率。インスタンス起動以降の累計。列ヘッダーでソート。",
+        "empty": "まだトラフィックがありません",
+        "cols": {
+          "uri": "URI",
+          "method": "Method",
+          "count": "Count",
+          "p50": "p50",
+          "p95": "p95",
+          "p99": "p99",
+          "errorRate": "5xx %"
+        }
       }
     },
     "trend": {
