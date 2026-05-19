@@ -326,6 +326,50 @@ const SPECS: ProfileSpec[] = [
     ],
   },
   {
+    // Pure link-share profile — the main use case ("Instagram bio · 한 링크 안에 모든 것"). No
+    // PLACE / CONTACT_CARD / GALLERY / EMAIL_FORM noise; just LINK entries with click-count
+    // chips so the visitor reads it as a Linktree-style bio link.
+    username: "min.links",
+    bio: "All my work in one tap.",
+    theme: "light",
+    bannerPhotoId: "1497436072909-60f360e1d4b1", // soft gradient / mountain — generic
+    avatarPhotoId: "1555066931-4365d14bab8c", // generic — reuses haruka.dev's avatar pool
+    entries: [
+      {
+        kind: "LINK",
+        shortCode: "port",
+        originalUrl: "https://example.com/portfolio",
+        ogTitle: "Portfolio",
+        ogImage: local("1497436072909-60f360e1d4b1"),
+        clickCount: 124,
+      },
+      {
+        kind: "LINK",
+        shortCode: "code",
+        originalUrl: "https://github.com/example",
+        ogTitle: "GitHub",
+        ogImage: local("1517694712202-14dd9538aa97"),
+        clickCount: 78,
+      },
+      {
+        kind: "LINK",
+        shortCode: "wri",
+        originalUrl: "https://medium.com/@example",
+        ogTitle: "Writing on Medium",
+        ogImage: local("1555066931-4365d14bab8c"),
+        clickCount: 56,
+      },
+      {
+        kind: "LINK",
+        shortCode: "lkin",
+        originalUrl: "https://linkedin.com/in/example",
+        ogTitle: "LinkedIn",
+        ogImage: local("1545389336-cf090694435e"),
+        clickCount: 89,
+      },
+    ],
+  },
+  {
     username: "kazuki.dj",
     bio: "House / Techno · Tokyo-based",
     theme: "neon",
