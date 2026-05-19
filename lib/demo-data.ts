@@ -262,14 +262,24 @@ function buildBrowsers(total: number): BrowserClick[] {
 }
 
 function buildBots(total: number): BotClick[] {
+  // Mix of link-unfurlers (the bulk for a Korean creator: KakaoTalk-Scrap dominates) plus the
+  // SEO/crawler tail you'd actually see on a public link (Googlebot, Bingbot, Yeti, SemrushBot,
+  // AhrefsBot). Numbers are seeded percentages of the bot bucket; the long tail intentionally
+  // includes single-digit entries so the BreakdownList shows the "lots of small ones" pattern
+  // that mirrors a real link's bots section.
   return [
-    { bot: "KakaoTalk-Scrap", count: Math.round(total * 0.42) },
-    { bot: "Twitterbot", count: Math.round(total * 0.18) },
-    { bot: "Slackbot-LinkExpanding", count: Math.round(total * 0.14) },
-    { bot: "Discordbot", count: Math.round(total * 0.09) },
+    { bot: "KakaoTalk-Scrap", count: Math.round(total * 0.34) },
+    { bot: "Twitterbot", count: Math.round(total * 0.15) },
+    { bot: "Slackbot-LinkExpanding", count: Math.round(total * 0.11) },
+    { bot: "Discordbot", count: Math.round(total * 0.08) },
     { bot: "facebookexternalhit", count: Math.round(total * 0.07) },
     { bot: "Googlebot", count: Math.round(total * 0.06) },
+    { bot: "Yeti (NaverBot)", count: Math.round(total * 0.05) },
     { bot: "Bingbot", count: Math.round(total * 0.04) },
+    { bot: "SemrushBot", count: Math.round(total * 0.03) },
+    { bot: "AhrefsBot", count: Math.round(total * 0.03) },
+    { bot: "LinkedInBot", count: Math.round(total * 0.02) },
+    { bot: "Applebot", count: Math.round(total * 0.02) },
   ];
 }
 
@@ -355,43 +365,101 @@ function buildCountries(total: number): CountryClick[] {
 }
 
 function buildRegions(total: number): RegionClick[] {
+  // KR dominates (~60% of human clicks via countryClicks). Spread it across the realistic
+  // top-N administrative regions so the BreakdownList shows a "Seoul + Gyeonggi own half, the
+  // rest is a long tail of metros" pattern instead of a 3-row stub. Tail mixes JP/US/EU/SEA
+  // regions so the section reads as a real audience map, not a Korea-only one.
   return [
-    { region: "Seoul", count: Math.round(total * 0.34) },
-    { region: "Gyeonggi", count: Math.round(total * 0.18) },
-    { region: "Busan", count: Math.round(total * 0.07) },
-    { region: "California", count: Math.round(total * 0.06) },
+    { region: "Seoul", count: Math.round(total * 0.27) },
+    { region: "Gyeonggi", count: Math.round(total * 0.16) },
+    { region: "Busan", count: Math.round(total * 0.06) },
+    { region: "Incheon", count: Math.round(total * 0.04) },
+    { region: "Daegu", count: Math.round(total * 0.03) },
+    { region: "Daejeon", count: Math.round(total * 0.02) },
+    { region: "Gwangju", count: Math.round(total * 0.015) },
+    { region: "Ulsan", count: Math.round(total * 0.01) },
+    { region: "Jeju", count: Math.round(total * 0.008) },
+    { region: "California", count: Math.round(total * 0.05) },
+    { region: "New York", count: Math.round(total * 0.025) },
+    { region: "Washington", count: Math.round(total * 0.015) },
     { region: "Tokyo", count: Math.round(total * 0.05) },
+    { region: "Osaka", count: Math.round(total * 0.02) },
+    { region: "Singapore", count: Math.round(total * 0.04) },
+    { region: "England", count: Math.round(total * 0.02) },
+    { region: "Berlin", count: Math.round(total * 0.015) },
+    { region: "Île-de-France", count: Math.round(total * 0.012) },
+    { region: "Ho Chi Minh", count: Math.round(total * 0.01) },
   ];
 }
 
 function buildCities(total: number): CityClick[] {
+  // City-level breakdown — finer than regions, but the BreakdownList truncates at top 10 so the
+  // ones below the cut are kept for total-share accuracy. KR cities split Seoul/Bundang/Pangyo
+  // (typical creator-audience metros) and include Suwon/Busan/Daegu to anchor the long tail.
   return [
-    { city: "Seoul", count: Math.round(total * 0.34) },
-    { city: "Suwon", count: Math.round(total * 0.08) },
-    { city: "Busan", count: Math.round(total * 0.07) },
-    { city: "San Francisco", count: Math.round(total * 0.05) },
-    { city: "Tokyo", count: Math.round(total * 0.05) },
-    { city: "Singapore", count: Math.round(total * 0.04) },
+    { city: "Seoul", count: Math.round(total * 0.24) },
+    { city: "Bundang", count: Math.round(total * 0.05) },
+    { city: "Pangyo", count: Math.round(total * 0.04) },
+    { city: "Suwon", count: Math.round(total * 0.04) },
+    { city: "Goyang", count: Math.round(total * 0.025) },
+    { city: "Yongin", count: Math.round(total * 0.02) },
+    { city: "Busan", count: Math.round(total * 0.05) },
+    { city: "Incheon", count: Math.round(total * 0.03) },
+    { city: "Daegu", count: Math.round(total * 0.025) },
+    { city: "Daejeon", count: Math.round(total * 0.015) },
+    { city: "Gwangju", count: Math.round(total * 0.012) },
+    { city: "Jeju", count: Math.round(total * 0.008) },
+    { city: "Tokyo", count: Math.round(total * 0.04) },
+    { city: "Osaka", count: Math.round(total * 0.018) },
+    { city: "San Francisco", count: Math.round(total * 0.035) },
+    { city: "New York", count: Math.round(total * 0.022) },
+    { city: "Seattle", count: Math.round(total * 0.014) },
+    { city: "Singapore", count: Math.round(total * 0.035) },
+    { city: "London", count: Math.round(total * 0.018) },
+    { city: "Berlin", count: Math.round(total * 0.014) },
+    { city: "Paris", count: Math.round(total * 0.012) },
+    { city: "Ho Chi Minh City", count: Math.round(total * 0.01) },
   ];
 }
 
 function buildLanguages(total: number): LanguageClick[] {
+  // Accept-Language first item. Korean dominant, English long-tail (US + UK), then JP/CN/TW/EU.
+  // Includes a small "es" + "fr" entry so the locale section shows depth.
   return [
-    { language: "ko", count: Math.round(total * 0.64) },
-    { language: "en", count: Math.round(total * 0.21) },
-    { language: "ja", count: Math.round(total * 0.09) },
-    { language: "zh", count: Math.round(total * 0.03) },
+    { language: "ko", count: Math.round(total * 0.58) },
+    { language: "en-US", count: Math.round(total * 0.14) },
+    { language: "en-GB", count: Math.round(total * 0.04) },
+    { language: "ja", count: Math.round(total * 0.08) },
+    { language: "zh-CN", count: Math.round(total * 0.03) },
+    { language: "zh-TW", count: Math.round(total * 0.015) },
     { language: "de", count: Math.round(total * 0.02) },
+    { language: "fr", count: Math.round(total * 0.015) },
+    { language: "es", count: Math.round(total * 0.01) },
+    { language: "vi", count: Math.round(total * 0.01) },
   ];
 }
 
 function buildAsns(total: number): AsnClick[] {
+  // KR ISP tier (KT / SKB / LG U+) makes up the bulk — these are the consumer ISPs that own
+  // residential / mobile traffic in Korea. International tail covers cloud-egress (Cloudflare,
+  // Akamai) which on a real link mean either VPN users or scraping/preview fetches, plus US/JP
+  // consumer ISPs (Comcast, KDDI, NTT). datacenterClicks (separate field on LinkStats) shows up
+  // in the section description, so this list is purely the per-org breakdown.
   return [
-    { asn: 4766, organization: "Korea Telecom", count: Math.round(total * 0.31) },
-    { asn: 9318, organization: "SK Broadband", count: Math.round(total * 0.21) },
-    { asn: 17858, organization: "LG U+", count: Math.round(total * 0.14) },
-    { asn: 7018, organization: "AT&T", count: Math.round(total * 0.06) },
-    { asn: 2516, organization: "KDDI", count: Math.round(total * 0.05) },
+    { asn: 4766, organization: "Korea Telecom (KT)", count: Math.round(total * 0.26) },
+    { asn: 9318, organization: "SK Broadband", count: Math.round(total * 0.18) },
+    { asn: 17858, organization: "LG U+", count: Math.round(total * 0.12) },
+    { asn: 45996, organization: "SK Telecom Mobile", count: Math.round(total * 0.07) },
+    { asn: 38099, organization: "KT Mobile", count: Math.round(total * 0.05) },
+    { asn: 7018, organization: "AT&T", count: Math.round(total * 0.04) },
+    { asn: 7922, organization: "Comcast", count: Math.round(total * 0.025) },
+    { asn: 2516, organization: "KDDI", count: Math.round(total * 0.035) },
+    { asn: 4713, organization: "NTT Communications", count: Math.round(total * 0.02) },
+    { asn: 13335, organization: "Cloudflare", count: Math.round(total * 0.025) },
+    { asn: 16509, organization: "Amazon AWS", count: Math.round(total * 0.018) },
+    { asn: 15169, organization: "Google", count: Math.round(total * 0.014) },
+    { asn: 20940, organization: "Akamai", count: Math.round(total * 0.012) },
+    { asn: 3320, organization: "Deutsche Telekom", count: Math.round(total * 0.01) },
   ];
 }
 

@@ -764,7 +764,13 @@
     "sampleCta": "Make my link",
     "settingsNotice": {
       "title": "Settings unlock after sign-up",
-      "desc": "A/B destinations and webhooks are managed per-link. After signing up, this exact tab opens on your own link's stats page."
+      "desc": "A/B destinations and webhooks are managed per-link. After signing up, this exact tab opens on your own link's stats page.",
+      "cta": "Make my link"
+    },
+    "settingsDemo": {
+      "badge": "Demo",
+      "lockedToast": "This is a demo preview. After signing up you can register and edit these on your own link.",
+      "payloadPreview": "Preview the payload that gets sent"
     }
   },
   "publicProfile": {
