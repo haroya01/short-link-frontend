@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ShortenForm } from "@/components/shorten-form";
 import { ResultCard } from "@/components/result-card";
@@ -148,6 +148,18 @@ export default function HomePage() {
               </div>
             ) : null}
           </div>
+        </div>
+
+        {/* Scroll cue — animated chevron + label below the fold-anchored hero so first-time
+            visitors see that the page continues past the input. The element is `absolute` inside
+            the hero, so it scrolls off with the hero itself once the user starts moving — no
+            JS to fade it out. `motion-safe:animate-bounce` opts out for prefers-reduced-motion. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-4 hidden flex-col items-center gap-0.5 text-[11px] font-medium text-slate-400 sm:flex"
+        >
+          <span>{t("scrollHint")}</span>
+          <ChevronDown className="h-4 w-4 motion-safe:animate-bounce" />
         </div>
       </section>
 
