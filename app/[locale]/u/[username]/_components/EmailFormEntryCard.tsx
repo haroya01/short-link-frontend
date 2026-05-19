@@ -61,6 +61,10 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
           </p>
         ) : (
           <>
+            {/* Input + submit share the same h-10 rounded-xl shell so they read as one paired
+                control (matches the Primary CTA scale in AGENTS.md §1 — h-10 rounded-xl text-[13px]).
+                Earlier rounded-md / no explicit height made the submit look like a generic ghost
+                button next to the input, breaking the Action archetype's voice. */}
             <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-2 sm:flex-row">
               <input
                 type="email"
@@ -70,12 +74,12 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
                 placeholder={config.placeholder ?? t("defaultPlaceholder")}
                 maxLength={254}
                 disabled={status === "submitting"}
-                className={`flex-1 rounded-md border bg-white/90 px-3 py-2 text-sm text-slate-900 outline-none ring-accent-500 placeholder:text-slate-400 focus:ring-2 ${colors.cardBorder}`}
+                className={`h-10 flex-1 rounded-xl border bg-white/90 px-3 text-sm text-slate-900 outline-none ring-accent-500 placeholder:text-slate-400 focus:ring-2 ${colors.cardBorder}`}
               />
               <button
                 type="submit"
                 disabled={status === "submitting"}
-                className={`rounded-md px-3 py-2 text-[13px] font-medium transition disabled:opacity-60 ${colors.ctaPrimary}`}
+                className={`h-10 rounded-xl px-4 text-[13px] font-medium transition active:scale-[0.98] disabled:opacity-60 ${colors.ctaPrimary}`}
               >
                 {status === "submitting" ? t("submitting") : t("submit")}
               </button>
