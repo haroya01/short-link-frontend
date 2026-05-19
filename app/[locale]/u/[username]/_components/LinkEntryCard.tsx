@@ -51,7 +51,7 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
           />
           {entry.ogTitle && (
             <div className="px-4 py-3">
-              <span className={`block truncate text-sm font-medium ${colors.primary}`}>
+              <span className={`block truncate text-[15px] font-semibold tracking-headline ${colors.primary}`}>
                 {entry.ogTitle}
               </span>
             </div>
@@ -127,7 +127,7 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
           <div className="flex items-center gap-3 px-4 py-3">
             <Favicon url={originalUrl} size={20} className="shrink-0" />
             <span className="min-w-0 flex-1">
-              <span className={`block truncate text-sm font-medium ${colors.primary}`}>
+              <span className={`block truncate text-[15px] font-semibold ${colors.primary}`}>
                 {entry.ogTitle ?? "YouTube"}
               </span>
               <span className={`block truncate text-[11px] ${colors.muted}`}>youtube.com</span>

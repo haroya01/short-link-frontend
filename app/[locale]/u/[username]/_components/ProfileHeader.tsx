@@ -44,8 +44,8 @@ export function ProfileHeader({
       )}
       {avatarUrl ? (
         <div
-          className={`h-20 w-20 overflow-hidden rounded-full shadow-sm ring-4 ${
-            bannerUrl ? "-mt-12 ring-white/95" : "ring-transparent"
+          className={`h-24 w-24 overflow-hidden rounded-full shadow-sm ring-4 ${
+            bannerUrl ? "-mt-14 ring-white/95" : "ring-transparent"
           }`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -54,16 +54,29 @@ export function ProfileHeader({
       ) : (
         <div
           className={
-            "grid h-20 w-20 place-items-center rounded-full text-2xl font-semibold shadow-sm ring-4 " +
-            (bannerUrl ? "-mt-12 ring-white/95 " : "ring-transparent ") +
+            "grid h-24 w-24 place-items-center rounded-full text-[28px] font-semibold shadow-sm ring-4 " +
+            (bannerUrl ? "-mt-14 ring-white/95 " : "ring-transparent ") +
             `${colors.avatar} ${colors.avatarText}`
           }
         >
           {initial}
         </div>
       )}
-      <p className={`text-sm font-medium ${colors.primary}`}>@{username}</p>
-      {bio && <p className={`text-sm leading-relaxed ${colors.muted}`}>{bio}</p>}
+      {/* Handle scale unified with dashboard / stats pages — 18 px semibold with tracking-headline
+          is the brand voice for the page's primary identifier. Previously 14 px regular which
+          read as caption-weight on a Linktree-equivalent landing page. */}
+      <p
+        className={`text-[18px] font-semibold leading-tight tracking-headline ${colors.primary}`}
+      >
+        @{username}
+      </p>
+      {bio && (
+        <p
+          className={`max-w-[28ch] text-[15px] leading-relaxed ${colors.muted}`}
+        >
+          {bio}
+        </p>
+      )}
     </div>
   );
 }
