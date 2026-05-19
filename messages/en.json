@@ -80,7 +80,7 @@
       },
       "profile": {
         "title": "Public profile",
-        "desc": "kurl.me/u/'{'your-id'}' — the one link for your Instagram bio."
+        "desc": "One page with every link — perfect for Instagram bio, Twitter, anywhere."
       },
       "domain": {
         "title": "Your own domain",
@@ -846,6 +846,7 @@
   },
   "qr": {
     "title": "qr code",
+    "triggerAria": "Open QR code",
     "copyUrl": "Copy URL",
     "copied": "Copied",
     "downloadPng": "Download PNG",
