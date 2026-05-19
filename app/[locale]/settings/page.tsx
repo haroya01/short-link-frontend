@@ -94,7 +94,9 @@ export default function SettingsPage() {
 
   return (
     <div className="container max-w-2xl space-y-6 py-12">
-      <h1 className="text-2xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
+      <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        {t("title")}
+      </h1>
 
       <SettingsTabs t={t}>
         {(tab) => (
@@ -321,13 +323,13 @@ function Section({
   return (
     <section
       className={
-        "rounded-lg border bg-white p-5 " +
+        "rounded-2xl border bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] " +
         (variant === "danger" ? "border-red-200" : "border-slate-200")
       }
     >
       <h2
         className={
-          "text-sm font-semibold tracking-headline " +
+          "text-[15px] font-semibold tracking-headline " +
           (variant === "danger" ? "text-red-700" : "text-slate-900")
         }
       >

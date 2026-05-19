@@ -83,8 +83,10 @@ export default function StatsPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-xl font-semibold tracking-headline text-slate-900">{t("loginRequired")}</h1>
-        <p className="mt-2 text-sm text-slate-500">{t("loginRequiredDesc")}</p>
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+          {t("loginRequired")}
+        </h1>
+        <p className="mt-2 text-[15px] leading-relaxed text-slate-500">{t("loginRequiredDesc")}</p>
         <Link href="/login" className="mt-6 inline-block">
           <Button>{t("backToDashboard")}</Button>
         </Link>

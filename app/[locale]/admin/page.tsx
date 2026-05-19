@@ -89,10 +89,10 @@ export default function AdminPage() {
         <Skeleton className="h-7 w-48" />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-lg" />
+            <Skeleton key={i} className="h-20 rounded-2xl" />
           ))}
         </div>
-        <Skeleton className="h-64 rounded-lg" />
+        <Skeleton className="h-64 rounded-2xl" />
       </div>
     );
   }
@@ -115,11 +115,11 @@ export default function AdminPage() {
         <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500">
           {t("label")}
         </p>
-        <h2 className="mt-1 text-2xl font-semibold tracking-headline text-slate-900">{t("title")}</h2>
+        <h2 className="mt-1 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">{t("title")}</h2>
         <p className="mt-1 text-sm text-slate-500">{t("subtitle")}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-3 lg:grid-cols-6">
         <Kpi
           label={t("kpi.users")}
           value={formatNumber(data.totals?.users ?? 0)}
@@ -178,12 +178,15 @@ export default function AdminPage() {
                 axisLine={false}
                 allowDecimals={false}
               />
-              <Tooltip contentStyle={{ borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 12 }} />
+              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0", fontSize: 12 }} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
+              {/* Three series share one accent — clicks (the lead metric) carries brand-600,
+                  links + signups lean on slate so the chart reads as brand-anchored rather than
+                  rainbow-coded. Distinguishable by hue weight, not unrelated palettes. */}
               <Line
                 type="monotone"
                 dataKey="signups"
-                stroke="#0ea5e9"
+                stroke="#94a3b8"
                 strokeWidth={1.5}
                 dot={false}
                 name={t("trend.signups")}
@@ -191,7 +194,7 @@ export default function AdminPage() {
               <Line
                 type="monotone"
                 dataKey="links"
-                stroke="#f59e0b"
+                stroke="#334155"
                 strokeWidth={1.5}
                 dot={false}
                 name={t("trend.links")}
@@ -229,7 +232,7 @@ export default function AdminPage() {
           title={t("section.redirectPerf.title")}
           description={t("section.redirectPerf.desc")}
         >
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 sm:grid-cols-4 lg:grid-cols-7">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-4 lg:grid-cols-7">
             <Kpi
               label={t("section.redirectPerf.p50")}
               value={`${(health.redirect.p50Millis ?? 0).toFixed(1)}ms`}
