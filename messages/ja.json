@@ -1033,19 +1033,19 @@
     "disclaimer": "比較対象: bit.ly / short.io / rebrandly / TinyURL の無料プラン (2026 時点)。",
     "rows": {
       "abtest": {
-        "label": "A/B 振り分け (重み付けルーティング)",
-        "note": "1つの短縮 URL → 複数の遷移先に重みで分散。通常 enterprise プラン。"
+        "label": "A/B 振り分け — 1 リンクに遷移先を複数",
+        "note": "各遷移先に比率を設定。クリックが比率どおりに自動分散。通常 enterprise プラン。"
       },
       "geoRouting": {
         "label": "国別の遷移先",
         "note": "訪問者の国に合わせて自動的に最適なページへ。無料で提供している短縮はほぼ無い。"
       },
       "webhooks": {
-        "label": "HMAC 署名 Webhook",
-        "note": "クリック毎に SHA-256 署名 POST + コスト削減オプション (バッチ / サンプル / quota)。"
+        "label": "クリック自動通知 (Slack · Discord · 自前サーバー)",
+        "note": "クリックごとに自分の endpoint へ POST。署名付きで安心。"
       },
       "realtime": {
-        "label": "ライブクリックフィード (SSE)",
+        "label": "ライブクリックフィード",
         "note": "統計ページでクリックがリアルタイムに流れる。同カテゴリでは珍しい。"
       },
       "insights": {
@@ -1053,16 +1053,16 @@
         "note": "ピーク時間 / 再訪率 / Half-life / Velocity — 設定なしで即可視化。"
       },
       "asnTracking": {
-        "label": "ASN / データセンター IP 分類",
-        "note": "クラウド (AWS/GCP/Azure) からのクリックを自動でボット判定 — kurl 独自。"
+        "label": "データセンタークリックを自動分離",
+        "note": "クラウド (AWS / GCP / Azure) からのクリックを自動でボット判定 — kurl 独自。"
       },
       "botDefense": {
         "label": "多層のボット対策",
-        "note": "Safe Browsing + 匿名短縮の PoW + ASN 自動分類。"
+        "note": "Safe Browsing + 匿名短縮チャレンジ + データセンター自動分類。"
       },
       "twofa": {
-        "label": "2FA TOTP + リカバリコード",
-        "note": "Google Authenticator + 1回限りリカバリコード 10 件。他社では有料の場合が多い。"
+        "label": "2 段階認証 + リカバリコード",
+        "note": "認証アプリ + 1 回限りリカバリコード 10 件。他社では有料の場合が多い。"
       }
     }
   },
