@@ -115,6 +115,8 @@ export type UtmMediumClick = { medium: string; count: number };
 export type UtmContentClick = { content: string; count: number };
 export type SourceChannelClick = { source: string; count: number };
 
+export type WebhookFormat = "GENERIC" | "DISCORD" | "SLACK";
+
 export type WebhookSummary = {
   id: number;
   url: string;
@@ -132,6 +134,7 @@ export type WebhookSummary = {
   autoDisabledReason: string | null;
   referrerHostFilter: string | null;
   utmSourceFilter: string | null;
+  format: WebhookFormat;
 };
 
 export type WebhookConfigPatch = {
@@ -149,6 +152,7 @@ export type IssuedWebhook = {
   secret: string;
   name: string | null;
   createdAt: string;
+  format: WebhookFormat;
 };
 
 export type DestinationSummary = {
