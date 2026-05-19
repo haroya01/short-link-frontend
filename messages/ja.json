@@ -1273,6 +1273,7 @@
       "featuredEmptyTitle": "公開フィードが空です",
       "featuredEmptyHasOthers": "上の '追加' フォームで新規作成するか、下の '他のリンク' ({count} 件) から選んでください。",
       "addBlockMenu": "追加",
+      "addMoreBlocks": "その他のブロック",
       "remove": "削除",
       "highlight": "ヒーローカードとして強調 (1 つのみ)",
       "labelEdit": "ラベルを編集 (訪問者に表示)",

@@ -1187,6 +1187,7 @@
       "featuredEmptyTitle": "공개할 링크가 비어있어요",
       "featuredEmptyHasOthers": "위 '링크 추가' 폼으로 새로 만들거나, 아래 '다른 내 링크' ({count}개) 에서 선택해보세요.",
       "addBlockMenu": "추가",
+      "addMoreBlocks": "그 외 블록",
       "remove": "제거",
       "highlight": "큰 카드로 강조 (1 개만)",
       "labelEdit": "라벨 수정 (방문자에게 보이는 이름)",

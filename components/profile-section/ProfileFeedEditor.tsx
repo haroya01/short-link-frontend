@@ -321,21 +321,28 @@ function AddMenu({
         {t("addBlockMenu")}
       </button>
       {open && (
+        // Two-group menu: the three blocks most users reach for first (Header / Image / Embed)
+        // sit on top so the menu doesn't read as an 11-item paralysis grid. The other eight
+        // are tucked below a small "More blocks" separator — still one tap away, but visually
+        // demoted.
         <div
           role="menu"
-          className="absolute right-0 top-full z-20 mt-1 w-40 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg"
+          className="absolute right-0 top-full z-20 mt-1 w-44 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg"
         >
           <MenuItem onClick={() => fire(onAddText)} icon={<Type className="h-3.5 w-3.5" />}>
             {t("addHeader")}
-          </MenuItem>
-          <MenuItem onClick={() => fire(onAddDivider)} icon={<Minus className="h-3.5 w-3.5" />}>
-            {t("addDivider")}
           </MenuItem>
           <MenuItem onClick={() => fire(onAddImage)} icon={<ImageIcon className="h-3.5 w-3.5" />}>
             {t("addImage")}
           </MenuItem>
           <MenuItem onClick={() => fire(onAddEmbed)} icon={<Play className="h-3.5 w-3.5" />}>
             {t("addEmbed")}
+          </MenuItem>
+          <div className="border-t border-slate-100 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-slate-400">
+            {t("addMoreBlocks")}
+          </div>
+          <MenuItem onClick={() => fire(onAddDivider)} icon={<Minus className="h-3.5 w-3.5" />}>
+            {t("addDivider")}
           </MenuItem>
           <MenuItem
             onClick={() => fire(onAddContactCard)}
