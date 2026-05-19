@@ -8,25 +8,13 @@
 @import "devices.css/dist/devices.min.css";
 
 /*
- * devices.css ships {@code .device-screen { background-color: #000 }} to simulate the bare phone
- * screen. The ProfilePreview / ProfileShowcase puts the actual page colors on the same element
- * via a Tailwind {@code bg-*} utility.
- *
- * <p>Two layered problems:
- *   1. devices.css and Tailwind utility have the same selector specificity (0,1,0), and
- *      devices.css gets emitted later in the cascade — so {@code .device-screen} wins and
- *      paints black, hiding the theme color.
- *   2. The earlier fix made the screen {@code transparent}, but devices.css ALSO paints
- *      {@code .device-frame} as {@code #010101} (the phone bezel). With the screen transparent
- *      the bezel showed through and the light/mono themes still read as black.
- *
- * <p>Fix: use {@code :where()} so this rule's specificity drops to 0 — any Tailwind
- * {@code bg-*} utility on {@code .device-screen} now beats it. The transparent default still
- * stands in for cases where no bg utility is applied. Dark/neon themes look unchanged.
+ * devices.css ships {@code .device .device-screen { background: #000 }} — a descendant selector
+ * with specificity (0,2,0), higher than Tailwind utilities (0,1,0). Previous attempts here
+ * (`.device-screen { transparent }` and `:where(.device-screen) { transparent }`) both lost the
+ * cascade. The real fix lives in {@code ShowcaseCard} / {@code ProfilePreview}: inline
+ * {@code style.backgroundColor} (specificity 1,0,0,0) beats the descendant selector and the
+ * theme's {@code pageBgHex} actually paints. No CSS rule is needed here anymore.
  */
-:where(.device-screen) {
-  background-color: transparent;
-}
 
 :root {
   color-scheme: light;

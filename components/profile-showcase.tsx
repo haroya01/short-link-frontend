@@ -169,9 +169,19 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
                 "device-screen pointer-events-none overflow-y-auto showcase-shimmer",
                 colors.page,
               )}
-              // --card-opacity 0.95 lifts the foil layers to near-full brightness so the
-              // animated shine drift reads clearly even at the marquee's reduced scale.
-              style={{ ["--card-opacity" as string]: "0.95" }}
+              style={{
+                // --card-opacity 0.95 lifts the foil layers to near-full brightness so the
+                // animated shine drift reads clearly even at the marquee's reduced scale.
+                ["--card-opacity" as string]: "0.95",
+                // Inline backgroundColor beats devices.css's `.device .device-screen {
+                // background: #000 }` (0,2,0). Without it light/mono themes showed black —
+                // the page-color utility (0,1,0) wasn't specific enough to overturn the
+                // default. Gradient themes leave pageBgHex undefined so their bg utility
+                // (which paints a gradient, not a single color) keeps working unchanged.
+                ...(colors.pageBgHex
+                  ? { backgroundColor: colors.pageBgHex }
+                  : undefined),
+              }}
             >
               <ProfilePreviewBody profile={profile} colors={colors} />
             </div>
