@@ -19,16 +19,8 @@ import { cn } from "@/lib/utils";
  * fade, same {@code -mt-12} container overlap — so what visitors see in the showcase is what
  * they'd see if they viewed the real profile page on their phone.
  *
- * Two pieces of "the carousel doesn't get the real interactive treatment" handled here:
- *
- *  1. Carousel is Embla — touch-swipe on mobile, drag on desktop, autoplay that pauses on
- *     hover so users can read a card without it sliding past.
- *  2. Foil shimmer on {@link ContactCardEntry} normally rides on pointer-move; inside the
- *     marquee the screen is {@code pointer-events:none} so the cards would sit dim and flat.
- *     The {@code showcase-foil-drift} keyframes below animate the four CSS vars the foil
- *     shader reads ({@code --background-x/y}, {@code --pointer-x/y}) so the holographic
- *     pattern keeps moving even with no pointer — the showcase ends up looking as alive as
- *     the real card on a real device tilt.
+ * Carousel is Embla — touch-swipe on mobile, drag on desktop, autoplay that pauses on hover so
+ * users can read a card without it sliding past.
  */
 const DEVICE_SCALE = 0.8;
 const DEVICE_NATIVE_W = 428;
@@ -68,79 +60,6 @@ export function ProfileShowcase() {
           ))}
         </div>
       </div>
-
-      {/* @property declarations are what make the CSS vars animatable — without them the
-          browser treats them as opaque strings and skips interpolation, so the keyframes
-          would snap between values instead of drifting. Chrome 85+, Safari 16.4+, FF 128+
-          all support this. Older browsers fall back to the static `--card-opacity` bump
-          set inline on the screen below, which already shows the foil pattern; just not
-          moving. */}
-      <style jsx global>{`
-        @property --background-x {
-          syntax: "<percentage>";
-          initial-value: 50%;
-          inherits: true;
-        }
-        @property --background-y {
-          syntax: "<percentage>";
-          initial-value: 50%;
-          inherits: true;
-        }
-        @property --pointer-x {
-          syntax: "<percentage>";
-          initial-value: 50%;
-          inherits: true;
-        }
-        @property --pointer-y {
-          syntax: "<percentage>";
-          initial-value: 50%;
-          inherits: true;
-        }
-        @keyframes showcase-foil-drift {
-          0% {
-            --background-x: 20%;
-            --background-y: 30%;
-            --pointer-x: 30%;
-            --pointer-y: 70%;
-          }
-          25% {
-            --background-x: 80%;
-            --background-y: 30%;
-            --pointer-x: 75%;
-            --pointer-y: 35%;
-          }
-          50% {
-            --background-x: 75%;
-            --background-y: 75%;
-            --pointer-x: 70%;
-            --pointer-y: 80%;
-          }
-          75% {
-            --background-x: 30%;
-            --background-y: 70%;
-            --pointer-x: 25%;
-            --pointer-y: 55%;
-          }
-          100% {
-            --background-x: 20%;
-            --background-y: 30%;
-            --pointer-x: 30%;
-            --pointer-y: 70%;
-          }
-        }
-        .showcase-shimmer {
-          animation: showcase-foil-drift 9s ease-in-out infinite;
-        }
-        /* Disable shimmer on mobile + reduce-motion. The 9s keyframe animates four custom
-           properties through @property interpolation across N concurrent slides — on phones
-           that compounds into noticeable jank during embla's loop reset (slide N → slide 1
-           transform jump). Desktop GPUs handle it fine, so keep it there. */
-        @media (max-width: 768px), (prefers-reduced-motion: reduce) {
-          .showcase-shimmer {
-            animation: none;
-          }
-        }
-      `}</style>
     </div>
   );
 }
@@ -152,6 +71,14 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
       href={`/showcase/${profile.username}`}
       className="group mr-6 block shrink-0 transition-transform hover:-translate-y-1"
       aria-label={`@${profile.username} — ${demoCta}`}
+      // Promote each slide to its own compositor layer + clip paint to the slide's box.
+      // Without this, embla's translateX on the parent flex track forces every slide's
+      // ContactCardEntry `filter:` and per-card `backdrop-blur` to repaint as the track
+      // moves — with 9 slides (× embla loop clones) that compounds into the jank the user
+      // sees. `contain: layout paint` says "nothing inside this slide affects layout/paint
+      // outside it", which lets the browser keep the offscreen slides as cached layers and
+      // composite them cheaply during the swipe.
+      style={{ contain: "layout paint", transform: "translateZ(0)" }}
     >
       <div
         style={{
@@ -166,22 +93,19 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
           <div className="device-frame">
             <div
               className={cn(
-                "device-screen pointer-events-none overflow-y-auto showcase-shimmer",
+                "device-screen pointer-events-none overflow-y-auto",
                 colors.page,
               )}
-              style={{
-                // --card-opacity 0.95 lifts the foil layers to near-full brightness so the
-                // animated shine drift reads clearly even at the marquee's reduced scale.
-                ["--card-opacity" as string]: "0.95",
+              style={
                 // Inline backgroundColor beats devices.css's `.device .device-screen {
                 // background: #000 }` (0,2,0). Without it light/mono themes showed black —
                 // the page-color utility (0,1,0) wasn't specific enough to overturn the
                 // default. Gradient themes leave pageBgHex undefined so their bg utility
                 // (which paints a gradient, not a single color) keeps working unchanged.
-                ...(colors.pageBgHex
+                colors.pageBgHex
                   ? { backgroundColor: colors.pageBgHex }
-                  : undefined),
-              }}
+                  : undefined
+              }
             >
               <ProfilePreviewBody profile={profile} colors={colors} />
             </div>
