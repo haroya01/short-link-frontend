@@ -62,7 +62,7 @@ function DemoSettingsBody() {
 function DemoSettingsBanner() {
   const t = useTranslations("demo.settingsNotice");
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-accent-200 bg-accent-50/60 px-4 py-3 text-[12px]">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 px-4 py-3 text-[12px]">
       <div className="flex items-center gap-2.5 text-accent-800">
         <Sparkles className="h-3.5 w-3.5 shrink-0" />
         <div>
