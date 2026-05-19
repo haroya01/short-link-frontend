@@ -43,12 +43,21 @@ h1, h2, h3, p {
   text-wrap: pretty;
 }
 
-/* CJK: don't split mid-phrase. Browsers break Japanese/Korean anywhere by default,
-   which produces awkward single-character last lines like "이." or "で。" */
-:lang(ko) h1, :lang(ko) h2, :lang(ko) h3, :lang(ko) p, :lang(ko) li, :lang(ko) span,
-:lang(ja) h1, :lang(ja) h2, :lang(ja) h3, :lang(ja) p, :lang(ja) li, :lang(ja) span {
+/* CJK typesetting:
+ *  1. `word-break: keep-all` keeps phrases (eojeol / bunsetsu) intact instead of breaking on every
+ *     character — fixes "이." / "で。" style orphan tails.
+ *  2. `overflow-wrap: break-word` (not `anywhere`) is the softer fallback for the few cases that
+ *     still don't fit — `anywhere` was so aggressive it overrode (1) and broke mid-phrase.
+ *  3. `line-break: strict` is the actual fix for the lone `。` / `、` / closing-paren on the next
+ *     line: it applies the Japanese Layout Requirements line-start prohibition (kinsoku shori).
+ *     Modern browsers all support it; older fallbacks just see normal CJK break behaviour.
+ * Applies broadly because the bug surfaces on any text node a CJK string ends up in (span / div /
+ * a / button labels, etc) — explicit element lists kept missing one.
+ */
+:lang(ko), :lang(ja), :lang(zh) {
   word-break: keep-all;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  line-break: strict;
 }
 
 /* Bobbing scroll cue on /showcase — anchors the CTA to the carousel below so visitors who land
