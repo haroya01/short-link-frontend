@@ -723,8 +723,17 @@
       },
       "routeMetrics": {
         "title": "Per-route traffic & latency",
-        "desc": "Requests, p50/p95/p99 (ms), and 5xx rate grouped by URI/method. Cumulative since instance start. Click column headers to sort.",
+        "desc": "Requests, p95/p99 (ms), and 5xx rate grouped by URI/method. Pick a window for recent slices (backed by an in-memory minute-by-minute ring) or 'all' for the cumulative view since process start. Click ▶ on a row to see its status code distribution.",
         "empty": "No traffic recorded yet",
+        "expandStatusDist": "Show status code distribution",
+        "collapseStatusDist": "Hide status code distribution",
+        "statusDist": "Status distribution:",
+        "window": {
+          "1h": "1h",
+          "24h": "24h",
+          "7d": "7d",
+          "all": "Since boot"
+        },
         "cols": {
           "uri": "URI",
           "method": "Method",
