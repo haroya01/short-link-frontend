@@ -37,12 +37,23 @@ const config: Config = {
           "sans-serif",
         ],
         mono: [
+          "var(--font-mono)",
           "ui-monospace",
           "SF Mono",
           "JetBrains Mono",
           "Menlo",
           "Consolas",
           "monospace",
+        ],
+        /*
+         * Display serif slot — opt-in via `font-display` for hero headlines / signature blocks.
+         * Stays out of the default `font-sans` cascade so existing copy keeps Pretendard.
+         */
+        display: [
+          "var(--font-display-serif)",
+          "ui-serif",
+          "Georgia",
+          "serif",
         ],
       },
       backgroundImage: {
