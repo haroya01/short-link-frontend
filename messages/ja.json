@@ -80,7 +80,7 @@
       },
       "profile": {
         "title": "公開プロフィール",
-        "desc": "kurl.me/u/'{'your-id'}' — Instagram bio に貼る 1 ページ。"
+        "desc": "リンクをまとめた 1 ページ。Instagram bio や Twitter にそのまま貼れます。"
       },
       "domain": {
         "title": "自分のドメイン",
@@ -842,6 +842,7 @@
   },
   "qr": {
     "title": "qr code",
+    "triggerAria": "QR コードを開く",
     "copyUrl": "URLコピー",
     "copied": "コピー済み",
     "downloadPng": "PNGダウンロード",

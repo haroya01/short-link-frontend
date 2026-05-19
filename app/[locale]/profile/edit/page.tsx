@@ -70,6 +70,7 @@ export default function ProfileEditPage() {
       {me?.username && (
         <ProfilePublicUrlBanner
           url={`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://kurl.me"}/u/${me.username}`}
+          username={me.username}
         />
       )}
 
