@@ -649,8 +649,17 @@
       },
       "routeMetrics": {
         "title": "라우트별 트래픽 · 지연",
-        "desc": "URI/method 기준 요청 수, p50/p95/p99(ms), 5xx 비율. 인스턴스 시작 이후 누적치. 컬럼 헤더로 정렬.",
+        "desc": "URI/method 기준 요청 수, p95/p99(ms), 5xx 비율. 분 단위 in-memory ring 으로 최근 윈도우 (1h / 24h / 7d) 슬라이스 가능, 'all' 은 인스턴스 시작 이후 누적치. ▶ 클릭으로 status code 분포.",
         "empty": "수집된 트래픽이 아직 없어요",
+        "expandStatusDist": "Status code 분포 보기",
+        "collapseStatusDist": "Status code 분포 숨기기",
+        "statusDist": "Status 분포:",
+        "window": {
+          "1h": "1시간",
+          "24h": "24시간",
+          "7d": "7일",
+          "all": "시작 이후"
+        },
         "cols": {
           "uri": "URI",
           "method": "Method",

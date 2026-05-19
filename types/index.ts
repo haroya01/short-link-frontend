@@ -724,7 +724,10 @@ export type AdminRouteMetric = {
   p99Millis: number;
   errorRate: number;
   error5xxCount: number;
+  statusDistribution: Record<string, number>;
 };
+
+export type AdminRouteMetricsWindow = "all" | "1h" | "24h" | "7d";
 
 export type AdminOverview = {
   totals: { users: number; links: number; clicks: number };
