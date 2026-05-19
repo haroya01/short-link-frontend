@@ -1037,19 +1037,19 @@
     "disclaimer": "Compared against bit.ly / short.io / rebrandly / TinyURL free tiers (2026).",
     "rows": {
       "abtest": {
-        "label": "A/B split (weighted routing)",
-        "note": "One short URL → multiple destinations by weight. Usually enterprise-only."
+        "label": "A/B split — one link, several destinations",
+        "note": "Route a percentage of clicks to each destination. Usually enterprise-only."
       },
       "geoRouting": {
         "label": "Per-country destinations",
         "note": "Auto-route visitors to a page tailored to their country. Almost no free shortener offers this."
       },
       "webhooks": {
-        "label": "HMAC-signed webhooks",
-        "note": "SHA-256 signed POST per click + cost controls (batch / sample / quota)."
+        "label": "Click notifications (Slack / Discord / your server)",
+        "note": "Every click POSTs to your endpoint, signed so you can trust the payload."
       },
       "realtime": {
-        "label": "Live click feed (SSE)",
+        "label": "Live click feed",
         "note": "Watch clicks arrive on the stats page in real time. Rare in this category."
       },
       "insights": {
@@ -1057,16 +1057,16 @@
         "note": "Peak hour, return rate, half-life, velocity — surfaced without setup."
       },
       "asnTracking": {
-        "label": "ASN / datacenter IP classification",
-        "note": "Auto-flags cloud egress (AWS/GCP/Azure) as bots — kurl-specific."
+        "label": "Auto-separate datacenter clicks",
+        "note": "Cloud egress (AWS / GCP / Azure) auto-flagged as bot — kurl-specific."
       },
       "botDefense": {
         "label": "Layered bot defence",
-        "note": "Safe Browsing + anonymous-shorten PoW + ASN auto-classification."
+        "note": "Safe Browsing + anonymous-shorten challenge + datacenter auto-classification."
       },
       "twofa": {
-        "label": "2FA TOTP + recovery codes",
-        "note": "Google Authenticator + 10 single-use recovery codes. Often paid elsewhere."
+        "label": "Two-step verification + recovery codes",
+        "note": "Authenticator app + 10 single-use recovery codes. Often paid elsewhere."
       }
     }
   },
