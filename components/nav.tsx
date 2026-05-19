@@ -267,7 +267,7 @@ function DesktopNav({
 }
 
 /*
- * Mobile drawer — slides in from the right with a backdrop. Single render path (CSS transform
+ * Mobile drawer — slides in from the left with a backdrop. Single render path (CSS transform
  * driven) so we can keep the drawer in the DOM and animate open/close without unmount jitter.
  * Body scroll is locked while open; Escape and outside-click both dismiss.
  */
@@ -302,8 +302,8 @@ function MobileDrawer({
         aria-modal="true"
         aria-label="navigation"
         className={cn(
-          "fixed right-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-l border-slate-200 bg-white shadow-xl transition-transform duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)] sm:hidden",
-          open ? "translate-x-0" : "translate-x-full",
+          "fixed left-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-r border-slate-200 bg-white shadow-xl transition-transform duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)] sm:hidden",
+          open ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <nav className="flex flex-col gap-0.5 px-3 py-4">
