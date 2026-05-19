@@ -124,6 +124,96 @@ export function AdminRouteMetrics() {
           {t("section.routeMetrics.empty")}
         </p>
       ) : (
+        <>
+          {/* Mobile cards — 8-column table is unreadable on a phone. The card carries the same
+              fields stacked: route header → count + p95/p99/err in one row → optional status
+              distribution under an inline disclosure. Desktop keeps the full table. */}
+          <div className="space-y-2 sm:hidden">
+            {sorted.map((r) => {
+              const id = `${r.method} ${r.uri}`;
+              const hot = topFiveIds.has(id);
+              const highError = r.errorRate >= 0.05;
+              const isExpanded = expanded.has(id);
+              const hasDist =
+                r.statusDistribution && Object.keys(r.statusDistribution).length > 0;
+              return (
+                <div
+                  key={id}
+                  className="rounded-lg border border-slate-200 bg-white p-3"
+                  data-testid="route-metric-card"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-700">
+                      {r.method}
+                    </span>
+                    <span
+                      className={cn(
+                        "truncate font-mono text-[12px]",
+                        hot && "font-semibold text-slate-900",
+                      )}
+                      title={r.uri}
+                    >
+                      {r.uri}
+                    </span>
+                    <span
+                      className={cn(
+                        "ml-auto shrink-0 font-mono text-sm tabular-nums",
+                        hot && "font-semibold text-slate-900",
+                      )}
+                    >
+                      {formatNumber(r.count)}
+                    </span>
+                  </div>
+                  <div className="mt-2 grid grid-cols-4 gap-2 text-[11px]">
+                    {showP50 && (
+                      <Stat label={t("section.routeMetrics.cols.p50")} value={r.p50Millis.toFixed(1)} />
+                    )}
+                    <Stat label={t("section.routeMetrics.cols.p95")} value={r.p95Millis.toFixed(1)} />
+                    <Stat label={t("section.routeMetrics.cols.p99")} value={r.p99Millis.toFixed(1)} />
+                    <Stat
+                      label={t("section.routeMetrics.cols.errorRate")}
+                      value={`${(r.errorRate * 100).toFixed(2)}%`}
+                      emphasized={highError}
+                      icon={highError ? <AlertTriangle className="h-3 w-3" /> : null}
+                    />
+                  </div>
+                  {hasDist && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setExpanded((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(id)) next.delete(id);
+                          else next.add(id);
+                          return next;
+                        });
+                      }}
+                      className="mt-2 inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-900"
+                      aria-label={
+                        isExpanded
+                          ? t("section.routeMetrics.collapseStatusDist")
+                          : t("section.routeMetrics.expandStatusDist")
+                      }
+                    >
+                      {isExpanded ? (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      )}
+                      {t("section.routeMetrics.statusDist")}
+                    </button>
+                  )}
+                  {isExpanded && hasDist && (
+                    <div className="mt-2 rounded-md bg-slate-50 p-2">
+                      <StatusDistribution dist={r.statusDistribution} total={r.count} t={t} />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="hidden sm:block">
         <Table>
           <THead>
             <TR>
@@ -268,8 +358,37 @@ export function AdminRouteMetrics() {
             })}
           </TBody>
         </Table>
+          </div>
+        </>
       )}
     </Section>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  emphasized,
+  icon,
+}: {
+  label: string;
+  value: string;
+  emphasized?: boolean;
+  icon?: React.ReactNode;
+}) {
+  return (
+    <div>
+      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400">{label}</p>
+      <p
+        className={cn(
+          "mt-0.5 inline-flex items-center gap-1 font-mono tabular-nums",
+          emphasized ? "rounded bg-slate-900 px-1 text-white" : "text-slate-700",
+        )}
+      >
+        {icon}
+        {value}
+      </p>
+    </div>
   );
 }
 
