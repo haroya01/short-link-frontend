@@ -710,6 +710,28 @@
           "errorRate": "에러율",
           "lastAt": "마지막"
         }
+      },
+      "requestMetrics": {
+        "title": "요청 로그 (raw)",
+        "desc": "새 request_metrics 테이블 기반 — 모든 HTTP 요청이 비동기로 누적되어 short_code 별 outcome 분포, 개별 요청 drill-down 같이 timer 기반 위 섹션이 못 답하는 질문에 답함. 빈 테이블일 때 (초기 배포) '샘플 표시' 로 레이아웃 미리보기.",
+        "mockOn": "샘플 표시 중",
+        "mockOff": "샘플 표시",
+        "window": { "1h": "1시간", "24h": "24시간", "7d": "7일" },
+        "routes": {
+          "title": "라우트",
+          "empty": "이 윈도우의 요청 기록 없음",
+          "err": "에러율"
+        },
+        "outcomes": {
+          "title": "short code 별 outcome",
+          "placeholder": "short code 입력…",
+          "lookup": "조회",
+          "empty": "이 윈도우에서 해당 코드 요청 기록 없음"
+        },
+        "rows": {
+          "title": "최근 요청",
+          "empty": "이 윈도우의 요청 기록 없음"
+        }
       }
     },
     "trend": { "signups": "가입", "links": "링크", "clicks": "클릭" },

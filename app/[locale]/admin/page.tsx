@@ -18,6 +18,7 @@ import { useAuth } from "@/lib/auth";
 import { ApiError, getAdminHealthMetrics, getAdminOverview } from "@/lib/api";
 import { AdminDeepStats } from "@/components/admin-deep-stats";
 import { AdminLinkMetrics } from "@/components/admin-link-metrics";
+import { AdminRequestMetrics } from "@/components/admin-request-metrics";
 import { AdminRouteMetrics } from "@/components/admin-route-metrics";
 import { Section } from "@/components/section";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -286,6 +287,8 @@ export default function AdminPage() {
       <AdminRouteMetrics />
 
       <AdminLinkMetrics />
+
+      <AdminRequestMetrics />
 
       <AdminDeepStats />
 

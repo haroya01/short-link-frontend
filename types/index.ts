@@ -755,6 +755,54 @@ export type AdminLinkMetric = {
 export type AdminLinkMetricsWindow = "1h" | "24h" | "7d" | "all";
 export type AdminLinkMetricsSort = "count" | "latency" | "error";
 
+/**
+ * Backed by the {@code request_metrics} table (every finished HTTP request, persisted async
+ * via {@code RequestMetricsFilter}). Same per-route aggregate shape as
+ * {@link AdminRouteMetric} but with an outcome distribution column ({@code redirect /
+ * not_found / expired / blocked / ...}) the timer-backed source can't surface.
+ */
+export type AdminRouteAggregate = {
+  method: string;
+  route: string;
+  count: number;
+  p50: number;
+  p95: number;
+  p99: number;
+  errorRate: number;
+  statusDistribution: Record<string, number>;
+  outcomeDistribution: Record<string, number>;
+};
+
+export type AdminOutcomeDistribution = {
+  shortCode: string;
+  total: number;
+  outcomes: Record<string, number>;
+};
+
+export type AdminRequestMetricsWindow = "1h" | "24h" | "7d";
+
+export type AdminRequestRawRow = {
+  occurredAt: string;
+  route: string;
+  method: string;
+  status: number;
+  outcome: string;
+  latencyMs: number;
+  shortCode: string | null;
+  userId: number | null;
+  traceId: string | null;
+};
+
+export type AdminRequestRawQuery = {
+  from?: string;
+  to?: string;
+  route?: string;
+  outcome?: string;
+  shortCode?: string;
+  userId?: number;
+  limit?: number;
+};
+
 export type AdminOverview = {
   totals: { users: number; links: number; clicks: number };
   newUsers7d: number;
