@@ -789,6 +789,28 @@
           "errorRate": "エラー率",
           "lastAt": "最終"
         }
+      },
+      "requestMetrics": {
+        "title": "リクエストログ (raw)",
+        "desc": "新しい request_metrics テーブル — 完了した HTTP リクエストをすべて非同期で蓄積。short_code 別の outcome 分布や個別リクエストへの drill-down など、上のタイマーベースのセクションでは答えられない問いに対応します。テーブルが空のときは「サンプル表示」でレイアウトをプレビュー。",
+        "mockOn": "サンプル表示中",
+        "mockOff": "サンプル表示",
+        "window": { "1h": "1h", "24h": "24h", "7d": "7d" },
+        "routes": {
+          "title": "ルート",
+          "empty": "このウィンドウにリクエスト記録なし",
+          "err": "Error"
+        },
+        "outcomes": {
+          "title": "short code 別 outcome",
+          "placeholder": "short code を入力…",
+          "lookup": "検索",
+          "empty": "このウィンドウにこのコードのリクエスト記録なし"
+        },
+        "rows": {
+          "title": "最近のリクエスト",
+          "empty": "このウィンドウにリクエスト記録なし"
+        }
       }
     },
     "trend": {

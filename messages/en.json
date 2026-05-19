@@ -789,6 +789,32 @@
           "errorRate": "Error %",
           "lastAt": "Last"
         }
+      },
+      "requestMetrics": {
+        "title": "Request log (raw)",
+        "desc": "Backed by the new request_metrics table — every finished HTTP request is captured asynchronously, so this section can answer per-code outcome questions and drill into individual requests, things the timer-backed sections above cannot. Use 'Show sample' to preview the layout when the table is empty (fresh deploy / pre-launch).",
+        "mockOn": "Showing sample",
+        "mockOff": "Show sample",
+        "window": {
+          "1h": "1h",
+          "24h": "24h",
+          "7d": "7d"
+        },
+        "routes": {
+          "title": "Routes",
+          "empty": "No requests in this window yet",
+          "err": "Error"
+        },
+        "outcomes": {
+          "title": "Outcomes by short code",
+          "placeholder": "Paste a short code…",
+          "lookup": "Look up",
+          "empty": "No requests recorded for this code in the window"
+        },
+        "rows": {
+          "title": "Recent requests",
+          "empty": "No requests in this window yet"
+        }
       }
     },
     "trend": {
