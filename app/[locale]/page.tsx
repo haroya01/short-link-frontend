@@ -29,23 +29,15 @@ export default function HomePage() {
   return (
     <div>
       {/*
-       * Hero re-think (PR #240) — earlier version was a perfectly-centered eyebrow / h1 / subhead
-       * stack on a plain grid background, which read as "default Tailwind landing template" to
-       * the eye. Now:
-       *   - `hero-mesh + hero-noise` paint an off-center radial bloom in the accent-green family
-       *     plus a subtle grain so the surface stops being mathematically flat
-       *   - the eyebrow drops onto a 1px accent bar that anchors it to the headline column on the
-       *     left edge of the centered measure — small grid-break that signals "designed", not
-       *     "generated"
-       *   - the headline is built as two lines with mixed weights: the brand assertion in a
-       *     display serif (Instrument Serif), the qualifier in Pretendard semibold. The mixed
-       *     family is the strongest distinctive cue per the frontend-design SKILL.md guidance
-       *   - `.hero-stagger` cascades the children in over ~500ms with `--hi` indexing instead of
-       *     the whole hero fading in as one slab
-       * Everything stays inside the brand-green accent ramp + Pretendard / Instrument Serif —
-       * no off-brand color, no maximalist chaos.
+       * Hero — flat white surface (no mesh, no noise) so the typography carries the page on its
+       * own. The earlier version layered `hero-mesh + hero-noise + grid-bg` over a centered
+       * eyebrow / h1 / subhead, and the cumulative ornament read as busy rather than refined.
+       * Luxury / refined surfaces work through restraint — type hierarchy + spacing + a single
+       * editorial moment (the serif italic on line one). The hairline eyebrow on either side of
+       * the tagline stays as a subtle grid-break, and the cascade-in still fires through
+       * `.hero-stagger`, now opacity-only.
        */}
-      <section className="relative isolate overflow-hidden grid-bg hero-mesh hero-noise">
+      <section className="relative isolate overflow-hidden bg-white">
         <div className="container relative z-10 max-w-3xl py-20 sm:py-28">
           <div className="hero-stagger mb-10 space-y-4 sm:mb-12">
             <div

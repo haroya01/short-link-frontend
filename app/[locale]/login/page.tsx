@@ -61,22 +61,18 @@ function LoginShell() {
   return (
     /*
      * Login is a single-purpose conversion surface — most visitors just hit Google and bounce.
-     * The hero treatment (mesh + noise) carries the brand language onto the page so the auth
-     * step doesn't feel like a different app. Card sits on top with a card-highlight + soft
-     * accent-glow halo so it lifts above the tinted hero plate.
+     * Flat white background with the same Pretendard / accent typography so the page reads as
+     * one with the rest of the app, without the decorative mesh / noise / accent halo that the
+     * earlier hero treatment piled on.
      */
-    <div className="relative isolate overflow-hidden grid-bg hero-mesh hero-noise">
-      <span
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-24 -z-0 h-72 w-72 -translate-x-1/2 rounded-full bg-accent-200/30 blur-3xl"
-      />
+    <div className="relative isolate overflow-hidden bg-white">
       <div className="container relative z-10 flex min-h-[calc(100vh-3.5rem-3rem)] max-w-md flex-col justify-center py-16">
-        <div className="card-highlight rounded-2xl border border-slate-200 bg-white p-8">
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
           <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
             {t("title")}
           </p>
-          <h1 className="mt-3 text-balance text-[26px] leading-tight tracking-headline text-slate-900">
-            <span className="font-display italic">{t("subtitle")}</span>
+          <h1 className="mt-3 text-balance text-[26px] font-semibold leading-tight tracking-headline text-slate-900">
+            {t("subtitle")}
           </h1>
 
           <Button
