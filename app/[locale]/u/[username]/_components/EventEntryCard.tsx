@@ -173,20 +173,24 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
         <div className="mt-4 px-4 pb-4">
           {isPast ? (
             <div
-              className={`flex w-full items-center justify-center rounded-md border px-3 py-2 text-[12px] font-medium ${colors.cardBorder} ${colors.muted}`}
+              className={`flex h-10 w-full items-center justify-center rounded-xl border px-3 text-[12px] font-medium ${colors.cardBorder} ${colors.muted}`}
             >
               {t("eventEnded")}
             </div>
           ) : (
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
+                {/* Primary CTA shell uses the AGENTS.md §1 token (h-10 rounded-xl text-[13px]) so
+                    this button matches PlaceEntry 길찾기 / ContactCard 연락처 저장 / EmailForm
+                    submit. Earlier rounded-md + py-2 made the event CTA half a notch shorter than
+                    its siblings and visibly off-brand on a profile that mixed both archetypes. */}
                 <button
                   ref={buttonRef}
                   type="button"
                   onClick={() => setMenuOpen((v) => !v)}
                   aria-haspopup="menu"
                   aria-expanded={menuOpen}
-                  className={`group inline-flex w-full items-center justify-center gap-2 rounded-md px-3 py-2 text-[13px] font-medium ${colors.ctaPrimary}`}
+                  className={`group inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl text-[13px] font-medium active:scale-[0.98] ${colors.ctaPrimary}`}
                 >
                   <CalendarPlus className="h-3.5 w-3.5" />
                   {t("addToCalendar")}
@@ -260,7 +264,7 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
                   href={config.url}
                   target="_blank"
                   rel="noreferrer"
-                  className={`shrink-0 rounded-md border px-3 py-2 text-[12px] font-medium ${colors.cardBorder} ${colors.primary} hover:underline`}
+                  className={`inline-flex h-10 shrink-0 items-center rounded-xl border px-3 text-[12px] font-medium ${colors.cardBorder} ${colors.primary} hover:underline`}
                 >
                   {t("moreInfo")}
                 </a>

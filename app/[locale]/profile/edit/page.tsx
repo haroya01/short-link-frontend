@@ -50,7 +50,7 @@ export default function ProfileEditPage() {
   return (
     <div className="container max-w-5xl space-y-6 py-12">
       {isNewProfile && (
-        <div className="rounded-lg border border-accent-200 bg-accent-50/60 p-5">
+        <div className="rounded-2xl border border-accent-200 bg-accent-50/60 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           <div className="flex items-center gap-2 text-xs font-medium text-accent-700">
             <Sparkles className="h-3.5 w-3.5" />
             {t("onboardingEyebrow")}
@@ -58,7 +58,7 @@ export default function ProfileEditPage() {
           <h2 className="mt-1 text-lg font-semibold tracking-headline text-slate-900">
             {t("onboardingTitle")}
           </h2>
-          <p className="mt-1 text-sm leading-relaxed text-slate-600">
+          <p className="mt-1 text-[15px] leading-relaxed text-slate-600">
             {t("onboardingSubhead")}
           </p>
         </div>
@@ -75,8 +75,14 @@ export default function ProfileEditPage() {
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
-          <p className="mt-1 text-sm text-slate-500">{t("intro")}</p>
+          {/* Heading scale unified with dashboard / stats / leads — text-[24px] mobile up to
+              text-[30px] sm+ with tracking-headline, per PR #243/#245 unified hierarchy. The
+              earlier text-2xl was a half-step short on desktop and made the editor heading
+              visually subordinate to its surrounding cards. */}
+          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+            {t("title")}
+          </h1>
+          <p className="mt-1 text-[15px] leading-relaxed text-slate-500">{t("intro")}</p>
         </div>
         {/* Only surface the leads link when there's at least one EMAIL_FORM block on the
             profile — keeps the header clean for sellers who aren't collecting emails. The page

@@ -76,8 +76,10 @@ export default function ProfileStatsPage() {
           <ArrowLeft className="h-3.5 w-3.5" />
           {t("backToEditor")}
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
-        <p className="mt-1 text-sm text-slate-500">{t("intro")}</p>
+        <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+          {t("title")}
+        </h1>
+        <p className="mt-1 text-[15px] leading-relaxed text-slate-500">{t("intro")}</p>
       </div>
 
       <ProfileStatsDashboard data={data} />
