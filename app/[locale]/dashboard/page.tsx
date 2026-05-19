@@ -116,8 +116,10 @@ export default function DashboardPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-xl font-semibold tracking-headline text-slate-900">{t("loginRequired")}</h1>
-        <p className="mt-2 text-sm text-slate-500">{t("loginRequiredDesc")}</p>
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+          {t("loginRequired")}
+        </h1>
+        <p className="mt-2 text-[15px] leading-relaxed text-slate-500">{t("loginRequiredDesc")}</p>
         <Link href="/login" className="mt-6 inline-block">
           <Button>{t("goToLogin")}</Button>
         </Link>
@@ -129,7 +131,9 @@ export default function DashboardPage() {
     <div className="container max-w-5xl space-y-5 py-10">
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <h1 className="text-2xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
+          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+            {t("title")}
+          </h1>
           <p className="mt-1 text-sm text-slate-500">
             {t("subtitle", { count: items?.length ?? 0 })}
           </p>
@@ -219,7 +223,7 @@ export default function DashboardPage() {
 
 function LoadingTable({ t }: { t: (k: string) => string }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
       <Table>
         <THead>
           <TR>
