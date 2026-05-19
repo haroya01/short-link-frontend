@@ -113,6 +113,66 @@ describe("buildDemoLinkStats", () => {
     expect(stats.countryClicks[0].count).toBeGreaterThan(stats.humanClicks * 0.5);
   });
 
+  it("regionClicks covers ≥10 entries (KR metros + intl tail) — AudienceTab needs depth, not a stub", () => {
+    const stats = buildDemoLinkStats();
+    // Stub regions (only Seoul + Gyeonggi + Busan) made the /demo Region rail look broken next
+    // to the rich Country one. The 100% mirror principle says the demo should show the same
+    // depth a real link would. Keep this guard so a future tidy-up doesn't trim the list back.
+    expect(stats.regionClicks.length).toBeGreaterThanOrEqual(10);
+    // KR metros should lead — Korean creator audience.
+    expect(stats.regionClicks[0].region).toBe("Seoul");
+    expect(stats.regionClicks[1].region).toBe("Gyeonggi");
+    // Intl entries must exist so the section reads as a real geo map, not "Korea only".
+    const intl = stats.regionClicks.filter((r) =>
+      ["Tokyo", "California", "Singapore", "England", "Berlin"].includes(r.region),
+    );
+    expect(intl.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("cityClicks covers ≥12 entries with the typical KR creator-audience metros", () => {
+    const stats = buildDemoLinkStats();
+    expect(stats.cityClicks.length).toBeGreaterThanOrEqual(12);
+    const cities = new Set(stats.cityClicks.map((c) => c.city));
+    // Bundang / Pangyo are the IT-belt cities a Korean creator's audience leans into; the demo
+    // should show them so the geo story matches the heatmap's KR-prime-time peak.
+    expect(cities.has("Seoul")).toBe(true);
+    expect(cities.has("Bundang")).toBe(true);
+    expect(cities.has("Pangyo")).toBe(true);
+  });
+
+  it("languageClicks separates en-US from en-GB so the demo mirrors real Accept-Language depth", () => {
+    const stats = buildDemoLinkStats();
+    const langs = new Set(stats.languageClicks.map((l) => l.language));
+    expect(langs.has("ko")).toBe(true);
+    expect(langs.has("en-US")).toBe(true);
+    expect(langs.has("en-GB")).toBe(true);
+    // ko must dominate; the rest sum < ko.
+    const ko = stats.languageClicks.find((l) => l.language === "ko")!.count;
+    const rest = stats.languageClicks
+      .filter((l) => l.language !== "ko")
+      .reduce((s, l) => s + l.count, 0);
+    expect(ko).toBeGreaterThan(rest);
+  });
+
+  it("botClicks2 includes the SEO/crawler tail (Yeti / SemrushBot / AhrefsBot) beyond the unfurlers", () => {
+    const stats = buildDemoLinkStats();
+    const bots = new Set(stats.botClicks2.map((b) => b.bot));
+    expect(bots.has("Googlebot")).toBe(true);
+    expect(bots.has("Yeti (NaverBot)")).toBe(true);
+    expect(bots.has("SemrushBot")).toBe(true);
+    expect(bots.has("AhrefsBot")).toBe(true);
+  });
+
+  it("asnClicks includes both KR consumer ISPs and cloud egress (Cloudflare / AWS / Akamai)", () => {
+    const stats = buildDemoLinkStats();
+    const orgs = new Set(stats.asnClicks.map((a) => a.organization));
+    expect(orgs.has("Korea Telecom (KT)")).toBe(true);
+    expect(orgs.has("SK Broadband")).toBe(true);
+    expect(orgs.has("LG U+")).toBe(true);
+    expect(orgs.has("Cloudflare")).toBe(true);
+    expect(orgs.has("Akamai")).toBe(true);
+  });
+
   it("exposes the full LinkStats surface so StatsBody can render it without branching", () => {
     const stats = buildDemoLinkStats();
     // Sanity: every chart fed by /stats/[code] reads from one of these arrays — if any drops to
