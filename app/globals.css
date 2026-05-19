@@ -9,14 +9,22 @@
 
 /*
  * devices.css ships {@code .device-screen { background-color: #000 }} to simulate the bare phone
- * screen. The ProfilePreview puts the actual page colors on the same element via a Tailwind
- * {@code bg-*} utility, but Tailwind utilities have the same selector specificity as the
- * devices.css rule and are emitted earlier in the cascade — devices.css wins and light/mono
- * themes paint a black background under their content. Resetting to transparent here lets the
- * page-color utility take effect again. Dark/neon themes look unchanged because their page
- * color was already near-black.
+ * screen. The ProfilePreview / ProfileShowcase puts the actual page colors on the same element
+ * via a Tailwind {@code bg-*} utility.
+ *
+ * <p>Two layered problems:
+ *   1. devices.css and Tailwind utility have the same selector specificity (0,1,0), and
+ *      devices.css gets emitted later in the cascade — so {@code .device-screen} wins and
+ *      paints black, hiding the theme color.
+ *   2. The earlier fix made the screen {@code transparent}, but devices.css ALSO paints
+ *      {@code .device-frame} as {@code #010101} (the phone bezel). With the screen transparent
+ *      the bezel showed through and the light/mono themes still read as black.
+ *
+ * <p>Fix: use {@code :where()} so this rule's specificity drops to 0 — any Tailwind
+ * {@code bg-*} utility on {@code .device-screen} now beats it. The transparent default still
+ * stands in for cases where no bg utility is applied. Dark/neon themes look unchanged.
  */
-.device-screen {
+:where(.device-screen) {
   background-color: transparent;
 }
 
