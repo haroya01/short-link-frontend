@@ -71,6 +71,7 @@
     "subhead": "See who clicked from where — by device, OS, browser, channel, country.",
     "anonymousHint": "No login required. Stats need login though.",
     "demoLink": "Preview the analytics dashboard",
+    "scrollHint": "More below",
     "previews": {
       "eyebrow": "What you get within 60 seconds",
       "see": "See",
