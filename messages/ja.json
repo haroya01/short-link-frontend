@@ -728,8 +728,17 @@
       },
       "routeMetrics": {
         "title": "ルート別トラフィック・遅延",
-        "desc": "URI/method ごとのリクエスト数、p50/p95/p99 (ms)、5xx 率。インスタンス起動以降の累計。列ヘッダーでソート。",
+        "desc": "URI/method ごとのリクエスト数、p95/p99 (ms)、5xx 率。分単位の in-memory ring で直近ウィンドウ (1h / 24h / 7d) をスライス可能、'all' は起動以降の累計。▶ クリックで status code 分布。",
         "empty": "まだトラフィックがありません",
+        "expandStatusDist": "Status code 分布を表示",
+        "collapseStatusDist": "Status code 分布を隠す",
+        "statusDist": "Status 分布:",
+        "window": {
+          "1h": "1時間",
+          "24h": "24時間",
+          "7d": "7日",
+          "all": "起動以降"
+        },
         "cols": {
           "uri": "URI",
           "method": "Method",

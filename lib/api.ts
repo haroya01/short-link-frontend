@@ -8,6 +8,7 @@ import type {
   AdminOverview,
   AdminRecentError,
   AdminRouteMetric,
+  AdminRouteMetricsWindow,
   ApiKeySummary,
   BulkImportSummary,
   ClaimResult,
@@ -751,8 +752,11 @@ export async function getAdminOverview(): Promise<AdminOverview> {
   return request<AdminOverview>("/api/v1/admin/overview", { method: "GET" });
 }
 
-export async function getAdminRouteMetrics(): Promise<AdminRouteMetric[]> {
-  return request<AdminRouteMetric[]>("/api/v1/admin/route-metrics", { method: "GET" });
+export async function getAdminRouteMetrics(
+  window: AdminRouteMetricsWindow = "all",
+): Promise<AdminRouteMetric[]> {
+  const qs = window === "all" ? "" : `?window=${window}`;
+  return request<AdminRouteMetric[]>(`/api/v1/admin/route-metrics${qs}`, { method: "GET" });
 }
 
 export async function listApiKeys(): Promise<ApiKeySummary[]> {
