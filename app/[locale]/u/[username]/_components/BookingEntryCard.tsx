@@ -57,7 +57,7 @@ export function BookingEntryCard({ content, colors, fadeStyle }: Props) {
             <CalendarDays className={`h-4 w-4 ${colors.primary}`} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className={`text-sm font-semibold leading-tight ${colors.primary}`}>{title}</p>
+            <p className={`text-[15px] font-semibold leading-tight tracking-headline ${colors.primary}`}>{title}</p>
             {config.description && (
               <p className={`mt-1 line-clamp-2 text-[12px] leading-snug ${colors.muted}`}>
                 {config.description}
