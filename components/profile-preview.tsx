@@ -78,7 +78,17 @@ export function ProfilePreview({
           style={{ transform: `scale(${DEVICE_SCALE})` }}
         >
           <div className="device-frame">
-            <div className={cn("device-screen overflow-y-auto", colors.page)}>
+            <div
+              className={cn("device-screen overflow-y-auto", colors.page)}
+              // Inline style (specificity 1,0,0,0) is the only thing that beats devices.css's
+              // `.device .device-screen { background: #000 }` (0,2,0). Tailwind utilities
+              // (0,1,0) and `:where()` resets (0,0,0) both lose. Only set for solid-color
+              // themes (light/mono/default); gradient themes paint their gradient over the
+              // whole screen via {@code colors.page}, hiding the #000 default anyway.
+              style={
+                colors.pageBgHex ? { backgroundColor: colors.pageBgHex } : undefined
+              }
+            >
               {/* Safe-area spacer for the Dynamic Island cutout — devices.css renders the
                   notch at screen y=10..45. The previous fake 9:41 / signal / wifi / battery
                   status-bar overlay used {@code colors.primary} as its text color, which on

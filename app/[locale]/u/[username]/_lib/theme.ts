@@ -18,6 +18,15 @@ export type ThemeColors = {
    * universally rather than a color statement that competes with the page gradient.
    */
   ctaPrimary: string;
+  /**
+   * Hex / CSS-color value for the page background, applied as an inline style on the device-frame
+   * preview surfaces (ShowcaseCard / ProfilePreview). devices.css ships
+   * {@code .device .device-screen { background: #000 }} (specificity 0,2,0) which beats both
+   * Tailwind utilities (0,1,0) and any low-specificity reset; inline style (1,0,0,0) wins. Only
+   * needed for solid-colored themes — gradient themes (sunset / ocean / forest / aurora / wave
+   * / ember / neon) paint their gradient over the whole screen, so the #000 default never shows.
+   */
+  pageBgHex?: string;
 };
 
 /**
@@ -35,6 +44,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     avatar: "bg-slate-900",
     avatarText: "text-white",
     ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
+    pageBgHex: "#ffffff",
   },
   light: {
     page: "bg-slate-50",
@@ -46,6 +56,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     avatar: "bg-slate-900",
     avatarText: "text-white",
     ctaPrimary: "bg-slate-900 text-white hover:bg-slate-700 active:bg-slate-700",
+    pageBgHex: "#f8fafc",
   },
   dark: {
     page: "bg-slate-950",
@@ -117,6 +128,7 @@ export const THEME_TABLE: Record<ProfileTheme | "default", ThemeColors> = {
     avatar: "bg-black",
     avatarText: "text-white",
     ctaPrimary: "bg-black text-white hover:bg-slate-800 active:bg-slate-800",
+    pageBgHex: "#ffffff",
   },
   neon: {
     page: "bg-slate-950",
