@@ -98,13 +98,13 @@ export default function ProfileLeadsCampaignPage() {
           <ArrowLeft className="h-3.5 w-3.5" />
           {t("back")}
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-headline text-slate-900">
+        <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
           {t("title")}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">{t("intro")}</p>
+        <p className="mt-1 text-[15px] leading-relaxed text-slate-500">{t("intro")}</p>
       </div>
 
-      <div className="space-y-4 rounded-lg border border-slate-200 bg-white p-5">
+      <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
         <div>
           <label htmlFor="campaign-name" className="text-xs font-medium text-slate-700">
             {t("nameLabel")}
@@ -160,7 +160,7 @@ export default function ProfileLeadsCampaignPage() {
       </div>
 
       {output && (
-        <div className="space-y-4 rounded-lg border border-emerald-200 bg-emerald-50/40 p-5">
+        <div className="space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50/40 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 className="text-sm font-semibold text-slate-900">{t("outputTitle")}</h2>

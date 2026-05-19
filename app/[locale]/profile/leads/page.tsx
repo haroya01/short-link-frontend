@@ -93,8 +93,12 @@ export default function ProfileLeadsPage() {
     <div className="container max-w-3xl space-y-6 py-12">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
-          <p className="mt-1 text-sm text-slate-500">{t("intro", { count: total })}</p>
+          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+            {t("title")}
+          </h1>
+          <p className="mt-1 text-[15px] leading-relaxed text-slate-500">
+            {t("intro", { count: total })}
+          </p>
           <p className="mt-1 text-[11px] text-slate-400">{t("csvExcludesOptedOut")}</p>
         </div>
         <div className="flex items-center gap-2">
@@ -122,12 +126,15 @@ export default function ProfileLeadsPage() {
       {loading ? (
         <p className="text-sm text-slate-400">{t("loading")}</p>
       ) : leads.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50/50 px-4 py-12 text-center">
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 px-4 py-12 text-center">
           <p className="text-sm font-medium text-slate-700">{t("emptyTitle")}</p>
           <p className="mt-1 text-[11px] text-slate-500">{t("emptyHint")}</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+        /* Surface card uses rounded-2xl + flat shadow to read as a sibling of Section / stats
+           cards (PR #245 unified surface). The table interior keeps its tight rounded-md tone
+           by virtue of being inside the rounded-2xl clip. */
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500">
               <tr>
