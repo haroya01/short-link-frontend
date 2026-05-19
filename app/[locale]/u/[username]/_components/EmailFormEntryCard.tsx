@@ -49,7 +49,7 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
       <div
         className={`profile-card-static px-4 py-3.5 ${colors.card} ${colors.cardBorder}`}
       >
-        <p className={`text-sm font-semibold ${colors.primary}`}>{config.title}</p>
+        <p className={`text-[15px] font-semibold tracking-headline ${colors.primary}`}>{config.title}</p>
         {config.subtitle && (
           <p className={`mt-1 whitespace-pre-line text-[12px] leading-snug ${colors.muted}`}>
             {config.subtitle}
