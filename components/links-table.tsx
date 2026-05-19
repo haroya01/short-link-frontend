@@ -136,7 +136,26 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+      {/* Mobile card list — table columns don't fit a phone viewport, so the same row data
+          is laid out vertically with the high-signal bits (shortCode + clicks) on top, original
+          URL below, and actions on the bottom-right. Desktop keeps the table view. */}
+      <div className="space-y-2 sm:hidden">
+        {sorted.map((item) => (
+          <MobileLinkCard
+            key={item.shortCode}
+            item={item}
+            selected={selected.has(item.shortCode)}
+            onToggleSelect={() => toggleOne(item.shortCode)}
+            onTagClick={onTagClick}
+            onCopied={() => toast("✓", "success")}
+            onEdit={() => setEditing(item)}
+            onDelete={() => setConfirmCode(item.shortCode)}
+            t={t}
+          />
+        ))}
+      </div>
+
+      <div className="hidden overflow-hidden rounded-lg border border-slate-200 bg-white sm:block">
         <Table>
           <THead>
             <TR>
@@ -324,6 +343,123 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
           onChanged();
         }}
       />
+    </div>
+  );
+}
+
+function MobileLinkCard({
+  item,
+  selected,
+  onToggleSelect,
+  onTagClick,
+  onCopied,
+  onEdit,
+  onDelete,
+  t,
+}: {
+  item: MyLink;
+  selected: boolean;
+  onToggleSelect: () => void;
+  onTagClick?: (tag: string) => void;
+  onCopied: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  t: ReturnType<typeof useTranslations<"dashboard">>;
+}) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-3">
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          aria-label={t("bulkSelectRow", { code: item.shortCode })}
+          checked={selected}
+          onChange={onToggleSelect}
+          className="h-3.5 w-3.5 shrink-0 cursor-pointer"
+        />
+        <Link
+          href={`/stats/${item.shortCode}`}
+          className="truncate font-mono text-sm font-medium text-slate-900 hover:underline"
+        >
+          /{item.shortCode}
+        </Link>
+        <CopyButton
+          size="sm"
+          variant="ghost"
+          label=""
+          value={item.shortUrl}
+          onCopied={onCopied}
+        />
+        <span className="ml-auto shrink-0 text-sm font-medium tabular-nums text-slate-900">
+          {formatNumber(item.clickCount)}
+        </span>
+      </div>
+
+      <a
+        href={item.originalUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-2 flex items-center gap-1.5 text-slate-600 hover:text-slate-900"
+        title={item.originalUrl}
+      >
+        <Favicon url={item.originalUrl} />
+        <span className="truncate text-xs">{truncateMiddle(item.originalUrl, 44)}</span>
+        <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
+      </a>
+
+      {item.tags && item.tags.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {item.tags.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => onTagClick?.(tag)}
+              className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600 hover:bg-slate-200"
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
+        <span className="truncate">
+          {formatDate(item.createdAt)}
+          {item.expiresAt && (
+            <span className="ml-2 text-slate-400">→ {formatDate(item.expiresAt)}</span>
+          )}
+        </span>
+        <div className="inline-flex shrink-0 items-center gap-0.5">
+          <Link href={`/stats/${item.shortCode}`}>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={t("actions.stats")}
+              title={t("actions.stats")}
+            >
+              <BarChart3 className="h-3.5 w-3.5" />
+            </Button>
+          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={t("actions.edit")}
+            title={t("actions.edit")}
+            onClick={onEdit}
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={t("actions.delete")}
+            title={t("actions.delete")}
+            onClick={onDelete}
+            className="text-slate-500 hover:bg-red-50 hover:text-red-600"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
