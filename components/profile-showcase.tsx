@@ -55,8 +55,14 @@ export function ProfileShowcase() {
         className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-white to-transparent sm:w-24"
       />
 
+      {/* Embla's loop mode wraps slides by cloning them outside the original flex track —
+          `gap` on the parent flexbox doesn't apply to the inter-slide spacing around the loop
+          seam, so the last → first transition reads as "two slides glued together". Per-slide
+          `mr-6` works because the margin is on the slide itself; the clone carries it too, and
+          loop wrap stays evenly spaced. The last `mr-6` is harmless visual padding that embla
+          accounts for via `containScroll: false`. */}
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex gap-6 py-2">
+        <div className="flex py-2">
           {SHOWCASE_PROFILES.map((profile) => (
             <ShowcaseCard key={profile.username} profile={profile} demoCta={t("demoCta")} />
           ))}
@@ -144,7 +150,7 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
   return (
     <Link
       href={`/showcase/${profile.username}`}
-      className="group block shrink-0 transition-transform hover:-translate-y-1"
+      className="group mr-6 block shrink-0 transition-transform hover:-translate-y-1"
       aria-label={`@${profile.username} — ${demoCta}`}
     >
       <div

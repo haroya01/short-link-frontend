@@ -332,15 +332,18 @@ const SPECS: ProfileSpec[] = [
     username: "min.links",
     bio: "All my work in one tap.",
     theme: "light",
-    bannerPhotoId: "1497436072909-60f360e1d4b1", // soft gradient / mountain — generic
-    avatarPhotoId: "1555066931-4365d14bab8c", // generic — reuses haruka.dev's avatar pool
+    // All photo IDs verified present in public/showcase/. Previous round used a guessed banner
+    // ID that 404'd, leaving the <img> empty — the visible "black background" on the showcase
+    // detail page was the broken image element, not the theme.
+    bannerPhotoId: "1487611459768-bd414656ea10",
+    avatarPhotoId: "1555066931-4365d14bab8c",
     entries: [
       {
         kind: "LINK",
         shortCode: "port",
         originalUrl: "https://example.com/portfolio",
         ogTitle: "Portfolio",
-        ogImage: local("1497436072909-60f360e1d4b1"),
+        ogImage: local("1487611459768-bd414656ea10"),
         clickCount: 124,
       },
       {
