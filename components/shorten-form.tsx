@@ -165,15 +165,41 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
         <button
           type="button"
           onClick={() => setShowAdvanced((v) => !v)}
-          className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900"
+          aria-expanded={showAdvanced}
+          aria-controls="shorten-advanced-section"
+          className="inline-flex items-center gap-1 text-xs text-slate-500 transition-colors hover:text-slate-900"
         >
           <ChevronDown
-            className={`h-3.5 w-3.5 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
+            className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${showAdvanced ? "rotate-180" : ""}`}
           />
           {t("advancedToggle")}
         </button>
-        {showAdvanced && (
-          <div className="mt-2 space-y-3 rounded-md border border-slate-200 bg-slate-50/50 p-3">
+        {/*
+         * Grid-rows trick for "auto height" reveal animations: an outer grid container animates
+         * between `grid-rows-[0fr]` (collapsed) and `grid-rows-[1fr]` (expanded), and the inner
+         * panel uses `min-h-0 overflow-hidden` so its measured content is clipped during transit.
+         * Trade-offs we considered:
+         *   - `max-height: 9999px` — janky easing curve because the browser interpolates against the
+         *     impossible upper bound, not the real content height.
+         *   - JS-measured `max-height` — needs ResizeObserver + a reflow on every layout-changing
+         *     field, fragile when authenticated/anonymous variants swap the row count.
+         *   - `display: none` / `display: block` toggle — instant, breaks the animation entirely.
+         * The grid-rows variant is one declarative CSS rule and survives every variant of the
+         * inner content (auth row appears / channel pills wrap onto a new line) without any
+         * JS bookkeeping. Reduce-motion users skip the animation entirely via a media query
+         * collapse inside the same className.
+         */}
+        <div
+          id="shorten-advanced-section"
+          aria-hidden={!showAdvanced}
+          className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none ${
+            showAdvanced
+              ? "mt-2 grid-rows-[1fr] opacity-100"
+              : "mt-0 grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="space-y-3 rounded-md border border-slate-200 bg-slate-50/50 p-3">
             {authenticated && (
               <div className="grid gap-2 sm:grid-cols-2">
                 <label className="block min-w-0 space-y-1">
@@ -243,8 +269,9 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
                 })}
               </div>
             </div>
+            </div>
           </div>
-        )}
+        </div>
       </div>
 
       {error && (
