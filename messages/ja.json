@@ -712,8 +712,7 @@
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} 回",
       "detailShare": "全体の {share}%",
-      "detailClose": "閉じる",
-      "detailHint": "同じセルをもう一度タップすると閉じます。"
+      "detailClose": "閉じる"
     }
   },
   "admin": {

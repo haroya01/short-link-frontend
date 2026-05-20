@@ -708,8 +708,7 @@
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "클릭 {count}회",
       "detailShare": "전체의 {share}%",
-      "detailClose": "닫기",
-      "detailHint": "셀을 다시 누르면 상세가 닫혀요."
+      "detailClose": "닫기"
     }
   },
   "admin": {
