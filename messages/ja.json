@@ -1699,5 +1699,63 @@
     "a5": "Google Safe Browsing APIで短縮時にチェックします。検知されたURLは短縮を拒否します。",
     "q6": "APIはありますか?",
     "a6": "はい — 開発者向け API を提供しています。設定 > API キー でキーを発行し、自前のコードから短縮 / 統計エンドポイントを呼び出せます。"
+  },
+  "qrCampaigns": {
+    "hero": {
+      "eyebrow": "Offline QR campaigns",
+      "title1": "オフラインのQR配布を、",
+      "title2": "測る。",
+      "cta": "はじめる"
+    },
+    "s1": {
+      "line1": "1万枚、配ったはず。",
+      "line2": "本当に、配ったのか。"
+    },
+    "s2": {
+      "line1": "エリアごとに、分けて配る。",
+      "line2": "渋谷○丁目 / 新宿○町 / 池袋."
+    },
+    "s3": {
+      "line1": "渋谷 142、新宿 38、池袋 91。",
+      "line2": "次は、渋谷に倍。",
+      "aux": "ラーメン店も、美容室も、学習塾も。"
+    },
+    "s4": {
+      "line1": "キャンペーンが終わっても、",
+      "line2": "チラシは街に残る。",
+      "line3": "期限後は、次のページへ自動切替。"
+    },
+    "cta": {
+      "title": "最初のキャンペーン、5分。",
+      "primary": "はじめる",
+      "secondary": "ログイン",
+      "note": "通常の短縮URL · 統計も同じアカウントで"
+    },
+    "mock": {
+      "s1Status": "進行中 · 5日目",
+      "s1KpiDistributed": "配布",
+      "s1KpiClicks": "クリック",
+      "s1KpiPer100": "100枚あたり",
+      "s1KpiConversions": "転換",
+      "s2Title": "配布バッチ",
+      "s2Add": "+ バッチ追加",
+      "s2ColName": "バッチ名",
+      "s2ColArea": "エリア",
+      "s2ColDist": "業者",
+      "s2ColQty": "枚数",
+      "s2ColStatus": "状態",
+      "s2Done": "印刷済",
+      "s2Unit": "枚",
+      "s3Title": "100枚あたりクリック",
+      "s3Sort": "効率順",
+      "s3Top": "Top",
+      "s3RecoTitle": "次回の推奨",
+      "s4Expired": "期限切れ時点",
+      "s4Next": "次のページ",
+      "s4Chip": "予約 / メニュー",
+      "s4Foot": "QRはそのまま、行き先だけ自動切替"
+    },
+    "backLink": "短縮URLツールに戻る",
+    "statsLink": "QRキャンペーン分析"
   }
 }
