@@ -961,6 +961,7 @@ import type {
   CampaignCreatePayload,
   CampaignDetail,
   CampaignStats,
+  CampaignStatsCompareResponse,
   CampaignSummary,
   CampaignUpdatePayload,
 } from "@/types";
@@ -1046,6 +1047,15 @@ export async function deleteCampaignBatch(campaignId: number, batchId: number): 
 
 export async function getCampaignStats(campaignId: number): Promise<CampaignStats> {
   return request<CampaignStats>(`/api/v1/campaigns/${campaignId}/stats`, { method: "GET" });
+}
+
+export async function compareCampaignStats(
+  campaignIds: number[],
+): Promise<CampaignStatsCompareResponse> {
+  return request<CampaignStatsCompareResponse>(`/api/v1/campaigns/stats/compare`, {
+    method: "POST",
+    body: JSON.stringify({ campaignIds }),
+  });
 }
 
 export type QrDownloadOptions = {

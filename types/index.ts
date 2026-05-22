@@ -940,4 +940,15 @@ export type CampaignStats = {
     totalQuantity: number;
     clickRatePerHundred: number;
   }[];
+  byHour: { hour: number; clicks: number }[];
+  byDay: { day: string; clicks: number }[];
+  heatmap: { dayOfWeek: number; hour: number; clicks: number }[];
+};
+
+export type CampaignStatsCompareResponse = {
+  campaigns: {
+    campaignId: number;
+    name: string;
+    stats: CampaignStats;
+  }[];
 };
