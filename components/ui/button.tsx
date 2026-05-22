@@ -21,6 +21,9 @@ const buttonVariants = cva(
         sm: "h-8 px-3",
         md: "h-10 px-4",
         lg: "h-11 px-5",
+        // Marketing hero / final CTA — qr-campaigns landing 의 hero CTA 매칭.
+        // h-12 + rounded-xl + 14px font, 일반 앱 화면엔 lg 까지가 적절.
+        xl: "h-12 rounded-xl px-7 text-[14px]",
         icon: "h-9 w-9",
       },
     },
