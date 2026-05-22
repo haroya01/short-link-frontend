@@ -254,9 +254,9 @@ function StickyNarrative({ mock }: { mock: MockData }) {
   ];
 
   return (
-    <section className="relative">
+    <section className="relative bg-slate-50/40">
       <div className="lg:flex">
-        <div className="relative hidden bg-slate-50 lg:flex lg:sticky lg:top-0 lg:h-screen lg:w-1/2 lg:items-center lg:justify-center">
+        <div className="relative hidden lg:flex lg:sticky lg:top-0 lg:h-screen lg:w-1/2 lg:items-center lg:justify-center">
           {sections.map((s, i) => {
             const isActive = i === active;
             return (
