@@ -17,7 +17,14 @@ import { Button } from "@/components/ui/button";
 
 type MockRow = { name: string; area: string; dist: string; qty: number };
 type MockBar = { label: string; value: number };
-type MockCase = { biz: string; action: string; uplift: string };
+type MockCase = {
+  biz: string;
+  area: string;
+  action: string;
+  before: number;
+  after: number;
+  multiplier: string;
+};
 
 type MockData = {
   campaignName: string;
@@ -47,9 +54,9 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
     ],
     reco: "渋谷 +3,000 / 新宿 -2,000",
     cases: [
-      { biz: "ラーメン店 コロネ", action: "渋谷集中", uplift: "+5x" },
-      { biz: "美容室 アルプス", action: "動線変更", uplift: "+3x" },
-      { biz: "学習塾 ZONE", action: "時間帯分析", uplift: "+2x" },
+      { biz: "ラーメン店 コロネ", area: "渋谷区", action: "1番出口集中", before: 28, after: 142, multiplier: "+5x" },
+      { biz: "美容室 アルプス", area: "新宿区", action: "動線変更", before: 47, after: 137, multiplier: "+3x" },
+      { biz: "学習塾 ZONE", area: "池袋", action: "週末分析", before: 61, after: 119, multiplier: "+2x" },
     ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
@@ -70,9 +77,9 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
     ],
     reco: "강남 +750 / 신촌 -250",
     cases: [
-      { biz: "라멘집 코로네", action: "강남 집중", uplift: "+5x" },
-      { biz: "미용실 알프스", action: "동선 변경", uplift: "+3x" },
-      { biz: "학원 ZONE", action: "시간대 분석", uplift: "+2x" },
+      { biz: "라멘집 코로네", area: "강남", action: "1출구 집중", before: 28, after: 142, multiplier: "+5x" },
+      { biz: "미용실 알프스", area: "신촌", action: "동선 변경", before: 47, after: 137, multiplier: "+3x" },
+      { biz: "학원 ZONE", area: "홍대", action: "주말 분석", before: 61, after: 119, multiplier: "+2x" },
     ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
@@ -93,9 +100,9 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
     ],
     reco: "Shibuya +3,000 / Shinjuku -2,000",
     cases: [
-      { biz: "Ramen · Korone", action: "Shibuya focus", uplift: "+5x" },
-      { biz: "Salon · Alps", action: "Reroute foot traffic", uplift: "+3x" },
-      { biz: "Cram · ZONE", action: "Hour-of-day", uplift: "+2x" },
+      { biz: "Ramen · Korone", area: "Shibuya", action: "Exit 1 focus", before: 28, after: 142, multiplier: "+5x" },
+      { biz: "Salon · Alps", area: "Shinjuku", action: "Reroute foot traffic", before: 47, after: 137, multiplier: "+3x" },
+      { biz: "Cram · ZONE", area: "Ikebukuro", action: "Weekend analysis", before: 61, after: 119, multiplier: "+2x" },
     ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
@@ -803,6 +810,8 @@ function MockBars({ mock, active }: { mock: MockData; active: boolean }) {
 
 function MockCases({ mock, active }: { mock: MockData; active: boolean }) {
   const t = useTranslations("qrCampaigns.mock");
+  // 모든 case 의 after 값 중 최댓값으로 normalize — bar 가 같은 scale 에서 비교됨.
+  const max = Math.max(...mock.cases.map((c) => c.after));
   return (
     <div
       className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700"
@@ -815,26 +824,103 @@ function MockCases({ mock, active }: { mock: MockData; active: boolean }) {
       <div className="border-b border-slate-200 px-5 py-3.5">
         <p className="text-[14px] font-semibold text-slate-900">{t("casesTitle")}</p>
       </div>
-      {mock.cases.map((c, i) => (
+      {mock.cases.map((c, i) => {
+        const beforePct = (c.before / max) * 100;
+        const afterPct = (c.after / max) * 100;
+        const rowDelay = 200 + i * 140;
+        return (
+          <div
+            key={c.biz}
+            className="border-b border-slate-100 px-5 py-3.5 transition-all duration-500 last:border-b-0"
+            style={{
+              transitionTimingFunction: EASE,
+              transitionDelay: active ? `${rowDelay}ms` : "0ms",
+              opacity: active ? 1 : 0,
+              transform: active ? "translateY(0)" : "translateY(-10px)",
+            }}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[13px] font-medium text-slate-900">{c.biz}</p>
+                <p className="mt-0.5 truncate text-[10px] text-slate-500">
+                  {c.area} · {c.action}
+                </p>
+              </div>
+              <span className="flex-shrink-0 rounded-md bg-accent-50 px-2 py-1 text-[14px] font-semibold tabular-nums leading-none tracking-headline text-accent-700">
+                {c.multiplier}
+              </span>
+            </div>
+
+            <div className="mt-3 space-y-1.5">
+              <CaseBar
+                label={t("casesBefore")}
+                value={c.before}
+                pct={beforePct}
+                active={active}
+                delay={rowDelay + 300}
+                accent={false}
+              />
+              <CaseBar
+                label={t("casesAfter")}
+                value={c.after}
+                pct={afterPct}
+                active={active}
+                delay={rowDelay + 500}
+                accent
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function CaseBar({
+  label,
+  value,
+  pct,
+  active,
+  delay,
+  accent,
+}: {
+  label: string;
+  value: number;
+  pct: number;
+  active: boolean;
+  delay: number;
+  accent: boolean;
+}) {
+  return (
+    <div className="grid grid-cols-[40px_1fr_auto] items-center gap-2">
+      <span
+        className={
+          "text-[10px] " + (accent ? "font-medium text-accent-700" : "text-slate-500")
+        }
+      >
+        {label}
+      </span>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
         <div
-          key={c.biz}
-          className="grid grid-cols-[1fr_auto] items-center gap-3 border-b border-slate-100 px-5 py-3.5 transition-all duration-500 last:border-b-0"
+          className={
+            "h-full rounded-full transition-[width] " +
+            (accent ? "bg-accent-600 duration-[1000ms]" : "bg-slate-300 duration-[800ms]")
+          }
           style={{
             transitionTimingFunction: EASE,
-            transitionDelay: active ? `${200 + i * 130}ms` : "0ms",
-            opacity: active ? 1 : 0,
-            transform: active ? "translateY(0)" : "translateY(-10px)",
+            transitionDelay: active ? `${delay}ms` : "0ms",
+            width: active ? `${pct}%` : "0%",
           }}
-        >
-          <div className="min-w-0">
-            <p className="truncate text-[13px] font-medium text-slate-900">{c.biz}</p>
-            <p className="mt-0.5 truncate text-[11px] text-slate-500">{c.action}</p>
-          </div>
-          <span className="flex-shrink-0 rounded-md bg-accent-50 px-2 py-1 text-[14px] font-semibold tabular-nums leading-none tracking-headline text-accent-700">
-            {c.uplift}
-          </span>
-        </div>
-      ))}
+        />
+      </div>
+      <span
+        className={
+          "text-[11px] tabular-nums " +
+          (accent ? "font-semibold text-accent-700" : "text-slate-500")
+        }
+      >
+        {value}
+      </span>
     </div>
   );
 }
