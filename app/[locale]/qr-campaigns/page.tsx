@@ -290,7 +290,6 @@ function StickyNarrative({ mock }: { mock: MockData }) {
       kind: "narrative",
       line1: t("s6.line1"),
       line2: t("s6.line2"),
-      line3: t("s6.line3"),
       Mock: MockTimeline,
     },
   ];
