@@ -184,7 +184,7 @@ type HeroSpec = {
   title1: string;
   title2: string;
   sub: string;
-  timeNote: string;
+  chips: [string, string, string];
   Mock: MockComponent;
 };
 type NarrativeSpec = {
@@ -256,7 +256,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
       title1: tHero("title1"),
       title2: tHero("title2"),
       sub: tHero("sub"),
-      timeNote: tHero("timeNote"),
+      chips: [tHero("chip1"), tHero("chip2"), tHero("chip3")],
       Mock: MockKpi,
     },
     {
@@ -352,9 +352,21 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                     <p className="mt-5 max-w-md text-[14px] leading-relaxed text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:text-[15px]">
                       {s.sub}
                     </p>
-                    <p className="mt-3 text-[12px] font-medium text-accent-700 opacity-0 [animation:hero-fade_700ms_var(--ease)_900ms_forwards]">
-                      {s.timeNote}
-                    </p>
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {s.chips.map((chip, ci) => (
+                        <span
+                          key={ci}
+                          className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-medium text-slate-700 opacity-0"
+                          style={{
+                            animation: `hero-fade 700ms var(--ease) ${
+                              850 + ci * 100
+                            }ms forwards`,
+                          }}
+                        >
+                          {chip}
+                        </span>
+                      ))}
+                    </div>
                   </>
                 ) : (
                   <>
