@@ -1617,41 +1617,42 @@
   "qrCampaigns": {
     "hero": {
       "eyebrow": "Offline QR campaigns",
-      "title1": "오프라인 QR 배포를,",
-      "title2": "측정합니다.",
-      "cta": "시작하기"
+      "title1": "전단지 QR,",
+      "title2": "어디서 효과 났는지.",
+      "sub": "지역·출구·배포자별로 다른 QR 을 만들고, 100장당 클릭률로 다음 배포지를 결정하세요.",
+      "timeNote": "5분이면 첫 캠페인.",
+      "cta": "캠페인 만들기"
     },
     "s1": {
-      "line1": "1000장, 뿌렸다고 합니다.",
-      "line2": "진짜, 다 뿌렸을까요."
+      "line1": "1000장을 뿌려도,",
+      "line2": "어디서 반응이 왔는지 모릅니다."
     },
     "s2": {
-      "line1": "지역으로, 나눕니다.",
-      "line2": "강남역 / 신촌 / 홍대."
+      "line1": "지역·출구·배포자별로,",
+      "line2": "QR 을 나눕니다."
     },
     "s3": {
-      "line1": "디자인은, 그대로.",
-      "line2": "QR 만, 우리가.",
+      "line1": "디자인은 그대로,",
+      "line2": "QR 만 다르게 넣습니다.",
       "aux": "Canva·인디자인 PDF 에 좌표만 지정."
     },
     "s4": {
-      "line1": "강남 80, 신촌 5, 홍대 47.",
-      "line2": "다음엔, 강남에 두 배.",
-      "aux": "── 그래서, 다음 달 배포가 정해진다."
+      "line1": "강남 80 클릭, 신촌 5 클릭.",
+      "line2": "다음 배포는 강남에 더.",
+      "aux": "어디에 더 뿌릴지, 클릭이 알려줍니다."
     },
     "s5": {
-      "line1": "라멘집도.",
-      "line2": "미용실도, 학원도.",
-      "aux": "같은 방식으로, 결과는 5배."
+      "line1": "전단지·쿠폰·포스터,",
+      "line2": "어느 업종이든.",
+      "aux": "사용 예시 — 같은 방식으로 비교."
     },
     "s6": {
-      "line1": "행사는 끝나도,",
-      "line2": "전단지는 남습니다.",
-      "line3": "만료 후엔, 다음 페이지로 자동 전환."
+      "line1": "인쇄된 QR 은 그대로,",
+      "line2": "도착지만 바꿉니다."
     },
     "cta": {
-      "title": "첫 캠페인, 5분.",
-      "primary": "시작하기",
+      "title": "어디에 더 뿌릴지, 클릭이 알려줍니다.",
+      "primary": "첫 QR 캠페인 만들기",
       "secondary": "로그인",
       "note": "일반 단축 URL · 통계도 같은 계정으로"
     },
@@ -1660,7 +1661,7 @@
       "kpiDistributed": "배포",
       "kpiClicks": "클릭",
       "kpiPer100": "100장당",
-      "kpiConversions": "전환",
+      "kpiHour": "시간대",
       "batchTitle": "배포 묶음",
       "batchAdd": "묶음 추가",
       "batchColName": "묶음명",
@@ -1680,15 +1681,15 @@
       "barsSort": "효율순",
       "barsTop": "Top",
       "barsRecoTitle": "다음 회 추천",
-      "barsRecoEstimate": "예상 +160 클릭 · 신규 고객 ~25명",
-      "casesTitle": "실제 사례",
+      "barsRecoEstimate": "예상 +160 클릭",
+      "casesTitle": "사용 예시",
       "casesBefore": "1차",
       "casesAfter": "2차",
-      "casesFooter": "묶음 분할 + 클릭 통계로 분석",
+      "casesFooter": "예시 — 묶음 분할 + 클릭 통계로 측정 가능",
       "timelineExpired": "만료 시점",
       "timelineNext": "다음 페이지",
       "timelineChip": "예약 / 메뉴",
-      "timelineFoot": "QR 은 그대로, 도착지만 자동 전환"
+      "timelineFoot": "인쇄된 QR 은 그대로, 도착지만 자동 전환"
     },
     "backLink": "단축 URL 도구로 돌아가기",
     "statsLink": "QR 캠페인 분석"

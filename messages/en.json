@@ -1707,41 +1707,42 @@
   "qrCampaigns": {
     "hero": {
       "eyebrow": "Offline QR campaigns",
-      "title1": "Measure",
-      "title2": "offline QR drops.",
-      "cta": "Get started"
+      "title1": "Flyer QR —",
+      "title2": "see where it worked.",
+      "sub": "Print a different QR per area, exit, or vendor. Pick the next drop zone from clicks-per-100.",
+      "timeNote": "5 minutes to first campaign.",
+      "cta": "Start campaign"
     },
     "s1": {
-      "line1": "10,000 flyers, supposedly delivered.",
-      "line2": "Were they, really?"
+      "line1": "10,000 flyers later —",
+      "line2": "no idea where the response came from."
     },
     "s2": {
-      "line1": "Split by area.",
-      "line2": "Shibuya / Shinjuku / Ikebukuro."
+      "line1": "By area, exit, vendor —",
+      "line2": "split the QR."
     },
     "s3": {
-      "line1": "Your design, intact.",
-      "line2": "We place the QR.",
-      "aux": "Bring a Canva / InDesign PDF. Just mark where the QR goes."
+      "line1": "Same design,",
+      "line2": "different QRs.",
+      "aux": "Bring a Canva / InDesign PDF. Mark where the QR goes."
     },
     "s4": {
-      "line1": "Shibuya 142, Shinjuku 38, Ikebukuro 91.",
-      "line2": "Double Shibuya next time.",
-      "aux": "── So the next month's drop is decided."
+      "line1": "Shibuya 142 clicks, Shinjuku 38.",
+      "line2": "Double Shibuya next round.",
+      "aux": "Where to drop next — the clicks tell you."
     },
     "s5": {
-      "line1": "Ramen shops too.",
-      "line2": "Salons too. Cram schools too.",
-      "aux": "Same playbook. Up to 5x."
+      "line1": "Flyers, coupons, posters.",
+      "line2": "Any vertical, same play.",
+      "aux": "Use cases — same method, up to 5x."
     },
     "s6": {
-      "line1": "When a campaign ends,",
-      "line2": "the flyers stay on the street.",
-      "line3": "On expiry, auto-route to the next page."
+      "line1": "Printed QR stays,",
+      "line2": "destination changes."
     },
     "cta": {
-      "title": "First campaign, 5 minutes.",
-      "primary": "Get started",
+      "title": "Where to drop next — the clicks tell you.",
+      "primary": "Create first campaign",
       "secondary": "Log in",
       "note": "Short links and stats live in the same account."
     },
@@ -1750,7 +1751,7 @@
       "kpiDistributed": "Distributed",
       "kpiClicks": "Clicks",
       "kpiPer100": "Per 100",
-      "kpiConversions": "Conv.",
+      "kpiHour": "Hour",
       "batchTitle": "Distribution batches",
       "batchAdd": "Add batch",
       "batchColName": "Batch",
@@ -1770,11 +1771,11 @@
       "barsSort": "By efficiency",
       "barsTop": "Top",
       "barsRecoTitle": "Next round",
-      "barsRecoEstimate": "Est. +160 clicks · ~25 new customers",
-      "casesTitle": "Real cases",
+      "barsRecoEstimate": "Est. +160 clicks",
+      "casesTitle": "Use cases",
       "casesBefore": "Before",
       "casesAfter": "After",
-      "casesFooter": "Batch split + click stats",
+      "casesFooter": "Example — batches + click stats",
       "timelineExpired": "Expiry",
       "timelineNext": "Next page",
       "timelineChip": "Reserve / Menu",

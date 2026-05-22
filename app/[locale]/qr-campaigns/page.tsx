@@ -184,6 +184,7 @@ type HeroSpec = {
   title1: string;
   title2: string;
   sub: string;
+  timeNote: string;
   Mock: MockComponent;
 };
 type NarrativeSpec = {
@@ -254,7 +255,8 @@ function StickyNarrative({ mock }: { mock: MockData }) {
       eyebrow: tHero("eyebrow"),
       title1: tHero("title1"),
       title2: tHero("title2"),
-      sub: `${t("s1.line1")} ${t("s1.line2")}`,
+      sub: tHero("sub"),
+      timeNote: tHero("timeNote"),
       Mock: MockKpi,
     },
     {
@@ -349,6 +351,9 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                     </h1>
                     <p className="mt-5 max-w-md text-[14px] leading-relaxed text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:text-[15px]">
                       {s.sub}
+                    </p>
+                    <p className="mt-3 text-[12px] font-medium text-accent-700 opacity-0 [animation:hero-fade_700ms_var(--ease)_900ms_forwards]">
+                      {s.timeNote}
                     </p>
                   </>
                 ) : (
@@ -500,7 +505,7 @@ function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
         />
         <KpiCell label={t("kpiClicks")} active={active} delay={350} muted />
         <KpiCell label={t("kpiPer100")} active={active} delay={450} muted />
-        <KpiCell label={t("kpiConversions")} active={active} delay={550} muted />
+        <KpiCell label={t("kpiHour")} active={active} delay={550} muted />
       </div>
     </div>
   );

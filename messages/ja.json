@@ -1703,41 +1703,42 @@
   "qrCampaigns": {
     "hero": {
       "eyebrow": "Offline QR campaigns",
-      "title1": "オフラインのQR配布を、",
-      "title2": "測る。",
-      "cta": "はじめる"
+      "title1": "チラシのQR、",
+      "title2": "どこで効いたか。",
+      "sub": "エリア·出口·業者ごとに別のQRを作り、100枚あたりクリック率で次の配布先を決める。",
+      "timeNote": "5分で最初のキャンペーン。",
+      "cta": "キャンペーン作成"
     },
     "s1": {
-      "line1": "1万枚、配ったはず。",
-      "line2": "本当に、配ったのか。"
+      "line1": "1万枚配っても、",
+      "line2": "どこで反応があったか分からない。"
     },
     "s2": {
-      "line1": "エリアごとに、分けて配る。",
-      "line2": "渋谷○丁目 / 新宿○町 / 池袋."
+      "line1": "エリア·出口·業者ごとに、",
+      "line2": "QRを分ける。"
     },
     "s3": {
-      "line1": "デザインは、そのまま。",
-      "line2": "QRだけ、こちらで。",
-      "aux": "Canva・InDesignで作ったPDFに、座標だけ指定。"
+      "line1": "デザインはそのまま、",
+      "line2": "QRだけ差し替える。",
+      "aux": "Canva·InDesignで作ったPDFに、座標だけ指定。"
     },
     "s4": {
-      "line1": "渋谷 142、新宿 38、池袋 91。",
-      "line2": "次は、渋谷に倍。",
-      "aux": "──だから、来月の配布が決まる。"
+      "line1": "渋谷 142 クリック、新宿 38。",
+      "line2": "次は、渋谷を倍に。",
+      "aux": "次の配布、クリックが教えてくれる。"
     },
     "s5": {
-      "line1": "ラーメン店も。",
-      "line2": "美容室も、学習塾も。",
-      "aux": "同じやり方で、結果は5倍。"
+      "line1": "チラシ·クーポン·ポスター。",
+      "line2": "業種を問わず比較できる。",
+      "aux": "活用例 — 同じやり方で5倍。"
     },
     "s6": {
-      "line1": "キャンペーンが終わっても、",
-      "line2": "チラシは街に残る。",
-      "line3": "期限後は、次のページへ自動切替。"
+      "line1": "印刷したQRはそのまま、",
+      "line2": "行き先だけ変更。"
     },
     "cta": {
-      "title": "最初のキャンペーン、5分。",
-      "primary": "はじめる",
+      "title": "次の配布、クリックが教えてくれる。",
+      "primary": "最初のQRキャンペーンを作る",
       "secondary": "ログイン",
       "note": "通常の短縮URL · 統計も同じアカウントで"
     },
@@ -1746,7 +1747,7 @@
       "kpiDistributed": "配布",
       "kpiClicks": "クリック",
       "kpiPer100": "100枚あたり",
-      "kpiConversions": "転換",
+      "kpiHour": "時間帯",
       "batchTitle": "配布バッチ",
       "batchAdd": "バッチ追加",
       "batchColName": "バッチ名",
@@ -1766,15 +1767,15 @@
       "barsSort": "効率順",
       "barsTop": "Top",
       "barsRecoTitle": "次回の推奨",
-      "barsRecoEstimate": "予想 +160 クリック · 新規 ~25人",
-      "casesTitle": "実例",
+      "barsRecoEstimate": "予想 +160 クリック",
+      "casesTitle": "活用例",
       "casesBefore": "1回目",
       "casesAfter": "2回目",
-      "casesFooter": "バッチ分割 + クリックstatsで分析",
+      "casesFooter": "例 — バッチ分割 + クリックstatsで測定可能",
       "timelineExpired": "期限切れ時点",
       "timelineNext": "次のページ",
       "timelineChip": "予約 / メニュー",
-      "timelineFoot": "QRはそのまま、行き先だけ自動切替"
+      "timelineFoot": "印刷したQRはそのまま、行き先だけ自動切替"
     },
     "backLink": "短縮URLツールに戻る",
     "statsLink": "QRキャンペーン分析"
