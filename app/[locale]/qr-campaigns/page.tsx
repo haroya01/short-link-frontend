@@ -97,83 +97,77 @@ export default function QrCampaignsLandingPage() {
 
   return (
     <div className="bg-white">
-      <Hero ctaHref={ctaHref} />
-      <StickyNarrative mock={mock} />
+      <GlobalStyles />
+      <StickyNarrative mock={mock} ctaHref={ctaHref} />
       <FinalCta ctaHref={ctaHref} authenticated={authenticated} />
     </div>
   );
 }
 
-function Hero({ ctaHref }: { ctaHref: string }) {
-  const t = useTranslations("qrCampaigns.hero");
+function GlobalStyles() {
   return (
-    <section className="bg-gradient-to-b from-accent-50/60 via-white to-white">
-      <div className="container max-w-5xl py-20 sm:py-28">
-        <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards]">
-          {t("eyebrow")}
-        </p>
-        <h1 className="mt-4 text-[40px] font-semibold leading-[1.05] tracking-headline text-slate-900 sm:text-[56px] lg:text-[68px]">
-          <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards]">
-            {t("title1")}
-          </span>
-          <br />
-          <span className="inline-block translate-y-4 text-accent-700 opacity-0 [animation:hero-rise_900ms_var(--ease)_420ms_forwards]">
-            {t("title2")}
-          </span>
-        </h1>
-        <div className="mt-10 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards]">
-          <Link href={ctaHref}>
-            <Button variant="accent" className="h-12 rounded-xl px-7 text-[14px] font-medium">
-              {t("cta")}
-              <ArrowRight className="h-4 w-4" aria-hidden />
-            </Button>
-          </Link>
-        </div>
-      </div>
-      <style jsx global>{`
-        :root {
-          --ease: ${EASE};
+    <style jsx global>{`
+      :root {
+        --ease: ${EASE};
+      }
+      @keyframes hero-fade {
+        to {
+          opacity: 1;
         }
-        @keyframes hero-fade {
-          to {
-            opacity: 1;
-          }
+      }
+      @keyframes hero-rise {
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        @keyframes hero-rise {
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+      }
+      @keyframes dot-progress {
+        from {
+          transform: scaleX(0);
         }
-        @keyframes dot-progress {
-          from {
-            transform: scaleX(0);
-          }
-          to {
-            transform: scaleX(1);
-          }
+        to {
+          transform: scaleX(1);
         }
-      `}</style>
-    </section>
+      }
+    `}</style>
   );
 }
 
 type MockComponent = React.ComponentType<{ mock: MockData; active: boolean }>;
 
-type SectionSpec = {
+type HeroSpec = {
+  kind: "hero";
+  eyebrow: string;
+  title1: string;
+  title2: string;
+  sub: string;
+  ctaLabel: string;
+  Mock: MockComponent;
+};
+type NarrativeSpec = {
+  kind: "narrative";
   line1: string;
   line2: string;
   line3?: string;
   aux?: string;
   Mock: MockComponent;
 };
+type SectionSpec = HeroSpec | NarrativeSpec;
 
-function StickyNarrative({ mock }: { mock: MockData }) {
+function StickyNarrative({ mock, ctaHref }: { mock: MockData; ctaHref: string }) {
   const t = useTranslations("qrCampaigns");
+  const tHero = useTranslations("qrCampaigns.hero");
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [active, setActive] = useState(0);
+  // -1 로 시작해서 첫 frame 직후 0 으로 setter — 좌측 mock 도 transition 으로 부드럽게 진입.
+  const [active, setActive] = useState(-1);
   const [paused, setPaused] = useState(false);
   const programmaticRef = useRef(false);
+
+  // 초기 mount 50ms 후 active=0 — fade-in transition 발화
+  useEffect(() => {
+    const t = window.setTimeout(() => setActive(0), 50);
+    return () => window.clearTimeout(t);
+  }, []);
 
   // user manual scroll/touch/key → autoplay 중단 (programmatic scroll 인 동안은 무시)
   useEffect(() => {
@@ -214,9 +208,10 @@ function StickyNarrative({ mock }: { mock: MockData }) {
     return () => observer.disconnect();
   }, []);
 
-  // autoplay: 7s 후 다음 섹션으로 smooth scroll (마지막 섹션이면 멈춤)
+  // autoplay: 7s 후 다음 섹션으로 smooth scroll (마지막 섹션이면 멈춤). active < 0 진입 단계엔 skip.
   useEffect(() => {
     if (paused) return;
+    if (active < 0) return;
     if (active >= SECTION_COUNT - 1) return;
     const timer = window.setTimeout(() => {
       const next = sectionRefs.current[active + 1];
@@ -230,22 +225,40 @@ function StickyNarrative({ mock }: { mock: MockData }) {
     return () => window.clearTimeout(timer);
   }, [active, paused]);
 
+  // §1 자리에 Hero (브랜드 명제 + 페인 sub + CTA) 를 통합. 진입 즉시 좌측 KPI mock + 우측 Hero text
+  // 가 한 viewport 에 같이 보임 — user 가 첫 화면에서 페이지 정체성과 autoplay 진행을 동시에 인식.
   const sections: SectionSpec[] = [
-    { line1: t("s1.line1"), line2: t("s1.line2"), Mock: MockKpi },
-    { line1: t("s2.line1"), line2: t("s2.line2"), Mock: MockBatch },
     {
+      kind: "hero",
+      eyebrow: tHero("eyebrow"),
+      title1: tHero("title1"),
+      title2: tHero("title2"),
+      sub: `${t("s1.line1")} ${t("s1.line2")}`,
+      ctaLabel: tHero("cta"),
+      Mock: MockKpi,
+    },
+    {
+      kind: "narrative",
+      line1: t("s2.line1"),
+      line2: t("s2.line2"),
+      Mock: MockBatch,
+    },
+    {
+      kind: "narrative",
       line1: t("s3.line1"),
       line2: t("s3.line2"),
       aux: t("s3.aux"),
       Mock: MockPoster,
     },
     {
+      kind: "narrative",
       line1: t("s4.line1"),
       line2: t("s4.line2"),
       aux: t("s4.aux"),
       Mock: MockBars,
     },
     {
+      kind: "narrative",
       line1: t("s5.line1"),
       line2: t("s5.line2"),
       line3: t("s5.line3"),
@@ -293,55 +306,85 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                 }}
                 className="flex flex-col justify-center px-6 py-20 sm:px-12 sm:py-24 lg:min-h-screen lg:px-16 lg:py-0"
               >
-                <h2 className="text-[28px] font-semibold leading-[1.15] tracking-headline text-slate-900 sm:text-[36px] lg:text-[44px]">
-                  <span
-                    className="inline-block transition-all duration-700"
-                    style={{
-                      transitionTimingFunction: EASE,
-                      opacity: isActive ? 1 : 0,
-                      transform: isActive ? "translateY(0)" : "translateY(16px)",
-                    }}
-                  >
-                    {s.line1}
-                  </span>
-                  <br />
-                  <span
-                    className="inline-block text-slate-500 transition-all duration-700"
-                    style={{
-                      transitionTimingFunction: EASE,
-                      transitionDelay: isActive ? "180ms" : "0ms",
-                      opacity: isActive ? 1 : 0,
-                      transform: isActive ? "translateY(0)" : "translateY(16px)",
-                    }}
-                  >
-                    {s.line2}
-                  </span>
-                </h2>
-                {s.line3 && (
-                  <p
-                    className="mt-3 text-[20px] leading-[1.2] tracking-headline text-slate-500 transition-all duration-700 sm:text-[24px] lg:text-[28px]"
-                    style={{
-                      transitionTimingFunction: EASE,
-                      transitionDelay: isActive ? "340ms" : "0ms",
-                      opacity: isActive ? 1 : 0,
-                      transform: isActive ? "translateY(0)" : "translateY(16px)",
-                    }}
-                  >
-                    {s.line3}
-                  </p>
-                )}
-                {s.aux && (
-                  <p
-                    className="mt-6 text-[13px] text-slate-500 transition-all duration-700 sm:text-[14px]"
-                    style={{
-                      transitionTimingFunction: EASE,
-                      transitionDelay: isActive ? "500ms" : "0ms",
-                      opacity: isActive ? 1 : 0,
-                      transform: isActive ? "translateY(0)" : "translateY(8px)",
-                    }}
-                  >
-                    ── {s.aux}
-                  </p>
+                {s.kind === "hero" ? (
+                  <>
+                    <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards]">
+                      {s.eyebrow}
+                    </p>
+                    <h1 className="mt-4 text-[36px] font-semibold leading-[1.05] tracking-headline text-slate-900 sm:text-[48px] lg:text-[56px]">
+                      <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards]">
+                        {s.title1}
+                      </span>
+                      <br />
+                      <span className="inline-block translate-y-4 text-accent-700 opacity-0 [animation:hero-rise_900ms_var(--ease)_420ms_forwards]">
+                        {s.title2}
+                      </span>
+                    </h1>
+                    <p className="mt-5 max-w-md text-[14px] leading-relaxed text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:text-[15px]">
+                      {s.sub}
+                    </p>
+                    <div className="mt-8 opacity-0 [animation:hero-fade_700ms_var(--ease)_900ms_forwards]">
+                      <Link href={ctaHref}>
+                        <Button variant="accent" className="h-12 rounded-xl px-7 text-[14px] font-medium">
+                          {s.ctaLabel}
+                          <ArrowRight className="h-4 w-4" aria-hidden />
+                        </Button>
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="text-[28px] font-semibold leading-[1.15] tracking-headline text-slate-900 sm:text-[36px] lg:text-[44px]">
+                      <span
+                        className="inline-block transition-all duration-700"
+                        style={{
+                          transitionTimingFunction: EASE,
+                          opacity: isActive ? 1 : 0,
+                          transform: isActive ? "translateY(0)" : "translateY(16px)",
+                        }}
+                      >
+                        {s.line1}
+                      </span>
+                      <br />
+                      <span
+                        className="inline-block text-slate-500 transition-all duration-700"
+                        style={{
+                          transitionTimingFunction: EASE,
+                          transitionDelay: isActive ? "180ms" : "0ms",
+                          opacity: isActive ? 1 : 0,
+                          transform: isActive ? "translateY(0)" : "translateY(16px)",
+                        }}
+                      >
+                        {s.line2}
+                      </span>
+                    </h2>
+                    {s.line3 && (
+                      <p
+                        className="mt-3 text-[20px] leading-[1.2] tracking-headline text-slate-500 transition-all duration-700 sm:text-[24px] lg:text-[28px]"
+                        style={{
+                          transitionTimingFunction: EASE,
+                          transitionDelay: isActive ? "340ms" : "0ms",
+                          opacity: isActive ? 1 : 0,
+                          transform: isActive ? "translateY(0)" : "translateY(16px)",
+                        }}
+                      >
+                        {s.line3}
+                      </p>
+                    )}
+                    {s.aux && (
+                      <p
+                        className="mt-6 text-[13px] text-slate-500 transition-all duration-700 sm:text-[14px]"
+                        style={{
+                          transitionTimingFunction: EASE,
+                          transitionDelay: isActive ? "500ms" : "0ms",
+                          opacity: isActive ? 1 : 0,
+                          transform: isActive ? "translateY(0)" : "translateY(8px)",
+                        }}
+                      >
+                        ── {s.aux}
+                      </p>
+                    )}
+                  </>
                 )}
                 <div className="mt-10 lg:hidden">
                   <s.Mock mock={mock} active={isActive} />
