@@ -1613,5 +1613,63 @@
     "a5": "Google Safe Browsing API로 단축 시점에 검사합니다. 차단된 URL은 단축이 거절됩니다.",
     "q6": "API가 있나요?",
     "a6": "네 — 개발자용 API 제공해요. 설정 > API 키 에서 키 발급 받고, 본인 코드에서 단축 / 통계 endpoint 호출 가능합니다."
+  },
+  "qrCampaigns": {
+    "hero": {
+      "eyebrow": "Offline QR campaigns",
+      "title1": "오프라인 QR 배포를,",
+      "title2": "측정합니다.",
+      "cta": "시작하기"
+    },
+    "s1": {
+      "line1": "1000장, 뿌렸다고 합니다.",
+      "line2": "진짜, 다 뿌렸을까요."
+    },
+    "s2": {
+      "line1": "지역으로, 나눕니다.",
+      "line2": "강남역 / 신촌 / 홍대."
+    },
+    "s3": {
+      "line1": "강남 80, 신촌 5, 홍대 47.",
+      "line2": "다음엔, 강남에 두 배.",
+      "aux": "학원도, 미용실도, 부동산도."
+    },
+    "s4": {
+      "line1": "행사는 끝나도,",
+      "line2": "전단지는 남습니다.",
+      "line3": "만료 후엔, 다음 페이지로 자동 전환."
+    },
+    "cta": {
+      "title": "첫 캠페인, 5분.",
+      "primary": "시작하기",
+      "secondary": "로그인",
+      "note": "일반 단축 URL · 통계도 같은 계정으로"
+    },
+    "mock": {
+      "s1Status": "진행 중 · 5일째",
+      "s1KpiDistributed": "배포",
+      "s1KpiClicks": "클릭",
+      "s1KpiPer100": "100장당",
+      "s1KpiConversions": "전환",
+      "s2Title": "배포 묶음",
+      "s2Add": "+ 묶음 추가",
+      "s2ColName": "묶음명",
+      "s2ColArea": "지역",
+      "s2ColDist": "배포자",
+      "s2ColQty": "수량",
+      "s2ColStatus": "상태",
+      "s2Done": "인쇄 완료",
+      "s2Unit": "장",
+      "s3Title": "100장당 클릭",
+      "s3Sort": "효율순",
+      "s3Top": "Top",
+      "s3RecoTitle": "다음 회 추천",
+      "s4Expired": "만료 시점",
+      "s4Next": "다음 페이지",
+      "s4Chip": "예약 / 메뉴",
+      "s4Foot": "QR 은 그대로, 도착지만 자동 전환"
+    },
+    "backLink": "단축 URL 도구로 돌아가기",
+    "statsLink": "QR 캠페인 분석"
   }
 }
