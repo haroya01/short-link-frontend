@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import * as Sentry from "@sentry/nextjs";
 import { claimAnonymousLinks, getMe, logout as apiLogout, readToken } from "./api";
 import { clearClaimTokens, readPendingClaimTokens } from "./recent-links";
@@ -12,8 +19,16 @@ type AuthState = {
   me: Me | null;
 };
 
-// Module-level guard so that multiple useAuth instances mounting concurrently after login
-// (Nav + page + dashboard, etc.) don't all race to claim the same tokens.
+type AuthContextValue = AuthState & {
+  isAdmin: boolean;
+  signInWithGoogle: () => void;
+  signOut: () => Promise<void>;
+};
+
+const AuthContext = createContext<AuthContextValue | null>(null);
+
+// Module-level guard so that overlapping mount effects (Strict Mode double-fires in dev, plus an
+// auth:change event arriving mid-mount) don't race to claim the same anonymous tokens.
 let claimAttempted = false;
 
 async function tryClaimPendingLinks() {
@@ -35,7 +50,7 @@ async function tryClaimPendingLinks() {
   }
 }
 
-export function useAuth() {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({
     authenticated: false,
     ready: false,
@@ -43,14 +58,16 @@ export function useAuth() {
   });
 
   useEffect(() => {
+    let cancelled = false;
     const sync = async () => {
       const token = readToken();
       if (!token) {
-        setState({ authenticated: false, ready: true, me: null });
+        if (!cancelled) setState({ authenticated: false, ready: true, me: null });
         return;
       }
       try {
         const me = await getMe();
+        if (cancelled) return;
         setState({ authenticated: true, ready: true, me });
         // Attach the user to Sentry so captured errors / breadcrumbs are tied back to a real
         // account when triaging. Email kept out — id + role is enough for cross-referencing the
@@ -59,6 +76,7 @@ export function useAuth() {
         Sentry.setTag("role", me.role);
         tryClaimPendingLinks();
       } catch {
+        if (cancelled) return;
         setState({ authenticated: false, ready: true, me: null });
         Sentry.setUser(null);
       }
@@ -68,6 +86,7 @@ export function useAuth() {
     window.addEventListener("auth:change", onChange);
     window.addEventListener("storage", onChange);
     return () => {
+      cancelled = true;
       window.removeEventListener("auth:change", onChange);
       window.removeEventListener("storage", onChange);
     };
@@ -83,10 +102,37 @@ export function useAuth() {
     Sentry.setUser(null);
   }, []);
 
-  return {
-    ...state,
-    isAdmin: state.me?.role === "ADMIN",
-    signInWithGoogle,
-    signOut,
-  };
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      ...state,
+      isAdmin: state.me?.role === "ADMIN",
+      signInWithGoogle,
+      signOut,
+    }),
+    [state, signInWithGoogle, signOut],
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+// Fallback used when a consumer mounts outside the provider (e.g., a storybook story or a leaked
+// test render). Returns `ready: false` so callers keep showing their skeleton instead of
+// flashing "anonymous" — and crucially does NOT fire its own /me, so the structural fix holds.
+const FALLBACK: AuthContextValue = {
+  authenticated: false,
+  ready: false,
+  me: null,
+  isAdmin: false,
+  signInWithGoogle: () => {
+    if (typeof window === "undefined") return;
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE ?? "";
+    window.location.href = apiBase + "/oauth2/authorization/google";
+  },
+  signOut: async () => {
+    /* no-op outside provider */
+  },
+};
+
+export function useAuth(): AuthContextValue {
+  return useContext(AuthContext) ?? FALLBACK;
 }

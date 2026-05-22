@@ -90,6 +90,10 @@ export function readToken(): string | null {
 }
 
 export function setToken(token: string | null) {
+  // No-op when the value hasn't changed — otherwise an expired-token path that re-calls
+  // setToken(null) on every failed request re-dispatches auth:change and re-triggers /me across
+  // all listeners, fanning out into N² requests.
+  if (memoryToken === token) return;
   memoryToken = token;
   if (typeof window === "undefined") return;
   if (token) window.localStorage.setItem(ACCESS_TOKEN_KEY, token);
@@ -451,8 +455,17 @@ export async function setLinkProtection(
   });
 }
 
+let meInFlight: Promise<Me> | null = null;
+
 export async function getMe(): Promise<Me> {
-  return request<Me>("/api/v1/users/me", { method: "GET" });
+  // Single-flight: if a /me call is already in flight, return its promise instead of opening a
+  // second connection. React Strict Mode double-mounts and the auth:change listener firing while
+  // the initial mount effect is still in-flight both used to fan out into duplicate /me requests.
+  if (meInFlight) return meInFlight;
+  meInFlight = request<Me>("/api/v1/users/me", { method: "GET" }).finally(() => {
+    meInFlight = null;
+  });
+  return meInFlight;
 }
 
 export async function updateMyTimezone(timezone: string): Promise<Me> {
