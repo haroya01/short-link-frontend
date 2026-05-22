@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   BarChart3,
@@ -144,9 +145,61 @@ function UseCases() {
   );
 }
 
+const FLOW_STEPS = [
+  {
+    num: "01",
+    title: "캠페인 만들기",
+    body: "이름 · 기간 · 종료 후 동작 (그대로 유지 / 만료 / 다른 페이지로 전환).",
+    mock: <MockCampaignForm />,
+  },
+  {
+    num: "02",
+    title: "배포 묶음 추가",
+    body: "배포자·지역·수량별로 묶음. 한 줄씩 폼으로 또는 스프레드시트에서 붙여넣기.",
+    mock: <MockBatchTable />,
+  },
+  {
+    num: "03",
+    title: "인쇄 자산 받기",
+    body: "QR ZIP / CSV / A4 시트 / 포스터 PDF 합본 — Canva·인쇄소에 그대로 넘김.",
+    mock: <MockAssets />,
+  },
+  {
+    num: "04",
+    title: "배포 → 측정 → 다음 배포 조정",
+    body: "배포자별 / 지역별 100장당 클릭률. 어느 묶음이 진짜 효율적이었는지.",
+    mock: <MockStats />,
+  },
+];
+
+const AUTO_ROTATE_MS = 5500;
+
 function Flow() {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const tickRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (paused) return;
+    tickRef.current = window.setTimeout(() => {
+      setActive((i) => (i + 1) % FLOW_STEPS.length);
+    }, AUTO_ROTATE_MS);
+    return () => {
+      if (tickRef.current) window.clearTimeout(tickRef.current);
+    };
+  }, [active, paused]);
+
+  function pick(i: number) {
+    setActive(i);
+    setPaused(true);
+  }
+
   return (
-    <section className="bg-slate-50/60">
+    <section
+      className="bg-slate-50/60"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
       <div className="container max-w-5xl py-16 sm:py-20">
         <div className="mb-8">
           <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
@@ -156,61 +209,100 @@ function Flow() {
             4 단계로 끝
           </h2>
         </div>
-        <ol className="space-y-3">
-          <FlowStep
-            num="01"
-            title="캠페인 만들기"
-            body="이름 · 기간 · 종료 후 동작 (그대로 유지 / 만료 / 다른 페이지로 전환)."
-          >
-            <MockCampaignForm />
-          </FlowStep>
-          <FlowStep
-            num="02"
-            title="배포 묶음 추가"
-            body="배포자·지역·수량별로 묶음. 한 줄씩 폼으로 또는 스프레드시트에서 붙여넣기."
-          >
-            <MockBatchTable />
-          </FlowStep>
-          <FlowStep
-            num="03"
-            title="인쇄 자산 받기"
-            body="QR ZIP / CSV / A4 시트 / 포스터 PDF 합본 — Canva·인쇄소에 그대로 넘김."
-          >
-            <MockAssets />
-          </FlowStep>
-          <FlowStep
-            num="04"
-            title="배포 → 측정 → 다음 배포 조정"
-            body="배포자별 / 지역별 100장당 클릭률. 어느 묶음이 진짜 효율적이었는지."
-          >
-            <MockStats />
-          </FlowStep>
-        </ol>
-      </div>
-    </section>
-  );
-}
 
-function FlowStep({
-  num,
-  title,
-  body,
-  children,
-}: {
-  num: string;
-  title: string;
-  body: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <li className="grid grid-cols-1 gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-4 sm:grid-cols-[260px_1fr] sm:px-5 sm:py-5">
-      <div>
-        <p className="text-[10px] font-medium uppercase tracking-wider text-accent-700">{num}</p>
-        <h3 className="mt-2 text-sm font-medium text-slate-900">{title}</h3>
-        <p className="mt-1.5 text-[12px] leading-snug text-slate-500">{body}</p>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[360px_1fr] lg:gap-8">
+          {/* 좌측 step list */}
+          <ol className="space-y-2">
+            {FLOW_STEPS.map((step, i) => (
+              <li key={step.num}>
+                <button
+                  type="button"
+                  onClick={() => pick(i)}
+                  className={
+                    "group relative w-full overflow-hidden rounded-2xl border px-4 py-3.5 text-left transition-all " +
+                    (i === active
+                      ? "border-accent-200 bg-white shadow-[0_4px_16px_rgba(15,23,42,0.06)]"
+                      : "border-slate-200 bg-white/50 hover:bg-white")
+                  }
+                >
+                  <div className="flex items-start gap-3">
+                    <span
+                      className={
+                        "grid h-7 w-7 flex-shrink-0 place-items-center rounded-lg text-[11px] font-semibold tabular-nums " +
+                        (i === active
+                          ? "bg-accent-600 text-white"
+                          : "bg-slate-100 text-slate-500")
+                      }
+                    >
+                      {step.num}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <h3
+                        className={
+                          "text-sm font-medium " +
+                          (i === active ? "text-slate-900" : "text-slate-600")
+                        }
+                      >
+                        {step.title}
+                      </h3>
+                      <p
+                        className={
+                          "mt-1 text-[12px] leading-snug " +
+                          (i === active ? "text-slate-600" : "text-slate-500")
+                        }
+                      >
+                        {step.body}
+                      </p>
+                    </div>
+                  </div>
+                  {i === active && !paused && (
+                    <span
+                      key={`progress-${active}`}
+                      aria-hidden
+                      className="absolute bottom-0 left-0 h-0.5 bg-accent-500"
+                      style={{ animation: `flow-progress ${AUTO_ROTATE_MS}ms linear forwards` }}
+                    />
+                  )}
+                </button>
+              </li>
+            ))}
+          </ol>
+
+          {/* 우측 mock viewport */}
+          <div className="relative min-h-[320px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] sm:p-5">
+            <div className="absolute right-4 top-3 inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-slate-400">
+              <span className="grid h-1.5 w-1.5 place-items-center rounded-full bg-accent-500" />
+              미리보기
+            </div>
+            <div className="relative mt-6">
+              {FLOW_STEPS.map((step, i) => (
+                <div
+                  key={step.num}
+                  aria-hidden={i !== active}
+                  className={
+                    "transition-opacity duration-500 " +
+                    (i === active ? "opacity-100" : "pointer-events-none absolute inset-0 opacity-0")
+                  }
+                >
+                  {step.mock}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
-      <div>{children}</div>
-    </li>
+
+      <style jsx>{`
+        @keyframes flow-progress {
+          from {
+            width: 0%;
+          }
+          to {
+            width: 100%;
+          }
+        }
+      `}</style>
+    </section>
   );
 }
 
