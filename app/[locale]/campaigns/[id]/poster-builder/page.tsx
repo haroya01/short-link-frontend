@@ -51,6 +51,35 @@ export default function PosterBuilderPage() {
   const [box, setBox] = useState<QrBoxFraction>(DEFAULT_BOX);
   const [composing, setComposing] = useState(false);
 
+  // 첫 batch 의 QR 을 미리보기에 박는다. 박스 위치/크기 조절 시 사용자가 *실제 결과물* 을
+  // 즉시 본다 (이전엔 박스 안에 "QR" 글자만 있어서 합성하기 전까지 결과를 못 봤음). batch 가
+  // 아직 없는 사용자는 generic kurl.me 로 placeholder QR 미리보기.
+  const previewShortUrl =
+    batches === null ? null : (batches[0]?.shortUrl ?? "https://kurl.me");
+  const previewBatchCount = batches?.length ?? 0;
+  const [previewQrDataUrl, setPreviewQrDataUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!previewShortUrl) {
+      setPreviewQrDataUrl(null);
+      return;
+    }
+    let cancelled = false;
+    QRCode.toDataURL(previewShortUrl, {
+      errorCorrectionLevel: "M",
+      margin: 1,
+      width: 512,
+    })
+      .then((url) => {
+        if (!cancelled) setPreviewQrDataUrl(url);
+      })
+      .catch(() => {
+        if (!cancelled) setPreviewQrDataUrl(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [previewShortUrl]);
+
   useEffect(() => {
     if (!ready || !authenticated || !Number.isFinite(campaignId)) {
       setLoading(false);
@@ -208,6 +237,8 @@ export default function PosterBuilderPage() {
               box={box}
               onBoxChange={setBox}
               onRemove={() => handleFile(null)}
+              qrDataUrl={previewQrDataUrl}
+              batchCount={previewBatchCount}
             />
           )}
         </div>
@@ -303,11 +334,15 @@ function PreviewWithBox({
   box,
   onBoxChange,
   onRemove,
+  qrDataUrl,
+  batchCount,
 }: {
   file: File;
   box: QrBoxFraction;
   onBoxChange: (b: QrBoxFraction) => void;
   onRemove: () => void;
+  qrDataUrl: string | null;
+  batchCount: number;
 }) {
   return (
     <div className="space-y-2">
@@ -322,9 +357,21 @@ function PreviewWithBox({
           <Trash2 className="h-3.5 w-3.5" aria-hidden /> 다른 PDF
         </button>
       </div>
-      <PdfPreview file={file} box={box} onBoxChange={onBoxChange} />
+      <PdfPreview file={file} box={box} onBoxChange={onBoxChange} qrDataUrl={qrDataUrl} />
       <p className="text-[11px] text-slate-500">
         QR 박스를 드래그해 위치를 옮기고, 우하단 핸들로 크기를 조절하세요.
+        {batchCount > 1 && (
+          <>
+            {" "}미리보기는 첫 번째 묶음 ({batchCount}개 묶음 중 1번째). 각 묶음마다 다른 QR 이
+            박힙니다.
+          </>
+        )}
+        {batchCount === 0 && (
+          <>
+            {" "}배포 묶음이 없어서 placeholder QR 로 미리보고 있어요. 실제 합성은 묶음 추가 후
+            가능.
+          </>
+        )}
       </p>
     </div>
   );
