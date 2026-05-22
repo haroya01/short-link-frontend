@@ -1711,12 +1711,12 @@
     },
     "hero": {
       "eyebrow": "Offline QR campaigns",
-      "title1": "Flyer QR —",
-      "title2": "see what worked.",
-      "sub": "Print a different QR per area, exit, or vendor. Pick the next drop zone from clicks-per-100.",
+      "title1": "Different QR per flyer —",
+      "title2": "see where they worked.",
+      "sub": "Auto-generate a different QR per area, exit, or vendor. Pick the next drop zone from clicks-per-100.",
       "chip1": "5 minutes to first campaign",
       "chip2": "Canva / InDesign PDF supported",
-      "chip3": "QR destination editable",
+      "chip3": "Change destination anytime",
       "cta": "Start campaign"
     },
     "s1": {
