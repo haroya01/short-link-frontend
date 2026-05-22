@@ -92,12 +92,14 @@ export function Nav() {
       label: t("myLinks"),
       active: (p) => p.startsWith("/dashboard"),
     });
-    entries.push({
-      href: "/campaigns",
-      label: t("campaigns"),
-      active: (p) => p.startsWith("/campaigns"),
-    });
   }
+  // QR 캠페인 메뉴는 anonymous + 로그인 모두 노출 — anonymous 는 marketing landing,
+  // 로그인 사용자는 자기 캠페인 목록. 도메인이 일반 단축 URL 과 다르다는 걸 진입에서 분리.
+  entries.push({
+    href: authenticated ? "/campaigns" : "/qr-campaigns",
+    label: t("campaigns"),
+    active: (p) => p.startsWith("/campaigns") || p.startsWith("/qr-campaigns"),
+  });
   if (isAdmin) {
     entries.push({
       href: "/admin",
