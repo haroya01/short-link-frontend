@@ -937,3 +937,113 @@ export function isValidUrl(s: string): boolean {
     return false;
   }
 }
+
+// ===== Campaign API =====
+
+import type {
+  CampaignBatch,
+  CampaignBatchBulkPayload,
+  CampaignBatchCreatePayload,
+  CampaignBatchUpdatePayload,
+  CampaignCreatePayload,
+  CampaignDetail,
+  CampaignStats,
+  CampaignSummary,
+  CampaignUpdatePayload,
+} from "@/types";
+
+export async function listCampaigns(): Promise<CampaignSummary[]> {
+  return request<CampaignSummary[]>("/api/v1/campaigns", { method: "GET" });
+}
+
+export async function getCampaign(id: number): Promise<CampaignDetail> {
+  return request<CampaignDetail>(`/api/v1/campaigns/${id}`, { method: "GET" });
+}
+
+export async function createCampaign(payload: CampaignCreatePayload): Promise<CampaignDetail> {
+  return request<CampaignDetail>("/api/v1/campaigns", { method: "POST", body: payload });
+}
+
+export async function updateCampaign(
+  id: number,
+  payload: CampaignUpdatePayload,
+): Promise<CampaignDetail> {
+  return request<CampaignDetail>(`/api/v1/campaigns/${id}`, { method: "PATCH", body: payload });
+}
+
+export async function archiveCampaign(id: number): Promise<CampaignDetail> {
+  return request<CampaignDetail>(`/api/v1/campaigns/${id}`, { method: "DELETE" });
+}
+
+export async function endCampaignNow(id: number): Promise<CampaignDetail> {
+  return request<CampaignDetail>(`/api/v1/campaigns/${id}/end`, { method: "POST" });
+}
+
+export async function reapplyCampaignPolicy(id: number): Promise<CampaignDetail> {
+  return request<CampaignDetail>(`/api/v1/campaigns/${id}/reapply-policy`, { method: "POST" });
+}
+
+export async function listCampaignBatches(campaignId: number): Promise<CampaignBatch[]> {
+  return request<CampaignBatch[]>(`/api/v1/campaigns/${campaignId}/batches`, { method: "GET" });
+}
+
+export async function getCampaignBatch(
+  campaignId: number,
+  batchId: number,
+): Promise<CampaignBatch> {
+  return request<CampaignBatch>(`/api/v1/campaigns/${campaignId}/batches/${batchId}`, {
+    method: "GET",
+  });
+}
+
+export async function createCampaignBatch(
+  campaignId: number,
+  payload: CampaignBatchCreatePayload,
+): Promise<CampaignBatch> {
+  return request<CampaignBatch>(`/api/v1/campaigns/${campaignId}/batches`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export async function createCampaignBatchesBulk(
+  campaignId: number,
+  payload: CampaignBatchBulkPayload,
+): Promise<CampaignBatch[]> {
+  return request<CampaignBatch[]>(`/api/v1/campaigns/${campaignId}/batches/bulk`, {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export async function updateCampaignBatch(
+  campaignId: number,
+  batchId: number,
+  payload: CampaignBatchUpdatePayload,
+): Promise<CampaignBatch> {
+  return request<CampaignBatch>(`/api/v1/campaigns/${campaignId}/batches/${batchId}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export async function deleteCampaignBatch(campaignId: number, batchId: number): Promise<void> {
+  await request<void>(`/api/v1/campaigns/${campaignId}/batches/${batchId}`, { method: "DELETE" });
+}
+
+export async function getCampaignStats(campaignId: number): Promise<CampaignStats> {
+  return request<CampaignStats>(`/api/v1/campaigns/${campaignId}/stats`, { method: "GET" });
+}
+
+/** 다운로드 URL — 토큰 없는 navigator 다운로드 트리거에 쓰임. 인증은 cookie/세션이 처리. */
+export function campaignBatchQrUrl(campaignId: number, batchId: number): string {
+  return withBase(`/api/v1/campaigns/${campaignId}/batches/${batchId}/qr`);
+}
+
+export function campaignBatchesZipUrl(campaignId: number): string {
+  return withBase(`/api/v1/campaigns/${campaignId}/batches/qr-zip`);
+}
+
+export function campaignBatchesCsvUrl(campaignId: number): string {
+  return withBase(`/api/v1/campaigns/${campaignId}/batches/csv`);
+}
