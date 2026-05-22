@@ -85,7 +85,7 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
   },
 };
 
-const AUTOPLAY_MS = 7000;
+const AUTOPLAY_MS = 5000;
 const SECTION_COUNT = 5;
 const EASE = "cubic-bezier(0.16,1,0.3,1)";
 
@@ -98,8 +98,27 @@ export default function QrCampaignsLandingPage() {
   return (
     <div className="bg-white">
       <GlobalStyles />
-      <StickyNarrative mock={mock} ctaHref={ctaHref} />
+      <StickyNarrative mock={mock} />
       <FinalCta ctaHref={ctaHref} authenticated={authenticated} />
+      <FloatingCta ctaHref={ctaHref} />
+    </div>
+  );
+}
+
+function FloatingCta({ ctaHref }: { ctaHref: string }) {
+  const t = useTranslations("qrCampaigns.hero");
+  // 어떤 § 에 있든 우하단 같은 자리. mount 직후 살짝 delay 후 fade-in.
+  return (
+    <div className="fixed bottom-6 right-6 z-50 opacity-0 [animation:hero-fade_600ms_var(--ease)_800ms_forwards] sm:bottom-8 sm:right-8">
+      <Link href={ctaHref}>
+        <Button
+          variant="accent"
+          className="h-12 rounded-xl px-6 text-[14px] font-medium shadow-[0_10px_28px_rgba(5,150,105,0.32)] sm:px-7"
+        >
+          {t("cta")}
+          <ArrowRight className="h-4 w-4" aria-hidden />
+        </Button>
+      </Link>
     </div>
   );
 }
@@ -141,7 +160,6 @@ type HeroSpec = {
   title1: string;
   title2: string;
   sub: string;
-  ctaLabel: string;
   Mock: MockComponent;
 };
 type NarrativeSpec = {
@@ -154,7 +172,7 @@ type NarrativeSpec = {
 };
 type SectionSpec = HeroSpec | NarrativeSpec;
 
-function StickyNarrative({ mock, ctaHref }: { mock: MockData; ctaHref: string }) {
+function StickyNarrative({ mock }: { mock: MockData }) {
   const t = useTranslations("qrCampaigns");
   const tHero = useTranslations("qrCampaigns.hero");
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -213,7 +231,6 @@ function StickyNarrative({ mock, ctaHref }: { mock: MockData; ctaHref: string })
       title1: tHero("title1"),
       title2: tHero("title2"),
       sub: `${t("s1.line1")} ${t("s1.line2")}`,
-      ctaLabel: tHero("cta"),
       Mock: MockKpi,
     },
     {
@@ -302,14 +319,6 @@ function StickyNarrative({ mock, ctaHref }: { mock: MockData; ctaHref: string })
                     <p className="mt-5 max-w-md text-[14px] leading-relaxed text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:text-[15px]">
                       {s.sub}
                     </p>
-                    <div className="mt-8 opacity-0 [animation:hero-fade_700ms_var(--ease)_900ms_forwards]">
-                      <Link href={ctaHref}>
-                        <Button variant="accent" className="h-12 rounded-xl px-7 text-[14px] font-medium">
-                          {s.ctaLabel}
-                          <ArrowRight className="h-4 w-4" aria-hidden />
-                        </Button>
-                      </Link>
-                    </div>
                   </>
                 ) : (
                   <>
@@ -389,7 +398,8 @@ function ProgressDots({ count, active }: { count: number; active: number }) {
           {i === active && (
             <div
               key={`bar-${active}`}
-              className="absolute inset-0 origin-left bg-accent-600 [animation:dot-progress_7000ms_linear_forwards]"
+              className="absolute inset-0 origin-left bg-accent-600"
+              style={{ animation: `dot-progress ${AUTOPLAY_MS}ms linear forwards` }}
             />
           )}
         </div>
