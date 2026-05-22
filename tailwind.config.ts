@@ -55,6 +55,27 @@ const config: Config = {
       backgroundImage: {
         "gradient-radial": "radial-gradient(circle, var(--tw-gradient-stops))",
       },
+      /*
+       * Headline scale — 5단계. 페이지마다 inline `text-[26px] sm:text-[36px] lg:text-[52px]`
+       * 가 분산되어 있어 audit (P1) 에서 비일관성 지적됨. 이 token 으로 점진 통일.
+       *
+       * 사용 예: `text-headline-md sm:text-headline-lg lg:text-headline-xl`
+       *
+       * - headline-xs (20px / 22px): 작은 section title (Section 의 h3 = 15px 보다 한 단계 위)
+       * - headline-sm (24px / 26px): 모바일 페이지 h1, narrative h2
+       * - headline-md (32px): tablet/sm breakpoint 의 h2
+       * - headline-lg (40px / 44px): desktop h2, hero sub
+       * - headline-xl (56px / 60px): hero h1 (qr-campaigns 같은 마케팅 페이지)
+       *
+       * line-height 는 큰 size 일수록 tight — display-quality.
+       */
+      fontSize: {
+        "headline-xs": ["1.25rem", { lineHeight: "1.25" }],
+        "headline-sm": ["1.5rem", { lineHeight: "1.2" }],
+        "headline-md": ["2rem", { lineHeight: "1.15" }],
+        "headline-lg": ["2.5rem", { lineHeight: "1.1" }],
+        "headline-xl": ["3.5rem", { lineHeight: "1.05" }],
+      },
       keyframes: {
         "fade-in": {
           from: { opacity: "0", transform: "translateY(2px)" },
