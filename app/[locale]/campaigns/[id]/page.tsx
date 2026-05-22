@@ -84,7 +84,7 @@ export default function CampaignDetailPage() {
         href="/campaigns"
         className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
       >
-        <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> 캠페인 목록
+        <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> QR 캠페인 목록
       </Link>
 
       {loading ? (
@@ -97,12 +97,12 @@ export default function CampaignDetailPage() {
             campaign={campaign}
             pending={pending}
             onEndNow={async () => {
-              if (!confirm("이 캠페인을 지금 종료하시겠습니까?\n인쇄된 QR 에 종료 정책이 즉시 적용됩니다."))
+              if (!confirm("이 QR 캠페인을 지금 종료하시겠습니까?\n인쇄된 QR 에 종료 정책이 즉시 적용됩니다."))
                 return;
               setPending(true);
               try {
                 await endCampaignNow(campaign.id);
-                toast("캠페인이 종료됐어요", "success");
+                toast("QR 캠페인이 종료됐어요", "success");
                 setReload((n) => n + 1);
               } catch (e) {
                 toast(e instanceof Error ? e.message : "종료 실패", "error");
@@ -125,14 +125,14 @@ export default function CampaignDetailPage() {
             onArchive={async () => {
               if (
                 !confirm(
-                  "이 캠페인을 보관합니다.\n목록에서 숨겨지지만 데이터는 그대로 유지됩니다.",
+                  "이 QR 캠페인을 보관합니다.\n목록에서 숨겨지지만 데이터는 그대로 유지됩니다.",
                 )
               )
                 return;
               setPending(true);
               try {
                 await archiveCampaign(campaign.id);
-                toast("캠페인을 보관했어요", "success");
+                toast("QR 캠페인을 보관했어요", "success");
                 setReload((n) => n + 1);
               } catch (e) {
                 toast(e instanceof Error ? e.message : "보관 실패", "error");

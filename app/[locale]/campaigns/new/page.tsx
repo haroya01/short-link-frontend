@@ -59,10 +59,10 @@ export default function NewCampaignPage() {
         postEndAction,
         postEndDestinationUrl: redirectRequired ? postEndDestinationUrl.trim() : undefined,
       });
-      toast("캠페인이 만들어졌어요", "success");
+      toast("QR 캠페인이 만들어졌어요", "success");
       router.push(`/campaigns/${created.id}`);
     } catch (err) {
-      toast(err instanceof Error ? err.message : "캠페인 만들기 실패", "error");
+      toast(err instanceof Error ? err.message : "QR 캠페인 만들기 실패", "error");
     } finally {
       setSubmitting(false);
     }
@@ -75,10 +75,10 @@ export default function NewCampaignPage() {
           href="/campaigns"
           className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
         >
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> 캠페인 목록
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> QR 캠페인 목록
         </Link>
         <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
-          새 캠페인
+          새 QR 캠페인
         </h1>
         <p className="mt-1 text-sm text-slate-500">
           기간과 종료 정책을 정하면, 그 안에 배포 묶음을 만들 수 있어요.
@@ -89,7 +89,7 @@ export default function NewCampaignPage() {
         onSubmit={handleSubmit}
         className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5"
       >
-        <Field label="캠페인 이름" required>
+        <Field label="QR 캠페인 이름" required>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -161,13 +161,13 @@ export default function NewCampaignPage() {
               active={postEndAction === "EXPIRE"}
               onClick={() => setPostEndAction("EXPIRE")}
               title="만료 페이지로"
-              body="QR 을 스캔하면 '이 캠페인은 종료됐어요' 안내 페이지를 봅니다."
+              body="QR 을 스캔하면 '이 QR 캠페인은 종료됐어요' 안내 페이지를 봅니다."
             />
             <PolicyOption
               active={postEndAction === "REDIRECT"}
               onClick={() => setPostEndAction("REDIRECT")}
               title="다른 페이지로 자동 전환"
-              body="후기 / 다음 캠페인 / 대기자 등록 — 인쇄된 QR 을 죽이지 않고 살려서 씁니다."
+              body="후기 / 다음 QR 캠페인 / 대기자 등록 — 인쇄된 QR 을 죽이지 않고 살려서 씁니다."
             />
           </div>
           {redirectRequired && (
@@ -180,7 +180,7 @@ export default function NewCampaignPage() {
                 required
               />
               <p className="mt-1.5 text-[12px] text-slate-500">
-                자동 전환 대상 URL — 캠페인 종료 시점에 인쇄된 QR 들에 일괄 적용됩니다.
+                자동 전환 대상 URL — QR 캠페인 종료 시점에 인쇄된 QR 들에 일괄 적용됩니다.
               </p>
             </div>
           )}
@@ -193,7 +193,7 @@ export default function NewCampaignPage() {
             </Button>
           </Link>
           <Button type="submit" variant="accent" disabled={!canSubmit}>
-            {submitting ? "만드는 중..." : "캠페인 만들기"}
+            {submitting ? "만드는 중..." : "QR 캠페인 만들기"}
           </Button>
         </div>
       </form>
