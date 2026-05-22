@@ -13,7 +13,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 
 /**
- * Campaigns wedge — 캠페인 0개일 때 노출. 단순 "캠페인 만들기" CTA 가 아니라 "이 도구로 무엇이 가능한지" 부터 보여줘야 사용자가 batch / 배포자 /
+ * Campaigns wedge — QR 캠페인 0개일 때 노출. 단순 "QR 캠페인 만들기" CTA 가 아니라 "이 도구로 무엇이 가능한지" 부터 보여줘야 사용자가 batch / 배포자 /
  * 지역 같은 새 개념을 마주했을 때 "왜 이걸 입력하는지" 가 명확해진다.
  *
  * <p>한 줄 메시지: "오프라인 홍보를 온라인 광고처럼 개선하는 도구."
@@ -77,12 +77,12 @@ export function CampaignOnboarding() {
       <div className="flex flex-col items-center gap-2 pt-2">
         <Link href="/campaigns/new">
           <Button variant="accent" className="h-11 rounded-xl px-6 text-[13px] font-medium">
-            첫 캠페인 만들기
+            첫 QR 캠페인 만들기
             <ArrowRight className="h-4 w-4" aria-hidden />
           </Button>
         </Link>
         <p className="text-[12px] text-slate-500">
-          처음 만들 때는 캠페인 이름과 종료 시점만 정하면 됩니다.
+          처음 만들 때는 QR 캠페인 이름과 종료 시점만 정하면 됩니다.
         </p>
       </div>
     </section>
