@@ -113,19 +113,22 @@ export default function ProfileEditPage() {
           </h1>
           <p className="mt-1 text-[15px] leading-relaxed text-slate-500">{t("intro")}</p>
         </div>
-        {/* Only surface the leads link when there's at least one EMAIL_FORM block on the
-            profile — keeps the header clean for sellers who aren't collecting emails. The page
-            was previously orphan (no nav entry anywhere), so sellers who built a form often
-            didn't know the dashboard existed. */}
-        {hasEmailForm && (
-          <Link
-            href={`/${locale}/profile/leads`}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
-          >
-            <Mail className="h-3.5 w-3.5" />
-            {t("leadsLink")}
-          </Link>
-        )}
+        {/* Leads 페이지 link 를 *항상* 노출 — 이전엔 EMAIL_FORM block 있을 때만 표시했는데, 폼을
+            나중에 추가하는 사용자는 "leads dashboard 자체" 가 어디 있는지 발견 못함 (orphan).
+            폼 없을 때는 disabled 톤으로 *비활성* 시각 표시. */}
+        <Link
+          href={`/${locale}/profile/leads`}
+          className={
+            "inline-flex shrink-0 items-center gap-1.5 rounded-md border bg-white px-3 py-1.5 text-xs font-medium transition " +
+            (hasEmailForm
+              ? "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+              : "border-dashed border-slate-200 text-slate-400 hover:text-slate-600")
+          }
+          title={hasEmailForm ? undefined : "이메일 폼을 추가하면 리드가 여기 모입니다"}
+        >
+          <Mail className="h-3.5 w-3.5" />
+          {t("leadsLink")}
+        </Link>
       </div>
 
       {/* Visit-stats summary — only renders when the user has claimed a username AND has at

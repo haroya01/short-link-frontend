@@ -187,7 +187,9 @@
     "title": "ログイン",
     "subtitle": "ログインするとリンク管理とクリック分析が利用できます。",
     "google": "Googleで続ける",
-    "anonymousAlt": "ログインなしでも<shorten>URL短縮は可能</shorten>です。"
+    "anonymousAlt": "ログインなしでも<shorten>URL短縮は可能</shorten>です。",
+    "anonymousButton": "ログインなしで短縮だけ使う",
+    "anonymousNote": "リンク管理・統計はログイン時のみ"
   },
   "auth": {
     "signedIn": "ログインしました",
@@ -1150,7 +1152,8 @@
     "right3": "クッキーはログイン保持の 1 個のみ — 分析/広告なし",
     "proHoldBadge": "近日公開",
     "proHoldNotice": "Pro プランは決済まわりの整備中につき一時停止しています。Free プランの 200 リンク · 8 種類の分析 · Webhook 5 件 · 2FA はすべて引き続きお使いいただけます。",
-    "proHoldCta": "準備中"
+    "proHoldCta": "準備中",
+    "proEta": "リリース時にメールでお知らせします — まずは無料プランから。"
   },
   "terms": {
     "title": "利用規約",

@@ -102,7 +102,7 @@ export default async function PricingPage({
               </li>
             ))}
           </ul>
-          <div className="mt-5">
+          <div className="mt-5 space-y-2">
             <button
               type="button"
               disabled
@@ -112,6 +112,7 @@ export default async function PricingPage({
               <Lock className="h-3.5 w-3.5" />
               {t("proHoldCta")}
             </button>
+            <p className="text-center text-[11px] text-slate-500">{t("proEta")}</p>
           </div>
         </section>
       </div>

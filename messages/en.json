@@ -187,7 +187,9 @@
     "title": "Sign in",
     "subtitle": "Sign in to manage your links and view analytics.",
     "google": "Continue with Google",
-    "anonymousAlt": "You can also <shorten>shorten URLs</shorten> without signing in."
+    "anonymousAlt": "You can also <shorten>shorten URLs</shorten> without signing in.",
+    "anonymousButton": "Shorten without signing in",
+    "anonymousNote": "Link management and stats require sign-in"
   },
   "auth": {
     "signedIn": "Signed in",
@@ -1154,7 +1156,8 @@
     "right3": "Only one cookie (sign-in) — no analytics or ad cookies",
     "proHoldBadge": "Coming soon",
     "proHoldNotice": "Pro is on hold while we finish the billing pipeline. The Free plan still ships 200 links, 8 analytics dimensions, 5 webhooks per link, and 2FA — every feature listed below is live today.",
-    "proHoldCta": "Not available yet"
+    "proHoldCta": "Not available yet",
+    "proEta": "We'll email you when it launches — start with Free for now."
   },
   "terms": {
     "title": "Terms of Service",
