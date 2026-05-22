@@ -15,6 +15,7 @@ import { BulkImportDialog } from "@/components/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/my-links-filters";
 import { WeeklyInsightsCard } from "@/components/weekly-insights-card";
 import { ExpiringSoonBanner } from "@/components/expiring-soon-banner";
+import { CampaignsEntryCard } from "@/components/campaigns-entry-card";
 import { DashboardOnboarding } from "@/components/dashboard-onboarding";
 import { EmptyState } from "@/components/empty-state";
 import { ErrorState } from "@/components/error-state";
@@ -155,6 +156,8 @@ export default function DashboardPage() {
         onClose={() => setBulkOpen(false)}
         onImported={() => setReload((n) => n + 1)}
       />
+
+      <CampaignsEntryCard />
 
       <ExpiringSoonBanner
         reloadKey={reload}
