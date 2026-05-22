@@ -1682,6 +1682,8 @@
       "barsRecoTitle": "다음 회 추천",
       "barsRecoEstimate": "예상 +160 클릭 · 신규 고객 ~25명",
       "casesTitle": "실제 사례",
+      "casesBefore": "1차",
+      "casesAfter": "2차",
       "timelineExpired": "만료 시점",
       "timelineNext": "다음 페이지",
       "timelineChip": "예약 / 메뉴",

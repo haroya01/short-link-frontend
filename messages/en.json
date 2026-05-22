@@ -1772,6 +1772,8 @@
       "barsRecoTitle": "Next round",
       "barsRecoEstimate": "Est. +160 clicks · ~25 new customers",
       "casesTitle": "Real cases",
+      "casesBefore": "Before",
+      "casesAfter": "After",
       "timelineExpired": "Expiry",
       "timelineNext": "Next page",
       "timelineChip": "Reserve / Menu",
