@@ -1754,6 +1754,7 @@
     },
     "mock": {
       "kpiBeforeKurl": "Before kurl",
+      "kpiAfterKurl": "After kurl",
       "kpiStatus": "Distributed, untracked",
       "kpiDistributed": "Distributed",
       "kpiClicks": "Clicks",

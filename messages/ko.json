@@ -1664,6 +1664,7 @@
     },
     "mock": {
       "kpiBeforeKurl": "kurl 도입 전",
+      "kpiAfterKurl": "kurl 도입 후",
       "kpiStatus": "측정 없이 배포",
       "kpiDistributed": "배포",
       "kpiClicks": "클릭",

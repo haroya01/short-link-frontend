@@ -1750,6 +1750,7 @@
     },
     "mock": {
       "kpiBeforeKurl": "kurl 導入前",
+      "kpiAfterKurl": "kurl 導入後",
       "kpiStatus": "測定なしで配布",
       "kpiDistributed": "配布",
       "kpiClicks": "クリック",
