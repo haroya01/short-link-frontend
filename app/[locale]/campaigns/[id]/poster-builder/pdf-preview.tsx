@@ -119,9 +119,11 @@ function DraggableBox({
         size: box.size,
       });
     } else {
-      // resize from bottom-right corner. 가로 변화량만 사용 (정사각 유지).
+      // resize from bottom-right corner. e.clientX 는 viewport 좌표, 박스 left 도 viewport 기준으로
+      // 환산해서 거리를 잡아야 한다. 박스 div 의 getBoundingClientRect().left 가 그 viewport left.
+      const boxRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
       const nextSizePx = clamp(
-        e.clientX - leftPx,
+        e.clientX - boxRect.left,
         MIN_SIZE * containerWidth,
         Math.min(containerWidth - leftPx, containerHeight - topPx, MAX_SIZE * containerWidth),
       );
