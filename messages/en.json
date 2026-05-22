@@ -1703,5 +1703,63 @@
     "a5": "We screen with Google Safe Browsing at shorten time. Flagged URLs are rejected.",
     "q6": "Is there an API?",
     "a6": "Yes — kurl offers a developer API. Get a key under Settings > API keys and call the shorten / stats endpoints from your own code."
+  },
+  "qrCampaigns": {
+    "hero": {
+      "eyebrow": "Offline QR campaigns",
+      "title1": "Measure",
+      "title2": "offline QR drops.",
+      "cta": "Get started"
+    },
+    "s1": {
+      "line1": "10,000 flyers, supposedly delivered.",
+      "line2": "Were they, really?"
+    },
+    "s2": {
+      "line1": "Split by area.",
+      "line2": "Shibuya / Shinjuku / Ikebukuro."
+    },
+    "s3": {
+      "line1": "Shibuya 142, Shinjuku 38, Ikebukuro 91.",
+      "line2": "Double Shibuya next time.",
+      "aux": "Ramen shops, salons, cram schools too."
+    },
+    "s4": {
+      "line1": "When a campaign ends,",
+      "line2": "the flyers stay on the street.",
+      "line3": "On expiry, auto-route to the next page."
+    },
+    "cta": {
+      "title": "First campaign, 5 minutes.",
+      "primary": "Get started",
+      "secondary": "Log in",
+      "note": "Short links and stats live in the same account."
+    },
+    "mock": {
+      "s1Status": "Live · Day 5",
+      "s1KpiDistributed": "Distributed",
+      "s1KpiClicks": "Clicks",
+      "s1KpiPer100": "Per 100",
+      "s1KpiConversions": "Conv.",
+      "s2Title": "Distribution batches",
+      "s2Add": "+ Add batch",
+      "s2ColName": "Batch",
+      "s2ColArea": "Area",
+      "s2ColDist": "Vendor",
+      "s2ColQty": "Qty",
+      "s2ColStatus": "Status",
+      "s2Done": "Printed",
+      "s2Unit": "",
+      "s3Title": "Clicks per 100",
+      "s3Sort": "By efficiency",
+      "s3Top": "Top",
+      "s3RecoTitle": "Next round",
+      "s4Expired": "Expiry",
+      "s4Next": "Next page",
+      "s4Chip": "Reserve / Menu",
+      "s4Foot": "Same QR, destination switches automatically."
+    },
+    "backLink": "Back to URL shortener",
+    "statsLink": "QR campaign analytics"
   }
 }

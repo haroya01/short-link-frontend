@@ -2,441 +2,284 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
+  ArrowDown,
   ArrowRight,
   BarChart3,
-  CheckCircle2,
-  Compass,
-  Download,
-  FileText,
-  Layers,
-  MapPin,
-  PackageOpen,
-  Printer,
+  Check,
+  Plus,
   QrCode,
-  Recycle,
-  Target,
-  Users,
 } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 
-/**
- * QR 캠페인 marketing landing — anonymous + 로그인 사용자 모두 접근 가능. 일반 단축 URL 과는 다른 의도/도메인이라는 걸 진입 시점에 분리.
- * <p>지금은 같은 host 안의 별도 라우트로만 분리. 사용자 검증 후 print.kurl.me 또는 campaigns.kurl.me 로 promote 가능.
- */
+type MockRow = { name: string; area: string; dist: string; qty: number };
+type MockBar = { label: string; value: number };
+
+type MockData = {
+  campaignName: string;
+  distributedValue: string;
+  rows: MockRow[];
+  bars: MockBar[];
+  reco: string;
+  startDate: string;
+  endDate: string;
+};
+
+const MOCK_BY_LOCALE: Record<string, MockData> = {
+  ja: {
+    campaignName: "2026 春チラシ",
+    distributedValue: "10,000",
+    rows: [
+      { name: "渋谷○丁目 北", area: "渋谷", dist: "業者 A", qty: 1500 },
+      { name: "渋谷○丁目 南", area: "渋谷", dist: "業者 A", qty: 1000 },
+      { name: "新宿○町", area: "新宿", dist: "業者 B", qty: 2500 },
+      { name: "池袋駅前", area: "池袋", dist: "業者 C", qty: 5000 },
+    ],
+    bars: [
+      { label: "渋谷", value: 142 },
+      { label: "池袋", value: 91 },
+      { label: "新宿", value: 38 },
+    ],
+    reco: "渋谷 +3,000 / 新宿 -2,000",
+    startDate: "2026-05-25",
+    endDate: "2026-05-27",
+  },
+  ko: {
+    campaignName: "2026 봄 전단지",
+    distributedValue: "1,000",
+    rows: [
+      { name: "강남 1출구", area: "강남", dist: "알바 A", qty: 250 },
+      { name: "강남 2출구", area: "강남", dist: "알바 A", qty: 250 },
+      { name: "신촌 로타리", area: "신촌", dist: "알바 B", qty: 500 },
+      { name: "홍대 정문", area: "홍대", dist: "알바 C", qty: 500 },
+    ],
+    bars: [
+      { label: "강남", value: 80 },
+      { label: "홍대", value: 47 },
+      { label: "신촌", value: 5 },
+    ],
+    reco: "강남 +750 / 신촌 -250",
+    startDate: "2026-05-25",
+    endDate: "2026-05-27",
+  },
+  en: {
+    campaignName: "2026 Spring drop",
+    distributedValue: "10,000",
+    rows: [
+      { name: "Shibuya N", area: "Shibuya", dist: "Vendor A", qty: 1500 },
+      { name: "Shibuya S", area: "Shibuya", dist: "Vendor A", qty: 1000 },
+      { name: "Shinjuku", area: "Shinjuku", dist: "Vendor B", qty: 2500 },
+      { name: "Ikebukuro", area: "Ikebukuro", dist: "Vendor C", qty: 5000 },
+    ],
+    bars: [
+      { label: "Shibuya", value: 142 },
+      { label: "Ikebukuro", value: 91 },
+      { label: "Shinjuku", value: 38 },
+    ],
+    reco: "Shibuya +3,000 / Shinjuku -2,000",
+    startDate: "2026-05-25",
+    endDate: "2026-05-27",
+  },
+};
+
 export default function QrCampaignsLandingPage() {
   const { authenticated } = useAuth();
   const ctaHref = authenticated ? "/campaigns/new" : "/login";
+  const locale = useLocale();
+  const mock = MOCK_BY_LOCALE[locale] ?? MOCK_BY_LOCALE.en;
 
   return (
     <div className="bg-white">
       <Hero ctaHref={ctaHref} />
-      <UseCases />
-      <Flow />
-      <Personas />
+      <StickyNarrative mock={mock} />
       <FinalCta ctaHref={ctaHref} authenticated={authenticated} />
     </div>
   );
 }
 
 function Hero({ ctaHref }: { ctaHref: string }) {
+  const t = useTranslations("qrCampaigns.hero");
   return (
     <section className="bg-gradient-to-b from-accent-50/60 via-white to-white">
-      <div className="container max-w-5xl py-16 sm:py-24">
+      <div className="container max-w-5xl py-20 sm:py-28">
         <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700">
-          Offline QR campaigns
+          {t("eyebrow")}
         </p>
-        <h1 className="mt-3 text-[32px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[44px]">
-          오프라인 QR 배포를
+        <h1 className="mt-4 text-[40px] font-semibold leading-[1.05] tracking-headline text-slate-900 sm:text-[56px] lg:text-[68px]">
+          {t("title1")}
           <br />
-          <span className="text-accent-700">측정</span>하세요
+          <span className="text-accent-700">{t("title2")}</span>
         </h1>
-        <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-600 sm:text-[17px]">
-          전단지·포스터·행사 안내물마다 QR 을 나누고, 어느 배포 묶음이 실제 반응을 만들었는지
-          확인합니다. 다음 배포는 그 데이터로 조정.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center gap-3">
+        <div className="mt-10">
           <Link href={ctaHref}>
-            <Button variant="accent" className="h-11 rounded-xl px-6 text-[13px] font-medium">
-              QR 캠페인 시작하기
+            <Button variant="accent" className="h-12 rounded-xl px-7 text-[14px] font-medium">
+              {t("cta")}
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Button>
           </Link>
-          <span className="text-[12px] text-slate-500">
-            일반 단축 URL 과는 다른 모드 — 오프라인 인쇄물 전용.
-          </span>
         </div>
       </div>
     </section>
   );
 }
 
-const USE_CASES = [
-  {
-    icon: <Compass className="h-4 w-4" aria-hidden />,
-    label: "01",
-    title: "배포 묶음 최적화",
-    body: "A 지역 500장 → 80명, B 지역 500장 → 5명. 다음에는 A 를 늘리고 B 를 줄인다.",
-  },
-  {
-    icon: <Users className="h-4 w-4" aria-hidden />,
-    label: "02",
-    title: "배포자 성과 비교",
-    body: "A 배포자 1000장 → 120, B 1000장 → 18. 정산/검증, '진짜 뿌렸나' 간접 확인.",
-  },
-  {
-    icon: <Layers className="h-4 w-4" aria-hidden />,
-    label: "03",
-    title: "문구·디자인 A/B 테스트",
-    body: "'무료 상담' vs '첫 달 50% 할인' — 어느 문구가 더 클릭을 만드는지 같은 지역에 두 버전.",
-  },
-  {
-    icon: <MapPin className="h-4 w-4" aria-hidden />,
-    label: "04",
-    title: "위치별 영업 전략",
-    body: "역 앞 반응 ↑, 주택가 반응 ↓ — 다음 포스터·현수막 위치 선정.",
-  },
-  {
-    icon: <Recycle className="h-4 w-4" aria-hidden />,
-    label: "05",
-    title: "종료 후 QR 재활용",
-    body: "이벤트 끝났는데 포스터는 그대로? 만료 시 후기/대기자/다음 프로모션 페이지로 자동 전환.",
-  },
-  {
-    icon: <Target className="h-4 w-4" aria-hidden />,
-    label: "06",
-    title: "전환까지 추적",
-    body: "단순 클릭이 아니라 문의·예약·쿠폰 다운·구매. 어느 묶음이 진짜 고객을 만들었는지.",
-  },
-];
+type SectionSpec = {
+  line1: string;
+  line2: string;
+  line3?: string;
+  aux?: string;
+  mock: React.ReactNode;
+};
 
-function UseCases() {
-  return (
-    <section className="container max-w-5xl py-16 sm:py-20">
-      <div className="mb-8">
-        <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-          Why this exists
-        </p>
-        <h2 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[28px]">
-          오프라인 홍보를 온라인 광고처럼
-        </h2>
-      </div>
-      <ol className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {USE_CASES.map((u) => (
-          <li
-            key={u.label}
-            className="rounded-2xl border border-slate-200 bg-white px-4 py-4 transition-shadow hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)]"
-          >
-            <div className="flex items-center gap-2">
-              <span className="grid h-7 w-7 place-items-center rounded-lg bg-accent-50 text-accent-700">
-                {u.icon}
-              </span>
-              <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
-                {u.label}
-              </span>
-            </div>
-            <h3 className="mt-3 text-sm font-medium text-slate-900">{u.title}</h3>
-            <p className="mt-1.5 text-[12px] leading-snug text-slate-500">{u.body}</p>
-          </li>
-        ))}
-      </ol>
-    </section>
-  );
-}
-
-const FLOW_STEPS = [
-  {
-    num: "01",
-    title: "캠페인 만들기",
-    body: "이름 · 기간 · 종료 후 동작 (그대로 유지 / 만료 / 다른 페이지로 전환).",
-    mock: <MockCampaignForm />,
-  },
-  {
-    num: "02",
-    title: "배포 묶음 추가",
-    body: "배포자·지역·수량별로 묶음. 한 줄씩 폼으로 또는 스프레드시트에서 붙여넣기.",
-    mock: <MockBatchTable />,
-  },
-  {
-    num: "03",
-    title: "인쇄 자산 받기",
-    body: "QR ZIP / CSV / A4 시트 / 포스터 PDF 합본 — Canva·인쇄소에 그대로 넘김.",
-    mock: <MockAssets />,
-  },
-  {
-    num: "04",
-    title: "배포 → 측정 → 다음 배포 조정",
-    body: "배포자별 / 지역별 100장당 클릭률. 어느 묶음이 진짜 효율적이었는지.",
-    mock: <MockStats />,
-  },
-];
-
-const AUTO_ROTATE_MS = 5500;
-
-function Flow() {
+function StickyNarrative({ mock }: { mock: MockData }) {
+  const t = useTranslations("qrCampaigns");
+  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const tickRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (paused) return;
-    tickRef.current = window.setTimeout(() => {
-      setActive((i) => (i + 1) % FLOW_STEPS.length);
-    }, AUTO_ROTATE_MS);
-    return () => {
-      if (tickRef.current) window.clearTimeout(tickRef.current);
-    };
-  }, [active, paused]);
-
-  function pick(i: number) {
-    setActive(i);
-    setPaused(true);
-  }
-
-  return (
-    <section
-      className="bg-slate-50/60"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      <div className="container max-w-5xl py-16 sm:py-20">
-        <div className="mb-8">
-          <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-            How it works
-          </p>
-          <h2 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[28px]">
-            4 단계로 끝
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[360px_1fr] lg:gap-8">
-          {/* 좌측 step list */}
-          <ol className="space-y-2">
-            {FLOW_STEPS.map((step, i) => (
-              <li key={step.num}>
-                <button
-                  type="button"
-                  onClick={() => pick(i)}
-                  className={
-                    "group relative w-full overflow-hidden rounded-2xl border px-4 py-3.5 text-left transition-all " +
-                    (i === active
-                      ? "border-accent-200 bg-white shadow-[0_4px_16px_rgba(15,23,42,0.06)]"
-                      : "border-slate-200 bg-white/50 hover:bg-white")
-                  }
-                >
-                  <div className="flex items-start gap-3">
-                    <span
-                      className={
-                        "grid h-7 w-7 flex-shrink-0 place-items-center rounded-lg text-[11px] font-semibold tabular-nums " +
-                        (i === active
-                          ? "bg-accent-600 text-white"
-                          : "bg-slate-100 text-slate-500")
-                      }
-                    >
-                      {step.num}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <h3
-                        className={
-                          "text-sm font-medium " +
-                          (i === active ? "text-slate-900" : "text-slate-600")
-                        }
-                      >
-                        {step.title}
-                      </h3>
-                      <p
-                        className={
-                          "mt-1 text-[12px] leading-snug " +
-                          (i === active ? "text-slate-600" : "text-slate-500")
-                        }
-                      >
-                        {step.body}
-                      </p>
-                    </div>
-                  </div>
-                  {i === active && !paused && (
-                    <span
-                      key={`progress-${active}`}
-                      aria-hidden
-                      className="absolute bottom-0 left-0 h-0.5 bg-accent-500"
-                      style={{ animation: `flow-progress ${AUTO_ROTATE_MS}ms linear forwards` }}
-                    />
-                  )}
-                </button>
-              </li>
-            ))}
-          </ol>
-
-          {/* 우측 mock viewport */}
-          <div className="relative min-h-[320px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] sm:p-5">
-            <div className="absolute right-4 top-3 inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-slate-400">
-              <span className="grid h-1.5 w-1.5 place-items-center rounded-full bg-accent-500" />
-              미리보기
-            </div>
-            <div className="relative mt-6">
-              {FLOW_STEPS.map((step, i) => (
-                <div
-                  key={step.num}
-                  aria-hidden={i !== active}
-                  className={
-                    "transition-opacity duration-500 " +
-                    (i === active ? "opacity-100" : "pointer-events-none absolute inset-0 opacity-0")
-                  }
-                >
-                  {step.mock}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <style jsx>{`
-        @keyframes flow-progress {
-          from {
-            width: 0%;
-          }
-          to {
-            width: 100%;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let best: IntersectionObserverEntry | null = null;
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            if (!best || entry.intersectionRatio > best.intersectionRatio) {
+              best = entry;
+            }
           }
         }
-      `}</style>
+        if (best) {
+          const idx = sectionRefs.current.findIndex((el) => el === best!.target);
+          if (idx !== -1) setActive(idx);
+        }
+      },
+      { rootMargin: "-30% 0px -30% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+    sectionRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const sections: SectionSpec[] = [
+    {
+      line1: t("s1.line1"),
+      line2: t("s1.line2"),
+      mock: <MockS1Kpi mock={mock} />,
+    },
+    {
+      line1: t("s2.line1"),
+      line2: t("s2.line2"),
+      mock: <MockS2Batch mock={mock} />,
+    },
+    {
+      line1: t("s3.line1"),
+      line2: t("s3.line2"),
+      aux: t("s3.aux"),
+      mock: <MockS3Bars mock={mock} />,
+    },
+    {
+      line1: t("s4.line1"),
+      line2: t("s4.line2"),
+      line3: t("s4.line3"),
+      mock: <MockS4Timeline mock={mock} />,
+    },
+  ];
+
+  return (
+    <section className="relative">
+      <div className="lg:flex">
+        <div className="relative hidden bg-slate-50 lg:flex lg:sticky lg:top-0 lg:h-screen lg:w-1/2 lg:items-center lg:justify-center">
+          {sections.map((s, i) => (
+            <div
+              key={i}
+              aria-hidden={i !== active}
+              className={
+                "absolute inset-0 flex items-center justify-center p-12 transition-opacity duration-700 " +
+                (i === active ? "opacity-100" : "pointer-events-none opacity-0")
+              }
+            >
+              <div className="w-full max-w-[480px]">{s.mock}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="lg:w-1/2">
+          {sections.map((s, i) => (
+            <div
+              key={i}
+              ref={(el) => {
+                sectionRefs.current[i] = el;
+              }}
+              className="flex flex-col justify-center px-6 py-20 sm:px-12 sm:py-24 lg:min-h-screen lg:px-16 lg:py-0"
+            >
+              <h2 className="text-[28px] font-semibold leading-[1.15] tracking-headline text-slate-900 sm:text-[36px] lg:text-[44px]">
+                {s.line1}
+                <br />
+                <span className="text-slate-500">{s.line2}</span>
+              </h2>
+              {s.line3 && (
+                <p className="mt-3 text-[20px] leading-[1.2] tracking-headline text-slate-500 sm:text-[24px] lg:text-[28px]">
+                  {s.line3}
+                </p>
+              )}
+              {s.aux && (
+                <p className="mt-6 text-[13px] text-slate-500 sm:text-[14px]">── {s.aux}</p>
+              )}
+              <div className="mt-10 lg:hidden">{s.mock}</div>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
 
-function MockCampaignForm() {
+function MockS1Kpi({ mock }: { mock: MockData }) {
+  const t = useTranslations("qrCampaigns.mock");
   return (
-    <div className="space-y-2 rounded-xl bg-slate-50 px-3 py-3">
-      <MockField label="이름" value="2026 봄 학교 축제" />
-      <div className="grid grid-cols-2 gap-2">
-        <MockField label="시작" value="2026-05-25" />
-        <MockField label="종료" value="2026-05-27" />
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
+      <div className="flex items-center justify-between">
+        <p className="text-[15px] font-semibold text-slate-900">{mock.campaignName}</p>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-50 px-2.5 py-1 text-[11px] font-medium text-accent-700">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent-500" />
+          {t("s1Status")}
+        </span>
       </div>
-      <MockField label="종료 후" value="다른 페이지로 자동 전환" valueAccent />
-    </div>
-  );
-}
-
-function MockBatchTable() {
-  const rows = [
-    { name: "정문 포스터", dist: "동아리부", area: "정문", qty: 50 },
-    { name: "학생회관", dist: "총학생회", area: "1층 게시판", qty: 100 },
-    { name: "기숙사 게시판", dist: "기숙사 조교", area: "각 동 입구", qty: 200 },
-  ];
-  return (
-    <div className="overflow-hidden rounded-xl bg-slate-50">
-      <div className="grid grid-cols-[1.5fr_1fr_1fr_0.6fr] gap-2 border-b border-slate-200 bg-slate-100 px-3 py-2 text-[10px] font-medium uppercase tracking-wider text-slate-500">
-        <span>묶음</span>
-        <span>배포자</span>
-        <span>지역</span>
-        <span>수량</span>
-      </div>
-      {rows.map((r) => (
-        <div
-          key={r.name}
-          className="grid grid-cols-[1.5fr_1fr_1fr_0.6fr] gap-2 px-3 py-2 text-[11px] text-slate-700"
-        >
-          <span className="truncate font-medium text-slate-900">{r.name}</span>
-          <span className="truncate text-slate-600">{r.dist}</span>
-          <span className="truncate text-slate-600">{r.area}</span>
-          <span className="tabular-nums text-slate-600">{r.qty}장</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function MockAssets() {
-  const assets = [
-    { icon: <Download className="h-3.5 w-3.5" aria-hidden />, label: "QR ZIP" },
-    { icon: <FileText className="h-3.5 w-3.5" aria-hidden />, label: "Batch CSV" },
-    { icon: <Printer className="h-3.5 w-3.5" aria-hidden />, label: "A4 시트" },
-    { icon: <Layers className="h-3.5 w-3.5" aria-hidden />, label: "포스터에 QR" },
-  ];
-  return (
-    <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-50 px-3 py-3 sm:grid-cols-4">
-      {assets.map((a) => (
-        <div
-          key={a.label}
-          className="flex flex-col items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2 py-3 text-center"
-        >
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-accent-50 text-accent-700">
-            {a.icon}
-          </span>
-          <span className="text-[11px] font-medium text-slate-700">{a.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function MockStats() {
-  return (
-    <div className="space-y-2 rounded-xl bg-slate-50 px-3 py-3">
-      <div className="grid grid-cols-3 gap-2">
-        <MockKpi label="총 클릭" value="172" />
-        <MockKpi label="총 인쇄·배포" value="350장" />
-        <MockKpi label="100장당" value="49.1" accent />
-      </div>
-      <div className="space-y-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2">
-        <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
-          배포자별 효율 (100장당)
-        </p>
-        <MockBar label="동아리부" value={62} max={62} />
-        <MockBar label="총학생회" value={48} max={62} />
-        <MockBar label="기숙사 조교" value={37} max={62} />
+      <div className="mt-5 grid grid-cols-4 gap-2.5">
+        <KpiCell label={t("s1KpiDistributed")} value={mock.distributedValue} />
+        <KpiCell label={t("s1KpiClicks")} value="?" muted />
+        <KpiCell label={t("s1KpiPer100")} value="?" muted />
+        <KpiCell label={t("s1KpiConversions")} value="?" muted />
       </div>
     </div>
   );
 }
 
-function MockField({
+function KpiCell({
   label,
   value,
-  valueAccent,
+  muted,
 }: {
   label: string;
   value: string;
-  valueAccent?: boolean;
-}) {
-  return (
-    <div className="rounded-md border border-slate-200 bg-white px-2 py-1.5">
-      <p className="text-[9px] font-medium uppercase tracking-wider text-slate-500">{label}</p>
-      <p
-        className={
-          "mt-0.5 text-[12px] font-medium " +
-          (valueAccent ? "text-accent-700" : "text-slate-900")
-        }
-      >
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function MockKpi({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: string;
-  accent?: boolean;
+  muted?: boolean;
 }) {
   return (
     <div
       className={
-        "rounded-lg border bg-white px-2 py-2 " +
-        (accent ? "border-accent-200 bg-accent-50/50" : "border-slate-200")
+        "rounded-xl border px-3 py-2.5 " +
+        (muted
+          ? "border-dashed border-slate-200 bg-slate-50/50"
+          : "border-slate-200 bg-white")
       }
     >
-      <p className="text-[9px] font-medium uppercase tracking-wider text-slate-500">{label}</p>
+      <p className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-500">
+        {label}
+      </p>
       <p
         className={
-          "mt-0.5 text-[15px] font-semibold tabular-nums leading-tight tracking-headline " +
-          (accent ? "text-accent-700" : "text-slate-900")
+          "mt-1 text-[18px] font-semibold tabular-nums leading-tight tracking-headline " +
+          (muted ? "text-slate-300" : "text-slate-900")
         }
       >
         {value}
@@ -445,67 +288,146 @@ function MockKpi({
   );
 }
 
-function MockBar({ label, value, max }: { label: string; value: number; max: number }) {
-  const pct = (value / max) * 100;
+function MockS2Batch({ mock }: { mock: MockData }) {
+  const t = useTranslations("qrCampaigns.mock");
   return (
-    <div>
-      <div className="flex items-center justify-between text-[11px]">
-        <span className="text-slate-700">{label}</span>
-        <span className="tabular-nums font-medium text-slate-900">{value.toFixed(1)}</span>
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
+      <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5">
+        <p className="text-[14px] font-semibold text-slate-900">{t("s2Title")}</p>
+        <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-medium text-slate-600">
+          <Plus className="h-3 w-3" aria-hidden />
+          {t("s2Add").replace(/^\+\s*/, "")}
+        </span>
       </div>
-      <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-slate-100">
-        <div className="h-full rounded-full bg-accent-600" style={{ width: `${pct}%` }} />
+      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 bg-slate-50/50 px-5 py-2.5 text-[10px] font-medium uppercase tracking-wider text-slate-500">
+        <span>{t("s2ColName")}</span>
+        <span>{t("s2ColArea")}</span>
+        <span>{t("s2ColDist")}</span>
+        <span className="text-right">{t("s2ColQty")}</span>
+        <span className="text-right">{t("s2ColStatus")}</span>
+      </div>
+      {mock.rows.map((row) => (
+        <div
+          key={row.name}
+          className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] items-center gap-2 border-b border-slate-100 px-5 py-3 text-[12px] last:border-b-0"
+        >
+          <span className="truncate font-medium text-slate-900">{row.name}</span>
+          <span className="truncate text-slate-600">{row.area}</span>
+          <span className="truncate text-slate-600">{row.dist}</span>
+          <span className="text-right tabular-nums text-slate-700">
+            {row.qty.toLocaleString()}
+            {t("s2Unit")}
+          </span>
+          <span className="flex items-center justify-end gap-1 text-[11px] text-accent-700">
+            <Check className="h-3 w-3" aria-hidden />
+            <span className="hidden sm:inline">{t("s2Done")}</span>
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MockS3Bars({ mock }: { mock: MockData }) {
+  const t = useTranslations("qrCampaigns.mock");
+  const max = Math.max(...mock.bars.map((b) => b.value));
+  return (
+    <div className="space-y-3">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-[14px] font-semibold text-slate-900">{t("s3Title")}</p>
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500">
+            <ArrowDown className="h-3 w-3" aria-hidden />
+            {t("s3Sort")}
+          </span>
+        </div>
+        <div className="space-y-3">
+          {mock.bars.map((b, i) => {
+            const pct = (b.value / max) * 100;
+            const isTop = i === 0;
+            return (
+              <div key={b.label}>
+                <div className="flex items-center justify-between text-[12px]">
+                  <span
+                    className={
+                      isTop ? "font-semibold text-slate-900" : "text-slate-700"
+                    }
+                  >
+                    {b.label}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={
+                        "tabular-nums " +
+                        (isTop ? "font-semibold text-accent-700" : "text-slate-600")
+                      }
+                    >
+                      {b.value}
+                    </span>
+                    {isTop && (
+                      <span className="rounded-md bg-accent-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-accent-700">
+                        {t("s3Top")}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                  <div
+                    className={
+                      "h-full rounded-full transition-[width] duration-700 ease-out " +
+                      (isTop ? "bg-accent-600" : "bg-slate-300")
+                    }
+                    style={{ width: pct + "%" }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="rounded-2xl border border-accent-200 bg-accent-50/50 px-4 py-3.5">
+        <p className="text-[10px] font-medium uppercase tracking-wider text-accent-700">
+          {t("s3RecoTitle")}
+        </p>
+        <p className="mt-1 text-[14px] font-medium text-slate-900">{mock.reco}</p>
       </div>
     </div>
   );
 }
 
-function Personas() {
-  const personas = [
-    {
-      title: "학교 행사 / 동아리 / 사내 공지",
-      body: "수십~수백장 인쇄. A4 시트 → 오려 쓰기. 어느 게시판 반응이 좋은지.",
-    },
-    {
-      title: "소상공인 — 음식점·학원·부동산",
-      body: "전단지 배포자별 정산. 100장당 클릭으로 효율 비교, 다음 배포 위치 결정.",
-    },
-    {
-      title: "포스팅·우편 배포 — 일본 시장",
-      body: "에리어·담당자별 묶음. 포스터 PDF + QR 좌표 합성 → N-페이지 합본 → 인쇄소.",
-    },
-    {
-      title: "팝업·이벤트 — 시한 캠페인",
-      body: "끝난 뒤 QR 을 죽은 링크로 두지 않고, 다음 이벤트 / 후기 페이지로 자동 전환.",
-    },
-  ];
+function MockS4Timeline({ mock }: { mock: MockData }) {
+  const t = useTranslations("qrCampaigns.mock");
   return (
-    <section className="container max-w-5xl py-16 sm:py-20">
-      <div className="mb-8">
-        <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-          Who uses it
-        </p>
-        <h2 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[28px]">
-          이런 분들이 씁니다
-        </h2>
-      </div>
-      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {personas.map((p) => (
-          <li
-            key={p.title}
-            className="rounded-2xl border border-slate-200 bg-white px-4 py-4"
-          >
-            <div className="flex items-start gap-2">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-accent-700" aria-hidden />
-              <div>
-                <h3 className="text-sm font-medium text-slate-900">{p.title}</h3>
-                <p className="mt-1.5 text-[12px] leading-snug text-slate-500">{p.body}</p>
-              </div>
+    <div className="space-y-3">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
+        <div className="relative px-1.5 pt-2">
+          <div className="absolute left-1.5 right-1.5 top-[14px] h-px bg-slate-200" />
+          <div className="absolute left-0 top-[8px] h-3 w-3 rounded-full border-2 border-accent-600 bg-white" />
+          <div className="absolute right-0 top-[8px] h-3 w-3 rounded-full border-2 border-slate-400 bg-white" />
+          <div className="h-6" />
+          <div className="flex justify-between text-[11px] tabular-nums text-slate-500">
+            <span>{mock.startDate}</span>
+            <span>{mock.endDate}</span>
+          </div>
+        </div>
+        <div className="mt-5 flex flex-col items-center gap-2.5">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-700">
+            {t("s4Expired")}
+          </span>
+          <ArrowDown className="h-4 w-4 text-slate-400" aria-hidden />
+          <div className="w-full rounded-xl border border-accent-200 bg-accent-50/40 px-4 py-3">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-accent-700">
+              {t("s4Next")}
+            </p>
+            <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-[12px] font-medium text-slate-900 shadow-sm">
+              <QrCode className="h-3.5 w-3.5 text-accent-700" aria-hidden />
+              {t("s4Chip")}
             </div>
-          </li>
-        ))}
-      </ul>
-    </section>
+          </div>
+        </div>
+      </div>
+      <p className="px-1 text-[11px] text-slate-500">{t("s4Foot")}</p>
+    </div>
   );
 }
 
@@ -516,22 +438,21 @@ function FinalCta({
   ctaHref: string;
   authenticated: boolean;
 }) {
+  const t = useTranslations("qrCampaigns.cta");
+  const tRoot = useTranslations("qrCampaigns");
   return (
     <section className="bg-slate-900 text-white">
-      <div className="container max-w-5xl py-16 text-center sm:py-20">
-        <div className="mx-auto grid h-10 w-10 place-items-center rounded-xl bg-accent-600">
-          <QrCode className="h-5 w-5" aria-hidden />
+      <div className="container max-w-5xl py-24 text-center">
+        <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-accent-600">
+          <QrCode className="h-6 w-6" aria-hidden />
         </div>
-        <h2 className="mt-4 text-[24px] font-semibold leading-tight tracking-headline sm:text-[28px]">
-          첫 QR 캠페인은 5 분이면 끝
+        <h2 className="mt-6 text-[32px] font-semibold leading-tight tracking-headline sm:text-[44px]">
+          {t("title")}
         </h2>
-        <p className="mx-auto mt-3 max-w-xl text-[14px] leading-relaxed text-slate-300">
-          캠페인 이름과 종료 시점만 정하면 batch 생성 → QR 다운로드 → 분석까지 한 자리에서.
-        </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link href={ctaHref}>
-            <Button variant="accent" className="h-11 rounded-xl px-6 text-[13px] font-medium">
-              {authenticated ? "지금 캠페인 만들기" : "무료로 시작하기"}
+            <Button variant="accent" className="h-12 rounded-xl px-7 text-[14px] font-medium">
+              {t("primary")}
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Button>
           </Link>
@@ -539,27 +460,24 @@ function FinalCta({
             <Link href="/login">
               <Button
                 variant="ghost"
-                className="h-11 rounded-xl px-6 text-[13px] font-medium text-white hover:bg-white/10"
+                className="h-12 rounded-xl px-6 text-[13px] font-medium text-white hover:bg-white/10"
               >
-                로그인
+                {t("secondary")}
               </Button>
             </Link>
           )}
         </div>
-        <p className="mt-6 inline-flex items-center gap-1.5 text-[12px] text-slate-400">
-          <PackageOpen className="h-3.5 w-3.5" aria-hidden />
-          일반 단축 URL · 통계 도 같은 계정으로
-        </p>
+        <p className="mt-8 text-[12px] text-slate-400">{t("note")}</p>
       </div>
       <div className="border-t border-white/10">
         <div className="container max-w-5xl py-4 text-center text-[11px] text-slate-400">
           <Link href="/" className="hover:text-white">
-            ← 단축 URL 도구로 돌아가기
+            ← {tRoot("backLink")}
           </Link>
           <span className="mx-2">·</span>
           <Link href="/qr-campaigns" className="hover:text-white">
             <BarChart3 className="mr-1 inline-block h-3 w-3" aria-hidden />
-            QR 캠페인 분석
+            {tRoot("statsLink")}
           </Link>
         </div>
       </div>
