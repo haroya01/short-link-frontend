@@ -1768,6 +1768,8 @@
       "barsRecoTitle": "次回の推奨",
       "barsRecoEstimate": "予想 +160 クリック · 新規 ~25人",
       "casesTitle": "実例",
+      "casesBefore": "1回目",
+      "casesAfter": "2回目",
       "timelineExpired": "期限切れ時点",
       "timelineNext": "次のページ",
       "timelineChip": "予約 / メニュー",
