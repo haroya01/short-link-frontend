@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft, ExternalLink, FlaskConical } from "lucide-react";
 import {
@@ -117,9 +117,136 @@ export default function CampaignStatsPage() {
               groups={stats.byArea}
             />
           )}
+          {stats.byDay.length > 0 && <DailyChart data={stats.byDay} />}
+          {stats.byHour.length > 0 && <HourlyChart data={stats.byHour} />}
+          {stats.heatmap.length > 0 && <HeatmapChart data={stats.heatmap} />}
         </>
       ) : null}
     </div>
+  );
+}
+
+function DailyChart({ data }: { data: CampaignStats["byDay"] }) {
+  const max = useMemo(() => Math.max(...data.map((d) => d.clicks), 1), [data]);
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-sm font-semibold text-slate-900">일별 클릭</h2>
+        <p className="text-[11px] text-slate-500">캠페인 시작 이후</p>
+      </div>
+      <div className="mt-4 flex h-32 items-end gap-1">
+        {data.map(({ day, clicks }) => {
+          const heightPct = (clicks / max) * 100;
+          return (
+            <div key={day} className="flex flex-1 flex-col items-center gap-1">
+              <span className="text-[10px] tabular-nums text-slate-500">{clicks}</span>
+              <div
+                className="w-full rounded-t-sm bg-accent-500"
+                style={{ height: `${heightPct}%` }}
+                title={`${day}: ${clicks}`}
+              />
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-2 flex justify-between text-[10px] tabular-nums text-slate-500">
+        <span>{data[0]?.day}</span>
+        <span>{data[data.length - 1]?.day}</span>
+      </div>
+    </section>
+  );
+}
+
+function HourlyChart({ data }: { data: CampaignStats["byHour"] }) {
+  // 0–23 시간대 채움 — 클릭 없는 시간대도 빈 bar 로 보여서 분포 의미 명확.
+  const full = useMemo(() => {
+    const map = new Map(data.map((d) => [d.hour, d.clicks]));
+    return Array.from({ length: 24 }, (_, h) => ({ hour: h, clicks: map.get(h) ?? 0 }));
+  }, [data]);
+  const max = Math.max(...full.map((d) => d.clicks), 1);
+
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-sm font-semibold text-slate-900">시간대별 클릭</h2>
+        <p className="text-[11px] text-slate-500">0–23시 (Asia/Seoul)</p>
+      </div>
+      <div className="mt-4 grid h-28 items-end gap-0.5" style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}>
+        {full.map(({ hour, clicks }) => {
+          const heightPct = (clicks / max) * 100;
+          return (
+            <div
+              key={hour}
+              className="rounded-t-sm bg-accent-500"
+              style={{ height: `${Math.max(heightPct, 2)}%` }}
+              title={`${hour}시: ${clicks}`}
+            />
+          );
+        })}
+      </div>
+      <div className="mt-2 flex justify-between text-[10px] tabular-nums text-slate-500">
+        <span>0</span>
+        <span>6</span>
+        <span>12</span>
+        <span>18</span>
+        <span>23</span>
+      </div>
+    </section>
+  );
+}
+
+function HeatmapChart({ data }: { data: CampaignStats["heatmap"] }) {
+  // DAYOFWEEK: 1(일) ~ 7(토). 7 × 24 grid.
+  const max = Math.max(...data.map((d) => d.clicks), 1);
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  const cellMap = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const d of data) m.set(`${d.dayOfWeek}-${d.hour}`, d.clicks);
+    return m;
+  }, [data]);
+
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-sm font-semibold text-slate-900">요일 × 시간대 분포</h2>
+        <p className="text-[11px] text-slate-500">진할수록 클릭 많음</p>
+      </div>
+      <div className="mt-4 grid gap-1" style={{ gridTemplateColumns: "20px 1fr" }}>
+        {days.map((day, idx) => {
+          const dow = idx + 1;
+          return (
+            <Fragment key={dow}>
+              <span className="self-center text-[10px] text-slate-500">{day}</span>
+              <div
+                className="grid gap-0.5"
+                style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}
+              >
+                {Array.from({ length: 24 }, (_, h) => {
+                  const clicks = cellMap.get(`${dow}-${h}`) ?? 0;
+                  const intensity = clicks / max;
+                  return (
+                    <div
+                      key={h}
+                      className="aspect-square rounded-[2px]"
+                      style={{
+                        backgroundColor:
+                          intensity > 0 ? `rgba(5, 150, 105, ${0.15 + intensity * 0.85})` : "rgb(241, 245, 249)",
+                      }}
+                      title={`${day} ${h}시: ${clicks}`}
+                    />
+                  );
+                })}
+              </div>
+            </Fragment>
+          );
+        })}
+      </div>
+      <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500" style={{ paddingLeft: 24 }}>
+        <span>0시</span>
+        <span>12시</span>
+        <span>23시</span>
+      </div>
+    </section>
   );
 }
 
