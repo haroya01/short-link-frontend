@@ -872,6 +872,9 @@ function MockCases({ mock, active }: { mock: MockData; active: boolean }) {
           </div>
         );
       })}
+      <div className="px-5 py-2.5">
+        <p className="text-[10px] text-slate-500">{t("casesFooter")}</p>
+      </div>
     </div>
   );
 }
@@ -936,77 +939,90 @@ function MockTimeline({ mock, active }: { mock: MockData; active: boolean }) {
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
-        <div className="relative px-1.5 pt-2">
-          <div className="absolute left-1.5 right-1.5 top-[14px] h-px bg-slate-200" />
-          <div
-            className="absolute left-1.5 top-[14px] h-px bg-accent-600 transition-[width] duration-[1600ms]"
-            style={{
-              transitionTimingFunction: EASE,
-              transitionDelay: active ? "200ms" : "0ms",
-              width: active ? "calc(100% - 12px)" : "0%",
-            }}
-          />
-          <div className="absolute left-0 top-[8px] h-3 w-3 rounded-full border-2 border-accent-600 bg-white" />
-          <div
-            className="absolute right-0 top-[8px] h-3 w-3 rounded-full border-2 border-slate-400 bg-white transition-all duration-300"
-            style={{
-              transitionDelay: active ? "1700ms" : "0ms",
-              transform: active ? "scale(1.15)" : "scale(1)",
-            }}
-          />
-          <div className="h-6" />
-          <div
-            className="flex justify-between text-[11px] tabular-nums text-slate-500 transition-opacity duration-500"
-            style={{
-              transitionDelay: active ? "400ms" : "0ms",
-              opacity: active ? 1 : 0,
-            }}
-          >
-            <span>{mock.startDate}</span>
-            <span>{mock.endDate}</span>
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
+        {/* timeline mini header */}
+        <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-3 text-[11px]">
+          <span className="tabular-nums text-slate-500">{mock.startDate}</span>
+          <div className="relative h-px flex-1 bg-slate-200">
+            <div
+              className="absolute left-0 top-0 h-full bg-accent-600 transition-[width] duration-[1200ms]"
+              style={{
+                transitionTimingFunction: EASE,
+                transitionDelay: active ? "200ms" : "0ms",
+                width: active ? "100%" : "0%",
+              }}
+            />
+            <div
+              className="absolute right-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-accent-600 transition-transform duration-300"
+              style={{
+                transitionDelay: active ? "1400ms" : "0ms",
+                transform: active ? "translateY(-50%) scale(1.4)" : "translateY(-50%) scale(1)",
+              }}
+            />
           </div>
-        </div>
-        <div className="mt-5 flex flex-col items-center gap-2.5">
           <span
-            className={
-              "inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-700 transition-all duration-500 " +
-              (active ? "animate-pulse" : "")
-            }
+            className="font-medium text-accent-700 transition-opacity duration-500"
             style={{
-              transitionTimingFunction: EASE,
-              transitionDelay: active ? "1900ms" : "0ms",
-              opacity: active ? 1 : 0,
-              transform: active ? "scale(1)" : "scale(0.85)",
+              transitionDelay: active ? "1500ms" : "0ms",
+              opacity: active ? 1 : 0.4,
             }}
           >
             {t("timelineExpired")}
           </span>
-          <ArrowDown
-            className="h-4 w-4 text-slate-400 transition-all duration-500"
+        </div>
+
+        {/* iPhone mockup — 캠페인 진행 중 화면 → 만료 후 화면 자동 슬라이드 */}
+        <div className="relative grid place-items-center bg-gradient-to-b from-slate-100 to-slate-50 px-6 py-8">
+          {/* date pill 표시 (옆) */}
+          <div
+            className="absolute left-5 top-5 rounded-md bg-white/80 px-2 py-1 text-[10px] font-medium text-slate-500 shadow-sm transition-opacity duration-500"
+            style={{ transitionDelay: active ? "400ms" : "0ms", opacity: active ? 1 : 0 }}
+          >
+            {mock.endDate}
+          </div>
+          <div
+            className="absolute right-5 top-5 rounded-md bg-accent-50 px-2 py-1 text-[10px] font-medium text-accent-700 shadow-sm transition-all duration-500"
             style={{
               transitionTimingFunction: EASE,
-              transitionDelay: active ? "2100ms" : "0ms",
+              transitionDelay: active ? "1700ms" : "0ms",
               opacity: active ? 1 : 0,
               transform: active ? "translateY(0)" : "translateY(-6px)",
             }}
-            aria-hidden
-          />
-          <div
-            className="w-full rounded-xl border border-accent-200 bg-accent-50/40 px-4 py-3 transition-all duration-500"
-            style={{
-              transitionTimingFunction: EASE,
-              transitionDelay: active ? "2300ms" : "0ms",
-              opacity: active ? 1 : 0,
-              transform: active ? "translateY(0)" : "translateY(10px)",
-            }}
           >
-            <p className="text-[10px] font-medium uppercase tracking-wider text-accent-700">
-              {t("timelineNext")}
-            </p>
-            <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-[12px] font-medium text-slate-900 shadow-sm">
-              <QrCode className="h-3.5 w-3.5 text-accent-700" aria-hidden />
-              {t("timelineChip")}
+            {t("timelineExpired")} →
+          </div>
+
+          {/* phone frame */}
+          <div className="relative h-[280px] w-[150px] overflow-hidden rounded-[28px] border-[5px] border-slate-900 bg-white shadow-[0_14px_32px_rgba(15,23,42,0.22)]">
+            {/* notch */}
+            <div className="absolute left-1/2 top-1.5 z-20 h-2 w-10 -translate-x-1/2 rounded-full bg-slate-900" />
+
+            {/* screen A — 캠페인 진행 중 (rose) */}
+            <div
+              className="absolute inset-0 transition-transform duration-700"
+              style={{
+                transitionTimingFunction: EASE,
+                transitionDelay: active ? "1700ms" : "0ms",
+                transform: active ? "translateX(-100%)" : "translateX(0%)",
+              }}
+            >
+              <PhoneScreen kind="before" />
+            </div>
+
+            {/* screen B — 만료 후 (accent) */}
+            <div
+              className="absolute inset-0 transition-transform duration-700"
+              style={{
+                transitionTimingFunction: EASE,
+                transitionDelay: active ? "1700ms" : "0ms",
+                transform: active ? "translateX(0%)" : "translateX(100%)",
+              }}
+            >
+              <PhoneScreen
+                kind="after"
+                nextLabel={t("timelineNext")}
+                chipLabel={t("timelineChip")}
+              />
             </div>
           </div>
         </div>
@@ -1020,6 +1036,54 @@ function MockTimeline({ mock, active }: { mock: MockData; active: boolean }) {
       >
         {t("timelineFoot")}
       </p>
+    </div>
+  );
+}
+
+function PhoneScreen({
+  kind,
+  nextLabel,
+  chipLabel,
+}: {
+  kind: "before" | "after";
+  nextLabel?: string;
+  chipLabel?: string;
+}) {
+  const isAfter = kind === "after";
+  return (
+    <div
+      className={
+        "flex h-full flex-col gap-1.5 px-2.5 pb-3 pt-9 " +
+        (isAfter ? "bg-accent-50" : "bg-rose-50")
+      }
+    >
+      <div
+        className={
+          "h-12 w-full rounded-md " + (isAfter ? "bg-accent-200" : "bg-rose-200")
+        }
+      />
+      <div
+        className={
+          "h-1.5 w-3/5 rounded-full " + (isAfter ? "bg-accent-500" : "bg-rose-500")
+        }
+      />
+      <div className="space-y-1">
+        <div className="h-1 w-full rounded-full bg-slate-200" />
+        <div className="h-1 w-5/6 rounded-full bg-slate-200" />
+        <div className="h-1 w-2/3 rounded-full bg-slate-200" />
+      </div>
+      {isAfter && nextLabel && chipLabel ? (
+        <div className="mt-auto flex flex-col items-start gap-1">
+          <span className="text-[7px] font-medium uppercase tracking-wider text-accent-700">
+            {nextLabel}
+          </span>
+          <span className="rounded-md bg-accent-600 px-1.5 py-0.5 text-[8px] font-medium text-white">
+            {chipLabel}
+          </span>
+        </div>
+      ) : (
+        <div className="mt-auto h-5 w-full rounded-md bg-rose-600" />
+      )}
     </div>
   );
 }

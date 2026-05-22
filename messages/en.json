@@ -1746,7 +1746,7 @@
       "note": "Short links and stats live in the same account."
     },
     "mock": {
-      "kpiStatus": "Live · Day 5",
+      "kpiStatus": "Distributed, untracked",
       "kpiDistributed": "Distributed",
       "kpiClicks": "Clicks",
       "kpiPer100": "Per 100",
@@ -1774,6 +1774,7 @@
       "casesTitle": "Real cases",
       "casesBefore": "Before",
       "casesAfter": "After",
+      "casesFooter": "Batch split + click stats",
       "timelineExpired": "Expiry",
       "timelineNext": "Next page",
       "timelineChip": "Reserve / Menu",

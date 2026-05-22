@@ -1656,7 +1656,7 @@
       "note": "일반 단축 URL · 통계도 같은 계정으로"
     },
     "mock": {
-      "kpiStatus": "진행 중 · 5일째",
+      "kpiStatus": "측정 없이 배포",
       "kpiDistributed": "배포",
       "kpiClicks": "클릭",
       "kpiPer100": "100장당",
@@ -1684,6 +1684,7 @@
       "casesTitle": "실제 사례",
       "casesBefore": "1차",
       "casesAfter": "2차",
+      "casesFooter": "묶음 분할 + 클릭 통계로 분석",
       "timelineExpired": "만료 시점",
       "timelineNext": "다음 페이지",
       "timelineChip": "예약 / 메뉴",

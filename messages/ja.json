@@ -1742,7 +1742,7 @@
       "note": "通常の短縮URL · 統計も同じアカウントで"
     },
     "mock": {
-      "kpiStatus": "進行中 · 5日目",
+      "kpiStatus": "測定なしで配布",
       "kpiDistributed": "配布",
       "kpiClicks": "クリック",
       "kpiPer100": "100枚あたり",
@@ -1770,6 +1770,7 @@
       "casesTitle": "実例",
       "casesBefore": "1回目",
       "casesAfter": "2回目",
+      "casesFooter": "バッチ分割 + クリックstatsで分析",
       "timelineExpired": "期限切れ時点",
       "timelineNext": "次のページ",
       "timelineChip": "予約 / メニュー",
