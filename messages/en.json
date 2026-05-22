@@ -1727,9 +1727,14 @@
     "s4": {
       "line1": "Shibuya 142, Shinjuku 38, Ikebukuro 91.",
       "line2": "Double Shibuya next time.",
-      "aux": "Ramen shops, salons, cram schools too."
+      "aux": "── So the next month's drop is decided."
     },
     "s5": {
+      "line1": "Ramen shops too.",
+      "line2": "Salons too. Cram schools too.",
+      "aux": "Same playbook. Up to 5x."
+    },
+    "s6": {
       "line1": "When a campaign ends,",
       "line2": "the flyers stay on the street.",
       "line3": "On expiry, auto-route to the next page."
@@ -1765,6 +1770,8 @@
       "barsSort": "By efficiency",
       "barsTop": "Top",
       "barsRecoTitle": "Next round",
+      "barsRecoEstimate": "Est. +160 clicks · ~25 new customers",
+      "casesTitle": "Real cases",
       "timelineExpired": "Expiry",
       "timelineNext": "Next page",
       "timelineChip": "Reserve / Menu",
