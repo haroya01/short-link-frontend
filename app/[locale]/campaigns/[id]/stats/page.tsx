@@ -16,6 +16,7 @@ import { useAuth } from "@/lib/auth";
 import {
   compareCampaignStats,
   getCampaign,
+  getCampaignRecommendations,
   getCampaignStats,
   listCampaigns,
 } from "@/lib/api";
@@ -24,6 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/error-state";
 import type {
   CampaignDetail,
+  CampaignRecommendation,
   CampaignStats,
   CampaignStatsCompareResponse,
   CampaignSummary,
@@ -45,6 +47,7 @@ export default function CampaignStatsPage() {
   const [compareWithId, setCompareWithId] = useState<number | null>(null);
   const [compareData, setCompareData] = useState<CampaignStatsCompareResponse | null>(null);
   const [compareLoading, setCompareLoading] = useState(false);
+  const [recData, setRecData] = useState<CampaignRecommendation | null>(null);
 
   useEffect(() => {
     if (!ready || !authenticated || !Number.isFinite(campaignId)) {
@@ -54,12 +57,18 @@ export default function CampaignStatsPage() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    Promise.all([getCampaign(campaignId), getCampaignStats(campaignId), listCampaigns()])
-      .then(([c, s, all]) => {
+    Promise.all([
+      getCampaign(campaignId),
+      getCampaignStats(campaignId),
+      listCampaigns(),
+      getCampaignRecommendations(campaignId),
+    ])
+      .then(([c, s, all, rec]) => {
         if (cancelled) return;
         setCampaign(c);
         setStats(s);
         setOtherCampaigns(all.filter((it) => it.id !== campaignId));
+        setRecData(rec);
       })
       .catch((err) => {
         if (!cancelled) setError(err instanceof Error ? err.message : "load failed");
@@ -156,6 +165,7 @@ export default function CampaignStatsPage() {
               groups={stats.byArea}
             />
           )}
+          {recData && <RecommendationCard data={recData} />}
           {stats.byDay.length > 0 && <DailyChart data={stats.byDay} />}
           {stats.byHour.length > 0 && <HourlyChart data={stats.byHour} />}
           {stats.heatmap.length > 0 && <HeatmapChart data={stats.heatmap} />}
@@ -246,6 +256,80 @@ function CompareSection({
         </div>
       )}
     </section>
+  );
+}
+
+function RecommendationCard({ data }: { data: CampaignRecommendation }) {
+  if (data.insufficient) {
+    return (
+      <section className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-4">
+        <h2 className="text-sm font-semibold text-slate-900">다음 배포 추천</h2>
+        <p className="mt-1 text-[12px] text-slate-500">{data.insufficientReason}</p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="rounded-2xl border border-accent-200 bg-accent-50/30 px-5 py-4">
+      <div className="flex items-baseline justify-between gap-2">
+        <div>
+          <h2 className="text-sm font-semibold text-slate-900">다음 배포 추천</h2>
+          <p className="mt-0.5 text-[11px] text-slate-500">
+            현재 총 {data.totalQuantity.toLocaleString()}장 — 같은 총량으로 재할당. 평균 100당{" "}
+            {data.avgRatePerHundred.toFixed(1)} 기준
+          </p>
+        </div>
+      </div>
+      <ul className="mt-3 divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200 bg-white">
+        {data.recommendations.map((r) => (
+          <RecRow key={r.batchId} rec={r} />
+        ))}
+      </ul>
+      <p className="mt-2 text-[10px] text-slate-500">
+        ※ 효율 비율 기반 추천 — 평균의 30% 미만은 폐기, 나머지는 비율대로 재할당 (한 묶음 최대 3배).
+      </p>
+    </section>
+  );
+}
+
+function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number] }) {
+  const verdictStyle: Record<string, string> = {
+    BOOST: "bg-accent-100 text-accent-700",
+    KEEP: "bg-slate-100 text-slate-700",
+    REDUCE: "bg-amber-50 text-amber-700",
+    PRUNE: "bg-rose-50 text-rose-700",
+  };
+  const verdictLabel: Record<string, string> = {
+    BOOST: "증가",
+    KEEP: "유지",
+    REDUCE: "감축",
+    PRUNE: "폐기",
+  };
+  const deltaSign = rec.delta > 0 ? "+" : "";
+  const deltaColor =
+    rec.delta > 0 ? "text-accent-700" : rec.delta < 0 ? "text-rose-600" : "text-slate-500";
+  return (
+    <li className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-3">
+      <div className="min-w-0">
+        <p className="truncate text-[13px] font-medium text-slate-900">{rec.batchName}</p>
+        <p className="mt-0.5 truncate text-[11px] text-slate-500">
+          {rec.currentQuantity.toLocaleString()} → {rec.recommendedQuantity.toLocaleString()}장 ·
+          100당 {rec.currentRatePerHundred.toFixed(1)}
+        </p>
+      </div>
+      <span
+        className={
+          "flex-shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider " +
+          verdictStyle[rec.verdict]
+        }
+      >
+        {verdictLabel[rec.verdict]}
+      </span>
+      <span className={"tabular-nums text-[14px] font-semibold " + deltaColor}>
+        {deltaSign}
+        {rec.delta.toLocaleString()}
+      </span>
+    </li>
   );
 }
 
