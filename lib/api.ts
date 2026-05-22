@@ -960,6 +960,7 @@ import type {
   CampaignBatchUpdatePayload,
   CampaignCreatePayload,
   CampaignDetail,
+  CampaignRecommendation,
   CampaignStats,
   CampaignStatsCompareResponse,
   CampaignSummary,
@@ -1056,6 +1057,15 @@ export async function compareCampaignStats(
     method: "POST",
     body: JSON.stringify({ campaignIds }),
   });
+}
+
+export async function getCampaignRecommendations(
+  campaignId: number,
+): Promise<CampaignRecommendation> {
+  return request<CampaignRecommendation>(
+    `/api/v1/campaigns/${campaignId}/recommendations`,
+    { method: "GET" },
+  );
 }
 
 export type QrDownloadOptions = {
