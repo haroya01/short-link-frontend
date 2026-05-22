@@ -50,7 +50,7 @@ export default function CampaignsPage() {
           로그인이 필요합니다
         </h1>
         <p className="mt-2 text-[15px] leading-relaxed text-slate-500">
-          캠페인은 로그인된 사용자만 운영할 수 있어요.
+          QR 캠페인은 로그인된 사용자만 운영할 수 있어요.
         </p>
         <Link href="/login" className="mt-6 inline-block">
           <Button>로그인하러 가기</Button>
@@ -64,18 +64,18 @@ export default function CampaignsPage() {
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
         <div>
           <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
-            캠페인
+            QR 캠페인
           </h1>
           <p className="mt-1 text-sm text-slate-500">
             {items === null
               ? "오프라인 QR 배포 운영 단위"
-              : `${items.length}개의 캠페인.`}
+              : `${items.length}개의 QR 캠페인.`}
           </p>
         </div>
         {items && items.length > 0 && (
           <Link href="/campaigns/new">
             <Button variant="accent">
-              <Plus className="h-4 w-4" aria-hidden /> 새 캠페인
+              <Plus className="h-4 w-4" aria-hidden /> 새 QR 캠페인
             </Button>
           </Link>
         )}
