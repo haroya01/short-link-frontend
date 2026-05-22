@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 
 type MockRow = { name: string; area: string; dist: string; qty: number };
 type MockBar = { label: string; value: number };
+type MockCase = { biz: string; action: string; uplift: string };
 
 type MockData = {
   campaignName: string;
@@ -24,6 +25,7 @@ type MockData = {
   rows: MockRow[];
   bars: MockBar[];
   reco: string;
+  cases: MockCase[];
   startDate: string;
   endDate: string;
 };
@@ -44,6 +46,11 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
       { label: "新宿", value: 38 },
     ],
     reco: "渋谷 +3,000 / 新宿 -2,000",
+    cases: [
+      { biz: "ラーメン店 コロネ", action: "渋谷集中", uplift: "+5x" },
+      { biz: "美容室 アルプス", action: "動線変更", uplift: "+3x" },
+      { biz: "学習塾 ZONE", action: "時間帯分析", uplift: "+2x" },
+    ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
   },
@@ -62,6 +69,11 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
       { label: "신촌", value: 5 },
     ],
     reco: "강남 +750 / 신촌 -250",
+    cases: [
+      { biz: "라멘집 코로네", action: "강남 집중", uplift: "+5x" },
+      { biz: "미용실 알프스", action: "동선 변경", uplift: "+3x" },
+      { biz: "학원 ZONE", action: "시간대 분석", uplift: "+2x" },
+    ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
   },
@@ -80,13 +92,18 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
       { label: "Shinjuku", value: 38 },
     ],
     reco: "Shibuya +3,000 / Shinjuku -2,000",
+    cases: [
+      { biz: "Ramen · Korone", action: "Shibuya focus", uplift: "+5x" },
+      { biz: "Salon · Alps", action: "Reroute foot traffic", uplift: "+3x" },
+      { biz: "Cram · ZONE", action: "Hour-of-day", uplift: "+2x" },
+    ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
   },
 };
 
-const AUTOPLAY_MS = 5000;
-const SECTION_COUNT = 5;
+const AUTOPLAY_MS = 4000;
+const SECTION_COUNT = 6;
 const EASE = "cubic-bezier(0.16,1,0.3,1)";
 
 export default function QrCampaignsLandingPage() {
@@ -257,7 +274,14 @@ function StickyNarrative({ mock }: { mock: MockData }) {
       kind: "narrative",
       line1: t("s5.line1"),
       line2: t("s5.line2"),
-      line3: t("s5.line3"),
+      aux: t("s5.aux"),
+      Mock: MockCases,
+    },
+    {
+      kind: "narrative",
+      line1: t("s6.line1"),
+      line2: t("s6.line2"),
+      line3: t("s6.line3"),
       Mock: MockTimeline,
     },
   ];
@@ -771,7 +795,46 @@ function MockBars({ mock, active }: { mock: MockData; active: boolean }) {
           {t("barsRecoTitle")}
         </p>
         <p className="mt-1 text-[14px] font-medium text-slate-900">{mock.reco}</p>
+        <p className="mt-1 text-[11px] text-slate-600">{t("barsRecoEstimate")}</p>
       </div>
+    </div>
+  );
+}
+
+function MockCases({ mock, active }: { mock: MockData; active: boolean }) {
+  const t = useTranslations("qrCampaigns.mock");
+  return (
+    <div
+      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700"
+      style={{
+        transitionTimingFunction: EASE,
+        opacity: active ? 1 : 0,
+        transform: active ? "translateY(0)" : "translateY(12px)",
+      }}
+    >
+      <div className="border-b border-slate-200 px-5 py-3.5">
+        <p className="text-[14px] font-semibold text-slate-900">{t("casesTitle")}</p>
+      </div>
+      {mock.cases.map((c, i) => (
+        <div
+          key={c.biz}
+          className="grid grid-cols-[1fr_auto] items-center gap-3 border-b border-slate-100 px-5 py-3.5 transition-all duration-500 last:border-b-0"
+          style={{
+            transitionTimingFunction: EASE,
+            transitionDelay: active ? `${200 + i * 130}ms` : "0ms",
+            opacity: active ? 1 : 0,
+            transform: active ? "translateY(0)" : "translateY(-10px)",
+          }}
+        >
+          <div className="min-w-0">
+            <p className="truncate text-[13px] font-medium text-slate-900">{c.biz}</p>
+            <p className="mt-0.5 truncate text-[11px] text-slate-500">{c.action}</p>
+          </div>
+          <span className="flex-shrink-0 rounded-md bg-accent-50 px-2 py-1 text-[14px] font-semibold tabular-nums leading-none tracking-headline text-accent-700">
+            {c.uplift}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
