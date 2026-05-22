@@ -150,7 +150,8 @@ function FloatingCta({ ctaHref }: { ctaHref: string }) {
       <Link href={ctaHref}>
         <Button
           variant="accent"
-          className="h-12 rounded-xl px-6 text-[14px] font-medium shadow-[0_10px_28px_rgba(5,150,105,0.32)] sm:px-7"
+          size="xl"
+          className="font-medium shadow-[0_10px_28px_rgba(5,150,105,0.32)]"
         >
           {t("cta")}
           <ArrowRight className="h-4 w-4" aria-hidden />
@@ -1196,7 +1197,7 @@ function FinalCta({
         </h2>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link href={ctaHref}>
-            <Button variant="accent" className="h-12 rounded-xl px-7 text-[14px] font-medium">
+            <Button variant="accent" size="xl" className="font-medium">
               {t("primary")}
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Button>
@@ -1205,7 +1206,8 @@ function FinalCta({
             <Link href="/login">
               <Button
                 variant="ghost"
-                className="h-12 rounded-xl px-6 text-[13px] font-medium text-white hover:bg-white/10"
+                size="xl"
+                className="px-6 text-[13px] font-medium text-white hover:bg-white/10"
               >
                 {t("secondary")}
               </Button>
