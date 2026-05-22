@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft, ExternalLink, FlaskConical } from "lucide-react";
 import {
@@ -23,6 +23,9 @@ import {
 import { Link } from "@/i18n/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/error-state";
+import { Section } from "@/components/section";
+import { Heatmap } from "@/components/charts/heatmap";
+import type { HeatmapCell } from "@/types";
 import type {
   CampaignDetail,
   CampaignRecommendation,
@@ -201,14 +204,10 @@ function CompareSection({
   loading: boolean;
 }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-sm font-semibold text-slate-900">다른 캠페인과 비교</h2>
-          <p className="mt-0.5 text-[11px] text-slate-500">
-            1차 vs 2차, 또는 다른 시즌 캠페인의 효율을 같이 본다.
-          </p>
-        </div>
+    <Section
+      title="다른 캠페인과 비교"
+      description="1차 vs 2차, 또는 다른 시즌 캠페인의 효율을 같이 본다."
+      action={
         <select
           value={selectedId ?? ""}
           onChange={(e) => onSelect(e.target.value ? Number(e.target.value) : null)}
@@ -221,10 +220,11 @@ function CompareSection({
             </option>
           ))}
         </select>
-      </div>
-      {loading && <p className="mt-4 text-[12px] text-slate-500">불러오는 중...</p>}
+      }
+    >
+      {loading && <p className="text-[12px] text-slate-500">불러오는 중...</p>}
       {data && !loading && (
-        <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {data.campaigns.map((c) => {
             const isCurrent = c.campaignId === currentId;
             const totalQuantity = c.stats.byBatch.reduce((sum, b) => sum + b.quantity, 0);
@@ -255,40 +255,36 @@ function CompareSection({
           })}
         </div>
       )}
-    </section>
+      {!loading && !data && (
+        <p className="text-[12px] text-slate-500">
+          위 dropdown 에서 비교할 캠페인을 선택하세요.
+        </p>
+      )}
+    </Section>
   );
 }
 
 function RecommendationCard({ data }: { data: CampaignRecommendation }) {
   if (data.insufficient) {
     return (
-      <section className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-4">
-        <h2 className="text-sm font-semibold text-slate-900">다음 배포 추천</h2>
-        <p className="mt-1 text-[12px] text-slate-500">{data.insufficientReason}</p>
-      </section>
+      <Section title="다음 배포 추천">
+        <p className="text-[12px] text-slate-500">{data.insufficientReason}</p>
+      </Section>
     );
   }
 
   return (
-    <section className="rounded-2xl border border-accent-200 bg-accent-50/30 px-5 py-4">
-      <div className="flex items-baseline justify-between gap-2">
-        <div>
-          <h2 className="text-sm font-semibold text-slate-900">다음 배포 추천</h2>
-          <p className="mt-0.5 text-[11px] text-slate-500">
-            현재 총 {data.totalQuantity.toLocaleString()}장 — 같은 총량으로 재할당. 평균 100당{" "}
-            {data.avgRatePerHundred.toFixed(1)} 기준
-          </p>
-        </div>
-      </div>
-      <ul className="mt-3 divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <Section
+      title="다음 배포 추천"
+      description={`현재 총 ${data.totalQuantity.toLocaleString()}장 — 같은 총량으로 재할당. 평균 100당 ${data.avgRatePerHundred.toFixed(1)} 기준`}
+      footnote="효율 비율 기반 추천 — 평균의 30% 미만은 폐기, 나머지는 비율대로 재할당 (한 묶음 최대 3배)."
+    >
+      <ul className="divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200 bg-white">
         {data.recommendations.map((r) => (
           <RecRow key={r.batchId} rec={r} />
         ))}
       </ul>
-      <p className="mt-2 text-[10px] text-slate-500">
-        ※ 효율 비율 기반 추천 — 평균의 30% 미만은 폐기, 나머지는 비율대로 재할당 (한 묶음 최대 3배).
-      </p>
-    </section>
+    </Section>
   );
 }
 
@@ -347,12 +343,8 @@ function CompareCell({ label, value }: { label: string; value: string }) {
 function DailyChart({ data }: { data: CampaignStats["byDay"] }) {
   const max = useMemo(() => Math.max(...data.map((d) => d.clicks), 1), [data]);
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
-      <div className="flex items-baseline justify-between">
-        <h2 className="text-sm font-semibold text-slate-900">일별 클릭</h2>
-        <p className="text-[11px] text-slate-500">캠페인 시작 이후</p>
-      </div>
-      <div className="mt-4 flex h-32 items-end gap-1">
+    <Section title="일별 클릭" description="캠페인 시작 이후">
+      <div className="flex h-32 items-end gap-1">
         {data.map(({ day, clicks }) => {
           const heightPct = (clicks / max) * 100;
           return (
@@ -371,7 +363,7 @@ function DailyChart({ data }: { data: CampaignStats["byDay"] }) {
         <span>{data[0]?.day}</span>
         <span>{data[data.length - 1]?.day}</span>
       </div>
-    </section>
+    </Section>
   );
 }
 
@@ -384,12 +376,11 @@ function HourlyChart({ data }: { data: CampaignStats["byHour"] }) {
   const max = Math.max(...full.map((d) => d.clicks), 1);
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
-      <div className="flex items-baseline justify-between">
-        <h2 className="text-sm font-semibold text-slate-900">시간대별 클릭</h2>
-        <p className="text-[11px] text-slate-500">0–23시 (Asia/Seoul)</p>
-      </div>
-      <div className="mt-4 grid h-28 items-end gap-0.5" style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}>
+    <Section title="시간대별 클릭" description="0–23시 (Asia/Seoul)">
+      <div
+        className="grid h-28 items-end gap-0.5"
+        style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}
+      >
         {full.map(({ hour, clicks }) => {
           const heightPct = (clicks / max) * 100;
           return (
@@ -409,62 +400,37 @@ function HourlyChart({ data }: { data: CampaignStats["byHour"] }) {
         <span>18</span>
         <span>23</span>
       </div>
-    </section>
+    </Section>
   );
 }
 
-function HeatmapChart({ data }: { data: CampaignStats["heatmap"] }) {
-  // DAYOFWEEK: 1(일) ~ 7(토). 7 × 24 grid.
-  const max = Math.max(...data.map((d) => d.clicks), 1);
-  const days = ["일", "월", "화", "수", "목", "금", "토"];
-  const cellMap = useMemo(() => {
-    const m = new Map<string, number>();
-    for (const d of data) m.set(`${d.dayOfWeek}-${d.hour}`, d.clicks);
-    return m;
-  }, [data]);
+// SQL DAYOFWEEK 가 1=Sunday, 7=Saturday. 공용 Heatmap 의 DAYS 배열은
+// ["MONDAY", ..., "SUNDAY"] string. 매핑.
+const DAYOFWEEK_TO_DAY: string[] = [
+  "",
+  "SUNDAY",
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+];
 
+function adaptHeatmap(cells: CampaignStats["heatmap"]): HeatmapCell[] {
+  return cells.map((c) => ({
+    dayOfWeek: DAYOFWEEK_TO_DAY[c.dayOfWeek] ?? "MONDAY",
+    hour: c.hour,
+    count: c.clicks,
+  }));
+}
+
+function HeatmapChart({ data }: { data: CampaignStats["heatmap"] }) {
+  const adapted = useMemo(() => adaptHeatmap(data), [data]);
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
-      <div className="flex items-baseline justify-between">
-        <h2 className="text-sm font-semibold text-slate-900">요일 × 시간대 분포</h2>
-        <p className="text-[11px] text-slate-500">진할수록 클릭 많음</p>
-      </div>
-      <div className="mt-4 grid gap-1" style={{ gridTemplateColumns: "20px 1fr" }}>
-        {days.map((day, idx) => {
-          const dow = idx + 1;
-          return (
-            <Fragment key={dow}>
-              <span className="self-center text-[10px] text-slate-500">{day}</span>
-              <div
-                className="grid gap-0.5"
-                style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}
-              >
-                {Array.from({ length: 24 }, (_, h) => {
-                  const clicks = cellMap.get(`${dow}-${h}`) ?? 0;
-                  const intensity = clicks / max;
-                  return (
-                    <div
-                      key={h}
-                      className="aspect-square rounded-[2px]"
-                      style={{
-                        backgroundColor:
-                          intensity > 0 ? `rgba(5, 150, 105, ${0.15 + intensity * 0.85})` : "rgb(241, 245, 249)",
-                      }}
-                      title={`${day} ${h}시: ${clicks}`}
-                    />
-                  );
-                })}
-              </div>
-            </Fragment>
-          );
-        })}
-      </div>
-      <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500" style={{ paddingLeft: 24 }}>
-        <span>0시</span>
-        <span>12시</span>
-        <span>23시</span>
-      </div>
-    </section>
+    <Section title="요일 × 시간대 분포" description="진할수록 클릭이 많은 시간대.">
+      <Heatmap data={adapted} />
+    </Section>
   );
 }
 
@@ -559,14 +525,12 @@ function ByBatchTable({ stats }: { stats: CampaignStats }) {
   }
   const maxClicks = sorted[0]?.clicks ?? 0;
   return (
-    <section className="space-y-2">
-      <header>
-        <h2 className="text-sm font-medium text-slate-900">묶음별 성과</h2>
-        <p className="mt-0.5 text-[12px] text-slate-500">
-          클릭 수 내림차순. 막대는 최대값 대비 상대 비율.
-        </p>
-      </header>
-      <ul className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <Section
+      title="묶음별 성과"
+      description="클릭 수 내림차순. 막대는 최대값 대비 상대 비율."
+      bodyClassName="p-0"
+    >
+      <ul className="divide-y divide-slate-200">
         {sorted.map((b) => {
           const widthPct = maxClicks > 0 ? (b.clicks * 100) / maxClicks : 0;
           const ratePerHundred = b.quantity > 0 ? (b.clicks * 100) / b.quantity : 0;
@@ -609,7 +573,7 @@ function ByBatchTable({ stats }: { stats: CampaignStats }) {
           );
         })}
       </ul>
-    </section>
+    </Section>
   );
 }
 
@@ -635,52 +599,50 @@ function GroupChart({
     [groups],
   );
   return (
-    <section className="space-y-2">
-      <header>
-        <h2 className="text-sm font-medium text-slate-900">{title}</h2>
-        <p className="mt-0.5 text-[12px] text-slate-500">{hint}</p>
-      </header>
-      <div className="rounded-2xl border border-slate-200 bg-white p-4">
-        <div className="h-[220px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} layout="vertical" margin={{ left: 8, right: 24, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
-              <XAxis
-                type="number"
-                tick={{ fontSize: 11, fill: "#64748b" }}
-                axisLine={{ stroke: "#e2e8f0" }}
-                tickLine={false}
-              />
-              <YAxis
-                type="category"
-                dataKey="key"
-                tick={{ fontSize: 12, fill: "#0f172a" }}
-                axisLine={{ stroke: "#e2e8f0" }}
-                tickLine={false}
-                width={100}
-              />
-              <Tooltip
-                cursor={{ fill: ACCENT_LIGHT, opacity: 0.3 }}
-                contentStyle={{
-                  borderRadius: 8,
-                  border: "1px solid #e2e8f0",
-                  fontSize: 12,
-                  padding: "8px 12px",
-                }}
-                formatter={(_value: number, _name: string, item) => {
-                  const row = item?.payload as { ratePerHundred: number; clicks: number; quantity: number };
-                  return [
-                    `${row.ratePerHundred}회 / 100장 · 클릭 ${row.clicks.toLocaleString()} / 배포 ${row.quantity.toLocaleString()}`,
-                    "효율",
-                  ];
-                }}
-              />
-              <Bar dataKey="ratePerHundred" fill={ACCENT} radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+    <Section title={title} description={hint}>
+      <div className="h-[220px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} layout="vertical" margin={{ left: 8, right: 24, top: 4, bottom: 4 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
+            <XAxis
+              type="number"
+              tick={{ fontSize: 11, fill: "#64748b" }}
+              axisLine={{ stroke: "#e2e8f0" }}
+              tickLine={false}
+            />
+            <YAxis
+              type="category"
+              dataKey="key"
+              tick={{ fontSize: 12, fill: "#0f172a" }}
+              axisLine={{ stroke: "#e2e8f0" }}
+              tickLine={false}
+              width={100}
+            />
+            <Tooltip
+              cursor={{ fill: ACCENT_LIGHT, opacity: 0.3 }}
+              contentStyle={{
+                borderRadius: 8,
+                border: "1px solid #e2e8f0",
+                fontSize: 12,
+                padding: "8px 12px",
+              }}
+              formatter={(_value: number, _name: string, item) => {
+                const row = item?.payload as {
+                  ratePerHundred: number;
+                  clicks: number;
+                  quantity: number;
+                };
+                return [
+                  `${row.ratePerHundred}회 / 100장 · 클릭 ${row.clicks.toLocaleString()} / 배포 ${row.quantity.toLocaleString()}`,
+                  "효율",
+                ];
+              }}
+            />
+            <Bar dataKey="ratePerHundred" fill={ACCENT} radius={[0, 4, 4, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
-    </section>
+    </Section>
   );
 }
 
