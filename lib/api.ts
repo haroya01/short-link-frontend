@@ -1035,13 +1035,37 @@ export async function getCampaignStats(campaignId: number): Promise<CampaignStat
   return request<CampaignStats>(`/api/v1/campaigns/${campaignId}/stats`, { method: "GET" });
 }
 
-/** 다운로드 URL — 토큰 없는 navigator 다운로드 트리거에 쓰임. 인증은 cookie/세션이 처리. */
-export function campaignBatchQrUrl(campaignId: number, batchId: number): string {
-  return withBase(`/api/v1/campaigns/${campaignId}/batches/${batchId}/qr`);
+export type QrDownloadOptions = {
+  size: 256 | 512 | 1024 | 2048;
+  ec: "L" | "M" | "Q" | "H";
+  label: boolean;
+};
+
+const QR_DEFAULTS: QrDownloadOptions = { size: 512, ec: "M", label: false };
+
+function qrQueryString(options?: Partial<QrDownloadOptions>): string {
+  const o = { ...QR_DEFAULTS, ...options };
+  return `?size=${o.size}&ec=${o.ec}&label=${o.label ? "true" : "false"}`;
 }
 
-export function campaignBatchesZipUrl(campaignId: number): string {
-  return withBase(`/api/v1/campaigns/${campaignId}/batches/qr-zip`);
+/** 다운로드 URL — 토큰 없는 navigator 다운로드 트리거에 쓰임. 인증은 cookie/세션이 처리. */
+export function campaignBatchQrUrl(
+  campaignId: number,
+  batchId: number,
+  options?: Partial<QrDownloadOptions>,
+): string {
+  return withBase(
+    `/api/v1/campaigns/${campaignId}/batches/${batchId}/qr${qrQueryString(options)}`,
+  );
+}
+
+export function campaignBatchesZipUrl(
+  campaignId: number,
+  options?: Partial<QrDownloadOptions>,
+): string {
+  return withBase(
+    `/api/v1/campaigns/${campaignId}/batches/qr-zip${qrQueryString(options)}`,
+  );
 }
 
 export function campaignBatchesCsvUrl(campaignId: number): string {
