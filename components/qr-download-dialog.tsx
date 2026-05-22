@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import {
   campaignBatchQrUrl,
   campaignBatchesZipUrl,
+  readToken,
   type QrDownloadOptions,
 } from "@/lib/api";
 
@@ -87,7 +88,7 @@ export function QrDownloadDialog({
           target.kind === "zip"
             ? campaignBatchesZipUrl(target.campaignId, options)
             : campaignBatchQrUrl(target.campaignId, target.batchId, options);
-        triggerDownload(url);
+        await triggerDownload(url);
       }}
     >
       <div className="space-y-4">
@@ -188,9 +189,29 @@ function SegmentButton({
   );
 }
 
-function triggerDownload(url: string) {
+async function triggerDownload(url: string) {
+  // JWT 가 localStorage 에 있어서 <a href> 단순 navigation 으로는 Authorization header 가
+  // 안 붙어 401. fetch + blob 패턴으로 인증 헤더 첨부 후 다운로드 트리거.
+  const token = readToken();
+  const headers = new Headers();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+
+  const res = await fetch(url, { credentials: "include", headers });
+  if (!res.ok) {
+    throw new Error(`Download failed: ${res.status}`);
+  }
+  const blob = await res.blob();
+
+  // server 의 Content-Disposition filename 을 그대로 사용. 헤더가 없으면 fallback name.
+  const cd = res.headers.get("Content-Disposition") ?? "";
+  const match = /filename="?([^"]+)"?/i.exec(cd);
+  const filename = match?.[1] ?? "download";
+
+  const blobUrl = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
+  a.href = blobUrl;
+  a.download = filename;
   a.rel = "noopener";
   a.click();
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
 }

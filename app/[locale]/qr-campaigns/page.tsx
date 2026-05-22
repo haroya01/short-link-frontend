@@ -166,13 +166,26 @@ function GlobalStyles() {
       :root {
         --ease: ${EASE};
       }
+      /*
+        Hero/sub/CTA 텍스트는 className 에 opacity-0 으로 시작 + 이 keyframe 으로 fade-in.
+        styled-jsx hydration race 가 일어나면 인라인 opacity-0 보다 animation 이 먼저
+        시작될 수 있어서, "0% { opacity: 0 }" 를 명시해 *animation 자체로* invisible 상태도
+        보장.
+      */
       @keyframes hero-fade {
-        to {
+        0% {
+          opacity: 0;
+        }
+        100% {
           opacity: 1;
         }
       }
       @keyframes hero-rise {
-        to {
+        0% {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        100% {
           opacity: 1;
           transform: translateY(0);
         }
@@ -353,7 +366,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                     <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards]">
                       {s.eyebrow}
                     </p>
-                    <h1 className="mt-4 text-[36px] font-semibold leading-[1.05] tracking-headline text-slate-900 sm:text-[48px] lg:text-[56px]">
+                    <h1 className="mt-4 break-keep text-[26px] font-semibold leading-[1.15] tracking-headline text-slate-900 sm:text-[36px] lg:text-[52px]">
                       <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards]">
                         {s.title1}
                       </span>
@@ -362,7 +375,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                         {s.title2}
                       </span>
                     </h1>
-                    <p className="mt-5 max-w-md text-[14px] leading-relaxed text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:text-[15px]">
+                    <p className="mt-5 max-w-md break-keep text-[13px] leading-relaxed text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:text-[15px]">
                       {s.sub}
                     </p>
                     <div className="mt-6 flex flex-wrap gap-2">
@@ -383,7 +396,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                   </>
                 ) : (
                   <>
-                    <h2 className="text-[28px] font-semibold leading-[1.15] tracking-headline text-slate-900 sm:text-[36px] lg:text-[44px]">
+                    <h2 className="break-keep text-[22px] font-semibold leading-[1.2] tracking-headline text-slate-900 sm:text-[32px] lg:text-[40px]">
                       <span
                         className="inline-block transition-all duration-700"
                         style={{
@@ -409,7 +422,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                     </h2>
                     {s.line3 && (
                       <p
-                        className="mt-3 text-[20px] leading-[1.2] tracking-headline text-slate-500 transition-all duration-700 sm:text-[24px] lg:text-[28px]"
+                        className="mt-3 break-keep text-[16px] leading-[1.25] tracking-headline text-slate-500 transition-all duration-700 sm:text-[22px] lg:text-[26px]"
                         style={{
                           transitionTimingFunction: EASE,
                           transitionDelay: isActive ? "340ms" : "0ms",
@@ -422,7 +435,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                     )}
                     {s.aux && (
                       <p
-                        className="mt-6 text-[13px] text-slate-500 transition-all duration-700 sm:text-[14px]"
+                        className="mt-6 break-keep text-[12px] text-slate-500 transition-all duration-700 sm:text-[14px]"
                         style={{
                           transitionTimingFunction: EASE,
                           transitionDelay: isActive ? "500ms" : "0ms",
