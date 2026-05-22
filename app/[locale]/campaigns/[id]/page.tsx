@@ -9,6 +9,7 @@ import {
   Download,
   FileText,
   PackageOpen,
+  Layers,
   Pencil,
   PlayCircle,
   Printer,
@@ -253,6 +254,11 @@ function PrepareSection({
           <Link href={`/campaigns/${campaignId}/print-sheet`}>
             <Button variant="outline">
               <Printer className="h-4 w-4" aria-hidden /> A4 시트
+            </Button>
+          </Link>
+          <Link href={`/campaigns/${campaignId}/poster-builder`}>
+            <Button variant="outline">
+              <Layers className="h-4 w-4" aria-hidden /> 포스터에 QR
             </Button>
           </Link>
         </div>
