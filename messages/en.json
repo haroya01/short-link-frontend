@@ -1720,11 +1720,16 @@
       "line2": "Shibuya / Shinjuku / Ikebukuro."
     },
     "s3": {
+      "line1": "Your design, intact.",
+      "line2": "We place the QR.",
+      "aux": "Bring a Canva / InDesign PDF. Just mark where the QR goes."
+    },
+    "s4": {
       "line1": "Shibuya 142, Shinjuku 38, Ikebukuro 91.",
       "line2": "Double Shibuya next time.",
       "aux": "Ramen shops, salons, cram schools too."
     },
-    "s4": {
+    "s5": {
       "line1": "When a campaign ends,",
       "line2": "the flyers stay on the street.",
       "line3": "On expiry, auto-route to the next page."
@@ -1736,28 +1741,34 @@
       "note": "Short links and stats live in the same account."
     },
     "mock": {
-      "s1Status": "Live · Day 5",
-      "s1KpiDistributed": "Distributed",
-      "s1KpiClicks": "Clicks",
-      "s1KpiPer100": "Per 100",
-      "s1KpiConversions": "Conv.",
-      "s2Title": "Distribution batches",
-      "s2Add": "+ Add batch",
-      "s2ColName": "Batch",
-      "s2ColArea": "Area",
-      "s2ColDist": "Vendor",
-      "s2ColQty": "Qty",
-      "s2ColStatus": "Status",
-      "s2Done": "Printed",
-      "s2Unit": "",
-      "s3Title": "Clicks per 100",
-      "s3Sort": "By efficiency",
-      "s3Top": "Top",
-      "s3RecoTitle": "Next round",
-      "s4Expired": "Expiry",
-      "s4Next": "Next page",
-      "s4Chip": "Reserve / Menu",
-      "s4Foot": "Same QR, destination switches automatically."
+      "kpiStatus": "Live · Day 5",
+      "kpiDistributed": "Distributed",
+      "kpiClicks": "Clicks",
+      "kpiPer100": "Per 100",
+      "kpiConversions": "Conv.",
+      "batchTitle": "Distribution batches",
+      "batchAdd": "Add batch",
+      "batchColName": "Batch",
+      "batchColArea": "Area",
+      "batchColDist": "Vendor",
+      "batchColQty": "Qty",
+      "batchColStatus": "Status",
+      "batchDone": "Printed",
+      "batchUnit": "",
+      "posterTitle": "Poster composer",
+      "posterStep1": "Upload your PDF",
+      "posterStep2": "Place the QR box",
+      "posterStep3": "Download merged PDF — one page per batch",
+      "posterBoxLabel": "QR",
+      "posterPerBatch": "Different QR per batch",
+      "barsTitle": "Clicks per 100",
+      "barsSort": "By efficiency",
+      "barsTop": "Top",
+      "barsRecoTitle": "Next round",
+      "timelineExpired": "Expiry",
+      "timelineNext": "Next page",
+      "timelineChip": "Reserve / Menu",
+      "timelineFoot": "Same QR, destination switches automatically."
     },
     "backLink": "Back to URL shortener",
     "statsLink": "QR campaign analytics"

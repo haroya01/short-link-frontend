@@ -1630,11 +1630,16 @@
       "line2": "강남역 / 신촌 / 홍대."
     },
     "s3": {
+      "line1": "디자인은, 그대로.",
+      "line2": "QR 만, 우리가.",
+      "aux": "Canva·인디자인 PDF 에 좌표만 지정."
+    },
+    "s4": {
       "line1": "강남 80, 신촌 5, 홍대 47.",
       "line2": "다음엔, 강남에 두 배.",
       "aux": "학원도, 미용실도, 부동산도."
     },
-    "s4": {
+    "s5": {
       "line1": "행사는 끝나도,",
       "line2": "전단지는 남습니다.",
       "line3": "만료 후엔, 다음 페이지로 자동 전환."
@@ -1646,28 +1651,34 @@
       "note": "일반 단축 URL · 통계도 같은 계정으로"
     },
     "mock": {
-      "s1Status": "진행 중 · 5일째",
-      "s1KpiDistributed": "배포",
-      "s1KpiClicks": "클릭",
-      "s1KpiPer100": "100장당",
-      "s1KpiConversions": "전환",
-      "s2Title": "배포 묶음",
-      "s2Add": "+ 묶음 추가",
-      "s2ColName": "묶음명",
-      "s2ColArea": "지역",
-      "s2ColDist": "배포자",
-      "s2ColQty": "수량",
-      "s2ColStatus": "상태",
-      "s2Done": "인쇄 완료",
-      "s2Unit": "장",
-      "s3Title": "100장당 클릭",
-      "s3Sort": "효율순",
-      "s3Top": "Top",
-      "s3RecoTitle": "다음 회 추천",
-      "s4Expired": "만료 시점",
-      "s4Next": "다음 페이지",
-      "s4Chip": "예약 / 메뉴",
-      "s4Foot": "QR 은 그대로, 도착지만 자동 전환"
+      "kpiStatus": "진행 중 · 5일째",
+      "kpiDistributed": "배포",
+      "kpiClicks": "클릭",
+      "kpiPer100": "100장당",
+      "kpiConversions": "전환",
+      "batchTitle": "배포 묶음",
+      "batchAdd": "묶음 추가",
+      "batchColName": "묶음명",
+      "batchColArea": "지역",
+      "batchColDist": "배포자",
+      "batchColQty": "수량",
+      "batchColStatus": "상태",
+      "batchDone": "인쇄 완료",
+      "batchUnit": "장",
+      "posterTitle": "포스터 합성",
+      "posterStep1": "PDF 업로드",
+      "posterStep2": "QR 박스 배치",
+      "posterStep3": "묶음별 합본 PDF 다운로드",
+      "posterBoxLabel": "QR",
+      "posterPerBatch": "묶음마다 다른 QR",
+      "barsTitle": "100장당 클릭",
+      "barsSort": "효율순",
+      "barsTop": "Top",
+      "barsRecoTitle": "다음 회 추천",
+      "timelineExpired": "만료 시점",
+      "timelineNext": "다음 페이지",
+      "timelineChip": "예약 / 메뉴",
+      "timelineFoot": "QR 은 그대로, 도착지만 자동 전환"
     },
     "backLink": "단축 URL 도구로 돌아가기",
     "statsLink": "QR 캠페인 분석"
