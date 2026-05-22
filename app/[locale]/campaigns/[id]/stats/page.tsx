@@ -13,11 +13,21 @@ import {
   YAxis,
 } from "recharts";
 import { useAuth } from "@/lib/auth";
-import { getCampaign, getCampaignStats } from "@/lib/api";
+import {
+  compareCampaignStats,
+  getCampaign,
+  getCampaignStats,
+  listCampaigns,
+} from "@/lib/api";
 import { Link } from "@/i18n/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/error-state";
-import type { CampaignDetail, CampaignStats } from "@/types";
+import type {
+  CampaignDetail,
+  CampaignStats,
+  CampaignStatsCompareResponse,
+  CampaignSummary,
+} from "@/types";
 
 const ACCENT = "#059669";
 const ACCENT_LIGHT = "#a7f3d0";
@@ -31,6 +41,10 @@ export default function CampaignStatsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
+  const [otherCampaigns, setOtherCampaigns] = useState<CampaignSummary[]>([]);
+  const [compareWithId, setCompareWithId] = useState<number | null>(null);
+  const [compareData, setCompareData] = useState<CampaignStatsCompareResponse | null>(null);
+  const [compareLoading, setCompareLoading] = useState(false);
 
   useEffect(() => {
     if (!ready || !authenticated || !Number.isFinite(campaignId)) {
@@ -40,11 +54,12 @@ export default function CampaignStatsPage() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    Promise.all([getCampaign(campaignId), getCampaignStats(campaignId)])
-      .then(([c, s]) => {
+    Promise.all([getCampaign(campaignId), getCampaignStats(campaignId), listCampaigns()])
+      .then(([c, s, all]) => {
         if (cancelled) return;
         setCampaign(c);
         setStats(s);
+        setOtherCampaigns(all.filter((it) => it.id !== campaignId));
       })
       .catch((err) => {
         if (!cancelled) setError(err instanceof Error ? err.message : "load failed");
@@ -56,6 +71,30 @@ export default function CampaignStatsPage() {
       cancelled = true;
     };
   }, [ready, authenticated, campaignId, reload]);
+
+  // 비교 대상 캠페인 선택 → compare endpoint 호출. 같은 페이지 안에서 두 캠페인의 핵심 KPI 를
+  // side-by-side 로 본다 (전체 차트 비교는 후속 PR).
+  useEffect(() => {
+    if (!compareWithId) {
+      setCompareData(null);
+      return;
+    }
+    let cancelled = false;
+    setCompareLoading(true);
+    compareCampaignStats([campaignId, compareWithId])
+      .then((data) => {
+        if (!cancelled) setCompareData(data);
+      })
+      .catch(() => {
+        if (!cancelled) setCompareData(null);
+      })
+      .finally(() => {
+        if (!cancelled) setCompareLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [campaignId, compareWithId]);
 
   if (ready && !authenticated) {
     return (
@@ -120,8 +159,103 @@ export default function CampaignStatsPage() {
           {stats.byDay.length > 0 && <DailyChart data={stats.byDay} />}
           {stats.byHour.length > 0 && <HourlyChart data={stats.byHour} />}
           {stats.heatmap.length > 0 && <HeatmapChart data={stats.heatmap} />}
+          {otherCampaigns.length > 0 && (
+            <CompareSection
+              campaigns={otherCampaigns}
+              selectedId={compareWithId}
+              onSelect={setCompareWithId}
+              data={compareData}
+              currentId={campaignId}
+              loading={compareLoading}
+            />
+          )}
         </>
       ) : null}
+    </div>
+  );
+}
+
+function CompareSection({
+  campaigns,
+  selectedId,
+  onSelect,
+  data,
+  currentId,
+  loading,
+}: {
+  campaigns: CampaignSummary[];
+  selectedId: number | null;
+  onSelect: (id: number | null) => void;
+  data: CampaignStatsCompareResponse | null;
+  currentId: number;
+  loading: boolean;
+}) {
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white px-5 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-sm font-semibold text-slate-900">다른 캠페인과 비교</h2>
+          <p className="mt-0.5 text-[11px] text-slate-500">
+            1차 vs 2차, 또는 다른 시즌 캠페인의 효율을 같이 본다.
+          </p>
+        </div>
+        <select
+          value={selectedId ?? ""}
+          onChange={(e) => onSelect(e.target.value ? Number(e.target.value) : null)}
+          className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[12px] text-slate-700"
+        >
+          <option value="">— 비교 안 함 —</option>
+          {campaigns.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      {loading && <p className="mt-4 text-[12px] text-slate-500">불러오는 중...</p>}
+      {data && !loading && (
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          {data.campaigns.map((c) => {
+            const isCurrent = c.campaignId === currentId;
+            const totalQuantity = c.stats.byBatch.reduce((sum, b) => sum + b.quantity, 0);
+            const ratePerHundred =
+              totalQuantity > 0 ? (c.stats.totalClicks * 100) / totalQuantity : 0;
+            const topArea = c.stats.byArea[0]?.key ?? "—";
+            return (
+              <div
+                key={c.campaignId}
+                className={
+                  "rounded-xl border p-3 " +
+                  (isCurrent
+                    ? "border-accent-200 bg-accent-50/40"
+                    : "border-slate-200 bg-slate-50/40")
+                }
+              >
+                <p className="truncate text-[12px] font-semibold text-slate-900">{c.name}</p>
+                <p className="mt-0.5 text-[10px] uppercase tracking-wider text-slate-500">
+                  {isCurrent ? "현재" : "비교"}
+                </p>
+                <dl className="mt-2.5 grid grid-cols-3 gap-2">
+                  <CompareCell label="총 클릭" value={c.stats.totalClicks.toLocaleString()} />
+                  <CompareCell label="100장당" value={ratePerHundred.toFixed(1)} />
+                  <CompareCell label="Top 지역" value={topArea} />
+                </dl>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function CompareCell({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-[9px] font-medium uppercase tracking-wider text-slate-500">{label}</dt>
+      <dd className="mt-0.5 truncate text-[15px] font-semibold tabular-nums text-slate-900">
+        {value}
+      </dd>
     </div>
   );
 }
