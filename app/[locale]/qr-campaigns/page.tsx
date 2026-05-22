@@ -32,7 +32,7 @@ type MockData = {
   // §1 KPI After-kurl 값 — Before 와 같은 캠페인의 *kurl 도입 후* KPI
   afterClicks: number;
   afterPer100: string;
-  afterHour: string;
+  afterTopArea: string;
   rows: MockRow[];
   bars: MockBar[];
   reco: string;
@@ -47,7 +47,7 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
     distributedValue: "10,000",
     afterClicks: 271,
     afterPer100: "2.7",
-    afterHour: "19時",
+    afterTopArea: "渋谷",
     rows: [
       { name: "渋谷○丁目 北", area: "渋谷", dist: "業者 A", qty: 1500 },
       { name: "渋谷○丁目 南", area: "渋谷", dist: "業者 A", qty: 1000 },
@@ -63,7 +63,7 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
     cases: [
       { biz: "ラーメン店 コロネ", area: "渋谷区", action: "1番出口集中", before: 28, after: 142, multiplier: "+5x" },
       { biz: "美容室 アルプス", area: "新宿区", action: "動線変更", before: 47, after: 137, multiplier: "+3x" },
-      { biz: "学習塾 ZONE", area: "池袋", action: "週末分析", before: 61, after: 119, multiplier: "+2x" },
+      { biz: "学習塾 ZONE", area: "池袋", action: "バッチ再構成", before: 61, after: 119, multiplier: "+2x" },
     ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
@@ -73,7 +73,7 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
     distributedValue: "1,000",
     afterClicks: 80,
     afterPer100: "8.0",
-    afterHour: "18시",
+    afterTopArea: "강남",
     rows: [
       { name: "강남 1출구", area: "강남", dist: "알바 A", qty: 250 },
       { name: "강남 2출구", area: "강남", dist: "알바 A", qty: 250 },
@@ -89,7 +89,7 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
     cases: [
       { biz: "라멘집 코로네", area: "강남", action: "1출구 집중", before: 28, after: 142, multiplier: "+5x" },
       { biz: "미용실 알프스", area: "신촌", action: "동선 변경", before: 47, after: 137, multiplier: "+3x" },
-      { biz: "학원 ZONE", area: "홍대", action: "주말 분석", before: 61, after: 119, multiplier: "+2x" },
+      { biz: "학원 ZONE", area: "홍대", action: "묶음 재구성", before: 61, after: 119, multiplier: "+2x" },
     ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
@@ -99,7 +99,7 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
     distributedValue: "10,000",
     afterClicks: 271,
     afterPer100: "2.7",
-    afterHour: "6 PM",
+    afterTopArea: "Shibuya",
     rows: [
       { name: "Shibuya N", area: "Shibuya", dist: "Vendor A", qty: 1500 },
       { name: "Shibuya S", area: "Shibuya", dist: "Vendor A", qty: 1000 },
@@ -115,7 +115,7 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
     cases: [
       { biz: "Ramen · Korone", area: "Shibuya", action: "Exit 1 focus", before: 28, after: 142, multiplier: "+5x" },
       { biz: "Salon · Alps", area: "Shinjuku", action: "Reroute foot traffic", before: 47, after: 137, multiplier: "+3x" },
-      { biz: "Cram · ZONE", area: "Ikebukuro", action: "Weekend analysis", before: 61, after: 119, multiplier: "+2x" },
+      { biz: "Cram · ZONE", area: "Ikebukuro", action: "Batch reshuffle", before: 61, after: 119, multiplier: "+2x" },
     ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
@@ -526,7 +526,7 @@ function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
           <KpiCellMini label={t("kpiDistributed")} value={mock.distributedValue} />
           <KpiCellMini label={t("kpiClicks")} value="?" muted />
           <KpiCellMini label={t("kpiPer100")} value="?" muted />
-          <KpiCellMini label={t("kpiHour")} value="?" muted />
+          <KpiCellMini label={t("kpiTopArea")} value="?" muted />
         </div>
       </div>
 
@@ -576,7 +576,7 @@ function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
             accent
           />
           <KpiCellMini label={t("kpiPer100")} value={mock.afterPer100} accent />
-          <KpiCellMini label={t("kpiHour")} value={mock.afterHour} accent />
+          <KpiCellMini label={t("kpiTopArea")} value={mock.afterTopArea} accent />
         </div>
       </div>
     </div>
