@@ -151,6 +151,10 @@ export default function CampaignDetailPage() {
 
           <PolicySummary campaign={campaign} />
 
+          {(batches ?? []).length > 0 && (
+            <PrepareSection campaignId={campaign.id} batchCount={(batches ?? []).length} />
+          )}
+
           <BatchSection
             campaignId={campaign.id}
             campaignStatus={campaign.status}
@@ -215,6 +219,44 @@ function Header({
   );
 }
 
+function PrepareSection({
+  campaignId,
+  batchCount,
+}: {
+  campaignId: number;
+  batchCount: number;
+}) {
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+            배포 준비
+          </p>
+          <h2 className="mt-1 text-sm font-medium text-slate-900">
+            인쇄소 · Canva 에 넘길 자산
+          </h2>
+          <p className="mt-0.5 text-[12px] leading-snug text-slate-500">
+            {batchCount}개 묶음의 QR 코드 + 메타 표. 디자인 도구에서 포스터/전단지에 박아 발주합니다.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <a href={campaignBatchesZipUrl(campaignId)} download>
+            <Button variant="outline">
+              <Download className="h-4 w-4" aria-hidden /> QR ZIP
+            </Button>
+          </a>
+          <a href={campaignBatchesCsvUrl(campaignId)} download>
+            <Button variant="outline">
+              <FileText className="h-4 w-4" aria-hidden /> Batch CSV
+            </Button>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function PolicySummary({ campaign }: { campaign: CampaignDetail }) {
   const action = campaign.postEndAction;
   const label =
@@ -275,20 +317,6 @@ function BatchSection({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {batches.length > 0 && (
-            <>
-              <a href={campaignBatchesCsvUrl(campaignId)} download>
-                <Button variant="outline">
-                  <FileText className="h-4 w-4" aria-hidden /> CSV
-                </Button>
-              </a>
-              <a href={campaignBatchesZipUrl(campaignId)} download>
-                <Button variant="outline">
-                  <Download className="h-4 w-4" aria-hidden /> QR ZIP
-                </Button>
-              </a>
-            </>
-          )}
           {!terminal && (
             <Link href={`/campaigns/${campaignId}/batches/new`}>
               <Button variant="accent">
