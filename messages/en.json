@@ -1712,12 +1712,12 @@
     "hero": {
       "eyebrow": "Offline QR campaigns",
       "title1": "Different QR per flyer —",
-      "title2": "see where they worked.",
+      "title2": "instantly see where it worked.",
       "sub": "Auto-generate a different QR per area, exit, or vendor. Pick the next drop zone from clicks-per-100.",
       "chip1": "5 minutes to first campaign",
       "chip2": "Canva / InDesign PDF supported",
       "chip3": "Change destination anytime",
-      "cta": "Start campaign"
+      "cta": "Create QRs"
     },
     "s1": {
       "line1": "Flyers are out.",
@@ -1744,15 +1744,16 @@
     },
     "s6": {
       "line1": "Printed QR stays,",
-      "line2": "destination changes."
+      "line2": "the linked page changes."
     },
     "cta": {
       "title": "Where to drop next — the clicks tell you.",
-      "primary": "Create first campaign",
+      "primary": "Create flyer QRs",
       "secondary": "Log in",
       "note": "Short links and stats live in the same account."
     },
     "mock": {
+      "kpiBeforeKurl": "Before kurl",
       "kpiStatus": "Distributed, untracked",
       "kpiDistributed": "Distributed",
       "kpiClicks": "Clicks",
@@ -1785,7 +1786,7 @@
       "timelineExpired": "Expiry",
       "timelineNext": "Next page",
       "timelineChip": "Reserve / Menu",
-      "timelineFoot": "Same QR, destination switches automatically."
+      "timelineFoot": "Same QR, the linked page switches."
     },
     "backLink": "Back to URL shortener",
     "statsLink": "QR campaign analytics"

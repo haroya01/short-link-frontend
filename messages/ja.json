@@ -1713,7 +1713,7 @@
       "chip1": "5分で最初のキャンペーン",
       "chip2": "Canva·InDesign PDF対応",
       "chip3": "行き先はいつでも変更",
-      "cta": "キャンペーン作成"
+      "cta": "QR作成"
     },
     "s1": {
       "line1": "チラシは配った。",
@@ -1744,11 +1744,12 @@
     },
     "cta": {
       "title": "次の配布、クリックが教えてくれる。",
-      "primary": "最初のQRキャンペーンを作る",
+      "primary": "チラシ用QRを作成",
       "secondary": "ログイン",
       "note": "通常の短縮URL · 統計も同じアカウントで"
     },
     "mock": {
+      "kpiBeforeKurl": "kurl 導入前",
       "kpiStatus": "測定なしで配布",
       "kpiDistributed": "配布",
       "kpiClicks": "クリック",
