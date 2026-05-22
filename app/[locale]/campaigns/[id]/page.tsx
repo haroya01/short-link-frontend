@@ -11,6 +11,7 @@ import {
   PackageOpen,
   Pencil,
   PlayCircle,
+  Printer,
   QrCode,
   Repeat,
   StopCircle,
@@ -249,6 +250,11 @@ function PrepareSection({
               <FileText className="h-4 w-4" aria-hidden /> Batch CSV
             </Button>
           </a>
+          <Link href={`/campaigns/${campaignId}/print-sheet`}>
+            <Button variant="outline">
+              <Printer className="h-4 w-4" aria-hidden /> A4 시트
+            </Button>
+          </Link>
         </div>
       </div>
       <QrDownloadDialog
