@@ -496,14 +496,12 @@ function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
+      <div className="mb-3 inline-flex items-center rounded-md bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-rose-700">
+        {t("kpiBeforeKurl")}
+      </div>
       <div className="flex items-center justify-between">
         <p className="text-[15px] font-semibold text-slate-900">{mock.campaignName}</p>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-50 px-2.5 py-1 text-[11px] font-medium text-accent-700">
-          <span
-            className={
-              "h-1.5 w-1.5 rounded-full bg-accent-500 " + (active ? "animate-pulse" : "")
-            }
-          />
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">
           {t("kpiStatus")}
         </span>
       </div>

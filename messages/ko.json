@@ -1622,12 +1622,12 @@
     "hero": {
       "eyebrow": "Offline QR campaigns",
       "title1": "전단지마다 다른 QR을 넣고,",
-      "title2": "어디서 반응이 왔는지 확인하세요.",
+      "title2": "어디서 반응 오는지 바로 확인하세요.",
       "sub": "지역·출구·배포자별로 다른 QR 을 자동 생성하고, 100장당 클릭률로 다음 배포 위치를 정하세요.",
       "chip1": "5분이면 첫 캠페인",
       "chip2": "Canva·인디자인 PDF 지원",
-      "chip3": "도착지는 언제든 변경",
-      "cta": "캠페인 만들기"
+      "chip3": "연결 페이지 언제든 변경",
+      "cta": "QR 만들기"
     },
     "s1": {
       "line1": "전단지는 뿌렸습니다.",
@@ -1654,15 +1654,16 @@
     },
     "s6": {
       "line1": "인쇄된 QR 은 그대로,",
-      "line2": "도착지만 바꿉니다."
+      "line2": "연결 페이지만 바꿉니다."
     },
     "cta": {
       "title": "어디에 더 뿌릴지, 클릭이 알려줍니다.",
-      "primary": "첫 QR 캠페인 만들기",
+      "primary": "전단지용 QR 만들기",
       "secondary": "로그인",
       "note": "일반 단축 URL · 통계도 같은 계정으로"
     },
     "mock": {
+      "kpiBeforeKurl": "kurl 도입 전",
       "kpiStatus": "측정 없이 배포",
       "kpiDistributed": "배포",
       "kpiClicks": "클릭",
@@ -1695,7 +1696,7 @@
       "timelineExpired": "만료 시점",
       "timelineNext": "다음 페이지",
       "timelineChip": "예약 / 메뉴",
-      "timelineFoot": "인쇄된 QR 은 그대로, 도착지만 자동 전환"
+      "timelineFoot": "인쇄된 QR 은 그대로, 연결 페이지만 자동 전환"
     },
     "backLink": "단축 URL 도구로 돌아가기",
     "statsLink": "QR 캠페인 분석"
