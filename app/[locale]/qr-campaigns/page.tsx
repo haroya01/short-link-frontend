@@ -276,6 +276,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
       kind: "narrative",
       line1: t("s2.line1"),
       line2: t("s2.line2"),
+      aux: t("s2.aux"),
       Mock: MockBatch,
     },
     {

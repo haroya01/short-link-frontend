@@ -1725,7 +1725,8 @@
     },
     "s2": {
       "line1": "By area, exit, vendor —",
-      "line2": "split the QR."
+      "line2": "split the QR.",
+      "aux": "Batch = a group of flyers sharing the same QR."
     },
     "s3": {
       "line1": "Same design,",
