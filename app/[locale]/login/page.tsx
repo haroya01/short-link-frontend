@@ -85,15 +85,16 @@ function LoginShell() {
           </Button>
         </div>
 
-        <p className="mt-6 text-center text-[12px] text-slate-500">
-          {t.rich("anonymousAlt", {
-            shorten: (chunks) => (
-              <Link href="/" className="text-slate-700 underline underline-offset-4">
-                {chunks}
-              </Link>
-            ),
-          })}
-        </p>
+        {/* 익명 사용자 옵션 — 이전엔 작은 underline link 였는데 visual weight 약해서 사용자가
+            "로그인만 가능한 페이지" 로 오해. ghost button + 위 link 와 명확히 분리. */}
+        <div className="mt-6 flex flex-col items-center gap-1.5">
+          <Link href="/">
+            <Button variant="ghost" size="sm" className="text-slate-600">
+              {t("anonymousButton")}
+            </Button>
+          </Link>
+          <p className="text-[11px] text-slate-400">{t("anonymousNote")}</p>
+        </div>
       </div>
     </div>
   );
