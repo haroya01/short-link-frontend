@@ -18,6 +18,11 @@ type Props = {
   profileClicks?: number | null;
   timeToFirstClickMinutes?: number | null;
   velocityRatio?: number | null;
+  /**
+   * Called when a card is clicked. Hosts on a tabbed surface use this to switch tab + scroll;
+   * single-page hosts can omit it and the card falls back to in-page {@code scrollIntoView}.
+   */
+  onNavigate?: (section: string) => void;
 };
 
 /**
@@ -37,6 +42,7 @@ export function StatsCards({
   profileClicks,
   timeToFirstClickMinutes,
   velocityRatio,
+  onNavigate,
 }: Props) {
   const t = useTranslations("stats.kpi");
   const hasUnique = typeof unique === "number" && Number.isFinite(unique);
@@ -45,6 +51,19 @@ export function StatsCards({
     typeof timeToFirstClickMinutes === "number" && Number.isFinite(timeToFirstClickMinutes);
   const showProfile =
     typeof profileClicks === "number" && Number.isFinite(profileClicks) && profileClicks > 0;
+  // Zero-data state has no chart to scroll to and the page already shows a "share your link"
+  // empty-state CTA above. Strip the interactive affordances on the KPI cards so the cursor /
+  // hover / focus signal doesn't promise navigation we can't deliver.
+  const interactive = total > 0;
+
+  function jump(section: string) {
+    if (!interactive) return;
+    if (onNavigate) {
+      onNavigate(section);
+      return;
+    }
+    document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   const humanRatio = total > 0 ? (human / total) * 100 : 0;
   const botRatio = total > 0 ? (bot / total) * 100 : 0;
@@ -70,10 +89,15 @@ export function StatsCards({
     >
       <button
         type="button"
-        onClick={() => {
-          document.getElementById("section-daily")?.scrollIntoView({ behavior: "smooth" });
-        }}
-        className="group relative col-span-2 overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50 via-accent-50/40 to-white p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-[0_8px_24px_rgba(5,150,105,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] sm:col-span-3 lg:col-span-1"
+        onClick={() => jump("section-daily")}
+        disabled={!interactive}
+        aria-disabled={!interactive}
+        className={cn(
+          "relative col-span-2 overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50 via-accent-50/40 to-white p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 ease-out sm:col-span-3 lg:col-span-1",
+          interactive
+            ? "group cursor-pointer hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-[0_8px_24px_rgba(5,150,105,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
+            : "cursor-default",
+        )}
       >
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700">
@@ -106,14 +130,14 @@ export function StatsCards({
         target={human}
         icon={MousePointerClick}
         sub={`${humanRatio.toFixed(1)}%`}
-        jumpTo="section-device"
+        onJump={interactive ? () => jump("section-device") : undefined}
       />
       <CountStat
         label={t("unique")}
         target={hasUnique ? (unique as number) : null}
         icon={Users}
         sub={hasUnique ? t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) }) : undefined}
-        jumpTo="section-daily"
+        onJump={interactive ? () => jump("section-daily") : undefined}
       />
       <CountStat
         label={t("bot")}
@@ -121,7 +145,7 @@ export function StatsCards({
         icon={Bot}
         sub={`${botRatio.toFixed(1)}%`}
         muted
-        jumpTo="section-bots"
+        onJump={interactive ? () => jump("section-bots") : undefined}
       />
       {showProfile && (
         <CountStat
@@ -129,7 +153,7 @@ export function StatsCards({
           target={profileClicks as number}
           icon={IdCard}
           sub={t("profileSub", { ratio: profileRatio.toFixed(0) })}
-          jumpTo="section-sources"
+          onJump={interactive ? () => jump("section-sources") : undefined}
         />
       )}
       <Stat
@@ -151,7 +175,7 @@ export function StatsCards({
         }
         icon={showVelocity && (velocityRatio as number) >= 1.5 ? TrendingUp : Clock}
         sub={showVelocity ? t("vsBaseline") : showLatency ? t("afterCreation") : t("noData")}
-        jumpTo="section-hourly"
+        onJump={interactive ? () => jump("section-hourly") : undefined}
       />
     </div>
   );
@@ -163,29 +187,26 @@ function Stat({
   sub,
   icon: Icon,
   muted,
-  jumpTo,
+  onJump,
 }: {
   label: string;
   value: string;
   sub?: string;
   icon: React.ComponentType<{ className?: string }>;
   muted?: boolean;
-  jumpTo?: string;
+  onJump?: () => void;
 }) {
-  function handleClick() {
-    if (!jumpTo) return;
-    document.getElementById(jumpTo)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
+  const interactive = typeof onJump === "function";
   return (
     <button
       type="button"
-      onClick={handleClick}
-      disabled={!jumpTo}
+      onClick={onJump}
+      disabled={!interactive}
+      aria-disabled={!interactive}
       className={cn(
-        "group flex flex-col rounded-xl border border-slate-200 bg-white p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-200 ease-out",
-        jumpTo
-          ? "cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
+        "flex flex-col rounded-xl border border-slate-200 bg-white p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-200 ease-out",
+        interactive
+          ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
           : "cursor-default",
       )}
     >
@@ -197,7 +218,7 @@ function Stat({
           className={cn(
             "h-3.5 w-3.5 shrink-0 transition-transform duration-200 ease-out",
             muted ? "text-slate-400" : "text-slate-500",
-            jumpTo && "group-hover:scale-110",
+            interactive && "group-hover:scale-110",
           )}
         />
       </div>
@@ -215,18 +236,18 @@ function CountStat({
   sub,
   icon,
   muted,
-  jumpTo,
+  onJump,
 }: {
   label: string;
   target: number | null;
   sub?: string;
   icon: React.ComponentType<{ className?: string }>;
   muted?: boolean;
-  jumpTo?: string;
+  onJump?: () => void;
 }) {
   const animated = useCountUp(target ?? 0, 700, target !== null);
   const display = target === null ? "—" : formatNumber(animated);
-  return <Stat label={label} value={display} sub={sub} icon={icon} muted={muted} jumpTo={jumpTo} />;
+  return <Stat label={label} value={display} sub={sub} icon={icon} muted={muted} onJump={onJump} />;
 }
 
 function formatLatency(minutes: number): string {
