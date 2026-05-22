@@ -29,6 +29,10 @@ type MockCase = {
 type MockData = {
   campaignName: string;
   distributedValue: string;
+  // §1 KPI After-kurl 값 — Before 와 같은 캠페인의 *kurl 도입 후* KPI
+  afterClicks: number;
+  afterPer100: string;
+  afterHour: string;
   rows: MockRow[];
   bars: MockBar[];
   reco: string;
@@ -41,6 +45,9 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
   ja: {
     campaignName: "2026 春チラシ",
     distributedValue: "10,000",
+    afterClicks: 271,
+    afterPer100: "2.7",
+    afterHour: "19時",
     rows: [
       { name: "渋谷○丁目 北", area: "渋谷", dist: "業者 A", qty: 1500 },
       { name: "渋谷○丁目 南", area: "渋谷", dist: "業者 A", qty: 1000 },
@@ -64,6 +71,9 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
   ko: {
     campaignName: "2026 봄 전단지",
     distributedValue: "1,000",
+    afterClicks: 80,
+    afterPer100: "8.0",
+    afterHour: "18시",
     rows: [
       { name: "강남 1출구", area: "강남", dist: "알바 A", qty: 250 },
       { name: "강남 2출구", area: "강남", dist: "알바 A", qty: 250 },
@@ -87,6 +97,9 @@ const MOCK_BY_LOCALE: Record<string, MockData> = {
   en: {
     campaignName: "2026 Spring drop",
     distributedValue: "10,000",
+    afterClicks: 271,
+    afterPer100: "2.7",
+    afterHour: "6 PM",
     rows: [
       { name: "Shibuya N", area: "Shibuya", dist: "Vendor A", qty: 1500 },
       { name: "Shibuya S", area: "Shibuya", dist: "Vendor A", qty: 1000 },
@@ -486,78 +499,125 @@ function CountUp({
 
 function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
   const t = useTranslations("qrCampaigns.mock");
-  const distNum = parseInt(mock.distributedValue.replace(/[^\d]/g, ""), 10);
   return (
     <div
-      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700"
+      className="space-y-2 transition-all duration-700"
       style={{
         transitionTimingFunction: EASE,
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      <div className="mb-3 inline-flex items-center rounded-md bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-rose-700">
-        {t("kpiBeforeKurl")}
+      {/* Before kurl — 4 cells 중 3개가 "?" */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
+        <div className="mb-2.5 inline-flex items-center rounded-md bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-rose-700">
+          {t("kpiBeforeKurl")}
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <p className="truncate text-[13px] font-semibold text-slate-900">
+            {mock.campaignName}
+          </p>
+          <span className="flex-shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600">
+            {t("kpiStatus")}
+          </span>
+        </div>
+        <div className="mt-3 grid grid-cols-4 gap-1.5">
+          <KpiCellMini label={t("kpiDistributed")} value={mock.distributedValue} />
+          <KpiCellMini label={t("kpiClicks")} value="?" muted />
+          <KpiCellMini label={t("kpiPer100")} value="?" muted />
+          <KpiCellMini label={t("kpiHour")} value="?" muted />
+        </div>
       </div>
-      <div className="flex items-center justify-between">
-        <p className="text-[15px] font-semibold text-slate-900">{mock.campaignName}</p>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">
-          {t("kpiStatus")}
-        </span>
+
+      {/* Arrow between cards — active 진입 후 살짝 늦게 등장 */}
+      <div
+        className="flex justify-center transition-opacity duration-500"
+        style={{
+          transitionDelay: active ? "600ms" : "0ms",
+          opacity: active ? 1 : 0,
+        }}
+      >
+        <ArrowDown className="h-4 w-4 text-accent-500" aria-hidden />
       </div>
-      <div className="mt-5 grid grid-cols-4 gap-2.5">
-        <KpiCell
-          label={t("kpiDistributed")}
-          active={active}
-          delay={200}
-          renderValue={() => (active ? <CountUp to={distNum} active={active} /> : "0")}
-        />
-        <KpiCell label={t("kpiClicks")} active={active} delay={350} muted />
-        <KpiCell label={t("kpiPer100")} active={active} delay={450} muted />
-        <KpiCell label={t("kpiHour")} active={active} delay={550} muted />
+
+      {/* After kurl — 같은 캠페인의 *kurl 도입 후* KPI. accent 톤. */}
+      <div
+        className="rounded-2xl border border-accent-200 bg-accent-50/30 p-4 shadow-[0_4px_24px_rgba(5,150,105,0.08)] transition-all duration-500"
+        style={{
+          transitionTimingFunction: EASE,
+          transitionDelay: active ? "800ms" : "0ms",
+          opacity: active ? 1 : 0,
+          transform: active ? "translateY(0)" : "translateY(12px)",
+        }}
+      >
+        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-700">
+          {t("kpiAfterKurl")}
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <p className="truncate text-[13px] font-semibold text-slate-900">
+            {mock.campaignName}
+          </p>
+          <span className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-accent-700 shadow-sm">
+            <span
+              className={
+                "h-1.5 w-1.5 rounded-full bg-accent-500 " +
+                (active ? "animate-pulse" : "")
+              }
+            />
+            Live
+          </span>
+        </div>
+        <div className="mt-3 grid grid-cols-4 gap-1.5">
+          <KpiCellMini label={t("kpiDistributed")} value={mock.distributedValue} />
+          <KpiCellMini
+            label={t("kpiClicks")}
+            value={active ? <CountUp to={mock.afterClicks} active={active} /> : 0}
+            accent
+          />
+          <KpiCellMini label={t("kpiPer100")} value={mock.afterPer100} accent />
+          <KpiCellMini label={t("kpiHour")} value={mock.afterHour} accent />
+        </div>
       </div>
     </div>
   );
 }
 
-function KpiCell({
+function KpiCellMini({
   label,
-  renderValue,
+  value,
   muted,
-  active,
-  delay,
+  accent,
 }: {
   label: string;
-  renderValue?: () => React.ReactNode;
+  value: React.ReactNode;
   muted?: boolean;
-  active: boolean;
-  delay: number;
+  accent?: boolean;
 }) {
   return (
     <div
       className={
-        "rounded-xl border px-3 py-2.5 transition-all duration-500 " +
+        "rounded-lg border px-2 py-1.5 " +
         (muted
-          ? "border-dashed border-slate-200 bg-slate-50/50"
-          : "border-slate-200 bg-white")
+          ? "border-dashed border-slate-200 bg-slate-50/60"
+          : accent
+            ? "border-accent-200 bg-white"
+            : "border-slate-200 bg-white")
       }
-      style={{
-        transitionTimingFunction: EASE,
-        transitionDelay: active ? `${delay}ms` : "0ms",
-        opacity: active ? 1 : 0,
-        transform: active ? "translateY(0)" : "translateY(8px)",
-      }}
     >
-      <p className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-500">
+      <p className="truncate text-[9px] font-medium uppercase tracking-wider text-slate-500">
         {label}
       </p>
       <p
         className={
-          "mt-1 text-[18px] font-semibold tabular-nums leading-tight tracking-headline " +
-          (muted ? "animate-pulse text-slate-300" : "text-slate-900")
+          "mt-0.5 text-[14px] font-semibold tabular-nums leading-tight tracking-headline " +
+          (muted
+            ? "animate-pulse text-slate-300"
+            : accent
+              ? "text-accent-700"
+              : "text-slate-900")
         }
       >
-        {renderValue ? renderValue() : "?"}
+        {value}
       </p>
     </div>
   );
