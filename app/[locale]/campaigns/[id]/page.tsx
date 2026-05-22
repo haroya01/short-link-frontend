@@ -20,9 +20,7 @@ import {
 import { useAuth } from "@/lib/auth";
 import {
   archiveCampaign,
-  campaignBatchQrUrl,
   campaignBatchesCsvUrl,
-  campaignBatchesZipUrl,
   endCampaignNow,
   getCampaign,
   listCampaignBatches,
@@ -35,6 +33,7 @@ import { ErrorState } from "@/components/error-state";
 import { useToast } from "@/components/ui/toast";
 import { BatchEditDialog } from "@/components/batch-edit-dialog";
 import { BatchDeleteDialog } from "@/components/batch-delete-dialog";
+import { QrDownloadDialog } from "@/components/qr-download-dialog";
 import type { CampaignBatch, CampaignDetail, CampaignStatus } from "@/types";
 
 export default function CampaignDetailPage() {
@@ -226,6 +225,7 @@ function PrepareSection({
   campaignId: number;
   batchCount: number;
 }) {
+  const [zipDialogOpen, setZipDialogOpen] = useState(false);
   return (
     <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -241,11 +241,9 @@ function PrepareSection({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <a href={campaignBatchesZipUrl(campaignId)} download>
-            <Button variant="outline">
-              <Download className="h-4 w-4" aria-hidden /> QR ZIP
-            </Button>
-          </a>
+          <Button variant="outline" onClick={() => setZipDialogOpen(true)}>
+            <Download className="h-4 w-4" aria-hidden /> QR ZIP
+          </Button>
           <a href={campaignBatchesCsvUrl(campaignId)} download>
             <Button variant="outline">
               <FileText className="h-4 w-4" aria-hidden /> Batch CSV
@@ -253,6 +251,11 @@ function PrepareSection({
           </a>
         </div>
       </div>
+      <QrDownloadDialog
+        open={zipDialogOpen}
+        onOpenChange={setZipDialogOpen}
+        target={{ kind: "zip", campaignId }}
+      />
     </section>
   );
 }
@@ -394,18 +397,19 @@ function BatchCard({
   onEdit: () => void;
   onDelete: () => void;
 }) {
+  const [qrDialogOpen, setQrDialogOpen] = useState(false);
   return (
     <li className="group relative rounded-2xl border border-slate-200 bg-white px-4 py-4">
       {/* Hover-revealed actions — corner cluster (디자인 가이드의 우상단 보조 액션 위치). */}
       <div className="absolute right-2 top-2 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
-        <a
-          href={campaignBatchQrUrl(campaignId, batch.id)}
-          download={`batch-${batch.id}.png`}
-          aria-label={`${batch.name} QR PNG 다운로드`}
+        <button
+          type="button"
+          onClick={() => setQrDialogOpen(true)}
+          aria-label={`${batch.name} QR 다운로드`}
           className="grid h-7 w-7 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700"
         >
           <QrCode className="h-3.5 w-3.5" aria-hidden />
-        </a>
+        </button>
         {canModify && (
           <>
             <button
@@ -449,6 +453,16 @@ function BatchCard({
           <ExternalLink className="h-3.5 w-3.5" aria-hidden />
         </a>
       </div>
+      <QrDownloadDialog
+        open={qrDialogOpen}
+        onOpenChange={setQrDialogOpen}
+        target={{
+          kind: "single",
+          campaignId,
+          batchId: batch.id,
+          batchName: batch.name,
+        }}
+      />
     </li>
   );
 }
