@@ -136,7 +136,7 @@ function DraggableBox({
 
   return (
     <div
-      role="slider"
+      role="group"
       aria-label="QR 박스 위치/크기"
       onPointerDown={onMoveStart}
       onPointerMove={onPointerMove}

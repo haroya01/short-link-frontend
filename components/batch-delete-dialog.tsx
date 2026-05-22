@@ -44,8 +44,9 @@ export function BatchDeleteDialog({
           <div className="space-y-1.5 text-[12px] leading-snug text-slate-700">
             <p className="font-medium text-rose-700">단축 URL 도 함께 삭제됩니다.</p>
             <p>
-              이미 인쇄된 QR 코드를 스캔하면 "링크 없음" 페이지를 보게 돼요. 발주 전이라면 안전하지만,
-              배포 후라면 종료 정책 (REDIRECT) 으로 살리는 쪽을 먼저 검토하세요.
+              이미 인쇄된 QR 코드를 스캔하면 &lsquo;링크 없음&rsquo; 페이지를 보게 돼요. 발주
+              전이라면 안전하지만, 배포 후라면 종료 정책 (REDIRECT) 으로 살리는 쪽을 먼저
+              검토하세요.
             </p>
           </div>
         </div>
