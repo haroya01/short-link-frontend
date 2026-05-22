@@ -160,8 +160,6 @@ function StickyNarrative({ mock, ctaHref }: { mock: MockData; ctaHref: string })
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
   // -1 로 시작해서 첫 frame 직후 0 으로 setter — 좌측 mock 도 transition 으로 부드럽게 진입.
   const [active, setActive] = useState(-1);
-  const [paused, setPaused] = useState(false);
-  const programmaticRef = useRef(false);
 
   // 초기 mount 50ms 후 active=0 — fade-in transition 발화
   useEffect(() => {
@@ -169,23 +167,8 @@ function StickyNarrative({ mock, ctaHref }: { mock: MockData; ctaHref: string })
     return () => window.clearTimeout(t);
   }, []);
 
-  // user manual scroll/touch/key → autoplay 중단 (programmatic scroll 인 동안은 무시)
-  useEffect(() => {
-    const onInteract = () => {
-      if (programmaticRef.current) return;
-      setPaused(true);
-    };
-    window.addEventListener("wheel", onInteract, { passive: true });
-    window.addEventListener("touchstart", onInteract, { passive: true });
-    window.addEventListener("keydown", onInteract);
-    return () => {
-      window.removeEventListener("wheel", onInteract);
-      window.removeEventListener("touchstart", onInteract);
-      window.removeEventListener("keydown", onInteract);
-    };
-  }, []);
-
-  // 어느 섹션이 viewport 중앙에 가까운지 → active index
+  // 어느 섹션이 viewport 중앙에 가까운지 → active index. user 가 manual scroll 해도 active 가
+  // 따라가고, 그 시점부터 다음 7s timer 가 reset (아래 autoplay useEffect 의 deps 가 active).
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -208,22 +191,18 @@ function StickyNarrative({ mock, ctaHref }: { mock: MockData; ctaHref: string })
     return () => observer.disconnect();
   }, []);
 
-  // autoplay: 7s 후 다음 섹션으로 smooth scroll (마지막 섹션이면 멈춤). active < 0 진입 단계엔 skip.
+  // autoplay: 7s 후 다음 섹션으로 smooth scroll (마지막 섹션이면 멈춤). active 변경 시 timer reset
+  // → user manual scroll 해서 §X 로 가도 §X 에서 7s 후 §X+1 로 이어짐. paused 트리거 없음.
   useEffect(() => {
-    if (paused) return;
     if (active < 0) return;
     if (active >= SECTION_COUNT - 1) return;
     const timer = window.setTimeout(() => {
       const next = sectionRefs.current[active + 1];
       if (!next) return;
-      programmaticRef.current = true;
       next.scrollIntoView({ behavior: "smooth", block: "center" });
-      window.setTimeout(() => {
-        programmaticRef.current = false;
-      }, 1200);
     }, AUTOPLAY_MS);
     return () => window.clearTimeout(timer);
-  }, [active, paused]);
+  }, [active]);
 
   // §1 자리에 Hero (브랜드 명제 + 페인 sub + CTA) 를 통합. 진입 즉시 좌측 KPI mock + 우측 Hero text
   // 가 한 viewport 에 같이 보임 — user 가 첫 화면에서 페이지 정체성과 autoplay 진행을 동시에 인식.
@@ -292,7 +271,7 @@ function StickyNarrative({ mock, ctaHref }: { mock: MockData; ctaHref: string })
               </div>
             );
           })}
-          <ProgressDots count={SECTION_COUNT} active={active} paused={paused} />
+          <ProgressDots count={SECTION_COUNT} active={active} />
         </div>
 
         <div className="lg:w-1/2">
@@ -398,15 +377,7 @@ function StickyNarrative({ mock, ctaHref }: { mock: MockData; ctaHref: string })
   );
 }
 
-function ProgressDots({
-  count,
-  active,
-  paused,
-}: {
-  count: number;
-  active: number;
-  paused: boolean;
-}) {
+function ProgressDots({ count, active }: { count: number; active: number }) {
   return (
     <div className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 gap-2">
       {Array.from({ length: count }).map((_, i) => (
@@ -415,14 +386,11 @@ function ProgressDots({
           className="relative h-1.5 w-10 overflow-hidden rounded-full bg-slate-200"
         >
           {i < active && <div className="absolute inset-0 bg-accent-400" />}
-          {i === active && !paused && (
+          {i === active && (
             <div
               key={`bar-${active}`}
               className="absolute inset-0 origin-left bg-accent-600 [animation:dot-progress_7000ms_linear_forwards]"
             />
-          )}
-          {i === active && paused && (
-            <div className="absolute inset-0 bg-accent-600" />
           )}
         </div>
       ))}
