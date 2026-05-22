@@ -16,13 +16,18 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "showcase" });
+  // Title keyword anchored to "link in bio" / "프로필 페이지" — the brand-style hero copy
+  // ("내가 원하는 스타일대로") doesn't carry organic search intent on its own. The on-page H1
+  // still uses the editorial line; only the meta surface targets keywords.
+  const title = t("meta.title");
+  const description = t("meta.description");
   return {
-    title: `${t("title")} · kurl`,
-    description: t("subhead"),
+    title,
+    description,
     alternates: { canonical: `${SITE_URL}/${locale}/showcase` },
     openGraph: {
-      title: `${t("title")} · kurl`,
-      description: t("subhead"),
+      title,
+      description,
       url: `${SITE_URL}/${locale}/showcase`,
       type: "website",
       siteName: "kurl",
@@ -31,14 +36,14 @@ export async function generateMetadata({
           url: `${SITE_URL}/${locale}/opengraph-image`,
           width: 1200,
           height: 630,
-          alt: `${t("title")} · kurl`,
+          alt: title,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${t("title")} · kurl`,
-      description: t("subhead"),
+      title,
+      description,
       images: [`${SITE_URL}/${locale}/opengraph-image`],
     },
   };
@@ -52,9 +57,27 @@ export default async function ShowcasePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "showcase" });
+  // CollectionPage JSON-LD — explicitly classifies the page as a curated gallery of example
+  // profiles. Helps Google differentiate this marketing surface from the dynamic /u/{handle}
+  // pages (Person + ProfilePage). Drives "link in bio examples" / "프로필 페이지 사례"
+  // queries toward this URL instead of a random user page.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: t("meta.title"),
+    description: t("meta.description"),
+    url: `${SITE_URL}/${locale}/showcase`,
+    inLanguage: locale,
+    isPartOf: { "@type": "WebSite", name: "kurl", url: SITE_URL },
+  };
 
   return (
     <div className="overflow-hidden">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* CTA-first hero — flat white surface (no mesh / no noise) so the page reads as restrained
           rather than busy. Single-CTA discipline (one slate-900 primary + scroll cue) kept so the
           surface direction matches the landing. Headline is Pretendard semibold with

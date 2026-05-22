@@ -141,7 +141,11 @@
     "metaSuffix": "サンプル",
     "sampleBanner": "サンプル · 登録後にあなたも作れます",
     "sampleCta": "プロフィールを作る",
-    "scrollCue": "実例を見る"
+    "scrollCue": "実例を見る",
+    "meta": {
+      "title": "プロフィールページ事例集 · リンクインバイオ - kurl",
+      "description": "クリエイター・販売者・店舗・講師など、kurl で運営するプロフィールページの実例。リンクインバイオ + QR名刺 + クリック分析を一つのページで。"
+    }
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
@@ -1153,7 +1157,11 @@
     "proHoldBadge": "近日公開",
     "proHoldNotice": "Pro プランは決済まわりの整備中につき一時停止しています。Free プランの 200 リンク · 8 種類の分析 · Webhook 5 件 · 2FA はすべて引き続きお使いいただけます。",
     "proHoldCta": "準備中",
-    "proEta": "リリース時にメールでお知らせします — まずは無料プランから。"
+    "proEta": "リリース時にメールでお知らせします — まずは無料プランから。",
+    "meta": {
+      "title": "料金プラン · 短縮URL Pro 無制限 - kurl",
+      "description": "Free プランで短縮URLとクリック分析を無料で利用。Pro は無制限リンク・カスタムドメイン自動TLS・統計の永続保存。"
+    }
   },
   "terms": {
     "title": "利用規約",
