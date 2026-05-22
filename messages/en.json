@@ -1705,17 +1705,23 @@
     "a6": "Yes — kurl offers a developer API. Get a key under Settings > API keys and call the shorten / stats endpoints from your own code."
   },
   "qrCampaigns": {
+    "meta": {
+      "title": "QR Campaigns | Flyer & Poster QR Performance — kurl",
+      "description": "Track flyer, poster, coupon QRs split by area, vendor, or batch. Use clicks-per-100 to choose your next drop zone."
+    },
     "hero": {
       "eyebrow": "Offline QR campaigns",
       "title1": "Flyer QR —",
-      "title2": "see where it worked.",
+      "title2": "see what worked.",
       "sub": "Print a different QR per area, exit, or vendor. Pick the next drop zone from clicks-per-100.",
-      "timeNote": "5 minutes to first campaign.",
+      "chip1": "5 minutes to first campaign",
+      "chip2": "Canva / InDesign PDF supported",
+      "chip3": "QR destination editable",
       "cta": "Start campaign"
     },
     "s1": {
-      "line1": "10,000 flyers later —",
-      "line2": "no idea where the response came from."
+      "line1": "Flyers are out.",
+      "line2": "But where did they actually work?"
     },
     "s2": {
       "line1": "By area, exit, vendor —",
@@ -1723,12 +1729,12 @@
     },
     "s3": {
       "line1": "Same design,",
-      "line2": "different QRs.",
+      "line2": "auto-insert different QRs.",
       "aux": "Bring a Canva / InDesign PDF. Mark where the QR goes."
     },
     "s4": {
       "line1": "Shibuya 142 clicks, Shinjuku 38.",
-      "line2": "Double Shibuya next round.",
+      "line2": "Pile on Shibuya next round.",
       "aux": "Where to drop next — the clicks tell you."
     },
     "s5": {
