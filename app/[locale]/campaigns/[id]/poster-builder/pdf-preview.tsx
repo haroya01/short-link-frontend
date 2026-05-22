@@ -20,10 +20,12 @@ export function PdfPreview({
   file,
   box,
   onBoxChange,
+  qrDataUrl,
 }: {
   file: File;
   box: QrBoxFraction;
   onBoxChange: (b: QrBoxFraction) => void;
+  qrDataUrl: string | null;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -69,6 +71,7 @@ export function PdfPreview({
           containerHeight={pageHeight}
           box={box}
           onBoxChange={onBoxChange}
+          qrDataUrl={qrDataUrl}
         />
       )}
     </div>
@@ -80,11 +83,13 @@ function DraggableBox({
   containerHeight,
   box,
   onBoxChange,
+  qrDataUrl,
 }: {
   containerWidth: number;
   containerHeight: number;
   box: QrBoxFraction;
   onBoxChange: (b: QrBoxFraction) => void;
+  qrDataUrl: string | null;
 }) {
   // QR 정사각이므로 px 크기 = page width × box.size. (가로 기준 fraction.)
   const sizePx = box.size * containerWidth;
@@ -151,18 +156,35 @@ function DraggableBox({
         width: sizePx,
         height: sizePx,
         cursor: dragging.current?.mode === "resize" ? "nwse-resize" : "move",
-        background: "rgba(5, 150, 105, 0.18)",
+        background: qrDataUrl ? "white" : "rgba(5, 150, 105, 0.18)",
         border: "2px solid rgba(5, 150, 105, 0.85)",
         borderRadius: 4,
         touchAction: "none",
       }}
     >
-      <div
-        className="grid h-full w-full place-items-center text-[11px] font-medium uppercase tracking-wider text-accent-700"
-        style={{ pointerEvents: "none" }}
-      >
-        QR
-      </div>
+      {qrDataUrl ? (
+        // 실제 QR 이미지를 박스 안에 그대로 박아 사용자에게 합성 결과를 즉시 보여준다.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={qrDataUrl}
+          alt="QR 미리보기"
+          draggable={false}
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "block",
+            pointerEvents: "none",
+            userSelect: "none",
+          }}
+        />
+      ) : (
+        <div
+          className="grid h-full w-full place-items-center text-[11px] font-medium uppercase tracking-wider text-accent-700"
+          style={{ pointerEvents: "none" }}
+        >
+          QR
+        </div>
+      )}
       <div
         data-handle="resize"
         onPointerDown={onResizeStart}
