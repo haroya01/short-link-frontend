@@ -952,3 +952,23 @@ export type CampaignStatsCompareResponse = {
     stats: CampaignStats;
   }[];
 };
+
+export type CampaignRecommendation = {
+  insufficient: boolean;
+  insufficientReason: string | null;
+  totalQuantity: number;
+  totalClicks: number;
+  avgRatePerHundred: number;
+  recommendations: {
+    batchId: number;
+    batchName: string;
+    distributor: string | null;
+    area: string | null;
+    currentQuantity: number;
+    currentClicks: number;
+    currentRatePerHundred: number;
+    recommendedQuantity: number;
+    delta: number;
+    verdict: "BOOST" | "KEEP" | "REDUCE" | "PRUNE";
+  }[];
+};
