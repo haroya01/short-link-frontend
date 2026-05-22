@@ -121,13 +121,18 @@ export default function PublicStatsPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Section
+          id="section-daily"
           title={t("section.daily.title")}
           description={t("section.daily.desc", { tz: data.timezone })}
           className="lg:col-span-2"
         >
           <DailyChart data={data.dailyClicks} />
         </Section>
-        <Section title={t("section.device.title")} description={t("section.device.desc")}>
+        <Section
+          id="section-device"
+          title={t("section.device.title")}
+          description={t("section.device.desc")}
+        >
           <DeviceChart data={data.deviceClicks} />
         </Section>
       </div>
