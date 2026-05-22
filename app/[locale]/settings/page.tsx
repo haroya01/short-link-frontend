@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/toast";
 import { ApiKeysSection } from "@/components/api-keys-section";
 import { TwoFactorSection } from "@/components/two-factor-section";
 import { CustomDomainsSection } from "@/components/custom-domains-section";
+import { Section as SharedSection } from "@/components/section";
 import type { Me } from "@/types";
 
 const COMMON_TIMEZONES = [
@@ -311,6 +312,11 @@ function initialSettingsTab(): SettingsTab {
   return "account";
 }
 
+/**
+ * Settings 의 자체 Section wrapper — 공용 components/section.tsx 를 base 로 사용하되 settings
+ * 도메인 의 *danger variant* (계정 삭제 등) 만 thin wrapper. 토큰 / shadow / radii / header 톤
+ * 은 모두 공용 Section 으로 흡수, 중복 정의 제거.
+ */
 function Section({
   title,
   children,
@@ -321,22 +327,12 @@ function Section({
   variant?: "danger";
 }) {
   return (
-    <section
-      className={
-        "rounded-2xl border bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] " +
-        (variant === "danger" ? "border-red-200" : "border-slate-200")
-      }
+    <SharedSection
+      title={title}
+      className={variant === "danger" ? "border-red-200" : undefined}
     >
-      <h2
-        className={
-          "text-[15px] font-semibold tracking-headline " +
-          (variant === "danger" ? "text-red-700" : "text-slate-900")
-        }
-      >
-        {title}
-      </h2>
-      <div className="mt-3">{children}</div>
-    </section>
+      {children}
+    </SharedSection>
   );
 }
 
