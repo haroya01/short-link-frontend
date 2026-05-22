@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { LinkStats } from "@/types";
 import { StatsCards } from "@/components/stats-cards";
 import { Header } from "./Header";
@@ -10,7 +11,18 @@ import { OverviewTab } from "./tabs/OverviewTab";
 import { SettingsTab } from "./tabs/SettingsTab";
 import { SourcesTab } from "./tabs/SourcesTab";
 import { TrafficTab } from "./tabs/TrafficTab";
-import { useTabHash } from "../_lib/use-tab-hash";
+import { useTabHash, type TabKey } from "../_lib/use-tab-hash";
+
+// Each KPI card jumps to a section that lives inside a specific tab. Tab content is
+// conditionally rendered (StatsBody only mounts the active tab), so clicking a card has to
+// switch tabs first and then scroll once the section is in the DOM.
+const SECTION_TAB: Record<string, TabKey> = {
+  "section-daily": "traffic",
+  "section-hourly": "traffic",
+  "section-device": "audience",
+  "section-bots": "audience",
+  "section-sources": "sources",
+};
 
 /**
  * Body of the stats page, lifted out of {@code page.tsx} so the public {@code /demo} route can
@@ -38,6 +50,28 @@ export function StatsBody({
   demo?: boolean;
 }) {
   const [tab, setTab] = useTabHash();
+  const [pendingScroll, setPendingScroll] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!pendingScroll) return;
+    // The target section only enters the DOM after the tab switch re-renders. requestAnimationFrame
+    // pushes the scroll to the next paint so the element exists when we look it up.
+    const id = pendingScroll;
+    const raf = requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setPendingScroll(null);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [pendingScroll, tab]);
+
+  function handleNavigate(section: string) {
+    const targetTab = SECTION_TAB[section];
+    if (targetTab && targetTab !== tab) {
+      setTab(targetTab);
+    }
+    setPendingScroll(section);
+  }
+
   return (
     <>
       <Header
@@ -56,6 +90,7 @@ export function StatsBody({
         profileClicks={data.profileClicks}
         timeToFirstClickMinutes={data.timeToFirstClickMinutes}
         velocityRatio={data.velocity?.ratio ?? 0}
+        onNavigate={handleNavigate}
       />
       <TabBar active={tab} onSelect={setTab} />
       {tab === "overview" && <OverviewTab data={data} onTick={onTick} demo={demo} />}

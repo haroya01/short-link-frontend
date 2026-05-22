@@ -19,6 +19,7 @@ export function SourcesTab({ data }: { data: LinkStats }) {
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section
+          id="section-sources"
           title={t("section.referrerHost.title")}
           description={t("section.referrerHost.desc")}
         >
