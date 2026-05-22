@@ -92,6 +92,11 @@ export function Nav() {
       label: t("myLinks"),
       active: (p) => p.startsWith("/dashboard"),
     });
+    entries.push({
+      href: "/campaigns",
+      label: t("campaigns"),
+      active: (p) => p.startsWith("/campaigns"),
+    });
   }
   if (isAdmin) {
     entries.push({
