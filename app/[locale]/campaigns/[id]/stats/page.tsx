@@ -1,0 +1,354 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "next/navigation";
+import { ArrowLeft, ExternalLink, FlaskConical } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { useAuth } from "@/lib/auth";
+import { getCampaign, getCampaignStats } from "@/lib/api";
+import { Link } from "@/i18n/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/error-state";
+import type { CampaignDetail, CampaignStats } from "@/types";
+
+const ACCENT = "#059669";
+const ACCENT_LIGHT = "#a7f3d0";
+
+export default function CampaignStatsPage() {
+  const { id } = useParams<{ id: string }>();
+  const campaignId = Number(id);
+  const { authenticated, ready } = useAuth();
+  const [campaign, setCampaign] = useState<CampaignDetail | null>(null);
+  const [stats, setStats] = useState<CampaignStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reload, setReload] = useState(0);
+
+  useEffect(() => {
+    if (!ready || !authenticated || !Number.isFinite(campaignId)) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    Promise.all([getCampaign(campaignId), getCampaignStats(campaignId)])
+      .then(([c, s]) => {
+        if (cancelled) return;
+        setCampaign(c);
+        setStats(s);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : "load failed");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, authenticated, campaignId, reload]);
+
+  if (ready && !authenticated) {
+    return (
+      <div className="container max-w-md py-20 text-center">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+          로그인이 필요합니다
+        </h1>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container max-w-5xl space-y-6 py-10">
+      <Link
+        href={`/campaigns/${campaignId}`}
+        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> QR 캠페인으로
+      </Link>
+
+      <div>
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+          분석
+        </h1>
+        <p className="mt-1 text-sm text-slate-500">
+          {loading ? (
+            <Skeleton className="inline-block h-4 w-40" />
+          ) : campaign ? (
+            <>
+              <span className="font-medium text-slate-700">{campaign.name}</span> · 시작 이후 클릭만
+              집계. 봇/프리뷰 제외.
+            </>
+          ) : null}
+        </p>
+      </div>
+
+      {loading ? (
+        <StatsSkeleton />
+      ) : error ? (
+        <ErrorState message={error} onRetry={() => setReload((n) => n + 1)} />
+      ) : stats && campaign ? (
+        <>
+          <KpiRow stats={stats} batchCount={campaign.batchCount} />
+          {stats.testScans > 0 && (
+            <TestScansCard count={stats.testScans} lastAt={stats.lastTestScanAt} />
+          )}
+          <ByBatchTable stats={stats} />
+          {stats.byDistributor.length > 0 && (
+            <GroupChart
+              title="배포자별 성과"
+              hint="100장당 클릭 비율 — 수량 차이 있는 배포자끼리도 효율 비교 가능."
+              groups={stats.byDistributor}
+            />
+          )}
+          {stats.byArea.length > 0 && (
+            <GroupChart
+              title="지역별 성과"
+              hint="다음 배포 위치 선정의 기준."
+              groups={stats.byArea}
+            />
+          )}
+        </>
+      ) : null}
+    </div>
+  );
+}
+
+function KpiRow({ stats, batchCount }: { stats: CampaignStats; batchCount: number }) {
+  const totalQuantity = useMemo(
+    () => stats.byBatch.reduce((sum, b) => sum + b.quantity, 0),
+    [stats.byBatch],
+  );
+  const ratePerHundred = totalQuantity > 0 ? (stats.totalClicks * 100) / totalQuantity : 0;
+  return (
+    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <Kpi label="총 클릭" value={stats.totalClicks.toLocaleString()} />
+      <Kpi label="배포 묶음" value={`${batchCount}개`} />
+      <Kpi label="총 인쇄·배포" value={`${totalQuantity.toLocaleString()}장`} />
+      <Kpi
+        label="100장당"
+        value={ratePerHundred.toFixed(1)}
+        accent
+        hint="평균 효율 (클릭 / 배포 × 100)"
+      />
+    </ul>
+  );
+}
+
+function Kpi({
+  label,
+  value,
+  accent,
+  hint,
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+  hint?: string;
+}) {
+  return (
+    <li
+      className={
+        "rounded-2xl border bg-white px-4 py-4 " +
+        (accent ? "border-accent-200 bg-accent-50/40" : "border-slate-200")
+      }
+    >
+      <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">{label}</p>
+      <p
+        className={
+          "mt-2 text-[24px] font-semibold leading-tight tracking-headline " +
+          (accent ? "text-accent-700" : "text-slate-900")
+        }
+      >
+        {value}
+      </p>
+      {hint && <p className="mt-1.5 text-[11px] leading-snug text-slate-500">{hint}</p>}
+    </li>
+  );
+}
+
+function TestScansCard({ count, lastAt }: { count: number; lastAt: string | null }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+      <div className="flex items-start gap-2">
+        <FlaskConical className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-500" aria-hidden />
+        <div className="flex-1">
+          <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+            시작 전 테스트 스캔
+          </p>
+          <p className="mt-1.5 text-sm text-slate-700">
+            <span className="font-medium text-slate-900">{count.toLocaleString()}회</span>{" "}
+            — 캠페인 시작 시각 이전. 분석 합계에서 제외돼요.
+          </p>
+          {lastAt && (
+            <p className="mt-0.5 text-[12px] text-slate-500">
+              마지막 테스트 · {new Date(lastAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ByBatchTable({ stats }: { stats: CampaignStats }) {
+  const sorted = useMemo(
+    () => [...stats.byBatch].sort((a, b) => b.clicks - a.clicks),
+    [stats.byBatch],
+  );
+  if (sorted.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-[12px] text-slate-500">
+        아직 배포 묶음이 없어요. 추가하면 여기에 묶음별 성과가 표시됩니다.
+      </div>
+    );
+  }
+  const maxClicks = sorted[0]?.clicks ?? 0;
+  return (
+    <section className="space-y-2">
+      <header>
+        <h2 className="text-sm font-medium text-slate-900">묶음별 성과</h2>
+        <p className="mt-0.5 text-[12px] text-slate-500">
+          클릭 수 내림차순. 막대는 최대값 대비 상대 비율.
+        </p>
+      </header>
+      <ul className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        {sorted.map((b) => {
+          const widthPct = maxClicks > 0 ? (b.clicks * 100) / maxClicks : 0;
+          const ratePerHundred = b.quantity > 0 ? (b.clicks * 100) / b.quantity : 0;
+          return (
+            <li key={b.batchId} className="px-4 py-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-slate-900">{b.batchName}</p>
+                  <p className="mt-0.5 truncate text-[12px] text-slate-500">
+                    {[b.distributor, b.area].filter(Boolean).join(" · ") || "—"}
+                  </p>
+                </div>
+                <div className="flex flex-shrink-0 items-baseline gap-3 text-right">
+                  <span className="text-[15px] font-semibold tabular-nums text-slate-900">
+                    {b.clicks.toLocaleString()}
+                  </span>
+                  <span className="text-[11px] tabular-nums text-slate-500">
+                    / {b.quantity.toLocaleString()}장 · {ratePerHundred.toFixed(1)}%
+                  </span>
+                </div>
+              </div>
+              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-accent-600 transition-all duration-500"
+                  style={{ width: `${widthPct}%` }}
+                />
+              </div>
+              <div className="mt-1.5 flex items-center justify-end">
+                <a
+                  href={`https://kurl.md/${b.shortCode}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-500 hover:text-accent-700 hover:underline"
+                >
+                  /{b.shortCode}
+                  <ExternalLink className="h-3 w-3" aria-hidden />
+                </a>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+function GroupChart({
+  title,
+  hint,
+  groups,
+}: {
+  title: string;
+  hint: string;
+  groups: CampaignStats["byDistributor"];
+}) {
+  const data = useMemo(
+    () =>
+      [...groups]
+        .sort((a, b) => b.clickRatePerHundred - a.clickRatePerHundred)
+        .map((g) => ({
+          key: g.key,
+          ratePerHundred: Number(g.clickRatePerHundred.toFixed(2)),
+          clicks: g.clicks,
+          quantity: g.totalQuantity,
+        })),
+    [groups],
+  );
+  return (
+    <section className="space-y-2">
+      <header>
+        <h2 className="text-sm font-medium text-slate-900">{title}</h2>
+        <p className="mt-0.5 text-[12px] text-slate-500">{hint}</p>
+      </header>
+      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="h-[220px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data} layout="vertical" margin={{ left: 8, right: 24, top: 4, bottom: 4 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
+              <XAxis
+                type="number"
+                tick={{ fontSize: 11, fill: "#64748b" }}
+                axisLine={{ stroke: "#e2e8f0" }}
+                tickLine={false}
+              />
+              <YAxis
+                type="category"
+                dataKey="key"
+                tick={{ fontSize: 12, fill: "#0f172a" }}
+                axisLine={{ stroke: "#e2e8f0" }}
+                tickLine={false}
+                width={100}
+              />
+              <Tooltip
+                cursor={{ fill: ACCENT_LIGHT, opacity: 0.3 }}
+                contentStyle={{
+                  borderRadius: 8,
+                  border: "1px solid #e2e8f0",
+                  fontSize: 12,
+                  padding: "8px 12px",
+                }}
+                formatter={(_value: number, _name: string, item) => {
+                  const row = item?.payload as { ratePerHundred: number; clicks: number; quantity: number };
+                  return [
+                    `${row.ratePerHundred}회 / 100장 · 클릭 ${row.clicks.toLocaleString()} / 배포 ${row.quantity.toLocaleString()}`,
+                    "효율",
+                  ];
+                }}
+              />
+              <Bar dataKey="ratePerHundred" fill={ACCENT} radius={[0, 4, 4, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StatsSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-24 rounded-2xl" />
+        ))}
+      </div>
+      <Skeleton className="h-40 w-full rounded-2xl" />
+      <Skeleton className="h-60 w-full rounded-2xl" />
+    </div>
+  );
+}

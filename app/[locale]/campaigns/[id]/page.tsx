@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import {
   ArrowLeft,
   Archive,
+  BarChart3,
   Download,
   FileText,
   PackageOpen,
@@ -188,6 +189,11 @@ function Header({
           {campaign.name}
         </h1>
         <div className="flex flex-wrap items-center gap-2">
+          <Link href={`/campaigns/${campaign.id}/stats`}>
+            <Button variant="outline">
+              <BarChart3 className="h-4 w-4" aria-hidden /> 분석
+            </Button>
+          </Link>
           {campaign.status === "ACTIVE" && (
             <Button variant="outline" onClick={onEndNow} disabled={pending}>
               <StopCircle className="h-4 w-4" aria-hidden /> 지금 종료
