@@ -8,14 +8,18 @@ import {
   Download,
   FileText,
   PackageOpen,
+  Pencil,
   PlayCircle,
-  StopCircle,
+  QrCode,
   Repeat,
+  StopCircle,
+  Trash2,
   ExternalLink,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
   archiveCampaign,
+  campaignBatchQrUrl,
   campaignBatchesCsvUrl,
   campaignBatchesZipUrl,
   endCampaignNow,
@@ -28,6 +32,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/error-state";
 import { useToast } from "@/components/ui/toast";
+import { BatchEditDialog } from "@/components/batch-edit-dialog";
+import { BatchDeleteDialog } from "@/components/batch-delete-dialog";
 import type { CampaignBatch, CampaignDetail, CampaignStatus } from "@/types";
 
 export default function CampaignDetailPage() {
@@ -148,6 +154,7 @@ export default function CampaignDetailPage() {
             campaignId={campaign.id}
             campaignStatus={campaign.status}
             batches={batches ?? []}
+            onChanged={() => setReload((n) => n + 1)}
           />
         </>
       ) : null}
@@ -242,12 +249,16 @@ function BatchSection({
   campaignId,
   campaignStatus,
   batches,
+  onChanged,
 }: {
   campaignId: number;
   campaignStatus: CampaignStatus;
   batches: CampaignBatch[];
+  onChanged: () => void;
 }) {
   const terminal = campaignStatus === "ENDED" || campaignStatus === "ARCHIVED";
+  const [editing, setEditing] = useState<CampaignBatch | null>(null);
+  const [deleting, setDeleting] = useState<CampaignBatch | null>(null);
   return (
     <section className="space-y-3">
       <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
@@ -300,18 +311,90 @@ function BatchSection({
       ) : (
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {batches.map((b) => (
-            <BatchCard key={b.id} batch={b} />
+            <BatchCard
+              key={b.id}
+              batch={b}
+              campaignId={campaignId}
+              canModify={!terminal}
+              onEdit={() => setEditing(b)}
+              onDelete={() => setDeleting(b)}
+            />
           ))}
         </ul>
       )}
+
+      <BatchEditDialog
+        open={editing !== null}
+        onOpenChange={(v) => !v && setEditing(null)}
+        batch={editing}
+        campaignId={campaignId}
+        onUpdated={() => {
+          setEditing(null);
+          onChanged();
+        }}
+      />
+      <BatchDeleteDialog
+        open={deleting !== null}
+        onOpenChange={(v) => !v && setDeleting(null)}
+        batch={deleting}
+        campaignId={campaignId}
+        onDeleted={() => {
+          setDeleting(null);
+          onChanged();
+        }}
+      />
     </section>
   );
 }
 
-function BatchCard({ batch }: { batch: CampaignBatch }) {
+function BatchCard({
+  batch,
+  campaignId,
+  canModify,
+  onEdit,
+  onDelete,
+}: {
+  batch: CampaignBatch;
+  campaignId: number;
+  canModify: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
   return (
-    <li className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-      <div className="flex items-center justify-between gap-2">
+    <li className="group relative rounded-2xl border border-slate-200 bg-white px-4 py-4">
+      {/* Hover-revealed actions — corner cluster (디자인 가이드의 우상단 보조 액션 위치). */}
+      <div className="absolute right-2 top-2 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+        <a
+          href={campaignBatchQrUrl(campaignId, batch.id)}
+          download={`batch-${batch.id}.png`}
+          aria-label={`${batch.name} QR PNG 다운로드`}
+          className="grid h-7 w-7 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+        >
+          <QrCode className="h-3.5 w-3.5" aria-hidden />
+        </a>
+        {canModify && (
+          <>
+            <button
+              type="button"
+              onClick={onEdit}
+              aria-label={`${batch.name} 편집`}
+              className="grid h-7 w-7 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+            >
+              <Pencil className="h-3.5 w-3.5" aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={onDelete}
+              aria-label={`${batch.name} 삭제`}
+              className="grid h-7 w-7 place-items-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-600"
+            >
+              <Trash2 className="h-3.5 w-3.5" aria-hidden />
+            </button>
+          </>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between gap-2 pr-20">
         <h3 className="text-sm font-medium text-slate-900">{batch.name}</h3>
         <span className="text-[11px] font-medium text-slate-500">
           {batch.quantity.toLocaleString()}장
