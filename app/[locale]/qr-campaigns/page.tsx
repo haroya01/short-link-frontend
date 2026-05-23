@@ -244,7 +244,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                 mobileRefs.current[i] = el;
               }}
               data-section-idx={i}
-              className="flex min-h-[100svh] flex-col justify-center gap-7 px-6 py-8 scroll-mt-14 sm:gap-8 sm:px-12 sm:py-12"
+              className="flex min-h-[100svh] flex-col justify-start gap-7 px-6 py-8 scroll-mt-14 sm:gap-8 sm:px-12 sm:py-12"
             >
               {s.kind === "hero" ? (
                 <HeroBody s={s} />
