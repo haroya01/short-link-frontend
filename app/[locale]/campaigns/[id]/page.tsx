@@ -24,6 +24,7 @@ import {
   getCampaign,
   listCampaignBatches,
   reapplyCampaignPolicy,
+  updateCampaign,
 } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
@@ -148,7 +149,7 @@ export default function CampaignDetailPage() {
             }}
           />
 
-          <PolicySummary campaign={campaign} />
+          <PolicySummary campaign={campaign} onChanged={() => setReload((n) => n + 1)} />
 
           {(batches ?? []).length > 0 && (
             <PrepareSection campaignId={campaign.id} batchCount={(batches ?? []).length} />
@@ -270,7 +271,14 @@ function PrepareSection({
   );
 }
 
-function PolicySummary({ campaign }: { campaign: CampaignDetail }) {
+function PolicySummary({
+  campaign,
+  onChanged,
+}: {
+  campaign: CampaignDetail;
+  onChanged: () => void;
+}) {
+  const { toast } = useToast();
   const action = campaign.postEndAction;
   const label =
     action === "KEEP"
@@ -278,6 +286,38 @@ function PolicySummary({ campaign }: { campaign: CampaignDetail }) {
       : action === "EXPIRE"
         ? "만료 페이지로"
         : "다른 페이지로 자동 전환";
+  const editable = campaign.status !== "ARCHIVED";
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(campaign.postEndMessage ?? "");
+  const [saving, setSaving] = useState(false);
+
+  function startEdit() {
+    setDraft(campaign.postEndMessage ?? "");
+    setEditing(true);
+  }
+
+  async function save() {
+    setSaving(true);
+    try {
+      const trimmed = draft.trim();
+      await updateCampaign(campaign.id, {
+        postEndMessage: trimmed.length > 0 ? trimmed : "",
+      });
+      toast(
+        campaign.status === "ENDED"
+          ? "메시지를 저장했어요. '종료 정책 재적용' 을 누르면 인쇄된 QR 에도 반영돼요."
+          : "만료 페이지 메시지를 저장했어요",
+        "success",
+      );
+      setEditing(false);
+      onChanged();
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "저장 실패", "error");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
       <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
@@ -297,6 +337,61 @@ function PolicySummary({ campaign }: { campaign: CampaignDetail }) {
           </a>
         )}
       </div>
+      {action === "EXPIRE" && (
+        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-3">
+          <div className="flex items-start justify-between gap-2">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+              만료 페이지 메시지
+            </p>
+            {editable && !editing && (
+              <button
+                type="button"
+                onClick={startEdit}
+                className="text-[12px] font-medium text-accent-700 hover:underline"
+              >
+                {campaign.postEndMessage ? "수정" : "추가"}
+              </button>
+            )}
+          </div>
+          {editing ? (
+            <div className="mt-2 space-y-2">
+              <textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value.slice(0, 500))}
+                rows={3}
+                placeholder="예: 캠페인이 종료됐어요. 다음 이벤트는 12월에 만나요."
+                className="block w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-900 placeholder:text-slate-400 focus:border-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-100"
+              />
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[12px] tabular-nums text-slate-500">
+                  {draft.length}/500
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setEditing(false)}
+                    disabled={saving}
+                  >
+                    취소
+                  </Button>
+                  <Button type="button" variant="accent" onClick={save} disabled={saving}>
+                    {saving ? "저장 중..." : "저장"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : campaign.postEndMessage ? (
+            <p className="mt-2 whitespace-pre-wrap text-[13px] leading-relaxed text-slate-700">
+              {campaign.postEndMessage}
+            </p>
+          ) : (
+            <p className="mt-2 text-[12px] italic text-slate-500">
+              메시지를 비워두면 기본 안내문이 표시됩니다.
+            </p>
+          )}
+        </div>
+      )}
       {campaign.defaultDestinationUrl && (
         <p className="mt-3 text-[12px] text-slate-500">
           기본 도착 URL · {campaign.defaultDestinationUrl}
