@@ -88,6 +88,22 @@ export async function generateMetadata({
       images: [ogImageUrl],
     },
     robots: { index: true, follow: true },
+    // Search-engine ownership tokens. Naver dominates Korean search (~50% share) and requires
+    // explicit verification via Search Advisor; without it the site is invisible in Naver
+    // results regardless of how good Google indexing is. Tokens injected via env so secrets
+    // don't live in the repo — empty env vars cause the meta tag to be omitted entirely.
+    verification: {
+      ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+        ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+        : {}),
+      ...(process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION
+        ? {
+            other: {
+              "naver-site-verification": process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION,
+            },
+          }
+        : {}),
+    },
   };
 }
 
@@ -120,6 +136,22 @@ export default async function RootLayout({
           "@type": "SearchAction",
           target: `${SITE_URL}/${locale}?q={search_term_string}`,
           "query-input": "required name=search_term_string",
+        },
+      },
+      // SoftwareApplication node lets the brand-name query show the product card panel on the
+      // right (description + screenshot + free price + category). Without this Google can only
+      // infer "website" from the WebSite node above and the SERP loses a major brand surface.
+      {
+        "@type": "SoftwareApplication",
+        name: "kurl",
+        url: SITE_URL,
+        applicationCategory: "WebApplication",
+        operatingSystem: "Any",
+        inLanguage: locale,
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "KRW",
         },
       },
     ],

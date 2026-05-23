@@ -14,9 +14,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "pricing" });
+  // Keyword-anchored meta — bare "요금제" / "Pricing" carries no informational signal. The
+  // on-page H1 still uses the short editorial title; only the SERP surface targets keywords.
   return {
-    title: t("title"),
-    description: t("lead"),
+    title: t("meta.title"),
+    description: t("meta.description"),
     alternates: { canonical: `${SITE_URL}/${locale}/pricing` },
   };
 }

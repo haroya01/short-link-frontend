@@ -22,10 +22,37 @@ export async function generateMetadata({
   };
 }
 
-export default function QrCampaignsLayout({
+export default async function QrCampaignsLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
-  return children;
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "qrCampaigns.meta" });
+  // Service JSON-LD — gives Google a structured signal that this page is the marketing surface
+  // for a specific offering (QR campaign tracking), distinct from the generic url-shortener
+  // node on the home page. Lets the SERP show the page as a service result for "QR 추적",
+  // "전단지 QR", etc. instead of just a sub-page of kurl.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: t("title"),
+    description: t("description"),
+    url: `${SITE_URL}/${locale}/qr-campaigns`,
+    provider: { "@type": "Organization", name: "kurl", url: SITE_URL },
+    areaServed: locale === "ko" ? "KR" : locale === "ja" ? "JP" : "Worldwide",
+    inLanguage: locale,
+  };
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      {children}
+    </>
+  );
 }

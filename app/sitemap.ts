@@ -9,7 +9,36 @@ const SITE_URL =
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? SITE_URL;
 
-const PUBLIC_PATHS = ["", "/showcase", "/learn", "/login", "/about", "/pricing", "/terms", "/privacy"] as const;
+// Marketing surfaces we actively push for organic search. Order doesn't matter for indexing
+// but priority below differentiates importance signals to crawlers. /login is intentionally
+// absent — auth pages have no informational value as search entry points and were dominating
+// brand-name sitelinks. robots.ts disallows it and the page-level layout sets noindex.
+const PUBLIC_PATHS = [
+  "",
+  "/qr-campaigns",
+  "/showcase",
+  "/learn",
+  "/about",
+  "/pricing",
+  "/terms",
+  "/privacy",
+] as const;
+
+// Sitemap priority is a weak signal but consistent differentiation helps Google decide which
+// pages deserve sitelink slots and which are leaf content. Push targets get 0.9-1.0; informational
+// long-tail gets 0.7; trust pages (terms/privacy) stay low so they don't crowd brand sitelinks.
+function priorityFor(path: string): number {
+  if (path === "" || path === "/qr-campaigns") return 1.0;
+  if (path === "/showcase") return 0.9;
+  if (path === "/learn") return 0.7;
+  if (path === "/about" || path === "/pricing") return 0.5;
+  return 0.3;
+}
+
+function changeFrequencyFor(path: string): "weekly" | "monthly" {
+  if (path === "" || path === "/qr-campaigns" || path === "/showcase") return "weekly";
+  return "monthly";
+}
 
 // Cap profile entries inserted into the sitemap. 5000 is the per-sitemap-file limit Google
 // recommends; if we ever exceed it we'd switch to a sitemap index. The backend listing endpoint
@@ -51,8 +80,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       entries.push({
         url: `${SITE_URL}/${locale}${path}`,
         lastModified: now,
-        changeFrequency: path === "" ? "weekly" : "monthly",
-        priority: path === "" ? 1.0 : 0.5,
+        changeFrequency: changeFrequencyFor(path),
+        priority: priorityFor(path),
         alternates: {
           languages: Object.fromEntries(
             routing.locales.map((l) => [l, `${SITE_URL}/${l}${path}`]),
@@ -68,7 +97,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/${routing.defaultLocale}/u/${username}`,
       lastModified: now,
       changeFrequency: "weekly",
-      priority: 0.7,
+      priority: 0.8,
       alternates: {
         languages: Object.fromEntries(
           routing.locales.map((l) => [l, `${SITE_URL}/${l}/u/${username}`]),

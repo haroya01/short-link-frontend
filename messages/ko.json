@@ -141,7 +141,11 @@
     "metaSuffix": "예시",
     "sampleBanner": "예시 페이지 · 가입 후 직접 만들 수 있어요",
     "sampleCta": "내 프로필 만들기",
-    "scrollCue": "실제 예시 보기"
+    "scrollCue": "실제 예시 보기",
+    "meta": {
+      "title": "프로필 페이지 사례 모음 · 링크 인 바이오 - kurl",
+      "description": "카페·크리에이터·셀러·강사 등 다양한 직군의 프로필 페이지 사례. 링크 인 바이오 + QR 명함 + 클릭 분석을 한 페이지에서 운영하는 방법."
+    }
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
@@ -1067,7 +1071,11 @@
     "proHoldBadge": "추후 출시",
     "proHoldNotice": "Pro 플랜은 결제 시스템 준비 중이라 잠시 닫혔어요. 지금은 Free 플랜의 200개 링크 · 8종 분석 · 웹훅 5개 · 2FA 모두 그대로 이용하실 수 있어요.",
     "proHoldCta": "준비 중",
-    "proEta": "출시 시 안내 메일로 알려드립니다 — 우선 무료 플랜으로 시작."
+    "proEta": "출시 시 안내 메일로 알려드립니다 — 우선 무료 플랜으로 시작.",
+    "meta": {
+      "title": "요금제 · 단축 URL Pro 무제한 - kurl",
+      "description": "Free 로 단축 URL과 클릭 분석을 무료로 시작. Pro 는 무제한 링크 · 커스텀 도메인 자동 TLS · 통계 영구 보존."
+    }
   },
   "terms": {
     "title": "이용약관",
