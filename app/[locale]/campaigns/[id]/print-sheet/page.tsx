@@ -8,7 +8,7 @@ import { getCampaign, listCampaignBatches } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorState } from "@/components/error-state";
+import { ErrorState } from "@/components/common/error-state";
 import type { CampaignBatch, CampaignDetail } from "@/types";
 
 type Layout = {

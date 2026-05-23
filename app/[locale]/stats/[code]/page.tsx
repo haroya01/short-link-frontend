@@ -8,12 +8,12 @@ import { useAuth } from "@/lib/auth";
 import { ApiError, getStats } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { ErrorState } from "@/components/error-state";
-import { EmptyState } from "@/components/empty-state";
+import { ErrorState } from "@/components/common/error-state";
+import { EmptyState } from "@/components/common/empty-state";
 import { useToast } from "@/components/ui/toast";
 import type { LinkStats } from "@/types";
-import { HeaderSkeleton } from "./_components/Header";
-import { StatsBody } from "./_components/StatsBody";
+import { HeaderSkeleton } from "./_components/header";
+import { StatsBody } from "./_components/stats-body";
 
 export default function StatsPage() {
   const params = useParams<{ code: string }>();

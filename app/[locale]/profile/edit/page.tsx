@@ -6,11 +6,11 @@ import Link from "next/link";
 import { Check, Mail, Sparkles } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { MobilePreviewSheet } from "@/components/mobile-preview-sheet";
-import { ProfileSection, type ProfileDraft } from "@/components/profile-section";
-import { ProfilePreview } from "@/components/profile-preview";
-import { ProfileVisitSummaryCard } from "@/components/profile-visit-summary-card";
-import { ProfilePublicUrlBanner } from "@/components/profile-public-url-banner";
+import { MobilePreviewSheet } from "@/components/profile/mobile-preview-sheet";
+import { ProfileSection, type ProfileDraft } from "@/components/profile/section";
+import { ProfilePreview } from "@/components/profile/preview";
+import { ProfileVisitSummaryCard } from "@/components/profile/visit-summary-card";
+import { ProfilePublicUrlBanner } from "@/components/profile/public-url-banner";
 
 export default function ProfileEditPage() {
   const t = useTranslations("settings.profile");

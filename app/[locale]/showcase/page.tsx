@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight, ChevronDown } from "lucide-react";
-import { ProfileShowcase } from "@/components/profile-showcase";
+import { ProfileShowcase } from "@/components/profile/showcase";
 import { Link } from "@/i18n/navigation";
 
 const SITE_URL =

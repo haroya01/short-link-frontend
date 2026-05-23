@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ProfileOwnerFab } from "@/components/profile-owner-fab";
-import { ProfileShareFab } from "@/components/profile-share-fab";
+import { ProfileOwnerFab } from "@/components/profile/owner-fab";
+import { ProfileShareFab } from "@/components/profile/share-fab";
 import type { PublicProfile } from "@/types";
-import { EntryList } from "./_components/EntryList";
-import { ProfileHeader } from "./_components/ProfileHeader";
-import { ProfileVisitBeacon } from "./_components/ProfileVisitBeacon";
-import { ShareRow } from "./_components/ShareRow";
+import { EntryList } from "./_components/entry-list";
+import { ProfileHeader } from "./_components/profile-header";
+import { ProfileVisitBeacon } from "./_components/profile-visit-beacon";
+import { ShareRow } from "./_components/share-row";
 import { THEME_TABLE } from "./_lib/theme";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";

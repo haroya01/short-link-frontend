@@ -16,14 +16,14 @@ import {
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError, getAdminHealthMetrics, getAdminOverview } from "@/lib/api";
-import { AdminDeepStats } from "@/components/admin-deep-stats";
-import { AdminLinkMetrics } from "@/components/admin-link-metrics";
-import { AdminRequestMetrics } from "@/components/admin-request-metrics";
-import { AdminRouteMetrics } from "@/components/admin-route-metrics";
-import { AdminTopLinksTable, AdminTopUsersTable } from "@/components/admin-top-tables";
-import { Section } from "@/components/section";
+import { AdminDeepStats } from "@/components/admin/deep-stats";
+import { AdminLinkMetrics } from "@/components/admin/link-metrics";
+import { AdminRequestMetrics } from "@/components/admin/request-metrics";
+import { AdminRouteMetrics } from "@/components/admin/route-metrics";
+import { AdminTopLinksTable, AdminTopUsersTable } from "@/components/admin/top-tables";
+import { Section } from "@/components/common/section";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorState } from "@/components/error-state";
+import { ErrorState } from "@/components/common/error-state";
 import { formatNumber } from "@/lib/utils";
 import type { AdminHealthMetrics, AdminOverview } from "@/types";
 

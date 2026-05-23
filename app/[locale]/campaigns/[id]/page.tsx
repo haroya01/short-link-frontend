@@ -29,11 +29,11 @@ import {
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorState } from "@/components/error-state";
+import { ErrorState } from "@/components/common/error-state";
 import { useToast } from "@/components/ui/toast";
-import { BatchEditDialog } from "@/components/batch-edit-dialog";
-import { BatchDeleteDialog } from "@/components/batch-delete-dialog";
-import { QrDownloadDialog } from "@/components/qr-download-dialog";
+import { BatchEditDialog } from "@/components/links/batch-edit-dialog";
+import { BatchDeleteDialog } from "@/components/links/batch-delete-dialog";
+import { QrDownloadDialog } from "@/components/qr/download-dialog";
 import { BatchCard } from "./_components/batch-card";
 import type { CampaignBatch, CampaignDetail, CampaignStatus } from "@/types";
 

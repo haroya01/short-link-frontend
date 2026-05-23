@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { GoogleIcon } from "@/components/google-icon";
+import { GoogleIcon } from "@/components/common/google-icon";
 
 const LOGIN_NEXT_KEY = "kurl:login-next";
 
