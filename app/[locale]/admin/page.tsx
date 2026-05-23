@@ -20,10 +20,9 @@ import { AdminDeepStats } from "@/components/admin-deep-stats";
 import { AdminLinkMetrics } from "@/components/admin-link-metrics";
 import { AdminRequestMetrics } from "@/components/admin-request-metrics";
 import { AdminRouteMetrics } from "@/components/admin-route-metrics";
+import { AdminTopLinksTable, AdminTopUsersTable } from "@/components/admin-top-tables";
 import { Section } from "@/components/section";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Link } from "@/i18n/navigation";
-import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { ErrorState } from "@/components/error-state";
 import { formatNumber } from "@/lib/utils";
 import type { AdminHealthMetrics, AdminOverview } from "@/types";
@@ -218,13 +217,21 @@ export default function AdminPage() {
           title={t("section.topUsersByLinks.title")}
           description={t("section.topUsersByLinks.desc")}
         >
-          <UserStatTable rows={data.topUsersByLinks ?? []} unit={t("table.links")} t={t} />
+          <AdminTopUsersTable
+            variant="links"
+            initialItems={data.topUsersByLinks ?? []}
+            initialTotal={data.topUsersByLinksTotal ?? 0}
+          />
         </Section>
         <Section
           title={t("section.topUsersByClicks.title")}
           description={t("section.topUsersByClicks.desc")}
         >
-          <UserStatTable rows={data.topUsersByClicks ?? []} unit={t("table.clicks")} t={t} />
+          <AdminTopUsersTable
+            variant="clicks"
+            initialItems={data.topUsersByClicks ?? []}
+            initialTotal={data.topUsersByClicksTotal ?? 0}
+          />
         </Section>
       </div>
 
@@ -293,33 +300,10 @@ export default function AdminPage() {
       <AdminDeepStats />
 
       <Section title={t("section.topLinks.title")} description={t("section.topLinks.desc")}>
-        <Table>
-          <THead>
-            <TR>
-              <TH>{t("table.shortCode")}</TH>
-              <TH>{t("table.owner")}</TH>
-              <TH className="text-right">{t("table.clicks")}</TH>
-            </TR>
-          </THead>
-          <TBody>
-            {(data.topLinksByClicks ?? []).map((l) => (
-              <TR key={l.shortCode}>
-                <TD>
-                  <Link
-                    href={`/stats/${l.shortCode}`}
-                    className="font-mono text-sm font-medium text-slate-900 hover:underline"
-                  >
-                    /{l.shortCode}
-                  </Link>
-                </TD>
-                <TD className="text-xs text-slate-500">{l.ownerEmail ?? t("table.anonymous")}</TD>
-                <TD className="text-right tabular-nums font-medium">
-                  {formatNumber(l.clickCount)}
-                </TD>
-              </TR>
-            ))}
-          </TBody>
-        </Table>
+        <AdminTopLinksTable
+          initialItems={data.topLinksByClicks ?? []}
+          initialTotal={data.topLinksByClicksTotal ?? 0}
+        />
       </Section>
     </div>
   );
@@ -357,38 +341,6 @@ function Kpi({
       </p>
       {sub && <p className="mt-1 truncate text-[10px] text-slate-500">{sub}</p>}
     </div>
-  );
-}
-
-function UserStatTable({
-  rows,
-  unit,
-  t,
-}: {
-  rows: { userId: number; email: string; count: number }[];
-  unit: string;
-  t: (k: string) => string;
-}) {
-  if (rows.length === 0) {
-    return <p className="py-8 text-center text-xs text-slate-500">{t("noData")}</p>;
-  }
-  return (
-    <Table>
-      <THead>
-        <TR>
-          <TH>{t("table.user")}</TH>
-          <TH className="text-right">{unit}</TH>
-        </TR>
-      </THead>
-      <TBody>
-        {rows.map((r) => (
-          <TR key={r.userId}>
-            <TD className="text-sm">{r.email}</TD>
-            <TD className="text-right tabular-nums font-medium">{formatNumber(r.count)}</TD>
-          </TR>
-        ))}
-      </TBody>
-    </Table>
   );
 }
 
