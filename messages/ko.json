@@ -502,29 +502,83 @@
       "profileSub": "사람 클릭의 {ratio}%"
     },
     "section": {
-      "heatmap": { "title": "시간대 × 요일 히트맵", "desc": "{tz} · 진할수록 클릭 많음" },
-      "daily": { "title": "일별 클릭", "desc": "최근 30일 · {tz}" },
-      "hourly": { "title": "시간대", "desc": "0~23시 분포" },
-      "device": { "title": "디바이스", "desc": "mobile · desktop · tablet · bot" },
-      "channel": { "title": "채널", "desc": "레퍼러 도메인 분류" },
-      "os": { "title": "OS", "desc": "운영체제별 분포" },
-      "browser": { "title": "브라우저", "desc": "브라우저별 분포" },
-      "referrerHost": { "title": "레퍼러 호스트", "desc": "유입 도메인 단위 집계" },
-      "referrerUrl": { "title": "레퍼러 URL TOP", "desc": "가장 많이 유입된 출처" },
-      "utm": { "title": "UTM 캠페인", "desc": "utm_campaign 별 집계" },
-      "utmSource": { "title": "UTM 소스", "desc": "utm_source 별 집계 (instagram, naver 등)" },
-      "utmMedium": { "title": "UTM 매체", "desc": "utm_medium 별 집계 (bio, ad, email 등)" },
-      "utmContent": { "title": "UTM 콘텐츠", "desc": "utm_content 별 집계 (배너, A/B 슬롯 구분)" },
+      "heatmap": {
+        "title": "시간대 × 요일 히트맵",
+        "desc": "{tz} · 진할수록 클릭 많음"
+      },
+      "daily": {
+        "title": "일별 클릭",
+        "desc": "최근 30일 · {tz}"
+      },
+      "hourly": {
+        "title": "시간대",
+        "desc": "0~23시 분포"
+      },
+      "device": {
+        "title": "디바이스",
+        "desc": "mobile · desktop · tablet · bot"
+      },
+      "channel": {
+        "title": "채널",
+        "desc": "레퍼러 도메인 분류"
+      },
+      "os": {
+        "title": "OS",
+        "desc": "운영체제별 분포"
+      },
+      "browser": {
+        "title": "브라우저",
+        "desc": "브라우저별 분포"
+      },
+      "referrerHost": {
+        "title": "레퍼러 호스트",
+        "desc": "유입 도메인 단위 집계"
+      },
+      "referrerUrl": {
+        "title": "레퍼러 URL TOP",
+        "desc": "가장 많이 유입된 출처"
+      },
+      "utm": {
+        "title": "UTM 캠페인",
+        "desc": "utm_campaign 별 집계"
+      },
+      "utmSource": {
+        "title": "UTM 소스",
+        "desc": "utm_source 별 집계 (instagram, naver 등)"
+      },
+      "utmMedium": {
+        "title": "UTM 매체",
+        "desc": "utm_medium 별 집계 (bio, ad, email 등)"
+      },
+      "utmContent": {
+        "title": "UTM 콘텐츠",
+        "desc": "utm_content 별 집계 (배너, A/B 슬롯 구분)"
+      },
       "srcChannel": {
         "title": "공유 채널 (?src)",
         "desc": "단축 URL 자체에 실은 ?src= 파라미터로 추적 (QR/카톡/오프라인 등 referrer 비어있는 경로)",
         "empty": "?src 파라미터로 들어온 클릭 없음"
       },
-      "bots": { "title": "봇 종류", "desc": "Googlebot · Slackbot 등 분리" },
-      "country": { "title": "국가", "desc": "GeoLite2-City IP 룩업" },
-      "region": { "title": "지역", "desc": "state / province 단위" },
-      "city": { "title": "도시", "desc": "city 단위" },
-      "language": { "title": "언어", "desc": "브라우저 Accept-Language 첫 항목" },
+      "bots": {
+        "title": "봇 종류",
+        "desc": "Googlebot · Slackbot 등 분리"
+      },
+      "country": {
+        "title": "국가",
+        "desc": "GeoLite2-City IP 룩업"
+      },
+      "region": {
+        "title": "지역",
+        "desc": "state / province 단위"
+      },
+      "city": {
+        "title": "도시",
+        "desc": "city 단위"
+      },
+      "language": {
+        "title": "언어",
+        "desc": "브라우저 Accept-Language 첫 항목"
+      },
       "asn": {
         "title": "네트워크 / ASN",
         "desc": "유입 IP 의 자율 시스템 (ISP / 클라우드 사업자) 분포. 데이터센터 클릭 {dc}건은 봇으로 자동 분류됨.",
@@ -536,11 +590,24 @@
     "noUtm": "UTM 캠페인 데이터 없음",
     "noBot": "봇 클릭 없음",
     "weekday": {
-      "MONDAY": "월", "TUESDAY": "화", "WEDNESDAY": "수",
-      "THURSDAY": "목", "FRIDAY": "금", "SATURDAY": "토", "SUNDAY": "일"
+      "MONDAY": "월",
+      "TUESDAY": "화",
+      "WEDNESDAY": "수",
+      "THURSDAY": "목",
+      "FRIDAY": "금",
+      "SATURDAY": "토",
+      "SUNDAY": "일"
     },
-    "device": { "mobile": "모바일", "desktop": "데스크톱", "tablet": "태블릿", "bot": "봇", "unknown": "기타" },
-    "country": { "unknown": "Unknown" },
+    "device": {
+      "mobile": "모바일",
+      "desktop": "데스크톱",
+      "tablet": "태블릿",
+      "bot": "봇",
+      "unknown": "기타"
+    },
+    "country": {
+      "unknown": "Unknown"
+    },
     "countryTable": {
       "country": "국가",
       "clicks": "클릭",
@@ -574,10 +641,22 @@
       "ofAllLinks": "of all links"
     },
     "section": {
-      "trend": { "title": "일별 추세", "desc": "최근 30일 · 가입 / 링크 생성 / 클릭" },
-      "topUsersByLinks": { "title": "Top 사용자 (링크 수)", "desc": "가장 많은 링크를 만든 사용자 10명" },
-      "topUsersByClicks": { "title": "Top 사용자 (클릭 수)", "desc": "가장 많은 클릭을 받은 사용자 10명" },
-      "topLinks": { "title": "Top 링크", "desc": "가장 많이 클릭된 링크 10개" },
+      "trend": {
+        "title": "일별 추세",
+        "desc": "최근 30일 · 가입 / 링크 생성 / 클릭"
+      },
+      "topUsersByLinks": {
+        "title": "Top 사용자 (링크 수)",
+        "desc": "가장 많은 링크를 만든 사용자 10명"
+      },
+      "topUsersByClicks": {
+        "title": "Top 사용자 (클릭 수)",
+        "desc": "가장 많은 클릭을 받은 사용자 10명"
+      },
+      "topLinks": {
+        "title": "Top 링크",
+        "desc": "가장 많이 클릭된 링크 10개"
+      },
       "redirectPerf": {
         "title": "리다이렉트 성능",
         "desc": "단축 URL → 원본/도착지 처리 지연. 전체 인스턴스가 처음 시작된 이후 누적치.",
@@ -618,7 +697,9 @@
         "emptyFiltered": "조건에 맞는 에러가 없어요",
         "reload": "새로고침",
         "searchPlaceholder": "메시지 / 예외 / 라우트 / task 검색",
-        "filter": { "all": "ALL" },
+        "filter": {
+          "all": "ALL"
+        },
         "detail": {
           "thread": "thread",
           "requestId": "requestId",
@@ -711,7 +792,11 @@
         "desc": "새 request_metrics 테이블 기반 — 모든 HTTP 요청이 비동기로 누적되어 short_code 별 outcome 분포, 개별 요청 drill-down 같이 timer 기반 위 섹션이 못 답하는 질문에 답함. 빈 테이블일 때 (초기 배포) '샘플 표시' 로 레이아웃 미리보기.",
         "mockOn": "샘플 표시 중",
         "mockOff": "샘플 표시",
-        "window": { "1h": "1시간", "24h": "24시간", "7d": "7일" },
+        "window": {
+          "1h": "1시간",
+          "24h": "24시간",
+          "7d": "7일"
+        },
         "routes": {
           "title": "라우트",
           "empty": "이 윈도우의 요청 기록 없음",
@@ -729,7 +814,11 @@
         }
       }
     },
-    "trend": { "signups": "가입", "links": "링크", "clicks": "클릭" },
+    "trend": {
+      "signups": "가입",
+      "links": "링크",
+      "clicks": "클릭"
+    },
     "table": {
       "user": "사용자",
       "shortCode": "짧은 코드",
@@ -937,7 +1026,10 @@
     "ja": "日本語"
   },
   "whyKurl": {
-    "th": { "feature": "기능", "others": "보통의 무료 단축기" },
+    "th": {
+      "feature": "기능",
+      "others": "보통의 무료 단축기"
+    },
     "paidTier": "유료 플랜",
     "disclaimer": "비교 대상: bit.ly / short.io / rebrandly / TinyURL 의 무료 등급 기준 (2026 기준).",
     "rows": {
@@ -1319,15 +1411,42 @@
           "allTime": "누적",
           "viewAll": "차트 보기"
         },
-        "daily": { "title": "최근 30 일 방문 추이", "desc": "일별 사람 방문 수 (봇 제외)" },
-        "heatmap": { "title": "요일 × 시간 히트맵", "desc": "방문이 몰리는 요일/시간대" },
-        "countries": { "title": "국가별 방문", "desc": "상위 50 개국까지" },
-        "devices": { "title": "기기", "desc": "모바일 / 데스크탑 / 태블릿" },
-        "browsers": { "title": "브라우저", "desc": "상위 10 개까지" },
-        "referrers": { "title": "유입 도메인", "desc": "어떤 사이트에서 왔는지" },
-        "channels": { "title": "공유 채널", "desc": "?src= 로 추적된 출처" },
-        "utmCampaigns": { "title": "캠페인 (utm_campaign)", "desc": "캠페인 빌더 / 외부 발송 추적" },
-        "utmSources": { "title": "UTM source", "desc": "이메일 / SNS 등 출처" },
+        "daily": {
+          "title": "최근 30 일 방문 추이",
+          "desc": "일별 사람 방문 수 (봇 제외)"
+        },
+        "heatmap": {
+          "title": "요일 × 시간 히트맵",
+          "desc": "방문이 몰리는 요일/시간대"
+        },
+        "countries": {
+          "title": "국가별 방문",
+          "desc": "상위 50 개국까지"
+        },
+        "devices": {
+          "title": "기기",
+          "desc": "모바일 / 데스크탑 / 태블릿"
+        },
+        "browsers": {
+          "title": "브라우저",
+          "desc": "상위 10 개까지"
+        },
+        "referrers": {
+          "title": "유입 도메인",
+          "desc": "어떤 사이트에서 왔는지"
+        },
+        "channels": {
+          "title": "공유 채널",
+          "desc": "?src= 로 추적된 출처"
+        },
+        "utmCampaigns": {
+          "title": "캠페인 (utm_campaign)",
+          "desc": "캠페인 빌더 / 외부 발송 추적"
+        },
+        "utmSources": {
+          "title": "UTM source",
+          "desc": "이메일 / SNS 등 출처"
+        },
         "publicTitle": "@{username} 의 프로필 방문 통계",
         "publicIntro": "프로필 소유자가 공개해 둔 집계 통계입니다.",
         "publicNotAvailable": {
@@ -1431,7 +1550,6 @@
       },
       "galleryAddRow": "이미지 추가",
       "galleryRowSummary": "이미지 {count}장",
-      "save": "저장",
       "cancel": "취소",
       "addTextPlaceholder": "(빈 텍스트)",
       "addTextTitle": "텍스트 추가",
@@ -1632,6 +1750,9 @@
       "chip1": "5분이면 첫 캠페인",
       "chip2": "Canva·인디자인 PDF 지원",
       "chip3": "연결 페이지 언제든 변경",
+      "chip1Short": "5분이면 시작",
+      "chip2Short": "PDF 지원",
+      "chip3Short": "링크 변경",
       "cta": "QR 만들기"
     },
     "s1": {

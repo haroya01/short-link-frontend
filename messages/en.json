@@ -697,7 +697,9 @@
         "emptyFiltered": "No errors match the current filter",
         "reload": "Reload",
         "searchPlaceholder": "search message / exception / route / task",
-        "filter": { "all": "ALL" },
+        "filter": {
+          "all": "ALL"
+        },
         "detail": {
           "thread": "thread",
           "requestId": "requestId",
@@ -1409,15 +1411,42 @@
           "allTime": "All time",
           "viewAll": "See charts"
         },
-        "daily": { "title": "Last 30 days", "desc": "Daily human visits (bots excluded)" },
-        "heatmap": { "title": "Day × hour heatmap", "desc": "When visitors land on your page" },
-        "countries": { "title": "By country", "desc": "Top 50" },
-        "devices": { "title": "Devices", "desc": "Mobile / desktop / tablet" },
-        "browsers": { "title": "Browsers", "desc": "Top 10" },
-        "referrers": { "title": "Referrers", "desc": "Which sites sent the visitor" },
-        "channels": { "title": "Share channels", "desc": "Tracked via ?src=" },
-        "utmCampaigns": { "title": "Campaigns (utm_campaign)", "desc": "From the campaign builder or external sends" },
-        "utmSources": { "title": "UTM source", "desc": "Email / SNS / etc." },
+        "daily": {
+          "title": "Last 30 days",
+          "desc": "Daily human visits (bots excluded)"
+        },
+        "heatmap": {
+          "title": "Day × hour heatmap",
+          "desc": "When visitors land on your page"
+        },
+        "countries": {
+          "title": "By country",
+          "desc": "Top 50"
+        },
+        "devices": {
+          "title": "Devices",
+          "desc": "Mobile / desktop / tablet"
+        },
+        "browsers": {
+          "title": "Browsers",
+          "desc": "Top 10"
+        },
+        "referrers": {
+          "title": "Referrers",
+          "desc": "Which sites sent the visitor"
+        },
+        "channels": {
+          "title": "Share channels",
+          "desc": "Tracked via ?src="
+        },
+        "utmCampaigns": {
+          "title": "Campaigns (utm_campaign)",
+          "desc": "From the campaign builder or external sends"
+        },
+        "utmSources": {
+          "title": "UTM source",
+          "desc": "Email / SNS / etc."
+        },
         "publicTitle": "@{username} — public visit stats",
         "publicIntro": "Aggregated stats the profile owner chose to share publicly.",
         "publicNotAvailable": {
@@ -1521,7 +1550,6 @@
       },
       "galleryAddRow": "Add image",
       "galleryRowSummary": "{count} images",
-      "save": "Save",
       "cancel": "Cancel",
       "addTextPlaceholder": "(empty text)",
       "addTextTitle": "Add text",
@@ -1722,6 +1750,9 @@
       "chip1": "5 minutes to first campaign",
       "chip2": "Canva / InDesign PDF supported",
       "chip3": "Change destination anytime",
+      "chip1Short": "5-min start",
+      "chip2Short": "PDF ready",
+      "chip3Short": "Editable link",
       "cta": "Create QRs"
     },
     "s1": {

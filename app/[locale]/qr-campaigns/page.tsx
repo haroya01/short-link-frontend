@@ -67,6 +67,7 @@ type HeroSpec = {
   title2: string;
   sub: string;
   chips: [string, string, string];
+  chipsShort: [string, string, string];
   Mock: MockComponent;
 };
 type NarrativeSpec = {
@@ -191,6 +192,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
       title2: tHero("title2"),
       sub: tHero("sub"),
       chips: [tHero("chip1"), tHero("chip2"), tHero("chip3")],
+      chipsShort: [tHero("chip1Short"), tHero("chip2Short"), tHero("chip3Short")],
       Mock: MockKpi,
     },
     {
@@ -352,12 +354,13 @@ function HeroBody({ s }: { s: HeroSpec }) {
         {s.chips.map((chip, ci) => (
           <span
             key={ci}
-            className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-medium text-slate-700 opacity-0"
+            className="inline-flex items-center whitespace-nowrap rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-medium text-slate-700 opacity-0"
             style={{
               animation: `hero-fade 700ms var(--ease) ${850 + ci * 100}ms forwards`,
             }}
           >
-            {chip}
+            <span className="sm:hidden">{s.chipsShort[ci]}</span>
+            <span className="hidden sm:inline">{chip}</span>
           </span>
         ))}
       </div>
