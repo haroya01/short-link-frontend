@@ -114,13 +114,19 @@ function StickyNarrative({ mock }: { mock: MockData }) {
     return () => observer.disconnect();
   }, []);
 
-  // autoplay: 7s 후 다음 섹션으로 smooth scroll (마지막 섹션이면 멈춤). active 변경 시 timer reset
-  // → user manual scroll 해서 §X 로 가도 §X 에서 7s 후 §X+1 로 이어짐. paused 트리거 없음.
+  // autoplay: AUTOPLAY_MS 후 다음 섹션으로 smooth scroll. §6 다음은 §1 로 loop (사용자 요청).
+  // inView 가드 — 현재 active 섹션이 viewport 에서 사라졌으면 (e.g. 사용자가 FinalCta 까지 스크롤
+  // 다운) 자동 루프로 다시 위로 끌어오지 않음. paused 트리거 대용.
   useEffect(() => {
     if (active < 0) return;
-    if (active >= SECTION_COUNT - 1) return;
     const timer = window.setTimeout(() => {
-      const next = sectionRefs.current[active + 1];
+      const current = sectionRefs.current[active];
+      if (!current) return;
+      const rect = current.getBoundingClientRect();
+      const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+      if (!inView) return;
+      const nextIdx = (active + 1) % SECTION_COUNT;
+      const next = sectionRefs.current[nextIdx];
       if (!next) return;
       next.scrollIntoView({ behavior: "smooth", block: "center" });
     }, AUTOPLAY_MS);
@@ -177,6 +183,16 @@ function StickyNarrative({ mock }: { mock: MockData }) {
 
   return (
     <section className="relative bg-slate-50/40">
+      {/* 모바일 전용 sticky progress chip — 어느 §에 있는지 + 다음 전환까지 countdown.
+          데스크탑은 left sticky 컬럼 안의 ProgressDots 가 같은 역할.
+          글로벌 header (h-14, z-50) 바로 아래에 붙임. */}
+      <div className="pointer-events-none sticky top-16 z-20 flex justify-center px-4 lg:hidden">
+        <ProgressDots
+          count={SECTION_COUNT}
+          active={active}
+          className="rounded-full bg-white/85 px-2.5 py-1.5 shadow-sm backdrop-blur"
+        />
+      </div>
       <div className="lg:flex">
         <div className="relative hidden lg:flex lg:sticky lg:top-0 lg:h-screen lg:w-1/2 lg:items-center lg:justify-center">
           {sections.map((s, i) => {
@@ -201,7 +217,11 @@ function StickyNarrative({ mock }: { mock: MockData }) {
               </div>
             );
           })}
-          <ProgressDots count={SECTION_COUNT} active={active} />
+          <ProgressDots
+            count={SECTION_COUNT}
+            active={active}
+            className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2"
+          />
         </div>
 
         <div className="lg:w-1/2">
@@ -315,9 +335,17 @@ function StickyNarrative({ mock }: { mock: MockData }) {
   );
 }
 
-function ProgressDots({ count, active }: { count: number; active: number }) {
+function ProgressDots({
+  count,
+  active,
+  className = "",
+}: {
+  count: number;
+  active: number;
+  className?: string;
+}) {
   return (
-    <div className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+    <div className={"flex gap-2 " + className}>
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
