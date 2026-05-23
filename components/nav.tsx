@@ -6,6 +6,19 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 // warning in development. Fall back to `useEffect` during SSR; the indicator stays opacity-0
 // until the first client measurement so the swap is invisible. Pattern lifted from React docs +
 // react-redux's `useIsomorphicLayoutEffect`.
+/**
+ * 로그인 버튼이 가는 /login URL — 현재 페이지에 따라 ?next= 부착해서 로그인 후 자연스러운
+ * 행선지로. 페이지에 명시적 의도가 없으면 그냥 /login (callback 의 default /dashboard).
+ * pathname 은 i18n usePathname() 결과라 이미 locale prefix 없음.
+ *
+ * next 행선지는 login/callback 양쪽의 ALLOWED_NEXT_PATHS 화이트리스트에 있어야 함.
+ */
+function loginHrefFor(pathname: string): string {
+  if (pathname.startsWith("/qr-campaigns")) return "/login?next=/campaigns";
+  if (pathname.startsWith("/showcase")) return "/login?next=/profile/edit";
+  return "/login";
+}
+
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 import { LogOut, Menu, X } from "lucide-react";
@@ -151,7 +164,7 @@ export function Nav() {
               <span className="hidden sm:inline">{t("logout")}</span>
             </Button>
           ) : (
-            <Link href="/login">
+            <Link href={loginHrefFor(pathname)}>
               <Button size="sm" variant="default">
                 {t("login")}
               </Button>
