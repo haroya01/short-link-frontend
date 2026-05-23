@@ -25,6 +25,7 @@ export default function NewCampaignPage() {
   const [defaultDestinationUrl, setDefaultDestinationUrl] = useState("");
   const [postEndAction, setPostEndAction] = useState<CampaignPostEndAction>("KEEP");
   const [postEndDestinationUrl, setPostEndDestinationUrl] = useState("");
+  const [postEndMessage, setPostEndMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   if (ready && !authenticated) {
@@ -58,6 +59,10 @@ export default function NewCampaignPage() {
         defaultDestinationUrl: defaultDestinationUrl.trim() || undefined,
         postEndAction,
         postEndDestinationUrl: redirectRequired ? postEndDestinationUrl.trim() : undefined,
+        postEndMessage:
+          postEndAction === "EXPIRE" && postEndMessage.trim().length > 0
+            ? postEndMessage.trim()
+            : undefined,
       });
       toast("QR 캠페인이 만들어졌어요", "success");
       router.push(`/campaigns/${created.id}`);
@@ -163,6 +168,21 @@ export default function NewCampaignPage() {
               title="만료 페이지로"
               body="QR 을 스캔하면 '이 QR 캠페인은 종료됐어요' 안내 페이지를 봅니다."
             />
+            {postEndAction === "EXPIRE" && (
+              <div className="ml-6 mt-2 space-y-1.5">
+                <textarea
+                  value={postEndMessage}
+                  onChange={(e) => setPostEndMessage(e.target.value.slice(0, 500))}
+                  placeholder={`예: 캠페인이 종료됐어요. 다음 이벤트는 12월에 만나요.\n문의 — @kurl_official`}
+                  rows={3}
+                  className="block w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-900 placeholder:text-slate-400 focus:border-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-100"
+                />
+                <p className="text-[12px] text-slate-500">
+                  비워두면 기본 안내문이 표시됩니다. 줄바꿈은 그대로 보입니다 ·{" "}
+                  <span className="tabular-nums">{postEndMessage.length}/500</span>
+                </p>
+              </div>
+            )}
             <PolicyOption
               active={postEndAction === "REDIRECT"}
               onClick={() => setPostEndAction("REDIRECT")}

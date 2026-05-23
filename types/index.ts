@@ -866,6 +866,7 @@ export type CampaignDetail = {
   defaultDestinationUrl: string | null;
   postEndAction: CampaignPostEndAction;
   postEndDestinationUrl: string | null;
+  postEndMessage: string | null;
   batchCount: number;
   createdAt: string;
   updatedAt: string;
@@ -878,6 +879,7 @@ export type CampaignCreatePayload = {
   defaultDestinationUrl?: string;
   postEndAction?: CampaignPostEndAction;
   postEndDestinationUrl?: string;
+  postEndMessage?: string;
 };
 
 export type CampaignUpdatePayload = Partial<{
@@ -886,6 +888,7 @@ export type CampaignUpdatePayload = Partial<{
   defaultDestinationUrl: string;
   postEndAction: CampaignPostEndAction;
   postEndDestinationUrl: string;
+  postEndMessage: string;
 }>;
 
 export type CampaignBatch = {
