@@ -141,7 +141,11 @@
     "metaSuffix": "sample",
     "sampleBanner": "Sample page · yours can look like this",
     "sampleCta": "Make my profile",
-    "scrollCue": "See real examples"
+    "scrollCue": "See real examples",
+    "meta": {
+      "title": "Profile page examples · Link in bio gallery - kurl",
+      "description": "How creators, sellers, and small businesses run their bio page on kurl. Link in bio + QR business card + click analytics — one page, all the surfaces."
+    }
   },
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
@@ -1157,7 +1161,11 @@
     "proHoldBadge": "Coming soon",
     "proHoldNotice": "Pro is on hold while we finish the billing pipeline. The Free plan still ships 200 links, 8 analytics dimensions, 5 webhooks per link, and 2FA — every feature listed below is live today.",
     "proHoldCta": "Not available yet",
-    "proEta": "We'll email you when it launches — start with Free for now."
+    "proEta": "We'll email you when it launches — start with Free for now.",
+    "meta": {
+      "title": "Pricing · Free URL shortener, Pro for unlimited - kurl",
+      "description": "Start free with URL shortening and click analytics. Pro adds unlimited links, custom-domain auto TLS, and permanent stats retention."
+    }
   },
   "terms": {
     "title": "Terms of Service",
