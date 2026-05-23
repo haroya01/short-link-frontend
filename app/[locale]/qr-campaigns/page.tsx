@@ -360,7 +360,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                 ref={(el) => {
                   sectionRefs.current[i] = el;
                 }}
-                className="flex flex-col justify-center px-6 py-20 sm:px-12 sm:py-24 lg:min-h-screen lg:px-16 lg:py-0"
+                className="flex flex-col justify-center px-6 py-12 sm:px-12 sm:py-16 lg:min-h-screen lg:px-16 lg:py-0"
               >
                 {s.kind === "hero" ? (
                   <>
@@ -449,7 +449,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                     )}
                   </>
                 )}
-                <div className="mt-10 lg:hidden">
+                <div className="mx-auto mt-8 w-full max-w-sm lg:hidden">
                   <s.Mock mock={mock} active={isActive} />
                 </div>
               </div>
@@ -720,8 +720,8 @@ function MockPoster({ active }: { mock: MockData; active: boolean }) {
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      {/* PDF 페이지 시뮬레이션 + 박스 이동 + QR 등장 시퀀스 */}
-      <div className="relative aspect-[1/1.414] overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+      {/* PDF 페이지 시뮬레이션 + 박스 이동 + QR 등장 시퀀스. 모바일은 4/5, lg+ 만 A4 비율 (mobile 풀폭이면 1/1.414 는 ~440px+ 로 과함). */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-b from-slate-50 to-white lg:aspect-[1/1.414]">
         {/* 회색 placeholder content — 디자이너가 만든 포스터 디자인의 윤곽 흉내 */}
         <div className="absolute inset-0 flex flex-col gap-2.5 p-6">
           <div className="h-3 w-3/5 rounded-sm bg-slate-200" />
