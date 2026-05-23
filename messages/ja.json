@@ -143,13 +143,10 @@
     "customCodeLabel": "カスタムコード (3-16文字、英数字のみ)",
     "customCodePlaceholder": "myLink2026",
     "expiresAtLabel": "有効期限 (任意)",
-    "utmTitle": "どこからクリックされたか追跡 (任意)",
-    "utmHint": "チャネルを選んでください — 1 チャネルにつき URL 1 つ、統計も別々に。",
-    "utmExample": "同じ動画を Instagram + Twitter に投稿するなら、URL 2 つ、クリック統計も別々。",
-    "campaignPlaceholder": "キャンペーン名 (例: spring-event)",
-    "campaignLabel": "このクリックをひとつの名前でまとめる",
-    "variantsCount": "{count} 個の短縮 URL を作成",
-    "variantsCountPlural": "{count} 個の短縮 URL を作成 — チャネルごとに 1 つずつ。",
+    "utmTitle": "複数の場所に投稿するリンクですか?",
+    "utmSubtitle": "チャネルを選ぶと、それぞれ別の URL が作られます。統計でどこからのクリックか別に集計されます。",
+    "variantsSummarySingle": "{labels} 専用リンク 1 本。",
+    "variantsSummary": "{count} 本 — それぞれ別 URL ({labels})。",
     "errors": {
       "empty": "URLを入力してください。",
       "invalid": "http:// または https:// で始まる正しいURLが必要です。",
@@ -170,13 +167,8 @@
     "copied": "コピー済み",
     "open": "開く",
     "anonymousExpiryInline": "24 時間で失効",
-    "anonymousAfterClicksInline": "{count} クリック — 永続保存する",
     "anonymousExpiryAt": "{when} 失効",
-    "anonymousExpirySignup": "サインイン",
-    "live": {
-      "clicks": "{count, plural, other {# クリック}}",
-      "bot": "bot"
-    }
+    "anonymousExpirySignup": "サインイン"
   },
   "login": {
     "title": "ログイン",
