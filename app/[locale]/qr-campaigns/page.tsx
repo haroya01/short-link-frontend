@@ -231,10 +231,9 @@ function StickyNarrative({ mock }: { mock: MockData }) {
 
   return (
     <section className="relative bg-slate-50/40">
-      {/* 모바일 레이아웃 — 각 § 가 정확히 viewport 한 화면 (h-[100svh]) 에 맞춰지도록.
-          svh = small viewport height: 모바일 toolbar 까지 빼고 계산되는 작은 viewport 단위라
-          페이지 어디서 멈춰도 § 가 한눈에 들어옴. overflow-hidden 으로 콘텐츠가 넘쳐도 잘림.
-          scroll-mt-14 = global sticky header (h-14) 보정. */}
+      {/* 모바일 레이아웃 — 각 § 가 viewport 한 화면을 채우되 (min-h-[100svh]) 콘텐츠 비율은
+          원래대로. 강제 h-[100svh] + 작은 mock 으로 어색해진 회귀를 되돌림. mock 은 다시 max-w-sm
+          (384px). scroll-mt-14 = global sticky header (h-14) 보정. */}
       <div className="lg:hidden">
         {sections.map((s, i) => {
           const isActive = i === active;
@@ -245,14 +244,14 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                 mobileRefs.current[i] = el;
               }}
               data-section-idx={i}
-              className="flex h-[100svh] flex-col justify-center gap-6 overflow-hidden px-6 py-6 scroll-mt-14 sm:gap-7 sm:px-12 sm:py-10"
+              className="flex min-h-[100svh] flex-col justify-center gap-7 px-6 py-8 scroll-mt-14 sm:gap-8 sm:px-12 sm:py-12"
             >
               {s.kind === "hero" ? (
                 <HeroBody s={s} />
               ) : (
                 <NarrativeBody s={s} isActive={isActive} />
               )}
-              <div className="mx-auto w-full max-w-[260px]">
+              <div className="mx-auto w-full max-w-sm">
                 <s.Mock mock={mock} active={isActive} />
               </div>
             </div>
