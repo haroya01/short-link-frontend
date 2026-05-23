@@ -39,7 +39,16 @@ export function ProfileHeader({
       {bannerUrl && bannerInline && (
         <div className="-mx-4 mb-2 aspect-[3/1] w-[calc(100%+2rem)] overflow-hidden sm:mx-0 sm:w-full sm:rounded-xl">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={bannerUrl} alt="" className="h-full w-full object-cover" />
+          <img
+            src={bannerUrl}
+            alt=""
+            width={1200}
+            height={400}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
         </div>
       )}
       {avatarUrl ? (
@@ -49,7 +58,16 @@ export function ProfileHeader({
           }`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={avatarUrl} alt={username} className="h-full w-full object-cover" />
+          <img
+            src={avatarUrl}
+            alt={username}
+            width={96}
+            height={96}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
         </div>
       ) : (
         <div
