@@ -249,7 +249,12 @@ function StickyNarrative({ mock }: { mock: MockData }) {
               {s.kind === "hero" ? (
                 <HeroBody s={s} />
               ) : (
-                <NarrativeBody s={s} isActive={isActive} />
+                // §2~6 의 mock 시작 Y 를 통일하기 위한 min-h. line1+line2 + (optional aux) 의
+                // 최대 자연 높이가 ~100-110px 이므로 120px 으로 천장 잡음. §6 (aux 없음) 은
+                // 텍스트 50px + 패딩으로 부족분이 채워짐.
+                <div className="min-h-[120px]">
+                  <NarrativeBody s={s} isActive={isActive} />
+                </div>
               )}
               <div className="mx-auto w-full max-w-sm">
                 <s.Mock mock={mock} active={isActive} />
