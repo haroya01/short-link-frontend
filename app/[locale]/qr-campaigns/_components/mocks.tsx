@@ -237,15 +237,17 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
   }, []);
 
   return (
+    // 모바일에서 다른 mock 보다 세로가 크다는 사용자 피드백 → MockPoster 만 max-width 좁게 cap.
+    // 다른 mock 은 부모의 max-w-sm 그대로.
     <div
-      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700"
+      className="mx-auto max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700 sm:max-w-[300px] lg:max-w-none"
       style={{
         transitionTimingFunction: EASE,
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      {/* PDF 페이지 시뮬레이션 + 박스 이동 + QR 등장 시퀀스. 모바일은 4/5, lg+ 만 A4 비율 (mobile 풀폭이면 1/1.414 는 ~440px+ 로 과함). */}
+      {/* PDF 페이지 시뮬레이션 + 박스 이동 + QR 등장 시퀀스. 모바일은 4/5, lg+ 만 A4 비율. */}
       <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-b from-slate-50 to-white lg:aspect-[1/1.414]">
         {/* 회색 placeholder content — 디자이너가 만든 포스터 디자인의 윤곽 흉내 */}
         <div className="absolute inset-0 flex flex-col gap-2.5 p-6">
