@@ -174,7 +174,10 @@ function StickyNarrative({ mock }: { mock: MockData }) {
         if (!inView) return;
         const next = mobileRefs.current[nextIdx];
         if (!next) return;
-        next.scrollIntoView({ behavior: "smooth", block: "center" });
+        // h-[100svh] § 이므로 block:"start" 가 viewport 정확히 채움. scroll-mt-14 가 sticky
+        // header 보정. block:"center" 였을 때 § height > viewport 일 경우 observer 가 중간
+        // 섹션에 반복 fire 해서 active 가 흔들리며 autoplay 가 멈춘 듯 보이는 회귀.
+        next.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }, AUTOPLAY_MS);
     return () => window.clearTimeout(timer);
@@ -228,16 +231,10 @@ function StickyNarrative({ mock }: { mock: MockData }) {
 
   return (
     <section className="relative bg-slate-50/40">
-      {/* 모바일 전용 sticky progress chip. 글로벌 header (h-14, z-50) 바로 아래. */}
-      <div className="pointer-events-none sticky top-16 z-20 flex justify-center px-4 lg:hidden">
-        <ProgressDots
-          count={SECTION_COUNT}
-          active={active}
-          className="rounded-full bg-white/85 px-2.5 py-1.5 shadow-sm backdrop-blur"
-        />
-      </div>
-
-      {/* 모바일 레이아웃 — 기존 스크롤 구조 유지 (텍스트 + mock 세로 스택, 섹션마다 진입) */}
+      {/* 모바일 레이아웃 — 각 § 가 정확히 viewport 한 화면 (h-[100svh]) 에 맞춰지도록.
+          svh = small viewport height: 모바일 toolbar 까지 빼고 계산되는 작은 viewport 단위라
+          페이지 어디서 멈춰도 § 가 한눈에 들어옴. overflow-hidden 으로 콘텐츠가 넘쳐도 잘림.
+          scroll-mt-14 = global sticky header (h-14) 보정. */}
       <div className="lg:hidden">
         {sections.map((s, i) => {
           const isActive = i === active;
@@ -248,14 +245,14 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                 mobileRefs.current[i] = el;
               }}
               data-section-idx={i}
-              className="flex flex-col justify-center px-6 py-12 sm:px-12 sm:py-16"
+              className="flex h-[100svh] flex-col justify-center gap-6 overflow-hidden px-6 py-6 scroll-mt-14 sm:gap-7 sm:px-12 sm:py-10"
             >
               {s.kind === "hero" ? (
                 <HeroBody s={s} />
               ) : (
                 <NarrativeBody s={s} isActive={isActive} />
               )}
-              <div className="mx-auto mt-8 w-full max-w-sm">
+              <div className="mx-auto w-full max-w-[260px]">
                 <s.Mock mock={mock} active={isActive} />
               </div>
             </div>
