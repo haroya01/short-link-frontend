@@ -183,9 +183,18 @@
     "copied": "복사됨",
     "open": "열기",
     "anonymousExpiryTitle": "이 링크는 24시간 동안만 유지돼요",
+    "anonymousSignupAfterClicksTitle": "이 {count}개 클릭과 앞으로의 통계, 가입하면 영구 보존",
     "anonymousExpiryAt": "만료: {when}",
     "anonymousExpirySignup": "가입하면 영구 보존",
-    "anonymousExpirySignupHint": "로그인하면 만료 없이 클릭 통계까지 영구 저장돼요."
+    "anonymousExpirySignupHint": "로그인하면 만료 없이 클릭 통계까지 영구 저장돼요.",
+    "live": {
+      "label": "live",
+      "tagline": "통계 잡히는 중",
+      "clicks": "{count, plural, other {#개 클릭}}",
+      "waiting": "첫 클릭이 들어오면 여기 흘러요",
+      "waitingHint": "시간 · 국가 · 디바이스 · 채널",
+      "bot": "bot"
+    }
   },
   "login": {
     "title": "로그인",

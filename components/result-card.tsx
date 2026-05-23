@@ -4,9 +4,11 @@ import { ArrowRight, CheckCircle2, Clock, Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "./copy-button";
 import { QrButton } from "./qr-button";
+import { ResultCardLive } from "./result-card-live";
 import { ShareButton } from "./share-button";
 import { useToast } from "./ui/toast";
 import { Link } from "@/i18n/navigation";
+import { useClickStream } from "@/lib/use-click-stream";
 import { truncateMiddle } from "@/lib/utils";
 import type { CreateLinkResponse } from "@/types";
 
@@ -26,7 +28,7 @@ type Props = {
 const ANONYMOUS_TTL_HOURS = 24;
 
 /**
- * Three-tier visual hierarchy.
+ * Three-tier visual hierarchy plus a live-stats strip.
  *
  * <ol>
  *   <li><b>Primary</b> — the new short URL. Owns its own white row, mono semibold, full-bleed
@@ -36,18 +38,25 @@ const ANONYMOUS_TTL_HOURS = 24;
  *       three buttons share size + spacing instead of fighting for inline real estate with the
  *       URL. Copy stays the only filled (accent) button per the AGENTS.md "one primary CTA per
  *       card" rule; Share + QR are outline-tier siblings.</li>
+ *   <li><b>Live strip</b> — Compact SSE feed via {@link ResultCardLive}. Proves the "stats" half
+ *       of the hero promise the moment the URL exists; first click slides in instead of forcing
+ *       the user to navigate to /stats to see anything happening. The auth channel is the
+ *       anonymous claim token when present (matches the just-created link, no session needed)
+ *       and falls back to the stored JWT for authenticated shortens.</li>
  *   <li><b>Meta</b> — the original URL is prefixed by a {@code Link2} icon to anchor it as a
  *       "source" line instead of a floating text fragment, matching the Information-archetype
  *       inline-icon convention.</li>
  * </ol>
  *
- * The 24h-TTL strip stays as the last child (PR #229) but moves from translucent
- * {@code bg-white/70} to solid {@code bg-white} so it reads as a distinct CTA card on the
- * tinted parent surface instead of "fading out".
+ * The 24h-TTL strip stays as the last child but flips its lead message from "time to expiry" to
+ * "data to preserve" once clicks have arrived — the loss-aversion grip on signup is stronger
+ * after the user has watched their URL collect real traffic than before.
  */
 export function ResultCard({ result, originalUrl, channel, authenticated }: Props) {
   const t = useTranslations("result");
   const { toast } = useToast();
+
+  const stream = useClickStream(result.shortCode, { claimToken: result.claimToken });
 
   const expiresAt = authenticated
     ? null
@@ -95,7 +104,14 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
           <QrButton url={result.shortUrl} />
         </div>
 
-        {/* Tier 3 — meta: anchored source row */}
+        {/* Tier 3 — live: SSE feed proves the "stats" promise without requiring navigation */}
+        <ResultCardLive
+          items={stream.items}
+          connected={stream.connected}
+          count={stream.count}
+        />
+
+        {/* Tier 4 — meta: anchored source row */}
         <div className="flex items-start gap-1.5 text-[12px] text-slate-500" title={originalUrl}>
           <Link2 className="mt-0.5 h-3 w-3 shrink-0 text-slate-400" aria-hidden />
           <span className="min-w-0 flex-1 truncate">
@@ -111,7 +127,9 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
               <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent-700" />
               <div className="min-w-0 flex-1 space-y-1">
                 <p className="text-[13px] font-medium text-slate-900">
-                  {t("anonymousExpiryTitle")}
+                  {stream.count > 0
+                    ? t("anonymousSignupAfterClicksTitle", { count: stream.count })
+                    : t("anonymousExpiryTitle")}
                 </p>
                 <p className="font-mono text-[11px] text-slate-500">
                   {t("anonymousExpiryAt", { when: formatExpiry(expiresAt) })}
