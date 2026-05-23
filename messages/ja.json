@@ -150,7 +150,6 @@
     "campaignLabel": "このクリックをひとつの名前でまとめる",
     "variantsCount": "{count} 個の短縮 URL を作成",
     "variantsCountPlural": "{count} 個の短縮 URL を作成 — チャネルごとに 1 つずつ。",
-    "anonymousNotice": "未ログインのリンクは 24 時間後に自動失効します。永続保存にはサインインしてください。",
     "errors": {
       "empty": "URLを入力してください。",
       "invalid": "http:// または https:// で始まる正しいURLが必要です。",
@@ -170,17 +169,12 @@
     "copy": "コピー",
     "copied": "コピー済み",
     "open": "開く",
-    "anonymousExpiryTitle": "未ログインのリンクは 24 時間後に自動失効します",
-    "anonymousSignupAfterClicksTitle": "この {count} 件のクリックと今後の統計、サインインで永久保存",
-    "anonymousExpiryAt": "失効: {when}",
-    "anonymousExpirySignup": "サインインで永久保存",
-    "anonymousExpirySignupHint": "サインインすれば失効せず、クリック統計まで永続保存できます。",
+    "anonymousExpiryInline": "24 時間で失効",
+    "anonymousAfterClicksInline": "{count} クリック — 永続保存する",
+    "anonymousExpiryAt": "{when} 失効",
+    "anonymousExpirySignup": "サインイン",
     "live": {
-      "label": "live",
-      "tagline": "クリックを集計中",
       "clicks": "{count, plural, other {# クリック}}",
-      "waiting": "最初のクリックがここに流れます",
-      "waitingHint": "時刻 · 国 · デバイス · チャネル",
       "bot": "bot"
     }
   },

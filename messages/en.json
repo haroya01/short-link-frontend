@@ -150,7 +150,6 @@
     "campaignLabel": "Group these clicks under one name",
     "variantsCount": "{count} short URL will be generated.",
     "variantsCountPlural": "{count} short URLs will be generated, one per channel.",
-    "anonymousNotice": "Anonymous links auto-expire after 24 hours. Sign in to keep them forever.",
     "errors": {
       "empty": "Please enter a URL.",
       "invalid": "URL must start with http:// or https://.",
@@ -170,17 +169,12 @@
     "copy": "Copy",
     "copied": "Copied",
     "open": "Open",
-    "anonymousExpiryTitle": "Anonymous links expire in 24 hours",
-    "anonymousSignupAfterClicksTitle": "Keep {count, plural, one {this click} other {these # clicks}} and every future one — sign in",
-    "anonymousExpiryAt": "Expires: {when}",
-    "anonymousExpirySignup": "Keep it forever — sign in",
-    "anonymousExpirySignupHint": "Sign in to keep your link and analyze every click — no expiry.",
+    "anonymousExpiryInline": "Expires in 24h",
+    "anonymousAfterClicksInline": "{count, plural, one {# click} other {# clicks}} — keep them",
+    "anonymousExpiryAt": "Expires {when}",
+    "anonymousExpirySignup": "Sign in",
     "live": {
-      "label": "live",
-      "tagline": "tracking clicks",
       "clicks": "{count, plural, one {# click} other {# clicks}}",
-      "waiting": "First click will stream in here",
-      "waitingHint": "time · country · device · channel",
       "bot": "bot"
     }
   },

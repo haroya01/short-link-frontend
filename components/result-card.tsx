@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, CheckCircle2, Clock, Link2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "./copy-button";
 import { QrButton } from "./qr-button";
@@ -17,10 +17,10 @@ type Props = {
   originalUrl: string;
   channel?: string;
   /**
-   * When false (anonymous shortener path), the card surfaces the 24h auto-expiry policy plus a
+   * When false (anonymous shortener path), the card surfaces the 24h auto-expiry strip plus a
    * signup CTA. Backend enforces {@code ANONYMOUS_TTL = Duration.ofDays(1)} so this mirrors the
-   * server-side rule rather than re-deriving it. Authenticated shortens never auto-expire
-   * (unless the user picked their own {@code expiresAt}) so we skip the strip entirely.
+   * server-side rule rather than re-deriving it. Authenticated shortens never auto-expire (unless
+   * the user picked their own {@code expiresAt}) so we skip the strip entirely.
    */
   authenticated: boolean;
 };
@@ -28,29 +28,27 @@ type Props = {
 const ANONYMOUS_TTL_HOURS = 24;
 
 /**
- * Three-tier visual hierarchy plus a live-stats strip.
+ * Apple-tone minimal result card. Earlier revisions stacked seven separately-bordered blocks (the
+ * "✓ 단축 완료" pill, the URL row with its own accent left-bar, the live widget in its own panel,
+ * the original-URL row with a {@code Link2} icon, the expiry block in a fourth panel, ...) which
+ * read as "boxes inside boxes inside boxes" — classic AI-generated overexplain. The rewrite drops
+ * the framing chrome and lets a single white card carry three groups separated by hairlines:
  *
  * <ol>
- *   <li><b>Primary</b> — the new short URL. Owns its own white row, mono semibold, full-bleed
- *       click target (the URL string itself is the {@code target="_blank"} anchor so we don't
- *       double-up with a separate "open" icon button).</li>
- *   <li><b>Secondary</b> — Copy / Share / QR action trio, kept on a single dedicated row so the
- *       three buttons share size + spacing instead of fighting for inline real estate with the
- *       URL. Copy stays the only filled (accent) button per the AGENTS.md "one primary CTA per
- *       card" rule; Share + QR are outline-tier siblings.</li>
- *   <li><b>Live strip</b> — Compact SSE feed via {@link ResultCardLive}. Proves the "stats" half
- *       of the hero promise the moment the URL exists; first click slides in instead of forcing
- *       the user to navigate to /stats to see anything happening. The auth channel is the
- *       anonymous claim token when present (matches the just-created link, no session needed)
- *       and falls back to the stored JWT for authenticated shortens.</li>
- *   <li><b>Meta</b> — the original URL is prefixed by a {@code Link2} icon to anchor it as a
- *       "source" line instead of a floating text fragment, matching the Information-archetype
- *       inline-icon convention.</li>
+ *   <li><b>URL + actions</b> — short URL as the visual anchor (large mono); Copy / Share / QR on
+ *       a wrap-friendly row beneath.</li>
+ *   <li><b>Live status</b> — {@link ResultCardLive} reduced to a pulse dot + count, with rolling
+ *       click rows fading in as they arrive. No labels, no placeholder copy.</li>
+ *   <li><b>Footer meta</b> — original URL (truncated) and, for anonymous shortens, a single-line
+ *       expiry + signup CTA. The verbose "이 링크는 24시간 동안만 유지돼요 / 만료: YYYY-MM-DD
+ *       HH:mm / 가입하면 영구 보존" block collapses to one sentence; the precise timestamp moves
+ *       to a {@code title} attribute so the certainty is still reachable on hover.</li>
  * </ol>
  *
- * The 24h-TTL strip stays as the last child but flips its lead message from "time to expiry" to
- * "data to preserve" once clicks have arrived — the loss-aversion grip on signup is stronger
- * after the user has watched their URL collect real traffic than before.
+ * <p>Mobile concerns: every horizontal row uses {@code min-w-0 + truncate} so long URLs or
+ * channels don't push the card off-viewport. Padding steps from p-4 on phones to p-5 on tablets+,
+ * keeping the URL legible without forcing the user to scroll past two screens of chrome before
+ * they see "copy".
  */
 export function ResultCard({ result, originalUrl, channel, authenticated }: Props) {
   const t = useTranslations("result");
@@ -63,35 +61,20 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
     : new Date(Date.now() + ANONYMOUS_TTL_HOURS * 60 * 60 * 1000);
 
   return (
-    <div className="animate-fade-in card-highlight relative overflow-hidden rounded-2xl border border-accent-200 bg-accent-50/40 p-5">
-      <div className="relative mb-4 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-tagline text-accent-700">
-          <CheckCircle2 className="h-3.5 w-3.5" />
-          {t("completed")}
-        </div>
-        {channel && (
-          <span className="rounded-full border border-accent-200 bg-white/80 px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-accent-700">
-            {channel}
-          </span>
-        )}
-      </div>
-
-      <div className="relative space-y-3">
-        {/* Tier 1 — primary: the new short URL. Rounded-xl + accent border-left bar pulls the row
-            forward from the tinted parent surface; the URL itself stays the click target. */}
+    <div className="animate-fade-in rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+      <div className="space-y-4">
         <a
           href={result.shortUrl}
           target="_blank"
           rel="noreferrer"
-          className="group flex items-center gap-2 rounded-xl border border-slate-200 border-l-2 border-l-accent-500 bg-white px-3.5 py-3 transition hover:border-accent-300 hover:border-l-accent-600 hover:bg-accent-50/30"
+          className="block min-w-0"
           aria-label={t("open")}
         >
-          <span className="min-w-0 flex-1 truncate font-mono text-[15px] font-semibold tracking-tight text-slate-900">
+          <span className="block truncate font-mono text-[15px] font-semibold tracking-tight text-slate-900 sm:text-base">
             {result.shortUrl}
           </span>
         </a>
 
-        {/* Tier 2 — secondary: Copy (primary CTA) + Share + QR siblings on a single row */}
         <div className="flex flex-wrap items-center gap-1.5">
           <CopyButton
             size="sm"
@@ -102,47 +85,48 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
           />
           <ShareButton url={result.shortUrl} title={result.shortUrl} variant="outline" />
           <QrButton url={result.shortUrl} />
+          {channel && (
+            <span className="ml-auto font-mono text-[10px] uppercase tracking-wider text-slate-400">
+              {channel}
+            </span>
+          )}
         </div>
+      </div>
 
-        {/* Tier 3 — live: SSE feed proves the "stats" promise without requiring navigation */}
-        <ResultCardLive
-          items={stream.items}
-          connected={stream.connected}
-          count={stream.count}
-        />
+      <div className="my-4 h-px bg-slate-100" aria-hidden />
 
-        {/* Tier 4 — meta: anchored source row */}
-        <div className="flex items-start gap-1.5 text-[12px] text-slate-500" title={originalUrl}>
-          <Link2 className="mt-0.5 h-3 w-3 shrink-0 text-slate-400" aria-hidden />
-          <span className="min-w-0 flex-1 truncate">
-            <span className="text-slate-400">{t("originalUrl")}</span>
-            <span className="mx-1 text-slate-300">·</span>
-            <span className="text-slate-600">{truncateMiddle(originalUrl, 72)}</span>
-          </span>
-        </div>
+      <ResultCardLive
+        items={stream.items}
+        connected={stream.connected}
+        count={stream.count}
+      />
+
+      <div className="my-4 h-px bg-slate-100" aria-hidden />
+
+      <div className="space-y-2 text-[12px]">
+        <p className="min-w-0 truncate text-slate-500" title={originalUrl}>
+          <span className="text-slate-400">{t("originalUrl")}</span>
+          <span className="mx-1 text-slate-300">·</span>
+          <span className="text-slate-600">{truncateMiddle(originalUrl, 56)}</span>
+        </p>
 
         {expiresAt && (
-          <div className="rounded-md border border-accent-100 border-l-2 border-l-accent-500 bg-white px-3 py-2.5">
-            <div className="flex items-start gap-2">
-              <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent-700" />
-              <div className="min-w-0 flex-1 space-y-1">
-                <p className="text-[13px] font-medium text-slate-900">
-                  {stream.count > 0
-                    ? t("anonymousSignupAfterClicksTitle", { count: stream.count })
-                    : t("anonymousExpiryTitle")}
-                </p>
-                <p className="font-mono text-[11px] text-slate-500">
-                  {t("anonymousExpiryAt", { when: formatExpiry(expiresAt) })}
-                </p>
-                <Link
-                  href="/login"
-                  className="group inline-flex items-center gap-1 text-[12px] font-medium text-accent-700 hover:text-accent-800"
-                >
-                  {t("anonymousExpirySignup")}
-                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              </div>
-            </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 gap-y-1">
+            <span
+              className="text-slate-500"
+              title={t("anonymousExpiryAt", { when: formatExpiry(expiresAt) })}
+            >
+              {stream.count > 0
+                ? t("anonymousAfterClicksInline", { count: stream.count })
+                : t("anonymousExpiryInline")}
+            </span>
+            <Link
+              href="/login"
+              className="group inline-flex shrink-0 items-center gap-1 font-medium text-accent-700 hover:text-accent-800"
+            >
+              {t("anonymousExpirySignup")}
+              <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
         )}
       </div>
@@ -153,7 +137,7 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
 /**
  * Render {@code expiresAt} in the user's local time using their browser locale + 24-hour clock.
  * Falls back to ISO if {@link Intl.DateTimeFormat} can't resolve a useful format (e.g. ancient
- * runtimes / unknown locale). The format intentionally drops seconds — the TTL precision is hours,
+ * runtimes / unknown locale). Seconds intentionally dropped — the TTL precision is hours, so
  * showing :ss would imply more precision than the backend guarantees.
  */
 function formatExpiry(date: Date): string {
