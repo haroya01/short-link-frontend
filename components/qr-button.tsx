@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Copy, Download, Loader2, QrCode, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import QRCode from "qrcode";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "./ui/toast";
@@ -157,12 +156,15 @@ function QrModal({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    QRCode.toCanvas(canvas, target, {
-      width: 512,
-      margin: 1,
-      color: { dark: palette.dark, light: palette.light },
-      errorCorrectionLevel: withLogo ? "H" : "M",
-    })
+    import("qrcode")
+      .then(({ default: QRCode }) =>
+        QRCode.toCanvas(canvas, target, {
+          width: 512,
+          margin: 1,
+          color: { dark: palette.dark, light: palette.light },
+          errorCorrectionLevel: withLogo ? "H" : "M",
+        }),
+      )
       .then(async () => {
         if (cancelled) return;
         if (logoUrl) {
