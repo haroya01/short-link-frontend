@@ -275,23 +275,21 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                   <>
                     <h2 className="break-keep text-[22px] font-semibold leading-[1.2] tracking-headline text-slate-900 sm:text-[32px] lg:text-[40px]">
                       <span
-                        className="inline-block transition-all duration-700"
+                        className="inline-block transition-opacity duration-700"
                         style={{
                           transitionTimingFunction: EASE,
                           opacity: isActive ? 1 : 0,
-                          transform: isActive ? "translateY(0)" : "translateY(16px)",
                         }}
                       >
                         {s.line1}
                       </span>
                       <br />
                       <span
-                        className="inline-block text-slate-500 transition-all duration-700"
+                        className="inline-block text-slate-500 transition-opacity duration-700"
                         style={{
                           transitionTimingFunction: EASE,
                           transitionDelay: isActive ? "180ms" : "0ms",
                           opacity: isActive ? 1 : 0,
-                          transform: isActive ? "translateY(0)" : "translateY(16px)",
                         }}
                       >
                         {s.line2}
@@ -299,12 +297,11 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                     </h2>
                     {s.line3 && (
                       <p
-                        className="mt-3 break-keep text-[16px] leading-[1.25] tracking-headline text-slate-500 transition-all duration-700 sm:text-[22px] lg:text-[26px]"
+                        className="mt-3 break-keep text-[16px] leading-[1.25] tracking-headline text-slate-500 transition-opacity duration-700 sm:text-[22px] lg:text-[26px]"
                         style={{
                           transitionTimingFunction: EASE,
                           transitionDelay: isActive ? "340ms" : "0ms",
                           opacity: isActive ? 1 : 0,
-                          transform: isActive ? "translateY(0)" : "translateY(16px)",
                         }}
                       >
                         {s.line3}
@@ -312,12 +309,11 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                     )}
                     {s.aux && (
                       <p
-                        className="mt-6 break-keep text-[12px] text-slate-500 transition-all duration-700 sm:text-[14px]"
+                        className="mt-6 break-keep text-[12px] text-slate-500 transition-opacity duration-700 sm:text-[14px]"
                         style={{
                           transitionTimingFunction: EASE,
                           transitionDelay: isActive ? "500ms" : "0ms",
                           opacity: isActive ? 1 : 0,
-                          transform: isActive ? "translateY(0)" : "translateY(8px)",
                         }}
                       >
                         ── {s.aux}
