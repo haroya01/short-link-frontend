@@ -300,9 +300,6 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
         </p>
       )}
 
-      {!authenticated && !error && (
-        <p className="text-[11px] leading-snug text-slate-500">{t("anonymousNotice")}</p>
-      )}
     </form>
   );
 }
