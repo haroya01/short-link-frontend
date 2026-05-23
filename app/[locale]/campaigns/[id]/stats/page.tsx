@@ -22,9 +22,9 @@ import {
 } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorState } from "@/components/error-state";
-import { Section } from "@/components/section";
-import { Heatmap } from "@/components/charts/heatmap";
+import { ErrorState } from "@/components/common/error-state";
+import { Section } from "@/components/common/section";
+import { Heatmap } from "@/components/stats/charts/heatmap";
 import type { HeatmapCell } from "@/types";
 import type {
   CampaignDetail,

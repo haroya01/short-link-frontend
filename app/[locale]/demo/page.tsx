@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { DemoStatsPage } from "./_components/DemoStatsPage";
+import { DemoStatsPage } from "./_components/demo-stats-page";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??

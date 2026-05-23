@@ -8,8 +8,8 @@ import { listCampaigns } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ErrorState } from "@/components/error-state";
-import { CampaignOnboarding } from "@/components/campaign-onboarding";
+import { ErrorState } from "@/components/common/error-state";
+import { CampaignOnboarding } from "@/components/campaigns/onboarding";
 import type { CampaignSummary } from "@/types";
 
 export default function CampaignsPage() {

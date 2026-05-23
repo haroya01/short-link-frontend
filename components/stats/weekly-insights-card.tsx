@@ -1,0 +1,203 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { ArrowDownRight, ArrowRight, ArrowUpRight, ChevronDown, Minus } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import { getWeeklyInsights } from "@/lib/api";
+import type { WeeklyInsights } from "@/types";
+import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const DAY_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
+
+export function WeeklyInsightsCard() {
+  const t = useTranslations("weeklyInsights");
+  const fmt = useFormatter();
+  const [data, setData] = useState<WeeklyInsights | null>(null);
+  const [loading, setLoading] = useState(true);
+  // Collapsed on mobile so the dashboard table sits one viewport away instead of three.
+  // The delta badge + eyebrow stays visible — the high-signal "did this week go better" question
+  // is answerable without expanding. Desktop ignores this; the card is always open on sm+.
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    getWeeklyInsights()
+      .then((d) => {
+        if (!cancelled) setData(d);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="rounded-lg border border-slate-200 bg-white p-5">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="mt-3 h-7 w-32" />
+        <Skeleton className="mt-2 h-3 w-48" />
+      </div>
+    );
+  }
+
+  if (!data || data.totalClicks === 0) {
+    return (
+      <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/50 p-5">
+        <p className="text-sm font-medium text-slate-700">{t("eyebrow")}</p>
+        <p className="mt-1 text-xs text-slate-500">{t("emptyDesc")}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white">
+      <button
+        type="button"
+        onClick={() => setMobileOpen((v) => !v)}
+        aria-expanded={mobileOpen}
+        className="flex w-full items-baseline justify-between gap-3 p-5 text-left sm:cursor-default"
+      >
+        <p className="text-sm font-medium text-slate-700">{t("eyebrow")}</p>
+        <div className="flex items-center gap-2">
+          <DeltaBadge delta={data.deltaPercent} t={t} fmt={fmt} />
+          <ChevronDown
+            aria-hidden
+            className={cn(
+              "h-4 w-4 text-slate-400 transition-transform sm:hidden",
+              mobileOpen && "rotate-180",
+            )}
+          />
+        </div>
+      </button>
+
+      <div
+        className={cn(
+          "grid gap-4 px-5 pb-5 sm:grid-cols-2 sm:!grid lg:grid-cols-4",
+          mobileOpen ? "grid" : "hidden",
+        )}
+      >
+        <Stat
+          label={t("humanClicks")}
+          value={fmt.number(data.humanClicks)}
+          sub={
+            data.humanRatio != null
+              ? t("humanRatio", { percent: Math.round(data.humanRatio * 100) })
+              : undefined
+          }
+        />
+        <Stat
+          label={t("topLink")}
+          value={data.topLink ? `/${data.topLink.shortCode}` : "—"}
+          sub={
+            data.topLink
+              ? t("topLinkSub", {
+                  count: data.topLink.clicks,
+                  source: data.topLink.topUtmSource ?? t("noUtm"),
+                })
+              : undefined
+          }
+          mono
+          href={data.topLink ? `/stats/${data.topLink.shortCode}` : undefined}
+        />
+        <Stat
+          label={t("peak")}
+          value={
+            data.peak
+              ? t("peakValue", {
+                  day: t(`days.${DAY_NAMES[(data.peak.dayOfWeek - 1) % 7]}`),
+                  hour: data.peak.hour,
+                })
+              : "—"
+          }
+          sub={data.peak ? t("peakSub", { count: data.peak.clicks }) : undefined}
+        />
+        <Stat
+          label={t("compareLabel")}
+          value={fmt.number(data.previousHumanClicks)}
+          sub={t("compareSub")}
+        />
+      </div>
+    </div>
+  );
+}
+
+function DeltaBadge({
+  delta,
+  t,
+  fmt,
+}: {
+  delta: number | null;
+  t: ReturnType<typeof useTranslations<"weeklyInsights">>;
+  fmt: ReturnType<typeof useFormatter>;
+}) {
+  if (delta == null) {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500">
+        <Minus className="h-3 w-3" />
+        {t("noBaseline")}
+      </span>
+    );
+  }
+  const positive = delta > 0;
+  const flat = Math.abs(delta) < 0.005;
+  const Icon = flat ? Minus : positive ? ArrowUpRight : ArrowDownRight;
+  const tone = flat
+    ? "bg-slate-100 text-slate-600"
+    : positive
+      ? "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200"
+      : "bg-red-50 text-red-700 ring-1 ring-inset ring-red-200";
+  return (
+    <span className={"inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium " + tone}>
+      <Icon className="h-3 w-3" />
+      {fmt.number(delta, { style: "percent", maximumFractionDigits: 0 })}
+    </span>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  sub,
+  mono,
+  href,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  mono?: boolean;
+  href?: string;
+}) {
+  const content = (
+    <>
+      <p className="text-xs text-slate-500">{label}</p>
+      <p
+        className={
+          (mono ? "font-mono " : "") +
+          "mt-1 truncate text-lg font-semibold text-slate-900"
+        }
+        title={value}
+      >
+        {value}
+      </p>
+      {sub && <p className="mt-0.5 truncate text-[11px] text-slate-500">{sub}</p>}
+    </>
+  );
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="group block rounded-md border border-transparent p-1.5 -m-1.5 hover:border-slate-200 hover:bg-slate-50"
+      >
+        {content}
+        <ArrowRight className="mt-1 h-3 w-3 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-500" />
+      </Link>
+    );
+  }
+  return <div className="p-1.5 -m-1.5">{content}</div>;
+}
