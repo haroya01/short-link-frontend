@@ -1,86 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { readToken } from "@/lib/api";
-
-type LiveClick = {
-  id: number;
-  occurredAt: string;
-  countryCode: string;
-  deviceClass: string;
-  channel: string;
-  bot: boolean;
-};
-
-const MAX_FEED = 30;
+import { useClickStream } from "@/lib/use-click-stream";
 
 /**
- * Subscribes to {@code /api/v1/links/{code}/stream} via EventSource and shows the most recent
- * clicks on the stats page in real time. Auto-reconnects with backoff. Closed when the component
- * unmounts.
+ * Stats-page live feed. Auth runs through the JWT path inside {@link useClickStream} (no claim
+ * token here — by the time you've reached the stats page you're authenticated).
  */
 export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick?: () => void }) {
   const t = useTranslations("stats.live");
-  const [items, setItems] = useState<LiveClick[]>([]);
-  const [connected, setConnected] = useState(false);
-  const seqRef = useRef(0);
-  // Stash the latest onTick in a ref so the EventSource useEffect doesn't re-run (and tear down
-  // the connection) every time the parent re-renders with a fresh callback identity.
-  const onTickRef = useRef(onTick);
-  useEffect(() => {
-    onTickRef.current = onTick;
-  }, [onTick]);
-
-  useEffect(() => {
-    const token = readToken();
-    if (!token) return;
-
-    let es: EventSource | null = null;
-    let cancelled = false;
-    let backoff = 1000;
-    let timer: ReturnType<typeof setTimeout> | null = null;
-
-    function open() {
-      if (cancelled) return;
-      // Always hit the backend host directly — Next.js rewrites buffer chunked responses in dev,
-      // and in prod the SPA lives on a different origin (e.g., app.kurl.md → kurl.md). Falls back
-      // to localhost:8080 only when neither env var is set.
-      const base =
-        process.env.NEXT_PUBLIC_API_BASE ??
-        process.env.NEXT_PUBLIC_BACKEND_URL ??
-        (process.env.NODE_ENV === "development" ? "http://localhost:8080" : "");
-      const url = `${base}/api/v1/links/${shortCode}/stream?token=${encodeURIComponent(token!)}`;
-      es = new EventSource(url);
-      es.addEventListener("ready", () => setConnected(true));
-      es.addEventListener("click", (event) => {
-        try {
-          const payload = JSON.parse((event as MessageEvent).data);
-          const id = ++seqRef.current;
-          setItems((prev) => [{ id, ...payload } as LiveClick, ...prev].slice(0, MAX_FEED));
-          onTickRef.current?.();
-        } catch {
-          // ignore malformed payloads
-        }
-      });
-      es.onerror = () => {
-        setConnected(false);
-        es?.close();
-        if (cancelled) return;
-        timer = setTimeout(() => {
-          backoff = Math.min(backoff * 2, 30_000);
-          open();
-        }, backoff);
-      };
-    }
-
-    open();
-    return () => {
-      cancelled = true;
-      if (timer) clearTimeout(timer);
-      es?.close();
-    };
-  }, [shortCode]);
+  const { items, connected } = useClickStream(shortCode, { onTick });
 
   return (
     <div className="space-y-3">

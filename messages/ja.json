@@ -183,9 +183,18 @@
     "copied": "コピー済み",
     "open": "開く",
     "anonymousExpiryTitle": "未ログインのリンクは 24 時間後に自動失効します",
+    "anonymousSignupAfterClicksTitle": "この {count} 件のクリックと今後の統計、サインインで永久保存",
     "anonymousExpiryAt": "失効: {when}",
     "anonymousExpirySignup": "サインインで永久保存",
-    "anonymousExpirySignupHint": "サインインすれば失効せず、クリック統計まで永続保存できます。"
+    "anonymousExpirySignupHint": "サインインすれば失効せず、クリック統計まで永続保存できます。",
+    "live": {
+      "label": "live",
+      "tagline": "クリックを集計中",
+      "clicks": "{count, plural, other {# クリック}}",
+      "waiting": "最初のクリックがここに流れます",
+      "waitingHint": "時刻 · 国 · デバイス · チャネル",
+      "bot": "bot"
+    }
   },
   "login": {
     "title": "ログイン",
