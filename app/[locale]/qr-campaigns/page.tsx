@@ -263,9 +263,8 @@ function StickyNarrative({ mock }: { mock: MockData }) {
         })}
       </div>
 
-      {/* 데스크탑 레이아웃 — 좌/우 컬럼이 viewport 정중앙에 고정. § 전환은 opacity fade 만,
-          좌우 슬라이드/세로 이동 없음. 사용자가 어디서 스크롤을 멈추든 글자는 항상 같은 위치.
-          컬럼 높이 = (SECTION_COUNT + 1) × 100vh — sticky 가 SECTION_COUNT × 100vh 동안 pinned. */}
+      {/* 데스크탑 레이아웃 — 좌/우 컬럼이 viewport 정중앙에 고정. § 전환은 세로 (translateY)
+          슬라이드: 다음 §은 아래에서 위로 올라오고 이전 §은 위로 빠짐. 위치는 항상 화면 중앙. */}
       <div
         ref={desktopContainerRef}
         className="relative hidden lg:block"
@@ -273,18 +272,20 @@ function StickyNarrative({ mock }: { mock: MockData }) {
       >
         <div className="sticky top-0 h-screen">
           <div className="flex h-full">
-            <div className="relative w-1/2">
+            <div className="relative w-1/2 overflow-hidden">
               {sections.map((s, i) => {
                 const isActive = i === active;
+                const base = active < 0 ? 0 : active;
                 return (
                   <div
                     key={i}
                     aria-hidden={!isActive}
                     className="absolute inset-0 flex items-center justify-center p-12"
                     style={{
-                      transition: `opacity 500ms ${EASE}`,
-                      opacity: isActive ? 1 : 0,
+                      transform: `translateY(${(i - base) * 100}%)`,
+                      transition: `transform 700ms ${EASE}`,
                       pointerEvents: isActive ? "auto" : "none",
+                      willChange: "transform",
                     }}
                   >
                     <div className="w-full max-w-[440px]">
@@ -296,22 +297,24 @@ function StickyNarrative({ mock }: { mock: MockData }) {
               <ProgressDots
                 count={SECTION_COUNT}
                 active={active}
-                className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2"
+                className="absolute bottom-10 left-1/2 z-20 -translate-x-1/2"
               />
             </div>
 
-            <div className="relative w-1/2">
+            <div className="relative w-1/2 overflow-hidden">
               {sections.map((s, i) => {
                 const isActive = i === active;
+                const base = active < 0 ? 0 : active;
                 return (
                   <div
                     key={i}
                     aria-hidden={!isActive}
                     className="absolute inset-0 flex flex-col justify-center px-16"
                     style={{
-                      transition: `opacity 500ms ${EASE}`,
-                      opacity: isActive ? 1 : 0,
+                      transform: `translateY(${(i - base) * 100}%)`,
+                      transition: `transform 700ms ${EASE}`,
                       pointerEvents: isActive ? "auto" : "none",
+                      willChange: "transform",
                     }}
                   >
                     {s.kind === "hero" ? (
