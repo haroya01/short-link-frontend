@@ -331,7 +331,7 @@ function HeroBody({ s }: { s: HeroSpec }) {
       <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards]">
         {s.eyebrow}
       </p>
-      <h1 className="mt-4 break-keep text-[26px] font-semibold leading-[1.15] tracking-headline text-slate-900 sm:text-[36px] lg:text-[52px]">
+      <h1 className="mt-3 break-keep text-[26px] font-semibold leading-[1.15] tracking-headline text-slate-900 sm:mt-4 sm:text-[36px] lg:text-[52px]">
         <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards]">
           {s.title1}
         </span>
@@ -340,10 +340,10 @@ function HeroBody({ s }: { s: HeroSpec }) {
           {s.title2}
         </span>
       </h1>
-      <p className="mt-5 max-w-md break-keep text-[13px] leading-relaxed text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:text-[15px]">
+      <p className="mt-3 max-w-md break-keep text-[13px] leading-snug text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:mt-5 sm:text-[15px] sm:leading-relaxed">
         {s.sub}
       </p>
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap gap-2 sm:mt-6">
         {s.chips.map((chip, ci) => (
           <span
             key={ci}
@@ -363,7 +363,7 @@ function HeroBody({ s }: { s: HeroSpec }) {
 function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean }) {
   return (
     <>
-      <h2 className="break-keep text-[22px] font-semibold leading-[1.2] tracking-headline text-slate-900 sm:text-[32px] lg:text-[40px]">
+      <h2 className="break-keep text-[22px] font-semibold leading-[1.15] tracking-headline text-slate-900 sm:text-[32px] sm:leading-[1.2] lg:text-[40px]">
         <span
           className="inline-block transition-opacity duration-700"
           style={{
@@ -387,7 +387,7 @@ function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean })
       </h2>
       {s.line3 && (
         <p
-          className="mt-3 break-keep text-[16px] leading-[1.25] tracking-headline text-slate-500 transition-opacity duration-700 sm:text-[22px] lg:text-[26px]"
+          className="mt-2 break-keep text-[16px] leading-[1.25] tracking-headline text-slate-500 transition-opacity duration-700 sm:mt-3 sm:text-[22px] lg:text-[26px]"
           style={{
             transitionTimingFunction: EASE,
             transitionDelay: isActive ? "340ms" : "0ms",
@@ -399,7 +399,7 @@ function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean })
       )}
       {s.aux && (
         <p
-          className="mt-6 break-keep text-[12px] text-slate-500 transition-opacity duration-700 sm:text-[14px]"
+          className="mt-4 break-keep text-[12px] text-slate-500 transition-opacity duration-700 sm:mt-6 sm:text-[14px]"
           style={{
             transitionTimingFunction: EASE,
             transitionDelay: isActive ? "500ms" : "0ms",
