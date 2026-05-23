@@ -4,11 +4,9 @@ import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "./copy-button";
 import { QrButton } from "./qr-button";
-import { ResultCardLive } from "./result-card-live";
 import { ShareButton } from "./share-button";
 import { useToast } from "./ui/toast";
 import { Link } from "@/i18n/navigation";
-import { useClickStream } from "@/lib/use-click-stream";
 import { truncateMiddle } from "@/lib/utils";
 import type { CreateLinkResponse } from "@/types";
 
@@ -28,33 +26,15 @@ type Props = {
 const ANONYMOUS_TTL_HOURS = 24;
 
 /**
- * Apple-tone minimal result card. Earlier revisions stacked seven separately-bordered blocks (the
- * "✓ 단축 완료" pill, the URL row with its own accent left-bar, the live widget in its own panel,
- * the original-URL row with a {@code Link2} icon, the expiry block in a fourth panel, ...) which
- * read as "boxes inside boxes inside boxes" — classic AI-generated overexplain. The rewrite drops
- * the framing chrome and lets a single white card carry three groups separated by hairlines:
- *
- * <ol>
- *   <li><b>URL + actions</b> — short URL as the visual anchor (large mono); Copy / Share / QR on
- *       a wrap-friendly row beneath.</li>
- *   <li><b>Live status</b> — {@link ResultCardLive} reduced to a pulse dot + count, with rolling
- *       click rows fading in as they arrive. No labels, no placeholder copy.</li>
- *   <li><b>Footer meta</b> — original URL (truncated) and, for anonymous shortens, a single-line
- *       expiry + signup CTA. The verbose "이 링크는 24시간 동안만 유지돼요 / 만료: YYYY-MM-DD
- *       HH:mm / 가입하면 영구 보존" block collapses to one sentence; the precise timestamp moves
- *       to a {@code title} attribute so the certainty is still reachable on hover.</li>
- * </ol>
- *
- * <p>Mobile concerns: every horizontal row uses {@code min-w-0 + truncate} so long URLs or
- * channels don't push the card off-viewport. Padding steps from p-4 on phones to p-5 on tablets+,
- * keeping the URL legible without forcing the user to scroll past two screens of chrome before
- * they see "copy".
+ * Success-confirmation card. Three rows: URL, actions, footer meta. Nothing else. Earlier passes
+ * tried to also prove the "analytics" half of the hero promise here with a live SSE counter, but
+ * the result card's job is to confirm and get out of the way — Apple confirmation surfaces never
+ * pile on feature demos. The analytics proof now lives entirely up-funnel (hero subhead + features
+ * carousel preview) and down-funnel (/stats page). The card itself stays bare.
  */
 export function ResultCard({ result, originalUrl, channel, authenticated }: Props) {
   const t = useTranslations("result");
   const { toast } = useToast();
-
-  const stream = useClickStream(result.shortCode, { claimToken: result.claimToken });
 
   const expiresAt = authenticated
     ? null
@@ -95,14 +75,6 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
 
       <div className="my-4 h-px bg-slate-100" aria-hidden />
 
-      <ResultCardLive
-        items={stream.items}
-        connected={stream.connected}
-        count={stream.count}
-      />
-
-      <div className="my-4 h-px bg-slate-100" aria-hidden />
-
       <div className="space-y-2 text-[12px]">
         <p className="min-w-0 truncate text-slate-500" title={originalUrl}>
           <span className="text-slate-400">{t("originalUrl")}</span>
@@ -116,9 +88,7 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
               className="text-slate-500"
               title={t("anonymousExpiryAt", { when: formatExpiry(expiresAt) })}
             >
-              {stream.count > 0
-                ? t("anonymousAfterClicksInline", { count: stream.count })
-                : t("anonymousExpiryInline")}
+              {t("anonymousExpiryInline")}
             </span>
             <Link
               href="/login"
