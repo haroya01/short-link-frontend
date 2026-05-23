@@ -263,8 +263,8 @@ function StickyNarrative({ mock }: { mock: MockData }) {
         })}
       </div>
 
-      {/* 데스크탑 레이아웃 — 좌/우 컬럼이 viewport 정중앙에 고정. § 전환은 세로 (translateY)
-          슬라이드: 다음 §은 아래에서 위로 올라오고 이전 §은 위로 빠짐. 위치는 항상 화면 중앙. */}
+      {/* 데스크탑 레이아웃 — 좌/우 컬럼이 viewport 정중앙에 sticky 고정.
+          § 전환은 opacity fade — 이전 §은 서서히 사라지고 다음 §은 서서히 나타남. */}
       <div
         ref={desktopContainerRef}
         className="relative hidden lg:block"
@@ -272,20 +272,18 @@ function StickyNarrative({ mock }: { mock: MockData }) {
       >
         <div className="sticky top-0 h-screen">
           <div className="flex h-full">
-            <div className="relative w-1/2 overflow-hidden">
+            <div className="relative w-1/2">
               {sections.map((s, i) => {
                 const isActive = i === active;
-                const base = active < 0 ? 0 : active;
                 return (
                   <div
                     key={i}
                     aria-hidden={!isActive}
                     className="absolute inset-0 flex items-center justify-center p-12"
                     style={{
-                      transform: `translateY(${(i - base) * 100}%)`,
-                      transition: `transform 700ms ${EASE}`,
+                      transition: `opacity 700ms ${EASE}`,
+                      opacity: isActive ? 1 : 0,
                       pointerEvents: isActive ? "auto" : "none",
-                      willChange: "transform",
                     }}
                   >
                     <div className="w-full max-w-[440px]">
@@ -301,20 +299,18 @@ function StickyNarrative({ mock }: { mock: MockData }) {
               />
             </div>
 
-            <div className="relative w-1/2 overflow-hidden">
+            <div className="relative w-1/2">
               {sections.map((s, i) => {
                 const isActive = i === active;
-                const base = active < 0 ? 0 : active;
                 return (
                   <div
                     key={i}
                     aria-hidden={!isActive}
                     className="absolute inset-0 flex flex-col justify-center px-16"
                     style={{
-                      transform: `translateY(${(i - base) * 100}%)`,
-                      transition: `transform 700ms ${EASE}`,
+                      transition: `opacity 700ms ${EASE}`,
+                      opacity: isActive ? 1 : 0,
                       pointerEvents: isActive ? "auto" : "none",
-                      willChange: "transform",
                     }}
                   >
                     {s.kind === "hero" ? (
