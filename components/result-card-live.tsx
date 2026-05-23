@@ -12,87 +12,67 @@ type Props = {
 const PREVIEW_ROWS = 3;
 
 /**
- * Compact live click feed designed to nest inside {@link import("./result-card").ResultCard}. The
- * stats-page feed already has its own chrome (large title, big "waiting" panel) which would dwarf
- * the result card — this variant keeps the SSE wiring upstream in the parent and renders just the
- * status strip + top-3 rolling preview. Counter and connection state share the header line so the
- * widget reads as a status row, not a second card.
+ * Compact live click feed for the result card. Earlier revisions wrapped this in its own bordered
+ * panel with a "live · 통계 잡히는 중" header + a dashed "첫 클릭은 여기 흘러요" placeholder; that
+ * read as a second card inside the card and earned a "too AI-like, make it more Apple" rewrite.
+ * Now: a single status line (animated dot + count) does the empty state — the dot's pulse alone
+ * carries "we're listening", no explainer copy. When clicks arrive, the rows fade in below the
+ * status; nothing else changes. No labels, no descriptions, no second box.
  */
 export function ResultCardLive({ items, connected, count }: Props) {
   const t = useTranslations("result.live");
-  const showRows = items.length > 0;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white px-3.5 py-3">
-      <div className="flex items-center justify-between text-[11px]">
-        <div className="flex items-center gap-1.5">
-          <span
-            className={
-              "inline-block h-1.5 w-1.5 rounded-full " +
-              (connected
-                ? "animate-pulse bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]"
-                : "bg-slate-300")
-            }
-            aria-hidden
-          />
-          <span
-            className={
-              "font-mono uppercase tracking-wider " +
-              (connected ? "text-emerald-700" : "text-slate-500")
-            }
-          >
-            {t("label")}
-          </span>
-          {!showRows && (
-            <span className="text-slate-400">· {t("tagline")}</span>
-          )}
-        </div>
-        <span className="font-mono tabular-nums text-[12px] font-semibold text-slate-900">
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <span
+          aria-hidden
+          className={
+            "inline-block h-1.5 w-1.5 rounded-full " +
+            (connected
+              ? "animate-pulse bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.45)]"
+              : "bg-slate-300")
+          }
+        />
+        <span className="font-mono tabular-nums text-[12px] text-slate-700">
           {t("clicks", { count })}
         </span>
       </div>
 
-      {showRows ? (
-        <ul className="mt-2.5 space-y-1">
+      {items.length > 0 && (
+        <ul className="space-y-1">
           {items.slice(0, PREVIEW_ROWS).map((item) => (
             <li
               key={item.id}
-              className="flex items-center gap-2 text-[11px] animate-fade-in"
+              className="flex min-w-0 items-center gap-2 text-[11px] text-slate-500 animate-fade-in"
             >
               <span
-                className="font-mono tabular-nums text-slate-500"
+                className="shrink-0 font-mono tabular-nums"
                 suppressHydrationWarning
               >
                 {formatTime(item.occurredAt)}
               </span>
               {item.countryCode && (
-                <span className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
+                <span className="shrink-0 font-mono text-[10px] text-slate-600">
                   {item.countryCode}
                 </span>
               )}
               {item.deviceClass && (
-                <span className="text-slate-600">{item.deviceClass}</span>
+                <span className="shrink-0">{item.deviceClass}</span>
               )}
               {item.channel && (
-                <span className="min-w-0 flex-1 truncate text-slate-500" title={item.channel}>
+                <span className="min-w-0 flex-1 truncate" title={item.channel}>
                   · {item.channel}
                 </span>
               )}
               {item.bot && (
-                <span className="ml-auto rounded-md bg-amber-50 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider text-amber-700">
+                <span className="ml-auto shrink-0 rounded bg-amber-50 px-1 py-0.5 text-[9px] font-medium uppercase tracking-wider text-amber-700">
                   {t("bot")}
                 </span>
               )}
             </li>
           ))}
         </ul>
-      ) : (
-        <div className="mt-2 space-y-0.5 text-center">
-          <p className="text-[12px] text-slate-500">{t("waiting")}</p>
-          <p className="font-mono text-[10px] uppercase tracking-wider text-slate-400">
-            {t("waitingHint")}
-          </p>
-        </div>
       )}
     </div>
   );
