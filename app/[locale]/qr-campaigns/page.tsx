@@ -82,18 +82,18 @@ type SectionSpec = HeroSpec | NarrativeSpec;
 function StickyNarrative({ mock }: { mock: MockData }) {
   const t = useTranslations("qrCampaigns");
   const tHero = useTranslations("qrCampaigns.hero");
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
-  // -1 로 시작해서 첫 frame 직후 0 으로 setter — 좌측 mock 도 transition 으로 부드럽게 진입.
+  const mobileRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const desktopContainerRef = useRef<HTMLDivElement | null>(null);
+  // -1 로 시작해서 첫 frame 직후 0 으로 setter — 좌·우 컬럼 모두 slide-in 으로 부드럽게 진입.
   const [active, setActive] = useState(-1);
 
-  // 초기 mount 50ms 후 active=0 — fade-in transition 발화
   useEffect(() => {
     const t = window.setTimeout(() => setActive(0), 50);
     return () => window.clearTimeout(t);
   }, []);
 
-  // 어느 섹션이 viewport 중앙에 가까운지 → active index. user 가 manual scroll 해도 active 가
-  // 따라가고, 그 시점부터 다음 7s timer 가 reset (아래 autoplay useEffect 의 deps 가 active).
+  // 모바일: 섹션이 viewport 중앙에 가까운지 → active.
+  // 모바일에서만 작동. lg+ 에선 mobileRefs 의 노드들이 display:none 이라 observer 가 무발화.
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -106,37 +106,80 @@ function StickyNarrative({ mock }: { mock: MockData }) {
           }
         }
         if (best) {
-          const idx = sectionRefs.current.findIndex((el) => el === best!.target);
+          const idx = mobileRefs.current.findIndex((el) => el === best!.target);
           if (idx !== -1) setActive(idx);
         }
       },
       { rootMargin: "-30% 0px -30% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
     );
-    sectionRefs.current.forEach((el) => el && observer.observe(el));
+    mobileRefs.current.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
-  // autoplay: AUTOPLAY_MS 후 다음 섹션으로 smooth scroll. §6 다음은 §1 로 loop (사용자 요청).
-  // inView 가드 — 현재 active 섹션이 viewport 에서 사라졌으면 (e.g. 사용자가 FinalCta 까지 스크롤
-  // 다운) 자동 루프로 다시 위로 끌어오지 않음. paused 트리거 대용.
+  // 데스크탑: 사용자가 컬럼 내부에서 만큼 스크롤했는지를 직접 계산해서 active 산출.
+  // 컬럼 height = (SECTION_COUNT + 1) × 100vh, 그 안에 sticky h-screen 한 장이 박혀있음.
+  // 좌우 컬럼은 절대 viewport 중앙에 고정되어있고, § 전환은 좌우 slide (translateX) 로만.
+  useEffect(() => {
+    let raf = 0;
+    const compute = () => {
+      raf = 0;
+      const c = desktopContainerRef.current;
+      if (!c) return;
+      if (!window.matchMedia("(min-width: 1024px)").matches) return;
+      const rect = c.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (rect.top > vh || rect.bottom < 0) return;
+      const scrolledIn = Math.max(0, -rect.top);
+      const idx = Math.max(
+        0,
+        Math.min(SECTION_COUNT - 1, Math.floor(scrolledIn / vh))
+      );
+      setActive(idx);
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(compute);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    compute();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  // autoplay: AUTOPLAY_MS 후 다음 §로 smooth scroll. §6 다음은 §1 로 loop.
+  // 데스크탑은 desktopContainer 내부의 nextIdx × 100vh 지점으로 직접 scroll,
+  // 모바일은 기존 mobile 섹션의 scrollIntoView.
   useEffect(() => {
     if (active < 0) return;
     const timer = window.setTimeout(() => {
-      const current = sectionRefs.current[active];
-      if (!current) return;
-      const rect = current.getBoundingClientRect();
-      const inView = rect.bottom > 0 && rect.top < window.innerHeight;
-      if (!inView) return;
+      const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
       const nextIdx = (active + 1) % SECTION_COUNT;
-      const next = sectionRefs.current[nextIdx];
-      if (!next) return;
-      next.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (isDesktop) {
+        const c = desktopContainerRef.current;
+        if (!c) return;
+        const rect = c.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+        const containerTopAbs = rect.top + window.scrollY;
+        const target = containerTopAbs + nextIdx * window.innerHeight + 40;
+        window.scrollTo({ top: target, behavior: "smooth" });
+      } else {
+        const current = mobileRefs.current[active];
+        if (!current) return;
+        const rect = current.getBoundingClientRect();
+        const inView = rect.bottom > 0 && rect.top < window.innerHeight;
+        if (!inView) return;
+        const next = mobileRefs.current[nextIdx];
+        if (!next) return;
+        next.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     }, AUTOPLAY_MS);
     return () => window.clearTimeout(timer);
   }, [active]);
 
-  // §1 자리에 Hero (브랜드 명제 + 페인 sub + CTA) 를 통합. 진입 즉시 좌측 KPI mock + 우측 Hero text
-  // 가 한 viewport 에 같이 보임 — user 가 첫 화면에서 페이지 정체성과 autoplay 진행을 동시에 인식.
   const sections: SectionSpec[] = [
     {
       kind: "hero",
@@ -183,11 +226,16 @@ function StickyNarrative({ mock }: { mock: MockData }) {
     },
   ];
 
+  // active=-1 (초기) 일 땐 §0 만 viewport 안 (translateX 0), 나머진 오른쪽 밖. 50ms 후 active=0
+  // 으로 바뀌면서 §0 의 진입 슬라이드는 발생하지 않고, 이후 § 전환에서 좌·우로 슬라이드.
+  const slideX = (i: number) => {
+    const base = active < 0 ? 0 : active;
+    return (i - base) * 100;
+  };
+
   return (
     <section className="relative bg-slate-50/40">
-      {/* 모바일 전용 sticky progress chip — 어느 §에 있는지 + 다음 전환까지 countdown.
-          데스크탑은 left sticky 컬럼 안의 ProgressDots 가 같은 역할.
-          글로벌 header (h-14, z-50) 바로 아래에 붙임. */}
+      {/* 모바일 전용 sticky progress chip. 글로벌 header (h-14, z-50) 바로 아래. */}
       <div className="pointer-events-none sticky top-16 z-20 flex justify-center px-4 lg:hidden">
         <ProgressDots
           count={SECTION_COUNT}
@@ -195,141 +243,187 @@ function StickyNarrative({ mock }: { mock: MockData }) {
           className="rounded-full bg-white/85 px-2.5 py-1.5 shadow-sm backdrop-blur"
         />
       </div>
-      <div className="lg:flex">
-        <div className="relative hidden lg:flex lg:sticky lg:top-0 lg:h-screen lg:w-1/2 lg:items-center lg:justify-center">
-          {sections.map((s, i) => {
-            const isActive = i === active;
-            return (
-              <div
-                key={i}
-                aria-hidden={!isActive}
-                className="absolute inset-0 flex items-center justify-center p-12 transition-all duration-[700ms]"
-                style={{
-                  transitionTimingFunction: EASE,
-                  opacity: isActive ? 1 : 0,
-                  transform: isActive
-                    ? "scale(1) translateY(0)"
-                    : "scale(0.96) translateY(8px)",
-                  pointerEvents: isActive ? "auto" : "none",
-                }}
-              >
-                <div className="w-full max-w-[440px]">
-                  <s.Mock mock={mock} active={isActive} />
-                </div>
-              </div>
-            );
-          })}
-          <ProgressDots
-            count={SECTION_COUNT}
-            active={active}
-            className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2"
-          />
-        </div>
 
-        <div className="lg:w-1/2">
-          {sections.map((s, i) => {
-            const isActive = i === active;
-            return (
-              <div
-                key={i}
-                ref={(el) => {
-                  sectionRefs.current[i] = el;
-                }}
-                data-section-idx={i}
-                className="flex flex-col justify-center px-6 py-12 sm:px-12 sm:py-16 lg:min-h-screen lg:px-16 lg:py-0"
-              >
-                {s.kind === "hero" ? (
-                  <>
-                    <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards]">
-                      {s.eyebrow}
-                    </p>
-                    <h1 className="mt-4 break-keep text-[26px] font-semibold leading-[1.15] tracking-headline text-slate-900 sm:text-[36px] lg:text-[52px]">
-                      <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards]">
-                        {s.title1}
-                      </span>
-                      <br />
-                      <span className="inline-block translate-y-4 text-accent-700 opacity-0 [animation:hero-rise_900ms_var(--ease)_420ms_forwards]">
-                        {s.title2}
-                      </span>
-                    </h1>
-                    <p className="mt-5 max-w-md break-keep text-[13px] leading-relaxed text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:text-[15px]">
-                      {s.sub}
-                    </p>
-                    <div className="mt-6 flex flex-wrap gap-2">
-                      {s.chips.map((chip, ci) => (
-                        <span
-                          key={ci}
-                          className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-medium text-slate-700 opacity-0"
-                          style={{
-                            animation: `hero-fade 700ms var(--ease) ${
-                              850 + ci * 100
-                            }ms forwards`,
-                          }}
-                        >
-                          {chip}
-                        </span>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <h2 className="break-keep text-[22px] font-semibold leading-[1.2] tracking-headline text-slate-900 sm:text-[32px] lg:text-[40px]">
-                      <span
-                        className="inline-block transition-opacity duration-700"
-                        style={{
-                          transitionTimingFunction: EASE,
-                          opacity: isActive ? 1 : 0,
-                        }}
-                      >
-                        {s.line1}
-                      </span>
-                      <br />
-                      <span
-                        className="inline-block text-slate-500 transition-opacity duration-700"
-                        style={{
-                          transitionTimingFunction: EASE,
-                          transitionDelay: isActive ? "180ms" : "0ms",
-                          opacity: isActive ? 1 : 0,
-                        }}
-                      >
-                        {s.line2}
-                      </span>
-                    </h2>
-                    {s.line3 && (
-                      <p
-                        className="mt-3 break-keep text-[16px] leading-[1.25] tracking-headline text-slate-500 transition-opacity duration-700 sm:text-[22px] lg:text-[26px]"
-                        style={{
-                          transitionTimingFunction: EASE,
-                          transitionDelay: isActive ? "340ms" : "0ms",
-                          opacity: isActive ? 1 : 0,
-                        }}
-                      >
-                        {s.line3}
-                      </p>
-                    )}
-                    {s.aux && (
-                      <p
-                        className="mt-6 break-keep text-[12px] text-slate-500 transition-opacity duration-700 sm:text-[14px]"
-                        style={{
-                          transitionTimingFunction: EASE,
-                          transitionDelay: isActive ? "500ms" : "0ms",
-                          opacity: isActive ? 1 : 0,
-                        }}
-                      >
-                        ── {s.aux}
-                      </p>
-                    )}
-                  </>
-                )}
-                <div className="mx-auto mt-8 w-full max-w-sm lg:hidden">
-                  <s.Mock mock={mock} active={isActive} />
-                </div>
+      {/* 모바일 레이아웃 — 기존 스크롤 구조 유지 (텍스트 + mock 세로 스택, 섹션마다 진입) */}
+      <div className="lg:hidden">
+        {sections.map((s, i) => {
+          const isActive = i === active;
+          return (
+            <div
+              key={i}
+              ref={(el) => {
+                mobileRefs.current[i] = el;
+              }}
+              data-section-idx={i}
+              className="flex flex-col justify-center px-6 py-12 sm:px-12 sm:py-16"
+            >
+              {s.kind === "hero" ? (
+                <HeroBody s={s} />
+              ) : (
+                <NarrativeBody s={s} isActive={isActive} />
+              )}
+              <div className="mx-auto mt-8 w-full max-w-sm">
+                <s.Mock mock={mock} active={isActive} />
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 데스크탑 레이아웃 — 좌/우 컬럼이 viewport 중앙에 고정, § 전환은 좌우 slide.
+          컬럼 높이 = (SECTION_COUNT + 1) × 100vh: sticky 가 SECTION_COUNT × 100vh 만큼 pinned
+          되도록 한 화면치 여유 확보 (마지막 §도 100vh 가 끝까지 머무름). */}
+      <div
+        ref={desktopContainerRef}
+        className="relative hidden lg:block"
+        style={{ height: `${(SECTION_COUNT + 1) * 100}vh` }}
+      >
+        <div className="sticky top-0 h-screen">
+          <div className="flex h-full">
+            <div className="relative w-1/2 overflow-hidden">
+              {sections.map((s, i) => {
+                const isActive = i === active;
+                return (
+                  <div
+                    key={i}
+                    aria-hidden={!isActive}
+                    className="absolute inset-0 flex items-center justify-center p-12"
+                    style={{
+                      transform: `translateX(${slideX(i)}%)`,
+                      transition: `transform 700ms ${EASE}`,
+                      pointerEvents: isActive ? "auto" : "none",
+                      willChange: "transform",
+                    }}
+                  >
+                    <div className="w-full max-w-[440px]">
+                      <s.Mock mock={mock} active={isActive} />
+                    </div>
+                  </div>
+                );
+              })}
+              <ProgressDots
+                count={SECTION_COUNT}
+                active={active}
+                className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2"
+              />
+            </div>
+
+            <div className="relative w-1/2 overflow-hidden">
+              {sections.map((s, i) => {
+                const isActive = i === active;
+                return (
+                  <div
+                    key={i}
+                    aria-hidden={!isActive}
+                    className="absolute inset-0 flex flex-col justify-center px-16"
+                    style={{
+                      transform: `translateX(${slideX(i)}%)`,
+                      transition: `transform 700ms ${EASE}`,
+                      pointerEvents: isActive ? "auto" : "none",
+                      willChange: "transform",
+                    }}
+                  >
+                    {s.kind === "hero" ? (
+                      <HeroBody s={s} />
+                    ) : (
+                      <NarrativeBody s={s} isActive={isActive} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function HeroBody({ s }: { s: HeroSpec }) {
+  return (
+    <>
+      <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards]">
+        {s.eyebrow}
+      </p>
+      <h1 className="mt-4 break-keep text-[26px] font-semibold leading-[1.15] tracking-headline text-slate-900 sm:text-[36px] lg:text-[52px]">
+        <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards]">
+          {s.title1}
+        </span>
+        <br />
+        <span className="inline-block translate-y-4 text-accent-700 opacity-0 [animation:hero-rise_900ms_var(--ease)_420ms_forwards]">
+          {s.title2}
+        </span>
+      </h1>
+      <p className="mt-5 max-w-md break-keep text-[13px] leading-relaxed text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:text-[15px]">
+        {s.sub}
+      </p>
+      <div className="mt-6 flex flex-wrap gap-2">
+        {s.chips.map((chip, ci) => (
+          <span
+            key={ci}
+            className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-medium text-slate-700 opacity-0"
+            style={{
+              animation: `hero-fade 700ms var(--ease) ${850 + ci * 100}ms forwards`,
+            }}
+          >
+            {chip}
+          </span>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean }) {
+  return (
+    <>
+      <h2 className="break-keep text-[22px] font-semibold leading-[1.2] tracking-headline text-slate-900 sm:text-[32px] lg:text-[40px]">
+        <span
+          className="inline-block transition-opacity duration-700"
+          style={{
+            transitionTimingFunction: EASE,
+            opacity: isActive ? 1 : 0,
+          }}
+        >
+          {s.line1}
+        </span>
+        <br />
+        <span
+          className="inline-block text-slate-500 transition-opacity duration-700"
+          style={{
+            transitionTimingFunction: EASE,
+            transitionDelay: isActive ? "180ms" : "0ms",
+            opacity: isActive ? 1 : 0,
+          }}
+        >
+          {s.line2}
+        </span>
+      </h2>
+      {s.line3 && (
+        <p
+          className="mt-3 break-keep text-[16px] leading-[1.25] tracking-headline text-slate-500 transition-opacity duration-700 sm:text-[22px] lg:text-[26px]"
+          style={{
+            transitionTimingFunction: EASE,
+            transitionDelay: isActive ? "340ms" : "0ms",
+            opacity: isActive ? 1 : 0,
+          }}
+        >
+          {s.line3}
+        </p>
+      )}
+      {s.aux && (
+        <p
+          className="mt-6 break-keep text-[12px] text-slate-500 transition-opacity duration-700 sm:text-[14px]"
+          style={{
+            transitionTimingFunction: EASE,
+            transitionDelay: isActive ? "500ms" : "0ms",
+            opacity: isActive ? 1 : 0,
+          }}
+        >
+          ── {s.aux}
+        </p>
+      )}
+    </>
   );
 }
 
