@@ -1,16 +1,14 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * §1 (Hero+KPI) 와 §3 (Poster) 가 모바일에서 너무 길게 흘러나오던 회귀 방지.
- * 측정 기반 cap 780px (post-fix 최대 § = 728px → 약 50px 버퍼). py-12 → py-20 되돌리거나
- * Poster aspect 4/5 → 1/1.414 되돌리면 ~790px 이상으로 튀어 fail.
+ * 모바일 § 가 한 viewport 에 fit 되어야 한다는 룰. 절대 cap (예: 780px) 이 아니라 viewport
+ * 높이 기준으로 검사 — 섹션이 h-[100svh] 로 강제 fit. iPhone SE (667px) 같은 작은 폰에서도
+ * 한눈에 들어와야 한다는 사용자 요구.
  */
 const VIEWPORTS = [
   { name: "iPhone SE", width: 375, height: 667 },
   { name: "iPhone 14", width: 390, height: 844 },
 ] as const;
-
-const MAX_SECTION_HEIGHT_PX = 780;
 
 /**
  * Hero (§1) 텍스트가 새로고침마다 fade-in 되는지. 이전엔 @keyframes hero-fade 가
@@ -52,7 +50,7 @@ test.describe("qr-campaigns mobile section height", () => {
     test.describe(`viewport ${vp.name} (${vp.width}x${vp.height})`, () => {
       test.use({ viewport: { width: vp.width, height: vp.height } });
 
-      test(`/ko/qr-campaigns — narrative 섹션 각각 height <= ${MAX_SECTION_HEIGHT_PX}px`, async ({
+      test(`/ko/qr-campaigns — 각 § height <= viewport ${vp.height}px (한눈에 fit)`, async ({
         page,
       }) => {
         await page.goto("/ko/qr-campaigns");
@@ -69,11 +67,14 @@ test.describe("qr-campaigns mobile section height", () => {
         });
 
         expect(heights.length).toBeGreaterThan(0);
+        // svh 는 브라우저 chrome 빼고 계산되지만 playwright headless 엔 chrome 없어서 viewport
+        // 값과 같음. 1px 반올림 여유.
+        const limit = vp.height + 1;
         for (const { idx, h } of heights) {
           expect(
             h,
-            `§${idx + 1} height ${Math.round(h)}px > limit ${MAX_SECTION_HEIGHT_PX}px`,
-          ).toBeLessThanOrEqual(MAX_SECTION_HEIGHT_PX);
+            `§${idx + 1} height ${Math.round(h)}px > viewport ${vp.height}px (overflow)`,
+          ).toBeLessThanOrEqual(limit);
         }
       });
     });
