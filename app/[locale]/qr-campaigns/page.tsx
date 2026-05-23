@@ -1193,14 +1193,20 @@ function FinalCta({
         <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-accent-600">
           <QrCode className="h-6 w-6" aria-hidden />
         </div>
-        <h2 className="mt-6 text-[32px] font-semibold leading-tight tracking-headline sm:text-[44px]">
+        <p className="mt-6 font-mono text-[11px] uppercase tracking-tagline text-accent-400">
+          {t("eyebrow")}
+        </p>
+        <h2 className="mt-3 text-[32px] font-semibold leading-tight tracking-headline sm:text-[44px]">
           {t("title")}
         </h2>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link href={ctaHref}>
-            <Button variant="accent" size="xl" className="font-medium">
+            <Button
+              variant="accent"
+              className="h-14 rounded-xl px-10 text-[15px] font-semibold shadow-[0_10px_28px_rgba(5,150,105,0.35)]"
+            >
               {t("primary")}
-              <ArrowRight className="h-4 w-4" aria-hidden />
+              <ArrowRight className="h-5 w-5" aria-hidden />
             </Button>
           </Link>
           {!authenticated && (

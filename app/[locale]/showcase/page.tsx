@@ -59,8 +59,8 @@ export default async function ShowcasePage({
           rather than busy. Single-CTA discipline (one slate-900 primary + scroll cue) kept so the
           surface direction matches the landing. Headline is Pretendard semibold with
           `.tracking-headline` (−0.025em) — same family/treatment as the landing hero. */}
-      <section className="relative isolate overflow-hidden bg-white">
-        <div className="container relative z-10 max-w-3xl py-20 text-center sm:py-28">
+      <section className="relative isolate flex flex-col overflow-hidden bg-white sm:min-h-[640px]">
+        <div className="container relative z-10 m-auto max-w-3xl py-20 text-center sm:py-28">
           <div className="hero-stagger space-y-4">
             <div
               className="flex items-center justify-center gap-3"
@@ -85,30 +85,31 @@ export default async function ShowcasePage({
               {t("ctaSubhead")}
             </p>
             <div
-              className="flex flex-col items-center gap-8 pt-2"
+              className="flex flex-col items-center pt-2"
               style={{ ["--hi" as string]: 3 } as React.CSSProperties}
             >
               <Link
                 href="/login?next=/profile/auto"
-                className="group inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-5 py-3 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(15,23,42,0.5)] transition hover:bg-slate-800 hover:shadow-[0_12px_32px_-8px_rgba(15,23,42,0.6)]"
+                className="group inline-flex items-center gap-1.5 rounded-xl bg-accent-600 px-5 py-3 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition hover:bg-accent-700 hover:shadow-[0_12px_32px_-8px_rgba(5,150,105,0.55)]"
               >
                 {t("cta")}
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
               </Link>
-
-              {/* Scroll cue — anchors the hero to the carousel below so visitors don't think the
-                  CTA is the entire page. The down-chevron bobs gently to signal "more below" */}
-              <a
-                href="#showcase-examples"
-                className="flex flex-col items-center gap-1 text-[11px] text-slate-400 transition hover:text-slate-600"
-                aria-label={t("scrollCue")}
-              >
-                <span>{t("scrollCue")}</span>
-                <ChevronDown className="h-3.5 w-3.5 showcase-scroll-cue-icon" />
-              </a>
             </div>
           </div>
         </div>
+
+        {/* Scroll cue — landing hero 의 패턴을 그대로 따름: 섹션 절대 위치 bottom-4 + bouncing
+            chevron. showcase 만 인라인 cue 였던 게 사용자가 "위치/UI 가 틀리다" 고 지적한
+            지점. 클릭 가능하게 anchor 로 두는 것만 landing 과 차이 (landing 은 decorative). */}
+        <a
+          href="#showcase-examples"
+          aria-label={t("scrollCue")}
+          className="absolute inset-x-0 bottom-4 mx-auto hidden w-fit flex-col items-center gap-0.5 text-[11px] font-medium text-slate-400 transition hover:text-slate-600 sm:flex"
+        >
+          <span>{t("scrollCue")}</span>
+          <ChevronDown className="h-4 w-4 motion-safe:animate-bounce" />
+        </a>
       </section>
 
       <section id="showcase-examples" className="bg-white py-16 sm:py-20">
