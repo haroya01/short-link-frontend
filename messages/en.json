@@ -1707,6 +1707,12 @@
     "q6": "Is there an API?",
     "a6": "Yes — kurl offers a developer API. Get a key under Settings > API keys and call the shorten / stats endpoints from your own code."
   },
+  "campaignStatus": {
+    "DRAFT": "Draft",
+    "ACTIVE": "Active",
+    "ENDED": "Ended",
+    "ARCHIVED": "Archived"
+  },
   "qrCampaigns": {
     "meta": {
       "title": "QR Campaigns | Flyer & Poster QR Performance — kurl",
