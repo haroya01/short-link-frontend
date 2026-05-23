@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listCampaigns } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
@@ -126,18 +127,19 @@ function CampaignList({ items }: { items: CampaignSummary[] }) {
 }
 
 function StatusBadge({ status }: { status: CampaignSummary["status"] }) {
-  const palette: Record<CampaignSummary["status"], { bg: string; text: string; label: string }> = {
-    DRAFT: { bg: "bg-slate-100", text: "text-slate-700", label: "시작 전" },
-    ACTIVE: { bg: "bg-accent-50", text: "text-accent-700", label: "운영 중" },
-    ENDED: { bg: "bg-amber-50", text: "text-amber-700", label: "종료됨" },
-    ARCHIVED: { bg: "bg-slate-100", text: "text-slate-500", label: "보관" },
+  const t = useTranslations("campaignStatus");
+  const palette: Record<CampaignSummary["status"], { bg: string; text: string }> = {
+    DRAFT: { bg: "bg-slate-100", text: "text-slate-700" },
+    ACTIVE: { bg: "bg-accent-50", text: "text-accent-700" },
+    ENDED: { bg: "bg-amber-50", text: "text-amber-700" },
+    ARCHIVED: { bg: "bg-slate-100", text: "text-slate-500" },
   };
-  const { bg, text, label } = palette[status];
+  const { bg, text } = palette[status];
   return (
     <span
       className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${bg} ${text}`}
     >
-      {label}
+      {t(status)}
     </span>
   );
 }
