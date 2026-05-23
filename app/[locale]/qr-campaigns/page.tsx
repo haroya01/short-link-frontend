@@ -30,7 +30,6 @@ export default function QrCampaignsLandingPage() {
 
   return (
     <div className="bg-white">
-      <GlobalStyles />
       <StickyNarrative mock={mock} />
       <FinalCta ctaHref={ctaHref} authenticated={authenticated} />
       <FloatingCta ctaHref={ctaHref} />
@@ -54,48 +53,6 @@ function FloatingCta({ ctaHref }: { ctaHref: string }) {
         </Button>
       </Link>
     </div>
-  );
-}
-
-function GlobalStyles() {
-  return (
-    <style jsx global>{`
-      :root {
-        --ease: ${EASE};
-      }
-      /*
-        Hero/sub/CTA 텍스트는 className 에 opacity-0 으로 시작 + 이 keyframe 으로 fade-in.
-        styled-jsx hydration race 가 일어나면 인라인 opacity-0 보다 animation 이 먼저
-        시작될 수 있어서, "0% { opacity: 0 }" 를 명시해 *animation 자체로* invisible 상태도
-        보장.
-      */
-      @keyframes hero-fade {
-        0% {
-          opacity: 0;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
-      @keyframes hero-rise {
-        0% {
-          opacity: 0;
-          transform: translateY(16px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      @keyframes dot-progress {
-        from {
-          transform: scaleX(0);
-        }
-        to {
-          transform: scaleX(1);
-        }
-      }
-    `}</style>
   );
 }
 

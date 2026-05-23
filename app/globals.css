@@ -18,6 +18,25 @@
 
 :root {
   color-scheme: light;
+  /* qr-campaigns 히어로 + 일반 entrance easing token. 이전엔 GlobalStyles 의
+     `<style jsx global>` 안에 있었는데, styled-jsx hydration race 때문에 hero 텍스트가
+     opacity-0 에서 안 풀리는 경우 발생. 정식 stylesheet 로 끌어내려 초기 CSS 와 같이 로드. */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* qr-campaigns 히어로 진입 애니메이션. opacity-0 으로 시작 → 100% 에서 1 로. forwards 로
+   끝 상태 유지. 같은 race 이유로 globals.css 에 둠 (styled-jsx 가 아님). */
+@keyframes hero-fade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes hero-rise {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes dot-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
 /*
