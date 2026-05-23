@@ -360,6 +360,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                 ref={(el) => {
                   sectionRefs.current[i] = el;
                 }}
+                data-section-idx={i}
                 className="flex flex-col justify-center px-6 py-12 sm:px-12 sm:py-16 lg:min-h-screen lg:px-16 lg:py-0"
               >
                 {s.kind === "hero" ? (
