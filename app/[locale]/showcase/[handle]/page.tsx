@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SHOWCASE_PROFILES } from "@/lib/landing-showcase-fixtures";
-import { EntryList } from "@/app/[locale]/u/[username]/_components/EntryList";
-import { ProfileHeader } from "@/app/[locale]/u/[username]/_components/ProfileHeader";
-import { ShareRow } from "@/app/[locale]/u/[username]/_components/ShareRow";
+import { EntryList } from "@/app/[locale]/u/[username]/_components/entry-list";
+import { ProfileHeader } from "@/app/[locale]/u/[username]/_components/profile-header";
+import { ShareRow } from "@/app/[locale]/u/[username]/_components/share-row";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import { Link } from "@/i18n/navigation";
 

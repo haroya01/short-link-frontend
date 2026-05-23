@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ContactCardEntry } from "@/app/[locale]/u/[username]/_components/ContactCardEntry";
+import { ContactCardEntry } from "@/app/[locale]/u/[username]/_components/contact-card-entry";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import type { ContactCardConfig } from "@/types";
 

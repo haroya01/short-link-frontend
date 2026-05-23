@@ -12,10 +12,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
-import { ApiKeysSection } from "@/components/api-keys-section";
-import { TwoFactorSection } from "@/components/two-factor-section";
-import { CustomDomainsSection } from "@/components/custom-domains-section";
-import { Section as SharedSection } from "@/components/section";
+import { ApiKeysSection } from "@/components/settings/api-keys-section";
+import { TwoFactorSection } from "@/components/settings/two-factor-section";
+import { CustomDomainsSection } from "@/components/settings/custom-domains-section";
+import { Section as SharedSection } from "@/components/common/section";
 import type { Me } from "@/types";
 
 const COMMON_TIMEZONES = [
