@@ -21,6 +21,8 @@ const ALLOWED_NEXT_PATHS = new Set<string>([
   "/profile/edit",
   "/dashboard",
   "/settings",
+  "/campaigns",
+  "/campaigns/new",
 ]);
 
 function sanitizeNext(raw: string | null): string | null {

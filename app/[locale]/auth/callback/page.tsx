@@ -19,6 +19,8 @@ const ALLOWED_NEXT_PATHS = new Set<string>([
   "/profile/edit",
   "/dashboard",
   "/settings",
+  "/campaigns",
+  "/campaigns/new",
 ]);
 
 export default function AuthCallbackPage() {

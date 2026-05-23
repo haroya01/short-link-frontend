@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { deleteMyAccount, downloadMyData, getMe, updateMyTimezone } from "@/lib/api";
+import { deleteMyAccount, downloadMyData, updateMyTimezone } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -34,11 +34,13 @@ export default function SettingsPage() {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
-  const { authenticated, ready, signOut } = useAuth();
+  const { authenticated, ready, me: ctxMe, signOut } = useAuth();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
-  const [me, setMe] = useState<Me | null>(null);
-  const [tz, setTz] = useState("");
+  // AuthProvider 가 이미 들고 있는 me 를 사용. 이전엔 page useEffect 에서 getMe() 한 번 더
+  // 쳐서 /users/me 가 중복으로 호출됐음. timezone 업데이트 후 로컬 me 유지를 위해 setMe 는 남김.
+  const [me, setMe] = useState<Me | null>(ctxMe);
+  const [tz, setTz] = useState(ctxMe?.timezone ?? "UTC");
   const [saving, setSaving] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
@@ -50,19 +52,11 @@ export default function SettingsPage() {
       router.replace(`/${locale}/login`);
       return;
     }
-    let cancelled = false;
-    getMe()
-      .then((data) => {
-        if (!cancelled) {
-          setMe(data);
-          setTz(data.timezone ?? "UTC");
-        }
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, [authenticated, ready, locale, router]);
+    if (ctxMe) {
+      setMe(ctxMe);
+      setTz(ctxMe.timezone ?? "UTC");
+    }
+  }, [authenticated, ready, locale, router, ctxMe]);
 
   async function handleSaveTimezone() {
     setSaving(true);
