@@ -1757,8 +1757,9 @@
       "line2": "the linked page changes."
     },
     "cta": {
+      "eyebrow": "Start right now",
       "title": "Where to drop next — the clicks tell you.",
-      "primary": "Create flyer QRs",
+      "primary": "Create QR",
       "secondary": "Log in",
       "note": "Short links and stats live in the same account."
     },
