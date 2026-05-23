@@ -2,19 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import {
-  BarChart3,
-  Globe2,
-  KeyRound,
-  Sparkles,
-  Webhook,
-  Shield,
-} from "lucide-react";
+import { BarChart3, Globe2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ROTATE_MS = 5500;
 
-type FeatureKey = "realtime" | "abtest" | "insights" | "webhooks" | "safety" | "twofa";
+type FeatureKey = "realtime" | "abtest" | "insights";
 
 type Feature = {
   key: FeatureKey;
@@ -23,10 +16,20 @@ type Feature = {
 };
 
 /**
- * 6-feature scrolling carousel for the home page "what you get" strip. Each preview is hand-
- * written to mirror the chrome of the corresponding real surface (border + bg + spacing scale +
- * status pill language) so the carousel reads as "a thumbnail of the real screen" rather than
- * "an unrelated marketing illustration".
+ * "Here's what other free shorteners don't give you" carousel — three cards because three is the
+ * count at which the answer to "but what's actually different about kurl?" lands instead of
+ * scrolling past. Earlier revisions ran six cards (webhooks / 2FA / abuse defense on top of the
+ * three below) which read as "we have a lot" — fine if the differentiation is "many features",
+ * not fine when the actual unique cut is the analytics depth on the free tier.
+ *
+ * <p>The three remaining surfaces are each something a typical free shortener (bit.ly / TinyURL /
+ * short.io free) genuinely doesn't ship; the cut surfaces (webhooks, 2FA, Safe Browsing) are
+ * absorbed into the section subhead as "+ 운영 인프라 기본 내장" so they're still on record
+ * without competing for the visitor's attention.
+ *
+ * <p>Each preview is hand-written to mirror the chrome of the corresponding real surface
+ * (border + bg + spacing scale + status pill language) so the carousel reads as "a thumbnail of
+ * the real screen" rather than "an unrelated marketing illustration".
  *
  * <p><b>Mirror sources</b>:
  *
@@ -39,27 +42,14 @@ type Feature = {
  *       progress bar)</li>
  *   <li>{@code InsightsPreview} → {@code weekly-insights-card.tsx} (eyebrow + delta badge +
  *       4-stat grid with {@code text-lg font-semibold tabular-nums} numbers)</li>
- *   <li>{@code WebhooksPreview} → {@code link-webhooks-section.tsx} (rounded card with
- *       monospace URL + status code pill + badge row mirroring {@code badgeSample / badgeBatch
- *       / badgeQuota} chips, plus the amber "issued secret" panel)</li>
- *   <li>{@code SafetyPreview} → admin / shorten error surfaces (red rounded card per
- *       {@code SafeBrowsing / PoW / datacenter ASN} reject row, mirroring the
- *       {@code shortenForm.errors.malicious} toast layout)</li>
- *   <li>{@code TwoFactorPreview} → {@code two-factor-section.tsx} (amber-bordered enrolment
- *       panel + QR placeholder + 6-digit input + recovery-codes grid)</li>
  * </ul>
  *
- * <p>The brand-green {@code accent-*} family is the only colored token in use; amber/red are
- * reserved for the "issued secret" / "danger" semantics that the real components also use, so
- * no off-brand color is introduced.
+ * <p>The brand-green {@code accent-*} family is the only colored token in use.
  */
 const FEATURES: Feature[] = [
   { key: "realtime", icon: BarChart3, preview: RealtimePreview },
-  { key: "abtest", icon: Globe2, preview: AbTestPreview },
   { key: "insights", icon: Sparkles, preview: InsightsPreview },
-  { key: "webhooks", icon: Webhook, preview: WebhooksPreview },
-  { key: "safety", icon: Shield, preview: SafetyPreview },
-  { key: "twofa", icon: KeyRound, preview: TwoFactorPreview },
+  { key: "abtest", icon: Globe2, preview: AbTestPreview },
 ];
 
 export function FeatureCarousel() {
@@ -403,227 +393,6 @@ function InsightsPreview() {
         @keyframes popIn {
           from {
             transform: scale(0.96);
-            opacity: 0;
-          }
-        }
-      `}</style>
-    </div>
-  );
-}
-
-/**
- * Mirror of {@code link-webhooks-section.tsx} — registered-hook row chrome plus the amber
- * "issued secret" panel that appears once after registration. Badge composition (봇 제외 / 샘플
- * 30% / 배치 / 한도) matches the real {@code badgeSkipBots / badgeSample / badgeBatch /
- * badgeQuota} chip set; the green {@code 200} status pill mirrors {@code StatusPill}.
- */
-function WebhooksPreview() {
-  return (
-    <div className="space-y-3 text-xs">
-      <div className="rounded-md border border-slate-200 bg-white px-3 py-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-medium text-slate-900">slack-#alerts</span>
-          <code
-            className="break-all font-mono text-[11px] text-slate-600"
-            title="https://hooks.slack.com/services/..."
-          >
-            https://hooks.slack.com/services/T0…/B0…
-          </code>
-        </div>
-        <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
-          <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
-            200
-          </span>
-          <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-600">
-            봇 제외
-          </span>
-          <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
-            샘플 30%
-          </span>
-          <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-600">
-            배치
-          </span>
-          <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
-            한도 10000/일
-          </span>
-        </div>
-      </div>
-
-      <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-[11px] text-amber-900">
-        <p className="font-medium">웹훅이 등록되었어요</p>
-        <p className="mt-1">
-          이 secret 은 한 번만 표시됩니다. 받은 쪽에서 X-Kurl-Signature(sha256=hex) 검증에 사용하세요.
-        </p>
-        <code className="mt-2 block break-all rounded bg-white px-2 py-1.5 font-mono text-[11px] text-slate-900">
-          whsec_a2f3b9e4c1d6e8f0a2b4c6d8e0f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c2d4
-        </code>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Mirror of the shorten-form error toast + admin abuse log style — green-pass / red-reject rows
- * showing the three real defense layers: Google Safe Browsing reject, anonymous proof-of-work
- * challenge, and the datacenter-ASN auto bot tag. The red rows use the same {@code border-red-200
- * bg-red-50 text-red-700} palette the real {@code shortenForm.errors.malicious} toast uses.
- */
-function SafetyPreview() {
-  const rows = [
-    {
-      ok: true,
-      url: "https://safe.example.com/post",
-      note: null,
-      delay: 0,
-    },
-    {
-      ok: false,
-      url: "http://phish-bank-login.tk/...",
-      note: "Safe Browsing",
-      delay: 120,
-    },
-    {
-      ok: false,
-      url: "익명 단축 — proof-of-work 필요",
-      note: "PoW",
-      delay: 240,
-    },
-    {
-      ok: true,
-      url: "AS16509 datacenter 클릭",
-      note: "bot=true",
-      delay: 360,
-      tone: "warn" as const,
-    },
-  ];
-  return (
-    <div className="space-y-2 text-xs">
-      {rows.map((row, i) => (
-        <div
-          key={i}
-          className={cn(
-            "flex items-center gap-2 rounded-md border px-3 py-2",
-            row.ok
-              ? row.tone === "warn"
-                ? "border-amber-200 bg-amber-50 text-amber-800"
-                : "border-slate-200 bg-white text-slate-700"
-              : "border-red-200 bg-red-50 text-red-700",
-          )}
-          style={{ animation: `slideIn 500ms ${row.delay}ms ease-out backwards` }}
-        >
-          <span
-            className={cn(
-              "grid h-4 w-4 shrink-0 place-items-center rounded-full text-[10px] font-bold text-white",
-              row.ok
-                ? row.tone === "warn"
-                  ? "bg-amber-600"
-                  : "bg-accent-600"
-                : "bg-red-600",
-            )}
-          >
-            {row.ok ? "✓" : "✕"}
-          </span>
-          <span className="truncate font-mono text-[11px]">{row.url}</span>
-          {row.note && (
-            <span
-              className={cn(
-                "ml-auto rounded px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider",
-                row.ok
-                  ? row.tone === "warn"
-                    ? "bg-amber-100 text-amber-800"
-                    : "bg-slate-100 text-slate-600"
-                  : "bg-red-100 text-red-700",
-              )}
-            >
-              {row.note}
-            </span>
-          )}
-        </div>
-      ))}
-      <style jsx>{`
-        @keyframes slideIn {
-          from {
-            transform: translateX(-8px);
-            opacity: 0;
-          }
-        }
-      `}</style>
-    </div>
-  );
-}
-
-/**
- * Mirror of {@code two-factor-section.tsx} enrolment panel — amber-bordered box, QR placeholder
- * + secret code, 6-digit input row, and the {@code RecoveryCodesPanel} 2x5 grid that appears
- * once 2FA is confirmed.
- */
-function TwoFactorPreview() {
-  const recoveryCodes = [
-    "5K7M-Q2X9",
-    "P3R8-N4T6",
-    "L9W1-V6B2",
-    "H8Y4-D3C7",
-    "F2J5-Z1M0",
-    "G6S3-K8N4",
-    "T9X1-B7P5",
-    "C4D2-Q6H8",
-    "R3W7-J9L0",
-    "M5V8-X1F2",
-  ];
-  return (
-    <div className="space-y-3 text-xs">
-      <div className="space-y-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-amber-900">
-        <p className="text-[11px] font-medium">인증 앱으로 QR 을 스캔하세요</p>
-        <div className="flex items-start gap-3">
-          <div
-            className="grid h-[88px] w-[88px] shrink-0 place-items-center rounded border border-amber-300 bg-white text-[8px] text-slate-300"
-            style={{
-              backgroundImage:
-                "linear-gradient(45deg,#0f172a 25%,transparent 25%,transparent 75%,#0f172a 75%,#0f172a),linear-gradient(45deg,#0f172a 25%,transparent 25%,transparent 75%,#0f172a 75%,#0f172a)",
-              backgroundSize: "6px 6px",
-              backgroundPosition: "0 0,3px 3px",
-            }}
-            aria-hidden
-          >
-            <span className="rounded bg-white px-1">QR</span>
-          </div>
-          <div className="min-w-0 flex-1 space-y-2">
-            <p className="text-[11px]">수동 키:</p>
-            <code className="block break-all rounded bg-white px-2 py-1.5 font-mono text-[11px] text-slate-900">
-              JBSWY3DPEHPK3PXPJBSWY3DP
-            </code>
-            <div className="flex items-center gap-1.5">
-              {[3, 9, 1, 4, 8, 2].map((d, i) => (
-                <span
-                  key={i}
-                  className="grid h-7 w-7 place-items-center rounded-md border border-accent-200 bg-accent-50 font-mono text-sm font-semibold text-accent-700"
-                  style={{ animation: `popIn 400ms ${i * 60}ms ease-out backwards` }}
-                >
-                  {d}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-amber-900">
-        <p className="text-[11px] font-medium">복구 코드 10개 (BCrypt 해시 저장)</p>
-        <div className="mt-2 grid grid-cols-5 gap-1.5">
-          {recoveryCodes.map((c) => (
-            <code
-              key={c}
-              className="rounded bg-white px-1.5 py-1 text-center font-mono text-[10px] text-slate-900"
-            >
-              {c}
-            </code>
-          ))}
-        </div>
-      </div>
-      <style jsx>{`
-        @keyframes popIn {
-          from {
-            transform: scale(0.6);
             opacity: 0;
           }
         }
