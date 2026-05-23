@@ -199,59 +199,54 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
           }`}
         >
           <div className="overflow-hidden">
-            <div className="space-y-3 rounded-md border border-slate-200 bg-slate-50/50 p-3">
+            {/* Advanced section follows the result card's tone — no tinted panel, no boxed sub-
+                sections, just spacing + a single hairline between the "this link" config (custom
+                code, expiry) and the "this campaign" config (channels, group name). Earlier
+                revision had a `bg-slate-50/50` panel that made advanced feel like a separate UI
+                surface; minimal-pass merged it into the form's own white background. */}
+            <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
             {authenticated && (
-              <div className="grid gap-2 sm:grid-cols-2">
-                <label className="block min-w-0 space-y-1">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                    {t("customCodeLabel")}
-                  </span>
-                  <Input
-                    type="text"
-                    value={customCode}
-                    onChange={(e) => setCustomCode(e.target.value)}
-                    pattern="^[0-9A-Za-z]{3,16}$"
-                    placeholder={t("customCodePlaceholder")}
-                    className="h-9 font-mono text-sm"
-                    disabled={busy || channels.size > 0}
-                  />
-                </label>
-                <label className="block min-w-0 space-y-1">
-                  <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                    {t("expiresAtLabel")}
-                  </span>
-                  <Input
-                    type="datetime-local"
-                    value={expiresAt}
-                    onChange={(e) => setExpiresAt(e.target.value)}
-                    className="h-9 text-sm"
-                    disabled={busy}
-                  />
-                </label>
-              </div>
+              <>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="block min-w-0 space-y-1.5">
+                    <span className="text-[12px] font-medium text-slate-700">
+                      {t("customCodeLabel")}
+                    </span>
+                    <Input
+                      type="text"
+                      value={customCode}
+                      onChange={(e) => setCustomCode(e.target.value)}
+                      pattern="^[0-9A-Za-z]{3,16}$"
+                      placeholder={t("customCodePlaceholder")}
+                      className="h-9 font-mono text-sm"
+                      disabled={busy || channels.size > 0}
+                    />
+                  </label>
+                  <label className="block min-w-0 space-y-1.5">
+                    <span className="text-[12px] font-medium text-slate-700">
+                      {t("expiresAtLabel")}
+                    </span>
+                    <Input
+                      type="datetime-local"
+                      value={expiresAt}
+                      onChange={(e) => setExpiresAt(e.target.value)}
+                      className="h-9 text-sm"
+                      disabled={busy}
+                    />
+                  </label>
+                </div>
+                <div className="h-px bg-slate-100" aria-hidden />
+              </>
             )}
 
-            <div className="space-y-2">
-              <div>
-                <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                  {t("utmTitle")}
-                </span>
-                <p className="mt-1 text-[11px] leading-snug text-slate-500">{t("utmHint")}</p>
-                <p className="mt-0.5 text-[11px] leading-snug text-slate-400">
-                  {t("utmExample")}
-                </p>
-              </div>
-              <label className="block space-y-1">
-                <span className="text-[11px] text-slate-500">{t("campaignLabel")}</span>
-                <Input
-                  type="text"
-                  value={campaign}
-                  onChange={(e) => setCampaign(e.target.value)}
-                  placeholder={t("campaignPlaceholder")}
-                  className="h-9 text-sm"
-                  disabled={busy}
-                />
-              </label>
+            {/* Channels block — entry copy frames intent ("posting the same link to multiple
+                places?") rather than describing the mechanic ("UTM tracking"). The variants
+                preview below the chips replaces the prior 3-paragraph explanation by *showing*
+                what the user gets the moment they pick a channel. The campaign-name field only
+                appears once ≥2 channels are picked — single-channel runs don't need a grouping
+                label, and surfacing it earlier confuses people who don't understand why. */}
+            <div className="space-y-2.5">
+              <p className="text-[13px] font-medium text-slate-900">{t("utmTitle")}</p>
               <div className="flex flex-wrap gap-1.5">
                 {CHANNEL_PRESETS.map((p) => {
                   const on = channels.has(p.id);
@@ -263,9 +258,9 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
                       disabled={busy}
                       title={`utm_source=${p.source} · utm_medium=${p.medium}`}
                       className={
-                        "rounded-full border px-2.5 py-1 text-[11px] font-medium transition " +
+                        "rounded-full border px-2.5 py-1 text-[12px] font-medium transition " +
                         (on
-                          ? "border-accent-300 bg-accent-100 text-accent-800"
+                          ? "border-accent-500 bg-accent-50 text-accent-800"
                           : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900")
                       }
                     >
@@ -274,19 +269,30 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
                   );
                 })}
               </div>
-              {/* Inline result preview — once the user picks at least one channel, surface how
-                  many short URLs will be generated so the "this is one input but it'll make
-                  multiple links" mental model is explicit before they submit. Zero-state
-                  (no channels picked) stays quiet — submit will produce exactly one URL. */}
               {channels.size > 0 && (
-                <p
-                  className="rounded-md bg-accent-50 px-2.5 py-1.5 text-[11px] font-medium text-accent-800"
-                  data-testid="variants-preview"
-                >
+                <p className="text-[12px] text-slate-500" data-testid="variants-preview">
                   {channels.size === 1
-                    ? t("variantsCount", { count: 1 })
-                    : t("variantsCountPlural", { count: channels.size })}
+                    ? t("variantsSummarySingle", { labels: selectedLabels(channels) })
+                    : t("variantsSummary", {
+                        count: channels.size,
+                        labels: selectedLabels(channels),
+                      })}
                 </p>
+              )}
+              {channels.size >= 2 && (
+                <label className="block space-y-1.5 pt-1">
+                  <span className="text-[12px] font-medium text-slate-700">
+                    {t("campaignLabel")}
+                  </span>
+                  <Input
+                    type="text"
+                    value={campaign}
+                    onChange={(e) => setCampaign(e.target.value)}
+                    placeholder={t("campaignPlaceholder")}
+                    className="h-9 text-sm"
+                    disabled={busy}
+                  />
+                </label>
               )}
             </div>
             </div>
@@ -302,6 +308,12 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
 
     </form>
   );
+}
+
+function selectedLabels(channels: Set<string>): string {
+  return CHANNEL_PRESETS.filter((p) => channels.has(p.id))
+    .map((p) => p.label)
+    .join(", ");
 }
 
 function buildVariants(

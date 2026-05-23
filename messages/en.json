@@ -143,13 +143,11 @@
     "customCodeLabel": "Custom code (3-16 letters/digits only)",
     "customCodePlaceholder": "myLink2026",
     "expiresAtLabel": "Expires at (optional)",
-    "utmTitle": "Track which channel got the click (optional)",
-    "utmHint": "Pick channels below — one short URL per channel, separate stats.",
-    "utmExample": "Same video shared on IG + Twitter? Two URLs, two click streams.",
-    "campaignPlaceholder": "Campaign name (e.g. spring-event)",
-    "campaignLabel": "Group these clicks under one name",
-    "variantsCount": "{count} short URL will be generated.",
-    "variantsCountPlural": "{count} short URLs will be generated, one per channel.",
+    "utmTitle": "Posting the same link in more than one place?",
+    "campaignPlaceholder": "e.g. spring-event",
+    "campaignLabel": "Group name",
+    "variantsSummarySingle": "1 channel → {labels}. UTM auto-tagged, stats kept separate.",
+    "variantsSummary": "{count} channels → {labels}. One URL each, stats kept separate.",
     "errors": {
       "empty": "Please enter a URL.",
       "invalid": "URL must start with http:// or https://.",
@@ -170,13 +168,8 @@
     "copied": "Copied",
     "open": "Open",
     "anonymousExpiryInline": "Expires in 24h",
-    "anonymousAfterClicksInline": "{count, plural, one {# click} other {# clicks}} — keep them",
     "anonymousExpiryAt": "Expires {when}",
-    "anonymousExpirySignup": "Sign in",
-    "live": {
-      "clicks": "{count, plural, one {# click} other {# clicks}}",
-      "bot": "bot"
-    }
+    "anonymousExpirySignup": "Sign in"
   },
   "login": {
     "title": "Sign in",
