@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { DemoStatsPage } from "./_components/DemoStatsPage";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.NEXT_PUBLIC_FRONTEND_URL ??
+  "https://kurl.me";
+
 export async function generateMetadata({
   params,
 }: {
@@ -12,6 +17,7 @@ export async function generateMetadata({
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
+    alternates: { canonical: `${SITE_URL}/${locale}/demo` },
   };
 }
 

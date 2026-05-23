@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.NEXT_PUBLIC_FRONTEND_URL ??
+  "https://kurl.me";
+
 export async function generateMetadata({
   params,
 }: {
@@ -8,7 +13,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "terms" });
-  return { title: t("title") };
+  return {
+    title: t("title"),
+    alternates: { canonical: `${SITE_URL}/${locale}/terms` },
+  };
 }
 
 export default async function TermsPage({
