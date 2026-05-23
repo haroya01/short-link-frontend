@@ -39,7 +39,6 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [campaign, setCampaign] = useState("");
   const [channels, setChannels] = useState<Set<string>>(new Set());
 
   // Pre-warm proof-of-work for anonymous users so submit doesn't pay the mining cost. Authenticated
@@ -75,10 +74,9 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
     setBusy(true);
     try {
       // Resolve which channels we're going to materialize. With nothing checked we still produce
-      // exactly one short link, just from the original URL (plus optional standalone campaign tag).
-      // Custom code only applies in single-link mode — bulk mode would otherwise collide on the
-      // second variant.
-      const variants = buildVariants(trimmed, campaign.trim(), channels);
+      // exactly one short link, just from the original URL. Custom code only applies in single-link
+      // mode — bulk mode would otherwise collide on the second variant.
+      const variants = buildVariants(trimmed, channels);
       const isBatch = variants.length > 1;
       const codeForSingle =
         !isBatch && authenticated && customCode.trim() ? customCode.trim() : undefined;
@@ -114,14 +112,12 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
           authenticated,
           has_custom_code: Boolean(codeForSingle),
           has_expiry: Boolean(expiry),
-          has_campaign: Boolean(campaign),
           channels: variants.length,
         });
         onShortened(ok);
         setUrl("");
         setCustomCode("");
         setExpiresAt("");
-        setCampaign("");
         setChannels(new Set());
       }
       if (firstErr && firstErr.kind === "err") {
@@ -239,15 +235,18 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
               </>
             )}
 
-            {/* Channels block — entry copy frames intent ("posting the same link to multiple
-                places?") rather than describing the mechanic ("UTM tracking"). The variants
-                preview below the chips replaces the prior 3-paragraph explanation by *showing*
-                what the user gets the moment they pick a channel. The campaign-name field only
-                appears once ≥2 channels are picked — single-channel runs don't need a grouping
-                label, and surfacing it earlier confuses people who don't understand why. */}
-            <div className="space-y-2.5">
-              <p className="text-[13px] font-medium text-slate-900">{t("utmTitle")}</p>
-              <div className="flex flex-wrap gap-1.5">
+            {/* Channels block — title + one-line subtitle frame the *outcome* (separate URLs per
+                channel) instead of the mechanism ("UTM tracking"). The variants preview below the
+                chips reinforces the outcome with the actual channel names once a chip is picked.
+                Campaign-name input is intentionally absent from this surface — it was confusing
+                first-time users for marginal value; power users who want to group across links
+                set utm_campaign downstream in /campaigns or via the dashboard. */}
+            <div className="space-y-2">
+              <div className="space-y-0.5">
+                <p className="text-[13px] font-medium text-slate-900">{t("utmTitle")}</p>
+                <p className="text-[12px] text-slate-500">{t("utmSubtitle")}</p>
+              </div>
+              <div className="flex flex-wrap gap-1.5 pt-1">
                 {CHANNEL_PRESETS.map((p) => {
                   const on = channels.has(p.id);
                   return (
@@ -270,7 +269,7 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
                 })}
               </div>
               {channels.size > 0 && (
-                <p className="text-[12px] text-slate-500" data-testid="variants-preview">
+                <p className="pt-0.5 text-[12px] text-slate-500" data-testid="variants-preview">
                   {channels.size === 1
                     ? t("variantsSummarySingle", { labels: selectedLabels(channels) })
                     : t("variantsSummary", {
@@ -278,21 +277,6 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
                         labels: selectedLabels(channels),
                       })}
                 </p>
-              )}
-              {channels.size >= 2 && (
-                <label className="block space-y-1.5 pt-1">
-                  <span className="text-[12px] font-medium text-slate-700">
-                    {t("campaignLabel")}
-                  </span>
-                  <Input
-                    type="text"
-                    value={campaign}
-                    onChange={(e) => setCampaign(e.target.value)}
-                    placeholder={t("campaignPlaceholder")}
-                    className="h-9 text-sm"
-                    disabled={busy}
-                  />
-                </label>
               )}
             </div>
             </div>
@@ -318,28 +302,20 @@ function selectedLabels(channels: Set<string>): string {
 
 function buildVariants(
   baseUrl: string,
-  campaign: string,
   channels: Set<string>,
 ): { url: string; channel?: string }[] {
-  if (channels.size === 0) {
-    if (!campaign) return [{ url: baseUrl }];
-    return [{ url: appendUtm(baseUrl, { campaign }) }];
-  }
+  if (channels.size === 0) return [{ url: baseUrl }];
   return CHANNEL_PRESETS.filter((p) => channels.has(p.id)).map((p) => ({
-    url: appendUtm(baseUrl, { source: p.source, medium: p.medium, campaign: campaign || undefined }),
+    url: appendUtm(baseUrl, { source: p.source, medium: p.medium }),
     channel: p.label,
   }));
 }
 
-function appendUtm(
-  raw: string,
-  parts: { source?: string; medium?: string; campaign?: string },
-): string {
+function appendUtm(raw: string, parts: { source: string; medium: string }): string {
   try {
     const u = new URL(raw);
-    if (parts.source) u.searchParams.set("utm_source", parts.source);
-    if (parts.medium) u.searchParams.set("utm_medium", parts.medium);
-    if (parts.campaign) u.searchParams.set("utm_campaign", parts.campaign);
+    u.searchParams.set("utm_source", parts.source);
+    u.searchParams.set("utm_medium", parts.medium);
     return u.toString();
   } catch {
     return raw;
