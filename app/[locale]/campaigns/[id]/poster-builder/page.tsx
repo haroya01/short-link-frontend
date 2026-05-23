@@ -4,8 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Download, FileUp, Trash2 } from "lucide-react";
 import dynamic from "next/dynamic";
-import QRCode from "qrcode";
-import { PDFDocument } from "pdf-lib";
 import { useAuth } from "@/lib/auth";
 import { getCampaign, listCampaignBatches } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
@@ -64,11 +62,14 @@ export default function PosterBuilderPage() {
       return;
     }
     let cancelled = false;
-    QRCode.toDataURL(previewShortUrl, {
-      errorCorrectionLevel: "M",
-      margin: 1,
-      width: 512,
-    })
+    import("qrcode")
+      .then(({ default: QRCode }) =>
+        QRCode.toDataURL(previewShortUrl, {
+          errorCorrectionLevel: "M",
+          margin: 1,
+          width: 512,
+        }),
+      )
       .then((url) => {
         if (!cancelled) setPreviewQrDataUrl(url);
       })
@@ -118,6 +119,7 @@ export default function PosterBuilderPage() {
       }
       const buf = await file.arrayBuffer();
       try {
+        const { PDFDocument } = await import("pdf-lib");
         const doc = await PDFDocument.load(buf);
         const page = doc.getPage(0);
         const { width, height } = page.getSize();
@@ -137,6 +139,7 @@ export default function PosterBuilderPage() {
     if (!pdfBytes || !pageWidthPt || !pageHeightPt || !batches || batches.length === 0) return;
     setComposing(true);
     try {
+      const { PDFDocument } = await import("pdf-lib");
       const source = await PDFDocument.load(pdfBytes);
       const out = await PDFDocument.create();
       // 박스의 PDF 좌표 (pdf-lib 은 좌하단 원점, 미리보기 박스는 좌상단 기준이라 y 뒤집기).
@@ -148,6 +151,8 @@ export default function PosterBuilderPage() {
 
       // QR 픽셀 크기 — 인쇄용 200dpi 기준 (pt = 1/72 inch, 200dpi → 200/72 px per pt)
       const qrPx = Math.max(256, Math.round(boxWidthPt * (200 / 72)));
+
+      const { default: QRCode } = await import("qrcode");
 
       for (const batch of batches) {
         const [page] = await out.copyPages(source, [0]);

@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Printer } from "lucide-react";
-import QRCode from "qrcode";
 import { useAuth } from "@/lib/auth";
 import { getCampaign, listCampaignBatches } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
@@ -307,7 +306,10 @@ function CellQr({ url }: { url: string }) {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   useEffect(() => {
     let cancelled = false;
-    QRCode.toDataURL(url, { errorCorrectionLevel: "M", margin: 1, width: 512 })
+    import("qrcode")
+      .then(({ default: QRCode }) =>
+        QRCode.toDataURL(url, { errorCorrectionLevel: "M", margin: 1, width: 512 }),
+      )
       .then((d) => {
         if (!cancelled) setDataUrl(d);
       })

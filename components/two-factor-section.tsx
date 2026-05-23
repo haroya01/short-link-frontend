@@ -1,6 +1,5 @@
 "use client";
 
-import QRCode from "qrcode";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
@@ -48,7 +47,10 @@ export function TwoFactorSection() {
       return;
     }
     let cancelled = false;
-    QRCode.toDataURL(setup.provisioningUri, { width: 220, margin: 1 })
+    import("qrcode")
+      .then(({ default: QRCode }) =>
+        QRCode.toDataURL(setup.provisioningUri, { width: 220, margin: 1 }),
+      )
       .then((url) => {
         if (!cancelled) setQrDataUrl(url);
       })

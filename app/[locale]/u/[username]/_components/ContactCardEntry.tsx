@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Download, Mail, MapPin, Phone, Share2 } from "lucide-react";
-import QRCode from "qrcode";
 import { useTranslations } from "next-intl";
 import type { ContactCardConfig } from "@/types";
 import { parseContactCardConfig } from "@/lib/block-config-parsers";
@@ -65,12 +64,15 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
       return;
     }
     let cancelled = false;
-    QRCode.toDataURL(vcard, {
-      errorCorrectionLevel: "M",
-      margin: 1,
-      width: 360,
-      color: { dark: "#0f172a", light: "#ffffff" },
-    })
+    import("qrcode")
+      .then(({ default: QRCode }) =>
+        QRCode.toDataURL(vcard, {
+          errorCorrectionLevel: "M",
+          margin: 1,
+          width: 360,
+          color: { dark: "#0f172a", light: "#ffffff" },
+        }),
+      )
       .then((url) => {
         if (!cancelled) setQrDataUrl(url);
       })
