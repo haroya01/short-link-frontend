@@ -67,9 +67,9 @@
   },
   "home": {
     "tagline": "kurl · v1",
-    "headline1": "Long URLs become",
-    "headline2": "one short line.",
-    "subhead": "See who clicked from where — by device, OS, browser, channel, country.",
+    "headline1": "Shorten in one line.",
+    "headline2": "Analyze who, where, when.",
+    "subhead": "Live click feed · auto-insights · bot filtering — paid-tier analytics other shorteners gate, free here.",
     "anonymousHint": "No login required. Stats need login though.",
     "demoLink": "Preview the analytics dashboard",
     "scrollHint": "More below",
@@ -96,25 +96,13 @@
         "title": "Live click feed (SSE)",
         "desc": "Watch clicks arrive in real time on the stats page — time / country / channel / device, streaming"
       },
-      "abtest": {
-        "title": "A/B split + geo-routing",
-        "desc": "One short URL → weighted variants and per-country destinations (up to 4 per link)"
-      },
       "insights": {
         "title": "Automatic insights",
         "desc": "Peak hour, return rate, half-life, velocity — surfaced without any setup"
       },
-      "webhooks": {
-        "title": "HMAC-signed webhooks",
-        "desc": "Signed JSON POST per click to Slack / your endpoint. Skip bots / sample / batch / quota cuts cost up to 98%"
-      },
-      "safety": {
-        "title": "Layered abuse defence",
-        "desc": "Google Safe Browsing + anonymous-shorten PoW + datacenter ASN auto-bot classification"
-      },
-      "twofa": {
-        "title": "2FA TOTP + recovery codes",
-        "desc": "Pair an authenticator app and add a 6-digit step to sign-in. 10 single-use codes, BCrypt-hashed"
+      "abtest": {
+        "title": "A/B split + geo-routing",
+        "desc": "One short URL → weighted variants and per-country destinations (up to 4 per link)"
       }
     },
     "recentEyebrow": "recent",
@@ -124,8 +112,8 @@
     "statsTitle": "Across kurl",
     "statsSubhead": "Total links shortened and clicks tracked so far.",
     "featuresEyebrow": "what you get",
-    "featuresTitle": "More than just shortening",
-    "featuresSubhead": "Live click feed · A/B + geo routing · HMAC webhooks · 2FA · auto-insights — everything you need to run links.",
+    "featuresTitle": "Three things free shorteners won't give you",
+    "featuresSubhead": "Live click feed · auto-insights · A/B + geo routing. HMAC webhooks · 2FA TOTP · Google Safe Browsing are built in.",
     "whyEyebrow": "why kurl",
     "whyTitle": "Why don't other shorteners ship this?",
     "whySubhead": "Features usually gated behind enterprise tiers — free here, on by default."
