@@ -226,13 +226,6 @@ function StickyNarrative({ mock }: { mock: MockData }) {
     },
   ];
 
-  // active=-1 (초기) 일 땐 §0 만 viewport 안 (translateX 0), 나머진 오른쪽 밖. 50ms 후 active=0
-  // 으로 바뀌면서 §0 의 진입 슬라이드는 발생하지 않고, 이후 § 전환에서 좌·우로 슬라이드.
-  const slideX = (i: number) => {
-    const base = active < 0 ? 0 : active;
-    return (i - base) * 100;
-  };
-
   return (
     <section className="relative bg-slate-50/40">
       {/* 모바일 전용 sticky progress chip. 글로벌 header (h-14, z-50) 바로 아래. */}
@@ -270,9 +263,9 @@ function StickyNarrative({ mock }: { mock: MockData }) {
         })}
       </div>
 
-      {/* 데스크탑 레이아웃 — 좌/우 컬럼이 viewport 중앙에 고정, § 전환은 좌우 slide.
-          컬럼 높이 = (SECTION_COUNT + 1) × 100vh: sticky 가 SECTION_COUNT × 100vh 만큼 pinned
-          되도록 한 화면치 여유 확보 (마지막 §도 100vh 가 끝까지 머무름). */}
+      {/* 데스크탑 레이아웃 — 좌/우 컬럼이 viewport 정중앙에 고정. § 전환은 opacity fade 만,
+          좌우 슬라이드/세로 이동 없음. 사용자가 어디서 스크롤을 멈추든 글자는 항상 같은 위치.
+          컬럼 높이 = (SECTION_COUNT + 1) × 100vh — sticky 가 SECTION_COUNT × 100vh 동안 pinned. */}
       <div
         ref={desktopContainerRef}
         className="relative hidden lg:block"
@@ -280,7 +273,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
       >
         <div className="sticky top-0 h-screen">
           <div className="flex h-full">
-            <div className="relative w-1/2 overflow-hidden">
+            <div className="relative w-1/2">
               {sections.map((s, i) => {
                 const isActive = i === active;
                 return (
@@ -289,10 +282,9 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                     aria-hidden={!isActive}
                     className="absolute inset-0 flex items-center justify-center p-12"
                     style={{
-                      transform: `translateX(${slideX(i)}%)`,
-                      transition: `transform 700ms ${EASE}`,
+                      transition: `opacity 500ms ${EASE}`,
+                      opacity: isActive ? 1 : 0,
                       pointerEvents: isActive ? "auto" : "none",
-                      willChange: "transform",
                     }}
                   >
                     <div className="w-full max-w-[440px]">
@@ -308,7 +300,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
               />
             </div>
 
-            <div className="relative w-1/2 overflow-hidden">
+            <div className="relative w-1/2">
               {sections.map((s, i) => {
                 const isActive = i === active;
                 return (
@@ -317,10 +309,9 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                     aria-hidden={!isActive}
                     className="absolute inset-0 flex flex-col justify-center px-16"
                     style={{
-                      transform: `translateX(${slideX(i)}%)`,
-                      transition: `transform 700ms ${EASE}`,
+                      transition: `opacity 500ms ${EASE}`,
+                      opacity: isActive ? 1 : 0,
                       pointerEvents: isActive ? "auto" : "none",
-                      willChange: "transform",
                     }}
                   >
                     {s.kind === "hero" ? (
