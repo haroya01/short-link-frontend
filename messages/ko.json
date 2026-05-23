@@ -1617,6 +1617,12 @@
     "q6": "API가 있나요?",
     "a6": "네 — 개발자용 API 제공해요. 설정 > API 키 에서 키 발급 받고, 본인 코드에서 단축 / 통계 endpoint 호출 가능합니다."
   },
+  "campaignStatus": {
+    "DRAFT": "시작 전",
+    "ACTIVE": "운영 중",
+    "ENDED": "종료됨",
+    "ARCHIVED": "보관"
+  },
   "qrCampaigns": {
     "meta": {
       "title": "QR 캠페인 분석 | 전단지·포스터 QR 성과 측정 - kurl",
