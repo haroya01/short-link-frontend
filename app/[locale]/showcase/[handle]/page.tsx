@@ -90,7 +90,16 @@ export default async function ShowcaseHandlePage({
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={profile.bannerUrl} alt="" className="h-full w-full object-cover" />
+          <img
+            src={profile.bannerUrl}
+            alt=""
+            width={1200}
+            height={400}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
         </div>
       )}
       <div className={`container max-w-md ${profile.bannerUrl ? "-mt-12 pb-12" : "py-12"}`}>
