@@ -67,9 +67,9 @@
   },
   "home": {
     "tagline": "kurl · v1",
-    "headline1": "長いURLを一行に、",
-    "headline2": "クリックは統計で。",
-    "subhead": "デバイス、OS、ブラウザ、チャネル、国まで — 誰がどこからクリックしたか一目で。",
+    "headline1": "短縮はひと行で。",
+    "headline2": "分析は誰が・どこで・いつ。",
+    "subhead": "ライブクリックフィード · 自動インサイト · ボット自動分離 — 他社の有料機能を、kurl は無料で。",
     "anonymousHint": "ログイン不要で短縮できます。統計はログイン後に確認できます。",
     "demoLink": "分析画面をデモで先に見る",
     "scrollHint": "下にスクロール",
@@ -96,25 +96,13 @@
         "title": "ライブクリックフィード (SSE)",
         "desc": "統計ページでクリックがリアルタイムに流れる — 時刻 / 国 / チャネル / デバイス"
       },
-      "abtest": {
-        "title": "A/B 振り分け + 国別ルーティング",
-        "desc": "1 つの短縮 URL → 重み配分 + 国に合わせた遷移先 (リンクあたり 4 件)"
-      },
       "insights": {
         "title": "自動インサイト",
         "desc": "ピーク時間 / 再訪率 / Half-life / Velocity — 設定なしで即可視化"
       },
-      "webhooks": {
-        "title": "HMAC 署名 Webhook",
-        "desc": "クリック毎に Slack / 自社 endpoint へ署名付き POST。ボット除外/サンプル/バッチ/quota で最大 -98%"
-      },
-      "safety": {
-        "title": "多層の不正対策",
-        "desc": "Google Safe Browsing + 匿名短縮 PoW + データセンター ASN の自動ボット判定"
-      },
-      "twofa": {
-        "title": "2FA TOTP + リカバリコード",
-        "desc": "認証アプリと連携してログインに 6 桁を追加。10 件の 1 回限りコードを BCrypt 保管"
+      "abtest": {
+        "title": "A/B 振り分け + 国別ルーティング",
+        "desc": "1 つの短縮 URL → 重み配分 + 国に合わせた遷移先 (リンクあたり 4 件)"
       }
     },
     "recentEyebrow": "最近",
@@ -124,8 +112,8 @@
     "statsTitle": "kurl 全体で",
     "statsSubhead": "これまでに短縮されたリンクと分析されたクリック数。",
     "featuresEyebrow": "what you get",
-    "featuresTitle": "ただの短縮ではありません",
-    "featuresSubhead": "ライブクリックフィード · A/B + 国別ルーティング · HMAC Webhook · 2FA · 自動インサイト — 運用に必要なすべて。",
+    "featuresTitle": "他社の無料では出てこない 3 つ",
+    "featuresSubhead": "ライブクリックフィード · 自動インサイト · A/B + 国別ルーティング。HMAC Webhook · 2FA TOTP · Google Safe Browsing は標準装備。",
     "whyEyebrow": "why kurl",
     "whyTitle": "なぜ他では提供されないのか",
     "whySubhead": "通常 enterprise プランで提供される機能を、ここでは無料 + 標準で。"
