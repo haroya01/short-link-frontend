@@ -7,6 +7,8 @@ import type {
   AdminLifecycle,
   AdminOverview,
   AdminRecentError,
+  AdminTopLinksPage,
+  AdminTopUsersPage,
   AdminLinkMetric,
   AdminLinkMetricsSort,
   AdminLinkMetricsWindow,
@@ -790,6 +792,36 @@ export async function getAdminRecentErrors(limit = 50): Promise<AdminRecentError
 
 export async function getAdminOverview(): Promise<AdminOverview> {
   return request<AdminOverview>("/api/v1/admin/overview", { method: "GET" });
+}
+
+export async function getAdminTopUsersByLinks(
+  page: number,
+  size: number,
+): Promise<AdminTopUsersPage> {
+  return request<AdminTopUsersPage>(
+    `/api/v1/admin/top-users-by-links?page=${page}&size=${size}`,
+    { method: "GET" },
+  );
+}
+
+export async function getAdminTopUsersByClicks(
+  page: number,
+  size: number,
+): Promise<AdminTopUsersPage> {
+  return request<AdminTopUsersPage>(
+    `/api/v1/admin/top-users-by-clicks?page=${page}&size=${size}`,
+    { method: "GET" },
+  );
+}
+
+export async function getAdminTopLinksByClicks(
+  page: number,
+  size: number,
+): Promise<AdminTopLinksPage> {
+  return request<AdminTopLinksPage>(
+    `/api/v1/admin/top-links-by-clicks?page=${page}&size=${size}`,
+    { method: "GET" },
+  );
 }
 
 export async function getAdminRouteMetrics(

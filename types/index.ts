@@ -815,9 +815,21 @@ export type AdminOverview = {
   dailyLinks: { date: string; count: number }[];
   dailyClicks: { date: string; count: number }[];
   topUsersByLinks: { userId: number; email: string; count: number }[];
+  topUsersByLinksTotal: number;
   topUsersByClicks: { userId: number; email: string; count: number }[];
+  topUsersByClicksTotal: number;
   topLinksByClicks: { shortCode: string; clickCount: number; ownerEmail: string | null }[];
+  topLinksByClicksTotal: number;
 };
+
+export type AdminTopUserStat = { userId: number; email: string; count: number };
+export type AdminTopLinkStat = {
+  shortCode: string;
+  clickCount: number;
+  ownerEmail: string | null;
+};
+export type AdminTopUsersPage = { items: AdminTopUserStat[]; total: number };
+export type AdminTopLinksPage = { items: AdminTopLinkStat[]; total: number };
 
 export type ApiKeySummary = {
   id: number;
