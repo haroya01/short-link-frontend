@@ -12,8 +12,7 @@ import { getLinkDetail, listMyLinks, listTags, type MyLinksFilters } from "./lin
 export const linksKeys = {
   all: ["links"] as const,
   list: (filters: MyLinksFilters) => {
-    // Strip the cursor — useInfiniteQuery owns paging, so a stale `after` from the caller's state
-    // shouldn't fork the cache into a separate entry per page boundary.
+    // cursor 는 useInfiniteQuery 의 pageParam 이 관리 — key 에서 빼야 페이지마다 캐시가 갈리지 않음
     const { after: _after, ...rest } = filters;
     void _after;
     return ["links", "list", rest] as const;

@@ -51,19 +51,13 @@ async function tryClaimPendingLinks() {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const meQuery = useMe();
   const me = meQuery.data ?? null;
-  // `ready` mirrors the prior "first auth determination complete" semantic. `isLoading` is
-  // `isPending && isFetching` so it's false for disabled queries (anonymous = no token) AND for
-  // background refetches that already have prior data — exactly the cases where we shouldn't
-  // re-flip the UI to a skeleton.
+  // isLoading = isPending && isFetching → disabled query (anonymous) 와 background refetch 양쪽에서 false
   const ready = !meQuery.isLoading;
   const authenticated = !!me;
 
   const meId = me?.id ?? null;
   const meRole = me?.role ?? null;
 
-  // Attach Sentry user + opportunistically claim anonymous links the visitor created pre-signup.
-  // Runs once on each transition into "authenticated" — keyed by `meId / meRole` so background
-  // refetches that return the same user don't re-fire Sentry calls or the claim attempt.
   useEffect(() => {
     if (!meId || !meRole) {
       Sentry.setUser(null);

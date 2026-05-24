@@ -41,13 +41,7 @@ const BLOCK_KINDS_WITH_CONTENT = [
   "EVENT",
 ] as const;
 
-/**
- * Convert the public-profile {@code /api/v1/public/profiles/{username}} response into the editor's
- * unified {@link FeedItem} list + the lookup maps for link OG title/image and the highlighted
- * shortCode. Pure — no React, no fetch. The supported block-kind set mirrors the original inline
- * switch and intentionally excludes PLACE (the public endpoint doesn't surface it for the editor
- * yet).
- */
+// PLACE 는 public endpoint 가 아직 editor 에 surface 안 함 — 인입 시 무시
 export function parsePublicFeed(entries: PublicFeedEntryShape[]): ParsedPublicFeed {
   const items: FeedItem[] = [];
   const labelByShortCode: Record<string, string> = {};

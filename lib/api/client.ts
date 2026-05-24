@@ -45,8 +45,6 @@ export function setToken(token: string | null) {
   if (typeof window === "undefined") return;
   if (token) window.localStorage.setItem(ACCESS_TOKEN_KEY, token);
   else window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-  // Cache invalidation (e.g. clearing /me on logout, refetching on login) happens in the React
-  // layer by listening for this event — see useMe in @/hooks/use-me.
   window.dispatchEvent(new CustomEvent("auth:change"));
 }
 
@@ -146,10 +144,6 @@ function safeParse(text: string): unknown {
 
 import type { Me } from "@/types";
 
-/**
- * Plain fetch for the current user. Caching, dedup, and invalidation now live in the React Query
- * layer (see {@link useMe}) — this function is just the network call.
- */
 export async function fetchMe(): Promise<Me> {
   return request<Me>("/api/v1/users/me", { method: "GET" });
 }
