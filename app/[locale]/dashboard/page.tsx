@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FileUp, Plus, Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { listMyLinks, listTags, type MyLinksFilters } from "@/lib/api";
+import type { MyLinksFilters } from "@/lib/api";
+import {
+  useInvalidateLinks,
+  useMyLinks,
+  useTags,
+} from "@/lib/api/links.queries";
 import { Link } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,24 +25,35 @@ import { DashboardOnboarding } from "@/components/common/dashboard-onboarding";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { useToast } from "@/components/ui/toast";
-import type { MyLink } from "@/types";
 
 export default function DashboardPage() {
   const { authenticated, ready, me } = useAuth();
   const t = useTranslations("dashboard");
   const tAuth = useTranslations("auth");
   const { toast } = useToast();
-  const [items, setItems] = useState<MyLink[] | null>(null);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<MyLinksFilters>({ size: 50 });
-  const [tagOptions, setTagOptions] = useState<string[]>([]);
-  const [reload, setReload] = useState(0);
   const [bulkOpen, setBulkOpen] = useState(false);
+
+  const enabled = ready && authenticated;
+  const linksQuery = useMyLinks(filters, { enabled });
+  const tagsQuery = useTags({ enabled });
+  const invalidateLinks = useInvalidateLinks();
+
+  const items = useMemo(
+    () => linksQuery.data?.pages.flatMap((p) => p.items) ?? [],
+    [linksQuery.data],
+  );
+  const tagOptions = useMemo(
+    () => tagsQuery.data?.map((t) => t.name) ?? [],
+    [tagsQuery.data],
+  );
+  const loading = linksQuery.isLoading;
+  const error = linksQuery.error
+    ? linksQuery.error instanceof Error
+      ? linksQuery.error.message
+      : "load failed"
+    : null;
 
   // Debounce the search box into the server-side `q` filter so the user doesn't have to wait for
   // each keystroke to round-trip and the query covers the full link set, not just the first page.
@@ -52,13 +68,6 @@ export default function DashboardPage() {
     return () => clearTimeout(id);
   }, [query]);
 
-  useEffect(() => {
-    if (!ready || !authenticated) return;
-    listTags()
-      .then((tags) => setTagOptions(tags.map((t) => t.name)))
-      .catch(() => {});
-  }, [ready, authenticated]);
-
   // Welcome toast set by /auth/callback after a successful sign-in. Read once and clear so the
   // toast only fires on the post-OAuth landing — page reloads or in-app navigation stay silent.
   useEffect(() => {
@@ -70,49 +79,9 @@ export default function DashboardPage() {
     toast(email ? tAuth("signedInWith", { email }) : tAuth("signedIn"), "success");
   }, [ready, authenticated, me, toast, tAuth]);
 
-  // First-page fetch — always starts at the cursorless top. Refires on filter / search /
-  // reload changes and resets the accumulated list so old rows don't bleed across filter switches.
-  useEffect(() => {
-    if (!ready) return;
-    if (!authenticated) {
-      setLoading(false);
-      return;
-    }
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    listMyLinks({ ...filters, after: undefined })
-      .then((data) => {
-        if (cancelled) return;
-        setItems(data.items);
-        setNextCursor(data.nextCursor);
-        setHasMore(data.hasMore);
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : "load failed");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [ready, authenticated, reload, filters]);
-
-  async function loadMore() {
-    if (!nextCursor || loadingMore) return;
-    setLoadingMore(true);
-    try {
-      const data = await listMyLinks({ ...filters, after: nextCursor });
-      setItems((prev) => [...(prev ?? []), ...data.items]);
-      setNextCursor(data.nextCursor);
-      setHasMore(data.hasMore);
-    } catch (err) {
-      toast(err instanceof Error ? err.message : "load failed", "error");
-    } finally {
-      setLoadingMore(false);
-    }
-  }
+  const handleLoadMore = () => {
+    void linksQuery.fetchNextPage();
+  };
 
   if (ready && !authenticated) {
     return (
@@ -136,7 +105,7 @@ export default function DashboardPage() {
             {t("title")}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            {t("subtitle", { count: items?.length ?? 0 })}
+            {t("subtitle", { count: items.length })}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -154,13 +123,12 @@ export default function DashboardPage() {
       <BulkImportDialog
         open={bulkOpen}
         onClose={() => setBulkOpen(false)}
-        onImported={() => setReload((n) => n + 1)}
+        onImported={() => void invalidateLinks()}
       />
 
       <CampaignsEntryCard />
 
       <ExpiringSoonBanner
-        reloadKey={reload}
         onShowAll={() => setFilters((f) => ({ ...f, expiry: "EXPIRING_SOON", page: 1 }))}
       />
 
@@ -197,8 +165,8 @@ export default function DashboardPage() {
       {loading ? (
         <LoadingTable t={t} />
       ) : error ? (
-        <ErrorState message={error} onRetry={() => setReload((n) => n + 1)} />
-      ) : items && items.length === 0 ? (
+        <ErrorState message={error} onRetry={() => void linksQuery.refetch()} />
+      ) : items.length === 0 ? (
         query.trim() || filters.tag || filters.domain || filters.expiry ? (
           <EmptyState title={t("noResultTitle")} description={t("noResultDesc", { query })} />
         ) : (
@@ -207,14 +175,18 @@ export default function DashboardPage() {
       ) : (
         <>
           <LinksTable
-            items={items ?? []}
-            onChanged={() => setReload((n) => n + 1)}
+            items={items}
+            onChanged={() => void invalidateLinks()}
             onTagClick={(tag) => setFilters((f) => ({ ...f, tag, after: undefined }))}
           />
-          {hasMore && (
+          {linksQuery.hasNextPage && (
             <div className="flex justify-center pt-2">
-              <Button variant="outline" onClick={loadMore} disabled={loadingMore}>
-                {loadingMore ? t("loadingMore") : t("loadMore")}
+              <Button
+                variant="outline"
+                onClick={handleLoadMore}
+                disabled={linksQuery.isFetchingNextPage}
+              >
+                {linksQuery.isFetchingNextPage ? t("loadingMore") : t("loadMore")}
               </Button>
             </div>
           )}
