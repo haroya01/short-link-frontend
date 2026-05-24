@@ -33,6 +33,7 @@ import { ClaimToastListener } from "@/components/common/claim-toast-listener";
 import { Nav } from "@/components/common/nav";
 import { ToastProvider } from "@/components/ui/toast";
 import { PostHogProvider } from "@/components/common/posthog-provider";
+import { QueryProvider } from "@/components/common/query-provider";
 import { AuthProvider } from "@/lib/auth";
 import { routing } from "@/i18n/routing";
 
@@ -179,17 +180,19 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <NextIntlClientProvider locale={locale}>
-          <AuthProvider>
-            <PostHogProvider>
-              <ToastProvider>
-                <Nav />
-                <main className="flex-1">{children}</main>
-                <Footer />
-                <CookieConsent />
-                <ClaimToastListener />
-              </ToastProvider>
-            </PostHogProvider>
-          </AuthProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <PostHogProvider>
+                <ToastProvider>
+                  <Nav />
+                  <main className="flex-1">{children}</main>
+                  <Footer />
+                  <CookieConsent />
+                  <ClaimToastListener />
+                </ToastProvider>
+              </PostHogProvider>
+            </AuthProvider>
+          </QueryProvider>
         </NextIntlClientProvider>
         <script
           type="application/ld+json"

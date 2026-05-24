@@ -6,20 +6,18 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
 } from "react";
 import * as Sentry from "@sentry/nextjs";
-import { claimAnonymousLinks, getMe, logout as apiLogout, readToken } from "./api";
+
+import { claimAnonymousLinks, logout as apiLogout } from "./api";
 import { clearClaimTokens, readPendingClaimTokens } from "./recent-links";
+import { useMe } from "@/hooks/use-me";
 import type { Me } from "@/types";
 
-type AuthState = {
+type AuthContextValue = {
   authenticated: boolean;
   ready: boolean;
   me: Me | null;
-};
-
-type AuthContextValue = AuthState & {
   isAdmin: boolean;
   signInWithGoogle: () => void;
   signOut: () => Promise<void>;
@@ -51,46 +49,32 @@ async function tryClaimPendingLinks() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState<AuthState>({
-    authenticated: false,
-    ready: false,
-    me: null,
-  });
+  const meQuery = useMe();
+  const me = meQuery.data ?? null;
+  // `ready` mirrors the prior "first auth determination complete" semantic. `isLoading` is
+  // `isPending && isFetching` so it's false for disabled queries (anonymous = no token) AND for
+  // background refetches that already have prior data — exactly the cases where we shouldn't
+  // re-flip the UI to a skeleton.
+  const ready = !meQuery.isLoading;
+  const authenticated = !!me;
 
+  const meId = me?.id ?? null;
+  const meRole = me?.role ?? null;
+
+  // Attach Sentry user + opportunistically claim anonymous links the visitor created pre-signup.
+  // Runs once on each transition into "authenticated" — keyed by `meId / meRole` so background
+  // refetches that return the same user don't re-fire Sentry calls or the claim attempt.
   useEffect(() => {
-    let cancelled = false;
-    const sync = async () => {
-      const token = readToken();
-      if (!token) {
-        if (!cancelled) setState({ authenticated: false, ready: true, me: null });
-        return;
-      }
-      try {
-        const me = await getMe();
-        if (cancelled) return;
-        setState({ authenticated: true, ready: true, me });
-        // Attach the user to Sentry so captured errors / breadcrumbs are tied back to a real
-        // account when triaging. Email kept out — id + role is enough for cross-referencing the
-        // admin "recent errors" pane (which already exposes the numeric userId).
-        Sentry.setUser({ id: String(me.id) });
-        Sentry.setTag("role", me.role);
-        tryClaimPendingLinks();
-      } catch {
-        if (cancelled) return;
-        setState({ authenticated: false, ready: true, me: null });
-        Sentry.setUser(null);
-      }
-    };
-    sync();
-    const onChange = () => sync();
-    window.addEventListener("auth:change", onChange);
-    window.addEventListener("storage", onChange);
-    return () => {
-      cancelled = true;
-      window.removeEventListener("auth:change", onChange);
-      window.removeEventListener("storage", onChange);
-    };
-  }, []);
+    if (!meId || !meRole) {
+      Sentry.setUser(null);
+      return;
+    }
+    // Email kept out — id + role is enough for cross-referencing the admin "recent errors" pane
+    // (which already exposes the numeric userId).
+    Sentry.setUser({ id: String(meId) });
+    Sentry.setTag("role", meRole);
+    tryClaimPendingLinks();
+  }, [meId, meRole]);
 
   const signInWithGoogle = useCallback(() => {
     const apiBase = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -104,12 +88,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<AuthContextValue>(
     () => ({
-      ...state,
-      isAdmin: state.me?.role === "ADMIN",
+      authenticated,
+      ready,
+      me,
+      isAdmin: me?.role === "ADMIN",
       signInWithGoogle,
       signOut,
     }),
-    [state, signInWithGoogle, signOut],
+    [authenticated, ready, me, signInWithGoogle, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
