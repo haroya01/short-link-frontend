@@ -5,14 +5,13 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import {
-  getLinkDetail,
   isValidUrl,
-  listTags,
   setLinkOgOverride,
   setLinkProtection,
   setLinkTags,
   updateLink,
 } from "@/lib/api";
+import { useLinkDetail, useTags } from "@/lib/api/links.queries";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { SectionTabs } from "@/components/links/edit-link-dialog/section-tabs";
 import { BasicSection } from "@/components/links/edit-link-dialog/sections/basic-section";
@@ -20,7 +19,7 @@ import { OgOverrideSection } from "@/components/links/edit-link-dialog/sections/
 import { ProtectionSection } from "@/components/links/edit-link-dialog/sections/protection-section";
 import { TagsSection } from "@/components/links/edit-link-dialog/sections/tags-section";
 import { blankToNull, toLocalInput, type Section } from "@/components/links/edit-link-dialog/utils";
-import type { LinkDetail, MyLink } from "@/types";
+import type { MyLink } from "@/types";
 
 type Props = {
   link: MyLink | null;
@@ -49,13 +48,21 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
   const [removePassword, setRemovePassword] = useState(false);
   const [maxViewsInput, setMaxViewsInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
-  const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
-  const [detail, setDetail] = useState<LinkDetail | null>(null);
-  const [loadingDetail, setLoadingDetail] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  const detailQuery = useLinkDetail(link?.shortCode);
+  const tagsQuery = useTags({ enabled: !!link });
+  const detail = detailQuery.data ?? null;
+  const loadingDetail = detailQuery.isLoading;
+  const tagSuggestions = useMemo(
+    () => tagsQuery.data?.map((t) => t.name) ?? [],
+    [tagsQuery.data],
+  );
+
+  // Reset form state synchronously when a new link opens — so the dialog shows the row's known
+  // values immediately, before the detail fetch lands.
   useEffect(() => {
     if (!link) return;
     setSection("basic");
@@ -68,34 +75,22 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     setRemovePassword(false);
     setMaxViewsInput("");
     setTags(link.tags ?? []);
-    setTagSuggestions([]);
-    setDetail(null);
+    setNote("");
+    setExpiredMessage("");
     setError(null);
-    let cancelled = false;
-    setLoadingDetail(true);
-    Promise.all([getLinkDetail(link.shortCode), listTags().catch(() => [])])
-      .then(([d, allTags]) => {
-        if (cancelled) return;
-        setDetail(d);
-        setOgTitle(d.ogTitleOverride ?? "");
-        setOgDescription(d.ogDescriptionOverride ?? "");
-        setOgImage(d.ogImageOverride ?? "");
-        setMaxViewsInput(d.maxViews != null ? String(d.maxViews) : "");
-        setTags(d.tags ?? []);
-        setTagSuggestions(allTags.map((t) => t.name));
-        setNote(d.note ?? "");
-        setExpiredMessage(d.expiredMessage ?? "");
-      })
-      .catch(() => {
-        if (cancelled) return;
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingDetail(false);
-      });
-    return () => {
-      cancelled = true;
-    };
   }, [link]);
+
+  // Overlay detail-only fields once the fetch lands.
+  useEffect(() => {
+    if (!detail) return;
+    setOgTitle(detail.ogTitleOverride ?? "");
+    setOgDescription(detail.ogDescriptionOverride ?? "");
+    setOgImage(detail.ogImageOverride ?? "");
+    setMaxViewsInput(detail.maxViews != null ? String(detail.maxViews) : "");
+    setTags(detail.tags ?? []);
+    setNote(detail.note ?? "");
+    setExpiredMessage(detail.expiredMessage ?? "");
+  }, [detail]);
 
   useEffect(() => {
     if (!link) return;

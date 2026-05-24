@@ -3,22 +3,22 @@
 import { useEffect, useState } from "react";
 import { AlertTriangle, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { listMyLinks } from "@/lib/api";
-import type { MyLink } from "@/types";
+import type { MyLinksFilters } from "@/lib/api";
+import { useMyLinks } from "@/lib/api/links.queries";
 
 type Props = {
-  /** Bumps when the parent reloads — re-checks expiring count after creates/deletes. */
-  reloadKey?: number;
   /** Click handler — typically sets the parent filter to expiry=EXPIRING_SOON. */
   onShowAll?: () => void;
 };
 
 const DISMISS_KEY = "kurl:expiring-banner-dismissed-until";
+const EXPIRING_FILTERS: MyLinksFilters = { expiry: "EXPIRING_SOON", size: 5 };
 
-export function ExpiringSoonBanner({ reloadKey, onShowAll }: Props) {
+export function ExpiringSoonBanner({ onShowAll }: Props) {
   const t = useTranslations("expiringBanner");
-  const [items, setItems] = useState<MyLink[] | null>(null);
   const [dismissed, setDismissed] = useState(false);
+  const { data } = useMyLinks(EXPIRING_FILTERS);
+  const items = data?.pages[0]?.items ?? [];
 
   useEffect(() => {
     // Hide for 24h once dismissed so we don't nag the user every navigation. New expirations
@@ -29,21 +29,7 @@ export function ExpiringSoonBanner({ reloadKey, onShowAll }: Props) {
     }
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-    listMyLinks({ expiry: "EXPIRING_SOON", size: 5 })
-      .then((page) => {
-        if (!cancelled) setItems(page.items);
-      })
-      .catch(() => {
-        if (!cancelled) setItems([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [reloadKey]);
-
-  if (dismissed || !items || items.length === 0) return null;
+  if (dismissed || items.length === 0) return null;
 
   function dismiss() {
     setDismissed(true);
