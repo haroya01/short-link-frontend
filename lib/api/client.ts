@@ -42,12 +42,11 @@ export function setToken(token: string | null) {
   // all listeners, fanning out into N² requests.
   if (memoryToken === token) return;
   memoryToken = token;
-  // 로그아웃 / 토큰 만료 → 캐시 무효화. 토큰 rotation (same user, refresh) 은 cache 유지해서
-  // AuthProvider sync 가 네트워크 안 거치고 캐시 응답으로 빠르게 끝나게.
-  if (token === null) invalidateMeCache();
   if (typeof window === "undefined") return;
   if (token) window.localStorage.setItem(ACCESS_TOKEN_KEY, token);
   else window.localStorage.removeItem(ACCESS_TOKEN_KEY);
+  // Cache invalidation (e.g. clearing /me on logout, refetching on login) happens in the React
+  // layer by listening for this event — see useMe in @/hooks/use-me.
   window.dispatchEvent(new CustomEvent("auth:change"));
 }
 
@@ -145,37 +144,14 @@ function safeParse(text: string): unknown {
   }
 }
 
-// ---- /me cache lives here so setToken(null) can invalidate it without a cycle ----
-
 import type { Me } from "@/types";
 
-let meInFlight: Promise<Me> | null = null;
-let meCache: { data: Me; ts: number } | null = null;
-// /me 는 인증 상태 + 사용자 메타 (timezone / role 등). 자주 안 바뀌므로 60s 캐시.
-// 토큰 refresh 마다 auth:change → AuthProvider sync → getMe 가 도는데 동일 사용자의 같은
-// 데이터를 매번 네트워크에서 새로 받을 필요가 없음. setToken 이 의도적 변화 (login / logout)
-// 일 땐 invalidateMeCache() 로 비움.
-const ME_TTL_MS = 60_000;
-
-export function invalidateMeCache(): void {
-  meCache = null;
-}
-
-export async function getMe(): Promise<Me> {
-  if (meCache && Date.now() - meCache.ts < ME_TTL_MS) {
-    return meCache.data;
-  }
-  // Single-flight: 동시에 여러 곳에서 호출돼도 한 요청만 나가게.
-  if (meInFlight) return meInFlight;
-  meInFlight = request<Me>("/api/v1/users/me", { method: "GET" })
-    .then((data) => {
-      meCache = { data, ts: Date.now() };
-      return data;
-    })
-    .finally(() => {
-      meInFlight = null;
-    });
-  return meInFlight;
+/**
+ * Plain fetch for the current user. Caching, dedup, and invalidation now live in the React Query
+ * layer (see {@link useMe}) — this function is just the network call.
+ */
+export async function fetchMe(): Promise<Me> {
+  return request<Me>("/api/v1/users/me", { method: "GET" });
 }
 
 export function isValidUrl(s: string): boolean {

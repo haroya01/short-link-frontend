@@ -93,7 +93,7 @@ describe("setToken", () => {
   });
 });
 
-describe("request — token + 401 refresh flow (via getMe)", () => {
+describe("request — token + 401 refresh flow (via fetchMe)", () => {
   function mockFetchSequence(
     responses: Array<{ status: number; body?: object | string }>,
   ): ReturnType<typeof vi.fn> {
@@ -112,28 +112,28 @@ describe("request — token + 401 refresh flow (via getMe)", () => {
   }
 
   it("attaches Bearer token from readToken to outgoing requests", async () => {
-    const { setToken, getMe } = await freshApi();
+    const { setToken, fetchMe } = await freshApi();
     setToken("my-token");
     const fetchMock = mockFetchSequence([{ status: 200, body: { id: 1, email: "a@b.com" } }]);
     vi.stubGlobal("fetch", fetchMock);
-    await getMe();
+    await fetchMe();
     const [, init] = fetchMock.mock.calls[0];
     const headers = new Headers(init.headers);
     expect(headers.get("Authorization")).toBe("Bearer my-token");
   });
 
   it("does not set Authorization when no token is stored", async () => {
-    const { getMe } = await freshApi();
+    const { fetchMe } = await freshApi();
     const fetchMock = mockFetchSequence([{ status: 200, body: { id: 1, email: "a@b.com" } }]);
     vi.stubGlobal("fetch", fetchMock);
-    await getMe();
+    await fetchMe();
     const [, init] = fetchMock.mock.calls[0];
     const headers = new Headers(init.headers);
     expect(headers.get("Authorization")).toBeNull();
   });
 
   it("on 401, calls refresh and retries the original request with the new token", async () => {
-    const { setToken, getMe } = await freshApi();
+    const { setToken, fetchMe } = await freshApi();
     setToken("expired");
     const fetchMock = mockFetchSequence([
       { status: 401, body: { status: 401, detail: "expired" } },
@@ -141,7 +141,7 @@ describe("request — token + 401 refresh flow (via getMe)", () => {
       { status: 200, body: { id: 1, email: "a@b.com" } },
     ]);
     vi.stubGlobal("fetch", fetchMock);
-    const me = await getMe();
+    const me = await fetchMe();
     expect(me).toMatchObject({ id: 1 });
     expect(fetchMock).toHaveBeenCalledTimes(3);
     // Second call hits /auth/refresh
@@ -152,14 +152,14 @@ describe("request — token + 401 refresh flow (via getMe)", () => {
   });
 
   it("clears the token when 401 and refresh fails", async () => {
-    const { setToken, readToken, getMe } = await freshApi();
+    const { setToken, readToken, fetchMe } = await freshApi();
     setToken("expired");
     const fetchMock = mockFetchSequence([
       { status: 401, body: { status: 401, detail: "expired" } },
       { status: 401, body: { status: 401, detail: "refresh failed" } },
     ]);
     vi.stubGlobal("fetch", fetchMock);
-    await expect(getMe()).rejects.toMatchObject({ status: 401 });
+    await expect(fetchMe()).rejects.toMatchObject({ status: 401 });
     expect(readToken()).toBeNull();
   });
 
@@ -172,14 +172,14 @@ describe("request — token + 401 refresh flow (via getMe)", () => {
   });
 
   it("throws ApiError with the server's ProblemDetail body on non-2xx", async () => {
-    const { setToken, getMe, ApiError } = await freshApi();
+    const { setToken, fetchMe, ApiError } = await freshApi();
     setToken("t");
     const fetchMock = mockFetchSequence([
       { status: 400, body: { status: 400, code: "BAD_INPUT", detail: "invalid x" } },
     ]);
     vi.stubGlobal("fetch", fetchMock);
     try {
-      await getMe();
+      await fetchMe();
       throw new Error("expected ApiError");
     } catch (err) {
       expect(err).toBeInstanceOf(ApiError);
