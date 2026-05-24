@@ -5,13 +5,13 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { ApiError, getStats } from "@/lib/api";
+import { ApiError } from "@/lib/api";
+import { useLinkStats } from "@/lib/api/stats.queries";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { useToast } from "@/components/ui/toast";
-import type { LinkStats } from "@/types";
 import { HeaderSkeleton } from "./_components/header";
 import { StatsBody } from "./_components/stats-body";
 
@@ -24,10 +24,6 @@ export default function StatsPage() {
   const { toast } = useToast();
   const code = params.code;
 
-  const [data, setData] = useState<LinkStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [tick, setTick] = useState(0);
   const [shortUrl, setShortUrl] = useState<string>("");
 
   useEffect(() => {
@@ -42,43 +38,14 @@ export default function StatsPage() {
     }
   }, [code]);
 
-  useEffect(() => {
-    if (!ready) return;
-    if (!authenticated) {
-      setLoading(false);
-      return;
-    }
-    if (!code) return;
-    let cancelled = false;
-    // Only the first fetch shows the loading skeleton; subsequent refreshes (e.g., the live-click
-    // feed bumping `tick` on every incoming SSE event) update silently in the background so the
-    // already-rendered page — including LiveClickFeed's accumulated items — doesn't unmount.
-    const isInitial = data === null;
-    if (isInitial) setLoading(true);
-    setError(null);
-    getStats(code)
-      .then((res) => {
-        if (!cancelled) setData(res);
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          if (err instanceof ApiError && err.status === 404) {
-            setData(null);
-            setError(null);
-          } else {
-            setError(err instanceof Error ? err.message : "load failed");
-          }
-        }
-      })
-      .finally(() => {
-        if (!cancelled && isInitial) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-    // data omitted from deps on purpose — only auth/code/tick should trigger refetch.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, authenticated, code, tick]);
+  const { data, error, isLoading, refetch } = useLinkStats(code, {
+    enabled: ready && authenticated && !!code,
+  });
+
+  // 404 = link doesn't exist (or not owned). Map to the empty state, not an error toast.
+  const notFound = error instanceof ApiError && error.status === 404;
+  const realError =
+    error && !notFound ? (error instanceof Error ? error.message : "load failed") : null;
 
   if (ready && !authenticated) {
     return (
@@ -104,11 +71,11 @@ export default function StatsPage() {
         {t("back")}
       </button>
 
-      {loading ? (
+      {isLoading ? (
         <HeaderSkeleton />
-      ) : error ? (
-        <ErrorState message={error} onRetry={() => setTick((n) => n + 1)} />
-      ) : !data ? (
+      ) : realError ? (
+        <ErrorState message={realError} onRetry={() => refetch()} />
+      ) : notFound || !data ? (
         <EmptyState
           title={t("notFound")}
           description={t("notFoundDesc")}
@@ -123,7 +90,7 @@ export default function StatsPage() {
           data={data}
           shortUrl={shortUrl}
           onCopy={() => toast(tResult("copied"), "success")}
-          onTick={() => setTick((n) => n + 1)}
+          onTick={() => refetch()}
           shortCodeLabel={t("shortCode")}
         />
       )}
