@@ -8,12 +8,6 @@ import type { Me } from "@/types";
 
 export const ME_QUERY_KEY = ["me"] as const;
 
-/**
- * Tracks "is there an access token in storage right now" as reactive state. Listens to the
- * `auth:change` event ({@link setToken} dispatches it on login / logout / refresh) and the
- * cross-tab `storage` event so a sign-out in another tab also flips this here. SSR-safe: reads
- * localStorage only inside `useState`'s initializer (lazy) and the effect.
- */
 function useHasToken(): boolean {
   const [hasToken, setHasToken] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
@@ -22,7 +16,6 @@ function useHasToken(): boolean {
 
   useEffect(() => {
     const update = () => setHasToken(!!readToken());
-    // Read once on mount as well — hydration may have started before localStorage was readable.
     update();
     window.addEventListener("auth:change", update);
     window.addEventListener("storage", update);
@@ -35,15 +28,11 @@ function useHasToken(): boolean {
   return hasToken;
 }
 
-/**
- * Subscribe to the current user. Disabled while no access token is in storage so anonymous visits
- * never fire /me. On logout (`setToken(null)` → `auth:change`) the query is removed so stale `me`
- * data is never shown after sign-out.
- */
 export function useMe() {
   const hasToken = useHasToken();
   const queryClient = useQueryClient();
 
+  // 로그아웃 시 stale me 가 화면에 안 남도록 캐시 제거 (invalidate 만으론 disabled 상태에서 data 유지됨)
   useEffect(() => {
     if (hasToken) return;
     queryClient.removeQueries({ queryKey: ME_QUERY_KEY });
