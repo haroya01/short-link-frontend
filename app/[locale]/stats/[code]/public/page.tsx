@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ApiError, getPublicLinkStats } from "@/lib/api";
+import { ApiError } from "@/lib/api";
+import { usePublicLinkStats } from "@/lib/api/stats.queries";
 import { Link } from "@/i18n/navigation";
 import { StatsCards } from "@/components/stats/cards";
 import { Section } from "@/components/common/section";
@@ -16,45 +16,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
 import { Button } from "@/components/ui/button";
-import type { LinkStats } from "@/types";
 
 export default function PublicStatsPage() {
   const params = useParams<{ code: string }>();
   const t = useTranslations("stats");
   const tPublic = useTranslations("publicStats");
   const code = params.code;
-  const [data, setData] = useState<LinkStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!code) return;
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    getPublicLinkStats(code)
-      .then((res) => {
-        if (!cancelled) setData(res);
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          if (err instanceof ApiError && err.status === 404) {
-            setData(null);
-            setError(null);
-          } else {
-            setError(err instanceof Error ? err.message : "load failed");
-          }
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [code]);
+  const { data, error, isLoading } = usePublicLinkStats(code);
+  const notFound = error instanceof ApiError && error.status === 404;
+  const realError =
+    error && !notFound ? (error instanceof Error ? error.message : "load failed") : null;
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="container max-w-6xl space-y-5 py-10">
         <Skeleton className="h-7 w-48" />
@@ -63,15 +37,15 @@ export default function PublicStatsPage() {
     );
   }
 
-  if (error) {
+  if (realError) {
     return (
       <div className="container max-w-2xl py-10">
-        <ErrorState message={error} onRetry={() => window.location.reload()} />
+        <ErrorState message={realError} onRetry={() => window.location.reload()} />
       </div>
     );
   }
 
-  if (!data) {
+  if (notFound || !data) {
     return (
       <div className="container max-w-md py-20">
         <EmptyState
