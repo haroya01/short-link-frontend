@@ -9,7 +9,8 @@ import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { LandingPreviews } from "@/components/landing/landing-previews";
 import { WhyKurl } from "@/components/landing/why-kurl";
 import { HomeFaq } from "@/components/landing/home-faq";
-import { HomeCounters, usePublicTotals } from "@/components/landing/home-counters";
+import { HomeCounters } from "@/components/landing/home-counters";
+import { usePublicTotals } from "@/lib/api/stats.queries";
 import { RecentLinks } from "@/components/links/recent-links";
 import { useAuth } from "@/lib/auth";
 import { recordRecent, useRecentLinks } from "@/lib/recent-links";
@@ -23,7 +24,7 @@ export default function HomePage() {
     { res: CreateLinkResponse; original: string; channel?: string }[] | null
   >(null);
   const recent = useRecentLinks();
-  const totals = usePublicTotals();
+  const { data: totals } = usePublicTotals();
   const showStats = totals != null && (totals.links > 0 || totals.clicks > 0);
 
   return (

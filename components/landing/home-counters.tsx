@@ -1,26 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCountUp } from "@/lib/animations";
-import { getPublicTotals } from "@/lib/api";
 import { formatNumber } from "@/lib/utils";
-
-export function usePublicTotals() {
-  const [totals, setTotals] = useState<{ links: number; clicks: number } | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    getPublicTotals()
-      .then((d) => {
-        if (!cancelled) setTotals(d);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-  return totals;
-}
 
 export function HomeCounters({
   totals,
