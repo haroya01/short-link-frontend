@@ -16,17 +16,26 @@ const MOBILE_VIEWPORTS = [
   { name: "iPhone 14 Plus", width: 414, height: 896 },
 ] as const;
 
-const PAGES: { path: string; name: string }[] = [
-  { path: "/ko", name: "landing" },
-  { path: "/ko/demo", name: "demo" },
-  { path: "/ko/showcase", name: "showcase" },
-  { path: "/ko/learn", name: "learn" },
-  { path: "/ko/pricing", name: "pricing" },
-  { path: "/ko/about", name: "about" },
-  { path: "/ko/login", name: "login" },
-  { path: "/ko/terms", name: "terms" },
-  { path: "/ko/privacy", name: "privacy" },
+const LOCALES = ["ko", "en", "ja"] as const;
+
+const ROUTES: { path: string; name: string }[] = [
+  { path: "", name: "landing" },
+  { path: "/demo", name: "demo" },
+  { path: "/showcase", name: "showcase" },
+  { path: "/learn", name: "learn" },
+  { path: "/pricing", name: "pricing" },
+  { path: "/about", name: "about" },
+  { path: "/login", name: "login" },
+  { path: "/terms", name: "terms" },
+  { path: "/privacy", name: "privacy" },
 ];
+
+const PAGES: { path: string; name: string }[] = LOCALES.flatMap((locale) =>
+  ROUTES.map((route) => ({
+    path: `/${locale}${route.path}`,
+    name: `${route.name} ${locale}`,
+  })),
+);
 
 test.describe("mobile horizontal overflow", () => {
   for (const vp of MOBILE_VIEWPORTS) {
