@@ -168,7 +168,7 @@
     "open": "열기",
     "anonymousExpiryInline": "24시간 후 만료",
     "anonymousExpiryAt": "{when} 만료",
-    "anonymousExpirySignup": "가입"
+    "anonymousExpirySignup": "가입하고 통계 저장"
   },
   "login": {
     "title": "로그인",
@@ -176,7 +176,12 @@
     "google": "Google로 계속하기",
     "anonymousAlt": "로그인 없이도 <shorten>URL 단축은 가능</shorten> 해요.",
     "anonymousButton": "로그인 없이 단축만 사용하기",
-    "anonymousNote": "내 링크 관리·통계는 로그인 시에만"
+    "anonymousNote": "내 링크 관리·통계는 로그인 시에만",
+    "benefits": {
+      "links": "단축한 링크를 한 곳에서 관리",
+      "stats": "클릭·국가·채널 통계 확인",
+      "keep": "익명 링크를 계정으로 보존"
+    }
   },
   "auth": {
     "signedIn": "로그인되었어요",
@@ -239,6 +244,12 @@
     "loginRequired": "로그인이 필요해요",
     "loginRequiredDesc": "내 링크와 클릭 통계는 로그인 후에 볼 수 있어요.",
     "goToLogin": "로그인하러 가기",
+    "loginRequiredBack": "지금 링크 단축하기",
+    "loginRequiredBenefits": {
+      "links": "내 링크 목록과 만료 예정 링크 관리",
+      "stats": "클릭 추이·유입 채널·기기 통계",
+      "campaigns": "QR 캠페인과 커스텀 도메인 설정"
+    },
     "emptyTitle": "첫 링크를 만들어볼까요",
     "emptyDesc": "URL 한 개만 단축하면 1 분 안에 클릭/국가/채널/디바이스 분석이 채워지기 시작해요. 1 회 단축에 30 초 안 걸립니다.",
     "emptyCta": "지금 단축하기",

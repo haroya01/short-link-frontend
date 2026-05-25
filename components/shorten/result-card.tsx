@@ -41,7 +41,10 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
     : new Date(Date.now() + ANONYMOUS_TTL_HOURS * 60 * 60 * 1000);
 
   return (
-    <div className="animate-fade-in rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+    <div
+      data-testid="result-card"
+      className="animate-fade-in rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
+    >
       <div className="space-y-4">
         <a
           href={result.shortUrl}

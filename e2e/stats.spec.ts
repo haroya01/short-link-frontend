@@ -8,7 +8,7 @@ test.describe("stats page", () => {
     const token = await signInAs(page, context, email);
     const link = await createLink(context.request, "https://example.com/stats-empty", token);
 
-    await page.goto(`/stats/${link.shortCode}`);
+    await page.goto(`/ko/stats/${link.shortCode}`);
     await expect(page.getByText(/아직 클릭이 없어요/)).toBeVisible({ timeout: 10000 });
     await expect(page.getByText(/단축 링크 복사/)).toBeVisible();
   });
@@ -21,7 +21,7 @@ test.describe("stats page", () => {
     await context.request.get(`/${link.shortCode}`, { maxRedirects: 0 });
     await context.request.get(`/${link.shortCode}`, { maxRedirects: 0 });
 
-    await page.goto(`/stats/${link.shortCode}`);
+    await page.goto(`/ko/stats/${link.shortCode}`);
     await expect(page.getByText("총 클릭")).toBeVisible({ timeout: 10000 });
   });
 
@@ -30,7 +30,7 @@ test.describe("stats page", () => {
     const token = await signInAs(page, context, email);
     const link = await createLink(context.request, "https://example.com/stats-public", token);
 
-    await page.goto(`/stats/${link.shortCode}`);
+    await page.goto(`/ko/stats/${link.shortCode}`);
     await page.getByRole("button", { name: /통계 공개로 전환/ }).click();
     await expect(page.getByRole("button", { name: /통계 비공개로 전환/ })).toBeVisible({
       timeout: 5000,
@@ -39,7 +39,7 @@ test.describe("stats page", () => {
     // Verify public route accessible without auth
     await page.context().clearCookies();
     await page.evaluate(() => window.localStorage.removeItem("short-link:access-token"));
-    await page.goto(`/stats/${link.shortCode}/public`);
+    await page.goto(`/ko/stats/${link.shortCode}/public`);
     await expect(page.getByText(/공개 통계/)).toBeVisible();
     await expect(page.getByText(/공개$/)).toBeVisible();
   });

@@ -168,7 +168,7 @@
     "open": "Open",
     "anonymousExpiryInline": "Expires in 24h",
     "anonymousExpiryAt": "Expires {when}",
-    "anonymousExpirySignup": "Sign in"
+    "anonymousExpirySignup": "Sign in to keep stats"
   },
   "login": {
     "title": "Sign in",
@@ -176,7 +176,12 @@
     "google": "Continue with Google",
     "anonymousAlt": "You can also <shorten>shorten URLs</shorten> without signing in.",
     "anonymousButton": "Shorten without signing in",
-    "anonymousNote": "Link management and stats require sign-in"
+    "anonymousNote": "Link management and stats require sign-in",
+    "benefits": {
+      "links": "Manage all shortened links in one place",
+      "stats": "View click, country, and channel analytics",
+      "keep": "Claim anonymous links into your account"
+    }
   },
   "auth": {
     "signedIn": "Signed in",
@@ -239,6 +244,12 @@
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "My links and click stats are visible only after sign-in.",
     "goToLogin": "Go to sign in",
+    "loginRequiredBack": "Shorten a link now",
+    "loginRequiredBenefits": {
+      "links": "Manage your link list and expiring links",
+      "stats": "Track clicks, channels, devices, and countries",
+      "campaigns": "Use QR campaigns and custom domains"
+    },
     "emptyTitle": "Make your first link",
     "emptyDesc": "Shorten one URL and within a minute the clicks / countries / channels / devices view fills in. Takes 30 seconds.",
     "emptyCta": "Shorten now",

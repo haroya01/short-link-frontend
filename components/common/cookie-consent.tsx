@@ -36,21 +36,23 @@ export function CookieConsent() {
       role="dialog"
       aria-live="polite"
       aria-label="cookie consent"
-      className="fixed inset-x-0 bottom-0 z-40 px-4 pb-4"
+      className="fixed inset-x-3 bottom-3 z-40 sm:inset-x-0 sm:bottom-4 sm:px-4"
     >
-      <div className="mx-auto flex max-w-3xl flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-lg sm:flex-row sm:items-center">
-        <p className="flex-1 text-xs leading-relaxed text-slate-600">{t("message")}</p>
-        <div className="flex shrink-0 items-center gap-2 self-end sm:self-auto">
+      <div className="mx-auto flex max-w-3xl items-start gap-3 rounded-lg border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur sm:items-center sm:p-3.5">
+        <p className="min-w-0 flex-1 text-[11px] leading-relaxed text-slate-600 sm:text-xs">
+          {t("message")}
+        </p>
+        <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/privacy"
-            className="text-xs text-slate-500 underline hover:text-slate-700"
+            className="hidden text-xs text-slate-500 underline hover:text-slate-700 sm:inline"
           >
             {t("learnMore")}
           </Link>
           <button
             type="button"
             onClick={accept}
-            className="rounded-md bg-slate-900 px-4 py-2 text-xs font-medium text-white transition hover:bg-slate-800"
+            className="rounded-md bg-slate-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-slate-800 sm:px-4"
           >
             {t("accept")}
           </button>
