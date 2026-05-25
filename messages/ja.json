@@ -183,7 +183,12 @@
     "title": "ログイン",
     "subtitle": "ログインするとリンク管理とクリック分析が利用できます。",
     "google": "Googleで続ける",
-    "anonymousButton": "ログインなしで短縮だけ使う"
+    "anonymousButton": "ログインなしで短縮だけ使う",
+    "rotation": [
+      "あなたの url。追跡は .me。",
+      "あなたの url。整理は .me。",
+      "あなたの url。統計は .me。"
+    ]
   },
   "auth": {
     "signedIn": "ログインしました",
