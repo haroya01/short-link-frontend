@@ -183,21 +183,7 @@
     "title": "Sign in",
     "subtitle": "Sign in to manage your links and view analytics.",
     "google": "Continue with Google",
-    "anonymousAlt": "You can also <shorten>shorten URLs</shorten> without signing in.",
-    "anonymousButton": "Shorten without signing in",
-    "anonymousNote": "Link management and stats require sign-in",
-    "benefits": {
-      "links": "Manage all shortened links in one place",
-      "stats": "View click, country, and channel analytics",
-      "keep": "Claim anonymous links into your account"
-    },
-    "preview": {
-      "eyebrow": "After sign-in",
-      "title": "Links and click flow in one place",
-      "links": "Links",
-      "clicks": "Clicks",
-      "channels": "Channels"
-    }
+    "anonymousButton": "Shorten without signing in"
   },
   "auth": {
     "signedIn": "Signed in",
