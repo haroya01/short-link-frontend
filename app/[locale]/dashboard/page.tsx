@@ -6,6 +6,7 @@ import { BarChart3, FileUp, Link2, Plus, QrCode, Search, X } from "lucide-react"
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { MyLinksFilters } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import {
   useInvalidateLinks,
   useMyLinks,
@@ -86,7 +87,7 @@ export default function DashboardPage() {
 
   if (ready && !authenticated) {
     return (
-      <div className="container grid min-h-[calc(100vh-3.5rem-3rem)] max-w-2xl place-items-center py-10">
+      <div className="container grid min-h-[calc(100vh-3.5rem-3rem)] max-w-5xl items-center gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)]">
         <div className="w-full rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-[0_1px_3px_rgba(15,23,42,0.04)] sm:p-8">
           <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
             dashboard
@@ -113,6 +114,7 @@ export default function DashboardPage() {
             </Link>
           </div>
         </div>
+        <DashboardPreview />
       </div>
     );
   }
@@ -229,6 +231,56 @@ function AuthBenefit({
         <Icon className="h-3.5 w-3.5" />
       </span>
       <p className="mt-2 leading-snug">{label}</p>
+    </div>
+  );
+}
+
+function DashboardPreview() {
+  const t = useTranslations("dashboard.preview");
+  return (
+    <div className="hidden lg:block">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+        <div className="flex items-center justify-between">
+          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+            {t("eyebrow")}
+          </p>
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+            30d
+          </span>
+        </div>
+        <p className="mt-3 text-[18px] font-semibold tracking-headline text-slate-900">
+          {t("title")}
+        </p>
+        <div className="mt-5 space-y-2">
+          <DashboardPreviewItem code="/spring" clicks="842" status={t("active")} />
+          <DashboardPreviewItem code="/bio" clicks="316" status={t("active")} />
+          <DashboardPreviewItem code="/event" clicks="90" status={t("expiring")} muted />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DashboardPreviewItem({
+  code,
+  clicks,
+  status,
+  muted,
+}: {
+  code: string;
+  clicks: string;
+  status: string;
+  muted?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50/70 px-3 py-2.5">
+      <div className="min-w-0">
+        <p className="font-mono text-[13px] font-semibold text-slate-900">{code}</p>
+        <p className="mt-0.5 text-[11px] text-slate-500">{status}</p>
+      </div>
+      <p className={cn("font-mono text-[14px] font-semibold", muted ? "text-slate-500" : "text-accent-700")}>
+        {clicks}
+      </p>
     </div>
   );
 }

@@ -181,6 +181,13 @@
       "links": "Manage all shortened links in one place",
       "stats": "View click, country, and channel analytics",
       "keep": "Claim anonymous links into your account"
+    },
+    "preview": {
+      "eyebrow": "After sign-in",
+      "title": "Links and click flow in one place",
+      "links": "Links",
+      "clicks": "Clicks",
+      "channels": "Channels"
     }
   },
   "auth": {
@@ -249,6 +256,12 @@
       "links": "Manage your link list and expiring links",
       "stats": "Track clicks, channels, devices, and countries",
       "campaigns": "Use QR campaigns and custom domains"
+    },
+    "preview": {
+      "eyebrow": "My links preview",
+      "title": "Sign in and this list starts filling up",
+      "active": "Tracking",
+      "expiring": "Expiring soon"
     },
     "emptyTitle": "Make your first link",
     "emptyDesc": "Shorten one URL and within a minute the clicks / countries / channels / devices view fills in. Takes 30 seconds.",

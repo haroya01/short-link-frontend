@@ -28,7 +28,7 @@ export function useInView(threshold = 0.15) {
 }
 
 export function useCountUp(target: number, duration = 700, enabled = true) {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(() => (enabled ? 0 : target));
 
   useEffect(() => {
     if (!enabled || target === 0) {

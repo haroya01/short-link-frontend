@@ -23,6 +23,22 @@ test.describe("design polish guards", () => {
       .getByRole("heading", { name: "내가 원하는 스타일대로" })
       .evaluate((el) => el.getBoundingClientRect().top);
     expect(examplesTop).toBeLessThan(760);
+
+    const cookieBox = await page
+      .getByRole("dialog", { name: "cookie consent" })
+      .boundingBox();
+    const examplesBox = await page
+      .getByRole("heading", { name: "내가 원하는 스타일대로" })
+      .boundingBox();
+    expect(cookieBox?.x).toBeLessThan(80);
+    expect(
+      cookieBox && examplesBox
+        ? cookieBox.y + cookieBox.height < examplesBox.y ||
+            cookieBox.y > examplesBox.y + examplesBox.height ||
+            cookieBox.x + cookieBox.width < examplesBox.x ||
+            cookieBox.x > examplesBox.x + examplesBox.width
+        : true,
+    ).toBe(true);
   });
 
   test("login page explains what signing in unlocks", async ({ page }) => {
@@ -31,6 +47,7 @@ test.describe("design polish guards", () => {
     await expect(page.getByText("단축한 링크를 한 곳에서 관리")).toBeVisible();
     await expect(page.getByText("클릭·국가·채널 통계 확인")).toBeVisible();
     await expect(page.getByText("익명 링크를 계정으로 보존")).toBeVisible();
+    await expect(page.getByText("단축 링크와 클릭 흐름을 한 번에")).toBeVisible();
   });
 
   test("dashboard signed-out state has useful actions, not an empty wall", async ({ page }) => {
@@ -38,7 +55,16 @@ test.describe("design polish guards", () => {
 
     await expect(page.getByRole("heading", { name: "로그인이 필요해요" })).toBeVisible();
     await expect(page.getByText("내 링크 목록과 만료 예정 링크 관리")).toBeVisible();
+    await expect(page.getByText("로그인하면 이런 목록이 채워져요")).toBeVisible();
     await expect(page.getByRole("link", { name: "로그인하러 가기" })).toBeVisible();
     await expect(page.getByRole("link", { name: "지금 링크 단축하기" })).toBeVisible();
+  });
+
+  test("demo stats KPI renders final numbers without a zero-count mismatch", async ({ page }) => {
+    await page.goto("/ko/demo");
+
+    await expect(page.getByText("총 클릭")).toBeVisible();
+    await expect(page.getByText("1,125")).toBeVisible();
+    await expect(page.getByText("698 유니크")).toBeVisible();
   });
 });

@@ -36,9 +36,9 @@ export function CookieConsent() {
       role="dialog"
       aria-live="polite"
       aria-label="cookie consent"
-      className="fixed inset-x-3 bottom-3 z-40 sm:inset-x-0 sm:bottom-4 sm:px-4"
+      className="fixed inset-x-3 bottom-3 z-40 sm:inset-x-auto sm:left-4 sm:right-auto sm:bottom-4"
     >
-      <div className="mx-auto flex max-w-3xl items-start gap-3 rounded-lg border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur sm:items-center sm:p-3.5">
+      <div className="mx-auto flex max-w-3xl items-start gap-3 rounded-lg border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur sm:w-[420px] sm:items-center sm:p-3.5">
         <p className="min-w-0 flex-1 text-[11px] leading-relaxed text-slate-600 sm:text-xs">
           {t("message")}
         </p>
