@@ -168,7 +168,7 @@
     "open": "開く",
     "anonymousExpiryInline": "24 時間で失効",
     "anonymousExpiryAt": "{when} 失効",
-    "anonymousExpirySignup": "サインイン"
+    "anonymousExpirySignup": "ログインして統計を保存"
   },
   "login": {
     "title": "ログイン",
@@ -176,7 +176,12 @@
     "google": "Googleで続ける",
     "anonymousAlt": "ログインなしでも<shorten>URL短縮は可能</shorten>です。",
     "anonymousButton": "ログインなしで短縮だけ使う",
-    "anonymousNote": "リンク管理・統計はログイン時のみ"
+    "anonymousNote": "リンク管理・統計はログイン時のみ",
+    "benefits": {
+      "links": "短縮リンクを一か所で管理",
+      "stats": "クリック・国・チャネル分析を確認",
+      "keep": "匿名リンクをアカウントに保存"
+    }
   },
   "auth": {
     "signedIn": "ログインしました",
@@ -239,6 +244,12 @@
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "マイリンクとクリック統計はログイン後に表示されます。",
     "goToLogin": "ログインへ",
+    "loginRequiredBack": "今すぐ短縮する",
+    "loginRequiredBenefits": {
+      "links": "リンク一覧と期限切れ予定リンクを管理",
+      "stats": "クリック推移・流入チャネル・端末を確認",
+      "campaigns": "QRキャンペーンとカスタムドメインを設定"
+    },
     "emptyTitle": "最初のリンクを作りましょう",
     "emptyDesc": "URL を 1 つ短縮するだけで、1 分以内にクリック / 国 / チャネル / デバイスの分析が埋まり始めます。所要 30 秒。",
     "emptyCta": "今すぐ短縮",

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { FileUp, Plus, Search, X } from "lucide-react";
+import type { ComponentType } from "react";
+import { BarChart3, FileUp, Link2, Plus, QrCode, Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { MyLinksFilters } from "@/lib/api";
@@ -85,14 +86,33 @@ export default function DashboardPage() {
 
   if (ready && !authenticated) {
     return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
-          {t("loginRequired")}
-        </h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-slate-500">{t("loginRequiredDesc")}</p>
-        <Link href="/login" className="mt-6 inline-block">
-          <Button>{t("goToLogin")}</Button>
-        </Link>
+      <div className="container grid min-h-[calc(100vh-3.5rem-3rem)] max-w-2xl place-items-center py-10">
+        <div className="w-full rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-[0_1px_3px_rgba(15,23,42,0.04)] sm:p-8">
+          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+            dashboard
+          </p>
+          <h1 className="mt-3 text-[26px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[32px]">
+            {t("loginRequired")}
+          </h1>
+          <p className="mt-2 text-[15px] leading-relaxed text-slate-500">
+            {t("loginRequiredDesc")}
+          </p>
+          <div className="mt-6 grid gap-2 text-[13px] text-slate-600 sm:grid-cols-3">
+            <AuthBenefit icon={Link2} label={t("loginRequiredBenefits.links")} />
+            <AuthBenefit icon={BarChart3} label={t("loginRequiredBenefits.stats")} />
+            <AuthBenefit icon={QrCode} label={t("loginRequiredBenefits.campaigns")} />
+          </div>
+          <div className="mt-7 flex flex-col gap-2 sm:flex-row">
+            <Link href="/login">
+              <Button className="w-full sm:w-auto">{t("goToLogin")}</Button>
+            </Link>
+            <Link href="/">
+              <Button variant="outline" className="w-full sm:w-auto">
+                {t("loginRequiredBack")}
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -192,6 +212,23 @@ export default function DashboardPage() {
           )}
         </>
       )}
+    </div>
+  );
+}
+
+function AuthBenefit({
+  icon: Icon,
+  label,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+}) {
+  return (
+    <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+      <span className="grid h-7 w-7 place-items-center rounded-md bg-white text-accent-700 shadow-sm">
+        <Icon className="h-3.5 w-3.5" />
+      </span>
+      <p className="mt-2 leading-snug">{label}</p>
     </div>
   );
 }
