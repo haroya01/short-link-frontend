@@ -141,15 +141,10 @@
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
     "submit": "Shorten",
-    "submitBatch": "Make {count} variants",
     "advancedToggle": "Advanced options",
     "customCodeLabel": "Custom code (3-16 letters/digits only)",
     "customCodePlaceholder": "myLink2026",
     "expiresAtLabel": "Expires at (optional)",
-    "utmTitle": "Sharing this link in more than one place?",
-    "utmSubtitle": "Pick channels and you get a separate URL for each — see which one drove the clicks in stats.",
-    "variantsSummarySingle": "Dedicated link for {labels}.",
-    "variantsSummary": "{count} different links ({labels}).",
     "errors": {
       "empty": "Please enter a URL.",
       "invalid": "URL must start with http:// or https://.",

@@ -21,7 +21,7 @@ export default function HomePage() {
   const { authenticated } = useAuth();
   const t = useTranslations("home");
   const [results, setResults] = useState<
-    { res: CreateLinkResponse; original: string; channel?: string }[] | null
+    { res: CreateLinkResponse; original: string }[] | null
   >(null);
   const recent = useRecentLinks();
   const { data: totals } = usePublicTotals();
@@ -95,7 +95,6 @@ export default function HomePage() {
                   items.map((it) => ({
                     res: it.res,
                     original: it.originalUrl,
-                    channel: it.channel,
                   })),
                 );
                 for (const it of items) {
@@ -119,7 +118,6 @@ export default function HomePage() {
                     key={r.res.shortCode}
                     result={r.res}
                     originalUrl={r.original}
-                    channel={r.channel}
                     authenticated={authenticated}
                   />
                 ))}
