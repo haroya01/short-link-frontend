@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
- * pow.ts caches a Promise at the module level — same isolation strategy as the api.ts tests:
- * {@code vi.resetModules()} + dynamic import so each case gets a fresh cache.
+ * pow.ts keeps a single prewarm slot at the module level — same isolation strategy as the
+ * api.ts tests: {@code vi.resetModules()} + dynamic import so each case gets a fresh slot.
  */
 async function freshPow() {
   vi.resetModules();
@@ -17,71 +17,83 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-function stubChallenge(body: { challenge?: string; difficulty?: number; enforced?: boolean }) {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn().mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      json: async () => body,
-    }),
-  );
+function stubChallenges(...bodies: { challenge: string; difficulty: number; enforced: boolean }[]) {
+  const mock = vi.fn();
+  for (const body of bodies) {
+    mock.mockResolvedValueOnce({ ok: true, status: 200, json: async () => body });
+  }
+  vi.stubGlobal("fetch", mock);
+  return mock;
 }
 
 describe("getPowToken — enforcement gate", () => {
   it("returns null when the backend reports enforced: false (no mining needed)", async () => {
-    stubChallenge({ challenge: "abc", difficulty: 4, enforced: false });
+    stubChallenges({ challenge: "abc", difficulty: 4, enforced: false });
     const { getPowToken } = await freshPow();
     const token = await getPowToken();
     expect(token).toBeNull();
   });
 
   it("mines a nonce and returns the pair when enforced: true (difficulty 0 → first try wins)", async () => {
-    // difficulty 0 makes the prefix "" — every hash matches → the mining loop exits at nonce 0.
-    // This keeps the test fast without depending on crypto.subtle output bytes.
-    stubChallenge({ challenge: "ch-1", difficulty: 0, enforced: true });
+    stubChallenges({ challenge: "ch-1", difficulty: 0, enforced: true });
     const { getPowToken } = await freshPow();
     const token = await getPowToken();
     expect(token).toEqual({ challenge: "ch-1", nonce: "0" });
   });
 });
 
-describe("getPowToken — caching", () => {
-  it("caches the promise across calls — only one challenge fetch per module lifetime", async () => {
-    const fetchMock = vi.fn().mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      json: async () => ({ challenge: "ch-cache", difficulty: 0, enforced: true }),
-    });
-    vi.stubGlobal("fetch", fetchMock);
+describe("getPowToken — atomic prewarm consume", () => {
+  it("returns a fresh token on every call when prewarm is not used", async () => {
+    const fetchMock = stubChallenges(
+      { challenge: "a", difficulty: 0, enforced: true },
+      { challenge: "b", difficulty: 0, enforced: true },
+    );
     const { getPowToken } = await freshPow();
     const a = await getPowToken();
     const b = await getPowToken();
-    expect(a).toEqual(b);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(a?.challenge).toBe("a");
+    expect(b?.challenge).toBe("b");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  it("clearPowToken invalidates the cache so the next call re-mines", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: async () => ({ challenge: "first", difficulty: 0, enforced: true }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: async () => ({ challenge: "second", difficulty: 0, enforced: true }),
-      });
-    vi.stubGlobal("fetch", fetchMock);
-    const { getPowToken, clearPowToken } = await freshPow();
+  it("prewarmPowToken seeds one slot that the next getPowToken consumes", async () => {
+    const fetchMock = stubChallenges(
+      { challenge: "warm", difficulty: 0, enforced: true },
+      { challenge: "fresh", difficulty: 0, enforced: true },
+    );
+    const { getPowToken, prewarmPowToken } = await freshPow();
+    prewarmPowToken();
     const a = await getPowToken();
-    expect(a?.challenge).toBe("first");
-    clearPowToken();
+    expect(a?.challenge).toBe("warm");
     const b = await getPowToken();
-    expect(b?.challenge).toBe("second");
+    expect(b?.challenge).toBe("fresh");
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("concurrent callers each get a unique token — only one claims the prewarm slot", async () => {
+    // Three concurrent callers + one prewarm: one claims, two mine fresh → three distinct challenges,
+    // three fetch calls. This is the multi-channel race that motivated the fix.
+    const fetchMock = stubChallenges(
+      { challenge: "warm", difficulty: 0, enforced: true },
+      { challenge: "fresh-1", difficulty: 0, enforced: true },
+      { challenge: "fresh-2", difficulty: 0, enforced: true },
+    );
+    const { getPowToken, prewarmPowToken } = await freshPow();
+    prewarmPowToken();
+    const [a, b, c] = await Promise.all([getPowToken(), getPowToken(), getPowToken()]);
+    const challenges = [a?.challenge, b?.challenge, c?.challenge].sort();
+    expect(challenges).toEqual(["fresh-1", "fresh-2", "warm"]);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it("prewarmPowToken called twice does not double-fetch — second call is a no-op while the slot is full", async () => {
+    const fetchMock = stubChallenges({ challenge: "only", difficulty: 0, enforced: true });
+    const { getPowToken, prewarmPowToken } = await freshPow();
+    prewarmPowToken();
+    prewarmPowToken();
+    const a = await getPowToken();
+    expect(a?.challenge).toBe("only");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });
 

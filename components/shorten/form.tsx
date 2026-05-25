@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ApiError, isValidUrl, shortenUrl } from "@/lib/api";
-import { getPowToken } from "@/lib/pow";
+import { prewarmPowToken } from "@/lib/pow";
 import { track } from "@/components/common/posthog-provider";
 import type { CreateLinkResponse } from "@/types";
 
@@ -41,11 +41,13 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
 
   const [channels, setChannels] = useState<Set<string>>(new Set());
 
-  // Pre-warm proof-of-work for anonymous users so submit doesn't pay the mining cost. Authenticated
-  // users skip PoW server-side, so don't bother computing.
+  // Pre-warm one proof-of-work token while the user is typing so the first POST doesn't pay the
+  // mining cost. Multi-channel submits fire N concurrent POSTs and only the first claims the
+  // prewarmed slot — the rest mine fresh, which is correct because each challenge is single-use
+  // on the server. Authenticated users skip PoW server-side, so don't bother computing.
   useEffect(() => {
     if (!authenticated) {
-      getPowToken().catch(() => {});
+      prewarmPowToken();
     }
   }, [authenticated]);
 

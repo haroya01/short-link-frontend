@@ -6,6 +6,11 @@
  * Mining runs on the main thread (Web Crypto SubtleCrypto is async-friendly so it doesn't
  * block UI). At difficulty=4 (~65k iterations) it completes well under a second on any
  * modern device — invisible to humans, costly at bot scale.
+ *
+ * Concurrency model: server treats each challenge as single-use (deleted on verify). The
+ * multi-channel shorten flow fires N concurrent POSTs in parallel, so every caller MUST
+ * get a unique challenge. The prewarm slot below is atomic-consumed: only one caller wins
+ * it, every other concurrent caller mines its own.
  */
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -22,16 +27,23 @@ type IssuedChallenge = {
   enforced: boolean;
 };
 
-let cached: Promise<PowToken | null> | null = null;
+let prewarmed: Promise<PowToken | null> | null = null;
 
 export async function getPowToken(): Promise<PowToken | null> {
-  if (cached) return cached;
-  cached = mineFresh().catch(() => null);
-  return cached;
+  // Atomic consume: the synchronous `prewarmed = null` happens before the await resolves,
+  // so a second concurrent caller sees null and mines its own.
+  if (prewarmed) {
+    const claimed = prewarmed;
+    prewarmed = null;
+    return claimed;
+  }
+  return mineFresh().catch(() => null);
 }
 
-export function clearPowToken() {
-  cached = null;
+export function prewarmPowToken(): void {
+  if (!prewarmed) {
+    prewarmed = mineFresh().catch(() => null);
+  }
 }
 
 async function mineFresh(): Promise<PowToken | null> {
