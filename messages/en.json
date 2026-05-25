@@ -1122,11 +1122,11 @@
     },
     "q2": {
       "q": "How is a short link different from a link-in-bio page?",
-      "a": "A short link is a 1:1 mapping: one long URL → one short URL. Best for a single destination — Twitter post, Instagram comment, business card.\n\nA link-in-bio page collects many links behind one URL. Since Instagram lets you put only one link in your profile, creators use kurl.me/<handle> as that one link, pointing visitors to a mini page with their email, booking, store, blog, and socials.\n\nkurl does both — shorten individual URLs, and build a profile page that bundles them."
+      "a": "A short link is a 1:1 mapping: one long URL → one short URL. Best for a single destination — Twitter post, Instagram comment, business card.\n\nA link-in-bio page collects many links behind one URL. Since Instagram lets you put only one link in your profile, creators use kurl.me/yourname as that one link, pointing visitors to a mini page with their email, booking, store, blog, and socials.\n\nkurl does both — shorten individual URLs, and build a profile page that bundles them."
     },
     "q3": {
       "q": "What is kurl?",
-      "a": "kurl is a free URL shortener + link-in-bio service. No ads, no required signup to shorten, and free analytics: device, country, channel, time-of-day.\n\nSign in with Google in one click and your shortened links persist, plus you can build a profile page at kurl.me/<handle> in five minutes."
+      "a": "kurl is a free URL shortener + link-in-bio service. No ads, no required signup to shorten, and free analytics: device, country, channel, time-of-day.\n\nSign in with Google in one click and your shortened links persist, plus you can build a profile page at kurl.me/yourname in five minutes."
     },
     "q4": {
       "q": "What can a profile page contain?",
@@ -1424,7 +1424,7 @@
       "leadsLink": "Collected emails",
       "stats": {
         "title": "My profile visit stats",
-        "intro": "Who's reading your /u/<handle> page, and from where. Same depth as your short-link stats.",
+        "intro": "Who's reading your /u/username page, and from where. Same depth as your short-link stats.",
         "backToEditor": "Back to editor",
         "loadFailed": "Couldn't load stats.",
         "summary": {
