@@ -14,7 +14,6 @@ import type { CreateLinkResponse } from "@/types";
 type Props = {
   result: CreateLinkResponse;
   originalUrl: string;
-  channel?: string;
   /**
    * When false (anonymous shortener path), the card surfaces the 24h auto-expiry strip plus a
    * signup CTA. Backend enforces {@code ANONYMOUS_TTL = Duration.ofDays(1)} so this mirrors the
@@ -26,7 +25,7 @@ type Props = {
 
 const ANONYMOUS_TTL_HOURS = 24;
 
-export function ResultCard({ result, originalUrl, channel, authenticated }: Props) {
+export function ResultCard({ result, originalUrl, authenticated }: Props) {
   const t = useTranslations("result");
   const { toast } = useToast();
 
@@ -89,11 +88,6 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
           </a>
           <ShareButton url={result.shortUrl} title={result.shortUrl} variant="outline" />
           <QrButton url={result.shortUrl} />
-          {channel && (
-            <span className="ml-auto font-mono text-[10px] uppercase tracking-wider text-slate-400">
-              {channel}
-            </span>
-          )}
         </div>
       </div>
 
