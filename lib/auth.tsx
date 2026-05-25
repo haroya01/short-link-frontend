@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from "react";
 import * as Sentry from "@sentry/nextjs";
 
@@ -49,14 +50,20 @@ async function tryClaimPendingLinks() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
   const meQuery = useMe();
   const me = meQuery.data ?? null;
-  // isLoading = isPending && isFetching → disabled query (anonymous) 와 background refetch 양쪽에서 false
-  const ready = !meQuery.isLoading;
+  // Keep the first client render structurally identical to SSR. Token state is browser-only, so
+  // auth-dependent UI must wait until after mount before deciding between anonymous and signed-in.
+  const ready = mounted && !meQuery.isLoading;
   const authenticated = !!me;
 
   const meId = me?.id ?? null;
   const meRole = me?.role ?? null;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!meId || !meRole) {
