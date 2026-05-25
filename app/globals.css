@@ -518,3 +518,54 @@ canvas.qr-canvas-fit {
 .mono-card .ring-white\/20 { --tw-ring-color: rgb(0 0 0 / 0.18); }
 .mono-card .bg-black\/30 { background-color: rgb(0 0 0 / 0.08); }
 .mono-card button:hover { background-color: rgb(0 0 0 / 0.04); }
+
+/* Login BrandRotator: phrase ↔ wordmark morph.
+ *
+ * 기본 = phrase 모드 "당신의 url. [verb] .me." 전부 표시. cycling 끝나면 .brand-settled
+ * 추가 → lead/join/tail/end/verb-wrap 가 max-width:0+opacity:0 으로 collapse, url+.me 가
+ * 양옆에서 붙고 폰트가 wordmark 사이즈로 커지고 k 가 prepend.
+ *
+ * opacity 와 max-width transition duration 을 동일하게 묶어서 mid-transition 의 "fade 만
+ * 끝나고 공간은 남아있는" gap 을 차단.
+ *
+ * .brand-no-transition = 첫 paint 에서 즉시 settled 인 경우 flash 없이 settled 직행. */
+.brand-rotator {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+  transition: font-size 0.55s ease-in-out, letter-spacing 0.55s ease-in-out,
+    font-weight 0.55s ease-in-out;
+}
+.brand-rotator > span {
+  display: inline-block;
+  white-space: pre;
+}
+.brand-rotator [data-fade] {
+  overflow: hidden;
+  max-width: 200px;
+  opacity: 1;
+  transition: max-width 0.55s ease-in-out, opacity 0.55s ease-in-out;
+}
+.brand-rotator [data-k] {
+  overflow: hidden;
+  max-width: 0;
+  opacity: 0;
+  transition: max-width 0.55s 0.15s ease-out, opacity 0.55s 0.15s ease-out;
+}
+.brand-rotator.brand-settled {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+.brand-rotator.brand-settled [data-fade] {
+  max-width: 0;
+  opacity: 0;
+}
+.brand-rotator.brand-settled [data-k] {
+  max-width: 0.65em;
+  opacity: 1;
+}
+.brand-no-transition,
+.brand-no-transition * {
+  transition: none !important;
+}
