@@ -18,6 +18,7 @@ type Props = {
   profileClicks?: number | null;
   timeToFirstClickMinutes?: number | null;
   velocityRatio?: number | null;
+  animate?: boolean;
   /**
    * Called when a card is clicked. Hosts on a tabbed surface use this to switch tab + scroll;
    * single-page hosts can omit it and the card falls back to in-page {@code scrollIntoView}.
@@ -42,6 +43,7 @@ export function StatsCards({
   profileClicks,
   timeToFirstClickMinutes,
   velocityRatio,
+  animate = true,
   onNavigate,
 }: Props) {
   const t = useTranslations("stats.kpi");
@@ -73,7 +75,7 @@ export function StatsCards({
   const showVelocity = hasVelocity && (velocityRatio as number) > 0;
   const showLatency = !showVelocity && hasLatency;
 
-  const animatedTotal = useCountUp(total, 900);
+  const animatedTotal = useCountUp(total, 900, animate);
 
   return (
     <div
@@ -130,6 +132,7 @@ export function StatsCards({
         target={human}
         icon={MousePointerClick}
         sub={`${humanRatio.toFixed(1)}%`}
+        animate={animate}
         onJump={interactive ? () => jump("section-device") : undefined}
       />
       <CountStat
@@ -137,6 +140,7 @@ export function StatsCards({
         target={hasUnique ? (unique as number) : null}
         icon={Users}
         sub={hasUnique ? t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) }) : undefined}
+        animate={animate}
         onJump={interactive ? () => jump("section-daily") : undefined}
       />
       <CountStat
@@ -145,6 +149,7 @@ export function StatsCards({
         icon={Bot}
         sub={`${botRatio.toFixed(1)}%`}
         muted
+        animate={animate}
         onJump={interactive ? () => jump("section-bots") : undefined}
       />
       {showProfile && (
@@ -153,6 +158,7 @@ export function StatsCards({
           target={profileClicks as number}
           icon={IdCard}
           sub={t("profileSub", { ratio: profileRatio.toFixed(0) })}
+          animate={animate}
           onJump={interactive ? () => jump("section-sources") : undefined}
         />
       )}
@@ -237,6 +243,7 @@ function CountStat({
   icon,
   muted,
   onJump,
+  animate = true,
 }: {
   label: string;
   target: number | null;
@@ -244,10 +251,13 @@ function CountStat({
   icon: React.ComponentType<{ className?: string }>;
   muted?: boolean;
   onJump?: () => void;
+  animate?: boolean;
 }) {
-  const animated = useCountUp(target ?? 0, 700, target !== null);
+  const animated = useCountUp(target ?? 0, 700, animate && target !== null);
   const display = target === null ? "—" : formatNumber(animated);
-  return <Stat label={label} value={display} sub={sub} icon={icon} muted={muted} onJump={onJump} />;
+  return (
+    <Stat label={label} value={display} sub={sub} icon={icon} muted={muted} onJump={onJump} />
+  );
 }
 
 function formatLatency(minutes: number): string {

@@ -90,6 +90,7 @@ export function StatsBody({
         profileClicks={data.profileClicks}
         timeToFirstClickMinutes={data.timeToFirstClickMinutes}
         velocityRatio={data.velocity?.ratio ?? 0}
+        animate={!demo}
         onNavigate={handleNavigate}
       />
       <TabBar active={tab} onSelect={setTab} />

@@ -70,42 +70,96 @@ function LoginShell() {
      * earlier hero treatment piled on.
      */
     <div className="relative isolate overflow-hidden bg-white">
-      <div className="container relative z-10 flex min-h-[calc(100vh-3.5rem-3rem)] max-w-md flex-col justify-center py-10 sm:py-16">
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
-            {t("title")}
-          </p>
-          <h1 className="mt-3 text-balance text-[26px] font-semibold leading-tight tracking-headline text-slate-900">
-            {t("subtitle")}
-          </h1>
+      <div className="container relative z-10 grid min-h-[calc(100vh-3.5rem-3rem)] max-w-5xl items-center gap-8 py-10 sm:py-16 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
+        <div className="mx-auto w-full max-w-md lg:mx-0">
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+            <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+              {t("title")}
+            </p>
+            <h1 className="mt-3 text-balance text-[26px] font-semibold leading-tight tracking-headline text-slate-900">
+              {t("subtitle")}
+            </h1>
 
-          <Button
-            variant="outline"
-            className="mt-7 h-11 w-full justify-center"
-            onClick={signInWithGoogle}
-          >
-            <GoogleIcon className="h-4 w-4" />
-            {t("google")}
-          </Button>
+            <Button
+              variant="outline"
+              className="mt-7 h-11 w-full justify-center"
+              onClick={signInWithGoogle}
+            >
+              <GoogleIcon className="h-4 w-4" />
+              {t("google")}
+            </Button>
 
-          <div className="mt-6 grid gap-2 border-t border-slate-100 pt-5 text-[12px] text-slate-500">
-            <LoginBenefit icon={Link2} label={t("benefits.links")} />
-            <LoginBenefit icon={BarChart3} label={t("benefits.stats")} />
-            <LoginBenefit icon={ShieldCheck} label={t("benefits.keep")} />
+            <div className="mt-6 grid gap-2 border-t border-slate-100 pt-5 text-[12px] text-slate-500">
+              <LoginBenefit icon={Link2} label={t("benefits.links")} />
+              <LoginBenefit icon={BarChart3} label={t("benefits.stats")} />
+              <LoginBenefit icon={ShieldCheck} label={t("benefits.keep")} />
+            </div>
+          </div>
+
+          {/* 익명 사용자 옵션 — 이전엔 작은 underline link 였는데 visual weight 약해서 사용자가
+              "로그인만 가능한 페이지" 로 오해. ghost button + 위 link 와 명확히 분리. */}
+          <div className="mt-6 flex flex-col items-center gap-1.5">
+            <Link href="/">
+              <Button variant="ghost" size="sm" className="text-slate-600">
+                {t("anonymousButton")}
+              </Button>
+            </Link>
+            <p className="text-[11px] text-slate-400">{t("anonymousNote")}</p>
           </div>
         </div>
+        <LoginPreview />
+      </div>
+    </div>
+  );
+}
 
-        {/* 익명 사용자 옵션 — 이전엔 작은 underline link 였는데 visual weight 약해서 사용자가
-            "로그인만 가능한 페이지" 로 오해. ghost button + 위 link 와 명확히 분리. */}
-        <div className="mt-6 flex flex-col items-center gap-1.5">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-slate-600">
-              {t("anonymousButton")}
-            </Button>
-          </Link>
-          <p className="text-[11px] text-slate-400">{t("anonymousNote")}</p>
+function LoginPreview() {
+  const t = useTranslations("login.preview");
+  return (
+    <div className="hidden lg:block">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+              {t("eyebrow")}
+            </p>
+            <p className="mt-2 text-[18px] font-semibold tracking-headline text-slate-900">
+              {t("title")}
+            </p>
+          </div>
+          <span className="rounded-full bg-accent-50 px-2.5 py-1 text-[11px] font-medium text-accent-700">
+            live
+          </span>
+        </div>
+        <div className="mt-5 grid grid-cols-3 gap-2">
+          <PreviewMetric label={t("links")} value="12" />
+          <PreviewMetric label={t("clicks")} value="1,248" />
+          <PreviewMetric label={t("channels")} value="6" />
+        </div>
+        <div className="mt-5 space-y-2 rounded-xl border border-slate-100 bg-slate-50/70 p-3">
+          <PreviewRow label="instagram" value="42%" />
+          <PreviewRow label="kakao" value="31%" />
+          <PreviewRow label="blog" value="18%" />
         </div>
       </div>
+    </div>
+  );
+}
+
+function PreviewMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
+      <p className="text-[11px] text-slate-500">{label}</p>
+      <p className="mt-1 font-mono text-xl font-semibold text-slate-900">{value}</p>
+    </div>
+  );
+}
+
+function PreviewRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 text-[12px]">
+      <span className="text-slate-500">{label}</span>
+      <span className="font-mono font-semibold text-slate-900">{value}</span>
     </div>
   );
 }
