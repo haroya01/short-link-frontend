@@ -39,6 +39,39 @@ export default function QrCampaignsLandingPage() {
   );
 }
 
+/**
+ * Top-of-viewport timeline showing which narrative section is on screen and how long until
+ * autoplay moves on. One segment per section — finished ones stay filled, the active one fills
+ * progressively over {@code AUTOPLAY_MS}. Both mobile and desktop see the same bar; the
+ * desktop-only bottom dots were dropped to keep one feedback surface.
+ *
+ * Keyed by {@code active} so each section transition restarts the fill animation cleanly — a
+ * single shared element would have to be reset every cycle, which interacts poorly with the
+ * CSS keyframe (no JS "play from 0").
+ */
+function TopProgressBar({ count, active }: { count: number; active: number }) {
+  if (active < 0) return null;
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none fixed left-0 right-0 top-0 z-50 flex gap-[2px] bg-slate-100/70 px-2 py-1.5"
+    >
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="relative h-0.5 flex-1 overflow-hidden rounded-full bg-slate-200">
+          {i < active && <div className="absolute inset-0 bg-accent-500" />}
+          {i === active && (
+            <div
+              key={`top-bar-${active}`}
+              className="absolute inset-0 origin-left bg-accent-600"
+              style={{ animation: `dot-progress ${AUTOPLAY_MS}ms linear forwards` }}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function FloatingCta({ ctaHref }: { ctaHref: string }) {
   const t = useTranslations("qrCampaigns.hero");
   // 어떤 § 에 있든 우하단 같은 자리. mount 직후 살짝 delay 후 fade-in.
@@ -88,6 +121,13 @@ function StickyNarrative({ mock }: { mock: MockData }) {
   // -1 로 시작해서 첫 frame 직후 0 으로 setter — 좌·우 컬럼 모두 slide-in 으로 부드럽게 진입.
   const [active, setActive] = useState(-1);
 
+  // True while autoplay is in the middle of a programmatic smooth scroll. Both the desktop
+  // scroll listener and the mobile IntersectionObserver bail when this is set, so they don't
+  // race the in-flight scroll and call setActive with intermediate idx values — which used to
+  // re-fire the autoplay effect mid-animation and produce the §1→§2 "scroll, pause, scroll
+  // again" stutter the user reported.
+  const scrollingRef = useRef(false);
+
   useEffect(() => {
     const t = window.setTimeout(() => setActive(0), 50);
     return () => window.clearTimeout(t);
@@ -98,6 +138,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
+        if (scrollingRef.current) return;
         let best: IntersectionObserverEntry | null = null;
         for (const entry of entries) {
           if (entry.isIntersecting) {
@@ -119,11 +160,12 @@ function StickyNarrative({ mock }: { mock: MockData }) {
 
   // 데스크탑: 사용자가 컬럼 내부에서 만큼 스크롤했는지를 직접 계산해서 active 산출.
   // 컬럼 height = (SECTION_COUNT + 1) × 100vh, 그 안에 sticky h-screen 한 장이 박혀있음.
-  // 좌우 컬럼은 절대 viewport 중앙에 고정되어있고, § 전환은 좌우 slide (translateX) 로만.
+  // 좌우 컬럼은 절대 viewport 중앙에 고정되어있고, § 전환은 opacity fade 로.
   useEffect(() => {
     let raf = 0;
     const compute = () => {
       raf = 0;
+      if (scrollingRef.current) return;
       const c = desktopContainerRef.current;
       if (!c) return;
       if (!window.matchMedia("(min-width: 1024px)").matches) return;
@@ -159,13 +201,32 @@ function StickyNarrative({ mock }: { mock: MockData }) {
     const timer = window.setTimeout(() => {
       const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
       const nextIdx = (active + 1) % SECTION_COUNT;
+
+      const beginScroll = () => {
+        scrollingRef.current = true;
+        // The smooth scroll itself takes ~500–700ms in Chrome/Safari/FF. 900ms gives the
+        // browser room to settle before we let compute/observer run again. Setting active
+        // eagerly (before scroll completes) is safe because the desktop layout fades sections
+        // via opacity — visually the new section reveals over the in-flight scroll, matching
+        // the same 700ms ease as a real user scroll.
+        setActive(nextIdx);
+        window.setTimeout(() => {
+          scrollingRef.current = false;
+        }, 900);
+      };
+
       if (isDesktop) {
         const c = desktopContainerRef.current;
         if (!c) return;
         const rect = c.getBoundingClientRect();
         if (rect.bottom < 0 || rect.top > window.innerHeight) return;
         const containerTopAbs = rect.top + window.scrollY;
-        const target = containerTopAbs + nextIdx * window.innerHeight + 40;
+        // Clean vh boundary — the previous `+ 40` overshoot landed at scrolledIn = vh + 40,
+        // and during the smooth scroll the scroll listener saw idx flip 0→1 mid-animation
+        // even though we'd already scheduled idx=1. Removing the offset + the scrollingRef
+        // guard fully drops the §1→§2 stutter.
+        const target = containerTopAbs + nextIdx * window.innerHeight;
+        beginScroll();
         window.scrollTo({ top: target, behavior: "smooth" });
       } else {
         const current = mobileRefs.current[active];
@@ -178,6 +239,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
         // h-[100svh] § 이므로 block:"start" 가 viewport 정확히 채움. scroll-mt-14 가 sticky
         // header 보정. block:"center" 였을 때 § height > viewport 일 경우 observer 가 중간
         // 섹션에 반복 fire 해서 active 가 흔들리며 autoplay 가 멈춘 듯 보이는 회귀.
+        beginScroll();
         next.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }, AUTOPLAY_MS);
@@ -233,6 +295,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
 
   return (
     <section className="relative bg-slate-50/40">
+      <TopProgressBar count={SECTION_COUNT} active={active} />
       {/* 모바일 레이아웃 — 각 § 가 viewport 한 화면을 채우되 (min-h-[100svh]) 콘텐츠 비율은
           원래대로. 강제 h-[100svh] + 작은 mock 으로 어색해진 회귀를 되돌림. mock 은 다시 max-w-sm
           (384px). scroll-mt-14 = global sticky header (h-14) 보정. */}
@@ -294,11 +357,6 @@ function StickyNarrative({ mock }: { mock: MockData }) {
                   </div>
                 );
               })}
-              <ProgressDots
-                count={SECTION_COUNT}
-                active={active}
-                className="absolute bottom-10 left-1/2 z-20 -translate-x-1/2"
-              />
             </div>
 
             <div className="relative w-1/2">
@@ -419,37 +477,6 @@ function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean })
     </>
   );
 }
-
-function ProgressDots({
-  count,
-  active,
-  className = "",
-}: {
-  count: number;
-  active: number;
-  className?: string;
-}) {
-  return (
-    <div className={"flex gap-2 " + className}>
-      {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className="relative h-1.5 w-10 overflow-hidden rounded-full bg-slate-200"
-        >
-          {i < active && <div className="absolute inset-0 bg-accent-400" />}
-          {i === active && (
-            <div
-              key={`bar-${active}`}
-              className="absolute inset-0 origin-left bg-accent-600"
-              style={{ animation: `dot-progress ${AUTOPLAY_MS}ms linear forwards` }}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
 
 function FinalCta({
   ctaHref,
