@@ -188,7 +188,7 @@
       "lead": "Your ",
       "join": " ",
       "tail": " ",
-      "end": ".",
+      "end": "",
       "verbs": ["Tracking", "Analysis", "Statistics"]
     }
   },
