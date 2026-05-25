@@ -39,16 +39,17 @@ export async function shortenUrl(payload: CreateLinkRequest): Promise<CreateLink
 async function shortenUrlOnce(payload: CreateLinkRequest): Promise<CreateLinkResponse> {
   const headers: Record<string, string> = {};
   // Anonymous shorten requires a fresh PoW token; authenticated users skip it (they're
-  // identified by access token + per-user rate limit).
+  // identified by access token + per-user rate limit). getPowToken atomically consumes the
+  // prewarmed slot if available, otherwise mines fresh — concurrent callers (multi-channel
+  // batch) each end up with a unique token, which is required because the server treats
+  // each challenge as single-use.
   if (!readToken()) {
-    const { getPowToken, clearPowToken } = await import("../pow");
+    const { getPowToken } = await import("../pow");
     const pow = await getPowToken();
     if (pow) {
       headers["X-Pow-Challenge"] = pow.challenge;
       headers["X-Pow-Nonce"] = pow.nonce;
     }
-    // Each token is single-use, so clear the cached one after we attach it.
-    clearPowToken();
   }
   return request<CreateLinkResponse>("/api/v1/links", {
     method: "POST",
