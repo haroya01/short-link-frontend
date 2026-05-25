@@ -189,6 +189,7 @@ export function FeatureCarousel() {
  * pixel-equivalent so the user recognises this screen when they reach the real stats page.
  */
 function RealtimePreview() {
+  const t = useTranslations("home.features.realtime.preview");
   const events = [
     { ts: "02:14:08", country: "KR", device: "mobile", channel: "instagram.com" },
     { ts: "02:14:11", country: "JP", device: "desktop", channel: "(direct)" },
@@ -200,14 +201,14 @@ function RealtimePreview() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700">
-          실시간 클릭
+          {t("eyebrow")}
         </h3>
         <div className="flex items-center gap-1.5 text-[11px]">
           <span
             className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
             aria-hidden
           />
-          <span className="font-medium text-emerald-700">라이브</span>
+          <span className="font-medium text-emerald-700">{t("live")}</span>
         </div>
       </div>
       <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
@@ -244,6 +245,7 @@ function RealtimePreview() {
  * percent in mono tabular-nums / accent progress bar / break-all destination URL underneath.
  */
 function AbTestPreview() {
+  const t = useTranslations("home.features.abtest.preview");
   type Variant = {
     label: string;
     url: string;
@@ -268,7 +270,7 @@ function AbTestPreview() {
       hits: 312,
     },
     {
-      label: "기본 (원본 URL)",
+      label: t("controlLabel"),
       url: "",
       country: null,
       weight: null,
@@ -279,9 +281,7 @@ function AbTestPreview() {
   const total = variants.reduce((s, v) => s + v.hits, 0);
   return (
     <div className="space-y-3">
-      <p className="text-[11px] leading-snug text-slate-500">
-        같은 단축 URL 의 클릭을 가중치 + 방문자 국가 매칭으로 분기. 매칭 안 되면 기본 도착지로 폴백.
-      </p>
+      <p className="text-[11px] leading-snug text-slate-500">{t("explainer")}</p>
       <div className="space-y-2">
         {variants.map((v, i) => {
           const pct = total === 0 ? 0 : (v.hits / total) * 100;
@@ -354,16 +354,17 @@ function AbTestPreview() {
  * card's {@code DeltaBadge} for positive deltas.
  */
 function InsightsPreview() {
+  const t = useTranslations("home.features.insights.preview");
   const stats = [
-    { label: "사람 클릭", value: "1,422", sub: "전체 중 91%" },
-    { label: "탑 링크", value: "/spring", sub: "638 · instagram", mono: true },
-    { label: "피크", value: "수 21시", sub: "이 시간대 클릭 38%" },
-    { label: "전주 대비", value: "1,142", sub: "지난주 사람 클릭" },
+    { label: t("humanLabel"), value: "1,422", sub: t("humanSub") },
+    { label: t("topLinkLabel"), value: "/spring", sub: t("topLinkSub"), mono: true },
+    { label: t("peakLabel"), value: t("peakValue"), sub: t("peakSub") },
+    { label: t("wowLabel"), value: "1,142", sub: t("wowSub") },
   ];
   return (
     <div className="space-y-4">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-sm font-medium text-slate-700">이번 주 인사이트</p>
+        <p className="text-sm font-medium text-slate-700">{t("heading")}</p>
         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
           ↗ 24%
         </span>

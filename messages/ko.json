@@ -97,15 +97,35 @@
     "features": {
       "realtime": {
         "title": "실시간 클릭 피드 (SSE)",
-        "desc": "통계 페이지에서 클릭이 들어오는 순간 시간/국가/채널/디바이스가 라이브로 흐름"
+        "desc": "통계 페이지에서 클릭이 들어오는 순간 시간/국가/채널/디바이스가 라이브로 흐름",
+        "preview": {
+          "eyebrow": "실시간 클릭",
+          "live": "라이브"
+        }
       },
       "insights": {
         "title": "자동 인사이트",
-        "desc": "피크 시간 / 재방문율 / Half-life / Velocity — 별도 설정 없이 즉시 노출"
+        "desc": "피크 시간 / 재방문율 / Half-life / Velocity — 별도 설정 없이 즉시 노출",
+        "preview": {
+          "heading": "이번 주 인사이트",
+          "humanLabel": "사람 클릭",
+          "humanSub": "전체 중 91%",
+          "topLinkLabel": "탑 링크",
+          "topLinkSub": "638 · instagram",
+          "peakLabel": "피크",
+          "peakValue": "수 21시",
+          "peakSub": "이 시간대 클릭 38%",
+          "wowLabel": "전주 대비",
+          "wowSub": "지난주 사람 클릭"
+        }
       },
       "abtest": {
         "title": "A/B 분배 + 국가별 라우팅",
-        "desc": "한 단축 URL → 가중치로 분산 + 방문자 국가에 맞춘 페이지로 자동 분기 (링크당 4개)"
+        "desc": "한 단축 URL → 가중치로 분산 + 방문자 국가에 맞춘 페이지로 자동 분기 (링크당 4개)",
+        "preview": {
+          "explainer": "같은 단축 URL 의 클릭을 가중치 + 방문자 국가 매칭으로 분기. 매칭 안 되면 기본 도착지로 폴백.",
+          "controlLabel": "기본 (원본 URL)"
+        }
       }
     },
     "recentEyebrow": "최근 단축",
