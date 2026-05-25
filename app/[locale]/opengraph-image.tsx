@@ -16,16 +16,27 @@ export default async function OgImage({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "login" });
 
-  // 로그인 BrandRotator 의 마지막 phrase(=통계) 를 OG 의 brand tagline 으로 재사용.
-  // 공유 카드 본 사람이 로그인 surface 에 와서 같은 카피를 다시 만나게 하는 의도.
-  let tagline = "";
+  // 로그인 BrandRotator 의 마지막 verb 를 phrase 형태로 OG tagline 재사용.
+  type Rotation = {
+    lead: string;
+    join: string;
+    tail: string;
+    end: string;
+    verbs: string[];
+  };
+  let tagline: Rotation | null = null;
   try {
     const raw = t.raw("rotation") as unknown;
-    if (Array.isArray(raw) && raw.length > 0) {
-      tagline = String(raw[raw.length - 1] ?? raw[0]);
+    if (
+      raw &&
+      typeof raw === "object" &&
+      Array.isArray((raw as Rotation).verbs) &&
+      (raw as Rotation).verbs.length > 0
+    ) {
+      tagline = raw as Rotation;
     }
   } catch {
-    // rotation 키 누락 locale 은 tagline 없이 mark + 워드마크 + 푸터만.
+    // rotation 누락 locale 은 tagline 없이 mark + 워드마크 + 푸터만.
   }
 
   return new ImageResponse(
@@ -92,12 +103,23 @@ export default async function OgImage({
             <div
               style={{
                 display: "flex",
-                fontSize: 76,
-                color: "#475569",
-                marginTop: 80,
+                fontSize: 80,
+                fontWeight: 700,
+                color: "#1e293b",
+                marginTop: 96,
+                letterSpacing: -1.5,
+                whiteSpace: "pre",
               }}
             >
-              {renderWithMeAccent(tagline)}
+              <span>{tagline.lead}</span>
+              <span>url</span>
+              <span>{tagline.join}</span>
+              <span style={{ color: "#0f172a" }}>
+                {tagline.verbs[tagline.verbs.length - 1]}
+              </span>
+              <span>{tagline.tail}</span>
+              <span style={{ color: "#94a3b8" }}>.me</span>
+              <span>{tagline.end}</span>
             </div>
           ) : null}
         </div>

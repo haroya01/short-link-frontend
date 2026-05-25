@@ -184,11 +184,13 @@
     "subtitle": "Sign in to manage your links and view analytics.",
     "google": "Continue with Google",
     "anonymousButton": "Shorten without signing in",
-    "rotation": [
-      "Your url. Tracked by .me.",
-      "Your url. Organized by .me.",
-      "Your url. Analyzed by .me."
-    ]
+    "rotation": {
+      "lead": "Your ",
+      "join": ". ",
+      "tail": " ",
+      "end": ".",
+      "verbs": ["Tracking", "Analysis", "Statistics"]
+    }
   },
   "auth": {
     "signedIn": "Signed in",

@@ -1,13 +1,19 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import gsap from "gsap";
+import { SplitText } from "gsap/SplitText";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { GoogleIcon } from "@/components/common/google-icon";
 import { cn } from "@/lib/utils";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(SplitText);
+}
 
 const LOGIN_NEXT_KEY = "kurl:login-next";
 
@@ -118,72 +124,224 @@ function LoginShell() {
 }
 
 const ROTATION_HOLD_MS = 1500;
-const ROTATED_KEY = "kurl:login-rotated";
+
+type Rotation = {
+  lead: string;
+  join: string;
+  tail: string;
+  end: string;
+  verbs: string[];
+};
 
 function BrandRotator({ style }: { style?: React.CSSProperties }) {
   const t = useTranslations("login");
-  const phrases = (() => {
+  const rotation = (() => {
     try {
       const raw = t.raw("rotation");
-      return Array.isArray(raw) ? (raw as string[]) : [];
+      if (
+        raw &&
+        typeof raw === "object" &&
+        Array.isArray((raw as Rotation).verbs)
+      ) {
+        return raw as Rotation;
+      }
+      return null;
     } catch {
-      return [];
+      return null;
     }
   })();
+  const verbs = rotation?.verbs ?? [];
 
-  // SSR / no-JS / reduced-motion / 세션 재방문은 모두 settled 상태로 떨어져야 해서 초기값은 끝.
-  const [idx, setIdx] = useState<number>(phrases.length);
-
-  useEffect(() => {
-    if (phrases.length === 0) return;
-    const seen = sessionStorage.getItem(ROTATED_KEY) === "1";
-    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (seen || reduced) return;
-    setIdx(0);
-  }, [phrases.length]);
+  const [idx, setIdx] = useState<number>(0);
+  const [mode, setMode] = useState<"cycling" | "settled">("cycling");
+  const containerRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    if (phrases.length === 0) return;
-    if (idx >= phrases.length) {
-      sessionStorage.setItem(ROTATED_KEY, "1");
+    if (verbs.length === 0) {
+      setMode("settled");
       return;
+    }
+    const reduced = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduced) {
+      // a11y — motion off 사용자는 즉시 settled, flash 없도록 transition 잠깐 끔.
+      const root = containerRef.current;
+      root?.classList.add("brand-no-transition");
+      setMode("settled");
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          root?.classList.remove("brand-no-transition");
+        });
+      });
+    }
+  }, [verbs.length]);
+
+  useEffect(() => {
+    if (mode !== "cycling" || verbs.length === 0) return;
+    if (idx >= verbs.length - 1) {
+      const timer = setTimeout(() => setMode("settled"), ROTATION_HOLD_MS);
+      return () => clearTimeout(timer);
     }
     const timer = setTimeout(() => setIdx((i) => i + 1), ROTATION_HOLD_MS);
     return () => clearTimeout(timer);
-  }, [idx, phrases.length]);
+  }, [idx, mode, verbs.length]);
 
-  const settled = phrases.length === 0 || idx >= phrases.length;
-  const current = phrases[Math.min(idx, Math.max(phrases.length - 1, 0))] ?? "";
+  if (!rotation) {
+    return (
+      <div
+        className="flex h-12 w-full items-center justify-center"
+        style={style}
+        aria-hidden
+      >
+        <span
+          className="text-[34px] font-bold leading-none text-slate-900"
+          style={{ letterSpacing: "-0.04em" }}
+        >
+          kurl<span className="text-slate-400">.me</span>
+        </span>
+      </div>
+    );
+  }
 
+  // phrase 안의 surrounding text (lead/join/tail/end) 는 settled 시 max-width:0 으로 collapse,
+  // url + .me 는 양옆에서 붙으며 wordmark 크기로 scale up, k 는 prepend 되며 등장.
+  // CSS-only morph (앞서 Flip 시도 → 초기 mount race + opacity 0 가 layout 차지하는 문제로
+  // 폐기). 모든 collapse/expand transition 을 같은 duration 으로 묶어서 layout flash 차단.
   return (
     <div
-      className="relative flex h-12 w-full items-center justify-center"
+      className="flex h-12 w-full items-center justify-center"
       style={style}
       aria-hidden
     >
       <span
+        ref={containerRef}
         className={cn(
-          "absolute inset-0 flex items-center justify-center text-[34px] font-bold leading-none text-slate-900 transition-all duration-500 ease-out",
-          settled ? "scale-100 opacity-100" : "scale-90 opacity-0",
-        )}
-        style={{ letterSpacing: "-0.04em" }}
-      >
-        kurl<span className="text-slate-400">.me</span>
-      </span>
-      <span
-        className={cn(
-          "absolute inset-0 flex items-center justify-center whitespace-nowrap text-[20px] font-medium leading-none text-slate-700 transition-opacity duration-300",
-          settled ? "opacity-0" : "opacity-100",
+          "brand-rotator flex items-center whitespace-nowrap leading-none text-slate-900",
+          mode === "settled" && "brand-settled",
         )}
       >
-        <span
-          key={idx}
-          className="inline-block animate-[hero-fade-in_280ms_ease-out]"
-        >
-          {renderPhraseWithMeAccent(current)}
+        <span data-fade>{rotation.lead}</span>
+        <span data-k>k</span>
+        <span>url</span>
+        <span data-fade>{rotation.join}</span>
+        <span data-fade>
+          <FoldRotator verbs={verbs} activeIdx={idx} />
         </span>
+        <span data-fade>{rotation.tail}</span>
+        <span className="text-slate-400">.me</span>
+        <span data-fade>{rotation.end}</span>
       </span>
     </div>
+  );
+}
+
+function FoldRotator({
+  verbs,
+  activeIdx,
+}: {
+  verbs: string[];
+  activeIdx: number;
+}) {
+  const containerRef = useRef<HTMLSpanElement>(null);
+  const splitsRef = useRef<SplitText[]>([]);
+  const prevIdxRef = useRef<number>(activeIdx);
+  const initRef = useRef<boolean>(false);
+
+  useLayoutEffect(() => {
+    if (!containerRef.current) return;
+    const slots =
+      containerRef.current.querySelectorAll<HTMLElement>("[data-fold-slot]");
+    splitsRef.current = Array.from(slots).map(
+      (el) => new SplitText(el, { type: "chars" }),
+    );
+    splitsRef.current.forEach((s, i) => {
+      gsap.set(
+        s.chars,
+        i === activeIdx
+          ? { rotateX: 0, y: 0, opacity: 1 }
+          : { rotateX: -90, y: 15, opacity: 0 },
+      );
+    });
+    initRef.current = true;
+    return () => {
+      splitsRef.current.forEach((s) => s.revert());
+      initRef.current = false;
+    };
+    // 한 번만 — verbs 배열은 locale 안에서 안정.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!initRef.current) return;
+    if (prevIdxRef.current === activeIdx) return;
+    const prev = splitsRef.current[prevIdxRef.current];
+    const next = splitsRef.current[activeIdx];
+    if (!prev || !next) return;
+
+    const reduced = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduced) {
+      gsap.set(prev.chars, { rotateX: -90, y: 15, opacity: 0 });
+      gsap.set(next.chars, { rotateX: 0, y: 0, opacity: 1 });
+      prevIdxRef.current = activeIdx;
+      return;
+    }
+
+    const tl = gsap.timeline();
+    tl.to(prev.chars, {
+      rotateX: 90,
+      y: -15,
+      opacity: 0,
+      stagger: 0.025,
+      duration: 0.35,
+      ease: "power2.in",
+      transformOrigin: "50% 0%",
+    });
+    tl.fromTo(
+      next.chars,
+      { rotateX: -90, y: 15, opacity: 0, transformOrigin: "50% 100%" },
+      {
+        rotateX: 0,
+        y: 0,
+        opacity: 1,
+        stagger: 0.035,
+        duration: 0.45,
+        ease: "back.out(1.4)",
+        transformOrigin: "50% 100%",
+      },
+      "-=0.2",
+    );
+
+    prevIdxRef.current = activeIdx;
+    return () => {
+      tl.kill();
+    };
+  }, [activeIdx]);
+
+  return (
+    <span
+      ref={containerRef}
+      className="relative inline-grid items-center"
+      style={{ perspective: 800 }}
+    >
+      {verbs.map((v, i) => (
+        <span
+          key={i}
+          data-fold-slot
+          className="col-start-1 row-start-1"
+          style={{
+            display: "inline-block",
+            transformStyle: "preserve-3d",
+            // 초기 paint: active 만 보이게 (GSAP 인라인 set 전 한순간 모두 보이는 flash 방지).
+            opacity: i === activeIdx ? 1 : 0,
+          }}
+        >
+          {v}
+        </span>
+      ))}
+    </span>
   );
 }
 
