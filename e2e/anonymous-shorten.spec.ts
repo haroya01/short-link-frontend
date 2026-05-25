@@ -50,26 +50,12 @@ test.describe("anonymous shorten flow", () => {
     await expect(page.getByText("분석된 클릭")).toBeVisible();
   });
 
-  test("advanced section reveals with animated grid-rows height", async ({ page }) => {
+  test("advanced section is hidden for anonymous (auth-only customCode / expiry)", async ({
+    page,
+  }) => {
     await page.goto("/ko");
-    const panel = page.locator("#shorten-advanced-section");
-    await expect(panel).toBeAttached();
-
-    // Resting collapsed state: the grid-rows track is 0fr so the panel has no rendered height.
-    const collapsedHeight = await panel.evaluate((el) => el.getBoundingClientRect().height);
-    expect(collapsedHeight).toBe(0);
-
-    const toggle = page.getByRole("button", { name: /고급 옵션|Advanced|詳細/i });
-    await toggle.click();
-
-    // Give the 280ms grid-template-rows transition time to settle, then re-measure. A successful
-    // reveal puts the panel above some non-trivial threshold (channel pills + utm input + border).
-    await page.waitForTimeout(360);
-    const expandedHeight = await panel.evaluate((el) => el.getBoundingClientRect().height);
-    expect(expandedHeight).toBeGreaterThan(60);
-
-    // The toggle should report aria-expanded after the click — verifies the controls binding for AT.
-    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await expect(page.locator("#shorten-advanced-section")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /고급 옵션|Advanced|詳細/i })).toHaveCount(0);
   });
 
   test("FAQ accordion expands", async ({ page }) => {
