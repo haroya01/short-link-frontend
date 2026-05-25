@@ -36,13 +36,13 @@ export function CookieConsent() {
       role="dialog"
       aria-live="polite"
       aria-label="cookie consent"
-      className="fixed inset-x-3 bottom-3 z-40 sm:inset-x-auto sm:left-4 sm:right-auto sm:bottom-4"
+      className="fixed bottom-3 right-3 z-40 sm:bottom-4 sm:right-4"
     >
-      <div className="mx-auto flex max-w-3xl items-start gap-3 rounded-lg border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur sm:w-[420px] sm:items-center sm:p-3.5">
-        <p className="min-w-0 flex-1 text-[11px] leading-relaxed text-slate-600 sm:text-xs">
+      <div className="flex w-[260px] flex-col gap-2.5 rounded-lg border border-slate-200 bg-white/95 p-3 shadow-md backdrop-blur sm:w-[360px] sm:flex-row sm:items-center sm:gap-3 sm:p-3.5">
+        <p className="min-w-0 flex-1 text-[11px] leading-snug text-slate-600 sm:text-xs sm:leading-relaxed">
           {t("message")}
         </p>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center justify-end gap-2">
           <Link
             href="/privacy"
             className="hidden text-xs text-slate-500 underline hover:text-slate-700 sm:inline"
@@ -52,7 +52,7 @@ export function CookieConsent() {
           <button
             type="button"
             onClick={accept}
-            className="rounded-md bg-slate-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-slate-800 sm:px-4"
+            className="rounded-md bg-slate-900 px-3 py-1.5 text-[11px] font-medium text-white transition hover:bg-slate-800 sm:px-4 sm:py-2 sm:text-xs"
           >
             {t("accept")}
           </button>

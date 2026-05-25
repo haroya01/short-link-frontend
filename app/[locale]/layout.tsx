@@ -86,7 +86,7 @@ export async function generateMetadata({
       title,
       description,
       locale: locale === "ko" ? "ko_KR" : locale === "ja" ? "ja_JP" : "en_US",
-      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
+      images: [{ url: ogImageUrl, width: 2400, height: 1260, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
