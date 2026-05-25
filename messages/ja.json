@@ -186,7 +186,7 @@
     "anonymousButton": "ログインなしで短縮だけ使う",
     "rotation": {
       "lead": "あなたの ",
-      "join": "。",
+      "join": " ",
       "tail": " ",
       "end": "。",
       "verbs": ["追跡", "分析", "統計"]

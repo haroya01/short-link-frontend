@@ -186,7 +186,7 @@
     "anonymousButton": "로그인 없이 단축만 사용하기",
     "rotation": {
       "lead": "당신의 ",
-      "join": ". ",
+      "join": " ",
       "tail": " ",
       "end": ".",
       "verbs": ["추적", "분석", "통계"]

@@ -186,7 +186,7 @@
     "anonymousButton": "Shorten without signing in",
     "rotation": {
       "lead": "Your ",
-      "join": ". ",
+      "join": " ",
       "tail": " ",
       "end": ".",
       "verbs": ["Tracking", "Analysis", "Statistics"]
