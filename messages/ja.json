@@ -10,7 +10,7 @@
   "tags": {
     "inputPlaceholder": "Enter または , で追加",
     "removeTag": "タグ {name} を削除",
-    "maxReached": "最大{max}個まで"
+    "maxReached": "最大 {max} 件まで"
   },
   "errors": {
     "LINK_NOT_FOUND": "リンクが見つかりません。",
@@ -21,8 +21,8 @@
     "DUPLICATE_SHORT_CODE": "そのショートコードは既に使われています。",
     "RESERVED_SHORT_CODE": "予約済みのコードのため使用できません。",
     "MALICIOUS_URL": "悪性/フィッシングと判定されたURLです。",
-    "SHORT_CODE_EXHAUSTED": "コード生成に失敗しました。少し待って再試行してください。",
-    "BULK_IMPORT_TOO_LARGE": "一度に最大{limit}行までです ({rows}行)。",
+    "SHORT_CODE_EXHAUSTED": "コード生成に失敗しました。しばらくしてから再度お試しください。",
+    "BULK_IMPORT_TOO_LARGE": "一度に {limit} 行までです (今回: {rows} 行)。",
     "OPTIMISTIC_LOCK": "他から先に更新されました。再読み込み後にお試しください。",
     "INVALID_REFRESH_TOKEN": "セッションの有効期限が切れました。再度ログインしてください。",
     "USER_NOT_FOUND": "アカウントが見つかりません。",
@@ -44,7 +44,7 @@
   },
   "cookieConsent": {
     "message": "ログイン保持のための必須クッキーのみを使用します。分析/広告用は使いません。",
-    "accept": "了解",
+    "accept": "同意する",
     "learnMore": "詳細"
   },
   "meta": {
@@ -69,15 +69,15 @@
     "tagline": "kurl v1",
     "headline1": "短縮はひと行で",
     "headline2": "クリックの「いつ・どこから・誰が」を一目で",
-    "subhead": "ライブクリックフィード、自動インサイト、ボット自動分離 — 他社の有料機能を、kurl は無料で",
+    "subhead": "ライブクリックフィード・自動インサイト・ボット自動分離 — 他社の有料機能を、kurl は無料で",
     "mobileHeadline1": "短縮はひと行",
-    "mobileHeadline2": "「いつ・どこから・誰が」一目で",
+    "mobileHeadline2": "誰・いつ・どこを一目で",
     "mobileSubhead": "ライブクリック・自動分析・ボット分離まで無料",
     "anonymousHint": "ログイン不要で短縮できます。統計はログイン後に確認できます。",
     "demoLink": "分析画面をデモで先に見る",
     "scrollHint": "下にスクロール",
     "previews": {
-      "eyebrow": "短縮後 60 秒以内に見える画面",
+      "eyebrow": "短縮後 1 分以内に見える画面",
       "see": "見る",
       "stats": {
         "title": "分析ダッシュボード",
@@ -130,27 +130,27 @@
     },
     "recentEyebrow": "最近",
     "recentTitle": "直近で作ったリンク",
-    "recentSubhead": "このブラウザに24時間保存されます。ログインすれば永続化されます。",
+    "recentSubhead": "このブラウザに 24 時間保存されます。ログインするとアカウントにずっと残せます。",
     "statsEyebrow": "live",
     "statsTitle": "kurl 全体で",
     "statsSubhead": "これまでに短縮されたリンクと分析されたクリック数。",
     "featuresEyebrow": "what you get",
-    "featuresTitle": "他社の無料では出てこない 3 つ",
+    "featuresTitle": "他社の無料プランにはない 3 つ",
     "featuresSubhead": "ライブクリックフィード · 自動インサイト · A/B + 国別ルーティング。HMAC Webhook · 2FA TOTP · Google Safe Browsing は標準装備。",
     "whyEyebrow": "why kurl",
-    "whyTitle": "なぜ他では提供されないのか",
-    "whySubhead": "通常 enterprise プランで提供される機能を、ここでは無料 + 標準で。"
+    "whyTitle": "なぜ他では出てこないのか",
+    "whySubhead": "通常は enterprise プランで提供される機能を、ここでは無料・標準装備で。"
   },
   "showcase": {
     "eyebrow": "公開プロフィール · 実例",
     "title": "あなたらしいスタイルで",
-    "subhead": "あなたの仕事に合うプロフィールを 1 つ。カフェオーナー · 開発者 · 講師 · 写真家 · クリエイター · DJ など、リンクを共有するすべての人のための 1 ページ。",
+    "subhead": "あなたの仕事にぴったりのプロフィール、ひとつ。カフェオーナー・開発者・講師・写真家・クリエイター・DJ — リンクを共有するすべての人のための 1 ページ。",
     "demoCta": "実例を見る",
     "ctaTitle": "あなたのプロフィールも 5 分で完成",
     "ctaSubhead": "登録してお好きな名前を決めるだけ。写真 · リンク · お店の住所 · 連絡先を入れれば、下の例のように仕上がります。",
     "cta": "プロフィールを作る",
     "metaSuffix": "サンプル",
-    "sampleBanner": "サンプル · 登録後にあなたも作れます",
+    "sampleBanner": "サンプル · 登録後、ご自身のページも作れます",
     "sampleCta": "プロフィールを作る",
     "scrollCue": "実例を見る",
     "meta": {
@@ -174,7 +174,7 @@
       "urlScheme": "URLは http:// または https:// で始まる必要があります。",
       "urlBlank": "URLを入力してください。",
       "urlGeneric": "正しいURLではありません。",
-      "generic": "短縮に失敗しました。",
+      "generic": "短縮に失敗しました。しばらくしてから再度お試しください。",
       "validation": "入力値が正しくありません。"
     }
   },
@@ -187,7 +187,7 @@
     "open": "開く",
     "viewStats": "統計を見る",
     "statsCta": "統計を追跡",
-    "statsCtaDesc": "クリック・流入・端末の流れを確認",
+    "statsCtaDesc": "クリック・流入・端末の推移を確認",
     "profileCta": "プロフィールに追加",
     "profileCtaDesc": "公開プロフィールのリンクブロックに配置",
     "anonymousExpiryInline": "24 時間で失効",
@@ -196,15 +196,19 @@
   },
   "login": {
     "title": "ログイン",
-    "subtitle": "ログインするとリンク管理とクリック分析が利用できます。",
+    "subtitle": "ログインすると、リンク管理とクリック分析がご利用いただけます。",
     "google": "Googleで続ける",
     "anonymousButton": "ログインなしで短縮だけ使う",
     "rotation": {
-      "lead": "あなたの ",
+      "lead": "あなただけの ",
       "join": " ",
       "tail": " ",
       "end": "",
-      "verbs": ["追跡", "分析", "統計"]
+      "verbs": [
+        "追跡",
+        "分析",
+        "統計"
+      ]
     }
   },
   "auth": {
@@ -225,8 +229,8 @@
       "verifyButton": "確認",
       "verifying": "確認中...",
       "verifyFailed": "コード検証に失敗しました。もう一度お試しください。",
-      "toggleToRecovery": "認証アプリが使えない場合はリカバリコードを使用",
-      "toggleToCode": "認証アプリのコードに戻す",
+      "toggleToRecovery": "認証アプリが使えないときはリカバリコードでログイン",
+      "toggleToCode": "認証アプリのコードに戻る",
       "missingChallenge": "challenge 情報がありません。再度ログインしてください。"
     }
   },
@@ -236,7 +240,7 @@
     "hint": "JPG / PNG / WebP、最大 5MB",
     "uploaded": "写真を更新しました",
     "uploadFailed": "アップロードに失敗しました",
-    "invalidType": "JPG, PNG, WebP のみアップロードできます",
+    "invalidType": "JPG・PNG・WebP のみアップロードできます",
     "tooBig": "5MB を超えるファイルはアップロードできません"
   },
   "banner": {
@@ -247,11 +251,11 @@
     "addCta": "バナーを追加",
     "uploaded": "バナーを更新しました",
     "uploadFailed": "バナーのアップロードに失敗しました",
-    "invalidType": "JPG, PNG, WebP のみ可能です",
-    "tooBig": "画像が大きすぎます"
+    "invalidType": "JPG・PNG・WebP のみ可能です",
+    "tooBig": "画像のサイズが上限を超えています"
   },
   "expiringBanner": {
-    "title": "{count} 件のリンクが 3 日以内に期限切れ",
+    "title": "{count} 件のリンクが 3 日以内に期限切れになります",
     "hint": "必要なリンクは期限を延長するか、不要なものは削除してください。",
     "showAll": "すべて表示",
     "dismiss": "閉じる"
@@ -259,7 +263,7 @@
   "dashboard": {
     "label": "dashboard",
     "title": "マイリンク",
-    "subtitle": "短縮したリンク {count}件。短縮コードをクリックして統計を確認。",
+    "subtitle": "短縮したリンク {count} 件。短縮コードをクリックすると統計を確認できます。",
     "newLink": "新規リンク",
     "loadMore": "もっと見る",
     "loadingMore": "読み込み中...",
@@ -277,29 +281,29 @@
     "preview": {
       "eyebrow": "マイリンクのプレビュー",
       "title": "ログインするとこの一覧が埋まります",
-      "active": "分析中",
+      "active": "アクティブ",
       "expiring": "期限切れ予定"
     },
     "ops": {
       "totalClicks": "総クリック",
       "totalClicksHint": "この一覧の累計成果",
       "weekClicks": "直近7日",
-      "weekClicksHint": "短期の運用シグナル",
+      "weekClicksHint": "直近の動向を確認",
       "zeroClick": "未クリックリンク",
-      "zeroClickReview": "配置やCTAを確認してください",
+      "zeroClickReview": "掲載場所や CTA を見直してください",
       "zeroClickClear": "すべてのリンクにクリックがあります",
       "expiring": "3日以内に期限切れ",
-      "expiringReview": "延長または削除の判断が必要",
-      "expiringClear": "急ぎの期限切れはありません",
-      "topLink": "最高成果リンク",
+      "expiringReview": "延長または削除の判断が必要です",
+      "expiringClear": "すぐに期限切れになるリンクはありません",
+      "topLink": "成果トップのリンク",
       "topLinkEmpty": "まだ比較できるリンクがありません",
       "clicks": "クリック",
       "copy": "コピー",
       "viewStats": "統計を見る",
       "open": "開く"
     },
-    "emptyTitle": "最初のリンクを作りましょう",
-    "emptyDesc": "URL を 1 つ短縮するだけで、1 分以内にクリック / 国 / チャネル / デバイスの分析が埋まり始めます。所要 30 秒。",
+    "emptyTitle": "最初のリンクを作ってみませんか",
+    "emptyDesc": "URL を 1 つ短縮するだけで、1 分以内にクリック・国・チャネル・デバイスのデータが揃い始めます。所要 30 秒。",
     "emptyCta": "今すぐ短縮",
     "onboarding": {
       "eyebrow": "ようこそ",
@@ -307,10 +311,10 @@
       "subtitle": "短縮 → 共有 → 統計確認。30 秒で最初のクリックが入ります。",
       "step1Title": "1 分で短縮",
       "step1Desc": "ホームで URL を貼り付け → 短縮ボタン。すぐに短縮 URL が生成。",
-      "step2Title": "共有",
-      "step2Desc": "Instagram bio、KakaoTalk、名刺どこでも。QR コードもワンタップ。",
+      "step2Title": "リンクを共有",
+      "step2Desc": "Instagram bio、LINE、名刺などどこでも。QR コードもワンタップ。",
       "step3Title": "統計を確認",
-      "step3Desc": "クリックが入ると自動でチャネル/国/デバイス/時間帯を分析。",
+      "step3Desc": "クリックが発生すると自動でチャネル/国/デバイス/時間帯を分析。",
       "primaryCta": "最初のリンクを作る",
       "secondaryCta": "分析画面をデモで見る →"
     },
@@ -329,7 +333,7 @@
       "edit": "編集",
       "delete": "削除"
     },
-    "deleteConfirmTitle": "このリンクを削除しますか?",
+    "deleteConfirmTitle": "このリンクを削除しますか？",
     "deleteConfirmDesc": "削除されたリンクは復旧できません。クリック統計も失われます。",
     "deleteOk": "削除",
     "deleted": "削除しました",
@@ -348,7 +352,7 @@
       "before": "以前",
       "clearAll": "フィルタをすべて解除",
       "expiry": {
-        "ACTIVE": "有効なものだけ",
+        "ACTIVE": "有効なリンクのみ",
         "NEVER": "期限なし",
         "HAS_EXPIRY": "期限あり",
         "EXPIRING_SOON": "3 日以内に期限切れ",
@@ -363,13 +367,13 @@
     "bulkDeleting": "削除中...",
     "bulkDeleted": "{count}件削除しました",
     "bulkDeleteFailed": "{total}件中 {failed}件の削除に失敗",
-    "bulkDeleteConfirmTitle": "選択したリンクを削除しますか?",
+    "bulkDeleteConfirmTitle": "選択したリンクを削除しますか？",
     "bulkDeleteConfirmDesc": "{count}件のリンクとクリック統計が完全に削除されます。",
     "bulkImport": {
-      "button": "CSV取込",
+      "button": "CSV インポート",
       "title": "CSVから一括登録",
-      "description": "ヘッダー: url(必須), custom_code, expires_at(ISO-8601)。先頭行がヘッダーなら自動検出します。",
-      "limitHint": "1回最大100行。検証後に結果CSVを受け取れます。",
+      "description": "ヘッダー：url（必須）、custom_code、expires_at（ISO-8601）。先頭行がヘッダーなら自動で検出します。",
+      "limitHint": "1 回あたり最大 100 行。検証後に結果 CSV をダウンロードできます。",
       "cancel": "キャンセル",
       "close": "閉じる",
       "upload": "アップロード",
@@ -398,8 +402,8 @@
     "saving": "保存中...",
     "saved": "保存しました",
     "saveFailed": "保存に失敗しました。",
-    "invalidUrl": "http:// または https:// で始まる正しいURLが必要です。",
-    "maliciousUrl": "悪性/フィッシングと判定されたため保存できません。",
+    "invalidUrl": "http:// または https:// で始まる正しい URL を入力してください。",
+    "maliciousUrl": "不正なサイト/フィッシングと判定されたため保存できません。",
     "tabs": {
       "basic": "基本",
       "tags": "タグ",
@@ -437,11 +441,11 @@
       "overview": "概要",
       "traffic": "トラフィック",
       "sources": "流入",
-      "audience": "オーディエンス",
+      "audience": "訪問者",
       "settings": "設定",
       "descriptions": {
-        "overview": "本質だけ — クリック品質 / ライブクリック / 曜日×時間ヒートマップ。",
-        "traffic": "量の流れ — 日別トレンド、時間帯分布、国別分布。",
+        "overview": "要点だけ — クリック品質 / ライブクリック / 曜日×時間ヒートマップ。",
+        "traffic": "トラフィックの動き — 日別トレンド・時間帯分布・国別分布。",
         "sources": "どこから来たか — Referrer、UTM 4 種、チャネル/src タグ。",
         "audience": "誰が来たか — デバイス、OS、ブラウザ、地域、言語、ボット。",
         "settings": "このリンクの設定 — A/B 遷移先、Webhook 通知。"
@@ -451,7 +455,7 @@
       "title": "リアルタイムクリック",
       "connecting": "接続中…",
       "connected": "ライブ",
-      "waiting": "クリックがあるとここに表示されます。"
+      "waiting": "新しいクリックがここに表示されます。"
     },
     "quality": {
       "title": "クリック品質",
@@ -459,14 +463,14 @@
       "returningHint": "{count} 名が2回以上",
       "clicksPerUnique": "ユニーク当たり平均",
       "clicksPerUniqueHint": "ユニーク {unique} 名",
-      "realVsPreview": "実 / プレビュー",
+      "realVsPreview": "実クリック / プレビュー",
       "realVsPreviewHint": "プレビュー比率 {ratio}",
       "peakHour": "ピーク時間",
       "peakHourHint": "この時間に最も多くクリック",
       "peakHourEmpty": "データ不足"
     },
     "insights": {
-      "title": "解釈サマリー",
+      "title": "ハイライト",
       "description": "生の数値から、今見るべき判断材料だけをまとめました。",
       "trend": "7日トレンド",
       "trendUp": "+{percent}%",
@@ -477,11 +481,11 @@
       "topSource": "上位流入",
       "countDetail": "{count} クリック",
       "audience": "主な訪問者",
-      "audienceEmpty": "クリックが入ると国と端末を表示します",
+      "audienceEmpty": "クリックが発生すると国と端末が表示されます",
       "audienceDetail": "国 {countryCount} · 端末 {deviceCount}",
       "quality": "品質シグナル",
       "botHigh": "Bot {percent}%",
-      "botHighDetail": "プレビューやクローラー流入を分けて確認してください",
+      "botHighDetail": "プレビューやクローラーからのアクセスを切り分けて確認してください",
       "botNormal": "Bot {percent}%",
       "botNormalDetail": "人のクリック {human} 件を中心に判断できます",
       "direct": "直接流入",
@@ -506,7 +510,7 @@
       "copy": "コピー",
       "secretCopied": "secretをコピーしました",
       "copyFailed": "コピー失敗",
-      "dismiss": "保存しました、閉じる",
+      "dismiss": "保存しました（閉じる）",
       "loading": "読み込み中...",
       "empty": "まだWebhookは登録されていません。",
       "lastCalled": "最終呼び出し",
@@ -515,7 +519,7 @@
       "enable": "有効化",
       "disable": "無効化",
       "delete": "削除",
-      "deleteConfirm": "このWebhookを削除しますか?",
+      "deleteConfirm": "この Webhook を削除しますか？",
       "deleted": "削除しました",
       "deleteFailed": "削除に失敗しました。",
       "toggleFailed": "有効/無効の更新に失敗しました。",
@@ -525,18 +529,18 @@
       "configSaved": "オプションを保存しました",
       "configFailed": "オプションの保存に失敗しました。",
       "optIncludeBots": "ボット/プレビューのクリックも送信",
-      "optBatch": "バッチ送信 (5秒ごとに 1回まとめて POST)",
+      "optBatch": "バッチ送信（5 秒ごとに 1 回まとめて送信）",
       "optSampleRate": "サンプリング比率: {rate}%",
       "optSampleRateAria": "サンプリング比率",
       "optDailyQuota": "1日の上限",
       "optDailyQuotaPlaceholder": "例: 10000 (空欄で無制限)",
-      "optReferrerFilter": "リファラーホストフィルタ",
+      "optReferrerFilter": "リファラーホストのフィルタ",
       "optUtmFilter": "UTM ソースフィルタ",
       "badgeSkipBots": "ボット除外",
       "badgeSample": "サンプル {rate}%",
       "badgeBatch": "バッチ",
-      "badgeQuota": "{n}/日",
-      "consecutiveFailures": "連続失敗 {n}回"
+      "badgeQuota": "上限 {n}/日",
+      "consecutiveFailures": "{n} 回連続で失敗"
     },
     "destinations": {
       "title": "A/B 振り分け / 国別ターゲティング",
@@ -551,7 +555,7 @@
       "adding": "追加中...",
       "addFailed": "遷移先の追加に失敗しました。",
       "updateFailed": "遷移先の更新に失敗しました。",
-      "deleteConfirm": "この遷移先を削除しますか?",
+      "deleteConfirm": "この遷移先を削除しますか？",
       "deleted": "削除しました",
       "deleteFailed": "削除に失敗しました。",
       "loading": "読み込み中...",
@@ -576,8 +580,8 @@
       "ttfc": "初回クリックまで",
       "noActivity": "活動",
       "noData": "データ不足",
-      "uniqueOfHuman": "{ratio}% of human",
-      "vsBaseline": "vs 24h 平均",
+      "uniqueOfHuman": "人クリックの {ratio}%",
+      "vsBaseline": "24h 平均比",
       "afterCreation": "作成後",
       "profile": "プロフィール経由",
       "profileSub": "人クリックの{ratio}%"
@@ -625,7 +629,7 @@
       },
       "utmSource": {
         "title": "UTM ソース",
-        "desc": "utm_source 別集計 (instagram, naver…)"
+        "desc": "utm_source 別集計（instagram・x など）"
       },
       "utmMedium": {
         "title": "UTM メディア",
@@ -637,7 +641,7 @@
       },
       "srcChannel": {
         "title": "共有チャネル (?src)",
-        "desc": "短縮URL自体に乗せた ?src= ヒントで追跡 (QR/LINE/オフライン等 referrer が空の経路)",
+        "desc": "短縮 URL に付与した ?src= パラメータで追跡（QR・LINE・オフラインなど referrer が空のチャネル）",
         "empty": "?src パラメータで来たクリックはありません"
       },
       "bots": {
@@ -662,7 +666,7 @@
       },
       "asn": {
         "title": "ネットワーク / ASN",
-        "desc": "流入 IP の自律システム (ISP / クラウド) 分布。データセンター由来 {dc} 件は自動でボット扱いされます。",
+        "desc": "流入 IP の自律システム (ISP / クラウド) 分布。データセンター由来 {dc} 件は自動でボットとして分類されます。",
         "empty": "ASN データなし (GeoLite2-ASN 未導入)"
       }
     },
@@ -704,7 +708,7 @@
       "detailClicks": "{count} 回",
       "detailShare": "全体の {share}%",
       "detailClose": "閉じる",
-      "detailHint": "もう一度同じセルを押すと閉じます。"
+      "detailHint": "同じセルをもう一度タップすると閉じます。"
     }
   },
   "admin": {
@@ -719,7 +723,7 @@
       "expiredRatio": "期限切れ比率",
       "clicklessRatio": "クリック0比率",
       "delta7d": "+{count} (7d)",
-      "ofAllLinks": "of all links"
+      "ofAllLinks": "全リンクのうち"
     },
     "section": {
       "trend": {
@@ -762,14 +766,14 @@
       },
       "lifecycle": {
         "title": "リンクのライフサイクル",
-        "desc": "リンク作成から N 日目に発生したクリックの分布 (~30 日)"
+        "desc": "リンク作成から N 日目に発生したクリックの分布（〜30 日）"
       },
       "cohort": {
         "title": "コホートリテンション",
-        "desc": "週毎の登録ユーザーのうち、その後の週に再びアクティブだった割合 (%)。色が濃いほど高い。",
+        "desc": "週毎の登録ユーザーのうち、その後の週に再びアクティブだった割合 (%)。色が濃いほど割合が高くなります。",
         "cohortCol": "登録週",
         "sizeCol": "規模",
-        "empty": "コホートデータが不足"
+        "empty": "コホートデータが不足しています（登録ユーザーが増えると埋まります）"
       },
       "recentErrors": {
         "title": "最近のエラーログ",
@@ -825,7 +829,7 @@
       "linkMetrics": {
         "title": "リンク別パフォーマンス",
         "desc": "short_code ごとの redirect 遅延 (p50/p95/p99)、ウィンドウ内クリック数、エラー率。メモリ上限のため最近アクティブな上位 500 コードのみ追跡します。▶ クリックで outcome 分布 (redirect / not_found / expired / blocked など)。",
-        "empty": "このウィンドウでは redirect が捕捉されたリンクがありません",
+        "empty": "このウィンドウでは redirect が記録されたリンクがありません",
         "expandOutcomes": "Outcome 分布を表示",
         "collapseOutcomes": "Outcome 分布を隠す",
         "outcomes": "Outcome 分布:",
@@ -849,7 +853,7 @@
           "preview": "プレビュー",
           "not_found": "404",
           "expired": "期限切れ",
-          "view_limit": "閲覧上限",
+          "view_limit": "閲覧上限超過",
           "blocked": "ブロック",
           "password_required": "パスワード必須",
           "error": "エラー",
@@ -881,7 +885,7 @@
         "routes": {
           "title": "ルート",
           "empty": "このウィンドウにリクエスト記録なし",
-          "err": "Error"
+          "err": "エラー率"
         },
         "outcomes": {
           "title": "short code 別 outcome",
@@ -944,13 +948,13 @@
     "copiedFallback": "URLをコピーしました"
   },
   "demo": {
-    "metaTitle": "kurl デモ — 短縮後に何が見えるかを実際に触る",
+    "metaTitle": "kurl デモ — 短縮後に何が見えるかを実際に体験",
     "metaDescription": "サインアップ不要で分析画面をそのままご覧いただけます。",
-    "sampleBanner": "サンプルデータです。サインアップすると自分のリンクで同じ画面が埋まります。",
+    "sampleBanner": "サンプルデータです。サインアップすると、ご自身のリンクで同じ画面が表示されます。",
     "sampleCta": "リンクを作る",
     "settingsNotice": {
-      "title": "設定はサインアップ後に触れます",
-      "desc": "A/B 振り分けの配信先と Webhook は自分のリンクでのみ登録できます。サインアップ後に自分のリンクの統計ページで同じ画面が開きます。",
+      "title": "設定はサインアップ後にお試しいただけます",
+      "desc": "A/B 振り分けの配信先と Webhook は、ご自身のリンクでのみ登録できます。サインアップ後、ご自身のリンクの統計ページで同じ画面が開きます。",
       "cta": "リンクを作る"
     },
     "settingsDemo": {
@@ -998,7 +1002,7 @@
       "error": "登録に失敗しました。しばらくしてからお試しください。",
       "defaultPlaceholder": "you@example.com",
       "defaultSuccess": "登録完了。ありがとうございます。",
-      "trustHint": "このページのオーナーにのみ届きます。スパムは送りません。"
+      "trustHint": "このページのオーナーにのみ届きます。迷惑メールは送りません。"
     },
     "booking": {
       "defaultTitle": "予約する",
@@ -1024,7 +1028,7 @@
       "share": "共有",
       "category_cafe": "カフェ",
       "category_bakery": "ベーカリー",
-      "category_restaurant": "飲食",
+      "category_restaurant": "飲食店",
       "category_retail": "ショップ",
       "category_studio": "スタジオ",
       "category_gallery": "ギャラリー",
@@ -1042,7 +1046,7 @@
       "defaultCta": "詳細",
       "discount": "-{pct}%",
       "badge": {
-        "NEW": "新着",
+        "NEW": "新商品",
         "BEST": "BEST",
         "LIMITED": "限定",
         "SOLD_OUT": "完売"
@@ -1051,7 +1055,7 @@
   },
   "weeklyInsights": {
     "eyebrow": "直近 7 日のインサイト",
-    "emptyDesc": "今週はまだクリックがありません。チャネルに UTM を付けてキャンペーンを試してみてください。",
+    "emptyDesc": "今週はまだクリックがありません。チャネル別に UTM を付けてキャンペーンを試してみてください。",
     "humanClicks": "人間クリック",
     "humanRatio": "全体の {percent}%",
     "topLink": "トップリンク",
@@ -1060,7 +1064,7 @@
     "peak": "ピーク時間",
     "peakValue": "{day} {hour}時",
     "peakSub": "この時間帯 {count} クリック",
-    "compareLabel": "前の 7 日",
+    "compareLabel": "前の 7 日間",
     "compareSub": "比較基準",
     "noBaseline": "比較データなし",
     "days": {
@@ -1075,15 +1079,15 @@
   },
   "recent": {
     "title": "最近の短縮",
-    "empty": "まだありません。上から短縮してみてください。",
+    "empty": "まだありません。上のフォームから短縮してみてください。",
     "viewStats": "統計を見る",
-    "claimCta": "サインアップすると、これらのリンクをアカウントに永続保存できます。",
-    "anonymousNote": "匿名リンクは24時間後に自動失効します。ログインすると自動でアカウントに移管され、有効期限なしで永続保存されます。",
+    "claimCta": "サインアップすると、これらのリンクをアカウントにずっと保存できます。",
+    "anonymousNote": "匿名リンクは 24 時間後に自動で失効します。ログインすればアカウントに自動で引き継がれ、有効期限なしでずっと保存されます。",
     "claimedToast": "{count}件のリンクをアカウントに保存しました"
   },
   "statsEmpty": {
     "title": "まだクリックがありません",
-    "description": "このリンクをカカオ / Slack / SNS で共有すると、誰かがクリックした瞬間から分析が始まります。",
+    "description": "このリンクを LINE / Slack / SNS で共有すると、誰かがクリックした瞬間から分析が始まります。",
     "shareCta": "短縮リンクをコピー",
     "shareCopied": "コピー済み"
   },
@@ -1109,26 +1113,26 @@
   "whyKurl": {
     "th": {
       "feature": "機能",
-      "others": "一般的な無料短縮"
+      "others": "一般的な無料短縮サービス"
     },
     "paidTier": "有料プラン",
     "disclaimer": "比較対象: bit.ly / short.io / rebrandly / TinyURL の無料プラン (2026 時点)。",
     "rows": {
       "abtest": {
         "label": "A/B 振り分け — 1 リンクに遷移先を複数",
-        "note": "各遷移先に比率を設定。クリックが比率どおりに自動分散。通常 enterprise プラン。"
+        "note": "各遷移先に比率を設定。クリックが比率どおりに自動分散。通常は enterprise プラン専用の機能。"
       },
       "geoRouting": {
         "label": "国別の遷移先",
-        "note": "訪問者の国に合わせて自動的に最適なページへ。無料で提供している短縮はほぼ無い。"
+        "note": "訪問者の国に合わせて自動で最適なページへ。無料で提供しているサービスはほぼありません。"
       },
       "webhooks": {
         "label": "クリック自動通知 (Slack · Discord · 自前サーバー)",
-        "note": "クリックごとに自分の endpoint へ POST。署名付きで安心。"
+        "note": "クリックごとに、ご自身の endpoint へ POST。署名付きで安心。"
       },
       "realtime": {
         "label": "ライブクリックフィード",
-        "note": "統計ページでクリックがリアルタイムに流れる。同カテゴリでは珍しい。"
+        "note": "統計ページでクリックがリアルタイムに流れる。他の短縮サービスでは珍しい機能。"
       },
       "insights": {
         "label": "自動インサイト",
@@ -1144,7 +1148,7 @@
       },
       "twofa": {
         "label": "2 段階認証 + リカバリコード",
-        "note": "認証アプリ + 1 回限りリカバリコード 10 件。他社では有料の場合が多い。"
+        "note": "認証アプリ + 1 回限りのリカバリコード 10 件。他社では有料の場合が多い。"
       }
     }
   },
@@ -1158,9 +1162,9 @@
   },
   "about": {
     "title": "kurl — URL短縮 + クリック分析",
-    "lead": "長いURLを一行に短縮し、誰がどこからクリックしたかを分析。無料・広告なし。",
+    "lead": "長い URL を一行に短縮し、誰がどこからクリックしたかを分析できます。無料・広告なし。",
     "section1Title": "なぜ作ったか",
-    "section1Body": "既存サービスは分析が貧弱か有料の壁の向こうにあります。kurlはデバイス・OS・ブラウザ・チャネル・国・時間帯まで主要分析を全て無料で提供します。",
+    "section1Body": "既存サービスは分析が貧弱か、有料プランでしか使えません。kurl はデバイス・OS・ブラウザ・チャネル・国・時間帯まで主要分析をすべて無料で提供します。",
     "section2Title": "仕組み",
     "section2Body": "短縮URLにアクセスするとボット・悪性URLを除外したうえで原URLへリダイレクト。すべてのクリックは匿名化IPと共に分析カラムに非正規化保存され、統計クエリが高速です。",
     "section3Title": "技術スタック",
@@ -1168,22 +1172,22 @@
     "ctaShorten": "今すぐ短縮"
   },
   "learn": {
-    "metaTitle": "短縮URL · URLシュリンク · リンクインバイオ ガイド · kurl",
+    "metaTitle": "短縮URL · 短縮リンク · リンクインバイオ ガイド · kurl",
     "metaDescription": "URL短縮とは何か、短縮URLとリンクインバイオの違い、プロフィール名刺の作り方まで。kurl の使い方とよくある質問を1ページにまとめました。",
     "eyebrow": "ガイド · FAQ",
     "title": "短縮URLとリンクインバイオ、はじめての方へ",
-    "lead": "URL短縮とは何か、kurl はどんなサービスか、プロフィールページとの違いは — よく検索される質問を1ページに集めました。",
+    "lead": "URL 短縮とは何か、kurl はどんなサービスか、プロフィールページとの違いは何か — よく検索される質問を 1 ページに集めました。",
     "q1": {
       "q": "URL短縮とは何ですか?",
-      "a": "URL短縮は、長く複雑なアドレス(例: https://example.com/very/long/path?utm_source=...)を、短く覚えやすいアドレス(例: kurl.me/abc1234)に置き換える機能です。短縮URL、ショートリンクも同じ意味です。\n\nSNSの文字数制限がある場面、名刺やポスターのように手入力が必要な場面で活躍します。さらに短縮サービス側がクリック分析を提供してくれるので、どのチャンネルから人が流入しているかが分かります。"
+      "a": "URL短縮は、長く複雑なアドレス(例: https://example.com/very/long/path?utm_source=...)を、短く覚えやすいアドレス(例: kurl.me/abc1234)に置き換える機能です。短縮URL、ショートリンクも同じ意味です。\n\nSNSの文字数制限がある場面、名刺やポスターのように手入力が必要な場面で活躍します。さらに短縮サービス側がクリック分析を提供してくれるので、どのチャネルから人が流入しているかが分かります。"
     },
     "q2": {
       "q": "短縮URLとリンクインバイオの違いは?",
-      "a": "短縮URLは「1つの長いURL → 1つの短いURL」の1対1マッピングです。Twitter投稿、Instagramコメント、名刺の1行など単一の宛先を指すのに最適です。\n\nリンクインバイオは「自分の全リンクをまとめた1つのミニページ」です。Instagramのプロフィール欄にはURLを1つしか入れられないので、kurl.me/yourname のような1つのURLに、連絡先・予約・SNS・ブログ・店舗情報をまとめて見せます。\n\nkurl は両方できます — 短縮URLも作れて、それらをまとめたプロフィール名刺ページも作れます。"
+      "a": "短縮URLは「1つの長いURL → 1つの短いURL」の1対1マッピングです。Twitter投稿、Instagramコメント、名刺の1行など 1 か所だけにリンクするときに最適です。\n\nリンクインバイオは「自分の全リンクをまとめた1つのミニページ」です。Instagramのプロフィール欄にはURLを1つしか入れられないので、kurl.me/yourname のような1つのURLに、連絡先・予約・SNS・ブログ・店舗情報をまとめて見せます。\n\nkurl は両方できます — 短縮URLも作れて、それらをまとめたプロフィール名刺ページも作れます。"
     },
     "q3": {
       "q": "kurl とはどんなサービスですか?",
-      "a": "kurl は無料のURL短縮 + リンクインバイオサービスです。広告なし、会員登録なしで短縮でき、デバイス・国・流入チャンネルなどの分析を無料で提供します。\n\nGoogle OAuth で1秒でサインインすると、短縮したリンクは永久保存され、自分のプロフィール名刺ページ (kurl.me/yourname) を5分で作れます。"
+      "a": "kurl は無料のURL短縮 + リンクインバイオサービスです。広告なし、会員登録なしで短縮でき、デバイス・国・流入チャネルなどの分析を無料で提供します。\n\nGoogle OAuth で1秒でサインインすると、短縮したリンクは永久保存され、自分のプロフィール名刺ページ (kurl.me/yourname) を5分で作れます。"
     },
     "q4": {
       "q": "プロフィールページに何を入れられますか?",
@@ -1191,7 +1195,7 @@
     },
     "q5": {
       "q": "クリック分析はどこまで見られますか?",
-      "a": "短縮リンクごとに 総クリック · 人間 vs ボット · ユニーク訪問者 · 日別/時間別チャート · 曜日×時間ヒートマップ · 国/都市 · デバイス/ブラウザ/OS · リファラドメイン · UTMキャンペーン まで提供します。無料プランでも同じです。\n\nプロフィール訪問統計も別途あり (/profile/stats) — 名刺ページがいつ誰に見られたかを同じ粒度で追跡します。"
+      "a": "短縮リンクごとに、総クリック・人間 vs ボット・ユニーク訪問者・日別/時間別チャート・曜日×時間ヒートマップ・国/都市・デバイス/ブラウザ/OS・リファラドメイン・UTMキャンペーン まで提供します。無料プランでも同じです。\n\nプロフィール訪問統計も別途用意しています (/profile/stats) — 名刺ページがいつ誰に見られたかを同じ粒度で追跡できます。"
     },
     "q6": {
       "q": "有料ですか?",
@@ -1203,7 +1207,7 @@
   },
   "pricing": {
     "title": "料金",
-    "lead": "Free でも短縮 + 全分析が無料。Pro はカスタムドメイン自動 TLS · 無制限リンク · 統計の永続保持。",
+    "lead": "Free でも短縮 + 全分析が無料。Pro はカスタムドメイン自動 TLS・無制限リンク・統計の永久保存。",
     "ctaUpgrade": "Pro を始める",
     "ctaManage": "決済を管理",
     "ctaLogin": "サインインして始める",
@@ -1220,7 +1224,7 @@
     "paidPrice": "¥700 / 月",
     "paidFeature1": "リンク無制限",
     "paidFeature2": "rate limit 10 倍",
-    "paidFeature3": "統計を永続保持 (Free: 90 日)",
+    "paidFeature3": "統計を永久保存 (Free: 90 日)",
     "paidFeature4": "カスタムドメイン (例: go.yourcompany.com)",
     "paidFeature5": "Webhook 50 件 / リンク (Free: 5 件)",
     "paidFeature6": "CSV エクスポート 50 万行 (Free: 5 万)",
@@ -1228,51 +1232,51 @@
     "rightsLead": "GDPR / 個人情報保護法に基づく保証。プランに関係なく常に利用できます。",
     "right1": "自分のデータをエクスポート (JSON)",
     "right2": "アカウントの完全削除 + 関連データの cascade 削除",
-    "right3": "クッキーはログイン保持の 1 個のみ — 分析/広告なし",
+    "right3": "クッキーはログイン保持の 1 つだけ — 分析/広告なし",
     "proHoldBadge": "近日公開",
-    "proHoldNotice": "Pro プランは決済まわりの整備中につき一時停止しています。Free プランの 200 リンク · 8 種類の分析 · Webhook 5 件 · 2FA はすべて引き続きお使いいただけます。",
+    "proHoldNotice": "Pro プランは決済システムの整備中のため、現在一時停止しています。Free プランの 200 リンク · 8 種類の分析 · Webhook 5 件 · 2FA はすべて引き続きお使いいただけます。",
     "proHoldCta": "準備中",
     "proEta": "リリース時にメールでお知らせします — まずは無料プランから。",
     "meta": {
       "title": "料金プラン · 短縮URL Pro 無制限 - kurl",
-      "description": "Free プランで短縮URLとクリック分析を無料で利用。Pro は無制限リンク・カスタムドメイン自動TLS・統計の永続保存。"
+      "description": "Free プランで短縮URLとクリック分析を無料で利用。Pro は無制限リンク・カスタムドメイン自動TLS・統計の永久保存。"
     }
   },
   "terms": {
     "title": "利用規約",
     "updatedAt": "最終更新: 2026-05-08",
-    "p1": "本規約はkurlサービス利用に関する条件を定めます。利用は同意とみなされます。",
+    "p1": "本規約は kurl サービス利用に関する条件を定めます。本サービスを利用することで、本規約に同意したものとみなします。",
     "h1": "1. 許可される利用",
-    "p2": "kurlは合法的なURL短縮にのみ利用できます。次のURLは拒否または事後ブロックされます: 悪性/フィッシング、スパム、著作権侵害、差別/ヘイト、本人同意なき個人情報暴露。",
-    "h2": "2. 短縮可能なURL",
-    "p3": "公開されたhttp/https URLのみ。プライベートIP、localhost、file://などは拒否。",
+    "p2": "kurl は合法的な URL 短縮にのみ利用できます。次の URL は拒否または事後ブロックされます: 悪性/フィッシング、スパム、著作権侵害、差別/ヘイト、本人同意のない個人情報の公開。",
+    "h2": "2. 短縮可能な URL",
+    "p3": "公開されている http/https URL のみ短縮可能です。プライベート IP、localhost、file:// などは拒否されます。",
     "h3": "3. 悪用対応",
-    "p4": "Google Safe Browsing + 独自ボット判別で悪性URLをブロック。悪用アカウントは事前通告なく停止する場合があります。",
+    "p4": "Google Safe Browsing + 独自のボット判別で悪性 URL をブロックします。悪用アカウントは事前通告なく停止する場合があります。",
     "h4": "4. 可用性",
-    "p5": "本サービスは「あるがまま」提供され、可用性は保証されません。運営者はデータ損失/障害について責任を負いません。",
+    "p5": "本サービスは「現状有姿」で提供され、可用性は保証されません。運営者はデータ損失/障害について責任を負いません。",
     "h5": "5. 変更",
     "p6": "本規約は事前通告のうえ変更される場合があります。重要な変更は\"最終更新\"の更新と可能な場合メールで案内されます。"
   },
   "privacy": {
     "title": "プライバシーポリシー",
     "updatedAt": "最終更新: 2026-05-08",
-    "p1": "kurlはユーザー情報を必要最小限のみ収集し、デフォルトで匿名化します。本ポリシーはGDPR Article 13と韓国PIPAに準拠。",
+    "p1": "kurl はユーザー情報を必要最小限のみ収集し、デフォルトで匿名化します。本ポリシーは GDPR Article 13 および韓国 PIPA に準拠します。",
     "h1": "1. 収集項目",
-    "p2": "OAuthログイン時: メール、プロバイダ(Google)、登録日。短縮時: 原URL、短縮コード、有効期限。クリック時: 時刻、User-Agent、Referer、最後のオクテットをマスクしたIP、GeoIPベースの国/地域/都市。",
+    "p2": "OAuth ログイン時: メール、プロバイダ (Google)、登録日。短縮時: 原 URL、短縮コード、有効期限。クリック時: 時刻、User-Agent、Referer、最後のオクテットをマスクした IP、GeoIP ベースの国/地域/都市。",
     "h2": "2. 利用目的",
-    "p3": "サービス運営(リダイレクト・統計)、悪用防止、セキュリティインシデント対応。マーケティングや広告には使用しません。",
+    "p3": "サービス運営 (リダイレクト・統計)、悪用防止、セキュリティインシデント対応のために利用します。マーケティングや広告には利用しません。",
     "h3": "3. 保存期間",
-    "p4": "匿名リンクは24時間後に自動失効。認証ユーザーのリンクは削除まで保持。失効後30日経過したリンクとそのクリックは自動清掃。アカウント削除で全データを即時永久削除。",
+    "p4": "匿名リンクは 24 時間後に自動で失効します。認証ユーザーのリンクは削除まで保持されます。失効から 30 日経過したリンクとそのクリックは自動で削除されます。アカウント削除時は、全データを即時永久削除します。",
     "h4": "4. IP匿名化",
     "p5": "保存IPはマスク(IPv4最終オクテット / IPv6最初の2グループのみ保持)。raw IPはメモリ・ログ上に一時的にのみ存在し、DBには保存されません。",
     "h5": "5. ユーザーの権利",
     "p6": "GDPR Article 17(消去権)、Article 20(ポータビリティ)を尊重。設定ページからデータダウンロード(JSON) / アカウント永久削除が可能。",
     "h6": "6. 外部サービス",
-    "p7": "Google OAuth(メール・名前)、Google Safe Browsing API(URLハッシュをマルウェアチェックに送信)、MaxMind GeoLite2(オフラインGeoIP・外部呼び出しなし)。",
+    "p7": "Google OAuth (メール・名前)、Google Safe Browsing API (URL ハッシュをマルウェアチェックに送信)、MaxMind GeoLite2 (オフライン GeoIP・外部呼び出しなし) を利用しています。",
     "h7": "7. クッキー",
-    "p8": "JWT refresh token保存用のHttpOnly + Secure + SameSite=Strictクッキー1個のみ使用。分析/広告クッキーなし。",
+    "p8": "JWT refresh token 保存用の HttpOnly + Secure + SameSite=Strict クッキー 1 つのみ使用します。分析/広告クッキーはありません。",
     "h8": "8. お問い合わせ",
-    "p9": "データに関する問合せ: GitHub issueまたは運営者メール。"
+    "p9": "データに関するお問い合わせ: GitHub issue または運営者メールまで。"
   },
   "settings": {
     "title": "設定",
@@ -1285,7 +1289,7 @@
       "descriptions": {
         "account": "メール / 登録日 / タイムゾーン / UI 言語。",
         "security": "2FA TOTP + リカバリコード / API キーの発行・失効。",
-        "domains": "短縮 URL を自分のドメイン (go.brand.com) から配信。",
+        "domains": "短縮 URL をご自身のドメイン（go.brand.com）から配信。",
         "data": "データエクスポート (JSON) / アカウント完全削除。"
       }
     },
@@ -1294,7 +1298,7 @@
       "intro": "短縮リンクを 1 つのページにまとめて共有 — SNS の bio にぴったり。",
       "onboardingEyebrow": "ようこそ",
       "onboardingTitle": "今すぐ作ってみましょう！",
-      "onboardingSubhead": "お好きな username を決めるだけでスタートです。写真 · リンク · お店の住所 · 連絡先を順に入れていけば、立派な名刺が完成します。",
+      "onboardingSubhead": "お好きな username を決めるだけでスタートです。写真 · リンク · お店の住所 · 連絡先を順に入れていけば、自分らしい名刺が完成します。",
       "onboardingStep1": "ニックネームを決める",
       "onboardingStep2": "自己紹介またはプロフィール写真を追加",
       "onboardingStep3": "最初のブロックを追加 (リンク・写真・何でも)",
@@ -1304,11 +1308,11 @@
       "usernameChangeHint": "変更すると、旧 URL は 30 日間自動 redirect された後に失効します。",
       "usernameChangeConfirm": "@{prev} → @{next} に変更しますか？旧 URL は 30 日間のみ有効です。",
       "usernameChangeAction": "変更",
-      "usernameUnsaved": "username が未保存",
+      "usernameUnsaved": "username が未保存です",
       "bioLabel": "自己紹介",
       "bioPlaceholder": "例: フルスタック開発者 · サイドプロジェクト製作中",
       "themeLabel": "テーマ",
-      "socialsLabel": "SNS / 共有ボタン",
+      "socialsLabel": "共有 / SNS ボタン",
       "socialsHint": "公開ページの下に表示するチャンネルを選んでください。それぞれにご自身のアカウント URL を入れると、訪問者がそのまま遷移します。最大 2 つ、選んだ順に表示されます。",
       "socialsCount": "{count}/{max} 選択",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
@@ -1329,11 +1333,11 @@
       "quickAdd": {
         "title": "リンクを追加",
         "firstTitle": "最初のリンクを追加 ↓",
-        "firstHint": "Instagram、ブログ、YouTube 等どんな URL でも、ラベルと一緒に追加して bio 用 1 ページに表示。",
+        "firstHint": "Instagram・ブログ・YouTube などどんな URL でも、ラベルと一緒に追加して bio 用 1 ページに表示できます。",
         "hint": "URL + ラベルを入力 → 短縮 + プロフィール表示まで自動。連続で何個でも追加できます。",
         "urlPlaceholder": "https://... または mailto:...",
         "labelPlaceholder": "ラベル (例: 📝 ブログ)",
-        "templatesLabel": "または URL のみクイック入力 (ラベルは自分で入力)",
+        "templatesLabel": "または URL だけクイック追加（ラベルはご自身で入力）",
         "templatesMore": "+{count} もっと",
         "add": "追加",
         "added": "{label} を追加しました",
@@ -1350,15 +1354,15 @@
       "copyPublicUrl": "公開 URL をコピー",
       "openProfile": "公開プロフィールを開く",
       "openShort": "開く",
-      "yourPage": "あなたのページ",
+      "yourPage": "マイページ",
       "featuredTitle": "公開ページのフィード",
-      "featuredHint": "ドラッグで並び替え (モバイル ↑↓)、★ で 1 つを大きなヒーローカードに、'削除' で外す。ヘッダーでセクションを作ると、折りたたみや一括移動ができます。",
+      "featuredHint": "ドラッグで並び替え (モバイル ↑↓)、★ で 1 つを大きなヒーローカードに、『削除』で外す。ヘッダーでセクションを作ると、折りたたみや一括移動ができます。",
       "sectionExpand": "セクションを開く",
       "sectionCollapse": "セクションを閉じる",
       "sectionItemCount": "{count} 件",
       "featuredEmpty": "下のリストからリンクを追加するか、ヘッダー / 区切り線でセクションを作りましょう。",
       "featuredEmptyTitle": "公開フィードが空です",
-      "featuredEmptyHasOthers": "上の '追加' フォームで新規作成するか、下の '他のリンク' ({count} 件) から選んでください。",
+      "featuredEmptyHasOthers": "上の『追加』フォームで新規作成するか、下の『他の自分のリンク』（{count} 件）から選んでください。",
       "addBlockMenu": "追加",
       "addMoreBlocks": "その他のブロック",
       "remove": "削除",
@@ -1422,11 +1426,11 @@
       "addPlaceDescription": "カフェ・店舗・スタジオ・ポップアップなどの単一の場所をカードで表示。Google 場所検索で住所と座標が自動入力されます。",
       "addPlacePlaceholder": "(店舗 未設定)",
       "placeFieldSearch": "場所を検索",
-      "placeFieldSearchPlaceholder": "例: NUDAKE 道山",
+      "placeFieldSearchPlaceholder": "例: ブルーボトル 表参道",
       "placeFieldName": "表示名",
-      "placeFieldNamePlaceholder": "例: NUDAKE House Dosan",
+      "placeFieldNamePlaceholder": "例: ブルーボトル 表参道",
       "placeFieldAddress": "住所",
-      "placeFieldAddressPlaceholder": "例: ソウル 江南区 狎鴎亭路46街 50",
+      "placeFieldAddressPlaceholder": "例: 東京都港区南青山 5-8-5",
       "placeFieldCategory": "カテゴリ (オプション)",
       "placeFieldCover": "カバー写真 (オプション)",
       "placeCoverHint": "店舗外観 / 代表カット推奨 (5:3 比率)",
@@ -1435,7 +1439,7 @@
       "placeFieldHoursPlaceholder": "例: 毎日 11:00-22:00\n火曜定休",
       "placeCategory_cafe": "カフェ",
       "placeCategory_bakery": "ベーカリー",
-      "placeCategory_restaurant": "飲食",
+      "placeCategory_restaurant": "飲食店",
       "placeCategory_retail": "ショップ",
       "placeCategory_studio": "スタジオ",
       "placeCategory_gallery": "ギャラリー",
@@ -1456,7 +1460,7 @@
       "eventFieldUrl": "関連URL (任意)",
       "bookingFieldUrl": "予約ページURL",
       "bookingFieldTitle": "タイトル (任意)",
-      "bookingFieldTitlePlaceholder": "例: 30分相談",
+      "bookingFieldTitlePlaceholder": "例: 30 分無料相談",
       "bookingFieldDescription": "説明 (任意)",
       "bookingFieldDescriptionPlaceholder": "例: オンラインまたは対面",
       "bookingFieldCtaLabel": "ボタンラベル (任意)",
@@ -1481,7 +1485,7 @@
       "leadsLink": "収集したメール",
       "stats": {
         "title": "プロフィール訪問統計",
-        "intro": "/u/username を誰がどこから見たか — 短縮リンクの統計と同じ深さで。",
+        "intro": "/u/username を誰がどこから見たか — 短縮リンクの統計と同じ詳しさで。",
         "backToEditor": "編集に戻る",
         "loadFailed": "統計を読み込めませんでした。",
         "summary": {
@@ -1535,7 +1539,7 @@
           "body": "このプロフィールの所有者は訪問統計を非公開にしています。"
         },
         "visibility": {
-          "title": "訪問統計を公開する",
+          "title": "訪問統計の公開",
           "publicHint": "/u/{username}/stats で誰でも集計を見られます。個別の訪問者情報は公開されません。",
           "privateHint": "今はあなたのみが閲覧できます。ONにすると訪問者がチャートを見られます。",
           "savedPublic": "訪問統計を公開しました。",
@@ -1561,7 +1565,7 @@
         "confirmDelete": "このメールを削除しますか？",
         "optOut": "受信拒否",
         "undoOptOut": "拒否を解除",
-        "optedOut": "拒否済み",
+        "optedOut": "受信拒否済み",
         "optOutFailed": "状態の更新に失敗しました。",
         "buildCampaign": "キャンペーンメッセージを作成",
         "prev": "前へ",
@@ -1618,9 +1622,9 @@
       "galleryFull": "これ以上追加できません",
       "galleryCounter": "{count} / {max}",
       "galleryCoverBadge": "表紙",
-      "galleryReorderHint": "ドラッグで並び替え · 最初の画像が訪問者の見る表紙",
+      "galleryReorderHint": "ドラッグで並び替え · 最初の画像が訪問者に表示されるカバーになります",
       "galleryFullToast": "最大 {max} 枚までです。",
-      "galleryTruncatedToast": "最初の {max} 枚のみ受け取りました。",
+      "galleryTruncatedToast": "最初の {max} 枚のみ取り込みました。",
       "imageUploader": {
         "emptyHint": "画像を追加",
         "replace": "変更",
@@ -1691,10 +1695,10 @@
     "dangerTitle": "危険な操作",
     "deleteHint": "削除申請後30日間の猶予期間があります。その間に再ログインすれば自動で復元され、30日経過後にアカウントとすべてのリンク・統計が完全削除されます。匿名リンクには影響しません。",
     "deleteButton": "アカウントを完全削除",
-    "deleteConfirmTitle": "本当に削除しますか?",
+    "deleteConfirmTitle": "本当に削除しますか？",
     "deleteConfirmDesc": "30日以内に再ログインすれば復元できます。それ以降は永久削除されます。\"DELETE\" と入力して確認してください。",
     "deleteConfirmPlaceholder": "DELETE",
-    "deleteOk": "完全に削除",
+    "deleteOk": "完全に削除する",
     "cancel": "キャンセル",
     "deleting": "削除中...",
     "twofa": {
@@ -1717,11 +1721,11 @@
       "cancel": "キャンセル",
       "enrolled": "2FA を有効化しました。",
       "regenerateAction": "リカバリコードを再生成",
-      "disableAction": "2FA をオフ",
+      "disableAction": "2FA を無効化",
       "confirmRegenerateHint": "現在の認証コードを入力すると、新しいリカバリコード 10 件が発行され既存コードは無効化されます。",
       "confirmDisableHint": "現在の認証コードまたはリカバリコードを入力すると 2FA がオフになります。",
       "regenerateButton": "再生成",
-      "disableButton": "オフ",
+      "disableButton": "無効化",
       "regenerateFailed": "再生成に失敗しました。",
       "disableFailed": "無効化に失敗しました。",
       "regenerated": "新しいリカバリコードを発行しました。",
@@ -1731,12 +1735,12 @@
       "recoveryCopyAll": "すべてコピー",
       "recoveryCopied": "リカバリコードをコピーしました。",
       "recoveryCopyFailed": "コピー失敗",
-      "recoveryDismiss": "保存しました、閉じる"
+      "recoveryDismiss": "保存しました（閉じる）"
     },
     "apiKeys": {
       "title": "APIキー",
       "description": "スクリプトや自動化から kurl API を呼び出す時に使います。発行されたキーは一度しか表示されないので、すぐに安全な場所に保存してください。",
-      "namePlaceholder": "キー名 (例: 社内レポートBot)",
+      "namePlaceholder": "キー名（例：社内レポート bot）",
       "issue": "発行",
       "issuing": "発行中...",
       "issueFailed": "発行に失敗しました。",
@@ -1747,7 +1751,7 @@
       "copy": "コピー",
       "copied": "コピーしました",
       "copyFailed": "コピー失敗",
-      "dismiss": "保存しました、閉じる",
+      "dismiss": "保存しました（閉じる）",
       "loading": "読み込み中...",
       "empty": "まだキーがありません。",
       "createdAt": "作成",
@@ -1757,17 +1761,17 @@
       "revoking": "失効中...",
       "revoked": "失効しました。",
       "revokeFailed": "失効に失敗しました。",
-      "revokeConfirm": "このキーを失効するとすぐに使えなくなります。続行しますか?",
+      "revokeConfirm": "このキーを失効するとすぐに使えなくなります。続行しますか？",
       "revokedLabel": "失効済み"
     },
     "customDomains": {
       "title": "カスタムドメイン",
-      "description": "自分のドメイン (例: go.brand.com) で短縮 URL を配信できます。TXT + CNAME を追加するとバックグラウンドで自動検証 (最大 10 分間 DNS をポーリング)。TLS は Cloudflare 無料プランを前段に置くのが最も簡単。",
+      "description": "ご自身のドメイン（例：go.brand.com）で短縮 URL を配信できます。TXT + CNAME を追加するとバックグラウンドで自動検証（最大 10 分間 DNS をポーリング）。TLS は Cloudflare 無料プランを前段に置くのが最も簡単です。",
       "register": "登録",
       "registering": "登録中...",
       "registerFailed": "ドメインの登録に失敗しました。",
       "loading": "読み込み中...",
-      "empty": "登録されたドメインはありません。上のフォームから始めてください。",
+      "empty": "登録されたドメインはありません。上の入力欄にご自身のドメインを入れて始めてください。",
       "statusPending": "検証待ち",
       "statusVerified": "検証完了",
       "statusAutoChecking": "自動確認中 · {time}",
@@ -1777,7 +1781,7 @@
       "verifyFailed": "TXT レコードが見つかりませんでした。伝播に 1〜5 分かかる場合があります。",
       "delete": "削除",
       "deleted": "削除しました",
-      "deleteConfirm": "このドメインを削除しますか？該当ドメインの短縮 URL は即座に動作停止します。",
+      "deleteConfirm": "このドメインを削除しますか？該当ドメインの短縮 URL はただちに動作を停止します。",
       "deleteFailed": "削除に失敗しました。",
       "dnsTxtHint": "ドメイン所有確認用 — DNS に TXT レコードを追加",
       "dnsCnameHint": "トラフィック転送用 — 同じ DNS に CNAME も追加"
@@ -1805,12 +1809,12 @@
     "a2": "はい、短縮は未ログインでも可能です。統計確認と永続保存にはGoogleログインが必要です。",
     "q3": "統計はどこで見られますか?",
     "a3": "マイリンクページで短縮コードをクリックすると、デバイス/チャネル/国/時間帯など8種の分析が見られます。",
-    "q4": "カカオトーク/Slackに貼ると、プレビューは表示されますか?",
-    "a4": "はい — KakaoTalk / Slack / Discord のプレビューカードは正常に動作します。これらのアプリがリンク情報を取得しに来たとき、kurl はすぐリダイレクトせず、タイトル · 説明 · 画像入りのプレビューページを返すためです。",
+    "q4": "LINE / Slack に貼ると、プレビューは表示されますか?",
+    "a4": "はい — LINE / Slack / Discord のプレビューカードはきちんと表示されます。これらのアプリがリンク情報を取得しに来たとき、kurl はすぐリダイレクトせず、タイトル・説明・画像入りのプレビューページを返すためです。",
     "q5": "悪性URLはどう遮断されますか?",
-    "a5": "Google Safe Browsing APIで短縮時にチェックします。検知されたURLは短縮を拒否します。",
+    "a5": "Google Safe Browsing API で短縮時にチェックします。検知された URL は短縮できません。",
     "q6": "APIはありますか?",
-    "a6": "はい — 開発者向け API を提供しています。設定 > API キー でキーを発行し、自前のコードから短縮 / 統計エンドポイントを呼び出せます。"
+    "a6": "はい — 開発者向け API を提供しています。設定 > API キー でキーを発行し、ご自身のコードから短縮 / 統計エンドポイントを呼び出せます。"
   },
   "campaignStatus": {
     "DRAFT": "開始前",
@@ -1827,9 +1831,9 @@
       "eyebrow": "Offline QR campaigns",
       "title1": "チラシごとに別のQRを入れて、",
       "title2": "どこで効いたかを確認する。",
-      "sub": "エリア·出口·業者ごとに別のQRを自動生成し、100枚あたりクリック率で次の配布先を決める。",
-      "chip1": "5分で最初のキャンペーン",
-      "chip2": "Canva·InDesign PDF対応",
+      "sub": "エリア・出口・業者ごとに別の QR を自動生成し、100 枚あたりのクリック率で次の配布先を決める。",
+      "chip1": "5 分で初キャンペーン",
+      "chip2": "Canva・InDesign PDF 対応",
       "chip3": "行き先はいつでも変更",
       "chip1Short": "5分で開始",
       "chip2Short": "PDF対応",
@@ -1838,27 +1842,27 @@
     },
     "s1": {
       "line1": "チラシは配った。",
-      "line2": "では、どこで効いたのか。"
+      "line2": "結局、どこで効いたのか?"
     },
     "s2": {
-      "line1": "エリア·出口·業者ごとに、",
-      "line2": "QRを分ける。",
-      "aux": "バッチ = 同じQRを貼るチラシのひとまとまり。"
+      "line1": "エリア・出口・業者ごとに、",
+      "line2": "QR を分ける。",
+      "aux": "ロット = 同じ QR を貼るチラシのひとまとまり。"
     },
     "s3": {
       "line1": "デザインはそのまま、",
-      "line2": "QRだけ自動で挿入する。",
-      "aux": "Canva·InDesignで作ったPDFに、座標だけ指定。"
+      "line2": "QR だけ自動で挿入する。",
+      "aux": "Canva・InDesign で作った PDF に、座標だけ指定。"
     },
     "s4": {
-      "line1": "渋谷 142 クリック、新宿 38。",
+      "line1": "渋谷 142 クリック・新宿 38。",
       "line2": "次は、渋谷を倍に。",
       "aux": "次の配布、クリックが教えてくれる。"
     },
     "s5": {
-      "line1": "チラシ·クーポン·ポスター。",
+      "line1": "チラシ・クーポン・ポスター。",
       "line2": "業種を問わず比較できる。",
-      "aux": "活用例 — 同じやり方で5倍。"
+      "aux": "活用例 — 同じやり方で比較できる。"
     },
     "s6": {
       "line1": "印刷したQRはそのまま、",
@@ -1869,7 +1873,7 @@
       "title": "次の配布、クリックが教えてくれる。",
       "primary": "QRを作成",
       "secondary": "ログイン",
-      "note": "通常の短縮URL · 統計も同じアカウントで"
+      "note": "通常の短縮 URL・統計も同じアカウントで"
     },
     "mock": {
       "kpiBeforeKurl": "kurl 導入前",
@@ -1877,7 +1881,7 @@
       "kpiStatus": "測定なしで配布",
       "kpiDistributed": "配布",
       "kpiClicks": "クリック",
-      "kpiPer100": "100枚あたり",
+      "kpiPer100": "100 枚あたり",
       "kpiTopArea": "Top エリア",
       "batchTitle": "配布バッチ",
       "batchAdd": "バッチ追加",
@@ -1894,7 +1898,7 @@
       "posterStep3": "バッチ別の合本PDFをダウンロード",
       "posterBoxLabel": "QR",
       "posterPerBatch": "バッチごとに別のQR",
-      "barsTitle": "100枚あたりクリック",
+      "barsTitle": "100 枚あたりのクリック",
       "barsSort": "効率順",
       "barsTop": "Top",
       "barsRecoTitle": "次回の推奨",
