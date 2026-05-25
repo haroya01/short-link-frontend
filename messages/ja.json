@@ -97,15 +97,35 @@
     "features": {
       "realtime": {
         "title": "ライブクリックフィード (SSE)",
-        "desc": "統計ページでクリックがリアルタイムに流れる — 時刻 / 国 / チャネル / デバイス"
+        "desc": "統計ページでクリックがリアルタイムに流れる — 時刻 / 国 / チャネル / デバイス",
+        "preview": {
+          "eyebrow": "リアルタイムクリック",
+          "live": "ライブ"
+        }
       },
       "insights": {
         "title": "自動インサイト",
-        "desc": "ピーク時間 / 再訪率 / Half-life / Velocity — 設定なしで即可視化"
+        "desc": "ピーク時間 / 再訪率 / Half-life / Velocity — 設定なしで即可視化",
+        "preview": {
+          "heading": "今週のインサイト",
+          "humanLabel": "人間クリック",
+          "humanSub": "全体の 91%",
+          "topLinkLabel": "トップリンク",
+          "topLinkSub": "638 · instagram",
+          "peakLabel": "ピーク",
+          "peakValue": "水 21時",
+          "peakSub": "この時間帯のクリック 38%",
+          "wowLabel": "前週比",
+          "wowSub": "先週の人間クリック"
+        }
       },
       "abtest": {
         "title": "A/B 振り分け + 国別ルーティング",
-        "desc": "1 つの短縮 URL → 重み配分 + 国に合わせた遷移先 (リンクあたり 4 件)"
+        "desc": "1 つの短縮 URL → 重み配分 + 国に合わせた遷移先 (リンクあたり 4 件)",
+        "preview": {
+          "explainer": "同じ短縮 URL のクリックを重み + 訪問者の国マッチで分岐。マッチしない場合はデフォルトの遷移先にフォールバック。",
+          "controlLabel": "デフォルト (元の URL)"
+        }
       }
     },
     "recentEyebrow": "最近",
