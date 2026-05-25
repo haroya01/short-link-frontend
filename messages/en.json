@@ -97,15 +97,35 @@
     "features": {
       "realtime": {
         "title": "Live click feed (SSE)",
-        "desc": "Watch clicks arrive in real time on the stats page — time / country / channel / device, streaming"
+        "desc": "Watch clicks arrive in real time on the stats page — time / country / channel / device, streaming",
+        "preview": {
+          "eyebrow": "Live clicks",
+          "live": "live"
+        }
       },
       "insights": {
         "title": "Automatic insights",
-        "desc": "Peak hour, return rate, half-life, velocity — surfaced without any setup"
+        "desc": "Peak hour, return rate, half-life, velocity — surfaced without any setup",
+        "preview": {
+          "heading": "This week's insights",
+          "humanLabel": "Human clicks",
+          "humanSub": "91% of total",
+          "topLinkLabel": "Top link",
+          "topLinkSub": "638 · instagram",
+          "peakLabel": "Peak",
+          "peakValue": "Wed 9pm",
+          "peakSub": "38% of clicks this hour",
+          "wowLabel": "Last week",
+          "wowSub": "Last week's human clicks"
+        }
       },
       "abtest": {
         "title": "A/B split + geo-routing",
-        "desc": "One short URL → weighted variants and per-country destinations (up to 4 per link)"
+        "desc": "One short URL → weighted variants and per-country destinations (up to 4 per link)",
+        "preview": {
+          "explainer": "Splits clicks on the same short URL by weight + visitor country. Falls back to the default destination on no match.",
+          "controlLabel": "Default (original URL)"
+        }
       }
     },
     "recentEyebrow": "recent",
