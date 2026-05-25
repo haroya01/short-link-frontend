@@ -1,6 +1,37 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator } from "@playwright/test";
+
+async function visualLineCount(locator: Locator) {
+  return locator.evaluate((el) => {
+    const style = window.getComputedStyle(el);
+    const lineHeight = Number.parseFloat(style.lineHeight);
+    return Math.round(el.getBoundingClientRect().height / lineHeight);
+  });
+}
 
 test.describe("design polish guards", () => {
+  test("mobile hero headline and subhead stay within two lines in every locale", async ({
+    page,
+  }) => {
+    for (const viewport of [
+      { width: 375, height: 667 },
+      { width: 390, height: 844 },
+    ]) {
+      await page.setViewportSize(viewport);
+
+      for (const locale of ["ko", "en", "ja"]) {
+        await page.goto(`/${locale}`);
+
+        const heading = page.getByTestId("home-hero-heading");
+        const subhead = page.getByTestId("home-hero-subhead");
+        await expect(heading).toBeVisible();
+        await expect(subhead).toBeVisible();
+
+        expect(await visualLineCount(heading)).toBeLessThanOrEqual(2);
+        expect(await visualLineCount(subhead)).toBeLessThanOrEqual(2);
+      }
+    }
+  });
+
   test("mobile cookie consent stays compact on the landing page", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/ko");
