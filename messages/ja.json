@@ -68,10 +68,10 @@
   "home": {
     "tagline": "kurl v1",
     "headline1": "短縮はひと行で",
-    "headline2": "分析は誰がどこでいつ",
+    "headline2": "分析は誰が、いつ、どこで",
     "subhead": "ライブクリックフィード、自動インサイト、ボット自動分離 — 他社の有料機能を、kurl は無料で",
     "mobileHeadline1": "短縮はひと行",
-    "mobileHeadline2": "誰がどこでいつ分析",
+    "mobileHeadline2": "誰が、いつ、どこで分析",
     "mobileSubhead": "ライブクリック、自動分析、Bot分離まで無料",
     "anonymousHint": "ログイン不要で短縮できます。統計はログイン後に確認できます。",
     "demoLink": "分析画面をデモで先に見る",
@@ -141,15 +141,10 @@
   "shortenForm": {
     "placeholder": "https://your-very-long-url.com/path?with=query",
     "submit": "短縮する",
-    "submitBatch": "{count}個のチャネルを作成",
     "advancedToggle": "詳細オプション",
     "customCodeLabel": "カスタムコード (3-16文字、英数字のみ)",
     "customCodePlaceholder": "myLink2026",
     "expiresAtLabel": "有効期限 (任意)",
-    "utmTitle": "複数の場所に投稿するリンクですか?",
-    "utmSubtitle": "チャネルを選ぶと、それぞれ別の URL が作られます。統計でどこからのクリックか別に集計されます。",
-    "variantsSummarySingle": "{labels} 専用リンク 1 本。",
-    "variantsSummary": "{count} 本 — それぞれ別 URL ({labels})。",
     "errors": {
       "empty": "URLを入力してください。",
       "invalid": "http:// または https:// で始まる正しいURLが必要です。",
