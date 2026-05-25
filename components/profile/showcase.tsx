@@ -67,10 +67,8 @@ export function ProfileShowcase() {
 function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: string }) {
   const colors = THEME_TABLE[profile.theme ?? "default"];
   return (
-    <Link
-      href={`/showcase/${profile.username}`}
-      className="group mr-6 block shrink-0 transition-transform hover:-translate-y-1"
-      aria-label={`@${profile.username} — ${demoCta}`}
+    <div
+      className="group relative mr-6 block shrink-0 cursor-pointer transition-transform hover:-translate-y-1"
       // Promote each slide to its own compositor layer + clip paint to the slide's box.
       // Without this, embla's translateX on the parent flex track forces every slide's
       // ContactCardEntry `filter:` and per-card `backdrop-blur` to repaint as the track
@@ -80,6 +78,13 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
       // composite them cheaply during the swipe.
       style={{ contain: "layout paint", transform: "translateZ(0)" }}
     >
+      <Link
+        href={`/showcase/${profile.username}`}
+        className="focus-ring absolute inset-0 z-10 rounded-[2rem]"
+        aria-label={`@${profile.username} — ${demoCta}`}
+      >
+        <span className="sr-only">{demoCta}</span>
+      </Link>
       <div
         style={{
           width: DEVICE_NATIVE_W * DEVICE_SCALE,
@@ -117,7 +122,7 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
           <div className="device-power" />
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 

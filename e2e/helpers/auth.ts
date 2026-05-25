@@ -20,9 +20,11 @@ export async function signInAs(
   email: string,
 ): Promise<string> {
   const tokens = await devLogin(context.request, email);
-  await page.addInitScript((token) => {
+  const installToken = (token: string) => {
     window.localStorage.setItem("short-link:access-token", token);
-  }, tokens.accessToken);
+  };
+  await context.addInitScript(installToken, tokens.accessToken);
+  await page.addInitScript(installToken, tokens.accessToken);
   return tokens.accessToken;
 }
 
