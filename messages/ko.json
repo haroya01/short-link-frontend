@@ -183,21 +183,7 @@
     "title": "로그인",
     "subtitle": "로그인하면 내 링크 관리와 클릭 통계 분석을 사용할 수 있어요.",
     "google": "Google로 계속하기",
-    "anonymousAlt": "로그인 없이도 <shorten>URL 단축은 가능</shorten> 해요.",
-    "anonymousButton": "로그인 없이 단축만 사용하기",
-    "anonymousNote": "내 링크 관리·통계는 로그인 시에만",
-    "benefits": {
-      "links": "단축한 링크를 한 곳에서 관리",
-      "stats": "클릭·국가·채널 통계 확인",
-      "keep": "익명 링크를 계정으로 보존"
-    },
-    "preview": {
-      "eyebrow": "로그인 후 화면",
-      "title": "단축 링크와 클릭 흐름을 한 번에",
-      "links": "링크",
-      "clicks": "클릭",
-      "channels": "채널"
-    }
+    "anonymousButton": "로그인 없이 단축만 사용하기"
   },
   "auth": {
     "signedIn": "로그인되었어요",

@@ -183,21 +183,7 @@
     "title": "ログイン",
     "subtitle": "ログインするとリンク管理とクリック分析が利用できます。",
     "google": "Googleで続ける",
-    "anonymousAlt": "ログインなしでも<shorten>URL短縮は可能</shorten>です。",
-    "anonymousButton": "ログインなしで短縮だけ使う",
-    "anonymousNote": "リンク管理・統計はログイン時のみ",
-    "benefits": {
-      "links": "短縮リンクを一か所で管理",
-      "stats": "クリック・国・チャネル分析を確認",
-      "keep": "匿名リンクをアカウントに保存"
-    },
-    "preview": {
-      "eyebrow": "ログイン後の画面",
-      "title": "リンクとクリックの流れを一か所で",
-      "links": "リンク",
-      "clicks": "クリック",
-      "channels": "チャネル"
-    }
+    "anonymousButton": "ログインなしで短縮だけ使う"
   },
   "auth": {
     "signedIn": "ログインしました",
