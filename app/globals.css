@@ -123,27 +123,26 @@ h1, h2, h3, p {
   }
 
   /*
-   * Hero stagger — opacity-only fade cascade for hero children (eyebrow → headline → subhead →
-   * form). The earlier version paired this with the shared `profile-fade-in` keyframe, which
-   * also slid each child up 6 px; restrained / luxury surfaces don't need motion that the eye
-   * has to parse on top of the typography. Each child reads `--hi` (hero index) via inline
-   * style, animation-delay scales from that, and we keep the cascade short so the cue lands
-   * before visitors have a chance to wonder "is the page loading".
+   * Hero stagger — rise+fade cascade for hero children (eyebrow → headline → subhead → CTA).
+   * Reuses the `hero-rise` keyframe (translateY 16px → 0 + opacity 0 → 1) so landing /
+   * showcase / login share the same entrance feel as qr-campaigns' sticky-narrative hero.
+   * Children set `--hi` (hero index) via inline style; `animation-delay` scales from that
+   * with a 180ms stagger so the cascade reads as deliberate, not staccato. Initial state
+   * (opacity 0 + translateY) is set on the element itself so the pre-delay frame doesn't
+   * flash the final position.
    */
   .hero-stagger > * {
     opacity: 0;
-    animation: hero-fade-in 420ms ease-out forwards;
-    animation-delay: calc(var(--hi, 0) * 70ms);
+    transform: translateY(16px);
+    animation: hero-rise 900ms var(--ease) forwards;
+    animation-delay: calc(var(--hi, 0) * 180ms);
   }
   @media (prefers-reduced-motion: reduce) {
     .hero-stagger > * {
       animation: none;
       opacity: 1;
+      transform: none;
     }
-  }
-  @keyframes hero-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
   }
 
   /*
