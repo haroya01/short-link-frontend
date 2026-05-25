@@ -1,10 +1,11 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, BarChart3, ExternalLink, IdCard } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/common/copy-button";
 import { QrButton } from "@/components/qr/button";
 import { ShareButton } from "@/components/common/share-button";
+import { buttonVariants } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { Link } from "@/i18n/navigation";
 import { truncateMiddle } from "@/lib/utils";
@@ -25,13 +26,6 @@ type Props = {
 
 const ANONYMOUS_TTL_HOURS = 24;
 
-/**
- * Success-confirmation card. Three rows: URL, actions, footer meta. Nothing else. Earlier passes
- * tried to also prove the "analytics" half of the hero promise here with a live SSE counter, but
- * the result card's job is to confirm and get out of the way — Apple confirmation surfaces never
- * pile on feature demos. The analytics proof now lives entirely up-funnel (hero subhead + features
- * carousel preview) and down-funnel (/stats page). The card itself stays bare.
- */
 export function ResultCard({ result, originalUrl, channel, authenticated }: Props) {
   const t = useTranslations("result");
   const { toast } = useToast();
@@ -46,6 +40,24 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
       className="animate-fade-in rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
     >
       <div className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-700">
+              {t("completed")}
+            </p>
+            <p className="mt-1 text-sm text-slate-500">{t("nextStepHint")}</p>
+          </div>
+          {authenticated && (
+            <Link
+              href={`/stats/${result.shortCode}`}
+              className={buttonVariants({ size: "sm", variant: "outline" })}
+            >
+              <BarChart3 className="h-3.5 w-3.5" />
+              {t("viewStats")}
+            </Link>
+          )}
+        </div>
+
         <a
           href={result.shortUrl}
           target="_blank"
@@ -66,6 +78,15 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
             value={result.shortUrl}
             onCopied={() => toast(t("copied"), "success")}
           />
+          <a
+            href={result.shortUrl}
+            target="_blank"
+            rel="noreferrer"
+            className={buttonVariants({ size: "sm", variant: "outline" })}
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            {t("open")}
+          </a>
           <ShareButton url={result.shortUrl} title={result.shortUrl} variant="outline" />
           <QrButton url={result.shortUrl} />
           {channel && (
@@ -84,6 +105,39 @@ export function ResultCard({ result, originalUrl, channel, authenticated }: Prop
           <span className="mx-1 text-slate-300">·</span>
           <span className="text-slate-600">{truncateMiddle(originalUrl, 56)}</span>
         </p>
+
+        {authenticated && (
+          <div className="grid gap-2 pt-1 sm:grid-cols-2">
+            <Link
+              href={`/stats/${result.shortCode}`}
+              className="group flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-left hover:border-slate-300 hover:bg-white"
+            >
+              <span className="min-w-0">
+                <span className="block text-[12px] font-medium text-slate-900">
+                  {t("statsCta")}
+                </span>
+                <span className="mt-0.5 block truncate text-[11px] text-slate-500">
+                  {t("statsCtaDesc")}
+                </span>
+              </span>
+              <BarChart3 className="h-4 w-4 shrink-0 text-slate-500 transition group-hover:text-accent-700" />
+            </Link>
+            <Link
+              href="/profile/edit"
+              className="group flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-left hover:border-slate-300 hover:bg-white"
+            >
+              <span className="min-w-0">
+                <span className="block text-[12px] font-medium text-slate-900">
+                  {t("profileCta")}
+                </span>
+                <span className="mt-0.5 block truncate text-[11px] text-slate-500">
+                  {t("profileCtaDesc")}
+                </span>
+              </span>
+              <IdCard className="h-4 w-4 shrink-0 text-slate-500 transition group-hover:text-accent-700" />
+            </Link>
+          </div>
+        )}
 
         {expiresAt && (
           <div className="flex flex-wrap items-center justify-between gap-2 gap-y-1">

@@ -2,11 +2,23 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { ComponentType } from "react";
-import { BarChart3, FileUp, Link2, Plus, QrCode, Search, X } from "lucide-react";
+import {
+  BarChart3,
+  Clock3,
+  FileUp,
+  Link2,
+  MousePointerClick,
+  Plus,
+  QrCode,
+  Search,
+  TrendingUp,
+  X,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { MyLinksFilters } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
+import type { MyLink } from "@/types";
 import {
   useInvalidateLinks,
   useMyLinks,
@@ -14,7 +26,7 @@ import {
 } from "@/lib/api/links.queries";
 import { Link } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { LinksTable } from "@/components/links/table";
@@ -27,6 +39,7 @@ import { DashboardOnboarding } from "@/components/common/dashboard-onboarding";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { useToast } from "@/components/ui/toast";
+import { CopyButton } from "@/components/common/copy-button";
 
 export default function DashboardPage() {
   const { authenticated, ready, me } = useAuth();
@@ -56,6 +69,7 @@ export default function DashboardPage() {
       ? linksQuery.error.message
       : "load failed"
     : null;
+  const ops = useMemo(() => buildDashboardOps(items), [items]);
 
   // Debounce the search box into the server-side `q` filter so the user doesn't have to wait for
   // each keystroke to round-trip and the query covers the full link set, not just the first page.
@@ -148,6 +162,8 @@ export default function DashboardPage() {
         onImported={() => void invalidateLinks()}
       />
 
+      {items.length > 0 && <DashboardOpsPanel ops={ops} />}
+
       <CampaignsEntryCard />
 
       <ExpiringSoonBanner
@@ -214,6 +230,179 @@ export default function DashboardPage() {
           )}
         </>
       )}
+    </div>
+  );
+}
+
+type DashboardOps = {
+  totalClicks: number;
+  clicks7d: number;
+  zeroClickLinks: number;
+  expiringLinks: number;
+  topLink: {
+    shortCode: string;
+    shortUrl: string;
+    originalUrl: string;
+    clickCount: number;
+    clicks7d: number;
+  } | null;
+};
+
+function buildDashboardOps(items: MyLink[]): DashboardOps {
+  const now = Date.now();
+  const threeDays = 3 * 24 * 60 * 60 * 1000;
+  let totalClicks = 0;
+  let clicks7d = 0;
+  let zeroClickLinks = 0;
+  let expiringLinks = 0;
+  let topLink: DashboardOps["topLink"] = null;
+
+  for (const item of items) {
+    const weekClicks = (item.clicksLast7d ?? []).reduce((sum, n) => sum + n, 0);
+    totalClicks += item.clickCount;
+    clicks7d += weekClicks;
+    if (item.clickCount === 0) zeroClickLinks += 1;
+    if (item.expiresAt) {
+      const expires = +new Date(item.expiresAt);
+      if (Number.isFinite(expires) && expires >= now && expires - now <= threeDays) {
+        expiringLinks += 1;
+      }
+    }
+    if (
+      !topLink ||
+      item.clickCount > topLink.clickCount ||
+      (item.clickCount === topLink.clickCount && weekClicks > topLink.clicks7d)
+    ) {
+      topLink = {
+        shortCode: item.shortCode,
+        shortUrl: item.shortUrl,
+        originalUrl: item.originalUrl,
+        clickCount: item.clickCount,
+        clicks7d: weekClicks,
+      };
+    }
+  }
+
+  return { totalClicks, clicks7d, zeroClickLinks, expiringLinks, topLink };
+}
+
+function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
+  const t = useTranslations("dashboard.ops");
+  const topLink = ops.topLink;
+
+  return (
+    <section className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.7fr)]">
+      <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        <OpsMetric
+          icon={MousePointerClick}
+          label={t("totalClicks")}
+          value={formatNumber(ops.totalClicks)}
+          hint={t("totalClicksHint")}
+        />
+        <OpsMetric
+          icon={TrendingUp}
+          label={t("weekClicks")}
+          value={formatNumber(ops.clicks7d)}
+          hint={t("weekClicksHint")}
+        />
+        <OpsMetric
+          icon={Link2}
+          label={t("zeroClick")}
+          value={formatNumber(ops.zeroClickLinks)}
+          hint={ops.zeroClickLinks > 0 ? t("zeroClickReview") : t("zeroClickClear")}
+        />
+        <OpsMetric
+          icon={Clock3}
+          label={t("expiring")}
+          value={formatNumber(ops.expiringLinks)}
+          hint={ops.expiringLinks > 0 ? t("expiringReview") : t("expiringClear")}
+        />
+      </div>
+
+      <div className="rounded-lg border border-slate-200 bg-white p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-700">
+              {t("topLink")}
+            </p>
+            {topLink ? (
+              <>
+                <Link
+                  href={`/stats/${topLink.shortCode}`}
+                  className="mt-1 block truncate font-mono text-[17px] font-semibold text-slate-900 hover:underline"
+                >
+                  /{topLink.shortCode}
+                </Link>
+                <p className="mt-1 truncate text-xs text-slate-500" title={topLink.originalUrl}>
+                  {topLink.originalUrl}
+                </p>
+              </>
+            ) : (
+              <p className="mt-2 text-sm text-slate-500">{t("topLinkEmpty")}</p>
+            )}
+          </div>
+          {topLink && (
+            <div className="shrink-0 text-right">
+              <p className="font-mono text-xl font-semibold tabular-nums text-slate-900">
+                {formatNumber(topLink.clickCount)}
+              </p>
+              <p className="text-[11px] text-slate-500">{t("clicks")}</p>
+            </div>
+          )}
+        </div>
+        {topLink && (
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <CopyButton
+              size="sm"
+              variant="accent"
+              label={t("copy")}
+              value={topLink.shortUrl}
+            />
+            <Link
+              href={`/stats/${topLink.shortCode}`}
+              className={buttonVariants({ size: "sm", variant: "outline" })}
+            >
+              <BarChart3 className="h-3.5 w-3.5" />
+              {t("viewStats")}
+            </Link>
+            <a
+              href={topLink.shortUrl}
+              target="_blank"
+              rel="noreferrer"
+              className={buttonVariants({ size: "sm", variant: "ghost" })}
+            >
+              {t("open")}
+            </a>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function OpsMetric({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+  hint: string;
+}) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+          {label}
+        </p>
+        <Icon className="h-4 w-4 shrink-0 text-slate-400" />
+      </div>
+      <p className="mt-2 font-mono text-2xl font-semibold leading-none tabular-nums text-slate-900">
+        {value}
+      </p>
+      <p className="mt-2 text-xs leading-relaxed text-slate-500">{hint}</p>
     </div>
   );
 }
