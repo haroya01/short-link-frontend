@@ -84,7 +84,7 @@ export default async function ShowcasePage({
           `.tracking-headline` (−0.025em) — same family/treatment as the landing hero. */}
       <section className="relative isolate flex flex-col overflow-hidden bg-white sm:min-h-[520px]">
         <div className="container relative z-10 m-auto max-w-3xl py-16 text-center sm:py-24">
-          <div className="space-y-4">
+          <div className="hero-stagger space-y-4">
             <div
               className="flex items-center justify-center gap-3"
               style={{ ["--hi" as string]: 0 } as React.CSSProperties}
