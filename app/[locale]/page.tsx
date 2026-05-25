@@ -53,7 +53,7 @@ export default function HomePage() {
               <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
             </div>
             <h1
-              className="text-balance text-center text-[40px] font-semibold leading-[1.04] tracking-headline text-slate-900 sm:text-[60px]"
+              className="text-balance text-center text-[34px] font-semibold leading-[1.08] tracking-headline text-slate-900 min-[390px]:text-[36px] sm:text-[60px] sm:leading-[1.04]"
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
               <span>{t("headline1")}</span>
@@ -61,7 +61,7 @@ export default function HomePage() {
               <span className="text-slate-500">{t("headline2")}</span>
             </h1>
             <p
-              className="mx-auto max-w-md text-balance text-center text-[15px] leading-relaxed text-slate-500"
+              className="mx-auto max-w-[320px] text-balance text-center text-[14px] leading-[1.7] text-slate-500 sm:max-w-md sm:text-[15px] sm:leading-relaxed"
               style={{ ["--hi" as string]: 2 } as React.CSSProperties}
             >
               {t("subhead")}
