@@ -11,6 +11,8 @@ test.describe("dashboard (auth)", () => {
 
     await page.goto("/ko/dashboard");
     await expect(page.getByRole("heading", { name: /내 링크/ })).toBeVisible();
+    await expect(page.getByText("전체 클릭")).toBeVisible();
+    await expect(page.getByText("성과 최고 링크")).toBeVisible();
     await expect(page.getByRole("link", { name: /example\.com\/dash-1/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /example\.com\/dash-2/ })).toBeVisible();
   });

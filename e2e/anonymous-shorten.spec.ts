@@ -15,6 +15,8 @@ test.describe("anonymous shorten flow", () => {
 
     const resultLink = page.locator("a", { hasText: /\/[0-9A-Za-z]{7}/ }).first();
     await expect(resultLink).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("단축 완료")).toBeVisible();
+    await expect(page.getByRole("link", { name: "열기" }).first()).toBeVisible();
 
     const href = await resultLink.getAttribute("href");
     expect(href).toMatch(/\/[0-9A-Za-z]{7}$/);

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { LinkStats } from "@/types";
 import { StatsCards } from "@/components/stats/cards";
+import { InsightSummary } from "@/components/stats/insight-summary";
 import { Header } from "./header";
 import { StatsEmptyState } from "./stats-empty-state";
 import { TabBar } from "./tab-bar";
@@ -93,6 +94,7 @@ export function StatsBody({
         animate={!demo}
         onNavigate={handleNavigate}
       />
+      <InsightSummary data={data} />
       <TabBar active={tab} onSelect={setTab} />
       {tab === "overview" && <OverviewTab data={data} onTick={onTick} demo={demo} />}
       {tab === "traffic" && <TrafficTab data={data} />}
