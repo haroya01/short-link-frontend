@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -9,7 +9,6 @@ import {
   deleteProfileBlock,
   getMyProfile,
   listMyLinks,
-  reorderProfileItems,
   setLinkHighlight,
   setLinkOgOverride,
   toggleLinkOnProfile,
@@ -20,31 +19,21 @@ import { track } from "@/components/common/posthog-provider";
 import type {
   MyLink,
   MyProfile,
-  ProfileReorderItem,
   ProfileTheme,
   PublicProfileEntry,
   Social,
 } from "@/types";
-import { BookingBlockDialog } from "@/components/profile/section/booking-block-dialog";
-import { ContactCardBlockDialog } from "@/components/profile/section/contact-card-block-dialog";
-import { EmailFormBlockDialog } from "@/components/profile/section/email-form-block-dialog";
-import { EmbedBlockDialog } from "@/components/profile/section/embed-block-dialog";
-import { TextBlockDialog } from "@/components/profile/section/text-block-dialog";
-import { EventBlockDialog } from "@/components/profile/section/event-block-dialog";
-import { PlaceBlockDialog } from "@/components/profile/section/place-block-dialog";
-import { GalleryBlockDialog } from "@/components/profile/section/gallery-block-dialog";
-import { ImageBlockDialog } from "@/components/profile/section/image-block-dialog";
-import { ProductCardBlockDialog } from "@/components/profile/section/product-card-block-dialog";
+import {
+  BlockDialogStack,
+  type BlockDialogs,
+} from "@/components/profile/section/block-dialog-stack";
 import { ProfileFeedEditor } from "@/components/profile/section/profile-feed-editor";
 import { ProfileMetaForm } from "@/components/profile/section/profile-meta-form";
 import { useBlockDialog } from "@/components/profile/section/use-block-dialog";
+import { useFeedReorder } from "@/components/profile/section/use-feed-reorder";
+import { useProfileAutosave } from "@/components/profile/section/use-profile-autosave";
 import { socialUrlPrefix } from "@/components/profile/section/socials-templates";
 import type { FeedItem } from "@/components/profile/section/types";
-import {
-  findNextTextHeader,
-  findUnitEndAfter,
-  findUnitStartBefore,
-} from "@/components/profile/section/feed-helpers";
 import {
   parsePublicFeed,
   type PublicFeedEntryShape,
@@ -101,27 +90,32 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   // Ten block-editor dialogs sharing the same {open, blockId, initialPayload} shape — each block
   // type opens its own dialog component (forms are very different: 7-field contact card vs URL
   // list vs markdown). `useBlockDialog` collapses 50+ lines of identical useState boilerplate to
-  // one line each + gives them a uniform `show()` / `close()` surface.
-  const contactCardDialog = useBlockDialog<string>(); // initial JSON
-  const galleryDialog = useBlockDialog<string>();
-  const productCardDialog = useBlockDialog<string>();
-  const emailFormDialog = useBlockDialog<string>();
-  const bookingDialog = useBlockDialog<string>();
-  const eventDialog = useBlockDialog<string>();
-  const placeDialog = useBlockDialog<string>();
-  const imageDialog = useBlockDialog<string>(); // initial URL
-  const embedDialog = useBlockDialog<string>();
-  const textDialog = useBlockDialog<string>(); // initial markdown content
+  // one line each + gives them a uniform `show()` / `close()` surface; `BlockDialogStack` then
+  // renders every mount in one place. Payload meaning: contactCard/gallery/productCard/emailForm/
+  // booking/event/place → JSON config; image/embed → URL string; text → markdown content.
+  const dialogs: BlockDialogs = {
+    contactCard: useBlockDialog<string>(),
+    gallery: useBlockDialog<string>(),
+    productCard: useBlockDialog<string>(),
+    emailForm: useBlockDialog<string>(),
+    booking: useBlockDialog<string>(),
+    event: useBlockDialog<string>(),
+    place: useBlockDialog<string>(),
+    image: useBlockDialog<string>(),
+    embed: useBlockDialog<string>(),
+    text: useBlockDialog<string>(),
+  };
   const [reload, setReload] = useState(0);
   const refresh = () => setReload((n) => n + 1);
-  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
-  const lastSavedRef = useRef<{
-    bio: string;
-    theme: ProfileTheme | null;
-    socials: string;
-  } | null>(null);
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [overIndex, setOverIndex] = useState<number | null>(null);
+  const handleAutoSaved = useCallback((updated: MyProfile) => setProfile(updated), []);
+  const autoSaveStatus = useProfileAutosave({
+    profile,
+    bio,
+    theme,
+    socials,
+    onSaved: handleAutoSaved,
+  });
+  const reorder = useFeedReorder({ items, setItems });
 
   // Build the same {@link PublicProfileEntry} shape the public profile endpoint returns from local
   // editor state. The preview consumes this directly through the real {@link EntryList} component,
@@ -192,68 +186,6 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     socials,
     entries,
     onDraft,
-  ]);
-
-  // After the username is claimed, bio + theme silently auto-save 600ms after the last change.
-  // Username keeps its explicit Save button because changing it costs the user their old URL —
-  // we want intent for that, but everything else should "just save" so the editor feels alive.
-  useEffect(() => {
-    if (!profile?.username) return;
-    // Drop entries with empty URL so the user can leave a chip enabled while still drafting the
-    // URL — only complete pairs trigger a save. Empty string later signals "clear all" to the API.
-    // Drafting-aware filter: blank URLs OR "just the channel prefix" (https://x.com/ etc — left
-    // after the chip prefill but before the user typed their handle) both count as in-progress.
-    // We don't push them so a half-completed chip doesn't ship a useless URL to the public profile.
-    const socialsCleaned = socials.filter((s) => {
-      const url = s.url.trim();
-      if (url.length === 0) return false;
-      if (url === socialUrlPrefix(s.channel)) return false;
-      return true;
-    });
-    const socialsJson = socialsCleaned.length === 0 ? "" : JSON.stringify(socialsCleaned);
-    if (lastSavedRef.current === null) {
-      lastSavedRef.current = {
-        bio: profile.bio ?? "",
-        theme: profile.theme ?? null,
-        socials: (profile.socials ?? []).length === 0 ? "" : JSON.stringify(profile.socials),
-      };
-      return;
-    }
-    if (
-      lastSavedRef.current.bio === bio &&
-      lastSavedRef.current.theme === theme &&
-      lastSavedRef.current.socials === socialsJson
-    )
-      return;
-    setAutoSaveStatus("saving");
-    const timer = setTimeout(async () => {
-      try {
-        const updated = await updateMyProfile({
-          bio: bio.trim(),
-          theme: theme ?? undefined,
-          socials: socialsJson,
-        });
-        setProfile(updated);
-        lastSavedRef.current = { bio, theme, socials: socialsJson };
-        setAutoSaveStatus("saved");
-        setTimeout(() => setAutoSaveStatus("idle"), 1500);
-      } catch (err) {
-        toast(errorMessage(err, t("saveFailed")), "error");
-        setAutoSaveStatus("idle");
-      }
-    }, 600);
-    return () => clearTimeout(timer);
-  }, [
-    bio,
-    theme,
-    socials,
-    profile?.username,
-    profile?.bio,
-    profile?.theme,
-    profile?.socials,
-    errorMessage,
-    t,
-    toast,
   ]);
 
   useEffect(() => {
@@ -359,14 +291,6 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
-  function toReorderTokens(arr: FeedItem[]): ProfileReorderItem[] {
-    return arr.map((it) =>
-      it.kind === "LINK"
-        ? { kind: "LINK", id: it.code }
-        : { kind: "BLOCK", id: String(it.id) },
-    );
-  }
-
   async function handleToggle(shortCode: string, show: boolean) {
     setPendingShortCode(shortCode);
     try {
@@ -385,113 +309,6 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     } finally {
       setPendingShortCode(null);
     }
-  }
-
-  async function move(itemIdx: number, direction: -1 | 1) {
-    const moved = items[itemIdx];
-    const isSectionMove = moved.kind === "BLOCK" && moved.type === "TEXT";
-    if (!isSectionMove) {
-      // Single-item swap — same as before. Non-header items only jump one slot at a time so the
-      // mobile arrow buttons feel granular for individual rows.
-      const swap = itemIdx + direction;
-      if (swap < 0 || swap >= items.length) return;
-      const next = items.slice();
-      [next[itemIdx], next[swap]] = [next[swap], next[itemIdx]];
-      void commitOrder(next);
-      return;
-    }
-    // Section move: the dragged unit is [itemIdx, sectionEnd) — header + its children.
-    const sectionEnd = findNextTextHeader(items, itemIdx + 1);
-    const myRange = sectionEnd - itemIdx;
-    if (direction === -1) {
-      if (itemIdx === 0) return;
-      // The "unit above" is either a single non-header row or the entire preceding section. Land
-      // at the start of that unit so a section hop = swap of two adjacent units.
-      const prevUnitStart = findUnitStartBefore(items, itemIdx);
-      const next = items.slice();
-      const range = next.splice(itemIdx, myRange);
-      next.splice(prevUnitStart, 0, ...range);
-      void commitOrder(next);
-      return;
-    }
-    if (sectionEnd >= items.length) return;
-    // The "unit below" begins at sectionEnd. Its end is the next header (or list end) when it's
-    // itself a section, or sectionEnd + 1 when it's a single item.
-    const nextUnitEnd = findUnitEndAfter(items, sectionEnd);
-    const next = items.slice();
-    const range = next.splice(itemIdx, myRange);
-    next.splice(nextUnitEnd - myRange, 0, ...range);
-    void commitOrder(next);
-  }
-
-  async function commitOrder(next: FeedItem[]) {
-    const prev = items;
-    setItems(next);
-    try {
-      await reorderProfileItems(toReorderTokens(next));
-    } catch (err) {
-      setItems(prev);
-      toast(errorMessage(err, t("toggleFailed")), "error");
-    }
-  }
-
-  function handleDragStart(idx: number, e: React.DragEvent) {
-    setDragIndex(idx);
-    e.dataTransfer.effectAllowed = "move";
-    // Some browsers refuse to start the drag without a payload.
-    const item = items[idx];
-    e.dataTransfer.setData(
-      "text/plain",
-      item.kind === "LINK" ? `link:${item.code}` : `block:${item.id}`,
-    );
-  }
-
-  function handleDragOver(idx: number, e: React.DragEvent) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    if (overIndex !== idx) setOverIndex(idx);
-  }
-
-  function handleDrop(toIndex: number, e: React.DragEvent) {
-    e.preventDefault();
-    if (dragIndex === null || dragIndex === toIndex) {
-      setDragIndex(null);
-      setOverIndex(null);
-      return;
-    }
-    // When the user drags a TEXT block, treat it as a section-level move: pick up the header
-    // plus the contiguous run of non-TEXT rows that follow (up to the next TEXT or the end of
-    // the list). This is how a "section" gets reordered as one unit instead of forcing the user
-    // to drag each item individually. Non-TEXT rows fall back to the simple one-item splice.
-    const dragged = items[dragIndex];
-    const sectionEndExclusive =
-      dragged.kind === "BLOCK" && dragged.type === "TEXT"
-        ? findNextTextHeader(items, dragIndex + 1)
-        : dragIndex + 1;
-    // Drop targets that fall inside the source range are a no-op — moving a section onto itself
-    // doesn't make sense and would otherwise produce a confusing splice.
-    if (toIndex >= dragIndex && toIndex < sectionEndExclusive) {
-      setDragIndex(null);
-      setOverIndex(null);
-      return;
-    }
-    const next = items.slice();
-    const moved = next.splice(dragIndex, sectionEndExclusive - dragIndex);
-    // Account for the shift from removing items above the drop target.
-    const adjustedTo = toIndex > dragIndex ? toIndex - moved.length : toIndex;
-    next.splice(adjustedTo, 0, ...moved);
-    setDragIndex(null);
-    setOverIndex(null);
-    void commitOrder(next);
-  }
-
-  function handleDragEnd() {
-    setDragIndex(null);
-    setOverIndex(null);
-  }
-
-  function handleAddText() {
-    textDialog.show(null, null);
   }
 
   /**
@@ -543,10 +360,6 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
-  function handleAddImage() {
-    imageDialog.show(null, null);
-  }
-
   async function persistImageBlock(blockId: number | null, url: string) {
     if (blockId != null) {
       applyBlockEditOptimistic(blockId, url);
@@ -562,34 +375,6 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     } catch (err) {
       toast(errorMessage(err, t("toggleFailed")), "error");
     }
-  }
-
-  function handleAddContactCard() {
-    contactCardDialog.show(null, null);
-  }
-
-  function handleAddGallery() {
-    galleryDialog.show(null, null);
-  }
-
-  function handleAddProductCard() {
-    productCardDialog.show(null, null);
-  }
-
-  function handleAddEmailForm() {
-    emailFormDialog.show(null, null);
-  }
-
-  function handleAddBooking() {
-    bookingDialog.show(null, null);
-  }
-
-  function handleAddEvent() {
-    eventDialog.show(null, null);
-  }
-
-  function handleAddPlace() {
-    placeDialog.show(null, null);
   }
 
   async function persistJsonBlock(
@@ -613,10 +398,6 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
-  function handleAddEmbed() {
-    embedDialog.show(null, null);
-  }
-
   async function persistEmbedBlock(blockId: number | null, url: string) {
     if (blockId != null) {
       applyBlockEditOptimistic(blockId, url);
@@ -634,51 +415,27 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     }
   }
 
+  // Map every editable block type to the dialog that owns its form. DIVIDER blocks have no
+  // editable payload so they're absent from the lookup. JSON-payload dialogs receive `current`
+  // as-is; URL/markdown dialogs coerce an empty string to `null` so the form starts blank.
+  const editDialogByBlockType: Partial<Record<string, (blockId: number, current: string) => void>> = {
+    CONTACT_CARD: (id, c) => dialogs.contactCard.show(id, c),
+    GALLERY: (id, c) => dialogs.gallery.show(id, c),
+    PRODUCT_CARD: (id, c) => dialogs.productCard.show(id, c),
+    EMAIL_FORM: (id, c) => dialogs.emailForm.show(id, c),
+    BOOKING: (id, c) => dialogs.booking.show(id, c),
+    EVENT: (id, c) => dialogs.event.show(id, c),
+    PLACE: (id, c) => dialogs.place.show(id, c),
+    IMAGE: (id, c) => dialogs.image.show(id, c || null),
+    EMBED: (id, c) => dialogs.embed.show(id, c || null),
+    TEXT: (id, c) => dialogs.text.show(id, c || null),
+  };
+
   async function handleEditBlock(blockId: number, current: string) {
     const item = items.find((i) => i.kind === "BLOCK" && i.id === blockId);
     const blockType = item?.kind === "BLOCK" ? item.type : null;
-    // CONTACT_CARD / GALLERY have multi-field configs stored as JSON — open their dedicated
-    // dialogs instead of a single window.prompt where the user would face raw JSON.
-    if (blockType === "CONTACT_CARD") {
-      contactCardDialog.show(blockId, current);
-      return;
-    }
-    if (blockType === "GALLERY") {
-      galleryDialog.show(blockId, current);
-      return;
-    }
-    if (blockType === "PRODUCT_CARD") {
-      productCardDialog.show(blockId, current);
-      return;
-    }
-    if (blockType === "EMAIL_FORM") {
-      emailFormDialog.show(blockId, current);
-      return;
-    }
-    if (blockType === "BOOKING") {
-      bookingDialog.show(blockId, current);
-      return;
-    }
-    if (blockType === "EVENT") {
-      eventDialog.show(blockId, current);
-      return;
-    }
-    if (blockType === "PLACE") {
-      placeDialog.show(blockId, current);
-      return;
-    }
-    if (blockType === "IMAGE") {
-      imageDialog.show(blockId, current || null);
-      return;
-    }
-    if (blockType === "EMBED") {
-      embedDialog.show(blockId, current || null);
-      return;
-    }
-    if (blockType === "TEXT") {
-      textDialog.show(blockId, current || null);
-      return;
-    }
+    if (!blockType) return;
+    editDialogByBlockType[blockType]?.(blockId, current);
   }
 
   async function handleEditLabel(shortCode: string, label: string) {
@@ -761,25 +518,25 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
           links={links}
           highlightedShortCode={highlightedShortCode}
           pendingShortCode={pendingShortCode}
-          dragIndex={dragIndex}
-          overIndex={overIndex}
+          dragIndex={reorder.dragIndex}
+          overIndex={reorder.overIndex}
           labelByShortCode={labelByShortCode}
-          onAddText={handleAddText}
+          onAddText={() => dialogs.text.show(null, null)}
           onAddDivider={handleAddDivider}
-          onAddImage={handleAddImage}
-          onAddEmbed={handleAddEmbed}
-          onAddContactCard={handleAddContactCard}
-          onAddGallery={handleAddGallery}
-          onAddProductCard={handleAddProductCard}
-          onAddEmailForm={handleAddEmailForm}
-          onAddBooking={handleAddBooking}
-          onAddEvent={handleAddEvent}
-          onAddPlace={handleAddPlace}
-          onMove={move}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          onDragEnd={handleDragEnd}
+          onAddImage={() => dialogs.image.show(null, null)}
+          onAddEmbed={() => dialogs.embed.show(null, null)}
+          onAddContactCard={() => dialogs.contactCard.show(null, null)}
+          onAddGallery={() => dialogs.gallery.show(null, null)}
+          onAddProductCard={() => dialogs.productCard.show(null, null)}
+          onAddEmailForm={() => dialogs.emailForm.show(null, null)}
+          onAddBooking={() => dialogs.booking.show(null, null)}
+          onAddEvent={() => dialogs.event.show(null, null)}
+          onAddPlace={() => dialogs.place.show(null, null)}
+          onMove={reorder.move}
+          onDragStart={reorder.onDragStart}
+          onDragOver={reorder.onDragOver}
+          onDrop={reorder.onDrop}
+          onDragEnd={reorder.onDragEnd}
           onHighlight={handleHighlight}
           onToggle={handleToggle}
           onEditBlock={handleEditBlock}
@@ -789,90 +546,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         />
       </SectionLabel>
 
-      <ContactCardBlockDialog
-        open={contactCardDialog.open}
-        initialJson={contactCardDialog.initialPayload}
-        onOpenChange={(open) =>
-          !open && contactCardDialog.close()
-        }
-        onSubmit={(json) =>
-          persistJsonBlock("CONTACT_CARD", contactCardDialog.blockId, json)
-        }
-        t={t}
-      />
-      <GalleryBlockDialog
-        open={galleryDialog.open}
-        initialJson={galleryDialog.initialPayload}
-        onOpenChange={(open) =>
-          !open && galleryDialog.close()
-        }
-        onSubmit={(json) => persistJsonBlock("GALLERY", galleryDialog.blockId, json)}
-        t={t}
-      />
-      <ProductCardBlockDialog
-        open={productCardDialog.open}
-        initialJson={productCardDialog.initialPayload}
-        onOpenChange={(open) =>
-          !open && productCardDialog.close()
-        }
-        onSubmit={(json) =>
-          persistJsonBlock("PRODUCT_CARD", productCardDialog.blockId, json)
-        }
-        t={t}
-      />
-      <EmailFormBlockDialog
-        open={emailFormDialog.open}
-        initialJson={emailFormDialog.initialPayload}
-        onOpenChange={(open) =>
-          !open && emailFormDialog.close()
-        }
-        onSubmit={(json) =>
-          persistJsonBlock("EMAIL_FORM", emailFormDialog.blockId, json)
-        }
-        t={t}
-      />
-      <BookingBlockDialog
-        open={bookingDialog.open}
-        initialJson={bookingDialog.initialPayload}
-        onOpenChange={(open) =>
-          !open && bookingDialog.close()
-        }
-        onSubmit={(json) => persistJsonBlock("BOOKING", bookingDialog.blockId, json)}
-        t={t}
-      />
-      <EventBlockDialog
-        open={eventDialog.open}
-        initialJson={eventDialog.initialPayload}
-        onOpenChange={(open) => !open && eventDialog.close()}
-        onSubmit={(json) => persistJsonBlock("EVENT", eventDialog.blockId, json)}
-        t={t}
-      />
-      <PlaceBlockDialog
-        open={placeDialog.open}
-        initialJson={placeDialog.initialPayload}
-        onOpenChange={(open) => !open && placeDialog.close()}
-        onSubmit={(json) => persistJsonBlock("PLACE", placeDialog.blockId, json)}
-        t={t}
-      />
-      <ImageBlockDialog
-        open={imageDialog.open}
-        initialUrl={imageDialog.initialPayload}
-        onOpenChange={(open) => !open && imageDialog.close()}
-        onSubmit={(url) => persistImageBlock(imageDialog.blockId, url)}
-        t={t}
-      />
-      <EmbedBlockDialog
-        open={embedDialog.open}
-        initialUrl={embedDialog.initialPayload}
-        onOpenChange={(open) => !open && embedDialog.close()}
-        onSubmit={(url) => persistEmbedBlock(embedDialog.blockId, url)}
-        t={t}
-      />
-      <TextBlockDialog
-        open={textDialog.open}
-        initialContent={textDialog.initialPayload}
-        onOpenChange={(open) => !open && textDialog.close()}
-        onSubmit={(content) => persistTextBlock(textDialog.blockId, content)}
+      <BlockDialogStack
+        dialogs={dialogs}
+        persistJsonBlock={persistJsonBlock}
+        persistImageBlock={persistImageBlock}
+        persistEmbedBlock={persistEmbedBlock}
+        persistTextBlock={persistTextBlock}
         t={t}
       />
     </div>
