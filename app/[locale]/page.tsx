@@ -27,7 +27,7 @@ export default function HomePage() {
   // 이유로 ja 만 base 24/26px 으로 축소.
   const headlineSizeClass =
     locale === "ja"
-      ? "text-[24px] leading-[1.15] min-[390px]:text-[26px] sm:text-[36px] sm:leading-[1.15]"
+      ? "text-[24px] leading-[1.15] min-[390px]:text-[26px] sm:text-[40px] sm:leading-[1.15]"
       : "text-[32px] leading-[1.08] min-[390px]:text-[33px] sm:text-[60px] sm:leading-[1.04]";
   const [results, setResults] = useState<
     { res: CreateLinkResponse; original: string }[] | null
