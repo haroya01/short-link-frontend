@@ -54,7 +54,7 @@ export default function HomePage() {
             </div>
             <h1
               data-testid="home-hero-heading"
-              className="text-balance text-center text-[32px] font-semibold leading-[1.08] tracking-headline text-slate-900 min-[390px]:text-[33px] sm:text-[60px] sm:leading-[1.04]"
+              className="text-balance text-center text-[24px] font-semibold leading-[1.15] tracking-headline text-slate-900 min-[390px]:text-[26px] sm:text-[36px] sm:leading-[1.15]"
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
               <span className="sm:hidden">
