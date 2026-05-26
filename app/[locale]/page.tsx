@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, ChevronDown } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ShortenForm } from "@/components/shorten/form";
 import { ResultCard } from "@/components/shorten/result-card";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
@@ -20,6 +20,15 @@ import type { CreateLinkResponse } from "@/types";
 export default function HomePage() {
   const { authenticated } = useAuth();
   const t = useTranslations("home");
+  const locale = useLocale();
+  // headline2 가 ja 에서 「クリックの「いつ・どこから・誰が」を一目で」 23자로 늘어나
+  // 기본 sm:text-[60px] 컨테이너 (max-w-3xl) 를 초과해 wrap. ko/en 은 short copy
+  // (12/24자) 라 60px 유지 가능 — locale 별로 hero font scale 분기. mobile 도 동일
+  // 이유로 ja 만 base 24/26px 으로 축소.
+  const headlineSizeClass =
+    locale === "ja"
+      ? "text-[24px] leading-[1.15] min-[390px]:text-[26px] sm:text-[36px] sm:leading-[1.15]"
+      : "text-[32px] leading-[1.08] min-[390px]:text-[33px] sm:text-[60px] sm:leading-[1.04]";
   const [results, setResults] = useState<
     { res: CreateLinkResponse; original: string }[] | null
   >(null);
@@ -54,7 +63,7 @@ export default function HomePage() {
             </div>
             <h1
               data-testid="home-hero-heading"
-              className="text-balance text-center text-[32px] font-semibold leading-[1.08] tracking-headline text-slate-900 min-[390px]:text-[33px] sm:text-[60px] sm:leading-[1.04]"
+              className={`text-balance text-center font-semibold tracking-headline text-slate-900 ${headlineSizeClass}`}
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
               <span className="sm:hidden">
