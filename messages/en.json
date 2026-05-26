@@ -8,7 +8,7 @@
     "zoom": "Zoom"
   },
   "tags": {
-    "inputPlaceholder": "Enter or , to add",
+    "inputPlaceholder": "Type a tag, then press Enter or comma",
     "removeTag": "Remove tag {name}",
     "maxReached": "Up to {max} tags"
   },
@@ -20,10 +20,10 @@
     "LINK_QUOTA_EXCEEDED": "You've reached the link quota ({limit}).",
     "DUPLICATE_SHORT_CODE": "That short code is already in use.",
     "RESERVED_SHORT_CODE": "That short code is reserved.",
-    "MALICIOUS_URL": "URL flagged as malicious or phishing.",
+    "MALICIOUS_URL": "This URL was flagged as malicious or a phishing site.",
     "SHORT_CODE_EXHAUSTED": "Couldn't generate a short code. Please try again.",
     "BULK_IMPORT_TOO_LARGE": "Up to {limit} rows per upload — got {rows}.",
-    "OPTIMISTIC_LOCK": "Modified elsewhere. Reload and retry.",
+    "OPTIMISTIC_LOCK": "Someone updated this in another tab. Reload and try again.",
     "INVALID_REFRESH_TOKEN": "Your session expired. Please sign in again.",
     "USER_NOT_FOUND": "Account not found.",
     "INVALID_CURSOR": "Bad pagination cursor.",
@@ -37,7 +37,7 @@
     "TOO_MANY_WEBHOOKS": "Up to {limit} webhooks per link — delete one to add another.",
     "WEBHOOK_NOT_FOUND": "Webhook not found. It may have been deleted in another tab.",
     "VALIDATION_FAILED": "Some fields are invalid.",
-    "MALFORMED_REQUEST": "Malformed request body.",
+    "MALFORMED_REQUEST": "Something looks wrong with that request. Please try again.",
     "UNAUTHORIZED": "Please sign in.",
     "NOT_FOUND": "Not found.",
     "INTERNAL_ERROR": "Something went wrong on our side. Please try again."
@@ -49,10 +49,10 @@
   },
   "meta": {
     "title": "kurl · URL shortener with click analytics",
-    "description": "Shorten long URLs. Analyze clicks by device, channel, and country.",
+    "description": "Shorten long URLs and see who clicks — by device, channel, and country.",
     "ogHeadlineTop": "Short URLs +",
     "ogHeadlineBottom": "Click analytics",
-    "ogSubline": "Device · channel · country · time — see who clicks from where, at a glance"
+    "ogSubline": "Device · channel · country · time — see where every click comes from, at a glance"
   },
   "nav": {
     "shorten": "Shorten",
@@ -69,15 +69,15 @@
     "tagline": "kurl v1",
     "headline1": "Shorten in one line",
     "headline2": "Analyze who, when, where",
-    "subhead": "Live click feed, auto-insights, bot filtering — paid-tier analytics other shorteners gate, free here",
+    "subhead": "Live click feed, auto-insights, bot filtering — the analytics other shorteners lock behind paid plans, free here.",
     "mobileHeadline1": "Shorten in one line",
     "mobileHeadline2": "See who, when, where",
     "mobileSubhead": "Live clicks, insights, and bot filtering for free",
-    "anonymousHint": "No login required. Stats need login though.",
+    "anonymousHint": "No sign-in required. Sign in if you want stats.",
     "demoLink": "Preview the analytics dashboard",
-    "scrollHint": "More below",
+    "scrollHint": "Scroll for more",
     "previews": {
-      "eyebrow": "What you get within 60 seconds",
+      "eyebrow": "What you get in under a minute",
       "see": "See",
       "stats": {
         "title": "Analytics dashboard",
@@ -85,19 +85,19 @@
       },
       "profile": {
         "title": "Public profile",
-        "desc": "One page with every link — perfect for Instagram bio, Twitter, anywhere."
+        "desc": "One page for every link — perfect for your Instagram bio, Twitter, or anywhere you share links."
       },
       "domain": {
         "title": "Your own domain",
-        "desc": "Route through go.brand.com. TXT + CNAME auto-verified."
+        "desc": "Route your short links through go.brand.com. TXT + CNAME verified automatically."
       }
     },
     "ctaSeeLinks": "See all my links",
-    "loginCta": "Sign in to save and analyze <clickStats>click stats</clickStats> for this link.",
+    "loginCta": "Sign in to keep this link and unlock its <clickStats>click stats</clickStats>.",
     "features": {
       "realtime": {
         "title": "Live click feed (SSE)",
-        "desc": "Watch clicks arrive in real time on the stats page — time / country / channel / device, streaming",
+        "desc": "Watch clicks land on the stats page in real time — time, country, channel, device, all streaming live.",
         "preview": {
           "eyebrow": "Live clicks",
           "live": "live"
@@ -115,42 +115,42 @@
           "peakLabel": "Peak",
           "peakValue": "Wed 9pm",
           "peakSub": "38% of clicks this hour",
-          "wowLabel": "Last week",
-          "wowSub": "Last week's human clicks"
+          "wowLabel": "vs last week",
+          "wowSub": "Human clicks, week over week"
         }
       },
       "abtest": {
         "title": "A/B split + geo-routing",
         "desc": "One short URL → weighted variants and per-country destinations (up to 4 per link)",
         "preview": {
-          "explainer": "Splits clicks on the same short URL by weight + visitor country. Falls back to the default destination on no match.",
+          "explainer": "Splits clicks on the same short URL by weight and visitor country. Falls back to the default destination when nothing matches.",
           "controlLabel": "Default (original URL)"
         }
       }
     },
     "recentEyebrow": "recent",
     "recentTitle": "Just shortened",
-    "recentSubhead": "Kept on this browser for 24 hours. Sign in to keep them forever.",
+    "recentSubhead": "Saved in this browser for 24 hours. Sign in to keep them permanently.",
     "statsEyebrow": "live",
-    "statsTitle": "Across kurl",
+    "statsTitle": "Service-wide so far",
     "statsSubhead": "Total links shortened and clicks tracked so far.",
     "featuresEyebrow": "what you get",
-    "featuresTitle": "Three things free shorteners won't give you",
+    "featuresTitle": "Three things free shorteners leave out",
     "featuresSubhead": "Live click feed · auto-insights · A/B + geo routing. HMAC webhooks · 2FA TOTP · Google Safe Browsing are built in.",
     "whyEyebrow": "why kurl",
-    "whyTitle": "Why don't other shorteners ship this?",
-    "whySubhead": "Features usually gated behind enterprise tiers — free here, on by default."
+    "whyTitle": "Why doesn't every shortener include this?",
+    "whySubhead": "Features usually locked behind enterprise plans — free here, enabled by default."
   },
   "showcase": {
     "eyebrow": "Public profiles · real examples",
-    "title": "Built your way",
-    "subhead": "A profile that fits how you work. Cafés, developers, instructors, photographers, shop owners, DJs, anyone who shares links — one page, your way.",
-    "demoCta": "See it live",
-    "ctaTitle": "Your profile, ready in 5 minutes",
+    "title": "Make it yours",
+    "subhead": "A profile that fits what you do — whether you run a café, ship code, teach a class, or just share links.",
+    "demoCta": "Browse all examples",
+    "ctaTitle": "Your profile, live in 5 minutes",
     "ctaSubhead": "Sign in and pick a name — then drop in your photos, links, address, and contact info, just like the examples below.",
     "cta": "Make your profile",
     "metaSuffix": "sample",
-    "sampleBanner": "Sample page · yours can look like this",
+    "sampleBanner": "Sample page · this could be your profile too",
     "sampleCta": "Make my profile",
     "scrollCue": "See real examples",
     "meta": {
@@ -179,8 +179,8 @@
     }
   },
   "result": {
-    "completed": "Shortened",
-    "nextStepHint": "Copy, open, and start tracking performance from here.",
+    "completed": "Your short link is ready",
+    "nextStepHint": "Copy it, open it, and start tracking how it performs.",
     "originalUrl": "Original",
     "copy": "Copy",
     "copied": "Copied",
@@ -189,10 +189,10 @@
     "statsCta": "Track stats",
     "statsCtaDesc": "See clicks, sources, and devices",
     "profileCta": "Add to profile",
-    "profileCtaDesc": "Place it as a public profile link block",
+    "profileCtaDesc": "Feature it on your public profile",
     "anonymousExpiryInline": "Expires in 24h",
     "anonymousExpiryAt": "Expires {when}",
-    "anonymousExpirySignup": "Sign in to keep stats"
+    "anonymousExpirySignup": "Sign in to keep your stats"
   },
   "login": {
     "title": "Sign in",
@@ -204,7 +204,7 @@
       "join": " ",
       "tail": " ",
       "end": "",
-      "verbs": ["Tracking", "Analysis", "Statistics"]
+      "verbs": ["Tracking", "Analytics", "Insights"]
     }
   },
   "auth": {
@@ -391,7 +391,7 @@
     "noteHint": "Visible only to you. Never shown to visitors.",
     "expiredMessageLabel": "Expired-page message (optional)",
     "expiredMessagePlaceholder": "e.g. Promo ended — see the next drop at example.com",
-    "expiredMessageHint": "Shown instead of the default 'gone' page when the link expires or hits its view limit.",
+    "expiredMessageHint": "Shown instead of the default expiry page when the link expires or hits its view limit.",
     "clear": "Clear",
     "cancel": "Cancel",
     "save": "Save",
@@ -928,7 +928,7 @@
     "cta": "Back to home"
   },
   "qr": {
-    "title": "qr code",
+    "title": "QR code",
     "triggerAria": "Open QR code",
     "copyUrl": "Copy URL",
     "copied": "Copied",
@@ -937,16 +937,16 @@
     "srcLabel": "Tracking tag (optional)",
     "srcPlaceholder": "e.g. poster, offline-card",
     "colorLabel": "Color",
-    "logoLabel": "Drop the destination favicon in the center"
+    "logoLabel": "Show destination favicon in the center"
   },
   "share": {
     "label": "Share",
     "copiedFallback": "URL copied"
   },
   "demo": {
-    "metaTitle": "kurl demo — see exactly what you get after shortening",
+    "metaTitle": "kurl demo — see exactly what you get when you shorten a link",
     "metaDescription": "Live preview of the analytics dashboard, no sign-up required.",
-    "sampleBanner": "Sample data — your own links fill in the same layout for real.",
+    "sampleBanner": "Sample data — your own links will fill in this same layout.",
     "sampleCta": "Make my link",
     "settingsNotice": {
       "title": "Settings unlock after sign-up",
@@ -960,7 +960,7 @@
     }
   },
   "publicProfile": {
-    "empty": "This user hasn't featured any links yet.",
+    "empty": "This user hasn't added any links yet.",
     "madeWith": "Made with kurl.me",
     "editFab": "Edit",
     "share": {
@@ -989,7 +989,7 @@
       "flipToBack": "Flip",
       "flipToFront": "Flip back",
       "qrAlt": "Scan QR to add this contact",
-      "backTagline": "Digital card",
+      "backTagline": "Digital business card",
       "backScanHint": "Tap to flip back"
     },
     "emailForm": {
@@ -1051,7 +1051,7 @@
   },
   "weeklyInsights": {
     "eyebrow": "Last 7 days",
-    "emptyDesc": "No clicks yet this week. Try tagging channels with UTM to start filling this in.",
+    "emptyDesc": "No clicks yet this week. Tag your channels with UTM and the data will start rolling in.",
     "humanClicks": "Human clicks",
     "humanRatio": "{percent}% of total",
     "topLink": "Top link",
@@ -1061,7 +1061,7 @@
     "peakValue": "{day} {hour}:00",
     "peakSub": "{count} clicks at peak",
     "compareLabel": "Previous 7d",
-    "compareSub": "Comparison baseline",
+    "compareSub": "Baseline for comparison",
     "noBaseline": "No baseline yet",
     "days": {
       "sun": "Sun",
@@ -1074,16 +1074,16 @@
     }
   },
   "recent": {
-    "title": "Recent shortenings",
+    "title": "Recently shortened",
     "empty": "Nothing yet — shorten one above.",
     "viewStats": "View stats",
-    "claimCta": "Sign up to keep these links permanently in your account.",
-    "anonymousNote": "Anonymous links auto-expire after 24h. Sign in and they move into your account permanently — no expiration.",
+    "claimCta": "Sign up to save these links to your account permanently.",
+    "anonymousNote": "Anonymous links auto-expire in 24h. Sign in and they're saved to your account — no expiration.",
     "claimedToast": "Saved {count} link(s) to your account"
   },
   "statsEmpty": {
     "title": "No clicks yet",
-    "description": "Share this short link on KakaoTalk / Slack / social — analytics will start the moment someone clicks.",
+    "description": "Share this short link on KakaoTalk, Slack, or social — stats start rolling in as soon as someone clicks.",
     "shareCta": "Copy short link",
     "shareCopied": "Copied"
   },
@@ -1111,8 +1111,8 @@
       "feature": "Feature",
       "others": "Typical free shortener"
     },
-    "paidTier": "Paid tier",
-    "disclaimer": "Compared against bit.ly / short.io / rebrandly / TinyURL free tiers (2026).",
+    "paidTier": "Paid plan",
+    "disclaimer": "Compared against bit.ly, short.io, rebrandly, and TinyURL free plans (2026).",
     "rows": {
       "abtest": {
         "label": "A/B split — one link, several destinations",
@@ -1136,7 +1136,7 @@
       },
       "asnTracking": {
         "label": "Auto-separate datacenter clicks",
-        "note": "Cloud egress (AWS / GCP / Azure) auto-flagged as bot — kurl-specific."
+        "note": "Cloud egress (AWS / GCP / Azure) auto-flagged as bots — only on kurl."
       },
       "botDefense": {
         "label": "Layered bot defence",
@@ -1144,7 +1144,7 @@
       },
       "twofa": {
         "label": "Two-step verification + recovery codes",
-        "note": "Authenticator app + 10 single-use recovery codes. Often paid elsewhere."
+        "note": "Authenticator app + 10 single-use recovery codes. Usually a paid feature elsewhere."
       }
     }
   },
@@ -1158,20 +1158,20 @@
   },
   "about": {
     "title": "kurl — URL shortener with click analytics",
-    "lead": "Shrink long URLs and see who clicks from where. Free, no ads.",
+    "lead": "Shrink long URLs and see where your clicks come from. Free, no ads.",
     "section1Title": "Why",
     "section1Body": "Most shorteners hide analytics behind a paywall. kurl gives you device, OS, browser, channel, country, and hour-of-day breakdowns for free.",
     "section2Title": "How it works",
-    "section2Body": "Each visit is filtered for bots and malicious URLs, then redirected. Clicks are denormalized into wide analytic columns so charts load fast even at scale.",
+    "section2Body": "Each visit is checked for bots and malicious URLs, then redirected. Click data is stored in a wide, query-friendly schema so charts load fast even at scale.",
     "section3Title": "Stack",
     "section3Body": "Spring Boot · MySQL · Redis · Next.js 14 · AWS ECS Fargate. Source on GitHub.",
-    "ctaShorten": "Shorten one now"
+    "ctaShorten": "Shorten a URL now"
   },
   "learn": {
     "metaTitle": "Short links · URL shortener · Link in bio guide · kurl",
     "metaDescription": "What URL shortening is, how short links differ from link-in-bio pages, and how kurl combines both — answered in one place.",
     "eyebrow": "Guide · FAQ",
-    "title": "Short links and link-in-bio, explained for first-time users",
+    "title": "Short links and link-in-bio, explained for beginners",
     "lead": "What URL shortening is, what kurl does, how a profile page differs from a single short link — the questions people search for, in one page.",
     "q1": {
       "q": "What is URL shortening?",
@@ -1203,7 +1203,7 @@
   },
   "pricing": {
     "title": "Pricing",
-    "lead": "Free covers shortening + full analytics. Pro adds custom-domain auto-TLS, unlimited links, permanent stats.",
+    "lead": "Free includes shortening and full analytics. Pro adds auto-TLS custom domains, unlimited links, and permanent stats.",
     "ctaUpgrade": "Start Pro",
     "ctaManage": "Manage billing",
     "ctaLogin": "Sign in to start",
@@ -1230,7 +1230,7 @@
     "right2": "Permanent account deletion + cascade",
     "right3": "Only one cookie (sign-in) — no analytics or ad cookies",
     "proHoldBadge": "Coming soon",
-    "proHoldNotice": "Pro is on hold while we finish the billing pipeline. The Free plan still ships 200 links, 8 analytics dimensions, 5 webhooks per link, and 2FA — every feature listed below is live today.",
+    "proHoldNotice": "Pro is on hold while we finish the billing pipeline. The Free plan still includes 200 links, 8 analytics dimensions, 5 webhooks per link, and 2FA — every feature listed below is live today.",
     "proHoldCta": "Not available yet",
     "proEta": "We'll email you when it launches — start with Free for now.",
     "meta": {
@@ -1291,7 +1291,7 @@
     },
     "profile": {
       "title": "Public profile",
-      "intro": "Bundle your short links into one shareable page — perfect for an SNS bio.",
+      "intro": "Bundle your short links into one shareable page — perfect for your social media bio.",
       "onboardingEyebrow": "Welcome",
       "onboardingTitle": "Start building right away!",
       "onboardingSubhead": "Pick the username you want and you're in. Add photos, links, your store address, and contact info — it builds into a polished card as you go.",
@@ -1806,7 +1806,7 @@
     "q3": "Where do I see stats?",
     "a3": "On the My Links page click any short code to open the 8-dimension stats page.",
     "q4": "Will previews show in KakaoTalk / Slack?",
-    "a4": "Yes — preview cards work on KakaoTalk / Slack / Discord. When those apps fetch the link to build a card, kurl returns a preview page with title, description, and image — instead of an immediate redirect.",
+    "a4": "Yes — preview cards work on KakaoTalk, Slack, and Discord. When those apps fetch the link to build a card, kurl returns a preview page with title, description, and image instead of redirecting right away.",
     "q5": "How are malicious URLs blocked?",
     "a5": "We screen with Google Safe Browsing at shorten time. Flagged URLs are rejected.",
     "q6": "Is there an API?",
@@ -1826,8 +1826,8 @@
     "hero": {
       "eyebrow": "Offline QR campaigns",
       "title1": "Different QR per flyer —",
-      "title2": "instantly see where it worked.",
-      "sub": "Auto-generate a different QR per area, exit, or vendor. Pick the next drop zone from clicks-per-100.",
+      "title2": "instantly see which ones got scanned.",
+      "sub": "Auto-generate a different QR per area, exit, or distributor. Use clicks per 100 flyers to pick your next drop zone.",
       "chip1": "5 minutes to first campaign",
       "chip2": "Canva / InDesign PDF supported",
       "chip3": "Change destination anytime",
@@ -1852,13 +1852,13 @@
     },
     "s4": {
       "line1": "Shibuya 142 clicks, Shinjuku 38.",
-      "line2": "Pile on Shibuya next round.",
+      "line2": "Double down on Shibuya next round.",
       "aux": "Where to drop next — the clicks tell you."
     },
     "s5": {
       "line1": "Flyers, coupons, posters.",
-      "line2": "Any vertical, same play.",
-      "aux": "Use cases — same method, up to 5x."
+      "line2": "Same play across every industry.",
+      "aux": "Use cases — compare with the same method."
     },
     "s6": {
       "line1": "Printed QR stays,",
@@ -1869,12 +1869,12 @@
       "title": "Where to drop next — the clicks tell you.",
       "primary": "Create QR",
       "secondary": "Log in",
-      "note": "Short links and stats live in the same account."
+      "note": "Your short links and stats share the same account."
     },
     "mock": {
       "kpiBeforeKurl": "Before kurl",
       "kpiAfterKurl": "After kurl",
-      "kpiStatus": "Distributed, untracked",
+      "kpiStatus": "Distributed but untracked",
       "kpiDistributed": "Distributed",
       "kpiClicks": "Clicks",
       "kpiPer100": "Per 100",
@@ -1897,7 +1897,7 @@
       "barsTitle": "Clicks per 100",
       "barsSort": "By efficiency",
       "barsTop": "Top",
-      "barsRecoTitle": "Next round",
+      "barsRecoTitle": "Recommended next",
       "barsRecoEstimate": "Est. +160 clicks",
       "casesTitle": "Use cases",
       "casesBefore": "Before",

@@ -34,7 +34,7 @@
     "INVALID_REFRESH_TOKEN": "세션이 만료됐어요. 다시 로그인해 주세요.",
     "USER_NOT_FOUND": "계정을 찾을 수 없어요.",
     "INVALID_CURSOR": "잘못된 페이지 커서예요.",
-    "INVALID_EXPORT_DIMENSION": "지원하지 않는 export 옵션이에요.",
+    "INVALID_EXPORT_DIMENSION": "지원하지 않는 내보내기 옵션이에요.",
     "INVALID_TIMEZONE": "잘못된 타임존이에요.",
     "INVALID_USERNAME": "username 은 3~16 자 영문 소문자 / 숫자 / 언더스코어만 가능해요.",
     "USERNAME_TAKEN": "이미 사용 중이거나 30일 이내 변경된 username 이에요.",
@@ -50,7 +50,7 @@
     "INTERNAL_ERROR": "서버 오류가 발생했어요. 잠시 후 다시 시도해 주세요."
   },
   "cookieConsent": {
-    "message": "이 사이트는 로그인 유지를 위한 필수 쿠키만 사용합니다. 분석/광고 쿠키는 사용하지 않아요.",
+    "message": "이 사이트는 로그인 유지를 위한 필수 쿠키만 사용해요. 분석·광고 쿠키는 쓰지 않아요.",
     "accept": "확인",
     "learnMore": "자세히"
   },
@@ -77,7 +77,7 @@
     "demoLink": "통계가 어떻게 보이는지 데모로 미리 보기",
     "scrollHint": "아래로 스크롤",
     "previews": {
-      "eyebrow": "단축 후 1 분 안에 보이는 화면들",
+      "eyebrow": "단축 1분 안에 확인할 수 있는 화면들",
       "see": "보기",
       "stats": {
         "title": "통계 대시보드",
@@ -85,19 +85,19 @@
       },
       "profile": {
         "title": "공개 프로필",
-        "desc": "링크 모두 모은 한 페이지. Instagram bio, 트위터, 어디든 그대로 붙임."
+        "desc": "링크를 모두 모은 한 페이지. Instagram bio, X(트위터) 어디든 그대로 붙여요."
       },
       "domain": {
         "title": "본인 도메인",
-        "desc": "go.brand.com 으로 단축. TXT + CNAME 자동 검증."
+        "desc": "go.brand.com 으로 단축해요. TXT + CNAME 자동 검증까지."
       }
     },
     "ctaSeeLinks": "내 링크 전체 보기",
-    "loginCta": "로그인하면 이 링크의 <clickStats>클릭 통계</clickStats>를 영구 저장하고 분석할 수 있어요.",
+    "loginCta": "로그인하면 이 링크의 <clickStats>클릭 통계</clickStats>를 계속 보관하고 분석할 수 있어요.",
     "features": {
       "realtime": {
         "title": "실시간 클릭 피드 (SSE)",
-        "desc": "통계 페이지에서 클릭이 들어오는 순간 시간/국가/채널/디바이스가 라이브로 흐름",
+        "desc": "통계 페이지에서 클릭이 들어오는 순간 시간·국가·채널·디바이스가 라이브로 흘러요",
         "preview": {
           "eyebrow": "실시간 클릭",
           "live": "라이브"
@@ -105,7 +105,7 @@
       },
       "insights": {
         "title": "자동 인사이트",
-        "desc": "피크 시간 / 재방문율 / Half-life / Velocity — 별도 설정 없이 즉시 노출",
+        "desc": "피크 시간·재방문율·반감기·가속도까지, 별도 설정 없이 바로 확인할 수 있어요",
         "preview": {
           "heading": "이번 주 인사이트",
           "humanLabel": "사람 클릭",
@@ -121,7 +121,7 @@
       },
       "abtest": {
         "title": "A/B 분배 + 국가별 라우팅",
-        "desc": "한 단축 URL → 가중치로 분산 + 방문자 국가에 맞춘 페이지로 자동 분기 (링크당 4개)",
+        "desc": "단축 URL 하나로 방문자를 가중치로 분산하고, 국가에 맞는 페이지로 자동 분기해요 (링크당 4개)",
         "preview": {
           "explainer": "같은 단축 URL 의 클릭을 가중치 + 방문자 국가 매칭으로 분기. 매칭 안 되면 기본 도착지로 폴백.",
           "controlLabel": "기본 (원본 URL)"
@@ -130,23 +130,23 @@
     },
     "recentEyebrow": "최근 단축",
     "recentTitle": "방금 만든 링크",
-    "recentSubhead": "이 브라우저에서 24시간 동안 보관됩니다. 로그인하면 영구 저장돼요.",
+    "recentSubhead": "이 브라우저에서 24시간 동안 보관돼요. 로그인하면 계정에 계속 저장돼요.",
     "statsEyebrow": "live",
     "statsTitle": "kurl 전체에서",
-    "statsSubhead": "지금까지 단축된 링크와 분석된 클릭 수.",
+    "statsSubhead": "지금까지 만들어진 단축 링크와 분석된 클릭이에요.",
     "featuresEyebrow": "what you get",
-    "featuresTitle": "다른 단축기 무료가 안 주는 3가지",
-    "featuresSubhead": "실시간 클릭 피드 · 자동 인사이트 · A/B + 국가 분기. HMAC 웹훅 · 2FA TOTP · Google Safe Browsing 은 기본 내장.",
+    "featuresTitle": "다른 단축 서비스 무료 플랜엔 없는 3가지",
+    "featuresSubhead": "실시간 클릭 피드, 자동 인사이트, A/B + 국가 분기까지. HMAC 웹훅·2FA TOTP·Google Safe Browsing 은 기본으로 들어가 있어요.",
     "whyEyebrow": "why kurl",
-    "whyTitle": "이걸 다른 데선 왜 안 줄까",
-    "whySubhead": "보통 enterprise 등급 가야 받는 기능들이 여기서는 무료 + 기본 동작."
+    "whyTitle": "왜 다른 곳에선 이걸 안 주는 걸까요?",
+    "whySubhead": "보통 엔터프라이즈 플랜에서나 주는 기능을, 여기선 무료로 기본 제공해요."
   },
   "showcase": {
     "eyebrow": "공개 프로필 · 실제 예시",
     "title": "내가 원하는 스타일대로",
-    "subhead": "내 일에 맞는 프로필 하나. 카페 사장 · 개발자 · 강사 · 사진작가 · 셀러 · DJ 누구든, 링크 공유하는 모두를 위한 한 페이지.",
+    "subhead": "내 일에 어울리는 프로필 한 페이지. 카페 사장·개발자·강사·사진작가·쇼핑몰 운영자·DJ까지, 링크를 공유하는 모두를 위해요.",
     "demoCta": "전체 보기",
-    "ctaTitle": "내 프로필도 5 분이면 완성",
+    "ctaTitle": "내 프로필도 5분이면 완성돼요",
     "ctaSubhead": "가입하고 원하는 이름만 정하면 시작이에요. 사진 · 링크 · 가게 주소 · 연락처를 넣으면 아래 예시처럼 채워집니다.",
     "cta": "내 프로필 만들기",
     "metaSuffix": "예시",
@@ -169,18 +169,18 @@
       "empty": "URL을 입력해 주세요.",
       "invalid": "http:// 또는 https:// 로 시작하는 올바른 URL이 필요해요.",
       "malicious": "악성/피싱으로 분류된 URL이라 단축할 수 없어요.",
-      "duplicate": "이미 사용 중인 커스텀 코드예요. 다른 이름을 시도해 보세요.",
+      "duplicate": "이미 사용 중인 커스텀 코드예요. 다른 이름으로 시도해 보세요.",
       "customCodeFormat": "커스텀 코드는 영문·숫자 3~16자만 가능해요.",
       "urlScheme": "URL은 http:// 또는 https:// 로 시작해야 해요.",
       "urlBlank": "URL을 입력해 주세요.",
       "urlGeneric": "올바른 URL이 아니에요.",
-      "generic": "단축에 실패했습니다.",
+      "generic": "단축에 실패했어요.",
       "validation": "입력값이 올바르지 않아요."
     }
   },
   "result": {
     "completed": "단축 완료",
-    "nextStepHint": "바로 복사하고, 열고, 성과 추적까지 이어가세요.",
+    "nextStepHint": "복사하고, 열고, 성과 추적까지 한 번에 이어가세요.",
     "originalUrl": "원본",
     "copy": "복사",
     "copied": "복사됨",
@@ -192,15 +192,15 @@
     "profileCtaDesc": "공개 프로필 링크 블록으로 배치",
     "anonymousExpiryInline": "24시간 후 만료",
     "anonymousExpiryAt": "{when} 만료",
-    "anonymousExpirySignup": "가입하고 통계 저장"
+    "anonymousExpirySignup": "가입하고 통계 보관하기"
   },
   "login": {
     "title": "로그인",
-    "subtitle": "로그인하면 내 링크 관리와 클릭 통계 분석을 사용할 수 있어요.",
-    "google": "Google로 계속하기",
+    "subtitle": "로그인하면 내 링크 관리와 클릭 통계 분석 기능을 쓸 수 있어요.",
+    "google": "Google 계정으로 로그인",
     "anonymousButton": "로그인 없이 단축만 사용하기",
     "rotation": {
-      "lead": "당신의 ",
+      "lead": "내 ",
       "join": " ",
       "tail": " ",
       "end": "",
@@ -234,7 +234,7 @@
     "change": "프로필 사진 변경",
     "remove": "사진 제거",
     "hint": "JPG / PNG / WebP, 5MB 이하",
-    "uploaded": "사진이 업데이트됐어요",
+    "uploaded": "사진이 변경됐어요",
     "uploadFailed": "업로드에 실패했어요",
     "invalidType": "JPG, PNG, WebP 만 업로드할 수 있어요",
     "tooBig": "5MB 를 넘는 파일은 업로드할 수 없어요"
@@ -245,10 +245,10 @@
     "remove": "배너 제거",
     "hint": "3:1 가로형 권장. JPG / PNG / WebP",
     "addCta": "배너 추가",
-    "uploaded": "배너가 업데이트됐어요",
+    "uploaded": "배너가 변경됐어요",
     "uploadFailed": "배너 업로드에 실패했어요",
     "invalidType": "JPG, PNG, WebP 만 가능해요",
-    "tooBig": "이미지가 너무 큽니다"
+    "tooBig": "이미지가 너무 커요. 권장 용량을 확인해 주세요."
   },
   "expiringBanner": {
     "title": "{count}개 링크가 3일 안에 만료돼요",
@@ -259,7 +259,7 @@
   "dashboard": {
     "label": "dashboard",
     "title": "내 링크",
-    "subtitle": "단축한 링크 {count}개. 짧은 코드를 클릭해 통계 확인.",
+    "subtitle": "단축한 링크 {count}개. 짧은 코드를 클릭하면 통계를 볼 수 있어요.",
     "newLink": "새 링크",
     "loadMore": "더 보기",
     "loadingMore": "불러오는 중...",
@@ -286,11 +286,11 @@
       "weekClicks": "최근 7일",
       "weekClicksHint": "짧은 주기로 보는 운영 흐름",
       "zeroClick": "무클릭 링크",
-      "zeroClickReview": "공유 위치나 CTA를 점검하세요",
+      "zeroClickReview": "공유 위치나 버튼 문구를 점검해 보세요",
       "zeroClickClear": "모든 링크가 클릭을 받았어요",
       "expiring": "3일 내 만료",
-      "expiringReview": "연장 또는 삭제 판단 필요",
-      "expiringClear": "급한 만료 링크 없음",
+      "expiringReview": "연장할지 삭제할지 결정해 보세요",
+      "expiringClear": "곧 만료될 링크가 없어요",
       "topLink": "성과 최고 링크",
       "topLinkEmpty": "아직 비교할 링크가 없어요",
       "clicks": "클릭",
@@ -299,12 +299,12 @@
       "open": "열기"
     },
     "emptyTitle": "첫 링크를 만들어볼까요",
-    "emptyDesc": "URL 한 개만 단축하면 1 분 안에 클릭/국가/채널/디바이스 분석이 채워지기 시작해요. 1 회 단축에 30 초 안 걸립니다.",
+    "emptyDesc": "URL 하나만 단축해도 1분 안에 클릭·국가·채널·디바이스 분석이 채워지기 시작해요. 한 번 단축에 30초도 안 걸려요.",
     "emptyCta": "지금 단축하기",
     "onboarding": {
       "eyebrow": "처음 오신 걸 환영해요",
       "title": "3 스텝이면 끝나요",
-      "subtitle": "단축 → 공유 → 통계 — 30 초 안에 첫 클릭 받을 수 있어요.",
+      "subtitle": "단축 → 공유 → 통계 — 30초 안에 첫 클릭을 받을 수 있어요.",
       "step1Title": "1 분 안에 단축",
       "step1Desc": "홈에서 URL 붙여넣기 + 단축 버튼. 즉시 짧은 링크 생성.",
       "step2Title": "공유하기",
@@ -489,7 +489,7 @@
     },
     "webhooks": {
       "title": "웹훅",
-      "description": "클릭이 발생하면 등록한 URL 로 POST 를 보냅니다. Slack / Discord 인커밍 웹훅은 자동 감지해서 각 서비스의 메시지 형식으로 변환해 전달하고, 그 외 endpoint 는 kurl JSON payload + HMAC 서명(X-Kurl-Signature) 으로 전달돼요. 링크당 최대 5개.",
+      "description": "클릭이 발생하면 등록한 URL 로 POST 요청을 보내요. Slack·Discord 인커밍 웹훅은 자동으로 감지해 각 서비스 메시지 형식으로 변환해 전달하고, 그 외 엔드포인트는 kurl JSON payload + HMAC 서명(X-Kurl-Signature)으로 전달돼요. 링크당 최대 5개까지 등록할 수 있어요.",
       "namePlaceholder": "이름 (선택, 예: slack-#alerts)",
       "register": "등록",
       "registering": "등록 중...",
@@ -769,7 +769,7 @@
         "desc": "주차별 가입자 N명 중 이후 주에 다시 활동한 비율 (%). 진할수록 리텐션 높음.",
         "cohortCol": "가입 주",
         "sizeCol": "규모",
-        "empty": "코호트 데이터 부족 (가입자 더 모이면 채워짐)"
+        "empty": "코호트 데이터 부족 (가입자가 더 모이면 채워져요)"
       },
       "recentErrors": {
         "title": "최근 에러 로그",
@@ -937,7 +937,7 @@
     "srcLabel": "추적 태그 (선택)",
     "srcPlaceholder": "예: poster, offline-card",
     "colorLabel": "색상",
-    "logoLabel": "도착지 favicon 가운데에 박기"
+    "logoLabel": "도착지 사이트 아이콘을 가운데에 넣기"
   },
   "share": {
     "label": "공유",
@@ -946,7 +946,7 @@
   "demo": {
     "metaTitle": "kurl 데모 — 단축 후 무엇이 보이는지 직접 만져보기",
     "metaDescription": "가입 없이 단축 링크 분석 화면을 그대로 보여드려요.",
-    "sampleBanner": "샘플 데이터입니다. 가입하면 본인 링크에 똑같이 채워져요.",
+    "sampleBanner": "샘플 데이터예요. 가입하면 내 링크에도 똑같이 채워져요.",
     "sampleCta": "내 링크 만들기",
     "settingsNotice": {
       "title": "설정은 가입 후에 만져볼 수 있어요",
@@ -961,7 +961,7 @@
   },
   "publicProfile": {
     "empty": "이 사용자가 아직 공개한 링크가 없어요.",
-    "madeWith": "kurl.me 로 만들었어요",
+    "madeWith": "kurl.me 로 만들어진 페이지",
     "editFab": "편집",
     "share": {
       "x": "X 에 공유",
@@ -998,7 +998,7 @@
       "error": "등록에 실패했어요. 잠시 후 다시 시도해 주세요.",
       "defaultPlaceholder": "you@example.com",
       "defaultSuccess": "등록 완료. 감사합니다.",
-      "trustHint": "이 페이지의 운영자에게만 전달돼요. 스팸 보내지 않아요."
+      "trustHint": "이 페이지 운영자에게만 전달돼요. 스팸은 보내지 않아요."
     },
     "booking": {
       "defaultTitle": "예약하기",
@@ -1051,7 +1051,7 @@
   },
   "weeklyInsights": {
     "eyebrow": "지난 7일 인사이트",
-    "emptyDesc": "이번 주 클릭이 아직 없어요. 채널별 utm 을 붙여 캠페인을 돌려보세요.",
+    "emptyDesc": "이번 주 클릭이 아직 없어요. UTM 태그를 붙여 캠페인을 시작해 보세요.",
     "humanClicks": "사람 클릭",
     "humanRatio": "전체의 {percent}%",
     "topLink": "탑 링크",
@@ -1075,15 +1075,15 @@
   },
   "recent": {
     "title": "최근 단축",
-    "empty": "아직 없어요. 위에서 단축해보세요.",
+    "empty": "아직 단축한 링크가 없어요. 위쪽에서 한번 만들어 보세요.",
     "viewStats": "통계 보기",
-    "claimCta": "가입하면 이 링크들을 본인 계정에 영구 보관할 수 있어요.",
-    "anonymousNote": "익명 링크는 24시간 후 자동 만료됩니다. 로그인하면 자동으로 내 계정으로 옮겨오고 만료 없이 영구 보관돼요.",
+    "claimCta": "가입하면 이 링크들을 내 계정에 계속 보관할 수 있어요.",
+    "anonymousNote": "익명 링크는 24시간 뒤 자동으로 만료돼요. 로그인하면 내 계정으로 자동 옮겨지고, 만료 없이 계속 보관돼요.",
     "claimedToast": "{count}개 링크를 계정에 저장했어요"
   },
   "statsEmpty": {
     "title": "아직 클릭이 없어요",
-    "description": "이 링크를 카톡 / 슬랙 / SNS 등에 공유하면, 클릭이 발생하는 즉시 분석이 시작됩니다.",
+    "description": "이 링크를 카톡·슬랙·SNS 등에 공유하면, 클릭이 들어오는 순간부터 분석이 시작돼요.",
     "shareCta": "단축 링크 복사",
     "shareCopied": "복사됨"
   },
@@ -1112,23 +1112,23 @@
       "others": "보통의 무료 단축기"
     },
     "paidTier": "유료 플랜",
-    "disclaimer": "비교 대상: bit.ly / short.io / rebrandly / TinyURL 의 무료 등급 기준 (2026 기준).",
+    "disclaimer": "비교 대상: bit.ly·short.io·rebrandly·TinyURL 의 무료 플랜 기준 (2026).",
     "rows": {
       "abtest": {
         "label": "A/B 분배 — 한 링크에 도착지 여러 개",
-        "note": "도착지마다 비율 설정. 클릭이 비율에 맞게 자동 분산. 보통 enterprise 플랜에만 있음"
+        "note": "도착지마다 비율을 설정하면 클릭이 자동으로 분산돼요. 보통 엔터프라이즈 플랜에만 있는 기능이에요."
       },
       "geoRouting": {
         "label": "국가별 도착지 분기",
-        "note": "방문자 IP 의 국가에 맞는 페이지로 자동 라우팅. 거의 어디서도 무료로 안 줌"
+        "note": "방문자 IP 국가에 맞는 페이지로 자동 라우팅해요. 무료로 주는 곳이 거의 없어요."
       },
       "webhooks": {
         "label": "클릭 자동 알림 (Slack · Discord · 자체 서버)",
-        "note": "클릭마다 본인 endpoint 로 POST. 서명까지 자동이라 신뢰 가능"
+        "note": "클릭마다 내 서버로 POST 요청을 보내요. 서명까지 자동이라 안전하게 받을 수 있어요."
       },
       "realtime": {
         "label": "실시간 클릭 피드",
-        "note": "통계 페이지에서 클릭이 들어오는 순간 라이브로 흐름. 다른 서비스엔 거의 없음"
+        "note": "통계 페이지에서 클릭이 들어오는 순간 라이브로 흘러요. 다른 서비스엔 거의 없는 기능이에요."
       },
       "insights": {
         "label": "자동 인사이트",
@@ -1136,7 +1136,7 @@
       },
       "asnTracking": {
         "label": "데이터센터 클릭 자동 분리",
-        "note": "AWS · GCP · Azure 등 클라우드에서 온 클릭 자동 봇 마킹 — 우리만의 차별점"
+        "note": "AWS·GCP·Azure 등 클라우드에서 온 클릭을 자동으로 봇으로 분류해요. 다른 서비스에선 보기 힘들어요."
       },
       "botDefense": {
         "label": "다층 봇 방어",
@@ -1144,7 +1144,7 @@
       },
       "twofa": {
         "label": "2 단계 인증 + 복구 코드",
-        "note": "Authenticator 앱 + 1 회용 복구 코드 10 개. 보통 유료"
+        "note": "인증 앱 + 1회용 복구 코드 10개. 다른 곳에선 보통 유료 기능이에요."
       }
     }
   },
@@ -1160,9 +1160,9 @@
     "title": "kurl — 단축 URL · 클릭 분석",
     "lead": "긴 URL을 한 줄로 줄이고, 누가 어디서 클릭하는지 분석합니다. 무료 + 광고 없음.",
     "section1Title": "왜 만들었나요",
-    "section1Body": "기존 단축 서비스들은 통계가 빈약하거나 유료 벽 뒤에 있어요. kurl은 디바이스, OS, 브라우저, 채널, 국가, 시간대까지 핵심 분석을 모두 무료로 제공합니다.",
+    "section1Body": "기존 단축 서비스들은 분석이 빈약하거나 유료 플랜에서만 풀려요. kurl 은 디바이스·OS·브라우저·채널·국가·시간대까지 핵심 분석을 모두 무료로 줘요.",
     "section2Title": "어떻게 동작하나요",
-    "section2Body": "단축 URL에 접근하면 봇·악성 URL을 거른 뒤 원본으로 redirect합니다. 모든 클릭은 익명화된 IP와 함께 분석 컬럼으로 비정규화 저장돼 통계 쿼리가 빠릅니다.",
+    "section2Body": "단축 URL에 접근하면 봇·악성 URL을 거른 뒤 원본으로 리다이렉트합니다. 모든 클릭은 익명화된 IP와 함께 분석에 최적화된 구조로 저장되어 통계 조회가 빠릅니다.",
     "section3Title": "기술 스택",
     "section3Body": "Spring Boot · MySQL · Redis · Next.js 14 · AWS ECS Fargate. 서비스 코드는 GitHub에서 공개됩니다.",
     "ctaShorten": "지금 단축해보기"
@@ -1172,7 +1172,7 @@
     "metaDescription": "URL 단축이란 무엇인지, 숏링크와 링크 인 바이오의 차이, 프로필 명함 만드는 법까지. kurl 사용법과 자주 묻는 질문.",
     "eyebrow": "가이드 · FAQ",
     "title": "숏링크 · 링크 인 바이오, 처음 쓰는 사람을 위한 안내서",
-    "lead": "URL 단축이 뭔지, 컬은 어떤 서비스인지, 프로필 명함이랑 어떻게 다른지 — 자주 묻는 질문을 한 페이지에 모았습니다.",
+    "lead": "URL 단축이 뭔지, kurl 은 어떤 서비스인지, 프로필 명함과는 어떻게 다른지 — 자주 묻는 질문을 한 페이지에 모았어요.",
     "q1": {
       "q": "URL 단축이란 무엇인가요?",
       "a": "URL 단축은 길고 복잡한 주소(예: https://example.com/very/long/path?utm_source=...)를 짧고 외우기 쉬운 주소(예: kurl.me/abc1234)로 바꾸는 기능입니다. 숏링크, 짧은 URL 모두 같은 의미예요.\n\nSNS 글자수 제한이 있거나, 명함·포스터처럼 손으로 입력해야 하는 곳에 긴 URL을 그대로 쓰기 부담스러울 때 씁니다. 또 단축 서비스 쪽에서 클릭 통계를 함께 제공하니까, 어떤 채널에서 사람들이 더 많이 들어오는지 분석할 수 있습니다."
@@ -1198,12 +1198,12 @@
       "a": "기본 기능은 전부 무료입니다. URL 단축, 통계, 프로필 명함, 8가지 블록 모두 무료 플랜으로 사용할 수 있어요.\n\nPro 플랜은 커스텀 도메인 자동 TLS, 무제한 링크, 통계 영구 보존 등 파워유저용 기능을 제공합니다 (요금제 페이지 참고)."
     },
     "ctaTitle": "지금 바로 단축해보기",
-    "ctaSubtitle": "회원가입 없이 한 번에 — 가입하면 통계까지 영구 보관",
+    "ctaSubtitle": "회원가입 없이 한 번에 — 가입하면 통계까지 평생 보관",
     "ctaButton": "URL 단축 시작"
   },
   "pricing": {
     "title": "요금제",
-    "lead": "Free 로 단축 + 분석은 무료. Pro 는 커스텀 도메인 자동 TLS · 무제한 링크 · 통계 영구 보존.",
+    "lead": "Free 플랜으로 단축과 분석은 평생 무료. Pro 플랜은 커스텀 도메인 자동 TLS·무제한 링크·통계 평생 보관.",
     "ctaUpgrade": "Pro 시작하기",
     "ctaManage": "결제 관리",
     "ctaLogin": "로그인하고 시작",
@@ -1220,19 +1220,19 @@
     "paidPrice": "₩6,900 / 월",
     "paidFeature1": "링크 무제한",
     "paidFeature2": "rate limit 10배 상향",
-    "paidFeature3": "통계 영구 보존 (Free 90일 → Pro 무제한)",
+    "paidFeature3": "통계 평생 보관 (Free 90일 → Pro 무제한)",
     "paidFeature4": "커스텀 도메인 (예: go.yourcompany.com)",
     "paidFeature5": "Webhook 50개 / 링크 (Free 5개)",
     "paidFeature6": "CSV export 50만 행 (Free 5만)",
-    "rightsTitle": "사용자 권리 (등급 무관)",
-    "rightsLead": "GDPR / 개인정보보호법에 따라 모든 사용자에게 보장되는 권리. 등급과 관계 없이 항상 가능합니다.",
+    "rightsTitle": "사용자 권리 (플랜 무관)",
+    "rightsLead": "GDPR / 개인정보보호법에 따라 모든 사용자에게 보장되는 권리. 플랜과 관계없이 언제든 가능합니다.",
     "right1": "내 데이터 export (JSON)",
     "right2": "계정 영구 삭제 + 데이터 cascade 삭제",
     "right3": "쿠키는 로그인 유지 1개만 — 분석/광고 쿠키 없음",
     "proHoldBadge": "추후 출시",
-    "proHoldNotice": "Pro 플랜은 결제 시스템 준비 중이라 잠시 닫혔어요. 지금은 Free 플랜의 200개 링크 · 8종 분석 · 웹훅 5개 · 2FA 모두 그대로 이용하실 수 있어요.",
+    "proHoldNotice": "Pro 플랜은 결제 시스템을 준비하고 있어 잠시 오픈을 미뤘어요. 지금은 Free 플랜의 200개 링크·8종 분석·웹훅 5개·2FA 를 모두 그대로 쓸 수 있어요.",
     "proHoldCta": "준비 중",
-    "proEta": "출시 시 안내 메일로 알려드립니다 — 우선 무료 플랜으로 시작.",
+    "proEta": "출시되면 안내 메일로 알려드릴게요. 우선 무료 플랜으로 시작해 보세요.",
     "meta": {
       "title": "요금제 · 단축 URL Pro 무제한 - kurl",
       "description": "Free 로 단축 URL과 클릭 분석을 무료로 시작. Pro 는 무제한 링크 · 커스텀 도메인 자동 TLS · 통계 영구 보존."
@@ -1291,7 +1291,7 @@
     },
     "profile": {
       "title": "공개 프로필",
-      "intro": "본인 단축 링크를 한 페이지로 모아 공유하세요. SNS bio 에 박는 1 개 링크.",
+      "intro": "내 단축 링크를 한 페이지로 모아 공유하세요. SNS bio 에 넣는 단 하나의 링크.",
       "onboardingEyebrow": "환영합니다",
       "onboardingTitle": "지금 바로 만들어보세요!",
       "onboardingSubhead": "원하는 이름 (username) 만 정하면 시작이에요. 사진 · 링크 · 가게 주소 · 연락처를 차곡차곡 추가하면 명함이 완성됩니다.",
@@ -1689,7 +1689,7 @@
     "exportButton": "내 데이터 다운로드 (JSON)",
     "exportHint": "사용자 정보 + 모든 링크 + 클릭 이벤트(IP는 마스킹됨).",
     "dangerTitle": "위험 영역",
-    "deleteHint": "삭제 신청 후 30일간 유예 기간이 있어요. 그 사이에 다시 로그인하면 자동으로 복구되고, 30일이 지나면 계정과 모든 링크·통계가 영구 삭제됩니다.",
+    "deleteHint": "삭제 신청 후 30일간 유예 기간이 있어요. 그 사이에 다시 로그인하면 자동으로 복구되고, 30일이 지나면 계정과 모든 링크·통계가 완전히 삭제돼요.",
     "deleteButton": "계정 영구 삭제",
     "deleteConfirmTitle": "정말 삭제할까요?",
     "deleteConfirmDesc": "30일 안에 다시 로그인하면 복구됩니다. 그 후에는 영구 삭제돼요. 확인을 위해 \"DELETE\" 를 입력하세요.",
@@ -1699,7 +1699,7 @@
     "deleting": "삭제 중...",
     "twofa": {
       "title": "2단계 인증 (2FA)",
-      "description": "TOTP 인증 앱(Google Authenticator, Authy 등)을 등록하면 로그인 시 6자리 코드 입력 단계가 추가돼요. 인증 앱을 분실해도 복구 코드로 로그인할 수 있도록 활성화 직후 표시되는 10개 코드를 안전한 곳에 보관하세요.",
+      "description": "TOTP 인증 앱(Google Authenticator, Authy 등)을 등록하면 로그인할 때 6자리 코드 입력 단계가 추가돼요. 인증 앱을 분실해도 로그인할 수 있도록, 활성화 직후 나타나는 복구 코드 10개를 안전한 곳에 보관해 주세요.",
       "loading": "불러오는 중...",
       "statusOn": "사용 중",
       "statusOff": "사용 안 함",
@@ -1800,17 +1800,17 @@
   "homeFaq": {
     "title": "자주 묻는 질문",
     "q1": "단축 링크는 영구 보존되나요?",
-    "a1": "비로그인 단축 링크는 24시간 후 자동 만료됩니다. 로그인 후 만든 링크는 직접 삭제하기 전까지 보존됩니다.",
+    "a1": "로그인 없이 만든 단축 링크는 24시간 후 자동으로 만료돼요. 로그인 후 만든 링크는 직접 삭제하기 전까지 계속 보관돼요.",
     "q2": "비밀번호 없이 사용할 수 있나요?",
     "a2": "네, 단축은 비로그인으로도 가능합니다. 통계 확인과 영구 보존은 Google 로그인이 필요합니다.",
     "q3": "통계는 어디서 보나요?",
     "a3": "내 링크 페이지에서 단축 코드를 클릭하면 디바이스/채널/국가/시간대 등 8종 분석을 볼 수 있어요.",
     "q4": "카톡/슬랙에 붙이면 미리보기가 뜨나요?",
-    "a4": "네 — 카톡 / Slack / Discord 미리보기 카드 정상 작동합니다. 그 앱들이 링크 정보를 받을 때 kurl이 바로 redirect 보내지 않고, 제목 · 설명 · 이미지가 들어간 미리보기 페이지를 따로 응답하기 때문이에요.",
+    "a4": "네 — 카톡·Slack·Discord 미리보기 카드 모두 정상으로 떠요. 이 앱들이 링크 정보를 받을 때 kurl 이 바로 리다이렉트하지 않고, 제목·설명·이미지가 들어간 미리보기 페이지를 따로 응답하기 때문이에요.",
     "q5": "악성 URL은 어떻게 차단되나요?",
     "a5": "Google Safe Browsing API로 단축 시점에 검사합니다. 차단된 URL은 단축이 거절됩니다.",
     "q6": "API가 있나요?",
-    "a6": "네 — 개발자용 API 제공해요. 설정 > API 키 에서 키 발급 받고, 본인 코드에서 단축 / 통계 endpoint 호출 가능합니다."
+    "a6": "네 — 개발자용 API 를 제공해요. 설정 > API 키 에서 키를 발급받아 단축·통계 API 를 호출할 수 있어요."
   },
   "campaignStatus": {
     "DRAFT": "시작 전",
@@ -1826,7 +1826,7 @@
     "hero": {
       "eyebrow": "Offline QR campaigns",
       "title1": "전단지마다 다른 QR을 넣고,",
-      "title2": "어디서 반응 오는지 바로 확인하세요.",
+      "title2": "어디서 반응이 오는지 바로 확인하세요.",
       "sub": "지역·출구·배포자별로 다른 QR 을 자동 생성하고, 100장당 클릭률로 다음 배포 위치를 정하세요.",
       "chip1": "5분이면 첫 캠페인",
       "chip2": "Canva·인디자인 PDF 지원",
@@ -1838,7 +1838,7 @@
     },
     "s1": {
       "line1": "전단지는 뿌렸습니다.",
-      "line2": "그런데 어디가 효과 있었나요?"
+      "line2": "그런데 어디가 효과가 있었나요?"
     },
     "s2": {
       "line1": "지역·출구·배포자별로,",
@@ -1857,7 +1857,7 @@
     },
     "s5": {
       "line1": "전단지·쿠폰·포스터,",
-      "line2": "어느 업종이든.",
+      "line2": "어느 업종이든 똑같이 동작해요.",
       "aux": "사용 예시 — 같은 방식으로 비교."
     },
     "s6": {
@@ -1869,7 +1869,7 @@
       "title": "어디에 더 뿌릴지, 클릭이 알려줍니다.",
       "primary": "QR 만들기",
       "secondary": "로그인",
-      "note": "일반 단축 URL · 통계도 같은 계정으로"
+      "note": "일반 단축 URL·통계도 같은 계정으로 같이 사용할 수 있어요"
     },
     "mock": {
       "kpiBeforeKurl": "kurl 도입 전",
