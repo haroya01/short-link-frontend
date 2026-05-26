@@ -79,6 +79,23 @@ h1, h2, h3, p {
   -webkit-tap-highlight-color: transparent;
 }
 
+/*
+ * iOS Safari auto-zooms on focus when a form control's font-size is below 16px. Our base Input
+ * (text-sm = 14px) tripped this on every URL input tap, and the resulting zoom-in made the
+ * landing page feel like a cheap mobile site. Bumping form controls to 16px on phones suppresses
+ * the auto-zoom without touching the viewport meta — pinch-zoom still works for accessibility.
+ * Scoped to the same breakpoint Tailwind uses for `sm:` (640px) so desktop keeps its tighter
+ * 14px typography. `!important` is needed because the call sites set `text-sm` / `text-xs` /
+ * `text-[12px]` utility classes that would otherwise out-specify a plain element selector.
+ */
+@media (max-width: 640px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 ::selection {
   background: #d1fae5;
   color: #064e3b;
