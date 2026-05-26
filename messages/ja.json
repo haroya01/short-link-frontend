@@ -4,13 +4,13 @@
     "cancel": "キャンセル",
     "apply": "適用",
     "applying": "適用中...",
-    "hint": "ドラッグで位置調整 · ピンチ / スクロールで拡大",
-    "zoom": "拡大"
+    "hint": "ドラッグで位置を調整・ピンチ / スクロールで拡大",
+    "zoom": "ズーム"
   },
   "tags": {
     "inputPlaceholder": "Enter または , で追加",
     "removeTag": "タグ {name} を削除",
-    "maxReached": "最大 {max} 件まで"
+    "maxReached": "最大 {max} 件まで追加できます"
   },
   "errors": {
     "LINK_NOT_FOUND": "リンクが見つかりません。",
@@ -20,14 +20,14 @@
     "LINK_QUOTA_EXCEEDED": "リンク作成上限 ({limit}件) に達しました。",
     "DUPLICATE_SHORT_CODE": "そのショートコードは既に使われています。",
     "RESERVED_SHORT_CODE": "予約済みのコードのため使用できません。",
-    "MALICIOUS_URL": "悪性/フィッシングと判定されたURLです。",
+    "MALICIOUS_URL": "不正・フィッシングと判定された URL です。",
     "SHORT_CODE_EXHAUSTED": "コード生成に失敗しました。しばらくしてから再度お試しください。",
     "BULK_IMPORT_TOO_LARGE": "一度に {limit} 行までです (今回: {rows} 行)。",
     "OPTIMISTIC_LOCK": "他から先に更新されました。再読み込み後にお試しください。",
     "INVALID_REFRESH_TOKEN": "セッションの有効期限が切れました。再度ログインしてください。",
     "USER_NOT_FOUND": "アカウントが見つかりません。",
     "INVALID_CURSOR": "ページネーションのカーソルが不正です。",
-    "INVALID_EXPORT_DIMENSION": "サポートされていない export オプションです。",
+    "INVALID_EXPORT_DIMENSION": "サポートされていないエクスポートオプションです。",
     "INVALID_TIMEZONE": "タイムゾーンが正しくありません。",
     "INVALID_USERNAME": "username は 3〜16 文字の英小文字 / 数字 / アンダースコアのみ使えます。",
     "USERNAME_TAKEN": "この username は使用中、または直近 30 日以内に変更されました。",
@@ -49,10 +49,10 @@
   },
   "meta": {
     "title": "kurl · URL短縮とクリック分析",
-    "description": "長いURLを一行に。デバイス、チャネル、国別のクリック分析まで。",
+    "description": "長い URL を一行に。デバイス・チャネル・国別までクリックを分析。",
     "ogHeadlineTop": "URL短縮 +",
     "ogHeadlineBottom": "クリック分析",
-    "ogSubline": "デバイス · チャネル · 国 · 時間 — 誰がどこからクリックしたかひと目で"
+    "ogSubline": "デバイス・チャネル・国・時間 — どこから誰がクリックしたか、ひと目でわかる"
   },
   "nav": {
     "shorten": "短縮",
@@ -60,7 +60,7 @@
     "myLinks": "マイリンク",
     "campaigns": "QRキャンペーン",
     "profile": "プロフィール",
-    "admin": "管理者",
+    "admin": "管理",
     "settings": "設定",
     "login": "ログイン",
     "logout": "ログアウト"
@@ -435,7 +435,7 @@
   },
   "stats": {
     "back": "戻る",
-    "shortCode": "short code",
+    "shortCode": "ショートコード",
     "tabs": {
       "aria": "統計セクション",
       "overview": "概要",
@@ -447,7 +447,7 @@
         "overview": "要点だけ — クリック品質 / ライブクリック / 曜日×時間ヒートマップ。",
         "traffic": "トラフィックの動き — 日別トレンド・時間帯分布・国別分布。",
         "sources": "どこから来たか — Referrer、UTM 4 種、チャネル/src タグ。",
-        "audience": "誰が来たか — デバイス、OS、ブラウザ、地域、言語、ボット。",
+        "audience": "誰が来たか — デバイス・OS・ブラウザ・地域・言語・ボット。",
         "settings": "このリンクの設定 — A/B 遷移先、Webhook 通知。"
       }
     },
@@ -578,7 +578,7 @@
       "velocityHot": "🔥 クリック急増",
       "velocityHour": "直近1時間",
       "ttfc": "初回クリックまで",
-      "noActivity": "活動",
+      "noActivity": "未計測",
       "noData": "データ不足",
       "uniqueOfHuman": "人クリックの {ratio}%",
       "vsBaseline": "24h 平均比",
@@ -713,8 +713,8 @@
   },
   "admin": {
     "label": "admin",
-    "title": "サービス overview",
-    "subtitle": "直近30日の推移 · 5分キャッシュ",
+    "title": "サービス概要",
+    "subtitle": "直近 30 日の推移 · 5 分キャッシュ",
     "kpi": {
       "users": "ユーザー",
       "links": "リンク",
@@ -722,7 +722,7 @@
       "anonymousRatio": "匿名比率",
       "expiredRatio": "期限切れ比率",
       "clicklessRatio": "クリック0比率",
-      "delta7d": "+{count} (7d)",
+      "delta7d": "+{count} (7 日)",
       "ofAllLinks": "全リンクのうち"
     },
     "section": {
@@ -932,16 +932,16 @@
     "cta": "ホームへ戻る"
   },
   "qr": {
-    "title": "qr code",
+    "title": "QR コード",
     "triggerAria": "QR コードを開く",
-    "copyUrl": "URLコピー",
+    "copyUrl": "URL をコピー",
     "copied": "コピー済み",
-    "downloadPng": "PNGダウンロード",
+    "downloadPng": "PNG をダウンロード",
     "close": "閉じる",
     "srcLabel": "トラッキングタグ (任意)",
     "srcPlaceholder": "例: poster, offline-card",
     "colorLabel": "色",
-    "logoLabel": "中央に遷移先 favicon を配置"
+    "logoLabel": "QR 中央に遷移先のファビコンを表示"
   },
   "share": {
     "label": "共有",
@@ -965,14 +965,14 @@
   },
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",
-    "madeWith": "kurl.me で作成",
+    "madeWith": "kurl.me でつくる",
     "editFab": "編集",
     "share": {
       "x": "X で共有",
       "line": "LINE で共有",
       "threads": "Threads で共有",
       "facebook": "Facebook で共有",
-      "kakao": "カカオトーク共有",
+      "kakao": "カカオトークで共有",
       "more": "共有",
       "copy": "URL コピー",
       "copied": "コピー済み"
@@ -1310,10 +1310,10 @@
       "usernameChangeAction": "変更",
       "usernameUnsaved": "username が未保存です",
       "bioLabel": "自己紹介",
-      "bioPlaceholder": "例: フルスタック開発者 · サイドプロジェクト製作中",
+      "bioPlaceholder": "例: フルスタック開発者 · サイドプロジェクト開発中",
       "themeLabel": "テーマ",
       "socialsLabel": "共有 / SNS ボタン",
-      "socialsHint": "公開ページの下に表示するチャンネルを選んでください。それぞれにご自身のアカウント URL を入れると、訪問者がそのまま遷移します。最大 2 つ、選んだ順に表示されます。",
+      "socialsHint": "公開ページの下に表示する SNS を選んでください。それぞれにご自身のアカウント URL を入れると、訪問者がそのまま遷移します。最大 2 つまで、選んだ順に表示されます。",
       "socialsCount": "{count}/{max} 選択",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
       "socialUrlPlaceholderLine": "https://line.me/ti/p/~yourlineid",
@@ -1622,7 +1622,7 @@
       "galleryFull": "これ以上追加できません",
       "galleryCounter": "{count} / {max}",
       "galleryCoverBadge": "表紙",
-      "galleryReorderHint": "ドラッグで並び替え · 最初の画像が訪問者に表示されるカバーになります",
+      "galleryReorderHint": "ドラッグで並び替え · 最初の画像が訪問者に表示される表紙になります",
       "galleryFullToast": "最大 {max} 枚までです。",
       "galleryTruncatedToast": "最初の {max} 枚のみ取り込みました。",
       "imageUploader": {
@@ -1788,17 +1788,17 @@
     }
   },
   "homeStats": {
-    "linksLabel": "短縮されたリンク",
-    "clicksLabel": "分析されたクリック"
+    "linksLabel": "短縮済みリンク",
+    "clicksLabel": "計測済みクリック数"
   },
   "publicStats": {
     "title": "公開統計",
     "publicBadge": "公開",
     "privateBadge": "非公開",
-    "shareButton": "公開リンクをコピー",
+    "shareButton": "公開 URL をコピー",
     "shareCopied": "コピーしました",
-    "togglePublic": "統計を公開",
-    "togglePrivate": "統計を非公開",
+    "togglePublic": "統計を公開する",
+    "togglePrivate": "統計を非公開にする",
     "toggleFailed": "公開設定の更新に失敗しました。"
   },
   "homeFaq": {
@@ -1817,7 +1817,7 @@
     "a6": "はい — 開発者向け API を提供しています。設定 > API キー でキーを発行し、ご自身のコードから短縮 / 統計エンドポイントを呼び出せます。"
   },
   "campaignStatus": {
-    "DRAFT": "開始前",
+    "DRAFT": "下書き",
     "ACTIVE": "運用中",
     "ENDED": "終了",
     "ARCHIVED": "アーカイブ"
@@ -1828,7 +1828,7 @@
       "description": "チラシ・ポスター・クーポンのQRをエリア・業者・バッチごとに分けて、クリック率を分析。100枚あたりクリック数で次の配布先を決められます。"
     },
     "hero": {
-      "eyebrow": "Offline QR campaigns",
+      "eyebrow": "オフライン QR キャンペーン",
       "title1": "チラシごとに、違う QR。",
       "title2": "効いた場所が、見える。",
       "sub": "エリア・出口・業者ごとに別の QR を自動生成し、100 枚あたりのクリック率で次の配布先を決める。",
@@ -1865,8 +1865,8 @@
       "aux": "活用例 — 同じやり方で比較できる。"
     },
     "s6": {
-      "line1": "印刷したQRはそのまま、",
-      "line2": "行き先だけ変更。"
+      "line1": "印刷した QR はそのまま、",
+      "line2": "行き先だけ差し替え。"
     },
     "cta": {
       "eyebrow": "今すぐ始める",
@@ -1878,7 +1878,7 @@
     "mock": {
       "kpiBeforeKurl": "kurl 導入前",
       "kpiAfterKurl": "kurl 導入後",
-      "kpiStatus": "測定なしで配布",
+      "kpiStatus": "効果を測らずに配布",
       "kpiDistributed": "配布",
       "kpiClicks": "クリック",
       "kpiPer100": "100枚あたり",
@@ -1895,18 +1895,18 @@
       "posterTitle": "ポスター合成",
       "posterStep1": "PDFをアップロード",
       "posterStep2": "QRボックスを配置",
-      "posterStep3": "バッチ別の合本PDFをダウンロード",
+      "posterStep3": "バッチごとの結合 PDF をダウンロード",
       "posterBoxLabel": "QR",
-      "posterPerBatch": "バッチごとに別のQR",
+      "posterPerBatch": "バッチごとに別の QR",
       "barsTitle": "100 枚あたりのクリック",
       "barsSort": "効率順",
       "barsTop": "Top",
-      "barsRecoTitle": "次回の推奨",
+      "barsRecoTitle": "次回のおすすめ",
       "barsRecoEstimate": "予想 +160 クリック",
       "casesTitle": "活用例",
       "casesBefore": "1回目",
       "casesAfter": "2回目",
-      "casesFooter": "例 — 2つのキャンペーンを自動比較した結果",
+      "casesFooter": "例 — 2 つのキャンペーンを自動で比較した結果",
       "timelineExpired": "期限切れ時点",
       "timelineNext": "次のページ",
       "timelineChip": "予約 / メニュー",
