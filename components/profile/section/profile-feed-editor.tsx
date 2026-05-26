@@ -10,15 +10,15 @@ import {
   ChevronUp,
   Contact,
   GalleryHorizontal,
-  ShoppingBag,
-  Mail,
-  MapPin,
   GripVertical,
   ImageIcon,
+  Mail,
+  MapPin,
   Minus,
   Pencil,
-  Plus,
   Play,
+  Plus,
+  ShoppingBag,
   Star,
   Type,
   X,
@@ -26,16 +26,9 @@ import {
 import type { useTranslations } from "next-intl";
 import type { MyLink } from "@/types";
 import { useCollapsedSections } from "@/hooks/use-collapsed-sections";
-import {
-  bookingSummary,
-  countGalleryImages,
-  eventSummary,
-  placeSummary,
-  productCardSummary,
-  summarizeJsonField,
-  summarizeTextBody,
-} from "@/lib/feed-summarizers";
+import { summarizeTextBody } from "@/lib/feed-summarizers";
 import type { FeedItem } from "@/components/profile/section/types";
+import { BLOCK_ROW_META, isCommonBlockType } from "@/components/profile/section/block-row-meta";
 
 type SectionMeta = {
   /** Index of the TEXT header that anchors this section, or null when the row sits above the
@@ -685,148 +678,20 @@ function FeedItemRow({
       </li>
     );
   }
-  if (item.kind === "BLOCK" && item.type === "CONTACT_CARD") {
-    const summary = summarizeJsonField(item.content, "name");
+  if (item.kind === "BLOCK" && isCommonBlockType(item.type)) {
+    const meta = BLOCK_ROW_META[item.type];
+    const Icon = meta.Icon;
+    const text = meta.render(item.content, t) || t(meta.placeholderKey);
+    const textClass =
+      meta.textStyle === "primary"
+        ? "truncate text-sm font-medium text-slate-900"
+        : "truncate text-[11px] text-slate-500";
     return (
       <li {...dndProps} className={baseRow}>
         {dragHandle}
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <Contact className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          <span className="truncate text-sm font-medium text-slate-900">
-            {summary || t("addContactCardPlaceholder")}
-          </span>
-        </div>
-        <BlockActions
-          onEdit={() => onEditBlock(item.id, item.content ?? "")}
-          onDelete={() => onDeleteBlock(item.id)}
-          t={t}
-        />
-      </li>
-    );
-  }
-  if (item.kind === "BLOCK" && item.type === "GALLERY") {
-    const count = countGalleryImages(item.content);
-    return (
-      <li {...dndProps} className={baseRow}>
-        {dragHandle}
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <GalleryHorizontal className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          <span className="truncate text-sm text-slate-700">
-            {count > 0 ? t("galleryRowSummary", { count }) : t("addGalleryPlaceholder")}
-          </span>
-        </div>
-        <BlockActions
-          onEdit={() => onEditBlock(item.id, item.content ?? "")}
-          onDelete={() => onDeleteBlock(item.id)}
-          t={t}
-        />
-      </li>
-    );
-  }
-  if (item.kind === "BLOCK" && item.type === "PRODUCT_CARD") {
-    const summary = productCardSummary(item.content);
-    return (
-      <li {...dndProps} className={baseRow}>
-        {dragHandle}
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <ShoppingBag className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          <span className="truncate text-sm font-medium text-slate-900">
-            {summary || t("addProductCardPlaceholder")}
-          </span>
-        </div>
-        <BlockActions
-          onEdit={() => onEditBlock(item.id, item.content ?? "")}
-          onDelete={() => onDeleteBlock(item.id)}
-          t={t}
-        />
-      </li>
-    );
-  }
-  if (item.kind === "BLOCK" && item.type === "EMAIL_FORM") {
-    const summary = summarizeJsonField(item.content, "title");
-    return (
-      <li {...dndProps} className={baseRow}>
-        {dragHandle}
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <Mail className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          <span className="truncate text-sm font-medium text-slate-900">
-            {summary || t("addEmailFormPlaceholder")}
-          </span>
-        </div>
-        <BlockActions
-          onEdit={() => onEditBlock(item.id, item.content ?? "")}
-          onDelete={() => onDeleteBlock(item.id)}
-          t={t}
-        />
-      </li>
-    );
-  }
-  if (item.kind === "BLOCK" && item.type === "BOOKING") {
-    const summary = bookingSummary(item.content);
-    return (
-      <li {...dndProps} className={baseRow}>
-        {dragHandle}
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <CalendarDays className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          <span className="truncate text-sm font-medium text-slate-900">
-            {summary || t("addBookingPlaceholder")}
-          </span>
-        </div>
-        <BlockActions
-          onEdit={() => onEditBlock(item.id, item.content ?? "")}
-          onDelete={() => onDeleteBlock(item.id)}
-          t={t}
-        />
-      </li>
-    );
-  }
-  if (item.kind === "BLOCK" && item.type === "EVENT") {
-    const summary = eventSummary(item.content);
-    return (
-      <li {...dndProps} className={baseRow}>
-        {dragHandle}
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <CalendarClock className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          <span className="truncate text-sm font-medium text-slate-900">
-            {summary || t("addEventPlaceholder")}
-          </span>
-        </div>
-        <BlockActions
-          onEdit={() => onEditBlock(item.id, item.content ?? "")}
-          onDelete={() => onDeleteBlock(item.id)}
-          t={t}
-        />
-      </li>
-    );
-  }
-  if (item.kind === "BLOCK" && item.type === "PLACE") {
-    const summary = placeSummary(item.content);
-    return (
-      <li {...dndProps} className={baseRow}>
-        {dragHandle}
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <MapPin className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          <span className="truncate text-sm font-medium text-slate-900">
-            {summary || t("addPlacePlaceholder")}
-          </span>
-        </div>
-        <BlockActions
-          onEdit={() => onEditBlock(item.id, item.content ?? "")}
-          onDelete={() => onDeleteBlock(item.id)}
-          t={t}
-        />
-      </li>
-    );
-  }
-  if (item.kind === "BLOCK" && item.type === "EMBED") {
-    return (
-      <li {...dndProps} className={baseRow}>
-        {dragHandle}
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <Play className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-          <span className="truncate text-[11px] text-slate-500">
-            {item.content || t("addEmbedPlaceholder")}
-          </span>
+          <Icon className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+          <span className={textClass}>{text}</span>
         </div>
         <BlockActions
           onEdit={() => onEditBlock(item.id, item.content ?? "")}
