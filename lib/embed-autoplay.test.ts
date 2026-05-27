@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { autoplayParamFor, injectAutoplay, withAutoplay } from "./embed-autoplay";
+import {
+  autoplayParamFor,
+  injectAutoplay,
+  sanitizeOembedHtml,
+  withAutoplay,
+} from "./embed-autoplay";
 
 describe("autoplayParamFor", () => {
   it("returns autoplay=1 for YouTube hosts (top and short)", () => {
@@ -21,6 +26,7 @@ describe("autoplayParamFor", () => {
   it("returns null for unknown hosts including Spotify (intentionally unsupported)", () => {
     expect(autoplayParamFor("open.spotify.com")).toBeNull();
     expect(autoplayParamFor("evil.example.com")).toBeNull();
+    expect(autoplayParamFor("evil-youtube.com")).toBeNull();
     expect(autoplayParamFor("")).toBeNull();
   });
 });
@@ -86,5 +92,45 @@ describe("withAutoplay", () => {
     expect(out).toContain('<img src="y.png">');
     expect(out).toContain('src="https://youtu.be/abc?autoplay=1"');
     expect(out).toContain('allow="autoplay"');
+  });
+});
+
+describe("sanitizeOembedHtml", () => {
+  it("keeps only a safe provider iframe and adds playback constraints", () => {
+    const html =
+      '<script>alert(1)</script><iframe onload="steal()" src="https://www.youtube.com/embed/abc?feature=oembed" srcdoc="<script>x</script>" title="Video"></iframe>';
+
+    const out = sanitizeOembedHtml(html);
+
+    expect(out).toContain('src="https://www.youtube.com/embed/abc?feature=oembed&amp;autoplay=1"');
+    expect(out).toContain('title="Video"');
+    expect(out).toContain('allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"');
+    expect(out).toContain("sandbox=");
+    expect(out).not.toContain("<script");
+    expect(out).not.toContain("onload");
+    expect(out).not.toContain("srcdoc");
+  });
+
+  it("rejects non-https and unknown iframe hosts", () => {
+    expect(sanitizeOembedHtml('<iframe src="http://www.youtube.com/embed/abc"></iframe>')).toBe("");
+    expect(sanitizeOembedHtml('<iframe src="https://evil.example.com/embed/abc"></iframe>')).toBe(
+      "",
+    );
+    expect(sanitizeOembedHtml('<iframe src="https://evil-youtube.com/embed/abc"></iframe>')).toBe(
+      "",
+    );
+  });
+
+  it("allows Spotify and SoundCloud embeds without adding unsupported autoplay", () => {
+    const spotify = sanitizeOembedHtml(
+      '<iframe src="https://open.spotify.com/embed/track/abc"></iframe>',
+    );
+    const soundcloud = sanitizeOembedHtml(
+      '<iframe src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1"></iframe>',
+    );
+
+    expect(spotify).toContain("https://open.spotify.com/embed/track/abc");
+    expect(spotify).not.toContain("autoplay=1");
+    expect(soundcloud).toContain("auto_play=true");
   });
 });

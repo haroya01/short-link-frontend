@@ -57,7 +57,7 @@ export function MobilePreviewSheet({ children }: Props) {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="close"
+                aria-label={t("closePreview")}
                 className="grid h-8 w-8 place-items-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-900"
               >
                 <X className="h-4 w-4" />

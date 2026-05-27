@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ArrowUpDown, BarChart3, ExternalLink, Pencil, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -24,12 +24,20 @@ type Props = {
   items: MyLink[];
   onChanged: () => void;
   onTagClick?: (tag: string) => void;
+  sortKey: SortKey;
+  sortDir: SortDir;
+  onSortChange: (key: SortKey, dir: SortDir) => void;
 };
 
-export function LinksTable({ items, onChanged, onTagClick }: Props) {
+export function LinksTable({
+  items,
+  onChanged,
+  onTagClick,
+  sortKey,
+  sortDir,
+  onSortChange,
+}: Props) {
   const t = useTranslations("dashboard");
-  const [sortKey, setSortKey] = useState<SortKey>("createdAt");
-  const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
   const [editing, setEditing] = useState<MyLink | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -38,28 +46,15 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
 
-  const sorted = useMemo(
-    () =>
-      [...items].sort((a, b) => {
-        const dir = sortDir === "asc" ? 1 : -1;
-        if (sortKey === "createdAt") {
-          return (+new Date(a.createdAt) - +new Date(b.createdAt)) * dir;
-        }
-        return (a.clickCount - b.clickCount) * dir;
-      }),
-    [items, sortKey, sortDir],
-  );
-
-  const allOnPage = sorted.map((s) => s.shortCode);
+  const allOnPage = items.map((s) => s.shortCode);
   const allSelected = allOnPage.length > 0 && allOnPage.every((c) => selected.has(c));
   const someSelected = !allSelected && allOnPage.some((c) => selected.has(c));
 
   function toggleSort(key: SortKey) {
     if (sortKey !== key) {
-      setSortKey(key);
-      setSortDir("desc");
+      onSortChange(key, "desc");
     } else {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+      onSortChange(key, sortDir === "asc" ? "desc" : "asc");
     }
   }
 
@@ -140,7 +135,7 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
           is laid out vertically with the high-signal bits (shortCode + clicks) on top, original
           URL below, and actions on the bottom-right. Desktop keeps the table view. */}
       <div className="space-y-2 sm:hidden">
-        {sorted.map((item) => (
+        {items.map((item) => (
           <MobileLinkCard
             key={item.shortCode}
             item={item}
@@ -197,7 +192,7 @@ export function LinksTable({ items, onChanged, onTagClick }: Props) {
             </TR>
           </THead>
           <TBody>
-            {sorted.map((item) => (
+            {items.map((item) => (
               <TR key={item.shortCode}>
                 <TD>
                   <input

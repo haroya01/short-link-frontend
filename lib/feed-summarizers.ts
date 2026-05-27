@@ -50,7 +50,7 @@ export function productCardSummary(content: string | null): string {
       Array.isArray(parsed?.items) && typeof parsed.items[0]?.name === "string"
         ? parsed.items[0].name
         : "";
-    return first ? `${first} 외 ${count - 1}건` : "";
+    return first ? `${first} +${count - 1}` : "";
   } catch {
     return "";
   }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { useTranslations } from "next-intl";
 import type { ContactCardPalette } from "@/types";
-import { PALETTES } from "@/app/[locale]/u/[username]/_components/contact-card-palettes";
+import { PALETTES } from "@/app/[locale]/(profile)/u/[username]/_components/contact-card-palettes";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/profile/section/form-field";
@@ -227,4 +227,3 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
     </ConfirmDialog>
   );
 }
-

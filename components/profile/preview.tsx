@@ -2,10 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import type { ProfileTheme, PublicProfileEntry, Social } from "@/types";
-import { EntryList } from "@/app/[locale]/u/[username]/_components/entry-list";
-import { ProfileHeader } from "@/app/[locale]/u/[username]/_components/profile-header";
-import { ShareRow } from "@/app/[locale]/u/[username]/_components/share-row";
-import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
+import { EntryList } from "@/app/[locale]/(profile)/u/[username]/_components/entry-list";
+import { ProfileHeader } from "@/app/[locale]/(profile)/u/[username]/_components/profile-header";
+import { ShareRow } from "@/app/[locale]/(profile)/u/[username]/_components/share-row";
+import { THEME_TABLE } from "@/app/[locale]/(profile)/u/[username]/_lib/theme";
 import { cn } from "@/lib/utils";
 
 type Props = {

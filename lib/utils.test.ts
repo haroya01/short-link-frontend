@@ -76,9 +76,13 @@ describe("countryName", () => {
     expect(countryName("JP")).toBe("일본");
   });
 
+  it("uses Intl region data beyond the old hand-written map", () => {
+    expect(countryName("MX")).toBe("멕시코");
+    expect(countryName("KR", "en")).toBe("South Korea");
+  });
+
   it("falls back to the input code when unknown — keeps display predictable", () => {
     expect(countryName("ZZ")).toBe("ZZ");
-    expect(countryName("MX")).toBe("MX");
   });
 });
 

@@ -29,25 +29,14 @@ export function truncateMiddle(s: string, max = 60) {
   return `${s.slice(0, head)}…${s.slice(-tail)}`;
 }
 
-export function countryName(code: string) {
-  const map: Record<string, string> = {
-    KR: "대한민국",
-    US: "미국",
-    JP: "일본",
-    CN: "중국",
-    GB: "영국",
-    DE: "독일",
-    FR: "프랑스",
-    VN: "베트남",
-    IN: "인도",
-    BR: "브라질",
-    CA: "캐나다",
-    AU: "호주",
-    SG: "싱가포르",
-    TH: "태국",
-    TW: "대만",
-  };
-  return map[code] ?? code;
+export function countryName(code: string, locale = "ko") {
+  const normalized = code.toUpperCase();
+  if (normalized === "ZZ") return normalized;
+  try {
+    return new Intl.DisplayNames([locale], { type: "region" }).of(normalized) ?? normalized;
+  } catch {
+    return normalized;
+  }
 }
 
 export function countryFlag(code: string) {

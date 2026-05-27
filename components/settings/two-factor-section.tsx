@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import {
   confirmTwoFactor,
@@ -165,11 +166,12 @@ export function TwoFactorSection() {
           <p>{t("scanHint")}</p>
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
             {qrDataUrl ? (
-              <img
+              <Image
                 src={qrDataUrl}
                 alt="2FA QR"
                 width={220}
                 height={220}
+                unoptimized
                 className="rounded border border-amber-300 bg-white"
               />
             ) : (
