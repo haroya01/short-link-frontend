@@ -708,8 +708,7 @@
       "detailBucket": "{day} {from}:00–{to}:59",
       "detailClicks": "{count} clicks",
       "detailShare": "{share}% of total",
-      "detailClose": "Close",
-      "detailHint": "Tap the same cell again to close."
+      "detailClose": "Close"
     }
   },
   "admin": {

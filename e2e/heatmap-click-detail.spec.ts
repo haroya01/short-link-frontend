@@ -3,10 +3,10 @@ import { expect, test } from "@playwright/test";
 /**
  * Heatmap click → inline detail contract.
  *
- * Clicking a cell opens an inline detail block below the chart that surfaces day + time range,
- * click count, and share-of-total. Clicking the same cell again (or the close button) hides the
- * detail. The detail must keep the chart visible — it is rendered inside the same card, not as a
- * modal.
+ * Clicking a cell promotes its info into the legend row below the chart — day + time range,
+ * click count, and share-of-total — sharing the slot with hover. Clicking the same cell again
+ * (or the inline close button) clears the selection. No floating box / modal; the detail lives
+ * in the chart's own legend row so the heatmap stays in view.
  */
 
 const DESKTOP_GRID_SELECTOR = '[class*="grid-cols-[36px_repeat(24"]';
@@ -39,7 +39,7 @@ test.describe("heatmap click → inline detail (desktop)", () => {
     expect(cellElement).not.toBeNull();
     await cellElement!.click();
 
-    const detail = page.getByRole("region").filter({ hasText: /클릭/ });
+    const detail = page.getByRole("status").filter({ hasText: /클릭/ });
     await expect(detail).toBeVisible();
     await expect(detail.locator("text=클릭")).toBeVisible();
 
@@ -67,7 +67,7 @@ test.describe("heatmap click → inline detail (desktop)", () => {
     expect(cellElement).not.toBeNull();
     await cellElement!.click();
 
-    const detail = page.getByRole("region").filter({ hasText: /클릭/ });
+    const detail = page.getByRole("status").filter({ hasText: /클릭/ });
     await expect(detail).toBeVisible();
 
     await detail.getByRole("button", { name: "닫기" }).click();
@@ -101,7 +101,7 @@ test.describe("heatmap click → inline detail (mobile)", () => {
     expect(cellElement).not.toBeNull();
     await cellElement!.click();
 
-    const detail = page.getByRole("region").filter({ hasText: /클릭/ });
+    const detail = page.getByRole("status").filter({ hasText: /클릭/ });
     await expect(detail).toBeVisible();
     // Mobile span shows a "from–to" range, so the label includes a dash between two hours.
     await expect(detail.locator("text=/\\d{2}:00–\\d{2}:59/")).toBeVisible();
