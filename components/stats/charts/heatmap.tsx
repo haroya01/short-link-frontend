@@ -221,20 +221,18 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500">
-        <div className="min-h-[1rem]">
-          {hover && hover.count > 0 && (
-            <span className="font-mono">
-              {tDay(hover.day)}{" "}
-              {hover.span === 1
-                ? `${String(hover.hour).padStart(2, "0")}:00`
-                : `${String(hover.hour).padStart(2, "0")}–${String(hover.hour + hover.span - 1).padStart(2, "0")}:59`}
-              {" — "}
-              {hover.count}
-            </span>
-          )}
+      <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-slate-500">
+        <div className="flex min-h-[1rem] min-w-0 items-center gap-2">
+          <ActiveCellLabel
+            active={selected ?? (hover && hover.count > 0 ? hover : null)}
+            total={total}
+            isSelected={selected !== null}
+            tDay={tDay}
+            t={t}
+            onClear={() => setSelected(null)}
+          />
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1.5">
           <span>{t("less")}</span>
           <div className="h-2.5 w-2.5 rounded-[3px] bg-slate-50 ring-1 ring-inset ring-slate-200" />
           <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-100" />
@@ -244,16 +242,6 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
           <span>{t("more")}</span>
         </div>
       </div>
-
-      {selected && (
-        <SelectedDetail
-          selected={selected}
-          total={total}
-          tDay={tDay}
-          t={t}
-          onClose={() => setSelected(null)}
-        />
-      )}
     </div>
   );
 }
@@ -270,67 +258,68 @@ function colorFor(count: number, scale: number): string {
   return "bg-accent-700";
 }
 
-/**
- * Inline detail block — surfaces below the chart when the user clicks/taps a cell. Shows
- * day + time range, click count, and share-of-total. Closes on the same-cell click or the
- * explicit close button. Designed to live inside the existing chart card (no modal / portal)
- * so the user keeps the heatmap in view while scanning the detail.
- */
-function SelectedDetail({
-  selected,
+function ActiveCellLabel({
+  active,
   total,
+  isSelected,
   tDay,
   t,
-  onClose,
+  onClear,
 }: {
-  selected: Selected;
+  active: Hover | Selected | null;
   total: number;
+  isSelected: boolean;
   tDay: (key: string) => string;
   t: (key: string, params?: Record<string, string | number>) => string;
-  onClose: () => void;
+  onClear: () => void;
 }) {
-  const dayLabel = tDay(selected.day);
+  if (!active) return null;
+
+  const dayLabel = tDay(active.day);
   const rangeLabel =
-    selected.span === 1
-      ? t("detailHourly", { day: dayLabel, hour: selected.hour })
+    active.span === 1
+      ? t("detailHourly", { day: dayLabel, hour: active.hour })
       : t("detailBucket", {
           day: dayLabel,
-          from: selected.hour,
-          to: selected.hour + selected.span - 1,
+          from: active.hour,
+          to: active.hour + active.span - 1,
         });
-  const share = total > 0 ? (selected.count / total) * 100 : 0;
+  const share = total > 0 ? (active.count / total) * 100 : 0;
   const shareLabel = share >= 10 ? share.toFixed(0) : share.toFixed(1);
 
   return (
     <div
-      role="region"
-      aria-live="polite"
-      className="mt-4 rounded-lg border border-accent-200 bg-accent-50/40 px-4 py-3"
+      role={isSelected ? "status" : undefined}
+      aria-live={isSelected ? "polite" : undefined}
+      className="flex min-w-0 items-center gap-2 font-mono"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1 space-y-1.5">
-          <p className="font-mono text-[12px] font-medium text-slate-900">{rangeLabel}</p>
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="font-mono text-base font-semibold tabular-nums text-slate-900">
-              {t("detailClicks", { count: selected.count })}
-            </span>
-            {total > 0 && (
-              <span className="font-mono text-[11px] text-slate-500">
-                {t("detailShare", { share: shareLabel })}
-              </span>
-            )}
-          </div>
-          <p className="text-[11px] text-slate-500">{t("detailHint")}</p>
-        </div>
+      <span className="truncate text-slate-700">{rangeLabel}</span>
+      <span aria-hidden="true" className="text-slate-300">
+        ·
+      </span>
+      <span className="tabular-nums font-medium text-slate-900">
+        {t("detailClicks", { count: active.count })}
+      </span>
+      {total > 0 && active.count > 0 && (
+        <>
+          <span aria-hidden="true" className="text-slate-300">
+            ·
+          </span>
+          <span className="tabular-nums text-slate-500">
+            {t("detailShare", { share: shareLabel })}
+          </span>
+        </>
+      )}
+      {isSelected && (
         <button
           type="button"
-          onClick={onClose}
+          onClick={onClear}
           aria-label={t("detailClose")}
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-slate-500 hover:bg-white hover:text-slate-900"
+          className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
         >
-          <X className="h-3.5 w-3.5" />
+          <X className="h-3 w-3" />
         </button>
-      </div>
+      )}
     </div>
   );
 }
