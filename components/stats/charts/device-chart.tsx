@@ -1,26 +1,21 @@
 "use client";
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { useTranslations } from "next-intl";
 import type { DeviceClick } from "@/types";
 import { formatNumber } from "@/lib/utils";
 
 type Props = { data: DeviceClick[] };
 
-const LABELS: Record<string, string> = {
-  mobile: "모바일",
-  desktop: "데스크톱",
-  tablet: "태블릿",
-  bot: "봇",
-  unknown: "기타",
-};
-
 const COLORS = ["#059669", "#10B981", "#34D399", "#6EE7B7", "#A7F3D0"];
 
 export function DeviceChart({ data }: Props) {
+  const t = useTranslations("stats");
   if (data.length === 0) {
-    return <p className="py-8 text-center text-xs text-slate-500">데이터 없음</p>;
+    return <p className="py-8 text-center text-xs text-slate-500">{t("noData")}</p>;
   }
   const total = data.reduce((acc, d) => acc + d.count, 0) || 1;
+  const labelFor = (device: string) => deviceLabel(device, t);
 
   return (
     <div className="flex flex-col items-center gap-4 sm:flex-row">
@@ -52,8 +47,8 @@ export function DeviceChart({ data }: Props) {
                 padding: "8px 12px",
               }}
               formatter={(value: number, _name, ctx) => [
-                `${formatNumber(value)}회 (${((value / total) * 100).toFixed(1)}%)`,
-                LABELS[ctx.payload.device as string] ?? ctx.payload.device,
+                `${t("clickCount", { count: formatNumber(value) })} (${((value / total) * 100).toFixed(1)}%)`,
+                labelFor(ctx.payload.device as string),
               ]}
             />
           </PieChart>
@@ -67,7 +62,7 @@ export function DeviceChart({ data }: Props) {
                 className="h-2.5 w-2.5 rounded-[3px]"
                 style={{ background: COLORS[i % COLORS.length] }}
               />
-              {LABELS[d.device] ?? d.device}
+              {labelFor(d.device)}
             </span>
             <span className="font-mono tabular-nums text-slate-600">
               {formatNumber(d.count)}
@@ -80,4 +75,21 @@ export function DeviceChart({ data }: Props) {
       </ul>
     </div>
   );
+}
+
+function deviceLabel(device: string, t: ReturnType<typeof useTranslations>): string {
+  switch (device) {
+    case "mobile":
+      return t("device.mobile");
+    case "desktop":
+      return t("device.desktop");
+    case "tablet":
+      return t("device.tablet");
+    case "bot":
+      return t("device.bot");
+    case "unknown":
+      return t("device.unknown");
+    default:
+      return device;
+  }
 }

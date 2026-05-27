@@ -43,6 +43,7 @@
     "INTERNAL_ERROR": "Something went wrong on our side. Please try again."
   },
   "cookieConsent": {
+    "ariaLabel": "Cookie notice",
     "message": "We only use strictly-necessary cookies to keep you signed in. No analytics or ad cookies.",
     "accept": "Got it",
     "learnMore": "Learn more"
@@ -150,6 +151,7 @@
     "ctaSubhead": "Sign in and pick a name — then drop in your photos, links, address, and contact info, just like the examples below.",
     "cta": "Make your profile",
     "metaSuffix": "sample",
+    "metaFallbackTitle": "{handle} · kurl sample",
     "sampleBanner": "Sample page · this could be your profile too",
     "sampleCta": "Make my profile",
     "scrollCue": "See real examples",
@@ -282,16 +284,16 @@
     },
     "ops": {
       "totalClicks": "Total clicks",
-      "totalClicksHint": "Cumulative performance in this list",
+      "totalClicksHint": "All-time clicks in this list",
       "weekClicks": "Last 7 days",
-      "weekClicksHint": "Short-window operating signal",
+      "weekClicksHint": "Recent movement",
       "zeroClick": "Zero-click links",
       "zeroClickReview": "Review placement or CTA",
       "zeroClickClear": "Every link has received clicks",
-      "expiring": "Expiring in 3d",
-      "expiringReview": "Extend or remove soon",
+      "expiring": "Expiring soon",
+      "expiringReview": "Extend or clean up soon",
       "expiringClear": "No urgent expirations",
-      "topLink": "Top-performing link",
+      "topLink": "Top link",
       "topLinkEmpty": "No links to compare yet",
       "clicks": "clicks",
       "copy": "Copy",
@@ -667,7 +669,9 @@
       }
     },
     "noData": "No data",
+    "referrerNoData": "No referrer data",
     "noClicks": "No clicks yet",
+    "clickCount": "{count} clicks",
     "noUtm": "No UTM campaign data",
     "noBot": "No bot clicks",
     "weekday": {
@@ -692,7 +696,8 @@
     "countryTable": {
       "country": "Country",
       "clicks": "Clicks",
-      "share": "Share"
+      "share": "Share",
+      "unknown": "Unknown"
     },
     "heatmap": {
       "less": "Less",
@@ -920,7 +925,14 @@
     "errorTitle": "Something went wrong",
     "errorDesc": "Please try again later.",
     "retry": "Retry",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "processing": "Processing...",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyFailed": "Copy failed.",
+    "close": "Close"
   },
   "notFound": {
     "title": "Page not found",
@@ -932,6 +944,7 @@
     "triggerAria": "Open QR code",
     "copyUrl": "Copy URL",
     "copied": "Copied",
+    "copyFailed": "Copy failed.",
     "downloadPng": "Download PNG",
     "close": "Close",
     "srcLabel": "Tracking tag (optional)",
@@ -1309,6 +1322,7 @@
       "bioPlaceholder": "e.g. fullstack dev / building side projects",
       "themeLabel": "Theme",
       "socialsLabel": "Social buttons",
+      "socialKakaoLabel": "KakaoTalk Channel",
       "socialsHint": "Pick which channels appear at the bottom of your public profile. For each, paste the URL of your own account — visitors who tap the button land there. Up to 2, shown in the order you pick.",
       "socialsCount": "{count}/{max} selected",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
@@ -1320,6 +1334,7 @@
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "Please paste a valid http(s) URL.",
       "previewTitle": "Live preview",
+      "closePreview": "Close preview",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "Your bio will appear here",
       "profileInfoToggle": "Profile info (username · bio · theme)",
@@ -1479,6 +1494,7 @@
       "emailFormHowItWorks": "Emails visitors leave land in your private 'leads' dashboard. Export to CSV and import into Mailchimp / your email tool.",
       "emailFormViewLeadsCta": "View collected emails",
       "leadsLink": "Collected emails",
+      "leadsDisabledTitle": "Add an email form to collect leads here",
       "stats": {
         "title": "My profile visit stats",
         "intro": "Who's reading your /u/username page, and from where. Same depth as your short-link stats.",
@@ -1793,9 +1809,288 @@
     "privateBadge": "private",
     "shareButton": "Copy public link",
     "shareCopied": "Copied",
+    "shareCopyFailed": "Copy failed.",
     "togglePublic": "Make stats public",
     "togglePrivate": "Make stats private",
     "toggleFailed": "Failed to update visibility."
+  },
+  "campaignApp": {
+    "entry": {
+      "title": "QR campaigns",
+      "badge": "Offline",
+      "description": "Split posters and flyers into batches, then see which batch performed best. A separate mode from regular short links.",
+      "cta": "Start"
+    },
+    "batchCard": {
+      "quantityUnit": "{count} sheets",
+      "distributor": "Distributor · {name}",
+      "downloadQr": "Download QR for {name}",
+      "edit": "Edit {name}",
+      "delete": "Delete {name}"
+    },
+    "batchDialogs": {
+      "editTitle": "Edit distribution batch",
+      "editDescription": "You can edit only the name, distributor, area, quantity, and memo. The short URL printed in the QR stays unchanged.",
+      "save": "Save",
+      "updated": "Batch updated",
+      "updateFailed": "Failed to update",
+      "name": "Batch name",
+      "distributor": "Distributor",
+      "area": "Area",
+      "quantity": "Quantity",
+      "memo": "Memo",
+      "deleteTitle": "Delete distribution batch",
+      "delete": "Delete",
+      "deleted": "Batch deleted",
+      "deleteFailed": "Failed to delete",
+      "deleteWarningTitle": "The short URL will be deleted too.",
+      "deleteWarningBody": "People scanning already-printed QR codes will see a link-not-found page. This is safe before ordering print, but after distribution you should usually keep it alive with an end policy.",
+      "quantityUnit": "{count} sheets"
+    },
+    "new": {
+      "loginRequired": "Sign in required",
+      "goToLogin": "Go to sign in",
+      "created": "QR campaign created",
+      "createFailed": "Failed to create QR campaign",
+      "backToList": "QR campaigns",
+      "title": "New QR campaign",
+      "intro": "Choose the active period and end policy, then add distribution batches inside it.",
+      "nameLabel": "QR campaign name",
+      "namePlaceholder": "e.g. Shinjuku spring poster drop",
+      "startLabel": "Start",
+      "startHint": "Usually start now. Schedule it only when print or ordering dates require it.",
+      "startNow": "Start now",
+      "startSchedule": "Schedule start",
+      "endLabel": "End",
+      "endHint": "Printed QR codes follow this policy after the campaign ends.",
+      "defaultUrlLabel": "Default destination URL",
+      "defaultUrlHint": "Leave blank if each batch should use its own URL.",
+      "postEndLabel": "After campaign ends",
+      "policy": {
+        "keepTitle": "Keep as is",
+        "keepBody": "Printed QR codes keep sending visitors to the original URLs after the campaign ends.",
+        "expireTitle": "Show expired page",
+        "expireBody": "Scans show a campaign-ended message.",
+        "redirectTitle": "Redirect elsewhere",
+        "redirectBody": "Send printed QRs to a review page, next campaign, waitlist, or any follow-up URL."
+      },
+      "messagePlaceholder": "e.g. This campaign has ended. See you at the next event in December.\nContact — @kurl_official",
+      "messageHint": "Blank uses the default message. Line breaks are preserved ·",
+      "redirectHint": "The redirect URL is applied to printed QR codes when the campaign ends.",
+      "cancel": "Cancel",
+      "creating": "Creating...",
+      "submit": "Create QR campaign"
+    },
+    "detail": {
+      "loadFailed": "Load failed",
+      "loginRequired": "Sign in required",
+      "backToList": "QR campaigns",
+      "confirmEnd": "End this QR campaign now?\nThe end policy applies immediately to printed QRs.",
+      "ended": "QR campaign ended",
+      "endFailed": "Failed to end",
+      "reapplied": "End policy reapplied",
+      "reapplyFailed": "Failed to reapply",
+      "confirmArchive": "Archive this QR campaign?\nIt will be hidden from the list, but data stays intact.",
+      "archived": "QR campaign archived",
+      "archiveFailed": "Failed to archive",
+      "cancel": "Cancel",
+      "actions": {
+        "stats": "Stats",
+        "endNow": "End now",
+        "reapply": "Reapply end policy",
+        "archive": "Archive"
+      },
+      "prepare": {
+        "eyebrow": "Distribution prep",
+        "title": "Assets for print shops and Canva",
+        "description": "QR codes and metadata for {count} batches. Drop them into posters or flyers before ordering print.",
+        "printSheet": "A4 sheet",
+        "posterBuilder": "Add QR to poster"
+      },
+      "policy": {
+        "eyebrow": "After campaign ends",
+        "keep": "Keep as is",
+        "expire": "Show expired page",
+        "redirect": "Redirect elsewhere",
+        "savedEnded": "Message saved. Use reapply end policy to push it to printed QRs.",
+        "saved": "Expired-page message saved",
+        "saveFailed": "Failed to save",
+        "messageLabel": "Expired-page message",
+        "edit": "Edit",
+        "add": "Add",
+        "messagePlaceholder": "e.g. This campaign has ended. See you at the next event in December.",
+        "saving": "Saving...",
+        "save": "Save",
+        "defaultMessageHint": "Leave the message blank to show the default notice.",
+        "defaultDestination": "Default destination URL · {url}"
+      },
+      "batches": {
+        "title": "Distribution batches",
+        "description": "One unit of printed distribution using the same QR. Split by distributor or area for meaningful analysis.",
+        "add": "Add batch",
+        "emptyTitle": "No distribution batches yet",
+        "emptyDescription": "Add the first batch to issue a QR code. Scan it before ordering print.",
+        "addFirst": "Add first batch"
+      }
+    },
+    "batchesNew": {
+      "loadFailed": "Load failed",
+      "pasteEmpty": "No rows found in the pasted text",
+      "pasteAdded": "Added {count} rows",
+      "created": "Created {count} distribution batches",
+      "createFailed": "Create failed",
+      "loginRequired": "Sign in required",
+      "backToCampaign": "Back to QR campaign",
+      "title": "Add distribution batches",
+      "introCampaign": "New batches for <name></name>.",
+      "addRow": "Add row",
+      "pasteToggle": "Paste from spreadsheet",
+      "defaultUrlActive": "<strong>Default destination URL is set.</strong> Leave the destination field blank to use <code></code>. Enter a URL only for batches that need a different destination.",
+      "defaultUrlMissing": "<strong>No default destination URL is set.</strong> Each batch needs its own destination URL.",
+      "fields": {
+        "name": "Batch name",
+        "distributor": "Distributor",
+        "area": "Area",
+        "quantity": "Quantity",
+        "destinationUrl": "Destination URL"
+      },
+      "compareHint": "Useful for comparison",
+      "placeholders": {
+        "name": "e.g. Shinjuku Station East",
+        "distributor": "A or distributor name",
+        "defaultValue": "(default)"
+      },
+      "hints": {
+        "defaultOptional": "Blank uses the default",
+        "defaultRequired": "Required (no default)"
+      },
+      "errors": {
+        "nameRequired": "Batch name is required",
+        "quantityRequired": "Quantity is required",
+        "quantityPositive": "Positive integer",
+        "destinationRequired": "No campaign default URL — required",
+        "destinationUrl": "http:// or https:// URL"
+      },
+      "removeRow": "Delete row {index}",
+      "pasteTitle": "Paste spreadsheet rows",
+      "pasteColumns": "Column order: <code>Batch name / Distributor / Area / Quantity / Destination URL / Memo</code> (tab or comma separated)",
+      "close": "Close",
+      "pastePlaceholder": "Shinjuku Station East\tA\tShinjuku East\t500\t\nOkubo\tB\tOkubo\t300\thttps://example.com/okubo",
+      "pasteZeroRows": "0 rows",
+      "pastePreviewRows": "{count} rows detected",
+      "cancel": "Cancel",
+      "pasteApply": "Add {count} rows",
+      "invalidRows": "{count} rows have input errors. Fix the highlighted cells.",
+      "summary": "<strong>{rowCount}</strong> batches · <strong>{totalQuantity}</strong> sheets planned",
+      "creating": "Creating...",
+      "submit": "Create {count} batches"
+    },
+    "posterBuilder": {
+      "loadFailed": "Load failed",
+      "pdfOnly": "Only PDF files can be uploaded",
+      "pdfReadFailed": "Could not read the PDF. The file may be damaged.",
+      "composed": "Created a merged PDF with {count} pages",
+      "composeFailed": "Composition failed",
+      "loginRequired": "Sign in required",
+      "backToCampaign": "Back to QR campaign",
+      "title": "Add QR to poster",
+      "introCampaign": "<name></name> · Duplicate the PDF once per batch ({count} total), each with its own QR, then download one merged PDF.",
+      "toolHint": "Finish the design in Canva, InDesign, PowerPoint, or another tool, export a PDF, then place only the QR here. This is a coordinate compositor, not a design tool.",
+      "targetLabel": "Composition target",
+      "targetSummary": "<strong>{count}</strong> batches · output is a <strong>{pages}-page</strong> PDF",
+      "noBatchesHint": "Add distribution batches first. (QR campaign detail → Add batch)",
+      "composing": "Composing...",
+      "download": "Download merged PDF ({count} pages)",
+      "notSavedHint": "QR placement is not saved. If you return with the same PDF later, redraw the box. Campaign print runs are treated as one-off orders.",
+      "dropTitle": "Drop a PDF here or click to upload",
+      "dropSubtitle": "1-page PDF · Canva/InDesign export recommended",
+      "removePdf": "Remove PDF",
+      "otherPdf": "Another PDF",
+      "dragHint": "Drag the QR box to move it, or resize it from the bottom-right handle.",
+      "previewFirstBatch": "Preview uses the first batch (1 of {count}). Each batch gets a different QR.",
+      "previewPlaceholder": "No batches yet, so the preview uses a placeholder QR. Real composition is available after adding batches.",
+      "boxAria": "QR box position and size",
+      "qrPreviewAlt": "QR preview"
+    },
+    "printSheet": {
+      "loadFailed": "Load failed",
+      "loginRequired": "Sign in required",
+      "backToCampaign": "Back to QR campaign",
+      "title": "A4 QR sheet",
+      "introCampaign": "<name></name> · Save as PDF through browser print (Cmd/Ctrl + P).",
+      "print": "Print",
+      "empty": "No batches to print. Add a batch first.",
+      "perPage": "Per page",
+      "layouts": {
+        "comfortable": { "label": "12 (3×4)", "hint": "Roomy · business-card size" },
+        "standard": { "label": "20 (4×5)", "hint": "Standard" },
+        "dense": { "label": "30 (5×6)", "hint": "Dense · small labels" }
+      },
+      "showLabel": "Show labels",
+      "cutMarks": "Cut marks",
+      "pagePerBatch": "One full page per batch"
+    },
+    "campaignStats": {
+      "loadFailed": "Load failed",
+      "loginRequired": "Sign in required",
+      "backToCampaign": "Back to QR campaign",
+      "title": "Stats",
+      "introCampaign": "<name></name> · Counts clicks after campaign start, excluding bots and previews.",
+      "loading": "Loading...",
+      "groups": {
+        "distributorTitle": "Performance by distributor",
+        "distributorHint": "Clicks per 100 sheets — comparable even when distributors handled different quantities.",
+        "areaTitle": "Performance by area",
+        "areaHint": "Use this to decide the next distribution location.",
+        "tooltip": "{rate} / 100 sheets · clicks {clicks} / distributed {quantity}",
+        "efficiency": "Efficiency"
+      },
+      "compare": {
+        "title": "Compare with another campaign",
+        "description": "Compare first vs second runs, or different seasonal campaigns.",
+        "none": "— No comparison —",
+        "current": "Current",
+        "comparison": "Compare",
+        "selectHint": "Choose a campaign from the dropdown above."
+      },
+      "kpi": {
+        "totalClicks": "Total clicks",
+        "perHundred": "Per 100",
+        "topArea": "Top area",
+        "batches": "Batches",
+        "totalDistributed": "Printed/distributed",
+        "perHundredHint": "Average efficiency (clicks / distributed × 100)"
+      },
+      "units": {
+        "count": "{count}",
+        "sheets": "{count} sheets"
+      },
+      "recommendation": {
+        "title": "Next distribution recommendation",
+        "description": "Redistribute the same total of {total} sheets. Baseline average is {average} per 100.",
+        "footnote": "Recommendation based on efficiency ratios. Under 30% of average is pruned; the rest is reallocated by ratio, capped at 3x per batch.",
+        "verdict": { "BOOST": "Boost", "KEEP": "Keep", "REDUCE": "Reduce", "PRUNE": "Prune" },
+        "rowMeta": "{current} → {recommended} sheets · {rate} per 100"
+      },
+      "daily": { "title": "Daily clicks", "description": "Since campaign start" },
+      "hourly": {
+        "title": "Clicks by hour",
+        "description": "0–23",
+        "tooltip": "{hour}:00: {clicks}"
+      },
+      "heatmap": { "title": "Day × hour distribution", "description": "Darker cells mean more clicks." },
+      "testScans": {
+        "title": "Pre-start test scans",
+        "description": "<strong>{count}</strong> before campaign start. Excluded from analytics totals.",
+        "last": "Last test · {date}"
+      },
+      "byBatch": {
+        "empty": "No distribution batches yet. Batch performance appears here after you add one.",
+        "title": "Performance by batch",
+        "description": "Sorted by clicks descending. Bars are relative to the max row.",
+        "meta": "/ {quantity} sheets · {rate}%"
+      }
+    }
   },
   "homeFaq": {
     "title": "Frequently asked questions",
@@ -1817,6 +2112,79 @@
     "ACTIVE": "Active",
     "ENDED": "Ended",
     "ARCHIVED": "Archived"
+  },
+  "campaignsApp": {
+    "authTitle": "Sign in required",
+    "authDesc": "QR campaigns are available to signed-in users only.",
+    "loginCta": "Go to sign in",
+    "title": "QR Campaigns",
+    "subtitleLoading": "Operational units for offline QR distribution",
+    "subtitleCount": "{count} QR campaigns.",
+    "loadFailed": "Could not load QR campaigns.",
+    "newCampaign": "New QR campaign",
+    "batchCount": "{count} batches",
+    "details": "Details",
+    "onboarding": {
+      "eyebrow": "Offline campaigns",
+      "title": "Improve offline promotion like online ads",
+      "body": "Split posters, flyers, and QR codes by distributor, area, and batch. Measure which batch performed best, then tune the next distribution with data.",
+      "useCases": {
+        "distribution": {
+          "title": "Optimize distribution batches",
+          "body": "Area A: 500 flyers → 80 visitors. Area B: 500 → 5. Increase A next time and reduce B."
+        },
+        "distributor": {
+          "title": "Compare distributor performance",
+          "body": "Distributor A: 1,000 flyers → 120 visits. B: 1,000 → 18. Useful for settlement, validation, and indirect proof of distribution."
+        },
+        "copy": {
+          "title": "A/B test copy and design",
+          "body": "\"Free consultation\" vs \"50% off first month\" — run two versions in the same area and see which earns clicks."
+        },
+        "location": {
+          "title": "Plan by location",
+          "body": "Station exit responds well, residential street does not — choose the next poster or banner spot accordingly."
+        },
+        "reuse": {
+          "title": "Reuse QR after the campaign",
+          "body": "Event ended but posters remain? Route expired QR codes to reviews, a waitlist, or the next promotion."
+        },
+        "conversion": {
+          "title": "Track beyond clicks",
+          "body": "Measure inquiries, bookings, coupon downloads, and purchases so you know which batch created real customers."
+        }
+      },
+      "flowLabel": "Repeatable loop",
+      "flowSteps": ["Distribute", "Measure batches", "Tune next run", "Route after end"],
+      "createCta": "Create first QR campaign",
+      "createHint": "For the first campaign, you only need a name and an end time."
+    }
+  },
+  "qrDownload": {
+    "zipTitle": "Download QR ZIP",
+    "singleTitle": "Download {name} QR",
+    "zipDescription": "All batch QR codes in one package, ready to hand off to a printer or designer.",
+    "singleDescription": "QR PNG for one distribution batch.",
+    "confirm": "Download",
+    "sizeLabel": "Size",
+    "sizes": {
+      "preview": "Preview",
+      "online": "Online post",
+      "print": "Standard print",
+      "poster": "Large poster"
+    },
+    "ecLabel": "Damage tolerance (Error correction)",
+    "ecHint": "Use a higher level for outdoor or dirty environments.",
+    "ec": {
+      "data": "Data priority",
+      "standard": "Standard",
+      "outdoor": "Outdoor / dirty",
+      "maximum": "Maximum protection"
+    },
+    "labelText": "Label text",
+    "labelHint": "Print the batch name below the QR so printers can identify it.",
+    "labelCheckbox": "Print batch name below QR",
+    "notSaved": "Download options are not saved. You can download the same campaign multiple times with different options."
   },
   "qrCampaigns": {
     "meta": {

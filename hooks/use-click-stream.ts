@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { readToken } from "@/lib/api";
+import { readToken, request, withBase } from "@/lib/api";
 
 export type LiveClick = {
   id: number;
@@ -27,6 +27,15 @@ type UseClickStreamOptions = {
   onTick?: () => void;
 };
 
+type StreamTokenResponse = {
+  streamToken: string;
+};
+
+type StreamCredential = {
+  param: "claimToken" | "streamToken";
+  value: string;
+};
+
 export type UseClickStreamResult = {
   items: LiveClick[];
   /** True once the backend has sent the {@code ready} event. */
@@ -38,9 +47,10 @@ export type UseClickStreamResult = {
 const DEFAULT_MAX = 30;
 
 /**
- * Subscribes to {@code /api/v1/links/{code}/stream} via {@link EventSource}. Auth uses the claim
- * token when provided (anonymous links on the landing result card) or falls back to the access JWT
- * (authenticated dashboard / stats). Auto-reconnects with exponential backoff and closes on unmount.
+ * Subscribes to {@code /api/v1/links/{code}/stream} via {@link EventSource}. Anonymous landing
+ * cards use their claim token; authenticated pages first exchange the access JWT for a short-lived,
+ * short-code-scoped stream token so the long-lived JWT never appears in an EventSource URL.
+ * Auto-reconnects with exponential backoff and closes on unmount.
  *
  * <p>The {@code onTick} callback is read from a ref so the EventSource isn't torn down on every
  * parent re-render that hands in a fresh closure identity.
@@ -61,24 +71,47 @@ export function useClickStream(
   }, [onTick]);
 
   useEffect(() => {
-    const token = claimToken ?? readToken();
-    if (!token) return;
+    if (!claimToken && !readToken()) return;
 
     let es: EventSource | null = null;
     let cancelled = false;
     let backoff = 1000;
     let timer: ReturnType<typeof setTimeout> | null = null;
 
-    function open() {
+    function scheduleReconnect() {
       if (cancelled) return;
-      const base =
-        process.env.NEXT_PUBLIC_API_BASE ??
-        process.env.NEXT_PUBLIC_BACKEND_URL ??
-        (process.env.NODE_ENV === "development" ? "http://localhost:8080" : "");
-      const param = claimToken ? "claimToken" : "token";
-      const url = `${base}/api/v1/links/${shortCode}/stream?${param}=${encodeURIComponent(token!)}`;
+      timer = setTimeout(() => {
+        backoff = Math.min(backoff * 2, 30_000);
+        void open();
+      }, backoff);
+    }
+
+    async function credential(): Promise<StreamCredential> {
+      if (claimToken) return { param: "claimToken", value: claimToken };
+      const data = await request<StreamTokenResponse>(
+        `/api/v1/links/${shortCode}/stream-token`,
+        { method: "POST" },
+      );
+      return { param: "streamToken", value: data.streamToken };
+    }
+
+    async function open() {
+      if (cancelled) return;
+      let auth: StreamCredential;
+      try {
+        auth = await credential();
+      } catch {
+        setConnected(false);
+        scheduleReconnect();
+        return;
+      }
+      if (cancelled) return;
+      const url = `${withBase(`/api/v1/links/${shortCode}/stream`)}?${auth.param}=${encodeURIComponent(auth.value)}`;
       es = new EventSource(url);
-      es.addEventListener("ready", () => setConnected(true));
+      es.addEventListener("ready", () => {
+        backoff = 1000;
+        setConnected(true);
+      });
       es.addEventListener("click", (event) => {
         try {
           const payload = JSON.parse((event as MessageEvent).data);
@@ -93,15 +126,11 @@ export function useClickStream(
       es.onerror = () => {
         setConnected(false);
         es?.close();
-        if (cancelled) return;
-        timer = setTimeout(() => {
-          backoff = Math.min(backoff * 2, 30_000);
-          open();
-        }, backoff);
+        scheduleReconnect();
       };
     }
 
-    open();
+    void open();
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);

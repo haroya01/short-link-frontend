@@ -43,6 +43,7 @@
     "INTERNAL_ERROR": "サーバエラーが発生しました。後でもう一度お試しください。"
   },
   "cookieConsent": {
+    "ariaLabel": "Cookieのお知らせ",
     "message": "ログイン保持のための必須クッキーのみを使用します。分析/広告用は使いません。",
     "accept": "同意する",
     "learnMore": "詳細"
@@ -150,6 +151,7 @@
     "ctaSubhead": "登録してお好きな名前を決めるだけ。写真 · リンク · お店の住所 · 連絡先を入れれば、下の例のように仕上がります。",
     "cta": "プロフィールを作る",
     "metaSuffix": "サンプル",
+    "metaFallbackTitle": "{handle} · kurl サンプル",
     "sampleBanner": "サンプル · 登録後、ご自身のページも作れます",
     "sampleCta": "プロフィールを作る",
     "scrollCue": "実例を見る",
@@ -286,16 +288,16 @@
     },
     "ops": {
       "totalClicks": "総クリック",
-      "totalClicksHint": "この一覧の累計成果",
+      "totalClicksHint": "一覧全体の累計",
       "weekClicks": "直近7日",
-      "weekClicksHint": "直近の動向を確認",
-      "zeroClick": "未クリックリンク",
-      "zeroClickReview": "掲載場所や CTA を見直してください",
+      "weekClicksHint": "直近の動き",
+      "zeroClick": "未クリック",
+      "zeroClickReview": "掲載場所・CTAを見直し",
       "zeroClickClear": "すべてのリンクにクリックがあります",
-      "expiring": "3日以内に期限切れ",
-      "expiringReview": "延長または削除の判断が必要です",
-      "expiringClear": "すぐに期限切れになるリンクはありません",
-      "topLink": "成果トップのリンク",
+      "expiring": "期限切れ間近",
+      "expiringReview": "延長または削除を検討",
+      "expiringClear": "期限切れ間近はありません",
+      "topLink": "トップリンク",
       "topLinkEmpty": "まだ比較できるリンクがありません",
       "clicks": "クリック",
       "copy": "コピー",
@@ -671,7 +673,9 @@
       }
     },
     "noData": "データなし",
+    "referrerNoData": "リファラーデータはありません",
     "noClicks": "まだクリックがありません",
+    "clickCount": "{count}回",
     "noUtm": "UTMキャンペーンデータなし",
     "noBot": "ボットクリックなし",
     "weekday": {
@@ -696,7 +700,8 @@
     "countryTable": {
       "country": "国",
       "clicks": "クリック",
-      "share": "比率"
+      "share": "比率",
+      "unknown": "不明"
     },
     "heatmap": {
       "less": "少",
@@ -924,7 +929,14 @@
     "errorTitle": "問題が発生しました",
     "errorDesc": "しばらくしてから再試行してください。",
     "retry": "再試行",
-    "loading": "読み込み中..."
+    "loading": "読み込み中...",
+    "confirm": "確認",
+    "cancel": "キャンセル",
+    "processing": "処理中...",
+    "copy": "コピー",
+    "copied": "コピー済み",
+    "copyFailed": "コピーに失敗しました",
+    "close": "閉じる"
   },
   "notFound": {
     "title": "ページが見つかりません",
@@ -936,6 +948,7 @@
     "triggerAria": "QR コードを開く",
     "copyUrl": "URL をコピー",
     "copied": "コピー済み",
+    "copyFailed": "コピーに失敗しました",
     "downloadPng": "PNG をダウンロード",
     "close": "閉じる",
     "srcLabel": "トラッキングタグ (任意)",
@@ -1313,6 +1326,7 @@
       "bioPlaceholder": "例: フルスタック開発者 · サイドプロジェクト開発中",
       "themeLabel": "テーマ",
       "socialsLabel": "共有 / SNS ボタン",
+      "socialKakaoLabel": "KakaoTalk チャンネル",
       "socialsHint": "公開ページの下に表示する SNS を選んでください。それぞれにご自身のアカウント URL を入れると、訪問者がそのまま遷移します。最大 2 つまで、選んだ順に表示されます。",
       "socialsCount": "{count}/{max} 選択",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
@@ -1324,6 +1338,7 @@
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "有効な http(s) URL を入力してください。",
       "previewTitle": "公開ページのライブプレビュー",
+      "closePreview": "プレビューを閉じる",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "ここに自己紹介が表示されます",
       "profileInfoToggle": "プロフィール情報 (username · 自己紹介 · テーマ)",
@@ -1483,6 +1498,7 @@
       "emailFormHowItWorks": "訪問者が残したメールはオーナーだけが見られる 'leads' ダッシュボードに集約されます。CSV エクスポートで Mailchimp などに取り込めます。",
       "emailFormViewLeadsCta": "収集したメールを見る",
       "leadsLink": "収集したメール",
+      "leadsDisabledTitle": "メールフォームを追加すると、ここでリードを確認できます",
       "stats": {
         "title": "プロフィール訪問統計",
         "intro": "/u/username を誰がどこから見たか — 短縮リンクの統計と同じ詳しさで。",
@@ -1797,9 +1813,288 @@
     "privateBadge": "非公開",
     "shareButton": "公開 URL をコピー",
     "shareCopied": "コピーしました",
+    "shareCopyFailed": "コピーに失敗しました",
     "togglePublic": "統計を公開する",
     "togglePrivate": "統計を非公開にする",
     "toggleFailed": "公開設定の更新に失敗しました。"
+  },
+  "campaignApp": {
+    "entry": {
+      "title": "QR キャンペーン",
+      "badge": "オフライン",
+      "description": "ポスターやチラシを複数の配布バッチに分け、どのバッチの反応が良かったかを測定します。通常の短縮 URL とは別のモードです。",
+      "cta": "始める"
+    },
+    "batchCard": {
+      "quantityUnit": "{count}枚",
+      "distributor": "配布担当 · {name}",
+      "downloadQr": "{name} の QR をダウンロード",
+      "edit": "{name} を編集",
+      "delete": "{name} を削除"
+    },
+    "batchDialogs": {
+      "editTitle": "配布バッチを編集",
+      "editDescription": "名前・配布担当・エリア・数量・メモのみ編集できます。印刷済み QR の短縮 URL は変わりません。",
+      "save": "保存",
+      "updated": "配布バッチを更新しました",
+      "updateFailed": "更新に失敗しました",
+      "name": "バッチ名",
+      "distributor": "配布担当",
+      "area": "エリア",
+      "quantity": "数量",
+      "memo": "メモ",
+      "deleteTitle": "配布バッチを削除",
+      "delete": "削除",
+      "deleted": "配布バッチを削除しました",
+      "deleteFailed": "削除に失敗しました",
+      "deleteWarningTitle": "短縮 URL も削除されます。",
+      "deleteWarningBody": "印刷済み QR を読み取るとリンクなしページが表示されます。発注前なら安全ですが、配布後は終了ポリシーで生かす運用を先に検討してください。",
+      "quantityUnit": "{count}枚"
+    },
+    "new": {
+      "loginRequired": "ログインが必要です",
+      "goToLogin": "ログインへ",
+      "created": "QR キャンペーンを作成しました",
+      "createFailed": "QR キャンペーンの作成に失敗しました",
+      "backToList": "QR キャンペーン一覧",
+      "title": "新しい QR キャンペーン",
+      "intro": "期間と終了ポリシーを決めると、その中に配布バッチを作成できます。",
+      "nameLabel": "QR キャンペーン名",
+      "namePlaceholder": "例: 新宿 春ポスター配布",
+      "startLabel": "開始時点",
+      "startHint": "基本は「今すぐ開始」。発注や印刷日程に合わせる場合のみ予約します。",
+      "startNow": "今すぐ開始",
+      "startSchedule": "開始時刻を予約",
+      "endLabel": "終了時点",
+      "endHint": "終了後、印刷済み QR は下のポリシーに従います。",
+      "defaultUrlLabel": "デフォルト遷移先 URL",
+      "defaultUrlHint": "空にすると、各バッチごとに URL を指定する必要があります。",
+      "postEndLabel": "終了後の動作",
+      "policy": {
+        "keepTitle": "そのまま維持",
+        "keepBody": "終了後も印刷済み QR は元の URL に移動します。",
+        "expireTitle": "終了ページを表示",
+        "expireBody": "QR を読み取るとキャンペーン終了メッセージを表示します。",
+        "redirectTitle": "別ページへ自動転送",
+        "redirectBody": "レビュー、次回キャンペーン、待機リストなど任意の URL に送れます。"
+      },
+      "messagePlaceholder": "例: このキャンペーンは終了しました。次回イベントは12月です。\n問い合わせ — @kurl_official",
+      "messageHint": "空の場合は標準メッセージを表示します。改行はそのまま反映されます ·",
+      "redirectHint": "キャンペーン終了時に、印刷済み QR へ一括適用される転送先 URL です。",
+      "cancel": "キャンセル",
+      "creating": "作成中...",
+      "submit": "QR キャンペーンを作成"
+    },
+    "detail": {
+      "loadFailed": "読み込みに失敗しました",
+      "loginRequired": "ログインが必要です",
+      "backToList": "QR キャンペーン一覧",
+      "confirmEnd": "この QR キャンペーンを今すぐ終了しますか？\n終了ポリシーが印刷済み QR に即時適用されます。",
+      "ended": "QR キャンペーンを終了しました",
+      "endFailed": "終了に失敗しました",
+      "reapplied": "終了ポリシーを再適用しました",
+      "reapplyFailed": "再適用に失敗しました",
+      "confirmArchive": "この QR キャンペーンをアーカイブしますか？\n一覧から非表示になりますが、データは保持されます。",
+      "archived": "QR キャンペーンをアーカイブしました",
+      "archiveFailed": "アーカイブに失敗しました",
+      "cancel": "キャンセル",
+      "actions": {
+        "stats": "分析",
+        "endNow": "今すぐ終了",
+        "reapply": "終了ポリシーを再適用",
+        "archive": "アーカイブ"
+      },
+      "prepare": {
+        "eyebrow": "配布準備",
+        "title": "印刷所・Canva に渡す素材",
+        "description": "{count}個のバッチの QR コードとメタ情報。ポスターやチラシに配置して発注できます。",
+        "printSheet": "A4 シート",
+        "posterBuilder": "ポスターに QR"
+      },
+      "policy": {
+        "eyebrow": "終了後の動作",
+        "keep": "そのまま維持",
+        "expire": "終了ページを表示",
+        "redirect": "別ページへ自動転送",
+        "savedEnded": "メッセージを保存しました。印刷済み QR に反映するには終了ポリシーを再適用してください。",
+        "saved": "終了ページメッセージを保存しました",
+        "saveFailed": "保存に失敗しました",
+        "messageLabel": "終了ページメッセージ",
+        "edit": "編集",
+        "add": "追加",
+        "messagePlaceholder": "例: このキャンペーンは終了しました。次回イベントは12月です。",
+        "saving": "保存中...",
+        "save": "保存",
+        "defaultMessageHint": "メッセージを空にすると標準案内文が表示されます。",
+        "defaultDestination": "デフォルト遷移先 URL · {url}"
+      },
+      "batches": {
+        "title": "配布バッチ",
+        "description": "同じ QR を複数枚印刷して配布する単位です。配布担当・エリア別に分けると分析が意味を持ちます。",
+        "add": "配布バッチを追加",
+        "emptyTitle": "配布バッチはまだありません",
+        "emptyDescription": "最初のバッチを追加すると QR コードが発行されます。印刷・発注前にスキャンして動作確認できます。",
+        "addFirst": "最初の配布バッチを追加"
+      }
+    },
+    "batchesNew": {
+      "loadFailed": "読み込みに失敗しました",
+      "pasteEmpty": "貼り付けたテキストに行が見つかりません",
+      "pasteAdded": "{count}行を追加しました",
+      "created": "{count}個の配布バッチを作成しました",
+      "createFailed": "作成に失敗しました",
+      "loginRequired": "ログインが必要です",
+      "backToCampaign": "QR キャンペーンへ",
+      "title": "配布バッチを追加",
+      "introCampaign": "<name></name> の新しいバッチ。",
+      "addRow": "行を追加",
+      "pasteToggle": "スプレッドシートから貼り付け",
+      "defaultUrlActive": "<strong>デフォルト遷移先 URL を使用中。</strong> 遷移先欄を空にすると <code></code> が自動で入ります。別 URL を使うバッチだけ入力してください。",
+      "defaultUrlMissing": "<strong>デフォルト遷移先 URL が設定されていません。</strong> 各バッチに遷移先 URL を入力してください。",
+      "fields": {
+        "name": "バッチ名",
+        "distributor": "配布担当",
+        "area": "エリア",
+        "quantity": "数量",
+        "destinationUrl": "遷移先 URL"
+      },
+      "compareHint": "比較分析に使用",
+      "placeholders": {
+        "name": "例: 新宿駅東口",
+        "distributor": "A または配布担当名",
+        "defaultValue": "(デフォルト)"
+      },
+      "hints": {
+        "defaultOptional": "空ならデフォルト使用",
+        "defaultRequired": "必須 (デフォルトなし)"
+      },
+      "errors": {
+        "nameRequired": "バッチ名は必須です",
+        "quantityRequired": "数量は必須です",
+        "quantityPositive": "正の整数",
+        "destinationRequired": "キャンペーンのデフォルト URL なし — 必須",
+        "destinationUrl": "http:// または https:// URL"
+      },
+      "removeRow": "{index}行目を削除",
+      "pasteTitle": "スプレッドシート行を貼り付け",
+      "pasteColumns": "列順: <code>バッチ名 / 配布担当 / エリア / 数量 / 遷移先 URL / メモ</code> (タブまたはカンマ区切り)",
+      "close": "閉じる",
+      "pastePlaceholder": "新宿駅東口\tA\tShinjuku East\t500\t\n大久保\tB\tOkubo\t300\thttps://example.com/okubo",
+      "pasteZeroRows": "0行",
+      "pastePreviewRows": "{count}行を認識",
+      "cancel": "キャンセル",
+      "pasteApply": "{count}行を追加",
+      "invalidRows": "{count}行に入力エラーがあります。赤いセルを修正してください。",
+      "summary": "<strong>{rowCount}</strong>個のバッチ · <strong>{totalQuantity}</strong>枚を印刷・配布予定",
+      "creating": "作成中...",
+      "submit": "{count}個のバッチを作成"
+    },
+    "posterBuilder": {
+      "loadFailed": "読み込みに失敗しました",
+      "pdfOnly": "PDF ファイルのみアップロードできます",
+      "pdfReadFailed": "PDF を読み込めませんでした。破損している可能性があります。",
+      "composed": "{count}ページの結合 PDF を作成しました",
+      "composeFailed": "合成に失敗しました",
+      "loginRequired": "ログインが必要です",
+      "backToCampaign": "QR キャンペーンへ",
+      "title": "ポスターに QR を配置",
+      "introCampaign": "<name></name> · 全配布バッチ ({count}個) ごとに PDF ページを複製し、それぞれ別 QR を配置して結合 PDF をダウンロードします。",
+      "toolHint": "Canva・InDesign・PowerPoint などでデザインを仕上げて PDF を書き出し、ここでは QR の位置だけ指定します。デザインツールではなく座標合成ツールです。",
+      "targetLabel": "合成対象",
+      "targetSummary": "<strong>{count}個</strong>の配布バッチ · 結果は<strong>{pages}ページ</strong>の PDF",
+      "noBatchesHint": "先に配布バッチを追加してください。(QR キャンペーン詳細 → 配布バッチを追加)",
+      "composing": "合成中...",
+      "download": "結合 PDF をダウンロード ({count}ページ)",
+      "notSavedHint": "QR の位置は保存されません。同じ PDF で戻っても、ボックスは再度指定してください。",
+      "dropTitle": "PDF をドロップ、またはクリックしてアップロード",
+      "dropSubtitle": "1ページ PDF · Canva/InDesign 書き出し推奨",
+      "removePdf": "PDF を削除",
+      "otherPdf": "別の PDF",
+      "dragHint": "QR ボックスをドラッグして移動し、右下ハンドルでサイズを調整します。",
+      "previewFirstBatch": "プレビューは最初のバッチ (全 {count} 個中 1番目) です。各バッチには別の QR が入ります。",
+      "previewPlaceholder": "配布バッチがないため placeholder QR でプレビューしています。実際の合成はバッチ追加後に可能です。",
+      "boxAria": "QR ボックスの位置とサイズ",
+      "qrPreviewAlt": "QR プレビュー"
+    },
+    "printSheet": {
+      "loadFailed": "読み込みに失敗しました",
+      "loginRequired": "ログインが必要です",
+      "backToCampaign": "QR キャンペーンへ",
+      "title": "A4 QR シート",
+      "introCampaign": "<name></name> · ブラウザ印刷で PDF 保存 (Cmd/Ctrl + P)。",
+      "print": "印刷",
+      "empty": "印刷する配布バッチがありません。先に追加してください。",
+      "perPage": "1ページあたり",
+      "layouts": {
+        "comfortable": { "label": "12個 (3×4)", "hint": "余裕あり · 名刺サイズ" },
+        "standard": { "label": "20個 (4×5)", "hint": "標準" },
+        "dense": { "label": "30個 (5×6)", "hint": "密 · 小ラベル" }
+      },
+      "showLabel": "ラベル表示",
+      "cutMarks": "カット線",
+      "pagePerBatch": "バッチごとに1ページ"
+    },
+    "campaignStats": {
+      "loadFailed": "読み込みに失敗しました",
+      "loginRequired": "ログインが必要です",
+      "backToCampaign": "QR キャンペーンへ",
+      "title": "分析",
+      "introCampaign": "<name></name> · 開始後のクリックのみ集計。ボット/プレビューは除外。",
+      "loading": "読み込み中...",
+      "groups": {
+        "distributorTitle": "配布担当別の成果",
+        "distributorHint": "100枚あたりクリック率 — 配布数が違っても効率を比較できます。",
+        "areaTitle": "エリア別の成果",
+        "areaHint": "次の配布場所を決める基準です。",
+        "tooltip": "{rate}回 / 100枚 · クリック {clicks} / 配布 {quantity}",
+        "efficiency": "効率"
+      },
+      "compare": {
+        "title": "他キャンペーンと比較",
+        "description": "1回目 vs 2回目、または別シーズンの効率を比較します。",
+        "none": "— 比較なし —",
+        "current": "現在",
+        "comparison": "比較",
+        "selectHint": "上のドロップダウンから比較するキャンペーンを選択してください。"
+      },
+      "kpi": {
+        "totalClicks": "総クリック",
+        "perHundred": "100枚あたり",
+        "topArea": "Top エリア",
+        "batches": "配布バッチ",
+        "totalDistributed": "総印刷・配布",
+        "perHundredHint": "平均効率 (クリック / 配布 × 100)"
+      },
+      "units": {
+        "count": "{count}個",
+        "sheets": "{count}枚"
+      },
+      "recommendation": {
+        "title": "次回配布のおすすめ",
+        "description": "現在合計 {total}枚 — 同じ総量で再配分。平均 100枚あたり {average} 基準",
+        "footnote": "効率比率に基づくおすすめ。平均の30%未満は削減し、残りを比率で再配分します (1バッチ最大3倍)。",
+        "verdict": { "BOOST": "増加", "KEEP": "維持", "REDUCE": "減少", "PRUNE": "削除" },
+        "rowMeta": "{current} → {recommended}枚 · 100枚あたり {rate}"
+      },
+      "daily": { "title": "日別クリック", "description": "キャンペーン開始以降" },
+      "hourly": {
+        "title": "時間帯別クリック",
+        "description": "0–23時",
+        "tooltip": "{hour}時: {clicks}"
+      },
+      "heatmap": { "title": "曜日 × 時間帯分布", "description": "濃いほどクリックが多い時間帯です。" },
+      "testScans": {
+        "title": "開始前テストスキャン",
+        "description": "<strong>{count}回</strong> — キャンペーン開始前。分析合計から除外されます。",
+        "last": "最後のテスト · {date}"
+      },
+      "byBatch": {
+        "empty": "配布バッチはまだありません。追加するとここにバッチ別成果が表示されます。",
+        "title": "バッチ別の成果",
+        "description": "クリック数の降順。バーは最大値に対する相対比です。",
+        "meta": "/ {quantity}枚 · {rate}%"
+      }
+    }
   },
   "homeFaq": {
     "title": "よくある質問",
@@ -1821,6 +2116,79 @@
     "ACTIVE": "運用中",
     "ENDED": "終了",
     "ARCHIVED": "アーカイブ"
+  },
+  "campaignsApp": {
+    "authTitle": "ログインが必要です",
+    "authDesc": "QRキャンペーンはログイン中のユーザーのみ利用できます。",
+    "loginCta": "ログインへ進む",
+    "title": "QRキャンペーン",
+    "subtitleLoading": "オフラインQR配布の運用単位",
+    "subtitleCount": "{count}件のQRキャンペーン。",
+    "loadFailed": "QRキャンペーンを読み込めませんでした。",
+    "newCampaign": "新しいQRキャンペーン",
+    "batchCount": "{count}件の束",
+    "details": "詳細",
+    "onboarding": {
+      "eyebrow": "Offline campaigns",
+      "title": "オフライン施策をオンライン広告のように改善",
+      "body": "ポスター・チラシ・QRを配布者、地域、束ごとに分け、どの束が成果を出したかを測定します。次の配布はそのデータで調整できます。",
+      "useCases": {
+        "distribution": {
+          "title": "配布束を最適化",
+          "body": "A地域 500枚 → 80人、B地域 500枚 → 5人。次回はAを増やし、Bを減らす判断ができます。"
+        },
+        "distributor": {
+          "title": "配布者の成果を比較",
+          "body": "A配布者 1000枚 → 120、B 1000枚 → 18。精算・検証や、実際に配布されたかの間接確認に使えます。"
+        },
+        "copy": {
+          "title": "文言・デザインA/Bテスト",
+          "body": "「無料相談」vs「初月50%オフ」など、同じ地域で2パターンを配り、クリックにつながる表現を比較します。"
+        },
+        "location": {
+          "title": "場所別の営業戦略",
+          "body": "駅前は反応が高く、住宅街は低い。次のポスターや横断幕の設置場所を選びやすくなります。"
+        },
+        "reuse": {
+          "title": "終了後もQRを再利用",
+          "body": "イベント終了後もポスターが残る場合、期限後はレビュー、待機リスト、次のキャンペーンへ自動転送できます。"
+        },
+        "conversion": {
+          "title": "コンバージョンまで追跡",
+          "body": "クリックだけでなく、問い合わせ・予約・クーポンDL・購入まで見て、本当に顧客を生んだ束を把握します。"
+        }
+      },
+      "flowLabel": "繰り返せるループ",
+      "flowSteps": ["配布", "束ごとに測定", "次回配布を調整", "終了後に転送"],
+      "createCta": "最初のQRキャンペーンを作成",
+      "createHint": "最初はキャンペーン名と終了時刻を決めるだけで始められます。"
+    }
+  },
+  "qrDownload": {
+    "zipTitle": "QR ZIPをダウンロード",
+    "singleTitle": "{name} のQRをダウンロード",
+    "zipDescription": "キャンペーン内のすべての配布束QRをまとめたファイルです。印刷会社やデザイナーへそのまま渡せます。",
+    "singleDescription": "単一配布束のQR PNGです。",
+    "confirm": "ダウンロード",
+    "sizeLabel": "サイズ",
+    "sizes": {
+      "preview": "プレビュー",
+      "online": "オンライン掲載",
+      "print": "標準印刷",
+      "poster": "大型ポスター"
+    },
+    "ecLabel": "破損許容 (Error correction)",
+    "ecHint": "屋外や汚れやすい環境では高めに設定してください。",
+    "ec": {
+      "data": "データ優先",
+      "standard": "標準",
+      "outdoor": "屋外・汚れ",
+      "maximum": "最大保護"
+    },
+    "labelText": "ラベルテキスト",
+    "labelHint": "QRの下に束名を小さく入れると印刷時に識別しやすくなります。",
+    "labelCheckbox": "QRの下に束名を印刷",
+    "notSaved": "ダウンロード設定は保存されません。同じキャンペーンを別の設定で何度でもダウンロードできます。"
   },
   "qrCampaigns": {
     "meta": {

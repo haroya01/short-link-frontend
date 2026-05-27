@@ -10,17 +10,19 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useTranslations } from "next-intl";
 import type { DailyClick } from "@/types";
 
 type Props = { data: DailyClick[] };
 
 export function DailyChart({ data }: Props) {
+  const t = useTranslations("stats");
   // On mobile (< 640 px) the recharts default Y-axis tick label needs the full computed track
   // width — pulling the chart back with `left: -16` cuts off "100" / "1k" on narrow viewports.
   // Desktop keeps the original tighter offset because the wider parent absorbs the axis cleanly.
   const isMobile = useIsMobile();
   if (data.length === 0) {
-    return <p className="py-12 text-center text-xs text-slate-500">아직 클릭이 없어요</p>;
+    return <p className="py-12 text-center text-xs text-slate-500">{t("noClicks")}</p>;
   }
   return (
     <div className="h-72 w-full">
@@ -60,7 +62,7 @@ export function DailyChart({ data }: Props) {
               boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
               padding: "8px 12px",
             }}
-            formatter={(value) => [`${value}회`, "클릭"]}
+            formatter={(value) => [t("clickCount", { count: String(value) }), t("countryTable.clicks")]}
             labelFormatter={(label: string) => label}
           />
           <Area

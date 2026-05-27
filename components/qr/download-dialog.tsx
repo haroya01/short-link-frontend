@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import {
   campaignBatchQrUrl,
   campaignBatchesZipUrl,
-  readToken,
+  requestBlob,
   type QrDownloadOptions,
 } from "@/lib/api";
 
@@ -16,18 +17,18 @@ type Target =
 
 const DEFAULTS: QrDownloadOptions = { size: 512, ec: "M", label: false };
 
-const SIZE_OPTIONS: { value: QrDownloadOptions["size"]; label: string; hint: string }[] = [
-  { value: 256, label: "256 px", hint: "미리보기" },
-  { value: 512, label: "512 px", hint: "온라인 게시" },
-  { value: 1024, label: "1024 px", hint: "일반 인쇄" },
-  { value: 2048, label: "2048 px", hint: "대형 포스터" },
+const SIZE_OPTIONS: { value: QrDownloadOptions["size"]; label: string; hintKey: string }[] = [
+  { value: 256, label: "256 px", hintKey: "preview" },
+  { value: 512, label: "512 px", hintKey: "online" },
+  { value: 1024, label: "1024 px", hintKey: "print" },
+  { value: 2048, label: "2048 px", hintKey: "poster" },
 ];
 
-const EC_OPTIONS: { value: QrDownloadOptions["ec"]; label: string; hint: string }[] = [
-  { value: "L", label: "L · 7%", hint: "데이터 우선" },
-  { value: "M", label: "M · 15%", hint: "표준" },
-  { value: "Q", label: "Q · 25%", hint: "야외·오염" },
-  { value: "H", label: "H · 30%", hint: "최대 보호" },
+const EC_OPTIONS: { value: QrDownloadOptions["ec"]; label: string; hintKey: string }[] = [
+  { value: "L", label: "L · 7%", hintKey: "data" },
+  { value: "M", label: "M · 15%", hintKey: "standard" },
+  { value: "Q", label: "Q · 25%", hintKey: "outdoor" },
+  { value: "H", label: "H · 30%", hintKey: "maximum" },
 ];
 
 /**
@@ -43,6 +44,7 @@ export function QrDownloadDialog({
   onOpenChange: (v: boolean) => void;
   target: Target | null;
 }) {
+  const t = useTranslations("qrDownload");
   const [size, setSize] = useState<QrDownloadOptions["size"]>(DEFAULTS.size);
   const [ec, setEc] = useState<QrDownloadOptions["ec"]>(DEFAULTS.ec);
   const [label, setLabel] = useState<boolean>(DEFAULTS.label);
@@ -68,11 +70,12 @@ export function QrDownloadDialog({
     );
   }
 
-  const title = target.kind === "zip" ? "QR ZIP 다운로드" : `${target.batchName} QR 다운로드`;
+  const title =
+    target.kind === "zip" ? t("zipTitle") : t("singleTitle", { name: target.batchName });
   const description =
     target.kind === "zip"
-      ? "캠페인의 모든 배포 묶음 QR 을 한 묶음으로. 인쇄소·디자이너에게 통째로 넘길 자산."
-      : "단일 배포 묶음의 QR PNG.";
+      ? t("zipDescription")
+      : t("singleDescription");
 
   return (
     <ConfirmDialog
@@ -80,7 +83,7 @@ export function QrDownloadDialog({
       onOpenChange={onOpenChange}
       title={title}
       description={description}
-      confirmLabel="다운로드"
+      confirmLabel={t("confirm")}
       maxWidthClass="max-w-lg"
       onConfirm={async () => {
         const options: Partial<QrDownloadOptions> = { size, ec, label };
@@ -92,7 +95,7 @@ export function QrDownloadDialog({
       }}
     >
       <div className="space-y-4">
-        <OptionGroup label="크기">
+        <OptionGroup label={t("sizeLabel")}>
           <div className="grid grid-cols-4 gap-1.5">
             {SIZE_OPTIONS.map((opt) => (
               <SegmentButton
@@ -100,14 +103,14 @@ export function QrDownloadDialog({
                 active={size === opt.value}
                 onClick={() => setSize(opt.value)}
                 primary={opt.label}
-                secondary={opt.hint}
+                secondary={t(`sizes.${opt.hintKey}`)}
               />
             ))}
           </div>
         </OptionGroup>
         <OptionGroup
-          label="손상 허용 (Error correction)"
-          hint="외부 노출·오염이 많은 환경일수록 높게."
+          label={t("ecLabel")}
+          hint={t("ecHint")}
         >
           <div className="grid grid-cols-4 gap-1.5">
             {EC_OPTIONS.map((opt) => (
@@ -116,12 +119,12 @@ export function QrDownloadDialog({
                 active={ec === opt.value}
                 onClick={() => setEc(opt.value)}
                 primary={opt.label}
-                secondary={opt.hint}
+                secondary={t(`ec.${opt.hintKey}`)}
               />
             ))}
           </div>
         </OptionGroup>
-        <OptionGroup label="라벨 텍스트" hint="QR 아래 묶음 이름을 작게 박아 인쇄소가 식별 가능.">
+        <OptionGroup label={t("labelText")} hint={t("labelHint")}>
           <label className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 hover:bg-slate-50">
             <input
               type="checkbox"
@@ -129,12 +132,12 @@ export function QrDownloadDialog({
               onChange={(e) => setLabel(e.target.checked)}
               className="h-4 w-4 rounded border-slate-300 text-accent-600 focus:ring-accent-500"
             />
-            <span className="text-[13px] text-slate-700">QR 아래에 묶음 이름 인쇄</span>
+            <span className="text-[13px] text-slate-700">{t("labelCheckbox")}</span>
           </label>
         </OptionGroup>
         <div className="rounded-xl bg-slate-50 px-3 py-2 text-[11px] text-slate-500">
           <Download className="mr-1 inline-block h-3 w-3" aria-hidden />
-          다운로드 옵션은 저장되지 않습니다. 같은 캠페인을 여러 옵션으로 여러 번 다운로드할 수 있어요.
+          {t("notSaved")}
         </div>
       </div>
     </ConfirmDialog>
@@ -190,27 +193,11 @@ function SegmentButton({
 }
 
 async function triggerDownload(url: string) {
-  // JWT 가 localStorage 에 있어서 <a href> 단순 navigation 으로는 Authorization header 가
-  // 안 붙어 401. fetch + blob 패턴으로 인증 헤더 첨부 후 다운로드 트리거.
-  const token = readToken();
-  const headers = new Headers();
-  if (token) headers.set("Authorization", `Bearer ${token}`);
-
-  const res = await fetch(url, { credentials: "include", headers });
-  if (!res.ok) {
-    throw new Error(`Download failed: ${res.status}`);
-  }
-  const blob = await res.blob();
-
-  // server 의 Content-Disposition filename 을 그대로 사용. 헤더가 없으면 fallback name.
-  const cd = res.headers.get("Content-Disposition") ?? "";
-  const match = /filename="?([^"]+)"?/i.exec(cd);
-  const filename = match?.[1] ?? "download";
-
+  const { blob, filename } = await requestBlob(url, { method: "GET" });
   const blobUrl = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = blobUrl;
-  a.download = filename;
+  a.download = filename ?? "download";
   a.rel = "noopener";
   a.click();
   setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);

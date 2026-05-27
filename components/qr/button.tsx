@@ -208,7 +208,7 @@ function QrModal({
       toast(t("copied"), "success");
       setTimeout(() => setCopied(false), 1600);
     } catch {
-      toast("Failed", "error");
+      toast(t("copyFailed"), "error");
     }
   }
 
@@ -218,7 +218,7 @@ function QrModal({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="QR 코드"
+        aria-label={t("title")}
         className="relative w-full max-w-sm animate-fade-in rounded-lg border border-slate-200 bg-white shadow-xl"
       >
         <button

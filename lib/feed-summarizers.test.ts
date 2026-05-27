@@ -65,10 +65,10 @@ describe("productCardSummary", () => {
     ).toBe("메뉴 · 2");
   });
 
-  it("falls back to first-item name + 외 N건 when no title", () => {
+  it("falls back to first-item name + count when no title", () => {
     expect(
       productCardSummary(JSON.stringify({ items: [{ name: "딸기 케이크" }, {}, {}] })),
-    ).toBe("딸기 케이크 외 2건");
+    ).toBe("딸기 케이크 +2");
   });
 
   it("returns empty when items is empty", () => {

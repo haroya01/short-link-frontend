@@ -73,11 +73,11 @@ export type RequestInitWithBody = Omit<RequestInit, "body"> & {
   body?: BodyInit | object | null;
 };
 
-export async function request<T>(
+async function fetchWithAuth(
   path: string,
-  init: RequestInitWithBody = {},
-  retried = false,
-): Promise<T> {
+  init: RequestInitWithBody,
+  retried: boolean,
+): Promise<Response> {
   const headers = new Headers(init.headers);
   const hasJsonBody =
     init.body != null && typeof init.body === "object" && !(init.body instanceof FormData);
@@ -94,9 +94,19 @@ export async function request<T>(
 
   if (res.status === 401 && !retried) {
     const refreshed = await tryRefresh();
-    if (refreshed) return request<T>(path, init, true);
+    if (refreshed) return fetchWithAuth(path, init, true);
     setToken(null);
   }
+
+  return res;
+}
+
+export async function request<T>(
+  path: string,
+  init: RequestInitWithBody = {},
+  retried = false,
+): Promise<T> {
+  const res = await fetchWithAuth(path, init, retried);
 
   if (res.status === 204) return undefined as T;
 
@@ -104,34 +114,42 @@ export async function request<T>(
   const body = text ? safeParse(text) : null;
 
   if (!res.ok) {
-    const detail: ProblemDetail =
-      body && typeof body === "object"
-        ? { status: res.status, ...(body as object) }
-        : { status: res.status, detail: text || res.statusText };
-    // Leave a Sentry breadcrumb so the next captured exception (e.g. a React render that
-    // dereferences a failed response) carries the API context that produced it. requestId comes
-    // from the backend MdcFilter response header, so admin "recent errors" + Sentry can be
-    // cross-referenced on the same id.
-    // res.headers may be undefined under test fetch mocks — guard so a breadcrumb never breaks
-    // the request path.
-    const requestId = res.headers?.get?.("X-Request-Id") ?? null;
-    Sentry.addBreadcrumb({
-      category: "api",
-      type: "http",
-      level: res.status >= 500 ? "error" : "warning",
-      message: `${(init.method ?? "GET").toUpperCase()} ${path} → ${res.status}`,
-      data: {
-        status: res.status,
-        path,
-        method: (init.method ?? "GET").toUpperCase(),
-        code: (detail as { code?: string }).code,
-        requestId,
-      },
-    });
-    throw new ApiError(res.status, detail);
+    throw apiErrorFromResponse(path, init, res, body, text);
   }
 
   return body as T;
+}
+
+export async function requestText(
+  path: string,
+  init: RequestInitWithBody = {},
+  retried = false,
+): Promise<{ text: string; headers: Headers }> {
+  const res = await fetchWithAuth(path, init, retried);
+  const text = await res.text();
+  const body = text ? safeParse(text) : null;
+  if (!res.ok) {
+    throw apiErrorFromResponse(path, init, res, body, text);
+  }
+  return { text, headers: res.headers };
+}
+
+export async function requestBlob(
+  path: string,
+  init: RequestInitWithBody = {},
+  retried = false,
+): Promise<{ blob: Blob; filename: string | null; headers: Headers }> {
+  const res = await fetchWithAuth(path, init, retried);
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    const body = text ? safeParse(text) : null;
+    throw apiErrorFromResponse(path, init, res, body, text);
+  }
+  return {
+    blob: await res.blob(),
+    filename: filenameFromContentDisposition(res.headers.get("Content-Disposition") ?? ""),
+    headers: res.headers,
+  };
 }
 
 function safeParse(text: string): unknown {
@@ -140,6 +158,41 @@ function safeParse(text: string): unknown {
   } catch {
     return text;
   }
+}
+
+function apiErrorFromResponse(
+  path: string,
+  init: RequestInitWithBody,
+  res: Response,
+  body: unknown,
+  text: string,
+): ApiError {
+  const detail: ProblemDetail =
+    body && typeof body === "object"
+      ? { status: res.status, ...(body as object) }
+      : { status: res.status, detail: text || res.statusText };
+  const requestId = res.headers?.get?.("X-Request-Id") ?? null;
+  Sentry.addBreadcrumb({
+    category: "api",
+    type: "http",
+    level: res.status >= 500 ? "error" : "warning",
+    message: `${(init.method ?? "GET").toUpperCase()} ${path} → ${res.status}`,
+    data: {
+      status: res.status,
+      path,
+      method: (init.method ?? "GET").toUpperCase(),
+      code: (detail as { code?: string }).code,
+      requestId,
+    },
+  });
+  return new ApiError(res.status, detail);
+}
+
+function filenameFromContentDisposition(header: string): string | null {
+  const utf8 = /filename\*=UTF-8''([^;]+)/i.exec(header);
+  if (utf8?.[1]) return decodeURIComponent(utf8[1]);
+  const plain = /filename="?([^";]+)"?/i.exec(header);
+  return plain?.[1] ?? null;
 }
 
 import type { Me } from "@/types";

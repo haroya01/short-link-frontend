@@ -33,7 +33,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
   }
 
   function clearAll() {
-    onChange({ size: filters.size });
+    onChange({ size: filters.size, sort: filters.sort, dir: filters.dir });
   }
 
   return (

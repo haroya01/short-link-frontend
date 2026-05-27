@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, QrCode } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 /**
@@ -8,6 +9,7 @@ import { Link } from "@/i18n/navigation";
  * 알린다. 매번 보일 만큼 prominent 하되, "내 링크" 의 메인 자리를 빼앗지 않는 가벼운 톤.
  */
 export function CampaignsEntryCard() {
+  const t = useTranslations("campaignApp.entry");
   return (
     <Link
       href="/campaigns"
@@ -20,19 +22,18 @@ export function CampaignsEntryCard() {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h2 className="text-[15px] font-semibold leading-tight text-slate-900">
-              QR 캠페인
+              {t("title")}
             </h2>
             <span className="rounded-full bg-white px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent-700 ring-1 ring-accent-200">
-              오프라인
+              {t("badge")}
             </span>
           </div>
           <p className="mt-1 text-[12px] leading-snug text-slate-600 sm:text-[13px]">
-            포스터·전단지를 여러 묶음으로 나눠 뿌리고, 어느 묶음이 반응이 좋았는지 측정합니다. 일반 단축
-            URL 과는 다른 모드.
+            {t("description")}
           </p>
         </div>
         <div className="flex items-center gap-1.5 self-end text-[13px] font-medium text-accent-700 transition-transform group-hover:translate-x-0.5 sm:self-center">
-          시작하기
+          {t("cta")}
           <ArrowRight className="h-4 w-4" aria-hidden />
         </div>
       </div>

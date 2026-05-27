@@ -27,14 +27,6 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   display: "swap",
 });
-import { Footer } from "@/components/common/footer";
-import { CookieConsent } from "@/components/common/cookie-consent";
-import { ClaimToastListener } from "@/components/common/claim-toast-listener";
-import { Nav } from "@/components/common/nav";
-import { ToastProvider } from "@/components/ui/toast";
-import { PostHogProvider } from "@/components/common/posthog-provider";
-import { QueryProvider } from "@/components/common/query-provider";
-import { AuthProvider } from "@/lib/auth";
 import { routing } from "@/i18n/routing";
 
 // Single canonical domain. Cloudflare Worker (kurl-router) routes kurl.me/* to either the
@@ -180,19 +172,7 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <NextIntlClientProvider locale={locale}>
-          <QueryProvider>
-            <AuthProvider>
-              <PostHogProvider>
-                <ToastProvider>
-                  <Nav />
-                  <main className="flex-1">{children}</main>
-                  <Footer />
-                  <CookieConsent />
-                  <ClaimToastListener />
-                </ToastProvider>
-              </PostHogProvider>
-            </AuthProvider>
-          </QueryProvider>
+          {children}
         </NextIntlClientProvider>
         <script
           type="application/ld+json"

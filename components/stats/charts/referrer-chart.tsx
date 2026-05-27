@@ -9,13 +9,15 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useTranslations } from "next-intl";
 import type { ReferrerClick } from "@/types";
 
 type Props = { data: ReferrerClick[] };
 
 export function ReferrerChart({ data }: Props) {
+  const t = useTranslations("stats");
   if (data.length === 0) {
-    return <p className="py-8 text-center text-xs text-slate-500">레퍼러 데이터 없음</p>;
+    return <p className="py-8 text-center text-xs text-slate-500">{t("referrerNoData")}</p>;
   }
   const sorted = [...data].sort((a, b) => a.count - b.count).slice(-10);
   const formatted = sorted.map((d) => ({

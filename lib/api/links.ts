@@ -10,12 +10,11 @@ import type {
   MyLinksPage,
   OgOverrideRequest,
   OgOverrideResponse,
-  ProblemDetail,
   TagSummary,
   UpdateLinkRequest,
 } from "@/types";
 
-import { ApiError, readToken, request, setToken, withBase } from "./client";
+import { ApiError, readToken, request, requestText, setToken } from "./client";
 
 export async function shortenUrl(payload: CreateLinkRequest): Promise<CreateLinkResponse> {
   try {
@@ -68,6 +67,8 @@ export type MyLinksFilters = {
   expiry?: "NEVER" | "ACTIVE" | "EXPIRED" | "HAS_EXPIRY" | "EXPIRING_SOON";
   createdAfter?: string;
   createdBefore?: string;
+  sort?: "createdAt" | "clickCount";
+  dir?: "asc" | "desc";
 };
 
 export async function listMyLinks(params?: MyLinksFilters): Promise<MyLinksPage> {
@@ -80,8 +81,23 @@ export async function listMyLinks(params?: MyLinksFilters): Promise<MyLinksPage>
   if (params?.expiry) qs.set("expiry", params.expiry);
   if (params?.createdAfter) qs.set("createdAfter", params.createdAfter);
   if (params?.createdBefore) qs.set("createdBefore", params.createdBefore);
+  if (params?.sort) qs.set("sort", params.sort);
+  if (params?.dir) qs.set("dir", params.dir);
   const suffix = qs.toString() ? `?${qs}` : "";
   return request<MyLinksPage>(`/api/v1/links/me${suffix}`, { method: "GET" });
+}
+
+export async function listAllMyLinks(
+  params: Omit<MyLinksFilters, "after"> = {},
+): Promise<MyLink[]> {
+  const items: MyLink[] = [];
+  let after: string | undefined;
+  do {
+    const page = await listMyLinks({ ...params, size: params.size ?? 100, after });
+    items.push(...page.items);
+    after = page.hasMore ? page.nextCursor ?? undefined : undefined;
+  } while (after);
+  return items;
 }
 
 export async function listTags(): Promise<TagSummary[]> {
@@ -154,28 +170,13 @@ export async function claimAnonymousLinks(claimTokens: string[]): Promise<ClaimR
 export async function bulkImportLinks(file: File): Promise<BulkImportSummary> {
   const form = new FormData();
   form.append("file", file);
-  const token = readToken();
-  const headers = new Headers();
-  if (token) headers.set("Authorization", `Bearer ${token}`);
-  const res = await fetch(withBase("/api/v1/links/bulk"), {
+  const { text, headers } = await requestText("/api/v1/links/bulk", {
     method: "POST",
-    credentials: "include",
-    headers,
     body: form,
   });
-  const text = await res.text();
-  if (!res.ok) {
-    let parsed: ProblemDetail;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      parsed = { status: res.status, detail: text || res.statusText };
-    }
-    throw new ApiError(res.status, parsed);
-  }
   return {
-    ok: Number(res.headers.get("X-Bulk-Ok") ?? 0),
-    failed: Number(res.headers.get("X-Bulk-Failed") ?? 0),
+    ok: Number(headers.get("X-Bulk-Ok") ?? 0),
+    failed: Number(headers.get("X-Bulk-Failed") ?? 0),
     resultCsv: text,
   };
 }

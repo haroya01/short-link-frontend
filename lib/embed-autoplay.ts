@@ -1,18 +1,57 @@
 /**
- * Inject the provider's "autoplay" query param into an iframe HTML blob so the visitor's tap on
- * our facade thumbnail starts playback immediately. Each provider uses a different param name —
- * wrong/unknown host is a silent no-op, never an error. Spotify is intentionally skipped: their
- * embed API ignores autoplay for non-Premium-logged-in viewers and shows a single big play
- * button anyway.
+ * Converts provider-authored oEmbed HTML into one tightly controlled iframe. We keep the provider
+ * src when it belongs to a known embed host, add the autoplay flag where supported, then rebuild
+ * the iframe with a fixed safe attribute set. Scripts, inline handlers, srcdoc, and all unrelated
+ * tags are dropped.
  *
  * <p>Used by {@code EmbedEntryCard} after the oembed proxy returns the provider-authored iframe
  * markup. Lives in {@code lib/} (not co-located with the React component) so the logic is
  * vitest-importable as a pure function — no React, no DOM.
- *
- * <p>The replacement only mutates {@code <iframe src="...">} attributes; script blocks and
- * other tags pass through untouched. Idempotent: if the relevant param is already present we
- * don't duplicate it.
  */
+const ALLOWED_IFRAME_HOSTS = new Set([
+  "www.youtube.com",
+  "youtube.com",
+  "www.youtube-nocookie.com",
+  "youtube-nocookie.com",
+  "player.vimeo.com",
+  "open.spotify.com",
+  "w.soundcloud.com",
+]);
+
+const IFRAME_ALLOW =
+  "accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+const IFRAME_SANDBOX =
+  "allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox";
+
+export function sanitizeOembedHtml(html: string): string {
+  if (typeof DOMParser === "undefined" || typeof document === "undefined") return "";
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const source = doc.querySelector("iframe");
+  if (!source) return "";
+  const src = source.getAttribute("src");
+  if (!src) return "";
+
+  let parsed: URL;
+  try {
+    parsed = new URL(src);
+  } catch {
+    return "";
+  }
+  if (parsed.protocol !== "https:" || !ALLOWED_IFRAME_HOSTS.has(parsed.host.toLowerCase())) {
+    return "";
+  }
+
+  const iframe = document.createElement("iframe");
+  iframe.src = injectAutoplay(parsed.toString());
+  iframe.title = source.getAttribute("title") || "Embedded media";
+  iframe.allowFullscreen = true;
+  iframe.loading = "lazy";
+  iframe.referrerPolicy = "strict-origin-when-cross-origin";
+  iframe.setAttribute("allow", IFRAME_ALLOW);
+  iframe.setAttribute("sandbox", IFRAME_SANDBOX);
+  return iframe.outerHTML;
+}
+
 export function withAutoplay(html: string): string {
   return html.replace(
     /<iframe([^>]*?)\ssrc="([^"]+)"([^>]*)>/gi,
@@ -38,9 +77,18 @@ export function injectAutoplay(src: string): string {
 }
 
 export function autoplayParamFor(host: string): { name: string; value: string } | null {
-  if (host.endsWith("youtube.com") || host.endsWith("youtu.be"))
+  if (
+    isHostOrSubdomain(host, "youtube.com") ||
+    isHostOrSubdomain(host, "youtube-nocookie.com") ||
+    host.toLowerCase() === "youtu.be"
+  )
     return { name: "autoplay", value: "1" };
-  if (host.endsWith("vimeo.com")) return { name: "autoplay", value: "1" };
-  if (host.endsWith("soundcloud.com")) return { name: "auto_play", value: "true" };
+  if (isHostOrSubdomain(host, "vimeo.com")) return { name: "autoplay", value: "1" };
+  if (isHostOrSubdomain(host, "soundcloud.com")) return { name: "auto_play", value: "true" };
   return null;
+}
+
+function isHostOrSubdomain(host: string, domain: string): boolean {
+  const normalized = host.toLowerCase();
+  return normalized === domain || normalized.endsWith(`.${domain}`);
 }

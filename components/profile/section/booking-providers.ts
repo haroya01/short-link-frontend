@@ -13,6 +13,18 @@ type ProviderSpec = {
   name: string;
 };
 
+const NAVER_BOOKING_NAME = String.fromCharCode(0xb124, 0xc774, 0xbc84, 0x0020, 0xc608, 0xc57d);
+const KAKAO_CHANNEL_NAME = String.fromCharCode(
+  0xce74,
+  0xce74,
+  0xc624,
+  0x0020,
+  0xd1a1,
+  0xcc44,
+  0xb110,
+);
+const CATCHTABLE_NAME = String.fromCharCode(0xce90, 0xce58, 0xd14c, 0xc774, 0xbe14);
+
 const PROVIDERS: readonly ProviderSpec[] = [
   { id: "calendly", hosts: ["calendly.com", "www.calendly.com"], name: "Calendly" },
   { id: "cal_com", hosts: ["cal.com", "app.cal.com"], name: "Cal.com" },
@@ -24,9 +36,9 @@ const PROVIDERS: readonly ProviderSpec[] = [
   {
     id: "naver_booking",
     hosts: ["booking.naver.com", "m.booking.naver.com"],
-    name: "네이버 예약",
+    name: NAVER_BOOKING_NAME,
   },
-  { id: "kakao_channel", hosts: ["pf.kakao.com"], name: "카카오 톡채널" },
+  { id: "kakao_channel", hosts: ["pf.kakao.com"], name: KAKAO_CHANNEL_NAME },
   {
     id: "microsoft_bookings",
     hosts: ["outlook.office.com", "outlook.office365.com", "bookwithme.microsoft.com"],
@@ -34,7 +46,7 @@ const PROVIDERS: readonly ProviderSpec[] = [
   },
   { id: "tidycal", hosts: ["tidycal.com", "www.tidycal.com"], name: "TidyCal" },
   { id: "acuity", hosts: ["app.acuityscheduling.com"], name: "Acuity" },
-  { id: "catchtable", hosts: ["app.catchtable.co.kr", "catchtable.co.kr"], name: "캐치테이블" },
+  { id: "catchtable", hosts: ["app.catchtable.co.kr", "catchtable.co.kr"], name: CATCHTABLE_NAME },
 ] as const;
 
 export function resolveBookingProvider(url: string): ProviderSpec | null {

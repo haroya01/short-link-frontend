@@ -7,9 +7,9 @@ import { useTranslations } from "next-intl";
 import type { PublicProfile } from "@/types";
 import { Link } from "@/i18n/navigation";
 import { SHOWCASE_PROFILES } from "@/lib/landing-showcase-fixtures";
-import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
-import { EntryList } from "@/app/[locale]/u/[username]/_components/entry-list";
-import { ProfileHeader } from "@/app/[locale]/u/[username]/_components/profile-header";
+import { EntryList } from "@/app/[locale]/(profile)/u/[username]/_components/entry-list";
+import { ProfileHeader } from "@/app/[locale]/(profile)/u/[username]/_components/profile-header";
+import { THEME_TABLE } from "@/app/[locale]/(profile)/u/[username]/_lib/theme";
 import { cn } from "@/lib/utils";
 
 /**

@@ -33,16 +33,16 @@ export function CookieConsent() {
 
   return (
     <div
-      role="dialog"
+      role="region"
       aria-live="polite"
-      aria-label="cookie consent"
-      className="fixed bottom-3 right-3 z-40 sm:bottom-4 sm:right-4"
+      aria-label={t("ariaLabel")}
+      className="fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] sm:bottom-4 sm:px-4 sm:pb-0"
     >
-      <div className="flex w-[260px] flex-col gap-2.5 rounded-lg border border-slate-200 bg-white/95 p-3 shadow-md backdrop-blur sm:w-[360px] sm:flex-row sm:items-center sm:gap-3 sm:p-3.5">
+      <div className="mx-auto flex max-w-3xl items-center gap-2 rounded-lg border border-slate-200 bg-white/95 px-3 py-2 shadow-md backdrop-blur sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:px-3.5 sm:py-3">
         <p className="min-w-0 flex-1 text-[11px] leading-snug text-slate-600 sm:text-xs sm:leading-relaxed">
           {t("message")}
         </p>
-        <div className="flex shrink-0 items-center justify-end gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/privacy"
             className="hidden text-xs text-slate-500 underline hover:text-slate-700 sm:inline"
