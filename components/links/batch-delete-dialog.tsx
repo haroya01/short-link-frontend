@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { deleteCampaignBatch } from "@/lib/api";
 import { useToast } from "@/components/ui/toast";
@@ -19,22 +20,23 @@ export function BatchDeleteDialog({
   campaignId: number;
   onDeleted: () => void;
 }) {
+  const t = useTranslations("campaignApp.batchDialogs");
   const { toast } = useToast();
   return (
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="배포 묶음 삭제"
+      title={t("deleteTitle")}
       destructive
-      confirmLabel="삭제"
+      confirmLabel={t("delete")}
       onConfirm={async () => {
         if (!batch) return;
         try {
           await deleteCampaignBatch(campaignId, batch.id);
-          toast("배포 묶음을 삭제했어요", "success");
+          toast(t("deleted"), "success");
           onDeleted();
         } catch (err) {
-          toast(err instanceof Error ? err.message : "삭제 실패", "error");
+          toast(err instanceof Error ? err.message : t("deleteFailed"), "error");
         }
       }}
     >
@@ -42,12 +44,8 @@ export function BatchDeleteDialog({
         <div className="flex items-start gap-2">
           <AlertTriangle className="h-4 w-4 flex-shrink-0 text-rose-600" aria-hidden />
           <div className="space-y-1.5 text-[12px] leading-snug text-slate-700">
-            <p className="font-medium text-rose-700">단축 URL 도 함께 삭제됩니다.</p>
-            <p>
-              이미 인쇄된 QR 코드를 스캔하면 &lsquo;링크 없음&rsquo; 페이지를 보게 돼요. 발주
-              전이라면 안전하지만, 배포 후라면 종료 정책 (REDIRECT) 으로 살리는 쪽을 먼저
-              검토하세요.
-            </p>
+            <p className="font-medium text-rose-700">{t("deleteWarningTitle")}</p>
+            <p>{t("deleteWarningBody")}</p>
           </div>
         </div>
       </div>
@@ -55,7 +53,7 @@ export function BatchDeleteDialog({
         <div className="mt-3 space-y-1 rounded-xl bg-slate-50 px-3 py-2.5 text-[12px] text-slate-600">
           <p>
             <span className="font-medium text-slate-900">{batch.name}</span> ·{" "}
-            {batch.quantity.toLocaleString()}장
+            {t("quantityUnit", { count: batch.quantity.toLocaleString() })}
           </p>
           <p className="font-mono text-[11px] text-slate-500">{batch.shortUrl}</p>
         </div>

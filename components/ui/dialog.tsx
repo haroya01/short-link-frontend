@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -24,28 +25,68 @@ type DialogProps = {
   maxWidthClass?: string;
 };
 
+const FOCUSABLE =
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export function ConfirmDialog({
   open,
   onOpenChange,
   title,
   description,
-  confirmLabel = "확인",
+  confirmLabel,
   confirmDisabled,
-  cancelLabel = "취소",
+  cancelLabel,
   destructive,
   onConfirm,
   children,
   maxWidthClass = "max-w-md",
 }: DialogProps) {
+  const t = useTranslations("common");
   const [busy, setBusy] = React.useState(false);
+  const busyRef = React.useRef(false);
+  const dialogRef = React.useRef<HTMLDivElement | null>(null);
+  const restoreFocusRef = React.useRef<HTMLElement | null>(null);
+  const titleId = React.useId();
+  const descriptionId = React.useId();
+
+  React.useEffect(() => {
+    busyRef.current = busy;
+  }, [busy]);
 
   React.useEffect(() => {
     if (!open) return;
+    restoreFocusRef.current = document.activeElement as HTMLElement | null;
+    requestAnimationFrame(() => {
+      const target = firstFocusable(dialogRef.current) ?? dialogRef.current;
+      target?.focus();
+    });
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onOpenChange(false);
+      if (e.key === "Escape" && !busyRef.current) {
+        onOpenChange(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const focusable = focusableElements(dialogRef.current);
+      if (focusable.length === 0) {
+        e.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      restoreFocusRef.current?.focus?.();
+    };
   }, [open, onOpenChange]);
 
   if (!open) return null;
@@ -63,8 +104,12 @@ export function ConfirmDialog({
         aria-hidden
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
+        tabIndex={-1}
         // min-h pins the panel at a consistent height regardless of body content. Without it,
         // a 3-field dialog (e.g. contact card with only email filled) would shrink the panel
         // to ~200px tall and pull the Save button up toward the screen middle; a 7-field
@@ -78,9 +123,13 @@ export function ConfirmDialog({
         )}
       >
         <div className="flex-1 overflow-y-auto px-6 py-6">
-          <h2 className="text-base font-semibold text-slate-900">{title}</h2>
+          <h2 id={titleId} className="text-base font-semibold text-slate-900">
+            {title}
+          </h2>
           {description && (
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">{description}</p>
+            <p id={descriptionId} className="mt-2 text-sm leading-relaxed text-slate-600">
+              {description}
+            </p>
           )}
           {children && <div className="mt-3">{children}</div>}
         </div>
@@ -89,7 +138,7 @@ export function ConfirmDialog({
             it's a fixed control rather than another field. */}
         <div className="flex justify-end gap-2 border-t border-slate-100 bg-white px-6 py-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>
-            {cancelLabel}
+            {cancelLabel ?? t("cancel")}
           </Button>
           <Button
             variant={destructive ? "destructive" : "default"}
@@ -104,10 +153,21 @@ export function ConfirmDialog({
               }
             }}
           >
-            {busy ? "처리 중..." : confirmLabel}
+            {busy ? t("processing") : confirmLabel ?? t("confirm")}
           </Button>
         </div>
       </div>
     </div>
   );
+}
+
+function focusableElements(root: HTMLElement | null): HTMLElement[] {
+  if (!root) return [];
+  return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+    (el) => !el.hasAttribute("disabled") && el.tabIndex !== -1,
+  );
+}
+
+function firstFocusable(root: HTMLElement | null): HTMLElement | null {
+  return focusableElements(root)[0] ?? null;
 }

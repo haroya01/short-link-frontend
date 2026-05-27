@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +22,7 @@ export function BatchEditDialog({
   campaignId: number;
   onUpdated: () => void;
 }) {
+  const t = useTranslations("campaignApp.batchDialogs");
   const { toast } = useToast();
   const [name, setName] = useState("");
   const [distributor, setDistributor] = useState("");
@@ -45,9 +47,9 @@ export function BatchEditDialog({
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="배포 묶음 편집"
-      description="이름·배포자·지역·수량·메모만 수정할 수 있어요. 단축 URL (인쇄된 QR) 은 그대로 유지됩니다."
-      confirmLabel="저장"
+      title={t("editTitle")}
+      description={t("editDescription")}
+      confirmLabel={t("save")}
       confirmDisabled={!canConfirm}
       onConfirm={async () => {
         if (!batch) return;
@@ -59,30 +61,30 @@ export function BatchEditDialog({
             quantity: q,
             memo: memo.trim() || undefined,
           });
-          toast("배포 묶음을 수정했어요", "success");
+          toast(t("updated"), "success");
           onUpdated();
         } catch (err) {
-          toast(err instanceof Error ? err.message : "수정 실패", "error");
+          toast(err instanceof Error ? err.message : t("updateFailed"), "error");
         }
       }}
     >
       <div className="space-y-3">
-        <Field label="묶음 이름" required>
+        <Field label={t("name")} required>
           <Input value={name} onChange={(e) => setName(e.target.value)} maxLength={255} />
         </Field>
         <div className="grid grid-cols-2 gap-2">
-          <Field label="배포자">
+          <Field label={t("distributor")}>
             <Input
               value={distributor}
               onChange={(e) => setDistributor(e.target.value)}
               maxLength={255}
             />
           </Field>
-          <Field label="지역">
+          <Field label={t("area")}>
             <Input value={area} onChange={(e) => setArea(e.target.value)} maxLength={255} />
           </Field>
         </div>
-        <Field label="수량" required>
+        <Field label={t("quantity")} required>
           <Input
             type="number"
             min="1"
@@ -91,7 +93,7 @@ export function BatchEditDialog({
             onChange={(e) => setQuantity(e.target.value)}
           />
         </Field>
-        <Field label="메모">
+        <Field label={t("memo")}>
           <Textarea
             value={memo}
             onChange={(e) => setMemo(e.target.value)}

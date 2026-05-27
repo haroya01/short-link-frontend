@@ -29,6 +29,17 @@ type Template = {
   handleRegex: RegExp;
 };
 
+const KAKAO_CHANNEL_LABEL = String.fromCharCode(
+  0xce74,
+  0xce74,
+  0xc624,
+  0xd1a1,
+  0x0020,
+  0xcc44,
+  0xb110,
+);
+const NAVER_BLOG_LABEL = String.fromCharCode(0xb124, 0xc774, 0xbc84, 0x0020, 0xbe14, 0xb85c, 0xadf8);
+
 const TEMPLATES: Template[] = [
   {
     id: "instagram",
@@ -67,14 +78,14 @@ const TEMPLATES: Template[] = [
   },
   {
     id: "kakao",
-    label: "카카오톡 채널",
+    label: KAKAO_CHANNEL_LABEL,
     urlTemplate: "https://pf.kakao.com/_{h}",
     placeholder: "abcDEF",
     handleRegex: /^https?:\/\/pf\.kakao\.com\/_([^/?#]+)/i,
   },
   {
     id: "naver-blog",
-    label: "네이버 블로그",
+    label: NAVER_BLOG_LABEL,
     urlTemplate: "https://blog.naver.com/{h}",
     placeholder: "haroya",
     handleRegex: /^https?:\/\/blog\.naver\.com\/([^/?#]+)/i,

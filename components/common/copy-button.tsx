@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button, type ButtonProps } from "@/components/ui/button";
 
 type Props = {
@@ -12,7 +13,9 @@ type Props = {
   onCopied?: () => void;
 };
 
-export function CopyButton({ value, label = "복사", size = "md", variant = "default", onCopied }: Props) {
+export function CopyButton({ value, label, size = "md", variant = "default", onCopied }: Props) {
+  const t = useTranslations("common");
+  const buttonLabel = label ?? t("copy");
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -31,12 +34,12 @@ export function CopyButton({ value, label = "복사", size = "md", variant = "de
       {copied ? (
         <>
           <Check className="h-4 w-4" />
-          <span>복사됨</span>
+          <span>{t("copied")}</span>
         </>
       ) : (
         <>
           <Copy className="h-4 w-4" />
-          <span>{label}</span>
+          <span>{buttonLabel}</span>
         </>
       )}
     </Button>

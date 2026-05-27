@@ -39,7 +39,7 @@ export function PublicStatsToggle({ shortCode }: { shortCode: string }) {
       await navigator.clipboard.writeText(url);
       toast(t("shareCopied"), "success");
     } catch {
-      toast("copy failed", "error");
+      toast(t("shareCopyFailed"), "error");
     }
   }
 

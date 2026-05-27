@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { MyProfile, ProfileTheme, ShareChannel, Social } from "@/types";
-import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/share-row";
+import { ChannelIcon } from "@/app/[locale]/(profile)/u/[username]/_components/share-row";
 import { socialUrlPrefix } from "@/components/profile/section/socials-templates";
 
 const SHARE_CHANNELS: ShareChannel[] = [
@@ -359,7 +359,7 @@ function SocialsPicker({
               }
             >
               <ChannelIcon channel={ch} className="h-3 w-3" />
-              {channelLabel(ch)}
+              {channelLabel(ch, t)}
               {active && <span className="text-[9px] text-accent-600">#{order}</span>}
             </button>
           );
@@ -389,7 +389,10 @@ function SocialsPicker({
   );
 }
 
-function channelLabel(channel: ShareChannel): string {
+function channelLabel(
+  channel: ShareChannel,
+  t: ReturnType<typeof useTranslations<"settings.profile">>,
+): string {
   switch (channel) {
     case "x":
       return "X";
@@ -400,7 +403,7 @@ function channelLabel(channel: ShareChannel): string {
     case "facebook":
       return "Facebook";
     case "kakao":
-      return "카카오톡 채널";
+      return t("socialKakaoLabel");
     case "instagram":
       return "Instagram";
     case "linkedin":

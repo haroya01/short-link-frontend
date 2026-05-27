@@ -50,6 +50,7 @@
     "INTERNAL_ERROR": "서버 오류가 발생했어요. 잠시 후 다시 시도해 주세요."
   },
   "cookieConsent": {
+    "ariaLabel": "쿠키 안내",
     "message": "이 사이트는 로그인 유지를 위한 필수 쿠키만 사용해요. 분석·광고 쿠키는 쓰지 않아요.",
     "accept": "확인",
     "learnMore": "자세히"
@@ -150,6 +151,7 @@
     "ctaSubhead": "가입하고 원하는 이름만 정하면 시작이에요. 사진 · 링크 · 가게 주소 · 연락처를 넣으면 아래 예시처럼 채워집니다.",
     "cta": "내 프로필 만들기",
     "metaSuffix": "예시",
+    "metaFallbackTitle": "{handle} · kurl 예시",
     "sampleBanner": "예시 페이지 · 가입 후 직접 만들 수 있어요",
     "sampleCta": "내 프로필 만들기",
     "scrollCue": "실제 예시 보기",
@@ -667,7 +669,9 @@
       }
     },
     "noData": "데이터 없음",
+    "referrerNoData": "레퍼러 데이터 없음",
     "noClicks": "아직 클릭이 없어요",
+    "clickCount": "{count}회",
     "noUtm": "UTM 캠페인 데이터 없음",
     "noBot": "봇 클릭 없음",
     "weekday": {
@@ -692,7 +696,8 @@
     "countryTable": {
       "country": "국가",
       "clicks": "클릭",
-      "share": "비중"
+      "share": "비중",
+      "unknown": "알 수 없음"
     },
     "heatmap": {
       "less": "적음",
@@ -920,7 +925,14 @@
     "errorTitle": "문제가 발생했어요",
     "errorDesc": "잠시 후 다시 시도해 주세요.",
     "retry": "다시 시도",
-    "loading": "로딩 중..."
+    "loading": "로딩 중...",
+    "confirm": "확인",
+    "cancel": "취소",
+    "processing": "처리 중...",
+    "copy": "복사",
+    "copied": "복사됨",
+    "copyFailed": "복사에 실패했어요",
+    "close": "닫기"
   },
   "notFound": {
     "title": "이 페이지를 찾을 수 없어요",
@@ -932,6 +944,7 @@
     "triggerAria": "QR 코드 열기",
     "copyUrl": "URL 복사",
     "copied": "복사됨",
+    "copyFailed": "복사에 실패했어요",
     "downloadPng": "PNG 다운로드",
     "close": "닫기",
     "srcLabel": "추적 태그 (선택)",
@@ -1309,6 +1322,7 @@
       "bioPlaceholder": "예: 풀스택 개발자 · 사이드 프로젝트 만드는 중",
       "themeLabel": "테마",
       "socialsLabel": "공유 / SNS 버튼",
+      "socialKakaoLabel": "카카오톡 채널",
       "socialsHint": "공개 페이지 하단에 표시할 채널을 골라주세요. 각 채널마다 본인 계정 URL 을 함께 입력하면 방문자가 그 URL 로 이동해요. 최대 2개, 선택한 순서대로 노출돼요.",
       "socialsCount": "{count}/{max} 선택",
       "socialUrlPlaceholderX": "https://x.com/yourhandle",
@@ -1320,6 +1334,7 @@
       "socialUrlPlaceholderLinkedin": "https://linkedin.com/in/yourhandle",
       "socialUrlInvalid": "올바른 http(s) URL 을 입력해주세요.",
       "previewTitle": "공개 페이지 미리보기 (실시간)",
+      "closePreview": "미리보기 닫기",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "한 줄 소개를 입력하면 여기에 보여요",
       "profileInfoToggle": "프로필 정보 (username · 한 줄 소개 · 테마)",
@@ -1479,6 +1494,7 @@
       "emailFormHowItWorks": "방문자가 이메일을 남기면 본인만 볼 수 있는 'leads' 페이지에 모입니다. CSV 로 받아 Mailchimp / 스티비 / 채널톡 등으로 가져가세요.",
       "emailFormViewLeadsCta": "수집된 이메일 보기",
       "leadsLink": "수집된 이메일",
+      "leadsDisabledTitle": "이메일 폼을 추가하면 리드가 여기 모입니다",
       "stats": {
         "title": "내 프로필 방문 통계",
         "intro": "내 /u/username 페이지를 누가 어디서 봤는지. 단축링크 통계와 같은 깊이로.",
@@ -1793,9 +1809,288 @@
     "privateBadge": "비공개",
     "shareButton": "공개 링크 복사",
     "shareCopied": "복사됨",
+    "shareCopyFailed": "복사에 실패했어요",
     "togglePublic": "통계 공개로 전환",
     "togglePrivate": "통계 비공개로 전환",
     "toggleFailed": "공개 설정에 실패했어요."
+  },
+  "campaignApp": {
+    "entry": {
+      "title": "QR 캠페인",
+      "badge": "오프라인",
+      "description": "포스터·전단지를 여러 묶음으로 나눠 뿌리고, 어느 묶음이 반응이 좋았는지 측정합니다. 일반 단축 URL 과는 다른 모드.",
+      "cta": "시작하기"
+    },
+    "batchCard": {
+      "quantityUnit": "{count}장",
+      "distributor": "배포자 · {name}",
+      "downloadQr": "{name} QR 다운로드",
+      "edit": "{name} 편집",
+      "delete": "{name} 삭제"
+    },
+    "batchDialogs": {
+      "editTitle": "배포 묶음 편집",
+      "editDescription": "이름·배포자·지역·수량·메모만 수정할 수 있어요. 단축 URL (인쇄된 QR) 은 그대로 유지됩니다.",
+      "save": "저장",
+      "updated": "배포 묶음을 수정했어요",
+      "updateFailed": "수정 실패",
+      "name": "묶음 이름",
+      "distributor": "배포자",
+      "area": "지역",
+      "quantity": "수량",
+      "memo": "메모",
+      "deleteTitle": "배포 묶음 삭제",
+      "delete": "삭제",
+      "deleted": "배포 묶음을 삭제했어요",
+      "deleteFailed": "삭제 실패",
+      "deleteWarningTitle": "단축 URL 도 함께 삭제됩니다.",
+      "deleteWarningBody": "이미 인쇄된 QR 코드를 스캔하면 '링크 없음' 페이지를 보게 돼요. 발주 전이라면 안전하지만, 배포 후라면 종료 정책 (REDIRECT) 으로 살리는 쪽을 먼저 검토하세요.",
+      "quantityUnit": "{count}장"
+    },
+    "new": {
+      "loginRequired": "로그인이 필요합니다",
+      "goToLogin": "로그인하러 가기",
+      "created": "QR 캠페인이 만들어졌어요",
+      "createFailed": "QR 캠페인 만들기 실패",
+      "backToList": "QR 캠페인 목록",
+      "title": "새 QR 캠페인",
+      "intro": "기간과 종료 정책을 정하면, 그 안에 배포 묶음을 만들 수 있어요.",
+      "nameLabel": "QR 캠페인 이름",
+      "namePlaceholder": "예: 신주쿠 봄 포스터 배포",
+      "startLabel": "시작 시점",
+      "startHint": "대부분 '지금 시작'. 발주·인쇄 일정에 맞춰 시작하려면 예약.",
+      "startNow": "지금 시작",
+      "startSchedule": "시작 시간 예약",
+      "endLabel": "종료 시점",
+      "endHint": "종료 후 인쇄된 QR 의 동작은 아래 정책을 따릅니다.",
+      "defaultUrlLabel": "기본 도착 URL",
+      "defaultUrlHint": "비워두면 각 묶음마다 URL 을 따로 지정해야 해요.",
+      "postEndLabel": "종료 후 동작",
+      "policy": {
+        "keepTitle": "그대로 유지",
+        "keepBody": "종료 후에도 인쇄된 QR 이 원래 URL 로 계속 이동합니다.",
+        "expireTitle": "만료 페이지로",
+        "expireBody": "QR 을 스캔하면 '이 QR 캠페인은 종료됐어요' 안내 페이지를 봅니다.",
+        "redirectTitle": "다른 페이지로 자동 전환",
+        "redirectBody": "후기 / 다음 QR 캠페인 / 대기자 등록 — 인쇄된 QR 을 죽이지 않고 살려서 씁니다."
+      },
+      "messagePlaceholder": "예: 캠페인이 종료됐어요. 다음 이벤트는 12월에 만나요.\n문의 — @kurl_official",
+      "messageHint": "비워두면 기본 안내문이 표시됩니다. 줄바꿈은 그대로 보입니다 ·",
+      "redirectHint": "자동 전환 대상 URL — QR 캠페인 종료 시점에 인쇄된 QR 들에 일괄 적용됩니다.",
+      "cancel": "취소",
+      "creating": "만드는 중...",
+      "submit": "QR 캠페인 만들기"
+    },
+    "detail": {
+      "loadFailed": "불러오기 실패",
+      "loginRequired": "로그인이 필요합니다",
+      "backToList": "QR 캠페인 목록",
+      "confirmEnd": "이 QR 캠페인을 지금 종료하시겠습니까?\n인쇄된 QR 에 종료 정책이 즉시 적용됩니다.",
+      "ended": "QR 캠페인이 종료됐어요",
+      "endFailed": "종료 실패",
+      "reapplied": "종료 정책을 다시 적용했어요",
+      "reapplyFailed": "재적용 실패",
+      "confirmArchive": "이 QR 캠페인을 보관합니다.\n목록에서 숨겨지지만 데이터는 그대로 유지됩니다.",
+      "archived": "QR 캠페인을 보관했어요",
+      "archiveFailed": "보관 실패",
+      "cancel": "취소",
+      "actions": {
+        "stats": "분석",
+        "endNow": "지금 종료",
+        "reapply": "종료 정책 재적용",
+        "archive": "보관"
+      },
+      "prepare": {
+        "eyebrow": "배포 준비",
+        "title": "인쇄소 · Canva 에 넘길 자산",
+        "description": "{count}개 묶음의 QR 코드 + 메타 표. 디자인 도구에서 포스터/전단지에 박아 발주합니다.",
+        "printSheet": "A4 시트",
+        "posterBuilder": "포스터에 QR"
+      },
+      "policy": {
+        "eyebrow": "종료 후 동작",
+        "keep": "그대로 유지",
+        "expire": "만료 페이지로",
+        "redirect": "다른 페이지로 자동 전환",
+        "savedEnded": "메시지를 저장했어요. '종료 정책 재적용' 을 누르면 인쇄된 QR 에도 반영돼요.",
+        "saved": "만료 페이지 메시지를 저장했어요",
+        "saveFailed": "저장 실패",
+        "messageLabel": "만료 페이지 메시지",
+        "edit": "수정",
+        "add": "추가",
+        "messagePlaceholder": "예: 캠페인이 종료됐어요. 다음 이벤트는 12월에 만나요.",
+        "saving": "저장 중...",
+        "save": "저장",
+        "defaultMessageHint": "메시지를 비워두면 기본 안내문이 표시됩니다.",
+        "defaultDestination": "기본 도착 URL · {url}"
+      },
+      "batches": {
+        "title": "배포 묶음",
+        "description": "QR 한 개를 여러 장 인쇄해서 배포한 한 단위. 배포자·지역별로 나눠야 분석이 의미 있어요.",
+        "add": "배포 묶음 추가",
+        "emptyTitle": "아직 배포 묶음이 없어요",
+        "emptyDescription": "첫 묶음을 추가하면 QR 코드가 즉시 발급됩니다. 인쇄·발주 전에 스캔해서 작동 확인 가능.",
+        "addFirst": "첫 배포 묶음 추가"
+      }
+    },
+    "batchesNew": {
+      "loadFailed": "불러오기 실패",
+      "pasteEmpty": "붙여넣은 텍스트에서 행을 찾지 못했어요",
+      "pasteAdded": "{count}개 행을 추가했어요",
+      "created": "{count}개 배포 묶음을 만들었어요",
+      "createFailed": "생성 실패",
+      "loginRequired": "로그인이 필요합니다",
+      "backToCampaign": "QR 캠페인으로",
+      "title": "배포 묶음 추가",
+      "introCampaign": "<name></name> 의 새 묶음들.",
+      "addRow": "행 추가",
+      "pasteToggle": "스프레드시트에서 붙여넣기",
+      "defaultUrlActive": "<strong>기본 도착 URL 사용 중.</strong> 도착 URL 칸을 비우면 자동으로 <code></code> 이 들어갑니다. 묶음마다 다른 URL 을 쓰려면 직접 입력하세요.",
+      "defaultUrlMissing": "<strong>기본 도착 URL 이 설정되지 않았습니다.</strong> 각 묶음마다 도착 URL 을 직접 입력해야 해요.",
+      "fields": {
+        "name": "묶음 이름",
+        "distributor": "배포자",
+        "area": "지역",
+        "quantity": "수량",
+        "destinationUrl": "도착 URL"
+      },
+      "compareHint": "비교 분석 가능",
+      "placeholders": {
+        "name": "예: 신주쿠역 동쪽",
+        "distributor": "A 또는 김배포",
+        "defaultValue": "(기본값)"
+      },
+      "hints": {
+        "defaultOptional": "비우면 기본값 사용",
+        "defaultRequired": "필수 (기본값 없음)"
+      },
+      "errors": {
+        "nameRequired": "묶음 이름은 필수",
+        "quantityRequired": "수량 필수",
+        "quantityPositive": "양의 정수",
+        "destinationRequired": "캠페인 기본 URL 없음 — 필수",
+        "destinationUrl": "http:// 또는 https:// URL"
+      },
+      "removeRow": "{index}번째 행 삭제",
+      "pasteTitle": "스프레드시트 행 붙여넣기",
+      "pasteColumns": "컬럼 순서: <code>묶음 이름 / 배포자 / 지역 / 수량 / 도착 URL / 메모</code> (탭 또는 쉼표 구분)",
+      "close": "닫기",
+      "pastePlaceholder": "신주쿠역 동쪽\tA\tShinjuku East\t500\t\n오쿠보\tB\tOkubo\t300\thttps://example.com/okubo",
+      "pasteZeroRows": "0개 행",
+      "pastePreviewRows": "{count}개 행 인식",
+      "cancel": "취소",
+      "pasteApply": "{count}개 행 추가",
+      "invalidRows": "{count}개 행에 입력 오류가 있어요. 빨간 표시된 칸을 고쳐주세요.",
+      "summary": "<strong>{rowCount}</strong>개 묶음 · <strong>{totalQuantity}</strong>장 인쇄·배포 예정",
+      "creating": "만드는 중...",
+      "submit": "{count}개 묶음 만들기"
+    },
+    "posterBuilder": {
+      "loadFailed": "불러오기 실패",
+      "pdfOnly": "PDF 파일만 업로드 가능해요",
+      "pdfReadFailed": "PDF 를 읽지 못했어요 — 손상된 파일일 수 있어요",
+      "composed": "{count}개 페이지 합본 PDF 를 만들었어요",
+      "composeFailed": "합성 실패",
+      "loginRequired": "로그인이 필요합니다",
+      "backToCampaign": "QR 캠페인으로",
+      "title": "포스터에 QR 박기",
+      "introCampaign": "<name></name> · 캠페인의 모든 배포 묶음 ({count}개) 마다 PDF 페이지 복제 + 각자 다른 QR 박힘. 합본 PDF 로 다운로드.",
+      "toolHint": "Canva·인디자인·PowerPoint 같은 도구에서 디자인을 끝내고 PDF 로 내보낸 뒤 여기서 QR 위치만 정하세요. 우리는 디자인 도구가 아니라 좌표 합성기.",
+      "targetLabel": "합성 대상",
+      "targetSummary": "<strong>{count}개</strong> 배포 묶음 · 결과는 <strong>{pages}페이지</strong> PDF",
+      "noBatchesHint": "먼저 배포 묶음을 추가하세요. (QR 캠페인 상세 → 배포 묶음 추가)",
+      "composing": "합성 중...",
+      "download": "합본 PDF 다운로드 ({count}페이지)",
+      "notSavedHint": "QR 위치는 저장하지 않습니다. 같은 PDF 로 다시 들어와도 박스를 다시 그려야 해요. 캠페인은 일회성 발주가 기본이라 영구 저장은 over.",
+      "dropTitle": "PDF 끌어다 놓거나 클릭해서 업로드",
+      "dropSubtitle": "1페이지 PDF · Canva/인디자인 export 권장",
+      "removePdf": "PDF 제거",
+      "otherPdf": "다른 PDF",
+      "dragHint": "QR 박스를 드래그해 위치를 옮기고, 우하단 핸들로 크기를 조절하세요.",
+      "previewFirstBatch": "미리보기는 첫 번째 묶음 ({count}개 묶음 중 1번째). 각 묶음마다 다른 QR 이 박힙니다.",
+      "previewPlaceholder": "배포 묶음이 없어서 placeholder QR 로 미리보고 있어요. 실제 합성은 묶음 추가 후 가능.",
+      "boxAria": "QR 박스 위치/크기",
+      "qrPreviewAlt": "QR 미리보기"
+    },
+    "printSheet": {
+      "loadFailed": "불러오기 실패",
+      "loginRequired": "로그인이 필요합니다",
+      "backToCampaign": "QR 캠페인으로",
+      "title": "A4 QR 시트",
+      "introCampaign": "<name></name> · 브라우저 인쇄로 PDF 저장 (Cmd/Ctrl + P).",
+      "print": "인쇄",
+      "empty": "인쇄할 배포 묶음이 없어요. 묶음을 먼저 추가하세요.",
+      "perPage": "한 페이지에",
+      "layouts": {
+        "comfortable": { "label": "12개 (3×4)", "hint": "넉넉 · 명함 크기" },
+        "standard": { "label": "20개 (4×5)", "hint": "표준" },
+        "dense": { "label": "30개 (5×6)", "hint": "빽빽 · 작은 라벨" }
+      },
+      "showLabel": "라벨 표시",
+      "cutMarks": "잘림선",
+      "pagePerBatch": "묶음당 한 페이지 (같은 QR 가득)"
+    },
+    "campaignStats": {
+      "loadFailed": "불러오기 실패",
+      "loginRequired": "로그인이 필요합니다",
+      "backToCampaign": "QR 캠페인으로",
+      "title": "분석",
+      "introCampaign": "<name></name> · 시작 이후 클릭만 집계. 봇/프리뷰 제외.",
+      "loading": "불러오는 중...",
+      "groups": {
+        "distributorTitle": "배포자별 성과",
+        "distributorHint": "100장당 클릭 비율 — 수량 차이 있는 배포자끼리도 효율 비교 가능.",
+        "areaTitle": "지역별 성과",
+        "areaHint": "다음 배포 위치 선정의 기준.",
+        "tooltip": "{rate}회 / 100장 · 클릭 {clicks} / 배포 {quantity}",
+        "efficiency": "효율"
+      },
+      "compare": {
+        "title": "다른 캠페인과 비교",
+        "description": "1차 vs 2차, 또는 다른 시즌 캠페인의 효율을 같이 본다.",
+        "none": "— 비교 안 함 —",
+        "current": "현재",
+        "comparison": "비교",
+        "selectHint": "위 dropdown 에서 비교할 캠페인을 선택하세요."
+      },
+      "kpi": {
+        "totalClicks": "총 클릭",
+        "perHundred": "100장당",
+        "topArea": "Top 지역",
+        "batches": "배포 묶음",
+        "totalDistributed": "총 인쇄·배포",
+        "perHundredHint": "평균 효율 (클릭 / 배포 × 100)"
+      },
+      "units": {
+        "count": "{count}개",
+        "sheets": "{count}장"
+      },
+      "recommendation": {
+        "title": "다음 배포 추천",
+        "description": "현재 총 {total}장 — 같은 총량으로 재할당. 평균 100당 {average} 기준",
+        "footnote": "효율 비율 기반 추천 — 평균의 30% 미만은 폐기, 나머지는 비율대로 재할당 (한 묶음 최대 3배).",
+        "verdict": { "BOOST": "증가", "KEEP": "유지", "REDUCE": "감축", "PRUNE": "폐기" },
+        "rowMeta": "{current} → {recommended}장 · 100당 {rate}"
+      },
+      "daily": { "title": "일별 클릭", "description": "캠페인 시작 이후" },
+      "hourly": {
+        "title": "시간대별 클릭",
+        "description": "0–23시",
+        "tooltip": "{hour}시: {clicks}"
+      },
+      "heatmap": { "title": "요일 × 시간대 분포", "description": "진할수록 클릭이 많은 시간대." },
+      "testScans": {
+        "title": "시작 전 테스트 스캔",
+        "description": "<strong>{count}회</strong> — 캠페인 시작 시각 이전. 분석 합계에서 제외돼요.",
+        "last": "마지막 테스트 · {date}"
+      },
+      "byBatch": {
+        "empty": "아직 배포 묶음이 없어요. 추가하면 여기에 묶음별 성과가 표시됩니다.",
+        "title": "묶음별 성과",
+        "description": "클릭 수 내림차순. 막대는 최대값 대비 상대 비율.",
+        "meta": "/ {quantity}장 · {rate}%"
+      }
+    }
   },
   "homeFaq": {
     "title": "자주 묻는 질문",
@@ -1817,6 +2112,79 @@
     "ACTIVE": "운영 중",
     "ENDED": "종료됨",
     "ARCHIVED": "보관"
+  },
+  "campaignsApp": {
+    "authTitle": "로그인이 필요합니다",
+    "authDesc": "QR 캠페인은 로그인된 사용자만 운영할 수 있어요.",
+    "loginCta": "로그인하러 가기",
+    "title": "QR 캠페인",
+    "subtitleLoading": "오프라인 QR 배포 운영 단위",
+    "subtitleCount": "{count}개의 QR 캠페인.",
+    "loadFailed": "QR 캠페인을 불러오지 못했어요.",
+    "newCampaign": "새 QR 캠페인",
+    "batchCount": "{count}개 묶음",
+    "details": "자세히",
+    "onboarding": {
+      "eyebrow": "Offline campaigns",
+      "title": "오프라인 홍보를 온라인 광고처럼 개선하는 도구",
+      "body": "포스터·전단지·QR 을 여러 사람·지역·묶음으로 나눠 뿌리고, 어느 묶음이 성과가 좋았는지 측정합니다. 다음 배포는 그 데이터로 조정.",
+      "useCases": {
+        "distribution": {
+          "title": "배포 묶음 최적화",
+          "body": "A 지역 500장 → 80명, B 지역 500장 → 5명. 다음에는 A 를 늘리고 B 를 줄인다."
+        },
+        "distributor": {
+          "title": "배포자 성과 비교",
+          "body": "A 배포자 1000장 → 120, B 1000장 → 18. 정산/검증, '진짜 뿌렸나' 간접 확인."
+        },
+        "copy": {
+          "title": "문구·디자인 A/B 테스트",
+          "body": "'무료 상담' vs '첫 달 50% 할인' — 어느 문구가 더 클릭을 만드는지 같은 지역에 두 버전."
+        },
+        "location": {
+          "title": "위치별 영업 전략",
+          "body": "역 앞 반응 ↑, 주택가 반응 ↓ — 다음 포스터·현수막 위치 선정."
+        },
+        "reuse": {
+          "title": "종료 후 QR 재활용",
+          "body": "이벤트 끝났는데 포스터는 그대로? 만료 시 후기/대기자/다음 프로모션 페이지로 자동 전환."
+        },
+        "conversion": {
+          "title": "전환까지 추적",
+          "body": "단순 클릭이 아니라 문의·예약·쿠폰 다운·구매. 어느 묶음이 진짜 고객을 만들었는지."
+        }
+      },
+      "flowLabel": "반복 가능한 루프",
+      "flowSteps": ["배포", "묶음별 측정", "다음 배포 조정", "종료 후 전환"],
+      "createCta": "첫 QR 캠페인 만들기",
+      "createHint": "처음 만들 때는 QR 캠페인 이름과 종료 시점만 정하면 됩니다."
+    }
+  },
+  "qrDownload": {
+    "zipTitle": "QR ZIP 다운로드",
+    "singleTitle": "{name} QR 다운로드",
+    "zipDescription": "캠페인의 모든 배포 묶음 QR 을 한 묶음으로. 인쇄소·디자이너에게 통째로 넘길 자산.",
+    "singleDescription": "단일 배포 묶음의 QR PNG.",
+    "confirm": "다운로드",
+    "sizeLabel": "크기",
+    "sizes": {
+      "preview": "미리보기",
+      "online": "온라인 게시",
+      "print": "일반 인쇄",
+      "poster": "대형 포스터"
+    },
+    "ecLabel": "손상 허용 (Error correction)",
+    "ecHint": "외부 노출·오염이 많은 환경일수록 높게.",
+    "ec": {
+      "data": "데이터 우선",
+      "standard": "표준",
+      "outdoor": "야외·오염",
+      "maximum": "최대 보호"
+    },
+    "labelText": "라벨 텍스트",
+    "labelHint": "QR 아래 묶음 이름을 작게 박아 인쇄소가 식별 가능.",
+    "labelCheckbox": "QR 아래에 묶음 이름 인쇄",
+    "notSaved": "다운로드 옵션은 저장되지 않습니다. 같은 캠페인을 여러 옵션으로 여러 번 다운로드할 수 있어요."
   },
   "qrCampaigns": {
     "meta": {

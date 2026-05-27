@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { CountryClick } from "@/types";
 import { cn, countryFlag, countryName, formatNumber } from "@/lib/utils";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
@@ -9,6 +9,7 @@ type Props = { data: CountryClick[] };
 
 export function CountryTable({ data }: Props) {
   const t = useTranslations("stats");
+  const locale = useLocale();
   if (data.length === 0) {
     return <p className="py-8 text-center text-xs text-slate-500">{t("noData")}</p>;
   }
@@ -46,7 +47,7 @@ export function CountryTable({ data }: Props) {
                     {known ? countryFlag(code) : "🌐"}
                   </span>
                   <span className="min-w-0 truncate font-medium text-slate-900">
-                    {known ? countryName(code) : "Unknown"}
+                    {known ? countryName(code, locale) : t("countryTable.unknown")}
                   </span>
                   {known && (
                     <span className="hidden font-mono text-[11px] text-slate-500 sm:inline">

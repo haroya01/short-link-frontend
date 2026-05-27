@@ -8,7 +8,7 @@ import {
   createProfileBlock,
   deleteProfileBlock,
   getMyProfile,
-  listMyLinks,
+  listAllMyLinks,
   setLinkHighlight,
   setLinkOgOverride,
   toggleLinkOnProfile,
@@ -190,15 +190,15 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([getMyProfile(), listMyLinks({ size: 100 })])
-      .then(([prof, page]) => {
+    Promise.all([getMyProfile(), listAllMyLinks({ size: 100 })])
+      .then(([prof, allLinks]) => {
         if (cancelled) return;
         setProfile(prof);
         setUsername(prof.username ?? "");
         setBio(prof.bio ?? "");
         setTheme(prof.theme ?? null);
         setSocials(prof.socials ?? []);
-        setLinks(page.items);
+        setLinks(allLinks);
       })
       .catch(() => {
         if (!cancelled) setLinks([]);
@@ -557,4 +557,3 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     </div>
   );
 }
-
