@@ -34,7 +34,7 @@ import { ErrorState } from "@/components/common/error-state";
 import { useToast } from "@/components/ui/toast";
 import { BatchEditDialog } from "@/components/links/batch-edit-dialog";
 import { BatchDeleteDialog } from "@/components/links/batch-delete-dialog";
-import { QrDownloadDialog } from "@/components/qr/download-dialog";
+import { QrDownloadDialog } from "@/components/links/qr/download-dialog";
 import { BatchCard } from "./_components/batch-card";
 import type { CampaignBatch, CampaignDetail, CampaignStatus } from "@/types";
 

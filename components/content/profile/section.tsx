@@ -26,20 +26,20 @@ import type {
 import {
   BlockDialogStack,
   type BlockDialogs,
-} from "@/components/profile/section/block-dialog-stack";
-import { ProfileFeedEditor } from "@/components/profile/section/profile-feed-editor";
-import { ProfileMetaForm } from "@/components/profile/section/profile-meta-form";
-import { useBlockDialog } from "@/components/profile/section/use-block-dialog";
-import { useFeedReorder } from "@/components/profile/section/use-feed-reorder";
-import { useProfileAutosave } from "@/components/profile/section/use-profile-autosave";
-import { socialUrlPrefix } from "@/components/profile/section/socials-templates";
-import type { FeedItem } from "@/components/profile/section/types";
+} from "@/components/content/curation/block-dialog-stack";
+import { ProfileFeedEditor } from "@/components/content/curation/profile-feed-editor";
+import { ProfileMetaForm } from "@/components/content/curation/profile-meta-form";
+import { useBlockDialog } from "@/components/content/curation/use-block-dialog";
+import { useFeedReorder } from "@/components/content/curation/use-feed-reorder";
+import { useProfileAutosave } from "@/components/content/curation/use-profile-autosave";
+import { socialUrlPrefix } from "@/components/content/curation/socials-templates";
+import type { FeedItem } from "@/components/content/curation/types";
 import {
   parsePublicFeed,
   type PublicFeedEntryShape,
-} from "@/components/profile/section/parse-public-feed";
-import { SectionLabel } from "@/components/profile/section/section-label";
-import { ProfileQuickAdd } from "@/components/profile/quick-add";
+} from "@/components/content/curation/parse-public-feed";
+import { SectionLabel } from "@/components/content/curation/section-label";
+import { ProfileQuickAdd } from "@/components/content/profile/quick-add";
 
 export type ProfileDraft = {
   username: string;

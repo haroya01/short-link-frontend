@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { CalendarDays, ExternalLink } from "lucide-react";
 import type { BookingConfig } from "@/types";
 import { parseBookingConfig } from "@/lib/block-config-parsers";
-import { resolveBookingProvider } from "@/components/profile/section/booking-providers";
+import { resolveBookingProvider } from "@/components/content/curation/booking-providers";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {

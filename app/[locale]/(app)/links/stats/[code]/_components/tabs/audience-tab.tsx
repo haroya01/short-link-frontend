@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { BreakdownList } from "@/components/stats/breakdown-list";
-import { DeviceChart } from "@/components/stats/charts/device-chart";
+import { BreakdownList } from "@/components/links/stats/breakdown-list";
+import { DeviceChart } from "@/components/links/stats/charts/device-chart";
 import { Section } from "@/components/common/section";
 import type { LinkStats } from "@/types";
 

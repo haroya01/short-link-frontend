@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/profile/section/form-field";
+import { FormField } from "@/components/content/curation/form-field";
 
 type Config = {
   title: string;

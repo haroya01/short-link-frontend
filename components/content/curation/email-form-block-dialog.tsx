@@ -7,7 +7,7 @@ import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FormField } from "@/components/profile/section/form-field";
+import { FormField } from "@/components/content/curation/form-field";
 
 type Config = {
   title: string;
