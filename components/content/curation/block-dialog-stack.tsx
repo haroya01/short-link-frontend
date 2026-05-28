@@ -1,17 +1,17 @@
 "use client";
 
 import type { useTranslations } from "next-intl";
-import { BookingBlockDialog } from "@/components/profile/section/booking-block-dialog";
-import { ContactCardBlockDialog } from "@/components/profile/section/contact-card-block-dialog";
-import { EmailFormBlockDialog } from "@/components/profile/section/email-form-block-dialog";
-import { EmbedBlockDialog } from "@/components/profile/section/embed-block-dialog";
-import { EventBlockDialog } from "@/components/profile/section/event-block-dialog";
-import { GalleryBlockDialog } from "@/components/profile/section/gallery-block-dialog";
-import { ImageBlockDialog } from "@/components/profile/section/image-block-dialog";
-import { PlaceBlockDialog } from "@/components/profile/section/place-block-dialog";
-import { ProductCardBlockDialog } from "@/components/profile/section/product-card-block-dialog";
-import { TextBlockDialog } from "@/components/profile/section/text-block-dialog";
-import type { BlockDialogState } from "@/components/profile/section/use-block-dialog";
+import { BookingBlockDialog } from "@/components/content/curation/booking-block-dialog";
+import { ContactCardBlockDialog } from "@/components/content/curation/contact-card-block-dialog";
+import { EmailFormBlockDialog } from "@/components/content/curation/email-form-block-dialog";
+import { EmbedBlockDialog } from "@/components/content/curation/embed-block-dialog";
+import { EventBlockDialog } from "@/components/content/curation/event-block-dialog";
+import { GalleryBlockDialog } from "@/components/content/curation/gallery-block-dialog";
+import { ImageBlockDialog } from "@/components/content/curation/image-block-dialog";
+import { PlaceBlockDialog } from "@/components/content/curation/place-block-dialog";
+import { ProductCardBlockDialog } from "@/components/content/curation/product-card-block-dialog";
+import { TextBlockDialog } from "@/components/content/curation/text-block-dialog";
+import type { BlockDialogState } from "@/components/content/curation/use-block-dialog";
 
 export type BlockDialogs = {
   contactCard: BlockDialogState<string>;

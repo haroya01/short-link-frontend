@@ -3,7 +3,7 @@
 import { ArrowRight, BarChart3, ExternalLink, IdCard } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/common/copy-button";
-import { QrButton } from "@/components/qr/button";
+import { QrButton } from "@/components/links/qr/button";
 import { ShareButton } from "@/components/common/share-button";
 import { buttonVariants } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";

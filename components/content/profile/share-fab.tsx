@@ -1,6 +1,6 @@
 "use client";
 
-import { QrButton } from "@/components/qr/button";
+import { QrButton } from "@/components/links/qr/button";
 
 /**
  * Public-profile share entry point. Anyone visiting the page can grab the QR — useful when the

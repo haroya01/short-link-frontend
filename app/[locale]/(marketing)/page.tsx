@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { ShortenForm } from "@/components/shorten/form";
-import { ResultCard } from "@/components/shorten/result-card";
+import { ShortenForm } from "@/components/links/shorten/form";
+import { ResultCard } from "@/components/links/shorten/result-card";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { LandingPreviews } from "@/components/landing/landing-previews";
 import { WhyKurl } from "@/components/landing/why-kurl";

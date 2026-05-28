@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ProfileOwnerFab } from "@/components/profile/owner-fab";
-import { ProfileShareFab } from "@/components/profile/share-fab";
+import { ProfileOwnerFab } from "@/components/content/profile/owner-fab";
+import { ProfileShareFab } from "@/components/content/profile/share-fab";
 import type { PublicProfile } from "@/types";
 import { EntryList } from "./_components/entry-list";
 import { ProfileHeader } from "./_components/profile-header";

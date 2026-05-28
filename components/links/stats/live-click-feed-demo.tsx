@@ -11,7 +11,7 @@ type DemoClick = {
 };
 
 /**
- * Public {@code /demo} stand-in for {@link import("@/components/stats/live-click-feed").LiveClickFeed}.
+ * Public {@code /demo} stand-in for {@link import("@/components/links/stats/live-click-feed").LiveClickFeed}.
  *
  * <p>Renders the same chrome (title, "라이브" pill, divided list) so visitors get the real
  * feeling of "stuff arrives in real time" without the page trying to authenticate against the

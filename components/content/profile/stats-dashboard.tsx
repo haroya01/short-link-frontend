@@ -2,11 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import type { ProfileStats } from "@/types";
-import { StatsCards } from "@/components/stats/cards";
-import { DailyChart } from "@/components/stats/charts/daily-chart";
-import { Heatmap } from "@/components/stats/charts/heatmap";
-import { CountryTable } from "@/components/stats/country-table";
-import { BreakdownList } from "@/components/stats/breakdown-list";
+import { StatsCards } from "@/components/links/stats/cards";
+import { DailyChart } from "@/components/links/stats/charts/daily-chart";
+import { Heatmap } from "@/components/links/stats/charts/heatmap";
+import { CountryTable } from "@/components/links/stats/country-table";
+import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { Section } from "@/components/common/section";
 
 /**

@@ -5,8 +5,8 @@ import { Play, CheckCircle2, AlertCircle } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/profile/section/form-field";
-import { EMBED_PROVIDERS, resolveEmbedProvider } from "@/components/profile/section/embed-providers";
+import { FormField } from "@/components/content/curation/form-field";
+import { EMBED_PROVIDERS, resolveEmbedProvider } from "@/components/content/curation/embed-providers";
 
 type Props = {
   open: boolean;

@@ -27,8 +27,8 @@ import type { useTranslations } from "next-intl";
 import type { MyLink } from "@/types";
 import { useCollapsedSections } from "@/hooks/use-collapsed-sections";
 import { summarizeTextBody } from "@/lib/feed-summarizers";
-import type { FeedItem } from "@/components/profile/section/types";
-import { BLOCK_ROW_META, isCommonBlockType } from "@/components/profile/section/block-row-meta";
+import type { FeedItem } from "@/components/content/curation/types";
+import { BLOCK_ROW_META, isCommonBlockType } from "@/components/content/curation/block-row-meta";
 
 type SectionMeta = {
   /** Index of the TEXT header that anchors this section, or null when the row sits above the
