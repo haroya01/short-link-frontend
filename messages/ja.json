@@ -1,4 +1,23 @@
 {
+  "publicPost": {
+    "readingTime": "約{minutes}分",
+    "morePosts": "@{username}さんの他の記事",
+    "allPosts": "すべての記事",
+    "emptyPosts": "まだ公開された記事はありません。",
+    "goneTitle": "この記事は公開を終了しました",
+    "goneBody": "投稿者がこの記事の公開を取りやめました。",
+    "postCount": "記事{count}件",
+    "report": "報告",
+    "reportTitle": "この記事を報告",
+    "reportReason": "報告理由（任意）",
+    "reportSubmit": "報告",
+    "reportSubmitting": "送信中…",
+    "reportDone": "報告を受け付けました。",
+    "reportPlaceholder": "具体的な理由があれば記入してください",
+    "ctaUnavailable": "{label} · 現在利用できないリンク",
+    "ctaDeleted": "削除されたリンク",
+    "toc": "目次"
+  },
   "imageCropper": {
     "title": "画像を切り抜く",
     "cancel": "キャンセル",

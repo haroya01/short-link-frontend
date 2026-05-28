@@ -1,24 +1,34 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import { getTranslations } from "next-intl/server";
+import { ArrowLeft } from "lucide-react";
 import { ReportButton } from "@/components/blog/report-button";
 import { ShareButton } from "@/components/blog/share-button";
 import { ViewBeacon } from "@/components/blog/view-beacon";
-import {
-  findPublicPost,
-  type PublicCtaInfo,
-  type PublicPostBlock,
-} from "@/lib/api/public-posts";
+import { PostToc } from "@/components/blog/post-toc";
+import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
+import { findPublicPost } from "@/lib/api/public-posts";
 
 export const revalidate = 30;
 
 type ReadonlyHeaders = Awaited<ReturnType<typeof headers>>;
+
+const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 
 function subdomainOrigin(req: ReadonlyHeaders, username: string): string {
   const host = req.get("x-original-host") ?? req.get("host");
   if (!host) return `https://${username}.kurl.me`;
   const cleaned = host.split(":")[0];
   return `https://${cleaned}`;
+}
+
+function formatDate(iso: string, locale: string): string {
+  return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 export async function generateMetadata({
@@ -51,18 +61,15 @@ export async function generateMetadata({
 export default async function PublicPostPage({
   params,
 }: {
-  params: Promise<{ username: string; slug: string }>;
+  params: Promise<{ locale: string; username: string; slug: string }>;
 }) {
-  const { username, slug } = await params;
+  const { locale, username, slug } = await params;
   const result = await findPublicPost(username, slug);
+  const t = await getTranslations({ locale, namespace: "publicPost" });
 
   if (!result.ok) {
     // backend: UNPUBLISHED → 410, DRAFT/SCHEDULED/missing → 404.
-    // Next.js 14 page.tsx 가 HTTP status code 직접 set 불가 → UI 분기로 처리.
-    // Status code 자체는 middleware 또는 route handler 로 별도 PR.
-    if (result.status === 410) {
-      return <GonePage username={username} />;
-    }
+    if (result.status === 410) return <GonePage username={username} t={t} />;
     notFound();
   }
 
@@ -70,163 +77,98 @@ export default async function PublicPostPage({
   const h = await headers();
   const origin = subdomainOrigin(h, username);
   const postUrl = `${origin}/${post.slug}`;
+  const minutes = readingMinutes(blocks);
+  const headings = extractHeadings(blocks);
 
   return (
-    <article className="mx-auto max-w-2xl px-6 py-12" lang={post.languageTag}>
-      <ViewBeacon username={username} slug={slug} />
-      <header className="mb-10">
-        <div className="flex items-start justify-between gap-4">
-          <h1 className="text-3xl font-bold leading-tight tracking-tight">{post.title}</h1>
-          <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
-        </div>
-        <div className="mt-4 flex items-center gap-3 text-sm text-gray-500">
-          <a href="/" className="hover:underline">
-            @{author.username}
+    <div className="relative mx-auto max-w-6xl">
+      {headings.length >= 2 && (
+        <aside className="absolute right-0 top-20 hidden w-56 xl:block">
+          <div className="sticky top-28 max-h-[calc(100vh-9rem)] overflow-y-auto">
+            <PostToc headings={headings} />
+          </div>
+        </aside>
+      )}
+      <article className="mx-auto max-w-2xl px-6 py-14 sm:py-20" lang={post.languageTag}>
+        <ViewBeacon username={username} slug={slug} />
+
+      <header className="mb-12">
+        <h1 className="text-headline-sm font-bold tracking-tight text-slate-900 sm:text-headline-md">
+          {post.title}
+        </h1>
+        <div className="mt-6 flex items-center justify-between gap-4">
+          <a href="/" className="group flex min-w-0 items-center gap-3">
+            {author.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={author.avatarUrl}
+                alt={`@${author.username}`}
+                width={40}
+                height={40}
+                className="h-10 w-10 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700">
+                {author.username.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <span className="min-w-0">
+              <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700">
+                @{author.username}
+              </span>
+              <span className="block text-[13px] text-slate-400">
+                <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
+                {" · "}
+                {t("readingTime", { minutes })}
+              </span>
+            </span>
           </a>
-          <span>·</span>
-          <time dateTime={post.publishedAt}>
-            {new Date(post.publishedAt).toLocaleDateString()}
-          </time>
+          <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
         </div>
       </header>
 
-      <div className="prose prose-neutral max-w-none">
-        {blocks.map((b, i) => (
-          <BlockRender key={i} block={b} />
-        ))}
-      </div>
+      <ArticleBody blocks={blocks} />
 
-      <footer className="mt-16 border-t pt-8 flex items-center justify-between">
-        <a href="/" className="text-sm text-gray-500 hover:underline">
-          ← @{author.username} 의 다른 글
-        </a>
-        <div className="flex items-center gap-3">
-          <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+      <footer className="mt-20 border-t border-slate-100 pt-8">
+        <div className="flex items-center justify-between gap-4">
+          <a
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-accent-700"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {t("morePosts", { username: author.username })}
+          </a>
+          <div className="flex items-center gap-4">
+            <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+          </div>
+        </div>
+        <div className="mt-6 flex justify-end">
           <ReportButton subjectType="POST" subjectId={post.id} />
         </div>
       </footer>
-    </article>
-  );
-}
-
-function GonePage({ username }: { username: string }) {
-  return (
-    <main className="mx-auto max-w-md px-6 py-24 text-center">
-      <h1 className="text-3xl font-bold">410</h1>
-      <p className="mt-4 text-gray-600">이 글은 더 이상 게시되지 않습니다.</p>
-      <a href="/" className="mt-8 inline-block text-sm text-emerald-600 hover:underline">
-        ← @{username} 의 다른 글
-      </a>
-    </main>
-  );
-}
-
-function BlockRender({ block }: { block: PublicPostBlock }) {
-  switch (block.type) {
-    case "PARAGRAPH":
-      return <p>{block.content}</p>;
-    case "H1":
-      return <h1>{block.content}</h1>;
-    case "H2":
-      return <h2>{block.content}</h2>;
-    case "H3":
-      return <h3>{block.content}</h3>;
-    case "QUOTE":
-      return <blockquote>{block.content}</blockquote>;
-    case "DIVIDER":
-      return <hr />;
-    case "LIST_BULLET":
-      return <ParsedList content={block.content} ordered={false} />;
-    case "LIST_NUMBERED":
-      return <ParsedList content={block.content} ordered={true} />;
-    case "IMAGE":
-      return <ImageBlock content={block.content} />;
-    case "CTA_REF":
-      return <CtaBlock cta={block.cta} />;
-    case "EMBED":
-      return <EmbedBlock content={block.content} />;
-    default:
-      return null;
-  }
-}
-
-function ParsedList({ content, ordered }: { content: string | null; ordered: boolean }) {
-  if (!content) return null;
-  let items: string[] = [];
-  try {
-    const parsed = JSON.parse(content);
-    if (Array.isArray(parsed)) items = parsed.filter((x) => typeof x === "string");
-  } catch {
-    items = content.split("\n").filter(Boolean);
-  }
-  const ListTag = ordered ? "ol" : "ul";
-  return (
-    <ListTag>
-      {items.map((item, i) => (
-        <li key={i}>{item}</li>
-      ))}
-    </ListTag>
-  );
-}
-
-function ImageBlock({ content }: { content: string | null }) {
-  if (!content) return null;
-  let url: string | null = null;
-  let alt = "";
-  try {
-    const parsed = JSON.parse(content);
-    if (parsed && typeof parsed === "object") {
-      url = typeof parsed.url === "string" ? parsed.url : null;
-      alt = typeof parsed.alt === "string" ? parsed.alt : "";
-    }
-  } catch {
-    url = content.trim();
-  }
-  if (!url) return null;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={url} alt={alt} className="rounded-lg" />;
-}
-
-function CtaBlock({ cta }: { cta: PublicCtaInfo | null }) {
-  if (!cta) {
-    return (
-      <div className="my-6 rounded-lg border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-500">
-        CTA (참조 만료 또는 삭제됨)
-      </div>
-    );
-  }
-  if (cta.deleted) {
-    return (
-      <div className="my-6 rounded-lg border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-500">
-        {cta.label} (현재 사용할 수 없음)
-      </div>
-    );
-  }
-  const primary = cta.style === "PRIMARY";
-  const baseClass = primary
-    ? "bg-emerald-600 text-white hover:bg-emerald-700"
-    : "border border-gray-300 text-gray-700 hover:bg-gray-50";
-  return (
-    <div className="my-8 not-prose">
-      <a
-        href={cta.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`inline-block rounded-lg px-6 py-3 font-medium ${baseClass}`}
-      >
-        {cta.label}
-      </a>
+      </article>
     </div>
   );
 }
 
-function EmbedBlock({ content }: { content: string | null }) {
-  if (!content) return null;
+function GonePage({
+  username,
+  t,
+}: {
+  username: string;
+  t: Awaited<ReturnType<typeof getTranslations>>;
+}) {
   return (
-    <p>
-      <a href={content} target="_blank" rel="noopener noreferrer">
-        {content}
+    <main className="mx-auto flex max-w-md flex-col items-center px-6 py-28 text-center">
+      <h1 className="text-headline-sm font-bold tracking-tight text-slate-900">{t("goneTitle")}</h1>
+      <p className="mt-3 text-slate-500">{t("goneBody")}</p>
+      <a
+        href="/"
+        className="mt-8 inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 hover:underline"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t("morePosts", { username })}
       </a>
-    </p>
+    </main>
   );
 }
