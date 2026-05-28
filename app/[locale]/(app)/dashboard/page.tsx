@@ -67,7 +67,7 @@ export default function DashboardPage() {
     () => tagsQuery.data?.map((t) => t.name) ?? [],
     [tagsQuery.data],
   );
-  const loading = linksQuery.isLoading;
+  const loading = !ready || linksQuery.isLoading;
   const error = linksQuery.error
     ? linksQuery.error instanceof Error
       ? linksQuery.error.message
@@ -166,7 +166,11 @@ export default function DashboardPage() {
         onImported={() => void invalidateLinks()}
       />
 
-      {items.length > 0 && <DashboardOpsPanel ops={ops} />}
+      {loading ? (
+        <DashboardOpsSkeleton />
+      ) : items.length > 0 ? (
+        <DashboardOpsPanel ops={ops} />
+      ) : null}
 
       <CampaignsEntryCard />
 
@@ -387,6 +391,49 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
               </a>
             </div>
           )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DashboardOpsSkeleton() {
+  return (
+    <section className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.72fr)]">
+      <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
+          >
+            <div className="flex min-w-0 items-start justify-between gap-3">
+              <div className="flex min-w-0 items-start gap-2.5">
+                <Skeleton className="mt-0.5 h-7 w-7 shrink-0 rounded-lg" />
+                <div className="min-w-0 space-y-1.5">
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-2.5 w-28" />
+                </div>
+              </div>
+              <Skeleton className="h-6 w-12 shrink-0" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+        <div className="flex h-full min-w-0 flex-col gap-4">
+          <div className="flex items-start justify-between gap-3">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-6 w-16 rounded-full" />
+          </div>
+          <div className="min-w-0 rounded-lg border border-slate-100 bg-slate-50/70 px-3 py-3 space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-3 w-3/4" />
+          </div>
+          <div className="mt-auto flex flex-wrap items-center gap-2">
+            <Skeleton className="h-8 w-16" />
+            <Skeleton className="h-8 w-20" />
+            <Skeleton className="h-8 w-12" />
+          </div>
         </div>
       </div>
     </section>
