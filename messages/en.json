@@ -13,7 +13,9 @@
     "reportPlaceholder": "Add any specific details",
     "reportSubmit": "Report",
     "reportSubmitting": "Sending…",
-    "reportDone": "Thanks — your report was received."
+    "reportDone": "Thanks — your report was received.",
+    "ctaUnavailable": "{label} · link unavailable",
+    "ctaDeleted": "Removed link"
   },
   "imageCropper": {
     "title": "Crop image",

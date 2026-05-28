@@ -13,7 +13,9 @@
     "reportPlaceholder": "구체적인 사유가 있으면 적어주세요",
     "reportSubmit": "신고",
     "reportSubmitting": "전송 중…",
-    "reportDone": "신고가 접수됐어요."
+    "reportDone": "신고가 접수됐어요.",
+    "ctaUnavailable": "{label} · 현재 사용할 수 없는 링크",
+    "ctaDeleted": "삭제된 링크"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",

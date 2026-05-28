@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { planEmbed } from "@/lib/post-embed";
 import type { PublicCtaInfo, PublicPostBlock } from "@/lib/api/public-posts";
 
@@ -151,11 +152,12 @@ function EmbedBlock({ content }: { content: string | null }) {
   );
 }
 
-function CtaBlock({ cta }: { cta: PublicCtaInfo | null }) {
+async function CtaBlock({ cta }: { cta: PublicCtaInfo | null }) {
   if (!cta || cta.deleted) {
+    const t = await getTranslations("publicPost");
     return (
       <div className="my-8 rounded-2xl border border-dashed border-slate-200 px-5 py-4 text-center text-sm text-slate-400">
-        {cta?.label ? `${cta.label} · 현재 사용할 수 없는 링크` : "삭제된 링크"}
+        {cta?.label ? t("ctaUnavailable", { label: cta.label }) : t("ctaDeleted")}
       </div>
     );
   }
