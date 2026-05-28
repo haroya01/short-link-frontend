@@ -69,6 +69,30 @@
     "login": "ログイン",
     "logout": "ログアウト"
   },
+  "area": {
+    "content": "コンテンツ",
+    "links": "リンク"
+  },
+  "sidebar": {
+    "content": {
+      "overview": "概要",
+      "write": "執筆",
+      "posts": "投稿",
+      "curation": "おすすめ",
+      "readers": "読者"
+    },
+    "links": {
+      "home": "ホーム",
+      "campaigns": "QR キャンペーン",
+      "qr": "QR コード",
+      "ctas": "CTA",
+      "stats": "統計"
+    },
+    "common": {
+      "settings": "設定",
+      "admin": "管理"
+    }
+  },
   "home": {
     "tagline": "kurl v1",
     "headline1": "短縮はひと行で",

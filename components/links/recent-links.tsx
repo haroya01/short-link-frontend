@@ -52,7 +52,7 @@ export function RecentLinks() {
               <ShareButton url={item.shortUrl} title={item.shortUrl} iconOnly variant="ghost" />
               {authenticated && (
                 <Link
-                  href={`/stats/${item.shortCode}`}
+                  href={`/links/stats/${item.shortCode}`}
                   className="rounded-md px-2 py-1 text-[11px] text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                 >
                   {t("viewStats")}

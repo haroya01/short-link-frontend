@@ -26,7 +26,7 @@ export default function ProfileAutoPage() {
     if (me?.username) {
       router.replace(`/u/${me.username}`);
     } else {
-      router.replace("/profile/edit");
+      router.replace("/settings/profile");
     }
   }, [authenticated, ready, me, router]);
 

@@ -14,11 +14,11 @@ const LOGIN_NEXT_KEY = "kurl:login-next";
 // Whitelist post-OAuth destinations so /login?next=evil.com cannot hijack the redirect.
 const ALLOWED_NEXT_PATHS = new Set<string>([
   "/profile/auto",
-  "/profile/edit",
-  "/dashboard",
+  "/settings/profile",
+  "/links",
   "/settings",
-  "/campaigns",
-  "/campaigns/new",
+  "/links/campaigns",
+  "/links/campaigns/new",
 ]);
 
 function sanitizeNext(raw: string | null): string | null {

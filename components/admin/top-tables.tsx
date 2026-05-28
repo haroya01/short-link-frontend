@@ -121,7 +121,7 @@ export function AdminTopLinksTable({
         <TR key={l.shortCode}>
           <TD>
             <Link
-              href={`/stats/${l.shortCode}`}
+              href={`/links/stats/${l.shortCode}`}
               className="font-mono text-sm font-medium text-slate-900 hover:underline"
             >
               /{l.shortCode}

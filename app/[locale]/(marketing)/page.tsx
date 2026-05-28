@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { ShortenForm } from "@/components/shorten/form";
@@ -14,13 +14,23 @@ import { usePublicTotals } from "@/lib/api/stats.queries";
 import { RecentLinks } from "@/components/links/recent-links";
 import { useAuth } from "@/lib/auth";
 import { recordRecent, useRecentLinks } from "@/lib/recent-links";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
+import { useLastArea } from "@/lib/use-last-area";
 import type { CreateLinkResponse } from "@/types";
 
 export default function HomePage() {
-  const { authenticated } = useAuth();
+  const { authenticated, ready } = useAuth();
   const t = useTranslations("home");
   const locale = useLocale();
+  const router = useRouter();
+  const area = useLastArea();
+
+  // 로그인된 사용자가 `/` 진입 시 마지막 사용 영역으로 자동 복귀.
+  // [[decisions/2026-05-29-blog-links-separation-ui]] D1.
+  useEffect(() => {
+    if (!ready || !authenticated) return;
+    router.replace(`/${area}`);
+  }, [ready, authenticated, area, router]);
   // headline2 가 ja 에서 「クリックの「いつ・どこから・誰が」を一目で」 23자로 늘어나
   // 기본 sm:text-[60px] 컨테이너 (max-w-3xl) 를 초과해 wrap. ko/en 은 short copy
   // (12/24자) 라 60px 유지 가능 — locale 별로 hero font scale 분기. mobile 도 동일
@@ -146,7 +156,7 @@ export default function HomePage() {
                   </Link>
                 ) : (
                   <Link
-                    href="/dashboard"
+                    href="/links"
                     className="group flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
                   >
                     <span>{t("ctaSeeLinks")}</span>

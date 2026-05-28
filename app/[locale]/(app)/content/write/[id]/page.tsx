@@ -128,7 +128,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     setError(null);
     try {
       await deletePost(post.id);
-      router.push("/write");
+      router.push("/content/write");
     } catch (e) {
       setError(e instanceof Error ? e.message : "delete failed");
       setBusy(false);
@@ -156,7 +156,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     <main className="mx-auto max-w-3xl px-6 py-12">
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <a href="/write" className="text-sm text-gray-500 hover:underline">
+          <a href="/content/write" className="text-sm text-gray-500 hover:underline">
             ← 글 목록
           </a>
           <p className="mt-1 text-xs text-gray-400 font-mono">slug: {post.slug}</p>

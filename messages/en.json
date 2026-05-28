@@ -69,6 +69,30 @@
     "login": "Sign in",
     "logout": "Sign out"
   },
+  "area": {
+    "content": "Content",
+    "links": "Links"
+  },
+  "sidebar": {
+    "content": {
+      "overview": "Overview",
+      "write": "Write",
+      "posts": "Posts",
+      "curation": "Curation",
+      "readers": "Readers"
+    },
+    "links": {
+      "home": "Home",
+      "campaigns": "Campaigns",
+      "qr": "QR Codes",
+      "ctas": "CTAs",
+      "stats": "Stats"
+    },
+    "common": {
+      "settings": "Settings",
+      "admin": "Admin"
+    }
+  },
   "home": {
     "tagline": "kurl v1",
     "headline1": "Shorten in one line",

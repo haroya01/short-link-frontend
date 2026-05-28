@@ -69,6 +69,30 @@
     "login": "로그인",
     "logout": "로그아웃"
   },
+  "area": {
+    "content": "콘텐츠",
+    "links": "링크"
+  },
+  "sidebar": {
+    "content": {
+      "overview": "개요",
+      "write": "글쓰기",
+      "posts": "글",
+      "curation": "큐레이션",
+      "readers": "독자"
+    },
+    "links": {
+      "home": "홈",
+      "campaigns": "QR 캠페인",
+      "qr": "QR 코드",
+      "ctas": "CTA",
+      "stats": "통계"
+    },
+    "common": {
+      "settings": "설정",
+      "admin": "관리자"
+    }
+  },
   "home": {
     "tagline": "kurl v1",
     "headline1": "단축은 한 줄",

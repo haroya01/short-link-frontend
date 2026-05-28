@@ -16,11 +16,11 @@ const LOGIN_NEXT_KEY = "kurl:login-next";
  */
 const ALLOWED_NEXT_PATHS = new Set<string>([
   "/profile/auto",
-  "/profile/edit",
-  "/dashboard",
+  "/settings/profile",
+  "/links",
   "/settings",
-  "/campaigns",
-  "/campaigns/new",
+  "/links/campaigns",
+  "/links/campaigns/new",
 ]);
 
 export default function AuthCallbackPage() {
@@ -56,7 +56,7 @@ export default function AuthCallbackPage() {
     // entry from /login doesn't change behavior.
     const next = sessionStorage.getItem(LOGIN_NEXT_KEY);
     sessionStorage.removeItem(LOGIN_NEXT_KEY);
-    const dest = next && ALLOWED_NEXT_PATHS.has(next) ? next : "/dashboard";
+    const dest = next && ALLOWED_NEXT_PATHS.has(next) ? next : "/links";
     router.replace(dest);
   }, [router, t]);
 

@@ -31,7 +31,7 @@ type Props = {
  * shape mirrors the backend JSON. Title is required; the other three have backend defaults so
  * blank is fine on initial create.
  *
- * <p>Dialog also surfaces a "수집된 이메일 보기 →" link to {@code /profile/leads} so the seller
+ * <p>Dialog also surfaces a "수집된 이메일 보기 →" link to {@code /content/leads} so the seller
  * who just made an EMAIL_FORM block immediately knows where the collected addresses live. The
  * page was orphaned until this dialog started linking to it — sellers were leaving the form on
  * profiles without realizing leads were being saved at all.
@@ -93,7 +93,7 @@ export function EmailFormBlockDialog({ open, initialJson, onOpenChange, onSubmit
           <div className="space-y-0.5">
             <p>{t("emailFormHowItWorks")}</p>
             <a
-              href={`/${locale}/profile/leads`}
+              href={`/${locale}/content/leads`}
               className="inline-flex items-center gap-0.5 font-medium underline-offset-2 hover:underline"
             >
               {t("emailFormViewLeadsCta")}
