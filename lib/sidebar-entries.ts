@@ -2,34 +2,37 @@ import type { SidebarSection } from "@/components/common/sidebar";
 
 type Translator = (key: string) => string;
 
-export function buildContentSections(
-  tContent: Translator,
+/**
+ * blog.kurl.me 워크스페이스 사이드바.
+ * "Links" 메뉴는 kurl.me product 진입이 아니라 이 사용자의 글 안에 박힌 링크들의 성과 view.
+ * Cross-product 진입은 헤더의 apps grid 가 처리한다.
+ */
+export function buildBlogSections(
+  tBlog: Translator,
   tCommon: Translator,
   { isAdmin }: { isAdmin: boolean },
 ): SidebarSection[] {
   return [
     {
       entries: [
-        {
-          href: "/content",
-          label: tContent("overview"),
-          active: (p) => p === "/content",
-        },
-        { href: "/content/write", label: tContent("write") },
-        { href: "/content/posts", label: tContent("posts") },
-        { href: "/content/curation", label: tContent("curation") },
-        { href: "/content/readers", label: tContent("readers") },
+        { href: "/", label: tBlog("overview"), active: (p) => p === "/" },
+        { href: "/write", label: tBlog("write") },
+        { href: "/posts", label: tBlog("posts") },
+        { href: "/drafts", label: tBlog("drafts") },
+        { href: "/readers", label: tBlog("readers") },
+        { href: "/links", label: tBlog("links") },
+        { href: "/curation", label: tBlog("curation") },
       ],
     },
     {
-      entries: [
-        { href: "/settings", label: tCommon("settings") },
-        ...(isAdmin ? [{ href: "/admin", label: tCommon("admin") }] : []),
-      ],
+      entries: [{ href: "/settings", label: tCommon("settings") }],
     },
   ];
 }
 
+/**
+ * kurl.me 워크스페이스 사이드바. 단축링크 product.
+ */
 export function buildLinksSections(
   tLinks: Translator,
   tCommon: Translator,
@@ -38,15 +41,11 @@ export function buildLinksSections(
   return [
     {
       entries: [
-        {
-          href: "/links",
-          label: tLinks("home"),
-          active: (p) => p === "/links",
-        },
-        { href: "/links/campaigns", label: tLinks("campaigns") },
-        { href: "/links/qr", label: tLinks("qr") },
-        { href: "/links/ctas", label: tLinks("ctas") },
-        { href: "/links/stats", label: tLinks("stats") },
+        { href: "/dashboard", label: tLinks("links") },
+        { href: "/campaigns", label: tLinks("campaigns") },
+        { href: "/qr", label: tLinks("qr") },
+        { href: "/ctas", label: tLinks("ctas") },
+        { href: "/stats", label: tLinks("stats") },
       ],
     },
     {

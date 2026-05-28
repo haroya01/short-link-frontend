@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
-import { ReportButton } from "@/components/content/report-button";
+import { ReportButton } from "@/components/blog/report-button";
 import { listPublicPosts, type PublicPostListItem } from "@/lib/api/public-posts";
 
 // 30s ISR — author 발행 후 30 초 내 visitors 반영. Backend 가 어차피 매번 직접 조회.

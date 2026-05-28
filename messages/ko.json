@@ -58,39 +58,31 @@
   "nav": {
     "shorten": "단축",
     "showcase": "프로필",
-    "myLinks": "내 링크",
-    "posts": "글",
-    "ctas": "CTA",
-    "analytics": "분석",
     "campaigns": "QR 캠페인",
-    "profile": "내 프로필",
-    "admin": "관리자",
+    "pricing": "가격",
     "settings": "설정",
     "login": "로그인",
     "logout": "로그아웃",
-    "viewMyPage": "내 페이지"
-  },
-  "postsLanding": {
-    "headline": "기록이 매번 단축링크가 된다",
-    "subhead": "kurl 의 글쓰기는 본문에 박힌 외부 링크가 자동으로 추적되는 콘텐츠 레이어다.",
-    "startWriting": "글 시작하기",
-    "recentPostsLabel": "최근 글",
-    "recentPostsEmpty": "곧."
-  },
-  "area": {
-    "content": "콘텐츠",
-    "links": "링크"
+    "apps": {
+      "trigger": "다른 앱",
+      "linksLabel": "Links",
+      "linksHint": "단축링크 · QR · 캠페인 · CTA · 통계",
+      "blogLabel": "Blog",
+      "blogHint": "글쓰기 · 작가 페이지 · 독자 분석"
+    }
   },
   "sidebar": {
-    "content": {
+    "blog": {
       "overview": "개요",
       "write": "글쓰기",
-      "posts": "글",
-      "curation": "큐레이션",
-      "readers": "독자"
+      "posts": "발행 글",
+      "drafts": "임시저장",
+      "readers": "독자",
+      "links": "글 안 링크",
+      "curation": "큐레이션"
     },
     "links": {
-      "home": "홈",
+      "links": "링크",
       "campaigns": "QR 캠페인",
       "qr": "QR 코드",
       "ctas": "CTA",
