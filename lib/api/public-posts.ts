@@ -26,10 +26,19 @@ export interface PublicPostListItem {
   publishedAt: string; // ISO instant
 }
 
+export interface PublicCtaInfo {
+  label: string;
+  url: string;
+  style: string;
+  purpose: string;
+  deleted: boolean;
+}
+
 export interface PublicPostBlock {
   type: string;
   content: string | null;
   blockOrder: number;
+  cta: PublicCtaInfo | null;
 }
 
 export interface PublicPostList {
