@@ -383,6 +383,127 @@ h1, h2, h3, p {
     @apply bg-slate-50 font-semibold;
   }
 
+  /*
+   * Long-form reading typography for the public blog post body. Distinct from .prose-text-block:
+   * that one is tuned small for a card-sized markdown block inside the profile feed; this one is a
+   * full article column (max-w-2xl) and leans editorial — 17px body, 1.85 leading, generous block
+   * rhythm, accent-green links. We render each post block as a discrete semantic element under this
+   * wrapper, so element selectors here carry the styling rather than @tailwindcss/typography (which
+   * the project deliberately doesn't pull in — one custom surface doesn't justify the plugin).
+   */
+  .prose-post > :first-child {
+    margin-top: 0;
+  }
+  .prose-post > :last-child {
+    margin-bottom: 0;
+  }
+  .prose-post p {
+    @apply my-5 text-[1.0625rem] leading-[1.85] text-slate-700;
+  }
+  .prose-post h2 {
+    @apply mb-3 mt-12 text-[1.5rem] font-bold leading-snug tracking-tight text-slate-900;
+  }
+  .prose-post h3 {
+    @apply mb-2 mt-10 text-[1.25rem] font-semibold leading-snug tracking-tight text-slate-900;
+  }
+  .prose-post h4 {
+    @apply mb-2 mt-8 text-[1.0625rem] font-semibold leading-snug text-slate-900;
+  }
+  .prose-post ul {
+    @apply my-5 list-disc space-y-2 pl-6;
+  }
+  .prose-post ol {
+    @apply my-5 list-decimal space-y-2 pl-6;
+  }
+  .prose-post li {
+    @apply text-[1.0625rem] leading-[1.8] text-slate-700;
+  }
+  .prose-post li::marker {
+    @apply text-accent-500;
+  }
+  .prose-post li > p {
+    @apply my-0;
+  }
+  .prose-post strong {
+    @apply font-semibold text-slate-900;
+  }
+  .prose-post em {
+    @apply italic;
+  }
+  .prose-post a {
+    @apply font-medium text-accent-700 underline decoration-accent-300 underline-offset-2 transition-colors hover:decoration-accent-600;
+  }
+  .prose-post code {
+    @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.875em] text-accent-800;
+  }
+  .prose-post pre {
+    @apply my-6 overflow-x-auto rounded-xl bg-slate-900 p-4 text-[0.875rem] leading-relaxed text-slate-100;
+  }
+  .prose-post pre code {
+    @apply bg-transparent p-0 text-slate-100;
+  }
+  .prose-post blockquote {
+    @apply my-7 border-l-[3px] border-accent-400 pl-5 text-[1.125rem] italic leading-relaxed text-slate-600;
+  }
+  .prose-post figure {
+    @apply my-8;
+  }
+  .prose-post figure img {
+    @apply mx-auto rounded-2xl;
+  }
+  .prose-post figcaption {
+    @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-400;
+  }
+  /*
+   * Syntax highlighting for fenced code blocks. rehype-highlight tags tokens with `.hljs-*`
+   * classes; this is a compact dark palette tuned for the slate-900 `pre` background above
+   * (no separate highlight.js theme stylesheet — one surface doesn't justify the import).
+   */
+  .prose-post pre code.hljs {
+    @apply bg-transparent p-0;
+    color: #e2e8f0;
+  }
+  .prose-post .hljs-comment,
+  .prose-post .hljs-quote {
+    color: #94a3b8;
+    font-style: italic;
+  }
+  .prose-post .hljs-keyword,
+  .prose-post .hljs-selector-tag,
+  .prose-post .hljs-literal,
+  .prose-post .hljs-section,
+  .prose-post .hljs-link {
+    color: #93c5fd;
+  }
+  .prose-post .hljs-string,
+  .prose-post .hljs-attr,
+  .prose-post .hljs-template-tag,
+  .prose-post .hljs-addition {
+    color: #6ee7b7;
+  }
+  .prose-post .hljs-number,
+  .prose-post .hljs-built_in,
+  .prose-post .hljs-builtin-name,
+  .prose-post .hljs-symbol,
+  .prose-post .hljs-meta {
+    color: #fca5a5;
+  }
+  .prose-post .hljs-title,
+  .prose-post .hljs-type {
+    color: #fcd34d;
+  }
+  .prose-post .hljs-variable,
+  .prose-post .hljs-name,
+  .prose-post .hljs-tag {
+    color: #f9a8d4;
+  }
+  .prose-post .hljs-emphasis {
+    font-style: italic;
+  }
+  .prose-post .hljs-strong {
+    font-weight: 700;
+  }
+
 @keyframes profile-fade-in {
   from {
     opacity: 0;
