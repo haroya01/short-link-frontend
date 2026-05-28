@@ -105,6 +105,21 @@ export function Nav() {
       label: t("myLinks"),
       active: (p) => p.startsWith("/dashboard"),
     });
+    entries.push({
+      href: "/write",
+      label: t("posts"),
+      active: (p) => p.startsWith("/write"),
+    });
+    entries.push({
+      href: "/ctas",
+      label: t("ctas"),
+      active: (p) => p.startsWith("/ctas"),
+    });
+    entries.push({
+      href: "/analytics",
+      label: t("analytics"),
+      active: (p) => p.startsWith("/analytics"),
+    });
   }
   // QR 캠페인 메뉴는 anonymous + 로그인 모두 노출 — anonymous 는 marketing landing,
   // 로그인 사용자는 자기 캠페인 목록. 도메인이 일반 단축 URL 과 다르다는 걸 진입에서 분리.
