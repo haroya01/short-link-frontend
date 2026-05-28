@@ -171,7 +171,8 @@
       "campaigns": "QR 캠페인",
       "qr": "QR 코드",
       "ctas": "CTA",
-      "stats": "통계"
+      "stats": "통계",
+      "profile": "프로필"
     },
     "common": {
       "settings": "설정",
