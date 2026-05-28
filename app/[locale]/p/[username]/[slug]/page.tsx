@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ShareButton } from "@/components/publishing/share-button";
+import { ViewBeacon } from "@/components/publishing/view-beacon";
 import {
   findPublicPost,
   type PublicCtaInfo,
@@ -71,6 +72,7 @@ export default async function PublicPostPage({
 
   return (
     <article className="mx-auto max-w-2xl px-6 py-12" lang={post.languageTag}>
+      <ViewBeacon username={username} slug={slug} />
       <header className="mb-10">
         <div className="flex items-start justify-between gap-4">
           <h1 className="text-3xl font-bold leading-tight tracking-tight">{post.title}</h1>
