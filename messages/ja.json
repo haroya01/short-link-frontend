@@ -15,7 +15,8 @@
     "reportDone": "報告を受け付けました。",
     "reportPlaceholder": "具体的な理由があれば記入してください",
     "ctaUnavailable": "{label} · 現在利用できないリンク",
-    "ctaDeleted": "削除されたリンク"
+    "ctaDeleted": "削除されたリンク",
+    "toc": "目次"
   },
   "imageCropper": {
     "title": "画像を切り抜く",

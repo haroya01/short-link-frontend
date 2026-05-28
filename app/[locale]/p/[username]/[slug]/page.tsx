@@ -6,7 +6,8 @@ import { ArrowLeft } from "lucide-react";
 import { ReportButton } from "@/components/blog/report-button";
 import { ShareButton } from "@/components/blog/share-button";
 import { ViewBeacon } from "@/components/blog/view-beacon";
-import { ArticleBody, readingMinutes } from "../_components/post-blocks";
+import { PostToc } from "@/components/blog/post-toc";
+import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { findPublicPost } from "@/lib/api/public-posts";
 
 export const revalidate = 30;
@@ -77,10 +78,19 @@ export default async function PublicPostPage({
   const origin = subdomainOrigin(h, username);
   const postUrl = `${origin}/${post.slug}`;
   const minutes = readingMinutes(blocks);
+  const headings = extractHeadings(blocks);
 
   return (
-    <article className="mx-auto max-w-2xl px-6 py-14 sm:py-20" lang={post.languageTag}>
-      <ViewBeacon username={username} slug={slug} />
+    <div className="relative mx-auto max-w-6xl">
+      {headings.length >= 2 && (
+        <aside className="absolute right-0 top-20 hidden w-56 xl:block">
+          <div className="sticky top-28 max-h-[calc(100vh-9rem)] overflow-y-auto">
+            <PostToc headings={headings} />
+          </div>
+        </aside>
+      )}
+      <article className="mx-auto max-w-2xl px-6 py-14 sm:py-20" lang={post.languageTag}>
+        <ViewBeacon username={username} slug={slug} />
 
       <header className="mb-12">
         <h1 className="text-headline-sm font-bold tracking-tight text-slate-900 sm:text-headline-md">
@@ -136,7 +146,8 @@ export default async function PublicPostPage({
           <ReportButton subjectType="POST" subjectId={post.id} />
         </div>
       </footer>
-    </article>
+      </article>
+    </div>
   );
 }
 

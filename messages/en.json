@@ -15,7 +15,8 @@
     "reportSubmitting": "Sending…",
     "reportDone": "Thanks — your report was received.",
     "ctaUnavailable": "{label} · link unavailable",
-    "ctaDeleted": "Removed link"
+    "ctaDeleted": "Removed link",
+    "toc": "Contents"
   },
   "imageCropper": {
     "title": "Crop image",

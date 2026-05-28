@@ -1,7 +1,24 @@
 import { ArrowUpRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Markdown } from "@/components/blog/markdown";
+import type { TocHeading } from "@/components/blog/post-toc";
 import { planEmbed } from "@/lib/post-embed";
+import { slugify } from "@/lib/slugify";
 import type { PublicCtaInfo, PublicPostBlock } from "@/lib/api/public-posts";
+
+const HEADING_TYPES = ["H1", "H2", "H3"];
+
+/** Headings for the floating TOC. Levels collapse H1/H2/H3 → 1/2/3 to mirror the body mapping. */
+export function extractHeadings(blocks: PublicPostBlock[]): TocHeading[] {
+  return blocks
+    .filter((b) => HEADING_TYPES.includes(b.type) && b.content?.trim())
+    .map((b) => ({
+      id: slugify(b.content as string),
+      text: (b.content as string).trim(),
+      level: Number(b.type[1]),
+    }))
+    .filter((h) => h.id.length > 0);
+}
 
 /**
  * Renders the ordered post blocks as a long-form article body. Each block becomes a discrete
@@ -35,15 +52,19 @@ export function readingMinutes(blocks: PublicPostBlock[]): number {
 function Block({ block }: { block: PublicPostBlock }) {
   switch (block.type) {
     case "PARAGRAPH":
-      return block.content ? <p className="whitespace-pre-line">{block.content}</p> : null;
+      return block.content ? <Markdown>{block.content}</Markdown> : null;
     case "H1":
-      return block.content ? <h2>{block.content}</h2> : null;
+      return block.content ? <h2 id={slugify(block.content)}>{block.content}</h2> : null;
     case "H2":
-      return block.content ? <h3>{block.content}</h3> : null;
+      return block.content ? <h3 id={slugify(block.content)}>{block.content}</h3> : null;
     case "H3":
-      return block.content ? <h4>{block.content}</h4> : null;
+      return block.content ? <h4 id={slugify(block.content)}>{block.content}</h4> : null;
     case "QUOTE":
-      return block.content ? <blockquote className="whitespace-pre-line">{block.content}</blockquote> : null;
+      return block.content ? (
+        <blockquote>
+          <Markdown inline>{block.content}</Markdown>
+        </blockquote>
+      ) : null;
     case "DIVIDER":
       return <div className="section-divider my-12" role="separator" />;
     case "LIST_BULLET":
@@ -79,7 +100,9 @@ function ListBlock({ content, ordered }: { content: string | null; ordered: bool
   return (
     <Tag>
       {items.map((item, i) => (
-        <li key={i}>{item}</li>
+        <li key={i}>
+          <Markdown inline>{item}</Markdown>
+        </li>
       ))}
     </Tag>
   );

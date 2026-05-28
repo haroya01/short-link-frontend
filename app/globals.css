@@ -454,6 +454,55 @@ h1, h2, h3, p {
   .prose-post figcaption {
     @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-400;
   }
+  /*
+   * Syntax highlighting for fenced code blocks. rehype-highlight tags tokens with `.hljs-*`
+   * classes; this is a compact dark palette tuned for the slate-900 `pre` background above
+   * (no separate highlight.js theme stylesheet — one surface doesn't justify the import).
+   */
+  .prose-post pre code.hljs {
+    @apply bg-transparent p-0;
+    color: #e2e8f0;
+  }
+  .prose-post .hljs-comment,
+  .prose-post .hljs-quote {
+    color: #94a3b8;
+    font-style: italic;
+  }
+  .prose-post .hljs-keyword,
+  .prose-post .hljs-selector-tag,
+  .prose-post .hljs-literal,
+  .prose-post .hljs-section,
+  .prose-post .hljs-link {
+    color: #93c5fd;
+  }
+  .prose-post .hljs-string,
+  .prose-post .hljs-attr,
+  .prose-post .hljs-template-tag,
+  .prose-post .hljs-addition {
+    color: #6ee7b7;
+  }
+  .prose-post .hljs-number,
+  .prose-post .hljs-built_in,
+  .prose-post .hljs-builtin-name,
+  .prose-post .hljs-symbol,
+  .prose-post .hljs-meta {
+    color: #fca5a5;
+  }
+  .prose-post .hljs-title,
+  .prose-post .hljs-type {
+    color: #fcd34d;
+  }
+  .prose-post .hljs-variable,
+  .prose-post .hljs-name,
+  .prose-post .hljs-tag {
+    color: #f9a8d4;
+  }
+  .prose-post .hljs-emphasis {
+    font-style: italic;
+  }
+  .prose-post .hljs-strong {
+    font-weight: 700;
+  }
 
 @keyframes profile-fade-in {
   from {
