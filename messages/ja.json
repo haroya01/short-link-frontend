@@ -58,39 +58,31 @@
   "nav": {
     "shorten": "短縮",
     "showcase": "プロフィール",
-    "myLinks": "マイリンク",
-    "posts": "投稿",
-    "ctas": "CTA",
-    "analytics": "分析",
     "campaigns": "QRキャンペーン",
-    "profile": "プロフィール",
-    "admin": "管理",
+    "pricing": "料金",
     "settings": "設定",
     "login": "ログイン",
     "logout": "ログアウト",
-    "viewMyPage": "公開ページ"
-  },
-  "postsLanding": {
-    "headline": "書くたびに、リンクは自動で計測される",
-    "subhead": "kurl のエディタは、本文に貼った外部リンクを自動で短縮し、行動を測れる「コンテンツレイヤー」にする。",
-    "startWriting": "書き始める",
-    "recentPostsLabel": "最近の投稿",
-    "recentPostsEmpty": "近日。"
-  },
-  "area": {
-    "content": "コンテンツ",
-    "links": "リンク"
+    "apps": {
+      "trigger": "他のアプリ",
+      "linksLabel": "Links",
+      "linksHint": "短縮リンク・QR・キャンペーン・CTA・統計",
+      "blogLabel": "Blog",
+      "blogHint": "執筆・作家ページ・読者分析"
+    }
   },
   "sidebar": {
-    "content": {
+    "blog": {
       "overview": "概要",
       "write": "執筆",
       "posts": "投稿",
-      "curation": "おすすめ",
-      "readers": "読者"
+      "drafts": "下書き",
+      "readers": "読者",
+      "links": "記事内リンク",
+      "curation": "おすすめ"
     },
     "links": {
-      "home": "ホーム",
+      "links": "リンク",
       "campaigns": "QR キャンペーン",
       "qr": "QR コード",
       "ctas": "CTA",

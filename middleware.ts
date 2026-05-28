@@ -5,12 +5,9 @@ import { routing } from "./i18n/routing";
 const intlMiddleware = createMiddleware(routing);
 
 // Cloudflare Worker 가 *.kurl.me 요청을 Vercel 로 proxy 할 때 set 하는 헤더.
-// 값 예시: "john.kurl.me". 이 헤더 있으면 publishing subdomain 요청으로 인식.
 const ORIGINAL_HOST_HEADER = "x-original-host";
 
-// kurl.me / app.kurl.me / api.kurl.me 같은 시스템 host 는 publishing rewrite 대상 X.
-// 백엔드 (kurl.me) 의 Worker 가 이런 host 는 애초에 forward 안 함. 방어적으로 frontend 에서도
-// 같은 reserved 리스트 유지.
+// 작가 페이지 subdomain 에서 제외할 시스템 host.
 const RESERVED_SUBDOMAINS = new Set([
   "www",
   "app",
@@ -25,51 +22,159 @@ const RESERVED_SUBDOMAINS = new Set([
   "official",
 ]);
 
-function extractSubdomain(host: string | null): string | null {
-  if (!host) return null;
-  const cleaned = host.toLowerCase().split(":")[0]; // strip port
+const DEFAULT_LOCALE = routing.defaultLocale;
+const LOCALE_RE = /^([a-z]{2})(\/.*)?$/;
+
+const BLOG_HOST_DEFAULT = "blog.kurl.me";
+const BLOG_HOST_ENV = process.env.NEXT_PUBLIC_BLOG_HOST;
+
+function cleanHost(host: string | null): string {
+  return (host ?? "").toLowerCase().split(":")[0];
+}
+
+function extractAuthorSubdomain(host: string | null): string | null {
+  const cleaned = cleanHost(host);
   if (!cleaned.endsWith(".kurl.me")) return null;
   const sub = cleaned.slice(0, -".kurl.me".length);
-  if (!sub || sub === "kurl") return null;
-  if (sub.includes(".")) return null; // multi-level subdomain (foo.bar.kurl.me) — not supported
+  if (!sub || sub.includes(".")) return null;
   if (RESERVED_SUBDOMAINS.has(sub)) return null;
   return sub;
 }
 
-// UI chrome locale (작성자의 게시 글 자체는 post.languageTag 로 별도 lang attr).
-// Worker 가 Accept-Language 기반으로 선택해서 헤더 전달하는 옵션도 가능하지만, 우선 default.
-const DEFAULT_PUBLISHING_LOCALE = routing.defaultLocale;
+function isBlogHost(host: string | null): boolean {
+  const cleaned = cleanHost(host);
+  if (cleaned === BLOG_HOST_DEFAULT) return true;
+  if (BLOG_HOST_ENV && cleaned === BLOG_HOST_ENV.toLowerCase()) return true;
+  return false;
+}
+
+/**
+ * 옛 URL → 새 URL 308 redirect. Redirect 가 rewrite 보다 먼저.
+ * Decision: [[decisions/2026-05-29-product-surface-c-lite]]
+ */
+function legacyRedirect(req: NextRequest): NextResponse | null {
+  const path = req.nextUrl.pathname;
+  const search = req.nextUrl.search;
+
+  // /{locale}/content/* → blog.kurl.me/{locale}/*
+  const contentMatch = path.match(/^\/([a-z]{2})\/content(\/.*)?$/);
+  if (contentMatch) {
+    const sub = contentMatch[2] || "/";
+    return NextResponse.redirect(
+      `https://${BLOG_HOST_DEFAULT}/${contentMatch[1]}${sub}${search}`,
+      308,
+    );
+  }
+
+  // /{locale}/posts → blog.kurl.me/{locale}/
+  const postsMatch = path.match(/^\/([a-z]{2})\/posts\/?$/);
+  if (postsMatch) {
+    return NextResponse.redirect(
+      `https://${BLOG_HOST_DEFAULT}/${postsMatch[1]}/${search}`,
+      308,
+    );
+  }
+
+  // /{locale}/showcase* → blog.kurl.me/{locale}/showcase*
+  const showcaseMatch = path.match(/^\/([a-z]{2})\/showcase(\/.*)?$/);
+  if (showcaseMatch) {
+    const sub = showcaseMatch[2] || "";
+    return NextResponse.redirect(
+      `https://${BLOG_HOST_DEFAULT}/${showcaseMatch[1]}/showcase${sub}${search}`,
+      308,
+    );
+  }
+
+  // /{locale}/links/* → /{locale}/* (URL prefix 폐기)
+  const linksSubMatch = path.match(/^\/([a-z]{2})\/links\/(.+)$/);
+  if (linksSubMatch) {
+    return NextResponse.redirect(
+      new URL(`/${linksSubMatch[1]}/${linksSubMatch[2]}${search}`, req.url),
+      308,
+    );
+  }
+
+  // /{locale}/links → /{locale}/dashboard
+  const linksRootMatch = path.match(/^\/([a-z]{2})\/links\/?$/);
+  if (linksRootMatch) {
+    return NextResponse.redirect(
+      new URL(`/${linksRootMatch[1]}/dashboard${search}`, req.url),
+      308,
+    );
+  }
+
+  return null;
+}
 
 export default function middleware(req: NextRequest) {
   const originalHost = req.headers.get(ORIGINAL_HOST_HEADER);
-  const subdomain = extractSubdomain(originalHost);
+  const reqHost = req.headers.get("host");
+  const host = originalHost ?? reqHost;
 
-  if (subdomain) {
-    // *.kurl.me publishing request.
-    // path '/' → /{locale}/p/{username}
-    // path '/article-slug' → /{locale}/p/{username}/article-slug
-    // Publishing routes 가 [locale] 안에 있어서 default locale prefix 부여 (UI chrome 만).
+  // 1. Redirect 가 rewrite 보다 먼저 (옛 URL).
+  const redirect = legacyRedirect(req);
+  if (redirect) return redirect;
+
+  // 2. 작가 페이지 — {username}.kurl.me/{anything} → /{defaultLocale}/p/{username}/{anything}
+  const authorSub = extractAuthorSubdomain(originalHost);
+  if (authorSub) {
     const url = req.nextUrl.clone();
     const path = url.pathname;
-    const target =
+    url.pathname =
       path === "/"
-        ? `/${DEFAULT_PUBLISHING_LOCALE}/p/${subdomain}`
-        : `/${DEFAULT_PUBLISHING_LOCALE}/p/${subdomain}${path}`;
-    url.pathname = target;
+        ? `/${DEFAULT_LOCALE}/p/${authorSub}`
+        : `/${DEFAULT_LOCALE}/p/${authorSub}${path}`;
     return NextResponse.rewrite(url);
   }
 
-  // 일반 frontend host (app.kurl.me 등) — 기존 next-intl 처리
+  // 3. blog.kurl.me — /{locale}/foo → /{locale}/blog/foo rewrite
+  if (isBlogHost(originalHost) || isBlogHost(reqHost)) {
+    const url = req.nextUrl.clone();
+    const m = url.pathname.match(/^\/(?:([a-z]{2})(\/.*)?)?$/);
+    const locale = m?.[1] ?? DEFAULT_LOCALE;
+    const rest = m?.[2] ?? "/";
+    const tail = rest === "/" ? "" : rest;
+    if (!url.pathname.match(/^\/[a-z]{2}\/blog(\/|$)/)) {
+      url.pathname = `/${locale}/blog${tail}`;
+      return NextResponse.rewrite(url);
+    }
+  }
+
+  // 4. dev / preview path-based blog — /blog-preview/* 또는 /{locale}/blog-preview/* → /{locale}/blog/*
+  const previewMatch = req.nextUrl.pathname.match(
+    /^(\/[a-z]{2})?\/blog-preview(\/.*)?$/,
+  );
+  if (previewMatch) {
+    const url = req.nextUrl.clone();
+    const locale = previewMatch[1] ?? `/${DEFAULT_LOCALE}`;
+    const rest = previewMatch[2] ?? "";
+    url.pathname = `${locale}/blog${rest}`;
+    return NextResponse.rewrite(url);
+  }
+
+  // 5. kurl.me / default — /{locale}/foo → /{locale}/links/foo rewrite
+  // 단 이미 /{locale}/{links,blog,p,u} 으로 시작하면 그대로 (internal route 보호).
+  const localePathMatch = req.nextUrl.pathname.match(/^\/([a-z]{2})(\/.+)?$/);
+  if (localePathMatch && localePathMatch[2]) {
+    const sub = localePathMatch[2];
+    if (!sub.match(/^\/(links|blog|p|u)(\/|$)/)) {
+      const url = req.nextUrl.clone();
+      url.pathname = `/${localePathMatch[1]}/links${sub}`;
+      return NextResponse.rewrite(url);
+    }
+  }
+  // /{locale} 만 (path 없음) → /{locale}/links
+  if (localePathMatch && !localePathMatch[2]) {
+    const url = req.nextUrl.clone();
+    url.pathname = `/${localePathMatch[1]}/links`;
+    return NextResponse.rewrite(url);
+  }
+
+  // 6. locale 없는 path — next-intl 의 default redirect (locale prefix 부착)
   return intlMiddleware(req);
 }
 
 export const config = {
-  // Run middleware on every request that isn't an asset, API, or OAuth callback. The previous
-  // exclusion of {@code [0-9A-Za-z]{3,16}$} (short-code paths) is gone now that the kurl.me
-  // Cloudflare Worker routes those to the backend before they ever reach Next.js — keeping
-  // the exclusion was silently breaking locale redirects for reserved frontend paths that
-  // happened to fit the 3-16 alnum pattern (/showcase, /about, /login, /pricing → all 404'd
-  // because middleware skipped them and `/showcase` doesn't exist without the locale prefix).
   matcher: [
     "/((?!api|_next|_vercel|favicon.ico|.*\\..*|oauth2|login/oauth2|monitoring).*)",
   ],

@@ -12,7 +12,7 @@ export function CampaignsEntryCard() {
   const t = useTranslations("campaignApp.entry");
   return (
     <Link
-      href="/links/campaigns"
+      href="/campaigns"
       className="profile-card group block overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50 via-white to-white px-4 py-4 sm:px-5 sm:py-5"
     >
       <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">

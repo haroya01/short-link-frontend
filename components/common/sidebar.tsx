@@ -98,6 +98,16 @@ function SidebarList({
   );
 }
 
+const PRODUCT_PREFIXES = ["/blog", "/links"];
+
+function stripProductPrefix(pathname: string): string {
+  for (const prefix of PRODUCT_PREFIXES) {
+    if (pathname === prefix) return "/";
+    if (pathname.startsWith(prefix + "/")) return pathname.slice(prefix.length);
+  }
+  return pathname;
+}
+
 function SidebarItem({
   entry,
   pathname,
@@ -105,9 +115,12 @@ function SidebarItem({
   entry: SidebarEntry;
   pathname: string;
 }) {
+  // middleware host rewrite 후 internal pathname 은 `/links/dashboard` 같은 product prefix 포함.
+  // sidebar entries 의 href 는 external path (`/dashboard`). active 매칭은 prefix 제거 후.
+  const external = stripProductPrefix(pathname);
   const isActive = entry.active
-    ? entry.active(pathname)
-    : pathname === entry.href || pathname.startsWith(entry.href + "/");
+    ? entry.active(external)
+    : external === entry.href || external.startsWith(entry.href + "/");
 
   return (
     <li>

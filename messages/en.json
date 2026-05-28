@@ -58,39 +58,31 @@
   "nav": {
     "shorten": "Shorten",
     "showcase": "Profiles",
-    "myLinks": "My Links",
-    "posts": "Posts",
-    "ctas": "CTAs",
-    "analytics": "Analytics",
     "campaigns": "QR Campaigns",
-    "profile": "Profile",
-    "admin": "Admin",
+    "pricing": "Pricing",
     "settings": "Settings",
     "login": "Sign in",
     "logout": "Sign out",
-    "viewMyPage": "My page"
-  },
-  "postsLanding": {
-    "headline": "Every paragraph becomes a tracked link.",
-    "subhead": "kurl's editor turns the links inside your posts into measured destinations — automatically.",
-    "startWriting": "Start writing",
-    "recentPostsLabel": "Recent posts",
-    "recentPostsEmpty": "Coming soon."
-  },
-  "area": {
-    "content": "Content",
-    "links": "Links"
+    "apps": {
+      "trigger": "Other apps",
+      "linksLabel": "Links",
+      "linksHint": "Short links · QR · Campaigns · CTA · Stats",
+      "blogLabel": "Blog",
+      "blogHint": "Writing · Author page · Reader analytics"
+    }
   },
   "sidebar": {
-    "content": {
+    "blog": {
       "overview": "Overview",
       "write": "Write",
-      "posts": "Posts",
-      "curation": "Curation",
-      "readers": "Readers"
+      "posts": "Published",
+      "drafts": "Drafts",
+      "readers": "Readers",
+      "links": "Links in posts",
+      "curation": "Curation"
     },
     "links": {
-      "home": "Home",
+      "links": "Links",
       "campaigns": "Campaigns",
       "qr": "QR Codes",
       "ctas": "CTAs",

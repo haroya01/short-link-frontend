@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
-import { ReportButton } from "@/components/content/report-button";
-import { ShareButton } from "@/components/content/share-button";
-import { ViewBeacon } from "@/components/content/view-beacon";
+import { ReportButton } from "@/components/blog/report-button";
+import { ShareButton } from "@/components/blog/share-button";
+import { ViewBeacon } from "@/components/blog/view-beacon";
 import {
   findPublicPost,
   type PublicCtaInfo,
