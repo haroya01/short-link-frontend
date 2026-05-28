@@ -70,12 +70,21 @@ export async function generateMetadata({
   };
 }
 
+// Phase E (subdomain 실제 동작) 검증 후 NEXT_PUBLIC_AUTHOR_SUBDOMAIN_REDIRECT=true 로 enable.
+// 그 전엔 /u/{username} 그대로 유지 — 안 그러면 visitors 가 dead URL 로 redirect 됨.
+// Decision: [[decisions/2026-05-29-product-surface-c-lite]]
+const AUTHOR_SUBDOMAIN_REDIRECT_ENABLED =
+  process.env.NEXT_PUBLIC_AUTHOR_SUBDOMAIN_REDIRECT === "true";
+
 export default async function PublicProfilePage({
   params,
 }: {
   params: Promise<{ locale: string; username: string }>;
 }) {
   const { locale, username } = await params;
+  if (AUTHOR_SUBDOMAIN_REDIRECT_ENABLED) {
+    redirect(`https://${username}.kurl.me/${locale}/`);
+  }
   const t = await getTranslations({ locale, namespace: "publicProfile" });
   const profile = await fetchProfile(username);
   if (!profile) notFound();
