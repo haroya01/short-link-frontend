@@ -52,7 +52,11 @@ function isBlogHost(host: string | null): boolean {
  * 옛 URL → 새 URL 308 redirect. Redirect 가 rewrite 보다 먼저.
  * Decision: [[decisions/2026-05-29-product-surface-c-lite]]
  */
-function legacyRedirect(req: NextRequest): NextResponse | null {
+function legacyRedirect(req: NextRequest, host: string): NextResponse | null {
+  // blog.kurl.me 에서 들어온 요청은 이미 destination host. cross-domain redirect 호출하면
+  // 같은 host 로 무한 loop. 옛 URL legacy redirect 는 kurl.me / default host 에서만 동작.
+  if (cleanHost(host) === BLOG_HOST_DEFAULT) return null;
+
   const path = req.nextUrl.pathname;
   const search = req.nextUrl.search;
 
@@ -111,8 +115,8 @@ export default function middleware(req: NextRequest) {
   const reqHost = req.headers.get("host");
   const host = originalHost ?? reqHost;
 
-  // 1. Redirect 가 rewrite 보다 먼저 (옛 URL).
-  const redirect = legacyRedirect(req);
+  // 1. Redirect 가 rewrite 보다 먼저 (옛 URL). blog.kurl.me 진입은 skip.
+  const redirect = legacyRedirect(req, host ?? "");
   if (redirect) return redirect;
 
   // 2. 작가 페이지 — {username}.kurl.me/{anything} → /{defaultLocale}/p/{username}/{anything}
