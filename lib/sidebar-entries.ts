@@ -47,6 +47,7 @@ export function buildLinksSections(
         { href: "/qr", label: tLinks("qr") },
         { href: "/ctas", label: tLinks("ctas") },
         { href: "/stats", label: tLinks("stats") },
+        { href: "/settings/profile", label: tLinks("profile") },
       ],
     },
     {
