@@ -19,6 +19,7 @@ const WORKSPACE_PATHS = [
   "/blog/write",
   "/blog/posts",
   "/blog/drafts",
+  "/blog/series",
   "/blog/readers",
   "/blog/links",
   "/blog/curation",
