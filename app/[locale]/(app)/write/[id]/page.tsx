@@ -17,10 +17,10 @@ import {
 import { uploadPostImage } from "@/lib/api/post-images";
 import { blocksToMarkdown, markdownToBlocks } from "@/lib/markdown-to-blocks";
 
-export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditPostPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { ready, authenticated } = useAuth();
-  const [postId, setPostId] = useState<number | null>(null);
+  const postId = Number(params.id);
   const [post, setPost] = useState<PostView | null>(null);
   const [title, setTitle] = useState("");
   const [markdown, setMarkdown] = useState("");
@@ -33,12 +33,8 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    void params.then((p) => setPostId(Number(p.id)));
-  }, [params]);
-
   const load = useCallback(async () => {
-    if (postId == null) return;
+    if (!Number.isFinite(postId)) return;
     setLoading(true);
     setError(null);
     try {
@@ -54,9 +50,9 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   }, [postId]);
 
   useEffect(() => {
-    if (!ready || !authenticated || postId == null) return;
+    if (!ready || !authenticated) return;
     void load();
-  }, [ready, authenticated, postId, load]);
+  }, [ready, authenticated, load]);
 
   async function handleSave() {
     if (post == null || saving) return;
