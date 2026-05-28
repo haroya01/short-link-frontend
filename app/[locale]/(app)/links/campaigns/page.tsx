@@ -75,7 +75,7 @@ export default function CampaignsPage() {
           </p>
         </div>
         {items && items.length > 0 && (
-          <Link href="/campaigns/new">
+          <Link href="/links/campaigns/new">
             <Button variant="accent">
               <Plus className="h-4 w-4" aria-hidden /> {t("newCampaign")}
             </Button>

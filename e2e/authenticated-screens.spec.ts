@@ -26,7 +26,7 @@ test.describe("authenticated screens", () => {
     await page.goto("/ko/dashboard");
     await expect(page.getByRole("heading", { name: "내 링크" })).toBeVisible();
 
-    await page.goto("/ko/profile/stats");
+    await page.goto("/ko/content/readers");
     await expect(page.getByRole("heading", { name: "내 프로필 방문 통계" })).toBeVisible();
     await expect(page.getByText("settings.profile.stats.intro")).toHaveCount(0);
     await expect(page.getByText("/u/username")).toBeVisible();

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useToast } from "@/components/ui/toast";
 import { buildDemoLinkStats } from "@/lib/demo-data";
-import { StatsBody } from "@/app/[locale]/(app)/stats/[code]/_components/stats-body";
+import { StatsBody } from "@/app/[locale]/(app)/links/stats/[code]/_components/stats-body";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??

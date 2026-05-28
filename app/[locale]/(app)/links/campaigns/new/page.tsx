@@ -79,7 +79,7 @@ export default function NewCampaignPage() {
     <div className="container max-w-2xl space-y-6 py-10">
       <div>
         <Link
-          href="/campaigns"
+          href="/links/campaigns"
           className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToList")}
@@ -209,7 +209,7 @@ export default function NewCampaignPage() {
         </Field>
 
         <div className="flex items-center justify-end gap-2 border-t border-slate-200 pt-4">
-          <Link href="/campaigns">
+          <Link href="/links/campaigns">
             <Button type="button" variant="outline">
               {t("cancel")}
             </Button>

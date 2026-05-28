@@ -42,7 +42,7 @@ export default function TwoFactorChallengePage() {
     try {
       const result = await verifyTwoFactor(challenge, code.trim(), recovery);
       setToken(result.accessToken);
-      router.replace("/dashboard");
+      router.replace("/links");
     } catch (err) {
       setError(errorMessage(err, t("verifyFailed")));
       setSubmitting(false);

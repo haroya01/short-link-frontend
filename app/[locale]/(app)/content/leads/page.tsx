@@ -130,7 +130,7 @@ export default function ProfileLeadsPage() {
               {t("downloadCsv")}
             </Button>
           </a>
-          <Link href={`/${locale}/profile/leads/campaign`}>
+          <Link href={`/${locale}/content/leads/campaign`}>
             <Button>
               <Sparkles className="mr-1 h-4 w-4" />
               {t("buildCampaign")}

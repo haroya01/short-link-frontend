@@ -80,7 +80,7 @@ export default function StatsPage() {
           title={t("notFound")}
           description={t("notFoundDesc")}
           action={
-            <Link href="/dashboard">
+            <Link href="/links">
               <Button variant="outline">{t("backToDashboard")}</Button>
             </Link>
           }

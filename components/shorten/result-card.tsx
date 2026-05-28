@@ -48,7 +48,7 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
           </div>
           {authenticated && (
             <Link
-              href={`/stats/${result.shortCode}`}
+              href={`/links/stats/${result.shortCode}`}
               className={buttonVariants({ size: "sm", variant: "outline" })}
             >
               <BarChart3 className="h-3.5 w-3.5" />
@@ -103,7 +103,7 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
         {authenticated && (
           <div className="grid gap-2 pt-1 sm:grid-cols-2">
             <Link
-              href={`/stats/${result.shortCode}`}
+              href={`/links/stats/${result.shortCode}`}
               className="group flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-left hover:border-slate-300 hover:bg-white"
             >
               <span className="min-w-0">
@@ -117,7 +117,7 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
               <BarChart3 className="h-4 w-4 shrink-0 text-slate-500 transition group-hover:text-accent-700" />
             </Link>
             <Link
-              href="/profile/edit"
+              href="/settings/profile"
               className="group flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-left hover:border-slate-300 hover:bg-white"
             >
               <span className="min-w-0">

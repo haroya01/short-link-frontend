@@ -20,7 +20,7 @@ export function ProfileOwnerFab({ username }: { username: string }) {
   if (!mineLc || mineLc !== username.toLowerCase()) return null;
   return (
     <Link
-      href="/profile/edit"
+      href="/settings/profile"
       className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 z-[60] inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-3 text-sm font-medium text-white shadow-xl ring-1 ring-white/10 transition hover:-translate-y-0.5 hover:shadow-2xl active:scale-95"
     >
       <Pencil className="h-4 w-4" />
