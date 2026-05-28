@@ -1,4 +1,20 @@
 {
+  "publicPost": {
+    "readingTime": "{minutes} min read",
+    "morePosts": "More from @{username}",
+    "allPosts": "All posts",
+    "emptyPosts": "No posts published yet.",
+    "goneTitle": "This post is no longer available",
+    "goneBody": "The author has unpublished this post.",
+    "postCount": "{count, plural, one {# post} other {# posts}}",
+    "report": "Report",
+    "reportTitle": "Report this post",
+    "reportReason": "Reason (optional)",
+    "reportPlaceholder": "Add any specific details",
+    "reportSubmit": "Report",
+    "reportSubmitting": "Sending…",
+    "reportDone": "Thanks — your report was received."
+  },
   "imageCropper": {
     "title": "Crop image",
     "cancel": "Cancel",

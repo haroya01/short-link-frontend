@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import { ReportButton } from "@/components/blog/report-button";
 import { listPublicPosts, type PublicPostListItem } from "@/lib/api/public-posts";
 
 // 30s ISR — author 발행 후 30 초 내 visitors 반영. Backend 가 어차피 매번 직접 조회.
 export const revalidate = 30;
+
+type ReadonlyHeaders = Awaited<ReturnType<typeof headers>>;
+
+const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 
 function subdomainOrigin(req: ReadonlyHeaders, username: string): string {
   const host = req.get("x-original-host") ?? req.get("host");
@@ -14,7 +19,13 @@ function subdomainOrigin(req: ReadonlyHeaders, username: string): string {
   return `https://${cleaned}`;
 }
 
-type ReadonlyHeaders = Awaited<ReturnType<typeof headers>>;
+function formatDate(iso: string, locale: string): string {
+  return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 
 export async function generateMetadata({
   params,
@@ -43,64 +54,93 @@ export async function generateMetadata({
 export default async function PublicProfileHomepage({
   params,
 }: {
-  params: Promise<{ username: string }>;
+  params: Promise<{ locale: string; username: string }>;
 }) {
-  const { username } = await params;
+  const { locale, username } = await params;
   const result = await listPublicPosts(username);
   if (!result.ok) notFound();
 
   const { author, posts } = result.data;
+  const t = await getTranslations({ locale, namespace: "publicPost" });
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-12">
-      <header className="mb-12 flex items-start gap-4">
-        {author.avatarUrl && (
+    <main className="mx-auto max-w-2xl px-6 py-14 sm:py-20">
+      <header className="flex items-start gap-5">
+        {author.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={author.avatarUrl}
             alt={`@${author.username}`}
-            width={72}
-            height={72}
-            className="h-18 w-18 rounded-full object-cover"
+            width={80}
+            height={80}
+            className="h-20 w-20 shrink-0 rounded-full object-cover"
           />
+        ) : (
+          <span className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-accent-100 text-2xl font-bold text-accent-700">
+            {author.username.charAt(0).toUpperCase()}
+          </span>
         )}
-        <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight">@{author.username}</h1>
-          {author.bio && <p className="mt-1 text-base text-gray-600">{author.bio}</p>}
+        <div className="min-w-0 pt-1">
+          <h1 className="text-headline-sm font-bold tracking-tight text-slate-900">
+            @{author.username}
+          </h1>
+          {author.bio && <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{author.bio}</p>}
+          {posts.length > 0 && (
+            <p className="mt-2 text-[13px] font-medium text-slate-400">
+              {t("postCount", { count: posts.length })}
+            </p>
+          )}
         </div>
       </header>
 
+      <div className="section-divider my-12" />
+
       {posts.length === 0 ? (
-        <p className="text-gray-500">아직 발행된 글이 없습니다.</p>
+        <p className="text-slate-400">{t("emptyPosts")}</p>
       ) : (
-        <ul className="space-y-8">
+        <ul className="space-y-2">
           {posts.map((p) => (
-            <PostListEntry key={p.slug} post={p} />
+            <PostListEntry key={p.slug} post={p} locale={locale} />
           ))}
         </ul>
       )}
 
-      <footer className="mt-16 border-t pt-8 flex justify-end">
+      <footer className="mt-16 flex justify-end border-t border-slate-100 pt-8">
         <ReportButton subjectType="USER" subjectId={author.id} />
       </footer>
     </main>
   );
 }
 
-function PostListEntry({ post }: { post: PublicPostListItem }) {
+function PostListEntry({ post, locale }: { post: PublicPostListItem; locale: string }) {
   return (
     <li>
-      <a href={`/${post.slug}`} className="group block">
-        <h2 className="text-xl font-semibold tracking-tight group-hover:underline">
-          {post.title}
-        </h2>
-        {post.excerpt && <p className="mt-2 text-gray-600">{post.excerpt}</p>}
-        <time
-          dateTime={post.publishedAt}
-          className="mt-2 inline-block text-sm text-gray-400"
-        >
-          {new Date(post.publishedAt).toLocaleDateString()}
-        </time>
+      <a
+        href={`/${post.slug}`}
+        className="group -mx-4 flex items-start gap-5 rounded-2xl px-4 py-5 transition-colors hover:bg-slate-50"
+      >
+        <div className="min-w-0 flex-1">
+          <h2 className="text-[19px] font-semibold leading-snug tracking-tight text-slate-900 group-hover:text-accent-700">
+            {post.title}
+          </h2>
+          {post.excerpt && (
+            <p className="mt-1.5 line-clamp-2 text-[15px] leading-relaxed text-slate-500">
+              {post.excerpt}
+            </p>
+          )}
+          <time dateTime={post.publishedAt} className="mt-2.5 block text-[13px] text-slate-400">
+            {formatDate(post.publishedAt, locale)}
+          </time>
+        </div>
+        {post.ogImageUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={post.ogImageUrl}
+            alt=""
+            className="hidden h-20 w-28 shrink-0 rounded-xl object-cover sm:block"
+            loading="lazy"
+          />
+        )}
       </a>
     </li>
   );

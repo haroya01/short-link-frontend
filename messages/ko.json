@@ -1,4 +1,20 @@
 {
+  "publicPost": {
+    "readingTime": "약 {minutes}분",
+    "morePosts": "@{username}님의 다른 글",
+    "allPosts": "모든 글",
+    "emptyPosts": "아직 발행된 글이 없어요.",
+    "goneTitle": "게시가 중단된 글이에요",
+    "goneBody": "작성자가 이 글의 게시를 중단했어요.",
+    "postCount": "글 {count}개",
+    "report": "신고",
+    "reportTitle": "이 글 신고",
+    "reportReason": "신고 사유 (선택)",
+    "reportPlaceholder": "구체적인 사유가 있으면 적어주세요",
+    "reportSubmit": "신고",
+    "reportSubmitting": "전송 중…",
+    "reportDone": "신고가 접수됐어요."
+  },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
     "description": "긴 URL을 한 줄로. 디바이스, 채널, 국가별 클릭 분석까지.",
