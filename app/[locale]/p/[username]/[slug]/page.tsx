@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import { ReportButton } from "@/components/publishing/report-button";
 import { ShareButton } from "@/components/publishing/share-button";
 import { ViewBeacon } from "@/components/publishing/view-beacon";
 import {
@@ -99,7 +100,10 @@ export default async function PublicPostPage({
         <a href="/" className="text-sm text-gray-500 hover:underline">
           ← @{author.username} 의 다른 글
         </a>
-        <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+        <div className="flex items-center gap-3">
+          <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+          <ReportButton subjectType="POST" subjectId={post.id} />
+        </div>
       </footer>
     </article>
   );
