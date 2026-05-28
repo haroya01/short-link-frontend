@@ -21,6 +21,7 @@ const ALLOWED_NEXT_PATHS = new Set<string>([
   "/settings",
   "/links/campaigns",
   "/links/campaigns/new",
+  "/content/write",
 ]);
 
 export default function AuthCallbackPage() {
