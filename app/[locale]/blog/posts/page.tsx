@@ -1,8 +1,48 @@
-export default function ContentPostsPage() {
+"use client";
+
+import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { useAuth } from "@/lib/auth";
+import { listMyPosts, type PostView } from "@/lib/api/posts";
+import { PostRow } from "@/components/blog/workspace/post-row";
+
+export default function BlogPostsPage() {
+  const t = useTranslations("blogWorkspace");
+  const { ready, authenticated } = useAuth();
+  const [posts, setPosts] = useState<PostView[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!ready || !authenticated) return;
+    listMyPosts()
+      .then(setPosts)
+      .catch(() => setPosts([]))
+      .finally(() => setLoading(false));
+  }, [ready, authenticated]);
+
+  if (!ready) return null;
+  if (!authenticated) {
+    return <main className="px-6 py-12 text-slate-600">{t("loginRequired")}</main>;
+  }
+
+  const published = posts.filter((p) => p.status === "PUBLISHED");
+
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-12">
-      <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Posts</h1>
-      <p className="mt-3 text-sm text-slate-500">곧.</p>
-    </div>
+    <main className="mx-auto max-w-3xl px-6 py-10">
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("postsTitle")}</h1>
+      <div className="mt-6">
+        {loading ? (
+          <p className="text-sm text-slate-400">{t("loading")}</p>
+        ) : published.length === 0 ? (
+          <p className="text-sm text-slate-400">{t("postsEmpty")}</p>
+        ) : (
+          <ul>
+            {published.map((p) => (
+              <PostRow key={p.id} post={p} />
+            ))}
+          </ul>
+        )}
+      </div>
+    </main>
   );
 }
