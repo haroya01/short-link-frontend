@@ -46,7 +46,10 @@
     "reportDone": "신고가 접수됐어요.",
     "ctaUnavailable": "{label} · 현재 사용할 수 없는 링크",
     "ctaDeleted": "삭제된 링크",
-    "toc": "목차"
+    "toc": "목차",
+    "seriesPosition": "{position}/{total}",
+    "seriesIndexTitle": "시리즈",
+    "seriesEmpty": "아직 시리즈가 없어요."
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",

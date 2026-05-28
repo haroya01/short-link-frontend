@@ -46,7 +46,10 @@
     "reportDone": "Thanks — your report was received.",
     "ctaUnavailable": "{label} · link unavailable",
     "ctaDeleted": "Removed link",
-    "toc": "Contents"
+    "toc": "Contents",
+    "seriesPosition": "{position}/{total}",
+    "seriesIndexTitle": "Series",
+    "seriesEmpty": "No series yet."
   },
   "imageCropper": {
     "title": "Crop image",

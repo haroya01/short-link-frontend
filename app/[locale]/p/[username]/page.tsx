@@ -85,11 +85,12 @@ export default async function PublicProfileHomepage({
             @{author.username}
           </h1>
           {author.bio && <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{author.bio}</p>}
-          {posts.length > 0 && (
-            <p className="mt-2 text-[13px] font-medium text-slate-400">
-              {t("postCount", { count: posts.length })}
-            </p>
-          )}
+          <p className="mt-2 flex items-center gap-3 text-[13px] font-medium text-slate-400">
+            {posts.length > 0 && <span>{t("postCount", { count: posts.length })}</span>}
+            <a href="/series" className="text-accent-600 transition-colors hover:text-accent-700">
+              {t("seriesIndexTitle")}
+            </a>
+          </p>
         </div>
       </header>
 
@@ -127,6 +128,18 @@ function PostListEntry({ post, locale }: { post: PublicPostListItem; locale: str
             <p className="mt-1.5 line-clamp-2 text-[15px] leading-relaxed text-slate-500">
               {post.excerpt}
             </p>
+          )}
+          {post.tags.length > 0 && (
+            <ul className="mt-2.5 flex flex-wrap gap-1.5">
+              {post.tags.slice(0, 4).map((tag) => (
+                <li
+                  key={tag}
+                  className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[12px] font-medium text-slate-500 group-hover:bg-accent-50 group-hover:text-accent-700"
+                >
+                  {tag}
+                </li>
+              ))}
+            </ul>
           )}
           <time dateTime={post.publishedAt} className="mt-2.5 block text-[13px] text-slate-400">
             {formatDate(post.publishedAt, locale)}

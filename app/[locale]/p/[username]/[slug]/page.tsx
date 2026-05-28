@@ -8,6 +8,7 @@ import { ShareButton } from "@/components/blog/share-button";
 import { ViewBeacon } from "@/components/blog/view-beacon";
 import { PostToc } from "@/components/blog/post-toc";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
+import { SeriesNav, TagChips } from "../_components/post-meta";
 import { findPublicPost } from "@/lib/api/public-posts";
 
 export const revalidate = 30;
@@ -127,7 +128,15 @@ export default async function PublicPostPage({
         </div>
       </header>
 
+      {result.data.series && <SeriesNav series={result.data.series} />}
+
       <ArticleBody blocks={blocks} />
+
+      {post.tags.length > 0 && (
+        <div className="mt-10">
+          <TagChips tags={post.tags} />
+        </div>
+      )}
 
       <footer className="mt-20 border-t border-slate-100 pt-8">
         <div className="flex items-center justify-between gap-4">
