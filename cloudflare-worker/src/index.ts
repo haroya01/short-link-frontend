@@ -1,31 +1,35 @@
 /**
  * kurl Subdomain Publishing Worker.
  *
- * `*.kurl.me/*` 요청을 Vercel 의 Next.js 프런트엔드로 proxy. 원래 host (예: john.kurl.me) 는
- * X-Original-Host 헤더로 전달 → Next.js middleware 가 subdomain 추출 후 internal rewrite.
+ * `*.kurl.me/*` 요청을 Vercel 의 Next.js 프런트엔드로 proxy. 원래 host (예: john.kurl.me
+ * 또는 blog.kurl.me) 는 X-Original-Host 헤더로 전달 → Next.js middleware 가 host 별 분기:
+ *   - author subdomain ({username}.kurl.me) → /p/{username}/* internal rewrite
+ *   - blog.kurl.me → /blog/* internal rewrite (C-plus product surface)
  *
  * Vercel Hobby 의 wildcard domain 미지원 우회 — Vercel 는 자기 default deployment URL 만 보고,
  * 본 Worker 가 subdomain 정보를 헤더로 propagate.
  *
  * 무시 (pass through to default CF routing):
- *   - 예약 subdomain (www / app / api / origin / admin / blog / help / status / mail /
+ *   - 예약 시스템 subdomain (www / app / api / origin / admin / help / status / mail /
  *     kurl / official). app 은 DNS only (CF 안 거침), 나머지는 Proxied (CF 안에서 EC2 backend 행).
  *   - .kurl.me 가 아닌 host (defensive — route config 상 보통 안 옴)
  *
  * Worker route: `*.kurl.me/*` (wrangler.toml).
+ *
+ * Decision: [[decisions/2026-05-29-product-surface-c-lite]]
  */
 
 const VERCEL_DEPLOYMENT_HOST = "short-link-frontend-blond.vercel.app";
 
 const KURL_DOMAIN_SUFFIX = ".kurl.me";
 
+// 시스템 subdomain — Vercel 로 forward 안 함. blog 는 C-plus product 라 reserved 에서 제외.
 const RESERVED_SUBDOMAINS = new Set([
   "www",
   "app",
   "api",
   "origin",
   "admin",
-  "blog",
   "help",
   "status",
   "mail",
