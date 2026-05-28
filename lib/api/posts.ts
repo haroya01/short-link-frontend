@@ -13,6 +13,9 @@ export interface PostView {
   excerpt: string | null;
   ogImageUrl: string | null;
   viewCount: number;
+  tags: string[];
+  seriesId: number | null;
+  seriesOrder: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -54,6 +57,7 @@ export function updatePostMetadata(
     ogImageUrl?: string;
     ogImageKey?: string;
     languageTag?: string;
+    tags?: string[];
   },
 ): Promise<PostView> {
   return request<PostView>(`/api/v1/posts/${id}`, { method: "PATCH", body: payload });
