@@ -1,12 +1,12 @@
 "use client";
 
-import { Eye, LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { AreaSwitcher } from "@/components/common/area-switcher";
+import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { useSidebarState } from "@/components/common/sidebar-state";
@@ -15,10 +15,8 @@ export function AppHeader() {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("nav");
-  const { me, signOut } = useAuth();
+  const { signOut } = useAuth();
   const { open, toggle } = useSidebarState();
-
-  const username = me?.username ?? null;
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
@@ -36,21 +34,10 @@ export function AppHeader() {
           <Link href="/" aria-label="kurl" className="shrink-0">
             <Logo />
           </Link>
-          <AreaSwitcher />
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          {username && (
-            <a
-              href={`/p/${username}`}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-            >
-              <Eye className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{t("viewMyPage")}</span>
-            </a>
-          )}
+          <AppsGrid />
           <LanguageSwitcher />
           <Button
             variant="ghost"

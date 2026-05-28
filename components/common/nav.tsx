@@ -15,9 +15,8 @@ import { cn } from "@/lib/utils";
  * 로그인 후 행선지를 ?next= 로 부착. login/callback 양쪽의 ALLOWED_NEXT_PATHS 화이트리스트에 있어야 한다.
  */
 function loginHrefFor(pathname: string): string {
-  if (pathname.startsWith("/qr-campaigns")) return "/login?next=/links/campaigns";
+  if (pathname.startsWith("/qr-campaigns")) return "/login?next=/campaigns";
   if (pathname.startsWith("/showcase")) return "/login?next=/settings/profile";
-  if (pathname.startsWith("/posts")) return "/login?next=/content/write";
   return "/login";
 }
 
@@ -30,9 +29,8 @@ type NavEntry = {
 function anonymousEntries(t: (k: string) => string): NavEntry[] {
   return [
     { href: "/", label: t("shorten"), active: (p) => p === "/" },
-    { href: "/posts", label: t("posts"), active: (p) => p.startsWith("/posts") },
-    { href: "/showcase", label: t("showcase"), active: (p) => p.startsWith("/showcase") },
     { href: "/qr-campaigns", label: t("campaigns"), active: (p) => p.startsWith("/qr-campaigns") },
+    { href: "/pricing", label: t("pricing"), active: (p) => p.startsWith("/pricing") },
   ];
 }
 
