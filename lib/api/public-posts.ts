@@ -25,7 +25,22 @@ export interface PublicPostListItem {
   excerpt: string | null;
   ogImageUrl: string | null;
   languageTag: string;
+  tags: string[];
   publishedAt: string; // ISO instant
+}
+
+export interface PublicSeriesNavLink {
+  slug: string;
+  title: string;
+}
+
+export interface PublicPostSeriesNav {
+  slug: string;
+  title: string;
+  position: number;
+  total: number;
+  prev: PublicSeriesNavLink | null;
+  next: PublicSeriesNavLink | null;
 }
 
 export interface PublicCtaInfo {
@@ -52,6 +67,24 @@ export interface PublicPostDetail {
   author: PublicAuthor;
   post: PublicPostListItem;
   blocks: PublicPostBlock[];
+  series: PublicPostSeriesNav | null;
+}
+
+export interface PublicSeriesListItem {
+  slug: string;
+  title: string;
+  postCount: number;
+}
+
+export interface PublicSeriesList {
+  author: PublicAuthor;
+  series: PublicSeriesListItem[];
+}
+
+export interface PublicSeriesDetail {
+  author: PublicAuthor;
+  series: PublicSeriesListItem;
+  posts: PublicPostListItem[];
 }
 
 export type FetchResult<T> =
@@ -82,5 +115,20 @@ export function findPublicPost(
 ): Promise<FetchResult<PublicPostDetail>> {
   return fetchPublic<PublicPostDetail>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/posts/${encodeURIComponent(slug)}`,
+  );
+}
+
+export function listPublicSeries(username: string): Promise<FetchResult<PublicSeriesList>> {
+  return fetchPublic<PublicSeriesList>(
+    `/api/v1/public/profiles/${encodeURIComponent(username)}/series`,
+  );
+}
+
+export function findPublicSeries(
+  username: string,
+  slug: string,
+): Promise<FetchResult<PublicSeriesDetail>> {
+  return fetchPublic<PublicSeriesDetail>(
+    `/api/v1/public/profiles/${encodeURIComponent(username)}/series/${encodeURIComponent(slug)}`,
   );
 }

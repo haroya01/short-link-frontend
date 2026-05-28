@@ -46,7 +46,10 @@
     "reportPlaceholder": "具体的な理由があれば記入してください",
     "ctaUnavailable": "{label} · 現在利用できないリンク",
     "ctaDeleted": "削除されたリンク",
-    "toc": "目次"
+    "toc": "目次",
+    "seriesPosition": "{position}/{total}",
+    "seriesIndexTitle": "シリーズ",
+    "seriesEmpty": "まだシリーズがありません。"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
