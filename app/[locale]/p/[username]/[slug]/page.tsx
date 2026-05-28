@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import { ShareButton } from "@/components/publishing/share-button";
 import {
   findPublicPost,
+  type PublicCtaInfo,
   type PublicPostBlock,
-  type PublicPostDetail,
 } from "@/lib/api/public-posts";
 
 export const revalidate = 30;
@@ -54,16 +55,27 @@ export default async function PublicPostPage({
   const result = await findPublicPost(username, slug);
 
   if (!result.ok) {
-    // TODO: 410 Gone 별도 페이지 처리 (현재는 notFound 로 통합, follow-up PR)
+    // backend: UNPUBLISHED → 410, DRAFT/SCHEDULED/missing → 404.
+    // Next.js 14 page.tsx 가 HTTP status code 직접 set 불가 → UI 분기로 처리.
+    // Status code 자체는 middleware 또는 route handler 로 별도 PR.
+    if (result.status === 410) {
+      return <GonePage username={username} />;
+    }
     notFound();
   }
 
   const { author, post, blocks } = result.data;
+  const h = await headers();
+  const origin = subdomainOrigin(h, username);
+  const postUrl = `${origin}/${post.slug}`;
 
   return (
     <article className="mx-auto max-w-2xl px-6 py-12" lang={post.languageTag}>
       <header className="mb-10">
-        <h1 className="text-3xl font-bold leading-tight tracking-tight">{post.title}</h1>
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="text-3xl font-bold leading-tight tracking-tight">{post.title}</h1>
+          <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+        </div>
         <div className="mt-4 flex items-center gap-3 text-sm text-gray-500">
           <a href="/" className="hover:underline">
             @{author.username}
@@ -81,12 +93,25 @@ export default async function PublicPostPage({
         ))}
       </div>
 
-      <footer className="mt-16 border-t pt-8">
+      <footer className="mt-16 border-t pt-8 flex items-center justify-between">
         <a href="/" className="text-sm text-gray-500 hover:underline">
           ← @{author.username} 의 다른 글
         </a>
+        <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
       </footer>
     </article>
+  );
+}
+
+function GonePage({ username }: { username: string }) {
+  return (
+    <main className="mx-auto max-w-md px-6 py-24 text-center">
+      <h1 className="text-3xl font-bold">410</h1>
+      <p className="mt-4 text-gray-600">이 글은 더 이상 게시되지 않습니다.</p>
+      <a href="/" className="mt-8 inline-block text-sm text-emerald-600 hover:underline">
+        ← @{username} 의 다른 글
+      </a>
+    </main>
   );
 }
 
@@ -111,8 +136,7 @@ function BlockRender({ block }: { block: PublicPostBlock }) {
     case "IMAGE":
       return <ImageBlock content={block.content} />;
     case "CTA_REF":
-      // CTA 라이브러리 참조 — wave 2 에서 CTA 데이터 hydration. 일단 placeholder.
-      return <CtaPlaceholder content={block.content} />;
+      return <CtaBlock cta={block.cta} />;
     case "EMBED":
       return <EmbedBlock content={block.content} />;
     default:
@@ -122,13 +146,11 @@ function BlockRender({ block }: { block: PublicPostBlock }) {
 
 function ParsedList({ content, ordered }: { content: string | null; ordered: boolean }) {
   if (!content) return null;
-  // 본문 블록의 list content 는 JSON array of strings (간단 model). 잘못된 JSON 은 fallback.
   let items: string[] = [];
   try {
     const parsed = JSON.parse(content);
     if (Array.isArray(parsed)) items = parsed.filter((x) => typeof x === "string");
   } catch {
-    // fallback: line-separated
     items = content.split("\n").filter(Boolean);
   }
   const ListTag = ordered ? "ol" : "ul";
@@ -152,7 +174,6 @@ function ImageBlock({ content }: { content: string | null }) {
       alt = typeof parsed.alt === "string" ? parsed.alt : "";
     }
   } catch {
-    // fallback: plain URL
     url = content.trim();
   }
   if (!url) return null;
@@ -160,13 +181,35 @@ function ImageBlock({ content }: { content: string | null }) {
   return <img src={url} alt={alt} className="rounded-lg" />;
 }
 
-function CtaPlaceholder({ content }: { content: string | null }) {
-  // wave 1.4 의 backend public read 는 CTA hydration 안 함. content = '{"ctaId":N}' 만 옴.
-  // wave 2 에서 backend public read 가 CTA 라이브러리 lookup 해서 label/url/style 까지 응답에
-  // 포함하도록 확장. 그 전까지는 사용 불가 표시.
+function CtaBlock({ cta }: { cta: PublicCtaInfo | null }) {
+  if (!cta) {
+    return (
+      <div className="my-6 rounded-lg border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-500">
+        CTA (참조 만료 또는 삭제됨)
+      </div>
+    );
+  }
+  if (cta.deleted) {
+    return (
+      <div className="my-6 rounded-lg border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-500">
+        {cta.label} (현재 사용할 수 없음)
+      </div>
+    );
+  }
+  const primary = cta.style === "PRIMARY";
+  const baseClass = primary
+    ? "bg-emerald-600 text-white hover:bg-emerald-700"
+    : "border border-gray-300 text-gray-700 hover:bg-gray-50";
   return (
-    <div className="my-6 rounded-lg border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-500">
-      CTA (wave 2 에서 hydration)
+    <div className="my-8 not-prose">
+      <a
+        href={cta.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`inline-block rounded-lg px-6 py-3 font-medium ${baseClass}`}
+      >
+        {cta.label}
+      </a>
     </div>
   );
 }
