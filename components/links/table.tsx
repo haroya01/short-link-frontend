@@ -10,7 +10,7 @@ import { CopyButton } from "@/components/common/copy-button";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { EditLinkDialog } from "@/components/links/edit-link-dialog";
 import { Favicon } from "@/components/common/favicon";
-import { Sparkline } from "@/components/stats/sparkline";
+import { Sparkline } from "@/components/links/stats/sparkline";
 import { useToast } from "@/components/ui/toast";
 import { deleteLink } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";

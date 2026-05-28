@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CountryTable } from "@/components/stats/country-table";
-import { DailyChart } from "@/components/stats/charts/daily-chart";
-import { HourChart } from "@/components/stats/charts/hour-chart";
+import { CountryTable } from "@/components/links/stats/country-table";
+import { DailyChart } from "@/components/links/stats/charts/daily-chart";
+import { HourChart } from "@/components/links/stats/charts/hour-chart";
 import { Reveal } from "@/components/common/reveal";
 import { Section } from "@/components/common/section";
 import type { LinkStats } from "@/types";

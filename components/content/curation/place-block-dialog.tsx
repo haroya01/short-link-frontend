@@ -24,8 +24,8 @@ import {
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FormField } from "@/components/profile/section/form-field";
-import { ImageUploader } from "@/components/profile/section/image-uploader";
+import { FormField } from "@/components/content/curation/form-field";
+import { ImageUploader } from "@/components/content/curation/image-uploader";
 
 const NAME_MAX = 80;
 const ADDRESS_MAX = 200;

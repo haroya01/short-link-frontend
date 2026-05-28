@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ShareChannel } from "@/types";
-import { socialUrlPrefix } from "@/components/profile/section/socials-templates";
+import { socialUrlPrefix } from "@/components/content/curation/socials-templates";
 
 describe("socialUrlPrefix", () => {
   it("returns the canonical handle-prefix for each channel", () => {

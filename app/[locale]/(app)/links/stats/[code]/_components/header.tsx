@@ -1,7 +1,7 @@
 import { ExternalLink, Link2 } from "lucide-react";
 import { CopyButton } from "@/components/common/copy-button";
-import { PublicStatsToggle } from "@/components/stats/public-stats-toggle";
-import { QrButton } from "@/components/qr/button";
+import { PublicStatsToggle } from "@/components/links/stats/public-stats-toggle";
+import { QrButton } from "@/components/links/qr/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { LinkStats } from "@/types";
 

@@ -6,12 +6,12 @@ import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { reorderProfileItems } from "@/lib/api";
 import type { ProfileReorderItem } from "@/types";
-import type { FeedItem } from "@/components/profile/section/types";
+import type { FeedItem } from "@/components/content/curation/types";
 import {
   findNextTextHeader,
   findUnitEndAfter,
   findUnitStartBefore,
-} from "@/components/profile/section/feed-helpers";
+} from "@/components/content/curation/feed-helpers";
 
 type Args = {
   items: FeedItem[];

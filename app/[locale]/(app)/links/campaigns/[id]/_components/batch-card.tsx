@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ExternalLink, Pencil, QrCode, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { QrDownloadDialog } from "@/components/qr/download-dialog";
+import { QrDownloadDialog } from "@/components/links/qr/download-dialog";
 import type { CampaignBatch } from "@/types";
 
 type Props = {

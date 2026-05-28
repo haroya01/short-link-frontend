@@ -1,10 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Heatmap } from "@/components/stats/charts/heatmap";
-import { ClickQualitySummary } from "@/components/stats/click-quality-summary";
-import { LiveClickFeed } from "@/components/stats/live-click-feed";
-import { LiveClickFeedDemo } from "@/components/stats/live-click-feed-demo";
+import { Heatmap } from "@/components/links/stats/charts/heatmap";
+import { ClickQualitySummary } from "@/components/links/stats/click-quality-summary";
+import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
+import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Reveal } from "@/components/common/reveal";
 import { Section } from "@/components/common/section";
 import type { LinkStats } from "@/types";

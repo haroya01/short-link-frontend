@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Check, Copy, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { QrButton } from "@/components/qr/button";
+import { QrButton } from "@/components/links/qr/button";
 
 /**
  * Top-of-editor link card showing the owner's public profile URL. Visually treated as a

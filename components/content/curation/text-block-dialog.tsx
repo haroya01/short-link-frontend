@@ -10,7 +10,7 @@ import { parseTextBlockConfig } from "@/lib/block-config-parsers";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/profile/section/form-field";
+import { FormField } from "@/components/content/curation/form-field";
 
 const MAX_CHARS = 2000;
 const MAX_ICON_CHARS = 8;

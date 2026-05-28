@@ -6,8 +6,8 @@ import type { ContactCardPalette } from "@/types";
 import { PALETTES } from "@/app/[locale]/(profile)/u/[username]/_components/contact-card-palettes";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/profile/section/form-field";
-import { ImageUploader } from "@/components/profile/section/image-uploader";
+import { FormField } from "@/components/content/curation/form-field";
+import { ImageUploader } from "@/components/content/curation/image-uploader";
 
 type Config = {
   name: string;

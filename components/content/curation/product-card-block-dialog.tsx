@@ -21,7 +21,7 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { ImageCropperDialog } from "@/components/ui/image-cropper-dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { FormField } from "@/components/profile/section/form-field";
+import { FormField } from "@/components/content/curation/form-field";
 
 const MAX_ITEMS = 8;
 const MAX_IMAGES_PER_ITEM = 5;
