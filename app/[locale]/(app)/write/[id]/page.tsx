@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import {
@@ -14,6 +14,7 @@ import {
   updatePostMetadata,
   type PostView,
 } from "@/lib/api/posts";
+import { uploadPostImage } from "@/lib/api/post-images";
 import { blocksToMarkdown, markdownToBlocks } from "@/lib/markdown-to-blocks";
 
 export default function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
@@ -26,8 +27,11 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     void params.then((p) => setPostId(Number(p.id)));
@@ -87,6 +91,37 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
       setError(e instanceof Error ? e.message : `${action} failed`);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleImageUpload(file: File) {
+    if (post == null || uploading) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const imageUrl = await uploadPostImage(post.id, file);
+      const alt = file.name.replace(/\.[^.]+$/, "");
+      const snippet = `\n\n![${alt}](${imageUrl})\n\n`;
+      const ta = textareaRef.current;
+      if (ta) {
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const next = markdown.slice(0, start) + snippet + markdown.slice(end);
+        setMarkdown(next);
+        // restore cursor after the inserted markdown
+        window.setTimeout(() => {
+          ta.focus();
+          const pos = start + snippet.length;
+          ta.setSelectionRange(pos, pos);
+        }, 0);
+      } else {
+        setMarkdown((prev) => prev + snippet);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "이미지 업로드 실패");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
@@ -182,7 +217,29 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
         placeholder="제목"
       />
 
+      <div className="mb-2 flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="rounded border border-gray-200 px-3 py-1 text-xs text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+        >
+          {uploading ? "업로드 중…" : "📷 이미지 삽입"}
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) void handleImageUpload(file);
+          }}
+        />
+        <span className="text-xs text-gray-400">jpg / png / webp / gif</span>
+      </div>
       <textarea
+        ref={textareaRef}
         value={markdown}
         onChange={(e) => setMarkdown(e.target.value)}
         className="min-h-[60vh] w-full resize-y rounded border border-gray-200 p-4 font-mono text-sm leading-relaxed focus:border-emerald-600 focus:outline-none"
