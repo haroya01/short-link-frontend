@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import { ReportButton } from "@/components/publishing/report-button";
 import { listPublicPosts, type PublicPostListItem } from "@/lib/api/public-posts";
 
 // 30s ISR — author 발행 후 30 초 내 visitors 반영. Backend 가 어차피 매번 직접 조회.
@@ -78,6 +79,10 @@ export default async function PublicProfileHomepage({
           ))}
         </ul>
       )}
+
+      <footer className="mt-16 border-t pt-8 flex justify-end">
+        <ReportButton subjectType="USER" subjectId={author.id} />
+      </footer>
     </main>
   );
 }

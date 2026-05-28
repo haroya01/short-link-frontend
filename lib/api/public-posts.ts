@@ -12,12 +12,14 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 const REVALIDATE_SECONDS = 30;
 
 export interface PublicAuthor {
+  id: number;
   username: string;
   bio: string | null;
   avatarUrl: string | null;
 }
 
 export interface PublicPostListItem {
+  id: number;
   slug: string;
   title: string;
   excerpt: string | null;
