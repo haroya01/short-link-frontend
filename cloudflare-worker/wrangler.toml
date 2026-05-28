@@ -1,0 +1,10 @@
+name = "kurl-subdomain-publishing"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+workers_dev = false
+
+# Route: 모든 *.kurl.me 요청 intercept. apex (kurl.me) 는 별도 Worker (kurl-router) 가 처리.
+# Reserved subdomain (www, app, api, origin, ...) 은 본 Worker 안에서 분기해 default routing 으로 pass through.
+[[routes]]
+pattern = "*.kurl.me/*"
+zone_name = "kurl.me"

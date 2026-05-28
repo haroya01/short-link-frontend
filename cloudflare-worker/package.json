@@ -1,0 +1,17 @@
+{
+  "name": "kurl-subdomain-publishing-worker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloudflare Worker proxying *.kurl.me/* publishing requests to the Vercel-hosted Next.js frontend.",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240909.0",
+    "typescript": "^5.4.0",
+    "wrangler": "^3.78.0"
+  }
+}
