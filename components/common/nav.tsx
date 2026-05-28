@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 function loginHrefFor(pathname: string): string {
   if (pathname.startsWith("/qr-campaigns")) return "/login?next=/links/campaigns";
   if (pathname.startsWith("/showcase")) return "/login?next=/settings/profile";
+  if (pathname.startsWith("/posts")) return "/login?next=/content/write";
   return "/login";
 }
 
@@ -29,6 +30,7 @@ type NavEntry = {
 function anonymousEntries(t: (k: string) => string): NavEntry[] {
   return [
     { href: "/", label: t("shorten"), active: (p) => p === "/" },
+    { href: "/posts", label: t("posts"), active: (p) => p.startsWith("/posts") },
     { href: "/showcase", label: t("showcase"), active: (p) => p.startsWith("/showcase") },
     { href: "/qr-campaigns", label: t("campaigns"), active: (p) => p.startsWith("/qr-campaigns") },
   ];

@@ -67,7 +67,15 @@
     "admin": "관리자",
     "settings": "설정",
     "login": "로그인",
-    "logout": "로그아웃"
+    "logout": "로그아웃",
+    "viewMyPage": "내 페이지"
+  },
+  "postsLanding": {
+    "headline": "기록이 매번 단축링크가 된다",
+    "subhead": "kurl 의 글쓰기는 본문에 박힌 외부 링크가 자동으로 추적되는 콘텐츠 레이어다.",
+    "startWriting": "글 시작하기",
+    "recentPostsLabel": "최근 글",
+    "recentPostsEmpty": "곧."
   },
   "area": {
     "content": "콘텐츠",

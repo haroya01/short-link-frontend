@@ -67,7 +67,15 @@
     "admin": "Admin",
     "settings": "Settings",
     "login": "Sign in",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "viewMyPage": "My page"
+  },
+  "postsLanding": {
+    "headline": "Every paragraph becomes a tracked link.",
+    "subhead": "kurl's editor turns the links inside your posts into measured destinations — automatically.",
+    "startWriting": "Start writing",
+    "recentPostsLabel": "Recent posts",
+    "recentPostsEmpty": "Coming soon."
   },
   "area": {
     "content": "Content",
