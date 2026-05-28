@@ -90,7 +90,7 @@ export default function CampaignDetailPage() {
   return (
     <div className="container max-w-5xl space-y-6 py-10">
       <Link
-        href="/campaigns"
+        href="/links/campaigns"
         className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
       >
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToList")}

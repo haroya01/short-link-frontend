@@ -10,7 +10,7 @@ import type { ProfileVisitSummary } from "@/types";
 
 /**
  * Compact 4-bucket summary of profile visits (today / 7d / 30d / all-time) for the top of the
- * /profile/edit page. Click-through links to /profile/stats for the full chart breakdown. Skips
+ * /settings/profile page. Click-through links to /content/readers for the full chart breakdown. Skips
  * its own render when the summary is all-zero so the editor doesn't get visual debt before
  * any visits have happened.
  */
@@ -38,7 +38,7 @@ export function ProfileVisitSummaryCard({ hasUsername }: { hasUsername: boolean 
 
   return (
     <Link
-      href={`/${locale}/profile/stats`}
+      href={`/${locale}/content/readers`}
       className="group block rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition hover:border-slate-300 hover:bg-slate-50/60"
     >
       <div className="flex items-center justify-between">

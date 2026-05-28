@@ -26,7 +26,7 @@ export default function QrCampaignsLandingPage() {
   const { authenticated } = useAuth();
   // 로그인 안 했어도 클릭 의도는 "캠페인 만들기". 로그인 후 dashboard 가 아니라 /campaigns/new
   // 로 이어지게 ?next= 부착 (ALLOWED_NEXT_PATHS 화이트리스트에 추가됨).
-  const ctaHref = authenticated ? "/campaigns/new" : "/login?next=/campaigns/new";
+  const ctaHref = authenticated ? "/links/campaigns/new" : "/login?next=/links/campaigns/new";
   const locale = useLocale();
   const mock = MOCK_BY_LOCALE[locale] ?? MOCK_BY_LOCALE.en;
 
@@ -510,7 +510,7 @@ function FinalCta({
             </Button>
           </Link>
           {!authenticated && (
-            <Link href="/login?next=/campaigns">
+            <Link href="/login?next=/links/campaigns">
               <Button
                 variant="ghost"
                 size="xl"

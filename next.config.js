@@ -39,6 +39,25 @@ const nextConfig = {
       { source: "/:code([0-9A-Za-z]{3,16})", destination: `${BACKEND}/:code` },
     ];
   },
+  async redirects() {
+    // 워크스페이스 영역 분리(Content / Links) 도입에 따른 옛 URL → 새 URL.
+    // [[decisions/2026-05-29-blog-links-separation-ui]] 의 D4 URL 매핑.
+    return [
+      { source: "/dashboard", destination: "/links", permanent: true },
+      { source: "/analytics", destination: "/links/stats", permanent: true },
+      { source: "/stats/:code", destination: "/links/stats/:code", permanent: true },
+      { source: "/stats/:code/public", destination: "/links/stats/:code/public", permanent: true },
+      { source: "/campaigns", destination: "/links/campaigns", permanent: true },
+      { source: "/campaigns/:path*", destination: "/links/campaigns/:path*", permanent: true },
+      { source: "/ctas", destination: "/links/ctas", permanent: true },
+      { source: "/write", destination: "/content/write", permanent: true },
+      { source: "/write/:id", destination: "/content/write/:id", permanent: true },
+      { source: "/profile/edit", destination: "/settings/profile", permanent: true },
+      { source: "/profile/leads", destination: "/content/leads", permanent: true },
+      { source: "/profile/leads/campaign", destination: "/content/leads/campaign", permanent: true },
+      { source: "/profile/stats", destination: "/content/readers", permanent: true },
+    ];
+  },
 };
 
 module.exports = withSentryConfig(withNextIntl(nextConfig), {

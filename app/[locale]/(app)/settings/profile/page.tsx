@@ -117,7 +117,7 @@ export default function ProfileEditPage() {
             나중에 추가하는 사용자는 "leads dashboard 자체" 가 어디 있는지 발견 못함 (orphan).
             폼 없을 때는 disabled 톤으로 *비활성* 시각 표시. */}
         <Link
-          href={`/${locale}/profile/leads`}
+          href={`/${locale}/content/leads`}
           className={
             "inline-flex shrink-0 items-center gap-1.5 rounded-md border bg-white px-3 py-1.5 text-xs font-medium transition " +
             (hasEmailForm
@@ -132,7 +132,7 @@ export default function ProfileEditPage() {
       </div>
 
       {/* Visit-stats summary — only renders when the user has claimed a username AND has at
-          least one recorded visit. Click-through takes them to /profile/stats for full charts.
+          least one recorded visit. Click-through takes them to /content/readers for full charts.
           Visit stats are owner-only — the previous public-visibility toggle was removed: there's
           no compelling reason for visitors to see who else came by, and the absence of the
           control keeps owners from worrying about whether their numbers leak. */}

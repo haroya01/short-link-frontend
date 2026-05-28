@@ -92,7 +92,7 @@ export default function ProfileLeadsCampaignPage() {
     <div className="container max-w-3xl space-y-6 py-12">
       <div>
         <Link
-          href={`/${locale}/profile/leads`}
+          href={`/${locale}/content/leads`}
           className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft className="h-3.5 w-3.5" />

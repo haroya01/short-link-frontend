@@ -2,13 +2,13 @@ import { expect, test } from "@playwright/test";
 
 test.describe("auth-protected pages redirect when not logged in", () => {
   test("dashboard shows login prompt", async ({ page }) => {
-    await page.goto("/dashboard");
+    await page.goto("/links");
     await expect(page.getByRole("heading", { name: "로그인이 필요해요" })).toBeVisible();
     await expect(page.getByRole("link", { name: "로그인하러 가기" })).toBeVisible();
   });
 
   test("stats shows login prompt", async ({ page }) => {
-    await page.goto("/stats/abc1234");
+    await page.goto("/links/stats/abc1234");
     await expect(page.getByRole("heading", { name: "로그인이 필요해요" })).toBeVisible();
   });
 
