@@ -88,6 +88,9 @@ export function FloatingToolbar({
                 key={c}
                 type="button"
                 aria-label={`color ${c}`}
+                // Keep the editor focused/selected — without this, mousedown blurs the
+                // contenteditable and the color applies to a collapsed selection (i.e. nothing).
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => run("color", { selectedColor: c })}
                 className="h-6 w-6 rounded-full ring-1 ring-black/5"
                 style={{ backgroundColor: c }}
@@ -172,6 +175,11 @@ function Btn({
     <button
       type="button"
       aria-label={label}
+      // preventDefault on mousedown keeps the WYSIWYG editor focused and its text selection intact.
+      // The toolbar is a fixed element outside the editor DOM, so a normal click would blur the
+      // contenteditable first — collapsing the selection and making selection-based commands
+      // (highlight, color, and "format the selected text") silently no-op.
+      onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       className={`grid h-9 w-9 shrink-0 place-items-center rounded-full transition-colors ${
         active
