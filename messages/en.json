@@ -1079,6 +1079,16 @@
       "prev": "Previous",
       "next": "Next",
       "page": "Page {page} of {total}"
+    },
+    "accessToken": {
+      "title": "API access token",
+      "desc": "A token to call the API as yourself. If leaked it hands over your account access — handle with care.",
+      "issue": "Issue token",
+      "reissue": "Reissue",
+      "copy": "Copy",
+      "copied": "Copied",
+      "expires": "Expires in {minutes} min",
+      "hint": "Use it for seeding or scripts without digging through devtools."
     }
   },
   "common": {

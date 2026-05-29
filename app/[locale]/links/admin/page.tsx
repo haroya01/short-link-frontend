@@ -16,6 +16,7 @@ import {
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError, getAdminHealthMetrics, getAdminOverview } from "@/lib/api";
+import { AdminAccessToken } from "@/components/admin/access-token";
 import { AdminDeepStats } from "@/components/admin/deep-stats";
 import { AdminLinkMetrics } from "@/components/admin/link-metrics";
 import { AdminRequestMetrics } from "@/components/admin/request-metrics";
@@ -118,6 +119,8 @@ export default function AdminPage() {
         <h2 className="mt-1 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">{t("title")}</h2>
         <p className="mt-1 text-sm text-slate-500">{t("subtitle")}</p>
       </div>
+
+      <AdminAccessToken />
 
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-3 lg:grid-cols-6">
         <Kpi
