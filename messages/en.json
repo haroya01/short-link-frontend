@@ -101,6 +101,10 @@
     "ctaDeleted": "Removed link",
     "toc": "Contents",
     "seriesPosition": "{position}/{total}",
+    "tabPosts": "Posts",
+    "tabSeries": "Series",
+    "tabAbout": "About",
+    "aboutEmpty": "No bio yet.",
     "seriesIndexTitle": "Series",
     "seriesEmpty": "No series yet."
   },

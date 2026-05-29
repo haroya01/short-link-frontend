@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ArrowLeft, Layers } from "lucide-react";
+import { Layers } from "lucide-react";
 import { listPublicSeries } from "@/modules/blog/api/public-posts";
+import { AuthorHeader } from "../_components/author-header";
 
 export const revalidate = 30;
 
@@ -29,23 +30,13 @@ export default async function PublicSeriesIndexPage({
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-14 sm:py-20">
-      <a
-        href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-400 transition-colors hover:text-accent-700"
-      >
-        <ArrowLeft className="h-4 w-4" />@{author.username}
-      </a>
+      <AuthorHeader author={author} active="series" />
 
-      <h1 className="mt-6 text-headline-sm font-bold tracking-tight text-slate-900">
-        {t("seriesIndexTitle")}
-      </h1>
-
-      <div className="section-divider my-10" />
-
-      {series.length === 0 ? (
-        <p className="text-slate-400">{t("seriesEmpty")}</p>
-      ) : (
-        <ul className="space-y-2">
+      <div className="mt-8">
+        {series.length === 0 ? (
+          <p className="text-slate-400">{t("seriesEmpty")}</p>
+        ) : (
+          <ul className="space-y-2">
           {series.map((s) => (
             <li key={s.slug}>
               <a
@@ -64,8 +55,9 @@ export default async function PublicSeriesIndexPage({
               </a>
             </li>
           ))}
-        </ul>
-      )}
+          </ul>
+        )}
+      </div>
     </main>
   );
 }

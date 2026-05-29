@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ReportButton } from "@/modules/blog/components/report-button";
+import { AuthorHeader } from "./_components/author-header";
 import { listPublicPosts, type PublicPostListItem } from "@/modules/blog/api/public-posts";
 
 // 30s ISR — author 발행 후 30 초 내 visitors 반영. Backend 가 어차피 매번 직접 조회.
@@ -65,46 +66,19 @@ export default async function PublicProfileHomepage({
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-14 sm:py-20">
-      <header className="flex items-start gap-5">
-        {author.avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={author.avatarUrl}
-            alt={`@${author.username}`}
-            width={80}
-            height={80}
-            className="h-20 w-20 shrink-0 rounded-full object-cover"
-          />
+      <AuthorHeader author={author} active="posts" />
+
+      <div className="mt-8">
+        {posts.length === 0 ? (
+          <p className="text-slate-400">{t("emptyPosts")}</p>
         ) : (
-          <span className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-accent-100 text-2xl font-bold text-accent-700">
-            {author.username.charAt(0).toUpperCase()}
-          </span>
+          <ul className="space-y-2">
+            {posts.map((p) => (
+              <PostListEntry key={p.slug} post={p} locale={locale} />
+            ))}
+          </ul>
         )}
-        <div className="min-w-0 pt-1">
-          <h1 className="text-headline-sm font-bold tracking-tight text-slate-900">
-            @{author.username}
-          </h1>
-          {author.bio && <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{author.bio}</p>}
-          <p className="mt-2 flex items-center gap-3 text-[13px] font-medium text-slate-400">
-            {posts.length > 0 && <span>{t("postCount", { count: posts.length })}</span>}
-            <a href="/series" className="text-accent-600 transition-colors hover:text-accent-700">
-              {t("seriesIndexTitle")}
-            </a>
-          </p>
-        </div>
-      </header>
-
-      <div className="section-divider my-12" />
-
-      {posts.length === 0 ? (
-        <p className="text-slate-400">{t("emptyPosts")}</p>
-      ) : (
-        <ul className="space-y-2">
-          {posts.map((p) => (
-            <PostListEntry key={p.slug} post={p} locale={locale} />
-          ))}
-        </ul>
-      )}
+      </div>
 
       <footer className="mt-16 flex justify-end border-t border-slate-100 pt-8">
         <ReportButton subjectType="USER" subjectId={author.id} />

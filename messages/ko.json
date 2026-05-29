@@ -101,6 +101,10 @@
     "ctaDeleted": "삭제된 링크",
     "toc": "목차",
     "seriesPosition": "{position}/{total}",
+    "tabPosts": "글",
+    "tabSeries": "시리즈",
+    "tabAbout": "소개",
+    "aboutEmpty": "아직 소개가 없어요.",
     "seriesIndexTitle": "시리즈",
     "seriesEmpty": "아직 시리즈가 없어요."
   },

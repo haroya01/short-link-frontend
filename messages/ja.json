@@ -101,6 +101,10 @@
     "ctaDeleted": "削除されたリンク",
     "toc": "目次",
     "seriesPosition": "{position}/{total}",
+    "tabPosts": "記事",
+    "tabSeries": "シリーズ",
+    "tabAbout": "紹介",
+    "aboutEmpty": "まだ紹介がありません。",
     "seriesIndexTitle": "シリーズ",
     "seriesEmpty": "まだシリーズがありません。"
   },
