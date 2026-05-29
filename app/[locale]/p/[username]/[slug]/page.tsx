@@ -8,6 +8,7 @@ import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { PostToc } from "@/modules/blog/components/post-toc";
 import { PostComments } from "@/modules/blog/components/comments";
+import { LikeButton } from "@/modules/blog/components/like-button";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { SeriesNav, TagChips } from "../_components/post-meta";
 import { findPublicPost } from "@/modules/blog/api/public-posts";
@@ -148,7 +149,8 @@ export default async function PublicPostPage({
             <ArrowLeft className="h-4 w-4" />
             {t("morePosts", { username: author.username })}
           </a>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <LikeButton postId={post.id} initialCount={post.likeCount} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
           </div>
         </div>
