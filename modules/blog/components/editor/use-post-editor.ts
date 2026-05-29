@@ -122,6 +122,11 @@ export function usePostEditor(
 
   async function changeStatus(action: StatusAction) {
     if (post == null || busy) return;
+    // Going public needs a title (backend enforces it too; this gives an immediate localized hint).
+    if (action === "publish" && !title.trim()) {
+      setError(t("titleRequired"));
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
