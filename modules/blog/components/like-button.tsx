@@ -5,6 +5,7 @@ import { Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { getLikeStatus, likePost, unlikePost } from "@/modules/blog/api/likes";
+import { showLikes } from "@/modules/blog/lib/public-metrics";
 
 /**
  * Like (공감) toggle. Shows the public count for everyone; the liked state loads for signed-in
@@ -62,7 +63,8 @@ export function LikeButton({ postId, initialCount }: { postId: number; initialCo
       }`}
     >
       <Heart className={`h-4 w-4 ${liked ? "fill-accent-600 text-accent-600" : ""}`} />
-      {count}
+      {/* Hide a bare "0" — show the count only once the post has a like (or the viewer adds one). */}
+      {showLikes(count) && count}
     </button>
   );
 }

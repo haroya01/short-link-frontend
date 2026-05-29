@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
+import { showLikes, showViews } from "@/modules/blog/lib/public-metrics";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 const KURL_HOST = process.env.NEXT_PUBLIC_KURL_HOST;
@@ -130,8 +131,12 @@ export function FeedCard({
                 day: "numeric",
               })}
             </time>
-            <span aria-hidden>·</span>
-            <span>{labels.views(item.viewCount)}</span>
+            {showViews(item.viewCount) && (
+              <>
+                <span aria-hidden>·</span>
+                <span>{labels.views(item.viewCount)}</span>
+              </>
+            )}
           </div>
         </div>
       </a>
@@ -157,10 +162,12 @@ export function FeedCard({
             by <b className="font-semibold text-slate-700">{item.author.username}</b>
           </span>
         </a>
-        <span className="flex shrink-0 items-center gap-1 text-[13px] text-slate-400">
-          <Heart className="h-3.5 w-3.5" />
-          {item.likeCount}
-        </span>
+        {showLikes(item.likeCount) && (
+          <span className="flex shrink-0 items-center gap-1 text-[13px] text-slate-400">
+            <Heart className="h-3.5 w-3.5" />
+            {item.likeCount}
+          </span>
+        )}
       </div>
     </li>
   );
