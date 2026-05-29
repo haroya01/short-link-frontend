@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Eye } from "lucide-react";
-import type { PostStatus, PostView } from "@/lib/api/posts";
+import type { PostStatus, PostView } from "@/modules/blog/api/posts";
 
 const TONE: Record<PostStatus, string> = {
   DRAFT: "bg-slate-100 text-slate-600",

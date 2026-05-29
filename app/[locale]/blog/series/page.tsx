@@ -12,7 +12,7 @@ import {
   setSeriesPosts,
   type SeriesDetailView,
   type SeriesView,
-} from "@/lib/api/series";
+} from "@/modules/blog/api/series";
 
 export default function BlogSeriesPage() {
   const t = useTranslations("blogWorkspace");

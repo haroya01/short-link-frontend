@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { listMyPosts, type PostStatus, type PostView } from "@/lib/api/posts";
+import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 
 export default function AnalyticsPage() {
   const { ready, authenticated } = useAuth();

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { listMyPosts, type PostView } from "@/lib/api/posts";
-import { PostRow } from "@/components/blog/workspace/post-row";
+import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
+import { PostRow } from "@/modules/blog/components/workspace/post-row";
 
 export default function BlogDraftsPage() {
   const t = useTranslations("blogWorkspace");

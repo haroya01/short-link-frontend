@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { ReportButton } from "@/components/blog/report-button";
-import { listPublicPosts, type PublicPostListItem } from "@/lib/api/public-posts";
+import { ReportButton } from "@/modules/blog/components/report-button";
+import { listPublicPosts, type PublicPostListItem } from "@/modules/blog/api/public-posts";
 
 // 30s ISR — author 발행 후 30 초 내 visitors 반영. Backend 가 어차피 매번 직접 조회.
 export const revalidate = 30;
