@@ -57,7 +57,10 @@ export function AppsGrid() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-10 z-40 w-72 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
+          // Mobile: pin to the viewport right edge (the trigger sits mid-header, so an
+          // absolute right-0 popover overflowed off the left edge). Desktop: anchor under the
+          // trigger as before.
+          className="fixed right-3 top-14 z-40 w-[calc(100vw-1.5rem)] max-w-xs overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg sm:absolute sm:right-0 sm:top-10 sm:w-72 sm:max-w-none"
         >
           {/* Only show the product(s) you're NOT on — the grid is a switcher, so surfacing the
               current product is noise. Computed client-side from host/path. */}
