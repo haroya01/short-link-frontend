@@ -22,7 +22,14 @@
     "followingSignedOut": "팔로우한 작가들의 글을 모아 봐요. 로그인하면 시작할 수 있어요.",
     "followingEmpty": "아직 팔로우한 작가의 글이 없어요. 마음에 드는 작가를 팔로우해 보세요.",
     "signIn": "로그인",
-    "topics": "주제"
+    "topics": "주제",
+    "heroEyebrow": "BLOG",
+    "heroTitle": "링크를 공유하는 사람들의 이야기",
+    "heroSubhead": "개발·디자인·일상. kurl에서 쓰고, 읽고, 팔로우하세요.",
+    "emptyTitle": "아직 발행된 글이 없어요",
+    "emptyBody": "첫 글의 주인공이 되어 보세요.",
+    "emptyFollowingTitle": "팔로우한 작가의 글이 없어요",
+    "emptyTagTitle": "이 주제의 글이 없어요"
   },
   "blogWorkspace": {
     "overviewTitle": "개요",
