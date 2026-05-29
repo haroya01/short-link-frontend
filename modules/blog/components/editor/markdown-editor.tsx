@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
+import "tui-color-picker/dist/tui-color-picker.css";
+import "@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css";
 
 /**
  * Toast UI Editor (vanilla — the React wrapper only peer-supports React 17). WYSIWYG + markdown
@@ -29,7 +31,10 @@ export function MarkdownEditor({
   useEffect(() => {
     let editor: ToastInstance | undefined;
     let cancelled = false;
-    void import("@toast-ui/editor").then(({ default: Editor }) => {
+    void Promise.all([
+      import("@toast-ui/editor"),
+      import("@toast-ui/editor-plugin-color-syntax"),
+    ]).then(([{ default: Editor }, { default: colorSyntax }]) => {
       if (cancelled || !hostRef.current) return;
       editor = new Editor({
         el: hostRef.current,
@@ -39,6 +44,7 @@ export function MarkdownEditor({
         previewStyle: "tab",
         usageStatistics: false,
         autofocus: false,
+        plugins: [colorSyntax],
         hooks: {
           addImageBlobHook: async (
             blob: Blob,
