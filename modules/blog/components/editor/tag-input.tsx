@@ -14,18 +14,36 @@ type Props = {
 export function TagInput({ tags, onChange, placeholder, max = 20 }: Props) {
   const [draft, setDraft] = useState("");
 
+  let pending = tags;
   function add(raw: string) {
-    const value = raw.trim().replace(/,$/, "").trim();
+    const value = raw.replace(/,/g, "").trim();
     if (!value) return;
-    const exists = tags.some((t) => t.toLowerCase() === value.toLowerCase());
-    if (!exists && tags.length < max) onChange([...tags, value]);
-    setDraft("");
+    const exists = pending.some((t) => t.toLowerCase() === value.toLowerCase());
+    if (!exists && pending.length < max) {
+      pending = [...pending, value];
+      onChange(pending);
+    }
+  }
+
+  // Split on comma here so it works regardless of how the comma arrives — typed, pasted, or
+  // committed by a Korean IME (where the comma keydown alone is unreliable). The trailing,
+  // comma-less fragment stays in the draft.
+  function onChangeValue(v: string) {
+    if (v.includes(",")) {
+      const parts = v.split(",");
+      parts.slice(0, -1).forEach(add);
+      setDraft(parts[parts.length - 1]);
+    } else {
+      setDraft(v);
+    }
   }
 
   function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" || e.key === ",") {
+    // Ignore the Enter that only commits an in-progress IME composition (Korean/Japanese).
+    if (e.key === "Enter" && !e.nativeEvent.isComposing) {
       e.preventDefault();
       add(draft);
+      setDraft("");
     } else if (e.key === "Backspace" && draft === "" && tags.length > 0) {
       onChange(tags.slice(0, -1));
     }
@@ -51,9 +69,12 @@ export function TagInput({ tags, onChange, placeholder, max = 20 }: Props) {
       ))}
       <input
         value={draft}
-        onChange={(e) => setDraft(e.target.value)}
+        onChange={(e) => onChangeValue(e.target.value)}
         onKeyDown={onKeyDown}
-        onBlur={() => add(draft)}
+        onBlur={() => {
+          add(draft);
+          setDraft("");
+        }}
         placeholder={tags.length === 0 ? placeholder : ""}
         className="min-w-[8rem] flex-1 bg-transparent py-1 text-base outline-none placeholder:text-slate-400 sm:text-sm"
       />
