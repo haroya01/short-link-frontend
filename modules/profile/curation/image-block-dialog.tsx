@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
-import { ImageUploader } from "@/components/blog/curation/image-uploader";
+import { ImageUploader } from "@/modules/profile/curation/image-uploader";
 
 type Props = {
   open: boolean;

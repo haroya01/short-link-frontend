@@ -8,7 +8,7 @@ import type {
   PublicProfile,
 } from "@/types";
 
-import { API_BASE, request } from "./client";
+import { API_BASE, request } from "@/lib/api/client";
 
 export async function getMyProfile(): Promise<MyProfile> {
   return request<MyProfile>("/api/v1/users/me/profile", { method: "GET" });

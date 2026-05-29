@@ -1,17 +1,17 @@
 "use client";
 
 import type { useTranslations } from "next-intl";
-import { BookingBlockDialog } from "@/components/blog/curation/booking-block-dialog";
-import { ContactCardBlockDialog } from "@/components/blog/curation/contact-card-block-dialog";
-import { EmailFormBlockDialog } from "@/components/blog/curation/email-form-block-dialog";
-import { EmbedBlockDialog } from "@/components/blog/curation/embed-block-dialog";
-import { EventBlockDialog } from "@/components/blog/curation/event-block-dialog";
-import { GalleryBlockDialog } from "@/components/blog/curation/gallery-block-dialog";
-import { ImageBlockDialog } from "@/components/blog/curation/image-block-dialog";
-import { PlaceBlockDialog } from "@/components/blog/curation/place-block-dialog";
-import { ProductCardBlockDialog } from "@/components/blog/curation/product-card-block-dialog";
-import { TextBlockDialog } from "@/components/blog/curation/text-block-dialog";
-import type { BlockDialogState } from "@/components/blog/curation/use-block-dialog";
+import { BookingBlockDialog } from "@/modules/profile/curation/booking-block-dialog";
+import { ContactCardBlockDialog } from "@/modules/profile/curation/contact-card-block-dialog";
+import { EmailFormBlockDialog } from "@/modules/profile/curation/email-form-block-dialog";
+import { EmbedBlockDialog } from "@/modules/profile/curation/embed-block-dialog";
+import { EventBlockDialog } from "@/modules/profile/curation/event-block-dialog";
+import { GalleryBlockDialog } from "@/modules/profile/curation/gallery-block-dialog";
+import { ImageBlockDialog } from "@/modules/profile/curation/image-block-dialog";
+import { PlaceBlockDialog } from "@/modules/profile/curation/place-block-dialog";
+import { ProductCardBlockDialog } from "@/modules/profile/curation/product-card-block-dialog";
+import { TextBlockDialog } from "@/modules/profile/curation/text-block-dialog";
+import type { BlockDialogState } from "@/modules/profile/curation/use-block-dialog";
 
 export type BlockDialogs = {
   contactCard: BlockDialogState<string>;

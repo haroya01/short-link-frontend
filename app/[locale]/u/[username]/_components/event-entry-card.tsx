@@ -9,8 +9,8 @@ import {
   downloadIcs,
   googleCalendarUrl,
   outlookCalendarUrl,
-} from "@/lib/calendar-export";
-import { parseEventConfig } from "@/lib/block-config-parsers";
+} from "@/modules/profile/lib/calendar-export";
+import { parseEventConfig } from "@/modules/profile/lib/block-config-parsers";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {
