@@ -62,6 +62,30 @@ describe("markdownToBlocks", () => {
   });
 });
 
+describe("video embeds", () => {
+  it("turns a standalone video URL (bare / autolink / link) into an EMBED block", () => {
+    expect(markdownToBlocks("https://youtu.be/dQw4w9WgXcQ")).toEqual([
+      { type: "EMBED", content: "https://youtu.be/dQw4w9WgXcQ" },
+    ]);
+    expect(markdownToBlocks("<https://www.youtube.com/watch?v=dQw4w9WgXcQ>")[0].type).toBe("EMBED");
+    expect(markdownToBlocks("[clip](https://vimeo.com/123456789)")[0].type).toBe("EMBED");
+  });
+
+  it("leaves a non-video URL as a paragraph", () => {
+    expect(markdownToBlocks("https://example.com/article")[0].type).toBe("PARAGRAPH");
+  });
+
+  it("splits a video URL out of surrounding text", () => {
+    const blocks = markdownToBlocks("intro line\nhttps://youtu.be/dQw4w9WgXcQ\noutro line");
+    expect(blocks.map((b) => b.type)).toEqual(["PARAGRAPH", "EMBED", "PARAGRAPH"]);
+  });
+
+  it("roundtrips an EMBED block through markdown", () => {
+    const blocks = markdownToBlocks("https://youtu.be/dQw4w9WgXcQ");
+    expect(markdownToBlocks(blocksToMarkdown(blocks))).toEqual(blocks);
+  });
+});
+
 describe("blocksToMarkdown", () => {
   it("roundtrips basic content", () => {
     const md = "# Hello\n\nFirst paragraph.\n\n> a quote\n\n---\n\n- a\n- b";

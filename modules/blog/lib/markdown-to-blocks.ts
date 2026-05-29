@@ -1,4 +1,21 @@
 import type { BlockInput } from "@/modules/blog/api/posts";
+import { planEmbed } from "@/modules/blog/lib/post-embed";
+
+/**
+ * A line that is just a video URL (bare, an `<autolink>`, or a `[text](url)` link) → return that
+ * URL when it's an embeddable provider (YouTube / Vimeo). velog-style: drop a YouTube link on its
+ * own line and it becomes a player. Other URLs return null and stay a normal paragraph/link.
+ */
+function standaloneVideoUrl(line: string): string | null {
+  const t = line.trim();
+  const m =
+    t.match(/^<(https?:\/\/[^>\s]+)>$/) ||
+    t.match(/^\[[^\]]*\]\((https?:\/\/[^)\s]+)\)$/) ||
+    t.match(/^(https?:\/\/\S+)$/);
+  if (!m) return null;
+  const plan = planEmbed(m[1]);
+  return plan && plan.kind === "video" ? m[1] : null;
+}
 
 /**
  * Markdown 텍스트를 PostBlock 배열로 변환. v0 minimal editor 용. block-based 에디터 (B2) 구현 전까지 의미적 mapping
@@ -61,6 +78,13 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       continue;
     }
 
+    const videoUrl = standaloneVideoUrl(line);
+    if (videoUrl) {
+      blocks.push({ type: "EMBED", content: videoUrl });
+      i++;
+      continue;
+    }
+
     if (/^[-*]\s+/.test(line)) {
       const items: string[] = [];
       while (i < lines.length && /^[-*]\s+/.test(lines[i])) {
@@ -87,7 +111,8 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       i < lines.length &&
       lines[i].trim() !== "" &&
       lines[i].trim() !== "---" &&
-      !/^(#{1,3}\s|>\s|!\[|[-*]\s|\d+\.\s)/.test(lines[i])
+      !/^(#{1,3}\s|>\s|!\[|[-*]\s|\d+\.\s)/.test(lines[i]) &&
+      !standaloneVideoUrl(lines[i])
     ) {
       paraLines.push(lines[i]);
       i++;
@@ -150,9 +175,22 @@ export function blocksToMarkdown(blocks: { type: string; content: string | null 
           // ignore
         }
         break;
-      case "CTA_REF":
       case "EMBED":
-        // v0 minimal 에디터 에선 직접 편집 X. read-only placeholder 로 보존.
+        // Emit the URL on its own line so it round-trips back to an EMBED block (markdownToBlocks
+        // re-detects it). Content is normally the bare URL; tolerate legacy JSON {url}.
+        if (b.content) {
+          let url = b.content;
+          try {
+            const j = JSON.parse(b.content);
+            if (j && typeof j.url === "string") url = j.url;
+          } catch {
+            // not JSON — content is the URL
+          }
+          parts.push(url);
+        }
+        break;
+      case "CTA_REF":
+        // Read-only placeholder preserved as-is (no markdown authoring path).
         if (b.content) parts.push(b.content);
         break;
       case "PARAGRAPH":
