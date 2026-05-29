@@ -9,7 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { getProfileStats } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { useToast } from "@/components/ui/toast";
-import { ProfileStatsDashboard } from "@/components/blog/profile/stats-dashboard";
+import { ProfileStatsDashboard } from "@/modules/profile/components/stats-dashboard";
 import type { ProfileStats } from "@/types";
 
 /**

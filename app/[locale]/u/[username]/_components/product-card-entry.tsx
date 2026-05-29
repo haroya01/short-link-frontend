@@ -9,7 +9,7 @@ import {
 } from "react";
 import { useTranslations } from "next-intl";
 import type { ProductBadge, ProductCardImage } from "@/types";
-import { parseProductCardConfig } from "@/lib/block-config-parsers";
+import { parseProductCardConfig } from "@/modules/profile/lib/block-config-parsers";
 import { useAutoSlide } from "@/hooks/use-auto-slide";
 import { useCardCarousel } from "@/hooks/use-card-carousel";
 import type { ThemeColors } from "../_lib/theme";

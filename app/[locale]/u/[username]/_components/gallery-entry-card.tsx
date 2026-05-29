@@ -3,7 +3,7 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { parseGalleryConfig } from "@/lib/block-config-parsers";
+import { parseGalleryConfig } from "@/modules/profile/lib/block-config-parsers";
 import { useAutoSlide } from "@/hooks/use-auto-slide";
 import { useCardCarousel } from "@/hooks/use-card-carousel";
 import type { ThemeColors } from "../_lib/theme";

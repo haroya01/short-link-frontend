@@ -26,9 +26,9 @@ import {
 import type { useTranslations } from "next-intl";
 import type { MyLink } from "@/types";
 import { useCollapsedSections } from "@/hooks/use-collapsed-sections";
-import { summarizeTextBody } from "@/lib/feed-summarizers";
-import type { FeedItem } from "@/components/blog/curation/types";
-import { BLOCK_ROW_META, isCommonBlockType } from "@/components/blog/curation/block-row-meta";
+import { summarizeTextBody } from "@/modules/profile/lib/feed-summarizers";
+import type { FeedItem } from "@/modules/profile/curation/types";
+import { BLOCK_ROW_META, isCommonBlockType } from "@/modules/profile/curation/block-row-meta";
 
 type SectionMeta = {
   /** Index of the TEXT header that anchors this section, or null when the row sits above the

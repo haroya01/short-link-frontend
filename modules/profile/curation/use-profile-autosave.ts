@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { updateMyProfile } from "@/lib/api";
 import type { MyProfile, ProfileTheme, Social } from "@/types";
-import { socialUrlPrefix } from "@/components/blog/curation/socials-templates";
+import { socialUrlPrefix } from "@/modules/profile/curation/socials-templates";
 
 export type AutoSaveStatus = "idle" | "saving" | "saved";
 

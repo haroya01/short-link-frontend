@@ -6,11 +6,11 @@ import type { useTranslations } from "next-intl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { TextAccent, TextLayout } from "@/types";
-import { parseTextBlockConfig } from "@/lib/block-config-parsers";
+import { parseTextBlockConfig } from "@/modules/profile/lib/block-config-parsers";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/blog/curation/form-field";
+import { FormField } from "@/modules/profile/curation/form-field";
 
 const MAX_CHARS = 2000;
 const MAX_ICON_CHARS = 8;

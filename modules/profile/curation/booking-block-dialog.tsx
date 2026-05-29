@@ -5,8 +5,8 @@ import { Calendar, CheckCircle2, AlertCircle } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/blog/curation/form-field";
-import { BOOKING_PROVIDERS, resolveBookingProvider } from "@/components/blog/curation/booking-providers";
+import { FormField } from "@/modules/profile/curation/form-field";
+import { BOOKING_PROVIDERS, resolveBookingProvider } from "@/modules/profile/curation/booking-providers";
 
 type Config = {
   url: string;

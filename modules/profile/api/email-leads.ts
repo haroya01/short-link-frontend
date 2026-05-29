@@ -1,6 +1,6 @@
 import type { EmailLead, EmailLeadPage } from "@/types";
 
-import { API_BASE, request } from "./client";
+import { API_BASE, request } from "@/lib/api/client";
 
 export async function submitEmailLead(blockId: number, email: string): Promise<void> {
   await request("/api/v1/public/email-leads", {

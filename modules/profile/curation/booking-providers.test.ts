@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveBookingProvider, BOOKING_PROVIDERS } from "@/components/blog/curation/booking-providers";
+import { resolveBookingProvider, BOOKING_PROVIDERS } from "@/modules/profile/curation/booking-providers";
 
 describe("resolveBookingProvider", () => {
   it("resolves Calendly URL", () => {

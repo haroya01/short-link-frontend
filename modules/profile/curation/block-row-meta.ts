@@ -17,7 +17,7 @@ import {
   placeSummary,
   productCardSummary,
   summarizeJsonField,
-} from "@/lib/feed-summarizers";
+} from "@/modules/profile/lib/feed-summarizers";
 
 type T = ReturnType<typeof useTranslations<"settings.profile">>;
 
