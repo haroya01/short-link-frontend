@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, Trash2 } from "lucide-react";
@@ -19,12 +19,9 @@ import {
 import { assignPostToSeries } from "@/modules/blog/api/series";
 import { uploadPostImage } from "@/modules/blog/api/post-images";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
-import { Markdown } from "@/modules/blog/components/markdown";
-import { MarkdownToolbar } from "@/modules/blog/components/editor/markdown-toolbar";
+import { MarkdownEditor } from "@/modules/blog/components/editor/markdown-editor";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
-import type { EditResult, Selection } from "@/modules/blog/components/editor/markdown-commands";
-import { insertImage } from "@/modules/blog/components/editor/markdown-commands";
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const t = useTranslations("postEditor");
@@ -40,14 +37,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
-  const [mobileTab, setMobileTab] = useState<"write" | "preview">("write");
-
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const pendingSelection = useRef<Selection | null>(null);
 
   const load = useCallback(async () => {
     if (!Number.isFinite(postId)) return;
@@ -71,57 +62,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     if (!ready || !authenticated) return;
     void load();
   }, [ready, authenticated, load]);
-
-  // Restore caret after a toolbar command rewrites the markdown.
-  useEffect(() => {
-    if (!pendingSelection.current) return;
-    const ta = textareaRef.current;
-    const sel = pendingSelection.current;
-    pendingSelection.current = null;
-    if (ta) {
-      ta.focus();
-      ta.setSelectionRange(sel.start, sel.end);
-    }
-  }, [markdown]);
-
-  function runCommand(producer: (value: string, sel: Selection) => EditResult) {
-    const ta = textareaRef.current;
-    const sel: Selection = ta
-      ? { start: ta.selectionStart, end: ta.selectionEnd }
-      : { start: markdown.length, end: markdown.length };
-    const result = producer(markdown, sel);
-    pendingSelection.current = result.selection;
-    setMarkdown(result.value);
-    setSaved(false);
-  }
-
-  async function handleImageUpload(file: File) {
-    if (post == null || uploading) return;
-    setUploading(true);
-    setError(null);
-    try {
-      const url = await uploadPostImage(post.id, file);
-      const alt = file.name.replace(/\.[^.]+$/, "");
-      const ta = textareaRef.current;
-      const sel: Selection = ta
-        ? { start: ta.selectionStart, end: ta.selectionEnd }
-        : { start: markdown.length, end: markdown.length };
-      const result = insertImage(markdown, sel, url, alt);
-      pendingSelection.current = result.selection;
-      setMarkdown(result.value);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : t("imageError"));
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  }
-
-  function firstImage(files: FileList | null | undefined): File | null {
-    if (!files) return null;
-    for (const f of Array.from(files)) if (f.type.startsWith("image/")) return f;
-    return null;
-  }
 
   async function handleSave() {
     if (post == null || saving) return;
@@ -190,7 +130,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <main className="mx-auto flex h-[calc(100vh-1px)] max-w-6xl flex-col px-4 py-4 sm:px-6">
+    <main className="mx-auto flex h-[calc(100vh-1px)] max-w-5xl flex-col px-4 py-4 sm:px-6">
       {/* Top bar */}
       <div className="mb-3 flex items-center justify-between gap-3">
         <a
@@ -263,87 +203,19 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         />
       </div>
 
-      {/* Mobile tab toggle */}
-      <div className="mt-3 flex gap-1 rounded-lg bg-slate-100 p-1 lg:hidden">
-        {(["write", "preview"] as const).map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => setMobileTab(tab)}
-            className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-colors ${
-              mobileTab === tab ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
-            }`}
-          >
-            {t(tab)}
-          </button>
-        ))}
-      </div>
-
-      {/* Editor + preview */}
-      <div className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-2">
-        <section
-          className={`flex min-h-0 flex-col overflow-hidden rounded-xl border border-slate-200 ${
-            mobileTab === "write" ? "flex" : "hidden lg:flex"
-          }`}
-        >
-          <MarkdownToolbar
-            run={runCommand}
-            onImage={() => fileInputRef.current?.click()}
-            uploading={uploading}
-          />
-          <textarea
-            ref={textareaRef}
-            value={markdown}
-            onChange={(e) => {
-              setMarkdown(e.target.value);
-              setSaved(false);
-            }}
-            onPaste={(e) => {
-              const file = firstImage(e.clipboardData?.files);
-              if (file) {
-                e.preventDefault();
-                void handleImageUpload(file);
-              }
-            }}
-            onDrop={(e) => {
-              const file = firstImage(e.dataTransfer?.files);
-              if (file) {
-                e.preventDefault();
-                void handleImageUpload(file);
-              }
-            }}
-            className="min-h-[40vh] flex-1 resize-none p-4 font-mono text-sm leading-relaxed outline-none"
-            placeholder={t("bodyPlaceholder")}
-          />
-        </section>
-
-        <section
-          className={`min-h-0 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50/40 p-6 ${
-            mobileTab === "preview" ? "block" : "hidden lg:block"
-          }`}
-        >
-          {markdown.trim() ? (
-            <div className="prose-post">
-              <Markdown>{markdown}</Markdown>
-            </div>
-          ) : (
-            <p className="text-sm text-slate-400">{t("previewEmpty")}</p>
-          )}
-        </section>
+      {/* Rich editor (Toast UI) — WYSIWYG/markdown with inline image upload (drop / paste / toolbar). */}
+      <div className="mt-3 min-h-0 flex-1 overflow-hidden rounded-xl border border-slate-200">
+        <MarkdownEditor
+          initialValue={markdown}
+          onChange={(md) => {
+            setMarkdown(md);
+            setSaved(false);
+          }}
+          onUploadImage={(blob) => uploadPostImage(post.id, blob as File)}
+        />
       </div>
 
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) void handleImageUpload(file);
-        }}
-      />
     </main>
   );
 }
