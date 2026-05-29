@@ -136,6 +136,16 @@ export function listPublicFeed(
   );
 }
 
+export function listFeedByTag(
+  tag: string,
+  page = 0,
+  size = 24,
+): Promise<FetchResult<PublicFeedView>> {
+  return fetchPublic<PublicFeedView>(
+    `/api/v1/public/posts?tag=${encodeURIComponent(tag)}&page=${page}&size=${size}`,
+  );
+}
+
 export function listPublicPosts(username: string): Promise<FetchResult<PublicPostList>> {
   return fetchPublic<PublicPostList>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/posts`,
