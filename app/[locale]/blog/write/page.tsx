@@ -12,6 +12,14 @@ export default function WriteIndexPage() {
   const [posts, setPosts] = useState<PostView[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Preserve the current path prefix (locale + /blog-preview on the apex) for intra-blog links —
+  // a root-relative "/write/..." would drop the prefix and 404.
+  const [writeBase, setWriteBase] = useState("/write");
+
+  useEffect(() => {
+    const i = window.location.pathname.indexOf("/write");
+    if (i >= 0) setWriteBase(window.location.pathname.slice(0, i + "/write".length));
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -40,7 +48,7 @@ export default function WriteIndexPage() {
       <header className="mb-8 flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("myPosts")}</h1>
         <a
-          href="/write/new"
+          href={`${writeBase}/new`}
           className="inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700"
         >
           <PenSquare className="h-4 w-4" />
@@ -57,7 +65,7 @@ export default function WriteIndexPage() {
             <li key={p.id} className="flex items-center gap-3 py-3">
               <StatusBadge status={p.status} />
               <a
-                href={`/write/${p.id}`}
+                href={`${writeBase}/${p.id}`}
                 className="flex-1 truncate text-sm text-slate-900 transition-colors hover:text-accent-700"
               >
                 {p.title}

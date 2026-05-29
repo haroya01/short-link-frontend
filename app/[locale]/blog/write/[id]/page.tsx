@@ -40,6 +40,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  // The blog list path with the current prefix preserved (locale + /blog-preview on the apex, or
+  // the bare path on blog.kurl.me) — a root-relative "/write" would 404 on the apex.
+  const [writeBase, setWriteBase] = useState("/write");
+
+  useEffect(() => {
+    const i = window.location.pathname.indexOf("/write");
+    if (i >= 0) setWriteBase(window.location.pathname.slice(0, i + "/write".length));
+  }, []);
 
   const load = useCallback(async () => {
     if (!Number.isFinite(postId)) return;
@@ -113,7 +121,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     setBusy(true);
     try {
       await deletePost(post.id);
-      router.push("/write");
+      router.push(writeBase);
     } catch (e) {
       setError(e instanceof Error ? e.message : "delete failed");
       setBusy(false);
@@ -141,7 +149,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
       {/* Top bar */}
       <div className="mb-3 flex items-center justify-between gap-3">
         <a
-          href="/write"
+          href={writeBase}
           className="inline-flex items-center gap-1.5 text-sm text-slate-500 transition-colors hover:text-accent-700"
         >
           <ArrowLeft className="h-4 w-4" />
