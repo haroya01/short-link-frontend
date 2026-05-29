@@ -79,16 +79,6 @@ function legacyRedirect(req: NextRequest, host: string): NextResponse | null {
     );
   }
 
-  // /{locale}/showcase* → blog.kurl.me/{locale}/showcase*
-  const showcaseMatch = path.match(/^\/([a-z]{2})\/showcase(\/.*)?$/);
-  if (showcaseMatch) {
-    const sub = showcaseMatch[2] || "";
-    return NextResponse.redirect(
-      `https://${BLOG_HOST_DEFAULT}/${showcaseMatch[1]}/showcase${sub}${search}`,
-      308,
-    );
-  }
-
   // /{locale}/links/* → /{locale}/* (URL prefix 폐기)
   const linksSubMatch = path.match(/^\/([a-z]{2})\/links\/(.+)$/);
   if (linksSubMatch) {
