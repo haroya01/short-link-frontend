@@ -33,7 +33,6 @@ function anonymousEntries(t: (k: string) => string): NavEntry[] {
   return [
     { href: "/", label: t("shorten"), active: (p) => p === "/" },
     { href: "/qr-campaigns", label: t("campaigns"), active: (p) => p.startsWith("/qr-campaigns") },
-    { href: "/pricing", label: t("pricing"), active: (p) => p.startsWith("/pricing") },
   ];
 }
 
