@@ -7,6 +7,7 @@ import { ReportButton } from "@/modules/blog/components/report-button";
 import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { PostToc } from "@/modules/blog/components/post-toc";
+import { PostComments } from "@/modules/blog/components/comments";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { SeriesNav, TagChips } from "../_components/post-meta";
 import { findPublicPost } from "@/modules/blog/api/public-posts";
@@ -155,6 +156,8 @@ export default async function PublicPostPage({
           <ReportButton subjectType="POST" subjectId={post.id} />
         </div>
       </footer>
+
+      <PostComments postId={post.id} authorUsername={author.username} />
       </article>
     </div>
   );

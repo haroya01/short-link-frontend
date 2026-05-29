@@ -1,4 +1,16 @@
 {
+  "comments": {
+    "count": "コメント{count}件",
+    "placeholder": "コメントを入力",
+    "submit": "コメント",
+    "submitting": "投稿中…",
+    "reply": "返信",
+    "replyPlaceholder": "返信を入力",
+    "delete": "削除",
+    "deleteConfirm": "このコメントを削除しますか？",
+    "empty": "最初のコメントを残しましょう。",
+    "loginPrompt": "ログインしてコメントしましょう"
+  },
   "publicFeed": {
     "recent": "最新",
     "trending": "トレンド",
