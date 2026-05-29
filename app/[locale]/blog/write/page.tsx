@@ -66,9 +66,11 @@ export default function WriteIndexPage() {
               <StatusBadge status={p.status} />
               <a
                 href={`${writeBase}/${p.id}`}
-                className="flex-1 truncate text-sm text-slate-900 transition-colors hover:text-accent-700"
+                className={`flex-1 truncate text-sm transition-colors hover:text-accent-700 ${
+                  p.title.trim() ? "text-slate-900" : "text-slate-400"
+                }`}
               >
-                {p.title}
+                {p.title.trim() || t("untitled")}
               </a>
               <span className="font-mono text-xs text-slate-400">{p.slug}</span>
             </li>
