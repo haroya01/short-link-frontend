@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, Trash2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
   deletePost,
@@ -14,6 +14,7 @@ import {
   republishPost,
   unpublishPost,
   updatePostMetadata,
+  type PostStatus,
   type PostView,
 } from "@/modules/blog/api/posts";
 import { assignPostToSeries } from "@/modules/blog/api/series";
@@ -146,21 +147,19 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
   return (
     <main className="mx-auto flex h-[calc(100dvh-1px)] max-w-5xl flex-col px-4 py-4 sm:px-6">
-      {/* Top bar */}
-      <div className="mb-3 flex items-center justify-between gap-3">
+      {/* Top bar — save is the single solid primary; status lifecycle is a quieter outline button. */}
+      <div className="flex items-center justify-between gap-3 border-b border-slate-200/70 pb-3">
         <a
           href={writeBase}
-          className="inline-flex items-center gap-1.5 text-sm text-slate-500 transition-colors hover:text-accent-700"
+          className="-ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
         >
           <ArrowLeft className="h-4 w-4" />
-          {t("backToList")}
+          <span className="hidden sm:inline">{t("backToList")}</span>
         </a>
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[12px] font-medium text-slate-600">
-            {t(`status${post.status}`)}
-          </span>
+          <StatusPill status={post.status} label={t(`status${post.status}`)} />
           {post.status === "DRAFT" && (
-            <StatusButton onClick={() => handleStatus("publish")} disabled={busy} tone="primary">
+            <StatusButton onClick={() => handleStatus("publish")} disabled={busy} tone="accent">
               {t("publish")}
             </StatusButton>
           )}
@@ -170,7 +169,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             </StatusButton>
           )}
           {post.status === "UNPUBLISHED" && (
-            <StatusButton onClick={() => handleStatus("republish")} disabled={busy} tone="primary">
+            <StatusButton onClick={() => handleStatus("republish")} disabled={busy} tone="accent">
               {t("republish")}
             </StatusButton>
           )}
@@ -178,8 +177,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="rounded-lg bg-accent-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-1.5 text-sm font-medium text-white shadow-[0_1px_2px_rgba(15,23,42,0.08)] transition-colors hover:bg-accent-700 disabled:opacity-50"
           >
+            {saved && <Check className="h-4 w-4" />}
             {saving ? t("saving") : saved ? t("saved") : t("save")}
           </button>
           <button
@@ -194,7 +194,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         </div>
       </div>
 
-      {/* Title + meta */}
+      {/* Title */}
       <input
         type="text"
         value={title}
@@ -203,12 +203,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           setSaved(false);
         }}
         maxLength={200}
-        className="w-full border-0 bg-transparent text-3xl font-bold tracking-tight outline-none placeholder:text-slate-300"
+        className="mt-5 w-full border-0 bg-transparent text-[28px] font-bold leading-tight tracking-tight text-slate-900 outline-none placeholder:text-slate-300 sm:text-[34px]"
         placeholder={t("titlePlaceholder")}
       />
       {post.status === "DRAFT" ? (
-        <div className="mt-1 flex flex-wrap items-center gap-2">
-          <span className="font-mono text-xs text-slate-400">/</span>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
+          <span className="font-mono text-slate-300">kurl.me/</span>
           <input
             type="text"
             value={slug}
@@ -217,26 +217,37 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
               setSaved(false);
             }}
             maxLength={200}
-            className="w-48 rounded border border-slate-200 bg-transparent px-2 py-0.5 font-mono text-xs text-slate-600 outline-none focus:border-accent-400"
+            className="w-44 rounded-md border border-slate-200 bg-slate-50/60 px-2 py-1 font-mono text-slate-600 outline-none transition-colors focus:border-accent-400 focus:bg-white"
           />
           <span className="text-[11px] text-slate-400">{t("slugHint")}</span>
         </div>
       ) : (
-        <p className="mt-1 font-mono text-xs text-slate-400">/{post.slug}</p>
+        <p className="mt-2 font-mono text-xs text-slate-400">kurl.me/{post.slug}</p>
       )}
 
-      <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_240px]">
-        <TagInput tags={tags} onChange={(v) => { setTags(v); setSaved(false); }} placeholder={t("tagsPlaceholder")} />
-        <SeriesSelect
-          value={seriesId}
-          onChange={(v) => { setSeriesId(v); setSaved(false); }}
-          noneLabel={t("seriesNone")}
-          emptyHint={t("seriesEmptyHint")}
-        />
+      {/* Meta — labelled so tags / series read as deliberate fields, not bare boxes. */}
+      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_220px]">
+        <div>
+          <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">
+            {t("tags")}
+          </label>
+          <TagInput tags={tags} onChange={(v) => { setTags(v); setSaved(false); }} placeholder={t("tagsPlaceholder")} />
+        </div>
+        <div>
+          <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">
+            {t("series")}
+          </label>
+          <SeriesSelect
+            value={seriesId}
+            onChange={(v) => { setSeriesId(v); setSaved(false); }}
+            noneLabel={t("seriesNone")}
+            emptyHint={t("seriesEmptyHint")}
+          />
+        </div>
       </div>
 
       {/* Rich editor (Toast UI) — WYSIWYG/markdown with inline image upload (drop / paste / toolbar). */}
-      <div className="mt-3 min-h-0 flex-1 overflow-hidden rounded-xl border border-slate-200">
+      <div className="mt-4 min-h-0 flex-1 overflow-hidden rounded-xl border border-slate-200 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
         <MarkdownEditor
           initialValue={markdown}
           onChange={(md) => {
@@ -261,20 +272,36 @@ function StatusButton({
   children: React.ReactNode;
   onClick: () => void;
   disabled?: boolean;
-  tone: "primary" | "amber";
+  tone: "accent" | "amber";
 }) {
+  // Outline so it reads as a secondary action next to the solid Save button.
   const cls =
-    tone === "primary"
-      ? "bg-accent-600 text-white hover:bg-accent-700"
-      : "border border-amber-400 text-amber-700 hover:bg-amber-50";
+    tone === "accent"
+      ? "border-accent-300 text-accent-700 hover:bg-accent-50"
+      : "border-amber-300 text-amber-700 hover:bg-amber-50";
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${cls}`}
+      className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${cls}`}
     >
       {children}
     </button>
+  );
+}
+
+const STATUS_PILL: Record<PostStatus, string> = {
+  DRAFT: "bg-slate-100 text-slate-600",
+  PUBLISHED: "bg-accent-50 text-accent-700",
+  UNPUBLISHED: "bg-amber-50 text-amber-700",
+  SCHEDULED: "bg-blue-50 text-blue-700",
+};
+
+function StatusPill({ status, label }: { status: PostStatus; label: string }) {
+  return (
+    <span className={`rounded-full px-2.5 py-1 text-[12px] font-medium ${STATUS_PILL[status]}`}>
+      {label}
+    </span>
   );
 }
