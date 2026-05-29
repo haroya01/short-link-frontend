@@ -29,7 +29,9 @@
     "emptyTitle": "No posts published yet",
     "emptyBody": "Be the first to publish.",
     "emptyFollowingTitle": "No posts from authors you follow",
-    "emptyTagTitle": "No posts in this topic yet"
+    "emptyTagTitle": "No posts in this topic yet",
+    "topicsIntro": "Browse what people are writing about. Pick a tag to dive in, or start with the latest posts below.",
+    "topicsRecent": "Latest posts"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",
@@ -2482,5 +2484,10 @@
     },
     "backLink": "Back to URL shortener",
     "statsLink": "QR campaign analytics"
+  },
+  "workspaceGate": {
+    "title": "Sign in to start writing",
+    "body": "Your posts, drafts, and series live here. Sign in to pick up where you left off.",
+    "signIn": "Sign in"
   }
 }

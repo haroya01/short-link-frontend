@@ -29,7 +29,9 @@
     "emptyTitle": "まだ公開された記事がありません",
     "emptyBody": "最初の記事を投稿してみましょう。",
     "emptyFollowingTitle": "フォロー中の作家の記事がありません",
-    "emptyTagTitle": "このトピックの記事はまだありません"
+    "emptyTagTitle": "このトピックの記事はまだありません",
+    "topicsIntro": "みんなが何について書いているかを見てみましょう。タグを選んで掘り下げても、下の最新記事から読み始めても。",
+    "topicsRecent": "最新の記事"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",
@@ -2482,5 +2484,10 @@
     },
     "backLink": "短縮URLツールに戻る",
     "statsLink": "QRキャンペーン分析"
+  },
+  "workspaceGate": {
+    "title": "ログインして書き始める",
+    "body": "あなたの記事・下書き・シリーズはここに。ログインすると続きから書けます。",
+    "signIn": "ログイン"
   }
 }

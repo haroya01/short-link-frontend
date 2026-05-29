@@ -783,3 +783,21 @@ canvas.qr-canvas-fit {
   border-radius: 0.75rem;
   padding: 1rem 1.1rem;
 }
+
+/*
+ * Cookie consent makes room. The banner is position:fixed at the viewport bottom, so on phones it
+ * overlaps the last feed card and the blog write FAB. While it's visible (CookieConsent toggles the
+ * body data-attribute) we reserve scroll space at the page bottom and lift the FAB above the banner
+ * via --fab-bottom. On sm+ the banner is a compact right-aligned card and the FAB is hidden, so no
+ * offset is needed there.
+ */
+body[data-cookie-consent="visible"] {
+  padding-bottom: 5rem;
+  --fab-bottom: 6.5rem;
+}
+@media (min-width: 640px) {
+  body[data-cookie-consent="visible"] {
+    padding-bottom: 0;
+    --fab-bottom: 1.5rem;
+  }
+}

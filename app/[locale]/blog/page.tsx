@@ -11,14 +11,41 @@ import { FollowingFeed } from "@/modules/blog/components/following-feed";
 
 export const revalidate = 30;
 
+// blog.kurl.me is its own surface — the root layout's canonical/OG point at kurl.me (the URL
+// shortener), so the feed must override them or share links preview as the shortener. og:image is
+// supplied by ./opengraph-image.tsx (file-based convention), so it isn't set here.
+const BLOG_URL =
+  process.env.NEXT_PUBLIC_BLOG_URL ??
+  (process.env.NEXT_PUBLIC_BLOG_HOST
+    ? `https://${process.env.NEXT_PUBLIC_BLOG_HOST}`
+    : "https://blog.kurl.me");
+
+const OG_LOCALE: Record<string, string> = { ko: "ko_KR", ja: "ja_JP", en: "en_US" };
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "meta" });
-  return { title: `blog.kurl — ${t("title")}` };
+  const t = await getTranslations({ locale, namespace: "publicFeed" });
+  const url = `${BLOG_URL}/${locale}`;
+  const description = t("heroSubhead");
+  const ogTitle = `${t("heroTitle")} · blog.kurl`;
+  return {
+    title: "blog.kurl",
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website",
+      url,
+      siteName: "blog.kurl",
+      title: ogTitle,
+      description,
+      locale: OG_LOCALE[locale] ?? "en_US",
+    },
+    twitter: { card: "summary_large_image", title: ogTitle, description },
+  };
 }
 
 export default async function BlogFeedPage({
@@ -113,7 +140,8 @@ export default async function BlogFeedPage({
       <a
         href={blogHref("/write/new")}
         aria-label={t("write")}
-        className="fixed bottom-6 right-4 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent-600 text-white shadow-[0_8px_24px_-6px_rgba(5,150,105,0.5)] transition-colors hover:bg-accent-700 sm:hidden"
+        style={{ bottom: "var(--fab-bottom, 1.5rem)" }}
+        className="fixed right-4 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent-600 text-white shadow-[0_8px_24px_-6px_rgba(5,150,105,0.5)] transition-[bottom,background-color] duration-200 hover:bg-accent-700 sm:hidden"
       >
         <PenSquare className="h-5 w-5" />
       </a>

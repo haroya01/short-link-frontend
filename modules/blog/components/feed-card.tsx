@@ -20,6 +20,56 @@ export function authorHref(username: string, locale: string): string {
 
 type Labels = { views: (count: number) => string };
 
+// Brand-green-only cover variants for posts without an og:image — keeps the grid balanced (every
+// card gets a 1.6:1 cover) without introducing off-brand color. Direction + shade vary so a column
+// of thumbnail-less posts doesn't read as one flat block.
+const COVER_GRADIENTS = [
+  "bg-gradient-to-br from-accent-50 to-accent-100",
+  "bg-gradient-to-tr from-accent-100 to-accent-50",
+  "bg-gradient-to-b from-accent-50 to-emerald-100",
+  "bg-gradient-to-bl from-emerald-50 to-accent-100",
+];
+
+function hashSeed(seed: string): number {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+/**
+ * Synthetic cover for posts without a thumbnail: a green-family gradient with a faint oversized "#"
+ * watermark and the post's first tag (or a clamped title fallback), so the card matches the
+ * dimensions of image cards instead of leaving a tall empty box.
+ */
+function CoverFallback({ title, tags, seed }: { title: string; tags: string[]; seed: string }) {
+  const gradient = COVER_GRADIENTS[hashSeed(seed) % COVER_GRADIENTS.length];
+  const label = tags[0];
+  return (
+    <div
+      className={cn(
+        "relative flex aspect-[1.6/1] w-full items-center justify-center overflow-hidden",
+        gradient,
+      )}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -bottom-7 -right-2 select-none text-[150px] font-black leading-none text-accent-600/10"
+      >
+        #
+      </span>
+      {label ? (
+        <span className="relative max-w-full truncate px-6 text-[18px] font-bold tracking-tight text-accent-800/80">
+          {label}
+        </span>
+      ) : (
+        <span className="relative line-clamp-2 px-6 text-center text-[15px] font-bold leading-snug tracking-tight text-accent-800/70">
+          {title}
+        </span>
+      )}
+    </div>
+  );
+}
+
 /**
  * velog-style responsive card grid. 1 / 2 / 3 / 4 columns. Both the feed home and tag pages wrap
  * their {@link FeedCard}s in this so the layout stays identical.
@@ -50,7 +100,7 @@ export function FeedCard({
   return (
     <li className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)]">
       <a href={postHref(item.author.username, item.slug, locale)} className="flex flex-1 flex-col">
-        {hasImage && (
+        {hasImage ? (
           <div className="aspect-[1.6/1] w-full overflow-hidden bg-slate-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -60,18 +110,15 @@ export function FeedCard({
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
             />
           </div>
+        ) : (
+          <CoverFallback title={item.title} tags={item.tags} seed={item.slug} />
         )}
         <div className="flex flex-1 flex-col px-4 pb-3 pt-4">
           <h2 className="line-clamp-2 text-[16px] font-bold leading-snug tracking-tight text-slate-900">
             {item.title}
           </h2>
           {item.excerpt && (
-            <p
-              className={cn(
-                "mt-2 text-[13.5px] leading-relaxed text-slate-500",
-                hasImage ? "line-clamp-2" : "line-clamp-4",
-              )}
-            >
+            <p className="mt-2 line-clamp-2 text-[13.5px] leading-relaxed text-slate-500">
               {item.excerpt}
             </p>
           )}

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Hash } from "lucide-react";
 import { blogHref } from "@/lib/host";
-import { listPopularTags } from "@/modules/blog/api/public-posts";
+import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts";
+import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 
 // Rendered per request (not prerendered at build): the popular-tags fetch needs the runtime API
@@ -26,17 +27,30 @@ export default async function TagsIndexPage({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "publicFeed" });
-  const result = await listPopularTags(100);
-  const tags = result.ok ? result.data : [];
+  // Tag cloud + a few recent posts so the topics page reads as a browsing surface, not a bare
+  // chip row over empty space.
+  const [tagsResult, recentResult] = await Promise.all([
+    listPopularTags(100),
+    listPublicFeed("recent", 0, 6),
+  ]);
+  const tags = tagsResult.ok ? tagsResult.data : [];
+  const recent = recentResult.ok ? recentResult.data.items : [];
 
   // Weight the chip by how popular the tag is, so the cloud reads at a glance.
   const max = tags.reduce((m, x) => Math.max(m, x.count), 1);
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
-      <header className="flex items-center gap-2 border-b border-slate-200/80 pb-5">
-        <Hash className="h-6 w-6 text-accent-600" />
-        <h1 className="text-headline-sm font-bold tracking-tight text-slate-900">{t("topics")}</h1>
+    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+      <header className="border-b border-slate-200/80 pb-5">
+        <div className="flex items-center gap-2">
+          <Hash className="h-6 w-6 text-accent-600" />
+          <h1 className="text-headline-sm font-bold tracking-tight text-slate-900">
+            {t("topics")}
+          </h1>
+        </div>
+        <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-slate-500">
+          {t("topicsIntro")}
+        </p>
       </header>
 
       {tags.length === 0 ? (
@@ -65,6 +79,24 @@ export default async function TagsIndexPage({
             );
           })}
         </ul>
+      )}
+
+      {recent.length > 0 && (
+        <section className="mt-14">
+          <h2 className="mb-5 text-[15px] font-bold tracking-tight text-slate-900">
+            {t("topicsRecent")}
+          </h2>
+          <FeedGrid>
+            {recent.map((item) => (
+              <FeedCard
+                key={`${item.author.username}/${item.slug}`}
+                item={item}
+                locale={locale}
+                labels={{ views: (count) => t("views", { count }) }}
+              />
+            ))}
+          </FeedGrid>
+        </section>
       )}
     </main>
   );
