@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Hash } from "lucide-react";
 import { listFeedByTag } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
+import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 
 export const revalidate = 30;
 
@@ -35,7 +36,7 @@ export default async function TagFeedPage({
       </header>
 
       {items.length === 0 ? (
-        <p className="mt-10 text-slate-400">{t("empty")}</p>
+        <FeedEmpty title={t("emptyTagTitle")} />
       ) : (
         <div className="mt-8">
           <FeedGrid>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Hash } from "lucide-react";
 import { listPopularTags } from "@/modules/blog/api/public-posts";
+import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 
 // Rendered per request (not prerendered at build): the popular-tags fetch needs the runtime API
 // base, which isn't available during static generation.
@@ -38,7 +39,7 @@ export default async function TagsIndexPage({
       </header>
 
       {tags.length === 0 ? (
-        <p className="mt-10 text-slate-400">{t("empty")}</p>
+        <FeedEmpty title={t("empty")} />
       ) : (
         <ul className="mt-8 flex flex-wrap gap-2.5">
           {tags.map((tag) => {

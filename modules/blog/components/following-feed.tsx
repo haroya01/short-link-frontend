@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
+import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 
 /**
  * The "피드" tab — posts from authors the signed-in user follows. Authenticated, so it fetches
@@ -59,7 +60,7 @@ export function FollowingFeed({ locale }: { locale: string }) {
   }
 
   if (items.length === 0) {
-    return <p className="mt-10 text-slate-400">{t("followingEmpty")}</p>;
+    return <FeedEmpty title={t("emptyFollowingTitle")} body={t("followingEmpty")} />;
   }
 
   return (
