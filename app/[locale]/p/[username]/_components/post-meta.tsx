@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, Layers } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { blogHref } from "@/lib/host";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 
 export function TagChips({ tags }: { tags: string[] }) {
@@ -7,11 +8,15 @@ export function TagChips({ tags }: { tags: string[] }) {
   return (
     <ul className="flex flex-wrap gap-2">
       {tags.map((tag) => (
-        <li
-          key={tag}
-          className="rounded-full bg-accent-50 px-3 py-1 text-[13px] font-medium text-accent-700"
-        >
-          {tag}
+        <li key={tag}>
+          {/* Tag pages live on the blog host (blog.kurl.me/tags/{tag}); posts are on the author
+              subdomain, so this is a cross-host link. */}
+          <a
+            href={blogHref(`/tags/${encodeURIComponent(tag)}`)}
+            className="inline-block rounded-full bg-accent-50 px-3 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-100"
+          >
+            {tag}
+          </a>
         </li>
       ))}
     </ul>
