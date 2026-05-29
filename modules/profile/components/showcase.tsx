@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import AutoplayPlugin from "embla-carousel-autoplay";
 import { useTranslations } from "next-intl";
@@ -22,12 +22,31 @@ import { cn } from "@/lib/utils";
  * Carousel is Embla — touch-swipe on mobile, drag on desktop, autoplay that pauses on hover so
  * users can read a card without it sliding past.
  */
-const DEVICE_SCALE = 0.8;
+const DEVICE_MAX_SCALE = 0.8;
 const DEVICE_NATIVE_W = 428;
 const DEVICE_NATIVE_H = 868;
 
+/**
+ * Fit the (fixed-size) device into the viewport with side margin so the centered slide is never
+ * clipped on small screens. SSR starts at the desktop scale and corrects on mount.
+ */
+function useDeviceScale() {
+  const [scale, setScale] = useState(DEVICE_MAX_SCALE);
+  useEffect(() => {
+    const compute = () => {
+      const fit = (window.innerWidth - 40) / DEVICE_NATIVE_W;
+      setScale(Math.max(0.5, Math.min(DEVICE_MAX_SCALE, fit)));
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, []);
+  return scale;
+}
+
 export function ProfileShowcase() {
   const t = useTranslations("showcase");
+  const scale = useDeviceScale();
   const autoplayRef = useRef(
     AutoplayPlugin({ delay: 3500, stopOnInteraction: false, stopOnMouseEnter: true }),
   );
@@ -38,13 +57,15 @@ export function ProfileShowcase() {
 
   return (
     <div className="relative">
+      {/* Edge fades for the peeking neighbour slides — desktop only. On mobile the centred phone
+          nearly fills the width, so a fade here would clip its right edge. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-white to-transparent sm:w-24"
+        className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-24 bg-gradient-to-r from-white to-transparent sm:block"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-white to-transparent sm:w-24"
+        className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-24 bg-gradient-to-l from-white to-transparent sm:block"
       />
 
       {/* Embla's loop mode wraps slides by cloning them outside the original flex track —
@@ -56,7 +77,12 @@ export function ProfileShowcase() {
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex py-2">
           {SHOWCASE_PROFILES.map((profile) => (
-            <ShowcaseCard key={profile.username} profile={profile} demoCta={t("demoCta")} />
+            <ShowcaseCard
+              key={profile.username}
+              profile={profile}
+              demoCta={t("demoCta")}
+              scale={scale}
+            />
           ))}
         </div>
       </div>
@@ -64,7 +90,15 @@ export function ProfileShowcase() {
   );
 }
 
-function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: string }) {
+function ShowcaseCard({
+  profile,
+  demoCta,
+  scale,
+}: {
+  profile: PublicProfile;
+  demoCta: string;
+  scale: number;
+}) {
   const colors = THEME_TABLE[profile.theme ?? "default"];
   return (
     <div
@@ -87,13 +121,13 @@ function ShowcaseCard({ profile, demoCta }: { profile: PublicProfile; demoCta: s
       </Link>
       <div
         style={{
-          width: DEVICE_NATIVE_W * DEVICE_SCALE,
-          height: DEVICE_NATIVE_H * DEVICE_SCALE,
+          width: DEVICE_NATIVE_W * scale,
+          height: DEVICE_NATIVE_H * scale,
         }}
       >
         <div
           className="device device-iphone-14-pro origin-top-left"
-          style={{ transform: `scale(${DEVICE_SCALE})` }}
+          style={{ transform: `scale(${scale})` }}
         >
           <div className="device-frame">
             <div
