@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Hash } from "lucide-react";
+import { blogHref } from "@/lib/host";
 import { listPopularTags } from "@/modules/blog/api/public-posts";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 
@@ -48,7 +49,7 @@ export default async function TagsIndexPage({
             return (
               <li key={tag.tag}>
                 <a
-                  href={`/tags/${encodeURIComponent(tag.tag)}`}
+                  href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
                   className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-medium transition-colors ${
                     strong
                       ? "bg-accent-100 text-accent-800 hover:bg-accent-200 text-[15px]"
