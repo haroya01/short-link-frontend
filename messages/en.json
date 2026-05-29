@@ -1,4 +1,16 @@
 {
+  "comments": {
+    "count": "{count, plural, =0 {Comments} one {# comment} other {# comments}}",
+    "placeholder": "Write a comment",
+    "submit": "Comment",
+    "submitting": "Posting…",
+    "reply": "Reply",
+    "replyPlaceholder": "Write a reply",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this comment?",
+    "empty": "Be the first to comment.",
+    "loginPrompt": "Sign in to leave a comment"
+  },
   "publicFeed": {
     "recent": "Latest",
     "trending": "Trending",

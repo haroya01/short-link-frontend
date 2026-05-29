@@ -1,4 +1,16 @@
 {
+  "comments": {
+    "count": "댓글 {count}개",
+    "placeholder": "댓글을 입력하세요",
+    "submit": "댓글 작성",
+    "submitting": "작성 중…",
+    "reply": "답글",
+    "replyPlaceholder": "답글을 입력하세요",
+    "delete": "삭제",
+    "deleteConfirm": "이 댓글을 삭제할까요?",
+    "empty": "첫 댓글을 남겨보세요.",
+    "loginPrompt": "로그인하고 댓글을 남겨보세요"
+  },
   "publicFeed": {
     "recent": "최신",
     "trending": "트렌딩",
