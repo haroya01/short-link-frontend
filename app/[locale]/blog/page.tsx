@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { PenSquare } from "lucide-react";
 import { listPublicFeed, type FeedSort } from "@/modules/blog/api/public-posts";
-import { FeedCard } from "@/modules/blog/components/feed-card";
+import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
 
 export const revalidate = 30;
 
@@ -32,9 +32,9 @@ export default async function BlogFeedPage({
   const items = result.ok ? result.data.items : [];
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-10">
-      <header className="flex items-center justify-between gap-4">
-        <nav className="flex gap-1 text-[15px] font-semibold">
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+      <header className="flex items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
+        <nav className="flex gap-1 text-[15px] font-bold">
           <SortTab label={t("recent")} href="?sort=recent" active={sort === "recent"} />
           <SortTab label={t("trending")} href="?sort=trending" active={sort === "trending"} />
         </nav>
@@ -47,21 +47,21 @@ export default async function BlogFeedPage({
         </a>
       </header>
 
-      <div className="section-divider my-8" />
-
       {items.length === 0 ? (
-        <p className="text-slate-400">{t("empty")}</p>
+        <p className="mt-10 text-slate-400">{t("empty")}</p>
       ) : (
-        <ul className="space-y-2">
-          {items.map((item) => (
-            <FeedCard
-              key={`${item.author.username}/${item.slug}`}
-              item={item}
-              locale={locale}
-              labels={{ views: (count) => t("views", { count }) }}
-            />
-          ))}
-        </ul>
+        <div className="mt-8">
+          <FeedGrid>
+            {items.map((item) => (
+              <FeedCard
+                key={`${item.author.username}/${item.slug}`}
+                item={item}
+                locale={locale}
+                labels={{ views: (count) => t("views", { count }) }}
+              />
+            ))}
+          </FeedGrid>
+        </div>
       )}
     </main>
   );
@@ -71,8 +71,10 @@ function SortTab({ label, href, active }: { label: string; href: string; active:
   return (
     <a
       href={href}
-      className={`rounded-md px-3 py-1.5 transition-colors ${
-        active ? "text-slate-900" : "text-slate-400 hover:text-slate-700"
+      className={`relative px-2.5 py-1.5 transition-colors ${
+        active
+          ? "text-accent-700 after:absolute after:inset-x-2.5 after:-bottom-[17px] after:h-0.5 after:rounded-full after:bg-accent-600"
+          : "text-slate-400 hover:text-slate-700"
       }`}
     >
       {label}
