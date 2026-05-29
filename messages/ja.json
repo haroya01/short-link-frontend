@@ -22,7 +22,14 @@
     "followingSignedOut": "フォローした作家の記事をまとめて読めます。ログインして始めましょう。",
     "followingEmpty": "フォロー中の作家の記事はまだありません。気になる作家をフォローしてみましょう。",
     "signIn": "ログイン",
-    "topics": "トピック"
+    "topics": "トピック",
+    "heroEyebrow": "BLOG",
+    "heroTitle": "リンクを共有する人たちの物語",
+    "heroSubhead": "開発・デザイン・日常。kurlで書いて、読んで、フォロー。",
+    "emptyTitle": "まだ公開された記事がありません",
+    "emptyBody": "最初の記事を投稿してみましょう。",
+    "emptyFollowingTitle": "フォロー中の作家の記事がありません",
+    "emptyTagTitle": "このトピックの記事はまだありません"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",

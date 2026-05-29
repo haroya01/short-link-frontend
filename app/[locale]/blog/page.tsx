@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { getTranslations } from "next-intl/server";
 import { PenSquare } from "lucide-react";
 import { listPublicFeed, type FeedSort } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
+import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 
 export const revalidate = 30;
@@ -34,43 +36,76 @@ export default async function BlogFeedPage({
   const result = tab === "following" ? null : await listPublicFeed(tab as FeedSort, 0, 24);
   const items = result && result.ok ? result.data.items : [];
 
-  return (
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
-      <header className="flex items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
-        <nav className="flex gap-1 text-[15px] font-bold">
-          <SortTab label={t("recent")} href="?sort=recent" active={tab === "recent"} />
-          <SortTab label={t("trending")} href="?sort=trending" active={tab === "trending"} />
-          <SortTab label={t("feed")} href="?sort=following" active={tab === "following"} />
-          <SortTab label={t("topics")} href="/tags" active={false} />
-        </nav>
-        <a
-          href="/write"
-          className="inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700"
-        >
-          <PenSquare className="h-4 w-4" />
-          {t("write")}
-        </a>
-      </header>
+  const writeCta = (
+    <a
+      href="/write"
+      className="inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition-colors hover:bg-accent-700"
+    >
+      <PenSquare className="h-4 w-4" />
+      {t("write")}
+    </a>
+  );
 
-      {tab === "following" ? (
-        <FollowingFeed locale={locale} />
-      ) : items.length === 0 ? (
-        <p className="mt-10 text-slate-400">{t("empty")}</p>
-      ) : (
-        <div className="mt-8">
-          <FeedGrid>
-            {items.map((item) => (
-              <FeedCard
-                key={`${item.author.username}/${item.slug}`}
-                item={item}
-                locale={locale}
-                labels={{ views: (count) => t("views", { count }) }}
-              />
-            ))}
-          </FeedGrid>
+  return (
+    <>
+      {/* Identity hero — same restrained eyebrow / headline / subhead treatment as the showcase &
+          landing heroes, so blog.kurl reads as part of kurl rather than a bare tab bar on white. */}
+      <section className="border-b border-slate-200/70 bg-gradient-to-b from-accent-50/50 to-white">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+          <div className="hero-stagger max-w-2xl space-y-3">
+            <p
+              className="font-mono text-[11px] uppercase tracking-tagline text-accent-700"
+              style={{ ["--hi" as string]: 0 } as CSSProperties}
+            >
+              {t("heroEyebrow")}
+            </p>
+            <h1
+              className="text-balance text-[30px] font-semibold leading-[1.1] tracking-headline text-slate-900 sm:text-[40px]"
+              style={{ ["--hi" as string]: 1 } as CSSProperties}
+            >
+              {t("heroTitle")}
+            </h1>
+            <p
+              className="max-w-md text-balance text-[15px] leading-relaxed text-slate-500"
+              style={{ ["--hi" as string]: 2 } as CSSProperties}
+            >
+              {t("heroSubhead")}
+            </p>
+          </div>
         </div>
-      )}
-    </main>
+      </section>
+
+      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+        <header className="flex items-center justify-between gap-4 border-b border-slate-200/80 pb-3">
+          <nav className="flex gap-1 text-[15px] font-bold">
+            <SortTab label={t("recent")} href="?sort=recent" active={tab === "recent"} />
+            <SortTab label={t("trending")} href="?sort=trending" active={tab === "trending"} />
+            <SortTab label={t("feed")} href="?sort=following" active={tab === "following"} />
+            <SortTab label={t("topics")} href="/tags" active={false} />
+          </nav>
+          <div className="hidden sm:block">{writeCta}</div>
+        </header>
+
+        {tab === "following" ? (
+          <FollowingFeed locale={locale} />
+        ) : items.length === 0 ? (
+          <FeedEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
+        ) : (
+          <div className="mt-8">
+            <FeedGrid>
+              {items.map((item) => (
+                <FeedCard
+                  key={`${item.author.username}/${item.slug}`}
+                  item={item}
+                  locale={locale}
+                  labels={{ views: (count) => t("views", { count }) }}
+                />
+              ))}
+            </FeedGrid>
+          </div>
+        )}
+      </main>
+    </>
   );
 }
 
@@ -80,7 +115,7 @@ function SortTab({ label, href, active }: { label: string; href: string; active:
       href={href}
       className={`relative px-2.5 py-1.5 transition-colors ${
         active
-          ? "text-accent-700 after:absolute after:inset-x-2.5 after:-bottom-[17px] after:h-0.5 after:rounded-full after:bg-accent-600"
+          ? "text-accent-700 after:absolute after:inset-x-2.5 after:-bottom-[13px] after:h-0.5 after:rounded-full after:bg-accent-600"
           : "text-slate-400 hover:text-slate-700"
       }`}
     >

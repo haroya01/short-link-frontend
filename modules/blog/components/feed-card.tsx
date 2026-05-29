@@ -48,7 +48,7 @@ export function FeedCard({
 }) {
   const hasImage = Boolean(item.ogImageUrl);
   return (
-    <li className="group flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-200/70 shadow-[0_1px_3px_rgba(0,0,0,0.04)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_8px_24px_-8px_rgba(0,0,0,0.15)]">
+    <li className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)]">
       <a href={postHref(item.author.username, item.slug, locale)} className="flex flex-1 flex-col">
         {hasImage && (
           <div className="aspect-[1.6/1] w-full overflow-hidden bg-slate-100">
