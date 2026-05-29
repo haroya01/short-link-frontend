@@ -141,6 +141,10 @@
   },
   "nav": {
     "shorten": "단축",
+    "myLinks": "내 링크",
+    "stats": "통계",
+    "profile": "프로필",
+    "blog": "블로그",
     "showcase": "프로필",
     "campaigns": "QR 캠페인",
     "pricing": "가격",

@@ -141,6 +141,10 @@
   },
   "nav": {
     "shorten": "Shorten",
+    "myLinks": "My links",
+    "stats": "Stats",
+    "profile": "Profile",
+    "blog": "Blog",
     "showcase": "Profiles",
     "campaigns": "QR Campaigns",
     "pricing": "Pricing",
