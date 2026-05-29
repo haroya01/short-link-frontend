@@ -29,12 +29,12 @@ type NavEntry = {
   external?: boolean;
 };
 
+// Single 3-entry bar: 숏링크 / QR캠페인 / 프로필. Blog is reached via the AppsGrid (▦) switcher.
 function anonymousEntries(t: (k: string) => string): NavEntry[] {
   return [
     { href: "/", label: t("shorten"), active: (p) => p === "/" },
-    // 프로필(showcase) promo — 로그아웃 상태에서도 노출. showcase 는 kurl.me 소속(#390).
-    { href: "/showcase", label: t("showcase"), active: (p) => p.startsWith("/showcase") },
     { href: "/qr-campaigns", label: t("campaigns"), active: (p) => p.startsWith("/qr-campaigns") },
+    { href: "/showcase", label: t("showcase"), active: (p) => p.startsWith("/showcase") },
   ];
 }
 
@@ -43,15 +43,12 @@ function authenticatedEntries(t: (k: string) => string, hasProfile: boolean): Na
   const profileHref = hasProfile ? "/settings/profile" : "/showcase";
   return [
     { href: "/", label: t("shorten"), active: (p) => p === "/" },
-    { href: "/dashboard", label: t("myLinks"), active: (p) => p.startsWith("/dashboard") },
     { href: "/campaigns", label: t("campaigns"), active: (p) => p.startsWith("/campaigns") },
-    { href: "/stats", label: t("stats"), active: (p) => p.startsWith("/stats") },
     {
       href: profileHref,
       label: t("profile"),
       active: (p) => p.startsWith("/settings/profile") || p.startsWith("/showcase"),
     },
-    // Blog is an independent product — reached via the AppsGrid (▦) switcher, not a nav entry.
   ];
 }
 
