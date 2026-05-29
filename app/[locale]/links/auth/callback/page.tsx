@@ -9,20 +9,6 @@ import { Button } from "@/components/ui/button";
 
 const LOGIN_NEXT_KEY = "kurl:login-next";
 
-/**
- * Mirror of {@code ALLOWED_NEXT_PATHS} on /login — kept duplicated rather than imported
- * because /login is a client component and we don't want to pull its module just for a
- * 5-item set. When you add a destination, update both.
- */
-const ALLOWED_NEXT_PATHS = new Set<string>([
-  "/profile/auto",
-  "/settings/profile",
-  "/dashboard",
-  "/settings",
-  "/campaigns",
-  "/campaigns/new",
-]);
-
 export default function AuthCallbackPage() {
   const router = useRouter();
   const t = useTranslations("auth");
@@ -51,13 +37,17 @@ export default function AuthCallbackPage() {
     sessionStorage.setItem("kurl:just-signed-in", "1");
     window.history.replaceState(null, "", "/auth/callback");
 
-    // Honor the post-login destination stashed by the originating page (e.g. the showcase
-    // "Make your profile" CTA → /profile/auto). Defaults to /dashboard so the regular sign-in
-    // entry from /login doesn't change behavior.
+    // Return to the page login started from (blog, profile, …). Honor any safe internal path —
+    // must start with a single "/" (no "//" or scheme) so it can't open-redirect off-origin.
+    // signInWithGoogle stashes the full path incl. locale, so navigate with the browser (not the
+    // locale-aware router, which would double-prefix). Falls back to /dashboard.
     const next = sessionStorage.getItem(LOGIN_NEXT_KEY);
     sessionStorage.removeItem(LOGIN_NEXT_KEY);
-    const dest = next && ALLOWED_NEXT_PATHS.has(next) ? next : "/dashboard";
-    router.replace(dest);
+    if (next && /^\/(?!\/)/.test(next) && !next.includes("\\")) {
+      window.location.replace(next);
+    } else {
+      router.replace("/dashboard");
+    }
   }, [router, t]);
 
   if (error) {
