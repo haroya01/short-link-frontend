@@ -15,16 +15,16 @@ import {
   unpublishPost,
   updatePostMetadata,
   type PostView,
-} from "@/lib/api/posts";
-import { assignPostToSeries } from "@/lib/api/series";
-import { uploadPostImage } from "@/lib/api/post-images";
-import { blocksToMarkdown, markdownToBlocks } from "@/lib/markdown-to-blocks";
-import { Markdown } from "@/components/blog/markdown";
-import { MarkdownToolbar } from "@/components/blog/editor/markdown-toolbar";
-import { TagInput } from "@/components/blog/editor/tag-input";
-import { SeriesSelect } from "@/components/blog/editor/series-select";
-import type { EditResult, Selection } from "@/components/blog/editor/markdown-commands";
-import { insertImage } from "@/components/blog/editor/markdown-commands";
+} from "@/modules/blog/api/posts";
+import { assignPostToSeries } from "@/modules/blog/api/series";
+import { uploadPostImage } from "@/modules/blog/api/post-images";
+import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
+import { Markdown } from "@/modules/blog/components/markdown";
+import { MarkdownToolbar } from "@/modules/blog/components/editor/markdown-toolbar";
+import { TagInput } from "@/modules/blog/components/editor/tag-input";
+import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
+import type { EditResult, Selection } from "@/modules/blog/components/editor/markdown-commands";
+import { insertImage } from "@/modules/blog/components/editor/markdown-commands";
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const t = useTranslations("postEditor");

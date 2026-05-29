@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft, Layers } from "lucide-react";
-import { listPublicSeries } from "@/lib/api/public-posts";
+import { listPublicSeries } from "@/modules/blog/api/public-posts";
 
 export const revalidate = 30;
 

@@ -1,10 +1,10 @@
 import { ArrowUpRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Markdown } from "@/components/blog/markdown";
-import type { TocHeading } from "@/components/blog/post-toc";
-import { planEmbed } from "@/lib/post-embed";
-import { slugify } from "@/lib/slugify";
-import type { PublicCtaInfo, PublicPostBlock } from "@/lib/api/public-posts";
+import { Markdown } from "@/modules/blog/components/markdown";
+import type { TocHeading } from "@/modules/blog/components/post-toc";
+import { planEmbed } from "@/modules/blog/lib/post-embed";
+import { slugify } from "@/modules/blog/lib/slugify";
+import type { PublicCtaInfo, PublicPostBlock } from "@/modules/blog/api/public-posts";
 
 const HEADING_TYPES = ["H1", "H2", "H3"];
 

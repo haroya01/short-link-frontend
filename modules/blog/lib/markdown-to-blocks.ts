@@ -1,4 +1,4 @@
-import type { BlockInput } from "@/lib/api/posts";
+import type { BlockInput } from "@/modules/blog/api/posts";
 
 /**
  * Markdown 텍스트를 PostBlock 배열로 변환. v0 minimal editor 용. block-based 에디터 (B2) 구현 전까지 의미적 mapping

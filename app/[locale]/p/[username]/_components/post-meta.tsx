@@ -1,6 +1,6 @@
 import { ArrowLeft, ArrowRight, Layers } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import type { PublicPostSeriesNav } from "@/lib/api/public-posts";
+import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 
 export function TagChips({ tags }: { tags: string[] }) {
   if (!tags || tags.length === 0) return null;

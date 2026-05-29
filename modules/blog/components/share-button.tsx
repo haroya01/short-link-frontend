@@ -7,7 +7,7 @@ import {
   buildAuthorShareUrl,
   buildSharePlatformIntent,
   type SharePlatform,
-} from "@/lib/publishing-share";
+} from "@/modules/blog/lib/publishing-share";
 
 type Props = {
   postUrl: string;
