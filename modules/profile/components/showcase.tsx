@@ -71,9 +71,9 @@ export function ProfileShowcase() {
       {/* Embla's loop mode wraps slides by cloning them outside the original flex track —
           `gap` on the parent flexbox doesn't apply to the inter-slide spacing around the loop
           seam, so the last → first transition reads as "two slides glued together". Per-slide
-          `mr-6` works because the margin is on the slide itself; the clone carries it too, and
-          loop wrap stays evenly spaced. The last `mr-6` is harmless visual padding that embla
-          accounts for via `containScroll: false`. */}
+          `mr-10` (sm:mr-14) works because the margin is on the slide itself; the clone carries
+          it too, and loop wrap stays evenly spaced. The last margin is harmless visual padding
+          that embla accounts for via `containScroll: false`. */}
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex py-2">
           {SHOWCASE_PROFILES.map((profile) => (
@@ -102,7 +102,7 @@ function ShowcaseCard({
   const colors = THEME_TABLE[profile.theme ?? "default"];
   return (
     <div
-      className="group relative mr-6 block shrink-0 cursor-pointer transition-transform hover:-translate-y-1"
+      className="group relative mr-10 block shrink-0 cursor-pointer transition-transform hover:-translate-y-1 sm:mr-14"
       // Promote each slide to its own compositor layer + clip paint to the slide's box.
       // Without this, embla's translateX on the parent flex track forces every slide's
       // ContactCardEntry `filter:` and per-card `backdrop-blur` to repaint as the track
