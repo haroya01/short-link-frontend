@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { listSeries, type SeriesView } from "@/lib/api/series";
+import { listSeries, type SeriesView } from "@/modules/blog/api/series";
 
 type Props = {
   value: number | null;

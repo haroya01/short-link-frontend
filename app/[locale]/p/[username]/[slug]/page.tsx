@@ -3,13 +3,13 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft } from "lucide-react";
-import { ReportButton } from "@/components/blog/report-button";
-import { ShareButton } from "@/components/blog/share-button";
-import { ViewBeacon } from "@/components/blog/view-beacon";
-import { PostToc } from "@/components/blog/post-toc";
+import { ReportButton } from "@/modules/blog/components/report-button";
+import { ShareButton } from "@/modules/blog/components/share-button";
+import { ViewBeacon } from "@/modules/blog/components/view-beacon";
+import { PostToc } from "@/modules/blog/components/post-toc";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { SeriesNav, TagChips } from "../_components/post-meta";
-import { findPublicPost } from "@/lib/api/public-posts";
+import { findPublicPost } from "@/modules/blog/api/public-posts";
 
 export const revalidate = 30;
 

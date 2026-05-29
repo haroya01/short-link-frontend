@@ -1,4 +1,4 @@
-import { request } from "./client";
+import { request } from "@/lib/api/client";
 
 export interface PresignResult {
   uploadUrl: string;

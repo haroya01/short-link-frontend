@@ -8,7 +8,7 @@ import {
   listMyPosts,
   type PostStatus,
   type PostView,
-} from "@/lib/api/posts";
+} from "@/modules/blog/api/posts";
 
 export default function WriteIndexPage() {
   const router = useRouter();
