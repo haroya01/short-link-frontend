@@ -26,6 +26,7 @@ export interface PublicPostListItem {
   ogImageUrl: string | null;
   languageTag: string;
   tags: string[];
+  likeCount: number;
   publishedAt: string; // ISO instant
 }
 
@@ -97,6 +98,7 @@ export interface PublicFeedItem {
   tags: string[];
   publishedAt: string;
   viewCount: number;
+  likeCount: number;
 }
 
 export interface PublicFeedView {

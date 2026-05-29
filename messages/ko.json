@@ -82,6 +82,7 @@
     "statusUNPUBLISHED": "발행취소"
   },
   "publicPost": {
+    "like": "좋아요",
     "readingTime": "약 {minutes}분",
     "morePosts": "@{username}님의 다른 글",
     "allPosts": "모든 글",

@@ -82,6 +82,7 @@
     "statusUNPUBLISHED": "公開停止"
   },
   "publicPost": {
+    "like": "いいね",
     "readingTime": "約{minutes}分",
     "morePosts": "@{username}さんの他の記事",
     "allPosts": "すべての記事",
