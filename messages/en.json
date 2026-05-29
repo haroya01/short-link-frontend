@@ -82,6 +82,7 @@
     "statusUNPUBLISHED": "Unpublished"
   },
   "publicPost": {
+    "like": "Like",
     "readingTime": "{minutes} min read",
     "morePosts": "More from @{username}",
     "allPosts": "All posts",

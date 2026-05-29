@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { PenSquare } from "lucide-react";
+import { Heart, PenSquare } from "lucide-react";
 import {
   listPublicFeed,
   type FeedSort,
@@ -138,6 +138,12 @@ function FeedCard({
             </time>
             <span>·</span>
             <span>{t("views", { count: item.viewCount })}</span>
+            {item.likeCount > 0 && (
+              <span className="inline-flex items-center gap-0.5">
+                <Heart className="h-3 w-3" />
+                {item.likeCount}
+              </span>
+            )}
             {item.tags.slice(0, 3).map((tag) => (
               <span key={tag} className="rounded-full bg-slate-100 px-2 py-0.5 font-medium">
                 {tag}
