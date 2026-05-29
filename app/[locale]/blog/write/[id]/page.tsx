@@ -49,6 +49,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         value={ed.title}
         onChange={(e) => ed.setTitle(e.target.value)}
         maxLength={200}
+        // Stop mobile Chrome from popping its autofill (address/card/wallet) bar over the keyboard
+        // on a plain post-title field. data-* opt password managers out too.
+        autoComplete="off"
+        data-1p-ignore
+        data-lpignore="true"
         className="mt-5 w-full border-0 bg-transparent text-[28px] font-bold leading-tight tracking-tight text-slate-900 outline-none placeholder:text-slate-300 sm:text-[34px]"
         placeholder={t("titlePlaceholder")}
       />

@@ -76,6 +76,11 @@ export function TagInput({ tags, onChange, placeholder, max = 10 }: Props) {
           setDraft("");
         }}
         placeholder={tags.length === 0 ? placeholder : ""}
+        // No mobile autofill (address/card/wallet) bar on a tag field.
+        autoComplete="off"
+        autoCorrect="off"
+        data-1p-ignore
+        data-lpignore="true"
         className="min-w-[8rem] flex-1 bg-transparent py-1 text-base outline-none placeholder:text-slate-400 sm:text-sm"
       />
     </div>
