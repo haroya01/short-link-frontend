@@ -11,7 +11,7 @@ type Props = {
 };
 
 /** Chip input: type + Enter/comma to add, Backspace on empty to remove the last. */
-export function TagInput({ tags, onChange, placeholder, max = 20 }: Props) {
+export function TagInput({ tags, onChange, placeholder, max = 10 }: Props) {
   const [draft, setDraft] = useState("");
 
   let pending = tags;
