@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { PenSquare } from "lucide-react";
+import { blogHref } from "@/lib/host";
 import { listPublicFeed, type FeedSort } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
@@ -39,7 +40,7 @@ export default async function BlogFeedPage({
 
   const writeCta = (
     <a
-      href="/write"
+      href={blogHref("/write")}
       className="inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition-colors hover:bg-accent-700"
     >
       <PenSquare className="h-4 w-4" />
@@ -82,7 +83,7 @@ export default async function BlogFeedPage({
             <SortTab label={t("recent")} href="?sort=recent" active={tab === "recent"} />
             <SortTab label={t("trending")} href="?sort=trending" active={tab === "trending"} />
             <SortTab label={t("feed")} href="?sort=following" active={tab === "following"} />
-            <SortTab label={t("topics")} href="/tags" active={false} />
+            <SortTab label={t("topics")} href={blogHref("/tags")} active={false} />
           </nav>
           <div className="hidden sm:block">{writeCta}</div>
         </header>
