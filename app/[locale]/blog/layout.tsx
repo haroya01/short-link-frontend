@@ -13,24 +13,35 @@ import { MobileSidebar, Sidebar } from "@/components/common/sidebar";
 import { SidebarStateProvider } from "@/components/common/sidebar-state";
 import { buildBlogSections } from "@/lib/sidebar-entries";
 
-// middleware rewrite 후 internal path 기준. blog 의 workspace = 모든 logged-in path.
+// Public-path based. On blog.kurl.me the /blog prefix is dropped (middleware rewrites /foo →
+// /blog/foo internally); in dev/preview the public path is /blog-preview/foo. stripLocale drops
+// either prefix so matching holds for the public path, the preview path, and the rewritten
+// internal path. blog workspace = every logged-in path that isn't marketing.
 const WORKSPACE_PATHS = [
-  "/blog",
-  "/blog/write",
-  "/blog/posts",
-  "/blog/drafts",
-  "/blog/series",
-  "/blog/readers",
-  "/blog/links",
-  "/blog/curation",
-  "/blog/leads",
+  "/",
+  "/write",
+  "/posts",
+  "/drafts",
+  "/series",
+  "/readers",
+  "/links",
+  "/curation",
+  "/leads",
 ];
 
-const ANONYMOUS_MARKETING_PATHS = ["/blog/showcase"];
+const ANONYMOUS_MARKETING_PATHS = ["/showcase"];
 
 function stripLocale(pathname: string): string {
   const m = pathname.match(/^\/[a-z]{2}(\/.*)?$/);
-  return m?.[1] ?? pathname;
+  let p = m?.[1] ?? pathname;
+  for (const prefix of ["/blog-preview", "/blog"]) {
+    if (p === prefix) return "/";
+    if (p.startsWith(prefix + "/")) {
+      p = p.slice(prefix.length);
+      break;
+    }
+  }
+  return p;
 }
 
 function matchesAny(path: string, list: string[]): boolean {
