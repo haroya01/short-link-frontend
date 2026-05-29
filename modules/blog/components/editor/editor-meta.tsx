@@ -51,6 +51,7 @@ export function EditorMeta({
             {t("tags")}
           </label>
           <TagInput tags={tags} onChange={onTagsChange} placeholder={t("tagsPlaceholder")} />
+          <p className="mt-1 text-[11px] text-slate-400">{t("tagsHint")}</p>
         </div>
         <div>
           <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-400">

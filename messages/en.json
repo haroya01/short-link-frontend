@@ -99,7 +99,8 @@
     "noPosts": "No posts yet.",
     "listLoading": "Loading…",
     "slugHint": "Editable until published · lowercase letters, digits, hyphens",
-    "titleRequired": "Add a title before publishing"
+    "titleRequired": "Add a title before publishing",
+    "tagsHint": "Separate with comma or Enter"
   },
   "publicPost": {
     "like": "Like",
