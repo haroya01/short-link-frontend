@@ -13,23 +13,28 @@ import { MobileSidebar, Sidebar } from "@/components/common/sidebar";
 import { SidebarStateProvider } from "@/components/common/sidebar-state";
 import { buildLinksSections } from "@/lib/sidebar-entries";
 
-// middleware rewrite 후 internal path 기준.
+// Public-path based. The /links URL prefix was abolished — middleware rewrites /foo → /links/foo
+// internally, but usePathname (next/navigation) reports the public /foo. stripLocale also drops a
+// stray /links so matching holds whether usePathname yields the public or rewritten internal path.
 const WORKSPACE_PATHS = [
-  "/links/dashboard",
-  "/links/campaigns",
-  "/links/qr",
-  "/links/ctas",
-  "/links/stats",
-  "/links/settings",
-  "/links/admin",
-  "/links/profile",
+  "/dashboard",
+  "/campaigns",
+  "/qr",
+  "/ctas",
+  "/stats",
+  "/settings",
+  "/admin",
+  "/profile",
 ];
 
-const MINIMAL_CHROME_PATHS = ["/links/login", "/links/auth"];
+const MINIMAL_CHROME_PATHS = ["/login", "/auth"];
 
 function stripLocale(pathname: string): string {
   const m = pathname.match(/^\/[a-z]{2}(\/.*)?$/);
-  return m?.[1] ?? pathname;
+  let p = m?.[1] ?? pathname;
+  if (p === "/links") return "/";
+  if (p.startsWith("/links/")) p = p.slice("/links".length);
+  return p;
 }
 
 function matchesAny(path: string, list: string[]): boolean {
