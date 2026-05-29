@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import type { PublicAuthor } from "@/modules/blog/api/public-posts";
+import { FollowButton } from "@/modules/blog/components/follow-button";
 
 type Tab = "posts" | "series" | "about";
 
@@ -32,13 +33,16 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
             {author.username.charAt(0).toUpperCase()}
           </span>
         )}
-        <div className="min-w-0 pt-1">
+        <div className="min-w-0 flex-1 pt-1">
           <h1 className="text-headline-sm font-bold tracking-tight text-slate-900">
             @{author.username}
           </h1>
           {author.bio && (
             <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{author.bio}</p>
           )}
+          <div className="mt-4">
+            <FollowButton username={author.username} initialFollowerCount={0} />
+          </div>
         </div>
       </div>
 

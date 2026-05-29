@@ -17,7 +17,11 @@
     "empty": "아직 발행된 글이 없어요.",
     "write": "글쓰기",
     "views": "조회 {count}",
-    "loadMore": "더 보기"
+    "loadMore": "더 보기",
+    "feed": "피드",
+    "followingSignedOut": "팔로우한 작가들의 글을 모아 봐요. 로그인하면 시작할 수 있어요.",
+    "followingEmpty": "아직 팔로우한 작가의 글이 없어요. 마음에 드는 작가를 팔로우해 보세요.",
+    "signIn": "로그인"
   },
   "blogWorkspace": {
     "overviewTitle": "개요",
@@ -106,7 +110,10 @@
     "tabAbout": "소개",
     "aboutEmpty": "아직 소개가 없어요.",
     "seriesIndexTitle": "시리즈",
-    "seriesEmpty": "아직 시리즈가 없어요."
+    "seriesEmpty": "아직 시리즈가 없어요.",
+    "follow": "팔로우",
+    "following": "팔로잉",
+    "followers": "팔로워 {count}"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -348,7 +355,11 @@
       "join": " ",
       "tail": " ",
       "end": "",
-      "verbs": ["추적", "분석", "통계"]
+      "verbs": [
+        "추적",
+        "분석",
+        "통계"
+      ]
     }
   },
   "auth": {
@@ -2163,9 +2174,18 @@
       "empty": "인쇄할 배포 묶음이 없어요. 묶음을 먼저 추가하세요.",
       "perPage": "한 페이지에",
       "layouts": {
-        "comfortable": { "label": "12개 (3×4)", "hint": "넉넉 · 명함 크기" },
-        "standard": { "label": "20개 (4×5)", "hint": "표준" },
-        "dense": { "label": "30개 (5×6)", "hint": "빽빽 · 작은 라벨" }
+        "comfortable": {
+          "label": "12개 (3×4)",
+          "hint": "넉넉 · 명함 크기"
+        },
+        "standard": {
+          "label": "20개 (4×5)",
+          "hint": "표준"
+        },
+        "dense": {
+          "label": "30개 (5×6)",
+          "hint": "빽빽 · 작은 라벨"
+        }
       },
       "showLabel": "라벨 표시",
       "cutMarks": "잘림선",
@@ -2210,16 +2230,27 @@
         "title": "다음 배포 추천",
         "description": "현재 총 {total}장 — 같은 총량으로 재할당. 평균 100당 {average} 기준",
         "footnote": "효율 비율 기반 추천 — 평균의 30% 미만은 폐기, 나머지는 비율대로 재할당 (한 묶음 최대 3배).",
-        "verdict": { "BOOST": "증가", "KEEP": "유지", "REDUCE": "감축", "PRUNE": "폐기" },
+        "verdict": {
+          "BOOST": "증가",
+          "KEEP": "유지",
+          "REDUCE": "감축",
+          "PRUNE": "폐기"
+        },
         "rowMeta": "{current} → {recommended}장 · 100당 {rate}"
       },
-      "daily": { "title": "일별 클릭", "description": "캠페인 시작 이후" },
+      "daily": {
+        "title": "일별 클릭",
+        "description": "캠페인 시작 이후"
+      },
       "hourly": {
         "title": "시간대별 클릭",
         "description": "0–23시",
         "tooltip": "{hour}시: {clicks}"
       },
-      "heatmap": { "title": "요일 × 시간대 분포", "description": "진할수록 클릭이 많은 시간대." },
+      "heatmap": {
+        "title": "요일 × 시간대 분포",
+        "description": "진할수록 클릭이 많은 시간대."
+      },
       "testScans": {
         "title": "시작 전 테스트 스캔",
         "description": "<strong>{count}회</strong> — 캠페인 시작 시각 이전. 분석 합계에서 제외돼요.",
@@ -2296,7 +2327,12 @@
         }
       },
       "flowLabel": "반복 가능한 루프",
-      "flowSteps": ["배포", "묶음별 측정", "다음 배포 조정", "종료 후 전환"],
+      "flowSteps": [
+        "배포",
+        "묶음별 측정",
+        "다음 배포 조정",
+        "종료 후 전환"
+      ],
       "createCta": "첫 QR 캠페인 만들기",
       "createHint": "처음 만들 때는 QR 캠페인 이름과 종료 시점만 정하면 됩니다."
     }
