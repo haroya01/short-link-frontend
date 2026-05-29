@@ -141,6 +141,10 @@
   },
   "nav": {
     "shorten": "短縮",
+    "myLinks": "マイリンク",
+    "stats": "統計",
+    "profile": "プロフィール",
+    "blog": "ブログ",
     "showcase": "プロフィール",
     "campaigns": "QRキャンペーン",
     "pricing": "料金",
