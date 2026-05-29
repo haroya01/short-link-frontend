@@ -91,7 +91,14 @@
     "statusDRAFT": "Draft",
     "statusSCHEDULED": "Scheduled",
     "statusPUBLISHED": "Published",
-    "statusUNPUBLISHED": "Unpublished"
+    "statusUNPUBLISHED": "Unpublished",
+    "untitled": "Untitled",
+    "creating": "Creating a new post…",
+    "newPost": "New post",
+    "myPosts": "My posts",
+    "noPosts": "No posts yet.",
+    "listLoading": "Loading…",
+    "slugHint": "Editable until published · lowercase letters, digits, hyphens"
   },
   "publicPost": {
     "like": "Like",

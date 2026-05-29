@@ -31,6 +31,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
   const [post, setPost] = useState<PostView | null>(null);
   const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
   const [markdown, setMarkdown] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [seriesId, setSeriesId] = useState<number | null>(null);
@@ -48,6 +49,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
       const [p, blocks] = await Promise.all([getPost(postId), getBlocks(postId)]);
       setPost(p);
       setTitle(p.title);
+      setSlug(p.slug);
       setMarkdown(blocksToMarkdown(blocks));
       setTags(p.tags ?? []);
       setSeriesId(p.seriesId ?? null);
@@ -68,7 +70,12 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     setSaving(true);
     setError(null);
     try {
-      const updated = await updatePostMetadata(post.id, { title: title.trim(), tags });
+      // Slug is editable only while DRAFT (frozen once the post has been public).
+      const updated = await updatePostMetadata(post.id, {
+        title: title.trim(),
+        tags,
+        ...(post.status === "DRAFT" ? { slug: slug.trim() } : {}),
+      });
       await replaceBlocks(post.id, markdownToBlocks(markdown));
       await assignPostToSeries(post.id, seriesId, post.seriesId ?? null);
       setPost({ ...updated, seriesId });
@@ -191,7 +198,24 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         className="w-full border-0 bg-transparent text-3xl font-bold tracking-tight outline-none placeholder:text-slate-300"
         placeholder={t("titlePlaceholder")}
       />
-      <p className="mt-1 font-mono text-xs text-slate-400">/{post.slug}</p>
+      {post.status === "DRAFT" ? (
+        <div className="mt-1 flex flex-wrap items-center gap-2">
+          <span className="font-mono text-xs text-slate-400">/</span>
+          <input
+            type="text"
+            value={slug}
+            onChange={(e) => {
+              setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"));
+              setSaved(false);
+            }}
+            maxLength={200}
+            className="w-48 rounded border border-slate-200 bg-transparent px-2 py-0.5 font-mono text-xs text-slate-600 outline-none focus:border-accent-400"
+          />
+          <span className="text-[11px] text-slate-400">{t("slugHint")}</span>
+        </div>
+      ) : (
+        <p className="mt-1 font-mono text-xs text-slate-400">/{post.slug}</p>
+      )}
 
       <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_240px]">
         <TagInput tags={tags} onChange={(v) => { setTags(v); setSaved(false); }} placeholder={t("tagsPlaceholder")} />
