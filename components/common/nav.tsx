@@ -7,9 +7,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
-import { blogHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
 
 /**
@@ -32,7 +32,7 @@ type NavEntry = {
 function anonymousEntries(t: (k: string) => string): NavEntry[] {
   return [
     { href: "/", label: t("shorten"), active: (p) => p === "/" },
-    // 프로필(showcase) promo — 로그아웃 상태에서도 노출. 미들웨어가 /showcase → blog.kurl.me/showcase 로 redirect.
+    // 프로필(showcase) promo — 로그아웃 상태에서도 노출. showcase 는 kurl.me 소속(#390).
     { href: "/showcase", label: t("showcase"), active: (p) => p.startsWith("/showcase") },
     { href: "/qr-campaigns", label: t("campaigns"), active: (p) => p.startsWith("/qr-campaigns") },
   ];
@@ -51,7 +51,7 @@ function authenticatedEntries(t: (k: string) => string, hasProfile: boolean): Na
       label: t("profile"),
       active: (p) => p.startsWith("/settings/profile") || p.startsWith("/showcase"),
     },
-    { href: blogHref("/"), label: t("blog"), active: () => false, external: true },
+    // Blog is an independent product — reached via the AppsGrid (▦) switcher, not a nav entry.
   ];
 }
 
@@ -124,6 +124,7 @@ export function Nav() {
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
+          <AppsGrid />
           <LanguageSwitcher />
           {!ready ? (
             <div className="h-8 w-20 animate-pulse rounded-md bg-slate-100" />
