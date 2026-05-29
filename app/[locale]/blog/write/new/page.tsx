@@ -32,7 +32,10 @@ export default function NewPostPage() {
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
           const post = await createPost({ slug: randomSlug(), title: t("untitled") });
-          router.replace(`/write/${post.id}`);
+          // Navigate to the sibling editor by swapping the trailing "/new" for the id — this
+          // preserves the current path prefix (locale + /blog-preview on the apex, or the bare
+          // path on blog.kurl.me). A root-relative `/write/${id}` would drop the prefix → 404.
+          router.replace(window.location.pathname.replace(/\/new\/?$/, `/${post.id}`));
           return;
         } catch (e) {
           if (attempt === 1) {
