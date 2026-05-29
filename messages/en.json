@@ -102,7 +102,18 @@
     "listLoading": "Loading…",
     "slugHint": "Editable until published · lowercase letters, digits, hyphens",
     "titleRequired": "Add a title before publishing",
-    "tagsHint": "Separate with comma or Enter"
+    "tagsHint": "Separate with comma or Enter",
+    "slash": {
+      "heading1": "Heading 1",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3",
+      "bulletList": "Bulleted list",
+      "orderedList": "Numbered list",
+      "quote": "Quote",
+      "codeBlock": "Code block",
+      "image": "Image",
+      "divider": "Divider"
+    }
   },
   "publicPost": {
     "like": "Like",

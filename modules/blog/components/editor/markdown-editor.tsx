@@ -9,6 +9,7 @@ import {
   FloatingToolbar,
   type EditorCommands,
 } from "@/modules/blog/components/editor/floating-toolbar";
+import { SlashMenu, type SlashEditor } from "@/modules/blog/components/editor/slash-menu";
 
 /**
  * Toast UI Editor (vanilla — the React wrapper only peer-supports React 17). WYSIWYG + markdown
@@ -18,10 +19,11 @@ import {
  * Toast's downward-opening one couldn't. The JS is dynamically imported inside the effect so it
  * never evaluates during SSR; the component renders just a host div on the server.
  */
-type ToastInstance = EditorCommands & {
-  getMarkdown: () => string;
-  destroy: () => void;
-};
+type ToastInstance = EditorCommands &
+  SlashEditor & {
+    getMarkdown: () => string;
+    destroy: () => void;
+  };
 
 export function MarkdownEditor({
   initialValue,
@@ -37,7 +39,7 @@ export function MarkdownEditor({
   const onUploadRef = useRef(onUploadImage);
   onChangeRef.current = onChange;
   onUploadRef.current = onUploadImage;
-  const [commands, setCommands] = useState<EditorCommands | null>(null);
+  const [commands, setCommands] = useState<ToastInstance | null>(null);
 
   useEffect(() => {
     let editor: ToastInstance | undefined;
@@ -93,11 +95,14 @@ export function MarkdownEditor({
     <div className="relative h-full">
       <div ref={hostRef} className="h-full" />
       {commands && (
-        <FloatingToolbar
-          editor={commands}
-          onUploadImage={onUploadImage}
-          editorHost={hostRef}
-        />
+        <>
+          <SlashMenu editor={commands} editorHost={hostRef} onUploadImage={onUploadImage} />
+          <FloatingToolbar
+            editor={commands}
+            onUploadImage={onUploadImage}
+            editorHost={hostRef}
+          />
+        </>
       )}
     </div>
   );
