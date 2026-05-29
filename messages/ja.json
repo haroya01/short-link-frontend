@@ -21,7 +21,8 @@
     "feed": "フィード",
     "followingSignedOut": "フォローした作家の記事をまとめて読めます。ログインして始めましょう。",
     "followingEmpty": "フォロー中の作家の記事はまだありません。気になる作家をフォローしてみましょう。",
-    "signIn": "ログイン"
+    "signIn": "ログイン",
+    "topics": "トピック"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",
