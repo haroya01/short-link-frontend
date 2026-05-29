@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { useToast } from "@/components/ui/toast";
 import { uploadPostImage } from "@/modules/blog/api/post-images";
 import { MarkdownEditor } from "@/modules/blog/components/editor/markdown-editor";
 import { EditorHeader } from "@/modules/blog/components/editor/editor-header";
@@ -11,6 +12,7 @@ import { usePostEditor } from "@/modules/blog/components/editor/use-post-editor"
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const t = useTranslations("postEditor");
   const { ready, authenticated } = useAuth();
+  const { toast } = useToast();
   const ed = usePostEditor(Number(params.id), { ready, authenticated });
 
   if (!ready) return null;
@@ -73,6 +75,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           initialValue={ed.markdown}
           onChange={ed.setMarkdown}
           onUploadImage={(blob) => uploadPostImage(post.id, blob as File)}
+          onUploadError={(msg) => toast(msg, "error")}
         />
       </div>
 

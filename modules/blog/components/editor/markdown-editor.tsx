@@ -29,16 +29,20 @@ export function MarkdownEditor({
   initialValue,
   onChange,
   onUploadImage,
+  onUploadError,
 }: {
   initialValue: string;
   onChange: (markdown: string) => void;
   onUploadImage: (file: Blob) => Promise<string>;
+  onUploadError?: (message: string) => void;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const onChangeRef = useRef(onChange);
   const onUploadRef = useRef(onUploadImage);
+  const onUploadErrorRef = useRef(onUploadError);
   onChangeRef.current = onChange;
   onUploadRef.current = onUploadImage;
+  onUploadErrorRef.current = onUploadError;
   const [commands, setCommands] = useState<ToastInstance | null>(null);
 
   useEffect(() => {
@@ -67,9 +71,10 @@ export function MarkdownEditor({
               const url = await onUploadRef.current(blob);
               const name = blob instanceof File ? blob.name : "image";
               callback(url, name);
-            } catch {
-              // The parent's uploader surfaces the error; returning without calling back keeps the
-              // editor from embedding a base64 blob.
+            } catch (e) {
+              // Returning without calling back keeps the editor from embedding a base64 blob; surface
+              // the reason so a failed paste/drop isn't silent.
+              onUploadErrorRef.current?.(e instanceof Error ? e.message : "image upload failed");
             }
             return false;
           },
@@ -96,10 +101,16 @@ export function MarkdownEditor({
       <div ref={hostRef} className="h-full" />
       {commands && (
         <>
-          <SlashMenu editor={commands} editorHost={hostRef} onUploadImage={onUploadImage} />
+          <SlashMenu
+            editor={commands}
+            editorHost={hostRef}
+            onUploadImage={onUploadImage}
+            onUploadError={onUploadError}
+          />
           <FloatingToolbar
             editor={commands}
             onUploadImage={onUploadImage}
+            onUploadError={onUploadError}
             editorHost={hostRef}
           />
         </>

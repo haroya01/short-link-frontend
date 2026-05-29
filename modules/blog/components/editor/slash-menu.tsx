@@ -19,6 +19,7 @@ import {
   ListOrdered,
   Minus,
   Quote,
+  Video,
   type LucideIcon,
 } from "lucide-react";
 import { keywordMatch, matchSlashQuery } from "@/modules/blog/components/editor/slash-menu-logic";
@@ -28,6 +29,7 @@ export type SlashEditor = {
   exec: (command: string, payload?: Record<string, unknown>) => void;
   getSelection: () => unknown;
   deleteSelection: (start: number, end: number) => void;
+  insertText: (text: string) => void;
   isWysiwygMode: () => boolean;
   focus: () => void;
 };
@@ -101,6 +103,18 @@ const ITEMS: SlashItem[] = [
     image: true,
   },
   {
+    key: "embed",
+    labelKey: "embed",
+    icon: Video,
+    keywords: ["video", "embed", "youtube", "vimeo", "동영상", "비디오", "임베드", "動画"],
+    // Drop the URL on its own line; markdownToBlocks turns a standalone YouTube/Vimeo link into a
+    // video EMBED on save (anything else becomes a link card).
+    run: (e) => {
+      const url = window.prompt("URL (YouTube / Vimeo)");
+      if (url && url.trim()) e.insertText(url.trim());
+    },
+  },
+  {
     key: "hr",
     labelKey: "divider",
     icon: Minus,
@@ -129,10 +143,12 @@ export function SlashMenu({
   editor,
   editorHost,
   onUploadImage,
+  onUploadError,
 }: {
   editor: SlashEditor;
   editorHost: RefObject<HTMLElement>;
   onUploadImage: (file: Blob) => Promise<string>;
+  onUploadError?: (message: string) => void;
 }) {
   const t = useTranslations("postEditor.slash");
   const [trigger, setTrigger] = useState<Trigger | null>(null);
@@ -235,8 +251,8 @@ export function SlashMenu({
             const url = await onUploadImage(f);
             editor.exec("addImage", { imageUrl: url, altText: f.name.replace(/\.[^.]+$/, "") });
             editor.focus();
-          } catch {
-            /* uploader surfaces the error */
+          } catch (err) {
+            onUploadError?.(err instanceof Error ? err.message : "image upload failed");
           }
         }}
       />

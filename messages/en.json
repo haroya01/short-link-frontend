@@ -112,7 +112,8 @@
       "quote": "Quote",
       "codeBlock": "Code block",
       "image": "Image",
-      "divider": "Divider"
+      "divider": "Divider",
+      "embed": "Embed (video / link)"
     }
   },
   "publicPost": {

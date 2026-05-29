@@ -112,7 +112,8 @@
       "quote": "인용",
       "codeBlock": "코드 블록",
       "image": "이미지",
-      "divider": "구분선"
+      "divider": "구분선",
+      "embed": "임베드 (동영상 / 링크)"
     }
   },
   "publicPost": {

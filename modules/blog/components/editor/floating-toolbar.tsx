@@ -54,10 +54,12 @@ const TEXT_COLORS = [
 export function FloatingToolbar({
   editor,
   onUploadImage,
+  onUploadError,
   editorHost,
 }: {
   editor: EditorCommands;
   onUploadImage: (file: Blob) => Promise<string>;
+  onUploadError?: (message: string) => void;
   editorHost: RefObject<HTMLElement>;
 }) {
   const [palette, setPalette] = useState(false);
@@ -85,8 +87,8 @@ export function FloatingToolbar({
         imageUrl: url,
         altText: file.name.replace(/\.[^.]+$/, ""),
       });
-    } catch {
-      /* uploader surfaces the error */
+    } catch (e) {
+      onUploadError?.(e instanceof Error ? e.message : "image upload failed");
     }
   };
 
