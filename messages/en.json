@@ -17,7 +17,11 @@
     "empty": "No posts published yet.",
     "write": "Write",
     "views": "{count} views",
-    "loadMore": "Load more"
+    "loadMore": "Load more",
+    "feed": "Feed",
+    "followingSignedOut": "See posts from the authors you follow. Sign in to get started.",
+    "followingEmpty": "No posts from authors you follow yet. Try following someone you like.",
+    "signIn": "Sign in"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",
@@ -106,7 +110,10 @@
     "tabAbout": "About",
     "aboutEmpty": "No bio yet.",
     "seriesIndexTitle": "Series",
-    "seriesEmpty": "No series yet."
+    "seriesEmpty": "No series yet.",
+    "follow": "Follow",
+    "following": "Following",
+    "followers": "{count} followers"
   },
   "imageCropper": {
     "title": "Crop image",
@@ -348,7 +355,11 @@
       "join": " ",
       "tail": " ",
       "end": "",
-      "verbs": ["Tracking", "Analytics", "Insights"]
+      "verbs": [
+        "Tracking",
+        "Analytics",
+        "Insights"
+      ]
     }
   },
   "auth": {
@@ -2163,9 +2174,18 @@
       "empty": "No batches to print. Add a batch first.",
       "perPage": "Per page",
       "layouts": {
-        "comfortable": { "label": "12 (3×4)", "hint": "Roomy · business-card size" },
-        "standard": { "label": "20 (4×5)", "hint": "Standard" },
-        "dense": { "label": "30 (5×6)", "hint": "Dense · small labels" }
+        "comfortable": {
+          "label": "12 (3×4)",
+          "hint": "Roomy · business-card size"
+        },
+        "standard": {
+          "label": "20 (4×5)",
+          "hint": "Standard"
+        },
+        "dense": {
+          "label": "30 (5×6)",
+          "hint": "Dense · small labels"
+        }
       },
       "showLabel": "Show labels",
       "cutMarks": "Cut marks",
@@ -2210,16 +2230,27 @@
         "title": "Next distribution recommendation",
         "description": "Redistribute the same total of {total} sheets. Baseline average is {average} per 100.",
         "footnote": "Recommendation based on efficiency ratios. Under 30% of average is pruned; the rest is reallocated by ratio, capped at 3x per batch.",
-        "verdict": { "BOOST": "Boost", "KEEP": "Keep", "REDUCE": "Reduce", "PRUNE": "Prune" },
+        "verdict": {
+          "BOOST": "Boost",
+          "KEEP": "Keep",
+          "REDUCE": "Reduce",
+          "PRUNE": "Prune"
+        },
         "rowMeta": "{current} → {recommended} sheets · {rate} per 100"
       },
-      "daily": { "title": "Daily clicks", "description": "Since campaign start" },
+      "daily": {
+        "title": "Daily clicks",
+        "description": "Since campaign start"
+      },
       "hourly": {
         "title": "Clicks by hour",
         "description": "0–23",
         "tooltip": "{hour}:00: {clicks}"
       },
-      "heatmap": { "title": "Day × hour distribution", "description": "Darker cells mean more clicks." },
+      "heatmap": {
+        "title": "Day × hour distribution",
+        "description": "Darker cells mean more clicks."
+      },
       "testScans": {
         "title": "Pre-start test scans",
         "description": "<strong>{count}</strong> before campaign start. Excluded from analytics totals.",
@@ -2296,7 +2327,12 @@
         }
       },
       "flowLabel": "Repeatable loop",
-      "flowSteps": ["Distribute", "Measure batches", "Tune next run", "Route after end"],
+      "flowSteps": [
+        "Distribute",
+        "Measure batches",
+        "Tune next run",
+        "Route after end"
+      ],
       "createCta": "Create first QR campaign",
       "createHint": "For the first campaign, you only need a name and an end time."
     }

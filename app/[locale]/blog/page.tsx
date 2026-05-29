@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { PenSquare } from "lucide-react";
 import { listPublicFeed, type FeedSort } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
+import { FollowingFeed } from "@/modules/blog/components/following-feed";
 
 export const revalidate = 30;
 
@@ -25,18 +26,21 @@ export default async function BlogFeedPage({
 }) {
   const { locale } = await params;
   const { sort: sortParam } = await searchParams;
-  const sort: FeedSort = sortParam === "trending" ? "trending" : "recent";
+  // "following" is client-rendered (auth needed); recent/trending are server-fetched here.
+  const tab: "recent" | "trending" | "following" =
+    sortParam === "trending" || sortParam === "following" ? sortParam : "recent";
   const t = await getTranslations({ locale, namespace: "publicFeed" });
 
-  const result = await listPublicFeed(sort, 0, 24);
-  const items = result.ok ? result.data.items : [];
+  const result = tab === "following" ? null : await listPublicFeed(tab as FeedSort, 0, 24);
+  const items = result && result.ok ? result.data.items : [];
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
       <header className="flex items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
         <nav className="flex gap-1 text-[15px] font-bold">
-          <SortTab label={t("recent")} href="?sort=recent" active={sort === "recent"} />
-          <SortTab label={t("trending")} href="?sort=trending" active={sort === "trending"} />
+          <SortTab label={t("recent")} href="?sort=recent" active={tab === "recent"} />
+          <SortTab label={t("trending")} href="?sort=trending" active={tab === "trending"} />
+          <SortTab label={t("feed")} href="?sort=following" active={tab === "following"} />
         </nav>
         <a
           href="/write"
@@ -47,7 +51,9 @@ export default async function BlogFeedPage({
         </a>
       </header>
 
-      {items.length === 0 ? (
+      {tab === "following" ? (
+        <FollowingFeed locale={locale} />
+      ) : items.length === 0 ? (
         <p className="mt-10 text-slate-400">{t("empty")}</p>
       ) : (
         <div className="mt-8">
