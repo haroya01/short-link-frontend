@@ -25,6 +25,16 @@ export async function getAdminHealthMetrics(): Promise<AdminHealthMetrics> {
   return request<AdminHealthMetrics>("/api/v1/admin/health-metrics", { method: "GET" });
 }
 
+export interface MintedAccessToken {
+  accessToken: string;
+  expiresInSeconds: number;
+}
+
+/** Mint a fresh access token for the calling admin (for API scripting). */
+export async function mintAdminAccessToken(): Promise<MintedAccessToken> {
+  return request<MintedAccessToken>("/api/v1/admin/access-token", { method: "POST" });
+}
+
 export async function getAdminCohort(weeks = 8): Promise<AdminCohort> {
   return request<AdminCohort>(`/api/v1/admin/cohort?weeks=${weeks}`, { method: "GET" });
 }
