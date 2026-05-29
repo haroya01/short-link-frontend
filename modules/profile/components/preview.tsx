@@ -74,8 +74,12 @@ export function ProfilePreview({
         }}
       >
         <div
-          className="device device-iphone-14-pro origin-top-left"
-          style={{ transform: `scale(${DEVICE_SCALE})` }}
+          className="device device-iphone-14-pro"
+          // transform-origin inline (not the `origin-top-left` utility): devices.css's `.device`
+          // rule overrides the utility with a centered origin, which makes scale() overflow this
+          // top-left-sized wrapper box symmetrically. Pin it to top-left so the scaled device
+          // exactly fills the reserved footprint.
+          style={{ transform: `scale(${DEVICE_SCALE})`, transformOrigin: "top left" }}
         >
           <div className="device-frame">
             <div
