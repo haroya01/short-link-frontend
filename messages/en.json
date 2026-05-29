@@ -1,4 +1,12 @@
 {
+  "publicFeed": {
+    "recent": "Latest",
+    "trending": "Trending",
+    "empty": "No posts published yet.",
+    "write": "Write",
+    "views": "{count} views",
+    "loadMore": "Load more"
+  },
   "blogWorkspace": {
     "overviewTitle": "Overview",
     "overviewSubtitle": "Manage your posts and series at a glance.",
