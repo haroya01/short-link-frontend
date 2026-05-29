@@ -21,6 +21,7 @@ import {
   Quote,
   type LucideIcon,
 } from "lucide-react";
+import { keywordMatch, matchSlashQuery } from "@/modules/blog/components/editor/slash-menu-logic";
 
 /** The slice of the Toast UI editor instance the slash menu drives. */
 export type SlashEditor = {
@@ -141,9 +142,7 @@ export function SlashMenu({
 
   const filtered = useMemo(() => {
     if (!trigger) return [];
-    const q = trigger.query.toLowerCase();
-    if (!q) return ITEMS;
-    return ITEMS.filter((it) => it.keywords.some((k) => k.toLowerCase().includes(q)));
+    return ITEMS.filter((it) => keywordMatch(it.keywords, trigger.query));
   }, [trigger]);
 
   const open = trigger !== null && filtered.length > 0;
@@ -160,12 +159,12 @@ export function SlashMenu({
       const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as Element);
       if (el?.closest("pre, code")) return setTrigger(null); // "/" is literal inside code
       const before = (node.textContent ?? "").slice(0, sel.anchorOffset);
-      const m = before.match(/(?:^|\s)\/([^\s/]*)$/);
-      if (!m) return setTrigger(null);
+      const query = matchSlashQuery(before);
+      if (query === null) return setTrigger(null);
       const r = sel.getRangeAt(0).getBoundingClientRect();
       const rect = r.width === 0 && r.height === 0 ? el?.getBoundingClientRect() : r;
       if (!rect) return setTrigger(null);
-      setTrigger({ query: m[1], rect });
+      setTrigger({ query, rect });
     };
     compute();
     document.addEventListener("selectionchange", compute);
