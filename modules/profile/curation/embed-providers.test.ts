@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveEmbedProvider, EMBED_PROVIDERS } from "@/components/blog/curation/embed-providers";
+import { resolveEmbedProvider, EMBED_PROVIDERS } from "@/modules/profile/curation/embed-providers";
 
 describe("resolveEmbedProvider", () => {
   it("resolves YouTube variants (main, short, mobile, music)", () => {

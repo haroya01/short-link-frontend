@@ -4,8 +4,8 @@ import { useMemo, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { CalendarDays, ExternalLink } from "lucide-react";
 import type { BookingConfig } from "@/types";
-import { parseBookingConfig } from "@/lib/block-config-parsers";
-import { resolveBookingProvider } from "@/components/blog/curation/booking-providers";
+import { parseBookingConfig } from "@/modules/profile/lib/block-config-parsers";
+import { resolveBookingProvider } from "@/modules/profile/curation/booking-providers";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {

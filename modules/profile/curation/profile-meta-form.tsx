@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { MyProfile, ProfileTheme, ShareChannel, Social } from "@/types";
 import { ChannelIcon } from "@/app/[locale]/u/[username]/_components/share-row";
-import { socialUrlPrefix } from "@/components/blog/curation/socials-templates";
+import { socialUrlPrefix } from "@/modules/profile/curation/socials-templates";
 
 const SHARE_CHANNELS: ShareChannel[] = [
   "instagram",

@@ -4,7 +4,7 @@ import { useMemo, type CSSProperties } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { TextAccent, TextLayout } from "@/types";
-import { parseTextBlockConfig } from "@/lib/block-config-parsers";
+import { parseTextBlockConfig } from "@/modules/profile/lib/block-config-parsers";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {

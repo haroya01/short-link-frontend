@@ -4,7 +4,7 @@ import { useState, type CSSProperties, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Lock } from "lucide-react";
 import { submitEmailLead } from "@/lib/api";
-import { parseEmailFormConfig } from "@/lib/block-config-parsers";
+import { parseEmailFormConfig } from "@/modules/profile/lib/block-config-parsers";
 import type { ThemeColors } from "../_lib/theme";
 
 type Props = {

@@ -19,8 +19,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PlaceCategory } from "@/types";
-import { parsePlaceConfig } from "@/lib/block-config-parsers";
-import { directionsUrl, staticMapUrl } from "@/lib/google-maps-static";
+import { parsePlaceConfig } from "@/modules/profile/lib/block-config-parsers";
+import { directionsUrl, staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 import type { ThemeColors } from "../_lib/theme";
 import { CardFloatingChip } from "./card-floating-chip";
 

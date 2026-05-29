@@ -20,12 +20,12 @@ import {
   getPlaceDetails,
   newSessionToken,
   type PlaceSuggestion,
-} from "@/lib/google-places";
+} from "@/modules/profile/lib/google-places";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FormField } from "@/components/blog/curation/form-field";
-import { ImageUploader } from "@/components/blog/curation/image-uploader";
+import { FormField } from "@/modules/profile/curation/form-field";
+import { ImageUploader } from "@/modules/profile/curation/image-uploader";
 
 const NAME_MAX = 80;
 const ADDRESS_MAX = 200;
