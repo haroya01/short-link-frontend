@@ -98,7 +98,8 @@
     "myPosts": "My posts",
     "noPosts": "No posts yet.",
     "listLoading": "Loading…",
-    "slugHint": "Editable until published · lowercase letters, digits, hyphens"
+    "slugHint": "Editable until published · lowercase letters, digits, hyphens",
+    "titleRequired": "Add a title before publishing"
   },
   "publicPost": {
     "like": "Like",

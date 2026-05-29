@@ -31,7 +31,9 @@ export default function NewPostPage() {
       // One retry covers the (rare) generated-slug collision.
       for (let attempt = 0; attempt < 2; attempt++) {
         try {
-          const post = await createPost({ slug: randomSlug(), title: t("untitled") });
+          // Untitled draft — the editor title field starts empty (placeholder), title is required
+          // only at publish.
+          const post = await createPost({ slug: randomSlug(), title: "" });
           // Navigate to the sibling editor by swapping the trailing "/new" for the id — this
           // preserves the current path prefix (locale + /blog-preview on the apex, or the bare
           // path on blog.kurl.me). A root-relative `/write/${id}` would drop the prefix → 404.
