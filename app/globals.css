@@ -706,3 +706,15 @@ canvas.qr-canvas-fit {
 .brand-no-transition * {
   transition: none !important;
 }
+
+/* iOS Safari auto-zooms the page when a focused editable region's font-size is under 16px. Keep
+   the post editor's writing surfaces at 16px on phones so tapping into the editor doesn't zoom.
+   Scoped to .toastui-editor (only the editor mounts it); desktop sizing is untouched. */
+@media (max-width: 640px) {
+  .toastui-editor-contents,
+  .toastui-editor .ProseMirror,
+  .toastui-editor .toastui-editor-md-container .toastui-editor,
+  .toastui-editor textarea {
+    font-size: 16px;
+  }
+}
