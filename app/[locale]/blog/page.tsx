@@ -41,6 +41,7 @@ export default async function BlogFeedPage({
           <SortTab label={t("recent")} href="?sort=recent" active={tab === "recent"} />
           <SortTab label={t("trending")} href="?sort=trending" active={tab === "trending"} />
           <SortTab label={t("feed")} href="?sort=following" active={tab === "following"} />
+          <SortTab label={t("topics")} href="/tags" active={false} />
         </nav>
         <a
           href="/write"

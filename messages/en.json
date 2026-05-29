@@ -21,7 +21,8 @@
     "feed": "Feed",
     "followingSignedOut": "See posts from the authors you follow. Sign in to get started.",
     "followingEmpty": "No posts from authors you follow yet. Try following someone you like.",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "topics": "Topics"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",

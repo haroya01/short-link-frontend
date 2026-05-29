@@ -161,6 +161,16 @@ export function findPublicPost(
   );
 }
 
+export interface TagCount {
+  tag: string;
+  count: number;
+}
+
+/** Most-used tags across published posts, most popular first — the 주제 index. */
+export function listPopularTags(limit = 50): Promise<FetchResult<TagCount[]>> {
+  return fetchPublic<TagCount[]>(`/api/v1/public/tags?limit=${limit}`);
+}
+
 export function listPublicSeries(username: string): Promise<FetchResult<PublicSeriesList>> {
   return fetchPublic<PublicSeriesList>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/series`,
