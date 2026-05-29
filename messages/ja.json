@@ -91,7 +91,14 @@
     "statusDRAFT": "下書き",
     "statusSCHEDULED": "予約",
     "statusPUBLISHED": "公開中",
-    "statusUNPUBLISHED": "公開停止"
+    "statusUNPUBLISHED": "公開停止",
+    "untitled": "無題",
+    "creating": "新しい記事を作成中…",
+    "newPost": "新規作成",
+    "myPosts": "投稿一覧",
+    "noPosts": "まだ投稿がありません。",
+    "listLoading": "読み込み中…",
+    "slugHint": "公開前は変更可能 · 英小文字・数字・ハイフン"
   },
   "publicPost": {
     "like": "いいね",

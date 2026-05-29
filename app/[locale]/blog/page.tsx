@@ -40,7 +40,7 @@ export default async function BlogFeedPage({
 
   const writeCta = (
     <a
-      href={blogHref("/write")}
+      href={blogHref("/write/new")}
       className="inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition-colors hover:bg-accent-700"
     >
       <PenSquare className="h-4 w-4" />
@@ -111,7 +111,7 @@ export default async function BlogFeedPage({
       {/* Mobile-only floating write button — the header Write CTA is desktop-only (sm:block), so
           on phones the action lives here as a FAB (velog-style). */}
       <a
-        href={blogHref("/write")}
+        href={blogHref("/write/new")}
         aria-label={t("write")}
         className="fixed bottom-6 right-4 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent-600 text-white shadow-[0_8px_24px_-6px_rgba(5,150,105,0.5)] transition-colors hover:bg-accent-700 sm:hidden"
       >

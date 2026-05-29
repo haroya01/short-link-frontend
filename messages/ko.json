@@ -91,7 +91,14 @@
     "statusDRAFT": "임시저장",
     "statusSCHEDULED": "예약",
     "statusPUBLISHED": "발행됨",
-    "statusUNPUBLISHED": "발행취소"
+    "statusUNPUBLISHED": "발행취소",
+    "untitled": "제목 없음",
+    "creating": "새 글을 만드는 중…",
+    "newPost": "새 글 쓰기",
+    "myPosts": "내 글",
+    "noPosts": "아직 작성한 글이 없어요.",
+    "listLoading": "불러오는 중…",
+    "slugHint": "발행 전까지 수정 가능 · 영문 소문자/숫자/하이픈"
   },
   "publicPost": {
     "like": "좋아요",
