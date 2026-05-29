@@ -145,7 +145,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <main className="mx-auto flex h-[calc(100vh-1px)] max-w-5xl flex-col px-4 py-4 sm:px-6">
+    <main className="mx-auto flex h-[calc(100dvh-1px)] max-w-5xl flex-col px-4 py-4 sm:px-6">
       {/* Top bar */}
       <div className="mb-3 flex items-center justify-between gap-3">
         <a
