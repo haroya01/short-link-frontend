@@ -3,13 +3,24 @@
 import { useEffect, useRef, useState } from "react";
 import { FileText, Grid3x3, Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { blogHref, linksHref } from "@/lib/host";
+import { blogHref, currentProduct, linksHref, type Product } from "@/lib/host";
 
 /**
  * Cross-product navigation. 헤더 우상단 grid icon → popover 두 카드 (Links / Blog).
  * 글로벌 이동 장치이고, in-context cross-product CTA 는 page-level 로 별도 배치한다.
  * Decision: [[decisions/2026-05-29-product-surface-c-lite]]
  */
+const PRODUCTS: {
+  key: Product;
+  href: () => string;
+  Icon: typeof Link2;
+  labelKey: string;
+  hintKey: string;
+}[] = [
+  { key: "links", href: () => linksHref("/"), Icon: Link2, labelKey: "linksLabel", hintKey: "linksHint" },
+  { key: "blog", href: () => blogHref("/"), Icon: FileText, labelKey: "blogLabel", hintKey: "blogHint" },
+];
+
 export function AppsGrid() {
   const [open, setOpen] = useState(false);
   const t = useTranslations("nav.apps");
@@ -48,32 +59,24 @@ export function AppsGrid() {
           role="menu"
           className="absolute right-0 top-10 z-40 w-72 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
         >
-          <a
-            href={linksHref("/")}
-            role="menuitem"
-            className="flex items-start gap-3 px-3 py-3 transition-colors hover:bg-slate-50"
-          >
-            <Link2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
-            <span className="min-w-0">
-              <span className="block text-sm font-medium text-slate-900">
-                {t("linksLabel")}
+          {/* Only show the product(s) you're NOT on — the grid is a switcher, so surfacing the
+              current product is noise. Computed client-side from host/path. */}
+          {PRODUCTS.filter((p) => p.key !== currentProduct()).map((p, i) => (
+            <a
+              key={p.key}
+              href={p.href()}
+              role="menuitem"
+              className={`flex items-start gap-3 px-3 py-3 transition-colors hover:bg-slate-50 ${
+                i > 0 ? "border-t border-slate-100" : ""
+              }`}
+            >
+              <p.Icon className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
+              <span className="min-w-0">
+                <span className="block text-sm font-medium text-slate-900">{t(p.labelKey)}</span>
+                <span className="block text-[12px] text-slate-500">{t(p.hintKey)}</span>
               </span>
-              <span className="block text-[12px] text-slate-500">{t("linksHint")}</span>
-            </span>
-          </a>
-          <a
-            href={blogHref("/")}
-            role="menuitem"
-            className="flex items-start gap-3 border-t border-slate-100 px-3 py-3 transition-colors hover:bg-slate-50"
-          >
-            <FileText className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
-            <span className="min-w-0">
-              <span className="block text-sm font-medium text-slate-900">
-                {t("blogLabel")}
-              </span>
-              <span className="block text-[12px] text-slate-500">{t("blogHint")}</span>
-            </span>
-          </a>
+            </a>
+          ))}
         </div>
       )}
     </div>
