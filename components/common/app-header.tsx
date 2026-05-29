@@ -31,8 +31,8 @@ export function AppHeader() {
           >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
-          <Link href="/" aria-label="kurl" className="shrink-0">
-            <Logo />
+          <Link href="/" aria-label="blog.kurl" className="shrink-0">
+            <Logo variant="blog" />
           </Link>
         </div>
 
