@@ -29,7 +29,8 @@ const WORKSPACE_PATHS = [
   "/leads",
 ];
 
-const ANONYMOUS_MARKETING_PATHS = ["/showcase"];
+// Showcase moved to kurl.me (profile is its own surface, not part of the blog product).
+const ANONYMOUS_MARKETING_PATHS: string[] = [];
 
 function stripLocale(pathname: string): string {
   const m = pathname.match(/^\/[a-z]{2}(\/.*)?$/);
