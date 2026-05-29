@@ -78,6 +78,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [meId, meRole]);
 
   const signInWithGoogle = useCallback(() => {
+    // Return to where login started (blog, profile, …) instead of always landing on /dashboard.
+    // Stash the current path unless we're on /login (which sets its own ?next=) or the callback;
+    // same-origin sessionStorage carries it through the OAuth round-trip.
+    if (!/\/(login|auth\/callback)(\/|$)/.test(window.location.pathname)) {
+      sessionStorage.setItem("kurl:login-next", window.location.pathname + window.location.search);
+    }
     const apiBase = process.env.NEXT_PUBLIC_API_BASE ?? "";
     window.location.href = apiBase + "/oauth2/authorization/google";
   }, []);
