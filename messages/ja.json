@@ -1,4 +1,12 @@
 {
+  "publicFeed": {
+    "recent": "最新",
+    "trending": "トレンド",
+    "empty": "まだ公開された記事はありません。",
+    "write": "投稿する",
+    "views": "閲覧 {count}",
+    "loadMore": "もっと見る"
+  },
   "blogWorkspace": {
     "overviewTitle": "概要",
     "overviewSubtitle": "記事とシリーズをまとめて管理できます。",
