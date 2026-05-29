@@ -126,8 +126,13 @@ function ShowcaseCard({
         }}
       >
         <div
-          className="device device-iphone-14-pro origin-top-left"
-          style={{ transform: `scale(${scale})` }}
+          className="device device-iphone-14-pro"
+          // transform-origin MUST be inline: the `origin-top-left` utility loses the cascade to
+          // devices.css's `.device` rule (equal specificity, loaded later) which forces a
+          // centered origin. With a centered origin scale() shrinks around the native 428px
+          // centre, so the device overflows this wrapper box — sized for top-left scaling — by
+          // (428-scaledW)/2 on each side, clipping the phone's right edge off-screen on mobile.
+          style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
         >
           <div className="device-frame">
             <div
