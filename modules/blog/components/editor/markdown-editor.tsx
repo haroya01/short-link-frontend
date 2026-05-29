@@ -93,7 +93,11 @@ export function MarkdownEditor({
     <div className="relative h-full">
       <div ref={hostRef} className="h-full" />
       {commands && (
-        <FloatingToolbar editor={commands} onUploadImage={onUploadImage} />
+        <FloatingToolbar
+          editor={commands}
+          onUploadImage={onUploadImage}
+          editorHost={hostRef}
+        />
       )}
     </div>
   );
