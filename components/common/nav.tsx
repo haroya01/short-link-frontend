@@ -32,6 +32,8 @@ type NavEntry = {
 function anonymousEntries(t: (k: string) => string): NavEntry[] {
   return [
     { href: "/", label: t("shorten"), active: (p) => p === "/" },
+    // 프로필(showcase) promo — 로그아웃 상태에서도 노출. 미들웨어가 /showcase → blog.kurl.me/showcase 로 redirect.
+    { href: "/showcase", label: t("showcase"), active: (p) => p.startsWith("/showcase") },
     { href: "/qr-campaigns", label: t("campaigns"), active: (p) => p.startsWith("/qr-campaigns") },
   ];
 }
