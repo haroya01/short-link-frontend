@@ -8,17 +8,14 @@ import { AppProviders } from "@/components/common/app-providers";
 import { ClaimToastListener } from "@/components/common/claim-toast-listener";
 import { CookieConsent } from "@/components/common/cookie-consent";
 import { Footer } from "@/components/common/footer";
-import { Nav } from "@/components/common/nav";
 import { MobileSidebar, Sidebar } from "@/components/common/sidebar";
 import { SidebarStateProvider } from "@/components/common/sidebar-state";
 import { buildBlogSections } from "@/lib/sidebar-entries";
 
-// Public-path based. On blog.kurl.me the /blog prefix is dropped (middleware rewrites /foo →
-// /blog/foo internally); in dev/preview the public path is /blog-preview/foo. stripLocale drops
-// either prefix so matching holds for the public path, the preview path, and the rewritten
-// internal path. blog workspace = every logged-in path that isn't marketing.
+// Author workspace paths get the sidebar. Everything else on blog.kurl.me — the public feed at
+// "/" and any other public page — gets the chrome-light header with no sidebar, so anyone can
+// browse. stripLocale also drops the /blog (prod rewrite) or /blog-preview (dev) prefix.
 const WORKSPACE_PATHS = [
-  "/",
   "/write",
   "/posts",
   "/drafts",
@@ -28,9 +25,6 @@ const WORKSPACE_PATHS = [
   "/curation",
   "/leads",
 ];
-
-// Showcase moved to kurl.me (profile is its own surface, not part of the blog product).
-const ANONYMOUS_MARKETING_PATHS: string[] = [];
 
 function stripLocale(pathname: string): string {
   const m = pathname.match(/^\/[a-z]{2}(\/.*)?$/);
@@ -51,26 +45,12 @@ function matchesAny(path: string, list: string[]): boolean {
 
 export default function BlogLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { authenticated } = useAuth();
   const tBlog = useTranslations("sidebar.blog");
   const tCommon = useTranslations("sidebar.common");
   const { isAdmin } = useAuth();
 
   const internalPath = stripLocale(pathname);
-  const isMarketing = matchesAny(internalPath, ANONYMOUS_MARKETING_PATHS);
-  const isWorkspace = !isMarketing && matchesAny(internalPath, WORKSPACE_PATHS);
-
-  if (isMarketing) {
-    return (
-      <AppProviders>
-        <Nav />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <CookieConsent />
-        <ClaimToastListener />
-      </AppProviders>
-    );
-  }
+  const isWorkspace = matchesAny(internalPath, WORKSPACE_PATHS);
 
   if (isWorkspace) {
     const sections = buildBlogSections(tBlog, tCommon, { isAdmin });
@@ -93,11 +73,16 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
     );
   }
 
+  // Public surface (feed home + any other public blog page) — header, no workspace sidebar.
   return (
     <AppProviders>
-      <Nav />
-      <main className="flex-1">{children}</main>
-      <Footer />
+      <SidebarStateProvider>
+        <div className="flex min-h-screen flex-col">
+          <AppHeader showMenu={false} />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
+      </SidebarStateProvider>
       <CookieConsent />
       <ClaimToastListener />
     </AppProviders>

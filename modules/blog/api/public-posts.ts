@@ -87,6 +87,27 @@ export interface PublicSeriesDetail {
   posts: PublicPostListItem[];
 }
 
+export interface PublicFeedItem {
+  author: PublicAuthor;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  ogImageUrl: string | null;
+  languageTag: string;
+  tags: string[];
+  publishedAt: string;
+  viewCount: number;
+}
+
+export interface PublicFeedView {
+  items: PublicFeedItem[];
+  page: number;
+  size: number;
+  hasNext: boolean;
+}
+
+export type FeedSort = "recent" | "trending";
+
 export type FetchResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: 404 | 410 | "error" };
@@ -101,6 +122,16 @@ async function fetchPublic<T>(path: string): Promise<FetchResult<T>> {
   if (res.status === 404) return { ok: false, status: 404 };
   if (res.status === 410) return { ok: false, status: 410 };
   return { ok: false, status: "error" };
+}
+
+export function listPublicFeed(
+  sort: FeedSort = "recent",
+  page = 0,
+  size = 20,
+): Promise<FetchResult<PublicFeedView>> {
+  return fetchPublic<PublicFeedView>(
+    `/api/v1/public/posts?sort=${sort}&page=${page}&size=${size}`,
+  );
 }
 
 export function listPublicPosts(username: string): Promise<FetchResult<PublicPostList>> {
