@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { PenSquare } from "lucide-react";
 import { listPublicFeed, type FeedSort } from "@/modules/blog/api/public-posts";
@@ -110,8 +111,9 @@ export default async function BlogFeedPage({
 }
 
 function SortTab({ label, href, active }: { label: string; href: string; active: boolean }) {
+  // next/link → client-side soft navigation between tabs (no full reload / flicker).
   return (
-    <a
+    <Link
       href={href}
       className={`relative px-2.5 py-1.5 transition-colors ${
         active
@@ -120,6 +122,6 @@ function SortTab({ label, href, active }: { label: string; href: string; active:
       }`}
     >
       {label}
-    </a>
+    </Link>
   );
 }
