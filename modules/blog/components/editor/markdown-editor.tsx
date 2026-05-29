@@ -1,24 +1,25 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import "tui-color-picker/dist/tui-color-picker.css";
 import "@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css";
 import { highlightPlugin } from "@/modules/blog/components/editor/highlight-plugin";
+import {
+  FloatingToolbar,
+  type EditorCommands,
+} from "@/modules/blog/components/editor/floating-toolbar";
 
 /**
  * Toast UI Editor (vanilla — the React wrapper only peer-supports React 17). WYSIWYG + markdown
- * tabs, built-in toolbar, and an image hook wired to the post's presign→commit uploader so authors
- * can drop / paste / pick images inline. The JS is dynamically imported inside the effect so it
+ * tabs and an image hook wired to the post's presign→commit uploader so authors can drop / paste /
+ * pick images inline. Toast's own top toolbar is hidden (CSS in globals); formatting is driven by a
+ * custom {@link FloatingToolbar} that floats at the bottom — its dropdown opens upward, which
+ * Toast's downward-opening one couldn't. The JS is dynamically imported inside the effect so it
  * never evaluates during SSR; the component renders just a host div on the server.
  */
-type ToastInstance = {
+type ToastInstance = EditorCommands & {
   getMarkdown: () => string;
-  exec: (command: string, payload?: unknown) => void;
-  insertToolbarItem: (
-    pos: { groupIndex: number; itemIndex: number },
-    item: Record<string, unknown>,
-  ) => void;
   destroy: () => void;
 };
 
@@ -36,6 +37,7 @@ export function MarkdownEditor({
   const onUploadRef = useRef(onUploadImage);
   onChangeRef.current = onChange;
   onUploadRef.current = onUploadImage;
+  const [commands, setCommands] = useState<EditorCommands | null>(null);
 
   useEffect(() => {
     let editor: ToastInstance | undefined;
@@ -76,34 +78,23 @@ export function MarkdownEditor({
           },
         },
       }) as unknown as ToastInstance;
-
-      // 형광펜 button — runs the highlightPlugin's "highlight" command (background-color span).
-      try {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "toastui-editor-toolbar-icons";
-        btn.style.margin = "0";
-        btn.style.backgroundImage = "none";
-        btn.style.fontSize = "15px";
-        btn.textContent = "🖍";
-        btn.setAttribute("aria-label", "Highlight");
-        btn.addEventListener("click", () => editor?.exec("highlight"));
-        // Next to the color picker (group 0) so both stay visible — not in the overflow group.
-        editor.insertToolbarItem(
-          { groupIndex: 0, itemIndex: 4 },
-          { name: "highlight", tooltip: "Highlight", el: btn },
-        );
-      } catch {
-        /* toolbar shape changed — skip rather than break the editor */
-      }
+      setCommands(editor);
     });
     return () => {
       cancelled = true;
+      setCommands(null);
       editor?.destroy();
     };
     // Mount once; `initialValue` is already loaded before this renders (the page gates on loading).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <div ref={hostRef} className="h-full" />;
+  return (
+    <div className="relative h-full">
+      <div ref={hostRef} className="h-full" />
+      {commands && (
+        <FloatingToolbar editor={commands} onUploadImage={onUploadImage} />
+      )}
+    </div>
+  );
 }

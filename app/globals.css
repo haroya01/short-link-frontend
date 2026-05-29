@@ -726,17 +726,14 @@ canvas.qr-canvas-fit {
 .toastui-editor-defaultUI {
   border: 0;
 }
+/* Hide Toast's own top toolbar — formatting is driven by the custom FloatingToolbar at the bottom. */
 .toastui-editor-defaultUI .toastui-editor-toolbar {
-  background: #fff;
-  border-bottom: 1px solid #f1f5f9; /* slate-100 */
-}
-.toastui-editor-defaultUI .toastui-editor-defaultUI-toolbar {
-  border: 0;
-  background: transparent;
+  display: none;
 }
 .toastui-editor-ww-container .toastui-editor-contents {
   color: #334155; /* slate-700 */
-  padding: 1.75rem clamp(1.25rem, 6vw, 4.5rem) 4rem;
+  /* Generous bottom padding clears the floating toolbar so the last lines stay reachable. */
+  padding: 1.75rem clamp(1.25rem, 6vw, 4.5rem) 6rem;
 }
 .toastui-editor-contents p,
 .toastui-editor-contents li {
