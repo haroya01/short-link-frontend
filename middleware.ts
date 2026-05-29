@@ -121,15 +121,17 @@ export default function middleware(req: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // 3. blog.kurl.me — /{locale}/foo → /{locale}/blog/foo rewrite
+  // 3. blog.kurl.me — /{locale?}/foo → /{locale}/blog/foo rewrite. Detect an optional leading
+  //    locale and preserve the FULL remaining path (encoding-safe slice). Previously a no-locale
+  //    multi-segment path like /write or /randomword fell through to /{locale}/blog (the feed),
+  //    so unknown paths showed the feed instead of 404 and /write/{id} lost its id.
   if (isBlogHost(originalHost) || isBlogHost(reqHost)) {
     const url = req.nextUrl.clone();
-    const m = url.pathname.match(/^\/(?:([a-z]{2})(\/.*)?)?$/);
-    const locale = m?.[1] ?? DEFAULT_LOCALE;
-    const rest = m?.[2] ?? "/";
-    const tail = rest === "/" ? "" : rest;
+    const localeMatch = url.pathname.match(/^\/([a-z]{2})(?=\/|$)/);
+    const locale = localeMatch ? localeMatch[1] : DEFAULT_LOCALE;
+    const rest = localeMatch ? url.pathname.slice(localeMatch[0].length) : url.pathname;
     if (!url.pathname.match(/^\/[a-z]{2}\/blog(\/|$)/)) {
-      url.pathname = `/${locale}/blog${tail}`;
+      url.pathname = `/${locale}/blog${rest === "/" ? "" : rest}`;
       return NextResponse.rewrite(url);
     }
   }
