@@ -38,16 +38,18 @@ function anonymousEntries(t: (k: string) => string): NavEntry[] {
   ];
 }
 
-function authenticatedEntries(t: (k: string) => string): NavEntry[] {
+function authenticatedEntries(t: (k: string) => string, hasProfile: boolean): NavEntry[] {
+  // Profile owner → edit settings; no profile yet → showcase (examples / onboarding).
+  const profileHref = hasProfile ? "/settings/profile" : "/showcase";
   return [
     { href: "/", label: t("shorten"), active: (p) => p === "/" },
     { href: "/dashboard", label: t("myLinks"), active: (p) => p.startsWith("/dashboard") },
     { href: "/campaigns", label: t("campaigns"), active: (p) => p.startsWith("/campaigns") },
     { href: "/stats", label: t("stats"), active: (p) => p.startsWith("/stats") },
     {
-      href: "/settings/profile",
+      href: profileHref,
       label: t("profile"),
-      active: (p) => p.startsWith("/settings/profile"),
+      active: (p) => p.startsWith("/settings/profile") || p.startsWith("/showcase"),
     },
     { href: blogHref("/"), label: t("blog"), active: () => false, external: true },
   ];
@@ -58,7 +60,7 @@ export function Nav() {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("nav");
-  const { authenticated, ready, signOut } = useAuth();
+  const { authenticated, ready, signOut, me } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -70,7 +72,11 @@ export function Nav() {
 
   // 단일 상단 가로바 IA: 로그인 여부에 따라 entries 만 교체. (사이드바 IA 폐기 — kurl.me 는 top-nav)
   const showEntries = ready;
-  const entries = !ready ? [] : authenticated ? authenticatedEntries(t) : anonymousEntries(t);
+  const entries = !ready
+    ? []
+    : authenticated
+      ? authenticatedEntries(t, Boolean(me?.username))
+      : anonymousEntries(t);
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
