@@ -4,7 +4,7 @@ import { LogIn, LogOut, Menu, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { Link } from "@/i18n/navigation";
+import { blogHref } from "@/lib/host";
 import { Button } from "@/components/ui/button";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
@@ -34,9 +34,11 @@ export function AppHeader({ showMenu = true }: { showMenu?: boolean }) {
               {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
           )}
-          <Link href="/" aria-label="blog.kurl" className="shrink-0">
+          {/* Blog header → the logo returns to the blog home, not the links app root. Plain anchor
+              with blogHref so it lands on the right host (blog.kurl.me, or /blog-preview on apex). */}
+          <a href={blogHref("/")} aria-label="blog.kurl" className="shrink-0">
             <Logo variant="blog" />
-          </Link>
+          </a>
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
