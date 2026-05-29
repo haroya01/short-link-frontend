@@ -11,3 +11,8 @@ declare module "@toast-ui/editor" {
     destroy(): void;
   }
 }
+
+declare module "@toast-ui/editor-plugin-color-syntax" {
+  const colorSyntax: (...args: unknown[]) => unknown;
+  export default colorSyntax;
+}
