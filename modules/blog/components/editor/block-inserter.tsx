@@ -2,22 +2,21 @@
 
 import { useEffect, useState, type RefObject } from "react";
 import { Plus } from "lucide-react";
-import type { SlashEditor } from "@/modules/blog/components/editor/slash-menu";
 
 /**
  * Medium/Notion-style "add block" affordance: a "+" sits to the left of the current empty line so
  * block insertion is discoverable without already knowing the slash menu (the selection bubble only
- * covers formatting *selected* text — it can't help on an empty line). Clicking it just types "/",
- * which opens the existing slash menu, so there's one block menu, one source of truth.
+ * covers formatting *selected* text — it can't help on an empty line). Clicking it opens the same
+ * slash menu (via onAddBlock) — one block menu, one source of truth — without typing a visible "/".
  *
  * Desktop only — phones keep the always-visible bottom toolbar, which already exposes everything.
  */
 export function BlockInserter({
-  editor,
   editorHost,
+  onAddBlock,
 }: {
-  editor: SlashEditor;
   editorHost: RefObject<HTMLElement>;
+  onAddBlock: () => void;
 }) {
   const [top, setTop] = useState<number | null>(null);
   const [left, setLeft] = useState(0);
@@ -60,12 +59,9 @@ export function BlockInserter({
     <button
       type="button"
       aria-label="Add a block"
-      // Keep the caret on the line so the inserted "/" lands there.
+      // Keep the caret on the line so the menu opens there.
       onMouseDown={(e) => e.preventDefault()}
-      onClick={() => {
-        editor.focus();
-        editor.insertText("/");
-      }}
+      onClick={onAddBlock}
       className="absolute z-20 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full border border-slate-200 bg-white text-slate-400 shadow-sm transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600"
       style={{ top, left }}
     >

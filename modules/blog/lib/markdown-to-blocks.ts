@@ -1,4 +1,5 @@
 import type { BlockInput } from "@/modules/blog/api/posts";
+import { altWithWidth, parseImageAlt } from "@/modules/blog/lib/image-width";
 import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
 
@@ -123,9 +124,10 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
 
     m = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
     if (m) {
+      const { width, alt } = parseImageAlt(m[1]);
       blocks.push({
         type: "IMAGE",
-        content: JSON.stringify({ url: m[2], alt: m[1] }),
+        content: JSON.stringify({ url: m[2], alt, ...(width ? { width } : {}) }),
       });
       i++;
       continue;
@@ -204,7 +206,7 @@ export function blocksToMarkdown(blocks: { type: string; content: string | null 
         try {
           const parsed = b.content ? JSON.parse(b.content) : null;
           if (parsed && typeof parsed.url === "string") {
-            parts.push(`![${parsed.alt ?? ""}](${parsed.url})`);
+            parts.push(`![${altWithWidth(parsed.alt ?? "", parsed.width)}](${parsed.url})`);
           }
         } catch {
           // ignore malformed

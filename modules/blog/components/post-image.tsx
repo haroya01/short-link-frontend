@@ -3,6 +3,13 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import type { ImageWidth } from "@/modules/blog/lib/image-width";
+
+// Wider-than-column layouts. Reader uses these; the editor mirrors them via img[alt^="«wide»"] CSS.
+const WIDTH_CLASS: Record<ImageWidth, string> = {
+  wide: "post-img-wide",
+  full: "post-img-full",
+};
 
 /**
  * A post image: fits the article column (aspect ratio preserved via CSS), and clicking it opens the
@@ -10,7 +17,17 @@ import { X } from "lucide-react";
  * Substack, Ghost, velog). Portaled to <body> so a transformed ancestor can't clip the fixed
  * overlay; Esc, backdrop click, and the close button all dismiss, and body scroll is locked while open.
  */
-export function PostImage({ src, alt, caption }: { src: string; alt: string; caption: string }) {
+export function PostImage({
+  src,
+  alt,
+  caption,
+  width,
+}: {
+  src: string;
+  alt: string;
+  caption: string;
+  width?: ImageWidth;
+}) {
   const [open, setOpen] = useState(false);
   const label = alt || caption || "";
 
@@ -27,7 +44,7 @@ export function PostImage({ src, alt, caption }: { src: string; alt: string; cap
   }, [open]);
 
   return (
-    <figure>
+    <figure className={width ? WIDTH_CLASS[width] : undefined}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}

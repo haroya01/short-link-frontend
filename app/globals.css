@@ -884,3 +884,32 @@ body[data-cookie-consent="visible"] {
     animation: none;
   }
 }
+
+/*
+ * Wide / full-bleed post images — break out of the reading column. Reader centers on the viewport;
+ * the editor mirrors the intent (wider than the writing column) via the «wide»/«full» alt marker so
+ * "wide" is visible while you write. Open for extension: add a width = add a WIDTH_CLASS + one rule.
+ */
+.post-img-wide,
+.post-img-full {
+  position: relative;
+  left: 50%;
+  max-width: none;
+  transform: translateX(-50%);
+}
+.post-img-wide {
+  width: min(56rem, calc(100vw - 2rem));
+}
+.post-img-full {
+  width: calc(100vw - 2rem);
+}
+.toastui-editor-contents img[alt^="«wide»"] {
+  max-width: none;
+  width: calc(100% + 6rem);
+  margin-inline: -3rem;
+}
+.toastui-editor-contents img[alt^="«full»"] {
+  max-width: none;
+  width: calc(100% + 10rem);
+  margin-inline: -5rem;
+}
