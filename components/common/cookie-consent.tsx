@@ -53,9 +53,12 @@ export function CookieConsent() {
       role="region"
       aria-live="polite"
       aria-label={t("ariaLabel")}
-      className="fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] sm:bottom-4 sm:px-4 sm:pb-0"
+      className="fixed inset-x-0 bottom-0 z-40 sm:bottom-4 sm:px-4"
     >
-      <div className="mx-auto flex max-w-3xl items-center gap-2 rounded-lg border border-slate-200 bg-white/95 px-3 py-2 shadow-md backdrop-blur sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:px-3.5 sm:py-3">
+      {/* Phones: an edge-to-edge bottom bar (top border + upward shadow) so it reads as system chrome
+          instead of a floating card stacked under the FAB. sm+: the compact right-aligned rounded
+          card returns. */}
+      <div className="mx-auto flex max-w-3xl items-center gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] backdrop-blur sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:pb-3 sm:shadow-md">
         <p className="min-w-0 flex-1 text-[11px] leading-snug text-slate-600 sm:text-xs sm:leading-relaxed">
           {t("message")}
         </p>

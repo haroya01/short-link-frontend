@@ -104,7 +104,9 @@ export default async function BlogFeedPage({
         </div>
       </section>
 
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+      {/* pb-24 on phones keeps the last feed card scrollable clear of the fixed write FAB (the body
+          gets extra room on top of that while the cookie banner is up — see globals.css). */}
+      <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
         <header className="flex items-center justify-between gap-4 border-b border-slate-200/80 pb-3">
           <nav className="flex gap-1 text-[15px] font-bold">
             <SortTab label={t("recent")} href="?sort=recent" active={tab === "recent"} />
