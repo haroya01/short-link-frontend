@@ -62,7 +62,7 @@ export default async function PublicSeriesPage({
           <li key={p.slug}>
             <a
               href={`/${p.slug}`}
-              className="group -mx-4 flex items-start gap-4 rounded-2xl px-4 py-4 transition-colors hover:bg-slate-50"
+              className="group -mx-4 flex items-start gap-4 rounded-2xl px-4 py-4 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
             >
               <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-50 text-[13px] font-semibold text-accent-700">
                 {i + 1}

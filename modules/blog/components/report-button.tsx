@@ -42,7 +42,7 @@ export function ReportButton({ subjectType, subjectId }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1 text-xs text-slate-400 transition-colors hover:text-slate-600"
+        className="inline-flex items-center gap-1 rounded text-xs text-slate-400 transition-colors hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
       >
         <Flag className="h-3 w-3" />
         {t("report")}
@@ -71,14 +71,14 @@ export function ReportButton({ subjectType, subjectId }: Props) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100"
+              className="rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
             >
               {tc("cancel")}
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+              className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:opacity-50"
             >
               {submitting ? t("reportSubmitting") : t("reportSubmit")}
             </button>

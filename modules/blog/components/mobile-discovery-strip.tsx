@@ -32,7 +32,7 @@ export async function MobileDiscoveryStrip({
             </h2>
             <a
               href={blogHref("/tags")}
-              className="text-[12px] font-medium text-accent-600 hover:text-accent-700"
+              className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
             >
               {t("railSeeAll")}
             </a>
