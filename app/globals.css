@@ -815,10 +815,10 @@ body[data-cookie-consent="visible"] {
 }
 
 /*
- * Product-switch warp. Jumping between kurl and blog.kurl is a cross-origin reload; this overlay
- * covers the hard load with one branded motion built from the logo mark: the three lines draw on
- * left-to-right (staggered), then brand-green floods out from the center, then the destination
- * wordmark fades in. Honors reduced-motion (the switcher skips the overlay and navigates straight).
+ * Product-switch warp. Jumping between kurl and blog.kurl is a cross-origin reload; this white
+ * overlay covers the hard load with a branded motion built from the logo mark: the three lines
+ * draw on left-to-right (staggered), then the destination wordmark fades in beneath them as a logo
+ * lockup. Honors reduced-motion (the switcher skips the overlay and navigates straight).
  */
 @keyframes warp-stroke {
   from {
@@ -826,19 +826,6 @@ body[data-cookie-consent="visible"] {
   }
   to {
     transform: scaleX(1);
-  }
-}
-@keyframes warp-flood {
-  from {
-    transform: scale(0.02);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  to {
-    transform: scale(1.05);
-    opacity: 1;
   }
 }
 @keyframes warp-word {
@@ -866,20 +853,10 @@ body[data-cookie-consent="visible"] {
 .warp-stroke-3 {
   animation-delay: 0.16s;
 }
-/* The disc stays a circle the whole way (it's `rounded-full` in markup, so scaling never reveals a
-   square edge) and only blooms once the mark has finished drawing + a short hold (0.52s delay). */
-.warp-flood {
-  transform: scale(0.02);
-  /* Hidden until the bloom starts — otherwise the tiny pre-delay seed shows as a green dot over
-     the mark. */
-  opacity: 0;
-  transform-origin: center;
-  animation: warp-flood 0.46s ease-out 0.52s forwards;
-  will-change: transform, opacity;
-}
+/* Wordmark fades in once the mark has finished drawing (~0.4s). */
 .warp-word {
   opacity: 0;
-  animation: warp-word 0.34s ease-out 0.8s forwards;
+  animation: warp-word 0.34s ease-out 0.46s forwards;
   will-change: transform, opacity;
 }
 
