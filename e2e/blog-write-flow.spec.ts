@@ -188,6 +188,9 @@ test.describe("desktop", () => {
     await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
     const h1 = captured.blocks!.find((b) => b.type === "H1");
     expect(h1?.content, "a block was inserted via the + menu").toContain("Added with plus");
+    // The "+" must NOT leave a literal "/" behind (it opens the menu without typing one).
+    expect(h1!.content).not.toContain("/");
+    expect(captured.blocks!.some((b) => b.content?.trim() === "/")).toBe(false);
   });
 });
 
@@ -252,4 +255,29 @@ test("slash menu inserts a table", async ({ page }) => {
   expect(table, "a TABLE block was saved").toBeTruthy();
   expect(table!.content).toContain("|");
   expect(table!.content).toContain("---");
+});
+
+test("slash menu inserts a wide image (width survives the save round-trip)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".ProseMirror.toastui-editor-contents").click();
+  await page.keyboard.type("/wide");
+  const chooser = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Wide image" }).click();
+  await (await chooser).setFiles({
+    name: "hero.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(PNG_BASE64, "base64"),
+  });
+  await expect(page.locator(`.ProseMirror.toastui-editor-contents img[src="${IMAGE_URL}"]`)).toBeVisible({
+    timeout: 15_000,
+  });
+
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
+  const img = captured.blocks!.find((b) => b.type === "IMAGE");
+  expect(img, "a wide IMAGE block was saved").toBeTruthy();
+  expect(JSON.parse(img!.content!).width, "width survived Toast's markdown round-trip").toBe("wide");
 });

@@ -5,6 +5,7 @@ import { KurlLinkCard } from "@/modules/blog/components/kurl-link-card";
 import { PostImage } from "@/modules/blog/components/post-image";
 import type { TocHeading } from "@/modules/blog/components/post-toc";
 import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
+import type { ImageWidth } from "@/modules/blog/lib/image-width";
 import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
 import { slugify } from "@/modules/blog/lib/slugify";
@@ -121,18 +122,20 @@ function ImageBlock({ content }: { content: string | null }) {
   let url: string | null = null;
   let alt = "";
   let caption = "";
+  let width: ImageWidth | undefined;
   try {
     const parsed = JSON.parse(content);
     if (parsed && typeof parsed === "object") {
       url = typeof parsed.url === "string" ? parsed.url : null;
       alt = typeof parsed.alt === "string" ? parsed.alt : "";
       caption = typeof parsed.caption === "string" ? parsed.caption : "";
+      width = parsed.width === "wide" || parsed.width === "full" ? parsed.width : undefined;
     }
   } catch {
     url = content.trim();
   }
   if (!url) return null;
-  return <PostImage src={url} alt={alt} caption={caption} />;
+  return <PostImage src={url} alt={alt} caption={caption} width={width} />;
 }
 
 function CodeBlock({ content }: { content: string | null }) {

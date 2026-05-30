@@ -38,6 +38,8 @@ export function MarkdownEditor({
   onUploadError?: (message: string) => void;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
+  // The "+" button calls this (set by SlashMenu) to open the block menu without typing a "/".
+  const openMenuRef = useRef<(() => void) | null>(null);
   const onChangeRef = useRef(onChange);
   const onUploadRef = useRef(onUploadImage);
   const onUploadErrorRef = useRef(onUploadError);
@@ -102,12 +104,19 @@ export function MarkdownEditor({
       <div ref={hostRef} className="h-full" />
       {commands && (
         <>
-          <BlockInserter editor={commands} editorHost={hostRef} />
+          <BlockInserter
+            editorHost={hostRef}
+            onAddBlock={() => {
+              commands.focus();
+              openMenuRef.current?.();
+            }}
+          />
           <SlashMenu
             editor={commands}
             editorHost={hostRef}
             onUploadImage={onUploadImage}
             onUploadError={onUploadError}
+            openRef={openMenuRef}
           />
           <FloatingToolbar
             editor={commands}

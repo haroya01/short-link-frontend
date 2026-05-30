@@ -119,6 +119,21 @@ describe("CODE blocks", () => {
   });
 });
 
+describe("image width", () => {
+  it("parses a wide-marked image and round-trips it", () => {
+    const blocks = markdownToBlocks("![«wide» My photo](https://x/a.png)");
+    expect(blocks).toEqual([
+      { type: "IMAGE", content: JSON.stringify({ url: "https://x/a.png", alt: "My photo", width: "wide" }) },
+    ]);
+    expect(markdownToBlocks(blocksToMarkdown(blocks))).toEqual(blocks);
+  });
+
+  it("a plain image has no width", () => {
+    const [block] = markdownToBlocks("![plain](https://x/b.png)");
+    expect(JSON.parse(block.content!)).toEqual({ url: "https://x/b.png", alt: "plain" });
+  });
+});
+
 describe("TABLE blocks", () => {
   it("parses a GFM table into a TABLE block holding the raw markdown", () => {
     const md = "| a | b |\n| --- | --- |\n| 1 | 2 |";
