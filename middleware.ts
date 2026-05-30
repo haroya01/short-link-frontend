@@ -60,6 +60,24 @@ function legacyRedirect(req: NextRequest, host: string): NextResponse | null {
   const path = req.nextUrl.pathname;
   const search = req.nextUrl.search;
 
+  // Canonical blog host: on the production apex, send blog routes to blog.kurl.me. The blog
+  // workspace's sidebar links are host-relative (only the blog host rewrites /{locale}/write →
+  // /{locale}/blog/write), so on kurl.me they 404 / cross-origin-redirect and the RSC prefetch
+  // errors out. Gated to kurl.me only — dev / Vercel preview serve the blog at /{locale}/blog (and
+  // /blog-preview) and must NOT redirect. The generated OG image is excluded: social scrapers may
+  // not follow a cross-host redirect for og:image.
+  const cleaned = cleanHost(host);
+  if (cleaned === "kurl.me" || cleaned === "www.kurl.me") {
+    const blogMatch = path.match(/^\/([a-z]{2})\/blog(\/.*)?$/);
+    if (blogMatch && !path.endsWith("/opengraph-image")) {
+      const rest = blogMatch[2] || "/";
+      return NextResponse.redirect(
+        `https://${BLOG_HOST_DEFAULT}/${blogMatch[1]}${rest}${search}`,
+        308,
+      );
+    }
+  }
+
   // /{locale}/content/* → blog.kurl.me/{locale}/*
   const contentMatch = path.match(/^\/([a-z]{2})\/content(\/.*)?$/);
   if (contentMatch) {
