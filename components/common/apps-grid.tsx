@@ -57,11 +57,11 @@ export function AppsGrid() {
     e.preventDefault();
     const href = dest.href();
     setWarp({ href, product: dest.key });
-    // Mark draws (~0.4s) → brief hold → green disc blooms (covers ~1.0s) → wordmark. Navigate once
-    // the disc has fully covered, so the cross-origin reload never flashes white.
+    // Mark draws (~0.4s) → destination wordmark fades in → navigate. The white overlay stays up
+    // until the destination paints, bridging the cross-origin reload.
     window.setTimeout(() => {
       window.location.href = href;
-    }, 1050);
+    }, 850);
   };
 
   return (
@@ -93,27 +93,23 @@ export function AppsGrid() {
             role="status"
             aria-live="polite"
           >
-            {/* Brand-green disc that blooms from the mark's center. `rounded-full` + a radius that
-                already clears the viewport's far corner keeps it a clean circle the whole way. */}
-            <span
-              aria-hidden
-              className="warp-flood pointer-events-none absolute left-1/2 top-1/2 -ml-[75vmax] -mt-[75vmax] h-[150vmax] w-[150vmax] rounded-full bg-accent-600"
-            />
-            {/* The mark draws on, line by line, then dissolves into the flood (same green). */}
-            <svg
-              aria-hidden
-              viewBox="0 0 28 18"
-              fill="currentColor"
-              className="relative col-start-1 row-start-1 h-[78px] w-auto text-accent-600"
-            >
-              <rect className="warp-stroke warp-stroke-1" x="6" y="1" width="20" height="3.4" rx="1.7" />
-              <rect className="warp-stroke warp-stroke-2" x="0" y="7.3" width="28" height="3.4" rx="1.7" />
-              <rect className="warp-stroke warp-stroke-3" x="9" y="13.6" width="17" height="3.4" rx="1.7" />
-            </svg>
-            {/* Destination wordmark, fading in over the flood. */}
-            <span className="warp-word relative col-start-1 row-start-1 text-[27px] font-bold tracking-[-0.04em] text-white">
-              <Wordmark product={warp.product} muted="text-white/55" />
-            </span>
+            {/* A clean white cover for the cross-origin reload: the mark draws on, line by line,
+                then the destination wordmark fades in beneath it as a logo lockup. */}
+            <div className="flex flex-col items-center gap-4">
+              <svg
+                aria-hidden
+                viewBox="0 0 28 18"
+                fill="currentColor"
+                className="h-[72px] w-auto text-accent-600"
+              >
+                <rect className="warp-stroke warp-stroke-1" x="6" y="1" width="20" height="3.4" rx="1.7" />
+                <rect className="warp-stroke warp-stroke-2" x="0" y="7.3" width="28" height="3.4" rx="1.7" />
+                <rect className="warp-stroke warp-stroke-3" x="9" y="13.6" width="17" height="3.4" rx="1.7" />
+              </svg>
+              <span className="warp-word text-[22px] font-bold tracking-[-0.04em] text-slate-900">
+                <Wordmark product={warp.product} muted="text-slate-400" />
+              </span>
+            </div>
           </div>,
           document.body,
         )}
