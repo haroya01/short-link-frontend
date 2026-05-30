@@ -13,10 +13,11 @@ import {
   type PublicFeedItem,
 } from "@/modules/blog/api/public-posts";
 import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
-import { FeedCard } from "@/modules/blog/components/feed-card";
 import { FeedHero } from "@/modules/blog/components/feed-hero";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
+import { MobileDiscoveryStrip } from "@/modules/blog/components/mobile-discovery-strip";
 
 export const revalidate = 30;
 
@@ -93,6 +94,7 @@ export default async function BlogFeedPage({
   ]);
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
+  const hasNext = feedResult && feedResult.ok ? feedResult.data.hasNext : false;
   const tags = tagsResult && tagsResult.ok ? tagsResult.data : [];
   const authors = authorsResult && authorsResult.ok ? authorsResult.data : [];
   const hasRail = tags.length > 0 || authors.length > 0;
@@ -147,7 +149,6 @@ export default async function BlogFeedPage({
               href="?sort=following"
               active={!searching && tab === "following"}
             />
-            <SortTab label={t("topics")} href={blogHref("/tags")} active={false} />
           </nav>
           <div className="hidden sm:block">{writeCta}</div>
         </header>
@@ -156,6 +157,12 @@ export default async function BlogFeedPage({
           <p className="mt-6 text-[14px] text-slate-500">
             {t("searchResultsFor", { q: query })}
           </p>
+        )}
+
+        {/* Phone-only discovery: the desktop rail (lg+) is absent on small screens, so surface tags
+            and authors here above the feed when browsing (not while searching or on the following tab). */}
+        {!searching && tab !== "following" && items.length > 0 && (
+          <MobileDiscoveryStrip locale={locale} tags={tags} authors={authors} />
         )}
 
         {tab === "following" && !searching ? (
@@ -171,7 +178,15 @@ export default async function BlogFeedPage({
             <FeedEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
           )
         ) : (
-          <FeedBody locale={locale} items={items} t={t} hasRail={hasRail} marginTop={!searching}>
+          <FeedBody
+            locale={locale}
+            items={items}
+            hasNext={hasNext}
+            sort={sort}
+            query={searching ? query : undefined}
+            hasRail={hasRail}
+            marginTop={!searching}
+          >
             {hasRail ? (
               <DiscoveryRail locale={locale} tags={tags} authors={authors} />
             ) : null}
@@ -200,33 +215,31 @@ export default async function BlogFeedPage({
 function FeedBody({
   locale,
   items,
-  t,
+  hasNext,
+  sort,
+  query,
   hasRail,
   marginTop,
   children,
 }: {
   locale: string;
   items: PublicFeedItem[];
-  t: Awaited<ReturnType<typeof getTranslations>>;
+  hasNext: boolean;
+  sort: FeedSort;
+  query?: string;
   hasRail: boolean;
   marginTop: boolean;
   children: ReactNode;
 }) {
   const grid = (
-    <ul
-      className={`grid grid-cols-1 gap-5 sm:grid-cols-2 ${
-        hasRail ? "xl:grid-cols-3" : "lg:grid-cols-3 xl:grid-cols-4"
-      }`}
-    >
-      {items.map((item) => (
-        <FeedCard
-          key={`${item.author.username}/${item.slug}`}
-          item={item}
-          locale={locale}
-          labels={{ views: (count) => t("views", { count }) }}
-        />
-      ))}
-    </ul>
+    <FeedInfinite
+      locale={locale}
+      initialItems={items}
+      initialHasNext={hasNext}
+      sort={sort}
+      query={query}
+      hasRail={hasRail}
+    />
   );
 
   const top = marginTop ? "mt-8" : "mt-6";
