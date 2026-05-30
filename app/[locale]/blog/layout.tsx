@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { PenSquare } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { blogHref } from "@/lib/host";
 import { AppHeader } from "@/components/common/app-header";
 import { AppProviders } from "@/components/common/app-providers";
 import { ClaimToastListener } from "@/components/common/claim-toast-listener";
@@ -84,39 +85,27 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
 
 // Workspace body — rendered inside AppProviders so it reads the real auth context (BlogLayout sits
 // above the provider and would only ever see the signed-out fallback). The author workspace needs
-// auth: signed-out visitors get a focused sign-in screen instead of an empty sidebar plus a cold
-// "please sign in" line, and the sidebar only mounts once authenticated.
+// auth: signed-out visitors (and anyone whose session drops mid-edit) get sent to the dedicated blog
+// login screen with a next= back to where they were, and the sidebar only mounts once authenticated.
 function WorkspaceBody({ children }: { children: React.ReactNode }) {
   const tBlog = useTranslations("sidebar.blog");
   const tCommon = useTranslations("sidebar.common");
-  const tGate = useTranslations("workspaceGate");
-  const { ready, authenticated, isAdmin, signInWithGoogle } = useAuth();
+  const { ready, authenticated, isAdmin } = useAuth();
 
-  // Hold layout until auth resolves so we don't flash the sidebar then swap to the gate.
-  if (!ready) return <div className="flex-1" />;
+  // Once auth resolves to signed-out, route to /login. This is also the safety net for the
+  // expired-session case: an authed page (e.g. /write/new auto-creating a draft) hits a 401, the
+  // interceptor clears the token, `authenticated` flips false, and we land here instead of flashing
+  // a confusing "you're logged out" state in place.
+  useEffect(() => {
+    if (ready && !authenticated) {
+      const next = window.location.pathname + window.location.search;
+      window.location.replace(`${blogHref("/login")}?next=${encodeURIComponent(next)}`);
+    }
+  }, [ready, authenticated]);
 
-  if (!authenticated) {
-    return (
-      <main className="flex flex-1 items-center justify-center px-6 py-20">
-        <div className="w-full max-w-sm text-center">
-          <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-accent-50 text-accent-600">
-            <PenSquare className="h-6 w-6" />
-          </span>
-          <h1 className="mt-6 text-[20px] font-bold tracking-tight text-slate-900">
-            {tGate("title")}
-          </h1>
-          <p className="mt-2 text-[14px] leading-relaxed text-slate-500">{tGate("body")}</p>
-          <button
-            type="button"
-            onClick={signInWithGoogle}
-            className="mt-7 inline-flex items-center gap-2 rounded-lg bg-accent-600 px-5 py-2.5 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition-colors hover:bg-accent-700"
-          >
-            {tGate("signIn")}
-          </button>
-        </div>
-      </main>
-    );
-  }
+  // Hold layout until auth resolves (and while the redirect above is in flight) so we never flash
+  // the sidebar before deciding.
+  if (!ready || !authenticated) return <div className="flex-1" />;
 
   const sections = buildBlogSections(tBlog, tCommon, { isAdmin });
   return (
