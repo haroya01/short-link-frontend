@@ -114,7 +114,8 @@
       "image": "Image",
       "divider": "Divider",
       "embed": "Embed (video / link)",
-      "table": "Table"
+      "table": "Table",
+      "imageWide": "Wide image"
     },
     "slugLabel": "Post URL slug"
   },

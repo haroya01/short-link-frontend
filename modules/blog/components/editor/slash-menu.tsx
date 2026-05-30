@@ -1,11 +1,13 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
+  type MutableRefObject,
   type RefObject,
 } from "react";
 import { useTranslations } from "next-intl";
@@ -19,10 +21,12 @@ import {
   ListOrdered,
   Minus,
   Quote,
+  RectangleHorizontal,
   Table,
   Video,
   type LucideIcon,
 } from "lucide-react";
+import { altWithWidth, type ImageWidth } from "@/modules/blog/lib/image-width";
 import { keywordMatch, matchSlashQuery } from "@/modules/blog/components/editor/slash-menu-logic";
 
 /** The slice of the Toast UI editor instance the slash menu drives. */
@@ -43,6 +47,8 @@ type SlashItem = {
   /** Block command run after the "/query" text is removed. Omitted for the image picker. */
   run?: (editor: SlashEditor) => void;
   image?: boolean;
+  /** For image items: the column width the uploaded image is inserted at (default = column). */
+  imageWidth?: ImageWidth;
 };
 
 // THE extension point — open for extension, closed for modification. Add a block by appending a
@@ -115,6 +121,14 @@ const ITEMS: SlashItem[] = [
     image: true,
   },
   {
+    key: "imageWide",
+    labelKey: "imageWide",
+    icon: RectangleHorizontal,
+    keywords: ["wide", "image", "cover", "hero", "banner", "와이드", "넓은", "배너", "ワイド"],
+    image: true,
+    imageWidth: "wide",
+  },
+  {
     key: "embed",
     labelKey: "embed",
     icon: Video,
@@ -135,7 +149,10 @@ const ITEMS: SlashItem[] = [
   },
 ];
 
-type Trigger = { query: string; rect: DOMRect };
+// `type` = the user typed "/query"; `manual` = opened by the "+" button (no slash in the text).
+type Trigger = { query: string; rect: DOMRect; source: "type" | "manual" };
+
+const BLOCK_SELECTOR = "p, h1, h2, h3, blockquote, li, td, th";
 
 function caretPos(selection: unknown): number | null {
   // WYSIWYG getSelection() → [from, to] as ProseMirror positions; collapsed caret means from === to.
@@ -156,16 +173,21 @@ export function SlashMenu({
   editorHost,
   onUploadImage,
   onUploadError,
+  openRef,
 }: {
   editor: SlashEditor;
   editorHost: RefObject<HTMLElement>;
   onUploadImage: (file: Blob) => Promise<string>;
   onUploadError?: (message: string) => void;
+  // The parent ("+" button) calls this to open the menu at the caret WITHOUT typing a "/".
+  openRef?: MutableRefObject<(() => void) | null>;
 }) {
   const t = useTranslations("postEditor.slash");
   const [trigger, setTrigger] = useState<Trigger | null>(null);
   const [active, setActive] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
+  // The width the in-flight image picker should apply (set when an image item is chosen).
+  const pendingWidthRef = useRef<ImageWidth | undefined>(undefined);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(() => {
@@ -176,7 +198,17 @@ export function SlashMenu({
   const open = trigger !== null && filtered.length > 0;
   const act = Math.min(active, filtered.length - 1);
 
-  // Detect the "/query" context at the caret and track its screen position.
+  // Caret context → menu state. A typed "/query" opens a `type` menu; a `manual` menu (from "+")
+  // stays open while the caret sits on an empty block and closes once the line gets content.
+  const caretRect = useCallback((): DOMRect | null => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return null;
+    const node = sel.anchorNode;
+    const el = node?.nodeType === Node.TEXT_NODE ? node.parentElement : (node as Element | null);
+    const r = sel.getRangeAt(0).getBoundingClientRect();
+    return r.width === 0 && r.height === 0 ? (el?.getBoundingClientRect() ?? null) : r;
+  }, []);
+
   useEffect(() => {
     const compute = () => {
       const host = editorHost.current;
@@ -188,11 +220,14 @@ export function SlashMenu({
       if (el?.closest("pre, code")) return setTrigger(null); // "/" is literal inside code
       const before = (node.textContent ?? "").slice(0, sel.anchorOffset);
       const query = matchSlashQuery(before);
-      if (query === null) return setTrigger(null);
-      const r = sel.getRangeAt(0).getBoundingClientRect();
-      const rect = r.width === 0 && r.height === 0 ? el?.getBoundingClientRect() : r;
-      if (!rect) return setTrigger(null);
-      setTrigger({ query, rect });
+      if (query !== null) {
+        const rect = caretRect();
+        if (rect) setTrigger({ query, rect, source: "type" });
+        return;
+      }
+      const block = el?.closest(BLOCK_SELECTOR);
+      const blockEmpty = !block || (block.textContent ?? "").trim() === "";
+      setTrigger((prev) => (prev?.source === "manual" && blockEmpty ? prev : null));
     };
     compute();
     document.addEventListener("selectionchange", compute);
@@ -203,7 +238,19 @@ export function SlashMenu({
       window.removeEventListener("scroll", compute, true);
       window.removeEventListener("resize", compute);
     };
-  }, [editorHost]);
+  }, [editorHost, caretRect]);
+
+  // Expose an imperative open to the "+" button — opens the block menu at the caret with no "/".
+  useEffect(() => {
+    if (!openRef) return;
+    openRef.current = () => {
+      const rect = caretRect();
+      if (rect) setTrigger({ query: "", rect, source: "manual" });
+    };
+    return () => {
+      openRef.current = null;
+    };
+  }, [openRef, caretRect]);
 
   // Reset the highlight whenever the query changes.
   useEffect(() => setActive(0), [trigger?.query]);
@@ -211,12 +258,15 @@ export function SlashMenu({
   const choose = (item: SlashItem | undefined) => {
     if (!item || !trigger) return;
     if (!editor.isWysiwygMode()) return setTrigger(null);
-    const caret = caretPos(editor.getSelection());
-    if (caret == null) return setTrigger(null);
-    // Drop the typed "/query" so the block command applies to a clean line.
-    editor.deleteSelection(caret - (trigger.query.length + 1), caret);
+    // Only a typed "/query" leaves text to remove; a "+"-opened (manual) menu has none.
+    if (trigger.source === "type") {
+      const caret = caretPos(editor.getSelection());
+      if (caret == null) return setTrigger(null);
+      editor.deleteSelection(caret - (trigger.query.length + 1), caret);
+    }
     setTrigger(null);
     if (item.image) {
+      pendingWidthRef.current = item.imageWidth;
       fileRef.current?.click();
       return;
     }
@@ -258,10 +308,14 @@ export function SlashMenu({
         onChange={async (e) => {
           const f = e.target.files?.[0];
           e.target.value = "";
+          const width = pendingWidthRef.current;
+          pendingWidthRef.current = undefined;
           if (!f) return;
           try {
             const url = await onUploadImage(f);
-            editor.exec("addImage", { imageUrl: url, altText: f.name.replace(/\.[^.]+$/, "") });
+            // Width rides on the alt as a marker — the only image metadata Toast round-trips.
+            const altText = altWithWidth(f.name.replace(/\.[^.]+$/, ""), width);
+            editor.exec("addImage", { imageUrl: url, altText });
             editor.focus();
           } catch (err) {
             onUploadError?.(err instanceof Error ? err.message : "image upload failed");
