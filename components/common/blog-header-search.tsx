@@ -17,23 +17,28 @@ import { blogHref } from "@/lib/host";
 export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolean }) {
   const t = useTranslations("publicFeed");
   const router = useRouter();
-  // On the discovery hub (feed home) the field rests open so search reads as a primary action, not a
-  // utility hidden behind a glyph; deep pages (post/tags/author) keep the compact 🔍 that expands on
-  // click. A live `?q=` also forces it open regardless.
-  const [open, setOpen] = useState(defaultOpen);
+  // On the discovery hub (feed home) the field rests open on ≥sm so search reads as a primary action;
+  // deep pages keep the compact 🔍. Start collapsed and only expand client-side — never rest open on
+  // mobile, where the expanded field would push the login + product switcher off a ~360px header.
+  const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  // Only steal focus when the user opens the field by tapping the glyph — not on the resting/URL open.
+  const focusOnOpen = useRef(false);
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get("q")?.trim() ?? "";
-    if (q) {
-      setValue(q);
-      setOpen(true);
-    }
-  }, []);
+    if (q) setValue(q);
+    // Expanded field only on ≥sm (mobile keeps the glyph so the header doesn't overflow).
+    if (!window.matchMedia("(min-width: 640px)").matches) return;
+    if (q || defaultOpen) setOpen(true);
+  }, [defaultOpen]);
 
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (open && focusOnOpen.current) {
+      inputRef.current?.focus();
+      focusOnOpen.current = false;
+    }
   }, [open]);
 
   // Soft-navigate when the target stays on this origin (dev /blog-preview path, or prod's same blog
@@ -61,9 +66,12 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
     return (
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          focusOnOpen.current = true;
+          setOpen(true);
+        }}
         aria-label={t("searchLabel")}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
       >
         <Search className="h-4 w-4" />
       </button>

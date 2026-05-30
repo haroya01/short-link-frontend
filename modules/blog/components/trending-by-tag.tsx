@@ -39,16 +39,22 @@ export function TrendingByTag({
                 // Carry the trending order into the full tag feed so "모두 보기" from a popularity-ranked
                 // row doesn't land on a time-ordered one.
                 href={blogHref(`/tags/${encodeURIComponent(section.tag)}?sort=trending`)}
-                className="group inline-flex shrink-0 items-center gap-1 text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800"
+                className="group inline-flex shrink-0 items-center gap-1 rounded text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
               >
                 {moreLabel}
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none" />
               </a>
             </div>
             {/* Horizontal scroll row. The right-edge fade (desktop) signals there's more to scroll
                 since the scrollbar is hidden; mobile relies on natural swipe + the clipped last card. */}
             <div className="relative -mx-4 sm:-mx-6">
-              <ul className="flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:px-6 [&::-webkit-scrollbar]:hidden">
+              {/* Focusable scroll region so keyboard users can arrow-scroll the row (cards are also
+                  tabbable, but the container itself needs to be reachable per WCAG 2.1.1). */}
+              <ul
+                tabIndex={0}
+                aria-label={section.tag}
+                className="flex snap-x gap-4 overflow-x-auto rounded-lg px-4 pb-2 [scrollbar-width:none] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 sm:px-6 [&::-webkit-scrollbar]:hidden"
+              >
                 {section.posts.map((item) => (
                   <FeedCard
                     key={`${item.author.username}/${item.slug}`}

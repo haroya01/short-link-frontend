@@ -43,7 +43,6 @@
     "searchClear": "검색어 지우기",
     "searchResultsFor": "‘{q}’ 검색 결과",
     "searchResultsCount": "‘{q}’ 검색 결과 {count}개",
-    "searchResultsCountMore": "‘{q}’ 검색 결과 {count}개 이상",
     "featuredLabel": "추천",
     "trendingTopicsLabel": "주제별로 많이 읽힌 글",
     "searchScopeAll": "검색 중에는 모든 글에서 찾고 있어요.",

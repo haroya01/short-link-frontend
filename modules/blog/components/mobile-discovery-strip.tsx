@@ -42,10 +42,10 @@ export async function MobileDiscoveryStrip({
               <li key={tag.tag} className="shrink-0">
                 <a
                   href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
-                  className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-700"
+                  className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-1"
                 >
                   <span>{tag.tag}</span>
-                  <span className="text-slate-400">{tag.count}</span>
+                  <span className="text-slate-500">{tag.count}</span>
                 </a>
               </li>
             ))}
@@ -63,7 +63,7 @@ export async function MobileDiscoveryStrip({
               <li key={author.username} className="shrink-0">
                 <a
                   href={authorHref(author.username, locale)}
-                  className="flex w-44 items-center gap-2.5 rounded-xl border border-slate-200 px-3 py-2.5 transition-colors hover:border-slate-300 hover:bg-slate-50"
+                  className="flex w-44 items-center gap-2.5 rounded-xl border border-slate-200 px-3 py-2.5 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-1"
                 >
                   {author.avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -81,7 +81,7 @@ export async function MobileDiscoveryStrip({
                     <span className="truncate text-[13px] font-semibold text-slate-800">
                       {author.username}
                     </span>
-                    <span className="truncate text-[11px] text-slate-400">
+                    <span className="truncate text-[11px] text-slate-500">
                       {t("railPostCount", { count: postCount })}
                     </span>
                   </span>

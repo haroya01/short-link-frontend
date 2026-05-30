@@ -69,10 +69,10 @@ export default async function TagsIndexPage({
               <li key={tag.tag}>
                 <a
                   href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
-                  className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-700"
+                  className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-1"
                 >
                   <span>{tag.tag}</span>
-                  <span className="text-slate-400">{tag.count}</span>
+                  <span className="text-slate-500">{tag.count}</span>
                 </a>
               </li>
             ))}

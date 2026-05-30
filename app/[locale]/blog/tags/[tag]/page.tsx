@@ -55,7 +55,9 @@ export default async function TagFeedPage({
   const hasNext = feedResult.ok ? feedResult.data.hasNext : false;
   const tags = tagsResult.ok ? tagsResult.data : [];
   const authors = authorsResult.ok ? authorsResult.data : [];
-  const hasRail = tags.length > 0 || authors.length > 0;
+  // Tags now live in the strip above, so the rail carries authors only — base its presence on
+  // authors. Also drop it for a thin result set so a lone card doesn't float beside a tall sidebar.
+  const hasRail = authors.length > 0 && items.length > 3;
 
   const writeCta = (
     <a

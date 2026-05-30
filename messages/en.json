@@ -43,7 +43,6 @@
     "searchClear": "Clear search",
     "searchResultsFor": "Search results for “{q}”",
     "searchResultsCount": "{count} results for “{q}”",
-    "searchResultsCountMore": "{count}+ results for “{q}”",
     "featuredLabel": "Featured",
     "trendingTopicsLabel": "Most-read, by topic",
     "searchScopeAll": "Searching across all posts",

@@ -37,7 +37,7 @@ function Cover({ item }: { item: PublicFeedItem }) {
         src={item.ogImageUrl}
         alt=""
         loading="lazy"
-        className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+        className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
       />
     );
   }
@@ -76,7 +76,7 @@ function MetaRow({
   compact?: boolean;
 }) {
   return (
-    <div className="mt-3 flex items-center gap-2 text-[12px] text-slate-400">
+    <div className="mt-3 flex items-center gap-2 text-[12px] text-slate-500">
       <a
         href={authorHref(item.author.username, locale)}
         className="flex min-w-0 items-center gap-1.5 text-slate-500 transition-colors hover:text-slate-900"
@@ -105,7 +105,7 @@ function MetaRow({
 
 function TagEyebrow({ tag }: { tag: string }) {
   return (
-    <span className="text-[11px] font-semibold uppercase tracking-wide text-accent-600">{tag}</span>
+    <span className="text-[11px] font-semibold uppercase tracking-wide text-accent-700">{tag}</span>
   );
 }
 
@@ -174,7 +174,7 @@ export function FeedCard({
   return (
     <li
       className={
-        "group flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-[0_10px_30px_-14px_rgba(15,23,42,0.2)]" +
+        "group flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-[0_10px_30px_-14px_rgba(15,23,42,0.2)] focus-within:ring-2 focus-within:ring-accent-500" +
         (className ? ` ${className}` : "")
       }
     >
@@ -186,7 +186,7 @@ export function FeedCard({
               src={item.ogImageUrl as string}
               alt=""
               loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
             />
           ) : (
             <TypoCover item={item} />
@@ -239,7 +239,7 @@ export function FeedFeaturedCard({
 }) {
   const postUrl = postHref(item.author.username, item.slug, locale);
   return (
-    <div className="group grid overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-[0_10px_30px_-14px_rgba(15,23,42,0.2)] sm:grid-cols-2 sm:items-stretch">
+    <div className="group grid overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-[0_10px_30px_-14px_rgba(15,23,42,0.2)] focus-within:ring-2 focus-within:ring-accent-500 sm:grid-cols-2 sm:items-stretch">
       {/* Cover bleeds to the card edge — aspect-locked on mobile, full-height on desktop. */}
       <a href={postUrl} className="block overflow-hidden bg-slate-100">
         <div className="aspect-[1.6/1] w-full sm:aspect-auto sm:h-full">

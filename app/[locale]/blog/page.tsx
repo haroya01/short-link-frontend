@@ -196,8 +196,11 @@ export default async function BlogFeedPage({
                 count shows only when the whole set fits one page (no `hasNext`) — the feed API has no
                 grand total, so "N" while more pages remain would understate it. */}
             <p aria-live="polite" className="text-[14px] text-slate-500">
+              {/* Exact count only when the whole set fits one page; otherwise a count-less label,
+                  since the appended (infinite-scroll) total isn't known here and a frozen number reads
+                  stale. */}
               {hasNext
-                ? t("searchResultsCountMore", { q: query, count: items.length })
+                ? t("searchResultsFor", { q: query })
                 : t("searchResultsCount", { q: query, count: items.length })}
             </p>
             {/* Visible scope note (not just the disabled-tab hover tooltip) so touch users learn why
@@ -264,7 +267,7 @@ export default async function BlogFeedPage({
         href={blogHref("/write/new")}
         aria-label={t("write")}
         style={{ bottom: "var(--fab-bottom, 1.5rem)" }}
-        className="fixed right-4 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent-600 text-white shadow-[0_8px_24px_-6px_rgba(5,150,105,0.5)] transition-[bottom,background-color] duration-200 hover:bg-accent-700 sm:hidden"
+        className="fixed right-4 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent-600 text-white shadow-[0_8px_24px_-6px_rgba(5,150,105,0.5)] transition-[bottom,background-color] duration-200 hover:bg-accent-700 motion-reduce:transition-none sm:hidden"
       >
         <PenSquare className="h-5 w-5" />
       </a>
@@ -331,35 +334,40 @@ function SortTab({
   href,
   active,
   disabled = false,
-  title,
 }: {
   label: string;
   href: string;
   active: boolean;
   disabled?: boolean;
-  title?: string;
 }) {
   const base = "relative px-2.5 py-1.5 transition-colors";
-  // Disabled (e.g. "following" while a search is active): a non-interactive, muted span with a
-  // tooltip explaining why, rather than a link that would silently change the result scope.
+  // Disabled (e.g. "following" while a search is active): a non-interactive, muted span. The reason
+  // is shown as the visible inline scope note, so no hover-only tooltip is needed here.
   if (disabled) {
     return (
-      <span title={title} aria-disabled className={`${base} cursor-default text-slate-300`}>
+      <span aria-disabled className={`${base} cursor-default text-slate-300`}>
         {label}
       </span>
     );
   }
-  // next/link → client-side soft navigation between tabs (no full reload / flicker).
+  // next/link → client-side soft navigation between tabs (no full reload / flicker). The underline is
+  // a keyed element (not an `after:` pseudo) so it remounts and re-plays its glide on each switch.
   return (
     <Link
       href={href}
-      className={`${base} ${
-        active
-          ? "text-accent-700 after:absolute after:inset-x-2.5 after:-bottom-[13px] after:h-0.5 after:origin-left after:rounded-full after:bg-accent-600 after:[animation:underline-glide_240ms_ease-out]"
-          : "text-slate-400 hover:text-slate-700"
+      aria-current={active ? "page" : undefined}
+      className={`${base} rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 ${
+        active ? "text-accent-700" : "text-slate-400 hover:text-slate-700"
       }`}
     >
       {label}
+      {active && (
+        <span
+          key={href}
+          aria-hidden
+          className="absolute inset-x-2.5 -bottom-[13px] h-0.5 origin-left rounded-full bg-accent-600 [animation:underline-glide_240ms_ease-out] motion-reduce:[animation:none]"
+        />
+      )}
     </Link>
   );
 }
