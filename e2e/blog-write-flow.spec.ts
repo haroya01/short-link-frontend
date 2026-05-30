@@ -189,12 +189,12 @@ test("slash menu code block survives a blank line on save", async ({ page }) => 
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
 
-  // The whole fenced block stays a single block carrying both lines (and the fences).
-  const codeBlock = captured.blocks!.find(
-    (b) => b.content?.includes("const a = 1;") && b.content?.includes("const b = 2;"),
-  );
-  expect(codeBlock, "code survived as one block").toBeTruthy();
-  expect(codeBlock!.content).toContain("```");
+  // The whole fenced block stays a single CODE block carrying both lines across the blank line.
+  const codeBlock = captured.blocks!.find((b) => b.type === "CODE");
+  expect(codeBlock, "a CODE block was saved").toBeTruthy();
+  const code = JSON.parse(codeBlock!.content!).code as string;
+  expect(code).toContain("const a = 1;");
+  expect(code).toContain("const b = 2;");
 });
 
 test("slash menu inserts a table", async ({ page }) => {
@@ -209,7 +209,9 @@ test("slash menu inserts a table", async ({ page }) => {
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
 
-  // GFM table markdown (pipes + the header separator row) is preserved.
-  const table = captured.blocks!.find((b) => b.content?.includes("|") && b.content?.includes("---"));
-  expect(table, "a GFM table was saved").toBeTruthy();
+  // Saved as a TABLE block holding GFM markdown (pipes + the header separator row).
+  const table = captured.blocks!.find((b) => b.type === "TABLE");
+  expect(table, "a TABLE block was saved").toBeTruthy();
+  expect(table!.content).toContain("|");
+  expect(table!.content).toContain("---");
 });

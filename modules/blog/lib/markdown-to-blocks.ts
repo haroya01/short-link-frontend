@@ -6,6 +6,19 @@ import { planEmbed } from "@/modules/blog/lib/post-embed";
  * URL when it's an embeddable provider (YouTube / Vimeo). velog-style: drop a YouTube link on its
  * own line and it becomes a player. Other URLs return null and stay a normal paragraph/link.
  */
+/** A backtick fence longer than any run of backticks in the code, so the code can't break out. */
+export function fenceFor(code: string): string {
+  const longest = (code.match(/`+/g) ?? []).reduce((m, s) => Math.max(m, s.length), 0);
+  return "`".repeat(Math.max(3, longest + 1));
+}
+
+/** A pipe-led line whose next line is a GFM separator row (`| --- |`) — the start of a table. */
+function isTableStart(line: string, next: string | undefined): boolean {
+  if (!/^\s*\|/.test(line) || next == null) return false;
+  const t = next.trim();
+  return /^[\s|:-]+$/.test(t) && t.includes("-") && t.includes("|");
+}
+
 function standaloneVideoUrl(line: string): string | null {
   const t = line.trim();
   const m =
@@ -47,21 +60,35 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       continue;
     }
 
-    // Fenced code block — consume the whole region verbatim (incl. blank lines and markdown-like
-    // lines) as one PARAGRAPH. The reader renders fenced code through its markdown pipeline; the
-    // line-based rules below would otherwise tear a code block apart at a blank line or a "-"/"#".
-    const fence = line.match(/^(```|~~~)/);
+    // Fenced code block → CODE block { lang, code }. Consume the whole region (incl. blank lines and
+    // markdown-like lines), so the line-based rules below can't tear it apart.
+    const fence = line.match(/^(```+|~~~+)(.*)$/);
     if (fence) {
-      const marker = fence[1];
-      const buf = [line];
+      const marker = fence[1][0].repeat(3);
+      const lang = fence[2].trim().split(/\s+/)[0] || null;
+      const code: string[] = [];
       i++;
       while (i < lines.length) {
-        buf.push(lines[i]);
-        const isClose = lines[i].trimStart().startsWith(marker);
+        if (lines[i].trimStart().startsWith(marker)) {
+          i++;
+          break;
+        }
+        code.push(lines[i]);
         i++;
-        if (isClose) break;
       }
-      blocks.push({ type: "PARAGRAPH", content: buf.join("\n") });
+      blocks.push({ type: "CODE", content: JSON.stringify({ lang, code: code.join("\n") }) });
+      continue;
+    }
+
+    // GFM table (header row + "| --- |" separator + body rows) → TABLE block holding the raw
+    // markdown; the reader renders it through remark-gfm.
+    if (isTableStart(line, lines[i + 1])) {
+      const rows: string[] = [];
+      while (i < lines.length && /^\s*\|/.test(lines[i])) {
+        rows.push(lines[i]);
+        i++;
+      }
+      blocks.push({ type: "TABLE", content: rows.join("\n") });
       continue;
     }
 
@@ -130,6 +157,7 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       lines[i].trim() !== "" &&
       lines[i].trim() !== "---" &&
       !/^(```|~~~)/.test(lines[i]) &&
+      !isTableStart(lines[i], lines[i + 1]) &&
       !/^(#{1,3}\s|>\s|!\[|[-*]\s|\d+\.\s)/.test(lines[i]) &&
       !standaloneVideoUrl(lines[i])
     ) {
@@ -207,6 +235,20 @@ export function blocksToMarkdown(blocks: { type: string; content: string | null 
           }
           parts.push(url);
         }
+        break;
+      case "CODE":
+        try {
+          const parsed = b.content ? JSON.parse(b.content) : null;
+          const code = typeof parsed?.code === "string" ? parsed.code : "";
+          const lang = typeof parsed?.lang === "string" ? parsed.lang : "";
+          parts.push(`${fenceFor(code)}${lang}\n${code}\n${fenceFor(code)}`);
+        } catch {
+          // ignore malformed
+        }
+        break;
+      case "TABLE":
+        // Raw GFM markdown — round-trips straight back to a TABLE block.
+        if (b.content) parts.push(b.content);
         break;
       case "CTA_REF":
         // Read-only placeholder preserved as-is (no markdown authoring path).

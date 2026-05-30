@@ -86,36 +86,53 @@ describe("video embeds", () => {
   });
 });
 
-describe("fenced code blocks", () => {
-  it("keeps a simple code block as one PARAGRAPH (incl. the fences)", () => {
+describe("CODE blocks", () => {
+  it("parses a fenced block into a CODE block with lang + code", () => {
     const blocks = markdownToBlocks("```js\nconst x = 1;\n```");
-    expect(blocks).toEqual([{ type: "PARAGRAPH", content: "```js\nconst x = 1;\n```" }]);
+    expect(blocks).toEqual([
+      { type: "CODE", content: JSON.stringify({ lang: "js", code: "const x = 1;" }) },
+    ]);
   });
 
-  it("does NOT split a code block at a blank line", () => {
-    const blocks = markdownToBlocks("```\nconst a = 1;\n\nconst b = 2;\n```");
-    expect(blocks).toHaveLength(1);
-    expect(blocks[0].type).toBe("PARAGRAPH");
-    expect(blocks[0].content).toContain("const a = 1;");
-    expect(blocks[0].content).toContain("const b = 2;");
+  it("keeps a blank line inside the code", () => {
+    const [block] = markdownToBlocks("```\nconst a = 1;\n\nconst b = 2;\n```");
+    expect(block.type).toBe("CODE");
+    expect(JSON.parse(block.content!).code).toBe("const a = 1;\n\nconst b = 2;");
   });
 
   it("does NOT treat markdown-like lines inside a code block as their own blocks", () => {
     const blocks = markdownToBlocks("```\n- not a list\n# not a heading\n```");
     expect(blocks).toHaveLength(1);
-    expect(blocks[0].type).toBe("PARAGRAPH");
+    expect(blocks[0].type).toBe("CODE");
     expect(blocks.some((b) => b.type === "H1" || b.type === "LIST_BULLET")).toBe(false);
   });
 
   it("separates a paragraph from a code block that follows it without a blank line", () => {
     const blocks = markdownToBlocks("intro text\n```\ncode\n```");
-    expect(blocks.map((b) => b.type)).toEqual(["PARAGRAPH", "PARAGRAPH"]);
+    expect(blocks.map((b) => b.type)).toEqual(["PARAGRAPH", "CODE"]);
     expect(blocks[0].content).toBe("intro text");
-    expect(blocks[1].content).toBe("```\ncode\n```");
   });
 
-  it("roundtrips a code block through markdown", () => {
+  it("roundtrips a CODE block through markdown", () => {
     const blocks = markdownToBlocks("```ts\nlet n = 0;\n\nn += 1;\n```");
+    expect(markdownToBlocks(blocksToMarkdown(blocks))).toEqual(blocks);
+  });
+});
+
+describe("TABLE blocks", () => {
+  it("parses a GFM table into a TABLE block holding the raw markdown", () => {
+    const md = "| a | b |\n| --- | --- |\n| 1 | 2 |";
+    const blocks = markdownToBlocks(md);
+    expect(blocks).toEqual([{ type: "TABLE", content: md }]);
+  });
+
+  it("does not mistake a single pipe line for a table", () => {
+    const blocks = markdownToBlocks("a | b not a table");
+    expect(blocks[0].type).toBe("PARAGRAPH");
+  });
+
+  it("roundtrips a TABLE block through markdown", () => {
+    const blocks = markdownToBlocks("| h1 | h2 |\n| --- | --- |\n| x | y |");
     expect(markdownToBlocks(blocksToMarkdown(blocks))).toEqual(blocks);
   });
 });
