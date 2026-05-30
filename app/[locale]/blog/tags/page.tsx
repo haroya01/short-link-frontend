@@ -40,9 +40,6 @@ export default async function TagsIndexPage({
   // Slice to a small peek (the mock returns a full page; the real API honors size=3).
   const recent = recentResult.ok ? recentResult.data.items.slice(0, 3) : [];
 
-  // Weight the chip by how popular the tag is, so the cloud reads at a glance.
-  const max = tags.reduce((m, x) => Math.max(m, x.count), 1);
-
   return (
     <>
       {/* Same masthead band as the feed home / tag pages — the topics index is part of the same
@@ -62,31 +59,23 @@ export default async function TagsIndexPage({
           </a>
         </header>
 
+        {/* Tag cloud — same chip style as the tag-page filter strip (uniform slate chip + count +
+            accent hover); wraps to show the full set. */}
         {tags.length === 0 ? (
           <FeedEmpty title={t("empty")} />
         ) : (
-          <ul className="flex flex-wrap gap-2.5">
-            {tags.map((tag) => {
-              const strong = tag.count >= max * 0.66;
-              const medium = !strong && tag.count >= max * 0.33;
-              return (
-                <li key={tag.tag}>
-                  <a
-                    href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
-                    className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-medium transition-colors ${
-                      strong
-                        ? "bg-accent-100 text-accent-800 hover:bg-accent-200 text-[15px]"
-                        : medium
-                          ? "bg-accent-50 text-accent-700 hover:bg-accent-100 text-[14px]"
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200 text-[13px]"
-                    }`}
-                  >
-                    <span>{tag.tag}</span>
-                    <span className="text-slate-400">{tag.count}</span>
-                  </a>
-                </li>
-              );
-            })}
+          <ul className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <li key={tag.tag}>
+                <a
+                  href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
+                  className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-700"
+                >
+                  <span>{tag.tag}</span>
+                  <span className="text-slate-400">{tag.count}</span>
+                </a>
+              </li>
+            ))}
           </ul>
         )}
 
