@@ -31,7 +31,18 @@
     "emptyFollowingTitle": "フォロー中の作家の記事がありません",
     "emptyTagTitle": "このトピックの記事はまだありません",
     "topicsIntro": "みんなが何について書いているかを見てみましょう。タグを選んで掘り下げても、下の最新記事から読み始めても。",
-    "topicsRecent": "最新の記事"
+    "topicsRecent": "最新の記事",
+    "searchPlaceholder": "記事・タグ・作者を検索",
+    "searchLabel": "検索",
+    "searchClear": "検索をクリア",
+    "searchResultsFor": "「{q}」の検索結果",
+    "searchEmptyTitle": "記事が見つかりません",
+    "searchEmptyBody": "別のキーワードを試すか、トピックを見てみましょう。",
+    "browseTopics": "トピックを見る",
+    "railPopularTags": "人気のタグ",
+    "railSuggestedAuthors": "おすすめの作家",
+    "railPostCount": "記事 {count}",
+    "railSeeAll": "すべて見る"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",

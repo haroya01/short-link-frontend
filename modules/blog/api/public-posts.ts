@@ -157,6 +157,18 @@ export function listFeedByTag(
   );
 }
 
+/** Free-text search across title / excerpt / tags / author handle. `sort` re-ranks the matches. */
+export function searchPublicFeed(
+  query: string,
+  sort: FeedSort = "recent",
+  page = 0,
+  size = 24,
+): Promise<FetchResult<PublicFeedView>> {
+  return fetchPublic<PublicFeedView>(
+    `/api/v1/public/posts?q=${encodeURIComponent(query)}&sort=${sort}&page=${page}&size=${size}`,
+  );
+}
+
 export function listPublicPosts(username: string): Promise<FetchResult<PublicPostList>> {
   return fetchPublic<PublicPostList>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/posts`,
@@ -181,6 +193,16 @@ export interface TagCount {
 /** Most-used tags across published posts, most popular first — the 주제 index. */
 export function listPopularTags(limit = 50): Promise<FetchResult<TagCount[]>> {
   return fetchPublic<TagCount[]>(`/api/v1/public/tags?limit=${limit}`);
+}
+
+export interface SuggestedAuthor {
+  author: PublicAuthor;
+  postCount: number;
+}
+
+/** Authors ranked by published-post count — the discovery rail's 추천 작가 list. */
+export function listSuggestedAuthors(limit = 5): Promise<FetchResult<SuggestedAuthor[]>> {
+  return fetchPublic<SuggestedAuthor[]>(`/api/v1/public/authors?limit=${limit}`);
 }
 
 export function listPublicSeries(username: string): Promise<FetchResult<PublicSeriesList>> {

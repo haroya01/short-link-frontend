@@ -31,7 +31,18 @@
     "emptyFollowingTitle": "팔로우한 작가의 글이 없어요",
     "emptyTagTitle": "이 주제의 글이 없어요",
     "topicsIntro": "사람들이 무엇을 쓰는지 둘러보세요. 태그를 골라 들어가거나, 아래 최신 글부터 시작해도 좋아요.",
-    "topicsRecent": "최근 글"
+    "topicsRecent": "최근 글",
+    "searchPlaceholder": "글, 태그, 작성자 검색",
+    "searchLabel": "검색",
+    "searchClear": "검색어 지우기",
+    "searchResultsFor": "‘{q}’ 검색 결과",
+    "searchEmptyTitle": "검색 결과가 없어요",
+    "searchEmptyBody": "다른 검색어를 시도하거나 주제를 둘러보세요.",
+    "browseTopics": "주제 둘러보기",
+    "railPopularTags": "인기 태그",
+    "railSuggestedAuthors": "추천 작가",
+    "railPostCount": "글 {count}",
+    "railSeeAll": "모두 보기"
   },
   "blogWorkspace": {
     "overviewTitle": "개요",
