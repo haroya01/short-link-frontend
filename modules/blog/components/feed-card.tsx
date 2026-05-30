@@ -124,11 +124,11 @@ export function FeedCard({
             {item.title}
           </h2>
           {item.excerpt && (
-            <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-slate-400">
+            <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-slate-600">
               {item.excerpt}
             </p>
           )}
-          <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-4 text-[12px] text-slate-400">
+          <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-4 text-[12px] text-slate-500">
             <time dateTime={item.publishedAt}>
               {new Date(item.publishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
                 year: "numeric",
@@ -168,7 +168,7 @@ export function FeedCard({
           </span>
         </a>
         {showLikes(item.likeCount) && (
-          <span className="flex shrink-0 items-center gap-1 text-[13px] text-slate-400">
+          <span className="flex shrink-0 items-center gap-1 text-[13px] text-slate-500">
             <Heart className="h-3.5 w-3.5" />
             {item.likeCount}
           </span>

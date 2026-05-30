@@ -1,24 +1,18 @@
 "use client";
 
 import { type CSSProperties, useEffect, useState } from "react";
-import { PenSquare, TrendingUp } from "lucide-react";
+import { PenSquare } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { postHref } from "@/modules/blog/components/feed-card";
 
-// ─── Mocked stats ────────────────────────────────────────────────────────────
-// These two have no backend source yet, so the dashboard hero fills them with placeholders to keep
-// the design complete. Swap for real values when the backend lands (tracked task):
-//   • Weekly views needs timestamped view events — today viewCount is a cumulative counter with no
-//     per-view timestamps, so "this week" can't be sliced.
-//   • Comment count needs a CommentRepository.countByAuthorId (author's posts' comments).
-// TODO(backend): replace MOCK_VIEWS_THIS_WEEK with real weekly views once view events are tracked.
-const MOCK_VIEWS_THIS_WEEK = 128;
-// TODO(backend): replace MOCK_COMMENTS with a real author comment count.
-const MOCK_COMMENTS = 2;
-// ─────────────────────────────────────────────────────────────────────────────
+// The dashboard hero shows only counts with a real backend source (published / drafts / top post,
+// all derived from listMyPosts). Weekly views and an author comment count are deliberately left out
+// until the backend can supply them: weekly views needs timestamped view events (viewCount is a
+// cumulative counter with no per-view timestamps), and comments needs an author-scoped count — a
+// placeholder number would just misinform the author about their own reach.
 
 const HERO_SECTION =
   "border-b border-slate-200/70 bg-gradient-to-b from-accent-50/50 to-white";
@@ -76,27 +70,19 @@ export function FeedHero({ locale }: { locale: string }) {
           >
             {t("heroWelcome", { name })}
           </h1>
-          <p
-            className="mt-2 flex items-center gap-1.5 text-[15px] leading-relaxed text-slate-500"
-            style={{ ["--hi" as string]: 1 } as CSSProperties}
-          >
-            <TrendingUp aria-hidden className="h-4 w-4 text-accent-600" />
-            {t("heroWeeklyViews", { count: MOCK_VIEWS_THIS_WEEK })}
-          </p>
 
           <dl
             className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-[14px]"
-            style={{ ["--hi" as string]: 2 } as CSSProperties}
+            style={{ ["--hi" as string]: 1 } as CSSProperties}
           >
             <Stat label={t("statPublished")} value={published} />
             <Stat label={t("statDrafts")} value={drafts} />
-            <Stat label={t("statComments")} value={MOCK_COMMENTS} />
           </dl>
 
           {topPost && (
             <p
               className="mt-3 truncate text-[14px] text-slate-500"
-              style={{ ["--hi" as string]: 3 } as CSSProperties}
+              style={{ ["--hi" as string]: 2 } as CSSProperties}
             >
               <span className="text-slate-400">{t("statTopPost")}</span>{" "}
               {username ? (
@@ -114,7 +100,7 @@ export function FeedHero({ locale }: { locale: string }) {
 
           <div
             className="mt-6 flex flex-wrap gap-2.5"
-            style={{ ["--hi" as string]: 4 } as CSSProperties}
+            style={{ ["--hi" as string]: 3 } as CSSProperties}
           >
             <a
               href={blogHref("/write/new")}
