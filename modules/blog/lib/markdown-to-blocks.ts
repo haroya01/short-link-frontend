@@ -1,4 +1,5 @@
 import type { BlockInput } from "@/modules/blog/api/posts";
+import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
 
 /**
@@ -19,15 +20,22 @@ function isTableStart(line: string, next: string | undefined): boolean {
   return /^[\s|:-]+$/.test(t) && t.includes("-") && t.includes("|");
 }
 
-function standaloneVideoUrl(line: string): string | null {
+/**
+ * A line that is just a single URL (bare, an `<autolink>`, or a `[text](url)` link) and is
+ * embeddable on its own → return that URL. Embeddable = a video provider (YouTube / Vimeo) or a
+ * kurl short link (rendered as a live link-stats card). Other URLs stay a normal paragraph.
+ */
+function standaloneEmbedUrl(line: string): string | null {
   const t = line.trim();
   const m =
     t.match(/^<(https?:\/\/[^>\s]+)>$/) ||
     t.match(/^\[[^\]]*\]\((https?:\/\/[^)\s]+)\)$/) ||
     t.match(/^(https?:\/\/\S+)$/);
   if (!m) return null;
-  const plan = planEmbed(m[1]);
-  return plan && plan.kind === "video" ? m[1] : null;
+  const url = m[1];
+  if (kurlShortCode(url)) return url;
+  const plan = planEmbed(url);
+  return plan && plan.kind === "video" ? url : null;
 }
 
 /**
@@ -123,9 +131,9 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       continue;
     }
 
-    const videoUrl = standaloneVideoUrl(line);
-    if (videoUrl) {
-      blocks.push({ type: "EMBED", content: videoUrl });
+    const embedUrl = standaloneEmbedUrl(line);
+    if (embedUrl) {
+      blocks.push({ type: "EMBED", content: embedUrl });
       i++;
       continue;
     }
@@ -159,7 +167,7 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       !/^(```|~~~)/.test(lines[i]) &&
       !isTableStart(lines[i], lines[i + 1]) &&
       !/^(#{1,3}\s|>\s|!\[|[-*]\s|\d+\.\s)/.test(lines[i]) &&
-      !standaloneVideoUrl(lines[i])
+      !standaloneEmbedUrl(lines[i])
     ) {
       paraLines.push(lines[i]);
       i++;
