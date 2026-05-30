@@ -18,6 +18,8 @@ export interface FollowStatus {
 
 /** Public — follower count for everyone; `following` is false for anonymous viewers. */
 export function getFollowStatus(username: string): Promise<FollowStatus> {
+  if (USE_MOCKS)
+    return Promise.resolve({ following: false, followerCount: 128, followingCount: 12 });
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {
     method: "GET",
   });

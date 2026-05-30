@@ -13,7 +13,7 @@ export function TagChips({ tags }: { tags: string[] }) {
               subdomain, so this is a cross-host link. */}
           <a
             href={blogHref(`/tags/${encodeURIComponent(tag)}`)}
-            className="inline-block rounded-full bg-accent-50 px-3 py-1 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-100"
+            className="inline-block rounded-full bg-slate-100 px-3 py-1 text-[13px] font-medium text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-1"
           >
             {tag}
           </a>
@@ -33,7 +33,7 @@ export async function SeriesNav({ series }: { series: PublicPostSeriesNav }) {
         <span className="text-[15px] font-semibold text-slate-900 group-hover:text-accent-700">
           {series.title}
         </span>
-        <span className="text-[13px] text-slate-400">
+        <span className="text-[13px] text-slate-500">
           {t("seriesPosition", { position: series.position, total: series.total })}
         </span>
       </a>

@@ -8,6 +8,10 @@
 import {
   USE_MOCKS,
   mockFeedView,
+  mockPostDetail,
+  mockPostList,
+  mockSeriesDetail,
+  mockSeriesList,
   mockTrendingByTag,
   MOCK_POPULAR_TAGS,
   MOCK_SUGGESTED_AUTHORS,
@@ -182,6 +186,7 @@ export function searchPublicFeed(
 }
 
 export function listPublicPosts(username: string): Promise<FetchResult<PublicPostList>> {
+  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostList(username) });
   return fetchPublic<PublicPostList>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/posts`,
   );
@@ -191,6 +196,7 @@ export function findPublicPost(
   username: string,
   slug: string,
 ): Promise<FetchResult<PublicPostDetail>> {
+  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostDetail(username, slug) });
   return fetchPublic<PublicPostDetail>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/posts/${encodeURIComponent(slug)}`,
     { noStore: true },
@@ -242,6 +248,7 @@ export function listTrendingByTag(
 }
 
 export function listPublicSeries(username: string): Promise<FetchResult<PublicSeriesList>> {
+  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockSeriesList(username) });
   return fetchPublic<PublicSeriesList>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/series`,
   );
@@ -251,6 +258,7 @@ export function findPublicSeries(
   username: string,
   slug: string,
 ): Promise<FetchResult<PublicSeriesDetail>> {
+  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockSeriesDetail(username, slug) });
   return fetchPublic<PublicSeriesDetail>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/series/${encodeURIComponent(slug)}`,
     { noStore: true },

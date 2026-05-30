@@ -12,6 +12,13 @@ import type {
   PublicAuthor,
   PublicFeedItem,
   PublicFeedView,
+  PublicPostBlock,
+  PublicPostDetail,
+  PublicPostList,
+  PublicPostListItem,
+  PublicSeriesDetail,
+  PublicSeriesList,
+  PublicSeriesListItem,
   SuggestedAuthor,
   TagCount,
   TrendingTagSection,
@@ -137,6 +144,75 @@ export function mockFollowingView(): PublicFeedView {
  * tags, ranks posts within a tag by views, and orders the tag rows by how many posts they hold.
  * Tags with fewer than 2 posts are dropped so a young feed doesn't render near-empty rows.
  */
+// ─── Reading surfaces: author home, post detail, series ────────────────────────
+
+function resolveAuthor(username: string): PublicAuthor {
+  return AUTHORS[username] ?? AUTHORS.dohyun;
+}
+
+function toListItem(item: PublicFeedItem, idx: number): PublicPostListItem {
+  return {
+    id: idx + 1,
+    slug: item.slug,
+    title: item.title,
+    excerpt: item.excerpt,
+    ogImageUrl: item.ogImageUrl,
+    languageTag: item.languageTag,
+    tags: item.tags,
+    likeCount: item.likeCount,
+    publishedAt: item.publishedAt,
+  };
+}
+
+/** Author home — the author's published posts (newest first). */
+export function mockPostList(username: string): PublicPostList {
+  const author = resolveAuthor(username);
+  const mine = ALL_ITEMS.filter((i) => i.author.username === author.username);
+  const posts = (mine.length ? mine : ALL_ITEMS.slice(0, 4)).map(toListItem);
+  return { author, posts };
+}
+
+function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
+  const tag = item.tags[0] ?? "kurl";
+  const rows: Array<[string, string | null]> = [
+    ["PARAGRAPH", item.excerpt ?? "이 글은 미리보기용 목 데이터예요. 실제 본문은 백엔드 연동 후 채워집니다."],
+    ["H2", "배경"],
+    ["PARAGRAPH", `${tag} 작업을 하며 부딪힌 문제와 결정을 정리합니다. 무엇을, 왜 그렇게 했는지를 중심으로.`],
+    ["LIST_BULLET", JSON.stringify(["문제 정의와 제약", "고려한 대안들", "최종 선택과 트레이드오프"])],
+    ["QUOTE", "좋은 결정은 과정을 남긴다 — 결과만큼 이유가 중요하다."],
+    ["IMAGE", item.ogImageUrl ?? "https://picsum.photos/seed/kurl-body/1200/700"],
+    ["H2", "정리"],
+    ["PARAGRAPH", "요약하면, 작은 서비스일수록 단순함이 이긴다. 다음 글에서 이어서 다룬다."],
+  ];
+  return rows.map(([type, content], blockOrder) => ({ type, content, blockOrder, cta: null }));
+}
+
+/** Post detail — author + post meta + a body of blocks. Series omitted in mock. */
+export function mockPostDetail(_username: string, slug: string): PublicPostDetail {
+  const item = ALL_ITEMS.find((i) => i.slug === slug) ?? ALL_ITEMS[0];
+  return {
+    author: item.author,
+    post: toListItem(item, ALL_ITEMS.indexOf(item)),
+    blocks: sampleBlocks(item),
+    series: null,
+  };
+}
+
+const MOCK_SERIES: PublicSeriesListItem[] = [
+  { slug: "nextjs-deep-dive", title: "Next.js 깊게 파기", postCount: 3 },
+  { slug: "side-project-log", title: "사이드 프로젝트 로그", postCount: 4 },
+];
+
+export function mockSeriesList(username: string): PublicSeriesList {
+  return { author: resolveAuthor(username), series: MOCK_SERIES };
+}
+
+export function mockSeriesDetail(username: string, slug: string): PublicSeriesDetail {
+  const series = MOCK_SERIES.find((s) => s.slug === slug) ?? MOCK_SERIES[0];
+  const posts = ALL_ITEMS.slice(0, series.postCount).map(toListItem);
+  return { author: resolveAuthor(username), series, posts };
+}
+
 export function mockTrendingByTag(tagLimit = 6, perTag = 8): TrendingTagSection[] {
   const byTag = new Map<string, PublicFeedItem[]>();
   for (const item of ALL_ITEMS) {

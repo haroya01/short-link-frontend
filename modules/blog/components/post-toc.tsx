@@ -41,7 +41,7 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
               className={`block truncate transition-colors ${
                 active === h.id
                   ? "font-medium text-accent-700"
-                  : "text-slate-400 hover:text-slate-700"
+                  : "text-slate-500 hover:text-slate-700"
               }`}
             >
               {h.text}

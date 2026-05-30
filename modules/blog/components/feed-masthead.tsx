@@ -30,7 +30,7 @@ export async function FeedMasthead({
               {eyebrow}
             </p>
           )}
-          <h1 className="text-balance text-[30px] font-semibold leading-[1.1] tracking-headline text-slate-900 sm:text-[40px]">
+          <h1 className="text-balance text-headline-md font-semibold leading-[1.1] tracking-headline text-slate-900 sm:text-headline-lg">
             {heading}
           </h1>
           {subText && <p className="mt-3 text-[15px] leading-relaxed text-slate-500">{subText}</p>}

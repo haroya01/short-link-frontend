@@ -124,7 +124,7 @@ export default async function PublicPostPage({
               <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700">
                 @{author.username}
               </span>
-              <span className="block text-[13px] text-slate-400">
+              <span className="block text-[13px] text-slate-500">
                 <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
                 {" · "}
                 {t("readingTime", { minutes })}

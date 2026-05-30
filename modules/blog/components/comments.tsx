@@ -127,7 +127,7 @@ export function PostComments({
       ) : null}
 
       {comments.length === 0 ? (
-        <p className="mt-8 text-sm text-slate-400">{t("empty")}</p>
+        <p className="mt-8 text-sm text-slate-500">{t("empty")}</p>
       ) : (
         <ul className="mt-8 space-y-6">
           {tops.map((c) => (
@@ -139,7 +139,7 @@ export function PostComments({
                     setReplyTo(replyTo === c.id ? null : c.id);
                     setReplyBody("");
                   }}
-                  className="inline-flex items-center gap-1 text-[13px] text-slate-400 transition-colors hover:text-accent-700"
+                  className="inline-flex items-center gap-1 text-[13px] text-slate-500 transition-colors hover:text-accent-700"
                 >
                   <CornerDownRight className="h-3.5 w-3.5" />
                   {t("reply")}
@@ -217,7 +217,7 @@ function CommentRow({
           </span>
         )}
         <span className="text-sm font-medium text-slate-900">@{username}</span>
-        <span className="text-[12px] text-slate-400">{fmt(comment.createdAt)}</span>
+        <span className="text-[12px] text-slate-500">{fmt(comment.createdAt)}</span>
         {canDelete && (
           <button
             type="button"
