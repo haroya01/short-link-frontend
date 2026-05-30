@@ -70,11 +70,11 @@ export function AppsGrid() {
       <a
         href={dest?.href() ?? "#"}
         onClick={switchTo}
-        className="group inline-flex h-8 items-center gap-2 rounded-full border border-slate-200 bg-white pl-2.5 pr-2 text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
+        className="group mark-hoverable inline-flex h-8 items-center gap-2 rounded-full border border-slate-200 bg-white pl-2.5 pr-2 text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
         aria-label={dest ? t(dest.labelKey) : t("trigger")}
         title={dest ? t(dest.hintKey) : undefined}
       >
-        <Mark className="h-3 text-accent-600" />
+        <Mark className="h-3 text-accent-600" animated />
         <span
           className="min-w-[2.5rem] text-[13px] font-bold leading-none tracking-[-0.04em]"
           aria-hidden={!dest}

@@ -106,8 +106,8 @@ export function Nav() {
               <Menu className="h-4 w-4" />
             </button>
           )}
-          <Link href="/" aria-label="kurl" className="shrink-0">
-            <Logo />
+          <Link href="/" aria-label="kurl" className="mark-hoverable shrink-0">
+            <Logo animated />
           </Link>
           {showEntries && (
             <nav className="hidden items-center gap-1 sm:flex">

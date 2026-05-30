@@ -863,6 +863,60 @@ body[data-cookie-consent="visible"] {
   will-change: transform, opacity;
 }
 
+/*
+ * Header logo hover — replays the product-switch warp's line-draw as a micro-interaction.
+ * Hovering the mark redraws its three lines left-to-right with the same stagger and easing as the
+ * warp overlay, so the brand mark feels alive on hover and previews the transition motion. Mirrors
+ * the warp's look without touching the locked warp keyframes. Honors reduced-motion.
+ */
+@keyframes mark-line-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.mark-line {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mark-hoverable:hover .mark-line {
+    animation: mark-line-draw 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .mark-hoverable:hover .mark-line-2 {
+    animation-delay: 0.08s;
+  }
+  .mark-hoverable:hover .mark-line-3 {
+    animation-delay: 0.16s;
+  }
+}
+
+/*
+ * Login centerpiece — the mark draws on as its entrance (same line-draw as the warp), instead of
+ * fading up with the rest of the hero cascade. The container drops the hero-rise so the draw IS the
+ * reveal; the three lines sweep on left-to-right just after the eyebrow. Reduced-motion shows the
+ * mark statically (no animation, full opacity via the hero-stagger reduce override).
+ */
+.hero-stagger > .mark-draw-in {
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mark-draw-in .mark-line {
+    animation: mark-line-draw 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.22s;
+  }
+  .mark-draw-in .mark-line-2 {
+    animation-delay: 0.3s;
+  }
+  .mark-draw-in .mark-line-3 {
+    animation-delay: 0.38s;
+  }
+}
+
 /* Post image lightbox — fade the backdrop, scale the image in. */
 @keyframes post-lightbox-in {
   from {

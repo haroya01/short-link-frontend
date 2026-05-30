@@ -5,12 +5,14 @@ type Props = {
   showText?: boolean;
   /** "blog" renders the blog.kurl wordmark for the (now independent) blog product header. */
   variant?: "kurl" | "blog";
+  /** Tags the mark's lines so a `.mark-hoverable` ancestor can replay the warp line-draw on hover. */
+  animated?: boolean;
 };
 
-export function Logo({ className, showText = true, variant = "kurl" }: Props) {
+export function Logo({ className, showText = true, variant = "kurl", animated = false }: Props) {
   return (
     <span className={cn("inline-flex items-center gap-2 text-accent-600", className)}>
-      <Mark className="h-4" />
+      <Mark className="h-4" animated={animated} />
       {showText && (
         // Wordmark in Pretendard 700 — one sans family across the app keeps the brand voice
         // consistent with the hero headline (also Pretendard). Tight tracking (-0.04em) gives
@@ -33,7 +35,7 @@ export function Logo({ className, showText = true, variant = "kurl" }: Props) {
   );
 }
 
-export function Mark({ className }: { className?: string }) {
+export function Mark({ className, animated = false }: { className?: string; animated?: boolean }) {
   return (
     <svg
       viewBox="0 0 28 18"
@@ -41,9 +43,9 @@ export function Mark({ className }: { className?: string }) {
       aria-hidden
       className={cn("h-auto", className)}
     >
-      <rect x="6" y="1" width="20" height="3.4" rx="1.7" />
-      <rect x="0" y="7.3" width="28" height="3.4" rx="1.7" />
-      <rect x="9" y="13.6" width="17" height="3.4" rx="1.7" />
+      <rect className={animated ? "mark-line mark-line-1" : undefined} x="6" y="1" width="20" height="3.4" rx="1.7" />
+      <rect className={animated ? "mark-line mark-line-2" : undefined} x="0" y="7.3" width="28" height="3.4" rx="1.7" />
+      <rect className={animated ? "mark-line mark-line-3" : undefined} x="9" y="13.6" width="17" height="3.4" rx="1.7" />
     </svg>
   );
 }

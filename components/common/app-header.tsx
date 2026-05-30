@@ -36,8 +36,8 @@ export function AppHeader({ showMenu = true }: { showMenu?: boolean }) {
           )}
           {/* Blog header → the logo returns to the blog home, not the links app root. Plain anchor
               with blogHref so it lands on the right host (blog.kurl.me, or /blog-preview on apex). */}
-          <a href={blogHref("/")} aria-label="blog.kurl" className="shrink-0">
-            <Logo variant="blog" />
+          <a href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable shrink-0">
+            <Logo variant="blog" animated />
           </a>
         </div>
 
