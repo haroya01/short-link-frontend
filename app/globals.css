@@ -278,6 +278,21 @@ h1, h2, h3, p {
     outline: 2px solid theme(colors.accent.500);
     outline-offset: 2px;
   }
+  /* Expands the TOUCH target of a compact control (like/share/follow pills sit ~32px tall) to the
+     44px WCAG 2.5.5 minimum WITHOUT growing its visual size — a transparent overlay centered on the
+     control captures the taps. Keeps the minimal pill look while staying thumb-friendly on mobile. */
+  .touch-target {
+    position: relative;
+  }
+  .touch-target::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 44px;
+    transform: translateY(-50%);
+  }
   .profile-card:active {
     /* Press feedback — Stan Store pattern (scale 0.98). Combined translateY(0) cancels the hover
      * lift mid-press, so the cursor and the card track each other instead of fighting. */
