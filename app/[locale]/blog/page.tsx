@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Hash, PenSquare } from "lucide-react";
@@ -14,6 +14,7 @@ import {
 } from "@/modules/blog/api/public-posts";
 import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedCard } from "@/modules/blog/components/feed-card";
+import { FeedHero } from "@/modules/blog/components/feed-hero";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedSearch } from "@/modules/blog/components/feed-search";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
@@ -123,32 +124,10 @@ export default async function BlogFeedPage({
 
   return (
     <>
-      {/* Identity hero — same restrained eyebrow / headline / subhead treatment as the showcase &
-          landing heroes, so blog.kurl reads as part of kurl rather than a bare tab bar on white. */}
-      <section className="border-b border-slate-200/70 bg-gradient-to-b from-accent-50/50 to-white">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
-          <div className="hero-stagger max-w-2xl space-y-3">
-            <p
-              className="font-mono text-[11px] uppercase tracking-tagline text-accent-700"
-              style={{ ["--hi" as string]: 0 } as CSSProperties}
-            >
-              {t("heroEyebrow")}
-            </p>
-            <h1
-              className="text-balance text-[30px] font-semibold leading-[1.1] tracking-headline text-slate-900 sm:text-[40px]"
-              style={{ ["--hi" as string]: 1 } as CSSProperties}
-            >
-              {t("heroTitle")}
-            </h1>
-            <p
-              className="max-w-md text-balance text-[15px] leading-relaxed text-slate-500"
-              style={{ ["--hi" as string]: 2 } as CSSProperties}
-            >
-              {t("heroSubhead")}
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Auth-adaptive hero — marketing pitch for visitors, a compact author dashboard for the
+          signed-in writer (client-resolved). Same shell as the showcase & landing heroes, so
+          blog.kurl reads as part of kurl rather than a bare tab bar on white. */}
+      <FeedHero locale={locale} />
 
       {/* pb-24 on phones keeps the last feed card scrollable clear of the fixed write FAB (the body
           gets extra room on top of that while the cookie banner is up — see globals.css). */}
