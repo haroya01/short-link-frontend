@@ -11,6 +11,7 @@ import { PostComments } from "@/modules/blog/components/comments";
 import { LikeButton } from "@/modules/blog/components/like-button";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { SeriesNav, TagChips } from "../_components/post-meta";
+import { authorHref } from "@/modules/blog/components/feed-card";
 import { findPublicPost } from "@/modules/blog/api/public-posts";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
@@ -77,7 +78,7 @@ export default async function PublicPostPage({
 
   if (!result.ok) {
     // backend: UNPUBLISHED → 410, DRAFT/SCHEDULED/missing → 404.
-    if (result.status === 410) return <GonePage username={username} t={t} />;
+    if (result.status === 410) return <GonePage username={username} locale={locale} t={t} />;
     notFound();
   }
 
@@ -89,15 +90,8 @@ export default async function PublicPostPage({
   const headings = extractHeadings(blocks);
 
   return (
-    <div className="relative mx-auto max-w-6xl">
-      {headings.length >= 2 && (
-        <aside className="absolute right-0 top-20 hidden w-56 xl:block">
-          <div className="sticky top-28 max-h-[calc(100vh-9rem)] overflow-y-auto">
-            <PostToc headings={headings} />
-          </div>
-        </aside>
-      )}
-      <article className="mx-auto max-w-2xl px-6 py-14 sm:py-20" lang={post.languageTag}>
+    <div className="mx-auto flex max-w-6xl justify-center gap-10 px-4 sm:px-6">
+      <article className="w-full max-w-2xl py-14 sm:py-20" lang={post.languageTag}>
         <ViewBeacon username={username} slug={slug} />
 
       <header className="mb-12">
@@ -105,7 +99,7 @@ export default async function PublicPostPage({
           {post.title}
         </h1>
         <div className="mt-6 flex items-center justify-between gap-4">
-          <a href="/" className="group flex min-w-0 items-center gap-3">
+          <a href={authorHref(author.username, locale)} className="group flex min-w-0 items-center gap-3 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2">
             {author.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -148,8 +142,8 @@ export default async function PublicPostPage({
       <footer className="mt-20 border-t border-slate-100 pt-8">
         <div className="flex items-center justify-between gap-4">
           <a
-            href="/"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-accent-700"
+            href={authorHref(author.username, locale)}
+            className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
           >
             <ArrowLeft className="h-4 w-4" />
             {t("morePosts", { username: author.username })}
@@ -166,15 +160,25 @@ export default async function PublicPostPage({
 
       <PostComments postId={post.id} authorUsername={author.username} />
       </article>
+
+      {headings.length >= 2 && (
+        <aside className="hidden w-56 shrink-0 py-20 xl:block">
+          <div className="sticky top-20 max-h-[calc(100vh-7rem)] overflow-y-auto">
+            <PostToc headings={headings} />
+          </div>
+        </aside>
+      )}
     </div>
   );
 }
 
 function GonePage({
   username,
+  locale,
   t,
 }: {
   username: string;
+  locale: string;
   t: Awaited<ReturnType<typeof getTranslations>>;
 }) {
   return (
@@ -182,8 +186,8 @@ function GonePage({
       <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900">{t("goneTitle")}</h1>
       <p className="mt-3 text-slate-500">{t("goneBody")}</p>
       <a
-        href="/"
-        className="mt-8 inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 hover:underline"
+        href={authorHref(username, locale)}
+        className="mt-8 inline-flex items-center gap-1.5 rounded text-sm font-medium text-accent-700 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
       >
         <ArrowLeft className="h-4 w-4" />
         {t("morePosts", { username })}

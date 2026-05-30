@@ -110,7 +110,7 @@ export function PostComments({
             <button
               type="submit"
               disabled={busy || !body.trim()}
-              className="rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
+              className="rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 disabled:opacity-50"
             >
               {busy ? t("submitting") : t("submit")}
             </button>
@@ -120,7 +120,7 @@ export function PostComments({
         <button
           type="button"
           onClick={signInWithGoogle}
-          className="mt-4 w-full rounded-xl border border-dashed border-slate-200 px-4 py-4 text-sm text-slate-500 transition-colors hover:border-accent-300 hover:text-accent-700"
+          className="mt-4 w-full rounded-xl border border-dashed border-slate-200 px-4 py-4 text-sm text-slate-500 transition-colors hover:border-accent-300 hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
         >
           {t("loginPrompt")}
         </button>
@@ -132,14 +132,14 @@ export function PostComments({
         <ul className="mt-8 space-y-6">
           {tops.map((c) => (
             <li key={c.id}>
-              <CommentRow comment={c} fmt={fmt} canDelete={canDelete(c)} onDelete={() => remove(c.id)}>
+              <CommentRow comment={c} fmt={fmt} canDelete={canDelete(c)} onDelete={() => remove(c.id)} deleteLabel={t("delete")}>
                 <button
                   type="button"
                   onClick={() => {
                     setReplyTo(replyTo === c.id ? null : c.id);
                     setReplyBody("");
                   }}
-                  className="inline-flex items-center gap-1 text-[13px] text-slate-500 transition-colors hover:text-accent-700"
+                  className="inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
                 >
                   <CornerDownRight className="h-3.5 w-3.5" />
                   {t("reply")}
@@ -155,6 +155,7 @@ export function PostComments({
                         fmt={fmt}
                         canDelete={canDelete(r)}
                         onDelete={() => remove(r.id)}
+                        deleteLabel={t("delete")}
                       />
                     </li>
                   ))}
@@ -176,7 +177,7 @@ export function PostComments({
                       type="button"
                       onClick={() => submitReply(c.id)}
                       disabled={busy || !replyBody.trim()}
-                      className="rounded-lg bg-accent-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
+                      className="rounded-lg bg-accent-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 disabled:opacity-50"
                     >
                       {t("reply")}
                     </button>
@@ -196,12 +197,14 @@ function CommentRow({
   fmt,
   canDelete,
   onDelete,
+  deleteLabel,
   children,
 }: {
   comment: CommentView;
   fmt: (iso: string) => string;
   canDelete: boolean;
   onDelete: () => void;
+  deleteLabel: string;
   children?: React.ReactNode;
 }) {
   const username = comment.author?.username ?? "?";
@@ -222,8 +225,8 @@ function CommentRow({
           <button
             type="button"
             onClick={onDelete}
-            className="ml-auto text-slate-300 transition-colors hover:text-red-500"
-            aria-label="delete"
+            className="ml-auto rounded text-slate-300 transition-colors hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+            aria-label={deleteLabel}
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>

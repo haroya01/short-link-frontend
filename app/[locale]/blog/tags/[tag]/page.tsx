@@ -55,9 +55,9 @@ export default async function TagFeedPage({
   const hasNext = feedResult.ok ? feedResult.data.hasNext : false;
   const tags = tagsResult.ok ? tagsResult.data : [];
   const authors = authorsResult.ok ? authorsResult.data : [];
-  // Tags now live in the strip above, so the rail carries authors only — base its presence on
-  // authors. Also drop it for a thin result set so a lone card doesn't float beside a tall sidebar.
-  const hasRail = authors.length > 0 && items.length > 3;
+  // Keep the (authors-only) rail whenever there are authors, so the grid stays 3-up like the feed —
+  // a few posts fill the row instead of shrinking to a 4-up grid with an empty trailing column.
+  const hasRail = authors.length > 0;
 
   const writeCta = (
     <a
@@ -97,7 +97,7 @@ export default async function TagFeedPage({
             action={
               <a
                 href={blogHref("/tags")}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
               >
                 <Hash className="h-4 w-4 text-accent-600" />
                 {t("browseTopics")}

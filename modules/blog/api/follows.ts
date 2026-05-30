@@ -26,12 +26,16 @@ export function getFollowStatus(username: string): Promise<FollowStatus> {
 }
 
 export function followUser(username: string): Promise<FollowStatus> {
+  if (USE_MOCKS)
+    return Promise.resolve({ following: true, followerCount: 129, followingCount: 12 });
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {
     method: "PUT",
   });
 }
 
 export function unfollowUser(username: string): Promise<FollowStatus> {
+  if (USE_MOCKS)
+    return Promise.resolve({ following: false, followerCount: 128, followingCount: 12 });
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {
     method: "DELETE",
   });

@@ -66,7 +66,7 @@ export function FollowingFeed({
             {/* Soft-nav back to the public feed — keeps a curious visitor reading instead of bouncing. */}
             <Link
               href="?sort=recent"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
             >
               {t("followingBrowseLatest")}
             </Link>
@@ -83,7 +83,7 @@ export function FollowingFeed({
                 <li key={author.username}>
                   <a
                     href={authorHref(author.username, locale)}
-                    className="group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50"
+                    className="group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-1"
                   >
                     {author.avatarUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -101,7 +101,7 @@ export function FollowingFeed({
                       <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900">
                         {author.username}
                       </span>
-                      <span className="truncate text-[12px] text-slate-400">
+                      <span className="truncate text-[12px] text-slate-500">
                         {t("railPostCount", { count: postCount })}
                       </span>
                     </span>

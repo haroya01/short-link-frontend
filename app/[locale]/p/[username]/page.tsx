@@ -92,7 +92,7 @@ function PostListEntry({ post, locale }: { post: PublicPostListItem; locale: str
     <li>
       <a
         href={`/${post.slug}`}
-        className="group -mx-4 flex items-start gap-5 rounded-2xl px-4 py-5 transition-colors hover:bg-slate-50"
+        className="group -mx-4 flex items-start gap-5 rounded-2xl px-4 py-5 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
       >
         <div className="min-w-0 flex-1">
           <h2 className="text-[19px] font-semibold leading-snug tracking-tight text-slate-900 group-hover:text-accent-700">

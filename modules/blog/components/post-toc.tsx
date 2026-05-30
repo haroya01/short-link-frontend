@@ -29,6 +29,16 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
     return () => observer.disconnect();
   }, [headings]);
 
+  function jumpTo(e: React.MouseEvent, id: string) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    setActive(id);
+    history.replaceState(null, "", `#${id}`);
+  }
+
   if (headings.length < 2) return null;
 
   return (
@@ -38,7 +48,9 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
           <li key={h.id} style={{ paddingLeft: `${(h.level - 1) * 12}px` }}>
             <a
               href={`#${h.id}`}
-              className={`block truncate transition-colors ${
+              onClick={(e) => jumpTo(e, h.id)}
+              aria-current={active === h.id ? "location" : undefined}
+              className={`block truncate rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 ${
                 active === h.id
                   ? "font-medium text-accent-700"
                   : "text-slate-500 hover:text-slate-700"
