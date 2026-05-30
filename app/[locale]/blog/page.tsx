@@ -161,10 +161,22 @@ export default async function BlogFeedPage({
 
   return (
     <>
-      {/* Editorial masthead — a quiet wordmark + tagline, identical for visitors and authors. Search
-          lives in the global header (BlogHeaderSearch 🔍); discovery (tabs + tags + content) leads
-          the body. */}
-      <FeedMasthead locale={locale} />
+      {/* Editorial masthead — the brand tagline by default; on search it becomes the search heading
+          (query + scope) so the band reflects what you're looking at instead of a static slogan. */}
+      {searching ? (
+        <FeedMasthead
+          locale={locale}
+          eyebrow={t("searchLabel")}
+          title={
+            hasNext
+              ? t("searchResultsFor", { q: query })
+              : t("searchResultsCount", { q: query, count: items.length })
+          }
+          sub={t("searchScopeAll")}
+        />
+      ) : (
+        <FeedMasthead locale={locale} />
+      )}
 
       {/* pb-24 on phones keeps the last feed card scrollable clear of the fixed write FAB (the body
           gets extra room on top of that while the cookie banner is up — see globals.css). */}
@@ -190,24 +202,6 @@ export default async function BlogFeedPage({
           <div className="hidden sm:block">{writeCta}</div>
         </header>
 
-        {searching && (
-          <div className="mt-6">
-            {/* aria-live so a screen reader announces the summary when results swap in. The exact
-                count shows only when the whole set fits one page (no `hasNext`) — the feed API has no
-                grand total, so "N" while more pages remain would understate it. */}
-            <p aria-live="polite" className="text-[14px] text-slate-500">
-              {/* Exact count only when the whole set fits one page; otherwise a count-less label,
-                  since the appended (infinite-scroll) total isn't known here and a frozen number reads
-                  stale. */}
-              {hasNext
-                ? t("searchResultsFor", { q: query })
-                : t("searchResultsCount", { q: query, count: items.length })}
-            </p>
-            {/* Visible scope note (not just the disabled-tab hover tooltip) so touch users learn why
-                the 팔로잉 tab is inactive: search spans every author. */}
-            <p className="mt-1 text-[12px] text-slate-400">{t("searchScopeAll")}</p>
-          </div>
-        )}
 
         {/* Keyed by tab + query so it remounts and crossfades on each tab switch / search. */}
         <div key={contentKey} className="content-fade">

@@ -89,15 +89,8 @@ export default async function PublicPostPage({
   const headings = extractHeadings(blocks);
 
   return (
-    <div className="relative mx-auto max-w-6xl">
-      {headings.length >= 2 && (
-        <aside className="absolute right-0 top-20 hidden w-56 xl:block">
-          <div className="sticky top-28 max-h-[calc(100vh-9rem)] overflow-y-auto">
-            <PostToc headings={headings} />
-          </div>
-        </aside>
-      )}
-      <article className="mx-auto max-w-2xl px-6 py-14 sm:py-20" lang={post.languageTag}>
+    <div className="mx-auto flex max-w-6xl justify-center gap-10 px-4 sm:px-6">
+      <article className="w-full max-w-2xl py-14 sm:py-20" lang={post.languageTag}>
         <ViewBeacon username={username} slug={slug} />
 
       <header className="mb-12">
@@ -166,6 +159,14 @@ export default async function PublicPostPage({
 
       <PostComments postId={post.id} authorUsername={author.username} />
       </article>
+
+      {headings.length >= 2 && (
+        <aside className="hidden w-56 shrink-0 py-20 xl:block">
+          <div className="sticky top-20 max-h-[calc(100vh-7rem)] overflow-y-auto">
+            <PostToc headings={headings} />
+          </div>
+        </aside>
+      )}
     </div>
   );
 }
