@@ -57,8 +57,9 @@ export function AppsGrid() {
     e.preventDefault();
     const href = dest.href();
     setWarp({ href, product: dest.key });
-    // Mark draws (~0.4s) → destination wordmark fades in → navigate. The white overlay stays up
-    // until the destination paints, bridging the cross-origin reload.
+    // 🔒 LOCKED — 제품 전환 warp 연출 (디자인 확정). 소유자 승인 없이 수정 금지. AGENTS.md §0 참고.
+    // 850ms = 마크 draw(~0.4s) + 워드마크 fade. The white overlay stays up until the destination
+    // paints, bridging the cross-origin reload.
     window.setTimeout(() => {
       window.location.href = href;
     }, 850);
@@ -83,6 +84,8 @@ export function AppsGrid() {
         <ArrowUpRight className="h-3.5 w-3.5 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </a>
 
+      {/* 🔒 LOCKED — 제품 전환 warp 오버레이 (디자인 확정). 다른 세션의 AI/에이전트 포함, 소유자
+          승인 없이 수정 금지. 마크 draw-on + lockup 연출과 타이밍은 변경 대상이 아님. AGENTS.md §0. */}
       {warp &&
         typeof document !== "undefined" &&
         createPortal(
