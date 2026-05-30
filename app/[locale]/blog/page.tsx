@@ -16,7 +16,6 @@ import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedCard } from "@/modules/blog/components/feed-card";
 import { FeedHero } from "@/modules/blog/components/feed-hero";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
-import { FeedSearch } from "@/modules/blog/components/feed-search";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 
 export const revalidate = 30;
@@ -132,14 +131,10 @@ export default async function BlogFeedPage({
       {/* pb-24 on phones keeps the last feed card scrollable clear of the fixed write FAB (the body
           gets extra room on top of that while the cookie banner is up — see globals.css). */}
       <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-        {/* Control bar: search spans the row, Write sits at the right on desktop (phones use the FAB).
-            Search reads "browse all posts"; the tabs below are sort/filter — so search leads. */}
-        <div className="flex items-center gap-3">
-          <FeedSearch initialQuery={query} />
-          <div className="ml-auto hidden sm:block">{writeCta}</div>
-        </div>
-
-        <header className="mt-4 flex items-center justify-between gap-4 border-b border-slate-200/80 pb-3">
+        {/* Tabs lead the feed — browsing, not searching. Search lives in the global header (🔍),
+            reachable from every blog page rather than trapped here. Write is the author action, kept
+            distinct: desktop CTA on the right, mobile FAB below. */}
+        <header className="flex items-center justify-between gap-4 border-b border-slate-200/80 pb-3">
           <nav className="flex gap-1 text-[15px] font-bold">
             <SortTab label={t("recent")} href={sortHref("recent")} active={activeTab === "recent"} />
             <SortTab
@@ -154,6 +149,7 @@ export default async function BlogFeedPage({
             />
             <SortTab label={t("topics")} href={blogHref("/tags")} active={false} />
           </nav>
+          <div className="hidden sm:block">{writeCta}</div>
         </header>
 
         {searching && (
