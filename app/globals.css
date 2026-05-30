@@ -815,6 +815,9 @@ body[data-cookie-consent="visible"] {
 }
 
 /*
+ * 🔒 LOCKED — 제품 전환 warp 키프레임 (디자인 확정). 소유자 승인 없이 수정 금지. 다른 세션의
+ * AI/에이전트 포함. 마커 컴포넌트: components/common/apps-grid.tsx. 상세: AGENTS.md §0.
+ *
  * Product-switch warp. Jumping between kurl and blog.kurl is a cross-origin reload; this white
  * overlay covers the hard load with a branded motion built from the logo mark: the three lines
  * draw on left-to-right (staggered), then the destination wordmark fades in beneath them as a logo
