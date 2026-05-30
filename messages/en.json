@@ -29,7 +29,9 @@
     "emptyTitle": "No posts published yet",
     "emptyBody": "Be the first to publish.",
     "emptyFollowingTitle": "No posts from authors you follow",
-    "emptyTagTitle": "No posts in this topic yet"
+    "emptyTagTitle": "No posts in this topic yet",
+    "topicsIntro": "Browse what people are writing about. Pick a tag to dive in, or start with the latest posts below.",
+    "topicsRecent": "Latest posts"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",
@@ -100,7 +102,21 @@
     "listLoading": "Loading…",
     "slugHint": "Editable until published · lowercase letters, digits, hyphens",
     "titleRequired": "Add a title before publishing",
-    "tagsHint": "Separate with comma or Enter"
+    "tagsHint": "Separate with comma or Enter",
+    "slash": {
+      "heading1": "Heading 1",
+      "heading2": "Heading 2",
+      "heading3": "Heading 3",
+      "bulletList": "Bulleted list",
+      "orderedList": "Numbered list",
+      "quote": "Quote",
+      "codeBlock": "Code block",
+      "image": "Image",
+      "divider": "Divider",
+      "embed": "Embed (video / link)",
+      "table": "Table"
+    },
+    "slugLabel": "Post URL slug"
   },
   "publicPost": {
     "like": "Like",
@@ -2482,5 +2498,10 @@
     },
     "backLink": "Back to URL shortener",
     "statsLink": "QR campaign analytics"
+  },
+  "workspaceGate": {
+    "title": "Sign in to start writing",
+    "body": "Your posts, drafts, and series live here. Sign in to pick up where you left off.",
+    "signIn": "Sign in"
   }
 }

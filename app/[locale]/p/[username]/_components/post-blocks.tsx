@@ -2,6 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Markdown } from "@/modules/blog/components/markdown";
 import type { TocHeading } from "@/modules/blog/components/post-toc";
+import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
 import { slugify } from "@/modules/blog/lib/slugify";
 import type { PublicCtaInfo, PublicPostBlock } from "@/modules/blog/api/public-posts";
@@ -73,6 +74,10 @@ function Block({ block }: { block: PublicPostBlock }) {
       return <ListBlock content={block.content} ordered />;
     case "IMAGE":
       return <ImageBlock content={block.content} />;
+    case "CODE":
+      return <CodeBlock content={block.content} />;
+    case "TABLE":
+      return block.content ? <Markdown>{block.content}</Markdown> : null;
     case "EMBED":
       return <EmbedBlock content={block.content} />;
     case "CTA_REF":
@@ -131,6 +136,24 @@ function ImageBlock({ content }: { content: string | null }) {
       {caption && <figcaption>{caption}</figcaption>}
     </figure>
   );
+}
+
+function CodeBlock({ content }: { content: string | null }) {
+  if (!content) return null;
+  let lang = "";
+  let code = "";
+  try {
+    const parsed = JSON.parse(content);
+    lang = typeof parsed?.lang === "string" ? parsed.lang : "";
+    code = typeof parsed?.code === "string" ? parsed.code : "";
+  } catch {
+    code = content; // tolerate a plain-string legacy payload
+  }
+  if (!code) return null;
+  // Render through the shared markdown pipeline so rehype-highlight applies; a backtick-safe fence
+  // keeps code that itself contains backticks from breaking out.
+  const fence = fenceFor(code);
+  return <Markdown>{`${fence}${lang}\n${code}\n${fence}`}</Markdown>;
 }
 
 function EmbedBlock({ content }: { content: string | null }) {

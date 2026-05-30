@@ -37,6 +37,14 @@ export function EditorMeta({
             value={slug}
             onChange={(e) => onSlugChange(e.target.value)}
             maxLength={200}
+            aria-label={t("slugLabel")}
+            // Slug is a code-like field — suppress the mobile autofill bar plus autocorrect/caps.
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            data-1p-ignore
+            data-lpignore="true"
             className="w-44 rounded-md border border-slate-200 bg-slate-50/60 px-2 py-1 font-mono text-base text-slate-600 outline-none transition-colors focus:border-accent-400 focus:bg-white sm:text-xs"
           />
           <span className="text-[11px] text-slate-400">{t("slugHint")}</span>

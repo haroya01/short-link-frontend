@@ -114,9 +114,20 @@ export type FetchResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: 404 | 410 | "error" };
 
-async function fetchPublic<T>(path: string): Promise<FetchResult<T>> {
+async function fetchPublic<T>(
+  path: string,
+  opts?: { noStore?: boolean },
+): Promise<FetchResult<T>> {
   const url = `${API_BASE}${path}`;
-  const res = await fetch(url, { next: { revalidate: REVALIDATE_SECONDS } });
+  // Detail lookups fetch with no-store: fetch can't cache only the 200 and skip the 404, so an ISR
+  // window would serve a stale 404 on the publish→share path (a just-published post staying 404 for
+  // up to the revalidate window). List/feed fetches stay on ISR — a momentarily missing card is far
+  // cheaper than a broken shared link. The backend reads straight from the DB, so no-store here just
+  // means one DB read per view.
+  const res = await fetch(
+    url,
+    opts?.noStore ? { cache: "no-store" } : { next: { revalidate: REVALIDATE_SECONDS } },
+  );
   if (res.status === 200) {
     const data = (await res.json()) as T;
     return { ok: true, data };
@@ -158,6 +169,7 @@ export function findPublicPost(
 ): Promise<FetchResult<PublicPostDetail>> {
   return fetchPublic<PublicPostDetail>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/posts/${encodeURIComponent(slug)}`,
+    { noStore: true },
   );
 }
 
@@ -183,5 +195,6 @@ export function findPublicSeries(
 ): Promise<FetchResult<PublicSeriesDetail>> {
   return fetchPublic<PublicSeriesDetail>(
     `/api/v1/public/profiles/${encodeURIComponent(username)}/series/${encodeURIComponent(slug)}`,
+    { noStore: true },
   );
 }

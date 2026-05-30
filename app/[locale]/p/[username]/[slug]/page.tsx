@@ -13,7 +13,12 @@ import { ArticleBody, extractHeadings, readingMinutes } from "../_components/pos
 import { SeriesNav, TagChips } from "../_components/post-meta";
 import { findPublicPost } from "@/modules/blog/api/public-posts";
 
-export const revalidate = 30;
+// Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
+// pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
+// risked serving a stale 404 on the publish→share path; findPublicPost fetches no-store to match.
+// The backend reads straight from the DB (no cache layer), so this is one DB read per view — when
+// that needs a cache, the right layer is the backend / CDN, not an ISR window that breaks freshness.
+export const dynamic = "force-dynamic";
 
 type ReadonlyHeaders = Awaited<ReturnType<typeof headers>>;
 

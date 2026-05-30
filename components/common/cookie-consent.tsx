@@ -19,7 +19,24 @@ export function CookieConsent() {
 
   // Suppress on chrome-less surfaces (public profile pages) — visitors who land via someone's
   // bio link expect a clean preview, not a banner from a service they've never used.
-  if (pathname.startsWith("/u/")) return null;
+  const suppressed = pathname.startsWith("/u/");
+
+  // Flag the visible banner on <body> so fixed elements (the blog write FAB) and page padding can
+  // make room for it on phones — see body[data-cookie-consent] in globals.css. Cleared on accept,
+  // on suppressed surfaces, and on unmount.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (show && !suppressed) {
+      document.body.dataset.cookieConsent = "visible";
+    } else {
+      delete document.body.dataset.cookieConsent;
+    }
+    return () => {
+      delete document.body.dataset.cookieConsent;
+    };
+  }, [show, suppressed]);
+
+  if (suppressed) return null;
   if (!show) return null;
 
   function accept() {
