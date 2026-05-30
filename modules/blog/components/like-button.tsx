@@ -56,7 +56,7 @@ export function LikeButton({ postId, initialCount }: { postId: number; initialCo
       onClick={toggle}
       aria-pressed={liked}
       aria-label={t("like")}
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 ${
+      className={`touch-target inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 ${
         liked
           ? "border-accent-300 bg-accent-50 text-accent-700"
           : "border-slate-200 text-slate-500 hover:border-accent-300 hover:text-accent-700"
