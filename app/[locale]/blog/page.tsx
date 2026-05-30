@@ -16,6 +16,7 @@ import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedHero } from "@/modules/blog/components/feed-hero";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
+import { FeedSearchBar } from "@/modules/blog/components/feed-search-bar";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { MobileDiscoveryStrip } from "@/modules/blog/components/mobile-discovery-strip";
 
@@ -137,10 +138,12 @@ export default async function BlogFeedPage({
       {/* pb-24 on phones keeps the last feed card scrollable clear of the fixed write FAB (the body
           gets extra room on top of that while the cookie banner is up — see globals.css). */}
       <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-        {/* Tabs lead the feed — browsing, not searching. Search lives in the global header (🔍),
-            reachable from every blog page rather than trapped here. Write is the author action, kept
-            distinct: desktop CTA on the right, mobile FAB below. */}
-        <header className="flex items-center justify-between gap-4 border-b border-slate-200/80 pb-3">
+        {/* The feed home is the discovery hub, so search leads here as a prominent field (deep pages
+            keep the compact header 🔍). Tabs sit just below for browsing; write is the author action,
+            kept distinct: desktop CTA on the right of the tabs, mobile FAB below. */}
+        <FeedSearchBar defaultQuery={searching ? query : ""} />
+
+        <header className="mt-6 flex items-center justify-between gap-4 border-b border-slate-200/80 pb-3">
           <nav className="flex gap-1 text-[15px] font-bold">
             <SortTab label={t("recent")} href={sortHref("recent")} active={activeTab === "recent"} />
             <SortTab
