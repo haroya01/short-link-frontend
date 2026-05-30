@@ -115,7 +115,8 @@
       "divider": "Divider",
       "embed": "Embed (video / link)",
       "table": "Table"
-    }
+    },
+    "slugLabel": "Post URL slug"
   },
   "publicPost": {
     "like": "Like",

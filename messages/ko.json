@@ -115,7 +115,8 @@
       "divider": "구분선",
       "embed": "임베드 (동영상 / 링크)",
       "table": "표"
-    }
+    },
+    "slugLabel": "글 주소(slug)"
   },
   "publicPost": {
     "like": "좋아요",

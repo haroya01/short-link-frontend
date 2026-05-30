@@ -37,6 +37,7 @@ export function EditorMeta({
             value={slug}
             onChange={(e) => onSlugChange(e.target.value)}
             maxLength={200}
+            aria-label={t("slugLabel")}
             // Slug is a code-like field — suppress the mobile autofill bar plus autocorrect/caps.
             autoComplete="off"
             autoCorrect="off"

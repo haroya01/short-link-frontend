@@ -115,7 +115,8 @@
       "divider": "区切り線",
       "embed": "埋め込み (動画 / リンク)",
       "table": "テーブル"
-    }
+    },
+    "slugLabel": "記事のURLスラッグ"
   },
   "publicPost": {
     "like": "いいね",

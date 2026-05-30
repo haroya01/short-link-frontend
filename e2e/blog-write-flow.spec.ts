@@ -151,6 +151,22 @@ test.describe("desktop", () => {
     const para = captured.blocks!.find((b) => b.type === "PARAGRAPH");
     expect(para?.content, "bold markdown was saved").toContain("**");
   });
+
+  test("slash menu works on desktop too (no bottom bar present)", async ({ page }) => {
+    const captured: Captured = { blocks: null };
+    await setupMocks(page, captured);
+    await openEditor(page);
+
+    await page.locator(".ProseMirror.toastui-editor-contents").click();
+    await page.keyboard.type("/h1");
+    await page.getByRole("button", { name: "Heading 1" }).click();
+    await page.keyboard.type("Desktop heading");
+
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
+    const h1 = captured.blocks!.find((b) => b.type === "H1");
+    expect(h1?.content).toContain("Desktop heading");
+  });
 });
 
 test("slash menu inserts a heading block", async ({ page }) => {
