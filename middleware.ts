@@ -60,14 +60,15 @@ function legacyRedirect(req: NextRequest, host: string): NextResponse | null {
   const path = req.nextUrl.pathname;
   const search = req.nextUrl.search;
 
-  // Canonical blog host: on the production apex, send blog routes to blog.kurl.me. The blog
-  // workspace's sidebar links are host-relative (only the blog host rewrites /{locale}/write →
-  // /{locale}/blog/write), so on kurl.me they 404 / cross-origin-redirect and the RSC prefetch
-  // errors out. Gated to kurl.me only — dev / Vercel preview serve the blog at /{locale}/blog (and
-  // /blog-preview) and must NOT redirect. The generated OG image is excluded: social scrapers may
-  // not follow a cross-host redirect for og:image.
-  const cleaned = cleanHost(host);
-  if (cleaned === "kurl.me" || cleaned === "www.kurl.me") {
+  // Canonical blog host: in production, send blog routes to blog.kurl.me. The blog workspace's
+  // sidebar links are host-relative (only the blog host rewrites /{locale}/write →
+  // /{locale}/blog/write), so on the apex they 404 / cross-origin-redirect and the RSC prefetch
+  // errors out. Gated on VERCEL_ENV === "production" (not the host) because the apex kurl.me is
+  // proxied by the kurl-router Worker, which reaches Next as the bare deployment host — so a host
+  // check can't see "kurl.me". blog.kurl.me requests are already returned above (host guard), so
+  // this can't loop; preview/dev have VERCEL_ENV preview/undefined and serve /{locale}/blog
+  // directly. The generated OG image is excluded — scrapers may not follow a cross-host redirect.
+  if (process.env.VERCEL_ENV === "production") {
     const blogMatch = path.match(/^\/([a-z]{2})\/blog(\/.*)?$/);
     if (blogMatch && !path.endsWith("/opengraph-image")) {
       const rest = blogMatch[2] || "/";
