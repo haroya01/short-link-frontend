@@ -107,7 +107,12 @@ export function FeedInfinite({
       </FeedGrid>
 
       {hasNext && (
-        <div ref={sentinelRef} className="mt-8 flex flex-col items-center gap-2">
+        <div
+          ref={sentinelRef}
+          role="status"
+          aria-live="polite"
+          className="mt-8 flex flex-col items-center gap-2"
+        >
           <button
             type="button"
             onClick={loadMore}
