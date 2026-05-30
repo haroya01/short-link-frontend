@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { useToast } from "@/components/ui/toast";
 import { uploadPostImage } from "@/modules/blog/api/post-images";
 import { MarkdownEditor } from "@/modules/blog/components/editor/markdown-editor";
 import { EditorHeader } from "@/modules/blog/components/editor/editor-header";
@@ -11,6 +12,7 @@ import { usePostEditor } from "@/modules/blog/components/editor/use-post-editor"
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const t = useTranslations("postEditor");
   const { ready, authenticated } = useAuth();
+  const { toast } = useToast();
   const ed = usePostEditor(Number(params.id), { ready, authenticated });
 
   if (!ready) return null;
@@ -49,6 +51,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         value={ed.title}
         onChange={(e) => ed.setTitle(e.target.value)}
         maxLength={200}
+        // Stop mobile Chrome from popping its autofill (address/card/wallet) bar over the keyboard
+        // on a plain post-title field. data-* opt password managers out too.
+        autoComplete="off"
+        data-1p-ignore
+        data-lpignore="true"
         className="mt-5 w-full border-0 bg-transparent text-[28px] font-bold leading-tight tracking-tight text-slate-900 outline-none placeholder:text-slate-300 sm:text-[34px]"
         placeholder={t("titlePlaceholder")}
       />
@@ -68,6 +75,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           initialValue={ed.markdown}
           onChange={ed.setMarkdown}
           onUploadImage={(blob) => uploadPostImage(post.id, blob as File)}
+          onUploadError={(msg) => toast(msg, "error")}
         />
       </div>
 

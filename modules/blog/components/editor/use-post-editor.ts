@@ -16,6 +16,7 @@ import {
 } from "@/modules/blog/api/posts";
 import { assignPostToSeries } from "@/modules/blog/api/series";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
+import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
 
 export type StatusAction = "publish" | "unpublish" | "republish";
 
@@ -57,7 +58,7 @@ export function usePostEditor(
     setSaved(false);
   };
   const setSlug = (v: string) => {
-    setSlugRaw(v.toLowerCase().replace(/[^a-z0-9-]/g, "-"));
+    setSlugRaw(normalizeSlugInput(v));
     setSaved(false);
   };
   const setMarkdown = (v: string) => {
@@ -106,7 +107,8 @@ export function usePostEditor(
       const updated = await updatePostMetadata(post.id, {
         title: title.trim(),
         tags,
-        ...(post.status === "DRAFT" ? { slug: slug.trim() } : {}),
+        // Trim edge hyphens the live input tolerates so the slug matches the backend regex.
+        ...(post.status === "DRAFT" ? { slug: slugForSave(slug) } : {}),
       });
       await replaceBlocks(post.id, markdownToBlocks(markdown));
       await assignPostToSeries(post.id, seriesId, post.seriesId ?? null);

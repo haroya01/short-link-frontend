@@ -29,7 +29,9 @@
     "emptyTitle": "まだ公開された記事がありません",
     "emptyBody": "最初の記事を投稿してみましょう。",
     "emptyFollowingTitle": "フォロー中の作家の記事がありません",
-    "emptyTagTitle": "このトピックの記事はまだありません"
+    "emptyTagTitle": "このトピックの記事はまだありません",
+    "topicsIntro": "みんなが何について書いているかを見てみましょう。タグを選んで掘り下げても、下の最新記事から読み始めても。",
+    "topicsRecent": "最新の記事"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",
@@ -100,7 +102,21 @@
     "listLoading": "読み込み中…",
     "slugHint": "公開前は変更可能 · 英小文字・数字・ハイフン",
     "titleRequired": "公開するにはタイトルを入力してください",
-    "tagsHint": "カンマかEnterで区切る"
+    "tagsHint": "カンマかEnterで区切る",
+    "slash": {
+      "heading1": "見出し1",
+      "heading2": "見出し2",
+      "heading3": "見出し3",
+      "bulletList": "箇条書きリスト",
+      "orderedList": "番号付きリスト",
+      "quote": "引用",
+      "codeBlock": "コードブロック",
+      "image": "画像",
+      "divider": "区切り線",
+      "embed": "埋め込み (動画 / リンク)",
+      "table": "テーブル"
+    },
+    "slugLabel": "記事のURLスラッグ"
   },
   "publicPost": {
     "like": "いいね",
@@ -2482,5 +2498,10 @@
     },
     "backLink": "短縮URLツールに戻る",
     "statsLink": "QRキャンペーン分析"
+  },
+  "workspaceGate": {
+    "title": "ログインして書き始める",
+    "body": "あなたの記事・下書き・シリーズはここに。ログインすると続きから書けます。",
+    "signIn": "ログイン"
   }
 }

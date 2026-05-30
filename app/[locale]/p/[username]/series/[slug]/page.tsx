@@ -4,7 +4,9 @@ import { getTranslations } from "next-intl/server";
 import { ArrowLeft, Layers } from "lucide-react";
 import { findPublicSeries } from "@/modules/blog/api/public-posts";
 
-export const revalidate = 30;
+// Always render fresh — same reasoning as the post detail page: never serve a stale 404 for a
+// just-published series. findPublicSeries fetches no-store to match.
+export const dynamic = "force-dynamic";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 
