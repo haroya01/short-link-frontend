@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { FileText, Grid3x3, Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { blogHref, currentProduct, linksHref, type Product } from "@/lib/host";
@@ -21,10 +22,30 @@ const PRODUCTS: {
   { key: "blog", href: () => blogHref("/"), Icon: FileText, labelKey: "blogLabel", hintKey: "blogHint" },
 ];
 
+type Warp = { href: string; label: string; Icon: typeof Link2 };
+
 export function AppsGrid() {
   const [open, setOpen] = useState(false);
+  const [warp, setWarp] = useState<Warp | null>(null);
   const t = useTranslations("nav.apps");
   const ref = useRef<HTMLDivElement>(null);
+
+  // Play the warp overlay, then do the (cross-origin) navigation. New-tab / modified clicks and
+  // reduced-motion fall through to the plain link.
+  const switchTo = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    p: (typeof PRODUCTS)[number],
+  ) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    e.preventDefault();
+    const href = p.href();
+    setOpen(false);
+    setWarp({ href, label: t(p.labelKey), Icon: p.Icon });
+    window.setTimeout(() => {
+      window.location.href = href;
+    }, 560);
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -69,6 +90,7 @@ export function AppsGrid() {
               key={p.key}
               href={p.href()}
               role="menuitem"
+              onClick={(e) => switchTo(e, p)}
               className={`flex items-start gap-3 px-3 py-3 transition-colors hover:bg-slate-50 ${
                 i > 0 ? "border-t border-slate-100" : ""
               }`}
@@ -82,6 +104,25 @@ export function AppsGrid() {
           ))}
         </div>
       )}
+
+      {warp &&
+        typeof document !== "undefined" &&
+        createPortal(
+          // Portal to <body>: a transformed/blurred header ancestor would otherwise be the
+          // containing block for `fixed`, clipping the overlay to the header height.
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-white"
+            role="status"
+            aria-live="polite"
+          >
+            <span aria-hidden className="product-warp-disc absolute inset-0 bg-accent-600" />
+            <span className="product-warp-content relative flex flex-col items-center gap-3 text-white">
+              <warp.Icon className="h-11 w-11" strokeWidth={1.75} />
+              <span className="text-[19px] font-semibold tracking-tight">{warp.label}</span>
+            </span>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
