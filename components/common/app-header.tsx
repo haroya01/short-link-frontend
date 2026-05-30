@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { Button } from "@/components/ui/button";
 import { AppsGrid } from "@/components/common/apps-grid";
+import { BlogHeaderSearch } from "@/components/common/blog-header-search";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { useSidebarState } from "@/components/common/sidebar-state";
@@ -42,6 +43,7 @@ export function AppHeader({ showMenu = true }: { showMenu?: boolean }) {
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
+          <BlogHeaderSearch />
           <AppsGrid />
           <LanguageSwitcher />
           {!ready ? (
