@@ -45,7 +45,11 @@ type SlashItem = {
   image?: boolean;
 };
 
-// Order = menu order. keywords power the type-to-filter ("/h1", "/img", …).
+// THE extension point — open for extension, closed for modification. Add a block by appending a
+// SlashItem here (key, labelKey, icon, keywords, and a `run` that drives editor.exec, or
+// `image: true` for the file picker). The detection, keyboard nav, positioning, "+" trigger, and
+// choose/insert logic below never need to change for a new block. Order = menu order; keywords power
+// the type-to-filter ("/h1", "/img", …). Covered by e2e (slash + the "+" affordance) — keep it green.
 const ITEMS: SlashItem[] = [
   {
     key: "h1",
