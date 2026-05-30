@@ -19,6 +19,7 @@ import {
   ListOrdered,
   Minus,
   Quote,
+  Table,
   Video,
   type LucideIcon,
 } from "lucide-react";
@@ -94,6 +95,13 @@ const ITEMS: SlashItem[] = [
     icon: Code2,
     keywords: ["code", "codeblock", "pre", "코드", "コード"],
     run: (e) => e.exec("codeBlock"),
+  },
+  {
+    key: "table",
+    labelKey: "table",
+    icon: Table,
+    keywords: ["table", "grid", "표", "테이블", "テーブル", "表"],
+    run: (e) => e.exec("addTable", { rowCount: 3, columnCount: 3 }),
   },
   {
     key: "image",

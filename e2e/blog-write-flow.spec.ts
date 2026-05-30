@@ -171,3 +171,45 @@ test("slash menu inserts a heading block", async ({ page }) => {
   expect(h1, "an H1 block was saved").toBeTruthy();
   expect(h1!.content).toContain("A big heading");
 });
+
+test("slash menu code block survives a blank line on save", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".ProseMirror.toastui-editor-contents").click();
+  await page.keyboard.type("/code");
+  await page.getByRole("button", { name: "Code block" }).click();
+  // A blank line inside the code used to split the block into pieces on save.
+  await page.keyboard.type("const a = 1;");
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("const b = 2;");
+
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
+
+  // The whole fenced block stays a single block carrying both lines (and the fences).
+  const codeBlock = captured.blocks!.find(
+    (b) => b.content?.includes("const a = 1;") && b.content?.includes("const b = 2;"),
+  );
+  expect(codeBlock, "code survived as one block").toBeTruthy();
+  expect(codeBlock!.content).toContain("```");
+});
+
+test("slash menu inserts a table", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".ProseMirror.toastui-editor-contents").click();
+  await page.keyboard.type("/table");
+  await page.getByRole("button", { name: "Table" }).click();
+
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
+
+  // GFM table markdown (pipes + the header separator row) is preserved.
+  const table = captured.blocks!.find((b) => b.content?.includes("|") && b.content?.includes("---"));
+  expect(table, "a GFM table was saved").toBeTruthy();
+});

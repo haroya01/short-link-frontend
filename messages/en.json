@@ -113,7 +113,8 @@
       "codeBlock": "Code block",
       "image": "Image",
       "divider": "Divider",
-      "embed": "Embed (video / link)"
+      "embed": "Embed (video / link)",
+      "table": "Table"
     }
   },
   "publicPost": {

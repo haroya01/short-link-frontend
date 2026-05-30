@@ -47,6 +47,24 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       continue;
     }
 
+    // Fenced code block — consume the whole region verbatim (incl. blank lines and markdown-like
+    // lines) as one PARAGRAPH. The reader renders fenced code through its markdown pipeline; the
+    // line-based rules below would otherwise tear a code block apart at a blank line or a "-"/"#".
+    const fence = line.match(/^(```|~~~)/);
+    if (fence) {
+      const marker = fence[1];
+      const buf = [line];
+      i++;
+      while (i < lines.length) {
+        buf.push(lines[i]);
+        const isClose = lines[i].trimStart().startsWith(marker);
+        i++;
+        if (isClose) break;
+      }
+      blocks.push({ type: "PARAGRAPH", content: buf.join("\n") });
+      continue;
+    }
+
     if (line.trim() === "---") {
       blocks.push({ type: "DIVIDER", content: null });
       i++;
@@ -111,6 +129,7 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       i < lines.length &&
       lines[i].trim() !== "" &&
       lines[i].trim() !== "---" &&
+      !/^(```|~~~)/.test(lines[i]) &&
       !/^(#{1,3}\s|>\s|!\[|[-*]\s|\d+\.\s)/.test(lines[i]) &&
       !standaloneVideoUrl(lines[i])
     ) {

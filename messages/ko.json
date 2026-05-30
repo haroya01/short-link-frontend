@@ -113,7 +113,8 @@
       "codeBlock": "코드 블록",
       "image": "이미지",
       "divider": "구분선",
-      "embed": "임베드 (동영상 / 링크)"
+      "embed": "임베드 (동영상 / 링크)",
+      "table": "표"
     }
   },
   "publicPost": {
