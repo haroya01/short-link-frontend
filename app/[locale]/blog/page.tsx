@@ -90,7 +90,11 @@ export default async function BlogFeedPage({
         ? searchPublicFeed(query, sort, 0, 24)
         : listPublicFeed(sort, 0, 24),
     showsServerFeed ? listPopularTags(12) : Promise.resolve(null),
-    showsServerFeed ? listSuggestedAuthors(5) : Promise.resolve(null),
+    // Authors are also the follow-suggestions for the signed-out "following" tab, so fetch them there
+    // too (not just for the server feed) to keep that tab from dead-ending.
+    showsServerFeed || tab === "following"
+      ? listSuggestedAuthors(5)
+      : Promise.resolve(null),
   ]);
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
@@ -166,7 +170,7 @@ export default async function BlogFeedPage({
         )}
 
         {tab === "following" && !searching ? (
-          <FollowingFeed locale={locale} />
+          <FollowingFeed locale={locale} suggestedAuthors={authors} />
         ) : items.length === 0 ? (
           searching ? (
             <FeedEmpty
