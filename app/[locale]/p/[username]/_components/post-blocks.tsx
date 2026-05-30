@@ -2,9 +2,9 @@ import { ArrowUpRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Markdown } from "@/modules/blog/components/markdown";
 import { KurlLinkCard } from "@/modules/blog/components/kurl-link-card";
+import { PostCode } from "@/modules/blog/components/post-code";
 import { PostImage } from "@/modules/blog/components/post-image";
 import type { TocHeading } from "@/modules/blog/components/post-toc";
-import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 import type { ImageWidth } from "@/modules/blog/lib/image-width";
 import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
@@ -150,10 +150,7 @@ function CodeBlock({ content }: { content: string | null }) {
     code = content; // tolerate a plain-string legacy payload
   }
   if (!code) return null;
-  // Render through the shared markdown pipeline so rehype-highlight applies; a backtick-safe fence
-  // keeps code that itself contains backticks from breaking out.
-  const fence = fenceFor(code);
-  return <Markdown>{`${fence}${lang}\n${code}\n${fence}`}</Markdown>;
+  return <PostCode lang={lang} code={code} />;
 }
 
 function EmbedBlock({ content }: { content: string | null }) {
