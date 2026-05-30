@@ -400,14 +400,16 @@ h1, h2, h3, p {
   .prose-post p {
     @apply my-5 text-[1.0625rem] leading-[1.85] text-slate-700;
   }
+  /* scroll-margin keeps a TOC jump target clear of the sticky header instead of tucking it
+     underneath. Applies to the heading anchors PostToc links to. */
   .prose-post h2 {
-    @apply mb-3 mt-12 text-[1.5rem] font-bold leading-snug tracking-tight text-slate-900;
+    @apply mb-3 mt-12 scroll-mt-24 text-[1.5rem] font-bold leading-snug tracking-tight text-slate-900;
   }
   .prose-post h3 {
-    @apply mb-2 mt-10 text-[1.25rem] font-semibold leading-snug tracking-tight text-slate-900;
+    @apply mb-2 mt-10 scroll-mt-24 text-[1.25rem] font-semibold leading-snug tracking-tight text-slate-900;
   }
   .prose-post h4 {
-    @apply mb-2 mt-8 text-[1.0625rem] font-semibold leading-snug text-slate-900;
+    @apply mb-2 mt-8 scroll-mt-24 text-[1.0625rem] font-semibold leading-snug text-slate-900;
   }
   .prose-post ul {
     @apply my-5 list-disc space-y-2 pl-6;

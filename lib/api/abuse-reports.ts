@@ -1,5 +1,7 @@
 import { request } from "./client";
 
+const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+
 export type AbuseSubjectType = "POST" | "USER";
 
 export type AbuseReportStatus = "OPEN" | "REVIEWING" | "RESOLVED" | "REJECTED";
@@ -24,6 +26,9 @@ export async function submitAbuseReport(payload: {
   subjectId: number;
   reason?: string;
 }): Promise<void> {
+  // Demo/mock mode: accept the report so the submit flow resolves to its "접수됨" state instead of
+  // hitting a backend that isn't there. The real endpoint stays the only path outside mock mode.
+  if (USE_MOCKS) return Promise.resolve();
   await request("/api/v1/public/abuse-reports", { method: "POST", body: payload });
 }
 

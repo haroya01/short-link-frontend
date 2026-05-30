@@ -11,6 +11,9 @@ const ACCESS_TOKEN_KEY = "short-link:access-token";
  */
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
+/** Demo/mock mode (NEXT_PUBLIC_USE_MOCKS=1) — lets the app render + interact without a backend. */
+const MOCKS_ON = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+
 export function withBase(path: string): string {
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
   return API_BASE + path;
@@ -55,6 +58,13 @@ export function setToken(token: string | null) {
  * logged out. No-op (and no request) when a token is already present.
  */
 export async function bootstrapSession(): Promise<boolean> {
+  // Demo/mock mode: seed a token so `useMe` (gated on token presence) enables and resolves to the
+  // mock viewer — making the signed-in UX (follow, comments, following feed, header logout)
+  // exercisable without a backend.
+  if (MOCKS_ON) {
+    if (!readToken()) setToken("mock-session-token");
+    return true;
+  }
   if (readToken()) return true;
   return (await tryRefresh()) != null;
 }
@@ -208,7 +218,19 @@ function filenameFromContentDisposition(header: string): string | null {
 
 import type { Me } from "@/types";
 
+/** A demo viewer for mock mode — username is NOT one of the mock authors, so the follow button
+ *  shows on every author page (never "your own profile"). */
+const MOCK_ME: Me = {
+  id: 9001,
+  email: "reader@kurl.me",
+  role: "USER",
+  username: "reader",
+  tier: "FREE",
+  createdAt: "2026-01-01T00:00:00Z",
+};
+
 export async function fetchMe(): Promise<Me> {
+  if (MOCKS_ON) return Promise.resolve(MOCK_ME);
   return request<Me>("/api/v1/users/me", { method: "GET" });
 }
 
