@@ -20,6 +20,8 @@
     "loadMore": "もっと見る",
     "feed": "フィード",
     "followingSignedOut": "フォローした作家の記事をまとめて読めます。ログインして始めましょう。",
+    "followingSignedOutTitle": "あなただけのフィードを作りましょう",
+    "followingBrowseLatest": "最新の記事を見る",
     "followingEmpty": "フォロー中の作家の記事はまだありません。気になる作家をフォローしてみましょう。",
     "signIn": "ログイン",
     "topics": "トピック",
