@@ -1,8 +1,10 @@
 import { ArrowUpRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Markdown } from "@/modules/blog/components/markdown";
+import { KurlLinkCard } from "@/modules/blog/components/kurl-link-card";
 import type { TocHeading } from "@/modules/blog/components/post-toc";
 import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
+import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
 import { slugify } from "@/modules/blog/lib/slugify";
 import type { PublicCtaInfo, PublicPostBlock } from "@/modules/blog/api/public-posts";
@@ -157,6 +159,10 @@ function CodeBlock({ content }: { content: string | null }) {
 }
 
 function EmbedBlock({ content }: { content: string | null }) {
+  // A kurl short link → live link-stats card (the "post backed by measured links" signal).
+  const code = content ? kurlShortCode(content) : null;
+  if (code && content) return <KurlLinkCard code={code} url={content.trim()} />;
+
   const plan = planEmbed(content);
   if (!plan) return null;
   if (plan.kind === "video") {
