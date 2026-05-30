@@ -12,8 +12,17 @@ import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { useSidebarState } from "@/components/common/sidebar-state";
 
-/** `showMenu` toggles the mobile sidebar button — off for the public feed, which has no sidebar. */
-export function AppHeader({ showMenu = true }: { showMenu?: boolean }) {
+/**
+ * `showMenu` toggles the mobile sidebar button — off for the public feed, which has no sidebar.
+ * `searchOpen` rests the header search field open (used on the blog feed home, the discovery hub).
+ */
+export function AppHeader({
+  showMenu = true,
+  searchOpen = false,
+}: {
+  showMenu?: boolean;
+  searchOpen?: boolean;
+}) {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("nav");
@@ -42,10 +51,16 @@ export function AppHeader({ showMenu = true }: { showMenu?: boolean }) {
           </a>
         </div>
 
+        {/* Right cluster split into two zones: utilities for *this* surface (search + language) on
+            the left, then a hairline divider, then the cross-product switcher + account on the right.
+            The divider stops the switcher's "kurl/blog.kurl" wordmark pill from reading as a second
+            brand mark beside the search field, and keeps the expanded search pill from sitting flush
+            against the same-shaped switcher pill. */}
         <div className="flex shrink-0 items-center gap-2">
-          <BlogHeaderSearch />
-          <AppsGrid />
+          <BlogHeaderSearch defaultOpen={searchOpen} />
           <LanguageSwitcher />
+          <span aria-hidden className="h-5 w-px bg-slate-200" />
+          <AppsGrid />
           {!ready ? (
             <div className="h-8 w-20 animate-pulse rounded-md bg-slate-100" />
           ) : authenticated ? (

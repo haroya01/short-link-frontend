@@ -34,7 +34,7 @@ export default async function PublicSeriesIndexPage({
 
       <div className="mt-8">
         {series.length === 0 ? (
-          <p className="text-slate-400">{t("seriesEmpty")}</p>
+          <p className="text-slate-500">{t("seriesEmpty")}</p>
         ) : (
           <ul className="space-y-2">
           {series.map((s) => (
@@ -48,7 +48,7 @@ export default async function PublicSeriesIndexPage({
                   <span className="block truncate text-[17px] font-semibold text-slate-900 group-hover:text-accent-700">
                     {s.title}
                   </span>
-                  <span className="text-[13px] text-slate-400">
+                  <span className="text-[13px] text-slate-500">
                     {t("postCount", { count: s.postCount })}
                   </span>
                 </span>

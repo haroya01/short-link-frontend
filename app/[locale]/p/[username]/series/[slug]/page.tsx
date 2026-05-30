@@ -37,18 +37,19 @@ export default async function PublicSeriesPage({
     <main className="mx-auto max-w-2xl px-6 py-14 sm:py-20">
       <a
         href="/series"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-400 transition-colors hover:text-accent-700"
+        className="inline-flex items-center gap-1.5 rounded text-sm text-slate-500 transition-colors hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
       >
-        <ArrowLeft className="h-4 w-4" />@{author.username}
+        <ArrowLeft className="h-4 w-4" />
+        {t("tabSeries")}
       </a>
 
       <header className="mt-6 flex items-center gap-3">
         <Layers className="h-6 w-6 text-accent-600" />
         <div>
-          <h1 className="text-headline-sm font-bold tracking-tight text-slate-900">
+          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 sm:text-headline-md">
             {series.title}
           </h1>
-          <p className="mt-1 text-[13px] font-medium text-slate-400">
+          <p className="mt-1 text-[13px] font-medium text-slate-500">
             {t("postCount", { count: series.postCount })}
           </p>
         </div>

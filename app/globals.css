@@ -518,6 +518,20 @@ h1, h2, h3, p {
   }
 }
 
+/*
+ * Feed content swap fade — keyed by the active tab/search so the block remounts and replays this on
+ * every Latest/Popular/Following switch, turning the soft-nav content swap into a gentle crossfade
+ * instead of an abrupt jump. `both` holds the from-state so there's no flash before it starts.
+ */
+.content-fade {
+  animation: profile-fade-in 280ms ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .content-fade {
+    animation: none;
+  }
+}
+
 @keyframes toast-slide-in {
   from {
     opacity: 0;

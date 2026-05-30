@@ -35,9 +35,9 @@ export default async function PublicAuthorAboutPage({
         {author.bio ? (
           <p className="whitespace-pre-line">{author.bio}</p>
         ) : (
-          <p className="text-slate-400">{t("aboutEmpty")}</p>
+          <p className="text-slate-500">{t("aboutEmpty")}</p>
         )}
-        <p className="text-[13px] text-slate-400">{t("postCount", { count: posts.length })}</p>
+        <p className="text-[13px] text-slate-500">{t("postCount", { count: posts.length })}</p>
       </div>
     </main>
   );
