@@ -2,6 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Markdown } from "@/modules/blog/components/markdown";
 import { KurlLinkCard } from "@/modules/blog/components/kurl-link-card";
+import { PostImage } from "@/modules/blog/components/post-image";
 import type { TocHeading } from "@/modules/blog/components/post-toc";
 import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
@@ -131,13 +132,7 @@ function ImageBlock({ content }: { content: string | null }) {
     url = content.trim();
   }
   if (!url) return null;
-  return (
-    <figure>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={url} alt={alt || caption} loading="lazy" />
-      {caption && <figcaption>{caption}</figcaption>}
-    </figure>
-  );
+  return <PostImage src={url} alt={alt} caption={caption} />;
 }
 
 function CodeBlock({ content }: { content: string | null }) {

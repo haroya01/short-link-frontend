@@ -167,6 +167,28 @@ test.describe("desktop", () => {
     const h1 = captured.blocks!.find((b) => b.type === "H1");
     expect(h1?.content).toContain("Desktop heading");
   });
+
+  // Locks the "+" add-block affordance — it must keep opening the block menu on an empty line.
+  test("the + affordance opens the block menu on an empty line", async ({ page }) => {
+    const captured: Captured = { blocks: null };
+    await setupMocks(page, captured);
+    await openEditor(page);
+
+    await page.locator(".ProseMirror.toastui-editor-contents").click();
+    await page.keyboard.type("intro line");
+    await page.keyboard.press("Enter");
+
+    const plus = page.getByRole("button", { name: "Add a block" });
+    await expect(plus).toBeVisible({ timeout: 10_000 });
+    await plus.click();
+    await page.getByRole("button", { name: "Heading 1" }).click();
+    await page.keyboard.type("Added with plus");
+
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
+    const h1 = captured.blocks!.find((b) => b.type === "H1");
+    expect(h1?.content, "a block was inserted via the + menu").toContain("Added with plus");
+  });
 });
 
 test("slash menu inserts a heading block", async ({ page }) => {
