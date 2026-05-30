@@ -115,6 +115,10 @@ export default async function BlogFeedPage({
 
   const labels = { views: (count: number) => t("views", { count }) };
 
+  // Remount key for the feed content: changes on every Latest/Popular/Following switch (and on a new
+  // search), so the content block replays its fade instead of swapping abruptly.
+  const contentKey = `${activeTab}:${searching ? query : ""}`;
+
   // Editorial focal point: promote the lead post to a wide featured card on the default (non-search)
   // feed — but only when (a) enough posts remain to fill a grid beneath it, and (b) the lead post has
   // a real cover image. A featured slot is the page's single focal point; filling it with the flat
@@ -202,13 +206,15 @@ export default async function BlogFeedPage({
           </div>
         )}
 
-        {/* Phone-only discovery: the desktop rail (lg+) is absent on small screens, so surface tags
-            and authors here above the feed when browsing (not while searching or on the following tab). */}
-        {!searching && tab !== "following" && items.length > 0 && (
-          <MobileDiscoveryStrip locale={locale} tags={tags} authors={authors} />
-        )}
+        {/* Keyed by tab + query so it remounts and crossfades on each tab switch / search. */}
+        <div key={contentKey} className="content-fade">
+          {/* Phone-only discovery: the desktop rail (lg+) is absent on small screens, so surface tags
+              and authors here above the feed when browsing (not while searching or on the following tab). */}
+          {!searching && tab !== "following" && items.length > 0 && (
+            <MobileDiscoveryStrip locale={locale} tags={tags} authors={authors} />
+          )}
 
-        {tab === "following" && !searching ? (
+          {tab === "following" && !searching ? (
           <FollowingFeed locale={locale} suggestedAuthors={authors} />
         ) : groupByTag ? (
           trendingSections.length === 0 ? (
@@ -219,6 +225,7 @@ export default async function BlogFeedPage({
               locale={locale}
               labels={labels}
               moreLabel={t("railSeeAll")}
+              heading={t("trendingTopicsLabel")}
             />
           )
         ) : items.length === 0 ? (
@@ -247,7 +254,8 @@ export default async function BlogFeedPage({
               <DiscoveryRail locale={locale} tags={tags} authors={authors} />
             ) : null}
           </FeedBody>
-        )}
+          )}
+        </div>
       </main>
 
       {/* Mobile-only floating write button — the header Write CTA is desktop-only (sm:block), so
@@ -292,9 +300,7 @@ function FeedBody({
 }) {
   const grid = (
     <>
-      {featured && (
-        <div className="mb-10 border-b border-slate-100 pb-10 sm:mb-12 sm:pb-12">{featured}</div>
-      )}
+      {featured && <div className="mb-10 sm:mb-12">{featured}</div>}
       <FeedInfinite
         locale={locale}
         initialItems={items}
@@ -349,7 +355,7 @@ function SortTab({
       href={href}
       className={`${base} ${
         active
-          ? "text-accent-700 after:absolute after:inset-x-2.5 after:-bottom-[13px] after:h-0.5 after:rounded-full after:bg-accent-600"
+          ? "text-accent-700 after:absolute after:inset-x-2.5 after:-bottom-[13px] after:h-0.5 after:origin-left after:rounded-full after:bg-accent-600 after:[animation:underline-glide_240ms_ease-out]"
           : "text-slate-400 hover:text-slate-700"
       }`}
     >

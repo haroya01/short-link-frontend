@@ -101,7 +101,7 @@ export default async function PublicPostPage({
         <ViewBeacon username={username} slug={slug} />
 
       <header className="mb-12">
-        <h1 className="text-headline-sm font-bold tracking-tight text-slate-900 sm:text-headline-md">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 sm:text-headline-md">
           {post.title}
         </h1>
         <div className="mt-6 flex items-center justify-between gap-4">
@@ -179,7 +179,7 @@ function GonePage({
 }) {
   return (
     <main className="mx-auto flex max-w-md flex-col items-center px-6 py-28 text-center">
-      <h1 className="text-headline-sm font-bold tracking-tight text-slate-900">{t("goneTitle")}</h1>
+      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900">{t("goneTitle")}</h1>
       <p className="mt-3 text-slate-500">{t("goneBody")}</p>
       <a
         href="/"

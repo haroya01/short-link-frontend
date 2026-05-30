@@ -45,6 +45,7 @@
     "searchResultsCount": "‘{q}’ 검색 결과 {count}개",
     "searchResultsCountMore": "‘{q}’ 검색 결과 {count}개 이상",
     "featuredLabel": "추천",
+    "trendingTopicsLabel": "주제별로 많이 읽힌 글",
     "searchScopeAll": "검색 중에는 모든 글에서 찾고 있어요.",
     "searchEmptyTitle": "검색 결과가 없어요",
     "searchEmptyBody": "다른 검색어를 시도하거나 주제를 둘러보세요.",

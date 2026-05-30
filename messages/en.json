@@ -45,6 +45,7 @@
     "searchResultsCount": "{count} results for “{q}”",
     "searchResultsCountMore": "{count}+ results for “{q}”",
     "featuredLabel": "Featured",
+    "trendingTopicsLabel": "Most-read, by topic",
     "searchScopeAll": "Searching across all posts",
     "searchEmptyTitle": "No posts found",
     "searchEmptyBody": "Try another keyword or browse topics.",

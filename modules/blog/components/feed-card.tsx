@@ -60,18 +60,20 @@ function Avatar({ author }: { author: PublicFeedItem["author"] }) {
 }
 
 /**
- * Meta row shared by both card variants: author (its own link) on the left, then date, with views
- * and the like count pushed to the right. Lives outside the post anchor so the author link doesn't
- * nest inside it.
+ * Meta row: author (its own link) on the left, then date. `compact` (grid cards) stops there to
+ * keep the feed calm; the full row (featured) also shows views + the like count pushed right. Lives
+ * outside the post anchor so the author link doesn't nest inside it.
  */
 function MetaRow({
   item,
   locale,
   labels,
+  compact = false,
 }: {
   item: PublicFeedItem;
   locale: string;
   labels: Labels;
+  compact?: boolean;
 }) {
   return (
     <div className="mt-3 flex items-center gap-2 text-[12px] text-slate-400">
@@ -86,15 +88,17 @@ function MetaRow({
       <time dateTime={item.publishedAt} className="shrink-0">
         {formatDate(item.publishedAt, locale)}
       </time>
-      <span className="ml-auto flex shrink-0 items-center gap-3">
-        {showViews(item.viewCount) && <span>{labels.views(item.viewCount)}</span>}
-        {showLikes(item.likeCount) && (
-          <span className="flex items-center gap-1">
-            <Heart className="h-3.5 w-3.5" />
-            {item.likeCount}
-          </span>
-        )}
-      </span>
+      {!compact && (
+        <span className="ml-auto flex shrink-0 items-center gap-3">
+          {showViews(item.viewCount) && <span>{labels.views(item.viewCount)}</span>}
+          {showLikes(item.likeCount) && (
+            <span className="flex items-center gap-1">
+              <Heart className="h-3.5 w-3.5" />
+              {item.likeCount}
+            </span>
+          )}
+        </span>
+      )}
     </div>
   );
 }
@@ -139,7 +143,7 @@ function TypoCover({ item }: { item: PublicFeedItem }) {
   return (
     <div className="flex h-full w-full flex-col justify-end gap-2 bg-gradient-to-br from-slate-50 to-slate-100/80 p-5">
       {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
-      <h3 className="line-clamp-3 text-[18px] font-bold leading-snug tracking-tight text-slate-800 transition-colors group-hover:text-accent-700">
+      <h3 className="line-clamp-3 text-[17px] font-bold leading-snug tracking-tight text-slate-800 transition-colors group-hover:text-accent-700">
         {item.title}
       </h3>
     </div>
@@ -194,7 +198,7 @@ export function FeedCard({
           {hasImage ? (
             <>
               {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
-              <h2 className="mt-1 line-clamp-2 text-[16px] font-bold leading-[1.35] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
+              <h2 className="mt-1 line-clamp-2 text-[17px] font-bold leading-[1.35] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
                 {item.title}
               </h2>
               {item.excerpt && (
@@ -211,7 +215,7 @@ export function FeedCard({
             )
           )}
         </a>
-        <MetaRow item={item} locale={locale} labels={labels} />
+        <MetaRow item={item} locale={locale} labels={labels} compact />
       </div>
     </li>
   );
@@ -235,16 +239,16 @@ export function FeedFeaturedCard({
 }) {
   const postUrl = postHref(item.author.username, item.slug, locale);
   return (
-    <div className="group grid gap-5 sm:grid-cols-2 sm:items-center sm:gap-8">
-      <a href={postUrl} className="block overflow-hidden rounded-2xl bg-slate-100">
-        <div className="aspect-[1.6/1] w-full">
+    <div className="group grid overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-[0_10px_30px_-14px_rgba(15,23,42,0.2)] sm:grid-cols-2 sm:items-stretch">
+      {/* Cover bleeds to the card edge — aspect-locked on mobile, full-height on desktop. */}
+      <a href={postUrl} className="block overflow-hidden bg-slate-100">
+        <div className="aspect-[1.6/1] w-full sm:aspect-auto sm:h-full">
           <Cover item={item} />
         </div>
       </a>
-      <div className="flex flex-col">
+      <div className="flex flex-col justify-center p-6 sm:p-8">
         <a href={postUrl} className="flex flex-col">
-          {/* "추천 · tag" eyebrow — labels the hero as a deliberate featured slot (it's the one card
-              without a surface), and keeps a single accent moment (추천 in green, tag muted). */}
+          {/* "추천 · tag" eyebrow — one accent moment (추천 in green, tag muted) marking the hero. */}
           <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide">
             {featuredLabel && <span className="text-accent-700">{featuredLabel}</span>}
             {featuredLabel && item.tags[0] && <span className="text-slate-300" aria-hidden>·</span>}

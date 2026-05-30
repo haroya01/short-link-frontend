@@ -18,43 +18,55 @@ export function TrendingByTag({
   locale,
   labels,
   moreLabel,
+  heading,
 }: {
   sections: TrendingTagSection[];
   locale: string;
   labels: { views: (count: number) => string };
   moreLabel: string;
+  /** Framing line above the rows, e.g. "주제별로 많이 읽힌 글" — so raw tag headers read as topics. */
+  heading?: string;
 }) {
   return (
-    <div className="mt-8 space-y-12">
-      {sections.map((section) => (
-        <section key={section.tag}>
-          <div className="mb-4 flex items-baseline justify-between gap-3">
-            <h2 className="text-[20px] font-bold tracking-tight text-slate-900">{section.tag}</h2>
-            <a
-              // Carry the trending order into the full tag feed so "모두 보기" from a popularity-ranked
-              // row doesn't land on a time-ordered one.
-              href={blogHref(`/tags/${encodeURIComponent(section.tag)}?sort=trending`)}
-              className="group inline-flex shrink-0 items-center gap-1 text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800"
-            >
-              {moreLabel}
-              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-            </a>
-          </div>
-          {/* Horizontal scroll row — hidden scrollbar, snap to card starts. Negative margin lets the
-              row bleed to the container edge so the last card hints there's more to scroll. */}
-          <ul className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:-mx-6 sm:px-6 [&::-webkit-scrollbar]:hidden">
-            {section.posts.map((item) => (
-              <FeedCard
-                key={`${item.author.username}/${item.slug}`}
-                item={item}
-                locale={locale}
-                labels={labels}
-                className="w-64 shrink-0 snap-start sm:w-72"
+    <div className="mt-8">
+      {heading && <p className="mb-6 text-[14px] text-slate-500">{heading}</p>}
+      <div className="space-y-12">
+        {sections.map((section) => (
+          <section key={section.tag}>
+            <div className="mb-4 flex items-baseline justify-between gap-3">
+              <h2 className="text-[20px] font-bold tracking-tight text-slate-900">{section.tag}</h2>
+              <a
+                // Carry the trending order into the full tag feed so "모두 보기" from a popularity-ranked
+                // row doesn't land on a time-ordered one.
+                href={blogHref(`/tags/${encodeURIComponent(section.tag)}?sort=trending`)}
+                className="group inline-flex shrink-0 items-center gap-1 text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800"
+              >
+                {moreLabel}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </a>
+            </div>
+            {/* Horizontal scroll row. The right-edge fade (desktop) signals there's more to scroll
+                since the scrollbar is hidden; mobile relies on natural swipe + the clipped last card. */}
+            <div className="relative -mx-4 sm:-mx-6">
+              <ul className="flex snap-x gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:px-6 [&::-webkit-scrollbar]:hidden">
+                {section.posts.map((item) => (
+                  <FeedCard
+                    key={`${item.author.username}/${item.slug}`}
+                    item={item}
+                    locale={locale}
+                    labels={labels}
+                    className="w-64 shrink-0 snap-start sm:w-72"
+                  />
+                ))}
+              </ul>
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 right-0 hidden w-12 bg-gradient-to-l from-white to-transparent sm:block"
               />
-            ))}
-          </ul>
-        </section>
-      ))}
+            </div>
+          </section>
+        ))}
+      </div>
     </div>
   );
 }

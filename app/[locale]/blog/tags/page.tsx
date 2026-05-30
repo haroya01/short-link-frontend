@@ -33,10 +33,12 @@ export default async function TagsIndexPage({
   // chip row over empty space.
   const [tagsResult, recentResult] = await Promise.all([
     listPopularTags(100),
-    listPublicFeed("recent", 0, 6),
+    // A small peek, not a second home feed — the tag cloud is this page's job.
+    listPublicFeed("recent", 0, 3),
   ]);
   const tags = tagsResult.ok ? tagsResult.data : [];
-  const recent = recentResult.ok ? recentResult.data.items : [];
+  // Slice to a small peek (the mock returns a full page; the real API honors size=3).
+  const recent = recentResult.ok ? recentResult.data.items.slice(0, 3) : [];
 
   // Weight the chip by how popular the tag is, so the cloud reads at a glance.
   const max = tags.reduce((m, x) => Math.max(m, x.count), 1);
@@ -89,8 +91,8 @@ export default async function TagsIndexPage({
         )}
 
         {recent.length > 0 && (
-          <section className="mt-14">
-            <h2 className="mb-5 text-[15px] font-bold tracking-tight text-slate-900">
+          <section className="mt-12">
+            <h2 className="mb-4 text-[13px] font-bold uppercase tracking-wide text-slate-500">
               {t("topicsRecent")}
             </h2>
             <FeedGrid>
