@@ -125,6 +125,34 @@ test("types a title + body, inserts an image, and saves the right blocks", async
   expect(image!.content).toContain(IMAGE_URL);
 });
 
+test.describe("desktop", () => {
+  // Wider viewport so the formatting toolbar is the selection bubble, not the bottom bar.
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test("selection bubble applies bold formatting", async ({ page }) => {
+    const captured: Captured = { blocks: null };
+    await setupMocks(page, captured);
+    await openEditor(page);
+
+    await page.locator(".ProseMirror.toastui-editor-contents").click();
+    await page.keyboard.type("bold me");
+    // Select the typed line back to its start — keeps the selection inside the contenteditable so
+    // the bubble's in-editor selection check passes (a page-level select-all would not).
+    await page.keyboard.press("Shift+Home");
+
+    // The bubble appears only over a non-empty selection.
+    const boldBtn = page.getByRole("button", { name: "bold", exact: true });
+    await expect(boldBtn).toBeVisible({ timeout: 10_000 });
+    await boldBtn.click();
+
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
+
+    const para = captured.blocks!.find((b) => b.type === "PARAGRAPH");
+    expect(para?.content, "bold markdown was saved").toContain("**");
+  });
+});
+
 test("slash menu inserts a heading block", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);

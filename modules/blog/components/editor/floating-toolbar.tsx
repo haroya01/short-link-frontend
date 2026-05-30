@@ -65,6 +65,7 @@ export function FloatingToolbar({
   const [palette, setPalette] = useState(false);
   const kbInset = useKeyboardInset();
   const isDesktop = useIsDesktop();
+  const cookieBannerOpen = useCookieBannerVisible();
   const selRect = useSelectionRect(editorHost, isDesktop);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -175,16 +176,22 @@ export function FloatingToolbar({
     return <SelectionBubble rect={selRect}>{pill}</SelectionBubble>;
   }
 
-  // Mobile: full-width bar riding above the keyboard.
+  // Mobile: full-width bar riding above the keyboard, and above the cookie banner when it's showing
+  // (the fixed banner sits at bottom:0 and would otherwise cover the bar). The keyboard, when up,
+  // already pushes the bar past the banner, so the cookie offset only applies with no keyboard.
+  const bottom = kbInset || (cookieBannerOpen ? COOKIE_BANNER_INSET : 0);
   return (
     <div
       className="pointer-events-none fixed inset-x-0 z-30 flex justify-center px-2 pb-2 sm:pb-3"
-      style={{ bottom: kbInset }}
+      style={{ bottom }}
     >
       {pill}
     </div>
   );
 }
+
+// Height the mobile cookie banner occupies — used to lift the bottom toolbar clear of it.
+const COOKIE_BANNER_INSET = 80;
 
 /**
  * Positions the pill just above the selection rect (flipping below when there's no room above) and
@@ -260,6 +267,19 @@ function Btn({
 
 function Divider() {
   return <span className="mx-0.5 h-5 w-px shrink-0 bg-slate-200" />;
+}
+
+/** Tracks whether the cookie consent banner is showing (CookieConsent flags it on <body>). */
+function useCookieBannerVisible() {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const read = () => setOpen(document.body.dataset.cookieConsent === "visible");
+    read();
+    const obs = new MutationObserver(read);
+    obs.observe(document.body, { attributes: true, attributeFilter: ["data-cookie-consent"] });
+    return () => obs.disconnect();
+  }, []);
+  return open;
 }
 
 /** sm breakpoint — desktop gets the selection bubble, phones keep the bottom bar. */
