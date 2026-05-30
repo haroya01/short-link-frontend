@@ -31,7 +31,18 @@
     "emptyFollowingTitle": "No posts from authors you follow",
     "emptyTagTitle": "No posts in this topic yet",
     "topicsIntro": "Browse what people are writing about. Pick a tag to dive in, or start with the latest posts below.",
-    "topicsRecent": "Latest posts"
+    "topicsRecent": "Latest posts",
+    "searchPlaceholder": "Search posts, tags, authors...",
+    "searchLabel": "Search",
+    "searchClear": "Clear search",
+    "searchResultsFor": "Search results for “{q}”",
+    "searchEmptyTitle": "No posts found",
+    "searchEmptyBody": "Try another keyword or browse topics.",
+    "browseTopics": "Browse topics",
+    "railPopularTags": "Popular tags",
+    "railSuggestedAuthors": "Suggested authors",
+    "railPostCount": "{count} posts",
+    "railSeeAll": "See all"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",
