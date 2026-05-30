@@ -48,6 +48,17 @@ export function setToken(token: string | null) {
   window.dispatchEvent(new CustomEvent("auth:change"));
 }
 
+/**
+ * Recover the session from the refresh cookie when there's no access token in this origin's
+ * localStorage. The token is per-origin but the refresh cookie is Domain=.kurl.me, so this keeps a
+ * signed-in user signed in after switching subdomains (kurl.me ↔ blog.kurl.me) instead of looking
+ * logged out. No-op (and no request) when a token is already present.
+ */
+export async function bootstrapSession(): Promise<boolean> {
+  if (readToken()) return true;
+  return (await tryRefresh()) != null;
+}
+
 async function tryRefresh(): Promise<string | null> {
   if (refreshInFlight) return refreshInFlight;
   refreshInFlight = (async () => {
