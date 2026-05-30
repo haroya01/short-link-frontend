@@ -70,7 +70,7 @@ export default async function PublicProfileHomepage({
 
       <div className="mt-8">
         {posts.length === 0 ? (
-          <p className="text-slate-400">{t("emptyPosts")}</p>
+          <p className="text-slate-500">{t("emptyPosts")}</p>
         ) : (
           <ul className="space-y-2">
             {posts.map((p) => (
@@ -115,7 +115,7 @@ function PostListEntry({ post, locale }: { post: PublicPostListItem; locale: str
               ))}
             </ul>
           )}
-          <time dateTime={post.publishedAt} className="mt-2.5 block text-[13px] text-slate-400">
+          <time dateTime={post.publishedAt} className="mt-2.5 block text-[13px] text-slate-500">
             {formatDate(post.publishedAt, locale)}
           </time>
         </div>

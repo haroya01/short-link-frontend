@@ -39,13 +39,13 @@ export function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-8 items-center gap-1 rounded-md px-2 text-xs text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
         aria-label={t("label")}
+        title={locale.toUpperCase()}
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <Globe className="h-3.5 w-3.5" />
-        <span className="font-mono uppercase">{locale}</span>
+        <Globe className="h-4 w-4" />
       </button>
       {open && (
         <div

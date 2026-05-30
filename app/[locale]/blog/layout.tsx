@@ -72,7 +72,9 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
     <AppProviders>
       <SidebarStateProvider>
         <div className="flex min-h-screen flex-col">
-          <AppHeader showMenu={false} />
+          {/* Feed home is the discovery hub → rest the header search open there; other public pages
+              (post, tags, author) keep the compact 🔍. */}
+          <AppHeader showMenu={false} searchOpen={internalPath === "/"} />
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
