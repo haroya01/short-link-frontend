@@ -192,5 +192,10 @@ export default function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/((?!api|_next|_vercel|favicon.ico|.*\\..*|oauth2|login/oauth2|monitoring).*)",
+    // Showcase 데모 핸들 (min.links / dohyun.coffee 등) 은 segment 에 점이 들어간다. 위 catch-all
+    // 의 `.*\\..*` 가 static asset 을 거르려고 점 포함 경로를 전부 제외하는데, 그 바람에 이 핸들들도
+    // middleware 를 건너뛰어 `/showcase/<handle>` → `/links/showcase/<handle>` rewrite 가 돌지
+    // 않고 404 가 난다. 점 포함 showcase 경로만 명시적으로 다시 포함시킨다.
+    "/:locale/showcase/:handle*",
   ],
 };
