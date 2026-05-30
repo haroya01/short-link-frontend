@@ -5,6 +5,14 @@
  * 그 페이지에서 backend 호출.
  */
 
+import {
+  USE_MOCKS,
+  mockFeedView,
+  mockTrendingByTag,
+  MOCK_POPULAR_TAGS,
+  MOCK_SUGGESTED_AUTHORS,
+} from "@/modules/blog/api/_mocks";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
 // ISR revalidate window. 작성자 발행/수정 후 visitors 가 30초 내 새 내용 봄.
@@ -142,6 +150,7 @@ export function listPublicFeed(
   page = 0,
   size = 20,
 ): Promise<FetchResult<PublicFeedView>> {
+  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockFeedView({ sort }) });
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?sort=${sort}&page=${page}&size=${size}`,
   );
@@ -149,11 +158,13 @@ export function listPublicFeed(
 
 export function listFeedByTag(
   tag: string,
+  sort: FeedSort = "recent",
   page = 0,
   size = 24,
 ): Promise<FetchResult<PublicFeedView>> {
+  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockFeedView({ tag, sort }) });
   return fetchPublic<PublicFeedView>(
-    `/api/v1/public/posts?tag=${encodeURIComponent(tag)}&page=${page}&size=${size}`,
+    `/api/v1/public/posts?tag=${encodeURIComponent(tag)}&sort=${sort}&page=${page}&size=${size}`,
   );
 }
 
@@ -164,6 +175,7 @@ export function searchPublicFeed(
   page = 0,
   size = 24,
 ): Promise<FetchResult<PublicFeedView>> {
+  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockFeedView({ sort, q: query }) });
   return fetchPublic<PublicFeedView>(
     `/api/v1/public/posts?q=${encodeURIComponent(query)}&sort=${sort}&page=${page}&size=${size}`,
   );
@@ -192,6 +204,7 @@ export interface TagCount {
 
 /** Most-used tags across published posts, most popular first — the 주제 index. */
 export function listPopularTags(limit = 50): Promise<FetchResult<TagCount[]>> {
+  if (USE_MOCKS) return Promise.resolve({ ok: true, data: MOCK_POPULAR_TAGS.slice(0, limit) });
   return fetchPublic<TagCount[]>(`/api/v1/public/tags?limit=${limit}`);
 }
 
@@ -202,7 +215,30 @@ export interface SuggestedAuthor {
 
 /** Authors ranked by published-post count — the discovery rail's 추천 작가 list. */
 export function listSuggestedAuthors(limit = 5): Promise<FetchResult<SuggestedAuthor[]>> {
+  if (USE_MOCKS)
+    return Promise.resolve({ ok: true, data: MOCK_SUGGESTED_AUTHORS.slice(0, limit) });
   return fetchPublic<SuggestedAuthor[]>(`/api/v1/public/authors?limit=${limit}`);
+}
+
+export interface TrendingTagSection {
+  tag: string;
+  postCount: number; // total published posts under the tag (for the "더보기" affordance)
+  posts: PublicFeedItem[]; // top posts in the tag, most popular first
+}
+
+/**
+ * Popular posts grouped by tag — backs the 인기 tab's "주제별 인기" sections (one horizontal row per
+ * topic). `tagLimit` = how many topic rows; `perTag` = posts per row.
+ */
+export function listTrendingByTag(
+  tagLimit = 6,
+  perTag = 8,
+): Promise<FetchResult<TrendingTagSection[]>> {
+  if (USE_MOCKS)
+    return Promise.resolve({ ok: true, data: mockTrendingByTag(tagLimit, perTag) });
+  return fetchPublic<TrendingTagSection[]>(
+    `/api/v1/public/feed/trending-by-tag?tagLimit=${tagLimit}&perTag=${perTag}`,
+  );
 }
 
 export function listPublicSeries(username: string): Promise<FetchResult<PublicSeriesList>> {

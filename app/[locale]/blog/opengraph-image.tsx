@@ -87,7 +87,7 @@ export default async function BlogOgImage({
               letterSpacing: -1.5,
             }}
           >
-            {t("heroTitle")}
+            {t("mastheadTagline")}
           </div>
         </div>
 

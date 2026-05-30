@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Hash } from "lucide-react";
+import { PenSquare } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
+import { FeedTabs } from "@/modules/blog/components/feed-tabs";
 
 // Rendered per request (not prerendered at build): the popular-tags fetch needs the runtime API
 // base, which isn't available during static generation.
@@ -40,64 +42,70 @@ export default async function TagsIndexPage({
   const max = tags.reduce((m, x) => Math.max(m, x.count), 1);
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
-      <header className="border-b border-slate-200/80 pb-5">
-        <div className="flex items-center gap-2">
-          <Hash className="h-6 w-6 text-accent-600" />
-          <h1 className="text-headline-sm font-bold tracking-tight text-slate-900">
-            {t("topics")}
-          </h1>
-        </div>
-        <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-slate-500">
-          {t("topicsIntro")}
-        </p>
-      </header>
+    <>
+      {/* Same masthead band as the feed home / tag pages — the topics index is part of the same
+          surface, just titled "주제". */}
+      <FeedMasthead locale={locale} title={t("topics")} sub={t("topicsIntro")} />
 
-      {tags.length === 0 ? (
-        <FeedEmpty title={t("empty")} />
-      ) : (
-        <ul className="mt-8 flex flex-wrap gap-2.5">
-          {tags.map((tag) => {
-            const strong = tag.count >= max * 0.66;
-            const medium = !strong && tag.count >= max * 0.33;
-            return (
-              <li key={tag.tag}>
-                <a
-                  href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-medium transition-colors ${
-                    strong
-                      ? "bg-accent-100 text-accent-800 hover:bg-accent-200 text-[15px]"
-                      : medium
-                        ? "bg-accent-50 text-accent-700 hover:bg-accent-100 text-[14px]"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200 text-[13px]"
-                  }`}
-                >
-                  <span>{tag.tag}</span>
-                  <span className="text-slate-400">{tag.count}</span>
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
+        {/* Same header row as the feed/tag surfaces — feed tabs (linking home) + Write. */}
+        <header className="mb-8 flex items-center justify-between gap-4 border-b border-slate-200/80 pb-3">
+          <FeedTabs locale={locale} />
+          <a
+            href={blogHref("/write/new")}
+            className="hidden shrink-0 items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition-colors hover:bg-accent-700 sm:inline-flex"
+          >
+            <PenSquare className="h-4 w-4" />
+            {t("write")}
+          </a>
+        </header>
 
-      {recent.length > 0 && (
-        <section className="mt-14">
-          <h2 className="mb-5 text-[15px] font-bold tracking-tight text-slate-900">
-            {t("topicsRecent")}
-          </h2>
-          <FeedGrid>
-            {recent.map((item) => (
-              <FeedCard
-                key={`${item.author.username}/${item.slug}`}
-                item={item}
-                locale={locale}
-                labels={{ views: (count) => t("views", { count }) }}
-              />
-            ))}
-          </FeedGrid>
-        </section>
-      )}
-    </main>
+        {tags.length === 0 ? (
+          <FeedEmpty title={t("empty")} />
+        ) : (
+          <ul className="flex flex-wrap gap-2.5">
+            {tags.map((tag) => {
+              const strong = tag.count >= max * 0.66;
+              const medium = !strong && tag.count >= max * 0.33;
+              return (
+                <li key={tag.tag}>
+                  <a
+                    href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
+                    className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-medium transition-colors ${
+                      strong
+                        ? "bg-accent-100 text-accent-800 hover:bg-accent-200 text-[15px]"
+                        : medium
+                          ? "bg-accent-50 text-accent-700 hover:bg-accent-100 text-[14px]"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200 text-[13px]"
+                    }`}
+                  >
+                    <span>{tag.tag}</span>
+                    <span className="text-slate-400">{tag.count}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        {recent.length > 0 && (
+          <section className="mt-14">
+            <h2 className="mb-5 text-[15px] font-bold tracking-tight text-slate-900">
+              {t("topicsRecent")}
+            </h2>
+            <FeedGrid>
+              {recent.map((item) => (
+                <FeedCard
+                  key={`${item.author.username}/${item.slug}`}
+                  item={item}
+                  locale={locale}
+                  labels={{ views: (count) => t("views", { count }) }}
+                />
+              ))}
+            </FeedGrid>
+          </section>
+        )}
+      </main>
+    </>
   );
 }

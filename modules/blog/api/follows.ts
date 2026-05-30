@@ -1,8 +1,10 @@
 import { request } from "@/lib/api/client";
+import { USE_MOCKS, mockFollowingView } from "@/modules/blog/api/_mocks";
 import type { PublicFeedView } from "@/modules/blog/api/public-posts";
 
 /** Authenticated — posts from authors the current user follows (the "피드" tab). */
 export function listFollowingFeed(page = 0, size = 24): Promise<PublicFeedView> {
+  if (USE_MOCKS) return Promise.resolve(mockFollowingView());
   return request<PublicFeedView>(`/api/v1/feed/following?page=${page}&size=${size}`, {
     method: "GET",
   });
