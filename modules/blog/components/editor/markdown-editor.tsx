@@ -10,6 +10,7 @@ import {
   type EditorCommands,
 } from "@/modules/blog/components/editor/floating-toolbar";
 import { SlashMenu, type SlashEditor } from "@/modules/blog/components/editor/slash-menu";
+import { BlockInserter } from "@/modules/blog/components/editor/block-inserter";
 
 /**
  * Toast UI Editor (vanilla — the React wrapper only peer-supports React 17). WYSIWYG + markdown
@@ -101,6 +102,7 @@ export function MarkdownEditor({
       <div ref={hostRef} className="h-full" />
       {commands && (
         <>
+          <BlockInserter editor={commands} editorHost={hostRef} />
           <SlashMenu
             editor={commands}
             editorHost={hostRef}
