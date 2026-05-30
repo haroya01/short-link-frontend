@@ -830,16 +830,14 @@ body[data-cookie-consent="visible"] {
 }
 @keyframes warp-flood {
   from {
-    transform: scale(0.04);
-    border-radius: 42%;
+    transform: scale(0.02);
     opacity: 0;
   }
-  18% {
+  15% {
     opacity: 1;
   }
   to {
-    transform: scale(1);
-    border-radius: 0;
+    transform: scale(1.05);
     opacity: 1;
   }
 }
@@ -857,7 +855,7 @@ body[data-cookie-consent="visible"] {
   transform: scaleX(0);
   transform-box: fill-box;
   transform-origin: left center;
-  animation: warp-stroke 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: warp-stroke 0.24s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 .warp-stroke-1 {
   animation-delay: 0s;
@@ -868,15 +866,20 @@ body[data-cookie-consent="visible"] {
 .warp-stroke-3 {
   animation-delay: 0.16s;
 }
+/* The disc stays a circle the whole way (it's `rounded-full` in markup, so scaling never reveals a
+   square edge) and only blooms once the mark has finished drawing + a short hold (0.52s delay). */
 .warp-flood {
-  transform: scale(0.04);
+  transform: scale(0.02);
+  /* Hidden until the bloom starts — otherwise the tiny pre-delay seed shows as a green dot over
+     the mark. */
+  opacity: 0;
   transform-origin: center;
-  animation: warp-flood 0.42s cubic-bezier(0.66, 0, 0.34, 1) 0.34s forwards;
-  will-change: transform, border-radius, opacity;
+  animation: warp-flood 0.46s ease-out 0.52s forwards;
+  will-change: transform, opacity;
 }
 .warp-word {
   opacity: 0;
-  animation: warp-word 0.34s ease-out 0.56s forwards;
+  animation: warp-word 0.34s ease-out 0.8s forwards;
   will-change: transform, opacity;
 }
 

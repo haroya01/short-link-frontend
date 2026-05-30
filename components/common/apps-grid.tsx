@@ -57,9 +57,11 @@ export function AppsGrid() {
     e.preventDefault();
     const href = dest.href();
     setWarp({ href, product: dest.key });
+    // Mark draws (~0.4s) → brief hold → green disc blooms (covers ~1.0s) → wordmark. Navigate once
+    // the disc has fully covered, so the cross-origin reload never flashes white.
     window.setTimeout(() => {
       window.location.href = href;
-    }, 800);
+    }, 1050);
   };
 
   return (
@@ -91,10 +93,11 @@ export function AppsGrid() {
             role="status"
             aria-live="polite"
           >
-            {/* Brand-green flood, emanating from the center where the mark is drawn. */}
+            {/* Brand-green disc that blooms from the mark's center. `rounded-full` + a radius that
+                already clears the viewport's far corner keeps it a clean circle the whole way. */}
             <span
               aria-hidden
-              className="warp-flood pointer-events-none absolute left-1/2 top-1/2 -ml-[75vmax] -mt-[75vmax] h-[150vmax] w-[150vmax] bg-accent-600"
+              className="warp-flood pointer-events-none absolute left-1/2 top-1/2 -ml-[75vmax] -mt-[75vmax] h-[150vmax] w-[150vmax] rounded-full bg-accent-600"
             />
             {/* The mark draws on, line by line, then dissolves into the flood (same green). */}
             <svg
