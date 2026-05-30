@@ -815,41 +815,68 @@ body[data-cookie-consent="visible"] {
 }
 
 /*
- * Product-switch warp. When you jump between kurl and blog.kurl (a cross-origin navigation), a
- * brand-green disc expands from the top to fill the screen with the destination's name, covering
- * the hard reload so the switch feels like one motion. Honors reduced-motion (the switcher skips
- * the overlay there and navigates straight away).
+ * Product-switch warp. Jumping between kurl and blog.kurl is a cross-origin reload; this overlay
+ * covers the hard load with one branded motion built from the logo mark: the three lines draw on
+ * left-to-right (staggered), then brand-green floods out from the center, then the destination
+ * wordmark fades in. Honors reduced-motion (the switcher skips the overlay and navigates straight).
  */
-@keyframes product-warp-disc {
+@keyframes warp-stroke {
   from {
-    transform: scale(0.06);
-    border-radius: 0 0 50% 50% / 0 0 40% 40%;
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes warp-flood {
+  from {
+    transform: scale(0.04);
+    border-radius: 42%;
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
   }
   to {
     transform: scale(1);
     border-radius: 0;
-  }
-}
-@keyframes product-warp-content {
-  0% {
-    opacity: 0;
-    transform: scale(0.6) translateY(-8px);
-  }
-  45% {
-    opacity: 0;
-  }
-  100% {
     opacity: 1;
-    transform: scale(1) translateY(0);
   }
 }
-.product-warp-disc {
-  transform-origin: top center;
-  animation: product-warp-disc 0.52s cubic-bezier(0.66, 0, 0.34, 1) forwards;
-  will-change: transform, border-radius;
+@keyframes warp-word {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.product-warp-content {
-  animation: product-warp-content 0.62s ease-out forwards;
+.warp-stroke {
+  transform: scaleX(0);
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: warp-stroke 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.warp-stroke-1 {
+  animation-delay: 0s;
+}
+.warp-stroke-2 {
+  animation-delay: 0.08s;
+}
+.warp-stroke-3 {
+  animation-delay: 0.16s;
+}
+.warp-flood {
+  transform: scale(0.04);
+  transform-origin: center;
+  animation: warp-flood 0.42s cubic-bezier(0.66, 0, 0.34, 1) 0.34s forwards;
+  will-change: transform, border-radius, opacity;
+}
+.warp-word {
+  opacity: 0;
+  animation: warp-word 0.34s ease-out 0.56s forwards;
   will-change: transform, opacity;
 }
 

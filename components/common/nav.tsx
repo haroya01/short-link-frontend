@@ -29,7 +29,7 @@ type NavEntry = {
   external?: boolean;
 };
 
-// Single 3-entry bar: 숏링크 / QR캠페인 / 프로필. Blog is reached via the AppsGrid (▦) switcher.
+// Single 3-entry bar: 숏링크 / QR캠페인 / 프로필. Blog is reached via the AppsGrid destination pill.
 function anonymousEntries(t: (k: string) => string): NavEntry[] {
   return [
     { href: "/", label: t("shorten"), active: (p) => p === "/" },
