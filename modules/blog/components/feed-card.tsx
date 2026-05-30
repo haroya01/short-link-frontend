@@ -115,11 +115,16 @@ export function FeedCard({
           <CoverFallback title={item.title} tags={item.tags} seed={item.slug} />
         )}
         <div className="flex flex-1 flex-col px-4 pb-3 pt-4">
-          <h2 className="line-clamp-2 text-[16px] font-bold leading-snug tracking-tight text-slate-900">
+          {hasImage && item.tags[0] && (
+            <span className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-accent-600">
+              {item.tags[0]}
+            </span>
+          )}
+          <h2 className="line-clamp-2 text-[17px] font-bold leading-[1.3] tracking-tight text-slate-900">
             {item.title}
           </h2>
           {item.excerpt && (
-            <p className="mt-2 line-clamp-2 text-[13.5px] leading-relaxed text-slate-500">
+            <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-slate-400">
               {item.excerpt}
             </p>
           )}
