@@ -20,7 +20,7 @@ function randomSlug(): string {
 export default function NewPostPage() {
   const router = useRouter();
   const t = useTranslations("postEditor");
-  const { ready, authenticated, signInWithGoogle } = useAuth();
+  const { ready, authenticated } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const started = useRef(false);
 
@@ -49,20 +49,9 @@ export default function NewPostPage() {
     })();
   }, [ready, authenticated, router, t]);
 
-  if (ready && !authenticated) {
-    return (
-      <main className="mx-auto flex max-w-md flex-col items-center gap-4 px-6 py-24 text-center">
-        <p className="text-slate-600">{t("loginRequired")}</p>
-        <button
-          type="button"
-          onClick={() => signInWithGoogle()}
-          className="rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white hover:bg-accent-700"
-        >
-          {t("loginRequired")}
-        </button>
-      </main>
-    );
-  }
+  // Signed-out / expired session is handled one level up by the workspace layout, which redirects
+  // to the blog login screen before this page ever renders its content. Nothing to show here.
+  if (ready && !authenticated) return null;
 
   return (
     <main className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 py-24 text-center text-slate-500">

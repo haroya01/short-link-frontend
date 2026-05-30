@@ -2504,5 +2504,12 @@
     "title": "Sign in to start writing",
     "body": "Your posts, drafts, and series live here. Sign in to pick up where you left off.",
     "signIn": "Sign in"
+  },
+  "blogLogin": {
+    "eyebrow": "blog.kurl",
+    "title": "Sign in to write",
+    "subtitle": "Your posts, drafts, and series live here. Sign in to pick up where you left off.",
+    "google": "Continue with Google",
+    "browse": "Browse without signing in"
   }
 }
