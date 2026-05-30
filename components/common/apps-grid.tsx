@@ -1,109 +1,85 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { FileText, Grid3x3, Link2 } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { blogHref, currentProduct, linksHref, type Product } from "@/lib/host";
+import { Mark } from "@/components/common/logo";
 
 /**
- * Cross-product navigation. 헤더 우상단 grid icon → popover 두 카드 (Links / Blog).
- * 글로벌 이동 장치이고, in-context cross-product CTA 는 page-level 로 별도 배치한다.
+ * Cross-product switcher. The header pill shows the *destination* brand (the mark + its wordmark),
+ * so a single click warps you to the other product — there's only ever one other surface, so the
+ * old grid-icon + popover was a needless second step. Clicking plays the warp overlay, then does
+ * the (cross-origin) navigation.
  * Decision: [[decisions/2026-05-29-product-surface-c-lite]]
  */
-const PRODUCTS: {
-  key: Product;
-  href: () => string;
-  Icon: typeof Link2;
-  labelKey: string;
-  hintKey: string;
-}[] = [
-  { key: "links", href: () => linksHref("/"), Icon: Link2, labelKey: "linksLabel", hintKey: "linksHint" },
-  { key: "blog", href: () => blogHref("/"), Icon: FileText, labelKey: "blogLabel", hintKey: "blogHint" },
+const PRODUCTS: { key: Product; href: () => string; labelKey: string; hintKey: string }[] = [
+  { key: "links", href: () => linksHref("/"), labelKey: "linksLabel", hintKey: "linksHint" },
+  { key: "blog", href: () => blogHref("/"), labelKey: "blogLabel", hintKey: "blogHint" },
 ];
 
-type Warp = { href: string; label: string; Icon: typeof Link2 };
+/** Destination wordmark — blog gets the "blog." prefix in a muted tone over the given base color. */
+function Wordmark({ product, muted }: { product: Product; muted: string }) {
+  if (product === "blog") {
+    return (
+      <>
+        <span className={muted}>blog.</span>kurl
+      </>
+    );
+  }
+  return <>kurl</>;
+}
+
+type Warp = { href: string; product: Product };
 
 export function AppsGrid() {
-  const [open, setOpen] = useState(false);
   const [warp, setWarp] = useState<Warp | null>(null);
+  // Resolved client-side: currentProduct() is host/path based and returns "links" during SSR, so we
+  // settle the destination after mount to avoid a hydration mismatch on the blog surface.
+  const [dest, setDest] = useState<(typeof PRODUCTS)[number] | null>(null);
   const t = useTranslations("nav.apps");
-  const ref = useRef<HTMLDivElement>(null);
 
-  // Play the warp overlay, then do the (cross-origin) navigation. New-tab / modified clicks and
-  // reduced-motion fall through to the plain link.
-  const switchTo = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    p: (typeof PRODUCTS)[number],
-  ) => {
+  useEffect(() => {
+    const cur = currentProduct();
+    setDest(PRODUCTS.find((p) => p.key !== cur) ?? PRODUCTS[1]);
+  }, []);
+
+  // Play the warp overlay, then navigate. New-tab / modified clicks and reduced-motion fall through
+  // to the plain anchor (native cross-origin navigation, no overlay).
+  const switchTo = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!dest) {
+      e.preventDefault();
+      return;
+    }
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     e.preventDefault();
-    const href = p.href();
-    setOpen(false);
-    setWarp({ href, label: t(p.labelKey), Icon: p.Icon });
+    const href = dest.href();
+    setWarp({ href, product: dest.key });
     window.setTimeout(() => {
       window.location.href = href;
-    }, 560);
+    }, 800);
   };
 
-  useEffect(() => {
-    if (!open) return;
-    const onClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("mousedown", onClick);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onClick);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
   return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-        aria-label={t("trigger")}
-        aria-expanded={open}
-        aria-haspopup="menu"
+    <>
+      <a
+        href={dest?.href() ?? "#"}
+        onClick={switchTo}
+        className="group inline-flex h-8 items-center gap-2 rounded-full border border-slate-200 bg-white pl-2.5 pr-2 text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
+        aria-label={dest ? t(dest.labelKey) : t("trigger")}
+        title={dest ? t(dest.hintKey) : undefined}
       >
-        <Grid3x3 className="h-4 w-4" />
-      </button>
-      {open && (
-        <div
-          role="menu"
-          // Mobile: pin to the viewport right edge (the trigger sits mid-header, so an
-          // absolute right-0 popover overflowed off the left edge). Desktop: anchor under the
-          // trigger as before.
-          className="fixed right-3 top-14 z-40 w-[calc(100vw-1.5rem)] max-w-xs overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg sm:absolute sm:right-0 sm:top-10 sm:w-72 sm:max-w-none"
+        <Mark className="h-3 text-accent-600" />
+        <span
+          className="min-w-[2.5rem] text-[13px] font-bold leading-none tracking-[-0.04em]"
+          aria-hidden={!dest}
         >
-          {/* Only show the product(s) you're NOT on — the grid is a switcher, so surfacing the
-              current product is noise. Computed client-side from host/path. */}
-          {PRODUCTS.filter((p) => p.key !== currentProduct()).map((p, i) => (
-            <a
-              key={p.key}
-              href={p.href()}
-              role="menuitem"
-              onClick={(e) => switchTo(e, p)}
-              className={`flex items-start gap-3 px-3 py-3 transition-colors hover:bg-slate-50 ${
-                i > 0 ? "border-t border-slate-100" : ""
-              }`}
-            >
-              <p.Icon className="mt-0.5 h-4 w-4 shrink-0 text-accent-600" />
-              <span className="min-w-0">
-                <span className="block text-sm font-medium text-slate-900">{t(p.labelKey)}</span>
-                <span className="block text-[12px] text-slate-500">{t(p.hintKey)}</span>
-              </span>
-            </a>
-          ))}
-        </div>
-      )}
+          {dest ? <Wordmark product={dest.key} muted="text-slate-400" /> : null}
+        </span>
+        <ArrowUpRight className="h-3.5 w-3.5 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      </a>
 
       {warp &&
         typeof document !== "undefined" &&
@@ -111,18 +87,33 @@ export function AppsGrid() {
           // Portal to <body>: a transformed/blurred header ancestor would otherwise be the
           // containing block for `fixed`, clipping the overlay to the header height.
           <div
-            className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-white"
+            className="fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-white"
             role="status"
             aria-live="polite"
           >
-            <span aria-hidden className="product-warp-disc absolute inset-0 bg-accent-600" />
-            <span className="product-warp-content relative flex flex-col items-center gap-3 text-white">
-              <warp.Icon className="h-11 w-11" strokeWidth={1.75} />
-              <span className="text-[19px] font-semibold tracking-tight">{warp.label}</span>
+            {/* Brand-green flood, emanating from the center where the mark is drawn. */}
+            <span
+              aria-hidden
+              className="warp-flood pointer-events-none absolute left-1/2 top-1/2 -ml-[75vmax] -mt-[75vmax] h-[150vmax] w-[150vmax] bg-accent-600"
+            />
+            {/* The mark draws on, line by line, then dissolves into the flood (same green). */}
+            <svg
+              aria-hidden
+              viewBox="0 0 28 18"
+              fill="currentColor"
+              className="relative col-start-1 row-start-1 h-[78px] w-auto text-accent-600"
+            >
+              <rect className="warp-stroke warp-stroke-1" x="6" y="1" width="20" height="3.4" rx="1.7" />
+              <rect className="warp-stroke warp-stroke-2" x="0" y="7.3" width="28" height="3.4" rx="1.7" />
+              <rect className="warp-stroke warp-stroke-3" x="9" y="13.6" width="17" height="3.4" rx="1.7" />
+            </svg>
+            {/* Destination wordmark, fading in over the flood. */}
+            <span className="warp-word relative col-start-1 row-start-1 text-[27px] font-bold tracking-[-0.04em] text-white">
+              <Wordmark product={warp.product} muted="text-white/55" />
             </span>
           </div>,
           document.body,
         )}
-    </div>
+    </>
   );
 }
