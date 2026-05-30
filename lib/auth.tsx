@@ -11,6 +11,7 @@ import {
 import * as Sentry from "@sentry/nextjs";
 
 import { claimAnonymousLinks, logout as apiLogout } from "./api";
+import { bootstrapSession } from "./api/client";
 import { clearClaimTokens, readPendingClaimTokens } from "./recent-links";
 import { useMe } from "@/hooks/use-me";
 import type { Me } from "@/types";
@@ -51,11 +52,14 @@ async function tryClaimPendingLinks() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
+  const [bootstrapped, setBootstrapped] = useState(false);
   const meQuery = useMe();
   const me = meQuery.data ?? null;
   // Keep the first client render structurally identical to SSR. Token state is browser-only, so
   // auth-dependent UI must wait until after mount before deciding between anonymous and signed-in.
-  const ready = mounted && !meQuery.isLoading;
+  // Also hold until the session bootstrap (refresh-cookie recovery) resolves, so a subdomain switch
+  // doesn't flash "signed out" before the token is recovered.
+  const ready = mounted && bootstrapped && !meQuery.isLoading;
   const authenticated = !!me;
 
   const meId = me?.id ?? null;
@@ -63,6 +67,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
+    // Recover the session from the shared .kurl.me refresh cookie when this origin has no token
+    // (e.g. just landed on blog.kurl.me from kurl.me). setToken fires auth:change, which enables
+    // the /me query. No token present → resolves immediately as anonymous.
+    let active = true;
+    void bootstrapSession().finally(() => {
+      if (active) setBootstrapped(true);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
