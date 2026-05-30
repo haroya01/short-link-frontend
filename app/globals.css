@@ -448,6 +448,9 @@ h1, h2, h3, p {
   .prose-post figure {
     @apply my-8;
   }
+  .prose-post img {
+    @apply h-auto max-w-full;
+  }
   .prose-post figure img {
     @apply mx-auto rounded-2xl;
   }
@@ -732,8 +735,17 @@ canvas.qr-canvas-fit {
 }
 .toastui-editor-ww-container .toastui-editor-contents {
   color: #334155; /* slate-700 */
-  /* Generous bottom padding clears the floating toolbar so the last lines stay reachable. */
-  padding: 1.75rem clamp(1.25rem, 6vw, 4.5rem) 6rem;
+  /* Match the published article column (reader is max-w-2xl) so what you write is the size and
+     position it ships at — WYSIWYG. Centered; generous bottom padding clears the floating bar. */
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: 1.75rem 1.25rem 6rem;
+}
+/* Images scale to the column instead of barging in at natural size — same rule the reader uses. */
+.toastui-editor-contents img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
 }
 .toastui-editor-contents p,
 .toastui-editor-contents li {
@@ -839,4 +851,36 @@ body[data-cookie-consent="visible"] {
 .product-warp-content {
   animation: product-warp-content 0.62s ease-out forwards;
   will-change: transform, opacity;
+}
+
+/* Post image lightbox — fade the backdrop, scale the image in. */
+@keyframes post-lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes post-lightbox-img-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.post-lightbox {
+  animation: post-lightbox-in 0.18s ease-out;
+}
+.post-lightbox-img {
+  animation: post-lightbox-img-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-lightbox,
+  .post-lightbox-img {
+    animation: none;
+  }
 }
