@@ -13,6 +13,7 @@ import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedTabs } from "@/modules/blog/components/feed-tabs";
+import { TagFilterStrip } from "@/modules/blog/components/tag-filter-strip";
 
 export const revalidate = 30;
 
@@ -47,7 +48,7 @@ export default async function TagFeedPage({
 
   const [feedResult, tagsResult, authorsResult] = await Promise.all([
     listFeedByTag(decoded, sort, 0, 24),
-    listPopularTags(12),
+    listPopularTags(20),
     listSuggestedAuthors(5),
   ]);
   const items = feedResult.ok ? feedResult.data.items : [];
@@ -83,6 +84,10 @@ export default async function TagFeedPage({
           <div className="hidden sm:block">{writeCta}</div>
         </header>
 
+        {/* Persistent tag chips (current one highlighted) so switching topics doesn't require going
+            back to the index — works on mobile where there's no rail. */}
+        <TagFilterStrip tags={tags} activeTag={decoded} sort={sort} />
+
         {items.length === 0 ? (
           <FeedEmpty
             icon={Hash}
@@ -111,7 +116,8 @@ export default async function TagFeedPage({
             </div>
             {hasRail ? (
               <aside className="mt-12 hidden lg:sticky lg:top-20 lg:mt-0 lg:block">
-                <DiscoveryRail locale={locale} tags={tags} authors={authors} />
+                {/* Tags live in the strip above now; the rail carries author discovery only. */}
+                <DiscoveryRail locale={locale} tags={[]} authors={authors} />
               </aside>
             ) : null}
           </div>
