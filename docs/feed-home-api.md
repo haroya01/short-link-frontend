@@ -58,6 +58,22 @@ interface TrendingTagSection {
 
 > 검색 제출은 새 API 없음 — `?q=` 로 soft-nav 후 #1(`q`)이 서버에서 결과 렌더. OG 이미지는 백엔드 아님(`GET /{locale}/blog/opengraph-image`, Next 라우트).
 
+## 4-b. 읽기 surface + 인터랙션 (작성자 subdomain: `{username}.kurl.me`)
+
+피드 카드/작성자 링크 → 작성자 세계(글 상세·홈·시리즈·소개). 전부 mock 게이트됨(`NEXT_PUBLIC_USE_MOCKS`).
+
+| # | Method · Path | 응답 | 용도 | 인증 | Mock |
+|---|---|---|---|---|---|
+| 13 | `GET /api/v1/public/profiles/{username}/posts` | `PublicPostList` | 작성자 홈(글 목록) | public | ✅ |
+| 14 | `GET /api/v1/public/profiles/{username}/posts/{slug}` | `PublicPostDetail` | 글 상세(본문 블록) · no-store(404/410) | public | ✅ |
+| 15 | `GET /api/v1/public/profiles/{username}/series` | `PublicSeriesList` | 시리즈 목록 | public | ✅ |
+| 16 | `GET /api/v1/public/profiles/{username}/series/{slug}` | `PublicSeriesDetail` | 시리즈 상세 | public | ✅ |
+| 17 | `GET\|POST /api/v1/posts/{postId}/comments` · `DELETE /api/v1/comments/{id}` | `CommentView[]` | 댓글 목록/작성/삭제 | GET public · 쓰기 auth | 미적용(실패 시 빈 목록으로 degrade) |
+| 18 | `POST\|DELETE /api/v1/posts/{postId}/like` | `{ liked, count }` | 좋아요 토글 | auth | 미적용 |
+| 19 | 조회 비콘 (글 상세 `ViewBeacon`) | — | 조회수 집계 | public | 미적용(fire-and-forget, 실패 무해) |
+
+> 글 상세는 `{username}.kurl.me/{slug}` (prod). 404=DRAFT/없음, 410=UNPUBLISHED. 본문은 블록 배열(아래 `PublicPostBlock`).
+
 ## 5. 응답 타입 (출처: `modules/blog/api/public-posts.ts`, `follows.ts`, `types/auth.ts`)
 
 ```ts
@@ -79,7 +95,35 @@ interface PublicFeedItem {
 interface PublicAuthor { id: number; username: string; bio: string | null; avatarUrl: string | null }
 interface TagCount { tag: string; count: number }
 interface SuggestedAuthor { author: PublicAuthor; postCount: number }
+interface TrendingTagSection { tag: string; postCount: number; posts: PublicFeedItem[] }
 interface FollowStatus { following: boolean; followerCount: number; followingCount: number }
+
+// 읽기 surface
+interface PublicPostListItem {
+  id: number; slug: string; title: string; excerpt: string | null;
+  ogImageUrl: string | null; languageTag: string; tags: string[];
+  likeCount: number; publishedAt: string;
+}
+interface PublicPostList { author: PublicAuthor; posts: PublicPostListItem[] }
+interface PublicPostBlock {
+  type: "PARAGRAPH" | "H1" | "H2" | "H3" | "QUOTE" | "DIVIDER"
+      | "LIST_BULLET" | "LIST_NUMBERED" | "IMAGE" | "CODE" | "TABLE" | "EMBED" | "CTA_REF";
+  content: string | null;   // IMAGE/LIST/CODE 등은 JSON 문자열, 나머지는 (마크다운) 텍스트
+  blockOrder: number;
+  cta: PublicCtaInfo | null;
+}
+interface PublicPostDetail {
+  author: PublicAuthor; post: PublicPostListItem;
+  blocks: PublicPostBlock[]; series: PublicPostSeriesNav | null;
+}
+interface PublicSeriesListItem { slug: string; title: string; postCount: number }
+interface PublicSeriesList { author: PublicAuthor; series: PublicSeriesListItem[] }
+interface PublicSeriesDetail { author: PublicAuthor; series: PublicSeriesListItem; posts: PublicPostListItem[] }
+interface PublicPostSeriesNav {
+  slug: string; title: string; position: number; total: number;
+  prev: { slug: string; title: string } | null;
+  next: { slug: string; title: string } | null;
+}
 
 type Me = {
   id: number; email: string; role: "USER" | "ADMIN";
