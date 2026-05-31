@@ -66,37 +66,45 @@ function Avatar({ author }: { author: PublicFeedItem["author"] }) {
 }
 
 /**
- * Meta row: author (its own link) on the left, then date. `compact` (grid cards) stops there to
- * keep the feed calm; the full row (featured) also shows views + the like count pushed right. Lives
- * outside the post anchor so the author link doesn't nest inside it.
+ * Meta row: author (its own link) + date, with the like count pushed right — shown on every card so
+ * image and image-less cards read identically. `compact` (grid/row cards) hides views to stay calm;
+ * the full row (featured) adds views. `hideAuthor` drops the author on a single-author surface (the
+ * author profile page) where repeating it on every row is noise. Lives outside the post anchor so
+ * the author link doesn't nest inside it.
  */
 function MetaRow({
   item,
   locale,
   labels,
   compact = false,
+  hideAuthor = false,
 }: {
   item: PublicFeedItem;
   locale: string;
   labels: Labels;
   compact?: boolean;
+  hideAuthor?: boolean;
 }) {
   return (
     <div className="mt-3 flex items-center gap-2 text-[12px] text-slate-500">
-      <a
-        href={authorHref(item.author.username, locale)}
-        className="flex min-w-0 items-center gap-1.5 text-slate-500 transition-colors hover:text-slate-900"
-      >
-        <Avatar author={item.author} />
-        <span className="truncate font-medium">{item.author.username}</span>
-      </a>
-      <span aria-hidden>·</span>
+      {!hideAuthor && (
+        <>
+          <a
+            href={authorHref(item.author.username, locale)}
+            className="flex min-w-0 items-center gap-1.5 text-slate-500 transition-colors hover:text-slate-900"
+          >
+            <Avatar author={item.author} />
+            <span className="truncate font-medium">{item.author.username}</span>
+          </a>
+          <span aria-hidden>·</span>
+        </>
+      )}
       <time dateTime={item.publishedAt} className="shrink-0">
         {formatDate(item.publishedAt, locale)}
       </time>
-      {!compact && (
+      {(showLikes(item.likeCount) || (!compact && showViews(item.viewCount))) && (
         <span className="ml-auto flex shrink-0 items-center gap-3">
-          {showViews(item.viewCount) && <span>{labels.views(item.viewCount)}</span>}
+          {!compact && showViews(item.viewCount) && <span>{labels.views(item.viewCount)}</span>}
           {showLikes(item.likeCount) && (
             <span className="flex items-center gap-1">
               <Heart className="h-3.5 w-3.5" />
@@ -169,12 +177,18 @@ export function FeedCard({
   locale,
   labels,
   className,
+  row = false,
+  hideAuthor = false,
 }: {
   item: PublicFeedItem;
   locale: string;
   labels: Labels;
   /** Extra classes on the card `<li>` — e.g. a fixed width when used in a horizontal scroll row. */
   className?: string;
+  /** Force the compact row layout at all widths (single-column lists, e.g. the author profile). */
+  row?: boolean;
+  /** Drop the author from the meta — for single-author surfaces (author profile page). */
+  hideAuthor?: boolean;
 }) {
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
@@ -185,8 +199,8 @@ export function FeedCard({
         (className ? ` ${className}` : "")
       }
     >
-      {/* Mobile: compact row */}
-      <div className="flex gap-3 p-3 sm:hidden">
+      {/* Compact row — always when `row`, else mobile-only (`sm` gets the full card below). */}
+      <div className={row ? "flex gap-3 p-3" : "flex gap-3 p-3 sm:hidden"}>
         <a
           href={postUrl}
           className="block h-[84px] w-[84px] shrink-0 overflow-hidden rounded-xl bg-slate-100"
@@ -212,11 +226,12 @@ export function FeedCard({
               {item.title}
             </h2>
           </a>
-          <MetaRow item={item} locale={locale} labels={labels} compact />
+          <MetaRow item={item} locale={locale} labels={labels} compact hideAuthor={hideAuthor} />
         </div>
       </div>
 
-      {/* sm+: full card */}
+      {/* sm+: full card (skipped in forced-row mode) */}
+      {!row && (
       <div className="hidden flex-col sm:flex">
         <a href={postUrl} className="block">
           <div className="aspect-[1.6/1] w-full overflow-hidden bg-slate-100">
@@ -255,9 +270,10 @@ export function FeedCard({
               )
             )}
           </a>
-          <MetaRow item={item} locale={locale} labels={labels} compact />
+          <MetaRow item={item} locale={locale} labels={labels} compact hideAuthor={hideAuthor} />
         </div>
       </div>
+      )}
     </li>
   );
 }

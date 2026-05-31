@@ -1,21 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { Search, X } from "lucide-react";
+import { ArrowRight, Loader2, Search, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
+import { searchPublicFeed, type PublicFeedItem } from "@/modules/blog/api/public-posts";
+import { postHref } from "@/modules/blog/components/feed-card";
 
 /**
- * Full-screen mobile search, opened from the bottom-nav 검색 tab. The desktop header keeps its own
- * inline search; this is the touch-first counterpart so the field gets the whole width and auto-focus
- * instead of cramming into a 390px top bar. Submits to the feed's `?q=` view (same as the header).
+ * Full-screen mobile search, opened from the bottom-nav 검색 tab. Live: results stream in as you type
+ * (debounced) so search feels dynamic instead of a blind submit-and-navigate. Enter (or "see all")
+ * still goes to the full ?q= results page. Desktop keeps its own header search.
  */
 export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("publicFeed");
   const tc = useTranslations("common");
+  const locale = useLocale();
   const router = useRouter();
   const [value, setValue] = useState("");
+  const [results, setResults] = useState<PublicFeedItem[]>([]);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -32,6 +37,28 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
     };
   }, [open, onClose]);
 
+  // Debounced live search — fires ~250ms after typing stops; stale responses ignored via `live`.
+  useEffect(() => {
+    const q = value.trim();
+    if (!open || !q) {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    let live = true;
+    const id = window.setTimeout(async () => {
+      const res = await searchPublicFeed(q, "recent", 0, 6).catch(() => null);
+      if (!live) return;
+      setResults(res?.ok ? res.data.items.slice(0, 6) : []);
+      setLoading(false);
+    }, 250);
+    return () => {
+      live = false;
+      window.clearTimeout(id);
+    };
+  }, [value, open]);
+
   if (!open) return null;
 
   function navigate(href: string) {
@@ -39,21 +66,23 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
     if (url.origin === window.location.origin) router.push(url.pathname + url.search);
     else window.location.href = href;
   }
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
+  function goToAll(e?: React.FormEvent) {
+    e?.preventDefault();
     const q = value.trim();
     onClose();
     if (q) navigate(blogHref(`/?q=${encodeURIComponent(q)}`));
   }
+
+  const q = value.trim();
 
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-label={t("searchLabel")}
-      className="fixed inset-0 z-50 bg-white sm:hidden"
+      className="fixed inset-0 z-50 flex flex-col bg-white sm:hidden"
     >
-      <form onSubmit={submit} role="search" className="flex h-14 items-center gap-2 px-3">
+      <form onSubmit={goToAll} role="search" className="flex h-14 shrink-0 items-center gap-2 px-3">
         <button
           type="button"
           onClick={onClose}
@@ -78,6 +107,54 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
           />
         </div>
       </form>
+
+      <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-6" aria-live="polite">
+        {q && loading && results.length === 0 && (
+          <div className="flex items-center justify-center py-10 text-slate-400">
+            <Loader2 className="h-5 w-5 animate-spin" />
+          </div>
+        )}
+        {q && !loading && results.length === 0 && (
+          <p className="px-3 py-10 text-center text-sm text-slate-500">{t("searchEmptyTitle")}</p>
+        )}
+        {results.length > 0 && (
+          <ul className="divide-y divide-slate-100">
+            {results.map((item) => (
+              <li key={`${item.author.username}/${item.slug}`}>
+                <a
+                  href={postHref(item.author.username, item.slug, locale)}
+                  onClick={() => onClose()}
+                  className="focus-ring flex items-center gap-3 rounded-xl px-3 py-3"
+                >
+                  <span className="min-w-0 flex-1">
+                    {item.tags[0] && (
+                      <span className="text-[11px] font-semibold uppercase tracking-wide text-accent-700">
+                        {item.tags[0]}
+                      </span>
+                    )}
+                    <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900">
+                      {item.title}
+                    </span>
+                    <span className="mt-0.5 block truncate text-[12px] text-slate-500">
+                      @{item.author.username}
+                    </span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+        {q && (
+          <button
+            type="button"
+            onClick={() => goToAll()}
+            className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl px-3 py-3 text-sm font-medium text-accent-700 transition-colors hover:bg-accent-50"
+          >
+            {t("searchResultsFor", { q })}
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
 import { PostComments } from "@/modules/blog/components/comments";
 import { LikeButton } from "@/modules/blog/components/like-button";
+import { FollowButton } from "@/modules/blog/components/follow-button";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { SeriesNav, TagChips } from "../_components/post-meta";
 import { authorHref } from "@/modules/blog/components/feed-card";
@@ -98,7 +99,7 @@ export default async function PublicPostPage({
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 sm:text-headline-md">
           {post.title}
         </h1>
-        <div className="mt-6 flex items-center justify-between gap-4">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
           <a href={authorHref(author.username, locale)} className="group flex min-w-0 items-center gap-3 rounded focus-ring">
             {author.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -125,7 +126,10 @@ export default async function PublicPostPage({
               </span>
             </span>
           </a>
-          <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+          <div className="flex shrink-0 items-center gap-2">
+            <FollowButton username={author.username} initialFollowerCount={0} showCount={false} />
+            <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+          </div>
         </div>
       </header>
 
