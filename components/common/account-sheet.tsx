@@ -125,6 +125,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             <button
               key={l}
               type="button"
+              aria-current={l === locale ? "true" : undefined}
               onClick={() => switchLocale(l)}
               className={cn(ITEM, "justify-between pl-11", l === locale && "text-accent-700")}
             >

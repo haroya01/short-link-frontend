@@ -80,14 +80,16 @@ export default async function TagFeedPage({
       <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
         {/* Same header row as the feed home — the feed tabs (linking home, none active here) so the
             user can jump into any feed mode, plus Write on the right. */}
-        <header className="flex items-center justify-between gap-4 border-b border-slate-200/80 pb-3">
+        <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3">
           <FeedTabs locale={locale} />
           <div className="hidden sm:block">{writeCta}</div>
         </header>
 
         {/* Persistent tag chips (current one highlighted) so switching topics doesn't require going
-            back to the index — works on mobile where there's no rail. */}
-        <TagFilterStrip tags={tags} activeTag={decoded} sort={sort} />
+            back to the index — works on mobile where there's no rail. Centered on the reading column. */}
+        <div className="mx-auto max-w-2xl">
+          <TagFilterStrip tags={tags} activeTag={decoded} sort={sort} />
+        </div>
 
         {items.length === 0 ? (
           <FeedEmpty
@@ -101,21 +103,22 @@ export default async function TagFeedPage({
             }
           />
         ) : (
-          <div className="mt-8 lg:grid lg:grid-cols-[minmax(0,1fr)_clamp(240px,22vw,300px)] lg:items-start lg:gap-10">
-            <div>
+          <div className="mx-auto mt-8 max-w-2xl xl:grid xl:max-w-7xl xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-10">
+            <div className="xl:col-start-2">
               <FeedInfinite
                 locale={locale}
                 initialItems={items}
                 initialHasNext={hasNext}
                 sort={sort}
                 tag={decoded}
-                hasRail={hasRail}
               />
             </div>
             {hasRail ? (
-              <aside className="mt-12 hidden lg:sticky lg:top-20 lg:mt-0 lg:block">
+              <aside className="mt-12 hidden xl:col-start-3 xl:mt-0 xl:block">
                 {/* Tags live in the strip above now; the rail carries author discovery only. */}
-                <DiscoveryRail locale={locale} tags={[]} authors={authors} />
+                <div className="sticky top-20">
+                  <DiscoveryRail locale={locale} tags={[]} authors={authors} />
+                </div>
               </aside>
             ) : null}
           </div>

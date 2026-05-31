@@ -24,9 +24,6 @@ export function authorHref(username: string, locale: string, subpath = ""): stri
   return `${base}/${subpath.replace(/^\//, "")}`;
 }
 
-/** Kept for call-site compatibility; the weblog card no longer surfaces a view count. */
-type Labels = { views: (count: number) => string };
-
 function formatDate(iso: string, locale: string): string {
   // A weblog reads by recency, so the year is usually noise — "5월 30일" / "May 30". The full date
   // (with year) lives on the post page itself.
@@ -115,12 +112,10 @@ export function FeedList({ children }: { children: ReactNode }) {
 }
 
 /**
- * Feed card. Two shapes for two contexts:
- * - **list row (default)**: a typography-led row — muted tag, title, excerpt, author·date — with an
- *   optional small thumbnail on the right. Image-less posts are a complete typographic row (no
- *   placeholder). `featured` gives the lead post a slightly larger title + an editorial label.
- * - **compact (`compact`)**: a small fixed-width vertical card for horizontal carousels (trending).
- * MetaRow stays a sibling of the post link (never nested) so the author link isn't an `<a>` in an `<a>`.
+ * Feed card — a typography-led list row: muted tag, title, excerpt, author·date, with an optional
+ * small thumbnail on the right. Image-less posts are a complete typographic row (no placeholder).
+ * `featured` gives the lead post a slightly larger title + an editorial label. MetaRow stays a sibling
+ * of the post link (never nested) so the author link isn't an `<a>` nested in an `<a>`.
  */
 export function FeedCard({
   item,
@@ -129,13 +124,10 @@ export function FeedCard({
   hideAuthor = false,
   featured = false,
   featuredLabel,
-  compact = false,
 }: {
   item: PublicFeedItem;
   locale: string;
-  /** Unused by the weblog card; accepted so existing call sites compile. */
-  labels?: Labels;
-  /** Extra classes on the card `<li>` — e.g. a fixed width in a horizontal carousel. */
+  /** Extra classes on the card `<li>`. */
   className?: string;
   /** Drop the author from the meta — for single-author surfaces (the author profile page). */
   hideAuthor?: boolean;
@@ -143,50 +135,9 @@ export function FeedCard({
   featured?: boolean;
   /** Editorial label for the featured row (e.g. "오늘의 글" / "Today"). */
   featuredLabel?: string;
-  /** Small fixed-width vertical card for horizontal carousels. */
-  compact?: boolean;
 }) {
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
-
-  if (compact) {
-    return (
-      <li
-        className={
-          "group flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-card-hover focus-within:ring-2 focus-within:ring-accent-500" +
-          (className ? ` ${className}` : "")
-        }
-      >
-        {hasImage && (
-          <a
-            href={postUrl}
-            aria-hidden
-            tabIndex={-1}
-            className="block aspect-[1.8/1] w-full overflow-hidden bg-slate-100"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={item.ogImageUrl as string}
-              alt=""
-              loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-            />
-          </a>
-        )}
-        <div className="flex flex-1 flex-col p-4">
-          <a href={postUrl} className="block">
-            {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
-            <h3 className="mt-0.5 line-clamp-2 text-[15px] font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
-              {item.title}
-            </h3>
-          </a>
-          <div className="mt-auto pt-2">
-            <MetaRow item={item} locale={locale} hideAuthor={hideAuthor} />
-          </div>
-        </div>
-      </li>
-    );
-  }
 
   return (
     <li

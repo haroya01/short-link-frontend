@@ -37,7 +37,7 @@ export function PostCode({ lang, code }: { lang: string; code: string }) {
         type="button"
         onClick={copy}
         aria-label={t("copy")}
-        className="absolute right-3 top-2.5 z-10 inline-flex items-center gap-1 rounded-md bg-white/10 px-2 py-1 text-[12px] font-medium text-slate-300 opacity-0 backdrop-blur transition-opacity hover:bg-white/20 hover:text-white focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 group-hover:opacity-100"
+        className="absolute right-3 top-2.5 z-10 inline-flex items-center gap-1 rounded-md bg-white/10 px-2 py-1 text-[12px] font-medium text-slate-300 opacity-100 backdrop-blur transition-opacity hover:bg-white/20 hover:text-white focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 sm:opacity-0 sm:group-hover:opacity-100"
       >
         {copied ? (
           <>

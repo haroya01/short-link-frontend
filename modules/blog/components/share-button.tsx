@@ -82,7 +82,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
                 handlePlatform(p.id);
                 setOpen(false);
               }}
-              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-visible:bg-accent-50 focus-visible:text-accent-800 focus-visible:outline-none"
+              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800"
             >
               {p.label}
             </button>
@@ -91,7 +91,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
             type="button"
             role="menuitem"
             onClick={() => handlePlatform("copy")}
-            className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-visible:bg-accent-50 focus-visible:text-accent-800 focus-visible:outline-none"
+            className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800"
           >
             {copied ? tc("copied") : tc("copy")}
             {copied && <Check className="h-3.5 w-3.5 text-accent-600" />}
