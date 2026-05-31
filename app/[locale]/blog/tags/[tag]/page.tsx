@@ -13,6 +13,7 @@ import {
 import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
+import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedTabs } from "@/modules/blog/components/feed-tabs";
 import { TagFilterStrip } from "@/modules/blog/components/tag-filter-strip";
@@ -103,25 +104,19 @@ export default async function TagFeedPage({
             }
           />
         ) : (
-          <div className="mx-auto mt-8 max-w-2xl xl:grid xl:max-w-7xl xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-10">
-            <div className="xl:col-start-2">
-              <FeedInfinite
-                locale={locale}
-                initialItems={items}
-                initialHasNext={hasNext}
-                sort={sort}
-                tag={decoded}
-              />
-            </div>
-            {hasRail ? (
-              <aside className="mt-12 hidden xl:col-start-3 xl:mt-0 xl:block">
-                {/* Tags live in the strip above now; the rail carries author discovery only. */}
-                <div className="sticky top-20">
-                  <DiscoveryRail locale={locale} tags={[]} authors={authors} />
-                </div>
-              </aside>
-            ) : null}
-          </div>
+          <ReadingShell
+            className="mt-8"
+            // Tags live in the strip above now; the rail carries author discovery only.
+            rail={hasRail ? <DiscoveryRail locale={locale} tags={[]} authors={authors} /> : undefined}
+          >
+            <FeedInfinite
+              locale={locale}
+              initialItems={items}
+              initialHasNext={hasNext}
+              sort={sort}
+              tag={decoded}
+            />
+          </ReadingShell>
         )}
       </main>
     </>

@@ -9,6 +9,7 @@ import { listFollowingFeed } from "@/modules/blog/api/follows";
 import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
 import { authorHref, FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 
@@ -167,47 +168,46 @@ export function FollowingFeed({
   const followedNames = new Set(followed.map((a) => a.username));
   const suggestions = suggestedAuthors.filter((s) => !followedNames.has(s.author.username));
 
-  return (
-    <div className="mt-8 mx-auto max-w-2xl xl:grid xl:max-w-7xl xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-10">
-      <div className="xl:col-start-2">
-        <FeedList>
-          {items.map((item) => (
-            <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
-          ))}
-        </FeedList>
+  // Same rail slot as the recent feed, filled with the following-tab context.
+  const rail =
+    followed.length > 0 || suggestions.length > 0 ? (
+      <div className="flex flex-col gap-8">
+        {followed.length > 0 && (
+          <section>
+            <RailHeading className="mb-3">{t("railFollowingAuthors")}</RailHeading>
+            <ul className="flex flex-col gap-1">
+              {followed.map((author) => (
+                <AuthorRow key={author.username} author={author} locale={locale} />
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {suggestions.length > 0 && (
+          <section>
+            <RailHeading className="mb-3">{t("railSuggestedAuthors")}</RailHeading>
+            <ul className="flex flex-col gap-1">
+              {suggestions.map(({ author, postCount }) => (
+                <AuthorRow
+                  key={author.username}
+                  author={author}
+                  locale={locale}
+                  subtitle={t("railPostCount", { count: postCount })}
+                />
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
+    ) : undefined;
 
-      {/* Same sticky rail slot as the recent feed, filled with the following-tab context. */}
-      <aside className="mt-12 hidden xl:col-start-3 xl:mt-0 xl:block">
-        <div className="sticky top-20 flex flex-col gap-8">
-          {followed.length > 0 && (
-            <section>
-              <RailHeading className="mb-3">{t("railFollowingAuthors")}</RailHeading>
-              <ul className="flex flex-col gap-1">
-                {followed.map((author) => (
-                  <AuthorRow key={author.username} author={author} locale={locale} />
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {suggestions.length > 0 && (
-            <section>
-              <RailHeading className="mb-3">{t("railSuggestedAuthors")}</RailHeading>
-              <ul className="flex flex-col gap-1">
-                {suggestions.map(({ author, postCount }) => (
-                  <AuthorRow
-                    key={author.username}
-                    author={author}
-                    locale={locale}
-                    subtitle={t("railPostCount", { count: postCount })}
-                  />
-                ))}
-              </ul>
-            </section>
-          )}
-        </div>
-      </aside>
-    </div>
+  return (
+    <ReadingShell className="mt-8" rail={rail}>
+      <FeedList>
+        {items.map((item) => (
+          <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
+        ))}
+      </FeedList>
+    </ReadingShell>
   );
 }
