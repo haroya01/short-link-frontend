@@ -250,17 +250,6 @@ export default async function BlogFeedPage({
           )}
         </div>
       </main>
-
-      {/* Mobile-only floating write button — the header Write CTA is desktop-only (sm:block), so
-          on phones the action lives here as a FAB (velog-style). */}
-      <a
-        href={blogHref("/write/new")}
-        aria-label={t("write")}
-        style={{ bottom: "var(--fab-bottom, 1.5rem)" }}
-        className="fixed right-4 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent-600 text-white shadow-fab transition-[bottom,background-color] duration-200 hover:bg-accent-700 focus-ring motion-reduce:transition-none sm:hidden"
-      >
-        <PenSquare className="h-5 w-5" />
-      </a>
     </>
   );
 }

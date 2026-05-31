@@ -239,6 +239,9 @@
     "login": "Sign in",
     "logout": "Sign out",
     "account": "Account",
+    "home": "Home",
+    "search": "Search",
+    "write": "Write",
     "apps": {
       "trigger": "Other apps",
       "linksLabel": "Links",
