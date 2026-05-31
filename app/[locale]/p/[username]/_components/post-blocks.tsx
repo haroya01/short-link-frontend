@@ -13,14 +13,32 @@ import type { PublicCtaInfo, PublicPostBlock } from "@/modules/blog/api/public-p
 
 const HEADING_TYPES = ["H1", "H2", "H3"];
 
-/** Headings for the floating TOC. Levels collapse H1/H2/H3 → 1/2/3 to mirror the body mapping. */
+/**
+ * editor heading level (1/2/3) → 0-based rank among the levels ACTUALLY present in the post. The
+ * body renders rank+2 (h2→h3→h4) so the outline is a contiguous run under the page <h1> (the post
+ * title) with no skipped levels — valid even when an author starts at H2/H3 instead of H1.
+ */
+function headingRanks(blocks: PublicPostBlock[]): Map<number, number> {
+  const present = [
+    ...new Set(
+      blocks
+        .filter((b) => HEADING_TYPES.includes(b.type) && b.content?.trim())
+        .map((b) => Number(b.type[1])),
+    ),
+  ].sort((a, b) => a - b);
+  return new Map(present.map((lvl, i) => [lvl, i]));
+}
+
+/** Headings for the floating TOC. `level` is the 1-based rank (mirrors the body's contiguous run)
+ *  so the TOC indentation matches the rendered heading depth. */
 export function extractHeadings(blocks: PublicPostBlock[]): TocHeading[] {
+  const ranks = headingRanks(blocks);
   return blocks
     .filter((b) => HEADING_TYPES.includes(b.type) && b.content?.trim())
     .map((b) => ({
       id: slugify(b.content as string),
       text: (b.content as string).trim(),
-      level: Number(b.type[1]),
+      level: (ranks.get(Number(b.type[1])) ?? 0) + 1,
     }))
     .filter((h) => h.id.length > 0);
 }
@@ -31,10 +49,11 @@ export function extractHeadings(blocks: PublicPostBlock[]): TocHeading[] {
  * Server component — no client state; the only interactive bits are plain anchors.
  */
 export function ArticleBody({ blocks }: { blocks: PublicPostBlock[] }) {
+  const ranks = headingRanks(blocks);
   return (
     <div className="prose-post">
       {blocks.map((block, i) => (
-        <Block key={i} block={block} />
+        <Block key={i} block={block} ranks={ranks} />
       ))}
     </div>
   );
@@ -54,16 +73,18 @@ export function readingMinutes(blocks: PublicPostBlock[]): number {
   return Math.max(1, Math.round(chars / 500));
 }
 
-function Block({ block }: { block: PublicPostBlock }) {
+function Block({ block, ranks }: { block: PublicPostBlock; ranks: Map<number, number> }) {
   switch (block.type) {
     case "PARAGRAPH":
       return block.content ? <Markdown>{block.content}</Markdown> : null;
     case "H1":
-      return block.content ? <h2 id={slugify(block.content)}>{block.content}</h2> : null;
     case "H2":
-      return block.content ? <h3 id={slugify(block.content)}>{block.content}</h3> : null;
-    case "H3":
-      return block.content ? <h4 id={slugify(block.content)}>{block.content}</h4> : null;
+    case "H3": {
+      if (!block.content) return null;
+      // rank+2 → h2/h3/h4, contiguous so the page outline never skips a level.
+      const Tag = `h${(ranks.get(Number(block.type[1])) ?? 0) + 2}` as "h2" | "h3" | "h4";
+      return <Tag id={slugify(block.content)}>{block.content}</Tag>;
+    }
     case "QUOTE":
       return block.content ? (
         <blockquote>

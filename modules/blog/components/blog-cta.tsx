@@ -15,7 +15,7 @@ export const blogCta = cva(
     variants: {
       variant: {
         primary:
-          "bg-accent-600 text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] hover:bg-accent-700",
+          "bg-accent-600 text-white shadow-cta hover:bg-accent-700",
         secondary:
           "border border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50",
       },
