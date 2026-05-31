@@ -83,7 +83,13 @@ function Block({ block, ranks }: { block: PublicPostBlock; ranks: Map<number, nu
       if (!block.content) return null;
       // rank+2 → h2/h3/h4, contiguous so the page outline never skips a level.
       const Tag = `h${(ranks.get(Number(block.type[1])) ?? 0) + 2}` as "h2" | "h3" | "h4";
-      return <Tag id={slugify(block.content)}>{block.content}</Tag>;
+      const id = slugify(block.content);
+      // Self-link so the heading is a copyable deep-link; a hover "#" marker is added in `.prose-post`.
+      return (
+        <Tag id={id}>
+          <a href={`#${id}`}>{block.content}</a>
+        </Tag>
+      );
     }
     case "QUOTE":
       return block.content ? (
