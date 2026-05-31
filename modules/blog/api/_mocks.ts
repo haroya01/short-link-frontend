@@ -147,7 +147,9 @@ export function mockFollowingView(): PublicFeedView {
 // ─── Reading surfaces: author home, post detail, series ────────────────────────
 
 function resolveAuthor(username: string): PublicAuthor {
-  return AUTHORS[username] ?? AUTHORS.dohyun;
+  const base = AUTHORS[username] ?? AUTHORS.dohyun;
+  // Demo: every mock author also has a link-in-bio, so the blog→프로필 cross-link shows.
+  return { ...base, hasLinkInBio: true };
 }
 
 function toListItem(item: PublicFeedItem, idx: number): PublicPostListItem {

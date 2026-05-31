@@ -1,4 +1,6 @@
-import { getTranslations } from "next-intl/server";
+import { Link2 } from "lucide-react";
+import { getLocale, getTranslations } from "next-intl/server";
+import { linksHref } from "@/lib/host";
 import type { PublicAuthor } from "@/modules/blog/api/public-posts";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 
@@ -10,6 +12,8 @@ type Tab = "posts" | "series" | "about";
  */
 export async function AuthorHeader({ author, active }: { author: PublicAuthor; active: Tab }) {
   const t = await getTranslations("publicPost");
+  const tNav = await getTranslations("nav");
+  const locale = await getLocale();
   const tabs: { key: Tab; href: string; label: string }[] = [
     { key: "posts", href: "/", label: t("tabPosts") },
     { key: "series", href: "/series", label: t("tabSeries") },
@@ -40,8 +44,19 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
           {author.bio && (
             <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{author.bio}</p>
           )}
-          <div className="mt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
             <FollowButton username={author.username} initialFollowerCount={0} />
+            {/* Cross-surface link to the same person's link-in-bio (separate product, shared
+                identity). Shown only when they actually have one. */}
+            {author.hasLinkInBio && (
+              <a
+                href={linksHref(`/${locale}/u/${author.username}`)}
+                className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700"
+              >
+                <Link2 className="h-3.5 w-3.5" />
+                {tNav("profile")}
+              </a>
+            )}
           </div>
         </div>
       </div>
