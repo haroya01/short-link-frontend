@@ -277,7 +277,7 @@ export function FeedFeaturedCard({
     <div className="group grid overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-card-hover focus-within:ring-2 focus-within:ring-accent-500 sm:grid-cols-2 sm:items-stretch">
       {/* Cover bleeds to the card edge — aspect-locked on mobile, full-height on desktop. */}
       <a href={postUrl} className="block overflow-hidden bg-slate-100">
-        <div className="aspect-[1.6/1] w-full sm:aspect-auto sm:h-full">
+        <div className="aspect-[2/1] w-full sm:aspect-auto sm:h-full">
           <Cover item={item} />
         </div>
       </a>
