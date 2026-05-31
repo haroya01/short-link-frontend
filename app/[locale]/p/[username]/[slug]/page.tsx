@@ -129,7 +129,9 @@ export default async function PublicPostPage({
         </div>
       </header>
 
-      {result.data.series && <SeriesNav series={result.data.series} />}
+      {result.data.series && (
+        <SeriesNav series={result.data.series} username={author.username} locale={locale} />
+      )}
 
       <ArticleBody blocks={blocks} />
 

@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { blogHref } from "@/lib/host";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 import { TagChip } from "@/modules/blog/components/tag-chip";
+import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 
 export function TagChips({ tags }: { tags: string[] }) {
   if (!tags || tags.length === 0) return null;
@@ -20,12 +21,20 @@ export function TagChips({ tags }: { tags: string[] }) {
 }
 
 /** velog-style series banner shown on a post that belongs to a series. */
-export async function SeriesNav({ series }: { series: PublicPostSeriesNav }) {
+export async function SeriesNav({
+  series,
+  username,
+  locale,
+}: {
+  series: PublicPostSeriesNav;
+  username: string;
+  locale: string;
+}) {
   const t = await getTranslations("publicPost");
   return (
     <nav className="mb-10 rounded-2xl border border-slate-200 bg-slate-50/60 p-5">
       <a
-        href={`/series/${series.slug}`}
+        href={authorHref(username, locale, `series/${series.slug}`)}
         className="group flex items-center gap-2 rounded transition-colors focus-ring"
       >
         <Layers className="h-4 w-4 text-accent-600" />
@@ -39,7 +48,7 @@ export async function SeriesNav({ series }: { series: PublicPostSeriesNav }) {
       <div className="mt-3 flex items-stretch justify-between gap-3 text-[13px]">
         {series.prev ? (
           <a
-            href={`/${series.prev.slug}`}
+            href={postHref(username, series.prev.slug, locale)}
             className="group flex min-w-0 flex-1 items-center gap-2 rounded text-slate-500 transition-colors hover:text-accent-700 focus-ring"
           >
             <ArrowLeft className="h-4 w-4 shrink-0" />
@@ -50,7 +59,7 @@ export async function SeriesNav({ series }: { series: PublicPostSeriesNav }) {
         )}
         {series.next ? (
           <a
-            href={`/${series.next.slug}`}
+            href={postHref(username, series.next.slug, locale)}
             className="group flex min-w-0 flex-1 items-center justify-end gap-2 rounded text-right text-slate-500 transition-colors hover:text-accent-700 focus-ring"
           >
             <span className="truncate">{series.next.title}</span>
