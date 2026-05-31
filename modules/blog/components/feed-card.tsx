@@ -151,11 +151,12 @@ function TypoCover({ item }: { item: PublicFeedItem }) {
 }
 
 /**
- * Uniform feed card on a soft light surface (hairline ring + gentle hover shadow — far lighter than
- * a bordered/lifting box). Every post fills the same 1.6:1 cover slot — a photo when there is one,
- * otherwise a typographic cover (title-as-art). Below the cover, image cards show tag + title +
- * excerpt; typo cards (title already in the cover) carry the excerpt only. Identical card shape +
- * cover box keeps the grid even, so coverless posts never stretch or leave a gap.
+ * Feed card with two layouts so the feed reads well at both sizes:
+ * - **mobile (`<sm`)**: a compact row — small square thumbnail + tag/title/meta beside it. Dense and
+ *   scannable, so the phone feed isn't an endless stack of tall blocks.
+ * - **`sm`+**: the full card — a 1.6:1 cover (photo, or a typographic cover for image-less posts)
+ *   over tag/title/excerpt. Identical card box keeps the grid even.
+ * MetaRow stays a sibling of the post link (never nested) so the author link isn't an `<a>` in an `<a>`.
  */
 export function FeedCard({
   item,
@@ -174,48 +175,82 @@ export function FeedCard({
   return (
     <li
       className={
-        "group flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-card-hover focus-within:ring-2 focus-within:ring-accent-500" +
+        "group overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-card-hover focus-within:ring-2 focus-within:ring-accent-500" +
         (className ? ` ${className}` : "")
       }
     >
-      <a href={postUrl} className="block">
-        <div className="aspect-[1.6/1] w-full overflow-hidden bg-slate-100">
+      {/* Mobile: compact row */}
+      <div className="flex gap-3 p-3 sm:hidden">
+        <a
+          href={postUrl}
+          className="block h-[84px] w-[84px] shrink-0 overflow-hidden rounded-xl bg-slate-100"
+          aria-hidden
+          tabIndex={-1}
+        >
           {hasImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={item.ogImageUrl as string}
               alt=""
               loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+              className="h-full w-full object-cover"
             />
           ) : (
-            <TypoCover item={item} />
-          )}
-        </div>
-      </a>
-      <div className="flex flex-1 flex-col p-4">
-        <a href={postUrl} className="flex flex-1 flex-col">
-          {hasImage ? (
-            <>
-              {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
-              <h2 className="mt-1 line-clamp-2 text-[17px] font-bold leading-[1.35] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
-                {item.title}
-              </h2>
-              {item.excerpt && (
-                <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-slate-500">
-                  {item.excerpt}
-                </p>
-              )}
-            </>
-          ) : (
-            item.excerpt && (
-              <p className="line-clamp-2 text-[13px] leading-relaxed text-slate-500">
-                {item.excerpt}
-              </p>
-            )
+            <span className="block h-full w-full bg-gradient-to-br from-slate-100 to-slate-200/80" />
           )}
         </a>
-        <MetaRow item={item} locale={locale} labels={labels} compact />
+        <div className="flex min-w-0 flex-1 flex-col justify-center">
+          <a href={postUrl} className="block">
+            {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
+            <h2 className="mt-0.5 line-clamp-2 text-[15px] font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
+              {item.title}
+            </h2>
+          </a>
+          <MetaRow item={item} locale={locale} labels={labels} compact />
+        </div>
+      </div>
+
+      {/* sm+: full card */}
+      <div className="hidden flex-col sm:flex">
+        <a href={postUrl} className="block">
+          <div className="aspect-[1.6/1] w-full overflow-hidden bg-slate-100">
+            {hasImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={item.ogImageUrl as string}
+                alt=""
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+              />
+            ) : (
+              <TypoCover item={item} />
+            )}
+          </div>
+        </a>
+        <div className="flex flex-1 flex-col p-4">
+          <a href={postUrl} className="flex flex-1 flex-col">
+            {hasImage ? (
+              <>
+                {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
+                <h2 className="mt-1 line-clamp-2 text-[17px] font-bold leading-[1.35] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
+                  {item.title}
+                </h2>
+                {item.excerpt && (
+                  <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-slate-500">
+                    {item.excerpt}
+                  </p>
+                )}
+              </>
+            ) : (
+              item.excerpt && (
+                <p className="line-clamp-2 text-[13px] leading-relaxed text-slate-500">
+                  {item.excerpt}
+                </p>
+              )
+            )}
+          </a>
+          <MetaRow item={item} locale={locale} labels={labels} compact />
+        </div>
       </div>
     </li>
   );
@@ -248,12 +283,14 @@ export function FeedFeaturedCard({
       </a>
       <div className="flex flex-col justify-center p-6 sm:p-8">
         <a href={postUrl} className="flex flex-col">
-          {/* "추천 · tag" eyebrow — one accent moment (추천 in green, tag muted) marking the hero. */}
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide">
-            {featuredLabel && <span className="text-accent-700">{featuredLabel}</span>}
-            {featuredLabel && item.tags[0] && <span className="text-slate-300" aria-hidden>·</span>}
-            {item.tags[0] && <span className="text-slate-400">{item.tags[0]}</span>}
-          </div>
+          {/* Single curation marker only ("추천"/"Featured"). The tag is NOT shown here — 상품·개발·
+              일상 are themes/tags, not top-level categories, so a "추천 · 개발" pair read as a category
+              badge. The post's tags live on the post itself. */}
+          {featuredLabel && (
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-accent-700">
+              {featuredLabel}
+            </span>
+          )}
           <h2 className="mt-1.5 line-clamp-3 text-[24px] font-bold leading-[1.2] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 sm:text-[28px]">
             {item.title}
           </h2>
