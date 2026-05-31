@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { request } from "@/lib/api/client";
 import type { FeedSort, PublicFeedItem, PublicFeedView } from "@/modules/blog/api/public-posts";
-import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
+import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 
 const PAGE_SIZE = 24;
 
@@ -24,7 +24,8 @@ export function FeedInfinite({
   sort,
   query,
   tag,
-  hasRail,
+  featuredFirst = false,
+  featuredLabel,
 }: {
   locale: string;
   initialItems: PublicFeedItem[];
@@ -33,7 +34,12 @@ export function FeedInfinite({
   query?: string;
   /** When set, paginate a single tag's feed (`?tag=`) instead of the sorted/searched feed. */
   tag?: string;
-  hasRail: boolean;
+  /** Accepted for call-site compatibility; the single-column list no longer varies by rail. */
+  hasRail?: boolean;
+  /** Give the very first item a quiet editorial emphasis (the recent home feed's lead post). */
+  featuredFirst?: boolean;
+  /** Label for the featured lead row (e.g. "오늘의 글"). */
+  featuredLabel?: string;
 }) {
   const t = useTranslations("publicFeed");
   const [items, setItems] = useState(initialItems);
@@ -95,16 +101,17 @@ export function FeedInfinite({
 
   return (
     <>
-      <FeedGrid hasRail={hasRail}>
-        {items.map((item) => (
+      <FeedList>
+        {items.map((item, i) => (
           <FeedCard
             key={itemKey(item)}
             item={item}
             locale={locale}
-            labels={{ views: (count) => t("views", { count }) }}
+            featured={featuredFirst && i === 0}
+            featuredLabel={featuredLabel}
           />
         ))}
-      </FeedGrid>
+      </FeedList>
 
       {hasNext && (
         <div

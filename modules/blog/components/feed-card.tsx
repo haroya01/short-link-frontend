@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 import { Heart } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
-import { showLikes, showViews } from "@/modules/blog/lib/public-metrics";
-import { Mark } from "@/components/common/logo";
+import { showLikes } from "@/modules/blog/lib/public-metrics";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 const KURL_HOST = process.env.NEXT_PUBLIC_KURL_HOST;
@@ -25,31 +24,16 @@ export function authorHref(username: string, locale: string, subpath = ""): stri
   return `${base}/${subpath.replace(/^\//, "")}`;
 }
 
+/** Kept for call-site compatibility; the weblog card no longer surfaces a view count. */
 type Labels = { views: (count: number) => string };
 
 function formatDate(iso: string, locale: string): string {
-  // No year — on a recency feed the year is noise, and the full "2026년 5월 30일" crowded the meta
-  // row on narrow grid cards (it wrapped / collided with views + likes). "5월 30일" / "May 30".
+  // A weblog reads by recency, so the year is usually noise — "5월 30일" / "May 30". The full date
+  // (with year) lives on the post page itself.
   return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
     month: "long",
     day: "numeric",
   });
-}
-
-function Cover({ item }: { item: PublicFeedItem }) {
-  if (item.ogImageUrl) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={item.ogImageUrl}
-        alt=""
-        loading="lazy"
-        className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-      />
-    );
-  }
-  // Single coverless treatment everywhere (featured + grid): a neutral branded placeholder.
-  return <CoverPlaceholder />;
 }
 
 function Avatar({ author }: { author: PublicFeedItem["author"] }) {
@@ -67,32 +51,35 @@ function Avatar({ author }: { author: PublicFeedItem["author"] }) {
 }
 
 /**
- * Meta row: author (its own link) + date, with the like count pushed right — shown on every card so
- * image and image-less cards read identically. `compact` (grid/row cards) hides views to stay calm;
- * the full row (featured) adds views. `hideAuthor` drops the author on a single-author surface (the
- * author profile page) where repeating it on every row is noise. Lives outside the post anchor so
- * the author link doesn't nest inside it.
+ * Representative tag = the post's first tag (the author orders them, so tag[0] is their pick). Shown
+ * as a quiet muted label — NOT a coloured "category" badge. We have flat tags, not categories, so
+ * dressing one up as a category would be a lie; this just hints at the post's subject.
+ */
+function TagEyebrow({ tag }: { tag: string }) {
+  return <span className="text-[12px] font-medium text-slate-400">{tag}</span>;
+}
+
+/**
+ * Meta line: author + date first (who, when — the weblog basics), with the like count demoted to a
+ * faint marker on the right and only when there is one. Views are intentionally absent from the card.
+ * Lives outside the post anchor so the author link isn't an `<a>` nested in an `<a>`.
  */
 function MetaRow({
   item,
   locale,
-  labels,
-  compact = false,
   hideAuthor = false,
 }: {
   item: PublicFeedItem;
   locale: string;
-  labels: Labels;
-  compact?: boolean;
   hideAuthor?: boolean;
 }) {
   return (
-    <div className="mt-3 flex items-center gap-2 text-[12px] text-slate-500">
+    <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500">
       {!hideAuthor && (
         <>
           <a
             href={authorHref(item.author.username, locale)}
-            className="flex min-w-0 items-center gap-1.5 text-slate-500 transition-colors hover:text-slate-900"
+            className="flex min-w-0 items-center gap-1.5 transition-colors hover:text-slate-900"
           >
             <Avatar author={item.author} />
             <span className="truncate font-medium">{item.author.username}</span>
@@ -103,211 +90,169 @@ function MetaRow({
       <time dateTime={item.publishedAt} className="shrink-0">
         {formatDate(item.publishedAt, locale)}
       </time>
-      {(showLikes(item.likeCount) || (!compact && showViews(item.viewCount))) && (
-        <span className="ml-auto flex shrink-0 items-center gap-3">
-          {!compact && showViews(item.viewCount) && <span>{labels.views(item.viewCount)}</span>}
-          {showLikes(item.likeCount) && (
-            <span className="flex items-center gap-1">
-              <Heart className="h-3.5 w-3.5" />
-              {item.likeCount}
-            </span>
-          )}
-        </span>
+      {/* Likes sit inline right after the date — same position on every card, never floated to a
+          column edge that shifts with the thumbnail. Demoted: a faint marker, only shown when > 0. */}
+      {showLikes(item.likeCount) && (
+        <>
+          <span aria-hidden>·</span>
+          <span className="flex shrink-0 items-center gap-1">
+            <Heart className="h-3 w-3" />
+            {item.likeCount}
+          </span>
+        </>
       )}
     </div>
   );
 }
 
-function TagEyebrow({ tag }: { tag: string }) {
-  return (
-    <span className="text-[11px] font-semibold uppercase tracking-wide text-accent-700">{tag}</span>
-  );
-}
-
 /**
- * Shared responsive card grid: the home feed (FeedInfinite), the following tab, and tag pages all
- * wrap their {@link FeedCard}s in this so every grid matches. With a discovery rail the cards cap at
- * 3 columns (the rail eats the 4th); without one they go 4-up.
+ * Single-column post list — the home recent feed, the following tab, tag pages and the author profile
+ * all wrap their {@link FeedCard}s in this. A quiet weblog reads as a vertical list, not a multi-column
+ * card grid, so this is a narrow stacked column; the card's own bottom border draws the row dividers.
  */
-export function FeedGrid({
-  children,
-  hasRail = false,
-}: {
-  children: ReactNode;
-  hasRail?: boolean;
-}) {
-  return (
-    <ul
-      className={`grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 ${
-        hasRail ? "xl:grid-cols-3" : "lg:grid-cols-3 xl:grid-cols-4"
-      }`}
-    >
-      {children}
-    </ul>
-  );
-}
-
-function CoverPlaceholder() {
-  // Neutral branded placeholder for image-less posts. Keeps the card structurally identical to photo
-  // cards (cover box + body), so the title/excerpt/meta line up across the grid. Not a blank void —
-  // the kurl mark sits faintly centered.
-  return (
-    <div className="grid h-full w-full place-items-center bg-gradient-to-br from-slate-50 to-slate-100/80">
-      <Mark className="h-5 w-auto text-slate-300" />
-    </div>
-  );
+export function FeedList({ children }: { children: ReactNode }) {
+  return <ul className="flex max-w-2xl flex-col">{children}</ul>;
 }
 
 /**
- * Feed card with two layouts so the feed reads well at both sizes:
- * - **mobile (`<sm`)**: a compact row — small square thumbnail + tag/title/meta beside it. Dense and
- *   scannable, so the phone feed isn't an endless stack of tall blocks.
- * - **`sm`+**: the full card — a 1.6:1 cover (photo, or a typographic cover for image-less posts)
- *   over tag/title/excerpt. Identical card box keeps the grid even.
+ * Feed card. Two shapes for two contexts:
+ * - **list row (default)**: a typography-led row — muted tag, title, excerpt, author·date — with an
+ *   optional small thumbnail on the right. Image-less posts are a complete typographic row (no
+ *   placeholder). `featured` gives the lead post a slightly larger title + an editorial label.
+ * - **compact (`compact`)**: a small fixed-width vertical card for horizontal carousels (trending).
  * MetaRow stays a sibling of the post link (never nested) so the author link isn't an `<a>` in an `<a>`.
  */
 export function FeedCard({
   item,
   locale,
-  labels,
   className,
-  row = false,
   hideAuthor = false,
+  featured = false,
+  featuredLabel,
+  compact = false,
 }: {
   item: PublicFeedItem;
   locale: string;
-  labels: Labels;
-  /** Extra classes on the card `<li>` — e.g. a fixed width when used in a horizontal scroll row. */
+  /** Unused by the weblog card; accepted so existing call sites compile. */
+  labels?: Labels;
+  /** Extra classes on the card `<li>` — e.g. a fixed width in a horizontal carousel. */
   className?: string;
-  /** Force the compact row layout at all widths (single-column lists, e.g. the author profile). */
-  row?: boolean;
-  /** Drop the author from the meta — for single-author surfaces (author profile page). */
+  /** Drop the author from the meta — for single-author surfaces (the author profile page). */
   hideAuthor?: boolean;
+  /** Lead post of the feed: slightly larger title + an editorial label above it. */
+  featured?: boolean;
+  /** Editorial label for the featured row (e.g. "오늘의 글" / "Today"). */
+  featuredLabel?: string;
+  /** Small fixed-width vertical card for horizontal carousels. */
+  compact?: boolean;
 }) {
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
-  return (
-    <li
-      className={
-        "group overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-card-hover focus-within:ring-2 focus-within:ring-accent-500" +
-        (className ? ` ${className}` : "")
-      }
-    >
-      {/* Compact row — always when `row`, else mobile-only (`sm` gets the full card below). */}
-      <div className={row ? "flex gap-3 p-3" : "flex gap-3 p-3 sm:hidden"}>
-        <a
-          href={postUrl}
-          className="block h-[84px] w-[84px] shrink-0 overflow-hidden rounded-xl bg-slate-100"
-          aria-hidden
-          tabIndex={-1}
-        >
-          {hasImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
+
+  if (compact) {
+    return (
+      <li
+        className={
+          "group flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-card-hover focus-within:ring-2 focus-within:ring-accent-500" +
+          (className ? ` ${className}` : "")
+        }
+      >
+        {hasImage && (
+          <a
+            href={postUrl}
+            aria-hidden
+            tabIndex={-1}
+            className="block aspect-[1.8/1] w-full overflow-hidden bg-slate-100"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={item.ogImageUrl as string}
               alt=""
               loading="lazy"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
             />
-          ) : (
-            <span className="block h-full w-full bg-gradient-to-br from-slate-100 to-slate-200/80" />
-          )}
-        </a>
-        <div className="flex min-w-0 flex-1 flex-col justify-center">
+          </a>
+        )}
+        <div className="flex flex-1 flex-col p-4">
           <a href={postUrl} className="block">
             {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
-            <h2 className="mt-0.5 line-clamp-2 text-[15px] font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
+            <h3 className="mt-0.5 line-clamp-2 text-[15px] font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
               {item.title}
-            </h2>
+            </h3>
           </a>
-          <MetaRow item={item} locale={locale} labels={labels} compact hideAuthor={hideAuthor} />
-        </div>
-      </div>
-
-      {/* sm+: full card (skipped in forced-row mode) */}
-      {!row && (
-      <div className="hidden flex-col sm:flex">
-        <a href={postUrl} className="block" aria-hidden tabIndex={-1}>
-          <div className="aspect-[1.6/1] w-full overflow-hidden bg-slate-100">
-            {hasImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={item.ogImageUrl as string}
-                alt=""
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-              />
-            ) : (
-              <CoverPlaceholder />
-            )}
+          <div className="mt-auto pt-2">
+            <MetaRow item={item} locale={locale} hideAuthor={hideAuthor} />
           </div>
-        </a>
-        {/* Same body for photo + image-less cards, with reserved title/excerpt heights, so every
-            card is the same height and the author·date·♥ meta lines up across the grid. */}
-        <div className="flex flex-1 flex-col p-4">
-          <a href={postUrl} className="flex flex-1 flex-col">
-            {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
-            <h2 className="mt-1 line-clamp-2 min-h-[2.7em] text-[17px] font-bold leading-[1.35] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
+        </div>
+      </li>
+    );
+  }
+
+  return (
+    <li
+      className={
+        "group relative border-b border-slate-100 last:border-b-0" +
+        (className ? ` ${className}` : "")
+      }
+    >
+      {/* -mx/px lets the hover highlight breathe past the text without moving the content edge (it
+          stays aligned with the divider + header). A quiet affordance that the whole row is a link. */}
+      <div
+        className={`-mx-3 flex gap-4 rounded-xl px-3 py-5 transition-colors group-hover:bg-slate-50/70 sm:gap-6 ${
+          featured ? "sm:py-7" : ""
+        }`}
+      >
+        <div className="min-w-0 flex-1">
+          <a href={postUrl} className="block">
+            {/* One marker per row. The featured lead shows a quiet editorial label; every other row
+                shows its muted representative tag. Never both — stacking them reads as a confusing
+                "which one is the category?" pair. */}
+            {featured && featuredLabel ? (
+              <span className="text-[11px] font-semibold tracking-wide text-accent-600">
+                {featuredLabel}
+              </span>
+            ) : (
+              item.tags[0] && <TagEyebrow tag={item.tags[0]} />
+            )}
+            <h2
+              className={`mt-0.5 line-clamp-2 font-bold leading-[1.3] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 ${
+                featured ? "text-[22px] sm:text-[26px] sm:leading-[1.2]" : "text-[18px]"
+              }`}
+            >
               {item.title}
             </h2>
-            <p className="mt-1.5 line-clamp-2 min-h-[2.6em] text-[13px] leading-relaxed text-slate-500">
-              {item.excerpt}
-            </p>
+            {item.excerpt && (
+              <p
+                className={`mt-1.5 text-[14px] leading-relaxed text-slate-500 ${
+                  featured ? "line-clamp-2 sm:line-clamp-3" : "line-clamp-2"
+                }`}
+              >
+                {item.excerpt}
+              </p>
+            )}
           </a>
-          <MetaRow item={item} locale={locale} labels={labels} compact hideAuthor={hideAuthor} />
+          <MetaRow item={item} locale={locale} hideAuthor={hideAuthor} />
         </div>
-      </div>
-      )}
-    </li>
-  );
-}
 
-/**
- * Wide "featured" variant for the lead post of the feed. Cover and copy sit side by side on desktop
- * (stacked on mobile) with a larger title, giving the feed an editorial focal point before the
- * uniform grid below. Same anchor discipline as {@link FeedCard}.
- */
-export function FeedFeaturedCard({
-  item,
-  locale,
-  labels,
-  featuredLabel,
-}: {
-  item: PublicFeedItem;
-  locale: string;
-  labels: Labels;
-  featuredLabel?: string;
-}) {
-  const postUrl = postHref(item.author.username, item.slug, locale);
-  return (
-    <div className="group grid overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-card-hover focus-within:ring-2 focus-within:ring-accent-500 sm:grid-cols-2 sm:items-stretch">
-      {/* Cover bleeds to the card edge — aspect-locked on mobile, full-height on desktop. */}
-      <a href={postUrl} className="block overflow-hidden bg-slate-100" aria-hidden tabIndex={-1}>
-        <div className="aspect-[5/2] w-full sm:aspect-auto sm:h-full">
-          <Cover item={item} />
-        </div>
-      </a>
-      <div className="flex flex-col justify-center p-5 sm:p-8">
-        <a href={postUrl} className="flex flex-col">
-          {/* Single curation marker only ("추천"/"Featured"). The tag is NOT shown here — 상품·개발·
-              일상 are themes/tags, not top-level categories, so a "추천 · 개발" pair read as a category
-              badge. The post's tags live on the post itself. */}
-          {featuredLabel && (
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-accent-700">
-              {featuredLabel}
-            </span>
-          )}
-          <h2 className="mt-1.5 line-clamp-2 text-[21px] font-bold leading-[1.22] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 sm:line-clamp-3 sm:text-[28px] sm:leading-[1.2]">
-            {item.title}
-          </h2>
-          {item.excerpt && (
-            <p className="mt-2 line-clamp-2 text-[14px] leading-relaxed text-slate-500 sm:mt-3 sm:line-clamp-3 sm:text-[15px]">
-              {item.excerpt}
-            </p>
-          )}
-        </a>
-        <MetaRow item={item} locale={locale} labels={labels} />
+        {hasImage && (
+          <a
+            href={postUrl}
+            aria-hidden
+            tabIndex={-1}
+            className={`block shrink-0 overflow-hidden rounded-xl bg-slate-100 ${
+              featured ? "h-24 w-24 sm:h-28 sm:w-[150px]" : "h-20 w-20 sm:h-24 sm:w-32"
+            }`}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.ogImageUrl as string}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+            />
+          </a>
+        )}
       </div>
-    </div>
+    </li>
   );
 }

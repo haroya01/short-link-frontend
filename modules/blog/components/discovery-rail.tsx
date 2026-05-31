@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { blogHref } from "@/lib/host";
 import type { SuggestedAuthor, TagCount } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 
 /**
@@ -22,38 +23,9 @@ export async function DiscoveryRail({
 
   return (
     <div className="flex flex-col gap-8">
-      {tags.length > 0 && (
-        <section>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-[13px] font-bold uppercase tracking-wide text-slate-500">
-              {t("railPopularTags")}
-            </h2>
-            <a
-              href={blogHref("/tags")}
-              className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring"
-            >
-              {t("railSeeAll")}
-            </a>
-          </div>
-          <ul className="flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <li key={tag.tag}>
-                <TagChip
-                  href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
-                  label={tag.tag}
-                  count={tag.count}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
       {authors.length > 0 && (
         <section>
-          <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wide text-slate-500">
-            {t("railSuggestedAuthors")}
-          </h2>
+          <RailHeading className="mb-3">{t("railWriters")}</RailHeading>
           <ul className="flex flex-col gap-1">
             {authors.map(({ author, postCount }) => (
               <li key={author.username}>
@@ -82,6 +54,31 @@ export async function DiscoveryRail({
                     </span>
                   </span>
                 </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {tags.length > 0 && (
+        <section>
+          <div className="mb-3 flex items-baseline justify-between">
+            <RailHeading>{t("railTopics")}</RailHeading>
+            <a
+              href={blogHref("/tags")}
+              className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring"
+            >
+              {t("railSeeAll")}
+            </a>
+          </div>
+          <ul className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <li key={tag.tag}>
+                <TagChip
+                  href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
+                  label={tag.tag}
+                  count={tag.count}
+                />
               </li>
             ))}
           </ul>
