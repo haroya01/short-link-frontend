@@ -2,6 +2,7 @@ import { Link2 } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { linksHref } from "@/lib/host";
 import type { PublicAuthor } from "@/modules/blog/api/public-posts";
+import { authorHref } from "@/modules/blog/components/feed-card";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 
 type Tab = "posts" | "series" | "about";
@@ -14,10 +15,12 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
   const t = await getTranslations("publicPost");
   const tNav = await getTranslations("nav");
   const locale = await getLocale();
+  // Full author-base paths (not bare "/series") so the tabs work on the path-based deployment
+  // (kurl.me/{locale}/p/{user}) as well as the author subdomain.
   const tabs: { key: Tab; href: string; label: string }[] = [
-    { key: "posts", href: "/", label: t("tabPosts") },
-    { key: "series", href: "/series", label: t("tabSeries") },
-    { key: "about", href: "/about", label: t("tabAbout") },
+    { key: "posts", href: authorHref(author.username, locale), label: t("tabPosts") },
+    { key: "series", href: authorHref(author.username, locale, "series"), label: t("tabSeries") },
+    { key: "about", href: authorHref(author.username, locale, "about"), label: t("tabAbout") },
   ];
 
   return (
