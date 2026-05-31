@@ -227,7 +227,7 @@ export function FeedCard({
       {/* sm+: full card (skipped in forced-row mode) */}
       {!row && (
       <div className="hidden flex-col sm:flex">
-        <a href={postUrl} className="block">
+        <a href={postUrl} className="block" aria-hidden tabIndex={-1}>
           <div className="aspect-[1.6/1] w-full overflow-hidden bg-slate-100">
             {hasImage ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -282,12 +282,12 @@ export function FeedFeaturedCard({
   return (
     <div className="group grid overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-card-hover focus-within:ring-2 focus-within:ring-accent-500 sm:grid-cols-2 sm:items-stretch">
       {/* Cover bleeds to the card edge — aspect-locked on mobile, full-height on desktop. */}
-      <a href={postUrl} className="block overflow-hidden bg-slate-100">
-        <div className="aspect-[2/1] w-full sm:aspect-auto sm:h-full">
+      <a href={postUrl} className="block overflow-hidden bg-slate-100" aria-hidden tabIndex={-1}>
+        <div className="aspect-[5/2] w-full sm:aspect-auto sm:h-full">
           <Cover item={item} />
         </div>
       </a>
-      <div className="flex flex-col justify-center p-6 sm:p-8">
+      <div className="flex flex-col justify-center p-5 sm:p-8">
         <a href={postUrl} className="flex flex-col">
           {/* Single curation marker only ("추천"/"Featured"). The tag is NOT shown here — 상품·개발·
               일상 are themes/tags, not top-level categories, so a "추천 · 개발" pair read as a category
@@ -297,11 +297,11 @@ export function FeedFeaturedCard({
               {featuredLabel}
             </span>
           )}
-          <h2 className="mt-1.5 line-clamp-3 text-[24px] font-bold leading-[1.2] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 sm:text-[28px]">
+          <h2 className="mt-1.5 line-clamp-2 text-[21px] font-bold leading-[1.22] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 sm:line-clamp-3 sm:text-[28px] sm:leading-[1.2]">
             {item.title}
           </h2>
           {item.excerpt && (
-            <p className="mt-3 line-clamp-3 text-[15px] leading-relaxed text-slate-500">
+            <p className="mt-2 line-clamp-2 text-[14px] leading-relaxed text-slate-500 sm:mt-3 sm:line-clamp-3 sm:text-[15px]">
               {item.excerpt}
             </p>
           )}
