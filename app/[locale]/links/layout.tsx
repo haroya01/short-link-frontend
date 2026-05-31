@@ -5,6 +5,7 @@ import { AppProviders } from "@/components/common/app-providers";
 import { ClaimToastListener } from "@/components/common/claim-toast-listener";
 import { CookieConsent } from "@/components/common/cookie-consent";
 import { Footer } from "@/components/common/footer";
+import { LinksBottomNav } from "@/components/common/links-bottom-nav";
 import { Nav } from "@/components/common/nav";
 
 // Login / OAuth callback get a chrome-less shell. Everything else (marketing + the logged-in
@@ -39,10 +40,12 @@ export default function LinksLayout({ children }: { children: React.ReactNode })
   return (
     <AppProviders>
       <Nav />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-16 sm:pb-0">{children}</main>
       <Footer />
       <CookieConsent />
       <ClaimToastListener />
+      {/* Mobile-only bottom tab bar — matches the blog; carries profile + kurl↔blog switch. */}
+      <LinksBottomNav />
     </AppProviders>
   );
 }

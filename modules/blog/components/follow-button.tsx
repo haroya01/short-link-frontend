@@ -14,9 +14,12 @@ import { followUser, getFollowStatus, unfollowUser } from "@/modules/blog/api/fo
 export function FollowButton({
   username,
   initialFollowerCount,
+  showCount = true,
 }: {
   username: string;
   initialFollowerCount: number;
+  /** Show the "N followers" count beside the button. Off in tight spots (e.g. the post header). */
+  showCount?: boolean;
 }) {
   const t = useTranslations("publicPost");
   const { authenticated, ready, me, signInWithGoogle } = useAuth();
@@ -79,7 +82,7 @@ export function FollowButton({
           {following ? t("following") : t("follow")}
         </button>
       )}
-      <span className="text-[13px] text-slate-500">{t("followers", { count })}</span>
+      {showCount && <span className="text-[13px] text-slate-500">{t("followers", { count })}</span>}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { SHOWCASE_PROFILES } from "@/lib/landing-showcase-fixtures";
+import { SEO_PAGES } from "@/modules/marketing/seo-landing";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -86,6 +87,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           languages: Object.fromEntries(
             routing.locales.map((l) => [l, `${SITE_URL}/${l}${path}`]),
           ),
+        },
+      });
+    }
+  }
+
+  // Programmatic SEO landing pages (one per high-intent query) — active organic-search push targets.
+  for (const page of SEO_PAGES) {
+    const path = `/use/${page.slug}`;
+    for (const locale of routing.locales) {
+      entries.push({
+        url: `${SITE_URL}/${locale}${path}`,
+        lastModified: now,
+        changeFrequency: "monthly",
+        priority: 0.8,
+        alternates: {
+          languages: Object.fromEntries(routing.locales.map((l) => [l, `${SITE_URL}/${l}${path}`])),
         },
       });
     }
