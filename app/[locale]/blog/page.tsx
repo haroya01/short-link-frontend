@@ -148,7 +148,7 @@ export default async function BlogFeedPage({
   const browseTopicsCta = (
     <a
       href={blogHref("/tags")}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring"
     >
       <Hash className="h-4 w-4 text-accent-600" />
       {t("browseTopics")}
@@ -261,7 +261,7 @@ export default async function BlogFeedPage({
         href={blogHref("/write/new")}
         aria-label={t("write")}
         style={{ bottom: "var(--fab-bottom, 1.5rem)" }}
-        className="fixed right-4 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent-600 text-white shadow-[0_8px_24px_-6px_rgba(5,150,105,0.5)] transition-[bottom,background-color] duration-200 hover:bg-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 motion-reduce:transition-none sm:hidden"
+        className="fixed right-4 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent-600 text-white shadow-[0_8px_24px_-6px_rgba(5,150,105,0.5)] transition-[bottom,background-color] duration-200 hover:bg-accent-700 focus-ring motion-reduce:transition-none sm:hidden"
       >
         <PenSquare className="h-5 w-5" />
       </a>
@@ -350,7 +350,7 @@ function SortTab({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`${base} rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 ${
+      className={`${base} rounded focus-ring ${
         active ? "text-accent-700" : "text-slate-400 hover:text-slate-700"
       }`}
     >

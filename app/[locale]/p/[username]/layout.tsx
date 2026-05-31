@@ -17,7 +17,7 @@ export default function AuthorChromeLayout({ children }: { children: ReactNode }
           <a
             href={blogHref("/")}
             aria-label="blog.kurl"
-            className="mark-hoverable inline-flex rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+            className="mark-hoverable inline-flex rounded focus-ring"
           >
             <Logo variant="blog" animated />
           </a>

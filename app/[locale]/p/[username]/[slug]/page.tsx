@@ -99,7 +99,7 @@ export default async function PublicPostPage({
           {post.title}
         </h1>
         <div className="mt-6 flex items-center justify-between gap-4">
-          <a href={authorHref(author.username, locale)} className="group flex min-w-0 items-center gap-3 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2">
+          <a href={authorHref(author.username, locale)} className="group flex min-w-0 items-center gap-3 rounded focus-ring">
             {author.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -143,7 +143,7 @@ export default async function PublicPostPage({
         <div className="flex items-center justify-between gap-4">
           <a
             href={authorHref(author.username, locale)}
-            className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+            className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring"
           >
             <ArrowLeft className="h-4 w-4" />
             {t("morePosts", { username: author.username })}
@@ -187,7 +187,7 @@ function GonePage({
       <p className="mt-3 text-slate-500">{t("goneBody")}</p>
       <a
         href={authorHref(username, locale)}
-        className="mt-8 inline-flex items-center gap-1.5 rounded text-sm font-medium text-accent-700 transition-colors hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+        className="mt-8 inline-flex items-center gap-1.5 rounded text-sm font-medium text-accent-700 transition-colors hover:underline focus-ring"
       >
         <ArrowLeft className="h-4 w-4" />
         {t("morePosts", { username })}

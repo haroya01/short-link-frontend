@@ -271,12 +271,11 @@ h1, h2, h3, p {
    * <p>Single utility instead of typing out `focus-visible:outline focus-visible:outline-2 ...`
    * on every clickable inside a card — repeated 6+ times across the entry components, easy to
    * forget on a new one. */
+  /* Single source for the keyboard focus ring across the blog. Ring-based (not outline) so it
+     composes with an element's existing drop shadow via Tailwind's ring/shadow vars. Change the
+     focus treatment here once instead of in every call site. */
   .focus-ring {
-    @apply focus-visible:outline-none;
-  }
-  .focus-ring:focus-visible {
-    outline: 2px solid theme(colors.accent.500);
-    outline-offset: 2px;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2;
   }
   /* Expands the TOUCH target of a compact control (like/share/follow pills sit ~32px tall) to the
      44px WCAG 2.5.5 minimum WITHOUT growing its visual size — a transparent overlay centered on the

@@ -39,7 +39,7 @@ export function TrendingByTag({
                 // Carry the trending order into the full tag feed so "모두 보기" from a popularity-ranked
                 // row doesn't land on a time-ordered one.
                 href={blogHref(`/tags/${encodeURIComponent(section.tag)}?sort=trending`)}
-                className="group inline-flex shrink-0 items-center gap-1 rounded text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+                className="group inline-flex shrink-0 items-center gap-1 rounded text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800 focus-ring"
               >
                 {moreLabel}
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none" />
@@ -53,7 +53,7 @@ export function TrendingByTag({
               <ul
                 tabIndex={0}
                 aria-label={section.tag}
-                className="flex snap-x gap-4 overflow-x-auto rounded-lg px-4 pb-2 [scrollbar-width:none] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 sm:px-6 [&::-webkit-scrollbar]:hidden"
+                className="flex snap-x gap-4 overflow-x-auto rounded-lg px-4 pb-2 [scrollbar-width:none] focus-ring sm:px-6 [&::-webkit-scrollbar]:hidden"
               >
                 {section.posts.map((item) => (
                   <FeedCard
