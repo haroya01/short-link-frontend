@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
 import type { PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
 import { authorHref, FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 
 /**
@@ -56,18 +57,11 @@ export function FollowingFeed({
             {t("followingSignedOut")}
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
-            <button
-              type="button"
-              onClick={() => signInWithGoogle()}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition-colors hover:bg-accent-700"
-            >
+            <button type="button" onClick={() => signInWithGoogle()} className={blogCta()}>
               {t("signIn")}
             </button>
             {/* Soft-nav back to the public feed — keeps a curious visitor reading instead of bouncing. */}
-            <Link
-              href="?sort=recent"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring"
-            >
+            <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
               {t("followingBrowseLatest")}
             </Link>
           </div>
