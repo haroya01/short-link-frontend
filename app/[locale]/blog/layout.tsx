@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { AppHeader } from "@/components/common/app-header";
 import { AppProviders } from "@/components/common/app-providers";
+import { BlogBottomNav } from "@/components/common/blog-bottom-nav";
 import { ClaimToastListener } from "@/components/common/claim-toast-listener";
 import { CookieConsent } from "@/components/common/cookie-consent";
 import { Footer } from "@/components/common/footer";
@@ -74,10 +75,12 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
         <div className="flex min-h-screen flex-col">
           {/* Feed home is the discovery hub → rest the header search open there; other public pages
               (post, tags, author) keep the compact 🔍. */}
-          <AppHeader showMenu={false} searchOpen={internalPath === "/"} />
-          <main className="flex-1">{children}</main>
+          <AppHeader showMenu={false} searchOpen={internalPath === "/"} slimMobile />
+          <main className="flex-1 pb-16 sm:pb-0">{children}</main>
           <Footer />
         </div>
+        {/* Mobile-only bottom tab bar (thumb-reachable nav); desktop uses the header. */}
+        <BlogBottomNav />
       </SidebarStateProvider>
       <CookieConsent />
       <ClaimToastListener />

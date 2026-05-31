@@ -239,6 +239,9 @@
     "login": "로그인",
     "logout": "로그아웃",
     "account": "계정",
+    "home": "홈",
+    "search": "검색",
+    "write": "글쓰기",
     "apps": {
       "trigger": "다른 앱",
       "linksLabel": "Links",
