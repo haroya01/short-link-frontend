@@ -65,7 +65,7 @@ export function FollowButton({
           type="button"
           onClick={toggle}
           aria-pressed={following}
-          className={`touch-target inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 ${
+          className={`touch-target inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors focus-ring ${
             following
               ? "border border-slate-200 text-slate-600 hover:border-slate-300"
               : "bg-accent-600 text-white hover:bg-accent-700"

@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { blogHref } from "@/lib/host";
 import type { SuggestedAuthor, TagCount } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { TagChip } from "@/modules/blog/components/tag-chip";
 
 /**
  * The discovery rail's mobile counterpart. The desktop {@link DiscoveryRail} is a sidebar (lg+), so
@@ -32,7 +33,7 @@ export async function MobileDiscoveryStrip({
             </h2>
             <a
               href={blogHref("/tags")}
-              className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+              className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring"
             >
               {t("railSeeAll")}
             </a>
@@ -40,13 +41,11 @@ export async function MobileDiscoveryStrip({
           <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {tags.map((tag) => (
               <li key={tag.tag} className="shrink-0">
-                <a
+                <TagChip
                   href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
-                  className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-1"
-                >
-                  <span>{tag.tag}</span>
-                  <span className="text-slate-500">{tag.count}</span>
-                </a>
+                  label={tag.tag}
+                  count={tag.count}
+                />
               </li>
             ))}
           </ul>
@@ -63,7 +62,7 @@ export async function MobileDiscoveryStrip({
               <li key={author.username} className="shrink-0">
                 <a
                   href={authorHref(author.username, locale)}
-                  className="flex w-44 items-center gap-2.5 rounded-xl border border-slate-200 px-3 py-2.5 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-1"
+                  className="flex w-44 items-center gap-2.5 rounded-xl border border-slate-200 px-3 py-2.5 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring"
                 >
                   {author.avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element

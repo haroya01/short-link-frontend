@@ -37,7 +37,7 @@ export default async function PublicSeriesPage({
     <main className="mx-auto max-w-2xl px-6 py-14 sm:py-20">
       <a
         href="/series"
-        className="inline-flex items-center gap-1.5 rounded text-sm text-slate-500 transition-colors hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+        className="inline-flex items-center gap-1.5 rounded text-sm text-slate-500 transition-colors hover:text-accent-700 focus-ring"
       >
         <ArrowLeft className="h-4 w-4" />
         {t("tabSeries")}
@@ -62,7 +62,7 @@ export default async function PublicSeriesPage({
           <li key={p.slug}>
             <a
               href={`/${p.slug}`}
-              className="group -mx-4 flex items-start gap-4 rounded-2xl px-4 py-4 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+              className="group -mx-4 flex items-start gap-4 rounded-2xl px-4 py-4 transition-colors hover:bg-slate-50 focus-ring"
             >
               <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-50 text-[13px] font-semibold text-accent-700">
                 {i + 1}
