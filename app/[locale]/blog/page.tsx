@@ -19,6 +19,7 @@ import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
+import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { MobileDiscoveryStrip } from "@/modules/blog/components/mobile-discovery-strip";
 import { TrendingByTag } from "@/modules/blog/components/trending-by-tag";
@@ -219,7 +220,6 @@ export default async function BlogFeedPage({
             hasNext={hasNext}
             sort={sort}
             query={searching ? query : undefined}
-            hasRail={showRail}
             marginTop={!searching}
             featuredFirst={featuredFirst}
             featuredLabel={t("featuredLabel")}
@@ -241,9 +241,9 @@ export default async function BlogFeedPage({
 }
 
 /**
- * The feed's lead area: an optional wide featured card stacked above the infinite-scroll grid, plus
- * the optional desktop rail. With a rail the cards cap at 3 columns (the rail eats the 4th); without
- * one they fall back to the standard 4-up grid so a rail-less feed isn't narrow.
+ * The feed's lead area: the infinite-scroll list (with an optional mobile discovery strip above it),
+ * wrapped in the shared {@link ReadingShell} so the reading column + optional desktop rail match every
+ * other blog surface. The rail (passed as `children`) sits in the right gutter at xl+.
  */
 function FeedBody({
   locale,
@@ -251,7 +251,6 @@ function FeedBody({
   hasNext,
   sort,
   query,
-  hasRail,
   marginTop,
   featuredFirst,
   featuredLabel,
@@ -263,15 +262,14 @@ function FeedBody({
   hasNext: boolean;
   sort: FeedSort;
   query?: string;
-  hasRail: boolean;
   marginTop: boolean;
   featuredFirst: boolean;
   featuredLabel: string;
   belowFeatured?: ReactNode;
   children: ReactNode;
 }) {
-  const grid = (
-    <>
+  return (
+    <ReadingShell className={marginTop ? "mt-8" : "mt-6"} rail={children}>
       {belowFeatured}
       <FeedInfinite
         locale={locale}
@@ -282,26 +280,7 @@ function FeedBody({
         featuredFirst={featuredFirst}
         featuredLabel={featuredLabel}
       />
-    </>
-  );
-
-  const top = marginTop ? "mt-8" : "mt-6";
-
-  // No rail → just the centered reading column.
-  if (!hasRail) return <div className={`${top} mx-auto max-w-2xl`}>{grid}</div>;
-
-  // Symmetric 3-column grid (xl+): equal side gutters keep the reading column in the exact page
-  // center — the same band as the post/profile — while the discovery rail sits in the right gutter
-  // without shifting it. Below xl the rail drops away and the column simply centers.
-  return (
-    <div className={`${top} mx-auto max-w-2xl xl:grid xl:max-w-7xl xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-10`}>
-      <div className="xl:col-start-2">{grid}</div>
-      {/* Sticky so the discovery rail stays present while the reader scrolls the feed — a more
-          useful presence without making it visually louder than the content. */}
-      <aside className="mt-12 hidden xl:col-start-3 xl:mt-0 xl:block">
-        <div className="sticky top-20">{children}</div>
-      </aside>
-    </div>
+    </ReadingShell>
   );
 }
 
