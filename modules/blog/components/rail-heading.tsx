@@ -11,7 +11,7 @@ export function RailHeading({ children, className }: { children: ReactNode; clas
   return (
     <h2
       className={
-        "flex items-center gap-2 text-[13px] font-bold text-slate-700" +
+        "flex items-center gap-2 text-[13px] font-bold text-slate-800" +
         (className ? ` ${className}` : "")
       }
     >

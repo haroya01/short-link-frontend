@@ -54,7 +54,7 @@ export async function AuthorRail({
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       {series.length > 0 && (
         <section>
           <RailHeading className="mb-3">{t("tabSeries")}</RailHeading>

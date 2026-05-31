@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Hash, PenSquare } from "lucide-react";
+import { Hash } from "lucide-react";
 import { blogHref } from "@/lib/host";
-import { cn } from "@/lib/utils";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import {
   listFeedByTag,
@@ -14,7 +13,6 @@ import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
-import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedTabs } from "@/modules/blog/components/feed-tabs";
 import { TagFilterStrip } from "@/modules/blog/components/tag-filter-strip";
 
@@ -62,35 +60,24 @@ export default async function TagFeedPage({
   // a few posts fill the row instead of shrinking to a 4-up grid with an empty trailing column.
   const hasRail = authors.length > 0;
 
-  const writeCta = (
-    <a href={blogHref("/write/new")} className={cn(blogCta(), "shrink-0")}>
-      <PenSquare className="h-4 w-4" />
-      {t("write")}
-    </a>
-  );
-
   return (
-    <>
-      <FeedMasthead
-        locale={locale}
-        eyebrow={t("topics")}
-        title={decoded}
-        sub={t("tagFeedSubtitle")}
-      />
+    <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
+      <header className="mx-auto flex w-full max-w-2xl items-center border-b border-slate-100 pb-3">
+        <FeedTabs locale={locale} />
+      </header>
 
-      <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-        {/* Same header row as the feed home — the feed tabs (linking home, none active here) so the
-            user can jump into any feed mode, plus Write on the right. */}
-        <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3">
-          <FeedTabs locale={locale} />
-          <div className="hidden sm:block">{writeCta}</div>
-        </header>
+      {/* Topic heading inside the centered reading column — aligns with the tabs + feed below,
+          instead of a full-width masthead band that floated left of the centered content. */}
+      <div className="mx-auto mt-6 max-w-2xl">
+        <p className="text-[12px] font-medium text-slate-400">{t("topics")}</p>
+        <h1 className="mt-1 text-[22px] font-bold tracking-tight text-slate-900">{decoded}</h1>
+        <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500">{t("tagFeedSubtitle")}</p>
+      </div>
 
-        {/* Persistent tag chips (current one highlighted) so switching topics doesn't require going
-            back to the index — works on mobile where there's no rail. Centered on the reading column. */}
-        <div className="mx-auto max-w-2xl">
-          <TagFilterStrip tags={tags} activeTag={decoded} sort={sort} />
-        </div>
+      {/* Persistent tag chips (current highlighted) so switching topics needs no back-trip. */}
+      <div className="mx-auto mt-5 max-w-2xl">
+        <TagFilterStrip tags={tags} activeTag={decoded} sort={sort} />
+      </div>
 
         {items.length === 0 ? (
           <FeedEmpty
@@ -118,7 +105,6 @@ export default async function TagFeedPage({
             />
           </ReadingShell>
         )}
-      </main>
-    </>
+    </main>
   );
 }
