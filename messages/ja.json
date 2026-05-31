@@ -239,6 +239,9 @@
     "login": "ログイン",
     "logout": "ログアウト",
     "account": "アカウント",
+    "home": "ホーム",
+    "search": "検索",
+    "write": "投稿",
     "apps": {
       "trigger": "他のアプリ",
       "linksLabel": "Links",

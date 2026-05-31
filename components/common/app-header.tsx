@@ -15,13 +15,17 @@ import { useSidebarState } from "@/components/common/sidebar-state";
 /**
  * `showMenu` toggles the mobile sidebar button — off for the public feed, which has no sidebar.
  * `searchOpen` rests the header search field open (used on the blog feed home, the discovery hub).
+ * `slimMobile` hides the right-cluster controls on mobile — used on public surfaces where the bottom
+ * tab bar carries search/account/switcher; the authoring workspace keeps the full header (no nav bar).
  */
 export function AppHeader({
   showMenu = true,
   searchOpen = false,
+  slimMobile = false,
 }: {
   showMenu?: boolean;
   searchOpen?: boolean;
+  slimMobile?: boolean;
 }) {
   const t = useTranslations("nav");
   const { authenticated, ready, signInWithGoogle } = useAuth();
@@ -54,7 +58,9 @@ export function AppHeader({
             The divider stops the switcher's "kurl/blog.kurl" wordmark pill from reading as a second
             brand mark beside the search field, and keeps the expanded search pill from sitting flush
             against the same-shaped switcher pill. */}
-        <div className="flex shrink-0 items-center gap-2">
+        <div
+          className={`shrink-0 items-center gap-2 ${slimMobile ? "hidden sm:flex" : "flex"}`}
+        >
           <BlogHeaderSearch defaultOpen={searchOpen} />
           {/* Signed-in users switch language inside the account menu; keep the standalone control for
               signed-out visitors who have no account menu. */}
