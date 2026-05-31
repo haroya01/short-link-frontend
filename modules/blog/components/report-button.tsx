@@ -42,7 +42,7 @@ export function ReportButton({ subjectType, subjectId }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1 rounded text-xs text-slate-400 transition-colors hover:text-slate-600 focus-ring"
+        className="touch-target inline-flex items-center gap-1 rounded text-xs text-slate-400 transition-colors hover:text-slate-600 focus-ring"
       >
         <Flag className="h-3 w-3" />
         {t("report")}
