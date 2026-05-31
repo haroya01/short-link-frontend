@@ -4,28 +4,19 @@ import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { AuthorHeader } from "./_components/author-header";
-import { listPublicPosts, type PublicPostListItem } from "@/modules/blog/api/public-posts";
+import { FeedCard } from "@/modules/blog/components/feed-card";
+import { listPublicPosts } from "@/modules/blog/api/public-posts";
 
 // 30s ISR — author 발행 후 30 초 내 visitors 반영. Backend 가 어차피 매번 직접 조회.
 export const revalidate = 30;
 
 type ReadonlyHeaders = Awaited<ReturnType<typeof headers>>;
 
-const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
-
 function subdomainOrigin(req: ReadonlyHeaders, username: string): string {
   const host = req.get("x-original-host") ?? req.get("host");
   if (!host) return `https://${username}.kurl.me`;
   const cleaned = host.split(":")[0];
   return `https://${cleaned}`;
-}
-
-function formatDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 }
 
 export async function generateMetadata({
@@ -72,9 +63,17 @@ export default async function PublicProfileHomepage({
         {posts.length === 0 ? (
           <p className="text-slate-500">{t("emptyPosts")}</p>
         ) : (
-          <ul className="space-y-2">
+          // Same card as the feed (forced row, single-author so no repeated author).
+          <ul className="flex flex-col gap-3">
             {posts.map((p) => (
-              <PostListEntry key={p.slug} post={p} locale={locale} />
+              <FeedCard
+                key={p.slug}
+                row
+                hideAuthor
+                item={{ ...p, author, viewCount: 0 }}
+                locale={locale}
+                labels={{ views: () => "" }}
+              />
             ))}
           </ul>
         )}
@@ -84,51 +83,5 @@ export default async function PublicProfileHomepage({
         <ReportButton subjectType="USER" subjectId={author.id} />
       </footer>
     </main>
-  );
-}
-
-function PostListEntry({ post, locale }: { post: PublicPostListItem; locale: string }) {
-  return (
-    <li>
-      <a
-        href={`/${post.slug}`}
-        className="group -mx-4 flex items-start gap-5 rounded-2xl px-4 py-5 transition-colors hover:bg-slate-50 focus-ring"
-      >
-        <div className="min-w-0 flex-1">
-          <h2 className="text-[19px] font-semibold leading-snug tracking-tight text-slate-900 group-hover:text-accent-700">
-            {post.title}
-          </h2>
-          {post.excerpt && (
-            <p className="mt-1.5 line-clamp-2 text-[15px] leading-relaxed text-slate-500">
-              {post.excerpt}
-            </p>
-          )}
-          {post.tags.length > 0 && (
-            <ul className="mt-2.5 flex flex-wrap gap-1.5">
-              {post.tags.slice(0, 4).map((tag) => (
-                <li
-                  key={tag}
-                  className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[12px] font-medium text-slate-500 group-hover:bg-accent-50 group-hover:text-accent-700"
-                >
-                  {tag}
-                </li>
-              ))}
-            </ul>
-          )}
-          <time dateTime={post.publishedAt} className="mt-2.5 block text-[13px] text-slate-500">
-            {formatDate(post.publishedAt, locale)}
-          </time>
-        </div>
-        {post.ogImageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={post.ogImageUrl}
-            alt=""
-            className="hidden h-20 w-28 shrink-0 rounded-xl object-cover sm:block"
-            loading="lazy"
-          />
-        )}
-      </a>
-    </li>
   );
 }

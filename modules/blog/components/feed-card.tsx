@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Heart } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { showLikes, showViews } from "@/modules/blog/lib/public-metrics";
+import { Mark } from "@/components/common/logo";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 const KURL_HOST = process.env.NEXT_PUBLIC_KURL_HOST;
@@ -47,8 +48,8 @@ function Cover({ item }: { item: PublicFeedItem }) {
       />
     );
   }
-  // Single coverless treatment everywhere (featured + grid): the typographic cover.
-  return <TypoCover item={item} />;
+  // Single coverless treatment everywhere (featured + grid): a neutral branded placeholder.
+  return <CoverPlaceholder />;
 }
 
 function Avatar({ author }: { author: PublicFeedItem["author"] }) {
@@ -66,37 +67,45 @@ function Avatar({ author }: { author: PublicFeedItem["author"] }) {
 }
 
 /**
- * Meta row: author (its own link) on the left, then date. `compact` (grid cards) stops there to
- * keep the feed calm; the full row (featured) also shows views + the like count pushed right. Lives
- * outside the post anchor so the author link doesn't nest inside it.
+ * Meta row: author (its own link) + date, with the like count pushed right — shown on every card so
+ * image and image-less cards read identically. `compact` (grid/row cards) hides views to stay calm;
+ * the full row (featured) adds views. `hideAuthor` drops the author on a single-author surface (the
+ * author profile page) where repeating it on every row is noise. Lives outside the post anchor so
+ * the author link doesn't nest inside it.
  */
 function MetaRow({
   item,
   locale,
   labels,
   compact = false,
+  hideAuthor = false,
 }: {
   item: PublicFeedItem;
   locale: string;
   labels: Labels;
   compact?: boolean;
+  hideAuthor?: boolean;
 }) {
   return (
     <div className="mt-3 flex items-center gap-2 text-[12px] text-slate-500">
-      <a
-        href={authorHref(item.author.username, locale)}
-        className="flex min-w-0 items-center gap-1.5 text-slate-500 transition-colors hover:text-slate-900"
-      >
-        <Avatar author={item.author} />
-        <span className="truncate font-medium">{item.author.username}</span>
-      </a>
-      <span aria-hidden>·</span>
+      {!hideAuthor && (
+        <>
+          <a
+            href={authorHref(item.author.username, locale)}
+            className="flex min-w-0 items-center gap-1.5 text-slate-500 transition-colors hover:text-slate-900"
+          >
+            <Avatar author={item.author} />
+            <span className="truncate font-medium">{item.author.username}</span>
+          </a>
+          <span aria-hidden>·</span>
+        </>
+      )}
       <time dateTime={item.publishedAt} className="shrink-0">
         {formatDate(item.publishedAt, locale)}
       </time>
-      {!compact && (
+      {(showLikes(item.likeCount) || (!compact && showViews(item.viewCount))) && (
         <span className="ml-auto flex shrink-0 items-center gap-3">
-          {showViews(item.viewCount) && <span>{labels.views(item.viewCount)}</span>}
+          {!compact && showViews(item.viewCount) && <span>{labels.views(item.viewCount)}</span>}
           {showLikes(item.likeCount) && (
             <span className="flex items-center gap-1">
               <Heart className="h-3.5 w-3.5" />
@@ -138,20 +147,13 @@ export function FeedGrid({
   );
 }
 
-/**
- * Typographic cover for image-less posts (Brunch-style) — the title set large on a quiet neutral
- * surface, filling the same 1.6:1 slot a photo would. It uses the real title (never a meaningless
- * placeholder), so every card keeps an identical cover box and the grid stays uniform-height. Kept
- * deliberately NEUTRAL (no brand-green wash, no mark): with ~1/3 of cards coverless, a green fill
- * would turn the accent into wallpaper. Accent stays reserved for the single tag eyebrow + hover.
- */
-function TypoCover({ item }: { item: PublicFeedItem }) {
+function CoverPlaceholder() {
+  // Neutral branded placeholder for image-less posts. Keeps the card structurally identical to photo
+  // cards (cover box + body), so the title/excerpt/meta line up across the grid. Not a blank void —
+  // the kurl mark sits faintly centered.
   return (
-    <div className="flex h-full w-full flex-col justify-end gap-2 bg-gradient-to-br from-slate-50 to-slate-100/80 p-5">
-      {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
-      <h3 className="line-clamp-3 text-[17px] font-bold leading-snug tracking-tight text-slate-800 transition-colors group-hover:text-accent-700">
-        {item.title}
-      </h3>
+    <div className="grid h-full w-full place-items-center bg-gradient-to-br from-slate-50 to-slate-100/80">
+      <Mark className="h-5 w-auto text-slate-300" />
     </div>
   );
 }
@@ -169,12 +171,18 @@ export function FeedCard({
   locale,
   labels,
   className,
+  row = false,
+  hideAuthor = false,
 }: {
   item: PublicFeedItem;
   locale: string;
   labels: Labels;
   /** Extra classes on the card `<li>` — e.g. a fixed width when used in a horizontal scroll row. */
   className?: string;
+  /** Force the compact row layout at all widths (single-column lists, e.g. the author profile). */
+  row?: boolean;
+  /** Drop the author from the meta — for single-author surfaces (author profile page). */
+  hideAuthor?: boolean;
 }) {
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
@@ -185,8 +193,8 @@ export function FeedCard({
         (className ? ` ${className}` : "")
       }
     >
-      {/* Mobile: compact row */}
-      <div className="flex gap-3 p-3 sm:hidden">
+      {/* Compact row — always when `row`, else mobile-only (`sm` gets the full card below). */}
+      <div className={row ? "flex gap-3 p-3" : "flex gap-3 p-3 sm:hidden"}>
         <a
           href={postUrl}
           className="block h-[84px] w-[84px] shrink-0 overflow-hidden rounded-xl bg-slate-100"
@@ -212,11 +220,12 @@ export function FeedCard({
               {item.title}
             </h2>
           </a>
-          <MetaRow item={item} locale={locale} labels={labels} compact />
+          <MetaRow item={item} locale={locale} labels={labels} compact hideAuthor={hideAuthor} />
         </div>
       </div>
 
-      {/* sm+: full card */}
+      {/* sm+: full card (skipped in forced-row mode) */}
+      {!row && (
       <div className="hidden flex-col sm:flex">
         <a href={postUrl} className="block">
           <div className="aspect-[1.6/1] w-full overflow-hidden bg-slate-100">
@@ -229,35 +238,26 @@ export function FeedCard({
                 className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
               />
             ) : (
-              <TypoCover item={item} />
+              <CoverPlaceholder />
             )}
           </div>
         </a>
+        {/* Same body for photo + image-less cards, with reserved title/excerpt heights, so every
+            card is the same height and the author·date·♥ meta lines up across the grid. */}
         <div className="flex flex-1 flex-col p-4">
           <a href={postUrl} className="flex flex-1 flex-col">
-            {hasImage ? (
-              <>
-                {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
-                <h2 className="mt-1 line-clamp-2 text-[17px] font-bold leading-[1.35] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
-                  {item.title}
-                </h2>
-                {item.excerpt && (
-                  <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-slate-500">
-                    {item.excerpt}
-                  </p>
-                )}
-              </>
-            ) : (
-              item.excerpt && (
-                <p className="line-clamp-2 text-[13px] leading-relaxed text-slate-500">
-                  {item.excerpt}
-                </p>
-              )
-            )}
+            {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
+            <h2 className="mt-1 line-clamp-2 min-h-[2.7em] text-[17px] font-bold leading-[1.35] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
+              {item.title}
+            </h2>
+            <p className="mt-1.5 line-clamp-2 min-h-[2.6em] text-[13px] leading-relaxed text-slate-500">
+              {item.excerpt}
+            </p>
           </a>
-          <MetaRow item={item} locale={locale} labels={labels} compact />
+          <MetaRow item={item} locale={locale} labels={labels} compact hideAuthor={hideAuthor} />
         </div>
       </div>
+      )}
     </li>
   );
 }

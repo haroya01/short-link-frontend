@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { Search, X } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { ArrowRight, Loader2, Search, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
+import { searchPublicFeed, type PublicFeedItem } from "@/modules/blog/api/public-posts";
+import { postHref } from "@/modules/blog/components/feed-card";
 
 /**
  * Global blog search — the single search entry point, in the header so it's reachable from every
@@ -16,7 +18,10 @@ import { blogHref } from "@/lib/host";
  */
 export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolean }) {
   const t = useTranslations("publicFeed");
+  const locale = useLocale();
   const router = useRouter();
+  const [results, setResults] = useState<PublicFeedItem[]>([]);
+  const [loading, setLoading] = useState(false);
   // On the discovery hub (feed home) the field rests open on ≥sm so search reads as a primary action;
   // deep pages keep the compact 🔍. Start collapsed and only expand client-side — never rest open on
   // mobile, where the expanded field would push the login + product switcher off a ~360px header.
@@ -40,6 +45,28 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
       focusOnOpen.current = false;
     }
   }, [open]);
+
+  // Live results dropdown — debounced, same engine as the mobile search sheet (unified search UX).
+  useEffect(() => {
+    const query = value.trim();
+    if (!open || !query) {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    let live = true;
+    const id = window.setTimeout(async () => {
+      const res = await searchPublicFeed(query, "recent", 0, 5).catch(() => null);
+      if (!live) return;
+      setResults(res?.ok ? res.data.items.slice(0, 5) : []);
+      setLoading(false);
+    }, 250);
+    return () => {
+      live = false;
+      window.clearTimeout(id);
+    };
+  }, [value, open]);
 
   // Soft-navigate when the target stays on this origin (dev /blog-preview path, or prod's same blog
   // host) so the view swaps in without a full reload; only a genuine cross-origin hop hard-navigates.
@@ -114,6 +141,48 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
         >
           <X className="h-3.5 w-3.5" />
         </button>
+      )}
+
+      {value.trim() && (
+        <div className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+          {loading && results.length === 0 ? (
+            <div className="flex justify-center py-6 text-slate-400">
+              <Loader2 className="h-4 w-4 animate-spin" />
+            </div>
+          ) : results.length > 0 ? (
+            <ul className="max-h-[60vh] divide-y divide-slate-100 overflow-y-auto">
+              {results.map((item) => (
+                <li key={`${item.author.username}/${item.slug}`}>
+                  <a
+                    href={postHref(item.author.username, item.slug, locale)}
+                    className="block px-3 py-2.5 transition-colors hover:bg-slate-50"
+                  >
+                    {item.tags[0] && (
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-accent-700">
+                        {item.tags[0]}
+                      </span>
+                    )}
+                    <span className="line-clamp-1 text-[13px] font-semibold text-slate-900">
+                      {item.title}
+                    </span>
+                    <span className="block truncate text-[11px] text-slate-500">
+                      @{item.author.username}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="px-3 py-6 text-center text-[13px] text-slate-500">{t("searchEmptyTitle")}</p>
+          )}
+          <button
+            type="submit"
+            className="flex w-full items-center justify-center gap-1.5 border-t border-slate-100 px-3 py-2.5 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50"
+          >
+            {t("searchResultsFor", { q: value.trim() })}
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
       )}
     </form>
   );

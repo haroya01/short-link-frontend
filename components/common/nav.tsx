@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { LogOut, Menu, Settings, X } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -58,26 +57,6 @@ export function Nav() {
   const locale = useLocale();
   const t = useTranslations("nav");
   const { authenticated, ready, signOut, me } = useAuth();
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
-  // Drawer open: lock body scroll behind the overlay + close on Escape.
-  useEffect(() => {
-    if (!mobileOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMobileOpen(false);
-    };
-    document.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [mobileOpen]);
 
   // 공개 프로필 페이지(u/) 는 standalone 느낌 유지 — Footer 도 같은 분기.
   if (pathname.startsWith("/u/")) return null;
@@ -91,21 +70,10 @@ export function Nav() {
       : anonymousEntries(t);
 
   return (
-    <>
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
       <div className="container flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">
-          {showEntries && (
-            <button
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              className="-ml-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-700 transition-colors hover:bg-slate-100 sm:hidden"
-              aria-label="open menu"
-              aria-expanded={mobileOpen}
-            >
-              <Menu className="h-4 w-4" />
-            </button>
-          )}
+          {/* Mobile nav lives in the bottom tab bar (LinksBottomNav) — no hamburger here. */}
           <Link href="/" aria-label="kurl" className="mark-hoverable shrink-0">
             <Logo animated />
           </Link>
@@ -136,7 +104,8 @@ export function Nav() {
           )}
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
+        {/* Desktop-only — on mobile these live in the bottom nav's account sheet. */}
+        <div className="hidden shrink-0 items-center gap-2 sm:flex">
           <AppsGrid />
           <LanguageSwitcher />
           {!ready ? (
@@ -172,85 +141,5 @@ export function Nav() {
         </div>
       </div>
     </header>
-
-      {/* Mobile menu = left-edge slide-in drawer (not a top accordion). Rendered OUTSIDE the
-          <header> on purpose: the header's `backdrop-blur` establishes a containing block for
-          `position: fixed` descendants, which would pin `inset-y-0` to the 56px header box
-          instead of the viewport (drawer collapses to header height). As a sibling it positions
-          against the viewport. Both backdrop and panel stay mounted so they transition;
-          pointer-events/translate toggle on `mobileOpen`. */}
-      {showEntries && (
-        <div className="sm:hidden" aria-hidden={!mobileOpen}>
-          <button
-            type="button"
-            tabIndex={mobileOpen ? 0 : -1}
-            aria-label="close menu"
-            onClick={() => setMobileOpen(false)}
-            className={cn(
-              "fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300 ease-out",
-              mobileOpen ? "opacity-100" : "pointer-events-none opacity-0",
-            )}
-          />
-          <div
-            className={cn(
-              "fixed inset-y-0 left-0 z-50 flex w-72 max-w-[80vw] flex-col bg-white shadow-xl transition-transform duration-300 ease-out",
-              mobileOpen ? "translate-x-0" : "-translate-x-full",
-            )}
-          >
-            <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200/80 px-4">
-              <Logo />
-              <button
-                type="button"
-                onClick={() => setMobileOpen(false)}
-                aria-label="close menu"
-                className="-mr-1 inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-700 transition-colors hover:bg-slate-100"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 py-3">
-              {entries.map((entry) => {
-                const active = entry.active(pathname);
-                const className = cn(
-                  "rounded-lg px-3 py-2.5 text-sm transition-colors duration-200 ease-out",
-                  active
-                    ? "bg-accent-50 font-medium text-slate-900"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
-                );
-                return entry.external ? (
-                  <a
-                    key={entry.href}
-                    href={entry.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={className}
-                  >
-                    {entry.label}
-                  </a>
-                ) : (
-                  <Link
-                    key={entry.href}
-                    href={entry.href}
-                    onClick={() => setMobileOpen(false)}
-                    aria-current={active ? "page" : undefined}
-                    className={className}
-                  >
-                    {entry.label}
-                  </Link>
-                );
-              })}
-              {authenticated && (
-                <Link
-                  href="/settings"
-                  onClick={() => setMobileOpen(false)}
-                  className="rounded-lg px-3 py-2.5 text-sm text-slate-600 transition-colors duration-200 ease-out hover:bg-slate-50 hover:text-slate-900"
-                >
-                  {t("settings")}
-                </Link>
-              )}
-            </nav>
-          </div>
-        </div>
-      )}
-    </>
   );
 }
