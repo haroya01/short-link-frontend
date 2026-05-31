@@ -38,7 +38,7 @@ export default async function PublicSeriesIndexPage({
         <AuthorHeader author={author} active="series" />
       </div>
 
-      <ReadingShell className="mt-8">
+      <ReadingShell className="mt-8 author-tab-enter">
         {series.length === 0 ? (
           <p className="text-slate-500">{t("seriesEmpty")}</p>
         ) : (

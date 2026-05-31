@@ -69,7 +69,7 @@ export default async function PublicProfileHomepage({
       {/* Centered post list + author rail (series · tags · archive) in the right gutter — the
           blog-native structure that lives here, where it's author-scoped and meaningful. */}
       <ReadingShell
-        className="mt-8"
+        className="mt-8 author-tab-enter"
         rail={
           posts.length > 0 ? (
             <AuthorRail username={author.username} locale={locale} posts={posts} series={series} />
