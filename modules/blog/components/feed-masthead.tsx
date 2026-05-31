@@ -23,17 +23,22 @@ export async function FeedMasthead({
   const subText = sub ?? t("mastheadSub");
   return (
     <section className="border-b border-slate-200/70 bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-14">
         <div className="hero-stagger max-w-2xl">
           {eyebrow && (
             <p className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-accent-700">
               {eyebrow}
             </p>
           )}
-          <h1 className="text-balance text-headline-md font-semibold leading-[1.1] tracking-headline text-slate-900 sm:text-headline-lg">
+          <h1 className="text-balance text-headline-sm font-semibold leading-[1.15] tracking-headline text-slate-900 sm:text-headline-lg sm:leading-[1.1]">
             {heading}
           </h1>
-          {subText && <p className="mt-3 text-[15px] leading-relaxed text-slate-500">{subText}</p>}
+          {/* Sub-line is brand flourish — hide on mobile to get the first post above the fold sooner. */}
+          {subText && (
+            <p className="mt-2 hidden text-[15px] leading-relaxed text-slate-500 sm:mt-3 sm:block">
+              {subText}
+            </p>
+          )}
         </div>
       </div>
     </section>

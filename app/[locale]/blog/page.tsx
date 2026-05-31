@@ -201,12 +201,6 @@ export default async function BlogFeedPage({
 
         {/* Keyed by tab + query so it remounts and crossfades on each tab switch / search. */}
         <div key={contentKey} className="content-fade">
-          {/* Phone-only discovery: the desktop rail (lg+) is absent on small screens, so surface tags
-              and authors here above the feed when browsing (not while searching or on the following tab). */}
-          {!searching && tab !== "following" && items.length > 0 && (
-            <MobileDiscoveryStrip locale={locale} tags={tags} authors={authors} />
-          )}
-
           {tab === "following" && !searching ? (
           <FollowingFeed locale={locale} suggestedAuthors={authors} />
         ) : groupByTag ? (
@@ -242,6 +236,11 @@ export default async function BlogFeedPage({
             hasRail={showRail}
             marginTop={!searching}
             featured={featured}
+            belowFeatured={
+              !searching ? (
+                <MobileDiscoveryStrip locale={locale} tags={tags} authors={authors} />
+              ) : null
+            }
           >
             {showRail ? (
               <DiscoveryRail locale={locale} tags={tags} authors={authors} />
@@ -268,6 +267,7 @@ function FeedBody({
   hasRail,
   marginTop,
   featured,
+  belowFeatured,
   children,
 }: {
   locale: string;
@@ -278,11 +278,13 @@ function FeedBody({
   hasRail: boolean;
   marginTop: boolean;
   featured: ReactNode;
+  belowFeatured?: ReactNode;
   children: ReactNode;
 }) {
   const grid = (
     <>
       {featured && <div className="mb-10 sm:mb-12">{featured}</div>}
+      {belowFeatured}
       <FeedInfinite
         locale={locale}
         initialItems={items}
