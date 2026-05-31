@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, Globe, LogOut, Newspaper, User } from "lucide-react";
+import { Check, ChevronDown, Globe, LogOut, Newspaper, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
@@ -27,6 +27,7 @@ export function AccountMenu() {
   const pathname = usePathname();
   const { me, signOut } = useAuth();
   const [open, setOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,6 +44,11 @@ export function AccountMenu() {
       document.removeEventListener("mousedown", onDown);
       document.removeEventListener("keydown", onKey);
     };
+  }, [open]);
+
+  // Collapse the language picker whenever the whole menu closes, so it reopens compact.
+  useEffect(() => {
+    if (!open) setLangOpen(false);
   }, [open]);
 
   function switchLocale(next: string) {
@@ -101,24 +107,38 @@ export function AccountMenu() {
           )}
 
           <div className="my-1 h-px bg-slate-100" />
-          <div className="px-3 pb-1 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-            <span className="inline-flex items-center gap-1.5">
-              <Globe className="h-3.5 w-3.5" />
+          {/* Collapsed by default — shows the current language; expands the picker on demand so the
+              3 locales don't dominate the menu. */}
+          <button
+            type="button"
+            aria-expanded={langOpen}
+            onClick={() => setLangOpen((v) => !v)}
+            className={cn(itemClass, "justify-between")}
+          >
+            <span className="inline-flex items-center gap-2.5">
+              <Globe className="h-4 w-4 text-slate-500" />
               {tLang("label")}
             </span>
-          </div>
-          {routing.locales.map((l) => (
-            <button
-              key={l}
-              type="button"
-              role="menuitem"
-              onClick={() => switchLocale(l)}
-              className={cn(itemClass, "justify-between", l === locale && "text-accent-700")}
-            >
-              {tLang(l)}
-              {l === locale && <Check className="h-4 w-4 text-accent-600" />}
-            </button>
-          ))}
+            <span className="inline-flex items-center gap-1 text-[13px] text-slate-400">
+              {tLang(locale)}
+              <ChevronDown
+                className={cn("h-4 w-4 transition-transform", langOpen && "rotate-180")}
+              />
+            </span>
+          </button>
+          {langOpen &&
+            routing.locales.map((l) => (
+              <button
+                key={l}
+                type="button"
+                role="menuitem"
+                onClick={() => switchLocale(l)}
+                className={cn(itemClass, "justify-between pl-9", l === locale && "text-accent-700")}
+              >
+                {tLang(l)}
+                {l === locale && <Check className="h-4 w-4 text-accent-600" />}
+              </button>
+            ))}
 
           <div className="my-1 h-px bg-slate-100" />
           <button
