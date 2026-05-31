@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Layers } from "lucide-react";
 import { listPublicSeries } from "@/modules/blog/api/public-posts";
+import { authorHref } from "@/modules/blog/components/feed-card";
 import { AuthorHeader } from "../_components/author-header";
 
 export const revalidate = 30;
@@ -40,7 +41,7 @@ export default async function PublicSeriesIndexPage({
           {series.map((s) => (
             <li key={s.slug}>
               <a
-                href={`/series/${s.slug}`}
+                href={authorHref(username, locale, `series/${s.slug}`)}
                 className="group -mx-4 flex items-center gap-3 rounded-2xl px-4 py-4 transition-colors hover:bg-slate-50 focus-ring"
               >
                 <Layers className="h-5 w-5 shrink-0 text-accent-500" />

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ArrowLeft, Layers } from "lucide-react";
 import { findPublicSeries } from "@/modules/blog/api/public-posts";
+import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 
 // Always render fresh — same reasoning as the post detail page: never serve a stale 404 for a
 // just-published series. findPublicSeries fetches no-store to match.
@@ -36,7 +37,7 @@ export default async function PublicSeriesPage({
   return (
     <main className="mx-auto max-w-2xl px-6 py-14 sm:py-20">
       <a
-        href="/series"
+        href={authorHref(username, locale, "series")}
         className="inline-flex items-center gap-1.5 rounded text-sm text-slate-500 transition-colors hover:text-accent-700 focus-ring"
       >
         <ArrowLeft className="h-4 w-4" />
@@ -61,7 +62,7 @@ export default async function PublicSeriesPage({
         {posts.map((p, i) => (
           <li key={p.slug}>
             <a
-              href={`/${p.slug}`}
+              href={postHref(author.username, p.slug, locale)}
               className="group -mx-4 flex items-start gap-4 rounded-2xl px-4 py-4 transition-colors hover:bg-slate-50 focus-ring"
             >
               <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-50 text-[13px] font-semibold text-accent-700">

@@ -13,9 +13,15 @@ export function postHref(username: string, slug: string, locale: string): string
     : `/${locale}/p/${username}/${slug}`;
 }
 
-/** Author's home (post list). prod → author subdomain root; dev/preview → /p/{username}. */
-export function authorHref(username: string, locale: string): string {
-  return KURL_HOST ? `https://${username}.${KURL_HOST}/` : `/${locale}/p/${username}`;
+/**
+ * Author's home (post list) or a sub-page. prod → author subdomain; dev/preview → /p/{username}.
+ * Pass `subpath` ("series" / "about" / "{slug}") for author sub-pages so links resolve in BOTH the
+ * subdomain and the path-based deployment — a bare "/series" breaks on kurl.me/{locale}/p/{user}.
+ */
+export function authorHref(username: string, locale: string, subpath = ""): string {
+  const base = KURL_HOST ? `https://${username}.${KURL_HOST}` : `/${locale}/p/${username}`;
+  if (!subpath) return KURL_HOST ? `${base}/` : base;
+  return `${base}/${subpath.replace(/^\//, "")}`;
 }
 
 type Labels = { views: (count: number) => string };
