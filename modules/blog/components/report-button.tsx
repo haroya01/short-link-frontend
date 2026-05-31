@@ -42,7 +42,7 @@ export function ReportButton({ subjectType, subjectId }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1 rounded text-xs text-slate-400 transition-colors hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+        className="inline-flex items-center gap-1 rounded text-xs text-slate-400 transition-colors hover:text-slate-600 focus-ring"
       >
         <Flag className="h-3 w-3" />
         {t("report")}
@@ -71,7 +71,7 @@ export function ReportButton({ subjectType, subjectId }: Props) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+              className="rounded-lg px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-slate-100 focus-ring"
             >
               {tc("cancel")}
             </button>

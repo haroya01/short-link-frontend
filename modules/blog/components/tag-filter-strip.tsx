@@ -1,5 +1,6 @@
 import { blogHref } from "@/lib/host";
 import type { TagCount } from "@/modules/blog/api/public-posts";
+import { TagChip } from "@/modules/blog/components/tag-chip";
 
 /**
  * Persistent popular-tag chips on a tag's feed page — so clicking into a topic doesn't strip away
@@ -34,18 +35,13 @@ export function TagFilterStrip({
           const active = tag.tag === activeTag;
           return (
             <li key={tag.tag} className="shrink-0">
-              <a
+              <TagChip
                 href={blogHref(`/tags/${encodeURIComponent(tag.tag)}${qs}`)}
-                aria-current={active ? "page" : undefined}
-                className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-1 ${
-                  active
-                    ? "bg-accent-600 text-white"
-                    : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700"
-                }`}
-              >
-                <span>{tag.tag}</span>
-                {!active && <span className="text-slate-500">{tag.count}</span>}
-              </a>
+                label={tag.tag}
+                count={tag.count}
+                active={active}
+                ariaCurrent={active ? "page" : undefined}
+              />
             </li>
           );
         })}

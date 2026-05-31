@@ -41,7 +41,7 @@ export default async function PublicSeriesIndexPage({
             <li key={s.slug}>
               <a
                 href={`/series/${s.slug}`}
-                className="group -mx-4 flex items-center gap-3 rounded-2xl px-4 py-4 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+                className="group -mx-4 flex items-center gap-3 rounded-2xl px-4 py-4 transition-colors hover:bg-slate-50 focus-ring"
               >
                 <Layers className="h-5 w-5 shrink-0 text-accent-500" />
                 <span className="min-w-0 flex-1">

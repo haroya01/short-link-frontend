@@ -110,7 +110,7 @@ export function PostComments({
             <button
               type="submit"
               disabled={busy || !body.trim()}
-              className="rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 disabled:opacity-50"
+              className="rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700 focus-ring disabled:opacity-50"
             >
               {busy ? t("submitting") : t("submit")}
             </button>
@@ -120,7 +120,7 @@ export function PostComments({
         <button
           type="button"
           onClick={signInWithGoogle}
-          className="mt-4 w-full rounded-xl border border-dashed border-slate-200 px-4 py-4 text-sm text-slate-500 transition-colors hover:border-accent-300 hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+          className="mt-4 w-full rounded-xl border border-dashed border-slate-200 px-4 py-4 text-sm text-slate-500 transition-colors hover:border-accent-300 hover:text-accent-700 focus-ring"
         >
           {t("loginPrompt")}
         </button>
@@ -139,7 +139,7 @@ export function PostComments({
                     setReplyTo(replyTo === c.id ? null : c.id);
                     setReplyBody("");
                   }}
-                  className="inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring"
                 >
                   <CornerDownRight className="h-3.5 w-3.5" />
                   {t("reply")}
@@ -177,7 +177,7 @@ export function PostComments({
                       type="button"
                       onClick={() => submitReply(c.id)}
                       disabled={busy || !replyBody.trim()}
-                      className="rounded-lg bg-accent-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 disabled:opacity-50"
+                      className="rounded-lg bg-accent-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-700 focus-ring disabled:opacity-50"
                     >
                       {t("reply")}
                     </button>
@@ -225,7 +225,7 @@ function CommentRow({
           <button
             type="button"
             onClick={onDelete}
-            className="ml-auto rounded text-slate-300 transition-colors hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+            className="ml-auto rounded text-slate-300 transition-colors hover:text-red-500 focus-ring"
             aria-label={deleteLabel}
           >
             <Trash2 className="h-3.5 w-3.5" />

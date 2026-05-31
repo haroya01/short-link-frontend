@@ -50,7 +50,7 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
               href={`#${h.id}`}
               onClick={(e) => jumpTo(e, h.id)}
               aria-current={active === h.id ? "location" : undefined}
-              className={`block truncate rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 ${
+              className={`block truncate rounded transition-colors focus-ring ${
                 active === h.id
                   ? "font-medium text-accent-700"
                   : "text-slate-500 hover:text-slate-700"

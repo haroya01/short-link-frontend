@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { PenSquare } from "lucide-react";
 import { blogHref } from "@/lib/host";
+import { TagChip } from "@/modules/blog/components/tag-chip";
 import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
@@ -67,13 +68,11 @@ export default async function TagsIndexPage({
           <ul className="flex flex-wrap gap-2">
             {tags.map((tag) => (
               <li key={tag.tag}>
-                <a
+                <TagChip
                   href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
-                  className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-accent-50 hover:text-accent-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-1"
-                >
-                  <span>{tag.tag}</span>
-                  <span className="text-slate-500">{tag.count}</span>
-                </a>
+                  label={tag.tag}
+                  count={tag.count}
+                />
               </li>
             ))}
           </ul>
