@@ -238,6 +238,7 @@
     "settings": "Settings",
     "login": "Sign in",
     "logout": "Sign out",
+    "account": "Account",
     "apps": {
       "trigger": "Other apps",
       "linksLabel": "Links",
