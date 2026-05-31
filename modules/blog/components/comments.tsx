@@ -47,6 +47,10 @@ export function PostComments({
 
   async function submitTop(e: React.FormEvent) {
     e.preventDefault();
+    if (!authenticated) {
+      signInWithGoogle();
+      return;
+    }
     if (!body.trim() || busy) return;
     setBusy(true);
     try {
@@ -59,6 +63,10 @@ export function PostComments({
   }
 
   async function submitReply(parentId: number) {
+    if (!authenticated) {
+      signInWithGoogle();
+      return;
+    }
     if (!replyBody.trim() || busy) return;
     setBusy(true);
     try {
@@ -96,35 +104,30 @@ export function PostComments({
         {t("count", { count: comments.length })}
       </h2>
 
-      {ready && authenticated ? (
-        <form onSubmit={submitTop} className="mt-4">
-          <textarea
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            maxLength={2000}
-            rows={3}
-            placeholder={t("placeholder")}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-[15px] leading-relaxed outline-none transition-colors focus:border-accent-400"
-          />
-          <div className="mt-2 flex justify-end">
-            <button
-              type="submit"
-              disabled={busy || !body.trim()}
-              className="rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700 focus-ring disabled:opacity-50"
-            >
-              {busy ? t("submitting") : t("submit")}
-            </button>
-          </div>
-        </form>
-      ) : ready ? (
-        <button
-          type="button"
-          onClick={signInWithGoogle}
-          className="mt-4 w-full rounded-xl border border-dashed border-slate-200 px-4 py-4 text-sm text-slate-500 transition-colors hover:border-accent-300 hover:text-accent-700 focus-ring"
-        >
-          {t("loginPrompt")}
-        </button>
-      ) : null}
+      {/* The input is ALWAYS visible so there's always a way to comment. Signed-out (or pre-auth)
+          submit kicks off login instead of hiding the field. */}
+      <form onSubmit={submitTop} className="mt-4">
+        <textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          maxLength={2000}
+          rows={3}
+          placeholder={t("placeholder")}
+          className="w-full rounded-xl border border-slate-200 px-4 py-3 text-[15px] leading-relaxed outline-none transition-colors focus:border-accent-400"
+        />
+        <div className="mt-2 flex items-center justify-between gap-3">
+          <span className="text-[12px] text-slate-400">
+            {ready && !authenticated ? t("loginPrompt") : ""}
+          </span>
+          <button
+            type="submit"
+            disabled={busy || (authenticated && !body.trim())}
+            className="rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700 focus-ring disabled:opacity-50"
+          >
+            {busy ? t("submitting") : t("submit")}
+          </button>
+        </div>
+      </form>
 
       {comments.length === 0 ? (
         <p className="mt-8 text-sm text-slate-500">{t("empty")}</p>
@@ -162,7 +165,7 @@ export function PostComments({
                 </ul>
               )}
 
-              {replyTo === c.id && ready && authenticated && (
+              {replyTo === c.id && (
                 <div className="mt-3 border-l-2 border-slate-100 pl-5">
                   <textarea
                     value={replyBody}
