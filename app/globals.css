@@ -473,6 +473,33 @@ h1, h2, h3, p {
   .prose-post figcaption {
     @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-400;
   }
+  /* Tables (TABLE block / markdown) — flat editorial: header underline + light row dividers, no heavy
+     grid (matches the §1 flat philosophy). Scrolls within the reading column if it gets too wide. */
+  .prose-post table {
+    @apply my-7 w-full border-collapse text-[0.9375rem] leading-snug;
+  }
+  .prose-post thead th {
+    @apply border-b-2 border-slate-200 px-3 py-2 text-left font-semibold text-slate-900;
+  }
+  .prose-post tbody td {
+    @apply border-b border-slate-100 px-3 py-2 align-top text-slate-700;
+  }
+  .prose-post tbody tr:last-child td {
+    @apply border-b-0;
+  }
+  /* Hover a heading → a faint "#" deep-link appears in the left gutter (the section's TOC anchor).
+     The wrapping link stays heading-styled, not the accent link style. Hover-only by nature. */
+  .prose-post :is(h2, h3, h4) a {
+    @apply relative text-inherit no-underline;
+    font-weight: inherit;
+  }
+  .prose-post :is(h2, h3, h4) a::before {
+    content: "#";
+    @apply absolute -left-5 font-normal text-accent-400 opacity-0 transition-opacity;
+  }
+  .prose-post :is(h2, h3, h4):hover a::before {
+    @apply opacity-100;
+  }
   /*
    * Syntax highlighting for fenced code blocks. rehype-highlight tags tokens with `.hljs-*`
    * classes; this is a compact dark palette tuned for the slate-900 `pre` background above
