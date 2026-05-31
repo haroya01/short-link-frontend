@@ -18,7 +18,6 @@ import {
 import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
-import { FeedFeaturedCard } from "@/modules/blog/components/feed-card";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { MobileDiscoveryStrip } from "@/modules/blog/components/mobile-discovery-strip";
@@ -115,27 +114,14 @@ export default async function BlogFeedPage({
   // the mobile discovery strip, so a short result set isn't dominated by a sticky sidebar.
   const showRail = hasRail && !searching;
 
-  const labels = { views: (count: number) => t("views", { count }) };
-
   // Remount key for the feed content: changes on every Latest/Popular/Following switch (and on a new
   // search), so the content block replays its fade instead of swapping abruptly.
   const contentKey = `${activeTab}:${searching ? query : ""}`;
 
-  // Editorial focal point: promote the lead post to a wide featured card on the default (non-search)
-  // feed — but only when (a) enough posts remain to fill a grid beneath it, and (b) the lead post has
-  // a real cover image. A featured slot is the page's single focal point; filling it with the flat
-  // monochrome fallback cover would make the hero read as an empty placeholder, so a coverless lead
-  // post just flows into the normal grid instead.
-  const useFeatured = !searching && items.length > 3 && Boolean(items[0].ogImageUrl);
-  const featured = useFeatured ? (
-    <FeedFeaturedCard
-      item={items[0]}
-      locale={locale}
-      labels={labels}
-      featuredLabel={t("featuredLabel")}
-    />
-  ) : null;
-  const gridItems = useFeatured ? items.slice(1) : items;
+  // No separate hero card. On the default (non-search) recent feed the lead post just gets a quiet
+  // "오늘의 글" emphasis as the first list row — same grammar as the rest of the list, only louder by a
+  // notch. Trending/search feeds have no lead emphasis.
+  const featuredFirst = !searching && tab === "recent" && items.length > 1;
 
   const writeCta = (
     <a href={blogHref("/write/new")} className={cn(blogCta(), "shrink-0")}>
@@ -159,7 +145,10 @@ export default async function BlogFeedPage({
     <>
       {/* Editorial masthead — the brand tagline by default; on search it becomes the search heading
           (query + scope) so the band reflects what you're looking at instead of a static slogan. */}
-      {searching ? (
+      {/* No marketing hero on the home feed — a quiet weblog leads with the posts (the top app header
+          already carries blog.kurl + search + write). The masthead band stays only for search, where
+          it states what you're looking at (query + scope). */}
+      {searching && (
         <FeedMasthead
           locale={locale}
           eyebrow={t("searchLabel")}
@@ -170,14 +159,12 @@ export default async function BlogFeedPage({
           }
           sub={t("searchScopeAll")}
         />
-      ) : (
-        <FeedMasthead locale={locale} />
       )}
 
       {/* pb-24 on phones keeps the last feed card scrollable clear of the fixed write FAB (the body
           gets extra room on top of that while the cookie banner is up — see globals.css). */}
       <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-        <header className="flex items-center justify-between gap-4 border-b border-slate-200/80 pb-3">
+        <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3">
           <nav className="flex gap-1 text-[15px] font-bold">
             <SortTab label={t("recent")} href={sortHref("recent")} active={activeTab === "recent"} />
             <SortTab
@@ -210,7 +197,6 @@ export default async function BlogFeedPage({
             <TrendingByTag
               sections={trendingSections}
               locale={locale}
-              labels={labels}
               moreLabel={t("railSeeAll")}
               heading={t("trendingTopicsLabel")}
             />
@@ -229,13 +215,14 @@ export default async function BlogFeedPage({
         ) : (
           <FeedBody
             locale={locale}
-            items={gridItems}
+            items={items}
             hasNext={hasNext}
             sort={sort}
             query={searching ? query : undefined}
             hasRail={showRail}
             marginTop={!searching}
-            featured={featured}
+            featuredFirst={featuredFirst}
+            featuredLabel={t("featuredLabel")}
             belowFeatured={
               !searching ? (
                 <MobileDiscoveryStrip locale={locale} tags={tags} authors={authors} />
@@ -266,7 +253,8 @@ function FeedBody({
   query,
   hasRail,
   marginTop,
-  featured,
+  featuredFirst,
+  featuredLabel,
   belowFeatured,
   children,
 }: {
@@ -277,13 +265,13 @@ function FeedBody({
   query?: string;
   hasRail: boolean;
   marginTop: boolean;
-  featured: ReactNode;
+  featuredFirst: boolean;
+  featuredLabel: string;
   belowFeatured?: ReactNode;
   children: ReactNode;
 }) {
   const grid = (
     <>
-      {featured && <div className="mb-10 sm:mb-12">{featured}</div>}
       {belowFeatured}
       <FeedInfinite
         locale={locale}
@@ -291,21 +279,28 @@ function FeedBody({
         initialHasNext={hasNext}
         sort={sort}
         query={query}
-        hasRail={hasRail}
+        featuredFirst={featuredFirst}
+        featuredLabel={featuredLabel}
       />
     </>
   );
 
   const top = marginTop ? "mt-8" : "mt-6";
 
-  if (!hasRail) return <div className={top}>{grid}</div>;
+  // No rail → just the centered reading column.
+  if (!hasRail) return <div className={`${top} mx-auto max-w-2xl`}>{grid}</div>;
 
+  // Symmetric 3-column grid (xl+): equal side gutters keep the reading column in the exact page
+  // center — the same band as the post/profile — while the discovery rail sits in the right gutter
+  // without shifting it. Below xl the rail drops away and the column simply centers.
   return (
-    <div className={`${top} lg:grid lg:grid-cols-[minmax(0,1fr)_clamp(240px,22vw,300px)] lg:items-start lg:gap-10`}>
-      <div>{grid}</div>
+    <div className={`${top} mx-auto max-w-2xl xl:grid xl:max-w-7xl xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-10`}>
+      <div className="xl:col-start-2">{grid}</div>
       {/* Sticky so the discovery rail stays present while the reader scrolls the feed — a more
           useful presence without making it visually louder than the content. */}
-      <aside className="mt-12 hidden lg:sticky lg:top-20 lg:mt-0 lg:block">{children}</aside>
+      <aside className="mt-12 hidden xl:col-start-3 xl:mt-0 xl:block">
+        <div className="sticky top-20">{children}</div>
+      </aside>
     </div>
   );
 }

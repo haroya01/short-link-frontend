@@ -91,8 +91,45 @@ export default async function PublicPostPage({
   const headings = extractHeadings(blocks);
 
   return (
-    <div className="mx-auto flex max-w-6xl justify-center gap-10 px-4 sm:px-6">
-      <article className="w-full max-w-2xl py-14 sm:py-20" lang={post.languageTag}>
+    // Symmetric 3-column grid: equal side gutters keep the 42rem article in the exact page center,
+    // the same reading band as the feed/profile. Rails live in the gutters and never shift it.
+    <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr]">
+      {/* Left rail (xl+): a persistent author identity + follow that stays once the in-article header
+          scrolls away. In the left gutter, so the centered article doesn't move. */}
+      <aside className="hidden py-20 xl:block xl:justify-self-end">
+        <div className="sticky top-24 w-52">
+          <a
+            href={authorHref(author.username, locale)}
+            className="group flex items-center gap-3 rounded focus-ring"
+          >
+            {author.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={author.avatarUrl}
+                alt={`@${author.username}`}
+                className="h-11 w-11 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent-100 text-base font-semibold text-accent-700">
+                {author.username.charAt(0).toUpperCase()}
+              </span>
+            )}
+            <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700">
+              @{author.username}
+            </span>
+          </a>
+          {author.bio && (
+            <p className="mt-3 line-clamp-3 text-[13px] leading-relaxed text-slate-500">
+              {author.bio}
+            </p>
+          )}
+          <div className="mt-4">
+            <FollowButton username={author.username} initialFollowerCount={0} />
+          </div>
+        </div>
+      </aside>
+
+      <article className="mx-auto w-full max-w-2xl py-14 sm:py-20" lang={post.languageTag}>
         <ViewBeacon username={username} slug={slug} />
 
       <header className="mb-12">
@@ -100,7 +137,12 @@ export default async function PublicPostPage({
           {post.title}
         </h1>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-          <a href={authorHref(author.username, locale)} className="group flex min-w-0 items-center gap-3 rounded focus-ring">
+          {/* <xl: full author identity + follow inline. xl: those move to the left rail, so the header
+              keeps only date·reading time + share — no duplicated author/follow at the top. */}
+          <a
+            href={authorHref(author.username, locale)}
+            className="group flex min-w-0 items-center gap-3 rounded focus-ring xl:hidden"
+          >
             {author.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -126,8 +168,15 @@ export default async function PublicPostPage({
               </span>
             </span>
           </a>
+          <p className="hidden text-[13px] text-slate-500 xl:block">
+            <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
+            {" · "}
+            {t("readingTime", { minutes })}
+          </p>
           <div className="flex shrink-0 items-center gap-2">
-            <FollowButton username={author.username} initialFollowerCount={0} showCount={false} />
+            <span className="xl:hidden">
+              <FollowButton username={author.username} initialFollowerCount={0} showCount={false} />
+            </span>
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
           </div>
         </div>
@@ -168,8 +217,8 @@ export default async function PublicPostPage({
       </article>
 
       {headings.length >= 2 && (
-        <aside className="hidden w-56 shrink-0 py-20 xl:block">
-          <div className="sticky top-20 max-h-[calc(100vh-7rem)] overflow-y-auto">
+        <aside className="hidden py-20 xl:block xl:justify-self-start">
+          <div className="sticky top-20 max-h-[calc(100vh-7rem)] w-56 overflow-y-auto">
             <PostToc headings={headings} />
           </div>
         </aside>
