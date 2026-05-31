@@ -238,6 +238,7 @@
     "settings": "설정",
     "login": "로그인",
     "logout": "로그아웃",
+    "account": "계정",
     "apps": {
       "trigger": "다른 앱",
       "linksLabel": "Links",

@@ -1,11 +1,11 @@
 "use client";
 
-import { LogIn, LogOut, Menu, X } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { LogIn, Menu, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { Button } from "@/components/ui/button";
+import { AccountMenu } from "@/components/common/account-menu";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { BlogHeaderSearch } from "@/components/common/blog-header-search";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
@@ -23,10 +23,8 @@ export function AppHeader({
   showMenu?: boolean;
   searchOpen?: boolean;
 }) {
-  const router = useRouter();
-  const locale = useLocale();
   const t = useTranslations("nav");
-  const { authenticated, ready, signOut, signInWithGoogle } = useAuth();
+  const { authenticated, ready, signInWithGoogle } = useAuth();
   const { open, toggle } = useSidebarState();
 
   return (
@@ -62,19 +60,9 @@ export function AppHeader({
           <span aria-hidden className="h-5 w-px bg-slate-200" />
           <AppsGrid />
           {!ready ? (
-            <div className="h-8 w-20 animate-pulse rounded-md bg-slate-100" />
+            <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100" />
           ) : authenticated ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={async () => {
-                await signOut();
-                router.push(`/${locale}`);
-              }}
-            >
-              <LogOut className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{t("logout")}</span>
-            </Button>
+            <AccountMenu />
           ) : (
             <Button variant="default" size="sm" onClick={signInWithGoogle}>
               <LogIn className="h-3.5 w-3.5" />
