@@ -181,8 +181,18 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
     ["H2", "배경"],
     ["PARAGRAPH", `${tag} 작업을 하며 부딪힌 문제와 결정을 정리합니다. 무엇을, 왜 그렇게 했는지를 중심으로.`],
     ["LIST_BULLET", JSON.stringify(["문제 정의와 제약", "고려한 대안들", "최종 선택과 트레이드오프"])],
+    [
+      "CODE",
+      JSON.stringify({
+        lang: "ts",
+        code: "function add(a: number, b: number) {\n  return a + b; // 합을 반환\n}",
+      }),
+    ],
     ["QUOTE", "좋은 결정은 과정을 남긴다 — 결과만큼 이유가 중요하다."],
     ["IMAGE", item.ogImageUrl ?? "https://picsum.photos/seed/kurl-body/1200/700"],
+    ["H2", "측정"],
+    ["PARAGRAPH", "도입 전후를 같은 부하로 비교했다."],
+    ["TABLE", "| 지표 | 이전 | 이후 |\n|---|---|---|\n| p95 응답 | 180ms | 96ms |\n| 처리량 | 0.8k/s | 1.4k/s |\n| 에러율 | 0.7% | 0.1% |"],
     ["H2", "정리"],
     ["PARAGRAPH", "요약하면, 작은 서비스일수록 단순함이 이긴다. 다음 글에서 이어서 다룬다."],
   ];
