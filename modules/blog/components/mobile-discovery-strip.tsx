@@ -38,17 +38,21 @@ export async function MobileDiscoveryStrip({
               {t("railSeeAll")}
             </a>
           </div>
-          <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {tags.map((tag) => (
-              <li key={tag.tag} className="shrink-0">
-                <TagChip
-                  href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
-                  label={tag.tag}
-                  count={tag.count}
-                />
-              </li>
-            ))}
-          </ul>
+          <div className="relative -mx-4">
+            <ul className="flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {tags.map((tag) => (
+                <li key={tag.tag} className="shrink-0">
+                  <TagChip
+                    href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
+                    label={tag.tag}
+                    count={tag.count}
+                  />
+                </li>
+              ))}
+            </ul>
+            {/* Right-edge fade — signals the row scrolls (mobile has no scrollbar). */}
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent" />
+          </div>
         </section>
       )}
 
@@ -57,7 +61,8 @@ export async function MobileDiscoveryStrip({
           <h2 className="mb-2 text-[12px] font-bold uppercase tracking-wide text-slate-500">
             {t("railSuggestedAuthors")}
           </h2>
-          <ul className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="relative -mx-4">
+            <ul className="flex gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {authors.map(({ author, postCount }) => (
               <li key={author.username} className="shrink-0">
                 <a
@@ -87,7 +92,9 @@ export async function MobileDiscoveryStrip({
                 </a>
               </li>
             ))}
-          </ul>
+            </ul>
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent" />
+          </div>
         </section>
       )}
     </div>

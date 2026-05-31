@@ -49,7 +49,7 @@ export function TagFilterStrip({
       </nav>
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-10 bg-gradient-to-l from-white to-transparent sm:block"
+        className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-white to-transparent"
       />
     </div>
   );
