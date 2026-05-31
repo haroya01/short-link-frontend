@@ -5,6 +5,7 @@ import { ProfileOwnerFab } from "@/modules/profile/components/owner-fab";
 import { ProfileShareFab } from "@/modules/profile/components/share-fab";
 import type { PublicProfile } from "@/types";
 import { mockPublicProfile } from "@/modules/profile/mock-profile";
+import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { EntryList } from "./_components/entry-list";
 import { ProfileHeader } from "./_components/profile-header";
 import { ProfileVisitBeacon } from "./_components/profile-visit-beacon";
@@ -188,7 +189,9 @@ export default async function PublicProfilePage({
             copied: t("share.copied"),
           }}
         />
-        <p className={`mt-6 text-center text-[11px] ${colors.muted}`}>{t("madeWith")}</p>
+        <div className="mt-6 flex justify-center">
+          <MadeWithKurl />
+        </div>
       </div>
       <ProfileShareFab
         url={`${SITE_URL}/u/${profile.username}`}
