@@ -139,7 +139,7 @@ export function PostComments({
                     setReplyTo(replyTo === c.id ? null : c.id);
                     setReplyBody("");
                   }}
-                  className="inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring"
+                  className="touch-target inline-flex items-center gap-1 rounded text-[13px] text-slate-500 transition-colors hover:text-accent-700 focus-ring"
                 >
                   <CornerDownRight className="h-3.5 w-3.5" />
                   {t("reply")}
@@ -225,7 +225,7 @@ function CommentRow({
           <button
             type="button"
             onClick={onDelete}
-            className="ml-auto rounded text-slate-300 transition-colors hover:text-red-500 focus-ring"
+            className="touch-target ml-auto rounded text-slate-300 transition-colors hover:text-red-500 focus-ring"
             aria-label={deleteLabel}
           >
             <Trash2 className="h-3.5 w-3.5" />

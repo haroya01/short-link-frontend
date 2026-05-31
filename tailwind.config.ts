@@ -80,6 +80,12 @@ const config: Config = {
         "headline-lg": ["2.5rem", { lineHeight: "1.1" }],
         "headline-xl": ["3.5rem", { lineHeight: "1.05" }],
       },
+      boxShadow: {
+        // Blog surface shadows as named tokens so call sites stop hand-rolling arbitrary values.
+        "card-hover": "0 10px 30px -14px rgba(15,23,42,0.2)", // feed card lift on hover
+        cta: "0 8px 24px -8px rgba(5,150,105,0.45)", // brand-green CTA glow
+        fab: "0 8px 24px -6px rgba(5,150,105,0.5)", // floating action button (slightly stronger)
+      },
       keyframes: {
         "fade-in": {
           from: { opacity: "0", transform: "translateY(2px)" },
