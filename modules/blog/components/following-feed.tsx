@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
 import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
-import { authorHref, FeedCard, FeedList } from "@/modules/blog/components/feed-card";
+import { authorHref, FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { blogCta } from "@/modules/blog/components/blog-cta";
@@ -145,15 +145,8 @@ export function FollowingFeed({
 
   if (!ready || items === null) {
     return (
-      <div
-        role="status"
-        aria-live="polite"
-        aria-label={t("loadingMore")}
-        className="mt-8 flex max-w-2xl flex-col gap-6"
-      >
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-20 animate-pulse rounded-xl bg-slate-100" />
-        ))}
+      <div className="mt-8">
+        <FeedListSkeleton />
       </div>
     );
   }
@@ -171,7 +164,7 @@ export function FollowingFeed({
   // Same rail slot as the recent feed, filled with the following-tab context.
   const rail =
     followed.length > 0 || suggestions.length > 0 ? (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         {followed.length > 0 && (
           <section>
             <RailHeading className="mb-3">{t("railFollowingAuthors")}</RailHeading>
