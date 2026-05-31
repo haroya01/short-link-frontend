@@ -1,3 +1,4 @@
+import { Rss } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { blogHref } from "@/lib/host";
 import type { PublicPostListItem, PublicSeriesListItem } from "@/modules/blog/api/public-posts";
@@ -108,6 +109,14 @@ export async function AuthorRail({
           </ul>
         </section>
       )}
+
+      <a
+        href={authorHref(username, locale, "feed")}
+        className="focus-ring inline-flex w-fit items-center gap-1.5 rounded text-[12px] font-medium text-slate-400 transition-colors hover:text-accent-700"
+      >
+        <Rss className="h-3.5 w-3.5" />
+        RSS
+      </a>
     </div>
   );
 }
