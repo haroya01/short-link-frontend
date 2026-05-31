@@ -22,7 +22,7 @@ export async function DiscoveryRail({
   const t = await getTranslations({ locale, namespace: "publicFeed" });
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       {authors.length > 0 && (
         <section>
           <RailHeading className="mb-3">{t("railWriters")}</RailHeading>

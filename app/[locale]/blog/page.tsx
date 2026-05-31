@@ -183,7 +183,6 @@ export default async function BlogFeedPage({
               disabled={searching}
             />
           </nav>
-          <div className="hidden sm:block">{writeCta}</div>
         </header>
 
 

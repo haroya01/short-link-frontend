@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2, Search, X } from "lucide-react";
+import { ArrowRight, Search, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import { searchPublicFeed, type PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/components/feed-card";
@@ -110,9 +110,14 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
 
       <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-6" aria-live="polite">
         {q && loading && results.length === 0 && (
-          <div className="flex items-center justify-center py-10 text-slate-400">
-            <Loader2 className="h-5 w-5 animate-spin" />
-          </div>
+          <ul className="animate-pulse divide-y divide-slate-100" aria-busy>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <li key={i} className="px-3 py-3">
+                <div className="h-2.5 w-12 rounded bg-slate-100" />
+                <div className="mt-2 h-4 w-3/4 rounded bg-slate-200/80" />
+              </li>
+            ))}
+          </ul>
         )}
         {q && !loading && results.length === 0 && (
           <p className="px-3 py-10 text-center text-sm text-slate-500">{t("searchEmptyTitle")}</p>

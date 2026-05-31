@@ -1,6 +1,6 @@
 "use client";
 
-import { LogIn, Menu, X } from "lucide-react";
+import { LogIn, Menu, PenSquare, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
@@ -66,6 +66,17 @@ export function AppHeader({
               signed-out visitors who have no account menu. */}
           {!authenticated && <LanguageSwitcher />}
           <span aria-hidden className="h-5 w-px bg-slate-200" />
+          {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row —
+              a standard, expected home for the primary action. Mobile uses the bottom tab bar. */}
+          {authenticated && (
+            <a
+              href={blogHref("/write/new")}
+              className="focus-ring hidden h-8 items-center gap-1.5 rounded-full bg-accent-600 px-3.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-700 sm:inline-flex"
+            >
+              <PenSquare className="h-3.5 w-3.5" />
+              {t("write")}
+            </a>
+          )}
           <AppsGrid />
           {!ready ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100" />

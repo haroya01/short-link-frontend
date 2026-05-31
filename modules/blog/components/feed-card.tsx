@@ -93,7 +93,7 @@ function MetaRow({
         <>
           <span aria-hidden>·</span>
           <span className="flex shrink-0 items-center gap-1">
-            <Heart className="h-3 w-3" />
+            <Heart className="h-3 w-3 text-accent-500" />
             {item.likeCount}
           </span>
         </>
@@ -109,6 +109,28 @@ function MetaRow({
  */
 export function FeedList({ children }: { children: ReactNode }) {
   return <ul className="flex max-w-2xl flex-col">{children}</ul>;
+}
+
+/** Loading placeholder shaped like a {@link FeedCard} list row — used while a client feed (following,
+ *  search) fetches, so the transition reads as the same list filling in, not a blank gap. */
+export function FeedListSkeleton({ count = 4 }: { count?: number }) {
+  return (
+    <ul role="status" aria-busy className="flex max-w-2xl animate-pulse flex-col">
+      {Array.from({ length: count }).map((_, i) => (
+        <li key={i} className="border-b border-slate-100 last:border-b-0">
+          <div className="flex gap-4 py-5 sm:gap-6">
+            <div className="min-w-0 flex-1 space-y-2.5 py-0.5">
+              <div className="h-3 w-14 rounded bg-slate-100" />
+              <div className="h-4 w-4/5 rounded bg-slate-200/80" />
+              <div className="h-3.5 w-full rounded bg-slate-100" />
+              <div className="h-3 w-28 rounded bg-slate-100" />
+            </div>
+            <div className="h-20 w-20 shrink-0 rounded-xl bg-slate-100 sm:h-24 sm:w-32" />
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 /**
@@ -149,25 +171,28 @@ export function FeedCard({
       {/* -mx/px lets the hover highlight breathe past the text without moving the content edge (it
           stays aligned with the divider + header). A quiet affordance that the whole row is a link. */}
       <div
-        className={`-mx-3 flex gap-4 rounded-xl px-3 py-5 transition-colors group-hover:bg-slate-50/70 sm:gap-6 ${
+        className={`-mx-3 flex gap-4 rounded-xl px-3 py-5 transition-colors group-hover:bg-slate-50 sm:gap-6 ${
           featured ? "sm:py-7" : ""
         }`}
       >
         <div className="min-w-0 flex-1">
           <a href={postUrl} className="block">
-            {/* One marker per row. The featured lead shows a quiet editorial label; every other row
-                shows its muted representative tag. Never both — stacking them reads as a confusing
-                "which one is the category?" pair. */}
+            {/* One marker per row. The featured lead shows a quiet editorial label (with a small
+                brand-green dot so it reads as the chosen post); every other row shows its muted
+                representative tag. Never both — stacking them reads as a confusing category pair. */}
             {featured && featuredLabel ? (
-              <span className="text-[11px] font-semibold tracking-wide text-accent-600">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-accent-600">
+                <span aria-hidden className="h-1 w-1 rounded-full bg-accent-500" />
                 {featuredLabel}
               </span>
             ) : (
               item.tags[0] && <TagEyebrow tag={item.tags[0]} />
             )}
             <h2
-              className={`mt-0.5 line-clamp-2 font-bold leading-[1.3] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 ${
-                featured ? "text-[22px] sm:text-[26px] sm:leading-[1.2]" : "text-[18px]"
+              className={`mt-1 line-clamp-2 font-bold leading-[1.3] text-slate-900 transition-colors group-hover:text-accent-700 ${
+                featured
+                  ? "text-[23px] tracking-headline sm:text-[27px] sm:leading-[1.18]"
+                  : "text-[18px] tracking-tight"
               }`}
             >
               {item.title}

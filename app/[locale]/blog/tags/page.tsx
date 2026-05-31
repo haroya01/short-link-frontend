@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { PenSquare } from "lucide-react";
 import { blogHref } from "@/lib/host";
-import { cn } from "@/lib/utils";
-import { blogCta } from "@/modules/blog/components/blog-cta";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
@@ -45,17 +42,10 @@ export default async function TagsIndexPage({
 
   return (
     <main className="mx-auto max-w-2xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-      {/* Shared feed nav (links home) + Write, on the same centered reading column as the feed —
-          no marketing band, matching the quiet home. */}
-      <header className="mb-8 flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
+      {/* Shared feed nav (links home) on the centered reading column — no marketing band, matching
+          the quiet home. Write lives in the top header now. */}
+      <header className="mb-8 flex items-center border-b border-slate-100 pb-3">
         <FeedTabs locale={locale} />
-        <a
-          href={blogHref("/write/new")}
-          className={cn(blogCta(), "hidden shrink-0 sm:inline-flex")}
-        >
-          <PenSquare className="h-4 w-4" />
-          {t("write")}
-        </a>
       </header>
 
       <div className="mb-6">
