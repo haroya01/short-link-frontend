@@ -112,6 +112,7 @@ export function PostComments({
           onChange={(e) => setBody(e.target.value)}
           maxLength={2000}
           rows={3}
+          aria-label={t("placeholder")}
           placeholder={t("placeholder")}
           className="w-full rounded-xl border border-slate-200 px-4 py-3 text-[15px] leading-relaxed outline-none transition-colors focus:border-accent-400"
         />
@@ -172,6 +173,7 @@ export function PostComments({
                     onChange={(e) => setReplyBody(e.target.value)}
                     maxLength={2000}
                     rows={2}
+                    aria-label={t("replyPlaceholder")}
                     placeholder={t("replyPlaceholder")}
                     className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-accent-400"
                   />

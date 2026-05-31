@@ -321,7 +321,11 @@ function SortTab({
   // is shown as the visible inline scope note, so no hover-only tooltip is needed here.
   if (disabled) {
     return (
-      <span aria-disabled className={`${base} cursor-default text-slate-300`}>
+      <span
+        aria-disabled
+        aria-current={active ? "page" : undefined}
+        className={`${base} cursor-default text-slate-300`}
+      >
         {label}
       </span>
     );

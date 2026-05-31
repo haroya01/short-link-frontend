@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { AuthorHeader } from "./_components/author-header";
-import { FeedCard } from "@/modules/blog/components/feed-card";
+import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
 
@@ -72,8 +72,8 @@ export default async function PublicProfileHomepage({
           {posts.length === 0 ? (
             <p className="text-slate-500">{t("emptyPosts")}</p>
           ) : (
-            // Same list card as the feed; single-author surface so the author is hidden on each row.
-            <ul className="flex flex-col">
+            // Same list card + wrapper as the feed; single-author surface so the author is hidden.
+            <FeedList>
               {posts.map((p) => (
                 <FeedCard
                   key={p.slug}
@@ -82,7 +82,7 @@ export default async function PublicProfileHomepage({
                   locale={locale}
                 />
               ))}
-            </ul>
+            </FeedList>
           )}
 
           <footer className="mt-16 flex justify-end border-t border-slate-100 pt-8">

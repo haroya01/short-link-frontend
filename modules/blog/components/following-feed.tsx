@@ -144,7 +144,12 @@ export function FollowingFeed({
 
   if (!ready || items === null) {
     return (
-      <div className="mt-8 flex max-w-2xl flex-col gap-6">
+      <div
+        role="status"
+        aria-live="polite"
+        aria-label={t("loadingMore")}
+        className="mt-8 flex max-w-2xl flex-col gap-6"
+      >
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="h-20 animate-pulse rounded-xl bg-slate-100" />
         ))}
