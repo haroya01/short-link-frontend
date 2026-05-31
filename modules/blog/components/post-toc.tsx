@@ -1,9 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { List, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export type TocHeading = { id: string; text: string; level: number };
+
+function scrollToHeading(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return false;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  history.replaceState(null, "", `#${id}`);
+  return true;
+}
 
 /**
  * velog-style floating table of contents. Shown only on xl+ screens (positioned in the right
@@ -30,13 +40,8 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
   }, [headings]);
 
   function jumpTo(e: React.MouseEvent, id: string) {
-    const el = document.getElementById(id);
-    if (!el) return;
     e.preventDefault();
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-    setActive(id);
-    history.replaceState(null, "", `#${id}`);
+    if (scrollToHeading(id)) setActive(id);
   }
 
   if (headings.length < 2) return null;
@@ -62,5 +67,82 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
         ))}
       </ul>
     </nav>
+  );
+}
+
+/**
+ * Mobile counterpart to {@link PostToc} (the sidebar TOC is xl-only). A floating "목차" button opens a
+ * bottom sheet of the headings so long posts stay navigable on a phone — no jump links otherwise.
+ */
+export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
+  const t = useTranslations("publicPost");
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  if (headings.length < 2) return null;
+
+  return (
+    <div className="xl:hidden">
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label={t("toc")}
+        aria-haspopup="dialog"
+        className="focus-ring fixed bottom-5 right-4 z-30 inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/95 px-4 py-2.5 text-[13px] font-medium text-slate-700 shadow-[0_6px_20px_-8px_rgba(15,23,42,0.3)] backdrop-blur transition-colors hover:border-slate-300"
+      >
+        <List className="h-4 w-4 text-accent-600" />
+        {t("toc")}
+      </button>
+      {open && (
+        <div role="dialog" aria-modal="true" aria-label={t("toc")} className="fixed inset-0 z-50">
+          <button
+            type="button"
+            aria-hidden
+            tabIndex={-1}
+            onClick={() => setOpen(false)}
+            className="absolute inset-0 animate-fade-in bg-slate-900/30"
+          />
+          <div className="absolute inset-x-0 bottom-0 max-h-[70vh] animate-fade-in overflow-y-auto rounded-t-2xl bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)]">
+            <div className="mx-auto mb-2 mt-1 h-1 w-10 rounded-full bg-slate-200" aria-hidden />
+            <div className="flex items-center justify-between px-3 pb-1">
+              <h2 className="text-[13px] font-bold uppercase tracking-wide text-slate-500">{t("toc")}</h2>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label={t("toc")}
+                className="focus-ring grid h-8 w-8 place-items-center rounded-full text-slate-500 hover:bg-slate-100"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <ul className="pb-1">
+              {headings.map((h) => (
+                <li key={h.id} style={{ paddingLeft: `${(h.level - 1) * 12}px` }}>
+                  <a
+                    href={`#${h.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      scrollToHeading(h.id);
+                      setOpen(false);
+                    }}
+                    className="focus-ring block truncate rounded-lg px-3 py-2.5 text-[15px] text-slate-700 transition-colors hover:bg-slate-50"
+                  >
+                    {h.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

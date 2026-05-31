@@ -6,7 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
-import { PostToc } from "@/modules/blog/components/post-toc";
+import { PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
 import { PostComments } from "@/modules/blog/components/comments";
 import { LikeButton } from "@/modules/blog/components/like-button";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
@@ -168,6 +168,9 @@ export default async function PublicPostPage({
           </div>
         </aside>
       )}
+
+      {/* Mobile/tablet (<xl) get the TOC as a floating button → bottom sheet. */}
+      <PostTocMobile headings={headings} />
     </div>
   );
 }
