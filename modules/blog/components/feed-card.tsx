@@ -283,12 +283,14 @@ export function FeedFeaturedCard({
       </a>
       <div className="flex flex-col justify-center p-6 sm:p-8">
         <a href={postUrl} className="flex flex-col">
-          {/* "추천 · tag" eyebrow — one accent moment (추천 in green, tag muted) marking the hero. */}
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide">
-            {featuredLabel && <span className="text-accent-700">{featuredLabel}</span>}
-            {featuredLabel && item.tags[0] && <span className="text-slate-300" aria-hidden>·</span>}
-            {item.tags[0] && <span className="text-slate-400">{item.tags[0]}</span>}
-          </div>
+          {/* Single curation marker only ("추천"/"Featured"). The tag is NOT shown here — 상품·개발·
+              일상 are themes/tags, not top-level categories, so a "추천 · 개발" pair read as a category
+              badge. The post's tags live on the post itself. */}
+          {featuredLabel && (
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-accent-700">
+              {featuredLabel}
+            </span>
+          )}
           <h2 className="mt-1.5 line-clamp-3 text-[24px] font-bold leading-[1.2] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 sm:text-[28px]">
             {item.title}
           </h2>
