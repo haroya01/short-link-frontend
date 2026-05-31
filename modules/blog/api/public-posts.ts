@@ -28,6 +28,9 @@ export interface PublicAuthor {
   username: string;
   bio: string | null;
   avatarUrl: string | null;
+  /** Whether this user also has a public link-in-bio profile (u/{username}). Optional — absent until
+   *  the backend supplies it, so the cross-link to the profile stays hidden rather than 404-ing. */
+  hasLinkInBio?: boolean;
 }
 
 export interface PublicPostListItem {
