@@ -77,17 +77,24 @@ function MetaRow({
   item,
   locale,
   labels,
-  compact = false,
   hideAuthor = false,
+  footer = false,
 }: {
   item: PublicFeedItem;
   locale: string;
   labels: Labels;
-  compact?: boolean;
   hideAuthor?: boolean;
+  /** Render as the card's bottom footer — a divider + fixed-height (72px) row, author·date · ♥. */
+  footer?: boolean;
 }) {
   return (
-    <div className="mt-3 flex items-center gap-2 text-[12px] text-slate-500">
+    <div
+      className={
+        footer
+          ? "mt-auto flex min-h-[72px] items-center gap-2 border-t border-slate-100 px-4 text-[12px] text-slate-500"
+          : "mt-3 flex items-center gap-2 text-[12px] text-slate-500"
+      }
+    >
       {!hideAuthor && (
         <>
           <a
@@ -103,9 +110,9 @@ function MetaRow({
       <time dateTime={item.publishedAt} className="shrink-0">
         {formatDate(item.publishedAt, locale)}
       </time>
-      {(showLikes(item.likeCount) || (!compact && showViews(item.viewCount))) && (
+      {(showLikes(item.likeCount) || (!footer && showViews(item.viewCount))) && (
         <span className="ml-auto flex shrink-0 items-center gap-3">
-          {!compact && showViews(item.viewCount) && <span>{labels.views(item.viewCount)}</span>}
+          {!footer && showViews(item.viewCount) && <span>{labels.views(item.viewCount)}</span>}
           {showLikes(item.likeCount) && (
             <span className="flex items-center gap-1">
               <Heart className="h-3.5 w-3.5" />
@@ -159,19 +166,17 @@ function CoverPlaceholder() {
 }
 
 /**
- * Feed card with two layouts so the feed reads well at both sizes:
- * - **mobile (`<sm`)**: a compact row — small square thumbnail + tag/title/meta beside it. Dense and
- *   scannable, so the phone feed isn't an endless stack of tall blocks.
- * - **`sm`+**: the full card — a 1.6:1 cover (photo, or a typographic cover for image-less posts)
- *   over tag/title/excerpt. Identical card box keeps the grid even.
- * MetaRow stays a sibling of the post link (never nested) so the author link isn't an `<a>` in an `<a>`.
+ * One card design used everywhere (feed desktop grid, feed mobile, author profile): a 180px cover
+ * (photo posts only — image-less posts skip it and the body fills the space), then category/title/
+ * excerpt, then a divider + fixed-height (72px) footer with author·date · ♥. `hideAuthor` drops the
+ * author on single-author surfaces (the profile). MetaRow stays a sibling of the post link so the
+ * author link isn't an `<a>` nested in an `<a>`.
  */
 export function FeedCard({
   item,
   locale,
   labels,
   className,
-  row = false,
   hideAuthor = false,
 }: {
   item: PublicFeedItem;
@@ -179,8 +184,6 @@ export function FeedCard({
   labels: Labels;
   /** Extra classes on the card `<li>` — e.g. a fixed width when used in a horizontal scroll row. */
   className?: string;
-  /** Force the compact row layout at all widths (single-column lists, e.g. the author profile). */
-  row?: boolean;
   /** Drop the author from the meta — for single-author surfaces (author profile page). */
   hideAuthor?: boolean;
 }) {
@@ -189,75 +192,41 @@ export function FeedCard({
   return (
     <li
       className={
-        "group overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-card-hover focus-within:ring-2 focus-within:ring-accent-500" +
+        "group flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200/70 transition duration-200 hover:ring-slate-300 hover:shadow-card-hover focus-within:ring-2 focus-within:ring-accent-500" +
         (className ? ` ${className}` : "")
       }
     >
-      {/* Compact row — always when `row`, else mobile-only (`sm` gets the full card below). */}
-      <div className={row ? "flex gap-3 p-3" : "flex gap-3 p-3 sm:hidden"}>
+      {/* 180px cover for photo posts; image-less posts skip it and the body fills the space. */}
+      {hasImage && (
         <a
           href={postUrl}
-          className="block h-[84px] w-[84px] shrink-0 overflow-hidden rounded-xl bg-slate-100"
           aria-hidden
           tabIndex={-1}
+          className="block h-[180px] w-full overflow-hidden bg-slate-100"
         >
-          {hasImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={item.ogImageUrl as string}
-              alt=""
-              loading="lazy"
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <span className="block h-full w-full bg-gradient-to-br from-slate-100 to-slate-200/80" />
-          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={item.ogImageUrl as string}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+          />
         </a>
-        <div className="flex min-w-0 flex-1 flex-col justify-center">
-          <a href={postUrl} className="block">
-            {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
-            <h2 className="mt-0.5 line-clamp-2 text-[15px] font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
-              {item.title}
-            </h2>
-          </a>
-          <MetaRow item={item} locale={locale} labels={labels} compact hideAuthor={hideAuthor} />
-        </div>
-      </div>
-
-      {/* sm+: full card (skipped in forced-row mode) */}
-      {!row && (
-      <div className="hidden flex-col sm:flex">
-        <a href={postUrl} className="block" aria-hidden tabIndex={-1}>
-          <div className="aspect-[1.6/1] w-full overflow-hidden bg-slate-100">
-            {hasImage ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={item.ogImageUrl as string}
-                alt=""
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
-              />
-            ) : (
-              <CoverPlaceholder />
-            )}
-          </div>
-        </a>
-        {/* Same body for photo + image-less cards, with reserved title/excerpt heights, so every
-            card is the same height and the author·date·♥ meta lines up across the grid. */}
-        <div className="flex flex-1 flex-col p-4">
-          <a href={postUrl} className="flex flex-1 flex-col">
-            {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
-            <h2 className="mt-1 line-clamp-2 min-h-[2.7em] text-[17px] font-bold leading-[1.35] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
-              {item.title}
-            </h2>
-            <p className="mt-1.5 line-clamp-2 min-h-[2.6em] text-[13px] leading-relaxed text-slate-500">
+      )}
+      <div className="flex flex-1 flex-col px-4 pt-4">
+        <a href={postUrl} className="block">
+          {item.tags[0] && <TagEyebrow tag={item.tags[0]} />}
+          <h2 className="mt-1 line-clamp-2 text-[17px] font-bold leading-[1.35] tracking-tight text-slate-900 transition-colors group-hover:text-accent-700">
+            {item.title}
+          </h2>
+          {item.excerpt && (
+            <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-slate-500">
               {item.excerpt}
             </p>
-          </a>
-          <MetaRow item={item} locale={locale} labels={labels} compact hideAuthor={hideAuthor} />
-        </div>
+          )}
+        </a>
       </div>
-      )}
+      <MetaRow item={item} locale={locale} labels={labels} footer hideAuthor={hideAuthor} />
     </li>
   );
 }

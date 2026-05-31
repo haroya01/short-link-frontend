@@ -68,7 +68,6 @@ export default async function PublicProfileHomepage({
             {posts.map((p) => (
               <FeedCard
                 key={p.slug}
-                row
                 hideAuthor
                 item={{ ...p, author, viewCount: 0 }}
                 locale={locale}
