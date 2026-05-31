@@ -40,7 +40,7 @@ export default async function PublicAuthorAboutPage({
 
       {/* Same centered column + author rail as the posts tab, so the author surface reads as one piece. */}
       <ReadingShell
-        className="mt-8"
+        className="mt-8 author-tab-enter"
         rail={
           posts.length > 0 ? (
             <AuthorRail username={author.username} locale={locale} posts={posts} series={series} />

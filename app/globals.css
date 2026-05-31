@@ -561,6 +561,27 @@ h1, h2, h3, p {
   }
 }
 
+/* Author tab content (글/시리즈/소개) slides in on navigation so switching tabs feels like sliding,
+   not a hard cut. The shared header above reconciles in place (same position) — only the content moves. */
+@keyframes author-tab-enter {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.author-tab-enter {
+  animation: author-tab-enter 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .author-tab-enter {
+    animation: none;
+  }
+}
+
 /*
  * Feed content swap fade — keyed by the active tab/search so the block remounts and replays this on
  * every Latest/Popular/Following switch, turning the soft-nav content swap into a gentle crossfade
