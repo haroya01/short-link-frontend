@@ -56,7 +56,9 @@ export function AppHeader({
             against the same-shaped switcher pill. */}
         <div className="flex shrink-0 items-center gap-2">
           <BlogHeaderSearch defaultOpen={searchOpen} />
-          <LanguageSwitcher />
+          {/* Signed-in users switch language inside the account menu; keep the standalone control for
+              signed-out visitors who have no account menu. */}
+          {!authenticated && <LanguageSwitcher />}
           <span aria-hidden className="h-5 w-px bg-slate-200" />
           <AppsGrid />
           {!ready ? (
