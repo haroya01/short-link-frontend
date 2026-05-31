@@ -35,7 +35,10 @@ export async function generateMetadata({
   return {
     title: `@${author.username}`,
     description: author.bio ?? undefined,
-    alternates: { canonical: `${origin}/` },
+    alternates: {
+      canonical: `${origin}/`,
+      types: { "application/rss+xml": `${origin}/feed` },
+    },
     openGraph: {
       title: `@${author.username}`,
       description: author.bio ?? undefined,

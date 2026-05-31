@@ -50,7 +50,10 @@ export async function generateMetadata({
   return {
     title: "blog.kurl",
     description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      types: { "application/rss+xml": `${BLOG_URL}/feed` },
+    },
     openGraph: {
       type: "website",
       url,
