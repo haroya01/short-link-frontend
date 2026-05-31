@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { PenSquare } from "lucide-react";
 import { blogHref } from "@/lib/host";
+import { cn } from "@/lib/utils";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
@@ -53,7 +55,7 @@ export default async function TagsIndexPage({
           <FeedTabs locale={locale} />
           <a
             href={blogHref("/write/new")}
-            className="hidden shrink-0 items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition-colors hover:bg-accent-700 sm:inline-flex"
+            className={cn(blogCta(), "hidden shrink-0 sm:inline-flex")}
           >
             <PenSquare className="h-4 w-4" />
             {t("write")}
