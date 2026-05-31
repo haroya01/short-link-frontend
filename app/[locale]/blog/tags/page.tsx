@@ -6,10 +6,10 @@ import { cn } from "@/lib/utils";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts";
-import { FeedCard, FeedGrid } from "@/modules/blog/components/feed-card";
+import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
-import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedTabs } from "@/modules/blog/components/feed-tabs";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 // Rendered per request (not prerendered at build): the popular-tags fetch needs the runtime API
 // base, which isn't available during static generation.
@@ -44,23 +44,24 @@ export default async function TagsIndexPage({
   const recent = recentResult.ok ? recentResult.data.items.slice(0, 3) : [];
 
   return (
-    <>
-      {/* Same masthead band as the feed home / tag pages — the topics index is part of the same
-          surface, just titled "주제". */}
-      <FeedMasthead locale={locale} title={t("topics")} sub={t("topicsIntro")} />
+    <main className="mx-auto max-w-2xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
+      {/* Shared feed nav (links home) + Write, on the same centered reading column as the feed —
+          no marketing band, matching the quiet home. */}
+      <header className="mb-8 flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
+        <FeedTabs locale={locale} />
+        <a
+          href={blogHref("/write/new")}
+          className={cn(blogCta(), "hidden shrink-0 sm:inline-flex")}
+        >
+          <PenSquare className="h-4 w-4" />
+          {t("write")}
+        </a>
+      </header>
 
-      <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-        {/* Same header row as the feed/tag surfaces — feed tabs (linking home) + Write. */}
-        <header className="mb-8 flex items-center justify-between gap-4 border-b border-slate-200/80 pb-3">
-          <FeedTabs locale={locale} />
-          <a
-            href={blogHref("/write/new")}
-            className={cn(blogCta(), "hidden shrink-0 sm:inline-flex")}
-          >
-            <PenSquare className="h-4 w-4" />
-            {t("write")}
-          </a>
-        </header>
+      <div className="mb-6">
+        <h1 className="text-[20px] font-bold tracking-tight text-slate-900">{t("topics")}</h1>
+        <p className="mt-1 text-[14px] leading-relaxed text-slate-500">{t("topicsIntro")}</p>
+      </div>
 
         {/* Tag cloud — same chip style as the tag-page filter strip (uniform slate chip + count +
             accent hover); wraps to show the full set. */}
@@ -82,22 +83,18 @@ export default async function TagsIndexPage({
 
         {recent.length > 0 && (
           <section className="mt-12">
-            <h2 className="mb-4 text-[13px] font-bold uppercase tracking-wide text-slate-500">
-              {t("topicsRecent")}
-            </h2>
-            <FeedGrid>
+            <RailHeading className="mb-4">{t("topicsRecent")}</RailHeading>
+            <FeedList>
               {recent.map((item) => (
                 <FeedCard
                   key={`${item.author.username}/${item.slug}`}
                   item={item}
                   locale={locale}
-                  labels={{ views: (count) => t("views", { count }) }}
                 />
               ))}
-            </FeedGrid>
+            </FeedList>
           </section>
         )}
-      </main>
-    </>
+    </main>
   );
 }

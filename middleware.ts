@@ -23,7 +23,27 @@ const RESERVED_SUBDOMAINS = new Set([
 ]);
 
 const DEFAULT_LOCALE = routing.defaultLocale;
+const SUPPORTED_LOCALES = routing.locales as readonly string[];
 const LOCALE_RE = /^([a-z]{2})(\/.*)?$/;
+
+/**
+ * Pick the visitor's locale for a no-locale entry on a blog/author host (where we rewrite instead of
+ * letting next-intl redirect, so its own detection never runs): a prior NEXT_LOCALE choice wins, then
+ * the browser's Accept-Language, then the ko fallback. Keeps blog.kurl from forcing English on a
+ * Japanese/Korean visitor while still honoring an explicit /en.
+ */
+function detectLocale(req: NextRequest): string {
+  const cookie = req.cookies.get("NEXT_LOCALE")?.value;
+  if (cookie && SUPPORTED_LOCALES.includes(cookie)) return cookie;
+  const header = req.headers.get("accept-language");
+  if (header) {
+    for (const part of header.split(",")) {
+      const code = part.split(";")[0].trim().slice(0, 2).toLowerCase();
+      if (SUPPORTED_LOCALES.includes(code)) return code;
+    }
+  }
+  return DEFAULT_LOCALE;
+}
 
 const BLOG_HOST_DEFAULT = "blog.kurl.me";
 const BLOG_HOST_ENV = process.env.NEXT_PUBLIC_BLOG_HOST;
@@ -133,10 +153,8 @@ export default function middleware(req: NextRequest) {
   if (authorSub) {
     const url = req.nextUrl.clone();
     const path = url.pathname;
-    url.pathname =
-      path === "/"
-        ? `/${DEFAULT_LOCALE}/p/${authorSub}`
-        : `/${DEFAULT_LOCALE}/p/${authorSub}${path}`;
+    const loc = detectLocale(req);
+    url.pathname = path === "/" ? `/${loc}/p/${authorSub}` : `/${loc}/p/${authorSub}${path}`;
     return NextResponse.rewrite(url);
   }
 
@@ -147,7 +165,7 @@ export default function middleware(req: NextRequest) {
   if (isBlogHost(originalHost) || isBlogHost(reqHost)) {
     const url = req.nextUrl.clone();
     const localeMatch = url.pathname.match(/^\/([a-z]{2})(?=\/|$)/);
-    const locale = localeMatch ? localeMatch[1] : DEFAULT_LOCALE;
+    const locale = localeMatch ? localeMatch[1] : detectLocale(req);
     const rest = localeMatch ? url.pathname.slice(localeMatch[0].length) : url.pathname;
     if (!url.pathname.match(/^\/[a-z]{2}\/blog(\/|$)/)) {
       url.pathname = `/${locale}/blog${rest === "/" ? "" : rest}`;
