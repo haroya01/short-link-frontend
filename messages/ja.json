@@ -87,7 +87,18 @@
     "seriesDeleteConfirm": "このシリーズを削除しますか？記事は削除されず、シリーズから外れるだけです。",
     "seriesMembers": "シリーズ内の記事",
     "seriesNoMembers": "このシリーズに記事がありません。記事の編集画面で指定してください。",
-    "selectSeries": "左からシリーズを選択してください。"
+    "selectSeries": "左からシリーズを選択してください。",
+    "analyticsTitle": "アナリティクス",
+    "analyticsEmpty": "まだ分析できるデータがありません。",
+    "analyticsNoViews": "この期間の閲覧はありません。",
+    "analyticsOverTime": "閲覧の推移",
+    "analyticsTopPosts": "人気の記事",
+    "analyticsWindowViews": "{days}日間の閲覧",
+    "analyticsLifetimeViews": "累計閲覧",
+    "analyticsLifetimeLikes": "累計いいね",
+    "analyticsPublished": "公開記事",
+    "analyticsViews": "閲覧 {count}",
+    "analyticsDays": "{days}日"
   },
   "postEditor": {
     "backToList": "記事一覧",
@@ -274,6 +285,7 @@
       "posts": "投稿",
       "drafts": "下書き",
       "series": "シリーズ",
+      "analytics": "アナリティクス",
       "readers": "読者",
       "links": "記事内リンク",
       "curation": "おすすめ"
