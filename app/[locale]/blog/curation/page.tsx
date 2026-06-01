@@ -7,19 +7,18 @@ import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import {
   getBookmarks,
-  getPinnedIds,
   removeBookmark,
-  setPinnedIds,
+  setPinnedPosts,
   type BookmarkItem,
 } from "@/modules/blog/api/curation";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 /**
- * 큐레이션 — author curates two things: which of their published posts are pinned (and in what order)
- * atop the public blog home, and a reading list of bookmarked posts. Front-end-only for now: state is
- * mock-persisted to localStorage (see modules/blog/api/curation.ts), so reorder/add/remove all work
- * across reloads without a backend. Matches the workspace dashboard conventions, not the public
- * reading column.
+ * 큐레이션 — author curates two things: which of their published posts are pinned (and in what
+ * order) atop their public profile post list, and a reading list of bookmarked posts. Pins are
+ * persisted server-side (PUT /api/v1/posts/pins; current order derived from each post's pinOrder),
+ * so they actually surface on the public profile. Bookmarks are still a localStorage mock (no
+ * backend yet). Matches the workspace dashboard conventions, not the public reading column.
  */
 export default function ContentCurationPage() {
   const t = useTranslations("blogWorkspace");
@@ -32,10 +31,18 @@ export default function ContentCurationPage() {
 
   useEffect(() => {
     if (!ready || !authenticated) return;
-    setPins(getPinnedIds());
     setBookmarks(getBookmarks());
     listMyPosts()
-      .then(setPosts)
+      .then((all) => {
+        setPosts(all);
+        // Current pin order rides on each post's pinOrder — derive it instead of a separate fetch.
+        setPins(
+          all
+            .filter((p) => p.pinOrder != null)
+            .sort((a, b) => (a.pinOrder as number) - (b.pinOrder as number))
+            .map((p) => p.id),
+        );
+      })
       .catch(() => setPosts([]))
       .finally(() => setLoading(false));
   }, [ready, authenticated]);
@@ -48,8 +55,8 @@ export default function ContentCurationPage() {
   const addable = published.filter((p) => !pinnedIds.includes(p.id));
 
   function commitPins(ids: number[]) {
-    setPins(ids);
-    setPinnedIds(ids);
+    setPins(ids); // optimistic; the backend persists the new order (own published posts only)
+    void setPinnedPosts(ids).catch(() => {});
   }
   function addPin() {
     const id = Number(addId);
@@ -81,11 +88,8 @@ export default function ContentCurationPage() {
     <main className="mx-auto max-w-4xl px-6 py-10">
       <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("curationTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("curationSubtitle")}</p>
-      <p className="mt-3 inline-block rounded-md bg-amber-50 px-2.5 py-1 text-[12px] text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
-        {t("curationMockNote")}
-      </p>
 
-      {/* 대표글 핀 — pick & order the posts that surface atop the public home. */}
+      {/* 대표글 핀 — pick & order the posts that surface atop the author's public profile. */}
       <section className="mt-8">
         <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
           <Pin className="h-4 w-4 text-accent-600 dark:text-accent-400" />
@@ -188,6 +192,9 @@ export default function ContentCurationPage() {
           <h2 className="text-sm font-semibold">{t("curationReadingList")}</h2>
         </div>
         <p className="mt-1 text-[12px] text-slate-400 dark:text-slate-500">{t("curationReadingListHint")}</p>
+        <p className="mt-2 inline-block rounded-md bg-amber-50 px-2.5 py-1 text-[12px] text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+          {t("curationMockNote")}
+        </p>
 
         {bookmarks.length > 0 ? (
           <ul className="mt-4 divide-y divide-slate-100 dark:divide-slate-800">

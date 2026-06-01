@@ -118,7 +118,7 @@
     "curationSubtitle": "代表記事を選んで並べ、読みたい記事をまとめましょう。",
     "curationMockNote": "プレビュー — 保存はこのブラウザだけに残ります。",
     "curationPinned": "代表記事",
-    "curationPinnedHint": "公開ブログのトップにこの順で表示されます。",
+    "curationPinnedHint": "公開プロフィールの記事一覧の先頭にこの順で表示されます。",
     "curationPinnedEmpty": "まだ固定した記事がありません。下から追加してください。",
     "curationAdd": "追加",
     "curationAddLabel": "代表記事を追加",
