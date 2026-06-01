@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { blogHref, type Product } from "@/lib/host";
 import { Button } from "@/components/ui/button";
 import { AccountMenu } from "@/components/common/account-menu";
+import { useAuthHint } from "@/components/common/auth-hint";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { BlogHeaderSearch } from "@/components/common/blog-header-search";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
@@ -33,6 +34,26 @@ export function AppHeader({
 }) {
   const t = useTranslations("nav");
   const { authenticated, ready } = useAuth();
+  // Server's first-paint guess (refresh-cookie presence, via the root layout). Until the client `/me`
+  // settles, trust it so the auth-dependent header (Write button, account avatar) renders immediately
+  // instead of flashing in on a cold load. Reconciles to the real auth once ready.
+  const initialAuthed = useAuthHint();
+  const showAuthed = ready ? authenticated : initialAuthed;
+
+  const loginButton = (
+    <Button
+      variant="default"
+      size="sm"
+      onClick={() => {
+        // Route through kurl's own branded login screen (then Google) instead of bouncing straight
+        // to the Google OAuth consent — carry the current page as the return ?next.
+        window.location.href = `${blogHref("/login")}?next=${encodeURIComponent(pathname)}`;
+      }}
+    >
+      <LogIn className="h-3.5 w-3.5" />
+      <span className="hidden sm:inline">{t("login")}</span>
+    </Button>
+  );
   const { open, toggle } = useSidebarState();
   const pathname = usePathname();
 
@@ -79,11 +100,11 @@ export function AppHeader({
           <BlogHeaderSearch defaultOpen={searchOpen} />
           {/* Signed-in users switch language inside the account menu; keep the standalone control for
               signed-out visitors who have no account menu. */}
-          {!authenticated && <LanguageSwitcher />}
+          {!showAuthed && <LanguageSwitcher />}
           <span aria-hidden className="h-5 w-px bg-slate-200 dark:bg-slate-700" />
           {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row —
               a standard, expected home for the primary action. Mobile uses the bottom tab bar. */}
-          {authenticated && (
+          {showAuthed && (
             <a
               href={blogHref("/write/new")}
               className="focus-ring hidden h-8 items-center gap-1.5 rounded-full bg-accent-600 px-3.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-700 sm:inline-flex"
@@ -94,22 +115,17 @@ export function AppHeader({
           )}
           <AppsGrid current={product} />
           {!ready ? (
-            <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100" />
+            initialAuthed ? (
+              // Seeded authed: a static avatar slot (not a pulse) holds the spot until AccountMenu
+              // mounts — no skeleton→avatar flash.
+              <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800" />
+            ) : (
+              loginButton
+            )
           ) : authenticated ? (
             <AccountMenu />
           ) : (
-            <Button
-              variant="default"
-              size="sm"
-              onClick={() => {
-                // Route through kurl's own branded login screen (then Google) instead of bouncing
-                // straight to the Google OAuth consent — carry the current page as the return ?next.
-                window.location.href = `${blogHref("/login")}?next=${encodeURIComponent(pathname)}`;
-              }}
-            >
-              <LogIn className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{t("login")}</span>
-            </Button>
+            loginButton
           )}
         </div>
       </div>
