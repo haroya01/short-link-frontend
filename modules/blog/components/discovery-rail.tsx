@@ -46,7 +46,7 @@ export async function DiscoveryRail({
                     </span>
                   )}
                   <span className="flex min-w-0 flex-col">
-                    <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900">
+                    <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200 dark:group-hover:text-slate-100">
                       {author.username}
                     </span>
                     <span className="truncate text-[12px] text-slate-500">

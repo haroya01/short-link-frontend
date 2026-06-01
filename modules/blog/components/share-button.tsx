@@ -56,12 +56,26 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
     if (intent) window.open(intent, "_blank", "noopener,noreferrer");
   }
 
+  // Mobile (and any browser exposing the Web Share API) → the OS-native share sheet, which is the
+  // expected pattern on a phone. Desktop falls back to the platform dropdown below.
+  async function onTrigger() {
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title: postTitle, url: postUrl });
+      } catch {
+        // user dismissed the share sheet — nothing to do
+      }
+      return;
+    }
+    setOpen((v) => !v);
+  }
+
   return (
     <div className="relative" ref={ref}>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="touch-target inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700 focus-ring"
+        onClick={onTrigger}
+        className="touch-target inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
         aria-haspopup="menu"
         aria-expanded={open}
       >
@@ -71,7 +85,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-20 mt-2 w-48 origin-top-right animate-dropdown-in rounded-xl border border-slate-200 bg-white p-1 shadow-lg"
+          className="absolute right-0 z-20 mt-2 w-48 origin-top-right animate-dropdown-in rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
         >
           {PLATFORMS.map((p) => (
             <button
@@ -82,7 +96,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
                 handlePlatform(p.id);
                 setOpen(false);
               }}
-              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800"
+              className="block w-full rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
             >
               {p.label}
             </button>
@@ -91,7 +105,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
             type="button"
             role="menuitem"
             onClick={() => handlePlatform("copy")}
-            className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800"
+            className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-accent-50 hover:text-accent-800 focus-ring focus-visible:bg-accent-50 focus-visible:text-accent-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
           >
             {copied ? tc("copied") : tc("copy")}
             {copied && <Check className="h-3.5 w-3.5 text-accent-600" />}

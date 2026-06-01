@@ -99,8 +99,8 @@ export function PostComments({
   }
 
   return (
-    <section className="mt-16 border-t border-slate-100 pt-10">
-      <h2 className="text-lg font-bold tracking-tight text-slate-900">
+    <section className="mt-16 border-t border-slate-100 pt-10 dark:border-slate-800">
+      <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
         {t("count", { count: comments.length })}
       </h2>
 
@@ -114,7 +114,7 @@ export function PostComments({
           rows={3}
           aria-label={t("placeholder")}
           placeholder={t("placeholder")}
-          className="w-full rounded-xl border border-slate-200 px-4 py-3 text-[15px] leading-relaxed outline-none transition-colors focus:border-accent-400"
+          className="w-full rounded-xl border border-slate-200 px-4 py-3 text-[15px] leading-relaxed outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
         />
         <div className="mt-2 flex items-center justify-between gap-3">
           <span className="text-[12px] text-slate-400">
@@ -151,7 +151,7 @@ export function PostComments({
               </CommentRow>
 
               {repliesOf(c.id).length > 0 && (
-                <ul className="mt-4 space-y-4 border-l-2 border-slate-100 pl-5">
+                <ul className="mt-4 space-y-4 border-l-2 border-slate-100 pl-5 dark:border-slate-800">
                   {repliesOf(c.id).map((r) => (
                     <li key={r.id}>
                       <CommentRow
@@ -167,7 +167,7 @@ export function PostComments({
               )}
 
               {replyTo === c.id && (
-                <div className="mt-3 border-l-2 border-slate-100 pl-5">
+                <div className="mt-3 border-l-2 border-slate-100 pl-5 dark:border-slate-800">
                   <textarea
                     value={replyBody}
                     onChange={(e) => setReplyBody(e.target.value)}
@@ -175,7 +175,7 @@ export function PostComments({
                     rows={2}
                     aria-label={t("replyPlaceholder")}
                     placeholder={t("replyPlaceholder")}
-                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-accent-400"
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500"
                   />
                   <div className="mt-2 flex justify-end gap-2">
                     <button
@@ -224,8 +224,8 @@ function CommentRow({
             {username.charAt(0).toUpperCase()}
           </span>
         )}
-        <span className="text-sm font-medium text-slate-900">@{username}</span>
-        <span className="text-[12px] text-slate-500">{fmt(comment.createdAt)}</span>
+        <span className="text-sm font-medium text-slate-900 dark:text-slate-100">@{username}</span>
+        <span className="text-[12px] text-slate-500 dark:text-slate-400">{fmt(comment.createdAt)}</span>
         {canDelete && (
           <button
             type="button"
@@ -237,7 +237,7 @@ function CommentRow({
           </button>
         )}
       </div>
-      <p className="mt-1.5 whitespace-pre-line pl-9 text-[15px] leading-relaxed text-slate-700">
+      <p className="mt-1.5 whitespace-pre-line pl-9 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
         {comment.body}
       </p>
       {children && <div className="mt-1.5 pl-9">{children}</div>}

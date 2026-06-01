@@ -13,7 +13,7 @@ import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const ITEM =
-  "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none";
+  "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
 
 /**
  * Mobile account bottom sheet, opened from the bottom-nav 계정 tab. Gathers everything personal that
@@ -66,8 +66,8 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
         onClick={onClose}
         className="absolute inset-0 animate-fade-in bg-slate-900/30"
       />
-      <div className="absolute inset-x-0 bottom-0 animate-fade-in rounded-t-2xl bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)]">
-        <div className="mx-auto mb-1 mt-1 h-1 w-10 rounded-full bg-slate-200" aria-hidden />
+      <div className="absolute inset-x-0 bottom-0 animate-fade-in rounded-t-2xl bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] dark:bg-slate-900">
+        <div className="mx-auto mb-1 mt-1 h-1 w-10 rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden />
 
         {authenticated && (
           <>
@@ -76,11 +76,11 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
                 {initial}
               </span>
               <span className="min-w-0">
-                {username && <span className="block truncate text-sm font-semibold text-slate-900">@{username}</span>}
-                {me?.email && <span className="block truncate text-[12px] text-slate-500">{me.email}</span>}
+                {username && <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">@{username}</span>}
+                {me?.email && <span className="block truncate text-[12px] text-slate-500 dark:text-slate-400">{me.email}</span>}
               </span>
             </div>
-            <div className="my-1 h-px bg-slate-100" />
+            <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
             <a href={authorHref(username, locale)} className={ITEM}>
               <Newspaper className="h-5 w-5 text-slate-500" />
               {t("blog")}
@@ -105,7 +105,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
           </a>
         )}
 
-        <div className="my-1 h-px bg-slate-100" />
+        <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
         <ThemeToggle className={cn(ITEM, "justify-between")} />
         <button
           type="button"
@@ -136,7 +136,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             </button>
           ))}
 
-        <div className="my-1 h-px bg-slate-100" />
+        <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
         {authenticated ? (
           <button
             type="button"

@@ -17,7 +17,7 @@ export const blogCta = cva(
         primary:
           "bg-accent-600 text-white shadow-cta hover:bg-accent-700",
         secondary:
-          "border border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50",
+          "border border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50",
       },
     },
     defaultVariants: { variant: "primary" },
