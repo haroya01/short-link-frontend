@@ -35,7 +35,9 @@ export async function SeriesFeedCard({
   const seriesUrl = authorHref(series.author.username, locale, `series/${series.slug}`);
 
   return (
-    <section className="group/series" aria-label={series.title}>
+    // `mark-hoverable` replays the kurl mark's line-draw (the "사사삭" loading stroke) whenever the card
+    // is hovered — so resting on a series animates its mark like a quiet "selected" cue.
+    <section className="group/series mark-hoverable" aria-label={series.title}>
       {/* Series eyebrow (kurl mark + "시리즈") where a post card shows its tag, with the subscribe
           toggle on the right (the series equivalent of follow). Then the series name as the card's
           headline — bigger than the members so the series itself reads as the subject. */}
@@ -44,7 +46,7 @@ export async function SeriesFeedCard({
           href={seriesUrl}
           className="focus-ring inline-flex items-center gap-1.5 rounded text-[12px] font-semibold tracking-wide text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
         >
-          <Mark className="h-2.5 w-auto shrink-0" />
+          <Mark className="h-2.5 w-auto shrink-0" animated />
           {t("seriesEyebrow")}
         </a>
         <SeriesSubscribeButton seriesId={series.id} />
