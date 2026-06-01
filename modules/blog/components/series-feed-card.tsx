@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Mark } from "@/components/common/logo";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 
@@ -35,15 +36,19 @@ export async function SeriesFeedCard({
 
   return (
     <section className="group/series" aria-label={series.title}>
-      {/* Series eyebrow (kurl mark + "시리즈") where a post card shows its tag, then the series name as
-          the card's headline — bigger than the members so the series itself reads as the subject. */}
-      <a
-        href={seriesUrl}
-        className="focus-ring inline-flex items-center gap-1.5 rounded text-[12px] font-semibold tracking-wide text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
-      >
-        <Mark className="h-2.5 w-auto shrink-0" />
-        {t("seriesEyebrow")}
-      </a>
+      {/* Series eyebrow (kurl mark + "시리즈") where a post card shows its tag, with the subscribe
+          toggle on the right (the series equivalent of follow). Then the series name as the card's
+          headline — bigger than the members so the series itself reads as the subject. */}
+      <div className="flex items-center justify-between gap-3">
+        <a
+          href={seriesUrl}
+          className="focus-ring inline-flex items-center gap-1.5 rounded text-[12px] font-semibold tracking-wide text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+        >
+          <Mark className="h-2.5 w-auto shrink-0" />
+          {t("seriesEyebrow")}
+        </a>
+        <SeriesSubscribeButton seriesId={series.id} />
+      </div>
       <a href={seriesUrl} className="focus-ring group/title mt-1 block rounded">
         <h3 className="line-clamp-2 text-[20px] font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover/title:text-accent-700 dark:text-slate-100 dark:group-hover/title:text-accent-400">
           {series.title}
