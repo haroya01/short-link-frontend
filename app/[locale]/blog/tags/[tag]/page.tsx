@@ -70,8 +70,7 @@ export default async function TagFeedPage({
       {/* Topic heading inside the centered reading column — aligns with the tabs + feed below,
           instead of a full-width masthead band that floated left of the centered content. */}
       <div className="mx-auto mt-6 max-w-2xl">
-        <p className="text-[12px] font-medium text-slate-400 dark:text-slate-500">{t("topics")}</p>
-        <h1 className="mt-1 text-[22px] font-bold tracking-tight text-slate-900 dark:text-slate-100">{decoded}</h1>
+        <h1 className="text-[22px] font-bold tracking-tight text-slate-900 dark:text-slate-100">{decoded}</h1>
         <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{t("tagFeedSubtitle")}</p>
         <TagFollowControls tag={decoded} />
       </div>
