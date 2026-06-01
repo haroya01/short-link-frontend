@@ -11,6 +11,7 @@ import { useApiErrorMessage } from "@/lib/error-messages";
 import { useToast } from "@/components/ui/toast";
 import { ProfileStatsDashboard } from "@/modules/profile/components/stats-dashboard";
 import type { ProfileStats } from "@/types";
+import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
 
 /**
  * Owner's profile visit stats — chart dashboard fed from {@code GET /api/v1/users/me/profile/stats}.
@@ -60,8 +61,9 @@ export default function ProfileStatsPage() {
   }
   if (loading || !data) {
     return (
-      <div className="container max-w-3xl py-16 text-center">
-        <Loader2 className="mx-auto h-6 w-6 animate-spin text-slate-400" />
+      <div className="container max-w-5xl space-y-6 py-12" aria-busy>
+        <SkeletonStatCards />
+        <SkeletonRows count={6} />
       </div>
     );
   }

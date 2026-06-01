@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { FileText, PenSquare } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
+import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 const RELATIVE_UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
   ["year", 31_536_000_000],
@@ -77,7 +78,7 @@ export default function WriteIndexPage() {
       </header>
 
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
-      {loading && <p className="text-slate-400">{t("listLoading")}</p>}
+      {loading && <SkeletonRows count={6} thumb />}
       {!loading && posts.length === 0 && <p className="text-slate-400">{t("noPosts")}</p>}
       {!loading && posts.length > 0 && (
         <ul className="space-y-1">

@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { getPostAnalytics, type PostAnalytics } from "@/modules/blog/api/analytics";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
+import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
 
 export default function PostAnalyticsPage() {
   const t = useTranslations("blogWorkspace");
@@ -43,7 +44,12 @@ export default function PostAnalyticsPage() {
       </a>
 
       {loading && !data ? (
-        <p className="mt-6 text-sm text-slate-400">{t("loading")}</p>
+        <div className="mt-6">
+          <SkeletonStatCards />
+          <div className="mt-8">
+            <SkeletonRows count={4} />
+          </div>
+        </div>
       ) : !data ? (
         <p className="mt-6 text-sm text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
