@@ -412,18 +412,18 @@ h1, h2, h3, p {
     margin-bottom: 0;
   }
   .prose-post p {
-    @apply my-5 text-[1.0625rem] leading-[1.85] text-slate-700;
+    @apply my-5 text-[1.0625rem] leading-[1.85] text-slate-700 dark:text-slate-300;
   }
   /* scroll-margin keeps a TOC jump target clear of the sticky header instead of tucking it
      underneath. Applies to the heading anchors PostToc links to. */
   .prose-post h2 {
-    @apply mb-3 mt-12 scroll-mt-24 text-[1.5rem] font-bold leading-snug tracking-tight text-slate-900;
+    @apply mb-3 mt-12 scroll-mt-24 text-[1.5rem] font-bold leading-snug tracking-tight text-slate-900 dark:text-slate-100;
   }
   .prose-post h3 {
-    @apply mb-2 mt-10 scroll-mt-24 text-[1.25rem] font-semibold leading-snug tracking-tight text-slate-900;
+    @apply mb-2 mt-10 scroll-mt-24 text-[1.25rem] font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100;
   }
   .prose-post h4 {
-    @apply mb-2 mt-8 scroll-mt-24 text-[1.0625rem] font-semibold leading-snug text-slate-900;
+    @apply mb-2 mt-8 scroll-mt-24 text-[1.0625rem] font-semibold leading-snug text-slate-900 dark:text-slate-100;
   }
   .prose-post ul {
     @apply my-5 list-disc space-y-2 pl-6;
@@ -432,7 +432,7 @@ h1, h2, h3, p {
     @apply my-5 list-decimal space-y-2 pl-6;
   }
   .prose-post li {
-    @apply text-[1.0625rem] leading-[1.8] text-slate-700;
+    @apply text-[1.0625rem] leading-[1.8] text-slate-700 dark:text-slate-300;
   }
   .prose-post li::marker {
     @apply text-accent-500;
@@ -441,16 +441,16 @@ h1, h2, h3, p {
     @apply my-0;
   }
   .prose-post strong {
-    @apply font-semibold text-slate-900;
+    @apply font-semibold text-slate-900 dark:text-slate-100;
   }
   .prose-post em {
     @apply italic;
   }
   .prose-post a {
-    @apply font-medium text-accent-700 underline decoration-accent-300 underline-offset-2 transition-colors hover:decoration-accent-600;
+    @apply font-medium text-accent-700 underline decoration-accent-300 underline-offset-2 transition-colors hover:decoration-accent-600 dark:text-accent-400 dark:decoration-accent-600 dark:hover:decoration-accent-400;
   }
   .prose-post code {
-    @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.875em] text-accent-800;
+    @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.875em] text-accent-800 dark:bg-slate-800 dark:text-accent-300;
   }
   .prose-post pre {
     @apply my-6 overflow-x-auto rounded-xl bg-slate-900 p-4 text-[0.875rem] leading-relaxed text-slate-100;
@@ -459,7 +459,7 @@ h1, h2, h3, p {
     @apply bg-transparent p-0 text-slate-100;
   }
   .prose-post blockquote {
-    @apply my-7 border-l-[3px] border-accent-400 pl-5 text-[1.125rem] italic leading-relaxed text-slate-600;
+    @apply my-7 border-l-[3px] border-accent-400 pl-5 text-[1.125rem] italic leading-relaxed text-slate-600 dark:text-slate-400;
   }
   .prose-post figure {
     @apply my-8;
@@ -479,10 +479,10 @@ h1, h2, h3, p {
     @apply my-7 w-full border-collapse text-[0.9375rem] leading-snug;
   }
   .prose-post thead th {
-    @apply border-b-2 border-slate-200 px-3 py-2 text-left font-semibold text-slate-900;
+    @apply border-b-2 border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100;
   }
   .prose-post tbody td {
-    @apply border-b border-slate-100 px-3 py-2 align-top text-slate-700;
+    @apply border-b border-slate-100 px-3 py-2 align-top text-slate-700 dark:border-slate-800 dark:text-slate-300;
   }
   .prose-post tbody tr:last-child td {
     @apply border-b-0;

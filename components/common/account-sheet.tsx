@@ -9,6 +9,7 @@ import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { blogHref, currentProduct, linksHref, type Product } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const ITEM =
@@ -105,6 +106,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
         )}
 
         <div className="my-1 h-px bg-slate-100" />
+        <ThemeToggle className={cn(ITEM, "justify-between")} />
         <button
           type="button"
           aria-expanded={langOpen}

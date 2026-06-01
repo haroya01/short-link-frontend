@@ -32,7 +32,7 @@ export function AppHeader({
   const { open, toggle } = useSidebarState();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
       <div className="container flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           {showMenu && (
@@ -65,7 +65,7 @@ export function AppHeader({
           {/* Signed-in users switch language inside the account menu; keep the standalone control for
               signed-out visitors who have no account menu. */}
           {!authenticated && <LanguageSwitcher />}
-          <span aria-hidden className="h-5 w-px bg-slate-200" />
+          <span aria-hidden className="h-5 w-px bg-slate-200 dark:bg-slate-700" />
           {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row —
               a standard, expected home for the primary action. Mobile uses the bottom tab bar. */}
           {authenticated && (
