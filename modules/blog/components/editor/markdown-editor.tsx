@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import "tui-color-picker/dist/tui-color-picker.css";
 import "@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css";
+// Prism token theme for in-editor code highlighting (matches the feature; the published reader uses
+// highlight.js via rehype, so palettes differ slightly but both colour by language).
+import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
 import { highlightPlugin } from "@/modules/blog/components/editor/highlight-plugin";
 import {
   FloatingToolbar,
@@ -54,7 +57,11 @@ export function MarkdownEditor({
     void Promise.all([
       import("@toast-ui/editor"),
       import("@toast-ui/editor-plugin-color-syntax"),
-    ]).then(([{ default: Editor }, { default: colorSyntax }]) => {
+      // The `-all` bundle ships Prism + every language with deps resolved, so ``` ```ts ```, ```python```
+      // etc. colour correctly with no per-language wiring. It's only pulled into the (lazy, authed-only)
+      // editor chunk, so its size never touches the public reader.
+      import("@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js"),
+    ]).then(([{ default: Editor }, { default: colorSyntax }, { default: codeSyntaxHighlight }]) => {
       if (cancelled || !hostRef.current) return;
       editor = new Editor({
         el: hostRef.current,
@@ -64,7 +71,7 @@ export function MarkdownEditor({
         previewStyle: "tab",
         usageStatistics: false,
         autofocus: false,
-        plugins: [colorSyntax, highlightPlugin],
+        plugins: [colorSyntax, highlightPlugin, codeSyntaxHighlight],
         hooks: {
           addImageBlobHook: async (
             blob: Blob,
