@@ -72,7 +72,9 @@
     "seriesSubscribe": "구독",
     "seriesSubscribed": "구독중",
     "seriesByAuthor": "이 시리즈의 작가",
-    "seriesAllByAuthor": "모든 시리즈 보기"
+    "seriesAllByAuthor": "모든 시리즈 보기",
+    "seriesFilterAll": "전체",
+    "seriesFilterEmpty": "#{tag} 태그가 달린 글이 없어요"
   },
   "blogWorkspace": {
     "overviewTitle": "개요",

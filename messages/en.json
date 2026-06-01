@@ -72,7 +72,9 @@
     "seriesSubscribe": "Subscribe",
     "seriesSubscribed": "Subscribed",
     "seriesByAuthor": "Series author",
-    "seriesAllByAuthor": "View all series"
+    "seriesAllByAuthor": "View all series",
+    "seriesFilterAll": "All",
+    "seriesFilterEmpty": "No posts tagged #{tag}"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",
