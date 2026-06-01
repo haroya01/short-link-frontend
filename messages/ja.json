@@ -855,7 +855,14 @@
       "disabled": "無効",
       "enable": "有効化",
       "disable": "無効化",
-      "delete": "削除"
+      "delete": "削除",
+      "blockedTitle": "国別ブロック",
+      "blockedDesc": "選択した国からの訪問者はこのリンクを開けません。",
+      "blockedAddHint": "ブロックする国を選択",
+      "blockedEmpty": "ブロック中の国はありません。",
+      "blockedLoading": "読み込み中…",
+      "blockedRemove": "ブロック解除",
+      "blockedFailed": "国別ブロックの更新に失敗しました。"
     },
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "統計はリンクの所有者のみ表示できます。",

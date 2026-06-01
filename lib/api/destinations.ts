@@ -46,3 +46,21 @@ export async function updateDestination(
 export async function deleteDestination(shortCode: string, id: number): Promise<void> {
   await request(`/api/v1/links/${shortCode}/destinations/${id}`, { method: "DELETE" });
 }
+
+/** Comma-separated ISO country codes currently blocked for this link (empty when none). */
+export async function getBlockedCountries(shortCode: string): Promise<string> {
+  const res = await request<{ codes: string | null }>(
+    `/api/v1/links/${shortCode}/blocked-countries`,
+    { method: "GET" },
+  );
+  return res.codes ?? "";
+}
+
+/** Replace the blocked-country set with `codes` (CSV). Returns the normalized stored value. */
+export async function setBlockedCountries(shortCode: string, codes: string): Promise<string> {
+  const res = await request<{ codes: string | null }>(
+    `/api/v1/links/${shortCode}/blocked-countries`,
+    { method: "PUT", body: { codes } },
+  );
+  return res.codes ?? "";
+}

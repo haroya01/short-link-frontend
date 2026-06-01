@@ -855,7 +855,14 @@
       "disabled": "Disabled",
       "enable": "Enable",
       "disable": "Disable",
-      "delete": "Delete"
+      "delete": "Delete",
+      "blockedTitle": "Country blocking",
+      "blockedDesc": "Visitors from the selected countries can't open this link.",
+      "blockedAddHint": "Pick a country to block",
+      "blockedEmpty": "No countries blocked.",
+      "blockedLoading": "Loading…",
+      "blockedRemove": "Unblock",
+      "blockedFailed": "Couldn't update country blocking."
     },
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "Stats are visible to the link owner only.",
