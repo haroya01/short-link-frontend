@@ -132,13 +132,12 @@ h1, h2, h3, p {
   }
 
   /*
-   * Section divider — replaces the recurring `border-t border-slate-100`. Hairline rule with a
-   * single accent-green dot in the centre, kept off the visual center by a deliberate 4px shift
-   * so the eye reads it as an editorial mark, not a UI artifact. Width is generous (260px) on
-   * desktop so it draws past the headline column and anchors the section break.
+   * Section divider — replaces the recurring `border-t border-slate-100`. A hairline rule that fades
+   * in from both ends so the section break reads softer than a hard full-width border. Light mode uses
+   * a dark slate tint; dark mode a light slate tint, so the line stays visible on a near-black page
+   * instead of vanishing (the old dark-slate gradient was invisible there).
    */
   .section-divider {
-    position: relative;
     height: 1px;
     background: linear-gradient(
       to right,
@@ -148,17 +147,14 @@ h1, h2, h3, p {
       transparent 100%
     );
   }
-  .section-divider::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 6px;
-    height: 6px;
-    transform: translate(-50%, -50%);
-    border-radius: 9999px;
-    background: theme(colors.accent.500);
-    box-shadow: 0 0 0 3px white;
+  .dark .section-divider {
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(148, 163, 184, 0.22) 18%,
+      rgba(148, 163, 184, 0.22) 82%,
+      transparent 100%
+    );
   }
 
   /*
