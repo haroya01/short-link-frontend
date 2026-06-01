@@ -74,12 +74,24 @@ export function SeriesReadingShell({
       .map((tag) => [tag, counts.get(tag) ?? 0] as const);
   }, [posts]);
 
-  // Month archive in chronological order (oldest → newest), made clickable as a filter. Ascending so
-  // the year reads as a heading for the months that follow it (see the year-omission in the render).
+  // Month archive grouped by year (chronological): each year is a quiet header line, its months listed
+  // below as the clickable filters. Grouping (vs. a year prefix on every row) keeps the months in one
+  // clean column and reads far better than "2026년 · 5월 · 3" strung across one row.
   const archive = useMemo(() => {
     const counts = new Map<string, number>();
     for (const p of posts) counts.set(monthKey(p.publishedAt), (counts.get(monthKey(p.publishedAt)) ?? 0) + 1);
-    return [...counts.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1));
+    const flat = [...counts.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1));
+    const groups: { year: string; sample: string; items: { key: string; count: number }[] }[] = [];
+    for (const [key, count] of flat) {
+      const year = key.slice(0, 4);
+      let g = groups[groups.length - 1];
+      if (!g || g.year !== year) {
+        g = { year, sample: key, items: [] };
+        groups.push(g);
+      }
+      g.items.push({ key, count });
+    }
+    return groups;
   }, [posts]);
 
   // Pin the real episode number before filtering, so a narrowed view keeps the series positions.
@@ -169,35 +181,38 @@ export function SeriesReadingShell({
       {archive.length > 0 && (
         <section>
           <RailHeading className="mb-3">{t("railArchive")}</RailHeading>
-          <ul className="flex flex-col gap-0.5 text-[13px]">
-            {archive.map(([key, count], idx) => {
-              const active = isActive({ kind: "month", value: key });
-              // Year carried only when it differs from the previous (older) row above it.
-              const year = key.slice(0, 4);
-              const showYear = idx === 0 || archive[idx - 1][0].slice(0, 4) !== year;
-              return (
-                <li key={key}>
-                  <button
-                    type="button"
-                    onClick={() => toggle({ kind: "month", value: key })}
-                    aria-pressed={active}
-                    className={cn(
-                      "focus-ring flex w-full items-baseline gap-2 rounded-lg px-2 py-1.5 transition-colors",
-                      active
-                        ? "bg-accent-50 font-medium text-accent-700 dark:bg-accent-500/15 dark:text-accent-300"
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800/50",
-                    )}
-                  >
-                    {/* Fixed-width year slot (printed only when the year changes) → months align below it. */}
-                    <span className="w-14 shrink-0 text-slate-400 dark:text-slate-500">
-                      {showYear ? yearStr(key) : ""}
-                    </span>
-                    <span className="flex-1">{monthStr(key)}</span>
-                    <span className={active ? "" : "text-slate-400"}>{count}</span>
-                  </button>
-                </li>
-              );
-            })}
+          <ul className="flex flex-col gap-3">
+            {archive.map((group) => (
+              <li key={group.year}>
+                {/* Year header line — quiet, non-interactive; its months are the filters below it. */}
+                <p className="mb-1 px-2 text-[12px] font-semibold text-slate-400 dark:text-slate-500">
+                  {yearStr(group.sample)}
+                </p>
+                <ul className="flex flex-col gap-0.5 text-[13px]">
+                  {group.items.map(({ key, count }) => {
+                    const active = isActive({ kind: "month", value: key });
+                    return (
+                      <li key={key}>
+                        <button
+                          type="button"
+                          onClick={() => toggle({ kind: "month", value: key })}
+                          aria-pressed={active}
+                          className={cn(
+                            "focus-ring flex w-full items-baseline justify-between gap-3 rounded-lg px-2 py-1.5 transition-colors",
+                            active
+                              ? "bg-accent-50 font-medium text-accent-700 dark:bg-accent-500/15 dark:text-accent-300"
+                              : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800/50",
+                          )}
+                        >
+                          <span>{monthStr(key)}</span>
+                          <span className={active ? "" : "text-slate-400"}>{count}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </li>
+            ))}
           </ul>
         </section>
       )}
