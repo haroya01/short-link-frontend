@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
+import { linksHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "kurl:cookie-consent:v1";
@@ -11,6 +12,7 @@ const STORAGE_KEY = "kurl:cookie-consent:v1";
  *  The links product leaves it off so the banner stays light even when `.dark` is set globally. */
 export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
   const t = useTranslations("cookieConsent");
+  const locale = useLocale();
   const pathname = usePathname();
   const [show, setShow] = useState(false);
 
@@ -76,15 +78,15 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
           {t("message")}
         </p>
         <div className="flex shrink-0 items-center gap-2">
-          <Link
-            href="/privacy"
+          <a
+            href={linksHref(`/${locale}/privacy`)}
             className={cn(
               "hidden text-xs text-slate-500 underline hover:text-slate-700 sm:inline",
               darkAware && "dark:text-slate-400 dark:hover:text-slate-200",
             )}
           >
             {t("learnMore")}
-          </Link>
+          </a>
           <button
             type="button"
             onClick={accept}
