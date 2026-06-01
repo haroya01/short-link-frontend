@@ -1212,16 +1212,3 @@ body[data-cookie-consent="visible"] {
 .tiptap .selectedCell {
   background: rgba(52, 211, 153, 0.12);
 }
-/* Highlight mark (편집 + 발행 모두) */
-.tiptap mark,
-.prose-post mark {
-  background: #fef08a;
-  color: inherit;
-  padding: 0 0.12em;
-  border-radius: 0.2em;
-}
-.dark .tiptap mark,
-.dark .prose-post mark {
-  background: #854d0e;
-  color: #fef9c3;
-}

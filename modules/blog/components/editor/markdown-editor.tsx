@@ -5,7 +5,6 @@ import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
-import Highlight from "@tiptap/extension-highlight";
 import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableHeader } from "@tiptap/extension-table-header";
@@ -16,7 +15,6 @@ import {
   Code2,
   Heading2,
   Heading3,
-  Highlighter,
   Image as ImageIcon,
   Italic,
   Link as LinkIcon,
@@ -85,15 +83,13 @@ export function MarkdownEditor({
       }),
       CodeMirrorBlock,
       Image.configure({ inline: false }),
-      Highlight,
       Table.configure({ resizable: false }),
       TableRow,
       TableHeader,
       TableCell,
       Placeholder.configure({ placeholder: "" }),
-      // html:true so the Highlight mark round-trips as <mark> (no markdown equivalent); the public
-      // reader safely sanitises <mark>/<span style> (see modules/blog/components/markdown.tsx).
-      Markdown.configure({ html: true, breaks: true, transformPastedText: true }),
+      // html:false — standard markdown only (no raw-HTML passthrough); GFM tables round-trip natively.
+      Markdown.configure({ html: false, breaks: true, transformPastedText: true }),
     ],
     content: initialValue || "",
     editorProps: {
@@ -194,7 +190,6 @@ function Toolbar({
       <button type="button" aria-label="Bold" className={btn(editor.isActive("bold"))} onClick={() => editor.chain().focus().toggleBold().run()}><Bold className="h-4 w-4" /></button>
       <button type="button" aria-label="Italic" className={btn(editor.isActive("italic"))} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic className="h-4 w-4" /></button>
       <button type="button" aria-label="Strike" className={btn(editor.isActive("strike"))} onClick={() => editor.chain().focus().toggleStrike().run()}><Strikethrough className="h-4 w-4" /></button>
-      <button type="button" aria-label="Highlight" className={btn(editor.isActive("highlight"))} onClick={() => editor.chain().focus().toggleHighlight().run()}><Highlighter className="h-4 w-4" /></button>
       <button type="button" aria-label="Link" className={btn(editor.isActive("link"))} onClick={setLink}><LinkIcon className="h-4 w-4" /></button>
       <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
       <button type="button" aria-label="Bullet list" className={btn(editor.isActive("bulletList"))} onClick={() => editor.chain().focus().toggleBulletList().run()}><List className="h-4 w-4" /></button>
