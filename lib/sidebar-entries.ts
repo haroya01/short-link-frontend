@@ -22,6 +22,7 @@ export function buildBlogSections(
         { href: "/series", label: tBlog("series") },
         { href: "/analytics", label: tBlog("analytics") },
         { href: "/readers", label: tBlog("readers") },
+        { href: "/leads", label: tBlog("leads") },
         { href: "/links", label: tBlog("links") },
         { href: "/curation", label: tBlog("curation") },
       ],

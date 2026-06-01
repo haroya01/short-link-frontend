@@ -129,7 +129,14 @@
     "curationReadingList": "Reading list",
     "curationReadingListHint": "Posts you saved to read later.",
     "curationReadingListEmpty": "No saved posts yet.",
-    "curationRemoveBookmark": "Remove from list"
+    "curationRemoveBookmark": "Remove from list",
+    "settingsTitle": "Settings",
+    "settingsSubtitle": "Account and display settings.",
+    "settingsAccount": "Account",
+    "settingsEditProfile": "Edit profile",
+    "settingsAccountSettings": "Full account settings",
+    "settingsViewBlog": "View my blog",
+    "settingsDisplay": "Display"
   },
   "postEditor": {
     "backToList": "Posts",
@@ -329,6 +336,7 @@
       "series": "Series",
       "analytics": "Analytics",
       "readers": "Readers",
+      "leads": "Leads",
       "links": "Links in posts",
       "curation": "Curation"
     },

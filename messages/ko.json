@@ -129,7 +129,14 @@
     "curationReadingList": "읽기 리스트",
     "curationReadingListHint": "나중에 읽으려고 담아둔 글.",
     "curationReadingListEmpty": "담아둔 글이 없어요.",
-    "curationRemoveBookmark": "리스트에서 빼기"
+    "curationRemoveBookmark": "리스트에서 빼기",
+    "settingsTitle": "설정",
+    "settingsSubtitle": "계정과 화면 설정.",
+    "settingsAccount": "계정",
+    "settingsEditProfile": "프로필 편집",
+    "settingsAccountSettings": "전체 계정 설정",
+    "settingsViewBlog": "내 블로그 보기",
+    "settingsDisplay": "화면"
   },
   "postEditor": {
     "backToList": "글 목록",
@@ -329,6 +336,7 @@
       "series": "시리즈",
       "analytics": "분석",
       "readers": "독자",
+      "leads": "리드",
       "links": "글 안 링크",
       "curation": "큐레이션"
     },

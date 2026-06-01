@@ -28,6 +28,7 @@ const WORKSPACE_PATHS = [
   "/links",
   "/curation",
   "/leads",
+  "/settings",
 ];
 
 function stripLocale(pathname: string): string {
