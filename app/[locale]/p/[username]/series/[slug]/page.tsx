@@ -149,7 +149,7 @@ export default async function PublicSeriesPage({
             return (
               <li
                 key={p.slug}
-                className="profile-fade group/row relative"
+                className="profile-fade group group/row relative"
                 style={{ ["--idx" as string]: i } as React.CSSProperties}
               >
                 <a
