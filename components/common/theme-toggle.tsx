@@ -19,13 +19,29 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   function toggle() {
     const next = !dark;
-    setDark(next);
-    document.documentElement.classList.toggle("dark", next);
-    try {
-      localStorage.setItem("theme", next ? "dark" : "light");
-    } catch {
-      // private mode / storage disabled — toggle still applies for the session.
+    const apply = () => {
+      setDark(next);
+      document.documentElement.classList.toggle("dark", next);
+      try {
+        localStorage.setItem("theme", next ? "dark" : "light");
+      } catch {
+        // private mode / storage disabled — toggle still applies for the session.
+      }
+    };
+
+    // Sweep the new theme down over the old via the View Transitions API (CSS in globals.css drives
+    // the top-to-bottom wipe). Unsupported browsers / reduced-motion just flip instantly.
+    const doc = document as Document & {
+      startViewTransition?: (cb: () => void) => void;
+    };
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!doc.startViewTransition || reduce) {
+      apply();
+      return;
     }
+    doc.startViewTransition(apply);
   }
 
   return (
