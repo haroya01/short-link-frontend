@@ -194,6 +194,11 @@ class CodeMirrorNodeView {
           const tr = this.view.state.tr.insert(after, block);
           tr.setSelection(Selection.near(tr.doc.resolve(after), 1));
           this.view.dispatch(tr.scrollIntoView());
+          // The nested CodeMirror contenteditable holds browser focus; blur it first so PM can move
+          // focus/selection out to the new paragraph (otherwise view.focus() no-ops and the caret
+          // stays in the code block). hasFocus is now false, so forwardUpdate won't clobber the
+          // selection we just set.
+          this.cm.contentDOM.blur();
           this.view.focus();
           return true;
         },
