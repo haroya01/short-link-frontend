@@ -9,6 +9,7 @@ import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { blogHref, currentProduct, linksHref, type Product } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -68,6 +69,13 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
       />
       <div className="absolute inset-x-0 bottom-0 animate-fade-in rounded-t-2xl bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] dark:bg-slate-900">
         <div className="mx-auto mb-1 mt-1 h-1 w-10 rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden />
+
+        {/* The blog brand lives here on mobile (it's dropped from the slim top bar so the screen leads
+            with the author/post). This anchors the sheet as "where blog.kurl + the product switch are." */}
+        <a href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable flex items-center px-3 py-2">
+          <Logo variant="blog" />
+        </a>
+        <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
 
         {authenticated && (
           <>
