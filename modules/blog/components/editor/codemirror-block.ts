@@ -1,6 +1,5 @@
 import CodeBlock from "@tiptap/extension-code-block";
 import { Selection, TextSelection } from "@tiptap/pm/state";
-import { exitCode } from "@tiptap/pm/commands";
 import { redo, undo } from "@tiptap/pm/history";
 import type { Node as PMNode } from "@tiptap/pm/model";
 import type { EditorView as PMEditorView } from "@tiptap/pm/view";
@@ -182,9 +181,19 @@ class CodeMirrorNodeView {
       { key: "Mod-y", run: runPM(redo) },
       { key: "Mod-Shift-z", run: runPM(redo) },
       {
+        // Exit the block: insert a paragraph right after the code block and move there. Done
+        // directly (not via exitCode, which gates on node.spec.code) so it always fires.
         key: "Mod-Enter",
         run: () => {
-          if (!exitCode(this.view.state, this.view.dispatch)) return false;
+          const pos = this.getPos();
+          if (pos == null) return false;
+          const para = this.view.state.schema.nodes.paragraph;
+          const block = para?.createAndFill();
+          if (!block) return false;
+          const after = pos + this.node.nodeSize;
+          const tr = this.view.state.tr.insert(after, block);
+          tr.setSelection(Selection.near(tr.doc.resolve(after), 1));
+          this.view.dispatch(tr.scrollIntoView());
           this.view.focus();
           return true;
         },
