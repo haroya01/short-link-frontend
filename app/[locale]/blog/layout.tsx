@@ -14,6 +14,7 @@ import { Footer } from "@/components/common/footer";
 import { MobileSidebar, Sidebar } from "@/components/common/sidebar";
 import { SidebarStateProvider } from "@/components/common/sidebar-state";
 import { buildBlogSections } from "@/lib/sidebar-entries";
+import { WorkspaceSkeleton } from "@/modules/blog/components/skeleton";
 
 // Author workspace paths get the sidebar. Everything else on blog.kurl.me — the public feed at
 // "/" and any other public page — gets the chrome-light header with no sidebar, so anyone can
@@ -110,9 +111,18 @@ function WorkspaceBody({ children }: { children: React.ReactNode }) {
     }
   }, [ready, authenticated]);
 
-  // Hold layout until auth resolves (and while the redirect above is in flight) so we never flash
-  // the sidebar before deciding.
-  if (!ready || !authenticated) return <div className="flex-1" />;
+  // Hold the sidebar until auth resolves (and while the redirect above is in flight) so we never
+  // flash it before deciding — but show a content skeleton instead of a blank pane, so a workspace
+  // navigation reads as "loading this page", never an empty white flash.
+  if (!ready || !authenticated) {
+    return (
+      <div className="flex flex-1" aria-busy>
+        <main className="min-w-0 flex-1">
+          <WorkspaceSkeleton />
+        </main>
+      </div>
+    );
+  }
 
   const sections = buildBlogSections(tBlog, tCommon, { isAdmin });
   return (

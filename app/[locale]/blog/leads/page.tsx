@@ -16,6 +16,7 @@ import {
 import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import type { EmailLead } from "@/types";
+import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 const PAGE_SIZE = 50;
 
@@ -140,7 +141,9 @@ export default function ProfileLeadsPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-slate-400">{t("loading")}</p>
+        <div className="rounded-2xl border border-slate-200 p-2 dark:border-slate-800">
+          <SkeletonRows count={8} />
+        </div>
       ) : leads.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 px-4 py-12 text-center">
           <p className="text-sm font-medium text-slate-700">{t("emptyTitle")}</p>

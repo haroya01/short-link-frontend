@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { PostRow } from "@/modules/blog/components/workspace/post-row";
+import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 export default function BlogPostsPage() {
   const t = useTranslations("blogWorkspace");
@@ -32,7 +33,7 @@ export default function BlogPostsPage() {
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("postsTitle")}</h1>
       <div className="mt-6">
         {loading ? (
-          <p className="text-sm text-slate-400">{t("loading")}</p>
+          <SkeletonRows count={6} thumb />
         ) : published.length === 0 ? (
           <p className="text-sm text-slate-400">{t("postsEmpty")}</p>
         ) : (

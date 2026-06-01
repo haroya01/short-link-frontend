@@ -10,6 +10,7 @@ import {
 } from "@/modules/blog/api/analytics";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
+import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
 
 export default function BlogAnalyticsPage() {
   const t = useTranslations("blogWorkspace");
@@ -40,7 +41,12 @@ export default function BlogAnalyticsPage() {
       </div>
 
       {loading && !data ? (
-        <p className="mt-8 text-sm text-slate-400">{t("loading")}</p>
+        <div className="mt-6">
+          <SkeletonStatCards />
+          <div className="mt-8">
+            <SkeletonRows count={5} />
+          </div>
+        </div>
       ) : !data ? (
         <p className="mt-8 text-sm text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
