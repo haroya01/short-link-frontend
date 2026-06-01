@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, MapPin } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 import { Markdown } from "@/modules/blog/components/markdown";
 import { KurlLinkCard } from "@/modules/blog/components/kurl-link-card";
 import { PostCode } from "@/modules/blog/components/post-code";
@@ -241,6 +242,41 @@ function EmbedBlock({ content, postId }: { content: string | null; postId?: numb
       </div>
     );
   }
+  if (plan.kind === "map") {
+    const img = staticMapUrl({ lat: plan.lat, lng: plan.lng, size: "640x360" });
+    return (
+      <a
+        href={plan.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="my-8 block overflow-hidden rounded-2xl border border-slate-200 no-underline transition-colors hover:border-accent-300 dark:border-slate-800"
+      >
+        {img ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={img}
+            alt={plan.label ?? "Google Maps"}
+            className="aspect-[16/9] w-full bg-slate-100 object-cover dark:bg-slate-800"
+            loading="lazy"
+          />
+        ) : (
+          <div className="grid aspect-[16/9] w-full place-items-center bg-slate-100 text-slate-400 dark:bg-slate-800">
+            <MapPin className="h-8 w-8" />
+          </div>
+        )}
+        <span className="flex items-center justify-between gap-3 px-5 py-3">
+          <span className="flex min-w-0 items-center gap-2">
+            <MapPin className="h-4 w-4 shrink-0 text-accent-600" />
+            <span className="min-w-0 truncate text-sm font-medium text-slate-900 dark:text-slate-100">
+              {plan.label ?? "Google Maps"}
+            </span>
+          </span>
+          <ArrowUpRight className="h-4 w-4 shrink-0 text-accent-600" />
+        </span>
+      </a>
+    );
+  }
+
   let host = plan.url;
   try {
     host = new URL(plan.url).host.replace(/^www\./, "");

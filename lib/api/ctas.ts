@@ -25,10 +25,6 @@ export function listMyCtas(): Promise<CtaView[]> {
   return request<CtaView[]>("/api/v1/ctas", { method: "GET" });
 }
 
-export function getCta(id: number): Promise<CtaView> {
-  return request<CtaView>(`/api/v1/ctas/${id}`, { method: "GET" });
-}
-
 export function createCta(payload: {
   label: string;
   url: string;

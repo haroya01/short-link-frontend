@@ -13,6 +13,7 @@ import {
   List,
   ListOrdered,
   type LucideIcon,
+  MapPin,
   Minus,
   Quote,
   RectangleHorizontal,
@@ -37,7 +38,10 @@ type SlashItem = {
   run: (editor: Editor) => void;
 };
 
-function buildItems(pickImage: (opts?: ImagePickOptions) => void): SlashItem[] {
+function buildItems(
+  pickImage: (opts?: ImagePickOptions) => void,
+  onPickPlace: () => void,
+): SlashItem[] {
   return [
     { key: "h1", labelKey: "heading1", icon: Heading1, keywords: ["h1", "heading", "title", "제목", "見出し"], run: (e) => e.chain().focus().toggleHeading({ level: 1 }).run() },
     { key: "h2", labelKey: "heading2", icon: Heading2, keywords: ["h2", "heading", "subtitle", "제목"], run: (e) => e.chain().focus().toggleHeading({ level: 2 }).run() },
@@ -51,6 +55,7 @@ function buildItems(pickImage: (opts?: ImagePickOptions) => void): SlashItem[] {
     { key: "imageWide", labelKey: "imageWide", icon: RectangleHorizontal, keywords: ["wide", "image", "cover", "hero", "banner", "와이드", "넓은", "배너", "ワイド"], run: () => pickImage({ width: "wide" }) },
     { key: "imagePair", labelKey: "imagePair", icon: Columns2, keywords: ["pair", "two", "gallery", "side", "2", "나란히", "두장", "갤러리", "並べ"], run: () => pickImage({ width: "half", multiple: true }) },
     { key: "embed", labelKey: "embed", icon: Video, keywords: ["video", "embed", "youtube", "vimeo", "동영상", "비디오", "임베드", "動画"], run: (e) => { const url = window.prompt("URL (YouTube / Vimeo)"); if (url && url.trim()) e.chain().focus().insertContent(url.trim()).run(); } },
+    { key: "place", labelKey: "place", icon: MapPin, keywords: ["map", "place", "location", "지도", "장소", "위치", "地図", "場所"], run: () => onPickPlace() },
     { key: "hr", labelKey: "divider", icon: Minus, keywords: ["divider", "hr", "rule", "line", "구분선", "区切り"], run: (e) => e.chain().focus().setHorizontalRule().run() },
   ];
 }
@@ -60,17 +65,22 @@ type MenuState = { query: string; top: number; left: number } | null;
 export function SlashMenu({
   editor,
   onPickImage,
+  onPickPlace,
 }: {
   editor: Editor;
   onPickImage: (opts?: ImagePickOptions) => void;
+  onPickPlace: () => void;
 }) {
   const t = useTranslations("postEditor.slash");
   const [menu, setMenu] = useState<MenuState>(null);
   const [active, setActive] = useState(0);
 
   const filtered = useMemo(
-    () => (menu ? buildItems(onPickImage).filter((i) => keywordMatch(i.keywords, menu.query)) : []),
-    [menu, onPickImage],
+    () =>
+      menu
+        ? buildItems(onPickImage, onPickPlace).filter((i) => keywordMatch(i.keywords, menu.query))
+        : [],
+    [menu, onPickImage, onPickPlace],
   );
 
   const choose = useCallback(

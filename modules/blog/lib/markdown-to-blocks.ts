@@ -36,7 +36,7 @@ function standaloneEmbedUrl(line: string): string | null {
   const url = m[1];
   if (kurlShortCode(url)) return url;
   const plan = planEmbed(url);
-  return plan && plan.kind === "video" ? url : null;
+  return plan && (plan.kind === "video" || plan.kind === "map") ? url : null;
 }
 
 /**

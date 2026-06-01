@@ -200,9 +200,17 @@
       "embed": "Embed (video / link)",
       "table": "Table",
       "imageWide": "Wide image",
-      "imagePair": "Two images (side by side)"
+      "imagePair": "Two images (side by side)",
+      "place": "Map / place"
     },
-    "slugLabel": "Post URL slug"
+    "slugLabel": "Post URL slug",
+    "placeDialog": {
+      "placeTitle": "Search a place",
+      "placePlaceholder": "Search a place name or address",
+      "placeEmpty": "No results.",
+      "placeHint": "Pick a place to insert a map card into the post.",
+      "placeClose": "Close"
+    }
   },
   "publicPost": {
     "like": "Like",

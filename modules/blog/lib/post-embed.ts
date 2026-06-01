@@ -8,6 +8,7 @@
  */
 export type EmbedPlan =
   | { kind: "video"; src: string; aspect: "16/9" }
+  | { kind: "map"; lat: number; lng: number; label: string | null; url: string }
   | { kind: "link"; url: string };
 
 export function planEmbed(raw: string | null): EmbedPlan | null {
@@ -34,7 +35,39 @@ export function planEmbed(raw: string | null): EmbedPlan | null {
     return { kind: "video", src: `https://player.vimeo.com/video/${vimeoId}`, aspect: "16/9" };
   }
 
+  const map = googleMapPlace(parsed, host);
+  if (map) return map;
+
   return { kind: "link", url: parsed.toString() };
+}
+
+/**
+ * A Google Maps "place" URL the editor inserts: `…/maps/place/<name>/@<lat>,<lng>,<zoom>z`. We pull
+ * the coordinates from the `@lat,lng` token and the place label from the path segment, so the
+ * reader can draw a static-map card. Only google.* hosts with `/maps/` qualify; other map links
+ * fall through to a plain link card.
+ */
+function googleMapPlace(parsed: URL, host: string): EmbedPlan | null {
+  const isGoogle = host === "google.com" || host.endsWith(".google.com") || /(^|\.)google\./.test(host);
+  if (!isGoogle || !parsed.pathname.includes("/maps")) return null;
+  const at = parsed.href.match(/@(-?\d{1,3}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)/);
+  if (!at) return null;
+  const lat = Number(at[1]);
+  const lng = Number(at[2]);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+    return null;
+  }
+  const segments = parsed.pathname.split("/").filter(Boolean);
+  const placeIdx = segments.indexOf("place");
+  let label: string | null = null;
+  if (placeIdx >= 0 && segments[placeIdx + 1] && !segments[placeIdx + 1].startsWith("@")) {
+    try {
+      label = decodeURIComponent(segments[placeIdx + 1].replace(/\+/g, " ")).trim() || null;
+    } catch {
+      label = null;
+    }
+  }
+  return { kind: "map", lat, lng, label, url: parsed.toString() };
 }
 
 function extractUrl(raw: string | null): string | null {
