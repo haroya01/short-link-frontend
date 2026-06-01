@@ -61,13 +61,13 @@ export default function WriteIndexPage() {
 
   if (!ready) return null;
   if (!authenticated) {
-    return <main className="mx-auto max-w-2xl px-6 py-12 text-slate-600">{t("loginRequired")}</main>;
+    return <main className="mx-auto max-w-2xl px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
   }
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-12">
       <header className="mb-8 flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("myPosts")}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
         <a
           href={`${writeBase}/new`}
           className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700"
@@ -79,7 +79,7 @@ export default function WriteIndexPage() {
 
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
       {loading && <SkeletonRows count={6} thumb />}
-      {!loading && posts.length === 0 && <p className="text-slate-400">{t("noPosts")}</p>}
+      {!loading && posts.length === 0 && <p className="text-slate-400 dark:text-slate-500">{t("noPosts")}</p>}
       {!loading && posts.length > 0 && (
         <ul className="space-y-1">
           {posts.map((p) => {
@@ -88,7 +88,7 @@ export default function WriteIndexPage() {
               <li key={p.id}>
                 <a
                   href={`${writeBase}/${p.id}`}
-                  className="focus-ring group -mx-3 flex gap-3.5 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50"
+                  className="focus-ring group -mx-3 flex gap-3.5 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
                 >
                   {p.ogImageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -98,7 +98,7 @@ export default function WriteIndexPage() {
                       className="h-14 w-14 shrink-0 rounded-lg object-cover"
                     />
                   ) : (
-                    <span className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-300">
+                    <span className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-300 dark:bg-slate-800 dark:text-slate-500">
                       <FileText className="h-5 w-5" />
                     </span>
                   )}
@@ -106,29 +106,29 @@ export default function WriteIndexPage() {
                     <div className="flex items-center gap-2">
                       <StatusBadge status={p.status} />
                       <span
-                        className={`truncate text-[15px] font-semibold transition-colors group-hover:text-accent-700 ${
-                          titled ? "text-slate-900" : "italic text-slate-400"
+                        className={`truncate text-[15px] font-semibold transition-colors group-hover:text-accent-700 dark:group-hover:text-accent-300 ${
+                          titled ? "text-slate-900 dark:text-slate-100" : "italic text-slate-400 dark:text-slate-500"
                         }`}
                       >
                         {titled || t("untitled")}
                       </span>
                     </div>
                     {p.excerpt && (
-                      <p className="mt-1 line-clamp-1 text-[13px] leading-relaxed text-slate-500">
+                      <p className="mt-1 line-clamp-1 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
                         {p.excerpt}
                       </p>
                     )}
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-slate-400">
+                    <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-slate-400 dark:text-slate-500">
                       <span>{relativeTime(p.updatedAt, locale)}</span>
                       {p.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
-                          className="rounded bg-slate-100 px-1.5 py-0.5 font-medium text-slate-500"
+                          className="rounded bg-slate-100 px-1.5 py-0.5 font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400"
                         >
                           {tag}
                         </span>
                       ))}
-                      <span className="ml-auto truncate font-mono text-slate-300">{p.slug}</span>
+                      <span className="ml-auto truncate font-mono text-slate-300 dark:text-slate-500">{p.slug}</span>
                     </div>
                   </div>
                 </a>
@@ -143,10 +143,10 @@ export default function WriteIndexPage() {
 
 function StatusBadge({ status }: { status: PostStatus }) {
   const map: Record<PostStatus, string> = {
-    DRAFT: "bg-slate-100 text-slate-600",
-    SCHEDULED: "bg-blue-100 text-blue-700",
-    PUBLISHED: "bg-accent-100 text-accent-800",
-    UNPUBLISHED: "bg-amber-100 text-amber-700",
+    DRAFT: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
+    SCHEDULED: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+    PUBLISHED: "bg-accent-100 text-accent-800 dark:bg-accent-500/15 dark:text-accent-300",
+    UNPUBLISHED: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
   };
   return (
     <span className={`rounded px-2 py-0.5 text-xs font-medium ${map[status]}`}>{status}</span>

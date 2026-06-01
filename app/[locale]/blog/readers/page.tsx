@@ -57,7 +57,7 @@ export default function ProfileStatsPage() {
   }, [authenticated]);
 
   if (!ready || !authenticated) {
-    return <div className="container max-w-3xl py-16 text-sm text-slate-500">…</div>;
+    return <div className="container max-w-3xl py-16 text-sm text-slate-500 dark:text-slate-400">…</div>;
   }
   if (loading || !data) {
     return (
@@ -73,15 +73,15 @@ export default function ProfileStatsPage() {
       <div>
         <Link
           href={`/${locale}/profile/edit`}
-          className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900"
+          className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           {t("backToEditor")}
         </Link>
-        <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px] dark:text-slate-100">
           {t("title")}
         </h1>
-        <p className="mt-1 text-[15px] leading-relaxed text-slate-500">{t("intro")}</p>
+        <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("intro")}</p>
       </div>
 
       <ProfileStatsDashboard data={data} />

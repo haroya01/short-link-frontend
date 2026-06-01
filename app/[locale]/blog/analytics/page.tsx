@@ -30,13 +30,13 @@ export default function BlogAnalyticsPage() {
 
   if (!ready) return null;
   if (!authenticated) {
-    return <main className="px-6 py-12 text-slate-600">{t("loginRequired")}</main>;
+    return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
   }
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("analyticsTitle")}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("analyticsTitle")}</h1>
         <WindowTabs days={days} onChange={setDays} />
       </div>
 
@@ -48,7 +48,7 @@ export default function BlogAnalyticsPage() {
           </div>
         </div>
       ) : !data ? (
-        <p className="mt-8 text-sm text-slate-400">{t("analyticsEmpty")}</p>
+        <p className="mt-8 text-sm text-slate-400 dark:text-slate-500">{t("analyticsEmpty")}</p>
       ) : (
         <>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -61,41 +61,41 @@ export default function BlogAnalyticsPage() {
           {/* kurl 연동 차별점 — 글 안 kurl 링크가 만든 클릭. */}
           <div className="mt-3 flex items-center justify-between rounded-2xl border border-accent-200 bg-accent-50/50 p-4">
             <div>
-              <div className="flex items-center gap-1.5 text-accent-700">
+              <div className="flex items-center gap-1.5 text-accent-700 dark:text-accent-300">
                 <MousePointerClick className="h-4 w-4" />
                 <span className="text-[13px] font-semibold">{t("analyticsLinkClicks")}</span>
               </div>
-              <p className="mt-0.5 text-[12px] text-accent-700/70">
+              <p className="mt-0.5 text-[12px] text-accent-700/70 dark:text-accent-300/70">
                 {t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
               </p>
             </div>
-            <span className="text-2xl font-bold tracking-tight text-accent-700">
+            <span className="text-2xl font-bold tracking-tight text-accent-700 dark:text-accent-300">
               {data.lifetimeLinkClicks.toLocaleString()}
             </span>
           </div>
 
-          <section className="mt-8 rounded-2xl border border-slate-200 p-5">
-            <h2 className="mb-4 text-sm font-semibold text-slate-700">{t("analyticsOverTime")}</h2>
+          <section className="mt-8 rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
+            <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsOverTime")}</h2>
             <AnalyticsAreaChart data={data.daily} />
           </section>
 
           {data.topPosts.length > 0 && (
             <section className="mt-8">
-              <h2 className="mb-3 text-sm font-semibold text-slate-700">{t("analyticsTopPosts")}</h2>
-              <ul className="divide-y divide-slate-100">
+              <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsTopPosts")}</h2>
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {data.topPosts.map((p, i) => (
                   <li key={p.postId}>
                     <a
                       href={`/analytics/${p.postId}`}
-                      className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50"
+                      className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
                     >
-                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300">
+                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-500">
                         {i + 1}
                       </span>
-                      <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700">
+                      <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
                         {p.title || p.slug}
                       </span>
-                      <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-400">
+                      <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-400 dark:text-slate-500">
                         <span className="inline-flex items-center gap-1">
                           <Eye className="h-3.5 w-3.5" />
                           {p.viewCount.toLocaleString()}

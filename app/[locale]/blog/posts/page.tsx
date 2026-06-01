@@ -23,19 +23,19 @@ export default function BlogPostsPage() {
 
   if (!ready) return null;
   if (!authenticated) {
-    return <main className="px-6 py-12 text-slate-600">{t("loginRequired")}</main>;
+    return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
   }
 
   const published = posts.filter((p) => p.status === "PUBLISHED");
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("postsTitle")}</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("postsTitle")}</h1>
       <div className="mt-6">
         {loading ? (
           <SkeletonRows count={6} thumb />
         ) : published.length === 0 ? (
-          <p className="text-sm text-slate-400">{t("postsEmpty")}</p>
+          <p className="text-sm text-slate-400 dark:text-slate-500">{t("postsEmpty")}</p>
         ) : (
           <ul>
             {published.map((p) => (
