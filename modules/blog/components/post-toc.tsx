@@ -16,8 +16,8 @@ function scrollToHeading(id: string) {
 }
 
 /**
- * velog-style floating table of contents. Shown only on xl+ screens (positioned in the right
- * margin by the page) and only when there are at least two headings. Scrollspy via
+ * velog-style floating table of contents. Shown from landscape-tablet width up (~1100px, positioned
+ * in the right margin by the page) and only when there are at least two headings. Scrollspy via
  * IntersectionObserver highlights the section currently near the top of the viewport.
  */
 export function PostToc({ headings }: { headings: TocHeading[] }) {
@@ -71,7 +71,7 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
 }
 
 /**
- * Mobile counterpart to {@link PostToc} (the sidebar TOC is xl-only). A floating "목차" button opens a
+ * Mobile counterpart to {@link PostToc} (the sidebar TOC is ~1100px+). A floating "목차" button opens a
  * bottom sheet of the headings so long posts stay navigable on a phone — no jump links otherwise.
  */
 export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
@@ -90,7 +90,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
   if (headings.length < 2) return null;
 
   return (
-    <div className="xl:hidden">
+    <div className="min-[1100px]:hidden">
       <button
         type="button"
         onClick={() => setOpen(true)}

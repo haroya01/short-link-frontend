@@ -216,15 +216,16 @@ export default async function PublicPostPage({
       <PostComments postId={post.id} authorUsername={author.username} />
       </article>
 
+      {/* velog-style TOC pinned just right of the centered column. Fixed (not a grid gutter) so it
+          shows from landscape-tablet width up (~1100px) without shrinking the 42rem reading column or
+          breaking its centering. Below that, the floating button → bottom sheet takes over. */}
       {headings.length >= 2 && (
-        <aside className="hidden py-20 xl:block xl:justify-self-start">
-          <div className="sticky top-20 max-h-[calc(100vh-7rem)] w-56 overflow-y-auto">
-            <PostToc headings={headings} />
-          </div>
+        <aside className="fixed left-[calc(50%_+_22.5rem)] top-24 z-20 hidden max-h-[calc(100vh_-_7rem)] w-40 overflow-y-auto min-[1100px]:block xl:w-52">
+          <PostToc headings={headings} />
         </aside>
       )}
 
-      {/* Mobile/tablet (<xl) get the TOC as a floating button → bottom sheet. */}
+      {/* Phone / portrait-tablet (<1100px) get the TOC as a floating button → bottom sheet. */}
       <PostTocMobile headings={headings} />
     </div>
   );

@@ -41,7 +41,7 @@ export function EditorHeader({
 }) {
   const t = useTranslations("postEditor");
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-slate-200/70 pb-3">
+    <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
       <a
         href={backHref}
         className="-ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
