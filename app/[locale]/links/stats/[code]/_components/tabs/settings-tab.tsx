@@ -3,6 +3,7 @@
 import { Lock, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LinkDestinationsSection } from "@/components/links/destinations-section";
+import { LinkExportSection } from "@/components/links/link-export-section";
 import { LinkWebhooksSection } from "@/components/links/webhooks-section";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,7 @@ export function SettingsTab({
         onChanged={onTick}
       />
       <LinkWebhooksSection shortCode={data.shortCode} />
+      <LinkExportSection shortCode={data.shortCode} />
     </div>
   );
 }
@@ -55,7 +57,56 @@ function DemoSettingsBody() {
       <DemoSettingsBanner />
       <DemoLinkDestinationsPreview />
       <DemoLinkWebhooksPreview />
+      <DemoLinkExportPreview />
     </div>
+  );
+}
+
+/**
+ * Demo mirror of {@link LinkExportSection}: disabled CSV buttons + a seeded raw-click row so the
+ * /demo settings surface shows the export/raw-log feature shape (mirror principle) without a session.
+ */
+function DemoLinkExportPreview() {
+  const t = useTranslations("stats.rawData");
+  const tDemo = useTranslations("demo.settingsDemo");
+  const { toast } = useToast();
+  const lock = () => toast(tDemo("lockedToast"), "default");
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-[15px] font-semibold tracking-headline text-slate-900">{t("title")}</h2>
+          <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("description")}</p>
+        </div>
+        <DemoBadge />
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" size="sm" variant="ghost" disabled onClick={lock}>
+          {t("exportEvents")}
+        </Button>
+        <Button type="button" size="sm" variant="ghost" disabled onClick={lock}>
+          {t("exportStats")}
+        </Button>
+      </div>
+      <table className="mt-4 w-full border-collapse text-[12px]">
+        <thead>
+          <tr className="border-b border-slate-200 text-left text-[11px] uppercase text-slate-500">
+            <th className="py-1.5 pr-3 font-medium">{t("colTime")}</th>
+            <th className="py-1.5 pr-3 font-medium">{t("colLocation")}</th>
+            <th className="py-1.5 pr-3 font-medium">{t("colDevice")}</th>
+            <th className="py-1.5 pr-3 font-medium">{t("colReferrer")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="border-b border-slate-100">
+            <td className="py-1.5 pr-3 font-mono tabular-nums text-slate-600">2026-05-10 20:14</td>
+            <td className="py-1.5 pr-3 text-slate-700">Seoul, KR</td>
+            <td className="py-1.5 pr-3 text-slate-700">mobile · iOS · Safari</td>
+            <td className="py-1.5 pr-3 text-slate-700">instagram.com</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   );
 }
 
