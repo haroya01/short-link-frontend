@@ -28,7 +28,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
   const router = useRouter();
   const intlRouter = useIntlRouter();
   const pathname = usePathname();
-  const { me, authenticated, signOut, signInWithGoogle } = useAuth();
+  const { me, authenticated, signOut } = useAuth();
   const [langOpen, setLangOpen] = useState(false);
   const [other, setOther] = useState<Product | null>(null);
 
@@ -163,7 +163,8 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             type="button"
             onClick={() => {
               onClose();
-              signInWithGoogle();
+              // Through kurl's branded login screen (then Google), not straight to OAuth.
+              window.location.href = `${blogHref("/login")}?next=${encodeURIComponent(pathname)}`;
             }}
             className={ITEM}
           >
