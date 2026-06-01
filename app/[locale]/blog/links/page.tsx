@@ -13,6 +13,7 @@ import {
   type PostAnalytics,
 } from "@/modules/blog/api/analytics";
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
+import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
 
 /**
  * "글 안 링크" — author-side view of the clicks the kurl links embedded in their posts have earned
@@ -96,7 +97,12 @@ export default function BlogLinksPage() {
       </div>
 
       {loading && !overview ? (
-        <p className="mt-8 text-sm text-slate-400">{t("loading")}</p>
+        <div className="mt-6">
+          <SkeletonStatCards count={2} />
+          <div className="mt-8">
+            <SkeletonRows count={5} />
+          </div>
+        </div>
       ) : !overview ? (
         <p className="mt-8 text-sm text-slate-400">{t("linksEmpty")}</p>
       ) : (

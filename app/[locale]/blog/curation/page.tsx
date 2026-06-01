@@ -12,6 +12,7 @@ import {
   setPinnedIds,
   type BookmarkItem,
 } from "@/modules/blog/api/curation";
+import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 /**
  * 큐레이션 — author curates two things: which of their published posts are pinned (and in what order)
@@ -93,7 +94,9 @@ export default function ContentCurationPage() {
         <p className="mt-1 text-[12px] text-slate-400">{t("curationPinnedHint")}</p>
 
         {loading ? (
-          <p className="mt-4 text-sm text-slate-400">{t("loading")}</p>
+          <div className="mt-4">
+            <SkeletonRows count={3} />
+          </div>
         ) : (
           <>
             {pinnedPosts.length > 0 ? (
