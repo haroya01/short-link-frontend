@@ -35,4 +35,19 @@ describe("planEmbed", () => {
     expect(planEmbed("https://youtu.be/!!!")).toEqual({ kind: "link", url: "https://youtu.be/!!!" });
     expect(planEmbed("https://vimeo.com/abc")).toEqual({ kind: "link", url: "https://vimeo.com/abc" });
   });
+
+  it("parses a Google Maps place URL into a map plan with coords + label", () => {
+    expect(
+      planEmbed(
+        "https://www.google.com/maps/place/%EB%88%84%EB%8D%B0%EC%9D%B4%ED%81%AC/@37.5219,127.0411,16z",
+      ),
+    ).toMatchObject({ kind: "map", lat: 37.5219, lng: 127.0411, label: "누데이크" });
+  });
+
+  it("falls back to a link card for a maps URL without coordinates", () => {
+    expect(planEmbed("https://www.google.com/maps/search/coffee")).toEqual({
+      kind: "link",
+      url: "https://www.google.com/maps/search/coffee",
+    });
+  });
 });

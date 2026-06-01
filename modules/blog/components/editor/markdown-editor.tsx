@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -28,6 +28,11 @@ import {
 } from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
+import {
+  PlaceSearchDialog,
+  mapsPlaceUrl,
+  type PickedPlace,
+} from "@/modules/blog/components/editor/place-search-dialog";
 import { altWithWidth, type ImageWidth } from "@/modules/blog/lib/image-width";
 
 /** Options for opening the image picker: a width (wide/full/half) and whether to allow multi-select
@@ -52,6 +57,7 @@ export function MarkdownEditor({
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const pendingWidth = useRef<ImageWidth | undefined>(undefined);
+  const [placeOpen, setPlaceOpen] = useState(false);
 
   // Open the file picker with a target width; "half" + multiple lets you pick 2 for a side-by-side row.
   function pickImage(opts: ImagePickOptions = {}) {
@@ -150,7 +156,16 @@ export function MarkdownEditor({
       <div className="min-h-0 flex-1 overflow-y-auto py-4">
         <EditorContent editor={editor} className="h-full" />
       </div>
-      <SlashMenu editor={editor} onPickImage={pickImage} />
+      <SlashMenu editor={editor} onPickImage={pickImage} onPickPlace={() => setPlaceOpen(true)} />
+      <PlaceSearchDialog
+        open={placeOpen}
+        onClose={() => setPlaceOpen(false)}
+        onPick={(place: PickedPlace) => {
+          // Insert the canonical Google Maps place URL on its own line → markdownToBlocks turns it
+          // into an EMBED block → the reader draws it as a static-map card.
+          editor.chain().focus().insertContent(`\n${mapsPlaceUrl(place)}\n`).run();
+        }}
+      />
     </div>
   );
 }

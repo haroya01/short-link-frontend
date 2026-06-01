@@ -58,11 +58,3 @@ export function useInvalidateLinks() {
     [queryClient],
   );
 }
-
-export function useInvalidateTags() {
-  const queryClient = useQueryClient();
-  return useCallback(
-    () => queryClient.invalidateQueries({ queryKey: tagsKeys.all }),
-    [queryClient],
-  );
-}
