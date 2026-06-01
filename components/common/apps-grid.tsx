@@ -70,7 +70,7 @@ export function AppsGrid() {
       <a
         href={dest?.href() ?? "#"}
         onClick={switchTo}
-        className="group mark-hoverable inline-flex h-8 items-center gap-2 rounded-full border border-slate-200 bg-white pl-2.5 pr-2 text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
+        className="group mark-hoverable inline-flex h-8 items-center gap-2 rounded-full border border-slate-200 bg-white pl-2.5 pr-2 text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800"
         aria-label={dest ? t(dest.labelKey) : t("trigger")}
         title={dest ? t(dest.hintKey) : undefined}
       >
