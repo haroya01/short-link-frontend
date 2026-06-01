@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Hash, PenSquare, SearchX } from "lucide-react";
 import { blogHref } from "@/lib/host";
@@ -19,6 +18,7 @@ import {
 import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedContentTransition } from "@/modules/blog/components/feed-content-transition";
+import { FeedSortTabs } from "@/modules/blog/components/feed-sort-tabs";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
@@ -184,23 +184,25 @@ export default async function BlogFeedPage({
           gets extra room on top of that while the cookie banner is up — see globals.css). */}
       <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
         <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800">
-          <nav className="flex gap-1 text-[15px] font-bold">
-            <SortTab label={t("recent")} href={sortHref("recent")} active={activeTab === "recent"} />
-            <SortTab
-              label={t("trending")}
-              href={sortHref("trending")}
-              active={activeTab === "trending"}
-            />
-            <SortTab
-              label={t("feed")}
-              href="?sort=following"
-              active={!searching && tab === "following"}
-              // A search spans every author, so "following" can't apply — disable the tab while a
-              // query is active. The reason is shown as a visible inline note under the result
-              // summary (touch-reachable), so no hover-only tooltip here.
-              disabled={searching}
-            />
-          </nav>
+          <FeedSortTabs
+            tabs={[
+              { key: "recent", label: t("recent"), href: sortHref("recent"), active: activeTab === "recent" },
+              {
+                key: "trending",
+                label: t("trending"),
+                href: sortHref("trending"),
+                active: activeTab === "trending",
+              },
+              {
+                key: "following",
+                label: t("feed"),
+                href: "?sort=following",
+                active: !searching && tab === "following",
+                // A search spans every author, so "following" can't apply — disable it while searching.
+                disabled: searching,
+              },
+            ]}
+          />
         </header>
 
         {/* Reader's followed tags ("보고싶은 태그") — hidden until they follow one. Not during search. */}
@@ -318,51 +320,3 @@ function FeedBody({
   );
 }
 
-function SortTab({
-  label,
-  href,
-  active,
-  disabled = false,
-}: {
-  label: string;
-  href: string;
-  active: boolean;
-  disabled?: boolean;
-}) {
-  const base = "relative px-2.5 py-1.5 transition-colors";
-  // Disabled (e.g. "following" while a search is active): a non-interactive, muted span. The reason
-  // is shown as the visible inline scope note, so no hover-only tooltip is needed here.
-  if (disabled) {
-    return (
-      <span
-        aria-disabled
-        aria-current={active ? "page" : undefined}
-        className={`${base} cursor-default text-slate-300`}
-      >
-        {label}
-      </span>
-    );
-  }
-  // next/link → client-side soft navigation between tabs (no full reload / flicker). The underline is
-  // a keyed element (not an `after:` pseudo) so it remounts and re-plays its glide on each switch.
-  return (
-    <Link
-      href={href}
-      aria-current={active ? "page" : undefined}
-      className={`${base} rounded focus-ring ${
-        active
-          ? "text-accent-700 dark:text-accent-400"
-          : "text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
-      }`}
-    >
-      {label}
-      {active && (
-        <span
-          key={href}
-          aria-hidden
-          className="absolute inset-x-2.5 -bottom-[13px] h-0.5 origin-left rounded-full bg-accent-600 [animation:underline-glide_240ms_ease-out] motion-reduce:[animation:none]"
-        />
-      )}
-    </Link>
-  );
-}
