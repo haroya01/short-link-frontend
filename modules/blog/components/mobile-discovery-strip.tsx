@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { blogHref } from "@/lib/host";
+import { blogPath } from "@/lib/host";
 import type { SuggestedAuthor, TagCount } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { TagChip } from "@/modules/blog/components/tag-chip";
@@ -31,21 +32,22 @@ export async function MobileDiscoveryStrip({
             <h2 className="text-[12px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               {t("railPopularTags")}
             </h2>
-            <a
-              href={blogHref("/tags")}
+            <Link
+              href={blogPath("/tags")}
               className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring"
             >
               {t("railSeeAll")}
-            </a>
+            </Link>
           </div>
           <div className="relative -mx-4">
             <ul className="flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {tags.map((tag) => (
                 <li key={tag.tag} className="shrink-0">
                   <TagChip
-                    href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
+                    href={blogPath(`/tags/${encodeURIComponent(tag.tag)}`)}
                     label={tag.tag}
                     count={tag.count}
+                    soft
                   />
                 </li>
               ))}

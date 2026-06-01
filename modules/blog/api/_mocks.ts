@@ -213,8 +213,8 @@ export function mockPostDetail(_username: string, slug: string): PublicPostDetai
 }
 
 const MOCK_SERIES: PublicSeriesListItem[] = [
-  { slug: "nextjs-deep-dive", title: "Next.js 깊게 파기", postCount: 3 },
-  { slug: "side-project-log", title: "사이드 프로젝트 로그", postCount: 4 },
+  { id: 901, slug: "nextjs-deep-dive", title: "Next.js 깊게 파기", postCount: 3 },
+  { id: 902, slug: "side-project-log", title: "사이드 프로젝트 로그", postCount: 4 },
 ];
 
 export function mockSeriesList(username: string): PublicSeriesList {

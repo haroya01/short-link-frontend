@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ArrowLeft, Layers } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { findPublicSeries } from "@/modules/blog/api/public-posts";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { Mark } from "@/components/common/logo";
+import { authorHref } from "@/modules/blog/components/feed-card";
+import { FollowButton } from "@/modules/blog/components/follow-button";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { SeriesReadingShell } from "@/modules/blog/components/series-reading-shell";
+import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
 
 // Always render fresh — same reasoning as the post detail page: never serve a stale 404 for a
 // just-published series. findPublicSeries fetches no-store to match.
@@ -30,68 +35,119 @@ export default async function PublicSeriesPage({
   const { locale, username, slug } = await params;
   const result = await findPublicSeries(username, slug);
   const t = await getTranslations({ locale, namespace: "publicPost" });
+  const tf = await getTranslations({ locale, namespace: "publicFeed" });
   if (!result.ok) notFound();
 
   const { author, series, posts } = result.data;
+  const fmtDate = (iso: string) =>
+    new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  // Series order ≠ publish order, so derive the latest publish for the header summary.
+  const lastPublished = posts.reduce<string | null>(
+    (max, p) => (max === null || p.publishedAt > max ? p.publishedAt : max),
+    null,
+  );
+  const profileHref = authorHref(author.username, locale);
 
-  return (
-    <main className="mx-auto max-w-2xl px-6 py-14 sm:py-20">
-      <a
-        href={authorHref(username, locale, "series")}
-        className="inline-flex items-center gap-1.5 rounded text-sm text-slate-500 transition-colors hover:text-accent-700 focus-ring"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {t("tabSeries")}
+  // Left gutter: who this series belongs to — avatar + handle (→ profile) + bio + follow, and a way
+  // back to the rest of their series. Replaces the old "← 시리즈" link, which masqueraded as browser
+  // back but always dumped you on the author's series tab regardless of where you arrived from.
+  const authorRail = (
+    <div className="flex flex-col gap-4">
+      <RailHeading>{tf("seriesByAuthor")}</RailHeading>
+      <a href={profileHref} className="focus-ring group flex items-center gap-3 rounded-lg">
+        {author.avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={author.avatarUrl}
+            alt=""
+            className="h-11 w-11 shrink-0 rounded-full object-cover"
+          />
+        ) : (
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent-100 text-base font-bold text-accent-700">
+            {author.username.charAt(0).toUpperCase()}
+          </span>
+        )}
+        <span className="min-w-0 text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
+          @{author.username}
+        </span>
       </a>
+      {author.bio && (
+        <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">{author.bio}</p>
+      )}
+      <FollowButton username={author.username} initialFollowerCount={0} compact />
+      <a
+        href={authorHref(author.username, locale, "series")}
+        className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"
+      >
+        {tf("seriesAllByAuthor")}
+        <ArrowRight className="h-3.5 w-3.5" />
+      </a>
+    </div>
+  );
 
-      <header className="mt-6 flex items-center gap-3">
-        <Layers className="h-6 w-6 text-accent-600" />
-        <div>
-          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 sm:text-headline-md">
-            {series.title}
-          </h1>
-          <p className="mt-1 text-[13px] font-medium text-slate-500">
-            {t("postCount", { count: series.postCount })}
-          </p>
-        </div>
-      </header>
-
-      <div className="section-divider my-10" />
-
-      <ol className="space-y-2">
-        {posts.map((p, i) => (
-          <li key={p.slug}>
+  const header = (
+    <header>
+          <div className="flex items-center gap-1.5 text-[12px] font-semibold tracking-wide text-accent-700 dark:text-accent-400">
+            <Mark className="h-2.5 w-auto shrink-0" />
+            {tf("seriesEyebrow")}
+          </div>
+          {/* Title + subscribe on one row — 구독 is the series equivalent of following the author
+              (author follow lives in the rail), so it sits with the series identity, not buried. */}
+          <div className="mt-1.5 flex items-start justify-between gap-4">
+            <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+              {series.title}
+            </h1>
+            <div className="mt-1 shrink-0">
+              <SeriesSubscribeButton seriesId={series.id} />
+            </div>
+          </div>
+          {/* Author (→ profile) + count + last-published, lifted to the header so the heart/date
+              context reads at a glance instead of being buried per-row. */}
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
             <a
-              href={postHref(author.username, p.slug, locale)}
-              className="group -mx-4 flex items-start gap-4 rounded-2xl px-4 py-4 transition-colors hover:bg-slate-50 focus-ring"
+              href={profileHref}
+              className="focus-ring group flex items-center gap-2 rounded transition-colors hover:text-accent-700 dark:hover:text-accent-400"
             >
-              <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-50 text-[13px] font-semibold text-accent-700">
-                {i + 1}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-[17px] font-semibold leading-snug text-slate-900 group-hover:text-accent-700">
-                  {p.title}
+              {author.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={author.avatarUrl} alt="" className="h-5 w-5 shrink-0 rounded-full object-cover" />
+              ) : (
+                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent-100 text-[10px] font-semibold text-accent-700">
+                  {author.username.charAt(0).toUpperCase()}
                 </span>
-                {p.excerpt && (
-                  <span className="mt-1 line-clamp-2 block text-[14px] leading-relaxed text-slate-500">
-                    {p.excerpt}
-                  </span>
-                )}
-                <time
-                  dateTime={p.publishedAt}
-                  className="mt-2 block text-[12px] text-slate-400"
-                >
-                  {new Date(p.publishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </time>
+              )}
+              <span className="font-medium text-slate-700 group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
+                {author.username}
               </span>
             </a>
-          </li>
-        ))}
-      </ol>
+            <span aria-hidden>·</span>
+            <span>{tf("seriesEpisodeCount", { count: series.postCount })}</span>
+            {lastPublished && (
+              <>
+                <span aria-hidden>·</span>
+                <span>{tf("seriesLastPublished", { date: fmtDate(lastPublished) })}</span>
+              </>
+            )}
+          </div>
+    </header>
+  );
+
+  // Left gutter = author card, right gutter = 태그 + 아카이브 filters, center = the episodes. The shell
+  // is client-orchestrated so the right-rail filters and the list share one filter state (see comment
+  // there); the header + author card are server-rendered and passed in as held nodes.
+  return (
+    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
+      <SeriesReadingShell
+        leftRail={authorRail}
+        header={header}
+        posts={posts}
+        username={author.username}
+        locale={locale}
+      />
     </main>
   );
 }

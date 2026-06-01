@@ -33,17 +33,20 @@ function Wordmark({ product, muted }: { product: Product; muted: string }) {
 
 type Warp = { href: string; product: Product };
 
-export function AppsGrid() {
+export function AppsGrid({ current }: { current?: Product }) {
   const [warp, setWarp] = useState<Warp | null>(null);
-  // Resolved client-side: currentProduct() is host/path based and returns "links" during SSR, so we
-  // settle the destination after mount to avoid a hydration mismatch on the blog surface.
-  const [dest, setDest] = useState<(typeof PRODUCTS)[number] | null>(null);
+  // When the surface is known at render (e.g. the blog layout passes current="blog"), seed the
+  // destination synchronously so the pill's wordmark doesn't flash empty → filled on every page load.
+  // Otherwise resolve after mount: currentProduct() is host/path based and returns "links" during SSR.
+  const seed = current ? (PRODUCTS.find((p) => p.key !== current) ?? null) : null;
+  const [dest, setDest] = useState<(typeof PRODUCTS)[number] | null>(seed);
   const t = useTranslations("nav.apps");
 
   useEffect(() => {
+    if (current) return; // already seeded from the known surface
     const cur = currentProduct();
     setDest(PRODUCTS.find((p) => p.key !== cur) ?? PRODUCTS[1]);
-  }, []);
+  }, [current]);
 
   // Play the warp overlay, then navigate. New-tab / modified clicks and reduced-motion fall through
   // to the plain anchor (native cross-origin navigation, no overlay).
