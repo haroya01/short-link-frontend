@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { request } from "@/lib/api/client";
@@ -27,6 +27,8 @@ export function FeedInfinite({
   tag,
   featuredFirst = false,
   featuredLabel,
+  interleaveNode,
+  interleaveAfter = 3,
 }: {
   locale: string;
   initialItems: PublicFeedItem[];
@@ -41,6 +43,11 @@ export function FeedInfinite({
   featuredFirst?: boolean;
   /** Label for the featured lead row (e.g. "오늘의 글"). */
   featuredLabel?: string;
+  /** A non-post block (e.g. a series card) dropped into the feed after {@link interleaveAfter} rows.
+   *  Only shown when the feed has rows past that point, so it never trails a short feed. */
+  interleaveNode?: ReactNode;
+  /** Zero-based row index the interleaved node is inserted after (default: after the 4th row). */
+  interleaveAfter?: number;
 }) {
   const t = useTranslations("publicFeed");
   const { prefs } = useTagPrefs();
@@ -114,13 +121,17 @@ export function FeedInfinite({
     <>
       <FeedList>
         {visible.map((item, i) => (
-          <FeedCard
-            key={itemKey(item)}
-            item={item}
-            locale={locale}
-            featured={featuredFirst && i === 0}
-            featuredLabel={featuredLabel}
-          />
+          <Fragment key={itemKey(item)}>
+            <FeedCard
+              item={item}
+              locale={locale}
+              featured={featuredFirst && i === 0}
+              featuredLabel={featuredLabel}
+            />
+            {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
+              <li className="list-none py-3">{interleaveNode}</li>
+            )}
+          </Fragment>
         ))}
       </FeedList>
 

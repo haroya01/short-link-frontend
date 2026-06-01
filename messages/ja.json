@@ -64,7 +64,10 @@
     "railPostCount": "記事 {count}",
     "railSeeAll": "すべて見る",
     "bookmark": "リーディングリストに保存",
-    "bookmarkOn": "リーディングリストから削除"
+    "bookmarkOn": "リーディングリストから削除",
+    "seriesEyebrow": "シリーズ",
+    "seriesEpisodeCount": "{count}本",
+    "seriesLastPublished": "最新 {date}"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",
