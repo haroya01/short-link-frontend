@@ -273,10 +273,15 @@ export function FollowingFeed({
     ) : undefined;
 
   return (
-    <ReadingShell className="mt-8" rail={rail}>
+    <ReadingShell className="mt-4" rail={rail}>
       <FeedList>
-        {shown.map((item) => (
-          <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
+        {shown.map((item, i) => (
+          <FeedCard
+            key={`${item.author.username}/${item.slug}`}
+            item={item}
+            locale={locale}
+            flushTop={i === 0}
+          />
         ))}
       </FeedList>
     </ReadingShell>

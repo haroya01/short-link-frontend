@@ -146,6 +146,7 @@ export function FeedCard({
   hideAuthor = false,
   featured = false,
   featuredLabel,
+  flushTop = false,
 }: {
   item: PublicFeedItem;
   locale: string;
@@ -157,6 +158,9 @@ export function FeedCard({
   featured?: boolean;
   /** Editorial label for the featured row (e.g. "오늘의 글" / "Today"). */
   featuredLabel?: string;
+  /** First row of a feed with no featured lead: trim the top padding so it sits flush under the tabs
+   *  (aligned with the rail) instead of floating below an empty band. */
+  flushTop?: boolean;
 }) {
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
@@ -171,9 +175,12 @@ export function FeedCard({
       {/* -mx/px lets the hover highlight breathe past the text without moving the content edge (it
           stays aligned with the divider + header). A quiet affordance that the whole row is a link. */}
       <div
-        className={`-mx-3 flex gap-4 rounded-xl px-3 py-5 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40 sm:gap-6 ${
-          featured ? "sm:py-7" : ""
-        }`}
+        className={`-mx-3 flex gap-4 rounded-xl px-3 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40 sm:gap-6 ${
+          // A row flush to the top of the feed (the featured lead, or the first row of a lead-less feed)
+          // gets only a hair of top padding — any more reads as an empty band under the tabs and pushes
+          // the content below the rail. Featured keeps a generous bottom so its larger title has weight.
+          featured || flushTop ? "pt-1.5 sm:pt-2" : "pt-5"
+        } ${featured ? "pb-6 sm:pb-8" : "pb-5"}`}
       >
         <div className="min-w-0 flex-1">
           <a href={postUrl} className="block">
