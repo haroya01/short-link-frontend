@@ -50,31 +50,51 @@ function BlogLoginShell({ next }: { next: string | null }) {
   };
 
   return (
-    <div className="relative flex min-h-[calc(100vh-3.5rem-3rem)] items-center justify-center overflow-hidden bg-gradient-to-b from-accent-50/50 to-white px-4 py-16">
+    <div className="relative flex min-h-[calc(100vh-3.5rem-3rem)] items-center justify-center overflow-hidden bg-white px-4 py-16">
       <div className="w-full max-w-sm">
-        <div className="hero-stagger flex flex-col items-center space-y-6 text-center">
-          <span
-            aria-hidden
-            className="grid h-16 w-16 place-items-center rounded-2xl bg-accent-600 text-white shadow-[0_12px_32px_-10px_rgba(5,150,105,0.6)]"
+        {/* Same entrance language as the kurl.me login: a hero-stagger cascade (eyebrow → glowing
+            mark → title → subtitle), each child timed off its --hi index, then the action block
+            fades up. Quiet, branded, no peppy onboarding chrome. */}
+        <div className="hero-stagger flex flex-col items-center space-y-5 text-center">
+          <p
+            className="flex items-center justify-center gap-3"
             style={{ ["--hi" as string]: 0 } as React.CSSProperties}
           >
-            <PenSquare className="h-7 w-7" />
-          </span>
-
-          <div className="space-y-2" style={{ ["--hi" as string]: 1 } as React.CSSProperties}>
-            <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+            <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
+            <span className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
               {t("eyebrow")}
-            </p>
-            <h1 className="text-[26px] font-bold leading-tight tracking-headline text-slate-900">
-              {t("title")}
-            </h1>
-            <p className="mx-auto max-w-xs text-[14px] leading-relaxed text-slate-500">
-              {t("subtitle")}
-            </p>
+            </span>
+            <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
+          </p>
+
+          <div className="relative" style={{ ["--hi" as string]: 1 } as React.CSSProperties}>
+            <div
+              aria-hidden
+              className="absolute -inset-8 -z-10 rounded-full bg-accent-200/55 blur-3xl"
+            />
+            <span
+              aria-hidden
+              className="grid h-16 w-16 place-items-center rounded-2xl bg-accent-600 text-white shadow-[0_12px_32px_-10px_rgba(5,150,105,0.6)]"
+            >
+              <PenSquare className="h-7 w-7" />
+            </span>
           </div>
+
+          <h1
+            className="text-[26px] font-bold leading-tight tracking-headline text-slate-900"
+            style={{ ["--hi" as string]: 2 } as React.CSSProperties}
+          >
+            {t("title")}
+          </h1>
+          <p
+            className="mx-auto max-w-xs text-[14px] leading-relaxed text-slate-500"
+            style={{ ["--hi" as string]: 3 } as React.CSSProperties}
+          >
+            {t("subtitle")}
+          </p>
         </div>
 
-        <div className="profile-fade mt-10" style={{ ["--idx" as string]: 2 } as React.CSSProperties}>
+        <div className="profile-fade mt-10" style={{ ["--idx" as string]: 4 } as React.CSSProperties}>
           <Button
             variant="outline"
             className="h-11 w-full justify-center rounded-xl"
@@ -87,7 +107,7 @@ function BlogLoginShell({ next }: { next: string | null }) {
 
         <div
           className="profile-fade mt-8 text-center"
-          style={{ ["--idx" as string]: 3 } as React.CSSProperties}
+          style={{ ["--idx" as string]: 5 } as React.CSSProperties}
         >
           <a
             href={blogHref("/")}
