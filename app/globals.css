@@ -1077,3 +1077,12 @@ body[data-cookie-consent="visible"] {
   width: calc(100% + 10rem);
   margin-inline: -5rem;
 }
+
+/* The Tailwind `animate-fade-in` utility (dialogs, sheets, the mobile TOC) has no reduced-motion
+   guard of its own — collapse it for users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
