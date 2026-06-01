@@ -1,34 +1,31 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import "@toast-ui/editor/dist/toastui-editor.css";
-import "tui-color-picker/dist/tui-color-picker.css";
-import "@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css";
-// Prism token theme for in-editor code highlighting (matches the feature; the published reader uses
-// highlight.js via rehype, so palettes differ slightly but both colour by language).
-import "@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css";
-import { highlightPlugin } from "@/modules/blog/components/editor/highlight-plugin";
+import { useRef } from "react";
+import { useEditor, EditorContent, type Editor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
+import Placeholder from "@tiptap/extension-placeholder";
+import { Markdown } from "tiptap-markdown";
 import {
-  FloatingToolbar,
-  type EditorCommands,
-} from "@/modules/blog/components/editor/floating-toolbar";
-import { SlashMenu, type SlashEditor } from "@/modules/blog/components/editor/slash-menu";
-import { BlockInserter } from "@/modules/blog/components/editor/block-inserter";
+  Bold,
+  Code2,
+  Heading2,
+  Heading3,
+  Image as ImageIcon,
+  Italic,
+  Link as LinkIcon,
+  List,
+  ListOrdered,
+  Quote,
+  Strikethrough,
+} from "lucide-react";
+import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
 
 /**
- * Toast UI Editor (vanilla — the React wrapper only peer-supports React 17). WYSIWYG + markdown
- * tabs and an image hook wired to the post's presign→commit uploader so authors can drop / paste /
- * pick images inline. Toast's own top toolbar is hidden (CSS in globals); formatting is driven by a
- * custom {@link FloatingToolbar} that floats at the bottom — its dropdown opens upward, which
- * Toast's downward-opening one couldn't. The JS is dynamically imported inside the effect so it
- * never evaluates during SSR; the component renders just a host div on the server.
+ * Long-form post editor — Tiptap (ProseMirror) with a CodeMirror code-block node (language-aware
+ * highlight + auto-indent). Content round-trips as markdown via tiptap-markdown, so the existing
+ * markdown↔blocks save path is unchanged. Replaces the previous Toast UI editor.
  */
-type ToastInstance = EditorCommands &
-  SlashEditor & {
-    getMarkdown: () => string;
-    destroy: () => void;
-  };
-
 export function MarkdownEditor({
   initialValue,
   onChange,
@@ -40,99 +37,121 @@ export function MarkdownEditor({
   onUploadImage: (file: Blob) => Promise<string>;
   onUploadError?: (message: string) => void;
 }) {
-  const hostRef = useRef<HTMLDivElement>(null);
-  // The "+" button calls this (set by SlashMenu) to open the block menu without typing a "/".
-  const openMenuRef = useRef<(() => void) | null>(null);
-  const onChangeRef = useRef(onChange);
-  const onUploadRef = useRef(onUploadImage);
-  const onUploadErrorRef = useRef(onUploadError);
-  onChangeRef.current = onChange;
-  onUploadRef.current = onUploadImage;
-  onUploadErrorRef.current = onUploadError;
-  const [commands, setCommands] = useState<ToastInstance | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    let editor: ToastInstance | undefined;
-    let cancelled = false;
-    void Promise.all([
-      import("@toast-ui/editor"),
-      import("@toast-ui/editor-plugin-color-syntax"),
-      // The `-all` bundle ships Prism + every language with deps resolved, so ``` ```ts ```, ```python```
-      // etc. colour correctly with no per-language wiring. It's only pulled into the (lazy, authed-only)
-      // editor chunk, so its size never touches the public reader.
-      import("@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js"),
-    ]).then(([{ default: Editor }, { default: colorSyntax }, { default: codeSyntaxHighlight }]) => {
-      if (cancelled || !hostRef.current) return;
-      editor = new Editor({
-        el: hostRef.current,
-        height: "100%",
-        initialValue: initialValue || "",
-        initialEditType: "wysiwyg",
-        previewStyle: "tab",
-        usageStatistics: false,
-        autofocus: false,
-        plugins: [colorSyntax, highlightPlugin, codeSyntaxHighlight],
-        hooks: {
-          addImageBlobHook: async (
-            blob: Blob,
-            callback: (url: string, alt?: string) => void,
-          ) => {
-            try {
-              const url = await onUploadRef.current(blob);
-              const name = blob instanceof File ? blob.name : "image";
-              callback(url, name);
-            } catch (e) {
-              // Returning without calling back keeps the editor from embedding a base64 blob; surface
-              // the reason so a failed paste/drop isn't silent.
-              onUploadErrorRef.current?.(e instanceof Error ? e.message : "image upload failed");
+  async function uploadAndInsert(ed: Editor, file: File) {
+    try {
+      const url = await onUploadImage(file);
+      ed.chain().focus().setImage({ src: url, alt: file.name }).run();
+    } catch (e) {
+      onUploadError?.(e instanceof Error ? e.message : "image upload failed");
+    }
+  }
+
+  const editor = useEditor({
+    // Next SSR: Tiptap must not render on the server (hydration mismatch otherwise).
+    immediatelyRender: false,
+    extensions: [
+      StarterKit.configure({ codeBlock: false }),
+      CodeMirrorBlock,
+      Image.configure({ inline: false }),
+      Placeholder.configure({ placeholder: "" }),
+      Markdown.configure({ html: false, breaks: true, transformPastedText: true }),
+    ],
+    content: initialValue || "",
+    editorProps: {
+      attributes: { class: "tiptap focus:outline-none" },
+      handlePaste: (_view, event) => {
+        const items = event.clipboardData?.items;
+        if (!items || !editor) return false;
+        for (const item of Array.from(items)) {
+          if (item.type.startsWith("image/")) {
+            const file = item.getAsFile();
+            if (file) {
+              event.preventDefault();
+              void uploadAndInsert(editor, file);
+              return true;
             }
-            return false;
-          },
-        },
-        events: {
-          change: () => {
-            if (editor) onChangeRef.current(editor.getMarkdown());
-          },
-        },
-      }) as unknown as ToastInstance;
-      setCommands(editor);
-    });
-    return () => {
-      cancelled = true;
-      setCommands(null);
-      editor?.destroy();
-    };
-    // Mount once; `initialValue` is already loaded before this renders (the page gates on loading).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+          }
+        }
+        return false;
+      },
+      handleDrop: (_view, event) => {
+        const files = (event as DragEvent).dataTransfer?.files;
+        if (!files || files.length === 0 || !editor) return false;
+        const img = Array.from(files).find((f) => f.type.startsWith("image/"));
+        if (img) {
+          event.preventDefault();
+          void uploadAndInsert(editor, img);
+          return true;
+        }
+        return false;
+      },
+    },
+    onUpdate: ({ editor }) => {
+      // tiptap-markdown augments storage at runtime but ships no type for it.
+      const md = (editor.storage as { markdown?: { getMarkdown: () => string } }).markdown;
+      if (md) onChange(md.getMarkdown());
+    },
+  });
+
+  if (!editor) return <div className="h-full" />;
 
   return (
-    <div className="relative h-full">
-      <div ref={hostRef} className="h-full" />
-      {commands && (
-        <>
-          <BlockInserter
-            editorHost={hostRef}
-            onAddBlock={() => {
-              commands.focus();
-              openMenuRef.current?.();
-            }}
-          />
-          <SlashMenu
-            editor={commands}
-            editorHost={hostRef}
-            onUploadImage={onUploadImage}
-            onUploadError={onUploadError}
-            openRef={openMenuRef}
-          />
-          <FloatingToolbar
-            editor={commands}
-            onUploadImage={onUploadImage}
-            onUploadError={onUploadError}
-            editorHost={hostRef}
-          />
-        </>
-      )}
+    <div className="flex h-full flex-col">
+      <Toolbar editor={editor} onPickImage={() => fileRef.current?.click()} />
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) void uploadAndInsert(editor, f);
+          e.target.value = "";
+        }}
+      />
+      <div className="min-h-0 flex-1 overflow-y-auto py-4">
+        <EditorContent editor={editor} className="h-full" />
+      </div>
+    </div>
+  );
+}
+
+function Toolbar({ editor, onPickImage }: { editor: Editor; onPickImage: () => void }) {
+  const btn = (active: boolean) =>
+    `focus-ring grid h-8 w-8 place-items-center rounded-lg transition-colors ${
+      active
+        ? "bg-accent-50 text-accent-700"
+        : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+    }`;
+
+  function setLink() {
+    const prev = editor.getAttributes("link").href as string | undefined;
+    const url = window.prompt("URL", prev ?? "");
+    if (url === null) return;
+    if (url === "") {
+      editor.chain().focus().unsetLink().run();
+      return;
+    }
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  }
+
+  return (
+    <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b border-slate-100 bg-white/90 py-1.5 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
+      <button type="button" aria-label="H2" className={btn(editor.isActive("heading", { level: 2 }))} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 className="h-4 w-4" /></button>
+      <button type="button" aria-label="H3" className={btn(editor.isActive("heading", { level: 3 }))} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}><Heading3 className="h-4 w-4" /></button>
+      <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
+      <button type="button" aria-label="Bold" className={btn(editor.isActive("bold"))} onClick={() => editor.chain().focus().toggleBold().run()}><Bold className="h-4 w-4" /></button>
+      <button type="button" aria-label="Italic" className={btn(editor.isActive("italic"))} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic className="h-4 w-4" /></button>
+      <button type="button" aria-label="Strike" className={btn(editor.isActive("strike"))} onClick={() => editor.chain().focus().toggleStrike().run()}><Strikethrough className="h-4 w-4" /></button>
+      <button type="button" aria-label="Link" className={btn(editor.isActive("link"))} onClick={setLink}><LinkIcon className="h-4 w-4" /></button>
+      <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
+      <button type="button" aria-label="Bullet list" className={btn(editor.isActive("bulletList"))} onClick={() => editor.chain().focus().toggleBulletList().run()}><List className="h-4 w-4" /></button>
+      <button type="button" aria-label="Ordered list" className={btn(editor.isActive("orderedList"))} onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered className="h-4 w-4" /></button>
+      <button type="button" aria-label="Quote" className={btn(editor.isActive("blockquote"))} onClick={() => editor.chain().focus().toggleBlockquote().run()}><Quote className="h-4 w-4" /></button>
+      <button type="button" aria-label="Code block" className={btn(editor.isActive("codeBlock"))} onClick={() => editor.chain().focus().toggleCodeBlock().run()}><Code2 className="h-4 w-4" /></button>
+      <button type="button" aria-label="Image" className={btn(false)} onClick={onPickImage}><ImageIcon className="h-4 w-4" /></button>
     </div>
   );
 }
