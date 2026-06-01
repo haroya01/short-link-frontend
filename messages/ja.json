@@ -67,7 +67,8 @@
     "bookmarkOn": "リーディングリストから削除",
     "seriesEyebrow": "シリーズ",
     "seriesEpisodeCount": "{count}本",
-    "seriesLastPublished": "最新 {date}"
+    "seriesLastPublished": "最新 {date}",
+    "seriesMoreCount": "他{count}本"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",
