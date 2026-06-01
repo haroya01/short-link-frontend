@@ -58,6 +58,7 @@
     "railPopularTags": "Popular tags",
     "railSuggestedAuthors": "Suggested authors",
     "railFollowingAuthors": "Authors you follow",
+    "railFollowingAll": "Show all",
     "railWriters": "Writers",
     "railTopics": "Topics",
     "railPostCount": "{count} posts",

@@ -95,6 +95,9 @@ export default async function BlogFeedPage({
   const groupByTag = tab === "trending" && !searching;
   // Flat feed = 최신, or any search (search collapses every tab to a flat result set).
   const needFlat = showsServerFeed && !groupByTag;
+  // The discovery rail (popular tags + suggested authors) rides beside both the flat feed and the
+  // trending tab — 인기 used to render with an empty right gutter, which read as a layout bug.
+  const needRail = needFlat || groupByTag;
 
   const [feedResult, trendingResult, tagsResult, authorsResult] = await Promise.all([
     needFlat
@@ -103,10 +106,10 @@ export default async function BlogFeedPage({
         : listPublicFeed(sort, 0, 24)
       : Promise.resolve(null),
     groupByTag ? listTrendingByTag() : Promise.resolve(null),
-    needFlat ? listPopularTags(12) : Promise.resolve(null),
+    needRail ? listPopularTags(12) : Promise.resolve(null),
     // Authors are also the follow-suggestions for the signed-out "following" tab, so fetch them there
-    // too (not just for the flat feed) to keep that tab from dead-ending.
-    needFlat || tab === "following" ? listSuggestedAuthors(5) : Promise.resolve(null),
+    // too (not just for the rail surfaces) to keep that tab from dead-ending.
+    needRail || tab === "following" ? listSuggestedAuthors(5) : Promise.resolve(null),
   ]);
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
@@ -200,12 +203,19 @@ export default async function BlogFeedPage({
           trendingSections.length === 0 ? (
             <FeedEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
           ) : (
-            <TrendingByTag
-              sections={trendingSections}
-              locale={locale}
-              moreLabel={t("railSeeAll")}
-              heading={t("trendingTopicsLabel")}
-            />
+            <ReadingShell
+              className="mt-8"
+              rail={
+                showRail ? <DiscoveryRail locale={locale} tags={tags} authors={authors} /> : undefined
+              }
+            >
+              <TrendingByTag
+                sections={trendingSections}
+                locale={locale}
+                moreLabel={t("railSeeAll")}
+                heading={t("trendingTopicsLabel")}
+              />
+            </ReadingShell>
           )
         ) : items.length === 0 ? (
           searching ? (
@@ -274,7 +284,9 @@ function FeedBody({
   children: ReactNode;
 }) {
   return (
-    <ReadingShell className={marginTop ? "mt-8" : "mt-6"} rail={children}>
+    // The recent feed leads straight into the posts (no masthead), so a wide top gap reads as an empty
+    // band under the tabs — keep it tight. Search keeps a touch more air below its masthead band.
+    <ReadingShell className={marginTop ? "mt-4" : "mt-6"} rail={children}>
       {belowFeatured}
       <FeedInfinite
         locale={locale}
