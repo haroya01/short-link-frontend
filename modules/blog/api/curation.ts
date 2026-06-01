@@ -1,10 +1,12 @@
 /**
- * Curation — FRONT-END-ONLY MOCK. There is no backend for this yet; pins and bookmarks live in
- * localStorage so the curation UX actually works (add / reorder / remove persist across reloads)
- * while the API is unbuilt. When a real endpoint lands, swap the bodies below for `request(...)`
- * calls — the call sites in the page don't change. CJK seed copy is fine here (mock data, same as
- * analytics.ts; the i18n literal guard scans app/components/hooks/lib, not modules).
+ * Curation. PINS are real: `setPinnedPosts` persists to the backend (`PUT /api/v1/posts/pins`) and
+ * the author's published pins surface first on their public profile; the current pin state rides on
+ * each post's `pinOrder` (PostView), so the page derives it from `listMyPosts` rather than a
+ * separate fetch. BOOKMARKS remain a FRONT-END-ONLY MOCK in localStorage (no backend yet) — when an
+ * endpoint lands, swap the bodies below for `request(...)`. CJK seed copy is fine here (mock data;
+ * the i18n literal guard scans app/components/hooks/lib, not modules).
  */
+import { request } from "@/lib/api/client";
 
 export interface BookmarkItem {
   id: number;
@@ -13,7 +15,6 @@ export interface BookmarkItem {
   slug: string;
 }
 
-const PIN_KEY = "kurl:curation:pins"; // number[] of postIds, in display order
 const BOOKMARK_KEY = "kurl:curation:bookmarks"; // BookmarkItem[]
 
 // Seeded once so the reading list isn't empty on first open. Mock authors/posts.
@@ -42,13 +43,13 @@ function write(key: string, value: unknown): void {
   }
 }
 
-/** Pinned post ids in display order (the order they'd surface atop the public blog home). */
-export function getPinnedIds(): number[] {
-  return read<number[]>(PIN_KEY, []);
-}
-
-export function setPinnedIds(ids: number[]): void {
-  write(PIN_KEY, ids);
+/**
+ * Replace the author's pinned set (ordered post ids → pin_order = list index). Only the caller's
+ * own PUBLISHED posts are pinnable; the backend ignores anything else. The new state is reflected
+ * in subsequent `listMyPosts()` via each post's `pinOrder`.
+ */
+export function setPinnedPosts(orderedIds: number[]): Promise<void> {
+  return request<void>(`/api/v1/posts/pins`, { method: "PUT", body: { postIds: orderedIds } });
 }
 
 export function getBookmarks(): BookmarkItem[] {

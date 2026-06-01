@@ -16,6 +16,8 @@ export interface PostView {
   tags: string[];
   seriesId: number | null;
   seriesOrder: number | null;
+  /** Author curation: 0-based position among pinned posts (null = not pinned). */
+  pinOrder: number | null;
   createdAt: string;
   updatedAt: string;
 }
