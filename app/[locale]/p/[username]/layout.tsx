@@ -15,9 +15,11 @@ export default function AuthorChromeLayout({ children }: { children: ReactNode }
   return (
     <AppProviders>
       <SidebarStateProvider>
-        <AppHeader showMenu={false} slimMobile />
-        <div className="min-h-screen pb-16 dark:bg-slate-950 dark:text-slate-300 sm:pb-0">
-          {children}
+        {/* Header inside the dark wrapper so its translucent bg blends with the dark page (not the
+            white body) — otherwise the sticky nav reads as a washed grey band in dark mode. */}
+        <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
+          <AppHeader showMenu={false} slimMobile />
+          <div className="flex-1 pb-16 sm:pb-0">{children}</div>
         </div>
         <BlogBottomNav />
       </SidebarStateProvider>
