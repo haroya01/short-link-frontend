@@ -27,6 +27,15 @@ export function BlogBottomNav() {
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
 
+  // Tell the cookie banner a bottom tab bar is present so it lifts above it (else it overlays the
+  // tabs and swallows their taps — 계정 → 로그아웃/제품 전환 unreachable). See globals.css.
+  useEffect(() => {
+    document.body.dataset.bottomNav = "1";
+    return () => {
+      delete document.body.dataset.bottomNav;
+    };
+  }, []);
+
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     function onScroll() {

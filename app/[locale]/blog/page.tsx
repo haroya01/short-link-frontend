@@ -22,6 +22,7 @@ import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { MobileDiscoveryStrip } from "@/modules/blog/components/mobile-discovery-strip";
+import { MyTagsStrip } from "@/modules/blog/components/my-tags-strip";
 import { TrendingByTag } from "@/modules/blog/components/trending-by-tag";
 
 export const revalidate = 30;
@@ -188,6 +189,8 @@ export default async function BlogFeedPage({
           </nav>
         </header>
 
+        {/* Reader's followed tags ("보고싶은 태그") — hidden until they follow one. Not during search. */}
+        {!searching && <MyTagsStrip />}
 
         {/* Keyed by tab + query so it remounts and crossfades on each tab switch / search. */}
         <div key={contentKey} className="content-fade">
