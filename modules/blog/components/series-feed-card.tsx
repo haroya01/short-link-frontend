@@ -51,7 +51,7 @@ export async function SeriesFeedCard({
       </a>
 
       {/* Members — each title is a link straight to that post. Quiet leading dot, hover lifts the row. */}
-      <ol className="mt-3 flex flex-col">
+      <ol className="mt-2 flex flex-col">
         {posts.map((post, i) => (
           <li
             key={post.slug}
@@ -60,7 +60,7 @@ export async function SeriesFeedCard({
           >
             <a
               href={postHref(series.author.username, post.slug, locale)}
-              className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
             >
               <span
                 aria-hidden
@@ -79,7 +79,7 @@ export async function SeriesFeedCard({
           >
             <a
               href={seriesUrl}
-              className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-[13px] text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-300"
+              className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 text-[13px] text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-300"
             >
               <span aria-hidden className="h-1.5 w-1.5 shrink-0" />
               <span>{t("seriesMoreCount", { count: more })}</span>
@@ -90,7 +90,7 @@ export async function SeriesFeedCard({
       </ol>
 
       {/* Author/date meta — same grammar as a post card's meta line. */}
-      <div className="mt-2.5 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
+      <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
         {series.author.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={series.author.avatarUrl} alt="" className="h-5 w-5 shrink-0 rounded-full object-cover" />

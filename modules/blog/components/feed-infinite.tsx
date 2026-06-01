@@ -131,7 +131,7 @@ export function FeedInfinite({
             {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
               // Bracketed by rules top + bottom so the series block reads as a distinct insert in the
               // feed flow, not just another post row.
-              <li className="list-none my-1 border-y border-slate-200 py-5 dark:border-slate-700">
+              <li className="list-none border-y border-slate-200 py-3.5 dark:border-slate-700">
                 {interleaveNode}
               </li>
             )}
