@@ -148,6 +148,12 @@
     "revisionVersion": "バージョン {n}",
     "revisionRestore": "復元",
     "revisionRestoreConfirm": "このバージョンに戻しますか？現在の内容は新しいリビジョンとして保存されます。",
+    "schedule": "予約",
+    "scheduleAt": "公開日時",
+    "scheduleConfirm": "予約する",
+    "scheduleInvalid": "未来の時刻を選んでください。",
+    "scheduledFor": "{when} に公開予定",
+    "cancelSchedule": "予約取消",
     "tagsHint": "カンマかEnterで区切る",
     "slash": {
       "heading1": "見出し1",

@@ -148,6 +148,12 @@
     "revisionVersion": "버전 {n}",
     "revisionRestore": "복원",
     "revisionRestoreConfirm": "이 버전으로 되돌릴까요? 현재 내용은 새 리비전으로 보관돼요.",
+    "schedule": "예약",
+    "scheduleAt": "발행 시각",
+    "scheduleConfirm": "예약하기",
+    "scheduleInvalid": "미래 시각을 선택해주세요.",
+    "scheduledFor": "{when} 발행 예정",
+    "cancelSchedule": "예약 취소",
     "tagsHint": "쉼표(,)나 Enter로 구분",
     "slash": {
       "heading1": "제목 1",
