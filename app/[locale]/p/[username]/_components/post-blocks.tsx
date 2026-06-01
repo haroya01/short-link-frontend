@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Markdown } from "@/modules/blog/components/markdown";
@@ -86,6 +87,34 @@ export function readingMinutes(blocks: PublicPostBlock[]): number {
   return Math.max(1, Math.round(chars / 500));
 }
 
+type BlockContext = { ranks: Map<number, number>; postId?: number };
+type BlockRenderer = (block: PublicPostBlock, ctx: BlockContext) => ReactNode;
+
+/**
+ * Block-type → renderer registry. OPEN FOR EXTENSION: a new block type is supported by registering
+ * one renderer here — the `Block` dispatcher below never changes (closed for modification).
+ */
+const BLOCK_RENDERERS: Record<string, BlockRenderer> = {
+  PARAGRAPH: (b) => (b.content ? <Markdown>{b.content}</Markdown> : null),
+  H1: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} />,
+  H2: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} />,
+  H3: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} />,
+  QUOTE: (b) =>
+    b.content ? (
+      <blockquote>
+        <Markdown inline>{b.content}</Markdown>
+      </blockquote>
+    ) : null,
+  DIVIDER: () => <div className="section-divider my-12" role="separator" />,
+  LIST_BULLET: (b) => <ListBlock content={b.content} ordered={false} />,
+  LIST_NUMBERED: (b) => <ListBlock content={b.content} ordered />,
+  IMAGE: (b) => <ImageBlock content={b.content} />,
+  CODE: (b) => <CodeBlock content={b.content} />,
+  TABLE: (b) => (b.content ? <Markdown>{b.content}</Markdown> : null),
+  EMBED: (b, ctx) => <EmbedBlock content={b.content} postId={ctx.postId} />,
+  CTA_REF: (b, ctx) => <CtaBlock cta={b.cta} postId={ctx.postId} />,
+};
+
 function Block({
   block,
   ranks,
@@ -95,48 +124,19 @@ function Block({
   ranks: Map<number, number>;
   postId?: number;
 }) {
-  switch (block.type) {
-    case "PARAGRAPH":
-      return block.content ? <Markdown>{block.content}</Markdown> : null;
-    case "H1":
-    case "H2":
-    case "H3": {
-      if (!block.content) return null;
-      // rank+2 → h2/h3/h4, contiguous so the page outline never skips a level.
-      const Tag = `h${(ranks.get(Number(block.type[1])) ?? 0) + 2}` as "h2" | "h3" | "h4";
-      const id = slugify(block.content);
-      // Self-link so the heading is a copyable deep-link; a hover "#" marker is added in `.prose-post`.
-      return (
-        <Tag id={id}>
-          <a href={`#${id}`}>{block.content}</a>
-        </Tag>
-      );
-    }
-    case "QUOTE":
-      return block.content ? (
-        <blockquote>
-          <Markdown inline>{block.content}</Markdown>
-        </blockquote>
-      ) : null;
-    case "DIVIDER":
-      return <div className="section-divider my-12" role="separator" />;
-    case "LIST_BULLET":
-      return <ListBlock content={block.content} ordered={false} />;
-    case "LIST_NUMBERED":
-      return <ListBlock content={block.content} ordered />;
-    case "IMAGE":
-      return <ImageBlock content={block.content} />;
-    case "CODE":
-      return <CodeBlock content={block.content} />;
-    case "TABLE":
-      return block.content ? <Markdown>{block.content}</Markdown> : null;
-    case "EMBED":
-      return <EmbedBlock content={block.content} postId={postId} />;
-    case "CTA_REF":
-      return <CtaBlock cta={block.cta} postId={postId} />;
-    default:
-      return null;
-  }
+  return BLOCK_RENDERERS[block.type]?.(block, { ranks, postId }) ?? null;
+}
+
+/** Heading (H1/H2/H3) → rank+2 (h2/h3/h4) so the outline never skips a level; self-linking deep anchor. */
+function HeadingBlock({ block, ranks }: { block: PublicPostBlock; ranks: Map<number, number> }) {
+  if (!block.content) return null;
+  const Tag = `h${(ranks.get(Number(block.type[1])) ?? 0) + 2}` as "h2" | "h3" | "h4";
+  const id = slugify(block.content);
+  return (
+    <Tag id={id}>
+      <a href={`#${id}`}>{block.content}</a>
+    </Tag>
+  );
 }
 
 function parseList(content: string): string[] {
