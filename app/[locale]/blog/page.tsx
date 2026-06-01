@@ -18,6 +18,7 @@ import {
 } from "@/modules/blog/api/public-posts";
 import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
+import { FeedContentTransition } from "@/modules/blog/components/feed-content-transition";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
@@ -131,8 +132,10 @@ export default async function BlogFeedPage({
   const showRail = hasRail && !searching;
 
   // Remount key for the feed content: changes on every Latest/Popular/Following switch (and on a new
-  // search), so the content block replays its fade instead of swapping abruptly.
+  // search), so the content block replays its slide instead of swapping abruptly.
   const contentKey = `${activeTab}:${searching ? query : ""}`;
+  // Tab order drives the slide direction (FeedContentTransition): recent → trending → following.
+  const tabIndex = activeTab === "trending" ? 1 : activeTab === "following" ? 2 : 0;
 
   // No separate hero card. On the default (non-search) recent feed the lead post just gets a quiet
   // "오늘의 글" emphasis as the first list row — same grammar as the rest of the list, only louder by a
@@ -203,8 +206,8 @@ export default async function BlogFeedPage({
         {/* Reader's followed tags ("보고싶은 태그") — hidden until they follow one. Not during search. */}
         {!searching && <MyTagsStrip />}
 
-        {/* Keyed by tab + query so it remounts and crossfades on each tab switch / search. */}
-        <div key={contentKey} className="content-fade">
+        {/* Keyed by tab + query so it remounts and replays the direction-aware slide on each switch. */}
+        <FeedContentTransition index={tabIndex} contentKey={contentKey}>
           {tab === "following" && !searching ? (
           <FollowingFeed locale={locale} suggestedAuthors={authors} />
         ) : groupByTag ? (
@@ -260,7 +263,7 @@ export default async function BlogFeedPage({
             ) : null}
           </FeedBody>
           )}
-        </div>
+        </FeedContentTransition>
       </main>
     </>
   );

@@ -606,25 +606,41 @@ h1, h2, h3, p {
 
 /*
  * Feed content swap — keyed by the active tab/search so the block remounts and replays this on every
- * Latest/Popular/Following switch. The tabs sit side by side, so the swap slides in laterally (matching
- * the author-tab content) rather than rising vertically — reads as moving *across* to the next tab, not
- * a fade-up. `both` holds the from-state so there's no flash before it starts.
+ * Latest/Popular/Following switch. The tabs sit side by side, so the swap slides in laterally and is
+ * *direction-aware*: moving to a tab on the right enters from the right (`-fwd`), moving back to a tab
+ * on the left enters from the left (`-back`) — so it reads as paging across, not always one way. The
+ * direction class is chosen client-side (FeedContentTransition). `both` holds the from-state so there's
+ * no flash before it starts.
  */
-@keyframes content-slide {
+@keyframes content-slide-fwd {
   from {
     opacity: 0;
-    transform: translateX(18px);
+    transform: translateX(20px);
   }
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
-.content-fade {
-  animation: content-slide 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+@keyframes content-slide-back {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.content-slide-fwd {
+  animation: content-slide-fwd 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.content-slide-back {
+  animation: content-slide-back 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 @media (prefers-reduced-motion: reduce) {
-  .content-fade {
+  .content-slide-fwd,
+  .content-slide-back {
     animation: none;
   }
 }
