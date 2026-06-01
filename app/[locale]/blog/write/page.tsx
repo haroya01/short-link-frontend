@@ -69,7 +69,7 @@ export default function WriteIndexPage() {
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("myPosts")}</h1>
         <a
           href={`${writeBase}/new`}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700"
+          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700"
         >
           <PenSquare className="h-4 w-4" />
           {t("newPost")}
@@ -87,7 +87,7 @@ export default function WriteIndexPage() {
               <li key={p.id}>
                 <a
                   href={`${writeBase}/${p.id}`}
-                  className="group -mx-3 flex gap-3.5 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50"
+                  className="focus-ring group -mx-3 flex gap-3.5 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50"
                 >
                   {p.ogImageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
