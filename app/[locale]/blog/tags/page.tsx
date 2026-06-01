@@ -58,8 +58,9 @@ export default async function TagsIndexPage({
       </div>
 
       {/* Tag cloud — same chip primitive + position as the tag page's filter strip; soft-nav so picking
-          a topic client-routes (no chrome reload) into the matching /tags/[tag] page. */}
-      <div className="mx-auto mt-5 max-w-2xl">
+          a topic client-routes (no chrome reload) into the matching /tags/[tag] page. The content
+          crossfades in (tag-list-enter) so arriving via "모두 보기" reads smooth, not a hard swap. */}
+      <div className="tag-list-enter mx-auto mt-5 max-w-2xl">
         {tags.length === 0 ? (
           <FeedEmpty title={t("empty")} />
         ) : (
