@@ -39,9 +39,9 @@ const BLOCK_KINDS_WITH_CONTENT = [
   "PRODUCT_CARD",
   "BOOKING",
   "EVENT",
+  "PLACE",
 ] as const;
 
-// PLACE 는 public endpoint 가 아직 editor 에 surface 안 함 — 인입 시 무시
 export function parsePublicFeed(entries: PublicFeedEntryShape[]): ParsedPublicFeed {
   const items: FeedItem[] = [];
   const labelByShortCode: Record<string, string> = {};
