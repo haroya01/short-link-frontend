@@ -1233,12 +1233,15 @@
     "copy": "복사",
     "copied": "복사됨",
     "copyFailed": "복사에 실패했어요",
-    "close": "닫기"
+    "close": "닫기",
+    "loginRequired": "로그인이 필요합니다.",
+    "errorPrefix": "에러:"
   },
   "notFound": {
     "title": "이 페이지를 찾을 수 없어요",
     "description": "주소를 잘못 입력했거나, 단축 링크가 만료됐거나, 존재하지 않는 페이지일 수 있어요.",
-    "cta": "홈으로 돌아가기"
+    "cta": "홈으로 돌아가기",
+    "short": "페이지를 찾을 수 없습니다."
   },
   "qr": {
     "title": "qr code",
@@ -1251,7 +1254,8 @@
     "srcLabel": "추적 태그 (선택)",
     "srcPlaceholder": "예: poster, offline-card",
     "colorLabel": "색상",
-    "logoLabel": "도착지 사이트 아이콘을 가운데에 넣기"
+    "logoLabel": "도착지 사이트 아이콘을 가운데에 넣기",
+    "comingSoon": "곧."
   },
   "share": {
     "label": "공유",
@@ -2616,5 +2620,51 @@
     "subtitle": "내가 쓴 글과 임시저장, 시리즈가 여기에 있어요. 로그인하면 이어서 작성할 수 있어요.",
     "google": "Google 계정으로 로그인",
     "browse": "로그인 없이 둘러보기"
+  },
+  "postAnalytics": {
+    "title": "분석",
+    "description": "글별 view 카운터 (v0). 정밀한 unique visitor / 읽은 시간 / 스크롤 깊이는 L3 tracking JS 도입 후.",
+    "totalViews": "총 조회수",
+    "published": "발행 글",
+    "drafts": "초안",
+    "empty": "아직 작성한 글이 없습니다.",
+    "colTitle": "제목",
+    "colStatus": "상태",
+    "colViews": "조회수",
+    "colPublished": "발행"
+  },
+  "ctaLibrary": {
+    "title": "CTA 라이브러리",
+    "description": "글에 박을 CTA 버튼을 한 곳에서 관리. 같은 CTA 를 여러 글에서 재사용 가능.",
+    "new": "새 CTA",
+    "empty": "아직 생성된 CTA 가 없습니다.",
+    "edit": "편집",
+    "delete": "삭제",
+    "deleteConfirm": "'{label}' CTA 를 삭제할까요? (soft-delete, 분석 데이터는 보존)",
+    "editorTitleEdit": "CTA 편집",
+    "editorTitleNew": "새 CTA 만들기",
+    "label": "라벨",
+    "labelPlaceholder": "예: 30분 무료 상담 예약",
+    "style": "스타일",
+    "intent": "의도",
+    "saving": "저장 중…",
+    "save": "저장",
+    "create": "만들기",
+    "purpose": {
+      "BOOKING": "예약",
+      "SUBSCRIBE": "구독",
+      "PURCHASE": "구매",
+      "CONTACT": "문의",
+      "DOWNLOAD": "자료 다운로드",
+      "CUSTOM": "기타"
+    }
+  },
+  "abuseReports": {
+    "filterAll": "전체",
+    "noPermission": "권한이 없습니다.",
+    "notePrompt": "{resolution} 메모 (선택)",
+    "subtitle": "신고 접수 list. CSAM auto-quarantine + DMCA 는 별도 트랙.",
+    "refresh": "새로고침",
+    "empty": "해당 상태의 신고가 없습니다."
   }
 }

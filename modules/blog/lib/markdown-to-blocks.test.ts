@@ -51,14 +51,15 @@ describe("markdownToBlocks", () => {
     const blocks = markdownToBlocks("- one\n- two\n- three");
     expect(blocks).toHaveLength(1);
     expect(blocks[0].type).toBe("LIST_BULLET");
-    expect(JSON.parse(blocks[0].content!)).toEqual(["one", "two", "three"]);
+    // New format = raw markdown (nesting-capable), not a JSON array.
+    expect(blocks[0].content).toBe("- one\n- two\n- three");
   });
 
   it("groups numbered list", () => {
     const blocks = markdownToBlocks("1. first\n2. second");
     expect(blocks).toHaveLength(1);
     expect(blocks[0].type).toBe("LIST_NUMBERED");
-    expect(JSON.parse(blocks[0].content!)).toEqual(["first", "second"]);
+    expect(blocks[0].content).toBe("1. first\n2. second");
   });
 });
 

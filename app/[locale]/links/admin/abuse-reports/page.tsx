@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
   listAbuseReports,
@@ -11,7 +12,7 @@ import {
 } from "@/lib/api/abuse-reports";
 
 const STATUS_FILTERS: { id: AbuseReportStatus | "ALL"; label: string }[] = [
-  { id: "ALL", label: "전체" },
+  { id: "ALL", label: "All" },
   { id: "OPEN", label: "Open" },
   { id: "REVIEWING", label: "Reviewing" },
   { id: "RESOLVED", label: "Resolved" },
@@ -27,6 +28,8 @@ const STATUS_BADGE: Record<AbuseReportStatus, string> = {
 
 export default function AdminAbuseReportsPage() {
   const { ready, authenticated, isAdmin } = useAuth();
+  const t = useTranslations("abuseReports");
+  const tc = useTranslations("common");
   const [reports, setReports] = useState<AbuseReportView[]>([]);
   const [statusFilter, setStatusFilter] = useState<AbuseReportStatus | "ALL">("ALL");
   const [loading, setLoading] = useState(true);
@@ -55,13 +58,13 @@ export default function AdminAbuseReportsPage() {
   if (!authenticated || !isAdmin) {
     return (
       <main className="mx-auto max-w-2xl px-6 py-12">
-        <p className="text-gray-600">권한이 없습니다.</p>
+        <p className="text-gray-600">{t("noPermission")}</p>
       </main>
     );
   }
 
   async function handleResolve(report: AbuseReportView, resolution: AbuseResolution) {
-    const note = window.prompt(`${resolution} 메모 (선택)`, "");
+    const note = window.prompt(t("notePrompt", { resolution }), "");
     if (note === null) return;
     try {
       const updated = await resolveAbuseReport(report.id, {
@@ -78,9 +81,7 @@ export default function AdminAbuseReportsPage() {
     <main className="mx-auto max-w-5xl px-6 py-12">
       <header className="mb-8">
         <h1 className="text-2xl font-bold">Abuse Reports</h1>
-        <p className="mt-2 text-sm text-gray-500">
-          신고 접수 list. CSAM auto-quarantine + DMCA 는 별도 트랙.
-        </p>
+        <p className="mt-2 text-sm text-gray-500">{t("subtitle")}</p>
       </header>
 
       <div className="mb-6 flex flex-wrap gap-2">
@@ -95,7 +96,7 @@ export default function AdminAbuseReportsPage() {
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
-            {f.label}
+            {f.id === "ALL" ? t("filterAll") : f.label}
           </button>
         ))}
         <button
@@ -103,15 +104,19 @@ export default function AdminAbuseReportsPage() {
           onClick={load}
           className="ml-auto rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200"
         >
-          새로고침
+          {t("refresh")}
         </button>
       </div>
 
-      {loading && <p className="text-gray-500">로딩 중…</p>}
-      {error && <p className="text-red-600">에러: {error}</p>}
+      {loading && <p className="text-gray-500">{tc("loading")}</p>}
+      {error && (
+        <p className="text-red-600">
+          {tc("errorPrefix")} {error}
+        </p>
+      )}
 
       {!loading && !error && reports.length === 0 && (
-        <p className="text-gray-500">해당 상태의 신고가 없습니다.</p>
+        <p className="text-gray-500">{t("empty")}</p>
       )}
 
       {!loading && reports.length > 0 && (
