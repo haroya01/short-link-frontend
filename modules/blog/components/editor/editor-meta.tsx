@@ -13,7 +13,7 @@ import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
  */
 function FieldLabel({ children }: { children: ReactNode }) {
   return (
-    <label className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-slate-700">
+    <label className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
       <span aria-hidden className="h-3 w-[3px] shrink-0 rounded-full bg-accent-500" />
       {children}
     </label>
@@ -44,10 +44,10 @@ export function EditorMeta({
 }) {
   const t = useTranslations("postEditor");
   return (
-    <div className="mt-3 border-b border-slate-100 pb-5">
+    <div className="mt-3 border-b border-slate-100 pb-5 dark:border-slate-800">
       {status === "DRAFT" ? (
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
-          <span className="font-mono text-slate-300">kurl.me/</span>
+          <span className="font-mono text-slate-300 dark:text-slate-600">kurl.me/</span>
           <input
             type="text"
             value={slug}
@@ -61,19 +61,19 @@ export function EditorMeta({
             spellCheck={false}
             data-1p-ignore
             data-lpignore="true"
-            className="w-44 rounded-md border border-slate-200 bg-slate-50/60 px-2 py-1 font-mono text-base text-slate-600 outline-none transition-colors focus:border-accent-400 focus:bg-white sm:text-xs"
+            className="w-44 rounded-md border border-slate-200 bg-slate-50/60 px-2 py-1 font-mono text-base text-slate-600 outline-none transition-colors focus:border-accent-400 focus:bg-white dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-200 dark:focus:bg-slate-900 sm:text-xs"
           />
-          <span className="text-[11px] text-slate-400">{t("slugHint")}</span>
+          <span className="text-[11px] text-slate-400 dark:text-slate-500">{t("slugHint")}</span>
         </div>
       ) : (
-        <p className="font-mono text-xs text-slate-400">kurl.me/{slug}</p>
+        <p className="font-mono text-xs text-slate-400 dark:text-slate-500">kurl.me/{slug}</p>
       )}
 
       <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_220px]">
         <div>
           <FieldLabel>{t("tags")}</FieldLabel>
           <TagInput tags={tags} onChange={onTagsChange} placeholder={t("tagsPlaceholder")} />
-          <p className="mt-1 text-[11px] text-slate-400">{t("tagsHint")}</p>
+          <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{t("tagsHint")}</p>
         </div>
         <div>
           <FieldLabel>{t("series")}</FieldLabel>
