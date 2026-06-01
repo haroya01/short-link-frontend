@@ -101,24 +101,24 @@ export default function BlogSeriesPage() {
 
   if (!ready) return null;
   if (!authenticated) {
-    return <main className="px-6 py-12 text-slate-600">{t("loginRequired")}</main>;
+    return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
   }
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("seriesTitle")}</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("seriesTitle")}</h1>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[300px_1fr]">
         {/* Left: create + list */}
         <div>
-          <form onSubmit={handleCreate} className="space-y-2 rounded-2xl border border-slate-200 p-4">
-            <p className="text-sm font-semibold text-slate-700">{t("seriesNewTitle")}</p>
+          <form onSubmit={handleCreate} className="space-y-2 rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t("seriesNewTitle")}</p>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder={t("seriesTitlePlaceholder")}
               maxLength={200}
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-accent-400"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-accent-400 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
             />
             <input
               value={slug}
@@ -127,9 +127,9 @@ export default function BlogSeriesPage() {
               pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
               minLength={2}
               maxLength={200}
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 font-mono text-sm outline-none focus:border-accent-400"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 font-mono text-sm outline-none focus:border-accent-400 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
             />
-            <p className="text-[12px] text-slate-400">{t("seriesSlugHint")}</p>
+            <p className="text-[12px] text-slate-400 dark:text-slate-500">{t("seriesSlugHint")}</p>
             <button
               type="submit"
               disabled={busy || !title.trim() || !slug.trim()}
@@ -143,7 +143,7 @@ export default function BlogSeriesPage() {
           <ul className="mt-4 space-y-1">
             {!loaded && <SkeletonRows count={4} />}
             {loaded && series.length === 0 && (
-              <li className="px-1 text-sm text-slate-400">{t("seriesEmpty")}</li>
+              <li className="px-1 text-sm text-slate-400 dark:text-slate-500">{t("seriesEmpty")}</li>
             )}
             {loaded &&
               series.map((s) => (
@@ -153,13 +153,13 @@ export default function BlogSeriesPage() {
                   onClick={() => select(s.id)}
                   className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                     selected?.series.id === s.id
-                      ? "bg-accent-50 text-accent-800"
-                      : "text-slate-700 hover:bg-slate-50"
+                      ? "bg-accent-50 text-accent-800 dark:bg-accent-500/15 dark:text-accent-300"
+                      : "text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60"
                   }`}
                 >
-                  <Layers className="h-4 w-4 shrink-0 text-accent-500" />
+                  <Layers className="h-4 w-4 shrink-0 text-accent-500 dark:text-accent-400" />
                   <span className="min-w-0 flex-1 truncate">{s.title}</span>
-                  <span className="text-[12px] text-slate-400">{s.postCount}</span>
+                  <span className="text-[12px] text-slate-400 dark:text-slate-500">{s.postCount}</span>
                 </button>
               </li>
             ))}
@@ -170,37 +170,37 @@ export default function BlogSeriesPage() {
         <div>
           {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
           {!selected ? (
-            <p className="text-sm text-slate-400">{t("selectSeries")}</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500">{t("selectSeries")}</p>
           ) : (
             <>
               <div className="flex items-center justify-between gap-3">
-                <h2 className="text-lg font-semibold text-slate-900">{selected.series.title}</h2>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{selected.series.title}</h2>
                 <button
                   type="button"
                   onClick={() => handleDelete(selected.series.id)}
                   disabled={busy}
-                  className="grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                  className="grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50 dark:text-slate-500 dark:hover:bg-red-950/40"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
-              <p className="mt-1 text-sm font-medium text-slate-500">{t("seriesMembers")}</p>
+              <p className="mt-1 text-sm font-medium text-slate-500 dark:text-slate-400">{t("seriesMembers")}</p>
 
               {selected.posts.length === 0 ? (
-                <p className="mt-4 text-sm text-slate-400">{t("seriesNoMembers")}</p>
+                <p className="mt-4 text-sm text-slate-400 dark:text-slate-500">{t("seriesNoMembers")}</p>
               ) : (
                 <ul className="mt-3 space-y-1">
                   {selected.posts.map((p, i) => (
                     <li
                       key={p.id}
-                      className="flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-2.5"
+                      className="flex items-center gap-3 rounded-xl border border-slate-200 px-3 py-2.5 dark:border-slate-800"
                     >
-                      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 text-[12px] font-semibold text-accent-700">
+                      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 text-[12px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">
                         {i + 1}
                       </span>
                       <a
                         href={`/write/${p.id}`}
-                        className="min-w-0 flex-1 truncate text-sm text-slate-800 hover:text-accent-700"
+                        className="min-w-0 flex-1 truncate text-sm text-slate-800 hover:text-accent-700 dark:text-slate-200 dark:hover:text-accent-300"
                       >
                         {p.title || p.slug}
                       </a>
@@ -210,7 +210,7 @@ export default function BlogSeriesPage() {
                           onClick={() => move(i, -1)}
                           disabled={busy || i === 0}
                           aria-label={t("curationMoveUp")}
-                          className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30"
+                          className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                         >
                           <ChevronUp className="h-4 w-4" />
                         </button>
@@ -219,7 +219,7 @@ export default function BlogSeriesPage() {
                           onClick={() => move(i, 1)}
                           disabled={busy || i === selected.posts.length - 1}
                           aria-label={t("curationMoveDown")}
-                          className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30"
+                          className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                         >
                           <ChevronDown className="h-4 w-4" />
                         </button>

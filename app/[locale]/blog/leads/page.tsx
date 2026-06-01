@@ -101,7 +101,7 @@ export default function ProfileLeadsPage() {
   }
 
   if (!ready || !authenticated) {
-    return <div className="container max-w-3xl py-16 text-sm text-slate-500">…</div>;
+    return <div className="container max-w-3xl py-16 text-sm text-slate-500 dark:text-slate-400">…</div>;
   }
 
   const lastPage = Math.max(0, Math.ceil(total / PAGE_SIZE) - 1);
@@ -110,18 +110,18 @@ export default function ProfileLeadsPage() {
     <div className="container max-w-3xl space-y-6 py-12">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px] dark:text-slate-100">
             {t("title")}
           </h1>
-          <p className="mt-1 text-[15px] leading-relaxed text-slate-500">
+          <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
             {t("intro", { count: total })}
           </p>
-          <p className="mt-1 text-[11px] text-slate-400">{t("csvExcludesOptedOut")}</p>
+          <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{t("csvExcludesOptedOut")}</p>
         </div>
         <div className="flex items-center gap-2">
           <Link
             href={`/${locale}/profile/edit`}
-            className="text-xs text-slate-500 hover:text-slate-900"
+            className="text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
           >
             {t("backToEditor")}
           </Link>
@@ -145,17 +145,18 @@ export default function ProfileLeadsPage() {
           <SkeletonRows count={8} />
         </div>
       ) : leads.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 px-4 py-12 text-center">
-          <p className="text-sm font-medium text-slate-700">{t("emptyTitle")}</p>
-          <p className="mt-1 text-[11px] text-slate-500">{t("emptyHint")}</p>
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 px-4 py-12 text-center dark:border-slate-700 dark:bg-slate-800/40">
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{t("emptyTitle")}</p>
+          <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{t("emptyHint")}</p>
         </div>
       ) : (
         /* Surface card uses rounded-2xl + flat shadow to read as a sibling of Section / stats
            cards (PR #245 unified surface). The table interior keeps its tight rounded-md tone
            by virtue of being inside the rounded-2xl clip. */
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] dark:border-slate-800 dark:bg-slate-900">
+          <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500">
+            <thead className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500 dark:bg-slate-800/40 dark:text-slate-400">
               <tr>
                 <th className="px-4 py-2 font-medium">{t("colEmail")}</th>
                 <th className="px-4 py-2 font-medium">{t("colBlock")}</th>
@@ -164,20 +165,20 @@ export default function ProfileLeadsPage() {
                 <th className="w-12 px-4 py-2"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {leads.map((lead) => (
-                <tr key={lead.id} className={lead.optedOut ? "bg-slate-50/60" : undefined}>
+                <tr key={lead.id} className={lead.optedOut ? "bg-slate-50/60 dark:bg-slate-800/40" : undefined}>
                   <td
                     className={
                       lead.optedOut
-                        ? "truncate px-4 py-2 font-medium text-slate-400 line-through"
-                        : "truncate px-4 py-2 font-medium text-slate-900"
+                        ? "truncate px-4 py-2 font-medium text-slate-400 line-through dark:text-slate-500"
+                        : "truncate px-4 py-2 font-medium text-slate-900 dark:text-slate-100"
                     }
                   >
                     {lead.email}
                   </td>
-                  <td className="px-4 py-2 text-[11px] text-slate-500">#{lead.blockId}</td>
-                  <td className="px-4 py-2 text-[11px] text-slate-500">
+                  <td className="px-4 py-2 text-[11px] text-slate-500 dark:text-slate-400">#{lead.blockId}</td>
+                  <td className="px-4 py-2 text-[11px] text-slate-500 dark:text-slate-400">
                     {new Date(lead.submittedAt).toLocaleString(locale)}
                   </td>
                   <td className="px-4 py-2 text-right">
@@ -187,7 +188,7 @@ export default function ProfileLeadsPage() {
                       className={
                         lead.optedOut
                           ? "inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-700 hover:bg-amber-100"
-                          : "inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-medium text-slate-500 hover:bg-slate-50"
+                          : "inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-medium text-slate-500 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/60"
                       }
                       aria-label={lead.optedOut ? t("undoOptOut") : t("optOut")}
                     >
@@ -208,7 +209,7 @@ export default function ProfileLeadsPage() {
                     <button
                       type="button"
                       onClick={() => handleDelete(lead.id)}
-                      className="text-slate-400 hover:text-red-600"
+                      className="text-slate-400 hover:text-red-600 dark:text-slate-500"
                       aria-label={t("delete")}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -218,16 +219,17 @@ export default function ProfileLeadsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
       {total > PAGE_SIZE && (
-        <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
           <button
             type="button"
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="rounded border border-slate-200 px-3 py-1 hover:bg-slate-50 disabled:opacity-40"
+            className="rounded border border-slate-200 px-3 py-1 hover:bg-slate-50 disabled:opacity-40 dark:border-slate-800 dark:hover:bg-slate-800/60"
           >
             {t("prev")}
           </button>
@@ -238,7 +240,7 @@ export default function ProfileLeadsPage() {
             type="button"
             onClick={() => setPage((p) => Math.min(lastPage, p + 1))}
             disabled={page >= lastPage}
-            className="rounded border border-slate-200 px-3 py-1 hover:bg-slate-50 disabled:opacity-40"
+            className="rounded border border-slate-200 px-3 py-1 hover:bg-slate-50 disabled:opacity-40 dark:border-slate-800 dark:hover:bg-slate-800/60"
           >
             {t("next")}
           </button>

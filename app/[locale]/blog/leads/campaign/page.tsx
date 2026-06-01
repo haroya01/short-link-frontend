@@ -85,7 +85,7 @@ export default function ProfileLeadsCampaignPage() {
   }
 
   if (!ready || !authenticated) {
-    return <div className="container max-w-3xl py-16 text-sm text-slate-500">…</div>;
+    return <div className="container max-w-3xl py-16 text-sm text-slate-500 dark:text-slate-400">…</div>;
   }
 
   return (
@@ -93,20 +93,20 @@ export default function ProfileLeadsCampaignPage() {
       <div>
         <Link
           href={`/${locale}/content/leads`}
-          className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900"
+          className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           {t("back")}
         </Link>
-        <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px] dark:text-slate-100">
           {t("title")}
         </h1>
-        <p className="mt-1 text-[15px] leading-relaxed text-slate-500">{t("intro")}</p>
+        <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("intro")}</p>
       </div>
 
-      <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] dark:border-slate-800 dark:bg-slate-900">
         <div>
-          <label htmlFor="campaign-name" className="text-xs font-medium text-slate-700">
+          <label htmlFor="campaign-name" className="text-xs font-medium text-slate-700 dark:text-slate-200">
             {t("nameLabel")}
           </label>
           <input
@@ -115,18 +115,18 @@ export default function ProfileLeadsCampaignPage() {
             value={campaignName}
             onChange={(e) => setCampaignName(e.target.value)}
             placeholder={t("namePlaceholder")}
-            className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:border-slate-400 focus:outline-none"
+            className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:border-slate-400 focus:outline-none dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
             maxLength={60}
           />
           {slug && (
-            <p className="mt-1 text-[11px] text-slate-400">
+            <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
               {t("nameSlugHint", { slug })}
             </p>
           )}
         </div>
 
         <div>
-          <label htmlFor="campaign-body" className="text-xs font-medium text-slate-700">
+          <label htmlFor="campaign-body" className="text-xs font-medium text-slate-700 dark:text-slate-200">
             {t("bodyLabel")}
           </label>
           <textarea
@@ -135,9 +135,9 @@ export default function ProfileLeadsCampaignPage() {
             onChange={(e) => setBody(e.target.value)}
             placeholder={t("bodyPlaceholder")}
             rows={10}
-            className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm leading-relaxed focus:border-slate-400 focus:outline-none"
+            className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm leading-relaxed focus:border-slate-400 focus:outline-none dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
           />
-          <p className="mt-1 text-[11px] text-slate-400">
+          <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
             {detectedUrls.length === 0
               ? t("bodyNoLinks")
               : t("bodyDetected", { count: detectedUrls.length })}
@@ -163,8 +163,8 @@ export default function ProfileLeadsCampaignPage() {
         <div className="space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50/40 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="text-sm font-semibold text-slate-900">{t("outputTitle")}</h2>
-              <p className="mt-0.5 text-[11px] text-slate-500">{t("outputHint")}</p>
+              <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t("outputTitle")}</h2>
+              <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">{t("outputHint")}</p>
             </div>
             <Button variant="outline" onClick={copyOutput}>
               <Copy className="mr-1 h-3.5 w-3.5" />
@@ -176,26 +176,26 @@ export default function ProfileLeadsCampaignPage() {
             readOnly
             value={output.body}
             rows={10}
-            className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm leading-relaxed text-slate-800"
+            className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm leading-relaxed text-slate-800 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
           />
 
           {output.rows.length > 0 && (
-            <div className="rounded-md border border-slate-200 bg-white">
-              <div className="border-b border-slate-100 px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+            <div className="rounded-md border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+              <div className="border-b border-slate-100 px-3 py-2 text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:text-slate-400">
                 {t("mappingTitle")}
               </div>
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {output.rows.map((row) => (
                   <li key={row.original} className="px-3 py-2 text-[11px]">
-                    <div className="truncate text-slate-400">{row.original}</div>
-                    <div className="truncate font-medium text-slate-700">{row.shortUrl}</div>
+                    <div className="truncate text-slate-400 dark:text-slate-500">{row.original}</div>
+                    <div className="truncate font-medium text-slate-700 dark:text-slate-200">{row.shortUrl}</div>
                   </li>
                 ))}
               </ul>
             </div>
           )}
 
-          <div className="flex items-start gap-2 rounded-md bg-white/60 px-3 py-2 text-[11px] text-slate-500">
+          <div className="flex items-start gap-2 rounded-md bg-white/60 px-3 py-2 text-[11px] text-slate-500 dark:bg-slate-900/60 dark:text-slate-400">
             <Send className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             <p>{t("sendHint")}</p>
           </div>

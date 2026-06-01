@@ -125,10 +125,11 @@ export function MarkdownEditor({
 
 function Toolbar({ editor, onPickImage }: { editor: Editor; onPickImage: () => void }) {
   const btn = (active: boolean) =>
-    `focus-ring grid h-8 w-8 place-items-center rounded-lg transition-colors ${
+    // touch-target adds a 44px-tall invisible hit area (WCAG 2.5.5) without enlarging the 32px icon.
+    `touch-target focus-ring grid h-8 w-8 place-items-center rounded-lg transition-colors ${
       active
-        ? "bg-accent-50 text-accent-700"
-        : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+        ? "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300"
+        : "text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
     }`;
 
   function setLink() {
