@@ -41,11 +41,11 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
           </span>
         )}
         <div className="min-w-0 flex-1 pt-1">
-          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 sm:text-headline-md">
+          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             @{author.username}
           </h1>
           {author.bio && (
-            <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{author.bio}</p>
+            <p className="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">{author.bio}</p>
           )}
           <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
             <FollowButton username={author.username} initialFollowerCount={0} />
@@ -54,7 +54,7 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
             {author.hasLinkInBio && (
               <a
                 href={linksHref(`/${locale}/u/${author.username}`)}
-                className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700"
+                className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
               >
                 <Link2 className="h-3.5 w-3.5" />
                 {tNav("profile")}
@@ -64,7 +64,7 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
         </div>
       </div>
 
-      <nav className="mt-8 flex gap-1 border-b border-slate-200 text-[15px] font-medium">
+      <nav className="mt-8 flex gap-1 border-b border-slate-200 text-[15px] font-medium dark:border-slate-800">
         {tabs.map((tab) => (
           <a
             key={tab.key}
@@ -72,8 +72,8 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
             aria-current={active === tab.key ? "page" : undefined}
             className={`-mb-px border-b-2 px-4 py-2.5 transition-colors ${
               active === tab.key
-                ? "border-accent-600 text-slate-900"
-                : "border-transparent text-slate-500 hover:text-slate-700"
+                ? "border-accent-600 text-slate-900 dark:text-slate-100"
+                : "border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             {tab.label}

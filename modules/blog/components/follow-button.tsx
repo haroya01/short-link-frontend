@@ -70,7 +70,7 @@ export function FollowButton({
           aria-pressed={following}
           className={`touch-target inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors focus-ring ${
             following
-              ? "border border-slate-200 text-slate-600 hover:border-slate-300"
+              ? "border border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600"
               : "bg-accent-600 text-white hover:bg-accent-700"
           }`}
         >
@@ -82,7 +82,7 @@ export function FollowButton({
           {following ? t("following") : t("follow")}
         </button>
       )}
-      {showCount && <span className="text-[13px] text-slate-500">{t("followers", { count })}</span>}
+      {showCount && <span className="text-[13px] text-slate-500 dark:text-slate-400">{t("followers", { count })}</span>}
     </div>
   );
 }

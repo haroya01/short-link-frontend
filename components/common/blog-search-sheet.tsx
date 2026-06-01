@@ -80,14 +80,14 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
       role="dialog"
       aria-modal="true"
       aria-label={t("searchLabel")}
-      className="fixed inset-0 z-50 flex flex-col bg-white sm:hidden"
+      className="fixed inset-0 z-50 flex flex-col bg-white dark:bg-slate-950 sm:hidden"
     >
       <form onSubmit={goToAll} role="search" className="flex h-14 shrink-0 items-center gap-2 px-3">
         <button
           type="button"
           onClick={onClose}
           aria-label={tc("close")}
-          className="focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-full text-slate-600 transition-colors hover:bg-slate-100"
+          className="focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-full text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           <X className="h-5 w-5" />
         </button>
@@ -103,7 +103,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             onChange={(e) => setValue(e.target.value)}
             placeholder={t("searchPlaceholder")}
             aria-label={t("searchLabel")}
-            className="h-10 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-[16px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-accent-500 focus:ring-2 focus:ring-accent-500/30 [&::-webkit-search-cancel-button]:appearance-none"
+            className="h-10 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-[16px] text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-accent-500 focus:ring-2 focus:ring-accent-500/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 [&::-webkit-search-cancel-button]:appearance-none"
           />
         </div>
       </form>
@@ -137,7 +137,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                         {item.tags[0]}
                       </span>
                     )}
-                    <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900">
+                    <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 dark:text-slate-100">
                       {item.title}
                     </span>
                     <span className="mt-0.5 block truncate text-[12px] text-slate-500">

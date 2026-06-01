@@ -58,8 +58,8 @@ export function LikeButton({ postId, initialCount }: { postId: number; initialCo
       aria-label={t("like")}
       className={`touch-target inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors focus-ring ${
         liked
-          ? "border-accent-300 bg-accent-50 text-accent-700"
-          : "border-slate-200 text-slate-500 hover:border-accent-300 hover:text-accent-700"
+          ? "border-accent-300 bg-accent-50 text-accent-700 dark:border-accent-500/40 dark:bg-accent-500/15 dark:text-accent-400"
+          : "border-slate-200 text-slate-500 hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
       }`}
     >
       <Heart className={`h-4 w-4 ${liked ? "fill-accent-600 text-accent-600" : ""}`} />

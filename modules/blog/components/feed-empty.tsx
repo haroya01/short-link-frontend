@@ -23,8 +23,8 @@ export function FeedEmpty({
       <span className="grid h-16 w-16 place-items-center rounded-2xl bg-accent-50 text-accent-600">
         <Icon className="h-7 w-7" />
       </span>
-      <h2 className="mt-6 text-[19px] font-semibold tracking-tight text-slate-900">{title}</h2>
-      {body && <p className="mt-2 max-w-sm text-[14px] leading-relaxed text-slate-500">{body}</p>}
+      <h2 className="mt-6 text-[19px] font-semibold tracking-tight text-slate-900 dark:text-slate-100">{title}</h2>
+      {body && <p className="mt-2 max-w-sm text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{body}</p>}
       {action && <div className="mt-6">{action}</div>}
     </div>
   );

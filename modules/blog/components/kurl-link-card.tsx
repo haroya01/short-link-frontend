@@ -46,7 +46,7 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
 
   if (state === "loading") {
     return (
-      <div className="my-8 h-28 animate-pulse rounded-2xl border border-slate-200 bg-slate-50" />
+      <div className="my-8 h-28 animate-pulse rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900" />
     );
   }
 
@@ -56,9 +56,9 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="my-8 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50/60 px-5 py-4 no-underline transition-colors hover:border-accent-300 hover:bg-accent-50/50"
+        className="my-8 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50/60 px-5 py-4 no-underline transition-colors hover:border-accent-300 hover:bg-accent-50/50 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-accent-500/40 dark:hover:bg-slate-800"
       >
-        <span className="flex min-w-0 items-center gap-2 text-sm font-medium text-slate-900">
+        <span className="flex min-w-0 items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-100">
           <MousePointerClick className="h-4 w-4 shrink-0 text-accent-600" />
           <span className="truncate">{shortLabel}</span>
         </span>
@@ -73,14 +73,14 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
   const sparkMax = Math.max(1, ...spark.map((d) => d.count));
 
   return (
-    <div className="my-8 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <div className="my-8 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
       <a
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-between gap-2 border-b border-slate-100 bg-slate-50/60 px-5 py-2.5 no-underline transition-colors hover:bg-accent-50/40"
+        className="flex items-center justify-between gap-2 border-b border-slate-100 bg-slate-50/60 px-5 py-2.5 no-underline transition-colors hover:bg-accent-50/40 dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800"
       >
-        <span className="flex min-w-0 items-center gap-1.5 font-mono text-[13px] font-medium text-slate-700">
+        <span className="flex min-w-0 items-center gap-1.5 font-mono text-[13px] font-medium text-slate-700 dark:text-slate-300">
           <MousePointerClick className="h-3.5 w-3.5 shrink-0 text-accent-600" />
           <span className="truncate">{shortLabel}</span>
         </span>
@@ -89,7 +89,7 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
 
       <div className="flex flex-wrap items-end gap-x-8 gap-y-4 px-5 py-4">
         <div>
-          <div className="text-[26px] font-bold leading-none tracking-tight text-slate-900">
+          <div className="text-[26px] font-bold leading-none tracking-tight text-slate-900 dark:text-slate-100">
             {data.totalClicks.toLocaleString()}
           </div>
           <div className="mt-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">

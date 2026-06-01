@@ -114,7 +114,7 @@ export default async function PublicPostPage({
                 {author.username.charAt(0).toUpperCase()}
               </span>
             )}
-            <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700">
+            <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
               @{author.username}
             </span>
           </a>
@@ -158,7 +158,7 @@ export default async function PublicPostPage({
               </span>
             )}
             <span className="min-w-0">
-              <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700">
+              <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
                 @{author.username}
               </span>
               <span className="block text-[13px] text-slate-500">
@@ -194,7 +194,7 @@ export default async function PublicPostPage({
         </div>
       )}
 
-      <footer className="mt-20 border-t border-slate-100 pt-8">
+      <footer className="mt-20 border-t border-slate-100 pt-8 dark:border-slate-800">
         <div className="flex items-center justify-between gap-4">
           <a
             href={authorHref(author.username, locale)}
