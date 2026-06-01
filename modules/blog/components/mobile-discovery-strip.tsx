@@ -28,7 +28,7 @@ export async function MobileDiscoveryStrip({
       {tags.length > 0 && (
         <section className="mt-6">
           <div className="mb-2 flex items-baseline justify-between">
-            <h2 className="text-[12px] font-bold uppercase tracking-wide text-slate-500">
+            <h2 className="text-[12px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               {t("railPopularTags")}
             </h2>
             <a
@@ -51,14 +51,14 @@ export async function MobileDiscoveryStrip({
               ))}
             </ul>
             {/* Right-edge fade — signals the row scrolls (mobile has no scrollbar). */}
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-950" />
           </div>
         </section>
       )}
 
       {authors.length > 0 && (
         <section className="mt-5">
-          <h2 className="mb-2 text-[12px] font-bold uppercase tracking-wide text-slate-500">
+          <h2 className="mb-2 text-[12px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
             {t("railSuggestedAuthors")}
           </h2>
           <div className="relative -mx-4">
@@ -67,7 +67,7 @@ export async function MobileDiscoveryStrip({
               <li key={author.username} className="shrink-0">
                 <a
                   href={authorHref(author.username, locale)}
-                  className="flex w-44 items-center gap-2.5 rounded-xl border border-slate-200 px-3 py-2.5 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring"
+                  className="flex w-44 items-center gap-2.5 rounded-xl border border-slate-200 px-3 py-2.5 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-800/50"
                 >
                   {author.avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -82,10 +82,10 @@ export async function MobileDiscoveryStrip({
                     </span>
                   )}
                   <span className="flex min-w-0 flex-col">
-                    <span className="truncate text-[13px] font-semibold text-slate-800">
+                    <span className="truncate text-[13px] font-semibold text-slate-800 dark:text-slate-200">
                       {author.username}
                     </span>
-                    <span className="truncate text-[11px] text-slate-500">
+                    <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">
                       {t("railPostCount", { count: postCount })}
                     </span>
                   </span>
@@ -93,7 +93,7 @@ export async function MobileDiscoveryStrip({
               </li>
             ))}
             </ul>
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-950" />
           </div>
         </section>
       )}
