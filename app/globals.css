@@ -684,8 +684,11 @@ html[data-theme-vt]::view-transition-new(root) {
 @view-transition {
   navigation: auto;
 }
-/* Calm, not chaotic: the sticky header + tab/filter chrome are held still (their own VT groups), so a
-   page navigation just cross-fades the body gently — no whole-page sideways slide. */
+/* Calm, not chaotic. Two fixes over a naive crossfade:
+   1. The OLD page is HELD at full opacity (no fade-out) and the NEW just fades in over it — a plain
+      crossfade fades both, dipping to ~half opacity mid-transition, which reads as a whole-page blink.
+   2. The named chrome groups (header, bottom nav) would otherwise get the UA default fade too, so they
+      blink. Pin them to `animation: none` → they stay perfectly still while only the body crossfades. */
 @keyframes page-nav-in {
   from {
     opacity: 0;
@@ -694,19 +697,17 @@ html[data-theme-vt]::view-transition-new(root) {
     opacity: 1;
   }
 }
-@keyframes page-nav-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
 html:not([data-theme-vt])::view-transition-old(root) {
-  animation: page-nav-out 160ms ease both;
+  animation: none;
 }
 html:not([data-theme-vt])::view-transition-new(root) {
-  animation: page-nav-in 240ms ease both;
+  animation: page-nav-in 260ms ease both;
+}
+::view-transition-old(app-header),
+::view-transition-new(app-header),
+::view-transition-old(bottom-nav),
+::view-transition-new(bottom-nav) {
+  animation: none;
 }
 /* The sticky app header + mobile tab bar are the SAME across blog pages, so name them as their own
    view-transition groups: identical position → they hold still while only the body crossfades, instead
