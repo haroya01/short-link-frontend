@@ -186,7 +186,7 @@ export default async function PublicPostPage({
         <SeriesNav series={result.data.series} username={author.username} locale={locale} />
       )}
 
-      <ArticleBody blocks={blocks} />
+      <ArticleBody blocks={blocks} postId={post.id} />
 
       {post.tags.length > 0 && (
         <div className="mt-10">

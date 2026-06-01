@@ -104,7 +104,9 @@
     "analyticsLifetimeLikes": "Total likes",
     "analyticsPublished": "Published",
     "analyticsViews": "{count} views",
-    "analyticsDays": "{days}d"
+    "analyticsDays": "{days}d",
+    "analyticsLinkClicks": "Clicks from this content",
+    "analyticsWindowClicks": "{count} clicks in {days}d"
   },
   "postEditor": {
     "backToList": "Posts",

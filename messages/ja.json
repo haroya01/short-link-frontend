@@ -104,7 +104,9 @@
     "analyticsLifetimeLikes": "累計いいね",
     "analyticsPublished": "公開記事",
     "analyticsViews": "閲覧 {count}",
-    "analyticsDays": "{days}日"
+    "analyticsDays": "{days}日",
+    "analyticsLinkClicks": "この記事が生んだクリック",
+    "analyticsWindowClicks": "直近{days}日で{count}クリック"
   },
   "postEditor": {
     "backToList": "記事一覧",

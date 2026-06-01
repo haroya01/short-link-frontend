@@ -48,15 +48,28 @@ export function extractHeadings(blocks: PublicPostBlock[]): TocHeading[] {
  * semantic element under `.prose-post` (see globals.css) which carries the editorial typography.
  * Server component — no client state; the only interactive bits are plain anchors.
  */
-export function ArticleBody({ blocks }: { blocks: PublicPostBlock[] }) {
+export function ArticleBody({
+  blocks,
+  postId,
+}: {
+  blocks: PublicPostBlock[];
+  /** When set, kurl links embedded in the post carry `?post=` so their clicks attribute here. */
+  postId?: number;
+}) {
   const ranks = headingRanks(blocks);
   return (
     <div className="prose-post">
       {blocks.map((block, i) => (
-        <Block key={i} block={block} ranks={ranks} />
+        <Block key={i} block={block} ranks={ranks} postId={postId} />
       ))}
     </div>
   );
+}
+
+/** Append `?post=` to a kurl short link so the redirect attributes the click to this post. */
+function withPostParam(url: string, postId?: number): string {
+  if (!postId || !kurlShortCode(url)) return url;
+  return `${url}${url.includes("?") ? "&" : "?"}post=${postId}`;
 }
 
 /** Rough read-time estimate from the textual blocks. CJK-leaning: ~500 chars/min. */
@@ -73,7 +86,15 @@ export function readingMinutes(blocks: PublicPostBlock[]): number {
   return Math.max(1, Math.round(chars / 500));
 }
 
-function Block({ block, ranks }: { block: PublicPostBlock; ranks: Map<number, number> }) {
+function Block({
+  block,
+  ranks,
+  postId,
+}: {
+  block: PublicPostBlock;
+  ranks: Map<number, number>;
+  postId?: number;
+}) {
   switch (block.type) {
     case "PARAGRAPH":
       return block.content ? <Markdown>{block.content}</Markdown> : null;
@@ -110,9 +131,9 @@ function Block({ block, ranks }: { block: PublicPostBlock; ranks: Map<number, nu
     case "TABLE":
       return block.content ? <Markdown>{block.content}</Markdown> : null;
     case "EMBED":
-      return <EmbedBlock content={block.content} />;
+      return <EmbedBlock content={block.content} postId={postId} />;
     case "CTA_REF":
-      return <CtaBlock cta={block.cta} />;
+      return <CtaBlock cta={block.cta} postId={postId} />;
     default:
       return null;
   }
@@ -180,10 +201,12 @@ function CodeBlock({ content }: { content: string | null }) {
   return <PostCode lang={lang} code={code} />;
 }
 
-function EmbedBlock({ content }: { content: string | null }) {
-  // A kurl short link → live link-stats card (the "post backed by measured links" signal).
+function EmbedBlock({ content, postId }: { content: string | null; postId?: number }) {
+  // A kurl short link → live link-stats card (the "post backed by measured links" signal). The
+  // outbound url carries ?post= so the click attributes to this post ("이 글이 만든 클릭").
   const code = content ? kurlShortCode(content) : null;
-  if (code && content) return <KurlLinkCard code={code} url={content.trim()} />;
+  if (code && content)
+    return <KurlLinkCard code={code} url={withPostParam(content.trim(), postId)} />;
 
   const plan = planEmbed(content);
   if (!plan) return null;
@@ -226,7 +249,7 @@ function EmbedBlock({ content }: { content: string | null }) {
   );
 }
 
-async function CtaBlock({ cta }: { cta: PublicCtaInfo | null }) {
+async function CtaBlock({ cta, postId }: { cta: PublicCtaInfo | null; postId?: number }) {
   if (!cta || cta.deleted) {
     const t = await getTranslations("publicPost");
     return (
@@ -242,7 +265,12 @@ async function CtaBlock({ cta }: { cta: PublicCtaInfo | null }) {
     ? "bg-accent-600 text-white hover:bg-accent-700"
     : "border border-slate-200 text-slate-900 hover:border-accent-300 hover:bg-accent-50/50";
   return (
-    <a href={cta.url} target="_blank" rel="noopener noreferrer" className={`${base} ${tone}`}>
+    <a
+      href={withPostParam(cta.url, postId)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${base} ${tone}`}
+    >
       {cta.label}
       <ArrowUpRight className="h-4 w-4" />
     </a>
