@@ -136,7 +136,13 @@
     "settingsEditProfile": "プロフィールを編集",
     "settingsAccountSettings": "アカウント設定全体",
     "settingsViewBlog": "自分のブログを見る",
-    "settingsDisplay": "表示"
+    "settingsDisplay": "表示",
+    "rowDelete": "削除",
+    "rowDeleteConfirm": "「{title}」を削除しますか？元に戻せません。",
+    "rowDeleteFailed": "削除に失敗しました。",
+    "curationLiked": "いいねした記事",
+    "curationLikedHint": "あなたがいいねした記事。",
+    "curationLikedEmpty": "まだいいねした記事がありません。"
   },
   "postEditor": {
     "backToList": "記事一覧",
