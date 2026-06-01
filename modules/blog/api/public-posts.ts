@@ -88,6 +88,8 @@ export interface PublicPostDetail {
 }
 
 export interface PublicSeriesListItem {
+  /** Series id — the subscribe toggle's target (the series page's 구독), like the discovery card. */
+  id: number;
   slug: string;
   title: string;
   postCount: number;

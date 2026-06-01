@@ -70,7 +70,9 @@
     "seriesLastPublished": "마지막 글 {date}",
     "seriesMoreCount": "+{count}편 더",
     "seriesSubscribe": "구독",
-    "seriesSubscribed": "구독중"
+    "seriesSubscribed": "구독중",
+    "seriesByAuthor": "이 시리즈의 작가",
+    "seriesAllByAuthor": "모든 시리즈 보기"
   },
   "blogWorkspace": {
     "overviewTitle": "개요",

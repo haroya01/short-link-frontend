@@ -70,7 +70,9 @@
     "seriesLastPublished": "Last post {date}",
     "seriesMoreCount": "+{count} more",
     "seriesSubscribe": "Subscribe",
-    "seriesSubscribed": "Subscribed"
+    "seriesSubscribed": "Subscribed",
+    "seriesByAuthor": "Series author",
+    "seriesAllByAuthor": "View all series"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",

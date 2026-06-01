@@ -70,7 +70,9 @@
     "seriesLastPublished": "最新 {date}",
     "seriesMoreCount": "他{count}本",
     "seriesSubscribe": "購読",
-    "seriesSubscribed": "購読中"
+    "seriesSubscribed": "購読中",
+    "seriesByAuthor": "このシリーズの作者",
+    "seriesAllByAuthor": "すべてのシリーズを見る"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",
