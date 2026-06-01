@@ -16,6 +16,7 @@ import {
   Minus,
   Quote,
   RectangleHorizontal,
+  Table as TableIcon,
   Video,
 } from "lucide-react";
 import { keywordMatch, matchSlashQuery } from "@/modules/blog/components/editor/slash-menu-logic";
@@ -45,6 +46,7 @@ function buildItems(pickImage: (opts?: ImagePickOptions) => void): SlashItem[] {
     { key: "ordered", labelKey: "orderedList", icon: ListOrdered, keywords: ["ordered", "number", "ol", "번호", "리스트"], run: (e) => e.chain().focus().toggleOrderedList().run() },
     { key: "quote", labelKey: "quote", icon: Quote, keywords: ["quote", "blockquote", "인용", "引用"], run: (e) => e.chain().focus().toggleBlockquote().run() },
     { key: "code", labelKey: "codeBlock", icon: Code2, keywords: ["code", "codeblock", "pre", "코드", "コード"], run: (e) => e.chain().focus().toggleCodeBlock().run() },
+    { key: "table", labelKey: "table", icon: TableIcon, keywords: ["table", "grid", "표", "테이블", "テーブル", "表"], run: (e) => e.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
     { key: "image", labelKey: "image", icon: ImageIcon, keywords: ["image", "img", "photo", "이미지", "사진", "画像"], run: () => pickImage() },
     { key: "imageWide", labelKey: "imageWide", icon: RectangleHorizontal, keywords: ["wide", "image", "cover", "hero", "banner", "와이드", "넓은", "배너", "ワイド"], run: () => pickImage({ width: "wide" }) },
     { key: "imagePair", labelKey: "imagePair", icon: Columns2, keywords: ["pair", "two", "gallery", "side", "2", "나란히", "두장", "갤러리", "並べ"], run: () => pickImage({ width: "half", multiple: true }) },

@@ -5,12 +5,18 @@ import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
+import Highlight from "@tiptap/extension-highlight";
+import { Table } from "@tiptap/extension-table";
+import { TableRow } from "@tiptap/extension-table-row";
+import { TableHeader } from "@tiptap/extension-table-header";
+import { TableCell } from "@tiptap/extension-table-cell";
 import { Markdown } from "tiptap-markdown";
 import {
   Bold,
   Code2,
   Heading2,
   Heading3,
+  Highlighter,
   Image as ImageIcon,
   Italic,
   Link as LinkIcon,
@@ -19,6 +25,7 @@ import {
   Plus,
   Quote,
   Strikethrough,
+  Table as TableIcon,
 } from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
@@ -78,8 +85,15 @@ export function MarkdownEditor({
       }),
       CodeMirrorBlock,
       Image.configure({ inline: false }),
+      Highlight,
+      Table.configure({ resizable: false }),
+      TableRow,
+      TableHeader,
+      TableCell,
       Placeholder.configure({ placeholder: "" }),
-      Markdown.configure({ html: false, breaks: true, transformPastedText: true }),
+      // html:true so the Highlight mark round-trips as <mark> (no markdown equivalent); the public
+      // reader safely sanitises <mark>/<span style> (see modules/blog/components/markdown.tsx).
+      Markdown.configure({ html: true, breaks: true, transformPastedText: true }),
     ],
     content: initialValue || "",
     editorProps: {
@@ -180,12 +194,14 @@ function Toolbar({
       <button type="button" aria-label="Bold" className={btn(editor.isActive("bold"))} onClick={() => editor.chain().focus().toggleBold().run()}><Bold className="h-4 w-4" /></button>
       <button type="button" aria-label="Italic" className={btn(editor.isActive("italic"))} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic className="h-4 w-4" /></button>
       <button type="button" aria-label="Strike" className={btn(editor.isActive("strike"))} onClick={() => editor.chain().focus().toggleStrike().run()}><Strikethrough className="h-4 w-4" /></button>
+      <button type="button" aria-label="Highlight" className={btn(editor.isActive("highlight"))} onClick={() => editor.chain().focus().toggleHighlight().run()}><Highlighter className="h-4 w-4" /></button>
       <button type="button" aria-label="Link" className={btn(editor.isActive("link"))} onClick={setLink}><LinkIcon className="h-4 w-4" /></button>
       <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
       <button type="button" aria-label="Bullet list" className={btn(editor.isActive("bulletList"))} onClick={() => editor.chain().focus().toggleBulletList().run()}><List className="h-4 w-4" /></button>
       <button type="button" aria-label="Ordered list" className={btn(editor.isActive("orderedList"))} onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered className="h-4 w-4" /></button>
       <button type="button" aria-label="Quote" className={btn(editor.isActive("blockquote"))} onClick={() => editor.chain().focus().toggleBlockquote().run()}><Quote className="h-4 w-4" /></button>
       <button type="button" aria-label="Code block" className={btn(editor.isActive("codeBlock"))} onClick={() => editor.chain().focus().toggleCodeBlock().run()}><Code2 className="h-4 w-4" /></button>
+      <button type="button" aria-label="Table" className={btn(editor.isActive("table"))} onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}><TableIcon className="h-4 w-4" /></button>
       <button type="button" aria-label="Image" className={btn(false)} onClick={() => onPickImage()}><ImageIcon className="h-4 w-4" /></button>
     </div>
   );
