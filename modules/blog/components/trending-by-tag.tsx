@@ -28,8 +28,10 @@ export function TrendingByTag({
   /** Framing line above the sections, e.g. "주제별로 많이 읽힌 글" — so raw tag headers read as topics. */
   heading?: string;
 }) {
+  // No own centering / max-width / top margin — the caller wraps this in <ReadingShell> so the column
+  // (and the optional discovery rail beside it) match the recent feed exactly.
   return (
-    <div className="mx-auto mt-8 max-w-2xl">
+    <>
       {heading && <p className="mb-8 text-[14px] text-slate-500">{heading}</p>}
       <div className="flex flex-col gap-12">
         {sections.map((section) => (
@@ -61,6 +63,6 @@ export function TrendingByTag({
           </section>
         ))}
       </div>
-    </div>
+    </>
   );
 }

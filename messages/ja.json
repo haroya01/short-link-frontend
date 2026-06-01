@@ -58,6 +58,7 @@
     "railPopularTags": "人気のタグ",
     "railSuggestedAuthors": "おすすめの作家",
     "railFollowingAuthors": "フォロー中の作家",
+    "railFollowingAll": "すべて表示",
     "railWriters": "作家",
     "railTopics": "トピック",
     "railPostCount": "記事 {count}",

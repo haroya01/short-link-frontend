@@ -58,6 +58,7 @@
     "railPopularTags": "인기 태그",
     "railSuggestedAuthors": "추천 작가",
     "railFollowingAuthors": "팔로우한 작가",
+    "railFollowingAll": "전체 보기",
     "railWriters": "작가",
     "railTopics": "주제",
     "railPostCount": "글 {count}",

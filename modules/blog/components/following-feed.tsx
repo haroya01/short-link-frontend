@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Users } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
 import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
@@ -27,7 +28,19 @@ function feedAuthors(items: PublicFeedItem[], limit = 8): PublicAuthor[] {
   return out;
 }
 
-/** One author row in a rail — avatar + name, optional subtitle. Shared by the followed/suggested lists. */
+function AuthorAvatar({ author }: { author: PublicAuthor }) {
+  if (author.avatarUrl) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={author.avatarUrl} alt="" className="h-9 w-9 shrink-0 rounded-full object-cover" />;
+  }
+  return (
+    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700">
+      {author.username.charAt(0).toUpperCase()}
+    </span>
+  );
+}
+
+/** One author row in a rail — avatar + name, optional subtitle. Used by the suggested-authors list. */
 function AuthorRow({
   author,
   locale,
@@ -43,14 +56,7 @@ function AuthorRow({
         href={authorHref(author.username, locale)}
         className="group flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
       >
-        {author.avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={author.avatarUrl} alt="" className="h-9 w-9 shrink-0 rounded-full object-cover" />
-        ) : (
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700">
-            {author.username.charAt(0).toUpperCase()}
-          </span>
-        )}
+        <AuthorAvatar author={author} />
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200 dark:group-hover:text-slate-100">
             {author.username}
@@ -58,6 +64,46 @@ function AuthorRow({
           {subtitle && <span className="truncate text-[12px] text-slate-500">{subtitle}</span>}
         </span>
       </a>
+    </li>
+  );
+}
+
+/** A followed author as a toggle — clicking filters the feed to just their posts (and again clears it),
+ *  so the rail doubles as an in-place filter instead of bouncing to the author's profile. */
+function AuthorFilterRow({
+  author,
+  active,
+  onToggle,
+}: {
+  author: PublicAuthor;
+  active: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-pressed={active}
+        className={cn(
+          "group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors focus-ring",
+          active
+            ? "bg-accent-50 dark:bg-accent-500/10"
+            : "hover:bg-slate-50 dark:hover:bg-slate-800/50",
+        )}
+      >
+        <AuthorAvatar author={author} />
+        <span
+          className={cn(
+            "min-w-0 flex-1 truncate text-[14px] font-semibold",
+            active
+              ? "text-accent-700 dark:text-accent-300"
+              : "text-slate-800 group-hover:text-slate-900 dark:text-slate-200 dark:group-hover:text-slate-100",
+          )}
+        >
+          {author.username}
+        </span>
+      </button>
     </li>
   );
 }
@@ -82,13 +128,19 @@ export function FollowingFeed({
   const t = useTranslations("publicFeed");
   const { authenticated, ready, signInWithGoogle } = useAuth();
   const [items, setItems] = useState<PublicFeedItem[] | null>(null);
+  // Selected followed author — when set, the feed is filtered in-place to just their posts (the rail
+  // row toggles it). Cleared whenever the feed reloads so a stale name never hides everything.
+  const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
 
   useEffect(() => {
     if (!ready || !authenticated) return;
     let alive = true;
     listFollowingFeed(0, 24)
       .then((view) => {
-        if (alive) setItems(view.items);
+        if (alive) {
+          setItems(view.items);
+          setSelectedAuthor(null);
+        }
       })
       .catch(() => {
         if (alive) setItems([]);
@@ -161,16 +213,42 @@ export function FollowingFeed({
   const followedNames = new Set(followed.map((a) => a.username));
   const suggestions = suggestedAuthors.filter((s) => !followedNames.has(s.author.username));
 
-  // Same rail slot as the recent feed, filled with the following-tab context.
+  // A filter only makes sense if the picked author is actually present; otherwise show everything.
+  const activeAuthor =
+    selectedAuthor && followedNames.has(selectedAuthor) ? selectedAuthor : null;
+  const shown = activeAuthor ? items.filter((it) => it.author.username === activeAuthor) : items;
+
+  // Same rail slot as the recent feed, filled with the following-tab context. The followed authors
+  // double as a filter; suggestions stay plain profile links.
   const rail =
     followed.length > 0 || suggestions.length > 0 ? (
       <div className="flex flex-col gap-6">
         {followed.length > 0 && (
           <section>
-            <RailHeading className="mb-3">{t("railFollowingAuthors")}</RailHeading>
+            <div className="mb-3 flex items-baseline justify-between gap-2">
+              <RailHeading>{t("railFollowingAuthors")}</RailHeading>
+              {activeAuthor && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedAuthor(null)}
+                  className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring"
+                >
+                  {t("railFollowingAll")}
+                </button>
+              )}
+            </div>
             <ul className="flex flex-col gap-1">
               {followed.map((author) => (
-                <AuthorRow key={author.username} author={author} locale={locale} />
+                <AuthorFilterRow
+                  key={author.username}
+                  author={author}
+                  active={activeAuthor === author.username}
+                  onToggle={() =>
+                    setSelectedAuthor((cur) =>
+                      cur === author.username ? null : author.username,
+                    )
+                  }
+                />
               ))}
             </ul>
           </section>
@@ -197,7 +275,7 @@ export function FollowingFeed({
   return (
     <ReadingShell className="mt-8" rail={rail}>
       <FeedList>
-        {items.map((item) => (
+        {shown.map((item) => (
           <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
         ))}
       </FeedList>
