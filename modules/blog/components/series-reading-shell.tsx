@@ -11,7 +11,8 @@ import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
-const MAX_ARCHIVE = 8;
+// Cap the tag cloud so a wide-ranging series doesn't fill the rail with chips; the rest expand on tap.
+const TAG_CAP = 12;
 
 type Filter = { kind: "tag"; value: string } | { kind: "month"; value: string } | null;
 
@@ -49,6 +50,7 @@ export function SeriesReadingShell({
   const t = useTranslations("publicPost");
   const tf = useTranslations("publicFeed");
   const [filter, setFilter] = useState<Filter>(null);
+  const [tagsOpen, setTagsOpen] = useState(false);
 
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
@@ -72,19 +74,22 @@ export function SeriesReadingShell({
       .map((tag) => [tag, counts.get(tag) ?? 0] as const);
   }, [posts]);
 
-  // Month archive, newest first — the same quiet timeline as the author rail, made clickable here.
+  // Month archive in chronological order (oldest → newest), made clickable as a filter. Ascending so
+  // the year reads as a heading for the months that follow it (see the year-omission in the render).
   const archive = useMemo(() => {
     const counts = new Map<string, number>();
     for (const p of posts) counts.set(monthKey(p.publishedAt), (counts.get(monthKey(p.publishedAt)) ?? 0) + 1);
-    return [...counts.entries()].sort((a, b) => (a[0] < b[0] ? 1 : -1)).slice(0, MAX_ARCHIVE);
+    return [...counts.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1));
   }, [posts]);
 
-  const monthLabel = (key: string) => {
+  // The year is shown only when it changes (the first month of each year carries it; the rest show the
+  // month alone) — so a multi-year run reads "2026년 1월 · 2월 … 2027년 1월" instead of repeating the year.
+  const fmtMonth = (key: string, withYear: boolean) => {
     const [y, m] = key.split("-").map(Number);
-    return new Date(y, m - 1).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-      year: "numeric",
-      month: "long",
-    });
+    return new Date(y, m - 1).toLocaleDateString(
+      DATE_LOCALE[locale] ?? "ko-KR",
+      withYear ? { year: "numeric", month: "long" } : { month: "long" },
+    );
   };
 
   // Pin the real episode number before filtering, so a narrowed view keeps the series positions.
@@ -118,7 +123,7 @@ export function SeriesReadingShell({
         <section>
           <RailHeading className="mb-3">{t("railTags")}</RailHeading>
           <ul className="flex flex-wrap gap-2">
-            {tags.map(([tag, count]) => {
+            {(tagsOpen ? tags : tags.slice(0, TAG_CAP)).map(([tag, count]) => {
               const active = isActive({ kind: "tag", value: tag });
               return (
                 <li key={tag}>
@@ -134,6 +139,19 @@ export function SeriesReadingShell({
                 </li>
               );
             })}
+            {/* Show-more chip lives in the same flow as the chips, styled quietly so it reads as a control
+                not a tag. Only when the cloud actually overflows the cap. */}
+            {tags.length > TAG_CAP && (
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setTagsOpen((o) => !o)}
+                  className="focus-ring inline-flex items-center rounded-full px-3 py-1.5 text-[13px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+                >
+                  {tagsOpen ? tf("seriesTagsLess") : tf("seriesTagsMore", { count: tags.length - TAG_CAP })}
+                </button>
+              </li>
+            )}
           </ul>
         </section>
       )}
@@ -142,8 +160,11 @@ export function SeriesReadingShell({
         <section>
           <RailHeading className="mb-3">{t("railArchive")}</RailHeading>
           <ul className="flex flex-col gap-0.5 text-[13px]">
-            {archive.map(([key, count]) => {
+            {archive.map(([key, count], idx) => {
               const active = isActive({ kind: "month", value: key });
+              // Year carried only when it differs from the previous (older) row above it.
+              const year = key.slice(0, 4);
+              const showYear = idx === 0 || archive[idx - 1][0].slice(0, 4) !== year;
               return (
                 <li key={key}>
                   <button
@@ -157,7 +178,7 @@ export function SeriesReadingShell({
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800/50",
                     )}
                   >
-                    <span>{monthLabel(key)}</span>
+                    <span>{fmtMonth(key, showYear)}</span>
                     <span className={active ? "" : "text-slate-400"}>{count}</span>
                   </button>
                 </li>

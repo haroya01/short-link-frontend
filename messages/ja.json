@@ -73,7 +73,9 @@
     "seriesSubscribed": "購読中",
     "seriesByAuthor": "このシリーズの作者",
     "seriesAllByAuthor": "すべてのシリーズを見る",
-    "seriesFilterNone": "条件に合う記事がありません"
+    "seriesFilterNone": "条件に合う記事がありません",
+    "seriesTagsMore": "+{count}",
+    "seriesTagsLess": "閉じる"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",

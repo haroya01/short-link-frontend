@@ -32,6 +32,9 @@ export function FollowButton({
   const [busy, setBusy] = useState(false);
   // Pop only on click (not on mount) — same gate as the subscribe button's keyed-span replay.
   const [interacted, setInteracted] = useState(false);
+  // The real follower count + following state arrive from a fetch; until then the count is a
+  // placeholder (often 0). Gate the count's visibility on this so it never flashes "0 → 128".
+  const [loaded, setLoaded] = useState(false);
 
   const isSelf = ready && me?.username === username;
 
@@ -42,7 +45,8 @@ export function FollowButton({
         setCount(s.followerCount);
         setFollowing(s.following);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoaded(true));
   }, [ready, username]);
 
   async function toggle() {
@@ -108,7 +112,17 @@ export function FollowButton({
           )}
         </button>
       )}
-      {showCount && <span className="text-[13px] text-slate-500 dark:text-slate-400">{t("followers", { count })}</span>}
+      {showCount && (
+        // Always in the DOM (reserves its width → no layout shift) but invisible until the real count
+        // loads, then fades in — so the misleading initial "0" is never seen.
+        <span
+          className={`text-[13px] text-slate-500 transition-opacity duration-300 dark:text-slate-400 ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {t("followers", { count })}
+        </span>
+      )}
     </div>
   );
 }
