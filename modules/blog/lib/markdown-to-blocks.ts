@@ -122,13 +122,17 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       continue;
     }
 
-    m = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
-    if (m) {
-      const { width, alt } = parseImageAlt(m[1]);
-      blocks.push({
-        type: "IMAGE",
-        content: JSON.stringify({ url: m[2], alt, ...(width ? { width } : {}) }),
-      });
+    // One OR MORE images on a line (a side-by-side «half» pair serializes adjacent: `![a](u)![b](u)`)
+    // → one IMAGE block each, so the 2-up row round-trips. Only when the line is *nothing but* images.
+    const imgMatches = [...line.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g)];
+    if (imgMatches.length > 0 && line.replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim() === "") {
+      for (const im of imgMatches) {
+        const { width, alt } = parseImageAlt(im[1]);
+        blocks.push({
+          type: "IMAGE",
+          content: JSON.stringify({ url: im[2], alt, ...(width ? { width } : {}) }),
+        });
+      }
       i++;
       continue;
     }
@@ -140,23 +144,22 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       continue;
     }
 
-    if (/^[-*]\s+/.test(line)) {
-      const items: string[] = [];
-      while (i < lines.length && /^[-*]\s+/.test(lines[i])) {
-        items.push(lines[i].replace(/^[-*]\s+/, "").trim());
+    // A markdown list (bullet or numbered), possibly NESTED. Capture the whole list region as raw
+    // markdown — including indented sub-items / continuation lines — so nesting round-trips (the
+    // reader renders it via remark-gfm). Block type follows the first line. Stops at a blank line or
+    // a non-indented non-list line. (Legacy lists stored as a JSON string array still render.)
+    if (/^(?:[-*]|\d+\.)\s+/.test(line)) {
+      const ordered = /^\d+\.\s+/.test(line);
+      const listLines: string[] = [];
+      while (
+        i < lines.length &&
+        lines[i].trim() !== "" &&
+        (/^\s*(?:[-*]|\d+\.)\s+/.test(lines[i]) || /^\s+\S/.test(lines[i]))
+      ) {
+        listLines.push(lines[i]);
         i++;
       }
-      blocks.push({ type: "LIST_BULLET", content: JSON.stringify(items) });
-      continue;
-    }
-
-    if (/^\d+\.\s+/.test(line)) {
-      const items: string[] = [];
-      while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
-        items.push(lines[i].replace(/^\d+\.\s+/, "").trim());
-        i++;
-      }
-      blocks.push({ type: "LIST_NUMBERED", content: JSON.stringify(items) });
+      blocks.push({ type: ordered ? "LIST_NUMBERED" : "LIST_BULLET", content: listLines.join("\n") });
       continue;
     }
 
@@ -213,25 +216,25 @@ export function blocksToMarkdown(blocks: { type: string; content: string | null 
         }
         break;
       case "LIST_BULLET":
+      case "LIST_NUMBERED": {
+        if (!b.content) break;
+        // New format = raw markdown (nesting-capable). Legacy = JSON array of flat strings.
         try {
-          const items = b.content ? JSON.parse(b.content) : [];
+          const items = JSON.parse(b.content);
           if (Array.isArray(items)) {
-            parts.push(items.map((x: string) => `- ${x}`).join("\n"));
+            parts.push(
+              items
+                .map((x: string, i: number) => (b.type === "LIST_NUMBERED" ? `${i + 1}. ${x}` : `- ${x}`))
+                .join("\n"),
+            );
+            break;
           }
         } catch {
-          // ignore
+          // not JSON — already raw markdown
         }
+        parts.push(b.content);
         break;
-      case "LIST_NUMBERED":
-        try {
-          const items = b.content ? JSON.parse(b.content) : [];
-          if (Array.isArray(items)) {
-            parts.push(items.map((x: string, i: number) => `${i + 1}. ${x}`).join("\n"));
-          }
-        } catch {
-          // ignore
-        }
-        break;
+      }
       case "EMBED":
         // Emit the URL on its own line so it round-trips back to an EMBED block (markdownToBlocks
         // re-detects it). Content is normally the bare URL; tolerate legacy JSON {url}.

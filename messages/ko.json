@@ -199,7 +199,8 @@
       "divider": "구분선",
       "embed": "임베드 (동영상 / 링크)",
       "table": "표",
-      "imageWide": "와이드 이미지"
+      "imageWide": "와이드 이미지",
+      "imagePair": "이미지 2장 (나란히)"
     },
     "slugLabel": "글 주소(slug)"
   },

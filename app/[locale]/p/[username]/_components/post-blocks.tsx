@@ -151,18 +151,29 @@ function parseList(content: string): string[] {
 
 function ListBlock({ content, ordered }: { content: string | null; ordered: boolean }) {
   if (!content) return null;
-  const items = parseList(content);
-  if (items.length === 0) return null;
-  const Tag = ordered ? "ol" : "ul";
-  return (
-    <Tag>
-      {items.map((item, i) => (
-        <li key={i}>
-          <Markdown inline>{item}</Markdown>
-        </li>
-      ))}
-    </Tag>
-  );
+  // New format = raw markdown (supports nested lists via remark-gfm). Legacy = JSON array of flat
+  // strings → render as a single-level ul/ol.
+  let legacy: string[] | null = null;
+  try {
+    const parsed = JSON.parse(content);
+    if (Array.isArray(parsed)) legacy = parsed.filter((x): x is string => typeof x === "string");
+  } catch {
+    // raw markdown
+  }
+  if (legacy) {
+    if (legacy.length === 0) return null;
+    const Tag = ordered ? "ol" : "ul";
+    return (
+      <Tag>
+        {legacy.map((item, i) => (
+          <li key={i}>
+            <Markdown inline>{item}</Markdown>
+          </li>
+        ))}
+      </Tag>
+    );
+  }
+  return <Markdown>{content}</Markdown>;
 }
 
 function ImageBlock({ content }: { content: string | null }) {
@@ -177,7 +188,10 @@ function ImageBlock({ content }: { content: string | null }) {
       url = typeof parsed.url === "string" ? parsed.url : null;
       alt = typeof parsed.alt === "string" ? parsed.alt : "";
       caption = typeof parsed.caption === "string" ? parsed.caption : "";
-      width = parsed.width === "wide" || parsed.width === "full" ? parsed.width : undefined;
+      width =
+        parsed.width === "wide" || parsed.width === "full" || parsed.width === "half"
+          ? parsed.width
+          : undefined;
     }
   } catch {
     url = content.trim();
