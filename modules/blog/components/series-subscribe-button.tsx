@@ -28,8 +28,11 @@ export function SeriesSubscribeButton({ seriesId }: { seriesId: number }) {
           : "border-transparent bg-accent-600 text-white hover:bg-accent-700"
       }`}
     >
-      {on ? <Check className="h-3.5 w-3.5" /> : <Bell className="h-3.5 w-3.5" />}
-      {on ? t("seriesSubscribed") : t("seriesSubscribe")}
+      {/* Keyed by state so it remounts + replays the pop on each 구독 ↔ 구독중 toggle. */}
+      <span key={on ? "on" : "off"} className="subscribe-pop inline-flex items-center gap-1">
+        {on ? <Check className="h-3.5 w-3.5" /> : <Bell className="h-3.5 w-3.5" />}
+        {on ? t("seriesSubscribed") : t("seriesSubscribe")}
+      </span>
     </button>
   );
 }

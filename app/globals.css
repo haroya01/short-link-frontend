@@ -671,6 +671,33 @@ h1, h2, h3, p {
   mix-blend-mode: normal;
 }
 
+/*
+ * Series subscribe toggle (구독 ↔ 구독중) — keyed by state so the icon+label remount and replay this on
+ * every toggle: a quick pop (scale + fade) so the swap reads as a deliberate state change, not just a
+ * silent color flip. Reduced-motion skips it.
+ */
+@keyframes subscribe-pop {
+  from {
+    transform: scale(0.55);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.subscribe-pop {
+  animation: subscribe-pop 240ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .subscribe-pop {
+    animation: none;
+  }
+}
+
 @keyframes toast-slide-in {
   from {
     opacity: 0;
