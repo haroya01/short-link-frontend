@@ -10,6 +10,7 @@ import {
   publishPost,
   replaceBlocks,
   republishPost,
+  restoreRevision as restoreRevisionApi,
   unpublishPost,
   updatePostMetadata,
   type PostView,
@@ -146,6 +147,22 @@ export function usePostEditor(
     }
   }
 
+  async function restoreRevision(versionNumber: number) {
+    if (post == null || busy) return;
+    if (!window.confirm(t("revisionRestoreConfirm"))) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await restoreRevisionApi(post.id, versionNumber);
+      // Restore replaces server content with the revision's snapshot — reload so the editor reflects it.
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "restore failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function remove() {
     if (post == null) return;
     if (!window.confirm(t("deleteConfirm"))) return;
@@ -179,6 +196,7 @@ export function usePostEditor(
     writeBase,
     save,
     changeStatus,
+    restoreRevision,
     remove,
   };
 }

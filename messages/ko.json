@@ -137,6 +137,11 @@
     "listLoading": "불러오는 중…",
     "slugHint": "발행 전까지 수정 가능 · 영문 소문자/숫자/하이픈",
     "titleRequired": "발행하려면 제목을 입력해주세요",
+    "revisions": "리비전",
+    "revisionsEmpty": "아직 저장된 버전이 없어요. 발행하면 버전이 쌓여요.",
+    "revisionVersion": "버전 {n}",
+    "revisionRestore": "복원",
+    "revisionRestoreConfirm": "이 버전으로 되돌릴까요? 현재 내용은 새 리비전으로 보관돼요.",
     "tagsHint": "쉼표(,)나 Enter로 구분",
     "slash": {
       "heading1": "제목 1",

@@ -79,6 +79,23 @@ export function republishPost(id: number): Promise<PostView> {
   return request<PostView>(`/api/v1/posts/${id}/republish`, { method: "POST" });
 }
 
+export interface PostRevisionView {
+  id: number;
+  versionNumber: number;
+  titleSnapshot: string;
+  createdAt: string;
+}
+
+export function listRevisions(id: number): Promise<PostRevisionView[]> {
+  return request<PostRevisionView[]>(`/api/v1/posts/${id}/revisions`, { method: "GET" });
+}
+
+export function restoreRevision(id: number, versionNumber: number): Promise<PostView> {
+  return request<PostView>(`/api/v1/posts/${id}/revisions/${versionNumber}/restore`, {
+    method: "POST",
+  });
+}
+
 export function getBlocks(id: number): Promise<PostBlockView[]> {
   return request<PostBlockView[]>(`/api/v1/posts/${id}/blocks`, { method: "GET" });
 }

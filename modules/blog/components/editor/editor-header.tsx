@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { ArrowLeft, Check, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PostStatus } from "@/modules/blog/api/posts";
+import { RevisionsButton } from "@/modules/blog/components/editor/revisions-button";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
 
 /**
@@ -12,21 +13,25 @@ import type { StatusAction } from "@/modules/blog/components/editor/use-post-edi
  */
 export function EditorHeader({
   backHref,
+  postId,
   status,
   saving,
   saved,
   busy,
   onSave,
   onChangeStatus,
+  onRestoreRevision,
   onDelete,
 }: {
   backHref: string;
+  postId: number;
   status: PostStatus;
   saving: boolean;
   saved: boolean;
   busy: boolean;
   onSave: () => void;
   onChangeStatus: (action: StatusAction) => void;
+  onRestoreRevision: (versionNumber: number) => void;
   onDelete: () => void;
 }) {
   const t = useTranslations("postEditor");
@@ -65,6 +70,7 @@ export function EditorHeader({
           {saved && <Check className="h-4 w-4" />}
           {saving ? t("saving") : saved ? t("saved") : t("save")}
         </button>
+        <RevisionsButton postId={postId} busy={busy} onRestore={onRestoreRevision} />
         <button
           type="button"
           onClick={onDelete}
