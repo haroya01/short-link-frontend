@@ -62,7 +62,9 @@
     "railWriters": "Writers",
     "railTopics": "Topics",
     "railPostCount": "{count} posts",
-    "railSeeAll": "See all"
+    "railSeeAll": "See all",
+    "bookmark": "Save to reading list",
+    "bookmarkOn": "Remove from reading list"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",

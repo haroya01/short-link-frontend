@@ -104,6 +104,8 @@ export interface PublicSeriesDetail {
 }
 
 export interface PublicFeedItem {
+  /** Post id — lets feed cards call post-scoped actions (bookmark/like) without opening the post. */
+  id: number;
   author: PublicAuthor;
   slug: string;
   title: string;
