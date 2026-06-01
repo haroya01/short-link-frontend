@@ -9,6 +9,7 @@ import type { ImageWidth } from "@/modules/blog/lib/image-width";
 const WIDTH_CLASS: Record<ImageWidth, string> = {
   wide: "post-img-wide",
   full: "post-img-full",
+  half: "post-img-half",
 };
 
 /**

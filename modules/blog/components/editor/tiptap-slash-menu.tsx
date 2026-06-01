@@ -5,6 +5,7 @@ import type { Editor } from "@tiptap/react";
 import { useTranslations } from "next-intl";
 import {
   Code2,
+  Columns2,
   Heading1,
   Heading2,
   Heading3,
@@ -14,9 +15,11 @@ import {
   type LucideIcon,
   Minus,
   Quote,
+  RectangleHorizontal,
   Video,
 } from "lucide-react";
 import { keywordMatch, matchSlashQuery } from "@/modules/blog/components/editor/slash-menu-logic";
+import type { ImagePickOptions } from "@/modules/blog/components/editor/markdown-editor";
 
 /**
  * Notion-style "/" block menu for the Tiptap editor (restores the system the old Toast editor had).
@@ -33,7 +36,7 @@ type SlashItem = {
   run: (editor: Editor) => void;
 };
 
-function buildItems(pickImage: () => void): SlashItem[] {
+function buildItems(pickImage: (opts?: ImagePickOptions) => void): SlashItem[] {
   return [
     { key: "h1", labelKey: "heading1", icon: Heading1, keywords: ["h1", "heading", "title", "제목", "見出し"], run: (e) => e.chain().focus().toggleHeading({ level: 1 }).run() },
     { key: "h2", labelKey: "heading2", icon: Heading2, keywords: ["h2", "heading", "subtitle", "제목"], run: (e) => e.chain().focus().toggleHeading({ level: 2 }).run() },
@@ -43,6 +46,8 @@ function buildItems(pickImage: () => void): SlashItem[] {
     { key: "quote", labelKey: "quote", icon: Quote, keywords: ["quote", "blockquote", "인용", "引用"], run: (e) => e.chain().focus().toggleBlockquote().run() },
     { key: "code", labelKey: "codeBlock", icon: Code2, keywords: ["code", "codeblock", "pre", "코드", "コード"], run: (e) => e.chain().focus().toggleCodeBlock().run() },
     { key: "image", labelKey: "image", icon: ImageIcon, keywords: ["image", "img", "photo", "이미지", "사진", "画像"], run: () => pickImage() },
+    { key: "imageWide", labelKey: "imageWide", icon: RectangleHorizontal, keywords: ["wide", "image", "cover", "hero", "banner", "와이드", "넓은", "배너", "ワイド"], run: () => pickImage({ width: "wide" }) },
+    { key: "imagePair", labelKey: "imagePair", icon: Columns2, keywords: ["pair", "two", "gallery", "side", "2", "나란히", "두장", "갤러리", "並べ"], run: () => pickImage({ width: "half", multiple: true }) },
     { key: "embed", labelKey: "embed", icon: Video, keywords: ["video", "embed", "youtube", "vimeo", "동영상", "비디오", "임베드", "動画"], run: (e) => { const url = window.prompt("URL (YouTube / Vimeo)"); if (url && url.trim()) e.chain().focus().insertContent(url.trim()).run(); } },
     { key: "hr", labelKey: "divider", icon: Minus, keywords: ["divider", "hr", "rule", "line", "구분선", "区切り"], run: (e) => e.chain().focus().setHorizontalRule().run() },
   ];
@@ -50,7 +55,13 @@ function buildItems(pickImage: () => void): SlashItem[] {
 
 type MenuState = { query: string; top: number; left: number } | null;
 
-export function SlashMenu({ editor, onPickImage }: { editor: Editor; onPickImage: () => void }) {
+export function SlashMenu({
+  editor,
+  onPickImage,
+}: {
+  editor: Editor;
+  onPickImage: (opts?: ImagePickOptions) => void;
+}) {
   const t = useTranslations("postEditor.slash");
   const [menu, setMenu] = useState<MenuState>(null);
   const [active, setActive] = useState(0);

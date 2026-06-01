@@ -1067,6 +1067,42 @@ body[data-cookie-consent="visible"] {
 .post-img-full {
   width: calc(100vw - 2rem);
 }
+/* Half-column image — two consecutive halves form a 2-up row (inline-block side-by-side); the
+   whitespace between them is the gutter. Stacks to full width on phones. */
+.prose-post figure.post-img-half {
+  display: inline-block;
+  width: calc(50% - 0.4rem);
+  vertical-align: top;
+}
+@media (max-width: 640px) {
+  .prose-post figure.post-img-half {
+    display: block;
+    width: 100%;
+  }
+}
+
+/* Editor (Tiptap) mirrors the width markers so the layout you write matches what ships. */
+.tiptap img[alt^="«wide»"] {
+  max-width: none;
+  width: calc(100% + 6rem);
+  margin-inline: -3rem;
+}
+.tiptap img[alt^="«full»"] {
+  max-width: none;
+  width: calc(100% + 10rem);
+  margin-inline: -5rem;
+}
+.tiptap img[alt^="«half»"] {
+  display: inline-block;
+  width: calc(50% - 0.4rem);
+  vertical-align: top;
+}
+@media (max-width: 640px) {
+  .tiptap img[alt^="«half»"] {
+    display: block;
+    width: 100%;
+  }
+}
 .toastui-editor-contents img[alt^="«wide»"] {
   max-width: none;
   width: calc(100% + 6rem);

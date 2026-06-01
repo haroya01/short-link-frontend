@@ -177,7 +177,10 @@ function ImageBlock({ content }: { content: string | null }) {
       url = typeof parsed.url === "string" ? parsed.url : null;
       alt = typeof parsed.alt === "string" ? parsed.alt : "";
       caption = typeof parsed.caption === "string" ? parsed.caption : "";
-      width = parsed.width === "wide" || parsed.width === "full" ? parsed.width : undefined;
+      width =
+        parsed.width === "wide" || parsed.width === "full" || parsed.width === "half"
+          ? parsed.width
+          : undefined;
     }
   } catch {
     url = content.trim();

@@ -22,6 +22,11 @@ import {
 } from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
+import { altWithWidth, type ImageWidth } from "@/modules/blog/lib/image-width";
+
+/** Options for opening the image picker: a width (wide/full/half) and whether to allow multi-select
+ *  (for a side-by-side "half" pair). Carried to the file-input change handler via a ref. */
+export type ImagePickOptions = { width?: ImageWidth; multiple?: boolean };
 
 /**
  * Long-form post editor — Tiptap (ProseMirror) with a CodeMirror code-block node (language-aware
@@ -40,11 +45,22 @@ export function MarkdownEditor({
   onUploadError?: (message: string) => void;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
+  const pendingWidth = useRef<ImageWidth | undefined>(undefined);
 
-  async function uploadAndInsert(ed: Editor, file: File) {
+  // Open the file picker with a target width; "half" + multiple lets you pick 2 for a side-by-side row.
+  function pickImage(opts: ImagePickOptions = {}) {
+    pendingWidth.current = opts.width;
+    if (fileRef.current) {
+      fileRef.current.multiple = !!opts.multiple;
+      fileRef.current.click();
+    }
+  }
+
+  async function uploadAndInsert(ed: Editor, file: File, width?: ImageWidth) {
     try {
       const url = await onUploadImage(file);
-      ed.chain().focus().setImage({ src: url, alt: file.name }).run();
+      // Width rides on the alt marker so it survives markdown↔block round-trip (image-width.ts).
+      ed.chain().focus().setImage({ src: url, alt: altWithWidth(file.name, width) }).run();
     } catch (e) {
       onUploadError?.(e instanceof Error ? e.message : "image upload failed");
     }
@@ -106,27 +122,35 @@ export function MarkdownEditor({
 
   return (
     <div className="flex h-full flex-col">
-      <Toolbar editor={editor} onPickImage={() => fileRef.current?.click()} />
+      <Toolbar editor={editor} onPickImage={pickImage} />
       <input
         ref={fileRef}
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) void uploadAndInsert(editor, f);
+        onChange={async (e) => {
+          const files = Array.from(e.target.files ?? []);
+          const width = pendingWidth.current;
           e.target.value = "";
+          // Insert sequentially so the order is stable; two "half" images land adjacent → a 2-up row.
+          for (const f of files) await uploadAndInsert(editor, f, width);
         }}
       />
       <div className="min-h-0 flex-1 overflow-y-auto py-4">
         <EditorContent editor={editor} className="h-full" />
       </div>
-      <SlashMenu editor={editor} onPickImage={() => fileRef.current?.click()} />
+      <SlashMenu editor={editor} onPickImage={pickImage} />
     </div>
   );
 }
 
-function Toolbar({ editor, onPickImage }: { editor: Editor; onPickImage: () => void }) {
+function Toolbar({
+  editor,
+  onPickImage,
+}: {
+  editor: Editor;
+  onPickImage: (opts?: ImagePickOptions) => void;
+}) {
   const btn = (active: boolean) =>
     // touch-target adds a 44px-tall invisible hit area (WCAG 2.5.5) without enlarging the 32px icon.
     `touch-target focus-ring grid h-8 w-8 place-items-center rounded-lg transition-colors ${
@@ -162,7 +186,7 @@ function Toolbar({ editor, onPickImage }: { editor: Editor; onPickImage: () => v
       <button type="button" aria-label="Ordered list" className={btn(editor.isActive("orderedList"))} onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered className="h-4 w-4" /></button>
       <button type="button" aria-label="Quote" className={btn(editor.isActive("blockquote"))} onClick={() => editor.chain().focus().toggleBlockquote().run()}><Quote className="h-4 w-4" /></button>
       <button type="button" aria-label="Code block" className={btn(editor.isActive("codeBlock"))} onClick={() => editor.chain().focus().toggleCodeBlock().run()}><Code2 className="h-4 w-4" /></button>
-      <button type="button" aria-label="Image" className={btn(false)} onClick={onPickImage}><ImageIcon className="h-4 w-4" /></button>
+      <button type="button" aria-label="Image" className={btn(false)} onClick={() => onPickImage()}><ImageIcon className="h-4 w-4" /></button>
     </div>
   );
 }
