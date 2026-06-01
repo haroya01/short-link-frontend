@@ -18,14 +18,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
   if (!ready) return null;
   if (!authenticated) {
-    return <main className="mx-auto max-w-[44rem] px-5 py-12 text-slate-600">{t("loginRequired")}</main>;
+    return <main className="mx-auto max-w-[44rem] px-5 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
   }
   if (ed.loading) {
     // Mirror the editor's real shape (top bar → title → meta strip → body) so the post swaps in
     // without a jump, instead of a bare "loading…" line on this full-height surface.
     return (
       <main className="mx-auto flex h-[calc(100dvh-1px)] max-w-[44rem] flex-col px-5 pt-3" aria-busy>
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
           <Skeleton className="h-6 w-16" />
           <div className="flex gap-2">
             <Skeleton className="h-8 w-20" />
@@ -33,7 +33,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           </div>
         </div>
         <Skeleton className="mt-6 h-9 w-3/4" />
-        <div className="mt-3 flex gap-2 border-b border-slate-100 pb-5">
+        <div className="mt-3 flex gap-2 border-b border-slate-100 pb-5 dark:border-slate-800">
           <Skeleton className="h-7 w-44" />
           <Skeleton className="h-7 w-24" />
         </div>
@@ -48,7 +48,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   if (!ed.post) {
     return (
       <main className="mx-auto max-w-[44rem] px-5 py-12">
-        <p className="text-red-600">{t("notFound")}</p>
+        <p className="text-red-600 dark:text-red-400">{t("notFound")}</p>
         {ed.error && <p className="mt-2 text-sm text-slate-500">{ed.error}</p>}
       </main>
     );
@@ -89,7 +89,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         data-lpignore="true"
         // Same headline token as the published post <h1> (text-headline-sm→md, tracking-headline) so the
         // title you type is the title that ships.
-        className="mt-6 w-full border-0 bg-transparent text-headline-sm font-semibold tracking-headline text-slate-900 outline-none placeholder:text-slate-300 sm:text-headline-md"
+        className="mt-6 w-full border-0 bg-transparent text-headline-sm font-semibold tracking-headline text-slate-900 outline-none placeholder:text-slate-300 dark:text-slate-100 dark:placeholder:text-slate-600 sm:text-headline-md"
         placeholder={t("titlePlaceholder")}
       />
 
