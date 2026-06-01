@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
   createCta,
@@ -22,17 +23,10 @@ const PURPOSE_OPTIONS: CtaPurpose[] = [
   "CUSTOM",
 ];
 
-const PURPOSE_LABEL: Record<CtaPurpose, string> = {
-  BOOKING: "예약",
-  SUBSCRIBE: "구독",
-  PURCHASE: "구매",
-  CONTACT: "문의",
-  DOWNLOAD: "자료 다운로드",
-  CUSTOM: "기타",
-};
-
 export default function CtaLibraryPage() {
   const { ready, authenticated } = useAuth();
+  const t = useTranslations("ctaLibrary");
+  const tc = useTranslations("common");
   const [ctas, setCtas] = useState<CtaView[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +50,7 @@ export default function CtaLibraryPage() {
   }, [ready, authenticated, load]);
 
   async function handleDelete(cta: CtaView) {
-    if (!window.confirm(`'${cta.label}' CTA 를 삭제할까요? (soft-delete, 분석 데이터는 보존)`)) {
+    if (!window.confirm(t("deleteConfirm", { label: cta.label }))) {
       return;
     }
     try {
@@ -71,7 +65,7 @@ export default function CtaLibraryPage() {
   if (!authenticated) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-12">
-        <p className="text-gray-600">로그인이 필요합니다.</p>
+        <p className="text-gray-600">{tc("loginRequired")}</p>
       </main>
     );
   }
@@ -80,17 +74,15 @@ export default function CtaLibraryPage() {
     <main className="mx-auto max-w-3xl px-6 py-12">
       <header className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">CTA 라이브러리</h1>
-          <p className="mt-2 text-sm text-gray-500">
-            글에 박을 CTA 버튼을 한 곳에서 관리. 같은 CTA 를 여러 글에서 재사용 가능.
-          </p>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
+          <p className="mt-2 text-sm text-gray-500">{t("description")}</p>
         </div>
         <button
           type="button"
           onClick={() => setEditing("new")}
           className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
         >
-          새 CTA
+          {t("new")}
         </button>
       </header>
 
@@ -110,11 +102,15 @@ export default function CtaLibraryPage() {
         />
       )}
 
-      {loading && <p className="text-gray-500">로딩 중…</p>}
-      {error && <p className="text-red-600">에러: {error}</p>}
+      {loading && <p className="text-gray-500">{tc("loading")}</p>}
+      {error && (
+        <p className="text-red-600">
+          {tc("errorPrefix")} {error}
+        </p>
+      )}
 
       {!loading && !error && ctas.length === 0 && (
-        <p className="text-gray-500">아직 생성된 CTA 가 없습니다.</p>
+        <p className="text-gray-500">{t("empty")}</p>
       )}
 
       {!loading && ctas.length > 0 && (
@@ -131,7 +127,7 @@ export default function CtaLibraryPage() {
                 {cta.style}
               </span>
               <span className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-600">
-                {PURPOSE_LABEL[cta.purpose]}
+                {t(`purpose.${cta.purpose}`)}
               </span>
               <div className="flex-1 min-w-0">
                 <p className="truncate text-sm font-medium text-gray-900">{cta.label}</p>
@@ -142,14 +138,14 @@ export default function CtaLibraryPage() {
                 onClick={() => setEditing(cta)}
                 className="rounded border border-gray-200 px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
               >
-                편집
+                {t("edit")}
               </button>
               <button
                 type="button"
                 onClick={() => handleDelete(cta)}
                 className="rounded border border-red-200 px-3 py-1 text-xs text-red-600 hover:bg-red-50"
               >
-                삭제
+                {t("delete")}
               </button>
             </li>
           ))}
@@ -168,6 +164,8 @@ function CtaEditor({
   onSaved: (cta: CtaView) => void;
   onCancel: () => void;
 }) {
+  const t = useTranslations("ctaLibrary");
+  const tc = useTranslations("common");
   const [label, setLabel] = useState(initial?.label ?? "");
   const [url, setUrl] = useState(initial?.url ?? "");
   const [style, setStyle] = useState<CtaStyle>(initial?.style ?? "PRIMARY");
@@ -197,17 +195,17 @@ function CtaEditor({
       className="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3"
     >
       <h2 className="text-sm font-medium text-gray-700">
-        {initial ? "CTA 편집" : "새 CTA 만들기"}
+        {initial ? t("editorTitleEdit") : t("editorTitleNew")}
       </h2>
       <label className="block text-sm">
-        <span className="text-gray-700">라벨</span>
+        <span className="text-gray-700">{t("label")}</span>
         <input
           type="text"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           maxLength={100}
           required
-          placeholder="예: 30분 무료 상담 예약"
+          placeholder={t("labelPlaceholder")}
           className="mt-1 block w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
         />
       </label>
@@ -226,7 +224,7 @@ function CtaEditor({
       </label>
       <div className="grid grid-cols-2 gap-3">
         <label className="block text-sm">
-          <span className="text-gray-700">스타일</span>
+          <span className="text-gray-700">{t("style")}</span>
           <select
             value={style}
             onChange={(e) => setStyle(e.target.value as CtaStyle)}
@@ -240,7 +238,7 @@ function CtaEditor({
           </select>
         </label>
         <label className="block text-sm">
-          <span className="text-gray-700">의도</span>
+          <span className="text-gray-700">{t("intent")}</span>
           <select
             value={purpose}
             onChange={(e) => setPurpose(e.target.value as CtaPurpose)}
@@ -261,14 +259,14 @@ function CtaEditor({
           onClick={onCancel}
           className="rounded px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100"
         >
-          취소
+          {tc("cancel")}
         </button>
         <button
           type="submit"
           disabled={saving}
           className="rounded bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
         >
-          {saving ? "저장 중…" : initial ? "저장" : "만들기"}
+          {saving ? t("saving") : initial ? t("save") : t("create")}
         </button>
       </div>
     </form>

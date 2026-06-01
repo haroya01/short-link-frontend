@@ -1233,12 +1233,15 @@
     "copy": "コピー",
     "copied": "コピー済み",
     "copyFailed": "コピーに失敗しました",
-    "close": "閉じる"
+    "close": "閉じる",
+    "loginRequired": "ログインが必要です。",
+    "errorPrefix": "エラー:"
   },
   "notFound": {
     "title": "ページが見つかりません",
     "description": "URLが間違っているか、短縮リンクが期限切れか、存在しないページの可能性があります。",
-    "cta": "ホームへ戻る"
+    "cta": "ホームへ戻る",
+    "short": "ページが見つかりません。"
   },
   "qr": {
     "title": "QR コード",
@@ -1251,7 +1254,8 @@
     "srcLabel": "トラッキングタグ (任意)",
     "srcPlaceholder": "例: poster, offline-card",
     "colorLabel": "色",
-    "logoLabel": "QR 中央に遷移先のファビコンを表示"
+    "logoLabel": "QR 中央に遷移先のファビコンを表示",
+    "comingSoon": "近日公開。"
   },
   "share": {
     "label": "共有",
@@ -2616,5 +2620,51 @@
     "subtitle": "あなたの記事・下書き・シリーズはここに。ログインすると続きから書けます。",
     "google": "Googleでログイン",
     "browse": "ログインせずに見る"
+  },
+  "postAnalytics": {
+    "title": "分析",
+    "description": "記事ごとのビューカウンター（v0）。正確なユニークビジター／読了時間／スクロール深度は L3 トラッキング JS 導入後に対応。",
+    "totalViews": "総ビュー数",
+    "published": "公開記事",
+    "drafts": "下書き",
+    "empty": "まだ記事がありません。",
+    "colTitle": "タイトル",
+    "colStatus": "ステータス",
+    "colViews": "ビュー数",
+    "colPublished": "公開"
+  },
+  "ctaLibrary": {
+    "title": "CTA ライブラリ",
+    "description": "記事に埋め込む CTA ボタンを一か所で管理。同じ CTA を複数の記事で再利用できます。",
+    "new": "新しい CTA",
+    "empty": "まだ CTA がありません。",
+    "edit": "編集",
+    "delete": "削除",
+    "deleteConfirm": "「{label}」CTA を削除しますか？（ソフト削除、分析データは保持されます）",
+    "editorTitleEdit": "CTA を編集",
+    "editorTitleNew": "新しい CTA を作成",
+    "label": "ラベル",
+    "labelPlaceholder": "例：30分の無料相談を予約",
+    "style": "スタイル",
+    "intent": "意図",
+    "saving": "保存中…",
+    "save": "保存",
+    "create": "作成",
+    "purpose": {
+      "BOOKING": "予約",
+      "SUBSCRIBE": "購読",
+      "PURCHASE": "購入",
+      "CONTACT": "問い合わせ",
+      "DOWNLOAD": "資料ダウンロード",
+      "CUSTOM": "その他"
+    }
+  },
+  "abuseReports": {
+    "filterAll": "すべて",
+    "noPermission": "権限がありません。",
+    "notePrompt": "{resolution} メモ（任意）",
+    "subtitle": "通報の受付リスト。CSAM 自動隔離 + DMCA は別トラック。",
+    "refresh": "更新",
+    "empty": "このステータスの通報はありません。"
   }
 }

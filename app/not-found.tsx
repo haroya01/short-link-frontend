@@ -1,4 +1,7 @@
 import { cookies } from "next/headers";
+import en from "@/messages/en.json";
+import ja from "@/messages/ja.json";
+import ko from "@/messages/ko.json";
 import "./globals.css";
 
 /**
@@ -8,26 +11,14 @@ import "./globals.css";
  * This makes every unmatched path render the same branded 404.
  *
  * It must ship its own <html>/<body> + globals.css: there is no root app/layout.tsx (the locale
- * layout owns the document), so this renders standalone. Copy is inlined per-locale (no
- * NextIntlClientProvider here) and chosen from the NEXT_LOCALE cookie.
+ * layout owns the document), so this renders standalone. There is no NextIntlClientProvider here,
+ * so the copy is read straight from the message catalogs' `notFound` namespace and chosen from the
+ * NEXT_LOCALE cookie.
  */
 const COPY: Record<string, { title: string; description: string; cta: string }> = {
-  ko: {
-    title: "이 페이지를 찾을 수 없어요",
-    description: "주소를 잘못 입력했거나, 단축 링크가 만료됐거나, 존재하지 않는 페이지일 수 있어요.",
-    cta: "홈으로 돌아가기",
-  },
-  en: {
-    title: "Page not found",
-    description:
-      "The address may be wrong, the short link may have expired, or the page may not exist.",
-    cta: "Back to home",
-  },
-  ja: {
-    title: "ページが見つかりません",
-    description: "URLが間違っているか、短縮リンクが期限切れか、存在しないページの可能性があります。",
-    cta: "ホームへ戻る",
-  },
+  ko: ko.notFound,
+  en: en.notFound,
+  ja: ja.notFound,
 };
 
 export default async function RootNotFound() {

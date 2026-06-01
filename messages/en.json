@@ -1233,12 +1233,15 @@
     "copy": "Copy",
     "copied": "Copied",
     "copyFailed": "Copy failed.",
-    "close": "Close"
+    "close": "Close",
+    "loginRequired": "Please sign in.",
+    "errorPrefix": "Error:"
   },
   "notFound": {
     "title": "Page not found",
     "description": "The address may be wrong, the short link may have expired, or the page may not exist.",
-    "cta": "Back to home"
+    "cta": "Back to home",
+    "short": "Page not found."
   },
   "qr": {
     "title": "QR code",
@@ -1251,7 +1254,8 @@
     "srcLabel": "Tracking tag (optional)",
     "srcPlaceholder": "e.g. poster, offline-card",
     "colorLabel": "Color",
-    "logoLabel": "Show destination favicon in the center"
+    "logoLabel": "Show destination favicon in the center",
+    "comingSoon": "Soon."
   },
   "share": {
     "label": "Share",
@@ -2616,5 +2620,51 @@
     "subtitle": "Your posts, drafts, and series live here. Sign in to pick up where you left off.",
     "google": "Continue with Google",
     "browse": "Browse without signing in"
+  },
+  "postAnalytics": {
+    "title": "Analytics",
+    "description": "Per-post view counter (v0). Precise unique visitors / read time / scroll depth come after L3 tracking JS.",
+    "totalViews": "Total views",
+    "published": "Published",
+    "drafts": "Drafts",
+    "empty": "You haven't written any posts yet.",
+    "colTitle": "Title",
+    "colStatus": "Status",
+    "colViews": "Views",
+    "colPublished": "Published"
+  },
+  "ctaLibrary": {
+    "title": "CTA library",
+    "description": "Manage the CTA buttons you embed in posts in one place. Reuse the same CTA across multiple posts.",
+    "new": "New CTA",
+    "empty": "No CTAs yet.",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Delete the '{label}' CTA? (soft-delete; analytics data is preserved)",
+    "editorTitleEdit": "Edit CTA",
+    "editorTitleNew": "New CTA",
+    "label": "Label",
+    "labelPlaceholder": "e.g. Book a 30-min free consultation",
+    "style": "Style",
+    "intent": "Intent",
+    "saving": "Saving…",
+    "save": "Save",
+    "create": "Create",
+    "purpose": {
+      "BOOKING": "Booking",
+      "SUBSCRIBE": "Subscribe",
+      "PURCHASE": "Purchase",
+      "CONTACT": "Contact",
+      "DOWNLOAD": "Download",
+      "CUSTOM": "Other"
+    }
+  },
+  "abuseReports": {
+    "filterAll": "All",
+    "noPermission": "You don't have permission.",
+    "notePrompt": "{resolution} note (optional)",
+    "subtitle": "Abuse report intake list. CSAM auto-quarantine + DMCA are on a separate track.",
+    "refresh": "Refresh",
+    "empty": "No reports in this status."
   }
 }

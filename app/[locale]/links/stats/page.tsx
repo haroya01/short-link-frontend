@@ -1,11 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 
 export default function AnalyticsPage() {
   const { ready, authenticated } = useAuth();
+  const t = useTranslations("postAnalytics");
+  const tc = useTranslations("common");
   const [posts, setPosts] = useState<PostView[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +46,7 @@ export default function AnalyticsPage() {
   if (!authenticated) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-12">
-        <p className="text-gray-600">로그인이 필요합니다.</p>
+        <p className="text-gray-600">{tc("loginRequired")}</p>
       </main>
     );
   }
@@ -51,34 +54,33 @@ export default function AnalyticsPage() {
   return (
     <main className="mx-auto max-w-4xl px-6 py-12">
       <header className="mb-8">
-        <h1 className="text-2xl font-bold">분석</h1>
-        <p className="mt-2 text-sm text-gray-500">
-          글별 view 카운터 (v0). 정밀한 unique visitor / 읽은 시간 / 스크롤 깊이는 L3 tracking
-          JS 도입 후.
-        </p>
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
+        <p className="mt-2 text-sm text-gray-500">{t("description")}</p>
       </header>
 
       <section className="mb-10 grid grid-cols-3 gap-4">
-        <StatCard label="총 조회수" value={stats.totalViews.toLocaleString()} />
-        <StatCard label="발행 글" value={stats.published.toString()} />
-        <StatCard label="초안" value={stats.drafts.toString()} />
+        <StatCard label={t("totalViews")} value={stats.totalViews.toLocaleString()} />
+        <StatCard label={t("published")} value={stats.published.toString()} />
+        <StatCard label={t("drafts")} value={stats.drafts.toString()} />
       </section>
 
-      {loading && <p className="text-gray-500">로딩 중…</p>}
-      {error && <p className="text-red-600">에러: {error}</p>}
-
-      {!loading && posts.length === 0 && (
-        <p className="text-gray-500">아직 작성한 글이 없습니다.</p>
+      {loading && <p className="text-gray-500">{tc("loading")}</p>}
+      {error && (
+        <p className="text-red-600">
+          {tc("errorPrefix")} {error}
+        </p>
       )}
+
+      {!loading && posts.length === 0 && <p className="text-gray-500">{t("empty")}</p>}
 
       {!loading && posts.length > 0 && (
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-gray-200 text-left text-xs uppercase text-gray-500">
-              <th className="px-2 py-2">제목</th>
-              <th className="px-2 py-2">상태</th>
-              <th className="px-2 py-2 text-right">조회수</th>
-              <th className="px-2 py-2">발행</th>
+              <th className="px-2 py-2">{t("colTitle")}</th>
+              <th className="px-2 py-2">{t("colStatus")}</th>
+              <th className="px-2 py-2 text-right">{t("colViews")}</th>
+              <th className="px-2 py-2">{t("colPublished")}</th>
             </tr>
           </thead>
           <tbody>
