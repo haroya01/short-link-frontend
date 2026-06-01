@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, Heart, FileText, TrendingUp } from "lucide-react";
+import { Eye, Heart, FileText, MousePointerClick, TrendingUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
@@ -50,6 +50,22 @@ export default function BlogAnalyticsPage() {
             <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
             <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
             <StatCard icon={<FileText className="h-4 w-4" />} label={t("analyticsPublished")} value={data.publishedPosts} />
+          </div>
+
+          {/* kurl 연동 차별점 — 글 안 kurl 링크가 만든 클릭. */}
+          <div className="mt-3 flex items-center justify-between rounded-2xl border border-accent-200 bg-accent-50/50 p-4">
+            <div>
+              <div className="flex items-center gap-1.5 text-accent-700">
+                <MousePointerClick className="h-4 w-4" />
+                <span className="text-[13px] font-semibold">{t("analyticsLinkClicks")}</span>
+              </div>
+              <p className="mt-0.5 text-[12px] text-accent-700/70">
+                {t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
+              </p>
+            </div>
+            <span className="text-2xl font-bold tracking-tight text-accent-700">
+              {data.lifetimeLinkClicks.toLocaleString()}
+            </span>
           </div>
 
           <section className="mt-8 rounded-2xl border border-slate-200 p-5">
