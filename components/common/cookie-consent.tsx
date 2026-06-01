@@ -56,14 +56,14 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
       role="region"
       aria-live="polite"
       aria-label={t("ariaLabel")}
-      className="fixed inset-x-0 bottom-0 z-40 sm:bottom-4 sm:px-4"
+      className="fixed inset-x-0 bottom-[var(--cookie-bottom)] z-40 sm:bottom-4 sm:px-4"
     >
-      {/* Phones: an edge-to-edge bottom bar (top border + upward shadow) so it reads as system chrome
-          instead of a floating card stacked under the FAB. sm+: the compact right-aligned rounded
-          card returns. */}
+      {/* Phones: an edge-to-edge bar (top border + upward shadow) that sits directly above the bottom
+          tab bar so it reads as system chrome and never covers the tabs. sm+: the compact
+          right-aligned rounded card returns. */}
       <div
         className={cn(
-          "mx-auto flex max-w-3xl items-center gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] backdrop-blur sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:pb-3 sm:shadow-md",
+          "mx-auto flex max-w-3xl items-center gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] backdrop-blur sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:shadow-md",
           darkAware && "dark:border-slate-800 dark:bg-slate-900/95",
         )}
       >
