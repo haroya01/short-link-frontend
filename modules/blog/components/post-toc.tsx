@@ -47,7 +47,7 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
   if (headings.length < 2) return null;
 
   return (
-    <nav aria-label={t("toc")} className="border-l border-slate-100 pl-4 text-[13px] leading-relaxed">
+    <nav aria-label={t("toc")} className="border-l border-slate-100 pl-4 text-[13px] leading-relaxed dark:border-slate-800">
       <ul className="space-y-1.5">
         {headings.map((h) => (
           <li key={h.id} style={{ paddingLeft: `${(h.level - 1) * 12}px` }}>
@@ -57,8 +57,8 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
               aria-current={active === h.id ? "location" : undefined}
               className={`block truncate rounded transition-colors focus-ring ${
                 active === h.id
-                  ? "font-medium text-accent-700"
-                  : "text-slate-500 hover:text-slate-700"
+                  ? "font-medium text-accent-700 dark:text-accent-400"
+                  : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
               }`}
             >
               {h.text}
@@ -96,7 +96,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
         onClick={() => setOpen(true)}
         aria-label={t("toc")}
         aria-haspopup="dialog"
-        className="focus-ring fixed bottom-20 right-4 z-30 inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/95 px-4 py-2.5 text-[13px] font-medium text-slate-700 shadow-[0_6px_20px_-8px_rgba(15,23,42,0.3)] backdrop-blur transition-colors hover:border-slate-300 sm:bottom-5"
+        className="focus-ring fixed bottom-20 right-4 z-30 inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/95 px-4 py-2.5 text-[13px] font-medium text-slate-700 shadow-[0_6px_20px_-8px_rgba(15,23,42,0.3)] backdrop-blur transition-colors hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-200 sm:bottom-5"
       >
         <List className="h-4 w-4 text-accent-600" />
         {t("toc")}
@@ -110,15 +110,15 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
             onClick={() => setOpen(false)}
             className="absolute inset-0 animate-fade-in bg-slate-900/30"
           />
-          <div className="absolute inset-x-0 bottom-0 max-h-[70vh] animate-fade-in overflow-y-auto rounded-t-2xl bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)]">
-            <div className="mx-auto mb-2 mt-1 h-1 w-10 rounded-full bg-slate-200" aria-hidden />
+          <div className="absolute inset-x-0 bottom-0 max-h-[70vh] animate-fade-in overflow-y-auto rounded-t-2xl bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] dark:bg-slate-900">
+            <div className="mx-auto mb-2 mt-1 h-1 w-10 rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden />
             <div className="flex items-center justify-between px-3 pb-1">
-              <h2 className="text-[13px] font-bold uppercase tracking-wide text-slate-500">{t("toc")}</h2>
+              <h2 className="text-[13px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{t("toc")}</h2>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label={t("toc")}
-                className="focus-ring grid h-8 w-8 place-items-center rounded-full text-slate-500 hover:bg-slate-100"
+                className="focus-ring grid h-8 w-8 place-items-center rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
               >
                 <X className="h-4 w-4" />
               </button>

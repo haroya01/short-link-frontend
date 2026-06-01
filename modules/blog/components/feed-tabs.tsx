@@ -32,7 +32,7 @@ export async function FeedTabs({
           className={`relative rounded px-2.5 py-1.5 transition-colors focus-ring ${
             active === tab.key
               ? "text-accent-700 after:absolute after:inset-x-2.5 after:-bottom-[13px] after:h-0.5 after:rounded-full after:bg-accent-600"
-              : "text-slate-400 hover:text-slate-700"
+              : "text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
           }`}
         >
           {tab.label}

@@ -41,7 +41,7 @@ function AuthorRow({
     <li>
       <a
         href={authorHref(author.username, locale)}
-        className="group flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring"
+        className="group flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
       >
         {author.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -52,7 +52,7 @@ function AuthorRow({
           </span>
         )}
         <span className="flex min-w-0 flex-col">
-          <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900">
+          <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200 dark:group-hover:text-slate-100">
             {author.username}
           </span>
           {subtitle && <span className="truncate text-[12px] text-slate-500">{subtitle}</span>}

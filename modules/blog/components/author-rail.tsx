@@ -64,9 +64,9 @@ export async function AuthorRail({
               <li key={s.slug}>
                 <a
                   href={authorHref(username, locale, `series/${s.slug}`)}
-                  className="group flex items-baseline justify-between gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring"
+                  className="group flex items-baseline justify-between gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
                 >
-                  <span className="truncate text-[14px] font-medium text-slate-700 group-hover:text-slate-900">
+                  <span className="truncate text-[14px] font-medium text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-slate-100">
                     {s.title}
                   </span>
                   <span className="shrink-0 text-[12px] text-slate-400">
