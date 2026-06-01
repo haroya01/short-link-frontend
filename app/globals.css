@@ -748,25 +748,24 @@ html[data-theme-vt] .vt-bottom-nav {
 }
 
 /*
- * Tag-page content entrance (template.tsx remounts on each topic soft-nav) — a calm fade+rise of just
- * the page body. The header/bottom-nav live in the layout (soft nav keeps them mounted), so only the
- * topic content transitions, not the chrome.
+ * Tag-feed POST LIST crossfade — keyed by the topic, so only the changing post list fades on a topic
+ * soft-nav. The topic title, follow controls and filter strip stay put (they update in place), and the
+ * header/bottom-nav (layout) stay mounted — only the list itself, the part that actually changes,
+ * transitions. Pure opacity (no rise) keeps it smooth, not jumpy.
  */
-@keyframes tag-page-enter {
+@keyframes tag-list-fade {
   from {
     opacity: 0;
-    transform: translateY(6px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
-.tag-page-enter {
-  animation: tag-page-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.tag-list-enter {
+  animation: tag-list-fade 300ms ease both;
 }
 @media (prefers-reduced-motion: reduce) {
-  .tag-page-enter {
+  .tag-list-enter {
     animation: none;
   }
 }

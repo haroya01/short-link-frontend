@@ -98,13 +98,17 @@ export default async function TagFeedPage({
             // Tags live in the strip above now; the rail carries author discovery only.
             rail={hasRail ? <DiscoveryRail locale={locale} tags={[]} authors={authors} /> : undefined}
           >
-            <FeedInfinite
-              locale={locale}
-              initialItems={items}
-              initialHasNext={hasNext}
-              sort={sort}
-              tag={decoded}
-            />
+            {/* Keyed by topic so only the post list crossfades when switching topics (soft nav) — the
+                title/filter/rail above stay put. */}
+            <div key={decoded} className="tag-list-enter">
+              <FeedInfinite
+                locale={locale}
+                initialItems={items}
+                initialHasNext={hasNext}
+                sort={sort}
+                tag={decoded}
+              />
+            </div>
           </ReadingShell>
         )}
     </main>
