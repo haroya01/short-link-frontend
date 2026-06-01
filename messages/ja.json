@@ -129,7 +129,14 @@
     "curationReadingList": "読みたいリスト",
     "curationReadingListHint": "あとで読むために保存した記事。",
     "curationReadingListEmpty": "保存した記事がありません。",
-    "curationRemoveBookmark": "リストから外す"
+    "curationRemoveBookmark": "リストから外す",
+    "settingsTitle": "設定",
+    "settingsSubtitle": "アカウントと表示の設定。",
+    "settingsAccount": "アカウント",
+    "settingsEditProfile": "プロフィールを編集",
+    "settingsAccountSettings": "アカウント設定全体",
+    "settingsViewBlog": "自分のブログを見る",
+    "settingsDisplay": "表示"
   },
   "postEditor": {
     "backToList": "記事一覧",
@@ -329,6 +336,7 @@
       "series": "シリーズ",
       "analytics": "アナリティクス",
       "readers": "読者",
+      "leads": "リード",
       "links": "記事内リンク",
       "curation": "おすすめ"
     },
