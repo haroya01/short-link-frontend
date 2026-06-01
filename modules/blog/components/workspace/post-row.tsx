@@ -26,7 +26,7 @@ export function PostRow({ post }: { post: PostView }) {
     <li>
       <a
         href={`/write/${post.id}`}
-        className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50"
+        className="focus-ring group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50"
       >
         <StatusBadge status={post.status} />
         <span className="min-w-0 flex-1">

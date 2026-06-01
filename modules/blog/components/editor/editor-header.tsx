@@ -44,7 +44,7 @@ export function EditorHeader({
     <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
       <a
         href={backHref}
-        className="-ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+        className="focus-ring -ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
       >
         <ArrowLeft className="h-4 w-4" />
         <span className="hidden sm:inline">{t("backToList")}</span>
@@ -87,7 +87,7 @@ export function EditorHeader({
           type="button"
           onClick={onSave}
           disabled={saving}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-1.5 text-sm font-medium text-white shadow-[0_1px_2px_rgba(15,23,42,0.08)] transition-colors hover:bg-accent-700 disabled:opacity-50"
+          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-1.5 text-sm font-medium text-white shadow-[0_1px_2px_rgba(15,23,42,0.08)] transition-colors hover:bg-accent-700 disabled:opacity-50"
         >
           {saved && <Check className="h-4 w-4" />}
           {saving ? t("saving") : saved ? t("saved") : t("save")}
@@ -97,7 +97,7 @@ export function EditorHeader({
           type="button"
           onClick={onDelete}
           disabled={busy}
-          className="grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+          className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
           title={t("delete")}
         >
           <Trash2 className="h-4 w-4" />
@@ -142,7 +142,7 @@ function OutlineButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${cls}`}
+      className={`focus-ring rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${cls}`}
     >
       {children}
     </button>
