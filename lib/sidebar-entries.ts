@@ -46,7 +46,6 @@ export function buildLinksSections(
       entries: [
         { href: "/dashboard", label: tLinks("links") },
         { href: "/campaigns", label: tLinks("campaigns") },
-        { href: "/qr", label: tLinks("qr") },
         { href: "/ctas", label: tLinks("ctas") },
         { href: "/stats", label: tLinks("stats") },
         { href: "/settings/profile", label: tLinks("profile") },
