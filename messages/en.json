@@ -148,6 +148,12 @@
     "revisionVersion": "Version {n}",
     "revisionRestore": "Restore",
     "revisionRestoreConfirm": "Restore this version? Your current content is kept as a new revision.",
+    "schedule": "Schedule",
+    "scheduleAt": "Publish at",
+    "scheduleConfirm": "Schedule",
+    "scheduleInvalid": "Pick a future time.",
+    "scheduledFor": "Publishes {when}",
+    "cancelSchedule": "Cancel schedule",
     "tagsHint": "Separate with comma or Enter",
     "slash": {
       "heading1": "Heading 1",

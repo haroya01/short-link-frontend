@@ -5,6 +5,7 @@ import { ArrowLeft, Check, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PostStatus } from "@/modules/blog/api/posts";
 import { RevisionsButton } from "@/modules/blog/components/editor/revisions-button";
+import { SchedulePopover } from "@/modules/blog/components/editor/schedule-popover";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
 
 /**
@@ -15,22 +16,26 @@ export function EditorHeader({
   backHref,
   postId,
   status,
+  scheduledAt,
   saving,
   saved,
   busy,
   onSave,
   onChangeStatus,
+  onSchedule,
   onRestoreRevision,
   onDelete,
 }: {
   backHref: string;
   postId: number;
   status: PostStatus;
+  scheduledAt: string | null;
   saving: boolean;
   saved: boolean;
   busy: boolean;
   onSave: () => void;
   onChangeStatus: (action: StatusAction) => void;
+  onSchedule: (iso: string) => void;
   onRestoreRevision: (versionNumber: number) => void;
   onDelete: () => void;
 }) {
@@ -46,9 +51,26 @@ export function EditorHeader({
       </a>
       <div className="flex items-center gap-2">
         <StatusPill status={status} label={t(`status${status}`)} />
+        {status === "SCHEDULED" && scheduledAt && (
+          <span className="hidden text-[12px] text-slate-500 sm:inline">
+            {t("scheduledFor", { when: new Date(scheduledAt).toLocaleString() })}
+          </span>
+        )}
         {status === "DRAFT" && (
-          <OutlineButton tone="accent" disabled={busy} onClick={() => onChangeStatus("publish")}>
-            {t("publish")}
+          <>
+            <SchedulePopover disabled={busy} onSchedule={onSchedule} />
+            <OutlineButton tone="accent" disabled={busy} onClick={() => onChangeStatus("publish")}>
+              {t("publish")}
+            </OutlineButton>
+          </>
+        )}
+        {status === "SCHEDULED" && (
+          <OutlineButton
+            tone="amber"
+            disabled={busy}
+            onClick={() => onChangeStatus("backToDraft")}
+          >
+            {t("cancelSchedule")}
           </OutlineButton>
         )}
         {status === "PUBLISHED" && (

@@ -39,11 +39,13 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         backHref={ed.writeBase}
         postId={post.id}
         status={post.status}
+        scheduledAt={post.scheduledAt}
         saving={ed.saving}
         saved={ed.saved}
         busy={ed.busy}
         onSave={ed.save}
         onChangeStatus={ed.changeStatus}
+        onSchedule={ed.schedule}
         onRestoreRevision={ed.restoreRevision}
         onDelete={ed.remove}
       />
