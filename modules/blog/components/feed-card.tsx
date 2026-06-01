@@ -187,15 +187,11 @@ export function FeedCard({
           featured || flushTop ? "pt-1.5 sm:pt-2" : "pt-5"
         } ${featured ? "pb-6 sm:pb-8" : "pb-5"}`}
       >
-        <div className="relative min-w-0 flex-1">
-          {bookmarkable && (
-            // Sibling of the post links (not nested in an <a>), pinned to the content column's top-right.
-            // The title/excerpt block reserves a right gutter (pr-9) so its text never runs under it.
-            <div className="absolute right-0 top-0 z-10">
-              <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
-            </div>
-          )}
-          <a href={postUrl} className={`block ${bookmarkable ? "pr-9" : ""}`}>
+        <div className="min-w-0 flex-1">
+          {/* Text-only rows reserve a right gutter so the title never runs under the bookmark (pinned
+              to the whole card's top-right below); image rows don't need it — the button sits over the
+              thumbnail, clear of the narrower text column. */}
+          <a href={postUrl} className={`block ${bookmarkable && !hasImage ? "pr-9" : ""}`}>
             {/* One marker per row. The featured lead shows a quiet editorial label (with a small
                 brand-green dot so it reads as the chosen post); every other row shows its muted
                 representative tag. Never both — stacking them reads as a confusing category pair. */}
@@ -248,6 +244,14 @@ export function FeedCard({
           </a>
         )}
       </div>
+
+      {bookmarkable && (
+        // Pinned to the whole card's top-right so it's in the same spot on every row regardless of
+        // whether the row has a thumbnail. Sibling of the post links (never nested in an <a>).
+        <div className="absolute right-3 top-4 z-10">
+          <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
+        </div>
+      )}
     </li>
   );
 }

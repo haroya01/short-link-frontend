@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { Layers } from "lucide-react";
+import { Mark } from "@/components/common/logo";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
 
@@ -34,7 +34,7 @@ export async function SeriesFeedCard({
       className="group block rounded-2xl border border-slate-200 bg-white p-5 transition-colors hover:border-accent-300 focus-ring dark:border-slate-800 dark:bg-slate-900/40 dark:hover:border-accent-500/40"
     >
       <div className="flex items-center gap-1.5 text-[12px] font-semibold tracking-wide text-accent-700 dark:text-accent-400">
-        <Layers className="h-3.5 w-3.5" />
+        <Mark className="h-2.5 w-auto" />
         <span>{t("seriesEyebrow")}</span>
         <span aria-hidden className="text-accent-300 dark:text-accent-500/50">
           ·
