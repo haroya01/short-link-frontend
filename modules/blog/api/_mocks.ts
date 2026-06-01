@@ -66,8 +66,9 @@ const SEEDS: Seed[] = [
   { slug: "coffee-routine", title: "커피 한 잔의 루틴, 생산성에 대하여", excerpt: "의식을 만들면 시작이 쉬워진다. 6개월의 작은 실험.", author: "minji", tags: ["일상"], views: 620, likes: 25, day: 19 },
 ];
 
-function toItem(s: Seed): PublicFeedItem {
+function toItem(s: Seed, i: number): PublicFeedItem {
   return {
+    id: i + 1,
     author: AUTHORS[s.author],
     slug: s.slug,
     title: s.title,
