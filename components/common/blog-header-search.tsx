@@ -122,7 +122,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
         }}
         placeholder={t("searchPlaceholder")}
         aria-label={t("searchLabel")}
-        className="h-8 w-40 rounded-full border border-slate-200 bg-white pl-8 pr-7 text-[13px] text-slate-900 placeholder:text-slate-400 transition-[width,box-shadow] focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 sm:w-56 [&::-webkit-search-cancel-button]:appearance-none"
+        className="h-8 w-40 rounded-full border border-slate-200 bg-white pl-8 pr-7 text-[13px] text-slate-900 placeholder:text-slate-400 transition-[width,box-shadow] focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 sm:w-56 [&::-webkit-search-cancel-button]:appearance-none"
       />
       {value && (
         <button
@@ -144,7 +144,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
       )}
 
       {value.trim() && (
-        <div className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+        <div className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
           {loading && results.length === 0 ? (
             <div className="flex justify-center py-6 text-slate-400">
               <Loader2 className="h-4 w-4 animate-spin" />

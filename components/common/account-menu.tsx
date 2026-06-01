@@ -9,6 +9,7 @@ import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
 /**
@@ -139,6 +140,9 @@ export function AccountMenu() {
                 {l === locale && <Check className="h-4 w-4 text-accent-600" />}
               </button>
             ))}
+
+          <div className="my-1 h-px bg-slate-100" />
+          <ThemeToggle className={itemClass} />
 
           <div className="my-1 h-px bg-slate-100" />
           <button

@@ -168,7 +168,7 @@ export default async function BlogFeedPage({
       {/* pb-24 on phones keeps the last feed card scrollable clear of the fixed write FAB (the body
           gets extra room on top of that while the cookie banner is up — see globals.css). */}
       <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-        <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3">
+        <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800">
           <nav className="flex gap-1 text-[15px] font-bold">
             <SortTab label={t("recent")} href={sortHref("recent")} active={activeTab === "recent"} />
             <SortTab
@@ -318,7 +318,9 @@ function SortTab({
       href={href}
       aria-current={active ? "page" : undefined}
       className={`${base} rounded focus-ring ${
-        active ? "text-accent-700" : "text-slate-400 hover:text-slate-700"
+        active
+          ? "text-accent-700 dark:text-accent-400"
+          : "text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
       }`}
     >
       {label}

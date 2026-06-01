@@ -53,7 +53,7 @@ function Avatar({ author }: { author: PublicFeedItem["author"] }) {
  * dressing one up as a category would be a lie; this just hints at the post's subject.
  */
 function TagEyebrow({ tag }: { tag: string }) {
-  return <span className="text-[12px] font-medium text-slate-400">{tag}</span>;
+  return <span className="text-[12px] font-medium text-slate-400 dark:text-slate-500">{tag}</span>;
 }
 
 /**
@@ -71,12 +71,12 @@ function MetaRow({
   hideAuthor?: boolean;
 }) {
   return (
-    <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500">
+    <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
       {!hideAuthor && (
         <>
           <a
             href={authorHref(item.author.username, locale)}
-            className="flex min-w-0 items-center gap-1.5 transition-colors hover:text-slate-900"
+            className="flex min-w-0 items-center gap-1.5 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
           >
             <Avatar author={item.author} />
             <span className="truncate font-medium">{item.author.username}</span>
@@ -117,15 +117,15 @@ export function FeedListSkeleton({ count = 4 }: { count?: number }) {
   return (
     <ul role="status" aria-busy className="flex max-w-2xl animate-pulse flex-col">
       {Array.from({ length: count }).map((_, i) => (
-        <li key={i} className="border-b border-slate-100 last:border-b-0">
+        <li key={i} className="border-b border-slate-100 last:border-b-0 dark:border-slate-800">
           <div className="flex gap-4 py-5 sm:gap-6">
             <div className="min-w-0 flex-1 space-y-2.5 py-0.5">
-              <div className="h-3 w-14 rounded bg-slate-100" />
-              <div className="h-4 w-4/5 rounded bg-slate-200/80" />
-              <div className="h-3.5 w-full rounded bg-slate-100" />
-              <div className="h-3 w-28 rounded bg-slate-100" />
+              <div className="h-3 w-14 rounded bg-slate-100 dark:bg-slate-800" />
+              <div className="h-4 w-4/5 rounded bg-slate-200/80 dark:bg-slate-700/80" />
+              <div className="h-3.5 w-full rounded bg-slate-100 dark:bg-slate-800" />
+              <div className="h-3 w-28 rounded bg-slate-100 dark:bg-slate-800" />
             </div>
-            <div className="h-20 w-20 shrink-0 rounded-xl bg-slate-100 sm:h-24 sm:w-32" />
+            <div className="h-20 w-20 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32" />
           </div>
         </li>
       ))}
@@ -164,14 +164,14 @@ export function FeedCard({
   return (
     <li
       className={
-        "group relative border-b border-slate-100 last:border-b-0" +
+        "group relative border-b border-slate-100 last:border-b-0 dark:border-slate-800" +
         (className ? ` ${className}` : "")
       }
     >
       {/* -mx/px lets the hover highlight breathe past the text without moving the content edge (it
           stays aligned with the divider + header). A quiet affordance that the whole row is a link. */}
       <div
-        className={`-mx-3 flex gap-4 rounded-xl px-3 py-5 transition-colors group-hover:bg-slate-50 sm:gap-6 ${
+        className={`-mx-3 flex gap-4 rounded-xl px-3 py-5 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40 sm:gap-6 ${
           featured ? "sm:py-7" : ""
         }`}
       >
@@ -189,7 +189,7 @@ export function FeedCard({
               item.tags[0] && <TagEyebrow tag={item.tags[0]} />
             )}
             <h2
-              className={`mt-1 line-clamp-2 font-bold leading-[1.3] text-slate-900 transition-colors group-hover:text-accent-700 ${
+              className={`mt-1 line-clamp-2 font-bold leading-[1.3] text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400 ${
                 featured
                   ? "text-[23px] tracking-headline sm:text-[27px] sm:leading-[1.18]"
                   : "text-[18px] tracking-tight"
@@ -199,7 +199,7 @@ export function FeedCard({
             </h2>
             {item.excerpt && (
               <p
-                className={`mt-1.5 text-[14px] leading-relaxed text-slate-500 ${
+                className={`mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400 ${
                   featured ? "line-clamp-2 sm:line-clamp-3" : "line-clamp-2"
                 }`}
               >
@@ -215,7 +215,7 @@ export function FeedCard({
             href={postUrl}
             aria-hidden
             tabIndex={-1}
-            className={`block shrink-0 overflow-hidden rounded-xl bg-slate-100 ${
+            className={`block shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 ${
               featured ? "h-24 w-24 sm:h-28 sm:w-[150px]" : "h-20 w-20 sm:h-24 sm:w-32"
             }`}
           >

@@ -160,8 +160,19 @@ export default async function RootLayout({
     <html
       lang={locale}
       className={jetbrainsMono.variable}
+      suppressHydrationWarning
     >
       <head>
+        {/* No-FOUC theme: set the `dark` class on <html> before paint from a stored pref, else the
+            system preference. Only blog components carry `dark:` variants, so the links product is
+            unaffected. */}
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()",
+          }}
+        />
         {/* Preconnect to the Pretendard CDN ahead of the stylesheet request — saves the TLS
             handshake (~150ms on mobile) for the Korean body font, which is on the LCP path. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
