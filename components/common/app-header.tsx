@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { LogIn, Menu, PenSquare, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
-import { blogHref } from "@/lib/host";
+import { blogHref, type Product } from "@/lib/host";
 import { Button } from "@/components/ui/button";
 import { AccountMenu } from "@/components/common/account-menu";
 import { AppsGrid } from "@/components/common/apps-grid";
@@ -23,10 +23,13 @@ export function AppHeader({
   showMenu = true,
   searchOpen = false,
   slimMobile = false,
+  product,
 }: {
   showMenu?: boolean;
   searchOpen?: boolean;
   slimMobile?: boolean;
+  /** The product this header sits on — lets the switcher seed its destination without a load flash. */
+  product?: Product;
 }) {
   const t = useTranslations("nav");
   const { authenticated, ready } = useAuth();
@@ -89,7 +92,7 @@ export function AppHeader({
               {t("write")}
             </a>
           )}
-          <AppsGrid />
+          <AppsGrid current={product} />
           {!ready ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100" />
           ) : authenticated ? (
