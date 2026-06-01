@@ -15,17 +15,17 @@ export type SidebarSection = {
   entries: SidebarEntry[];
 };
 
-export function Sidebar({ sections }: { sections: SidebarSection[] }) {
+export function Sidebar({ sections, basePath = "" }: { sections: SidebarSection[]; basePath?: string }) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-56 shrink-0 border-r border-slate-200 bg-white sm:flex sm:flex-col">
-      <SidebarList sections={sections} pathname={pathname} />
+    <aside className="hidden w-56 shrink-0 border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950 sm:flex sm:flex-col">
+      <SidebarList sections={sections} pathname={pathname} basePath={basePath} />
     </aside>
   );
 }
 
-export function MobileSidebar({ sections }: { sections: SidebarSection[] }) {
+export function MobileSidebar({ sections, basePath = "" }: { sections: SidebarSection[]; basePath?: string }) {
   const pathname = usePathname();
   const { open, close } = useSidebarState();
 
@@ -62,11 +62,11 @@ export function MobileSidebar({ sections }: { sections: SidebarSection[] }) {
         aria-modal="true"
         aria-label="navigation"
         className={cn(
-          "fixed left-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-r border-slate-200 bg-white shadow-xl transition-transform duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)] sm:hidden",
+          "fixed left-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-r border-slate-200 bg-white shadow-xl transition-transform duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)] dark:border-slate-800 dark:bg-slate-950 sm:hidden",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <SidebarList sections={sections} pathname={pathname} />
+        <SidebarList sections={sections} pathname={pathname} basePath={basePath} />
       </div>
     </>
   );
@@ -75,9 +75,11 @@ export function MobileSidebar({ sections }: { sections: SidebarSection[] }) {
 function SidebarList({
   sections,
   pathname,
+  basePath,
 }: {
   sections: SidebarSection[];
   pathname: string;
+  basePath: string;
 }) {
   return (
     <nav className="flex-1 px-3 py-4">
@@ -86,11 +88,11 @@ function SidebarList({
           key={i}
           className={cn(
             "flex flex-col gap-0.5",
-            i > 0 && "mt-3 border-t border-slate-200 pt-3",
+            i > 0 && "mt-3 border-t border-slate-200 pt-3 dark:border-slate-800",
           )}
         >
           {section.entries.map((entry) => (
-            <SidebarItem key={entry.href} entry={entry} pathname={pathname} />
+            <SidebarItem key={entry.href} entry={entry} pathname={pathname} basePath={basePath} />
           ))}
         </ul>
       ))}
@@ -111,13 +113,21 @@ function stripProductPrefix(pathname: string): string {
 function SidebarItem({
   entry,
   pathname,
+  basePath,
 }: {
   entry: SidebarEntry;
   pathname: string;
+  basePath: string;
 }) {
-  // middleware host rewrite 후 internal pathname 은 `/links/dashboard` 같은 product prefix 포함.
-  // sidebar entries 의 href 는 external path (`/dashboard`). active 매칭은 prefix 제거 후.
-  const external = stripProductPrefix(pathname);
+  // Entry hrefs are product-relative (`/analytics`). On a path-based deploy the blog lives under a
+  // product prefix (e.g. `/blog-preview`) that the blog host strips via rewrite — so the rendered
+  // link must carry `basePath` or it 404s (resolving to the links product instead). Active matching
+  // strips the same base + any internal product prefix.
+  const withoutBase =
+    basePath && (pathname === basePath || pathname.startsWith(basePath + "/"))
+      ? pathname.slice(basePath.length) || "/"
+      : pathname;
+  const external = stripProductPrefix(withoutBase);
   const isActive = entry.active
     ? entry.active(external)
     : external === entry.href || external.startsWith(entry.href + "/");
@@ -125,13 +135,13 @@ function SidebarItem({
   return (
     <li>
       <Link
-        href={entry.href}
+        href={`${basePath}${entry.href}`}
         aria-current={isActive ? "page" : undefined}
         className={cn(
           "relative flex items-center rounded-lg px-3 py-2 text-sm transition-colors duration-200 ease-out",
           isActive
-            ? "bg-accent-50 font-medium text-slate-900"
-            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+            ? "bg-accent-50 font-medium text-slate-900 dark:bg-accent-500/15 dark:text-slate-100"
+            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100",
         )}
       >
         {isActive && (

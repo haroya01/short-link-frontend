@@ -32,6 +32,15 @@ const WORKSPACE_PATHS = [
   "/settings",
 ];
 
+/** Product prefix the blog is served under on this deploy (post-locale): "/blog-preview", "/blog",
+ *  or "" on the blog host. Prepended to sidebar entry hrefs so they don't 404 into the links product. */
+function blogBasePath(fullPathname: string): string {
+  const afterLocale = fullPathname.replace(/^\/[a-z]{2}(?=\/|$)/, "");
+  if (afterLocale === "/blog-preview" || afterLocale.startsWith("/blog-preview/")) return "/blog-preview";
+  if (afterLocale === "/blog" || afterLocale.startsWith("/blog/")) return "/blog";
+  return "";
+}
+
 function stripLocale(pathname: string): string {
   const m = pathname.match(/^\/[a-z]{2}(\/.*)?$/);
   let p = m?.[1] ?? pathname;
@@ -99,6 +108,10 @@ function WorkspaceBody({ children }: { children: React.ReactNode }) {
   const tBlog = useTranslations("sidebar.blog");
   const tCommon = useTranslations("sidebar.common");
   const { ready, authenticated, isAdmin } = useAuth();
+  // Product base for the sidebar links: on a path-based deploy the blog lives under /blog-preview
+  // (or /blog), and the entry hrefs are product-relative — without this prefix they'd 404 into the
+  // links product. On the blog host the prefix is stripped by rewrite, so base is "".
+  const base = blogBasePath(usePathname());
 
   // Once auth resolves to signed-out, route to /login. This is also the safety net for the
   // expired-session case: an authed page (e.g. /write/new auto-creating a draft) hits a 401, the
@@ -127,8 +140,8 @@ function WorkspaceBody({ children }: { children: React.ReactNode }) {
   const sections = buildBlogSections(tBlog, tCommon, { isAdmin });
   return (
     <div className="flex flex-1">
-      <Sidebar sections={sections} />
-      <MobileSidebar sections={sections} />
+      <Sidebar sections={sections} basePath={base} />
+      <MobileSidebar sections={sections} basePath={base} />
       <main className="min-w-0 flex-1">{children}</main>
     </div>
   );
