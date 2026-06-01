@@ -1,6 +1,5 @@
 import { Rss } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { blogHref } from "@/lib/host";
 import type { PublicPostListItem, PublicSeriesListItem } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -23,13 +22,22 @@ export async function AuthorRail({
   locale,
   posts,
   series,
+  activeTag,
 }: {
   username: string;
   locale: string;
   posts: PublicPostListItem[];
   series: PublicSeriesListItem[];
+  /** When set, the matching tag chip inverts to the brand fill and links back to the unfiltered
+   *  author home (so it reads as a removable filter, not a link off to the global topic feed). */
+  activeTag?: string;
 }) {
   const t = await getTranslations("publicPost");
+  const authorHome = authorHref(username, locale);
+  // Tags scope to THIS author's posts (?tag=) — clicking one filters the author's own writing, not
+  // the cross-author topic feed at /tags/{tag}. The active chip links back home to clear the filter.
+  const tagHref = (tag: string) =>
+    tag === activeTag ? authorHome : `${authorHome}?tag=${encodeURIComponent(tag)}`;
 
   const tagCounts = new Map<string, number>();
   for (const post of posts) {
@@ -86,9 +94,11 @@ export async function AuthorRail({
             {tags.map(([tag, count]) => (
               <li key={tag}>
                 <TagChip
-                  href={blogHref(`/tags/${encodeURIComponent(tag)}`)}
+                  href={tagHref(tag)}
                   label={tag}
                   count={count}
+                  active={tag === activeTag}
+                  ariaCurrent={tag === activeTag ? "true" : undefined}
                 />
               </li>
             ))}
