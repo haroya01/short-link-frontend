@@ -137,6 +137,11 @@
     "listLoading": "Loading…",
     "slugHint": "Editable until published · lowercase letters, digits, hyphens",
     "titleRequired": "Add a title before publishing",
+    "revisions": "Revisions",
+    "revisionsEmpty": "No saved versions yet. Publishing captures them.",
+    "revisionVersion": "Version {n}",
+    "revisionRestore": "Restore",
+    "revisionRestoreConfirm": "Restore this version? Your current content is kept as a new revision.",
     "tagsHint": "Separate with comma or Enter",
     "slash": {
       "heading1": "Heading 1",

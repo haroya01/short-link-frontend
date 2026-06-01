@@ -37,12 +37,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     <main className="mx-auto flex h-[calc(100dvh-1px)] max-w-5xl flex-col px-4 py-4 sm:px-6">
       <EditorHeader
         backHref={ed.writeBase}
+        postId={post.id}
         status={post.status}
         saving={ed.saving}
         saved={ed.saved}
         busy={ed.busy}
         onSave={ed.save}
         onChangeStatus={ed.changeStatus}
+        onRestoreRevision={ed.restoreRevision}
         onDelete={ed.remove}
       />
 
