@@ -206,12 +206,7 @@ export default async function PublicPostPage({
           </a>
           <div className="flex items-center gap-3">
             <LikeButton postId={post.id} initialCount={post.likeCount} />
-            <BookmarkButton
-              postId={post.id}
-              username={author.username}
-              title={post.title}
-              slug={post.slug}
-            />
+            <BookmarkButton postId={post.id} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
           </div>
         </div>

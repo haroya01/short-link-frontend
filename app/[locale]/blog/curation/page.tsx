@@ -5,20 +5,16 @@ import { useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp, Bookmark, ExternalLink, Pin, Plus, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
-import {
-  getBookmarks,
-  removeBookmark,
-  setPinnedPosts,
-  type BookmarkItem,
-} from "@/modules/blog/api/curation";
+import { setPinnedPosts } from "@/modules/blog/api/curation";
+import { listBookmarks, removeBookmark, type BookmarkItem } from "@/modules/blog/api/bookmarks";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 /**
  * 큐레이션 — author curates two things: which of their published posts are pinned (and in what
- * order) atop their public profile post list, and a reading list of bookmarked posts. Pins are
- * persisted server-side (PUT /api/v1/posts/pins; current order derived from each post's pinOrder),
- * so they actually surface on the public profile. Bookmarks are still a localStorage mock (no
- * backend yet). Matches the workspace dashboard conventions, not the public reading column.
+ * order) atop their public profile post list, and a reading list of bookmarked posts. Both are
+ * persisted server-side: pins via PUT /api/v1/posts/pins (current order derived from each post's
+ * pinOrder), bookmarks via /api/v1/bookmarks. Matches the workspace dashboard conventions, not the
+ * public reading column.
  */
 export default function ContentCurationPage() {
   const t = useTranslations("blogWorkspace");
@@ -31,7 +27,9 @@ export default function ContentCurationPage() {
 
   useEffect(() => {
     if (!ready || !authenticated) return;
-    setBookmarks(getBookmarks());
+    listBookmarks()
+      .then(setBookmarks)
+      .catch(() => setBookmarks([]));
     listMyPosts()
       .then((all) => {
         setPosts(all);
@@ -76,7 +74,8 @@ export default function ContentCurationPage() {
     commitPins(next);
   }
   function dropBookmark(id: number) {
-    setBookmarks(removeBookmark(id));
+    setBookmarks((prev) => prev.filter((b) => b.id !== id)); // optimistic
+    void removeBookmark(id).catch(() => {});
   }
 
   if (!ready) return null;
