@@ -654,17 +654,20 @@ h1, h2, h3, p {
 @keyframes theme-wipe-down {
   from {
     clip-path: inset(0 0 100% 0);
+    opacity: 0.5;
   }
   to {
     clip-path: inset(0 0 0 0);
+    opacity: 1;
   }
 }
 ::view-transition-old(root) {
   animation: none;
 }
 ::view-transition-new(root) {
-  animation: theme-wipe-down 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  /* New snapshot paints over the held old one — no blend, a clean reveal edge. */
+  /* Softer than a hard guillotine: a slower ease-in-out sweep + an opacity ramp so the new theme
+     blends in over the old as it pours down, instead of a stark moving edge. */
+  animation: theme-wipe-down 650ms cubic-bezier(0.4, 0, 0.2, 1) both;
   mix-blend-mode: normal;
 }
 
