@@ -200,9 +200,17 @@
       "embed": "임베드 (동영상 / 링크)",
       "table": "표",
       "imageWide": "와이드 이미지",
-      "imagePair": "이미지 2장 (나란히)"
+      "imagePair": "이미지 2장 (나란히)",
+      "place": "지도 / 장소"
     },
-    "slugLabel": "글 주소(slug)"
+    "slugLabel": "글 주소(slug)",
+    "placeDialog": {
+      "placeTitle": "장소 검색",
+      "placePlaceholder": "장소 이름이나 주소 검색",
+      "placeEmpty": "검색 결과가 없어요.",
+      "placeHint": "장소를 고르면 지도 카드가 글에 삽입돼요.",
+      "placeClose": "닫기"
+    }
   },
   "publicPost": {
     "like": "좋아요",

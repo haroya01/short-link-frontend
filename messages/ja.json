@@ -200,9 +200,17 @@
       "embed": "埋め込み (動画 / リンク)",
       "table": "テーブル",
       "imageWide": "ワイド画像",
-      "imagePair": "画像2枚 (横並び)"
+      "imagePair": "画像2枚 (横並び)",
+      "place": "地図 / 場所"
     },
-    "slugLabel": "記事のURLスラッグ"
+    "slugLabel": "記事のURLスラッグ",
+    "placeDialog": {
+      "placeTitle": "場所を検索",
+      "placePlaceholder": "場所名や住所を検索",
+      "placeEmpty": "結果がありません。",
+      "placeHint": "場所を選ぶと地図カードが記事に挿入されます。",
+      "placeClose": "閉じる"
+    }
   },
   "publicPost": {
     "like": "いいね",
