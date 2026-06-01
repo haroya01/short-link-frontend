@@ -82,16 +82,6 @@ export function SeriesReadingShell({
     return [...counts.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1));
   }, [posts]);
 
-  // The year is shown only when it changes (the first month of each year carries it; the rest show the
-  // month alone) — so a multi-year run reads "2026년 1월 · 2월 … 2027년 1월" instead of repeating the year.
-  const fmtMonth = (key: string, withYear: boolean) => {
-    const [y, m] = key.split("-").map(Number);
-    return new Date(y, m - 1).toLocaleDateString(
-      DATE_LOCALE[locale] ?? "ko-KR",
-      withYear ? { year: "numeric", month: "long" } : { month: "long" },
-    );
-  };
-
   // Pin the real episode number before filtering, so a narrowed view keeps the series positions.
   const rows = posts
     .map((p, i) => ({ post: p, n: i + 1 }))
@@ -116,43 +106,63 @@ export function SeriesReadingShell({
         ? "bg-accent-600 text-white"
         : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400",
     );
+  const renderTagChip = ([tag, count]: readonly [string, number]) => {
+    const active = isActive({ kind: "tag", value: tag });
+    return (
+      <li key={tag}>
+        <button
+          type="button"
+          onClick={() => toggle({ kind: "tag", value: tag })}
+          aria-pressed={active}
+          className={chipCls(active)}
+        >
+          <span>{tag}</span>
+          {!active && <span className="text-slate-500 dark:text-slate-500">{count}</span>}
+        </button>
+      </li>
+    );
+  };
+
+  // Year/month shown separately so the months line up in their own column (the year sits in a fixed-
+  // width slot, printed only when it changes) — otherwise "2026년 1월" and "2월" start at different x.
+  const yearStr = (key: string) =>
+    new Date(Number(key.slice(0, 4)), 0, 1).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
+      year: "numeric",
+    });
+  const monthStr = (key: string) => {
+    const [y, m] = key.split("-").map(Number);
+    return new Date(y, m - 1, 1).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", { month: "long" });
+  };
 
   const rail = (
     <div className="flex flex-col gap-6">
       {tags.length > 0 && (
         <section>
           <RailHeading className="mb-3">{t("railTags")}</RailHeading>
-          <ul className="flex flex-wrap gap-2">
-            {(tagsOpen ? tags : tags.slice(0, TAG_CAP)).map(([tag, count]) => {
-              const active = isActive({ kind: "tag", value: tag });
-              return (
-                <li key={tag}>
-                  <button
-                    type="button"
-                    onClick={() => toggle({ kind: "tag", value: tag })}
-                    aria-pressed={active}
-                    className={chipCls(active)}
-                  >
-                    <span>{tag}</span>
-                    {!active && <span className="text-slate-500 dark:text-slate-500">{count}</span>}
-                  </button>
-                </li>
-              );
-            })}
-            {/* Show-more chip lives in the same flow as the chips, styled quietly so it reads as a control
-                not a tag. Only when the cloud actually overflows the cap. */}
-            {tags.length > TAG_CAP && (
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setTagsOpen((o) => !o)}
-                  className="focus-ring inline-flex items-center rounded-full px-3 py-1.5 text-[13px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
-                >
-                  {tagsOpen ? tf("seriesTagsLess") : tf("seriesTagsMore", { count: tags.length - TAG_CAP })}
-                </button>
-              </li>
-            )}
-          </ul>
+          <ul className="flex flex-wrap gap-2">{tags.slice(0, TAG_CAP).map(renderTagChip)}</ul>
+          {tags.length > TAG_CAP && (
+            <>
+              {/* The overflow chips animate open/closed via the grid 0fr↔1fr trick (height auto, both
+                  directions, no measured pixels). overflow-hidden clips them while collapsed. */}
+              <div
+                className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                  tagsOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <ul className="flex flex-wrap gap-2 pt-2">{tags.slice(TAG_CAP).map(renderTagChip)}</ul>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTagsOpen((o) => !o)}
+                aria-expanded={tagsOpen}
+                className="focus-ring mt-2 rounded text-[12px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+              >
+                {tagsOpen ? tf("seriesTagsLess") : tf("seriesTagsMore", { count: tags.length - TAG_CAP })}
+              </button>
+            </>
+          )}
         </section>
       )}
 
@@ -172,13 +182,17 @@ export function SeriesReadingShell({
                     onClick={() => toggle({ kind: "month", value: key })}
                     aria-pressed={active}
                     className={cn(
-                      "focus-ring flex w-full items-baseline justify-between gap-3 rounded-lg px-2 py-1.5 transition-colors",
+                      "focus-ring flex w-full items-baseline gap-2 rounded-lg px-2 py-1.5 transition-colors",
                       active
                         ? "bg-accent-50 font-medium text-accent-700 dark:bg-accent-500/15 dark:text-accent-300"
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800/50",
                     )}
                   >
-                    <span>{fmtMonth(key, showYear)}</span>
+                    {/* Fixed-width year slot (printed only when the year changes) → months align below it. */}
+                    <span className="w-14 shrink-0 text-slate-400 dark:text-slate-500">
+                      {showYear ? yearStr(key) : ""}
+                    </span>
+                    <span className="flex-1">{monthStr(key)}</span>
                     <span className={active ? "" : "text-slate-400"}>{count}</span>
                   </button>
                 </li>
@@ -196,10 +210,10 @@ export function SeriesReadingShell({
   // list, so it aligns with the list (row 2). The left rail spans both rows so its height never forces
   // a gap between the header and the list. Below xl this collapses to the centered column, rails drop.
   return (
-    <div className="mx-auto max-w-2xl xl:grid xl:max-w-7xl xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-10">
+    <div className="mx-auto max-w-2xl xl:grid xl:max-w-7xl xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-x-10">
       <div className="xl:col-start-2 xl:row-start-1">
         {header}
-        <div className="section-divider my-10" />
+        <div className="section-divider mt-6 mb-5" />
       </div>
 
       <aside className="hidden xl:col-start-1 xl:row-start-1 xl:row-span-2 xl:block">
