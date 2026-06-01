@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { LogIn, Menu, PenSquare, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -28,8 +29,9 @@ export function AppHeader({
   slimMobile?: boolean;
 }) {
   const t = useTranslations("nav");
-  const { authenticated, ready, signInWithGoogle } = useAuth();
+  const { authenticated, ready } = useAuth();
   const { open, toggle } = useSidebarState();
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
@@ -93,7 +95,15 @@ export function AppHeader({
           ) : authenticated ? (
             <AccountMenu />
           ) : (
-            <Button variant="default" size="sm" onClick={signInWithGoogle}>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => {
+                // Route through kurl's own branded login screen (then Google) instead of bouncing
+                // straight to the Google OAuth consent — carry the current page as the return ?next.
+                window.location.href = `${blogHref("/login")}?next=${encodeURIComponent(pathname)}`;
+              }}
+            >
               <LogIn className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">{t("login")}</span>
             </Button>
