@@ -132,13 +132,12 @@ h1, h2, h3, p {
   }
 
   /*
-   * Section divider — replaces the recurring `border-t border-slate-100`. Hairline rule with a
-   * single accent-green dot in the centre, kept off the visual center by a deliberate 4px shift
-   * so the eye reads it as an editorial mark, not a UI artifact. Width is generous (260px) on
-   * desktop so it draws past the headline column and anchors the section break.
+   * Section divider — replaces the recurring `border-t border-slate-100`. A hairline rule that fades
+   * in from both ends so the section break reads softer than a hard full-width border. Light mode uses
+   * a dark slate tint; dark mode a light slate tint, so the line stays visible on a near-black page
+   * instead of vanishing (the old dark-slate gradient was invisible there).
    */
   .section-divider {
-    position: relative;
     height: 1px;
     background: linear-gradient(
       to right,
@@ -148,17 +147,14 @@ h1, h2, h3, p {
       transparent 100%
     );
   }
-  .section-divider::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 6px;
-    height: 6px;
-    transform: translate(-50%, -50%);
-    border-radius: 9999px;
-    background: theme(colors.accent.500);
-    box-shadow: 0 0 0 3px white;
+  .dark .section-divider {
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(148, 163, 184, 0.22) 18%,
+      rgba(148, 163, 184, 0.22) 82%,
+      transparent 100%
+    );
   }
 
   /*
@@ -661,14 +657,68 @@ h1, h2, h3, p {
     opacity: 1;
   }
 }
-::view-transition-old(root) {
+/* Scoped to the theme toggle (it sets data-theme-vt on <html> for the transition's duration) so the
+   wipe does NOT bleed into the cross-document page-navigation transition below, which shares root. */
+html[data-theme-vt]::view-transition-old(root) {
   animation: none;
 }
-::view-transition-new(root) {
+html[data-theme-vt]::view-transition-new(root) {
   /* Softer than a hard guillotine: a slower ease-in-out sweep + an opacity ramp so the new theme
      blends in over the old as it pours down, instead of a stark moving edge. */
   animation: theme-wipe-down 650ms cubic-bezier(0.4, 0, 0.2, 1) both;
   mix-blend-mode: normal;
+}
+
+/*
+ * Cross-document page transitions (same-origin blog navigations — clicking a topic chip / tag, etc).
+ * Without this, a full navigation re-paints the whole page including the header, which flickers each
+ * time. `navigation: auto` lets the browser snapshot the old page and crossfade to the new one — the
+ * header reconciles smoothly instead of blinking. Scoped to NOT the theme transition (data-theme-vt).
+ * Cross-origin navs (author/post subdomains) are unaffected; unsupported browsers just navigate
+ * instantly; reduced-motion is honored by the UA.
+ */
+@view-transition {
+  navigation: auto;
+}
+/* Calm, not chaotic. Two fixes over a naive crossfade:
+   1. The OLD page is HELD at full opacity (no fade-out) and the NEW just fades in over it — a plain
+      crossfade fades both, dipping to ~half opacity mid-transition, which reads as a whole-page blink.
+   2. The named chrome groups (header, bottom nav) would otherwise get the UA default fade too, so they
+      blink. Pin them to `animation: none` → they stay perfectly still while only the body crossfades. */
+@keyframes page-nav-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+html:not([data-theme-vt])::view-transition-old(root) {
+  animation: none;
+}
+html:not([data-theme-vt])::view-transition-new(root) {
+  animation: page-nav-in 260ms ease both;
+}
+::view-transition-old(app-header),
+::view-transition-new(app-header),
+::view-transition-old(bottom-nav),
+::view-transition-new(bottom-nav) {
+  animation: none;
+}
+/* The sticky app header + mobile tab bar are the SAME across blog pages, so name them as their own
+   view-transition groups: identical position → they hold still while only the body crossfades, instead
+   of getting swept into the root fade and blinking on every navigation. */
+.vt-app-header {
+  view-transition-name: app-header;
+}
+.vt-bottom-nav {
+  view-transition-name: bottom-nav;
+}
+/* Theme toggle snapshots the whole page as one image, so the named groups must collapse back into the
+   root there (a same-named group on both snapshots would otherwise try to morph the header too). */
+html[data-theme-vt] .vt-app-header,
+html[data-theme-vt] .vt-bottom-nav {
+  view-transition-name: none;
 }
 
 /*
@@ -691,6 +741,29 @@ h1, h2, h3, p {
 }
 .subscribe-pop {
   animation: subscribe-pop 240ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/*
+ * Tag-feed POST LIST crossfade — keyed by the topic, so only the changing post list fades on a topic
+ * soft-nav. The topic title, follow controls and filter strip stay put (they update in place), and the
+ * header/bottom-nav (layout) stay mounted — only the list itself, the part that actually changes,
+ * transitions. Pure opacity (no rise) keeps it smooth, not jumpy.
+ */
+@keyframes tag-list-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.tag-list-enter {
+  animation: tag-list-fade 300ms ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tag-list-enter {
+    animation: none;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .subscribe-pop {

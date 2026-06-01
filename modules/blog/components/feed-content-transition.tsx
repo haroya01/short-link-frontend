@@ -27,14 +27,18 @@ export function FeedContentTransition({
   contentKey: string;
   children: ReactNode;
 }) {
-  const back = committedIndex !== null && index < committedIndex;
+  // First load (no prior tab this session) shows the content with no entrance slide — the whole feed
+  // appears at once instead of sliding in piecemeal. The slide is reserved for actual tab switches.
+  const firstLoad = committedIndex === null;
+  const back = !firstLoad && index < (committedIndex as number);
+  const slide = firstLoad ? "" : back ? "content-slide-back" : "content-slide-fwd";
 
   useEffect(() => {
     committedIndex = index;
   }, [index]);
 
   return (
-    <div key={contentKey} className={back ? "content-slide-back" : "content-slide-fwd"}>
+    <div key={contentKey} className={slide}>
       {children}
     </div>
   );

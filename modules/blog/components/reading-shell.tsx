@@ -15,15 +15,19 @@ import { cn } from "@/lib/utils";
 export function ReadingShell({
   children,
   rail,
+  leftRail,
   className,
 }: {
   children: ReactNode;
   /** Optional sidebar content; rendered sticky in the right gutter at `xl+`. Falsy → no rail. */
   rail?: ReactNode;
+  /** Optional content for the *left* gutter (col 1) — author context on the series page, where the
+   *  rail reads as "whose series is this" rather than cross-author discovery. Sticky at `xl+`. */
+  leftRail?: ReactNode;
   /** Extra classes on the outer wrapper — e.g. top margin (`mt-8`). */
   className?: string;
 }) {
-  if (!rail) {
+  if (!rail && !leftRail) {
     return <div className={cn("mx-auto max-w-2xl", className)}>{children}</div>;
   }
   return (
@@ -33,10 +37,17 @@ export function ReadingShell({
         className,
       )}
     >
-      <div className="xl:col-start-2">{children}</div>
-      <aside className="mt-12 hidden xl:col-start-3 xl:mt-0 xl:block">
-        <div className="sticky top-20">{rail}</div>
-      </aside>
+      {leftRail && (
+        <aside className="mb-12 hidden xl:col-start-1 xl:row-start-1 xl:mb-0 xl:block">
+          <div className="sticky top-20">{leftRail}</div>
+        </aside>
+      )}
+      <div className="xl:col-start-2 xl:row-start-1">{children}</div>
+      {rail && (
+        <aside className="mt-12 hidden xl:col-start-3 xl:row-start-1 xl:mt-0 xl:block">
+          <div className="sticky top-20">{rail}</div>
+        </aside>
+      )}
     </div>
   );
 }

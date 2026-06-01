@@ -2,7 +2,7 @@
 
 import { Star } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { blogHref } from "@/lib/host";
+import { blogPath } from "@/lib/host";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 
@@ -27,7 +27,7 @@ export function MyTagsStrip() {
       <ul className="flex flex-wrap gap-2">
         {prefs.followed.map((tag) => (
           <li key={tag}>
-            <TagChip href={blogHref(`/tags/${encodeURIComponent(tag)}`)} label={tag} />
+            <TagChip href={blogPath(`/tags/${encodeURIComponent(tag)}`)} label={tag} soft />
           </li>
         ))}
       </ul>

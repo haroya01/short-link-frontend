@@ -32,7 +32,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     // Sweep the new theme down over the old via the View Transitions API (CSS in globals.css drives
     // the top-to-bottom wipe). Unsupported browsers / reduced-motion just flip instantly.
     const doc = document as Document & {
-      startViewTransition?: (cb: () => void) => void;
+      startViewTransition?: (cb: () => void) => { finished: Promise<unknown> };
     };
     const reduce =
       typeof window !== "undefined" &&
@@ -41,7 +41,13 @@ export function ThemeToggle({ className }: { className?: string }) {
       apply();
       return;
     }
-    doc.startViewTransition(apply);
+    // Mark the root for the duration so the theme wipe is scoped to `html[data-theme-vt]` and the
+    // cross-document page-navigation transition (which shares `::view-transition(root)`) doesn't
+    // inherit the wipe — see globals.css.
+    const root = document.documentElement;
+    root.setAttribute("data-theme-vt", "");
+    const vt = doc.startViewTransition(apply);
+    vt.finished.finally(() => root.removeAttribute("data-theme-vt"));
   }
 
   return (

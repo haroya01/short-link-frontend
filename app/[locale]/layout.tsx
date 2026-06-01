@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { AuthHintProvider } from "@/components/common/auth-hint";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
@@ -117,6 +119,13 @@ export default async function RootLayout({
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
+  // First-paint sign-in guess for the header (avoids the auth-dependent chrome flashing in on cold
+  // load). The access token is per-origin localStorage (client-only), but the refresh cookie is
+  // server-readable; its presence ≈ a recoverable session. Mocks have no real cookie, so assume authed
+  // (the mock fixture is the signed-in demo user). The client `/me` reconciles either way.
+  const initialAuthed =
+    process.env.NEXT_PUBLIC_USE_MOCKS === "1" || cookies().has("refresh_token");
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -183,7 +192,7 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <NextIntlClientProvider locale={locale}>
-          {children}
+          <AuthHintProvider initialAuthed={initialAuthed}>{children}</AuthHintProvider>
         </NextIntlClientProvider>
         <script
           type="application/ld+json"

@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { blogHref } from "@/lib/host";
+import { blogPath } from "@/lib/host";
 import type { SuggestedAuthor, TagCount } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -64,20 +65,21 @@ export async function DiscoveryRail({
         <section>
           <div className="mb-3 flex items-baseline justify-between">
             <RailHeading>{t("railTopics")}</RailHeading>
-            <a
-              href={blogHref("/tags")}
+            <Link
+              href={blogPath("/tags")}
               className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring"
             >
               {t("railSeeAll")}
-            </a>
+            </Link>
           </div>
           <ul className="flex flex-wrap gap-2">
             {tags.map((tag) => (
               <li key={tag.tag}>
                 <TagChip
-                  href={blogHref(`/tags/${encodeURIComponent(tag.tag)}`)}
+                  href={blogPath(`/tags/${encodeURIComponent(tag.tag)}`)}
                   label={tag.tag}
                   count={tag.count}
+                  soft
                 />
               </li>
             ))}
