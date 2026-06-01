@@ -1,4 +1,4 @@
-import { blogHref } from "@/lib/host";
+import { blogPath } from "@/lib/host";
 import type { TagCount } from "@/modules/blog/api/public-posts";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 
@@ -36,11 +36,12 @@ export function TagFilterStrip({
           return (
             <li key={tag.tag} className="shrink-0">
               <TagChip
-                href={blogHref(`/tags/${encodeURIComponent(tag.tag)}${qs}`)}
+                href={blogPath(`/tags/${encodeURIComponent(tag.tag)}${qs}`)}
                 label={tag.tag}
                 count={tag.count}
                 active={active}
                 ariaCurrent={active ? "page" : undefined}
+                soft
               />
             </li>
           );

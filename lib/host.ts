@@ -21,6 +21,19 @@ export function blogHref(path: string = "/"): string {
   return `/blog-preview${path === "/" ? "" : path}`;
 }
 
+/**
+ * Same-origin RELATIVE blog path for in-app (soft) navigation between blog routes — unlike
+ * {@link blogHref} (absolute URL in prod → forces a full reload via next/link), this stays relative
+ * so next/link can client-navigate, keeping the layout/header/auth mounted (no per-nav flicker).
+ * Only for links FROM a blog page TO another blog page (same origin); cross-product/author links
+ * still use the absolute helpers.
+ */
+export function blogPath(path: string = "/"): string {
+  // prod: already on blog.kurl.me, so a leading-slash path is same-origin. dev: /blog-preview/*.
+  if (BLOG_HOST) return path;
+  return `/blog-preview${path === "/" ? "" : path}`;
+}
+
 export type Product = "links" | "blog";
 
 /**

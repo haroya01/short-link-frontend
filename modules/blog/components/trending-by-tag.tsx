@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { blogHref } from "@/lib/host";
+import { blogPath } from "@/lib/host";
 import type { TrendingTagSection } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 
@@ -43,15 +44,15 @@ export function TrendingByTag({
                 <span aria-hidden className="h-3.5 w-[3px] shrink-0 rounded-full bg-accent-500" />
                 {section.tag}
               </h2>
-              <a
+              <Link
                 // Carry the trending order into the full tag feed so "더 보기" from a popularity-ranked
-                // section doesn't land on a time-ordered one.
-                href={blogHref(`/tags/${encodeURIComponent(section.tag)}?sort=trending`)}
+                // section doesn't land on a time-ordered one. Soft-nav so the chrome doesn't reload.
+                href={blogPath(`/tags/${encodeURIComponent(section.tag)}?sort=trending`)}
                 className="group inline-flex shrink-0 items-center gap-1 rounded text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800 focus-ring dark:text-accent-400 dark:hover:text-accent-300"
               >
                 {moreLabel}
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none" />
-              </a>
+              </Link>
             </div>
             <FeedList>
               {section.posts.slice(0, POSTS_PER_TOPIC).map((item) => (
