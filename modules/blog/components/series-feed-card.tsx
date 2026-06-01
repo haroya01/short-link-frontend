@@ -1,18 +1,19 @@
 import { getTranslations } from "next-intl/server";
+import { ArrowRight } from "lucide-react";
 import { Mark } from "@/components/common/logo";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 
-// Episode markers cap — past this the dots stop reading as a count and start as a bar.
-const MAX_DOTS = 6;
-
 /**
- * A series as a single "collection" unit in the feed flow — a bordered card (distinct from the flat
- * post rows) that surfaces a multi-post series for discovery. Links into the series detail page.
- * Server-rendered so the date/labels resolve with the request locale; it's handed to the client
- * {@link FeedInfinite} as a node and dropped in among the post rows.
+ * A series in the feed flow — kept in the same quiet, typographic family as the post cards (no boxed
+ * widget): a series eyebrow (kurl mark + name + count), then its first members as a list where each
+ * title is its own link straight to that post, and an author/date meta line like a normal card. The
+ * members cascade in (shared `.profile-fade` stagger) so the block feels alive rather than static.
+ *
+ * Each episode title and the eyebrow are separate links (siblings, never nested) — the block has no
+ * single wrapping anchor, so clicking a title goes to that post and the eyebrow/"+N" go to the series.
  */
 export async function SeriesFeedCard({
   series,
@@ -26,28 +27,66 @@ export async function SeriesFeedCard({
     month: "long",
     day: "numeric",
   });
-  const dots = Math.min(series.postCount, MAX_DOTS);
+  const more = series.postCount - series.posts.length;
+  const seriesUrl = authorHref(series.author.username, locale, `series/${series.slug}`);
 
   return (
-    <a
-      href={authorHref(series.author.username, locale, `series/${series.slug}`)}
-      className="group block rounded-2xl border border-slate-200 bg-white p-5 transition-colors hover:border-accent-300 focus-ring dark:border-slate-800 dark:bg-slate-900/40 dark:hover:border-accent-500/40"
-    >
-      <div className="flex items-center gap-1.5 text-[12px] font-semibold tracking-wide text-accent-700 dark:text-accent-400">
-        <Mark className="h-2.5 w-auto" />
-        <span>{t("seriesEyebrow")}</span>
-        <span aria-hidden className="text-accent-300 dark:text-accent-500/50">
+    <section className="group/series" aria-label={series.title}>
+      {/* Series eyebrow — where a post card shows its tag. Marks the block as a series + links to it. */}
+      <a
+        href={seriesUrl}
+        className="focus-ring inline-flex max-w-full items-center gap-1.5 rounded text-[12px] font-semibold tracking-wide text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+      >
+        <Mark className="h-2.5 w-auto shrink-0" />
+        <span className="truncate">{series.title}</span>
+        <span aria-hidden className="shrink-0 text-accent-300 dark:text-accent-500/50">
           ·
         </span>
-        <span className="text-slate-500 dark:text-slate-400">
+        <span className="shrink-0 font-medium text-slate-500 dark:text-slate-400">
           {t("seriesEpisodeCount", { count: series.postCount })}
         </span>
-      </div>
+      </a>
 
-      <h3 className="mt-1.5 text-[19px] font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
-        {series.title}
-      </h3>
+      {/* Members — each title is a link straight to that post. Quiet leading dot, hover lifts the row. */}
+      <ol className="mt-2 flex flex-col">
+        {series.posts.map((post, i) => (
+          <li
+            key={post.slug}
+            className="profile-fade"
+            style={{ ["--idx" as string]: i } as React.CSSProperties}
+          >
+            <a
+              href={postHref(series.author.username, post.slug, locale)}
+              className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+            >
+              <span
+                aria-hidden
+                className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-300 transition-colors group-hover/ep:bg-accent-500 dark:bg-accent-500/40"
+              />
+              <span className="truncate text-[14px] font-medium text-slate-700 transition-colors group-hover/ep:text-accent-700 dark:text-slate-300 dark:group-hover/ep:text-accent-300">
+                {post.title}
+              </span>
+            </a>
+          </li>
+        ))}
+        {more > 0 && (
+          <li
+            className="profile-fade"
+            style={{ ["--idx" as string]: series.posts.length } as React.CSSProperties}
+          >
+            <a
+              href={seriesUrl}
+              className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-[13px] text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-300"
+            >
+              <span aria-hidden className="h-1.5 w-1.5 shrink-0" />
+              <span>{t("seriesMoreCount", { count: more })}</span>
+              <ArrowRight className="h-3 w-3 transition-transform group-hover/ep:translate-x-0.5 motion-reduce:transform-none" />
+            </a>
+          </li>
+        )}
+      </ol>
 
+      {/* Author/date meta — same grammar as a post card's meta line. */}
       <div className="mt-2.5 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
         {series.author.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -61,16 +100,6 @@ export async function SeriesFeedCard({
         <span aria-hidden>·</span>
         <span className="shrink-0">{t("seriesLastPublished", { date })}</span>
       </div>
-
-      {/* Episode markers — a quiet visual for "this is a run of N posts", not interactive. */}
-      <div className="mt-3.5 flex items-center gap-1.5" aria-hidden>
-        {Array.from({ length: dots }).map((_, i) => (
-          <span
-            key={i}
-            className="h-1.5 w-6 rounded-full bg-accent-200 transition-colors group-hover:bg-accent-300 dark:bg-accent-500/30 dark:group-hover:bg-accent-500/50"
-          />
-        ))}
-      </div>
-    </a>
+    </section>
   );
 }

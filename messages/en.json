@@ -67,7 +67,8 @@
     "bookmarkOn": "Remove from reading list",
     "seriesEyebrow": "Series",
     "seriesEpisodeCount": "{count} posts",
-    "seriesLastPublished": "Last post {date}"
+    "seriesLastPublished": "Last post {date}",
+    "seriesMoreCount": "+{count} more"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",

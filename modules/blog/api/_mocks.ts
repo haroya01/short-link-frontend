@@ -235,6 +235,11 @@ const MOCK_DISCOVER_SERIES: PublicSeriesCard[] = [
     title: "Next.js 깊게 파기",
     postCount: 4,
     lastPublishedAt: "2026-05-30T09:00:00Z",
+    posts: [
+      { slug: "nextjs-14-app-router-blog", title: "Next.js 14 App Router로 블로그를 다시 만든 이유" },
+      { slug: "spring-tx-propagation", title: "App Router의 데이터 패칭 다시 보기" },
+      { slug: "naming-things", title: "서버 액션으로 폼을 다루는 법" },
+    ],
   },
   {
     author: AUTHORS.minji,
@@ -242,6 +247,10 @@ const MOCK_DISCOVER_SERIES: PublicSeriesCard[] = [
     title: "사이드 프로젝트 로그",
     postCount: 6,
     lastPublishedAt: "2026-05-24T09:00:00Z",
+    posts: [
+      { slug: "killed-side-project", title: "사이드 프로젝트를 6개월 만에 접은 이야기" },
+      { slug: "pricing-experiment-free-to-pro", title: "1인 개발자의 가격 정책 실험" },
+    ],
   },
 ];
 

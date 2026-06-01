@@ -98,6 +98,12 @@ export interface PublicSeriesList {
   series: PublicSeriesListItem[];
 }
 
+/** A minimal reference to a series member post — for the card's "what's inside" preview. */
+export interface SeriesPostRef {
+  slug: string;
+  title: string;
+}
+
 /** A series as it appears on the discovery feed (cross-author series card). */
 export interface PublicSeriesCard {
   author: PublicAuthor;
@@ -105,6 +111,8 @@ export interface PublicSeriesCard {
   title: string;
   postCount: number;
   lastPublishedAt: string;
+  /** First few published members (in series order) — the card's mini table of contents. */
+  posts: SeriesPostRef[];
 }
 
 export interface PublicSeriesDetail {
