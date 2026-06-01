@@ -171,11 +171,15 @@ export function SeriesReadingShell({
   );
 
   return (
-    <ReadingShell leftRail={leftRail} rail={rail}>
-      {header}
-      <div className="section-divider my-10" />
+    <>
+      {/* Series identity (title/subscribe/author) spans the full reading column on top; the grid below
+          holds only the episodes + rails, so both rails top-align with the LIST they relate to (the
+          tag/archive rail is a filter panel for the episodes — not part of the masthead). */}
+      <div className="mx-auto max-w-2xl">{header}</div>
+      <div className="section-divider mx-auto my-10 max-w-2xl" />
 
-      {rows.length === 0 ? (
+      <ReadingShell leftRail={leftRail} rail={rail}>
+        {rows.length === 0 ? (
         <p className="py-6 text-[14px] text-slate-500 dark:text-slate-400">{tf("seriesFilterNone")}</p>
       ) : (
         // Re-keyed on the active filter so the whole list remounts and the cascade replays on each change.
@@ -239,6 +243,7 @@ export function SeriesReadingShell({
           })}
         </ol>
       )}
-    </ReadingShell>
+      </ReadingShell>
+    </>
   );
 }
