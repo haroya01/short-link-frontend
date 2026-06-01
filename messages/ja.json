@@ -199,7 +199,8 @@
       "divider": "区切り線",
       "embed": "埋め込み (動画 / リンク)",
       "table": "テーブル",
-      "imageWide": "ワイド画像"
+      "imageWide": "ワイド画像",
+      "imagePair": "画像2枚 (横並び)"
     },
     "slugLabel": "記事のURLスラッグ"
   },

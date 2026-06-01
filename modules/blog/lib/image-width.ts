@@ -6,10 +6,12 @@
  * images via `img[alt^="«wide»"]` CSS; the reader uses the parsed `width`. No bracket/paren chars in
  * the marker — those would break the image markdown regex.
  */
-export type ImageWidth = "wide" | "full";
+// "wide" / "full" = wider than the column. "half" = column-half, so two consecutive halves render
+// side by side (a 2-up image row), stacking on mobile.
+export type ImageWidth = "wide" | "full" | "half";
 
-const MARK: Record<ImageWidth, string> = { wide: "«wide» ", full: "«full» " };
-const WIDTHS: ImageWidth[] = ["wide", "full"];
+const MARK: Record<ImageWidth, string> = { wide: "«wide» ", full: "«full» ", half: "«half» " };
+const WIDTHS: ImageWidth[] = ["wide", "full", "half"];
 
 /** Split a width-marker prefix out of an image's alt text. */
 export function parseImageAlt(alt: string): { width?: ImageWidth; alt: string } {
