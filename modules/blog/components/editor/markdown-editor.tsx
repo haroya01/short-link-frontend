@@ -20,6 +20,7 @@ import {
   Link as LinkIcon,
   List,
   ListOrdered,
+  type LucideIcon,
   Plus,
   Quote,
   Strikethrough,
@@ -180,24 +181,47 @@ function Toolbar({
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   }
 
+  const run = (cmd: () => void) => () => cmd();
+  // Config-driven toolbar — OPEN FOR EXTENSION: add a button by adding one entry (or "|" divider);
+  // the render below never changes. isActive is read each render so highlight state stays live.
+  type Item = "|" | { icon: LucideIcon; label: string; title?: string; active?: boolean; run: () => void };
+  const items: Item[] = [
+    { icon: Plus, label: "Insert block", title: "블록 추가 ( / )", run: run(() => editor.chain().focus().insertContent("/").run()) },
+    "|",
+    { icon: Heading2, label: "H2", active: editor.isActive("heading", { level: 2 }), run: run(() => editor.chain().focus().toggleHeading({ level: 2 }).run()) },
+    { icon: Heading3, label: "H3", active: editor.isActive("heading", { level: 3 }), run: run(() => editor.chain().focus().toggleHeading({ level: 3 }).run()) },
+    "|",
+    { icon: Bold, label: "Bold", active: editor.isActive("bold"), run: run(() => editor.chain().focus().toggleBold().run()) },
+    { icon: Italic, label: "Italic", active: editor.isActive("italic"), run: run(() => editor.chain().focus().toggleItalic().run()) },
+    { icon: Strikethrough, label: "Strike", active: editor.isActive("strike"), run: run(() => editor.chain().focus().toggleStrike().run()) },
+    { icon: LinkIcon, label: "Link", active: editor.isActive("link"), run: setLink },
+    "|",
+    { icon: List, label: "Bullet list", active: editor.isActive("bulletList"), run: run(() => editor.chain().focus().toggleBulletList().run()) },
+    { icon: ListOrdered, label: "Ordered list", active: editor.isActive("orderedList"), run: run(() => editor.chain().focus().toggleOrderedList().run()) },
+    { icon: Quote, label: "Quote", active: editor.isActive("blockquote"), run: run(() => editor.chain().focus().toggleBlockquote().run()) },
+    { icon: Code2, label: "Code block", active: editor.isActive("codeBlock"), run: run(() => editor.chain().focus().toggleCodeBlock().run()) },
+    { icon: TableIcon, label: "Table", active: editor.isActive("table"), run: run(() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()) },
+    { icon: ImageIcon, label: "Image", run: () => onPickImage() },
+  ];
+
   return (
     <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b border-slate-100 bg-white/90 py-1.5 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
-      <button type="button" aria-label="Insert block" title="블록 추가 ( / )" className={btn(false)} onClick={() => editor.chain().focus().insertContent("/").run()}><Plus className="h-4 w-4" /></button>
-      <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
-      <button type="button" aria-label="H2" className={btn(editor.isActive("heading", { level: 2 }))} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 className="h-4 w-4" /></button>
-      <button type="button" aria-label="H3" className={btn(editor.isActive("heading", { level: 3 }))} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}><Heading3 className="h-4 w-4" /></button>
-      <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
-      <button type="button" aria-label="Bold" className={btn(editor.isActive("bold"))} onClick={() => editor.chain().focus().toggleBold().run()}><Bold className="h-4 w-4" /></button>
-      <button type="button" aria-label="Italic" className={btn(editor.isActive("italic"))} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic className="h-4 w-4" /></button>
-      <button type="button" aria-label="Strike" className={btn(editor.isActive("strike"))} onClick={() => editor.chain().focus().toggleStrike().run()}><Strikethrough className="h-4 w-4" /></button>
-      <button type="button" aria-label="Link" className={btn(editor.isActive("link"))} onClick={setLink}><LinkIcon className="h-4 w-4" /></button>
-      <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
-      <button type="button" aria-label="Bullet list" className={btn(editor.isActive("bulletList"))} onClick={() => editor.chain().focus().toggleBulletList().run()}><List className="h-4 w-4" /></button>
-      <button type="button" aria-label="Ordered list" className={btn(editor.isActive("orderedList"))} onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered className="h-4 w-4" /></button>
-      <button type="button" aria-label="Quote" className={btn(editor.isActive("blockquote"))} onClick={() => editor.chain().focus().toggleBlockquote().run()}><Quote className="h-4 w-4" /></button>
-      <button type="button" aria-label="Code block" className={btn(editor.isActive("codeBlock"))} onClick={() => editor.chain().focus().toggleCodeBlock().run()}><Code2 className="h-4 w-4" /></button>
-      <button type="button" aria-label="Table" className={btn(editor.isActive("table"))} onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}><TableIcon className="h-4 w-4" /></button>
-      <button type="button" aria-label="Image" className={btn(false)} onClick={() => onPickImage()}><ImageIcon className="h-4 w-4" /></button>
+      {items.map((it, i) =>
+        it === "|" ? (
+          <span key={i} className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
+        ) : (
+          <button
+            key={i}
+            type="button"
+            aria-label={it.label}
+            title={it.title}
+            className={btn(!!it.active)}
+            onClick={it.run}
+          >
+            <it.icon className="h-4 w-4" />
+          </button>
+        ),
+      )}
     </div>
   );
 }
