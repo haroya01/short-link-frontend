@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Hash, PenSquare, SearchX } from "lucide-react";
 import { blogHref } from "@/lib/host";
@@ -18,6 +17,8 @@ import {
 } from "@/modules/blog/api/public-posts";
 import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
+import { FeedContentTransition } from "@/modules/blog/components/feed-content-transition";
+import { FeedSortTabs } from "@/modules/blog/components/feed-sort-tabs";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
@@ -131,8 +132,10 @@ export default async function BlogFeedPage({
   const showRail = hasRail && !searching;
 
   // Remount key for the feed content: changes on every Latest/Popular/Following switch (and on a new
-  // search), so the content block replays its fade instead of swapping abruptly.
+  // search), so the content block replays its slide instead of swapping abruptly.
   const contentKey = `${activeTab}:${searching ? query : ""}`;
+  // Tab order drives the slide direction (FeedContentTransition): recent → trending → following.
+  const tabIndex = activeTab === "trending" ? 1 : activeTab === "following" ? 2 : 0;
 
   // No separate hero card. On the default (non-search) recent feed the lead post just gets a quiet
   // "오늘의 글" emphasis as the first list row — same grammar as the rest of the list, only louder by a
@@ -181,125 +184,121 @@ export default async function BlogFeedPage({
           gets extra room on top of that while the cookie banner is up — see globals.css). */}
       <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
         <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800">
-          <nav className="flex gap-1 text-[15px] font-bold">
-            <SortTab label={t("recent")} href={sortHref("recent")} active={activeTab === "recent"} />
-            <SortTab
-              label={t("trending")}
-              href={sortHref("trending")}
-              active={activeTab === "trending"}
-            />
-            <SortTab
-              label={t("feed")}
-              href="?sort=following"
-              active={!searching && tab === "following"}
-              // A search spans every author, so "following" can't apply — disable the tab while a
-              // query is active. The reason is shown as a visible inline note under the result
-              // summary (touch-reachable), so no hover-only tooltip here.
-              disabled={searching}
-            />
-          </nav>
+          <FeedSortTabs
+            tabs={[
+              { key: "recent", label: t("recent"), href: sortHref("recent"), active: activeTab === "recent" },
+              {
+                key: "trending",
+                label: t("trending"),
+                href: sortHref("trending"),
+                active: activeTab === "trending",
+              },
+              {
+                key: "following",
+                label: t("feed"),
+                href: "?sort=following",
+                active: !searching && tab === "following",
+                // A search spans every author, so "following" can't apply — disable it while searching.
+                disabled: searching,
+              },
+            ]}
+          />
         </header>
 
         {/* Reader's followed tags ("보고싶은 태그") — hidden until they follow one. Not during search. */}
         {!searching && <MyTagsStrip />}
 
-        {/* Keyed by tab + query so it remounts and crossfades on each tab switch / search. */}
-        <div key={contentKey} className="content-fade">
-          {tab === "following" && !searching ? (
-          <FollowingFeed locale={locale} suggestedAuthors={authors} />
-        ) : groupByTag ? (
-          trendingSections.length === 0 ? (
-            <FeedEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
-          ) : (
-            <ReadingShell
-              className="mt-8"
-              rail={
-                showRail ? <DiscoveryRail locale={locale} tags={tags} authors={authors} /> : undefined
-              }
-            >
-              <TrendingByTag
-                sections={trendingSections}
-                locale={locale}
-                moreLabel={t("railSeeAll")}
-                heading={t("trendingTopicsLabel")}
-              />
-            </ReadingShell>
-          )
-        ) : items.length === 0 ? (
-          searching ? (
-            <FeedEmpty
-              icon={SearchX}
-              title={t("searchEmptyTitle")}
-              body={t("searchEmptyBody")}
-              action={browseTopicsCta}
-            />
-          ) : (
-            <FeedEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
-          )
+        {/* Following is its own client surface with its own rail (followed authors), so it animates as
+            a whole — there's no shared discovery rail to hold still here. */}
+        {tab === "following" && !searching ? (
+          <FeedContentTransition index={tabIndex} contentKey={contentKey}>
+            <FollowingFeed locale={locale} suggestedAuthors={authors} />
+          </FeedContentTransition>
         ) : (
-          <FeedBody
-            locale={locale}
-            items={items}
-            hasNext={hasNext}
-            sort={sort}
-            query={searching ? query : undefined}
-            marginTop={!searching}
-            featuredFirst={featuredFirst}
-            featuredLabel={t("featuredLabel")}
-            interleave={
-              series.length > 0 ? <SeriesFeedCard series={series[0]} locale={locale} /> : null
-            }
-            belowFeatured={
-              !searching ? (
-                <MobileDiscoveryStrip locale={locale} tags={tags} authors={authors} />
-              ) : null
-            }
+          // recent / trending / search share ONE ReadingShell so the discovery rail is rendered once
+          // and stays put — only the content column (inside FeedContentTransition) slides on a switch.
+          <ReadingShell
+            className={searching ? "mt-6" : "mt-4"}
+            rail={showRail ? <DiscoveryRail locale={locale} tags={tags} authors={authors} /> : undefined}
           >
-            {showRail ? (
-              <DiscoveryRail locale={locale} tags={tags} authors={authors} />
-            ) : null}
-          </FeedBody>
-          )}
-        </div>
+            <FeedContentTransition index={tabIndex} contentKey={contentKey}>
+              {groupByTag ? (
+                trendingSections.length === 0 ? (
+                  <FeedEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
+                ) : (
+                  <TrendingByTag
+                    sections={trendingSections}
+                    locale={locale}
+                    moreLabel={t("railSeeAll")}
+                    heading={t("trendingTopicsLabel")}
+                  />
+                )
+              ) : items.length === 0 ? (
+                searching ? (
+                  <FeedEmpty
+                    icon={SearchX}
+                    title={t("searchEmptyTitle")}
+                    body={t("searchEmptyBody")}
+                    action={browseTopicsCta}
+                  />
+                ) : (
+                  <FeedEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
+                )
+              ) : (
+                <FeedColumn
+                  locale={locale}
+                  items={items}
+                  hasNext={hasNext}
+                  sort={sort}
+                  query={searching ? query : undefined}
+                  featuredFirst={featuredFirst}
+                  featuredLabel={t("featuredLabel")}
+                  interleave={
+                    series.length > 0 ? <SeriesFeedCard series={series[0]} locale={locale} /> : null
+                  }
+                  belowFeatured={
+                    !searching ? (
+                      <MobileDiscoveryStrip locale={locale} tags={tags} authors={authors} />
+                    ) : null
+                  }
+                />
+              )}
+            </FeedContentTransition>
+          </ReadingShell>
+        )}
       </main>
     </>
   );
 }
 
 /**
- * The feed's lead area: the infinite-scroll list (with an optional mobile discovery strip above it),
- * wrapped in the shared {@link ReadingShell} so the reading column + optional desktop rail match every
- * other blog surface. The rail (passed as `children`) sits in the right gutter at xl+.
+ * The feed's reading column: an optional mobile discovery strip above the infinite-scroll list. The
+ * surrounding {@link ReadingShell} (+ the desktop rail) is rendered once by the page — NOT here — so
+ * the rail stays put while only this column slides on a tab switch.
  */
-function FeedBody({
+function FeedColumn({
   locale,
   items,
   hasNext,
   sort,
   query,
-  marginTop,
   featuredFirst,
   featuredLabel,
   interleave,
   belowFeatured,
-  children,
 }: {
   locale: string;
   items: PublicFeedItem[];
   hasNext: boolean;
   sort: FeedSort;
   query?: string;
-  marginTop: boolean;
   featuredFirst: boolean;
   featuredLabel: string;
   interleave?: ReactNode;
   belowFeatured?: ReactNode;
-  children: ReactNode;
 }) {
   return (
-    // The recent feed leads straight into the posts (no masthead), so a wide top gap reads as an empty
-    // band under the tabs — keep it tight. Search keeps a touch more air below its masthead band.
-    <ReadingShell className={marginTop ? "mt-4" : "mt-6"} rail={children}>
+    <>
       {belowFeatured}
       <FeedInfinite
         locale={locale}
@@ -311,55 +310,7 @@ function FeedBody({
         featuredLabel={featuredLabel}
         interleaveNode={interleave}
       />
-    </ReadingShell>
+    </>
   );
 }
 
-function SortTab({
-  label,
-  href,
-  active,
-  disabled = false,
-}: {
-  label: string;
-  href: string;
-  active: boolean;
-  disabled?: boolean;
-}) {
-  const base = "relative px-2.5 py-1.5 transition-colors";
-  // Disabled (e.g. "following" while a search is active): a non-interactive, muted span. The reason
-  // is shown as the visible inline scope note, so no hover-only tooltip is needed here.
-  if (disabled) {
-    return (
-      <span
-        aria-disabled
-        aria-current={active ? "page" : undefined}
-        className={`${base} cursor-default text-slate-300`}
-      >
-        {label}
-      </span>
-    );
-  }
-  // next/link → client-side soft navigation between tabs (no full reload / flicker). The underline is
-  // a keyed element (not an `after:` pseudo) so it remounts and re-plays its glide on each switch.
-  return (
-    <Link
-      href={href}
-      aria-current={active ? "page" : undefined}
-      className={`${base} rounded focus-ring ${
-        active
-          ? "text-accent-700 dark:text-accent-400"
-          : "text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
-      }`}
-    >
-      {label}
-      {active && (
-        <span
-          key={href}
-          aria-hidden
-          className="absolute inset-x-2.5 -bottom-[13px] h-0.5 origin-left rounded-full bg-accent-600 [animation:underline-glide_240ms_ease-out] motion-reduce:[animation:none]"
-        />
-      )}
-    </Link>
-  );
-}
