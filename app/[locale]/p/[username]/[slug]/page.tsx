@@ -226,7 +226,7 @@ export default async function PublicPostPage({
       {/* velog-style TOC pinned just right of the centered column. Fixed (not a grid gutter) so it
           shows from landscape-tablet width up (~1100px) without shrinking the 42rem reading column or
           breaking its centering. Below that, the floating button → bottom sheet takes over. */}
-      {headings.length >= 2 && (
+      {headings.length >= 1 && (
         <aside className="fixed left-[calc(50%_+_22.5rem)] top-24 z-20 hidden max-h-[calc(100vh_-_7rem)] w-40 overflow-y-auto min-[1100px]:block xl:w-52">
           <PostToc headings={headings} />
         </aside>

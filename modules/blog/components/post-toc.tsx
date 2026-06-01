@@ -17,7 +17,7 @@ function scrollToHeading(id: string) {
 
 /**
  * velog-style floating table of contents. Shown from landscape-tablet width up (~1100px, positioned
- * in the right margin by the page) and only when there are at least two headings. Scrollspy via
+ * in the right margin by the page) whenever the post has at least one heading. Scrollspy via
  * IntersectionObserver highlights the section currently near the top of the viewport.
  */
 export function PostToc({ headings }: { headings: TocHeading[] }) {
@@ -44,7 +44,7 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
     if (scrollToHeading(id)) setActive(id);
   }
 
-  if (headings.length < 2) return null;
+  if (headings.length < 1) return null;
 
   return (
     <nav aria-label={t("toc")} className="border-l border-slate-100 pl-4 text-[13px] leading-relaxed dark:border-slate-800">
@@ -87,7 +87,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
-  if (headings.length < 2) return null;
+  if (headings.length < 1) return null;
 
   return (
     <div className="min-[1100px]:hidden">
