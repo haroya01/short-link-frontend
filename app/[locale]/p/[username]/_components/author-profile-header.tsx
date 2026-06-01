@@ -1,26 +1,37 @@
+"use client";
+
 import { Link2 } from "lucide-react";
-import { getLocale, getTranslations } from "next-intl/server";
+import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { linksHref } from "@/lib/host";
 import type { PublicAuthor } from "@/modules/blog/api/public-posts";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorPath } from "@/modules/blog/components/feed-card";
+import { FeedSortTabs } from "@/modules/blog/components/feed-sort-tabs";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 
-type Tab = "posts" | "series" | "about";
+const norm = (p: string) => p.replace(/\/+$/, "") || "/";
 
 /**
- * Shared header for the author's blog pages (velog @user style): avatar + handle + bio, then a
- * tab bar — 글 / 시리즈 / 소개. Hrefs are relative to the author subdomain root.
+ * Persistent author header (avatar · bio · follow + 글/시리즈/소개 tabs), rendered once by the author
+ * layout so it stays mounted across tab navigation. The tab bar is the feed home's {@link FeedSortTabs}
+ * — same gliding, distance-proportional underline — and the tabs soft-navigate (relative {@link
+ * authorPath}) so the layout/header don't reload. The active tab is the one whose path matches the
+ * current URL exactly (works on both the subdomain and the /p path deployment).
  */
-export async function AuthorHeader({ author, active }: { author: PublicAuthor; active: Tab }) {
-  const t = await getTranslations("publicPost");
-  const tNav = await getTranslations("nav");
-  const locale = await getLocale();
-  // Full author-base paths (not bare "/series") so the tabs work on the path-based deployment
-  // (kurl.me/{locale}/p/{user}) as well as the author subdomain.
-  const tabs: { key: Tab; href: string; label: string }[] = [
-    { key: "posts", href: authorHref(author.username, locale), label: t("tabPosts") },
-    { key: "series", href: authorHref(author.username, locale, "series"), label: t("tabSeries") },
-    { key: "about", href: authorHref(author.username, locale, "about"), label: t("tabAbout") },
+export function AuthorProfileHeader({ author, locale }: { author: PublicAuthor; locale: string }) {
+  const t = useTranslations("publicPost");
+  const tNav = useTranslations("nav");
+  const pathname = usePathname();
+  const cur = norm(pathname);
+
+  const homePath = authorPath(author.username, locale);
+  const seriesPath = authorPath(author.username, locale, "series");
+  const aboutPath = authorPath(author.username, locale, "about");
+
+  const tabs = [
+    { key: "posts", label: t("tabPosts"), href: homePath, active: cur === norm(homePath) },
+    { key: "series", label: t("tabSeries"), href: seriesPath, active: cur === norm(seriesPath) },
+    { key: "about", label: t("tabAbout"), href: aboutPath, active: cur === norm(aboutPath) },
   ];
 
   return (
@@ -49,8 +60,6 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
           )}
           <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
             <FollowButton username={author.username} initialFollowerCount={0} />
-            {/* Cross-surface link to the same person's link-in-bio (separate product, shared
-                identity). Shown only when they actually have one. */}
             {author.hasLinkInBio && (
               <a
                 href={linksHref(`/${locale}/u/${author.username}`)}
@@ -64,22 +73,10 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
         </div>
       </div>
 
-      <nav className="mt-8 flex gap-1 border-b border-slate-200 text-[15px] font-medium dark:border-slate-800">
-        {tabs.map((tab) => (
-          <a
-            key={tab.key}
-            href={tab.href}
-            aria-current={active === tab.key ? "page" : undefined}
-            className={`-mb-px border-b-2 px-4 py-2.5 transition-colors ${
-              active === tab.key
-                ? "border-accent-600 text-slate-900 dark:text-slate-100"
-                : "border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-            }`}
-          >
-            {tab.label}
-          </a>
-        ))}
-      </nav>
+      {/* Same baseline + gliding underline as the feed home tabs. */}
+      <div className="mt-8 border-b border-slate-200 pb-3 dark:border-slate-800">
+        <FeedSortTabs tabs={tabs} />
+      </div>
     </header>
   );
 }

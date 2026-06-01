@@ -5,7 +5,6 @@ import { Layers } from "lucide-react";
 import { listPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
-import { AuthorHeader } from "../_components/author-header";
 
 export const revalidate = 30;
 
@@ -28,18 +27,12 @@ export default async function PublicSeriesIndexPage({
   const t = await getTranslations({ locale, namespace: "publicPost" });
   if (!result.ok) notFound();
 
-  const { author, series } = result.data;
+  const { series } = result.data;
 
   return (
-    // Same main + centered header wrapper as the posts/about tabs, so the avatar + tab bar stay
-    // fixed when switching tabs (no jump).
-    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
-      <div className="mx-auto max-w-2xl">
-        <AuthorHeader author={author} active="series" />
-      </div>
-
-      <ReadingShell className="mt-8 author-tab-enter">
-        {series.length === 0 ? (
+    // Header + outer <main> come from the author layout's shell; this page renders only its content.
+    <ReadingShell className="mt-8">
+      {series.length === 0 ? (
           <p className="text-slate-500">{t("seriesEmpty")}</p>
         ) : (
           <ul className="space-y-2">
@@ -63,7 +56,6 @@ export default async function PublicSeriesIndexPage({
             ))}
           </ul>
         )}
-      </ReadingShell>
-    </main>
+    </ReadingShell>
   );
 }

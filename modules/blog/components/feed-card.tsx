@@ -25,6 +25,20 @@ export function authorHref(username: string, locale: string, subpath = ""): stri
   return `${base}/${subpath.replace(/^\//, "")}`;
 }
 
+/**
+ * Same target as {@link authorHref} but as a *same-origin relative path* — for soft navigation
+ * (next/link) between an author's tab pages so the persistent header/tab-bar stays mounted (the
+ * underline glides instead of remounting). On the subdomain it's root-relative (`/`, `/series`);
+ * on the path deployment it's `/{locale}/p/{username}/…`. Matches what `usePathname()` reports, so
+ * exact-comparing the two reliably identifies the active tab on both host models.
+ */
+export function authorPath(username: string, locale: string, subpath = ""): string {
+  const base = KURL_HOST ? "" : `/${locale}/p/${username}`;
+  const clean = subpath.replace(/^\//, "");
+  if (!clean) return base || "/";
+  return `${base}/${clean}`;
+}
+
 function formatDate(iso: string, locale: string): string {
   // A weblog reads by recency, so the year is usually noise — "5월 30일" / "May 30". The full date
   // (with year) lives on the post page itself.

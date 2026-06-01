@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ReportButton } from "@/modules/blog/components/report-button";
-import { AuthorHeader } from "./_components/author-header";
 import { FeedCard, FeedList, authorHref } from "@/modules/blog/components/feed-card";
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
@@ -71,17 +70,11 @@ export default async function PublicProfileHomepage({
   const visiblePosts = activeTag ? posts.filter((p) => p.tags.includes(activeTag)) : posts;
 
   return (
-    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
-      {/* Header on the centered reading column — same band as the feed/post. */}
-      <div className="mx-auto max-w-2xl">
-        <AuthorHeader author={author} active="posts" />
-      </div>
-
-      {/* Centered post list + author rail (series · tags · archive) in the right gutter — the
-          blog-native structure that lives here, where it's author-scoped and meaningful. */}
-      <ReadingShell
-        className="mt-8 author-tab-enter"
-        rail={
+    // Header + outer <main> come from the author layout's shell (persistent tab bar); this page renders
+    // only its content column. Centered post list + author rail (series · tags · archive) on the right.
+    <ReadingShell
+      className="mt-8"
+      rail={
           posts.length > 0 ? (
             <AuthorRail
               username={author.username}
@@ -129,7 +122,6 @@ export default async function PublicProfileHomepage({
         <footer className="mt-16 flex justify-end border-t border-slate-100 pt-8">
           <ReportButton subjectType="USER" subjectId={author.id} />
         </footer>
-      </ReadingShell>
-    </main>
+    </ReadingShell>
   );
 }
