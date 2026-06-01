@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowDown, ArrowUp, Bookmark, ExternalLink, Pin, Plus, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Bookmark, ExternalLink, Heart, Pin, Plus, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { setPinnedPosts } from "@/modules/blog/api/curation";
 import { listBookmarks, removeBookmark, type BookmarkItem } from "@/modules/blog/api/bookmarks";
+import { listLikedPosts, type LikedPost } from "@/modules/blog/api/likes";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 /**
@@ -22,6 +23,7 @@ export default function ContentCurationPage() {
   const [posts, setPosts] = useState<PostView[]>([]);
   const [pinnedIds, setPins] = useState<number[]>([]);
   const [bookmarks, setBookmarks] = useState<BookmarkItem[]>([]);
+  const [liked, setLiked] = useState<LikedPost[]>([]);
   const [addId, setAddId] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -30,6 +32,9 @@ export default function ContentCurationPage() {
     listBookmarks()
       .then(setBookmarks)
       .catch(() => setBookmarks([]));
+    listLikedPosts()
+      .then(setLiked)
+      .catch(() => setLiked([]));
     listMyPosts()
       .then((all) => {
         setPosts(all);
@@ -184,16 +189,13 @@ export default function ContentCurationPage() {
         )}
       </section>
 
-      {/* 읽기 리스트 — bookmarked posts (mock; saved via the bookmark toggle on public post pages). */}
+      {/* 읽기 리스트 — bookmarked posts (account-synced, saved via the bookmark toggle on post pages). */}
       <section className="mt-12">
         <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
           <Bookmark className="h-4 w-4 text-accent-600 dark:text-accent-400" />
           <h2 className="text-sm font-semibold">{t("curationReadingList")}</h2>
         </div>
         <p className="mt-1 text-[12px] text-slate-400 dark:text-slate-500">{t("curationReadingListHint")}</p>
-        <p className="mt-2 inline-block rounded-md bg-amber-50 px-2.5 py-1 text-[12px] text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
-          {t("curationMockNote")}
-        </p>
 
         {bookmarks.length > 0 ? (
           <ul className="mt-4 divide-y divide-slate-100 dark:divide-slate-800">
@@ -223,6 +225,36 @@ export default function ContentCurationPage() {
         ) : (
           <p className="mt-4 rounded-2xl border border-dashed border-slate-200 px-4 py-8 text-center text-[13px] text-slate-400">
             {t("curationReadingListEmpty")}
+          </p>
+        )}
+      </section>
+
+      {/* 좋아요한 글 — posts the user liked (read-only list; the like toggle lives on each post). */}
+      <section className="mt-12">
+        <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
+          <Heart className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+          <h2 className="text-sm font-semibold">{t("curationLiked")}</h2>
+        </div>
+        <p className="mt-1 text-[12px] text-slate-400 dark:text-slate-500">{t("curationLikedHint")}</p>
+
+        {liked.length > 0 ? (
+          <ul className="mt-4 divide-y divide-slate-100 dark:divide-slate-800">
+            {liked.map((p) => (
+              <li key={p.id} className="py-2.5">
+                <a
+                  href={`/p/${p.username}/${p.slug}`}
+                  className="focus-ring group flex items-center gap-1.5 truncate text-[15px] font-medium text-slate-900 hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-300"
+                >
+                  <span className="truncate">{p.title}</span>
+                  <ExternalLink className="h-3.5 w-3.5 shrink-0 text-slate-300 group-hover:text-accent-600 dark:text-slate-500 dark:group-hover:text-accent-400" />
+                </a>
+                <span className="block truncate text-[12px] text-slate-400 dark:text-slate-500">@{p.username}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-4 rounded-2xl border border-dashed border-slate-200 px-4 py-8 text-center text-[13px] text-slate-400">
+            {t("curationLikedEmpty")}
           </p>
         )}
       </section>

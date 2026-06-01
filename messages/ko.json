@@ -136,7 +136,13 @@
     "settingsEditProfile": "프로필 편집",
     "settingsAccountSettings": "전체 계정 설정",
     "settingsViewBlog": "내 블로그 보기",
-    "settingsDisplay": "화면"
+    "settingsDisplay": "화면",
+    "rowDelete": "삭제",
+    "rowDeleteConfirm": "'{title}' 글을 삭제할까요? 되돌릴 수 없어요.",
+    "rowDeleteFailed": "삭제에 실패했어요.",
+    "curationLiked": "좋아요한 글",
+    "curationLikedHint": "내가 공감한 글 모음.",
+    "curationLikedEmpty": "아직 좋아요한 글이 없어요."
   },
   "postEditor": {
     "backToList": "글 목록",
