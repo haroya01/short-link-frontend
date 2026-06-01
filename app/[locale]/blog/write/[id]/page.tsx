@@ -17,14 +17,14 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
   if (!ready) return null;
   if (!authenticated) {
-    return <main className="mx-auto max-w-3xl px-6 py-12 text-slate-600">{t("loginRequired")}</main>;
+    return <main className="mx-auto max-w-[44rem] px-5 py-12 text-slate-600">{t("loginRequired")}</main>;
   }
   if (ed.loading) {
-    return <main className="mx-auto max-w-3xl px-6 py-12 text-slate-400">{t("loading")}</main>;
+    return <main className="mx-auto max-w-[44rem] px-5 py-12 text-slate-400">{t("loading")}</main>;
   }
   if (!ed.post) {
     return (
-      <main className="mx-auto max-w-3xl px-6 py-12">
+      <main className="mx-auto max-w-[44rem] px-5 py-12">
         <p className="text-red-600">{t("notFound")}</p>
         {ed.error && <p className="mt-2 text-sm text-slate-500">{ed.error}</p>}
       </main>
@@ -34,7 +34,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const post = ed.post;
 
   return (
-    <main className="mx-auto flex h-[calc(100dvh-1px)] max-w-5xl flex-col px-4 py-4 sm:px-6">
+    // Write = read: the whole writing surface lives in the same centered 42rem reading band the post
+    // ships in (§10.1). Title, meta and body share one measure and there is no boxed-in editor frame —
+    // a quiet paper column, not a SaaS form. The body editor re-centers at the same width (globals.css)
+    // and breaks out of the page padding so its text aligns with the title above it.
+    <main className="mx-auto flex h-[calc(100dvh-1px)] max-w-[44rem] flex-col px-5 pt-3">
       <EditorHeader
         backHref={ed.writeBase}
         postId={post.id}
@@ -60,7 +64,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         autoComplete="off"
         data-1p-ignore
         data-lpignore="true"
-        className="mt-5 w-full border-0 bg-transparent text-[28px] font-bold leading-tight tracking-tight text-slate-900 outline-none placeholder:text-slate-300 sm:text-[34px]"
+        // Same headline token as the published post <h1> (text-headline-sm→md, tracking-headline) so the
+        // title you type is the title that ships.
+        className="mt-6 w-full border-0 bg-transparent text-headline-sm font-semibold tracking-headline text-slate-900 outline-none placeholder:text-slate-300 sm:text-headline-md"
         placeholder={t("titlePlaceholder")}
       />
 
@@ -74,7 +80,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         onSeriesChange={ed.setSeriesId}
       />
 
-      <div className="mt-4 min-h-0 flex-1 overflow-hidden rounded-xl border border-slate-200 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+      <div className="-mx-5 mt-2 min-h-0 flex-1 overflow-hidden">
         <MarkdownEditor
           initialValue={ed.markdown}
           onChange={ed.setMarkdown}
