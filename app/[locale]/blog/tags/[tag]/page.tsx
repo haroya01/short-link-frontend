@@ -15,6 +15,7 @@ import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FeedTabs } from "@/modules/blog/components/feed-tabs";
 import { TagFilterStrip } from "@/modules/blog/components/tag-filter-strip";
+import { TagFollowControls } from "@/modules/blog/components/tag-follow-controls";
 
 export const revalidate = 30;
 
@@ -72,6 +73,7 @@ export default async function TagFeedPage({
         <p className="text-[12px] font-medium text-slate-400 dark:text-slate-500">{t("topics")}</p>
         <h1 className="mt-1 text-[22px] font-bold tracking-tight text-slate-900 dark:text-slate-100">{decoded}</h1>
         <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{t("tagFeedSubtitle")}</p>
+        <TagFollowControls tag={decoded} />
       </div>
 
       {/* Persistent tag chips (current highlighted) so switching topics needs no back-trip. */}

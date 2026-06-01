@@ -22,6 +22,17 @@
      `<style jsx global>` 안에 있었는데, styled-jsx hydration race 때문에 hero 텍스트가
      opacity-0 에서 안 풀리는 경우 발생. 정식 stylesheet 로 끌어내려 초기 CSS 와 같이 로드. */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* 모바일 하단 탭바(Blog/LinksBottomNav) 높이 — home-indicator inset 포함. 쿠키 배너를 탭바 위로
+     띄우는 데 씀. 없으면 배너가 탭바를 덮어 탭(계정 → 로그아웃/제품 전환) 클릭을 가로챈다. */
+  --bottom-nav-h: calc(3.5rem + env(safe-area-inset-bottom));
+  /* 쿠키 배너가 뷰포트 하단에서 얼마나 떠 있나. 기본은 home-indicator 만 비키고, 하단 탭바가 있는
+     표면(body[data-bottom-nav])에선 탭바 높이만큼 올린다. */
+  --cookie-bottom: env(safe-area-inset-bottom);
+}
+
+/* 하단 탭바가 있는 표면에선 쿠키 배너를 탭바 바로 위로 올려 탭을 가리지 않게 한다. */
+body[data-bottom-nav] {
+  --cookie-bottom: var(--bottom-nav-h);
 }
 
 /* qr-campaigns 히어로 진입 애니메이션. opacity-0 으로 시작 → 100% 에서 1 로. forwards 로

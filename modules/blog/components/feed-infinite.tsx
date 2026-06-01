@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { request } from "@/lib/api/client";
 import type { FeedSort, PublicFeedItem, PublicFeedView } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
+import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 
 const PAGE_SIZE = 24;
 
@@ -42,6 +43,7 @@ export function FeedInfinite({
   featuredLabel?: string;
 }) {
   const t = useTranslations("publicFeed");
+  const { prefs } = useTagPrefs();
   const [items, setItems] = useState(initialItems);
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(initialHasNext);
@@ -99,10 +101,19 @@ export function FeedInfinite({
     return () => io.disconnect();
   }, [hasNext, error, loadMore]);
 
+  // "보고싶은 태그만": drop posts carrying a hidden tag (per-device). The tag currently being viewed
+  // is exempt, so a hidden tag's own page still shows its posts. Featured stays pinned to index 0.
+  const hiddenSet = new Set(prefs.hidden.filter((h) => h !== tag));
+  const visible =
+    hiddenSet.size === 0
+      ? items
+      : items.filter((i) => !i.tags?.some((tg) => hiddenSet.has(tg)));
+  const hiddenCount = items.length - visible.length;
+
   return (
     <>
       <FeedList>
-        {items.map((item, i) => (
+        {visible.map((item, i) => (
           <FeedCard
             key={itemKey(item)}
             item={item}
@@ -112,6 +123,12 @@ export function FeedInfinite({
           />
         ))}
       </FeedList>
+
+      {hiddenCount > 0 && (
+        <p className="mt-4 text-center text-[12px] text-slate-400 dark:text-slate-500">
+          {t("tagHiddenCount", { count: hiddenCount })}
+        </p>
+      )}
 
       {hasNext && (
         <div
