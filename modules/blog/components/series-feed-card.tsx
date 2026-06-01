@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
-import { ArrowRight } from "lucide-react";
 import { Mark } from "@/components/common/logo";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
-import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { authorHref } from "@/modules/blog/components/feed-card";
+import { SeriesEpisodeList } from "@/modules/blog/components/series-episode-list";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
@@ -31,7 +31,6 @@ export async function SeriesFeedCard({
   // Defensive: tolerate a payload without `posts` (e.g. a brief window before the backend that adds it
   // finishes deploying) instead of throwing on .length / .map.
   const posts = series.posts ?? [];
-  const more = series.postCount - posts.length;
   const seriesUrl = authorHref(series.author.username, locale, `series/${series.slug}`);
 
   return (
@@ -57,44 +56,15 @@ export async function SeriesFeedCard({
         </h3>
       </a>
 
-      {/* Members — each title is a link straight to that post. Quiet leading dot, hover lifts the row. */}
-      <ol className="mt-2 flex flex-col">
-        {posts.map((post, i) => (
-          <li
-            key={post.slug}
-            className="profile-fade"
-            style={{ ["--idx" as string]: i } as React.CSSProperties}
-          >
-            <a
-              href={postHref(series.author.username, post.slug, locale)}
-              className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
-            >
-              <span
-                aria-hidden
-                className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-300 transition-colors group-hover/ep:bg-accent-500 dark:bg-accent-500/40"
-              />
-              <span className="truncate text-[14px] font-medium text-slate-700 transition-colors group-hover/ep:text-accent-700 dark:text-slate-300 dark:group-hover/ep:text-accent-300">
-                {post.title}
-              </span>
-            </a>
-          </li>
-        ))}
-        {more > 0 && (
-          <li
-            className="profile-fade"
-            style={{ ["--idx" as string]: posts.length } as React.CSSProperties}
-          >
-            <a
-              href={seriesUrl}
-              className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 text-[13px] text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-300"
-            >
-              <span aria-hidden className="h-1.5 w-1.5 shrink-0" />
-              <span>{t("seriesMoreCount", { count: more })}</span>
-              <ArrowRight className="h-3 w-3 transition-transform group-hover/ep:translate-x-0.5 motion-reduce:transform-none" />
-            </a>
-          </li>
-        )}
-      </ol>
+      {/* Members — each title links straight to its post; a slow spotlight cycles the bold emphasis
+          through them (client component). */}
+      <SeriesEpisodeList
+        authorUsername={series.author.username}
+        locale={locale}
+        posts={posts}
+        postCount={series.postCount}
+        seriesUrl={seriesUrl}
+      />
 
       {/* Author/date meta — same grammar as a post card's meta line. */}
       <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
