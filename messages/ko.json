@@ -87,7 +87,18 @@
     "seriesDeleteConfirm": "이 시리즈를 삭제할까요? 글은 삭제되지 않고 시리즈에서만 빠집니다.",
     "seriesMembers": "시리즈 글",
     "seriesNoMembers": "이 시리즈에 글이 없어요. 글 편집 화면에서 시리즈를 지정하세요.",
-    "selectSeries": "왼쪽에서 시리즈를 선택하세요."
+    "selectSeries": "왼쪽에서 시리즈를 선택하세요.",
+    "analyticsTitle": "분석",
+    "analyticsEmpty": "아직 분석할 데이터가 없어요.",
+    "analyticsNoViews": "이 기간엔 조회가 없어요.",
+    "analyticsOverTime": "조회 추이",
+    "analyticsTopPosts": "인기 글",
+    "analyticsWindowViews": "{days}일 조회",
+    "analyticsLifetimeViews": "총 조회",
+    "analyticsLifetimeLikes": "총 공감",
+    "analyticsPublished": "발행 글",
+    "analyticsViews": "조회 {count}",
+    "analyticsDays": "{days}일"
   },
   "postEditor": {
     "backToList": "글 목록",
@@ -274,6 +285,7 @@
       "posts": "발행 글",
       "drafts": "임시저장",
       "series": "시리즈",
+      "analytics": "분석",
       "readers": "독자",
       "links": "글 안 링크",
       "curation": "큐레이션"

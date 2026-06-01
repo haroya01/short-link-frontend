@@ -1,0 +1,96 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Eye, Heart, FileText, TrendingUp } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useAuth } from "@/lib/auth";
+import {
+  getAuthorAnalyticsOverview,
+  type AuthorAnalyticsOverview,
+} from "@/modules/blog/api/analytics";
+import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
+import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
+
+export default function BlogAnalyticsPage() {
+  const t = useTranslations("blogWorkspace");
+  const { ready, authenticated } = useAuth();
+  const [days, setDays] = useState(30);
+  const [data, setData] = useState<AuthorAnalyticsOverview | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!ready || !authenticated) return;
+    setLoading(true);
+    getAuthorAnalyticsOverview(days)
+      .then(setData)
+      .catch(() => setData(null))
+      .finally(() => setLoading(false));
+  }, [ready, authenticated, days]);
+
+  if (!ready) return null;
+  if (!authenticated) {
+    return <main className="px-6 py-12 text-slate-600">{t("loginRequired")}</main>;
+  }
+
+  return (
+    <main className="mx-auto max-w-4xl px-6 py-10">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("analyticsTitle")}</h1>
+        <WindowTabs days={days} onChange={setDays} />
+      </div>
+
+      {loading && !data ? (
+        <p className="mt-8 text-sm text-slate-400">{t("loading")}</p>
+      ) : !data ? (
+        <p className="mt-8 text-sm text-slate-400">{t("analyticsEmpty")}</p>
+      ) : (
+        <>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatCard icon={<TrendingUp className="h-4 w-4" />} label={t("analyticsWindowViews", { days })} value={data.windowViews} />
+            <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
+            <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
+            <StatCard icon={<FileText className="h-4 w-4" />} label={t("analyticsPublished")} value={data.publishedPosts} />
+          </div>
+
+          <section className="mt-8 rounded-2xl border border-slate-200 p-5">
+            <h2 className="mb-4 text-sm font-semibold text-slate-700">{t("analyticsOverTime")}</h2>
+            <AnalyticsAreaChart data={data.daily} />
+          </section>
+
+          {data.topPosts.length > 0 && (
+            <section className="mt-8">
+              <h2 className="mb-3 text-sm font-semibold text-slate-700">{t("analyticsTopPosts")}</h2>
+              <ul className="divide-y divide-slate-100">
+                {data.topPosts.map((p, i) => (
+                  <li key={p.postId}>
+                    <a
+                      href={`/analytics/${p.postId}`}
+                      className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50"
+                    >
+                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300">
+                        {i + 1}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700">
+                        {p.title || p.slug}
+                      </span>
+                      <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-400">
+                        <span className="inline-flex items-center gap-1">
+                          <Eye className="h-3.5 w-3.5" />
+                          {p.viewCount.toLocaleString()}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <Heart className="h-3.5 w-3.5" />
+                          {p.likeCount.toLocaleString()}
+                        </span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </>
+      )}
+    </main>
+  );
+}

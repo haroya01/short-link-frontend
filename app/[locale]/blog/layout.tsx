@@ -23,6 +23,7 @@ const WORKSPACE_PATHS = [
   "/posts",
   "/drafts",
   "/series",
+  "/analytics",
   "/readers",
   "/links",
   "/curation",

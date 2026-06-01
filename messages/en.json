@@ -87,7 +87,18 @@
     "seriesDeleteConfirm": "Delete this series? Posts stay — they're just removed from the series.",
     "seriesMembers": "Posts in series",
     "seriesNoMembers": "No posts in this series. Assign one from the post editor.",
-    "selectSeries": "Select a series on the left."
+    "selectSeries": "Select a series on the left.",
+    "analyticsTitle": "Analytics",
+    "analyticsEmpty": "No data to analyze yet.",
+    "analyticsNoViews": "No views in this period.",
+    "analyticsOverTime": "Views over time",
+    "analyticsTopPosts": "Top posts",
+    "analyticsWindowViews": "Views ({days}d)",
+    "analyticsLifetimeViews": "Total views",
+    "analyticsLifetimeLikes": "Total likes",
+    "analyticsPublished": "Published",
+    "analyticsViews": "{count} views",
+    "analyticsDays": "{days}d"
   },
   "postEditor": {
     "backToList": "Posts",
@@ -274,6 +285,7 @@
       "posts": "Published",
       "drafts": "Drafts",
       "series": "Series",
+      "analytics": "Analytics",
       "readers": "Readers",
       "links": "Links in posts",
       "curation": "Curation"
