@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Bell, Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useSeriesSubscriptions } from "@/modules/blog/lib/use-series-subscriptions";
@@ -13,11 +14,16 @@ export function SeriesSubscribeButton({ seriesId }: { seriesId: number }) {
   const t = useTranslations("publicFeed");
   const { isSubscribed, toggle } = useSeriesSubscriptions();
   const on = isSubscribed(seriesId);
+  // Pop only on click, not on mount (the keyed span replays its animation on every mount otherwise).
+  const [interacted, setInteracted] = useState(false);
 
   return (
     <button
       type="button"
-      onClick={() => void toggle(seriesId)}
+      onClick={() => {
+        setInteracted(true);
+        void toggle(seriesId);
+      }}
       aria-pressed={on}
       // Fixed height + a border in *both* states (transparent when filled) so toggling never changes
       // the box height — only the width flexes with the label. `transition-colors` crossfades the
@@ -29,7 +35,10 @@ export function SeriesSubscribeButton({ seriesId }: { seriesId: number }) {
       }`}
     >
       {/* Keyed by state so it remounts + replays the pop on each 구독 ↔ 구독중 toggle. */}
-      <span key={on ? "on" : "off"} className="subscribe-pop inline-flex items-center gap-1">
+      <span
+        key={on ? "on" : "off"}
+        className={`${interacted ? "subscribe-pop" : ""} inline-flex items-center gap-1`}
+      >
         {on ? <Check className="h-3.5 w-3.5" /> : <Bell className="h-3.5 w-3.5" />}
         {on ? t("seriesSubscribed") : t("seriesSubscribe")}
       </span>

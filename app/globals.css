@@ -684,29 +684,33 @@ html[data-theme-vt]::view-transition-new(root) {
 @view-transition {
   navigation: auto;
 }
+/* Horizontal slide, unified with the feed tab transition (content-slide): the new page enters from
+   the right while the old exits left — reads as paging forward, the same gesture as the tabs. */
 @keyframes page-nav-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateX(28px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 @keyframes page-nav-out {
   from {
     opacity: 1;
+    transform: translateX(0);
   }
   to {
     opacity: 0;
+    transform: translateX(-28px);
   }
 }
 html:not([data-theme-vt])::view-transition-old(root) {
-  animation: page-nav-out 220ms ease both;
+  animation: page-nav-out 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 html:not([data-theme-vt])::view-transition-new(root) {
-  animation: page-nav-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: page-nav-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 /* The sticky app header + mobile tab bar are the SAME across blog pages, so name them as their own
    view-transition groups: identical position → they hold still while only the body crossfades, instead
