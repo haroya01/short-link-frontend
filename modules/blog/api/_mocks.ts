@@ -16,6 +16,7 @@ import type {
   PublicPostDetail,
   PublicPostList,
   PublicPostListItem,
+  PublicSeriesCard,
   PublicSeriesDetail,
   PublicSeriesList,
   PublicSeriesListItem,
@@ -224,6 +225,28 @@ export function mockSeriesDetail(username: string, slug: string): PublicSeriesDe
   const series = MOCK_SERIES.find((s) => s.slug === slug) ?? MOCK_SERIES[0];
   const posts = ALL_ITEMS.slice(0, series.postCount).map(toListItem);
   return { author: resolveAuthor(username), series, posts };
+}
+
+// Cross-author active series for the feed's discovery cards, most recently active first.
+const MOCK_DISCOVER_SERIES: PublicSeriesCard[] = [
+  {
+    author: AUTHORS.dohyun,
+    slug: "nextjs-deep-dive",
+    title: "Next.js 깊게 파기",
+    postCount: 4,
+    lastPublishedAt: "2026-05-30T09:00:00Z",
+  },
+  {
+    author: AUTHORS.minji,
+    slug: "side-project-log",
+    title: "사이드 프로젝트 로그",
+    postCount: 6,
+    lastPublishedAt: "2026-05-24T09:00:00Z",
+  },
+];
+
+export function mockDiscoverSeries(limit = 6): PublicSeriesCard[] {
+  return MOCK_DISCOVER_SERIES.slice(0, limit);
 }
 
 export function mockTrendingByTag(tagLimit = 6, perTag = 8): TrendingTagSection[] {

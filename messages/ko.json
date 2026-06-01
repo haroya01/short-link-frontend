@@ -64,7 +64,10 @@
     "railPostCount": "글 {count}",
     "railSeeAll": "모두 보기",
     "bookmark": "북마크에 저장",
-    "bookmarkOn": "북마크에서 빼기"
+    "bookmarkOn": "북마크에서 빼기",
+    "seriesEyebrow": "시리즈",
+    "seriesEpisodeCount": "{count}편",
+    "seriesLastPublished": "마지막 글 {date}"
   },
   "blogWorkspace": {
     "overviewTitle": "개요",
