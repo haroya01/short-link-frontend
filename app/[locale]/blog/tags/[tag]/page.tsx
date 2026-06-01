@@ -62,16 +62,16 @@ export default async function TagFeedPage({
 
   return (
     <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-      <header className="mx-auto flex w-full max-w-2xl items-center border-b border-slate-100 pb-3">
+      <header className="mx-auto flex w-full max-w-2xl items-center border-b border-slate-100 pb-3 dark:border-slate-800">
         <FeedTabs locale={locale} />
       </header>
 
       {/* Topic heading inside the centered reading column — aligns with the tabs + feed below,
           instead of a full-width masthead band that floated left of the centered content. */}
       <div className="mx-auto mt-6 max-w-2xl">
-        <p className="text-[12px] font-medium text-slate-400">{t("topics")}</p>
-        <h1 className="mt-1 text-[22px] font-bold tracking-tight text-slate-900">{decoded}</h1>
-        <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500">{t("tagFeedSubtitle")}</p>
+        <p className="text-[12px] font-medium text-slate-400 dark:text-slate-500">{t("topics")}</p>
+        <h1 className="mt-1 text-[22px] font-bold tracking-tight text-slate-900 dark:text-slate-100">{decoded}</h1>
+        <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{t("tagFeedSubtitle")}</p>
       </div>
 
       {/* Persistent tag chips (current highlighted) so switching topics needs no back-trip. */}

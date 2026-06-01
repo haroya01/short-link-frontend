@@ -44,13 +44,13 @@ export default async function TagsIndexPage({
     <main className="mx-auto max-w-2xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
       {/* Shared feed nav (links home) on the centered reading column — no marketing band, matching
           the quiet home. Write lives in the top header now. */}
-      <header className="mb-8 flex items-center border-b border-slate-100 pb-3">
+      <header className="mb-8 flex items-center border-b border-slate-100 pb-3 dark:border-slate-800">
         <FeedTabs locale={locale} />
       </header>
 
       <div className="mb-6">
-        <h1 className="text-[20px] font-bold tracking-tight text-slate-900">{t("topics")}</h1>
-        <p className="mt-1 text-[14px] leading-relaxed text-slate-500">{t("topicsIntro")}</p>
+        <h1 className="text-[20px] font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("topics")}</h1>
+        <p className="mt-1 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{t("topicsIntro")}</p>
       </div>
 
         {/* Tag cloud — same chip style as the tag-page filter strip (uniform slate chip + count +

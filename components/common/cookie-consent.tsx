@@ -3,10 +3,13 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "kurl:cookie-consent:v1";
 
-export function CookieConsent() {
+/** `darkAware` opts this instance into `dark:` variants — set on the blog (which has a dark theme).
+ *  The links product leaves it off so the banner stays light even when `.dark` is set globally. */
+export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
   const t = useTranslations("cookieConsent");
   const pathname = usePathname();
   const [show, setShow] = useState(false);
@@ -58,21 +61,37 @@ export function CookieConsent() {
       {/* Phones: an edge-to-edge bottom bar (top border + upward shadow) so it reads as system chrome
           instead of a floating card stacked under the FAB. sm+: the compact right-aligned rounded
           card returns. */}
-      <div className="mx-auto flex max-w-3xl items-center gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] backdrop-blur sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:pb-3 sm:shadow-md">
-        <p className="min-w-0 flex-1 text-[11px] leading-snug text-slate-600 sm:text-xs sm:leading-relaxed">
+      <div
+        className={cn(
+          "mx-auto flex max-w-3xl items-center gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] backdrop-blur sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:pb-3 sm:shadow-md",
+          darkAware && "dark:border-slate-800 dark:bg-slate-900/95",
+        )}
+      >
+        <p
+          className={cn(
+            "min-w-0 flex-1 text-[11px] leading-snug text-slate-600 sm:text-xs sm:leading-relaxed",
+            darkAware && "dark:text-slate-300",
+          )}
+        >
           {t("message")}
         </p>
         <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/privacy"
-            className="hidden text-xs text-slate-500 underline hover:text-slate-700 sm:inline"
+            className={cn(
+              "hidden text-xs text-slate-500 underline hover:text-slate-700 sm:inline",
+              darkAware && "dark:text-slate-400 dark:hover:text-slate-200",
+            )}
           >
             {t("learnMore")}
           </Link>
           <button
             type="button"
             onClick={accept}
-            className="rounded-md bg-slate-900 px-3 py-1.5 text-[11px] font-medium text-white transition hover:bg-slate-800 sm:px-4 sm:py-2 sm:text-xs"
+            className={cn(
+              "rounded-md bg-slate-900 px-3 py-1.5 text-[11px] font-medium text-white transition hover:bg-slate-800 sm:px-4 sm:py-2 sm:text-xs",
+              darkAware && "dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white",
+            )}
           >
             {t("accept")}
           </button>

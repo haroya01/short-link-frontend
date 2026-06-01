@@ -82,7 +82,7 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
         {/* Mobile-only bottom tab bar (thumb-reachable nav); desktop uses the header. */}
         <BlogBottomNav />
       </SidebarStateProvider>
-      <CookieConsent />
+      <CookieConsent darkAware />
       <ClaimToastListener />
     </AppProviders>
   );
