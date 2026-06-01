@@ -67,7 +67,8 @@
     "bookmarkOn": "북마크에서 빼기",
     "seriesEyebrow": "시리즈",
     "seriesEpisodeCount": "{count}편",
-    "seriesLastPublished": "마지막 글 {date}"
+    "seriesLastPublished": "마지막 글 {date}",
+    "seriesMoreCount": "+{count}편 더"
   },
   "blogWorkspace": {
     "overviewTitle": "개요",
