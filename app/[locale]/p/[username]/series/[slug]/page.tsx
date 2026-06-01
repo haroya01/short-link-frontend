@@ -78,7 +78,7 @@ export default async function PublicSeriesPage({
       {author.bio && (
         <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">{author.bio}</p>
       )}
-      <FollowButton username={author.username} initialFollowerCount={0} />
+      <FollowButton username={author.username} initialFollowerCount={0} compact />
       <a
         href={authorHref(author.username, locale, "series")}
         className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"

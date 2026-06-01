@@ -8,7 +8,6 @@ import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/components/feed-card";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
-import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
@@ -170,15 +169,23 @@ export function SeriesReadingShell({
     </div>
   );
 
+  // Asymmetric 3-column layout (so NOT the generic ReadingShell): the two rails anchor to different
+  // things. The LEFT rail is author identity — a byline in the margin — so it top-aligns with the
+  // title (row 1, the masthead). The RIGHT rail is the 태그/아카이브 *filters* that act on the episode
+  // list, so it aligns with the list (row 2). The left rail spans both rows so its height never forces
+  // a gap between the header and the list. Below xl this collapses to the centered column, rails drop.
   return (
-    <>
-      {/* Series identity (title/subscribe/author) spans the full reading column on top; the grid below
-          holds only the episodes + rails, so both rails top-align with the LIST they relate to (the
-          tag/archive rail is a filter panel for the episodes — not part of the masthead). */}
-      <div className="mx-auto max-w-2xl">{header}</div>
-      <div className="section-divider mx-auto my-10 max-w-2xl" />
+    <div className="mx-auto max-w-2xl xl:grid xl:max-w-7xl xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-10">
+      <div className="xl:col-start-2 xl:row-start-1">
+        {header}
+        <div className="section-divider my-10" />
+      </div>
 
-      <ReadingShell leftRail={leftRail} rail={rail}>
+      <aside className="hidden xl:col-start-1 xl:row-start-1 xl:row-span-2 xl:block">
+        <div className="sticky top-20">{leftRail}</div>
+      </aside>
+
+      <div className="xl:col-start-2 xl:row-start-2">
         {rows.length === 0 ? (
         <p className="py-6 text-[14px] text-slate-500 dark:text-slate-400">{tf("seriesFilterNone")}</p>
       ) : (
@@ -243,7 +250,11 @@ export function SeriesReadingShell({
           })}
         </ol>
       )}
-      </ReadingShell>
-    </>
+      </div>
+
+      <aside className="mt-12 hidden xl:col-start-3 xl:row-start-2 xl:mt-0 xl:block">
+        <div className="sticky top-20">{rail}</div>
+      </aside>
+    </div>
   );
 }

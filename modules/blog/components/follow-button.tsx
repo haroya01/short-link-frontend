@@ -15,17 +15,23 @@ export function FollowButton({
   username,
   initialFollowerCount,
   showCount = true,
+  compact = false,
 }: {
   username: string;
   initialFollowerCount: number;
   /** Show the "N followers" count beside the button. Off in tight spots (e.g. the post header). */
   showCount?: boolean;
+  /** Small pill matching the series 구독 button (h-7 · pop on toggle) — for the series rail, where it
+   *  sits beside the subscribe button and should read as the same control family. */
+  compact?: boolean;
 }) {
   const t = useTranslations("publicPost");
   const { authenticated, ready, me, signInWithGoogle } = useAuth();
   const [count, setCount] = useState(initialFollowerCount);
   const [following, setFollowing] = useState(false);
   const [busy, setBusy] = useState(false);
+  // Pop only on click (not on mount) — same gate as the subscribe button's keyed-span replay.
+  const [interacted, setInteracted] = useState(false);
 
   const isSelf = ready && me?.username === username;
 
@@ -61,25 +67,45 @@ export function FollowButton({
     }
   }
 
+  const onColor = following
+    ? "border border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600"
+    : "bg-accent-600 text-white hover:bg-accent-700";
+  const btnCls = compact
+    ? `touch-target inline-flex h-7 shrink-0 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold transition-colors duration-200 focus-ring ${
+        following ? onColor : `border-transparent ${onColor}`
+      }`
+    : `touch-target inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors focus-ring ${onColor}`;
+  const iconCls = compact ? "h-3.5 w-3.5" : "h-4 w-4";
+  const icon = following ? <UserCheck className={iconCls} /> : <UserPlus className={iconCls} />;
+  const label = following ? t("following") : t("follow");
+
   return (
     <div className="flex items-center gap-3">
       {!isSelf && (
         <button
           type="button"
-          onClick={toggle}
+          onClick={() => {
+            setInteracted(true);
+            void toggle();
+          }}
           aria-pressed={following}
-          className={`touch-target inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors focus-ring ${
-            following
-              ? "border border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600"
-              : "bg-accent-600 text-white hover:bg-accent-700"
-          }`}
+          className={btnCls}
         >
-          {following ? (
-            <UserCheck className="h-4 w-4" />
+          {compact ? (
+            // Keyed by state so it remounts + replays the pop on each 팔로우 ↔ 팔로잉 toggle.
+            <span
+              key={following ? "on" : "off"}
+              className={`${interacted ? "subscribe-pop" : ""} inline-flex items-center gap-1`}
+            >
+              {icon}
+              {label}
+            </span>
           ) : (
-            <UserPlus className="h-4 w-4" />
+            <>
+              {icon}
+              {label}
+            </>
           )}
-          {following ? t("following") : t("follow")}
         </button>
       )}
       {showCount && <span className="text-[13px] text-slate-500 dark:text-slate-400">{t("followers", { count })}</span>}
