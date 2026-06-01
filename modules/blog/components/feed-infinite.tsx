@@ -129,7 +129,11 @@ export function FeedInfinite({
               featuredLabel={featuredLabel}
             />
             {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
-              <li className="list-none py-3">{interleaveNode}</li>
+              // Bracketed by rules top + bottom so the series block reads as a distinct insert in the
+              // feed flow, not just another post row.
+              <li className="list-none my-1 border-y border-slate-200 py-5 dark:border-slate-700">
+                {interleaveNode}
+              </li>
             )}
           </Fragment>
         ))}
