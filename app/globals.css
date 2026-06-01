@@ -53,6 +53,17 @@ body {
   @apply bg-white text-slate-900 antialiased;
 }
 
+/* Dark mode is blog-only (the ThemeToggle that sets `.dark` lives on blog.kurl; the links product
+   never sets it). The blog surfaces paint their own slate-950 wrappers, but the root <html> stayed
+   bg-white — so iOS rubber-band overscroll and the home-indicator safe-area below the bottom nav
+   flashed a white bar at the screen bottom in dark mode. Darken <html> itself (and switch
+   color-scheme so the native scrollbar/overscroll gutter follows) to kill that white edge. Left on
+   <html>, not <body>, so the links product (whose wrappers sit on the white body) is unaffected. */
+html.dark {
+  @apply bg-slate-950;
+  color-scheme: dark;
+}
+
 /* Avoid orphans (single-character last lines). Modern browsers (Chrome 117+, Safari 17.4+, FF 121+). */
 h1, h2, h3, p {
   text-wrap: pretty;

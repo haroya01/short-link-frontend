@@ -24,7 +24,7 @@ export function Logo({ className, showText = true, variant = "kurl", animated = 
         >
           {variant === "blog" ? (
             <>
-              <span className="text-slate-400">blog.</span>kurl
+              <span className="text-slate-400 dark:text-slate-500">blog.</span>kurl
             </>
           ) : (
             "kurl"

@@ -47,9 +47,19 @@ export function AppHeader({
             </button>
           )}
           {/* Blog header → the logo returns to the blog home, not the links app root. Plain anchor
-              with blogHref so it lands on the right host (blog.kurl.me, or /blog-preview on apex). */}
+              with blogHref so it lands on the right host (blog.kurl.me, or /blog-preview on apex).
+              On the slim mobile surfaces the "blog.kurl" wordmark drops to just the mark so the screen
+              leads with context (the author / post) — the full brand + product switch live in the
+              bottom-nav 계정 sheet. The full wordmark returns at sm+ (and always in the workspace). */}
           <a href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable shrink-0">
-            <Logo variant="blog" animated />
+            {slimMobile ? (
+              <>
+                <Logo variant="blog" animated showText={false} className="sm:hidden" />
+                <Logo variant="blog" animated className="hidden sm:inline-flex" />
+              </>
+            ) : (
+              <Logo variant="blog" animated />
+            )}
           </a>
         </div>
 
