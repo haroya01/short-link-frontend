@@ -7,6 +7,7 @@ import { blogHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import {
+  listDiscoverSeries,
   listPopularTags,
   listPublicFeed,
   listSuggestedAuthors,
@@ -23,6 +24,7 @@ import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { MobileDiscoveryStrip } from "@/modules/blog/components/mobile-discovery-strip";
 import { MyTagsStrip } from "@/modules/blog/components/my-tags-strip";
+import { SeriesFeedCard } from "@/modules/blog/components/series-feed-card";
 import { TrendingByTag } from "@/modules/blog/components/trending-by-tag";
 
 export const revalidate = 30;
@@ -99,7 +101,11 @@ export default async function BlogFeedPage({
   // trending tab — 인기 used to render with an empty right gutter, which read as a layout bug.
   const needRail = needFlat || groupByTag;
 
-  const [feedResult, trendingResult, tagsResult, authorsResult] = await Promise.all([
+  // Series cards ride only on the default recent feed (not search / trending / following) — one
+  // "collection" unit dropped into the flow to surface multi-post series for discovery.
+  const wantSeries = !searching && tab === "recent";
+
+  const [feedResult, trendingResult, tagsResult, authorsResult, seriesResult] = await Promise.all([
     needFlat
       ? searching
         ? searchPublicFeed(query, sort, 0, 24)
@@ -110,6 +116,7 @@ export default async function BlogFeedPage({
     // Authors are also the follow-suggestions for the signed-out "following" tab, so fetch them there
     // too (not just for the rail surfaces) to keep that tab from dead-ending.
     needRail || tab === "following" ? listSuggestedAuthors(5) : Promise.resolve(null),
+    wantSeries ? listDiscoverSeries(4) : Promise.resolve(null),
   ]);
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
@@ -117,6 +124,7 @@ export default async function BlogFeedPage({
   const trendingSections = trendingResult && trendingResult.ok ? trendingResult.data : [];
   const tags = tagsResult && tagsResult.ok ? tagsResult.data : [];
   const authors = authorsResult && authorsResult.ok ? authorsResult.data : [];
+  const series = seriesResult && seriesResult.ok ? seriesResult.data : [];
   const hasRail = tags.length > 0 || authors.length > 0;
   // The rail is a *browse* affordance, not a *search* one — hide it during search (desktop) to match
   // the mobile discovery strip, so a short result set isn't dominated by a sticky sidebar.
@@ -238,6 +246,9 @@ export default async function BlogFeedPage({
             marginTop={!searching}
             featuredFirst={featuredFirst}
             featuredLabel={t("featuredLabel")}
+            interleave={
+              series.length > 0 ? <SeriesFeedCard series={series[0]} locale={locale} /> : null
+            }
             belowFeatured={
               !searching ? (
                 <MobileDiscoveryStrip locale={locale} tags={tags} authors={authors} />
@@ -269,6 +280,7 @@ function FeedBody({
   marginTop,
   featuredFirst,
   featuredLabel,
+  interleave,
   belowFeatured,
   children,
 }: {
@@ -280,6 +292,7 @@ function FeedBody({
   marginTop: boolean;
   featuredFirst: boolean;
   featuredLabel: string;
+  interleave?: ReactNode;
   belowFeatured?: ReactNode;
   children: ReactNode;
 }) {
@@ -296,6 +309,7 @@ function FeedBody({
         query={query}
         featuredFirst={featuredFirst}
         featuredLabel={featuredLabel}
+        interleaveNode={interleave}
       />
     </ReadingShell>
   );

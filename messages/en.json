@@ -64,7 +64,10 @@
     "railPostCount": "{count} posts",
     "railSeeAll": "See all",
     "bookmark": "Save to reading list",
-    "bookmarkOn": "Remove from reading list"
+    "bookmarkOn": "Remove from reading list",
+    "seriesEyebrow": "Series",
+    "seriesEpisodeCount": "{count} posts",
+    "seriesLastPublished": "Last post {date}"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",

@@ -10,6 +10,7 @@ import {
   mockFeedView,
   mockPostDetail,
   mockPostList,
+  mockDiscoverSeries,
   mockSeriesDetail,
   mockSeriesList,
   mockTrendingByTag,
@@ -95,6 +96,15 @@ export interface PublicSeriesListItem {
 export interface PublicSeriesList {
   author: PublicAuthor;
   series: PublicSeriesListItem[];
+}
+
+/** A series as it appears on the discovery feed (cross-author series card). */
+export interface PublicSeriesCard {
+  author: PublicAuthor;
+  slug: string;
+  title: string;
+  postCount: number;
+  lastPublishedAt: string;
 }
 
 export interface PublicSeriesDetail {
@@ -250,6 +260,12 @@ export function listTrendingByTag(
   return fetchPublic<TrendingTagSection[]>(
     `/api/v1/public/feed/trending-by-tag?tagLimit=${tagLimit}&perTag=${perTag}`,
   );
+}
+
+/** Cross-author active series for the feed's series cards — most recently active first. */
+export function listDiscoverSeries(limit = 6): Promise<FetchResult<PublicSeriesCard[]>> {
+  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockDiscoverSeries(limit) });
+  return fetchPublic<PublicSeriesCard[]>(`/api/v1/public/series?limit=${limit}`);
 }
 
 export function listPublicSeries(username: string): Promise<FetchResult<PublicSeriesList>> {
