@@ -83,15 +83,15 @@ export default function BlogLinksPage() {
 
   if (!ready) return null;
   if (!authenticated) {
-    return <main className="px-6 py-12 text-slate-600">{t("loginRequired")}</main>;
+    return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
   }
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("linksTitle")}</h1>
-          <p className="mt-1 text-[13px] text-slate-500">{t("linksSubtitle")}</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("linksTitle")}</h1>
+          <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("linksSubtitle")}</p>
         </div>
         <WindowTabs days={days} onChange={setDays} />
       </div>
@@ -104,7 +104,7 @@ export default function BlogLinksPage() {
           </div>
         </div>
       ) : !overview ? (
-        <p className="mt-8 text-sm text-slate-400">{t("linksEmpty")}</p>
+        <p className="mt-8 text-sm text-slate-400 dark:text-slate-500">{t("linksEmpty")}</p>
       ) : (
         <>
           <div className="mt-6 grid grid-cols-2 gap-3">
@@ -121,27 +121,27 @@ export default function BlogLinksPage() {
           </div>
 
           <section className="mt-8">
-            <h2 className="mb-3 text-sm font-semibold text-slate-700">{t("linksByPost")}</h2>
+            <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("linksByPost")}</h2>
             {rows && rows.length > 0 ? (
-              <ul className="divide-y divide-slate-100">
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {rows.map((r, i) => (
                   <li key={r.postId}>
                     <a
                       href={`/analytics/${r.postId}`}
-                      className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50"
+                      className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
                     >
-                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300">
+                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-500">
                         {i + 1}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700">
+                        <span className="block truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
                           {r.title || r.slug}
                         </span>
-                        <span className="block truncate font-mono text-[12px] text-slate-400">
+                        <span className="block truncate font-mono text-[12px] text-slate-400 dark:text-slate-500">
                           /{r.slug}
                         </span>
                       </span>
-                      <span className="flex shrink-0 items-center gap-1 text-[13px] font-semibold text-accent-700">
+                      <span className="flex shrink-0 items-center gap-1 text-[13px] font-semibold text-accent-700 dark:text-accent-300">
                         <MousePointerClick className="h-3.5 w-3.5" />
                         {r.lifetimeClicks.toLocaleString()}
                       </span>
@@ -150,7 +150,7 @@ export default function BlogLinksPage() {
                 ))}
               </ul>
             ) : (
-              <p className="rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-center text-[13px] text-slate-400">
+              <p className="rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-center text-[13px] text-slate-400 dark:border-slate-700 dark:text-slate-500">
                 {t("linksByPostEmpty")}
               </p>
             )}
@@ -160,7 +160,7 @@ export default function BlogLinksPage() {
             href={linksHref("/dashboard")}
             target="_blank"
             rel="noreferrer"
-            className="focus-ring mt-8 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-50"
+            className="focus-ring mt-8 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800/60"
           >
             {t("linksFullDashboard")}
             <ExternalLink className="h-3.5 w-3.5" />
