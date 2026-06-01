@@ -29,9 +29,9 @@ export function TrendingByTag({
   heading?: string;
 }) {
   return (
-    <div className="mt-8">
+    <div className="mx-auto mt-8 max-w-2xl">
       {heading && <p className="mb-8 text-[14px] text-slate-500">{heading}</p>}
-      <div className="flex max-w-2xl flex-col gap-12">
+      <div className="flex flex-col gap-12">
         {sections.map((section) => (
           <section key={section.tag}>
             <div className="mb-1 flex items-baseline justify-between gap-3">

@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
-import { PageTransition } from "@/modules/blog/components/page-transition";
 
 /**
- * Next re-mounts a template on every navigation (unlike layout), so wrapping the blog tree here gives
- * each route change a fresh entry transition (see PageTransition). The workspace chrome (header /
- * sidebar) lives in layout.tsx and stays mounted across navigations — only this inner content
- * animates, so the shell never flashes.
+ * Blog content renders directly with NO per-navigation entry transition. A `template.tsx` re-mounts
+ * on every route change, so wrapping it in a framer-motion `opacity:0 → 1` (+ y/scale) entrance made
+ * every navigation flash the whole page in from invisible — read as flicker/stutter. The chrome
+ * (header / sidebar) already lives in the persistent layout.tsx; the content should just swap in
+ * place. Keeping the template as a thin pass-through (no animation) is the no-flicker default.
  */
 export default function BlogTemplate({ children }: { children: ReactNode }) {
-  return <PageTransition>{children}</PageTransition>;
+  return <>{children}</>;
 }
