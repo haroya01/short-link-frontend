@@ -1003,6 +1003,22 @@
       "detailClicks": "클릭 {count}회",
       "detailShare": "전체의 {share}%",
       "detailClose": "닫기"
+    },
+    "rawData": {
+      "title": "원본 데이터 · 내보내기",
+      "description": "이 링크의 클릭 원본 로그를 보거나 CSV 로 내보내요.",
+      "exportEvents": "클릭 이벤트 CSV",
+      "exportStats": "일별 통계 CSV",
+      "exporting": "내보내는 중…",
+      "showLog": "원본 클릭 로그",
+      "hideLog": "로그 숨기기",
+      "loadMore": "더 보기",
+      "empty": "아직 클릭이 없어요.",
+      "bot": "봇",
+      "colTime": "시각",
+      "colLocation": "위치",
+      "colDevice": "기기",
+      "colReferrer": "유입"
     }
   },
   "admin": {
