@@ -605,12 +605,23 @@ h1, h2, h3, p {
 }
 
 /*
- * Feed content swap fade — keyed by the active tab/search so the block remounts and replays this on
- * every Latest/Popular/Following switch, turning the soft-nav content swap into a gentle crossfade
- * instead of an abrupt jump. `both` holds the from-state so there's no flash before it starts.
+ * Feed content swap — keyed by the active tab/search so the block remounts and replays this on every
+ * Latest/Popular/Following switch. The tabs sit side by side, so the swap slides in laterally (matching
+ * the author-tab content) rather than rising vertically — reads as moving *across* to the next tab, not
+ * a fade-up. `both` holds the from-state so there's no flash before it starts.
  */
+@keyframes content-slide {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 .content-fade {
-  animation: profile-fade-in 280ms ease-out both;
+  animation: content-slide 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 @media (prefers-reduced-motion: reduce) {
   .content-fade {
