@@ -27,29 +27,32 @@ export async function SeriesFeedCard({
     month: "long",
     day: "numeric",
   });
-  const more = series.postCount - series.posts.length;
+  // Defensive: tolerate a payload without `posts` (e.g. a brief window before the backend that adds it
+  // finishes deploying) instead of throwing on .length / .map.
+  const posts = series.posts ?? [];
+  const more = series.postCount - posts.length;
   const seriesUrl = authorHref(series.author.username, locale, `series/${series.slug}`);
 
   return (
     <section className="group/series" aria-label={series.title}>
-      {/* Series eyebrow — where a post card shows its tag. Marks the block as a series + links to it. */}
+      {/* Series eyebrow (kurl mark + "시리즈") where a post card shows its tag, then the series name as
+          the card's headline — bigger than the members so the series itself reads as the subject. */}
       <a
         href={seriesUrl}
-        className="focus-ring inline-flex max-w-full items-center gap-1.5 rounded text-[12px] font-semibold tracking-wide text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+        className="focus-ring inline-flex items-center gap-1.5 rounded text-[12px] font-semibold tracking-wide text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
       >
         <Mark className="h-2.5 w-auto shrink-0" />
-        <span className="truncate">{series.title}</span>
-        <span aria-hidden className="shrink-0 text-accent-300 dark:text-accent-500/50">
-          ·
-        </span>
-        <span className="shrink-0 font-medium text-slate-500 dark:text-slate-400">
-          {t("seriesEpisodeCount", { count: series.postCount })}
-        </span>
+        {t("seriesEyebrow")}
+      </a>
+      <a href={seriesUrl} className="focus-ring group/title mt-1 block rounded">
+        <h3 className="line-clamp-2 text-[20px] font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover/title:text-accent-700 dark:text-slate-100 dark:group-hover/title:text-accent-400">
+          {series.title}
+        </h3>
       </a>
 
       {/* Members — each title is a link straight to that post. Quiet leading dot, hover lifts the row. */}
-      <ol className="mt-2 flex flex-col">
-        {series.posts.map((post, i) => (
+      <ol className="mt-3 flex flex-col">
+        {posts.map((post, i) => (
           <li
             key={post.slug}
             className="profile-fade"
@@ -72,7 +75,7 @@ export async function SeriesFeedCard({
         {more > 0 && (
           <li
             className="profile-fade"
-            style={{ ["--idx" as string]: series.posts.length } as React.CSSProperties}
+            style={{ ["--idx" as string]: posts.length } as React.CSSProperties}
           >
             <a
               href={seriesUrl}
@@ -97,6 +100,8 @@ export async function SeriesFeedCard({
           </span>
         )}
         <span className="truncate font-medium">{series.author.username}</span>
+        <span aria-hidden>·</span>
+        <span className="shrink-0">{t("seriesEpisodeCount", { count: series.postCount })}</span>
         <span aria-hidden>·</span>
         <span className="shrink-0">{t("seriesLastPublished", { date })}</span>
       </div>
