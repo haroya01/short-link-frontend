@@ -855,7 +855,14 @@
       "disabled": "비활성",
       "enable": "활성화",
       "disable": "비활성화",
-      "delete": "삭제"
+      "delete": "삭제",
+      "blockedTitle": "국가 차단",
+      "blockedDesc": "선택한 국가의 방문자는 이 링크로 접근할 수 없어요.",
+      "blockedAddHint": "차단할 국가 선택",
+      "blockedEmpty": "차단된 국가가 없어요.",
+      "blockedLoading": "불러오는 중…",
+      "blockedRemove": "차단 해제",
+      "blockedFailed": "국가 차단 변경에 실패했어요."
     },
     "loginRequired": "로그인이 필요해요",
     "loginRequiredDesc": "통계는 링크 소유자만 볼 수 있어요.",

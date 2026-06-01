@@ -8,7 +8,9 @@ import { useToast } from "@/components/ui/toast";
 import {
   addDestination,
   deleteDestination,
+  getBlockedCountries,
   listDestinations,
+  setBlockedCountries,
   updateDestination,
 } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -329,6 +331,100 @@ const COUNTRY_OPTIONS: { code: string; flag: string }[] = [
   { code: "AU", flag: "🇦🇺" },
   { code: "BR", flag: "🇧🇷" },
 ];
+
+/**
+ * Geo-block editor: countries whose visitors are blocked from this link. Loads the current set,
+ * shows it as removable chips, and adds via the same {@link CountrySelect} as destinations. Each
+ * change persists immediately (PUT /blocked-countries) and adopts the backend-normalized value.
+ */
+export function LinkBlockedCountriesSection({ shortCode }: { shortCode: string }) {
+  const t = useTranslations("stats.destinations");
+  const { toast } = useToast();
+  const toMessage = useApiErrorMessage();
+  const [codes, setCodes] = useState<string[]>([]);
+  const [pick, setPick] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    getBlockedCountries(shortCode)
+      .then((csv) => active && setCodes(csv ? csv.split(",").filter(Boolean) : []))
+      .catch(() => {})
+      .finally(() => active && setLoading(false));
+    return () => {
+      active = false;
+    };
+  }, [shortCode]);
+
+  async function persist(next: string[]) {
+    setBusy(true);
+    const prev = codes;
+    setCodes(next); // optimistic
+    try {
+      const stored = await setBlockedCountries(shortCode, next.join(","));
+      setCodes(stored ? stored.split(",").filter(Boolean) : []);
+    } catch (e) {
+      setCodes(prev);
+      toast(toMessage(e, t("blockedFailed")), "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function add(code: string) {
+    const c = code.toUpperCase();
+    if (!c || codes.includes(c)) return;
+    void persist([...codes, c]);
+    setPick("");
+  }
+
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] dark:border-slate-800 dark:bg-slate-900">
+      <div className="mb-3">
+        <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">
+          {t("blockedTitle")}
+        </h2>
+        <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">
+          {t("blockedDesc")}
+        </p>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <CountrySelect value={pick} onChange={add} disabled={busy} t={t} />
+        <span className="text-[12px] text-slate-400">{t("blockedAddHint")}</span>
+      </div>
+
+      <div className="mt-3">
+        {loading ? (
+          <p className="text-[12px] text-slate-400">{t("blockedLoading")}</p>
+        ) : codes.length === 0 ? (
+          <p className="text-[12px] text-slate-400">{t("blockedEmpty")}</p>
+        ) : (
+          <div className="flex flex-wrap gap-1.5">
+            {codes.map((c) => (
+              <span
+                key={c}
+                className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[12px] text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              >
+                {countryFlag(c)} {c}
+                <button
+                  type="button"
+                  onClick={() => persist(codes.filter((x) => x !== c))}
+                  disabled={busy}
+                  aria-label={t("blockedRemove")}
+                  className="ml-0.5 text-slate-400 hover:text-red-600 disabled:opacity-50"
+                >
+                  ✕
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
 
 function countryFlag(code: string): string {
   const found = COUNTRY_OPTIONS.find((c) => c.code === code.toUpperCase());

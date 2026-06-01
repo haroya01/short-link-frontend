@@ -2,7 +2,10 @@
 
 import { Lock, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { LinkDestinationsSection } from "@/components/links/destinations-section";
+import {
+  LinkBlockedCountriesSection,
+  LinkDestinationsSection,
+} from "@/components/links/destinations-section";
 import { LinkExportSection } from "@/components/links/link-export-section";
 import { LinkWebhooksSection } from "@/components/links/webhooks-section";
 import { Button } from "@/components/ui/button";
@@ -38,6 +41,7 @@ export function SettingsTab({
         destinationClicks={data.destinationClicks}
         onChanged={onTick}
       />
+      <LinkBlockedCountriesSection shortCode={data.shortCode} />
       <LinkWebhooksSection shortCode={data.shortCode} />
       <LinkExportSection shortCode={data.shortCode} />
     </div>
@@ -56,9 +60,47 @@ function DemoSettingsBody() {
     <div className="space-y-5">
       <DemoSettingsBanner />
       <DemoLinkDestinationsPreview />
+      <DemoLinkBlockedCountriesPreview />
       <DemoLinkWebhooksPreview />
       <DemoLinkExportPreview />
     </div>
+  );
+}
+
+/** Demo mirror of the geo-block section: seeded blocked-country chips + a disabled add control. */
+function DemoLinkBlockedCountriesPreview() {
+  const t = useTranslations("stats.destinations");
+  const tDemo = useTranslations("demo.settingsDemo");
+  const { toast } = useToast();
+  const lock = () => toast(tDemo("lockedToast"), "default");
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-[15px] font-semibold tracking-headline text-slate-900">{t("blockedTitle")}</h2>
+          <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("blockedDesc")}</p>
+        </div>
+        <DemoBadge />
+      </div>
+      <select
+        disabled
+        onClick={lock}
+        aria-label={t("countryLabel")}
+        className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs disabled:opacity-50"
+      >
+        <option>{t("countryAny")}</option>
+      </select>
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {["🇰🇵 KP", "🇮🇷 IR"].map((c) => (
+          <span
+            key={c}
+            className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[12px] text-slate-700"
+          >
+            {c}
+          </span>
+        ))}
+      </div>
+    </section>
   );
 }
 
