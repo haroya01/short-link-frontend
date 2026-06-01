@@ -7,8 +7,7 @@ import { Mark } from "@/components/common/logo";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
-import { ReadingShell } from "@/modules/blog/components/reading-shell";
-import { SeriesEpisodeBrowser } from "@/modules/blog/components/series-episode-browser";
+import { SeriesReadingShell } from "@/modules/blog/components/series-reading-shell";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
 
 // Always render fresh — same reasoning as the post detail page: never serve a stale 404 for a
@@ -90,10 +89,8 @@ export default async function PublicSeriesPage({
     </div>
   );
 
-  return (
-    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
-      <ReadingShell leftRail={authorRail}>
-        <header>
+  const header = (
+    <header>
           <div className="flex items-center gap-1.5 text-[12px] font-semibold tracking-wide text-accent-700 dark:text-accent-400">
             <Mark className="h-2.5 w-auto shrink-0" />
             {tf("seriesEyebrow")}
@@ -136,15 +133,21 @@ export default async function PublicSeriesPage({
               </>
             )}
           </div>
-        </header>
+    </header>
+  );
 
-        <div className="section-divider my-10" />
-
-        {/* Ordered episodes + a tag filter strip (태그별로 좁혀보기). Client-side + instant — the posts
-            already carry their tags, so filtering needs no fetch. Rows are divided (칸 구분), carry a
-            cover + hover-revealed save toggle, and cascade from the top on each filter switch. */}
-        <SeriesEpisodeBrowser posts={posts} username={author.username} locale={locale} />
-      </ReadingShell>
+  // Left gutter = author card, right gutter = 태그 + 아카이브 filters, center = the episodes. The shell
+  // is client-orchestrated so the right-rail filters and the list share one filter state (see comment
+  // there); the header + author card are server-rendered and passed in as held nodes.
+  return (
+    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
+      <SeriesReadingShell
+        leftRail={authorRail}
+        header={header}
+        posts={posts}
+        username={author.username}
+        locale={locale}
+      />
     </main>
   );
 }
