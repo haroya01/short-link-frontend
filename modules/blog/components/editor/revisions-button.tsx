@@ -52,7 +52,8 @@ export function RevisionsButton({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         title={t("revisions")}
-        className="grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+        aria-label={t("revisions")}
+        className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
       >
         <History className="h-4 w-4" />
       </button>

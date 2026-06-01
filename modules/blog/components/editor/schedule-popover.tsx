@@ -54,7 +54,7 @@ export function SchedulePopover({
         type="button"
         disabled={disabled}
         onClick={() => setOpen((v) => !v)}
-        className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+        className="focus-ring rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
       >
         <span className="inline-flex items-center gap-1.5">
           <CalendarClock className="h-4 w-4" />
@@ -78,7 +78,7 @@ export function SchedulePopover({
           <button
             type="button"
             onClick={confirm}
-            className="mt-3 w-full rounded-lg bg-accent-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-700"
+            className="focus-ring mt-3 w-full rounded-lg bg-accent-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-700"
           >
             {t("scheduleConfirm")}
           </button>

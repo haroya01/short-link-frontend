@@ -203,7 +203,8 @@ export default function BlogSeriesPage() {
                           type="button"
                           onClick={() => move(i, -1)}
                           disabled={busy || i === 0}
-                          className="grid h-7 w-7 place-items-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30"
+                          aria-label={t("curationMoveUp")}
+                          className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30"
                         >
                           <ChevronUp className="h-4 w-4" />
                         </button>
@@ -211,7 +212,8 @@ export default function BlogSeriesPage() {
                           type="button"
                           onClick={() => move(i, 1)}
                           disabled={busy || i === selected.posts.length - 1}
-                          className="grid h-7 w-7 place-items-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30"
+                          aria-label={t("curationMoveDown")}
+                          className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30"
                         >
                           <ChevronDown className="h-4 w-4" />
                         </button>
