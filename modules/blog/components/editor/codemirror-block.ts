@@ -1,11 +1,17 @@
 import CodeBlock from "@tiptap/extension-code-block";
 import { Selection, TextSelection } from "@tiptap/pm/state";
 import { exitCode } from "@tiptap/pm/commands";
+import { redo, undo } from "@tiptap/pm/history";
 import type { Node as PMNode } from "@tiptap/pm/model";
 import type { EditorView as PMEditorView } from "@tiptap/pm/view";
 import { Compartment } from "@codemirror/state";
-import { drawSelection, EditorView as CMView, keymap as cmKeymap } from "@codemirror/view";
-import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
+import {
+  drawSelection,
+  EditorView as CMView,
+  keymap as cmKeymap,
+  type ViewUpdate,
+} from "@codemirror/view";
+import { defaultKeymap, indentWithTab } from "@codemirror/commands";
 import {
   defaultHighlightStyle,
   indentUnit,
@@ -15,14 +21,16 @@ import {
 import { languages } from "@codemirror/language-data";
 
 /**
- * A Tiptap code-block node whose editing surface IS CodeMirror 6 — so code gets language-aware
- * syntax highlighting AND real auto-indent (Enter keeps indentation, Tab indents, language modes
- * handle brackets) while typing, not just on the published page. The block still serialises to a
- * ```lang fenced block via tiptap-markdown, so the markdown↔blocks round-trip is unchanged.
+ * A Tiptap code-block node whose editing surface IS CodeMirror 6 — language-aware syntax highlighting
+ * AND real auto-indent while typing, serialised back to a ```lang fenced block via tiptap-markdown
+ * (so the markdown↔blocks round-trip is unchanged).
  *
- * The ProseMirror↔CodeMirror bridge (forwardUpdate / cursor hand-off at the block edges) follows the
- * canonical prosemirror-codemirror integration so arrows, Backspace and Mod-Enter cross the boundary
- * naturally.
+ * ProseMirror↔CodeMirror bridge follows the canonical prosemirror-codemirror integration:
+ * - `forwardUpdate` mirrors CM's *minimal* changes (not a full-block replace) AND CM's selection back
+ *   into PM on every CM update, so PM always knows the cursor inside the block (Mod-Enter / toolbar
+ *   commands act on the right selection).
+ * - Undo is owned solely by ProseMirror: CM has no `history()`; Mod-z / redo route to PM history. This
+ *   avoids the double-history corruption where a CM undo gets re-recorded as a new PM transaction.
  */
 
 const LANGUAGES = [
@@ -49,8 +57,10 @@ const cmTheme = CMView.theme({
 class CodeMirrorNodeView {
   dom: HTMLElement;
   private cm: CMView;
+  private languageSelect: HTMLSelectElement;
   private langCompartment = new Compartment();
   private updating = false;
+  private langRequest = 0;
 
   constructor(
     public node: PMNode,
@@ -60,20 +70,14 @@ class CodeMirrorNodeView {
     this.cm = new CMView({
       doc: this.node.textContent,
       extensions: [
-        cmKeymap.of([
-          ...this.codeMirrorKeymap(),
-          indentWithTab,
-          ...defaultKeymap,
-          ...historyKeymap,
-        ]),
+        cmKeymap.of([...this.codeMirrorKeymap(), indentWithTab, ...defaultKeymap]),
         drawSelection(),
-        history(),
         indentUnit.of("  "),
         CMView.lineWrapping,
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         this.langCompartment.of([]),
         CMView.updateListener.of((u) => {
-          if (!this.updating && u.docChanged) this.forwardUpdate();
+          if (!this.updating) this.forwardUpdate(u);
         }),
         cmTheme,
       ],
@@ -85,28 +89,30 @@ class CodeMirrorNodeView {
 
     const bar = document.createElement("div");
     bar.className = "flex justify-end border-b border-white/10 px-2 py-1";
-    const select = document.createElement("select");
-    select.className =
+    this.languageSelect = document.createElement("select");
+    this.languageSelect.className =
       "rounded bg-transparent px-1 py-0.5 text-[11px] text-slate-400 outline-none hover:text-slate-200";
-    select.contentEditable = "false";
+    this.languageSelect.contentEditable = "false";
     for (const lang of LANGUAGES) {
       const opt = document.createElement("option");
       opt.value = lang === "plaintext" ? "" : lang;
       opt.textContent = lang;
       opt.className = "text-slate-900";
-      select.append(opt);
+      this.languageSelect.append(opt);
     }
-    select.value = this.node.attrs.language || "";
-    select.addEventListener("mousedown", (e) => e.stopPropagation());
-    select.addEventListener("change", () => {
+    this.languageSelect.value = this.node.attrs.language || "";
+    this.languageSelect.addEventListener("mousedown", (e) => e.stopPropagation());
+    this.languageSelect.addEventListener("change", () => {
       const pos = this.getPos();
       if (pos != null) {
-        this.view.dispatch(this.view.state.tr.setNodeAttribute(pos, "language", select.value || null));
+        this.view.dispatch(
+          this.view.state.tr.setNodeAttribute(pos, "language", this.languageSelect.value || null),
+        );
       }
-      void this.applyLanguage(select.value);
+      void this.applyLanguage(this.languageSelect.value);
       this.cm.focus();
     });
-    bar.append(select);
+    bar.append(this.languageSelect);
 
     const body = document.createElement("div");
     body.className = "px-3 py-2";
@@ -117,42 +123,64 @@ class CodeMirrorNodeView {
   }
 
   private async applyLanguage(name: string) {
+    const req = ++this.langRequest;
     const desc = name ? LanguageDescription.matchLanguageName(languages, name, true) : null;
     if (!desc) {
-      this.cm.dispatch({ effects: this.langCompartment.reconfigure([]) });
+      if (req === this.langRequest) this.cm.dispatch({ effects: this.langCompartment.reconfigure([]) });
       return;
     }
     try {
       const support = await desc.load();
-      this.cm.dispatch({ effects: this.langCompartment.reconfigure(support) });
+      // Ignore a stale load that resolved after a newer language change.
+      if (req === this.langRequest) {
+        this.cm.dispatch({ effects: this.langCompartment.reconfigure(support) });
+      }
     } catch {
-      this.cm.dispatch({ effects: this.langCompartment.reconfigure([]) });
+      if (req === this.langRequest) this.cm.dispatch({ effects: this.langCompartment.reconfigure([]) });
     }
   }
 
-  private forwardUpdate() {
-    if (!this.cm.hasFocus) return;
+  // Mirror CM's changes AND selection into ProseMirror (canonical prosemirror-codemirror bridge).
+  private forwardUpdate(update: ViewUpdate) {
+    if (this.updating || !this.cm.hasFocus) return;
     const pos = this.getPos();
     if (pos == null) return;
     let offset = pos + 1;
-    const text = this.cm.state.doc.toString();
-    const tr = this.view.state.tr;
-    const start = offset;
-    const end = offset + this.node.content.size;
-    tr.replaceWith(start, end, text ? this.view.state.schema.text(text) : []);
-    const sel = this.cm.state.selection.main;
-    tr.setSelection(TextSelection.create(tr.doc, offset + sel.from, offset + sel.to));
-    this.updating = true;
-    this.view.dispatch(tr);
-    this.updating = false;
+    const { main } = update.state.selection;
+    const selFrom = offset + main.from;
+    const selTo = offset + main.to;
+    const pmSel = this.view.state.selection;
+    if (update.docChanged || pmSel.from !== selFrom || pmSel.to !== selTo) {
+      const tr = this.view.state.tr;
+      update.changes.iterChanges((fromA, toA, _fromB, _toB, text) => {
+        if (text.length) {
+          tr.replaceWith(offset + fromA, offset + toA, this.view.state.schema.text(text.toString()));
+        } else {
+          tr.delete(offset + fromA, offset + toA);
+        }
+        offset += text.length - (toA - fromA);
+      });
+      tr.setSelection(TextSelection.create(tr.doc, selFrom, selTo));
+      this.updating = true;
+      this.view.dispatch(tr);
+      this.updating = false;
+    }
   }
 
   private codeMirrorKeymap() {
+    const runPM = (cmd: (s: PMEditorView["state"], d: PMEditorView["dispatch"]) => boolean) => () => {
+      const done = cmd(this.view.state, this.view.dispatch);
+      if (done) this.view.focus();
+      return done;
+    };
     return [
       { key: "ArrowUp", run: () => this.maybeEscape("line", -1) },
       { key: "ArrowLeft", run: () => this.maybeEscape("char", -1) },
       { key: "ArrowDown", run: () => this.maybeEscape("line", 1) },
       { key: "ArrowRight", run: () => this.maybeEscape("char", 1) },
+      { key: "Mod-z", run: runPM(undo) },
+      { key: "Mod-y", run: runPM(redo) },
+      { key: "Mod-Shift-z", run: runPM(redo) },
       {
         key: "Mod-Enter",
         run: () => {
@@ -204,7 +232,10 @@ class CodeMirrorNodeView {
       this.cm.dispatch({ changes: { from, to: curEnd, insert: newText.slice(from, newEnd) } });
       this.updating = false;
     }
-    if (newLang !== oldLang) void this.applyLanguage(newLang);
+    if (newLang !== oldLang) {
+      this.languageSelect.value = newLang;
+      void this.applyLanguage(newLang);
+    }
     return true;
   }
 

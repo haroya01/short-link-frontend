@@ -52,7 +52,12 @@ export function MarkdownEditor({
     // Next SSR: Tiptap must not render on the server (hydration mismatch otherwise).
     immediatelyRender: false,
     extensions: [
-      StarterKit.configure({ codeBlock: false }),
+      // codeBlock off → our CodeMirror block; link openOnClick off so clicking a link in the editor
+      // places the cursor instead of opening a tab.
+      StarterKit.configure({
+        codeBlock: false,
+        link: { openOnClick: false, enableClickSelection: true },
+      }),
       CodeMirrorBlock,
       Image.configure({ inline: false }),
       Placeholder.configure({ placeholder: "" }),
