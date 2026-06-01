@@ -1003,6 +1003,22 @@
       "detailClicks": "{count} clicks",
       "detailShare": "{share}% of total",
       "detailClose": "Close"
+    },
+    "rawData": {
+      "title": "Raw data · export",
+      "description": "View this link's raw click log or export it as CSV.",
+      "exportEvents": "Click events CSV",
+      "exportStats": "Daily stats CSV",
+      "exporting": "Exporting…",
+      "showLog": "Raw click log",
+      "hideLog": "Hide log",
+      "loadMore": "Load more",
+      "empty": "No clicks yet.",
+      "bot": "Bot",
+      "colTime": "Time",
+      "colLocation": "Location",
+      "colDevice": "Device",
+      "colReferrer": "Referrer"
     }
   },
   "admin": {
