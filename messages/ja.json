@@ -68,7 +68,9 @@
     "seriesEyebrow": "シリーズ",
     "seriesEpisodeCount": "{count}本",
     "seriesLastPublished": "最新 {date}",
-    "seriesMoreCount": "他{count}本"
+    "seriesMoreCount": "他{count}本",
+    "seriesSubscribe": "購読",
+    "seriesSubscribed": "購読中"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",

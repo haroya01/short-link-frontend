@@ -106,6 +106,8 @@ export interface SeriesPostRef {
 
 /** A series as it appears on the discovery feed (cross-author series card). */
 export interface PublicSeriesCard {
+  /** Series id — the target for the subscribe toggle. */
+  id: number;
   author: PublicAuthor;
   slug: string;
   title: string;

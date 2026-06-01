@@ -230,6 +230,7 @@ export function mockSeriesDetail(username: string, slug: string): PublicSeriesDe
 // Cross-author active series for the feed's discovery cards, most recently active first.
 const MOCK_DISCOVER_SERIES: PublicSeriesCard[] = [
   {
+    id: 1,
     author: AUTHORS.dohyun,
     slug: "nextjs-deep-dive",
     title: "Next.js 깊게 파기",
@@ -242,6 +243,7 @@ const MOCK_DISCOVER_SERIES: PublicSeriesCard[] = [
     ],
   },
   {
+    id: 2,
     author: AUTHORS.minji,
     slug: "side-project-log",
     title: "사이드 프로젝트 로그",

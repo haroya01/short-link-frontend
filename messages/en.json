@@ -68,7 +68,9 @@
     "seriesEyebrow": "Series",
     "seriesEpisodeCount": "{count} posts",
     "seriesLastPublished": "Last post {date}",
-    "seriesMoreCount": "+{count} more"
+    "seriesMoreCount": "+{count} more",
+    "seriesSubscribe": "Subscribe",
+    "seriesSubscribed": "Subscribed"
   },
   "blogWorkspace": {
     "overviewTitle": "Overview",
