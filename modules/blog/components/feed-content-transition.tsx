@@ -1,16 +1,21 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 /**
- * Direction-aware crossfade-slide for the feed content as you switch tabs (최신 0 · 인기 1 · 팔로잉 2).
- * It remembers the previous tab index across soft navigations (the component instance is preserved —
- * only the inner `key`ed block remounts), so it can enter from the right when moving to a tab on the
- * right and from the left when moving back — reads as paging across rather than always one direction.
+ * Direction-aware crossfade-slide for the feed content as you switch tabs (최신 0 · 인기 1 · 팔로잉 2):
+ * enter from the right when moving to a tab on the right, from the left when moving back — reads as
+ * paging across rather than always one direction.
  *
- * The children are server-rendered (passed in from the server page); this only positions them and
- * picks the animation class.
+ * The previous index is held at module scope (not per-instance state) because the page renders TWO
+ * separate instances — recent/trending share one (inside the fixed ReadingShell) and following is its
+ * own — and a tab switch unmounts one, mounts the other. A per-instance ref/state would reset on that
+ * remount and lose the direction (every following → elsewhere move looked like "forward"). It's read
+ * during render for the slide class and written in an effect (commit phase) so render stays pure /
+ * StrictMode-safe. The children are server-rendered; this only positions them and picks the class.
  */
+let committedIndex: number | null = null;
+
 export function FeedContentTransition({
   index,
   contentKey,
@@ -22,15 +27,11 @@ export function FeedContentTransition({
   contentKey: string;
   children: ReactNode;
 }) {
-  // React's "store previous value" pattern — adjust state during render (StrictMode-safe; mutating a
-  // ref during render double-fires and loses the direction). When the tab index changes we record
-  // whether it moved back (to a lower index) and remember the new index.
-  const [prevIndex, setPrevIndex] = useState(index);
-  const [back, setBack] = useState(false);
-  if (index !== prevIndex) {
-    setBack(index < prevIndex);
-    setPrevIndex(index);
-  }
+  const back = committedIndex !== null && index < committedIndex;
+
+  useEffect(() => {
+    committedIndex = index;
+  }, [index]);
 
   return (
     <div key={contentKey} className={back ? "content-slide-back" : "content-slide-fwd"}>
