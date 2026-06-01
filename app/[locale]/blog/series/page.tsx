@@ -13,6 +13,7 @@ import {
   type SeriesDetailView,
   type SeriesView,
 } from "@/modules/blog/api/series";
+import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 export default function BlogSeriesPage() {
   const t = useTranslations("blogWorkspace");
@@ -22,6 +23,7 @@ export default function BlogSeriesPage() {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [busy, setBusy] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadList = useCallback(async () => {
@@ -29,6 +31,8 @@ export default function BlogSeriesPage() {
       setSeries(await listSeries());
     } catch {
       setSeries([]);
+    } finally {
+      setLoaded(true);
     }
   }, []);
 
@@ -137,10 +141,12 @@ export default function BlogSeriesPage() {
           </form>
 
           <ul className="mt-4 space-y-1">
-            {series.length === 0 && (
+            {!loaded && <SkeletonRows count={4} />}
+            {loaded && series.length === 0 && (
               <li className="px-1 text-sm text-slate-400">{t("seriesEmpty")}</li>
             )}
-            {series.map((s) => (
+            {loaded &&
+              series.map((s) => (
               <li key={s.id}>
                 <button
                   type="button"
