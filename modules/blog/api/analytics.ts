@@ -21,6 +21,8 @@ export interface AuthorAnalyticsOverview {
   lifetimeLikes: number;
   windowDays: number;
   windowViews: number;
+  lifetimeLinkClicks: number;
+  windowLinkClicks: number;
   daily: DailyPoint[];
   topPosts: TopPost[];
 }
@@ -34,6 +36,8 @@ export interface PostAnalytics {
   lifetimeLikes: number;
   windowDays: number;
   windowViews: number;
+  lifetimeLinkClicks: number;
+  windowLinkClicks: number;
   daily: DailyPoint[];
 }
 
@@ -82,6 +86,8 @@ function mockOverview(days: number): AuthorAnalyticsOverview {
     lifetimeLikes: MOCK_TOP.reduce((s, p) => s + p.likeCount, 0),
     windowDays: days,
     windowViews: daily.reduce((s, p) => s + p.views, 0),
+    lifetimeLinkClicks: 742,
+    windowLinkClicks: Math.round(daily.reduce((s, p) => s + p.views, 0) * 0.18),
     daily,
     topPosts: MOCK_TOP,
   };
@@ -99,6 +105,8 @@ function mockPostAnalytics(id: number, days: number): PostAnalytics {
     lifetimeLikes: top.likeCount,
     windowDays: days,
     windowViews: daily.reduce((s, p) => s + p.views, 0),
+    lifetimeLinkClicks: Math.round(top.viewCount * 0.4),
+    windowLinkClicks: Math.round(daily.reduce((s, p) => s + p.views, 0) * 0.2),
     daily,
   };
 }

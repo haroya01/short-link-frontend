@@ -104,7 +104,9 @@
     "analyticsLifetimeLikes": "총 공감",
     "analyticsPublished": "발행 글",
     "analyticsViews": "조회 {count}",
-    "analyticsDays": "{days}일"
+    "analyticsDays": "{days}일",
+    "analyticsLinkClicks": "이 글이 만든 클릭",
+    "analyticsWindowClicks": "최근 {days}일 {count}클릭"
   },
   "postEditor": {
     "backToList": "글 목록",
