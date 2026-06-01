@@ -3,41 +3,44 @@
 import { useEffect, useState } from "react";
 import { Bookmark } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { addBookmark, isBookmarked, removeBookmark } from "@/modules/blog/api/curation";
+import { useAuth } from "@/lib/auth";
+import { addBookmark, getBookmarkStatus, removeBookmark } from "@/modules/blog/api/bookmarks";
 
 /**
- * Save-to-reading-list toggle on the public post page. FRONT-END-ONLY MOCK: the bookmark lives in
- * localStorage (see modules/blog/api/curation.ts) and shows up in the author's /curation reading
- * list. No backend, no auth — it's a per-browser preference until a real endpoint lands.
- *
- * Bookmarked state is read in an effect (post-mount) so SSR and first paint stay unbookmarked and
- * we never hydration-mismatch on localStorage.
+ * Save-to-reading-list toggle on the public post page. Account-backed: the bookmark is stored per
+ * user (`/api/v1/posts/{id}/bookmark`) and shows up in the author's /curation reading list across
+ * devices. Anonymous click starts the login flow (same as the like button). Optimistic with
+ * rollback on error.
  */
-export function BookmarkButton({
-  postId,
-  username,
-  title,
-  slug,
-}: {
-  postId: number;
-  username: string;
-  title: string;
-  slug: string;
-}) {
+export function BookmarkButton({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
+  const { authenticated, ready, signInWithGoogle } = useAuth();
   const [saved, setSaved] = useState(false);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    setSaved(isBookmarked(postId));
-  }, [postId]);
+    if (!ready || !authenticated) return;
+    getBookmarkStatus(postId)
+      .then((s) => setSaved(s.bookmarked))
+      .catch(() => {});
+  }, [ready, authenticated, postId]);
 
-  function toggle() {
-    if (saved) {
-      removeBookmark(postId);
-      setSaved(false);
-    } else {
-      addBookmark({ id: postId, username, title, slug });
-      setSaved(true);
+  async function toggle() {
+    if (!authenticated) {
+      signInWithGoogle();
+      return;
+    }
+    if (busy) return;
+    setBusy(true);
+    const next = !saved;
+    setSaved(next);
+    try {
+      const s = next ? await addBookmark(postId) : await removeBookmark(postId);
+      setSaved(s.bookmarked);
+    } catch {
+      setSaved(!next);
+    } finally {
+      setBusy(false);
     }
   }
 
