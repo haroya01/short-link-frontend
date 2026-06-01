@@ -79,6 +79,19 @@ export function republishPost(id: number): Promise<PostView> {
   return request<PostView>(`/api/v1/posts/${id}/republish`, { method: "POST" });
 }
 
+/** Park a draft for future auto-publish. `scheduledAt` is an ISO instant (must be in the future). */
+export function schedulePost(id: number, scheduledAt: string): Promise<PostView> {
+  return request<PostView>(`/api/v1/posts/${id}/schedule`, {
+    method: "POST",
+    body: { scheduledAt },
+  });
+}
+
+/** Cancel a schedule — send a SCHEDULED post back to DRAFT. */
+export function backToDraftPost(id: number): Promise<PostView> {
+  return request<PostView>(`/api/v1/posts/${id}/back-to-draft`, { method: "POST" });
+}
+
 export interface PostRevisionView {
   id: number;
   versionNumber: number;

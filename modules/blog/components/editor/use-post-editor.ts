@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
+  backToDraftPost,
   deletePost,
   getBlocks,
   getPost,
@@ -11,6 +12,7 @@ import {
   replaceBlocks,
   republishPost,
   restoreRevision as restoreRevisionApi,
+  schedulePost,
   unpublishPost,
   updatePostMetadata,
   type PostView,
@@ -19,7 +21,7 @@ import { assignPostToSeries } from "@/modules/blog/api/series";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
 
-export type StatusAction = "publish" | "unpublish" | "republish";
+export type StatusAction = "publish" | "unpublish" | "republish" | "backToDraft";
 
 /**
  * The post editor's controller: owns loading, the editable fields, dirty tracking, and the
@@ -138,10 +140,31 @@ export function usePostEditor(
           ? await publishPost(post.id)
           : action === "unpublish"
             ? await unpublishPost(post.id)
-            : await republishPost(post.id);
+            : action === "backToDraft"
+              ? await backToDraftPost(post.id)
+              : await republishPost(post.id);
       setPost(updated);
     } catch (e) {
       setError(e instanceof Error ? e.message : `${action} failed`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function schedule(scheduledAt: string) {
+    if (post == null || busy) return;
+    if (!title.trim()) {
+      setError(t("titleRequired"));
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      // Persist edits first so the scheduled snapshot matches what's on screen, then park it.
+      await save();
+      setPost(await schedulePost(post.id, scheduledAt));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "schedule failed");
     } finally {
       setBusy(false);
     }
@@ -196,6 +219,7 @@ export function usePostEditor(
     writeBase,
     save,
     changeStatus,
+    schedule,
     restoreRevision,
     remove,
   };
