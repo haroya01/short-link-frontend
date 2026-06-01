@@ -16,10 +16,12 @@ import {
   Link as LinkIcon,
   List,
   ListOrdered,
+  Plus,
   Quote,
   Strikethrough,
 } from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
+import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
 
 /**
  * Long-form post editor — Tiptap (ProseMirror) with a CodeMirror code-block node (language-aware
@@ -119,6 +121,7 @@ export function MarkdownEditor({
       <div className="min-h-0 flex-1 overflow-y-auto py-4">
         <EditorContent editor={editor} className="h-full" />
       </div>
+      <SlashMenu editor={editor} onPickImage={() => fileRef.current?.click()} />
     </div>
   );
 }
@@ -145,6 +148,8 @@ function Toolbar({ editor, onPickImage }: { editor: Editor; onPickImage: () => v
 
   return (
     <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b border-slate-100 bg-white/90 py-1.5 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
+      <button type="button" aria-label="Insert block" title="블록 추가 ( / )" className={btn(false)} onClick={() => editor.chain().focus().insertContent("/").run()}><Plus className="h-4 w-4" /></button>
+      <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
       <button type="button" aria-label="H2" className={btn(editor.isActive("heading", { level: 2 }))} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 className="h-4 w-4" /></button>
       <button type="button" aria-label="H3" className={btn(editor.isActive("heading", { level: 3 }))} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}><Heading3 className="h-4 w-4" /></button>
       <span className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
