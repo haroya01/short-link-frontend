@@ -181,7 +181,7 @@ export default function ContentCurationPage() {
         )}
       </section>
 
-      {/* 읽기 리스트 — bookmarked posts (mock; saved from post pages in a later pass). */}
+      {/* 읽기 리스트 — bookmarked posts (mock; saved via the bookmark toggle on public post pages). */}
       <section className="mt-12">
         <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
           <Bookmark className="h-4 w-4 text-accent-600 dark:text-accent-400" />
