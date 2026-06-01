@@ -9,6 +9,7 @@ import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
 import { PostComments } from "@/modules/blog/components/comments";
 import { LikeButton } from "@/modules/blog/components/like-button";
+import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { SeriesNav, TagChips } from "../_components/post-meta";
@@ -205,6 +206,12 @@ export default async function PublicPostPage({
           </a>
           <div className="flex items-center gap-3">
             <LikeButton postId={post.id} initialCount={post.likeCount} />
+            <BookmarkButton
+              postId={post.id}
+              username={author.username}
+              title={post.title}
+              slug={post.slug}
+            />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
           </div>
         </div>

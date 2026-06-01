@@ -52,7 +52,9 @@ export function setPinnedIds(ids: number[]): void {
 }
 
 export function getBookmarks(): BookmarkItem[] {
-  // First open → seed, so the panel demonstrates the shape instead of rendering empty.
+  // First open → seed, so the curation panel demonstrates the shape instead of rendering empty.
+  // Only the panel calls this; the post-page toggle uses the raw helpers below so a brand-new
+  // reader who bookmarks one post gets exactly that post, not the seed demo set.
   if (typeof window !== "undefined" && window.localStorage.getItem(BOOKMARK_KEY) === null) {
     write(BOOKMARK_KEY, SEED_BOOKMARKS);
     return SEED_BOOKMARKS;
@@ -60,8 +62,21 @@ export function getBookmarks(): BookmarkItem[] {
   return read<BookmarkItem[]>(BOOKMARK_KEY, SEED_BOOKMARKS);
 }
 
+export function isBookmarked(id: number): boolean {
+  return read<BookmarkItem[]>(BOOKMARK_KEY, []).some((b) => b.id === id);
+}
+
+/** Save a post to the reading list (idempotent, newest first). Returns the updated list. */
+export function addBookmark(item: BookmarkItem): BookmarkItem[] {
+  const cur = read<BookmarkItem[]>(BOOKMARK_KEY, []);
+  if (cur.some((b) => b.id === item.id)) return cur;
+  const next = [item, ...cur];
+  write(BOOKMARK_KEY, next);
+  return next;
+}
+
 export function removeBookmark(id: number): BookmarkItem[] {
-  const next = getBookmarks().filter((b) => b.id !== id);
+  const next = read<BookmarkItem[]>(BOOKMARK_KEY, []).filter((b) => b.id !== id);
   write(BOOKMARK_KEY, next);
   return next;
 }

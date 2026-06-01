@@ -245,7 +245,9 @@
     "seriesEmpty": "まだシリーズがありません。",
     "follow": "フォロー",
     "following": "フォロー中",
-    "followers": "フォロワー {count}"
+    "followers": "フォロワー {count}",
+    "bookmark": "リーディングリストに保存",
+    "bookmarkOn": "リーディングリストから削除"
   },
   "imageCropper": {
     "title": "画像を切り抜く",

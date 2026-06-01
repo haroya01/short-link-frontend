@@ -27,13 +27,6 @@ export function createSeries(payload: { slug: string; title: string }): Promise<
   return request<SeriesDetailView>("/api/v1/series", { method: "POST", body: payload });
 }
 
-export function updateSeries(
-  id: number,
-  payload: { title?: string; slug?: string },
-): Promise<SeriesDetailView> {
-  return request<SeriesDetailView>(`/api/v1/series/${id}`, { method: "PATCH", body: payload });
-}
-
 export function setSeriesPosts(id: number, postIds: number[]): Promise<SeriesDetailView> {
   return request<SeriesDetailView>(`/api/v1/series/${id}/posts`, {
     method: "PUT",

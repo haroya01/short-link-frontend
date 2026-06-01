@@ -245,7 +245,9 @@
     "seriesEmpty": "No series yet.",
     "follow": "Follow",
     "following": "Following",
-    "followers": "{count} followers"
+    "followers": "{count} followers",
+    "bookmark": "Save to reading list",
+    "bookmarkOn": "Remove from reading list"
   },
   "imageCropper": {
     "title": "Crop image",
