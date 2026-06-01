@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Heart } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
+import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 const KURL_HOST = process.env.NEXT_PUBLIC_KURL_HOST;
@@ -147,6 +148,7 @@ export function FeedCard({
   featured = false,
   featuredLabel,
   flushTop = false,
+  showBookmark = true,
 }: {
   item: PublicFeedItem;
   locale: string;
@@ -161,9 +163,12 @@ export function FeedCard({
   /** First row of a feed with no featured lead: trim the top padding so it sits flush under the tabs
    *  (aligned with the rail) instead of floating below an empty band. */
   flushTop?: boolean;
+  /** Show the save-to-reading-list toggle in the card's top-right (needs a numeric post id). */
+  showBookmark?: boolean;
 }) {
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
+  const bookmarkable = showBookmark && typeof item.id === "number";
 
   return (
     <li
@@ -182,8 +187,15 @@ export function FeedCard({
           featured || flushTop ? "pt-1.5 sm:pt-2" : "pt-5"
         } ${featured ? "pb-6 sm:pb-8" : "pb-5"}`}
       >
-        <div className="min-w-0 flex-1">
-          <a href={postUrl} className="block">
+        <div className="relative min-w-0 flex-1">
+          {bookmarkable && (
+            // Sibling of the post links (not nested in an <a>), pinned to the content column's top-right.
+            // The title/excerpt block reserves a right gutter (pr-9) so its text never runs under it.
+            <div className="absolute right-0 top-0 z-10">
+              <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
+            </div>
+          )}
+          <a href={postUrl} className={`block ${bookmarkable ? "pr-9" : ""}`}>
             {/* One marker per row. The featured lead shows a quiet editorial label (with a small
                 brand-green dot so it reads as the chosen post); every other row shows its muted
                 representative tag. Never both — stacking them reads as a confusing category pair. */}

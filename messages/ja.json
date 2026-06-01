@@ -62,7 +62,9 @@
     "railWriters": "作家",
     "railTopics": "トピック",
     "railPostCount": "記事 {count}",
-    "railSeeAll": "すべて見る"
+    "railSeeAll": "すべて見る",
+    "bookmark": "リーディングリストに保存",
+    "bookmarkOn": "リーディングリストから削除"
   },
   "blogWorkspace": {
     "overviewTitle": "概要",
