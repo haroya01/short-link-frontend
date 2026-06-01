@@ -191,14 +191,14 @@ class CodeMirrorNodeView {
           const block = para?.createAndFill();
           if (!block) return false;
           const after = pos + this.node.nodeSize;
+          // Blur the nested CodeMirror editable BEFORE dispatching: if CM still holds DOM focus when
+          // we move the PM selection out, CM's selectionchange races and snaps the caret back into the
+          // block. With CM blurred first, PM owns the selection cleanly. forwardUpdate is guarded by
+          // hasFocus so the blur won't clobber anything.
+          this.cm.contentDOM.blur();
           const tr = this.view.state.tr.insert(after, block);
           tr.setSelection(Selection.near(tr.doc.resolve(after), 1));
           this.view.dispatch(tr.scrollIntoView());
-          // The nested CodeMirror contenteditable holds browser focus; blur it first so PM can move
-          // focus/selection out to the new paragraph (otherwise view.focus() no-ops and the caret
-          // stays in the code block). hasFocus is now false, so forwardUpdate won't clobber the
-          // selection we just set.
-          this.cm.contentDOM.blur();
           this.view.focus();
           return true;
         },
