@@ -29,12 +29,12 @@ export function TagChip({
         "focus-ring inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors",
         active
           ? "bg-accent-600 text-white"
-          : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700",
+          : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400",
         className,
       )}
     >
       <span>{label}</span>
-      {count != null && !active && <span className="text-slate-500">{count}</span>}
+      {count != null && !active && <span className="text-slate-500 dark:text-slate-500">{count}</span>}
     </a>
   );
 }

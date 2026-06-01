@@ -133,7 +133,7 @@ export default async function PublicPostPage({
         <ViewBeacon username={username} slug={slug} />
 
       <header className="mb-12">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 sm:text-headline-md">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {post.title}
         </h1>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">

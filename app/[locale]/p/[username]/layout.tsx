@@ -16,7 +16,9 @@ export default function AuthorChromeLayout({ children }: { children: ReactNode }
     <AppProviders>
       <SidebarStateProvider>
         <AppHeader showMenu={false} slimMobile />
-        <div className="pb-16 sm:pb-0">{children}</div>
+        <div className="min-h-screen pb-16 dark:bg-slate-950 dark:text-slate-300 sm:pb-0">
+          {children}
+        </div>
         <BlogBottomNav />
       </SidebarStateProvider>
     </AppProviders>
