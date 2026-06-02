@@ -51,6 +51,7 @@ const GROUP_LABEL: Record<SlashGroup, string> = {
 function buildItems(
   pickImage: (opts?: ImagePickOptions) => void,
   onPickPlace: () => void,
+  onPickEmbed: () => void,
 ): SlashItem[] {
   return [
     { key: "h1", labelKey: "heading1", group: "basic", icon: Heading1, keywords: ["h1", "heading", "title", "제목", "見出し"], run: (e) => e.chain().focus().toggleHeading({ level: 1 }).run() },
@@ -63,7 +64,7 @@ function buildItems(
     { key: "image", labelKey: "image", group: "media", icon: ImageIcon, keywords: ["image", "img", "photo", "이미지", "사진", "画像"], run: () => pickImage() },
     { key: "imageWide", labelKey: "imageWide", group: "media", icon: RectangleHorizontal, keywords: ["wide", "image", "cover", "hero", "banner", "와이드", "넓은", "배너", "ワイド"], run: () => pickImage({ width: "wide" }) },
     { key: "imagePair", labelKey: "imagePair", group: "media", icon: Columns2, keywords: ["pair", "two", "gallery", "side", "2", "나란히", "두장", "갤러리", "並べ"], run: () => pickImage({ width: "half", multiple: true }) },
-    { key: "embed", labelKey: "embed", group: "media", icon: Video, keywords: ["video", "embed", "youtube", "vimeo", "동영상", "비디오", "임베드", "動画"], run: (e) => { const url = window.prompt("URL (YouTube / Vimeo)"); if (url && url.trim()) e.chain().focus().insertContent(url.trim()).run(); } },
+    { key: "embed", labelKey: "embed", group: "media", icon: Video, keywords: ["video", "embed", "youtube", "vimeo", "동영상", "비디오", "임베드", "動画"], run: () => onPickEmbed() },
     { key: "place", labelKey: "place", group: "media", icon: MapPin, keywords: ["map", "place", "location", "지도", "장소", "위치", "地図", "場所"], run: () => onPickPlace() },
     { key: "code", labelKey: "codeBlock", group: "advanced", icon: Code2, keywords: ["code", "codeblock", "pre", "코드", "コード"], run: (e) => e.chain().focus().toggleCodeBlock().run() },
     { key: "table", labelKey: "table", group: "advanced", icon: TableIcon, keywords: ["table", "grid", "표", "테이블", "テーブル", "表"], run: (e) => e.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
@@ -76,10 +77,12 @@ export function SlashMenu({
   editor,
   onPickImage,
   onPickPlace,
+  onPickEmbed,
 }: {
   editor: Editor;
   onPickImage: (opts?: ImagePickOptions) => void;
   onPickPlace: () => void;
+  onPickEmbed: () => void;
 }) {
   const t = useTranslations("postEditor.slash");
   const [menu, setMenu] = useState<MenuState>(null);
@@ -88,9 +91,9 @@ export function SlashMenu({
   const filtered = useMemo(
     () =>
       menu
-        ? buildItems(onPickImage, onPickPlace).filter((i) => keywordMatch(i.keywords, menu.query))
+        ? buildItems(onPickImage, onPickPlace, onPickEmbed).filter((i) => keywordMatch(i.keywords, menu.query))
         : [],
-    [menu, onPickImage, onPickPlace],
+    [menu, onPickImage, onPickPlace, onPickEmbed],
   );
 
   const choose = useCallback(

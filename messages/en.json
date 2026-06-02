@@ -172,6 +172,15 @@
       "delete": "Delete",
       "paragraph": "Text"
     },
+    "urlDialog": {
+      "linkTitle": "Link",
+      "embedTitle": "Embed",
+      "linkPlaceholder": "https://example.com",
+      "embedPlaceholder": "Paste a YouTube · Vimeo link",
+      "confirm": "Add",
+      "cancel": "Cancel",
+      "remove": "Remove link"
+    },
     "write": "Write",
     "preview": "Preview",
     "previewEmpty": "Your preview will appear here.",

@@ -172,6 +172,15 @@
       "delete": "削除",
       "paragraph": "テキスト"
     },
+    "urlDialog": {
+      "linkTitle": "リンク",
+      "embedTitle": "埋め込み",
+      "linkPlaceholder": "https://example.com",
+      "embedPlaceholder": "YouTube · Vimeo のリンクを貼り付け",
+      "confirm": "確定",
+      "cancel": "キャンセル",
+      "remove": "リンクを削除"
+    },
     "write": "編集",
     "preview": "プレビュー",
     "previewEmpty": "プレビューがここに表示されます。",

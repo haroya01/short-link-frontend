@@ -172,6 +172,15 @@
       "delete": "삭제",
       "paragraph": "텍스트"
     },
+    "urlDialog": {
+      "linkTitle": "링크",
+      "embedTitle": "임베드",
+      "linkPlaceholder": "https://example.com",
+      "embedPlaceholder": "YouTube · Vimeo 링크 붙여넣기",
+      "confirm": "확인",
+      "cancel": "취소",
+      "remove": "링크 제거"
+    },
     "write": "작성",
     "preview": "미리보기",
     "previewEmpty": "미리보기가 여기에 표시됩니다.",
