@@ -46,16 +46,39 @@ export function EditorHeader({
         <span className="hidden sm:inline">{t("backToList")}</span>
       </a>
       <div className="flex items-center gap-2">
-        <PostStatusBadge status={status} />
-        <button
-          type="button"
-          onClick={onSave}
-          disabled={saving}
-          className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
-        >
-          {saved && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
-          {saving ? t("saving") : saved ? t("saved") : t("save")}
-        </button>
+        {isDraft ? (
+          // Drafts autosave (1.8s idle) — so no manual 저장 button (the velog/Notion model). A quiet
+          // status reassures: 저장 중… → 저장됨, and 자동 저장 at rest so it's clear saving is automatic.
+          <span
+            aria-live="polite"
+            className="inline-flex items-center gap-1.5 px-2 text-[13px] font-medium text-slate-400 dark:text-slate-500"
+          >
+            {saving ? (
+              t("saving")
+            ) : saved ? (
+              <>
+                <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                {t("saved")}
+              </>
+            ) : (
+              t("autoSave")
+            )}
+          </span>
+        ) : (
+          // Published posts don't autosave (so the live post never changes mid-edit) — explicit 저장.
+          <>
+            <PostStatusBadge status={status} />
+            <button
+              type="button"
+              onClick={onSave}
+              disabled={saving}
+              className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
+            >
+              {saved && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
+              {saving ? t("saving") : saved ? t("saved") : t("save")}
+            </button>
+          </>
+        )}
         <button
           type="button"
           onClick={onOpenPublish}

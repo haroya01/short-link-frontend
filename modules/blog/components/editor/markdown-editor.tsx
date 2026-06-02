@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
@@ -47,6 +47,14 @@ export function MarkdownEditor({
   const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
   const pendingWidth = useRef<ImageWidth | undefined>(undefined);
+  // Serializing the whole doc to markdown (+ a parent setState) on EVERY keystroke makes typing lag on
+  // long posts. Debounce it so the doc serializes ~250ms after you stop typing, and flush on blur so a
+  // save/publish never misses the last edit. `onChangeRef` keeps the latest callback without re-creating
+  // the editor.
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const flushTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(flushTimer.current), []);
   const [placeOpen, setPlaceOpen] = useState(false);
   // In-app URL prompt (link / embed) instead of window.prompt.
   const [urlDialog, setUrlDialog] = useState<{ mode: "link" | "embed"; initial: string } | null>(null);
@@ -123,9 +131,18 @@ export function MarkdownEditor({
       },
     },
     onUpdate: ({ editor }) => {
-      // tiptap-markdown augments storage at runtime but ships no type for it.
+      window.clearTimeout(flushTimer.current);
+      flushTimer.current = window.setTimeout(() => {
+        // tiptap-markdown augments storage at runtime but ships no type for it.
+        const md = (editor.storage as { markdown?: { getMarkdown: () => string } }).markdown;
+        if (md) onChangeRef.current(md.getMarkdown());
+      }, 250);
+    },
+    onBlur: ({ editor }) => {
+      // Flush immediately so clicking 저장/발행 (or tabbing away) captures the latest content.
+      window.clearTimeout(flushTimer.current);
       const md = (editor.storage as { markdown?: { getMarkdown: () => string } }).markdown;
-      if (md) onChange(md.getMarkdown());
+      if (md) onChangeRef.current(md.getMarkdown());
     },
   });
 
