@@ -12,6 +12,7 @@ import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
 import { slugify } from "@/modules/blog/lib/slugify";
 import type { PublicCtaInfo, PublicPostBlock } from "@/modules/blog/api/public-posts";
+import { getLinkPreview } from "@/modules/blog/api/public-posts";
 
 const HEADING_TYPES = ["H1", "H2", "H3"];
 
@@ -277,24 +278,68 @@ function EmbedBlock({ content, postId }: { content: string | null; postId?: numb
     );
   }
 
-  let host = plan.url;
+  // General link → velog-style preview card (og:title/description/image via the unfurl endpoint).
+  return <LinkPreviewCard url={plan.url} />;
+}
+
+/**
+ * Rich link card — fetches the target's Open Graph (server-side, cached) and draws a velog-style
+ * card: title + description on the left, thumbnail on the right, domain footer. Falls back to a bare
+ * domain row when the target exposes no OG (or the fetch fails), so a link always renders something.
+ */
+async function LinkPreviewCard({ url }: { url: string }) {
+  let host = url;
   try {
-    host = new URL(plan.url).host.replace(/^www\./, "");
+    host = new URL(url).host.replace(/^www\./, "");
   } catch {
-    // keep raw
+    /* keep raw */
   }
+  const res = await getLinkPreview(url);
+  const data = res.ok ? res.data : null;
+  const rich = data && (data.title || data.image);
+
+  const shell =
+    "my-8 flex overflow-hidden rounded-2xl border border-slate-200 no-underline transition-colors hover:border-accent-300 dark:border-slate-800 dark:hover:border-accent-500/50";
+
+  if (!rich) {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${shell} items-center justify-between gap-3 bg-slate-50/60 px-5 py-4 dark:bg-slate-800/40`}
+      >
+        <span className="min-w-0">
+          <span className="block truncate text-sm font-medium text-slate-900 dark:text-slate-100">{host}</span>
+          <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">{url}</span>
+        </span>
+        <ArrowUpRight className="h-4 w-4 shrink-0 text-accent-600" />
+      </a>
+    );
+  }
+
   return (
-    <a
-      href={plan.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="my-8 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50/60 px-5 py-4 no-underline transition-colors hover:border-accent-300 hover:bg-accent-50/50"
-    >
-      <span className="min-w-0">
-        <span className="block truncate text-sm font-medium text-slate-900">{host}</span>
-        <span className="block truncate text-[13px] text-slate-500">{plan.url}</span>
+    <a href={url} target="_blank" rel="noopener noreferrer" className={shell}>
+      <span className="flex min-w-0 flex-1 flex-col justify-center gap-1 p-4 sm:p-5">
+        <span className="line-clamp-2 text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+          {data?.title || host}
+        </span>
+        {data?.description && (
+          <span className="line-clamp-2 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+            {data.description}
+          </span>
+        )}
+        <span className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-slate-400 dark:text-slate-500">
+          <ArrowUpRight className="h-3 w-3 shrink-0 text-accent-600" />
+          {host}
+        </span>
       </span>
-      <ArrowUpRight className="h-4 w-4 shrink-0 text-accent-600" />
+      {data?.image && (
+        <span className="hidden w-32 shrink-0 self-stretch bg-slate-100 dark:bg-slate-800 sm:block sm:w-44">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={data.image} alt="" loading="lazy" className="h-full w-full object-cover" />
+        </span>
+      )}
     </a>
   );
 }

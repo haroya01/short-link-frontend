@@ -301,3 +301,35 @@ export function findPublicSeries(
     { noStore: true },
   );
 }
+
+/** Link-preview (unfurl) for a URL embedded in a post — og:title/description/image, or nulls when
+ *  the target has no Open Graph (the card then falls back to a bare domain row). */
+export interface LinkPreview {
+  url: string;
+  title: string | null;
+  description: string | null;
+  image: string | null;
+}
+
+export function getLinkPreview(url: string): Promise<FetchResult<LinkPreview>> {
+  // Mocks have no backend to scrape — return a believable rich preview so the card layout (image +
+  // title + domain) is exercised in dev/storybook without a network call.
+  if (USE_MOCKS) {
+    let host = url;
+    try {
+      host = new URL(url).host.replace(/^www\./, "");
+    } catch {
+      /* keep raw */
+    }
+    return Promise.resolve({
+      ok: true,
+      data: {
+        url,
+        title: `${host} — 링크 미리보기`,
+        description: "이 링크의 Open Graph 설명이 여기에 표시됩니다.",
+        image: `https://picsum.photos/seed/${encodeURIComponent(host)}/480/252`,
+      },
+    });
+  }
+  return fetchPublic<LinkPreview>(`/api/v1/public/link-preview?url=${encodeURIComponent(url)}`);
+}
