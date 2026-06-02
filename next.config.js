@@ -27,6 +27,13 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  // The Tiptap v3 drag-handle packages ship ESM that Next's server bundler mis-resolves
+  // ("__webpack_modules__[moduleId] is not a function") unless transpiled here.
+  transpilePackages: [
+    "@tiptap/extension-drag-handle-react",
+    "@tiptap/extension-drag-handle",
+    "@tiptap/extension-node-range",
+  ],
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

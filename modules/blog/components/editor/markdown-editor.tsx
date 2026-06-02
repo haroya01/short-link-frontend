@@ -14,7 +14,9 @@ import { TableCell } from "@tiptap/extension-table-cell";
 import { Markdown } from "tiptap-markdown";
 import { Bold, Code2, Italic, Link as LinkIcon, Strikethrough } from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
+import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
+import { UrlDialog } from "@/modules/blog/components/editor/url-dialog";
 import {
   PlaceSearchDialog,
   mapsPlaceUrl,
@@ -46,6 +48,8 @@ export function MarkdownEditor({
   const fileRef = useRef<HTMLInputElement>(null);
   const pendingWidth = useRef<ImageWidth | undefined>(undefined);
   const [placeOpen, setPlaceOpen] = useState(false);
+  // In-app URL prompt (link / embed) instead of window.prompt.
+  const [urlDialog, setUrlDialog] = useState<{ mode: "link" | "embed"; initial: string } | null>(null);
 
   // Open the file picker with a target width; "half" + multiple lets you pick 2 for a side-by-side row.
   function pickImage(opts: ImagePickOptions = {}) {
@@ -129,7 +133,8 @@ export function MarkdownEditor({
 
   return (
     <div className="flex h-full flex-col">
-      <BubbleBar editor={editor} />
+      <BubbleBar editor={editor} onEditLink={(href) => setUrlDialog({ mode: "link", initial: href })} />
+      <EditorBlockHandle editor={editor} />
       <input
         ref={fileRef}
         type="file"
@@ -148,7 +153,12 @@ export function MarkdownEditor({
       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
         <EditorContent editor={editor} className="h-full" />
       </div>
-      <SlashMenu editor={editor} onPickImage={pickImage} onPickPlace={() => setPlaceOpen(true)} />
+      <SlashMenu
+        editor={editor}
+        onPickImage={pickImage}
+        onPickPlace={() => setPlaceOpen(true)}
+        onPickEmbed={() => setUrlDialog({ mode: "embed", initial: "" })}
+      />
       <PlaceSearchDialog
         open={placeOpen}
         onClose={() => setPlaceOpen(false)}
@@ -157,6 +167,22 @@ export function MarkdownEditor({
           // into an EMBED block → the reader draws it as a static-map card.
           editor.chain().focus().insertContent(`\n${mapsPlaceUrl(place)}\n`).run();
         }}
+      />
+      <UrlDialog
+        open={!!urlDialog}
+        title={urlDialog?.mode === "embed" ? t("urlDialog.embedTitle") : t("urlDialog.linkTitle")}
+        placeholder={urlDialog?.mode === "embed" ? t("urlDialog.embedPlaceholder") : t("urlDialog.linkPlaceholder")}
+        initialValue={urlDialog?.initial ?? ""}
+        allowRemove={urlDialog?.mode === "link" && !!urlDialog.initial}
+        onClose={() => setUrlDialog(null)}
+        onSubmit={(url) => {
+          if (urlDialog?.mode === "embed") {
+            editor.chain().focus().insertContent(`\n${url}\n`).run();
+          } else {
+            editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+          }
+        }}
+        onRemove={() => editor.chain().focus().extendMarkRange("link").unsetLink().run()}
       />
     </div>
   );
@@ -168,7 +194,7 @@ export function MarkdownEditor({
  * lists, quote, code, table, image, place) lives in the slash (`/`) menu and markdown input rules
  * (`## `, `> `, `- `, ``` ```). So the writing surface stays a clean paper column until you act on text.
  */
-function BubbleBar({ editor }: { editor: Editor }) {
+function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: string) => void }) {
   const btn = (active: boolean) =>
     `touch-target focus-ring grid h-8 w-8 place-items-center rounded-md transition-colors ${
       active
@@ -176,16 +202,7 @@ function BubbleBar({ editor }: { editor: Editor }) {
         : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
     }`;
 
-  function setLink() {
-    const prev = editor.getAttributes("link").href as string | undefined;
-    const url = window.prompt("URL", prev ?? "");
-    if (url === null) return;
-    if (url === "") {
-      editor.chain().focus().unsetLink().run();
-      return;
-    }
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
-  }
+  const setLink = () => onEditLink((editor.getAttributes("link").href as string | undefined) ?? "");
 
   const items = [
     { icon: Bold, label: "Bold", active: editor.isActive("bold"), run: () => editor.chain().focus().toggleBold().run() },

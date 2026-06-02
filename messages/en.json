@@ -163,7 +163,24 @@
   "postEditor": {
     "backToList": "Posts",
     "titlePlaceholder": "Title",
-    "bodyPlaceholder": "Write your post in markdown…",
+    "bodyPlaceholder": "Type '/' for blocks — or just start writing",
+    "blockMenu": {
+      "add": "Add block below",
+      "drag": "Drag to move · click for menu",
+      "turnInto": "Turn into",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "paragraph": "Text"
+    },
+    "urlDialog": {
+      "linkTitle": "Link",
+      "embedTitle": "Embed",
+      "linkPlaceholder": "https://example.com",
+      "embedPlaceholder": "Paste a YouTube · Vimeo link",
+      "confirm": "Add",
+      "cancel": "Cancel",
+      "remove": "Remove link"
+    },
     "write": "Write",
     "preview": "Preview",
     "previewEmpty": "Your preview will appear here.",
@@ -226,6 +243,10 @@
     "cancelSchedule": "Cancel schedule",
     "tagsHint": "Separate with comma or Enter",
     "slash": {
+      "groupBasic": "Basic",
+      "groupMedia": "Media",
+      "groupAdvanced": "Advanced",
+      "empty": "No results",
       "heading1": "Heading 1",
       "heading2": "Heading 2",
       "heading3": "Heading 3",
@@ -239,7 +260,23 @@
       "table": "Table",
       "imageWide": "Wide image",
       "imagePair": "Two images (side by side)",
-      "place": "Map / place"
+      "place": "Map / place",
+      "desc": {
+        "heading1": "Big section heading",
+        "heading2": "Medium heading",
+        "heading3": "Small heading",
+        "bulletList": "• Bulleted list",
+        "orderedList": "1. Numbered list",
+        "quote": "Quote block",
+        "codeBlock": "Syntax-highlighted code",
+        "image": "Upload an image",
+        "divider": "Horizontal rule",
+        "embed": "YouTube · Vimeo embed",
+        "table": "Insert a table",
+        "imageWide": "Image wider than text",
+        "imagePair": "Two side by side",
+        "place": "Map place card"
+      }
     },
     "slugLabel": "Post URL slug",
     "placeDialog": {
