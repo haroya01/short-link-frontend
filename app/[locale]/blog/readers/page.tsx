@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { getProfileStats } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { useToast } from "@/components/ui/toast";
+import { AnalyticsTabs } from "@/modules/blog/components/workspace/analytics-tabs";
 import { ProfileStatsDashboard } from "@/modules/profile/components/stats-dashboard";
 import type { ProfileStats } from "@/types";
 import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
@@ -70,6 +71,7 @@ export default function ProfileStatsPage() {
 
   return (
     <div className="container max-w-5xl space-y-6 py-12">
+      <AnalyticsTabs active="readers" />
       <div>
         <Link
           href={`/${locale}/profile/edit`}
