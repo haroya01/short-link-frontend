@@ -430,7 +430,7 @@ h1, h2, h3, p {
     margin-bottom: 0;
   }
   .prose-post p {
-    @apply my-4 text-[1.0625rem] leading-[1.7] text-slate-700 dark:text-slate-300;
+    @apply my-[1.125rem] text-[1.125rem] leading-[1.7] text-slate-700 dark:text-slate-300;
   }
   /* scroll-margin keeps a TOC jump target clear of the sticky header instead of tucking it
      underneath. Applies to the heading anchors PostToc links to. */
@@ -450,7 +450,7 @@ h1, h2, h3, p {
     @apply my-4 list-decimal space-y-1.5 pl-6;
   }
   .prose-post li {
-    @apply text-[1.0625rem] leading-[1.7] text-slate-700 dark:text-slate-300;
+    @apply text-[1.125rem] leading-[1.7] text-slate-700 dark:text-slate-300;
   }
   .prose-post li::marker {
     @apply text-accent-500;
@@ -1247,7 +1247,7 @@ body[data-cookie-consent="visible"] {
    (17px / 1.85 / slate-700) so what you write matches what ships; the code block is a CodeMirror
    node (codemirror-block.ts) that styles itself. Dark-aware for the blog theme. */
 .tiptap {
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   line-height: 1.7;
   color: #334155;
   outline: none;
@@ -1255,9 +1255,9 @@ body[data-cookie-consent="visible"] {
 .dark .tiptap {
   color: #cbd5e1;
 }
-/* Block rhythm mirrors the published .prose-post so what you write spaces like what ships. */
+/* Block rhythm mirrors the published .prose-post (velog-matched: 18px font, 1.125rem block gap). */
 .tiptap > * + * {
-  margin-top: 1rem;
+  margin-top: 1.125rem;
 }
 .tiptap :is(h1, h2, h3) {
   color: #0f172a;
