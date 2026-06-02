@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Bookmark } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { addBookmark, getBookmarkStatus, removeBookmark } from "@/modules/blog/api/bookmarks";
@@ -13,6 +14,8 @@ import { useOptimisticToggle } from "@/modules/blog/lib/use-optimistic-toggle";
  */
 export function BookmarkButton({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
+  // Pop only on click (not when the saved state loads from the server) — same gate as the follow/구독 button.
+  const [interacted, setInteracted] = useState(false);
   const { on: saved, toggle } = useOptimisticToggle({
     depKey: postId,
     load: () => getBookmarkStatus(postId).then((s) => ({ on: s.bookmarked })),
@@ -23,7 +26,10 @@ export function BookmarkButton({ postId }: { postId: number }) {
   return (
     <button
       type="button"
-      onClick={toggle}
+      onClick={() => {
+        setInteracted(true);
+        toggle();
+      }}
       aria-pressed={saved}
       aria-label={saved ? t("bookmarkOn") : t("bookmark")}
       className={`touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium transition-colors focus-ring ${
@@ -32,7 +38,10 @@ export function BookmarkButton({ postId }: { postId: number }) {
           : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
       }`}
     >
-      <Bookmark className={`h-4 w-4 ${saved ? "fill-accent-600 text-accent-600" : ""}`} />
+      {/* Keyed by state so it remounts + replays the pop on each toggle (only after a click). */}
+      <span key={saved ? "on" : "off"} className={`inline-flex ${interacted ? "subscribe-pop" : ""}`}>
+        <Bookmark className={`h-4 w-4 ${saved ? "fill-accent-600 text-accent-600" : ""}`} />
+      </span>
     </button>
   );
 }

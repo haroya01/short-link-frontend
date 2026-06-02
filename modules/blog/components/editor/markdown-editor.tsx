@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
@@ -41,6 +42,7 @@ export function MarkdownEditor({
   onUploadImage: (file: Blob) => Promise<string>;
   onUploadError?: (message: string) => void;
 }) {
+  const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
   const pendingWidth = useRef<ImageWidth | undefined>(undefined);
   const [placeOpen, setPlaceOpen] = useState(false);
@@ -80,7 +82,9 @@ export function MarkdownEditor({
       TableRow,
       TableHeader,
       TableCell,
-      Placeholder.configure({ placeholder: "" }),
+      // Show a hint on the empty body so it's obvious where to start writing (CSS at .tiptap
+      // p.is-editor-empty::before renders this).
+      Placeholder.configure({ placeholder: t("bodyPlaceholder") }),
       // html:false — standard markdown only (no raw-HTML passthrough); GFM tables round-trip natively.
       Markdown.configure({ html: false, breaks: true, transformPastedText: true }),
     ],
@@ -139,7 +143,9 @@ export function MarkdownEditor({
           for (const f of files) await uploadAndInsert(editor, f, width);
         }}
       />
-      <div className="min-h-0 flex-1 overflow-y-auto py-4">
+      {/* px-5 matches the page's px-5 so the body text lines up with the title above (the wrapper
+          breaks out of that padding with -mx-5 to let «wide»/«full» images bleed wider than the text). */}
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
         <EditorContent editor={editor} className="h-full" />
       </div>
       <SlashMenu editor={editor} onPickImage={pickImage} onPickPlace={() => setPlaceOpen(true)} />

@@ -61,7 +61,11 @@ export function FollowButton({
   // Gates the count's visibility so it never flashes "0 → 128"; seeded true from cache on a revisit.
   const [loaded, setLoaded] = useState(false);
 
+  // Until auth resolves we don't know if this is the viewer's own profile, so we can't tell whether to
+  // show the button. Render it only once `ready` — otherwise it flashes in for everyone and then yanks
+  // itself away on your own profile (the "버튼이 사라지는" flicker). `showButton` gates on that.
   const isSelf = ready && me?.username === username;
+  const showButton = ready && !isSelf;
 
   // Seed from the session cache before paint → no flash on tab navigation.
   useIsoLayoutEffect(() => {
@@ -119,7 +123,7 @@ export function FollowButton({
 
   return (
     <div className="flex items-center gap-3">
-      {!isSelf && (
+      {showButton && (
         <button
           type="button"
           onClick={() => {
