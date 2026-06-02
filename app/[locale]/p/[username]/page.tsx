@@ -8,18 +8,10 @@ import { FeedCard, FeedList, authorHref } from "@/modules/blog/components/feed-c
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
+import { subdomainOrigin } from "@/modules/blog/lib/subdomain-origin";
 
 // 30s ISR — author 발행 후 30 초 내 visitors 반영. Backend 가 어차피 매번 직접 조회.
 export const revalidate = 30;
-
-type ReadonlyHeaders = Awaited<ReturnType<typeof headers>>;
-
-function subdomainOrigin(req: ReadonlyHeaders, username: string): string {
-  const host = req.get("x-original-host") ?? req.get("host");
-  if (!host) return `https://${username}.kurl.me`;
-  const cleaned = host.split(":")[0];
-  return `https://${cleaned}`;
-}
 
 export async function generateMetadata({
   params,
