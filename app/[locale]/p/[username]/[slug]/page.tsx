@@ -115,6 +115,16 @@ export default async function PublicPostPage({
       <article className="mx-auto w-full max-w-2xl py-14 sm:py-20" lang={post.languageTag}>
         <ViewBeacon username={username} slug={slug} />
 
+      {/* Cover (when set) — contained to the reading column + rounded, not a full-bleed banner, so it
+          reads as a quiet lead image in keeping with §10 (조용한 웹로그), the Notion-ish touch without the
+          magazine masthead. */}
+      {post.ogImageUrl && (
+        <div className="mb-10 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={post.ogImageUrl} alt="" className="aspect-[2/1] w-full object-cover" />
+        </div>
+      )}
+
       <header className="mb-12">
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {post.title}
