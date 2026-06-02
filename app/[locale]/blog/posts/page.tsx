@@ -1,37 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/lib/auth";
-import { deletePost, listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { PostRow } from "@/modules/blog/components/workspace/post-row";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
-import { useToast } from "@/components/ui/toast";
+import { useMyPosts } from "@/modules/blog/lib/use-my-posts";
 
 export default function BlogPostsPage() {
   const t = useTranslations("blogWorkspace");
-  const { ready, authenticated } = useAuth();
-  const { toast } = useToast();
-  const [posts, setPosts] = useState<PostView[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!ready || !authenticated) return;
-    listMyPosts()
-      .then(setPosts)
-      .catch(() => setPosts([]))
-      .finally(() => setLoading(false));
-  }, [ready, authenticated]);
-
-  function handleDelete(post: PostView) {
-    if (!window.confirm(t("rowDeleteConfirm", { title: post.title || post.slug }))) return;
-    const prev = posts;
-    setPosts((cur) => cur.filter((p) => p.id !== post.id)); // optimistic
-    deletePost(post.id).catch(() => {
-      setPosts(prev);
-      toast(t("rowDeleteFailed"), "error");
-    });
-  }
+  const { ready, authenticated, posts, loading, handleDelete } = useMyPosts();
 
   if (!ready) return null;
   if (!authenticated) {
