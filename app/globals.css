@@ -430,7 +430,7 @@ h1, h2, h3, p {
     margin-bottom: 0;
   }
   .prose-post p {
-    @apply my-[1.125rem] text-[1.125rem] leading-[1.7] text-slate-700 dark:text-slate-300;
+    @apply my-[0.625rem] text-[1.125rem] leading-[1.7] text-slate-700 dark:text-slate-300;
   }
   /* scroll-margin keeps a TOC jump target clear of the sticky header instead of tucking it
      underneath. Applies to the heading anchors PostToc links to. */
@@ -1255,9 +1255,10 @@ body[data-cookie-consent="visible"] {
 .dark .tiptap {
   color: #cbd5e1;
 }
-/* Block rhythm mirrors the published .prose-post (velog-matched: 18px font, 1.125rem block gap). */
+/* Block rhythm mirrors the published .prose-post. Tighter than velog's 18px gap (0.625rem) — single-
+   sentence-per-Enter paragraphs read far too sparse at 18px. */
 .tiptap > * + * {
-  margin-top: 1.125rem;
+  margin-top: 0.625rem;
 }
 .tiptap :is(h1, h2, h3) {
   color: #0f172a;
