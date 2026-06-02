@@ -183,6 +183,13 @@
       "cancel": "キャンセル",
       "remove": "リンクを削除"
     },
+    "table": {
+      "addColumn": "列を追加",
+      "addRow": "行を追加",
+      "deleteColumn": "列を削除",
+      "deleteRow": "行を削除",
+      "deleteTable": "表を削除"
+    },
     "write": "編集",
     "preview": "プレビュー",
     "previewEmpty": "プレビューがここに表示されます。",

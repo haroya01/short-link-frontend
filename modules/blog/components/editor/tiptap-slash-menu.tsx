@@ -71,7 +71,11 @@ function buildItems(
   ];
 }
 
-type MenuState = { query: string; top: number; left: number } | null;
+// `top` OR `bottom` is set (not both): bottom-anchored when the menu would overflow past the viewport
+// bottom (e.g. typing "/" on the last line), so it flips above the caret instead of off-screen.
+type MenuState = { query: string; left: number; top?: number; bottom?: number } | null;
+const MENU_MAX_H = 340; // max-h-80 (320px) + padding — room needed below before we flip up.
+const MENU_W = 288; // w-72
 
 export function SlashMenu({
   editor,
@@ -122,7 +126,15 @@ export function SlashMenu({
       const q = matchSlashQuery(before);
       if (q === null) return setMenu(null);
       const coords = editor.view.coordsAtPos($from.pos);
-      setMenu({ query: q, top: coords.bottom + 6, left: coords.left });
+      const left = Math.max(8, Math.min(coords.left, window.innerWidth - MENU_W - 8));
+      // Flip above the caret when there isn't room below (bottom of the editor) so the menu never
+      // renders off-screen / clipped.
+      const roomBelow = window.innerHeight - coords.bottom;
+      const next =
+        roomBelow < MENU_MAX_H
+          ? { query: q, left, bottom: window.innerHeight - coords.top + 6 }
+          : { query: q, left, top: coords.bottom + 6 };
+      setMenu(next);
       setActive(0);
     };
     editor.on("selectionUpdate", update);
@@ -156,7 +168,7 @@ export function SlashMenu({
     <div
       role="listbox"
       className="fixed z-50 max-h-80 w-72 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-700 dark:bg-slate-900"
-      style={{ top: menu.top, left: menu.left }}
+      style={menu.bottom != null ? { bottom: menu.bottom, left: menu.left } : { top: menu.top, left: menu.left }}
     >
       {filtered.length === 0 ? (
         <p className="px-2.5 py-3 text-sm text-slate-400 dark:text-slate-500">{t("empty")}</p>
