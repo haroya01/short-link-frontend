@@ -442,6 +442,7 @@
     "blog": {
       "overview": "Overview",
       "write": "Write",
+      "myPosts": "Posts",
       "posts": "Published",
       "drafts": "Drafts",
       "series": "Series",

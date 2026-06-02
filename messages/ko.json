@@ -442,6 +442,7 @@
     "blog": {
       "overview": "개요",
       "write": "글쓰기",
+      "myPosts": "글",
       "posts": "발행 글",
       "drafts": "임시저장",
       "series": "시리즈",

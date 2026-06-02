@@ -15,9 +15,9 @@ export function buildBlogSections(
   return [
     {
       entries: [
-        { href: "/write", label: tBlog("write") },
-        { href: "/posts", label: tBlog("posts") },
-        { href: "/drafts", label: tBlog("drafts") },
+        // 글: /write is already the unified post list (전체/발행/임시저장/예약 tabs + 새 글) — the
+        // separate 발행 글(/posts) · 임시저장(/drafts) entries were just its filtered subsets.
+        { href: "/write", label: tBlog("myPosts") },
         { href: "/series", label: tBlog("series") },
         { href: "/analytics", label: tBlog("analytics") },
         { href: "/readers", label: tBlog("readers") },
