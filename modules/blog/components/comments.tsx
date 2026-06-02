@@ -10,6 +10,7 @@ import {
   listComments,
   type CommentView,
 } from "@/modules/blog/api/comments";
+import { Avatar } from "@/modules/blog/components/avatar";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 
@@ -216,14 +217,7 @@ function CommentRow({
   return (
     <div>
       <div className="flex items-center gap-2">
-        {comment.author?.avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={comment.author.avatarUrl} alt="" className="h-7 w-7 rounded-full object-cover" />
-        ) : (
-          <span className="grid h-7 w-7 place-items-center rounded-full bg-accent-100 text-[11px] font-semibold text-accent-700">
-            {username.charAt(0).toUpperCase()}
-          </span>
-        )}
+        <Avatar src={comment.author?.avatarUrl} name={username} size="sm" shrink={false} />
         <span className="text-sm font-medium text-slate-900 dark:text-slate-100">@{username}</span>
         <span className="text-[12px] text-slate-500 dark:text-slate-400">{fmt(comment.createdAt)}</span>
         {canDelete && (

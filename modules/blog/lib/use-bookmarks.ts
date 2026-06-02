@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useSyncExternalStore } from "react";
+import { useCallback } from "react";
 import { useAuth } from "@/lib/auth";
 import { addBookmark, listBookmarks, removeBookmark } from "@/modules/blog/api/bookmarks";
+import { createSharedSetStore, useSetStore } from "@/modules/blog/lib/shared-set-store";
 
 /**
  * A single shared bookmark store for the whole feed. Without it, dropping a {@link BookmarkButton} on
@@ -15,55 +16,13 @@ import { addBookmark, listBookmarks, removeBookmark } from "@/modules/blog/api/b
  */
 const key = (username: string, slug: string) => `${username}/${slug}`;
 
-let saved = new Set<string>();
-let status: "idle" | "loading" | "ready" = "idle";
-const listeners = new Set<() => void>();
-
-function emit() {
-  // Replace the reference so useSyncExternalStore sees a new snapshot.
-  saved = new Set(saved);
-  for (const l of listeners) l();
-}
-
-function subscribe(l: () => void) {
-  listeners.add(l);
-  return () => listeners.delete(l);
-}
-
-async function ensureLoaded() {
-  if (status !== "idle") return;
-  status = "loading";
-  try {
-    const items = await listBookmarks();
-    saved = new Set(items.map((b) => key(b.username, b.slug)));
-    status = "ready";
-    emit();
-  } catch {
-    // Leave the set empty and allow a later retry (e.g. after sign-in).
-    status = "idle";
-  }
-}
-
-/** Reset on sign-out so a different account doesn't inherit the previous user's saved set. */
-function reset() {
-  saved = new Set();
-  status = "idle";
-  for (const l of listeners) l();
-}
+const store = createSharedSetStore<string>(async () =>
+  (await listBookmarks()).map((b) => key(b.username, b.slug)),
+);
 
 export function useBookmarks() {
   const { authenticated, ready, signInWithGoogle } = useAuth();
-  const set = useSyncExternalStore(
-    subscribe,
-    () => saved,
-    () => saved,
-  );
-
-  useEffect(() => {
-    if (!ready) return;
-    if (authenticated) void ensureLoaded();
-    else reset();
-  }, [ready, authenticated]);
+  const set = useSetStore(store, { ready, authenticated });
 
   const isSaved = useCallback((username: string, slug: string) => set.has(key(username, slug)), [set]);
 
@@ -73,19 +32,9 @@ export function useBookmarks() {
         signInWithGoogle();
         return;
       }
-      const k = key(username, slug);
-      const had = saved.has(k);
-      if (had) saved.delete(k);
-      else saved.add(k);
-      emit(); // optimistic
-      try {
-        if (had) await removeBookmark(postId);
-        else await addBookmark(postId);
-      } catch {
-        if (had) saved.add(k);
-        else saved.delete(k);
-        emit(); // rollback
-      }
+      await store.optimisticToggle(key(username, slug), (had) =>
+        had ? removeBookmark(postId) : addBookmark(postId),
+      );
     },
     [authenticated, signInWithGoogle],
   );
