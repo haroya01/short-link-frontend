@@ -15,7 +15,6 @@ export function buildBlogSections(
   return [
     {
       entries: [
-        { href: "/", label: tBlog("overview"), active: (p) => p === "/" },
         { href: "/write", label: tBlog("write") },
         { href: "/posts", label: tBlog("posts") },
         { href: "/drafts", label: tBlog("drafts") },
