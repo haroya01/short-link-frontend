@@ -163,7 +163,24 @@
   "postEditor": {
     "backToList": "글 목록",
     "titlePlaceholder": "제목",
-    "bodyPlaceholder": "본문을 마크다운으로 작성하세요…",
+    "bodyPlaceholder": "'/' 를 입력해 블록 추가 — 또는 그냥 작성하세요",
+    "blockMenu": {
+      "add": "아래에 블록 추가",
+      "drag": "드래그로 이동 · 클릭으로 메뉴",
+      "turnInto": "전환",
+      "duplicate": "복제",
+      "delete": "삭제",
+      "paragraph": "텍스트"
+    },
+    "urlDialog": {
+      "linkTitle": "링크",
+      "embedTitle": "임베드",
+      "linkPlaceholder": "https://example.com",
+      "embedPlaceholder": "YouTube · Vimeo 링크 붙여넣기",
+      "confirm": "확인",
+      "cancel": "취소",
+      "remove": "링크 제거"
+    },
     "write": "작성",
     "preview": "미리보기",
     "previewEmpty": "미리보기가 여기에 표시됩니다.",
@@ -226,6 +243,10 @@
     "cancelSchedule": "예약 취소",
     "tagsHint": "쉼표(,)나 Enter로 구분",
     "slash": {
+      "groupBasic": "기본",
+      "groupMedia": "미디어",
+      "groupAdvanced": "고급",
+      "empty": "결과 없음",
       "heading1": "제목 1",
       "heading2": "제목 2",
       "heading3": "제목 3",
@@ -239,7 +260,23 @@
       "table": "표",
       "imageWide": "와이드 이미지",
       "imagePair": "이미지 2장 (나란히)",
-      "place": "지도 / 장소"
+      "place": "지도 / 장소",
+      "desc": {
+        "heading1": "큰 섹션 제목",
+        "heading2": "중간 제목",
+        "heading3": "작은 제목",
+        "bulletList": "• 글머리 목록",
+        "orderedList": "1. 번호 목록",
+        "quote": "인용문 블록",
+        "codeBlock": "구문 강조 코드",
+        "image": "이미지 업로드",
+        "divider": "가로 구분선",
+        "embed": "YouTube · Vimeo 임베드",
+        "table": "표 삽입",
+        "imageWide": "본문보다 넓은 이미지",
+        "imagePair": "두 장 나란히",
+        "place": "지도 장소 카드"
+      }
     },
     "slugLabel": "글 주소(slug)",
     "placeDialog": {

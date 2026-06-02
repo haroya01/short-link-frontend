@@ -1255,8 +1255,10 @@ body[data-cookie-consent="visible"] {
 .dark .tiptap {
   color: #cbd5e1;
 }
+/* Block rhythm mirrors the published .prose-post (p my-5 = 1.25rem) so what you write spaces exactly
+   like what ships — the editor and the post were drifting (1.05 vs 1.25rem). */
 .tiptap > * + * {
-  margin-top: 1.05rem;
+  margin-top: 1.25rem;
 }
 .tiptap :is(h1, h2, h3) {
   color: #0f172a;
@@ -1267,9 +1269,10 @@ body[data-cookie-consent="visible"] {
 .dark .tiptap :is(h1, h2, h3) {
   color: #f1f5f9;
 }
-.tiptap h1 { font-size: 1.9rem; margin-top: 1.8rem; }
-.tiptap h2 { font-size: 1.5rem; margin-top: 2.2rem; }
-.tiptap h3 { font-size: 1.25rem; margin-top: 1.8rem; }
+/* Heading top margins match .prose-post (h2 mt-12 / h3 mt-10) so heading rhythm ships unchanged. */
+.tiptap h1 { font-size: 1.9rem; margin-top: 2.75rem; }
+.tiptap h2 { font-size: 1.5rem; margin-top: 3rem; }
+.tiptap h3 { font-size: 1.25rem; margin-top: 2.5rem; }
 .tiptap ul { list-style: disc; padding-left: 1.5rem; }
 .tiptap ol { list-style: decimal; padding-left: 1.5rem; }
 .tiptap li { margin: 0.3rem 0; }
@@ -1304,9 +1307,12 @@ body[data-cookie-consent="visible"] {
   height: 0;
   pointer-events: none;
 }
-/* Editor table (flat, matches the reader's §10.7 table look) */
+/* Editor table (flat, matches the reader's §10.7 table look). table-layout:fixed = columns keep a
+   stable width as you type (content wraps inside the cell) instead of the column growing and shoving
+   the others sideways — the Notion / Obsidian behaviour. */
 .tiptap table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   margin: 1.2rem 0;
 }
@@ -1316,6 +1322,7 @@ body[data-cookie-consent="visible"] {
   padding: 0.4rem 0.6rem;
   text-align: left;
   vertical-align: top;
+  overflow-wrap: anywhere;
 }
 .dark .tiptap th,
 .dark .tiptap td {
