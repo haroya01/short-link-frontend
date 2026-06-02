@@ -1,3 +1,4 @@
+import { DATE_LOCALE } from "@/lib/date";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
@@ -14,6 +15,7 @@ import { FollowButton } from "@/modules/blog/components/follow-button";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { SeriesNav, TagChips } from "../_components/post-meta";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { Avatar } from "@/modules/blog/components/avatar";
 import { findPublicPost } from "@/modules/blog/api/public-posts";
 import { subdomainOrigin } from "@/modules/blog/lib/subdomain-origin";
 
@@ -24,7 +26,6 @@ import { subdomainOrigin } from "@/modules/blog/lib/subdomain-origin";
 // that needs a cache, the right layer is the backend / CDN, not an ISR window that breaks freshness.
 export const dynamic = "force-dynamic";
 
-const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 
 function formatDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
@@ -95,18 +96,7 @@ export default async function PublicPostPage({
             href={authorHref(author.username, locale)}
             className="group flex items-center gap-3 rounded focus-ring"
           >
-            {author.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={author.avatarUrl}
-                alt={`@${author.username}`}
-                className="h-11 w-11 shrink-0 rounded-full object-cover"
-              />
-            ) : (
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent-100 text-base font-semibold text-accent-700">
-                {author.username.charAt(0).toUpperCase()}
-              </span>
-            )}
+            <Avatar src={author.avatarUrl} name={author.username} size="lg" />
             <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
               @{author.username}
             </span>
@@ -136,20 +126,7 @@ export default async function PublicPostPage({
             href={authorHref(author.username, locale)}
             className="group flex min-w-0 items-center gap-3 rounded focus-ring xl:hidden"
           >
-            {author.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={author.avatarUrl}
-                alt={`@${author.username}`}
-                width={40}
-                height={40}
-                className="h-10 w-10 shrink-0 rounded-full object-cover"
-              />
-            ) : (
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700">
-                {author.username.charAt(0).toUpperCase()}
-              </span>
-            )}
+            <Avatar src={author.avatarUrl} name={author.username} size="lg" />
             <span className="min-w-0">
               <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
                 @{author.username}
@@ -188,7 +165,7 @@ export default async function PublicPostPage({
       )}
 
       <footer className="mt-20 border-t border-slate-100 pt-8 dark:border-slate-800">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-4">
           <a
             href={authorHref(author.username, locale)}
             className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring"
@@ -196,14 +173,16 @@ export default async function PublicPostPage({
             <ArrowLeft className="h-4 w-4" />
             {t("morePosts", { username: author.username })}
           </a>
+          {/* All post actions live in one cluster — like / bookmark / share, then a hairline and the
+              quiet 신고 (a popover, so it never breaks the row) so it reads as a secondary action in the
+              group rather than a button orphaned on its own line below. */}
           <div className="flex items-center gap-3">
             <LikeButton postId={post.id} initialCount={post.likeCount} />
             <BookmarkButton postId={post.id} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+            <span aria-hidden className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
+            <ReportButton subjectType="POST" subjectId={post.id} />
           </div>
-        </div>
-        <div className="mt-6 flex justify-end">
-          <ReportButton subjectType="POST" subjectId={post.id} />
         </div>
       </footer>
 
@@ -214,7 +193,7 @@ export default async function PublicPostPage({
           shows from landscape-tablet width up (~1100px) without shrinking the 42rem reading column or
           breaking its centering. Below that, the floating button → bottom sheet takes over. */}
       {headings.length >= 1 && (
-        <aside className="fixed left-[calc(50%_+_22.5rem)] top-24 z-20 hidden max-h-[calc(100vh_-_7rem)] w-40 overflow-y-auto min-[1100px]:block xl:w-52">
+        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto min-[1100px]:block xl:w-52">
           <PostToc headings={headings} />
         </aside>
       )}

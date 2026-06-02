@@ -1,5 +1,6 @@
 "use client";
 
+import { DATE_LOCALE } from "@/lib/date";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { CornerDownRight, Trash2 } from "lucide-react";
@@ -12,7 +13,6 @@ import {
 } from "@/modules/blog/api/comments";
 import { Avatar } from "@/modules/blog/components/avatar";
 
-const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 
 export function PostComments({
   postId,

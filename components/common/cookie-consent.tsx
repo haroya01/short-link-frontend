@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import { linksHref } from "@/lib/host";
+import { readStorageString, writeStorageString } from "@/lib/storage-json";
 import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "kurl:cookie-consent:v1";
@@ -17,9 +18,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (window.localStorage.getItem(STORAGE_KEY) === "accepted") return;
-    setShow(true);
+    if (readStorageString(STORAGE_KEY) !== "accepted") setShow(true);
   }, []);
 
   // Suppress on chrome-less surfaces (public profile pages) — visitors who land via someone's
@@ -45,11 +44,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
   if (!show) return null;
 
   function accept() {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, "accepted");
-    } catch {
-      /* ignore quota / privacy mode */
-    }
+    writeStorageString(STORAGE_KEY, "accepted");
     setShow(false);
   }
 

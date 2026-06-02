@@ -1,16 +1,18 @@
 /**
- * Author avatar — the "image if present, else the initial on an accent disc" pattern that every feed
- * surface (feed card, following feed, discovery rail, series card, comments) was reimplementing inline.
- * Sizes match the three the surfaces use; class strings are order-independent utilities so the rendered
- * output is byte-for-byte what each call site emitted before.
+ * Author avatar — the "image if present, else the initial on an accent disc" pattern that every surface
+ * (feed card, following feed, discovery rail, series card, comments, author header, post page) was
+ * reimplementing inline. One definition keeps the disc tint consistent in light AND dark across all of
+ * them — the identity element of the weblog.
  *
- * Sizes: xs = 20px / 10px initial (inline meta rows), sm = 28px / 11px (comment header), md = 36px /
- * 13px (rail + discovery cards).
+ * Sizes: xs 20 (inline meta) · sm 28 (comment header) · md 36 (rail / cards) · lg 44 (post rail) ·
+ * xl 80 (author header).
  */
 const SIZES = {
   xs: { box: "h-5 w-5", text: "text-[10px]" },
   sm: { box: "h-7 w-7", text: "text-[11px]" },
   md: { box: "h-9 w-9", text: "text-[13px]" },
+  lg: { box: "h-11 w-11", text: "text-base" },
+  xl: { box: "h-20 w-20", text: "text-2xl" },
 } as const;
 
 export type AvatarSize = keyof typeof SIZES;
@@ -36,7 +38,7 @@ export function Avatar({
   }
   return (
     <span
-      className={`${box} ${shrinkCls}grid place-items-center rounded-full bg-accent-100 ${text} font-semibold text-accent-700`}
+      className={`${box} ${shrinkCls}grid place-items-center rounded-full bg-accent-100 ${text} font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300`}
     >
       {name.charAt(0).toUpperCase()}
     </span>

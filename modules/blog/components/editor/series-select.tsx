@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { listSeries, type SeriesView } from "@/modules/blog/api/series";
+import { Loader2, Plus, X } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { createSeries, listSeries, type SeriesView } from "@/modules/blog/api/series";
 
 type Props = {
   value: number | null;
@@ -10,10 +12,18 @@ type Props = {
   emptyHint: string;
 };
 
-/** Assigns the post to one of the author's existing series (or none). Creation lives in the workspace. */
+/**
+ * Assigns the post to one of the author's series — or creates a new one inline (no trip to the series
+ * workspace), so a "스토리" can be made freely while writing. Pick from the list, or "+ 새 시리즈" → type a
+ * name → it's created (slug auto-derived) and selected.
+ */
 export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
+  const t = useTranslations("postEditor");
   const [series, setSeries] = useState<SeriesView[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     listSeries()
@@ -22,22 +32,95 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
       .finally(() => setLoaded(true));
   }, []);
 
-  if (loaded && series.length === 0) {
-    return <p className="text-[13px] text-slate-400">{emptyHint}</p>;
+  async function create() {
+    const title = newTitle.trim();
+    if (!title || busy) return;
+    setBusy(true);
+    try {
+      // Auto-derive a slug from the title; non-Latin titles (ko/ja) collapse to empty → random fallback.
+      const base = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      const slug = base.length >= 2 ? base : `series-${Math.random().toString(36).slice(2, 8)}`;
+      const created = await createSeries({ title, slug });
+      setSeries((prev) => [created.series, ...prev]);
+      onChange(created.series.id);
+      setNewTitle("");
+      setCreating(false);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (creating) {
+    return (
+      <div className="flex items-center gap-1.5">
+        <input
+          autoFocus
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+              e.preventDefault();
+              void create();
+            } else if (e.key === "Escape") {
+              setCreating(false);
+              setNewTitle("");
+            }
+          }}
+          maxLength={200}
+          placeholder={t("seriesNewPlaceholder")}
+          className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-accent-500"
+        />
+        <button
+          type="button"
+          onClick={create}
+          disabled={busy || !newTitle.trim()}
+          className="focus-ring inline-flex shrink-0 items-center gap-1 rounded-lg bg-accent-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
+        >
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+          {t("seriesNew")}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setCreating(false);
+            setNewTitle("");
+          }}
+          aria-label={t("close")}
+          className="focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    );
   }
 
   return (
-    <select
-      value={value ?? ""}
-      onChange={(e) => onChange(e.target.value === "" ? null : Number(e.target.value))}
-      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-base outline-none focus:border-accent-400 sm:text-sm"
-    >
-      <option value="">{noneLabel}</option>
-      {series.map((s) => (
-        <option key={s.id} value={s.id}>
-          {s.title}
-        </option>
-      ))}
-    </select>
+    <div>
+      <div className="flex items-center gap-1.5">
+        <select
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value === "" ? null : Number(e.target.value))}
+          className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-900 outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-accent-500 sm:text-sm"
+        >
+          <option value="">{noneLabel}</option>
+          {series.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.title}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => setCreating(true)}
+          className="focus-ring inline-flex shrink-0 items-center gap-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
+        >
+          <Plus className="h-4 w-4" />
+          {t("seriesNew")}
+        </button>
+      </div>
+      {loaded && series.length === 0 && (
+        <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{emptyHint}</p>
+      )}
+    </div>
   );
 }

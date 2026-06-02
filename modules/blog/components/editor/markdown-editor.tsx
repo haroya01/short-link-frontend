@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
+import { BubbleMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -10,22 +11,7 @@ import { TableRow } from "@tiptap/extension-table-row";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { Markdown } from "tiptap-markdown";
-import {
-  Bold,
-  Code2,
-  Heading2,
-  Heading3,
-  Image as ImageIcon,
-  Italic,
-  Link as LinkIcon,
-  List,
-  ListOrdered,
-  type LucideIcon,
-  Plus,
-  Quote,
-  Strikethrough,
-  Table as TableIcon,
-} from "lucide-react";
+import { Bold, Code2, Italic, Link as LinkIcon, Strikethrough } from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
 import {
@@ -139,7 +125,7 @@ export function MarkdownEditor({
 
   return (
     <div className="flex h-full flex-col">
-      <Toolbar editor={editor} onPickImage={pickImage} />
+      <BubbleBar editor={editor} />
       <input
         ref={fileRef}
         type="file"
@@ -170,19 +156,18 @@ export function MarkdownEditor({
   );
 }
 
-function Toolbar({
-  editor,
-  onPickImage,
-}: {
-  editor: Editor;
-  onPickImage: (opts?: ImagePickOptions) => void;
-}) {
+/**
+ * Selection bubble — the only persistent formatting affordance (the §10 "quiet weblog" direction: no
+ * Office-style sticky toolbar). Shows the inline marks on a text selection; block insertion (headings,
+ * lists, quote, code, table, image, place) lives in the slash (`/`) menu and markdown input rules
+ * (`## `, `> `, `- `, ``` ```). So the writing surface stays a clean paper column until you act on text.
+ */
+function BubbleBar({ editor }: { editor: Editor }) {
   const btn = (active: boolean) =>
-    // touch-target adds a 44px-tall invisible hit area (WCAG 2.5.5) without enlarging the 32px icon.
-    `touch-target focus-ring grid h-8 w-8 place-items-center rounded-lg transition-colors ${
+    `touch-target focus-ring grid h-8 w-8 place-items-center rounded-md transition-colors ${
       active
-        ? "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300"
-        : "text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+        ? "bg-accent-50 text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
     }`;
 
   function setLink() {
@@ -196,47 +181,24 @@ function Toolbar({
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   }
 
-  const run = (cmd: () => void) => () => cmd();
-  // Config-driven toolbar — OPEN FOR EXTENSION: add a button by adding one entry (or "|" divider);
-  // the render below never changes. isActive is read each render so highlight state stays live.
-  type Item = "|" | { icon: LucideIcon; label: string; title?: string; active?: boolean; run: () => void };
-  const items: Item[] = [
-    { icon: Plus, label: "Insert block", title: "블록 추가 ( / )", run: run(() => editor.chain().focus().insertContent("/").run()) },
-    "|",
-    { icon: Heading2, label: "H2", active: editor.isActive("heading", { level: 2 }), run: run(() => editor.chain().focus().toggleHeading({ level: 2 }).run()) },
-    { icon: Heading3, label: "H3", active: editor.isActive("heading", { level: 3 }), run: run(() => editor.chain().focus().toggleHeading({ level: 3 }).run()) },
-    "|",
-    { icon: Bold, label: "Bold", active: editor.isActive("bold"), run: run(() => editor.chain().focus().toggleBold().run()) },
-    { icon: Italic, label: "Italic", active: editor.isActive("italic"), run: run(() => editor.chain().focus().toggleItalic().run()) },
-    { icon: Strikethrough, label: "Strike", active: editor.isActive("strike"), run: run(() => editor.chain().focus().toggleStrike().run()) },
+  const items = [
+    { icon: Bold, label: "Bold", active: editor.isActive("bold"), run: () => editor.chain().focus().toggleBold().run() },
+    { icon: Italic, label: "Italic", active: editor.isActive("italic"), run: () => editor.chain().focus().toggleItalic().run() },
+    { icon: Strikethrough, label: "Strike", active: editor.isActive("strike"), run: () => editor.chain().focus().toggleStrike().run() },
+    { icon: Code2, label: "Inline code", active: editor.isActive("code"), run: () => editor.chain().focus().toggleCode().run() },
     { icon: LinkIcon, label: "Link", active: editor.isActive("link"), run: setLink },
-    "|",
-    { icon: List, label: "Bullet list", active: editor.isActive("bulletList"), run: run(() => editor.chain().focus().toggleBulletList().run()) },
-    { icon: ListOrdered, label: "Ordered list", active: editor.isActive("orderedList"), run: run(() => editor.chain().focus().toggleOrderedList().run()) },
-    { icon: Quote, label: "Quote", active: editor.isActive("blockquote"), run: run(() => editor.chain().focus().toggleBlockquote().run()) },
-    { icon: Code2, label: "Code block", active: editor.isActive("codeBlock"), run: run(() => editor.chain().focus().toggleCodeBlock().run()) },
-    { icon: TableIcon, label: "Table", active: editor.isActive("table"), run: run(() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()) },
-    { icon: ImageIcon, label: "Image", run: () => onPickImage() },
   ];
 
   return (
-    <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b border-slate-100 bg-white/90 py-1.5 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
-      {items.map((it, i) =>
-        it === "|" ? (
-          <span key={i} className="mx-1 h-5 w-px bg-slate-200 dark:bg-slate-700" />
-        ) : (
-          <button
-            key={i}
-            type="button"
-            aria-label={it.label}
-            title={it.title}
-            className={btn(!!it.active)}
-            onClick={it.run}
-          >
-            <it.icon className="h-4 w-4" />
-          </button>
-        ),
-      )}
-    </div>
+    <BubbleMenu
+      editor={editor}
+      className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
+    >
+      {items.map((it, i) => (
+        <button key={i} type="button" aria-label={it.label} className={btn(it.active)} onClick={it.run}>
+          <it.icon className="h-4 w-4" />
+        </button>
+      ))}
+    </BubbleMenu>
   );
 }

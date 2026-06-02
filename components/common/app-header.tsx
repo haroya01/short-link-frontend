@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { blogHref, type Product } from "@/lib/host";
 import { Button } from "@/components/ui/button";
 import { AccountMenu } from "@/components/common/account-menu";
+import { HeaderAvatarSlot } from "@/components/common/header-avatar-slot";
 import { useAuthHint } from "@/components/common/auth-hint";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { BlogHeaderSearch } from "@/components/common/blog-header-search";
@@ -116,9 +117,9 @@ export function AppHeader({
           <AppsGrid current={product} />
           {!ready ? (
             initialAuthed ? (
-              // Seeded authed: a static avatar slot (not a pulse) holds the spot until AccountMenu
-              // mounts — no skeleton→avatar flash.
-              <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800" />
+              // Seeded authed: an avatar slot that mirrors AccountMenu (accent circle + cached initial)
+              // holds the spot until it mounts — no grey→green flash on each navigation.
+              <HeaderAvatarSlot />
             ) : (
               loginButton
             )

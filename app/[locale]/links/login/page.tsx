@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
+import { writeStorageString } from "@/lib/storage-json";
 import { Button } from "@/components/ui/button";
 import { GoogleIcon } from "@/components/common/google-icon";
 import { cn } from "@/lib/utils";
@@ -40,7 +41,7 @@ function LoginInner() {
   // OAuth round-trip drops the query string, so stash `next` here for the callback to read.
   useEffect(() => {
     const next = sanitizeNext(searchParams.get("next"));
-    if (next) sessionStorage.setItem(LOGIN_NEXT_KEY, next);
+    if (next) writeStorageString(LOGIN_NEXT_KEY, next, { session: true });
   }, [searchParams]);
 
   return <LoginShell />;

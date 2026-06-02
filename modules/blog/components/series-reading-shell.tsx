@@ -1,5 +1,6 @@
 "use client";
 
+import { DATE_LOCALE } from "@/lib/date";
 import { useMemo, useState, type ReactNode } from "react";
 import { Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -10,7 +11,6 @@ import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
 
-const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 // Cap the tag cloud so a wide-ranging series doesn't fill the rail with chips; the rest expand on tap.
 const TAG_CAP = 12;
 

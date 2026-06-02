@@ -80,7 +80,7 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
         {authenticated && (
           <>
             <div className="flex items-center gap-3 px-3 py-2">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300">
                 {initial}
               </span>
               <span className="min-w-0">

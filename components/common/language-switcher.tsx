@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Globe } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 
 export function LanguageSwitcher() {
@@ -14,14 +15,7 @@ export function LanguageSwitcher() {
   const t = useTranslations("languageSwitcher");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, []);
+  useDismiss(open, ref, () => setOpen(false));
 
   function switchTo(next: string) {
     setOpen(false);

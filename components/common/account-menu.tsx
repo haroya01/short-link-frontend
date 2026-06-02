@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
+import { useDismiss } from "@/hooks/use-dismiss";
+import { cacheMeInitial } from "@/components/common/header-avatar-slot";
 import { linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { ThemeToggle } from "@/components/common/theme-toggle";
@@ -31,21 +33,7 @@ export function AccountMenu() {
   const [langOpen, setLangOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    function onDown(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
-    }
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
+  useDismiss(open, ref, () => setOpen(false));
 
   // Collapse the language picker whenever the whole menu closes, so it reopens compact.
   useEffect(() => {
@@ -63,6 +51,12 @@ export function AccountMenu() {
   const username = me?.username ?? "";
   const initial = (username || me?.email || "?").charAt(0).toUpperCase();
 
+  // Cache the initial so the header's seeded avatar slot can paint it before auth resolves on the next
+  // navigation — no grey→green flash on the top-right avatar between pages.
+  useEffect(() => {
+    if (initial && initial !== "?") cacheMeInitial(initial);
+  }, [initial]);
+
   const itemClass =
     "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none";
 
@@ -74,7 +68,7 @@ export function AccountMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={t("account")}
-        className="focus-ring grid h-8 w-8 place-items-center rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700 transition-colors hover:bg-accent-200"
+        className="focus-ring grid h-8 w-8 place-items-center rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700 transition-colors hover:bg-accent-200 dark:bg-accent-500/20 dark:text-accent-300 dark:hover:bg-accent-500/30"
       >
         {initial}
       </button>
