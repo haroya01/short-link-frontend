@@ -57,7 +57,7 @@
 
 - [x] 계획 문서 (이 문서) — #541
 - [x] PR A — 공유 set 스토어·낙관적 토글·아바타 원시화 (#544). 순감 ~165 LOC. tsc/vitest(58)/eslint/build/visual(9) green.
-- [ ] PR B
+- [x] PR B — host resolver 팩토리 + 블록 다이얼로그 폼 하네스 (#545). 순감 ~54 LOC. tsc/vitest(25)/eslint/build green. _feed-item 렌더 레지스트리는 이미 `BLOCK_ROW_META`로 존재 + 나머지 분기 의도적 bespoke라 추가 변경 없음._
 - [ ] PR C
 
 ## 관찰 메모 (동작/UX — 임의 수정 안 함, 보고만)
