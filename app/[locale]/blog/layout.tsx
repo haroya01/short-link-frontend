@@ -68,13 +68,13 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
     return (
       <AppProviders>
         <SidebarStateProvider>
-          <div className="flex min-h-screen flex-col">
+          <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
             <AppHeader product="blog" />
             <WorkspaceBody>{children}</WorkspaceBody>
             <Footer />
           </div>
         </SidebarStateProvider>
-        <CookieConsent />
+        <CookieConsent darkAware />
         <ClaimToastListener />
       </AppProviders>
     );

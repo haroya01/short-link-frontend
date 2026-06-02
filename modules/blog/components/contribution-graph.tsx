@@ -1,8 +1,8 @@
+import { DATE_LOCALE } from "@/lib/date";
 import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
 import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
 
-const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 const WEEKS = 53;
 const DAY = 86_400_000;
 

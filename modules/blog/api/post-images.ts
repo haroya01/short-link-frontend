@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import { USE_MOCKS } from "@/modules/blog/api/_mocks";
 
 export interface PresignResult {
   uploadUrl: string;
@@ -38,6 +39,9 @@ export async function uploadPostImage(postId: number, file: File): Promise<strin
   if (!file.type.startsWith("image/")) {
     throw new Error("이미지 파일만 업로드 가능합니다.");
   }
+  // Mock: skip presign→PUT→commit (no backend / object store) and hand back a local object URL so the
+  // image drops into the editor markdown immediately. Lives only for this session — fine for a demo.
+  if (USE_MOCKS) return URL.createObjectURL(file);
   const presigned = await presignPostImage(postId, file.type);
   if (file.size > presigned.maxBytes) {
     throw new Error(

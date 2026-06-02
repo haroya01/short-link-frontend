@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
-import { Hash, PenSquare, SearchX } from "lucide-react";
+import { PenSquare } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
 import { blogCta } from "@/modules/blog/components/blog-cta";
@@ -20,6 +20,7 @@ import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedContentTransition } from "@/modules/blog/components/feed-content-transition";
 import { FeedSortTabs } from "@/modules/blog/components/feed-sort-tabs";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { SearchEmpty } from "@/modules/blog/components/search-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
@@ -149,13 +150,6 @@ export default async function BlogFeedPage({
     </a>
   );
 
-  const browseTopicsCta = (
-    <a href={blogHref("/tags")} className={blogCta({ variant: "secondary" })}>
-      <Hash className="h-4 w-4 text-accent-600" />
-      {t("browseTopics")}
-    </a>
-  );
-
   // tab hrefs keep the active search term on recent/trending; following leaves search.
   const sortHref = (s: FeedSort) =>
     searching ? `?q=${encodeURIComponent(query)}&sort=${s}` : `?sort=${s}`;
@@ -235,12 +229,7 @@ export default async function BlogFeedPage({
                 )
               ) : items.length === 0 ? (
                 searching ? (
-                  <FeedEmpty
-                    icon={SearchX}
-                    title={t("searchEmptyTitle")}
-                    body={t("searchEmptyBody")}
-                    action={browseTopicsCta}
-                  />
+                  <SearchEmpty query={query} tags={tags} locale={locale} />
                 ) : (
                   <FeedEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
                 )

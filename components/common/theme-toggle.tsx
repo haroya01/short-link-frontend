@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { writeStorageString } from "@/lib/storage-json";
 
 /**
  * Dark-mode toggle. Flips the `dark` class on <html> and persists the choice to localStorage (read
@@ -22,11 +23,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     const apply = () => {
       setDark(next);
       document.documentElement.classList.toggle("dark", next);
-      try {
-        localStorage.setItem("theme", next ? "dark" : "light");
-      } catch {
-        // private mode / storage disabled — toggle still applies for the session.
-      }
+      writeStorageString("theme", next ? "dark" : "light");
     };
 
     // Sweep the new theme down over the old via the View Transitions API (CSS in globals.css drives

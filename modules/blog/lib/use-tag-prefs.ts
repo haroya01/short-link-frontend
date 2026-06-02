@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
 import {
   followTag,
   getTagPrefs,
@@ -25,27 +26,19 @@ const EVENT = "kurl:tagprefs";
 
 const EMPTY: TagPrefs = { followed: [], hidden: [] };
 
+const isObject = (v: unknown): v is Partial<TagPrefs> => typeof v === "object" && v !== null;
+
 function readLocal(): TagPrefs {
-  if (typeof window === "undefined") return EMPTY;
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) return EMPTY;
-    const p = JSON.parse(raw) as Partial<TagPrefs>;
-    return {
-      followed: Array.isArray(p.followed) ? p.followed : [],
-      hidden: Array.isArray(p.hidden) ? p.hidden : [],
-    };
-  } catch {
-    return EMPTY;
-  }
+  // Permissive guard + normalize: a partial/legacy shape keeps its valid arrays rather than resetting.
+  const p = readStorageJson<Partial<TagPrefs>>(KEY, isObject, EMPTY);
+  return {
+    followed: Array.isArray(p.followed) ? p.followed : [],
+    hidden: Array.isArray(p.hidden) ? p.hidden : [],
+  };
 }
 
 function writeLocal(next: TagPrefs) {
-  try {
-    window.localStorage.setItem(KEY, JSON.stringify(next));
-  } catch {
-    /* ignore quota / privacy mode */
-  }
+  writeStorageJson(KEY, next);
 }
 
 /** Broadcast the new prefs to every mounted hook instance (this tab + other tabs via storage). */

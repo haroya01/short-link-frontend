@@ -579,26 +579,12 @@ h1, h2, h3, p {
   }
 }
 
-/* Author tab content (글/시리즈/소개) slides in on navigation so switching tabs feels like sliding,
-   not a hard cut. The shared header above reconciles in place (same position) — only the content moves. */
-@keyframes author-tab-enter {
-  from {
-    opacity: 0;
-    transform: translateX(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-.author-tab-enter {
-  animation: author-tab-enter 280ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-@media (prefers-reduced-motion: reduce) {
-  .author-tab-enter {
-    animation: none;
-  }
-}
+/*
+ * Author tab content (글/시리즈/소개) reuses the feed's direction-aware content-slide (below) via
+ * AuthorContentTransition, so switching author tabs pages left/right exactly like 최신/인기/팔로잉 —
+ * one motion language across both surfaces. The shared header reconciles in place; the underline glides
+ * (AuthorTabs). No separate author-only keyframe.
+ */
 
 /*
  * Feed content swap — keyed by the active tab/search so the block remounts and replays this on every
@@ -717,8 +703,84 @@ html:not([data-theme-vt])::view-transition-new(root) {
 /* Theme toggle snapshots the whole page as one image, so the named groups must collapse back into the
    root there (a same-named group on both snapshots would otherwise try to morph the header too). */
 html[data-theme-vt] .vt-app-header,
-html[data-theme-vt] .vt-bottom-nav {
+html[data-theme-vt] .vt-bottom-nav,
+html[data-theme-vt] .author-vt-identity,
+html[data-theme-vt] .author-vt-content {
   view-transition-name: none;
+}
+
+/*
+ * Author tab content (글 · 시리즈 · 소개) is its own view-transition group so a tab switch slides this
+ * column horizontally — direction (fwd/back) set on <html> by the author layout's pagereveal script —
+ * exactly like the feed's 최신/인기/팔로잉 content slide, while the rest of the page rides the calm root
+ * crossfade above. First visit / same-tab refresh / unsupported browsers fall back to that crossfade.
+ */
+.author-vt-content {
+  view-transition-name: author-content;
+}
+/* The author identity block (avatar + handle + bio + follow) is identical across 글/시리즈/소개, so it
+   gets its own group to hold still on a tab switch instead of crossfading with the root — no blink on
+   the follow button between tabs. */
+.author-vt-identity {
+  view-transition-name: author-identity;
+}
+@keyframes vt-content-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes vt-content-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes vt-content-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+@keyframes vt-content-out-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+html[data-author-nav="fwd"]::view-transition-old(author-content) {
+  animation: vt-content-out-left 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+html[data-author-nav="fwd"]::view-transition-new(author-content) {
+  animation: vt-content-in-right 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+html[data-author-nav="back"]::view-transition-old(author-content) {
+  animation: vt-content-out-right 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+html[data-author-nav="back"]::view-transition-new(author-content) {
+  animation: vt-content-in-left 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-author-nav]::view-transition-old(author-content),
+  html[data-author-nav]::view-transition-new(author-content) {
+    animation: none;
+  }
 }
 
 /*

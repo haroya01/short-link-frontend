@@ -50,11 +50,11 @@ export function TagInput({ tags, onChange, placeholder, max = 10 }: Props) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-2 focus-within:border-accent-400">
+    <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-2 focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
       {tags.map((tag) => (
         <span
           key={tag}
-          className="inline-flex items-center gap-1 rounded-full bg-accent-50 px-2.5 py-1 text-[13px] font-medium text-accent-700"
+          className="inline-flex items-center gap-1 rounded-full bg-accent-50 px-2.5 py-1 text-[13px] font-medium text-accent-700 dark:bg-accent-500/15 dark:text-accent-300"
         >
           {tag}
           <button
@@ -81,7 +81,7 @@ export function TagInput({ tags, onChange, placeholder, max = 10 }: Props) {
         autoCorrect="off"
         data-1p-ignore
         data-lpignore="true"
-        className="min-w-[8rem] flex-1 bg-transparent py-1 text-base outline-none placeholder:text-slate-400 sm:text-sm"
+        className="min-w-[8rem] flex-1 bg-transparent py-1 text-base text-slate-900 outline-none placeholder:text-slate-400 dark:text-slate-100 sm:text-sm"
       />
     </div>
   );

@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
-import { ArrowDown, ArrowUp, Bookmark, ExternalLink, Heart, Pin, Plus, X } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { ArrowDown, ArrowUp, Bookmark, Heart, Pin, Plus, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { setPinnedPosts } from "@/modules/blog/api/curation";
-import { listBookmarks, removeBookmark, type BookmarkItem } from "@/modules/blog/api/bookmarks";
-import { listLikedPosts, type LikedPost } from "@/modules/blog/api/likes";
+import { SmartShelf } from "@/modules/blog/components/saved/smart-shelf";
+import { LikedList } from "@/modules/blog/components/saved/liked-list";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 /**
@@ -19,22 +19,15 @@ import { SkeletonRows } from "@/modules/blog/components/skeleton";
  */
 export default function ContentCurationPage() {
   const t = useTranslations("blogWorkspace");
-  const { ready, authenticated } = useAuth();
+  const locale = useLocale();
+  const { ready, authenticated, me } = useAuth();
   const [posts, setPosts] = useState<PostView[]>([]);
   const [pinnedIds, setPins] = useState<number[]>([]);
-  const [bookmarks, setBookmarks] = useState<BookmarkItem[]>([]);
-  const [liked, setLiked] = useState<LikedPost[]>([]);
   const [addId, setAddId] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!ready || !authenticated) return;
-    listBookmarks()
-      .then(setBookmarks)
-      .catch(() => setBookmarks([]));
-    listLikedPosts()
-      .then(setLiked)
-      .catch(() => setLiked([]));
     listMyPosts()
       .then((all) => {
         setPosts(all);
@@ -77,10 +70,6 @@ export default function ContentCurationPage() {
     const next = [...pinnedIds];
     [next[i], next[j]] = [next[j], next[i]];
     commitPins(next);
-  }
-  function dropBookmark(id: number) {
-    setBookmarks((prev) => prev.filter((b) => b.id !== id)); // optimistic
-    void removeBookmark(id).catch(() => {});
   }
 
   if (!ready) return null;
@@ -197,36 +186,10 @@ export default function ContentCurationPage() {
         </div>
         <p className="mt-1 text-[12px] text-slate-400 dark:text-slate-500">{t("curationReadingListHint")}</p>
 
-        {bookmarks.length > 0 ? (
-          <ul className="mt-4 divide-y divide-slate-100 dark:divide-slate-800">
-            {bookmarks.map((b) => (
-              <li key={b.id} className="flex items-center gap-3 py-2.5">
-                <span className="min-w-0 flex-1">
-                  <a
-                    href={`/p/${b.username}/${b.slug}`}
-                    className="focus-ring group flex items-center gap-1.5 truncate text-[15px] font-medium text-slate-900 hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-300"
-                  >
-                    <span className="truncate">{b.title}</span>
-                    <ExternalLink className="h-3.5 w-3.5 shrink-0 text-slate-300 group-hover:text-accent-600 dark:text-slate-500 dark:group-hover:text-accent-400" />
-                  </a>
-                  <span className="block truncate text-[12px] text-slate-400 dark:text-slate-500">@{b.username}</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => dropBookmark(b.id)}
-                  aria-label={t("curationRemoveBookmark")}
-                  className="focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-500 dark:hover:bg-red-950/40"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-4 rounded-2xl border border-dashed border-slate-200 px-4 py-8 text-center text-[13px] text-slate-400">
-            {t("curationReadingListEmpty")}
-          </p>
-        )}
+        {/* Unified with the profile's 보관함 — smart shelf (manual folders + auto tag groups). */}
+        <div className="mt-5">
+          <SmartShelf username={me?.username ?? ""} locale={locale} />
+        </div>
       </section>
 
       {/* 좋아요한 글 — posts the user liked (read-only list; the like toggle lives on each post). */}
@@ -237,26 +200,9 @@ export default function ContentCurationPage() {
         </div>
         <p className="mt-1 text-[12px] text-slate-400 dark:text-slate-500">{t("curationLikedHint")}</p>
 
-        {liked.length > 0 ? (
-          <ul className="mt-4 divide-y divide-slate-100 dark:divide-slate-800">
-            {liked.map((p) => (
-              <li key={p.id} className="py-2.5">
-                <a
-                  href={`/p/${p.username}/${p.slug}`}
-                  className="focus-ring group flex items-center gap-1.5 truncate text-[15px] font-medium text-slate-900 hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-300"
-                >
-                  <span className="truncate">{p.title}</span>
-                  <ExternalLink className="h-3.5 w-3.5 shrink-0 text-slate-300 group-hover:text-accent-600 dark:text-slate-500 dark:group-hover:text-accent-400" />
-                </a>
-                <span className="block truncate text-[12px] text-slate-400 dark:text-slate-500">@{p.username}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-4 rounded-2xl border border-dashed border-slate-200 px-4 py-8 text-center text-[13px] text-slate-400">
-            {t("curationLikedEmpty")}
-          </p>
-        )}
+        <div className="mt-5">
+          <LikedList username={me?.username ?? ""} locale={locale} />
+        </div>
       </section>
     </main>
   );

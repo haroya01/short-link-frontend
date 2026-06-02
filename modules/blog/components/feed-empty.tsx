@@ -20,7 +20,7 @@ export function FeedEmpty({
 }) {
   return (
     <div className="flex flex-col items-center px-6 py-24 text-center">
-      <span className="grid h-16 w-16 place-items-center rounded-2xl bg-accent-50 text-accent-600">
+      <span className="grid h-16 w-16 place-items-center rounded-2xl bg-accent-50 text-accent-600 dark:bg-accent-500/15 dark:text-accent-400">
         <Icon className="h-7 w-7" />
       </span>
       <h2 className="mt-6 text-[19px] font-semibold tracking-tight text-slate-900 dark:text-slate-100">{title}</h2>

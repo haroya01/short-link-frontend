@@ -2,23 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Eye, Trash2 } from "lucide-react";
-import type { PostStatus, PostView } from "@/modules/blog/api/posts";
-
-const TONE: Record<PostStatus, string> = {
-  DRAFT: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
-  SCHEDULED: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300",
-  PUBLISHED: "bg-accent-100 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300",
-  UNPUBLISHED: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
-};
-
-export function StatusBadge({ status }: { status: PostStatus }) {
-  const t = useTranslations("postEditor");
-  return (
-    <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-medium ${TONE[status]}`}>
-      {t(`status${status}`)}
-    </span>
-  );
-}
+import type { PostView } from "@/modules/blog/api/posts";
+import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 
 export function PostRow({ post, onDelete }: { post: PostView; onDelete?: (post: PostView) => void }) {
   const t = useTranslations("blogWorkspace");
@@ -30,7 +15,7 @@ export function PostRow({ post, onDelete }: { post: PostView; onDelete?: (post: 
         href={`/write/${post.id}`}
         className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3 py-3"
       >
-        <StatusBadge status={post.status} />
+        <PostStatusBadge status={post.status} />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[15px] font-medium text-slate-900 group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400">
             {post.title || post.slug}

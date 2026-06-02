@@ -3,9 +3,11 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { linksHref } from "@/lib/host";
 import type { PublicAuthor } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { Avatar } from "@/modules/blog/components/avatar";
 import { FollowButton } from "@/modules/blog/components/follow-button";
+import { AuthorTabs } from "./author-tabs";
 
-type Tab = "posts" | "series" | "about";
+type Tab = "posts" | "series" | "about" | "liked" | "bookmarks";
 
 /**
  * Shared header for the author's blog pages (velog @user style): avatar + handle + bio, then a
@@ -17,29 +19,24 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
   const locale = await getLocale();
   // Full author-base paths (not bare "/series") so the tabs work on the path-based deployment
   // (kurl.me/{locale}/p/{user}) as well as the author subdomain.
-  const tabs: { key: Tab; href: string; label: string }[] = [
+  // `private` tabs (좋아요 / 북마크) render only on the viewer's OWN profile — AuthorTabs decides that
+  // client-side (auth isn't available in this server component). They sit after the public tabs so the
+  // tab-direction index scheme (posts 0 · series 1 · about 2 · liked 3 · bookmarks 4) stays consistent.
+  const tabs: { key: Tab; href: string; label: string; private?: boolean }[] = [
     { key: "posts", href: authorHref(author.username, locale), label: t("tabPosts") },
     { key: "series", href: authorHref(author.username, locale, "series"), label: t("tabSeries") },
     { key: "about", href: authorHref(author.username, locale, "about"), label: t("tabAbout") },
+    { key: "liked", href: authorHref(author.username, locale, "liked"), label: t("tabLiked"), private: true },
+    { key: "bookmarks", href: authorHref(author.username, locale, "bookmarks"), label: t("tabBookmarks"), private: true },
   ];
 
   return (
     <header>
-      <div className="flex items-start gap-5">
-        {author.avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={author.avatarUrl}
-            alt={`@${author.username}`}
-            width={80}
-            height={80}
-            className="h-20 w-20 shrink-0 rounded-full object-cover"
-          />
-        ) : (
-          <span className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-accent-100 text-2xl font-bold text-accent-700">
-            {author.username.charAt(0).toUpperCase()}
-          </span>
-        )}
+      {/* The identity block is identical across 글/시리즈/소개, so name it as its own view-transition
+          group — it holds perfectly still on a tab switch (like the app header) instead of being swept
+          into the root crossfade, so the avatar + follow button never blink between tabs. */}
+      <div className="author-vt-identity flex items-start gap-5">
+        <Avatar src={author.avatarUrl} name={author.username} size="xl" />
         <div className="min-w-0 flex-1 pt-1">
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             @{author.username}
@@ -64,22 +61,7 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
         </div>
       </div>
 
-      <nav className="mt-8 flex gap-1 border-b border-slate-200 text-[15px] font-medium dark:border-slate-800">
-        {tabs.map((tab) => (
-          <a
-            key={tab.key}
-            href={tab.href}
-            aria-current={active === tab.key ? "page" : undefined}
-            className={`-mb-px border-b-2 px-4 py-2.5 transition-colors ${
-              active === tab.key
-                ? "border-accent-600 text-slate-900 dark:text-slate-100"
-                : "border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-            }`}
-          >
-            {tab.label}
-          </a>
-        ))}
-      </nav>
+      <AuthorTabs tabs={tabs} activeKey={active} username={author.username} />
     </header>
   );
 }

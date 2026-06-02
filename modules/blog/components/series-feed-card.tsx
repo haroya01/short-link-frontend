@@ -1,3 +1,4 @@
+import { DATE_LOCALE } from "@/lib/date";
 import { getTranslations } from "next-intl/server";
 import { Mark } from "@/components/common/logo";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
@@ -6,7 +7,6 @@ import { authorHref } from "@/modules/blog/components/feed-card";
 import { SeriesEpisodeList } from "@/modules/blog/components/series-episode-list";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
 
-const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 
 /**
  * A series in the feed flow — kept in the same quiet, typographic family as the post cards (no boxed

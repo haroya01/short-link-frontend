@@ -7,6 +7,7 @@ import { AuthorHeader } from "./_components/author-header";
 import { FeedCard, FeedList, authorHref } from "@/modules/blog/components/feed-card";
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
+import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
 import { subdomainOrigin } from "@/modules/blog/lib/subdomain-origin";
 
@@ -72,7 +73,7 @@ export default async function PublicProfileHomepage({
       {/* Centered post list + author rail (series · tags · archive) in the right gutter — the
           blog-native structure that lives here, where it's author-scoped and meaningful. */}
       <ReadingShell
-        className="mt-8 author-tab-enter"
+        className="mt-8"
         rail={
           posts.length > 0 ? (
             <AuthorRail
@@ -85,6 +86,7 @@ export default async function PublicProfileHomepage({
           ) : undefined
         }
       >
+        <AuthorContentTransition>
         {activeTag && (
           // Active tag filter banner — names the scope (this author's posts under #tag) and offers a
           // clear, never sending the reader off to the global topic feed.
@@ -105,12 +107,15 @@ export default async function PublicProfileHomepage({
         ) : visiblePosts.length === 0 ? (
           <p className="text-slate-500 dark:text-slate-400">{t("tagFilterEmpty", { tag: activeTag ?? "" })}</p>
         ) : (
-          // Same list card + wrapper as the feed; single-author surface so the author is hidden.
+          // Same list card + wrapper as the feed; single-author surface so the author is hidden. The
+          // first row gets flushTop (like the feed / following feed) so it sits tight under the tabs
+          // instead of floating below an empty band. With a tag filter the banner leads, so don't flush.
           <FeedList>
-            {visiblePosts.map((p) => (
+            {visiblePosts.map((p, i) => (
               <FeedCard
                 key={p.slug}
                 hideAuthor
+                flushTop={i === 0 && !activeTag}
                 item={{ ...p, author, viewCount: 0 }}
                 locale={locale}
               />
@@ -118,9 +123,10 @@ export default async function PublicProfileHomepage({
           </FeedList>
         )}
 
-        <footer className="mt-16 flex justify-end border-t border-slate-100 pt-8">
+        <footer className="mt-16 flex justify-end border-t border-slate-100 pt-8 dark:border-slate-800">
           <ReportButton subjectType="USER" subjectId={author.id} />
         </footer>
+        </AuthorContentTransition>
       </ReadingShell>
     </main>
   );

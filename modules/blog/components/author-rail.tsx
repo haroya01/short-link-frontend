@@ -1,3 +1,4 @@
+import { DATE_LOCALE } from "@/lib/date";
 import { Rss } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { PublicPostListItem, PublicSeriesListItem } from "@/modules/blog/api/public-posts";
@@ -5,7 +6,6 @@ import { authorHref } from "@/modules/blog/components/feed-card";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 
-const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 const MAX_TAGS = 12;
 const MAX_ARCHIVE = 8;
 
