@@ -299,7 +299,7 @@ async function LinkPreviewCard({ url }: { url: string }) {
   const rich = data && (data.title || data.image);
 
   const shell =
-    "my-8 flex overflow-hidden rounded-2xl border border-slate-200 no-underline transition-colors hover:border-accent-300 dark:border-slate-800 dark:hover:border-accent-500/50";
+    "my-8 flex overflow-hidden rounded-2xl border border-slate-200 !no-underline transition-colors hover:border-accent-300 dark:border-slate-800 dark:hover:border-accent-500/50 [&_*]:!no-underline";
 
   if (!rich) {
     return (

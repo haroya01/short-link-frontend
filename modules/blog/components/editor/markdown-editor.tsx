@@ -14,6 +14,7 @@ import { TableCell } from "@tiptap/extension-table-cell";
 import { Markdown } from "tiptap-markdown";
 import { Bold, Code2, Italic, Link as LinkIcon, Minus, Plus, Strikethrough, Trash2 } from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
+import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
 import { UrlDialog } from "@/modules/blog/components/editor/url-dialog";
@@ -81,6 +82,7 @@ export function MarkdownEditor({
         link: { openOnClick: false, enableClickSelection: true },
       }),
       CodeMirrorBlock,
+      LinkCardNode,
       Image.configure({ inline: false }),
       Table.configure({ resizable: false }),
       TableRow,
@@ -106,6 +108,18 @@ export function MarkdownEditor({
               void uploadAndInsert(editor, file);
               return true;
             }
+          }
+        }
+        // A bare URL pasted onto an empty line → a live link-preview card (velog/Notion). Pasting a
+        // URL over text or into a non-empty line stays a normal link (default behaviour).
+        const text = event.clipboardData?.getData("text/plain")?.trim();
+        if (text && LINK_CARD_URL_RE.test(text)) {
+          const { $from, empty } = editor.state.selection;
+          const para = $from.parent;
+          if (empty && para.type.name === "paragraph" && para.content.size === 0) {
+            event.preventDefault();
+            editor.chain().focus().insertContent({ type: "linkCard", attrs: { url: text } }).run();
+            return true;
           }
         }
         return false;
@@ -178,7 +192,8 @@ export function MarkdownEditor({
         onClose={() => setUrlDialog(null)}
         onSubmit={(url) => {
           if (urlDialog?.mode === "embed") {
-            editor.chain().focus().insertContent(`\n${url}\n`).run();
+            // Insert a live link-preview card node (serializes back to the bare URL → EMBED block).
+            editor.chain().focus().insertContent({ type: "linkCard", attrs: { url } }).run();
           } else {
             editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
           }
