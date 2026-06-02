@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { FileText, PenSquare } from "lucide-react";
+import { BarChart3, FileText, PenSquare } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
@@ -66,6 +66,8 @@ export default function WriteIndexPage() {
     return <main className="mx-auto max-w-2xl px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
   }
 
+  // Per-post analytics lives at the sibling /analytics/{id} route — derive its base from writeBase.
+  const analyticsBase = writeBase.replace(/\/write$/, "/analytics");
   const count = (s: "all" | PostStatus) =>
     s === "all" ? posts.length : posts.filter((p) => p.status === s).length;
   // Tabs: 전체 + only the statuses that actually have posts, so the bar stays as quiet as the content.
@@ -115,10 +117,10 @@ export default function WriteIndexPage() {
           {visible.map((p) => {
             const titled = p.title.trim();
             return (
-              <li key={p.id}>
+              <li key={p.id} className="group/row relative">
                 <a
                   href={`${writeBase}/${p.id}`}
-                  className="focus-ring group -mx-3 flex gap-3.5 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                  className="focus-ring group -mx-3 flex gap-3.5 rounded-xl px-3 py-3 pr-12 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
                 >
                   {p.ogImageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -161,6 +163,16 @@ export default function WriteIndexPage() {
                       <span className="ml-auto truncate font-mono text-slate-300 dark:text-slate-500">{p.slug}</span>
                     </div>
                   </div>
+                </a>
+                {/* Per-post analytics — sibling of the editor link (never nested), revealed on row
+                    hover/focus. Pinned right so it reads as a quiet action, not part of the title. */}
+                <a
+                  href={`${analyticsBase}/${p.id}`}
+                  aria-label={t("viewAnalytics")}
+                  title={t("viewAnalytics")}
+                  className="focus-ring absolute right-1 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-lg text-slate-400 opacity-0 transition-all hover:bg-white hover:text-accent-700 focus-visible:opacity-100 group-hover/row:opacity-100 dark:text-slate-500 dark:hover:bg-slate-900 dark:hover:text-accent-300 [@media(hover:none)]:opacity-100"
+                >
+                  <BarChart3 className="h-[18px] w-[18px]" />
                 </a>
               </li>
             );
