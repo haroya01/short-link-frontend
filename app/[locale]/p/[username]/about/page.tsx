@@ -8,7 +8,6 @@ import { authorHref } from "@/modules/blog/components/feed-card";
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { ContributionGraph } from "@/modules/blog/components/contribution-graph";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
-import { AuthorHeader } from "../_components/author-header";
 
 export const revalidate = 30;
 
@@ -35,15 +34,11 @@ export default async function PublicAuthorAboutPage({
   const t = await getTranslations({ locale, namespace: "publicPost" });
 
   return (
-    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
-      <div className="mx-auto max-w-2xl">
-        <AuthorHeader author={author} active="about" />
-      </div>
-
-      {/* Same centered column + author rail as the posts tab, so the author surface reads as one piece. */}
-      <ReadingShell
-        className="mt-8 author-tab-enter"
-        rail={
+    // Header + outer <main> come from the author layout's shell; this page renders only its content.
+    // Same centered column + author rail as the posts tab, so the author surface reads as one piece.
+    <ReadingShell
+      className="mt-8"
+      rail={
           posts.length > 0 ? (
             <AuthorRail username={author.username} locale={locale} posts={posts} series={series} />
           ) : undefined
@@ -87,7 +82,6 @@ export default async function PublicAuthorAboutPage({
             </a>
           )}
         </div>
-      </ReadingShell>
-    </main>
+    </ReadingShell>
   );
 }
