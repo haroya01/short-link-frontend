@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/modules/profile/curation/form-field";
+import { useBlockDialogForm } from "@/modules/profile/curation/use-block-dialog-form";
 
 type Config = {
   title: string;
@@ -42,28 +42,24 @@ type Props = {
  * KST workshop should still read "9 AM KST" even when a visitor in PST loads the page later).
  */
 export function EventBlockDialog({ open, initialJson, onOpenChange, onSubmit, t }: Props) {
-  const [config, setConfig] = useState<Config>(EMPTY);
-
-  useEffect(() => {
-    if (!open) return;
-    if (initialJson) {
+  const [config, setConfig] = useBlockDialogForm<Config>(open, initialJson, (raw) => {
+    if (raw) {
       try {
-        const parsed = JSON.parse(initialJson);
-        setConfig({
+        const parsed = JSON.parse(raw);
+        return {
           title: parsed.title ?? "",
           startsAt: isoToLocalInput(parsed.startsAt) ?? "",
           endsAt: isoToLocalInput(parsed.endsAt) ?? "",
           location: parsed.location ?? "",
           description: parsed.description ?? "",
           url: parsed.url ?? "",
-        });
-        return;
+        };
       } catch {
         /* fall through to defaults */
       }
     }
-    setConfig(EMPTY);
-  }, [open, initialJson]);
+    return EMPTY;
+  });
 
   const title = config.title.trim();
   const startsAt = config.startsAt.trim();

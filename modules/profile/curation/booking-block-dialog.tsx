@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Calendar, CheckCircle2, AlertCircle } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/modules/profile/curation/form-field";
 import { BOOKING_PROVIDERS, resolveBookingProvider } from "@/modules/profile/curation/booking-providers";
+import { useBlockDialogForm } from "@/modules/profile/curation/use-block-dialog-form";
 
 type Config = {
   url: string;
@@ -31,26 +32,22 @@ type Props = {
  * ✗ unsupported" inline, but the backend remains authoritative on validation.
  */
 export function BookingBlockDialog({ open, initialJson, onOpenChange, onSubmit, t }: Props) {
-  const [config, setConfig] = useState<Config>(EMPTY);
-
-  useEffect(() => {
-    if (!open) return;
-    if (initialJson) {
+  const [config, setConfig] = useBlockDialogForm<Config>(open, initialJson, (raw) => {
+    if (raw) {
       try {
-        const parsed = JSON.parse(initialJson);
-        setConfig({
+        const parsed = JSON.parse(raw);
+        return {
           url: parsed.url ?? "",
           title: parsed.title ?? "",
           description: parsed.description ?? "",
           ctaLabel: parsed.ctaLabel ?? "",
-        });
-        return;
+        };
       } catch {
         /* fall through */
       }
     }
-    setConfig(EMPTY);
-  }, [open, initialJson]);
+    return EMPTY;
+  });
 
   const trimmedUrl = config.url.trim();
   const provider = useMemo(() => resolveBookingProvider(trimmedUrl), [trimmedUrl]);
