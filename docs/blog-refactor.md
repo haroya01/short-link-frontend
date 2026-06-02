@@ -58,7 +58,26 @@
 - [x] 계획 문서 (이 문서) — #541
 - [x] PR A — 공유 set 스토어·낙관적 토글·아바타 원시화 (#544). 순감 ~165 LOC. tsc/vitest(58)/eslint/build/visual(9) green.
 - [x] PR B — host resolver 팩토리 + 블록 다이얼로그 폼 하네스 (#545). 순감 ~54 LOC. tsc/vitest(25)/eslint/build green. _feed-item 렌더 레지스트리는 이미 `BLOCK_ROW_META`로 존재 + 나머지 분기 의도적 bespoke라 추가 변경 없음._
-- [ ] PR C
+- [x] PR C — useMyPosts 훅 + subdomainOrigin 헬퍼 (#546). 순감 ~64 LOC. tsc/vitest(360 전체)/eslint/build green. _useAuthGuard·full 메타데이터 빌더·API 경계 재라우팅은 평가 후 descope(렌더 비균일/lateral 가치)._
+
+**계획한 리팩토링 전부 완료.** 4개 PR(#541 계획, #544/#545/#546 구현) 모두 머지 대기 — 머지는 허락 후 진행.
+
+## 결과 요약
+
+| PR | 무엇 | 신규 primitive | 순감 LOC | 테스트 |
+|---|---|---|---|---|
+| #544 | 공유 set 스토어 · 낙관적 토글 · 아바타 | `createSharedSetStore`, `useOptimisticToggle`, `<Avatar>` | ~165 | shared-set-store(9) + visual `blog-avatars` |
+| #545 | host resolver 팩토리 · 다이얼로그 폼 하네스 | `createHostResolver`, `useBlockDialogForm` | ~54 | host-resolver(5) + 기존 provider(16) |
+| #546 | 작성목록 데이터 훅 · origin 헬퍼 | `useMyPosts`, `subdomainOrigin` | ~64 | subdomain-origin(4) |
+
+- 전 구간 **렌더 결과·동작 불변** 원칙 유지: 마크업/클래스 그대로, 로직만 컴포넌트 밖으로 추출 → vitest 단위테스트로 덮음.
+- 검증: 매 PR `tsc --noEmit` · `eslint` · `next build` 통과. 전체 vitest 360 green. visual 스냅샷 9 green(아바타 신규 픽스처 포함).
+
+## 남은 후속(이번 범위 밖 — 별도 작업)
+
+- **거대 컴포넌트 분해**: `section.tsx`(561)·`profile-feed-editor.tsx`(937)·`comments.tsx`·`series-reading-shell.tsx`. 시각 회귀 위험이 커 이번엔 제외. PR A~C의 훅/primitive가 발판.
+- **app/ 라우트 내 아바타 중복**: `p/[username]/[slug]/page.tsx`의 좌측 레일·헤더 아바타(h-11/text-base, h-10/text-sm)는 서버 컴포넌트라 PR A의 `<Avatar>`(modules/blog, xs/sm/md) 범위 밖. `<Avatar>`에 lg 크기 추가하면 흡수 가능.
+- **북마크 이원화 통합**(아래 관찰 1): 상세 `BookmarkButton`도 공유 스토어를 쓰게.
 
 ## 관찰 메모 (동작/UX — 임의 수정 안 함, 보고만)
 
