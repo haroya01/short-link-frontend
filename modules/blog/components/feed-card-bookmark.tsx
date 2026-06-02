@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Bookmark } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useBookmarks } from "@/modules/blog/lib/use-bookmarks";
@@ -26,6 +27,8 @@ export function FeedCardBookmark({
   const t = useTranslations("publicFeed");
   const { isSaved, toggle } = useBookmarks();
   const saved = isSaved(username, slug);
+  // Pop only on click (not when the store hydrates the saved state) — same gate as the follow/구독 button.
+  const [interacted, setInteracted] = useState(false);
 
   return (
     <button
@@ -33,6 +36,7 @@ export function FeedCardBookmark({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
+        setInteracted(true);
         void toggle(postId, username, slug);
       }}
       aria-pressed={saved}
@@ -46,7 +50,10 @@ export function FeedCardBookmark({
           : "opacity-0 focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
       }`}
     >
-      <Bookmark className={`h-[18px] w-[18px] ${saved ? "fill-accent-600 dark:fill-accent-400" : ""}`} />
+      {/* Keyed by state so it remounts + replays the pop on each toggle (only after a click). */}
+      <span key={saved ? "on" : "off"} className={`inline-flex ${interacted ? "subscribe-pop" : ""}`}>
+        <Bookmark className={`h-[18px] w-[18px] ${saved ? "fill-accent-600 dark:fill-accent-400" : ""}`} />
+      </span>
     </button>
   );
 }
