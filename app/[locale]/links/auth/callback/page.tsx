@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { setToken } from "@/lib/api";
 import { Link, useRouter } from "@/i18n/navigation";
+import { readStorageString, removeStorageItem, writeStorageString } from "@/lib/storage-json";
 import { Button } from "@/components/ui/button";
 
 const LOGIN_NEXT_KEY = "kurl:login-next";
@@ -34,15 +35,15 @@ export default function AuthCallbackPage() {
     setToken(token);
     // Drop a flag the dashboard reads on first render and clears, so the welcome toast appears
     // *after* navigation completes — putting it here would flash and disappear with the redirect.
-    sessionStorage.setItem("kurl:just-signed-in", "1");
+    writeStorageString("kurl:just-signed-in", "1", { session: true });
     window.history.replaceState(null, "", "/auth/callback");
 
     // Return to the page login started from (blog, profile, …). Honor any safe internal path —
     // must start with a single "/" (no "//" or scheme) so it can't open-redirect off-origin.
     // signInWithGoogle stashes the full path incl. locale, so navigate with the browser (not the
     // locale-aware router, which would double-prefix). Falls back to /dashboard.
-    const next = sessionStorage.getItem(LOGIN_NEXT_KEY);
-    sessionStorage.removeItem(LOGIN_NEXT_KEY);
+    const next = readStorageString(LOGIN_NEXT_KEY, { session: true });
+    removeStorageItem(LOGIN_NEXT_KEY, { session: true });
     if (next && /^\/(?!\/)/.test(next) && !next.includes("\\")) {
       window.location.replace(next);
     } else {

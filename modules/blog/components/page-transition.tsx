@@ -12,7 +12,7 @@ import { motion, useReducedMotion } from "framer-motion";
  * - `settle` (default, blog workspace/feed): a quiet fade + 6px settle + a hair of scale — the page
  *   composes in place. These surfaces have no per-component entrance, so this IS the entrance.
  * - `fade` (public profile/post, link-in-bio, links product): opacity-only. Those surfaces already
- *   run their own CSS content entrance (profile-fade / author-tab-enter / hero-stagger); a plain
+ *   run their own CSS content entrance (profile-fade / hero-stagger); a plain
  *   crossfade on route change rides on top WITHOUT adding a second "rise from the bottom".
  */
 export function PageTransition({

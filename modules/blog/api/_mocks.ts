@@ -85,6 +85,9 @@ function toItem(s: Seed, i: number): PublicFeedItem {
 
 const ALL_ITEMS = SEEDS.map(toItem);
 
+/** Exposed for the saved/liked (보관함) mocks, which reuse these as the viewer's liked/bookmarked posts. */
+export const MOCK_ALL_ITEMS = ALL_ITEMS;
+
 /** A single page of the feed. `hasNext` stays false so the one mock page renders cleanly (no
  *  load-more round-trip to a backend that isn't there). */
 export function mockFeedView({
@@ -213,8 +216,27 @@ export function mockPostDetail(_username: string, slug: string): PublicPostDetai
 }
 
 const MOCK_SERIES: PublicSeriesListItem[] = [
-  { id: 901, slug: "nextjs-deep-dive", title: "Next.js 깊게 파기", postCount: 3 },
-  { id: 902, slug: "side-project-log", title: "사이드 프로젝트 로그", postCount: 4 },
+  {
+    id: 901,
+    slug: "nextjs-deep-dive",
+    title: "Next.js 깊게 파기",
+    postCount: 3,
+    tags: ["Next.js", "React", "프론트엔드"],
+  },
+  {
+    id: 902,
+    slug: "side-project-log",
+    title: "사이드 프로젝트 로그",
+    postCount: 4,
+    tags: ["사이드프로젝트", "회고"],
+  },
+  {
+    id: 903,
+    slug: "spring-in-depth",
+    title: "Spring 인 뎁스",
+    postCount: 5,
+    tags: ["Spring", "백엔드", "Next.js"],
+  },
 ];
 
 export function mockSeriesList(username: string): PublicSeriesList {

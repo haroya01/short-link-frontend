@@ -1,3 +1,4 @@
+import { DATE_LOCALE } from "@/lib/date";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -5,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { findPublicSeries } from "@/modules/blog/api/public-posts";
 import { Mark } from "@/components/common/logo";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { Avatar } from "@/modules/blog/components/avatar";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { SeriesReadingShell } from "@/modules/blog/components/series-reading-shell";
@@ -14,7 +16,6 @@ import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscrib
 // just-published series. findPublicSeries fetches no-store to match.
 export const dynamic = "force-dynamic";
 
-const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 
 export async function generateMetadata({
   params,
@@ -59,18 +60,7 @@ export default async function PublicSeriesPage({
     <div className="flex flex-col gap-4">
       <RailHeading>{tf("seriesByAuthor")}</RailHeading>
       <a href={profileHref} className="focus-ring group flex items-center gap-3 rounded-lg">
-        {author.avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={author.avatarUrl}
-            alt=""
-            className="h-11 w-11 shrink-0 rounded-full object-cover"
-          />
-        ) : (
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent-100 text-base font-bold text-accent-700">
-            {author.username.charAt(0).toUpperCase()}
-          </span>
-        )}
+        <Avatar src={author.avatarUrl} name={author.username} size="lg" />
         <span className="min-w-0 text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
           @{author.username}
         </span>
@@ -112,14 +102,7 @@ export default async function PublicSeriesPage({
               href={profileHref}
               className="focus-ring group flex items-center gap-2 rounded transition-colors hover:text-accent-700 dark:hover:text-accent-400"
             >
-              {author.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={author.avatarUrl} alt="" className="h-5 w-5 shrink-0 rounded-full object-cover" />
-              ) : (
-                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent-100 text-[10px] font-semibold text-accent-700">
-                  {author.username.charAt(0).toUpperCase()}
-                </span>
-              )}
+              <Avatar src={author.avatarUrl} name={author.username} size="xs" />
               <span className="font-medium text-slate-700 group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
                 {author.username}
               </span>

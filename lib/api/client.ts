@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/nextjs";
 
 import type { ProblemDetail } from "@/types";
+import { readStorageString, removeStorageItem, writeStorageString } from "@/lib/storage-json";
 
 const ACCESS_TOKEN_KEY = "short-link:access-token";
 
@@ -33,8 +34,7 @@ let refreshInFlight: Promise<string | null> | null = null;
 
 export function readToken(): string | null {
   if (memoryToken) return memoryToken;
-  if (typeof window === "undefined") return null;
-  const stored = window.localStorage.getItem(ACCESS_TOKEN_KEY);
+  const stored = readStorageString(ACCESS_TOKEN_KEY);
   if (stored) memoryToken = stored;
   return memoryToken;
 }
@@ -46,8 +46,8 @@ export function setToken(token: string | null) {
   if (memoryToken === token) return;
   memoryToken = token;
   if (typeof window === "undefined") return;
-  if (token) window.localStorage.setItem(ACCESS_TOKEN_KEY, token);
-  else window.localStorage.removeItem(ACCESS_TOKEN_KEY);
+  if (token) writeStorageString(ACCESS_TOKEN_KEY, token);
+  else removeStorageItem(ACCESS_TOKEN_KEY);
   window.dispatchEvent(new CustomEvent("auth:change"));
 }
 
@@ -220,11 +220,13 @@ import type { Me } from "@/types";
 
 /** A demo viewer for mock mode — username is NOT one of the mock authors, so the follow button
  *  shows on every author page (never "your own profile"). */
+// The demo viewer is the author "dohyun" (matches the mock author fixture), so visiting /p/dohyun is
+// "your own profile" — private 좋아요/북마크 tabs show, the self-follow button hides, etc.
 const MOCK_ME: Me = {
-  id: 9001,
-  email: "reader@kurl.me",
+  id: 1,
+  email: "dohyun@kurl.me",
   role: "USER",
-  username: "reader",
+  username: "dohyun",
   tier: "FREE",
   createdAt: "2026-01-01T00:00:00Z",
 };

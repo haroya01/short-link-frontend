@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
 import { uploadPostImage } from "@/modules/blog/api/post-images";
 import { MarkdownEditor } from "@/modules/blog/components/editor/markdown-editor";
 import { EditorHeader } from "@/modules/blog/components/editor/editor-header";
-import { EditorMeta } from "@/modules/blog/components/editor/editor-meta";
+import { PublishDialog } from "@/modules/blog/components/editor/publish-dialog";
 import { usePostEditor } from "@/modules/blog/components/editor/use-post-editor";
 import { Skeleton } from "@/modules/blog/components/skeleton";
 
@@ -15,6 +16,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const { ready, authenticated } = useAuth();
   const { toast } = useToast();
   const ed = usePostEditor(Number(params.id), { ready, authenticated });
+  const [publishOpen, setPublishOpen] = useState(false);
 
   if (!ready) return null;
   if (!authenticated) {
@@ -66,13 +68,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         backHref={ed.writeBase}
         postId={post.id}
         status={post.status}
-        scheduledAt={post.scheduledAt}
         saving={ed.saving}
         saved={ed.saved}
         busy={ed.busy}
         onSave={ed.save}
-        onChangeStatus={ed.changeStatus}
-        onSchedule={ed.schedule}
+        onOpenPublish={() => setPublishOpen(true)}
         onRestoreRevision={ed.restoreRevision}
         onDelete={ed.remove}
       />
@@ -93,17 +93,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         placeholder={t("titlePlaceholder")}
       />
 
-      <EditorMeta
-        status={post.status}
-        slug={ed.slug}
-        onSlugChange={ed.setSlug}
-        tags={ed.tags}
-        onTagsChange={ed.setTags}
-        seriesId={ed.seriesId}
-        onSeriesChange={ed.setSeriesId}
-      />
-
-      <div className="-mx-5 mt-2 min-h-0 flex-1 overflow-hidden">
+      {/* Clean writing surface: title flows straight into the body — no form strip. All publish
+          metadata (cover · 요약 · 시리즈 · 태그 · slug) lives in the 발행 설정 dialog. */}
+      <div className="-mx-5 mt-4 min-h-0 flex-1 overflow-hidden">
         <MarkdownEditor
           initialValue={ed.markdown}
           onChange={ed.setMarkdown}
@@ -113,6 +105,29 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
       </div>
 
       {ed.error && <p className="mt-2 text-sm text-red-600">{ed.error}</p>}
+
+      <PublishDialog
+        open={publishOpen}
+        onClose={() => setPublishOpen(false)}
+        status={post.status}
+        scheduledAt={post.scheduledAt}
+        cover={ed.coverUrl}
+        onCoverChange={ed.setCover}
+        onUploadCover={(file) => uploadPostImage(post.id, file)}
+        excerpt={ed.excerpt}
+        onExcerptChange={ed.setExcerpt}
+        slug={ed.slug}
+        onSlugChange={ed.setSlug}
+        tags={ed.tags}
+        onTagsChange={ed.setTags}
+        seriesId={ed.seriesId}
+        onSeriesChange={ed.setSeriesId}
+        saving={ed.saving}
+        busy={ed.busy}
+        onSave={ed.save}
+        onChangeStatus={ed.changeStatus}
+        onSchedule={ed.schedule}
+      />
     </main>
   );
 }

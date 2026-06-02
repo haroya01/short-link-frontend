@@ -21,6 +21,7 @@ import {
   newSessionToken,
   type PlaceSuggestion,
 } from "@/modules/profile/lib/google-places";
+import { useDismiss } from "@/hooks/use-dismiss";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -316,14 +317,9 @@ function PlaceAutocompleteInput({
     };
   }, [query, sessionToken, initialValue]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onDoc = (e: MouseEvent) => {
-      if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
-  }, [open]);
+  // Outside-click only (no Escape) — this autocomplete lives inside a ConfirmDialog that owns Escape;
+  // matches the pre-refactor behaviour exactly.
+  useDismiss(open, containerRef, () => setOpen(false), { escape: false });
 
   async function handleSelect(suggestion: PlaceSuggestion) {
     setOpen(false);

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { PenSquare } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
+import { writeStorageString } from "@/lib/storage-json";
 import { Button } from "@/components/ui/button";
 import { GoogleIcon } from "@/components/common/google-icon";
 
@@ -45,7 +46,7 @@ function BlogLoginShell({ next }: { next: string | null }) {
   const onSignIn = () => {
     // signInWithGoogle 은 /login 경로에서는 현재 경로를 stash 하지 않으므로, 돌아갈 목적지를
     // 여기서 직접 넣어 OAuth 왕복 뒤 callback 이 honor 하게 한다.
-    if (next) sessionStorage.setItem(LOGIN_NEXT_KEY, next);
+    if (next) writeStorageString(LOGIN_NEXT_KEY, next, { session: true });
     signInWithGoogle();
   };
 
