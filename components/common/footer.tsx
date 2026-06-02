@@ -20,23 +20,23 @@ export function Footer() {
   if (pathname.startsWith("/u/")) return null;
 
   return (
-    <footer className="border-t border-slate-200 py-6">
-      <div className="container flex flex-col items-center justify-between gap-2 text-xs text-slate-500 sm:flex-row">
+    <footer className="border-t border-slate-200 py-6 dark:border-slate-800">
+      <div className="container flex flex-col items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 sm:flex-row">
         <span>{t("copyright", { year: new Date().getFullYear() })}</span>
         <nav className="flex items-center gap-3">
-          <a href={marketingHref("/about")} className="hover:text-slate-900">
+          <a href={marketingHref("/about")} className="hover:text-slate-900 dark:hover:text-slate-100">
             {t("about")}
           </a>
           <span aria-hidden>·</span>
-          <a href={marketingHref("/pricing")} className="hover:text-slate-900">
+          <a href={marketingHref("/pricing")} className="hover:text-slate-900 dark:hover:text-slate-100">
             {t("pricing")}
           </a>
           <span aria-hidden>·</span>
-          <a href={marketingHref("/terms")} className="hover:text-slate-900">
+          <a href={marketingHref("/terms")} className="hover:text-slate-900 dark:hover:text-slate-100">
             {t("terms")}
           </a>
           <span aria-hidden>·</span>
-          <a href={marketingHref("/privacy")} className="hover:text-slate-900">
+          <a href={marketingHref("/privacy")} className="hover:text-slate-900 dark:hover:text-slate-100">
             {t("privacy")}
           </a>
           <span aria-hidden>·</span>
@@ -44,7 +44,7 @@ export function Footer() {
             href="https://github.com/haroya01/short-link"
             target="_blank"
             rel="noreferrer"
-            className="hover:text-slate-900"
+            className="hover:text-slate-900 dark:hover:text-slate-100"
           >
             {t("github")}
           </a>

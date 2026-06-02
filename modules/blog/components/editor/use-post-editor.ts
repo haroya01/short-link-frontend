@@ -42,11 +42,15 @@ export function usePostEditor(
   const [markdown, setMarkdownRaw] = useState("");
   const [tags, setTagsRaw] = useState<string[]>([]);
   const [seriesId, setSeriesIdRaw] = useState<number | null>(null);
+  const [coverUrl, setCoverRaw] = useState<string | null>(null);
+  const [excerpt, setExcerptRaw] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  // Unsaved-edits flag, distinct from `saved` (which is also false right after load) — drives autosave.
+  const [dirty, setDirty] = useState(false);
   // The /write list path with the current prefix preserved (locale + /blog-preview on the apex).
   const [writeBase, setWriteBase] = useState("/write");
 
@@ -55,26 +59,38 @@ export function usePostEditor(
     if (i >= 0) setWriteBase(window.location.pathname.slice(0, i + "/write".length));
   }, []);
 
-  // Dirty-marking setters — the view just sets values; "saved" resets here.
+  // Dirty-marking setters — the view just sets values; this resets "saved" and arms autosave.
+  const touchDirty = () => {
+    setSaved(false);
+    setDirty(true);
+  };
   const setTitle = (v: string) => {
     setTitleRaw(v);
-    setSaved(false);
+    touchDirty();
   };
   const setSlug = (v: string) => {
     setSlugRaw(normalizeSlugInput(v));
-    setSaved(false);
+    touchDirty();
   };
   const setMarkdown = (v: string) => {
     setMarkdownRaw(v);
-    setSaved(false);
+    touchDirty();
   };
   const setTags = (v: string[]) => {
     setTagsRaw(v);
-    setSaved(false);
+    touchDirty();
   };
   const setSeriesId = (v: number | null) => {
     setSeriesIdRaw(v);
-    setSaved(false);
+    touchDirty();
+  };
+  const setCover = (v: string | null) => {
+    setCoverRaw(v);
+    touchDirty();
+  };
+  const setExcerpt = (v: string) => {
+    setExcerptRaw(v);
+    touchDirty();
   };
 
   const load = useCallback(async () => {
@@ -89,6 +105,9 @@ export function usePostEditor(
       setMarkdownRaw(blocksToMarkdown(blocks));
       setTagsRaw(p.tags ?? []);
       setSeriesIdRaw(p.seriesId ?? null);
+      setCoverRaw(p.ogImageUrl ?? null);
+      setExcerptRaw(p.excerpt ?? "");
+      setDirty(false); // freshly loaded content isn't a pending edit
     } catch (e) {
       setError(e instanceof Error ? e.message : "load failed");
     } finally {
@@ -101,6 +120,17 @@ export function usePostEditor(
     void load();
   }, [ready, authenticated, load]);
 
+  // Draft autosave — persist edits after a short idle so nothing is lost. Drafts only: a published post
+  // saves only on an explicit action, so the live post never changes out from under readers mid-edit.
+  // Each edit re-arms the debounce; `dirty` clears on save → effect no-ops until the next edit.
+  useEffect(() => {
+    if (!post || post.status !== "DRAFT" || !dirty || saving || busy) return;
+    const id = window.setTimeout(() => void save(), 1800);
+    return () => window.clearTimeout(id);
+    // save is intentionally omitted — content deps re-arm the timer with the latest closure.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dirty, title, markdown, slug, tags, seriesId, coverUrl, excerpt, post, saving, busy]);
+
   async function save() {
     if (post == null || saving) return;
     setSaving(true);
@@ -110,12 +140,15 @@ export function usePostEditor(
       const updated = await updatePostMetadata(post.id, {
         title: title.trim(),
         tags,
+        excerpt: excerpt.trim(),
+        ogImageUrl: coverUrl ?? "",
         // Trim edge hyphens the live input tolerates so the slug matches the backend regex.
         ...(post.status === "DRAFT" ? { slug: slugForSave(slug) } : {}),
       });
       await replaceBlocks(post.id, markdownToBlocks(markdown));
       await assignPostToSeries(post.id, seriesId, post.seriesId ?? null);
       setPost({ ...updated, seriesId });
+      setDirty(false);
       setSaved(true);
       window.setTimeout(() => setSaved(false), 2000);
     } catch (e) {
@@ -211,6 +244,10 @@ export function usePostEditor(
     setTags,
     seriesId,
     setSeriesId,
+    coverUrl,
+    setCover,
+    excerpt,
+    setExcerpt,
     loading,
     saving,
     busy,

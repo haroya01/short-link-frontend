@@ -18,6 +18,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { MyLinksFilters } from "@/lib/api";
 import { cn, formatNumber } from "@/lib/utils";
+import { readStorageString, removeStorageItem } from "@/lib/storage-json";
 import type { MyLink } from "@/types";
 import {
   useInvalidateLinks,
@@ -92,9 +93,8 @@ export default function DashboardPage() {
   // toast only fires on the post-OAuth landing — page reloads or in-app navigation stay silent.
   useEffect(() => {
     if (!ready || !authenticated) return;
-    if (typeof window === "undefined") return;
-    if (sessionStorage.getItem("kurl:just-signed-in") !== "1") return;
-    sessionStorage.removeItem("kurl:just-signed-in");
+    if (readStorageString("kurl:just-signed-in", { session: true }) !== "1") return;
+    removeStorageItem("kurl:just-signed-in", { session: true });
     const email = me?.email;
     toast(email ? tAuth("signedInWith", { email }) : tAuth("signedIn"), "success");
   }, [ready, authenticated, me, toast, tAuth]);

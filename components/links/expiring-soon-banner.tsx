@@ -5,6 +5,7 @@ import { AlertTriangle, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { MyLinksFilters } from "@/lib/api";
 import { useMyLinks } from "@/lib/api/links.queries";
+import { readStorageString, writeStorageString } from "@/lib/storage-json";
 
 type Props = {
   /** Click handler — typically sets the parent filter to expiry=EXPIRING_SOON. */
@@ -23,19 +24,15 @@ export function ExpiringSoonBanner({ onShowAll }: Props) {
   useEffect(() => {
     // Hide for 24h once dismissed so we don't nag the user every navigation. New expirations
     // breaking through within the day are still worth surfacing — but not at every reload.
-    if (typeof window !== "undefined") {
-      const until = window.localStorage.getItem(DISMISS_KEY);
-      if (until && Number(until) > Date.now()) setDismissed(true);
-    }
+    const until = readStorageString(DISMISS_KEY);
+    if (until && Number(until) > Date.now()) setDismissed(true);
   }, []);
 
   if (dismissed || items.length === 0) return null;
 
   function dismiss() {
     setDismissed(true);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(DISMISS_KEY, String(Date.now() + 24 * 60 * 60 * 1000));
-    }
+    writeStorageString(DISMISS_KEY, String(Date.now() + 24 * 60 * 60 * 1000));
   }
 
   return (

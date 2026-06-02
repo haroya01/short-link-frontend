@@ -150,19 +150,19 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
               <Loader2 className="h-4 w-4 animate-spin" />
             </div>
           ) : results.length > 0 ? (
-            <ul className="max-h-[60vh] divide-y divide-slate-100 overflow-y-auto">
+            <ul className="max-h-[60vh] divide-y divide-slate-100 overflow-y-auto dark:divide-slate-800">
               {results.map((item) => (
                 <li key={`${item.author.username}/${item.slug}`}>
                   <a
                     href={postHref(item.author.username, item.slug, locale)}
-                    className="block px-3 py-2.5 transition-colors hover:bg-slate-50"
+                    className="block px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
                   >
                     {item.tags[0] && (
-                      <span className="text-[10px] font-semibold uppercase tracking-wide text-accent-700">
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-accent-700 dark:text-accent-400">
                         {item.tags[0]}
                       </span>
                     )}
-                    <span className="line-clamp-1 text-[13px] font-semibold text-slate-900">
+                    <span className="line-clamp-1 text-[13px] font-semibold text-slate-900 dark:text-slate-100">
                       {item.title}
                     </span>
                     <span className="block truncate text-[11px] text-slate-500">
@@ -177,7 +177,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
           )}
           <button
             type="submit"
-            className="flex w-full items-center justify-center gap-1.5 border-t border-slate-100 px-3 py-2.5 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50"
+            className="flex w-full items-center justify-center gap-1.5 border-t border-slate-100 px-3 py-2.5 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:border-slate-800 dark:text-accent-400 dark:hover:bg-accent-500/10"
           >
             {t("searchResultsFor", { q: value.trim() })}
             <ArrowRight className="h-3.5 w-3.5" />

@@ -93,6 +93,10 @@ export interface PublicSeriesListItem {
   slug: string;
   title: string;
   postCount: number;
+  /** Distinct tags across the series' member posts — backs the series index's tag filter. Optional:
+   *  absent until the backend aggregates it, so the filter rail simply hides rather than mis-filtering
+   *  (treated as "no tags" everywhere it's read). */
+  tags?: string[];
 }
 
 export interface PublicSeriesList {

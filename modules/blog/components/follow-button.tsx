@@ -1,15 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { UserPlus, UserCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
 import { followUser, getFollowStatus, unfollowUser } from "@/modules/blog/api/follows";
 
+// useLayoutEffect on the client (seed before paint → no flash), useEffect on the server (no warning).
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+// Per-session cache of follow state, keyed by author. The author tabs hard-navigate (subdomain model),
+// so the button remounts on every 글/시리즈/소개 switch and would otherwise reset to "팔로우" + fade the
+// count back in each time — the flicker. We seed from the last known value before paint, then refresh.
+type FollowSnap = { following: boolean; count: number };
+const cacheKey = (u: string) => `kurl:follow:${u}`;
+const isSnap = (v: unknown): v is FollowSnap | null =>
+  v === null ||
+  (typeof v === "object" &&
+    v !== null &&
+    typeof (v as FollowSnap).following === "boolean" &&
+    typeof (v as FollowSnap).count === "number");
+function readFollowCache(u: string): FollowSnap | null {
+  return readStorageJson<FollowSnap | null>(cacheKey(u), isSnap, null, { session: true });
+}
+function writeFollowCache(u: string, snap: FollowSnap) {
+  writeStorageJson(cacheKey(u), snap, { session: true });
+}
+
 /**
- * Follow / unfollow an author + their follower count. The count is public; the following state
- * loads for signed-in viewers. Anonymous click starts the login flow. Hidden on your own profile.
- * Optimistic with rollback on error.
+ * Follow / unfollow an author + their follower count. The count is public; the following state loads
+ * for signed-in viewers. Anonymous click starts the login flow. Hidden on your own profile. Optimistic
+ * with rollback on error.
+ *
+ * Shares the exact button recipe with the series 구독 button (SeriesSubscribeButton): a fixed height +
+ * a border in *both* states (transparent when filled) so 팔로우 ↔ 팔로잉 never changes the box size, only
+ * the label width; `transition-colors` crossfades the fill/outline swap; and a keyed span replays the
+ * `subscribe-pop` on each toggle. So follow and subscribe read as one control family.
  */
 export function FollowButton({
   username,
@@ -21,8 +48,7 @@ export function FollowButton({
   initialFollowerCount: number;
   /** Show the "N followers" count beside the button. Off in tight spots (e.g. the post header). */
   showCount?: boolean;
-  /** Small pill matching the series 구독 button (h-7 · pop on toggle) — for the series rail, where it
-   *  sits beside the subscribe button and should read as the same control family. */
+  /** Smaller pill (h-7) for tight spots like the series rail; the default (h-9) is the profile action. */
   compact?: boolean;
 }) {
   const t = useTranslations("publicPost");
@@ -30,13 +56,22 @@ export function FollowButton({
   const [count, setCount] = useState(initialFollowerCount);
   const [following, setFollowing] = useState(false);
   const [busy, setBusy] = useState(false);
-  // Pop only on click (not on mount) — same gate as the subscribe button's keyed-span replay.
+  // Pop only on click (not on mount) — so navigating between tabs doesn't replay it.
   const [interacted, setInteracted] = useState(false);
-  // The real follower count + following state arrive from a fetch; until then the count is a
-  // placeholder (often 0). Gate the count's visibility on this so it never flashes "0 → 128".
+  // Gates the count's visibility so it never flashes "0 → 128"; seeded true from cache on a revisit.
   const [loaded, setLoaded] = useState(false);
 
   const isSelf = ready && me?.username === username;
+
+  // Seed from the session cache before paint → no flash on tab navigation.
+  useIsoLayoutEffect(() => {
+    const cached = readFollowCache(username);
+    if (cached) {
+      setFollowing(cached.following);
+      setCount(cached.count);
+      setLoaded(true);
+    }
+  }, [username]);
 
   useEffect(() => {
     if (!ready) return;
@@ -44,6 +79,7 @@ export function FollowButton({
       .then((s) => {
         setCount(s.followerCount);
         setFollowing(s.following);
+        writeFollowCache(username, { following: s.following, count: s.followerCount });
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
@@ -63,6 +99,7 @@ export function FollowButton({
       const s = next ? await followUser(username) : await unfollowUser(username);
       setFollowing(s.following);
       setCount(s.followerCount);
+      writeFollowCache(username, { following: s.following, count: s.followerCount });
     } catch {
       setFollowing(!next);
       setCount((c) => c + (next ? -1 : 1));
@@ -71,14 +108,11 @@ export function FollowButton({
     }
   }
 
-  const onColor = following
-    ? "border border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600"
-    : "bg-accent-600 text-white hover:bg-accent-700";
-  const btnCls = compact
-    ? `touch-target inline-flex h-7 shrink-0 items-center gap-1 rounded-full border px-3 text-[12px] font-semibold transition-colors duration-200 focus-ring ${
-        following ? onColor : `border-transparent ${onColor}`
-      }`
-    : `touch-target inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[13px] font-medium transition-colors focus-ring ${onColor}`;
+  const stateCls = following
+    ? "border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600"
+    : "border-transparent bg-accent-600 text-white hover:bg-accent-700";
+  const sizeCls = compact ? "h-7 px-3 text-[12px]" : "h-9 px-4 text-[14px]";
+  const gapCls = compact ? "gap-1" : "gap-1.5";
   const iconCls = compact ? "h-3.5 w-3.5" : "h-4 w-4";
   const icon = following ? <UserCheck className={iconCls} /> : <UserPlus className={iconCls} />;
   const label = following ? t("following") : t("follow");
@@ -93,23 +127,16 @@ export function FollowButton({
             void toggle();
           }}
           aria-pressed={following}
-          className={btnCls}
+          className={`touch-target inline-flex shrink-0 items-center rounded-full border font-semibold transition-colors duration-200 focus-ring ${sizeCls} ${stateCls}`}
         >
-          {compact ? (
-            // Keyed by state so it remounts + replays the pop on each 팔로우 ↔ 팔로잉 toggle.
-            <span
-              key={following ? "on" : "off"}
-              className={`${interacted ? "subscribe-pop" : ""} inline-flex items-center gap-1`}
-            >
-              {icon}
-              {label}
-            </span>
-          ) : (
-            <>
-              {icon}
-              {label}
-            </>
-          )}
+          {/* Keyed by state so it remounts + replays the pop on each 팔로우 ↔ 팔로잉 toggle. */}
+          <span
+            key={following ? "on" : "off"}
+            className={`${interacted ? "subscribe-pop" : ""} inline-flex items-center ${gapCls}`}
+          >
+            {icon}
+            {label}
+          </span>
         </button>
       )}
       {showCount && (

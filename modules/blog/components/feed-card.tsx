@@ -1,3 +1,4 @@
+import { DATE_LOCALE } from "@/lib/date";
 import type { ReactNode } from "react";
 import { Heart } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
@@ -5,7 +6,6 @@ import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 
-const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
 const KURL_HOST = process.env.NEXT_PUBLIC_KURL_HOST;
 
 /** prod → author subdomain; dev/preview → /p path on the same app. */
@@ -24,20 +24,6 @@ export function authorHref(username: string, locale: string, subpath = ""): stri
   const base = KURL_HOST ? `https://${username}.${KURL_HOST}` : `/${locale}/p/${username}`;
   if (!subpath) return KURL_HOST ? `${base}/` : base;
   return `${base}/${subpath.replace(/^\//, "")}`;
-}
-
-/**
- * Same target as {@link authorHref} but as a *same-origin relative path* — for soft navigation
- * (next/link) between an author's tab pages so the persistent header/tab-bar stays mounted (the
- * underline glides instead of remounting). On the subdomain it's root-relative (`/`, `/series`);
- * on the path deployment it's `/{locale}/p/{username}/…`. Matches what `usePathname()` reports, so
- * exact-comparing the two reliably identifies the active tab on both host models.
- */
-export function authorPath(username: string, locale: string, subpath = ""): string {
-  const base = KURL_HOST ? "" : `/${locale}/p/${username}`;
-  const clean = subpath.replace(/^\//, "");
-  if (!clean) return base || "/";
-  return `${base}/${clean}`;
 }
 
 function formatDate(iso: string, locale: string): string {

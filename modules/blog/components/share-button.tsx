@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Check, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useDismiss } from "@/hooks/use-dismiss";
 import {
   buildAuthorShareUrl,
   buildSharePlatformIntent,
@@ -28,15 +29,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function onClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, [open]);
+  useDismiss(open, ref, () => setOpen(false));
 
   async function handlePlatform(platform: SharePlatform) {
     const shareUrl = buildAuthorShareUrl(postUrl, postSlug, platform);
