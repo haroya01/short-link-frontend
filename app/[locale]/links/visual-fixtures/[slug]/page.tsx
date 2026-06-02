@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ContactCardEntry } from "@/app/[locale]/u/[username]/_components/contact-card-entry";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
+import { Avatar } from "@/modules/blog/components/avatar";
 import type { ContactCardConfig } from "@/types";
 
 /**
@@ -42,6 +43,7 @@ const FIXTURES: Record<string, () => React.ReactNode> = {
   "contact-card-midnight": () => (
     <ContactCardFixture config={{ ...SAMPLE_CONTACT_CARD, palette: "midnight" }} />
   ),
+  "blog-avatars": () => <AvatarFixture />,
 };
 
 export const dynamic = "force-static";
@@ -72,6 +74,33 @@ export default function VisualFixturePage({
         {renderer()}
       </div>
     </main>
+  );
+}
+
+/**
+ * Locks the shared {@link Avatar} (the "image, else initial on an accent disc" pattern consolidated
+ * out of the feed surfaces) across its three sizes and both branches. The image branch uses an inline
+ * data-URI so the snapshot needs no network — a solid teal square stretched by object-cover, which
+ * also confirms the rounding/clip is applied.
+ */
+const SOLID_IMG =
+  "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='2'%20height='2'%3E%3Crect%20width='2'%20height='2'%20fill='%23059669'/%3E%3C/svg%3E";
+
+function AvatarFixture() {
+  return (
+    <div className="flex flex-col gap-5">
+      <div className="flex items-center gap-3">
+        <Avatar src={null} name="dohyeon" size="xs" />
+        <Avatar src={null} name="dohyeon" size="sm" />
+        <Avatar src={null} name="dohyeon" size="md" />
+        <Avatar src={null} name="dohyeon" size="sm" shrink={false} />
+      </div>
+      <div className="flex items-center gap-3">
+        <Avatar src={SOLID_IMG} name="dohyeon" size="xs" />
+        <Avatar src={SOLID_IMG} name="dohyeon" size="sm" />
+        <Avatar src={SOLID_IMG} name="dohyeon" size="md" />
+      </div>
+    </div>
   );
 }
 

@@ -54,6 +54,7 @@ const FIXTURES = [
   "contact-card-rose-gold",
   "contact-card-emerald",
   "contact-card-midnight",
+  "blog-avatars",
 ] as const;
 
 test.describe("visual: component fixtures", () => {

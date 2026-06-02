@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
 import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
+import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref, FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
@@ -29,15 +30,7 @@ function feedAuthors(items: PublicFeedItem[], limit = 8): PublicAuthor[] {
 }
 
 function AuthorAvatar({ author }: { author: PublicAuthor }) {
-  if (author.avatarUrl) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={author.avatarUrl} alt="" className="h-9 w-9 shrink-0 rounded-full object-cover" />;
-  }
-  return (
-    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700">
-      {author.username.charAt(0).toUpperCase()}
-    </span>
-  );
+  return <Avatar src={author.avatarUrl} name={author.username} size="md" />;
 }
 
 /** One author row in a rail — avatar + name, optional subtitle. Used by the suggested-authors list. */

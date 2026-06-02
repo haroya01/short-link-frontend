@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Bookmark } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/lib/auth";
 import { addBookmark, getBookmarkStatus, removeBookmark } from "@/modules/blog/api/bookmarks";
+import { useOptimisticToggle } from "@/modules/blog/lib/use-optimistic-toggle";
 
 /**
  * Save-to-reading-list toggle on the public post page. Account-backed: the bookmark is stored per
@@ -14,35 +13,12 @@ import { addBookmark, getBookmarkStatus, removeBookmark } from "@/modules/blog/a
  */
 export function BookmarkButton({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
-  const { authenticated, ready, signInWithGoogle } = useAuth();
-  const [saved, setSaved] = useState(false);
-  const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    if (!ready || !authenticated) return;
-    getBookmarkStatus(postId)
-      .then((s) => setSaved(s.bookmarked))
-      .catch(() => {});
-  }, [ready, authenticated, postId]);
-
-  async function toggle() {
-    if (!authenticated) {
-      signInWithGoogle();
-      return;
-    }
-    if (busy) return;
-    setBusy(true);
-    const next = !saved;
-    setSaved(next);
-    try {
-      const s = next ? await addBookmark(postId) : await removeBookmark(postId);
-      setSaved(s.bookmarked);
-    } catch {
-      setSaved(!next);
-    } finally {
-      setBusy(false);
-    }
-  }
+  const { on: saved, toggle } = useOptimisticToggle({
+    depKey: postId,
+    load: () => getBookmarkStatus(postId).then((s) => ({ on: s.bookmarked })),
+    mutate: (next) =>
+      (next ? addBookmark(postId) : removeBookmark(postId)).then((s) => ({ on: s.bookmarked })),
+  });
 
   return (
     <button

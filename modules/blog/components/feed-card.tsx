@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Heart } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
+import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
@@ -35,17 +36,7 @@ function formatDate(iso: string, locale: string): string {
 }
 
 function Avatar({ author }: { author: PublicFeedItem["author"] }) {
-  if (author.avatarUrl) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={author.avatarUrl} alt="" className="h-5 w-5 shrink-0 rounded-full object-cover" />
-    );
-  }
-  return (
-    <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent-100 text-[10px] font-semibold text-accent-700">
-      {author.username.charAt(0).toUpperCase()}
-    </span>
-  );
+  return <AuthorAvatar src={author.avatarUrl} name={author.username} size="xs" />;
 }
 
 /**
