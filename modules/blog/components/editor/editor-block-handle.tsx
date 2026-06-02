@@ -38,14 +38,26 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
   // Insert an empty paragraph right after the hovered block and drop the caret into it, then type "/"
   // so the slash menu opens — same as clicking Notion's "+".
   function addBelow() {
-    if (!target) return;
-    const end = target.pos + target.node.nodeSize;
-    editor
-      .chain()
-      .insertContentAt(end, { type: "paragraph" })
-      .focus(end + 1)
-      .insertContent("/")
-      .run();
+    const { state } = editor;
+    const docEnd = state.doc.content.size;
+    let end: number;
+    if (target) {
+      // Re-resolve the node at the stored pos (the hovered target can be stale if the doc changed
+      // since hover — that's what made the "/" land in the wrong block). Clamp to the doc end.
+      const pos = Math.min(target.pos, docEnd);
+      const node = state.doc.nodeAt(pos);
+      end = Math.min(pos + (node?.nodeSize ?? target.node.nodeSize), docEnd);
+    } else {
+      // The drag-handle hasn't reported a hovered node to React yet (its onNodeChange can lag a click
+      // on a freshly-revealed gutter). The "+" must never silently no-op, so fall back to inserting
+      // after the block that currently holds the caret.
+      const $from = state.selection.$from;
+      end = Math.min($from.after(Math.max(1, $from.depth)), docEnd);
+    }
+    // Insert an empty paragraph below and drop the caret into it. No auto-"/" — that was the fragile
+    // bit (a computed insert position landing the slash in the next block); the empty-line placeholder
+    // already hints "/", and typing "/" there opens the menu reliably at the caret.
+    editor.chain().insertContentAt(end, { type: "paragraph" }).focus(end + 1).run();
   }
 
   function openMenu() {

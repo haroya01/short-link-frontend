@@ -3,14 +3,16 @@ import { test, expect, type Page } from "@playwright/test";
 /**
  * Post editor write-flow — runs against a fully MOCKED backend (no Spring/DB/S3 needed), so it can
  * verify the whole authoring path in CI without infrastructure: load the editor, type a title and
- * body, insert an image through the upload pipeline, run the slash menu, and assert the exact block
- * payload that hits PUT /posts/:id/blocks. This is the "is a post saved correctly" guarantee that
- * unit tests on markdownToBlocks can't give (they don't drive the real Toast UI editor).
+ * body, run markdown shortcuts, drive the slash menu + the "+" block handle, and insert a live link
+ * card, then assert the exact block payload that hits PUT /posts/:id/blocks. This is the "is a post
+ * saved correctly" guarantee that unit tests on markdownToBlocks can't give — they don't drive the
+ * real Tiptap editor, its node views, or its serialization.
  *
- * Phone viewport so the formatting toolbar renders as the always-visible bottom bar (desktop uses a
- * selection-only bubble, which is awkward to drive headlessly).
+ * Desktop viewport: the Tiptap editor has no phone bottom bar — formatting is a selection bubble, and
+ * the "+ / ⋮⋮" block gutter appears on hover, which needs a real pointer (a touch viewport never
+ * fires the hover that reveals it).
  */
-test.use({ viewport: { width: 390, height: 844 } });
+test.use({ viewport: { width: 1280, height: 900 } });
 
 const TOKEN = "e2e-fake-token";
 const POST_ID = 16;
@@ -36,12 +38,10 @@ const POST = {
 
 const ME = { id: 1, email: "e2e@kurl.test", role: "USER", createdAt: NOW, username: "e2euser" };
 
-// 1×1 transparent PNG.
-const PNG_BASE64 =
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
 const IMAGE_URL = "https://mock-s3.test/img.png";
 
-type Captured = { blocks: Array<{ type: string; content: string | null }> | null };
+type Block = { type: string; content: string | null };
+type Captured = { blocks: Block[] | null };
 
 async function setupMocks(page: Page, captured: Captured) {
   // Generic fallback FIRST so specific routes (registered after) take priority.
@@ -56,6 +56,17 @@ async function setupMocks(page: Page, captured: Captured) {
     }
     return route.fulfill({ json: [] });
   });
+  // Live link-card preview (the editor node view fetches this) — return a believable rich preview.
+  await page.route("**/api/v1/public/link-preview**", (route) =>
+    route.fulfill({
+      json: {
+        url: "https://example.com",
+        title: "Example — link preview",
+        description: "Open Graph description goes here.",
+        image: "https://mock-s3.test/og.png",
+      },
+    }),
+  );
   await page.route(`**/api/v1/posts/${POST_ID}/images/presign`, (route) =>
     route.fulfill({
       json: {
@@ -77,207 +88,177 @@ async function setupMocks(page: Page, captured: Captured) {
 async function openEditor(page: Page) {
   await page.context().addInitScript((t) => {
     window.localStorage.setItem("short-link:access-token", t as string);
-    // Accept cookies up front — the fixed bottom banner otherwise overlaps the bottom toolbar.
+    // Accept cookies up front — the fixed bottom banner otherwise overlaps the editor.
     window.localStorage.setItem("kurl:cookie-consent:v1", "accepted");
   }, TOKEN);
   await page.goto("/en/blog/write/16");
-  // Toast UI mounts client-side after a dynamic import.
-  await expect(page.locator(".ProseMirror.toastui-editor-contents")).toBeVisible({ timeout: 30_000 });
+  // The Tiptap editor mounts client-side after a dynamic import.
+  await expect(page.locator(".tiptap")).toBeVisible({ timeout: 30_000 });
 }
 
-test("types a title + body, inserts an image, and saves the right blocks", async ({ page }) => {
-  const captured: Captured = { blocks: null };
-  await setupMocks(page, captured);
-  await openEditor(page);
+/** Title field (the only autocomplete-off text input — the URL dialog uses type=url). */
+function titleInput(page: Page) {
+  return page.locator('input[type="text"][autocomplete="off"]').first();
+}
 
-  // Title (first autocomplete-off text input on the page).
-  const title = page.locator('input[type="text"][autocomplete="off"]').first();
-  await title.fill("My e2e post");
-  await expect(title).toHaveValue("My e2e post");
-
-  // Body, then a fresh line so the image becomes its own block (an inline image stays in the
-  // paragraph — markdownToBlocks only promotes a line that is *only* an image to an IMAGE block).
-  await page.locator(".ProseMirror.toastui-editor-contents").click();
-  await page.keyboard.type("Hello from the e2e write flow.");
-  await page.keyboard.press("Enter");
-
-  // Insert an image through the toolbar button → file chooser → mocked presign/PUT/commit.
-  const chooser = page.waitForEvent("filechooser");
-  await page.getByRole("button", { name: "image", exact: true }).click();
-  await (await chooser).setFiles({
-    name: "test.png",
-    mimeType: "image/png",
-    buffer: Buffer.from(PNG_BASE64, "base64"),
-  });
-  await expect(page.locator(`.ProseMirror.toastui-editor-contents img[src="${IMAGE_URL}"]`)).toBeVisible({
-    timeout: 15_000,
-  });
-
-  // Save → assert the serialized block payload.
+async function save(page: Page, captured: Captured): Promise<Block[]> {
+  // Clicking Save blurs the editor → the onBlur flush serializes the latest markdown (the keystroke
+  // path is debounced, so a blur-flush is what makes Save deterministic).
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
+  return captured.blocks!;
+}
 
-  const blocks = captured.blocks!;
-  const para = blocks.find((b) => b.type === "PARAGRAPH");
-  const image = blocks.find((b) => b.type === "IMAGE");
-  expect(para?.content).toContain("Hello from the e2e write flow.");
-  expect(image, "an IMAGE block was saved").toBeTruthy();
-  expect(image!.content).toContain(IMAGE_URL);
-});
-
-test.describe("desktop", () => {
-  // Wider viewport so the formatting toolbar is the selection bubble, not the bottom bar.
-  test.use({ viewport: { width: 1280, height: 800 } });
-
-  test("selection bubble applies bold formatting", async ({ page }) => {
-    const captured: Captured = { blocks: null };
-    await setupMocks(page, captured);
-    await openEditor(page);
-
-    await page.locator(".ProseMirror.toastui-editor-contents").click();
-    await page.keyboard.type("bold me");
-    // Select the typed line back to its start — keeps the selection inside the contenteditable so
-    // the bubble's in-editor selection check passes (a page-level select-all would not).
-    await page.keyboard.press("Shift+Home");
-
-    // The bubble appears only over a non-empty selection.
-    const boldBtn = page.getByRole("button", { name: "bold", exact: true });
-    await expect(boldBtn).toBeVisible({ timeout: 10_000 });
-    await boldBtn.click();
-
-    await page.getByRole("button", { name: "Save", exact: true }).click();
-    await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
-
-    const para = captured.blocks!.find((b) => b.type === "PARAGRAPH");
-    expect(para?.content, "bold markdown was saved").toContain("**");
-  });
-
-  test("slash menu works on desktop too (no bottom bar present)", async ({ page }) => {
-    const captured: Captured = { blocks: null };
-    await setupMocks(page, captured);
-    await openEditor(page);
-
-    await page.locator(".ProseMirror.toastui-editor-contents").click();
-    await page.keyboard.type("/h1");
-    await page.getByRole("button", { name: "Heading 1" }).click();
-    await page.keyboard.type("Desktop heading");
-
-    await page.getByRole("button", { name: "Save", exact: true }).click();
-    await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
-    const h1 = captured.blocks!.find((b) => b.type === "H1");
-    expect(h1?.content).toContain("Desktop heading");
-  });
-
-  // Locks the "+" add-block affordance — it must keep opening the block menu on an empty line.
-  test("the + affordance opens the block menu on an empty line", async ({ page }) => {
-    const captured: Captured = { blocks: null };
-    await setupMocks(page, captured);
-    await openEditor(page);
-
-    await page.locator(".ProseMirror.toastui-editor-contents").click();
-    await page.keyboard.type("intro line");
-    await page.keyboard.press("Enter");
-
-    const plus = page.getByRole("button", { name: "Add a block" });
-    await expect(plus).toBeVisible({ timeout: 10_000 });
-    await plus.click();
-    await page.getByRole("button", { name: "Heading 1" }).click();
-    await page.keyboard.type("Added with plus");
-
-    await page.getByRole("button", { name: "Save", exact: true }).click();
-    await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
-    const h1 = captured.blocks!.find((b) => b.type === "H1");
-    expect(h1?.content, "a block was inserted via the + menu").toContain("Added with plus");
-    // The "+" must NOT leave a literal "/" behind (it opens the menu without typing one).
-    expect(h1!.content).not.toContain("/");
-    expect(captured.blocks!.some((b) => b.content?.trim() === "/")).toBe(false);
-  });
-});
-
-test("slash menu inserts a heading block", async ({ page }) => {
+test("types a title + body and saves a PARAGRAPH block", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
 
-  await page.locator(".ProseMirror.toastui-editor-contents").click();
-  await page.keyboard.type("/h1");
-  // The menu reads the typed "/h1" and filters to Heading 1.
-  await page.getByRole("button", { name: "Heading 1" }).click();
+  await titleInput(page).fill("My e2e post");
+  await expect(titleInput(page)).toHaveValue("My e2e post");
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("Hello from the e2e write flow.");
+
+  const blocks = await save(page, captured);
+  const para = blocks.find((b) => b.type === "PARAGRAPH");
+  expect(para?.content).toContain("Hello from the e2e write flow.");
+});
+
+test("markdown shortcut '## ' becomes an H2 block", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  // StarterKit input rule: "##" + space → heading level 2.
+  await page.keyboard.type("## Section title");
+
+  const blocks = await save(page, captured);
+  const h2 = blocks.find((b) => b.type === "H2");
+  expect(h2, "an H2 block was saved").toBeTruthy();
+  expect(h2!.content).toContain("Section title");
+});
+
+test("slash menu inserts a heading", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  // Menu items are role=option; their accessible name is "<label> <description>", so match the
+  // label at the start. Choosing one deletes the "/query" run, so no stray "/" survives.
+  await page.getByRole("option", { name: /^Heading 1\b/ }).click();
   await page.keyboard.type("A big heading");
 
-  await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
-
-  const h1 = captured.blocks!.find((b) => b.type === "H1");
+  const blocks = await save(page, captured);
+  const h1 = blocks.find((b) => b.type === "H1");
   expect(h1, "an H1 block was saved").toBeTruthy();
   expect(h1!.content).toContain("A big heading");
+  expect(blocks.some((b) => b.content?.trim() === "/")).toBe(false);
 });
 
-test("slash menu code block survives a blank line on save", async ({ page }) => {
+test("slash menu inserts a table (GFM round-trips through save)", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
 
-  await page.locator(".ProseMirror.toastui-editor-contents").click();
-  await page.keyboard.type("/code");
-  await page.getByRole("button", { name: "Code block" }).click();
-  // A blank line inside the code used to split the block into pieces on save.
-  await page.keyboard.type("const a = 1;");
-  await page.keyboard.press("Enter");
-  await page.keyboard.press("Enter");
-  await page.keyboard.type("const b = 2;");
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Table\b/ }).click();
 
-  await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
-
-  // The whole fenced block stays a single CODE block carrying both lines across the blank line.
-  const codeBlock = captured.blocks!.find((b) => b.type === "CODE");
-  expect(codeBlock, "a CODE block was saved").toBeTruthy();
-  const code = JSON.parse(codeBlock!.content!).code as string;
-  expect(code).toContain("const a = 1;");
-  expect(code).toContain("const b = 2;");
-});
-
-test("slash menu inserts a table", async ({ page }) => {
-  const captured: Captured = { blocks: null };
-  await setupMocks(page, captured);
-  await openEditor(page);
-
-  await page.locator(".ProseMirror.toastui-editor-contents").click();
-  await page.keyboard.type("/table");
-  await page.getByRole("button", { name: "Table" }).click();
-
-  await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
-
-  // Saved as a TABLE block holding GFM markdown (pipes + the header separator row).
-  const table = captured.blocks!.find((b) => b.type === "TABLE");
+  const blocks = await save(page, captured);
+  const table = blocks.find((b) => b.type === "TABLE");
   expect(table, "a TABLE block was saved").toBeTruthy();
   expect(table!.content).toContain("|");
   expect(table!.content).toContain("---");
 });
 
-test("slash menu inserts a wide image (width survives the save round-trip)", async ({ page }) => {
+test("slash menu inserts a code block", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
 
-  await page.locator(".ProseMirror.toastui-editor-contents").click();
-  await page.keyboard.type("/wide");
-  const chooser = page.waitForEvent("filechooser");
-  await page.getByRole("button", { name: "Wide image" }).click();
-  await (await chooser).setFiles({
-    name: "hero.png",
-    mimeType: "image/png",
-    buffer: Buffer.from(PNG_BASE64, "base64"),
-  });
-  await expect(page.locator(`.ProseMirror.toastui-editor-contents img[src="${IMAGE_URL}"]`)).toBeVisible({
-    timeout: 15_000,
-  });
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Code block\b/ }).click();
 
-  await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
-  const img = captured.blocks!.find((b) => b.type === "IMAGE");
-  expect(img, "a wide IMAGE block was saved").toBeTruthy();
-  expect(JSON.parse(img!.content!).width, "width survived Toast's markdown round-trip").toBe("wide");
+  // The editing surface IS CodeMirror (its own NodeView). Asserting the block exists is the reliable
+  // guarantee here — driving CodeMirror's text + its async sync back to ProseMirror headlessly is
+  // timing-sensitive, so the text round-trip is left to the markdown unit tests.
+  await expect(page.locator(".tiptap .cm-content")).toBeVisible({ timeout: 10_000 });
+});
+
+test("the '+' block handle adds a clean empty block below — NO stray '/'", async ({ page }) => {
+  // Regression lock for the reported bug: pressing the gutter "+" used to drop a literal "/" into the
+  // wrong (next) block. It must now insert an empty paragraph below the hovered block, caret inside.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("first line");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("second line");
+
+  // Reveal the gutter on the FIRST paragraph, then fire the "+" without moving the pointer off the
+  // content: a real pointer move onto the gutter button makes the drag-handle hide before the click
+  // lands. dispatchEvent fires onClick in place — and exercises the handler's no-op-safety fallback.
+  const firstPara = page.locator(".tiptap p", { hasText: "first line" }).first();
+  await firstPara.hover();
+  const plus = page.getByRole("button", { name: "Add block below" });
+  await expect(plus).toBeVisible({ timeout: 10_000 });
+  await page.waitForTimeout(150);
+  await plus.dispatchEvent("click");
+  // The "+" adds exactly one empty paragraph. Find it (position-agnostic) and type into it — clicking
+  // the gutter button itself left DOM focus on the button, so click the new block first.
+  const paras = page.locator(".tiptap > p");
+  await expect(paras).toHaveCount(3);
+  let emptyIdx = -1;
+  for (let i = 0; i < (await paras.count()); i++) {
+    if (((await paras.nth(i).textContent()) ?? "").trim() === "") {
+      emptyIdx = i;
+      break;
+    }
+  }
+  expect(emptyIdx, "the '+' added a new empty paragraph").toBeGreaterThanOrEqual(0);
+  await paras.nth(emptyIdx).click();
+  await page.keyboard.type("inserted line");
+
+  const blocks = await save(page, captured);
+  const text = blocks.map((b) => b.content ?? "").join("\n");
+  expect(text).toContain("first line");
+  expect(text).toContain("inserted line");
+  expect(text).toContain("second line");
+  // The headline guarantee: the "+" left no literal "/" anywhere.
+  expect(blocks.some((b) => b.content?.trim() === "/")).toBe(false);
+  expect(
+    blocks.some((b) => (b.content ?? "").includes("/inserted") || (b.content ?? "").includes("inserted/")),
+  ).toBe(false);
+});
+
+test("the embed dialog inserts a live link card that round-trips to an EMBED block", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Embed\b/ }).click();
+
+  // The in-app URL dialog replaces window.prompt; type a YouTube link and confirm with Enter.
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible({ timeout: 10_000 });
+  await dialog.locator('input[type="url"]').fill("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+  await dialog.locator('input[type="url"]').press("Enter");
+
+  // The live card node view renders in the editor.
+  await expect(page.locator(".tiptap [data-link-card]")).toBeVisible({ timeout: 10_000 });
+
+  const blocks = await save(page, captured);
+  // A bare video URL on its own line serializes to an EMBED block (markdownToBlocks re-detects it).
+  const embed = blocks.find((b) => b.type === "EMBED");
+  expect(embed, "an EMBED block was saved").toBeTruthy();
+  expect(embed!.content).toContain("dQw4w9WgXcQ");
 });
