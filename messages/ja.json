@@ -163,7 +163,15 @@
   "postEditor": {
     "backToList": "記事一覧",
     "titlePlaceholder": "タイトル",
-    "bodyPlaceholder": "本文をマークダウンで書いてください…",
+    "bodyPlaceholder": "'/' でブロック追加 — またはそのまま入力",
+    "blockMenu": {
+      "add": "下にブロックを追加",
+      "drag": "ドラッグで移動 · クリックでメニュー",
+      "turnInto": "変換",
+      "duplicate": "複製",
+      "delete": "削除",
+      "paragraph": "テキスト"
+    },
     "write": "編集",
     "preview": "プレビュー",
     "previewEmpty": "プレビューがここに表示されます。",
@@ -226,6 +234,10 @@
     "cancelSchedule": "予約取消",
     "tagsHint": "カンマかEnterで区切る",
     "slash": {
+      "groupBasic": "基本",
+      "groupMedia": "メディア",
+      "groupAdvanced": "高度",
+      "empty": "結果なし",
       "heading1": "見出し1",
       "heading2": "見出し2",
       "heading3": "見出し3",
@@ -239,7 +251,23 @@
       "table": "テーブル",
       "imageWide": "ワイド画像",
       "imagePair": "画像2枚 (横並び)",
-      "place": "地図 / 場所"
+      "place": "地図 / 場所",
+      "desc": {
+        "heading1": "大きなセクション見出し",
+        "heading2": "中見出し",
+        "heading3": "小見出し",
+        "bulletList": "• 箇条書き",
+        "orderedList": "1. 番号付き",
+        "quote": "引用ブロック",
+        "codeBlock": "構文ハイライト",
+        "image": "画像をアップロード",
+        "divider": "横の区切り線",
+        "embed": "YouTube · Vimeo 埋め込み",
+        "table": "テーブルを挿入",
+        "imageWide": "本文より広い画像",
+        "imagePair": "2枚を横並び",
+        "place": "地図の場所カード"
+      }
     },
     "slugLabel": "記事のURLスラッグ",
     "placeDialog": {

@@ -30,12 +30,22 @@ import type { ImagePickOptions } from "@/modules/blog/components/editor/markdown
  * runs the Tiptap command. The "+" button opens the same menu by typing a "/". Arrow / Enter / Esc
  * drive the menu while it's open.
  */
+type SlashGroup = "basic" | "media" | "advanced";
 type SlashItem = {
   key: string;
   labelKey: string;
+  group: SlashGroup;
   icon: LucideIcon;
   keywords: string[];
   run: (editor: Editor) => void;
+};
+
+// Notion-style grouping: text/structure first, then media, then advanced.
+const GROUP_ORDER: SlashGroup[] = ["basic", "media", "advanced"];
+const GROUP_LABEL: Record<SlashGroup, string> = {
+  basic: "groupBasic",
+  media: "groupMedia",
+  advanced: "groupAdvanced",
 };
 
 function buildItems(
@@ -43,20 +53,20 @@ function buildItems(
   onPickPlace: () => void,
 ): SlashItem[] {
   return [
-    { key: "h1", labelKey: "heading1", icon: Heading1, keywords: ["h1", "heading", "title", "제목", "見出し"], run: (e) => e.chain().focus().toggleHeading({ level: 1 }).run() },
-    { key: "h2", labelKey: "heading2", icon: Heading2, keywords: ["h2", "heading", "subtitle", "제목"], run: (e) => e.chain().focus().toggleHeading({ level: 2 }).run() },
-    { key: "h3", labelKey: "heading3", icon: Heading3, keywords: ["h3", "heading", "제목"], run: (e) => e.chain().focus().toggleHeading({ level: 3 }).run() },
-    { key: "bullet", labelKey: "bulletList", icon: List, keywords: ["bullet", "list", "ul", "목록", "리스트", "リスト"], run: (e) => e.chain().focus().toggleBulletList().run() },
-    { key: "ordered", labelKey: "orderedList", icon: ListOrdered, keywords: ["ordered", "number", "ol", "번호", "리스트"], run: (e) => e.chain().focus().toggleOrderedList().run() },
-    { key: "quote", labelKey: "quote", icon: Quote, keywords: ["quote", "blockquote", "인용", "引用"], run: (e) => e.chain().focus().toggleBlockquote().run() },
-    { key: "code", labelKey: "codeBlock", icon: Code2, keywords: ["code", "codeblock", "pre", "코드", "コード"], run: (e) => e.chain().focus().toggleCodeBlock().run() },
-    { key: "table", labelKey: "table", icon: TableIcon, keywords: ["table", "grid", "표", "테이블", "テーブル", "表"], run: (e) => e.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
-    { key: "image", labelKey: "image", icon: ImageIcon, keywords: ["image", "img", "photo", "이미지", "사진", "画像"], run: () => pickImage() },
-    { key: "imageWide", labelKey: "imageWide", icon: RectangleHorizontal, keywords: ["wide", "image", "cover", "hero", "banner", "와이드", "넓은", "배너", "ワイド"], run: () => pickImage({ width: "wide" }) },
-    { key: "imagePair", labelKey: "imagePair", icon: Columns2, keywords: ["pair", "two", "gallery", "side", "2", "나란히", "두장", "갤러리", "並べ"], run: () => pickImage({ width: "half", multiple: true }) },
-    { key: "embed", labelKey: "embed", icon: Video, keywords: ["video", "embed", "youtube", "vimeo", "동영상", "비디오", "임베드", "動画"], run: (e) => { const url = window.prompt("URL (YouTube / Vimeo)"); if (url && url.trim()) e.chain().focus().insertContent(url.trim()).run(); } },
-    { key: "place", labelKey: "place", icon: MapPin, keywords: ["map", "place", "location", "지도", "장소", "위치", "地図", "場所"], run: () => onPickPlace() },
-    { key: "hr", labelKey: "divider", icon: Minus, keywords: ["divider", "hr", "rule", "line", "구분선", "区切り"], run: (e) => e.chain().focus().setHorizontalRule().run() },
+    { key: "h1", labelKey: "heading1", group: "basic", icon: Heading1, keywords: ["h1", "heading", "title", "제목", "見出し"], run: (e) => e.chain().focus().toggleHeading({ level: 1 }).run() },
+    { key: "h2", labelKey: "heading2", group: "basic", icon: Heading2, keywords: ["h2", "heading", "subtitle", "제목"], run: (e) => e.chain().focus().toggleHeading({ level: 2 }).run() },
+    { key: "h3", labelKey: "heading3", group: "basic", icon: Heading3, keywords: ["h3", "heading", "제목"], run: (e) => e.chain().focus().toggleHeading({ level: 3 }).run() },
+    { key: "bullet", labelKey: "bulletList", group: "basic", icon: List, keywords: ["bullet", "list", "ul", "목록", "리스트", "リスト"], run: (e) => e.chain().focus().toggleBulletList().run() },
+    { key: "ordered", labelKey: "orderedList", group: "basic", icon: ListOrdered, keywords: ["ordered", "number", "ol", "번호", "리스트"], run: (e) => e.chain().focus().toggleOrderedList().run() },
+    { key: "quote", labelKey: "quote", group: "basic", icon: Quote, keywords: ["quote", "blockquote", "인용", "引用"], run: (e) => e.chain().focus().toggleBlockquote().run() },
+    { key: "hr", labelKey: "divider", group: "basic", icon: Minus, keywords: ["divider", "hr", "rule", "line", "구분선", "区切り"], run: (e) => e.chain().focus().setHorizontalRule().run() },
+    { key: "image", labelKey: "image", group: "media", icon: ImageIcon, keywords: ["image", "img", "photo", "이미지", "사진", "画像"], run: () => pickImage() },
+    { key: "imageWide", labelKey: "imageWide", group: "media", icon: RectangleHorizontal, keywords: ["wide", "image", "cover", "hero", "banner", "와이드", "넓은", "배너", "ワイド"], run: () => pickImage({ width: "wide" }) },
+    { key: "imagePair", labelKey: "imagePair", group: "media", icon: Columns2, keywords: ["pair", "two", "gallery", "side", "2", "나란히", "두장", "갤러리", "並べ"], run: () => pickImage({ width: "half", multiple: true }) },
+    { key: "embed", labelKey: "embed", group: "media", icon: Video, keywords: ["video", "embed", "youtube", "vimeo", "동영상", "비디오", "임베드", "動画"], run: (e) => { const url = window.prompt("URL (YouTube / Vimeo)"); if (url && url.trim()) e.chain().focus().insertContent(url.trim()).run(); } },
+    { key: "place", labelKey: "place", group: "media", icon: MapPin, keywords: ["map", "place", "location", "지도", "장소", "위치", "地図", "場所"], run: () => onPickPlace() },
+    { key: "code", labelKey: "codeBlock", group: "advanced", icon: Code2, keywords: ["code", "codeblock", "pre", "코드", "コード"], run: (e) => e.chain().focus().toggleCodeBlock().run() },
+    { key: "table", labelKey: "table", group: "advanced", icon: TableIcon, keywords: ["table", "grid", "표", "테이블", "テーブル", "表"], run: (e) => e.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
   ];
 }
 
@@ -137,32 +147,65 @@ export function SlashMenu({
     return () => document.removeEventListener("keydown", onKey, true);
   }, [menu, filtered, active, choose]);
 
-  if (!menu || filtered.length === 0) return null;
+  if (!menu) return null;
 
   return (
     <div
       role="listbox"
-      className="fixed z-50 max-h-72 w-60 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
+      className="fixed z-50 max-h-80 w-72 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-700 dark:bg-slate-900"
       style={{ top: menu.top, left: menu.left }}
     >
-      {filtered.map((item, i) => (
-        <button
-          key={item.key}
-          type="button"
-          role="option"
-          aria-selected={i === active}
-          onMouseDown={(e) => { e.preventDefault(); choose(item); }}
-          onMouseEnter={() => setActive(i)}
-          className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors ${
-            i === active
-              ? "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300"
-              : "text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
-          }`}
-        >
-          <item.icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
-          {t(item.labelKey)}
-        </button>
-      ))}
+      {filtered.length === 0 ? (
+        <p className="px-2.5 py-3 text-sm text-slate-400 dark:text-slate-500">{t("empty")}</p>
+      ) : (
+        GROUP_ORDER.map((group) => {
+          const groupItems = filtered.filter((it) => it.group === group);
+          if (groupItems.length === 0) return null;
+          return (
+            <div key={group} className="mb-0.5 last:mb-0">
+              <p className="px-2.5 pb-1 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                {t(GROUP_LABEL[group])}
+              </p>
+              {groupItems.map((item) => {
+                const i = filtered.indexOf(item);
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    role="option"
+                    aria-selected={i === active}
+                    onMouseDown={(e) => { e.preventDefault(); choose(item); }}
+                    onMouseEnter={() => setActive(i)}
+                    className={`flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left transition-colors ${
+                      i === active
+                        ? "bg-accent-50 dark:bg-accent-500/15"
+                        : "hover:bg-slate-50 dark:hover:bg-slate-800"
+                    }`}
+                  >
+                    <span
+                      className={`grid h-9 w-9 shrink-0 place-items-center rounded-md border ${
+                        i === active
+                          ? "border-accent-200 bg-white text-accent-700 dark:border-accent-500/30 dark:bg-slate-900 dark:text-accent-300"
+                          : "border-slate-200 bg-white text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
+                      }`}
+                    >
+                      <item.icon className="h-[18px] w-[18px]" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[13px] font-medium text-slate-800 dark:text-slate-100">
+                        {t(item.labelKey)}
+                      </span>
+                      <span className="block truncate text-[12px] text-slate-400 dark:text-slate-500">
+                        {t(`desc.${item.labelKey}`)}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }

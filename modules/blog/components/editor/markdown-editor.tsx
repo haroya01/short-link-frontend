@@ -14,6 +14,7 @@ import { TableCell } from "@tiptap/extension-table-cell";
 import { Markdown } from "tiptap-markdown";
 import { Bold, Code2, Italic, Link as LinkIcon, Strikethrough } from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
+import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
 import {
   PlaceSearchDialog,
@@ -130,6 +131,7 @@ export function MarkdownEditor({
   return (
     <div className="flex h-full flex-col">
       <BubbleBar editor={editor} />
+      <EditorBlockHandle editor={editor} />
       <input
         ref={fileRef}
         type="file"
