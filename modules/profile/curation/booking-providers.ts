@@ -1,4 +1,5 @@
 import type { BookingProvider } from "@/types";
+import { createHostResolver } from "@/modules/profile/curation/host-resolver";
 
 /**
  * Frontend mirror of the backend's {@code Booking.Provider} host whitelist. Resolving on the client
@@ -49,20 +50,6 @@ const PROVIDERS: readonly ProviderSpec[] = [
   { id: "catchtable", hosts: ["app.catchtable.co.kr", "catchtable.co.kr"], name: CATCHTABLE_NAME },
 ] as const;
 
-export function resolveBookingProvider(url: string): ProviderSpec | null {
-  if (!url) return null;
-  let parsed: URL;
-  try {
-    parsed = new URL(url.trim());
-  } catch {
-    return null;
-  }
-  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
-  const host = parsed.host.toLowerCase();
-  for (const p of PROVIDERS) {
-    if (p.hosts.includes(host)) return p;
-  }
-  return null;
-}
+export const resolveBookingProvider = createHostResolver(PROVIDERS);
 
 export const BOOKING_PROVIDERS = PROVIDERS;

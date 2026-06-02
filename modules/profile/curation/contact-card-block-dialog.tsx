@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { useTranslations } from "next-intl";
 import type { ContactCardPalette } from "@/types";
 import { PALETTES } from "@/app/[locale]/u/[username]/_components/contact-card-palettes";
@@ -8,6 +7,7 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/modules/profile/curation/form-field";
 import { ImageUploader } from "@/modules/profile/curation/image-uploader";
+import { useBlockDialogForm } from "@/modules/profile/curation/use-block-dialog-form";
 
 type Config = {
   name: string;
@@ -51,14 +51,11 @@ type Props = {
  * as null when blank so the rendered card stays compact. JSON shape mirrors the backend record.
  */
 export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubmit, t }: Props) {
-  const [config, setConfig] = useState<Config>(EMPTY);
-
-  useEffect(() => {
-    if (!open) return;
-    if (initialJson) {
+  const [config, setConfig] = useBlockDialogForm<Config>(open, initialJson, (raw) => {
+    if (raw) {
       try {
-        const parsed = JSON.parse(initialJson);
-        setConfig({
+        const parsed = JSON.parse(raw);
+        return {
           name: parsed.name ?? "",
           title: parsed.title ?? "",
           company: parsed.company ?? "",
@@ -70,17 +67,14 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
           logoFocalX: typeof parsed.logoFocalX === "number" ? parsed.logoFocalX : 50,
           logoFocalY: typeof parsed.logoFocalY === "number" ? parsed.logoFocalY : 50,
           palette:
-            typeof parsed.palette === "string"
-              ? (parsed.palette as ContactCardPalette)
-              : null,
-        });
-        return;
+            typeof parsed.palette === "string" ? (parsed.palette as ContactCardPalette) : null,
+        };
       } catch {
         /* fall through to defaults */
       }
     }
-    setConfig(EMPTY);
-  }, [open, initialJson]);
+    return EMPTY;
+  });
 
   const name = config.name.trim();
 

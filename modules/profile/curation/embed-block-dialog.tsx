@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Play, CheckCircle2, AlertCircle } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/modules/profile/curation/form-field";
 import { EMBED_PROVIDERS, resolveEmbedProvider } from "@/modules/profile/curation/embed-providers";
+import { useBlockDialogForm } from "@/modules/profile/curation/use-block-dialog-form";
 
 type Props = {
   open: boolean;
@@ -25,12 +26,7 @@ type Props = {
  * validation, so a host the client misses will still be rejected on save.
  */
 export function EmbedBlockDialog({ open, initialUrl, onOpenChange, onSubmit, t }: Props) {
-  const [value, setValue] = useState("");
-
-  useEffect(() => {
-    if (!open) return;
-    setValue(initialUrl ?? "");
-  }, [open, initialUrl]);
+  const [value, setValue] = useBlockDialogForm(open, initialUrl, (raw) => raw ?? "");
 
   const trimmed = value.trim();
   const provider = useMemo(() => resolveEmbedProvider(trimmed), [trimmed]);
