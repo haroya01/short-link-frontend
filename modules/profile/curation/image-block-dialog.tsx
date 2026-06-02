@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import type { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { ImageUploader } from "@/modules/profile/curation/image-uploader";
+import { useBlockDialogForm } from "@/modules/profile/curation/use-block-dialog-form";
 
 type Props = {
   open: boolean;
@@ -22,12 +22,7 @@ type Props = {
  * block's persisted content is still a public URL, just the input affordance changed.
  */
 export function ImageBlockDialog({ open, initialUrl, onOpenChange, onSubmit, t }: Props) {
-  const [value, setValue] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    setValue(initialUrl);
-  }, [open, initialUrl]);
+  const [value, setValue] = useBlockDialogForm<string | null>(open, initialUrl, (raw) => raw);
 
   return (
     <ConfirmDialog

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ExternalLink, Info } from "lucide-react";
 import { useLocale } from "next-intl";
 import type { useTranslations } from "next-intl";
@@ -8,6 +7,7 @@ import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField } from "@/modules/profile/curation/form-field";
+import { useBlockDialogForm } from "@/modules/profile/curation/use-block-dialog-form";
 
 type Config = {
   title: string;
@@ -15,6 +15,8 @@ type Config = {
   placeholder: string;
   successMessage: string;
 };
+
+const EMPTY: Config = { title: "", subtitle: "", placeholder: "", successMessage: "" };
 
 type Props = {
   open: boolean;
@@ -38,31 +40,22 @@ type Props = {
  */
 export function EmailFormBlockDialog({ open, initialJson, onOpenChange, onSubmit, t }: Props) {
   const locale = useLocale();
-  const [config, setConfig] = useState<Config>({
-    title: "",
-    subtitle: "",
-    placeholder: "",
-    successMessage: "",
-  });
-
-  useEffect(() => {
-    if (!open) return;
-    if (initialJson) {
+  const [config, setConfig] = useBlockDialogForm<Config>(open, initialJson, (raw) => {
+    if (raw) {
       try {
-        const parsed = JSON.parse(initialJson);
-        setConfig({
+        const parsed = JSON.parse(raw);
+        return {
           title: parsed.title ?? "",
           subtitle: parsed.subtitle ?? "",
           placeholder: parsed.placeholder ?? "",
           successMessage: parsed.successMessage ?? "",
-        });
-        return;
+        };
       } catch {
         /* fall through to defaults */
       }
     }
-    setConfig({ title: "", subtitle: "", placeholder: "", successMessage: "" });
-  }, [open, initialJson]);
+    return EMPTY;
+  });
 
   const title = config.title.trim();
 

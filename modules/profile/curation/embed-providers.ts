@@ -4,6 +4,8 @@
  * the source of truth on save. Keep the host list in sync when the backend changes, otherwise the
  * dialog will say "unsupported" for a URL the API would actually accept (or vice versa).
  */
+import { createHostResolver } from "@/modules/profile/curation/host-resolver";
+
 type ProviderSpec = {
   id: "youtube" | "vimeo" | "spotify" | "soundcloud";
   hosts: readonly string[];
@@ -33,20 +35,6 @@ const PROVIDERS: readonly ProviderSpec[] = [
   },
 ] as const;
 
-export function resolveEmbedProvider(url: string): ProviderSpec | null {
-  if (!url) return null;
-  let parsed: URL;
-  try {
-    parsed = new URL(url.trim());
-  } catch {
-    return null;
-  }
-  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
-  const host = parsed.host.toLowerCase();
-  for (const p of PROVIDERS) {
-    if (p.hosts.includes(host)) return p;
-  }
-  return null;
-}
+export const resolveEmbedProvider = createHostResolver(PROVIDERS);
 
 export const EMBED_PROVIDERS = PROVIDERS;
