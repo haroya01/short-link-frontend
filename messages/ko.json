@@ -183,6 +183,13 @@
       "cancel": "취소",
       "remove": "링크 제거"
     },
+    "table": {
+      "addColumn": "열 추가",
+      "addRow": "행 추가",
+      "deleteColumn": "열 삭제",
+      "deleteRow": "행 삭제",
+      "deleteTable": "표 삭제"
+    },
     "write": "작성",
     "preview": "미리보기",
     "previewEmpty": "미리보기가 여기에 표시됩니다.",
