@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { blogPath } from "@/lib/host";
 import type { SuggestedAuthor, TagCount } from "@/modules/blog/api/public-posts";
+import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 
@@ -71,18 +72,7 @@ export async function MobileDiscoveryStrip({
                   href={authorHref(author.username, locale)}
                   className="flex w-44 items-center gap-2.5 rounded-xl border border-slate-200 px-3 py-2.5 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-800/50"
                 >
-                  {author.avatarUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={author.avatarUrl}
-                      alt=""
-                      className="h-9 w-9 shrink-0 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700">
-                      {author.username.charAt(0).toUpperCase()}
-                    </span>
-                  )}
+                  <Avatar src={author.avatarUrl} name={author.username} size="md" />
                   <span className="flex min-w-0 flex-col">
                     <span className="truncate text-[13px] font-semibold text-slate-800 dark:text-slate-200">
                       {author.username}

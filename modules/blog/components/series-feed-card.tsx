@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Mark } from "@/components/common/logo";
 import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
+import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { SeriesEpisodeList } from "@/modules/blog/components/series-episode-list";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
@@ -68,14 +69,7 @@ export async function SeriesFeedCard({
 
       {/* Author/date meta — same grammar as a post card's meta line. */}
       <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
-        {series.author.avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={series.author.avatarUrl} alt="" className="h-5 w-5 shrink-0 rounded-full object-cover" />
-        ) : (
-          <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent-100 text-[10px] font-semibold text-accent-700">
-            {series.author.username.charAt(0).toUpperCase()}
-          </span>
-        )}
+        <Avatar src={series.author.avatarUrl} name={series.author.username} size="xs" />
         <span className="truncate font-medium">{series.author.username}</span>
         <span aria-hidden>·</span>
         <span className="shrink-0">{t("seriesEpisodeCount", { count: series.postCount })}</span>
