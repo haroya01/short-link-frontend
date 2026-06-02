@@ -19,8 +19,8 @@ export function buildBlogSections(
         // separate 발행 글(/posts) · 임시저장(/drafts) entries were just its filtered subsets.
         { href: "/write", label: tBlog("myPosts") },
         { href: "/series", label: tBlog("series") },
+        // 분석: /analytics + /readers(방문자) share one tabbed section now, so a single nav entry.
         { href: "/analytics", label: tBlog("analytics") },
-        { href: "/readers", label: tBlog("readers") },
         { href: "/leads", label: tBlog("leads") },
         { href: "/links", label: tBlog("links") },
         { href: "/curation", label: tBlog("curation") },
