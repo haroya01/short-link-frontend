@@ -15,6 +15,7 @@ import { ArticleBody, extractHeadings, readingMinutes } from "../_components/pos
 import { SeriesNav, TagChips } from "../_components/post-meta";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { findPublicPost } from "@/modules/blog/api/public-posts";
+import { subdomainOrigin } from "@/modules/blog/lib/subdomain-origin";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
 // pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
@@ -23,16 +24,7 @@ import { findPublicPost } from "@/modules/blog/api/public-posts";
 // that needs a cache, the right layer is the backend / CDN, not an ISR window that breaks freshness.
 export const dynamic = "force-dynamic";
 
-type ReadonlyHeaders = Awaited<ReturnType<typeof headers>>;
-
 const DATE_LOCALE: Record<string, string> = { ko: "ko-KR", ja: "ja-JP", en: "en-US" };
-
-function subdomainOrigin(req: ReadonlyHeaders, username: string): string {
-  const host = req.get("x-original-host") ?? req.get("host");
-  if (!host) return `https://${username}.kurl.me`;
-  const cleaned = host.split(":")[0];
-  return `https://${cleaned}`;
-}
 
 function formatDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
