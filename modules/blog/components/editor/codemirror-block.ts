@@ -78,6 +78,15 @@ class CodeMirrorNodeView {
         CMView.updateListener.of((u) => {
           if (!this.updating) this.forwardUpdate(u);
         }),
+        // forwardUpdate only mirrors while CM has focus. Clicking Save (outside the editor) blurs CM,
+        // and the outer onBlur serializes the doc — so commit the full CM buffer into the PM node on
+        // blur, or a quick-save right after typing code would persist a stale/empty CODE block.
+        CMView.domEventHandlers({
+          blur: () => {
+            this.commitToPM();
+            return false;
+          },
+        }),
         cmTheme,
       ],
     });
@@ -140,6 +149,26 @@ class CodeMirrorNodeView {
   }
 
   // Mirror CM's changes AND selection into ProseMirror (canonical prosemirror-codemirror bridge).
+  // Force the entire CM buffer into the PM node — used on blur, when forwardUpdate's focus guard would
+  // otherwise skip the final sync. Idempotent: replacing identical text is a no-op-shaped transaction.
+  private commitToPM() {
+    if (this.updating) return;
+    const pos = this.getPos();
+    if (pos == null) return;
+    const from = pos + 1;
+    const to = pos + this.node.nodeSize - 1;
+    const text = this.cm.state.doc.toString();
+    const tr = this.view.state.tr;
+    if (text.length) {
+      tr.replaceWith(from, to, this.view.state.schema.text(text));
+    } else {
+      tr.delete(from, to);
+    }
+    this.updating = true;
+    this.view.dispatch(tr);
+    this.updating = false;
+  }
+
   private forwardUpdate(update: ViewUpdate) {
     if (this.updating || !this.cm.hasFocus) return;
     const pos = this.getPos();

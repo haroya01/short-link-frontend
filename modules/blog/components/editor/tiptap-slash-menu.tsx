@@ -149,6 +149,12 @@ export function SlashMenu({
   useEffect(() => {
     if (!menu) return;
     const onKey = (e: KeyboardEvent) => {
+      // Don't hijack an IME composition commit (Korean/Japanese): the Enter that confirms a
+      // composing word must reach the editor, not pick a menu item. (Audience is JP+KO.)
+      if (e.isComposing || e.keyCode === 229) return;
+      // Only drive the menu while the editor actually has focus, so Tab can still move focus OUT of
+      // the editor (e.g. to the toolbar) instead of being swallowed as a menu selection.
+      if (!editor.isFocused) return;
       if (filtered.length === 0) {
         if (e.key === "Escape") setMenu(null);
         return;
@@ -160,7 +166,7 @@ export function SlashMenu({
     };
     document.addEventListener("keydown", onKey, true);
     return () => document.removeEventListener("keydown", onKey, true);
-  }, [menu, filtered, active, choose]);
+  }, [menu, filtered, active, choose, editor]);
 
   if (!menu) return null;
 
