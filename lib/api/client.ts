@@ -2,6 +2,7 @@ import * as Sentry from "@sentry/nextjs";
 
 import type { ProblemDetail } from "@/types";
 import { readStorageString, removeStorageItem, writeStorageString } from "@/lib/storage-json";
+import { mockLinksResponse } from "@/lib/api/_links-mocks";
 
 const ACCESS_TOKEN_KEY = "short-link:access-token";
 
@@ -127,6 +128,11 @@ export async function request<T>(
   init: RequestInitWithBody = {},
   retried = false,
 ): Promise<T> {
+  // Mock mode: answer known links-product read endpoints locally so the app renders without a backend.
+  if (MOCKS_ON) {
+    const mocked = mockLinksResponse(path, init.method ?? "GET");
+    if (mocked !== undefined) return mocked as T;
+  }
   const res = await fetchWithAuth(path, init, retried);
 
   if (res.status === 204) return undefined as T;
