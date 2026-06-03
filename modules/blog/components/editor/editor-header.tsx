@@ -19,6 +19,7 @@ export function EditorHeader({
   saved,
   busy,
   onSave,
+  onBack,
   onOpenPublish,
   onRestoreRevision,
   onDelete,
@@ -30,6 +31,8 @@ export function EditorHeader({
   saved: boolean;
   busy: boolean;
   onSave: () => void;
+  /** Plain-click leaves via here (saves a dirty draft first). Modified clicks keep the raw link. */
+  onBack: () => void;
   onOpenPublish: () => void;
   onRestoreRevision: (versionNumber: number) => void;
   onDelete: () => void;
@@ -40,6 +43,13 @@ export function EditorHeader({
     <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 dark:border-slate-800">
       <a
         href={backHref}
+        onClick={(e) => {
+          // Plain left-click → save-then-navigate via onBack (don't lose a dirty draft). Let
+          // modified clicks (new tab / middle-click) keep the native link behaviour.
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          onBack();
+        }}
         className="focus-ring -ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
       >
         <ArrowLeft className="h-4 w-4" />

@@ -787,6 +787,20 @@ test("delete: confirming the trash action calls DELETE and returns to the list",
   await expect(page).toHaveURL(/\/blog\/write\/?$/);
 });
 
+test("leaving a dirty draft via Back saves it first — no lost edits", async ({ page }) => {
+  // The header Back is a real navigation; typing then immediately leaving used to drop the last
+  // keystrokes (still inside the 1.8s autosave debounce). Back now saves a dirty draft first.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("draft words before leaving");
+  // The header back arrow (lucide ArrowLeft) — clicked well within the autosave window.
+  await page.locator("a:has(svg.lucide-arrow-left)").click();
+  await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
+  expect(captured.blocks!.map((b) => b.content ?? "").join("\n")).toContain("draft words before leaving");
+});
+
 test("revisions: restoring a saved version calls the restore endpoint", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
@@ -1037,9 +1051,9 @@ test("code block language + body round-trip into the CODE block", async ({ page 
   await page.locator(".tiptap select").selectOption("python");
   await page.locator(".tiptap .cm-content").click();
   await page.keyboard.type("print('hi')");
-  // Move focus out of the nested CodeMirror so it flushes its content back into the ProseMirror node
-  // (the CM→PM mirror commits on blur); saving while CM still has focus would serialize an empty block.
-  await page.locator(".tiptap p").first().click();
+  // Save directly while CodeMirror still has focus — no manual blur. The CM blur handler commits the
+  // buffer into the ProseMirror node when Save steals focus, so a quick-save must NOT drop the code
+  // (this used to serialize an empty CODE block).
   const blocks = await save(page, captured);
   const code = blocks.find((b) => b.type === "CODE");
   expect(code, "a CODE block was saved").toBeTruthy();

@@ -72,6 +72,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         saved={ed.saved}
         busy={ed.busy}
         onSave={ed.save}
+        onBack={ed.leave}
         onOpenPublish={() => setPublishOpen(true)}
         onRestoreRevision={ed.restoreRevision}
         onDelete={ed.remove}
