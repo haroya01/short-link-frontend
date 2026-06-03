@@ -299,7 +299,8 @@
       "placeEmpty": "검색 결과가 없어요.",
       "placeHint": "장소를 고르면 지도 카드가 글에 삽입돼요.",
       "placeClose": "닫기"
-    }
+    },
+    "autoSave": "자동 저장"
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",

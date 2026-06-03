@@ -430,7 +430,7 @@ h1, h2, h3, p {
     margin-bottom: 0;
   }
   .prose-post p {
-    @apply my-[0.75rem] text-[1.125rem] leading-[1.55] text-slate-700 dark:text-slate-300;
+    @apply my-[0.625rem] text-[1.125rem] leading-[1.55] text-slate-700 dark:text-slate-300;
   }
   /* scroll-margin keeps a TOC jump target clear of the sticky header instead of tucking it
      underneath. Applies to the heading anchors PostToc links to. */
@@ -1260,7 +1260,7 @@ body[data-cookie-consent="visible"] {
 }
 /* Block rhythm mirrors the published .prose-post (18px font, tightened block gap so lines don't float). */
 .tiptap > * + * {
-  margin-top: 0.75rem;
+  margin-top: 0.625rem;
 }
 .tiptap :is(h1, h2, h3) {
   color: #0f172a;

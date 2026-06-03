@@ -299,7 +299,8 @@
       "placeEmpty": "結果がありません。",
       "placeHint": "場所を選ぶと地図カードが記事に挿入されます。",
       "placeClose": "閉じる"
-    }
+    },
+    "autoSave": "自動保存"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
