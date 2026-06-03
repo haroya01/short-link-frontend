@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, Layers } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Mark } from "@/components/common/logo";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 
@@ -34,7 +35,7 @@ export function SeriesNav({
     <nav className="mb-10 border-l-2 border-accent-500 pl-4">
       <div className="flex items-center justify-between gap-3">
         <a href={seriesHref} className="focus-ring group flex min-w-0 items-center gap-2 rounded">
-          <Layers className="h-4 w-4 shrink-0 text-accent-600 dark:text-accent-400" />
+          <Mark className="h-3 w-auto shrink-0 text-accent-600 dark:text-accent-400" />
           <span className="truncate text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
             {series.title}
           </span>

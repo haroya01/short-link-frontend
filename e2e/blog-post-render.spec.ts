@@ -67,3 +67,13 @@ test("a series post shows the series banner (progress + episode list) and an end
   await expect(page.getByText("Next in this series", { exact: false })).toBeVisible();
   await expect(page.getByRole("link", { name: /View all 3 parts/i })).toBeVisible();
 });
+
+test("a comment's @author handle links to the commenter's profile", async ({ page }) => {
+  // The comment author (avatar + @handle) must be a link to their profile (cross-host on prod), not
+  // plain text — so readers can jump from a comment to who wrote it.
+  await page.goto(POST_PATH);
+  await expect(page.locator(".prose-post")).toBeVisible({ timeout: 30_000 });
+  const authorLink = page.locator('a[href*="/p/minji"]').first(); // seeded mock comment by @minji
+  await expect(authorLink).toBeVisible();
+  await expect(authorLink).toContainText("minji");
+});

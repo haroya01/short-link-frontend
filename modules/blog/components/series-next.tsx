@@ -1,5 +1,6 @@
-import { ArrowRight, Layers } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Mark } from "@/components/common/logo";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 
@@ -27,7 +28,7 @@ export async function SeriesNext({
           className="focus-ring group block rounded-2xl border border-slate-200 p-5 transition-colors hover:border-accent-300 dark:border-slate-700 dark:hover:border-accent-500/50"
         >
           <span className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-accent-700 dark:text-accent-400">
-            <Layers className="h-3.5 w-3.5" />
+            <Mark className="h-2.5 w-auto" />
             {t("seriesNextUp")}
           </span>
           <span className="mt-2 flex items-center justify-between gap-3">
