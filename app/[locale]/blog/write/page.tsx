@@ -76,7 +76,7 @@ export default function WriteIndexPage() {
   const visible = filter === "all" ? posts : posts.filter((p) => p.status === filter);
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
+    <main className="mx-auto max-w-2xl px-6 py-10">
       <header className="mb-6 flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
         <a
@@ -164,13 +164,14 @@ export default function WriteIndexPage() {
                     </div>
                   </div>
                 </a>
-                {/* Per-post analytics — sibling of the editor link (never nested), revealed on row
-                    hover/focus. Pinned right so it reads as a quiet action, not part of the title. */}
+                {/* Per-post analytics — sibling of the editor link (never nested). Pinned right and
+                    always visible (matching the series workspace's always-on row actions), so it's
+                    reachable on touch and reads as a consistent quiet action across the workspace. */}
                 <a
                   href={`${analyticsBase}/${p.id}`}
                   aria-label={t("viewAnalytics")}
                   title={t("viewAnalytics")}
-                  className="focus-ring absolute right-1 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-lg text-slate-400 opacity-0 transition-all hover:bg-white hover:text-accent-700 focus-visible:opacity-100 group-hover/row:opacity-100 dark:text-slate-500 dark:hover:bg-slate-900 dark:hover:text-accent-300 [@media(hover:none)]:opacity-100"
+                  className="focus-ring absolute right-1 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-white hover:text-accent-700 dark:text-slate-500 dark:hover:bg-slate-900 dark:hover:text-accent-300"
                 >
                   <BarChart3 className="h-[18px] w-[18px]" />
                 </a>
