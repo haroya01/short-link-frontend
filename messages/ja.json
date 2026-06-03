@@ -217,6 +217,8 @@
     "seriesNewPlaceholder": "新しいシリーズ名",
     "publishSettings": "公開設定",
     "postSettings": "記事設定",
+    "bodyLinks": "本文のリンク",
+    "bodyLinksHint": "公開時にkurlリンクへ短縮され、クリックが計測されます。オフにすると元のURLのままになります。",
     "close": "閉じる",
     "saveDraft": "下書き保存",
     "saveChanges": "変更を保存",

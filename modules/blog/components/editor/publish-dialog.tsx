@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CalendarClock, Check, ImagePlus, Loader2, Trash2, X } from "lucide-react";
+import { CalendarClock, Check, ImagePlus, Link2, Loader2, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PostStatus } from "@/modules/blog/api/posts";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
@@ -31,6 +31,7 @@ export function PublishDialog({
   onTagsChange,
   seriesId,
   onSeriesChange,
+  bodyLinks,
   saving,
   busy,
   onSave,
@@ -54,11 +55,13 @@ export function PublishDialog({
   onTagsChange: (v: string[]) => void;
   seriesId: number | null;
   onSeriesChange: (v: number | null) => void;
+  /** External http(s) links found in the body — offered for auto-shortening through kurl on publish. */
+  bodyLinks: string[];
   saving: boolean;
   busy: boolean;
   onSave: () => Promise<void> | void;
-  onChangeStatus: (a: StatusAction) => Promise<void> | void;
-  onSchedule: (iso: string) => Promise<void> | void;
+  onChangeStatus: (a: StatusAction, opts?: { shortenLinks?: string[] }) => Promise<void> | void;
+  onSchedule: (iso: string, opts?: { shortenLinks?: string[] }) => Promise<void> | void;
 }) {
   const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -66,6 +69,10 @@ export function PublishDialog({
   const [coverError, setCoverError] = useState<string | null>(null);
   const [scheduleAt, setScheduleAt] = useState("");
   const [showSchedule, setShowSchedule] = useState(false);
+  // Which in-post links to auto-shorten through kurl on publish — all on by default; the author can
+  // opt any out (kept as the original URL). Seeded when the dialog opens (body isn't edited while it's
+  // open, so the detected set is stable for the session).
+  const [shortenSet, setShortenSet] = useState<Set<string>>(new Set());
 
   // A public post must carry at least one topic (tag) — the reader's whole discovery surface is
   // tag-driven. Block the going-public actions until then, and nudge it on the tag field.
@@ -80,6 +87,19 @@ export function PublishDialog({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  useEffect(() => {
+    if (open) setShortenSet(new Set(bodyLinks));
+  }, [open, bodyLinks]);
+
+  const enabledLinks = bodyLinks.filter((l) => shortenSet.has(l));
+  const toggleLink = (url: string) =>
+    setShortenSet((prev) => {
+      const next = new Set(prev);
+      if (next.has(url)) next.delete(url);
+      else next.add(url);
+      return next;
+    });
 
   // Prefill an empty 요약 with the body's opening line when the dialog opens, so the author edits a
   // draft excerpt instead of facing a blank box. Once per open (the ref resets on close); never
@@ -254,6 +274,50 @@ export function PublishDialog({
             )}
           </Field>
 
+          {/* 본문 링크 — 발행 시 kurl 단축링크로 변환해 클릭 추적. 링크별로 끌 수 있음. */}
+          {bodyLinks.length > 0 && (
+            <Field label={t("bodyLinks")} hint={t("bodyLinksHint")}>
+              <ul className="space-y-1 rounded-lg border border-slate-200 p-1.5 dark:border-slate-700">
+                {bodyLinks.map((url) => {
+                  const on = shortenSet.has(url);
+                  let host = url;
+                  try {
+                    host = new URL(url).host.replace(/^www\./, "");
+                  } catch {
+                    /* keep raw */
+                  }
+                  return (
+                    <li key={url}>
+                      <button
+                        type="button"
+                        onClick={() => toggleLink(url)}
+                        aria-pressed={on}
+                        className="focus-ring flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                      >
+                        <span
+                          className={`grid h-4 w-4 shrink-0 place-items-center rounded border transition-colors ${
+                            on
+                              ? "border-accent-600 bg-accent-600 text-white dark:border-accent-500 dark:bg-accent-500"
+                              : "border-slate-300 dark:border-slate-600"
+                          }`}
+                        >
+                          {on && <Check className="h-3 w-3" />}
+                        </span>
+                        <Link2 className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                        <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-200">
+                          {host}
+                          <span className="text-slate-400 dark:text-slate-500">
+                            {url.slice(url.indexOf(host) + host.length)}
+                          </span>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Field>
+          )}
+
           {/* 예약 (초안일 때) */}
           {status === "DRAFT" && showSchedule && (
             <Field label={t("scheduleAt")}>
@@ -312,8 +376,8 @@ export function PublishDialog({
               t={t}
               onPublish={async () => {
                 await onSave();
-                if (showSchedule && scheduleAt) await onSchedule(scheduleAt);
-                else await onChangeStatus("publish");
+                if (showSchedule && scheduleAt) await onSchedule(scheduleAt, { shortenLinks: enabledLinks });
+                else await onChangeStatus("publish", { shortenLinks: enabledLinks });
                 onClose();
               }}
               onSaveChanges={async () => {
@@ -329,7 +393,7 @@ export function PublishDialog({
               }}
               onRepublish={async () => {
                 await onSave();
-                await onChangeStatus("republish");
+                await onChangeStatus("republish", { shortenLinks: enabledLinks });
               }}
               onCancelSchedule={async () => {
                 await onSave();

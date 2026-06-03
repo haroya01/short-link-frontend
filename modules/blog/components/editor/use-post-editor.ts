@@ -18,8 +18,10 @@ import {
   type PostView,
 } from "@/modules/blog/api/posts";
 import { assignPostToSeries } from "@/modules/blog/api/series";
+import { shortenUrl } from "@/lib/api/links";
 import { ApiError } from "@/lib/api/client";
 import { postHref } from "@/modules/blog/components/feed-card";
+import { rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
 
@@ -203,7 +205,30 @@ export function usePostEditor(
     router.push(writeBase);
   }
 
-  async function changeStatus(action: StatusAction) {
+  /**
+   * Auto-shorten the given in-post links through the kurl system right before going public, so every
+   * click is tracked (and surfaces in the post's analytics). Each URL is created as a kurl short link
+   * and swapped into the saved body. A link that fails to shorten is left as the author wrote it — a
+   * tracking miss never blocks publishing. Returns the rewritten markdown (or null if nothing changed).
+   */
+  async function applyLinkShortening(urls: string[]): Promise<string | null> {
+    if (post == null || urls.length === 0) return null;
+    const md = liveMarkdown.current?.() ?? markdown;
+    const map: Record<string, string> = {};
+    for (const url of urls) {
+      try {
+        map[url] = (await shortenUrl({ url })).shortUrl;
+      } catch {
+        /* keep the original link — partial coverage beats a blocked publish */
+      }
+    }
+    if (Object.keys(map).length === 0) return null;
+    const newMd = rewriteMarkdownLinks(md, map);
+    await replaceBlocks(post.id, markdownToBlocks(newMd));
+    return newMd;
+  }
+
+  async function changeStatus(action: StatusAction, opts?: { shortenLinks?: string[] }) {
     if (post == null || busy) return;
     const goingPublic = action === "publish" || action === "republish";
     // Publishing from a draft needs a title (backend enforces it too; this gives an immediate localized
@@ -221,6 +246,8 @@ export function usePostEditor(
     setBusy(true);
     setError(null);
     try {
+      // Shorten in-post links through kurl before the post goes live (skipped for unpublish/backToDraft).
+      if (goingPublic && opts?.shortenLinks?.length) await applyLinkShortening(opts.shortenLinks);
       const updated =
         action === "publish"
           ? await publishPost(post.id)
@@ -246,7 +273,7 @@ export function usePostEditor(
   }
 
   /** Returns true once the post is parked for a future publish — the caller can then confirm the time. */
-  async function schedule(scheduledAt: string): Promise<boolean> {
+  async function schedule(scheduledAt: string, opts?: { shortenLinks?: string[] }): Promise<boolean> {
     if (post == null || busy) return false;
     if (!title.trim()) {
       setError(t("titleRequired"));
@@ -267,6 +294,15 @@ export function usePostEditor(
     try {
       // Persist edits first so the scheduled snapshot matches what's on screen, then park it.
       await save();
+      // Shorten in-post links into the scheduled snapshot; reseed the editor so the author (who stays
+      // here after scheduling) sees the rewritten links rather than stale originals.
+      if (opts?.shortenLinks?.length) {
+        const newMd = await applyLinkShortening(opts.shortenLinks);
+        if (newMd != null) {
+          setMarkdownRaw(newMd);
+          setReloadKey((k) => k + 1);
+        }
+      }
       setPost(await schedulePost(post.id, scheduledAt));
       return true;
     } catch (e) {
