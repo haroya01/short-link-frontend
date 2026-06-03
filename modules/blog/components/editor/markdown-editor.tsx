@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
-import { BubbleMenu } from "@tiptap/react/menus";
+import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -12,7 +12,22 @@ import { TableRow } from "@tiptap/extension-table-row";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { Markdown } from "tiptap-markdown";
-import { Bold, Code2, Italic, Link as LinkIcon, Minus, Plus, Strikethrough, Trash2 } from "lucide-react";
+import {
+  Bold,
+  Code2,
+  Heading2,
+  Image as ImageIcon,
+  Italic,
+  Link as LinkIcon,
+  List,
+  Minus,
+  Plus,
+  Quote,
+  Strikethrough,
+  Table as TableIcon,
+  Trash2,
+  Video,
+} from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
@@ -163,6 +178,11 @@ export function MarkdownEditor({
   return (
     <div className="flex h-full flex-col">
       <BubbleBar editor={editor} onEditLink={(href) => setUrlDialog({ mode: "link", initial: href })} />
+      <FloatingInsertBar
+        editor={editor}
+        onPickImage={pickImage}
+        onPickEmbed={() => setUrlDialog({ mode: "embed", initial: "" })}
+      />
       <TableMenu editor={editor} />
       <EditorBlockHandle editor={editor} />
       <input
@@ -254,6 +274,72 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
         </button>
       ))}
     </BubbleMenu>
+  );
+}
+
+/**
+ * Floating insert bar — the "절충" between a permanent toolbar (too loud for the quiet weblog) and the
+ * selection-only bubble (which hides block tools behind the `/` you have to know about). On an empty
+ * top-level line it floats a compact palette of the common block types just below the caret, so the
+ * tools are discoverable at a glance; it vanishes the moment you type. The `/` menu, markdown input
+ * rules, and the gutter "+" all still work — this is the visible, zero-knowledge entry point.
+ */
+function FloatingInsertBar({
+  editor,
+  onPickImage,
+  onPickEmbed,
+}: {
+  editor: Editor;
+  onPickImage: (opts?: ImagePickOptions) => void;
+  onPickEmbed: () => void;
+}) {
+  const t = useTranslations("postEditor");
+  const items = [
+    { icon: Heading2, label: t("slash.heading2"), run: () => editor.chain().focus().toggleHeading({ level: 2 }).run() },
+    { icon: List, label: t("slash.bulletList"), run: () => editor.chain().focus().toggleBulletList().run() },
+    { icon: Quote, label: t("slash.quote"), run: () => editor.chain().focus().toggleBlockquote().run() },
+    { icon: Code2, label: t("slash.codeBlock"), run: () => editor.chain().focus().toggleCodeBlock().run() },
+    { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() },
+    { icon: Video, label: t("slash.embed"), run: () => onPickEmbed() },
+    { icon: TableIcon, label: t("slash.table"), run: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
+  ];
+
+  return (
+    <FloatingMenu
+      editor={editor}
+      options={{ placement: "bottom-start", offset: 6 }}
+      // Only on a truly empty, focused, top-level paragraph — never inside a list item, code block,
+      // table cell, or a line that already has text.
+      shouldShow={({ view, state }) => {
+        if (!view.hasFocus()) return false;
+        const { $from, empty } = state.selection;
+        return (
+          empty &&
+          $from.depth === 1 &&
+          $from.parent.type.name === "paragraph" &&
+          $from.parent.content.size === 0
+        );
+      }}
+      className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-md dark:border-slate-700 dark:bg-slate-900"
+    >
+      {items.map((it, i) => (
+        <button
+          key={i}
+          type="button"
+          aria-label={it.label}
+          title={it.label}
+          // onMouseDown + preventDefault so clicking the bar doesn't blur the editor before the command
+          // runs (a blur would collapse the empty selection and hide the bar mid-click).
+          onMouseDown={(e) => {
+            e.preventDefault();
+            it.run();
+          }}
+          className="touch-target focus-ring grid h-8 w-8 place-items-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+        >
+          <it.icon className="h-4 w-4" />
+        </button>
+      ))}
+    </FloatingMenu>
   );
 }
 

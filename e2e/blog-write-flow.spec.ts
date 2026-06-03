@@ -262,3 +262,24 @@ test("the embed dialog inserts a live link card that round-trips to an EMBED blo
   expect(embed, "an EMBED block was saved").toBeTruthy();
   expect(embed!.content).toContain("dQw4w9WgXcQ");
 });
+
+test("the floating insert bar shows on an empty line and inserts a block", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  // Focusing the empty editor reveals the floating block palette (no "/" knowledge required).
+  await page.locator(".tiptap").click();
+  const headingBtn = page.getByRole("button", { name: "Heading 2", exact: true });
+  await expect(headingBtn).toBeVisible({ timeout: 10_000 });
+  await headingBtn.click();
+  await page.keyboard.type("From the floating bar");
+
+  // It must hide once the line has content (no longer an empty paragraph).
+  await expect(headingBtn).toBeHidden();
+
+  const blocks = await save(page, captured);
+  const h2 = blocks.find((b) => b.type === "H2");
+  expect(h2, "the floating bar inserted an H2").toBeTruthy();
+  expect(h2!.content).toContain("From the floating bar");
+});
