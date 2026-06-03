@@ -152,9 +152,9 @@ async function awaitBubbleButton(page: Page, select: () => Promise<void>, button
 }
 
 async function save(page: Page, captured: Captured): Promise<Block[]> {
-  // Clicking Save blurs the editor → the onBlur flush serializes the latest markdown (the keystroke
-  // path is debounced, so a blur-flush is what makes Save deterministic).
-  await page.getByRole("button", { name: "Save", exact: true }).click();
+  // Drafts have no manual Save button (autosave-only model) — they persist ~1.8s after you stop
+  // typing. Wait for that idle autosave. The 250ms serialize debounce coalesces fast keystrokes into a
+  // single flush, so the captured payload is the complete doc, not a partial mid-type snapshot.
   await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
   return captured.blocks!;
 }
@@ -1107,8 +1107,8 @@ test("a failed save surfaces an error message", async ({ page }) => {
   await openEditor(page);
   await page.locator(".tiptap").click();
   await page.keyboard.type("this will not save");
-  await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(page.locator("main p.text-red-600")).toBeVisible({ timeout: 10_000 });
+  // The idle autosave attempts the (failing) blocks PUT — no manual Save button — and surfaces the error.
+  await expect(page.locator("main p.text-red-600")).toBeVisible({ timeout: 15_000 });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
