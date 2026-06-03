@@ -184,6 +184,9 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
   const rows: Array<[string, string | null]> = [
     ["PARAGRAPH", item.excerpt ?? "이 글은 미리보기용 목 데이터예요. 실제 본문은 백엔드 연동 후 채워집니다."],
     ["H2", "배경"],
+    // Soft line break inside ONE paragraph (markdown backslash hard break) — the reader must render
+    // it as a <br> (tight), NOT show a literal backslash nor split it into two paragraphs.
+    ["PARAGRAPH", "소프트 줄바꿈 첫 줄.\\\n같은 문단의 둘째 줄."],
     ["PARAGRAPH", `${tag} 작업을 하며 부딪힌 문제와 결정을 정리합니다. 무엇을, 왜 그렇게 했는지를 중심으로.`],
     ["LIST_BULLET", JSON.stringify(["문제 정의와 제약", "고려한 대안들", "최종 선택과 트레이드오프"])],
     [

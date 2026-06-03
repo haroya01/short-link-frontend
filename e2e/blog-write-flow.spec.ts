@@ -249,6 +249,9 @@ test("the '+' block handle adds a clean empty block below — NO stray '/'", asy
 
   await page.locator(".tiptap").click();
   await page.keyboard.type("first line");
+  // Two Enters = a real paragraph break (a single Enter is now a tight soft line break within the
+  // same paragraph), so "first line" and "second line" are two distinct blocks here.
+  await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
   await page.keyboard.type("second line");
 
@@ -399,9 +402,13 @@ test("autosave does not freeze on image / edge-syntax lines (regression #559)", 
   await openEditor(page);
 
   await page.locator(".tiptap").click();
+  // Double Enter between each = real block breaks (single Enter is a soft line break now), so each
+  // tricky line becomes its own block and exercises markdownToBlocks' per-block consume paths.
   await page.keyboard.type("![half-typed-image");
   await page.keyboard.press("Enter");
+  await page.keyboard.press("Enter");
   await page.keyboard.type("> ");
+  await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
   await page.keyboard.type("![pic](http://x/y.png) trailing caption");
 
@@ -545,12 +552,48 @@ test("typing '---' on its own line becomes a DIVIDER block", async ({ page }) =>
   await openEditor(page);
   await page.locator(".tiptap").click();
   await page.keyboard.type("above");
+  // Double Enter = a fresh paragraph so the '---' rule fires at a block start (a single Enter would
+  // leave '---' mid-paragraph after a soft line break, where the rule never triggers).
+  await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
   await page.keyboard.type("---");
   await page.keyboard.press("Enter");
   await page.keyboard.type("below");
   const blocks = await save(page, captured);
   expect(blocks.some((b) => b.type === "DIVIDER")).toBe(true);
+});
+
+test("Enter is a tight soft line break; a second Enter makes a new paragraph (Inflearn-style)", async ({
+  page,
+}) => {
+  // The reader asked for narrow line spacing on a single Enter while real paragraph separation keeps
+  // the current gap. A single Enter must keep both lines in ONE paragraph (a <br> — no block gap),
+  // and a second Enter on the empty break-line must promote to a new paragraph (the wider gap).
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+
+  await page.keyboard.type("line one");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("line two");
+  // Both lines live in a single top-level paragraph, joined by one soft break.
+  await expect(page.locator(".tiptap > p")).toHaveCount(1);
+  await expect(page.locator(".tiptap > p br")).toHaveCount(1);
+
+  // Second Enter (on the empty break-line) → a brand new paragraph.
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("a new paragraph");
+  await expect(page.locator(".tiptap > p")).toHaveCount(2);
+
+  // Round-trip: the soft break stays inside one PARAGRAPH block; the paragraph break splits blocks.
+  const blocks = await save(page, captured);
+  const paras = blocks.filter((b) => b.type === "PARAGRAPH");
+  expect(paras.length, "soft break did not spill into a second block").toBe(2);
+  expect(paras[0].content).toContain("line one");
+  expect(paras[0].content).toContain("line two");
+  expect(paras[1].content).toContain("a new paragraph");
 });
 
 test("selection Bold (bubble menu) wraps the text as **bold** in the saved paragraph", async ({ page }) => {
@@ -882,6 +925,8 @@ test("slash menu inserts a divider (DIVIDER block)", async ({ page }) => {
   await openEditor(page);
   await page.locator(".tiptap").click();
   await page.keyboard.type("above the line");
+  // Fresh paragraph (double Enter) so the slash menu opens at a block start, not mid-paragraph.
+  await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
   await page.keyboard.type("/");
   await page.getByRole("option", { name: /^Divider\b/ }).click();
@@ -1049,6 +1094,8 @@ test("code block language + body round-trip into the CODE block", async ({ page 
   await openEditor(page);
   await page.locator(".tiptap").click();
   await page.keyboard.type("intro");
+  // Fresh paragraph (double Enter) so the slash menu opens at a block start, not mid-paragraph.
+  await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
   await page.keyboard.type("/");
   await page.getByRole("option", { name: /^Code block\b/ }).click();
@@ -1125,12 +1172,16 @@ test("the editor visually styles marks and blocks (computed styles, not just pay
   // Bold / italic / strike via markdown input rules — deterministic (no selection + Cmd+B timing,
   // which flaked in CI when the prior blockquote swallowed the following lines).
   await page.keyboard.type("**boldword** *ital* ~~strk~~ plain");
+  // Double Enter after a paragraph = real block break (single Enter is a soft line break now). After
+  // a heading, a single Enter already exits to a new paragraph, so the H2→code step stays single.
+  await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
   // H2 (markdown shortcut)
   await page.keyboard.type("## Heading");
   await page.keyboard.press("Enter");
   // Inline code (backtick input rule)
   await page.keyboard.type("text with `snippet` inline");
+  await page.keyboard.press("Enter");
   await page.keyboard.press("Enter");
   // Blockquote LAST — Enter inside a quote keeps following lines in the quote, so it must not precede
   // the other blocks.

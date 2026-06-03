@@ -48,6 +48,64 @@ test("reader typography is applied — heading is larger and bolder than body te
   expect(m.h2Weight).toBeGreaterThanOrEqual(600);
 });
 
+test("a soft line break renders as a tight <br> — narrower than a real paragraph break", async ({
+  page,
+}) => {
+  // The editor's single-Enter soft break stores `\` + newline inside ONE PARAGRAPH block. The reader
+  // must render it as a <br> (NO literal backslash, NOT a second paragraph), and the gap between the
+  // two soft-broken lines must be narrower than the gap across a real paragraph boundary. This is the
+  // lived counterpart to the authoring spec's structural check — proven with computed line geometry.
+  await page.goto(POST_PATH);
+  await expect(page.locator(".prose-post")).toBeVisible({ timeout: 30_000 });
+
+  const m = await page.evaluate(() => {
+    const ps = [...document.querySelectorAll(".prose-post p")];
+    const sp = ps.find((p) => (p.textContent || "").includes("소프트 줄바꿈 첫 줄"));
+    const np = ps.find((p) => (p.textContent || "").includes("작업을 하며 부딪힌"));
+    if (!sp || !np) return { found: false } as const;
+    const lineTops = (el: Element) => {
+      const r = document.createRange();
+      r.selectNodeContents(el);
+      // Drop zero-size rects — a <br> emits a width:0 rect at the FIRST line's top, which would
+      // otherwise read as a second "line" sharing line 1's top and zero out the advance.
+      const tops = [...r.getClientRects()]
+        .filter((c) => c.width > 0 && c.height > 0)
+        .map((c) => Math.round(c.top));
+      return [...new Set(tops)].sort((a, b) => a - b);
+    };
+    const spTops = lineTops(sp);
+    const npTops = lineTops(np);
+    // Top-to-top advance between two soft-broken lines vs. across the paragraph boundary (last line
+    // of the soft-break paragraph → first line of the next paragraph). Apples-to-apples line advances.
+    const withinAdvance = spTops.length >= 2 ? spTops[1] - spTops[0] : 0;
+    const acrossAdvance = npTops[0] - spTops[spTops.length - 1];
+    return {
+      found: true,
+      brs: sp.querySelectorAll("br").length,
+      paragraphs: ps.filter((p) => (p.textContent || "").includes("소프트 줄바꿈")).length,
+      text: sp.textContent || "",
+      lines: spTops.length,
+      withinAdvance,
+      acrossAdvance,
+    } as const;
+  });
+
+  expect(m.found, "the soft-break paragraph is present").toBe(true);
+  if (!m.found) return;
+  expect(m.brs, "the soft break renders as exactly one <br>").toBe(1);
+  expect(m.paragraphs, "the soft break stays in ONE paragraph, not split into two").toBe(1);
+  expect(m.text).toContain("소프트 줄바꿈 첫 줄");
+  expect(m.text).toContain("같은 문단의 둘째 줄");
+  expect(m.text, "no literal backslash leaks into the rendered text").not.toContain("\\");
+  expect(m.lines, "the paragraph occupies two visual lines").toBeGreaterThanOrEqual(2);
+  expect(m.withinAdvance).toBeGreaterThan(0);
+  // The headline guarantee: a real paragraph break is wider than a soft line break.
+  expect(
+    m.acrossAdvance,
+    "a real paragraph break must be wider than a soft line break",
+  ).toBeGreaterThan(m.withinAdvance);
+});
+
 test("a series post shows the series banner (progress + episode list) and an end-of-post next-up card", async ({
   page,
 }) => {
