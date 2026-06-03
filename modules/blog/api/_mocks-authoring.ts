@@ -201,6 +201,12 @@ export function mockCreateSeries(payload: { slug: string; title: string }): Seri
   return { series: s, posts: [] };
 }
 
+export function mockUpdateSeries(id: number, payload: { title: string; slug: string }): SeriesDetailView {
+  const s = series.get(id);
+  if (s) series.set(id, { ...s, title: payload.title, slug: payload.slug, updatedAt: nowIso() });
+  return mockGetSeries(id);
+}
+
 export function mockSetSeriesPosts(id: number, postIds: number[]): SeriesDetailView {
   seriesPosts.set(id, [...postIds]);
   recount(id);
