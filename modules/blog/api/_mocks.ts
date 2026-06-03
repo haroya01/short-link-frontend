@@ -204,14 +204,27 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
   return rows.map(([type, content], blockOrder) => ({ type, content, blockOrder, cta: null }));
 }
 
-/** Post detail — author + post meta + a body of blocks. Series omitted in mock. */
+/** Post detail — author + post meta + a body of blocks. First 3 posts belong to a series so the
+ * on-post series UI can be exercised (slugs line up with mockSeriesDetail("nextjs-deep-dive")). */
 export function mockPostDetail(_username: string, slug: string): PublicPostDetail {
   const item = ALL_ITEMS.find((i) => i.slug === slug) ?? ALL_ITEMS[0];
+  const idx = ALL_ITEMS.indexOf(item);
+  const inSeries = idx >= 0 && idx < 3;
+  const ref = (i: number) => ({ slug: ALL_ITEMS[i].slug, title: ALL_ITEMS[i].title });
   return {
     author: item.author,
-    post: toListItem(item, ALL_ITEMS.indexOf(item)),
+    post: toListItem(item, idx),
     blocks: sampleBlocks(item),
-    series: null,
+    series: inSeries
+      ? {
+          slug: "nextjs-deep-dive",
+          title: "Next.js 깊게 파기",
+          position: idx + 1,
+          total: 3,
+          prev: idx > 0 ? ref(idx - 1) : null,
+          next: idx < 2 ? ref(idx + 1) : null,
+        }
+      : null,
   };
 }
 

@@ -369,7 +369,11 @@
     "following": "팔로잉",
     "followers": "팔로워 {count}",
     "bookmark": "북마크에 저장",
-    "bookmarkOn": "북마크에서 빼기"
+    "bookmarkOn": "북마크에서 빼기",
+    "seriesInThis": "이 시리즈",
+    "seriesNextUp": "이 시리즈의 다음 글",
+    "seriesViewAll": "시리즈 전체 {total}편 보기",
+    "seriesEpisode": "{n}편"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
