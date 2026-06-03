@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
@@ -11,6 +11,7 @@ import { PublishDialog } from "@/modules/blog/components/editor/publish-dialog";
 import { usePostEditor } from "@/modules/blog/components/editor/use-post-editor";
 import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton";
 import { markdownLead } from "@/modules/blog/lib/markdown-lead";
+import { extractExternalLinks } from "@/modules/blog/lib/post-links";
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const t = useTranslations("postEditor");
@@ -18,6 +19,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const { toast } = useToast();
   const ed = usePostEditor(Number(params.id), { ready, authenticated, username: me?.username });
   const [publishOpen, setPublishOpen] = useState(false);
+  // External links the author wrote in the body — offered for kurl auto-shortening in the publish
+  // dialog. Computed before the early returns so the hook order stays stable.
+  const bodyLinks = useMemo(() => extractExternalLinks(ed.markdown), [ed.markdown]);
 
   if (!ready) return null;
   if (!authenticated) {
@@ -113,14 +117,15 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         onTagsChange={ed.setTags}
         seriesId={ed.seriesId}
         onSeriesChange={ed.setSeriesId}
+        bodyLinks={bodyLinks}
         saving={ed.saving}
         busy={ed.busy}
         onSave={ed.save}
         onChangeStatus={ed.changeStatus}
-        onSchedule={async (iso) => {
+        onSchedule={async (iso, opts) => {
           // Confirm the parked publish with its exact date/time — the SCHEDULED badge alone is easy to
           // miss right after the action.
-          if (await ed.schedule(iso)) {
+          if (await ed.schedule(iso, opts)) {
             toast(t("scheduledToast", { when: new Date(iso).toLocaleString() }), "success");
           }
         }}

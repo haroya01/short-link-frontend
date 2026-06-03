@@ -7,11 +7,23 @@
  *
  * Scope: the read endpoints the main app screens load (dashboard · campaigns · ctas · stats · settings).
  * Returns `undefined` for anything not mocked → the caller falls through to the real fetch. Add a case
- * here as more links screens get covered. GET-only; mutations (not triggered on a render) fall through.
+ * here as more links screens get covered. Mostly GET; the one mutation is the publish-time shorten.
  */
+let mockShortenSeq = 7000;
+
 export function mockLinksResponse(path: string, method: string): unknown | undefined {
-  if ((method || "GET").toUpperCase() !== "GET") return undefined;
+  const verb = (method || "GET").toUpperCase();
   const p = path.split("?")[0].replace(/\/+$/, "");
+
+  // Shorten — the blog publish flow auto-shortens in-post links. Return a valid kurl short link so
+  // the rewrite recognizes it (kurlShortCode) and the flow is exercisable without a backend.
+  if (verb === "POST" && p === "/api/v1/links") {
+    const host = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
+    const code = (++mockShortenSeq).toString(36).padStart(4, "0");
+    return { shortCode: code, shortUrl: `https://${host}/${code}`, claimToken: null };
+  }
+
+  if (verb !== "GET") return undefined;
 
   switch (p) {
     // Dashboard — the viewer's links (paged) + their tags.
