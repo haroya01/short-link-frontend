@@ -13,9 +13,9 @@ import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const t = useTranslations("postEditor");
-  const { ready, authenticated } = useAuth();
+  const { ready, authenticated, me } = useAuth();
   const { toast } = useToast();
-  const ed = usePostEditor(Number(params.id), { ready, authenticated });
+  const ed = usePostEditor(Number(params.id), { ready, authenticated, username: me?.username });
   const [publishOpen, setPublishOpen] = useState(false);
 
   if (!ready) return null;
