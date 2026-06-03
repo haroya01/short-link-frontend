@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { listPublicPosts } from "@/modules/blog/api/public-posts";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
@@ -11,10 +12,11 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ username: string }>;
+  params: Promise<{ locale: string; username: string }>;
 }): Promise<Metadata> {
-  const { username } = await params;
-  return { title: `좋아요 · @${username}`, robots: { index: false, follow: false } };
+  const { locale, username } = await params;
+  const t = await getTranslations({ locale, namespace: "publicPost" });
+  return { title: `${t("tabLiked")} · @${username}`, robots: { index: false, follow: false } };
 }
 
 export default async function LikedPostsPage({
