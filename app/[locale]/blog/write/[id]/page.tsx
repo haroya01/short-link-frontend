@@ -9,7 +9,7 @@ import { MarkdownEditor } from "@/modules/blog/components/editor/markdown-editor
 import { EditorHeader } from "@/modules/blog/components/editor/editor-header";
 import { PublishDialog } from "@/modules/blog/components/editor/publish-dialog";
 import { usePostEditor } from "@/modules/blog/components/editor/use-post-editor";
-import { Skeleton } from "@/modules/blog/components/skeleton";
+import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton";
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const t = useTranslations("postEditor");
@@ -22,31 +22,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   if (!authenticated) {
     return <main className="mx-auto max-w-[44rem] px-5 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
   }
-  if (ed.loading) {
-    // Mirror the editor's real shape (top bar → title → meta strip → body) so the post swaps in
-    // without a jump, instead of a bare "loading…" line on this full-height surface.
-    return (
-      <main className="mx-auto flex h-[calc(100dvh-1px)] max-w-[44rem] flex-col px-5 pt-3" aria-busy>
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
-          <Skeleton className="h-6 w-16" />
-          <div className="flex gap-2">
-            <Skeleton className="h-8 w-20" />
-            <Skeleton className="h-8 w-16" />
-          </div>
-        </div>
-        <Skeleton className="mt-6 h-9 w-3/4" />
-        <div className="mt-3 flex gap-2 border-b border-slate-100 pb-5 dark:border-slate-800">
-          <Skeleton className="h-7 w-44" />
-          <Skeleton className="h-7 w-24" />
-        </div>
-        <div className="mt-6 flex-1 space-y-3">
-          {["w-full", "w-[92%]", "w-[97%]", "w-[60%]", "w-full", "w-[80%]"].map((w, i) => (
-            <Skeleton key={i} className={`h-4 ${w}`} />
-          ))}
-        </div>
-      </main>
-    );
-  }
+  // Mirror the editor's real shape so the post swaps in without a jump (shared with /write/new).
+  if (ed.loading) return <EditorSkeleton />;
   if (!ed.post) {
     return (
       <main className="mx-auto max-w-[44rem] px-5 py-12">
