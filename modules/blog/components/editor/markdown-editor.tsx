@@ -151,6 +151,10 @@ export function MarkdownEditor({
       // places the cursor instead of opening a tab.
       StarterKit.configure({
         codeBlock: false,
+        // Only H1–H3 exist in the block model (markdownToBlocks matches `#{1,3}`). Without this,
+        // typing `#### ` makes a real h4 node that serializes to `#### text` and round-trips as a
+        // literal-text PARAGRAPH — the heading (and its TOC entry) silently lost.
+        heading: { levels: [1, 2, 3] },
         link: { openOnClick: false, enableClickSelection: true },
       }),
       CodeMirrorBlock,
