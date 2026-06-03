@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useEditor, EditorContent, type Editor } from "@tiptap/react";
+import { useEditor, useEditorState, EditorContent, type Editor } from "@tiptap/react";
 import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -311,12 +311,26 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
 
   const setLink = () => onEditLink((editor.getAttributes("link").href as string | undefined) ?? "");
 
+  // Tiptap v3's useEditor does NOT re-render on transactions, so reading editor.isActive(...) inline
+  // would freeze the buttons' active highlight at their mount value. Subscribe via useEditorState so
+  // each toggle reflects immediately (this is what made the empty-line "굵게 쓰기" feel dead).
+  const active = useEditorState({
+    editor,
+    selector: ({ editor }) => ({
+      bold: editor.isActive("bold"),
+      italic: editor.isActive("italic"),
+      strike: editor.isActive("strike"),
+      code: editor.isActive("code"),
+      link: editor.isActive("link"),
+    }),
+  });
+
   const items = [
-    { icon: Bold, label: "Bold", active: editor.isActive("bold"), run: () => editor.chain().focus().toggleBold().run() },
-    { icon: Italic, label: "Italic", active: editor.isActive("italic"), run: () => editor.chain().focus().toggleItalic().run() },
-    { icon: Strikethrough, label: "Strike", active: editor.isActive("strike"), run: () => editor.chain().focus().toggleStrike().run() },
-    { icon: Code2, label: "Inline code", active: editor.isActive("code"), run: () => editor.chain().focus().toggleCode().run() },
-    { icon: LinkIcon, label: "Link", active: editor.isActive("link"), run: setLink },
+    { icon: Bold, label: "Bold", active: active.bold, run: () => editor.chain().focus().toggleBold().run() },
+    { icon: Italic, label: "Italic", active: active.italic, run: () => editor.chain().focus().toggleItalic().run() },
+    { icon: Strikethrough, label: "Strike", active: active.strike, run: () => editor.chain().focus().toggleStrike().run() },
+    { icon: Code2, label: "Inline code", active: active.code, run: () => editor.chain().focus().toggleCode().run() },
+    { icon: LinkIcon, label: "Link", active: active.link, run: setLink },
   ];
 
   return (
@@ -325,7 +339,14 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
       className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
     >
       {items.map((it, i) => (
-        <button key={i} type="button" aria-label={it.label} className={btn(it.active)} onClick={it.run}>
+        <button
+          key={i}
+          type="button"
+          aria-label={it.label}
+          aria-pressed={it.active}
+          className={btn(it.active)}
+          onClick={it.run}
+        >
           <it.icon className="h-4 w-4" />
         </button>
       ))}
@@ -350,6 +371,9 @@ function FloatingInsertBar({
   onPickEmbed: () => void;
 }) {
   const t = useTranslations("postEditor");
+  // Tiptap v3's useEditor doesn't re-render on transactions, so subscribe to the bold state explicitly
+  // — otherwise the toggle's highlight/aria-pressed never update and the button reads as "does nothing".
+  const boldActive = useEditorState({ editor, selector: ({ editor }) => editor.isActive("bold") });
   const items = [
     { icon: Heading2, label: t("slash.heading2"), run: () => editor.chain().focus().toggleHeading({ level: 2 }).run() },
     { icon: List, label: t("slash.bulletList"), run: () => editor.chain().focus().toggleBulletList().run() },
@@ -389,7 +413,7 @@ function FloatingInsertBar({
         type="button"
         aria-label={t("boldMode")}
         title={t("boldMode")}
-        aria-pressed={editor.isActive("bold")}
+        aria-pressed={boldActive}
         // onMouseDown + preventDefault so clicking doesn't blur the editor (a blur would collapse the
         // empty selection and hide the bar before toggleBold runs).
         onMouseDown={(e) => {
@@ -397,7 +421,7 @@ function FloatingInsertBar({
           editor.chain().focus().toggleBold().run();
         }}
         className={`touch-target focus-ring grid h-8 w-8 place-items-center rounded-md transition-colors ${
-          editor.isActive("bold")
+          boldActive
             ? "bg-accent-50 text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
             : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
         }`}

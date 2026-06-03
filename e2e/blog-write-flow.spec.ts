@@ -425,6 +425,11 @@ test("bold writing mode: floating-bar toggle saves typed text as **bold**", asyn
   const bold = page.getByRole("button", { name: "Bold", exact: true });
   await expect(bold).toBeVisible({ timeout: 10_000 });
   await bold.click();
+  // The toggle MUST reflect that bold is now armed. Tiptap v3's useEditor doesn't re-render on
+  // transactions, so a button reading editor.isActive() inline stays stuck at its mount value — the
+  // toggle looks dead ("버튼 눌러도 아무 변화 없음") even though the mark is set. This asserts the
+  // feedback, which a serialization-only check (below) silently misses.
+  await expect(bold).toHaveAttribute("aria-pressed", "true");
   await page.keyboard.type("bold words");
 
   const blocks = await save(page, captured);
@@ -562,6 +567,8 @@ test("selection Bold (bubble menu) wraps the text as **bold** in the saved parag
     "Bold",
   );
   await bold.click();
+  // Active-state feedback must update (see the v3 useEditorState note in the floating-bar test).
+  await expect(bold).toHaveAttribute("aria-pressed", "true");
   const blocks = await save(page, captured);
   expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain("**make me bold**");
 });
