@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { SeriesPostRef } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/components/feed-card";
+import { SeriesIndex } from "@/modules/blog/components/series-index";
 
 // How long each episode holds the spotlight before it moves to the next (1 → 2 → 3 → loop).
 const CYCLE_MS = 2200;
@@ -55,14 +56,7 @@ export function SeriesEpisodeList({
               href={postHref(authorUsername, post.slug, locale)}
               className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
             >
-              <span
-                aria-hidden
-                className={`h-1.5 w-1.5 shrink-0 rounded-full transition-all duration-500 ${
-                  on
-                    ? "scale-125 bg-accent-500 dark:bg-accent-400"
-                    : "bg-accent-300 dark:bg-accent-500/40"
-                }`}
-              />
+              <SeriesIndex n={i + 1} current={on} className="shrink-0 text-[13px]" />
               <span
                 className={`truncate text-[14px] transition-all duration-500 group-hover/ep:text-accent-700 dark:group-hover/ep:text-accent-300 ${
                   on
@@ -85,7 +79,7 @@ export function SeriesEpisodeList({
             href={seriesUrl}
             className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 text-[13px] text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-300"
           >
-            <span aria-hidden className="h-1.5 w-1.5 shrink-0" />
+            <span aria-hidden className="w-[2ch] shrink-0" />
             <span>{t("seriesMoreCount", { count: more })}</span>
             <ArrowRight className="h-3 w-3 transition-transform group-hover/ep:translate-x-0.5 motion-reduce:transform-none" />
           </a>

@@ -337,7 +337,7 @@
     "ctaUnavailable": "{label} · 현재 사용할 수 없는 링크",
     "ctaDeleted": "삭제된 링크",
     "toc": "목차",
-    "seriesPosition": "{position}/{total}",
+    "seriesPosition": "{position} / {total}",
     "tabPosts": "글",
     "tabSeries": "시리즈",
     "tabAbout": "소개",
@@ -373,8 +373,7 @@
     "bookmarkOn": "북마크에서 빼기",
     "seriesInThis": "이 시리즈",
     "seriesNextUp": "이 시리즈의 다음 글",
-    "seriesViewAll": "시리즈 전체 {total}편 보기",
-    "seriesEpisode": "{n}편"
+    "seriesViewAll": "시리즈 전체 {total}편 보기"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
