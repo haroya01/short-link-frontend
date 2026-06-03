@@ -76,3 +76,19 @@ test("the author header is the SAME DOM node before and after a tab switch (not 
   );
   expect(kept, "the marked author header survived the tab switch (lives in the layout)").toBe(true);
 });
+
+test("the theme is shared across blog surfaces via cookie (feed ↔ profile ↔ post)", async ({
+  page,
+  context,
+}) => {
+  // Theme is a `.kurl.me` cookie, NOT per-origin localStorage — so the apex feed and an author
+  // post/profile (different origins in prod) agree. Set only the cookie; every surface must read dark.
+  await context.addCookies([{ name: "theme", value: "dark", domain: "localhost", path: "/" }]);
+  for (const url of ["/en/blog", "/en/p/dohyun", "/en/p/dohyun/nextjs-14-app-router-blog"]) {
+    await page.goto(url);
+    expect(
+      await page.evaluate(() => document.documentElement.classList.contains("dark")),
+      `${url} applied the shared theme cookie`,
+    ).toBe(true);
+  }
+});
