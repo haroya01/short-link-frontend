@@ -789,6 +789,10 @@ for (const { label, type, wrap } of [
       label,
     );
     await btn.click();
+    // The toggle's active feedback must update (Tiptap v3 useEditor doesn't re-render on transactions
+    // — the bubble buttons subscribe via useEditorState). Asserting aria-pressed here guards the same
+    // regression that left "굵게 쓰기" looking dead, for every inline mark.
+    await expect(btn).toHaveAttribute("aria-pressed", "true");
     const blocks = await save(page, captured);
     expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain(wrap);
   });
@@ -1045,4 +1049,55 @@ test("a failed save surfaces an error message", async ({ page }) => {
   await page.keyboard.type("this will not save");
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.locator("main p.text-red-600")).toBeVisible({ timeout: 10_000 });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Lived rendering — the editor must VISUALLY style marks/blocks, not just serialize them. This is the
+// class of bug that nearly shipped (a missing `.tiptap strong` rule would still serialize `**` but
+// render flat) and is exactly what payload-only assertions miss. Asserts computed styles.
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+test("the editor visually styles marks and blocks (computed styles, not just payload)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  // H2 (markdown shortcut)
+  await page.keyboard.type("## Heading");
+  await page.keyboard.press("Enter");
+  // Blockquote
+  await page.keyboard.type("> quoted line");
+  await page.keyboard.press("Enter");
+  // Inline code (backtick input rule)
+  await page.keyboard.type("a `snippet` here");
+  await page.keyboard.press("Enter");
+  // Bold via keyboard last, so its stored mark can't bleed into the blocks above.
+  await page.keyboard.type("boldword");
+  await page.keyboard.press("Home");
+  await page.keyboard.press("Shift+End");
+  await page.keyboard.press("ControlOrMeta+b");
+  await expect(page.locator(".tiptap strong")).toBeVisible();
+
+  const m = await page.evaluate(() => {
+    const get = (sel: string) => {
+      const el = document.querySelector(sel);
+      return el ? getComputedStyle(el) : null;
+    };
+    const strong = get(".tiptap strong");
+    const h2 = get(".tiptap h2");
+    const p = get(".tiptap p");
+    const bq = get(".tiptap blockquote");
+    const code = get(".tiptap :not(pre) > code");
+    return {
+      strongWeight: strong ? Number(strong.fontWeight) : 0,
+      h2Size: h2 ? parseFloat(h2.fontSize) : 0,
+      pSize: p ? parseFloat(p.fontSize) : 0,
+      bqBorder: bq ? parseFloat(bq.borderLeftWidth) : 0,
+      codeBg: code ? code.backgroundColor : "rgba(0, 0, 0, 0)",
+    };
+  });
+  expect(m.strongWeight, "bold text renders bold").toBeGreaterThanOrEqual(600);
+  expect(m.h2Size, "H2 renders larger than body").toBeGreaterThan(m.pSize);
+  expect(m.bqBorder, "blockquote has a left rule").toBeGreaterThan(0);
+  expect(m.codeBg, "inline code has a background tint").not.toBe("rgba(0, 0, 0, 0)");
 });
