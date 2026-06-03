@@ -209,6 +209,7 @@
     "seriesNew": "新しいシリーズ",
     "seriesNewPlaceholder": "新しいシリーズ名",
     "publishSettings": "公開設定",
+    "postSettings": "記事設定",
     "close": "閉じる",
     "saveDraft": "下書き保存",
     "saveChanges": "変更を保存",
@@ -255,6 +256,7 @@
     "scheduledFor": "{when} に公開予定",
     "cancelSchedule": "予約取消",
     "tagsHint": "カンマかEnterで区切る",
+    "tagsRequired": "公開するにはトピック（タグ）を1つ以上追加してください",
     "boldMode": "太字",
     "slash": {
       "groupBasic": "基本",

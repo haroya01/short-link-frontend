@@ -209,6 +209,7 @@
     "seriesNew": "New series",
     "seriesNewPlaceholder": "New series name",
     "publishSettings": "Publish settings",
+    "postSettings": "Post settings",
     "close": "Close",
     "saveDraft": "Save draft",
     "saveChanges": "Save changes",
@@ -255,6 +256,7 @@
     "scheduledFor": "Publishes {when}",
     "cancelSchedule": "Cancel schedule",
     "tagsHint": "Separate with comma or Enter",
+    "tagsRequired": "Add at least one topic (tag) to publish",
     "boldMode": "Bold",
     "slash": {
       "groupBasic": "Basic",

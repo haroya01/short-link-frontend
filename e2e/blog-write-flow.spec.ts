@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page, type Locator } from "@playwright/test";
 
 /**
  * Post editor write-flow — runs against a fully MOCKED backend (no Spring/DB/S3 needed), so it can
@@ -682,23 +682,34 @@ async function openPublishDialog(page: Page) {
   return dialog;
 }
 
-test("publish: dialog Publish fires POST /publish and the badge flips to Published", async ({ page }) => {
+/** Add a topic (tag) in the dialog — going public now requires ≥1, so publish/republish/schedule
+ *  tests must seed one or the primary action stays disabled. */
+async function addDialogTag(dialog: Locator, name = "dev") {
+  const input = dialog.getByPlaceholder(/tag/i);
+  await input.fill(name);
+  await input.press("Enter");
+}
+
+test("publish: dialog Publish fires POST /publish and lands on the published post", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
   await titleInput(page).fill("Ready to ship");
   const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog); // topic required to publish
   await dialog.getByRole("button", { name: "Publish", exact: true }).click();
   await expect.poll(() => captured.status).toBe("publish");
-  await expect(page.getByText("Published", { exact: true })).toBeVisible();
+  // Publishing drops the writer onto the live post (reader view), not back in the editor.
+  await page.waitForURL(/\/p\/[^/]+\/[^/]+/, { timeout: 10_000 });
 });
 
 test("publish is blocked without a title — shows the hint, fires no /publish", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
-  // Title left empty (POST.title === "").
+  // Title left empty (POST.title === ""); add a topic so the title is the ONLY thing blocking publish.
   const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog);
   await dialog.getByRole("button", { name: "Publish", exact: true }).click();
   await expect(page.getByText("Add a title before publishing")).toBeVisible();
   expect(captured.status, "no status endpoint should have fired").toBeFalsy();
@@ -718,6 +729,7 @@ test("republish: an unpublished post can go live again (POST /republish)", async
   await setupMocks(page, captured, { ...POST, status: "UNPUBLISHED" });
   await openEditor(page);
   const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog); // going public again still needs a topic
   await dialog.getByRole("button", { name: "Republish", exact: true }).click();
   await expect.poll(() => captured.status).toBe("republish");
 });
@@ -732,6 +744,7 @@ test("republish persists pending body edits (not just flips status)", async ({ p
   await page.locator(".tiptap").click();
   await page.keyboard.type("edited before republish");
   const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog);
   await dialog.getByRole("button", { name: "Republish", exact: true }).click();
   await expect.poll(() => captured.status).toBe("republish");
   await expect.poll(() => captured.blocks).not.toBeNull();
@@ -744,6 +757,7 @@ test("schedule: a draft can be parked for a future publish (POST /schedule)", as
   await openEditor(page);
   await titleInput(page).fill("Scheduled one");
   const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog); // scheduling is a deferred publish → topic required too
   await dialog.getByRole("button", { name: "Schedule", exact: true }).click();
   await dialog.locator('input[type="datetime-local"]').fill("2030-01-01T10:00");
   await dialog.getByRole("button", { name: "Publish", exact: true }).click();
@@ -1284,6 +1298,7 @@ test("scheduling a past time is rejected with no /schedule call (A22)", async ({
   await openEditor(page);
   await titleInput(page).fill("Scheduled one");
   const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog); // pass the topic gate so the PAST-TIME guard is what blocks it
   await dialog.getByRole("button", { name: "Schedule", exact: true }).click();
   await dialog.locator('input[type="datetime-local"]').fill("2020-01-01T10:00");
   await dialog.getByRole("button", { name: "Publish", exact: true }).click();

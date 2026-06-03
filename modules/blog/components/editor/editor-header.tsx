@@ -97,7 +97,9 @@ export function EditorHeader({
           className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-1.5 text-sm font-semibold text-white shadow-[0_1px_2px_rgba(15,23,42,0.08)] transition-colors hover:bg-accent-700 disabled:opacity-50"
         >
           {isDraft ? <Send className="h-4 w-4" /> : <Settings2 className="h-4 w-4" />}
-          {isDraft ? t("publish") : t("publishSettings")}
+          {/* Already-public posts aren't being "published" — this opens metadata + 내리기/예약, so it
+              reads as 글 설정, not 발행 설정 (which only fits a draft about to go live). */}
+          {isDraft ? t("publish") : t("postSettings")}
         </button>
         <RevisionsButton postId={postId} busy={busy} onRestore={onRestoreRevision} />
         <button

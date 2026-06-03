@@ -64,6 +64,13 @@ export function PublishDialog({
   const [scheduleAt, setScheduleAt] = useState("");
   const [showSchedule, setShowSchedule] = useState(false);
 
+  // A public post must carry at least one topic (tag) — the reader's whole discovery surface is
+  // tag-driven. Block the going-public actions until then, and nudge it on the tag field.
+  const canPublish = tags.length > 0;
+  const needTags = !canPublish && (status === "DRAFT" || status === "UNPUBLISHED");
+  // Draft → "발행 설정" (about to go live); already-public → "글 설정" (managing the live post).
+  const dialogTitle = status === "DRAFT" ? t("publishSettings") : t("postSettings");
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -95,11 +102,11 @@ export function PublishDialog({
       <div
         role="dialog"
         aria-modal
-        aria-label={t("publishSettings")}
-        className="flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:rounded-2xl"
+        aria-label={dialogTitle}
+        className="flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:rounded-2xl sm:max-w-3xl"
       >
         <header className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5 dark:border-slate-800">
-          <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100">{t("publishSettings")}</h2>
+          <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100">{dialogTitle}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -110,7 +117,12 @@ export function PublishDialog({
           </button>
         </header>
 
-        <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
+        <div className="flex-1 overflow-y-auto px-5 py-5">
+          {/* velog-style two columns: LEFT = how the post will look (cover + summary), RIGHT = the
+              publish settings (series · topics · address). Stacks to one column on mobile. */}
+          <div className="grid gap-x-7 gap-y-5 sm:grid-cols-2">
+            {/* LEFT — 보이는 모습 */}
+            <div className="space-y-5">
           {/* 대표 이미지 */}
           <Field label={t("coverImage")} hint={t("coverImageHint")}>
             <input
@@ -170,12 +182,15 @@ export function PublishDialog({
               value={excerpt}
               onChange={(e) => onExcerptChange(e.target.value)}
               maxLength={300}
-              rows={2}
+              rows={4}
               placeholder={t("excerptPlaceholder")}
               className="w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-accent-500"
             />
           </Field>
+            </div>
 
+            {/* RIGHT — 발행 설정 */}
+            <div className="space-y-5">
           {/* 시리즈 */}
           <Field label={t("series")}>
             <SeriesSelect
@@ -186,9 +201,14 @@ export function PublishDialog({
             />
           </Field>
 
-          {/* 태그 */}
-          <Field label={t("tags")} hint={t("tagsHint")}>
+          {/* 태그 — 발행 필수 (주제 1개 이상) */}
+          <Field label={t("tags")} hint={needTags ? undefined : t("tagsHint")} required>
             <TagInput tags={tags} onChange={onTagsChange} placeholder={t("tagsPlaceholder")} />
+            {needTags && (
+              <p role="alert" className="mt-1.5 text-[12px] font-medium text-amber-600 dark:text-amber-400">
+                {t("tagsRequired")}
+              </p>
+            )}
           </Field>
 
           {/* slug — 초안 동안만 편집 */}
@@ -224,6 +244,8 @@ export function PublishDialog({
               />
             </Field>
           )}
+            </div>
+          </div>
         </div>
 
         {/* Footer — status-aware actions */}
@@ -264,6 +286,7 @@ export function PublishDialog({
             <PrimaryAction
               status={status}
               busy={busy}
+              canPublish={canPublish}
               t={t}
               onPublish={async () => {
                 await onSave();
@@ -298,12 +321,27 @@ export function PublishDialog({
   );
 }
 
-function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+function Field({
+  label,
+  hint,
+  required,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <div>
       <label className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
         <BrandTick />
         {label}
+        {required && (
+          <span className="text-accent-600 dark:text-accent-400" aria-hidden>
+            *
+          </span>
+        )}
       </label>
       {children}
       {hint && <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{hint}</p>}
@@ -314,6 +352,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
 function PrimaryAction({
   status,
   busy,
+  canPublish,
   t,
   onPublish,
   onSaveChanges,
@@ -323,6 +362,7 @@ function PrimaryAction({
 }: {
   status: PostStatus;
   busy: boolean;
+  canPublish: boolean;
   t: ReturnType<typeof useTranslations>;
   onPublish: () => void;
   onSaveChanges: () => void;
@@ -334,7 +374,13 @@ function PrimaryAction({
     "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-700 disabled:opacity-50";
   if (status === "DRAFT")
     return (
-      <button type="button" onClick={onPublish} disabled={busy} className={solid}>
+      <button
+        type="button"
+        onClick={onPublish}
+        disabled={busy || !canPublish}
+        title={canPublish ? undefined : t("tagsRequired")}
+        className={solid}
+      >
         <Check className="h-4 w-4" />
         {t("publish")}
       </button>
@@ -357,7 +403,13 @@ function PrimaryAction({
     );
   if (status === "UNPUBLISHED")
     return (
-      <button type="button" onClick={onRepublish} disabled={busy} className={solid}>
+      <button
+        type="button"
+        onClick={onRepublish}
+        disabled={busy || !canPublish}
+        title={canPublish ? undefined : t("tagsRequired")}
+        className={solid}
+      >
         {t("republish")}
       </button>
     );
