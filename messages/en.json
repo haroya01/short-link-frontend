@@ -253,6 +253,8 @@
     "scheduleAt": "Publish at",
     "scheduleConfirm": "Schedule",
     "scheduleInvalid": "Pick a future time.",
+    "slugTaken": "This address is already taken — try a different one.",
+    "scheduledToast": "Scheduled to publish on {when}.",
     "scheduledFor": "Publishes {when}",
     "cancelSchedule": "Cancel schedule",
     "tagsHint": "Separate with comma or Enter",

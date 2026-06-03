@@ -24,6 +24,7 @@ export function PublishDialog({
   onUploadCover,
   excerpt,
   onExcerptChange,
+  excerptSuggestion,
   slug,
   onSlugChange,
   tags,
@@ -45,6 +46,8 @@ export function PublishDialog({
   onUploadCover: (file: File) => Promise<string>;
   excerpt: string;
   onExcerptChange: (v: string) => void;
+  /** Body's opening line — prefilled into an empty 요약 on open so the author edits, not starts blank. */
+  excerptSuggestion?: string;
   slug: string;
   onSlugChange: (v: string) => void;
   tags: string[];
@@ -77,6 +80,21 @@ export function PublishDialog({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  // Prefill an empty 요약 with the body's opening line when the dialog opens, so the author edits a
+  // draft excerpt instead of facing a blank box. Once per open (the ref resets on close); never
+  // overwrites text the author already has.
+  const prefilled = useRef(false);
+  useEffect(() => {
+    if (!open) {
+      prefilled.current = false;
+      return;
+    }
+    if (!prefilled.current && !excerpt.trim() && excerptSuggestion?.trim()) {
+      prefilled.current = true;
+      onExcerptChange(excerptSuggestion);
+    }
+  }, [open, excerpt, excerptSuggestion, onExcerptChange]);
 
   if (!open) return null;
 
@@ -186,6 +204,7 @@ export function PublishDialog({
               placeholder={t("excerptPlaceholder")}
               className="w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-accent-500"
             />
+            <CharCount value={excerpt} max={300} />
           </Field>
             </div>
 
@@ -318,6 +337,21 @@ export function PublishDialog({
         </footer>
       </div>
     </div>
+  );
+}
+
+/** Right-aligned character counter for a length-capped field; warns (amber) within 10% of the cap. */
+function CharCount({ value, max }: { value: string; max: number }) {
+  const n = value.length;
+  const near = n >= max * 0.9;
+  return (
+    <p
+      className={`mt-1 text-right text-[11px] tabular-nums ${
+        near ? "text-amber-600 dark:text-amber-400" : "text-slate-400 dark:text-slate-500"
+      }`}
+    >
+      {n}/{max}
+    </p>
   );
 }
 

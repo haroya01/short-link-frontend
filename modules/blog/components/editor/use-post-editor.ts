@@ -18,6 +18,7 @@ import {
   type PostView,
 } from "@/modules/blog/api/posts";
 import { assignPostToSeries } from "@/modules/blog/api/series";
+import { ApiError } from "@/lib/api/client";
 import { postHref } from "@/modules/blog/components/feed-card";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
@@ -180,7 +181,9 @@ export function usePostEditor(
       setSaved(true);
       window.setTimeout(() => setSaved(false), 2000);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "save failed");
+      // A duplicate slug (same author) returns 409 — show a fixable hint, not a raw "HTTP 409".
+      if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
+      else setError(e instanceof Error ? e.message : "save failed");
     } finally {
       setSaving(false);
     }
@@ -235,27 +238,29 @@ export function usePostEditor(
         return;
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : `${action} failed`);
+      if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
+      else setError(e instanceof Error ? e.message : `${action} failed`);
     } finally {
       setBusy(false);
     }
   }
 
-  async function schedule(scheduledAt: string) {
-    if (post == null || busy) return;
+  /** Returns true once the post is parked for a future publish — the caller can then confirm the time. */
+  async function schedule(scheduledAt: string): Promise<boolean> {
+    if (post == null || busy) return false;
     if (!title.trim()) {
       setError(t("titleRequired"));
-      return;
+      return false;
     }
     // Scheduling is a deferred publish → same topic requirement as publishing now.
     if (tags.length === 0) {
       setError(t("tagsRequired"));
-      return;
+      return false;
     }
     // Reject a past instant up front (the datetime-local `min` is only advisory and editable).
     if (!scheduledAt || new Date(scheduledAt).getTime() <= Date.now()) {
       setError(t("scheduleInvalid"));
-      return;
+      return false;
     }
     setBusy(true);
     setError(null);
@@ -263,8 +268,11 @@ export function usePostEditor(
       // Persist edits first so the scheduled snapshot matches what's on screen, then park it.
       await save();
       setPost(await schedulePost(post.id, scheduledAt));
+      return true;
     } catch (e) {
-      setError(e instanceof Error ? e.message : "schedule failed");
+      if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
+      else setError(e instanceof Error ? e.message : "schedule failed");
+      return false;
     } finally {
       setBusy(false);
     }

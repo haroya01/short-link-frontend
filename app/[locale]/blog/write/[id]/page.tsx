@@ -10,6 +10,7 @@ import { EditorHeader } from "@/modules/blog/components/editor/editor-header";
 import { PublishDialog } from "@/modules/blog/components/editor/publish-dialog";
 import { usePostEditor } from "@/modules/blog/components/editor/use-post-editor";
 import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton";
+import { markdownLead } from "@/modules/blog/lib/markdown-lead";
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const t = useTranslations("postEditor");
@@ -70,6 +71,13 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         className="mt-6 w-full border-0 bg-transparent text-headline-sm font-semibold tracking-headline text-slate-900 outline-none placeholder:text-slate-300 dark:text-slate-100 dark:placeholder:text-slate-600 sm:text-headline-md"
         placeholder={t("titlePlaceholder")}
       />
+      {/* Title length is capped at 200; surface the count only as it approaches the cap so the clean
+          masthead isn't cluttered for a normal title. */}
+      {ed.title.length > 160 && (
+        <p className="mt-1 text-right text-[11px] tabular-nums text-amber-600 dark:text-amber-400">
+          {ed.title.length}/200
+        </p>
+      )}
 
       {/* Clean writing surface: title flows straight into the body — no form strip. All publish
           metadata (cover · 요약 · 시리즈 · 태그 · slug) lives in the 발행 설정 dialog. */}
@@ -98,6 +106,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         onUploadCover={(file) => uploadPostImage(post.id, file)}
         excerpt={ed.excerpt}
         onExcerptChange={ed.setExcerpt}
+        excerptSuggestion={markdownLead(ed.markdown)}
         slug={ed.slug}
         onSlugChange={ed.setSlug}
         tags={ed.tags}
@@ -108,7 +117,13 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         busy={ed.busy}
         onSave={ed.save}
         onChangeStatus={ed.changeStatus}
-        onSchedule={ed.schedule}
+        onSchedule={async (iso) => {
+          // Confirm the parked publish with its exact date/time — the SCHEDULED badge alone is easy to
+          // miss right after the action.
+          if (await ed.schedule(iso)) {
+            toast(t("scheduledToast", { when: new Date(iso).toLocaleString() }), "success");
+          }
+        }}
       />
     </main>
   );
