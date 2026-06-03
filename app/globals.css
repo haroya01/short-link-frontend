@@ -464,6 +464,10 @@ h1, h2, h3, p {
   .prose-post em {
     @apply italic;
   }
+  .prose-post s,
+  .prose-post del {
+    @apply text-slate-500 line-through dark:text-slate-400;
+  }
   .prose-post a {
     @apply font-medium text-accent-700 underline decoration-accent-300 underline-offset-2 transition-colors hover:decoration-accent-600 dark:text-accent-400 dark:decoration-accent-600 dark:hover:decoration-accent-400;
   }
@@ -1203,6 +1207,12 @@ body[data-cookie-consent="visible"] {
   width: calc(50% - 0.4rem);
   vertical-align: top;
 }
+/* Gutter between a side-by-side pair. The reader renders consecutive IMAGE blocks as adjacent
+   <figure> siblings with NO whitespace text node between them (React doesn't emit it), so the inline
+   gap the layout assumed never existed — the two halves butted together. Add it explicitly. */
+.prose-post figure.post-img-half + figure.post-img-half {
+  margin-left: 0.8rem;
+}
 @media (max-width: 640px) {
   .prose-post figure.post-img-half {
     display: block;
@@ -1282,6 +1292,18 @@ body[data-cookie-consent="visible"] {
   border-left: 3px solid #34d399;
   padding: 0.1rem 0 0.1rem 1.1rem;
   color: #475569;
+}
+/* Inline marks — explicit so a Tailwind/preflight change can't flatten bold/italic/strike in the
+   editor (the published .prose-post styles these too; keep them in lockstep). */
+.tiptap strong {
+  font-weight: 700;
+}
+.tiptap em {
+  font-style: italic;
+}
+.tiptap s,
+.tiptap del {
+  text-decoration: line-through;
 }
 .tiptap :not(pre) > code {
   background: rgba(15, 23, 42, 0.06);

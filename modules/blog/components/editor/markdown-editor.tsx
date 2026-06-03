@@ -53,6 +53,11 @@ export type ImagePickOptions = { width?: ImageWidth; multiple?: boolean };
  */
 function keepCaretInView(editor: Editor, scroller: HTMLElement | null) {
   if (!scroller) return;
+  // Reduced-motion: skip the typewriter re-positioning and let the browser's native caret scrolling
+  // keep it visible — the constant auto-scroll-as-you-type is exactly the motion these users opt out of.
+  if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
   let coords: { bottom: number };
   try {
     coords = editor.view.coordsAtPos(editor.state.selection.head);
@@ -143,6 +148,16 @@ export function MarkdownEditor({
     }
   }
 
+  // Insert several images in order. setImage leaves each inserted image SELECTED (a NodeSelection), so
+  // collapse the caret to just after it before the next insert — otherwise the second setImage replaces
+  // the first and only one survives (drop / paste / multi-pick all hit this).
+  async function uploadAndInsertMany(ed: Editor, files: File[], width?: ImageWidth) {
+    for (const f of files) {
+      await uploadAndInsert(ed, f, width);
+      ed.commands.setTextSelection(ed.state.selection.to);
+    }
+  }
+
   const editor = useEditor({
     // Next SSR: Tiptap must not render on the server (hydration mismatch otherwise).
     immediatelyRender: false,
@@ -176,15 +191,15 @@ export function MarkdownEditor({
       handlePaste: (_view, event) => {
         const items = event.clipboardData?.items;
         if (!items || !editor) return false;
-        for (const item of Array.from(items)) {
-          if (item.type.startsWith("image/")) {
-            const file = item.getAsFile();
-            if (file) {
-              event.preventDefault();
-              void uploadAndInsert(editor, file);
-              return true;
-            }
-          }
+        // ALL pasted images, not just the first — pasting a 2-up screenshot batch dropped the rest.
+        const imageFiles = Array.from(items)
+          .filter((it) => it.type.startsWith("image/"))
+          .map((it) => it.getAsFile())
+          .filter((f): f is File => !!f);
+        if (imageFiles.length) {
+          event.preventDefault();
+          void uploadAndInsertMany(editor, imageFiles);
+          return true;
         }
         // A bare URL pasted onto an empty line → a live link-preview card (velog/Notion). Pasting a
         // URL over text or into a non-empty line stays a normal link (default behaviour).
@@ -200,16 +215,18 @@ export function MarkdownEditor({
         }
         return false;
       },
-      handleDrop: (_view, event) => {
+      handleDrop: (view, event) => {
         const files = (event as DragEvent).dataTransfer?.files;
         if (!files || files.length === 0 || !editor) return false;
-        const img = Array.from(files).find((f) => f.type.startsWith("image/"));
-        if (img) {
-          event.preventDefault();
-          void uploadAndInsert(editor, img);
-          return true;
-        }
-        return false;
+        const imgs = Array.from(files).filter((f) => f.type.startsWith("image/"));
+        if (imgs.length === 0) return false;
+        event.preventDefault();
+        // Land the image WHERE it was dropped (posAtCoords), not at the stale caret (usually doc end),
+        // and insert ALL dropped images, not just the first.
+        const at = view.posAtCoords({ left: (event as DragEvent).clientX, top: (event as DragEvent).clientY });
+        if (at) editor.commands.setTextSelection(at.pos);
+        void uploadAndInsertMany(editor, imgs);
+        return true;
       },
     },
     onUpdate: ({ editor }) => {
@@ -264,14 +281,7 @@ export function MarkdownEditor({
           const files = Array.from(e.target.files ?? []);
           const width = pendingWidth.current;
           e.target.value = "";
-          // Insert sequentially so the order is stable; two "half" images land adjacent → a 2-up row.
-          // setImage leaves the inserted image selected (a NodeSelection), so without moving the caret
-          // past it the next setImage would REPLACE it — collapse the selection to just after each
-          // image so a multi-file pick lands them side by side instead of overwriting the first.
-          for (const f of files) {
-            await uploadAndInsert(editor, f, width);
-            editor.commands.setTextSelection(editor.state.selection.to);
-          }
+          await uploadAndInsertMany(editor, files, width);
         }}
       />
       {/* px-5 matches the page's px-5 so the body text lines up with the title above (the wrapper

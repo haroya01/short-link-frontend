@@ -98,6 +98,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           metadata (cover · 요약 · 시리즈 · 태그 · slug) lives in the 발행 설정 dialog. */}
       <div className="-mx-5 mt-4 min-h-0 flex-1 overflow-hidden">
         <MarkdownEditor
+          // Remount on load / revision-restore so the editor reseeds from the fresh content (Tiptap
+          // only reads initialValue at mount). reloadKey bumps on load()/restore, never on typing.
+          key={ed.reloadKey}
           initialValue={ed.markdown}
           onChange={ed.setMarkdown}
           liveMarkdownRef={ed.liveMarkdown}

@@ -65,25 +65,39 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
     if (r) setMenuAt({ x: r.right + 6, y: r.top });
   }
 
+  // Re-resolve the hovered block at action time (like addBelow): the stored hover-time pos/node can be
+  // stale if the doc changed between hover and click (an async image insert finishing above, an
+  // autosave reflow), and acting on a stale position duplicates/deletes the WRONG block.
+  function resolved(): Target | null {
+    if (!target) return null;
+    const { state } = editor;
+    const pos = Math.min(target.pos, state.doc.content.size);
+    const node = state.doc.nodeAt(pos) ?? target.node;
+    return { pos, node };
+  }
+
   // Run a transform against the hovered block: drop the caret inside it first so the command applies
   // to that block regardless of where the real selection is.
   function turnInto(run: () => void) {
-    if (!target) return;
-    editor.chain().focus().setTextSelection(target.pos + 1).run();
+    const r = resolved();
+    if (!r) return;
+    editor.chain().focus().setTextSelection(r.pos + 1).run();
     run();
     setMenuAt(null);
   }
 
   function duplicate() {
-    if (!target) return;
-    const end = target.pos + target.node.nodeSize;
-    editor.chain().focus().insertContentAt(end, target.node.toJSON()).run();
+    const r = resolved();
+    if (!r) return;
+    const end = r.pos + r.node.nodeSize;
+    editor.chain().focus().insertContentAt(end, r.node.toJSON()).run();
     setMenuAt(null);
   }
 
   function remove() {
-    if (!target) return;
-    editor.chain().focus().deleteRange({ from: target.pos, to: target.pos + target.node.nodeSize }).run();
+    const r = resolved();
+    if (!r) return;
+    editor.chain().focus().deleteRange({ from: r.pos, to: r.pos + r.node.nodeSize }).run();
     setMenuAt(null);
   }
 
