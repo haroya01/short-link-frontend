@@ -735,77 +735,18 @@ html[data-theme-vt] .author-vt-content {
 }
 
 /*
- * Author tab content (글 · 시리즈 · 소개) is its own view-transition group so a tab switch slides this
- * column horizontally — direction (fwd/back) set on <html> by the author layout's pagereveal script —
- * exactly like the feed's 최신/인기/팔로잉 content slide, while the rest of the page rides the calm root
- * crossfade above. First visit / same-tab refresh / unsupported browsers fall back to that crossfade.
+ * Author tab content (글 · 시리즈 · 소개 · 좋아요 · 북마크) rides the calm root crossfade on a tab switch.
+ * It used to be its own `author-content` view-transition group that slid horizontally, but the tabs'
+ * content heights differ wildly (글 = a tall post list, 소개 = a short bio), so the group morphed its
+ * box between those sizes — squashing the captured snapshot into a diagonal, blinking slide — and
+ * rasterizing the whole tall column made the switch lag. A plain crossfade (the site-wide default) is
+ * smooth and size-agnostic; the identity block + header still hold still via their own groups below.
  */
-.author-vt-content {
-  view-transition-name: author-content;
-}
-/* The author identity block (avatar + handle + bio + follow) is identical across 글/시리즈/소개, so it
-   gets its own group to hold still on a tab switch instead of crossfading with the root — no blink on
-   the follow button between tabs. */
+/* The author identity block (avatar + handle + bio + follow) is identical across the tabs, so it gets
+   its own group to hold still on a tab switch instead of crossfading with the root — no blink on the
+   follow button between tabs. */
 .author-vt-identity {
   view-transition-name: author-identity;
-}
-@keyframes vt-content-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-@keyframes vt-content-in-left {
-  from {
-    opacity: 0;
-    transform: translateX(-24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-@keyframes vt-content-out-left {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-24px);
-  }
-}
-@keyframes vt-content-out-right {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(24px);
-  }
-}
-html[data-author-nav="fwd"]::view-transition-old(author-content) {
-  animation: vt-content-out-left 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-html[data-author-nav="fwd"]::view-transition-new(author-content) {
-  animation: vt-content-in-right 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-html[data-author-nav="back"]::view-transition-old(author-content) {
-  animation: vt-content-out-right 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-html[data-author-nav="back"]::view-transition-new(author-content) {
-  animation: vt-content-in-left 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@media (prefers-reduced-motion: reduce) {
-  html[data-author-nav]::view-transition-old(author-content),
-  html[data-author-nav]::view-transition-new(author-content) {
-    animation: none;
-  }
 }
 
 /*
