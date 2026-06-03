@@ -2,14 +2,11 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Names the author page's content column as its own view-transition group (`author-content`) so a tab
- * switch slides just this column horizontally — the author-surface twin of the feed's
- * FeedContentTransition. Wrap only the center column (not the rail) so the rail rides the calm root
- * crossfade while the content pages left/right.
- *
- * The slide direction is set on <html> (data-author-nav) by the author layout's pagereveal script and
- * realized by the `::view-transition-*(author-content)` rules in globals.css. First visit / a same-tab
- * refresh / unsupported browsers fall back to the default crossfade. Presentational only.
+ * Wraps the author page's content column on the tab surface (글 · 시리즈 · 소개 · 좋아요 · 북마크). The
+ * tab content rides the calm site-wide root crossfade on a switch — no per-column slide, because the
+ * tabs' heights differ wildly (글 = a tall post list, 소개 = a short bio) and a sized view-transition
+ * group morphed that into a diagonal, laggy slide. Presentational marker only (no view-transition-name
+ * — see the `.author-vt-content` note in globals.css); kept as the column's named wrapper.
  */
 export function AuthorContentTransition({
   children,
