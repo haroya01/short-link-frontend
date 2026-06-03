@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   backToDraftPost,
   deletePost,
@@ -18,6 +18,7 @@ import {
   type PostView,
 } from "@/modules/blog/api/posts";
 import { assignPostToSeries } from "@/modules/blog/api/series";
+import { postHref } from "@/modules/blog/components/feed-card";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
 
@@ -31,10 +32,15 @@ export type StatusAction = "publish" | "unpublish" | "republish" | "backToDraft"
  */
 export function usePostEditor(
   postId: number,
-  { ready, authenticated }: { ready: boolean; authenticated: boolean },
+  {
+    ready,
+    authenticated,
+    username,
+  }: { ready: boolean; authenticated: boolean; username?: string | null },
 ) {
   const t = useTranslations("postEditor");
   const router = useRouter();
+  const locale = useLocale();
 
   const [post, setPost] = useState<PostView | null>(null);
   const [title, setTitleRaw] = useState("");
@@ -196,9 +202,17 @@ export function usePostEditor(
 
   async function changeStatus(action: StatusAction) {
     if (post == null || busy) return;
-    // Going public needs a title (backend enforces it too; this gives an immediate localized hint).
+    const goingPublic = action === "publish" || action === "republish";
+    // Publishing from a draft needs a title (backend enforces it too; this gives an immediate localized
+    // hint). Republish keeps the post's existing title, so it isn't re-checked here.
     if (action === "publish" && !title.trim()) {
       setError(t("titleRequired"));
+      return;
+    }
+    // Going public needs at least one topic (tag). The reader's discovery — topic feeds, the author
+    // rail, related posts — is tag-driven, so an untagged public post is effectively undiscoverable.
+    if (goingPublic && tags.length === 0) {
+      setError(t("tagsRequired"));
       return;
     }
     setBusy(true);
@@ -213,6 +227,13 @@ export function usePostEditor(
               ? await backToDraftPost(post.id)
               : await republishPost(post.id);
       setPost(updated);
+      // Just went live → drop the writer straight onto the published post (the reader view), so
+      // publishing ends on "here's my post", not back in the editor. Full assign covers the
+      // cross-subdomain prod URL (postHref returns an absolute origin there).
+      if (updated.status === "PUBLISHED" && username) {
+        window.location.assign(postHref(username, updated.slug, locale));
+        return;
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : `${action} failed`);
     } finally {
@@ -224,6 +245,11 @@ export function usePostEditor(
     if (post == null || busy) return;
     if (!title.trim()) {
       setError(t("titleRequired"));
+      return;
+    }
+    // Scheduling is a deferred publish → same topic requirement as publishing now.
+    if (tags.length === 0) {
+      setError(t("tagsRequired"));
       return;
     }
     // Reject a past instant up front (the datetime-local `min` is only advisory and editable).

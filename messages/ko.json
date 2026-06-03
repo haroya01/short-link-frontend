@@ -209,6 +209,7 @@
     "seriesNew": "새 시리즈",
     "seriesNewPlaceholder": "새 시리즈 이름",
     "publishSettings": "발행 설정",
+    "postSettings": "글 설정",
     "close": "닫기",
     "saveDraft": "임시저장",
     "saveChanges": "변경사항 저장",
@@ -255,6 +256,7 @@
     "scheduledFor": "{when} 발행 예정",
     "cancelSchedule": "예약 취소",
     "tagsHint": "쉼표(,)나 Enter로 구분",
+    "tagsRequired": "발행하려면 주제(태그)를 1개 이상 추가하세요",
     "boldMode": "굵게 쓰기",
     "slash": {
       "groupBasic": "기본",
