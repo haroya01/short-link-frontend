@@ -255,6 +255,7 @@
     "scheduledFor": "{when} 발행 예정",
     "cancelSchedule": "예약 취소",
     "tagsHint": "쉼표(,)나 Enter로 구분",
+    "boldMode": "굵게 쓰기",
     "slash": {
       "groupBasic": "기본",
       "groupMedia": "미디어",

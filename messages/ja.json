@@ -255,6 +255,7 @@
     "scheduledFor": "{when} に公開予定",
     "cancelSchedule": "予約取消",
     "tagsHint": "カンマかEnterで区切る",
+    "boldMode": "太字",
     "slash": {
       "groupBasic": "基本",
       "groupMedia": "メディア",
