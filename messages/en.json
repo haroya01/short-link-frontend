@@ -258,6 +258,13 @@
     "tagsHint": "Separate with comma or Enter",
     "tagsRequired": "Add at least one topic (tag) to publish",
     "boldMode": "Bold",
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "strike": "Strikethrough",
+      "inlineCode": "Inline code",
+      "link": "Link"
+    },
     "slash": {
       "groupBasic": "Basic",
       "groupMedia": "Media",

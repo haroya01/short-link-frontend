@@ -258,6 +258,13 @@
     "tagsHint": "쉼표(,)나 Enter로 구분",
     "tagsRequired": "발행하려면 주제(태그)를 1개 이상 추가하세요",
     "boldMode": "굵게 쓰기",
+    "toolbar": {
+      "bold": "굵게",
+      "italic": "기울임",
+      "strike": "취소선",
+      "inlineCode": "인라인 코드",
+      "link": "링크"
+    },
     "slash": {
       "groupBasic": "기본",
       "groupMedia": "미디어",

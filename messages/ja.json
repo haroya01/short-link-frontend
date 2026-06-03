@@ -258,6 +258,13 @@
     "tagsHint": "カンマかEnterで区切る",
     "tagsRequired": "公開するにはトピック（タグ）を1つ以上追加してください",
     "boldMode": "太字",
+    "toolbar": {
+      "bold": "太字",
+      "italic": "斜体",
+      "strike": "取り消し線",
+      "inlineCode": "インラインコード",
+      "link": "リンク"
+    },
     "slash": {
       "groupBasic": "基本",
       "groupMedia": "メディア",
