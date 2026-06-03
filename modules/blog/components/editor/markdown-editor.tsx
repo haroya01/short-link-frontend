@@ -65,6 +65,24 @@ function keepCaretInView(editor: Editor, scroller: HTMLElement | null) {
 }
 
 /**
+ * Coalesce the typewriter-scroll measurement to one rAF. Each keystroke fires BOTH onUpdate and
+ * onSelectionUpdate, and a fast typist emits several per frame — running keepCaretInView on each
+ * forces a synchronous layout (coordsAtPos + getBoundingClientRect) every time. Scheduling through a
+ * single rAF collapses a burst into one layout read per frame.
+ */
+function scheduleKeepCaret(
+  rafRef: { current: number | undefined },
+  editor: Editor,
+  scrollerRef: { current: HTMLElement | null },
+) {
+  if (rafRef.current != null) return;
+  rafRef.current = window.requestAnimationFrame(() => {
+    rafRef.current = undefined;
+    keepCaretInView(editor, scrollerRef.current);
+  });
+}
+
+/**
  * Long-form post editor — Tiptap (ProseMirror) with a CodeMirror code-block node (language-aware
  * highlight + auto-indent). Content round-trips as markdown via tiptap-markdown, so the existing
  * markdown↔blocks save path is unchanged. Replaces the previous Toast UI editor.
@@ -84,6 +102,7 @@ export function MarkdownEditor({
   const fileRef = useRef<HTMLInputElement>(null);
   const pendingWidth = useRef<ImageWidth | undefined>(undefined);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const caretRaf = useRef<number | undefined>(undefined);
   const [placeOpen, setPlaceOpen] = useState(false);
   // Serializing the whole doc to markdown (+ a parent setState) on EVERY keystroke freezes typing on
   // long posts. Debounce it (~250ms after you stop) and flush on blur so save/publish never misses the
@@ -91,7 +110,13 @@ export function MarkdownEditor({
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
   const flushTimer = useRef<number | undefined>(undefined);
-  useEffect(() => () => window.clearTimeout(flushTimer.current), []);
+  useEffect(
+    () => () => {
+      window.clearTimeout(flushTimer.current);
+      if (caretRaf.current != null) window.cancelAnimationFrame(caretRaf.current);
+    },
+    [],
+  );
   // In-app URL prompt (link / embed) instead of window.prompt.
   const [urlDialog, setUrlDialog] = useState<{ mode: "link" | "embed"; initial: string } | null>(null);
 
@@ -180,7 +205,7 @@ export function MarkdownEditor({
       },
     },
     onUpdate: ({ editor }) => {
-      keepCaretInView(editor, scrollerRef.current);
+      scheduleKeepCaret(caretRaf, editor, scrollerRef);
       window.clearTimeout(flushTimer.current);
       flushTimer.current = window.setTimeout(() => {
         // tiptap-markdown augments storage at runtime but ships no type for it.
@@ -189,7 +214,7 @@ export function MarkdownEditor({
       }, 250);
     },
     onSelectionUpdate: ({ editor }) => {
-      keepCaretInView(editor, scrollerRef.current);
+      scheduleKeepCaret(caretRaf, editor, scrollerRef);
     },
     onBlur: ({ editor }) => {
       window.clearTimeout(flushTimer.current);
@@ -333,20 +358,47 @@ function FloatingInsertBar({
     <FloatingMenu
       editor={editor}
       options={{ placement: "bottom-start", offset: 6 }}
-      // Only on a truly empty, focused, top-level paragraph — never inside a list item, code block,
-      // table cell, or a line that already has text.
+      // On ANY empty, focused, top-level text line (paragraph OR an emptied-out heading) so the
+      // toolbox reliably appears whenever the line has no text. Never inside a list item, blockquote,
+      // or table cell (depth > 1), and not in the CodeMirror code block (it owns its own surface).
       shouldShow={({ view, state }) => {
         if (!view.hasFocus()) return false;
         const { $from, empty } = state.selection;
+        const node = $from.parent;
         return (
           empty &&
           $from.depth === 1 &&
-          $from.parent.type.name === "paragraph" &&
-          $from.parent.content.size === 0
+          node.isTextblock &&
+          node.type.name !== "codeBlock" &&
+          node.content.size === 0
         );
       }}
       className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-md dark:border-slate-700 dark:bg-slate-900"
     >
+      {/* "굵게 쓰기" mode — an inline mark, not a block insert. On an empty line toggleBold() arms a
+          stored mark, so the next text you type comes out bold (and stays bold for that run until you
+          move off the line). Highlighted while armed; sits left of a divider so it reads apart from the
+          block-insert tools to its right. */}
+      <button
+        type="button"
+        aria-label={t("boldMode")}
+        title={t("boldMode")}
+        aria-pressed={editor.isActive("bold")}
+        // onMouseDown + preventDefault so clicking doesn't blur the editor (a blur would collapse the
+        // empty selection and hide the bar before toggleBold runs).
+        onMouseDown={(e) => {
+          e.preventDefault();
+          editor.chain().focus().toggleBold().run();
+        }}
+        className={`touch-target focus-ring grid h-8 w-8 place-items-center rounded-md transition-colors ${
+          editor.isActive("bold")
+            ? "bg-accent-50 text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
+            : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+        }`}
+      >
+        <Bold className="h-4 w-4" />
+      </button>
+      <span className="mx-0.5 h-5 w-px bg-slate-200 dark:bg-slate-700" aria-hidden />
       {items.map((it, i) => (
         <button
           key={i}
