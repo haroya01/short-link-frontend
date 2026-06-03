@@ -337,7 +337,7 @@
     "ctaUnavailable": "{label} · link unavailable",
     "ctaDeleted": "Removed link",
     "toc": "Contents",
-    "seriesPosition": "{position}/{total}",
+    "seriesPosition": "{position} / {total}",
     "tabPosts": "Posts",
     "tabSeries": "Series",
     "tabAbout": "About",
@@ -373,8 +373,7 @@
     "bookmarkOn": "Remove from reading list",
     "seriesInThis": "In this series",
     "seriesNextUp": "Next in this series",
-    "seriesViewAll": "View all {total} parts",
-    "seriesEpisode": "Part {n}"
+    "seriesViewAll": "View all {total} parts"
   },
   "imageCropper": {
     "title": "Crop image",

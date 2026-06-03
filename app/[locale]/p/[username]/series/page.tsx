@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ArrowRight } from "lucide-react";
 import { listPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -121,9 +122,7 @@ export default async function PublicSeriesIndexPage({
                   href={authorHref(username, locale, `series/${s.slug}`)}
                   className="focus-ring group flex items-center gap-5 rounded-lg py-5"
                 >
-                  <span className="font-mono text-[13px] tabular-nums text-accent-500/70 dark:text-accent-400/70">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                  <SeriesIndex n={i + 1} className="text-[13px]" />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[18px] font-semibold tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
                       {s.title}

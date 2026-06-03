@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Mark } from "@/components/common/logo";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { SeriesIndex } from "@/modules/blog/components/series-index";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 
 /**
@@ -33,9 +34,7 @@ export async function SeriesNext({
           </span>
           <span className="mt-2 flex items-center justify-between gap-3">
             <span className="min-w-0">
-              <span className="block font-mono text-[12px] tabular-nums text-slate-400 dark:text-slate-500">
-                {t("seriesEpisode", { n: series.position + 1 })}
-              </span>
+              <SeriesIndex n={series.position + 1} className="block text-[12px]" />
               <span className="mt-0.5 block text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
                 {series.next.title}
               </span>
