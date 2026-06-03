@@ -245,7 +245,13 @@ export function MarkdownEditor({
           const width = pendingWidth.current;
           e.target.value = "";
           // Insert sequentially so the order is stable; two "half" images land adjacent → a 2-up row.
-          for (const f of files) await uploadAndInsert(editor, f, width);
+          // setImage leaves the inserted image selected (a NodeSelection), so without moving the caret
+          // past it the next setImage would REPLACE it — collapse the selection to just after each
+          // image so a multi-file pick lands them side by side instead of overwriting the first.
+          for (const f of files) {
+            await uploadAndInsert(editor, f, width);
+            editor.commands.setTextSelection(editor.state.selection.to);
+          }
         }}
       />
       {/* px-5 matches the page's px-5 so the body text lines up with the title above (the wrapper

@@ -836,12 +836,7 @@ test("slash 'Wide image' saves an IMAGE block tagged width:wide", async ({ page 
   expect(img?.content, "width marker rides through the round-trip").toContain('"width":"wide"');
 });
 
-// KNOWN BUG (kept as fixme so it flips green once fixed): "Two images (side by side)" inserts only
-// ONE image. uploadAndInsert calls setImage() per file in a loop, but the first inserted image is left
-// as a NodeSelection, so the second setImage REPLACES it instead of landing beside it — the 2-up row
-// never forms. The fix belongs in markdown-editor.tsx (advance the selection past the image before the
-// next insert), not in this test.
-test.fixme("slash 'Two images' saves a side-by-side pair as two IMAGE blocks", async ({ page }) => {
+test("slash 'Two images' saves a side-by-side pair as two IMAGE blocks", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
@@ -906,4 +901,141 @@ test("removing a tag chip drops it from the metadata PATCH", async ({ page }) =>
   await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => captured.meta).not.toBeNull();
   expect(captured.meta).toMatchObject({ tags: ["keep"] });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Batch 3 — series assignment, the new-post bootstrap, code-block language, cover removal, live slug
+// normalization, and the failed-save error path.
+//
+// Deliberately NOT covered here (would be flaky or need external stubs, not real signal):
+//   · image paste / drag-drop  — synthetic ClipboardEvent/DataTransfer with a File is unreliable headless
+//   · URL-paste → link card    — same paste-synthesis problem
+//   · map / place embed        — PlaceSearchDialog drives the Google Places SDK (external)
+//   · schedule past-time guard — no client-side validation exists (only the datetime-local min attr)
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+test("assigning a freshly created series persists membership (PUT /series/:id/posts)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  const SERIES = { id: 99, slug: "my-series", title: "My series", postCount: 0, createdAt: NOW, updatedAt: null };
+  let seriesPostIds: number[] | null = null;
+  // GET list (empty) + POST create on the same path; detail + membership on the id paths.
+  await page.route("**/api/v1/series", (route) =>
+    route.request().method() === "POST"
+      ? route.fulfill({ json: { series: SERIES, posts: [] } })
+      : route.fulfill({ json: [] }),
+  );
+  await page.route(`**/api/v1/series/${SERIES.id}`, (route) =>
+    route.fulfill({ json: { series: SERIES, posts: [] } }),
+  );
+  await page.route(`**/api/v1/series/${SERIES.id}/posts`, (route) => {
+    if (route.request().method() === "PUT") seriesPostIds = route.request().postDataJSON()?.postIds ?? null;
+    return route.fulfill({ json: { series: SERIES, posts: [] } });
+  });
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "New series", exact: true }).click();
+  const name = dialog.getByPlaceholder("New series name");
+  await name.fill("My series");
+  await name.press("Enter");
+  captured.blocks = null;
+  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect.poll(() => seriesPostIds).not.toBeNull();
+  expect(seriesPostIds, "the post is appended to the new series").toContain(POST_ID);
+});
+
+test("the new-post bootstrap creates a draft and lands in its editor", async ({ page }) => {
+  const NEW_ID = 777;
+  const draft = { ...POST, id: NEW_ID, slug: "draft-x" };
+  await page.route("**/api/v1/**", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: "[]" }),
+  );
+  await page.route("**/api/v1/users/me", (route) => route.fulfill({ json: ME }));
+  let created = false;
+  await page.route("**/api/v1/posts", (route) => {
+    if (route.request().method() === "POST") {
+      created = true;
+      return route.fulfill({ json: draft });
+    }
+    return route.fulfill({ json: [] });
+  });
+  await page.route(`**/api/v1/posts/${NEW_ID}`, (route) => route.fulfill({ json: draft }));
+  await page.route(`**/api/v1/posts/${NEW_ID}/blocks`, (route) => route.fulfill({ json: [] }));
+  await page.context().addInitScript((t) => {
+    window.localStorage.setItem("short-link:access-token", t as string);
+    window.localStorage.setItem("kurl:cookie-consent:v1", "accepted");
+  }, TOKEN);
+  await page.goto("/en/blog/write/new");
+  // The bootstrap POSTs a blank draft then swaps /new → /{id} and drops into the editor.
+  await expect(page).toHaveURL(new RegExp(`/blog/write/${NEW_ID}$`), { timeout: 30_000 });
+  await expect(page.locator(".tiptap")).toBeVisible({ timeout: 30_000 });
+  expect(created, "a draft was created via POST /posts").toBe(true);
+});
+
+test("code block language + body round-trip into the CODE block", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("intro");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Code block\b/ }).click();
+  // The CodeMirror node view owns a language <select> (the only select inside the editor).
+  await page.locator(".tiptap select").selectOption("python");
+  await page.locator(".tiptap .cm-content").click();
+  await page.keyboard.type("print('hi')");
+  // Move focus out of the nested CodeMirror so it flushes its content back into the ProseMirror node
+  // (the CM→PM mirror commits on blur); saving while CM still has focus would serialize an empty block.
+  await page.locator(".tiptap p").first().click();
+  const blocks = await save(page, captured);
+  const code = blocks.find((b) => b.type === "CODE");
+  expect(code, "a CODE block was saved").toBeTruthy();
+  expect(code!.content).toContain('"lang":"python"');
+  expect(code!.content).toContain("print('hi')");
+});
+
+test("removing the cover image clears ogImageUrl in the metadata PATCH", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await dialog
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "c.png", mimeType: "image/png", buffer: Buffer.from("c") });
+  await expect(dialog.locator("img")).toBeVisible({ timeout: 10_000 });
+  await dialog.getByRole("button", { name: "Remove", exact: true }).click();
+  await expect(dialog.locator("img")).toHaveCount(0);
+  captured.meta = null;
+  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect.poll(() => captured.meta).not.toBeNull();
+  expect(captured.meta).toMatchObject({ ogImageUrl: "" });
+});
+
+test("the slug field normalizes input live (caps/spaces/symbols → hyphen-case)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  const slug = dialog.locator('input[spellcheck="false"]');
+  await slug.fill("Hello World!");
+  // normalizeSlugInput lowercases, turns invalid chars into single hyphens, drops a leading hyphen;
+  // a trailing hyphen is intentionally kept (so "a-" → "a-b" works) and only trimmed on save.
+  await expect(slug).toHaveValue("hello-world-");
+});
+
+test("a failed save surfaces an error message", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  // Fail the blocks PUT so save() throws after the metadata PATCH succeeds.
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) =>
+    route.request().method() === "PUT"
+      ? route.fulfill({ status: 500, contentType: "application/json", body: '{"title":"Server error"}' })
+      : route.fulfill({ json: [] }),
+  );
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("this will not save");
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.locator("main p.text-red-600")).toBeVisible({ timeout: 10_000 });
 });
