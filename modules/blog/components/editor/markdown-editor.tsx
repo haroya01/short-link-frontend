@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useEditor, useEditorState, EditorContent, type Editor } from "@tiptap/react";
 import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
+import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -86,6 +87,50 @@ function scheduleKeepCaret(
     keepCaretInView(editor, scrollerRef.current);
   });
 }
+
+/**
+ * Inflearn/Notion-style Enter: inside a plain top-level paragraph, a single Enter is a SOFT line
+ * break (tight — same paragraph, just line-height), and a second Enter on that empty break-line
+ * promotes to a NEW paragraph (the wider inter-paragraph gap). This keeps casual line breaks tight
+ * while real paragraph separation stays as-is.
+ *
+ * Scoped to depth-1 paragraphs only — headings, list items, and quotes keep their native Enter
+ * (exit heading / new list item / etc.), so markdown shortcuts (`## `, `- `, `---`) still work at
+ * the start of a fresh paragraph. Soft breaks serialize as `\n` within one PARAGRAPH block (the
+ * markdown↔blocks path already coalesces them; the reader renders them via `breaks:true`).
+ */
+const EnterSoftBreak = Extension.create({
+  name: "enterSoftBreak",
+  // Run before StarterKit's default Enter; returning false falls through to native handlers.
+  priority: 1000,
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => {
+        const { selection } = this.editor.state;
+        const { $from, empty } = selection;
+        if (!empty) return false;
+        // Only plain top-level paragraphs — lists/quotes/headings keep their own Enter.
+        if ($from.depth !== 1 || $from.parent.type.name !== "paragraph") return false;
+        const before = $from.nodeBefore;
+        // Second Enter (caret right after a soft break) → drop the break, split into a new paragraph.
+        if (before?.type.name === "hardBreak") {
+          return this.editor
+            .chain()
+            .command(({ tr }) => {
+              tr.delete($from.pos - before.nodeSize, $from.pos);
+              return true;
+            })
+            .splitBlock()
+            .run();
+        }
+        // Empty paragraph → let the default Enter make a new paragraph.
+        if ($from.parent.content.size === 0) return false;
+        // Otherwise: a tight soft line break within the same paragraph.
+        return this.editor.commands.setHardBreak();
+      },
+    };
+  },
+});
 
 /**
  * Long-form post editor — Tiptap (ProseMirror) with a CodeMirror code-block node (language-aware
@@ -172,6 +217,7 @@ export function MarkdownEditor({
         heading: { levels: [1, 2, 3] },
         link: { openOnClick: false, enableClickSelection: true },
       }),
+      EnterSoftBreak,
       CodeMirrorBlock,
       LinkCardNode,
       Image.configure({ inline: false }),
