@@ -13,14 +13,18 @@ const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : use
 // Per-session cache of follow state, keyed by author. The author tabs hard-navigate (subdomain model),
 // so the button remounts on every 글/시리즈/소개 switch and would otherwise reset to "팔로우" + fade the
 // count back in each time — the flicker. We seed from the last known value before paint, then refresh.
-type FollowSnap = { following: boolean; count: number };
+// `self` lets a revisit seed the button's VISIBILITY before auth resolves — without it the button
+// re-hides until `ready` flips on every hard navigation, popping in (and reflowing the 프로필 link
+// beside it) each tab switch. Optional so caches written by the older shape still validate.
+type FollowSnap = { following: boolean; count: number; self?: boolean };
 const cacheKey = (u: string) => `kurl:follow:${u}`;
 const isSnap = (v: unknown): v is FollowSnap | null =>
   v === null ||
   (typeof v === "object" &&
     v !== null &&
     typeof (v as FollowSnap).following === "boolean" &&
-    typeof (v as FollowSnap).count === "number");
+    typeof (v as FollowSnap).count === "number" &&
+    (typeof (v as FollowSnap).self === "boolean" || (v as FollowSnap).self === undefined));
 function readFollowCache(u: string): FollowSnap | null {
   return readStorageJson<FollowSnap | null>(cacheKey(u), isSnap, null, { session: true });
 }
@@ -60,12 +64,15 @@ export function FollowButton({
   const [interacted, setInteracted] = useState(false);
   // Gates the count's visibility so it never flashes "0 → 128"; seeded true from cache on a revisit.
   const [loaded, setLoaded] = useState(false);
+  // Button visibility seeded from cache before auth resolves (null = unknown / cold cache).
+  const [seedVisible, setSeedVisible] = useState<boolean | null>(null);
 
-  // Until auth resolves we don't know if this is the viewer's own profile, so we can't tell whether to
-  // show the button. Render it only once `ready` — otherwise it flashes in for everyone and then yanks
-  // itself away on your own profile (the "버튼이 사라지는" flicker). `showButton` gates on that.
+  // Until auth resolves we don't know if this is the viewer's own profile. Once `ready`, that's
+  // authoritative; before then we fall back to the cached self/visitor verdict so the button doesn't
+  // re-hide and pop back in on every hard navigation (the flicker) — only the very first visit (cold
+  // cache) waits for auth.
   const isSelf = ready && me?.username === username;
-  const showButton = ready && !isSelf;
+  const showButton = ready ? !isSelf : seedVisible === true;
 
   // Seed from the session cache before paint → no flash on tab navigation.
   useIsoLayoutEffect(() => {
@@ -74,20 +81,22 @@ export function FollowButton({
       setFollowing(cached.following);
       setCount(cached.count);
       setLoaded(true);
+      if (typeof cached.self === "boolean") setSeedVisible(!cached.self);
     }
   }, [username]);
 
   useEffect(() => {
     if (!ready) return;
+    const self = me?.username === username;
     getFollowStatus(username)
       .then((s) => {
         setCount(s.followerCount);
         setFollowing(s.following);
-        writeFollowCache(username, { following: s.following, count: s.followerCount });
+        writeFollowCache(username, { following: s.following, count: s.followerCount, self });
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
-  }, [ready, username]);
+  }, [ready, username, me?.username]);
 
   async function toggle() {
     if (!authenticated) {
@@ -103,7 +112,11 @@ export function FollowButton({
       const s = next ? await followUser(username) : await unfollowUser(username);
       setFollowing(s.following);
       setCount(s.followerCount);
-      writeFollowCache(username, { following: s.following, count: s.followerCount });
+      writeFollowCache(username, {
+        following: s.following,
+        count: s.followerCount,
+        self: me?.username === username,
+      });
     } catch {
       setFollowing(!next);
       setCount((c) => c + (next ? -1 : 1));
