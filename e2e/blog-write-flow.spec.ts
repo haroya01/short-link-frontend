@@ -305,6 +305,11 @@ test("the embed dialog inserts a live link card that round-trips to an EMBED blo
 
   // The live card node view renders in the editor.
   await expect(page.locator(".tiptap [data-link-card]")).toBeVisible({ timeout: 10_000 });
+  // A2: a VIDEO embed must render as the reader does — a 16:9 iframe — not a generic OG link card, so
+  // the editor matches the published page (WYSIWYG). The iframe points at the privacy embed host.
+  await expect(page.locator('.tiptap iframe[src*="youtube-nocookie.com/embed/dQw4w9WgXcQ"]')).toBeVisible({
+    timeout: 10_000,
+  });
 
   const blocks = await save(page, captured);
   // A bare video URL on its own line serializes to an EMBED block (markdownToBlocks re-detects it).

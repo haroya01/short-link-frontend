@@ -85,8 +85,13 @@ describe("video embeds", () => {
     expect(markdownToBlocks("[clip](https://vimeo.com/123456789)")[0].type).toBe("EMBED");
   });
 
-  it("leaves a non-video URL as a paragraph", () => {
-    expect(markdownToBlocks("https://example.com/article")[0].type).toBe("PARAGRAPH");
+  it("turns a standalone non-video URL into an EMBED card too (velog-style)", () => {
+    // The reader renders this as an OG link-preview card, matching the editor's inserted link card.
+    expect(markdownToBlocks("https://example.com/article")[0].type).toBe("EMBED");
+  });
+
+  it("keeps a URL with surrounding text as an inline link (paragraph), not a card", () => {
+    expect(markdownToBlocks("see https://example.com/article for more")[0].type).toBe("PARAGRAPH");
   });
 
   it("splits a video URL out of surrounding text", () => {
