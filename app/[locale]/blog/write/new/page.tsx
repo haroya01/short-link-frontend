@@ -2,10 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { createPost } from "@/modules/blog/api/posts";
+import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton";
 
 /**
  * "글쓰기" lands here, not on a title/slug form. Create a draft on the fly (generated slug +
@@ -19,7 +18,6 @@ function randomSlug(): string {
 
 export default function NewPostPage() {
   const router = useRouter();
-  const t = useTranslations("postEditor");
   const { ready, authenticated } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const started = useRef(false);
@@ -47,22 +45,21 @@ export default function NewPostPage() {
         }
       }
     })();
-  }, [ready, authenticated, router, t]);
+  }, [ready, authenticated, router]);
 
   // Signed-out / expired session is handled one level up by the workspace layout, which redirects
   // to the blog login screen before this page ever renders its content. Nothing to show here.
   if (ready && !authenticated) return null;
 
-  return (
-    <main className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 py-24 text-center text-slate-500">
-      {error ? (
+  if (error) {
+    return (
+      <main className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 py-24 text-center text-slate-500">
         <p className="text-sm text-red-600">{error}</p>
-      ) : (
-        <>
-          <Loader2 className="h-5 w-5 animate-spin text-accent-600" />
-          <p className="text-sm">{t("creating")}</p>
-        </>
-      )}
-    </main>
-  );
+      </main>
+    );
+  }
+
+  // While the draft is being created, show the editor's skeleton so this page → /write/[id] → the
+  // editor is one continuous reveal (no spinner-then-skeleton-then-editor jump).
+  return <EditorSkeleton />;
 }
