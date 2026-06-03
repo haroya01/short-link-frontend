@@ -163,8 +163,12 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       continue;
     }
 
-    // PARAGRAPH — 연속 non-empty 줄 묶음
-    const paraLines: string[] = [];
+    // PARAGRAPH — 연속 non-empty 줄 묶음. Always consume the current line FIRST so `i` advances even
+    // when that line is rejected by the guard below but matched no block rule above (e.g. an image
+    // with a trailing caption `![a](u) text`, or a bare `> ` blockquote marker). Otherwise `i` would
+    // never move and the outer while-loop spins forever — a permanent editor freeze on autosave.
+    const paraLines: string[] = [lines[i]];
+    i++;
     while (
       i < lines.length &&
       lines[i].trim() !== "" &&
@@ -177,9 +181,7 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       paraLines.push(lines[i]);
       i++;
     }
-    if (paraLines.length > 0) {
-      blocks.push({ type: "PARAGRAPH", content: paraLines.join("\n") });
-    }
+    blocks.push({ type: "PARAGRAPH", content: paraLines.join("\n") });
   }
 
   return blocks;
