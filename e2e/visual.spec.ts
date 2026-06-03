@@ -49,6 +49,44 @@ test.describe.skip("visual: static pages", () => {
   }
 });
 
+// Full-page pixel snapshots of every data-driven blog screen — the tier-3 appearance lock (layout,
+// typography scale, spacing, color drift) that complements the deterministic blog-screens.spec.ts.
+//
+// SKIPPED until activated, in two one-time steps (can't be done from macOS — Linux CI only):
+//   1. Build the visual lane mock-ON so these Server-Component screens render with the in-memory mock
+//      — set `NEXT_PUBLIC_USE_MOCKS=1` on the build step in .github/workflows/visual.yml.
+//   2. Bootstrap baselines: run the "Visual Snapshots" workflow with update_snapshots=true, download
+//      the `visual-baselines-linux` artifact, commit the PNGs under e2e/visual.spec.ts-snapshots/.
+// Then remove `.skip`. Dynamic regions (images, dates, counts) are masked so only structural drift
+// trips the diff; text still renders subtly differently macOS↔Linux, hence Linux-only baselines.
+const SCREEN_SNAPSHOTS = [
+  { name: "feed-home", path: "/ko/blog" },
+  { name: "feed-search", path: "/ko/blog?q=개발" },
+  { name: "profile-posts", path: "/ko/p/dohyun" },
+  { name: "profile-series", path: "/ko/p/dohyun/series" },
+  { name: "profile-about", path: "/ko/p/dohyun/about" },
+  { name: "post-reader", path: "/ko/p/dohyun/nextjs-14-app-router-blog" },
+  { name: "series-detail", path: "/ko/p/dohyun/series/nextjs-deep-dive" },
+] as const;
+
+test.describe.skip("visual: blog screens (mock-on — bootstrap baselines to enable)", () => {
+  for (const { name, path } of SCREEN_SNAPSHOTS) {
+    test(`screen ${name}`, async ({ page }) => {
+      await page.goto(path);
+      await page.waitForLoadState("networkidle");
+      await page.waitForTimeout(400); // fonts + initial paint settle
+      // Mask runtime-variable regions so only layout/typography drift trips the diff.
+      const dynamic = page.locator("img, time, [data-dynamic], .tabular-nums, svg");
+      await expect(page).toHaveScreenshot(`screen-${name}.png`, {
+        fullPage: true,
+        animations: "disabled",
+        mask: [dynamic],
+        maxDiffPixelRatio: 0.02,
+      });
+    });
+  }
+});
+
 const FIXTURES = [
   "contact-card-amethyst",
   "contact-card-rose-gold",

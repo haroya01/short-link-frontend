@@ -13,7 +13,7 @@ type Tab = "posts" | "series" | "about" | "liked" | "bookmarks";
  * Shared header for the author's blog pages (velog @user style): avatar + handle + bio, then a
  * tab bar — 글 / 시리즈 / 소개. Hrefs are relative to the author subdomain root.
  */
-export async function AuthorHeader({ author, active }: { author: PublicAuthor; active: Tab }) {
+export async function AuthorHeader({ author }: { author: PublicAuthor }) {
   const t = await getTranslations("publicPost");
   const tNav = await getTranslations("nav");
   const locale = await getLocale();
@@ -62,7 +62,7 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
         </div>
       </div>
 
-      <AuthorTabs tabs={tabs} activeKey={active} username={author.username} />
+      <AuthorTabs tabs={tabs} username={author.username} />
     </header>
   );
 }
