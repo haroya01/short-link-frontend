@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useEditor, useEditorState, EditorContent, type Editor } from "@tiptap/react";
-import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
+import { BubbleMenu } from "@tiptap/react/menus";
 import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -16,18 +16,23 @@ import { Markdown } from "tiptap-markdown";
 import {
   Bold,
   Code2,
+  Heading1,
   Heading2,
+  Heading3,
   Image as ImageIcon,
   Italic,
   Link as LinkIcon,
   List,
+  ListOrdered,
   Minus,
   Plus,
   Quote,
+  SquareCode,
   Strikethrough,
   Table as TableIcon,
   Trash2,
   Video,
+  type LucideIcon,
 } from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
@@ -311,11 +316,6 @@ export function MarkdownEditor({
   return (
     <div className="flex h-full flex-col">
       <BubbleBar editor={editor} onEditLink={(href) => setUrlDialog({ mode: "link", initial: href })} />
-      <FloatingInsertBar
-        editor={editor}
-        onPickImage={pickImage}
-        onPickEmbed={() => setUrlDialog({ mode: "embed", initial: "" })}
-      />
       <TableMenu editor={editor} />
       <EditorBlockHandle editor={editor} />
       <input
@@ -329,6 +329,15 @@ export function MarkdownEditor({
           e.target.value = "";
           await uploadAndInsertMany(editor, files, width);
         }}
+      />
+      {/* Always-on top toolbar — the resting-state affordance so every tool (굵게·표·…) is visible
+          without selecting text or knowing `/`. Sits above the scrolling body so it never scrolls away;
+          the selection bubble + floating insert bar still work as contextual shortcuts. */}
+      <EditorToolbar
+        editor={editor}
+        onEditLink={(href) => setUrlDialog({ mode: "link", initial: href })}
+        onPickImage={pickImage}
+        onPickEmbed={() => setUrlDialog({ mode: "embed", initial: "" })}
       />
       {/* px-5 matches the page's px-5 so the body text lines up with the title above (the wrapper
           breaks out of that padding with -mx-5 to let «wide»/«full» images bleed wider than the text). */}
@@ -372,10 +381,111 @@ export function MarkdownEditor({
 }
 
 /**
- * Selection bubble — the only persistent formatting affordance (the §10 "quiet weblog" direction: no
- * Office-style sticky toolbar). Shows the inline marks on a text selection; block insertion (headings,
- * lists, quote, code, table, image, place) lives in the slash (`/`) menu and markdown input rules
- * (`## `, `> `, `- `, ``` ```). So the writing surface stays a clean paper column until you act on text.
+ * Always-on top toolbar. Readers asked for a resting-state toolbar so every tool is visible without
+ * selecting text or knowing the `/` menu / shift+enter — text marks, headings, lists, quote, code,
+ * divider, and the inserts (image · table · embed), each reflecting its active state live (Tiptap v3
+ * useEditor doesn't re-render on transactions → useEditorState). Block labels reuse the localized
+ * slash.* strings; commands mirror the bubble / floating bars. `onMouseDown`+preventDefault keeps the
+ * selection/caret from collapsing before the command runs (so Link + mark toggles work).
+ */
+function EditorToolbar({
+  editor,
+  onEditLink,
+  onPickImage,
+  onPickEmbed,
+}: {
+  editor: Editor;
+  onEditLink: (href: string) => void;
+  onPickImage: (opts?: ImagePickOptions) => void;
+  onPickEmbed: () => void;
+}) {
+  const t = useTranslations("postEditor");
+  const a = useEditorState({
+    editor,
+    selector: ({ editor }) => ({
+      bold: editor.isActive("bold"),
+      italic: editor.isActive("italic"),
+      strike: editor.isActive("strike"),
+      code: editor.isActive("code"),
+      link: editor.isActive("link"),
+      h1: editor.isActive("heading", { level: 1 }),
+      h2: editor.isActive("heading", { level: 2 }),
+      h3: editor.isActive("heading", { level: 3 }),
+      bullet: editor.isActive("bulletList"),
+      ordered: editor.isActive("orderedList"),
+      quote: editor.isActive("blockquote"),
+      codeBlock: editor.isActive("codeBlock"),
+    }),
+  });
+  const setLink = () => onEditLink((editor.getAttributes("link").href as string | undefined) ?? "");
+
+  type Item = { icon: LucideIcon; label: string; active?: boolean; run: () => void };
+  const groups: Item[][] = [
+    [
+      { icon: Bold, label: t("toolbar.bold"), active: a.bold, run: () => editor.chain().focus().toggleBold().run() },
+      { icon: Italic, label: t("toolbar.italic"), active: a.italic, run: () => editor.chain().focus().toggleItalic().run() },
+      { icon: Strikethrough, label: t("toolbar.strike"), active: a.strike, run: () => editor.chain().focus().toggleStrike().run() },
+      { icon: Code2, label: t("toolbar.inlineCode"), active: a.code, run: () => editor.chain().focus().toggleCode().run() },
+      { icon: LinkIcon, label: t("toolbar.link"), active: a.link, run: setLink },
+    ],
+    [
+      { icon: Heading1, label: t("slash.heading1"), active: a.h1, run: () => editor.chain().focus().toggleHeading({ level: 1 }).run() },
+      { icon: Heading2, label: t("slash.heading2"), active: a.h2, run: () => editor.chain().focus().toggleHeading({ level: 2 }).run() },
+      { icon: Heading3, label: t("slash.heading3"), active: a.h3, run: () => editor.chain().focus().toggleHeading({ level: 3 }).run() },
+      { icon: List, label: t("slash.bulletList"), active: a.bullet, run: () => editor.chain().focus().toggleBulletList().run() },
+      { icon: ListOrdered, label: t("slash.orderedList"), active: a.ordered, run: () => editor.chain().focus().toggleOrderedList().run() },
+      { icon: Quote, label: t("slash.quote"), active: a.quote, run: () => editor.chain().focus().toggleBlockquote().run() },
+      { icon: SquareCode, label: t("slash.codeBlock"), active: a.codeBlock, run: () => editor.chain().focus().toggleCodeBlock().run() },
+    ],
+    [
+      { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() },
+      { icon: TableIcon, label: t("slash.table"), run: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
+      { icon: Video, label: t("slash.embed"), run: onPickEmbed },
+      { icon: Minus, label: t("slash.divider"), run: () => editor.chain().focus().setHorizontalRule().run() },
+    ],
+  ];
+
+  const cls = (active?: boolean) =>
+    `touch-target focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-md transition-colors ${
+      active
+        ? "bg-accent-50 text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
+        : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+    }`;
+
+  return (
+    <div
+      data-testid="editor-toolbar"
+      className="flex items-center gap-0.5 overflow-x-auto border-b border-slate-100 px-5 py-1.5 dark:border-slate-800"
+    >
+      {groups.map((group, gi) => (
+        <div key={gi} className="flex items-center gap-0.5">
+          {gi > 0 && <span className="mx-1 h-5 w-px shrink-0 bg-slate-200 dark:bg-slate-700" aria-hidden />}
+          {group.map((it, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={it.label}
+              title={it.label}
+              aria-pressed={it.active}
+              className={cls(it.active)}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                it.run();
+              }}
+            >
+              <it.icon className="h-4 w-4" />
+            </button>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Selection bubble — a contextual formatting shortcut over a text selection (the always-on toolbar
+ * above covers discovery). Shows the inline marks; block insertion also lives in the slash (`/`) menu
+ * and markdown input rules (`## `, `> `, `- `, ``` ```).
  */
 function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: string) => void }) {
   const btn = (active: boolean) =>
@@ -410,125 +520,33 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
   ];
 
   return (
-    <BubbleMenu
-      editor={editor}
-      className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
-    >
-      {items.map((it, i) => (
-        <button
-          key={i}
-          type="button"
-          aria-label={it.label}
-          aria-pressed={it.active}
-          className={btn(it.active)}
-          // onMouseDown + preventDefault (like the floating bar) so clicking doesn't blur the editor
-          // and collapse the selection before the command runs — a collapsed selection makes Link in
-          // particular a no-op (extendMarkRange finds no range), and weakens the mark toggles.
-          onMouseDown={(e) => {
-            e.preventDefault();
-            it.run();
-          }}
-        >
-          <it.icon className="h-4 w-4" />
-        </button>
-      ))}
-    </BubbleMenu>
-  );
-}
-
-/**
- * Floating insert bar — the "절충" between a permanent toolbar (too loud for the quiet weblog) and the
- * selection-only bubble (which hides block tools behind the `/` you have to know about). On an empty
- * top-level line it floats a compact palette of the common block types just below the caret, so the
- * tools are discoverable at a glance; it vanishes the moment you type. The `/` menu, markdown input
- * rules, and the gutter "+" all still work — this is the visible, zero-knowledge entry point.
- */
-function FloatingInsertBar({
-  editor,
-  onPickImage,
-  onPickEmbed,
-}: {
-  editor: Editor;
-  onPickImage: (opts?: ImagePickOptions) => void;
-  onPickEmbed: () => void;
-}) {
-  const t = useTranslations("postEditor");
-  // Tiptap v3's useEditor doesn't re-render on transactions, so subscribe to the bold state explicitly
-  // — otherwise the toggle's highlight/aria-pressed never update and the button reads as "does nothing".
-  const boldActive = useEditorState({ editor, selector: ({ editor }) => editor.isActive("bold") });
-  const items = [
-    { icon: Heading2, label: t("slash.heading2"), run: () => editor.chain().focus().toggleHeading({ level: 2 }).run() },
-    { icon: List, label: t("slash.bulletList"), run: () => editor.chain().focus().toggleBulletList().run() },
-    { icon: Quote, label: t("slash.quote"), run: () => editor.chain().focus().toggleBlockquote().run() },
-    { icon: Code2, label: t("slash.codeBlock"), run: () => editor.chain().focus().toggleCodeBlock().run() },
-    { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() },
-    { icon: Video, label: t("slash.embed"), run: () => onPickEmbed() },
-    { icon: TableIcon, label: t("slash.table"), run: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
-  ];
-
-  return (
-    <FloatingMenu
-      editor={editor}
-      options={{ placement: "bottom-start", offset: 6 }}
-      // On ANY empty, focused, top-level text line (paragraph OR an emptied-out heading) so the
-      // toolbox reliably appears whenever the line has no text. Never inside a list item, blockquote,
-      // or table cell (depth > 1), and not in the CodeMirror code block (it owns its own surface).
-      shouldShow={({ view, state }) => {
-        if (!view.hasFocus()) return false;
-        const { $from, empty } = state.selection;
-        const node = $from.parent;
-        return (
-          empty &&
-          $from.depth === 1 &&
-          node.isTextblock &&
-          node.type.name !== "codeBlock" &&
-          node.content.size === 0
-        );
-      }}
-      className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-md dark:border-slate-700 dark:bg-slate-900"
-    >
-      {/* "굵게 쓰기" mode — an inline mark, not a block insert. On an empty line toggleBold() arms a
-          stored mark, so the next text you type comes out bold (and stays bold for that run until you
-          move off the line). Highlighted while armed; sits left of a divider so it reads apart from the
-          block-insert tools to its right. */}
-      <button
-        type="button"
-        aria-label={t("boldMode")}
-        title={t("boldMode")}
-        aria-pressed={boldActive}
-        // onMouseDown + preventDefault so clicking doesn't blur the editor (a blur would collapse the
-        // empty selection and hide the bar before toggleBold runs).
-        onMouseDown={(e) => {
-          e.preventDefault();
-          editor.chain().focus().toggleBold().run();
-        }}
-        className={`touch-target focus-ring grid h-8 w-8 place-items-center rounded-md transition-colors ${
-          boldActive
-            ? "bg-accent-50 text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
-            : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-        }`}
+    <BubbleMenu editor={editor}>
+      {/* Inner div carries the chrome + a testid so tests target the bubble's marks, not the
+          identically-labelled always-on toolbar buttons. */}
+      <div
+        data-testid="bubble-bar"
+        className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
       >
-        <Bold className="h-4 w-4" />
-      </button>
-      <span className="mx-0.5 h-5 w-px bg-slate-200 dark:bg-slate-700" aria-hidden />
-      {items.map((it, i) => (
-        <button
-          key={i}
-          type="button"
-          aria-label={it.label}
-          title={it.label}
-          // onMouseDown + preventDefault so clicking the bar doesn't blur the editor before the command
-          // runs (a blur would collapse the empty selection and hide the bar mid-click).
-          onMouseDown={(e) => {
-            e.preventDefault();
-            it.run();
-          }}
-          className="touch-target focus-ring grid h-8 w-8 place-items-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-        >
-          <it.icon className="h-4 w-4" />
-        </button>
-      ))}
-    </FloatingMenu>
+        {items.map((it, i) => (
+          <button
+            key={i}
+            type="button"
+            aria-label={it.label}
+            aria-pressed={it.active}
+            className={btn(it.active)}
+            // onMouseDown + preventDefault (like the toolbar) so clicking doesn't blur the editor
+            // and collapse the selection before the command runs — a collapsed selection makes Link in
+            // particular a no-op (extendMarkRange finds no range), and weakens the mark toggles.
+            onMouseDown={(e) => {
+              e.preventDefault();
+              it.run();
+            }}
+          >
+            <it.icon className="h-4 w-4" />
+          </button>
+        ))}
+      </div>
+    </BubbleMenu>
   );
 }
 
