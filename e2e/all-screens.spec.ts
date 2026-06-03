@@ -1,0 +1,71 @@
+import { test, expect, type Page } from "@playwright/test";
+
+/**
+ * Tier-2 "lived render" safety net across EVERY frontend surface — marketing, link-in-bio, the links
+ * app, and the blog workspace. Product-agnostic + deterministic (no pixel baselines): a screen that
+ * throws (error boundary), renders blank, collapses its layout, or drops its heading/main landmark
+ * fails loudly. This is the broad sweep; richer per-screen assertions live in blog-screens.spec.ts.
+ *
+ * mock-ON lane: the in-memory mock provides an auto-authenticated session, so the auth-gated
+ * workspace/app pages render their real content (not the login wall).
+ */
+test.use({ viewport: { width: 1280, height: 900 } });
+
+async function rendersCleanly(page: Page, name: string) {
+  await expect(page.locator("body")).toBeVisible();
+  // No framework error boundary surfaced.
+  await expect(
+    page.getByText(/Application error|client-side exception|Internal Server Error|Unhandled Runtime/i),
+  ).toHaveCount(0);
+  // Real laid-out content (not a blank/collapsed shell).
+  const height = await page.evaluate(() => document.body.scrollHeight);
+  expect(height, `${name}: laid-out content (not collapsed)`).toBeGreaterThan(300);
+  // The page rendered its own structure, not just shared chrome.
+  const hasStructure = await page.evaluate(
+    () => !!document.querySelector("h1, h2, main, [role='main'], article, [data-testid='editor-toolbar']"),
+  );
+  expect(hasStructure, `${name}: has a heading / main landmark`).toBe(true);
+}
+
+// Canonical served URLs (the /links/* paths 308-redirect to these apex routes).
+const SCREENS: { name: string; path: string }[] = [
+  // ── marketing (public) ──
+  { name: "marketing · pricing", path: "/ko/pricing" },
+  { name: "marketing · about", path: "/ko/about" },
+  { name: "marketing · learn", path: "/ko/learn" },
+  { name: "marketing · privacy", path: "/ko/privacy" },
+  { name: "marketing · terms", path: "/ko/terms" },
+  { name: "marketing · login", path: "/ko/login" },
+  { name: "marketing · showcase", path: "/ko/showcase" },
+  { name: "marketing · demo", path: "/ko/demo" },
+  { name: "marketing · qr", path: "/ko/qr" },
+  // ── link-in-bio (public) ──
+  { name: "link-in-bio · u/{user}", path: "/ko/u/dohyun" },
+  // NOTE: the links APP pages (/dashboard, /campaigns, /ctas, /stats, /qr-campaigns, /settings) are
+  // NOT covered here — the in-memory mock only backs the BLOG product, so they render a data-error
+  // state ("에러: Internal Server Error"), not real content. Covering them needs a links-product mock
+  // layer (the blog's modules/blog/api/_mocks.ts equivalent) — a separate follow-up.
+  // ── blog workspace (auth) ──
+  { name: "blog · posts", path: "/ko/blog/posts" },
+  { name: "blog · analytics", path: "/ko/blog/analytics" },
+  { name: "blog · drafts", path: "/ko/blog/drafts" },
+  { name: "blog · leads", path: "/ko/blog/leads" },
+  { name: "blog · readers", path: "/ko/blog/readers" },
+  { name: "blog · curation", path: "/ko/blog/curation" },
+  { name: "blog · settings", path: "/ko/blog/settings" },
+  { name: "blog · tags", path: "/ko/blog/tags" },
+  { name: "blog · tag detail", path: "/ko/blog/tags/개발" },
+  { name: "blog · links-in-posts", path: "/ko/blog/links" },
+  { name: "blog · series (workspace)", path: "/ko/blog/series" },
+  { name: "blog · login", path: "/ko/blog/login" },
+];
+
+for (const s of SCREENS) {
+  test(`renders: ${s.name}`, async ({ page }) => {
+    await page.goto(s.path);
+    // load + a beat for hydration/auth to resolve (auth-gated pages swap the login wall for content).
+    await page.waitForLoadState("load");
+    await page.waitForTimeout(900);
+    await rendersCleanly(page, s.name);
+  });
+}

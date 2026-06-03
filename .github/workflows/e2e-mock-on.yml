@@ -49,7 +49,7 @@ jobs:
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3001
           CI: "true"
-        run: npx playwright test e2e/blog-post-render.spec.ts e2e/blog-navigation.spec.ts e2e/blog-screens.spec.ts
+        run: npx playwright test e2e/blog-post-render.spec.ts e2e/blog-navigation.spec.ts e2e/blog-screens.spec.ts e2e/all-screens.spec.ts
       - name: Upload report on failure
         if: failure()
         uses: actions/upload-artifact@v4
