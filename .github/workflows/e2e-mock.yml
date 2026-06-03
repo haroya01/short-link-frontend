@@ -1,0 +1,62 @@
+name: E2E (mock-only)
+
+# Backend-free e2e lane. The authoring specs mock the whole API at the Playwright layer, so they
+# need only the built frontend — no Spring/DB/Redis and no SUB_TOKEN. This runs on every PR even when
+# the full E2E job (which boots the backend) is skipped for want of SUB_TOKEN, so the write flow is
+# actually guarded on every change.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-mock-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-mock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Build still expects an API base; a noop URL keeps it happy. Every request is intercepted by
+      # Playwright routes, and NEXT_PUBLIC_USE_MOCKS is left unset so the real fetch path runs (the
+      # in-memory demo mocks would bypass the network and the route assertions would never fire).
+      NEXT_PUBLIC_API_BASE: http://localhost:0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: Build Next.js
+        run: npm run build
+      - name: Start Next.js
+        run: |
+          PORT=3001 npm start &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3001/ko >/dev/null; then
+              echo "next is up"
+              break
+            fi
+            sleep 1
+          done
+      - name: Run mock-only e2e
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3001
+          CI: "true"
+        run: npx playwright test e2e/blog-write-flow.spec.ts
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-e2e-mock-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
