@@ -61,7 +61,22 @@ const SCREENS: { name: string; path: string }[] = [
   { name: "blog · links-in-posts", path: "/ko/blog/links" },
   { name: "blog · series (workspace)", path: "/ko/blog/series" },
   { name: "blog · login", path: "/ko/blog/login" },
+  // ── deep / dynamic routes that render with current mocks ──
+  { name: "links · campaign create", path: "/ko/campaigns/new" },
+  { name: "links · settings/profile", path: "/ko/settings/profile" },
+  { name: "links · profile auto-setup", path: "/ko/profile/auto" },
+  { name: "links · admin abuse-reports", path: "/ko/admin/abuse-reports" },
+  { name: "blog · post analytics", path: "/ko/blog/analytics/1" },
+  { name: "blog · editor (write/[id])", path: "/ko/blog/write/16" },
 ];
+
+// Intentionally NOT in the sweep (documented gaps, not oversights):
+//   • Heavy detail/stats views needing large mock shapes — /stats/{code}(+/public), /campaigns/{id}
+//     (+/stats) — their LIST views are covered; the 40-field LinkStats / CampaignDetail mocks are high
+//     cost / low marginal value. Add cases to lib/api/_links-mocks.ts to enable.
+//   • Tool surfaces — /campaigns/{id}/poster-builder (canvas), /print-sheet, /batches/new.
+//   • Redirect/flow handlers (not content screens) — /use/{slug}, /auth/callback, /auth/2fa.
+//   • Role-gated — /admin root (needs an admin-role mock); /showcase/{handle} (needs showcase mock).
 
 for (const s of SCREENS) {
   test(`renders: ${s.name}`, async ({ page }) => {
