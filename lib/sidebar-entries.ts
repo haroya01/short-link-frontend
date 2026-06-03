@@ -15,10 +15,10 @@ export function buildBlogSections(
   return [
     {
       entries: [
-        // 글: /write is already the unified post list (전체/발행/임시저장/예약 tabs + 새 글) — the
-        // separate 발행 글(/posts) · 임시저장(/drafts) entries were just its filtered subsets.
+        // 글: /write is the single content home (전체/발행/임시저장/예약 tabs + 새 글). Series are now a
+        // VIEW of it (내 글 → 시리즈별 보기), not a separate destination — the old 발행 글(/posts)·
+        // 임시저장(/drafts)·시리즈(/series) entries were all just lenses on this same list.
         { href: "/write", label: tBlog("myPosts") },
-        { href: "/series", label: tBlog("series") },
         // 분석: /analytics + /readers(방문자) share one tabbed section now, so a single nav entry.
         { href: "/analytics", label: tBlog("analytics") },
         { href: "/leads", label: tBlog("leads") },

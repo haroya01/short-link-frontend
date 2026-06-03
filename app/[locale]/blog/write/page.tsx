@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { BarChart3, FileText, PenSquare } from "lucide-react";
+import { BarChart3, FileText, Layers, List, PenSquare } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
+import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 const RELATIVE_UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
@@ -31,6 +33,12 @@ export default function WriteIndexPage() {
   const t = useTranslations("postEditor");
   const locale = useLocale();
   const { ready, authenticated } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+  // "시리즈별 보기" is a view of this same list, driven by ?view=series (so /series can forward here and
+  // the choice is shareable). Read from the live URL rather than useSearchParams() so the page doesn't
+  // bail into the CSR-only build path. Series management lives in that view — no separate series page.
+  const [view, setView] = useState<"all" | "series">("all");
   const [posts, setPosts] = useState<PostView[]>([]);
   const [filter, setFilter] = useState<"all" | PostStatus>("all");
   const [loading, setLoading] = useState(true);
@@ -42,7 +50,13 @@ export default function WriteIndexPage() {
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
     if (i >= 0) setWriteBase(window.location.pathname.slice(0, i + "/write".length));
+    setView(new URLSearchParams(window.location.search).get("view") === "series" ? "series" : "all");
   }, []);
+
+  function changeView(v: "all" | "series") {
+    setView(v);
+    router.replace(v === "series" ? `${pathname}?view=series` : pathname, { scroll: false });
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -88,6 +102,33 @@ export default function WriteIndexPage() {
         </a>
       </header>
 
+      {/* 전체 ↔ 시리즈별 — same content, two lenses. 시리즈별 is where series get curated. */}
+      <div className="mb-5 inline-flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-800">
+        {([
+          ["all", t("viewAll"), List],
+          ["series", t("viewBySeries"), Layers],
+        ] as const).map(([v, label, Icon]) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => changeView(v)}
+            aria-pressed={view === v}
+            className={`focus-ring inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors ${
+              view === v
+                ? "bg-accent-600 text-white"
+                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+            }`}
+          >
+            <Icon className="h-3.5 w-3.5" />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {view === "series" ? (
+        <SeriesGroupedView writeBase={writeBase} />
+      ) : (
+        <>
       {!loading && posts.length > 0 && (
         <div className="mb-5 flex flex-wrap gap-1.5">
           {tabs.map((s) => (
@@ -179,6 +220,8 @@ export default function WriteIndexPage() {
             );
           })}
         </ul>
+      )}
+        </>
       )}
     </main>
   );

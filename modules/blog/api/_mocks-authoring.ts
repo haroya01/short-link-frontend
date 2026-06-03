@@ -208,7 +208,19 @@ export function mockUpdateSeries(id: number, payload: { title: string; slug: str
 }
 
 export function mockSetSeriesPosts(id: number, postIds: number[]): SeriesDetailView {
+  const prev = seriesPosts.get(id) ?? [];
   seriesPosts.set(id, [...postIds]);
+  // Reflect membership on the posts themselves (the real backend owns post.seriesId / seriesOrder).
+  // Dropped members lose their series; current members get this series id + their new order — so a
+  // grouped "시리즈별" view that groups by post.seriesId stays correct after add/remove/reorder.
+  prev.forEach((pid) => {
+    const p = posts.get(pid);
+    if (p && !postIds.includes(pid)) posts.set(pid, { ...p, seriesId: null, seriesOrder: null });
+  });
+  postIds.forEach((pid, i) => {
+    const p = posts.get(pid);
+    if (p) posts.set(pid, { ...p, seriesId: id, seriesOrder: i });
+  });
   recount(id);
   return mockGetSeries(id);
 }
