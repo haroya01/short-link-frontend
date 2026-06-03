@@ -8,6 +8,19 @@ describe("markdownToBlocks", () => {
     expect(markdownToBlocks("   \n  \n")).toEqual([]);
   });
 
+  // Regression: an image line the image rule doesn't fully consume (a trailing caption, or a
+  // half-typed `![`) is rejected by the paragraph guard too, so `i` never advanced → infinite loop →
+  // permanent editor freeze on autosave. Each must now terminate and fall back to a PARAGRAPH.
+  it("does not hang on an image line with a trailing caption", () => {
+    expect(markdownToBlocks("![alt](http://x/y.png) some caption")).toEqual([
+      { type: "PARAGRAPH", content: "![alt](http://x/y.png) some caption" },
+    ]);
+  });
+
+  it("does not hang on a half-typed image", () => {
+    expect(markdownToBlocks("![alt")).toEqual([{ type: "PARAGRAPH", content: "![alt" }]);
+  });
+
   it("converts headings", () => {
     const blocks = markdownToBlocks("# Title\n## Section\n### Subsection");
     expect(blocks).toEqual([
