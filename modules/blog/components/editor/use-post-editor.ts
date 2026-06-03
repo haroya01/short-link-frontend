@@ -57,6 +57,13 @@ export function usePostEditor(
   // `markdown` state so a Save/Publish fired right after an edit (or with the editor still focused)
   // serializes the LATEST content — not a stale closure (the source of dropped last-keystroke saves).
   const liveMarkdown = useRef<(() => string) | null>(null);
+  // Bumped on load/restore so the page can remount the editor with fresh content — Tiptap seeds from
+  // initialValue only at mount, so without this a revision restore updates state but the editor keeps
+  // showing the old doc.
+  const [reloadKey, setReloadKey] = useState(0);
+  // Signature of the last successfully-saved payload — skip an autosave that would re-send identical
+  // content (the idle effect re-fires on unrelated dep changes; a failing endpoint shouldn't thrash).
+  const lastSaved = useRef<string>("");
 
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
@@ -112,6 +119,8 @@ export function usePostEditor(
       setCoverRaw(p.ogImageUrl ?? null);
       setExcerptRaw(p.excerpt ?? "");
       setDirty(false); // freshly loaded content isn't a pending edit
+      lastSaved.current = ""; // new content baseline — let the first real edit save
+      setReloadKey((k) => k + 1); // remount the editor so it seeds from the (re)loaded content
     } catch (e) {
       setError(e instanceof Error ? e.message : "load failed");
     } finally {
@@ -137,6 +146,14 @@ export function usePostEditor(
 
   async function save() {
     if (post == null || saving) return;
+    // Pull the freshest markdown straight from the editor (falls back to state pre-mount).
+    const md = liveMarkdown.current?.() ?? markdown;
+    const slugPart = post.status === "DRAFT" ? slugForSave(slug) : post.slug;
+    // Skip a save whose payload is identical to the last successful one — the idle autosave effect
+    // re-fires on unrelated dep changes, and a persistently-failing endpoint shouldn't re-send the
+    // same content on every keystroke.
+    const sig = JSON.stringify([title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", seriesId, md]);
+    if (sig === lastSaved.current) return;
     setSaving(true);
     setError(null);
     try {
@@ -149,11 +166,10 @@ export function usePostEditor(
         // Trim edge hyphens the live input tolerates so the slug matches the backend regex.
         ...(post.status === "DRAFT" ? { slug: slugForSave(slug) } : {}),
       });
-      // Pull the freshest markdown straight from the editor (falls back to state pre-mount).
-      const md = liveMarkdown.current?.() ?? markdown;
       await replaceBlocks(post.id, markdownToBlocks(md));
       await assignPostToSeries(post.id, seriesId, post.seriesId ?? null);
       setPost({ ...updated, seriesId });
+      lastSaved.current = sig;
       setDirty(false);
       setSaved(true);
       window.setTimeout(() => setSaved(false), 2000);
@@ -210,6 +226,11 @@ export function usePostEditor(
       setError(t("titleRequired"));
       return;
     }
+    // Reject a past instant up front (the datetime-local `min` is only advisory and editable).
+    if (!scheduledAt || new Date(scheduledAt).getTime() <= Date.now()) {
+      setError(t("scheduleInvalid"));
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
@@ -261,6 +282,7 @@ export function usePostEditor(
     markdown,
     setMarkdown,
     liveMarkdown,
+    reloadKey,
     leave,
     tags,
     setTags,

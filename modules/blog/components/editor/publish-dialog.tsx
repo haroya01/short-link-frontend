@@ -60,6 +60,7 @@ export function PublishDialog({
   const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [coverError, setCoverError] = useState<string | null>(null);
   const [scheduleAt, setScheduleAt] = useState("");
   const [showSchedule, setShowSchedule] = useState(false);
 
@@ -74,8 +75,12 @@ export function PublishDialog({
 
   async function pickCover(file: File) {
     setUploading(true);
+    setCoverError(null);
     try {
       onCoverChange(await onUploadCover(file));
+    } catch (e) {
+      // Don't fail silently (the dropzone just snapping back read as "nothing happened") — surface it.
+      setCoverError(e instanceof Error ? e.message : t("imageError"));
     } finally {
       setUploading(false);
     }
@@ -151,6 +156,11 @@ export function PublishDialog({
                 {uploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ImagePlus className="h-6 w-6" />}
                 <span className="text-[13px] font-medium">{uploading ? t("coverUploading") : t("coverAdd")}</span>
               </button>
+            )}
+            {coverError && (
+              <p className="mt-1.5 text-[12px] text-red-600 dark:text-red-400" role="alert">
+                {coverError}
+              </p>
             )}
           </Field>
 
