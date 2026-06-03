@@ -30,6 +30,10 @@ if (typeof window !== "undefined" && POSTHOG_KEY && !(posthog as unknown as { __
     capture_pageleave: true,
     person_profiles: "identified_only",
     autocapture: true,
+    // Cookieless — keep the distinct_id in localStorage, never a cookie. The app promises "no
+    // analytics or ad cookies" (cookie banner + privacy page); PostHog's default "localStorage+cookie"
+    // would set one, so this keeps that promise literally true while analytics still works.
+    persistence: "localStorage",
     // Disable session replay — rrweb posts to /s/ every few seconds per active tab, which
     // floods the network panel and burns the PostHog quota. Autocapture + explicit track()
     // events already give us the behavioral signal we want without the per-frame DOM diffing.
