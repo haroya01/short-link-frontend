@@ -35,8 +35,10 @@ function standaloneEmbedUrl(line: string): string | null {
   if (!m) return null;
   const url = m[1];
   if (kurlShortCode(url)) return url;
-  const plan = planEmbed(url);
-  return plan && (plan.kind === "video" || plan.kind === "map") ? url : null;
+  // velog-style: ANY standalone URL on its own line is a rich card (EMBED) — the editor already turns
+  // a pasted/inserted bare URL into a link card, so the reader must honor it (video→iframe, map→static
+  // map, everything else→OG link-preview card). A URL with surrounding text stays an inline link.
+  return planEmbed(url) ? url : null;
 }
 
 /**
@@ -115,10 +117,19 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       continue;
     }
 
-    m = line.match(/^>\s*(.+)$/);
+    m = line.match(/^>\s*(.*)$/);
     if (m) {
-      blocks.push({ type: "QUOTE", content: m[1].trim() });
+      // Coalesce consecutive `>` lines into ONE quote — a multi-line blockquote serializes as several
+      // `> ` lines, and pushing one QUOTE block per line rendered as N adjacent quote boxes.
+      const quoteLines: string[] = [m[1]];
       i++;
+      while (i < lines.length) {
+        const qm = lines[i].match(/^>\s*(.*)$/);
+        if (!qm) break;
+        quoteLines.push(qm[1]);
+        i++;
+      }
+      blocks.push({ type: "QUOTE", content: quoteLines.join("\n").trim() });
       continue;
     }
 
@@ -202,7 +213,13 @@ export function blocksToMarkdown(blocks: { type: string; content: string | null 
         parts.push(`### ${b.content ?? ""}`);
         break;
       case "QUOTE":
-        parts.push(`> ${b.content ?? ""}`);
+        // Prefix every line so a multi-line quote round-trips back to one QUOTE block (not N).
+        parts.push(
+          (b.content ?? "")
+            .split("\n")
+            .map((l) => `> ${l}`)
+            .join("\n"),
+        );
         break;
       case "DIVIDER":
         parts.push("---");

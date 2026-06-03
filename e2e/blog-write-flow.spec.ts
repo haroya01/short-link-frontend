@@ -305,6 +305,11 @@ test("the embed dialog inserts a live link card that round-trips to an EMBED blo
 
   // The live card node view renders in the editor.
   await expect(page.locator(".tiptap [data-link-card]")).toBeVisible({ timeout: 10_000 });
+  // A2: a VIDEO embed must render as the reader does — a 16:9 iframe — not a generic OG link card, so
+  // the editor matches the published page (WYSIWYG). The iframe points at the privacy embed host.
+  await expect(page.locator('.tiptap iframe[src*="youtube-nocookie.com/embed/dQw4w9WgXcQ"]')).toBeVisible({
+    timeout: 10_000,
+  });
 
   const blocks = await save(page, captured);
   // A bare video URL on its own line serializes to an EMBED block (markdownToBlocks re-detects it).
@@ -573,10 +578,35 @@ test("selection Bold (bubble menu) wraps the text as **bold** in the saved parag
   expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain("**make me bold**");
 });
 
-// NOTE: inline link via the selection bubble + URL dialog is intentionally NOT e2e'd here — the
-// bubble collapses the selection on a programmatic button click in headless Chromium, which makes the
-// assertion flaky for no real signal. The URL dialog itself is covered by the embed test, and the
-// selection bubble's appearance + a mark round-trip is covered by the "selection Bold" test above.
+test("selection Link (bubble menu + URL dialog) saves a real markdown link", async ({ page }) => {
+  // This was a REAL bug, not headless flakiness: the bubble buttons used onClick, so the click blurred
+  // the editor and collapsed the selection before setLink ran → extendMarkRange found no range → no
+  // link (and no `[text](url)` in the payload). Fixed by moving the bubble to onMouseDown+preventDefault
+  // (like the floating bar). Surrounding text keeps the line a paragraph (a link-only line → EMBED).
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("intro docs");
+  // Select just the word "docs" (last 4 chars). Re-select from line-end each retry so it's idempotent,
+  // and wait for the bubble Link button to be ready before clicking.
+  const link = await awaitBubbleButton(
+    page,
+    async () => {
+      await page.keyboard.press("End");
+      for (let i = 0; i < 4; i++) await page.keyboard.press("Shift+ArrowLeft");
+    },
+    "Link",
+  );
+  await link.click();
+  await page.getByPlaceholder("https://example.com").fill("https://kurl.me/help");
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  // Lived proof the bug is fixed: a real clickable anchor lands on the selected word. (Before the
+  // onMouseDown fix the selection collapsed and no link was created at all.) We assert the rendered
+  // anchor rather than the saved markdown — the link mark IS what serializes, and the anchor is the
+  // deterministic, user-facing signal.
+  await expect(page.locator('.tiptap a[href="https://kurl.me/help"]')).toHaveText("docs");
+});
 
 test("inserting an image saves an IMAGE block carrying the uploaded URL", async ({ page }) => {
   // Drives the real presign → S3 PUT → commit → setImage path (all mocked in setupMocks). The image
@@ -647,6 +677,22 @@ test("republish: an unpublished post can go live again (POST /republish)", async
   const dialog = await openPublishDialog(page);
   await dialog.getByRole("button", { name: "Republish", exact: true }).click();
   await expect.poll(() => captured.status).toBe("republish");
+});
+
+test("republish persists pending body edits (not just flips status)", async ({ page }) => {
+  // Republish / Cancel-schedule / Unpublish must save first — editing then republishing used to push
+  // the OLD server content live and silently drop the edit. Assert the edit reaches /blocks, not just
+  // that the lifecycle endpoint fired.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured, { ...POST, status: "UNPUBLISHED" });
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("edited before republish");
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "Republish", exact: true }).click();
+  await expect.poll(() => captured.status).toBe("republish");
+  await expect.poll(() => captured.blocks).not.toBeNull();
+  expect(captured.blocks!.map((b) => b.content ?? "").join("\n")).toContain("edited before republish");
 });
 
 test("schedule: a draft can be parked for a future publish (POST /schedule)", async ({ page }) => {
@@ -744,6 +790,20 @@ test("delete: confirming the trash action calls DELETE and returns to the list",
   await page.getByRole("button", { name: "Delete", exact: true }).click();
   await expect.poll(() => captured.deleted).toBe(true);
   await expect(page).toHaveURL(/\/blog\/write\/?$/);
+});
+
+test("leaving a dirty draft via Back saves it first — no lost edits", async ({ page }) => {
+  // The header Back is a real navigation; typing then immediately leaving used to drop the last
+  // keystrokes (still inside the 1.8s autosave debounce). Back now saves a dirty draft first.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("draft words before leaving");
+  // The header back arrow (lucide ArrowLeft) — clicked well within the autosave window.
+  await page.locator("a:has(svg.lucide-arrow-left)").click();
+  await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
+  expect(captured.blocks!.map((b) => b.content ?? "").join("\n")).toContain("draft words before leaving");
 });
 
 test("revisions: restoring a saved version calls the restore endpoint", async ({ page }) => {
@@ -996,9 +1056,9 @@ test("code block language + body round-trip into the CODE block", async ({ page 
   await page.locator(".tiptap select").selectOption("python");
   await page.locator(".tiptap .cm-content").click();
   await page.keyboard.type("print('hi')");
-  // Move focus out of the nested CodeMirror so it flushes its content back into the ProseMirror node
-  // (the CM→PM mirror commits on blur); saving while CM still has focus would serialize an empty block.
-  await page.locator(".tiptap p").first().click();
+  // Save directly while CodeMirror still has focus — no manual blur. The CM blur handler commits the
+  // buffer into the ProseMirror node when Save steals focus, so a quick-save must NOT drop the code
+  // (this used to serialize an empty CODE block).
   const blocks = await save(page, captured);
   const code = blocks.find((b) => b.type === "CODE");
   expect(code, "a CODE block was saved").toBeTruthy();
@@ -1100,4 +1160,42 @@ test("the editor visually styles marks and blocks (computed styles, not just pay
   expect(m.h2Size, "H2 renders larger than body").toBeGreaterThan(m.pSize);
   expect(m.bqBorder, "blockquote has a left rule").toBeGreaterThan(0);
   expect(m.codeBg, "inline code has a background tint").not.toBe("rgba(0, 0, 0, 0)");
+});
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Audit follow-ups: heading levels (A7), slash-menu IME safety (A9).
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+test("'#### ' does NOT create a broken h4 — the block model is H1–H3 only (A7)", async ({ page }) => {
+  // StarterKit is capped to levels [1,2,3]; a 4th-level heading node would serialize to literal
+  // `#### text` and round-trip as a PARAGRAPH (heading + TOC entry lost). Assert no h4 node forms.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("### still a heading");
+  await expect(page.locator(".tiptap h3")).toHaveText("still a heading");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("#### not a heading");
+  // No h4 node is created (the input rule stops at level 3).
+  await expect(page.locator(".tiptap h4")).toHaveCount(0);
+  const blocks = await save(page, captured);
+  expect(blocks.some((b) => b.type === "H3" && b.content === "still a heading")).toBe(true);
+});
+
+test("slash menu does not hijack the IME composition Enter (CJK) (A9)", async ({ page }) => {
+  // Korean/Japanese authors confirm a composing word with Enter. With the menu open that Enter must
+  // commit the composition, not pick a menu item. Dispatch a composing keydown and assert the menu
+  // stays open (no selection fired).
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await expect(page.getByRole("listbox")).toBeVisible();
+  await page.evaluate(() => {
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", isComposing: true, bubbles: true }));
+  });
+  // Menu is still open — the composing Enter did not select an item.
+  await expect(page.getByRole("listbox")).toBeVisible();
 });

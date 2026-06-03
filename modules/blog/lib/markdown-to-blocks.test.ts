@@ -85,8 +85,13 @@ describe("video embeds", () => {
     expect(markdownToBlocks("[clip](https://vimeo.com/123456789)")[0].type).toBe("EMBED");
   });
 
-  it("leaves a non-video URL as a paragraph", () => {
-    expect(markdownToBlocks("https://example.com/article")[0].type).toBe("PARAGRAPH");
+  it("turns a standalone non-video URL into an EMBED card too (velog-style)", () => {
+    // The reader renders this as an OG link-preview card, matching the editor's inserted link card.
+    expect(markdownToBlocks("https://example.com/article")[0].type).toBe("EMBED");
+  });
+
+  it("keeps a URL with surrounding text as an inline link (paragraph), not a card", () => {
+    expect(markdownToBlocks("see https://example.com/article for more")[0].type).toBe("PARAGRAPH");
   });
 
   it("splits a video URL out of surrounding text", () => {
@@ -97,6 +102,15 @@ describe("video embeds", () => {
   it("roundtrips an EMBED block through markdown", () => {
     const blocks = markdownToBlocks("https://youtu.be/dQw4w9WgXcQ");
     expect(markdownToBlocks(blocksToMarkdown(blocks))).toEqual(blocks);
+  });
+
+  it("coalesces a multi-line blockquote into ONE QUOTE block (round-trips)", () => {
+    const blocks = markdownToBlocks("> first line\n> second line");
+    const quotes = blocks.filter((b) => b.type === "QUOTE");
+    expect(quotes).toHaveLength(1);
+    expect(quotes[0].content).toBe("first line\nsecond line");
+    // The serializer prefixes every line, so it parses back to one QUOTE, not N adjacent quote boxes.
+    expect(markdownToBlocks(blocksToMarkdown(blocks)).filter((b) => b.type === "QUOTE")).toHaveLength(1);
   });
 });
 

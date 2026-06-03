@@ -265,9 +265,21 @@ export function PublishDialog({
                 await onSave();
                 onClose();
               }}
-              onUnpublish={() => onChangeStatus("unpublish")}
-              onRepublish={() => onChangeStatus("republish")}
-              onCancelSchedule={() => onChangeStatus("backToDraft")}
+              // Persist pending edits BEFORE the status flip — otherwise editing then Republish /
+              // Cancel-schedule / Unpublish silently drops the new content (changeStatus only POSTs the
+              // lifecycle endpoint, it doesn't save blocks/meta). Matches Publish / Save changes.
+              onUnpublish={async () => {
+                await onSave();
+                await onChangeStatus("unpublish");
+              }}
+              onRepublish={async () => {
+                await onSave();
+                await onChangeStatus("republish");
+              }}
+              onCancelSchedule={async () => {
+                await onSave();
+                await onChangeStatus("backToDraft");
+              }}
             />
           </div>
         </footer>

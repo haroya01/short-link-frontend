@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -53,6 +53,10 @@ export function usePostEditor(
   const [dirty, setDirty] = useState(false);
   // The /write list path with the current prefix preserved (locale + /blog-preview on the apex).
   const [writeBase, setWriteBase] = useState("/write");
+  // The editor registers a synchronous markdown getter here. save() reads it instead of the debounced
+  // `markdown` state so a Save/Publish fired right after an edit (or with the editor still focused)
+  // serializes the LATEST content — not a stale closure (the source of dropped last-keystroke saves).
+  const liveMarkdown = useRef<(() => string) | null>(null);
 
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
@@ -145,7 +149,9 @@ export function usePostEditor(
         // Trim edge hyphens the live input tolerates so the slug matches the backend regex.
         ...(post.status === "DRAFT" ? { slug: slugForSave(slug) } : {}),
       });
-      await replaceBlocks(post.id, markdownToBlocks(markdown));
+      // Pull the freshest markdown straight from the editor (falls back to state pre-mount).
+      const md = liveMarkdown.current?.() ?? markdown;
+      await replaceBlocks(post.id, markdownToBlocks(md));
       await assignPostToSeries(post.id, seriesId, post.seriesId ?? null);
       setPost({ ...updated, seriesId });
       setDirty(false);
@@ -156,6 +162,20 @@ export function usePostEditor(
     } finally {
       setSaving(false);
     }
+  }
+
+  // Leave the editor for the list. Save a dirty DRAFT first so the last keystrokes (still inside the
+  // 1.8s autosave debounce) aren't lost to the full-page back navigation — the reported data-loss path.
+  // Published posts persist only via explicit actions, so they navigate without an implicit save.
+  async function leave() {
+    if (dirty && post?.status === "DRAFT") {
+      try {
+        await save();
+      } catch {
+        /* error is already surfaced via setError; still let the user leave */
+      }
+    }
+    router.push(writeBase);
   }
 
   async function changeStatus(action: StatusAction) {
@@ -240,6 +260,8 @@ export function usePostEditor(
     setSlug,
     markdown,
     setMarkdown,
+    liveMarkdown,
+    leave,
     tags,
     setTags,
     seriesId,

@@ -92,11 +92,15 @@ export function MarkdownEditor({
   onChange,
   onUploadImage,
   onUploadError,
+  liveMarkdownRef,
 }: {
   initialValue: string;
   onChange: (markdown: string) => void;
   onUploadImage: (file: Blob) => Promise<string>;
   onUploadError?: (message: string) => void;
+  // Exposes a synchronous "serialize the doc to markdown right now" getter to the parent, so Save/
+  // Publish can read the LATEST content instead of the debounced onChange state.
+  liveMarkdownRef?: { current: (() => string) | null };
 }) {
   const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -147,6 +151,10 @@ export function MarkdownEditor({
       // places the cursor instead of opening a tab.
       StarterKit.configure({
         codeBlock: false,
+        // Only H1–H3 exist in the block model (markdownToBlocks matches `#{1,3}`). Without this,
+        // typing `#### ` makes a real h4 node that serializes to `#### text` and round-trips as a
+        // literal-text PARAGRAPH — the heading (and its TOC entry) silently lost.
+        heading: { levels: [1, 2, 3] },
         link: { openOnClick: false, enableClickSelection: true },
       }),
       CodeMirrorBlock,
@@ -222,6 +230,18 @@ export function MarkdownEditor({
       if (md) onChangeRef.current(md.getMarkdown());
     },
   });
+
+  // Register the synchronous markdown getter for the parent's Save/Publish path (must run before the
+  // early return so the hook order is stable).
+  useEffect(() => {
+    if (!liveMarkdownRef) return;
+    liveMarkdownRef.current = () =>
+      (editor?.storage as { markdown?: { getMarkdown: () => string } } | undefined)?.markdown?.getMarkdown() ??
+      "";
+    return () => {
+      if (liveMarkdownRef) liveMarkdownRef.current = null;
+    };
+  }, [editor, liveMarkdownRef]);
 
   if (!editor) return <div className="h-full" />;
 
@@ -345,7 +365,13 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
           aria-label={it.label}
           aria-pressed={it.active}
           className={btn(it.active)}
-          onClick={it.run}
+          // onMouseDown + preventDefault (like the floating bar) so clicking doesn't blur the editor
+          // and collapse the selection before the command runs — a collapsed selection makes Link in
+          // particular a no-op (extendMarkRange finds no range), and weakens the mark toggles.
+          onMouseDown={(e) => {
+            e.preventDefault();
+            it.run();
+          }}
         >
           <it.icon className="h-4 w-4" />
         </button>
