@@ -172,14 +172,15 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* No-FOUC theme: set the `dark` class on <html> before paint from a stored pref, else the
-            system preference. Only blog components carry `dark:` variants, so the links product is
-            unaffected. */}
+        {/* No-FOUC theme: set the `dark` class on <html> before paint. Reads the shared `.kurl.me`
+            cookie FIRST (so the apex feed + author subdomains agree on the theme), then the per-origin
+            localStorage fallback, else the system preference. Only blog components carry `dark:`
+            variants, so the links product is unaffected. */}
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()",
+              "(function(){try{var m=document.cookie.match(/(?:^|; )theme=(dark|light)/);var t=m?m[1]:localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()",
           }}
         />
         {/* Preconnect to the Pretendard CDN ahead of the stylesheet request — saves the TLS
