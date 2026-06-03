@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
@@ -14,6 +14,7 @@ import { TableCell } from "@tiptap/extension-table-cell";
 import { Markdown } from "tiptap-markdown";
 import { Bold, Code2, Italic, Link as LinkIcon, Minus, Plus, Strikethrough, Trash2 } from "lucide-react";
 import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
+import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
 import { UrlDialog } from "@/modules/blog/components/editor/url-dialog";
@@ -48,6 +49,13 @@ export function MarkdownEditor({
   const fileRef = useRef<HTMLInputElement>(null);
   const pendingWidth = useRef<ImageWidth | undefined>(undefined);
   const [placeOpen, setPlaceOpen] = useState(false);
+  // Serializing the whole doc to markdown (+ a parent setState) on EVERY keystroke freezes typing on
+  // long posts. Debounce it (~250ms after you stop) and flush on blur so save/publish never misses the
+  // last edit. onChangeRef keeps the latest callback without re-creating the editor.
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const flushTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(flushTimer.current), []);
   // In-app URL prompt (link / embed) instead of window.prompt.
   const [urlDialog, setUrlDialog] = useState<{ mode: "link" | "embed"; initial: string } | null>(null);
 
@@ -81,6 +89,7 @@ export function MarkdownEditor({
         link: { openOnClick: false, enableClickSelection: true },
       }),
       CodeMirrorBlock,
+      LinkCardNode,
       Image.configure({ inline: false }),
       Table.configure({ resizable: false }),
       TableRow,
@@ -108,6 +117,18 @@ export function MarkdownEditor({
             }
           }
         }
+        // A bare URL pasted onto an empty line → a live link-preview card (velog/Notion). Pasting a
+        // URL over text or into a non-empty line stays a normal link (default behaviour).
+        const text = event.clipboardData?.getData("text/plain")?.trim();
+        if (text && LINK_CARD_URL_RE.test(text)) {
+          const { $from, empty } = editor.state.selection;
+          const para = $from.parent;
+          if (empty && para.type.name === "paragraph" && para.content.size === 0) {
+            event.preventDefault();
+            editor.chain().focus().insertContent({ type: "linkCard", attrs: { url: text } }).run();
+            return true;
+          }
+        }
         return false;
       },
       handleDrop: (_view, event) => {
@@ -123,9 +144,17 @@ export function MarkdownEditor({
       },
     },
     onUpdate: ({ editor }) => {
-      // tiptap-markdown augments storage at runtime but ships no type for it.
+      window.clearTimeout(flushTimer.current);
+      flushTimer.current = window.setTimeout(() => {
+        // tiptap-markdown augments storage at runtime but ships no type for it.
+        const md = (editor.storage as { markdown?: { getMarkdown: () => string } }).markdown;
+        if (md) onChangeRef.current(md.getMarkdown());
+      }, 250);
+    },
+    onBlur: ({ editor }) => {
+      window.clearTimeout(flushTimer.current);
       const md = (editor.storage as { markdown?: { getMarkdown: () => string } }).markdown;
-      if (md) onChange(md.getMarkdown());
+      if (md) onChangeRef.current(md.getMarkdown());
     },
   });
 
@@ -178,7 +207,8 @@ export function MarkdownEditor({
         onClose={() => setUrlDialog(null)}
         onSubmit={(url) => {
           if (urlDialog?.mode === "embed") {
-            editor.chain().focus().insertContent(`\n${url}\n`).run();
+            // Insert a live link-preview card node (serializes back to the bare URL → EMBED block).
+            editor.chain().focus().insertContent({ type: "linkCard", attrs: { url } }).run();
           } else {
             editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
           }
