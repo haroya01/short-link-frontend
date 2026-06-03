@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/components/feed-card";
+import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
@@ -253,9 +254,7 @@ export function SeriesReadingShell({
                   href={postHref(username, p.slug, locale)}
                   className="-mx-3 flex items-start gap-3 rounded-xl px-3 py-4 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/40 sm:gap-4"
                 >
-                  <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-50 text-[13px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">
-                    {n}
-                  </span>
+                  <SeriesIndex n={n} className="mt-1 shrink-0 text-[14px]" />
                   {/* No-image rows reserve a right gutter so the title never runs under the save toggle. */}
                   <span className={`min-w-0 flex-1 ${hasImage ? "" : "pr-9"}`}>
                     <span className="block text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400">

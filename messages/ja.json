@@ -337,7 +337,7 @@
     "ctaUnavailable": "{label} · 現在利用できないリンク",
     "ctaDeleted": "削除されたリンク",
     "toc": "目次",
-    "seriesPosition": "{position}/{total}",
+    "seriesPosition": "{position} / {total}",
     "tabPosts": "記事",
     "tabSeries": "シリーズ",
     "tabAbout": "紹介",
@@ -373,8 +373,7 @@
     "bookmarkOn": "リーディングリストから削除",
     "seriesInThis": "このシリーズ",
     "seriesNextUp": "このシリーズの次の記事",
-    "seriesViewAll": "シリーズ全{total}話を見る",
-    "seriesEpisode": "第{n}回"
+    "seriesViewAll": "シリーズ全{total}話を見る"
   },
   "imageCropper": {
     "title": "画像を切り抜く",

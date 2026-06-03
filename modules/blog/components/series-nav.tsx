@@ -5,6 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Mark } from "@/components/common/logo";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { SeriesIndex } from "@/modules/blog/components/series-index";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 
 type Episode = { slug: string; title: string };
@@ -41,7 +42,10 @@ export function SeriesNav({
           </span>
         </a>
         <span className="shrink-0 font-mono text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
-          {t("seriesPosition", { position: series.position, total: series.total })}
+          {t("seriesPosition", {
+            position: String(series.position).padStart(2, "0"),
+            total: String(series.total).padStart(2, "0"),
+          })}
         </span>
       </div>
 
@@ -73,9 +77,7 @@ export function SeriesNav({
               {episodes.map((ep, i) => {
                 const current = ep.slug === currentSlug;
                 const ep1 = (
-                  <span className="mt-px shrink-0 font-mono text-[11px] tabular-nums opacity-70">
-                    {t("seriesEpisode", { n: i + 1 })}
-                  </span>
+                  <SeriesIndex n={i + 1} current={current} className="mt-px shrink-0 text-[11px]" />
                 );
                 return (
                   <li key={ep.slug}>
