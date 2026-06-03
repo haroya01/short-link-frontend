@@ -13,10 +13,12 @@ import { LikeButton } from "@/modules/blog/components/like-button";
 import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
-import { SeriesNav, TagChips } from "../_components/post-meta";
+import { TagChips } from "../_components/post-meta";
+import { SeriesNav } from "@/modules/blog/components/series-nav";
+import { SeriesNext } from "@/modules/blog/components/series-next";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { findPublicPost } from "@/modules/blog/api/public-posts";
+import { findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
 import { subdomainOrigin } from "@/modules/blog/lib/subdomain-origin";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
@@ -83,6 +85,13 @@ export default async function PublicPostPage({
   const postUrl = `${origin}/${post.slug}`;
   const minutes = readingMinutes(blocks);
   const headings = extractHeadings(blocks);
+  // For a series post, pull the full ordered episode list so the banner can show the whole arc with
+  // the current part highlighted (the post payload only carries position/total + prev/next).
+  const seriesEpisodes =
+    result.data.series &&
+    (await findPublicSeries(author.username, result.data.series.slug).then((r) =>
+      r.ok ? r.data.posts.map((p) => ({ slug: p.slug, title: p.title })) : [],
+    ));
 
   return (
     // Symmetric 3-column grid: equal side gutters keep the 42rem article in the exact page center,
@@ -163,10 +172,20 @@ export default async function PublicPostPage({
       </header>
 
       {result.data.series && (
-        <SeriesNav series={result.data.series} username={author.username} locale={locale} />
+        <SeriesNav
+          series={result.data.series}
+          episodes={seriesEpisodes || []}
+          currentSlug={post.slug}
+          username={author.username}
+          locale={locale}
+        />
       )}
 
       <ArticleBody blocks={blocks} postId={post.id} />
+
+      {result.data.series && (
+        <SeriesNext series={result.data.series} username={author.username} locale={locale} />
+      )}
 
       {post.tags.length > 0 && (
         <div className="mt-10">

@@ -1122,20 +1122,19 @@ test("the editor visually styles marks and blocks (computed styles, not just pay
   await setupMocks(page, captured);
   await openEditor(page);
   await page.locator(".tiptap").click();
+  // Bold via the **…** markdown input rule — deterministic (no selection + Cmd+B timing, which flaked
+  // in CI when the prior blockquote swallowed the following lines).
+  await page.keyboard.type("**boldword** and plain");
+  await page.keyboard.press("Enter");
   // H2 (markdown shortcut)
   await page.keyboard.type("## Heading");
   await page.keyboard.press("Enter");
-  // Blockquote
-  await page.keyboard.type("> quoted line");
-  await page.keyboard.press("Enter");
   // Inline code (backtick input rule)
-  await page.keyboard.type("a `snippet` here");
+  await page.keyboard.type("text with `snippet` inline");
   await page.keyboard.press("Enter");
-  // Bold via keyboard last, so its stored mark can't bleed into the blocks above.
-  await page.keyboard.type("boldword");
-  await page.keyboard.press("Home");
-  await page.keyboard.press("Shift+End");
-  await page.keyboard.press("ControlOrMeta+b");
+  // Blockquote LAST — Enter inside a quote keeps following lines in the quote, so it must not precede
+  // the other blocks.
+  await page.keyboard.type("> quoted line");
   await expect(page.locator(".tiptap strong")).toBeVisible();
 
   const m = await page.evaluate(() => {

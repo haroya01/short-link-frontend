@@ -369,7 +369,11 @@
     "following": "Following",
     "followers": "{count} followers",
     "bookmark": "Save to reading list",
-    "bookmarkOn": "Remove from reading list"
+    "bookmarkOn": "Remove from reading list",
+    "seriesInThis": "In this series",
+    "seriesNextUp": "Next in this series",
+    "seriesViewAll": "View all {total} parts",
+    "seriesEpisode": "Part {n}"
   },
   "imageCropper": {
     "title": "Crop image",

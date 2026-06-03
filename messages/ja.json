@@ -369,7 +369,11 @@
     "following": "フォロー中",
     "followers": "フォロワー {count}",
     "bookmark": "リーディングリストに保存",
-    "bookmarkOn": "リーディングリストから削除"
+    "bookmarkOn": "リーディングリストから削除",
+    "seriesInThis": "このシリーズ",
+    "seriesNextUp": "このシリーズの次の記事",
+    "seriesViewAll": "シリーズ全{total}話を見る",
+    "seriesEpisode": "第{n}回"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
