@@ -5,7 +5,6 @@ import { listPublicPosts } from "@/modules/blog/api/public-posts";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
 import { LikedList } from "@/modules/blog/components/saved/liked-list";
-import { AuthorHeader } from "../_components/author-header";
 
 export const dynamic = "force-dynamic";
 
@@ -29,16 +28,12 @@ export default async function LikedPostsPage({
   if (!result.ok) notFound();
   const { author } = result.data;
 
+  // Header lives in the persistent layout (ProfileChrome) — this page renders only its content.
   return (
-    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
-      <div className="mx-auto max-w-2xl">
-        <AuthorHeader author={author} active="liked" />
-      </div>
       <ReadingShell className="mt-8">
         <AuthorContentTransition>
           <LikedList username={author.username} locale={locale} />
         </AuthorContentTransition>
       </ReadingShell>
-    </main>
   );
 }

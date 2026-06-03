@@ -9,7 +9,6 @@ import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { TagChip } from "@/modules/blog/components/tag-chip";
-import { AuthorHeader } from "../_components/author-header";
 
 export const revalidate = 30;
 
@@ -55,14 +54,8 @@ export default async function PublicSeriesIndexPage({
     ? series.filter((s) => (s.tags ?? []).includes(activeTag))
     : series;
 
+  // Header lives in the persistent layout (ProfileChrome) — this page renders only its content.
   return (
-    // Same main + centered header wrapper as the posts/about tabs, so the avatar + tab bar stay
-    // fixed when switching tabs (no jump).
-    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
-      <div className="mx-auto max-w-2xl">
-        <AuthorHeader author={author} active="series" />
-      </div>
-
       <ReadingShell
         className="mt-8"
         rail={
@@ -139,6 +132,5 @@ export default async function PublicSeriesIndexPage({
         )}
         </AuthorContentTransition>
       </ReadingShell>
-    </main>
   );
 }

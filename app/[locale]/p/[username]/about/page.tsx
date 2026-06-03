@@ -10,7 +10,6 @@ import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
-import { AuthorHeader } from "../_components/author-header";
 
 export const revalidate = 30;
 
@@ -55,13 +54,8 @@ export default async function PublicAuthorAboutPage({
     { value: totalLikes, label: t("statLikes") },
   ];
 
+  // Header lives in the persistent layout (ProfileChrome) — this page renders only its content.
   return (
-    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
-      <div className="mx-auto max-w-2xl">
-        <AuthorHeader author={author} active="about" />
-      </div>
-
-      {/* Same centered column + author rail as the posts tab, so the author surface reads as one piece. */}
       <ReadingShell
         className="mt-8"
         rail={
@@ -132,6 +126,5 @@ export default async function PublicAuthorAboutPage({
           )}
         </AuthorContentTransition>
       </ReadingShell>
-    </main>
   );
 }

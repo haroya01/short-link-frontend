@@ -5,6 +5,7 @@
  * 그 페이지에서 backend 호출.
  */
 
+import { cache } from "react";
 import {
   USE_MOCKS,
   mockFeedView,
@@ -216,12 +217,16 @@ export function searchPublicFeed(
   );
 }
 
-export function listPublicPosts(username: string): Promise<FetchResult<PublicPostList>> {
-  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostList(username) });
-  return fetchPublic<PublicPostList>(
-    `/api/v1/public/profiles/${encodeURIComponent(username)}/posts`,
-  );
-}
+// cache() so the persistent author layout + the tab page share ONE request per render (the layout
+// reads it for the header, the page for its posts).
+export const listPublicPosts = cache(
+  (username: string): Promise<FetchResult<PublicPostList>> => {
+    if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostList(username) });
+    return fetchPublic<PublicPostList>(
+      `/api/v1/public/profiles/${encodeURIComponent(username)}/posts`,
+    );
+  },
+);
 
 export function findPublicPost(
   username: string,

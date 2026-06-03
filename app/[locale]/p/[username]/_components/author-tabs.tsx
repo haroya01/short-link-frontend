@@ -1,11 +1,18 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { readNavPrev } from "@/modules/blog/lib/author-tab-direction";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 
 export type AuthorTab = { key: string; href: string; label: string; private?: boolean };
+
+/** Which tab the current path is on. The bar lives in the persistent layout (mounted once), so the
+ *  active tab is derived from the live pathname — it updates on a client tab switch without a remount. */
+function activeKeyForPath(pathname: string): string {
+  const seg = pathname.replace(/\/+$/, "").split("/").pop() ?? "";
+  return ["series", "about", "liked", "bookmarks"].includes(seg) ? seg : "posts";
+}
 
 // Tab horizontal padding (px-4 = 16px); the underline spans the label, inset past the padding.
 const PAD = 16;
@@ -16,23 +23,22 @@ const MIN_MS = 180;
 const MAX_MS = 640;
 
 /**
- * Author tab bar (글 · 시리즈 · 소개) with a single underline that *glides* from the previous tab to the
- * active one on a switch — the same motion as the feed's 최신/인기/팔로잉 bar, so the two surfaces feel
- * like one product. The author surface hard-navigates (subdomain model), so unlike FeedSortTabs the bar
- * can't simply stay mounted and transition; instead it seeds the underline at the previous tab's
- * position (recovered via author-tab-direction) and glides to the active one on mount. First visit / a
- * same-tab refresh just places the underline with no glide.
+ * Author tab bar (글 · 시리즈 · 소개 · 좋아요 · 북마크) with a single underline that *glides* from the
+ * previous tab to the active one on a switch — the same motion as the feed's 최신/인기/팔로잉 bar. The
+ * bar is mounted once in the persistent layout (ProfileChrome), so on a client tab switch it stays put
+ * and glides from its current slot to the new active tab (derived from the live pathname). First paint
+ * places the underline with no glide.
  */
 export function AuthorTabs({
   tabs,
-  activeKey,
   username,
 }: {
   tabs: AuthorTab[];
-  activeKey: string;
   username: string;
 }) {
   const { me } = useAuth();
+  const pathname = usePathname();
+  const activeKey = activeKeyForPath(pathname);
   const isOwner = me?.username === username;
   // Private tabs (좋아요 / 북마크) only on your own profile. They're appended in order, so the visible
   // index doubles as the tab-direction index for both owner and visitor.
@@ -41,6 +47,9 @@ export function AuthorTabs({
   const navRef = useRef<HTMLElement>(null);
   const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
   const [durationMs, setDurationMs] = useState(0);
+  // The bar is persistent (mounted once in the layout) so it glides from wherever it currently is to
+  // the new active tab on each switch — its previous on-screen slot, not a hard-nav hand-off.
+  const prevLeft = useRef<number | null>(null);
 
   useLayoutEffect(() => {
     const nav = navRef.current;
@@ -53,26 +62,18 @@ export function AuthorTabs({
     const target = measure(activeIndex);
     if (!target) return;
 
-    const prev = readNavPrev();
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    let raf = 0;
-    if (prev == null || prev === activeIndex || reduce) {
-      // First visit / same-tab refresh / reduced motion → place it, no glide.
+    // Glide from where the bar currently sits to the new active tab. First placement (no prior slot)
+    // and reduced-motion just snap into position.
+    const from = prevLeft.current;
+    prevLeft.current = target.left;
+    if (from == null || from === target.left || reduce) {
       setDurationMs(0);
       setBar(target);
     } else {
-      // Seed at the previous tab's slot (no transition), then glide to the active one next frame.
-      const start = measure(prev) ?? target;
-      setDurationMs(0);
-      setBar(start);
-      raf = requestAnimationFrame(() =>
-        (raf = requestAnimationFrame(() => {
-          const dist = Math.abs(target.left - start.left);
-          setDurationMs(Math.min(MAX_MS, Math.max(MIN_MS, Math.round(dist * MS_PER_PX))));
-          setBar(target);
-        })),
-      );
+      const dist = Math.abs(target.left - from);
+      setDurationMs(Math.min(MAX_MS, Math.max(MIN_MS, Math.round(dist * MS_PER_PX))));
+      setBar(target);
     }
 
     // Genuine layout changes (window resize / late font load shifting label widths) → reposition
@@ -85,15 +86,13 @@ export function AuthorTabs({
       }
       const t = measure(activeIndex);
       if (t) {
+        prevLeft.current = t.left;
         setDurationMs(0);
         setBar(t);
       }
     });
     ro.observe(nav);
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      ro.disconnect();
-    };
+    return () => ro.disconnect();
     // isOwner flips the visible tab set (private tabs appear) → re-measure when it resolves.
   }, [activeIndex, isOwner]);
 
