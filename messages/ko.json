@@ -253,6 +253,8 @@
     "scheduleAt": "발행 시각",
     "scheduleConfirm": "예약하기",
     "scheduleInvalid": "미래 시각을 선택해주세요.",
+    "slugTaken": "이 주소는 이미 사용 중이에요. 다른 주소로 바꿔주세요.",
+    "scheduledToast": "{when}에 발행 예약됐어요.",
     "scheduledFor": "{when} 발행 예정",
     "cancelSchedule": "예약 취소",
     "tagsHint": "쉼표(,)나 Enter로 구분",

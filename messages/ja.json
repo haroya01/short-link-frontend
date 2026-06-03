@@ -253,6 +253,8 @@
     "scheduleAt": "公開日時",
     "scheduleConfirm": "予約する",
     "scheduleInvalid": "未来の時刻を選んでください。",
+    "slugTaken": "このURLは既に使われています。別のURLにしてください。",
+    "scheduledToast": "{when}に公開予約しました。",
     "scheduledFor": "{when} に公開予定",
     "cancelSchedule": "予約取消",
     "tagsHint": "カンマかEnterで区切る",

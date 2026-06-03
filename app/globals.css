@@ -432,6 +432,11 @@ h1, h2, h3, p {
   .prose-post p {
     @apply my-[0.625rem] text-[1.125rem] leading-[1.55] text-slate-700 dark:text-slate-300;
   }
+  /* Reader twin of .tiptap > p + p: a real paragraph break (double-Enter) reads clearly wider than a
+     soft line break (a <br>), so the editor and the published post separate paragraphs identically. */
+  .prose-post p + p {
+    @apply mt-[1.3rem];
+  }
   /* scroll-margin keeps a TOC jump target clear of the sticky header instead of tucking it
      underneath. Applies to the heading anchors PostToc links to. */
   .prose-post h2 {
@@ -1229,6 +1234,12 @@ body[data-cookie-consent="visible"] {
 /* Block rhythm mirrors the published .prose-post (18px font, tightened block gap so lines don't float). */
 .tiptap > * + * {
   margin-top: 0.625rem;
+}
+/* Paragraph ↔ paragraph (a double-Enter "new paragraph") gets a clearly wider gap than the tight
+   single-Enter soft break (a <br>, line-height only) — so pressing Enter twice visibly separates into
+   the next paragraph instead of reading like one more tight line. Matches .prose-post below. */
+.tiptap > p + p {
+  margin-top: 1.3rem;
 }
 .tiptap :is(h1, h2, h3) {
   color: #0f172a;
