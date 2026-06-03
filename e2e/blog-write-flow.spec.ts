@@ -314,3 +314,87 @@ test("typewriter scrolling keeps the active line in the upper 2/3 while writing"
   // Small tolerance for line-height / sub-pixel rounding.
   expect(m!.caretBottom).toBeLessThanOrEqual(m!.limit + 10);
 });
+
+test("draft autosaves on idle — no Save click needed", async ({ page }) => {
+  // usePostEditor persists a DRAFT ~1.8s after you stop typing. This is the path that froze the tab
+  // when markdownToBlocks looped (#559), so prove it fires on its own end-to-end.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("autosaved on idle");
+
+  await expect.poll(() => captured.blocks, { timeout: 15_000 }).not.toBeNull();
+  expect(captured.blocks!.map((b) => b.content ?? "").join("\n")).toContain("autosaved on idle");
+});
+
+test("autosave does not freeze on image / edge-syntax lines (regression #559)", async ({ page }) => {
+  // A half-typed image (`![…`), a bare blockquote marker, and a captioned image line are exactly the
+  // lines markdownToBlocks failed to advance past — the parser spun forever on autosave and froze the
+  // whole tab. Driving them through the REAL editor + the real 1.8s autosave proves the integrated
+  // pipeline terminates (the precise loop logic is pinned by markdown-to-blocks unit tests).
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("![half-typed-image");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("> ");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("![pic](http://x/y.png) trailing caption");
+
+  // Save runs markdownToBlocks on the serialized markdown. If it hangs, the captured PUT never lands
+  // and save() times out → the freeze is back. (Deterministic blur-flush, like the rest of the suite.)
+  const blocks = await save(page, captured);
+  expect(blocks.length, "the post serialized into blocks without hanging").toBeGreaterThan(0);
+
+  // And the tab is still alive: typing after the trigger lines still registers.
+  await page.locator(".tiptap").click();
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("editor still responsive");
+  await expect(page.locator(".tiptap")).toContainText("editor still responsive");
+});
+
+test("bold writing mode: floating-bar toggle saves typed text as **bold**", async ({ page }) => {
+  // Regression for the "굵게 쓰기" mode — on an empty line the floating bar's Bold toggle arms a stored
+  // mark so the next text is bold, and that round-trips to ** ** in the saved markdown.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  // /en locale → aria-label is the English boldMode label "Bold". The selection BubbleMenu (also
+  // "Bold") only shows on a selection, so on an empty line this resolves to the floating-bar toggle.
+  const bold = page.getByRole("button", { name: "Bold", exact: true });
+  await expect(bold).toBeVisible({ timeout: 10_000 });
+  await bold.click();
+  await page.keyboard.type("bold words");
+
+  const blocks = await save(page, captured);
+  const para = blocks.find((b) => b.type === "PARAGRAPH");
+  expect(para?.content, "typed text saved as bold markdown").toContain("**bold words**");
+});
+
+test("a saved post reloads its content into the editor (blocks → markdown round-trip)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  // Server already holds content for this post — the editor must hydrate it on load (GET /blocks).
+  // Registered after setupMocks so it wins for this spec.
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) => {
+    if (route.request().method() === "GET") {
+      return route.fulfill({
+        json: [
+          { type: "H2", content: "Loaded heading" },
+          { type: "PARAGRAPH", content: "Loaded body text." },
+        ],
+      });
+    }
+    return route.fulfill({ json: [] });
+  });
+  await openEditor(page);
+
+  await expect(page.locator(".tiptap h2")).toHaveText("Loaded heading");
+  await expect(page.locator(".tiptap")).toContainText("Loaded body text.");
+});
