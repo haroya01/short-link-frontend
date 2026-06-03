@@ -143,7 +143,8 @@ function titleInput(page: Page) {
  * "select, then expect visible" flakes — re-selecting on each retry is the reliable shape.
  */
 async function awaitBubbleButton(page: Page, select: () => Promise<void>, buttonName: string) {
-  const btn = page.getByRole("button", { name: buttonName, exact: true });
+  // Scope to the selection bubble — the always-on toolbar carries the same labels (Bold/Italic/…).
+  const btn = page.getByTestId("bubble-bar").getByRole("button", { name: buttonName, exact: true });
   await expect(async () => {
     await select();
     await expect(btn).toBeVisible({ timeout: 1500 });
@@ -321,25 +322,22 @@ test("the embed dialog inserts a live link card that round-trips to an EMBED blo
   expect(embed!.content).toContain("dQw4w9WgXcQ");
 });
 
-test("the floating insert bar shows on an empty line and inserts a block", async ({ page }) => {
+test("the always-on toolbar inserts a block (no '/' or selection needed)", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
 
-  // Focusing the empty editor reveals the floating block palette (no "/" knowledge required).
+  // The top toolbar is always visible — click its Heading 2 with no selection / no "/" knowledge.
+  const toolbar = page.getByTestId("editor-toolbar");
+  await expect(toolbar).toBeVisible({ timeout: 10_000 });
   await page.locator(".tiptap").click();
-  const headingBtn = page.getByRole("button", { name: "Heading 2", exact: true });
-  await expect(headingBtn).toBeVisible({ timeout: 10_000 });
-  await headingBtn.click();
-  await page.keyboard.type("From the floating bar");
-
-  // It must hide once the line has content (no longer an empty paragraph).
-  await expect(headingBtn).toBeHidden();
+  await toolbar.getByRole("button", { name: "Heading 2", exact: true }).click();
+  await page.keyboard.type("From the toolbar");
 
   const blocks = await save(page, captured);
   const h2 = blocks.find((b) => b.type === "H2");
-  expect(h2, "the floating bar inserted an H2").toBeTruthy();
-  expect(h2!.content).toContain("From the floating bar");
+  expect(h2, "the toolbar inserted an H2").toBeTruthy();
+  expect(h2!.content).toContain("From the toolbar");
 });
 
 test("typewriter scrolling keeps the active line in the upper 2/3 while writing", async ({ page }) => {
@@ -424,17 +422,16 @@ test("autosave does not freeze on image / edge-syntax lines (regression #559)", 
   await expect(page.locator(".tiptap")).toContainText("editor still responsive");
 });
 
-test("bold writing mode: floating-bar toggle saves typed text as **bold**", async ({ page }) => {
-  // Regression for the "굵게 쓰기" mode — on an empty line the floating bar's Bold toggle arms a stored
+test("bold writing mode: toolbar Bold toggle saves typed text as **bold**", async ({ page }) => {
+  // Regression for the "굵게 쓰기" mode — with no selection the toolbar's Bold toggle arms a stored
   // mark so the next text is bold, and that round-trips to ** ** in the saved markdown.
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
 
   await page.locator(".tiptap").click();
-  // /en locale → aria-label is the English boldMode label "Bold". The selection BubbleMenu (also
-  // "Bold") only shows on a selection, so on an empty line this resolves to the floating-bar toggle.
-  const bold = page.getByRole("button", { name: "Bold", exact: true });
+  // Toolbar Bold (always visible). Scoped to the toolbar so it's unambiguous vs the selection bubble.
+  const bold = page.getByTestId("editor-toolbar").getByRole("button", { name: "Bold", exact: true });
   await expect(bold).toBeVisible({ timeout: 10_000 });
   await bold.click();
   // The toggle MUST reflect that bold is now armed. Tiptap v3's useEditor doesn't re-render on
@@ -674,9 +671,10 @@ test("inserting an image saves an IMAGE block carrying the uploaded URL", async 
 // Each test seeds the post in the relevant starting state via setupMocks(…, post).
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 
-/** Header «발행 / 발행 설정» opens the publish dialog. Returns the dialog locator for scoped actions. */
+/** Header «발행 / 글 설정» opens the publish dialog. Returns the dialog locator for scoped actions.
+ *  Draft → "Publish"; already-public → "Post settings" (the 발행됨/예약 states renamed the button). */
 async function openPublishDialog(page: Page) {
-  await page.getByRole("button", { name: /^(Publish|Publish settings)$/ }).click();
+  await page.getByRole("button", { name: /^(Publish|Publish settings|Post settings)$/ }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
   return dialog;

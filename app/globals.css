@@ -728,26 +728,22 @@ html:not([data-theme-vt])::view-transition-new(root) {
 /* Theme toggle snapshots the whole page as one image, so the named groups must collapse back into the
    root there (a same-named group on both snapshots would otherwise try to morph the header too). */
 html[data-theme-vt] .vt-app-header,
-html[data-theme-vt] .vt-bottom-nav,
-html[data-theme-vt] .author-vt-identity,
-html[data-theme-vt] .author-vt-content {
+html[data-theme-vt] .vt-bottom-nav {
   view-transition-name: none;
 }
 
 /*
- * Author tab content (글 · 시리즈 · 소개 · 좋아요 · 북마크) rides the calm root crossfade on a tab switch.
- * It used to be its own `author-content` view-transition group that slid horizontally, but the tabs'
- * content heights differ wildly (글 = a tall post list, 소개 = a short bio), so the group morphed its
- * box between those sizes — squashing the captured snapshot into a diagonal, blinking slide — and
- * rasterizing the whole tall column made the switch lag. A plain crossfade (the site-wide default) is
- * smooth and size-agnostic; the identity block + header still hold still via their own groups below.
+ * Author tab content (글 · 시리즈 · 소개 · 좋아요 · 북마크) AND the identity block both ride the calm
+ * site-wide root crossfade on a tab switch — neither is its own view-transition group.
+ *
+ * The content used to be an `author-content` group that slid horizontally, but the tabs' heights differ
+ * wildly (글 = a tall post list, 소개 = a short bio), so the group morphed its box — a diagonal, laggy
+ * slide. The identity used to be an `author-identity` group "to hold still", but a named group does a
+ * crossfade (old fades OUT while new fades in), and the new page's snapshot is the pre-hydration server
+ * HTML (follow button + count not loaded yet) — different from the old → the whole block dipped in
+ * opacity and flickered. Under the root crossfade the OLD page is HELD at full opacity (it doesn't fade
+ * out), so the identical avatar/handle/bio stay visually static and only the follow row settles.
  */
-/* The author identity block (avatar + handle + bio + follow) is identical across the tabs, so it gets
-   its own group to hold still on a tab switch instead of crossfading with the root — no blink on the
-   follow button between tabs. */
-.author-vt-identity {
-  view-transition-name: author-identity;
-}
 
 /*
  * Series subscribe toggle (구독 ↔ 구독중) — keyed by state so the icon+label remount and replay this on

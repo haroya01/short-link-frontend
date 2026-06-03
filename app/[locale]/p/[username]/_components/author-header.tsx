@@ -32,10 +32,11 @@ export async function AuthorHeader({ author, active }: { author: PublicAuthor; a
 
   return (
     <header>
-      {/* The identity block is identical across 글/시리즈/소개, so name it as its own view-transition
-          group — it holds perfectly still on a tab switch (like the app header) instead of being swept
-          into the root crossfade, so the avatar + follow button never blink between tabs. */}
-      <div className="author-vt-identity flex items-start gap-5">
+      {/* Identity block. Rides the calm root crossfade on a tab switch (NOT its own view-transition
+          group) — under that crossfade the OLD page is held at full opacity, so the identical avatar /
+          handle / bio stay visually static instead of dipping. (A named group did the opposite: it
+          crossfaded old-out/new-in, and the new snapshot is pre-hydration, so the whole block blinked.) */}
+      <div className="flex items-start gap-5">
         <Avatar src={author.avatarUrl} name={author.username} size="xl" />
         <div className="min-w-0 flex-1 pt-1">
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
