@@ -112,6 +112,8 @@
     "seriesDeleteConfirm": "このシリーズを削除しますか？記事は削除されず、シリーズから外れるだけです。",
     "seriesMembers": "シリーズ内の記事",
     "seriesNoMembers": "このシリーズにはまだ記事がありません。下から追加してください。",
+    "seriesRename": "名前を変更",
+    "seriesRenameSave": "保存",
     "seriesAddPost": "記事を追加",
     "seriesRemoveFromSeries": "シリーズから外す",
     "seriesPickerSearch": "タイトルで記事を検索",

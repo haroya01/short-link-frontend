@@ -112,6 +112,8 @@
     "seriesDeleteConfirm": "이 시리즈를 삭제할까요? 글은 삭제되지 않고 시리즈에서만 빠집니다.",
     "seriesMembers": "시리즈 글",
     "seriesNoMembers": "이 시리즈에 글이 없어요. 아래에서 글을 추가하세요.",
+    "seriesRename": "이름 변경",
+    "seriesRenameSave": "저장",
     "seriesAddPost": "글 추가",
     "seriesRemoveFromSeries": "시리즈에서 빼기",
     "seriesPickerSearch": "글 제목으로 검색",

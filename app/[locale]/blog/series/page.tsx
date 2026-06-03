@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, ChevronUp, Layers, Plus, Search, Trash2, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
   createSeries,
@@ -10,10 +10,12 @@ import {
   getSeries,
   listSeries,
   setSeriesPosts,
+  updateSeries,
   type SeriesDetailView,
   type SeriesView,
 } from "@/modules/blog/api/series";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
+import { Mark } from "@/components/common/logo";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 /**
@@ -33,6 +35,10 @@ export default function BlogSeriesPage() {
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
+  // Inline rename of the open series (id being renamed + its editable title/slug).
+  const [renaming, setRenaming] = useState<number | null>(null);
+  const [rTitle, setRTitle] = useState("");
+  const [rSlug, setRSlug] = useState("");
   const [busy, setBusy] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,9 +69,10 @@ export default function BlogSeriesPage() {
   }, [ready, authenticated, loadList]);
 
   async function toggleExpand(id: number) {
-    // Collapse resets the per-series picker so it never re-opens stale on the next series.
+    // Collapse resets the per-series picker + rename so neither re-opens stale on the next series.
     setPicking(false);
     setPickQuery("");
+    setRenaming(null);
     if (expanded?.series.id === id) {
       setExpanded(null);
       return;
@@ -92,6 +99,27 @@ export default function BlogSeriesPage() {
       setExpanded(created);
     } catch (e) {
       setError(e instanceof Error ? e.message : "create failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function startRename(s: SeriesView) {
+    setRenaming(s.id);
+    setRTitle(s.title);
+    setRSlug(s.slug);
+  }
+
+  async function handleRename(id: number) {
+    if (busy || !rTitle.trim() || !rSlug.trim()) return;
+    setBusy(true);
+    setError(null);
+    try {
+      setExpanded(await updateSeries(id, { title: rTitle.trim(), slug: rSlug.trim() }));
+      setRenaming(null);
+      await loadList();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "rename failed");
     } finally {
       setBusy(false);
     }
@@ -166,7 +194,12 @@ export default function BlogSeriesPage() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">
       <header className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("seriesTitle")}</h1>
+        <div className="flex items-center gap-2.5">
+          {/* The kurl mark draws itself in (사사삭) when the page mounts — the series surface's
+              signature entrance, shared with the reader's series banner + feed card. */}
+          <Mark animated className="mark-draw-in h-3.5 w-auto shrink-0 text-accent-600 dark:text-accent-400" />
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("seriesTitle")}</h1>
+        </div>
         <button
           type="button"
           onClick={() => setCreating((c) => !c)}
@@ -238,9 +271,11 @@ export default function BlogSeriesPage() {
                     type="button"
                     onClick={() => toggleExpand(s.id)}
                     aria-expanded={open}
-                    className="focus-ring flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                    // `mark-hoverable` replays the kurl mark's line-draw on hover — resting on a series
+                    // animates its mark like a quiet "selected" cue, matching the series feed card.
+                    className="mark-hoverable focus-ring flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
                   >
-                    <Layers className="h-4 w-4 shrink-0 text-accent-500 dark:text-accent-400" />
+                    <Mark animated className="h-3 w-auto shrink-0 text-accent-500 dark:text-accent-400" />
                     <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
                       {s.title}
                     </span>
@@ -254,6 +289,45 @@ export default function BlogSeriesPage() {
 
                   {open && expanded && (
                     <div className="border-t border-slate-100 px-4 py-4 dark:border-slate-800">
+                      {/* Inline rename — title + address. Membership/order untouched. */}
+                      {renaming === s.id && (
+                        <div className="mb-3 space-y-2 rounded-xl border border-slate-200 p-3 dark:border-slate-800">
+                          <input
+                            value={rTitle}
+                            onChange={(e) => setRTitle(e.target.value)}
+                            placeholder={t("seriesTitlePlaceholder")}
+                            maxLength={200}
+                            autoFocus
+                            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                          />
+                          <input
+                            value={rSlug}
+                            onChange={(e) => setRSlug(e.target.value)}
+                            placeholder={t("seriesSlugPlaceholder")}
+                            pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+                            minLength={2}
+                            maxLength={200}
+                            className="w-full rounded-lg border border-slate-200 px-3 py-2 font-mono text-sm outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                          />
+                          <div className="flex justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setRenaming(null)}
+                              className="focus-ring rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                            >
+                              {t("seriesCancel")}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRename(s.id)}
+                              disabled={busy || !rTitle.trim() || !rSlug.trim()}
+                              className="focus-ring rounded-lg bg-accent-600 px-3.5 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
+                            >
+                              {t("seriesRenameSave")}
+                            </button>
+                          </div>
+                        </div>
+                      )}
                       {expanded.posts.length === 0 ? (
                         <p className="py-2 text-sm text-slate-400 dark:text-slate-500">{t("seriesNoMembers")}</p>
                       ) : (
@@ -373,7 +447,16 @@ export default function BlogSeriesPage() {
                         )}
                       </div>
 
-                      <div className="mt-3 flex justify-end border-t border-slate-100 pt-3 dark:border-slate-800">
+                      <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 dark:border-slate-800">
+                        <button
+                          type="button"
+                          onClick={() => (renaming === s.id ? setRenaming(null) : startRename(s))}
+                          disabled={busy}
+                          className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                          {t("seriesRename")}
+                        </button>
                         <button
                           type="button"
                           onClick={() => handleDelete(s.id)}

@@ -112,6 +112,8 @@
     "seriesDeleteConfirm": "Delete this series? Posts stay — they're just removed from the series.",
     "seriesMembers": "Posts in series",
     "seriesNoMembers": "No posts in this series yet. Add one below.",
+    "seriesRename": "Rename",
+    "seriesRenameSave": "Save",
     "seriesAddPost": "Add post",
     "seriesRemoveFromSeries": "Remove from series",
     "seriesPickerSearch": "Search posts by title",

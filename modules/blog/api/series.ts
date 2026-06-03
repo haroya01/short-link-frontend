@@ -7,6 +7,7 @@ import {
   mockGetSeries,
   mockListSeries,
   mockSetSeriesPosts,
+  mockUpdateSeries,
 } from "@/modules/blog/api/_mocks-authoring";
 
 export interface SeriesView {
@@ -36,6 +37,15 @@ export function getSeries(id: number): Promise<SeriesDetailView> {
 export function createSeries(payload: { slug: string; title: string }): Promise<SeriesDetailView> {
   if (USE_MOCKS) return Promise.resolve(mockCreateSeries(payload));
   return request<SeriesDetailView>("/api/v1/series", { method: "POST", body: payload });
+}
+
+/** Rename a series (and/or change its address). Membership/order is untouched. */
+export function updateSeries(
+  id: number,
+  payload: { title: string; slug: string },
+): Promise<SeriesDetailView> {
+  if (USE_MOCKS) return Promise.resolve(mockUpdateSeries(id, payload));
+  return request<SeriesDetailView>(`/api/v1/series/${id}`, { method: "PUT", body: payload });
 }
 
 export function setSeriesPosts(id: number, postIds: number[]): Promise<SeriesDetailView> {
