@@ -299,7 +299,8 @@
       "placeEmpty": "No results.",
       "placeHint": "Pick a place to insert a map card into the post.",
       "placeClose": "Close"
-    }
+    },
+    "autoSave": "Autosaves"
   },
   "savedLibrary": {
     "private": "Only you can see this.",
