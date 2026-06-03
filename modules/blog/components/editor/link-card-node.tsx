@@ -4,8 +4,10 @@ import { Node, mergeAttributes } from "@tiptap/core";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Link2, X } from "lucide-react";
+import { ArrowUpRight, Link2, MapPin, X } from "lucide-react";
 import { getLinkPreview, type LinkPreview } from "@/modules/blog/api/public-posts";
+import { planEmbed } from "@/modules/blog/lib/post-embed";
+import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 
 /** A bare URL on its own line, pasted into the editor. */
 export const LINK_CARD_URL_RE = /^https?:\/\/\S+$/;
@@ -74,8 +76,13 @@ function LinkCardView({ node, deleteNode, selected }: NodeViewProps) {
   const [data, setData] = useState<LinkPreview | null>(null);
   const [loaded, setLoaded] = useState(false);
   const host = hostOf(url);
+  // Mirror the READER: video → iframe, map → static map, everything else → OG card. The editor used to
+  // show a generic OG card for ALL embeds, so what the author saw didn't match the published page.
+  const plan = planEmbed(url);
+  const isMedia = plan?.kind === "video" || plan?.kind === "map";
 
   useEffect(() => {
+    if (isMedia) return; // video/map render directly — no OG-preview fetch needed
     let alive = true;
     getLinkPreview(url)
       .then((r) => {
@@ -87,9 +94,59 @@ function LinkCardView({ node, deleteNode, selected }: NodeViewProps) {
     return () => {
       alive = false;
     };
-  }, [url]);
+  }, [url, isMedia]);
 
   const rich = data && (data.title || data.image);
+
+  if (plan && isMedia) {
+    const mapImg = plan.kind === "map" ? staticMapUrl({ lat: plan.lat, lng: plan.lng, size: "640x360" }) : null;
+    return (
+      <NodeViewWrapper
+        className={`group/lc relative my-4 ${selected ? "ring-2 ring-accent-400 rounded-2xl" : ""}`}
+        data-link-card=""
+        data-url={url}
+      >
+        {plan.kind === "video" ? (
+          <div className="overflow-hidden rounded-2xl bg-slate-900" contentEditable={false}>
+            <div className="relative aspect-video">
+              <iframe
+                src={plan.src}
+                title="Embedded media"
+                loading="lazy"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
+                className="absolute inset-0 h-full w-full"
+              />
+            </div>
+          </div>
+        ) : (
+          <div
+            contentEditable={false}
+            className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700"
+          >
+            {mapImg ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={mapImg} alt={(plan.kind === "map" && plan.label) || "Google Maps"} className="aspect-[16/9] w-full bg-slate-100 object-cover dark:bg-slate-800" />
+            ) : (
+              <div className="grid aspect-[16/9] w-full place-items-center bg-slate-100 text-slate-400 dark:bg-slate-800">
+                <MapPin className="h-8 w-8" />
+              </div>
+            )}
+          </div>
+        )}
+        <button
+          type="button"
+          contentEditable={false}
+          onClick={() => deleteNode()}
+          aria-label="삭제"
+          className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-lg bg-white/90 text-slate-400 opacity-0 shadow-sm backdrop-blur transition-opacity hover:text-red-600 group-hover/lc:opacity-100 dark:bg-slate-900/80 dark:hover:text-red-400"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </NodeViewWrapper>
+    );
+  }
 
   return (
     <NodeViewWrapper

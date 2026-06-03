@@ -35,8 +35,10 @@ function standaloneEmbedUrl(line: string): string | null {
   if (!m) return null;
   const url = m[1];
   if (kurlShortCode(url)) return url;
-  const plan = planEmbed(url);
-  return plan && (plan.kind === "video" || plan.kind === "map") ? url : null;
+  // velog-style: ANY standalone URL on its own line is a rich card (EMBED) — the editor already turns
+  // a pasted/inserted bare URL into a link card, so the reader must honor it (video→iframe, map→static
+  // map, everything else→OG link-preview card). A URL with surrounding text stays an inline link.
+  return planEmbed(url) ? url : null;
 }
 
 /**
