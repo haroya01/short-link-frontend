@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, ChevronUp, Layers, Plus, Trash2, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Layers, Plus, Search, Trash2, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
   createSeries,
@@ -13,18 +13,23 @@ import {
   type SeriesDetailView,
   type SeriesView,
 } from "@/modules/blog/api/series";
+import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
 /**
- * Author series workspace — create a series, then expand any one inline to reorder / drop its member
- * posts. Single centered column with quiet accordion cards, matching the rest of the workspace (내 글 ·
- * 분석): no permanent form box, no cramped master-detail. "새 시리즈" toggles an inline create panel.
+ * Author series workspace — create a series, then expand any one inline to manage its membership:
+ * add posts from a searchable picker, remove or reorder the ones already in it. Single centered
+ * column with quiet accordion cards, matching the rest of the workspace (내 글 · 분석). This screen
+ * curates membership only — it never deletes the posts themselves (그건 글 관리에서).
  */
 export default function BlogSeriesPage() {
   const t = useTranslations("blogWorkspace");
   const { ready, authenticated } = useAuth();
   const [series, setSeries] = useState<SeriesView[]>([]);
   const [expanded, setExpanded] = useState<SeriesDetailView | null>(null);
+  const [myPosts, setMyPosts] = useState<PostView[]>([]);
+  const [picking, setPicking] = useState(false);
+  const [pickQuery, setPickQuery] = useState("");
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -51,9 +56,16 @@ export default function BlogSeriesPage() {
   useEffect(() => {
     if (!ready || !authenticated) return;
     void loadList();
+    // The picker draws from the author's whole post list; load it once up front so "글 추가" is instant.
+    listMyPosts()
+      .then(setMyPosts)
+      .catch(() => setMyPosts([]));
   }, [ready, authenticated, loadList]);
 
   async function toggleExpand(id: number) {
+    // Collapse resets the per-series picker so it never re-opens stale on the next series.
+    setPicking(false);
+    setPickQuery("");
     if (expanded?.series.id === id) {
       setExpanded(null);
       return;
@@ -99,22 +111,52 @@ export default function BlogSeriesPage() {
     }
   }
 
-  async function move(index: number, dir: -1 | 1) {
+  // Single path for every membership change (reorder / add / remove): persist the new ordered id
+  // list, swap in the returned detail, and refresh the list counts.
+  async function commitMembers(seriesId: number, ids: number[]) {
+    setBusy(true);
+    setError(null);
+    try {
+      setExpanded(await setSeriesPosts(seriesId, ids));
+      await loadList();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "update failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function move(index: number, dir: -1 | 1) {
     if (!expanded) return;
     const ids = expanded.posts.map((p) => p.id);
     const target = index + dir;
     if (target < 0 || target >= ids.length) return;
     [ids[index], ids[target]] = [ids[target], ids[index]];
-    setBusy(true);
-    try {
-      setExpanded(await setSeriesPosts(expanded.series.id, ids));
-      await loadList();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "reorder failed");
-    } finally {
-      setBusy(false);
-    }
+    void commitMembers(expanded.series.id, ids);
   }
+
+  function removeMember(postId: number) {
+    if (!expanded) return;
+    void commitMembers(
+      expanded.series.id,
+      expanded.posts.map((p) => p.id).filter((id) => id !== postId),
+    );
+  }
+
+  function addMember(postId: number) {
+    if (!expanded) return;
+    void commitMembers(expanded.series.id, [...expanded.posts.map((p) => p.id), postId]);
+  }
+
+  // Posts not already in the open series, narrowed by the search box.
+  const candidates = useMemo(() => {
+    if (!expanded) return [];
+    const memberIds = new Set(expanded.posts.map((p) => p.id));
+    const q = pickQuery.trim().toLowerCase();
+    return myPosts
+      .filter((p) => !memberIds.has(p.id))
+      .filter((p) => !q || (p.title || p.slug).toLowerCase().includes(q));
+  }, [expanded, myPosts, pickQuery]);
 
   if (!ready) return null;
   if (!authenticated) {
@@ -219,10 +261,10 @@ export default function BlogSeriesPage() {
                           {expanded.posts.map((p, i) => (
                             <li
                               key={p.id}
-                              className="group/row flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                              className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
                             >
-                              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 text-[12px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">
-                                {i + 1}
+                              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 font-mono text-[12px] font-semibold tabular-nums text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">
+                                {String(i + 1).padStart(2, "0")}
                               </span>
                               <a
                                 href={`${writeBase}/${p.id}`}
@@ -230,7 +272,8 @@ export default function BlogSeriesPage() {
                               >
                                 {p.title || p.slug}
                               </a>
-                              <span className="flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover/row:opacity-100 [@media(hover:none)]:opacity-100">
+                              {/* Always-visible actions (not hover-gated) so reorder/remove is reachable on touch too. */}
+                              <span className="flex shrink-0 items-center gap-0.5">
                                 <button
                                   type="button"
                                   onClick={() => move(i, -1)}
@@ -249,11 +292,87 @@ export default function BlogSeriesPage() {
                                 >
                                   <ChevronDown className="h-4 w-4" />
                                 </button>
+                                <button
+                                  type="button"
+                                  onClick={() => removeMember(p.id)}
+                                  disabled={busy}
+                                  aria-label={t("seriesRemoveFromSeries")}
+                                  title={t("seriesRemoveFromSeries")}
+                                  className="focus-ring ml-0.5 grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                                >
+                                  <X className="h-4 w-4" />
+                                </button>
                               </span>
                             </li>
                           ))}
                         </ol>
                       )}
+
+                      {/* Add posts to this series. Toggle reveals a searchable picker of the author's other posts. */}
+                      <div className="mt-3">
+                        {!picking ? (
+                          <button
+                            type="button"
+                            onClick={() => setPicking(true)}
+                            disabled={busy}
+                            className="focus-ring inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-200 px-3 py-2.5 text-sm font-medium text-slate-500 transition-colors hover:border-accent-300 hover:bg-accent-50/50 hover:text-accent-700 disabled:opacity-50 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10 dark:hover:text-accent-300"
+                          >
+                            <Plus className="h-4 w-4" />
+                            {t("seriesAddPost")}
+                          </button>
+                        ) : (
+                          <div className="rounded-xl border border-slate-200 dark:border-slate-800">
+                            <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2 dark:border-slate-800">
+                              <Search className="h-4 w-4 shrink-0 text-slate-400" />
+                              <input
+                                value={pickQuery}
+                                onChange={(e) => setPickQuery(e.target.value)}
+                                placeholder={t("seriesPickerSearch")}
+                                autoFocus
+                                className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400 dark:text-slate-100"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setPicking(false);
+                                  setPickQuery("");
+                                }}
+                                aria-label={t("seriesCancel")}
+                                className="focus-ring grid h-6 w-6 shrink-0 place-items-center rounded text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                            {candidates.length === 0 ? (
+                              <p className="px-3 py-6 text-center text-sm text-slate-400 dark:text-slate-500">
+                                {t("seriesPickerEmpty")}
+                              </p>
+                            ) : (
+                              <ul className="max-h-64 overflow-y-auto p-1">
+                                {candidates.map((p) => (
+                                  <li key={p.id}>
+                                    <button
+                                      type="button"
+                                      onClick={() => addMember(p.id)}
+                                      disabled={busy}
+                                      className="focus-ring flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-accent-50/60 disabled:opacity-50 dark:hover:bg-accent-500/10"
+                                    >
+                                      <Plus className="h-4 w-4 shrink-0 text-accent-500 dark:text-accent-400" />
+                                      <span className="min-w-0 flex-1 truncate text-sm text-slate-700 dark:text-slate-200">
+                                        {p.title || p.slug}
+                                      </span>
+                                    </button>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                            <p className="border-t border-slate-100 px-3 py-2 text-[12px] text-slate-400 dark:border-slate-800 dark:text-slate-500">
+                              {t("seriesPickerHint")}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
                       <div className="mt-3 flex justify-end border-t border-slate-100 pt-3 dark:border-slate-800">
                         <button
                           type="button"
