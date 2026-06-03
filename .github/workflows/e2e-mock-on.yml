@@ -1,0 +1,61 @@
+name: E2E (reader, mock-on)
+
+# Reader-side rendering lane. The public post page is a Server Component that fetches its data
+# server-side, so Playwright can't intercept it the way the mock-OFF authoring lane does. Instead this
+# builds with NEXT_PUBLIC_USE_MOCKS=1 so the in-memory mock serves a deterministic post, and asserts
+# what a VISITOR actually sees (every block type renders, editorial typography applies). No backend.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-mock-on-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-mock-on:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_USE_MOCKS: "1"
+      # No network is hit in mock mode, but the build still wants a base defined.
+      NEXT_PUBLIC_API_BASE: http://localhost:0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: Build Next.js (mock-on)
+        run: npm run build
+      - name: Start Next.js
+        run: |
+          PORT=3001 npm start &
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3001/ko >/dev/null; then
+              echo "next is up"
+              break
+            fi
+            sleep 1
+          done
+      - name: Run reader-render e2e
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3001
+          CI: "true"
+        run: npx playwright test e2e/blog-post-render.spec.ts
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-e2e-mock-on-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
