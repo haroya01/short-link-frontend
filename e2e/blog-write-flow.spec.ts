@@ -756,3 +756,154 @@ test("revisions: restoring a saved version calls the restore endpoint", async ({
   await page.getByRole("button", { name: "Restore", exact: true }).click();
   await expect.poll(() => restored).toBe(3);
 });
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Batch 2 — remaining inline marks, the rest of the slash menu, image widths, table editing, the
+// published-post save path, and tag removal. Closes the gaps left by the first pass.
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+for (const { label, type, wrap } of [
+  { label: "Italic", type: "italic", wrap: "*styled words*" },
+  { label: "Strike", type: "strike", wrap: "~~styled words~~" },
+  { label: "Inline code", type: "code", wrap: "`styled words`" },
+] as const) {
+  test(`selection ${label} (bubble menu) round-trips to ${wrap}`, async ({ page }) => {
+    const captured: Captured = { blocks: null };
+    await setupMocks(page, captured);
+    await openEditor(page);
+    await page.locator(".tiptap").click();
+    await page.keyboard.type("styled words");
+    const btn = await awaitBubbleButton(
+      page,
+      async () => {
+        await page.keyboard.press("Home");
+        await page.keyboard.press("Shift+End");
+      },
+      label,
+    );
+    await btn.click();
+    const blocks = await save(page, captured);
+    expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain(wrap);
+  });
+}
+
+for (const { item, blockType, text } of [
+  { item: "Bulleted list", blockType: "LIST_BULLET", text: "bullet via slash" },
+  { item: "Numbered list", blockType: "LIST_NUMBERED", text: "number via slash" },
+  { item: "Quote", blockType: "QUOTE", text: "quote via slash" },
+] as const) {
+  test(`slash menu inserts a ${blockType} block`, async ({ page }) => {
+    const captured: Captured = { blocks: null };
+    await setupMocks(page, captured);
+    await openEditor(page);
+    await page.locator(".tiptap").click();
+    await page.keyboard.type("/");
+    await page.getByRole("option", { name: new RegExp(`^${item.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`) }).click();
+    await page.keyboard.type(text);
+    const blocks = await save(page, captured);
+    expect(blocks.find((b) => b.type === blockType)?.content).toContain(text);
+  });
+}
+
+test("slash menu inserts a divider (DIVIDER block)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("above the line");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Divider\b/ }).click();
+  const blocks = await save(page, captured);
+  expect(blocks.some((b) => b.type === "DIVIDER")).toBe(true);
+});
+
+test("slash 'Wide image' saves an IMAGE block tagged width:wide", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Wide image\b/ }).click();
+  // The slash item armed pendingWidth="wide" then opened the hidden picker; set the file directly.
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "hero.png", mimeType: "image/png", buffer: Buffer.from("png") });
+  await expect(page.locator(".tiptap img")).toBeVisible({ timeout: 10_000 });
+  const blocks = await save(page, captured);
+  const img = blocks.find((b) => b.type === "IMAGE");
+  expect(img?.content).toContain(IMAGE_URL);
+  expect(img?.content, "width marker rides through the round-trip").toContain('"width":"wide"');
+});
+
+// KNOWN BUG (kept as fixme so it flips green once fixed): "Two images (side by side)" inserts only
+// ONE image. uploadAndInsert calls setImage() per file in a loop, but the first inserted image is left
+// as a NodeSelection, so the second setImage REPLACES it instead of landing beside it — the 2-up row
+// never forms. The fix belongs in markdown-editor.tsx (advance the selection past the image before the
+// next insert), not in this test.
+test.fixme("slash 'Two images' saves a side-by-side pair as two IMAGE blocks", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Two images\b/ }).click();
+  // multiple=true picker → two files land adjacent → a 2-up half/half row.
+  await page.locator('input[type="file"]').setInputFiles([
+    { name: "a.png", mimeType: "image/png", buffer: Buffer.from("a") },
+    { name: "b.png", mimeType: "image/png", buffer: Buffer.from("b") },
+  ]);
+  await expect(page.locator(".tiptap img")).toHaveCount(2, { timeout: 10_000 });
+  const blocks = await save(page, captured);
+  expect(blocks.filter((b) => b.type === "IMAGE")).toHaveLength(2);
+});
+
+test("table toolbar grows a 3×3 into a 4×4", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Table\b/ }).click();
+  await expect(page.locator(".tiptap table")).toBeVisible({ timeout: 10_000 });
+  // Each toolbar command does editor.chain().focus().<cmd>() — firing it before the cell selection has
+  // propagated to ProseMirror (or while the toolbar is repositioning after the previous edit) restores
+  // a stale selection and no-ops. Re-anchor the caret in a cell + let it settle before each action;
+  // adding isn't idempotent so re-clicking the cell (which is) is safer than a click-retry, and each
+  // action asserts its own result so too short a settle fails loudly rather than passing wrong.
+  const tableAction = async (name: string) => {
+    await page.locator(".tiptap table td").first().click();
+    await page.waitForTimeout(350);
+    await page.getByRole("button", { name, exact: true }).click();
+  };
+  await tableAction("Add column");
+  await expect(page.locator(".tiptap table tr").first().locator("th, td")).toHaveCount(4);
+  await tableAction("Add row");
+  await expect(page.locator(".tiptap table tr")).toHaveCount(4);
+});
+
+test("published post: 'Save changes' persists edits without changing status", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured, { ...POST, status: "PUBLISHED", publishedAt: NOW });
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("an edit to a live post");
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "Save changes", exact: true }).click();
+  await expect.poll(() => captured.blocks).not.toBeNull();
+  expect(captured.blocks!.map((b) => b.content ?? "").join("\n")).toContain("an edit to a live post");
+  // No lifecycle endpoint should fire — saving a published post must not flip its status.
+  expect(captured.status, "status must be untouched by a content save").toBeFalsy();
+});
+
+test("removing a tag chip drops it from the metadata PATCH", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured, { ...POST, tags: ["keep", "drop"] });
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "remove drop", exact: true }).click();
+  captured.meta = null;
+  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect.poll(() => captured.meta).not.toBeNull();
+  expect(captured.meta).toMatchObject({ tags: ["keep"] });
+});
