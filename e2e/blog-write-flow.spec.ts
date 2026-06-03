@@ -1122,9 +1122,9 @@ test("the editor visually styles marks and blocks (computed styles, not just pay
   await setupMocks(page, captured);
   await openEditor(page);
   await page.locator(".tiptap").click();
-  // Bold via the **…** markdown input rule — deterministic (no selection + Cmd+B timing, which flaked
-  // in CI when the prior blockquote swallowed the following lines).
-  await page.keyboard.type("**boldword** and plain");
+  // Bold / italic / strike via markdown input rules — deterministic (no selection + Cmd+B timing,
+  // which flaked in CI when the prior blockquote swallowed the following lines).
+  await page.keyboard.type("**boldword** *ital* ~~strk~~ plain");
   await page.keyboard.press("Enter");
   // H2 (markdown shortcut)
   await page.keyboard.type("## Heading");
@@ -1143,12 +1143,16 @@ test("the editor visually styles marks and blocks (computed styles, not just pay
       return el ? getComputedStyle(el) : null;
     };
     const strong = get(".tiptap strong");
+    const em = get(".tiptap em");
+    const strike = get(".tiptap s") ?? get(".tiptap del");
     const h2 = get(".tiptap h2");
     const p = get(".tiptap p");
     const bq = get(".tiptap blockquote");
     const code = get(".tiptap :not(pre) > code");
     return {
       strongWeight: strong ? Number(strong.fontWeight) : 0,
+      emStyle: em ? em.fontStyle : "",
+      strikeLine: strike ? strike.textDecorationLine : "",
       h2Size: h2 ? parseFloat(h2.fontSize) : 0,
       pSize: p ? parseFloat(p.fontSize) : 0,
       bqBorder: bq ? parseFloat(bq.borderLeftWidth) : 0,
@@ -1156,6 +1160,8 @@ test("the editor visually styles marks and blocks (computed styles, not just pay
     };
   });
   expect(m.strongWeight, "bold text renders bold").toBeGreaterThanOrEqual(600);
+  expect(m.emStyle, "italic renders slanted").toBe("italic");
+  expect(m.strikeLine, "strike renders a line-through").toContain("line-through");
   expect(m.h2Size, "H2 renders larger than body").toBeGreaterThan(m.pSize);
   expect(m.bqBorder, "blockquote has a left rule").toBeGreaterThan(0);
   expect(m.codeBg, "inline code has a background tint").not.toBe("rgba(0, 0, 0, 0)");
@@ -1197,4 +1203,67 @@ test("slash menu does not hijack the IME composition Enter (CJK) (A9)", async ({
   });
   // Menu is still open — the composing Enter did not select an item.
   await expect(page.getByRole("listbox")).toBeVisible();
+});
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Audit batch 2 — cover upload failure (A14), schedule past-time guard (A22), revision reseed (A17).
+// (Drag/drop + multi-paste image fixes (A12/A20) and block-handle stale-resolve (A15) aren't e2e'd —
+// synthetic clipboard/drag and the hover→mutate→click race are unreliable headless; verified by code.)
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+test("cover image upload failure surfaces an error (not silent) (A14)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  // Fail the cover's presign so the upload rejects.
+  await page.route(`**/api/v1/posts/${POST_ID}/images/presign`, (route) =>
+    route.fulfill({ status: 500, contentType: "application/json", body: "{}" }),
+  );
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await dialog
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "cover.png", mimeType: "image/png", buffer: Buffer.from("png") });
+  // A visible error, not a silent dropzone reset.
+  await expect(dialog.getByRole("alert")).toBeVisible({ timeout: 10_000 });
+});
+
+test("scheduling a past time is rejected with no /schedule call (A22)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await titleInput(page).fill("Scheduled one");
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "Schedule", exact: true }).click();
+  await dialog.locator('input[type="datetime-local"]').fill("2020-01-01T10:00");
+  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+  await expect(page.getByText("Pick a future time")).toBeVisible();
+  expect(captured.status, "no schedule endpoint should fire for a past time").toBeFalsy();
+});
+
+test("restoring a revision reseeds the editor with the restored content (A17)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  // The editor starts empty; after the restore POST, GET /blocks serves the restored body. The editor
+  // must reflect it (it used to update state but keep the stale mounted doc).
+  let restored = false;
+  await page.route(`**/api/v1/posts/${POST_ID}/revisions`, (route) =>
+    route.fulfill({ json: [{ id: 1, versionNumber: 3, titleSnapshot: "earlier", createdAt: NOW }] }),
+  );
+  await page.route(`**/api/v1/posts/${POST_ID}/revisions/3/restore`, (route) => {
+    restored = true;
+    return route.fulfill({ json: POST });
+  });
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) => {
+    if (route.request().method() === "PUT") {
+      captured.blocks = route.request().postDataJSON()?.blocks ?? null;
+      return route.fulfill({ json: [] });
+    }
+    return route.fulfill({ json: restored ? [{ type: "H2", content: "Restored heading" }] : [] });
+  });
+  await openEditor(page);
+  page.on("dialog", (d) => d.accept()); // restore confirm
+  await page.getByRole("button", { name: "Revisions", exact: true }).click();
+  await page.getByRole("button", { name: "Restore", exact: true }).click();
+  // The restored content is now shown in the editor (remounted from the reloaded blocks).
+  await expect(page.locator(".tiptap h2")).toHaveText("Restored heading", { timeout: 15_000 });
 });
