@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { writeStorageString } from "@/lib/storage-json";
+import { writeThemeCookie } from "@/lib/theme-cookie";
 
 /**
- * Dark-mode toggle. Flips the `dark` class on <html> and persists the choice to localStorage (read
- * back by the no-FOUC script in the root layout). Defaults to the system preference until the user
+ * Dark-mode toggle. Flips the `dark` class on <html> and persists the choice to a `.kurl.me` cookie
+ * (shared across the apex feed + author subdomains) plus localStorage (same-origin fallback), read
+ * back by the no-FOUC script in the root layout. Defaults to the system preference until the user
  * picks. Rendered as a full-width row to drop into the account menu / sheet.
  */
 export function ThemeToggle({ className }: { className?: string }) {
@@ -23,7 +25,9 @@ export function ThemeToggle({ className }: { className?: string }) {
     const apply = () => {
       setDark(next);
       document.documentElement.classList.toggle("dark", next);
-      writeStorageString("theme", next ? "dark" : "light");
+      const value = next ? "dark" : "light";
+      writeThemeCookie(value); // shared across apex ↔ author subdomains
+      writeStorageString("theme", value); // same-origin fallback
     };
 
     // Sweep the new theme down over the old via the View Transitions API (CSS in globals.css drives
