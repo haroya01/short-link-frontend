@@ -12,6 +12,7 @@ import {
   type CommentView,
 } from "@/modules/blog/api/comments";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { authorHref } from "@/modules/blog/components/feed-card";
 
 
 export function PostComments({
@@ -30,6 +31,8 @@ export function PostComments({
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyBody, setReplyBody] = useState("");
   const [busy, setBusy] = useState(false);
+  // The just-posted comment's id — drives its slide-in entrance animation once it renders.
+  const [justAddedId, setJustAddedId] = useState<number | null>(null);
 
   const load = useCallback(() => {
     return listComments(postId)
@@ -55,9 +58,10 @@ export function PostComments({
     if (!body.trim() || busy) return;
     setBusy(true);
     try {
-      await createComment(postId, body.trim());
+      const created = await createComment(postId, body.trim());
       setBody("");
       await load();
+      setJustAddedId(created.id); // animate the new comment in once it renders
     } finally {
       setBusy(false);
     }
@@ -71,10 +75,11 @@ export function PostComments({
     if (!replyBody.trim() || busy) return;
     setBusy(true);
     try {
-      await createComment(postId, replyBody.trim(), parentId);
+      const created = await createComment(postId, replyBody.trim(), parentId);
       setReplyBody("");
       setReplyTo(null);
       await load();
+      setJustAddedId(created.id);
     } finally {
       setBusy(false);
     }
@@ -137,7 +142,7 @@ export function PostComments({
         <ul className="mt-8 space-y-6">
           {tops.map((c) => (
             <li key={c.id}>
-              <CommentRow comment={c} fmt={fmt} canDelete={canDelete(c)} onDelete={() => remove(c.id)} deleteLabel={t("delete")}>
+              <CommentRow comment={c} fmt={fmt} canDelete={canDelete(c)} onDelete={() => remove(c.id)} deleteLabel={t("delete")} isNew={c.id === justAddedId}>
                 <button
                   type="button"
                   onClick={() => {
@@ -161,6 +166,7 @@ export function PostComments({
                         canDelete={canDelete(r)}
                         onDelete={() => remove(r.id)}
                         deleteLabel={t("delete")}
+                        isNew={r.id === justAddedId}
                       />
                     </li>
                   ))}
@@ -204,6 +210,7 @@ function CommentRow({
   canDelete,
   onDelete,
   deleteLabel,
+  isNew,
   children,
 }: {
   comment: CommentView;
@@ -211,14 +218,27 @@ function CommentRow({
   canDelete: boolean;
   onDelete: () => void;
   deleteLabel: string;
+  isNew?: boolean;
   children?: React.ReactNode;
 }) {
+  const locale = useLocale();
   const username = comment.author?.username ?? "?";
+  const hasAuthor = !!comment.author?.username;
+  const profileHref = hasAuthor ? authorHref(username, locale) : undefined;
   return (
-    <div>
+    <div className={isNew ? "comment-in" : undefined}>
       <div className="flex items-center gap-2">
-        <Avatar src={comment.author?.avatarUrl} name={username} size="sm" shrink={false} />
-        <span className="text-sm font-medium text-slate-900 dark:text-slate-100">@{username}</span>
+        {/* Avatar + @handle link to the commenter's profile (cross-host on prod). */}
+        <a
+          href={profileHref ?? "#"}
+          className={`group/author flex items-center gap-2 rounded focus-ring ${hasAuthor ? "" : "pointer-events-none"}`}
+          aria-disabled={!hasAuthor}
+        >
+          <Avatar src={comment.author?.avatarUrl} name={username} size="sm" shrink={false} />
+          <span className="text-sm font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
+            @{username}
+          </span>
+        </a>
         <span className="text-[12px] text-slate-500 dark:text-slate-400">{fmt(comment.createdAt)}</span>
         {canDelete && (
           <button

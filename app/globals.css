@@ -579,6 +579,27 @@ h1, h2, h3, p {
   }
 }
 
+/* A just-posted comment slides + fades in so submitting feels alive (matches the quiet entrance
+   language elsewhere). Applied only to the new comment's row; honors reduced-motion. */
+@keyframes comment-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.comment-in {
+  animation: comment-in 360ms var(--ease, ease-out) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .comment-in {
+    animation: none;
+  }
+}
+
 /*
  * Author tab content (글/시리즈/소개) reuses the feed's direction-aware content-slide (below) via
  * AuthorContentTransition, so switching author tabs pages left/right exactly like 최신/인기/팔로잉 —
