@@ -26,10 +26,11 @@ export async function SeriesNext({
       {series.next && (
         <a
           href={postHref(username, series.next.slug, locale)}
-          className="focus-ring group block rounded-2xl border border-slate-200 p-5 transition-colors hover:border-accent-300 dark:border-slate-700 dark:hover:border-accent-500/50"
+          className="mark-hoverable focus-ring group block rounded-2xl border border-slate-200 p-5 transition-colors hover:border-accent-300 dark:border-slate-700 dark:hover:border-accent-500/50"
         >
           <span className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-accent-700 dark:text-accent-400">
-            <Mark className="h-2.5 w-auto" />
+            {/* Hovering the next-up card replays the mark's draw — same cue as the feed series card. */}
+            <Mark animated className="h-2.5 w-auto" />
             {t("seriesNextUp")}
           </span>
           <span className="mt-2 flex items-center justify-between gap-3">

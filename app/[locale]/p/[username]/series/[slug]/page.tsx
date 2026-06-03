@@ -82,7 +82,8 @@ export default async function PublicSeriesPage({
   const header = (
     <header>
           <div className="flex items-center gap-1.5 text-[12px] font-semibold tracking-wide text-accent-700 dark:text-accent-400">
-            <Mark className="h-2.5 w-auto shrink-0" />
+            {/* Mark draws itself in when the series page loads — shared entrance with the on-post banner. */}
+            <Mark animated className="mark-draw-in h-2.5 w-auto shrink-0" />
             {tf("seriesEyebrow")}
           </div>
           {/* Title + subscribe on one row — 구독 is the series equivalent of following the author

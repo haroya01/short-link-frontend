@@ -36,7 +36,9 @@ export function SeriesNav({
     <nav className="mb-10 border-l-2 border-accent-500 pl-4">
       <div className="flex items-center justify-between gap-3">
         <a href={seriesHref} className="focus-ring group flex min-w-0 items-center gap-2 rounded">
-          <Mark className="h-3 w-auto shrink-0 text-accent-600 dark:text-accent-400" />
+          {/* The kurl mark draws itself in (사사삭) when the banner appears — the series surface's
+              signature entrance, shared with the series detail header + feed card. */}
+          <Mark animated className="mark-draw-in h-3 w-auto shrink-0 text-accent-600 dark:text-accent-400" />
           <span className="truncate text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
             {series.title}
           </span>
