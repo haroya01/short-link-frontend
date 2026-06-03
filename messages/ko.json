@@ -2763,7 +2763,7 @@
     "signIn": "로그인"
   },
   "blogLogin": {
-    "eyebrow": "blog.kurl",
+    "eyebrow": "로그인",
     "title": "로그인하고 글쓰기",
     "subtitle": "내가 쓴 글과 임시저장, 시리즈가 여기에 있어요. 로그인하면 이어서 작성할 수 있어요.",
     "google": "Google 계정으로 로그인",
