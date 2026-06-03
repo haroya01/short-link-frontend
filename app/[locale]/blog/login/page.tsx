@@ -3,11 +3,11 @@
 import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { PenSquare } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { writeStorageString } from "@/lib/storage-json";
 import { Button } from "@/components/ui/button";
+import { Mark } from "@/components/common/logo";
 import { GoogleIcon } from "@/components/common/google-icon";
 
 const LOGIN_NEXT_KEY = "kurl:login-next";
@@ -51,44 +51,46 @@ function BlogLoginShell({ next }: { next: string | null }) {
   };
 
   return (
-    <div className="relative flex min-h-[calc(100vh-3.5rem-3rem)] items-center justify-center overflow-hidden bg-white px-4 py-16">
+    <div className="relative flex min-h-[calc(100vh-3.5rem-3rem)] items-center justify-center overflow-hidden bg-white px-4 py-16 dark:bg-slate-950">
       <div className="w-full max-w-sm">
-        {/* Same entrance language as the kurl.me login: a hero-stagger cascade (eyebrow → glowing
-            mark → title → subtitle), each child timed off its --hi index, then the action block
-            fades up. Quiet, branded, no peppy onboarding chrome. */}
+        {/* Same entrance as the kurl.me login: a hero-stagger cascade (kicker → mark draws on →
+            wordmark → subtitle), then the action block fades up. The 3-bar brand mark sweeps on
+            left-to-right (mark-draw-in) as its own reveal, and the blog.kurl wordmark lands under it —
+            branded and quiet, no peppy onboarding chrome. */}
         <div className="hero-stagger flex flex-col items-center space-y-5 text-center">
           <p
             className="flex items-center justify-center gap-3"
             style={{ ["--hi" as string]: 0 } as React.CSSProperties}
           >
-            <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
-            <span className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+            <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 dark:bg-accent-500/40 sm:block" />
+            <span className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
               {t("eyebrow")}
             </span>
-            <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
+            <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 dark:bg-accent-500/40 sm:block" />
           </p>
 
-          <div className="relative" style={{ ["--hi" as string]: 1 } as React.CSSProperties}>
+          {/* The mark IS the reveal — it draws on (mark-draw-in) rather than fading up with the rest. */}
+          <div
+            className="relative mark-draw-in text-accent-600 dark:text-accent-500"
+            style={{ ["--hi" as string]: 1 } as React.CSSProperties}
+          >
             <div
               aria-hidden
-              className="absolute -inset-8 -z-10 rounded-full bg-accent-200/55 blur-3xl"
+              className="absolute -inset-8 -z-10 rounded-full bg-accent-200/55 blur-3xl dark:bg-accent-500/20"
             />
-            <span
-              aria-hidden
-              className="grid h-16 w-16 place-items-center rounded-2xl bg-accent-600 text-white shadow-[0_12px_32px_-10px_rgba(5,150,105,0.6)]"
-            >
-              <PenSquare className="h-7 w-7" />
-            </span>
+            <Mark animated className="h-12 w-auto sm:h-14" />
           </div>
 
-          <h1
-            className="text-[26px] font-bold leading-tight tracking-headline text-slate-900"
-            style={{ ["--hi" as string]: 2 } as React.CSSProperties}
+          <span
+            className="text-[32px] font-bold leading-none tracking-headline"
+            style={{ ["--hi" as string]: 2, letterSpacing: "-0.04em" } as React.CSSProperties}
           >
-            {t("title")}
-          </h1>
+            <span className="text-slate-400 dark:text-slate-500">blog.</span>
+            <span className="text-slate-900 dark:text-slate-100">kurl</span>
+          </span>
+
           <p
-            className="mx-auto max-w-xs text-[14px] leading-relaxed text-slate-500"
+            className="mx-auto max-w-xs text-[14px] leading-relaxed text-slate-500 dark:text-slate-400"
             style={{ ["--hi" as string]: 3 } as React.CSSProperties}
           >
             {t("subtitle")}
@@ -112,7 +114,7 @@ function BlogLoginShell({ next }: { next: string | null }) {
         >
           <a
             href={blogHref("/")}
-            className="text-[13px] text-slate-500 underline-offset-4 hover:text-slate-900 hover:underline"
+            className="text-[13px] text-slate-500 underline-offset-4 hover:text-slate-900 hover:underline dark:text-slate-400 dark:hover:text-slate-100"
           >
             {t("browse")}
           </a>

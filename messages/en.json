@@ -2763,7 +2763,7 @@
     "signIn": "Sign in"
   },
   "blogLogin": {
-    "eyebrow": "blog.kurl",
+    "eyebrow": "Sign in",
     "title": "Sign in to write",
     "subtitle": "Your posts, drafts, and series live here. Sign in to pick up where you left off.",
     "google": "Continue with Google",
