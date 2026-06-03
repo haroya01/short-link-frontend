@@ -45,6 +45,26 @@ import { altWithWidth, type ImageWidth } from "@/modules/blog/lib/image-width";
 export type ImagePickOptions = { width?: ImageWidth; multiple?: boolean };
 
 /**
+ * Typewriter scrolling — keep the caret from sinking into the bottom of the editor while you write.
+ * When the caret's bottom drops past the 2/3 line of the scroll container, nudge the container down
+ * by the overflow so the active line settles at ~2/3 height (always ~1/3 of room below it). Only
+ * scrolls DOWN (caret too low); a caret higher up is left alone, so clicking near the top — or
+ * editing the first few lines — never yanks the view.
+ */
+function keepCaretInView(editor: Editor, scroller: HTMLElement | null) {
+  if (!scroller) return;
+  let coords: { bottom: number };
+  try {
+    coords = editor.view.coordsAtPos(editor.state.selection.head);
+  } catch {
+    return;
+  }
+  const rect = scroller.getBoundingClientRect();
+  const overflow = coords.bottom - (rect.top + rect.height * (2 / 3));
+  if (overflow > 0) scroller.scrollTop += overflow;
+}
+
+/**
  * Long-form post editor — Tiptap (ProseMirror) with a CodeMirror code-block node (language-aware
  * highlight + auto-indent). Content round-trips as markdown via tiptap-markdown, so the existing
  * markdown↔blocks save path is unchanged. Replaces the previous Toast UI editor.
@@ -63,6 +83,7 @@ export function MarkdownEditor({
   const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
   const pendingWidth = useRef<ImageWidth | undefined>(undefined);
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const [placeOpen, setPlaceOpen] = useState(false);
   // Serializing the whole doc to markdown (+ a parent setState) on EVERY keystroke freezes typing on
   // long posts. Debounce it (~250ms after you stop) and flush on blur so save/publish never misses the
@@ -159,12 +180,16 @@ export function MarkdownEditor({
       },
     },
     onUpdate: ({ editor }) => {
+      keepCaretInView(editor, scrollerRef.current);
       window.clearTimeout(flushTimer.current);
       flushTimer.current = window.setTimeout(() => {
         // tiptap-markdown augments storage at runtime but ships no type for it.
         const md = (editor.storage as { markdown?: { getMarkdown: () => string } }).markdown;
         if (md) onChangeRef.current(md.getMarkdown());
       }, 250);
+    },
+    onSelectionUpdate: ({ editor }) => {
+      keepCaretInView(editor, scrollerRef.current);
     },
     onBlur: ({ editor }) => {
       window.clearTimeout(flushTimer.current);
@@ -200,7 +225,7 @@ export function MarkdownEditor({
       />
       {/* px-5 matches the page's px-5 so the body text lines up with the title above (the wrapper
           breaks out of that padding with -mx-5 to let «wide»/«full» images bleed wider than the text). */}
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+      <div ref={scrollerRef} className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
         <EditorContent editor={editor} className="h-full" />
       </div>
       <SlashMenu

@@ -1251,6 +1251,9 @@ body[data-cookie-consent="visible"] {
   line-height: 1.55;
   color: #334155;
   outline: none;
+  /* Scroll-past-end gutter: lets the LAST line be scrolled up to the typewriter position (≈2/3
+   * height) instead of being pinned to the bottom edge. keepCaretInView relies on this room. */
+  padding-bottom: 40vh;
 }
 .dark .tiptap {
   color: #cbd5e1;
