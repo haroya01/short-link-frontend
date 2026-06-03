@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -250,7 +251,7 @@ export function SeriesReadingShell({
                 className="profile-fade group group/row relative"
                 style={{ ["--idx" as string]: i } as React.CSSProperties}
               >
-                <a
+                <BlogLink
                   href={postHref(username, p.slug, locale)}
                   className="-mx-3 flex items-start gap-3 rounded-xl px-3 py-4 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/40 sm:gap-4"
                 >
@@ -289,7 +290,7 @@ export function SeriesReadingShell({
                       />
                     </span>
                   )}
-                </a>
+                </BlogLink>
                 {/* Save toggle — sibling of the post link (never nested), pinned to the row's top-right. */}
                 <div className="absolute right-3 top-4 z-10">
                   <FeedCardBookmark postId={p.id} username={username} slug={p.slug} />
