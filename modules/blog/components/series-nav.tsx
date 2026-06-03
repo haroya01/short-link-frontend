@@ -5,6 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Mark } from "@/components/common/logo";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 
@@ -35,14 +36,14 @@ export function SeriesNav({
   return (
     <nav className="mb-10 border-l-2 border-accent-500 pl-4">
       <div className="flex items-center justify-between gap-3">
-        <a href={seriesHref} className="focus-ring group flex min-w-0 items-center gap-2 rounded">
+        <BlogLink href={seriesHref} className="focus-ring group flex min-w-0 items-center gap-2 rounded">
           {/* The kurl mark draws itself in (사사삭) when the banner appears — the series surface's
               signature entrance, shared with the series detail header + feed card. */}
           <Mark animated className="mark-draw-in h-3 w-auto shrink-0 text-accent-600 dark:text-accent-400" />
           <span className="truncate text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
             {series.title}
           </span>
-        </a>
+        </BlogLink>
         <span className="shrink-0 font-mono text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
           {t("seriesPosition", {
             position: String(series.position).padStart(2, "0"),
@@ -92,13 +93,13 @@ export function SeriesNav({
                         <span>{ep.title}</span>
                       </span>
                     ) : (
-                      <a
+                      <BlogLink
                         href={postHref(username, ep.slug, locale)}
                         className="focus-ring flex items-start gap-2 rounded px-1 py-0.5 text-[13px] text-slate-600 transition-colors hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400"
                       >
                         {ep1}
                         <span>{ep.title}</span>
-                      </a>
+                      </BlogLink>
                     )}
                   </li>
                 );

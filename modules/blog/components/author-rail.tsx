@@ -3,6 +3,7 @@ import { Rss } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { PublicPostListItem, PublicSeriesListItem } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 
@@ -70,7 +71,7 @@ export async function AuthorRail({
           <ul className="flex flex-col gap-1">
             {series.map((s) => (
               <li key={s.slug}>
-                <a
+                <BlogLink
                   href={authorHref(username, locale, `series/${s.slug}`)}
                   className="group flex items-baseline justify-between gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
                 >
@@ -80,7 +81,7 @@ export async function AuthorRail({
                   <span className="shrink-0 text-[12px] text-slate-400">
                     {t("railPostCount", { count: s.postCount })}
                   </span>
-                </a>
+                </BlogLink>
               </li>
             ))}
           </ul>

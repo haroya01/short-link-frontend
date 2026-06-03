@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { readNavPrev } from "@/modules/blog/lib/author-tab-direction";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 
 export type AuthorTab = { key: string; href: string; label: string; private?: boolean };
 
@@ -102,7 +103,7 @@ export function AuthorTabs({
       className="relative mt-8 flex gap-1 border-b border-slate-200 text-[15px] font-medium dark:border-slate-800"
     >
       {visible.map((tab, i) => (
-        <a
+        <BlogLink
           key={tab.key}
           href={tab.href}
           data-tab
@@ -115,7 +116,7 @@ export function AuthorTabs({
           }`}
         >
           {tab.label}
-        </a>
+        </BlogLink>
       ))}
       {bar && (
         <span

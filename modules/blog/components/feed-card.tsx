@@ -5,6 +5,7 @@ import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 
 const KURL_HOST = process.env.NEXT_PUBLIC_KURL_HOST;
 
@@ -66,13 +67,13 @@ function MetaRow({
     <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
       {!hideAuthor && (
         <>
-          <a
+          <BlogLink
             href={authorHref(item.author.username, locale)}
             className="flex min-w-0 items-center gap-1.5 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
           >
             <Avatar author={item.author} />
             <span className="truncate font-medium">{item.author.username}</span>
-          </a>
+          </BlogLink>
           <span aria-hidden>·</span>
         </>
       )}
@@ -182,7 +183,7 @@ export function FeedCard({
           {/* Text-only rows reserve a right gutter so the title never runs under the bookmark (pinned
               to the whole card's top-right below); image rows don't need it — the button sits over the
               thumbnail, clear of the narrower text column. */}
-          <a href={postUrl} className={`block ${bookmarkable && !hasImage ? "pr-9" : ""}`}>
+          <BlogLink href={postUrl} className={`block ${bookmarkable && !hasImage ? "pr-9" : ""}`}>
             {/* One marker per row. The featured lead shows a quiet editorial label (with a small
                 brand-green dot so it reads as the chosen post); every other row shows its muted
                 representative tag. Never both — stacking them reads as a confusing category pair. */}
@@ -212,12 +213,12 @@ export function FeedCard({
                 {item.excerpt}
               </p>
             )}
-          </a>
+          </BlogLink>
           <MetaRow item={item} locale={locale} hideAuthor={hideAuthor} />
         </div>
 
         {hasImage && (
-          <a
+          <BlogLink
             href={postUrl}
             aria-hidden
             tabIndex={-1}
@@ -232,7 +233,7 @@ export function FeedCard({
               loading="lazy"
               className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
             />
-          </a>
+          </BlogLink>
         )}
       </div>
 
