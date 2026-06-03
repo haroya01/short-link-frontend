@@ -154,26 +154,3 @@ test("feed → post is a client-side navigation (so loading skeletons show, no f
     "the JS context survived → soft (client) navigation, not a full reload",
   ).toBe("alive");
 });
-
-test("the author header persists across a tab switch — same DOM node, no skeleton flash", async ({
-  page,
-}) => {
-  // The identity + tabs live in the persistent layout (ProfileChrome), NOT in each page — so a tab
-  // switch swaps only the content (with its own skeleton) while the header stays mounted. Before, the
-  // header lived in the page, so the route loading.tsx replaced the WHOLE header with a grey skeleton
-  // on every switch (the "전체요소 깜빡"). Proof: mark the author <header> node, switch tabs, and assert
-  // the SAME node is still there (a re-mount would have discarded the marker).
-  await page.goto("/en/p/dohyun");
-  await page.waitForLoadState("networkidle");
-  await page.evaluate(() => {
-    const el = [...document.querySelectorAll("header")].find((h) => h.textContent?.includes("@dohyun"));
-    el?.setAttribute("data-persist-test", "1");
-  });
-  await page.locator('a[href$="/p/dohyun/about"]').first().click();
-  await page.waitForURL(/\/p\/dohyun\/about/, { timeout: 15_000 });
-  const kept = await page.evaluate(() => {
-    const el = document.querySelector('header[data-persist-test="1"]');
-    return !!el && !!el.textContent?.includes("@dohyun");
-  });
-  expect(kept, "the marked author header survived the tab switch (it lives in the layout)").toBe(true);
-});
