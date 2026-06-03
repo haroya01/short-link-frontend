@@ -135,3 +135,22 @@ test("a comment's @author handle links to the commenter's profile", async ({ pag
   await expect(authorLink).toBeVisible();
   await expect(authorLink).toContainText("minji");
 });
+
+test("feed → post is a client-side navigation (so loading skeletons show, no freeze-then-pop)", async ({
+  page,
+}) => {
+  // Blog links are BlogLink → Next <Link>, so an in-app nav is a SOFT navigation: the route's
+  // loading.tsx skeleton streams in instantly instead of the browser holding the old page until the
+  // new document is ready. Proof: the JS context survives the click (a full reload would reset it).
+  await page.goto("/en/blog");
+  await page.waitForLoadState("networkidle");
+  await page.evaluate(() => ((window as Window & { __nav?: string }).__nav = "alive"));
+  const post = page.locator('a[href$="/nextjs-14-app-router-blog"]').first();
+  await expect(post).toBeVisible({ timeout: 15_000 });
+  await post.click();
+  await page.waitForURL(/\/p\/[^/]+\/nextjs-14-app-router-blog/, { timeout: 15_000 });
+  expect(
+    await page.evaluate(() => (window as Window & { __nav?: string }).__nav),
+    "the JS context survived → soft (client) navigation, not a full reload",
+  ).toBe("alive");
+});

@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Mark } from "@/components/common/logo";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 
@@ -24,7 +25,7 @@ export async function SeriesNext({
   return (
     <aside className="mt-16 border-t border-slate-100 pt-8 dark:border-slate-800">
       {series.next && (
-        <a
+        <BlogLink
           href={postHref(username, series.next.slug, locale)}
           className="mark-hoverable focus-ring group block rounded-2xl border border-slate-200 p-5 transition-colors hover:border-accent-300 dark:border-slate-700 dark:hover:border-accent-500/50"
         >
@@ -42,16 +43,16 @@ export async function SeriesNext({
             </span>
             <ArrowRight className="h-5 w-5 shrink-0 text-slate-300 transition-colors group-hover:text-accent-600 dark:text-slate-600" />
           </span>
-        </a>
+        </BlogLink>
       )}
-      <a
+      <BlogLink
         href={authorHref(username, locale, `series/${series.slug}`)}
         className={`focus-ring inline-block rounded text-[13px] text-slate-500 underline-offset-4 transition-colors hover:text-accent-700 hover:underline dark:text-slate-400 dark:hover:text-accent-400 ${
           series.next ? "mt-3" : ""
         }`}
       >
         {t("seriesViewAll", { total: series.total })}
-      </a>
+      </BlogLink>
     </aside>
   );
 }

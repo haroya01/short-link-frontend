@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { SeriesPostRef } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 
 // How long each episode holds the spotlight before it moves to the next (1 → 2 → 3 → loop).
@@ -52,7 +53,7 @@ export function SeriesEpisodeList({
             className="profile-fade"
             style={{ ["--idx" as string]: i } as React.CSSProperties}
           >
-            <a
+            <BlogLink
               href={postHref(authorUsername, post.slug, locale)}
               className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
             >
@@ -66,7 +67,7 @@ export function SeriesEpisodeList({
               >
                 {post.title}
               </span>
-            </a>
+            </BlogLink>
           </li>
         );
       })}
@@ -75,14 +76,14 @@ export function SeriesEpisodeList({
           className="profile-fade"
           style={{ ["--idx" as string]: posts.length } as React.CSSProperties}
         >
-          <a
+          <BlogLink
             href={seriesUrl}
             className="group/ep focus-ring -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-1 text-[13px] text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-300"
           >
             <span aria-hidden className="w-[2ch] shrink-0" />
             <span>{t("seriesMoreCount", { count: more })}</span>
             <ArrowRight className="h-3 w-3 transition-transform group-hover/ep:translate-x-0.5 motion-reduce:transform-none" />
-          </a>
+          </BlogLink>
         </li>
       )}
     </ol>
