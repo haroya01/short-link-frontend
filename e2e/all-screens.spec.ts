@@ -41,10 +41,13 @@ const SCREENS: { name: string; path: string }[] = [
   { name: "marketing · qr", path: "/ko/qr" },
   // ── link-in-bio (public) ──
   { name: "link-in-bio · u/{user}", path: "/ko/u/dohyun" },
-  // NOTE: the links APP pages (/dashboard, /campaigns, /ctas, /stats, /qr-campaigns, /settings) are
-  // NOT covered here — the in-memory mock only backs the BLOG product, so they render a data-error
-  // state ("에러: Internal Server Error"), not real content. Covering them needs a links-product mock
-  // layer (the blog's modules/blog/api/_mocks.ts equivalent) — a separate follow-up.
+  // ── links app (auth; backed by the links mock layer in lib/api/_links-mocks.ts) ──
+  { name: "links · dashboard", path: "/ko/dashboard" },
+  { name: "links · campaigns", path: "/ko/campaigns" },
+  { name: "links · ctas", path: "/ko/ctas" },
+  { name: "links · stats", path: "/ko/stats" },
+  { name: "links · qr-campaigns", path: "/ko/qr-campaigns" },
+  { name: "links · settings", path: "/ko/settings" },
   // ── blog workspace (auth) ──
   { name: "blog · posts", path: "/ko/blog/posts" },
   { name: "blog · analytics", path: "/ko/blog/analytics" },
