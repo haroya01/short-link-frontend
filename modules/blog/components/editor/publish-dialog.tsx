@@ -220,11 +220,14 @@ export function PublishDialog({
             />
           </Field>
 
-          {/* 태그 — 발행 필수 (주제 1개 이상) */}
+          {/* 태그 — 발행 필수 (주제 1개 이상). Persistent guidance, not a transient error — so NOT
+              role="alert" (the disabled Publish button + the * marker already signal "required", and a
+              standing hint shouldn't assertively re-announce; this also keeps it out of the dialog's
+              single error-alert slot used by the cover-upload failure). */}
           <Field label={t("tags")} hint={needTags ? undefined : t("tagsHint")} required>
             <TagInput tags={tags} onChange={onTagsChange} placeholder={t("tagsPlaceholder")} />
             {needTags && (
-              <p role="alert" className="mt-1.5 text-[12px] font-medium text-amber-600 dark:text-amber-400">
+              <p className="mt-1.5 text-[12px] font-medium text-amber-600 dark:text-amber-400">
                 {t("tagsRequired")}
               </p>
             )}

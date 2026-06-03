@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ReportButton } from "@/modules/blog/components/report-button";
-import { AuthorHeader } from "./_components/author-header";
 import { FeedCard, FeedList, authorHref } from "@/modules/blog/components/feed-card";
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
@@ -63,15 +62,9 @@ export default async function PublicProfileHomepage({
   const activeTag = rawTag?.trim() || undefined;
   const visiblePosts = activeTag ? posts.filter((p) => p.tags.includes(activeTag)) : posts;
 
+  // The author header (identity + tabs) is rendered once by the persistent layout (ProfileChrome) so
+  // it never re-mounts on a tab switch; this page renders only its content column + rail.
   return (
-    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
-      {/* Header on the centered reading column — same band as the feed/post. */}
-      <div className="mx-auto max-w-2xl">
-        <AuthorHeader author={author} active="posts" />
-      </div>
-
-      {/* Centered post list + author rail (series · tags · archive) in the right gutter — the
-          blog-native structure that lives here, where it's author-scoped and meaningful. */}
       <ReadingShell
         className="mt-8"
         rail={
@@ -128,6 +121,5 @@ export default async function PublicProfileHomepage({
         </footer>
         </AuthorContentTransition>
       </ReadingShell>
-    </main>
   );
 }
