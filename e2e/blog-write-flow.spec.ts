@@ -262,3 +262,55 @@ test("the embed dialog inserts a live link card that round-trips to an EMBED blo
   expect(embed, "an EMBED block was saved").toBeTruthy();
   expect(embed!.content).toContain("dQw4w9WgXcQ");
 });
+
+test("the floating insert bar shows on an empty line and inserts a block", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  // Focusing the empty editor reveals the floating block palette (no "/" knowledge required).
+  await page.locator(".tiptap").click();
+  const headingBtn = page.getByRole("button", { name: "Heading 2", exact: true });
+  await expect(headingBtn).toBeVisible({ timeout: 10_000 });
+  await headingBtn.click();
+  await page.keyboard.type("From the floating bar");
+
+  // It must hide once the line has content (no longer an empty paragraph).
+  await expect(headingBtn).toBeHidden();
+
+  const blocks = await save(page, captured);
+  const h2 = blocks.find((b) => b.type === "H2");
+  expect(h2, "the floating bar inserted an H2").toBeTruthy();
+  expect(h2!.content).toContain("From the floating bar");
+});
+
+test("typewriter scrolling keeps the active line in the upper 2/3 while writing", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  // Type enough lines to overflow the editor's scroll container so scrolling actually kicks in.
+  for (let i = 0; i < 40; i++) {
+    await page.keyboard.type(`line ${i}`);
+    await page.keyboard.press("Enter");
+  }
+  await page.keyboard.type("CARET HERE");
+
+  // The line being written must sit at or above the 2/3 line of the scroll container (≈1/3 of room
+  // left below it), not pinned to the bottom edge.
+  const m = await page.evaluate(() => {
+    const tiptap = document.querySelector(".tiptap");
+    const scroller = tiptap?.closest(".overflow-y-auto") as HTMLElement | null;
+    if (!scroller) return null;
+    const active = Array.from(scroller.querySelectorAll(".tiptap > p")).find((p) =>
+      p.textContent?.includes("CARET HERE"),
+    );
+    if (!active) return null;
+    const sr = scroller.getBoundingClientRect();
+    return { caretBottom: active.getBoundingClientRect().bottom, limit: sr.top + sr.height * (2 / 3) };
+  });
+  expect(m, "found the active line + scroller").not.toBeNull();
+  // Small tolerance for line-height / sub-pixel rounding.
+  expect(m!.caretBottom).toBeLessThanOrEqual(m!.limit + 10);
+});

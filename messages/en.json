@@ -255,6 +255,7 @@
     "scheduledFor": "Publishes {when}",
     "cancelSchedule": "Cancel schedule",
     "tagsHint": "Separate with comma or Enter",
+    "boldMode": "Bold",
     "slash": {
       "groupBasic": "Basic",
       "groupMedia": "Media",
