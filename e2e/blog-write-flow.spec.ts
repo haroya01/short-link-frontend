@@ -24,14 +24,14 @@ const POST = {
   title: "",
   status: "DRAFT",
   languageTag: "ko",
-  publishedAt: null,
-  scheduledAt: null,
-  excerpt: null,
-  ogImageUrl: null,
+  publishedAt: null as string | null,
+  scheduledAt: null as string | null,
+  excerpt: null as string | null,
+  ogImageUrl: null as string | null,
   viewCount: 0,
   tags: [] as string[],
-  seriesId: null,
-  seriesOrder: null,
+  seriesId: null as number | null,
+  seriesOrder: null as number | null,
   createdAt: NOW,
   updatedAt: NOW,
 };
@@ -41,15 +41,50 @@ const ME = { id: 1, email: "e2e@kurl.test", role: "USER", createdAt: NOW, userna
 const IMAGE_URL = "https://mock-s3.test/img.png";
 
 type Block = { type: string; content: string | null };
-type Captured = { blocks: Block[] | null };
+type Captured = {
+  blocks: Block[] | null;
+  // PATCH /posts/:id body — the metadata save (title · slug · tags · excerpt · cover).
+  meta?: Record<string, unknown> | null;
+  // The last status-lifecycle action that hit the backend: publish · unpublish · republish · schedule
+  // · back-to-draft. Proves the right endpoint fired, independent of the optimistic UI.
+  status?: string | null;
+  scheduledAt?: string | null;
+  deleted?: boolean;
+};
 
-async function setupMocks(page: Page, captured: Captured) {
+/**
+ * Mocks the whole authoring backend. `post` seeds GET /posts/:id so a test can start the editor in
+ * any lifecycle state (DRAFT/PUBLISHED/UNPUBLISHED/SCHEDULED); the metadata/status/schedule/delete
+ * routes capture what the editor sends so each lifecycle action is asserted at the wire.
+ */
+async function setupMocks(page: Page, captured: Captured, post: typeof POST = POST) {
   // Generic fallback FIRST so specific routes (registered after) take priority.
   await page.route("**/api/v1/**", (route) =>
     route.fulfill({ status: 200, contentType: "application/json", body: "[]" }),
   );
   await page.route("**/api/v1/users/me", (route) => route.fulfill({ json: ME }));
-  await page.route(`**/api/v1/posts/${POST_ID}`, (route) => route.fulfill({ json: POST }));
+  await page.route(`**/api/v1/posts/${POST_ID}`, (route) => {
+    const method = route.request().method();
+    if (method === "PATCH") captured.meta = route.request().postDataJSON() ?? null;
+    if (method === "DELETE") {
+      captured.deleted = true;
+      return route.fulfill({ status: 204, body: "" });
+    }
+    return route.fulfill({ json: post });
+  });
+  // Status lifecycle — each returns the post in its new state so the UI re-renders, and records which
+  // endpoint fired so the test asserts the action at the wire (not just the optimistic badge).
+  const statusRoute = (suffix: string, action: string, next: Partial<typeof POST>) =>
+    page.route(`**/api/v1/posts/${POST_ID}/${suffix}`, (route) => {
+      if (suffix === "schedule") captured.scheduledAt = route.request().postDataJSON()?.scheduledAt ?? null;
+      captured.status = action;
+      return route.fulfill({ json: { ...post, ...next } });
+    });
+  await statusRoute("publish", "publish", { status: "PUBLISHED", publishedAt: NOW });
+  await statusRoute("unpublish", "unpublish", { status: "UNPUBLISHED" });
+  await statusRoute("republish", "republish", { status: "PUBLISHED", publishedAt: NOW });
+  await statusRoute("back-to-draft", "back-to-draft", { status: "DRAFT", scheduledAt: null });
+  await statusRoute("schedule", "schedule", { status: "SCHEDULED" });
   await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) => {
     if (route.request().method() === "PUT") {
       captured.blocks = route.request().postDataJSON()?.blocks ?? null;
@@ -99,6 +134,21 @@ async function openEditor(page: Page) {
 /** Title field (the only autocomplete-off text input — the URL dialog uses type=url). */
 function titleInput(page: Page) {
   return page.locator('input[type="text"][autocomplete="off"]').first();
+}
+
+/**
+ * Make a keyboard selection (which leaves a stable ProseMirror selection with the editor focused, so
+ * the bubble survives a button click) and wait for the named bubble button to appear. The whole
+ * select-then-assert is retried: the BubbleMenu can lag a frame behind the selection, so a one-shot
+ * "select, then expect visible" flakes — re-selecting on each retry is the reliable shape.
+ */
+async function awaitBubbleButton(page: Page, select: () => Promise<void>, buttonName: string) {
+  const btn = page.getByRole("button", { name: buttonName, exact: true });
+  await expect(async () => {
+    await select();
+    await expect(btn).toBeVisible({ timeout: 1500 });
+  }).toPass({ timeout: 15_000 });
+  return btn;
 }
 
 async function save(page: Page, captured: Captured): Promise<Block[]> {
@@ -298,21 +348,26 @@ test("typewriter scrolling keeps the active line in the upper 2/3 while writing"
   await page.keyboard.type("CARET HERE");
 
   // The line being written must sit at or above the 2/3 line of the scroll container (≈1/3 of room
-  // left below it), not pinned to the bottom edge.
-  const m = await page.evaluate(() => {
-    const tiptap = document.querySelector(".tiptap");
-    const scroller = tiptap?.closest(".overflow-y-auto") as HTMLElement | null;
-    if (!scroller) return null;
-    const active = Array.from(scroller.querySelectorAll(".tiptap > p")).find((p) =>
-      p.textContent?.includes("CARET HERE"),
-    );
-    if (!active) return null;
-    const sr = scroller.getBoundingClientRect();
-    return { caretBottom: active.getBoundingClientRect().bottom, limit: sr.top + sr.height * (2 / 3) };
-  });
-  expect(m, "found the active line + scroller").not.toBeNull();
-  // Small tolerance for line-height / sub-pixel rounding.
-  expect(m!.caretBottom).toBeLessThanOrEqual(m!.limit + 10);
+  // left below it), not pinned to the bottom edge. The keep-in-view scroll runs on a coalesced rAF, so
+  // poll the measurement until it settles instead of reading one frame too early (the source of the
+  // flake). Returns caretBottom − limit; a small tolerance covers line-height / sub-pixel rounding.
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(() => {
+          const tiptap = document.querySelector(".tiptap");
+          const scroller = tiptap?.closest(".overflow-y-auto") as HTMLElement | null;
+          if (!scroller) return Number.POSITIVE_INFINITY;
+          const active = Array.from(scroller.querySelectorAll(".tiptap > p")).find((p) =>
+            p.textContent?.includes("CARET HERE"),
+          );
+          if (!active) return Number.POSITIVE_INFINITY;
+          const sr = scroller.getBoundingClientRect();
+          return active.getBoundingClientRect().bottom - (sr.top + sr.height * (2 / 3));
+        }),
+      { timeout: 5_000 },
+    )
+    .toBeLessThanOrEqual(10);
 });
 
 test("draft autosaves on idle — no Save click needed", async ({ page }) => {
@@ -397,4 +452,307 @@ test("a saved post reloads its content into the editor (blocks → markdown roun
 
   await expect(page.locator(".tiptap h2")).toHaveText("Loaded heading");
   await expect(page.locator(".tiptap")).toContainText("Loaded body text.");
+});
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Block serialization — every markdown shortcut / inline mark must round-trip to the right block type
+// in the PUT /posts/:id/blocks payload. These are the "the post I wrote is the post that ships" guards
+// that markdownToBlocks unit tests can't give (they don't drive the real Tiptap editor + serializer).
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+test("markdown shortcut '### ' becomes an H3 block", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("### Small heading");
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "H3")?.content).toBe("Small heading");
+});
+
+test("markdown shortcut '- ' becomes a LIST_BULLET block holding every item", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("- first item");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("second item");
+  const blocks = await save(page, captured);
+  const list = blocks.find((b) => b.type === "LIST_BULLET");
+  expect(list, "a bullet list block was produced").toBeTruthy();
+  expect(list!.content).toContain("first item");
+  expect(list!.content).toContain("second item");
+});
+
+test("markdown shortcut '1. ' becomes a LIST_NUMBERED block", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("1. step one");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("step two");
+  const blocks = await save(page, captured);
+  const list = blocks.find((b) => b.type === "LIST_NUMBERED");
+  expect(list, "a numbered list block was produced").toBeTruthy();
+  expect(list!.content).toContain("step one");
+  expect(list!.content).toContain("step two");
+});
+
+test("nested bullet list (Tab) keeps the indentation in the saved markdown", async ({ page }) => {
+  // Nesting is stored as raw markdown (indented sub-items) and rendered by remark-gfm on read, so the
+  // round-trip must preserve the indentation — a flat list would silently drop the hierarchy.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("- parent");
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Tab");
+  await page.keyboard.type("child");
+  const blocks = await save(page, captured);
+  const list = blocks.find((b) => b.type === "LIST_BULLET");
+  expect(list, "a bullet list block was produced").toBeTruthy();
+  expect(list!.content).toContain("parent");
+  // The child rides indented under its parent (a flat list would put it at column 0).
+  expect(list!.content).toMatch(/\n\s+(?:[-*]|\d+\.)\s+child/);
+});
+
+test("markdown shortcut '> ' becomes a QUOTE block", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("> a wise remark");
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "QUOTE")?.content).toBe("a wise remark");
+});
+
+test("typing '---' on its own line becomes a DIVIDER block", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("above");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("---");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("below");
+  const blocks = await save(page, captured);
+  expect(blocks.some((b) => b.type === "DIVIDER")).toBe(true);
+});
+
+test("selection Bold (bubble menu) wraps the text as **bold** in the saved paragraph", async ({ page }) => {
+  // Complements the empty-line "굵게 쓰기" toggle: here a non-empty SELECTION shows the bubble bar, and
+  // its Bold must round-trip to ** ** for the selected run (not the whole block, not nothing).
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("make me bold");
+  // Select the run so the bubble bar appears (a non-empty selection also hides the empty-line floating
+  // bar, so "Bold" resolves to the bubble toggle).
+  const bold = await awaitBubbleButton(
+    page,
+    async () => {
+      await page.keyboard.press("Home");
+      await page.keyboard.press("Shift+End");
+    },
+    "Bold",
+  );
+  await bold.click();
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain("**make me bold**");
+});
+
+// NOTE: inline link via the selection bubble + URL dialog is intentionally NOT e2e'd here — the
+// bubble collapses the selection on a programmatic button click in headless Chromium, which makes the
+// assertion flaky for no real signal. The URL dialog itself is covered by the embed test, and the
+// selection bubble's appearance + a mark round-trip is covered by the "selection Bold" test above.
+
+test("inserting an image saves an IMAGE block carrying the uploaded URL", async ({ page }) => {
+  // Drives the real presign → S3 PUT → commit → setImage path (all mocked in setupMocks). The image
+  // node must serialize to an IMAGE block whose url is the committed public URL.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  // The body image picker is a hidden <input type=file>; setting it fires the same onChange the
+  // floating-bar / slash «image» buttons trigger, without a native file chooser.
+  await page.locator('.tiptap').click();
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "shot.png", mimeType: "image/png", buffer: Buffer.from("png-bytes") });
+  await expect(page.locator(".tiptap img")).toBeVisible({ timeout: 10_000 });
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "IMAGE")?.content).toContain(IMAGE_URL);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Publish lifecycle — open the 발행 설정 dialog and prove each status action hits the right endpoint.
+// Each test seeds the post in the relevant starting state via setupMocks(…, post).
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+/** Header «발행 / 발행 설정» opens the publish dialog. Returns the dialog locator for scoped actions. */
+async function openPublishDialog(page: Page) {
+  await page.getByRole("button", { name: /^(Publish|Publish settings)$/ }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  return dialog;
+}
+
+test("publish: dialog Publish fires POST /publish and the badge flips to Published", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await titleInput(page).fill("Ready to ship");
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+  await expect.poll(() => captured.status).toBe("publish");
+  await expect(page.getByText("Published", { exact: true })).toBeVisible();
+});
+
+test("publish is blocked without a title — shows the hint, fires no /publish", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  // Title left empty (POST.title === "").
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+  await expect(page.getByText("Add a title before publishing")).toBeVisible();
+  expect(captured.status, "no status endpoint should have fired").toBeFalsy();
+});
+
+test("unpublish: a published post can be taken down (POST /unpublish)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured, { ...POST, status: "PUBLISHED", publishedAt: NOW });
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "Unpublish", exact: true }).click();
+  await expect.poll(() => captured.status).toBe("unpublish");
+});
+
+test("republish: an unpublished post can go live again (POST /republish)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured, { ...POST, status: "UNPUBLISHED" });
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "Republish", exact: true }).click();
+  await expect.poll(() => captured.status).toBe("republish");
+});
+
+test("schedule: a draft can be parked for a future publish (POST /schedule)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await titleInput(page).fill("Scheduled one");
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "Schedule", exact: true }).click();
+  await dialog.locator('input[type="datetime-local"]').fill("2030-01-01T10:00");
+  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+  await expect.poll(() => captured.status).toBe("schedule");
+  expect(captured.scheduledAt).toContain("2030-01-01");
+});
+
+test("cancel schedule: a scheduled post returns to draft (POST /back-to-draft)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured, { ...POST, status: "SCHEDULED", scheduledAt: "2030-01-01T10:00:00Z" });
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "Cancel schedule", exact: true }).click();
+  await expect.poll(() => captured.status).toBe("back-to-draft");
+});
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Metadata — values set in the publish dialog must land in the PATCH /posts/:id body on save.
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+test("tags entered in the dialog persist to the metadata PATCH", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  // Stable handle: the tag field is the dialog's only autocomplete-off input (its placeholder empties
+  // after the first chip, so a getByPlaceholder locator would stop resolving for the second tag).
+  const tagInput = dialog.locator('input[autocomplete="off"]');
+  await tagInput.fill("nextjs");
+  await tagInput.press("Enter");
+  await tagInput.fill("testing");
+  await tagInput.press("Enter");
+  captured.meta = null;
+  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect.poll(() => captured.meta).not.toBeNull();
+  expect(captured.meta).toMatchObject({ tags: ["nextjs", "testing"] });
+});
+
+test("excerpt entered in the dialog persists to the metadata PATCH", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await dialog.getByPlaceholder("One-line summary").fill("a short summary");
+  captured.meta = null;
+  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect.poll(() => captured.meta).not.toBeNull();
+  expect(captured.meta).toMatchObject({ excerpt: "a short summary" });
+});
+
+test("slug is normalized (edge hyphens trimmed, lowercased) before the PATCH", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await dialog.locator('input[spellcheck="false"]').fill("-Hello-World-");
+  captured.meta = null;
+  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect.poll(() => captured.meta).not.toBeNull();
+  expect(captured.meta).toMatchObject({ slug: "hello-world" });
+});
+
+test("a cover image uploaded in the dialog persists to the metadata PATCH", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await dialog
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "cover.png", mimeType: "image/png", buffer: Buffer.from("png-bytes") });
+  await expect(dialog.locator("img")).toBeVisible({ timeout: 10_000 });
+  captured.meta = null;
+  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect.poll(() => captured.meta).not.toBeNull();
+  expect(captured.meta).toMatchObject({ ogImageUrl: IMAGE_URL });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Destructive + recovery actions.
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+test("delete: confirming the trash action calls DELETE and returns to the list", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  page.on("dialog", (d) => d.accept()); // window.confirm(deleteConfirm)
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
+  await expect.poll(() => captured.deleted).toBe(true);
+  await expect(page).toHaveURL(/\/blog\/write\/?$/);
+});
+
+test("revisions: restoring a saved version calls the restore endpoint", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  let restored = 0;
+  await page.route(`**/api/v1/posts/${POST_ID}/revisions`, (route) =>
+    route.fulfill({ json: [{ id: 1, versionNumber: 3, titleSnapshot: "earlier", createdAt: NOW }] }),
+  );
+  await page.route(`**/api/v1/posts/${POST_ID}/revisions/3/restore`, (route) => {
+    restored = 3;
+    return route.fulfill({ json: POST });
+  });
+  await openEditor(page);
+  page.on("dialog", (d) => d.accept()); // window.confirm(revisionRestoreConfirm)
+  await page.getByRole("button", { name: "Revisions", exact: true }).click();
+  await page.getByRole("button", { name: "Restore", exact: true }).click();
+  await expect.poll(() => restored).toBe(3);
 });
