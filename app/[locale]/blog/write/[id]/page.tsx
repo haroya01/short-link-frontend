@@ -99,6 +99,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         <MarkdownEditor
           initialValue={ed.markdown}
           onChange={ed.setMarkdown}
+          liveMarkdownRef={ed.liveMarkdown}
           onUploadImage={(blob) => uploadPostImage(post.id, blob as File)}
           onUploadError={(msg) => toast(msg, "error")}
         />

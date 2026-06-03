@@ -573,10 +573,35 @@ test("selection Bold (bubble menu) wraps the text as **bold** in the saved parag
   expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain("**make me bold**");
 });
 
-// NOTE: inline link via the selection bubble + URL dialog is intentionally NOT e2e'd here — the
-// bubble collapses the selection on a programmatic button click in headless Chromium, which makes the
-// assertion flaky for no real signal. The URL dialog itself is covered by the embed test, and the
-// selection bubble's appearance + a mark round-trip is covered by the "selection Bold" test above.
+test("selection Link (bubble menu + URL dialog) saves a real markdown link", async ({ page }) => {
+  // This was a REAL bug, not headless flakiness: the bubble buttons used onClick, so the click blurred
+  // the editor and collapsed the selection before setLink ran → extendMarkRange found no range → no
+  // link (and no `[text](url)` in the payload). Fixed by moving the bubble to onMouseDown+preventDefault
+  // (like the floating bar). Surrounding text keeps the line a paragraph (a link-only line → EMBED).
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("intro docs");
+  // Select just the word "docs" (last 4 chars). Re-select from line-end each retry so it's idempotent,
+  // and wait for the bubble Link button to be ready before clicking.
+  const link = await awaitBubbleButton(
+    page,
+    async () => {
+      await page.keyboard.press("End");
+      for (let i = 0; i < 4; i++) await page.keyboard.press("Shift+ArrowLeft");
+    },
+    "Link",
+  );
+  await link.click();
+  await page.getByPlaceholder("https://example.com").fill("https://kurl.me/help");
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  // Lived proof the bug is fixed: a real clickable anchor lands on the selected word. (Before the
+  // onMouseDown fix the selection collapsed and no link was created at all.) We assert the rendered
+  // anchor rather than the saved markdown — the link mark IS what serializes, and the anchor is the
+  // deterministic, user-facing signal.
+  await expect(page.locator('.tiptap a[href="https://kurl.me/help"]')).toHaveText("docs");
+});
 
 test("inserting an image saves an IMAGE block carrying the uploaded URL", async ({ page }) => {
   // Drives the real presign → S3 PUT → commit → setImage path (all mocked in setupMocks). The image
@@ -647,6 +672,22 @@ test("republish: an unpublished post can go live again (POST /republish)", async
   const dialog = await openPublishDialog(page);
   await dialog.getByRole("button", { name: "Republish", exact: true }).click();
   await expect.poll(() => captured.status).toBe("republish");
+});
+
+test("republish persists pending body edits (not just flips status)", async ({ page }) => {
+  // Republish / Cancel-schedule / Unpublish must save first — editing then republishing used to push
+  // the OLD server content live and silently drop the edit. Assert the edit reaches /blocks, not just
+  // that the lifecycle endpoint fired.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured, { ...POST, status: "UNPUBLISHED" });
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("edited before republish");
+  const dialog = await openPublishDialog(page);
+  await dialog.getByRole("button", { name: "Republish", exact: true }).click();
+  await expect.poll(() => captured.status).toBe("republish");
+  await expect.poll(() => captured.blocks).not.toBeNull();
+  expect(captured.blocks!.map((b) => b.content ?? "").join("\n")).toContain("edited before republish");
 });
 
 test("schedule: a draft can be parked for a future publish (POST /schedule)", async ({ page }) => {
