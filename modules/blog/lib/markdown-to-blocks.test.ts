@@ -98,6 +98,15 @@ describe("video embeds", () => {
     const blocks = markdownToBlocks("https://youtu.be/dQw4w9WgXcQ");
     expect(markdownToBlocks(blocksToMarkdown(blocks))).toEqual(blocks);
   });
+
+  it("coalesces a multi-line blockquote into ONE QUOTE block (round-trips)", () => {
+    const blocks = markdownToBlocks("> first line\n> second line");
+    const quotes = blocks.filter((b) => b.type === "QUOTE");
+    expect(quotes).toHaveLength(1);
+    expect(quotes[0].content).toBe("first line\nsecond line");
+    // The serializer prefixes every line, so it parses back to one QUOTE, not N adjacent quote boxes.
+    expect(markdownToBlocks(blocksToMarkdown(blocks)).filter((b) => b.type === "QUOTE")).toHaveLength(1);
+  });
 });
 
 describe("CODE blocks", () => {

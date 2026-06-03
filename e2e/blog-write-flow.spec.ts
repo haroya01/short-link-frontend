@@ -1156,3 +1156,41 @@ test("the editor visually styles marks and blocks (computed styles, not just pay
   expect(m.bqBorder, "blockquote has a left rule").toBeGreaterThan(0);
   expect(m.codeBg, "inline code has a background tint").not.toBe("rgba(0, 0, 0, 0)");
 });
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Audit follow-ups: heading levels (A7), slash-menu IME safety (A9).
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+test("'#### ' does NOT create a broken h4 — the block model is H1–H3 only (A7)", async ({ page }) => {
+  // StarterKit is capped to levels [1,2,3]; a 4th-level heading node would serialize to literal
+  // `#### text` and round-trip as a PARAGRAPH (heading + TOC entry lost). Assert no h4 node forms.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("### still a heading");
+  await expect(page.locator(".tiptap h3")).toHaveText("still a heading");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("#### not a heading");
+  // No h4 node is created (the input rule stops at level 3).
+  await expect(page.locator(".tiptap h4")).toHaveCount(0);
+  const blocks = await save(page, captured);
+  expect(blocks.some((b) => b.type === "H3" && b.content === "still a heading")).toBe(true);
+});
+
+test("slash menu does not hijack the IME composition Enter (CJK) (A9)", async ({ page }) => {
+  // Korean/Japanese authors confirm a composing word with Enter. With the menu open that Enter must
+  // commit the composition, not pick a menu item. Dispatch a composing keydown and assert the menu
+  // stays open (no selection fired).
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await expect(page.getByRole("listbox")).toBeVisible();
+  await page.evaluate(() => {
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", isComposing: true, bubbles: true }));
+  });
+  // Menu is still open — the composing Enter did not select an item.
+  await expect(page.getByRole("listbox")).toBeVisible();
+});
