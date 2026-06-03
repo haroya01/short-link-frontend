@@ -217,6 +217,8 @@
     "seriesNewPlaceholder": "New series name",
     "publishSettings": "Publish settings",
     "postSettings": "Post settings",
+    "bodyLinks": "In-post links",
+    "bodyLinksHint": "Shortened to kurl links on publish so clicks are tracked. Turn one off to keep its original URL.",
     "close": "Close",
     "saveDraft": "Save draft",
     "saveChanges": "Save changes",
