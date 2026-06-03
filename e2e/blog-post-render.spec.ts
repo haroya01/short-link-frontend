@@ -47,3 +47,23 @@ test("reader typography is applied — heading is larger and bolder than body te
   expect(m.h2Size).toBeGreaterThan(m.pSize);
   expect(m.h2Weight).toBeGreaterThanOrEqual(600);
 });
+
+test("a series post shows the series banner (progress + episode list) and an end-of-post next-up card", async ({
+  page,
+}) => {
+  // The seeded mock post (POST_PATH) is part 1 of the "Next.js 깊게 파기" series, so the on-post series
+  // UI renders for the reader: a top banner (title + progress stepper + collapsible episode list with
+  // the current part marked) and a bottom "next in this series" continuation card.
+  await page.goto(POST_PATH);
+  await expect(page.locator(".prose-post")).toBeVisible({ timeout: 30_000 });
+
+  const banner = page.locator("nav").filter({ hasText: "Next.js 깊게 파기" }).first();
+  await expect(banner).toBeVisible();
+  await banner.getByRole("button", { name: /In this series/i }).click();
+  // The current part is marked in the expanded episode list (not just listed).
+  await expect(banner.locator('[aria-current="true"]')).toBeVisible();
+
+  // End-of-post continuation: the next part card + a link to the whole series.
+  await expect(page.getByText("Next in this series", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: /View all 3 parts/i })).toBeVisible();
+});
