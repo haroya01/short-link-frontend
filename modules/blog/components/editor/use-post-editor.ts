@@ -164,6 +164,20 @@ export function usePostEditor(
     }
   }
 
+  // Leave the editor for the list. Save a dirty DRAFT first so the last keystrokes (still inside the
+  // 1.8s autosave debounce) aren't lost to the full-page back navigation — the reported data-loss path.
+  // Published posts persist only via explicit actions, so they navigate without an implicit save.
+  async function leave() {
+    if (dirty && post?.status === "DRAFT") {
+      try {
+        await save();
+      } catch {
+        /* error is already surfaced via setError; still let the user leave */
+      }
+    }
+    router.push(writeBase);
+  }
+
   async function changeStatus(action: StatusAction) {
     if (post == null || busy) return;
     // Going public needs a title (backend enforces it too; this gives an immediate localized hint).
@@ -247,6 +261,7 @@ export function usePostEditor(
     markdown,
     setMarkdown,
     liveMarkdown,
+    leave,
     tags,
     setTags,
     seriesId,
