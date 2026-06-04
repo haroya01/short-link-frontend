@@ -47,6 +47,7 @@ export function FollowButton({
   initialFollowerCount,
   showCount = true,
   compact = false,
+  sourcePostId,
 }: {
   username: string;
   initialFollowerCount: number;
@@ -54,6 +55,8 @@ export function FollowButton({
   showCount?: boolean;
   /** Smaller pill (h-7) for tight spots like the series rail; the default (h-9) is the profile action. */
   compact?: boolean;
+  /** When followed from inside a post, attributes the follow to it ("이 글로 늘어난 팔로우" analytics). */
+  sourcePostId?: number;
 }) {
   const t = useTranslations("publicPost");
   const { authenticated, ready, me, signInWithGoogle } = useAuth();
@@ -109,7 +112,7 @@ export function FollowButton({
     setFollowing(next);
     setCount((c) => c + (next ? 1 : -1));
     try {
-      const s = next ? await followUser(username) : await unfollowUser(username);
+      const s = next ? await followUser(username, sourcePostId) : await unfollowUser(username);
       setFollowing(s.following);
       setCount(s.followerCount);
       writeFollowCache(username, {
