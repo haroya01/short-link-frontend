@@ -166,6 +166,10 @@ export default async function PublicPostPage({
             <span className="xl:hidden">
               <FollowButton username={author.username} initialFollowerCount={0} showCount={false} />
             </span>
+            {/* Like/bookmark at the top too (synced with the footer cluster via syncKey) so the
+                reader can react without scrolling to the end. */}
+            <LikeButton postId={post.id} initialCount={post.likeCount} />
+            <BookmarkButton postId={post.id} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
           </div>
         </div>
