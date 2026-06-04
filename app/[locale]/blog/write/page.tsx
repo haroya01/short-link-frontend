@@ -7,6 +7,7 @@ import { BarChart3, Layers, List, PenSquare } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
+import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
@@ -190,6 +191,9 @@ export default function WriteIndexPage() {
                         <span>{relativeTime(p.updatedAt, locale)}</span>
                         {p.status === "PUBLISHED" && p.viewCount > 0 && (
                           <span>· {t("viewCount", { count: p.viewCount })}</span>
+                        )}
+                        {showLikes(p.likeCount ?? 0) && (
+                          <span>· {t("likeCount", { count: p.likeCount })}</span>
                         )}
                         <span className="truncate font-mono text-slate-300 dark:text-slate-600">{p.slug}</span>
                       </div>

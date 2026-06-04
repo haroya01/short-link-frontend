@@ -253,6 +253,7 @@
     "viewAll": "전체",
     "viewBySeries": "시리즈별",
     "viewCount": "조회 {count}",
+    "likeCount": "좋아요 {count}",
     "noPosts": "아직 작성한 글이 없어요.",
     "listLoading": "불러오는 중…",
     "slugHint": "발행 전까지 수정 가능 · 영문 소문자/숫자/하이픈",
