@@ -25,10 +25,15 @@ export function getFollowStatus(username: string): Promise<FollowStatus> {
   });
 }
 
-export function followUser(username: string): Promise<FollowStatus> {
+/**
+ * Follow an author. `sourcePostId` attributes the follow to the post the reader was on when they
+ * followed — it powers the per-post "이 글로 늘어난 팔로우" analytics. Omitted for a direct profile follow.
+ */
+export function followUser(username: string, sourcePostId?: number): Promise<FollowStatus> {
   if (USE_MOCKS)
     return Promise.resolve({ following: true, followerCount: 129, followingCount: 12 });
-  return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {
+  const q = sourcePostId != null ? `?sourcePostId=${sourcePostId}` : "";
+  return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow${q}`, {
     method: "PUT",
   });
 }

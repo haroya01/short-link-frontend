@@ -116,7 +116,7 @@ export default async function PublicPostPage({
             </p>
           )}
           <div className="mt-4">
-            <FollowButton username={author.username} initialFollowerCount={0} />
+            <FollowButton username={author.username} initialFollowerCount={0} sourcePostId={post.id} />
           </div>
         </div>
       </aside>
@@ -164,7 +164,12 @@ export default async function PublicPostPage({
           </p>
           <div className="flex shrink-0 items-center gap-2">
             <span className="xl:hidden">
-              <FollowButton username={author.username} initialFollowerCount={0} showCount={false} />
+              <FollowButton
+                username={author.username}
+                initialFollowerCount={0}
+                showCount={false}
+                sourcePostId={post.id}
+              />
             </span>
             {/* Like/bookmark at the top too (synced with the footer cluster via syncKey) so the
                 reader can react without scrolling to the end. */}

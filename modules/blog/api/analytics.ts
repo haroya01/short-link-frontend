@@ -13,6 +13,8 @@ export interface TopPost {
   title: string;
   viewCount: number;
   likeCount: number;
+  /** Follows this post drove ("이 글로 늘어난 팔로우"). */
+  followsGained: number;
 }
 
 export interface AuthorAnalyticsOverview {
@@ -24,6 +26,8 @@ export interface AuthorAnalyticsOverview {
   windowViews: number;
   lifetimeLinkClicks: number;
   windowLinkClicks: number;
+  lifetimeFollows: number;
+  windowFollows: number;
   daily: DailyPoint[];
   topPosts: TopPost[];
 }
@@ -39,6 +43,8 @@ export interface PostAnalytics {
   windowViews: number;
   lifetimeLinkClicks: number;
   windowLinkClicks: number;
+  lifetimeFollows: number;
+  windowFollows: number;
   daily: DailyPoint[];
 }
 
@@ -90,11 +96,11 @@ function mockDaily(days: number, seed: number): DailyPoint[] {
 }
 
 const MOCK_TOP: TopPost[] = [
-  { postId: 1, slug: "nextjs-14-app-router-blog", title: "Next.js 14 App Router로 블로그를 다시 만든 이유", viewCount: 1284, likeCount: 62 },
-  { postId: 2, slug: "spring-boot-tx-propagation", title: "Spring Boot 트랜잭션 전파, 다시 정리", viewCount: 903, likeCount: 39 },
-  { postId: 3, slug: "naming-is-hard", title: "리팩터링: 이름 짓기에 하루를 쓰는 이유", viewCount: 612, likeCount: 44 },
-  { postId: 4, slug: "side-project-pricing", title: "1인 개발자의 가격 정책 실험", viewCount: 428, likeCount: 88 },
-  { postId: 5, slug: "coffee-routine", title: "커피 한 잔의 루틴, 생산성에 대하여", viewCount: 211, likeCount: 25 },
+  { postId: 1, slug: "nextjs-14-app-router-blog", title: "Next.js 14 App Router로 블로그를 다시 만든 이유", viewCount: 1284, likeCount: 62, followsGained: 34 },
+  { postId: 2, slug: "spring-boot-tx-propagation", title: "Spring Boot 트랜잭션 전파, 다시 정리", viewCount: 903, likeCount: 39, followsGained: 21 },
+  { postId: 3, slug: "naming-is-hard", title: "리팩터링: 이름 짓기에 하루를 쓰는 이유", viewCount: 612, likeCount: 44, followsGained: 12 },
+  { postId: 4, slug: "side-project-pricing", title: "1인 개발자의 가격 정책 실험", viewCount: 428, likeCount: 88, followsGained: 29 },
+  { postId: 5, slug: "coffee-routine", title: "커피 한 잔의 루틴, 생산성에 대하여", viewCount: 211, likeCount: 25, followsGained: 4 },
 ];
 
 function mockOverview(days: number): AuthorAnalyticsOverview {
@@ -108,6 +114,8 @@ function mockOverview(days: number): AuthorAnalyticsOverview {
     windowViews: daily.reduce((s, p) => s + p.views, 0),
     lifetimeLinkClicks: 742,
     windowLinkClicks: Math.round(daily.reduce((s, p) => s + p.views, 0) * 0.18),
+    lifetimeFollows: MOCK_TOP.reduce((s, p) => s + p.followsGained, 0),
+    windowFollows: 18,
     daily,
     topPosts: MOCK_TOP,
   };
@@ -127,6 +135,8 @@ function mockPostAnalytics(id: number, days: number): PostAnalytics {
     windowViews: daily.reduce((s, p) => s + p.views, 0),
     lifetimeLinkClicks: Math.round(top.viewCount * 0.4),
     windowLinkClicks: Math.round(daily.reduce((s, p) => s + p.views, 0) * 0.2),
+    lifetimeFollows: top.followsGained,
+    windowFollows: Math.max(1, Math.round(top.followsGained * 0.3)),
     daily,
   };
 }
