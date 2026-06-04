@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Globe, LogOut, Newspaper, User } from "lucide-react";
+import { BarChart3, Check, ChevronDown, Globe, LogOut, Newspaper, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
@@ -9,7 +9,7 @@ import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { cacheMeInitial } from "@/components/common/header-avatar-slot";
-import { linksHref } from "@/lib/host";
+import { blogHref, linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -89,6 +89,11 @@ export function AccountMenu() {
           {username && (
             <>
               <div className="my-1 h-px bg-slate-100" />
+              {/* 분석 진입은 글 목록 strip 이 아니라 여기 — 프로필 바로 아래의 전용 버튼. */}
+              <a href={blogHref("/analytics")} role="menuitem" className={itemClass}>
+                <BarChart3 className="h-4 w-4 text-slate-500" />
+                {t("analytics")}
+              </a>
               {/* The viewer's two public surfaces — separate products, one identity. */}
               <a href={authorHref(username, locale)} role="menuitem" className={itemClass}>
                 <Newspaper className="h-4 w-4 text-slate-500" />
