@@ -41,7 +41,7 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
     if (r) setMenuAt({ x: r.right + 6, y: r.top });
   }
 
-  // Re-resolve the hovered block at action time (like addBelow): the stored hover-time pos/node can be
+  // Re-resolve the hovered block at action time: the stored hover-time pos/node can be
   // stale if the doc changed between hover and click (an async image insert finishing above, an
   // autosave reflow), and acting on a stale position duplicates/deletes the WRONG block.
   function resolved(): Target | null {

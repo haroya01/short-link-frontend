@@ -78,10 +78,17 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
     );
   }
 
+  // Backend returns the list latest-active-first, so series[0] is the freshest. But "freshest of a
+  // stale set" isn't worth a hero — only feature the lead when its newest episode landed recently, so
+  // a returning subscriber's eye goes straight to a series that actually has something new to read.
+  const [lead, ...rest] = series;
+  const featureLead = isRecent(lead.lastPublishedAt);
+
   return (
     <ReadingShell>
       <div className="flex flex-col gap-10 divide-y divide-slate-100 dark:divide-slate-800 [&>*:not(:first-child)]:pt-10">
-        {series.map((s) => (
+        <SubscribedSeriesCard key={lead.id} series={lead} locale={locale} featured={featureLead} />
+        {rest.map((s) => (
           <SubscribedSeriesCard key={s.id} series={s} locale={locale} />
         ))}
       </div>
@@ -89,8 +96,24 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   );
 }
 
-/** Client mirror of SeriesFeedCard (the server card can't render inside this auth-gated client tab). */
-function SubscribedSeriesCard({ series, locale }: { series: PublicSeriesCard; locale: string }) {
+/** A series whose newest episode landed within the last two weeks reads as "actively updating". */
+function isRecent(iso: string): boolean {
+  const published = new Date(iso).getTime();
+  if (Number.isNaN(published)) return false;
+  return Date.now() - published < 14 * 24 * 60 * 60 * 1000;
+}
+
+/** Client mirror of SeriesFeedCard (the server card can't render inside this auth-gated client tab).
+ *  `featured` promotes the freshly-updated lead series: a "최신 업데이트" eyebrow + a larger title. */
+function SubscribedSeriesCard({
+  series,
+  locale,
+  featured = false,
+}: {
+  series: PublicSeriesCard;
+  locale: string;
+  featured?: boolean;
+}) {
   const t = useTranslations("publicFeed");
   const date = new Date(series.lastPublishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
     month: "long",
@@ -102,17 +125,31 @@ function SubscribedSeriesCard({ series, locale }: { series: PublicSeriesCard; lo
   return (
     <section className="group/series mark-hoverable" aria-label={series.title}>
       <div className="flex items-center justify-between gap-3">
-        <BlogLink
-          href={seriesUrl}
-          className="focus-ring inline-flex items-center gap-1.5 rounded text-[12px] font-semibold tracking-wide text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
-        >
-          <Mark className="h-2.5 w-auto shrink-0" animated />
-          {t("seriesEyebrow")}
-        </BlogLink>
+        {featured ? (
+          <BlogLink
+            href={seriesUrl}
+            className="focus-ring inline-flex items-center gap-1.5 rounded text-[12px] font-semibold tracking-wide text-accent-600 transition-colors hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300"
+          >
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent-500" />
+            {t("seriesTabFreshBadge")}
+          </BlogLink>
+        ) : (
+          <BlogLink
+            href={seriesUrl}
+            className="focus-ring inline-flex items-center gap-1.5 rounded text-[12px] font-semibold tracking-wide text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+          >
+            <Mark className="h-2.5 w-auto shrink-0" animated />
+            {t("seriesEyebrow")}
+          </BlogLink>
+        )}
         <SeriesSubscribeButton seriesId={series.id} />
       </div>
       <BlogLink href={seriesUrl} className="focus-ring group/title mt-1 block rounded">
-        <h3 className="line-clamp-2 text-[20px] font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover/title:text-accent-700 dark:text-slate-100 dark:group-hover/title:text-accent-400">
+        <h3
+          className={`line-clamp-2 font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover/title:text-accent-700 dark:text-slate-100 dark:group-hover/title:text-accent-400 ${
+            featured ? "text-[24px] sm:text-[28px] sm:leading-[1.2]" : "text-[20px]"
+          }`}
+        >
           {series.title}
         </h3>
       </BlogLink>
