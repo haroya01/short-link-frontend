@@ -31,7 +31,10 @@ export interface AuthorAnalyticsOverview {
   daily: DailyPoint[];
 }
 
-/** One page of the per-post performance table (ordered by views) — drives the infinite-scroll list. */
+/** Sort dimension for the per-post performance table (post-column metrics only). */
+export type PostPerformanceSort = "views" | "likes" | "recent";
+
+/** One page of the per-post performance table — drives the infinite-scroll list. */
 export interface PostPerformancePage {
   items: TopPost[];
   page: number;
@@ -68,12 +71,17 @@ export function getPostAnalytics(id: number, days = 30): Promise<PostAnalytics> 
   return request<PostAnalytics>(`/api/v1/posts/${id}/analytics?days=${days}`, { method: "GET" });
 }
 
-/** Paginated per-post performance, ordered by views — the overview's infinite-scroll list. */
-export function getPostPerformance(page = 0, size = 20): Promise<PostPerformancePage> {
-  if (USE_MOCKS) return Promise.resolve(mockPerformance(page, size));
-  return request<PostPerformancePage>(`/api/v1/posts/analytics/posts?page=${page}&size=${size}`, {
-    method: "GET",
-  });
+/** Paginated per-post performance — the overview's infinite-scroll list. Sort: views|likes|recent. */
+export function getPostPerformance(
+  page = 0,
+  size = 20,
+  sort: PostPerformanceSort = "views",
+): Promise<PostPerformancePage> {
+  if (USE_MOCKS) return Promise.resolve(mockPerformance(page, size, sort));
+  return request<PostPerformancePage>(
+    `/api/v1/posts/analytics/posts?page=${page}&size=${size}&sort=${sort}`,
+    { method: "GET" },
+  );
 }
 
 /**
@@ -151,10 +159,21 @@ const MOCK_PERFORMANCE: TopPost[] = Array.from({ length: 47 }, (_, i) =>
       },
 );
 
-function mockPerformance(page: number, size: number): PostPerformancePage {
+function mockPerformance(
+  page: number,
+  size: number,
+  sort: PostPerformanceSort,
+): PostPerformancePage {
+  const sorted = [...MOCK_PERFORMANCE].sort((a, b) =>
+    sort === "likes"
+      ? b.likeCount - a.likeCount
+      : sort === "recent"
+        ? b.postId - a.postId // postId stands in for recency in the mock corpus
+        : b.viewCount - a.viewCount,
+  );
   const start = page * size;
-  const items = MOCK_PERFORMANCE.slice(start, start + size);
-  return { items, page, hasNext: start + size < MOCK_PERFORMANCE.length };
+  const items = sorted.slice(start, start + size);
+  return { items, page, hasNext: start + size < sorted.length };
 }
 
 function mockPostAnalytics(id: number, days: number): PostAnalytics {

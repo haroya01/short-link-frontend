@@ -8,6 +8,7 @@ import {
   getAuthorAnalyticsOverview,
   getPostPerformance,
   type AuthorAnalyticsOverview,
+  type PostPerformanceSort,
   type TopPost,
 } from "@/modules/blog/api/analytics";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
@@ -98,35 +99,53 @@ export default function BlogAnalyticsPage() {
   );
 }
 
-/** Per-post performance, ordered by views, appended page-by-page as the reader nears the end. */
+const SORTS: PostPerformanceSort[] = ["views", "likes", "recent"];
+
+/** Per-post performance, sortable, appended page-by-page as the reader nears the end. */
 function PostPerformanceList() {
   const t = useTranslations("blogWorkspace");
+  const [sort, setSort] = useState<PostPerformanceSort>("views");
   const [items, setItems] = useState<TopPost[]>([]);
-  const [page, setPage] = useState(0);
+  const [nextPage, setNextPage] = useState(0);
   const [hasNext, setHasNext] = useState(true);
   const [loading, setLoading] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
+  // Reset + load the first page whenever the sort changes (and on mount).
+  useEffect(() => {
+    let alive = true;
+    setItems([]);
+    setNextPage(0);
+    setHasNext(true);
+    setLoading(true);
+    getPostPerformance(0, 20, sort)
+      .then((res) => {
+        if (!alive) return;
+        setItems(res.items);
+        setHasNext(res.hasNext);
+        setNextPage(1);
+      })
+      .catch(() => alive && setHasNext(false))
+      .finally(() => alive && setLoading(false));
+    return () => {
+      alive = false;
+    };
+  }, [sort]);
+
   const loadMore = useCallback(async () => {
-    if (loading || !hasNext) return;
+    if (loading || !hasNext || nextPage === 0) return; // nextPage 0 = first page not in yet
     setLoading(true);
     try {
-      const res = await getPostPerformance(page, 20);
+      const res = await getPostPerformance(nextPage, 20, sort);
       setItems((prev) => [...prev, ...res.items]);
       setHasNext(res.hasNext);
-      setPage((p) => p + 1);
+      setNextPage((p) => p + 1);
     } catch {
       setHasNext(false);
     } finally {
       setLoading(false);
     }
-  }, [loading, hasNext, page]);
-
-  // First page on mount.
-  useEffect(() => {
-    void loadMore();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loading, hasNext, nextPage, sort]);
 
   // Append subsequent pages when the sentinel scrolls into view.
   useEffect(() => {
@@ -142,18 +161,33 @@ function PostPerformanceList() {
     return () => observer.disconnect();
   }, [loadMore]);
 
-  if (items.length === 0 && loading) {
-    return (
-      <section className="mt-8">
-        <SkeletonRows count={5} />
-      </section>
-    );
-  }
-  if (items.length === 0) return null;
-
   return (
     <section className="mt-8">
-      <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsPerPost")}</h2>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsPerPost")}</h2>
+        <div className="inline-flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-800">
+          {SORTS.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setSort(s)}
+              aria-pressed={sort === s}
+              className={`focus-ring rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors ${
+                sort === s
+                  ? "bg-accent-600 text-white"
+                  : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              }`}
+            >
+              {t(`analyticsSort.${s}`)}
+            </button>
+          ))}
+        </div>
+      </div>
+      {items.length === 0 && loading ? (
+        <SkeletonRows count={5} />
+      ) : items.length === 0 ? (
+        <p className="py-6 text-center text-sm text-slate-400 dark:text-slate-500">{t("analyticsEmpty")}</p>
+      ) : (
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
         {items.map((p) => (
           <li key={p.postId}>
@@ -183,6 +217,7 @@ function PostPerformanceList() {
           </li>
         ))}
       </ul>
+      )}
       <div ref={sentinelRef} aria-hidden className="h-px" />
       {loading && items.length > 0 && (
         <p className="py-4 text-center text-[12px] text-slate-400 dark:text-slate-500">···</p>

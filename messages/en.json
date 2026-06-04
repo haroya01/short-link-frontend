@@ -175,6 +175,7 @@
     "analyticsLinkClicksAll": "Clicks from your post links",
     "analyticsWindowClicks": "{count} clicks in {days}d",
     "analyticsPerPost": "Per-post",
+    "analyticsSort": { "views": "By views", "likes": "By likes", "recent": "Most recent" },
     "analyticsFollows": "Follows gained",
     "analyticsFollowsGained": "Follows from this post",
     "analyticsWindowFollows": "+{count} in {days}d",
