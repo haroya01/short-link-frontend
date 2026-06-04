@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, Eye, FileText, Heart, Users } from "lucide-react";
+import { ArrowLeft, Eye, FileText, Heart, Layers, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -12,7 +12,7 @@ import {
 } from "@/modules/blog/api/analytics";
 import { getSeries } from "@/modules/blog/api/series";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
-import { StatCard } from "@/modules/blog/components/workspace/analytics-bits";
+import { SeriesReadThrough, StatCard } from "@/modules/blog/components/workspace/analytics-bits";
 import { ProfileStatsDashboard } from "@/modules/profile/components/stats-dashboard";
 import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
 import type { ProfileStats } from "@/types";
@@ -100,6 +100,25 @@ export default function SeriesAnalyticsPage() {
                 </h2>
                 <AnalyticsAreaChart data={detail.subscriberDaily} />
               </section>
+
+              {/* 화별 성과 · 연속 읽기 — 각 화의 독자와 다음 화로 이어 읽은 비율(read-through). */}
+              {detail.members.length > 0 && (
+                <section className="mt-8 rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
+                  <h2 className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    <Layers className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                    {t("analyticsMemberFunnel")}
+                  </h2>
+                  <p className="mb-3 mt-0.5 text-[12px] text-slate-400 dark:text-slate-500">
+                    {t("analyticsMemberFunnelHint")}
+                  </p>
+                  <SeriesReadThrough
+                    members={detail.members}
+                    postHref={(postId) =>
+                      pathname.replace(/\/analytics\/series\/.*$/, `/analytics/${postId}`)
+                    }
+                  />
+                </section>
+              )}
             </>
           )}
 

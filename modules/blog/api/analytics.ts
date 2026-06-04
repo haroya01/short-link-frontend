@@ -77,11 +77,33 @@ export interface SeriesAnalyticsRow {
   totalLikes: number;
 }
 
-/** One series' detail — headline row + cumulative subscriber trend (views = running total). */
+/**
+ * One episode's performance within a series + its read-through to the next episode. {@link episode}
+ * is 1-based (series order); {@link continuedToNext} is how many of {@link uniqueReaders} also read
+ * the next episode, so the continue-rate is {@code continuedToNext / uniqueReaders}. The last
+ * episode has {@code continuedToNext === 0}.
+ */
+export interface SeriesMemberStat {
+  postId: number;
+  slug: string;
+  title: string;
+  episode: number;
+  views: number;
+  likes: number;
+  follows: number;
+  uniqueReaders: number;
+  continuedToNext: number;
+}
+
+/**
+ * One series' detail — headline row, cumulative subscriber trend (views = running total), and
+ * per-episode performance with the read-through funnel.
+ */
 export interface SeriesAnalyticsDetail {
   series: SeriesAnalyticsRow;
   windowDays: number;
   subscriberDaily: DailyPoint[];
+  members: SeriesMemberStat[];
 }
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
@@ -183,7 +205,44 @@ function mockSeriesDetail(id: number, days: number): SeriesAnalyticsDetail {
     date: d.date,
     views: Math.round((series.subscriberCount * (i + 1)) / arr.length),
   }));
-  return { series, windowDays: span, subscriberDaily };
+  return { series, windowDays: span, subscriberDaily, members: mockSeriesMembers(series) };
+}
+
+// Plausible per-episode titles — the chip already carries "N화", so titles read as real post titles.
+const MOCK_EPISODE_TITLES = [
+  "기획과 첫 삽",
+  "도메인 모델부터 잡기",
+  "에디터를 붙이며 만난 것들",
+  "배포 파이프라인 다지기",
+  "분석 대시보드를 직접",
+  "회고와 다음 계획",
+  "성능을 다시 들여다보다",
+  "테스트 전략 정리",
+];
+
+// A declining read-through funnel: each episode's readers ≈ those who continued from the previous,
+// with later episodes retaining a higher share (survivorship). Lifetime, so window-independent.
+function mockSeriesMembers(series: SeriesAnalyticsRow): SeriesMemberStat[] {
+  const out: SeriesMemberStat[] = [];
+  let readers = Math.max(1, Math.round(series.totalViews / series.postCount / 1.6));
+  for (let i = 0; i < series.postCount; i++) {
+    const isLast = i === series.postCount - 1;
+    const continueRate = Math.min(0.55 + 0.06 * i, 0.9);
+    const continued = isLast ? 0 : Math.round(readers * continueRate);
+    out.push({
+      postId: series.seriesId * 100 + i + 1,
+      slug: `${series.slug}-${i + 1}`,
+      title: MOCK_EPISODE_TITLES[i % MOCK_EPISODE_TITLES.length],
+      episode: i + 1,
+      views: Math.round(readers * 1.7),
+      likes: Math.round(readers * 0.06),
+      follows: Math.max(0, Math.round(readers * 0.04) - i),
+      uniqueReaders: readers,
+      continuedToNext: continued,
+    });
+    if (!isLast) readers = continued;
+  }
+  return out;
 }
 
 function mockOverview(days: number): AuthorAnalyticsOverview {
