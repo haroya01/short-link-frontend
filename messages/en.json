@@ -13,6 +13,10 @@
   },
   "publicFeed": {
     "recent": "Latest",
+    "seriesTab": "Series",
+    "seriesTabEmpty": "No subscribed series yet. Subscribe to a series to see its latest here.",
+    "seriesTabSignedOut": "See the latest from series you subscribe to.",
+    "seriesTabSignIn": "Sign in",
     "trending": "Popular",
     "empty": "No posts published yet.",
     "write": "Write",

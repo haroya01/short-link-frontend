@@ -13,6 +13,10 @@
   },
   "publicFeed": {
     "recent": "최신",
+    "seriesTab": "시리즈",
+    "seriesTabEmpty": "구독한 시리즈가 없어요. 시리즈를 구독하면 최신 글이 여기 떠요.",
+    "seriesTabSignedOut": "구독한 시리즈의 최신 글을 모아 봐요.",
+    "seriesTabSignIn": "로그인",
     "trending": "인기",
     "empty": "아직 발행된 글이 없어요.",
     "write": "글쓰기",
