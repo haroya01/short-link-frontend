@@ -84,6 +84,35 @@
     "seriesTagsMore": "+{count}개",
     "seriesTagsLess": "접기"
   },
+  "blogWebhooks": {
+    "loginRequired": "로그인이 필요해요.",
+    "title": "웹훅",
+    "subtitle": "독자가 좋아요·댓글·팔로우·시리즈 구독을 하면 지정한 엔드포인트로 알림을 보내요.",
+    "connected": "연결된 웹훅",
+    "empty": "아직 등록된 웹훅이 없어요.",
+    "delete": "삭제",
+    "event": {
+      "LIKE": "좋아요",
+      "COMMENT": "댓글",
+      "FOLLOW": "팔로우",
+      "SERIES_SUBSCRIBE": "시리즈 구독"
+    },
+    "autoDisabled": "연속 실패로 자동 비활성화됐어요. 다시 켜면 재시도해요.",
+    "lastDelivery": "최근 전송 응답 {status}",
+    "addTitle": "새 웹훅 추가",
+    "secretTitle": "서명 시크릿",
+    "secretHint": "이 값은 지금만 보여요. GENERIC 형식 요청의 X-Kurl-Signature(HMAC-SHA256) 검증에 쓰여요.",
+    "copy": "복사",
+    "copied": "복사됨",
+    "urlLabel": "엔드포인트 URL",
+    "urlHint": "Discord·Slack 주소는 자동으로 형식이 감지돼요. 그 외엔 서명된 JSON으로 전송돼요.",
+    "nameLabel": "이름 (선택)",
+    "namePlaceholder": "예: Discord 알림 채널",
+    "eventsLabel": "알림 받을 이벤트",
+    "createError": "등록하지 못했어요. URL을 확인해 주세요.",
+    "limitReached": "웹훅은 최대 5개까지 등록할 수 있어요.",
+    "addButton": "웹훅 추가"
+  },
   "blogWorkspace": {
     "overviewTitle": "개요",
     "overviewSubtitle": "글과 시리즈를 한눈에 관리하세요.",
@@ -507,7 +536,8 @@
       "readers": "독자",
       "leads": "리드",
       "links": "글 안 링크",
-      "curation": "큐레이션"
+      "curation": "큐레이션",
+      "webhooks": "웹훅"
     },
     "links": {
       "links": "링크",

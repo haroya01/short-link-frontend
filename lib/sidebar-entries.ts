@@ -24,6 +24,7 @@ export function buildBlogSections(
         { href: "/leads", label: tBlog("leads") },
         { href: "/links", label: tBlog("links") },
         { href: "/curation", label: tBlog("curation") },
+        { href: "/webhooks", label: tBlog("webhooks") },
       ],
     },
     {

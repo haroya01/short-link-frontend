@@ -84,6 +84,35 @@
     "seriesTagsMore": "+{count}",
     "seriesTagsLess": "閉じる"
   },
+  "blogWebhooks": {
+    "loginRequired": "ログインが必要です。",
+    "title": "Webhook",
+    "subtitle": "読者がいいね・コメント・フォロー・シリーズ購読をすると、指定したエンドポイントに通知します。",
+    "connected": "連携中のWebhook",
+    "empty": "まだWebhookがありません。",
+    "delete": "削除",
+    "event": {
+      "LIKE": "いいね",
+      "COMMENT": "コメント",
+      "FOLLOW": "フォロー",
+      "SERIES_SUBSCRIBE": "シリーズ購読"
+    },
+    "autoDisabled": "連続失敗のため自動で無効化されました。再度有効にすると再試行します。",
+    "lastDelivery": "直近の送信レスポンス {status}",
+    "addTitle": "Webhookを追加",
+    "secretTitle": "署名シークレット",
+    "secretHint": "表示は今だけです。GENERIC形式のX-Kurl-Signature（HMAC-SHA256）検証に使います。",
+    "copy": "コピー",
+    "copied": "コピー済み",
+    "urlLabel": "エンドポイントURL",
+    "urlHint": "Discord・SlackのURLは自動判別します。それ以外は署名付きJSONを送信します。",
+    "nameLabel": "名前（任意）",
+    "namePlaceholder": "例: Discord通知チャンネル",
+    "eventsLabel": "通知するイベント",
+    "createError": "登録できませんでした。URLを確認してください。",
+    "limitReached": "Webhookは最大5件まで登録できます。",
+    "addButton": "Webhookを追加"
+  },
   "blogWorkspace": {
     "overviewTitle": "概要",
     "overviewSubtitle": "記事とシリーズをまとめて管理できます。",
@@ -507,7 +536,8 @@
       "readers": "読者",
       "leads": "リード",
       "links": "記事内リンク",
-      "curation": "おすすめ"
+      "curation": "おすすめ",
+      "webhooks": "Webhook"
     },
     "links": {
       "links": "リンク",
