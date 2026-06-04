@@ -3,9 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { BarChart3, Layers, List, PenSquare } from "lucide-react";
+import { ArrowRight, BarChart3, Layers, List, PenSquare } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
+import {
+  getAuthorAnalyticsOverview,
+  type AuthorAnalyticsOverview,
+} from "@/modules/blog/api/analytics";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
@@ -47,6 +51,9 @@ export default function WriteIndexPage() {
   // Preserve the current path prefix (locale + /blog-preview on the apex) for intra-blog links —
   // a root-relative "/write/..." would drop the prefix and 404.
   const [writeBase, setWriteBase] = useState("/write");
+  // Blog-level totals for the summary strip — this list is the analytics hub now (no separate 분석
+  // sidebar entry), so the aggregate sits on top and "전체 분석" links to the deep overview.
+  const [summary, setSummary] = useState<AuthorAnalyticsOverview | null>(null);
 
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
@@ -74,6 +81,9 @@ export default function WriteIndexPage() {
   useEffect(() => {
     if (!ready || !authenticated) return;
     void load();
+    getAuthorAnalyticsOverview()
+      .then(setSummary)
+      .catch(() => setSummary(null));
   }, [ready, authenticated, load]);
 
   if (!ready) return null;
@@ -102,6 +112,41 @@ export default function WriteIndexPage() {
           {t("newPost")}
         </a>
       </header>
+
+      {/* Blog-level summary strip — the aggregate that used to be its own 분석 page. Whole strip links
+          to the deep overview (chart + ranking). Hidden until something's published (nothing to total). */}
+      {summary && summary.publishedPosts > 0 && (
+        <a
+          href={analyticsBase}
+          className="focus-ring group mb-5 flex items-center gap-4 rounded-xl border border-slate-200 px-4 py-3 transition-colors hover:border-accent-200 hover:bg-slate-50/60 dark:border-slate-800 dark:hover:border-accent-500/40 dark:hover:bg-slate-800/40"
+        >
+          <dl className="flex flex-1 flex-wrap items-baseline gap-x-5 gap-y-1">
+            {([
+              [t("hubViews"), summary.lifetimeViews],
+              [t("hubLikes"), summary.lifetimeLikes],
+              [t("hubFollows"), summary.lifetimeFollows],
+            ] as const).map(([label, value]) => (
+              <div key={label} className="flex items-baseline gap-1.5">
+                <dt className="text-[12px] text-slate-400 dark:text-slate-500">{label}</dt>
+                <dd className="text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+                  {value.toLocaleString()}
+                </dd>
+              </div>
+            ))}
+            {/* kurl 차별점 — 글 안 링크가 만든 클릭, 브랜드 그린으로 강조. */}
+            <div className="flex items-baseline gap-1.5">
+              <dt className="text-[12px] text-accent-700/70 dark:text-accent-300/70">{t("hubLinkClicks")}</dt>
+              <dd className="text-[15px] font-semibold tabular-nums text-accent-600 dark:text-accent-400">
+                {summary.lifetimeLinkClicks.toLocaleString()}
+              </dd>
+            </div>
+          </dl>
+          <span className="inline-flex shrink-0 items-center gap-1 text-[13px] font-medium text-slate-400 transition-colors group-hover:text-accent-700 dark:text-slate-500 dark:group-hover:text-accent-300">
+            {t("hubFullAnalytics")}
+            <ArrowRight className="h-4 w-4" />
+          </span>
+        </a>
+      )}
 
       {/* 전체 ↔ 시리즈별 — same content, two lenses. 시리즈별 is where series get curated. */}
       <div className="mb-5 inline-flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-800">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, Heart, FileText, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
+import { ArrowLeft, Eye, Heart, FileText, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
@@ -35,6 +35,14 @@ export default function BlogAnalyticsPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
+      {/* 전체 분석은 글 허브(/write)의 한 facet — 사이드바 진입점이 없으므로 거기로 돌아가는 링크를 둔다. */}
+      <a
+        href="/write"
+        className="focus-ring mb-3 inline-flex items-center gap-1.5 rounded text-[13px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t("backToPosts")}
+      </a>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("analyticsTitle")}</h1>
         <WindowTabs days={days} onChange={setDays} />
