@@ -247,29 +247,34 @@ function SeriesAnalyticsSection() {
       </h2>
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
         {rows.map((s) => (
-          <li key={s.seriesId} className="flex items-center gap-3 py-3">
-            <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 dark:text-slate-100">
-              {s.title}
-            </span>
-            <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-400 dark:text-slate-500">
-              {/* 구독자 — 시리즈의 헤드라인 지표, 브랜드 그린 강조. */}
-              <span className="inline-flex items-center gap-1 text-accent-600 dark:text-accent-400">
-                <Users className="h-3.5 w-3.5" />
-                {s.subscriberCount.toLocaleString()}
+          <li key={s.seriesId}>
+            <a
+              href={`/analytics/series/${s.seriesId}`}
+              className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+            >
+              <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
+                {s.title}
               </span>
-              <span className="inline-flex items-center gap-1">
-                <FileText className="h-3.5 w-3.5" />
-                {s.postCount.toLocaleString()}
+              <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-400 dark:text-slate-500">
+                {/* 구독자 — 시리즈의 헤드라인 지표, 브랜드 그린 강조. */}
+                <span className="inline-flex items-center gap-1 text-accent-600 dark:text-accent-400">
+                  <Users className="h-3.5 w-3.5" />
+                  {s.subscriberCount.toLocaleString()}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <FileText className="h-3.5 w-3.5" />
+                  {s.postCount.toLocaleString()}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Eye className="h-3.5 w-3.5" />
+                  {s.totalViews.toLocaleString()}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Heart className="h-3.5 w-3.5" />
+                  {s.totalLikes.toLocaleString()}
+                </span>
               </span>
-              <span className="inline-flex items-center gap-1">
-                <Eye className="h-3.5 w-3.5" />
-                {s.totalViews.toLocaleString()}
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <Heart className="h-3.5 w-3.5" />
-                {s.totalLikes.toLocaleString()}
-              </span>
-            </span>
+            </a>
           </li>
         ))}
       </ul>

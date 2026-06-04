@@ -77,6 +77,13 @@ export interface SeriesAnalyticsRow {
   totalLikes: number;
 }
 
+/** One series' detail — headline row + cumulative subscriber trend (views = running total). */
+export interface SeriesAnalyticsDetail {
+  series: SeriesAnalyticsRow;
+  windowDays: number;
+  subscriberDaily: DailyPoint[];
+}
+
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 export function getAuthorAnalyticsOverview(days = 30): Promise<AuthorAnalyticsOverview> {
@@ -95,6 +102,14 @@ export function getPostAnalytics(id: number, days = 30): Promise<PostAnalytics> 
 export function getSeriesAnalytics(): Promise<SeriesAnalyticsRow[]> {
   if (USE_MOCKS) return Promise.resolve(MOCK_SERIES_ANALYTICS);
   return request<SeriesAnalyticsRow[]>("/api/v1/posts/analytics/series", { method: "GET" });
+}
+
+/** One series' detail — headline metrics + cumulative subscriber trend over the window. */
+export function getSeriesDetail(id: number, days = 30): Promise<SeriesAnalyticsDetail> {
+  if (USE_MOCKS) return Promise.resolve(mockSeriesDetail(id, days));
+  return request<SeriesAnalyticsDetail>(`/api/v1/posts/analytics/series/${id}?days=${days}`, {
+    method: "GET",
+  });
 }
 
 /** Paginated per-post performance — the overview's infinite-scroll list. Sort: views|likes|recent. */
@@ -159,6 +174,17 @@ const MOCK_SERIES_ANALYTICS: SeriesAnalyticsRow[] = [
   { seriesId: 2, slug: "spring-deep-dive", title: "Spring 깊이 파기", postCount: 4, subscriberCount: 73, totalViews: 1890, totalLikes: 96 },
   { seriesId: 3, slug: "solo-dev-notes", title: "1인 개발 기록", postCount: 3, subscriberCount: 41, totalViews: 642, totalLikes: 55 },
 ];
+
+function mockSeriesDetail(id: number, days: number): SeriesAnalyticsDetail {
+  const series = MOCK_SERIES_ANALYTICS.find((s) => s.seriesId === id) ?? MOCK_SERIES_ANALYTICS[0];
+  const span = days <= 0 ? 120 : days;
+  // A monotonic cumulative curve rising to the current subscriber count over the window.
+  const subscriberDaily = mockDaily(span, id + 2).map((d, i, arr) => ({
+    date: d.date,
+    views: Math.round((series.subscriberCount * (i + 1)) / arr.length),
+  }));
+  return { series, windowDays: span, subscriberDaily };
+}
 
 function mockOverview(days: number): AuthorAnalyticsOverview {
   // days<=0 = 전체(all-time): span a representative history and surface the lifetime totals.
