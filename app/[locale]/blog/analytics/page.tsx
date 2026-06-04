@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, Heart, FileText, MousePointerClick, TrendingUp } from "lucide-react";
+import { Eye, Heart, FileText, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
@@ -53,10 +53,11 @@ export default function BlogAnalyticsPage() {
         <p className="mt-8 text-sm text-slate-400 dark:text-slate-500">{t("analyticsEmpty")}</p>
       ) : (
         <>
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             <StatCard icon={<TrendingUp className="h-4 w-4" />} label={t("analyticsWindowViews", { days })} value={data.windowViews} />
             <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
             <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
+            <StatCard icon={<UserPlus className="h-4 w-4" />} label={t("analyticsFollows")} value={data.lifetimeFollows} />
             <StatCard icon={<FileText className="h-4 w-4" />} label={t("analyticsPublished")} value={data.publishedPosts} />
           </div>
 
@@ -83,7 +84,7 @@ export default function BlogAnalyticsPage() {
 
           {data.topPosts.length > 0 && (
             <section className="mt-8">
-              <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsTopPosts")}</h2>
+              <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsPerPost")}</h2>
               <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {data.topPosts.map((p, i) => (
                   <li key={p.postId}>
@@ -105,6 +106,11 @@ export default function BlogAnalyticsPage() {
                         <span className="inline-flex items-center gap-1">
                           <Heart className="h-3.5 w-3.5" />
                           {p.likeCount.toLocaleString()}
+                        </span>
+                        {/* 이 글로 늘어난 팔로우 — 브랜드 그린으로, 단순 트래픽이 아니라 '구독으로 이어진' 신호임을 강조. */}
+                        <span className="inline-flex items-center gap-1 text-accent-600 dark:text-accent-400">
+                          <UserPlus className="h-3.5 w-3.5" />
+                          {p.followsGained.toLocaleString()}
                         </span>
                       </span>
                     </a>
