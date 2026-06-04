@@ -14,7 +14,6 @@ import {
   Heading3,
   List,
   ListOrdered,
-  Plus,
   Quote,
   Trash2,
   Type,
@@ -37,29 +36,6 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
 
   // Insert an empty paragraph right after the hovered block and drop the caret into it, then type "/"
   // so the slash menu opens — same as clicking Notion's "+".
-  function addBelow() {
-    const { state } = editor;
-    const docEnd = state.doc.content.size;
-    let end: number;
-    if (target) {
-      // Re-resolve the node at the stored pos (the hovered target can be stale if the doc changed
-      // since hover — that's what made the "/" land in the wrong block). Clamp to the doc end.
-      const pos = Math.min(target.pos, docEnd);
-      const node = state.doc.nodeAt(pos);
-      end = Math.min(pos + (node?.nodeSize ?? target.node.nodeSize), docEnd);
-    } else {
-      // The drag-handle hasn't reported a hovered node to React yet (its onNodeChange can lag a click
-      // on a freshly-revealed gutter). The "+" must never silently no-op, so fall back to inserting
-      // after the block that currently holds the caret.
-      const $from = state.selection.$from;
-      end = Math.min($from.after(Math.max(1, $from.depth)), docEnd);
-    }
-    // Insert an empty paragraph below and drop the caret into it. No auto-"/" — that was the fragile
-    // bit (a computed insert position landing the slash in the next block); the empty-line placeholder
-    // already hints "/", and typing "/" there opens the menu reliably at the caret.
-    editor.chain().insertContentAt(end, { type: "paragraph" }).focus(end + 1).run();
-  }
-
   function openMenu() {
     const r = gripRef.current?.getBoundingClientRect();
     if (r) setMenuAt({ x: r.right + 6, y: r.top });
@@ -124,9 +100,9 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
         }}
       >
         <div className="flex items-center pr-1">
-          <button type="button" aria-label={t("add")} title={t("add")} className={ghostBtn} onClick={addBelow}>
-            <Plus className="h-4 w-4" />
-          </button>
+          {/* Reorder + block menu (turn into · duplicate · delete). The old "+" (insert blank line)
+              was removed — it duplicated Enter, and the always-on toolbar / slash menu cover real
+              block insertion, so a gutter "+" that only added an empty paragraph read as noise. */}
           <button
             ref={gripRef}
             type="button"
