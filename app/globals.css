@@ -28,6 +28,19 @@
   /* 쿠키 배너가 뷰포트 하단에서 얼마나 떠 있나. 기본은 home-indicator 만 비키고, 하단 탭바가 있는
      표면(body[data-bottom-nav])에선 탭바 높이만큼 올린다. */
   --cookie-bottom: env(safe-area-inset-bottom);
+  /* recharts(daily-chart) 색은 inline SVG/style 이라 Tailwind dark: 가 안 닿는다. CSS 변수로
+     테마를 끌어 .dark 에서 한 번에 덮는다 — 작가 방문통계가 다크 표면에서 라이트 격자/툴팁로 깨지던 문제. */
+  --chart-grid: #e2e8f0;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: #e2e8f0;
+  --chart-tooltip-text: #0f172a;
+}
+
+.dark {
+  --chart-grid: #334155;
+  --chart-tooltip-bg: #0f172a;
+  --chart-tooltip-border: #334155;
+  --chart-tooltip-text: #e2e8f0;
 }
 
 /* 하단 탭바가 있는 표면에선 쿠키 배너를 탭바 바로 위로 올려 탭을 가리지 않게 한다. */
