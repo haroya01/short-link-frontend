@@ -127,6 +127,9 @@
     "analyticsEmpty": "まだ分析できるデータがありません。",
     "analyticsNoViews": "この期間の閲覧はありません。",
     "analyticsOverTime": "閲覧の推移",
+    "analyticsReaders": "読者の内訳",
+    "seriesAnalytics": "シリーズ分析",
+    "seriesAnalyticsTitle": "{title}・シリーズ分析",
     "analyticsTopPosts": "人気の記事",
     "analyticsWindowViews": "{days}日間の閲覧",
     "analyticsLifetimeViews": "累計閲覧",
@@ -876,6 +879,10 @@
     }
   },
   "stats": {
+    "breakdown": {
+      "unknown": "不明",
+      "direct": "直接"
+    },
     "back": "戻る",
     "shortCode": "ショートコード",
     "tabs": {

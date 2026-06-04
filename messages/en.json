@@ -127,6 +127,9 @@
     "analyticsEmpty": "No data to analyze yet.",
     "analyticsNoViews": "No views in this period.",
     "analyticsOverTime": "Views over time",
+    "analyticsReaders": "Reader breakdown",
+    "seriesAnalytics": "Series analytics",
+    "seriesAnalyticsTitle": "{title} · series analytics",
     "analyticsTopPosts": "Top posts",
     "analyticsWindowViews": "Views ({days}d)",
     "analyticsLifetimeViews": "Total views",
@@ -876,6 +879,10 @@
     }
   },
   "stats": {
+    "breakdown": {
+      "unknown": "Unknown",
+      "direct": "Direct"
+    },
     "back": "Back",
     "shortCode": "short code",
     "tabs": {
