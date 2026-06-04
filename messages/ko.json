@@ -172,6 +172,7 @@
     "analyticsViews": "조회 {count}",
     "analyticsDays": "{days}일",
     "analyticsLinkClicks": "이 글이 만든 클릭",
+    "analyticsLinkBreakdown": "글 안 링크별 클릭",
     "analyticsWindowClicks": "최근 {days}일 {count}클릭",
     "analyticsPerPost": "글별 성과",
     "analyticsFollows": "늘어난 팔로우",
