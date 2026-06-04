@@ -41,6 +41,13 @@ export interface PostPerformancePage {
   hasNext: boolean;
 }
 
+/** Clicks one in-post kurl link drove — the per-link breakdown of "이 글이 만든 클릭". */
+export interface PostLinkClick {
+  shortCode: string;
+  destinationUrl: string;
+  clicks: number;
+}
+
 export interface PostAnalytics {
   postId: number;
   slug: string;
@@ -55,6 +62,8 @@ export interface PostAnalytics {
   lifetimeFollows: number;
   windowFollows: number;
   daily: DailyPoint[];
+  /** Per-link click breakdown (most-clicked first), empty when the post has no kurl links. */
+  linkBreakdown: PostLinkClick[];
 }
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
@@ -193,6 +202,11 @@ function mockPostAnalytics(id: number, days: number): PostAnalytics {
     lifetimeFollows: top.followsGained,
     windowFollows: Math.max(1, Math.round(top.followsGained * 0.3)),
     daily,
+    linkBreakdown: [
+      { shortCode: "kurl-a1", destinationUrl: "https://github.com/haroya01/short-link", clicks: Math.round(top.viewCount * 0.22) },
+      { shortCode: "kurl-b2", destinationUrl: "https://nextjs.org/docs", clicks: Math.round(top.viewCount * 0.11) },
+      { shortCode: "kurl-c3", destinationUrl: "https://docs.spring.io/spring-boot", clicks: Math.round(top.viewCount * 0.05) },
+    ],
   };
 }
 

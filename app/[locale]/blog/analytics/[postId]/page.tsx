@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Eye, Heart, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Eye, Heart, Link2, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -141,6 +141,31 @@ export default function PostAnalyticsPage() {
               {data.lifetimeLinkClicks.toLocaleString()}
             </span>
           </div>
+
+          {/* 글 안 링크별 분해 — 합계가 어느 링크에서 나왔는지. 링크가 있을 때만 노출. */}
+          {data.linkBreakdown.length > 0 && (
+            <section className="mt-8">
+              <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsLinkBreakdown")}</h2>
+              <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
+                {data.linkBreakdown.map((lc) => (
+                  <li key={lc.shortCode} className="flex items-center gap-3 px-4 py-2.5">
+                    <Link2 className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[14px] text-slate-700 dark:text-slate-200">
+                        {lc.destinationUrl}
+                      </span>
+                      <span className="block truncate font-mono text-[11px] text-slate-400 dark:text-slate-500">
+                        kurl.me/{lc.shortCode}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-[14px] font-semibold tabular-nums text-accent-700 dark:text-accent-300">
+                      {lc.clicks.toLocaleString()}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section className="mt-8 rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
             <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsOverTime")}</h2>
