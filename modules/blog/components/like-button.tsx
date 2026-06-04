@@ -21,6 +21,7 @@ export function LikeButton({ postId, initialCount }: { postId: number; initialCo
     toggle,
   } = useOptimisticToggle({
     depKey: postId,
+    syncKey: `like:${postId}`,
     initialCount,
     load: () => getLikeStatus(postId).then((s) => ({ on: s.liked, count: s.likeCount })),
     mutate: (next) =>
