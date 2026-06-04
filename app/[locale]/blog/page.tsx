@@ -24,6 +24,7 @@ import { SearchEmpty } from "@/modules/blog/components/search-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
+import { SubscribedSeriesFeed } from "@/modules/blog/components/subscribed-series-feed";
 import { MobileDiscoveryStrip } from "@/modules/blog/components/mobile-discovery-strip";
 import { MyTagsStrip } from "@/modules/blog/components/my-tags-strip";
 import { SeriesFeedCard } from "@/modules/blog/components/series-feed-card";
@@ -85,8 +86,10 @@ export default async function BlogFeedPage({
 
   // "following" is client-rendered (auth needed); recent/trending are server-fetched here. A search
   // spans every author, so it only honors recent/trending — the following sort collapses to recent.
-  const tab: "recent" | "trending" | "following" =
-    sortParam === "trending" || sortParam === "following" ? sortParam : "recent";
+  const tab: "recent" | "trending" | "following" | "series" =
+    sortParam === "trending" || sortParam === "following" || sortParam === "series"
+      ? sortParam
+      : "recent";
   const sort: FeedSort = tab === "trending" ? "trending" : "recent";
   const activeTab = searching ? sort : tab;
 
@@ -94,7 +97,7 @@ export default async function BlogFeedPage({
 
   // The following tab is its own (client, auth) path with no rail; every other state shows the feed
   // body plus the desktop discovery rail.
-  const showsServerFeed = searching || tab !== "following";
+  const showsServerFeed = searching || (tab !== "following" && tab !== "series");
   // The 인기 tab (when not searching) is grouped into "주제별 인기" rows instead of a flat feed.
   const groupByTag = tab === "trending" && !searching;
   // Flat feed = 최신, or any search (search collapses every tab to a flat result set).
@@ -136,7 +139,8 @@ export default async function BlogFeedPage({
   // search), so the content block replays its slide instead of swapping abruptly.
   const contentKey = `${activeTab}:${searching ? query : ""}`;
   // Tab order drives the slide direction (FeedContentTransition): recent → trending → following.
-  const tabIndex = activeTab === "trending" ? 1 : activeTab === "following" ? 2 : 0;
+  const tabIndex =
+    activeTab === "trending" ? 1 : activeTab === "following" ? 2 : activeTab === "series" ? 3 : 0;
 
   // No separate hero card. On the default (non-search) recent feed the lead post just gets a quiet
   // "오늘의 글" emphasis as the first list row — same grammar as the rest of the list, only louder by a
@@ -195,6 +199,13 @@ export default async function BlogFeedPage({
                 // A search spans every author, so "following" can't apply — disable it while searching.
                 disabled: searching,
               },
+              {
+                key: "series",
+                label: t("seriesTab"),
+                href: "?sort=series",
+                active: !searching && tab === "series",
+                disabled: searching,
+              },
             ]}
           />
         </header>
@@ -207,6 +218,10 @@ export default async function BlogFeedPage({
         {tab === "following" && !searching ? (
           <FeedContentTransition index={tabIndex} contentKey={contentKey}>
             <FollowingFeed locale={locale} suggestedAuthors={authors} />
+          </FeedContentTransition>
+        ) : tab === "series" && !searching ? (
+          <FeedContentTransition index={tabIndex} contentKey={contentKey}>
+            <SubscribedSeriesFeed locale={locale} />
           </FeedContentTransition>
         ) : (
           // recent / trending / search share ONE ReadingShell so the discovery rail is rendered once
