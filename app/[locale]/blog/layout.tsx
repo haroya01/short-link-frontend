@@ -29,6 +29,7 @@ const WORKSPACE_PATHS = [
   "/links",
   "/curation",
   "/leads",
+  "/webhooks",
   "/settings",
 ];
 

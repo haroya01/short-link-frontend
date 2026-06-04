@@ -84,6 +84,35 @@
     "seriesTagsMore": "+{count} more",
     "seriesTagsLess": "Show less"
   },
+  "blogWebhooks": {
+    "loginRequired": "Sign in required.",
+    "title": "Webhooks",
+    "subtitle": "Get notified at your endpoint when readers like, comment, follow, or subscribe to a series.",
+    "connected": "Connected webhooks",
+    "empty": "No webhooks yet.",
+    "delete": "Delete",
+    "event": {
+      "LIKE": "Like",
+      "COMMENT": "Comment",
+      "FOLLOW": "Follow",
+      "SERIES_SUBSCRIBE": "Series subscribe"
+    },
+    "autoDisabled": "Auto-disabled after repeated failures. Re-enable to retry.",
+    "lastDelivery": "Last delivery responded {status}",
+    "addTitle": "Add a webhook",
+    "secretTitle": "Signing secret",
+    "secretHint": "Shown only once. Used to verify the X-Kurl-Signature (HMAC-SHA256) on GENERIC requests.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "urlLabel": "Endpoint URL",
+    "urlHint": "Discord and Slack URLs are auto-detected. Anything else receives signed JSON.",
+    "nameLabel": "Name (optional)",
+    "namePlaceholder": "e.g. Discord alerts channel",
+    "eventsLabel": "Events to notify on",
+    "createError": "Couldn't register. Check the URL.",
+    "limitReached": "You can register up to 5 webhooks.",
+    "addButton": "Add webhook"
+  },
   "blogWorkspace": {
     "overviewTitle": "Overview",
     "overviewSubtitle": "Manage your posts and series at a glance.",
@@ -507,7 +536,8 @@
       "readers": "Readers",
       "leads": "Leads",
       "links": "Links in posts",
-      "curation": "Curation"
+      "curation": "Curation",
+      "webhooks": "Webhooks"
     },
     "links": {
       "links": "Links",
