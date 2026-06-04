@@ -161,11 +161,15 @@ export default function WriteIndexPage() {
         <ul className="-mx-3 flex flex-col">
           {visible.map((p) => {
             const titled = p.title.trim();
+            // Analytics only means something once a post has gone public — drafts·scheduled have no reads.
+            const hasAnalytics = p.status === "PUBLISHED" || p.status === "UNPUBLISHED";
             return (
               <li key={p.id} className="group/row relative">
                 <a
                   href={`${writeBase}/${p.id}`}
-                  className="focus-ring group block rounded-xl px-3 py-4 pr-12 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40"
+                  className={`focus-ring group block rounded-xl px-3 py-4 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
+                    hasAnalytics ? "pr-28" : "pr-3"
+                  }`}
                 >
                   <div className="flex gap-4">
                     <div className="min-w-0 flex-1">
@@ -208,15 +212,18 @@ export default function WriteIndexPage() {
                     )}
                   </div>
                 </a>
-                {/* Per-post analytics — sibling of the editor link (never nested), pinned by the title. */}
-                <a
-                  href={`${analyticsBase}/${p.id}`}
-                  aria-label={t("viewAnalytics")}
-                  title={t("viewAnalytics")}
-                  className="focus-ring absolute right-1 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-white hover:text-accent-700 dark:text-slate-500 dark:hover:bg-slate-900 dark:hover:text-accent-300"
-                >
-                  <BarChart3 className="h-[18px] w-[18px]" />
-                </a>
+                {/* Per-post analytics — first-class labeled entry (sibling of the editor link, never
+                    nested). This list is the hub: published posts surface their 성과 inline. */}
+                {hasAnalytics && (
+                  <a
+                    href={`${analyticsBase}/${p.id}`}
+                    aria-label={t("viewAnalytics")}
+                    className="focus-ring absolute right-2 top-1/2 z-10 inline-flex -translate-y-1/2 items-center gap-1.5 rounded-lg border border-slate-200 bg-white/80 px-2.5 py-1.5 text-[12px] font-medium text-slate-500 backdrop-blur transition-colors hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
+                  >
+                    <BarChart3 className="h-4 w-4" />
+                    {t("viewAnalytics")}
+                  </a>
+                )}
               </li>
             );
           })}

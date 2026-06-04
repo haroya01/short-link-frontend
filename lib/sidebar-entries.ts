@@ -19,7 +19,8 @@ export function buildBlogSections(
         // VIEW of it (내 글 → 시리즈별 보기), not a separate destination — the old 발행 글(/posts)·
         // 임시저장(/drafts)·시리즈(/series) entries were all just lenses on this same list.
         { href: "/write", label: tBlog("myPosts") },
-        // 분석: /analytics + /readers(방문자) share one tabbed section now, so a single nav entry.
+        // 분석: overview(저자 지표 + 글별 목록) → 글 클릭 시 글별 성과 + 독자 분석 한 화면. 독자는 글의
+        // 한 facet 이라 별도 탭 없이 글 상세에 포함되고, 상세의 prev/next switcher 로 글을 넘긴다.
         { href: "/analytics", label: tBlog("analytics") },
         { href: "/leads", label: tBlog("leads") },
         { href: "/links", label: tBlog("links") },

@@ -9,7 +9,6 @@ import {
   type AuthorAnalyticsOverview,
 } from "@/modules/blog/api/analytics";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
-import { AnalyticsTabs } from "@/modules/blog/components/workspace/analytics-tabs";
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
 import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
 
@@ -36,7 +35,6 @@ export default function BlogAnalyticsPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
-      <AnalyticsTabs active="analytics" />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("analyticsTitle")}</h1>
         <WindowTabs days={days} onChange={setDays} />
