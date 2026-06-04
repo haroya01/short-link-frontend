@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
+  BarChart3,
   Check,
   ChevronDown,
   FileText,
@@ -105,6 +106,11 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               </span>
             </div>
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+            {/* 분석 진입은 글 목록 strip 이 아니라 프로필 바로 아래 전용 버튼. */}
+            <a href={blogHref("/analytics")} className={ITEM}>
+              <BarChart3 className="h-5 w-5 text-slate-500" />
+              {t("analytics")}
+            </a>
             <a href={authorHref(username, locale)} className={ITEM}>
               <Newspaper className="h-5 w-5 text-slate-500" />
               {t("blog")}
