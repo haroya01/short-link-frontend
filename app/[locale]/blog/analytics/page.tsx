@@ -1,14 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Eye, Heart, FileText, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
+import { Eye, FileText, Heart, Layers, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
   getAuthorAnalyticsOverview,
   getPostPerformance,
+  getSeriesAnalytics,
   type AuthorAnalyticsOverview,
   type PostPerformanceSort,
+  type SeriesAnalyticsRow,
   type TopPost,
 } from "@/modules/blog/api/analytics";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
@@ -56,7 +58,7 @@ export default function BlogAnalyticsPage() {
       ) : (
         <>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            <StatCard icon={<TrendingUp className="h-4 w-4" />} label={t("analyticsWindowViews", { days })} value={data.windowViews} />
+            <StatCard icon={<TrendingUp className="h-4 w-4" />} label={days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })} value={data.windowViews} />
             <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
             <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
             <StatCard icon={<UserPlus className="h-4 w-4" />} label={t("analyticsFollows")} value={data.lifetimeFollows} />
@@ -71,7 +73,9 @@ export default function BlogAnalyticsPage() {
                 <span className="text-[13px] font-semibold">{t("analyticsLinkClicksAll")}</span>
               </div>
               <p className="mt-0.5 text-[12px] text-accent-700/70 dark:text-accent-300/70">
-                {t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
+                {days === 0
+                  ? t("analyticsAllClicks", { count: data.windowLinkClicks })
+                  : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
               </p>
             </div>
             <span className="text-2xl font-bold tracking-tight text-accent-700 dark:text-accent-300">
@@ -83,6 +87,9 @@ export default function BlogAnalyticsPage() {
             <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsOverTime")}</h2>
             <AnalyticsAreaChart data={data.daily} />
           </section>
+
+          {/* Series — the recurring-readership unit; subscriber count is the headline metric. */}
+          <SeriesAnalyticsSection />
 
           {/* Every post, views-first, lazy-loaded — so a few hundred posts don't all arrive at once. */}
           {data.totalPosts > 0 && <PostPerformanceList />}
@@ -215,6 +222,57 @@ function PostPerformanceList() {
       {loading && items.length > 0 && (
         <p className="py-4 text-center text-[12px] text-slate-400 dark:text-slate-500">···</p>
       )}
+    </section>
+  );
+}
+
+/** Per-series traction — subscriber count leads (the recurring-readership signal). Hidden if none. */
+function SeriesAnalyticsSection() {
+  const t = useTranslations("blogWorkspace");
+  const [rows, setRows] = useState<SeriesAnalyticsRow[] | null>(null);
+
+  useEffect(() => {
+    getSeriesAnalytics()
+      .then(setRows)
+      .catch(() => setRows([]));
+  }, []);
+
+  if (rows === null || rows.length === 0) return null;
+
+  return (
+    <section className="mt-8">
+      <h2 className="mb-3 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
+        <Layers className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+        {t("analyticsSeries")}
+      </h2>
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+        {rows.map((s) => (
+          <li key={s.seriesId} className="flex items-center gap-3 py-3">
+            <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 dark:text-slate-100">
+              {s.title}
+            </span>
+            <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-400 dark:text-slate-500">
+              {/* 구독자 — 시리즈의 헤드라인 지표, 브랜드 그린 강조. */}
+              <span className="inline-flex items-center gap-1 text-accent-600 dark:text-accent-400">
+                <Users className="h-3.5 w-3.5" />
+                {s.subscriberCount.toLocaleString()}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <FileText className="h-3.5 w-3.5" />
+                {s.postCount.toLocaleString()}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <Eye className="h-3.5 w-3.5" />
+                {s.totalViews.toLocaleString()}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <Heart className="h-3.5 w-3.5" />
+                {s.totalLikes.toLocaleString()}
+              </span>
+            </span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

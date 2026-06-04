@@ -66,6 +66,17 @@ export interface PostAnalytics {
   linkBreakdown: PostLinkClick[];
 }
 
+/** One series in the author's analytics — subscriber count + member-post traction. */
+export interface SeriesAnalyticsRow {
+  seriesId: number;
+  slug: string;
+  title: string;
+  postCount: number;
+  subscriberCount: number;
+  totalViews: number;
+  totalLikes: number;
+}
+
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 export function getAuthorAnalyticsOverview(days = 30): Promise<AuthorAnalyticsOverview> {
@@ -78,6 +89,12 @@ export function getAuthorAnalyticsOverview(days = 30): Promise<AuthorAnalyticsOv
 export function getPostAnalytics(id: number, days = 30): Promise<PostAnalytics> {
   if (USE_MOCKS) return Promise.resolve(mockPostAnalytics(id, days));
   return request<PostAnalytics>(`/api/v1/posts/${id}/analytics?days=${days}`, { method: "GET" });
+}
+
+/** Per-series analytics — subscriber count + member-post traction, newest series first. */
+export function getSeriesAnalytics(): Promise<SeriesAnalyticsRow[]> {
+  if (USE_MOCKS) return Promise.resolve(MOCK_SERIES_ANALYTICS);
+  return request<SeriesAnalyticsRow[]>("/api/v1/posts/analytics/series", { method: "GET" });
 }
 
 /** Paginated per-post performance — the overview's infinite-scroll list. Sort: views|likes|recent. */
@@ -137,19 +154,29 @@ const MOCK_TOP: TopPost[] = [
   { postId: 8, slug: "webhook-design", title: "웹훅을 설계하며 배운 것 (서명·재시도·자동 비활성화)", viewCount: 97, likeCount: 11, followsGained: 3 },
 ];
 
+const MOCK_SERIES_ANALYTICS: SeriesAnalyticsRow[] = [
+  { seriesId: 1, slug: "build-a-blog", title: "블로그를 직접 만들기", postCount: 6, subscriberCount: 128, totalViews: 3421, totalLikes: 184 },
+  { seriesId: 2, slug: "spring-deep-dive", title: "Spring 깊이 파기", postCount: 4, subscriberCount: 73, totalViews: 1890, totalLikes: 96 },
+  { seriesId: 3, slug: "solo-dev-notes", title: "1인 개발 기록", postCount: 3, subscriberCount: 41, totalViews: 642, totalLikes: 55 },
+];
+
 function mockOverview(days: number): AuthorAnalyticsOverview {
-  const daily = mockDaily(days, 3);
+  // days<=0 = 전체(all-time): span a representative history and surface the lifetime totals.
+  const allTime = days <= 0;
+  const daily = mockDaily(allTime ? 120 : days, 3);
+  const lifetimeViews = MOCK_TOP.reduce((s, p) => s + p.viewCount, 0);
+  const lifetimeFollows = MOCK_TOP.reduce((s, p) => s + p.followsGained, 0);
   return {
     totalPosts: 8,
     publishedPosts: 5,
-    lifetimeViews: MOCK_TOP.reduce((s, p) => s + p.viewCount, 0),
+    lifetimeViews,
     lifetimeLikes: MOCK_TOP.reduce((s, p) => s + p.likeCount, 0),
-    windowDays: days,
-    windowViews: daily.reduce((s, p) => s + p.views, 0),
+    windowDays: allTime ? 120 : days,
+    windowViews: allTime ? lifetimeViews : daily.reduce((s, p) => s + p.views, 0),
     lifetimeLinkClicks: 742,
-    windowLinkClicks: Math.round(daily.reduce((s, p) => s + p.views, 0) * 0.18),
-    lifetimeFollows: MOCK_TOP.reduce((s, p) => s + p.followsGained, 0),
-    windowFollows: 18,
+    windowLinkClicks: allTime ? 742 : Math.round(daily.reduce((s, p) => s + p.views, 0) * 0.18),
+    lifetimeFollows,
+    windowFollows: allTime ? lifetimeFollows : 18,
     daily,
   };
 }
@@ -187,7 +214,9 @@ function mockPerformance(
 
 function mockPostAnalytics(id: number, days: number): PostAnalytics {
   const top = MOCK_TOP.find((p) => p.postId === id) ?? MOCK_TOP[0];
-  const daily = mockDaily(days, id + 1);
+  const allTime = days <= 0;
+  const daily = mockDaily(allTime ? 120 : days, id + 1);
+  const lifetimeLinkClicks = Math.round(top.viewCount * 0.4);
   return {
     postId: top.postId,
     slug: top.slug,
@@ -195,10 +224,12 @@ function mockPostAnalytics(id: number, days: number): PostAnalytics {
     status: "PUBLISHED",
     lifetimeViews: top.viewCount,
     lifetimeLikes: top.likeCount,
-    windowDays: days,
-    windowViews: daily.reduce((s, p) => s + p.views, 0),
-    lifetimeLinkClicks: Math.round(top.viewCount * 0.4),
-    windowLinkClicks: Math.round(daily.reduce((s, p) => s + p.views, 0) * 0.2),
+    windowDays: allTime ? 120 : days,
+    windowViews: allTime ? top.viewCount : daily.reduce((s, p) => s + p.views, 0),
+    lifetimeLinkClicks,
+    windowLinkClicks: allTime
+      ? lifetimeLinkClicks
+      : Math.round(daily.reduce((s, p) => s + p.views, 0) * 0.2),
     lifetimeFollows: top.followsGained,
     windowFollows: Math.max(1, Math.round(top.followsGained * 0.3)),
     daily,
