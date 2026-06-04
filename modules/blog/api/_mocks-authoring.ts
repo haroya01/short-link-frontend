@@ -28,6 +28,7 @@ function blankPost(over: Partial<PostView>): PostView {
     excerpt: null,
     ogImageUrl: null,
     viewCount: 0,
+    likeCount: 0,
     tags: [],
     seriesId: null,
     seriesOrder: null,
@@ -55,6 +56,8 @@ let seq = 7000;
     publishedAt: nowIso(),
     excerpt: "mock 모드에서 에디터로 작성·발행한 예시 글.",
     tags: ["개발", "회고"],
+    viewCount: 1284,
+    likeCount: 62,
   });
   posts.set(pub.id, pub);
   blocks.set(

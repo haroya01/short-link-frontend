@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { BarChart3, FileText, Layers, List, PenSquare } from "lucide-react";
+import { BarChart3, Layers, List, PenSquare } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
+import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
 
@@ -154,60 +155,60 @@ export default function WriteIndexPage() {
       {loading && <SkeletonRows count={6} thumb />}
       {!loading && posts.length === 0 && <p className="text-slate-400 dark:text-slate-500">{t("noPosts")}</p>}
       {!loading && posts.length > 0 && (
-        <ul className="space-y-1">
+        // Typography-first rows (§10.2): no placeholder thumbnail — a post with no cover is a complete
+        // text row; the cover shows only when it exists. Lead = 대표 태그(muted) + status, then title,
+        // 2-line excerpt, quiet meta. -mx-3/px-3 keeps text aligned with the heading while hover spills.
+        <ul className="-mx-3 flex flex-col">
           {visible.map((p) => {
             const titled = p.title.trim();
             return (
               <li key={p.id} className="group/row relative">
                 <a
                   href={`${writeBase}/${p.id}`}
-                  className="focus-ring group -mx-3 flex gap-3.5 rounded-xl px-3 py-3 pr-12 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                  className="focus-ring group block rounded-xl px-3 py-4 pr-12 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40"
                 >
-                  {p.ogImageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={p.ogImageUrl}
-                      alt=""
-                      className="h-14 w-14 shrink-0 rounded-lg object-cover"
-                    />
-                  ) : (
-                    <span className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-slate-100 text-slate-300 dark:bg-slate-800 dark:text-slate-500">
-                      <FileText className="h-5 w-5" />
-                    </span>
-                  )}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <PostStatusBadge status={p.status} />
-                      <span
-                        className={`truncate text-[15px] font-semibold transition-colors group-hover:text-accent-700 dark:group-hover:text-accent-300 ${
+                  <div className="flex gap-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 text-[12px]">
+                        <PostStatusBadge status={p.status} />
+                        {p.tags[0] && (
+                          <span className="truncate text-slate-400 dark:text-slate-500">{p.tags[0]}</span>
+                        )}
+                      </div>
+                      <h3
+                        className={`mt-1.5 truncate text-[17px] font-semibold leading-snug transition-colors group-hover:text-accent-700 dark:group-hover:text-accent-300 ${
                           titled ? "text-slate-900 dark:text-slate-100" : "italic text-slate-400 dark:text-slate-500"
                         }`}
                       >
                         {titled || t("untitled")}
-                      </span>
+                      </h3>
+                      {p.excerpt && (
+                        <p className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-slate-500 dark:text-slate-400">
+                          {p.excerpt}
+                        </p>
+                      )}
+                      <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-400 dark:text-slate-500">
+                        <span>{relativeTime(p.updatedAt, locale)}</span>
+                        {p.status === "PUBLISHED" && p.viewCount > 0 && (
+                          <span>· {t("viewCount", { count: p.viewCount })}</span>
+                        )}
+                        {showLikes(p.likeCount ?? 0) && (
+                          <span>· {t("likeCount", { count: p.likeCount })}</span>
+                        )}
+                        <span className="truncate font-mono text-slate-300 dark:text-slate-600">{p.slug}</span>
+                      </div>
                     </div>
-                    {p.excerpt && (
-                      <p className="mt-1 line-clamp-1 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-                        {p.excerpt}
-                      </p>
+                    {p.ogImageUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={p.ogImageUrl}
+                        alt=""
+                        className="h-[4.5rem] w-28 shrink-0 self-start rounded-lg object-cover sm:w-32"
+                      />
                     )}
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-slate-400 dark:text-slate-500">
-                      <span>{relativeTime(p.updatedAt, locale)}</span>
-                      {p.tags.slice(0, 3).map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded bg-slate-100 px-1.5 py-0.5 font-medium text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                      <span className="ml-auto truncate font-mono text-slate-300 dark:text-slate-500">{p.slug}</span>
-                    </div>
                   </div>
                 </a>
-                {/* Per-post analytics — sibling of the editor link (never nested). Pinned right and
-                    always visible (matching the series workspace's always-on row actions), so it's
-                    reachable on touch and reads as a consistent quiet action across the workspace. */}
+                {/* Per-post analytics — sibling of the editor link (never nested), pinned by the title. */}
                 <a
                   href={`${analyticsBase}/${p.id}`}
                   aria-label={t("viewAnalytics")}
