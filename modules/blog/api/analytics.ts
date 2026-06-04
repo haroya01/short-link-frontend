@@ -101,6 +101,9 @@ const MOCK_TOP: TopPost[] = [
   { postId: 3, slug: "naming-is-hard", title: "리팩터링: 이름 짓기에 하루를 쓰는 이유", viewCount: 612, likeCount: 44, followsGained: 12 },
   { postId: 4, slug: "side-project-pricing", title: "1인 개발자의 가격 정책 실험", viewCount: 428, likeCount: 88, followsGained: 29 },
   { postId: 5, slug: "coffee-routine", title: "커피 한 잔의 루틴, 생산성에 대하여", viewCount: 211, likeCount: 25, followsGained: 4 },
+  { postId: 6, slug: "docker-compose-prod", title: "작은 EC2에 docker compose로 배포하기", viewCount: 188, likeCount: 18, followsGained: 7 },
+  { postId: 7, slug: "rotating-refresh-tokens", title: "리프레시 토큰 회전, 로그아웃 폭탄을 피하는 법", viewCount: 156, likeCount: 21, followsGained: 9 },
+  { postId: 8, slug: "webhook-design", title: "웹훅을 설계하며 배운 것 (서명·재시도·자동 비활성화)", viewCount: 97, likeCount: 11, followsGained: 3 },
 ];
 
 function mockOverview(days: number): AuthorAnalyticsOverview {

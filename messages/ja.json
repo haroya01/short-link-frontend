@@ -172,6 +172,7 @@
     "analyticsViews": "閲覧 {count}",
     "analyticsDays": "{days}日",
     "analyticsLinkClicks": "この記事が生んだクリック",
+    "analyticsLinkClicksAll": "記事内リンクが生んだクリック",
     "analyticsWindowClicks": "直近{days}日で{count}クリック",
     "analyticsPerPost": "記事別の成果",
     "analyticsFollows": "増えたフォロー",

@@ -72,7 +72,7 @@ export default function BlogAnalyticsPage() {
             <div>
               <div className="flex items-center gap-1.5 text-accent-700 dark:text-accent-300">
                 <MousePointerClick className="h-4 w-4" />
-                <span className="text-[13px] font-semibold">{t("analyticsLinkClicks")}</span>
+                <span className="text-[13px] font-semibold">{t("analyticsLinkClicksAll")}</span>
               </div>
               <p className="mt-0.5 text-[12px] text-accent-700/70 dark:text-accent-300/70">
                 {t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}

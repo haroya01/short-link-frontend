@@ -172,6 +172,7 @@
     "analyticsViews": "{count} views",
     "analyticsDays": "{days}d",
     "analyticsLinkClicks": "Clicks from this content",
+    "analyticsLinkClicksAll": "Clicks from your post links",
     "analyticsWindowClicks": "{count} clicks in {days}d",
     "analyticsPerPost": "Per-post",
     "analyticsFollows": "Follows gained",
