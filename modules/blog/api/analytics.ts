@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import type { ProfileStats } from "@/types";
 
 /** Author analytics — mirrors the backend PostAnalyticsController DTOs. */
 export interface DailyPoint {
@@ -55,6 +56,25 @@ export function getPostAnalytics(id: number, days = 30): Promise<PostAnalytics> 
   return request<PostAnalytics>(`/api/v1/posts/${id}/analytics?days=${days}`, { method: "GET" });
 }
 
+/**
+ * Deep per-post read stats — the same dimensional breakdown as the profile-visit dashboard
+ * (countries · devices · browsers · referrers · channels · UTM · hour heatmap · daily), but scoped
+ * to ONE post's reads. Reuses the ProfileStats shape so {@link ProfileStatsDashboard} renders it
+ * directly. Backend endpoint to be added: {@code GET /api/v1/posts/{id}/stats} (clicks already carry
+ * post_id — see backend V73 migration). Mock-backed until then.
+ */
+export function getPostStats(id: number, days = 30): Promise<ProfileStats> {
+  if (USE_MOCKS) return Promise.resolve(mockDeepStats(id, days));
+  return request<ProfileStats>(`/api/v1/posts/${id}/stats?days=${days}`, { method: "GET" });
+}
+
+/** Deep per-series read stats — the post breakdown aggregated across a series' member posts. Backend
+ *  endpoint to be added: {@code GET /api/v1/series/{id}/stats}. Mock-backed until then. */
+export function getSeriesStats(id: number, days = 30): Promise<ProfileStats> {
+  if (USE_MOCKS) return Promise.resolve(mockDeepStats(id * 1000, days, 2.4));
+  return request<ProfileStats>(`/api/v1/series/${id}/stats?days=${days}`, { method: "GET" });
+}
+
 // ---- mocks (NEXT_PUBLIC_USE_MOCKS=1) — deterministic so screenshots/dev are stable ----
 
 function mockDaily(days: number, seed: number): DailyPoint[] {
@@ -108,5 +128,70 @@ function mockPostAnalytics(id: number, days: number): PostAnalytics {
     lifetimeLinkClicks: Math.round(top.viewCount * 0.4),
     windowLinkClicks: Math.round(daily.reduce((s, p) => s + p.views, 0) * 0.2),
     daily,
+  };
+}
+
+/** ProfileStats-shaped deep breakdown for a post/series, seeded so each id renders distinct data. */
+function mockDeepStats(seed: number, days: number, mult = 1): ProfileStats {
+  const k = (n: number) => Math.round(n * mult * (0.7 + ((seed % 7) + 1) / 10));
+  const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+  const dailyVisits = mockDaily(days, seed + 5).map((d) => ({ date: d.date, count: k(d.views + 8) }));
+  const hourVisits = Array.from({ length: 24 }, (_, h) => ({
+    hour: h,
+    count: k(12 + 60 * Math.abs(Math.sin((h - 3 + (seed % 5)) * 0.4))),
+  }));
+  const heatmap: { dayOfWeek: string; hour: number; count: number }[] = [];
+  for (const day of DAYS) {
+    const weekend = day === "SATURDAY" || day === "SUNDAY" ? 0.5 : 1;
+    for (let h = 0; h < 24; h++) {
+      const c = k(Math.max(0, 18 * Math.sin((h + (seed % 4)) * 0.42) * weekend));
+      if (c > 0) heatmap.push({ dayOfWeek: day, hour: h, count: c });
+    }
+  }
+  const human = k(1800);
+  const bot = k(160);
+  return {
+    timezone: "Asia/Seoul",
+    totalVisits: human + bot,
+    humanVisits: human,
+    botVisits: bot,
+    uniqueVisits: k(1240),
+    firstVisitAt: "2026-05-01T08:12:00Z",
+    lastVisitAt: "2026-06-04T21:40:00Z",
+    peakHour: 21,
+    dailyVisits,
+    hourVisits,
+    heatmap,
+    countryVisits: [
+      { country: "KR", count: k(1180) },
+      { country: "JP", count: k(420) },
+      { country: "US", count: k(160) },
+      { country: "DE", count: k(60) },
+    ],
+    deviceVisits: [
+      { device: "mobile", count: k(1120) },
+      { device: "desktop", count: k(620) },
+      { device: "tablet", count: k(90) },
+    ],
+    browserVisits: [
+      { browser: "Chrome", count: k(1040) },
+      { browser: "Safari", count: k(600) },
+      { browser: "Edge", count: k(140) },
+    ],
+    referrerHostVisits: [
+      { host: "", count: k(820) },
+      { host: "google.com", count: k(560) },
+      { host: "x.com", count: k(260) },
+    ],
+    sourceChannelVisits: [
+      { source: "organic", count: k(760) },
+      { source: "direct", count: k(560) },
+      { source: "social", count: k(480) },
+    ],
+    utmCampaignVisits: [{ campaign: "launch", count: k(120) }],
+    utmSourceVisits: [
+      { source: "twitter", count: k(100) },
+      { source: "instagram", count: k(70) },
+    ],
   };
 }

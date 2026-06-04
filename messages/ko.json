@@ -127,6 +127,9 @@
     "analyticsEmpty": "아직 분석할 데이터가 없어요.",
     "analyticsNoViews": "이 기간엔 조회가 없어요.",
     "analyticsOverTime": "조회 추이",
+    "analyticsReaders": "독자 분석",
+    "seriesAnalytics": "시리즈 분석",
+    "seriesAnalyticsTitle": "{title} · 시리즈 분석",
     "analyticsTopPosts": "인기 글",
     "analyticsWindowViews": "{days}일 조회",
     "analyticsLifetimeViews": "총 조회",
@@ -878,6 +881,10 @@
     }
   },
   "stats": {
+    "breakdown": {
+      "unknown": "알 수 없음",
+      "direct": "직접 유입"
+    },
     "back": "뒤로",
     "shortCode": "short code",
     "tabs": {
