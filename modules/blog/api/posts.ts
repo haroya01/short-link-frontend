@@ -25,6 +25,9 @@ export interface PostView {
   excerpt: string | null;
   ogImageUrl: string | null;
   viewCount: number;
+  /** Lifetime likes — shown in 내 글 when >0. Backend adds this to /api/v1/posts alongside viewCount;
+   *  until then it's absent at runtime and the like count simply doesn't render (showLikes gates on >0). */
+  likeCount: number;
   tags: string[];
   seriesId: number | null;
   seriesOrder: number | null;

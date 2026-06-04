@@ -252,6 +252,8 @@
     "myPosts": "My posts",
     "viewAll": "All",
     "viewBySeries": "By series",
+    "viewCount": "{count} views",
+    "likeCount": "{count} likes",
     "noPosts": "No posts yet.",
     "listLoading": "Loading…",
     "slugHint": "Editable until published · lowercase letters, digits, hyphens",
