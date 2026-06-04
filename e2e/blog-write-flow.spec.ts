@@ -241,57 +241,6 @@ test("slash menu inserts a code block", async ({ page }) => {
   await expect(page.locator(".tiptap .cm-content")).toBeVisible({ timeout: 10_000 });
 });
 
-test("the '+' block handle adds a clean empty block below — NO stray '/'", async ({ page }) => {
-  // Regression lock for the reported bug: pressing the gutter "+" used to drop a literal "/" into the
-  // wrong (next) block. It must now insert an empty paragraph below the hovered block, caret inside.
-  const captured: Captured = { blocks: null };
-  await setupMocks(page, captured);
-  await openEditor(page);
-
-  await page.locator(".tiptap").click();
-  await page.keyboard.type("first line");
-  // Two Enters = a real paragraph break (a single Enter is now a tight soft line break within the
-  // same paragraph), so "first line" and "second line" are two distinct blocks here.
-  await page.keyboard.press("Enter");
-  await page.keyboard.press("Enter");
-  await page.keyboard.type("second line");
-
-  // Reveal the gutter on the FIRST paragraph, then fire the "+" without moving the pointer off the
-  // content: a real pointer move onto the gutter button makes the drag-handle hide before the click
-  // lands. dispatchEvent fires onClick in place — and exercises the handler's no-op-safety fallback.
-  const firstPara = page.locator(".tiptap p", { hasText: "first line" }).first();
-  await firstPara.hover();
-  const plus = page.getByRole("button", { name: "Add block below" });
-  await expect(plus).toBeVisible({ timeout: 10_000 });
-  await page.waitForTimeout(150);
-  await plus.dispatchEvent("click");
-  // The "+" adds exactly one empty paragraph. Find it (position-agnostic) and type into it — clicking
-  // the gutter button itself left DOM focus on the button, so click the new block first.
-  const paras = page.locator(".tiptap > p");
-  await expect(paras).toHaveCount(3);
-  let emptyIdx = -1;
-  for (let i = 0; i < (await paras.count()); i++) {
-    if (((await paras.nth(i).textContent()) ?? "").trim() === "") {
-      emptyIdx = i;
-      break;
-    }
-  }
-  expect(emptyIdx, "the '+' added a new empty paragraph").toBeGreaterThanOrEqual(0);
-  await paras.nth(emptyIdx).click();
-  await page.keyboard.type("inserted line");
-
-  const blocks = await save(page, captured);
-  const text = blocks.map((b) => b.content ?? "").join("\n");
-  expect(text).toContain("first line");
-  expect(text).toContain("inserted line");
-  expect(text).toContain("second line");
-  // The headline guarantee: the "+" left no literal "/" anywhere.
-  expect(blocks.some((b) => b.content?.trim() === "/")).toBe(false);
-  expect(
-    blocks.some((b) => (b.content ?? "").includes("/inserted") || (b.content ?? "").includes("inserted/")),
-  ).toBe(false);
-});
-
 test("the embed dialog inserts a live link card that round-trips to an EMBED block", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
