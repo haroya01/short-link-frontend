@@ -28,7 +28,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
   const [selected, setSelected] = useState<Selected | null>(null);
 
   if (data.length === 0) {
-    return <p className="py-8 text-center text-xs text-slate-500">{tShared("noData")}</p>;
+    return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{tShared("noData")}</p>;
   }
 
   const grid: Record<string, Record<number, number>> = {};
@@ -92,7 +92,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                   key={h}
                   className={cn(
                     "text-center font-mono text-[10px]",
-                    h % 6 === 0 ? "text-slate-700 font-medium" : "text-slate-500",
+                    h % 6 === 0 ? "text-slate-700 font-medium dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
                   )}
                   style={{ visibility: h % 3 === 0 ? "visible" : "hidden" }}
                 >
@@ -106,7 +106,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                     <div
                       className={cn(
                         "flex h-6 items-center justify-end pr-2 text-[11px]",
-                        isWeekend ? "font-semibold text-slate-700" : "text-slate-500",
+                        isWeekend ? "font-semibold text-slate-700 dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
                       )}
                     >
                       {tDay(day)}
@@ -131,7 +131,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                           className={cn(
                             "h-6 rounded-md transition-all duration-150 ease-out",
                             colorFor(count, max),
-                            count === 0 && "ring-1 ring-inset ring-slate-200/70",
+                            count === 0 && "ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/50",
                             isHover && "scale-110 ring-2 ring-accent-700 ring-offset-1",
                             isSel && "scale-110 ring-2 ring-accent-700 ring-offset-1",
                           )}
@@ -152,7 +152,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
           {MOBILE_BUCKET_STARTS.map((h) => (
             <div
               key={h}
-              className="text-center font-mono text-[10px] font-medium text-slate-700"
+              className="text-center font-mono text-[10px] font-medium text-slate-700 dark:text-slate-200"
             >
               {h}
             </div>
@@ -164,7 +164,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                 <div
                   className={cn(
                     "flex h-7 items-center justify-end pr-2 text-[11px]",
-                    isWeekend ? "font-semibold text-slate-700" : "text-slate-500",
+                    isWeekend ? "font-semibold text-slate-700 dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
                   )}
                 >
                   {tDay(day)}
@@ -208,7 +208,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                       className={cn(
                         "h-7 rounded-md transition-all duration-150 ease-out",
                         colorFor(count, mobileMax),
-                        count === 0 && "ring-1 ring-inset ring-slate-200/70",
+                        count === 0 && "ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/50",
                         isHover && "scale-105 ring-2 ring-accent-700 ring-offset-1",
                         isSel && "scale-105 ring-2 ring-accent-700 ring-offset-1",
                       )}
@@ -221,7 +221,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-slate-500">
+      <div className="mt-3 flex items-center justify-between gap-3 text-[11px] text-slate-500 dark:text-slate-400">
         <div className="flex min-h-[1rem] min-w-0 items-center gap-2">
           <ActiveCellLabel
             active={selected ?? (hover && hover.count > 0 ? hover : null)}
@@ -234,7 +234,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           <span>{t("less")}</span>
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-slate-50 ring-1 ring-inset ring-slate-200" />
+          <div className="h-2.5 w-2.5 rounded-[3px] bg-slate-50 ring-1 ring-inset ring-slate-200 dark:bg-slate-800/60 dark:ring-slate-700/50" />
           <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-100" />
           <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-300" />
           <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-500" />
@@ -247,15 +247,15 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
 }
 
 function colorFor(count: number, scale: number): string {
-  if (count === 0) return "bg-slate-50";
-  if (scale === 0) return "bg-slate-50";
+  if (count === 0) return "bg-slate-50 dark:bg-slate-800/60";
+  if (scale === 0) return "bg-slate-50 dark:bg-slate-800/60";
   const intensity = Math.min(1, count / scale);
-  if (intensity < 0.15) return "bg-accent-50";
-  if (intensity < 0.3) return "bg-accent-100";
-  if (intensity < 0.5) return "bg-accent-300";
-  if (intensity < 0.7) return "bg-accent-500";
-  if (intensity < 0.85) return "bg-accent-600";
-  return "bg-accent-700";
+  if (intensity < 0.15) return "bg-accent-50 dark:bg-accent-500/15";
+  if (intensity < 0.3) return "bg-accent-100 dark:bg-accent-500/25";
+  if (intensity < 0.5) return "bg-accent-300 dark:bg-accent-500/45";
+  if (intensity < 0.7) return "bg-accent-500 dark:bg-accent-500/70";
+  if (intensity < 0.85) return "bg-accent-600 dark:bg-accent-500/85";
+  return "bg-accent-700 dark:bg-accent-400";
 }
 
 function ActiveCellLabel({
@@ -293,19 +293,19 @@ function ActiveCellLabel({
       aria-live={isSelected ? "polite" : undefined}
       className="flex min-w-0 items-center gap-2 font-mono"
     >
-      <span className="truncate text-slate-700">{rangeLabel}</span>
-      <span aria-hidden="true" className="text-slate-300">
+      <span className="truncate text-slate-700 dark:text-slate-200">{rangeLabel}</span>
+      <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">
         ·
       </span>
-      <span className="tabular-nums font-medium text-slate-900">
+      <span className="tabular-nums font-medium text-slate-900 dark:text-slate-100">
         {t("detailClicks", { count: active.count })}
       </span>
       {total > 0 && active.count > 0 && (
         <>
-          <span aria-hidden="true" className="text-slate-300">
+          <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">
             ·
           </span>
-          <span className="tabular-nums text-slate-500">
+          <span className="tabular-nums text-slate-500 dark:text-slate-400">
             {t("detailShare", { share: shareLabel })}
           </span>
         </>
@@ -315,7 +315,7 @@ function ActiveCellLabel({
           type="button"
           onClick={onClear}
           aria-label={t("detailClose")}
-          className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-100"
         >
           <X className="h-3 w-3" />
         </button>

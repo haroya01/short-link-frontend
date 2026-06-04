@@ -95,30 +95,30 @@ export function StatsCards({
         disabled={!interactive}
         aria-disabled={!interactive}
         className={cn(
-          "relative col-span-2 overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50 via-accent-50/40 to-white p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 ease-out sm:col-span-3 lg:col-span-1",
+          "relative col-span-2 overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50 via-accent-50/40 to-white p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 ease-out sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:from-accent-500/10 dark:via-accent-500/5 dark:to-slate-900 dark:shadow-none",
           interactive
-            ? "group cursor-pointer hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-[0_8px_24px_rgba(5,150,105,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
+            ? "group cursor-pointer hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-[0_8px_24px_rgba(5,150,105,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-accent-500/50"
             : "cursor-default",
         )}
       >
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-300">
             {t("totalClicks")}
           </span>
           <span className="grid h-7 w-7 place-items-center rounded-full bg-accent-600 text-white shadow-sm transition-transform duration-200 ease-out group-hover:scale-110">
             <MousePointerClick className="h-3.5 w-3.5" />
           </span>
         </div>
-        <p className="mt-3 font-mono text-[34px] font-bold leading-none tracking-tight tabular-nums text-slate-900">
+        <p className="mt-3 font-mono text-[34px] font-bold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
           {formatNumber(animatedTotal)}
         </p>
         {hasUnique && (
-          <p className="mt-3 text-[11px] text-slate-600">
-            <span className="font-mono font-medium tabular-nums text-slate-900">
+          <p className="mt-3 text-[11px] text-slate-600 dark:text-slate-400">
+            <span className="font-mono font-medium tabular-nums text-slate-900 dark:text-slate-100">
               {formatNumber(unique as number)}
             </span>{" "}
             {t("unique").toLowerCase()}{" "}
-            <span className="text-slate-400">· {uniqueRatio.toFixed(0)}% of human</span>
+            <span className="text-slate-400 dark:text-slate-500">· {uniqueRatio.toFixed(0)}% of human</span>
           </p>
         )}
         <div
@@ -210,28 +210,28 @@ function Stat({
       disabled={!interactive}
       aria-disabled={!interactive}
       className={cn(
-        "flex flex-col rounded-xl border border-slate-200 bg-white p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-200 ease-out",
+        "flex flex-col rounded-xl border border-slate-200 bg-white p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-200 ease-out dark:border-slate-800 dark:bg-slate-900 dark:shadow-none",
         interactive
-          ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
+          ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-slate-700"
           : "cursor-default",
       )}
     >
       <div className="flex items-center justify-between">
-        <span className="truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 transition-colors group-hover:text-slate-700">
+        <span className="truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
           {label}
         </span>
         <Icon
           className={cn(
             "h-3.5 w-3.5 shrink-0 transition-transform duration-200 ease-out",
-            muted ? "text-slate-400" : "text-slate-500",
+            muted ? "text-slate-400 dark:text-slate-500" : "text-slate-500 dark:text-slate-400",
             interactive && "group-hover:scale-110",
           )}
         />
       </div>
-      <p className="mt-2 font-mono text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900">
+      <p className="mt-2 font-mono text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
         {value}
       </p>
-      {sub && <p className="mt-2 truncate text-[11px] text-slate-500">{sub}</p>}
+      {sub && <p className="mt-2 truncate text-[11px] text-slate-500 dark:text-slate-400">{sub}</p>}
     </button>
   );
 }

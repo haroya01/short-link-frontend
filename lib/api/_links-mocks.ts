@@ -39,7 +39,83 @@ export function mockLinksResponse(path: string, method: string): unknown | undef
     // Weekly insights (dashboard/stats summary) — zeroed but well-formed.
     case "/api/v1/users/me/insights/week":
       return { clicks: 0, links: 0, topLinks: [], byDay: [] };
+    // Owner profile visit stats (방문자/readers + /u/<user>/stats) — a populated ProfileStats so the
+    // dashboard renders its full chart breakdown (the page errored without this, blocking dark-mode QA).
+    case "/api/v1/users/me/profile/stats":
+      return mockProfileStats();
     default:
       return undefined;
   }
+}
+
+function mockProfileStats(): unknown {
+  const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+  const base = new Date();
+  const dailyVisits = Array.from({ length: 30 }, (_, idx) => {
+    const i = 29 - idx;
+    const d = new Date(base.getTime() - i * 86_400_000);
+    return { date: d.toISOString().slice(0, 10), count: Math.round(60 + 50 * Math.abs(Math.sin(i * 0.7))) };
+  });
+  const hourVisits = Array.from({ length: 24 }, (_, h) => ({
+    hour: h,
+    count: Math.round(20 + 80 * Math.abs(Math.sin((h - 3) * 0.4))),
+  }));
+  const heatmap: { dayOfWeek: string; hour: number; count: number }[] = [];
+  for (const day of days) {
+    const weekend = day === "SATURDAY" || day === "SUNDAY" ? 0.5 : 1;
+    for (let h = 0; h < 24; h++) {
+      const c = Math.round(Math.max(0, 28 * Math.sin(h * 0.42) * weekend));
+      if (c > 0) heatmap.push({ dayOfWeek: day, hour: h, count: c });
+    }
+  }
+  return {
+    timezone: "Asia/Seoul",
+    totalVisits: 3120,
+    humanVisits: 2840,
+    botVisits: 280,
+    uniqueVisits: 1990,
+    firstVisitAt: "2026-05-01T08:12:00Z",
+    lastVisitAt: "2026-06-04T21:40:00Z",
+    peakHour: 21,
+    dailyVisits,
+    hourVisits,
+    heatmap,
+    countryVisits: [
+      { country: "KR", count: 1840 },
+      { country: "JP", count: 610 },
+      { country: "US", count: 240 },
+      { country: "DE", count: 90 },
+      { country: "GB", count: 60 },
+    ],
+    deviceVisits: [
+      { device: "mobile", count: 1720 },
+      { device: "desktop", count: 980 },
+      { device: "tablet", count: 140 },
+    ],
+    browserVisits: [
+      { browser: "Chrome", count: 1610 },
+      { browser: "Safari", count: 920 },
+      { browser: "Edge", count: 210 },
+      { browser: "Firefox", count: 100 },
+    ],
+    referrerHostVisits: [
+      { host: "", count: 1230 },
+      { host: "google.com", count: 880 },
+      { host: "x.com", count: 420 },
+      { host: "naver.com", count: 310 },
+    ],
+    sourceChannelVisits: [
+      { source: "organic", count: 1200 },
+      { source: "direct", count: 880 },
+      { source: "social", count: 760 },
+    ],
+    utmCampaignVisits: [
+      { campaign: "launch", count: 180 },
+      { campaign: "newsletter", count: 90 },
+    ],
+    utmSourceVisits: [
+      { source: "twitter", count: 160 },
+      { source: "instagram", count: 110 },
+    ],
+  };
 }

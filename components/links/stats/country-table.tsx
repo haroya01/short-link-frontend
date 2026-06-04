@@ -11,7 +11,7 @@ export function CountryTable({ data }: Props) {
   const t = useTranslations("stats");
   const locale = useLocale();
   if (data.length === 0) {
-    return <p className="py-8 text-center text-xs text-slate-500">{t("noData")}</p>;
+    return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noData")}</p>;
   }
   const total = data.reduce((a, b) => a + b.count, 0) || 1;
   // Top country pct guides the leader highlight ({@code accent-700} vs the ramp's
@@ -46,11 +46,11 @@ export function CountryTable({ data }: Props) {
                   <span className="text-base leading-none">
                     {known ? countryFlag(code) : "🌐"}
                   </span>
-                  <span className="min-w-0 truncate font-medium text-slate-900">
+                  <span className="min-w-0 truncate font-medium text-slate-900 dark:text-slate-100">
                     {known ? countryName(code, locale) : t("countryTable.unknown")}
                   </span>
                   {known && (
-                    <span className="hidden font-mono text-[11px] text-slate-500 sm:inline">
+                    <span className="hidden font-mono text-[11px] text-slate-500 dark:text-slate-400 sm:inline">
                       {code}
                     </span>
                   )}
@@ -65,7 +65,7 @@ export function CountryTable({ data }: Props) {
                     full-width mobile bar drifted away from the breakdown-list aesthetic and
                     made the /demo Audience section read as two unrelated widgets. */}
                 <div className="ml-auto flex w-[120px] items-center gap-2 sm:w-[160px]">
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div
                       className={cn(
                         "h-full rounded-full",
@@ -77,7 +77,7 @@ export function CountryTable({ data }: Props) {
                       }}
                     />
                   </div>
-                  <span className="w-9 text-right font-mono text-[11px] tabular-nums text-slate-500 sm:w-10">
+                  <span className="w-9 text-right font-mono text-[11px] tabular-nums text-slate-500 dark:text-slate-400 sm:w-10">
                     {pct}%
                   </span>
                 </div>
