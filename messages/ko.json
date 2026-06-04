@@ -175,6 +175,8 @@
     "analyticsLinkClicksAll": "글 안 링크가 만든 클릭",
     "analyticsWindowClicks": "최근 {days}일 {count}클릭",
     "analyticsPerPost": "글별 성과",
+    "analyticsTopHint": "조회 상위 글",
+    "analyticsAllInPosts": "내 글에서 전체 보기",
     "analyticsFollows": "늘어난 팔로우",
     "analyticsFollowsGained": "이 글로 늘어난 팔로우",
     "analyticsWindowFollows": "최근 {days}일 +{count}",

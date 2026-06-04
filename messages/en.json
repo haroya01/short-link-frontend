@@ -175,6 +175,8 @@
     "analyticsLinkClicksAll": "Clicks from your post links",
     "analyticsWindowClicks": "{count} clicks in {days}d",
     "analyticsPerPost": "Per-post",
+    "analyticsTopHint": "Top posts by views",
+    "analyticsAllInPosts": "See all in My posts",
     "analyticsFollows": "Follows gained",
     "analyticsFollowsGained": "Follows from this post",
     "analyticsWindowFollows": "+{count} in {days}d",

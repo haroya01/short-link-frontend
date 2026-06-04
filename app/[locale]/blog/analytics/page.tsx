@@ -90,7 +90,22 @@ export default function BlogAnalyticsPage() {
 
           {data.topPosts.length > 0 && (
             <section className="mt-8">
-              <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsPerPost")}</h2>
+              <div className="mb-3 flex items-baseline justify-between gap-3">
+                <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                  {t("analyticsPerPost")}
+                  <span className="ml-2 text-[12px] font-normal text-slate-400 dark:text-slate-500">
+                    {t("analyticsTopHint")}
+                  </span>
+                </h2>
+                {/* The full per-post list is the 내 글 hub — keeps this preview bounded for authors
+                    with many posts. */}
+                <a
+                  href="/write"
+                  className="focus-ring shrink-0 rounded text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+                >
+                  {t("analyticsAllInPosts")}
+                </a>
+              </div>
               <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {data.topPosts.map((p, i) => (
                   <li key={p.postId}>
