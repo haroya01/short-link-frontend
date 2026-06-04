@@ -1,7 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Check, ChevronDown, Globe, LogIn, LogOut, Newspaper, User } from "lucide-react";
+import {
+  ArrowUpRight,
+  Check,
+  ChevronDown,
+  FileText,
+  Globe,
+  Inbox,
+  Link2,
+  LogIn,
+  LogOut,
+  Newspaper,
+  Settings,
+  Sparkles,
+  User,
+  Webhook,
+} from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
@@ -23,6 +38,7 @@ const ITEM =
  */
 export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("nav");
+  const tBlog = useTranslations("sidebar.blog");
   const tLang = useTranslations("languageSwitcher");
   const locale = useLocale();
   const router = useRouter();
@@ -96,6 +112,35 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             <a href={linksHref(`/${locale}/u/${username}`)} className={ITEM}>
               <User className="h-5 w-5 text-slate-500" />
               {t("profile")}
+            </a>
+
+            {/* Author workspace — the desktop sidebar's entries, which mobile otherwise can't reach
+                (the bottom nav only has 홈/검색/글쓰기/계정). 분석은 별도 항목이 아니라 글의 facet 이라
+                여기서도 빼고, 내 글(/write) 상단 요약 strip·글별 성과로 들어간다(#602). */}
+            <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+            <a href={blogHref("/write")} className={ITEM}>
+              <FileText className="h-5 w-5 text-slate-500" />
+              {tBlog("myPosts")}
+            </a>
+            <a href={blogHref("/leads")} className={ITEM}>
+              <Inbox className="h-5 w-5 text-slate-500" />
+              {tBlog("leads")}
+            </a>
+            <a href={blogHref("/links")} className={ITEM}>
+              <Link2 className="h-5 w-5 text-slate-500" />
+              {tBlog("links")}
+            </a>
+            <a href={blogHref("/curation")} className={ITEM}>
+              <Sparkles className="h-5 w-5 text-slate-500" />
+              {tBlog("curation")}
+            </a>
+            <a href={blogHref("/webhooks")} className={ITEM}>
+              <Webhook className="h-5 w-5 text-slate-500" />
+              {tBlog("webhooks")}
+            </a>
+            <a href={blogHref("/settings")} className={ITEM}>
+              <Settings className="h-5 w-5 text-slate-500" />
+              {t("settings")}
             </a>
           </>
         )}
