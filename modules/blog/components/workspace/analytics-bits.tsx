@@ -26,9 +26,10 @@ export function StatCard({
   );
 }
 
-const WINDOWS = [7, 30, 90] as const;
+// 0 = all-time ("전체"); the backend reads days<=0 as the lifetime window.
+const WINDOWS = [7, 30, 0] as const;
 
-/** 7 / 30 / 90-day window switcher shared by the overview + per-post analytics pages. */
+/** 7 / 30 / 전체 window switcher shared by the overview + per-post analytics pages. */
 export function WindowTabs({ days, onChange }: { days: number; onChange: (d: number) => void }) {
   const t = useTranslations("blogWorkspace");
   return (
@@ -45,7 +46,7 @@ export function WindowTabs({ days, onChange }: { days: number; onChange: (d: num
               : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
           }`}
         >
-          {t("analyticsDays", { days: d })}
+          {d === 0 ? t("analyticsAll") : t("analyticsDays", { days: d })}
         </button>
       ))}
     </div>
