@@ -53,7 +53,6 @@ const SCREENS: { name: string; path: string }[] = [
   { name: "blog · analytics", path: "/ko/blog/analytics" },
   { name: "blog · drafts", path: "/ko/blog/drafts" },
   { name: "blog · leads", path: "/ko/blog/leads" },
-  { name: "blog · readers", path: "/ko/blog/readers" },
   { name: "blog · curation", path: "/ko/blog/curation" },
   { name: "blog · settings", path: "/ko/blog/settings" },
   { name: "blog · tags", path: "/ko/blog/tags" },

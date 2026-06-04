@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft, Eye, Heart, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Eye, Heart, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { getPostAnalytics, getPostStats, type PostAnalytics } from "@/modules/blog/api/analytics";
+import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
 import { ProfileStatsDashboard } from "@/modules/profile/components/stats-dashboard";
@@ -21,6 +22,7 @@ export default function PostAnalyticsPage() {
   const [data, setData] = useState<PostAnalytics | null>(null);
   const [deep, setDeep] = useState<ProfileStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [siblings, setSiblings] = useState<PostView[] | null>(null);
 
   useEffect(() => {
     if (!ready || !authenticated || !Number.isFinite(postId)) return;
@@ -36,6 +38,25 @@ export default function PostAnalyticsPage() {
       .catch(() => setDeep(null));
   }, [ready, authenticated, postId, days]);
 
+  // Sibling published posts (newest first) power the prev/next 글 switcher — flip straight to the next
+  // post's readers without bouncing back to the overview. Window-independent, so it loads once.
+  useEffect(() => {
+    if (!ready || !authenticated) return;
+    listMyPosts()
+      .then((all) =>
+        setSiblings(
+          all
+            .filter((p) => p.status === "PUBLISHED")
+            .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "")),
+        ),
+      )
+      .catch(() => setSiblings([]));
+  }, [ready, authenticated]);
+
+  const idx = siblings?.findIndex((p) => p.id === postId) ?? -1;
+  const prevPost = idx > 0 ? siblings![idx - 1] : null;
+  const nextPost = siblings && idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null;
+
   if (!ready) return null;
   if (!authenticated) {
     return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
@@ -50,6 +71,36 @@ export default function PostAnalyticsPage() {
         <ArrowLeft className="h-4 w-4" />
         {t("analyticsTitle")}
       </a>
+
+      {/* Prev/next 글 switcher — absorbs the old 독자 picker: flip between posts' readers in place. */}
+      {(prevPost || nextPost) && (
+        <nav className="mt-4 flex items-center justify-between gap-3 text-[13px] font-medium">
+          {prevPost ? (
+            <a
+              href={`/analytics/${prevPost.id}`}
+              aria-label={`${t("analyticsPrevPost")}: ${prevPost.title || prevPost.slug}`}
+              className="focus-ring inline-flex min-w-0 max-w-[45%] items-center gap-1.5 rounded text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
+            >
+              <ChevronLeft className="h-4 w-4 shrink-0" />
+              <span className="truncate">{prevPost.title || prevPost.slug}</span>
+            </a>
+          ) : (
+            <span />
+          )}
+          {nextPost ? (
+            <a
+              href={`/analytics/${nextPost.id}`}
+              aria-label={`${t("analyticsNextPost")}: ${nextPost.title || nextPost.slug}`}
+              className="focus-ring inline-flex min-w-0 max-w-[45%] items-center gap-1.5 rounded text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
+            >
+              <span className="truncate">{nextPost.title || nextPost.slug}</span>
+              <ChevronRight className="h-4 w-4 shrink-0" />
+            </a>
+          ) : (
+            <span />
+          )}
+        </nav>
+      )}
 
       {loading && !data ? (
         <div className="mt-6">
