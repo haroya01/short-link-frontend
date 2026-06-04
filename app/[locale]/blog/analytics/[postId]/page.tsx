@@ -121,7 +121,7 @@ export default function PostAnalyticsPage() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatCard icon={<TrendingUp className="h-4 w-4" />} label={t("analyticsWindowViews", { days })} value={data.windowViews} />
+            <StatCard icon={<TrendingUp className="h-4 w-4" />} label={days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })} value={data.windowViews} />
             <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
             <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
             <StatCard icon={<UserPlus className="h-4 w-4" />} label={t("analyticsFollowsGained")} value={data.lifetimeFollows} />
@@ -134,7 +134,9 @@ export default function PostAnalyticsPage() {
                 <span className="text-[13px] font-semibold">{t("analyticsLinkClicks")}</span>
               </div>
               <p className="mt-0.5 text-[12px] text-accent-700/70 dark:text-accent-300/70">
-                {t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
+                {days === 0
+                  ? t("analyticsAllClicks", { count: data.windowLinkClicks })
+                  : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
               </p>
             </div>
             <span className="text-2xl font-bold tracking-tight text-accent-700 dark:text-accent-300">

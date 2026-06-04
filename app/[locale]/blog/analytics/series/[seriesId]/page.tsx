@@ -1,20 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, FileText, Heart, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { getSeriesStats } from "@/modules/blog/api/analytics";
+import {
+  getSeriesDetail,
+  getSeriesStats,
+  type SeriesAnalyticsDetail,
+} from "@/modules/blog/api/analytics";
 import { getSeries } from "@/modules/blog/api/series";
+import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
+import { StatCard } from "@/modules/blog/components/workspace/analytics-bits";
 import { ProfileStatsDashboard } from "@/modules/profile/components/stats-dashboard";
 import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
 import type { ProfileStats } from "@/types";
 
 /**
- * Deep per-series reader analytics — the same dimensional breakdown as the profile-visit dashboard,
- * aggregated across the series' member posts. Reuses {@link ProfileStatsDashboard}. Data comes from
- * {@code getSeriesStats} (backend {@code GET /api/v1/series/{id}/stats}, mock-backed until shipped).
+ * Per-series analytics — the subscriber trend (구독자 추이) + headline metrics on top, then the deep
+ * reader breakdown (ProfileStatsDashboard) aggregated across the series' member posts. Subscriber
+ * data comes from {@code getSeriesDetail}; reader stats from {@code getSeriesStats}.
  */
 export default function SeriesAnalyticsPage() {
   const t = useTranslations("blogWorkspace");
@@ -23,16 +29,24 @@ export default function SeriesAnalyticsPage() {
   const seriesId = Number(params.seriesId);
   const { ready, authenticated } = useAuth();
   const [title, setTitle] = useState("");
+  const [detail, setDetail] = useState<SeriesAnalyticsDetail | null>(null);
   const [data, setData] = useState<ProfileStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!ready || !authenticated || !Number.isFinite(seriesId)) return;
     setLoading(true);
+    // All-time subscriber trend (days=0) — the most meaningful "구독자가 이렇게 늘었다" view.
+    getSeriesDetail(seriesId, 0)
+      .then((d) => {
+        setDetail(d);
+        if (d.series.title) setTitle(d.series.title);
+      })
+      .catch(() => setDetail(null))
+      .finally(() => setLoading(false));
     getSeriesStats(seriesId)
       .then(setData)
-      .catch(() => setData(null))
-      .finally(() => setLoading(false));
+      .catch(() => setData(null));
     getSeries(seriesId)
       .then((d) => setTitle(d.series.title))
       .catch(() => {});
@@ -60,19 +74,43 @@ export default function SeriesAnalyticsPage() {
         {title ? t("seriesAnalyticsTitle", { title }) : t("analyticsTitle")}
       </h1>
 
-      {loading && !data ? (
+      {loading && !detail ? (
         <div className="mt-6">
           <SkeletonStatCards />
           <div className="mt-8">
             <SkeletonRows count={4} />
           </div>
         </div>
-      ) : !data ? (
-        <p className="mt-6 text-sm text-slate-400 dark:text-slate-500">{t("analyticsEmpty")}</p>
       ) : (
-        <div className="mt-6">
-          <ProfileStatsDashboard data={data} />
-        </div>
+        <>
+          {detail && (
+            <>
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <StatCard icon={<Users className="h-4 w-4" />} label={t("analyticsSubscribers")} value={detail.series.subscriberCount} />
+                <StatCard icon={<FileText className="h-4 w-4" />} label={t("analyticsPosts")} value={detail.series.postCount} />
+                <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={detail.series.totalViews} />
+                <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={detail.series.totalLikes} />
+              </div>
+
+              {/* 구독자 추이 — 현재까지 유지중인 구독자가 시간에 따라 누적된 곡선. */}
+              <section className="mt-8 rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
+                <h2 className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                  <Users className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                  {t("analyticsSubscriberTrend")}
+                </h2>
+                <AnalyticsAreaChart data={detail.subscriberDaily} />
+              </section>
+            </>
+          )}
+
+          {/* 독자 분석 — 시리즈 멤버 글 전반의 reader 차원 분해. */}
+          {data && (
+            <div className="mt-8">
+              <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsReaders")}</h2>
+              <ProfileStatsDashboard data={data} />
+            </div>
+          )}
+        </>
       )}
     </main>
   );
