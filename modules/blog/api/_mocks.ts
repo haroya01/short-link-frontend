@@ -298,6 +298,11 @@ export function mockDiscoverSeries(limit = 6): PublicSeriesCard[] {
   return MOCK_DISCOVER_SERIES.slice(0, limit);
 }
 
+/** Subscribed series for the home "시리즈" tab — a couple of the discover series as if subscribed. */
+export function mockSubscribedSeries(): PublicSeriesCard[] {
+  return MOCK_DISCOVER_SERIES.slice(0, 2);
+}
+
 export function mockTrendingByTag(tagLimit = 6, perTag = 8): TrendingTagSection[] {
   const byTag = new Map<string, PublicFeedItem[]>();
   for (const item of ALL_ITEMS) {

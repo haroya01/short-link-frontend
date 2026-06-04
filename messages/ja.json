@@ -13,6 +13,10 @@
   },
   "publicFeed": {
     "recent": "最新",
+    "seriesTab": "シリーズ",
+    "seriesTabEmpty": "購読中のシリーズがありません。シリーズを購読すると最新がここに出ます。",
+    "seriesTabSignedOut": "購読中のシリーズの最新をまとめて。",
+    "seriesTabSignIn": "ログイン",
     "trending": "人気",
     "empty": "まだ公開された記事はありません。",
     "write": "投稿する",
