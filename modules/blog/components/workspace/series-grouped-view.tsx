@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, ChevronUp, FileText, Pencil, Plus, Search, Trash2, X } from "lucide-react";
+import { BarChart3, ChevronDown, ChevronUp, FileText, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import {
   createSeries,
   deleteSeries,
@@ -24,6 +24,8 @@ import { SkeletonRows } from "@/modules/blog/components/skeleton";
  */
 export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
   const t = useTranslations("blogWorkspace");
+  // Per-series deep analytics lives at the sibling /analytics/series/{id} route.
+  const analyticsBase = writeBase.replace(/\/write$/, "/analytics");
   const [series, setSeries] = useState<SeriesView[]>([]);
   const [posts, setPosts] = useState<PostView[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -267,6 +269,14 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                   {t("postCount", { count: members.length })}
                 </span>
                 <span className="flex shrink-0 items-center gap-0.5">
+                  <a
+                    href={`${analyticsBase}/series/${s.id}`}
+                    aria-label={t("seriesAnalytics")}
+                    title={t("seriesAnalytics")}
+                    className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-accent-300"
+                  >
+                    <BarChart3 className="h-4 w-4" />
+                  </a>
                   <button
                     type="button"
                     onClick={() => startRename(s)}

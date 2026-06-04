@@ -5,10 +5,12 @@ import { ArrowLeft, Eye, Heart, MousePointerClick, TrendingUp } from "lucide-rea
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { getPostAnalytics, type PostAnalytics } from "@/modules/blog/api/analytics";
+import { getPostAnalytics, getPostStats, type PostAnalytics } from "@/modules/blog/api/analytics";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
+import { ProfileStatsDashboard } from "@/modules/profile/components/stats-dashboard";
 import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
+import type { ProfileStats } from "@/types";
 
 export default function PostAnalyticsPage() {
   const t = useTranslations("blogWorkspace");
@@ -17,6 +19,7 @@ export default function PostAnalyticsPage() {
   const { ready, authenticated } = useAuth();
   const [days, setDays] = useState(30);
   const [data, setData] = useState<PostAnalytics | null>(null);
+  const [deep, setDeep] = useState<ProfileStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,6 +29,11 @@ export default function PostAnalyticsPage() {
       .then(setData)
       .catch(() => setData(null))
       .finally(() => setLoading(false));
+    // Deep reader breakdown (countries · devices · referrers · UTM · heatmap) — same depth as the
+    // profile-visit dashboard, scoped to this post. Loads independently so the light header isn't gated.
+    getPostStats(postId, days)
+      .then(setDeep)
+      .catch(() => setDeep(null));
   }, [ready, authenticated, postId, days]);
 
   if (!ready) return null;
@@ -86,6 +94,14 @@ export default function PostAnalyticsPage() {
             <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsOverTime")}</h2>
             <AnalyticsAreaChart data={data.daily} />
           </section>
+
+          {/* Deep reader breakdown — short-link-stats depth, scoped to this post. */}
+          {deep && (
+            <div className="mt-8">
+              <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsReaders")}</h2>
+              <ProfileStatsDashboard data={deep} />
+            </div>
+          )}
         </>
       )}
     </main>
