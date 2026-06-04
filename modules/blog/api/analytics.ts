@@ -29,7 +29,16 @@ export interface AuthorAnalyticsOverview {
   lifetimeFollows: number;
   windowFollows: number;
   daily: DailyPoint[];
-  topPosts: TopPost[];
+}
+
+/** Sort dimension for the per-post performance table (post-column metrics only). */
+export type PostPerformanceSort = "views" | "likes" | "recent";
+
+/** One page of the per-post performance table — drives the infinite-scroll list. */
+export interface PostPerformancePage {
+  items: TopPost[];
+  page: number;
+  hasNext: boolean;
 }
 
 /** Clicks one in-post kurl link drove — the per-link breakdown of "이 글이 만든 클릭". */
@@ -71,6 +80,19 @@ export function getPostAnalytics(id: number, days = 30): Promise<PostAnalytics> 
   return request<PostAnalytics>(`/api/v1/posts/${id}/analytics?days=${days}`, { method: "GET" });
 }
 
+/** Paginated per-post performance — the overview's infinite-scroll list. Sort: views|likes|recent. */
+export function getPostPerformance(
+  page = 0,
+  size = 20,
+  sort: PostPerformanceSort = "views",
+): Promise<PostPerformancePage> {
+  if (USE_MOCKS) return Promise.resolve(mockPerformance(page, size, sort));
+  return request<PostPerformancePage>(
+    `/api/v1/posts/analytics/posts?page=${page}&size=${size}&sort=${sort}`,
+    { method: "GET" },
+  );
+}
+
 /**
  * Deep per-post read stats — the same dimensional breakdown as the profile-visit dashboard
  * (countries · devices · browsers · referrers · channels · UTM · hour heatmap · daily), but scoped
@@ -110,6 +132,9 @@ const MOCK_TOP: TopPost[] = [
   { postId: 3, slug: "naming-is-hard", title: "리팩터링: 이름 짓기에 하루를 쓰는 이유", viewCount: 612, likeCount: 44, followsGained: 12 },
   { postId: 4, slug: "side-project-pricing", title: "1인 개발자의 가격 정책 실험", viewCount: 428, likeCount: 88, followsGained: 29 },
   { postId: 5, slug: "coffee-routine", title: "커피 한 잔의 루틴, 생산성에 대하여", viewCount: 211, likeCount: 25, followsGained: 4 },
+  { postId: 6, slug: "docker-compose-prod", title: "작은 EC2에 docker compose로 배포하기", viewCount: 188, likeCount: 18, followsGained: 7 },
+  { postId: 7, slug: "rotating-refresh-tokens", title: "리프레시 토큰 회전, 로그아웃 폭탄을 피하는 법", viewCount: 156, likeCount: 21, followsGained: 9 },
+  { postId: 8, slug: "webhook-design", title: "웹훅을 설계하며 배운 것 (서명·재시도·자동 비활성화)", viewCount: 97, likeCount: 11, followsGained: 3 },
 ];
 
 function mockOverview(days: number): AuthorAnalyticsOverview {
@@ -126,8 +151,38 @@ function mockOverview(days: number): AuthorAnalyticsOverview {
     lifetimeFollows: MOCK_TOP.reduce((s, p) => s + p.followsGained, 0),
     windowFollows: 18,
     daily,
-    topPosts: MOCK_TOP,
   };
+}
+
+// A bigger synthetic corpus so the infinite-scroll list pages past the first screen in dev.
+const MOCK_PERFORMANCE: TopPost[] = Array.from({ length: 47 }, (_, i) =>
+  i < MOCK_TOP.length
+    ? MOCK_TOP[i]
+    : {
+        postId: 100 + i,
+        slug: `post-${100 + i}`,
+        title: `글 ${i + 1} — 예시 게시글`,
+        viewCount: Math.max(1, 90 - i),
+        likeCount: Math.max(0, 12 - (i % 13)),
+        followsGained: Math.max(0, 6 - (i % 7)),
+      },
+);
+
+function mockPerformance(
+  page: number,
+  size: number,
+  sort: PostPerformanceSort,
+): PostPerformancePage {
+  const sorted = [...MOCK_PERFORMANCE].sort((a, b) =>
+    sort === "likes"
+      ? b.likeCount - a.likeCount
+      : sort === "recent"
+        ? b.postId - a.postId // postId stands in for recency in the mock corpus
+        : b.viewCount - a.viewCount,
+  );
+  const start = page * size;
+  const items = sorted.slice(start, start + size);
+  return { items, page, hasNext: start + size < sorted.length };
 }
 
 function mockPostAnalytics(id: number, days: number): PostAnalytics {
