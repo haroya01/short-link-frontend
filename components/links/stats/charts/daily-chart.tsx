@@ -22,7 +22,7 @@ export function DailyChart({ data }: Props) {
   // Desktop keeps the original tighter offset because the wider parent absorbs the axis cleanly.
   const isMobile = useIsMobile();
   if (data.length === 0) {
-    return <p className="py-12 text-center text-xs text-slate-500">{t("noClicks")}</p>;
+    return <p className="py-12 text-center text-xs text-slate-500 dark:text-slate-400">{t("noClicks")}</p>;
   }
   return (
     <div className="h-72 w-full">
@@ -37,7 +37,7 @@ export function DailyChart({ data }: Props) {
               <stop offset="100%" stopColor="#059669" stopOpacity={0.02} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
           <XAxis
             dataKey="date"
             tick={{ fontSize: 10, fill: "#94a3b8" }}
@@ -57,11 +57,15 @@ export function DailyChart({ data }: Props) {
             cursor={{ stroke: "#059669", strokeWidth: 1, strokeDasharray: "3 3" }}
             contentStyle={{
               borderRadius: 12,
-              border: "1px solid #e2e8f0",
+              border: "1px solid var(--chart-tooltip-border)",
+              backgroundColor: "var(--chart-tooltip-bg)",
+              color: "var(--chart-tooltip-text)",
               fontSize: 12,
               boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
               padding: "8px 12px",
             }}
+            itemStyle={{ color: "var(--chart-tooltip-text)" }}
+            labelStyle={{ color: "var(--chart-tooltip-text)" }}
             formatter={(value) => [t("clickCount", { count: String(value) }), t("countryTable.clicks")]}
             labelFormatter={(label: string) => label}
           />

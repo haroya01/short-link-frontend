@@ -224,7 +224,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
           className="mark-hoverable overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800"
         >
           <header className="flex items-center gap-3 px-4 py-3.5">
-            <Mark animated className="h-3 w-auto shrink-0 text-accent-500 dark:text-accent-400" />
+            <Mark animated className="mark-draw-in h-3.5 w-auto shrink-0 text-accent-600 dark:text-accent-400" />
             {renaming === s.id ? (
               <span className="flex flex-1 items-center gap-2">
                 <input

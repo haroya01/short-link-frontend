@@ -40,27 +40,27 @@ export function Section({
         // (e.g. the 640px-wide {@code Heatmap}) propagates its min-content up to the parent
         // grid track, and on viewports narrower than 640px the body ends up wider than the
         // viewport → horizontal page scroll, huge right-side gutter. Issue #222.
-        "min-w-0 rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] scroll-mt-20",
+        "min-w-0 rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] scroll-mt-20 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none",
         className,
       )}
     >
-      <header className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4">
+      <header className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4 dark:border-slate-800">
         <div className="min-w-0 flex-1">
           {eyebrow && (
-            <p className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-tagline text-accent-700">
+            <p className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-tagline text-accent-700 dark:text-accent-400">
               {eyebrow}
             </p>
           )}
-          <h3 className="text-[15px] font-semibold tracking-headline text-slate-900">{title}</h3>
+          <h3 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">{title}</h3>
           {description && (
-            <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{description}</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{description}</p>
           )}
         </div>
         {action && <div className="shrink-0">{action}</div>}
       </header>
       <div className={cn("min-w-0 px-5 py-5", bodyClassName)}>{children}</div>
       {footnote && (
-        <footer className="border-t border-slate-100 px-5 py-3 text-[11px] text-slate-500">
+        <footer className="border-t border-slate-100 px-5 py-3 text-[11px] text-slate-500 dark:border-slate-800 dark:text-slate-400">
           {footnote}
         </footer>
       )}
