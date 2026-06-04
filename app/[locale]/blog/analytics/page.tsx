@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, Eye, Heart, FileText, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
   getAuthorAnalyticsOverview,
+  getPostPerformance,
   type AuthorAnalyticsOverview,
+  type TopPost,
 } from "@/modules/blog/api/analytics";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
@@ -88,60 +90,103 @@ export default function BlogAnalyticsPage() {
             <AnalyticsAreaChart data={data.daily} />
           </section>
 
-          {data.topPosts.length > 0 && (
-            <section className="mt-8">
-              <div className="mb-3 flex items-baseline justify-between gap-3">
-                <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-                  {t("analyticsPerPost")}
-                  <span className="ml-2 text-[12px] font-normal text-slate-400 dark:text-slate-500">
-                    {t("analyticsTopHint")}
-                  </span>
-                </h2>
-                {/* The full per-post list is the 내 글 hub — keeps this preview bounded for authors
-                    with many posts. */}
-                <a
-                  href="/write"
-                  className="focus-ring shrink-0 rounded text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
-                >
-                  {t("analyticsAllInPosts")}
-                </a>
-              </div>
-              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-                {data.topPosts.map((p, i) => (
-                  <li key={p.postId}>
-                    <a
-                      href={`/analytics/${p.postId}`}
-                      className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                    >
-                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-500">
-                        {i + 1}
-                      </span>
-                      <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
-                        {p.title || p.slug}
-                      </span>
-                      <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-400 dark:text-slate-500">
-                        <span className="inline-flex items-center gap-1">
-                          <Eye className="h-3.5 w-3.5" />
-                          {p.viewCount.toLocaleString()}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                          <Heart className="h-3.5 w-3.5" />
-                          {p.likeCount.toLocaleString()}
-                        </span>
-                        {/* 이 글로 늘어난 팔로우 — 브랜드 그린으로, 단순 트래픽이 아니라 '구독으로 이어진' 신호임을 강조. */}
-                        <span className="inline-flex items-center gap-1 text-accent-600 dark:text-accent-400">
-                          <UserPlus className="h-3.5 w-3.5" />
-                          {p.followsGained.toLocaleString()}
-                        </span>
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+          {/* Every post, views-first, lazy-loaded — so a few hundred posts don't all arrive at once. */}
+          {data.totalPosts > 0 && <PostPerformanceList />}
         </>
       )}
     </main>
+  );
+}
+
+/** Per-post performance, ordered by views, appended page-by-page as the reader nears the end. */
+function PostPerformanceList() {
+  const t = useTranslations("blogWorkspace");
+  const [items, setItems] = useState<TopPost[]>([]);
+  const [page, setPage] = useState(0);
+  const [hasNext, setHasNext] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  const loadMore = useCallback(async () => {
+    if (loading || !hasNext) return;
+    setLoading(true);
+    try {
+      const res = await getPostPerformance(page, 20);
+      setItems((prev) => [...prev, ...res.items]);
+      setHasNext(res.hasNext);
+      setPage((p) => p + 1);
+    } catch {
+      setHasNext(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, hasNext, page]);
+
+  // First page on mount.
+  useEffect(() => {
+    void loadMore();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Append subsequent pages when the sentinel scrolls into view.
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) void loadMore();
+      },
+      { rootMargin: "400px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loadMore]);
+
+  if (items.length === 0 && loading) {
+    return (
+      <section className="mt-8">
+        <SkeletonRows count={5} />
+      </section>
+    );
+  }
+  if (items.length === 0) return null;
+
+  return (
+    <section className="mt-8">
+      <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsPerPost")}</h2>
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+        {items.map((p) => (
+          <li key={p.postId}>
+            <a
+              href={`/analytics/${p.postId}`}
+              className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+            >
+              <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
+                {p.title || p.slug}
+              </span>
+              <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-400 dark:text-slate-500">
+                <span className="inline-flex items-center gap-1">
+                  <Eye className="h-3.5 w-3.5" />
+                  {p.viewCount.toLocaleString()}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Heart className="h-3.5 w-3.5" />
+                  {p.likeCount.toLocaleString()}
+                </span>
+                {/* 이 글로 늘어난 팔로우 — 브랜드 그린으로, 단순 트래픽이 아니라 '구독으로 이어진' 신호임을 강조. */}
+                <span className="inline-flex items-center gap-1 text-accent-600 dark:text-accent-400">
+                  <UserPlus className="h-3.5 w-3.5" />
+                  {p.followsGained.toLocaleString()}
+                </span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div ref={sentinelRef} aria-hidden className="h-px" />
+      {loading && items.length > 0 && (
+        <p className="py-4 text-center text-[12px] text-slate-400 dark:text-slate-500">···</p>
+      )}
+    </section>
   );
 }

@@ -175,8 +175,6 @@
     "analyticsLinkClicksAll": "記事内リンクが生んだクリック",
     "analyticsWindowClicks": "直近{days}日で{count}クリック",
     "analyticsPerPost": "記事別の成果",
-    "analyticsTopHint": "ビュー上位の記事",
-    "analyticsAllInPosts": "投稿一覧で全て見る",
     "analyticsFollows": "増えたフォロー",
     "analyticsFollowsGained": "この記事で増えたフォロー",
     "analyticsWindowFollows": "直近{days}日 +{count}",

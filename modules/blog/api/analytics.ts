@@ -29,7 +29,13 @@ export interface AuthorAnalyticsOverview {
   lifetimeFollows: number;
   windowFollows: number;
   daily: DailyPoint[];
-  topPosts: TopPost[];
+}
+
+/** One page of the per-post performance table (ordered by views) — drives the infinite-scroll list. */
+export interface PostPerformancePage {
+  items: TopPost[];
+  page: number;
+  hasNext: boolean;
 }
 
 export interface PostAnalytics {
@@ -60,6 +66,14 @@ export function getAuthorAnalyticsOverview(days = 30): Promise<AuthorAnalyticsOv
 export function getPostAnalytics(id: number, days = 30): Promise<PostAnalytics> {
   if (USE_MOCKS) return Promise.resolve(mockPostAnalytics(id, days));
   return request<PostAnalytics>(`/api/v1/posts/${id}/analytics?days=${days}`, { method: "GET" });
+}
+
+/** Paginated per-post performance, ordered by views — the overview's infinite-scroll list. */
+export function getPostPerformance(page = 0, size = 20): Promise<PostPerformancePage> {
+  if (USE_MOCKS) return Promise.resolve(mockPerformance(page, size));
+  return request<PostPerformancePage>(`/api/v1/posts/analytics/posts?page=${page}&size=${size}`, {
+    method: "GET",
+  });
 }
 
 /**
@@ -120,8 +134,27 @@ function mockOverview(days: number): AuthorAnalyticsOverview {
     lifetimeFollows: MOCK_TOP.reduce((s, p) => s + p.followsGained, 0),
     windowFollows: 18,
     daily,
-    topPosts: MOCK_TOP,
   };
+}
+
+// A bigger synthetic corpus so the infinite-scroll list pages past the first screen in dev.
+const MOCK_PERFORMANCE: TopPost[] = Array.from({ length: 47 }, (_, i) =>
+  i < MOCK_TOP.length
+    ? MOCK_TOP[i]
+    : {
+        postId: 100 + i,
+        slug: `post-${100 + i}`,
+        title: `글 ${i + 1} — 예시 게시글`,
+        viewCount: Math.max(1, 90 - i),
+        likeCount: Math.max(0, 12 - (i % 13)),
+        followsGained: Math.max(0, 6 - (i % 7)),
+      },
+);
+
+function mockPerformance(page: number, size: number): PostPerformancePage {
+  const start = page * size;
+  const items = MOCK_PERFORMANCE.slice(start, start + size);
+  return { items, page, hasNext: start + size < MOCK_PERFORMANCE.length };
 }
 
 function mockPostAnalytics(id: number, days: number): PostAnalytics {
