@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Eye, FileText, Heart, Layers, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
+import { blogPath } from "@/lib/host";
 import {
   getAuthorAnalyticsOverview,
   getPostPerformance,
@@ -191,8 +193,8 @@ function PostPerformanceList() {
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
         {items.map((p) => (
           <li key={p.postId}>
-            <a
-              href={`/analytics/${p.postId}`}
+            <Link
+              href={blogPath(`/analytics/${p.postId}`)}
               className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
               <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
@@ -213,7 +215,7 @@ function PostPerformanceList() {
                   {p.followsGained.toLocaleString()}
                 </span>
               </span>
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -248,8 +250,8 @@ function SeriesAnalyticsSection() {
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
         {rows.map((s) => (
           <li key={s.seriesId}>
-            <a
-              href={`/analytics/series/${s.seriesId}`}
+            <Link
+              href={blogPath(`/analytics/series/${s.seriesId}`)}
               className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
               <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
@@ -274,7 +276,7 @@ function SeriesAnalyticsSection() {
                   {s.totalLikes.toLocaleString()}
                 </span>
               </span>
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

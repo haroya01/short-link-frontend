@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ExternalLink, MousePointerClick } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
-import { linksHref } from "@/lib/host";
+import { blogPath, linksHref } from "@/lib/host";
 import { listMyPosts } from "@/modules/blog/api/posts";
 import {
   getAuthorAnalyticsOverview,
@@ -126,8 +127,8 @@ export default function BlogLinksPage() {
               <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {rows.map((r, i) => (
                   <li key={r.postId}>
-                    <a
-                      href={`/analytics/${r.postId}`}
+                    <Link
+                      href={blogPath(`/analytics/${r.postId}`)}
                       className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
                     >
                       <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-500">
@@ -145,7 +146,7 @@ export default function BlogLinksPage() {
                         <MousePointerClick className="h-3.5 w-3.5" />
                         {r.lifetimeClicks.toLocaleString()}
                       </span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
