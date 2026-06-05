@@ -231,15 +231,15 @@ function CommentRow({
         {/* Avatar + @handle link to the commenter's profile (cross-host on prod). */}
         <a
           href={profileHref ?? "#"}
-          className={`group/author flex items-center gap-2 rounded focus-ring ${hasAuthor ? "" : "pointer-events-none"}`}
+          className={`group/author flex min-w-0 items-center gap-2 rounded focus-ring ${hasAuthor ? "" : "pointer-events-none"}`}
           aria-disabled={!hasAuthor}
         >
           <Avatar src={comment.author?.avatarUrl} name={username} size="sm" shrink={false} />
-          <span className="text-sm font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
+          <span className="truncate text-sm font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
             @{username}
           </span>
         </a>
-        <span className="text-[12px] text-slate-500 dark:text-slate-400">{fmt(comment.createdAt)}</span>
+        <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">{fmt(comment.createdAt)}</span>
         {canDelete && (
           <button
             type="button"
