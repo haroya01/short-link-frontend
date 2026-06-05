@@ -150,6 +150,7 @@
     "seriesRenameSave": "保存",
     "seriesNoneGroup": "シリーズなし",
     "seriesAddPost": "記事を追加",
+    "seriesAddSelected": "{count}件追加",
     "seriesRemoveFromSeries": "シリーズから外す",
     "seriesPickerSearch": "タイトルで記事を検索",
     "seriesPickerEmpty": "追加できる記事がありません。",
