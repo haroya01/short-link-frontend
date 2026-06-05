@@ -8,7 +8,7 @@ import { Link } from "@/i18n/navigation";
 /**
  * Floating "edit" button shown on a public profile page when the visitor is the owner. The
  * profile page is intentionally chrome-less (no global nav) so visitors see a clean bio link —
- * but that leaves the owner without a path back to /profile/edit. This restores it without
+ * but that leaves the owner without a path back to /settings/profile. This restores it without
  * breaking the chrome-less feel: only the owner sees it, and only on their own page.
  */
 export function ProfileOwnerFab({ username }: { username: string }) {
