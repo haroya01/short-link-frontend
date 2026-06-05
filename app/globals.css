@@ -437,7 +437,7 @@ h1, h2, h3, p {
   /*
    * Long-form reading typography for the public blog post body. Distinct from .prose-text-block:
    * that one is tuned small for a card-sized markdown block inside the profile feed; this one is a
-   * full article column (max-w-2xl) and leans editorial — 17px body, 1.85 leading, generous block
+   * full article column (max-w-2xl) and leans editorial — 18px body, 1.55 leading, generous block
    * rhythm, accent-green links. We render each post block as a discrete semantic element under this
    * wrapper, so element selectors here carry the styling rather than @tailwindcss/typography (which
    * the project deliberately doesn't pull in — one custom surface doesn't justify the plugin).
@@ -1245,7 +1245,7 @@ body[data-cookie-consent="visible"] {
 
 /* ── Tiptap post editor content ──────────────────────────────────────────────────────────────
    Editable typography for the Tiptap body editor. Mirrors the published `.prose-post` reading look
-   (17px / 1.85 / slate-700) so what you write matches what ships; the code block is a CodeMirror
+   (18px / 1.55 / slate-700) so what you write matches what ships; the code block is a CodeMirror
    node (codemirror-block.ts) that styles itself. Dark-aware for the blog theme. */
 .tiptap {
   font-size: 1.125rem;
