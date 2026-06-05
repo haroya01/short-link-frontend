@@ -481,7 +481,8 @@ function EditorToolbar({
         ))}
       </div>
       {/* Right-edge fade — signals the toolbar scrolls horizontally where it can't fit (390px crops the
-          trailing groups). Mirrors MobileDiscoveryStrip; sm+ the toolbar fits, so the hint hides. */}
+          trailing groups). Same scroll-fade idiom as the discovery rail; sm+ the toolbar fits, so the
+          hint hides. */}
       <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-950 sm:hidden" />
     </div>
   );
