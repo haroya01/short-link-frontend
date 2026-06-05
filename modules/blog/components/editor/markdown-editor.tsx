@@ -453,31 +453,36 @@ function EditorToolbar({
     }`;
 
   return (
-    <div
-      data-testid="editor-toolbar"
-      className="flex items-center gap-0.5 overflow-x-auto border-b border-slate-100 px-5 py-1.5 dark:border-slate-800"
-    >
-      {groups.map((group, gi) => (
-        <div key={gi} className="flex items-center gap-0.5">
-          {gi > 0 && <span className="mx-1 h-5 w-px shrink-0 bg-slate-200 dark:bg-slate-700" aria-hidden />}
-          {group.map((it, i) => (
-            <button
-              key={i}
-              type="button"
-              aria-label={it.label}
-              title={it.label}
-              aria-pressed={it.active}
-              className={cls(it.active)}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                it.run();
-              }}
-            >
-              <it.icon className="h-4 w-4" />
-            </button>
-          ))}
-        </div>
-      ))}
+    <div className="relative border-b border-slate-100 dark:border-slate-800">
+      <div
+        data-testid="editor-toolbar"
+        className="flex items-center gap-0.5 overflow-x-auto px-5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {groups.map((group, gi) => (
+          <div key={gi} className="flex items-center gap-0.5">
+            {gi > 0 && <span className="mx-1 h-5 w-px shrink-0 bg-slate-200 dark:bg-slate-700" aria-hidden />}
+            {group.map((it, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={it.label}
+                title={it.label}
+                aria-pressed={it.active}
+                className={cls(it.active)}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  it.run();
+                }}
+              >
+                <it.icon className="h-4 w-4" />
+              </button>
+            ))}
+          </div>
+        ))}
+      </div>
+      {/* Right-edge fade — signals the toolbar scrolls horizontally where it can't fit (390px crops the
+          trailing groups). Mirrors MobileDiscoveryStrip; sm+ the toolbar fits, so the hint hides. */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-slate-950 sm:hidden" />
     </div>
   );
 }
