@@ -8,7 +8,7 @@ import { useRouter } from "@/i18n/navigation";
 
 /**
  * Auto-redirect destination used after the "Make your profile" CTA login flow. Sends users to
- * their own /u/&lt;handle&gt; if they've claimed a username, otherwise to /profile/edit where
+ * their own /u/&lt;handle&gt; if they've claimed a username, otherwise to /settings/profile where
  * the onboarding flow takes over. Keeps the showcase CTA single-target without baking the
  * conditional into every caller.
  */
