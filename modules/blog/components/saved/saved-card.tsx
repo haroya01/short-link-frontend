@@ -21,6 +21,9 @@ export function SavedCard({
   onMove,
   onRemove,
   onCreateFolder,
+  selectMode = false,
+  selected = false,
+  onToggleSelect,
 }: {
   item: SavedPost;
   folders: BookmarkFolder[];
@@ -28,6 +31,9 @@ export function SavedCard({
   onMove: (postId: number, folderId: number | null) => void;
   onRemove: (postId: number) => void;
   onCreateFolder: (name: string, thenMovePostId: number) => void;
+  selectMode?: boolean;
+  selected?: boolean;
+  onToggleSelect?: (postId: number) => void;
 }) {
   const t = useTranslations("savedLibrary");
   const [open, setOpen] = useState(false);
@@ -50,28 +56,60 @@ export function SavedCard({
     setOpen(false);
   }
 
+  const body = (
+    <>
+      {item.tags[0] && (
+        <span className="text-[12px] font-medium text-slate-400 dark:text-slate-500">{item.tags[0]}</span>
+      )}
+      <h3 className={`mt-0.5 line-clamp-2 pr-8 text-[17px] font-semibold leading-snug tracking-tight text-slate-900 transition-colors dark:text-slate-100 ${selectMode ? "" : "group-hover/saved:text-accent-700 dark:group-hover/saved:text-accent-400"}`}>
+        {item.title}
+      </h3>
+      {item.excerpt && (
+        <p className="mt-1 line-clamp-1 text-[13px] text-slate-500 dark:text-slate-400">{item.excerpt}</p>
+      )}
+    </>
+  );
+
   return (
-    <article className="group/saved relative">
-      <a href={postHref(item.author.username, item.slug, locale)} className="focus-ring block rounded">
-        {item.tags[0] && (
-          <span className="text-[12px] font-medium text-slate-400 dark:text-slate-500">{item.tags[0]}</span>
-        )}
-        <h3 className="mt-0.5 line-clamp-2 pr-8 text-[17px] font-semibold leading-snug tracking-tight text-slate-900 transition-colors group-hover/saved:text-accent-700 dark:text-slate-100 dark:group-hover/saved:text-accent-400">
-          {item.title}
-        </h3>
-        {item.excerpt && (
-          <p className="mt-1 line-clamp-1 text-[13px] text-slate-500 dark:text-slate-400">{item.excerpt}</p>
-        )}
-      </a>
-      <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
-        <a href={authorHref(item.author.username, locale)} className="focus-ring rounded font-medium hover:text-accent-700 dark:hover:text-accent-400">
-          {item.author.username}
+    <article
+      className={`group/saved relative rounded-xl transition-colors ${selectMode ? "-mx-3 cursor-pointer select-none px-3 py-2" : ""} ${selected ? "bg-accent-50/70 dark:bg-accent-500/10" : ""}`}
+      onClick={selectMode ? () => onToggleSelect?.(item.id) : undefined}
+    >
+      {selectMode ? (
+        <div>{body}</div>
+      ) : (
+        <a href={postHref(item.author.username, item.slug, locale)} className="focus-ring block rounded">
+          {body}
         </a>
+      )}
+      <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
+        {selectMode ? (
+          <span className="font-medium">{item.author.username}</span>
+        ) : (
+          <a href={authorHref(item.author.username, locale)} className="focus-ring rounded font-medium hover:text-accent-700 dark:hover:text-accent-400">
+            {item.author.username}
+          </a>
+        )}
         <span aria-hidden>·</span>
         <span>{date}</span>
       </div>
 
-      {/* Folder / remove menu */}
+      {/* Select-mode checkbox (replaces the ⋯ menu). */}
+      {selectMode && (
+        <span
+          aria-hidden
+          className={`absolute right-0 top-0 grid h-6 w-6 place-items-center rounded-md border transition-colors ${
+            selected
+              ? "border-accent-600 bg-accent-600 text-white"
+              : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
+          }`}
+        >
+          {selected && <Check className="h-4 w-4" />}
+        </span>
+      )}
+
+      {/* Folder / remove menu — hidden in select mode. */}
+      {!selectMode && (
       <div className="absolute right-0 top-0" ref={ref}>
         <button
           type="button"
@@ -124,6 +162,7 @@ export function SavedCard({
           </div>
         )}
       </div>
+      )}
     </article>
   );
 }
