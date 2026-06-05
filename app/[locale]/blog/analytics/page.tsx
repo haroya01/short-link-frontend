@@ -1,20 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Eye, FileText, Heart, Layers, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
+import { ExternalLink, Eye, FileText, Heart, Layers, Link2, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
-import { blogPath } from "@/lib/host";
+import { blogPath, linksHref } from "@/lib/host";
 import {
   getAuthorAnalyticsOverview,
+  getPostAnalytics,
   getPostPerformance,
   getSeriesAnalytics,
   type AuthorAnalyticsOverview,
+  type PostAnalytics,
   type PostPerformanceSort,
   type SeriesAnalyticsRow,
   type TopPost,
 } from "@/modules/blog/api/analytics";
+import { listMyPosts } from "@/modules/blog/api/posts";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
 import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
@@ -93,7 +96,11 @@ export default function BlogAnalyticsPage() {
           {/* Series — the recurring-readership unit; subscriber count is the headline metric. */}
           <SeriesAnalyticsSection />
 
-          {/* Every post, views-first, lazy-loaded — so a few hundred posts don't all arrive at once. */}
+          {/* 글 안 링크 — kurl × 웹로그 차별점을 라벨된 섹션으로. 위 클릭 카드의 by-post 분해. */}
+          <LinksBreakdownSection days={days} />
+
+          {/* Every post, views-first, lazy-loaded — so a few hundred posts don't all arrive at once.
+              Infinite-scroll, so it stays LAST — anything below it would be unreachable until fully paged. */}
           {data.totalPosts > 0 && <PostPerformanceList />}
         </>
       )}
@@ -275,6 +282,91 @@ function SeriesAnalyticsSection() {
                   <Heart className="h-3.5 w-3.5" />
                   {s.totalLikes.toLocaleString()}
                 </span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+type LinkRow = { postId: number; title: string; slug: string; clicks: number };
+
+/**
+ * 글 안 링크 — kurl × 웹로그 차별점을 분석 안의 라벨된 섹션으로 흡수(옛 /links 페이지). 위 클릭 카드가
+ * 합계라면 여기는 "어느 글의 kurl 링크가 그 클릭을 끌었나"의 by-post 분해다. 클릭이 있을 때만 노출.
+ * 글별 클릭을 한 번에 주는 list endpoint 가 아직 없어 발행 글마다 fan-out — 백엔드 역인덱스가 들어오면
+ * 이 fetch 만 교체한다.
+ */
+function LinksBreakdownSection({ days }: { days: number }) {
+  const t = useTranslations("blogWorkspace");
+  const [rows, setRows] = useState<LinkRow[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const published = (await listMyPosts()).filter((p) => p.status === "PUBLISHED");
+        const detail = await Promise.all(
+          published.map((p) => getPostAnalytics(p.id, days).catch(() => null)),
+        );
+        if (cancelled) return;
+        const built = detail
+          .filter((d): d is PostAnalytics => d !== null)
+          .map((d) => ({ postId: d.postId, title: d.title, slug: d.slug, clicks: d.lifetimeLinkClicks }))
+          .filter((r) => r.clicks > 0)
+          .sort((a, b) => b.clicks - a.clicks);
+        setRows(built);
+      } catch {
+        if (!cancelled) setRows([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [days]);
+
+  if (!rows || rows.length === 0) return null;
+
+  return (
+    <section className="mt-8">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <Link2 className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+          {t("linksByPost")}
+        </h2>
+        <a
+          href={linksHref("/dashboard")}
+          target="_blank"
+          rel="noreferrer"
+          className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
+        >
+          {t("linksFullDashboard")}
+          <ExternalLink className="h-3.5 w-3.5" />
+        </a>
+      </div>
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+        {rows.map((r, i) => (
+          <li key={r.postId}>
+            <Link
+              href={blogPath(`/analytics/${r.postId}`)}
+              className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+            >
+              <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-500">
+                {i + 1}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
+                  {r.title || r.slug}
+                </span>
+                <span className="block truncate font-mono text-[12px] text-slate-400 dark:text-slate-500">
+                  /{r.slug}
+                </span>
+              </span>
+              <span className="flex shrink-0 items-center gap-1 text-[13px] font-semibold text-accent-700 dark:text-accent-300">
+                <MousePointerClick className="h-3.5 w-3.5" />
+                {r.clicks.toLocaleString()}
               </span>
             </Link>
           </li>

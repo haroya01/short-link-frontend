@@ -9,7 +9,6 @@ import {
   FileText,
   Globe,
   Inbox,
-  Link2,
   LogIn,
   LogOut,
   Newspaper,
@@ -131,10 +130,6 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             <a href={blogHref("/leads")} className={ITEM}>
               <Inbox className="h-5 w-5 text-slate-500" />
               {tBlog("leads")}
-            </a>
-            <a href={blogHref("/links")} className={ITEM}>
-              <Link2 className="h-5 w-5 text-slate-500" />
-              {tBlog("links")}
             </a>
             <a href={blogHref("/curation")} className={ITEM}>
               <Sparkles className="h-5 w-5 text-slate-500" />
