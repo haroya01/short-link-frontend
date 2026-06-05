@@ -62,6 +62,12 @@ export default async function PublicProfileHomepage({
   const activeTag = rawTag?.trim() || undefined;
   const visiblePosts = activeTag ? posts.filter((p) => p.tags.includes(activeTag)) : posts;
 
+  // 대표글(author-pinned) lead the home in their own labelled section so the ordering reads as a
+  // deliberate highlight, not an unexplained reshuffle. Under a tag filter the section split is
+  // dropped — the filter is the organizing principle there, so just show the flat filtered list.
+  const pinnedPosts = activeTag ? [] : visiblePosts.filter((p) => p.pinned);
+  const recentPosts = activeTag ? visiblePosts : visiblePosts.filter((p) => !p.pinned);
+
   // The author header (identity + tabs) is rendered once by the persistent layout (ProfileChrome) so
   // it never re-mounts on a tab switch; this page renders only its content column + rail.
   return (
@@ -99,10 +105,36 @@ export default async function PublicProfileHomepage({
           <p className="text-slate-500">{t("emptyPosts")}</p>
         ) : visiblePosts.length === 0 ? (
           <p className="text-slate-500 dark:text-slate-400">{t("tagFilterEmpty", { tag: activeTag ?? "" })}</p>
+        ) : pinnedPosts.length > 0 ? (
+          // 대표글 → 최근 글, each under a quiet label. The labels carry the top spacing, so no flushTop.
+          <div className="space-y-9">
+            <section>
+              <h2 className="mb-3 text-[13px] font-semibold tracking-tight text-slate-400 dark:text-slate-500">
+                {t("featuredPosts")}
+              </h2>
+              <FeedList>
+                {pinnedPosts.map((p) => (
+                  <FeedCard key={p.slug} hideAuthor item={{ ...p, author, viewCount: 0 }} locale={locale} />
+                ))}
+              </FeedList>
+            </section>
+            {recentPosts.length > 0 && (
+              <section>
+                <h2 className="mb-3 text-[13px] font-semibold tracking-tight text-slate-400 dark:text-slate-500">
+                  {t("recentPosts")}
+                </h2>
+                <FeedList>
+                  {recentPosts.map((p) => (
+                    <FeedCard key={p.slug} hideAuthor item={{ ...p, author, viewCount: 0 }} locale={locale} />
+                  ))}
+                </FeedList>
+              </section>
+            )}
+          </div>
         ) : (
-          // Same list card + wrapper as the feed; single-author surface so the author is hidden. The
-          // first row gets flushTop (like the feed / following feed) so it sits tight under the tabs
-          // instead of floating below an empty band. With a tag filter the banner leads, so don't flush.
+          // No pins → the plain list. Same card + wrapper as the feed; single-author surface so the
+          // author is hidden. The first row gets flushTop so it sits tight under the tabs (with a tag
+          // filter the banner leads, so don't flush).
           <FeedList>
             {visiblePosts.map((p, i) => (
               <FeedCard

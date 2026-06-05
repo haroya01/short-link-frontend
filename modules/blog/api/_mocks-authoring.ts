@@ -147,6 +147,16 @@ export function mockSetStatus(id: number, status: PostStatus, scheduledAt?: stri
   });
 }
 
+/** Replace the pinned set (ordered ids → pinOrder = index). Only PUBLISHED posts pin; others clear —
+ *  mirrors the backend's SetPinnedPostsUseCase so the 글 목록 toggle + 대표글 strip behave like prod. */
+export function mockSetPins(orderedIds: number[]): void {
+  for (const p of posts.values()) {
+    if (p.status !== "PUBLISHED") continue;
+    const idx = orderedIds.indexOf(p.id);
+    posts.set(p.id, { ...p, pinOrder: idx >= 0 ? idx : null });
+  }
+}
+
 export function mockListRevisions(_id: number): PostRevisionView[] {
   return [];
 }

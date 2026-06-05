@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { BarChart3, Layers, List, PenSquare } from "lucide-react";
+import { ArrowDown, ArrowUp, BarChart3, Layers, List, PenSquare, Pin, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
+import { setPinnedPosts } from "@/modules/blog/api/curation";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
@@ -76,6 +77,22 @@ export default function WriteIndexPage() {
     void load();
   }, [ready, authenticated, load]);
 
+  // 대표글(pins): state rides on each post's pinOrder. A pin edit recomputes the ordered id list and
+  // PUTs it (replace-whole-set semantics). Update locally first so the row reacts instantly, then
+  // persist; on failure reload to resync. Only PUBLISHED posts are pinnable (backend ignores others).
+  const applyPins = useCallback(
+    (orderedIds: number[]) => {
+      setPosts((prev) =>
+        prev.map((p) => {
+          const idx = orderedIds.indexOf(p.id);
+          return { ...p, pinOrder: idx >= 0 ? idx : null };
+        }),
+      );
+      void setPinnedPosts(orderedIds).catch(() => void load());
+    },
+    [load],
+  );
+
   if (!ready) return null;
   if (!authenticated) {
     return <main className="mx-auto max-w-2xl px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
@@ -89,6 +106,24 @@ export default function WriteIndexPage() {
   const TAB_STATUSES: PostStatus[] = ["PUBLISHED", "DRAFT", "SCHEDULED", "UNPUBLISHED"];
   const tabs: ("all" | PostStatus)[] = ["all", ...TAB_STATUSES.filter((s) => count(s) > 0)];
   const visible = filter === "all" ? posts : posts.filter((p) => p.status === filter);
+
+  // Pinned posts in display order — drives the 대표글 manage strip and each row's toggle state.
+  const pinned = posts
+    .filter((p) => p.pinOrder != null)
+    .sort((a, b) => (a.pinOrder as number) - (b.pinOrder as number));
+  const pinnedIds = () => pinned.map((p) => p.id);
+  const togglePin = (post: PostView) => {
+    const ids = pinnedIds();
+    applyPins(ids.includes(post.id) ? ids.filter((i) => i !== post.id) : [...ids, post.id]);
+  };
+  const movePin = (id: number, dir: -1 | 1) => {
+    const ids = pinnedIds();
+    const i = ids.indexOf(id);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= ids.length) return;
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+    applyPins(ids);
+  };
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">
@@ -130,6 +165,54 @@ export default function WriteIndexPage() {
         <SeriesGroupedView writeBase={writeBase} />
       ) : (
         <>
+      {/* 대표글 관리 — 핀한 글을 공개 블로그 '대표글' 섹션에 이 순서로 노출. 순서 조정·해제는 여기서. */}
+      {!loading && pinned.length > 0 && (
+        <section className="mb-5 rounded-xl border border-slate-200 p-3 dark:border-slate-800">
+          <h2 className="mb-2 flex items-center gap-1.5 px-1 text-[13px] font-semibold text-slate-600 dark:text-slate-300">
+            <Pin className="h-3.5 w-3.5 fill-current text-accent-600 dark:text-accent-400" />
+            {t("featuredManageTitle")}
+          </h2>
+          <ul className="flex flex-col">
+            {pinned.map((p, i) => (
+              <li key={p.id} className="flex items-center gap-2 rounded-lg px-1 py-1.5">
+                <span className="w-5 shrink-0 text-center text-[12px] font-semibold tabular-nums text-accent-600 dark:text-accent-400">
+                  {i + 1}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-[14px] text-slate-700 dark:text-slate-200">
+                  {p.title.trim() || t("untitled")}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => movePin(p.id, -1)}
+                  disabled={i === 0}
+                  aria-label={t("featuredMoveUp")}
+                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                >
+                  <ArrowUp className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => movePin(p.id, 1)}
+                  disabled={i === pinned.length - 1}
+                  aria-label={t("featuredMoveDown")}
+                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                >
+                  <ArrowDown className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => togglePin(p)}
+                  aria-label={t("featuredUnpin")}
+                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {!loading && posts.length > 0 && (
         <div className="mb-5 flex flex-wrap gap-1.5">
           {tabs.map((s) => (
@@ -168,7 +251,7 @@ export default function WriteIndexPage() {
                 <a
                   href={`${writeBase}/${p.id}`}
                   className={`focus-ring group block rounded-xl px-3 py-4 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
-                    hasAnalytics ? "pr-28" : "pr-3"
+                    p.status === "PUBLISHED" ? "pr-32" : hasAnalytics ? "pr-28" : "pr-3"
                   }`}
                 >
                   <div className="flex gap-4">
@@ -212,17 +295,37 @@ export default function WriteIndexPage() {
                     )}
                   </div>
                 </a>
-                {/* Per-post analytics — first-class labeled entry (sibling of the editor link, never
-                    nested). This list is the hub: published posts surface their 성과 inline. */}
-                {hasAnalytics && (
-                  <a
-                    href={`${analyticsBase}/${p.id}`}
-                    aria-label={t("viewAnalytics")}
-                    className="focus-ring absolute right-2 top-1/2 z-10 inline-flex -translate-y-1/2 items-center gap-1.5 rounded-lg border border-slate-200 bg-white/80 px-2.5 py-1.5 text-[12px] font-medium text-slate-500 backdrop-blur transition-colors hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
-                  >
-                    <BarChart3 className="h-4 w-4" />
-                    {t("viewAnalytics")}
-                  </a>
+                {/* Action cluster — siblings of the editor link (never nested). 대표글 toggle (published
+                    only) + per-post 성과. This list is the hub: pinning and analytics live inline. */}
+                {(hasAnalytics || p.status === "PUBLISHED") && (
+                  <div className="absolute right-2 top-1/2 z-10 flex -translate-y-1/2 items-center gap-1.5">
+                    {p.status === "PUBLISHED" && (
+                      <button
+                        type="button"
+                        onClick={() => togglePin(p)}
+                        aria-pressed={p.pinOrder != null}
+                        aria-label={p.pinOrder != null ? t("featuredUnpin") : t("featuredPin")}
+                        title={p.pinOrder != null ? t("featuredPinnedLabel") : t("featuredPin")}
+                        className={`focus-ring grid h-8 w-8 place-items-center rounded-lg border backdrop-blur transition-colors ${
+                          p.pinOrder != null
+                            ? "border-accent-300 bg-accent-50 text-accent-700 hover:bg-accent-100 dark:border-accent-500/40 dark:bg-accent-500/15 dark:text-accent-300"
+                            : "border-slate-200 bg-white/80 text-slate-400 hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-500 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
+                        }`}
+                      >
+                        <Pin className={`h-4 w-4 ${p.pinOrder != null ? "fill-current" : ""}`} />
+                      </button>
+                    )}
+                    {hasAnalytics && (
+                      <a
+                        href={`${analyticsBase}/${p.id}`}
+                        aria-label={t("viewAnalytics")}
+                        className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/80 px-2.5 py-1.5 text-[12px] font-medium text-slate-500 backdrop-blur transition-colors hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
+                      >
+                        <BarChart3 className="h-4 w-4" />
+                        {t("viewAnalytics")}
+                      </a>
+                    )}
+                  </div>
                 )}
               </li>
             );

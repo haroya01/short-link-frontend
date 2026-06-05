@@ -45,6 +45,8 @@ export interface PublicPostListItem {
   tags: string[];
   likeCount: number;
   publishedAt: string; // ISO instant
+  /** Author-pinned 대표글 — surfaces in the blog's 대표글 section, ordered before 최근 글. */
+  pinned: boolean;
 }
 
 export interface PublicSeriesNavLink {
