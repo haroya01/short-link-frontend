@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ExternalLink, Eye, FileText, Heart, Layers, Link2, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
+import { ChevronDown, ExternalLink, Eye, FileText, Heart, Link2, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
 import { blogPath, linksHref } from "@/lib/host";
+import { Mark } from "@/components/common/logo";
 import {
   getAuthorAnalyticsOverview,
   getPostAnalytics,
@@ -70,14 +71,15 @@ export default function BlogAnalyticsPage() {
             <StatCard icon={<FileText className="h-4 w-4" />} label={t("analyticsPublished")} value={data.publishedPosts} />
           </div>
 
-          {/* kurl 연동 차별점 — 글 안 kurl 링크가 만든 클릭. */}
-          <div className="mt-3 flex items-center justify-between rounded-2xl border border-accent-200 bg-accent-50/50 p-4">
+          {/* kurl 연동 차별점 — 글 안 kurl 링크가 만든 클릭. 다른 카드와 같은 중립 surface 로 두되,
+              아이콘·숫자만 brand-green 으로 두어 'kurl 클릭'임을 조용히 표시(혼자 초록 패널로 튀지 않게). */}
+          <div className="mt-3 flex items-center justify-between rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
             <div>
-              <div className="flex items-center gap-1.5 text-accent-700 dark:text-accent-300">
-                <MousePointerClick className="h-4 w-4" />
+              <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
+                <MousePointerClick className="h-4 w-4 text-accent-600 dark:text-accent-400" />
                 <span className="text-[13px] font-semibold">{t("analyticsLinkClicksAll")}</span>
               </div>
-              <p className="mt-0.5 text-[12px] text-accent-700/70 dark:text-accent-300/70">
+              <p className="mt-0.5 text-[12px] text-slate-400 dark:text-slate-500">
                 {days === 0
                   ? t("analyticsAllClicks", { count: data.windowLinkClicks })
                   : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
@@ -108,6 +110,24 @@ export default function BlogAnalyticsPage() {
   );
 }
 
+const COLLAPSED_ROWS = 10;
+
+/** 목록을 10개로 접어 두고 인라인으로 펼치는 토글 — 분석 개요의 긴 글별 목록들에 뎁스를 준다. */
+function ViewAllToggle({ expanded, onToggle }: { expanded: boolean; onToggle: () => void }) {
+  const t = useTranslations("blogWorkspace");
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={expanded}
+      className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
+    >
+      {expanded ? t("analyticsCollapse") : t("analyticsViewAll")}
+      <ChevronDown className={`h-3.5 w-3.5 transition-transform ${expanded ? "rotate-180" : ""}`} />
+    </button>
+  );
+}
+
 const SORTS: PostPerformanceSort[] = ["views", "likes", "recent"];
 
 /** Per-post performance, sortable, appended page-by-page as the reader nears the end. */
@@ -118,6 +138,8 @@ function PostPerformanceList() {
   const [nextPage, setNextPage] = useState(0);
   const [hasNext, setHasNext] = useState(true);
   const [loading, setLoading] = useState(false);
+  // Collapsed by default to 10 rows; '전체보기' activates the infinite-scroll sentinel.
+  const [expanded, setExpanded] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   // Reset + load the first page whenever the sort changes (and on mount).
@@ -126,6 +148,7 @@ function PostPerformanceList() {
     setItems([]);
     setNextPage(0);
     setHasNext(true);
+    setExpanded(false);
     setLoading(true);
     getPostPerformance(0, 20, sort)
       .then((res) => {
@@ -198,7 +221,7 @@ function PostPerformanceList() {
         <p className="py-6 text-center text-sm text-slate-400 dark:text-slate-500">{t("analyticsEmpty")}</p>
       ) : (
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-        {items.map((p) => (
+        {(expanded ? items : items.slice(0, COLLAPSED_ROWS)).map((p) => (
           <li key={p.postId}>
             <Link
               href={blogPath(`/analytics/${p.postId}`)}
@@ -227,8 +250,12 @@ function PostPerformanceList() {
         ))}
       </ul>
       )}
-      <div ref={sentinelRef} aria-hidden className="h-px" />
-      {loading && items.length > 0 && (
+      {/* Collapsed → '전체보기' reveals the rest; once expanded, the sentinel resumes infinite scroll. */}
+      {!expanded && items.length > 0 && (items.length > COLLAPSED_ROWS || hasNext) && (
+        <ViewAllToggle expanded={false} onToggle={() => setExpanded(true)} />
+      )}
+      {expanded && <div ref={sentinelRef} aria-hidden className="h-px" />}
+      {expanded && loading && items.length > 0 && (
         <p className="py-4 text-center text-[12px] text-slate-400 dark:text-slate-500">···</p>
       )}
     </section>
@@ -239,6 +266,7 @@ function PostPerformanceList() {
 function SeriesAnalyticsSection() {
   const t = useTranslations("blogWorkspace");
   const [rows, setRows] = useState<SeriesAnalyticsRow[] | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     getSeriesAnalytics()
@@ -251,11 +279,11 @@ function SeriesAnalyticsSection() {
   return (
     <section className="mt-8">
       <h2 className="mb-3 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
-        <Layers className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+        <Mark className="h-3 w-auto text-slate-400 dark:text-slate-500" />
         {t("analyticsSeries")}
       </h2>
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-        {rows.map((s) => (
+        {(expanded ? rows : rows.slice(0, COLLAPSED_ROWS)).map((s) => (
           <li key={s.seriesId}>
             <Link
               href={blogPath(`/analytics/series/${s.seriesId}`)}
@@ -287,6 +315,9 @@ function SeriesAnalyticsSection() {
           </li>
         ))}
       </ul>
+      {rows.length > COLLAPSED_ROWS && (
+        <ViewAllToggle expanded={expanded} onToggle={() => setExpanded((v) => !v)} />
+      )}
     </section>
   );
 }
@@ -302,6 +333,7 @@ type LinkRow = { postId: number; title: string; slug: string; clicks: number };
 function LinksBreakdownSection({ days }: { days: number }) {
   const t = useTranslations("blogWorkspace");
   const [rows, setRows] = useState<LinkRow[] | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -347,7 +379,7 @@ function LinksBreakdownSection({ days }: { days: number }) {
         </a>
       </div>
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-        {rows.map((r, i) => (
+        {(expanded ? rows : rows.slice(0, COLLAPSED_ROWS)).map((r, i) => (
           <li key={r.postId}>
             <Link
               href={blogPath(`/analytics/${r.postId}`)}
@@ -372,6 +404,9 @@ function LinksBreakdownSection({ days }: { days: number }) {
           </li>
         ))}
       </ul>
+      {rows.length > COLLAPSED_ROWS && (
+        <ViewAllToggle expanded={expanded} onToggle={() => setExpanded((v) => !v)} />
+      )}
     </section>
   );
 }
