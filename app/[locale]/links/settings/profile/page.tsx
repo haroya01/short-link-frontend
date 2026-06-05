@@ -128,11 +128,12 @@ export default function ProfileEditPage() {
         >
           <Mail className="h-3.5 w-3.5" />
           {t("leadsLink")}
-        </Link>
+        </a>
       </div>
 
       {/* Visit-stats summary — only renders when the user has claimed a username AND has at
-          least one recorded visit. Click-through takes them to /content/readers for full charts.
+          least one recorded visit. Static card (the standalone full-charts page was folded into
+          post-detail analytics in #602, so there's no drill-down target anymore).
           Visit stats are owner-only — the previous public-visibility toggle was removed: there's
           no compelling reason for visitors to see who else came by, and the absence of the
           control keeps owners from worrying about whether their numbers leak. */}

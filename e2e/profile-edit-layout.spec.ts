@@ -11,7 +11,7 @@ import { createLink } from "./helpers/links";
  * The check: document.documentElement.scrollWidth must not exceed clientWidth at desktop width,
  * because if the left column overflowed, the page-level scrollbar appears.
  */
-test.describe("profile/edit layout — long URLs don't stretch the page", () => {
+test.describe("profile editor layout — long URLs don't stretch the page", () => {
   test("long original URL in feed does not cause horizontal overflow", async ({
     page,
     context,
@@ -52,7 +52,7 @@ test.describe("profile/edit layout — long URLs don't stretch the page", () => 
     // Sized so `lg:` breakpoint kicks in (grid splits into 2 columns) — that's the layout that
     // had the bug; the 1-column stack on smaller widths was never broken.
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto("/ko/profile/edit");
+    await page.goto("/ko/settings/profile");
 
     // Wait for the feed to render so we're measuring the populated layout, not the loading state.
     await expect(page.locator(`text=/${created.shortCode}`)).toBeVisible();

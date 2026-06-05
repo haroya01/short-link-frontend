@@ -2056,8 +2056,7 @@
           "today": "今日",
           "week": "7 日",
           "month": "30 日",
-          "allTime": "累計",
-          "viewAll": "グラフを見る"
+          "allTime": "累計"
         },
         "daily": {
           "title": "直近 30 日",
