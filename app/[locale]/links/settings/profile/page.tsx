@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Check, Mail, Sparkles } from "lucide-react";
+import { blogHref } from "@/lib/host";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { MobilePreviewSheet } from "@/modules/profile/components/mobile-preview-sheet";
@@ -116,8 +116,8 @@ export default function ProfileEditPage() {
         {/* Leads 페이지 link 를 *항상* 노출 — 이전엔 EMAIL_FORM block 있을 때만 표시했는데, 폼을
             나중에 추가하는 사용자는 "leads dashboard 자체" 가 어디 있는지 발견 못함 (orphan).
             폼 없을 때는 disabled 톤으로 *비활성* 시각 표시. */}
-        <Link
-          href={`/${locale}/content/leads`}
+        <a
+          href={blogHref("/leads")}
           className={
             "inline-flex shrink-0 items-center gap-1.5 rounded-md border bg-white px-3 py-1.5 text-xs font-medium transition " +
             (hasEmailForm

@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Copy, Loader2, Send, Sparkles } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { shortenUrl } from "@/lib/api";
+import { blogPath } from "@/lib/host";
 import {
   appendUtmParams,
   extractUrls,
@@ -92,7 +93,7 @@ export default function ProfileLeadsCampaignPage() {
     <div className="container max-w-3xl space-y-6 py-12">
       <div>
         <Link
-          href={`/${locale}/content/leads`}
+          href={blogPath("/leads")}
           className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
