@@ -150,6 +150,7 @@
     "seriesRenameSave": "저장",
     "seriesNoneGroup": "시리즈 없음",
     "seriesAddPost": "글 추가",
+    "seriesAddSelected": "{count}개 추가",
     "seriesRemoveFromSeries": "시리즈에서 빼기",
     "seriesPickerSearch": "글 제목으로 검색",
     "seriesPickerEmpty": "추가할 글이 없어요.",

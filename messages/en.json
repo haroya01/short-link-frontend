@@ -150,6 +150,7 @@
     "seriesRenameSave": "Save",
     "seriesNoneGroup": "No series",
     "seriesAddPost": "Add post",
+    "seriesAddSelected": "Add {count}",
     "seriesRemoveFromSeries": "Remove from series",
     "seriesPickerSearch": "Search posts by title",
     "seriesPickerEmpty": "No posts to add.",
