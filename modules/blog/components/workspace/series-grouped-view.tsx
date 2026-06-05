@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { BarChart3, ChevronDown, ChevronUp, FileText, Pencil, Plus, Search, Trash2, X } from "lucide-react";
+import { BarChart3, Check, ChevronDown, ChevronUp, FileText, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import {
   createSeries,
   deleteSeries,
@@ -40,9 +40,11 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
   const [rTitle, setRTitle] = useState("");
   const [rSlug, setRSlug] = useState("");
 
-  // Which series' "글 추가" picker is open, and its search query.
+  // Which series' "글 추가" picker is open, its search query, and the multi-selected candidate ids
+  // (check several unassigned posts → add them all in one commit, instead of one-at-a-time).
   const [picking, setPicking] = useState<number | null>(null);
   const [pickQuery, setPickQuery] = useState("");
+  const [pickSelected, setPickSelected] = useState<Set<number>>(new Set());
 
   const load = useCallback(async () => {
     try {
@@ -98,8 +100,23 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
 
   const removeMember = (seriesId: number, postId: number) =>
     void commitMembers(seriesId, memberIds(seriesId).filter((id) => id !== postId));
-  const addMember = (seriesId: number, postId: number) =>
-    void commitMembers(seriesId, [...memberIds(seriesId), postId]);
+
+  function togglePickPost(postId: number) {
+    setPickSelected((prev) => {
+      const next = new Set(prev);
+      next.has(postId) ? next.delete(postId) : next.add(postId);
+      return next;
+    });
+  }
+  function closePicker() {
+    setPicking(null);
+    setPickSelected(new Set());
+  }
+  function addSelected(seriesId: number) {
+    if (pickSelected.size === 0) return;
+    void commitMembers(seriesId, [...memberIds(seriesId), ...pickSelected]);
+    closePicker();
+  }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -365,6 +382,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                   onClick={() => {
                     setPicking(s.id);
                     setPickQuery("");
+                    setPickSelected(new Set());
                   }}
                   disabled={busy}
                   className="focus-ring inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-200 px-3 py-2 text-[13px] font-medium text-slate-500 transition-colors hover:border-accent-300 hover:bg-accent-50/50 hover:text-accent-700 disabled:opacity-50 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10 dark:hover:text-accent-300"
@@ -385,7 +403,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     />
                     <button
                       type="button"
-                      onClick={() => setPicking(null)}
+                      onClick={closePicker}
                       aria-label={t("seriesCancel")}
                       className="focus-ring grid h-6 w-6 shrink-0 place-items-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                     >
@@ -398,22 +416,48 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     </p>
                   ) : (
                     <ul className="max-h-60 overflow-y-auto p-1">
-                      {candidates.map((p) => (
-                        <li key={p.id}>
-                          <button
-                            type="button"
-                            onClick={() => addMember(s.id, p.id)}
-                            disabled={busy}
-                            className="focus-ring flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-accent-50/60 disabled:opacity-50 dark:hover:bg-accent-500/10"
-                          >
-                            <Plus className="h-4 w-4 shrink-0 text-accent-500 dark:text-accent-400" />
-                            <span className="min-w-0 flex-1 truncate text-sm text-slate-700 dark:text-slate-200">
-                              {p.title || p.slug}
-                            </span>
-                          </button>
-                        </li>
-                      ))}
+                      {candidates.map((p) => {
+                        const checked = pickSelected.has(p.id);
+                        return (
+                          <li key={p.id}>
+                            <button
+                              type="button"
+                              onClick={() => togglePickPost(p.id)}
+                              aria-pressed={checked}
+                              className="focus-ring flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-accent-50/60 dark:hover:bg-accent-500/10"
+                            >
+                              <span
+                                aria-hidden
+                                className={`grid h-5 w-5 shrink-0 place-items-center rounded border transition-colors ${
+                                  checked
+                                    ? "border-accent-600 bg-accent-600 text-white"
+                                    : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
+                                }`}
+                              >
+                                {checked && <Check className="h-3.5 w-3.5" />}
+                              </span>
+                              <span className="min-w-0 flex-1 truncate text-sm text-slate-700 dark:text-slate-200">
+                                {p.title || p.slug}
+                              </span>
+                            </button>
+                          </li>
+                        );
+                      })}
                     </ul>
+                  )}
+                  {/* 선택분 일괄 추가 — 여러 글을 한 commit 으로 시리즈에 넣는다(예전엔 클릭마다 commit). */}
+                  {pickSelected.size > 0 && (
+                    <div className="border-t border-slate-100 p-2 dark:border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => addSelected(s.id)}
+                        disabled={busy}
+                        className="focus-ring flex w-full items-center justify-center gap-1.5 rounded-lg bg-accent-600 px-3 py-2 text-[13px] font-medium text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
+                      >
+                        <Plus className="h-4 w-4" />
+                        {t("seriesAddSelected", { count: pickSelected.size })}
+                      </button>
+                    </div>
                   )}
                 </div>
               )}
