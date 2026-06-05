@@ -10,11 +10,11 @@ import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { Section } from "@/components/common/section";
 
 /**
- * Renders a {@link ProfileStats} payload as the full chart dashboard. Same component used by
- * both owner ({@code /content/readers}) and public ({@code /u/<username>/stats}) pages — the only
- * difference between those two views is the data source + header chrome, the visual breakdown
- * is identical. Extracted to keep the two call sites from drifting (and so the public page
- * doesn't accidentally leak owner-only widgets we add later).
+ * Renders a {@link ProfileStats} payload as the full chart dashboard. Shared component — now
+ * rendered inside blog post/series analytics (the standalone owner readers page was folded into
+ * post-detail in #602). The only difference between call sites is the data source + header chrome,
+ * the visual breakdown is identical. Extracted to keep the call sites from drifting (and so a
+ * public surface doesn't accidentally leak owner-only widgets we add later).
  */
 export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
   const t = useTranslations("settings.profile.stats");
