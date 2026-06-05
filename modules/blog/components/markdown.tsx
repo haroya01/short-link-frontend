@@ -67,7 +67,19 @@ export function Markdown({ children, inline = false }: { children: string; inlin
           ? [rehypeRaw, rehypeSafeStyle, [rehypeSanitize, schema]]
           : [rehypeRaw, rehypeSafeStyle, rehypeHighlight, [rehypeSanitize, schema]]
       }
-      components={inline ? { p: ({ children }) => <>{children}</> } : undefined}
+      components={
+        inline
+          ? { p: ({ children }) => <>{children}</> }
+          : {
+              // Wrap tables so a too-wide one scrolls within the reading column instead of squishing
+              // its cells unreadably on a phone (the .prose-post table CSS only sets w-full).
+              table: ({ children, className }) => (
+                <div className="prose-table-wrap">
+                  <table className={className}>{children}</table>
+                </div>
+              ),
+            }
+      }
     >
       {children}
     </ReactMarkdown>
