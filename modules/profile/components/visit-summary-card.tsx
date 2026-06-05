@@ -1,22 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, BarChart3 } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
+import { BarChart3 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { getProfileStatsSummary } from "@/lib/api";
 import { formatNumber } from "@/lib/utils";
 import type { ProfileVisitSummary } from "@/types";
 
 /**
  * Compact 4-bucket summary of profile visits (today / 7d / 30d / all-time) for the top of the
- * /settings/profile page. Click-through links to /content/readers for the full chart breakdown. Skips
- * its own render when the summary is all-zero so the editor doesn't get visual debt before
- * any visits have happened.
+ * /settings/profile page. Static card — the standalone full-breakdown page was removed when reader
+ * analytics folded into post-detail (#602), so there's no longer a drill-down target. Skips its own
+ * render when the summary is all-zero so the editor doesn't get visual debt before any visits.
  */
 export function ProfileVisitSummaryCard({ hasUsername }: { hasUsername: boolean }) {
   const t = useTranslations("settings.profile.stats");
-  const locale = useLocale();
   const [data, setData] = useState<ProfileVisitSummary | null>(null);
 
   useEffect(() => {
@@ -37,19 +35,10 @@ export function ProfileVisitSummaryCard({ hasUsername }: { hasUsername: boolean 
   ];
 
   return (
-    <Link
-      href={`/${locale}/content/readers`}
-      className="group block rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition hover:border-slate-300 hover:bg-slate-50/60"
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-medium text-slate-700">
-          <BarChart3 className="h-3.5 w-3.5" />
-          {t("summary.title")}
-        </div>
-        <span className="inline-flex items-center gap-1 text-[11px] text-slate-500 group-hover:text-slate-900">
-          {t("summary.viewAll")}
-          <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
-        </span>
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <div className="flex items-center gap-2 text-xs font-medium text-slate-700">
+        <BarChart3 className="h-3.5 w-3.5" />
+        {t("summary.title")}
       </div>
       <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {buckets.map((b) => (
@@ -61,6 +50,6 @@ export function ProfileVisitSummaryCard({ hasUsername }: { hasUsername: boolean 
           </div>
         ))}
       </dl>
-    </Link>
+    </div>
   );
 }

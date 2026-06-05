@@ -26,10 +26,11 @@ test.describe("authenticated screens", () => {
     await page.goto("/ko/dashboard");
     await expect(page.getByRole("heading", { name: "내 링크" })).toBeVisible();
 
-    await page.goto("/ko/content/readers");
-    await expect(page.getByRole("heading", { name: "내 프로필 방문 통계" })).toBeVisible();
-    await expect(page.getByText("settings.profile.stats.intro")).toHaveCount(0);
-    await expect(page.getByText("/u/username")).toBeVisible();
+    // Profile editor hosts the visit-stats summary now that the standalone readers page was folded
+    // into post-detail analytics (#602). Assert the editor heading renders and no raw i18n keys leak.
+    await page.goto("/ko/settings/profile");
+    await expect(page.getByRole("heading", { name: "공개 프로필" })).toBeVisible();
+    await expect(page.getByText("settings.profile.intro")).toHaveCount(0);
 
     expect(errors).toEqual([]);
   });

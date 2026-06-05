@@ -2056,8 +2056,7 @@
           "today": "오늘",
           "week": "7 일",
           "month": "30 일",
-          "allTime": "누적",
-          "viewAll": "차트 보기"
+          "allTime": "누적"
         },
         "daily": {
           "title": "최근 30 일 방문 추이",
