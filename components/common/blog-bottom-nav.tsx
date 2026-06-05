@@ -14,10 +14,11 @@ const TAB =
   "focus-ring flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar (blog surfaces). Moves the primary actions — 홈/검색/글쓰기/계정 — to a
- * thumb-reachable bar instead of cramming them in the top header, and shows current location. Search
- * and account open full-width sheets. Auto-hides on scroll-down, returns on scroll-up (reading space),
- * unless reduced-motion. Hidden on `sm`+ where the desktop header carries everything.
+ * Mobile-only bottom tab bar (blog surfaces). Moves the primary actions — 홈/탐색/글쓰기/계정 — to a
+ * thumb-reachable bar instead of cramming them in the top header, and shows current location. 탐색
+ * (search + discovery) and account open full-width sheets. Auto-hides on scroll-down, returns on
+ * scroll-up (reading space), unless reduced-motion. Hidden on `sm`+ where the desktop header carries
+ * everything.
  */
 export function BlogBottomNav() {
   const t = useTranslations("nav");
@@ -74,7 +75,7 @@ export function BlogBottomNav() {
           className={cn(TAB, sheet === "search" ? "text-accent-600" : "text-slate-500")}
         >
           <Search className="h-5 w-5" />
-          {t("search")}
+          {t("explore")}
         </button>
         {authenticated && (
           <a href={blogHref("/write/new")} className={cn(TAB, "text-slate-500")}>
