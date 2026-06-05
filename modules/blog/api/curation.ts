@@ -5,6 +5,8 @@
  * separate fetch. (Bookmarks moved to their own account-backed module: modules/blog/api/bookmarks.)
  */
 import { request } from "@/lib/api/client";
+import { USE_MOCKS } from "@/modules/blog/api/_mocks";
+import { mockSetPins } from "@/modules/blog/api/_mocks-authoring";
 
 /**
  * Replace the author's pinned set (ordered post ids → pin_order = list index). Only the caller's
@@ -12,5 +14,9 @@ import { request } from "@/lib/api/client";
  * in subsequent `listMyPosts()` via each post's `pinOrder`.
  */
 export function setPinnedPosts(orderedIds: number[]): Promise<void> {
+  if (USE_MOCKS) {
+    mockSetPins(orderedIds);
+    return Promise.resolve();
+  }
   return request<void>(`/api/v1/posts/pins`, { method: "PUT", body: { postIds: orderedIds } });
 }
