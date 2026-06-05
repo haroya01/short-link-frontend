@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Ban, Download, Sparkles, Trash2, Undo2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
+import { blogPath, linksHref } from "@/lib/host";
 import {
   deleteEmailLead,
   emailLeadsExportUrl,
@@ -119,19 +120,19 @@ export default function ProfileLeadsPage() {
           <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{t("csvExcludesOptedOut")}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Link
-            href={`/${locale}/profile/edit`}
+          <a
+            href={linksHref("/settings/profile")}
             className="text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
           >
             {t("backToEditor")}
-          </Link>
+          </a>
           <a href={emailLeadsExportUrl()} download>
             <Button variant="outline">
               <Download className="mr-1 h-4 w-4" />
               {t("downloadCsv")}
             </Button>
           </a>
-          <Link href={`/${locale}/content/leads/campaign`}>
+          <Link href={blogPath("/leads/campaign")}>
             <Button>
               <Sparkles className="mr-1 h-4 w-4" />
               {t("buildCampaign")}
