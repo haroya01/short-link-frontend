@@ -37,6 +37,11 @@ export default function ProfileLeadsPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
+  // A failed fetch must be visually distinct from an empty list: without this the catch only fired a
+  // transient toast and the body fell through to the "no signups yet" empty state, so a 500 read as
+  // "you have zero leads". `reloadKey` lets the error panel's retry button re-run the effect.
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (ready && !authenticated) router.replace(`/${locale}/login`);
@@ -53,6 +58,7 @@ export default function ProfileLeadsPage() {
     if (!authenticated) return;
     let cancelled = false;
     setLoading(true);
+    setError(null);
     listEmailLeads(page, PAGE_SIZE)
       .then((data) => {
         if (cancelled) return;
@@ -60,7 +66,9 @@ export default function ProfileLeadsPage() {
         setTotal(data.total);
       })
       .catch((err) => {
-        if (!cancelled) toast(errorMessage(err, t("loadFailed")), "error");
+        // Persist the failure in state (rendered as an error panel) instead of a transient toast —
+        // the empty state must not stand in for a load failure.
+        if (!cancelled) setError(errorMessage(err, t("loadFailed")));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -73,7 +81,7 @@ export default function ProfileLeadsPage() {
     // current render's closure of them, which is fine because the request fires once per
     // (authenticated, page) transition.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authenticated, page]);
+  }, [authenticated, page, reloadKey]);
 
   async function handleDelete(id: number) {
     if (!window.confirm(t("confirmDelete"))) return;
@@ -144,6 +152,14 @@ export default function ProfileLeadsPage() {
       {loading ? (
         <div className="rounded-2xl border border-slate-200 p-2 dark:border-slate-800">
           <SkeletonRows count={8} />
+        </div>
+      ) : error ? (
+        <div className="rounded-2xl border border-dashed border-red-300 bg-red-50/50 px-4 py-12 text-center dark:border-red-900/60 dark:bg-red-950/20">
+          <p className="text-sm font-medium text-red-700 dark:text-red-300">{error}</p>
+          <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{t("errorHint")}</p>
+          <Button variant="outline" className="mt-4" onClick={() => setReloadKey((k) => k + 1)}>
+            {t("retry")}
+          </Button>
         </div>
       ) : leads.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 px-4 py-12 text-center dark:border-slate-700 dark:bg-slate-800/40">
