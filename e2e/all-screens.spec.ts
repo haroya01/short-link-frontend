@@ -57,7 +57,6 @@ const SCREENS: { name: string; path: string }[] = [
   { name: "blog · settings", path: "/ko/blog/settings" },
   { name: "blog · tags", path: "/ko/blog/tags" },
   { name: "blog · tag detail", path: "/ko/blog/tags/개발" },
-  { name: "blog · links-in-posts", path: "/ko/blog/links" },
   { name: "blog · series (workspace)", path: "/ko/blog/series" },
   { name: "blog · login", path: "/ko/blog/login" },
   // ── deep / dynamic routes that render with current mocks ──
