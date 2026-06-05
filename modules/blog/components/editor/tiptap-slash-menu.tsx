@@ -20,6 +20,7 @@ import {
   Table as TableIcon,
   Video,
 } from "lucide-react";
+import { insertCodeBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { keywordMatch, matchSlashQuery } from "@/modules/blog/components/editor/slash-menu-logic";
 import type { ImagePickOptions } from "@/modules/blog/components/editor/markdown-editor";
 
@@ -66,7 +67,7 @@ function buildItems(
     { key: "imagePair", labelKey: "imagePair", group: "media", icon: Columns2, keywords: ["pair", "two", "gallery", "side", "2", "나란히", "두장", "갤러리", "並べ"], run: () => pickImage({ width: "half", multiple: true }) },
     { key: "embed", labelKey: "embed", group: "media", icon: Video, keywords: ["video", "embed", "youtube", "vimeo", "동영상", "비디오", "임베드", "動画"], run: () => onPickEmbed() },
     { key: "place", labelKey: "place", group: "media", icon: MapPin, keywords: ["map", "place", "location", "지도", "장소", "위치", "地図", "場所"], run: () => onPickPlace() },
-    { key: "code", labelKey: "codeBlock", group: "advanced", icon: Code2, keywords: ["code", "codeblock", "pre", "코드", "コード"], run: (e) => e.chain().focus().toggleCodeBlock().run() },
+    { key: "code", labelKey: "codeBlock", group: "advanced", icon: Code2, keywords: ["code", "codeblock", "pre", "코드", "コード"], run: (e) => insertCodeBlock(e) },
     { key: "table", labelKey: "table", group: "advanced", icon: TableIcon, keywords: ["table", "grid", "표", "테이블", "テーブル", "表"], run: (e) => e.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
   ];
 }

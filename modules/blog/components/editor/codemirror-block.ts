@@ -1,4 +1,5 @@
 import CodeBlock from "@tiptap/extension-code-block";
+import { InputRule, type Editor } from "@tiptap/core";
 import { Selection, TextSelection } from "@tiptap/pm/state";
 import { redo, undo } from "@tiptap/pm/history";
 import type { Node as PMNode } from "@tiptap/pm/model";
@@ -96,10 +97,25 @@ class CodeMirrorNodeView {
       "cm-codeblock relative my-4 overflow-hidden rounded-xl bg-slate-900 text-slate-100";
 
     const bar = document.createElement("div");
-    bar.className = "flex justify-end border-b border-white/10 px-2 py-1";
+    bar.className = "flex items-center justify-between border-b border-white/10 px-3 py-1.5";
+
+    // Mac-style traffic lights — a universal "this is a code block" signal, no i18n needed. The
+    // green dot keeps the brand accent.
+    const dots = document.createElement("span");
+    dots.className = "flex items-center gap-1.5";
+    dots.contentEditable = "false";
+    for (const color of ["#f87171", "#fbbf24", "#34d399"]) {
+      const dot = document.createElement("span");
+      dot.style.cssText = `width:9px;height:9px;border-radius:9999px;background:${color};display:inline-block`;
+      dots.append(dot);
+    }
+
+    // Language picker styled as an obvious pill (border + bg + hover) so a regular author sees it's
+    // selectable — plaintext = a plain ``` fence, java = a ```java fence, etc.
     this.languageSelect = document.createElement("select");
     this.languageSelect.className =
-      "rounded bg-transparent px-1 py-0.5 text-[11px] text-slate-400 outline-none hover:text-slate-200";
+      "cursor-pointer rounded-md border border-white/15 bg-white/5 px-2 py-0.5 text-[11px] font-medium text-slate-200 outline-none transition-colors hover:bg-white/10 hover:text-white";
+    this.languageSelect.title = "코드 언어";
     this.languageSelect.contentEditable = "false";
     for (const lang of LANGUAGES) {
       const opt = document.createElement("option");
@@ -120,7 +136,7 @@ class CodeMirrorNodeView {
       void this.applyLanguage(this.languageSelect.value);
       this.cm.focus();
     });
-    bar.append(this.languageSelect);
+    bar.append(dots, this.languageSelect);
 
     const body = document.createElement("div");
     body.className = "px-3 py-2";
@@ -307,4 +323,61 @@ export const CodeMirrorBlock = CodeBlock.extend({
     return ({ node, editor, getPos }) =>
       new CodeMirrorNodeView(node, editor.view, getPos as () => number | undefined);
   },
+  // Keep CodeBlock's own ``` rules (they fire only at a paragraph START) and add one for the
+  // Medium-style Enter flow: new visual lines are soft breaks (hardBreak) inside ONE paragraph, so a
+  // ``` typed after Enter sits mid-paragraph, never at a textblock start. This matches ```lang + space
+  // anywhere, swallows a preceding soft break, splits the prose off, and turns the rest into a code
+  // block. (At a real paragraph start the parent rule above wins first, so this only covers the gap.)
+  addInputRules() {
+    const parentRules = this.parent?.() ?? [];
+    const typeName = this.type.name;
+    return [
+      ...parentRules,
+      new InputRule({
+        find: /```([a-zA-Z0-9+#.-]*)[ ]$/,
+        handler: ({ state, range, match, chain }) => {
+          const language = match[1] || null;
+          let from = range.from;
+          const before = state.doc.resolve(from).nodeBefore;
+          if (before?.type.name === "hardBreak") from -= before.nodeSize;
+          chain()
+            .deleteRange({ from, to: range.to })
+            .splitBlock()
+            .setNode(typeName, language ? { language } : {})
+            .run();
+        },
+      }),
+    ];
+  },
 });
+
+/**
+ * Insert a code block from the toolbar / slash menu. Unlike `toggleCodeBlock`, this never swallows
+ * the current paragraph's prose: an empty textblock is converted in place, but a paragraph with text
+ * gets a FRESH empty code block inserted right after it, with the caret moved inside (CodeMirror
+ * focuses on selection). Toggling while already inside a code block exits back to a paragraph.
+ */
+export function insertCodeBlock(editor: Editor, language: string | null = null) {
+  const attrs = language ? { language } : {};
+  const { $from, empty } = editor.state.selection;
+  const parent = $from.parent;
+
+  // Already in a code block → toggle off (parity with the toolbar's active state).
+  if (parent.type.name === "codeBlock") {
+    return editor.chain().focus().setNode("paragraph").run();
+  }
+
+  // Empty textblock → convert it in place (matches the ``` markdown shortcut at line start).
+  if (empty && parent.isTextblock && parent.content.size === 0) {
+    return editor.chain().focus().setNode("codeBlock", attrs).run();
+  }
+
+  // Otherwise insert a new empty code block after the current top-level block, caret inside.
+  const insertAt = $from.depth >= 1 ? $from.after(1) : $from.pos;
+  return editor
+    .chain()
+    .focus()
+    .insertContentAt(insertAt, { type: "codeBlock", attrs })
+    .setTextSelection(insertAt + 1)
+    .run();
+}
