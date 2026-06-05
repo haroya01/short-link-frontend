@@ -157,7 +157,7 @@ function resolveAuthor(username: string): PublicAuthor {
   return { ...base, hasLinkInBio: true };
 }
 
-function toListItem(item: PublicFeedItem, idx: number): PublicPostListItem {
+function toListItem(item: PublicFeedItem, idx: number, pinned = false): PublicPostListItem {
   return {
     id: idx + 1,
     slug: item.slug,
@@ -168,14 +168,17 @@ function toListItem(item: PublicFeedItem, idx: number): PublicPostListItem {
     tags: item.tags,
     likeCount: item.likeCount,
     publishedAt: item.publishedAt,
+    pinned,
   };
 }
 
-/** Author home — the author's published posts (newest first). */
+/** Author home — the author's published posts. Pinned 대표글 lead (mirrors the backend's PINNED_FIRST),
+ *  then the rest newest-first. Demo: the two most recent are pinned so the 대표글 section renders. */
 export function mockPostList(username: string): PublicPostList {
   const author = resolveAuthor(username);
   const mine = ALL_ITEMS.filter((i) => i.author.username === author.username);
-  const posts = (mine.length ? mine : ALL_ITEMS.slice(0, 4)).map(toListItem);
+  const base = mine.length ? mine : ALL_ITEMS.slice(0, 4);
+  const posts = base.map((it, i) => toListItem(it, i, i < 2));
   return { author, posts };
 }
 
@@ -261,7 +264,7 @@ export function mockSeriesList(username: string): PublicSeriesList {
 
 export function mockSeriesDetail(username: string, slug: string): PublicSeriesDetail {
   const series = MOCK_SERIES.find((s) => s.slug === slug) ?? MOCK_SERIES[0];
-  const posts = ALL_ITEMS.slice(0, series.postCount).map(toListItem);
+  const posts = ALL_ITEMS.slice(0, series.postCount).map((it, i) => toListItem(it, i));
   return { author: resolveAuthor(username), series, posts };
 }
 
