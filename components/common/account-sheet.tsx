@@ -96,8 +96,13 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
         {authenticated && (
           <>
             <div className="flex items-center gap-3 px-3 py-2">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300">
-                {initial}
+              <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-accent-100 text-sm font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300">
+                {me?.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={me.avatarUrl} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  initial
+                )}
               </span>
               <span className="min-w-0">
                 {username && <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-100">@{username}</span>}

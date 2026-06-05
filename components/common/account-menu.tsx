@@ -8,7 +8,7 @@ import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
-import { cacheMeInitial } from "@/components/common/header-avatar-slot";
+import { cacheMeAvatar, cacheMeInitial } from "@/components/common/header-avatar-slot";
 import { blogHref, linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { ThemeToggle } from "@/components/common/theme-toggle";
@@ -50,12 +50,16 @@ export function AccountMenu() {
 
   const username = me?.username ?? "";
   const initial = (username || me?.email || "?").charAt(0).toUpperCase();
+  const avatarUrl = me?.avatarUrl ?? "";
 
-  // Cache the initial so the header's seeded avatar slot can paint it before auth resolves on the next
-  // navigation — no grey→green flash on the top-right avatar between pages.
+  // Cache the initial + avatar so the header's seeded avatar slot can paint them before auth resolves
+  // on the next navigation — no grey→green flash (and no initial→photo flash) between pages.
   useEffect(() => {
     if (initial && initial !== "?") cacheMeInitial(initial);
   }, [initial]);
+  useEffect(() => {
+    cacheMeAvatar(avatarUrl);
+  }, [avatarUrl]);
 
   const itemClass =
     "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none";
@@ -68,9 +72,14 @@ export function AccountMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={t("account")}
-        className="focus-ring grid h-8 w-8 place-items-center rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700 transition-colors hover:bg-accent-200 dark:bg-accent-500/20 dark:text-accent-300 dark:hover:bg-accent-500/30"
+        className="focus-ring grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700 transition-colors hover:bg-accent-200 dark:bg-accent-500/20 dark:text-accent-300 dark:hover:bg-accent-500/30"
       >
-        {initial}
+        {avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
+        ) : (
+          initial
+        )}
       </button>
       {open && (
         <div
