@@ -80,6 +80,7 @@ export function SeriesReadThrough({
           <li key={m.postId}>
             <a
               href={postHref(m.postId)}
+              aria-label={`${t("analyticsViewPost")}: ${m.title || m.slug}`}
               className="focus-ring group block rounded-xl px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/60"
             >
               <div className="flex items-baseline gap-2">
@@ -96,6 +97,8 @@ export function SeriesReadThrough({
                   <Users className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
                   {m.uniqueReaders.toLocaleString()}
                 </span>
+                {/* 글별로 따로 분석 — 이 화의 per-post 분석으로 들어가는 드릴인임을 명시. */}
+                <ChevronRight className="h-4 w-4 shrink-0 self-center text-slate-300 transition-colors group-hover:text-accent-500 dark:text-slate-600 dark:group-hover:text-accent-400" />
               </div>
               {/* Reader bar, sized against the strongest episode. */}
               <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
