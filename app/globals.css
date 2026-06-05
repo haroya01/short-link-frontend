@@ -28,6 +28,10 @@
   /* 쿠키 배너가 뷰포트 하단에서 얼마나 떠 있나. 기본은 home-indicator 만 비키고, 하단 탭바가 있는
      표면(body[data-bottom-nav])에선 탭바 높이만큼 올린다. */
   --cookie-bottom: env(safe-area-inset-bottom);
+  /* 토스트가 뷰포트 하단에서 얼마나 떠 있나. 기본은 데스크톱과 같은 1.5rem. 하단 탭바·쿠키 배너가
+     있는 표면(아래 body[...] 규칙)에선 그 위로 올려 충돌을 피한다. 모바일 전용 — 토스트는 sm+ 에서
+     sm:bottom-6 으로 되돌아간다(탭바가 sm:hidden 이라 lift 가 필요 없음). */
+  --toast-bottom: 1.5rem;
   /* recharts(daily-chart) 색은 inline SVG/style 이라 Tailwind dark: 가 안 닿는다. CSS 변수로
      테마를 끌어 .dark 에서 한 번에 덮는다 — 작가 방문통계가 다크 표면에서 라이트 격자/툴팁로 깨지던 문제. */
   --chart-grid: #e2e8f0;
@@ -43,9 +47,11 @@
   --chart-tooltip-text: #e2e8f0;
 }
 
-/* 하단 탭바가 있는 표면에선 쿠키 배너를 탭바 바로 위로 올려 탭을 가리지 않게 한다. */
+/* 하단 탭바가 있는 표면에선 쿠키 배너를 탭바 바로 위로 올려 탭을 가리지 않게 한다.
+   토스트도 탭바 위로 올린다 — 안 그러면 bottom-6 토스트가 탭을 덮어 클릭을 가로챈다. */
 body[data-bottom-nav] {
   --cookie-bottom: var(--bottom-nav-h);
+  --toast-bottom: calc(var(--bottom-nav-h) + 0.75rem);
 }
 
 /* qr-campaigns 히어로 진입 애니메이션. opacity-0 으로 시작 → 100% 에서 1 로. forwards 로
@@ -1015,6 +1021,10 @@ canvas.qr-canvas-fit {
 body[data-cookie-consent="visible"] {
   padding-bottom: 6rem;
   --fab-bottom: calc(7rem + env(safe-area-inset-bottom));
+  /* 쿠키 배너가 떠 있으면 토스트를 배너 위로 더 올린다. --cookie-bottom 은 탭바 유무까지 이미
+     반영하므로 여기에 배너 높이(~3.5rem)만 더하면 탭바·배너 둘 다 비킨다. 이 규칙이 위
+     body[data-bottom-nav] 보다 뒤라, 둘 다 켜져도 (배너가 최상단이라) 이 값이 이긴다. */
+  --toast-bottom: calc(var(--cookie-bottom) + 3.5rem);
 }
 @media (min-width: 640px) {
   body[data-cookie-consent="visible"] {
