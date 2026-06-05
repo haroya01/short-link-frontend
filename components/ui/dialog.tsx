@@ -97,7 +97,7 @@ export function ConfirmDialog({
     // the user toggled into a dialog with fewer fields (contact card, etc.) because the panel
     // shrunk and re-centered around the smaller content. Anchoring to top + a fixed top
     // offset keeps the Save button position predictable regardless of body length.
-    <div className="fixed inset-0 z-50 overflow-y-auto p-4 pt-12 sm:pt-16">
+    <div className="fixed inset-0 z-50 overflow-y-auto px-4 pt-12 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pt-16">
       <div
         className="fixed inset-0 bg-slate-900/50"
         onClick={() => !busy && onOpenChange(false)}
@@ -117,7 +117,10 @@ export function ConfirmDialog({
         // navigating between dialogs. Floor at min(540px, viewport-4rem) so phones with very
         // short viewports don't get squeezed below their natural content height.
         className={cn(
-          "relative mx-auto flex max-h-[calc(100vh-4rem)] min-h-[min(540px,calc(100vh-4rem))] w-full flex-col rounded-lg border border-slate-200 bg-white shadow-xl",
+          // dvh (not vh): on iOS Safari 100vh is the toolbar-expanded height, so with the toolbar
+          // visible a vh-sized panel pushes its sticky footer (cancel/confirm) below the visible area,
+          // forcing a scroll to reach it. dvh tracks the actual viewport.
+          "relative mx-auto flex max-h-[calc(100dvh-4rem)] min-h-[min(540px,calc(100dvh-4rem))] w-full flex-col rounded-lg border border-slate-200 bg-white shadow-xl",
           maxWidthClass,
           "animate-fade-in",
         )}

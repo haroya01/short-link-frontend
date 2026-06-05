@@ -66,7 +66,7 @@ export function AppHeader({
             <button
               type="button"
               onClick={toggle}
-              className="-ml-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-700 transition-colors hover:bg-slate-100 sm:hidden"
+              className="touch-target -ml-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-700 transition-colors hover:bg-slate-100 sm:hidden"
               aria-label={open ? "close menu" : "open menu"}
               aria-expanded={open}
             >
