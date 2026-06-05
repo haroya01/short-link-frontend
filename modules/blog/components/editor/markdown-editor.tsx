@@ -34,7 +34,7 @@ import {
   Video,
   type LucideIcon,
 } from "lucide-react";
-import { CodeMirrorBlock } from "@/modules/blog/components/editor/codemirror-block";
+import { CodeMirrorBlock, insertCodeBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
@@ -435,7 +435,7 @@ function EditorToolbar({
       { icon: List, label: t("slash.bulletList"), active: a.bullet, run: () => editor.chain().focus().toggleBulletList().run() },
       { icon: ListOrdered, label: t("slash.orderedList"), active: a.ordered, run: () => editor.chain().focus().toggleOrderedList().run() },
       { icon: Quote, label: t("slash.quote"), active: a.quote, run: () => editor.chain().focus().toggleBlockquote().run() },
-      { icon: SquareCode, label: t("slash.codeBlock"), active: a.codeBlock, run: () => editor.chain().focus().toggleCodeBlock().run() },
+      { icon: SquareCode, label: t("slash.codeBlock"), active: a.codeBlock, run: () => insertCodeBlock(editor) },
     ],
     [
       { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() },
