@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight, Eye, Heart, Link2, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
+import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
+import { blogPath } from "@/lib/host";
 import { getPostAnalytics, getPostStats, type PostAnalytics } from "@/modules/blog/api/analytics";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
@@ -64,38 +66,38 @@ export default function PostAnalyticsPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
-      <a
-        href="/analytics"
+      <Link
+        href={blogPath("/analytics")}
         className="focus-ring inline-flex items-center gap-1.5 rounded text-[13px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
       >
         <ArrowLeft className="h-4 w-4" />
         {t("analyticsTitle")}
-      </a>
+      </Link>
 
       {/* Prev/next 글 switcher — absorbs the old 독자 picker: flip between posts' readers in place. */}
       {(prevPost || nextPost) && (
         <nav className="mt-4 flex items-center justify-between gap-3 text-[13px] font-medium">
           {prevPost ? (
-            <a
-              href={`/analytics/${prevPost.id}`}
+            <Link
+              href={blogPath(`/analytics/${prevPost.id}`)}
               aria-label={`${t("analyticsPrevPost")}: ${prevPost.title || prevPost.slug}`}
               className="focus-ring inline-flex min-w-0 max-w-[45%] items-center gap-1.5 rounded text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
             >
               <ChevronLeft className="h-4 w-4 shrink-0" />
               <span className="truncate">{prevPost.title || prevPost.slug}</span>
-            </a>
+            </Link>
           ) : (
             <span />
           )}
           {nextPost ? (
-            <a
-              href={`/analytics/${nextPost.id}`}
+            <Link
+              href={blogPath(`/analytics/${nextPost.id}`)}
               aria-label={`${t("analyticsNextPost")}: ${nextPost.title || nextPost.slug}`}
               className="focus-ring inline-flex min-w-0 max-w-[45%] items-center gap-1.5 rounded text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
             >
               <span className="truncate">{nextPost.title || nextPost.slug}</span>
               <ChevronRight className="h-4 w-4 shrink-0" />
-            </a>
+            </Link>
           ) : (
             <span />
           )}
