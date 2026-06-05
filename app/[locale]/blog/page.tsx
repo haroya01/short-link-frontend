@@ -25,7 +25,6 @@ import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { SubscribedSeriesFeed } from "@/modules/blog/components/subscribed-series-feed";
-import { MobileDiscoveryStrip } from "@/modules/blog/components/mobile-discovery-strip";
 import { MyTagsStrip } from "@/modules/blog/components/my-tags-strip";
 import { SeriesFeedCard } from "@/modules/blog/components/series-feed-card";
 import { TrendingByTag } from "@/modules/blog/components/trending-by-tag";
@@ -260,11 +259,6 @@ export default async function BlogFeedPage({
                   interleave={
                     series.length > 0 ? <SeriesFeedCard series={series[0]} locale={locale} /> : null
                   }
-                  belowFeatured={
-                    !searching ? (
-                      <MobileDiscoveryStrip locale={locale} tags={tags} authors={authors} />
-                    ) : null
-                  }
                 />
               )}
             </FeedContentTransition>
@@ -276,9 +270,10 @@ export default async function BlogFeedPage({
 }
 
 /**
- * The feed's reading column: an optional mobile discovery strip above the infinite-scroll list. The
- * surrounding {@link ReadingShell} (+ the desktop rail) is rendered once by the page — NOT here — so
- * the rail stays put while only this column slides on a tab switch.
+ * The feed's reading column — the infinite-scroll post list. The surrounding {@link ReadingShell}
+ * (+ the desktop rail) is rendered once by the page — NOT here — so the rail stays put while only this
+ * column slides on a tab switch. Mobile discovery (tags / authors) lives in the 탐색 sheet now, not
+ * above the feed.
  */
 function FeedColumn({
   locale,
@@ -289,7 +284,6 @@ function FeedColumn({
   featuredFirst,
   featuredLabel,
   interleave,
-  belowFeatured,
 }: {
   locale: string;
   items: PublicFeedItem[];
@@ -299,22 +293,18 @@ function FeedColumn({
   featuredFirst: boolean;
   featuredLabel: string;
   interleave?: ReactNode;
-  belowFeatured?: ReactNode;
 }) {
   return (
-    <>
-      {belowFeatured}
-      <FeedInfinite
-        locale={locale}
-        initialItems={items}
-        initialHasNext={hasNext}
-        sort={sort}
-        query={query}
-        featuredFirst={featuredFirst}
-        featuredLabel={featuredLabel}
-        interleaveNode={interleave}
-      />
-    </>
+    <FeedInfinite
+      locale={locale}
+      initialItems={items}
+      initialHasNext={hasNext}
+      sort={sort}
+      query={query}
+      featuredFirst={featuredFirst}
+      featuredLabel={featuredLabel}
+      interleaveNode={interleave}
+    />
   );
 }
 

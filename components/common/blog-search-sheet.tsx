@@ -4,14 +4,25 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Search, X } from "lucide-react";
-import { blogHref } from "@/lib/host";
-import { searchPublicFeed, type PublicFeedItem } from "@/modules/blog/api/public-posts";
-import { postHref } from "@/modules/blog/components/feed-card";
+import { blogHref, blogPath } from "@/lib/host";
+import {
+  listPopularTags,
+  listSuggestedAuthors,
+  searchPublicFeed,
+  type PublicFeedItem,
+  type SuggestedAuthor,
+  type TagCount,
+} from "@/modules/blog/api/public-posts";
+import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { Avatar } from "@/modules/blog/components/avatar";
+import { TagChip } from "@/modules/blog/components/tag-chip";
 
 /**
- * Full-screen mobile search, opened from the bottom-nav 검색 tab. Live: results stream in as you type
- * (debounced) so search feels dynamic instead of a blind submit-and-navigate. Enter (or "see all")
- * still goes to the full ?q= results page. Desktop keeps its own header search.
+ * Full-screen mobile 탐색 (explore) sheet, opened from the bottom-nav. Resting state = discovery
+ * (popular tags + suggested authors), which used to sit as a strip above the mobile feed and crowd the
+ * first paint; folding it here keeps the feed content-first while search and discovery share one
+ * intent ("뭐 읽지?"). Typing switches to live search (debounced); Enter / "see all" goes to the full
+ * ?q= results page. Desktop keeps its own header search + sidebar rail.
  */
 export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("publicFeed");
@@ -21,6 +32,12 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const [value, setValue] = useState("");
   const [results, setResults] = useState<PublicFeedItem[]>([]);
   const [loading, setLoading] = useState(false);
+  // Discovery (popular tags + suggested authors) fills the sheet's resting state — the mobile feed no
+  // longer carries a discovery strip above the posts, so this is where "둘러보기" lives now. Fetched
+  // client-side (the sheet mounts in the layout, not the feed page) once per open session.
+  const [tags, setTags] = useState<TagCount[]>([]);
+  const [authors, setAuthors] = useState<SuggestedAuthor[]>([]);
+  const [discoveryLoaded, setDiscoveryLoaded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -36,6 +53,21 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
       document.removeEventListener("keydown", onKey);
     };
   }, [open, onClose]);
+
+  // Lazily load discovery the first time the sheet opens; keep it across opens within the session.
+  useEffect(() => {
+    if (!open || discoveryLoaded) return;
+    let live = true;
+    Promise.all([listPopularTags(12), listSuggestedAuthors(5)]).then(([tg, au]) => {
+      if (!live) return;
+      if (tg.ok) setTags(tg.data);
+      if (au.ok) setAuthors(au.data);
+      setDiscoveryLoaded(true);
+    });
+    return () => {
+      live = false;
+    };
+  }, [open, discoveryLoaded]);
 
   // Debounced live search — fires ~250ms after typing stops; stale responses ignored via `live`.
   useEffect(() => {
@@ -109,6 +141,70 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
       </form>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-6" aria-live="polite">
+        {!q && (tags.length > 0 || authors.length > 0) && (
+          <div className="pt-2">
+            {tags.length > 0 && (
+              <section className="mb-6">
+                <div className="mb-2.5 flex items-baseline justify-between px-2">
+                  <h2 className="text-[12px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    {t("railPopularTags")}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      navigate(blogPath("/tags"));
+                    }}
+                    className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring"
+                  >
+                    {t("railSeeAll")}
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2 px-2">
+                  {tags.map((tag) => (
+                    <TagChip
+                      key={tag.tag}
+                      soft
+                      href={blogPath(`/tags/${encodeURIComponent(tag.tag)}`)}
+                      label={tag.tag}
+                      count={tag.count}
+                      onClick={onClose}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {authors.length > 0 && (
+              <section>
+                <h2 className="mb-1 px-2 text-[12px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  {t("railSuggestedAuthors")}
+                </h2>
+                <ul>
+                  {authors.map(({ author, postCount }) => (
+                    <li key={author.username}>
+                      <a
+                        href={authorHref(author.username, locale)}
+                        onClick={() => onClose()}
+                        className="focus-ring flex items-center gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      >
+                        <Avatar src={author.avatarUrl} name={author.username} size="md" />
+                        <span className="flex min-w-0 flex-col">
+                          <span className="truncate text-[14px] font-semibold text-slate-800 dark:text-slate-200">
+                            {author.username}
+                          </span>
+                          <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">
+                            {t("railPostCount", { count: postCount })}
+                          </span>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+        )}
         {q && loading && results.length === 0 && (
           <ul className="animate-pulse divide-y divide-slate-100" aria-busy>
             {Array.from({ length: 5 }).map((_, i) => (

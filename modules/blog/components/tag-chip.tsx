@@ -18,6 +18,7 @@ export function TagChip({
   ariaCurrent,
   className,
   soft = false,
+  onClick,
 }: {
   href: string;
   label: string;
@@ -26,6 +27,9 @@ export function TagChip({
   ariaCurrent?: "page" | "true";
   className?: string;
   soft?: boolean;
+  /** Fires on click (before navigation) — e.g. to dismiss the explore sheet a chip is rendered in,
+   *  which lives in a parent that a soft-nav wouldn't otherwise unmount. */
+  onClick?: () => void;
 }) {
   const cls = cn(
     "focus-ring inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors",
@@ -43,11 +47,11 @@ export function TagChip({
     </>
   );
   return soft ? (
-    <Link href={href} aria-current={ariaCurrent} className={cls}>
+    <Link href={href} aria-current={ariaCurrent} className={cls} onClick={onClick}>
       {inner}
     </Link>
   ) : (
-    <a href={href} aria-current={ariaCurrent} className={cls}>
+    <a href={href} aria-current={ariaCurrent} className={cls} onClick={onClick}>
       {inner}
     </a>
   );
