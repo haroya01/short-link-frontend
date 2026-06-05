@@ -1,8 +1,8 @@
 "use client";
 
 import { ExternalLink, Info } from "lucide-react";
-import { useLocale } from "next-intl";
 import type { useTranslations } from "next-intl";
+import { blogHref } from "@/lib/host";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,13 +33,12 @@ type Props = {
  * shape mirrors the backend JSON. Title is required; the other three have backend defaults so
  * blank is fine on initial create.
  *
- * <p>Dialog also surfaces a "수집된 이메일 보기 →" link to {@code /content/leads} so the seller
+ * <p>Dialog also surfaces a "수집된 이메일 보기 →" link to the blog leads dashboard so the seller
  * who just made an EMAIL_FORM block immediately knows where the collected addresses live. The
  * page was orphaned until this dialog started linking to it — sellers were leaving the form on
  * profiles without realizing leads were being saved at all.
  */
 export function EmailFormBlockDialog({ open, initialJson, onOpenChange, onSubmit, t }: Props) {
-  const locale = useLocale();
   const [config, setConfig] = useBlockDialogForm<Config>(open, initialJson, (raw) => {
     if (raw) {
       try {
@@ -86,7 +85,7 @@ export function EmailFormBlockDialog({ open, initialJson, onOpenChange, onSubmit
           <div className="space-y-0.5">
             <p>{t("emailFormHowItWorks")}</p>
             <a
-              href={`/${locale}/content/leads`}
+              href={blogHref("/leads")}
               className="inline-flex items-center gap-0.5 font-medium underline-offset-2 hover:underline"
             >
               {t("emailFormViewLeadsCta")}
