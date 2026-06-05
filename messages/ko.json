@@ -2117,6 +2117,8 @@
         "csvExcludesOptedOut": "수신 거부로 표시한 항목은 CSV 에서 자동 제외됩니다.",
         "loading": "불러오는 중...",
         "loadFailed": "불러오기에 실패했어요.",
+        "errorHint": "잠시 후 다시 시도해 주세요. 문제가 계속되면 새로고침해 보세요.",
+        "retry": "다시 시도",
         "downloadCsv": "CSV 다운로드",
         "backToEditor": "편집으로 돌아가기",
         "emptyTitle": "아직 등록된 이메일이 없어요",

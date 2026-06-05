@@ -2117,6 +2117,8 @@
         "csvExcludesOptedOut": "Entries marked as opted-out are automatically excluded from the CSV.",
         "loading": "Loading...",
         "loadFailed": "Couldn't load leads.",
+        "errorHint": "Please try again in a moment. If it keeps failing, try refreshing the page.",
+        "retry": "Try again",
         "downloadCsv": "Download CSV",
         "backToEditor": "Back to editor",
         "emptyTitle": "No signups yet",
