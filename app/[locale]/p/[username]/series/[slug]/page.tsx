@@ -117,6 +117,19 @@ export default async function PublicSeriesPage({
               </>
             )}
           </div>
+          {/* The left rail (author follow + 모든 시리즈) is xl-only, so surface both here for <xl too —
+              else mobile readers can 구독 the series but never follow the author or reach their other
+              series. Hidden on xl where the rail carries it. */}
+          <div className="mt-4 flex flex-wrap items-center gap-3 xl:hidden">
+            <FollowButton username={author.username} initialFollowerCount={0} compact />
+            <a
+              href={authorHref(author.username, locale, "series")}
+              className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"
+            >
+              {tf("seriesAllByAuthor")}
+              <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
     </header>
   );
 
