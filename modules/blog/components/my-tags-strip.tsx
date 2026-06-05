@@ -20,7 +20,7 @@ export function MyTagsStrip() {
     <section className="mx-auto mt-5 w-full max-w-2xl">
       <div className="mb-2 flex items-center gap-1.5">
         <Star className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" />
-        <h2 className="text-[12px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        <h2 className="text-[13px] font-bold text-slate-800 dark:text-slate-200">
           {t("myTags")}
         </h2>
       </div>

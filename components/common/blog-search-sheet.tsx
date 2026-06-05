@@ -16,6 +16,7 @@ import {
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { TagChip } from "@/modules/blog/components/tag-chip";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 /**
  * Full-screen mobile 탐색 (explore) sheet, opened from the bottom-nav. Resting state = discovery
@@ -146,9 +147,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
             {tags.length > 0 && (
               <section className="mb-6">
                 <div className="mb-2.5 flex items-baseline justify-between px-2">
-                  <h2 className="text-[12px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                    {t("railPopularTags")}
-                  </h2>
+                  <RailHeading>{t("railPopularTags")}</RailHeading>
                   <button
                     type="button"
                     onClick={() => {
@@ -177,9 +176,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
 
             {authors.length > 0 && (
               <section>
-                <h2 className="mb-1 px-2 text-[12px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                  {t("railSuggestedAuthors")}
-                </h2>
+                <RailHeading className="mb-1 px-2">{t("railSuggestedAuthors")}</RailHeading>
                 <ul>
                   {authors.map(({ author, postCount }) => (
                     <li key={author.username}>
@@ -229,7 +226,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                 >
                   <span className="min-w-0 flex-1">
                     {item.tags[0] && (
-                      <span className="text-[11px] font-semibold uppercase tracking-wide text-accent-700">
+                      <span className="text-[11px] font-semibold text-accent-700">
                         {item.tags[0]}
                       </span>
                     )}
