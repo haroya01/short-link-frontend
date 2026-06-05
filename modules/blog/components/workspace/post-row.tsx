@@ -2,6 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Eye, Trash2 } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import { blogPath } from "@/lib/host";
 import type { PostView } from "@/modules/blog/api/posts";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 
@@ -11,8 +13,8 @@ export function PostRow({ post, onDelete }: { post: PostView; onDelete?: (post: 
   // a button inside an anchor is invalid + un-clickable). Shown on hover / focus-within.
   return (
     <li className="group/row -mx-3 flex items-center rounded-xl transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60">
-      <a
-        href={`/write/${post.id}`}
+      <Link
+        href={blogPath(`/write/${post.id}`)}
         className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3 py-3"
       >
         <PostStatusBadge status={post.status} />
@@ -28,7 +30,7 @@ export function PostRow({ post, onDelete }: { post: PostView; onDelete?: (post: 
             {t("views", { count: post.viewCount })}
           </span>
         )}
-      </a>
+      </Link>
       {onDelete && (
         <button
           type="button"
