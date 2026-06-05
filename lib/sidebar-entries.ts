@@ -20,10 +20,10 @@ export function buildBlogSections(
         // 임시저장(/drafts)·시리즈(/series) entries were all just lenses on this same list.
         // 분석은 글의 facet이기도 하다 — /write 상단 요약 strip("전체 분석")과 글별 성과 버튼,
         // 독자용 글 상세 섹션으로도 들어간다. 그 진입점들은 그대로 두고, 사이드바에도 직접 진입점을 둔다.
+        // "글 안 링크"는 분석 안의 라벨된 섹션으로 흡수돼 별도 항목을 두지 않는다(중복 제거).
         { href: "/write", label: tBlog("myPosts") },
         { href: "/analytics", label: tBlog("analytics") },
         { href: "/leads", label: tBlog("leads") },
-        { href: "/links", label: tBlog("links") },
         { href: "/curation", label: tBlog("curation") },
         { href: "/webhooks", label: tBlog("webhooks") },
       ],
