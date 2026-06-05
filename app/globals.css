@@ -520,9 +520,14 @@ h1, h2, h3, p {
     @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-400;
   }
   /* Tables (TABLE block / markdown) — flat editorial: header underline + light row dividers, no heavy
-     grid (matches the §1 flat philosophy). Scrolls within the reading column if it gets too wide. */
+     grid (matches the §1 flat philosophy). The Markdown renderer wraps each table in .prose-table-wrap
+     so a too-wide one scrolls horizontally within the reading column (the margin lives on the wrap so
+     overflow-x-auto doesn't clip it) instead of squishing cells on a phone. */
+  .prose-post .prose-table-wrap {
+    @apply my-7 overflow-x-auto;
+  }
   .prose-post table {
-    @apply my-7 w-full border-collapse text-[0.9375rem] leading-snug;
+    @apply w-full border-collapse text-[0.9375rem] leading-snug;
   }
   .prose-post thead th {
     @apply border-b-2 border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100;
