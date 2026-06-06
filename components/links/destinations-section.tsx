@@ -38,6 +38,8 @@ export function LinkDestinationsSection({
   const [weight, setWeight] = useState(50);
   const [label, setLabel] = useState("");
   const [country, setCountry] = useState("");
+  const [deviceClass, setDeviceClass] = useState("");
+  const [os, setOs] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -74,11 +76,15 @@ export function LinkDestinationsSection({
         weight,
         label.trim() || undefined,
         country || undefined,
+        deviceClass || undefined,
+        os || undefined,
       );
       setUrl("");
       setLabel("");
       setWeight(50);
       setCountry("");
+      setDeviceClass("");
+      setOs("");
       await refresh();
     } catch (err) {
       toast(errorMessage(err, t("addFailed")), "error");
@@ -122,7 +128,7 @@ export function LinkDestinationsSection({
         <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("description")}</p>
       </div>
 
-      <form onSubmit={handleAdd} className="grid gap-2 sm:grid-cols-[1fr_100px_120px_120px_auto]">
+      <form onSubmit={handleAdd} className="grid gap-2 sm:grid-cols-[1fr_100px_120px] sm:items-start">
         <Input
           type="url"
           value={url}
@@ -148,10 +154,20 @@ export function LinkDestinationsSection({
           maxLength={40}
           disabled={busy}
         />
-        <CountrySelect value={country} onChange={setCountry} disabled={busy} t={t} />
-        <Button type="submit" size="sm" variant="accent" disabled={busy || !url.trim()}>
-          {busy ? t("adding") : t("add")}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2 sm:col-span-3">
+          <CountrySelect value={country} onChange={setCountry} disabled={busy} t={t} />
+          <DeviceClassSelect value={deviceClass} onChange={setDeviceClass} disabled={busy} t={t} />
+          <OsSelect value={os} onChange={setOs} disabled={busy} t={t} />
+          <Button
+            type="submit"
+            size="sm"
+            variant="accent"
+            disabled={busy || !url.trim()}
+            className="ml-auto"
+          >
+            {busy ? t("adding") : t("add")}
+          </Button>
+        </div>
       </form>
 
       <div className="mt-4 space-y-2">
@@ -180,9 +196,13 @@ export function LinkDestinationsSection({
               weight={d.weight}
               enabled={d.enabled}
               countryCode={d.countryCode}
+              deviceClass={d.deviceClass}
+              os={d.os}
               onToggle={() => patch(d.id, { enabled: !d.enabled })}
               onWeightChange={(next) => patch(d.id, { weight: next })}
               onCountryChange={(next) => patch(d.id, { countryCode: next })}
+              onDeviceClassChange={(next) => patch(d.id, { deviceClass: next })}
+              onOsChange={(next) => patch(d.id, { os: next })}
               onDelete={() => handleDelete(d.id)}
             />
           ))
@@ -200,10 +220,14 @@ function DestinationRow({
   weight,
   enabled,
   countryCode,
+  deviceClass,
+  os,
   isControl,
   onToggle,
   onWeightChange,
   onCountryChange,
+  onDeviceClassChange,
+  onOsChange,
   onDelete,
 }: {
   label: string;
@@ -213,10 +237,14 @@ function DestinationRow({
   weight?: number;
   enabled?: boolean;
   countryCode?: string | null;
+  deviceClass?: string | null;
+  os?: string | null;
   isControl?: boolean;
   onToggle?: () => void;
   onWeightChange?: (n: number) => void;
   onCountryChange?: (next: string | null) => void;
+  onDeviceClassChange?: (next: string | null) => void;
+  onOsChange?: (next: string | null) => void;
   onDelete?: () => void;
 }) {
   const t = useTranslations("stats.destinations");
@@ -245,6 +273,16 @@ function DestinationRow({
         {countryCode && (
           <span className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
             {countryFlag(countryCode)} {countryCode}
+          </span>
+        )}
+        {deviceClass && (
+          <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-700">
+            {t(`device.${deviceClass}`)}
+          </span>
+        )}
+        {os && (
+          <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-700">
+            {t(`os.${os}`)}
           </span>
         )}
         {enabled === false && (
@@ -290,6 +328,24 @@ function DestinationRow({
               t={t}
             />
           )}
+          {onDeviceClassChange && (
+            <RowSelect
+              value={deviceClass ?? ""}
+              onChange={(v) => onDeviceClassChange(v || null)}
+              ariaLabel={t("deviceLabel")}
+              anyLabel={t("deviceAny")}
+              options={DEVICE_CLASS_OPTIONS.map((id) => ({ value: id, label: t(`device.${id}`) }))}
+            />
+          )}
+          {onOsChange && (
+            <RowSelect
+              value={os ?? ""}
+              onChange={(v) => onOsChange(v || null)}
+              ariaLabel={t("osLabel")}
+              anyLabel={t("osAny")}
+              options={OS_OPTIONS.map((id) => ({ value: id, label: t(`os.${id}`) }))}
+            />
+          )}
           {onToggle && (
             <Button type="button" size="sm" variant="ghost" onClick={onToggle}>
               {enabled === false ? t("enable") : t("disable")}
@@ -331,6 +387,10 @@ const COUNTRY_OPTIONS: { code: string; flag: string }[] = [
   { code: "AU", flag: "🇦🇺" },
   { code: "BR", flag: "🇧🇷" },
 ];
+
+// Mirrors the backend @Pattern on destination requests (mobile|tablet|desktop, and the OS set).
+const DEVICE_CLASS_OPTIONS = ["mobile", "tablet", "desktop"] as const;
+const OS_OPTIONS = ["ios", "android", "windows", "macos", "linux"] as const;
 
 /**
  * Geo-block editor: countries whose visitors are blocked from this link. Loads the current set,
@@ -480,6 +540,94 @@ function RowCountrySelect({
       {COUNTRY_OPTIONS.map((c) => (
         <option key={c.code} value={c.code}>
           {c.flag} {c.code}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function DeviceClassSelect({
+  value,
+  onChange,
+  disabled,
+  t,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  disabled?: boolean;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-50"
+      aria-label={t("deviceLabel")}
+    >
+      <option value="">{t("deviceAny")}</option>
+      {DEVICE_CLASS_OPTIONS.map((id) => (
+        <option key={id} value={id}>
+          {t(`device.${id}`)}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function OsSelect({
+  value,
+  onChange,
+  disabled,
+  t,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  disabled?: boolean;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-50"
+      aria-label={t("osLabel")}
+    >
+      <option value="">{t("osAny")}</option>
+      {OS_OPTIONS.map((id) => (
+        <option key={id} value={id}>
+          {t(`os.${id}`)}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function RowSelect({
+  value,
+  onChange,
+  ariaLabel,
+  anyLabel,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  ariaLabel: string;
+  anyLabel: string;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="rounded-md border border-slate-200 bg-white px-1.5 py-0.5 text-[11px]"
+      aria-label={ariaLabel}
+    >
+      <option value="">{anyLabel}</option>
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>
+          {o.label}
         </option>
       ))}
     </select>

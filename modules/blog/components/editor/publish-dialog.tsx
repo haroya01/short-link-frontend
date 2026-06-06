@@ -32,6 +32,7 @@ export function PublishDialog({
   seriesId,
   onSeriesChange,
   bodyLinks,
+  error,
   saving,
   busy,
   onSave,
@@ -57,11 +58,16 @@ export function PublishDialog({
   onSeriesChange: (v: number | null) => void;
   /** External http(s) links found in the body — offered for auto-shortening through kurl on publish. */
   bodyLinks: string[];
+  /** The editor's current error (failed save / publish), surfaced in the footer so a failed action
+   *  keeps the dialog open with the reason rather than reading as a silent success. */
+  error: string | null;
   saving: boolean;
   busy: boolean;
   onSave: () => Promise<void> | void;
-  onChangeStatus: (a: StatusAction, opts?: { shortenLinks?: string[] }) => Promise<void> | void;
-  onSchedule: (iso: string, opts?: { shortenLinks?: string[] }) => Promise<void> | void;
+  /** Resolves true once the status change succeeds — the dialog closes only then. */
+  onChangeStatus: (a: StatusAction, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
+  /** Resolves true once the post is parked for a future publish — the dialog closes only then. */
+  onSchedule: (iso: string, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
 }) {
   const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -74,10 +80,14 @@ export function PublishDialog({
   // open, so the detected set is stable for the session).
   const [shortenSet, setShortenSet] = useState<Set<string>>(new Set());
 
-  // A public post must carry at least one topic (tag) — the reader's whole discovery surface is
-  // tag-driven. Block the going-public actions until then, and nudge it on the tag field.
+  // A public post must carry at least one topic (tag) AND a title — the reader's whole discovery
+  // A public post needs at least one topic (tag) — the reader's whole discovery surface is
+  // tag-driven — so tags gate the button (disabled) and the tag field nudges. A missing title does
+  // NOT disable Publish: clicking it surfaces the inline "add a title" hint and fires no /publish
+  // (changeStatus guards + returns false, so the dialog stays open) — a teachable click beats a
+  // silently dead button.
   const canPublish = tags.length > 0;
-  const needTags = !canPublish && (status === "DRAFT" || status === "UNPUBLISHED");
+  const needTags = tags.length === 0 && (status === "DRAFT" || status === "UNPUBLISHED");
   // Draft → "발행 설정" (about to go live); already-public → "글 설정" (managing the live post).
   const dialogTitle = status === "DRAFT" ? t("publishSettings") : t("postSettings");
 
@@ -335,7 +345,15 @@ export function PublishDialog({
         </div>
 
         {/* Footer — status-aware actions */}
-        <footer className="flex items-center justify-between gap-2 border-t border-slate-100 px-5 py-3.5 dark:border-slate-800">
+        <footer className="border-t border-slate-100 px-5 py-3.5 dark:border-slate-800">
+          {/* Action error (failed publish/schedule/save) — keeps the dialog open with the reason so a
+              failed action never reads as a silent success. */}
+          {error && (
+            <p className="mb-2.5 text-[13px] text-red-600 dark:text-red-400" role="alert">
+              {error}
+            </p>
+          )}
+          <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {status === "DRAFT" && (
               <button
@@ -374,11 +392,16 @@ export function PublishDialog({
               busy={busy}
               canPublish={canPublish}
               t={t}
+              // Close ONLY when the lifecycle action actually succeeds — a failed publish/schedule
+              // (no title, server 409, …) keeps the dialog open with the error in the footer, instead
+              // of closing and reading as a phantom "published".
               onPublish={async () => {
                 await onSave();
-                if (showSchedule && scheduleAt) await onSchedule(scheduleAt, { shortenLinks: enabledLinks });
-                else await onChangeStatus("publish", { shortenLinks: enabledLinks });
-                onClose();
+                const ok =
+                  showSchedule && scheduleAt
+                    ? await onSchedule(scheduleAt, { shortenLinks: enabledLinks })
+                    : await onChangeStatus("publish", { shortenLinks: enabledLinks });
+                if (ok) onClose();
               }}
               onSaveChanges={async () => {
                 await onSave();
@@ -400,6 +423,7 @@ export function PublishDialog({
                 await onChangeStatus("backToDraft");
               }}
             />
+          </div>
           </div>
         </footer>
       </div>

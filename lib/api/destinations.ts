@@ -14,6 +14,8 @@ export async function addDestination(
   weight: number,
   label?: string,
   countryCode?: string,
+  deviceClass?: string,
+  os?: string,
 ): Promise<DestinationSummary> {
   return request<DestinationSummary>(`/api/v1/links/${shortCode}/destinations`, {
     method: "POST",
@@ -22,6 +24,8 @@ export async function addDestination(
       weight,
       label: label ?? null,
       countryCode: countryCode && countryCode.length > 0 ? countryCode : null,
+      deviceClass: deviceClass && deviceClass.length > 0 ? deviceClass : null,
+      os: os && os.length > 0 ? os : null,
     },
   });
 }
@@ -35,6 +39,8 @@ export async function updateDestination(
     label?: string | null;
     enabled?: boolean;
     countryCode?: string | null;
+    deviceClass?: string | null;
+    os?: string | null;
   },
 ): Promise<DestinationSummary> {
   return request<DestinationSummary>(`/api/v1/links/${shortCode}/destinations/${id}`, {
