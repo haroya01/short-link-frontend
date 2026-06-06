@@ -534,7 +534,20 @@
     "ogHeadlineBottom": "クリック分析",
     "ogSubline": "デバイス・チャネル・国・時間 — どこから誰がクリックしたか、ひと目でわかる"
   },
+  "notifications": {
+    "title": "通知",
+    "empty": "まだ通知はありません",
+    "markAllRead": "すべて既読",
+    "loadMore": "もっと見る",
+    "viewAll": "すべての通知を見る",
+    "loginRequired": "ログインが必要です",
+    "someone": "誰か",
+    "like": "{actor}さんがあなたの記事にいいねしました",
+    "comment": "{actor}さんがあなたの記事にコメントしました",
+    "follow": "{actor}さんがあなたをフォローしました"
+  },
   "nav": {
+    "notifications": "通知",
     "shorten": "短縮",
     "myLinks": "マイリンク",
     "stats": "統計",

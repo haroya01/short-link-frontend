@@ -534,7 +534,20 @@
     "accept": "확인",
     "learnMore": "자세히"
   },
+  "notifications": {
+    "title": "알림",
+    "empty": "아직 알림이 없어요",
+    "markAllRead": "모두 읽음",
+    "loadMore": "더 보기",
+    "viewAll": "모든 알림 보기",
+    "loginRequired": "로그인이 필요해요",
+    "someone": "누군가",
+    "like": "{actor}님이 회원님의 글을 좋아합니다",
+    "comment": "{actor}님이 회원님의 글에 댓글을 남겼습니다",
+    "follow": "{actor}님이 회원님을 팔로우하기 시작했습니다"
+  },
   "nav": {
+    "notifications": "알림",
     "shorten": "단축",
     "myLinks": "내 링크",
     "stats": "통계",
