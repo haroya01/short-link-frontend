@@ -405,6 +405,7 @@
     "untagged": "태그 없음",
     "emptyBookmarks": "아직 북마크한 글이 없어요.",
     "emptyLiked": "아직 좋아요한 글이 없어요.",
+    "browseFeed": "피드 둘러보기",
     "emptyFolder": "이 폴더는 비어 있어요."
   },
   "publicPost": {
@@ -464,6 +465,11 @@
     "bookmarkOn": "북마크에서 빼기",
     "seriesInThis": "이 시리즈",
     "seriesNextUp": "이 시리즈의 다음 글",
+    "ownerEdit": "수정",
+    "ownerDelete": "삭제",
+    "ownerDeleteConfirm": "이 글을 삭제할까요?",
+    "ownerDeleteConfirmBody": "삭제하면 되돌릴 수 없어요.",
+    "ownerDeleteError": "삭제하지 못했어요. 다시 시도해 주세요.",
     "seriesViewAll": "시리즈 전체 {total}편 보기"
   },
   "meta": {

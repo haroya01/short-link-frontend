@@ -494,6 +494,7 @@ function EditorToolbar({
  * and markdown input rules (`## `, `> `, `- `, ``` ```).
  */
 function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: string) => void }) {
+  const t = useTranslations("postEditor");
   const btn = (active: boolean) =>
     `touch-target focus-ring grid h-8 w-8 place-items-center rounded-md transition-colors ${
       active
@@ -518,11 +519,11 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
   });
 
   const items = [
-    { icon: Bold, label: "Bold", active: active.bold, run: () => editor.chain().focus().toggleBold().run() },
-    { icon: Italic, label: "Italic", active: active.italic, run: () => editor.chain().focus().toggleItalic().run() },
-    { icon: Strikethrough, label: "Strike", active: active.strike, run: () => editor.chain().focus().toggleStrike().run() },
-    { icon: Code2, label: "Inline code", active: active.code, run: () => editor.chain().focus().toggleCode().run() },
-    { icon: LinkIcon, label: "Link", active: active.link, run: setLink },
+    { icon: Bold, label: t("toolbar.bold"), active: active.bold, run: () => editor.chain().focus().toggleBold().run() },
+    { icon: Italic, label: t("toolbar.italic"), active: active.italic, run: () => editor.chain().focus().toggleItalic().run() },
+    { icon: Strikethrough, label: t("toolbar.strike"), active: active.strike, run: () => editor.chain().focus().toggleStrike().run() },
+    { icon: Code2, label: t("toolbar.inlineCode"), active: active.code, run: () => editor.chain().focus().toggleCode().run() },
+    { icon: LinkIcon, label: t("toolbar.link"), active: active.link, run: setLink },
   ];
 
   return (

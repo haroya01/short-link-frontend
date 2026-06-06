@@ -92,7 +92,7 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
           <div className="text-[26px] font-bold leading-none tracking-tight text-slate-900 dark:text-slate-100">
             {data.totalClicks.toLocaleString()}
           </div>
-          <div className="mt-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">
+          <div className="mt-1 text-[11px] font-medium text-slate-400">
             clicks
           </div>
         </div>
@@ -133,10 +133,10 @@ function Metric({ label, value, sub }: { label: string; value: string; sub: stri
   return (
     <div className="min-w-0">
       <div className="flex items-baseline gap-1.5">
-        <span className="truncate text-[15px] font-semibold text-slate-900">{value}</span>
+        <span className="truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">{value}</span>
         <span className="text-[12px] font-medium text-accent-700">{sub}</span>
       </div>
-      <div className="mt-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</div>
+      <div className="mt-1 text-[11px] font-medium text-slate-400">{label}</div>
     </div>
   );
 }

@@ -60,9 +60,14 @@ export function ReportButton({ subjectType, subjectId }: Props) {
       </button>
 
       {open && (
-        <div className="absolute bottom-full right-0 z-30 mb-2 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("report")}
+          className="absolute bottom-full right-0 z-30 mb-2 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900"
+        >
           {submitted ? (
-            <p className="text-sm text-slate-600 dark:text-slate-300">{t("reportDone")}</p>
+            <p role="status" className="text-sm text-slate-600 dark:text-slate-300">{t("reportDone")}</p>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3">
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">

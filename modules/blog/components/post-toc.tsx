@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { List, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 export type TocHeading = { id: string; text: string; level: number };
 
@@ -113,7 +114,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
           <div className="absolute inset-x-0 bottom-0 max-h-[70vh] animate-fade-in overflow-y-auto rounded-t-2xl bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] dark:bg-slate-900">
             <div className="mx-auto mb-2 mt-1 h-1 w-10 rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden />
             <div className="flex items-center justify-between px-3 pb-1">
-              <h2 className="text-[13px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{t("toc")}</h2>
+              <RailHeading>{t("toc")}</RailHeading>
               <button
                 type="button"
                 onClick={() => setOpen(false)}

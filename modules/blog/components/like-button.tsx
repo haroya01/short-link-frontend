@@ -50,8 +50,9 @@ export function LikeButton({ postId, initialCount }: { postId: number; initialCo
       <span key={liked ? "on" : "off"} className={`inline-flex ${interacted ? "subscribe-pop" : ""}`}>
         <Heart className={`h-4 w-4 ${liked ? "fill-accent-600 text-accent-600" : ""}`} />
       </span>
-      {/* Hide a bare "0" — show the count only once the post has a like (or the viewer adds one). */}
-      {showLikes(count ?? 0) && (count ?? 0)}
+      {/* Hide a bare "0" — show the count only once the post has a like (or the viewer adds one).
+          aria-live so a screen reader hears the count change when the viewer toggles. */}
+      <span aria-live="polite">{showLikes(count ?? 0) ? count ?? 0 : ""}</span>
     </button>
   );
 }

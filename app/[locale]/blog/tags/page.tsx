@@ -43,7 +43,7 @@ export default async function TagsIndexPage({
   return (
     // Same shell as a single topic's page (/tags/[tag]) so selecting a topic is a seamless soft-nav:
     // identical max-w-7xl main → centered max-w-2xl tabs header → heading → chips → content.
-    <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
+    <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
       <header className="mx-auto flex w-full max-w-2xl items-center border-b border-slate-100 pb-3 dark:border-slate-800">
         <FeedTabs locale={locale} />
       </header>
@@ -89,6 +89,6 @@ export default async function TagsIndexPage({
           </section>
         )}
       </div>
-    </main>
+    </div>
   );
 }
