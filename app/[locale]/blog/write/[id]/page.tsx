@@ -74,6 +74,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         // title you type is the title that ships.
         className="mt-6 w-full border-0 bg-transparent text-headline-sm font-semibold tracking-headline text-slate-900 outline-none placeholder:text-slate-300 dark:text-slate-100 dark:placeholder:text-slate-600 sm:text-headline-md"
         placeholder={t("titlePlaceholder")}
+        aria-label={t("titlePlaceholder")}
       />
       {/* Title length is capped at 200; surface the count only as it approaches the cap so the clean
           masthead isn't cluttered for a normal title. */}
@@ -98,7 +99,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         />
       </div>
 
-      {ed.error && <p className="mt-2 text-sm text-red-600">{ed.error}</p>}
+      {/* While the publish dialog is open it surfaces the error in its own footer — don't double it here. */}
+      {ed.error && !publishOpen && <p className="mt-2 text-sm text-red-600">{ed.error}</p>}
 
       <PublishDialog
         open={publishOpen}
@@ -118,6 +120,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         seriesId={ed.seriesId}
         onSeriesChange={ed.setSeriesId}
         bodyLinks={bodyLinks}
+        title={ed.title}
+        error={ed.error}
         saving={ed.saving}
         busy={ed.busy}
         onSave={ed.save}
@@ -125,9 +129,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         onSchedule={async (iso, opts) => {
           // Confirm the parked publish with its exact date/time — the SCHEDULED badge alone is easy to
           // miss right after the action.
-          if (await ed.schedule(iso, opts)) {
-            toast(t("scheduledToast", { when: new Date(iso).toLocaleString() }), "success");
-          }
+          const ok = await ed.schedule(iso, opts);
+          if (ok) toast(t("scheduledToast", { when: new Date(iso).toLocaleString() }), "success");
+          return ok;
         }}
       />
       {ed.confirmDialog}

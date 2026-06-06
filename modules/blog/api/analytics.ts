@@ -151,16 +151,14 @@ export function getPostPerformance(
  * Deep per-post read stats — the same dimensional breakdown as the profile-visit dashboard
  * (countries · devices · browsers · referrers · channels · UTM · hour heatmap · daily), but scoped
  * to ONE post's reads. Reuses the ProfileStats shape so {@link ProfileStatsDashboard} renders it
- * directly. Backend endpoint to be added: {@code GET /api/v1/posts/{id}/stats} (clicks already carry
- * post_id — see backend V73 migration). Mock-backed until then.
+ * directly.
  */
 export function getPostStats(id: number, days = 30): Promise<ProfileStats> {
   if (USE_MOCKS) return Promise.resolve(mockDeepStats(id, days));
   return request<ProfileStats>(`/api/v1/posts/${id}/stats?days=${days}`, { method: "GET" });
 }
 
-/** Deep per-series read stats — the post breakdown aggregated across a series' member posts. Backend
- *  endpoint to be added: {@code GET /api/v1/series/{id}/stats}. Mock-backed until then. */
+/** Deep per-series read stats — the post breakdown aggregated across a series' member posts. */
 export function getSeriesStats(id: number, days = 30): Promise<ProfileStats> {
   if (USE_MOCKS) return Promise.resolve(mockDeepStats(id * 1000, days, 2.4));
   return request<ProfileStats>(`/api/v1/series/${id}/stats?days=${days}`, { method: "GET" });

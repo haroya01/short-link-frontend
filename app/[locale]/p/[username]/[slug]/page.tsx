@@ -265,7 +265,7 @@ function GonePage({
 }) {
   return (
     <main className="mx-auto flex max-w-md flex-col items-center px-6 py-28 text-center">
-      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900">{t("goneTitle")}</h1>
+      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("goneTitle")}</h1>
       <p className="mt-3 text-slate-500">{t("goneBody")}</p>
       <a
         href={authorHref(username, locale)}

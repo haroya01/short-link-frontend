@@ -455,6 +455,8 @@
     "statLikes": "공감",
     "activityHeading": "활동",
     "activitySummary": "최근 1년 동안 {count}개 발행",
+    "imageZoom": "이미지 확대",
+    "imageClose": "닫기",
     "activityNone": "발행 없음",
     "activityCount": "{count}개 발행",
     "activityLess": "적음",
@@ -1076,6 +1078,22 @@
       "description": "같은 단축 URL 의 클릭을 가중치로 분산하거나 방문자 국가에 맞춰 다른 페이지로 보낼 수 있어요. 국가가 지정된 도착지는 해당 국가 방문자에게만 노출되고, 매칭 안 되면 국가 미지정 도착지로 폴백, 그것도 없으면 원본 URL. 링크당 최대 4개.",
       "countryLabel": "대상 국가",
       "countryAny": "🌐 전체",
+      "deviceLabel": "대상 기기",
+      "deviceAny": "모든 기기",
+      "device": {
+        "mobile": "모바일",
+        "tablet": "태블릿",
+        "desktop": "데스크톱"
+      },
+      "osLabel": "대상 OS",
+      "osAny": "모든 OS",
+      "os": {
+        "ios": "iOS",
+        "android": "Android",
+        "windows": "Windows",
+        "macos": "macOS",
+        "linux": "Linux"
+      },
       "weight": "가중치",
       "labelPlaceholder": "라벨 (선택, 예: variant-A)",
       "controlLabel": "기본 (원본 URL)",
@@ -2925,11 +2943,36 @@
     }
   },
   "abuseReports": {
+    "title": "신고 관리",
     "filterAll": "전체",
     "noPermission": "권한이 없습니다.",
     "notePrompt": "{resolution} 메모 (선택)",
     "subtitle": "신고 접수 list. CSAM auto-quarantine + DMCA 는 별도 트랙.",
     "refresh": "새로고침",
-    "empty": "해당 상태의 신고가 없습니다."
+    "empty": "해당 상태의 신고가 없습니다.",
+    "loadFailed": "신고를 불러오지 못했어요.",
+    "resolveFailed": "처리에 실패했어요.",
+    "anonymous": "익명",
+    "noteLabel": "메모",
+    "status": {
+      "OPEN": "접수",
+      "REVIEWING": "검토 중",
+      "RESOLVED": "처리됨",
+      "REJECTED": "반려됨"
+    },
+    "column": {
+      "id": "ID",
+      "status": "상태",
+      "subject": "대상",
+      "reporter": "신고자",
+      "reason": "사유",
+      "created": "접수일",
+      "actions": "액션"
+    },
+    "action": {
+      "reviewing": "검토 시작",
+      "resolve": "처리",
+      "reject": "반려"
+    }
   }
 }

@@ -455,6 +455,8 @@
     "statLikes": "共感",
     "activityHeading": "アクティビティ",
     "activitySummary": "直近1年で{count}件公開",
+    "imageZoom": "画像を拡大",
+    "imageClose": "閉じる",
     "activityNone": "公開なし",
     "activityCount": "{count}件公開",
     "activityLess": "少",
@@ -1076,6 +1078,22 @@
       "description": "同じ短縮 URL のクリックを重みで分散したり、訪問者の国に合わせて遷移先を切り替えられます。国を指定した遷移先は該当国の訪問者にのみ表示され、合致しない場合は国指定なしの遷移先、それも無ければ元の URL にフォールバックします。リンクごとに最大 4 件。",
       "countryLabel": "対象国",
       "countryAny": "🌐 全体",
+      "deviceLabel": "対象デバイス",
+      "deviceAny": "すべてのデバイス",
+      "device": {
+        "mobile": "モバイル",
+        "tablet": "タブレット",
+        "desktop": "デスクトップ"
+      },
+      "osLabel": "対象 OS",
+      "osAny": "すべての OS",
+      "os": {
+        "ios": "iOS",
+        "android": "Android",
+        "windows": "Windows",
+        "macos": "macOS",
+        "linux": "Linux"
+      },
       "weight": "重み",
       "labelPlaceholder": "ラベル (任意、例: variant-A)",
       "controlLabel": "デフォルト (元の URL)",
@@ -2925,11 +2943,36 @@
     }
   },
   "abuseReports": {
+    "title": "通報管理",
     "filterAll": "すべて",
     "noPermission": "権限がありません。",
     "notePrompt": "{resolution} メモ（任意）",
     "subtitle": "通報の受付リスト。CSAM 自動隔離 + DMCA は別トラック。",
     "refresh": "更新",
-    "empty": "このステータスの通報はありません。"
+    "empty": "このステータスの通報はありません。",
+    "loadFailed": "通報を読み込めませんでした。",
+    "resolveFailed": "処理に失敗しました。",
+    "anonymous": "匿名",
+    "noteLabel": "メモ",
+    "status": {
+      "OPEN": "受付",
+      "REVIEWING": "確認中",
+      "RESOLVED": "処理済み",
+      "REJECTED": "却下"
+    },
+    "column": {
+      "id": "ID",
+      "status": "ステータス",
+      "subject": "対象",
+      "reporter": "通報者",
+      "reason": "理由",
+      "created": "受付日",
+      "actions": "操作"
+    },
+    "action": {
+      "reviewing": "確認を開始",
+      "resolve": "処理",
+      "reject": "却下"
+    }
   }
 }

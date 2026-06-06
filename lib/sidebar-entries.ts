@@ -33,30 +33,3 @@ export function buildBlogSections(
     },
   ];
 }
-
-/**
- * kurl.me 워크스페이스 사이드바. 단축링크 product.
- */
-export function buildLinksSections(
-  tLinks: Translator,
-  tCommon: Translator,
-  { isAdmin }: { isAdmin: boolean },
-): SidebarSection[] {
-  return [
-    {
-      entries: [
-        { href: "/dashboard", label: tLinks("links") },
-        { href: "/campaigns", label: tLinks("campaigns") },
-        { href: "/ctas", label: tLinks("ctas") },
-        { href: "/stats", label: tLinks("stats") },
-        { href: "/settings/profile", label: tLinks("profile") },
-      ],
-    },
-    {
-      entries: [
-        { href: "/settings", label: tCommon("settings") },
-        ...(isAdmin ? [{ href: "/admin", label: tCommon("admin") }] : []),
-      ],
-    },
-  ];
-}
