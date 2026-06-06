@@ -24,6 +24,7 @@ import { postHref } from "@/modules/blog/components/feed-card";
 import { rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
+import { useConfirm } from "@/components/ui/use-confirm";
 
 export type StatusAction = "publish" | "unpublish" | "republish" | "backToDraft";
 
@@ -44,6 +45,7 @@ export function usePostEditor(
   const t = useTranslations("postEditor");
   const router = useRouter();
   const locale = useLocale();
+  const [confirm, confirmDialog] = useConfirm();
 
   const [post, setPost] = useState<PostView | null>(null);
   const [title, setTitleRaw] = useState("");
@@ -316,7 +318,7 @@ export function usePostEditor(
 
   async function restoreRevision(versionNumber: number) {
     if (post == null || busy) return;
-    if (!window.confirm(t("revisionRestoreConfirm"))) return;
+    if (!(await confirm({ title: t("revisionRestoreConfirm"), confirmLabel: t("revisionRestore") }))) return;
     setBusy(true);
     setError(null);
     try {
@@ -332,7 +334,7 @@ export function usePostEditor(
 
   async function remove() {
     if (post == null) return;
-    if (!window.confirm(t("deleteConfirm"))) return;
+    if (!(await confirm({ title: t("deleteConfirm"), destructive: true }))) return;
     setBusy(true);
     try {
       await deletePost(post.id);
@@ -373,5 +375,6 @@ export function usePostEditor(
     schedule,
     restoreRevision,
     remove,
+    confirmDialog,
   };
 }
