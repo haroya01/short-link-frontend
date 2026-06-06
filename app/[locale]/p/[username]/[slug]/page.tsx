@@ -85,6 +85,13 @@ export default async function PublicPostPage({
   const origin = subdomainOrigin(h, username);
   const postUrl = `${origin}/${post.slug}`;
   const minutes = readingMinutes(blocks);
+  // "수정 {date}" hint only when the last edit lands on a LATER DAY than publish — same-day edits
+  // (incl. the save-at-publish stamp) read as part of publishing and stay quiet (조용한 웹로그).
+  const editedLabel =
+    post.lastEditedAt &&
+    formatDate(post.lastEditedAt, locale) !== formatDate(post.publishedAt, locale)
+      ? formatDate(post.lastEditedAt, locale)
+      : null;
   const headings = extractHeadings(blocks);
   // For a series post, pull the full ordered episode list so the banner can show the whole arc with
   // the current part highlighted (the post payload only carries position/total + prev/next).
@@ -155,6 +162,7 @@ export default async function PublicPostPage({
                 <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
                 {" · "}
                 {t("readingTime", { minutes })}
+                {editedLabel ? ` · ${t("editedOn", { date: editedLabel })}` : ""}
               </span>
             </span>
           </a>
@@ -162,6 +170,7 @@ export default async function PublicPostPage({
             <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
             {" · "}
             {t("readingTime", { minutes })}
+            {editedLabel ? ` · ${t("editedOn", { date: editedLabel })}` : ""}
           </p>
           <div className="flex shrink-0 items-center gap-2">
             <span className="xl:hidden">

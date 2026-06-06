@@ -411,6 +411,7 @@
   "publicPost": {
     "like": "좋아요",
     "readingTime": "약 {minutes}분",
+    "editedOn": "수정 {date}",
     "morePosts": "@{username}님의 다른 글",
     "allPosts": "모든 글",
     "emptyPosts": "아직 발행된 글이 없어요.",
@@ -1535,6 +1536,7 @@
   },
   "publicProfile": {
     "empty": "이 사용자가 아직 공개한 링크가 없어요.",
+    "viewBlog": "글 {count}편 보기",
     "madeWith": "kurl.me 로 만들어진 페이지",
     "editFab": "편집",
     "share": {

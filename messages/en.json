@@ -411,6 +411,7 @@
   "publicPost": {
     "like": "Like",
     "readingTime": "{minutes} min read",
+    "editedOn": "Updated {date}",
     "morePosts": "More from @{username}",
     "allPosts": "All posts",
     "emptyPosts": "No posts published yet.",
@@ -1535,6 +1536,7 @@
   },
   "publicProfile": {
     "empty": "This user hasn't added any links yet.",
+    "viewBlog": "View {count} posts",
     "madeWith": "Made with kurl.me",
     "editFab": "Edit",
     "share": {

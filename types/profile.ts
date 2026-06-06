@@ -47,6 +47,8 @@ export type PublicProfile = {
   bannerUrl: string | null;
   socials: Social[];
   entries: PublicProfileEntry[];
+  /** Count of the author's published blog posts — drives the "글 보기" entry-point into /p/<user>. */
+  publishedPostCount: number;
 };
 
 export type PublicProfileEntry = {
