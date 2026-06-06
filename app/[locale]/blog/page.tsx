@@ -233,7 +233,7 @@ export default async function BlogFeedPage({
             <FeedContentTransition index={tabIndex} contentKey={contentKey}>
               {groupByTag ? (
                 trendingSections.length === 0 ? (
-                  <FeedEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
+                  <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
                 ) : (
                   <TrendingByTag
                     sections={trendingSections}
@@ -246,7 +246,7 @@ export default async function BlogFeedPage({
                 searching ? (
                   <SearchEmpty query={query} tags={tags} locale={locale} />
                 ) : (
-                  <FeedEmpty title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
+                  <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
                 )
               ) : (
                 <FeedColumn
