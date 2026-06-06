@@ -11,7 +11,7 @@ export type AuthorTab = { key: string; href: string; label: string; private?: bo
  *  active tab is derived from the live pathname — it updates on a client tab switch without a remount. */
 function activeKeyForPath(pathname: string): string {
   const seg = pathname.replace(/\/+$/, "").split("/").pop() ?? "";
-  return ["series", "about", "liked", "bookmarks"].includes(seg) ? seg : "posts";
+  return ["series", "about"].includes(seg) ? seg : "posts";
 }
 
 // Tab horizontal padding (px-4 = 16px); the underline spans the label, inset past the padding.
