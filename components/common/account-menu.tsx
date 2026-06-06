@@ -7,7 +7,6 @@ import {
   Check,
   ChevronDown,
   Globe,
-  Heart,
   LogOut,
   Newspaper,
   User,
@@ -122,15 +121,11 @@ export function AccountMenu() {
                 <User className="h-4 w-4 text-slate-500" />
                 {t("profile")}
               </a>
-              {/* The viewer's private reading library — saved + liked posts (owner-only tabs on the
-                  author surface; surfaced here so they're reachable from anywhere). */}
-              <a href={authorHref(username, locale, "bookmarks")} role="menuitem" className={itemClass}>
+              {/* The viewer's private reading library — bookmarks + likes, both on the workspace
+                  curation page (a private tool, not an owner-only tab on the public profile). */}
+              <a href={blogHref("/curation")} role="menuitem" className={itemClass}>
                 <Bookmark className="h-4 w-4 text-slate-500" />
-                {t("bookmarks")}
-              </a>
-              <a href={authorHref(username, locale, "liked")} role="menuitem" className={itemClass}>
-                <Heart className="h-4 w-4 text-slate-500" />
-                {t("liked")}
+                {t("library")}
               </a>
             </>
           )}

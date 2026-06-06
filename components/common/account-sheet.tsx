@@ -9,7 +9,6 @@ import {
   ChevronDown,
   FileText,
   Globe,
-  Heart,
   Inbox,
   LogIn,
   LogOut,
@@ -131,14 +130,10 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               <User className="h-5 w-5 text-slate-500" />
               {t("profile")}
             </a>
-            {/* Reader's private library — saved + liked posts. */}
-            <a href={authorHref(username, locale, "bookmarks")} className={ITEM}>
+            {/* Reader's private library — bookmarks + likes, on the workspace curation page. */}
+            <a href={blogHref("/curation")} className={ITEM}>
               <Bookmark className="h-5 w-5 text-slate-500" />
-              {t("bookmarks")}
-            </a>
-            <a href={authorHref(username, locale, "liked")} className={ITEM}>
-              <Heart className="h-5 w-5 text-slate-500" />
-              {t("liked")}
+              {t("library")}
             </a>
 
             {/* Author workspace — the desktop sidebar's entries, which mobile otherwise can't reach
