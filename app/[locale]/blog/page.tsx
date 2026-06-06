@@ -177,9 +177,10 @@ export default async function BlogFeedPage({
         />
       )}
 
-      {/* pb-24 on phones keeps the last feed card scrollable clear of the fixed write FAB (the body
-          gets extra room on top of that while the cookie banner is up — see globals.css). */}
-      <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
+      {/* pb-24 gives the last feed card tail room; the layout's pb-16 already clears the bottom tab
+          bar, and the body gets extra room while the cookie banner is up (see globals.css).
+          A <div>, not <main> — the public blog layout already owns the single <main> landmark. */}
+      <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
         <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800">
           <FeedSortTabs
             tabs={[
@@ -264,7 +265,7 @@ export default async function BlogFeedPage({
             </FeedContentTransition>
           </ReadingShell>
         )}
-      </main>
+      </div>
     </>
   );
 }

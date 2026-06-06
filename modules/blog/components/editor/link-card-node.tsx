@@ -4,6 +4,7 @@ import { Node, mergeAttributes } from "@tiptap/core";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ArrowUpRight, Link2, MapPin, X } from "lucide-react";
 import { getLinkPreview, type LinkPreview } from "@/modules/blog/api/public-posts";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
@@ -72,6 +73,7 @@ function hostOf(url: string): string {
 }
 
 function LinkCardView({ node, deleteNode, selected }: NodeViewProps) {
+  const t = useTranslations("postEditor.blockMenu");
   const url = (node.attrs.url as string) || "";
   const [data, setData] = useState<LinkPreview | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -139,7 +141,7 @@ function LinkCardView({ node, deleteNode, selected }: NodeViewProps) {
           type="button"
           contentEditable={false}
           onClick={() => deleteNode()}
-          aria-label="삭제"
+          aria-label={t("delete")}
           className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-lg bg-white/90 text-slate-400 opacity-0 shadow-sm backdrop-blur transition-opacity hover:text-red-600 group-hover/lc:opacity-100 dark:bg-slate-900/80 dark:hover:text-red-400"
         >
           <X className="h-4 w-4" />
@@ -199,7 +201,7 @@ function LinkCardView({ node, deleteNode, selected }: NodeViewProps) {
         type="button"
         contentEditable={false}
         onClick={() => deleteNode()}
-        aria-label="삭제"
+        aria-label={t("delete")}
         className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-lg bg-white/90 text-slate-400 opacity-0 shadow-sm backdrop-blur transition-opacity hover:text-red-600 group-hover/lc:opacity-100 dark:bg-slate-900/80 dark:hover:text-red-400"
       >
         <X className="h-4 w-4" />

@@ -99,7 +99,7 @@ export function AuthorTabs({
   return (
     <nav
       ref={navRef}
-      className="relative mt-8 flex gap-1 border-b border-slate-200 text-[15px] font-medium dark:border-slate-800"
+      className="relative mt-8 flex gap-1 border-b border-slate-100 text-[15px] font-medium dark:border-slate-800"
     >
       {visible.map((tab, i) => (
         <BlogLink
@@ -108,7 +108,7 @@ export function AuthorTabs({
           data-tab
           data-active={i === activeIndex ? "true" : undefined}
           aria-current={i === activeIndex ? "page" : undefined}
-          className={`focus-ring relative rounded-t px-4 py-2.5 transition-colors ${
+          className={`focus-ring touch-target relative rounded-t px-4 py-2.5 transition-colors ${
             i === activeIndex
               ? "text-slate-900 dark:text-slate-100"
               : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"

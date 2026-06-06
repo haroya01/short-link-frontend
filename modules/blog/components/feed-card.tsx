@@ -188,7 +188,7 @@ export function FeedCard({
                 brand-green dot so it reads as the chosen post); every other row shows its muted
                 representative tag. Never both — stacking them reads as a confusing category pair. */}
             {featured && featuredLabel ? (
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-wide text-accent-600">
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-accent-700 dark:text-accent-400">
                 <span aria-hidden className="h-1 w-1 rounded-full bg-accent-500" />
                 {featuredLabel}
               </span>

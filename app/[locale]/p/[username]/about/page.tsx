@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { linksHref } from "@/lib/host";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
@@ -114,13 +115,13 @@ export default async function PublicAuthorAboutPage({
               </section>
 
               <div className="mt-10 flex justify-end">
-                <a
+                <BlogLink
                   href={authorHref(author.username, locale)}
                   className="group inline-flex items-center gap-1 rounded font-medium text-accent-700 transition-colors hover:text-accent-800 focus-ring dark:text-accent-400"
                 >
                   {t("aboutViewPosts")}
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none" />
-                </a>
+                </BlogLink>
               </div>
             </>
           )}

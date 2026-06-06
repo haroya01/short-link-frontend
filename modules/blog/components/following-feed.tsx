@@ -169,9 +169,7 @@ export function FollowingFeed({
 
         {suggestedAuthors.length > 0 && (
           <section className="mx-auto max-w-md border-t border-slate-100 pt-8">
-            <h3 className="mb-3 text-center text-[13px] font-bold uppercase tracking-wide text-slate-500">
-              {t("railSuggestedAuthors")}
-            </h3>
+            <RailHeading className="mb-3 justify-center">{t("railSuggestedAuthors")}</RailHeading>
             <ul className="flex flex-col gap-1">
               {suggestedAuthors.map(({ author, postCount }) => (
                 <AuthorRow

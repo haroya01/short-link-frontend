@@ -4,6 +4,8 @@
  * headline-sized title + author-meta row — so the skeleton doesn't jump to a different geometry when
  * the post resolves (the "스켈레톤이 다르다" gap). Dark-aware; rendered inside the author chrome.
  */
+import { SrLoading } from "@/modules/blog/components/sr-loading";
+
 export default function PostLoading() {
   return (
     <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr]">
@@ -12,6 +14,7 @@ export default function PostLoading() {
       <div className="hidden xl:block" aria-hidden />
 
       <div className="mx-auto w-full max-w-2xl animate-pulse py-14 sm:py-20" aria-busy>
+        <SrLoading />
         {/* Title — same headline measure as the post <h1> (2 lines). */}
         <div className="h-9 w-11/12 rounded bg-slate-200/80 dark:bg-slate-700/80 sm:h-11" />
         <div className="mt-3 h-9 w-3/5 rounded bg-slate-200/80 dark:bg-slate-700/80 sm:h-11" />

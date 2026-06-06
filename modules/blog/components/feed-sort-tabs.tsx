@@ -89,7 +89,7 @@ export function FeedSortTabs({ tabs }: { tabs: FeedSortTab[] }) {
             href={t.href}
             data-active={t.active ? "true" : undefined}
             aria-current={t.active ? "page" : undefined}
-            className={`focus-ring relative rounded px-2.5 py-1.5 transition-colors ${
+            className={`focus-ring touch-target relative rounded px-2.5 py-1.5 transition-colors ${
               t.active
                 ? "text-accent-700 dark:text-accent-400"
                 : "text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"

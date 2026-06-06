@@ -62,7 +62,7 @@ export default async function TagFeedPage({
   const hasRail = authors.length > 0;
 
   return (
-    <main className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
+    <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
       <header className="mx-auto flex w-full max-w-2xl items-center border-b border-slate-100 pb-3 dark:border-slate-800">
         <FeedTabs locale={locale} />
       </header>
@@ -110,6 +110,6 @@ export default async function TagFeedPage({
             </div>
           </ReadingShell>
         )}
-    </main>
+    </div>
   );
 }

@@ -11,6 +11,7 @@ import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { SeriesReadingShell } from "@/modules/blog/components/series-reading-shell";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 
 // Always render fresh — same reasoning as the post detail page: never serve a stale 404 for a
 // just-published series. findPublicSeries fetches no-store to match.
@@ -59,23 +60,23 @@ export default async function PublicSeriesPage({
   const authorRail = (
     <div className="flex flex-col gap-4">
       <RailHeading>{tf("seriesByAuthor")}</RailHeading>
-      <a href={profileHref} className="focus-ring group flex items-center gap-3 rounded-lg">
+      <BlogLink href={profileHref} className="focus-ring group flex items-center gap-3 rounded-lg">
         <Avatar src={author.avatarUrl} name={author.username} size="lg" />
         <span className="min-w-0 text-[15px] font-semibold text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
           @{author.username}
         </span>
-      </a>
+      </BlogLink>
       {author.bio && (
         <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">{author.bio}</p>
       )}
       <FollowButton username={author.username} initialFollowerCount={0} compact />
-      <a
+      <BlogLink
         href={authorHref(author.username, locale, "series")}
         className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"
       >
         {tf("seriesAllByAuthor")}
         <ArrowRight className="h-3.5 w-3.5" />
-      </a>
+      </BlogLink>
     </div>
   );
 
@@ -99,7 +100,7 @@ export default async function PublicSeriesPage({
           {/* Author (→ profile) + count + last-published, lifted to the header so the heart/date
               context reads at a glance instead of being buried per-row. */}
           <div className="mt-3 flex flex-wrap items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
-            <a
+            <BlogLink
               href={profileHref}
               className="focus-ring group flex items-center gap-2 rounded transition-colors hover:text-accent-700 dark:hover:text-accent-400"
             >
@@ -107,7 +108,7 @@ export default async function PublicSeriesPage({
               <span className="font-medium text-slate-700 group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
                 {author.username}
               </span>
-            </a>
+            </BlogLink>
             <span aria-hidden>·</span>
             <span>{tf("seriesEpisodeCount", { count: series.postCount })}</span>
             {lastPublished && (
@@ -116,6 +117,19 @@ export default async function PublicSeriesPage({
                 <span>{tf("seriesLastPublished", { date: fmtDate(lastPublished) })}</span>
               </>
             )}
+          </div>
+          {/* The left rail (author follow + 모든 시리즈) is xl-only, so surface both here for <xl too —
+              else mobile readers can 구독 the series but never follow the author or reach their other
+              series. Hidden on xl where the rail carries it. */}
+          <div className="mt-4 flex flex-wrap items-center gap-3 xl:hidden">
+            <FollowButton username={author.username} initialFollowerCount={0} compact />
+            <BlogLink
+              href={authorHref(author.username, locale, "series")}
+              className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"
+            >
+              {tf("seriesAllByAuthor")}
+              <ArrowRight className="h-3.5 w-3.5" />
+            </BlogLink>
           </div>
     </header>
   );

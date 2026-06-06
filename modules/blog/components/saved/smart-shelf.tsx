@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Sparkles } from "lucide-react";
+import { Bookmark, Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { blogHref } from "@/lib/host";
 import { useDismiss } from "@/hooks/use-dismiss";
 import {
   type BookmarkFolder,
@@ -15,6 +16,8 @@ import {
   removeSaved,
 } from "@/modules/blog/api/saved";
 import { SavedCard } from "@/modules/blog/components/saved/saved-card";
+import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 
 /**
  * 스마트 셸프 — the owner's bookmarks, hybrid-organized: manual folders the user makes, plus the
@@ -133,7 +136,17 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
     );
   }
   if (saved.length === 0) {
-    return <p className="py-16 text-center text-[14px] text-slate-500 dark:text-slate-400">{t("emptyBookmarks")}</p>;
+    return (
+      <FeedEmpty
+        icon={Bookmark}
+        title={t("emptyBookmarks")}
+        action={
+          <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
+            {t("browseFeed")}
+          </a>
+        }
+      />
+    );
   }
 
   const cardProps = {

@@ -49,7 +49,10 @@ export function BlogBottomNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const isHome = sheet === null && /\/(blog-preview|blog)$/.test(pathname);
+  // Locale-anchored so 홈 highlights on both topologies: production subdomain (pathname = `/ko`) and
+  // dev/preview path (`/ko/blog`, `/ko/blog-preview`). The old `/(blog|blog-preview)$/` only matched
+  // the path form, so 홈 was never active on the production blog subdomain. Mirrors LinksBottomNav.
+  const isHome = sheet === null && /^\/[a-z]{2}(\/(blog|blog-preview))?\/?$/.test(pathname);
 
   return (
     <>

@@ -405,6 +405,7 @@
     "untagged": "タグなし",
     "emptyBookmarks": "まだブックマークした記事がありません。",
     "emptyLiked": "まだいいねした記事がありません。",
+    "browseFeed": "フィードを見る",
     "emptyFolder": "このフォルダは空です。"
   },
   "publicPost": {
@@ -464,6 +465,11 @@
     "bookmarkOn": "リーディングリストから削除",
     "seriesInThis": "このシリーズ",
     "seriesNextUp": "このシリーズの次の記事",
+    "ownerEdit": "編集",
+    "ownerDelete": "削除",
+    "ownerDeleteConfirm": "この記事を削除しますか?",
+    "ownerDeleteConfirmBody": "削除すると元に戻せません。",
+    "ownerDeleteError": "削除できませんでした。もう一度お試しください。",
     "seriesViewAll": "シリーズ全{total}話を見る"
   },
   "imageCropper": {

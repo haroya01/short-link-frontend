@@ -405,6 +405,7 @@
     "untagged": "Untagged",
     "emptyBookmarks": "No bookmarks yet.",
     "emptyLiked": "No liked posts yet.",
+    "browseFeed": "Browse the feed",
     "emptyFolder": "This folder is empty."
   },
   "publicPost": {
@@ -464,6 +465,11 @@
     "bookmarkOn": "Remove from reading list",
     "seriesInThis": "In this series",
     "seriesNextUp": "Next in this series",
+    "ownerEdit": "Edit",
+    "ownerDelete": "Delete",
+    "ownerDeleteConfirm": "Delete this post?",
+    "ownerDeleteConfirmBody": "This can't be undone.",
+    "ownerDeleteError": "Couldn't delete. Please try again.",
     "seriesViewAll": "View all {total} parts"
   },
   "imageCropper": {
