@@ -18,6 +18,7 @@ import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import type { EmailLead } from "@/types";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
+import { useConfirm } from "@/components/ui/use-confirm";
 
 const PAGE_SIZE = 50;
 
@@ -33,6 +34,7 @@ export default function ProfileLeadsPage() {
   const { authenticated, ready } = useAuth();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
+  const [confirm, confirmDialog] = useConfirm();
   const [leads, setLeads] = useState<EmailLead[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
@@ -84,7 +86,7 @@ export default function ProfileLeadsPage() {
   }, [authenticated, page, reloadKey]);
 
   async function handleDelete(id: number) {
-    if (!window.confirm(t("confirmDelete"))) return;
+    if (!(await confirm({ title: t("confirmDelete"), destructive: true }))) return;
     try {
       await deleteEmailLead(id);
       setLeads((prev) => prev.filter((l) => l.id !== id));
@@ -263,6 +265,7 @@ export default function ProfileLeadsPage() {
           </button>
         </div>
       )}
+      {confirmDialog}
     </div>
   );
 }

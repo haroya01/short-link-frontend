@@ -15,6 +15,7 @@ import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { Mark } from "@/components/common/logo";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
+import { useConfirm } from "@/components/ui/use-confirm";
 
 /**
  * 내 글의 "시리즈별 보기" — the post list grouped by series (the unified workspace; series is a lens on
@@ -31,6 +32,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirm, confirmDialog] = useConfirm();
 
   const [creating, setCreating] = useState(false);
   const [nTitle, setNTitle] = useState("");
@@ -158,7 +160,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
   }
 
   async function handleDelete(id: number) {
-    if (!window.confirm(t("seriesDeleteConfirm"))) return;
+    if (!(await confirm({ title: t("seriesDeleteConfirm"), destructive: true }))) return;
     setBusy(true);
     try {
       await deleteSeries(id);
@@ -495,6 +497,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
           </ol>
         </section>
       )}
+      {confirmDialog}
     </div>
   );
 }
