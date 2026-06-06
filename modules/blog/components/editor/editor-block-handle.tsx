@@ -30,6 +30,8 @@ type Target = { node: PMNode; pos: number };
  */
 export function EditorBlockHandle({ editor }: { editor: Editor }) {
   const t = useTranslations("postEditor.blockMenu");
+  // Reuse the slash menu's block labels (heading1 등) so the two menus stay in lockstep + translated.
+  const ts = useTranslations("postEditor.slash");
   const [target, setTarget] = useState<Target | null>(null);
   const [menuAt, setMenuAt] = useState<{ x: number; y: number } | null>(null);
   const gripRef = useRef<HTMLButtonElement>(null);
@@ -79,12 +81,12 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
 
   const turnIntoItems: { icon: LucideIcon; label: string; run: () => void }[] = [
     { icon: Type, label: t("paragraph"), run: () => editor.chain().focus().setParagraph().run() },
-    { icon: Heading1, label: "제목 1", run: () => editor.chain().focus().toggleHeading({ level: 1 }).run() },
-    { icon: Heading2, label: "제목 2", run: () => editor.chain().focus().toggleHeading({ level: 2 }).run() },
-    { icon: Heading3, label: "제목 3", run: () => editor.chain().focus().toggleHeading({ level: 3 }).run() },
-    { icon: List, label: "글머리 목록", run: () => editor.chain().focus().toggleBulletList().run() },
-    { icon: ListOrdered, label: "번호 목록", run: () => editor.chain().focus().toggleOrderedList().run() },
-    { icon: Quote, label: "인용", run: () => editor.chain().focus().toggleBlockquote().run() },
+    { icon: Heading1, label: ts("heading1"), run: () => editor.chain().focus().toggleHeading({ level: 1 }).run() },
+    { icon: Heading2, label: ts("heading2"), run: () => editor.chain().focus().toggleHeading({ level: 2 }).run() },
+    { icon: Heading3, label: ts("heading3"), run: () => editor.chain().focus().toggleHeading({ level: 3 }).run() },
+    { icon: List, label: ts("bulletList"), run: () => editor.chain().focus().toggleBulletList().run() },
+    { icon: ListOrdered, label: ts("orderedList"), run: () => editor.chain().focus().toggleOrderedList().run() },
+    { icon: Quote, label: ts("quote"), run: () => editor.chain().focus().toggleBlockquote().run() },
   ];
 
   const ghostBtn =
@@ -126,7 +128,7 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
               className="fixed z-50 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-700 dark:bg-slate-900"
               style={{ left: menuAt.x, top: menuAt.y }}
             >
-              <p className="px-2 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+              <p className="px-2 pb-1 pt-1 text-[11px] font-semibold text-slate-400 dark:text-slate-500">
                 {t("turnInto")}
               </p>
               {turnIntoItems.map((it) => (
