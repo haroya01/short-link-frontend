@@ -13,6 +13,7 @@ import {
 } from "@/modules/blog/api/comments";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { useConfirm } from "@/components/ui/use-confirm";
 
 
 export function PostComments({
@@ -33,6 +34,7 @@ export function PostComments({
   const [busy, setBusy] = useState(false);
   // The just-posted comment's id — drives its slide-in entrance animation once it renders.
   const [justAddedId, setJustAddedId] = useState<number | null>(null);
+  const [confirm, confirmDialog] = useConfirm();
 
   const load = useCallback(() => {
     return listComments(postId)
@@ -86,7 +88,7 @@ export function PostComments({
   }
 
   async function remove(id: number) {
-    if (!window.confirm(t("deleteConfirm"))) return;
+    if (!(await confirm({ title: t("deleteConfirm"), destructive: true }))) return;
     setBusy(true);
     try {
       await deleteComment(id);
@@ -200,6 +202,7 @@ export function PostComments({
           ))}
         </ul>
       )}
+      {confirmDialog}
     </section>
   );
 }
