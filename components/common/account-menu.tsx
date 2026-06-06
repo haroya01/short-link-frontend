@@ -1,7 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BarChart3, Check, ChevronDown, Globe, LogOut, Newspaper, User } from "lucide-react";
+import {
+  BarChart3,
+  Bookmark,
+  Check,
+  ChevronDown,
+  Globe,
+  Heart,
+  LogOut,
+  Newspaper,
+  User,
+} from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
@@ -111,6 +121,16 @@ export function AccountMenu() {
               <a href={linksHref(`/${locale}/u/${username}`)} role="menuitem" className={itemClass}>
                 <User className="h-4 w-4 text-slate-500" />
                 {t("profile")}
+              </a>
+              {/* The viewer's private reading library — saved + liked posts (owner-only tabs on the
+                  author surface; surfaced here so they're reachable from anywhere). */}
+              <a href={authorHref(username, locale, "bookmarks")} role="menuitem" className={itemClass}>
+                <Bookmark className="h-4 w-4 text-slate-500" />
+                {t("bookmarks")}
+              </a>
+              <a href={authorHref(username, locale, "liked")} role="menuitem" className={itemClass}>
+                <Heart className="h-4 w-4 text-slate-500" />
+                {t("liked")}
               </a>
             </>
           )}

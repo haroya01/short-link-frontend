@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   BarChart3,
+  Bookmark,
   Check,
   ChevronDown,
   FileText,
   Globe,
+  Heart,
   Inbox,
   LogIn,
   LogOut,
@@ -128,6 +130,15 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             <a href={linksHref(`/${locale}/u/${username}`)} className={ITEM}>
               <User className="h-5 w-5 text-slate-500" />
               {t("profile")}
+            </a>
+            {/* Reader's private library — saved + liked posts. */}
+            <a href={authorHref(username, locale, "bookmarks")} className={ITEM}>
+              <Bookmark className="h-5 w-5 text-slate-500" />
+              {t("bookmarks")}
+            </a>
+            <a href={authorHref(username, locale, "liked")} className={ITEM}>
+              <Heart className="h-5 w-5 text-slate-500" />
+              {t("liked")}
             </a>
 
             {/* Author workspace — the desktop sidebar's entries, which mobile otherwise can't reach
