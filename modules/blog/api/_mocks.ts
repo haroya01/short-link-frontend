@@ -168,6 +168,12 @@ function toListItem(item: PublicFeedItem, idx: number, pinned = false): PublicPo
     tags: item.tags,
     likeCount: item.likeCount,
     publishedAt: item.publishedAt,
+    // Demo: the lead post reads as edited a few days after publishing so the "수정 {date}" hint is
+    // visible in mock mode; the rest are unedited (null).
+    lastEditedAt:
+      idx === 0
+        ? new Date(new Date(item.publishedAt).getTime() + 3 * 86_400_000).toISOString()
+        : null,
     pinned,
   };
 }

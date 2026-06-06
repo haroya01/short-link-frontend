@@ -411,6 +411,7 @@
   "publicPost": {
     "like": "いいね",
     "readingTime": "約{minutes}分",
+    "editedOn": "更新 {date}",
     "morePosts": "@{username}さんの他の記事",
     "allPosts": "すべての記事",
     "emptyPosts": "まだ公開された記事はありません。",
@@ -1535,6 +1536,7 @@
   },
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",
+    "viewBlog": "記事{count}件を見る",
     "madeWith": "kurl.me でつくる",
     "editFab": "編集",
     "share": {

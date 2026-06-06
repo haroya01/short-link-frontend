@@ -11,6 +11,8 @@ import { ProfileHeader } from "./_components/profile-header";
 import { ProfileVisitBeacon } from "./_components/profile-visit-beacon";
 import { ShareRow } from "./_components/share-row";
 import { THEME_TABLE } from "./_lib/theme";
+import { authorHref } from "@/modules/blog/components/feed-card";
+import { ArrowRight, BookOpen } from "lucide-react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
@@ -169,6 +171,20 @@ export default async function PublicProfilePage({
           colors={colors}
           emptyLabel={t("empty")}
         />
+        {/* Bridge into the weblog: shown only when this author has published posts, so the
+            link-in-bio surface can reach /p/<user> (the profile→blog direction, mirroring blog→profile). */}
+        {profile.publishedPostCount > 0 && (
+          <div className="mt-5 flex justify-center">
+            <a
+              href={authorHref(profile.username, locale)}
+              className={`focus-ring inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[13px] font-medium transition-opacity hover:opacity-80 ${colors.cardBorder} ${colors.card} ${colors.primary}`}
+            >
+              <BookOpen className="h-4 w-4" aria-hidden />
+              {t("viewBlog", { count: profile.publishedPostCount })}
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+            </a>
+          </div>
+        )}
         <ShareRow
           url={`${SITE_URL}/u/${profile.username}`}
           username={profile.username}
