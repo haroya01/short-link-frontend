@@ -835,7 +835,9 @@ test("revisions: restoring a saved version calls the restore endpoint", async ({
 
 for (const { label, type, wrap } of [
   { label: "Italic", type: "italic", wrap: "*styled words*" },
-  { label: "Strike", type: "strike", wrap: "~~styled words~~" },
+  // The bubble strike button now shares the always-on toolbar's accessible name (toolbar.strike =
+  // "Strikethrough") instead of a separate hardcoded "Strike" — locate it by that unified label.
+  { label: "Strikethrough", type: "strike", wrap: "~~styled words~~" },
   { label: "Inline code", type: "code", wrap: "`styled words`" },
 ] as const) {
   test(`selection ${label} (bubble menu) round-trips to ${wrap}`, async ({ page }) => {
