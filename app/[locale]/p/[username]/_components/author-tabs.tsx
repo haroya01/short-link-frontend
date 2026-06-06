@@ -76,6 +76,15 @@ export function AuthorTabs({
       setBar(target);
     }
 
+    // Owner sees 5 tabs; on a narrow phone they overflow + scroll. Keep the active tab (and its
+    // gliding underline) in view so the current section is never scrolled off-screen.
+    const activeEl = nav.querySelectorAll<HTMLElement>("[data-tab]")[activeIndex];
+    if (activeEl) {
+      const right = activeEl.offsetLeft + activeEl.offsetWidth;
+      if (right > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = right - nav.clientWidth;
+      else if (activeEl.offsetLeft < nav.scrollLeft) nav.scrollLeft = activeEl.offsetLeft;
+    }
+
     // Genuine layout changes (window resize / late font load shifting label widths) → reposition
     // instantly, no glide. Skip the observer's initial fire so it doesn't clobber the glide above.
     let first = true;
@@ -99,7 +108,7 @@ export function AuthorTabs({
   return (
     <nav
       ref={navRef}
-      className="relative mt-8 flex gap-1 border-b border-slate-100 text-[15px] font-medium dark:border-slate-800"
+      className="relative mt-8 flex gap-1 overflow-x-auto border-b border-slate-100 text-[15px] font-medium [scrollbar-width:none] dark:border-slate-800 [&::-webkit-scrollbar]:hidden"
     >
       {visible.map((tab, i) => (
         <BlogLink
@@ -108,7 +117,7 @@ export function AuthorTabs({
           data-tab
           data-active={i === activeIndex ? "true" : undefined}
           aria-current={i === activeIndex ? "page" : undefined}
-          className={`focus-ring touch-target relative rounded-t px-4 py-2.5 transition-colors ${
+          className={`focus-ring touch-target relative shrink-0 whitespace-nowrap rounded-t px-4 py-2.5 transition-colors ${
             i === activeIndex
               ? "text-slate-900 dark:text-slate-100"
               : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
@@ -120,7 +129,7 @@ export function AuthorTabs({
       {bar && (
         <span
           aria-hidden
-          className="pointer-events-none absolute -bottom-px left-0 h-0.5 rounded-full bg-accent-600 transition-[transform,width] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+          className="pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-accent-600 transition-[transform,width] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
           style={{
             transform: `translateX(${bar.left}px)`,
             width: `${bar.width}px`,
