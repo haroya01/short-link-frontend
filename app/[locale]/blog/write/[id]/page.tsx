@@ -130,6 +130,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           }
         }}
       />
+      {ed.confirmDialog}
     </main>
   );
 }
