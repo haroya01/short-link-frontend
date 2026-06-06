@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { FeedCard, FeedList, authorHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
@@ -92,12 +94,12 @@ export default async function PublicProfileHomepage({
           <div className="mb-5 flex items-center gap-2 text-[14px]">
             <span className="text-slate-500 dark:text-slate-400">{t("tagFilterLabel")}</span>
             <span className="font-semibold text-slate-900 dark:text-slate-100">#{activeTag}</span>
-            <a
+            <BlogLink
               href={authorHref(author.username, locale)}
               className="focus-ring ml-1 rounded text-[13px] font-medium text-accent-600 transition-colors hover:text-accent-700 dark:text-accent-400"
             >
               {t("tagFilterClear")}
-            </a>
+            </BlogLink>
           </div>
         )}
 
@@ -109,9 +111,7 @@ export default async function PublicProfileHomepage({
           // 대표글 → 최근 글, each under a quiet label. The labels carry the top spacing, so no flushTop.
           <div className="space-y-9">
             <section>
-              <h2 className="mb-3 text-[13px] font-semibold tracking-tight text-slate-400 dark:text-slate-500">
-                {t("featuredPosts")}
-              </h2>
+              <RailHeading className="mb-3">{t("featuredPosts")}</RailHeading>
               <FeedList>
                 {pinnedPosts.map((p) => (
                   <FeedCard key={p.slug} hideAuthor item={{ ...p, author, viewCount: 0 }} locale={locale} />
@@ -120,9 +120,7 @@ export default async function PublicProfileHomepage({
             </section>
             {recentPosts.length > 0 && (
               <section>
-                <h2 className="mb-3 text-[13px] font-semibold tracking-tight text-slate-400 dark:text-slate-500">
-                  {t("recentPosts")}
-                </h2>
+                <RailHeading className="mb-3">{t("recentPosts")}</RailHeading>
                 <FeedList>
                   {recentPosts.map((p) => (
                     <FeedCard key={p.slug} hideAuthor item={{ ...p, author, viewCount: 0 }} locale={locale} />

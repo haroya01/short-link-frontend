@@ -9,6 +9,7 @@ import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { TagChip } from "@/modules/blog/components/tag-chip";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 
 export const revalidate = 30;
 
@@ -86,12 +87,12 @@ export default async function PublicSeriesIndexPage({
           <div className="mb-5 flex items-center gap-2 text-[14px]">
             <span className="text-slate-500 dark:text-slate-400">{t("tagFilterLabel")}</span>
             <span className="font-semibold text-slate-900 dark:text-slate-100">#{activeTag}</span>
-            <a
+            <BlogLink
               href={seriesHome}
               className="focus-ring ml-1 rounded text-[13px] font-medium text-accent-600 transition-colors hover:text-accent-700 dark:text-accent-400"
             >
               {t("tagFilterClear")}
-            </a>
+            </BlogLink>
           </div>
         )}
 
@@ -111,7 +112,7 @@ export default async function PublicSeriesIndexPage({
                 key={s.slug}
                 className="border-b border-slate-100 dark:border-slate-800/80"
               >
-                <a
+                <BlogLink
                   href={authorHref(username, locale, `series/${s.slug}`)}
                   className="focus-ring group flex items-center gap-5 rounded-lg py-5"
                 >
@@ -125,7 +126,7 @@ export default async function PublicSeriesIndexPage({
                     </span>
                   </span>
                   <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-all group-hover:translate-x-0.5 group-hover:text-accent-600 dark:text-slate-600 dark:group-hover:text-accent-400" />
-                </a>
+                </BlogLink>
               </li>
             ))}
           </ol>
