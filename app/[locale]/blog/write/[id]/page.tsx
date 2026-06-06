@@ -120,7 +120,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         seriesId={ed.seriesId}
         onSeriesChange={ed.setSeriesId}
         bodyLinks={bodyLinks}
-        title={ed.title}
         error={ed.error}
         saving={ed.saving}
         busy={ed.busy}

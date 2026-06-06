@@ -32,7 +32,6 @@ export function PublishDialog({
   seriesId,
   onSeriesChange,
   bodyLinks,
-  title,
   error,
   saving,
   busy,
@@ -59,8 +58,6 @@ export function PublishDialog({
   onSeriesChange: (v: number | null) => void;
   /** External http(s) links found in the body — offered for auto-shortening through kurl on publish. */
   bodyLinks: string[];
-  /** The post's current title — a public post needs one, so it gates the publish action. */
-  title: string;
   /** The editor's current error (failed save / publish), surfaced in the footer so a failed action
    *  keeps the dialog open with the reason rather than reading as a silent success. */
   error: string | null;
@@ -84,9 +81,12 @@ export function PublishDialog({
   const [shortenSet, setShortenSet] = useState<Set<string>>(new Set());
 
   // A public post must carry at least one topic (tag) AND a title — the reader's whole discovery
-  // surface is tag-driven, and a titleless post can't ship. Block the going-public actions until both
-  // are present, and nudge the missing tag on the tag field.
-  const canPublish = tags.length > 0 && title.trim().length > 0;
+  // A public post needs at least one topic (tag) — the reader's whole discovery surface is
+  // tag-driven — so tags gate the button (disabled) and the tag field nudges. A missing title does
+  // NOT disable Publish: clicking it surfaces the inline "add a title" hint and fires no /publish
+  // (changeStatus guards + returns false, so the dialog stays open) — a teachable click beats a
+  // silently dead button.
+  const canPublish = tags.length > 0;
   const needTags = tags.length === 0 && (status === "DRAFT" || status === "UNPUBLISHED");
   // Draft → "발행 설정" (about to go live); already-public → "글 설정" (managing the live post).
   const dialogTitle = status === "DRAFT" ? t("publishSettings") : t("postSettings");
