@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
@@ -146,42 +145,38 @@ export function FollowingFeed({
   if (ready && !authenticated) {
     return (
       <div className="mt-8">
-        <div className="flex flex-col items-center px-6 py-16 text-center">
-          <span className="grid h-16 w-16 place-items-center rounded-2xl bg-accent-50 text-accent-600">
-            <Users className="h-7 w-7" />
-          </span>
-          <h2 className="mt-6 text-[19px] font-semibold tracking-tight text-slate-900">
-            {t("followingSignedOutTitle")}
-          </h2>
-          <p className="mt-2 max-w-sm text-[14px] leading-relaxed text-slate-500">
-            {t("followingSignedOut")}
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
-            <button type="button" onClick={() => signInWithGoogle()} className={blogCta()}>
-              {t("signIn")}
-            </button>
-            {/* Soft-nav back to the public feed — keeps a curious visitor reading instead of bouncing. */}
-            <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
-              {t("followingBrowseLatest")}
-            </Link>
-          </div>
-        </div>
-
-        {suggestedAuthors.length > 0 && (
-          <section className="mx-auto max-w-md border-t border-slate-100 pt-8">
-            <RailHeading className="mb-3 justify-center">{t("railSuggestedAuthors")}</RailHeading>
-            <ul className="flex flex-col gap-1">
-              {suggestedAuthors.map(({ author, postCount }) => (
-                <AuthorRow
-                  key={author.username}
-                  author={author}
-                  locale={locale}
-                  subtitle={t("railPostCount", { count: postCount })}
-                />
-              ))}
-            </ul>
-          </section>
-        )}
+        <FeedEmpty
+          mark
+          title={t("followingSignedOutTitle")}
+          body={t("followingSignedOut")}
+          action={
+            <div className="flex flex-wrap items-center justify-center gap-2.5">
+              <button type="button" onClick={() => signInWithGoogle()} className={blogCta()}>
+                {t("signIn")}
+              </button>
+              {/* Soft-nav back to the public feed — keeps a curious visitor reading instead of bouncing. */}
+              <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
+                {t("followingBrowseLatest")}
+              </Link>
+            </div>
+          }
+        >
+          {suggestedAuthors.length > 0 && (
+            <section className="mt-10 w-full max-w-md border-t border-slate-100 pt-8 dark:border-slate-800">
+              <RailHeading className="mb-3 justify-center">{t("railSuggestedAuthors")}</RailHeading>
+              <ul className="flex flex-col gap-1">
+                {suggestedAuthors.map(({ author, postCount }) => (
+                  <AuthorRow
+                    key={author.username}
+                    author={author}
+                    locale={locale}
+                    subtitle={t("railPostCount", { count: postCount })}
+                  />
+                ))}
+              </ul>
+            </section>
+          )}
+        </FeedEmpty>
       </div>
     );
   }
@@ -195,7 +190,36 @@ export function FollowingFeed({
   }
 
   if (items.length === 0) {
-    return <FeedEmpty title={t("emptyFollowingTitle")} body={t("followingEmpty")} />;
+    return (
+      <div className="mt-4">
+        <FeedEmpty
+          mark
+          title={t("emptyFollowingTitle")}
+          body={t("followingEmpty")}
+          action={
+            <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
+              {t("followingBrowseLatest")}
+            </Link>
+          }
+        >
+          {suggestedAuthors.length > 0 && (
+            <section className="mt-10 w-full max-w-md border-t border-slate-100 pt-8 dark:border-slate-800">
+              <RailHeading className="mb-3 justify-center">{t("railSuggestedAuthors")}</RailHeading>
+              <ul className="flex flex-col gap-1">
+                {suggestedAuthors.map(({ author, postCount }) => (
+                  <AuthorRow
+                    key={author.username}
+                    author={author}
+                    locale={locale}
+                    subtitle={t("railPostCount", { count: postCount })}
+                  />
+                ))}
+              </ul>
+            </section>
+          )}
+        </FeedEmpty>
+      </div>
+    );
   }
 
   const followed = feedAuthors(items);

@@ -14,7 +14,8 @@
   "publicFeed": {
     "recent": "Latest",
     "seriesTab": "Series",
-    "seriesTabEmpty": "No subscribed series yet. Subscribe to a series to see its latest here.",
+    "seriesTabEmptyTitle": "No subscribed series yet",
+    "seriesTabEmpty": "Subscribe to a series and its new posts gather here.",
     "seriesTabSignedOut": "See the latest from series you subscribe to.",
     "seriesTabSignIn": "Sign in",
     "seriesTabFreshBadge": "Just updated",
