@@ -7,7 +7,7 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { AuthorTabs } from "./author-tabs";
 
-type Tab = "posts" | "series" | "about" | "liked" | "bookmarks";
+type Tab = "posts" | "series" | "about";
 
 /**
  * Shared header for the author's blog pages (velog @user style): avatar + handle + bio, then a
@@ -18,16 +18,13 @@ export async function AuthorHeader({ author }: { author: PublicAuthor }) {
   const tNav = await getTranslations("nav");
   const locale = await getLocale();
   // Full author-base paths (not bare "/series") so the tabs work on the path-based deployment
-  // (kurl.me/{locale}/p/{user}) as well as the author subdomain.
-  // `private` tabs (좋아요 / 북마크) render only on the viewer's OWN profile — AuthorTabs decides that
-  // client-side (auth isn't available in this server component). They sit after the public tabs so the
-  // tab-direction index scheme (posts 0 · series 1 · about 2 · liked 3 · bookmarks 4) stays consistent.
-  const tabs: { key: Tab; href: string; label: string; private?: boolean }[] = [
+  // (kurl.me/{locale}/p/{user}) as well as the author subdomain. The profile is the author's PUBLIC
+  // surface; the viewer's own private reading list (좋아요 / 북마크) lives in the workspace
+  // (/blog/curation), reachable from the account menu — not as owner-only tabs on a public page.
+  const tabs: { key: Tab; href: string; label: string }[] = [
     { key: "posts", href: authorHref(author.username, locale), label: t("tabPosts") },
     { key: "series", href: authorHref(author.username, locale, "series"), label: t("tabSeries") },
     { key: "about", href: authorHref(author.username, locale, "about"), label: t("tabAbout") },
-    { key: "liked", href: authorHref(author.username, locale, "liked"), label: t("tabLiked"), private: true },
-    { key: "bookmarks", href: authorHref(author.username, locale, "bookmarks"), label: t("tabBookmarks"), private: true },
   ];
 
   return (

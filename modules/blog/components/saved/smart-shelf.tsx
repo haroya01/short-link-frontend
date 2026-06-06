@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Bookmark, Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Sparkles } from "lucide-react";
+import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
@@ -138,8 +138,9 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   if (saved.length === 0) {
     return (
       <FeedEmpty
-        icon={Bookmark}
+        mark
         title={t("emptyBookmarks")}
+        body={t("emptyBookmarksBody")}
         action={
           <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
             {t("browseFeed")}

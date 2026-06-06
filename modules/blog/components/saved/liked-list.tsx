@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
@@ -43,8 +43,9 @@ export function LikedList({ username, locale }: { username: string; locale: stri
   if (items.length === 0) {
     return (
       <FeedEmpty
-        icon={Heart}
+        mark
         title={t("emptyLiked")}
+        body={t("emptyLikedBody")}
         action={
           <a href={blogHref("/")} className={blogCta({ variant: "secondary" })}>
             {t("browseFeed")}
