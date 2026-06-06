@@ -45,6 +45,9 @@ export interface PublicPostListItem {
   tags: string[];
   likeCount: number;
   publishedAt: string; // ISO instant
+  /** Last meaningful edit (ISO instant), or null if never edited since publish. The reader shows a
+   *  "수정 {date}" hint only when this falls on a later day than publishedAt — see the post page. */
+  lastEditedAt: string | null;
   /** Author-pinned 대표글 — surfaces in the blog's 대표글 section, ordered before 최근 글. */
   pinned: boolean;
 }
