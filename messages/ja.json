@@ -14,7 +14,8 @@
   "publicFeed": {
     "recent": "最新",
     "seriesTab": "シリーズ",
-    "seriesTabEmpty": "購読中のシリーズがありません。シリーズを購読すると最新がここに出ます。",
+    "seriesTabEmptyTitle": "購読中のシリーズがありません",
+    "seriesTabEmpty": "気になる作家のシリーズを購読すると、新着がここに集まります。",
     "seriesTabSignedOut": "購読中のシリーズの最新をまとめて。",
     "seriesTabSignIn": "ログイン",
     "seriesTabFreshBadge": "最新更新",

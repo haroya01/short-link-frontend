@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Layers } from "lucide-react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
 import { useAuth } from "@/lib/auth";
@@ -14,6 +14,8 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesEpisodeList } from "@/modules/blog/components/series-episode-list";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
+import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 
 /**
  * The home feed's "시리즈" tab — series the signed-in viewer subscribes to, latest active first.
@@ -51,19 +53,20 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   if (!authenticated) {
     return (
       <ReadingShell>
-        <div className="rounded-2xl border border-dashed border-slate-200 px-6 py-16 text-center dark:border-slate-800">
-          <Layers className="mx-auto h-7 w-7 text-slate-300 dark:text-slate-600" />
-          <p className="mt-3 text-[15px] font-medium text-slate-700 dark:text-slate-200">
-            {t("seriesTabSignedOut")}
-          </p>
-          <button
-            type="button"
-            onClick={signInWithGoogle}
-            className="focus-ring mt-4 inline-flex items-center rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700"
-          >
-            {t("seriesTabSignIn")}
-          </button>
-        </div>
+        <FeedEmpty
+          mark
+          title={t("seriesTabSignedOut")}
+          action={
+            <div className="flex flex-wrap items-center justify-center gap-2.5">
+              <button type="button" onClick={() => signInWithGoogle()} className={blogCta()}>
+                {t("seriesTabSignIn")}
+              </button>
+              <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
+                {t("followingBrowseLatest")}
+              </Link>
+            </div>
+          }
+        />
       </ReadingShell>
     );
   }
@@ -71,9 +74,16 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   if (series.length === 0) {
     return (
       <ReadingShell>
-        <p className="rounded-2xl border border-dashed border-slate-200 px-6 py-16 text-center text-sm text-slate-400 dark:border-slate-800 dark:text-slate-500">
-          {t("seriesTabEmpty")}
-        </p>
+        <FeedEmpty
+          mark
+          title={t("seriesTabEmptyTitle")}
+          body={t("seriesTabEmpty")}
+          action={
+            <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
+              {t("followingBrowseLatest")}
+            </Link>
+          }
+        />
       </ReadingShell>
     );
   }
