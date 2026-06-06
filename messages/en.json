@@ -455,6 +455,8 @@
     "statLikes": "Likes",
     "activityHeading": "Activity",
     "activitySummary": "{count} published in the last year",
+    "imageZoom": "Enlarge image",
+    "imageClose": "Close",
     "activityNone": "No posts",
     "activityCount": "{count} published",
     "activityLess": "Less",
@@ -1076,6 +1078,22 @@
       "description": "Distribute clicks across destinations by weight, or send visitors from specific countries to a tailored page. Country-tagged variants only fire for matching visitors; otherwise traffic falls back to country-agnostic variants, then the original URL. Up to 4 per link.",
       "countryLabel": "Target country",
       "countryAny": "🌐 Any country",
+      "deviceLabel": "Target device",
+      "deviceAny": "Any device",
+      "device": {
+        "mobile": "Mobile",
+        "tablet": "Tablet",
+        "desktop": "Desktop"
+      },
+      "osLabel": "Target OS",
+      "osAny": "Any OS",
+      "os": {
+        "ios": "iOS",
+        "android": "Android",
+        "windows": "Windows",
+        "macos": "macOS",
+        "linux": "Linux"
+      },
       "weight": "Weight",
       "labelPlaceholder": "Label (optional, e.g. variant-A)",
       "controlLabel": "Default (original URL)",
@@ -2925,11 +2943,36 @@
     }
   },
   "abuseReports": {
+    "title": "Abuse Reports",
     "filterAll": "All",
     "noPermission": "You don't have permission.",
     "notePrompt": "{resolution} note (optional)",
     "subtitle": "Abuse report intake list. CSAM auto-quarantine + DMCA are on a separate track.",
     "refresh": "Refresh",
-    "empty": "No reports in this status."
+    "empty": "No reports in this status.",
+    "loadFailed": "Failed to load reports.",
+    "resolveFailed": "Failed to resolve.",
+    "anonymous": "anonymous",
+    "noteLabel": "note",
+    "status": {
+      "OPEN": "Open",
+      "REVIEWING": "Reviewing",
+      "RESOLVED": "Resolved",
+      "REJECTED": "Rejected"
+    },
+    "column": {
+      "id": "ID",
+      "status": "Status",
+      "subject": "Subject",
+      "reporter": "Reporter",
+      "reason": "Reason",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "action": {
+      "reviewing": "Reviewing",
+      "resolve": "Resolve",
+      "reject": "Reject"
+    }
   }
 }

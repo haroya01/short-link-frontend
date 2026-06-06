@@ -72,8 +72,22 @@ export function SavedCard({
 
   return (
     <article
-      className={`group/saved relative rounded-xl transition-colors ${selectMode ? "-mx-3 cursor-pointer select-none px-3 py-2" : ""} ${selected ? "bg-accent-50/70 dark:bg-accent-500/10" : ""}`}
+      className={`group/saved relative rounded-xl transition-colors ${selectMode ? "focus-ring -mx-3 cursor-pointer select-none px-3 py-2" : ""} ${selected ? "bg-accent-50/70 dark:bg-accent-500/10" : ""}`}
       onClick={selectMode ? () => onToggleSelect?.(item.id) : undefined}
+      role={selectMode ? "checkbox" : undefined}
+      aria-checked={selectMode ? selected : undefined}
+      aria-label={selectMode ? item.title : undefined}
+      tabIndex={selectMode ? 0 : undefined}
+      onKeyDown={
+        selectMode
+          ? (e) => {
+              if (e.key === " " || e.key === "Enter") {
+                e.preventDefault();
+                onToggleSelect?.(item.id);
+              }
+            }
+          : undefined
+      }
     >
       {selectMode ? (
         <div>{body}</div>

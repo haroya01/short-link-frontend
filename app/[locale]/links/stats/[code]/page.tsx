@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { useLinkStats } from "@/lib/api/stats.queries";
@@ -18,6 +18,7 @@ import { StatsBody } from "./_components/stats-body";
 export default function StatsPage() {
   const params = useParams<{ code: string }>();
   const router = useRouter();
+  const locale = useLocale();
   const t = useTranslations("stats");
   const tResult = useTranslations("result");
   const { authenticated, ready } = useAuth();
@@ -64,7 +65,15 @@ export default function StatsPage() {
   return (
     <div className="container max-w-6xl space-y-5 py-10">
       <button
-        onClick={() => router.back()}
+        onClick={() => {
+          // Direct entry (no in-app history) leaves router.back() a no-op — fall back to the link
+          // dashboard so the button always goes somewhere.
+          if (typeof window !== "undefined" && window.history.length > 1) {
+            router.back();
+          } else {
+            router.push(`/${locale}/links`);
+          }
+        }}
         className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12px] text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
       >
         <ArrowLeft className="h-3.5 w-3.5" />

@@ -73,8 +73,12 @@ export async function ContributionGraph({
           {t("activitySummary", { count: total })}
         </span>
       </div>
-      <div className="overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className="flex gap-[3px]">
+      <div
+        role="img"
+        aria-label={t("activitySummary", { count: total })}
+        className="overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        <div className="flex gap-[3px]" aria-hidden>
           {columns.map((week, ci) => (
             <div key={ci} className="flex flex-col gap-[3px]">
               {week.map((cell) => (

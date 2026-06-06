@@ -230,20 +230,24 @@ export function usePostEditor(
     return newMd;
   }
 
-  async function changeStatus(action: StatusAction, opts?: { shortenLinks?: string[] }) {
-    if (post == null || busy) return;
+  /** Returns true once the status change succeeds — the caller can then close the publish dialog. */
+  async function changeStatus(
+    action: StatusAction,
+    opts?: { shortenLinks?: string[] },
+  ): Promise<boolean> {
+    if (post == null || busy) return false;
     const goingPublic = action === "publish" || action === "republish";
     // Publishing from a draft needs a title (backend enforces it too; this gives an immediate localized
     // hint). Republish keeps the post's existing title, so it isn't re-checked here.
     if (action === "publish" && !title.trim()) {
       setError(t("titleRequired"));
-      return;
+      return false;
     }
     // Going public needs at least one topic (tag). The reader's discovery — topic feeds, the author
     // rail, related posts — is tag-driven, so an untagged public post is effectively undiscoverable.
     if (goingPublic && tags.length === 0) {
       setError(t("tagsRequired"));
-      return;
+      return false;
     }
     setBusy(true);
     setError(null);
@@ -264,11 +268,12 @@ export function usePostEditor(
       // cross-subdomain prod URL (postHref returns an absolute origin there).
       if (updated.status === "PUBLISHED" && username) {
         window.location.assign(postHref(username, updated.slug, locale));
-        return;
       }
+      return true;
     } catch (e) {
       if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
       else setError(e instanceof Error ? e.message : `${action} failed`);
+      return false;
     } finally {
       setBusy(false);
     }

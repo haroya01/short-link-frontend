@@ -105,6 +105,8 @@ export type DestinationSummary = {
   label: string | null;
   enabled: boolean;
   countryCode: string | null;
+  deviceClass: string | null;
+  os: string | null;
   createdAt: string;
 };
 

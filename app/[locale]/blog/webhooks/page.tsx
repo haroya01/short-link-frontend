@@ -241,10 +241,11 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
         className="space-y-3 rounded-2xl border border-slate-200 p-4 dark:border-slate-800"
       >
         <div>
-          <label className="mb-1 block text-[12px] font-medium text-slate-600 dark:text-slate-300">
+          <label htmlFor="webhook-url" className="mb-1 block text-[12px] font-medium text-slate-600 dark:text-slate-300">
             {t("urlLabel")}
           </label>
           <input
+            id="webhook-url"
             type="url"
             required
             value={url}
@@ -255,10 +256,11 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
           <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{t("urlHint")}</p>
         </div>
         <div>
-          <label className="mb-1 block text-[12px] font-medium text-slate-600 dark:text-slate-300">
+          <label htmlFor="webhook-name" className="mb-1 block text-[12px] font-medium text-slate-600 dark:text-slate-300">
             {t("nameLabel")}
           </label>
           <input
+            id="webhook-name"
             type="text"
             value={name}
             maxLength={100}

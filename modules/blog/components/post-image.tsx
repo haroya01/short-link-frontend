@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ImageWidth } from "@/modules/blog/lib/image-width";
 
 // Wider-than-column layouts. Reader uses these; the editor mirrors them via img[alt^="«wide»"] CSS.
@@ -29,6 +30,7 @@ export function PostImage({
   caption: string;
   width?: ImageWidth;
 }) {
+  const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
   const label = alt || caption || "";
 
@@ -46,14 +48,15 @@ export function PostImage({
 
   return (
     <figure className={width ? WIDTH_CLASS[width] : undefined}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt={label}
-        loading="lazy"
+      <button
+        type="button"
         onClick={() => setOpen(true)}
-        className="cursor-zoom-in"
-      />
+        aria-label={t("imageZoom")}
+        className="focus-ring block w-full cursor-zoom-in"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt={label} loading="lazy" />
+      </button>
       {caption && <figcaption>{caption}</figcaption>}
 
       {open &&
@@ -75,7 +78,7 @@ export function PostImage({
             />
             <button
               type="button"
-              aria-label="Close"
+              aria-label={t("imageClose")}
               onClick={() => setOpen(false)}
               className="fixed right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20"
             >

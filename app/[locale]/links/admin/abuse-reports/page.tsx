@@ -11,12 +11,12 @@ import {
   type AbuseResolution,
 } from "@/lib/api/abuse-reports";
 
-const STATUS_FILTERS: { id: AbuseReportStatus | "ALL"; label: string }[] = [
-  { id: "ALL", label: "All" },
-  { id: "OPEN", label: "Open" },
-  { id: "REVIEWING", label: "Reviewing" },
-  { id: "RESOLVED", label: "Resolved" },
-  { id: "REJECTED", label: "Rejected" },
+const STATUS_FILTERS: (AbuseReportStatus | "ALL")[] = [
+  "ALL",
+  "OPEN",
+  "REVIEWING",
+  "RESOLVED",
+  "REJECTED",
 ];
 
 const STATUS_BADGE: Record<AbuseReportStatus, string> = {
@@ -43,11 +43,11 @@ export default function AdminAbuseReportsPage() {
       const list = await listAbuseReports(filter);
       setReports(list);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "load failed");
+      setError(e instanceof Error ? e.message : t("loadFailed"));
     } finally {
       setLoading(false);
     }
-  }, [statusFilter]);
+  }, [statusFilter, t]);
 
   useEffect(() => {
     if (!ready || !authenticated || !isAdmin) return;
@@ -73,30 +73,30 @@ export default function AdminAbuseReportsPage() {
       });
       setReports((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
     } catch (e) {
-      window.alert(e instanceof Error ? e.message : "resolve failed");
+      window.alert(e instanceof Error ? e.message : t("resolveFailed"));
     }
   }
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
       <header className="mb-8">
-        <h1 className="text-2xl font-bold">Abuse Reports</h1>
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="mt-2 text-sm text-gray-500">{t("subtitle")}</p>
       </header>
 
       <div className="mb-6 flex flex-wrap gap-2">
-        {STATUS_FILTERS.map((f) => (
+        {STATUS_FILTERS.map((id) => (
           <button
-            key={f.id}
+            key={id}
             type="button"
-            onClick={() => setStatusFilter(f.id)}
+            onClick={() => setStatusFilter(id)}
             className={`rounded-full px-3 py-1 text-sm ${
-              statusFilter === f.id
+              statusFilter === id
                 ? "bg-gray-900 text-white"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
           >
-            {f.id === "ALL" ? t("filterAll") : f.label}
+            {id === "ALL" ? t("filterAll") : t(`status.${id}`)}
           </button>
         ))}
         <button
@@ -123,13 +123,13 @@ export default function AdminAbuseReportsPage() {
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-gray-200 text-left text-xs uppercase text-gray-500">
-              <th className="px-2 py-2">ID</th>
-              <th className="px-2 py-2">Status</th>
-              <th className="px-2 py-2">Subject</th>
-              <th className="px-2 py-2">Reporter</th>
-              <th className="px-2 py-2">Reason</th>
-              <th className="px-2 py-2">Created</th>
-              <th className="px-2 py-2">Actions</th>
+              <th className="px-2 py-2">{t("column.id")}</th>
+              <th className="px-2 py-2">{t("column.status")}</th>
+              <th className="px-2 py-2">{t("column.subject")}</th>
+              <th className="px-2 py-2">{t("column.reporter")}</th>
+              <th className="px-2 py-2">{t("column.reason")}</th>
+              <th className="px-2 py-2">{t("column.created")}</th>
+              <th className="px-2 py-2">{t("column.actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -140,7 +140,7 @@ export default function AdminAbuseReportsPage() {
                   <span
                     className={`rounded px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[r.status]}`}
                   >
-                    {r.status}
+                    {t(`status.${r.status}`)}
                   </span>
                 </td>
                 <td className="px-2 py-3">
@@ -149,14 +149,14 @@ export default function AdminAbuseReportsPage() {
                   </code>
                 </td>
                 <td className="px-2 py-3 text-gray-600">
-                  {r.reporterUserId ?? <span className="text-gray-400">anonymous</span>}
+                  {r.reporterUserId ?? <span className="text-gray-400">{t("anonymous")}</span>}
                 </td>
                 <td className="px-2 py-3 max-w-xs">
                   <p className="text-gray-700 line-clamp-3">
                     {r.reason ?? <span className="text-gray-400">—</span>}
                   </p>
                   {r.adminNote && (
-                    <p className="mt-1 text-xs text-gray-500">note: {r.adminNote}</p>
+                    <p className="mt-1 text-xs text-gray-500">{t("noteLabel")}: {r.adminNote}</p>
                   )}
                 </td>
                 <td className="px-2 py-3 text-xs text-gray-500">
@@ -171,7 +171,7 @@ export default function AdminAbuseReportsPage() {
                           onClick={() => handleResolve(r, "REVIEWING")}
                           className="rounded border border-blue-200 px-2 py-0.5 text-xs text-blue-700 hover:bg-blue-50"
                         >
-                          Reviewing
+                          {t("action.reviewing")}
                         </button>
                       )}
                       <button
@@ -179,14 +179,14 @@ export default function AdminAbuseReportsPage() {
                         onClick={() => handleResolve(r, "RESOLVED")}
                         className="rounded border border-emerald-200 px-2 py-0.5 text-xs text-emerald-700 hover:bg-emerald-50"
                       >
-                        Resolve
+                        {t("action.resolve")}
                       </button>
                       <button
                         type="button"
                         onClick={() => handleResolve(r, "REJECTED")}
                         className="rounded border border-gray-200 px-2 py-0.5 text-xs text-gray-700 hover:bg-gray-100"
                       >
-                        Reject
+                        {t("action.reject")}
                       </button>
                     </div>
                   ) : (
