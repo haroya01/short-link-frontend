@@ -404,8 +404,10 @@
     "selectedCount": "{count} selected",
     "newFolderTo": "To new folder",
     "untagged": "Untagged",
-    "emptyBookmarks": "No bookmarks yet.",
-    "emptyLiked": "No liked posts yet.",
+    "emptyBookmarks": "Your reading list is empty",
+    "emptyBookmarksBody": "Bookmark posts you want to revisit and they’ll gather here.",
+    "emptyLiked": "No liked posts yet",
+    "emptyLikedBody": "Posts you like will gather here.",
     "browseFeed": "Browse the feed",
     "emptyFolder": "This folder is empty."
   },

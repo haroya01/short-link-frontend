@@ -404,8 +404,10 @@
     "selectedCount": "{count}개 선택",
     "newFolderTo": "새 폴더로",
     "untagged": "태그 없음",
-    "emptyBookmarks": "아직 북마크한 글이 없어요.",
-    "emptyLiked": "아직 좋아요한 글이 없어요.",
+    "emptyBookmarks": "아직 담아둔 글이 없어요",
+    "emptyBookmarksBody": "나중에 다시 읽고 싶은 글을 북마크하면 여기에 모입니다.",
+    "emptyLiked": "아직 좋아요한 글이 없어요",
+    "emptyLikedBody": "마음에 드는 글에 좋아요를 누르면 여기에 모입니다.",
     "browseFeed": "피드 둘러보기",
     "emptyFolder": "이 폴더는 비어 있어요."
   },

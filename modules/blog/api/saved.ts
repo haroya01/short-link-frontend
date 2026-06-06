@@ -30,7 +30,7 @@ export type SavedPost = PublicFeedItem & { folderId: number | null };
 
 export function listLikedFeed(): Promise<PublicFeedItem[]> {
   if (USE_MOCKS) return Promise.resolve(mockListLikedFeed());
-  return request<PublicFeedItem[]>("/api/v1/me/liked", { method: "GET" });
+  return request<PublicFeedItem[]>("/api/v1/users/me/likes", { method: "GET" });
 }
 
 export function listSavedFeed(): Promise<SavedPost[]> {
