@@ -186,11 +186,13 @@ export default function middleware(req: NextRequest) {
   }
 
   // 5. kurl.me / default — /{locale}/foo → /{locale}/links/foo rewrite
-  // 단 이미 /{locale}/{links,blog,p,u} 으로 시작하면 그대로 (internal route 보호).
+  // 단 이미 /{locale}/{links,blog,p,u} 으로 시작하면 그대로 (internal route 보호). 루트 locale 의
+  // 메타데이터 라우트(opengraph-image / twitter-image — app/[locale]/ 직하)도 links 로 보내면 404 →
+  // Discord/Kakao 등 공유 미리보기 이미지가 깨진다. 그대로 둬서 file-convention 라우트가 살게 한다.
   const localePathMatch = req.nextUrl.pathname.match(/^\/([a-z]{2})(\/.+)?$/);
   if (localePathMatch && localePathMatch[2]) {
     const sub = localePathMatch[2];
-    if (!sub.match(/^\/(links|blog|p|u)(\/|$)/)) {
+    if (!sub.match(/^\/(links|blog|p|u|opengraph-image|twitter-image)(\/|$)/)) {
       const url = req.nextUrl.clone();
       url.pathname = `/${localePathMatch[1]}/links${sub}`;
       return NextResponse.rewrite(url);
