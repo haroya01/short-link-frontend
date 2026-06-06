@@ -405,6 +405,7 @@
     "untagged": "タグなし",
     "emptyBookmarks": "まだブックマークした記事がありません。",
     "emptyLiked": "まだいいねした記事がありません。",
+    "browseFeed": "フィードを見る",
     "emptyFolder": "このフォルダは空です。"
   },
   "publicPost": {

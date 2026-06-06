@@ -405,6 +405,7 @@
     "untagged": "태그 없음",
     "emptyBookmarks": "아직 북마크한 글이 없어요.",
     "emptyLiked": "아직 좋아요한 글이 없어요.",
+    "browseFeed": "피드 둘러보기",
     "emptyFolder": "이 폴더는 비어 있어요."
   },
   "publicPost": {

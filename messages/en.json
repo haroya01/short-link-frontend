@@ -405,6 +405,7 @@
     "untagged": "Untagged",
     "emptyBookmarks": "No bookmarks yet.",
     "emptyLiked": "No liked posts yet.",
+    "browseFeed": "Browse the feed",
     "emptyFolder": "This folder is empty."
   },
   "publicPost": {

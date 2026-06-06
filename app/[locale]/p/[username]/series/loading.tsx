@@ -1,4 +1,5 @@
 import { Skeleton } from "@/modules/blog/components/skeleton";
+import { SrLoading } from "@/modules/blog/components/sr-loading";
 
 /**
  * Series-index content skeleton (icon + title + post-count rows), on the centered column. The header
@@ -8,6 +9,7 @@ import { Skeleton } from "@/modules/blog/components/skeleton";
 export default function SeriesIndexLoading() {
   return (
     <div className="mx-auto mt-8 max-w-2xl space-y-3" aria-busy>
+      <SrLoading />
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
