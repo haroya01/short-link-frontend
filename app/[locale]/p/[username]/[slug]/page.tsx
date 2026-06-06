@@ -14,6 +14,7 @@ import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { TagChips } from "../_components/post-meta";
+import { PostOwnerActions } from "../_components/post-owner-actions";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
 import { authorHref } from "@/modules/blog/components/feed-card";
@@ -176,6 +177,8 @@ export default async function PublicPostPage({
             <LikeButton postId={post.id} initialCount={post.likeCount} />
             <BookmarkButton postId={post.id} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
+            {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
+            <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />
           </div>
         </div>
       </header>
