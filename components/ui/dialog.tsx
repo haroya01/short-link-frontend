@@ -23,6 +23,8 @@ type DialogProps = {
    * multi-column form.
    */
   maxWidthClass?: string;
+  /** Size to content instead of pinning a min height — for lightweight confirms (no form body). */
+  compact?: boolean;
 };
 
 const FOCUSABLE =
@@ -40,6 +42,7 @@ export function ConfirmDialog({
   onConfirm,
   children,
   maxWidthClass = "max-w-md",
+  compact = false,
 }: DialogProps) {
   const t = useTranslations("common");
   const [busy, setBusy] = React.useState(false);
@@ -120,7 +123,9 @@ export function ConfirmDialog({
           // dvh (not vh): on iOS Safari 100vh is the toolbar-expanded height, so with the toolbar
           // visible a vh-sized panel pushes its sticky footer (cancel/confirm) below the visible area,
           // forcing a scroll to reach it. dvh tracks the actual viewport.
-          "relative mx-auto flex max-h-[calc(100dvh-4rem)] min-h-[min(540px,calc(100dvh-4rem))] w-full flex-col rounded-lg border border-slate-200 bg-white shadow-xl",
+          "relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full flex-col rounded-lg border border-slate-200 bg-white shadow-xl",
+          // Compact confirms size to content; form dialogs pin a min height so Save doesn't jump.
+          !compact && "min-h-[min(540px,calc(100dvh-4rem))]",
           maxWidthClass,
           "animate-fade-in",
         )}
@@ -156,7 +161,7 @@ export function ConfirmDialog({
               }
             }}
           >
-            {busy ? t("processing") : confirmLabel ?? t("confirm")}
+            {busy ? t("processing") : confirmLabel ?? (destructive ? t("delete") : t("confirm"))}
           </Button>
         </div>
       </div>
