@@ -207,6 +207,33 @@ export function PostComments({
   );
 }
 
+// Matches @username (the backend's handle grammar); the lookbehind keeps it out of emails (foo@bar).
+const MENTION_RE = /(?<![A-Za-z0-9_])@([a-z0-9][a-z0-9_]{2,15})/g;
+
+/** Renders a comment body with @mentions linked to the mentioned user's profile. */
+function CommentBody({ text, locale }: { text: string; locale: string }) {
+  const nodes: React.ReactNode[] = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  MENTION_RE.lastIndex = 0;
+  while ((m = MENTION_RE.exec(text)) !== null) {
+    if (m.index > last) nodes.push(text.slice(last, m.index));
+    const handle = m[1];
+    nodes.push(
+      <a
+        key={m.index}
+        href={authorHref(handle, locale)}
+        className="font-medium text-accent-700 transition-colors hover:underline dark:text-accent-400"
+      >
+        @{handle}
+      </a>,
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) nodes.push(text.slice(last));
+  return <>{nodes}</>;
+}
+
 function CommentRow({
   comment,
   fmt,
@@ -255,7 +282,7 @@ function CommentRow({
         )}
       </div>
       <p className="mt-1.5 whitespace-pre-line pl-9 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
-        {comment.body}
+        <CommentBody text={comment.body} locale={locale} />
       </p>
       {children && <div className="mt-1.5 pl-9">{children}</div>}
     </div>

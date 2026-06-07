@@ -552,7 +552,8 @@
     "follow": "{actor}さんがあなたをフォローしました",
     "series_subscribe": "{actor}さんがあなたのシリーズを購読しました",
     "reply": "{actor}さんがあなたのコメントに返信しました",
-    "new_post": "{actor}さんが新しい記事を公開しました"
+    "new_post": "{actor}さんが新しい記事を公開しました",
+    "mention": "{actor}さんがコメントであなたをメンションしました"
   },
   "nav": {
     "notifications": "通知",

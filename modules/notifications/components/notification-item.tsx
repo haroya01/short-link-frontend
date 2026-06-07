@@ -27,6 +27,8 @@ function resolveHref(item: Item, myUsername: string | null, locale: string): str
         ? postHref(item.actorUsername, item.postSlug, locale)
         : undefined;
     case "REPLY":
+    case "MENTION":
+      // The post may be someone else's — the owner's handle rides in the payload.
       return item.postSlug && item.postAuthorUsername
         ? postHref(item.postAuthorUsername, item.postSlug, locale)
         : undefined;
@@ -44,6 +46,7 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   SERIES_SUBSCRIBE: "series_subscribe",
   REPLY: "reply",
   NEW_POST: "new_post",
+  MENTION: "mention",
 };
 
 /**
