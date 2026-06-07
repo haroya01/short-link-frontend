@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   BarChart3,
+  Bell,
   Bookmark,
   Check,
   ChevronDown,
@@ -24,6 +25,7 @@ import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { blogHref, currentProduct, linksHref, type Product } from "@/lib/host";
+import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
@@ -39,7 +41,9 @@ const ITEM =
  */
 export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("nav");
+  const tNotif = useTranslations("notifications");
   const tBlog = useTranslations("sidebar.blog");
+  const unread = useUnreadCount();
   const tLang = useTranslations("languageSwitcher");
   const locale = useLocale();
   const router = useRouter();
@@ -134,6 +138,19 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             <a href={blogHref("/curation")} className={ITEM}>
               <Bookmark className="h-5 w-5 text-slate-500" />
               {t("library")}
+            </a>
+            {/* Notifications — mobile reaches the full page here (the desktop header bell has a
+                dropdown). Unread badge mirrors the desktop bell. */}
+            <a href={blogHref("/notifications")} className={cn(ITEM, "justify-between")}>
+              <span className="inline-flex items-center gap-3">
+                <Bell className="h-5 w-5 text-slate-500" />
+                {tNotif("title")}
+              </span>
+              {unread > 0 && (
+                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent-600 px-1 text-[11px] font-bold text-white">
+                  {unread > 99 ? "99+" : unread}
+                </span>
+              )}
             </a>
 
             {/* Author workspace — the desktop sidebar's entries, which mobile otherwise can't reach

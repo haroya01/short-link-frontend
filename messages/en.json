@@ -534,7 +534,20 @@
     "ogHeadlineBottom": "Click analytics",
     "ogSubline": "Device · channel · country · time — see where every click comes from, at a glance"
   },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet",
+    "markAllRead": "Mark all read",
+    "loadMore": "Load more",
+    "viewAll": "View all notifications",
+    "loginRequired": "Sign in required",
+    "someone": "Someone",
+    "like": "{actor} liked your post",
+    "comment": "{actor} commented on your post",
+    "follow": "{actor} started following you"
+  },
   "nav": {
+    "notifications": "Notifications",
     "shorten": "Shorten",
     "myLinks": "My links",
     "stats": "Stats",
