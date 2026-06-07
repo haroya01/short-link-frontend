@@ -102,6 +102,16 @@ export function unpublishPost(id: number): Promise<PostView> {
   return request<PostView>(`/api/v1/posts/${id}/unpublish`, { method: "POST" });
 }
 
+/**
+ * Get-or-create the share token for a not-yet-public post, so the owner can preview/share it without
+ * publishing. Idempotent on the backend — the same post returns the same token, so the link is
+ * stable.
+ */
+export function issuePreviewToken(id: number): Promise<{ token: string }> {
+  if (USE_MOCKS) return Promise.resolve({ token: `mock-preview-${id}` });
+  return request<{ token: string }>(`/api/v1/posts/${id}/preview-token`, { method: "POST" });
+}
+
 export function republishPost(id: number): Promise<PostView> {
   if (USE_MOCKS) return Promise.resolve(mockSetStatus(id, "PUBLISHED"));
   return request<PostView>(`/api/v1/posts/${id}/republish`, { method: "POST" });

@@ -244,6 +244,18 @@ export function findPublicPost(
   );
 }
 
+/**
+ * Reads a not-yet-public post by its share token (the owner's preview link). Bypasses the status
+ * guard server-side; the token is the authorization, so no username/slug is needed. Always no-store.
+ */
+export function findPreviewPost(token: string): Promise<FetchResult<PublicPostDetail>> {
+  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostDetail("me", "preview") });
+  return fetchPublic<PublicPostDetail>(
+    `/api/v1/public/preview/${encodeURIComponent(token)}`,
+    { noStore: true },
+  );
+}
+
 export interface TagCount {
   tag: string;
   count: number;
