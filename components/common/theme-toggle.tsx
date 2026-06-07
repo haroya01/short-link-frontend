@@ -9,8 +9,8 @@ import { writeThemeCookie } from "@/lib/theme-cookie";
 /**
  * Dark-mode toggle. Flips the `dark` class on <html> and persists the choice to a `.kurl.me` cookie
  * (shared across the apex feed + author subdomains) plus localStorage (same-origin fallback), read
- * back by the no-FOUC script in the root layout. Defaults to the system preference until the user
- * picks. Rendered as a full-width row to drop into the account menu / sheet.
+ * back by the no-FOUC script in the root layout. Dark is an explicit opt-in — light until the user
+ * picks dark (we don't auto-follow the OS theme). Rendered as a full-width row for the account menu / sheet.
  */
 export function ThemeToggle({ className }: { className?: string }) {
   const t = useTranslations("nav");
