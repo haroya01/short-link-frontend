@@ -544,7 +544,10 @@
     "someone": "誰か",
     "like": "{actor}さんがあなたの記事にいいねしました",
     "comment": "{actor}さんがあなたの記事にコメントしました",
-    "follow": "{actor}さんがあなたをフォローしました"
+    "follow": "{actor}さんがあなたをフォローしました",
+    "series_subscribe": "{actor}さんがあなたのシリーズを購読しました",
+    "reply": "{actor}さんがあなたのコメントに返信しました",
+    "new_post": "{actor}さんが新しい記事を公開しました"
   },
   "nav": {
     "notifications": "通知",

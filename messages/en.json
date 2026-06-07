@@ -544,7 +544,10 @@
     "someone": "Someone",
     "like": "{actor} liked your post",
     "comment": "{actor} commented on your post",
-    "follow": "{actor} started following you"
+    "follow": "{actor} started following you",
+    "series_subscribe": "{actor} subscribed to your series",
+    "reply": "{actor} replied to your comment",
+    "new_post": "{actor} published a new post"
   },
   "nav": {
     "notifications": "Notifications",
