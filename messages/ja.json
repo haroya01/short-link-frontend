@@ -13,6 +13,7 @@
   },
   "publicFeed": {
     "recent": "最新",
+    "allLanguages": "すべて",
     "seriesTab": "シリーズ",
     "seriesTabEmptyTitle": "購読中のシリーズがありません",
     "seriesTabEmpty": "気になる作家のシリーズを購読すると、新着がここに集まります。",

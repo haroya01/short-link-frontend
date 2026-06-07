@@ -25,6 +25,7 @@ export function FeedInfinite({
   sort,
   query,
   tag,
+  lang,
   featuredFirst = false,
   featuredLabel,
   interleaveNode,
@@ -37,6 +38,8 @@ export function FeedInfinite({
   query?: string;
   /** When set, paginate a single tag's feed (`?tag=`) instead of the sorted/searched feed. */
   tag?: string;
+  /** Active post-language filter (ko/ja/en); undefined = all languages. Carried into page fetches. */
+  lang?: string;
   /** Accepted for call-site compatibility; the single-column list no longer varies by rail. */
   hasRail?: boolean;
   /** Give the very first item a quiet editorial emphasis (the recent home feed's lead post). */
@@ -72,11 +75,12 @@ export function FeedInfinite({
     setError(false);
     const next = page + 1;
     const q = query?.trim();
+    const langSuffix = lang ? `&lang=${encodeURIComponent(lang)}` : "";
     const path = tag
       ? `/api/v1/public/posts?tag=${encodeURIComponent(tag)}&sort=${sort}&page=${next}&size=${PAGE_SIZE}`
       : q
-        ? `/api/v1/public/posts?q=${encodeURIComponent(q)}&sort=${sort}&page=${next}&size=${PAGE_SIZE}`
-        : `/api/v1/public/posts?sort=${sort}&page=${next}&size=${PAGE_SIZE}`;
+        ? `/api/v1/public/posts?q=${encodeURIComponent(q)}&sort=${sort}&page=${next}&size=${PAGE_SIZE}${langSuffix}`
+        : `/api/v1/public/posts?sort=${sort}&page=${next}&size=${PAGE_SIZE}${langSuffix}`;
     try {
       const view = await request<PublicFeedView>(path, { method: "GET" });
       // De-dupe defensively: a publish at the head between fetches can shift a post across pages.
@@ -93,7 +97,7 @@ export function FeedInfinite({
     } finally {
       setLoading(false);
     }
-  }, [loading, hasNext, page, query, sort, tag]);
+  }, [loading, hasNext, page, query, sort, tag, lang]);
 
   useEffect(() => {
     const el = sentinelRef.current;
