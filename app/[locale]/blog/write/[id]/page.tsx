@@ -8,6 +8,7 @@ import { uploadPostImage } from "@/modules/blog/api/post-images";
 import { MarkdownEditor } from "@/modules/blog/components/editor/markdown-editor";
 import { EditorHeader } from "@/modules/blog/components/editor/editor-header";
 import { PublishDialog } from "@/modules/blog/components/editor/publish-dialog";
+import { PreviewLinkButton } from "@/modules/blog/components/editor/preview-link-button";
 import { usePostEditor } from "@/modules/blog/components/editor/use-post-editor";
 import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton";
 import { markdownLead } from "@/modules/blog/lib/markdown-lead";
@@ -120,6 +121,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         seriesId={ed.seriesId}
         onSeriesChange={ed.setSeriesId}
         bodyLinks={bodyLinks}
+        previewAction={
+          post.status !== "PUBLISHED" ? (
+            <PreviewLinkButton postId={post.id} username={me?.username} slug={ed.slug} />
+          ) : null
+        }
         error={ed.error}
         saving={ed.saving}
         busy={ed.busy}
