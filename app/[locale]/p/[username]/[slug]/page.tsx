@@ -19,7 +19,7 @@ import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
+import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
 import { subdomainOrigin } from "@/modules/blog/lib/subdomain-origin";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
@@ -40,13 +40,20 @@ function formatDate(iso: string, locale: string): string {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ username: string; slug: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }): Promise<Metadata> {
   const { username, slug } = await params;
-  const result = await findPublicPost(username, slug);
+  const { preview } = await searchParams;
+  const result = preview ? await findPreviewPost(preview) : await findPublicPost(username, slug);
   if (!result.ok) return { title: `@${username}` };
   const { author, post } = result.data;
+  // A preview is an unlisted draft — never let search engines index the shared link.
+  if (preview) {
+    return { title: post.title, robots: { index: false, follow: false } };
+  }
   const h = await headers();
   const origin = subdomainOrigin(h, username);
   return {
@@ -67,15 +74,19 @@ export async function generateMetadata({
 
 export default async function PublicPostPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; username: string; slug: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }) {
   const { locale, username, slug } = await params;
-  const result = await findPublicPost(username, slug);
+  const { preview } = await searchParams;
+  const isPreview = Boolean(preview);
+  const result = preview ? await findPreviewPost(preview) : await findPublicPost(username, slug);
   const t = await getTranslations({ locale, namespace: "publicPost" });
 
   if (!result.ok) {
-    // backend: UNPUBLISHED → 410, DRAFT/SCHEDULED/missing → 404.
+    // backend: UNPUBLISHED → 410, DRAFT/SCHEDULED/missing → 404. A bad preview token is a plain 404.
     if (result.status === 410) return <GonePage username={username} locale={locale} t={t} />;
     notFound();
   }
@@ -130,7 +141,15 @@ export default async function PublicPostPage({
       </aside>
 
       <article className="mx-auto w-full max-w-2xl py-14 sm:py-20" lang={post.languageTag}>
-        <ViewBeacon username={username} slug={slug} />
+        {/* A preview is an unlisted draft shared by its author — don't record a view, and flag it so
+            the owner knows this isn't the live page. */}
+        {isPreview ? (
+          <div className="mb-8 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-medium text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
+            {t("previewBanner")}
+          </div>
+        ) : (
+          <ViewBeacon username={username} slug={slug} />
+        )}
 
       {/* Cover (when set) — contained to the reading column + rounded, not a full-bleed banner, so it
           reads as a quiet lead image in keeping with §10 (조용한 웹로그), the Notion-ish touch without the

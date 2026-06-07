@@ -277,6 +277,10 @@
     "bodyLinksHint": "발행 시 kurl 링크로 단축돼 클릭이 추적됩니다. 끄면 원래 주소 그대로 둡니다.",
     "close": "닫기",
     "saveDraft": "임시저장",
+    "previewCopyLink": "미리보기 링크 복사",
+    "previewCopiedShort": "복사됨",
+    "previewCopied": "미리보기 링크를 복사했어요",
+    "previewCopyError": "링크 복사에 실패했어요",
     "saveChanges": "변경사항 저장",
     "coverImage": "대표 이미지",
     "coverImageHint": "목록·공유 미리보기에 쓰여요. 16:9 권장.",
@@ -414,6 +418,7 @@
   "publicPost": {
     "like": "좋아요",
     "readingTime": "약 {minutes}분",
+    "previewBanner": "미리보기 — 아직 발행되지 않은 글이에요. 이 링크가 있는 사람만 볼 수 있어요.",
     "editedOn": "수정 {date}",
     "morePosts": "@{username}님의 다른 글",
     "allPosts": "모든 글",

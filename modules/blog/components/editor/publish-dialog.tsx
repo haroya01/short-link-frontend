@@ -32,6 +32,7 @@ export function PublishDialog({
   seriesId,
   onSeriesChange,
   bodyLinks,
+  previewAction,
   error,
   saving,
   busy,
@@ -58,6 +59,8 @@ export function PublishDialog({
   onSeriesChange: (v: number | null) => void;
   /** External http(s) links found in the body — offered for auto-shortening through kurl on publish. */
   bodyLinks: string[];
+  /** "미리보기 링크 복사" affordance, rendered in the footer for a not-yet-public post (null otherwise). */
+  previewAction?: React.ReactNode;
   /** The editor's current error (failed save / publish), surfaced in the footer so a failed action
    *  keeps the dialog open with the reason rather than reading as a silent success. */
   error: string | null;
@@ -374,6 +377,7 @@ export function PublishDialog({
                 {t("scheduledFor", { when: new Date(scheduledAt).toLocaleString() })}
               </span>
             )}
+            {previewAction}
           </div>
 
           <div className="flex items-center gap-2">

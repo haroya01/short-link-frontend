@@ -277,6 +277,10 @@
     "bodyLinksHint": "公開時にkurlリンクへ短縮され、クリックが計測されます。オフにすると元のURLのままになります。",
     "close": "閉じる",
     "saveDraft": "下書き保存",
+    "previewCopyLink": "プレビューリンクをコピー",
+    "previewCopiedShort": "コピー済み",
+    "previewCopied": "プレビューリンクをコピーしました",
+    "previewCopyError": "リンクのコピーに失敗しました",
     "saveChanges": "変更を保存",
     "coverImage": "カバー画像",
     "coverImageHint": "一覧・共有プレビューに使われます。16:9 推奨。",
@@ -414,6 +418,7 @@
   "publicPost": {
     "like": "いいね",
     "readingTime": "約{minutes}分",
+    "previewBanner": "プレビュー — まだ公開されていない記事です。このリンクを知っている人だけが閲覧できます。",
     "editedOn": "更新 {date}",
     "morePosts": "@{username}さんの他の記事",
     "allPosts": "すべての記事",
