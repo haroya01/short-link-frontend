@@ -10,6 +10,7 @@ import { AccountMenu } from "@/components/common/account-menu";
 import { HeaderAvatarSlot } from "@/components/common/header-avatar-slot";
 import { useAuthHint } from "@/components/common/auth-hint";
 import { AppsGrid } from "@/components/common/apps-grid";
+import { NotificationBell } from "@/components/common/notification-bell";
 import { BlogHeaderSearch } from "@/components/common/blog-header-search";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
@@ -114,6 +115,7 @@ export function AppHeader({
               {t("write")}
             </a>
           )}
+          {showAuthed && <NotificationBell />}
           <AppsGrid current={product} />
           {!ready ? (
             initialAuthed ? (
