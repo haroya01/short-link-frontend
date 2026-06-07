@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { linksHref } from "@/lib/host";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { AccountSheet } from "@/components/common/account-sheet";
 
@@ -65,10 +66,17 @@ export function LinksBottomNav() {
           <Home className="h-5 w-5" />
           {t("home")}
         </a>
-        <a href={linksHref("/campaigns")} className={cn(TAB, "text-slate-500")}>
+        {/* Locale-aware, same-origin Link (NOT linksHref) — an absolute apex URL without the locale
+            (https://kurl.me/campaigns) gets resolved as a short code on the backend apex → 404
+            LINK_NOT_FOUND. Anonymous → the qr-campaigns landing (mirrors the desktop Nav); authed →
+            the campaigns app. */}
+        <Link
+          href={authenticated ? "/campaigns" : "/qr-campaigns"}
+          className={cn(TAB, "text-slate-500")}
+        >
           <Megaphone className="h-5 w-5" />
           {t("campaigns")}
-        </a>
+        </Link>
         <button
           type="button"
           onClick={() => setSheet(true)}
