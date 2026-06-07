@@ -13,6 +13,7 @@
   },
   "publicFeed": {
     "recent": "Latest",
+    "allLanguages": "All",
     "seriesTab": "Series",
     "seriesTabEmptyTitle": "No subscribed series yet",
     "seriesTabEmpty": "Subscribe to a series and its new posts gather here.",
