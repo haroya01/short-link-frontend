@@ -7,7 +7,8 @@ export type NotificationType =
   | "FOLLOW"
   | "SERIES_SUBSCRIBE"
   | "REPLY"
-  | "NEW_POST";
+  | "NEW_POST"
+  | "MENTION";
 
 /**
  * One in-app notification, as returned by the backend. The actor's display fields are flat and null

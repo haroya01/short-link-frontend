@@ -18,6 +18,20 @@ export function mockNotificationsPage(): NotificationsPage {
     items: [
       {
         ...BASE,
+        id: 7,
+        type: "MENTION",
+        actorId: 12,
+        actorUsername: "kazuki",
+        actorAvatarUrl: null,
+        postId: 5,
+        postSlug: "typescript-generics",
+        postTitle: "타입스크립트 제네릭이 어려운 이유",
+        postAuthorUsername: "minji",
+        read: false,
+        createdAt: "2026-06-07T11:05:00Z",
+      },
+      {
+        ...BASE,
         id: 6,
         type: "NEW_POST",
         actorId: 14,
