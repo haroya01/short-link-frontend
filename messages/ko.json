@@ -544,7 +544,10 @@
     "someone": "누군가",
     "like": "{actor}님이 회원님의 글을 좋아합니다",
     "comment": "{actor}님이 회원님의 글에 댓글을 남겼습니다",
-    "follow": "{actor}님이 회원님을 팔로우하기 시작했습니다"
+    "follow": "{actor}님이 회원님을 팔로우하기 시작했습니다",
+    "series_subscribe": "{actor}님이 회원님의 시리즈를 구독합니다",
+    "reply": "{actor}님이 회원님의 댓글에 답글을 남겼습니다",
+    "new_post": "{actor}님이 새 글을 발행했습니다"
   },
   "nav": {
     "notifications": "알림",
