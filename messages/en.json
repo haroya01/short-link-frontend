@@ -552,7 +552,8 @@
     "follow": "{actor} started following you",
     "series_subscribe": "{actor} subscribed to your series",
     "reply": "{actor} replied to your comment",
-    "new_post": "{actor} published a new post"
+    "new_post": "{actor} published a new post",
+    "mention": "{actor} mentioned you in a comment"
   },
   "nav": {
     "notifications": "Notifications",
