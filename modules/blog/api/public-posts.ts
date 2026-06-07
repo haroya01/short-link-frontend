@@ -190,17 +190,11 @@ export function listPublicFeed(
   sort: FeedSort = "recent",
   page = 0,
   size = 20,
-  lang?: string,
 ): Promise<FetchResult<PublicFeedView>> {
   if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockFeedView({ sort }) });
   return fetchPublic<PublicFeedView>(
-    `/api/v1/public/posts?sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
+    `/api/v1/public/posts?sort=${sort}&page=${page}&size=${size}`,
   );
-}
-
-/** `&lang=ko` when a language is selected; empty (all languages) otherwise. */
-function langParam(lang?: string): string {
-  return lang ? `&lang=${encodeURIComponent(lang)}` : "";
 }
 
 export function listFeedByTag(
@@ -221,11 +215,10 @@ export function searchPublicFeed(
   sort: FeedSort = "recent",
   page = 0,
   size = 24,
-  lang?: string,
 ): Promise<FetchResult<PublicFeedView>> {
   if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockFeedView({ sort, q: query }) });
   return fetchPublic<PublicFeedView>(
-    `/api/v1/public/posts?q=${encodeURIComponent(query)}&sort=${sort}&page=${page}&size=${size}${langParam(lang)}`,
+    `/api/v1/public/posts?q=${encodeURIComponent(query)}&sort=${sort}&page=${page}&size=${size}`,
   );
 }
 

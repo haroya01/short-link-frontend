@@ -19,7 +19,6 @@ import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedContentTransition } from "@/modules/blog/components/feed-content-transition";
 import { FeedSortTabs } from "@/modules/blog/components/feed-sort-tabs";
-import { FeedLanguageChips } from "@/modules/blog/components/feed-language-chips";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { SearchEmpty } from "@/modules/blog/components/search-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
@@ -77,16 +76,12 @@ export default async function BlogFeedPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ sort?: string; q?: string; lang?: string }>;
+  searchParams: Promise<{ sort?: string; q?: string }>;
 }) {
   const { locale } = await params;
-  const { sort: sortParam, q: qParam, lang: langParam } = await searchParams;
+  const { sort: sortParam, q: qParam } = await searchParams;
   const query = (qParam ?? "").trim();
   const searching = query.length > 0;
-  // Post-language filter (flat feed + search only); "" = all languages, the default.
-  const activeLang = ["ko", "ja", "en"].includes((langParam ?? "").trim())
-    ? (langParam ?? "").trim()
-    : "";
 
   // "following" is client-rendered (auth needed); recent/trending are server-fetched here. A search
   // spans every author, so it only honors recent/trending — the following sort collapses to recent.
@@ -117,8 +112,8 @@ export default async function BlogFeedPage({
   const [feedResult, trendingResult, tagsResult, authorsResult, seriesResult] = await Promise.all([
     needFlat
       ? searching
-        ? searchPublicFeed(query, sort, 0, 24, activeLang || undefined)
-        : listPublicFeed(sort, 0, 24, activeLang || undefined)
+        ? searchPublicFeed(query, sort, 0, 24)
+        : listPublicFeed(sort, 0, 24)
       : Promise.resolve(null),
     groupByTag ? listTrendingByTag() : Promise.resolve(null),
     needRail ? listPopularTags(12) : Promise.resolve(null),
@@ -158,20 +153,9 @@ export default async function BlogFeedPage({
     </a>
   );
 
-  // tab hrefs keep the active search term on recent/trending (and the language filter); following
-  // leaves search.
-  const langSuffix = activeLang ? `&lang=${activeLang}` : "";
+  // tab hrefs keep the active search term on recent/trending; following leaves search.
   const sortHref = (s: FeedSort) =>
-    searching
-      ? `?q=${encodeURIComponent(query)}&sort=${s}${langSuffix}`
-      : `?sort=${s}${langSuffix}`;
-  // Language chip hrefs keep the active sort + search term, swapping only the language.
-  const langHref = (code: string) => {
-    const langPart = code ? `&lang=${code}` : "";
-    return searching
-      ? `?q=${encodeURIComponent(query)}&sort=${sort}${langPart}`
-      : `?sort=${sort}${langPart}`;
-  };
+    searching ? `?q=${encodeURIComponent(query)}&sort=${s}` : `?sort=${s}`;
 
   return (
     <>
@@ -226,18 +210,6 @@ export default async function BlogFeedPage({
           />
         </header>
 
-        {/* Language filter — flat feed (최신) + search only; trending-grouped/following/series don't
-            carry it. "전체" by default so discovery isn't narrowed unless the reader chooses. */}
-        {needFlat && (
-          <div className="mx-auto w-full max-w-2xl">
-            <FeedLanguageChips
-              activeLang={activeLang}
-              buildHref={langHref}
-              allLabel={t("allLanguages")}
-            />
-          </div>
-        )}
-
         {/* Reader's followed tags ("보고싶은 태그") — hidden until they follow one. Not during search. */}
         {!searching && <MyTagsStrip />}
 
@@ -283,7 +255,6 @@ export default async function BlogFeedPage({
                   hasNext={hasNext}
                   sort={sort}
                   query={searching ? query : undefined}
-                  lang={activeLang || undefined}
                   featuredFirst={featuredFirst}
                   featuredLabel={t("featuredLabel")}
                   interleave={
@@ -311,7 +282,6 @@ function FeedColumn({
   hasNext,
   sort,
   query,
-  lang,
   featuredFirst,
   featuredLabel,
   interleave,
@@ -321,7 +291,6 @@ function FeedColumn({
   hasNext: boolean;
   sort: FeedSort;
   query?: string;
-  lang?: string;
   featuredFirst: boolean;
   featuredLabel: string;
   interleave?: ReactNode;
@@ -333,7 +302,6 @@ function FeedColumn({
       initialHasNext={hasNext}
       sort={sort}
       query={query}
-      lang={lang}
       featuredFirst={featuredFirst}
       featuredLabel={featuredLabel}
       interleaveNode={interleave}
