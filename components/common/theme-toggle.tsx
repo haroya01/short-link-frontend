@@ -10,9 +10,16 @@ import { writeThemeCookie } from "@/lib/theme-cookie";
  * Dark-mode toggle. Flips the `dark` class on <html> and persists the choice to a `.kurl.me` cookie
  * (shared across the apex feed + author subdomains) plus localStorage (same-origin fallback), read
  * back by the no-FOUC script in the root layout. Dark is an explicit opt-in — light until the user
- * picks dark (we don't auto-follow the OS theme). Rendered as a full-width row for the account menu / sheet.
+ * picks dark (we don't auto-follow the OS theme). Default render is a full-width row (account menu /
+ * sheet); `iconOnly` drops the label for a compact icon button (e.g. the kurl desktop top nav).
  */
-export function ThemeToggle({ className }: { className?: string }) {
+export function ThemeToggle({
+  className,
+  iconOnly = false,
+}: {
+  className?: string;
+  iconOnly?: boolean;
+}) {
   const t = useTranslations("nav");
   const [dark, setDark] = useState(false);
 
@@ -52,14 +59,21 @@ export function ThemeToggle({ className }: { className?: string }) {
   }
 
   return (
-    <button type="button" onClick={toggle} aria-pressed={dark} className={className}>
+    <button
+      type="button"
+      onClick={toggle}
+      aria-pressed={dark}
+      aria-label={iconOnly ? t("theme") : undefined}
+      title={iconOnly ? t("theme") : undefined}
+      className={className}
+    >
       <span className="inline-flex items-center gap-3">
         {dark ? (
           <Sun className="h-5 w-5 text-slate-500" />
         ) : (
           <Moon className="h-5 w-5 text-slate-500" />
         )}
-        {t("theme")}
+        {!iconOnly && t("theme")}
       </span>
     </button>
   );
