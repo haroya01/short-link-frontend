@@ -497,7 +497,7 @@ function StatusBadge({ status }: { status: CampaignStatus }) {
   const palette: Record<CampaignStatus, { bg: string; text: string }> = {
     DRAFT: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-700 dark:text-slate-300" },
     ACTIVE: { bg: "bg-accent-50 dark:bg-accent-500/10", text: "text-accent-700 dark:text-accent-400" },
-    ENDED: { bg: "bg-amber-50", text: "text-amber-700" },
+    ENDED: { bg: "bg-amber-50 dark:bg-amber-500/10", text: "text-amber-700 dark:text-amber-400" },
     ARCHIVED: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-500 dark:text-slate-400" },
   };
   const { bg, text } = palette[status];

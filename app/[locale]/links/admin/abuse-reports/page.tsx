@@ -20,9 +20,9 @@ const STATUS_FILTERS: (AbuseReportStatus | "ALL")[] = [
 ];
 
 const STATUS_BADGE: Record<AbuseReportStatus, string> = {
-  OPEN: "bg-amber-100 text-amber-800",
-  REVIEWING: "bg-blue-100 text-blue-800",
-  RESOLVED: "bg-emerald-100 text-emerald-800",
+  OPEN: "bg-amber-100 dark:bg-amber-500/15 text-amber-800 dark:text-amber-300",
+  REVIEWING: "bg-blue-100 dark:bg-blue-500/15 text-blue-800 dark:text-blue-300",
+  RESOLVED: "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300",
   REJECTED: "bg-gray-100 text-gray-600",
 };
 
@@ -110,7 +110,7 @@ export default function AdminAbuseReportsPage() {
 
       {loading && <p className="text-gray-500">{tc("loading")}</p>}
       {error && (
-        <p className="text-red-600">
+        <p className="text-red-600 dark:text-red-400">
           {tc("errorPrefix")} {error}
         </p>
       )}
@@ -169,7 +169,7 @@ export default function AdminAbuseReportsPage() {
                         <button
                           type="button"
                           onClick={() => handleResolve(r, "REVIEWING")}
-                          className="rounded border border-blue-200 px-2 py-0.5 text-xs text-blue-700 hover:bg-blue-50"
+                          className="rounded border border-blue-200 dark:border-blue-500/30 px-2 py-0.5 text-xs text-blue-700 dark:text-blue-400 hover:bg-blue-50"
                         >
                           {t("action.reviewing")}
                         </button>
@@ -177,7 +177,7 @@ export default function AdminAbuseReportsPage() {
                       <button
                         type="button"
                         onClick={() => handleResolve(r, "RESOLVED")}
-                        className="rounded border border-emerald-200 px-2 py-0.5 text-xs text-emerald-700 hover:bg-emerald-50"
+                        className="rounded border border-emerald-200 dark:border-emerald-500/30 px-2 py-0.5 text-xs text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50"
                       >
                         {t("action.resolve")}
                       </button>

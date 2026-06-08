@@ -103,7 +103,7 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
             </div>
             <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("limitHint")}</p>
             {error && (
-              <p className="text-sm text-red-600" role="alert">
+              <p className="text-sm text-red-600 dark:text-red-400" role="alert">
                 {error}
               </p>
             )}

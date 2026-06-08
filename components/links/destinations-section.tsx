@@ -356,7 +356,7 @@ function DestinationRow({
               type="button"
               size="sm"
               variant="ghost"
-              className="text-red-600 hover:bg-red-50"
+              className="text-red-600 dark:text-red-400 hover:bg-red-50"
               onClick={onDelete}
             >
               {t("delete")}

@@ -61,7 +61,7 @@ export function LiveClickFeedDemo() {
             className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-500"
             aria-hidden
           />
-          <span className="text-emerald-700">{t("connected")}</span>
+          <span className="text-emerald-700 dark:text-emerald-400">{t("connected")}</span>
         </div>
       </div>
       <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">

@@ -267,11 +267,11 @@ function DestinationHint({
     );
   }
   return (
-    <div className="rounded-2xl border border-amber-200 bg-amber-50/60 px-4 py-3">
+    <div className="rounded-2xl border border-amber-200 dark:border-amber-500/30 bg-amber-50/60 px-4 py-3">
       <p className="text-[12px] leading-snug text-slate-700 dark:text-slate-300">
         {t.rich("defaultUrlMissing", {
           strong: (chunks) => (
-            <span className="font-medium text-amber-800">{chunks}</span>
+            <span className="font-medium text-amber-800 dark:text-amber-300">{chunks}</span>
           ),
         })}
       </p>
