@@ -101,7 +101,7 @@ export default async function SeoLandingPage({
         </dl>
       </section>
 
-      <div className="mt-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 py-10 text-center ring-1 ring-slate-200/70">
+      <div className="mt-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 py-10 text-center ring-1 ring-slate-200/70 dark:ring-slate-700/70">
         <a
           href={ctaHref}
           className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent-600 px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition-colors hover:bg-accent-700"

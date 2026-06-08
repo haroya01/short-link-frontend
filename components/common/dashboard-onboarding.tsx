@@ -19,22 +19,22 @@ export function DashboardOnboarding() {
   ];
 
   return (
-    <div className="overflow-hidden rounded-xl border border-accent-200 bg-gradient-to-br from-accent-50/60 via-white to-white p-6 shadow-sm">
-      <div className="flex items-center gap-2 text-xs font-medium text-accent-700">
+    <div className="overflow-hidden rounded-xl border border-accent-200 bg-gradient-to-br from-accent-50/60 via-white to-white p-6 shadow-sm dark:border-accent-500/30 dark:from-accent-500/10 dark:via-slate-900 dark:to-slate-900">
+      <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
         <Sparkles className="h-3.5 w-3.5" />
         {t("eyebrow")}
       </div>
-      <h2 className="mt-1 text-xl font-semibold tracking-headline text-slate-900">{t("title")}</h2>
-      <p className="mt-1 text-sm text-slate-600">{t("subtitle")}</p>
+      <h2 className="mt-1 text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h2>
+      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{t("subtitle")}</p>
 
       <ol className="mt-5 grid gap-3 sm:grid-cols-3">
         {steps.map((s) => (
-          <li key={s.num} className="rounded-lg border border-slate-200 bg-white p-4">
-            <div className="grid h-7 w-7 place-items-center rounded-full bg-slate-900 text-xs font-semibold text-white">
+          <li key={s.num} className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/50">
+            <div className="grid h-7 w-7 place-items-center rounded-full bg-slate-900 text-xs font-semibold text-white dark:bg-slate-100 dark:text-slate-900">
               {s.num}
             </div>
-            <p className="mt-2.5 text-sm font-medium text-slate-900">{s.title}</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{s.desc}</p>
+            <p className="mt-2.5 text-sm font-medium text-slate-900 dark:text-slate-100">{s.title}</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">{s.desc}</p>
           </li>
         ))}
       </ol>
@@ -47,7 +47,7 @@ export function DashboardOnboarding() {
         </Link>
         <Link
           href="/demo"
-          className="text-xs text-slate-500 hover:text-slate-900"
+          className="text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
         >
           {t("secondaryCta")}
         </Link>

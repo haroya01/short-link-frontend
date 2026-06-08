@@ -132,8 +132,8 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                             "h-6 rounded-md transition-all duration-150 ease-out",
                             colorFor(count, max),
                             count === 0 && "ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/50",
-                            isHover && "scale-110 ring-2 ring-accent-700 ring-offset-1",
-                            isSel && "scale-110 ring-2 ring-accent-700 ring-offset-1",
+                            isHover && "scale-110 ring-2 ring-accent-700 ring-offset-1 dark:ring-accent-400 dark:ring-offset-slate-950",
+                            isSel && "scale-110 ring-2 ring-accent-700 ring-offset-1 dark:ring-accent-400 dark:ring-offset-slate-950",
                           )}
                         />
                       );

@@ -134,7 +134,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
                       scrollToHeading(h.id);
                       setOpen(false);
                     }}
-                    className="focus-ring block truncate rounded-lg px-3 py-2.5 text-[15px] text-slate-700 transition-colors hover:bg-slate-50"
+                    className="focus-ring block truncate rounded-lg px-3 py-2.5 text-[15px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
                   >
                     {h.text}
                   </a>

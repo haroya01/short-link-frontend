@@ -69,9 +69,9 @@ export function ThemeToggle({
     >
       <span className="inline-flex items-center gap-3">
         {dark ? (
-          <Sun className="h-5 w-5 text-slate-500" />
+          <Sun className="h-5 w-5 text-slate-500 dark:text-slate-400" />
         ) : (
-          <Moon className="h-5 w-5 text-slate-500" />
+          <Moon className="h-5 w-5 text-slate-500 dark:text-slate-400" />
         )}
         {!iconOnly && t("theme")}
       </span>

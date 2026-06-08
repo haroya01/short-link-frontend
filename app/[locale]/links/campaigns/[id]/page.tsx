@@ -362,7 +362,7 @@ function PolicySummary({
                 onChange={(e) => setDraft(e.target.value.slice(0, 500))}
                 rows={3}
                 placeholder={t("policy.messagePlaceholder")}
-                className="block w-full resize-y rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-100"
+                className="block w-full resize-y rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-100 dark:focus:ring-accent-500/20"
               />
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[12px] tabular-nums text-slate-500 dark:text-slate-400">

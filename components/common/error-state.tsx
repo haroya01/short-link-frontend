@@ -13,12 +13,12 @@ type Props = {
 export function ErrorState({ title, message, onRetry }: Props) {
   const t = useTranslations("common");
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-red-200 bg-red-50/40 px-6 py-16 text-center">
-      <div className="mb-4 grid h-10 w-10 place-items-center rounded-full bg-red-100 text-red-600">
+    <div className="flex flex-col items-center justify-center rounded-lg border border-red-200 bg-red-50/40 px-6 py-16 text-center dark:border-red-500/30 dark:bg-red-500/10">
+      <div className="mb-4 grid h-10 w-10 place-items-center rounded-full bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400">
         <AlertTriangle className="h-4 w-4" />
       </div>
-      <p className="text-sm font-semibold tracking-headline text-slate-900">{title ?? t("errorTitle")}</p>
-      <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-slate-500">
+      <p className="text-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100">{title ?? t("errorTitle")}</p>
+      <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-slate-500 dark:text-slate-400">
         {message ?? t("errorDesc")}
       </p>
       {onRetry && (
