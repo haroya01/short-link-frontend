@@ -133,7 +133,7 @@ export default function HomePage() {
                 {!authenticated ? (
                   <Link
                     href="/login"
-                    className="group flex items-center justify-between rounded-lg bg-slate-900 px-4 py-3 text-sm text-slate-100 shadow-sm transition hover:bg-slate-800"
+                    className="group flex items-center justify-between rounded-lg bg-slate-900 dark:bg-white px-4 py-3 text-sm text-slate-100 dark:text-slate-900 shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-200"
                   >
                     <span>
                       {t.rich("loginCta", {

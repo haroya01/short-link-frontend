@@ -140,7 +140,7 @@ export default function SettingsPage() {
                           locale={l}
                           className={
                             l === locale
-                              ? "rounded-md bg-slate-900 px-3 py-1.5 text-xs text-white"
+                              ? "rounded-md bg-slate-900 dark:bg-white px-3 py-1.5 text-xs text-white dark:text-slate-900"
                               : "rounded-md border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                           }
                         >
@@ -283,7 +283,7 @@ function SettingsTabs({
                 className={
                   "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition " +
                   (active
-                    ? "bg-slate-900 text-white"
+                    ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900"
                     : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 ring-1 ring-inset ring-slate-200 dark:ring-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50")
                 }
               >

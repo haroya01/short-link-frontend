@@ -420,7 +420,7 @@ function FormatBadge({
   // generic stays the neutral light slate.
   if (format === "DISCORD" || format === "SLACK") {
     return (
-      <span className="rounded bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium text-white">
+      <span className="rounded bg-slate-900 dark:bg-white px-1.5 py-0.5 text-[10px] font-medium text-white dark:text-slate-900">
         {format === "DISCORD" ? t("formatBadgeDiscord") : t("formatBadgeSlack")}
       </span>
     );

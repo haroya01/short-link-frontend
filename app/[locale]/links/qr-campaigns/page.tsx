@@ -488,7 +488,7 @@ function FinalCta({
   const t = useTranslations("qrCampaigns.cta");
   const tRoot = useTranslations("qrCampaigns");
   return (
-    <section className="bg-slate-900 text-white">
+    <section className="bg-slate-900 dark:bg-white text-white dark:text-slate-900">
       <div className="container max-w-5xl py-24 text-center">
         <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-accent-600">
           <QrCode className="h-6 w-6" aria-hidden />
