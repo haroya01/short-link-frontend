@@ -46,7 +46,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
         >
           {t("toggle")}
           {activeCount > 0 && (
-            <span className="rounded-full bg-slate-900 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+            <span className="rounded-full bg-slate-900 dark:bg-white px-1.5 py-0.5 text-[10px] font-semibold text-white dark:text-slate-900">
               {activeCount}
             </span>
           )}

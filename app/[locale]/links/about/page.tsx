@@ -50,7 +50,7 @@ export default async function AboutPage({
 
       <Link
         href="/"
-        className="inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+        className="inline-flex items-center justify-center rounded-md bg-slate-900 dark:bg-white px-4 py-2 text-sm font-medium text-white dark:text-slate-900 transition hover:bg-slate-800 dark:hover:bg-slate-200"
       >
         {t("ctaShorten")}
       </Link>
