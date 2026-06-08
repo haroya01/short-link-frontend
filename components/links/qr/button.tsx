@@ -277,7 +277,7 @@ function QrModal({
               onClick={() => setWithLogo((v) => !v)}
               className={
                 "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition " +
-                (withLogo ? "bg-slate-900" : "bg-slate-200")
+                (withLogo ? "bg-slate-900" : "bg-slate-200 dark:bg-slate-800")
               }
             >
               <span

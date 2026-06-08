@@ -91,7 +91,7 @@ export function FeatureCarousel() {
         visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
       )}
     >
-      <div className="grid items-stretch gap-px overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-200 lg:grid-cols-[1fr_1.6fr]">
+      <div className="grid items-stretch gap-px overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-200 dark:bg-slate-800 lg:grid-cols-[1fr_1.6fr]">
         <div className="flex flex-col bg-white dark:bg-slate-900">
           {FEATURES.map((f, i) => {
             const Icon = f.icon;
@@ -148,7 +148,7 @@ export function FeatureCarousel() {
                   key={i}
                   className={cn(
                     "h-1.5 rounded-full transition-all duration-300",
-                    i === active ? "w-6 bg-accent-600" : "w-1.5 bg-slate-300",
+                    i === active ? "w-6 bg-accent-600" : "w-1.5 bg-slate-300 dark:bg-slate-700",
                   )}
                 />
               ))}

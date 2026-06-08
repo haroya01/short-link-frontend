@@ -251,14 +251,14 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
       <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-b from-slate-50 to-white lg:aspect-[1/1.414]">
         {/* 회색 placeholder content — 디자이너가 만든 포스터 디자인의 윤곽 흉내 */}
         <div className="absolute inset-0 flex flex-col gap-2.5 p-6">
-          <div className="h-3 w-3/5 rounded-sm bg-slate-200" />
-          <div className="h-2 w-2/5 rounded-sm bg-slate-200" />
+          <div className="h-3 w-3/5 rounded-sm bg-slate-200 dark:bg-slate-800" />
+          <div className="h-2 w-2/5 rounded-sm bg-slate-200 dark:bg-slate-800" />
           <div className="mt-4 h-1.5 w-full rounded-sm bg-slate-100 dark:bg-slate-800" />
           <div className="h-1.5 w-11/12 rounded-sm bg-slate-100 dark:bg-slate-800" />
           <div className="h-1.5 w-4/5 rounded-sm bg-slate-100 dark:bg-slate-800" />
           <div className="mt-auto flex flex-col gap-1.5">
             <div className="h-1.5 w-2/5 rounded-sm bg-slate-100 dark:bg-slate-800" />
-            <div className="h-2 w-1/3 rounded-sm bg-slate-200" />
+            <div className="h-2 w-1/3 rounded-sm bg-slate-200 dark:bg-slate-800" />
           </div>
         </div>
 
@@ -391,7 +391,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
                   <div
                     className={
                       "h-full rounded-full transition-[width] duration-[1200ms] " +
-                      (isTop ? "bg-accent-600" : "bg-slate-300")
+                      (isTop ? "bg-accent-600" : "bg-slate-300 dark:bg-slate-700")
                     }
                     style={{
                       transitionTimingFunction: EASE,
@@ -523,7 +523,7 @@ function CaseBar({
         <div
           className={
             "h-full rounded-full transition-[width] " +
-            (accent ? "bg-accent-600 duration-[1000ms]" : "bg-slate-300 duration-[800ms]")
+            (accent ? "bg-accent-600 duration-[1000ms]" : "bg-slate-300 dark:bg-slate-700 duration-[800ms]")
           }
           style={{
             transitionTimingFunction: EASE,
@@ -559,7 +559,7 @@ export function MockTimeline({ mock, active }: { mock: MockData; active: boolean
         {/* timeline mini header */}
         <div className="flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 px-5 py-3 text-[11px]">
           <span className="tabular-nums text-slate-500 dark:text-slate-400">{mock.startDate}</span>
-          <div className="relative h-px flex-1 bg-slate-200">
+          <div className="relative h-px flex-1 bg-slate-200 dark:bg-slate-800">
             <div
               className="absolute left-0 top-0 h-full bg-accent-600 transition-[width] duration-[1200ms]"
               style={{
@@ -684,9 +684,9 @@ function PhoneScreen({
         }
       />
       <div className="space-y-1">
-        <div className="h-1 w-full rounded-full bg-slate-200" />
-        <div className="h-1 w-5/6 rounded-full bg-slate-200" />
-        <div className="h-1 w-2/3 rounded-full bg-slate-200" />
+        <div className="h-1 w-full rounded-full bg-slate-200 dark:bg-slate-800" />
+        <div className="h-1 w-5/6 rounded-full bg-slate-200 dark:bg-slate-800" />
+        <div className="h-1 w-2/3 rounded-full bg-slate-200 dark:bg-slate-800" />
       </div>
       {isAfter && nextLabel && chipLabel ? (
         <div className="mt-auto flex flex-col items-start gap-1">
