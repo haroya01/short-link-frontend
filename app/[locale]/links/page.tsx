@@ -48,7 +48,7 @@ export default function HomePage() {
        * editorial moment. The hairline eyebrow on either side of the tagline stays as a subtle
        * grid-break, and the cascade-in still fires through `.hero-stagger`, opacity-only.
        */}
-      <section className="relative isolate overflow-hidden bg-white dark:bg-slate-900">
+      <section className="relative isolate overflow-hidden bg-white dark:bg-slate-950">
         <div className="container relative z-10 max-w-3xl py-20 sm:py-28">
           <div className="hero-stagger mb-10 space-y-4 sm:mb-12">
             <div
@@ -259,7 +259,7 @@ function Section({
 }) {
   const hasHeader = eyebrow || title || subhead;
   return (
-    <section className="bg-white dark:bg-slate-900">
+    <section className="bg-white dark:bg-slate-950">
       <div className={"container py-16 sm:py-20 " + (wide ? "max-w-5xl" : "max-w-3xl")}>
         <div className="section-divider mx-auto mb-12 w-full max-w-xl" aria-hidden />
         {hasHeader && (
