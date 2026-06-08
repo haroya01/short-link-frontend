@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils";
 
 const STORAGE_KEY = "kurl:cookie-consent:v1";
 
-/** `darkAware` opts this instance into `dark:` variants — set on the blog (which has a dark theme).
- *  The links product leaves it off so the banner stays light even when `.dark` is set globally. */
+/** `darkAware` opts this instance into `dark:` variants. Set on both products now that kurl supports
+ *  dark mode too (it was blog-only before the links dark sweep). */
 export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
   const t = useTranslations("cookieConsent");
   const locale = useLocale();

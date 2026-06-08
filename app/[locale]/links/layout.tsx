@@ -42,7 +42,7 @@ export default function LinksLayout({ children }: { children: React.ReactNode })
       <Nav />
       <main className="flex-1 pb-16 sm:pb-0">{children}</main>
       <Footer />
-      <CookieConsent />
+      <CookieConsent darkAware />
       <ClaimToastListener />
       {/* Mobile-only bottom tab bar — matches the blog; carries profile + kurl↔blog switch. */}
       <LinksBottomNav />
