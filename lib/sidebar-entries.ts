@@ -31,5 +31,17 @@ export function buildBlogSections(
     {
       entries: [{ href: "/settings", label: tCommon("settings") }],
     },
+    // Admin-only section — the dead `isAdmin` param now drives real entries. Authors never see it;
+    // admins get the blog moderation queue + cross-author metrics without leaving for the apex /admin.
+    ...(isAdmin
+      ? [
+          {
+            entries: [
+              { href: "/admin", label: tBlog("moderation") },
+              { href: "/admin/metrics", label: tBlog("adminMetrics") },
+            ],
+          },
+        ]
+      : []),
   ];
 }

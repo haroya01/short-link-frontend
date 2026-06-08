@@ -193,7 +193,11 @@
     "analyticsViewAll": "すべて表示",
     "analyticsCollapse": "閉じる",
     "analyticsViewPost": "分析を見る",
-    "analyticsSort": { "views": "ビュー順", "likes": "いいね順", "recent": "新着順" },
+    "analyticsSort": {
+      "views": "ビュー順",
+      "likes": "いいね順",
+      "recent": "新着順"
+    },
     "analyticsFollows": "増えたフォロー",
     "analyticsFollowsGained": "この記事で増えたフォロー",
     "analyticsWindowFollows": "直近{days}日 +{count}",
@@ -599,7 +603,9 @@
       "readers": "読者",
       "leads": "リード",
       "curation": "保存した記事",
-      "webhooks": "Webhook"
+      "webhooks": "Webhook",
+      "moderation": "通報管理",
+      "adminMetrics": "指標"
     },
     "links": {
       "links": "リンク",
@@ -2995,7 +3001,34 @@
     "action": {
       "reviewing": "確認を開始",
       "resolve": "処理",
-      "reject": "却下"
+      "reject": "却下",
+      "takedown": "非公開"
+    },
+    "subjectType": {
+      "POST": "投稿",
+      "USER": "作者",
+      "COMMENT": "コメント"
+    },
+    "takedownConfirm": "この投稿を非公開にしますか？公開フィードから外れます（下書きは作者に残ります）。",
+    "takedownFailed": "非公開処理に失敗しました。",
+    "removed": "非公開"
+  },
+  "blogAdminMetrics": {
+    "title": "ブログ指標",
+    "subtitle": "全作者を合算したブログ運営指標。",
+    "loadFailed": "指標を読み込めませんでした。",
+    "empty": "データがありません。",
+    "metric": {
+      "totalPosts": "総投稿",
+      "totalReads": "総閲覧",
+      "activeAuthors": "アクティブ作者",
+      "openReports": "未処理の通報"
+    },
+    "topPosts": {
+      "title": "人気の投稿",
+      "post": "投稿",
+      "author": "作者",
+      "reads": "閲覧"
     }
   }
 }

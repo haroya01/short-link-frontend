@@ -193,7 +193,11 @@
     "analyticsViewAll": "View all",
     "analyticsCollapse": "Collapse",
     "analyticsViewPost": "View analytics",
-    "analyticsSort": { "views": "By views", "likes": "By likes", "recent": "Most recent" },
+    "analyticsSort": {
+      "views": "By views",
+      "likes": "By likes",
+      "recent": "Most recent"
+    },
     "analyticsFollows": "Follows gained",
     "analyticsFollowsGained": "Follows from this post",
     "analyticsWindowFollows": "+{count} in {days}d",
@@ -599,7 +603,9 @@
       "readers": "Readers",
       "leads": "Leads",
       "curation": "Saved",
-      "webhooks": "Webhooks"
+      "webhooks": "Webhooks",
+      "moderation": "Moderation",
+      "adminMetrics": "Metrics"
     },
     "links": {
       "links": "Links",
@@ -2995,7 +3001,34 @@
     "action": {
       "reviewing": "Reviewing",
       "resolve": "Resolve",
-      "reject": "Reject"
+      "reject": "Reject",
+      "takedown": "Unpublish"
+    },
+    "subjectType": {
+      "POST": "Post",
+      "USER": "Author",
+      "COMMENT": "Comment"
+    },
+    "takedownConfirm": "Unpublish this post? It leaves the public feed (the author keeps the draft).",
+    "takedownFailed": "Couldn't unpublish the post.",
+    "removed": "Unpublished"
+  },
+  "blogAdminMetrics": {
+    "title": "Blog metrics",
+    "subtitle": "Blog-wide metrics rolled up across all authors.",
+    "loadFailed": "Couldn't load metrics.",
+    "empty": "No data yet.",
+    "metric": {
+      "totalPosts": "Total posts",
+      "totalReads": "Total reads",
+      "activeAuthors": "Active authors",
+      "openReports": "Open reports"
+    },
+    "topPosts": {
+      "title": "Top posts",
+      "post": "Post",
+      "author": "Author",
+      "reads": "Reads"
     }
   }
 }
