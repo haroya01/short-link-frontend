@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { notFound, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
@@ -108,26 +108,37 @@ function WorkspaceBody({ children }: { children: React.ReactNode }) {
   const tBlog = useTranslations("sidebar.blog");
   const tCommon = useTranslations("sidebar.common");
   const { ready, authenticated, isAdmin } = useAuth();
+  const pathname = usePathname();
   // Product base for the sidebar links: on a path-based deploy the blog lives under /blog-preview
   // (or /blog), and the entry hrefs are product-relative — without this prefix they'd 404 into the
   // links product. On the blog host the prefix is stripped by rewrite, so base is "".
-  const base = blogBasePath(usePathname());
+  const base = blogBasePath(pathname);
+  // Admin surfaces are hidden behind a hard 404, not the friendly login bounce: a visitor who isn't
+  // a signed-in admin — no token, expired token, or a valid non-admin token — must never learn the
+  // route exists. So the login redirect below is skipped for /admin, and the render-time guard 404s.
+  const isAdminPath = matchesAny(stripLocale(pathname), ["/admin"]);
 
   // Once auth resolves to signed-out, route to /login. This is also the safety net for the
   // expired-session case: an authed page (e.g. /write/new auto-creating a draft) hits a 401, the
   // interceptor clears the token, `authenticated` flips false, and we land here instead of flashing
-  // a confusing "you're logged out" state in place.
+  // a confusing "you're logged out" state in place. Admin paths opt out — they 404 instead.
   useEffect(() => {
-    if (ready && !authenticated) {
+    if (ready && !authenticated && !isAdminPath) {
       const next = window.location.pathname + window.location.search;
       window.location.replace(`${blogHref("/login")}?next=${encodeURIComponent(next)}`);
     }
-  }, [ready, authenticated]);
+  }, [ready, authenticated, isAdminPath]);
 
-  // Hold the sidebar until auth resolves (and while the redirect above is in flight) so we never
-  // flash it before deciding — but show a content skeleton instead of a blank pane, so a workspace
-  // navigation reads as "loading this page", never an empty white flash.
-  if (!ready || !authenticated) {
+  // Hard 404 for admin paths the moment auth resolves to anything but a signed-in admin.
+  if (isAdminPath && ready && (!authenticated || !isAdmin)) {
+    notFound();
+  }
+
+  // Hold the sidebar until auth resolves (and while the login redirect above is in flight) so we
+  // never flash it before deciding — but show a content skeleton instead of a blank pane, so a
+  // workspace navigation reads as "loading this page", never an empty white flash. Admin paths only
+  // wait on `ready` (their auth verdict is the 404 above), not on `authenticated`.
+  if (!ready || (!authenticated && !isAdminPath)) {
     return (
       <div className="flex flex-1" aria-busy>
         <main className="min-w-0 flex-1">
