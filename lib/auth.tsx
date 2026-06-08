@@ -13,7 +13,7 @@ import * as Sentry from "@sentry/nextjs";
 import { claimAnonymousLinks, logout as apiLogout } from "./api";
 import { bootstrapSession } from "./api/client";
 import { clearClaimTokens, readPendingClaimTokens } from "./recent-links";
-import { writeStorageString } from "./storage-json";
+import { writeLoginNextCookie } from "./login-next-cookie";
 import { useMe } from "@/hooks/use-me";
 import type { Me } from "@/types";
 
@@ -94,12 +94,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = useCallback(() => {
     // Return to where login started (blog, profile, …) instead of always landing on /dashboard.
-    // Stash the current path unless we're on /login (which sets its own ?next=) or the callback;
-    // same-origin sessionStorage carries it through the OAuth round-trip.
+    // Stash the current path unless we're on /login (which sets its own ?next=) or the callback.
+    // A `.kurl.me` cookie (not sessionStorage) carries it through the OAuth round-trip: login often
+    // starts on blog.kurl.me / {author}.kurl.me but the callback lands on the apex — a per-origin
+    // sessionStorage stash is gone by then, so every blog login fell back to /dashboard.
     if (!/\/(login|auth\/callback)(\/|$)/.test(window.location.pathname)) {
-      writeStorageString("kurl:login-next", window.location.pathname + window.location.search, {
-        session: true,
-      });
+      writeLoginNextCookie(window.location.href);
     }
     const apiBase = process.env.NEXT_PUBLIC_API_BASE ?? "";
     window.location.href = apiBase + "/oauth2/authorization/google";

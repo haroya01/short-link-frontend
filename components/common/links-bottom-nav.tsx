@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Home, Megaphone, User } from "lucide-react";
+import { BarChart3, Link2, Megaphone, User } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { linksHref } from "@/lib/host";
+import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { AccountSheet } from "@/components/common/account-sheet";
 
@@ -13,14 +12,17 @@ const TAB =
   "focus-ring flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar for the kurl (links) product — mirrors the blog's, so the two products
- * feel like one app on a phone. The 계정 tab opens the shared AccountSheet, which carries the
- * profile + the kurl↔blog switch + sign out (the cross-product hop the links top-nav lacked). Hidden
- * on `sm`+ where the top Nav carries everything. Auto-hides on scroll-down.
+ * Mobile-only bottom tab bar for the kurl (links) product. Unlike the blog's nav, the tabs map to
+ * kurl's own features — 단축(shortener) · 캠페인(QR) · 통계(stats) · 계정 — so the two products read as
+ * distinct apps on a phone (only the session, via the `.kurl.me` refresh cookie, is shared). All tabs
+ * are locale-aware same-origin Links (NOT linksHref): an absolute apex URL without the locale, e.g.
+ * https://kurl.me/campaigns, gets resolved as a short code on the backend apex → 404 LINK_NOT_FOUND.
+ * The 계정 tab opens the shared AccountSheet (profile + kurl↔blog switch + sign out). Hidden on `sm`+
+ * where the top Nav carries everything. Auto-hides on scroll-down.
  */
 export function LinksBottomNav() {
   const t = useTranslations("nav");
-  const pathname = usePathname();
+  const pathname = usePathname(); // locale-stripped (e.g. "/", "/dashboard", "/campaigns", "/stats")
   const { authenticated } = useAuth();
   const [sheet, setSheet] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -47,7 +49,13 @@ export function LinksBottomNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const isHome = !sheet && /^\/[a-z]{2}(\/links)?$/.test(pathname);
+  const tab = (active: boolean) =>
+    cn(TAB, !sheet && active ? "text-accent-600" : "text-slate-500");
+  // 단축: the shortener home + the "내 링크" dashboard. 캠페인: the app (authed) or its landing (anon).
+  const shortenActive = pathname === "/" || pathname.startsWith("/dashboard");
+  const campaignsActive =
+    pathname.startsWith("/campaigns") || pathname.startsWith("/qr-campaigns");
+  const statsActive = pathname.startsWith("/stats");
 
   return (
     <>
@@ -57,18 +65,30 @@ export function LinksBottomNav() {
           hidden && "translate-y-full",
         )}
       >
-        <a
-          href={linksHref("/")}
-          aria-current={isHome ? "page" : undefined}
-          className={cn(TAB, isHome ? "text-accent-600" : "text-slate-500")}
+        <Link
+          href="/"
+          aria-current={shortenActive && !sheet ? "page" : undefined}
+          className={tab(shortenActive)}
         >
-          <Home className="h-5 w-5" />
-          {t("home")}
-        </a>
-        <a href={linksHref("/campaigns")} className={cn(TAB, "text-slate-500")}>
+          <Link2 className="h-5 w-5" />
+          {t("shorten")}
+        </Link>
+        <Link
+          href={authenticated ? "/campaigns" : "/qr-campaigns"}
+          aria-current={campaignsActive && !sheet ? "page" : undefined}
+          className={tab(campaignsActive)}
+        >
           <Megaphone className="h-5 w-5" />
           {t("campaigns")}
-        </a>
+        </Link>
+        <Link
+          href="/stats"
+          aria-current={statsActive && !sheet ? "page" : undefined}
+          className={tab(statsActive)}
+        >
+          <BarChart3 className="h-5 w-5" />
+          {t("stats")}
+        </Link>
         <button
           type="button"
           onClick={() => setSheet(true)}
