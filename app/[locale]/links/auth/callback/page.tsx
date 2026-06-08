@@ -5,10 +5,9 @@ import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { setToken } from "@/lib/api";
 import { Link, useRouter } from "@/i18n/navigation";
-import { readStorageString, removeStorageItem, writeStorageString } from "@/lib/storage-json";
+import { writeStorageString } from "@/lib/storage-json";
+import { readSafeLoginNext } from "@/lib/login-next-cookie";
 import { Button } from "@/components/ui/button";
-
-const LOGIN_NEXT_KEY = "kurl:login-next";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -38,13 +37,13 @@ export default function AuthCallbackPage() {
     writeStorageString("kurl:just-signed-in", "1", { session: true });
     window.history.replaceState(null, "", "/auth/callback");
 
-    // Return to the page login started from (blog, profile, …). Honor any safe internal path —
-    // must start with a single "/" (no "//" or scheme) so it can't open-redirect off-origin.
-    // signInWithGoogle stashes the full path incl. locale, so navigate with the browser (not the
-    // locale-aware router, which would double-prefix). Falls back to /dashboard.
-    const next = readStorageString(LOGIN_NEXT_KEY, { session: true });
-    removeStorageItem(LOGIN_NEXT_KEY, { session: true });
-    if (next && /^\/(?!\/)/.test(next) && !next.includes("\\")) {
+    // Return to the page login started from (blog, profile, …). signInWithGoogle stashes the FULL url
+    // in a `.kurl.me` cookie that survives the cross-host blog → apex callback hop; readSafeLoginNext
+    // validates the origin (same-origin or on-platform .kurl.me) so it can't open-redirect off-site and
+    // clears the cookie as it reads. Navigate with the browser — the destination may be a different
+    // host (blog.kurl.me / {author}.kurl.me) than this apex callback. Falls back to /dashboard.
+    const next = readSafeLoginNext();
+    if (next) {
       window.location.replace(next);
     } else {
       router.replace("/dashboard");
