@@ -165,28 +165,15 @@ export default async function RootLayout({
     ],
   };
 
-  // No-FOUC theme, scoped to the BLOG product only. Dark mode is blog-only — the links product
-  // (dashboard, etc.) carries zero `dark:` styles, so letting `.dark` land there (via the system
-  // preference, or the shared `.kurl.me` theme=dark cookie a reader set on the blog) paints its root
-  // slate-950 + flips color-scheme and the whole table/UI reads as broken. So we first decide whether
-  // this surface is the blog — by host (blog.kurl.me / an author {sub}.kurl.me) or, off those hosts,
-  // by path (/{locale}/{blog,p,u} or /blog-preview) — and bail (stay light) otherwise. Dark is an
-  // EXPLICIT opt-in: we apply it only when the reader has chosen it (shared `.kurl.me` cookie FIRST so
-  // the apex feed + author subdomains agree, then the per-origin localStorage fallback). We deliberately
-  // do NOT auto-darken from the OS `prefers-color-scheme` — that flipped feed↔post inconsistently across
-  // hosts and read as "the post forced dark mode on me".
-  const BLOG_HOST = (process.env.NEXT_PUBLIC_BLOG_HOST ?? "").toLowerCase();
-  const KURL_HOST = (process.env.NEXT_PUBLIC_KURL_HOST ?? "").toLowerCase();
+  // No-FOUC theme. Dark mode is now supported on BOTH products (blog + kurl/links — the links surfaces
+  // carry `dark:` variants as of the P1–P3 sweep), so we apply `.dark` on every surface, gated only on
+  // the reader's EXPLICIT choice: the shared `.kurl.me` cookie FIRST (so the apex + author subdomains
+  // agree), then the per-origin localStorage fallback. We deliberately do NOT auto-darken from the OS
+  // `prefers-color-scheme` — that flipped surfaces inconsistently across hosts and read as "it forced
+  // dark mode on me." (Earlier this was scoped to blog-only because the links product had no dark styles
+  // and `.dark` painted its root slate-950 over un-themed UI; that scoping is no longer needed.)
   const themeInitScript =
     "(function(){try{" +
-    "var h=location.hostname.toLowerCase(),p=location.pathname;" +
-    `var BH=${JSON.stringify(BLOG_HOST)},KH=${JSON.stringify(KURL_HOST)};` +
-    "var reserved={www:1,app:1,api:1,origin:1,admin:1,blog:1,help:1,status:1,mail:1,kurl:1,official:1};" +
-    "var isBlog=false;" +
-    "if(BH&&h===BH){isBlog=true;}" +
-    "else if(KH&&h.slice(-(KH.length+1))==='.'+KH){var s=h.slice(0,-(KH.length+1));if(s&&s.indexOf('.')<0&&!reserved[s]){isBlog=true;}}" +
-    "if(!isBlog){var seg=p.split('/'),x=seg[2];if(x==='blog'||x==='p'||x==='u'||p.indexOf('/blog-preview')>-1){isBlog=true;}}" +
-    "if(!isBlog){return;}" +
     "var m=document.cookie.match(/(?:^|; )theme=(dark|light)/);var t=m?m[1]:localStorage.getItem('theme');" +
     "if(t==='dark'){document.documentElement.classList.add('dark');}" +
     "}catch(e){}})()";
