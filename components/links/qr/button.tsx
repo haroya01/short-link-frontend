@@ -91,7 +91,7 @@ export function QrButton({
           disabled={!baseUrl}
           aria-label={t("triggerAria")}
           title={t("triggerAria")}
-          className="grid h-8 w-8 place-items-center rounded-md text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 disabled:opacity-50"
+          className="grid h-8 w-8 place-items-center rounded-md text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 disabled:opacity-50"
         >
           <QrCode className="h-3.5 w-3.5" />
         </button>
@@ -225,7 +225,7 @@ function QrModal({
           type="button"
           onClick={onClose}
           aria-label={t("close")}
-          className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700"
+          className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300"
         >
           <X className="h-4 w-4" />
         </button>

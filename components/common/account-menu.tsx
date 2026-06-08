@@ -71,7 +71,7 @@ export function AccountMenu() {
   }, [avatarUrl]);
 
   const itemClass =
-    "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none";
+    "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-slate-700 dark:text-slate-300 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 focus-visible:bg-slate-50 dark:focus-visible:bg-slate-800 focus-visible:outline-none";
 
   return (
     <div className="relative" ref={ref}>
@@ -93,44 +93,44 @@ export function AccountMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-30 mt-2 w-60 origin-top-right animate-dropdown-in rounded-xl border border-slate-200 bg-white p-1 shadow-lg"
+          className="absolute right-0 z-30 mt-2 w-60 origin-top-right animate-dropdown-in rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
         >
           {(username || me?.email) && (
             <div className="px-3 py-2">
               {username && (
-                <p className="truncate text-sm font-semibold text-slate-900">@{username}</p>
+                <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">@{username}</p>
               )}
-              {me?.email && <p className="truncate text-[12px] text-slate-500">{me.email}</p>}
+              {me?.email && <p className="truncate text-[12px] text-slate-500 dark:text-slate-400">{me.email}</p>}
             </div>
           )}
 
           {username && (
             <>
-              <div className="my-1 h-px bg-slate-100" />
+              <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
               {/* 분석 진입은 글 목록 strip 이 아니라 여기 — 프로필 바로 아래의 전용 버튼. */}
               <a href={blogHref("/analytics")} role="menuitem" className={itemClass}>
-                <BarChart3 className="h-4 w-4 text-slate-500" />
+                <BarChart3 className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("analytics")}
               </a>
               {/* The viewer's two public surfaces — separate products, one identity. */}
               <a href={authorHref(username, locale)} role="menuitem" className={itemClass}>
-                <Newspaper className="h-4 w-4 text-slate-500" />
+                <Newspaper className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("blog")}
               </a>
               <a href={linksHref(`/${locale}/u/${username}`)} role="menuitem" className={itemClass}>
-                <User className="h-4 w-4 text-slate-500" />
+                <User className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("profile")}
               </a>
               {/* The viewer's private reading library — bookmarks + likes, both on the workspace
                   curation page (a private tool, not an owner-only tab on the public profile). */}
               <a href={blogHref("/curation")} role="menuitem" className={itemClass}>
-                <Bookmark className="h-4 w-4 text-slate-500" />
+                <Bookmark className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("library")}
               </a>
             </>
           )}
 
-          <div className="my-1 h-px bg-slate-100" />
+          <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
           {/* Collapsed by default — shows the current language; expands the picker on demand so the
               3 locales don't dominate the menu. */}
           <button
@@ -140,7 +140,7 @@ export function AccountMenu() {
             className={cn(itemClass, "justify-between")}
           >
             <span className="inline-flex items-center gap-2.5">
-              <Globe className="h-4 w-4 text-slate-500" />
+              <Globe className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               {tLang("label")}
             </span>
             <span className="inline-flex items-center gap-1 text-[13px] text-slate-400">
@@ -157,17 +157,17 @@ export function AccountMenu() {
                 type="button"
                 role="menuitem"
                 onClick={() => switchLocale(l)}
-                className={cn(itemClass, "justify-between pl-9", l === locale && "text-accent-700")}
+                className={cn(itemClass, "justify-between pl-9", l === locale && "text-accent-700 dark:text-accent-400")}
               >
                 {tLang(l)}
                 {l === locale && <Check className="h-4 w-4 text-accent-600" />}
               </button>
             ))}
 
-          <div className="my-1 h-px bg-slate-100" />
+          <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
           <ThemeToggle className={itemClass} />
 
-          <div className="my-1 h-px bg-slate-100" />
+          <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
           <button
             type="button"
             role="menuitem"
@@ -178,7 +178,7 @@ export function AccountMenu() {
             }}
             className={itemClass}
           >
-            <LogOut className="h-4 w-4 text-slate-500" />
+            <LogOut className="h-4 w-4 text-slate-500 dark:text-slate-400" />
             {t("logout")}
           </button>
         </div>

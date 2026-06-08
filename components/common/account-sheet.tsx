@@ -138,7 +138,7 @@ export function AccountSheet({
             {/* kurl: just settings here — profile is a bottom-nav tab, the blog switch is in the top Nav. */}
             {isLinks && (
               <a href={linksHref(`/${locale}/settings`)} className={ITEM}>
-                <Settings className="h-5 w-5 text-slate-500" />
+                <Settings className="h-5 w-5 text-slate-500 dark:text-slate-400" />
                 {t("settings")}
               </a>
             )}
@@ -146,27 +146,27 @@ export function AccountSheet({
             <>
             {/* 분석 진입은 글 목록 strip 이 아니라 프로필 바로 아래 전용 버튼. */}
             <a href={blogHref("/analytics")} className={ITEM}>
-              <BarChart3 className="h-5 w-5 text-slate-500" />
+              <BarChart3 className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("analytics")}
             </a>
             <a href={authorHref(username, locale)} className={ITEM}>
-              <Newspaper className="h-5 w-5 text-slate-500" />
+              <Newspaper className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("blog")}
             </a>
             <a href={linksHref(`/${locale}/u/${username}`)} className={ITEM}>
-              <User className="h-5 w-5 text-slate-500" />
+              <User className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("profile")}
             </a>
             {/* Reader's private library — bookmarks + likes, on the workspace curation page. */}
             <a href={blogHref("/curation")} className={ITEM}>
-              <Bookmark className="h-5 w-5 text-slate-500" />
+              <Bookmark className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("library")}
             </a>
             {/* Notifications — mobile reaches the full page here (the desktop header bell has a
                 dropdown). Unread badge mirrors the desktop bell. */}
             <a href={blogHref("/notifications")} className={cn(ITEM, "justify-between")}>
               <span className="inline-flex items-center gap-3">
-                <Bell className="h-5 w-5 text-slate-500" />
+                <Bell className="h-5 w-5 text-slate-500 dark:text-slate-400" />
                 {tNotif("title")}
               </span>
               {unread > 0 && (
@@ -181,23 +181,23 @@ export function AccountSheet({
                 여기서도 빼고, 내 글(/write) 상단 요약 strip·글별 성과로 들어간다(#602). */}
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
             <a href={blogHref("/write")} className={ITEM}>
-              <FileText className="h-5 w-5 text-slate-500" />
+              <FileText className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tBlog("myPosts")}
             </a>
             <a href={blogHref("/leads")} className={ITEM}>
-              <Inbox className="h-5 w-5 text-slate-500" />
+              <Inbox className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tBlog("leads")}
             </a>
             <a href={blogHref("/curation")} className={ITEM}>
-              <Sparkles className="h-5 w-5 text-slate-500" />
+              <Sparkles className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tBlog("curation")}
             </a>
             <a href={blogHref("/webhooks")} className={ITEM}>
-              <Webhook className="h-5 w-5 text-slate-500" />
+              <Webhook className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tBlog("webhooks")}
             </a>
             <a href={blogHref("/settings")} className={ITEM}>
-              <Settings className="h-5 w-5 text-slate-500" />
+              <Settings className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("settings")}
             </a>
             </>
@@ -222,7 +222,7 @@ export function AccountSheet({
           className={cn(ITEM, "justify-between")}
         >
           <span className="inline-flex items-center gap-3">
-            <Globe className="h-5 w-5 text-slate-500" />
+            <Globe className="h-5 w-5 text-slate-500 dark:text-slate-400" />
             {tLang("label")}
           </span>
           <span className="inline-flex items-center gap-1 text-[13px] text-slate-400">
@@ -255,7 +255,7 @@ export function AccountSheet({
             }}
             className={ITEM}
           >
-            <LogOut className="h-5 w-5 text-slate-500" />
+            <LogOut className="h-5 w-5 text-slate-500 dark:text-slate-400" />
             {t("logout")}
           </button>
         ) : (
@@ -268,7 +268,7 @@ export function AccountSheet({
             }}
             className={ITEM}
           >
-            <LogIn className="h-5 w-5 text-slate-500" />
+            <LogIn className="h-5 w-5 text-slate-500 dark:text-slate-400" />
             {t("login")}
           </button>
         )}

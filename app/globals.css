@@ -328,6 +328,11 @@ h1, h2, h3, p {
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2;
   }
+  /* Tailwind's default ring-offset color is white — on a dark surface the 2px offset reads as a white
+     halo around the focus ring. Match it to the page base instead. */
+  .dark .focus-ring {
+    @apply focus-visible:ring-offset-slate-950;
+  }
   /* Expands the TOUCH target of a compact control (like/share/follow pills sit ~32px tall) to the
      44px WCAG 2.5.5 minimum WITHOUT growing its visual size — a transparent overlay centered on the
      control captures the taps. Keeps the minimal pill look while staying thumb-friendly on mobile. */

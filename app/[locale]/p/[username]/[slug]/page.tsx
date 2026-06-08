@@ -148,7 +148,7 @@ export default async function PublicPostPage({
             </span>
           </a>
           {author.bio && (
-            <p className="mt-3 line-clamp-3 text-[13px] leading-relaxed text-slate-500">
+            <p className="mt-3 line-clamp-3 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
               {author.bio}
             </p>
           )}
@@ -195,7 +195,7 @@ export default async function PublicPostPage({
               <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
                 @{author.username}
               </span>
-              <span className="block text-[13px] text-slate-500">
+              <span className="block text-[13px] text-slate-500 dark:text-slate-400">
                 <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
                 {" · "}
                 {t("readingTime", { minutes })}
@@ -203,7 +203,7 @@ export default async function PublicPostPage({
               </span>
             </span>
           </a>
-          <p className="hidden text-[13px] text-slate-500 xl:block">
+          <p className="hidden text-[13px] text-slate-500 dark:text-slate-400 xl:block">
             <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
             {" · "}
             {t("readingTime", { minutes })}
@@ -255,7 +255,7 @@ export default async function PublicPostPage({
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-4">
           <a
             href={authorHref(author.username, locale)}
-            className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 focus-ring"
+            className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400 focus-ring"
           >
             <ArrowLeft className="h-4 w-4" />
             {t("morePosts", { username: author.username })}

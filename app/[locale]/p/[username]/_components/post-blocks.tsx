@@ -348,7 +348,7 @@ async function CtaBlock({ cta, postId }: { cta: PublicCtaInfo | null; postId?: n
   if (!cta || cta.deleted) {
     const t = await getTranslations("publicPost");
     return (
-      <div className="my-8 rounded-2xl border border-dashed border-slate-200 px-5 py-4 text-center text-sm text-slate-400">
+      <div className="my-8 rounded-2xl border border-dashed border-slate-200 px-5 py-4 text-center text-sm text-slate-400 dark:border-slate-800 dark:text-slate-500">
         {cta?.label ? t("ctaUnavailable", { label: cta.label }) : t("ctaDeleted")}
       </div>
     );

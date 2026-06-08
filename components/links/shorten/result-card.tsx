@@ -104,7 +104,7 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
           <div className="grid gap-2 pt-1 sm:grid-cols-2">
             <Link
               href={`/links/stats/${result.shortCode}`}
-              className="group flex items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-2.5 text-left hover:border-slate-300 hover:bg-white"
+              className="group flex items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-2.5 text-left hover:border-slate-300 hover:bg-white dark:hover:border-slate-700 dark:hover:bg-slate-800"
             >
               <span className="min-w-0">
                 <span className="block text-[12px] font-medium text-slate-900 dark:text-slate-100">
@@ -118,7 +118,7 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
             </Link>
             <Link
               href="/settings/profile"
-              className="group flex items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-2.5 text-left hover:border-slate-300 hover:bg-white"
+              className="group flex items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-2.5 text-left hover:border-slate-300 hover:bg-white dark:hover:border-slate-700 dark:hover:bg-slate-800"
             >
               <span className="min-w-0">
                 <span className="block text-[12px] font-medium text-slate-900 dark:text-slate-100">

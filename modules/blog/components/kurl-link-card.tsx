@@ -121,7 +121,7 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
         href={linksHref(`/stats/${code}/public`)}
         target="_blank"
         rel="noopener noreferrer"
-        className="block border-t border-slate-100 px-5 py-2 text-[12px] font-medium text-accent-700 no-underline transition-colors hover:bg-accent-50/40"
+        className="block border-t border-slate-100 px-5 py-2 text-[12px] font-medium text-accent-700 no-underline transition-colors hover:bg-accent-50/40 dark:border-slate-800 dark:text-accent-400 dark:hover:bg-accent-500/10"
       >
         Full stats on kurl →
       </a>

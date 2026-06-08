@@ -63,11 +63,11 @@ export default async function ShowcaseHandlePage({
     <div className={`min-h-screen ${colors.page}`}>
       {/* Sample banner — keep it small and dismissible-looking so it doesn't bury the demo, but
           explicit enough that visitors don't think this is a real user's page. */}
-      <div className="sticky top-0 z-30 border-b border-amber-200/60 bg-amber-50/80 backdrop-blur">
+      <div className="sticky top-0 z-30 border-b border-amber-200/60 bg-amber-50/80 backdrop-blur dark:border-amber-500/30 dark:bg-amber-500/10">
         <div className="container flex max-w-md items-center justify-between gap-3 py-2 text-[11px]">
           {/* min-w-0 + truncate keeps the banner to one line on narrow viewports —
               previously the long copy wrapped to two rows on phone. */}
-          <span className="inline-flex min-w-0 items-center gap-1.5 font-medium text-amber-900">
+          <span className="inline-flex min-w-0 items-center gap-1.5 font-medium text-amber-900 dark:text-amber-300">
             <Sparkles className="h-3 w-3 shrink-0" />
             <span className="truncate">{t("sampleBanner")}</span>
           </span>
