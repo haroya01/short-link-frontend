@@ -106,17 +106,17 @@ export default function DashboardPage() {
   if (ready && !authenticated) {
     return (
       <div className="container grid min-h-[calc(100vh-3.5rem-3rem)] max-w-5xl items-center gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)]">
-        <div className="w-full rounded-2xl border border-slate-200 bg-white p-6 text-left shadow-[0_1px_3px_rgba(15,23,42,0.04)] sm:p-8">
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+        <div className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 text-left shadow-[0_1px_3px_rgba(15,23,42,0.04)] sm:p-8">
+          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
             dashboard
           </p>
-          <h1 className="mt-3 text-[26px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[32px]">
+          <h1 className="mt-3 text-[26px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
             {t("loginRequired")}
           </h1>
-          <p className="mt-2 text-[15px] leading-relaxed text-slate-500">
+          <p className="mt-2 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
             {t("loginRequiredDesc")}
           </p>
-          <div className="mt-6 grid gap-2 text-[13px] text-slate-600 sm:grid-cols-3">
+          <div className="mt-6 grid gap-2 text-[13px] text-slate-600 dark:text-slate-300 sm:grid-cols-3">
             <AuthBenefit icon={Link2} label={t("loginRequiredBenefits.links")} />
             <AuthBenefit icon={BarChart3} label={t("loginRequiredBenefits.stats")} />
             <AuthBenefit icon={QrCode} label={t("loginRequiredBenefits.campaigns")} />
@@ -141,10 +141,10 @@ export default function DashboardPage() {
     <div className="container max-w-5xl space-y-5 py-10">
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
             {t("title")}
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             {t("subtitle", { count: items.length })}
           </p>
         </div>
@@ -182,7 +182,7 @@ export default function DashboardPage() {
 
       <div className="space-y-3">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -194,7 +194,7 @@ export default function DashboardPage() {
               type="button"
               onClick={() => setQuery("")}
               aria-label={t("clearSearch")}
-              className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+              className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -332,14 +332,14 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
         />
       </div>
 
-      <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <div className="min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
         <div className="flex h-full min-w-0 flex-col gap-4">
           <div className="flex items-start justify-between gap-3">
-            <p className="text-[12px] font-semibold leading-snug text-accent-700">
+            <p className="text-[12px] font-semibold leading-snug text-accent-700 dark:text-accent-400">
               {t("topLink")}
             </p>
             {topLink && (
-              <div className="inline-flex shrink-0 items-baseline gap-1 rounded-full bg-accent-50 px-2.5 py-1 text-accent-700">
+              <div className="inline-flex shrink-0 items-baseline gap-1 rounded-full bg-accent-50 dark:bg-accent-500/10 px-2.5 py-1 text-accent-700 dark:text-accent-400">
                 <span className="font-mono text-sm font-semibold tabular-nums">
                   {formatNumber(topLink.clickCount)}
                 </span>
@@ -349,21 +349,21 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
           </div>
 
           {topLink ? (
-            <div className="min-w-0 rounded-lg border border-slate-100 bg-slate-50/70 px-3 py-3">
+            <div className="min-w-0 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 px-3 py-3">
               <div className="min-w-0">
                 <Link
                   href={`/links/stats/${topLink.shortCode}`}
-                  className="block truncate font-mono text-[17px] font-semibold leading-tight text-slate-900 hover:underline"
+                  className="block truncate font-mono text-[17px] font-semibold leading-tight text-slate-900 dark:text-slate-100 hover:underline"
                 >
                   /{topLink.shortCode}
                 </Link>
-                <p className="mt-1 truncate text-xs leading-relaxed text-slate-500" title={topLink.originalUrl}>
+                <p className="mt-1 truncate text-xs leading-relaxed text-slate-500 dark:text-slate-400" title={topLink.originalUrl}>
                   {topLink.originalUrl}
                 </p>
               </div>
             </div>
           ) : (
-            <p className="text-sm leading-relaxed text-slate-500">{t("topLinkEmpty")}</p>
+            <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">{t("topLinkEmpty")}</p>
           )}
 
           {topLink && (
@@ -404,7 +404,7 @@ function DashboardOpsSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
+            className="min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
           >
             <div className="flex min-w-0 items-start justify-between gap-3">
               <div className="flex min-w-0 items-start gap-2.5">
@@ -419,13 +419,13 @@ function DashboardOpsSkeleton() {
           </div>
         ))}
       </div>
-      <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <div className="min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
         <div className="flex h-full min-w-0 flex-col gap-4">
           <div className="flex items-start justify-between gap-3">
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-6 w-16 rounded-full" />
           </div>
-          <div className="min-w-0 rounded-lg border border-slate-100 bg-slate-50/70 px-3 py-3 space-y-2">
+          <div className="min-w-0 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 px-3 py-3 space-y-2">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-3 w-3/4" />
           </div>
@@ -452,18 +452,18 @@ function OpsMetric({
   hint: string;
 }) {
   return (
-    <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+    <div className="min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-slate-50 text-accent-700">
+          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-slate-50 dark:bg-slate-800/50 text-accent-700 dark:text-accent-400">
             <Icon className="h-3.5 w-3.5" />
           </span>
           <div className="min-w-0">
-            <p className="text-[12px] font-semibold leading-snug text-slate-700">{label}</p>
-            <p className="mt-1 text-[11px] leading-snug text-slate-500">{hint}</p>
+            <p className="text-[12px] font-semibold leading-snug text-slate-700 dark:text-slate-300">{label}</p>
+            <p className="mt-1 text-[11px] leading-snug text-slate-500 dark:text-slate-400">{hint}</p>
           </div>
         </div>
-        <p className="shrink-0 font-mono text-2xl font-semibold leading-none tabular-nums text-slate-900">
+        <p className="shrink-0 font-mono text-2xl font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
           {value}
         </p>
       </div>
@@ -479,8 +479,8 @@ function AuthBenefit({
   label: string;
 }) {
   return (
-    <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3">
-      <span className="grid h-7 w-7 place-items-center rounded-md bg-white text-accent-700 shadow-sm">
+    <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 p-3">
+      <span className="grid h-7 w-7 place-items-center rounded-md bg-white dark:bg-slate-900 text-accent-700 dark:text-accent-400 shadow-sm">
         <Icon className="h-3.5 w-3.5" />
       </span>
       <p className="mt-2 leading-snug">{label}</p>
@@ -492,16 +492,16 @@ function DashboardPreview() {
   const t = useTranslations("dashboard.preview");
   return (
     <div className="hidden lg:block">
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
         <div className="flex items-center justify-between">
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
             {t("eyebrow")}
           </p>
-          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+          <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-slate-600 dark:text-slate-300">
             30d
           </span>
         </div>
-        <p className="mt-3 text-[18px] font-semibold tracking-headline text-slate-900">
+        <p className="mt-3 text-[18px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">
           {t("title")}
         </p>
         <div className="mt-5 space-y-2">
@@ -526,12 +526,12 @@ function DashboardPreviewItem({
   muted?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50/70 px-3 py-2.5">
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 px-3 py-2.5">
       <div className="min-w-0">
-        <p className="font-mono text-[13px] font-semibold text-slate-900">{code}</p>
-        <p className="mt-0.5 text-[11px] text-slate-500">{status}</p>
+        <p className="font-mono text-[13px] font-semibold text-slate-900 dark:text-slate-100">{code}</p>
+        <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">{status}</p>
       </div>
-      <p className={cn("font-mono text-[14px] font-semibold", muted ? "text-slate-500" : "text-accent-700")}>
+      <p className={cn("font-mono text-[14px] font-semibold", muted ? "text-slate-500 dark:text-slate-400" : "text-accent-700 dark:text-accent-400")}>
         {clicks}
       </p>
     </div>
@@ -540,7 +540,7 @@ function DashboardPreviewItem({
 
 function LoadingTable({ t }: { t: (k: string) => string }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
       <Table>
         <THead>
           <TR>
