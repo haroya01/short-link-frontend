@@ -191,13 +191,39 @@ export default async function RootLayout({
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: themeInitScript }}
         />
-        {/* Preconnect to the Pretendard CDN ahead of the stylesheet request — saves the TLS
-            handshake (~150ms on mobile) for the Korean body font, which is on the LCP path. */}
+        {/* Pretendard (Korean body font) loaded ASYNC, not render-blocking. It used to be a blocking
+            <link rel=stylesheet> from jsdelivr (~1s render-block on mobile) and, because the feed's LCP
+            element is TEXT, that delay landed straight on LCP. Now: preconnect + preload warm the
+            request, the stylesheet ships as media="print" (non-blocking) so the page paints
+            immediately in the system fallback, and a tiny inline script flips it to media="all" once
+            loaded — upgrading to Pretendard without ever blocking first paint. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link
-          rel="stylesheet"
+          rel="preload"
+          as="style"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
+        <link
+          rel="stylesheet"
+          media="print"
+          data-pretendard=""
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){var l=document.querySelector('link[data-pretendard]');if(!l)return;var a=function(){l.media='all'};if(l.sheet)a();else l.addEventListener('load',a,{once:true});})();",
+          }}
+        />
+        <noscript>
+          {/* JS off → ship it as a normal blocking stylesheet so the font still applies. */}
+          {/* eslint-disable-next-line @next/next/no-css-tags */}
+          <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+          />
+        </noscript>
       </head>
       <body className="min-h-screen flex flex-col">
         <NextIntlClientProvider locale={locale}>
