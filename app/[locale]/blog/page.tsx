@@ -19,7 +19,6 @@ import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedContentTransition } from "@/modules/blog/components/feed-content-transition";
 import { FeedSortTabs } from "@/modules/blog/components/feed-sort-tabs";
-import { FeedLanguageChips } from "@/modules/blog/components/feed-language-chips";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { SearchEmpty } from "@/modules/blog/components/search-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
@@ -165,14 +164,6 @@ export default async function BlogFeedPage({
     searching
       ? `?q=${encodeURIComponent(query)}&sort=${s}${langSuffix}`
       : `?sort=${s}${langSuffix}`;
-  // Language chip hrefs keep the active sort + search term, swapping only the language.
-  const langHref = (code: string) => {
-    const langPart = code ? `&lang=${code}` : "";
-    return searching
-      ? `?q=${encodeURIComponent(query)}&sort=${sort}${langPart}`
-      : `?sort=${sort}${langPart}`;
-  };
-
   return (
     <>
       {/* Editorial masthead — the brand tagline by default; on search it becomes the search heading
@@ -225,18 +216,6 @@ export default async function BlogFeedPage({
             ]}
           />
         </header>
-
-        {/* Language filter — flat feed (최신) + search only; trending-grouped/following/series don't
-            carry it. "전체" by default so discovery isn't narrowed unless the reader chooses. */}
-        {needFlat && (
-          <div className="mx-auto w-full max-w-2xl">
-            <FeedLanguageChips
-              activeLang={activeLang}
-              buildHref={langHref}
-              allLabel={t("allLanguages")}
-            />
-          </div>
-        )}
 
         {/* Reader's followed tags ("보고싶은 태그") — hidden until they follow one. Not during search. */}
         {!searching && <MyTagsStrip />}
