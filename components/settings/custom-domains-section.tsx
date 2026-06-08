@@ -176,7 +176,7 @@ function DomainRow({
       </div>
 
       {!d.verified && (
-        <div className="space-y-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 px-3 py-3">
+        <div className="space-y-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-3 py-3">
           <DnsRecord
             type="TXT"
             host={d.verificationHost}

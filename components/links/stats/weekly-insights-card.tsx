@@ -58,7 +58,7 @@ export function WeeklyInsightsCard() {
 
   if (!data || data.totalClicks === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 p-5">
+      <div className="rounded-lg border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 p-5">
         <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("eyebrow")}</p>
         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t("emptyDesc")}</p>
       </div>

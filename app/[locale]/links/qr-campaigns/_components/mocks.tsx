@@ -79,7 +79,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
 
       {/* After kurl — 같은 캠페인의 *kurl 도입 후* KPI. accent 톤. */}
       <div
-        className="rounded-2xl border border-accent-200 bg-accent-50/30 p-4 shadow-[0_4px_24px_rgba(5,150,105,0.08)] transition-all duration-500"
+        className="rounded-2xl border border-accent-200 bg-accent-50/30 dark:bg-accent-500/10 p-4 shadow-[0_4px_24px_rgba(5,150,105,0.08)] transition-all duration-500"
         style={{
           transitionTimingFunction: EASE,
           transitionDelay: active ? "800ms" : "0ms",
@@ -135,7 +135,7 @@ function KpiCellMini({
       className={
         "rounded-lg border px-2 py-1.5 " +
         (muted
-          ? "border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/60"
+          ? "border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60"
           : accent
             ? "border-accent-200 bg-white dark:bg-slate-900"
             : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900")
@@ -178,7 +178,7 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
           {t("batchAdd")}
         </span>
       </div>
-      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 px-5 py-2.5 text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-5 py-2.5 text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
         <span>{t("batchColName")}</span>
         <span>{t("batchColArea")}</span>
         <span>{t("batchColDist")}</span>
@@ -248,7 +248,7 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
       }}
     >
       {/* PDF 페이지 시뮬레이션 + 박스 이동 + QR 등장 시퀀스. 모바일은 4/5, lg+ 만 A4 비율. */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-b from-slate-50 to-white lg:aspect-[1/1.414]">
+      <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 lg:aspect-[1/1.414]">
         {/* 회색 placeholder content — 디자이너가 만든 포스터 디자인의 윤곽 흉내 */}
         <div className="absolute inset-0 flex flex-col gap-2.5 p-6">
           <div className="h-3 w-3/5 rounded-sm bg-slate-200 dark:bg-slate-800" />
@@ -406,7 +406,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
         </div>
       </div>
       <div
-        className="rounded-2xl border border-accent-200 bg-accent-50/50 px-4 py-3.5 transition-all duration-500"
+        className="rounded-2xl border border-accent-200 bg-accent-50/50 dark:bg-accent-500/10 px-4 py-3.5 transition-all duration-500"
         style={{
           transitionTimingFunction: EASE,
           transitionDelay: active ? "1500ms" : "0ms",
@@ -588,10 +588,10 @@ export function MockTimeline({ mock, active }: { mock: MockData; active: boolean
         </div>
 
         {/* iPhone mockup — 캠페인 진행 중 화면 → 만료 후 화면 자동 슬라이드 */}
-        <div className="relative grid place-items-center bg-gradient-to-b from-slate-100 to-slate-50 px-6 py-8">
+        <div className="relative grid place-items-center bg-gradient-to-b from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 px-6 py-8">
           {/* date pill 표시 (옆) */}
           <div
-            className="absolute left-5 top-5 rounded-md bg-white/80 px-2 py-1 text-[10px] font-medium text-slate-500 dark:text-slate-400 shadow-sm transition-opacity duration-500"
+            className="absolute left-5 top-5 rounded-md bg-white/80 dark:bg-slate-900/80 px-2 py-1 text-[10px] font-medium text-slate-500 dark:text-slate-400 shadow-sm transition-opacity duration-500"
             style={{ transitionDelay: active ? "400ms" : "0ms", opacity: active ? 1 : 0 }}
           >
             {mock.endDate}
