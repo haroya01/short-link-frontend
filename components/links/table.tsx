@@ -220,7 +220,7 @@ export function LinksTable({
                     />
                   </div>
                 </TD>
-                <TD className="max-w-[360px]">
+                <TD className="max-w-[260px]">
                   <div className="flex flex-col gap-1">
                     <a
                       href={item.originalUrl}
@@ -231,7 +231,7 @@ export function LinksTable({
                     >
                       <Favicon url={item.originalUrl} />
                       <span className="truncate text-xs">
-                        {truncateMiddle(item.originalUrl, 56)}
+                        {truncateMiddle(item.originalUrl, 42)}
                       </span>
                       <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
                     </a>
@@ -276,6 +276,7 @@ export function LinksTable({
                         size="icon"
                         aria-label={t("actions.stats")}
                         title={t("actions.stats")}
+                        className="h-8 w-8"
                       >
                         <BarChart3 className="h-3.5 w-3.5" />
                       </Button>
@@ -286,6 +287,7 @@ export function LinksTable({
                       aria-label={t("actions.edit")}
                       title={t("actions.edit")}
                       onClick={() => setEditing(item)}
+                      className="h-8 w-8"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
@@ -295,7 +297,7 @@ export function LinksTable({
                       aria-label={t("actions.delete")}
                       title={t("actions.delete")}
                       onClick={() => setConfirmCode(item.shortCode)}
-                      className="text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600"
+                      className="h-8 w-8 text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
