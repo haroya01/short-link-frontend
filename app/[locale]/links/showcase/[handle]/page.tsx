@@ -73,7 +73,7 @@ export default async function ShowcaseHandlePage({
           </span>
           <Link
             href="/login?next=/profile/auto"
-            className="inline-flex shrink-0 items-center gap-1 rounded-md bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-white transition hover:bg-slate-800"
+            className="inline-flex shrink-0 items-center gap-1 rounded-md bg-slate-900 dark:bg-white px-2.5 py-1 text-[11px] font-medium text-white dark:text-slate-900 transition hover:bg-slate-800 dark:hover:bg-slate-200"
           >
             {t("sampleCta")}
             <ArrowRight className="h-3 w-3" />
