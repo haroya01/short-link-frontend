@@ -31,9 +31,9 @@ export function OgOverrideSection({
 }: Props) {
   return (
     <div className="space-y-3">
-      <p className="text-xs text-slate-500">{t("og.description")}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">{t("og.description")}</p>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {t("og.titleLabel")}
         </span>
         <Input
@@ -46,7 +46,7 @@ export function OgOverrideSection({
         />
       </label>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {t("og.descriptionLabel")}
         </span>
         <textarea
@@ -56,11 +56,11 @@ export function OgOverrideSection({
           maxLength={800}
           disabled={busy || loadingDetail}
           rows={3}
-          className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300 disabled:bg-slate-50 disabled:text-slate-500"
+          className="block w-full rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm shadow-sm focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-300 disabled:bg-slate-50 disabled:text-slate-500"
         />
       </label>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {t("og.imageLabel")}
         </span>
         <Input

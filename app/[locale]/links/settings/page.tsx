@@ -84,12 +84,12 @@ export default function SettingsPage() {
   }
 
   if (!me) {
-    return <div className="container max-w-2xl py-16 text-sm text-slate-500">…</div>;
+    return <div className="container max-w-2xl py-16 text-sm text-slate-500 dark:text-slate-400">…</div>;
   }
 
   return (
     <div className="container max-w-2xl space-y-6 py-12">
-      <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+      <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
         {t("title")}
       </h1>
 
@@ -107,13 +107,13 @@ export default function SettingsPage() {
                 <Section title={t("preferencesTitle")}>
                   <div className="space-y-3">
                     <label className="block space-y-1.5">
-                      <span className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                      <span className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         {t("timezoneLabel")}
                       </span>
                       <select
                         value={tz}
                         onChange={(e) => setTz(e.target.value)}
-                        className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+                        className="block w-full rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
                       >
                         {COMMON_TIMEZONES.map((z) => (
                           <option key={z} value={z}>
@@ -121,15 +121,15 @@ export default function SettingsPage() {
                           </option>
                         ))}
                       </select>
-                      <p className="text-xs text-slate-500">{t("timezoneHint")}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{t("timezoneHint")}</p>
                     </label>
                     <Button onClick={handleSaveTimezone} disabled={saving} size="sm">
                       {t("save")}
                     </Button>
                   </div>
 
-                  <div className="mt-6 space-y-2 border-t border-slate-100 pt-4">
-                    <span className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                  <div className="mt-6 space-y-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+                    <span className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
                       {t("interfaceLanguage")}
                     </span>
                     <div className="flex gap-2">
@@ -141,14 +141,14 @@ export default function SettingsPage() {
                           className={
                             l === locale
                               ? "rounded-md bg-slate-900 px-3 py-1.5 text-xs text-white"
-                              : "rounded-md border border-slate-200 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50"
+                              : "rounded-md border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                           }
                         >
                           {l.toUpperCase()}
                         </Link>
                       ))}
                     </div>
-                    <p className="text-xs text-slate-500">{t("languageHint")}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{t("languageHint")}</p>
                   </div>
                 </Section>
               </div>
@@ -174,7 +174,7 @@ export default function SettingsPage() {
             {tab === "data" && (
               <div className="space-y-6">
                 <Section title={t("dataTitle")}>
-                  <p className="text-xs text-slate-500">{t("exportHint")}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{t("exportHint")}</p>
                   <Button
                     variant="outline"
                     size="sm"
@@ -192,7 +192,7 @@ export default function SettingsPage() {
                 </Section>
 
                 <Section title={t("dangerTitle")} variant="danger">
-                  <p className="text-xs text-slate-500">{t("deleteHint")}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{t("deleteHint")}</p>
                   <Button
                     variant="destructive"
                     size="sm"
@@ -284,7 +284,7 @@ function SettingsTabs({
                   "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition " +
                   (active
                     ? "bg-slate-900 text-white"
-                    : "bg-white text-slate-600 ring-1 ring-inset ring-slate-200 hover:bg-slate-50")
+                    : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 ring-1 ring-inset ring-slate-200 dark:ring-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50")
                 }
               >
                 {it.label}
@@ -292,7 +292,7 @@ function SettingsTabs({
             );
           })}
         </div>
-        <p className="text-xs text-slate-500">{t(`tabs.descriptions.${tab}`)}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{t(`tabs.descriptions.${tab}`)}</p>
       </div>
       {children(tab)}
     </div>
@@ -332,9 +332,9 @@ function Section({
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex justify-between border-b border-slate-100 py-2 text-sm last:border-b-0">
-      <span className="text-slate-500">{label}</span>
-      <span className="font-mono text-slate-900">{children}</span>
+    <div className="flex justify-between border-b border-slate-100 dark:border-slate-800 py-2 text-sm last:border-b-0">
+      <span className="text-slate-500 dark:text-slate-400">{label}</span>
+      <span className="font-mono text-slate-900 dark:text-slate-100">{children}</span>
     </div>
   );
 }

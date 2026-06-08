@@ -69,14 +69,14 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
   return (
     <div className="fixed inset-0 z-50 grid place-items-center p-4">
       <div className="absolute inset-0 bg-slate-900/50" onClick={close} />
-      <div className="relative w-full max-w-md animate-fade-in rounded-lg border border-slate-200 bg-white p-6 shadow-xl">
+      <div className="relative w-full max-w-md animate-fade-in rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-slate-900">{t("title")}</h2>
+          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t("title")}</h2>
           <button
             type="button"
             onClick={close}
             disabled={busy}
-            className="text-slate-400 hover:text-slate-700"
+            className="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
             aria-label={t("close")}
           >
             <X className="h-4 w-4" />
@@ -85,8 +85,8 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
 
         {!result ? (
           <form onSubmit={handleSubmit} className="space-y-3">
-            <p className="text-xs text-slate-500">{t("description")}</p>
-            <pre className="overflow-x-auto rounded bg-slate-50 px-3 py-2 font-mono text-[11px] text-slate-700">
+            <p className="text-xs text-slate-500 dark:text-slate-400">{t("description")}</p>
+            <pre className="overflow-x-auto rounded bg-slate-50 dark:bg-slate-800/50 px-3 py-2 font-mono text-[11px] text-slate-700 dark:text-slate-300">
               url,custom_code,expires_at{"\n"}
               https://example.com/a,,{"\n"}
               https://example.com/b,promo,2026-12-31T00:00:00Z
@@ -101,7 +101,7 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
                 className="block flex-1 text-xs file:mr-3 file:rounded file:border file:border-slate-200 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-slate-700 hover:file:bg-slate-50"
               />
             </div>
-            <p className="text-[11px] text-slate-500">{t("limitHint")}</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("limitHint")}</p>
             {error && (
               <p className="text-sm text-red-600" role="alert">
                 {error}
@@ -119,11 +119,11 @@ export function BulkImportDialog({ open, onClose, onImported }: Props) {
           </form>
         ) : (
           <div className="space-y-3">
-            <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm">
-              <p className="font-medium text-slate-900">
+            <div className="rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-3 text-sm">
+              <p className="font-medium text-slate-900 dark:text-slate-100">
                 {t("resultSummary", { ok: result.ok, failed: result.failed })}
               </p>
-              <p className="mt-1 text-xs text-slate-500">{t("resultHint")}</p>
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t("resultHint")}</p>
             </div>
             <div className="flex justify-between gap-2">
               <Button type="button" variant="outline" size="sm" onClick={downloadResultCsv}>

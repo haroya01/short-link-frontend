@@ -51,7 +51,7 @@ function LoginShell() {
   const t = useTranslations("login");
   const { signInWithGoogle } = useAuth();
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem-3rem)] items-center justify-center bg-white px-4 py-12">
+    <div className="flex min-h-[calc(100vh-3.5rem-3rem)] items-center justify-center bg-white dark:bg-slate-900 px-4 py-12">
       <div className="w-full max-w-sm">
         <div className="hero-stagger flex flex-col items-center space-y-5 text-center">
           <h1
@@ -59,7 +59,7 @@ function LoginShell() {
             style={{ ["--hi" as string]: 0 } as React.CSSProperties}
           >
             <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
-            <span className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+            <span className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
               {t("title")}
             </span>
             <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
@@ -81,7 +81,7 @@ function LoginShell() {
           />
 
           <p
-            className="text-[13px] leading-relaxed text-slate-500"
+            className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400"
             style={{ ["--hi" as string]: 3 } as React.CSSProperties}
           >
             {t("subtitle")}
@@ -108,7 +108,7 @@ function LoginShell() {
         >
           <Link
             href="/"
-            className="text-[13px] text-slate-500 underline-offset-4 hover:text-slate-900 hover:underline"
+            className="text-[13px] text-slate-500 dark:text-slate-400 underline-offset-4 hover:text-slate-900 dark:hover:text-slate-100 hover:underline"
           >
             {t("anonymousButton")}
           </Link>
@@ -197,10 +197,10 @@ function BrandRotator({ style }: { style?: React.CSSProperties }) {
         aria-hidden
       >
         <span
-          className="text-[34px] font-bold leading-none text-slate-900"
+          className="text-[34px] font-bold leading-none text-slate-900 dark:text-slate-100"
           style={{ letterSpacing: "-0.04em" }}
         >
-          kurl<span className="text-slate-400">.me</span>
+          kurl<span className="text-slate-400 dark:text-slate-500">.me</span>
         </span>
       </div>
     );
@@ -219,7 +219,7 @@ function BrandRotator({ style }: { style?: React.CSSProperties }) {
       <span
         ref={containerRef}
         className={cn(
-          "brand-rotator flex items-center whitespace-nowrap leading-none text-slate-900",
+          "brand-rotator flex items-center whitespace-nowrap leading-none text-slate-900 dark:text-slate-100",
           mode === "settled" && "brand-settled",
         )}
       >
@@ -231,7 +231,7 @@ function BrandRotator({ style }: { style?: React.CSSProperties }) {
           <FoldRotator verbs={verbs} activeIdx={idx} />
         </span>
         <span data-fade>{rotation.tail}</span>
-        <span className="text-slate-400">.me</span>
+        <span className="text-slate-400 dark:text-slate-500">.me</span>
         <span data-fade>{rotation.end}</span>
       </span>
     </div>
@@ -371,7 +371,7 @@ function renderPhraseWithMeAccent(phrase: string) {
   const parts = phrase.split(/(\.me)/g);
   return parts.map((part, i) =>
     part === ".me" ? (
-      <span key={i} className="text-slate-400">
+      <span key={i} className="text-slate-400 dark:text-slate-500">
         .me
       </span>
     ) : (

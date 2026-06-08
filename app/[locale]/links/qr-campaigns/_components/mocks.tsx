@@ -46,15 +46,15 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
       }}
     >
       {/* Before kurl — 4 cells 중 3개가 "?" */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
         <div className="mb-2.5 inline-flex items-center rounded-md bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-rose-700">
           {t("kpiBeforeKurl")}
         </div>
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-[13px] font-semibold text-slate-900">
+          <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-slate-100">
             {mock.campaignName}
           </p>
-          <span className="flex-shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600">
+          <span className="flex-shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300">
             {t("kpiStatus")}
           </span>
         </div>
@@ -87,14 +87,14 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
           transform: active ? "translateY(0)" : "translateY(12px)",
         }}
       >
-        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-700">
+        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-700 dark:text-accent-400">
           {t("kpiAfterKurl")}
         </div>
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-[13px] font-semibold text-slate-900">
+          <p className="truncate text-[13px] font-semibold text-slate-900 dark:text-slate-100">
             {mock.campaignName}
           </p>
-          <span className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-accent-700 shadow-sm">
+          <span className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full bg-white dark:bg-slate-900 px-2 py-0.5 text-[10px] font-medium text-accent-700 dark:text-accent-400 shadow-sm">
             <span
               className={
                 "h-1.5 w-1.5 rounded-full bg-accent-500 " +
@@ -135,13 +135,13 @@ function KpiCellMini({
       className={
         "rounded-lg border px-2 py-1.5 " +
         (muted
-          ? "border-dashed border-slate-200 bg-slate-50/60"
+          ? "border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/60"
           : accent
-            ? "border-accent-200 bg-white"
-            : "border-slate-200 bg-white")
+            ? "border-accent-200 bg-white dark:bg-slate-900"
+            : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900")
       }
     >
-      <p className="truncate text-[9px] font-medium uppercase tracking-wider text-slate-500">
+      <p className="truncate text-[9px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
         {label}
       </p>
       <p
@@ -150,8 +150,8 @@ function KpiCellMini({
           (muted
             ? "animate-pulse text-slate-300"
             : accent
-              ? "text-accent-700"
-              : "text-slate-900")
+              ? "text-accent-700 dark:text-accent-400"
+              : "text-slate-900 dark:text-slate-100")
         }
       >
         {value}
@@ -164,21 +164,21 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
   const t = useTranslations("qrCampaigns.mock");
   return (
     <div
-      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700"
+      className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700"
       style={{
         transitionTimingFunction: EASE,
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5">
-        <p className="text-[14px] font-semibold text-slate-900">{t("batchTitle")}</p>
-        <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-medium text-slate-600">
+      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-5 py-3.5">
+        <p className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{t("batchTitle")}</p>
+        <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-[11px] font-medium text-slate-600 dark:text-slate-300">
           <Plus className="h-3 w-3" aria-hidden />
           {t("batchAdd")}
         </span>
       </div>
-      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 bg-slate-50/50 px-5 py-2.5 text-[10px] font-medium uppercase tracking-wider text-slate-500">
+      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 px-5 py-2.5 text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
         <span>{t("batchColName")}</span>
         <span>{t("batchColArea")}</span>
         <span>{t("batchColDist")}</span>
@@ -188,7 +188,7 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
       {mock.rows.map((row, i) => (
         <div
           key={row.name}
-          className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] items-center gap-2 border-b border-slate-100 px-5 py-3 text-[12px] transition-all duration-500 last:border-b-0"
+          className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] items-center gap-2 border-b border-slate-100 dark:border-slate-800 px-5 py-3 text-[12px] transition-all duration-500 last:border-b-0"
           style={{
             transitionTimingFunction: EASE,
             transitionDelay: active ? `${200 + i * 110}ms` : "0ms",
@@ -196,14 +196,14 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
             transform: active ? "translateY(0)" : "translateY(-10px)",
           }}
         >
-          <span className="truncate font-medium text-slate-900">{row.name}</span>
-          <span className="truncate text-slate-600">{row.area}</span>
-          <span className="truncate text-slate-600">{row.dist}</span>
-          <span className="text-right tabular-nums text-slate-700">
+          <span className="truncate font-medium text-slate-900 dark:text-slate-100">{row.name}</span>
+          <span className="truncate text-slate-600 dark:text-slate-300">{row.area}</span>
+          <span className="truncate text-slate-600 dark:text-slate-300">{row.dist}</span>
+          <span className="text-right tabular-nums text-slate-700 dark:text-slate-300">
             {row.qty.toLocaleString()}
             {t("batchUnit")}
           </span>
-          <span className="flex items-center justify-end gap-1 text-[11px] text-accent-700">
+          <span className="flex items-center justify-end gap-1 text-[11px] text-accent-700 dark:text-accent-400">
             <Check className="h-3 w-3" aria-hidden />
             <span className="hidden sm:inline">{t("batchDone")}</span>
           </span>
@@ -240,7 +240,7 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
     // 모바일에서 다른 mock 보다 세로가 크다는 사용자 피드백 → MockPoster 만 max-width 좁게 cap.
     // 다른 mock 은 부모의 max-w-sm 그대로.
     <div
-      className="mx-auto max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700 sm:max-w-[300px] lg:max-w-none"
+      className="mx-auto max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700 sm:max-w-[300px] lg:max-w-none"
       style={{
         transitionTimingFunction: EASE,
         opacity: active ? 1 : 0,
@@ -253,18 +253,18 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
         <div className="absolute inset-0 flex flex-col gap-2.5 p-6">
           <div className="h-3 w-3/5 rounded-sm bg-slate-200" />
           <div className="h-2 w-2/5 rounded-sm bg-slate-200" />
-          <div className="mt-4 h-1.5 w-full rounded-sm bg-slate-100" />
-          <div className="h-1.5 w-11/12 rounded-sm bg-slate-100" />
-          <div className="h-1.5 w-4/5 rounded-sm bg-slate-100" />
+          <div className="mt-4 h-1.5 w-full rounded-sm bg-slate-100 dark:bg-slate-800" />
+          <div className="h-1.5 w-11/12 rounded-sm bg-slate-100 dark:bg-slate-800" />
+          <div className="h-1.5 w-4/5 rounded-sm bg-slate-100 dark:bg-slate-800" />
           <div className="mt-auto flex flex-col gap-1.5">
-            <div className="h-1.5 w-2/5 rounded-sm bg-slate-100" />
+            <div className="h-1.5 w-2/5 rounded-sm bg-slate-100 dark:bg-slate-800" />
             <div className="h-2 w-1/3 rounded-sm bg-slate-200" />
           </div>
         </div>
 
         {/* QR 박스 — active 시 화면 중앙 → 우하단으로 이동하면서 크기 축소, QR fade-in */}
         <div
-          className="absolute rounded-md border-2 border-accent-600 bg-white transition-all duration-[1000ms]"
+          className="absolute rounded-md border-2 border-accent-600 bg-white dark:bg-slate-900 transition-all duration-[1000ms]"
           style={{
             transitionTimingFunction: EASE,
             left: active ? "60%" : "26%",
@@ -293,19 +293,19 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
               }}
             />
           ) : (
-            <div className="grid h-full w-full place-items-center text-[10px] font-medium uppercase tracking-wider text-accent-700">
+            <div className="grid h-full w-full place-items-center text-[10px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
               {t("posterBoxLabel")}
             </div>
           )}
           {/* resize handle 흉내 */}
-          <div className="absolute -bottom-1.5 -right-1.5 h-3 w-3 rounded-full border-2 border-accent-600 bg-white" />
+          <div className="absolute -bottom-1.5 -right-1.5 h-3 w-3 rounded-full border-2 border-accent-600 bg-white dark:bg-slate-900" />
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-slate-200 px-5 py-3">
-        <p className="text-[12px] font-semibold text-slate-900">{t("posterTitle")}</p>
+      <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 px-5 py-3">
+        <p className="text-[12px] font-semibold text-slate-900 dark:text-slate-100">{t("posterTitle")}</p>
         <span
-          className="inline-flex items-center gap-1.5 rounded-full bg-accent-50 px-2.5 py-1 text-[11px] font-medium text-accent-700 transition-all duration-500"
+          className="inline-flex items-center gap-1.5 rounded-full bg-accent-50 dark:bg-accent-500/10 px-2.5 py-1 text-[11px] font-medium text-accent-700 dark:text-accent-400 transition-all duration-500"
           style={{
             transitionTimingFunction: EASE,
             transitionDelay: active ? "2400ms" : "0ms",
@@ -333,10 +333,10 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
         <div className="mb-4 flex items-center justify-between">
-          <p className="text-[14px] font-semibold text-slate-900">{t("barsTitle")}</p>
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500">
+          <p className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{t("barsTitle")}</p>
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
             <ArrowDown className="h-3 w-3" aria-hidden />
             {t("barsSort")}
           </span>
@@ -358,7 +358,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
                 <div className="flex items-center justify-between text-[12px]">
                   <span
                     className={
-                      isTop ? "font-semibold text-slate-900" : "text-slate-700"
+                      isTop ? "font-semibold text-slate-900 dark:text-slate-100" : "text-slate-700 dark:text-slate-300"
                     }
                   >
                     {b.label}
@@ -367,14 +367,14 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
                     <span
                       className={
                         "tabular-nums " +
-                        (isTop ? "font-semibold text-accent-700" : "text-slate-600")
+                        (isTop ? "font-semibold text-accent-700 dark:text-accent-400" : "text-slate-600 dark:text-slate-300")
                       }
                     >
                       {active ? <CountUp to={b.value} active={active} /> : 0}
                     </span>
                     {isTop && (
                       <span
-                        className="rounded-md bg-accent-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-accent-700 transition-all duration-500"
+                        className="rounded-md bg-accent-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-accent-700 dark:text-accent-400 transition-all duration-500"
                         style={{
                           transitionTimingFunction: EASE,
                           transitionDelay: active ? `${delay + 900}ms` : "0ms",
@@ -387,7 +387,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
                     )}
                   </div>
                 </div>
-                <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                   <div
                     className={
                       "h-full rounded-full transition-[width] duration-[1200ms] " +
@@ -414,11 +414,11 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
           transform: active ? "translateY(0)" : "translateY(12px)",
         }}
       >
-        <p className="text-[10px] font-medium uppercase tracking-wider text-accent-700">
+        <p className="text-[10px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
           {t("barsRecoTitle")}
         </p>
-        <p className="mt-1 text-[14px] font-medium text-slate-900">{mock.reco}</p>
-        <p className="mt-1 text-[11px] text-slate-600">{t("barsRecoEstimate")}</p>
+        <p className="mt-1 text-[14px] font-medium text-slate-900 dark:text-slate-100">{mock.reco}</p>
+        <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-300">{t("barsRecoEstimate")}</p>
       </div>
     </div>
   );
@@ -430,15 +430,15 @@ export function MockCases({ mock, active }: { mock: MockData; active: boolean })
   const max = Math.max(...mock.cases.map((c) => c.after));
   return (
     <div
-      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700"
+      className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_4px_24px_rgba(15,23,42,0.06)] transition-all duration-700"
       style={{
         transitionTimingFunction: EASE,
         opacity: active ? 1 : 0,
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      <div className="border-b border-slate-200 px-5 py-3.5">
-        <p className="text-[14px] font-semibold text-slate-900">{t("casesTitle")}</p>
+      <div className="border-b border-slate-200 dark:border-slate-800 px-5 py-3.5">
+        <p className="text-[14px] font-semibold text-slate-900 dark:text-slate-100">{t("casesTitle")}</p>
       </div>
       {mock.cases.map((c, i) => {
         const beforePct = (c.before / max) * 100;
@@ -447,7 +447,7 @@ export function MockCases({ mock, active }: { mock: MockData; active: boolean })
         return (
           <div
             key={c.biz}
-            className="border-b border-slate-100 px-5 py-3.5 transition-all duration-500 last:border-b-0"
+            className="border-b border-slate-100 dark:border-slate-800 px-5 py-3.5 transition-all duration-500 last:border-b-0"
             style={{
               transitionTimingFunction: EASE,
               transitionDelay: active ? `${rowDelay}ms` : "0ms",
@@ -457,12 +457,12 @@ export function MockCases({ mock, active }: { mock: MockData; active: boolean })
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[13px] font-medium text-slate-900">{c.biz}</p>
-                <p className="mt-0.5 truncate text-[10px] text-slate-500">
+                <p className="truncate text-[13px] font-medium text-slate-900 dark:text-slate-100">{c.biz}</p>
+                <p className="mt-0.5 truncate text-[10px] text-slate-500 dark:text-slate-400">
                   {c.area} · {c.action}
                 </p>
               </div>
-              <span className="flex-shrink-0 rounded-md bg-accent-50 px-2 py-1 text-[14px] font-semibold tabular-nums leading-none tracking-headline text-accent-700">
+              <span className="flex-shrink-0 rounded-md bg-accent-50 dark:bg-accent-500/10 px-2 py-1 text-[14px] font-semibold tabular-nums leading-none tracking-headline text-accent-700 dark:text-accent-400">
                 {c.multiplier}
               </span>
             </div>
@@ -489,7 +489,7 @@ export function MockCases({ mock, active }: { mock: MockData; active: boolean })
         );
       })}
       <div className="px-5 py-2.5">
-        <p className="text-[10px] text-slate-500">{t("casesFooter")}</p>
+        <p className="text-[10px] text-slate-500 dark:text-slate-400">{t("casesFooter")}</p>
       </div>
     </div>
   );
@@ -514,12 +514,12 @@ function CaseBar({
     <div className="grid grid-cols-[40px_1fr_auto] items-center gap-2">
       <span
         className={
-          "text-[10px] " + (accent ? "font-medium text-accent-700" : "text-slate-500")
+          "text-[10px] " + (accent ? "font-medium text-accent-700 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")
         }
       >
         {label}
       </span>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
         <div
           className={
             "h-full rounded-full transition-[width] " +
@@ -535,7 +535,7 @@ function CaseBar({
       <span
         className={
           "text-[11px] tabular-nums " +
-          (accent ? "font-semibold text-accent-700" : "text-slate-500")
+          (accent ? "font-semibold text-accent-700 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")
         }
       >
         {value}
@@ -555,10 +555,10 @@ export function MockTimeline({ mock, active }: { mock: MockData; active: boolean
         transform: active ? "translateY(0)" : "translateY(12px)",
       }}
     >
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
         {/* timeline mini header */}
-        <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-3 text-[11px]">
-          <span className="tabular-nums text-slate-500">{mock.startDate}</span>
+        <div className="flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 px-5 py-3 text-[11px]">
+          <span className="tabular-nums text-slate-500 dark:text-slate-400">{mock.startDate}</span>
           <div className="relative h-px flex-1 bg-slate-200">
             <div
               className="absolute left-0 top-0 h-full bg-accent-600 transition-[width] duration-[1200ms]"
@@ -577,7 +577,7 @@ export function MockTimeline({ mock, active }: { mock: MockData; active: boolean
             />
           </div>
           <span
-            className="font-medium text-accent-700 transition-opacity duration-500"
+            className="font-medium text-accent-700 dark:text-accent-400 transition-opacity duration-500"
             style={{
               transitionDelay: active ? "1500ms" : "0ms",
               opacity: active ? 1 : 0.4,
@@ -591,13 +591,13 @@ export function MockTimeline({ mock, active }: { mock: MockData; active: boolean
         <div className="relative grid place-items-center bg-gradient-to-b from-slate-100 to-slate-50 px-6 py-8">
           {/* date pill 표시 (옆) */}
           <div
-            className="absolute left-5 top-5 rounded-md bg-white/80 px-2 py-1 text-[10px] font-medium text-slate-500 shadow-sm transition-opacity duration-500"
+            className="absolute left-5 top-5 rounded-md bg-white/80 px-2 py-1 text-[10px] font-medium text-slate-500 dark:text-slate-400 shadow-sm transition-opacity duration-500"
             style={{ transitionDelay: active ? "400ms" : "0ms", opacity: active ? 1 : 0 }}
           >
             {mock.endDate}
           </div>
           <div
-            className="absolute right-5 top-5 rounded-md bg-accent-50 px-2 py-1 text-[10px] font-medium text-accent-700 shadow-sm transition-all duration-500"
+            className="absolute right-5 top-5 rounded-md bg-accent-50 dark:bg-accent-500/10 px-2 py-1 text-[10px] font-medium text-accent-700 dark:text-accent-400 shadow-sm transition-all duration-500"
             style={{
               transitionTimingFunction: EASE,
               transitionDelay: active ? "1700ms" : "0ms",
@@ -609,7 +609,7 @@ export function MockTimeline({ mock, active }: { mock: MockData; active: boolean
           </div>
 
           {/* phone frame */}
-          <div className="relative h-[280px] w-[150px] overflow-hidden rounded-[28px] border-[5px] border-slate-900 bg-white shadow-[0_14px_32px_rgba(15,23,42,0.22)]">
+          <div className="relative h-[280px] w-[150px] overflow-hidden rounded-[28px] border-[5px] border-slate-900 bg-white dark:bg-slate-900 shadow-[0_14px_32px_rgba(15,23,42,0.22)]">
             {/* notch */}
             <div className="absolute left-1/2 top-1.5 z-20 h-2 w-10 -translate-x-1/2 rounded-full bg-slate-900" />
 
@@ -644,7 +644,7 @@ export function MockTimeline({ mock, active }: { mock: MockData; active: boolean
         </div>
       </div>
       <p
-        className="px-1 text-[11px] text-slate-500 transition-opacity duration-500"
+        className="px-1 text-[11px] text-slate-500 dark:text-slate-400 transition-opacity duration-500"
         style={{
           transitionDelay: active ? "2600ms" : "0ms",
           opacity: active ? 1 : 0,
@@ -670,7 +670,7 @@ function PhoneScreen({
     <div
       className={
         "flex h-full flex-col gap-1.5 px-2.5 pb-3 pt-9 " +
-        (isAfter ? "bg-accent-50" : "bg-rose-50")
+        (isAfter ? "bg-accent-50 dark:bg-accent-500/10" : "bg-rose-50")
       }
     >
       <div
@@ -690,7 +690,7 @@ function PhoneScreen({
       </div>
       {isAfter && nextLabel && chipLabel ? (
         <div className="mt-auto flex flex-col items-start gap-1">
-          <span className="text-[7px] font-medium uppercase tracking-wider text-accent-700">
+          <span className="text-[7px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
             {nextLabel}
           </span>
           <span className="rounded-md bg-accent-600 px-1.5 py-0.5 text-[8px] font-medium text-white">

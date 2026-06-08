@@ -113,7 +113,7 @@ export default function CampaignStatsPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("loginRequired")}
         </h1>
       </div>
@@ -124,22 +124,22 @@ export default function CampaignStatsPage() {
     <div className="container max-w-5xl space-y-6 py-10">
       <Link
         href={`/campaigns/${campaignId}`}
-        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
+        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
       >
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToCampaign")}
       </Link>
 
       <div>
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("title")}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {loading ? (
             <Skeleton className="inline-block h-4 w-40" />
           ) : campaign ? (
             <>
               {t.rich("introCampaign", {
-                name: () => <span className="font-medium text-slate-700">{campaign.name}</span>,
+                name: () => <span className="font-medium text-slate-700 dark:text-slate-300">{campaign.name}</span>,
               })}
             </>
           ) : null}
@@ -215,7 +215,7 @@ function CompareSection({
         <select
           value={selectedId ?? ""}
           onChange={(e) => onSelect(e.target.value ? Number(e.target.value) : null)}
-          className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[12px] text-slate-700"
+          className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 text-[12px] text-slate-700 dark:text-slate-300"
         >
           <option value="">{t("compare.none")}</option>
           {campaigns.map((c) => (
@@ -226,7 +226,7 @@ function CompareSection({
         </select>
       }
     >
-      {loading && <p className="text-[12px] text-slate-500">{t("loading")}</p>}
+      {loading && <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("loading")}</p>}
       {data && !loading && (
         <div className="grid grid-cols-2 gap-3">
           {data.campaigns.map((c) => {
@@ -242,11 +242,11 @@ function CompareSection({
                   "rounded-xl border p-3 " +
                   (isCurrent
                     ? "border-accent-200 bg-accent-50/40"
-                    : "border-slate-200 bg-slate-50/40")
+                    : "border-slate-200 dark:border-slate-800 bg-slate-50/40")
                 }
               >
-                <p className="truncate text-[12px] font-semibold text-slate-900">{c.name}</p>
-                <p className="mt-0.5 text-[10px] uppercase tracking-wider text-slate-500">
+                <p className="truncate text-[12px] font-semibold text-slate-900 dark:text-slate-100">{c.name}</p>
+                <p className="mt-0.5 text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   {isCurrent ? t("compare.current") : t("compare.comparison")}
                 </p>
                 <dl className="mt-2.5 grid grid-cols-3 gap-2">
@@ -260,7 +260,7 @@ function CompareSection({
         </div>
       )}
       {!loading && !data && (
-        <p className="text-[12px] text-slate-500">
+        <p className="text-[12px] text-slate-500 dark:text-slate-400">
           {t("compare.selectHint")}
         </p>
       )}
@@ -273,7 +273,7 @@ function RecommendationCard({ data }: { data: CampaignRecommendation }) {
   if (data.insufficient) {
     return (
       <Section title={t("recommendation.title")}>
-        <p className="text-[12px] text-slate-500">{data.insufficientReason}</p>
+        <p className="text-[12px] text-slate-500 dark:text-slate-400">{data.insufficientReason}</p>
       </Section>
     );
   }
@@ -287,7 +287,7 @@ function RecommendationCard({ data }: { data: CampaignRecommendation }) {
       })}
       footnote={t("recommendation.footnote")}
     >
-      <ul className="divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <ul className="divide-y divide-slate-200 dark:divide-slate-800 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         {data.recommendations.map((r) => (
           <RecRow key={r.batchId} rec={r} />
         ))}
@@ -299,8 +299,8 @@ function RecommendationCard({ data }: { data: CampaignRecommendation }) {
 function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number] }) {
   const t = useTranslations("campaignApp.campaignStats");
   const verdictStyle: Record<string, string> = {
-    BOOST: "bg-accent-100 text-accent-700",
-    KEEP: "bg-slate-100 text-slate-700",
+    BOOST: "bg-accent-100 text-accent-700 dark:text-accent-400",
+    KEEP: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
     REDUCE: "bg-amber-50 text-amber-700",
     PRUNE: "bg-rose-50 text-rose-700",
   };
@@ -312,12 +312,12 @@ function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number
   };
   const deltaSign = rec.delta > 0 ? "+" : "";
   const deltaColor =
-    rec.delta > 0 ? "text-accent-700" : rec.delta < 0 ? "text-rose-600" : "text-slate-500";
+    rec.delta > 0 ? "text-accent-700 dark:text-accent-400" : rec.delta < 0 ? "text-rose-600" : "text-slate-500 dark:text-slate-400";
   return (
     <li className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-4 py-3">
       <div className="min-w-0">
-        <p className="truncate text-[13px] font-medium text-slate-900">{rec.batchName}</p>
-        <p className="mt-0.5 truncate text-[11px] text-slate-500">
+        <p className="truncate text-[13px] font-medium text-slate-900 dark:text-slate-100">{rec.batchName}</p>
+        <p className="mt-0.5 truncate text-[11px] text-slate-500 dark:text-slate-400">
           {t("recommendation.rowMeta", {
             current: rec.currentQuantity.toLocaleString(),
             recommended: rec.recommendedQuantity.toLocaleString(),
@@ -344,8 +344,8 @@ function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number
 function CompareCell({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[9px] font-medium uppercase tracking-wider text-slate-500">{label}</dt>
-      <dd className="mt-0.5 truncate text-[15px] font-semibold tabular-nums text-slate-900">
+      <dt className="text-[9px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</dt>
+      <dd className="mt-0.5 truncate text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
         {value}
       </dd>
     </div>
@@ -362,7 +362,7 @@ function DailyChart({ data }: { data: CampaignStats["byDay"] }) {
           const heightPct = (clicks / max) * 100;
           return (
             <div key={day} className="flex flex-1 flex-col items-center gap-1">
-              <span className="text-[10px] tabular-nums text-slate-500">{clicks}</span>
+              <span className="text-[10px] tabular-nums text-slate-500 dark:text-slate-400">{clicks}</span>
               <div
                 className="w-full rounded-t-sm bg-accent-500"
                 style={{ height: `${heightPct}%` }}
@@ -372,7 +372,7 @@ function DailyChart({ data }: { data: CampaignStats["byDay"] }) {
           );
         })}
       </div>
-      <div className="mt-2 flex justify-between text-[10px] tabular-nums text-slate-500">
+      <div className="mt-2 flex justify-between text-[10px] tabular-nums text-slate-500 dark:text-slate-400">
         <span>{data[0]?.day}</span>
         <span>{data[data.length - 1]?.day}</span>
       </div>
@@ -407,7 +407,7 @@ function HourlyChart({ data }: { data: CampaignStats["byHour"] }) {
           );
         })}
       </div>
-      <div className="mt-2 flex justify-between text-[10px] tabular-nums text-slate-500">
+      <div className="mt-2 flex justify-between text-[10px] tabular-nums text-slate-500 dark:text-slate-400">
         <span>0</span>
         <span>6</span>
         <span>12</span>
@@ -488,20 +488,20 @@ function Kpi({
   return (
     <li
       className={
-        "rounded-2xl border bg-white px-4 py-4 " +
-        (accent ? "border-accent-200 bg-accent-50/40" : "border-slate-200")
+        "rounded-2xl border bg-white dark:bg-slate-900 px-4 py-4 " +
+        (accent ? "border-accent-200 bg-accent-50/40" : "border-slate-200 dark:border-slate-800")
       }
     >
-      <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">{label}</p>
+      <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</p>
       <p
         className={
           "mt-2 text-[24px] font-semibold leading-tight tracking-headline " +
-          (accent ? "text-accent-700" : "text-slate-900")
+          (accent ? "text-accent-700 dark:text-accent-400" : "text-slate-900 dark:text-slate-100")
         }
       >
         {value}
       </p>
-      {hint && <p className="mt-1.5 text-[11px] leading-snug text-slate-500">{hint}</p>}
+      {hint && <p className="mt-1.5 text-[11px] leading-snug text-slate-500 dark:text-slate-400">{hint}</p>}
     </li>
   );
 }
@@ -510,21 +510,21 @@ function TestScansCard({ count, lastAt }: { count: number; lastAt: string | null
   const t = useTranslations("campaignApp.campaignStats");
   const locale = useLocale();
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-4 py-4">
       <div className="flex items-start gap-2">
-        <FlaskConical className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-500" aria-hidden />
+        <FlaskConical className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-500 dark:text-slate-400" aria-hidden />
         <div className="flex-1">
-          <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+          <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {t("testScans.title")}
           </p>
-          <p className="mt-1.5 text-sm text-slate-700">
+          <p className="mt-1.5 text-sm text-slate-700 dark:text-slate-300">
             {t.rich("testScans.description", {
               count: count.toLocaleString(),
-              strong: (chunks) => <span className="font-medium text-slate-900">{chunks}</span>,
+              strong: (chunks) => <span className="font-medium text-slate-900 dark:text-slate-100">{chunks}</span>,
             })}
           </p>
           {lastAt && (
-            <p className="mt-0.5 text-[12px] text-slate-500">
+            <p className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">
               {t("testScans.last", { date: new Date(lastAt).toLocaleString(locale) })}
             </p>
           )}
@@ -542,7 +542,7 @@ function ByBatchTable({ stats }: { stats: CampaignStats }) {
   );
   if (sorted.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-[12px] text-slate-500">
+      <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-10 text-center text-[12px] text-slate-500 dark:text-slate-400">
         {t("byBatch.empty")}
       </div>
     );
@@ -554,7 +554,7 @@ function ByBatchTable({ stats }: { stats: CampaignStats }) {
       description={t("byBatch.description")}
       bodyClassName="p-0"
     >
-      <ul className="divide-y divide-slate-200">
+      <ul className="divide-y divide-slate-200 dark:divide-slate-800">
         {sorted.map((b) => {
           const widthPct = maxClicks > 0 ? (b.clicks * 100) / maxClicks : 0;
           const ratePerHundred = b.quantity > 0 ? (b.clicks * 100) / b.quantity : 0;
@@ -562,16 +562,16 @@ function ByBatchTable({ stats }: { stats: CampaignStats }) {
             <li key={b.batchId} className="px-4 py-3">
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-slate-900">{b.batchName}</p>
-                  <p className="mt-0.5 truncate text-[12px] text-slate-500">
+                  <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">{b.batchName}</p>
+                  <p className="mt-0.5 truncate text-[12px] text-slate-500 dark:text-slate-400">
                     {[b.distributor, b.area].filter(Boolean).join(" · ") || "—"}
                   </p>
                 </div>
                 <div className="flex flex-shrink-0 items-baseline gap-3 text-right">
-                  <span className="text-[15px] font-semibold tabular-nums text-slate-900">
+                  <span className="text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
                     {b.clicks.toLocaleString()}
                   </span>
-                  <span className="text-[11px] tabular-nums text-slate-500">
+                  <span className="text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
                     {t("byBatch.meta", {
                       quantity: b.quantity.toLocaleString(),
                       rate: ratePerHundred.toFixed(1),
@@ -579,7 +579,7 @@ function ByBatchTable({ stats }: { stats: CampaignStats }) {
                   </span>
                 </div>
               </div>
-              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 <div
                   className="h-full rounded-full bg-accent-600 transition-all duration-500"
                   style={{ width: `${widthPct}%` }}
@@ -590,7 +590,7 @@ function ByBatchTable({ stats }: { stats: CampaignStats }) {
                   href={`https://kurl.md/${b.shortCode}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-500 hover:text-accent-700 hover:underline"
+                  className="inline-flex items-center gap-1 font-mono text-[11px] text-slate-500 dark:text-slate-400 hover:text-accent-700 hover:underline"
                 >
                   /{b.shortCode}
                   <ExternalLink className="h-3 w-3" aria-hidden />

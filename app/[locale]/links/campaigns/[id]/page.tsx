@@ -80,7 +80,7 @@ export default function CampaignDetailPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("loginRequired")}
         </h1>
       </div>
@@ -91,7 +91,7 @@ export default function CampaignDetailPage() {
     <div className="container max-w-5xl space-y-6 py-10">
       <Link
         href="/campaigns"
-        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
+        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
       >
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToList")}
       </Link>
@@ -184,12 +184,12 @@ function Header({
     <header className="space-y-3">
       <div className="flex items-center gap-2">
         <StatusBadge status={campaign.status} />
-        <span className="text-[12px] text-slate-500">
+        <span className="text-[12px] text-slate-500 dark:text-slate-400">
           {formatPeriod(campaign.startsAt, campaign.endsAt, locale)}
         </span>
       </div>
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {campaign.name}
         </h1>
         <div className="flex flex-wrap items-center gap-2">
@@ -229,16 +229,16 @@ function PrepareSection({
   const [zipDialogOpen, setZipDialogOpen] = useState(false);
   const t = useTranslations("campaignApp.detail");
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+          <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {t("prepare.eyebrow")}
           </p>
-          <h2 className="mt-1 text-sm font-medium text-slate-900">
+          <h2 className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">
             {t("prepare.title")}
           </h2>
-          <p className="mt-0.5 text-[12px] leading-snug text-slate-500">
+          <p className="mt-0.5 text-[12px] leading-snug text-slate-500 dark:text-slate-400">
             {t("prepare.description", { count: batchCount })}
           </p>
         </div>
@@ -321,18 +321,18 @@ function PolicySummary({
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-      <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4">
+      <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
         {t("policy.eyebrow")}
       </p>
       <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm font-medium text-slate-900">{label}</p>
+        <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{label}</p>
         {action === "REDIRECT" && campaign.postEndDestinationUrl && (
           <a
             href={campaign.postEndDestinationUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-accent-700 hover:underline"
+            className="inline-flex items-center gap-1.5 text-[12px] font-medium text-accent-700 dark:text-accent-400 hover:underline"
           >
             {campaign.postEndDestinationUrl}
             <ExternalLink className="h-3.5 w-3.5" aria-hidden />
@@ -340,16 +340,16 @@ function PolicySummary({
         )}
       </div>
       {action === "EXPIRE" && (
-        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-3">
+        <div className="mt-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 px-3 py-3">
           <div className="flex items-start justify-between gap-2">
-            <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
               {t("policy.messageLabel")}
             </p>
             {editable && !editing && (
               <button
                 type="button"
                 onClick={startEdit}
-                className="text-[12px] font-medium text-accent-700 hover:underline"
+                className="text-[12px] font-medium text-accent-700 dark:text-accent-400 hover:underline"
               >
                 {campaign.postEndMessage ? t("policy.edit") : t("policy.add")}
               </button>
@@ -362,10 +362,10 @@ function PolicySummary({
                 onChange={(e) => setDraft(e.target.value.slice(0, 500))}
                 rows={3}
                 placeholder={t("policy.messagePlaceholder")}
-                className="block w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-900 placeholder:text-slate-400 focus:border-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-100"
+                className="block w-full resize-y rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-100"
               />
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[12px] tabular-nums text-slate-500">
+                <span className="text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
                   {draft.length}/500
                 </span>
                 <div className="flex items-center gap-2">
@@ -384,18 +384,18 @@ function PolicySummary({
               </div>
             </div>
           ) : campaign.postEndMessage ? (
-            <p className="mt-2 whitespace-pre-wrap text-[13px] leading-relaxed text-slate-700">
+            <p className="mt-2 whitespace-pre-wrap text-[13px] leading-relaxed text-slate-700 dark:text-slate-300">
               {campaign.postEndMessage}
             </p>
           ) : (
-            <p className="mt-2 text-[12px] italic text-slate-500">
+            <p className="mt-2 text-[12px] italic text-slate-500 dark:text-slate-400">
               {t("policy.defaultMessageHint")}
             </p>
           )}
         </div>
       )}
       {campaign.defaultDestinationUrl && (
-        <p className="mt-3 text-[12px] text-slate-500">
+        <p className="mt-3 text-[12px] text-slate-500 dark:text-slate-400">
           {t("policy.defaultDestination", { url: campaign.defaultDestinationUrl })}
         </p>
       )}
@@ -422,8 +422,8 @@ function BatchSection({
     <section className="space-y-3">
       <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-end">
         <div>
-          <h2 className="text-sm font-medium text-slate-900">{t("batches.title")}</h2>
-          <p className="mt-0.5 text-[12px] text-slate-500">
+          <h2 className="text-sm font-medium text-slate-900 dark:text-slate-100">{t("batches.title")}</h2>
+          <p className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">
             {t("batches.description")}
           </p>
         </div>
@@ -439,12 +439,12 @@ function BatchSection({
       </div>
 
       {batches.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center">
-          <PackageOpen className="mx-auto h-6 w-6 text-slate-400" aria-hidden />
-          <p className="mt-3 text-sm font-medium text-slate-900">
+        <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-10 text-center">
+          <PackageOpen className="mx-auto h-6 w-6 text-slate-400 dark:text-slate-500" aria-hidden />
+          <p className="mt-3 text-sm font-medium text-slate-900 dark:text-slate-100">
             {t("batches.emptyTitle")}
           </p>
-          <p className="mt-1.5 text-[12px] text-slate-500">
+          <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">
             {t("batches.emptyDescription")}
           </p>
           {!terminal && (
@@ -495,10 +495,10 @@ function BatchSection({
 function StatusBadge({ status }: { status: CampaignStatus }) {
   const t = useTranslations("campaignStatus");
   const palette: Record<CampaignStatus, { bg: string; text: string }> = {
-    DRAFT: { bg: "bg-slate-100", text: "text-slate-700" },
-    ACTIVE: { bg: "bg-accent-50", text: "text-accent-700" },
+    DRAFT: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-700 dark:text-slate-300" },
+    ACTIVE: { bg: "bg-accent-50 dark:bg-accent-500/10", text: "text-accent-700 dark:text-accent-400" },
     ENDED: { bg: "bg-amber-50", text: "text-amber-700" },
-    ARCHIVED: { bg: "bg-slate-100", text: "text-slate-500" },
+    ARCHIVED: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-500 dark:text-slate-400" },
   };
   const { bg, text } = palette[status];
   return (

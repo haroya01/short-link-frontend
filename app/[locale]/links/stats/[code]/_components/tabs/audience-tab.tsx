@@ -50,7 +50,7 @@ export function AudienceTab({ data }: { data: LinkStats }) {
         description={t("section.bots.desc")}
       >
         {data.botClicks2.length === 0 ? (
-          <p className="py-8 text-center text-xs text-slate-500">{t("noBot")}</p>
+          <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noBot")}</p>
         ) : (
           <BreakdownList
             items={data.botClicks2.map((b) => ({ label: b.bot, count: b.count }))}
@@ -62,7 +62,7 @@ export function AudienceTab({ data }: { data: LinkStats }) {
         description={t("section.asn.desc", { dc: data.datacenterClicks })}
       >
         {data.asnClicks.length === 0 ? (
-          <p className="py-8 text-center text-xs text-slate-500">{t("section.asn.empty")}</p>
+          <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("section.asn.empty")}</p>
         ) : (
           <BreakdownList
             items={data.asnClicks.map((a) => ({

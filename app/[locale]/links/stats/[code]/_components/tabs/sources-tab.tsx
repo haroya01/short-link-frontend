@@ -37,7 +37,7 @@ export function SourcesTab({ data }: { data: LinkStats }) {
 
       {!utmHasAny ? (
         <Section title={t("section.utm.title")} description={t("section.utm.desc")}>
-          <p className="py-8 text-center text-xs text-slate-500">{t("noUtm")}</p>
+          <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noUtm")}</p>
         </Section>
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -95,7 +95,7 @@ export function SourcesTab({ data }: { data: LinkStats }) {
           description={t("section.srcChannel.desc")}
         >
           {data.sourceChannelClicks.length === 0 ? (
-            <p className="py-8 text-center text-xs text-slate-500">
+            <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">
               {t("section.srcChannel.empty")}
             </p>
           ) : (

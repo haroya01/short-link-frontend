@@ -15,7 +15,7 @@ type Props = {
 export function TagsSection({ tags, suggestions, busy, loadingDetail, onChange, t }: Props) {
   return (
     <div className="space-y-2">
-      <p className="text-xs text-slate-500">{t("tags.description")}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">{t("tags.description")}</p>
       <TagInput
         value={tags}
         onChange={onChange}

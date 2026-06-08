@@ -210,14 +210,14 @@ function Stat({
       disabled={!interactive}
       aria-disabled={!interactive}
       className={cn(
-        "flex flex-col rounded-xl border border-slate-200 bg-white p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-200 ease-out dark:border-slate-800 dark:bg-slate-900 dark:shadow-none",
+        "flex flex-col rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-200 ease-out dark:border-slate-800 dark:bg-slate-900 dark:shadow-none",
         interactive
           ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-slate-700"
           : "cursor-default",
       )}
     >
       <div className="flex items-center justify-between">
-        <span className="truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
+        <span className="truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
           {label}
         </span>
         <Icon

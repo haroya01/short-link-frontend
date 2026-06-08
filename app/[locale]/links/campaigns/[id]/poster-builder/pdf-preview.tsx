@@ -56,7 +56,7 @@ export function PdfPreview({
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
+      className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
     >
       <Document file={file} loading={null}>
         <Page
@@ -182,7 +182,7 @@ function DraggableBox({
         />
       ) : (
         <div
-          className="grid h-full w-full place-items-center text-[11px] font-medium uppercase tracking-wider text-accent-700"
+          className="grid h-full w-full place-items-center text-[11px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400"
           style={{ pointerEvents: "none" }}
         >
           QR

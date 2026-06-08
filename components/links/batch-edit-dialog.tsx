@@ -117,9 +117,9 @@ function Field({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="block text-[12px] font-medium text-slate-700">
+      <label className="block text-[12px] font-medium text-slate-700 dark:text-slate-300">
         {label}
-        {required && <span className="ml-1 text-accent-700">*</span>}
+        {required && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
       </label>
       {children}
     </div>

@@ -17,7 +17,7 @@ type Props = { data: ReferrerClick[] };
 export function ReferrerChart({ data }: Props) {
   const t = useTranslations("stats");
   if (data.length === 0) {
-    return <p className="py-8 text-center text-xs text-slate-500">{t("referrerNoData")}</p>;
+    return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("referrerNoData")}</p>;
   }
   const sorted = [...data].sort((a, b) => a.count - b.count).slice(-10);
   const formatted = sorted.map((d) => ({

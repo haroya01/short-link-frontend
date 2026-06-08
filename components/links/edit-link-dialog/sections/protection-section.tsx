@@ -34,9 +34,9 @@ export function ProtectionSection({
 }: Props) {
   return (
     <div className="space-y-3">
-      <p className="text-xs text-slate-500">{t("protection.description")}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">{t("protection.description")}</p>
       <div className="space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {t("protection.passwordLabel")}
         </span>
         <Input
@@ -54,7 +54,7 @@ export function ProtectionSection({
           autoComplete="new-password"
         />
         {passwordProtected && (
-          <label className="flex items-center gap-2 text-xs text-slate-600">
+          <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
             <input
               type="checkbox"
               checked={removePassword}
@@ -69,7 +69,7 @@ export function ProtectionSection({
         )}
       </div>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {t("protection.maxViewsLabel")}
         </span>
         <Input
@@ -82,7 +82,7 @@ export function ProtectionSection({
           disabled={busy || loadingDetail}
         />
         {maxViews != null && (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             {t("protection.viewCountHint", { current: viewCount, max: maxViews })}
           </p>
         )}

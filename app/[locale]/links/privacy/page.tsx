@@ -39,14 +39,14 @@ export default async function PrivacyPage({
   return (
     <article className="container max-w-3xl space-y-8 py-16">
       <header className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
-        <p className="text-xs text-slate-500">{t("updatedAt")}</p>
+        <h1 className="text-3xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{t("updatedAt")}</p>
       </header>
-      <p className="text-sm leading-relaxed text-slate-600">{t("p1")}</p>
+      <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{t("p1")}</p>
       {sections.map((s) => (
         <section key={s.h} className="space-y-2">
-          <h2 className="text-lg font-semibold tracking-headline text-slate-900">{s.h}</h2>
-          <p className="text-sm leading-relaxed text-slate-600">{s.p}</p>
+          <h2 className="text-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100">{s.h}</h2>
+          <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{s.p}</p>
         </section>
       ))}
     </article>

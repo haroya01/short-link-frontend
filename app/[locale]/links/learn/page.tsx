@@ -56,28 +56,28 @@ export default async function LearnPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <header className="space-y-3">
-        <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+        <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
           {t("eyebrow")}
         </p>
-        <h1 className="text-balance text-3xl font-semibold tracking-headline text-slate-900 sm:text-4xl">
+        <h1 className="text-balance text-3xl font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-4xl">
           {t("title")}
         </h1>
-        <p className="text-base leading-relaxed text-slate-600">{t("lead")}</p>
+        <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">{t("lead")}</p>
       </header>
 
       {sections.map((id) => (
         <section key={id} className="space-y-2">
-          <h2 className="text-xl font-semibold tracking-headline text-slate-900">{t(`${id}.q`)}</h2>
-          <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
+          <h2 className="text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t(`${id}.q`)}</h2>
+          <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
             {t(`${id}.a`)}
           </p>
         </section>
       ))}
 
-      <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-slate-900">{t("ctaTitle")}</p>
-          <p className="mt-1 text-xs text-slate-500">{t("ctaSubtitle")}</p>
+          <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{t("ctaTitle")}</p>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t("ctaSubtitle")}</p>
         </div>
         <Link
           href="/"

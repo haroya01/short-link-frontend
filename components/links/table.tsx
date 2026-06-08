@@ -110,8 +110,8 @@ export function LinksTable({
   return (
     <div className="space-y-3">
       {selected.size > 0 && (
-        <div className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
-          <span className="text-slate-700">
+        <div className="flex items-center justify-between rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-3 py-2 text-xs">
+          <span className="text-slate-700 dark:text-slate-300">
             {t("bulkSelectedCount", { count: selected.size })}
           </span>
           <div className="flex items-center gap-2">
@@ -150,7 +150,7 @@ export function LinksTable({
         ))}
       </div>
 
-      <div className="hidden overflow-hidden rounded-lg border border-slate-200 bg-white sm:block">
+      <div className="hidden overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sm:block">
         <Table>
           <THead>
             <TR>
@@ -207,7 +207,7 @@ export function LinksTable({
                   <div className="flex items-center gap-1.5">
                     <Link
                       href={`/links/stats/${item.shortCode}`}
-                      className="font-mono text-sm font-medium text-slate-900 hover:underline"
+                      className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100 hover:underline"
                     >
                       /{item.shortCode}
                     </Link>
@@ -226,7 +226,7 @@ export function LinksTable({
                       href={item.originalUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900"
+                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
                       title={item.originalUrl}
                     >
                       <Favicon url={item.originalUrl} />
@@ -242,7 +242,7 @@ export function LinksTable({
                             key={tag}
                             type="button"
                             onClick={() => onTagClick?.(tag)}
-                            className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600 hover:bg-slate-200"
+                            className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] text-slate-600 dark:text-slate-300 hover:bg-slate-200"
                           >
                             {tag}
                           </button>
@@ -251,19 +251,19 @@ export function LinksTable({
                     )}
                   </div>
                 </TD>
-                <TD className="hidden whitespace-nowrap text-xs text-slate-500 md:table-cell">
+                <TD className="hidden whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 md:table-cell">
                   {formatDate(item.createdAt)}
                 </TD>
-                <TD className="hidden whitespace-nowrap text-xs text-slate-500 lg:table-cell">
+                <TD className="hidden whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 lg:table-cell">
                   {item.expiresAt ? formatDate(item.expiresAt) : "—"}
                 </TD>
                 <TD className="whitespace-nowrap text-right">
                   <div className="inline-flex items-center gap-2">
                     <Sparkline
                       values={item.clicksLast7d ?? []}
-                      className="hidden text-slate-400 lg:inline-block"
+                      className="hidden text-slate-400 dark:text-slate-500 lg:inline-block"
                     />
-                    <span className="tabular-nums font-medium text-slate-900">
+                    <span className="tabular-nums font-medium text-slate-900 dark:text-slate-100">
                       {formatNumber(item.clickCount)}
                     </span>
                   </div>
@@ -295,7 +295,7 @@ export function LinksTable({
                       aria-label={t("actions.delete")}
                       title={t("actions.delete")}
                       onClick={() => setConfirmCode(item.shortCode)}
-                      className="text-slate-500 hover:bg-red-50 hover:text-red-600"
+                      className="text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -362,7 +362,7 @@ function MobileLinkCard({
   t: ReturnType<typeof useTranslations<"dashboard">>;
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-3">
+    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3">
       <div className="flex items-center gap-2">
         <input
           type="checkbox"
@@ -373,7 +373,7 @@ function MobileLinkCard({
         />
         <Link
           href={`/links/stats/${item.shortCode}`}
-          className="truncate font-mono text-sm font-medium text-slate-900 hover:underline"
+          className="truncate font-mono text-sm font-medium text-slate-900 dark:text-slate-100 hover:underline"
         >
           /{item.shortCode}
         </Link>
@@ -384,7 +384,7 @@ function MobileLinkCard({
           value={item.shortUrl}
           onCopied={onCopied}
         />
-        <span className="ml-auto shrink-0 text-sm font-medium tabular-nums text-slate-900">
+        <span className="ml-auto shrink-0 text-sm font-medium tabular-nums text-slate-900 dark:text-slate-100">
           {formatNumber(item.clickCount)}
         </span>
       </div>
@@ -393,7 +393,7 @@ function MobileLinkCard({
         href={item.originalUrl}
         target="_blank"
         rel="noreferrer"
-        className="mt-2 flex items-center gap-1.5 text-slate-600 hover:text-slate-900"
+        className="mt-2 flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
         title={item.originalUrl}
       >
         <Favicon url={item.originalUrl} />
@@ -408,7 +408,7 @@ function MobileLinkCard({
               key={tag}
               type="button"
               onClick={() => onTagClick?.(tag)}
-              className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600 hover:bg-slate-200"
+              className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] text-slate-600 dark:text-slate-300 hover:bg-slate-200"
             >
               {tag}
             </button>
@@ -416,11 +416,11 @@ function MobileLinkCard({
         </div>
       )}
 
-      <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
+      <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
         <span className="truncate">
           {formatDate(item.createdAt)}
           {item.expiresAt && (
-            <span className="ml-2 text-slate-400">→ {formatDate(item.expiresAt)}</span>
+            <span className="ml-2 text-slate-400 dark:text-slate-500">→ {formatDate(item.expiresAt)}</span>
           )}
         </span>
         <div className="inline-flex shrink-0 items-center gap-0.5">
@@ -449,7 +449,7 @@ function MobileLinkCard({
             aria-label={t("actions.delete")}
             title={t("actions.delete")}
             onClick={onDelete}
-            className="text-slate-500 hover:bg-red-50 hover:text-red-600"
+            className="text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
@@ -477,8 +477,8 @@ function SortHeader({
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider hover:text-slate-900",
-        active ? "text-slate-900" : "text-slate-500",
+        "inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider hover:text-slate-900 dark:hover:text-slate-100",
+        active ? "text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400",
         align === "right" && "ml-auto",
       )}
     >

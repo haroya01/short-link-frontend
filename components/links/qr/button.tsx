@@ -91,7 +91,7 @@ export function QrButton({
           disabled={!baseUrl}
           aria-label={t("triggerAria")}
           title={t("triggerAria")}
-          className="grid h-8 w-8 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50"
+          className="grid h-8 w-8 place-items-center rounded-md text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 disabled:opacity-50"
         >
           <QrCode className="h-3.5 w-3.5" />
         </button>
@@ -219,35 +219,35 @@ function QrModal({
         role="dialog"
         aria-modal="true"
         aria-label={t("title")}
-        className="relative w-full max-w-sm animate-fade-in rounded-lg border border-slate-200 bg-white shadow-xl"
+        className="relative w-full max-w-sm animate-fade-in rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl"
       >
         <button
           type="button"
           onClick={onClose}
           aria-label={t("close")}
-          className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+          className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700"
         >
           <X className="h-4 w-4" />
         </button>
 
         <div className="flex flex-col items-center px-6 py-6">
-          <p className="text-sm font-medium text-slate-700">{t("title")}</p>
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("title")}</p>
           <div
-            className="mt-3 flex h-64 w-64 items-center justify-center rounded-md border border-slate-200 p-2"
+            className="mt-3 flex h-64 w-64 items-center justify-center rounded-md border border-slate-200 dark:border-slate-800 p-2"
             style={{ backgroundColor: palette.light }}
           >
             <canvas ref={canvasRef} className="qr-canvas-fit h-full w-full" />
             {!dataUrl && <Loader2 className="absolute h-6 w-6 animate-spin text-slate-300" />}
           </div>
           <p
-            className="mt-3 max-w-full truncate text-center text-xs text-slate-500"
+            className="mt-3 max-w-full truncate text-center text-xs text-slate-500 dark:text-slate-400"
             title={target}
           >
             {truncateMiddle(target, 48)}
           </p>
 
           <div className="mt-4 w-full space-y-2">
-            <p className="text-xs text-slate-500">{t("colorLabel")}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{t("colorLabel")}</p>
             <div className="flex flex-wrap gap-1.5">
               {PALETTES.map((p) => {
                 const active = p.id === paletteId;
@@ -259,7 +259,7 @@ function QrModal({
                     onClick={() => setPaletteId(p.id)}
                     className={
                       "h-7 w-7 rounded-full border transition " +
-                      (active ? "ring-2 ring-offset-1 ring-slate-900" : "border-slate-200")
+                      (active ? "ring-2 ring-offset-1 ring-slate-900" : "border-slate-200 dark:border-slate-800")
                     }
                     style={{ backgroundColor: p.dark }}
                   />
@@ -268,7 +268,7 @@ function QrModal({
             </div>
           </div>
 
-          <label className="mt-3 flex w-full items-center justify-between gap-2 text-xs text-slate-700">
+          <label className="mt-3 flex w-full items-center justify-between gap-2 text-xs text-slate-700 dark:text-slate-300">
             <span>{t("logoLabel")}</span>
             <button
               type="button"
@@ -282,7 +282,7 @@ function QrModal({
             >
               <span
                 className={
-                  "inline-block h-4 w-4 transform rounded-full bg-white shadow transition " +
+                  "inline-block h-4 w-4 transform rounded-full bg-white dark:bg-slate-900 shadow transition " +
                   (withLogo ? "translate-x-4" : "translate-x-0.5")
                 }
               />
@@ -291,7 +291,7 @@ function QrModal({
 
           {showSrcInput && (
             <label className="mt-3 w-full space-y-1">
-              <span className="text-xs text-slate-500">{t("srcLabel")}</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">{t("srcLabel")}</span>
               <Input
                 type="text"
                 value={srcHint}
@@ -304,16 +304,16 @@ function QrModal({
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-px border-t border-slate-100 bg-slate-100">
+        <div className="grid grid-cols-2 gap-px border-t border-slate-100 dark:border-slate-800 bg-slate-100 dark:bg-slate-800">
           <button
             type="button"
             onClick={copyUrl}
             disabled={!dataUrl}
-            className="flex items-center justify-center gap-1.5 bg-white py-3 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 bg-white dark:bg-slate-900 py-3 text-sm text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50"
           >
             {copied ? (
               <>
-                <Check className="h-4 w-4 text-accent-600" /> {t("copied")}
+                <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" /> {t("copied")}
               </>
             ) : (
               <>
@@ -325,7 +325,7 @@ function QrModal({
             type="button"
             onClick={download}
             disabled={!dataUrl}
-            className="flex items-center justify-center gap-1.5 bg-white py-3 text-sm text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 bg-white dark:bg-slate-900 py-3 text-sm text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-slate-800/50 disabled:opacity-50"
           >
             <Download className="h-4 w-4" /> {t("downloadPng")}
           </button>

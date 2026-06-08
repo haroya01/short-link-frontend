@@ -59,10 +59,10 @@ export default async function PricingPage({
   return (
     <article className="container max-w-3xl space-y-10 py-16">
       <header className="space-y-3 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("title")}
         </h1>
-        <p className="text-[15px] leading-relaxed text-slate-500">{t("lead")}</p>
+        <p className="text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("lead")}</p>
       </header>
 
       <section
@@ -70,24 +70,24 @@ export default async function PricingPage({
         aria-label={t("proHoldBadge")}
       >
         <div className="flex items-start gap-3">
-          <Lock className="mt-0.5 h-4 w-4 shrink-0 text-accent-700" />
+          <Lock className="mt-0.5 h-4 w-4 shrink-0 text-accent-700 dark:text-accent-400" />
           <div className="min-w-0 flex-1">
-            <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+            <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
               {t("proHoldBadge")}
             </p>
-            <p className="mt-1 text-sm leading-relaxed text-slate-700">{t("proHoldNotice")}</p>
+            <p className="mt-1 text-sm leading-relaxed text-slate-700 dark:text-slate-300">{t("proHoldNotice")}</p>
           </div>
         </div>
       </section>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-          <h2 className="text-[15px] font-semibold tracking-headline text-slate-900">{t("freeTitle")}</h2>
-          <p className="mt-1 font-mono text-2xl font-semibold text-slate-900 tabular-nums">{t("freePrice")}</p>
-          <ul className="mt-4 space-y-2 text-sm text-slate-600">
+        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+          <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("freeTitle")}</h2>
+          <p className="mt-1 font-mono text-2xl font-semibold text-slate-900 dark:text-slate-100 tabular-nums">{t("freePrice")}</p>
+          <ul className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
             {free.map((f) => (
               <li key={f} className="flex items-start gap-2">
-                <span className="mt-0.5 text-accent-600">✓</span>
+                <span className="mt-0.5 text-accent-600 dark:text-accent-400">✓</span>
                 <span>{f}</span>
               </li>
             ))}
@@ -95,20 +95,20 @@ export default async function PricingPage({
         </section>
 
         <section
-          className="relative rounded-2xl border border-slate-200 bg-slate-50/40 p-6"
+          className="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/40 p-6"
           aria-label={`${t("paidTitle")} — ${t("proHoldBadge")}`}
         >
           <div className="flex items-center justify-between gap-2">
-            <h2 className="text-[15px] font-semibold tracking-headline text-slate-500">{t("paidTitle")}</h2>
-            <span className="rounded-full border border-accent-200 bg-white px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-accent-700">
+            <h2 className="text-[15px] font-semibold tracking-headline text-slate-500 dark:text-slate-400">{t("paidTitle")}</h2>
+            <span className="rounded-full border border-accent-200 bg-white dark:bg-slate-900 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-accent-700 dark:text-accent-400">
               {t("proHoldBadge")}
             </span>
           </div>
-          <p className="mt-1 font-mono text-2xl font-semibold text-slate-400 tabular-nums">{t("paidPrice")}</p>
-          <ul className="mt-4 space-y-2 text-sm text-slate-500">
+          <p className="mt-1 font-mono text-2xl font-semibold text-slate-400 dark:text-slate-500 tabular-nums">{t("paidPrice")}</p>
+          <ul className="mt-4 space-y-2 text-sm text-slate-500 dark:text-slate-400">
             {paid.map((f) => (
               <li key={f} className="flex items-start gap-2">
-                <span className="mt-0.5 text-slate-400">✓</span>
+                <span className="mt-0.5 text-slate-400 dark:text-slate-500">✓</span>
                 <span>{f}</span>
               </li>
             ))}
@@ -118,26 +118,26 @@ export default async function PricingPage({
               type="button"
               disabled
               aria-disabled
-              className="inline-flex h-10 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 text-[13px] font-medium text-slate-400"
+              className="inline-flex h-10 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 text-[13px] font-medium text-slate-400 dark:text-slate-500"
             >
               <Lock className="h-3.5 w-3.5" />
               {t("proHoldCta")}
             </button>
-            <p className="text-center text-[11px] text-slate-500">{t("proEta")}</p>
+            <p className="text-center text-[11px] text-slate-500 dark:text-slate-400">{t("proEta")}</p>
           </div>
         </section>
       </div>
 
-      <section className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6">
+      <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 p-6">
         <div className="flex items-start gap-3">
-          <Shield className="mt-0.5 h-5 w-5 shrink-0 text-slate-500" />
+          <Shield className="mt-0.5 h-5 w-5 shrink-0 text-slate-500 dark:text-slate-400" />
           <div className="flex-1">
-            <h2 className="text-[15px] font-semibold tracking-headline text-slate-900">{t("rightsTitle")}</h2>
-            <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("rightsLead")}</p>
-            <ul className="mt-3 space-y-1.5 text-sm text-slate-700">
+            <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("rightsTitle")}</h2>
+            <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{t("rightsLead")}</p>
+            <ul className="mt-3 space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
               {rights.map((r) => (
                 <li key={r} className="flex items-start gap-2">
-                  <span className="mt-0.5 text-slate-400">•</span>
+                  <span className="mt-0.5 text-slate-400 dark:text-slate-500">•</span>
                   <span>{r}</span>
                 </li>
               ))}
