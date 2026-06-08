@@ -16,6 +16,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       rows={rows}
       className={cn(
         "block w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-2 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400",
+        "dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:[color-scheme:dark]",
         "focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent",
         "disabled:cursor-not-allowed disabled:opacity-50",
         className,
