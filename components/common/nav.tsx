@@ -74,7 +74,7 @@ export function Nav() {
 
   return (
     <>
-    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/85">
       <div className="container flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">
           {/* Mobile nav lives in the bottom tab bar (LinksBottomNav) — no hamburger here. */}
@@ -87,7 +87,9 @@ export function Nav() {
                 const active = entry.active(pathname);
                 const className = cn(
                   "rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors duration-200 ease-out",
-                  active ? "text-slate-900" : "text-slate-500 hover:text-slate-900",
+                  active
+                    ? "text-slate-900 dark:text-slate-100"
+                    : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
                 );
                 return entry.external ? (
                   <a key={entry.href} href={entry.href} className={className}>
@@ -114,14 +116,14 @@ export function Nav() {
         <div className="flex shrink-0 items-center gap-1.5 sm:hidden">
           <AppsGrid current="links" />
           {!ready ? (
-            <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100" />
+            <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
           ) : authenticated ? (
             <button
               type="button"
               onClick={() => setSheet(true)}
               aria-haspopup="dialog"
               aria-label={t("account")}
-              className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700"
+              className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
             >
               {me?.avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -144,13 +146,13 @@ export function Nav() {
           <AppsGrid />
           <LanguageSwitcher />
           {!ready ? (
-            <div className="h-8 w-20 animate-pulse rounded-md bg-slate-100" />
+            <div className="h-8 w-20 animate-pulse rounded-md bg-slate-100 dark:bg-slate-800" />
           ) : authenticated ? (
             <>
               <Link
                 href="/settings"
                 aria-label={t("settings")}
-                className="grid h-8 w-8 place-items-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                className="grid h-8 w-8 place-items-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
               >
                 <Settings className="h-4 w-4" />
               </Link>
