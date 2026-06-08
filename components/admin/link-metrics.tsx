@@ -97,7 +97,7 @@ export function AdminLinkMetrics() {
     <Section title={t("section.linkMetrics.title")} description={t("section.linkMetrics.desc")}>
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {t("section.linkMetrics.windowSort")}
           </span>
           {WINDOWS.map((w) => (
@@ -108,8 +108,8 @@ export function AdminLinkMetrics() {
               className={cn(
                 "rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors",
                 windowSel === w
-                  ? "bg-slate-900 text-white"
-                  : "border border-slate-200 text-slate-600 hover:bg-slate-50",
+                  ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900"
+                  : "border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50",
               )}
               data-testid={`link-metrics-window-${w}`}
             >
@@ -118,7 +118,7 @@ export function AdminLinkMetrics() {
           ))}
         </div>
         <div className="ml-auto flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
             {t("section.linkMetrics.sortLabel")}
           </span>
           {SORTS.map((s) => (
@@ -129,8 +129,8 @@ export function AdminLinkMetrics() {
               className={cn(
                 "rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors",
                 serverSort === s
-                  ? "bg-slate-900 text-white"
-                  : "border border-slate-200 text-slate-600 hover:bg-slate-50",
+                  ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900"
+                  : "border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50",
               )}
               data-testid={`link-metrics-sort-${s}`}
             >
@@ -140,11 +140,11 @@ export function AdminLinkMetrics() {
         </div>
       </div>
       {error ? (
-        <p className="py-8 text-center text-xs text-slate-500">{error}</p>
+        <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{error}</p>
       ) : !rows ? (
-        <p className="py-8 text-center text-xs text-slate-500">{t("loading")}</p>
+        <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>
       ) : rows.length === 0 ? (
-        <p className="py-8 text-center text-xs text-slate-500">
+        <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">
           {t("section.linkMetrics.empty")}
         </p>
       ) : (
@@ -163,36 +163,36 @@ export function AdminLinkMetrics() {
               return (
                 <div
                   key={id}
-                  className="rounded-lg border border-slate-200 bg-white p-3"
+                  className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3"
                   data-testid="link-metric-card"
                 >
                   <div className="flex items-center gap-2">
                     <span
                       className={cn(
                         "truncate font-mono text-[12px]",
-                        hot && "font-semibold text-slate-900",
+                        hot && "font-semibold text-slate-900 dark:text-slate-100",
                       )}
                     >
                       /{r.shortCode}
                     </span>
                     <span className="ml-auto inline-flex shrink-0 items-baseline gap-1 text-sm tabular-nums">
-                      <span className={cn("font-mono", hot && "font-semibold text-slate-900")}>
+                      <span className={cn("font-mono", hot && "font-semibold text-slate-900 dark:text-slate-100")}>
                         {formatNumber(r.windowedRedirects)}
                       </span>
-                      <span className="font-mono text-[11px] text-slate-400">
+                      <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">
                         /{formatNumber(r.totalRedirects)}
                       </span>
                     </span>
                   </div>
                   {r.originalUrl && (
                     <p
-                      className="mt-2 truncate text-xs text-slate-600"
+                      className="mt-2 truncate text-xs text-slate-600 dark:text-slate-300"
                       title={r.originalUrl ?? undefined}
                     >
                       → {r.originalUrl}
                     </p>
                   )}
-                  <div className="mt-1 flex items-center justify-between text-[11px] text-slate-500">
+                  <div className="mt-1 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
                     <span className="truncate">
                       {r.ownerEmail ?? t("section.linkMetrics.noOwner")}
                     </span>
@@ -227,7 +227,7 @@ export function AdminLinkMetrics() {
                           return next;
                         });
                       }}
-                      className="mt-2 inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-900"
+                      className="mt-2 inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
                     >
                       {isExpanded ? (
                         <ChevronDown className="h-3.5 w-3.5" />
@@ -238,7 +238,7 @@ export function AdminLinkMetrics() {
                     </button>
                   )}
                   {isExpanded && hasOutcomes && (
-                    <div className="mt-2 rounded-md bg-slate-50 p-2">
+                    <div className="mt-2 rounded-md bg-slate-50 dark:bg-slate-800/50 p-2">
                       <OutcomeBreakdown
                         counts={r.outcomeCounts}
                         total={r.windowedRedirects}
@@ -326,7 +326,7 @@ export function AdminLinkMetrics() {
                               ? t("section.linkMetrics.collapseOutcomes")
                               : t("section.linkMetrics.expandOutcomes")
                           }
-                          className="rounded p-0.5 text-slate-400 hover:text-slate-900"
+                          className="rounded p-0.5 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-100"
                           data-testid="link-metric-toggle"
                         >
                           {isExpanded ? (
@@ -340,22 +340,22 @@ export function AdminLinkMetrics() {
                     <TD
                       className={cn(
                         "font-mono text-[12px]",
-                        hot && "font-semibold text-slate-900",
+                        hot && "font-semibold text-slate-900 dark:text-slate-100",
                       )}
                     >
                       /{r.shortCode}
                     </TD>
                     <TD
-                      className="max-w-[260px] truncate text-xs text-slate-600"
+                      className="max-w-[260px] truncate text-xs text-slate-600 dark:text-slate-300"
                       title={r.originalUrl ?? undefined}
                     >
                       {r.originalUrl ?? (
-                        <span className="text-slate-400">
+                        <span className="text-slate-400 dark:text-slate-500">
                           {t("section.linkMetrics.noOriginal")}
                         </span>
                       )}
                     </TD>
-                    <TD className="text-xs text-slate-500">
+                    <TD className="text-xs text-slate-500 dark:text-slate-400">
                       {r.ownerEmail ?? t("section.linkMetrics.noOwner")}
                     </TD>
                     <TD
@@ -366,23 +366,23 @@ export function AdminLinkMetrics() {
                     >
                       {formatNumber(r.windowedRedirects)}
                     </TD>
-                    <TD className="text-right tabular-nums font-mono text-slate-500">
+                    <TD className="text-right tabular-nums font-mono text-slate-500 dark:text-slate-400">
                       {formatNumber(r.totalRedirects)}
                     </TD>
-                    <TD className="text-right tabular-nums font-mono text-slate-600">
+                    <TD className="text-right tabular-nums font-mono text-slate-600 dark:text-slate-300">
                       {r.p50Millis}
                     </TD>
-                    <TD className="text-right tabular-nums font-mono text-slate-600">
+                    <TD className="text-right tabular-nums font-mono text-slate-600 dark:text-slate-300">
                       {r.p95Millis}
                     </TD>
-                    <TD className="text-right tabular-nums font-mono text-slate-600">
+                    <TD className="text-right tabular-nums font-mono text-slate-600 dark:text-slate-300">
                       {r.p99Millis}
                     </TD>
                     <TD className="text-right">
                       <span
                         className={cn(
                           "inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono text-[11px] tabular-nums",
-                          highError ? "bg-slate-900 text-white" : "text-slate-600",
+                          highError ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900" : "text-slate-600 dark:text-slate-300",
                         )}
                         data-testid={highError ? "link-metric-high-error" : undefined}
                       >
@@ -392,12 +392,12 @@ export function AdminLinkMetrics() {
                         {(r.errorRate * 100).toFixed(2)}%
                       </span>
                     </TD>
-                    <TD className="text-right text-[11px] tabular-nums text-slate-500">
+                    <TD className="text-right text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
                       {formatRelative(r.lastRedirectAt)}
                     </TD>
                   </TR>
                   {isExpanded && hasOutcomes && (
-                    <TR data-testid="link-metric-outcomes" className="bg-slate-50">
+                    <TR data-testid="link-metric-outcomes" className="bg-slate-50 dark:bg-slate-800/50">
                       <TD />
                       <TD colSpan={10} className="py-2">
                         <OutcomeBreakdown
@@ -433,11 +433,11 @@ function LinkStat({
 }) {
   return (
     <div>
-      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400">{label}</p>
+      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
       <p
         className={cn(
           "mt-0.5 inline-flex items-center gap-1 font-mono tabular-nums",
-          emphasized ? "rounded bg-slate-900 px-1 text-white" : "text-slate-700",
+          emphasized ? "rounded bg-slate-900 dark:bg-white px-1 text-white dark:text-slate-900" : "text-slate-700 dark:text-slate-300",
         )}
       >
         {icon}
@@ -464,8 +464,8 @@ function SortableHeader({
         type="button"
         onClick={onClick}
         className={cn(
-          "inline-flex items-center gap-1 transition-colors hover:text-slate-900",
-          active ? "text-accent-700" : "text-slate-500",
+          "inline-flex items-center gap-1 transition-colors hover:text-slate-900 dark:hover:text-slate-100",
+          active ? "text-accent-700 dark:text-accent-400" : "text-slate-500 dark:text-slate-400",
         )}
       >
         {label}
@@ -494,7 +494,7 @@ function OutcomeBreakdown({
   const entries = Object.entries(counts).sort(([, a], [, b]) => b - a);
   return (
     <div className="flex flex-wrap items-center gap-2 px-1 text-[11px]">
-      <span className="text-slate-500">{t("section.linkMetrics.outcomes")}</span>
+      <span className="text-slate-500 dark:text-slate-400">{t("section.linkMetrics.outcomes")}</span>
       {entries.map(([outcome, count]) => {
         const pct = total > 0 ? (count / total) * 100 : 0;
         const isError =
@@ -512,10 +512,10 @@ function OutcomeBreakdown({
             className={cn(
               "inline-flex items-center gap-1 rounded px-1.5 py-0.5",
               isError
-                ? "bg-slate-900 text-white"
+                ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900"
                 : isWarn
-                  ? "border border-slate-300 text-slate-700"
-                  : "bg-slate-100 text-slate-700",
+                  ? "border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
             )}
             data-testid={`outcome-pill-${outcome}`}
           >

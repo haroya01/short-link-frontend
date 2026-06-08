@@ -54,14 +54,14 @@ export function AdminAccessToken() {
               readOnly
               value={token}
               onFocus={(e) => e.currentTarget.select()}
-              className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-[12px] text-slate-700"
+              className="min-w-0 flex-1 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-3 py-2 font-mono text-[12px] text-slate-700 dark:text-slate-300"
             />
             <button
               type="button"
               onClick={copy}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 px-3 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-800 px-3 text-[13px] font-medium text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
             >
-              {copied ? <Check className="h-4 w-4 text-accent-600" /> : <Copy className="h-4 w-4" />}
+              {copied ? <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" /> : <Copy className="h-4 w-4" />}
               {copied ? t("copied") : t("copy")}
             </button>
           </div>
@@ -82,12 +82,12 @@ export function AdminAccessToken() {
             {token ? t("reissue") : t("issue")}
           </button>
           {token && (
-            <span className="text-[12px] text-slate-500">{t("expires", { minutes: expiresMin })}</span>
+            <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("expires", { minutes: expiresMin })}</span>
           )}
-          {!token && <span className="text-[12px] text-slate-400">{t("hint")}</span>}
+          {!token && <span className="text-[12px] text-slate-400 dark:text-slate-500">{t("hint")}</span>}
         </div>
 
-        {error && <p className="text-[13px] text-red-600">{error}</p>}
+        {error && <p className="text-[13px] text-red-600 dark:text-red-400">{error}</p>}
       </div>
     </Section>
   );

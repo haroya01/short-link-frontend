@@ -107,13 +107,13 @@ export function AvatarPicker({
         onClick={() => fileInput.current?.click()}
         disabled={busy}
         aria-label={t("change")}
-        className="group relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 transition-colors hover:border-accent-300"
+        className="group relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 transition-colors hover:border-accent-300"
       >
         {currentUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={currentUrl} alt="" className="h-full w-full object-cover" />
         ) : (
-          <span className="text-lg font-semibold text-slate-700">{initialChar}</span>
+          <span className="text-lg font-semibold text-slate-700 dark:text-slate-300">{initialChar}</span>
         )}
         <span className="absolute inset-0 grid place-items-center bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100">
           {busy ? (
@@ -124,13 +124,13 @@ export function AvatarPicker({
         </span>
       </button>
       <div className="space-y-1">
-        <p className="text-xs text-slate-500">{t("hint")}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{t("hint")}</p>
         {currentUrl && (
           <button
             type="button"
             onClick={handleRemove}
             disabled={busy}
-            className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-red-600"
+            className="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 hover:text-red-600"
           >
             <X className="h-3 w-3" /> {t("remove")}
           </button>
