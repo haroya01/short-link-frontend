@@ -13,6 +13,7 @@ import {
 } from "@/modules/blog/api/comments";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { ReportButton } from "@/modules/blog/components/report-button";
 import { useConfirm } from "@/components/ui/use-confirm";
 
 
@@ -144,7 +145,7 @@ export function PostComments({
         <ul className="mt-8 space-y-6">
           {tops.map((c) => (
             <li key={c.id}>
-              <CommentRow comment={c} fmt={fmt} canDelete={canDelete(c)} onDelete={() => remove(c.id)} deleteLabel={t("delete")} isNew={c.id === justAddedId}>
+              <CommentRow comment={c} fmt={fmt} canDelete={canDelete(c)} canReport={!canDelete(c)} onDelete={() => remove(c.id)} deleteLabel={t("delete")} isNew={c.id === justAddedId}>
                 <button
                   type="button"
                   onClick={() => {
@@ -166,6 +167,7 @@ export function PostComments({
                         comment={r}
                         fmt={fmt}
                         canDelete={canDelete(r)}
+                        canReport={!canDelete(r)}
                         onDelete={() => remove(r.id)}
                         deleteLabel={t("delete")}
                         isNew={r.id === justAddedId}
@@ -238,6 +240,7 @@ function CommentRow({
   comment,
   fmt,
   canDelete,
+  canReport,
   onDelete,
   deleteLabel,
   isNew,
@@ -246,6 +249,7 @@ function CommentRow({
   comment: CommentView;
   fmt: (iso: string) => string;
   canDelete: boolean;
+  canReport: boolean;
   onDelete: () => void;
   deleteLabel: string;
   isNew?: boolean;
@@ -270,16 +274,20 @@ function CommentRow({
           </span>
         </a>
         <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">{fmt(comment.createdAt)}</span>
-        {canDelete && (
-          <button
-            type="button"
-            onClick={onDelete}
-            className="touch-target ml-auto rounded text-slate-300 transition-colors hover:text-red-500 focus-ring"
-            aria-label={deleteLabel}
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
-        )}
+        <div className="ml-auto flex shrink-0 items-center gap-1">
+          {/* 신고는 내가 지울 수 없는 (= 내 글/내 댓글이 아닌) 댓글에만 노출 — 내 것엔 휴지통만. */}
+          {canReport && <ReportButton subjectType="COMMENT" subjectId={comment.id} />}
+          {canDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="touch-target rounded text-slate-300 transition-colors hover:text-red-500 focus-ring"
+              aria-label={deleteLabel}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       </div>
       <p className="mt-1.5 whitespace-pre-line pl-9 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
         <CommentBody text={comment.body} locale={locale} />

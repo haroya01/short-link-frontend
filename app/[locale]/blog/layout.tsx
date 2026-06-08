@@ -29,6 +29,7 @@ const WORKSPACE_PATHS = [
   "/leads",
   "/webhooks",
   "/settings",
+  "/admin",
 ];
 
 /** Product prefix the blog is served under on this deploy (post-locale): "/blog-preview", "/blog",

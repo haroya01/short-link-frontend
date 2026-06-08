@@ -193,7 +193,11 @@
     "analyticsViewAll": "전체보기",
     "analyticsCollapse": "접기",
     "analyticsViewPost": "분석 보기",
-    "analyticsSort": { "views": "조회순", "likes": "좋아요순", "recent": "최신순" },
+    "analyticsSort": {
+      "views": "조회순",
+      "likes": "좋아요순",
+      "recent": "최신순"
+    },
     "analyticsFollows": "늘어난 팔로우",
     "analyticsFollowsGained": "이 글로 늘어난 팔로우",
     "analyticsWindowFollows": "최근 {days}일 +{count}",
@@ -599,7 +603,9 @@
       "readers": "독자",
       "leads": "리드",
       "curation": "저장한 글",
-      "webhooks": "웹훅"
+      "webhooks": "웹훅",
+      "moderation": "신고 관리",
+      "adminMetrics": "지표"
     },
     "links": {
       "links": "링크",
@@ -2995,7 +3001,34 @@
     "action": {
       "reviewing": "검토 시작",
       "resolve": "처리",
-      "reject": "반려"
+      "reject": "반려",
+      "takedown": "비공개"
+    },
+    "subjectType": {
+      "POST": "글",
+      "USER": "작가",
+      "COMMENT": "댓글"
+    },
+    "takedownConfirm": "이 글을 비공개 처리할까요? 공개 피드에서 내려갑니다 (작성자 초안은 유지).",
+    "takedownFailed": "비공개 처리에 실패했어요.",
+    "removed": "비공개됨"
+  },
+  "blogAdminMetrics": {
+    "title": "블로그 지표",
+    "subtitle": "작가 전체를 합산한 블로그 운영 지표.",
+    "loadFailed": "지표를 불러오지 못했어요.",
+    "empty": "표시할 데이터가 없어요.",
+    "metric": {
+      "totalPosts": "전체 글",
+      "totalReads": "전체 조회수",
+      "activeAuthors": "활성 작가",
+      "openReports": "미처리 신고"
+    },
+    "topPosts": {
+      "title": "인기 글",
+      "post": "글",
+      "author": "작가",
+      "reads": "조회수"
     }
   }
 }
