@@ -82,7 +82,7 @@ export default async function ShowcasePage({
           rather than busy. Single-CTA discipline (one slate-900 primary + scroll cue) kept so the
           surface direction matches the landing. Headline is Pretendard semibold with
           `.tracking-headline` (−0.025em) — same family/treatment as the landing hero. */}
-      <section className="relative isolate flex flex-col overflow-hidden bg-white dark:bg-slate-900 sm:min-h-[520px]">
+      <section className="relative isolate flex flex-col overflow-hidden bg-white dark:bg-slate-950 sm:min-h-[520px]">
         <div className="container relative z-10 m-auto max-w-3xl py-16 text-center sm:py-24">
           <div className="hero-stagger space-y-4">
             <div
@@ -135,7 +135,7 @@ export default async function ShowcasePage({
         </a>
       </section>
 
-      <section id="showcase-examples" className="bg-white dark:bg-slate-900 py-12 sm:py-16">
+      <section id="showcase-examples" className="bg-white dark:bg-slate-950 py-12 sm:py-16">
         <div className="container max-w-3xl mb-10">
           <div className="section-divider mx-auto mb-10 w-full max-w-xl" aria-hidden />
           <div className="text-center">
