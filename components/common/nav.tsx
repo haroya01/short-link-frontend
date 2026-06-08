@@ -11,6 +11,7 @@ import { AccountSheet } from "@/components/common/account-sheet";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
 /**
@@ -145,6 +146,12 @@ export function Nav() {
         <div className="hidden shrink-0 items-center gap-2 sm:flex">
           <AppsGrid />
           <LanguageSwitcher />
+          {/* kurl desktop theme toggle — the mobile account sheet has one, blog's desktop header has
+              its own; without this kurl-on-desktop could only inherit the shared cookie, never set it. */}
+          <ThemeToggle
+            iconOnly
+            className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+          />
           {!ready ? (
             <div className="h-8 w-20 animate-pulse rounded-md bg-slate-100 dark:bg-slate-800" />
           ) : authenticated ? (
