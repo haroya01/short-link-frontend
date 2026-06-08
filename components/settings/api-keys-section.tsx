@@ -88,7 +88,7 @@ export function ApiKeysSection() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-slate-500">{t("description")}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">{t("description")}</p>
 
       <form onSubmit={handleIssue} className="flex gap-2">
         <Input
@@ -106,11 +106,11 @@ export function ApiKeysSection() {
       </form>
 
       {issued && (
-        <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+        <div className="rounded-md border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-3 text-xs text-amber-900">
           <p className="font-medium">{t("justIssuedTitle")}</p>
           <p className="mt-1">{t("justIssuedHint")}</p>
           <div className="mt-2 flex gap-2">
-            <code className="flex-1 break-all rounded bg-white px-2 py-1.5 font-mono text-[11px] text-slate-900">
+            <code className="flex-1 break-all rounded bg-white dark:bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:text-slate-100">
               {revealed ? issued.rawKey : "•".repeat(issued.rawKey.length)}
             </code>
             <Button
@@ -127,7 +127,7 @@ export function ApiKeysSection() {
           </div>
           <button
             type="button"
-            className="mt-2 text-amber-700 underline hover:text-amber-900"
+            className="mt-2 text-amber-700 dark:text-amber-400 underline hover:text-amber-900"
             onClick={() => setIssued(null)}
           >
             {t("dismiss")}
@@ -136,9 +136,9 @@ export function ApiKeysSection() {
       )}
 
       {keys === null ? (
-        <p className="text-xs text-slate-400">{t("loading")}</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">{t("loading")}</p>
       ) : keys.length === 0 ? (
-        <p className="text-xs text-slate-500">{t("empty")}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{t("empty")}</p>
       ) : (
         <ul className="space-y-2">
           {keys.map((key) => {
@@ -148,22 +148,22 @@ export function ApiKeysSection() {
                 key={key.id}
                 className={
                   "flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2 text-xs " +
-                  (isActive ? "border-slate-200 bg-white" : "border-slate-100 bg-slate-50 text-slate-500")
+                  (isActive ? "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900" : "border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400")
                 }
               >
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
-                    <code className="font-mono text-[11px] text-slate-700">{key.prefix}…</code>
+                    <code className="font-mono text-[11px] text-slate-700 dark:text-slate-300">{key.prefix}…</code>
                     {key.name && (
-                      <span className="font-medium text-slate-900">{key.name}</span>
+                      <span className="font-medium text-slate-900 dark:text-slate-100">{key.name}</span>
                     )}
                     {!isActive && (
-                      <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-700">
+                      <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-700 dark:text-slate-300">
                         {t("revokedLabel")}
                       </span>
                     )}
                   </div>
-                  <div className="text-[11px] text-slate-500">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">
                     {t("createdAt")}: {key.createdAt.slice(0, 10)} ·{" "}
                     {t("lastUsedAt")}: {key.lastUsedAt ? key.lastUsedAt.slice(0, 10) : t("never")}
                   </div>

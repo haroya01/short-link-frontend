@@ -89,7 +89,7 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-slate-500">{t("label")}</p>
+      <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t("label")}</p>
       <button
         type="button"
         onClick={() => fileInput.current?.click()}
@@ -97,7 +97,7 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
         aria-label={t("change")}
         // aspect-ratio + relative + min-h-0 keeps the button locked to 3:1 regardless of an
         // unstyled image flash during reflow.
-        className="group relative block w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100 transition-colors hover:border-accent-300"
+        className="group relative block w-full overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 transition-colors hover:border-accent-300"
         style={{ aspectRatio: "3 / 1" }}
       >
         {currentUrl ? (
@@ -108,7 +108,7 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
-          <span className="absolute inset-0 grid place-items-center text-xs text-slate-500">
+          <span className="absolute inset-0 grid place-items-center text-xs text-slate-500 dark:text-slate-400">
             <span className="inline-flex items-center gap-1.5">
               <ImagePlus className="h-4 w-4" />
               {t("addCta")}
@@ -123,7 +123,7 @@ export function BannerPicker({ currentUrl, onChange }: Props) {
           )}
         </span>
       </button>
-      <div className="flex items-center justify-between text-[11px] text-slate-500">
+      <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
         <span>{t("hint")}</span>
         {currentUrl && (
           <button
