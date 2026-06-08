@@ -1,4 +1,6 @@
-const BASE = process.env.NEXT_PUBLIC_KURL_HOST; // e.g. "kurl.me"
+// Fallback to "kurl.me" when the env var is missing so the shared `.kurl.me` theme cookie still
+// lands in prod; the `onPlatform` guard keeps it host-only off-platform (localhost / previews).
+const BASE = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me"; // e.g. "kurl.me"
 
 /**
  * Persist the dark/light choice in a cookie scoped to the PARENT domain (e.g. `.kurl.me`) so the theme
