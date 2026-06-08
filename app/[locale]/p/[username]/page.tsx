@@ -10,7 +10,7 @@ import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
-import { subdomainOrigin } from "@/modules/blog/lib/subdomain-origin";
+import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 
 // 30s ISR — author 발행 후 30 초 내 visitors 반영. Backend 가 어차피 매번 직접 조회.
 export const revalidate = 30;
@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!result.ok) return { title: `@${username}` };
   const { author } = result.data;
   const h = await headers();
-  const origin = subdomainOrigin(h, username);
+  const origin = authorBaseUrl(h, username);
   return {
     title: `@${author.username}`,
     description: author.bio ?? undefined,

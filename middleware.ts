@@ -148,13 +148,15 @@ export default function middleware(req: NextRequest) {
   const redirect = legacyRedirect(req, host ?? "");
   if (redirect) return redirect;
 
-  // 2. 작가 페이지 — {username}.kurl.me/{anything} → /{defaultLocale}/p/{username}/{anything}
+  // 2. 유저 명함 — {username}.kurl.me/{anything} → /{locale}/u/{username}/{anything}
+  // 서브도메인은 이제 링크인바이오(명함)다. 블로그 작가 프로필은 blog.kurl.me/@{username} 로 분리됨
+  // (아래 blog-host 분기). 명함은 단일 페이지라 보통 root 만 의미가 있다.
   const authorSub = extractAuthorSubdomain(originalHost);
   if (authorSub) {
     const url = req.nextUrl.clone();
     const path = url.pathname;
     const loc = detectLocale(req);
-    url.pathname = path === "/" ? `/${loc}/p/${authorSub}` : `/${loc}/p/${authorSub}${path}`;
+    url.pathname = path === "/" ? `/${loc}/u/${authorSub}` : `/${loc}/u/${authorSub}${path}`;
     return NextResponse.rewrite(url);
   }
 
@@ -167,6 +169,13 @@ export default function middleware(req: NextRequest) {
     const localeMatch = url.pathname.match(/^\/([a-z]{2})(?=\/|$)/);
     const locale = localeMatch ? localeMatch[1] : detectLocale(req);
     const rest = localeMatch ? url.pathname.slice(localeMatch[0].length) : url.pathname;
+    // 작가 프로필 (velog 식) — blog.kurl.me/@{user}[/...] → /{locale}/p/{user}[/...]. `@` 접두사가
+    // 작가명과 블로그 자체 경로(write·tags·posts 등)를 충돌 없이 가른다. 일반 blog rewrite 보다 먼저.
+    const authorMatch = rest.match(/^\/@([^/]+)(\/.*)?$/);
+    if (authorMatch) {
+      url.pathname = `/${locale}/p/${decodeURIComponent(authorMatch[1])}${authorMatch[2] ?? ""}`;
+      return NextResponse.rewrite(url);
+    }
     if (!url.pathname.match(/^\/[a-z]{2}\/blog(\/|$)/)) {
       url.pathname = `/${locale}/blog${rest === "/" ? "" : rest}`;
       return NextResponse.rewrite(url);
