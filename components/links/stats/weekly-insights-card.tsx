@@ -160,8 +160,8 @@ function DeltaBadge({
   const tone = flat
     ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
     : positive
-      ? "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200"
-      : "bg-red-50 text-red-700 ring-1 ring-inset ring-red-200";
+      ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-200"
+      : "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-200";
   return (
     <span className={"inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium " + tone}>
       <Icon className="h-3 w-3" />

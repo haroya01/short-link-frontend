@@ -108,9 +108,9 @@ function InsightCard({ insight }: { insight: Insight }) {
   const Icon = insight.icon;
   const tone =
     insight.tone === "positive"
-      ? "text-emerald-700 bg-emerald-50"
+      ? "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10"
       : insight.tone === "warning"
-        ? "text-amber-700 bg-amber-50"
+        ? "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10"
         : "text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800";
 
   return (

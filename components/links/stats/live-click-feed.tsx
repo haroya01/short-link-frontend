@@ -25,7 +25,7 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
             }
             aria-hidden
           />
-          <span className={connected ? "font-medium text-emerald-700" : "text-slate-500 dark:text-slate-400"}>
+          <span className={connected ? "font-medium text-emerald-700 dark:text-emerald-400" : "text-slate-500 dark:text-slate-400"}>
             {connected ? t("connected") : t("connecting")}
           </span>
         </div>
@@ -56,7 +56,7 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
                 </span>
               )}
               {item.bot && (
-                <span className="ml-auto rounded-md bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-700">
+                <span className="ml-auto rounded-md bg-amber-50 dark:bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-700 dark:text-amber-400">
                   bot
                 </span>
               )}
