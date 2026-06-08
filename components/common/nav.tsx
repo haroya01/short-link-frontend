@@ -1,11 +1,14 @@
 "use client";
 
-import { LogOut, Settings } from "lucide-react";
+import { useState } from "react";
+import { ArrowUpRight, LogOut, Settings } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
+import { blogHref } from "@/lib/host";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { AccountSheet } from "@/components/common/account-sheet";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
@@ -57,6 +60,7 @@ export function Nav() {
   const locale = useLocale();
   const t = useTranslations("nav");
   const { authenticated, ready, signOut, me } = useAuth();
+  const [sheet, setSheet] = useState(false);
 
   // 공개 프로필 페이지(u/) 는 standalone 느낌 유지 — Footer 도 같은 분기.
   if (pathname.startsWith("/u/")) return null;
@@ -70,6 +74,7 @@ export function Nav() {
       : anonymousEntries(t);
 
   return (
+    <>
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
       <div className="container flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">
@@ -104,7 +109,44 @@ export function Nav() {
           )}
         </div>
 
-        {/* Desktop-only — on mobile these live in the bottom nav's account sheet. */}
+        {/* Mobile-only top cluster — the blog↔kurl switch (the user asked for it up top, not buried in
+            the sheet) + the account avatar (opens the slim links AccountSheet). The bottom nav carries
+            the feature tabs. */}
+        <div className="flex shrink-0 items-center gap-1.5 sm:hidden">
+          <a
+            href={blogHref("/")}
+            className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-2.5 py-1 text-[12px] font-medium text-slate-600 transition-colors hover:bg-slate-50"
+          >
+            blog.kurl
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </a>
+          {!ready ? (
+            <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100" />
+          ) : authenticated ? (
+            <button
+              type="button"
+              onClick={() => setSheet(true)}
+              aria-haspopup="dialog"
+              aria-label={t("account")}
+              className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full bg-accent-100 text-[13px] font-semibold text-accent-700"
+            >
+              {me?.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={me.avatarUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                (me?.username || me?.email || "?").charAt(0).toUpperCase()
+              )}
+            </button>
+          ) : (
+            <Link href={loginHrefFor(pathname)}>
+              <Button size="sm" variant="default">
+                {t("login")}
+              </Button>
+            </Link>
+          )}
+        </div>
+
+        {/* Desktop-only — on mobile the blog switch + account live in the mobile cluster above. */}
         <div className="hidden shrink-0 items-center gap-2 sm:flex">
           <AppsGrid />
           <LanguageSwitcher />
@@ -141,5 +183,7 @@ export function Nav() {
         </div>
       </div>
     </header>
+    <AccountSheet open={sheet} onClose={() => setSheet(false)} product="links" />
+    </>
   );
 }
