@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  ArrowUpRight,
   BarChart3,
   Bell,
   Bookmark,
@@ -24,9 +23,10 @@ import { useRouter } from "next/navigation";
 import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
-import { blogHref, currentProduct, linksHref, type Product } from "@/lib/host";
+import { blogHref, linksHref, type Product } from "@/lib/host";
 import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { AppsGrid } from "@/components/common/apps-grid";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -62,14 +62,12 @@ export function AccountSheet({
   const pathname = usePathname();
   const { me, authenticated, signOut } = useAuth();
   const [langOpen, setLangOpen] = useState(false);
-  const [other, setOther] = useState<Product | null>(null);
 
   useEffect(() => {
     if (!open) {
       setLangOpen(false);
       return;
     }
-    setOther(currentProduct() === "blog" ? "links" : "blog");
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
@@ -99,7 +97,7 @@ export function AccountSheet({
         onClick={onClose}
         className="absolute inset-0 animate-fade-in bg-slate-900/30"
       />
-      <div className="absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col animate-fade-in rounded-t-2xl bg-white p-2 pb-0 shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] dark:bg-slate-900">
+      <div className="absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col animate-[sheet-up_280ms_cubic-bezier(0.22,1,0.36,1)_both] rounded-t-2xl bg-white p-2 pb-0 shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] motion-reduce:animate-none dark:bg-slate-900">
         <div className="mx-auto mb-1 mt-1 h-1 w-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden />
 
         {/* Scrollable menu body. The sheet pins to the bottom and grows upward, so without a height cap
@@ -207,18 +205,12 @@ export function AccountSheet({
           </>
         )}
 
-        {/* Cross-product switch (kurl ↔ blog.kurl) — distinct from "내 블로그" above. On kurl it lives
-            in the top Nav instead, so it's dropped from the sheet here. */}
-        {!isLinks && other && (
-          <a
-            href={other === "links" ? linksHref("/") : blogHref("/")}
-            className={cn(ITEM, "justify-between")}
-          >
-            <span className="inline-flex items-center gap-3">
-              <ArrowUpRight className="h-5 w-5 text-slate-500" />
-              {other === "links" ? "kurl" : "blog.kurl"}
-            </span>
-          </a>
+        {/* Cross-product switch (blog → kurl) — AppsGrid plays the same warp transition as desktop on
+            the cross-product hop. On kurl the switch lives in the top Nav instead, so it's dropped here. */}
+        {!isLinks && (
+          <div className="px-2 py-1.5">
+            <AppsGrid current="blog" />
+          </div>
         )}
 
         <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />

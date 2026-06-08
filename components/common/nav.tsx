@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, LogOut, Settings } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { blogHref } from "@/lib/host";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { AccountSheet } from "@/components/common/account-sheet";
@@ -109,17 +108,11 @@ export function Nav() {
           )}
         </div>
 
-        {/* Mobile-only top cluster — the blog↔kurl switch (the user asked for it up top, not buried in
-            the sheet) + the account avatar (opens the slim links AccountSheet). The bottom nav carries
-            the feature tabs. */}
+        {/* Mobile-only top cluster — the blog↔kurl switch + the account avatar (opens the slim links
+            AccountSheet). AppsGrid plays the same warp transition as desktop on the cross-product hop;
+            the bottom nav carries the feature tabs. */}
         <div className="flex shrink-0 items-center gap-1.5 sm:hidden">
-          <a
-            href={blogHref("/")}
-            className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-2.5 py-1 text-[12px] font-medium text-slate-600 transition-colors hover:bg-slate-50"
-          >
-            blog.kurl
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
+          <AppsGrid current="links" />
           {!ready ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100" />
           ) : authenticated ? (
