@@ -36,7 +36,7 @@ export function ExpiringSoonBanner({ onShowAll }: Props) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-4 py-3 text-sm text-amber-900">
       <AlertTriangle className="h-4 w-4 shrink-0" />
       <div className="flex-1">
         <p className="font-medium">{t("title", { count: items.length })}</p>
@@ -46,7 +46,7 @@ export function ExpiringSoonBanner({ onShowAll }: Props) {
         <button
           type="button"
           onClick={onShowAll}
-          className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium hover:bg-amber-200"
+          className="rounded-full bg-amber-100 dark:bg-amber-500/15 px-3 py-1 text-xs font-medium hover:bg-amber-200"
         >
           {t("showAll")}
         </button>

@@ -53,7 +53,7 @@ export default function TwoFactorChallengePage() {
     return (
       <div className="container max-w-md py-20 text-center">
         <h1 className="text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
-        <p className="mt-2 text-sm text-red-600">{error}</p>
+        <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
         <Link href="/login" className="mt-6 inline-block">
           <Button variant="outline">{t("backToLogin")}</Button>
         </Link>
@@ -82,7 +82,7 @@ export default function TwoFactorChallengePage() {
           className="font-mono"
           required
         />
-        {error && <p className="text-xs text-red-600">{error}</p>}
+        {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
         <Button
           type="submit"
           variant="accent"

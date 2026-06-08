@@ -151,7 +151,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
       </form>
 
       {issued && (
-        <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+        <div className="mt-3 rounded-md border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-3 text-xs text-amber-900">
           <div className="flex flex-wrap items-center gap-2">
             <p className="font-medium">{t("issuedTitle")}</p>
             <FormatBadge format={issued.format} t={t} />
@@ -181,7 +181,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
           </div>
           <button
             type="button"
-            className="mt-2 text-amber-700 underline hover:text-amber-900"
+            className="mt-2 text-amber-700 dark:text-amber-400 underline hover:text-amber-900"
             onClick={() => setIssued(null)}
           >
             {t("dismiss")}
@@ -243,12 +243,12 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
                       </span>
                     )}
                     {hook.consecutiveFailures > 0 && (
-                      <span className="text-red-600">
+                      <span className="text-red-600 dark:text-red-400">
                         {t("consecutiveFailures", { n: hook.consecutiveFailures })}
                       </span>
                     )}
                     {hook.lastError && (
-                      <span className="text-red-600" title={hook.lastError}>
+                      <span className="text-red-600 dark:text-red-400" title={hook.lastError}>
                         {hook.lastError.length > 50
                           ? hook.lastError.slice(0, 50) + "…"
                           : hook.lastError}
@@ -256,7 +256,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
                     )}
                   </div>
                   {hook.autoDisabledReason && (
-                    <p className="mt-1 rounded bg-red-50 px-2 py-1 text-[11px] text-red-700">
+                    <p className="mt-1 rounded bg-red-50 dark:bg-red-500/10 px-2 py-1 text-[11px] text-red-700 dark:text-red-400">
                       {hook.autoDisabledReason}
                     </p>
                   )}
@@ -282,7 +282,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
                     type="button"
                     size="sm"
                     variant="ghost"
-                    className="text-red-600 hover:bg-red-50"
+                    className="text-red-600 dark:text-red-400 hover:bg-red-50"
                     onClick={() => handleDelete(hook.id)}
                   >
                     {t("delete")}
@@ -458,7 +458,7 @@ function StatusPill({
     <span
       className={
         "rounded px-1.5 py-0.5 text-[10px] font-medium " +
-        (ok ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700")
+        (ok ? "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400" : "bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400")
       }
     >
       {hook.lastStatusCode}

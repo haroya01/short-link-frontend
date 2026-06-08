@@ -323,7 +323,7 @@ function Section({
   return (
     <SharedSection
       title={title}
-      className={variant === "danger" ? "border-red-200" : undefined}
+      className={variant === "danger" ? "border-red-200 dark:border-red-500/30" : undefined}
     >
       {children}
     </SharedSection>

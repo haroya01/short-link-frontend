@@ -301,7 +301,7 @@ function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number
   const verdictStyle: Record<string, string> = {
     BOOST: "bg-accent-100 text-accent-700 dark:text-accent-400",
     KEEP: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
-    REDUCE: "bg-amber-50 text-amber-700",
+    REDUCE: "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400",
     PRUNE: "bg-rose-50 text-rose-700",
   };
   const verdictLabel: Record<string, string> = {

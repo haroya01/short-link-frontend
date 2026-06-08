@@ -104,7 +104,7 @@ export default function CtaLibraryPage() {
 
       {loading && <p className="text-gray-500">{tc("loading")}</p>}
       {error && (
-        <p className="text-red-600">
+        <p className="text-red-600 dark:text-red-400">
           {tc("errorPrefix")} {error}
         </p>
       )}
@@ -120,7 +120,7 @@ export default function CtaLibraryPage() {
               <span
                 className={`rounded px-2 py-1 text-xs font-medium ${
                   cta.style === "PRIMARY"
-                    ? "bg-emerald-100 text-emerald-800"
+                    ? "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300"
                     : "bg-gray-100 text-gray-700"
                 }`}
               >
@@ -143,7 +143,7 @@ export default function CtaLibraryPage() {
               <button
                 type="button"
                 onClick={() => handleDelete(cta)}
-                className="rounded border border-red-200 px-3 py-1 text-xs text-red-600 hover:bg-red-50"
+                className="rounded border border-red-200 dark:border-red-500/30 px-3 py-1 text-xs text-red-600 dark:text-red-400 hover:bg-red-50"
               >
                 {t("delete")}
               </button>
@@ -252,7 +252,7 @@ function CtaEditor({
           </select>
         </label>
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
       <div className="flex justify-end gap-2 pt-2">
         <button
           type="button"
