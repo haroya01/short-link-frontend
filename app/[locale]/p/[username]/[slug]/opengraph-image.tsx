@@ -39,6 +39,28 @@ function readLabel(mins: number, locale: string): string {
   return `${mins}분 읽기`;
 }
 
+// Satori crashes the whole render if a remote <img> fails to load — and avatars are user-set, so the
+// URL can 404, block CORS, or be webp/avif (which Satori can't decode). Fetch the bytes ourselves,
+// accept only png/jpeg, and inline as a data URL. Any failure returns null → the byline falls back to
+// an initial monogram. https-only + short timeout + size cap keeps it from hanging or being abused.
+async function loadAvatar(rawUrl: string): Promise<string | null> {
+  try {
+    const u = new URL(rawUrl);
+    if (u.protocol !== "https:") return null;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 2500);
+    const res = await fetch(rawUrl, { signal: ctrl.signal }).finally(() => clearTimeout(timer));
+    if (!res.ok) return null;
+    const ct = res.headers.get("content-type") ?? "";
+    if (!/^image\/(png|jpe?g)$/.test(ct)) return null;
+    const buf = await res.arrayBuffer();
+    if (buf.byteLength > 2_000_000) return null;
+    return `data:${ct};base64,${Buffer.from(buf).toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
+
 const EMERALD = "#059669";
 const INK = "#0f172a";
 const MUTE = "#94a3b8";
@@ -61,6 +83,7 @@ export default async function PostOgImage({
   let handle = username;
   let dateStr = "";
   let mins = 0;
+  let avatarDataUrl: string | null = null;
   try {
     const result = await findPublicPost(username, slug);
     if (result.ok) {
@@ -70,10 +93,15 @@ export default async function PostOgImage({
       excerpt = post.excerpt;
       dateStr = formatDate(post.publishedAt);
       mins = readingMinutes(blocks);
+      if (author.avatarUrl) avatarDataUrl = await loadAvatar(author.avatarUrl);
     }
   } catch {
     // Fall back to the brand-only card if the post can't be fetched at render time.
   }
+
+  // Byline mark: the author's photo when we could safely load it, else an emerald monogram of their
+  // handle's first letter — never a broken image. Korean/Japanese first chars render fine.
+  const initial = (handle.trim()[0] ?? "?").toUpperCase();
 
   return new ImageResponse(
     (
@@ -186,9 +214,32 @@ export default async function PostOgImage({
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
-              <div
-                style={{ display: "flex", width: 22, height: 22, borderRadius: 11, backgroundColor: EMERALD }}
-              />
+              {avatarDataUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={avatarDataUrl}
+                  width={52}
+                  height={52}
+                  style={{ width: 52, height: 52, borderRadius: 26, objectFit: "cover" }}
+                />
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    width: 52,
+                    height: 52,
+                    borderRadius: 26,
+                    backgroundColor: EMERALD,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#ffffff",
+                    fontSize: 26,
+                    fontWeight: 700,
+                  }}
+                >
+                  {initial}
+                </div>
+              )}
               <span style={{ display: "flex", fontSize: 42, fontWeight: 600, color: "#334155" }}>
                 @{handle}
               </span>
