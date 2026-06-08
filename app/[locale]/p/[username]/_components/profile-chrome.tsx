@@ -7,13 +7,21 @@ const TAB_SEGMENTS = ["series", "about", "liked", "bookmarks"];
 
 /** True on the author's tab pages (글 · 시리즈 · 소개 · 좋아요 · 북마크) — NOT a post (/p/user/{slug})
  *  or a series detail (/p/user/series/{slug}). Static tab segments win route resolution over [slug],
- *  so a post can never own one of those names. */
+ *  so a post can never own one of those names.
+ *
+ *  Two URL topologies reach this layout, and `usePathname()` reflects the VISIBLE browser URL:
+ *   - apex path form `/{locale}/p/{user}/...` → take the segments after the username.
+ *   - author subdomain `{user}.kurl.me/...` → the middleware rewrites the host to `/p/{user}`
+ *     SERVER-SIDE, so the browser path has NO `/p/{user}` prefix (it's just `/`, `/series`, `/{slug}`,
+ *     …). ProfileChrome only ever mounts under the /p/[username] layout, so "no `/p/` segment here"
+ *     means we're on the subdomain → the whole path IS the post-username tail (no locale prefix on
+ *     the subdomain either). Missing this case dropped the avatar + tab bar on every author subdomain
+ *     home — they showed only on the apex `/p/` path. */
 function isTabRoute(pathname: string): boolean {
   const parts = pathname.replace(/\/+$/, "").split("/").filter(Boolean);
   const pIdx = parts.indexOf("p");
-  if (pIdx === -1) return false;
-  const after = parts.slice(pIdx + 2); // segments after the username
-  if (after.length === 0) return true; // /p/{user} → 글
+  const after = pIdx === -1 ? parts : parts.slice(pIdx + 2); // subdomain tail vs segments after username
+  if (after.length === 0) return true; // /p/{user} or subdomain root → 글
   if (after.length === 1) return TAB_SEGMENTS.includes(after[0]); // tab vs post slug
   return false; // /p/{user}/series/{slug}, deeper → not a tab
 }
