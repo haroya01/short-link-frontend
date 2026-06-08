@@ -5,12 +5,10 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
-import { writeStorageString } from "@/lib/storage-json";
+import { writeLoginNextCookie } from "@/lib/login-next-cookie";
 import { Button } from "@/components/ui/button";
 import { Mark } from "@/components/common/logo";
 import { GoogleIcon } from "@/components/common/google-icon";
-
-const LOGIN_NEXT_KEY = "kurl:login-next";
 
 // ?next= 는 같은 오리진 내부 경로만 허용 — callback 의 동일 가드와 맞춰 open-redirect 차단.
 function sanitizeNext(raw: string | null): string | null {
@@ -44,9 +42,11 @@ function BlogLoginShell({ next }: { next: string | null }) {
   }, [ready, authenticated, next]);
 
   const onSignIn = () => {
-    // signInWithGoogle 은 /login 경로에서는 현재 경로를 stash 하지 않으므로, 돌아갈 목적지를
-    // 여기서 직접 넣어 OAuth 왕복 뒤 callback 이 honor 하게 한다.
-    if (next) writeStorageString(LOGIN_NEXT_KEY, next, { session: true });
+    // OAuth 콜백은 apex(kurl.me)로 떨어진다 → blog.kurl.me 에서 저장한 sessionStorage(오리진별)는
+    // 콜백에서 못 읽고, 콜백은 readSafeLoginNext() = `.kurl.me` 쿠키만 읽는다. 또 signInWithGoogle 은
+    // /login 경로에선 쿠키를 stash 하지 않는다. 그래서 돌아갈 목적지를 여기서 직접 `.kurl.me` 쿠키에
+    // **절대 blog URL** 로 넣는다(bare path 면 콜백이 apex origin 기준으로 풀어 엉뚱한 제품으로 감).
+    writeLoginNextCookie(blogHref(next ?? "/"));
     signInWithGoogle();
   };
 

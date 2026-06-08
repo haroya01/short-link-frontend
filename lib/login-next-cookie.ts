@@ -1,4 +1,7 @@
-const BASE = process.env.NEXT_PUBLIC_KURL_HOST; // e.g. "kurl.me"
+// Fallback to "kurl.me" when the env var is missing (it's unset in some deploy envs) so the
+// parent-domain (`.kurl.me`) cookie still lands in prod. The `onPlatform` guard below keeps it
+// host-only off-platform (localhost / *.vercel.app), so the fallback can't mis-scope a cookie there.
+const BASE = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me"; // e.g. "kurl.me"
 
 const LOGIN_NEXT_COOKIE = "kurl_login_next";
 
