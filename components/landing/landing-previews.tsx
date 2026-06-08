@@ -63,11 +63,11 @@ export function LandingPreviews() {
   ];
 
   return (
-    <section className="relative isolate overflow-hidden bg-slate-50/60">
+    <section className="relative isolate overflow-hidden bg-slate-50/60 dark:bg-slate-900/40">
       <div className="container max-w-5xl py-16 sm:py-20">
         <div className="mb-10 flex items-center gap-3">
           <span aria-hidden className="h-px flex-1 bg-slate-200" />
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
             {t("previews.eyebrow")}
           </p>
           <span aria-hidden className="h-px flex-1 bg-slate-200" />
@@ -93,7 +93,7 @@ export function LandingPreviews() {
               <Link
                 href={it.href}
                 className={
-                  "profile-card card-highlight group flex h-full flex-col gap-4 border border-slate-200 bg-white p-5 sm:p-6"
+                  "profile-card card-highlight group flex h-full flex-col gap-4 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6"
                 }
               >
                 <div
@@ -107,7 +107,7 @@ export function LandingPreviews() {
                 <div className="flex-1 space-y-1.5">
                   <h3
                     className={
-                      "leading-tight tracking-headline text-slate-900 " +
+                      "leading-tight tracking-headline text-slate-900 dark:text-slate-100 " +
                       (i === 0
                         ? "text-lg font-semibold sm:text-xl"
                         : "text-sm font-semibold")
@@ -115,11 +115,11 @@ export function LandingPreviews() {
                   >
                     {it.label}
                   </h3>
-                  <p className="text-[12px] leading-snug text-slate-600 sm:text-[13px]">
+                  <p className="text-[12px] leading-snug text-slate-600 dark:text-slate-300 sm:text-[13px]">
                     {it.desc}
                   </p>
                 </div>
-                <span className="inline-flex items-center gap-1 text-[12px] font-medium text-accent-700">
+                <span className="inline-flex items-center gap-1 text-[12px] font-medium text-accent-700 dark:text-accent-400">
                   {t("previews.see")}
                   <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                 </span>
@@ -160,10 +160,10 @@ function StatsVisual() {
   return (
     <div className="absolute inset-0 flex items-end gap-3 px-4 pb-3 pt-3">
       <div className="flex flex-col gap-0.5">
-        <span className="font-mono text-[10px] uppercase tracking-wider text-accent-700">
+        <span className="font-mono text-[10px] uppercase tracking-wider text-accent-700 dark:text-accent-400">
           30d
         </span>
-        <span className="font-mono text-base font-semibold leading-none tabular-nums text-slate-900">
+        <span className="font-mono text-base font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
           1,247
         </span>
       </div>
@@ -193,11 +193,11 @@ function StatsVisual() {
 function ProfileVisual() {
   return (
     <div className="absolute inset-0 flex items-center gap-3 px-4">
-      <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-accent-200 bg-white text-accent-700">
+      <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-accent-200 bg-white dark:bg-slate-900 text-accent-700 dark:text-accent-400">
         <IdCard className="h-4 w-4" />
       </div>
       <div className="min-w-0 flex-1 space-y-1.5">
-        <span className="block font-mono text-[10px] text-slate-500">kurl.me/u/</span>
+        <span className="block font-mono text-[10px] text-slate-500 dark:text-slate-400">kurl.me/u/</span>
         <div className="space-y-1">
           <div className="h-1.5 w-24 rounded-full bg-accent-200" />
           <div className="h-1.5 w-16 rounded-full bg-slate-200" />
@@ -226,22 +226,22 @@ function ProfileVisual() {
 function DomainVisual() {
   return (
     <div className="absolute inset-0 flex flex-col justify-center gap-2 px-4">
-      <div className="flex min-w-0 items-center gap-2 rounded-md border border-slate-200 bg-white px-2.5 py-1.5">
-        <LinkIcon className="h-3 w-3 shrink-0 text-slate-400" />
-        <span className="min-w-0 flex-1 truncate font-mono text-[11px] font-medium text-slate-900">
+      <div className="flex min-w-0 items-center gap-2 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1.5">
+        <LinkIcon className="h-3 w-3 shrink-0 text-slate-400 dark:text-slate-500" />
+        <span className="min-w-0 flex-1 truncate font-mono text-[11px] font-medium text-slate-900 dark:text-slate-100">
           go.brand.com/spring
         </span>
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden />
       </div>
-      <div className="flex min-w-0 items-center gap-1.5 px-1 font-mono text-[10px] text-slate-500">
-        <span className="shrink-0 whitespace-nowrap uppercase tracking-wider text-accent-700">
+      <div className="flex min-w-0 items-center gap-1.5 px-1 font-mono text-[10px] text-slate-500 dark:text-slate-400">
+        <span className="shrink-0 whitespace-nowrap uppercase tracking-wider text-accent-700 dark:text-accent-400">
           DNS
         </span>
         <span className="shrink-0 text-slate-300">·</span>
         <span className="shrink-0 whitespace-nowrap">TXT</span>
         <span className="shrink-0 text-slate-300">·</span>
         <span className="shrink-0 whitespace-nowrap">CNAME</span>
-        <span className="ml-auto shrink-0 whitespace-nowrap text-accent-700">verified</span>
+        <span className="ml-auto shrink-0 whitespace-nowrap text-accent-700 dark:text-accent-400">verified</span>
       </div>
     </div>
   );

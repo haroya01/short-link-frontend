@@ -91,8 +91,8 @@ export function FeatureCarousel() {
         visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
       )}
     >
-      <div className="grid items-stretch gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 lg:grid-cols-[1fr_1.6fr]">
-        <div className="flex flex-col bg-white">
+      <div className="grid items-stretch gap-px overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-200 lg:grid-cols-[1fr_1.6fr]">
+        <div className="flex flex-col bg-white dark:bg-slate-900">
           {FEATURES.map((f, i) => {
             const Icon = f.icon;
             const isActive = i === active;
@@ -105,8 +105,8 @@ export function FeatureCarousel() {
                   setPaused(true);
                 }}
                 className={cn(
-                  "relative flex items-start gap-3 border-b border-slate-100 px-4 text-left transition-all last:border-b-0",
-                  isActive ? "bg-accent-50/60 py-3" : "py-2.5 hover:bg-slate-50",
+                  "relative flex items-start gap-3 border-b border-slate-100 dark:border-slate-800 px-4 text-left transition-all last:border-b-0",
+                  isActive ? "bg-accent-50/60 py-3" : "py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50",
                 )}
               >
                 <span
@@ -118,7 +118,7 @@ export function FeatureCarousel() {
                 <span
                   className={cn(
                     "mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-md transition-colors",
-                    isActive ? "bg-accent-600 text-white" : "bg-slate-100 text-slate-500",
+                    isActive ? "bg-accent-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400",
                   )}
                 >
                   <Icon className="h-3 w-3" />
@@ -127,13 +127,13 @@ export function FeatureCarousel() {
                   <h3
                     className={cn(
                       "text-[13px] font-semibold leading-tight transition-colors",
-                      isActive ? "text-accent-800" : "text-slate-900",
+                      isActive ? "text-accent-800" : "text-slate-900 dark:text-slate-100",
                     )}
                   >
                     {t(`${f.key}.title`)}
                   </h3>
                   {isActive && (
-                    <p className="mt-1 text-[11px] leading-snug text-slate-500">
+                    <p className="mt-1 text-[11px] leading-snug text-slate-500 dark:text-slate-400">
                       {t(`${f.key}.desc`)}
                     </p>
                   )}
@@ -141,7 +141,7 @@ export function FeatureCarousel() {
               </button>
             );
           })}
-          <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
+          <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 px-5 py-3">
             <div className="flex gap-1.5">
               {FEATURES.map((_, i) => (
                 <span
@@ -153,16 +153,16 @@ export function FeatureCarousel() {
                 />
               ))}
             </div>
-            <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
+            <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
               {String(active + 1).padStart(2, "0")} / 0{FEATURES.length}
             </p>
           </div>
         </div>
 
-        <div className="relative min-h-[420px] overflow-hidden bg-white">
+        <div className="relative min-h-[420px] overflow-hidden bg-white dark:bg-slate-900">
           <div key={active} className="absolute inset-0 flex animate-fade-in flex-col p-6">
-            <div className="mb-4 flex items-center gap-2 text-xs text-slate-500">
-              <ActiveIcon className="h-3.5 w-3.5 text-accent-600" />
+            <div className="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+              <ActiveIcon className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" />
               <span className="font-mono uppercase tracking-wider">
                 {t(`${current.key}.title`)}
               </span>
@@ -200,7 +200,7 @@ function RealtimePreview() {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700">
+        <h3 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-400">
           {t("eyebrow")}
         </h3>
         <div className="flex items-center gap-1.5 text-[11px]">
@@ -208,22 +208,22 @@ function RealtimePreview() {
             className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
             aria-hidden
           />
-          <span className="font-medium text-emerald-700">{t("live")}</span>
+          <span className="font-medium text-emerald-700 dark:text-emerald-400">{t("live")}</span>
         </div>
       </div>
-      <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
         {events.map((e, i) => (
           <li
             key={e.ts}
             className="flex items-center gap-3 px-4 py-2.5 text-[12px]"
             style={{ animation: `tickIn 500ms ${i * 120}ms ease-out backwards` }}
           >
-            <span className="font-mono tabular-nums text-slate-500">{e.ts}</span>
-            <span className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
+            <span className="font-mono tabular-nums text-slate-500 dark:text-slate-400">{e.ts}</span>
+            <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
               {e.country}
             </span>
-            <span className="text-slate-600">{e.device}</span>
-            <span className="truncate text-slate-500">· {e.channel}</span>
+            <span className="text-slate-600 dark:text-slate-300">{e.device}</span>
+            <span className="truncate text-slate-500 dark:text-slate-400">· {e.channel}</span>
           </li>
         ))}
       </ul>
@@ -281,43 +281,43 @@ function AbTestPreview() {
   const total = variants.reduce((s, v) => s + v.hits, 0);
   return (
     <div className="space-y-3">
-      <p className="text-[11px] leading-snug text-slate-500">{t("explainer")}</p>
+      <p className="text-[11px] leading-snug text-slate-500 dark:text-slate-400">{t("explainer")}</p>
       <div className="space-y-2">
         {variants.map((v, i) => {
           const pct = total === 0 ? 0 : (v.hits / total) * 100;
           return (
             <div
               key={v.label}
-              className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs"
+              className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs"
               style={{ animation: `rowIn 500ms ${i * 100}ms ease-out backwards` }}
             >
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-medium text-slate-900">{v.label}</span>
+                <span className="font-medium text-slate-900 dark:text-slate-100">{v.label}</span>
                 {v.isControl && (
-                  <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-600">
+                  <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-600 dark:text-slate-300">
                     control
                   </span>
                 )}
                 {v.weight != null && (
-                  <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
+                  <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
                     w {v.weight}
                   </span>
                 )}
                 {v.country && (
-                  <span className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
+                  <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
                     {v.country.flag} {v.country.code}
                   </span>
                 )}
-                <span className="ml-auto font-mono tabular-nums text-slate-700">
+                <span className="ml-auto font-mono tabular-nums text-slate-700 dark:text-slate-300">
                   {v.hits.toLocaleString()} · {pct.toFixed(1)}%
                 </span>
               </div>
               {v.url && (
-                <code className="mt-1 block break-all font-mono text-[11px] text-slate-500">
+                <code className="mt-1 block break-all font-mono text-[11px] text-slate-500 dark:text-slate-400">
                   {v.url}
                 </code>
               )}
-              <div className="mt-1.5 h-1 w-full overflow-hidden rounded bg-slate-100">
+              <div className="mt-1.5 h-1 w-full overflow-hidden rounded bg-slate-100 dark:bg-slate-800">
                 <div
                   className="h-full bg-accent-600"
                   style={{
@@ -364,8 +364,8 @@ function InsightsPreview() {
   return (
     <div className="space-y-4">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-sm font-medium text-slate-700">{t("heading")}</p>
-        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
+        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("heading")}</p>
+        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-200">
           ↗ 24%
         </span>
       </div>
@@ -373,20 +373,20 @@ function InsightsPreview() {
         {stats.map((s, i) => (
           <div
             key={s.label}
-            className="rounded-lg border border-slate-200 bg-white p-3"
+            className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3"
             style={{ animation: `popIn 500ms ${i * 80}ms ease-out backwards` }}
           >
-            <p className="text-xs text-slate-500">{s.label}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{s.label}</p>
             <p
               className={cn(
-                "mt-1 truncate text-lg font-semibold text-slate-900 tabular-nums",
+                "mt-1 truncate text-lg font-semibold text-slate-900 dark:text-slate-100 tabular-nums",
                 s.mono && "font-mono",
               )}
               title={s.value}
             >
               {s.value}
             </p>
-            <p className="mt-0.5 truncate text-[11px] text-slate-500">{s.sub}</p>
+            <p className="mt-0.5 truncate text-[11px] text-slate-500 dark:text-slate-400">{s.sub}</p>
           </div>
         ))}
       </div>
