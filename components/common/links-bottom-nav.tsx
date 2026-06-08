@@ -80,7 +80,7 @@ export function LinksBottomNav() {
   return (
     <nav
       className={cn(
-        "fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur transition-transform duration-200 motion-reduce:transition-none sm:hidden",
+        "fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800 dark:bg-slate-950/90 sm:hidden",
         hidden && "translate-y-full",
       )}
     >
@@ -89,7 +89,7 @@ export function LinksBottomNav() {
           key={label}
           href={href}
           aria-current={active ? "page" : undefined}
-          className={cn(TAB, active ? "text-accent-600" : "text-slate-500")}
+          className={cn(TAB, active ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
         >
           <Icon className="h-5 w-5" />
           {label}
