@@ -31,7 +31,7 @@ export default function QrCampaignsLandingPage() {
   const mock = MOCK_BY_LOCALE[locale] ?? MOCK_BY_LOCALE.en;
 
   return (
-    <div className="bg-white dark:bg-slate-900">
+    <div className="bg-white dark:bg-slate-950">
       <StickyNarrative mock={mock} />
       <FinalCta ctaHref={ctaHref} authenticated={authenticated} />
       <FloatingCta ctaHref={ctaHref} />
@@ -54,7 +54,7 @@ function TopProgressBar({ count, active }: { count: number; active: number }) {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed left-0 right-0 top-0 z-50 flex gap-[2px] bg-slate-100/70 dark:bg-slate-800/70 px-2 py-1.5"
+      className="pointer-events-none fixed left-0 right-0 top-0 z-50 flex gap-[2px] bg-slate-100/70 dark:bg-slate-900/70 px-2 py-1.5"
     >
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="relative h-0.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
@@ -294,7 +294,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
   ];
 
   return (
-    <section className="relative bg-slate-50/40 dark:bg-slate-800/40">
+    <section className="relative bg-slate-50/40 dark:bg-slate-900/40">
       <TopProgressBar count={SECTION_COUNT} active={active} />
       {/* 모바일 레이아웃 — 각 § 가 viewport 한 화면을 채우되 (min-h-[100svh]) 콘텐츠 비율은
           원래대로. 강제 h-[100svh] + 작은 mock 으로 어색해진 회귀를 되돌림. mock 은 다시 max-w-sm

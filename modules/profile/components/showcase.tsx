@@ -61,11 +61,11 @@ export function ProfileShowcase() {
           nearly fills the width, so a fade here would clip its right edge. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-24 bg-gradient-to-r from-white to-transparent sm:block"
+        className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-24 bg-gradient-to-r from-white to-transparent dark:from-slate-950 sm:block"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-24 bg-gradient-to-l from-white to-transparent sm:block"
+        className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-24 bg-gradient-to-l from-white to-transparent dark:from-slate-950 sm:block"
       />
 
       {/* Embla's loop mode wraps slides by cloning them outside the original flex track —
