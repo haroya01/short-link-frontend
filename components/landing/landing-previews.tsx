@@ -66,11 +66,11 @@ export function LandingPreviews() {
     <section className="relative isolate overflow-hidden bg-slate-50/60 dark:bg-slate-900/40">
       <div className="container max-w-5xl py-16 sm:py-20">
         <div className="mb-10 flex items-center gap-3">
-          <span aria-hidden className="h-px flex-1 bg-slate-200" />
+          <span aria-hidden className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
           <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
             {t("previews.eyebrow")}
           </p>
-          <span aria-hidden className="h-px flex-1 bg-slate-200" />
+          <span aria-hidden className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
         </div>
         {/*
          * Asymmetric grid — featured card spans 2 columns on desktop, the remaining two stack to
@@ -200,8 +200,8 @@ function ProfileVisual() {
         <span className="block font-mono text-[10px] text-slate-500 dark:text-slate-400">kurl.me/u/</span>
         <div className="space-y-1">
           <div className="h-1.5 w-24 rounded-full bg-accent-200" />
-          <div className="h-1.5 w-16 rounded-full bg-slate-200" />
-          <div className="h-1.5 w-20 rounded-full bg-slate-200" />
+          <div className="h-1.5 w-16 rounded-full bg-slate-200 dark:bg-slate-800" />
+          <div className="h-1.5 w-20 rounded-full bg-slate-200 dark:bg-slate-800" />
         </div>
       </div>
     </div>

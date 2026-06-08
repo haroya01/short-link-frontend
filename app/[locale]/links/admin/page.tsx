@@ -122,7 +122,7 @@ export default function AdminPage() {
 
       <AdminAccessToken />
 
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-200 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-200 dark:bg-slate-800 sm:grid-cols-3 lg:grid-cols-6">
         <Kpi
           label={t("kpi.users")}
           value={formatNumber(data.totals?.users ?? 0)}
@@ -243,7 +243,7 @@ export default function AdminPage() {
           title={t("section.redirectPerf.title")}
           description={t("section.redirectPerf.desc")}
         >
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-200 sm:grid-cols-4 lg:grid-cols-7">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-200 dark:bg-slate-800 sm:grid-cols-4 lg:grid-cols-7">
             <Kpi
               label={t("section.redirectPerf.p50")}
               value={`${(health.redirect.p50Millis ?? 0).toFixed(1)}ms`}

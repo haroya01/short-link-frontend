@@ -57,7 +57,7 @@ function TopProgressBar({ count, active }: { count: number; active: number }) {
       className="pointer-events-none fixed left-0 right-0 top-0 z-50 flex gap-[2px] bg-slate-100/70 px-2 py-1.5"
     >
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="relative h-0.5 flex-1 overflow-hidden rounded-full bg-slate-200">
+        <div key={i} className="relative h-0.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
           {i < active && <div className="absolute inset-0 bg-accent-500" />}
           {i === active && (
             <div

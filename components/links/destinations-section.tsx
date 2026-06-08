@@ -286,7 +286,7 @@ function DestinationRow({
           </span>
         )}
         {enabled === false && (
-          <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-700 dark:text-slate-300">
+          <span className="rounded bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-700 dark:text-slate-300">
             {t("disabled")}
           </span>
         )}

@@ -21,7 +21,7 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
           <span
             className={
               "inline-block h-2 w-2 rounded-full " +
-              (connected ? "animate-pulse bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-slate-300")
+              (connected ? "animate-pulse bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-slate-300 dark:bg-slate-700")
             }
             aria-hidden
           />
