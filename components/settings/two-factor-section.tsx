@@ -138,12 +138,12 @@ export function TwoFactorSection() {
   }
 
   if (mode === "loading") {
-    return <p className="text-xs text-slate-400">{t("loading")}</p>;
+    return <p className="text-xs text-slate-400 dark:text-slate-500">{t("loading")}</p>;
   }
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-slate-500">{t("description")}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">{t("description")}</p>
 
       {recoveryCodes && (
         <RecoveryCodesPanel codes={recoveryCodes} onDismiss={() => setRecoveryCodes(null)} />
@@ -151,7 +151,7 @@ export function TwoFactorSection() {
 
       {mode === "off" && (
         <div className="flex items-center gap-3">
-          <span className="rounded bg-slate-100 px-2 py-1 text-[11px] text-slate-700">
+          <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-1 text-[11px] text-slate-700 dark:text-slate-300">
             {t("statusOff")}
           </span>
           <Button size="sm" variant="accent" onClick={handleStart} disabled={busy}>
@@ -161,7 +161,7 @@ export function TwoFactorSection() {
       )}
 
       {mode === "enrolling" && setup && (
-        <div className="space-y-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+        <div className="space-y-3 rounded-md border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-3 text-xs text-amber-900">
           <p className="font-medium">{t("scanTitle")}</p>
           <p>{t("scanHint")}</p>
           <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
@@ -172,14 +172,14 @@ export function TwoFactorSection() {
                 width={220}
                 height={220}
                 unoptimized
-                className="rounded border border-amber-300 bg-white"
+                className="rounded border border-amber-300 bg-white dark:bg-slate-900"
               />
             ) : (
-              <div className="h-[220px] w-[220px] animate-pulse rounded border border-amber-200 bg-white/60" />
+              <div className="h-[220px] w-[220px] animate-pulse rounded border border-amber-200 dark:border-amber-500/30 bg-white/60" />
             )}
             <div className="flex-1 space-y-2">
               <p>{t("manualKeyHint")}</p>
-              <code className="block break-all rounded bg-white px-2 py-1.5 font-mono text-[11px] text-slate-900">
+              <code className="block break-all rounded bg-white dark:bg-slate-900 px-2 py-1.5 font-mono text-[11px] text-slate-900 dark:text-slate-100">
                 {setup.secret}
               </code>
             </div>
@@ -213,18 +213,18 @@ export function TwoFactorSection() {
       {mode === "on" && (
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded bg-emerald-100 px-2 py-1 text-[11px] font-medium text-emerald-700">
+            <span className="rounded bg-emerald-100 dark:bg-emerald-500/15 px-2 py-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
               {t("statusOn")}
             </span>
             {status?.lastUsedAt && (
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 {t("lastUsed")}: {status.lastUsedAt.replace("T", " ").slice(0, 19)}
               </span>
             )}
           </div>
           {(confirmDisable || confirmRegenerate) && (
-            <div className="space-y-2 rounded-md border border-slate-200 bg-slate-50 p-3">
-              <p className="text-xs text-slate-700">
+            <div className="space-y-2 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-3">
+              <p className="text-xs text-slate-700 dark:text-slate-300">
                 {confirmDisable ? t("confirmDisableHint") : t("confirmRegenerateHint")}
               </p>
               <div className="flex items-center gap-2">
@@ -269,7 +269,7 @@ export function TwoFactorSection() {
               <Button
                 size="sm"
                 variant="ghost"
-                className="text-red-600 hover:bg-red-50"
+                className="text-red-600 dark:text-red-400 hover:bg-red-50"
                 onClick={() => setConfirmDisable(true)}
               >
                 {t("disableAction")}
@@ -296,14 +296,14 @@ function RecoveryCodesPanel({ codes, onDismiss }: { codes: string[]; onDismiss: 
   }
 
   return (
-    <div className="space-y-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+    <div className="space-y-3 rounded-md border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-3 text-xs text-amber-900">
       <p className="font-medium">{t("recoveryTitle")}</p>
       <p>{t("recoveryHint")}</p>
       <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-5">
         {codes.map((c) => (
           <code
             key={c}
-            className="rounded bg-white px-2 py-1.5 text-center font-mono text-[11px] text-slate-900"
+            className="rounded bg-white dark:bg-slate-900 px-2 py-1.5 text-center font-mono text-[11px] text-slate-900 dark:text-slate-100"
           >
             {c}
           </code>

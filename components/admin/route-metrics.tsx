@@ -106,8 +106,8 @@ export function AdminRouteMetrics() {
             className={cn(
               "rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors",
               windowSel === w
-                ? "bg-slate-900 text-white"
-                : "border border-slate-200 text-slate-600 hover:bg-slate-50",
+                ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900"
+                : "border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50",
             )}
             data-testid={`route-metrics-window-${w}`}
           >
@@ -116,11 +116,11 @@ export function AdminRouteMetrics() {
         ))}
       </div>
       {error ? (
-        <p className="py-8 text-center text-xs text-slate-500">{error}</p>
+        <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{error}</p>
       ) : !rows ? (
-        <p className="py-8 text-center text-xs text-slate-500">{t("loading")}</p>
+        <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>
       ) : rows.length === 0 ? (
-        <p className="py-8 text-center text-xs text-slate-500">
+        <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">
           {t("section.routeMetrics.empty")}
         </p>
       ) : (
@@ -139,17 +139,17 @@ export function AdminRouteMetrics() {
               return (
                 <div
                   key={id}
-                  className="rounded-lg border border-slate-200 bg-white p-3"
+                  className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3"
                   data-testid="route-metric-card"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-700">
+                    <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-700 dark:text-slate-300">
                       {r.method}
                     </span>
                     <span
                       className={cn(
                         "truncate font-mono text-[12px]",
-                        hot && "font-semibold text-slate-900",
+                        hot && "font-semibold text-slate-900 dark:text-slate-100",
                       )}
                       title={r.uri}
                     >
@@ -158,7 +158,7 @@ export function AdminRouteMetrics() {
                     <span
                       className={cn(
                         "ml-auto shrink-0 font-mono text-sm tabular-nums",
-                        hot && "font-semibold text-slate-900",
+                        hot && "font-semibold text-slate-900 dark:text-slate-100",
                       )}
                     >
                       {formatNumber(r.count)}
@@ -188,7 +188,7 @@ export function AdminRouteMetrics() {
                           return next;
                         });
                       }}
-                      className="mt-2 inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-900"
+                      className="mt-2 inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
                       aria-label={
                         isExpanded
                           ? t("section.routeMetrics.collapseStatusDist")
@@ -204,7 +204,7 @@ export function AdminRouteMetrics() {
                     </button>
                   )}
                   {isExpanded && hasDist && (
-                    <div className="mt-2 rounded-md bg-slate-50 p-2">
+                    <div className="mt-2 rounded-md bg-slate-50 dark:bg-slate-800/50 p-2">
                       <StatusDistribution dist={r.statusDistribution} total={r.count} t={t} />
                     </div>
                   )}
@@ -282,7 +282,7 @@ export function AdminRouteMetrics() {
                               ? t("section.routeMetrics.collapseStatusDist")
                               : t("section.routeMetrics.expandStatusDist")
                           }
-                          className="rounded p-0.5 text-slate-400 hover:text-slate-900"
+                          className="rounded p-0.5 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-100"
                           data-testid="route-metric-toggle"
                         >
                           {isExpanded ? (
@@ -296,13 +296,13 @@ export function AdminRouteMetrics() {
                     <TD
                       className={cn(
                         "max-w-[280px] truncate font-mono text-[12px]",
-                        hot && "font-semibold text-slate-900",
+                        hot && "font-semibold text-slate-900 dark:text-slate-100",
                       )}
                     >
                       {r.uri}
                     </TD>
                     <TD>
-                      <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-700">
+                      <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-700 dark:text-slate-300">
                         {r.method}
                       </span>
                     </TD>
@@ -315,21 +315,21 @@ export function AdminRouteMetrics() {
                       {formatNumber(r.count)}
                     </TD>
                     {showP50 && (
-                      <TD className="text-right tabular-nums font-mono text-slate-600">
+                      <TD className="text-right tabular-nums font-mono text-slate-600 dark:text-slate-300">
                         {r.p50Millis.toFixed(1)}
                       </TD>
                     )}
-                    <TD className="text-right tabular-nums font-mono text-slate-600">
+                    <TD className="text-right tabular-nums font-mono text-slate-600 dark:text-slate-300">
                       {r.p95Millis.toFixed(1)}
                     </TD>
-                    <TD className="text-right tabular-nums font-mono text-slate-600">
+                    <TD className="text-right tabular-nums font-mono text-slate-600 dark:text-slate-300">
                       {r.p99Millis.toFixed(1)}
                     </TD>
                     <TD className="text-right">
                       <span
                         className={cn(
                           "inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono text-[11px] tabular-nums",
-                          highError ? "bg-slate-900 text-white" : "text-slate-600",
+                          highError ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900" : "text-slate-600 dark:text-slate-300",
                         )}
                         data-testid={highError ? "route-metric-high-error" : undefined}
                       >
@@ -341,7 +341,7 @@ export function AdminRouteMetrics() {
                   {isExpanded && hasDist && (
                     <TR
                       data-testid="route-metric-distribution"
-                      className="bg-slate-50"
+                      className="bg-slate-50 dark:bg-slate-800/50"
                     >
                       <TD />
                       <TD colSpan={showP50 ? 7 : 6} className="py-2">
@@ -378,11 +378,11 @@ function Stat({
 }) {
   return (
     <div>
-      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400">{label}</p>
+      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
       <p
         className={cn(
           "mt-0.5 inline-flex items-center gap-1 font-mono tabular-nums",
-          emphasized ? "rounded bg-slate-900 px-1 text-white" : "text-slate-700",
+          emphasized ? "rounded bg-slate-900 dark:bg-white px-1 text-white dark:text-slate-900" : "text-slate-700 dark:text-slate-300",
         )}
       >
         {icon}
@@ -409,8 +409,8 @@ function SortableHeader({
         type="button"
         onClick={onClick}
         className={cn(
-          "inline-flex items-center gap-1 transition-colors hover:text-slate-900",
-          active ? "text-accent-700" : "text-slate-500",
+          "inline-flex items-center gap-1 transition-colors hover:text-slate-900 dark:hover:text-slate-100",
+          active ? "text-accent-700 dark:text-accent-400" : "text-slate-500 dark:text-slate-400",
         )}
       >
         {label}
@@ -437,7 +437,7 @@ function StatusDistribution({
   const entries = Object.entries(dist).sort(([a], [b]) => a.localeCompare(b));
   return (
     <div className="flex flex-wrap items-center gap-2 px-1 text-[11px]">
-      <span className="text-slate-500">{t("section.routeMetrics.statusDist")}</span>
+      <span className="text-slate-500 dark:text-slate-400">{t("section.routeMetrics.statusDist")}</span>
       {entries.map(([status, count]) => {
         const pct = total > 0 ? (count / total) * 100 : 0;
         const first = status.charAt(0);
@@ -449,10 +449,10 @@ function StatusDistribution({
             className={cn(
               "inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono",
               isError
-                ? "bg-slate-900 text-white"
+                ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900"
                 : isClient
-                  ? "border border-slate-300 text-slate-700"
-                  : "bg-slate-100 text-slate-700",
+                  ? "border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
             )}
             data-testid={`status-pill-${status}`}
           >

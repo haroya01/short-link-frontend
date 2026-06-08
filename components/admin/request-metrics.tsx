@@ -65,8 +65,8 @@ export function AdminRequestMetrics() {
               className={cn(
                 "rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors",
                 windowSel === w
-                  ? "bg-slate-900 text-white"
-                  : "border border-slate-200 text-slate-600 hover:bg-slate-50",
+                  ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900"
+                  : "border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50",
               )}
               data-testid={`request-metrics-window-${w}`}
             >
@@ -80,8 +80,8 @@ export function AdminRequestMetrics() {
           className={cn(
             "ml-auto inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium transition-colors",
             showMock
-              ? "bg-amber-100 text-amber-900 ring-1 ring-amber-300"
-              : "border border-slate-200 text-slate-500 hover:bg-slate-50",
+              ? "bg-amber-100 dark:bg-amber-500/15 text-amber-900 ring-1 ring-amber-300"
+              : "border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50",
           )}
           data-testid="request-metrics-mock-toggle"
         >
@@ -162,15 +162,15 @@ function RouteAggregateCard({
 }) {
   const highError = row.errorRate >= 0.05;
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-3" data-testid="request-route-card">
+    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3" data-testid="request-route-card">
       <div className="flex items-center gap-2">
-        <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-700">
+        <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-700 dark:text-slate-300">
           {row.method}
         </span>
-        <span className="truncate font-mono text-[12px] text-slate-900" title={row.route}>
+        <span className="truncate font-mono text-[12px] text-slate-900 dark:text-slate-100" title={row.route}>
           {row.route}
         </span>
-        <span className="ml-auto shrink-0 font-mono text-sm tabular-nums text-slate-900">
+        <span className="ml-auto shrink-0 font-mono text-sm tabular-nums text-slate-900 dark:text-slate-100">
           {formatNumber(row.count)}
         </span>
       </div>
@@ -190,10 +190,10 @@ function RouteAggregateCard({
           {Object.entries(row.outcomeDistribution).map(([outcome, count]) => (
             <span
               key={outcome}
-              className="inline-flex items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 text-[10px] text-slate-600"
+              className="inline-flex items-center gap-1 rounded-full bg-slate-50 dark:bg-slate-800/50 px-2 py-0.5 text-[10px] text-slate-600 dark:text-slate-300"
             >
               <span className="font-medium">{outcome}</span>
-              <span className="tabular-nums text-slate-400">{formatNumber(count)}</span>
+              <span className="tabular-nums text-slate-400 dark:text-slate-500">{formatNumber(count)}</span>
             </span>
           ))}
         </div>
@@ -250,7 +250,7 @@ function OutcomeLookup({
         className="flex gap-2"
       >
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -263,12 +263,12 @@ function OutcomeLookup({
         </Button>
       </form>
 
-      {error && <p className="mt-2 text-xs text-slate-500">{error}</p>}
+      {error && <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">{error}</p>}
       {result && (
-        <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3">
+        <div className="mt-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-[12px] text-slate-900">/{result.shortCode}</span>
-            <span className="font-mono text-sm tabular-nums text-slate-900">
+            <span className="font-mono text-[12px] text-slate-900 dark:text-slate-100">/{result.shortCode}</span>
+            <span className="font-mono text-sm tabular-nums text-slate-900 dark:text-slate-100">
               {formatNumber(result.total)}
             </span>
           </div>
@@ -278,17 +278,17 @@ function OutcomeLookup({
                 const pct = result.total > 0 ? count / result.total : 0;
                 return (
                   <div key={outcome} className="flex items-center gap-2 text-[11px]">
-                    <span className="w-24 shrink-0 truncate font-medium text-slate-700">{outcome}</span>
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                    <span className="w-24 shrink-0 truncate font-medium text-slate-700 dark:text-slate-300">{outcome}</span>
+                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                       <div
                         className="h-full rounded-full bg-accent-500"
                         style={{ width: `${(pct * 100).toFixed(1)}%` }}
                       />
                     </div>
-                    <span className="w-12 shrink-0 text-right tabular-nums text-slate-500">
+                    <span className="w-12 shrink-0 text-right tabular-nums text-slate-500 dark:text-slate-400">
                       {(pct * 100).toFixed(1)}%
                     </span>
-                    <span className="w-10 shrink-0 text-right tabular-nums font-mono text-slate-500">
+                    <span className="w-10 shrink-0 text-right tabular-nums font-mono text-slate-500 dark:text-slate-400">
                       {formatNumber(count)}
                     </span>
                   </div>
@@ -296,7 +296,7 @@ function OutcomeLookup({
               })}
             </div>
           ) : (
-            <p className="mt-2 text-[11px] text-slate-500">
+            <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
               {t("section.requestMetrics.outcomes.empty")}
             </p>
           )}
@@ -375,16 +375,16 @@ function RawRow({
   row: AdminRequestRawRow;
   fmt: ReturnType<typeof useFormatter>;
 }) {
-  const outcomeStyle = row.status >= 500 ? "bg-slate-900 text-white" : row.status >= 400 ? "bg-slate-100 text-slate-700" : "bg-emerald-50 text-emerald-700";
+  const outcomeStyle = row.status >= 500 ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900" : row.status >= 400 ? "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400";
   return (
     <div
-      className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-2.5 py-1.5"
+      className="flex items-center gap-2 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1.5"
       data-testid="request-raw-row"
     >
-      <span className="shrink-0 rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-700">
+      <span className="shrink-0 rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-700 dark:text-slate-300">
         {row.method}
       </span>
-      <span className="truncate font-mono text-[11px] text-slate-900" title={row.route}>
+      <span className="truncate font-mono text-[11px] text-slate-900 dark:text-slate-100" title={row.route}>
         {row.route}
       </span>
       <span
@@ -395,14 +395,14 @@ function RawRow({
       >
         {row.status}
       </span>
-      <span className="hidden shrink-0 truncate text-[10px] text-slate-500 sm:inline">
+      <span className="hidden shrink-0 truncate text-[10px] text-slate-500 dark:text-slate-400 sm:inline">
         {row.outcome}
       </span>
-      <span className="ml-auto shrink-0 font-mono text-[11px] tabular-nums text-slate-500">
+      <span className="ml-auto shrink-0 font-mono text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
         {row.latencyMs}ms
       </span>
       <span
-        className="shrink-0 font-mono text-[10px] tabular-nums text-slate-400"
+        className="shrink-0 font-mono text-[10px] tabular-nums text-slate-400 dark:text-slate-500"
         title={row.occurredAt}
       >
         {fmt.relativeTime(new Date(row.occurredAt), { now: new Date() })}
@@ -414,7 +414,7 @@ function RawRow({
 function Sub({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+      <h3 className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
         {title}
       </h3>
       {children}
@@ -423,7 +423,7 @@ function Sub({ title, children }: { title: string; children: React.ReactNode }) 
 }
 
 function Empty({ msg }: { msg: string }) {
-  return <p className="py-6 text-center text-xs text-slate-500">{msg}</p>;
+  return <p className="py-6 text-center text-xs text-slate-500 dark:text-slate-400">{msg}</p>;
 }
 
 function MetricStat({
@@ -439,11 +439,11 @@ function MetricStat({
 }) {
   return (
     <div>
-      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400">{label}</p>
+      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
       <p
         className={cn(
           "mt-0.5 inline-flex items-center gap-1 font-mono tabular-nums",
-          emphasized ? "rounded bg-slate-900 px-1 text-white" : "text-slate-700",
+          emphasized ? "rounded bg-slate-900 dark:bg-white px-1 text-white dark:text-slate-900" : "text-slate-700 dark:text-slate-300",
         )}
       >
         {icon}

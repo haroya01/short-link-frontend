@@ -122,12 +122,12 @@ export function AdminTopLinksTable({
           <TD>
             <Link
               href={`/links/stats/${l.shortCode}`}
-              className="font-mono text-sm font-medium text-slate-900 hover:underline"
+              className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100 hover:underline"
             >
               /{l.shortCode}
             </Link>
           </TD>
-          <TD className="text-xs text-slate-500">{l.ownerEmail ?? t("table.anonymous")}</TD>
+          <TD className="text-xs text-slate-500 dark:text-slate-400">{l.ownerEmail ?? t("table.anonymous")}</TD>
           <TD className="text-right tabular-nums font-medium">{formatNumber(l.clickCount)}</TD>
         </TR>
       ))}
@@ -156,7 +156,7 @@ function TopTableShell({
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   if (empty && page === 0) {
-    return <p className="py-8 text-center text-xs text-slate-500">{t("noData")}</p>;
+    return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noData")}</p>;
   }
 
   return (
@@ -195,7 +195,7 @@ function PageControls({
 
   return (
     <div className="flex items-center justify-between gap-2">
-      <span className="text-xs text-slate-500">
+      <span className="text-xs text-slate-500 dark:text-slate-400">
         {t("page", { page: page + 1, total: totalPages })}
       </span>
       <div className="flex items-center gap-1">
@@ -210,7 +210,7 @@ function PageControls({
         </Button>
         {numbers.map((n, i) =>
           n === "…" ? (
-            <span key={`gap-${i}`} className="px-1 text-xs text-slate-400">
+            <span key={`gap-${i}`} className="px-1 text-xs text-slate-400 dark:text-slate-500">
               …
             </span>
           ) : (
