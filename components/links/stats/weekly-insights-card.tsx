@@ -38,7 +38,7 @@ export function WeeklyInsightsCard() {
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white">
+      <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         <div className="flex items-center justify-between p-5">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-5 w-16 rounded-full" />
@@ -58,28 +58,28 @@ export function WeeklyInsightsCard() {
 
   if (!data || data.totalClicks === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/50 p-5">
-        <p className="text-sm font-medium text-slate-700">{t("eyebrow")}</p>
-        <p className="mt-1 text-xs text-slate-500">{t("emptyDesc")}</p>
+      <div className="rounded-lg border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 p-5">
+        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("eyebrow")}</p>
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t("emptyDesc")}</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white">
+    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
       <button
         type="button"
         onClick={() => setMobileOpen((v) => !v)}
         aria-expanded={mobileOpen}
         className="flex w-full items-baseline justify-between gap-3 p-5 text-left sm:cursor-default"
       >
-        <p className="text-sm font-medium text-slate-700">{t("eyebrow")}</p>
+        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("eyebrow")}</p>
         <div className="flex items-center gap-2">
           <DeltaBadge delta={data.deltaPercent} t={t} fmt={fmt} />
           <ChevronDown
             aria-hidden
             className={cn(
-              "h-4 w-4 text-slate-400 transition-transform sm:hidden",
+              "h-4 w-4 text-slate-400 dark:text-slate-500 transition-transform sm:hidden",
               mobileOpen && "rotate-180",
             )}
           />
@@ -148,7 +148,7 @@ function DeltaBadge({
 }) {
   if (delta == null) {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-500">
+      <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
         <Minus className="h-3 w-3" />
         {t("noBaseline")}
       </span>
@@ -158,7 +158,7 @@ function DeltaBadge({
   const flat = Math.abs(delta) < 0.005;
   const Icon = flat ? Minus : positive ? ArrowUpRight : ArrowDownRight;
   const tone = flat
-    ? "bg-slate-100 text-slate-600"
+    ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
     : positive
       ? "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200"
       : "bg-red-50 text-red-700 ring-1 ring-inset ring-red-200";
@@ -185,24 +185,24 @@ function Stat({
 }) {
   const content = (
     <>
-      <p className="text-xs text-slate-500">{label}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
       <p
         className={
           (mono ? "font-mono " : "") +
-          "mt-1 truncate text-lg font-semibold text-slate-900"
+          "mt-1 truncate text-lg font-semibold text-slate-900 dark:text-slate-100"
         }
         title={value}
       >
         {value}
       </p>
-      {sub && <p className="mt-0.5 truncate text-[11px] text-slate-500">{sub}</p>}
+      {sub && <p className="mt-0.5 truncate text-[11px] text-slate-500 dark:text-slate-400">{sub}</p>}
     </>
   );
   if (href) {
     return (
       <Link
         href={href}
-        className="group block rounded-md border border-transparent p-1.5 -m-1.5 hover:border-slate-200 hover:bg-slate-50"
+        className="group block rounded-md border border-transparent p-1.5 -m-1.5 hover:border-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
       >
         {content}
         <ArrowRight className="mt-1 h-3 w-3 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-500" />

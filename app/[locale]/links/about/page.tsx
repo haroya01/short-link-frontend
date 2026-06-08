@@ -31,21 +31,21 @@ export default async function AboutPage({
   return (
     <article className="container max-w-3xl space-y-8 py-16">
       <header className="space-y-3">
-        <h1 className="text-3xl font-semibold tracking-headline text-slate-900">{t("title")}</h1>
-        <p className="text-base leading-relaxed text-slate-600">{t("lead")}</p>
+        <h1 className="text-3xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
+        <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">{t("lead")}</p>
       </header>
 
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold tracking-headline text-slate-900">{t("section1Title")}</h2>
-        <p className="text-sm leading-relaxed text-slate-600">{t("section1Body")}</p>
+        <h2 className="text-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("section1Title")}</h2>
+        <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{t("section1Body")}</p>
       </section>
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold tracking-headline text-slate-900">{t("section2Title")}</h2>
-        <p className="text-sm leading-relaxed text-slate-600">{t("section2Body")}</p>
+        <h2 className="text-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("section2Title")}</h2>
+        <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{t("section2Body")}</p>
       </section>
       <section className="space-y-2">
-        <h2 className="text-lg font-semibold tracking-headline text-slate-900">{t("section3Title")}</h2>
-        <p className="text-sm leading-relaxed text-slate-600">{t("section3Body")}</p>
+        <h2 className="text-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("section3Title")}</h2>
+        <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{t("section3Body")}</p>
       </section>
 
       <Link

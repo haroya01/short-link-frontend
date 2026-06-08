@@ -53,8 +53,8 @@ export default function AuthCallbackPage() {
   if (error) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-xl font-semibold tracking-headline text-slate-900">{t("callbackFailed")}</h1>
-        <p className="mt-2 text-sm text-slate-500">{error}</p>
+        <h1 className="text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("callbackFailed")}</h1>
+        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{error}</p>
         <Link href="/login" className="mt-6 inline-block">
           <Button variant="outline">{t("backToLogin")}</Button>
         </Link>
@@ -64,8 +64,8 @@ export default function AuthCallbackPage() {
 
   return (
     <div className="container max-w-md py-20 text-center">
-      <Loader2 className="mx-auto h-6 w-6 animate-spin text-slate-500" />
-      <p className="mt-3 text-sm text-slate-500">{t("callbackProcessing")}</p>
+      <Loader2 className="mx-auto h-6 w-6 animate-spin text-slate-500 dark:text-slate-400" />
+      <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">{t("callbackProcessing")}</p>
     </div>
   );
 }

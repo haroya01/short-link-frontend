@@ -48,10 +48,10 @@ export default function CampaignsPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("authTitle")}
         </h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-slate-500">
+        <p className="mt-2 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
           {t("authDesc")}
         </p>
         <Link href="/login" className="mt-6 inline-block">
@@ -65,10 +65,10 @@ export default function CampaignsPage() {
     <div className="container max-w-5xl space-y-6 py-10">
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
             {t("title")}
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             {items === null
               ? t("subtitleLoading")
               : t("subtitleCount", { count: items.length })}
@@ -105,21 +105,21 @@ function CampaignList({ items }: { items: CampaignSummary[] }) {
         <li key={c.id}>
           <Link
             href={`/campaigns/${c.id}`}
-            className="profile-card group block rounded-2xl border border-slate-200 bg-white px-4 py-4 text-left"
+            className="profile-card group block rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4 text-left"
           >
             <div className="flex items-center justify-between gap-2">
               <StatusBadge status={c.status} />
-              <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 {t("batchCount", { count: c.batchCount })}
               </span>
             </div>
-            <h3 className="mt-3 text-sm font-medium leading-snug text-slate-900 line-clamp-2">
+            <h3 className="mt-3 text-sm font-medium leading-snug text-slate-900 dark:text-slate-100 line-clamp-2">
               {c.name}
             </h3>
-            <p className="mt-2 text-[12px] leading-snug text-slate-500">
+            <p className="mt-2 text-[12px] leading-snug text-slate-500 dark:text-slate-400">
               {formatPeriod(c.startsAt, c.endsAt, locale)}
             </p>
-            <div className="mt-3 flex items-center justify-end gap-1.5 text-[12px] font-medium text-accent-700 opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="mt-3 flex items-center justify-end gap-1.5 text-[12px] font-medium text-accent-700 dark:text-accent-400 opacity-0 transition-opacity group-hover:opacity-100">
               {t("details")} <ArrowRight className="h-3.5 w-3.5" aria-hidden />
             </div>
           </Link>
@@ -132,10 +132,10 @@ function CampaignList({ items }: { items: CampaignSummary[] }) {
 function StatusBadge({ status }: { status: CampaignSummary["status"] }) {
   const t = useTranslations("campaignStatus");
   const palette: Record<CampaignSummary["status"], { bg: string; text: string }> = {
-    DRAFT: { bg: "bg-slate-100", text: "text-slate-700" },
-    ACTIVE: { bg: "bg-accent-50", text: "text-accent-700" },
+    DRAFT: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-700 dark:text-slate-300" },
+    ACTIVE: { bg: "bg-accent-50 dark:bg-accent-500/10", text: "text-accent-700 dark:text-accent-400" },
     ENDED: { bg: "bg-amber-50", text: "text-amber-700" },
-    ARCHIVED: { bg: "bg-slate-100", text: "text-slate-500" },
+    ARCHIVED: { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-500 dark:text-slate-400" },
   };
   const { bg, text } = palette[status];
   return (
@@ -153,7 +153,7 @@ function CampaignListSkeleton() {
       {Array.from({ length: 6 }).map((_, i) => (
         <li
           key={i}
-          className="rounded-2xl border border-slate-200 bg-white px-4 py-4"
+          className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4"
         >
           <Skeleton className="h-4 w-16" />
           <Skeleton className="mt-3 h-5 w-3/4" />

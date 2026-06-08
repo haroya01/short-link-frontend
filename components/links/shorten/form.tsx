@@ -115,7 +115,7 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
             onClick={() => setShowAdvanced((v) => !v)}
             aria-expanded={showAdvanced}
             aria-controls="shorten-advanced-section"
-            className="inline-flex items-center gap-1 text-xs text-slate-500 transition-colors hover:text-slate-900"
+            className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
           >
             <ChevronDown
               className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${showAdvanced ? "rotate-180" : ""}`}
@@ -139,10 +139,10 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
             }`}
           >
             <div className="overflow-hidden">
-              <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+              <div className="space-y-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="block min-w-0 space-y-1.5">
-                    <span className="text-[12px] font-medium text-slate-700">
+                    <span className="text-[12px] font-medium text-slate-700 dark:text-slate-300">
                       {t("customCodeLabel")}
                     </span>
                     <Input
@@ -156,7 +156,7 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
                     />
                   </label>
                   <label className="block min-w-0 space-y-1.5">
-                    <span className="text-[12px] font-medium text-slate-700">
+                    <span className="text-[12px] font-medium text-slate-700 dark:text-slate-300">
                       {t("expiresAtLabel")}
                     </span>
                     <Input

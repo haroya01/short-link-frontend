@@ -48,7 +48,7 @@ export default function HomePage() {
        * editorial moment. The hairline eyebrow on either side of the tagline stays as a subtle
        * grid-break, and the cascade-in still fires through `.hero-stagger`, opacity-only.
        */}
-      <section className="relative isolate overflow-hidden bg-white">
+      <section className="relative isolate overflow-hidden bg-white dark:bg-slate-900">
         <div className="container relative z-10 max-w-3xl py-20 sm:py-28">
           <div className="hero-stagger mb-10 space-y-4 sm:mb-12">
             <div
@@ -56,30 +56,30 @@ export default function HomePage() {
               style={{ ["--hi" as string]: 0 } as React.CSSProperties}
             >
               <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
                 {t("tagline")}
               </p>
               <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
             </div>
             <h1
               data-testid="home-hero-heading"
-              className={`text-balance text-center font-semibold tracking-headline text-slate-900 ${headlineSizeClass}`}
+              className={`text-balance text-center font-semibold tracking-headline text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
               <span className="sm:hidden">
                 <span>{t("mobileHeadline1")}</span>
                 <br />
-                <span className="text-slate-500">{t("mobileHeadline2")}</span>
+                <span className="text-slate-500 dark:text-slate-400">{t("mobileHeadline2")}</span>
               </span>
               <span className="hidden sm:inline">
                 <span>{t("headline1")}</span>
                 <br />
-                <span className="text-slate-500">{t("headline2")}</span>
+                <span className="text-slate-500 dark:text-slate-400">{t("headline2")}</span>
               </span>
             </h1>
             <p
               data-testid="home-hero-subhead"
-              className="mx-auto max-w-[320px] text-balance text-center text-[14px] leading-[1.7] text-slate-500 sm:max-w-md sm:text-[15px] sm:leading-relaxed"
+              className="mx-auto max-w-[320px] text-balance text-center text-[14px] leading-[1.7] text-slate-500 dark:text-slate-400 sm:max-w-md sm:text-[15px] sm:leading-relaxed"
               style={{ ["--hi" as string]: 2 } as React.CSSProperties}
             >
               <span className="sm:hidden">{t("mobileSubhead")}</span>
@@ -147,7 +147,7 @@ export default function HomePage() {
                 ) : (
                   <Link
                     href="/links"
-                    className="group flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                    className="group flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 transition hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                   >
                     <span>{t("ctaSeeLinks")}</span>
                     <ArrowRight className="h-4 w-4 shrink-0 transition group-hover:translate-x-0.5" />
@@ -156,10 +156,10 @@ export default function HomePage() {
               </div>
             ) : !authenticated ? (
               <div className="space-y-2 text-center">
-                <p className="text-xs text-slate-500">{t("anonymousHint")}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t("anonymousHint")}</p>
                 <Link
                   href="/demo"
-                  className="inline-flex items-center gap-1 text-xs text-accent-700 hover:text-accent-800"
+                  className="inline-flex items-center gap-1 text-xs text-accent-700 dark:text-accent-400 hover:text-accent-800"
                 >
                   {t("demoLink")} <ArrowRight className="h-3 w-3" />
                 </Link>
@@ -174,7 +174,7 @@ export default function HomePage() {
             JS to fade it out. `motion-safe:animate-bounce` opts out for prefers-reduced-motion. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-4 hidden flex-col items-center gap-0.5 text-[11px] font-medium text-slate-400 sm:flex"
+          className="pointer-events-none absolute inset-x-0 bottom-4 hidden flex-col items-center gap-0.5 text-[11px] font-medium text-slate-400 dark:text-slate-500 sm:flex"
         >
           <span>{t("scrollHint")}</span>
           <ChevronDown className="h-4 w-4 motion-safe:animate-bounce" />
@@ -201,11 +201,11 @@ export default function HomePage() {
         {totals != null && showStats ? (
           <HomeCounters totals={totals} />
         ) : (
-          <dl className="grid grid-cols-2 divide-x divide-slate-100 text-center" aria-hidden>
+          <dl className="grid grid-cols-2 divide-x divide-slate-100 dark:divide-slate-800 text-center" aria-hidden>
             {[0, 1].map((i) => (
               <div key={i} className="px-6 py-2">
-                <div className="mx-auto h-12 w-24 animate-pulse rounded bg-slate-100 sm:h-14" />
-                <div className="mx-auto mt-2 h-3 w-16 rounded bg-slate-50" />
+                <div className="mx-auto h-12 w-24 animate-pulse rounded bg-slate-100 dark:bg-slate-800 sm:h-14" />
+                <div className="mx-auto mt-2 h-3 w-16 rounded bg-slate-50 dark:bg-slate-800/50" />
               </div>
             ))}
           </dl>
@@ -259,23 +259,23 @@ function Section({
 }) {
   const hasHeader = eyebrow || title || subhead;
   return (
-    <section className="bg-white">
+    <section className="bg-white dark:bg-slate-900">
       <div className={"container py-16 sm:py-20 " + (wide ? "max-w-5xl" : "max-w-3xl")}>
         <div className="section-divider mx-auto mb-12 w-full max-w-xl" aria-hidden />
         {hasHeader && (
           <div className="mb-10 space-y-3 text-center sm:mb-14">
             {eyebrow && (
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
                 {eyebrow}
               </p>
             )}
             {title && (
-              <h2 className="text-balance text-[26px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[34px]">
+              <h2 className="text-balance text-[26px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[34px]">
                 {title}
               </h2>
             )}
             {subhead && (
-              <p className="mx-auto max-w-md text-balance text-[14px] leading-relaxed text-slate-500">
+              <p className="mx-auto max-w-md text-balance text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
                 {subhead}
               </p>
             )}

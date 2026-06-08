@@ -33,13 +33,13 @@ export function CampaignOnboarding() {
   return (
     <section className="space-y-8">
       <header className="text-center">
-        <p className="text-[12px] font-medium uppercase tracking-wider text-accent-700">
+        <p className="text-[12px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
           {t("eyebrow")}
         </p>
-        <h2 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[32px]">
+        <h2 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
           {t("title")}
         </h2>
-        <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-relaxed text-slate-500">
+        <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
           {t("body")}
         </p>
       </header>
@@ -65,7 +65,7 @@ export function CampaignOnboarding() {
             <ArrowRight className="h-4 w-4" aria-hidden />
           </Button>
         </Link>
-        <p className="text-[12px] text-slate-500">
+        <p className="text-[12px] text-slate-500 dark:text-slate-400">
           {t("createHint")}
         </p>
       </div>
@@ -85,17 +85,17 @@ function UseCaseCard({
   body: string;
 }) {
   return (
-    <li className="rounded-2xl border border-slate-200 bg-white px-4 py-4 transition-shadow hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)]">
+    <li className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4 transition-shadow hover:shadow-[0_4px_16px_rgba(15,23,42,0.06)]">
       <div className="flex items-center gap-2">
-        <span className="grid h-7 w-7 place-items-center rounded-lg bg-accent-50 text-accent-700">
+        <span className="grid h-7 w-7 place-items-center rounded-lg bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400">
           {icon}
         </span>
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {label}
         </span>
       </div>
-      <h3 className="mt-3 text-sm font-medium text-slate-900">{title}</h3>
-      <p className="mt-1.5 text-[12px] leading-snug text-slate-500">{body}</p>
+      <h3 className="mt-3 text-sm font-medium text-slate-900 dark:text-slate-100">{title}</h3>
+      <p className="mt-1.5 text-[12px] leading-snug text-slate-500 dark:text-slate-400">{body}</p>
     </li>
   );
 }
@@ -105,19 +105,19 @@ function FlowStrip() {
   const t = useTranslations("campaignsApp.onboarding");
   const steps = t.raw("flowSteps") as string[];
   return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
-      <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-4 py-4">
+      <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
         {t("flowLabel")}
       </p>
       <div className="mt-3 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-1.5">
         {steps.map((step, i) => (
           <div key={step} className="flex items-center gap-1.5">
-            <span className="flex-1 rounded-lg bg-white px-3 py-2 text-center text-[12px] font-medium text-slate-700 sm:flex-none sm:px-3">
+            <span className="flex-1 rounded-lg bg-white dark:bg-slate-900 px-3 py-2 text-center text-[12px] font-medium text-slate-700 dark:text-slate-300 sm:flex-none sm:px-3">
               {step}
             </span>
             {i < steps.length - 1 && (
               <ArrowRight
-                className="hidden h-3.5 w-3.5 text-slate-400 sm:block"
+                className="hidden h-3.5 w-3.5 text-slate-400 dark:text-slate-500 sm:block"
                 aria-hidden
               />
             )}

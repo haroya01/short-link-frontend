@@ -64,7 +64,7 @@ export default function VisualFixturePage({
   const renderer = FIXTURES[params.slug];
   if (!renderer) notFound();
   return (
-    <main className="flex min-h-screen justify-center bg-white py-12">
+    <main className="flex min-h-screen justify-center bg-white dark:bg-slate-900 py-12">
       {/* Fixed width (no padding-based subtraction) so the snapshot has identical pixel
           dimensions across OSes — padding-derived widths rounded differently between macOS dev
           (400px) and Linux CI (401px), and Playwright's toHaveScreenshot requires the size to

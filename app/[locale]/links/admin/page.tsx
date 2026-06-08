@@ -113,16 +113,16 @@ export default function AdminPage() {
   return (
     <div className="container max-w-6xl space-y-5 py-10">
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500">
+        <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500 dark:text-slate-400">
           {t("label")}
         </p>
-        <h2 className="mt-1 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">{t("title")}</h2>
-        <p className="mt-1 text-sm text-slate-500">{t("subtitle")}</p>
+        <h2 className="mt-1 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">{t("title")}</h2>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t("subtitle")}</p>
       </div>
 
       <AdminAccessToken />
 
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-200 sm:grid-cols-3 lg:grid-cols-6">
         <Kpi
           label={t("kpi.users")}
           value={formatNumber(data.totals?.users ?? 0)}
@@ -243,7 +243,7 @@ export default function AdminPage() {
           title={t("section.redirectPerf.title")}
           description={t("section.redirectPerf.desc")}
         >
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-4 lg:grid-cols-7">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-200 sm:grid-cols-4 lg:grid-cols-7">
             <Kpi
               label={t("section.redirectPerf.p50")}
               value={`${(health.redirect.p50Millis ?? 0).toFixed(1)}ms`}
@@ -328,21 +328,21 @@ function Kpi({
   muted?: boolean;
 }) {
   return (
-    <div className="bg-white p-4">
+    <div className="bg-white dark:bg-slate-900 p-4">
       <div className="flex items-center justify-between">
-        <span className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-500">
+        <span className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {label}
         </span>
         <Icon
           className={`h-3.5 w-3.5 shrink-0 ${
-            accent ? "text-accent-600" : muted ? "text-slate-500" : "text-slate-500"
+            accent ? "text-accent-600 dark:text-accent-400" : muted ? "text-slate-500 dark:text-slate-400" : "text-slate-500 dark:text-slate-400"
           }`}
         />
       </div>
-      <p className="mt-2 font-mono text-lg font-semibold tracking-tight text-slate-900 tabular-nums">
+      <p className="mt-2 font-mono text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100 tabular-nums">
         {value}
       </p>
-      {sub && <p className="mt-1 truncate text-[10px] text-slate-500">{sub}</p>}
+      {sub && <p className="mt-1 truncate text-[10px] text-slate-500 dark:text-slate-400">{sub}</p>}
     </div>
   );
 }

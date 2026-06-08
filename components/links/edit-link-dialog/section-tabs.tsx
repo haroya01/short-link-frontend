@@ -11,7 +11,7 @@ type Props = {
 
 export function SectionTabs({ active, onSelect, t }: Props) {
   return (
-    <div className="mb-4 flex gap-1 rounded-md bg-slate-100 p-1 text-xs">
+    <div className="mb-4 flex gap-1 rounded-md bg-slate-100 dark:bg-slate-800 p-1 text-xs">
       <Pill active={active === "basic"} onClick={() => onSelect("basic")}>
         {t("tabs.basic")}
       </Pill>
@@ -44,8 +44,8 @@ function Pill({
       className={
         "flex-1 rounded px-2 py-1.5 text-center transition " +
         (active
-          ? "bg-white font-medium text-slate-900 shadow-sm"
-          : "text-slate-600 hover:text-slate-900")
+          ? "bg-white dark:bg-slate-900 font-medium text-slate-900 dark:text-slate-100 shadow-sm"
+          : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100")
       }
     >
       {children}

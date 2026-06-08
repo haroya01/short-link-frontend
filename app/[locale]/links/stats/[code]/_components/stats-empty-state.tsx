@@ -27,11 +27,11 @@ export function StatsEmptyState({ shortUrl }: { shortUrl: string }) {
         className="pointer-events-none absolute -left-12 -bottom-12 h-40 w-40 rounded-full bg-accent-200/20 blur-3xl"
       />
       <div className="relative">
-        <span className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-white text-accent-700 shadow-sm">
+        <span className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-white dark:bg-slate-900 text-accent-700 dark:text-accent-400 shadow-sm">
           <Send className="h-4 w-4" />
         </span>
-        <h3 className="mt-3 text-base font-semibold tracking-headline text-slate-900">{t("title")}</h3>
-        <p className="mx-auto mt-1.5 max-w-md text-[13px] leading-relaxed text-slate-600">
+        <h3 className="mt-3 text-base font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h3>
+        <p className="mx-auto mt-1.5 max-w-md text-[13px] leading-relaxed text-slate-600 dark:text-slate-300">
           {t("description")}
         </p>
         <div className="mt-5 flex justify-center gap-2">

@@ -62,10 +62,10 @@ export default async function SeoLandingPage({
       />
 
       <header className="max-w-2xl">
-        <h1 className="text-balance text-headline-md font-bold leading-[1.15] tracking-headline text-slate-900 sm:text-headline-lg">
+        <h1 className="text-balance text-headline-md font-bold leading-[1.15] tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
           {c.title}
         </h1>
-        <p className="mt-5 text-[17px] leading-relaxed text-slate-600">{c.intro}</p>
+        <p className="mt-5 text-[17px] leading-relaxed text-slate-600 dark:text-slate-300">{c.intro}</p>
         <a
           href={ctaHref}
           className="focus-ring mt-8 inline-flex items-center gap-2 rounded-xl bg-accent-600 px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition-colors hover:bg-accent-700"
@@ -78,30 +78,30 @@ export default async function SeoLandingPage({
       <ul className="mt-16 grid gap-x-8 gap-y-6 sm:grid-cols-2">
         {c.features.map((f) => (
           <li key={f.title} className="flex gap-3">
-            <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 text-accent-600">
+            <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400">
               <Check className="h-3.5 w-3.5" />
             </span>
             <span>
-              <span className="block text-[15px] font-semibold text-slate-900">{f.title}</span>
-              <span className="mt-1 block text-[14px] leading-relaxed text-slate-600">{f.body}</span>
+              <span className="block text-[15px] font-semibold text-slate-900 dark:text-slate-100">{f.title}</span>
+              <span className="mt-1 block text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{f.body}</span>
             </span>
           </li>
         ))}
       </ul>
 
-      <section className="mt-16 border-t border-slate-200 pt-10">
-        <h2 className="text-headline-xs font-bold tracking-headline text-slate-900">FAQ</h2>
+      <section className="mt-16 border-t border-slate-200 dark:border-slate-800 pt-10">
+        <h2 className="text-headline-xs font-bold tracking-headline text-slate-900 dark:text-slate-100">FAQ</h2>
         <dl className="mt-6 space-y-6">
           {c.faq.map((f) => (
             <div key={f.q}>
-              <dt className="text-[15px] font-semibold text-slate-900">{f.q}</dt>
-              <dd className="mt-1.5 text-[14px] leading-relaxed text-slate-600">{f.a}</dd>
+              <dt className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{f.q}</dt>
+              <dd className="mt-1.5 text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{f.a}</dd>
             </div>
           ))}
         </dl>
       </section>
 
-      <div className="mt-16 rounded-2xl bg-slate-50 px-6 py-10 text-center ring-1 ring-slate-200/70">
+      <div className="mt-16 rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-6 py-10 text-center ring-1 ring-slate-200/70">
         <a
           href={ctaHref}
           className="focus-ring inline-flex items-center gap-2 rounded-xl bg-accent-600 px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition-colors hover:bg-accent-700"

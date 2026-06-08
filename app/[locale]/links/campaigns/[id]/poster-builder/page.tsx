@@ -196,7 +196,7 @@ export default function PosterBuilderPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("loginRequired")}
         </h1>
       </div>
@@ -207,22 +207,22 @@ export default function PosterBuilderPage() {
     <div className="container max-w-5xl space-y-6 py-10">
       <Link
         href={`/campaigns/${campaignId}`}
-        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
+        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
       >
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToCampaign")}
       </Link>
 
       <div>
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("title")}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {loading ? (
             <Skeleton className="inline-block h-4 w-48" />
           ) : campaign ? (
             <>
               {t.rich("introCampaign", {
-                name: () => <span className="font-medium text-slate-700">{campaign.name}</span>,
+                name: () => <span className="font-medium text-slate-700 dark:text-slate-300">{campaign.name}</span>,
                 count: batchCount,
               })}
             </>
@@ -230,7 +230,7 @@ export default function PosterBuilderPage() {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-[12px] leading-snug text-slate-600">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 px-4 py-3 text-[12px] leading-snug text-slate-600 dark:text-slate-300">
         {t("toolHint")}
       </div>
 
@@ -251,16 +251,16 @@ export default function PosterBuilderPage() {
         </div>
 
         <aside className="space-y-3">
-          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
-            <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
               {t("targetLabel")}
             </p>
-            <p className="mt-2 text-sm text-slate-700">
+            <p className="mt-2 text-sm text-slate-700 dark:text-slate-300">
               {t.rich("targetSummary", {
                 count: batchCount,
                 pages: batchCount,
                 strong: (chunks) => (
-                  <span className="font-medium text-slate-900">{chunks}</span>
+                  <span className="font-medium text-slate-900 dark:text-slate-100">{chunks}</span>
                 ),
               })}
             </p>
@@ -281,7 +281,7 @@ export default function PosterBuilderPage() {
             {composing ? t("composing") : t("download", { count: batchCount })}
           </Button>
 
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-[11px] leading-snug text-slate-500">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 text-[11px] leading-snug text-slate-500 dark:text-slate-400">
             {t("notSavedHint")}
           </div>
 
@@ -318,8 +318,8 @@ function DropZone({ onPick }: { onPick: (file: File) => void }) {
         if (file) onPick(file);
       }}
       className={
-        "flex aspect-[1/1.414] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-white text-center transition-colors " +
-        (hover ? "border-accent-500 bg-accent-50/40" : "border-slate-300 hover:bg-slate-50")
+        "flex aspect-[1/1.414] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-white dark:bg-slate-900 text-center transition-colors " +
+        (hover ? "border-accent-500 bg-accent-50/40" : "border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50")
       }
     >
       <input
@@ -334,9 +334,9 @@ function DropZone({ onPick }: { onPick: (file: File) => void }) {
         }}
         className="sr-only"
       />
-      <FileUp className="h-8 w-8 text-slate-400" aria-hidden />
-      <p className="mt-3 text-sm font-medium text-slate-900">{t("dropTitle")}</p>
-      <p className="mt-1 text-[12px] text-slate-500">{t("dropSubtitle")}</p>
+      <FileUp className="h-8 w-8 text-slate-400 dark:text-slate-500" aria-hidden />
+      <p className="mt-3 text-sm font-medium text-slate-900 dark:text-slate-100">{t("dropTitle")}</p>
+      <p className="mt-1 text-[12px] text-slate-500 dark:text-slate-400">{t("dropSubtitle")}</p>
     </label>
   );
 }
@@ -359,19 +359,19 @@ function PreviewWithBox({
   const t = useTranslations("campaignApp.posterBuilder");
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between text-[12px] text-slate-500">
+      <div className="flex items-center justify-between text-[12px] text-slate-500 dark:text-slate-400">
         <span className="truncate font-mono">{file.name}</span>
         <button
           type="button"
           onClick={onRemove}
           aria-label={t("removePdf")}
-          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 hover:bg-slate-100 hover:text-slate-700"
+          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300"
         >
           <Trash2 className="h-3.5 w-3.5" aria-hidden /> {t("otherPdf")}
         </button>
       </div>
       <PdfPreview file={file} box={box} onBoxChange={onBoxChange} qrDataUrl={qrDataUrl} />
-      <p className="text-[11px] text-slate-500">
+      <p className="text-[11px] text-slate-500 dark:text-slate-400">
         {t("dragHint")}
         {batchCount > 1 && (
           <>

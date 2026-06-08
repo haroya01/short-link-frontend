@@ -31,7 +31,7 @@ export default function QrCampaignsLandingPage() {
   const mock = MOCK_BY_LOCALE[locale] ?? MOCK_BY_LOCALE.en;
 
   return (
-    <div className="bg-white">
+    <div className="bg-white dark:bg-slate-900">
       <StickyNarrative mock={mock} />
       <FinalCta ctaHref={ctaHref} authenticated={authenticated} />
       <FloatingCta ctaHref={ctaHref} />
@@ -392,26 +392,26 @@ function StickyNarrative({ mock }: { mock: MockData }) {
 function HeroBody({ s }: { s: HeroSpec }) {
   return (
     <>
-      <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards]">
+      <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards]">
         {s.eyebrow}
       </p>
-      <h1 className="mt-2 break-keep text-[26px] font-semibold leading-[1.1] tracking-headline text-slate-900 sm:mt-4 sm:text-[36px] sm:leading-[1.15] lg:text-[52px]">
+      <h1 className="mt-2 break-keep text-[26px] font-semibold leading-[1.1] tracking-headline text-slate-900 dark:text-slate-100 sm:mt-4 sm:text-[36px] sm:leading-[1.15] lg:text-[52px]">
         <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards]">
           {s.title1}
         </span>
         <br />
-        <span className="inline-block translate-y-4 text-accent-700 opacity-0 [animation:hero-rise_900ms_var(--ease)_420ms_forwards]">
+        <span className="inline-block translate-y-4 text-accent-700 dark:text-accent-400 opacity-0 [animation:hero-rise_900ms_var(--ease)_420ms_forwards]">
           {s.title2}
         </span>
       </h1>
-      <p className="mt-2 max-w-md break-keep text-[13px] leading-tight text-slate-500 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:mt-5 sm:text-[15px] sm:leading-relaxed">
+      <p className="mt-2 max-w-md break-keep text-[13px] leading-tight text-slate-500 dark:text-slate-400 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:mt-5 sm:text-[15px] sm:leading-relaxed">
         {s.sub}
       </p>
       <div className="mt-3 flex flex-wrap gap-2 sm:mt-6">
         {s.chips.map((chip, ci) => (
           <span
             key={ci}
-            className="inline-flex items-center whitespace-nowrap rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-medium text-slate-700 opacity-0"
+            className="inline-flex items-center whitespace-nowrap rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300 opacity-0"
             style={{
               animation: `hero-fade 700ms var(--ease) ${850 + ci * 100}ms forwards`,
             }}
@@ -428,7 +428,7 @@ function HeroBody({ s }: { s: HeroSpec }) {
 function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean }) {
   return (
     <>
-      <h2 className="break-keep text-[22px] font-semibold leading-[1.1] tracking-headline text-slate-900 sm:text-[32px] sm:leading-[1.2] lg:text-[40px]">
+      <h2 className="break-keep text-[22px] font-semibold leading-[1.1] tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px] sm:leading-[1.2] lg:text-[40px]">
         <span
           className="inline-block transition-opacity duration-700"
           style={{
@@ -440,7 +440,7 @@ function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean })
         </span>
         <br />
         <span
-          className="inline-block text-slate-500 transition-opacity duration-700"
+          className="inline-block text-slate-500 dark:text-slate-400 transition-opacity duration-700"
           style={{
             transitionTimingFunction: EASE,
             transitionDelay: isActive ? "180ms" : "0ms",
@@ -452,7 +452,7 @@ function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean })
       </h2>
       {s.line3 && (
         <p
-          className="mt-1 break-keep text-[16px] leading-[1.2] tracking-headline text-slate-500 transition-opacity duration-700 sm:mt-3 sm:text-[22px] sm:leading-[1.25] lg:text-[26px]"
+          className="mt-1 break-keep text-[16px] leading-[1.2] tracking-headline text-slate-500 dark:text-slate-400 transition-opacity duration-700 sm:mt-3 sm:text-[22px] sm:leading-[1.25] lg:text-[26px]"
           style={{
             transitionTimingFunction: EASE,
             transitionDelay: isActive ? "340ms" : "0ms",
@@ -464,7 +464,7 @@ function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean })
       )}
       {s.aux && (
         <p
-          className="mt-3 break-keep text-[12px] text-slate-500 transition-opacity duration-700 sm:mt-6 sm:text-[14px]"
+          className="mt-3 break-keep text-[12px] text-slate-500 dark:text-slate-400 transition-opacity duration-700 sm:mt-6 sm:text-[14px]"
           style={{
             transitionTimingFunction: EASE,
             transitionDelay: isActive ? "500ms" : "0ms",
@@ -521,10 +521,10 @@ function FinalCta({
             </Link>
           )}
         </div>
-        <p className="mt-8 text-[12px] text-slate-400">{t("note")}</p>
+        <p className="mt-8 text-[12px] text-slate-400 dark:text-slate-500">{t("note")}</p>
       </div>
       <div className="border-t border-white/10">
-        <div className="container max-w-5xl py-4 text-center text-[11px] text-slate-400">
+        <div className="container max-w-5xl py-4 text-center text-[11px] text-slate-400 dark:text-slate-500">
           <Link href="/" className="hover:text-white">
             ← {tRoot("backLink")}
           </Link>
