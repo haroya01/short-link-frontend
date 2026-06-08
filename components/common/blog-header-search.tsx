@@ -112,7 +112,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
           setOpen(true);
         }}
         aria-label={t("searchLabel")}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 dark:focus-visible:ring-offset-slate-950"
       >
         <Search className="h-4 w-4" />
       </button>
@@ -184,7 +184,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
                     <span className="line-clamp-1 text-[13px] font-semibold text-slate-900 dark:text-slate-100">
                       {item.title}
                     </span>
-                    <span className="block truncate text-[11px] text-slate-500">
+                    <span className="block truncate text-[11px] text-slate-500 dark:text-slate-400">
                       @{item.author.username}
                     </span>
                   </a>
@@ -192,7 +192,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
               ))}
             </ul>
           ) : (
-            <p className="px-3 py-6 text-center text-[13px] text-slate-500">{t("searchEmptyTitle")}</p>
+            <p className="px-3 py-6 text-center text-[13px] text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
           )}
           <button
             type="submit"

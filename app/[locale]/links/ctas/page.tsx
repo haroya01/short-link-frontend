@@ -65,7 +65,7 @@ export default function CtaLibraryPage() {
   if (!authenticated) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-12">
-        <p className="text-gray-600">{tc("loginRequired")}</p>
+        <p className="text-slate-600 dark:text-slate-400">{tc("loginRequired")}</p>
       </main>
     );
   }
@@ -74,8 +74,8 @@ export default function CtaLibraryPage() {
     <main className="mx-auto max-w-3xl px-6 py-12">
       <header className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">{t("title")}</h1>
-          <p className="mt-2 text-sm text-gray-500">{t("description")}</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{t("title")}</h1>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{t("description")}</p>
         </div>
         <button
           type="button"
@@ -102,7 +102,7 @@ export default function CtaLibraryPage() {
         />
       )}
 
-      {loading && <p className="text-gray-500">{tc("loading")}</p>}
+      {loading && <p className="text-slate-500 dark:text-slate-400">{tc("loading")}</p>}
       {error && (
         <p className="text-red-600 dark:text-red-400">
           {tc("errorPrefix")} {error}
@@ -110,40 +110,40 @@ export default function CtaLibraryPage() {
       )}
 
       {!loading && !error && ctas.length === 0 && (
-        <p className="text-gray-500">{t("empty")}</p>
+        <p className="text-slate-500 dark:text-slate-400">{t("empty")}</p>
       )}
 
       {!loading && ctas.length > 0 && (
-        <ul className="mt-6 divide-y divide-gray-100">
+        <ul className="mt-6 divide-y divide-slate-100 dark:divide-slate-800">
           {ctas.map((cta) => (
             <li key={cta.id} className="flex items-center gap-3 py-4">
               <span
                 className={`rounded px-2 py-1 text-xs font-medium ${
                   cta.style === "PRIMARY"
                     ? "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300"
-                    : "bg-gray-100 text-gray-700"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
                 }`}
               >
                 {cta.style}
               </span>
-              <span className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-600">
+              <span className="rounded bg-slate-100 dark:bg-slate-800 px-2 py-1 text-xs text-slate-600 dark:text-slate-400">
                 {t(`purpose.${cta.purpose}`)}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="truncate text-sm font-medium text-gray-900">{cta.label}</p>
-                <p className="truncate text-xs text-gray-500">{cta.url}</p>
+                <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">{cta.label}</p>
+                <p className="truncate text-xs text-slate-500 dark:text-slate-400">{cta.url}</p>
               </div>
               <button
                 type="button"
                 onClick={() => setEditing(cta)}
-                className="rounded border border-gray-200 px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
+                className="rounded border border-slate-200 dark:border-slate-700 px-3 py-1 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 {t("edit")}
               </button>
               <button
                 type="button"
                 onClick={() => handleDelete(cta)}
-                className="rounded border border-red-200 dark:border-red-500/30 px-3 py-1 text-xs text-red-600 dark:text-red-400 hover:bg-red-50"
+                className="rounded border border-red-200 dark:border-red-500/30 px-3 py-1 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
               >
                 {t("delete")}
               </button>
@@ -192,13 +192,13 @@ function CtaEditor({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3"
+      className="mb-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-4 space-y-3"
     >
-      <h2 className="text-sm font-medium text-gray-700">
+      <h2 className="text-sm font-medium text-slate-700 dark:text-slate-300">
         {initial ? t("editorTitleEdit") : t("editorTitleNew")}
       </h2>
       <label className="block text-sm">
-        <span className="text-gray-700">{t("label")}</span>
+        <span className="text-slate-700 dark:text-slate-300">{t("label")}</span>
         <input
           type="text"
           value={label}
@@ -206,11 +206,11 @@ function CtaEditor({
           maxLength={100}
           required
           placeholder={t("labelPlaceholder")}
-          className="mt-1 block w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+          className="mt-1 block w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
         />
       </label>
       <label className="block text-sm">
-        <span className="text-gray-700">URL</span>
+        <span className="text-slate-700 dark:text-slate-300">URL</span>
         <input
           type="url"
           value={url}
@@ -219,16 +219,16 @@ function CtaEditor({
           required
           pattern="https?://.*"
           placeholder="https://"
-          className="mt-1 block w-full rounded border border-gray-300 px-2 py-1.5 text-sm font-mono"
+          className="mt-1 block w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 font-mono"
         />
       </label>
       <div className="grid grid-cols-2 gap-3">
         <label className="block text-sm">
-          <span className="text-gray-700">{t("style")}</span>
+          <span className="text-slate-700 dark:text-slate-300">{t("style")}</span>
           <select
             value={style}
             onChange={(e) => setStyle(e.target.value as CtaStyle)}
-            className="mt-1 block w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+            className="mt-1 block w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
           >
             {STYLE_OPTIONS.map((s) => (
               <option key={s} value={s}>
@@ -238,11 +238,11 @@ function CtaEditor({
           </select>
         </label>
         <label className="block text-sm">
-          <span className="text-gray-700">{t("intent")}</span>
+          <span className="text-slate-700 dark:text-slate-300">{t("intent")}</span>
           <select
             value={purpose}
             onChange={(e) => setPurpose(e.target.value as CtaPurpose)}
-            className="mt-1 block w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+            className="mt-1 block w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-1.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
           >
             {PURPOSE_OPTIONS.map((p) => (
               <option key={p} value={p}>
@@ -257,7 +257,7 @@ function CtaEditor({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100"
+          className="rounded px-3 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
         >
           {tc("cancel")}
         </button>

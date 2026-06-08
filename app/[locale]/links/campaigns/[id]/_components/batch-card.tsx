@@ -64,7 +64,7 @@ export function BatchCard({ batch, campaignId, canModify, onEdit, onDelete }: Pr
                 type="button"
                 onClick={onDelete}
                 aria-label={t("delete", { name: batch.name })}
-                className="grid h-7 w-7 place-items-center rounded-lg text-slate-500 dark:text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                className="grid h-7 w-7 place-items-center rounded-lg text-slate-500 dark:text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/10 dark:hover:text-rose-400"
               >
                 <Trash2 className="h-3.5 w-3.5" aria-hidden />
               </button>

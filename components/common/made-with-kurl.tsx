@@ -15,13 +15,13 @@ export function MadeWithKurl({ className }: { className?: string }) {
       target="_blank"
       rel="noopener"
       className={cn(
-        "focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/70 px-3 py-1.5 text-[12px] font-medium text-slate-500 backdrop-blur transition-colors hover:border-slate-300 hover:text-slate-700",
+        "focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/70 px-3 py-1.5 text-[12px] font-medium text-slate-500 backdrop-blur transition-colors hover:border-slate-300 hover:text-slate-700 dark:border-slate-700/80 dark:bg-slate-900/70 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200",
         className,
       )}
     >
       <Mark className="h-3 text-accent-600" />
       <span>
-        Made with <span className="font-bold text-slate-700">kurl</span>
+        Made with <span className="font-bold text-slate-700 dark:text-slate-200">kurl</span>
       </span>
     </a>
   );

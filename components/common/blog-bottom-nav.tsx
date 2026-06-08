@@ -72,7 +72,7 @@ export function BlogBottomNav() {
         <a
           href={blogHref("/")}
           aria-current={isHome ? "page" : undefined}
-          className={cn(TAB, isHome ? "text-accent-600" : "text-slate-500")}
+          className={cn(TAB, isHome ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
         >
           <Home className="h-5 w-5" />
           {t("home")}
@@ -82,7 +82,7 @@ export function BlogBottomNav() {
           onClick={() => setSheet("search")}
           aria-current={sheet === "search" ? "page" : undefined}
           aria-haspopup="dialog"
-          className={cn(TAB, sheet === "search" ? "text-accent-600" : "text-slate-500")}
+          className={cn(TAB, sheet === "search" ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
         >
           <Search className="h-5 w-5" />
           {t("explore")}
@@ -103,7 +103,7 @@ export function BlogBottomNav() {
         <a
           href={notifHref}
           aria-current={isNotif ? "page" : undefined}
-          className={cn(TAB, isNotif ? "text-accent-600" : "text-slate-500")}
+          className={cn(TAB, isNotif ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
         >
           <span className="relative">
             <Bell className="h-5 w-5" />
@@ -120,7 +120,7 @@ export function BlogBottomNav() {
           onClick={() => setSheet("account")}
           aria-current={sheet === "account" ? "page" : undefined}
           aria-haspopup="dialog"
-          className={cn(TAB, sheet === "account" ? "text-accent-600" : "text-slate-500")}
+          className={cn(TAB, sheet === "account" ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
         >
           <User className="h-5 w-5" />
           {authenticated ? t("account") : t("login")}

@@ -33,7 +33,7 @@ export function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
         aria-label={t("label")}
         title={locale.toUpperCase()}
         aria-haspopup="menu"
@@ -44,7 +44,7 @@ export function LanguageSwitcher() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-1 w-32 overflow-hidden rounded-md border border-slate-200 bg-white shadow-md"
+          className="absolute right-0 top-full z-40 mt-1 w-32 overflow-hidden rounded-md border border-slate-200 bg-white shadow-md dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
         >
           {routing.locales.map((l) => (
             <button
@@ -53,12 +53,12 @@ export function LanguageSwitcher() {
               role="menuitem"
               onClick={() => switchTo(l)}
               className={cn(
-                "flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-slate-50",
-                l === locale && "bg-accent-50 text-accent-700",
+                "flex w-full items-center justify-between px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800",
+                l === locale && "bg-accent-50 text-accent-700 dark:bg-accent-500/10 dark:text-accent-400",
               )}
             >
               {t(l)}
-              <span className="font-mono text-[10px] uppercase text-slate-500">{l}</span>
+              <span className="font-mono text-[10px] uppercase text-slate-500 dark:text-slate-400">{l}</span>
             </button>
           ))}
         </div>

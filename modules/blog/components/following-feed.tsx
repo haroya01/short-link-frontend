@@ -53,7 +53,7 @@ function AuthorRow({
           <span className="truncate text-[14px] font-semibold text-slate-800 group-hover:text-slate-900 dark:text-slate-200 dark:group-hover:text-slate-100">
             {author.username}
           </span>
-          {subtitle && <span className="truncate text-[12px] text-slate-500">{subtitle}</span>}
+          {subtitle && <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">{subtitle}</span>}
         </span>
       </a>
     </li>

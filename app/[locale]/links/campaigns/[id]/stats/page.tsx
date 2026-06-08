@@ -299,10 +299,10 @@ function RecommendationCard({ data }: { data: CampaignRecommendation }) {
 function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number] }) {
   const t = useTranslations("campaignApp.campaignStats");
   const verdictStyle: Record<string, string> = {
-    BOOST: "bg-accent-100 text-accent-700 dark:text-accent-400",
+    BOOST: "bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400",
     KEEP: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
     REDUCE: "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400",
-    PRUNE: "bg-rose-50 text-rose-700",
+    PRUNE: "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400",
   };
   const verdictLabel: Record<string, string> = {
     BOOST: t("recommendation.verdict.BOOST"),

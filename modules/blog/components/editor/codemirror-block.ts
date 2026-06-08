@@ -121,7 +121,7 @@ class CodeMirrorNodeView {
       const opt = document.createElement("option");
       opt.value = lang === "plaintext" ? "" : lang;
       opt.textContent = lang;
-      opt.className = "text-slate-900";
+      opt.className = "bg-white text-slate-900 dark:bg-slate-800 dark:text-slate-100";
       this.languageSelect.append(opt);
     }
     this.languageSelect.value = this.node.attrs.language || "";
