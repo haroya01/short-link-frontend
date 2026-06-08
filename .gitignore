@@ -20,3 +20,5 @@ playwright/.cache/
 
 # Local agent state
 .claude/
+.vercel
+.env*

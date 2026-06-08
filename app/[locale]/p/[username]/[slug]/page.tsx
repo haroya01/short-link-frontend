@@ -56,18 +56,36 @@ export async function generateMetadata({
   }
   const h = await headers();
   const origin = subdomainOrigin(h, username);
+  const url = `${origin}/${post.slug}`;
+  // Always hand crawlers a card image: the post's own cover if set, else the per-post generated card
+  // (app/[locale]/p/[username]/[slug]/opengraph-image — the subdomain rewrite maps this back to the
+  // route). Without the fallback an image-less post unfurled blank. The URL is already absolute, so
+  // metadataBase doesn't rewrite it.
+  const ogImage = post.ogImageUrl ?? `${url}/opengraph-image`;
   return {
     title: post.title,
     description: post.excerpt ?? undefined,
-    alternates: { canonical: `${origin}/${post.slug}` },
+    alternates: { canonical: url },
     openGraph: {
       title: post.title,
       description: post.excerpt ?? undefined,
-      url: `${origin}/${post.slug}`,
+      url,
       type: "article",
       siteName: `@${author.username}`,
-      images: post.ogImageUrl ? [{ url: post.ogImageUrl }] : undefined,
+      images: [{ url: ogImage }],
       locale: post.languageTag,
+      publishedTime: post.publishedAt,
+      modifiedTime: post.lastEditedAt ?? undefined,
+      authors: [`@${author.username}`],
+      tags: post.tags,
+    },
+    // Set twitter:* explicitly — otherwise the post inherits the root kurl.me site card (generic
+    // title/description/image) on X / Slack / any consumer that prefers twitter tags over OpenGraph.
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt ?? undefined,
+      images: [ogImage],
     },
   };
 }

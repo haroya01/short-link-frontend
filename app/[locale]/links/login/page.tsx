@@ -51,7 +51,7 @@ function LoginShell() {
   const t = useTranslations("login");
   const { signInWithGoogle } = useAuth();
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem-3rem)] items-center justify-center bg-white dark:bg-slate-900 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-white dark:bg-slate-900 px-4 py-12">
       <div className="w-full max-w-sm">
         <div className="hero-stagger flex flex-col items-center space-y-5 text-center">
           <h1
