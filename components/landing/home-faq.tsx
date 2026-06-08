@@ -25,11 +25,11 @@ export function HomeFaq() {
   return (
     <div>
       <div className="mb-8 text-center">
-        <h2 className="text-2xl font-semibold tracking-headline text-slate-900 sm:text-3xl">
+        <h2 className="text-2xl font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-3xl">
           {t("title")}
         </h2>
       </div>
-      <ul className="divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
+      <ul className="divide-y divide-slate-200 dark:divide-slate-800 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         {items.map((item, idx) => (
           <FaqItem key={idx} q={item.q} a={item.a} />
         ))}
@@ -50,19 +50,19 @@ function FaqItem({ q, a }: { q: string; a: string }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between px-5 py-4 text-left text-sm font-medium text-slate-900 hover:bg-slate-50"
+        className="flex w-full items-center justify-between px-5 py-4 text-left text-sm font-medium text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/50"
         aria-expanded={open}
       >
         <span>{q}</span>
         <ChevronDown
           className={cn(
-            "h-4 w-4 shrink-0 text-slate-500 transition-transform",
+            "h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400 transition-transform",
             open && "rotate-180",
           )}
         />
       </button>
       {open && (
-        <p className="px-5 pb-4 text-sm leading-relaxed text-slate-600">{a}</p>
+        <p className="px-5 pb-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{a}</p>
       )}
     </li>
   );
