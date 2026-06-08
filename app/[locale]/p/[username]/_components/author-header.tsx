@@ -1,6 +1,6 @@
 import { Link2 } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
-import { linksHref } from "@/lib/host";
+import { cardHref } from "@/lib/host";
 import type { PublicAuthor } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
@@ -48,7 +48,7 @@ export async function AuthorHeader({ author }: { author: PublicAuthor }) {
                 identity). Shown only when they actually have one. */}
             {author.hasLinkInBio && (
               <a
-                href={linksHref(`/${locale}/u/${author.username}`)}
+                href={cardHref(author.username, locale)}
                 className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
               >
                 <Link2 className="h-3.5 w-3.5" />

@@ -20,7 +20,7 @@ import { SeriesNext } from "@/modules/blog/components/series-next";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
-import { subdomainOrigin } from "@/modules/blog/lib/subdomain-origin";
+import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 
 // Always render fresh. A just-published post must resolve on the first visit (no cached 404 from a
 // pre-publish request), and an unpublished/deleted one must 404 immediately. ISR here only ever
@@ -55,7 +55,7 @@ export async function generateMetadata({
     return { title: post.title, robots: { index: false, follow: false } };
   }
   const h = await headers();
-  const origin = subdomainOrigin(h, username);
+  const origin = authorBaseUrl(h, username);
   const url = `${origin}/${post.slug}`;
   // Always hand crawlers a card image: the post's own cover if set, else the per-post generated card
   // (app/[locale]/p/[username]/[slug]/opengraph-image — the subdomain rewrite maps this back to the
@@ -111,7 +111,7 @@ export default async function PublicPostPage({
 
   const { author, post, blocks } = result.data;
   const h = await headers();
-  const origin = subdomainOrigin(h, username);
+  const origin = authorBaseUrl(h, username);
   const postUrl = `${origin}/${post.slug}`;
   const minutes = readingMinutes(blocks);
   // "수정 {date}" hint only when the last edit lands on a LATER DAY than publish — same-day edits
