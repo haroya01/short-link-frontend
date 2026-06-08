@@ -241,8 +241,8 @@ function CompareSection({
                 className={
                   "rounded-xl border p-3 " +
                   (isCurrent
-                    ? "border-accent-200 bg-accent-50/40"
-                    : "border-slate-200 dark:border-slate-800 bg-slate-50/40")
+                    ? "border-accent-200 bg-accent-50/40 dark:bg-accent-500/10"
+                    : "border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40")
                 }
               >
                 <p className="truncate text-[12px] font-semibold text-slate-900 dark:text-slate-100">{c.name}</p>
@@ -489,7 +489,7 @@ function Kpi({
     <li
       className={
         "rounded-2xl border bg-white dark:bg-slate-900 px-4 py-4 " +
-        (accent ? "border-accent-200 bg-accent-50/40" : "border-slate-200 dark:border-slate-800")
+        (accent ? "border-accent-200 bg-accent-50/40 dark:bg-accent-500/10" : "border-slate-200 dark:border-slate-800")
       }
     >
       <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</p>

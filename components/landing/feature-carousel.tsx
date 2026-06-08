@@ -106,7 +106,7 @@ export function FeatureCarousel() {
                 }}
                 className={cn(
                   "relative flex items-start gap-3 border-b border-slate-100 dark:border-slate-800 px-4 text-left transition-all last:border-b-0",
-                  isActive ? "bg-accent-50/60 py-3" : "py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50",
+                  isActive ? "bg-accent-50/60 dark:bg-accent-500/10 py-3" : "py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50",
                 )}
               >
                 <span
@@ -127,7 +127,7 @@ export function FeatureCarousel() {
                   <h3
                     className={cn(
                       "text-[13px] font-semibold leading-tight transition-colors",
-                      isActive ? "text-accent-800" : "text-slate-900 dark:text-slate-100",
+                      isActive ? "text-accent-800 dark:text-accent-300" : "text-slate-900 dark:text-slate-100",
                     )}
                   >
                     {t(`${f.key}.title`)}

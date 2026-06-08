@@ -48,13 +48,13 @@ export function WhyKurl() {
              * single biggest "this is a Tailwind UI table" tell in the previous version.
              */}
             <tr className="text-left">
-              <th className="bg-slate-50/70 px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-tagline text-slate-500 dark:text-slate-400">
+              <th className="bg-slate-50/70 dark:bg-slate-800/70 px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-tagline text-slate-500 dark:text-slate-400">
                 {t("th.feature")}
               </th>
-              <th className="border-b-2 border-accent-500 bg-accent-50/60 px-4 py-3 text-center font-mono text-[10px] font-semibold uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+              <th className="border-b-2 border-accent-500 bg-accent-50/60 dark:bg-accent-500/10 px-4 py-3 text-center font-mono text-[10px] font-semibold uppercase tracking-tagline text-accent-700 dark:text-accent-400">
                 kurl
               </th>
-              <th className="bg-slate-50/70 px-4 py-3 text-center font-mono text-[10px] font-semibold uppercase tracking-tagline text-slate-500 dark:text-slate-400">
+              <th className="bg-slate-50/70 dark:bg-slate-800/70 px-4 py-3 text-center font-mono text-[10px] font-semibold uppercase tracking-tagline text-slate-500 dark:text-slate-400">
                 {t("th.others")}
               </th>
             </tr>

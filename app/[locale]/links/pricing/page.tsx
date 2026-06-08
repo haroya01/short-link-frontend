@@ -66,7 +66,7 @@ export default async function PricingPage({
       </header>
 
       <section
-        className="rounded-2xl border border-accent-200 bg-accent-50/50 px-5 py-4"
+        className="rounded-2xl border border-accent-200 bg-accent-50/50 dark:bg-accent-500/10 px-5 py-4"
         aria-label={t("proHoldBadge")}
       >
         <div className="flex items-start gap-3">
@@ -95,7 +95,7 @@ export default async function PricingPage({
         </section>
 
         <section
-          className="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/40 p-6"
+          className="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40 p-6"
           aria-label={`${t("paidTitle")} — ${t("proHoldBadge")}`}
         >
           <div className="flex items-center justify-between gap-2">
@@ -128,7 +128,7 @@ export default async function PricingPage({
         </section>
       </div>
 
-      <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 p-6">
+      <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 p-6">
         <div className="flex items-start gap-3">
           <Shield className="mt-0.5 h-5 w-5 shrink-0 text-slate-500 dark:text-slate-400" />
           <div className="flex-1">

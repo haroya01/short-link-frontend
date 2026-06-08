@@ -155,8 +155,8 @@ function DemoLinkExportPreview() {
 function DemoSettingsBanner() {
   const t = useTranslations("demo.settingsNotice");
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 px-4 py-3 text-[12px]">
-      <div className="flex items-center gap-2.5 text-accent-800">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 dark:bg-accent-500/10 px-4 py-3 text-[12px]">
+      <div className="flex items-center gap-2.5 text-accent-800 dark:text-accent-300">
         <Sparkles className="h-3.5 w-3.5 shrink-0" />
         <div>
           <p className="font-medium">{t("title")}</p>
@@ -165,7 +165,7 @@ function DemoSettingsBanner() {
       </div>
       <Link
         href="/login"
-        className="inline-flex items-center gap-1 rounded-md border border-accent-300 bg-white dark:bg-slate-900 px-3 py-1.5 font-medium text-accent-800 hover:bg-accent-50"
+        className="inline-flex items-center gap-1 rounded-md border border-accent-300 bg-white dark:bg-slate-900 px-3 py-1.5 font-medium text-accent-800 dark:text-accent-300 hover:bg-accent-50"
       >
         {t("cta")}
       </Link>
@@ -481,7 +481,7 @@ function DemoLinkWebhooksPreview() {
         {/* Payload preview — the dashboard doesn't ship this inline (owners read it from the
             docs), but on /demo it's the cheapest way to communicate what the webhook actually
             sends. Same chrome the dashboard uses for the one-time-secret reveal banner. */}
-        <details className="rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50/60 px-3 py-2 text-xs">
+        <details className="rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 px-3 py-2 text-xs">
           <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">
             {tDemo("payloadPreview")}
           </summary>

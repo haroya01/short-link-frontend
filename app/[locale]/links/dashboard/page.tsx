@@ -349,7 +349,7 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
           </div>
 
           {topLink ? (
-            <div className="min-w-0 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 px-3 py-3">
+            <div className="min-w-0 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-3">
               <div className="min-w-0">
                 <Link
                   href={`/links/stats/${topLink.shortCode}`}
@@ -425,7 +425,7 @@ function DashboardOpsSkeleton() {
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-6 w-16 rounded-full" />
           </div>
-          <div className="min-w-0 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 px-3 py-3 space-y-2">
+          <div className="min-w-0 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-3 space-y-2">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-3 w-3/4" />
           </div>
@@ -479,7 +479,7 @@ function AuthBenefit({
   label: string;
 }) {
   return (
-    <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 p-3">
+    <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 p-3">
       <span className="grid h-7 w-7 place-items-center rounded-md bg-white dark:bg-slate-900 text-accent-700 dark:text-accent-400 shadow-sm">
         <Icon className="h-3.5 w-3.5" />
       </span>
@@ -526,7 +526,7 @@ function DashboardPreviewItem({
   muted?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 px-3 py-2.5">
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-2.5">
       <div className="min-w-0">
         <p className="font-mono text-[13px] font-semibold text-slate-900 dark:text-slate-100">{code}</p>
         <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">{status}</p>

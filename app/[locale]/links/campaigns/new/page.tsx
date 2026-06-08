@@ -289,7 +289,7 @@ function PolicyOption({
       className={
         "w-full rounded-xl border px-4 py-3 text-left transition-colors " +
         (active
-          ? "border-accent-600 bg-accent-50/40"
+          ? "border-accent-600 bg-accent-50/40 dark:bg-accent-500/10"
           : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50")
       }
     >

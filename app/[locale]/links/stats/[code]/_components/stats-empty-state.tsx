@@ -17,7 +17,7 @@ export function StatsEmptyState({ shortUrl }: { shortUrl: string }) {
   const t = useTranslations("statsEmpty");
   const { toast } = useToast();
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-dashed border-accent-300 bg-accent-50/40 px-6 py-10 text-center">
+    <div className="relative overflow-hidden rounded-2xl border border-dashed border-accent-300 bg-accent-50/40 dark:bg-accent-500/10 px-6 py-10 text-center">
       <div
         aria-hidden
         className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-accent-200/30 blur-3xl"

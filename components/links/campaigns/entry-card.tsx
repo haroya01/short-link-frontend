@@ -13,7 +13,7 @@ export function CampaignsEntryCard() {
   return (
     <Link
       href="/campaigns"
-      className="profile-card group block overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50 via-white to-white px-4 py-4 sm:px-5 sm:py-5"
+      className="profile-card group block overflow-hidden rounded-2xl border border-accent-200 dark:border-accent-500/30 bg-gradient-to-br from-accent-50 via-white to-white dark:from-accent-500/10 dark:via-slate-900 dark:to-slate-900 px-4 py-4 sm:px-5 sm:py-5"
     >
       <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
         <span className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl bg-white dark:bg-slate-900 text-accent-700 dark:text-accent-400 shadow-[0_1px_2px_rgba(15,23,42,0.04)] ring-1 ring-accent-200/60">
