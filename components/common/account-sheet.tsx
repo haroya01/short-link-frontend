@@ -35,11 +35,22 @@ const ITEM =
   "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
 
 /**
- * Mobile account bottom sheet, opened from the bottom-nav 계정 tab. Gathers everything personal that
- * used to crowd the top bar: the viewer's two surfaces (블로그/프로필), the cross-product switch
- * (kurl ↔ blog.kurl), language, and sign out — or sign in when signed out.
+ * Mobile account bottom sheet. `product` slims it per surface:
+ *  - "blog" (default): the full personal menu — the viewer's two surfaces (블로그/프로필), workspace
+ *    entries (내 글/리드/…), the cross-product switch, language, sign out.
+ *  - "links": kurl is its own app, so only 설정·테마·언어·로그아웃 here — its profile + blog↔kurl
+ *    switch live in the bottom nav / top Nav instead, not duplicated in the sheet.
  */
-export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function AccountSheet({
+  open,
+  onClose,
+  product = "blog",
+}: {
+  open: boolean;
+  onClose: () => void;
+  product?: Product;
+}) {
+  const isLinks = product === "links";
   const t = useTranslations("nav");
   const tNotif = useTranslations("notifications");
   const tBlog = useTranslations("sidebar.blog");
@@ -98,11 +109,16 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
             home indicator. */}
         <div className="overflow-y-auto pb-[max(env(safe-area-inset-bottom),0.75rem)]">
         {/* The blog brand lives here on mobile (it's dropped from the slim top bar so the screen leads
-            with the author/post). This anchors the sheet as "where blog.kurl + the product switch are." */}
-        <a href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable flex items-center px-3 py-2">
-          <Logo variant="blog" />
-        </a>
-        <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+            with the author/post). This anchors the sheet as "where blog.kurl + the product switch are."
+            On kurl the switch is in the top Nav, so the sheet leads straight with the account. */}
+        {!isLinks && (
+          <>
+            <a href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable flex items-center px-3 py-2">
+              <Logo variant="blog" />
+            </a>
+            <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+          </>
+        )}
 
         {authenticated && (
           <>
@@ -121,6 +137,15 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               </span>
             </div>
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+            {/* kurl: just settings here — profile is a bottom-nav tab, the blog switch is in the top Nav. */}
+            {isLinks && (
+              <a href={linksHref(`/${locale}/settings`)} className={ITEM}>
+                <Settings className="h-5 w-5 text-slate-500" />
+                {t("settings")}
+              </a>
+            )}
+            {!isLinks && (
+            <>
             {/* 분석 진입은 글 목록 strip 이 아니라 프로필 바로 아래 전용 버튼. */}
             <a href={blogHref("/analytics")} className={ITEM}>
               <BarChart3 className="h-5 w-5 text-slate-500" />
@@ -177,11 +202,14 @@ export function AccountSheet({ open, onClose }: { open: boolean; onClose: () => 
               <Settings className="h-5 w-5 text-slate-500" />
               {t("settings")}
             </a>
+            </>
+            )}
           </>
         )}
 
-        {/* Cross-product switch (kurl ↔ blog.kurl) — distinct from "내 블로그" above. */}
-        {other && (
+        {/* Cross-product switch (kurl ↔ blog.kurl) — distinct from "내 블로그" above. On kurl it lives
+            in the top Nav instead, so it's dropped from the sheet here. */}
+        {!isLinks && other && (
           <a
             href={other === "links" ? linksHref("/") : blogHref("/")}
             className={cn(ITEM, "justify-between")}
