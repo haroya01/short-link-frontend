@@ -7,6 +7,7 @@ import { ArrowRight, Loader2, Search, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import { searchPublicFeed, type PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/components/feed-card";
+import { cn } from "@/lib/utils";
 
 /**
  * Global blog search — the single search entry point, in the header so it's reachable from every
@@ -26,6 +27,9 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   // deep pages keep the compact 🔍. Start collapsed and only expand client-side — never rest open on
   // mobile, where the expanded field would push the login + product switcher off a ~360px header.
   const [open, setOpen] = useState(false);
+  // Drives the width unfold: render at glyph width, then flip to full so `transition-[width]` animates
+  // the field open (icon stays put, placeholder reveals as it widens — no scaleX text squish).
+  const [expanded, setExpanded] = useState(false);
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   // Only steal focus when the user opens the field by tapping the glyph — not on the resting/URL open.
@@ -44,6 +48,16 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
       inputRef.current?.focus();
       focusOnOpen.current = false;
     }
+  }, [open]);
+
+  // Flip to the expanded width one frame after opening so the field animates from glyph → full.
+  useEffect(() => {
+    if (!open) {
+      setExpanded(false);
+      return;
+    }
+    const id = requestAnimationFrame(() => setExpanded(true));
+    return () => cancelAnimationFrame(id);
   }, [open]);
 
   // Live results dropdown — debounced, same engine as the mobile search sheet (unified search UX).
@@ -106,11 +120,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   }
 
   return (
-    <form
-      onSubmit={submit}
-      role="search"
-      className="relative origin-right animate-[search-unfold_220ms_cubic-bezier(0.22,1,0.36,1)_both] motion-reduce:animate-none"
-    >
+    <form onSubmit={submit} role="search" className="relative">
       <Search
         aria-hidden
         className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
@@ -126,7 +136,12 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
         }}
         placeholder={t("searchPlaceholder")}
         aria-label={t("searchLabel")}
-        className="h-8 w-40 rounded-full border border-slate-200 bg-white pl-8 pr-7 text-[13px] text-slate-900 placeholder:text-slate-400 transition-[width,box-shadow] focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 sm:w-56 [&::-webkit-search-cancel-button]:appearance-none"
+        className={cn(
+          "h-8 rounded-full border border-slate-200 bg-white pl-8 pr-7 text-[13px] text-slate-900 placeholder:text-slate-400 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 [&::-webkit-search-cancel-button]:appearance-none",
+          "transition-[width,box-shadow] duration-200 ease-out motion-reduce:transition-none",
+          // Unfold by width from the glyph: collapsed ≈ the 🔍 button, expands to the full field.
+          expanded ? "w-40 sm:w-56" : "w-8",
+        )}
       />
       {value && (
         <button
