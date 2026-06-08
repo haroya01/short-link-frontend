@@ -10,6 +10,16 @@ const SITE_URL =
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? SITE_URL;
 
+// Blog lives on its own host; each author is a {username}.kurl.me subdomain. A single sitemap may
+// list these cross-subdomain URLs because they're all owned under one Search Console *Domain*
+// property (kurl.me). Post/author canonicals are host-root (no locale prefix) — match them exactly.
+const PLATFORM_DOMAIN = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
+const BLOG_URL =
+  process.env.NEXT_PUBLIC_BLOG_URL ??
+  (process.env.NEXT_PUBLIC_BLOG_HOST
+    ? `https://${process.env.NEXT_PUBLIC_BLOG_HOST}`
+    : `https://blog.${PLATFORM_DOMAIN}`);
+
 // Marketing surfaces we actively push for organic search. Order doesn't matter for indexing
 // but priority below differentiates importance signals to crawlers. /login is intentionally
 // absent — auth pages have no informational value as search entry points and were dominating
@@ -51,6 +61,34 @@ type ProfileListResponse = {
   items: { username: string }[];
   total: number;
 };
+
+// Enumerate every public blog post for the sitemap. The feed endpoint is paged + ordered recent;
+// we walk until hasNext is false (or the cap). Same graceful-degradation rule as profiles: a backend
+// hiccup returns what we have rather than deindexing the whole site.
+const POST_SITEMAP_CAP = 20000;
+const POST_PAGE_SIZE = 100;
+
+type FeedPostItem = { author: { username: string }; slug: string; publishedAt: string | null };
+type FeedPageResponse = { items: FeedPostItem[]; hasNext: boolean };
+
+async function fetchPublicPosts(): Promise<FeedPostItem[]> {
+  const posts: FeedPostItem[] = [];
+  for (let page = 0; posts.length < POST_SITEMAP_CAP; page++) {
+    const url = `${API_BASE}/api/v1/public/posts?sort=recent&page=${page}&size=${POST_PAGE_SIZE}`;
+    let data: FeedPageResponse;
+    try {
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+      if (!res.ok) break;
+      data = (await res.json()) as FeedPageResponse;
+    } catch {
+      break;
+    }
+    if (!data.items?.length) break;
+    posts.push(...data.items);
+    if (!data.hasNext) break;
+  }
+  return posts;
+}
 
 async function fetchPublicProfiles(): Promise<string[]> {
   const handles: string[] = [];
@@ -106,6 +144,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
       });
     }
+  }
+
+  // Blog feed home (blog.kurl.me) per locale — the discovery entry point for all posts.
+  for (const locale of routing.locales) {
+    entries.push({
+      url: `${BLOG_URL}/${locale}`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.8,
+      alternates: {
+        languages: Object.fromEntries(routing.locales.map((l) => [l, `${BLOG_URL}/${l}`])),
+      },
+    });
+  }
+
+  // Blog posts + their author homes. URLs are {username}.kurl.me/{slug} (post) and {username}.kurl.me/
+  // (author home) — the exact canonicals, no locale prefix. Dedupe author homes across their posts.
+  const posts = await fetchPublicPosts();
+  const authorHomes = new Set<string>();
+  for (const post of posts) {
+    if (!post.author?.username || !post.slug) continue;
+    const origin = `https://${post.author.username}.${PLATFORM_DOMAIN}`;
+    authorHomes.add(origin);
+    entries.push({
+      url: `${origin}/${post.slug}`,
+      lastModified: post.publishedAt ? new Date(post.publishedAt) : now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
+  }
+  for (const origin of authorHomes) {
+    entries.push({
+      url: `${origin}/`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    });
   }
 
   const handles = await fetchPublicProfiles();
