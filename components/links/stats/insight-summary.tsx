@@ -114,7 +114,7 @@ function InsightCard({ insight }: { insight: Insight }) {
         : "text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800";
 
   return (
-    <div className="rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 p-3">
+    <div className="rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 p-3">
       <div className="flex items-center justify-between gap-2">
         <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
           {insight.label}

@@ -42,8 +42,8 @@ export function DemoStatsPage() {
       {/* Sample-data banner — minimal, single line, accent-tinted. Keeps the page honest about
           the numbers being seeded without competing with the dashboard chrome below. The CTA
           is intentionally low-weight so the eye lands on the charts. */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 px-4 py-2.5 text-[12px]">
-        <span className="inline-flex items-center gap-2 font-medium text-accent-800">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 dark:bg-accent-500/10 px-4 py-2.5 text-[12px]">
+        <span className="inline-flex items-center gap-2 font-medium text-accent-800 dark:text-accent-300">
           <Sparkles className="h-3.5 w-3.5 shrink-0" />
           {t("sampleBanner")}
         </span>

@@ -175,7 +175,7 @@ export function TwoFactorSection() {
                 className="rounded border border-amber-300 bg-white dark:bg-slate-900"
               />
             ) : (
-              <div className="h-[220px] w-[220px] animate-pulse rounded border border-amber-200 dark:border-amber-500/30 bg-white/60" />
+              <div className="h-[220px] w-[220px] animate-pulse rounded border border-amber-200 dark:border-amber-500/30 bg-white/60 dark:bg-slate-900/60" />
             )}
             <div className="flex-1 space-y-2">
               <p>{t("manualKeyHint")}</p>

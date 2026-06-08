@@ -98,7 +98,7 @@ export function LandingPreviews() {
               >
                 <div
                   className={
-                    "relative w-full overflow-hidden rounded-xl border border-accent-100 bg-gradient-to-br from-accent-50 via-white to-white " +
+                    "relative w-full overflow-hidden rounded-xl border border-accent-100 bg-gradient-to-br from-accent-50 via-white to-white dark:from-accent-500/10 dark:via-slate-900 dark:to-slate-900 " +
                     (i === 0 ? "h-44 sm:h-56" : "h-24 sm:h-28")
                   }
                 >
