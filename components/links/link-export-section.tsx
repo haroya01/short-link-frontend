@@ -65,7 +65,7 @@ export function LinkExportSection({ shortCode }: { shortCode: string }) {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] dark:border-slate-800 dark:bg-slate-900">
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] dark:border-slate-800 dark:bg-slate-900">
       <div className="mb-3">
         <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">
           {t("title")}
@@ -91,15 +91,15 @@ export function LinkExportSection({ shortCode }: { shortCode: string }) {
 
       {open && (
         <div className="mt-4">
-          {!loadedOnce && loading && <p className="text-xs text-slate-500">{tc("loading")}</p>}
+          {!loadedOnce && loading && <p className="text-xs text-slate-500 dark:text-slate-400">{tc("loading")}</p>}
           {loadedOnce && events.length === 0 && (
-            <p className="text-xs text-slate-500">{t("empty")}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{t("empty")}</p>
           )}
           {events.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-[12px]">
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-[11px] uppercase text-slate-500 dark:border-slate-700">
+                  <tr className="border-b border-slate-200 dark:border-slate-800 text-left text-[11px] uppercase text-slate-500 dark:border-slate-700">
                     <th className="py-1.5 pr-3 font-medium">{t("colTime")}</th>
                     <th className="py-1.5 pr-3 font-medium">{t("colLocation")}</th>
                     <th className="py-1.5 pr-3 font-medium">{t("colDevice")}</th>
@@ -108,7 +108,7 @@ export function LinkExportSection({ shortCode }: { shortCode: string }) {
                 </thead>
                 <tbody>
                   {events.map((e, i) => (
-                    <tr key={i} className="border-b border-slate-100 align-top dark:border-slate-800">
+                    <tr key={i} className="border-b border-slate-100 dark:border-slate-800 align-top dark:border-slate-800">
                       <td className="py-1.5 pr-3 font-mono tabular-nums text-slate-600 dark:text-slate-300">
                         {new Date(e.clickedAt).toLocaleString()}
                       </td>

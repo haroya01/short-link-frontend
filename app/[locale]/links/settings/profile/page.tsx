@@ -48,7 +48,7 @@ export default function ProfileEditPage() {
   const handleDraft = useCallback((next: ProfileDraft) => setDraft(next), []);
 
   if (!ready || !authenticated) {
-    return <div className="container max-w-2xl py-16 text-sm text-slate-500">…</div>;
+    return <div className="container max-w-2xl py-16 text-sm text-slate-500 dark:text-slate-400">…</div>;
   }
 
   const hasEmailForm = draft.entries.some((e) => e.kind === "EMAIL_FORM");
@@ -57,14 +57,14 @@ export default function ProfileEditPage() {
     <div className="container max-w-5xl space-y-6 py-12">
       {isOnboarding && (
         <div className="rounded-2xl border border-accent-200 bg-accent-50/60 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
-          <div className="flex items-center gap-2 text-xs font-medium text-accent-700">
+          <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
             <Sparkles className="h-3.5 w-3.5" />
             {t("onboardingEyebrow")}
           </div>
-          <h2 className="mt-1 text-lg font-semibold tracking-headline text-slate-900">
+          <h2 className="mt-1 text-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100">
             {t("onboardingTitle")}
           </h2>
-          <p className="mt-1 text-[15px] leading-relaxed text-slate-600">
+          <p className="mt-1 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
             {t("onboardingSubhead")}
           </p>
           {/* Three-step progress — each step's bullet is filled (●) once detected. The bar
@@ -108,10 +108,10 @@ export default function ProfileEditPage() {
               text-[30px] sm+ with tracking-headline, per PR #243/#245 unified hierarchy. The
               earlier text-2xl was a half-step short on desktop and made the editor heading
               visually subordinate to its surrounding cards. */}
-          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
             {t("title")}
           </h1>
-          <p className="mt-1 text-[15px] leading-relaxed text-slate-500">{t("intro")}</p>
+          <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("intro")}</p>
         </div>
         {/* Leads 페이지 link 를 *항상* 노출 — 이전엔 EMAIL_FORM block 있을 때만 표시했는데, 폼을
             나중에 추가하는 사용자는 "leads dashboard 자체" 가 어디 있는지 발견 못함 (orphan).
@@ -119,10 +119,10 @@ export default function ProfileEditPage() {
         <a
           href={blogHref("/leads")}
           className={
-            "inline-flex shrink-0 items-center gap-1.5 rounded-md border bg-white px-3 py-1.5 text-xs font-medium transition " +
+            "inline-flex shrink-0 items-center gap-1.5 rounded-md border bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium transition " +
             (hasEmailForm
-              ? "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-              : "border-dashed border-slate-200 text-slate-400 hover:text-slate-600")
+              ? "border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              : "border-dashed border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 hover:text-slate-600")
           }
           title={hasEmailForm ? undefined : t("leadsDisabledTitle")}
         >
@@ -195,15 +195,15 @@ function OnboardingStep({
           "grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-semibold transition " +
           (done
             ? "bg-emerald-500 text-white"
-            : "border border-accent-300 bg-white text-accent-700")
+            : "border border-accent-300 bg-white dark:bg-slate-900 text-accent-700 dark:text-accent-400")
         }
         aria-hidden
       >
         {done ? <Check className="h-3 w-3" /> : index}
       </span>
-      <span className={done ? "text-slate-400 line-through" : "text-slate-700"}>
+      <span className={done ? "text-slate-400 dark:text-slate-500 line-through" : "text-slate-700 dark:text-slate-300"}>
         {label}
-        {required && !done && <span className="ml-1 text-accent-700">*</span>}
+        {required && !done && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
       </span>
     </li>
   );

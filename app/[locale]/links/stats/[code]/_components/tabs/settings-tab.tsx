@@ -74,11 +74,11 @@ function DemoLinkBlockedCountriesPreview() {
   const { toast } = useToast();
   const lock = () => toast(tDemo("lockedToast"), "default");
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-[15px] font-semibold tracking-headline text-slate-900">{t("blockedTitle")}</h2>
-          <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("blockedDesc")}</p>
+          <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("blockedTitle")}</h2>
+          <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{t("blockedDesc")}</p>
         </div>
         <DemoBadge />
       </div>
@@ -86,7 +86,7 @@ function DemoLinkBlockedCountriesPreview() {
         disabled
         onClick={lock}
         aria-label={t("countryLabel")}
-        className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs disabled:opacity-50"
+        className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs disabled:opacity-50"
       >
         <option>{t("countryAny")}</option>
       </select>
@@ -94,7 +94,7 @@ function DemoLinkBlockedCountriesPreview() {
         {["🇰🇵 KP", "🇮🇷 IR"].map((c) => (
           <span
             key={c}
-            className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[12px] text-slate-700"
+            className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-2 py-1 text-[12px] text-slate-700 dark:text-slate-300"
           >
             {c}
           </span>
@@ -114,11 +114,11 @@ function DemoLinkExportPreview() {
   const { toast } = useToast();
   const lock = () => toast(tDemo("lockedToast"), "default");
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-[15px] font-semibold tracking-headline text-slate-900">{t("title")}</h2>
-          <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("description")}</p>
+          <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h2>
+          <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{t("description")}</p>
         </div>
         <DemoBadge />
       </div>
@@ -132,7 +132,7 @@ function DemoLinkExportPreview() {
       </div>
       <table className="mt-4 w-full border-collapse text-[12px]">
         <thead>
-          <tr className="border-b border-slate-200 text-left text-[11px] uppercase text-slate-500">
+          <tr className="border-b border-slate-200 dark:border-slate-800 text-left text-[11px] uppercase text-slate-500 dark:text-slate-400">
             <th className="py-1.5 pr-3 font-medium">{t("colTime")}</th>
             <th className="py-1.5 pr-3 font-medium">{t("colLocation")}</th>
             <th className="py-1.5 pr-3 font-medium">{t("colDevice")}</th>
@@ -140,11 +140,11 @@ function DemoLinkExportPreview() {
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-slate-100">
-            <td className="py-1.5 pr-3 font-mono tabular-nums text-slate-600">2026-05-10 20:14</td>
-            <td className="py-1.5 pr-3 text-slate-700">Seoul, KR</td>
-            <td className="py-1.5 pr-3 text-slate-700">mobile · iOS · Safari</td>
-            <td className="py-1.5 pr-3 text-slate-700">instagram.com</td>
+          <tr className="border-b border-slate-100 dark:border-slate-800">
+            <td className="py-1.5 pr-3 font-mono tabular-nums text-slate-600 dark:text-slate-300">2026-05-10 20:14</td>
+            <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">Seoul, KR</td>
+            <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">mobile · iOS · Safari</td>
+            <td className="py-1.5 pr-3 text-slate-700 dark:text-slate-300">instagram.com</td>
           </tr>
         </tbody>
       </table>
@@ -165,7 +165,7 @@ function DemoSettingsBanner() {
       </div>
       <Link
         href="/login"
-        className="inline-flex items-center gap-1 rounded-md border border-accent-300 bg-white px-3 py-1.5 font-medium text-accent-800 hover:bg-accent-50"
+        className="inline-flex items-center gap-1 rounded-md border border-accent-300 bg-white dark:bg-slate-900 px-3 py-1.5 font-medium text-accent-800 hover:bg-accent-50"
       >
         {t("cta")}
       </Link>
@@ -217,14 +217,14 @@ function DemoLinkDestinationsPreview() {
   const total = DEMO_DESTINATIONS.reduce((s, d) => s + d.count, 0);
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
       <div className="mb-3">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-[15px] font-semibold tracking-headline text-slate-900">
+            <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">
               {t("title")}
             </h2>
-            <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("description")}</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{t("description")}</p>
           </div>
           <DemoBadge />
         </div>
@@ -268,7 +268,7 @@ function DemoLinkDestinationsPreview() {
           value=""
           onChange={() => {}}
           disabled
-          className="rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs disabled:opacity-50"
+          className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs disabled:opacity-50"
           aria-label={t("countryLabel")}
           onClick={lock}
         >
@@ -301,25 +301,25 @@ function DemoDestinationRow({
   const pct = total === 0 ? 0 : (d.count / total) * 100;
   const flag = d.countryCode === "JP" ? "🇯🇵" : d.countryCode === "KR" ? "🇰🇷" : "🇺🇸";
   return (
-    <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs">
+    <div className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="font-medium text-slate-900">{d.label}</span>
-        <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
+        <span className="font-medium text-slate-900 dark:text-slate-100">{d.label}</span>
+        <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
           w {d.weight}
         </span>
         {d.countryCode && (
-          <span className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
+          <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
             {flag} {d.countryCode}
           </span>
         )}
-        <span className="ml-auto font-mono tabular-nums text-slate-700">
+        <span className="ml-auto font-mono tabular-nums text-slate-700 dark:text-slate-300">
           {d.count} · {pct.toFixed(1)}%
         </span>
       </div>
-      <code className="mt-1 block break-all font-mono text-[11px] text-slate-500" title={d.url}>
+      <code className="mt-1 block break-all font-mono text-[11px] text-slate-500 dark:text-slate-400" title={d.url}>
         {d.url}
       </code>
-      <div className="mt-1.5 h-1 w-full overflow-hidden rounded bg-slate-100">
+      <div className="mt-1.5 h-1 w-full overflow-hidden rounded bg-slate-100 dark:bg-slate-800">
         <div className="h-full bg-accent-600" style={{ width: `${Math.min(100, pct)}%` }} />
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -383,14 +383,14 @@ function DemoLinkWebhooksPreview() {
   const lock = () => toast(lockMessage, "default");
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
       <div className="mb-3">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-[15px] font-semibold tracking-headline text-slate-900">
+            <h2 className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">
               {t("title")}
             </h2>
-            <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{t("description")}</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">{t("description")}</p>
           </div>
           <DemoBadge />
         </div>
@@ -426,30 +426,30 @@ function DemoLinkWebhooksPreview() {
       </form>
 
       <div className="mt-4 space-y-2">
-        <div className="rounded-md border border-slate-200 bg-white px-3 py-2 text-xs">
+        <div className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs">
           <div className="flex flex-wrap items-center gap-2">
             <div className="min-w-0 flex-1">
-              <span className="mr-2 font-medium text-slate-900">{DEMO_WEBHOOK.name}</span>
+              <span className="mr-2 font-medium text-slate-900 dark:text-slate-100">{DEMO_WEBHOOK.name}</span>
               <code
-                className="break-all font-mono text-[11px] text-slate-600"
+                className="break-all font-mono text-[11px] text-slate-600 dark:text-slate-300"
                 title={DEMO_WEBHOOK.url}
               >
                 {DEMO_WEBHOOK.url}
               </code>
-              <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+              <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
                 <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700">
                   {DEMO_WEBHOOK.lastStatusCode}
                 </span>
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-600">
+                <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-600 dark:text-slate-300">
                   {t("badgeSkipBots")}
                 </span>
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
+                <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
                   {t("badgeSample", { rate: DEMO_WEBHOOK.sampleRate })}
                 </span>
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-600">
+                <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-600 dark:text-slate-300">
                   {t("badgeBatch")}
                 </span>
-                <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[10px] text-slate-700">
+                <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
                   {t("badgeQuota", { n: DEMO_WEBHOOK.dailyQuota })}
                 </span>
                 <span>
@@ -481,11 +481,11 @@ function DemoLinkWebhooksPreview() {
         {/* Payload preview — the dashboard doesn't ship this inline (owners read it from the
             docs), but on /demo it's the cheapest way to communicate what the webhook actually
             sends. Same chrome the dashboard uses for the one-time-secret reveal banner. */}
-        <details className="rounded-md border border-slate-200 bg-slate-50/60 px-3 py-2 text-xs">
-          <summary className="cursor-pointer select-none font-medium text-slate-700">
+        <details className="rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50/60 px-3 py-2 text-xs">
+          <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-300">
             {tDemo("payloadPreview")}
           </summary>
-          <pre className="mt-2 overflow-x-auto rounded bg-white p-3 font-mono text-[11px] leading-relaxed text-slate-700">
+          <pre className="mt-2 overflow-x-auto rounded bg-white dark:bg-slate-900 p-3 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-slate-300">
 {`POST https://hooks.slack.com/services/T01ABC/B02XYZ/demo-token
 Content-Type: application/json
 X-Kurl-Signature: sha256=8b1a9953c4611296a827abf8c47804d7
@@ -511,7 +511,7 @@ X-Kurl-Signature: sha256=8b1a9953c4611296a827abf8c47804d7
 function DemoBadge() {
   const tDemo = useTranslations("demo.settingsDemo");
   return (
-    <span className="inline-flex shrink-0 items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[10px] font-medium text-slate-600">
+    <span className="inline-flex shrink-0 items-center gap-1 rounded-md border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-2 py-1 text-[10px] font-medium text-slate-600 dark:text-slate-300">
       <Lock className="h-3 w-3" />
       {tDemo("badge")}
     </span>

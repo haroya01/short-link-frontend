@@ -78,7 +78,7 @@ export default function PrintSheetPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("loginRequired")}
         </h1>
       </div>
@@ -91,24 +91,24 @@ export default function PrintSheetPage() {
       <div className="container max-w-5xl space-y-4 py-8 screen-only">
         <Link
           href={`/campaigns/${campaignId}`}
-          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
+          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToCampaign")}
         </Link>
 
         <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
           <div>
-            <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+            <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
               {t("title")}
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               {loading ? (
                 <Skeleton className="inline-block h-4 w-40" />
               ) : campaign ? (
                 <>
                   {t.rich("introCampaign", {
                     name: () => (
-                      <span className="font-medium text-slate-700">{campaign.name}</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-300">{campaign.name}</span>
                     ),
                   })}
                 </>
@@ -136,7 +136,7 @@ export default function PrintSheetPage() {
         ) : error ? (
           <ErrorState message={error} onRetry={() => window.location.reload()} />
         ) : (batches ?? []).length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-10 text-center text-[13px] text-slate-500">
+          <div className="rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-4 py-10 text-center text-[13px] text-slate-500 dark:text-slate-400">
             {t("empty")}
           </div>
         ) : null}
@@ -184,9 +184,9 @@ function OptionsBar({
 }) {
   const t = useTranslations("campaignApp.printSheet");
   return (
-    <div className="space-y-3 rounded-2xl border border-slate-200 bg-white px-4 py-4">
+    <div className="space-y-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4">
       <div className="space-y-1.5">
-        <p className="text-[12px] font-medium text-slate-700">{t("perPage")}</p>
+        <p className="text-[12px] font-medium text-slate-700 dark:text-slate-300">{t("perPage")}</p>
         <div className="grid grid-cols-3 gap-1.5">
           {LAYOUTS.map((l) => (
             <button
@@ -196,12 +196,12 @@ function OptionsBar({
               className={
                 "flex flex-col rounded-xl border px-3 py-2 text-left transition-colors " +
                 (layout.id === l.id
-                  ? "border-accent-600 bg-accent-50 text-accent-700"
-                  : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50")
+                  ? "border-accent-600 bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400"
+                  : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50")
               }
             >
               <span className="text-[12px] font-medium">{t(`layouts.${l.id}.label`)}</span>
-              <span className="mt-0.5 text-[10px] leading-tight text-slate-500">
+              <span className="mt-0.5 text-[10px] leading-tight text-slate-500 dark:text-slate-400">
                 {t(`layouts.${l.id}.hint`)}
               </span>
             </button>
@@ -231,14 +231,14 @@ function Toggle({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 hover:bg-slate-50">
+    <label className="inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/50">
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 rounded border-slate-300 text-accent-600 focus:ring-accent-500"
+        className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-accent-600 dark:text-accent-400 focus:ring-accent-500"
       />
-      <span className="text-[12px] text-slate-700">{label}</span>
+      <span className="text-[12px] text-slate-700 dark:text-slate-300">{label}</span>
     </label>
   );
 }

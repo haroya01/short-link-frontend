@@ -49,7 +49,7 @@ export function DemoStatsPage() {
         </span>
         <Link
           href="/login"
-          className="inline-flex items-center gap-1 font-medium text-accent-700 underline-offset-4 hover:text-accent-800 hover:underline"
+          className="inline-flex items-center gap-1 font-medium text-accent-700 dark:text-accent-400 underline-offset-4 hover:text-accent-800 hover:underline"
         >
           {t("sampleCta")}
           <ArrowRight className="h-3 w-3" />

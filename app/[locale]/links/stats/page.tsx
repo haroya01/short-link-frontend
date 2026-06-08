@@ -117,7 +117,7 @@ export default function AnalyticsPage() {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
+    <div className="rounded-lg border border-gray-200 bg-white dark:bg-slate-900 p-4">
       <p className="text-xs uppercase text-gray-500">{label}</p>
       <p className="mt-1 text-2xl font-bold text-gray-900">{value}</p>
     </div>

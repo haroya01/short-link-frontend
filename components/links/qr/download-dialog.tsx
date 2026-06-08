@@ -125,17 +125,17 @@ export function QrDownloadDialog({
           </div>
         </OptionGroup>
         <OptionGroup label={t("labelText")} hint={t("labelHint")}>
-          <label className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 hover:bg-slate-50">
+          <label className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50">
             <input
               type="checkbox"
               checked={label}
               onChange={(e) => setLabel(e.target.checked)}
-              className="h-4 w-4 rounded border-slate-300 text-accent-600 focus:ring-accent-500"
+              className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-accent-600 dark:text-accent-400 focus:ring-accent-500"
             />
-            <span className="text-[13px] text-slate-700">{t("labelCheckbox")}</span>
+            <span className="text-[13px] text-slate-700 dark:text-slate-300">{t("labelCheckbox")}</span>
           </label>
         </OptionGroup>
-        <div className="rounded-xl bg-slate-50 px-3 py-2 text-[11px] text-slate-500">
+        <div className="rounded-xl bg-slate-50 dark:bg-slate-800/50 px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400">
           <Download className="mr-1 inline-block h-3 w-3" aria-hidden />
           {t("notSaved")}
         </div>
@@ -156,8 +156,8 @@ function OptionGroup({
   return (
     <div className="space-y-1.5">
       <div>
-        <p className="text-[12px] font-medium text-slate-700">{label}</p>
-        {hint && <p className="mt-0.5 text-[11px] leading-snug text-slate-500">{hint}</p>}
+        <p className="text-[12px] font-medium text-slate-700 dark:text-slate-300">{label}</p>
+        {hint && <p className="mt-0.5 text-[11px] leading-snug text-slate-500 dark:text-slate-400">{hint}</p>}
       </div>
       {children}
     </div>
@@ -182,12 +182,12 @@ function SegmentButton({
       className={
         "flex flex-col items-center justify-center rounded-xl border px-2 py-2 text-center transition-colors " +
         (active
-          ? "border-accent-600 bg-accent-50 text-accent-700"
-          : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50")
+          ? "border-accent-600 bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400"
+          : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50")
       }
     >
       <span className="text-[12px] font-medium">{primary}</span>
-      <span className="mt-0.5 text-[10px] leading-tight text-slate-500">{secondary}</span>
+      <span className="mt-0.5 text-[10px] leading-tight text-slate-500 dark:text-slate-400">{secondary}</span>
     </button>
   );
 }

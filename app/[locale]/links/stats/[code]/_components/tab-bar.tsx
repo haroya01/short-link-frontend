@@ -31,7 +31,7 @@ export function TabBar({ active, onSelect }: Props) {
         aria-label={t("tabs.aria")}
         className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0"
       >
-        <div className="inline-flex gap-1 rounded-full border border-slate-200 bg-slate-50 p-1">
+        <div className="inline-flex gap-1 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-1">
           {tabs.map((it) => {
             const selected = active === it.key;
             return (
@@ -44,8 +44,8 @@ export function TabBar({ active, onSelect }: Props) {
                 className={
                   "relative shrink-0 rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 " +
                   (selected
-                    ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(15,23,42,0.08)]"
-                    : "text-slate-500 hover:text-slate-900")
+                    ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-[0_1px_3px_rgba(15,23,42,0.08)]"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100")
                 }
               >
                 {it.label}
@@ -54,7 +54,7 @@ export function TabBar({ active, onSelect }: Props) {
           })}
         </div>
       </div>
-      <p className="text-[12px] leading-relaxed text-slate-500">
+      <p className="text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">
         {t(`tabs.descriptions.${active}`)}
       </p>
     </div>

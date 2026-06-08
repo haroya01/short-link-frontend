@@ -63,16 +63,16 @@ export default function PublicStatsPage() {
 
   return (
     <div className="container max-w-6xl space-y-5 py-10">
-      <header className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+      <header className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
             {tPublic("title")}
           </p>
-          <h1 className="mt-1.5 font-mono text-xl font-bold tracking-tight text-slate-900">
+          <h1 className="mt-1.5 font-mono text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             /{data.shortCode}
           </h1>
         </div>
-        <span className="rounded-full bg-accent-50 px-2.5 py-1 text-[11px] font-medium text-accent-700 ring-1 ring-inset ring-accent-200">
+        <span className="rounded-full bg-accent-50 dark:bg-accent-500/10 px-2.5 py-1 text-[11px] font-medium text-accent-700 dark:text-accent-400 ring-1 ring-inset ring-accent-200">
           {tPublic("publicBadge")}
         </span>
       </header>

@@ -33,7 +33,7 @@ export default function NewCampaignPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("loginRequired")}
         </h1>
         <Link href="/login" className="mt-6 inline-block">
@@ -80,21 +80,21 @@ export default function NewCampaignPage() {
       <div>
         <Link
           href="/campaigns"
-          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
+          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToList")}
         </Link>
-        <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("title")}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {t("intro")}
         </p>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5"
+        className="space-y-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5"
       >
         <Field label={t("nameLabel")} required>
           <Input
@@ -139,7 +139,7 @@ export default function NewCampaignPage() {
             onChange={(e) => setEndsAtLocal(e.target.value)}
             required
           />
-          <p className="mt-1.5 text-[12px] text-slate-500">
+          <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">
             {t("endHint")}
           </p>
         </Field>
@@ -177,9 +177,9 @@ export default function NewCampaignPage() {
                   onChange={(e) => setPostEndMessage(e.target.value.slice(0, 500))}
                   placeholder={t("messagePlaceholder")}
                   rows={3}
-                  className="block w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-900 placeholder:text-slate-400 focus:border-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-100"
+                  className="block w-full resize-y rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-[13px] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-100"
                 />
-                <p className="text-[12px] text-slate-500">
+                <p className="text-[12px] text-slate-500 dark:text-slate-400">
                   {t("messageHint")}{" "}
                   <span className="tabular-nums">{postEndMessage.length}/500</span>
                 </p>
@@ -201,14 +201,14 @@ export default function NewCampaignPage() {
                 placeholder="https://example.com/after-event"
                 required
               />
-              <p className="mt-1.5 text-[12px] text-slate-500">
+              <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">
                 {t("redirectHint")}
               </p>
             </div>
           )}
         </Field>
 
-        <div className="flex items-center justify-end gap-2 border-t border-slate-200 pt-4">
+        <div className="flex items-center justify-end gap-2 border-t border-slate-200 dark:border-slate-800 pt-4">
           <Link href="/campaigns">
             <Button type="button" variant="outline">
               {t("cancel")}
@@ -236,12 +236,12 @@ function Field({
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-[13px] font-medium text-slate-900">
+      <label className="block text-[13px] font-medium text-slate-900 dark:text-slate-100">
         {label}
-        {required && <span className="ml-1 text-accent-700">*</span>}
+        {required && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
       </label>
       {children}
-      {hint && <p className="text-[12px] text-slate-500">{hint}</p>}
+      {hint && <p className="text-[12px] text-slate-500 dark:text-slate-400">{hint}</p>}
     </div>
   );
 }
@@ -262,8 +262,8 @@ function Segmented({
       className={
         "h-10 rounded-xl border text-[13px] font-medium transition-colors " +
         (active
-          ? "border-accent-600 bg-accent-50 text-accent-700"
-          : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50")
+          ? "border-accent-600 bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400"
+          : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50")
       }
     >
       {label}
@@ -290,21 +290,21 @@ function PolicyOption({
         "w-full rounded-xl border px-4 py-3 text-left transition-colors " +
         (active
           ? "border-accent-600 bg-accent-50/40"
-          : "border-slate-200 bg-white hover:bg-slate-50")
+          : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50")
       }
     >
       <div className="flex items-center gap-2">
         <span
           className={
             "grid h-4 w-4 place-items-center rounded-full border " +
-            (active ? "border-accent-600 bg-accent-600" : "border-slate-300 bg-white")
+            (active ? "border-accent-600 bg-accent-600" : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900")
           }
         >
-          {active && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+          {active && <span className="h-1.5 w-1.5 rounded-full bg-white dark:bg-slate-900" />}
         </span>
-        <span className="text-[13px] font-medium text-slate-900">{title}</span>
+        <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">{title}</span>
       </div>
-      <p className="mt-1.5 pl-6 text-[12px] leading-snug text-slate-500">{body}</p>
+      <p className="mt-1.5 pl-6 text-[12px] leading-snug text-slate-500 dark:text-slate-400">{body}</p>
     </button>
   );
 }

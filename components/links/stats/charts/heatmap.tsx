@@ -92,7 +92,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                   key={h}
                   className={cn(
                     "text-center font-mono text-[10px]",
-                    h % 6 === 0 ? "text-slate-700 font-medium dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
+                    h % 6 === 0 ? "text-slate-700 dark:text-slate-300 font-medium dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
                   )}
                   style={{ visibility: h % 3 === 0 ? "visible" : "hidden" }}
                 >
@@ -234,7 +234,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           <span>{t("less")}</span>
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-slate-50 ring-1 ring-inset ring-slate-200 dark:bg-slate-800/60 dark:ring-slate-700/50" />
+          <div className="h-2.5 w-2.5 rounded-[3px] bg-slate-50 dark:bg-slate-800/50 ring-1 ring-inset ring-slate-200 dark:bg-slate-800/60 dark:ring-slate-700/50" />
           <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-100" />
           <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-300" />
           <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-500" />
@@ -315,7 +315,7 @@ function ActiveCellLabel({
           type="button"
           onClick={onClear}
           aria-label={t("detailClose")}
-          className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+          className="ml-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-slate-400 dark:text-slate-500 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-100"
         >
           <X className="h-3 w-3" />
         </button>

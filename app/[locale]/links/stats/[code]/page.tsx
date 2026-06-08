@@ -51,10 +51,10 @@ export default function StatsPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("loginRequired")}
         </h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-slate-500">{t("loginRequiredDesc")}</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("loginRequiredDesc")}</p>
         <Link href="/login" className="mt-6 inline-block">
           <Button>{t("backToDashboard")}</Button>
         </Link>
@@ -74,7 +74,7 @@ export default function StatsPage() {
             router.push(`/${locale}/links`);
           }
         }}
-        className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12px] text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
+        className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-[12px] text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         {t("back")}

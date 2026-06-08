@@ -82,7 +82,7 @@ export default async function ShowcasePage({
           rather than busy. Single-CTA discipline (one slate-900 primary + scroll cue) kept so the
           surface direction matches the landing. Headline is Pretendard semibold with
           `.tracking-headline` (−0.025em) — same family/treatment as the landing hero. */}
-      <section className="relative isolate flex flex-col overflow-hidden bg-white sm:min-h-[520px]">
+      <section className="relative isolate flex flex-col overflow-hidden bg-white dark:bg-slate-900 sm:min-h-[520px]">
         <div className="container relative z-10 m-auto max-w-3xl py-16 text-center sm:py-24">
           <div className="hero-stagger space-y-4">
             <div
@@ -90,19 +90,19 @@ export default async function ShowcasePage({
               style={{ ["--hi" as string]: 0 } as React.CSSProperties}
             >
               <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
                 {t("eyebrow")}
               </p>
               <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
             </div>
             <h1
-              className="text-balance text-[34px] font-semibold leading-[1.05] tracking-headline text-slate-900 sm:text-[48px]"
+              className="text-balance text-[34px] font-semibold leading-[1.05] tracking-headline text-slate-900 dark:text-slate-100 sm:text-[48px]"
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
               {t("ctaTitle")}
             </h1>
             <p
-              className="mx-auto max-w-md text-balance text-[15px] leading-relaxed text-slate-500"
+              className="mx-auto max-w-md text-balance text-[15px] leading-relaxed text-slate-500 dark:text-slate-400"
               style={{ ["--hi" as string]: 2 } as React.CSSProperties}
             >
               {t("ctaSubhead")}
@@ -128,21 +128,21 @@ export default async function ShowcasePage({
         <a
           href="#showcase-examples"
           aria-label={t("scrollCue")}
-          className="absolute inset-x-0 bottom-4 mx-auto hidden w-fit flex-col items-center gap-0.5 text-[11px] font-medium text-slate-400 transition hover:text-slate-600 sm:flex"
+          className="absolute inset-x-0 bottom-4 mx-auto hidden w-fit flex-col items-center gap-0.5 text-[11px] font-medium text-slate-400 dark:text-slate-500 transition hover:text-slate-600 sm:flex"
         >
           <span>{t("scrollCue")}</span>
           <ChevronDown className="h-4 w-4 motion-safe:animate-bounce" />
         </a>
       </section>
 
-      <section id="showcase-examples" className="bg-white py-12 sm:py-16">
+      <section id="showcase-examples" className="bg-white dark:bg-slate-900 py-12 sm:py-16">
         <div className="container max-w-3xl mb-10">
           <div className="section-divider mx-auto mb-10 w-full max-w-xl" aria-hidden />
           <div className="text-center">
-            <h2 className="text-balance text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+            <h2 className="text-balance text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
               {t("title")}
             </h2>
-            <p className="mx-auto mt-3 max-w-md text-balance text-[14px] leading-relaxed text-slate-500">
+            <p className="mx-auto mt-3 max-w-md text-balance text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
               {t("subhead")}
             </p>
           </div>

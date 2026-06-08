@@ -162,7 +162,7 @@ export default function NewBatchPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("loginRequired")}
         </h1>
       </div>
@@ -173,22 +173,22 @@ export default function NewBatchPage() {
     <div className="container max-w-5xl space-y-6 py-10">
       <Link
         href={`/campaigns/${campaignId}`}
-        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-700"
+        className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
       >
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToCampaign")}
       </Link>
 
       <div>
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px]">
+        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
           {t("title")}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {loading ? (
             <Skeleton className="inline-block h-4 w-40" />
           ) : campaign ? (
             <>
               {t.rich("introCampaign", {
-                name: () => <span className="font-medium text-slate-700">{campaign.name}</span>,
+                name: () => <span className="font-medium text-slate-700 dark:text-slate-300">{campaign.name}</span>,
               })}
             </>
           ) : null}
@@ -251,13 +251,13 @@ function DestinationHint({
   if (defaultDestinationUrl) {
     return (
       <div className="rounded-2xl border border-accent-200 bg-accent-50/40 px-4 py-3">
-        <p className="text-[12px] leading-snug text-slate-700">
+        <p className="text-[12px] leading-snug text-slate-700 dark:text-slate-300">
           {t.rich("defaultUrlActive", {
             strong: (chunks) => (
-              <span className="font-medium text-accent-700">{chunks}</span>
+              <span className="font-medium text-accent-700 dark:text-accent-400">{chunks}</span>
             ),
             code: () => (
-              <code className="rounded bg-white px-1 py-0.5 text-[11px]">
+              <code className="rounded bg-white dark:bg-slate-900 px-1 py-0.5 text-[11px]">
                 {defaultDestinationUrl}
               </code>
             ),
@@ -268,7 +268,7 @@ function DestinationHint({
   }
   return (
     <div className="rounded-2xl border border-amber-200 bg-amber-50/60 px-4 py-3">
-      <p className="text-[12px] leading-snug text-slate-700">
+      <p className="text-[12px] leading-snug text-slate-700 dark:text-slate-300">
         {t.rich("defaultUrlMissing", {
           strong: (chunks) => (
             <span className="font-medium text-amber-800">{chunks}</span>
@@ -294,22 +294,22 @@ function RowsTable({
 }) {
   const t = useTranslations("campaignApp.batchesNew");
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
       {/* Desktop header */}
-      <div className="hidden grid-cols-[1.4fr_1fr_1fr_0.7fr_1.6fr_0.5fr] gap-2 border-b border-slate-200 bg-slate-50 px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider text-slate-500 lg:grid">
+      <div className="hidden grid-cols-[1.4fr_1fr_1fr_0.7fr_1.6fr_0.5fr] gap-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 lg:grid">
         <span>
-          {t("fields.name")} <span className="text-accent-700">*</span>
+          {t("fields.name")} <span className="text-accent-700 dark:text-accent-400">*</span>
         </span>
         <span>{t("fields.distributor")}</span>
         <span>{t("fields.area")}</span>
         <span>
-          {t("fields.quantity")} <span className="text-accent-700">*</span>
+          {t("fields.quantity")} <span className="text-accent-700 dark:text-accent-400">*</span>
         </span>
         <span>{t("fields.destinationUrl")}</span>
         <span></span>
       </div>
 
-      <ul className="divide-y divide-slate-200">
+      <ul className="divide-y divide-slate-200 dark:divide-slate-800">
         {rows.map((row, idx) => (
           <RowItem
             key={row.id}
@@ -401,7 +401,7 @@ function RowItem({
             onClick={onRemove}
             disabled={!canRemove}
             aria-label={t("removeRow", { index: index + 1 })}
-            className="grid h-9 w-9 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400"
+            className="grid h-9 w-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400"
           >
             <Trash2 className="h-3.5 w-3.5" aria-hidden />
           </button>
@@ -427,15 +427,15 @@ function Cell({
   const t = useTranslations("campaignApp.batchesNew");
   return (
     <div className="space-y-1">
-      <label className="block text-[11px] font-medium text-slate-500 lg:hidden">
+      <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 lg:hidden">
         {label}
-        {required && <span className="ml-1 text-accent-700">*</span>}
+        {required && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
       </label>
       {children}
       {error ? (
         <p className="text-[11px] leading-snug text-rose-600">{error}</p>
       ) : (
-        hint && <p className="text-[11px] leading-snug text-slate-400 lg:hidden">{hint}</p>
+        hint && <p className="text-[11px] leading-snug text-slate-400 dark:text-slate-500 lg:hidden">{hint}</p>
       )}
     </div>
   );
@@ -455,14 +455,14 @@ function PastePanel({
   const t = useTranslations("campaignApp.batchesNew");
   const preview = useMemo(() => parsePastedRows(text), [text]);
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
       <div className="flex items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-medium text-slate-900">{t("pasteTitle")}</h3>
-          <p className="mt-0.5 text-[12px] text-slate-500">
+          <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">{t("pasteTitle")}</h3>
+          <p className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">
             {t.rich("pasteColumns", {
               code: (chunks) => (
-                <code className="rounded bg-slate-100 px-1">{chunks}</code>
+                <code className="rounded bg-slate-100 dark:bg-slate-800 px-1">{chunks}</code>
               ),
             })}
           </p>
@@ -471,7 +471,7 @@ function PastePanel({
           type="button"
           onClick={onClose}
           aria-label={t("close")}
-          className="grid h-7 w-7 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+          className="grid h-7 w-7 place-items-center rounded-lg text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300"
         >
           <X className="h-3.5 w-3.5" aria-hidden />
         </button>
@@ -484,7 +484,7 @@ function PastePanel({
         placeholder={t("pastePlaceholder")}
       />
       <div className="mt-3 flex items-center justify-between gap-2">
-        <p className="text-[12px] text-slate-500">
+        <p className="text-[12px] text-slate-500 dark:text-slate-400">
           {text.trim() === "" ? t("pasteZeroRows") : t("pastePreviewRows", { count: preview.length })}
         </p>
         <div className="flex items-center gap-2">
@@ -523,8 +523,8 @@ function SubmitBar({
   const t = useTranslations("campaignApp.batchesNew");
 
   return (
-    <div className="sticky bottom-3 z-10 mt-4 flex flex-col items-stretch gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_4px_16px_rgba(15,23,42,0.06)] sm:flex-row sm:items-center sm:justify-between">
-      <div className="text-[12px] text-slate-500">
+    <div className="sticky bottom-3 z-10 mt-4 flex flex-col items-stretch gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-[0_4px_16px_rgba(15,23,42,0.06)] sm:flex-row sm:items-center sm:justify-between">
+      <div className="text-[12px] text-slate-500 dark:text-slate-400">
         {invalidCount > 0 ? (
           <span className="text-rose-600">
             {t("invalidRows", { count: invalidCount })}
@@ -535,7 +535,7 @@ function SubmitBar({
               rowCount,
               totalQuantity: totalQuantity.toLocaleString(),
               strong: (chunks: ReactNode) => (
-                <span className="font-medium text-slate-900">{chunks}</span>
+                <span className="font-medium text-slate-900 dark:text-slate-100">{chunks}</span>
               ),
             })}
           </>

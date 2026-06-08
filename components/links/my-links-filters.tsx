@@ -42,7 +42,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+          className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
         >
           {t("toggle")}
           {activeCount > 0 && (
@@ -87,7 +87,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
           <button
             type="button"
             onClick={clearAll}
-            className="ml-auto text-xs text-slate-500 hover:text-slate-900"
+            className="ml-auto text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
           >
             {t("clearAll")}
           </button>
@@ -95,7 +95,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
       </div>
 
       {open && (
-        <div className="grid gap-3 rounded-md border border-slate-200 bg-white p-3 sm:grid-cols-2">
+        <div className="grid gap-3 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:grid-cols-2">
           <Field label={t("domain")}>
             <Input
               type="text"
@@ -112,7 +112,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
               <select
                 value={filters.tag ?? ""}
                 onChange={(e) => patch({ tag: e.target.value || undefined })}
-                className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
+                className="block w-full rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
               >
                 <option value="">{t("any")}</option>
                 {tagOptions.map((name) => (
@@ -142,7 +142,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
                     (e.target.value as MyLinksFilters["expiry"]) || undefined,
                 })
               }
-              className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
+              className="block w-full rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
             >
               <option value="">{t("any")}</option>
               {EXPIRY_OPTIONS.map((value) => (
@@ -162,7 +162,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
                   patch({ createdAfter: toIsoStart(e.target.value) })
                 }
               />
-              <span className="text-slate-400">–</span>
+              <span className="text-slate-400 dark:text-slate-500">–</span>
               <Input
                 type="date"
                 value={dateOnly(filters.createdBefore)}
@@ -180,12 +180,12 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
 
 function Chip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-700">
+    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-1 text-[11px] font-medium text-slate-700 dark:text-slate-300">
       {label}
       <button
         type="button"
         onClick={onRemove}
-        className="text-slate-400 hover:text-slate-700"
+        className="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
         aria-label="remove filter"
       >
         <X className="h-3 w-3" />
@@ -197,7 +197,7 @@ function Chip({ label, onRemove }: { label: string; onRemove: () => void }) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block space-y-1">
-      <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+      <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
         {label}
       </span>
       {children}

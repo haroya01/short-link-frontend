@@ -31,10 +31,10 @@ type Props = {
 export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }: Props) {
   const display = shortUrl || `/${data.shortCode}`;
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
       <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
         <div className="min-w-0">
-          <p className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-tagline text-accent-700">
+          <p className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
             <Link2 className="h-3 w-3" />
             {shortCodeLabel}
           </p>
@@ -43,7 +43,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }:
             target="_blank"
             rel="noreferrer"
             aria-label={shortCodeLabel}
-            className="group mt-2 block truncate font-mono text-2xl font-bold leading-none tracking-tight text-slate-900 transition-colors hover:text-accent-700"
+            className="group mt-2 block truncate font-mono text-2xl font-bold leading-none tracking-tight text-slate-900 dark:text-slate-100 transition-colors hover:text-accent-700"
           >
             /{data.shortCode}
           </a>
@@ -51,7 +51,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }:
             href={display}
             target="_blank"
             rel="noreferrer"
-            className="mt-2 inline-flex max-w-full items-center gap-1.5 truncate rounded-lg bg-slate-50 px-2 py-1 text-[12px] text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            className="mt-2 inline-flex max-w-full items-center gap-1.5 truncate rounded-lg bg-slate-50 dark:bg-slate-800/50 px-2 py-1 text-[12px] text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300"
           >
             <ExternalLink className="h-3 w-3 shrink-0" />
             <span className="truncate font-mono">{display}</span>
@@ -71,7 +71,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }:
 
 export function HeaderSkeleton() {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white px-6 py-6">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-6">
       <Skeleton className="h-3 w-20" />
       <Skeleton className="mt-3 h-7 w-56" />
       <Skeleton className="mt-3 h-4 w-72" />

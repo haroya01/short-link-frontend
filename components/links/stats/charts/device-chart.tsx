@@ -12,7 +12,7 @@ const COLORS = ["#059669", "#10B981", "#34D399", "#6EE7B7", "#A7F3D0"];
 export function DeviceChart({ data }: Props) {
   const t = useTranslations("stats");
   if (data.length === 0) {
-    return <p className="py-8 text-center text-xs text-slate-500">{t("noData")}</p>;
+    return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noData")}</p>;
   }
   const total = data.reduce((acc, d) => acc + d.count, 0) || 1;
   const labelFor = (device: string) => deviceLabel(device, t);
@@ -57,16 +57,16 @@ export function DeviceChart({ data }: Props) {
       <ul className="grid w-full grid-cols-2 gap-1.5 sm:w-1/2 sm:grid-cols-1">
         {data.map((d, i) => (
           <li key={d.device} className="flex items-center justify-between text-xs">
-            <span className="flex items-center gap-2 text-slate-700">
+            <span className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
               <span
                 className="h-2.5 w-2.5 rounded-[3px]"
                 style={{ background: COLORS[i % COLORS.length] }}
               />
               {labelFor(d.device)}
             </span>
-            <span className="font-mono tabular-nums text-slate-600">
+            <span className="font-mono tabular-nums text-slate-600 dark:text-slate-300">
               {formatNumber(d.count)}
-              <span className="ml-1.5 text-[10px] text-slate-500">
+              <span className="ml-1.5 text-[10px] text-slate-500 dark:text-slate-400">
                 {((d.count / total) * 100).toFixed(0)}%
               </span>
             </span>

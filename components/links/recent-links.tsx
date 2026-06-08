@@ -16,33 +16,33 @@ export function RecentLinks() {
   if (items.length === 0) return null;
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
+    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-xs font-medium uppercase tracking-wider text-slate-500">
+        <h3 className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {t("title")}
         </h3>
         {!authenticated && (
           <Link
             href="/login"
-            className="text-[11px] text-accent-700 hover:underline"
+            className="text-[11px] text-accent-700 dark:text-accent-400 hover:underline"
           >
             {t("claimCta")}
           </Link>
         )}
       </div>
-      <ul className="divide-y divide-slate-100">
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800">
         {items.map((item) => (
           <li key={item.shortCode} className="flex items-center gap-2 py-2 text-sm">
             <a
               href={item.shortUrl}
               target="_blank"
               rel="noreferrer"
-              className="font-mono font-medium text-slate-900 hover:underline"
+              className="font-mono font-medium text-slate-900 dark:text-slate-100 hover:underline"
             >
               /{item.shortCode}
             </a>
             <span
-              className="flex-1 truncate text-xs text-slate-500"
+              className="flex-1 truncate text-xs text-slate-500 dark:text-slate-400"
               title={item.originalUrl}
             >
               {truncateMiddle(item.originalUrl, 56)}
@@ -53,7 +53,7 @@ export function RecentLinks() {
               {authenticated && (
                 <Link
                   href={`/links/stats/${item.shortCode}`}
-                  className="rounded-md px-2 py-1 text-[11px] text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                  className="rounded-md px-2 py-1 text-[11px] text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
                 >
                   {t("viewStats")}
                 </Link>
@@ -63,7 +63,7 @@ export function RecentLinks() {
         ))}
       </ul>
       {!authenticated && (
-        <p className="mt-3 text-[11px] text-slate-400">{t("anonymousNote")}</p>
+        <p className="mt-3 text-[11px] text-slate-400 dark:text-slate-500">{t("anonymousNote")}</p>
       )}
     </div>
   );
