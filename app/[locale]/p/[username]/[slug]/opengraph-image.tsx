@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getTranslations } from "next-intl/server";
 import { findPublicPost, type PublicPostBlock } from "@/modules/blog/api/public-posts";
 
 // nodejs (not edge): we fetch the post to put its title/excerpt/byline on the card.
@@ -31,12 +32,6 @@ function formatDate(iso: string): string {
   const d = new Date(iso);
   const p = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}.${p(d.getMonth() + 1)}.${p(d.getDate())}`;
-}
-
-function readLabel(mins: number, locale: string): string {
-  if (locale === "en") return `${mins} min read`;
-  if (locale === "ja") return `${mins}分で読めます`;
-  return `${mins}분 읽기`;
 }
 
 // Satori crashes the whole render if a remote <img> fails to load — and avatars are user-set, so the
@@ -77,6 +72,7 @@ export default async function PostOgImage({
   params: Promise<{ locale: string; username: string; slug: string }>;
 }) {
   const { locale, username, slug } = await params;
+  const t = await getTranslations({ locale, namespace: "publicPost" });
 
   let title = "blog.kurl";
   let excerpt: string | null = null;
@@ -245,7 +241,7 @@ export default async function PostOgImage({
               </span>
             </div>
             <div style={{ display: "flex", fontSize: 38, color: MUTE, fontFamily: "monospace" }}>
-              {dateStr && mins ? `${dateStr} · ${readLabel(mins, locale)}` : "blog.kurl.me"}
+              {dateStr && mins ? `${dateStr} · ${t("ogReadingTime", { minutes: mins })}` : "blog.kurl.me"}
             </div>
           </div>
         </div>

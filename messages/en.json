@@ -426,6 +426,7 @@
   "publicPost": {
     "like": "Like",
     "readingTime": "{minutes} min read",
+    "ogReadingTime": "{minutes} min read",
     "previewBanner": "Preview — this post isn't published yet. Only people with this link can see it.",
     "editedOn": "Updated {date}",
     "morePosts": "More from @{username}",
