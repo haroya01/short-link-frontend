@@ -7,7 +7,7 @@
 `ReadingShell` / AGENTS.md §10.1 은 "피드 본문은 모든 면에서 `max-w-2xl` 단일 컬럼"을 불변식으로 둔다
 (`FeedList` 주석도 *"a quiet weblog reads as a vertical list, NOT a multi-column card grid"*).
 이번 변경은 **발견 면(블로그 홈 최신/검색)에 한해 그 불변식을 예외**로 둔다 — browse 면은 그리드가 맞고,
-read 면은 컬럼이 맞다는 판단. **AGENTS.md §10.1 에 이 예외를 명문화 필요** (이 PR에는 미포함).
+read 면은 컬럼이 맞다는 판단. **AGENTS.md §10.1 에 이 예외를 명문화 완료** (§10.1 하단 예외 콜아웃).
 
 ## Phase 1 — 적용 완료 (이 브랜치, FE only, 백엔드 0)
 - 신규 `modules/blog/components/discovery-card.tsx`
