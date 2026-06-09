@@ -222,10 +222,10 @@ export default async function BlogFeedPage({
         {/* Keeps the SSR default-tab cookie in step with the account pref (no UI, no redirect). */}
         <FeedTabCookieSync />
 
-        {/* Reader's followed tags ("보고싶은 태그") — a jump-to-topic shortcut. Hidden until they follow
-            one, during search, and on the 팔로잉 tab (there topics are integrated as filter chips, so
-            the floating strip would duplicate them). */}
-        {!searching && tab !== "following" && <MyTagsStrip />}
+        {/* Reader's followed tags ("보고싶은 태그") — a jump-to-topic shortcut, only on 최신. Other tabs
+            already cover topics (인기=주제별 인기 / 팔로잉=주제 필터 칩), so showing it there just stacks a
+            second redundant tag row. Hidden during search. */}
+        {!searching && tab === "recent" && <MyTagsStrip />}
 
         {/* Following is its own client surface with its own rail (followed authors), so it animates as
             a whole — there's no shared discovery rail to hold still here. */}
