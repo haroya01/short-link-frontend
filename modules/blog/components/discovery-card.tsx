@@ -209,3 +209,27 @@ export function DiscoveryGrid({ children }: { children: ReactNode }) {
 export function DiscoveryCell({ children }: { children: ReactNode }) {
   return <div className="mb-4 break-inside-avoid sm:mb-5">{children}</div>;
 }
+
+// 로딩 placeholder — 리스트 행이 아니라 실제 카드 그리드와 같은 메이슨리 모양으로(높이 섞인 카드 블록)
+// 채워, 전환이 "같은 그리드가 채워지는" 느낌이 되게 한다. 비율을 섞어 메이슨리 packing 을 흉내.
+const SKELETON_RATIOS = [
+  "aspect-[4/5]",
+  "aspect-[4/3]",
+  "aspect-square",
+  "aspect-[3/4]",
+  "aspect-[4/5]",
+  "aspect-[4/3]",
+];
+export function DiscoveryGridSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div role="status" aria-busy="true" className="gap-4 columns-2 sm:gap-5 md:columns-3">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="mb-4 break-inside-avoid sm:mb-5">
+          <div
+            className={`w-full animate-pulse rounded-2xl bg-slate-200/80 dark:bg-slate-800 ${SKELETON_RATIOS[i % SKELETON_RATIOS.length]}`}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}

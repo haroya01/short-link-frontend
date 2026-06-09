@@ -6,8 +6,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listSubscribedSeries } from "@/modules/blog/api/series-subscription";
 import type { PublicAuthor, PublicSeriesCard } from "@/modules/blog/api/public-posts";
-import { FeedListSkeleton } from "@/modules/blog/components/feed-card";
-import { DiscoveryGrid, DiscoveryCell } from "@/modules/blog/components/discovery-card";
+import { DiscoveryGrid, DiscoveryCell, DiscoveryGridSkeleton } from "@/modules/blog/components/discovery-card";
 import { DiscoverySeriesCard } from "@/modules/blog/components/discovery-series-card";
 import { AuthorFilterChips } from "@/modules/blog/components/author-filter-chips";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
@@ -43,9 +42,9 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
 
   if (!ready || series === null) {
     return (
-      <ReadingShell>
-        <FeedListSkeleton />
-      </ReadingShell>
+      <div className="mx-auto mt-6 max-w-4xl">
+        <DiscoveryGridSkeleton />
+      </div>
     );
   }
 

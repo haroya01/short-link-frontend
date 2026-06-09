@@ -8,8 +8,13 @@ import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
 import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref, FeedListSkeleton } from "@/modules/blog/components/feed-card";
-import { DiscoveryCard, DiscoveryGrid, DiscoveryCell } from "@/modules/blog/components/discovery-card";
+import { authorHref } from "@/modules/blog/components/feed-card";
+import {
+  DiscoveryCard,
+  DiscoveryGrid,
+  DiscoveryCell,
+  DiscoveryGridSkeleton,
+} from "@/modules/blog/components/discovery-card";
 import { FollowFilterChips, type FeedFacet } from "@/modules/blog/components/follow-filter-chips";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -163,8 +168,8 @@ export function FollowingFeed({
 
   if (!ready || items === null) {
     return (
-      <div className="mt-8">
-        <FeedListSkeleton />
+      <div className="mx-auto mt-4 max-w-4xl">
+        <DiscoveryGridSkeleton />
       </div>
     );
   }
