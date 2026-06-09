@@ -1,0 +1,207 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
+import { ChevronRight } from "lucide-react";
+import { DATE_LOCALE } from "@/lib/date";
+import { Mark } from "@/components/common/logo";
+import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
+import { Avatar } from "@/modules/blog/components/avatar";
+import { authorHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
+import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
+
+/**
+ * Series tile for the discovery grid — a deck of **full-size episode cards** you flip through. Each
+ * episode is its own big theme-gradient cover (series name + 01 + episode title); the next episodes
+ * peek behind it like a real deck. It flips one card at a time — auto while idle (pauses on
+ * hover/focus, respects reduced-motion), and the front card's right edge / the dots flip manually.
+ * The front card opens that episode; the series name opens the series.
+ */
+
+// 글 카드(COVER_GRADS)와 동일한 single-accent(emerald) + slate 패밀리 — 덱 전체가 무지개로 튀지 않고
+// 브랜드 안에서 에피소드별로만 미묘하게 달라진다. 어두운 끝색이라 흰 텍스트 대비도 확보.
+const EP_GRADS = [
+  "from-emerald-500 via-teal-600 to-emerald-800",
+  "from-teal-600 via-emerald-700 to-slate-900",
+  "from-emerald-600 via-emerald-800 to-slate-900",
+  "from-slate-700 via-emerald-800 to-slate-950",
+];
+const MAX = 4;
+const AUTOPLAY_MS = 3400;
+
+export function DiscoverySeriesCard({
+  series,
+  locale,
+}: {
+  series: PublicSeriesCard;
+  locale: string;
+}) {
+  const t = useTranslations("publicFeed");
+  const posts = (series.posts ?? []).slice(0, MAX);
+  const n = posts.length;
+  const seriesUrl = authorHref(series.author.username, locale, `series/${series.slug}`);
+  const date = new Date(series.lastPublishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
+    month: "long",
+    day: "numeric",
+  });
+
+  const [idx, setIdx] = useState(0);
+  const [paused, setPaused] = useState(false); // hover/focus
+  const [onScreen, setOnScreen] = useState(true); // 뷰포트 밖이면 정지
+  const [tabVisible, setTabVisible] = useState(true); // 백그라운드 탭이면 정지
+  const [reduced, setReduced] = useState(false); // prefers-reduced-motion (런타임 변경 추적)
+  const sectionRef = useRef<HTMLElement>(null);
+  const advanceRef = useRef(() => setIdx((i) => (i + 1) % n));
+  advanceRef.current = () => setIdx((i) => (i + 1) % n);
+
+  // reduced-motion 은 사용자가 OS 설정에서 켜고 끌 수 있으므로 한 번 읽고 끝내지 않고 change 를 구독한다.
+  useEffect(() => {
+    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    if (!mq) return;
+    setReduced(mq.matches);
+    const onChange = () => setReduced(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  // 화면 밖으로 스크롤되면 자동 넘김을 멈춘다(보이지도 않는 카드가 setState 를 돌리지 않게).
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { threshold: 0.3 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // 탭이 백그라운드면 정지(불필요한 타이머/리렌더 차단).
+  useEffect(() => {
+    const onVis = () => setTabVisible(!document.hidden);
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
+
+  useEffect(() => {
+    if (paused || reduced || !onScreen || !tabVisible || n <= 1) return;
+    const id = window.setInterval(() => advanceRef.current(), AUTOPLAY_MS);
+    return () => window.clearInterval(id);
+  }, [paused, reduced, onScreen, tabVisible, n]);
+
+  if (n === 0) return null;
+
+  return (
+    <section
+      ref={sectionRef}
+      aria-label={series.title}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+    >
+      {/* 스크린리더에 현재 보이는 에피소드를 알린다(자동/수동 넘김 모두). 시각적으로는 숨김. */}
+      <span className="sr-only" aria-live="polite">
+        {t("seriesEpisodeOf", { current: idx + 1, total: series.postCount })}
+      </span>
+      {/* Deck of full-size episode cards. Each card is inset by PEEK on the bottom-right; the back
+          cards translate INTO that reserved margin so the deck stays fully inside its own cell and
+          never overlaps neighbours. */}
+      <div className="relative aspect-[4/5]">
+        {posts.map((p, i) => {
+          const order = (i - idx + n) % n; // 0 = front
+          const front = order === 0;
+          const hidden = order >= 3;
+          const PEEK = 14;
+          return (
+            <div
+              key={p.slug}
+              aria-hidden={!front}
+              className="absolute transition-all duration-500 ease-[var(--ease)]"
+              style={{
+                top: 0,
+                left: 0,
+                right: PEEK,
+                bottom: PEEK,
+                transform: `translate(${order * (PEEK / 2)}px, ${order * (PEEK / 2)}px) scale(${1 - order * 0.04})`,
+                transformOrigin: "bottom right",
+                zIndex: n - order,
+                opacity: hidden ? 0 : 1,
+                pointerEvents: front ? "auto" : "none",
+              }}
+            >
+              <div
+                className={`relative h-full w-full overflow-hidden rounded-2xl bg-slate-700 shadow-[0_1px_3px_rgba(15,23,42,0.06)] ring-1 ring-white/15 ${
+                  front
+                    ? "focus-within:ring-2 focus-within:ring-accent-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-950"
+                    : ""
+                }`}
+              >
+                {p.ogImageUrl ? (
+                  // 에피소드에 사진이 있으면 그 사진을 커버로 (글 카드와 동일 규칙).
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={p.ogImageUrl} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                ) : (
+                  <>
+                    <div className={`absolute inset-0 bg-gradient-to-br ${EP_GRADS[i % EP_GRADS.length]}`} />
+                    <div className="absolute inset-0 bg-[radial-gradient(130%_110%_at_15%_0%,rgba(255,255,255,0.28),transparent_55%)]" />
+                  </>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+
+                {/* Subscribe (front only) + the whole card → this episode. */}
+                {front && (
+                  <div className="absolute right-3 top-3 z-20">
+                    <SeriesSubscribeButton seriesId={series.id} />
+                  </div>
+                )}
+                <BlogLink
+                  href={authorHref(series.author.username, locale, p.slug)}
+                  aria-label={p.title}
+                  className="absolute inset-0 z-10"
+                />
+
+                <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4 text-white">
+                  {/* Series identity (opens series). pr clears the subscribe button at top-right. */}
+                  <div className="flex pr-9">
+                    <BlogLink href={seriesUrl} className="pointer-events-auto flex min-w-0 items-center gap-1.5">
+                      <Mark className="h-2.5 w-auto shrink-0" animated />
+                      <span className="truncate text-[12px] font-semibold tracking-wide">{series.title}</span>
+                    </BlogLink>
+                  </div>
+
+                  {/* Episode number(+total) + title (the card's subject). */}
+                  <div>
+                    <p className="font-mono font-bold leading-none tabular-nums text-white/85">
+                      <span className="text-[34px]">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-[15px] text-white/70"> / {String(series.postCount).padStart(2, "0")}</span>
+                    </p>
+                    <h3 className="mt-2 line-clamp-3 text-balance text-[18px] font-bold leading-tight tracking-tight">
+                      {p.title}
+                    </h3>
+                    <div className="mt-2.5 flex items-center gap-1.5 text-[12px] text-white/85">
+                      <Avatar src={series.author.avatarUrl} name={series.author.username} size="xs" />
+                      <span className="truncate font-medium">{series.author.username}</span>
+                      <span aria-hidden>·</span>
+                      <span className="shrink-0">{date}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right flip edge → next episode (한 장 넘김). */}
+                {front && n > 1 && (
+                  <button
+                    type="button"
+                    onClick={advanceRef.current}
+                    aria-label={t("seriesNextEpisode")}
+                    className="absolute inset-y-0 right-0 z-30 flex w-12 items-center justify-center bg-gradient-to-l from-black/30 to-transparent text-white/85 transition hover:text-white"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}

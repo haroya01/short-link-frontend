@@ -84,7 +84,10 @@
     "seriesAllByAuthor": "View all series",
     "seriesFilterNone": "No posts match this filter",
     "seriesTagsMore": "+{count} more",
-    "seriesTagsLess": "Show less"
+    "seriesTagsLess": "Show less",
+    "tagFilterClear": "Clear filter",
+    "seriesNextEpisode": "Next episode",
+    "seriesEpisodeOf": "Episode {current} of {total}"
   },
   "blogWebhooks": {
     "loginRequired": "Sign in required.",
@@ -423,6 +426,7 @@
   "publicPost": {
     "like": "Like",
     "readingTime": "{minutes} min read",
+    "ogReadingTime": "{minutes} min read",
     "previewBanner": "Preview — this post isn't published yet. Only people with this link can see it.",
     "editedOn": "Updated {date}",
     "morePosts": "More from @{username}",

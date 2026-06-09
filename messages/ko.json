@@ -84,7 +84,10 @@
     "seriesAllByAuthor": "모든 시리즈 보기",
     "seriesFilterNone": "이 조건에 맞는 글이 없어요",
     "seriesTagsMore": "+{count}개",
-    "seriesTagsLess": "접기"
+    "seriesTagsLess": "접기",
+    "tagFilterClear": "필터 해제",
+    "seriesNextEpisode": "다음 편",
+    "seriesEpisodeOf": "{total}편 중 {current}편"
   },
   "blogWebhooks": {
     "loginRequired": "로그인이 필요해요.",
@@ -423,6 +426,7 @@
   "publicPost": {
     "like": "좋아요",
     "readingTime": "약 {minutes}분",
+    "ogReadingTime": "{minutes}분 읽기",
     "previewBanner": "미리보기 — 아직 발행되지 않은 글이에요. 이 링크가 있는 사람만 볼 수 있어요.",
     "editedOn": "수정 {date}",
     "morePosts": "@{username}님의 다른 글",

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { request } from "@/lib/api/client";
 import type { FeedSort, PublicFeedItem, PublicFeedView } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
+import { DiscoveryCard, DiscoveryGrid, DiscoveryCell } from "@/modules/blog/components/discovery-card";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 
 const PAGE_SIZE = 24;
@@ -30,12 +31,16 @@ export function FeedInfinite({
   featuredLabel,
   interleaveNode,
   interleaveAfter = 3,
+  variant = "list",
 }: {
   locale: string;
   initialItems: PublicFeedItem[];
   initialHasNext: boolean;
   sort: FeedSort;
   query?: string;
+  /** "list" = the reading-column post list (default, used by author/tag/following surfaces).
+   *  "grid" = the discovery masonry of {@link DiscoveryCard} (blog home 최신 / 검색 — browse surface). */
+  variant?: "list" | "grid";
   /** When set, paginate a single tag's feed (`?tag=`) instead of the sorted/searched feed. */
   tag?: string;
   /** Active post-language filter (ko/ja/en); undefined = all languages. Carried into page fetches. */
@@ -123,25 +128,43 @@ export function FeedInfinite({
 
   return (
     <>
-      <FeedList>
-        {visible.map((item, i) => (
-          <Fragment key={itemKey(item)}>
-            <FeedCard
-              item={item}
-              locale={locale}
-              featured={featuredFirst && i === 0}
-              featuredLabel={featuredLabel}
-            />
-            {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
-              // Bracketed by rules top + bottom so the series block reads as a distinct insert in the
-              // feed flow, not just another post row.
-              <li className="list-none border-y border-slate-200 py-3.5 dark:border-slate-700">
-                {interleaveNode}
-              </li>
-            )}
-          </Fragment>
-        ))}
-      </FeedList>
+      {variant === "grid" ? (
+        // Discovery masonry — every post is a visual tile (cover or generated theme cover). The
+        // featured lead is just a taller tile (columns can't span), and the interleaved block (series)
+        // drops in as one grid cell.
+        <DiscoveryGrid>
+          {visible.map((item, i) => (
+            <Fragment key={itemKey(item)}>
+              <DiscoveryCell>
+                <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} />
+              </DiscoveryCell>
+              {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
+                <DiscoveryCell>{interleaveNode}</DiscoveryCell>
+              )}
+            </Fragment>
+          ))}
+        </DiscoveryGrid>
+      ) : (
+        <FeedList>
+          {visible.map((item, i) => (
+            <Fragment key={itemKey(item)}>
+              <FeedCard
+                item={item}
+                locale={locale}
+                featured={featuredFirst && i === 0}
+                featuredLabel={featuredLabel}
+              />
+              {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
+                // Bracketed by rules top + bottom so the series block reads as a distinct insert in the
+                // feed flow, not just another post row.
+                <li className="list-none border-y border-slate-200 py-3.5 dark:border-slate-700">
+                  {interleaveNode}
+                </li>
+              )}
+            </Fragment>
+          ))}
+        </FeedList>
+      )}
 
       {hiddenCount > 0 && (
         <p className="mt-4 text-center text-[12px] text-slate-400 dark:text-slate-500">

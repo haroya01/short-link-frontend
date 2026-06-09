@@ -138,9 +138,19 @@ export const MOCK_SUGGESTED_AUTHORS: SuggestedAuthor[] = [
   { author: AUTHORS.sora, postCount: 2 },
 ];
 
-/** Following feed (the 팔로잉 tab, when signed in) — posts from a couple of "followed" authors. */
+/**
+ * Following feed (the 팔로잉 tab, when signed in) — mirrors the backend union: posts from followed
+ * authors (dohyun, minji) OR carrying a followed topic (here "일상", a demo). So the merged feed
+ * visibly includes posts from authors you don't follow, surfaced by a topic you do.
+ */
+const MOCK_FOLLOWED_AUTHORS = ["dohyun", "minji"];
+const MOCK_FOLLOWED_TAGS = ["일상"];
 export function mockFollowingView(): PublicFeedView {
-  const items = ALL_ITEMS.filter((i) => ["dohyun", "minji"].includes(i.author.username));
+  const items = ALL_ITEMS.filter(
+    (i) =>
+      MOCK_FOLLOWED_AUTHORS.includes(i.author.username) ||
+      i.tags.some((t) => MOCK_FOLLOWED_TAGS.includes(t)),
+  );
   return { items, page: 0, size: 24, hasNext: false };
 }
 
@@ -284,9 +294,9 @@ const MOCK_DISCOVER_SERIES: PublicSeriesCard[] = [
     postCount: 4,
     lastPublishedAt: "2026-05-30T09:00:00Z",
     posts: [
-      { slug: "nextjs-14-app-router-blog", title: "Next.js 14 App Router로 블로그를 다시 만든 이유" },
+      { slug: "nextjs-14-app-router-blog", title: "Next.js 14 App Router로 블로그를 다시 만든 이유", ogImageUrl: "https://picsum.photos/seed/ep1/600/760" },
       { slug: "spring-tx-propagation", title: "App Router의 데이터 패칭 다시 보기" },
-      { slug: "naming-things", title: "서버 액션으로 폼을 다루는 법" },
+      { slug: "naming-things", title: "서버 액션으로 폼을 다루는 법", ogImageUrl: "https://picsum.photos/seed/ep3/600/760" },
     ],
   },
   {

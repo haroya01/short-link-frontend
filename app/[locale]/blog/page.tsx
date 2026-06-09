@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
-import { PenSquare } from "lucide-react";
+import { PenSquare, X } from "lucide-react";
 import { blogHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import {
   listDiscoverSeries,
+  listFeedByTag,
   listPopularTags,
   listPublicFeed,
   listSuggestedAuthors,
-  listTrendingByTag,
   searchPublicFeed,
   type FeedSort,
   type PublicFeedItem,
 } from "@/modules/blog/api/public-posts";
-import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FeedMasthead } from "@/modules/blog/components/feed-masthead";
 import { FeedContentTransition } from "@/modules/blog/components/feed-content-transition";
 import { FeedSortTabs } from "@/modules/blog/components/feed-sort-tabs";
@@ -26,8 +26,8 @@ import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { SubscribedSeriesFeed } from "@/modules/blog/components/subscribed-series-feed";
 import { MyTagsStrip } from "@/modules/blog/components/my-tags-strip";
-import { SeriesFeedCard } from "@/modules/blog/components/series-feed-card";
-import { TrendingByTag } from "@/modules/blog/components/trending-by-tag";
+import { DiscoverySeriesCard } from "@/modules/blog/components/discovery-series-card";
+import { TrendingTopics } from "@/modules/blog/components/trending-topics";
 
 export const revalidate = 30;
 
@@ -76,12 +76,15 @@ export default async function BlogFeedPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ sort?: string; q?: string; lang?: string }>;
+  searchParams: Promise<{ sort?: string; q?: string; lang?: string; tag?: string }>;
 }) {
   const { locale } = await params;
-  const { sort: sortParam, q: qParam, lang: langParam } = await searchParams;
+  const { sort: sortParam, q: qParam, lang: langParam, tag: tagParam } = await searchParams;
   const query = (qParam ?? "").trim();
   const searching = query.length > 0;
+  // Tag filter on the discovery feed (flat grid only): clicking a card's #tag narrows to that tag.
+  // Ignored during search (search already spans tags). A tag view drops the lead/series emphasis.
+  const activeTag = !searching ? (tagParam ?? "").trim() : "";
   // Post-language filter (flat feed + search only); "" = all languages, the default.
   const activeLang = ["ko", "ja", "en"].includes((langParam ?? "").trim())
     ? (langParam ?? "").trim()
@@ -98,45 +101,35 @@ export default async function BlogFeedPage({
 
   const t = await getTranslations({ locale, namespace: "publicFeed" });
 
-  // The following tab is its own (client, auth) path with no rail; every other state shows the feed
-  // body plus the desktop discovery rail.
+  // 발견 탭 통일: 최신·인기·검색·태그 전부 동일한 카드 그리드 프레임(폭·카드 언어 일치). 인기는
+  // 인기순 정렬일 뿐 같은 그리드 — 예전 "주제별 인기 carousel"은 탭 일관성을 깨서 제거. 팔로잉/시리즈는
+  // 인증이 필요한 자체 클라이언트 면(아래에서 각자 그리드로 렌더).
   const showsServerFeed = searching || (tab !== "following" && tab !== "series");
-  // The 인기 tab (when not searching) is grouped into "주제별 인기" rows instead of a flat feed.
-  const groupByTag = tab === "trending" && !searching;
-  // Flat feed = 최신, or any search (search collapses every tab to a flat result set).
-  const needFlat = showsServerFeed && !groupByTag;
-  // The discovery rail (popular tags + suggested authors) rides beside both the flat feed and the
-  // trending tab — 인기 used to render with an empty right gutter, which read as a layout bug.
-  const needRail = needFlat || groupByTag;
+  const needFlat = showsServerFeed;
+  // Series 카드는 기본(비검색·비태그) 최신 그리드에만 끼워넣는다.
+  const wantSeries = !searching && !activeTag && tab === "recent";
+  // "지금 뜨는 주제" — 인기 탭(비검색·비필터)에서 그리드 위에 랭킹 주제 칩으로. carousel 없이 정보만.
+  const wantTopics = tab === "trending" && !searching && !activeTag;
 
-  // Series cards ride only on the default recent feed (not search / trending / following) — one
-  // "collection" unit dropped into the flow to surface multi-post series for discovery.
-  const wantSeries = !searching && tab === "recent";
-
-  const [feedResult, trendingResult, tagsResult, authorsResult, seriesResult] = await Promise.all([
+  const [feedResult, authorsResult, seriesResult, topicsResult] = await Promise.all([
     needFlat
       ? searching
         ? searchPublicFeed(query, sort, 0, 24, activeLang || undefined)
-        : listPublicFeed(sort, 0, 24, activeLang || undefined)
+        : activeTag
+          ? listFeedByTag(activeTag, sort, 0, 24)
+          : listPublicFeed(sort, 0, 24, activeLang || undefined)
       : Promise.resolve(null),
-    groupByTag ? listTrendingByTag() : Promise.resolve(null),
-    needRail ? listPopularTags(12) : Promise.resolve(null),
-    // Authors are also the follow-suggestions for the signed-out "following" tab, so fetch them there
-    // too (not just for the rail surfaces) to keep that tab from dead-ending.
-    needRail || tab === "following" ? listSuggestedAuthors(5) : Promise.resolve(null),
+    // 팔로잉 탭의 추천 작가(빈 상태 dead-end 방지).
+    tab === "following" ? listSuggestedAuthors(5) : Promise.resolve(null),
     wantSeries ? listDiscoverSeries(4) : Promise.resolve(null),
+    wantTopics ? listPopularTags(10) : Promise.resolve(null),
   ]);
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
   const hasNext = feedResult && feedResult.ok ? feedResult.data.hasNext : false;
-  const trendingSections = trendingResult && trendingResult.ok ? trendingResult.data : [];
-  const tags = tagsResult && tagsResult.ok ? tagsResult.data : [];
   const authors = authorsResult && authorsResult.ok ? authorsResult.data : [];
   const series = seriesResult && seriesResult.ok ? seriesResult.data : [];
-  const hasRail = tags.length > 0 || authors.length > 0;
-  // The rail is a *browse* affordance, not a *search* one — hide it during search (desktop) to match
-  // the mobile discovery strip, so a short result set isn't dominated by a sticky sidebar.
-  const showRail = hasRail && !searching;
+  const topics = topicsResult && topicsResult.ok ? topicsResult.data : [];
 
   // Remount key for the feed content: changes on every Latest/Popular/Following switch (and on a new
   // search), so the content block replays its slide instead of swapping abruptly.
@@ -148,7 +141,7 @@ export default async function BlogFeedPage({
   // No separate hero card. On the default (non-search) recent feed the lead post just gets a quiet
   // "오늘의 글" emphasis as the first list row — same grammar as the rest of the list, only louder by a
   // notch. Trending/search feeds have no lead emphasis.
-  const featuredFirst = !searching && tab === "recent" && items.length > 1;
+  const featuredFirst = !searching && !activeTag && tab === "recent" && items.length > 1;
 
   const writeCta = (
     <a href={blogHref("/write/new")} className={cn(blogCta(), "shrink-0")}>
@@ -217,8 +210,10 @@ export default async function BlogFeedPage({
           />
         </header>
 
-        {/* Reader's followed tags ("보고싶은 태그") — hidden until they follow one. Not during search. */}
-        {!searching && <MyTagsStrip />}
+        {/* Reader's followed tags ("보고싶은 태그") — a jump-to-topic shortcut. Hidden until they follow
+            one, during search, and on the 팔로잉 tab (there topics are integrated as filter chips, so
+            the floating strip would duplicate them). */}
+        {!searching && tab !== "following" && <MyTagsStrip />}
 
         {/* Following is its own client surface with its own rail (followed authors), so it animates as
             a whole — there's no shared discovery rail to hold still here. */}
@@ -230,48 +225,54 @@ export default async function BlogFeedPage({
           <FeedContentTransition index={tabIndex} contentKey={contentKey}>
             <SubscribedSeriesFeed locale={locale} />
           </FeedContentTransition>
-        ) : (
-          // recent / trending / search share ONE ReadingShell so the discovery rail is rendered once
-          // and stays put — only the content column (inside FeedContentTransition) slides on a switch.
-          <ReadingShell
-            className={searching ? "mt-6" : "mt-4"}
-            rail={showRail ? <DiscoveryRail locale={locale} tags={tags} authors={authors} /> : undefined}
-          >
+        ) : items.length === 0 ? (
+          <ReadingShell className={searching ? "mt-6" : "mt-4"}>
             <FeedContentTransition index={tabIndex} contentKey={contentKey}>
-              {groupByTag ? (
-                trendingSections.length === 0 ? (
-                  <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
-                ) : (
-                  <TrendingByTag
-                    sections={trendingSections}
-                    locale={locale}
-                    moreLabel={t("railSeeAll")}
-                    heading={t("trendingTopicsLabel")}
-                  />
-                )
-              ) : items.length === 0 ? (
-                searching ? (
-                  <SearchEmpty query={query} tags={tags} locale={locale} />
-                ) : (
-                  <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
-                )
+              {searching ? (
+                <SearchEmpty query={query} tags={[]} locale={locale} />
               ) : (
-                <FeedColumn
-                  locale={locale}
-                  items={items}
-                  hasNext={hasNext}
-                  sort={sort}
-                  query={searching ? query : undefined}
-                  lang={activeLang || undefined}
-                  featuredFirst={featuredFirst}
-                  featuredLabel={t("featuredLabel")}
-                  interleave={
-                    series.length > 0 ? <SeriesFeedCard series={series[0]} locale={locale} /> : null
-                  }
-                />
+                <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
               )}
             </FeedContentTransition>
           </ReadingShell>
+        ) : (
+          // 최신 / 검색 결과 = 발견(browse) 면 → 와이드 메이슨리 그리드 (reading-column 예외, AGENTS.md §10.1).
+          // 읽기 면(글/작가/태그)은 컬럼 유지. 사이드 rail 은 이 면에서 생략(모바일 탐색 시트가 발견을 담당).
+          <div className={cn("mx-auto max-w-4xl", searching ? "mt-6" : "mt-4")}>
+            {wantTopics && <TrendingTopics topics={topics} locale={locale} />}
+            {activeTag && (
+              // Active tag filter — always visible (no hidden filter), one click to clear.
+              <div className="mb-5 flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-50 px-3 py-1 text-[13px] font-medium text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">
+                  #{activeTag}
+                  <BlogLink
+                    href={`?sort=${sort}`}
+                    aria-label={t("tagFilterClear")}
+                    className="rounded-full transition hover:text-accent-900 dark:hover:text-accent-100"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </BlogLink>
+                </span>
+              </div>
+            )}
+            <FeedContentTransition index={tabIndex} contentKey={contentKey}>
+              <FeedColumn
+                locale={locale}
+                items={items}
+                hasNext={hasNext}
+                sort={sort}
+                tag={activeTag || undefined}
+                query={searching ? query : undefined}
+                lang={activeLang || undefined}
+                featuredFirst={featuredFirst}
+                featuredLabel={t("featuredLabel")}
+                variant="grid"
+                interleave={
+                  series.length > 0 ? <DiscoverySeriesCard series={series[0]} locale={locale} /> : null
+                }
+              />
+            </FeedContentTransition>
+          </div>
         )}
       </div>
     </>
@@ -294,6 +295,8 @@ function FeedColumn({
   featuredFirst,
   featuredLabel,
   interleave,
+  variant,
+  tag,
 }: {
   locale: string;
   items: PublicFeedItem[];
@@ -304,6 +307,8 @@ function FeedColumn({
   featuredFirst: boolean;
   featuredLabel: string;
   interleave?: ReactNode;
+  variant?: "list" | "grid";
+  tag?: string;
 }) {
   return (
     <FeedInfinite
@@ -312,10 +317,12 @@ function FeedColumn({
       initialHasNext={hasNext}
       sort={sort}
       query={query}
+      tag={tag}
       lang={lang}
       featuredFirst={featuredFirst}
       featuredLabel={featuredLabel}
       interleaveNode={interleave}
+      variant={variant}
     />
   );
 }

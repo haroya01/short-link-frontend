@@ -114,6 +114,9 @@ export interface PublicSeriesList {
 export interface SeriesPostRef {
   slug: string;
   title: string;
+  /** Episode cover (OG image). Optional — when the backend supplies it the deck shows that episode's
+   *  photo; absent → the card falls back to its theme-color cover. */
+  ogImageUrl?: string | null;
 }
 
 /** A series as it appears on the discovery feed (cross-author series card). */
