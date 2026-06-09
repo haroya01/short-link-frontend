@@ -231,6 +231,8 @@
     "settingsAccountSettings": "Full account settings",
     "settingsViewBlog": "View my blog",
     "settingsDisplay": "Display",
+    "settingsFeed": "Feed",
+    "settingsDefaultTab": "Default tab — opens first when you land on the blog home",
     "rowDelete": "Delete",
     "rowDeleteConfirm": "Delete '{title}'? This can't be undone.",
     "rowDeleteFailed": "Couldn't delete.",

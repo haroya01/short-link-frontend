@@ -8,6 +8,7 @@ import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { FeedDefaultTabSetting } from "@/modules/blog/components/feed-default-tab-setting";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -121,6 +122,9 @@ export default function BlogSettingsPage() {
           ))}
         </div>
       </section>
+
+      {/* 피드 */}
+      <FeedDefaultTabSetting rowClass={rowClass} />
 
       {/* 로그아웃 */}
       <section className="mt-8">
