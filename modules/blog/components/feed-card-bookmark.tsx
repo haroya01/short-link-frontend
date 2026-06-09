@@ -44,7 +44,7 @@ export function FeedCardBookmark({
       title={saved ? t("bookmarkOn") : t("bookmark")}
       // A faint translucent chip keeps the icon legible when the card has a thumbnail and the button
       // sits over it; over plain text rows the chip is all but invisible on the card background.
-      className={`grid h-8 w-8 place-items-center rounded-lg bg-white/80 text-slate-500 backdrop-blur-sm transition-all hover:bg-accent-50 hover:text-accent-700 focus-ring dark:bg-slate-900/60 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-300 ${
+      className={`grid h-8 w-8 place-items-center rounded-lg bg-white/70 text-slate-600 shadow-sm ring-1 ring-white/50 backdrop-blur-md transition-all hover:bg-accent-50 hover:text-accent-700 focus-ring dark:bg-slate-900/55 dark:text-slate-300 dark:ring-white/10 dark:hover:bg-accent-500/15 dark:hover:text-accent-300 ${
         saved
           ? "text-accent-600 opacity-100 dark:text-accent-400"
           : "opacity-0 focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"

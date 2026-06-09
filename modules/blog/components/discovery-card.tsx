@@ -122,11 +122,13 @@ function CardMeta({ item, locale, over }: { item: PublicFeedItem; locale: string
   );
 }
 
-// 카드 공통 surface/motion 토큰 — 시스템과 통일: rounded-2xl, --ease, hover lift 0.5 + 그림자 상승,
-// 300ms. focus-within ring = 전면 링크 카드의 키보드 포커스 가시화(WCAG 2.4.7).
+// 카드 공통 surface/motion 토큰 — rounded-2xl, --ease, 300ms. 입체감: 다층 그림자(닿는 면 가까운 1px +
+// 퍼지는 ambient)로 평면이 아니라 살짝 떠 있게, hover 시 -translate-y-1 로 깊게 떠오르며 그림자 확장.
+// focus-within ring = 전면 링크 카드의 키보드 포커스 가시화(WCAG 2.4.7).
 const SHELL =
-  "group relative overflow-hidden rounded-2xl transition-[transform,box-shadow] duration-300 ease-[var(--ease)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-8px_rgba(15,23,42,0.18)] focus-within:ring-2 focus-within:ring-accent-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-950";
-const CARD_SHADOW = "shadow-[0_1px_3px_rgba(15,23,42,0.06)]";
+  "group relative overflow-hidden rounded-2xl transition-[transform,box-shadow] duration-300 ease-[var(--ease)] hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_rgba(15,23,42,0.28)] focus-within:ring-2 focus-within:ring-accent-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-950";
+const CARD_SHADOW =
+  "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_6px_16px_-8px_rgba(15,23,42,0.12)]";
 
 export function DiscoveryCard({
   item,
@@ -176,7 +178,8 @@ export function DiscoveryCard({
   const ratio = hasImage ? (featured ? "aspect-[3/4]" : "aspect-[4/3]") : featured ? "aspect-[4/5]" : "aspect-square";
 
   return (
-    <div className={`${SHELL} ${CARD_SHADOW} bg-slate-200 dark:bg-slate-800`}>
+    // ring-inset white/10: 어두운 커버 가장자리에 유리 같은 얇은 빛 테두리 → 입체감.
+    <div className={`${SHELL} ${CARD_SHADOW} bg-slate-200 ring-1 ring-inset ring-white/10 dark:bg-slate-800`}>
       <div className={ratio}>
         {hasImage ? (
           <img
@@ -194,6 +197,8 @@ export function DiscoveryCard({
         {/* 텍스트 가독성 scrim — 상·하단 모두(상단 태그, 하단 제목/메타). WCAG 대비 확보용으로 통일. */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/35 to-transparent" />
+        {/* 위에서 빛이 닿는 1px 하이라이트 — 커버가 평면 아니라 살짝 솟은 듯한 입체감. */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/25" />
       </div>
 
       <div className="absolute right-3 top-3 z-20 text-white">
