@@ -93,6 +93,7 @@ export function DiscoverySeriesCard({
     <section
       ref={sectionRef}
       aria-label={series.title}
+      className="group"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -131,7 +132,7 @@ export function DiscoverySeriesCard({
               <div
                 className={`relative h-full w-full overflow-hidden rounded-2xl bg-slate-700 shadow-[0_1px_3px_rgba(15,23,42,0.06)] ring-1 ring-white/15 ${
                   front
-                    ? "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-500 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950"
+                    ? "transition-[transform,box-shadow] duration-300 ease-[var(--ease)] group-hover:-translate-y-1 group-hover:shadow-[0_18px_40px_-12px_rgba(15,23,42,0.28)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-500 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950"
                     : ""
                 }`}
               >
@@ -186,13 +187,14 @@ export function DiscoverySeriesCard({
                   </div>
                 </div>
 
-                {/* Right flip edge → next episode (한 장 넘김). */}
+                {/* Right flip edge → next episode (한 장 넘김). top-14: 우상단 구독 버튼 히트박스를 비워둬
+                    겹치지 않게(예전엔 inset-y-0 z-30 이 구독 버튼을 덮어 구독 탭이 거의 안 먹었음). */}
                 {front && n > 1 && (
                   <button
                     type="button"
                     onClick={advanceRef.current}
                     aria-label={t("seriesNextEpisode")}
-                    className="absolute inset-y-0 right-0 z-30 flex w-12 items-center justify-center bg-gradient-to-l from-black/30 to-transparent text-white/85 transition hover:text-white"
+                    className="absolute bottom-0 right-0 top-14 z-30 flex w-12 items-center justify-center bg-gradient-to-l from-black/30 to-transparent text-white/85 transition hover:text-white"
                   >
                     <ChevronRight className="h-6 w-6" />
                   </button>
