@@ -84,7 +84,10 @@
     "seriesAllByAuthor": "View all series",
     "seriesFilterNone": "No posts match this filter",
     "seriesTagsMore": "+{count} more",
-    "seriesTagsLess": "Show less"
+    "seriesTagsLess": "Show less",
+    "tagFilterClear": "Clear filter",
+    "seriesNextEpisode": "Next episode",
+    "seriesEpisodeOf": "Episode {current} of {total}"
   },
   "blogWebhooks": {
     "loginRequired": "Sign in required.",

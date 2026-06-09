@@ -18,7 +18,12 @@ read 면은 컬럼이 맞다는 판단. **AGENTS.md §10.1 에 이 예외를 명
 - `feed-infinite.tsx` — `variant?: "list" | "grid"` 추가. **기본 "list"(기존 면 전부 보존)**, "grid" 일 때만 그리드.
 - `app/[locale]/blog/page.tsx` — **최신/검색 flat 피드만** 와이드 그리드(`max-w-6xl`, rail 생략). 인기(주제별 carousel)·
   팔로잉·시리즈·작가 페이지·태그 페이지는 **그대로**.
-- featured(오늘의 글) = 더 큰 타일(columns 는 span 불가 → 높이로 강조). 시리즈 interleave = 그리드 셀 1개.
+- featured(오늘의 글) = 더 큰 타일(columns 는 span 불가 → 높이로 강조).
+- **카드 변형 규칙(결정적)**: ogImageUrl 있으면 `cover`(사진) · 없고 excerpt 있으면 `text`(소개글 표시) ·
+  둘 다 없으면 `auto`(테마색 자동커버 = 우리 UI + 3-bar 마크). 리치 멀티스톱 그라데이션 + sheen.
+- **태그 필터**(Phase 2 일부 선반영): 카드의 `#태그` 클릭 → `?tag=` 로 그 태그만 필터(flat 그리드),
+  상단 활성 칩 + 해제(✕). `listFeedByTag` (mock/실 BE 모두 지원). 페이지네이션도 tag 유지.
+- **시리즈 카드**: 그리드에선 accent 틴트 박스 타일로 감싸 일반 글 카드와 구분(개선).
 
 ### 검증
 - `tsc` ✅, `next lint` ✅, `vitest` 389 passed / 1 failed.
@@ -46,3 +51,27 @@ read 면은 컬럼이 맞다는 판단. **AGENTS.md §10.1 에 이 예외를 명
 - CSS `columns` 메이슨리는 칼럼 끝 높이 불균형 + 읽기 순서(a11y)가 세로 우선 → 필요 시 grid/JS 메이슨리로.
 - 좁은 카드에서 메타(작가·날짜·♥·👁) 줄바꿈 → 좁을 때 조회수 생략 등 우선순위 조정.
 - 발견 면에서 rail(추천 작가) 생략 → 상단 칩 strip + 추천 섹션으로 흡수 검토(Phase 2).
+
+## UX 검토 반영 (독립 4-세션 리뷰 → P0/P1 핵심)
+- **브랜드 색 통일**: 카드 자동커버(`COVER_GRADS`)·시리즈 덱(`EP_GRADS`) 모두 무지개 → single-accent(emerald)+slate
+  패밀리로. 그리드 한 화면이 한 가지 색 언어로 읽힌다.
+- **포커스 가시화(WCAG 2.4.7)**: 전면 링크 카드에 `focus-within:ring-2 ring-accent-500` + offset(다크 대응).
+  글 카드·시리즈 앞면 카드 모두.
+- **대비**: cover scrim 상·하단 통일, 시리즈 에피소드 카운트 `/55`→`/70`.
+- **죽은 태그클릭 수정**: 카드 `#태그` → `?sort=recent&tag=` (팔로잉/시리즈 탭에선 `?tag=` 만으론 필터가 안 먹어
+  죽은 링크였음 → 항상 작동하는 최신+태그 그리드로 못박음).
+- **시리즈 자동넘김 접근성/성능**: 뷰포트 밖(IntersectionObserver)·백그라운드 탭(visibilitychange) 정지,
+  `prefers-reduced-motion` 런타임 `change` 구독, 현재 편을 `aria-live`(sr-only)로 안내.
+- **작가 필터 칩**: "전체 보기" `aria-pressed`, 터치 타깃 `min-h-[34px]`, 모션 토큰(--ease·200ms) 통일.
+- **후속(미적용, 사용자 확인 필요)**: CSS columns 메이슨리 → 행순서 그리드(읽기 순서 a11y), 작가 필터 `?author=` URL 동기화.
+
+## 모션·표면 토큰 (일관성 규칙)
+
+발견 피드 컴포넌트(DiscoveryCard·DiscoverySeriesCard·AuthorFilterChips·TrendingTopics)는 다음 토큰으로 통일한다. **새 요소도 반드시 이 값에서 고를 것** — 임의 radius/shadow/duration/easing 금지.
+
+- **radius**: 카드 `rounded-2xl`(16) · 칩 `rounded-full` · 카드 내부 미디어 `rounded-xl`(12)
+- **shadow**: 카드 공통 `shadow-[0_1px_3px_rgba(15,23,42,0.06)]` (시스템 은은한 값). 무거운 floating shadow 금지 — 깊이/스택감은 offset·scale·ring 으로.
+- **easing**: 모든 transition/animation = `var(--ease)` (= `cubic-bezier(0.16,1,0.3,1)`, globals.css). `ease-out` 등 임의 easing 금지.
+- **duration**: micro/hover = `300ms` · 큰 이동(시리즈 카드 넘김) = `500ms`. 이 2단계만 사용.
+- **hover(카드)**: `-translate-y-0.5` (lift) + 이미지 `scale-[1.03]`, 둘 다 `duration-300 ease-[var(--ease)]`.
+- **칩**: filled slate(`bg-slate-100`)·`rounded-full`, 활성 = `bg-accent-600 text-white`. (시스템 칩 언어와 동일)

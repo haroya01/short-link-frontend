@@ -84,7 +84,10 @@
     "seriesAllByAuthor": "すべてのシリーズを見る",
     "seriesFilterNone": "条件に合う記事がありません",
     "seriesTagsMore": "+{count}",
-    "seriesTagsLess": "閉じる"
+    "seriesTagsLess": "閉じる",
+    "tagFilterClear": "フィルター解除",
+    "seriesNextEpisode": "次の話",
+    "seriesEpisodeOf": "全{total}話中{current}話"
   },
   "blogWebhooks": {
     "loginRequired": "ログインが必要です。",

@@ -284,9 +284,9 @@ const MOCK_DISCOVER_SERIES: PublicSeriesCard[] = [
     postCount: 4,
     lastPublishedAt: "2026-05-30T09:00:00Z",
     posts: [
-      { slug: "nextjs-14-app-router-blog", title: "Next.js 14 App Router로 블로그를 다시 만든 이유" },
+      { slug: "nextjs-14-app-router-blog", title: "Next.js 14 App Router로 블로그를 다시 만든 이유", ogImageUrl: "https://picsum.photos/seed/ep1/600/760" },
       { slug: "spring-tx-propagation", title: "App Router의 데이터 패칭 다시 보기" },
-      { slug: "naming-things", title: "서버 액션으로 폼을 다루는 법" },
+      { slug: "naming-things", title: "서버 액션으로 폼을 다루는 법", ogImageUrl: "https://picsum.photos/seed/ep3/600/760" },
     ],
   },
   {

@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
 import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref, FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
+import { authorHref, FeedListSkeleton } from "@/modules/blog/components/feed-card";
+import { DiscoveryCard, DiscoveryGrid, DiscoveryCell } from "@/modules/blog/components/discovery-card";
+import { AuthorFilterChips } from "@/modules/blog/components/author-filter-chips";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
-import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 
@@ -56,46 +56,6 @@ function AuthorRow({
           {subtitle && <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">{subtitle}</span>}
         </span>
       </a>
-    </li>
-  );
-}
-
-/** A followed author as a toggle — clicking filters the feed to just their posts (and again clears it),
- *  so the rail doubles as an in-place filter instead of bouncing to the author's profile. */
-function AuthorFilterRow({
-  author,
-  active,
-  onToggle,
-}: {
-  author: PublicAuthor;
-  active: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <li>
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-pressed={active}
-        className={cn(
-          "group flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors focus-ring",
-          active
-            ? "bg-accent-50 dark:bg-accent-500/10"
-            : "hover:bg-slate-50 dark:hover:bg-slate-800/50",
-        )}
-      >
-        <AuthorAvatar author={author} />
-        <span
-          className={cn(
-            "min-w-0 flex-1 truncate text-[14px] font-semibold",
-            active
-              ? "text-accent-700 dark:text-accent-300"
-              : "text-slate-800 group-hover:text-slate-900 dark:text-slate-200 dark:group-hover:text-slate-100",
-          )}
-        >
-          {author.username}
-        </span>
-      </button>
     </li>
   );
 }
@@ -223,82 +183,23 @@ export function FollowingFeed({
   }
 
   const followed = feedAuthors(items);
-  // Don't suggest authors that already show up in "팔로우한 작가" — the backend may not pre-filter
-  // (mocks don't), and the same face twice in one rail reads as a bug.
   const followedNames = new Set(followed.map((a) => a.username));
-  const suggestions = suggestedAuthors.filter((s) => !followedNames.has(s.author.username));
-
   // A filter only makes sense if the picked author is actually present; otherwise show everything.
   const activeAuthor =
     selectedAuthor && followedNames.has(selectedAuthor) ? selectedAuthor : null;
   const shown = activeAuthor ? items.filter((it) => it.author.username === activeAuthor) : items;
 
-  // Same rail slot as the recent feed, filled with the following-tab context. The followed authors
-  // double as a filter; suggestions stay plain profile links.
-  const rail =
-    followed.length > 0 || suggestions.length > 0 ? (
-      <div className="flex flex-col gap-6">
-        {followed.length > 0 && (
-          <section>
-            <div className="mb-3 flex items-baseline justify-between gap-2">
-              <RailHeading>{t("railFollowingAuthors")}</RailHeading>
-              {activeAuthor && (
-                <button
-                  type="button"
-                  onClick={() => setSelectedAuthor(null)}
-                  className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring"
-                >
-                  {t("railFollowingAll")}
-                </button>
-              )}
-            </div>
-            <ul className="flex flex-col gap-1">
-              {followed.map((author) => (
-                <AuthorFilterRow
-                  key={author.username}
-                  author={author}
-                  active={activeAuthor === author.username}
-                  onToggle={() =>
-                    setSelectedAuthor((cur) =>
-                      cur === author.username ? null : author.username,
-                    )
-                  }
-                />
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {suggestions.length > 0 && (
-          <section>
-            <RailHeading className="mb-3">{t("railSuggestedAuthors")}</RailHeading>
-            <ul className="flex flex-col gap-1">
-              {suggestions.map(({ author, postCount }) => (
-                <AuthorRow
-                  key={author.username}
-                  author={author}
-                  locale={locale}
-                  subtitle={t("railPostCount", { count: postCount })}
-                />
-              ))}
-            </ul>
-          </section>
-        )}
-      </div>
-    ) : undefined;
-
+  // 다른 발견 탭과 동일한 와이드 카드 그리드. 팔로우한 작가 필터는 사이드 rail 대신 상단 아바타 칩으로.
   return (
-    <ReadingShell className="mt-4" rail={rail}>
-      <FeedList>
-        {shown.map((item, i) => (
-          <FeedCard
-            key={`${item.author.username}/${item.slug}`}
-            item={item}
-            locale={locale}
-            flushTop={i === 0}
-          />
+    <div className="mx-auto mt-4 max-w-4xl">
+      <AuthorFilterChips authors={followed} active={activeAuthor} onSelect={setSelectedAuthor} />
+      <DiscoveryGrid>
+        {shown.map((item) => (
+          <DiscoveryCell key={`${item.author.username}/${item.slug}`}>
+            <DiscoveryCard item={item} locale={locale} />
+          </DiscoveryCell>
         ))}
-      </FeedList>
-    </ReadingShell>
+      </DiscoveryGrid>
+    </div>
   );
 }
