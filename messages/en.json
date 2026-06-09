@@ -87,7 +87,9 @@
     "seriesTagsLess": "Show less",
     "tagFilterClear": "Clear filter",
     "seriesNextEpisode": "Next episode",
-    "seriesEpisodeOf": "Episode {current} of {total}"
+    "seriesEpisodeOf": "Episode {current} of {total}",
+    "feedReasonTopic": "Following ‘{tag}’",
+    "feedReasonSeries": "Subscribed series"
   },
   "blogWebhooks": {
     "loginRequired": "Sign in required.",

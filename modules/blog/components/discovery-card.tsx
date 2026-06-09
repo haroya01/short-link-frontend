@@ -1,8 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import type { ReactNode } from "react";
 import { Heart, Eye } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
-import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
+import type { FollowReason, PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { showLikes, showViews } from "@/modules/blog/lib/public-metrics";
 import { postHref, authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
@@ -66,6 +67,30 @@ function TagLink({ tag, over }: { tag: string; over?: boolean }) {
   );
 }
 
+// 통합 팔로잉 피드에서 "왜 떴는지" 배지 — 팔로우한 주제/구독 시리즈로 들어온 글에만(작가 팔로우는 자명해
+// 생략). followReason 은 팔로잉 피드에서만 채워지므로 다른 면에선 자동으로 안 보인다.
+function ReasonPill({
+  reason,
+  over,
+  t,
+}: {
+  reason: FollowReason;
+  over?: boolean;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  if (reason.kind === "AUTHOR") return null;
+  const label = reason.kind === "TOPIC" ? t("feedReasonTopic", { tag: reason.tag ?? "" }) : t("feedReasonSeries");
+  return (
+    <span
+      className={`pointer-events-none inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${
+        over ? "bg-white/15 text-white/90 backdrop-blur-sm" : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+      }`}
+    >
+      {label}
+    </span>
+  );
+}
+
 function CardMeta({ item, locale, over }: { item: PublicFeedItem; locale: string; over?: boolean }) {
   const tone = over ? "text-white/85" : "text-slate-500 dark:text-slate-400";
   return (
@@ -112,10 +137,12 @@ export function DiscoveryCard({
   locale: string;
   featured?: boolean;
 }) {
+  const t = useTranslations("publicFeed");
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
   const variant: "cover" | "text" | "auto" = hasImage ? "cover" : item.excerpt ? "text" : "auto";
   const tag = item.tags[0];
+  const reason = item.followReason ?? null;
 
   // ── text: 소개글을 보여주는 글 카드 (이미지·표지 없이 글만) ──
   if (variant === "text") {
@@ -126,7 +153,10 @@ export function DiscoveryCard({
         </div>
         <BlogLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
         <div className="pointer-events-none relative z-10 flex flex-col gap-2">
-          {tag && <TagLink tag={tag} />}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {tag && <TagLink tag={tag} />}
+            {reason && <ReasonPill reason={reason} t={t} />}
+          </div>
           <h3 className={`text-balance font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100 ${featured ? "text-[19px]" : "text-[17px]"}`}>
             {item.title}
           </h3>
@@ -170,9 +200,10 @@ export function DiscoveryCard({
       <BlogLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
 
       <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {tag && <TagLink tag={tag} over />}
           {!hasImage && <Mark className="h-3.5 w-auto text-white/85" />}
+          {reason && <ReasonPill reason={reason} over t={t} />}
         </div>
         <div className="space-y-2">
           {/* 제목 스케일은 변형(이미지 유무)이 아니라 중요도(featured) 한 축으로만 — 위계 역전 방지. */}

@@ -151,6 +151,17 @@ export interface PublicFeedItem {
   publishedAt: string;
   viewCount: number;
   likeCount: number;
+  /**
+   * Why this post is in the viewer's 팔로잉 feed — only set there (null elsewhere). kind: AUTHOR
+   * (follow the author) · SERIES (subscribe to its series) · TOPIC (follow a tag it carries); `tag`
+   * names the matched tag for TOPIC.
+   */
+  followReason?: FollowReason | null;
+}
+
+export interface FollowReason {
+  kind: "AUTHOR" | "SERIES" | "TOPIC";
+  tag: string | null;
 }
 
 export interface PublicFeedView {

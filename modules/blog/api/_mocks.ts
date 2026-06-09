@@ -150,7 +150,13 @@ export function mockFollowingView(): PublicFeedView {
     (i) =>
       MOCK_FOLLOWED_AUTHORS.includes(i.author.username) ||
       i.tags.some((t) => MOCK_FOLLOWED_TAGS.includes(t)),
-  );
+  ).map((i) => ({
+    // followReason 도 백엔드처럼 채워, "왜 떴는지" 배지가 데모에서도 보이게 — 작가 우선, 아니면 주제.
+    ...i,
+    followReason: MOCK_FOLLOWED_AUTHORS.includes(i.author.username)
+      ? { kind: "AUTHOR" as const, tag: null }
+      : { kind: "TOPIC" as const, tag: i.tags.find((t) => MOCK_FOLLOWED_TAGS.includes(t)) ?? null },
+  }));
   return { items, page: 0, size: 24, hasNext: false };
 }
 

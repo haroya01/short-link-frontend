@@ -87,7 +87,9 @@
     "seriesTagsLess": "閉じる",
     "tagFilterClear": "フィルター解除",
     "seriesNextEpisode": "次の話",
-    "seriesEpisodeOf": "全{total}話中{current}話"
+    "seriesEpisodeOf": "全{total}話中{current}話",
+    "feedReasonTopic": "「{tag}」をフォロー中",
+    "feedReasonSeries": "購読中シリーズ"
   },
   "blogWebhooks": {
     "loginRequired": "ログインが必要です。",
