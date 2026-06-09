@@ -148,6 +148,10 @@ export function DiscoveryCard({
   // 카드 변형(결정적): 사진 있으면 cover / 없고 소개글 있으면 text(흰 글 카드) / 둘 다 없으면 auto(테마 표지).
   // → 표지 강제 없이, 글만 있는 글은 깔끔한 텍스트 카드. 표지·소개 둘 다 없을 때만 브랜드 자동표지(§10.4).
   const variant: "cover" | "text" | "auto" = hasImage ? "cover" : item.excerpt ? "text" : "auto";
+  // 카드 → 글 이동에 통일된 은은한 전환(페이드+살짝 스케일, View Transitions). 전 카드 타입(이미지·글·자동)
+  // 동일하게 적용 — 소프트 내비(상대경로, dev/path)에서만 동작, 절대경로(prod 서브도메인)는 하드 내비라 미적용.
+  const internal = postUrl.startsWith("/");
+  const PostLink = internal ? TransitionLink : BlogLink;
 
   // ── text: 이미지·표지 없이 소개글을 보여주는 글 카드 ──
   if (variant === "text") {
@@ -156,7 +160,7 @@ export function DiscoveryCard({
         <div className="absolute right-3 top-3 z-20">
           <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
         </div>
-        <BlogLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
+        <PostLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
         <div className="pointer-events-none relative z-10 flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
             {tag && <TagLink tag={tag} />}
@@ -177,12 +181,6 @@ export function DiscoveryCard({
   // ── cover / auto: 사진 또는 테마색 자동표지 ──
   const grad = COVER_GRADS[item.id % COVER_GRADS.length];
   const ratio = hasImage ? (featured ? "aspect-[3/4]" : "aspect-[4/3]") : featured ? "aspect-[4/5]" : "aspect-square";
-  // 사진 카드 → 글 페이지로 이동할 때 커버 사진이 글 히어로로 늘어나는 View Transitions 모핑.
-  // 카드 커버 img 와 글 히어로 img 에 같은 view-transition-name 을 주면 브라우저가 둘을 잇는다.
-  // 소프트 내비(상대경로, dev/path 모델)에서만 — 절대경로(prod 서브도메인)는 하드 내비라 미적용.
-  const internal = postUrl.startsWith("/");
-  const vtName = hasImage ? `cover-${item.slug.replace(/[^a-zA-Z0-9_-]/g, "")}` : undefined;
-  const PostLink = hasImage && internal ? TransitionLink : BlogLink;
 
   return (
     // ring-inset white/10: 어두운 커버 가장자리에 유리 같은 얇은 빛 테두리 → 입체감.
@@ -193,7 +191,6 @@ export function DiscoveryCard({
             src={item.ogImageUrl as string}
             alt=""
             loading="lazy"
-            style={vtName ? { viewTransitionName: vtName } : undefined}
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none"
           />
         ) : (

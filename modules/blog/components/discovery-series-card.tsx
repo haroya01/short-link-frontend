@@ -9,6 +9,7 @@ import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { Link as TransitionLink } from "next-view-transitions";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
 
 /**
@@ -41,6 +42,8 @@ export function DiscoverySeriesCard({
   const posts = (series.posts ?? []).slice(0, MAX);
   const n = posts.length;
   const seriesUrl = authorHref(series.author.username, locale, `series/${series.slug}`);
+  // 카드의 글/시리즈 이동도 발견 카드와 같은 통일 전환(소프트 내비일 때만). 절대경로(prod)는 일반 이동.
+  const Nav = seriesUrl.startsWith("/") ? TransitionLink : BlogLink;
   const date = new Date(series.lastPublishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
     month: "long",
     day: "numeric",
@@ -154,7 +157,7 @@ export function DiscoverySeriesCard({
                     <SeriesSubscribeButton seriesId={series.id} />
                   </div>
                 )}
-                <BlogLink
+                <Nav
                   href={authorHref(series.author.username, locale, p.slug)}
                   aria-label={p.title}
                   className="absolute inset-0 z-10"
@@ -163,10 +166,10 @@ export function DiscoverySeriesCard({
                 <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4 text-white">
                   {/* Series identity (opens series). pr clears the subscribe button at top-right. */}
                   <div className="flex pr-9">
-                    <BlogLink href={seriesUrl} className="pointer-events-auto flex min-w-0 items-center gap-1.5">
+                    <Nav href={seriesUrl} className="pointer-events-auto flex min-w-0 items-center gap-1.5">
                       <Mark className="h-2.5 w-auto shrink-0" animated />
                       <span className="truncate text-[12px] font-semibold tracking-wide">{series.title}</span>
-                    </BlogLink>
+                    </Nav>
                   </div>
 
                   {/* Episode number(+total) + title (the card's subject). */}
