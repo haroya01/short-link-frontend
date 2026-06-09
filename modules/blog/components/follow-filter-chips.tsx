@@ -28,9 +28,10 @@ export function FollowFilterChips({
   const t = useTranslations("publicFeed");
   if (authors.length + tags.length <= 1) return null;
 
-  // min-h-[34px]: 터치 타깃(WCAG 2.5.8). 모션은 시스템 토큰(--ease, 200ms). (author-filter-chips 와 동일)
+  // h-9 고정: 모든 칩(사람·주제·전체보기)이 정확히 같은 높이 → 줄이 삐죽삐죽하지 않게. 모션은 시스템
+  // 토큰(--ease, 200ms). shrink-0/whitespace-nowrap: 한 줄 가로 스크롤에서 찌그러짐·줄바꿈 방지.
   const base =
-    "inline-flex min-h-[34px] items-center gap-1.5 rounded-full text-[13px] font-medium transition-colors duration-200 ease-[var(--ease)]";
+    "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full text-[13px] font-medium transition-colors duration-200 ease-[var(--ease)]";
   const tone = (on: boolean) =>
     on
       ? "bg-accent-600 text-white"
@@ -40,12 +41,13 @@ export function FollowFilterChips({
   const toggle = (facet: FeedFacet) => onSelect(isOn(facet) ? null : facet);
 
   return (
-    <div className="mb-5 flex flex-wrap items-center gap-2">
+    // 한 줄 가로 스크롤 — 사람+주제가 많아져도 여러 줄 벽이 되지 않고 옆으로 흐른다(스크롤바 숨김).
+    <div className="mb-5 flex items-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <button
         type="button"
         aria-pressed={!active}
         onClick={() => onSelect(null)}
-        className={cn(base, tone(!active), "px-3.5 py-1.5")}
+        className={cn(base, tone(!active), "px-4")}
       >
         {t("railFollowingAll")}
       </button>
@@ -57,7 +59,7 @@ export function FollowFilterChips({
             type="button"
             aria-pressed={isOn(facet)}
             onClick={() => toggle(facet)}
-            className={cn(base, tone(isOn(facet)), "py-1 pl-1 pr-3")}
+            className={cn(base, tone(isOn(facet)), "pl-2 pr-4")}
           >
             <Avatar src={a.avatarUrl} name={a.username} size="xs" />@{a.username}
           </button>
@@ -71,7 +73,7 @@ export function FollowFilterChips({
             type="button"
             aria-pressed={isOn(facet)}
             onClick={() => toggle(facet)}
-            className={cn(base, tone(isOn(facet)), "px-3.5 py-1.5")}
+            className={cn(base, tone(isOn(facet)), "px-4")}
           >
             #{tg}
           </button>

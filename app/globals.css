@@ -213,6 +213,18 @@ h1, h2, h3, p {
     }
   }
 
+  /* 글 내용 등장 — 스켈레톤이 실제 글로 바뀔 때(또는 직접 진입 시) 본문이 살짝 떠오르며 페이드인.
+     View Transitions 는 "피드→스켈레톤"까지만 덮으므로, 정작 "스켈레톤→내용"이 툭 바뀌던 부분을 이게
+     채운다 = 사용자가 원한 "내용이 뜨는" 애니메이션. 마운트마다 1회 재생(브라우저 무관). */
+  .post-enter {
+    animation: hero-rise 520ms var(--ease) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .post-enter {
+      animation: none;
+    }
+  }
+
   /*
    * Card surface — single soft 1px falloff at rest, a slightly deeper falloff on hover. The
    * earlier version layered three shadows (inner highlight + near + far) to fake a printed-card
@@ -1377,4 +1389,35 @@ body[data-cookie-consent="visible"] {
 }
 .tiptap .selectedCell {
   background: rgba(52, 211, 153, 0.12);
+}
+
+/* ── 카드 → 글 전환 (View Transitions) ───────────────────────────────────────
+   사진 모핑(카드 커버↔글 히어로 비율 차로 stretch 가 생겨 "이상"했음)을 버리고, 화면 전체가
+   부드럽게 교차되는 통일된 은은한 전환으로 — 현재 화면은 살짝 축소되며 사라지고, 새 화면은 살짝
+   확대되며 들어온다. 전 카드 타입(이미지·글·시리즈) 동일. 소프트 내비에서만 동작. */
+::view-transition-old(root) {
+  animation: vt-leave 240ms var(--ease) both;
+}
+::view-transition-new(root) {
+  animation: vt-enter 440ms var(--ease) both;
+}
+/* 현재 화면: 뒤로 물러나며(축소) 페이드아웃. */
+@keyframes vt-leave {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+/* 새 화면: 아래에서 올라오며(translateY) 확대되어 들어옴 + 페이드인 — 또렷이 보이는 전환. */
+@keyframes vt-enter {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }

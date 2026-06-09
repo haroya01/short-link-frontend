@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { ViewTransitions } from "next-view-transitions";
 import { AuthHintProvider } from "@/components/common/auth-hint";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -179,6 +180,7 @@ export default async function RootLayout({
     "}catch(e){}})()";
 
   return (
+    <ViewTransitions>
     <html
       lang={locale}
       className={jetbrainsMono.variable}
@@ -240,5 +242,6 @@ export default async function RootLayout({
         <SpeedInsights />
       </body>
     </html>
+    </ViewTransitions>
   );
 }

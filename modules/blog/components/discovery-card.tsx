@@ -2,6 +2,7 @@
 import type { ReactNode } from "react";
 import { Heart, Eye } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Link as TransitionLink } from "next-view-transitions";
 import { DATE_LOCALE } from "@/lib/date";
 import type { FollowReason, PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { showLikes, showViews } from "@/modules/blog/lib/public-metrics";
@@ -122,11 +123,13 @@ function CardMeta({ item, locale, over }: { item: PublicFeedItem; locale: string
   );
 }
 
-// 카드 공통 surface/motion 토큰 — 시스템과 통일: rounded-2xl, --ease, hover lift 0.5 + 그림자 상승,
-// 300ms. focus-within ring = 전면 링크 카드의 키보드 포커스 가시화(WCAG 2.4.7).
+// 카드 공통 surface/motion 토큰 — rounded-2xl, --ease, 300ms. 입체감: 다층 그림자(닿는 면 가까운 1px +
+// 퍼지는 ambient)로 평면이 아니라 살짝 떠 있게, hover 시 -translate-y-1 로 깊게 떠오르며 그림자 확장.
+// focus-within ring = 전면 링크 카드의 키보드 포커스 가시화(WCAG 2.4.7).
 const SHELL =
-  "group relative overflow-hidden rounded-2xl transition-[transform,box-shadow] duration-300 ease-[var(--ease)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-8px_rgba(15,23,42,0.18)] focus-within:ring-2 focus-within:ring-accent-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-950";
-const CARD_SHADOW = "shadow-[0_1px_3px_rgba(15,23,42,0.06)]";
+  "group relative overflow-hidden rounded-2xl transition-[transform,box-shadow] duration-300 ease-[var(--ease)] hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_rgba(15,23,42,0.28)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-500 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950";
+const CARD_SHADOW =
+  "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_6px_16px_-8px_rgba(15,23,42,0.12)]";
 
 export function DiscoveryCard({
   item,
@@ -142,18 +145,46 @@ export function DiscoveryCard({
   const hasImage = Boolean(item.ogImageUrl);
   const tag = item.tags[0];
   const reason = item.followReason ?? null;
-  // 이미지 없는 글도 흰 텍스트 카드 대신 브랜드 그라데이션 "자동 표지"로 — 그리드가 전부 표지 룩으로 통일된다
-  // (강제 스톡 이미지가 아니라 우리 UI: 그라데이션 + 3-bar 마크 + 제목, AGENTS §10.4 와 일관). 소개글이
-  // 있으면 표지 위에 함께 얹어 글 카드의 정보(소개글)도 잃지 않는다.
-  const showExcerpt = !hasImage && Boolean(item.excerpt);
+  // 카드 변형(결정적): 사진 있으면 cover / 없고 소개글 있으면 text(흰 글 카드) / 둘 다 없으면 auto(테마 표지).
+  // → 표지 강제 없이, 글만 있는 글은 깔끔한 텍스트 카드. 표지·소개 둘 다 없을 때만 브랜드 자동표지(§10.4).
+  const variant: "cover" | "text" | "auto" = hasImage ? "cover" : item.excerpt ? "text" : "auto";
+  // 카드 → 글 이동에 통일된 은은한 전환(페이드+살짝 스케일, View Transitions). 전 카드 타입(이미지·글·자동)
+  // 동일하게 적용 — 소프트 내비(상대경로, dev/path)에서만 동작, 절대경로(prod 서브도메인)는 하드 내비라 미적용.
+  const internal = postUrl.startsWith("/");
+  const PostLink = internal ? TransitionLink : BlogLink;
+
+  // ── text: 이미지·표지 없이 소개글을 보여주는 글 카드 ──
+  if (variant === "text") {
+    return (
+      <div className={`${SHELL} ${CARD_SHADOW} border border-slate-200/80 bg-white p-4 dark:border-slate-800 dark:bg-slate-900`}>
+        <div className="absolute right-3 top-3 z-20">
+          <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
+        </div>
+        <PostLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
+        <div className="pointer-events-none relative z-10 flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
+            {tag && <TagLink tag={tag} />}
+            {reason && <ReasonPill reason={reason} t={t} />}
+          </div>
+          <h3 className={`text-balance font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100 ${featured ? "text-[19px]" : "text-[17px]"}`}>
+            {item.title}
+          </h3>
+          <p className="line-clamp-4 text-[13.5px] leading-relaxed text-slate-500 dark:text-slate-400">
+            {item.excerpt}
+          </p>
+          <CardMeta item={item} locale={locale} />
+        </div>
+      </div>
+    );
+  }
 
   // ── cover / auto: 사진 또는 테마색 자동표지 ──
   const grad = COVER_GRADS[item.id % COVER_GRADS.length];
-  // 이미지 없는 카드는 제목+소개글이 들어가도록 살짝 더 세로로(4/5). 사진 카드는 사진 비율 우선.
-  const ratio = hasImage ? (featured ? "aspect-[3/4]" : "aspect-[4/3]") : featured ? "aspect-[4/5]" : "aspect-[4/5]";
+  const ratio = hasImage ? (featured ? "aspect-[3/4]" : "aspect-[4/3]") : featured ? "aspect-[4/5]" : "aspect-square";
 
   return (
-    <div className={`${SHELL} ${CARD_SHADOW} bg-slate-200 dark:bg-slate-800`}>
+    // ring-inset white/10: 어두운 커버 가장자리에 유리 같은 얇은 빛 테두리 → 입체감.
+    <div className={`${SHELL} ${CARD_SHADOW} bg-slate-200 ring-1 ring-inset ring-white/10 dark:bg-slate-800`}>
       <div className={ratio}>
         {hasImage ? (
           <img
@@ -171,12 +202,14 @@ export function DiscoveryCard({
         {/* 텍스트 가독성 scrim — 상·하단 모두(상단 태그, 하단 제목/메타). WCAG 대비 확보용으로 통일. */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/35 to-transparent" />
+        {/* 위에서 빛이 닿는 1px 하이라이트 — 커버가 평면 아니라 살짝 솟은 듯한 입체감. */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/25" />
       </div>
 
       <div className="absolute right-3 top-3 z-20 text-white">
         <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
       </div>
-      <BlogLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
+      <PostLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
 
       <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4">
         <div className="flex flex-wrap items-center gap-2">
@@ -186,12 +219,9 @@ export function DiscoveryCard({
         </div>
         <div className="space-y-2">
           {/* 제목 스케일은 변형(이미지 유무)이 아니라 중요도(featured) 한 축으로만 — 위계 역전 방지. */}
-          <h3 className={`text-balance font-semibold leading-tight tracking-tight text-white ${showExcerpt ? "line-clamp-2" : "line-clamp-3"} ${featured ? "text-[20px]" : "text-[18px]"}`}>
+          <h3 className={`line-clamp-3 text-balance font-semibold leading-tight tracking-tight text-white ${featured ? "text-[20px]" : "text-[18px]"}`}>
             {item.title}
           </h3>
-          {showExcerpt && (
-            <p className="line-clamp-2 text-[13px] leading-relaxed text-white/80">{item.excerpt}</p>
-          )}
           <CardMeta item={item} locale={locale} over />
         </div>
       </div>
@@ -199,14 +229,37 @@ export function DiscoveryCard({
   );
 }
 
-// Row-order grid (was CSS columns/masonry). columns 는 칼럼 우선(세로)으로 흘러 시각·DOM 순서가 어긋났는데
-// (최신순인데 4번째 글이 2번째 칼럼 맨 위로), grid 는 행 우선이라 왼→오·위→아래 = 본문 순서와 일치.
-// items-start: 카드가 자기 높이를 유지하고 행 위쪽 정렬(가장 큰 카드에 맞춰 늘어나지 않음).
+// 메이슨리(JS-free CSS columns) — 카드를 크기대로 빈틈없이 퍼즐처럼 채운다(행 강제 정렬 X). 모바일 2열
+// → md 3열. 행순서 그리드는 밑 여백이 들쭉날쭉해 메이슨리의 타이트한 packing 을 선택(시각 우선).
 export function DiscoveryGrid({ children }: { children: ReactNode }) {
-  return <div className="grid grid-cols-2 items-start gap-4 sm:gap-5 md:grid-cols-3">{children}</div>;
+  return <div className="gap-4 columns-2 sm:gap-5 md:columns-3">{children}</div>;
 }
 
-/** A child cell of {@link DiscoveryGrid}. Grid gap handles spacing — no masonry break rules needed. */
+/** A child cell of {@link DiscoveryGrid} — 칼럼 사이에서 카드가 쪼개지지 않게 막는다. */
 export function DiscoveryCell({ children }: { children: ReactNode }) {
-  return <div>{children}</div>;
+  return <div className="mb-4 break-inside-avoid sm:mb-5">{children}</div>;
+}
+
+// 로딩 placeholder — 리스트 행이 아니라 실제 카드 그리드와 같은 메이슨리 모양으로(높이 섞인 카드 블록)
+// 채워, 전환이 "같은 그리드가 채워지는" 느낌이 되게 한다. 비율을 섞어 메이슨리 packing 을 흉내.
+const SKELETON_RATIOS = [
+  "aspect-[4/5]",
+  "aspect-[4/3]",
+  "aspect-square",
+  "aspect-[3/4]",
+  "aspect-[4/5]",
+  "aspect-[4/3]",
+];
+export function DiscoveryGridSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div role="status" aria-busy="true" className="gap-4 columns-2 sm:gap-5 md:columns-3">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="mb-4 break-inside-avoid sm:mb-5">
+          <div
+            className={`w-full animate-pulse rounded-2xl bg-slate-200/80 dark:bg-slate-800 ${SKELETON_RATIOS[i % SKELETON_RATIOS.length]}`}
+          />
+        </div>
+      ))}
+    </div>
+  );
 }

@@ -9,6 +9,7 @@ import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { Link as TransitionLink } from "next-view-transitions";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
 
 /**
@@ -41,6 +42,8 @@ export function DiscoverySeriesCard({
   const posts = (series.posts ?? []).slice(0, MAX);
   const n = posts.length;
   const seriesUrl = authorHref(series.author.username, locale, `series/${series.slug}`);
+  // 카드의 글/시리즈 이동도 발견 카드와 같은 통일 전환(소프트 내비일 때만). 절대경로(prod)는 일반 이동.
+  const Nav = seriesUrl.startsWith("/") ? TransitionLink : BlogLink;
   const date = new Date(series.lastPublishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
     month: "long",
     day: "numeric",
@@ -93,6 +96,7 @@ export function DiscoverySeriesCard({
     <section
       ref={sectionRef}
       aria-label={series.title}
+      className="group"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -131,7 +135,7 @@ export function DiscoverySeriesCard({
               <div
                 className={`relative h-full w-full overflow-hidden rounded-2xl bg-slate-700 shadow-[0_1px_3px_rgba(15,23,42,0.06)] ring-1 ring-white/15 ${
                   front
-                    ? "focus-within:ring-2 focus-within:ring-accent-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-950"
+                    ? "transition-[transform,box-shadow] duration-300 ease-[var(--ease)] group-hover:-translate-y-1 group-hover:shadow-[0_18px_40px_-12px_rgba(15,23,42,0.28)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-500 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950"
                     : ""
                 }`}
               >
@@ -153,7 +157,7 @@ export function DiscoverySeriesCard({
                     <SeriesSubscribeButton seriesId={series.id} />
                   </div>
                 )}
-                <BlogLink
+                <Nav
                   href={authorHref(series.author.username, locale, p.slug)}
                   aria-label={p.title}
                   className="absolute inset-0 z-10"
@@ -162,10 +166,10 @@ export function DiscoverySeriesCard({
                 <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4 text-white">
                   {/* Series identity (opens series). pr clears the subscribe button at top-right. */}
                   <div className="flex pr-9">
-                    <BlogLink href={seriesUrl} className="pointer-events-auto flex min-w-0 items-center gap-1.5">
+                    <Nav href={seriesUrl} className="pointer-events-auto flex min-w-0 items-center gap-1.5">
                       <Mark className="h-2.5 w-auto shrink-0" animated />
                       <span className="truncate text-[12px] font-semibold tracking-wide">{series.title}</span>
-                    </BlogLink>
+                    </Nav>
                   </div>
 
                   {/* Episode number(+total) + title (the card's subject). */}
@@ -186,13 +190,14 @@ export function DiscoverySeriesCard({
                   </div>
                 </div>
 
-                {/* Right flip edge → next episode (한 장 넘김). */}
+                {/* Right flip edge → next episode (한 장 넘김). top-14: 우상단 구독 버튼 히트박스를 비워둬
+                    겹치지 않게(예전엔 inset-y-0 z-30 이 구독 버튼을 덮어 구독 탭이 거의 안 먹었음). */}
                 {front && n > 1 && (
                   <button
                     type="button"
                     onClick={advanceRef.current}
                     aria-label={t("seriesNextEpisode")}
-                    className="absolute inset-y-0 right-0 z-30 flex w-12 items-center justify-center bg-gradient-to-l from-black/30 to-transparent text-white/85 transition hover:text-white"
+                    className="absolute bottom-0 right-0 top-14 z-30 flex w-12 items-center justify-center bg-gradient-to-l from-black/30 to-transparent text-white/85 transition hover:text-white"
                   >
                     <ChevronRight className="h-6 w-6" />
                   </button>
