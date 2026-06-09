@@ -230,48 +230,56 @@ export default async function BlogFeedPage({
           <FeedContentTransition index={tabIndex} contentKey={contentKey}>
             <SubscribedSeriesFeed locale={locale} />
           </FeedContentTransition>
-        ) : (
-          // recent / trending / search share ONE ReadingShell so the discovery rail is rendered once
-          // and stays put — only the content column (inside FeedContentTransition) slides on a switch.
+        ) : groupByTag ? (
+          // 인기(주제별) — reading-column shell + rail, unchanged.
           <ReadingShell
-            className={searching ? "mt-6" : "mt-4"}
+            className="mt-4"
             rail={showRail ? <DiscoveryRail locale={locale} tags={tags} authors={authors} /> : undefined}
           >
             <FeedContentTransition index={tabIndex} contentKey={contentKey}>
-              {groupByTag ? (
-                trendingSections.length === 0 ? (
-                  <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
-                ) : (
-                  <TrendingByTag
-                    sections={trendingSections}
-                    locale={locale}
-                    moreLabel={t("railSeeAll")}
-                    heading={t("trendingTopicsLabel")}
-                  />
-                )
-              ) : items.length === 0 ? (
-                searching ? (
-                  <SearchEmpty query={query} tags={tags} locale={locale} />
-                ) : (
-                  <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
-                )
+              {trendingSections.length === 0 ? (
+                <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
               ) : (
-                <FeedColumn
+                <TrendingByTag
+                  sections={trendingSections}
                   locale={locale}
-                  items={items}
-                  hasNext={hasNext}
-                  sort={sort}
-                  query={searching ? query : undefined}
-                  lang={activeLang || undefined}
-                  featuredFirst={featuredFirst}
-                  featuredLabel={t("featuredLabel")}
-                  interleave={
-                    series.length > 0 ? <SeriesFeedCard series={series[0]} locale={locale} /> : null
-                  }
+                  moreLabel={t("railSeeAll")}
+                  heading={t("trendingTopicsLabel")}
                 />
               )}
             </FeedContentTransition>
           </ReadingShell>
+        ) : items.length === 0 ? (
+          <ReadingShell className={searching ? "mt-6" : "mt-4"}>
+            <FeedContentTransition index={tabIndex} contentKey={contentKey}>
+              {searching ? (
+                <SearchEmpty query={query} tags={tags} locale={locale} />
+              ) : (
+                <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
+              )}
+            </FeedContentTransition>
+          </ReadingShell>
+        ) : (
+          // 최신 / 검색 결과 = 발견(browse) 면 → 와이드 메이슨리 그리드 (reading-column 예외, AGENTS.md §10.1).
+          // 읽기 면(글/작가/태그)은 컬럼 유지. 사이드 rail 은 이 면에서 생략(모바일 탐색 시트가 발견을 담당).
+          <div className={cn("mx-auto max-w-6xl", searching ? "mt-6" : "mt-4")}>
+            <FeedContentTransition index={tabIndex} contentKey={contentKey}>
+              <FeedColumn
+                locale={locale}
+                items={items}
+                hasNext={hasNext}
+                sort={sort}
+                query={searching ? query : undefined}
+                lang={activeLang || undefined}
+                featuredFirst={featuredFirst}
+                featuredLabel={t("featuredLabel")}
+                variant="grid"
+                interleave={
+                  series.length > 0 ? <SeriesFeedCard series={series[0]} locale={locale} /> : null
+                }
+              />
+            </FeedContentTransition>
+          </div>
         )}
       </div>
     </>
@@ -294,6 +302,7 @@ function FeedColumn({
   featuredFirst,
   featuredLabel,
   interleave,
+  variant,
 }: {
   locale: string;
   items: PublicFeedItem[];
@@ -304,6 +313,7 @@ function FeedColumn({
   featuredFirst: boolean;
   featuredLabel: string;
   interleave?: ReactNode;
+  variant?: "list" | "grid";
 }) {
   return (
     <FeedInfinite
@@ -316,6 +326,7 @@ function FeedColumn({
       featuredFirst={featuredFirst}
       featuredLabel={featuredLabel}
       interleaveNode={interleave}
+      variant={variant}
     />
   );
 }
