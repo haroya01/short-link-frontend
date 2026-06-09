@@ -213,6 +213,18 @@ h1, h2, h3, p {
     }
   }
 
+  /* 글 내용 등장 — 스켈레톤이 실제 글로 바뀔 때(또는 직접 진입 시) 본문이 살짝 떠오르며 페이드인.
+     View Transitions 는 "피드→스켈레톤"까지만 덮으므로, 정작 "스켈레톤→내용"이 툭 바뀌던 부분을 이게
+     채운다 = 사용자가 원한 "내용이 뜨는" 애니메이션. 마운트마다 1회 재생(브라우저 무관). */
+  .post-enter {
+    animation: hero-rise 520ms var(--ease) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .post-enter {
+      animation: none;
+    }
+  }
+
   /*
    * Card surface — single soft 1px falloff at rest, a slightly deeper falloff on hover. The
    * earlier version layered three shadows (inner highlight + near + far) to fake a printed-card
