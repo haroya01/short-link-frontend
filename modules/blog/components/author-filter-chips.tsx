@@ -24,15 +24,17 @@ export function AuthorFilterChips({
   if (authors.length <= 1) return null;
 
   // min-h-[34px]: 손가락 터치 타깃(WCAG 2.5.8) 확보. 모션은 시스템 토큰(--ease, 200ms)으로 통일.
+  // shrink-0/whitespace-nowrap: 한 줄 가로 스크롤에서 칩이 찌그러지거나 줄바꿈되지 않게.
   const base =
-    "inline-flex min-h-[34px] items-center gap-1.5 rounded-full text-[13px] font-medium transition-colors duration-200 ease-[var(--ease)]";
+    "inline-flex min-h-[34px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full text-[13px] font-medium transition-colors duration-200 ease-[var(--ease)]";
   const tone = (on: boolean) =>
     on
       ? "bg-accent-600 text-white"
       : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700";
 
   return (
-    <div className="mb-5 flex flex-wrap items-center gap-2">
+    // 한 줄 가로 스크롤 — 작가가 많아져도 여러 줄 벽이 되지 않고 옆으로 흐른다(스크롤바 숨김).
+    <div className="mb-5 flex items-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <button
         type="button"
         aria-pressed={!active}

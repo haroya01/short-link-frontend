@@ -28,9 +28,10 @@ export function FollowFilterChips({
   const t = useTranslations("publicFeed");
   if (authors.length + tags.length <= 1) return null;
 
-  // min-h-[34px]: 터치 타깃(WCAG 2.5.8). 모션은 시스템 토큰(--ease, 200ms). (author-filter-chips 와 동일)
+  // min-h-[34px]: 터치 타깃(WCAG 2.5.8). 모션은 시스템 토큰(--ease, 200ms). shrink-0/whitespace-nowrap:
+  // 한 줄 가로 스크롤에서 칩이 찌그러지거나 줄바꿈되지 않게. (author-filter-chips 와 동일)
   const base =
-    "inline-flex min-h-[34px] items-center gap-1.5 rounded-full text-[13px] font-medium transition-colors duration-200 ease-[var(--ease)]";
+    "inline-flex min-h-[34px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full text-[13px] font-medium transition-colors duration-200 ease-[var(--ease)]";
   const tone = (on: boolean) =>
     on
       ? "bg-accent-600 text-white"
@@ -40,7 +41,8 @@ export function FollowFilterChips({
   const toggle = (facet: FeedFacet) => onSelect(isOn(facet) ? null : facet);
 
   return (
-    <div className="mb-5 flex flex-wrap items-center gap-2">
+    // 한 줄 가로 스크롤 — 사람+주제가 많아져도 여러 줄 벽이 되지 않고 옆으로 흐른다(스크롤바 숨김).
+    <div className="mb-5 flex items-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <button
         type="button"
         aria-pressed={!active}
