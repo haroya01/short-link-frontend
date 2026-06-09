@@ -47,6 +47,7 @@
     "lucide-react": "^0.441.0",
     "next": "14.2.5",
     "next-intl": "^4.11.0",
+    "next-view-transitions": "^0.3.5",
     "pdf-lib": "^1.17.1",
     "posthog-js": "^1.373.4",
     "qrcode": "^1.5.4",

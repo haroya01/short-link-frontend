@@ -174,8 +174,15 @@ export default async function PublicPostPage({
           magazine masthead. */}
       {post.ogImageUrl && (
         <div className="mb-10 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
+          {/* view-transition-name 이 발견 카드의 커버 img 와 같아, 카드에서 들어올 때 사진이 이 히어로로
+              늘어나며 모핑된다(View Transitions). 카드 쪽 이름과 동일 규칙(cover-<sanitized slug>). */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={post.ogImageUrl} alt="" className="aspect-[2/1] w-full object-cover" />
+          <img
+            src={post.ogImageUrl}
+            alt=""
+            style={{ viewTransitionName: `cover-${slug.replace(/[^a-zA-Z0-9_-]/g, "")}` }}
+            className="aspect-[2/1] w-full object-cover"
+          />
         </div>
       )}
 
