@@ -1384,21 +1384,23 @@ body[data-cookie-consent="visible"] {
    부드럽게 교차되는 통일된 은은한 전환으로 — 현재 화면은 살짝 축소되며 사라지고, 새 화면은 살짝
    확대되며 들어온다. 전 카드 타입(이미지·글·시리즈) 동일. 소프트 내비에서만 동작. */
 ::view-transition-old(root) {
-  animation: vt-leave 220ms var(--ease) both;
+  animation: vt-leave 240ms var(--ease) both;
 }
 ::view-transition-new(root) {
-  animation: vt-enter 280ms var(--ease) both;
+  animation: vt-enter 440ms var(--ease) both;
 }
+/* 현재 화면: 뒤로 물러나며(축소) 페이드아웃. */
 @keyframes vt-leave {
   to {
     opacity: 0;
-    transform: scale(0.985);
+    transform: scale(0.96);
   }
 }
+/* 새 화면: 아래에서 올라오며(translateY) 확대되어 들어옴 + 페이드인 — 또렷이 보이는 전환. */
 @keyframes vt-enter {
   from {
     opacity: 0;
-    transform: scale(0.99);
+    transform: translateY(28px) scale(0.97);
   }
 }
 @media (prefers-reduced-motion: reduce) {
