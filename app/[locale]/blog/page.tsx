@@ -117,7 +117,9 @@ export default async function BlogFeedPage({
   // Series 카드는 기본(비검색·비태그) 최신 그리드에만 끼워넣는다.
   const wantSeries = !searching && !activeTag && tab === "recent";
   // "지금 뜨는 주제" — 인기 탭(비검색·비필터)에서 그리드 위에 랭킹 주제 칩으로. carousel 없이 정보만.
-  const wantTopics = tab === "trending" && !searching && !activeTag;
+  // 인기 탭에선 태그가 선택돼도 주제 strip 을 계속 보여준다(선택 칩만 강조) — strip 이 사라졌다 나타나며
+  // 카드가 위로 점프하는 레이아웃 흔들림 방지. 선택 상태는 TrendingTopics 가 활성 칩으로 표현.
+  const wantTopics = tab === "trending" && !searching;
 
   const [feedResult, authorsResult, seriesResult, topicsResult] = await Promise.all([
     needFlat
@@ -245,8 +247,10 @@ export default async function BlogFeedPage({
           // 최신 / 검색 결과 = 발견(browse) 면 → 와이드 메이슨리 그리드 (reading-column 예외, AGENTS.md §10.1).
           // 읽기 면(글/작가/태그)은 컬럼 유지. 사이드 rail 은 이 면에서 생략(모바일 탐색 시트가 발견을 담당).
           <div className={cn("mx-auto max-w-4xl", searching ? "mt-6" : "mt-4")}>
-            {wantTopics && <TrendingTopics topics={topics} locale={locale} />}
-            {activeTag && (
+            {wantTopics && <TrendingTopics topics={topics} locale={locale} activeTag={activeTag} />}
+            {/* 인기 탭(주제 strip 노출 중)에선 strip 의 활성 칩이 필터 상태를 보여주므로 별도 해제 칩은 숨김
+                — 두 표시가 겹치지 않게. 최신 탭(카드 #태그 클릭) 등 strip 없는 면에선 이 칩으로 해제. */}
+            {activeTag && !wantTopics && (
               // Active tag filter — always visible (no hidden filter), one click to clear.
               <div className="mb-5 flex items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-50 px-3 py-1 text-[13px] font-medium text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">

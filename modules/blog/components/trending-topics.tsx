@@ -10,12 +10,17 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 export async function TrendingTopics({
   topics,
   locale,
+  activeTag = "",
 }: {
   topics: TagCount[];
   locale: string;
+  /** Currently filtered tag — that chip renders active and links back to "clear", so selecting a
+   *  topic highlights in place instead of removing the strip (no layout jump). */
+  activeTag?: string;
 }) {
   const t = await getTranslations({ locale, namespace: "publicFeed" });
   if (topics.length === 0) return null;
+  const lower = activeTag.toLowerCase();
 
   return (
     <div className="mb-7">
@@ -23,15 +28,23 @@ export async function TrendingTopics({
         {t("trendingTopicsLabel")}
       </p>
       <div className="flex flex-wrap gap-2">
-        {topics.slice(0, 12).map((tg) => (
-          <BlogLink
-            key={tg.tag}
-            href={`?sort=trending&tag=${encodeURIComponent(tg.tag)}`}
-            className="rounded-full bg-slate-100 px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
-          >
-            #{tg.tag}
-          </BlogLink>
-        ))}
+        {topics.slice(0, 12).map((tg) => {
+          const active = tg.tag.toLowerCase() === lower;
+          return (
+            <BlogLink
+              key={tg.tag}
+              href={active ? "?sort=trending" : `?sort=trending&tag=${encodeURIComponent(tg.tag)}`}
+              aria-current={active ? "true" : undefined}
+              className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
+                active
+                  ? "bg-accent-600 text-white hover:bg-accent-700"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+              }`}
+            >
+              #{tg.tag}
+            </BlogLink>
+          );
+        })}
       </div>
     </div>
   );
