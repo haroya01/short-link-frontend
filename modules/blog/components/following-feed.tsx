@@ -9,7 +9,8 @@ import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/bl
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref, FeedListSkeleton } from "@/modules/blog/components/feed-card";
 import { DiscoveryCard, DiscoveryGrid, DiscoveryCell } from "@/modules/blog/components/discovery-card";
-import { AuthorFilterChips } from "@/modules/blog/components/author-filter-chips";
+import { FollowFilterChips, type FeedFacet } from "@/modules/blog/components/follow-filter-chips";
+import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
@@ -79,10 +80,12 @@ export function FollowingFeed({
 }) {
   const t = useTranslations("publicFeed");
   const { authenticated, ready, signInWithGoogle } = useAuth();
+  const { prefs } = useTagPrefs();
   const [items, setItems] = useState<PublicFeedItem[] | null>(null);
-  // Selected followed author — when set, the feed is filtered in-place to just their posts (the rail
-  // row toggles it). Cleared whenever the feed reloads so a stale name never hides everything.
-  const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
+  // Active filter facet — the feed merges 작가·시리즈·주제, so it can be narrowed by one author OR one
+  // followed tag at a time (in-place over loaded items). Cleared on reload so a stale facet never
+  // hides everything.
+  const [facet, setFacet] = useState<FeedFacet | null>(null);
 
   useEffect(() => {
     if (!ready || !authenticated) return;
@@ -91,7 +94,7 @@ export function FollowingFeed({
       .then((view) => {
         if (alive) {
           setItems(view.items);
-          setSelectedAuthor(null);
+          setFacet(null);
         }
       })
       .catch(() => {
@@ -182,17 +185,30 @@ export function FollowingFeed({
     );
   }
 
+  // 사람(피드에 등장하는 작가) + 주제(내가 팔로우한 태그 중 이 피드에 실제로 글이 있는 것)를 필터 축으로.
   const followed = feedAuthors(items);
   const followedNames = new Set(followed.map((a) => a.username));
-  // A filter only makes sense if the picked author is actually present; otherwise show everything.
-  const activeAuthor =
-    selectedAuthor && followedNames.has(selectedAuthor) ? selectedAuthor : null;
-  const shown = activeAuthor ? items.filter((it) => it.author.username === activeAuthor) : items;
+  const hasTag = (it: PublicFeedItem, tag: string) =>
+    it.tags?.some((x) => x.toLowerCase() === tag.toLowerCase()) ?? false;
+  const presentTags = prefs.followed.filter((tag) => items.some((it) => hasTag(it, tag)));
 
-  // 다른 발견 탭과 동일한 와이드 카드 그리드. 팔로우한 작가 필터는 사이드 rail 대신 상단 아바타 칩으로.
+  // 선택한 facet 이 실제로 존재할 때만 필터 적용(없으면 전체) — 새로고침 직후 stale facet 방지.
+  const activeFacet =
+    facet?.kind === "author" && followedNames.has(facet.value)
+      ? facet
+      : facet?.kind === "tag" && presentTags.includes(facet.value)
+        ? facet
+        : null;
+  const shown = !activeFacet
+    ? items
+    : activeFacet.kind === "author"
+      ? items.filter((it) => it.author.username === activeFacet.value)
+      : items.filter((it) => hasTag(it, activeFacet.value));
+
+  // 다른 발견 탭과 동일한 와이드 카드 그리드. 팔로우(사람+주제) 필터는 사이드 rail 대신 상단 칩으로.
   return (
     <div className="mx-auto mt-4 max-w-4xl">
-      <AuthorFilterChips authors={followed} active={activeAuthor} onSelect={setSelectedAuthor} />
+      <FollowFilterChips authors={followed} tags={presentTags} active={activeFacet} onSelect={setFacet} />
       <DiscoveryGrid>
         {shown.map((item) => (
           <DiscoveryCell key={`${item.author.username}/${item.slug}`}>

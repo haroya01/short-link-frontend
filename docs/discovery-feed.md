@@ -43,7 +43,7 @@ read 면은 컬럼이 맞다는 판단. **AGENTS.md §10.1 에 이 예외를 명
 |---|---|
 | `GET /public/tags?limit` (인기 태그) | ✅ 있음 |
 | `GET /public/posts?sort=&tag=&page&size` | ✅ 있음 |
-| `GET /feed/following?tag=&page&size` | ⚠️ Phase 2 |
+| `GET /feed/following` (작가+시리즈+팔로우 주제 통합) | ✅ 있음 (tag 파라미터 불필요 — 서버가 followed 태그 자동 합류) |
 | `GET/PUT /users/me/feed-prefs` | ⚠️ Phase 3 |
 | 자동커버 생성 | ⚠️ Phase 4 |
 
@@ -51,6 +51,19 @@ read 면은 컬럼이 맞다는 판단. **AGENTS.md §10.1 에 이 예외를 명
 - CSS `columns` 메이슨리는 칼럼 끝 높이 불균형 + 읽기 순서(a11y)가 세로 우선 → 필요 시 grid/JS 메이슨리로.
 - 좁은 카드에서 메타(작가·날짜·♥·👁) 줄바꿈 → 좁을 때 조회수 생략 등 우선순위 조정.
 - 발견 면에서 rail(추천 작가) 생략 → 상단 칩 strip + 추천 섹션으로 흡수 검토(Phase 2).
+
+## 팔로우 통합 — 작가 + 주제 한 피드로 (Option 1, FE+BE)
+"팔로우"라는 한 동사가 작가는 피드 탭으로, 주제(태그)는 점프 링크+숨김 필터로 갈라져 결과가 예측 불가능했던
+문제(일관성·정보 향기 위반)를 해소. **팔로잉 탭 = 내가 팔로우한 작가 + 구독 시리즈 + 팔로우한 주제의 통합 피드**.
+
+- **BE (short-link)**: `/feed/following` 의 union 쿼리에 태그 축 추가 —
+  `findPublishedByAuthorsSeriesOrTags(authorIds, seriesIds, tags)` (`left join p.tags t` + `lower(t) in :tags`,
+  `distinct`). 팔로우 태그는 `tag-prefs` 의 followed 를 lower-case 로 합류. 빈 축은 no-match 센티넬.
+  FE 계약(엔드포인트·응답)은 **그대로** — 주제 글이 자동으로 합류만 됨.
+- **FE**: 팔로잉 탭 필터를 `FollowFilterChips` 로 — 사람(@핸들) + 주제(#태그)를 한 줄에, 한 번에 하나 활성(상호 배타).
+  주제 칩은 `useTagPrefs().followed` 중 **이 피드에 실제 글이 있는 것**만 노출. 떠다니던 `MyTagsStrip` 은 팔로잉
+  탭에서 숨김(중복 제거), 최신/인기/시리즈에선 주제 점프 shortcut 으로 유지.
+- mock: `mockFollowingView` 가 union 을 흉내(팔로우 작가 + 데모 주제 "일상"), `tag-prefs` 읽기/토글 mock 추가.
 
 ## UX 검토 반영 (독립 4-세션 리뷰 → P0/P1 핵심)
 - **브랜드 색 통일**: 카드 자동커버(`COVER_GRADS`)·시리즈 덱(`EP_GRADS`) 모두 무지개 → single-accent(emerald)+slate

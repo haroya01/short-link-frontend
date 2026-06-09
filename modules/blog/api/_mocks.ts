@@ -138,9 +138,19 @@ export const MOCK_SUGGESTED_AUTHORS: SuggestedAuthor[] = [
   { author: AUTHORS.sora, postCount: 2 },
 ];
 
-/** Following feed (the 팔로잉 tab, when signed in) — posts from a couple of "followed" authors. */
+/**
+ * Following feed (the 팔로잉 tab, when signed in) — mirrors the backend union: posts from followed
+ * authors (dohyun, minji) OR carrying a followed topic (here "일상", a demo). So the merged feed
+ * visibly includes posts from authors you don't follow, surfaced by a topic you do.
+ */
+const MOCK_FOLLOWED_AUTHORS = ["dohyun", "minji"];
+const MOCK_FOLLOWED_TAGS = ["일상"];
 export function mockFollowingView(): PublicFeedView {
-  const items = ALL_ITEMS.filter((i) => ["dohyun", "minji"].includes(i.author.username));
+  const items = ALL_ITEMS.filter(
+    (i) =>
+      MOCK_FOLLOWED_AUTHORS.includes(i.author.username) ||
+      i.tags.some((t) => MOCK_FOLLOWED_TAGS.includes(t)),
+  );
   return { items, page: 0, size: 24, hasNext: false };
 }
 
