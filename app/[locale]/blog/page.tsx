@@ -27,7 +27,6 @@ import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { SubscribedSeriesFeed } from "@/modules/blog/components/subscribed-series-feed";
-import { MyTagsStrip } from "@/modules/blog/components/my-tags-strip";
 import { FeedTabCookieSync } from "@/modules/blog/components/feed-tab-cookie-sync";
 import { DiscoverySeriesCard } from "@/modules/blog/components/discovery-series-card";
 import { TrendingTopics } from "@/modules/blog/components/trending-topics";
@@ -221,11 +220,6 @@ export default async function BlogFeedPage({
 
         {/* Keeps the SSR default-tab cookie in step with the account pref (no UI, no redirect). */}
         <FeedTabCookieSync />
-
-        {/* Reader's followed tags ("보고싶은 태그") — a jump-to-topic shortcut, only on 최신. Other tabs
-            already cover topics (인기=주제별 인기 / 팔로잉=주제 필터 칩), so showing it there just stacks a
-            second redundant tag row. Hidden during search. */}
-        {!searching && tab === "recent" && <MyTagsStrip />}
 
         {/* Following is its own client surface with its own rail (followed authors), so it animates as
             a whole — there's no shared discovery rail to hold still here. */}
