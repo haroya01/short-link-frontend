@@ -199,14 +199,13 @@ export function DiscoveryCard({
   );
 }
 
-// Row-order grid (was CSS columns/masonry). columns 는 칼럼 우선(세로)으로 흘러 시각·DOM 순서가 어긋났는데
-// (최신순인데 4번째 글이 2번째 칼럼 맨 위로), grid 는 행 우선이라 왼→오·위→아래 = 본문 순서와 일치.
-// items-start: 카드가 자기 높이를 유지하고 행 위쪽 정렬(가장 큰 카드에 맞춰 늘어나지 않음).
+// 메이슨리(JS-free CSS columns) — 카드를 크기대로 빈틈없이 퍼즐처럼 채운다(행 강제 정렬 X). 모바일 2열
+// → md 3열. 행순서 그리드는 밑 여백이 들쭉날쭉해 메이슨리의 타이트한 packing 을 선택(시각 우선).
 export function DiscoveryGrid({ children }: { children: ReactNode }) {
-  return <div className="grid grid-cols-2 items-start gap-4 sm:gap-5 md:grid-cols-3">{children}</div>;
+  return <div className="gap-4 columns-2 sm:gap-5 md:columns-3">{children}</div>;
 }
 
-/** A child cell of {@link DiscoveryGrid}. Grid gap handles spacing — no masonry break rules needed. */
+/** A child cell of {@link DiscoveryGrid} — 칼럼 사이에서 카드가 쪼개지지 않게 막는다. */
 export function DiscoveryCell({ children }: { children: ReactNode }) {
-  return <div>{children}</div>;
+  return <div className="mb-4 break-inside-avoid sm:mb-5">{children}</div>;
 }
