@@ -87,7 +87,9 @@
     "seriesTagsLess": "접기",
     "tagFilterClear": "필터 해제",
     "seriesNextEpisode": "다음 편",
-    "seriesEpisodeOf": "{total}편 중 {current}편"
+    "seriesEpisodeOf": "{total}편 중 {current}편",
+    "feedReasonTopic": "‘{tag}’ 팔로우",
+    "feedReasonSeries": "구독 시리즈"
   },
   "blogWebhooks": {
     "loginRequired": "로그인이 필요해요.",
