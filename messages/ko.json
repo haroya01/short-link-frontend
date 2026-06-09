@@ -231,6 +231,8 @@
     "settingsAccountSettings": "전체 계정 설정",
     "settingsViewBlog": "내 블로그 보기",
     "settingsDisplay": "화면",
+    "settingsFeed": "피드",
+    "settingsDefaultTab": "기본 탭 — 블로그 홈에 들어오면 먼저 열릴 탭",
     "rowDelete": "삭제",
     "rowDeleteConfirm": "'{title}' 글을 삭제할까요? 되돌릴 수 없어요.",
     "rowDeleteFailed": "삭제에 실패했어요.",

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { PenSquare, X } from "lucide-react";
+import { FEED_TAB_COOKIE, isFeedTab } from "@/modules/blog/api/feed-prefs";
 import { blogHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
 import { blogCta } from "@/modules/blog/components/blog-cta";
@@ -26,6 +28,7 @@ import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { SubscribedSeriesFeed } from "@/modules/blog/components/subscribed-series-feed";
 import { MyTagsStrip } from "@/modules/blog/components/my-tags-strip";
+import { FeedTabCookieSync } from "@/modules/blog/components/feed-tab-cookie-sync";
 import { DiscoverySeriesCard } from "@/modules/blog/components/discovery-series-card";
 import { TrendingTopics } from "@/modules/blog/components/trending-topics";
 
@@ -90,11 +93,17 @@ export default async function BlogFeedPage({
     ? (langParam ?? "").trim()
     : "";
 
+  // No explicit ?sort, and not in a search/tag context → honor the reader's saved default tab (a
+  // cookie cache of feed-prefs, so SSR opens the right tab with no flash). Search/tag stay on recent.
+  const cookieDefaultTab = cookies().get(FEED_TAB_COOKIE)?.value;
+  const resolvedSort =
+    sortParam ?? (!searching && !activeTag && isFeedTab(cookieDefaultTab) ? cookieDefaultTab : "recent");
+
   // "following" is client-rendered (auth needed); recent/trending are server-fetched here. A search
   // spans every author, so it only honors recent/trending — the following sort collapses to recent.
   const tab: "recent" | "trending" | "following" | "series" =
-    sortParam === "trending" || sortParam === "following" || sortParam === "series"
-      ? sortParam
+    resolvedSort === "trending" || resolvedSort === "following" || resolvedSort === "series"
+      ? resolvedSort
       : "recent";
   const sort: FeedSort = tab === "trending" ? "trending" : "recent";
   const activeTab = searching ? sort : tab;
@@ -209,6 +218,9 @@ export default async function BlogFeedPage({
             ]}
           />
         </header>
+
+        {/* Keeps the SSR default-tab cookie in step with the account pref (no UI, no redirect). */}
+        <FeedTabCookieSync />
 
         {/* Reader's followed tags ("보고싶은 태그") — a jump-to-topic shortcut. Hidden until they follow
             one, during search, and on the 팔로잉 tab (there topics are integrated as filter chips, so
