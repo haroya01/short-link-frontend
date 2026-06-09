@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
@@ -81,21 +82,37 @@ export function FollowingFeed({
   const t = useTranslations("publicFeed");
   const { authenticated, ready, signInWithGoogle } = useAuth();
   const { prefs } = useTagPrefs();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [items, setItems] = useState<PublicFeedItem[] | null>(null);
-  // Active filter facet — the feed merges 작가·시리즈·주제, so it can be narrowed by one author OR one
-  // followed tag at a time (in-place over loaded items). Cleared on reload so a stale facet never
-  // hides everything.
-  const [facet, setFacet] = useState<FeedFacet | null>(null);
+
+  // Active filter facet lives in the URL (?author= / ?topic=), so it survives reload and is shareable.
+  // The feed merges 작가·시리즈·주제, so it narrows by one author OR one followed tag (in-place over
+  // loaded items). 'topic' (not 'tag') to avoid the page's server-side ?tag= flat-grid route.
+  const authorParam = searchParams.get("author");
+  const topicParam = searchParams.get("topic");
+  const facet: FeedFacet | null = authorParam
+    ? { kind: "author", value: authorParam }
+    : topicParam
+      ? { kind: "tag", value: topicParam }
+      : null;
+  const setFacet = (next: FeedFacet | null) => {
+    const params = new URLSearchParams(searchParams);
+    params.delete("author");
+    params.delete("topic");
+    if (next?.kind === "author") params.set("author", next.value);
+    else if (next?.kind === "tag") params.set("topic", next.value);
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  };
 
   useEffect(() => {
     if (!ready || !authenticated) return;
     let alive = true;
     listFollowingFeed(0, 24)
       .then((view) => {
-        if (alive) {
-          setItems(view.items);
-          setFacet(null);
-        }
+        if (alive) setItems(view.items);
       })
       .catch(() => {
         if (alive) setItems([]);
