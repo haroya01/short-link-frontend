@@ -202,12 +202,18 @@ export function FollowingFeed({
     );
   }
 
+  // "숨긴 주제"는 강한 부정 신호("이 주제는 안 볼래") — 팔로우로 떴어도 숨긴 태그를 가진 글은 제외(hidden
+  // 우선). 공개 피드(feed-infinite)와 동일한 클라이언트 측 규칙으로 통일.
+  const hiddenSet = new Set(prefs.hidden);
+  const visible =
+    hiddenSet.size === 0 ? items : items.filter((it) => !it.tags?.some((x) => hiddenSet.has(x)));
+
   // 사람(피드에 등장하는 작가) + 주제(내가 팔로우한 태그 중 이 피드에 실제로 글이 있는 것)를 필터 축으로.
-  const followed = feedAuthors(items);
+  const followed = feedAuthors(visible);
   const followedNames = new Set(followed.map((a) => a.username));
   const hasTag = (it: PublicFeedItem, tag: string) =>
     it.tags?.some((x) => x.toLowerCase() === tag.toLowerCase()) ?? false;
-  const presentTags = prefs.followed.filter((tag) => items.some((it) => hasTag(it, tag)));
+  const presentTags = prefs.followed.filter((tag) => visible.some((it) => hasTag(it, tag)));
 
   // 선택한 facet 이 실제로 존재할 때만 필터 적용(없으면 전체) — 새로고침 직후 stale facet 방지.
   const activeFacet =
@@ -217,10 +223,10 @@ export function FollowingFeed({
         ? facet
         : null;
   const shown = !activeFacet
-    ? items
+    ? visible
     : activeFacet.kind === "author"
-      ? items.filter((it) => it.author.username === activeFacet.value)
-      : items.filter((it) => hasTag(it, activeFacet.value));
+      ? visible.filter((it) => it.author.username === activeFacet.value)
+      : visible.filter((it) => hasTag(it, activeFacet.value));
 
   // 다른 발견 탭과 동일한 와이드 카드 그리드. 팔로우(사람+주제) 필터는 사이드 rail 대신 상단 칩으로.
   return (
