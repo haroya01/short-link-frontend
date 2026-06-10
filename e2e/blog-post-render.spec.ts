@@ -145,7 +145,9 @@ test("feed → post is a client-side navigation (so loading skeletons show, no f
   await page.goto("/en/blog");
   await page.waitForLoadState("networkidle");
   await page.evaluate(() => ((window as Window & { __nav?: string }).__nav = "alive"));
-  const post = page.locator('a[href$="/nextjs-14-app-router-blog"]').first();
+  // :visible — the browse feed renders a mobile list tree AND the md+ masonry (CSS-only breakpoint
+  // split); the same post link exists in both, and DOM-order .first() would grab the hidden one.
+  const post = page.locator('a[href$="/nextjs-14-app-router-blog"]:visible').first();
   await expect(post).toBeVisible({ timeout: 15_000 });
   await post.click();
   await page.waitForURL(/\/p\/[^/]+\/nextjs-14-app-router-blog/, { timeout: 15_000 });
