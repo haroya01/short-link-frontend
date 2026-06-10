@@ -706,8 +706,11 @@ test("schedule: a draft can be parked for a future publish (POST /schedule)", as
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog); // scheduling is a deferred publish → topic required too
   await dialog.getByRole("button", { name: "Schedule", exact: true }).click();
+  // Schedule mode swaps the primary action: "Publish" becomes "Schedule post", disabled until a
+  // time is picked (an empty time used to fall through to an immediate publish).
+  await expect(dialog.getByRole("button", { name: "Schedule post", exact: true })).toBeDisabled();
   await dialog.locator('input[type="datetime-local"]').fill("2030-01-01T10:00");
-  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+  await dialog.getByRole("button", { name: "Schedule post", exact: true }).click();
   await expect.poll(() => captured.status).toBe("schedule");
   expect(captured.scheduledAt).toContain("2030-01-01");
 });
@@ -1250,7 +1253,7 @@ test("scheduling a past time is rejected with no /schedule call (A22)", async ({
   await addDialogTag(dialog); // pass the topic gate so the PAST-TIME guard is what blocks it
   await dialog.getByRole("button", { name: "Schedule", exact: true }).click();
   await dialog.locator('input[type="datetime-local"]').fill("2020-01-01T10:00");
-  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+  await dialog.getByRole("button", { name: "Schedule post", exact: true }).click();
   await expect(page.getByText("Pick a future time")).toBeVisible();
   expect(captured.status, "no schedule endpoint should fire for a past time").toBeFalsy();
 });

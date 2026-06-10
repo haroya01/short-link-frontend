@@ -342,7 +342,7 @@
     "revisionRestoreConfirm": "Restore this version? Your current content is kept as a new revision.",
     "schedule": "Schedule",
     "scheduleAt": "Publish at",
-    "scheduleConfirm": "Schedule",
+    "scheduleConfirm": "Schedule post",
     "scheduleInvalid": "Pick a future time.",
     "slugTaken": "This address is already taken — try a different one.",
     "scheduledToast": "Scheduled to publish on {when}.",
