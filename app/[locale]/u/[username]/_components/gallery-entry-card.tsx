@@ -56,6 +56,9 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
           onMouseEnter={pauseAutoplay}
           onMouseLeave={resumeAutoplay}
           onTouchStart={pauseAutoplay}
+          // Keyboard parity with hover: a slide mustn't advance under the user mid-interaction.
+          onFocusCapture={pauseAutoplay}
+          onBlurCapture={resumeAutoplay}
         >
           <div
             ref={scrollerRef}
@@ -101,7 +104,10 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
-              <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-black/40 px-2 py-1 backdrop-blur-sm">
+              {/* Each dot is a 24px button (WCAG 2.5.8 minimum) wrapping the 6px visual — the bare
+                  6px dots were impossible to hit on touch, and on mobile (arrows are md+) they're
+                  the only non-swipe navigation. */}
+              <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center rounded-full bg-black/40 px-1 backdrop-blur-sm">
                 {config.images.map((_, idx) => (
                   <button
                     key={idx}
@@ -111,11 +117,17 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
                       scrollToIdx(idx);
                     }}
                     aria-label={t("goTo", { idx: idx + 1 })}
-                    className={
-                      "h-1.5 rounded-full transition-all duration-200 " +
-                      (idx === activeIdx ? "w-4 bg-white" : "w-1.5 bg-white/40")
-                    }
-                  />
+                    aria-current={idx === activeIdx}
+                    className="focus-ring grid h-6 w-6 place-items-center rounded-full"
+                  >
+                    <span
+                      aria-hidden
+                      className={
+                        "h-1.5 rounded-full transition-all duration-200 " +
+                        (idx === activeIdx ? "w-4 bg-white" : "w-1.5 bg-white/40")
+                      }
+                    />
+                  </button>
                 ))}
               </div>
             </>

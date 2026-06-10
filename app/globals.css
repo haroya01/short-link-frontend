@@ -322,7 +322,7 @@ h1, h2, h3, p {
    * the wrapper already uses box-shadow for its baseline + hover lift — combining them is fragile,
    * outline sits on its own paint layer. */
   .profile-card:focus-visible {
-    outline: 2px solid theme(colors.accent.500);
+    outline: 2px solid theme(colors.accent.600);
     outline-offset: 2px;
   }
 
@@ -338,7 +338,7 @@ h1, h2, h3, p {
      composes with an element's existing drop shadow via Tailwind's ring/shadow vars. Change the
      focus treatment here once instead of in every call site. */
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2;
   }
   /* Tailwind's default ring-offset color is white — on a dark surface the 2px offset reads as a white
      halo around the focus ring. Match it to the page base instead. */
@@ -354,11 +354,12 @@ h1, h2, h3, p {
   .touch-target::before {
     content: "";
     position: absolute;
-    left: 0;
+    left: 50%;
     top: 50%;
     width: 100%;
+    min-width: 44px;
     height: 44px;
-    transform: translateY(-50%);
+    transform: translate(-50%, -50%);
   }
   .profile-card:active {
     /* Press feedback — Stan Store pattern (scale 0.98). Combined translateY(0) cancels the hover
@@ -751,25 +752,10 @@ html[data-theme-vt]::view-transition-new(root) {
 @view-transition {
   navigation: auto;
 }
-/* Calm, not chaotic. Two fixes over a naive crossfade:
-   1. The OLD page is HELD at full opacity (no fade-out) and the NEW just fades in over it — a plain
-      crossfade fades both, dipping to ~half opacity mid-transition, which reads as a whole-page blink.
-   2. The named chrome groups (header, bottom nav) would otherwise get the UA default fade too, so they
-      blink. Pin them to `animation: none` → they stay perfectly still while only the body crossfades. */
-@keyframes page-nav-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-html:not([data-theme-vt])::view-transition-old(root) {
-  animation: none;
-}
-html:not([data-theme-vt])::view-transition-new(root) {
-  animation: page-nav-in 260ms ease both;
-}
+/* The root enter/leave motion for page navigations lives in the "카드 → 글 전환" block near the end
+   of this file (vt-leave / vt-enter). The named chrome groups (header, bottom nav) would get the UA
+   default fade too and blink on every navigation — pin them to `animation: none` so they hold still
+   while only the body transitions. */
 ::view-transition-old(app-header),
 ::view-transition-new(app-header),
 ::view-transition-old(bottom-nav),
@@ -855,25 +841,7 @@ html[data-theme-vt] .vt-bottom-nav {
   }
 }
 
-@keyframes toast-slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
 
-@keyframes underline-glide {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
 
 /*
  * The `qrcode` lib sets inline `style.width: 512px` on the canvas after toCanvas() runs, which
@@ -1394,11 +1362,16 @@ body[data-cookie-consent="visible"] {
 /* ── 카드 → 글 전환 (View Transitions) ───────────────────────────────────────
    사진 모핑(카드 커버↔글 히어로 비율 차로 stretch 가 생겨 "이상"했음)을 버리고, 화면 전체가
    부드럽게 교차되는 통일된 은은한 전환으로 — 현재 화면은 살짝 축소되며 사라지고, 새 화면은 살짝
-   확대되며 들어온다. 전 카드 타입(이미지·글·시리즈) 동일. 소프트 내비에서만 동작. */
-::view-transition-old(root) {
+   확대되며 들어온다. 전 카드 타입(이미지·글·시리즈) 동일. 소프트 내비에서만 동작.
+
+   셀렉터에 html:not([data-theme-vt]) 프리픽스 필수: 테마 토글의 wipe 와 root 를 공유하기 때문이기도
+   하고, 무엇보다 특이도 때문이다 — 프리픽스 없는 ::view-transition-*(root) (0,0,1) 은 위쪽 테마
+   스코프 규칙(0,1,2)에 항상 져서 이 모션이 한 번도 렌더되지 않는 죽은 코드가 된다 (실제로 그랬다).
+   reduced-motion 가드도 같은 이유로 같은 특이도를 맞춘다. */
+html:not([data-theme-vt])::view-transition-old(root) {
   animation: vt-leave 240ms var(--ease) both;
 }
-::view-transition-new(root) {
+html:not([data-theme-vt])::view-transition-new(root) {
   animation: vt-enter 440ms var(--ease) both;
 }
 /* 현재 화면: 뒤로 물러나며(축소) 페이드아웃. */
@@ -1416,8 +1389,8 @@ body[data-cookie-consent="visible"] {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
+  html:not([data-theme-vt])::view-transition-old(root),
+  html:not([data-theme-vt])::view-transition-new(root) {
     animation: none;
   }
 }

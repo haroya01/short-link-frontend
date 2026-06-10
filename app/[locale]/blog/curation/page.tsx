@@ -32,7 +32,7 @@ export default function SavedPostsPage() {
           <Bookmark className="h-4 w-4 text-accent-600 dark:text-accent-400" />
           <h2 className="text-sm font-semibold">{t("curationReadingList")}</h2>
         </div>
-        <p className="mt-1 text-[12px] text-slate-400 dark:text-slate-500">{t("curationReadingListHint")}</p>
+        <p className="mt-1 text-[12px] text-slate-500 dark:text-slate-400">{t("curationReadingListHint")}</p>
 
         {/* Unified with the profile's 보관함 — smart shelf (manual folders + auto tag groups). */}
         <div className="mt-5">
@@ -46,7 +46,7 @@ export default function SavedPostsPage() {
           <Heart className="h-4 w-4 text-accent-600 dark:text-accent-400" />
           <h2 className="text-sm font-semibold">{t("curationLiked")}</h2>
         </div>
-        <p className="mt-1 text-[12px] text-slate-400 dark:text-slate-500">{t("curationLikedHint")}</p>
+        <p className="mt-1 text-[12px] text-slate-500 dark:text-slate-400">{t("curationLikedHint")}</p>
 
         <div className="mt-5">
           <LikedList username={me?.username ?? ""} locale={locale} />

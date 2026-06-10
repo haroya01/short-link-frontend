@@ -402,7 +402,10 @@
       "placeHint": "場所を選ぶと地図カードが記事に挿入されます。",
       "placeClose": "閉じる"
     },
-    "autoSave": "自動保存"
+    "autoSave": "自動保存",
+    "unsavedLeaveTitle": "保存されていない変更があります",
+    "unsavedLeaveDescription": "今離れるとこの変更は失われます。公開中の記事は記事設定から保存しないと反映されません。",
+    "unsavedLeaveAction": "離れる"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
@@ -1673,7 +1676,8 @@
       "goTo": "{idx} 番目へ移動",
       "previous": "前の写真",
       "next": "次の写真",
-      "close": "閉じる"
+      "close": "閉じる",
+      "viewer": "写真ビューアー"
     },
     "productCard": {
       "defaultCta": "詳細",
@@ -1683,7 +1687,10 @@
         "BEST": "BEST",
         "LIMITED": "限定",
         "SOLD_OUT": "完売"
-      }
+      },
+      "goTo": "{idx} 番目へ移動",
+      "openImage": "写真を拡大",
+      "imageN": "{idx} 番目の写真"
     }
   },
   "weeklyInsights": {

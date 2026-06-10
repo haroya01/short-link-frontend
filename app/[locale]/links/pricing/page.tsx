@@ -118,7 +118,7 @@ export default async function PricingPage({
               type="button"
               disabled
               aria-disabled
-              className="inline-flex h-10 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 text-[13px] font-medium text-slate-400 dark:text-slate-500"
+              className="inline-flex h-10 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 text-[13px] font-medium text-slate-500 dark:text-slate-400"
             >
               <Lock className="h-3.5 w-3.5" />
               {t("proHoldCta")}

@@ -29,7 +29,7 @@ export function AuthorFilterChips({
     "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full text-[13px] font-medium transition-colors duration-200 ease-[var(--ease)]";
   const tone = (on: boolean) =>
     on
-      ? "bg-accent-600 text-white"
+      ? "bg-accent-700 text-white"
       : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700";
 
   return (

@@ -94,7 +94,7 @@ export function BlogBottomNav() {
           <a
             href={writeHref}
             aria-label={t("write")}
-            className="focus-ring -mt-5 grid h-12 w-12 place-items-center rounded-full bg-accent-600 text-white shadow-[0_6px_16px_-4px_rgba(15,23,42,0.4)] ring-4 ring-white transition-colors hover:bg-accent-700 dark:ring-slate-950"
+            className="focus-ring -mt-5 grid h-12 w-12 place-items-center rounded-full bg-accent-700 text-white shadow-[0_6px_16px_-4px_rgba(15,23,42,0.4)] ring-4 ring-white transition-colors hover:bg-accent-700 dark:ring-slate-950"
           >
             <PenSquare className="h-5 w-5" />
           </a>
@@ -108,7 +108,7 @@ export function BlogBottomNav() {
           <span className="relative">
             <Bell className="h-5 w-5" />
             {authenticated && unread > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent-600 px-1 text-[10px] font-bold leading-none text-white">
+              <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent-700 px-1 text-[10px] font-bold leading-none text-white">
                 {unread > 99 ? "99+" : unread}
               </span>
             )}

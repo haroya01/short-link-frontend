@@ -59,7 +59,7 @@ export function SavedCard({
   const body = (
     <>
       {item.tags[0] && (
-        <span className="text-[12px] font-medium text-slate-400 dark:text-slate-500">{item.tags[0]}</span>
+        <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">{item.tags[0]}</span>
       )}
       <h3 className={`mt-0.5 line-clamp-2 pr-8 text-[17px] font-semibold leading-snug tracking-tight text-slate-900 transition-colors dark:text-slate-100 ${selectMode ? "" : "group-hover/saved:text-accent-700 dark:group-hover/saved:text-accent-400"}`}>
         {item.title}
@@ -114,7 +114,7 @@ export function SavedCard({
           aria-hidden
           className={`absolute right-0 top-0 grid h-6 w-6 place-items-center rounded-md border transition-colors ${
             selected
-              ? "border-accent-600 bg-accent-600 text-white"
+              ? "border-accent-600 bg-accent-700 text-white"
               : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
           }`}
         >
@@ -137,7 +137,7 @@ export function SavedCard({
         </button>
         {open && (
           <div className="absolute right-0 z-30 mt-1 w-52 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-900">
-            <p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-slate-400 dark:text-slate-500">{t("moveTo")}</p>
+            <p className="px-3 pb-1 pt-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400">{t("moveTo")}</p>
             <button type="button" onClick={() => { onMove(item.id, null); setOpen(false); }} className={menuItem}>
               <span className="flex-1 text-left">{t("unfiled")}</span>
               {item.folderId == null && <Check className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" />}

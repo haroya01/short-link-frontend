@@ -48,7 +48,7 @@ export default function BlogWebhooksPage() {
         {hooks === null ? (
           <SkeletonRows count={2} />
         ) : hooks.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-200 px-6 py-12 text-center text-sm text-slate-400 dark:border-slate-800 dark:text-slate-500">
+          <p className="rounded-2xl border border-dashed border-slate-200 px-6 py-12 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-500">
             {t("empty")}
           </p>
         ) : (
@@ -151,7 +151,7 @@ function WebhookRow({ hook, onChanged }: { hook: BlogWebhookSummary; onChanged: 
               aria-pressed={on}
               className={`focus-ring rounded-full border px-2.5 py-1 text-[12px] font-medium transition-colors ${
                 on
-                  ? "border-transparent bg-accent-600 text-white"
+                  ? "border-transparent bg-accent-700 text-white"
                   : "border-slate-200 text-slate-500 hover:border-slate-300 dark:border-slate-700 dark:text-slate-400"
               }`}
             >
@@ -168,7 +168,7 @@ function WebhookRow({ hook, onChanged }: { hook: BlogWebhookSummary; onChanged: 
         </p>
       )}
       {hook.lastStatusCode != null && !hook.autoDisabledReason && (
-        <p className="mt-2 text-[11px] text-slate-400 dark:text-slate-500">
+        <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
           {t("lastDelivery", { status: hook.lastStatusCode })}
         </p>
       )}
@@ -227,7 +227,7 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
                 void navigator.clipboard?.writeText(secret);
                 setCopied(true);
               }}
-              className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-700"
+              className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-800"
             >
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {copied ? t("copied") : t("copy")}
@@ -253,7 +253,7 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
             placeholder="https://hooks.slack.com/services/…"
             className="focus-ring w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
-          <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{t("urlHint")}</p>
+          <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{t("urlHint")}</p>
         </div>
         <div>
           <label htmlFor="webhook-name" className="mb-1 block text-[12px] font-medium text-slate-600 dark:text-slate-300">
@@ -284,7 +284,7 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
                   aria-pressed={on}
                   className={`focus-ring rounded-full border px-2.5 py-1 text-[12px] font-medium transition-colors ${
                     on
-                      ? "border-transparent bg-accent-600 text-white"
+                      ? "border-transparent bg-accent-700 text-white"
                       : "border-slate-200 text-slate-500 hover:border-slate-300 dark:border-slate-700 dark:text-slate-400"
                   }`}
                 >
@@ -301,7 +301,7 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
         <button
           type="submit"
           disabled={busy || disabled || !url.trim() || events.length === 0}
-          className="focus-ring inline-flex items-center gap-2 rounded-lg bg-accent-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="focus-ring inline-flex items-center gap-2 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Webhook className="h-4 w-4" />
           {t("addButton")}

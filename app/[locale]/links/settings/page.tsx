@@ -113,7 +113,7 @@ export default function SettingsPage() {
                       <select
                         value={tz}
                         onChange={(e) => setTz(e.target.value)}
-                        className="block w-full rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+                        className="block w-full rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600"
                       >
                         {COMMON_TIMEZONES.map((z) => (
                           <option key={z} value={z}>

@@ -143,7 +143,7 @@ export function AccountMenu() {
               <Globe className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               {tLang("label")}
             </span>
-            <span className="inline-flex items-center gap-1 text-[13px] text-slate-400">
+            <span className="inline-flex items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
               {tLang(locale)}
               <ChevronDown
                 className={cn("h-4 w-4 transition-transform", langOpen && "rotate-180")}

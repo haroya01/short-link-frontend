@@ -521,10 +521,10 @@ function FinalCta({
             </Link>
           )}
         </div>
-        <p className="mt-8 text-[12px] text-slate-400 dark:text-slate-500">{t("note")}</p>
+        <p className="mt-8 text-[12px] text-slate-500 dark:text-slate-400">{t("note")}</p>
       </div>
       <div className="border-t border-white/10">
-        <div className="container max-w-5xl py-4 text-center text-[11px] text-slate-400 dark:text-slate-500">
+        <div className="container max-w-5xl py-4 text-center text-[11px] text-slate-500 dark:text-slate-400">
           <Link href="/" className="hover:text-white">
             ← {tRoot("backLink")}
           </Link>

@@ -74,7 +74,7 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
           type="button"
           onClick={create}
           disabled={busy || !newTitle.trim()}
-          className="focus-ring inline-flex shrink-0 items-center gap-1 rounded-lg bg-accent-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700 disabled:opacity-50"
+          className="focus-ring inline-flex shrink-0 items-center gap-1 rounded-lg bg-accent-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
           {t("seriesNew")}
@@ -119,7 +119,7 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
         </button>
       </div>
       {loaded && series.length === 0 && (
-        <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{emptyHint}</p>
+        <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{emptyHint}</p>
       )}
     </div>
   );

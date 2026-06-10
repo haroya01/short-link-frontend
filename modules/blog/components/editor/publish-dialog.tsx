@@ -8,6 +8,7 @@ import type { StatusAction } from "@/modules/blog/components/editor/use-post-edi
 import { BrandTick } from "@/modules/blog/components/rail-heading";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 
 /**
  * Publish settings panel (velog/Medium style) — keeps the writing surface Zen while gathering the
@@ -74,6 +75,7 @@ export function PublishDialog({
 }) {
   const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [uploading, setUploading] = useState(false);
   const [coverError, setCoverError] = useState<string | null>(null);
   const [scheduleAt, setScheduleAt] = useState("");
@@ -94,12 +96,9 @@ export function PublishDialog({
   // Draft → "발행 설정" (about to go live); already-public → "글 설정" (managing the live post).
   const dialogTitle = status === "DRAFT" ? t("publishSettings") : t("postSettings");
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  // Escape + Tab containment + focus restore to the editor's publish button — the panel declares
+  // aria-modal, so keyboard focus must not escape into the editor beneath the backdrop.
+  useFocusTrap(panelRef, { active: open, onEscape: onClose });
 
   useEffect(() => {
     if (open) setShortenSet(new Set(bodyLinks));
@@ -151,6 +150,7 @@ export function PublishDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4">
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal
         aria-label={dialogTitle}
@@ -270,7 +270,7 @@ export function PublishDialog({
           <Field label={t("slugLabel")}>
             {status === "DRAFT" ? (
               <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[13px] text-slate-400 dark:text-slate-500">kurl.me/</span>
+                <span className="font-mono text-[13px] text-slate-500 dark:text-slate-400">kurl.me/</span>
                 <input
                   type="text"
                   value={slug}
@@ -283,7 +283,7 @@ export function PublishDialog({
                 />
               </div>
             ) : (
-              <p className="font-mono text-[13px] text-slate-400 dark:text-slate-500">kurl.me/{slug}</p>
+              <p className="font-mono text-[13px] text-slate-500 dark:text-slate-400">kurl.me/{slug}</p>
             )}
           </Field>
 
@@ -310,7 +310,7 @@ export function PublishDialog({
                         <span
                           className={`grid h-4 w-4 shrink-0 place-items-center rounded border transition-colors ${
                             on
-                              ? "border-accent-600 bg-accent-600 text-white dark:border-accent-500 dark:bg-accent-500"
+                              ? "border-accent-600 bg-accent-700 text-white dark:border-accent-500 dark:bg-accent-500"
                               : "border-slate-300 dark:border-slate-600"
                           }`}
                         >
@@ -395,6 +395,8 @@ export function PublishDialog({
               status={status}
               busy={busy}
               canPublish={canPublish}
+              scheduleMode={showSchedule}
+              scheduleReady={Boolean(scheduleAt)}
               t={t}
               // Close ONLY when the lifecycle action actually succeeds — a failed publish/schedule
               // (no title, server 409, …) keeps the dialog open with the error in the footer, instead
@@ -473,7 +475,7 @@ function Field({
         )}
       </label>
       {children}
-      {hint && <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{hint}</p>}
+      {hint && <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{hint}</p>}
     </div>
   );
 }
@@ -482,6 +484,8 @@ function PrimaryAction({
   status,
   busy,
   canPublish,
+  scheduleMode,
+  scheduleReady,
   t,
   onPublish,
   onSaveChanges,
@@ -492,6 +496,10 @@ function PrimaryAction({
   status: PostStatus;
   busy: boolean;
   canPublish: boolean;
+  /** The schedule panel is open — the primary action parks the post instead of publishing now. */
+  scheduleMode: boolean;
+  /** A publish time has been picked; gates the schedule action so an empty time can't fall through. */
+  scheduleReady: boolean;
   t: ReturnType<typeof useTranslations>;
   onPublish: () => void;
   onSaveChanges: () => void;
@@ -500,8 +508,24 @@ function PrimaryAction({
   onCancelSchedule: () => void;
 }) {
   const solid =
-    "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-700 disabled:opacity-50";
-  if (status === "DRAFT")
+    "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50";
+  if (status === "DRAFT") {
+    // Schedule mode swaps the primary action wholesale: label, icon, and gating. With the panel
+    // open but no time picked, the old single "발행" button silently fell through to an immediate
+    // publish — the opposite of what the author was setting up.
+    if (scheduleMode)
+      return (
+        <button
+          type="button"
+          onClick={onPublish}
+          disabled={busy || !canPublish || !scheduleReady}
+          title={!canPublish ? t("tagsRequired") : !scheduleReady ? t("scheduleInvalid") : undefined}
+          className={solid}
+        >
+          <CalendarClock className="h-4 w-4" />
+          {t("scheduleConfirm")}
+        </button>
+      );
     return (
       <button
         type="button"
@@ -514,6 +538,7 @@ function PrimaryAction({
         {t("publish")}
       </button>
     );
+  }
   if (status === "PUBLISHED")
     return (
       <div className="flex items-center gap-2">

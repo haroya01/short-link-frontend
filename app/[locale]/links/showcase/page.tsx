@@ -113,7 +113,7 @@ export default async function ShowcasePage({
             >
               <Link
                 href="/login?next=/profile/auto"
-                className="group inline-flex items-center gap-1.5 rounded-xl bg-accent-600 px-5 py-3 text-sm font-medium text-white shadow-[0_8px_24px_-8px_rgba(5,150,105,0.45)] transition hover:bg-accent-700 hover:shadow-[0_12px_32px_-8px_rgba(5,150,105,0.55)]"
+                className="group inline-flex items-center gap-1.5 rounded-xl bg-accent-700 px-5 py-3 text-sm font-medium text-white shadow-cta transition hover:bg-accent-800 hover:shadow-[0_12px_32px_-8px_rgba(5,150,105,0.55)]"
               >
                 {t("cta")}
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
@@ -128,7 +128,7 @@ export default async function ShowcasePage({
         <a
           href="#showcase-examples"
           aria-label={t("scrollCue")}
-          className="absolute inset-x-0 bottom-4 mx-auto hidden w-fit flex-col items-center gap-0.5 text-[11px] font-medium text-slate-400 dark:text-slate-500 transition hover:text-slate-600 sm:flex"
+          className="absolute inset-x-0 bottom-4 mx-auto hidden w-fit flex-col items-center gap-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 transition hover:text-slate-600 sm:flex"
         >
           <span>{t("scrollCue")}</span>
           <ChevronDown className="h-4 w-4 motion-safe:animate-bounce" />

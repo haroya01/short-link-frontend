@@ -63,7 +63,7 @@ export function RecentLinks() {
         ))}
       </ul>
       {!authenticated && (
-        <p className="mt-3 text-[11px] text-slate-400 dark:text-slate-500">{t("anonymousNote")}</p>
+        <p className="mt-3 text-[11px] text-slate-500 dark:text-slate-400">{t("anonymousNote")}</p>
       )}
     </div>
   );

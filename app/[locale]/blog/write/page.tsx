@@ -131,7 +131,7 @@ export default function WriteIndexPage() {
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
         <a
           href={`${writeBase}/new`}
-          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-700"
+          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800"
         >
           <PenSquare className="h-4 w-4" />
           {t("newPost")}
@@ -151,7 +151,7 @@ export default function WriteIndexPage() {
             aria-pressed={view === v}
             className={`focus-ring inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors ${
               view === v
-                ? "bg-accent-600 text-white"
+                ? "bg-accent-700 text-white"
                 : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
@@ -223,7 +223,7 @@ export default function WriteIndexPage() {
               aria-pressed={filter === s}
               className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
                 filter === s
-                  ? "bg-accent-600 text-white"
+                  ? "bg-accent-700 text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
               }`}
             >
@@ -274,7 +274,7 @@ export default function WriteIndexPage() {
                           {p.excerpt}
                         </p>
                       )}
-                      <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-400 dark:text-slate-500">
+                      <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
                         <span>{relativeTime(p.updatedAt, locale)}</span>
                         {p.status === "PUBLISHED" && p.viewCount > 0 && (
                           <span>· {t("viewCount", { count: p.viewCount })}</span>

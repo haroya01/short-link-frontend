@@ -9,6 +9,7 @@ import {
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 
 type Props = {
   images: string[];
@@ -32,6 +33,7 @@ type Props = {
 export function PhotoLightbox({ images, initialIdx, onClose }: Props) {
   const t = useTranslations("publicProfile.gallery");
   const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
   const [currentIdx, setCurrentIdx] = useState(initialIdx);
   // First mount renders hidden, then flips to "entered" after the first paint so CSS transitions
   // (backdrop fade + image scale) actually run. requestAnimationFrame is the canonical way to
@@ -84,12 +86,15 @@ export function PhotoLightbox({ images, initialIdx, onClose }: Props) {
     [currentIdx, images.length],
   );
 
-  // ESC / arrow keys + body-scroll lock (restored on unmount, so we don't trample another
+  // Keyboard containment — without the trap, Tab walks into the blurred profile behind the
+  // overlay even though we declare aria-modal. Escape lives in the trap; arrows stay here.
+  useFocusTrap(dialogRef, { active: true, onEscape: onClose });
+
+  // Arrow keys + body-scroll lock (restored on unmount, so we don't trample another
   // component's lock).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowLeft") nav(-1);
+      if (e.key === "ArrowLeft") nav(-1);
       else if (e.key === "ArrowRight") nav(1);
     };
     document.addEventListener("keydown", onKey);
@@ -99,12 +104,13 @@ export function PhotoLightbox({ images, initialIdx, onClose }: Props) {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [onClose, nav]);
+  }, [nav]);
 
   if (!portalTarget) return null;
 
   return createPortal(
     <div
+      ref={dialogRef}
       className={
         "fixed inset-0 z-[100] bg-black/55 backdrop-blur-2xl backdrop-saturate-150 transition-opacity duration-200 " +
         (entered ? "opacity-100" : "opacity-0")
@@ -112,6 +118,7 @@ export function PhotoLightbox({ images, initialIdx, onClose }: Props) {
       onClick={onClose}
       role="dialog"
       aria-modal="true"
+      aria-label={t("viewer")}
     >
       <button
         type="button"

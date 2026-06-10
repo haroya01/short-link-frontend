@@ -156,7 +156,7 @@ export function ProfileMetaForm({
           pattern="^[a-z0-9][a-z0-9_]{2,15}$"
           maxLength={16}
         />
-        <p className="text-[11px] text-slate-400">
+        <p className="text-[11px] text-slate-500 dark:text-slate-400">
           {profile?.username ? t("usernameChangeHint") : t("usernameHint")}
         </p>
       </label>
@@ -169,9 +169,9 @@ export function ProfileMetaForm({
           maxLength={280}
           rows={3}
           placeholder={t("bioPlaceholder")}
-          className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+          className="block w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600"
         />
-        <p className="text-[11px] text-slate-400">{bio.length}/280</p>
+        <p className="text-[11px] text-slate-500 dark:text-slate-400">{bio.length}/280</p>
       </label>
 
       <div className="space-y-1.5">
@@ -211,7 +211,7 @@ export function ProfileMetaForm({
                   aria-pressed={active}
                   className={
                     "group relative aspect-[3/4] overflow-hidden rounded-lg ring-2 ring-offset-1 transition " +
-                    (active ? "ring-accent-500" : "ring-transparent hover:ring-slate-300")
+                    (active ? "ring-accent-600" : "ring-transparent hover:ring-slate-300")
                   }
                 >
                   <div className={`absolute inset-0 ${tm.page}`}>
@@ -287,7 +287,7 @@ function AutoSaveIndicator({
       </span>
     );
   }
-  return <span className="text-[11px] text-slate-400">{t("autosaveHint")}</span>;
+  return <span className="text-[11px] text-slate-500 dark:text-slate-400">{t("autosaveHint")}</span>;
 }
 
 /**

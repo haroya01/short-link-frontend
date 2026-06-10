@@ -214,7 +214,7 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
           aria-pressed={selectMode}
           className={`focus-ring ml-auto inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
             selectMode
-              ? "bg-accent-600 text-white"
+              ? "bg-accent-700 text-white"
               : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
           }`}
         >
@@ -227,7 +227,7 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
       {typeof selected === "number" ? (
         <Section icon={<Folder className="h-3.5 w-3.5" />} title={selectedFolder?.name ?? ""}>
           {selectedItems.length === 0 ? (
-            <p className="text-[13px] text-slate-400 dark:text-slate-500">{t("emptyFolder")}</p>
+            <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("emptyFolder")}</p>
           ) : (
             selectedItems.map((it) => <SavedCard key={it.id} item={it} selected={picked.has(it.id)} {...cardProps} />)
           )}
@@ -338,7 +338,7 @@ function BulkBar({
         <button
           type="button"
           onClick={() => setAdding(true)}
-          className="focus-ring inline-flex items-center gap-1 rounded-full bg-accent-600 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-700"
+          className="focus-ring inline-flex items-center gap-1 rounded-full bg-accent-700 px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800"
         >
           <FolderPlus className="h-3.5 w-3.5" />
           {t("newFolderTo")}
@@ -371,7 +371,7 @@ function FolderPill({
       aria-pressed={active}
       className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
         active
-          ? "bg-accent-600 text-white"
+          ? "bg-accent-700 text-white"
           : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
       }`}
     >

@@ -48,9 +48,9 @@ export default function NotificationsPage() {
 
       <div className="mt-6">
         {isLoading ? (
-          <p className="py-16 text-center text-sm text-slate-400">…</p>
+          <p className="py-16 text-center text-sm text-slate-500 dark:text-slate-400">…</p>
         ) : items.length === 0 ? (
-          <p className="py-20 text-center text-sm text-slate-400 dark:text-slate-500">
+          <p className="py-20 text-center text-sm text-slate-500 dark:text-slate-400">
             {t("empty")}
           </p>
         ) : (

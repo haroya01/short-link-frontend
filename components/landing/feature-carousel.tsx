@@ -118,7 +118,7 @@ export function FeatureCarousel() {
                 <span
                   className={cn(
                     "mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-md transition-colors",
-                    isActive ? "bg-accent-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400",
+                    isActive ? "bg-accent-700 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400",
                   )}
                 >
                   <Icon className="h-3 w-3" />

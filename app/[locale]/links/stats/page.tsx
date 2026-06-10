@@ -95,7 +95,7 @@ export default function AnalyticsPage() {
                     >
                       {p.title}
                     </a>
-                    <span className="block text-xs text-slate-400 dark:text-slate-500 font-mono">{p.slug}</span>
+                    <span className="block text-xs text-slate-500 dark:text-slate-400 font-mono">{p.slug}</span>
                   </td>
                   <td className="px-2 py-3">
                     <StatusBadge status={p.status} />

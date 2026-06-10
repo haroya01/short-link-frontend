@@ -182,7 +182,7 @@ export function LinkDestinationsSection({
         )}
 
         {items === null ? (
-          <p className="text-xs text-slate-400 dark:text-slate-500">{t("loading")}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>
         ) : items.length === 0 ? (
           <p className="text-xs text-slate-500 dark:text-slate-400">{t("empty")}</p>
         ) : (
@@ -452,14 +452,14 @@ export function LinkBlockedCountriesSection({ shortCode }: { shortCode: string }
 
       <div className="flex items-center gap-2">
         <CountrySelect value={pick} onChange={add} disabled={busy} t={t} />
-        <span className="text-[12px] text-slate-400 dark:text-slate-500">{t("blockedAddHint")}</span>
+        <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("blockedAddHint")}</span>
       </div>
 
       <div className="mt-3">
         {loading ? (
-          <p className="text-[12px] text-slate-400 dark:text-slate-500">{t("blockedLoading")}</p>
+          <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("blockedLoading")}</p>
         ) : codes.length === 0 ? (
-          <p className="text-[12px] text-slate-400 dark:text-slate-500">{t("blockedEmpty")}</p>
+          <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("blockedEmpty")}</p>
         ) : (
           <div className="flex flex-wrap gap-1.5">
             {codes.map((c) => (
@@ -507,7 +507,7 @@ function CountrySelect({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-50"
+      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 disabled:opacity-50"
       aria-label={t("countryLabel")}
     >
       <option value="">{t("countryAny")}</option>
@@ -562,7 +562,7 @@ function DeviceClassSelect({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-50"
+      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 disabled:opacity-50"
       aria-label={t("deviceLabel")}
     >
       <option value="">{t("deviceAny")}</option>
@@ -591,7 +591,7 @@ function OsSelect({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-50"
+      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 disabled:opacity-50"
       aria-label={t("osLabel")}
     >
       <option value="">{t("osAny")}</option>

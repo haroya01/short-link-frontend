@@ -108,7 +108,7 @@ export default function SeriesAnalyticsPage() {
                     <Layers className="h-4 w-4 text-slate-400 dark:text-slate-500" />
                     {t("analyticsMemberFunnel")}
                   </h2>
-                  <p className="mb-3 mt-0.5 text-[12px] text-slate-400 dark:text-slate-500">
+                  <p className="mb-3 mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">
                     {t("analyticsMemberFunnelHint")}
                   </p>
                   <SeriesReadThrough

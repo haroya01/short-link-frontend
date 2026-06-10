@@ -123,7 +123,7 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
         <div className="flex items-start gap-4 px-4 pt-4">
           {/* Calendar-leaf date tile. Colored band on top, big day numeral on bottom. */}
           <div className="grid h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-accent-200/60 bg-white text-center leading-none shadow-sm">
-            <div className="grid h-6 place-items-center bg-accent-600 px-1">
+            <div className="grid h-6 place-items-center bg-accent-700 px-1">
               <p className="text-[10px] font-bold uppercase tracking-wider text-white">
                 {dateBadge.month}
               </p>

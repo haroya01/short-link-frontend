@@ -89,11 +89,11 @@ export function NotificationItem({ item, onNavigate }: { item: Item; onNavigate?
           {message}
         </span>
         {subtitle && (
-          <span className="mt-0.5 block truncate text-[12px] text-slate-400 dark:text-slate-500">
+          <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">
             {subtitle}
           </span>
         )}
-        <span className="mt-0.5 block text-[11px] text-slate-400 dark:text-slate-500">
+        <span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-400">
           {relative(item.createdAt)}
         </span>
       </span>

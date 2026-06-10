@@ -402,7 +402,10 @@
       "placeHint": "장소를 고르면 지도 카드가 글에 삽입돼요.",
       "placeClose": "닫기"
     },
-    "autoSave": "자동 저장"
+    "autoSave": "자동 저장",
+    "unsavedLeaveTitle": "저장하지 않은 변경이 있어요",
+    "unsavedLeaveDescription": "지금 나가면 이 변경분은 사라져요. 발행 중인 글은 글 설정에서 저장해야 반영돼요.",
+    "unsavedLeaveAction": "나가기"
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -1673,7 +1676,8 @@
       "goTo": "{idx}번째로 이동",
       "previous": "이전 사진",
       "next": "다음 사진",
-      "close": "닫기"
+      "close": "닫기",
+      "viewer": "사진 보기"
     },
     "productCard": {
       "defaultCta": "자세히",
@@ -1683,7 +1687,10 @@
         "BEST": "BEST",
         "LIMITED": "한정",
         "SOLD_OUT": "품절"
-      }
+      },
+      "goTo": "{idx}번째로 이동",
+      "openImage": "사진 크게 보기",
+      "imageN": "{idx}번째 사진"
     }
   },
   "weeklyInsights": {

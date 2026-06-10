@@ -167,7 +167,7 @@ export function FeedInfinite({
       )}
 
       {hiddenCount > 0 && (
-        <p className="mt-4 text-center text-[12px] text-slate-400 dark:text-slate-500">
+        <p className="mt-4 text-center text-[12px] text-slate-500 dark:text-slate-400">
           {t("tagHiddenCount", { count: hiddenCount })}
         </p>
       )}
@@ -197,7 +197,7 @@ export function FeedInfinite({
             )}
           </button>
           {error && !loading && (
-            <p className="text-[12px] text-slate-400">{t("loadMoreError")}</p>
+            <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("loadMoreError")}</p>
           )}
         </div>
       )}

@@ -40,7 +40,7 @@ export function NotificationBell() {
       >
         <Bell className="h-5 w-5" />
         {unread > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent-600 px-1 text-[10px] font-bold leading-none text-white">
+          <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent-700 px-1 text-[10px] font-bold leading-none text-white">
             {unread > 99 ? "99+" : unread}
           </span>
         )}
@@ -67,9 +67,9 @@ export function NotificationBell() {
 
           <div className="max-h-96 overflow-y-auto p-1">
             {isLoading ? (
-              <p className="px-3 py-8 text-center text-[13px] text-slate-400">…</p>
+              <p className="px-3 py-8 text-center text-[13px] text-slate-500 dark:text-slate-400">…</p>
             ) : items.length === 0 ? (
-              <p className="px-3 py-10 text-center text-[13px] text-slate-400 dark:text-slate-500">
+              <p className="px-3 py-10 text-center text-[13px] text-slate-500 dark:text-slate-400">
                 {t("empty")}
               </p>
             ) : (

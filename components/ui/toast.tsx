@@ -43,7 +43,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             key={t.id}
             className={cn(
               "pointer-events-auto flex animate-toast-in items-center gap-3 rounded-full pl-4 pr-2 py-2 text-sm shadow-lg",
-              t.variant === "success" && "bg-accent-600 text-white",
+              t.variant === "success" && "bg-accent-700 text-white",
               t.variant === "error" && "bg-red-600 text-white",
               (!t.variant || t.variant === "default") && "bg-slate-900 text-white",
             )}

@@ -33,7 +33,7 @@ export function TagFollowControls({ tag }: { tag: string }) {
         // the row — the posts below used to jump when the followed fill added/removed its border.
         className={`focus-ring inline-flex h-8 items-center gap-1.5 rounded-full border px-3.5 text-[13px] font-medium transition-colors ${
           followed
-            ? "border-transparent bg-accent-600 text-white hover:bg-accent-700"
+            ? "border-transparent bg-accent-700 text-white hover:bg-accent-800"
             : "border-slate-200 text-slate-600 hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
         }`}
       >

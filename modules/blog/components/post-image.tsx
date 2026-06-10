@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import type { ImageWidth } from "@/modules/blog/lib/image-width";
 
 // Wider-than-column layouts. Reader uses these; the editor mirrors them via img[alt^="«wide»"] CSS.
@@ -32,16 +33,17 @@ export function PostImage({
 }) {
   const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
   const label = alt || caption || "";
+
+  // Escape + focus containment (the close button is the only tab stop) + restore to the trigger.
+  useFocusTrap(overlayRef, { active: open, onEscape: () => setOpen(false) });
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    document.addEventListener("keydown", onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
     };
   }, [open]);
@@ -63,9 +65,10 @@ export function PostImage({
         typeof document !== "undefined" &&
         createPortal(
           <div
+            ref={overlayRef}
             role="dialog"
             aria-modal="true"
-            aria-label={label || "image"}
+            aria-label={label || t("imageZoom")}
             onClick={() => setOpen(false)}
             className="post-lightbox fixed inset-0 z-[100] flex cursor-zoom-out items-center justify-center bg-slate-950/90 p-4 backdrop-blur-sm"
           >

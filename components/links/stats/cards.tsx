@@ -97,7 +97,7 @@ export function StatsCards({
         className={cn(
           "relative col-span-2 overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50 via-accent-50/40 to-white p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 ease-out sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:from-accent-500/10 dark:via-accent-500/5 dark:to-slate-900 dark:shadow-none",
           interactive
-            ? "group cursor-pointer hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-[0_8px_24px_rgba(5,150,105,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-accent-500/50"
+            ? "group cursor-pointer hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-[0_8px_24px_rgba(5,150,105,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-accent-500/50"
             : "cursor-default",
         )}
       >
@@ -105,7 +105,7 @@ export function StatsCards({
           <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-300">
             {t("totalClicks")}
           </span>
-          <span className="grid h-7 w-7 place-items-center rounded-full bg-accent-600 text-white shadow-sm transition-transform duration-200 ease-out group-hover:scale-110">
+          <span className="grid h-7 w-7 place-items-center rounded-full bg-accent-700 text-white shadow-sm transition-transform duration-200 ease-out group-hover:scale-110">
             <MousePointerClick className="h-3.5 w-3.5" />
           </span>
         </div>
@@ -212,7 +212,7 @@ function Stat({
       className={cn(
         "flex flex-col rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-200 ease-out dark:border-slate-800 dark:bg-slate-900 dark:shadow-none",
         interactive
-          ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-slate-700"
+          ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-slate-700"
           : "cursor-default",
       )}
     >

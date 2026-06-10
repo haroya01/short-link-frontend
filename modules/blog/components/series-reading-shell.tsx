@@ -117,7 +117,7 @@ export function SeriesReadingShell({
     cn(
       "focus-ring inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors",
       active
-        ? "bg-accent-600 text-white"
+        ? "bg-accent-700 text-white"
         : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400",
     );
   const renderTagChip = ([tag, count]: readonly [string, number]) => {
@@ -171,7 +171,7 @@ export function SeriesReadingShell({
                 type="button"
                 onClick={() => setTagsOpen((o) => !o)}
                 aria-expanded={tagsOpen}
-                className="focus-ring mt-2 rounded text-[12px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+                className="focus-ring mt-2 rounded text-[12px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
               >
                 {tagsOpen ? tf("seriesTagsLess") : tf("seriesTagsMore", { count: tags.length - TAG_CAP })}
               </button>
@@ -187,7 +187,7 @@ export function SeriesReadingShell({
             {archive.map((group) => (
               <li key={group.year}>
                 {/* Year header line — quiet, non-interactive; its months are the filters below it. */}
-                <p className="mb-1 px-2 text-[12px] font-semibold text-slate-400 dark:text-slate-500">
+                <p className="mb-1 px-2 text-[12px] font-semibold text-slate-500 dark:text-slate-400">
                   {yearStr(group.sample)}
                 </p>
                 <ul className="flex flex-col gap-0.5 text-[13px]">
@@ -261,7 +261,7 @@ export function SeriesReadingShell({
                     <span className="block text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400">
                       {p.title}
                     </span>
-                    <span className="mt-1 flex items-center gap-2 text-[12px] text-slate-400 dark:text-slate-500">
+                    <span className="mt-1 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
                       <time dateTime={p.publishedAt}>{fmtDate(p.publishedAt)}</time>
                       {showLikes(p.likeCount) && (
                         <>

@@ -100,7 +100,7 @@ export function UrlDialog({
             type="button"
             onClick={submit}
             disabled={!value.trim()}
-            className="rounded-lg bg-accent-600 px-3.5 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-700 disabled:opacity-40"
+            className="rounded-lg bg-accent-700 px-3.5 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
           >
             {t("confirm")}
           </button>

@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  // Toggle-based dark mode (`.dark` on <html>). Only blog surfaces carry `dark:` variants, so the
-  // links product is unaffected even when the class is set.
+  // Toggle-based dark mode (`.dark` on <html>). Both products (links + blog) are dark-capable;
+  // u/ public profiles opt out — they color through their own 12-theme token system instead.
   darkMode: "class",
   content: [
     "./app/**/*.{ts,tsx}",

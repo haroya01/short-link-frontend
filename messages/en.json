@@ -342,7 +342,7 @@
     "revisionRestoreConfirm": "Restore this version? Your current content is kept as a new revision.",
     "schedule": "Schedule",
     "scheduleAt": "Publish at",
-    "scheduleConfirm": "Schedule",
+    "scheduleConfirm": "Schedule post",
     "scheduleInvalid": "Pick a future time.",
     "slugTaken": "This address is already taken — try a different one.",
     "scheduledToast": "Scheduled to publish on {when}.",
@@ -402,7 +402,10 @@
       "placeHint": "Pick a place to insert a map card into the post.",
       "placeClose": "Close"
     },
-    "autoSave": "Autosaves"
+    "autoSave": "Autosaves",
+    "unsavedLeaveTitle": "You have unsaved changes",
+    "unsavedLeaveDescription": "Leaving now discards these edits. A live post only keeps changes saved from its post settings.",
+    "unsavedLeaveAction": "Leave"
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -1673,7 +1676,8 @@
       "goTo": "Go to photo {idx}",
       "previous": "Previous photo",
       "next": "Next photo",
-      "close": "Close"
+      "close": "Close",
+      "viewer": "Photo viewer"
     },
     "productCard": {
       "defaultCta": "Details",
@@ -1683,7 +1687,10 @@
         "BEST": "BEST",
         "LIMITED": "Limited",
         "SOLD_OUT": "Sold out"
-      }
+      },
+      "goTo": "Go to card {idx}",
+      "openImage": "Open image",
+      "imageN": "Image {idx}"
     }
   },
   "weeklyInsights": {

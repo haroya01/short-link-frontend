@@ -17,6 +17,7 @@ import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 
 /**
  * Full-screen mobile 탐색 (explore) sheet, opened from the bottom-nav. Resting state = discovery
@@ -40,20 +41,19 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const [authors, setAuthors] = useState<SuggestedAuthor[]>([]);
   const [discoveryLoaded, setDiscoveryLoaded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  // Escape + Tab containment + focus restore; the sheet places initial focus on its input itself.
+  useFocusTrap(sheetRef, { active: open, onEscape: onClose, autoFocus: false });
 
   useEffect(() => {
     if (!open) return;
     setValue(new URLSearchParams(window.location.search).get("q")?.trim() ?? "");
     const id = window.setTimeout(() => inputRef.current?.focus(), 60);
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    document.addEventListener("keydown", onKey);
     return () => {
       window.clearTimeout(id);
-      document.removeEventListener("keydown", onKey);
     };
-  }, [open, onClose]);
+  }, [open]);
 
   // Lazily load discovery the first time the sheet opens; keep it across opens within the session.
   useEffect(() => {
@@ -110,6 +110,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
 
   return (
     <div
+      ref={sheetRef}
       role="dialog"
       aria-modal="true"
       aria-label={t("searchLabel")}

@@ -112,7 +112,7 @@ export default function PostAnalyticsPage() {
           </div>
         </div>
       ) : !data ? (
-        <p className="mt-6 text-sm text-slate-400 dark:text-slate-500">{t("analyticsEmpty")}</p>
+        <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
         <>
           <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
@@ -158,7 +158,7 @@ export default function PostAnalyticsPage() {
                       <span className="block truncate text-[14px] text-slate-700 dark:text-slate-200">
                         {lc.destinationUrl}
                       </span>
-                      <span className="block truncate font-mono text-[11px] text-slate-400 dark:text-slate-500">
+                      <span className="block truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
                         kurl.me/{lc.shortCode}
                       </span>
                     </span>

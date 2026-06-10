@@ -329,7 +329,7 @@ async function LinkPreviewCard({ url }: { url: string }) {
             {data.description}
           </span>
         )}
-        <span className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-slate-400 dark:text-slate-500">
+        <span className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-slate-500 dark:text-slate-400">
           <ArrowUpRight className="h-3 w-3 shrink-0 text-accent-600" />
           {host}
         </span>
@@ -348,7 +348,7 @@ async function CtaBlock({ cta, postId }: { cta: PublicCtaInfo | null; postId?: n
   if (!cta || cta.deleted) {
     const t = await getTranslations("publicPost");
     return (
-      <div className="my-8 rounded-2xl border border-dashed border-slate-200 px-5 py-4 text-center text-sm text-slate-400 dark:border-slate-800 dark:text-slate-500">
+      <div className="my-8 rounded-2xl border border-dashed border-slate-200 px-5 py-4 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-500">
         {cta?.label ? t("ctaUnavailable", { label: cta.label }) : t("ctaDeleted")}
       </div>
     );
@@ -357,7 +357,7 @@ async function CtaBlock({ cta, postId }: { cta: PublicCtaInfo | null; postId?: n
   const base =
     "my-8 inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-[15px] font-semibold no-underline transition-colors";
   const tone = primary
-    ? "bg-accent-600 text-white hover:bg-accent-700"
+    ? "bg-accent-700 text-white hover:bg-accent-800"
     : "border border-slate-200 text-slate-900 hover:border-accent-300 hover:bg-accent-50/50 dark:border-slate-700 dark:text-slate-100 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10";
   return (
     <a

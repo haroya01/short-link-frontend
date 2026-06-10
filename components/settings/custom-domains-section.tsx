@@ -112,7 +112,7 @@ export function CustomDomainsSection() {
       </form>
 
       {items === null ? (
-        <p className="text-xs text-slate-400 dark:text-slate-500">{t("loading")}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>
       ) : items.length === 0 ? null : (
         <ul className="space-y-2">
           {items.map((d) => (

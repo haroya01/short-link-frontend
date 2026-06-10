@@ -96,12 +96,14 @@ export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
             </span>
             <span className={`block truncate text-[11px] ${colors.muted}`}>{host}</span>
           </span>
+          {/* The only path to the original page — a padded 28px hitbox (same as the share
+              corner buttons) instead of the bare 14px glyph, plus the shared focus ring. */}
           <a
             href={url}
             target="_blank"
             rel="noreferrer"
             aria-label={host}
-            className={colors.muted}
+            className={`focus-ring -m-2 grid h-7 w-7 place-items-center rounded-full ${colors.muted}`}
           >
             <ExternalLink className="h-3.5 w-3.5" />
           </a>

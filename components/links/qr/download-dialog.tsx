@@ -130,7 +130,7 @@ export function QrDownloadDialog({
               type="checkbox"
               checked={label}
               onChange={(e) => setLabel(e.target.checked)}
-              className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-accent-600 dark:text-accent-400 focus:ring-accent-500"
+              className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-accent-600 dark:text-accent-400 focus:ring-accent-600"
             />
             <span className="text-[13px] text-slate-700 dark:text-slate-300">{t("labelCheckbox")}</span>
           </label>

@@ -317,7 +317,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                       {card.company || t("backTagline")}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[9px] uppercase tracking-[0.18em] text-slate-400">
+                  <span className="shrink-0 text-[10px] uppercase tracking-[0.18em] text-slate-400">
                     kurl.me
                   </span>
                 </div>
