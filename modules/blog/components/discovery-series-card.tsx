@@ -109,7 +109,19 @@ export function DiscoverySeriesCard({
                     <div aria-hidden className="absolute inset-0 bg-accent-900/10" />
                   </>
                 ) : (
-                  <div className={`absolute inset-0 bg-gradient-to-br ${EP_GRADS[i % EP_GRADS.length]} dark:opacity-[0.06]`} />
+                  <>
+                    <div className={`absolute inset-0 bg-gradient-to-br ${EP_GRADS[i % EP_GRADS.length]} dark:opacity-[0.06]`} />
+                    {/* 무이미지 장의 표지 아트 = 에피소드 번호 그 자체 — 거대한 mono 숫자가 우상단
+                        모서리에서 비껴 잘리는 워터마크. 위(시리즈명)와 아래(번호+제목) 사이 빈 가운데가
+                        "미완성"으로 읽히던 걸 의도된 구성으로 바꾼다. 01/04 표기의 확대라 새 문법이
+                        아니고, 장마다 숫자가 달라 시리즈 탭에 여러 장 모여도 도배가 안 된다. */}
+                    <span
+                      aria-hidden
+                      className="absolute -right-3 -top-9 select-none font-mono text-[148px] font-bold leading-none tracking-tighter tabular-nums text-accent-600/[0.09] dark:text-accent-400/[0.08]"
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </>
                 ))}
                 {front && p.ogImageUrl && (
                   <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
@@ -159,15 +171,34 @@ export function DiscoverySeriesCard({
                 )}
 
                 {/* Right flip edge → next episode (한 장 넘김). top-14: 우상단 구독 버튼 히트박스를 비워둬
-                    겹치지 않게(예전엔 inset-y-0 z-30 이 구독 버튼을 덮어 구독 탭이 거의 안 먹었음). */}
+                    겹치지 않게(예전엔 inset-y-0 z-30 이 구독 버튼을 덮어 구독 탭이 거의 안 먹었음).
+                    상시 깔리던 검은 그라디언트 띠는 흰 종이 장에서 "따로 떨어진 회색 사각형"으로 읽혀
+                    폐기 — 평소엔 변형에 맞춘 글리프만 두고, 카드 hover/포커스에서만 페더 스크림이
+                    떠오른다. 히트 영역(w-12 풀하이트)은 그대로라 탭 타깃은 안 줄어든다. */}
                 {front && n > 1 && (
                   <button
                     type="button"
                     onClick={advance}
                     aria-label={t("seriesNextEpisode")}
-                    className="absolute bottom-0 right-0 top-14 z-30 flex w-12 items-center justify-center bg-gradient-to-l from-black/30 to-transparent text-white/85 transition hover:text-white"
+                    className={`absolute bottom-0 right-0 top-14 z-30 flex w-12 items-center justify-center transition-colors duration-300 ${
+                      p.ogImageUrl
+                        ? "text-white/85 hover:text-white"
+                        : "text-slate-400 hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-300"
+                    }`}
                   >
-                    <ChevronRight className="h-6 w-6" />
+                    <span
+                      aria-hidden
+                      className={`absolute inset-0 opacity-0 transition-opacity duration-300 ease-[var(--ease)] group-focus-within:opacity-100 group-hover:opacity-100 ${
+                        p.ogImageUrl
+                          ? "bg-gradient-to-l from-black/25 to-transparent"
+                          : "bg-gradient-to-l from-slate-900/[0.04] to-transparent dark:from-white/[0.06]"
+                      }`}
+                    />
+                    <ChevronRight
+                      className={`relative h-6 w-6 transition-transform duration-300 ease-[var(--ease)] group-hover:translate-x-0.5 motion-reduce:transform-none ${
+                        p.ogImageUrl ? "drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]" : ""
+                      }`}
+                    />
                   </button>
                 )}
               </div>
