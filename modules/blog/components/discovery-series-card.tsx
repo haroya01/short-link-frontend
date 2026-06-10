@@ -14,11 +14,9 @@ import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscrib
 import { BrandTick } from "@/modules/blog/components/rail-heading";
 
 /**
- * Series tile for the discovery grid — a deck of **full-size episode cards** you flip through. Each
- * episode is its own big theme-gradient cover (series name + 01 + episode title); the next episodes
- * peek behind it like a real deck. It flips one card at a time — auto while idle (pauses on
- * hover/focus, respects reduced-motion), and the front card's right edge / the dots flip manually.
- * The front card opens that episode; the series name opens the series.
+ * Series tile for the discovery grid — full-size episode pages you flip through in place. Each
+ * episode is its own big cover (series name + 01 + episode title); the right edge flips to the next
+ * one as a quiet crossfade. The front page opens that episode; the series name opens the series.
  */
 
 // 이미지 없는 에피소드 페이지 = 라이트 "종이". 진초록 덱은 featured(오늘의 글) 타일과 같은
@@ -65,15 +63,14 @@ export function DiscoverySeriesCard({
       <span className="sr-only" aria-live="polite">
         {t("seriesEpisodeOf", { current: idx + 1, total: series.postCount })}
       </span>
-      {/* Deck of full-size episode cards. Each card is inset by PEEK on the bottom-right; the back
-          cards translate INTO that reserved margin so the deck stays fully inside its own cell and
-          never overlaps neighbours. */}
+      {/* Episode pages stacked in one spot — only the front one shows; flipping is an in-place
+          crossfade(+미세 스케일). 예전의 "덱 peek"(뒷장 모서리를 오른쪽-아래로 노출)은 카드 밑에
+          물결처럼 겹친 띠를 만들고, 앞장을 셀에서 14px 들여 앉혀 둥근 실루엣이 각진 사각형
+          덩어리로 읽혔다 — 폐기하고 카드가 셀을 꽉 채운다. */}
       <div className="relative aspect-[4/5]">
         {posts.map((p, i) => {
           const order = (i - idx + n) % n; // 0 = front
           const front = order === 0;
-          const hidden = order >= 3;
-          const PEEK = 14;
           return (
             <div
               key={p.slug}
@@ -81,28 +78,22 @@ export function DiscoverySeriesCard({
               // transition-all 은 zIndex 의 이산 점프까지 페인트 사이클에 끌어들여 Safari 에서
               // 전환마다 번쩍였다 — transform/opacity 만 전환하고, translateZ(0) 로 각 페이지를
               // 자기 컴포지터 레이어에 고정해 재래스터 플래시를 막는다.
-              className="absolute transition-[transform,opacity] duration-500 ease-[var(--ease)] will-change-transform"
+              className="absolute inset-0 transition-[transform,opacity] duration-500 ease-[var(--ease)] will-change-transform"
               style={{
-                top: 0,
-                left: 0,
-                right: PEEK,
-                bottom: PEEK,
-                // translateZ(0): 각 페이지를 자기 컴포지터 레이어에 고정(Safari 재래스터 플래시 방지).
-                transform: `translate(${order * (PEEK / 2)}px, ${order * (PEEK / 2)}px) scale(${1 - order * 0.04}) translateZ(0)`,
-                transformOrigin: "bottom right",
-                zIndex: n - order,
-                opacity: hidden ? 0 : 1,
+                transform: `scale(${front ? 1 : 0.97}) translateZ(0)`,
+                zIndex: front ? 2 : 1,
+                opacity: front ? 1 : 0,
                 pointerEvents: front ? "auto" : "none",
               }}
             >
               <div
                 className={`relative h-full w-full overflow-hidden rounded-2xl shadow-[0_1px_3px_rgba(15,23,42,0.06)] ${
-                  // 뒷장은 내용물 없이 중립 종이 — 어두운 사진 모서리가 비죽 나오면 경계선처럼 읽힌다.
+                  // 뒷장은 내용물 없이 중립 종이 — 넘김 크로스페이드 중 빈 장이 어둡게 비치지 않게.
                   !front
                     ? "bg-white ring-1 ring-slate-200/80 dark:bg-slate-900 dark:ring-slate-700/60"
                     : p.ogImageUrl
                       ? "bg-slate-700 ring-1 ring-white/15"
-                      : "bg-white ring-1 ring-accent-200/60 dark:bg-slate-900 dark:ring-accent-500/20"
+                      : "bg-white ring-1 ring-slate-200/80 dark:bg-slate-900 dark:ring-slate-700/60"
                 } ${
                   front
                     ? "transition-[transform,box-shadow] duration-300 ease-[var(--ease)] group-hover:-translate-y-1 group-hover:shadow-card-hover has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950"
