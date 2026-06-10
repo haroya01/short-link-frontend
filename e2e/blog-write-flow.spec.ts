@@ -371,23 +371,18 @@ test("autosave does not freeze on image / edge-syntax lines (regression #559)", 
   await expect(page.locator(".tiptap")).toContainText("editor still responsive");
 });
 
-test("bold writing mode: toolbar Bold toggle saves typed text as **bold**", async ({ page }) => {
-  // Regression for the "굵게 쓰기" mode — with no selection the toolbar's Bold toggle arms a stored
-  // mark so the next text is bold, and that round-trips to ** ** in the saved markdown.
+test("bold writing mode: Mod+B at an empty caret saves typed text as **bold**", async ({ page }) => {
+  // Regression for the "굵게 쓰기" mode — with no selection, arming bold stores a mark so the next
+  // text is bold, and that round-trips to ** ** in the saved markdown. The always-on toolbar no
+  // longer carries inline marks (the selection bubble owns them, and a bubble needs a selection),
+  // so the empty-caret entry point is the keyboard shortcut. Bubble-side active-state feedback is
+  // asserted by the per-mark bubble tests below.
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
 
   await page.locator(".tiptap").click();
-  // Toolbar Bold (always visible). Scoped to the toolbar so it's unambiguous vs the selection bubble.
-  const bold = page.getByTestId("editor-toolbar").getByRole("button", { name: "Bold", exact: true });
-  await expect(bold).toBeVisible({ timeout: 10_000 });
-  await bold.click();
-  // The toggle MUST reflect that bold is now armed. Tiptap v3's useEditor doesn't re-render on
-  // transactions, so a button reading editor.isActive() inline stays stuck at its mount value — the
-  // toggle looks dead ("버튼 눌러도 아무 변화 없음") even though the mark is set. This asserts the
-  // feedback, which a serialization-only check (below) silently misses.
-  await expect(bold).toHaveAttribute("aria-pressed", "true");
+  await page.keyboard.press("ControlOrMeta+b");
   await page.keyboard.type("bold words");
 
   const blocks = await save(page, captured);
