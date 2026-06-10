@@ -157,7 +157,7 @@ export function DiscoverySeriesCard({
                       <span className="text-[34px]">{String(i + 1).padStart(2, "0")}</span>
                       <span className={`text-[15px] ${p.ogImageUrl ? "text-white/70" : "text-slate-500 dark:text-slate-400"}`}> / {String(series.postCount).padStart(2, "0")}</span>
                     </p>
-                    <h3 className="mt-2 line-clamp-3 text-balance text-[18px] font-bold leading-tight tracking-tight">
+                    <h3 className="mt-2 line-clamp-3 text-balance font-serif text-[18px] font-bold leading-tight tracking-display">
                       {p.title}
                     </h3>
                     <div className={`mt-2.5 flex items-center gap-1.5 text-[12px] ${p.ogImageUrl ? "text-white/85" : "text-slate-600 dark:text-slate-400"}`}>
@@ -234,7 +234,7 @@ export function DiscoverySeriesRow({ series, locale }: { series: PublicSeriesCar
         <SeriesSubscribeButton seriesId={series.id} />
       </div>
       <Nav href={seriesUrl} className="group mt-1.5 block rounded focus-ring">
-        <h3 className="text-[17px] font-semibold leading-snug tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
+        <h3 className="font-serif text-[17px] font-semibold leading-snug tracking-display text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
           {series.title}
         </h3>
         {latest && (

@@ -33,11 +33,12 @@ const config: Config = {
       },
       fontFamily: {
         /*
-         * One sans family across the entire app — Pretendard for both Korean and Latin. The
-         * earlier setup paired Pretendard with an Instrument Serif display slot for hero
-         * headlines, but the western serif italic read as out-of-place on a Korean-first
-         * surface. Pretendard's 700/800 weights at tight tracking carry the editorial moment
-         * on their own; no display swap needed.
+         * Two voices. Pretendard(sans) = 제품이 말할 때 — UI, 버튼, 메타, 내비, 본문.
+         * MaruBuri(serif, --font-serif 경유) = 콘텐츠가 말할 때 — 글/시리즈 제목, 본문 헤딩,
+         * 마스트헤드. The earlier Instrument Serif display slot died because a *western* serif
+         * italic read as out-of-place on a Korean-first surface — MaruBuri is a Korean-first
+         * 부리 face, so the premise differs. 600/700 두 웨이트만 로드(globals.css @font-face);
+         * serif 표면에선 font-semibold/bold 만 쓸 것.
          */
         sans: [
           "Pretendard Variable",
@@ -49,6 +50,7 @@ const config: Config = {
           "Noto Sans KR",
           "sans-serif",
         ],
+        serif: ["var(--font-serif)", "serif"],
         mono: [
           "var(--font-mono)",
           "ui-monospace",

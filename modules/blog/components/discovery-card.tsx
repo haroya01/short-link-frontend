@@ -163,7 +163,7 @@ export function DiscoveryCard({
             {tag && <TagLink tag={tag} />}
             {reason && <ReasonPill reason={reason} t={t} />}
           </div>
-          <h3 className={`text-balance font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100 ${featured ? "text-[19px]" : "text-[17px]"}`}>
+          <h3 className={`text-balance font-serif font-semibold leading-snug tracking-display text-slate-900 dark:text-slate-100 ${featured ? "text-[19px]" : "text-[17px]"}`}>
             {item.title}
           </h3>
           {item.excerpt && (
@@ -219,7 +219,7 @@ export function DiscoveryCard({
         </div>
         <div className="space-y-2">
           {/* 제목 스케일은 변형(이미지 유무)이 아니라 중요도(featured) 한 축으로만 — 위계 역전 방지. */}
-          <h3 className={`line-clamp-3 text-balance font-semibold leading-tight tracking-tight text-white ${featured ? "text-[20px]" : "text-[18px]"}`}>
+          <h3 className={`line-clamp-3 text-balance font-serif font-semibold leading-tight tracking-display text-white ${featured ? "text-[20px]" : "text-[18px]"}`}>
             {item.title}
           </h3>
           <CardMeta item={item} locale={locale} over />

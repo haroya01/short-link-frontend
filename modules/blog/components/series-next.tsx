@@ -37,7 +37,7 @@ export async function SeriesNext({
           <span className="mt-2 flex items-center justify-between gap-3">
             <span className="min-w-0">
               <SeriesIndex n={series.position + 1} className="block text-[12px]" />
-              <span className="mt-0.5 block text-[17px] font-semibold leading-snug text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
+              <span className="mt-0.5 block font-serif text-[17px] font-semibold leading-snug tracking-display text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
                 {series.next.title}
               </span>
             </span>

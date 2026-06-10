@@ -90,7 +90,7 @@ export default async function PublicSeriesPage({
           {/* Title + subscribe on one row — 구독 is the series equivalent of following the author
               (author follow lives in the rail), so it sits with the series identity, not buried. */}
           <div className="mt-1.5 flex items-start justify-between gap-4">
-            <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+            <h1 className="font-serif text-headline-sm font-semibold tracking-display text-slate-900 dark:text-slate-100 sm:text-headline-md">
               {series.title}
             </h1>
             <div className="mt-1 shrink-0">

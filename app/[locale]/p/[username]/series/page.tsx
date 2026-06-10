@@ -118,7 +118,7 @@ export default async function PublicSeriesIndexPage({
                 >
                   <SeriesIndex n={i + 1} className="text-[13px]" />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[18px] font-semibold tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
+                    <span className="block truncate font-serif text-[18px] font-semibold tracking-display text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
                       {s.title}
                     </span>
                     <span className="mt-0.5 block text-[13px] text-slate-500 dark:text-slate-400">

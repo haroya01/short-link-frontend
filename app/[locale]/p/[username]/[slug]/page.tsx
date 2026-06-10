@@ -184,7 +184,7 @@ export default async function PublicPostPage({
       <header className="mb-12">
         {/* headline-md + bold 고정: 모바일에서 headline-sm(24px semibold)이 본문 h2(24px bold)와
             같은 크기·더 약한 무게라 위계가 뒤집혀 보였다. 제목 32px bold > h2 24px bold > h3 20px. */}
-        <h1 className="text-headline-md font-bold tracking-headline text-slate-900 dark:text-slate-100">
+        <h1 className="font-serif text-headline-md font-bold tracking-display text-slate-900 dark:text-slate-100">
           {post.title}
         </h1>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -313,7 +313,7 @@ function GonePage({
 }) {
   return (
     <main className="mx-auto flex max-w-md flex-col items-center px-6 py-28 text-center">
-      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("goneTitle")}</h1>
+      <h1 className="font-serif text-headline-sm font-semibold tracking-display text-slate-900 dark:text-slate-100">{t("goneTitle")}</h1>
       <p className="mt-3 text-slate-500">{t("goneBody")}</p>
       <a
         href={authorHref(username, locale)}
