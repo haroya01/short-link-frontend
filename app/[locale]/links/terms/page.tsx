@@ -32,6 +32,11 @@ export default async function TermsPage({
     { h: t("h3"), p: t("p4") },
     { h: t("h4"), p: t("p5") },
     { h: t("h5"), p: t("p6") },
+    { h: t("h6"), p: t("p7") },
+    { h: t("h7"), p: t("p8") },
+    { h: t("h8"), p: t("p9") },
+    { h: t("h9"), p: t("p10") },
+    { h: t("h10"), p: t("p11") },
   ];
   return (
     <article className="container max-w-3xl space-y-8 py-16">

@@ -35,6 +35,9 @@ export default async function PrivacyPage({
     { h: t("h6"), p: t("p7") },
     { h: t("h7"), p: t("p8") },
     { h: t("h8"), p: t("p9") },
+    { h: t("h9"), p: t("p10") },
+    { h: t("h10"), p: t("p11") },
+    { h: t("h11"), p: t("p12") },
   ];
   return (
     <article className="container max-w-3xl space-y-8 py-16">
