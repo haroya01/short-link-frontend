@@ -201,17 +201,17 @@ export function DiscoveryCard({
     // ring-inset white/10: 어두운 커버 가장자리에 유리 같은 얇은 빛 테두리 → 입체감.
     <div className={`${SHELL} ${CARD_SHADOW} bg-slate-200 ring-1 ring-inset ring-white/10 dark:bg-slate-800`}>
       <div className={ratio}>
-        {/* 톤 하모나이즈(상시 고정): 제각각인 사진(밝기·채도·색온도)을 살짝 저채도 + 약한 그린
-            틴트로 모은다. hover 원색 복원은 폐기 — 커서를 둔 채 스크롤하면 카드들이 커서 밑을
-            지나가며 hover 가 연사돼 틴트가 켜졌다 꺼졌다(깜빡임 신고의 원인). 정적 처리에는
-            그런 상태 전환 자체가 없다. */}
+        {/* 톤 하모나이즈(상시 고정): 저채도 필터 + 일반 알파 베일. mix-blend-color 는 색 통일이
+            더 강했지만 iPad Safari 가 블렌드 영역을 타일로 합성하며 경계선(seam)과 깜빡임을
+            그렸다 — 블렌드 모드 없이 filter + 단순 오버레이로(전 브라우저 안정). hover 전환도
+            없음(스크롤 중 hover 연사 깜빡임, #693). */}
         <img
           src={item.ogImageUrl as string}
           alt=""
           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover saturate-[.85] transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none"
         />
-        <div aria-hidden className="absolute inset-0 bg-accent-800/15 mix-blend-color" />
+        <div aria-hidden className="absolute inset-0 bg-accent-900/10" />
         {/* 텍스트 가독성 scrim — 상·하단 모두(상단 태그, 하단 제목/메타). WCAG 대비 확보용으로 통일. */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/35 to-transparent" />
