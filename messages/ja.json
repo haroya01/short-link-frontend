@@ -410,7 +410,8 @@
     "exportMd": ".md エクスポート",
     "importMd": ".md インポート",
     "importProgress": "{done}/{total} インポート中…",
-    "importPartialError": "一部のファイルをインポートできませんでした。ファイルを確認して再試行してください。"
+    "importPartialError": "一部のファイルをインポートできませんでした。ファイルを確認して再試行してください。",
+    "savedAt": "{time} 保存済み"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",

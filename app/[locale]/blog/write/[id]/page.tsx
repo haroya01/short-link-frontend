@@ -78,6 +78,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         status={post.status}
         saving={ed.saving}
         saved={ed.saved}
+        lastSavedAt={ed.lastSavedAt}
         busy={ed.busy}
         onSave={ed.save}
         onBack={ed.leave}

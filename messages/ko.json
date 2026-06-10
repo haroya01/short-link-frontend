@@ -410,7 +410,8 @@
     "exportMd": ".md 내보내기",
     "importMd": ".md 가져오기",
     "importProgress": "{done}/{total} 가져오는 중…",
-    "importPartialError": "일부 파일을 가져오지 못했어요. 파일을 확인하고 다시 시도해주세요."
+    "importPartialError": "일부 파일을 가져오지 못했어요. 파일을 확인하고 다시 시도해주세요.",
+    "savedAt": "{time} 저장됨"
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
