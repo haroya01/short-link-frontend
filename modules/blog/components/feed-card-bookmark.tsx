@@ -44,10 +44,12 @@ export function FeedCardBookmark({
       title={saved ? t("bookmarkOn") : t("bookmark")}
       // A faint translucent chip keeps the icon legible when the card has a thumbnail and the button
       // sits over it; over plain text rows the chip is all but invisible on the card background.
-      className={`grid h-8 w-8 place-items-center rounded-lg bg-white/70 text-slate-600 shadow-sm ring-1 ring-white/50 backdrop-blur-md transition-all hover:bg-accent-50 hover:text-accent-700 focus-ring dark:bg-slate-900/55 dark:text-slate-300 dark:ring-white/10 dark:hover:bg-accent-500/15 dark:hover:text-accent-300 ${
+      // Reveal 은 300ms --ease 페이드 + 0.9→1 스케일의 잔잔한 떠오름 — transition-all 기본 150ms 는
+      // 흰 칩이 hover 순간 탁 켜져 난폭하게 읽혔다.
+      className={`grid h-8 w-8 place-items-center rounded-lg bg-white/70 text-slate-600 shadow-sm ring-1 ring-white/50 backdrop-blur-md transition-[opacity,transform,background-color,color] duration-300 ease-[var(--ease)] hover:bg-accent-50 hover:text-accent-700 focus-ring motion-reduce:transform-none dark:bg-slate-900/55 dark:text-slate-300 dark:ring-white/10 dark:hover:bg-accent-500/15 dark:hover:text-accent-300 ${
         saved
-          ? "text-accent-600 opacity-100 dark:text-accent-400"
-          : "opacity-0 focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+          ? "scale-100 text-accent-600 opacity-100 dark:text-accent-400"
+          : "scale-90 opacity-0 focus-visible:scale-100 focus-visible:opacity-100 group-hover:scale-100 group-hover:opacity-100 [@media(hover:none)]:scale-100 [@media(hover:none)]:opacity-100"
       }`}
     >
       {/* Keyed by state so it remounts + replays the pop on each toggle (only after a click). */}
