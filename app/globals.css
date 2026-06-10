@@ -21,9 +21,17 @@
  * 헤딩, 마스트헤드)에만 쓰고, 제품이 말하는 자리(UI·버튼·메타·내비)는 Pretendard 그대로.
  * 예전 Instrument Serif 슬롯은 "서양 세리프 이탤릭이 한글 우선 화면에서 겉돈다"로 폐기됐는데
  * (tailwind.config 주석), 이번엔 한글 우선 부리 활자라 전제가 다르다. 네이버 CDN woff2 직결
- * (CORS *), 실제 쓰는 두 웨이트(600/700)만 선언 — @font-face 는 그 글꼴을 쓰는 텍스트가
- * 화면에 있어야만 다운로드하므로 serif 없는 표면(링크 제품 등)엔 비용이 0이다.
+ * (CORS *), 실제 쓰는 세 웨이트만 선언(400 은 인용 전용, 제목은 600/700) — @font-face 는
+ * 그 글꼴을 쓰는 텍스트가 화면에 있어야만 다운로드하므로 serif 없는 표면(링크 제품 등)엔
+ * 비용이 0이다.
  */
+@font-face {
+  font-family: "MaruBuri";
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2)
+    format("woff2");
+}
 @font-face {
   font-family: "MaruBuri";
   font-weight: 600;
@@ -180,6 +188,11 @@ h1, h2, h3, p {
 ::selection {
   background: #d1fae5;
   color: #064e3b;
+}
+/* 다크 본문 위에서 라이트용 민트 면은 너무 밝게 번쩍인다 — 반투명 그린로 가라앉힘. */
+.dark ::selection {
+  background: rgba(16, 185, 129, 0.32);
+  color: #ecfdf5;
 }
 
 @layer utilities {
@@ -558,8 +571,9 @@ h1, h2, h3, p {
   .prose-post del {
     @apply text-slate-500 line-through dark:text-slate-400;
   }
+  /* 밑줄은 글자에서 살짝 떨어진 1px 헤어라인(em 기반 offset — 글자 크기를 따라간다). */
   .prose-post a {
-    @apply font-medium text-accent-700 underline decoration-accent-300 underline-offset-2 transition-colors hover:decoration-accent-600 dark:text-accent-400 dark:decoration-accent-600 dark:hover:decoration-accent-400;
+    @apply font-medium text-accent-700 underline decoration-accent-300 decoration-1 underline-offset-[0.2em] transition-colors hover:decoration-accent-600 dark:text-accent-400 dark:decoration-accent-600 dark:hover:decoration-accent-400;
   }
   .prose-post code {
     @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.875em] text-accent-800 dark:bg-slate-800 dark:text-accent-300;
@@ -570,8 +584,21 @@ h1, h2, h3, p {
   .prose-post pre code {
     @apply bg-transparent p-0 text-slate-100;
   }
+  /* 인용 = 세리프 풀쿼트. 이전의 italic 은 한글에선 합성 기울임(자형이 없어 브라우저가 억지로
+     눕힘)이라 활자 품질이 깨졌다 — 기울임 대신 활자 전환(명조 400)으로 인용의 결을 바꾼다. */
   .prose-post blockquote {
-    @apply my-7 border-l-[3px] border-accent-400 pl-5 text-[1.125rem] italic leading-relaxed text-slate-600 dark:text-slate-400;
+    @apply my-7 border-l-[3px] border-accent-400 pl-5 font-serif text-[1.125rem] leading-relaxed text-slate-600 dark:text-slate-400;
+  }
+  /* 구분선 = 애스터리즘(✳ ✳ ✳) — 선 하나보다 "장이 넘어간다"를 인쇄물의 어휘로 말한다.
+     음수 margin-right 는 마지막 글자 뒤에 붙는 letter-spacing 만큼 되밀어 진짜 가운데 정렬. */
+  .prose-post hr {
+    @apply my-12 flex items-center justify-center border-0;
+  }
+  .prose-post hr::before {
+    content: "✳ ✳ ✳";
+    @apply font-serif text-[12px] text-slate-300 dark:text-slate-600;
+    letter-spacing: 0.5em;
+    margin-right: -0.5em;
   }
   .prose-post figure {
     @apply my-8;
@@ -1359,6 +1386,8 @@ body[data-cookie-consent="visible"] {
 .tiptap :is(h1, h2, h3) {
   color: #0f172a;
   font-weight: 700;
+  /* 발행본(.prose-post 헤딩)과 같은 세리프 — 쓰는 화면과 읽는 화면의 활자가 갈리지 않게. */
+  font-family: var(--font-serif);
   letter-spacing: -0.01em;
   line-height: 1.3;
 }
@@ -1370,15 +1399,35 @@ body[data-cookie-consent="visible"] {
    아래 h2→h3→h4 contiguous run 으로 강등되므로(post-blocks.tsx headingRanks), 에디터가 발행 크기를
    미리 보여줘야 WYSIWYG 가 선다. 이전엔 H1 이 1.9rem 으로 그려지고 1.5rem 으로 발행돼 위계가 어긋났다. */
 .tiptap h1 { font-size: 1.5rem; font-weight: 700; margin-top: 2rem; }
-/* 헤딩은 발행본(.prose-post)과 같은 세리프 — 쓰는 화면과 읽는 화면의 활자가 갈리지 않게. */
-.tiptap h2 { font-size: 1.25rem; font-weight: 600; margin-top: 1.75rem; font-family: var(--font-serif); letter-spacing: -0.01em; }
-.tiptap h3 { font-size: 1.0625rem; font-weight: 600; margin-top: 1.5rem; font-family: var(--font-serif); letter-spacing: -0.01em; }
+.tiptap h2 { font-size: 1.25rem; font-weight: 600; margin-top: 1.75rem; }
+.tiptap h3 { font-size: 1.0625rem; font-weight: 600; margin-top: 1.5rem; }
 .tiptap ul { list-style: disc; padding-left: 1.5rem; }
 .tiptap ol { list-style: decimal; padding-left: 1.5rem; }
 .tiptap li { margin: 0.3rem 0; }
+/* 발행본(.prose-post blockquote)과 같은 세리프 풀쿼트 — 쓰는 화면=읽는 화면. */
 .tiptap blockquote {
   border-left: 3px solid #34d399;
   padding: 0.1rem 0 0.1rem 1.1rem;
+  color: #475569;
+  font-family: var(--font-serif);
+}
+/* 발행본의 애스터리즘 구분선과 동일. */
+.tiptap hr {
+  border: 0;
+  margin: 2.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tiptap hr::before {
+  content: "✳ ✳ ✳";
+  font-family: var(--font-serif);
+  font-size: 12px;
+  color: #cbd5e1;
+  letter-spacing: 0.5em;
+  margin-right: -0.5em;
+}
+.dark .tiptap hr::before {
   color: #475569;
 }
 /* Inline marks — explicit so a Tailwind/preflight change can't flatten bold/italic/strike in the
