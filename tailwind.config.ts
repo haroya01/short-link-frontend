@@ -33,11 +33,11 @@ const config: Config = {
       },
       fontFamily: {
         /*
-         * One sans family across the entire app — Pretendard for both Korean and Latin. The
-         * earlier setup paired Pretendard with an Instrument Serif display slot for hero
-         * headlines, but the western serif italic read as out-of-place on a Korean-first
-         * surface. Pretendard's 700/800 weights at tight tracking carry the editorial moment
-         * on their own; no display swap needed.
+         * One sans family across the entire app — Pretendard for both Korean and Latin.
+         * 디스플레이 세리프 슬롯은 두 번 도입됐다가 두 번 죽었다: Instrument Serif 는 서양
+         * 세리프 이탤릭이 한글 우선 화면에서 겉돌아서, MaruBuri(마루 부리)는 콘텐츠 제목 전반에
+         * 깔아 보니 명조 디스플레이가 올드하게 읽혀 당일 철회(2026-06, #701). Pretendard's
+         * 700/800 weights at tight tracking carry the editorial moment on their own.
          */
         sans: [
           "Pretendard Variable",

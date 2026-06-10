@@ -9,6 +9,7 @@ import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { CoverMorphLink } from "@/modules/blog/components/cover-morph-link";
 import { Link as TransitionLink } from "next-view-transitions";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
 import { BrandTick } from "@/modules/blog/components/rail-heading";
@@ -87,6 +88,7 @@ export function DiscoverySeriesCard({
               }}
             >
               <div
+                data-vt-cover-scope
                 className={`relative h-full w-full overflow-hidden rounded-2xl shadow-[0_1px_3px_rgba(15,23,42,0.06)] ${
                   // 뒷장은 내용물 없이 중립 종이 — 넘김 크로스페이드 중 빈 장이 어둡게 비치지 않게.
                   !front
@@ -105,7 +107,7 @@ export function DiscoverySeriesCard({
                   // 규칙(블렌드 모드 ❌ — iPad Safari 타일 seam/깜빡임, 글 카드 주석 참조).
                   <>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.ogImageUrl} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover saturate-[.85]" />
+                    <img src={p.ogImageUrl} alt="" loading="lazy" data-vt-cover className="absolute inset-0 h-full w-full object-cover saturate-[.85]" />
                     <div aria-hidden className="absolute inset-0 bg-accent-900/10" />
                   </>
                 ) : (
@@ -133,13 +135,17 @@ export function DiscoverySeriesCard({
                     <SeriesSubscribeButton seriesId={series.id} />
                   </div>
                 )}
-                {front && (
-                  <Nav
-                    href={authorHref(series.author.username, locale, p.slug)}
-                    aria-label={p.title}
-                    className="absolute inset-0 z-10"
-                  />
-                )}
+                {front && (() => {
+                  // 사진 있는 에피소드 장만 커버 모핑(소프트 내비 한정) — 종이 장은 피사체가 없다.
+                  const EpNav = Nav === TransitionLink && p.ogImageUrl ? CoverMorphLink : Nav;
+                  return (
+                    <EpNav
+                      href={authorHref(series.author.username, locale, p.slug)}
+                      aria-label={p.title}
+                      className="absolute inset-0 z-10"
+                    />
+                  );
+                })()}
 
                 {front && (
                 <div className={`pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4 ${p.ogImageUrl ? "text-white" : "text-slate-900 dark:text-slate-100"}`}>

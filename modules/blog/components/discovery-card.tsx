@@ -10,6 +10,7 @@ import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { postHref, authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { CoverMorphLink } from "@/modules/blog/components/cover-morph-link";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 
 /**
@@ -179,10 +180,13 @@ export function DiscoveryCard({
 
   // ── cover: 사진이 카드 전체 배경 ──
   const ratio = featured ? "aspect-[3/4]" : "aspect-[4/3]";
+  // 사진 카드만 커버 모핑(클릭한 커버가 글 히어로로 흘러 들어감) — 텍스트 카드는 모핑할 피사체가
+  // 없어 기존 통일 전환을 탄다. 하드 내비(절대경로)는 VT 페어가 못 맺히므로 일반 링크 유지.
+  const CoverLink = internal ? CoverMorphLink : BlogLink;
 
   return (
     // ring-inset white/10: 어두운 커버 가장자리에 유리 같은 얇은 빛 테두리 → 입체감.
-    <div className={`${SHELL} ${CARD_SHADOW} bg-slate-200 ring-1 ring-inset ring-white/10 dark:bg-slate-800`}>
+    <div data-vt-cover-scope className={`${SHELL} ${CARD_SHADOW} bg-slate-200 ring-1 ring-inset ring-white/10 dark:bg-slate-800`}>
       <div className={ratio}>
         {/* 톤 하모나이즈(상시 고정): 저채도 필터 + 일반 알파 베일. mix-blend-color 는 색 통일이
             더 강했지만 iPad Safari 가 블렌드 영역을 타일로 합성하며 경계선(seam)과 깜빡임을
@@ -192,6 +196,7 @@ export function DiscoveryCard({
           src={item.ogImageUrl as string}
           alt=""
           loading="lazy"
+          data-vt-cover
           className="absolute inset-0 h-full w-full object-cover saturate-[.85] transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none"
         />
         <div aria-hidden className="absolute inset-0 bg-accent-900/10" />
@@ -210,7 +215,7 @@ export function DiscoveryCard({
           <FeaturedBadge label={t("featuredLabel")} over />
         </div>
       )}
-      <PostLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
+      <CoverLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
 
       <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4">
         <div className="flex flex-wrap items-center gap-2">
