@@ -17,6 +17,8 @@ import { TagChips } from "../_components/post-meta";
 import { PostOwnerActions } from "../_components/post-owner-actions";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
+import { RelatedPosts } from "@/modules/blog/components/related-posts";
+import { ReadingResume } from "@/modules/blog/components/reading-resume";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
@@ -274,6 +276,11 @@ export default async function PublicPostPage({
           </div>
         </div>
       </footer>
+
+      <RelatedPosts locale={locale} author={author} currentSlug={post.slug} tags={post.tags} />
+
+      {/* 읽기 이어가기 — 기기 로컬(localStorage), 프리뷰(비공개 토큰 링크)에선 기록하지 않는다. */}
+      {!isPreview && <ReadingResume postKey={`${author.username}/${post.slug}`} />}
 
       <PostComments postId={post.id} authorUsername={author.username} />
       </article>

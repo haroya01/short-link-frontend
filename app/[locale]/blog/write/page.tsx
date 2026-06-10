@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp, BarChart3, Layers, List, PenSquare, Pin, X } from "lucide-react";
+import { ImportMdButton } from "@/modules/blog/components/workspace/import-md-button";
 import { useAuth } from "@/lib/auth";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 import { setPinnedPosts } from "@/modules/blog/api/curation";
@@ -129,13 +130,16 @@ export default function WriteIndexPage() {
     <main className="mx-auto max-w-2xl px-6 py-10">
       <header className="mb-6 flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
-        <a
-          href={`${writeBase}/new`}
-          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800"
-        >
-          <PenSquare className="h-4 w-4" />
-          {t("newPost")}
-        </a>
+        <div className="flex items-center gap-2">
+          <ImportMdButton onDone={load} />
+          <a
+            href={`${writeBase}/new`}
+            className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800"
+          >
+            <PenSquare className="h-4 w-4" />
+            {t("newPost")}
+          </a>
+        </div>
       </header>
 
       {/* 전체 ↔ 시리즈별 — same content, two lenses. 시리즈별 is where series get curated. */}

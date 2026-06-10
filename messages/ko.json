@@ -405,7 +405,11 @@
     "autoSave": "자동 저장",
     "unsavedLeaveTitle": "저장하지 않은 변경이 있어요",
     "unsavedLeaveDescription": "지금 나가면 이 변경분은 사라져요. 발행 중인 글은 글 설정에서 저장해야 반영돼요.",
-    "unsavedLeaveAction": "나가기"
+    "unsavedLeaveAction": "나가기",
+    "exportMd": ".md 내보내기",
+    "importMd": ".md 가져오기",
+    "importProgress": "{done}/{total} 가져오는 중…",
+    "importPartialError": "일부 파일을 가져오지 못했어요. 파일을 확인하고 다시 시도해주세요."
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -497,7 +501,10 @@
     "ownerDeleteConfirm": "이 글을 삭제할까요?",
     "ownerDeleteConfirmBody": "삭제하면 되돌릴 수 없어요.",
     "ownerDeleteError": "삭제하지 못했어요. 다시 시도해 주세요.",
-    "seriesViewAll": "시리즈 전체 {total}편 보기"
+    "seriesViewAll": "시리즈 전체 {total}편 보기",
+    "relatedHeading": "다음 읽을 글",
+    "resumeReading": "이어서 읽기",
+    "resumeDismiss": "이어읽기 닫기"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",

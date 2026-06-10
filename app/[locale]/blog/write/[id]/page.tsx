@@ -41,6 +41,31 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
   const post = ed.post;
 
+  // 글을 frontmatter 포함 .md 로 다운로드 — 데이터 소유권(언제든 들고 나갈 수 있는 문).
+  // liveMarkdown(에디터의 동기 getter)을 우선해 마지막 키스트로크까지 담는다.
+  function exportMarkdown() {
+    const md = ed.liveMarkdown.current?.() ?? ed.markdown;
+    const fm = [
+      "---",
+      `title: "${ed.title.replace(/"/g, '\\"')}"`,
+      ed.tags.length > 0 ? `tags: [${ed.tags.join(", ")}]` : null,
+      post.publishedAt ? `published: ${post.publishedAt}` : null,
+      `slug: ${post.slug}`,
+      "---",
+      "",
+      "",
+    ]
+      .filter((l) => l != null)
+      .join("\n");
+    const blob = new Blob([fm + md + "\n"], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${post.slug || "post"}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     // Write = read: the whole writing surface lives in the same centered 42rem reading band the post
     // ships in (§10.1). Title, meta and body share one measure and there is no boxed-in editor frame —
@@ -58,6 +83,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         onBack={ed.leave}
         onOpenPublish={() => setPublishOpen(true)}
         onRestoreRevision={ed.restoreRevision}
+        onExport={exportMarkdown}
         onDelete={ed.remove}
       />
 

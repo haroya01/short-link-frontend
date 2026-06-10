@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Check, Send, Settings2, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, Download, Send, Settings2, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PostStatus } from "@/modules/blog/api/posts";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
@@ -22,6 +22,7 @@ export function EditorHeader({
   onBack,
   onOpenPublish,
   onRestoreRevision,
+  onExport,
   onDelete,
 }: {
   backHref: string;
@@ -35,6 +36,8 @@ export function EditorHeader({
   onBack: () => void;
   onOpenPublish: () => void;
   onRestoreRevision: (versionNumber: number) => void;
+  /** 현재 글을 frontmatter 포함 .md 파일로 다운로드 — 데이터 소유권(언제든 들고 나갈 수 있음). */
+  onExport: () => void;
   onDelete: () => void;
 }) {
   const t = useTranslations("postEditor");
@@ -102,6 +105,15 @@ export function EditorHeader({
           {isDraft ? t("publish") : t("postSettings")}
         </button>
         <RevisionsButton postId={postId} busy={busy} onRestore={onRestoreRevision} />
+        <button
+          type="button"
+          onClick={onExport}
+          className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+          title={t("exportMd")}
+          aria-label={t("exportMd")}
+        >
+          <Download className="h-4 w-4" />
+        </button>
         <button
           type="button"
           onClick={onDelete}

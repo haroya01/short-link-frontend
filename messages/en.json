@@ -405,7 +405,11 @@
     "autoSave": "Autosaves",
     "unsavedLeaveTitle": "You have unsaved changes",
     "unsavedLeaveDescription": "Leaving now discards these edits. A live post only keeps changes saved from its post settings.",
-    "unsavedLeaveAction": "Leave"
+    "unsavedLeaveAction": "Leave",
+    "exportMd": "Export .md",
+    "importMd": "Import .md",
+    "importProgress": "Importing {done}/{total}…",
+    "importPartialError": "Some files could not be imported. Check the files and try again."
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -497,7 +501,10 @@
     "ownerDeleteConfirm": "Delete this post?",
     "ownerDeleteConfirmBody": "This can't be undone.",
     "ownerDeleteError": "Couldn't delete. Please try again.",
-    "seriesViewAll": "View all {total} parts"
+    "seriesViewAll": "View all {total} parts",
+    "relatedHeading": "Read next",
+    "resumeReading": "Resume reading",
+    "resumeDismiss": "Dismiss"
   },
   "imageCropper": {
     "title": "Crop image",

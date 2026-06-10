@@ -405,7 +405,11 @@
     "autoSave": "自動保存",
     "unsavedLeaveTitle": "保存されていない変更があります",
     "unsavedLeaveDescription": "今離れるとこの変更は失われます。公開中の記事は記事設定から保存しないと反映されません。",
-    "unsavedLeaveAction": "離れる"
+    "unsavedLeaveAction": "離れる",
+    "exportMd": ".md エクスポート",
+    "importMd": ".md インポート",
+    "importProgress": "{done}/{total} インポート中…",
+    "importPartialError": "一部のファイルをインポートできませんでした。ファイルを確認して再試行してください。"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
@@ -497,7 +501,10 @@
     "ownerDeleteConfirm": "この記事を削除しますか?",
     "ownerDeleteConfirmBody": "削除すると元に戻せません。",
     "ownerDeleteError": "削除できませんでした。もう一度お試しください。",
-    "seriesViewAll": "シリーズ全{total}話を見る"
+    "seriesViewAll": "シリーズ全{total}話を見る",
+    "relatedHeading": "次に読む",
+    "resumeReading": "続きを読む",
+    "resumeDismiss": "閉じる"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
