@@ -30,6 +30,7 @@ export function FeedInfinite({
   featuredFirst = false,
   featuredLabel,
   interleaveNode,
+  interleaveListNode,
   interleaveAfter = 3,
   variant = "list",
 }: {
@@ -54,6 +55,9 @@ export function FeedInfinite({
   /** A non-post block (e.g. a series card) dropped into the feed after {@link interleaveAfter} rows.
    *  Only shown when the feed has rows past that point, so it never trails a short feed. */
   interleaveNode?: ReactNode;
+  /** 리스트(1열) 분기 전용 인서트 — 메이슨리 타일을 리스트에 끼우면 거대한 비주얼 블록이 되므로,
+   *  행 문법의 대체 노드를 받는다. 없으면 interleaveNode 폴백. */
+  interleaveListNode?: ReactNode;
   /** Zero-based row index the interleaved node is inserted after (default: after the 4th row). */
   interleaveAfter?: number;
 }) {
@@ -126,6 +130,7 @@ export function FeedInfinite({
       : items.filter((i) => !i.tags?.some((tg) => hiddenSet.has(tg)));
   const hiddenCount = items.length - visible.length;
 
+  const listInsert = interleaveListNode ?? interleaveNode;
   const listRows = (
     <FeedList>
       {visible.map((item, i) => (
@@ -136,11 +141,11 @@ export function FeedInfinite({
             featured={featuredFirst && i === 0}
             featuredLabel={featuredLabel}
           />
-          {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
+          {listInsert && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
             // Bracketed by rules top + bottom so the series block reads as a distinct insert in the
             // feed flow, not just another post row.
             <li className="list-none border-y border-slate-200 py-3.5 dark:border-slate-700">
-              {interleaveNode}
+              {listInsert}
             </li>
           )}
         </Fragment>

@@ -28,7 +28,7 @@ import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { FollowingFeed } from "@/modules/blog/components/following-feed";
 import { SubscribedSeriesFeed } from "@/modules/blog/components/subscribed-series-feed";
 import { FeedTabCookieSync } from "@/modules/blog/components/feed-tab-cookie-sync";
-import { DiscoverySeriesCard } from "@/modules/blog/components/discovery-series-card";
+import { DiscoverySeriesCard, DiscoverySeriesRow } from "@/modules/blog/components/discovery-series-card";
 import { TrendingTopics } from "@/modules/blog/components/trending-topics";
 
 export const revalidate = 30;
@@ -288,6 +288,9 @@ export default async function BlogFeedPage({
                 interleave={
                   series.length > 0 ? <DiscoverySeriesCard series={series[0]} locale={locale} /> : null
                 }
+                interleaveList={
+                  series.length > 0 ? <DiscoverySeriesRow series={series[0]} locale={locale} /> : null
+                }
               />
             </FeedContentTransition>
           </div>
@@ -313,6 +316,7 @@ function FeedColumn({
   featuredFirst,
   featuredLabel,
   interleave,
+  interleaveList,
   variant,
   tag,
 }: {
@@ -325,6 +329,7 @@ function FeedColumn({
   featuredFirst: boolean;
   featuredLabel: string;
   interleave?: ReactNode;
+  interleaveList?: ReactNode;
   variant?: "list" | "grid";
   tag?: string;
 }) {
@@ -340,6 +345,7 @@ function FeedColumn({
       featuredFirst={featuredFirst}
       featuredLabel={featuredLabel}
       interleaveNode={interleave}
+      interleaveListNode={interleaveList}
       variant={variant}
     />
   );
