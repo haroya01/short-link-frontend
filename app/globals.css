@@ -1501,9 +1501,14 @@ body[data-cookie-consent="visible"] {
 }
 
 /* ── 카드 → 글 전환 (View Transitions) ───────────────────────────────────────
-   사진 모핑(카드 커버↔글 히어로 비율 차로 stretch 가 생겨 "이상"했음)을 버리고, 화면 전체가
-   부드럽게 교차되는 통일된 은은한 전환으로 — 현재 화면은 살짝 축소되며 사라지고, 새 화면은 살짝
-   확대되며 들어온다. 전 카드 타입(이미지·글·시리즈) 동일. 소프트 내비에서만 동작.
+   기본은 화면 전체가 부드럽게 교차되는 통일 전환 — 현재 화면은 살짝 축소되며 사라지고, 새 화면은
+   살짝 확대되며 들어온다. 소프트 내비에서만 동작.
+
+   사진 카드는 그 위에 커버 모핑이 얹힌다(아래 post-cover 블록). 1차 시도는 카드 커버↔글 히어로
+   비율 차(4:3↔2:1)로 사진이 stretch 돼 폐기했었는데, 그 원인은 스냅샷이 그룹 박스에 늘어붙는
+   기본 동작이었다 — ::view-transition-old/new 는 replaced element 라 object-fit: cover 를 주면
+   박스가 변하는 동안 사진은 비율을 지키고 크롭만 미끄러진다. 텍스트/종이 카드는 모핑할 피사체가
+   없어 통일 전환 그대로.
 
    셀렉터에 html:not([data-theme-vt]) 프리픽스 필수: 테마 토글의 wipe 와 root 를 공유하기 때문이기도
    하고, 무엇보다 특이도 때문이다 — 프리픽스 없는 ::view-transition-*(root) (0,0,1) 은 위쪽 테마
@@ -1532,6 +1537,37 @@ html:not([data-theme-vt])::view-transition-new(root) {
 @media (prefers-reduced-motion: reduce) {
   html:not([data-theme-vt])::view-transition-old(root),
   html:not([data-theme-vt])::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* 커버 모핑(post-cover) — 클릭된 카드 커버(CoverMorphLink 가 클릭 순간 명명)와 글 히어로가
+   한 그룹으로 묶여 박스가 모핑한다. 그룹이 root 의 vt-leave/enter(축소·페이드) 바깥에서 날아가는
+   동안에도 사진은 또렷해야 하므로 old/new 의 기본 crossfade 만 남기고:
+   - object-fit: cover + 100%: 비율이 다른 두 스냅샷이 그룹 박스에 늘어붙지 않게(1차 폐기 사유).
+   - isolation 해제 + blend 정상화: 교차 중 반투명 겹침이 어둡게 번지는 것 방지.
+   - 그룹에 카드/히어로 공통의 rounded-2xl 을 줘 비행 중에도 모서리가 각지지 않게. */
+::view-transition-group(post-cover) {
+  animation-duration: 360ms;
+  animation-timing-function: var(--ease);
+  border-radius: 1rem;
+  overflow: clip;
+}
+::view-transition-image-pair(post-cover) {
+  isolation: none;
+}
+::view-transition-old(post-cover),
+::view-transition-new(post-cover) {
+  animation: none;
+  mix-blend-mode: normal;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(post-cover),
+  ::view-transition-old(post-cover),
+  ::view-transition-new(post-cover) {
     animation: none;
   }
 }
