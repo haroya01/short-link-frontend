@@ -180,7 +180,9 @@ export default async function PublicPostPage({
       )}
 
       <header className="mb-12">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
+        {/* headline-md + bold 고정: 모바일에서 headline-sm(24px semibold)이 본문 h2(24px bold)와
+            같은 크기·더 약한 무게라 위계가 뒤집혀 보였다. 제목 32px bold > h2 24px bold > h3 20px. */}
+        <h1 className="text-headline-md font-bold tracking-headline text-slate-900 dark:text-slate-100">
           {post.title}
         </h1>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -239,7 +241,7 @@ export default async function PublicPostPage({
         />
       )}
 
-      <ArticleBody blocks={blocks} postId={post.id} />
+      <ArticleBody blocks={blocks} postId={post.id} className={headings.length >= 1 ? "has-toc" : undefined} />
 
       {result.data.series && (
         <SeriesNext series={result.data.series} username={author.username} locale={locale} />
@@ -278,9 +280,11 @@ export default async function PublicPostPage({
 
       {/* velog-style TOC pinned just right of the centered column. Fixed (not a grid gutter) so it
           shows from landscape-tablet width up (~1100px) without shrinking the 42rem reading column or
-          breaking its centering. Below that, the floating button → bottom sheet takes over. */}
+          breaking its centering. Below that, the floating button → bottom sheet takes over.
+          반투명 블러 배경(헤더와 같은 언어): full-bleed 이미지가 TOC 뒤를 지나갈 때 텍스트가
+          이미지와 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이 겹침 자체를 제거. */}
       {headings.length >= 1 && (
-        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto min-[1100px]:block xl:w-52">
+        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-xl bg-white/85 p-3 backdrop-blur-sm min-[1100px]:block xl:w-52 dark:bg-slate-950/85">
           <PostToc headings={headings} />
         </aside>
       )}
