@@ -3,10 +3,13 @@
 import { DATE_LOCALE } from "@/lib/date";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { CornerDownRight, Trash2 } from "lucide-react";
+import { CornerDownRight, Trash2, Heart } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import {
   createComment,
+  likeComment,
+  listLikedCommentIds,
+  unlikeComment,
   deleteComment,
   listComments,
   type CommentView,
@@ -35,6 +38,8 @@ export function PostComments({
   const [busy, setBusy] = useState(false);
   // The just-posted comment's id — drives its slide-in entrance animation once it renders.
   const [justAddedId, setJustAddedId] = useState<number | null>(null);
+  // 보는 사람이 좋아요한 댓글 id — 공개 목록은 비인증이라 인증 후 별도 엔드포인트로 한 번 hydrate.
+  const [likedIds, setLikedIds] = useState<Set<number>>(new Set());
   const [confirm, confirmDialog] = useConfirm();
 
   const load = useCallback(() => {
@@ -46,6 +51,45 @@ export function PostComments({
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    if (!ready || !authenticated) return;
+    listLikedCommentIds(postId)
+      .then((ids) => setLikedIds(new Set(ids)))
+      .catch(() => {});
+  }, [ready, authenticated, postId]);
+
+  // 낙관 토글: UI 를 먼저 뒤집고 서버의 authoritative count 로 정착, 실패 시 원복.
+  async function toggleLike(c: CommentView) {
+    if (!authenticated) {
+      signInWithGoogle();
+      return;
+    }
+    const wasLiked = likedIds.has(c.id);
+    setLikedIds((prev) => {
+      const next = new Set(prev);
+      if (wasLiked) next.delete(c.id);
+      else next.add(c.id);
+      return next;
+    });
+    setComments((prev) =>
+      prev.map((x) => (x.id === c.id ? { ...x, likeCount: Math.max(0, x.likeCount + (wasLiked ? -1 : 1)) } : x)),
+    );
+    try {
+      const status = wasLiked ? await unlikeComment(c.id) : await likeComment(c.id);
+      setComments((prev) => prev.map((x) => (x.id === c.id ? { ...x, likeCount: status.likeCount } : x)));
+    } catch {
+      setLikedIds((prev) => {
+        const next = new Set(prev);
+        if (wasLiked) next.add(c.id);
+        else next.delete(c.id);
+        return next;
+      });
+      setComments((prev) =>
+        prev.map((x) => (x.id === c.id ? { ...x, likeCount: Math.max(0, x.likeCount + (wasLiked ? 1 : -1)) } : x)),
+      );
+    }
+  }
 
   const tops = comments.filter((c) => c.parentId == null);
   const repliesOf = (id: number) => comments.filter((c) => c.parentId === id);
@@ -145,7 +189,18 @@ export function PostComments({
         <ul className="mt-8 space-y-6">
           {tops.map((c) => (
             <li key={c.id}>
-              <CommentRow comment={c} fmt={fmt} canDelete={canDelete(c)} canReport={!canDelete(c)} onDelete={() => remove(c.id)} deleteLabel={t("delete")} isNew={c.id === justAddedId}>
+              <CommentRow
+                comment={c}
+                fmt={fmt}
+                canDelete={canDelete(c)}
+                canReport={!canDelete(c)}
+                onDelete={() => remove(c.id)}
+                deleteLabel={t("delete")}
+                liked={likedIds.has(c.id)}
+                likeLabel={t("like")}
+                onToggleLike={() => void toggleLike(c)}
+                isNew={c.id === justAddedId}
+              >
                 <button
                   type="button"
                   onClick={() => {
@@ -170,6 +225,9 @@ export function PostComments({
                         canReport={!canDelete(r)}
                         onDelete={() => remove(r.id)}
                         deleteLabel={t("delete")}
+                        liked={likedIds.has(r.id)}
+                        likeLabel={t("like")}
+                        onToggleLike={() => void toggleLike(r)}
                         isNew={r.id === justAddedId}
                       />
                     </li>
@@ -348,6 +406,9 @@ function CommentRow({
   canReport,
   onDelete,
   deleteLabel,
+  liked,
+  likeLabel,
+  onToggleLike,
   isNew,
   children,
 }: {
@@ -357,6 +418,9 @@ function CommentRow({
   canReport: boolean;
   onDelete: () => void;
   deleteLabel: string;
+  liked: boolean;
+  likeLabel: string;
+  onToggleLike: () => void;
   isNew?: boolean;
   children?: React.ReactNode;
 }) {
@@ -397,7 +461,26 @@ function CommentRow({
       <div className="mt-1.5 pl-9 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
         <CommentBody text={comment.body} locale={locale} />
       </div>
-      {children && <div className="mt-1.5 pl-9">{children}</div>}
+      <div className="mt-1.5 flex items-center gap-3 pl-9">
+        {/* 댓글 공감 — 포스트 LikeButton 과 같은 문법(하트 fill + pop), 카운트는 >0 일 때만. */}
+        <button
+          type="button"
+          onClick={onToggleLike}
+          aria-pressed={liked}
+          aria-label={likeLabel}
+          className={`touch-target inline-flex items-center gap-1 rounded text-[13px] transition-colors focus-ring ${
+            liked
+              ? "text-accent-700 dark:text-accent-400"
+              : "text-slate-500 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
+          }`}
+        >
+          <span key={liked ? "on" : "off"} className="subscribe-pop inline-flex">
+            <Heart className={`h-3.5 w-3.5 ${liked ? "fill-accent-600 text-accent-600" : ""}`} />
+          </span>
+          <span aria-live="polite">{comment.likeCount > 0 ? comment.likeCount : ""}</span>
+        </button>
+        {children}
+      </div>
     </div>
   );
 }

@@ -9,7 +9,8 @@
     "delete": "Delete",
     "deleteConfirm": "Delete this comment?",
     "empty": "Be the first to comment.",
-    "loginPrompt": "Sign in to leave a comment"
+    "loginPrompt": "Sign in to leave a comment",
+    "like": "Like"
   },
   "publicFeed": {
     "recent": "Latest",

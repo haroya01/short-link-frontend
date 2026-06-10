@@ -9,7 +9,8 @@
     "delete": "削除",
     "deleteConfirm": "このコメントを削除しますか？",
     "empty": "最初のコメントを残しましょう。",
-    "loginPrompt": "ログインしてコメントしましょう"
+    "loginPrompt": "ログインしてコメントしましょう",
+    "like": "いいね"
   },
   "publicFeed": {
     "recent": "最新",

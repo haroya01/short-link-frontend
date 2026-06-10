@@ -9,7 +9,8 @@
     "delete": "삭제",
     "deleteConfirm": "이 댓글을 삭제할까요?",
     "empty": "첫 댓글을 남겨보세요.",
-    "loginPrompt": "로그인하고 댓글을 남겨보세요"
+    "loginPrompt": "로그인하고 댓글을 남겨보세요",
+    "like": "공감"
   },
   "publicFeed": {
     "recent": "최신",
