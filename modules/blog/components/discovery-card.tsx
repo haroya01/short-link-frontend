@@ -157,8 +157,32 @@ export function DiscoveryCard({
 
   // ── text: 이미지·표지 없이 소개글을 보여주는 글 카드 ──
   if (variant === "text") {
+    // 물결 위상: 카드마다 다른 음수 delay 로 시작점을 어긋내 그리드가 일제히 출렁이지 않게.
+    // (Math.random 금지 — id 시드라 SSR/CSR 결정적)
+    const wavePhase = { animationDelay: `-${(item.id % 9) * 1.7}s` } as const;
     return (
-      <div className={`${SHELL} ${CARD_SHADOW} border border-slate-200/80 bg-white p-4 dark:border-slate-800 dark:bg-slate-900`}>
+      <div className={`${SHELL} ${CARD_SHADOW} border border-slate-200/80 bg-white p-4 pb-7 dark:border-slate-800 dark:bg-slate-900`}>
+        {/* 잔잔한 물결 — 이미지 없는 글의 "심심함"을 채우는 ambient. 브랜드 그린 저채도 두 겹이
+            서로 다른 속도로 흐르고(패럴랙스), hover 에서만 한 단계 짙어진다. transform-only 라
+            컴포지터 비용만 들고, reduced-motion 은 globals 가드가 정지시킨다. */}
+        <div aria-hidden className="absolute inset-x-0 bottom-0 z-0 h-12 overflow-hidden opacity-70 transition-opacity duration-300 ease-[var(--ease)] group-hover:opacity-100">
+          <svg
+            viewBox="0 0 600 24"
+            preserveAspectRatio="none"
+            className="typo-wave absolute bottom-0 left-0 h-6 w-[200%] text-accent-600/[0.08] dark:text-accent-400/[0.1]"
+            style={wavePhase}
+          >
+            <path d="M0 14 Q 37.5 4 75 14 T 150 14 T 225 14 T 300 14 T 375 14 T 450 14 T 525 14 T 600 14 V 24 H 0 Z" fill="currentColor" />
+          </svg>
+          <svg
+            viewBox="0 0 600 24"
+            preserveAspectRatio="none"
+            className="typo-wave-slow absolute -bottom-0.5 left-0 h-5 w-[200%] text-accent-600/[0.14] dark:text-accent-400/[0.16]"
+            style={wavePhase}
+          >
+            <path d="M0 12 Q 50 22 100 12 T 200 12 T 300 12 T 400 12 T 500 12 T 600 12 V 24 H 0 Z" fill="currentColor" />
+          </svg>
+        </div>
         <div className="absolute right-3 top-3 z-20">
           <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
         </div>

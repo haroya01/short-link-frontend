@@ -1284,6 +1284,25 @@ body[data-cookie-consent="visible"] {
 @keyframes chrome-float {
   to {
     box-shadow: 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+/* ── 발견 타이포 카드의 잔잔한 물결 (ambient) ────────────────────────────────
+   2x 폭 스트립을 translateX(-50%) 루프 — path 가 주기적이라 이음새 없이 무한히 흐른다.
+   transform-only(컴포지터 전용)·14s+ 저속·저채도라 §10.7 의 "조용함"을 깨지 않고,
+   두 겹의 속도 차가 느린 패럴랙스를 만든다. reduced-motion 은 아래 가드가 정지. */
+@keyframes wave-drift {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.typo-wave {
+  animation: wave-drift 14s linear infinite;
+}
+.typo-wave-slow {
+  animation: wave-drift 23s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .typo-wave,
+  .typo-wave-slow {
+    animation: none;
   }
 }
 
