@@ -143,9 +143,13 @@ export function DiscoverySeriesCard({
                 }`}
               >
                 {p.ogImageUrl ? (
-                  // 에피소드에 사진이 있으면 그 사진을 커버로 (글 카드와 동일 규칙).
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.ogImageUrl} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                  // 에피소드에 사진이 있으면 그 사진을 커버로 — 톤 하모나이즈(저채도+그린 틴트,
+                  // hover 원색)도 글 카드와 동일 규칙.
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={p.ogImageUrl} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover saturate-[.8] transition-[filter] duration-300 ease-[var(--ease)] group-hover:saturate-100" />
+                    <div aria-hidden className="absolute inset-0 bg-accent-800/25 mix-blend-color transition-opacity duration-300 ease-[var(--ease)] group-hover:opacity-0" />
+                  </>
                 ) : (
                   <div className={`absolute inset-0 bg-gradient-to-br ${EP_GRADS[i % EP_GRADS.length]} dark:opacity-[0.06]`} />
                 )}

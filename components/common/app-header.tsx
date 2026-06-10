@@ -98,6 +98,17 @@ export function AppHeader({
             The divider stops the switcher's "kurl/blog.kurl" wordmark pill from reading as a second
             brand mark beside the search field, and keeps the expanded search pill from sitting flush
             against the same-shaped switcher pill. */}
+        {/* 모바일 글쓰기 — 하단 탭바 중앙 FAB 에서 이동: 스크롤 중 떠 있는 원형이 본문을 가리고
+            거슬린다는 피드백. 콘텐츠 앱의 주 행동을 우상단 고정(헤더는 sticky)으로. */}
+        {product === "blog" && (
+          <BlogChromeLink
+            href={showAuthed ? blogHref("/write/new") : `${blogHref("/login")}?next=${encodeURIComponent("/write/new")}`}
+            aria-label={t("write")}
+            className="focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden"
+          >
+            <PenSquare className="h-4 w-4" />
+          </BlogChromeLink>
+        )}
         <div
           className={`shrink-0 items-center gap-2 ${slimMobile ? "hidden sm:flex" : "flex"}`}
         >
