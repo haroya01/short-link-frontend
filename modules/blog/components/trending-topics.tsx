@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import type { TagCount } from "@/modules/blog/api/public-posts";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 /**
  * 발견 피드 "인기 주제" — 교과서 표준 패턴(Medium "recommended topics" / Hashnode / dev.to):
@@ -24,10 +25,10 @@ export async function TrendingTopics({
 
   return (
     <div className="mb-7">
-      <p className="mb-3 text-[13px] font-semibold text-slate-700 dark:text-slate-200">
-        {t("trendingTopicsLabel")}
-      </p>
-      <div className="flex flex-wrap gap-2">
+      <RailHeading className="mb-3">{t("trendingTopicsLabel")}</RailHeading>
+      {/* 한 줄 가로 스크롤 + 우측 엣지 페이드 마스크: 줄바꿈 없이 12개가 이어지고, 잘리는 끝이
+          mask 로 자연스럽게 사라져 "더 있다"는 신호가 된다(스크롤바는 숨김, 스냅으로 정착). */}
+      <div className="flex snap-x gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {topics.slice(0, 12).map((tg) => {
           const active = tg.tag.toLowerCase() === lower;
           return (
@@ -35,7 +36,7 @@ export async function TrendingTopics({
               key={tg.tag}
               href={active ? "?sort=trending" : `?sort=trending&tag=${encodeURIComponent(tg.tag)}`}
               aria-current={active ? "true" : undefined}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
+              className={`shrink-0 snap-start rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
                 active
                   ? "bg-accent-700 text-white hover:bg-accent-800"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"

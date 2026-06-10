@@ -38,6 +38,23 @@ function fmtDate(iso: string, locale: string): string {
 // 못박던 핵도 함께 사라진다.
 const tagHref = (tag: string) => blogPath(`/tags/${encodeURIComponent(tag)}`);
 
+/** featured(오늘의 글) 신호 — 그리드에서 "왜 이 타일만 큰지"를 설명한다(모바일 리스트의 eyebrow 와
+ *  같은 언어). 라이브 펄스 점(.live-dot)이 "지금"임을 조용히 말하고, reduced-motion 은 정지. */
+function FeaturedBadge({ label, over }: { label: string; over?: boolean }) {
+  return (
+    <span
+      className={
+        over
+          ? "inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-900 shadow-sm backdrop-blur"
+          : "inline-flex items-center gap-1.5 text-[12px] font-semibold text-accent-700 dark:text-accent-400"
+      }
+    >
+      <span aria-hidden className="live-dot relative h-1.5 w-1.5 rounded-full bg-accent-600" />
+      {label}
+    </span>
+  );
+}
+
 function TagLink({ tag, over }: { tag: string; over?: boolean }) {
   return (
     <BlogLink
@@ -148,6 +165,7 @@ export function DiscoveryCard({
         <PostLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
         <div className="pointer-events-none relative z-10 flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-1.5">
+            {featured && <FeaturedBadge label={t("featuredLabel")} />}
             {tag && <TagLink tag={tag} />}
             {reason && <ReasonPill reason={reason} t={t} />}
           </div>
@@ -188,6 +206,11 @@ export function DiscoveryCard({
       <div className="absolute right-3 top-3 z-20 text-white">
         <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
       </div>
+      {featured && (
+        <div className="pointer-events-none absolute left-3 top-3 z-20">
+          <FeaturedBadge label={t("featuredLabel")} over />
+        </div>
+      )}
       <PostLink href={postUrl} aria-label={item.title} className="absolute inset-0 z-10" />
 
       <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4">

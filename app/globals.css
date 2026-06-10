@@ -1240,6 +1240,53 @@ body[data-cookie-consent="visible"] {
   }
 }
 
+/* ── featured 라이브 펄스 ────────────────────────────────────────────────────
+   "오늘의 글" 점에서 그린 링이 2.4s 주기로 한 번씩 번진다 — 라이브 인디케이터 문법.
+   ::after 가 transform/opacity 만 애니메이션(컴포지터 전용). reduced-motion 은 아래에서 정지. */
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: theme(colors.accent.500);
+  animation: live-ping 2.4s var(--ease) infinite;
+}
+@keyframes live-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* ── scroll-driven 헤더 깊이 (progressive enhancement) ───────────────────────
+   스크롤 진행(0→120px)에 비례해 헤더 아래 그림자가 떠오른다 — JS 스크롤 리스너 없이 CSS
+   scroll() 타임라인만으로. 미지원 브라우저는 기존 모습(보더+블러) 그대로. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vt-app-header {
+      animation: chrome-float linear both;
+      animation-timeline: scroll();
+      animation-range: 0 120px;
+    }
+  }
+}
+@keyframes chrome-float {
+  to {
+    box-shadow: 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+  }
+}
+
 /* The Tailwind `animate-fade-in` utility (dialogs, sheets, the mobile TOC) has no reduced-motion
    guard of its own — collapse it for users who ask for less motion. */
 @media (prefers-reduced-motion: reduce) {

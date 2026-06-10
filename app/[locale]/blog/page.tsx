@@ -197,7 +197,7 @@ export default async function BlogFeedPage({
           bar, and the body gets extra room while the cookie banner is up (see globals.css).
           A <div>, not <main> — the public blog layout already owns the single <main> landmark. */}
       <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-        <header className="mx-auto flex w-full max-w-4xl items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800">
+        <header className="mx-auto flex w-full max-w-4xl items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800 xl:max-w-5xl">
           <FeedSortTabs
             tabs={[
               { key: "recent", label: t("recent"), href: sortHref("recent"), active: activeTab === "recent" },
@@ -252,7 +252,9 @@ export default async function BlogFeedPage({
         ) : (
           // 최신 / 검색 결과 = 발견(browse) 면 → 와이드 메이슨리 그리드 (reading-column 예외, AGENTS.md §10.1).
           // 읽기 면(글/작가/태그)은 컬럼 유지. 사이드 rail 은 이 면에서 생략(모바일 탐색 시트가 발견을 담당).
-          <div className={cn("mx-auto max-w-4xl", searching ? "mt-6" : "mt-4")}>
+          // xl 부터 5xl: 1440+ 에서 중앙 60%만 쓰며 허전하던 좌우를 카드 폭(3열 유지)을 키워 채운다.
+          // 탭 헤더(위)도 같은 폭 — §10.1 의 "탭 밑줄이 그리드 폭과 연결" 규칙 유지.
+          <div className={cn("mx-auto max-w-4xl xl:max-w-5xl", searching ? "mt-6" : "mt-4")}>
             {wantTopics && <TrendingTopics topics={topics} locale={locale} activeTag={activeTag} />}
             {/* 인기 탭(주제 strip 노출 중)에선 strip 의 활성 칩이 필터 상태를 보여주므로 별도 해제 칩은 숨김
                 — 두 표시가 겹치지 않게. 최신 탭(카드 #태그 클릭) 등 strip 없는 면에선 이 칩으로 해제. */}
