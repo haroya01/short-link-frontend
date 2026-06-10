@@ -9,6 +9,8 @@ import { BrandTick } from "@/modules/blog/components/rail-heading";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { useAuth } from "@/lib/auth";
+import { blogHref } from "@/lib/host";
 
 /**
  * Publish settings panel (velog/Medium style) — keeps the writing surface Zen while gathering the
@@ -74,6 +76,10 @@ export function PublishDialog({
   onSchedule: (iso: string, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
 }) {
   const t = useTranslations("postEditor");
+  const { me } = useAuth();
+  // 실제 발행 주소(blog.kurl.me/@user/…)를 보여준다 — 이전 표기 "kurl.me/{slug}" 는 단축링크
+  // 도메인이라 발행되는 URL 과 달랐다. dev(path-based)에선 /blog-preview/@user/… 로 그대로 표시.
+  const addressPrefix = blogHref(`/@${me?.username ?? ""}/`).replace(/^https?:\/\//, "");
   const fileRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -270,7 +276,7 @@ export function PublishDialog({
           <Field label={t("slugLabel")}>
             {status === "DRAFT" ? (
               <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[13px] text-slate-500 dark:text-slate-400">kurl.me/</span>
+                <span className="min-w-0 truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">{addressPrefix}</span>
                 <input
                   type="text"
                   value={slug}
@@ -283,7 +289,10 @@ export function PublishDialog({
                 />
               </div>
             ) : (
-              <p className="font-mono text-[13px] text-slate-500 dark:text-slate-400">kurl.me/{slug}</p>
+              <p className="truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">
+                {addressPrefix}
+                {slug}
+              </p>
             )}
           </Field>
 

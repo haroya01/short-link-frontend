@@ -54,14 +54,17 @@ export function extractHeadings(blocks: PublicPostBlock[]): TocHeading[] {
 export function ArticleBody({
   blocks,
   postId,
+  className,
 }: {
   blocks: PublicPostBlock[];
   /** When set, kurl links embedded in the post carry `?post=` so their clicks attribute here. */
   postId?: number;
+  /** Extra marker classes on the prose root — e.g. `has-toc` scopes the wide-image width cap. */
+  className?: string;
 }) {
   const ranks = headingRanks(blocks);
   return (
-    <div className="prose-post">
+    <div className={className ? `prose-post ${className}` : "prose-post"}>
       {blocks.map((block, i) => (
         <Block key={i} block={block} ranks={ranks} postId={postId} />
       ))}

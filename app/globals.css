@@ -1187,6 +1187,13 @@ body[data-cookie-consent="visible"] {
 .post-img-wide {
   width: min(56rem, calc(100vw - 2rem));
 }
+/* 고정 TOC(≥1100px, 중앙+360px 에서 시작)와 wide 이미지(우단 중앙+448px)가 88px 겹치던 충돌 —
+   TOC 가 있는 글에선 wide 폭을 TOC 시작선 안쪽(45rem)으로 캡. full 은 TOC 의 반투명 배경이 감당. */
+@media (min-width: 1100px) {
+  .prose-post.has-toc .post-img-wide {
+    width: min(45rem, calc(100vw - 2rem));
+  }
+}
 .post-img-full {
   width: calc(100vw - 2rem);
 }
@@ -1278,9 +1285,12 @@ body[data-cookie-consent="visible"] {
   color: #f1f5f9;
 }
 /* Heading top margins match .prose-post so heading rhythm ships unchanged. */
-.tiptap h1 { font-size: 1.9rem; margin-top: 2rem; }
-.tiptap h2 { font-size: 1.5rem; margin-top: 2.25rem; }
-.tiptap h3 { font-size: 1.25rem; margin-top: 1.75rem; }
+/* 발행면(.prose-post h2/h3/h4)과 같은 크기·무게 — 에디터의 H1/H2/H3 은 발행 시 페이지 <h1>(제목)
+   아래 h2→h3→h4 contiguous run 으로 강등되므로(post-blocks.tsx headingRanks), 에디터가 발행 크기를
+   미리 보여줘야 WYSIWYG 가 선다. 이전엔 H1 이 1.9rem 으로 그려지고 1.5rem 으로 발행돼 위계가 어긋났다. */
+.tiptap h1 { font-size: 1.5rem; font-weight: 700; margin-top: 2rem; }
+.tiptap h2 { font-size: 1.25rem; font-weight: 600; margin-top: 1.75rem; }
+.tiptap h3 { font-size: 1.0625rem; font-weight: 600; margin-top: 1.5rem; }
 .tiptap ul { list-style: disc; padding-left: 1.5rem; }
 .tiptap ol { list-style: decimal; padding-left: 1.5rem; }
 .tiptap li { margin: 0.3rem 0; }

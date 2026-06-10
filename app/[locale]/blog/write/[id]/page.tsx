@@ -46,7 +46,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     // ships in (§10.1). Title, meta and body share one measure and there is no boxed-in editor frame —
     // a quiet paper column, not a SaaS form. The body editor re-centers at the same width (globals.css)
     // and breaks out of the page padding so its text aligns with the title above it.
-    <main className="mx-auto flex h-[calc(100dvh-1px)] max-w-[44rem] flex-col px-5 pt-3">
+    <main className="mx-auto flex h-[calc(100dvh-3.5rem)] max-w-[44rem] flex-col px-5 pt-3">
       <EditorHeader
         backHref={ed.writeBase}
         postId={post.id}

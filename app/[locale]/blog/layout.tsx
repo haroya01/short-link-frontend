@@ -63,6 +63,10 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
 
   const internalPath = stripLocale(pathname);
   const isWorkspace = matchesAny(internalPath, WORKSPACE_PATHS);
+  // 에디터 캔버스(/write/new · /write/{id})는 자기 스크롤을 가진 100dvh-헤더 표면 — 아래에 Footer 가
+  // 있으면 페이지 스크롤이 하나 더 생겨(이중 스크롤 컨텍스트) 휠/스와이프가 본문과 페이지 사이에서
+  // 튕긴다. 허브(/write)와 다른 워크스페이스 페이지는 일반 문서 흐름이라 Footer 유지.
+  const isEditorCanvas = /^\/write\/[^/]+$/.test(internalPath);
 
   if (isWorkspace) {
     return (
@@ -71,7 +75,7 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
           <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
             <AppHeader product="blog" />
             <WorkspaceBody>{children}</WorkspaceBody>
-            <Footer />
+            {!isEditorCanvas && <Footer />}
           </div>
         </SidebarStateProvider>
         <CookieConsent darkAware />
