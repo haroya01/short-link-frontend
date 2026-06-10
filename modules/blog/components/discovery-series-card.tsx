@@ -120,13 +120,17 @@ export function DiscoverySeriesCard({
             <div
               key={p.slug}
               aria-hidden={!front}
-              className="absolute transition-all duration-500 ease-[var(--ease)]"
+              // transition-all 은 zIndex 의 이산 점프까지 페인트 사이클에 끌어들여 Safari 에서
+              // 전환마다 번쩍였다 — transform/opacity 만 전환하고, translateZ(0) 로 각 페이지를
+              // 자기 컴포지터 레이어에 고정해 재래스터 플래시를 막는다.
+              className="absolute transition-[transform,opacity] duration-500 ease-[var(--ease)] will-change-transform"
               style={{
                 top: 0,
                 left: 0,
                 right: PEEK,
                 bottom: PEEK,
-                transform: `translate(${order * (PEEK / 2)}px, ${order * (PEEK / 2)}px) scale(${1 - order * 0.04})`,
+                // translateZ(0): 각 페이지를 자기 컴포지터 레이어에 고정(Safari 재래스터 플래시 방지).
+                transform: `translate(${order * (PEEK / 2)}px, ${order * (PEEK / 2)}px) scale(${1 - order * 0.04}) translateZ(0)`,
                 transformOrigin: "bottom right",
                 zIndex: n - order,
                 opacity: hidden ? 0 : 1,
@@ -143,12 +147,12 @@ export function DiscoverySeriesCard({
                 }`}
               >
                 {p.ogImageUrl ? (
-                  // 에피소드에 사진이 있으면 그 사진을 커버로 — 톤 하모나이즈(상시 고정)도 글
-                  // 카드와 동일 규칙(hover 복원은 스크롤 중 hover 연사 깜빡임 때문에 폐기).
+                  // 에피소드에 사진이 있으면 그 사진을 커버로 — 톤 하모나이즈도 글 카드와 동일
+                  // 규칙(블렌드 모드 ❌ — iPad Safari 타일 seam/깜빡임, 글 카드 주석 참조).
                   <>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.ogImageUrl} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover saturate-[.85]" />
-                    <div aria-hidden className="absolute inset-0 bg-accent-800/15 mix-blend-color" />
+                    <div aria-hidden className="absolute inset-0 bg-accent-900/10" />
                   </>
                 ) : (
                   <div className={`absolute inset-0 bg-gradient-to-br ${EP_GRADS[i % EP_GRADS.length]} dark:opacity-[0.06]`} />
