@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -91,6 +92,13 @@ export function FollowingFeed({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [items, setItems] = useState<PublicFeedItem[] | null>(null);
+  // Pagination — without it the feed silently ended at the first 24 posts: the API has had
+  // page/size + hasNext all along, the component just never asked for page 1.
+  const [page, setPage] = useState(0);
+  const [hasNext, setHasNext] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   // Active filter facet lives in the URL (?author= / ?topic=), so it survives reload and is shareable.
   // The feed merges 작가·시리즈·주제, so it narrows by one author OR one followed tag (in-place over
@@ -117,7 +125,10 @@ export function FollowingFeed({
     let alive = true;
     listFollowingFeed(0, 24)
       .then((view) => {
-        if (alive) setItems(view.items);
+        if (!alive) return;
+        setItems(view.items);
+        setHasNext(view.hasNext);
+        setPage(0);
       })
       .catch(() => {
         if (alive) setItems([]);
@@ -126,6 +137,43 @@ export function FollowingFeed({
       alive = false;
     };
   }, [ready, authenticated]);
+
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasNext) return;
+    setLoadingMore(true);
+    setLoadError(false);
+    const next = page + 1;
+    try {
+      const view = await listFollowingFeed(next, 24);
+      // De-dupe defensively (same rule as feed-infinite): a new post at the head between fetches
+      // can shift an already-seen post across the page boundary.
+      setItems((prev) => {
+        const seen = new Set((prev ?? []).map((i) => `${i.author.username}/${i.slug}`));
+        return [...(prev ?? []), ...view.items.filter((i) => !seen.has(`${i.author.username}/${i.slug}`))];
+      });
+      setPage(next);
+      setHasNext(view.hasNext);
+    } catch {
+      // Keep hasNext so the button stays as a retry; the error gates the auto-loader below.
+      setLoadError(true);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, hasNext, page]);
+
+  // Auto-load as the reader nears the end; the button below stays as the no-JS/retry fallback.
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasNext || loadError) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore();
+      },
+      { rootMargin: "600px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasNext, loadError, loadMore]);
 
   if (ready && !authenticated) {
     return (
@@ -261,6 +309,31 @@ export function FollowingFeed({
           ))}
         </DiscoveryGrid>
       </div>
+
+      {hasNext && (
+        <div ref={sentinelRef} role="status" aria-live="polite" className="mt-8 flex flex-col items-center gap-2">
+          <button
+            type="button"
+            onClick={loadMore}
+            disabled={loadingMore}
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
+          >
+            {loadingMore ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {t("loadingMore")}
+              </>
+            ) : loadError ? (
+              t("retry")
+            ) : (
+              t("loadMore")
+            )}
+          </button>
+          {loadError && !loadingMore && (
+            <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("loadMoreError")}</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
