@@ -151,25 +151,8 @@ export function DiscoveryCard({
 
   // ── text: 이미지·표지 없이 소개글을 보여주는 글 카드 ──
   if (variant === "text") {
-    // 물결 위상: 카드마다 다른 음수 delay 로 시작점을 어긋내 그리드가 일제히 출렁이지 않게.
-    // (Math.random 금지 — id 시드라 SSR/CSR 결정적)
-    const wavePhase = { animationDelay: `-${(item.id % 9) * 1.7}s` } as const;
     return (
-      <div className={`${SHELL} ${CARD_SHADOW} border border-slate-200/80 bg-white p-4 pb-6 dark:border-slate-800 dark:bg-slate-900`}>
-        {/* 잔잔한 수면 — 이미지 없는 글의 "심심함"을 채우는 형태. 한 겹·완만한 큰 곡선·균일한
-            민트 면: 이전의 두 겹 잔물결은 농도 단차+톱니가 겹쳐 라이트 모드에서 깨진 그림자처럼
-            읽혔다. 쉬는 상태선 정지(카드별 위상으로 형태만 제각각), hover/포커스에서만 흐른다.
-            transform-only, reduced-motion 은 globals 가드가 영구 정지. */}
-        <div aria-hidden className="absolute inset-x-0 bottom-0 z-0 h-8 overflow-hidden opacity-80 transition-opacity duration-300 ease-[var(--ease)] group-hover:opacity-100">
-          <svg
-            viewBox="0 0 600 20"
-            preserveAspectRatio="none"
-            className="typo-wave absolute bottom-0 left-0 h-7 w-[200%] text-accent-100/80 dark:text-accent-500/10"
-            style={wavePhase}
-          >
-            <path d="M0 11 Q 150 3 300 11 T 600 11 V 20 H 0 Z" fill="currentColor" />
-          </svg>
-        </div>
+      <div className={`${SHELL} ${CARD_SHADOW} border border-slate-200/80 bg-white p-4 dark:border-slate-800 dark:bg-slate-900`}>
         <div className="absolute right-3 top-3 z-20">
           <FeedCardBookmark postId={item.id} username={item.author.username} slug={item.slug} />
         </div>

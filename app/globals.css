@@ -1287,33 +1287,6 @@ body[data-cookie-consent="visible"] {
   }
 }
 
-/* ── 발견 타이포 카드의 잔잔한 수면 (hover 시 흐름) ──────────────────────────
-   2x 폭 스트립을 translateX(-50%) 루프 — path 가 주기적이라 이음새 없이 무한히 흐른다.
-   한 겹·완만한 곡선·균일 면: 겹침 단차가 없어 정지 상태에서도 깨진 그림자처럼 안 읽힌다.
-   transform-only(컴포지터 전용). reduced-motion 은 아래 가드가 정지. */
-@keyframes wave-drift {
-  to {
-    transform: translateX(-50%);
-  }
-}
-/* 기본은 정지(paused) — 카드마다 다른 음수 delay 가 정지 상태의 물결 '형태'도 다르게 만든다.
-   hover/키보드 포커스에서만 흐른다: 타이포 카드가 그리드의 다수가 된 뒤 전부 상시 출렁이니
-   잔잔함이 아니라 패턴 소음이었다("모든 카드가 특별하면 아무도 특별하지 않다"). */
-.typo-wave {
-  animation: wave-drift 16s linear infinite;
-  animation-play-state: paused;
-}
-.group:hover .typo-wave,
-.group:focus-within .typo-wave {
-  animation-play-state: running;
-}
-@media (prefers-reduced-motion: reduce) {
-  .typo-wave,
-  .typo-wave-slow {
-    animation: none;
-  }
-}
-
 /* The Tailwind `animate-fade-in` utility (dialogs, sheets, the mobile TOC) has no reduced-motion
    guard of its own — collapse it for users who ask for less motion. */
 @media (prefers-reduced-motion: reduce) {
