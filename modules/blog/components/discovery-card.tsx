@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import type { ReactNode } from "react";
-import { Heart, Eye } from "lucide-react";
+import { Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link as TransitionLink } from "next-view-transitions";
 import { blogPath } from "@/lib/host";
 import { DATE_LOCALE } from "@/lib/date";
 import type { FollowReason, PublicFeedItem } from "@/modules/blog/api/public-posts";
-import { showLikes, showViews } from "@/modules/blog/lib/public-metrics";
+import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { postHref, authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -27,7 +27,6 @@ import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
  * ♥좋아요(>0) · 👁조회수(≥10) · 북마크. Only layout differs.
  */
 
-const fmtNum = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`);
 function fmtDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", { month: "long", day: "numeric" });
 }
@@ -107,16 +106,11 @@ function CardMeta({ item, locale, over }: { item: PublicFeedItem; locale: string
       <time dateTime={item.publishedAt} className="shrink-0">
         {fmtDate(item.publishedAt, locale)}
       </time>
+      {/* 조회수는 카드에서 제거(§10.2 와 동일 규칙으로 통일) — 작은 카드에 숫자 신호는 하나(좋아요)면 충분. */}
       {showLikes(item.likeCount) && (
         <span className="flex shrink-0 items-center gap-0.5">
           <Heart className={`ml-0.5 h-3 w-3 ${over ? "" : "text-accent-500"}`} />
           {item.likeCount}
-        </span>
-      )}
-      {showViews(item.viewCount) && (
-        <span className="flex shrink-0 items-center gap-0.5">
-          <Eye className="ml-0.5 h-3 w-3" />
-          {fmtNum(item.viewCount)}
         </span>
       )}
     </div>

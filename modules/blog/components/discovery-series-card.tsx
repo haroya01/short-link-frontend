@@ -20,13 +20,14 @@ import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscrib
  * The front card opens that episode; the series name opens the series.
  */
 
-// 글 카드(COVER_GRADS)와 동일한 single-accent(emerald) + slate 패밀리 — 덱 전체가 무지개로 튀지 않고
-// 브랜드 안에서 에피소드별로만 미묘하게 달라진다. 어두운 끝색이라 흰 텍스트 대비도 확보.
+// 이미지 없는 에피소드 페이지 = 라이트 "종이". 진초록 덱은 featured(오늘의 글) 타일과 같은
+// "크고 어두운 타일"이라 첫 화면에서 주인공 경합이 났다 — 흰 바탕 + 그린 액센트로 반전해
+// "오늘의 글 > 시리즈 추천" 위계를 세운다. 에피소드별로 틴트만 미묘하게 달라진다.
 const EP_GRADS = [
-  "from-emerald-500 via-teal-600 to-emerald-800",
-  "from-teal-600 via-emerald-700 to-slate-900",
-  "from-emerald-600 via-emerald-800 to-slate-900",
-  "from-slate-700 via-emerald-800 to-slate-950",
+  "from-white via-accent-50/70 to-accent-100/60",
+  "from-accent-50/80 via-white to-slate-50",
+  "from-white via-slate-50 to-accent-50/70",
+  "from-accent-50/60 via-white to-white",
 ];
 const MAX = 4;
 const AUTOPLAY_MS = 3400;
@@ -133,7 +134,9 @@ export function DiscoverySeriesCard({
               }}
             >
               <div
-                className={`relative h-full w-full overflow-hidden rounded-2xl bg-slate-700 shadow-[0_1px_3px_rgba(15,23,42,0.06)] ring-1 ring-white/15 ${
+                className={`relative h-full w-full overflow-hidden rounded-2xl shadow-[0_1px_3px_rgba(15,23,42,0.06)] ${
+                  p.ogImageUrl ? "bg-slate-700 ring-1 ring-white/15" : "bg-white ring-1 ring-accent-200/60 dark:bg-slate-900 dark:ring-accent-500/20"
+                } ${
                   front
                     ? "transition-[transform,box-shadow] duration-300 ease-[var(--ease)] group-hover:-translate-y-1 group-hover:shadow-card-hover has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950"
                     : ""
@@ -144,12 +147,11 @@ export function DiscoverySeriesCard({
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={p.ogImageUrl} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
                 ) : (
-                  <>
-                    <div className={`absolute inset-0 bg-gradient-to-br ${EP_GRADS[i % EP_GRADS.length]}`} />
-                    <div className="absolute inset-0 bg-[radial-gradient(130%_110%_at_15%_0%,rgba(255,255,255,0.28),transparent_55%)]" />
-                  </>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${EP_GRADS[i % EP_GRADS.length]} dark:opacity-[0.06]`} />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                {p.ogImageUrl && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                )}
 
                 {/* Subscribe (front only) + the whole card → this episode. */}
                 {front && (
@@ -163,25 +165,25 @@ export function DiscoverySeriesCard({
                   className="absolute inset-0 z-10"
                 />
 
-                <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4 text-white">
+                <div className={`pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4 ${p.ogImageUrl ? "text-white" : "text-slate-900 dark:text-slate-100"}`}>
                   {/* Series identity (opens series). pr clears the subscribe button at top-right. */}
                   <div className="flex pr-9">
                     <Nav href={seriesUrl} className="pointer-events-auto flex min-w-0 items-center gap-1.5">
-                      <Mark className="h-2.5 w-auto shrink-0" animated />
+                      <Mark className={`h-2.5 w-auto shrink-0 ${p.ogImageUrl ? "" : "text-accent-600 dark:text-accent-400"}`} animated />
                       <span className="truncate text-[12px] font-semibold tracking-wide">{series.title}</span>
                     </Nav>
                   </div>
 
                   {/* Episode number(+total) + title (the card's subject). */}
                   <div>
-                    <p className="font-mono font-bold leading-none tabular-nums text-white/85">
+                    <p className={`font-mono font-bold leading-none tabular-nums ${p.ogImageUrl ? "text-white/85" : "text-accent-700 dark:text-accent-400"}`}>
                       <span className="text-[34px]">{String(i + 1).padStart(2, "0")}</span>
-                      <span className="text-[15px] text-white/70"> / {String(series.postCount).padStart(2, "0")}</span>
+                      <span className={`text-[15px] ${p.ogImageUrl ? "text-white/70" : "text-slate-500 dark:text-slate-400"}`}> / {String(series.postCount).padStart(2, "0")}</span>
                     </p>
                     <h3 className="mt-2 line-clamp-3 text-balance text-[18px] font-bold leading-tight tracking-tight">
                       {p.title}
                     </h3>
-                    <div className="mt-2.5 flex items-center gap-1.5 text-[12px] text-white/85">
+                    <div className={`mt-2.5 flex items-center gap-1.5 text-[12px] ${p.ogImageUrl ? "text-white/85" : "text-slate-600 dark:text-slate-400"}`}>
                       <Avatar src={series.author.avatarUrl} name={series.author.username} size="xs" />
                       <span className="truncate font-medium">{series.author.username}</span>
                       <span aria-hidden>·</span>
