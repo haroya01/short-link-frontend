@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Heart, Eye } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link as TransitionLink } from "next-view-transitions";
+import { blogPath } from "@/lib/host";
 import { DATE_LOCALE } from "@/lib/date";
 import type { FollowReason, PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { showLikes, showViews } from "@/modules/blog/lib/public-metrics";
@@ -30,9 +31,12 @@ const fmtNum = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`)
 function fmtDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", { month: "long", day: "numeric" });
 }
-// 카드 #태그는 항상 작동하는 "최신+태그" 그리드로 — 팔로잉/시리즈 탭에선 ?tag= 만으론 필터가 안 먹어
-// 죽은 클릭이 되므로 sort=recent 로 못박는다(인기 주제 칩은 별도로 ?sort=trending&tag= 사용).
-const tagHref = (tag: string) => `?sort=recent&tag=${encodeURIComponent(tag)}`;
+// 카드 #태그 = 주제의 정식 목적지인 /tags/[tag] 읽기 페이지. 이전엔 ?sort=recent&tag= 그리드
+// 필터였는데, 같은 #태그 affordance 가 화면에 따라 세 목적지(recent 필터·trending 필터·읽기
+// 페이지)로 갈라져 있었다. 규칙을 하나로: #태그 텍스트는 어디서든 /tags/[tag], in-place 필터는
+// active 상태를 가진 칩 스트립(TrendingTopics)만. 팔로잉/시리즈 탭에서 ?tag= 가 안 먹어 sort 를
+// 못박던 핵도 함께 사라진다.
+const tagHref = (tag: string) => blogPath(`/tags/${encodeURIComponent(tag)}`);
 
 // Theme covers for image-less posts — single-accent(emerald) + slate family only, so a grid of them
 // stays on-brand (no rainbow) and dark enough that white text passes contrast. Indexed by post id.

@@ -137,6 +137,12 @@ export default async function BlogFeedPage({
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
   const hasNext = feedResult && feedResult.ok ? feedResult.data.hasNext : false;
+  // 검색이 비었을 때만 인기 주제를 한 번 더 가져온다 — SearchEmpty 의 "다른 주제 둘러보기" 칩이
+  // 빈 배열로 죽어 있던 dead end 수정. 흔치 않은 경로라 순차 fetch 비용은 무시 가능.
+  const emptySearchTopics =
+    searching && feedResult && feedResult.ok && feedResult.data.items.length === 0
+      ? await listPopularTags(8)
+      : null;
   const authors = authorsResult && authorsResult.ok ? authorsResult.data : [];
   const series = seriesResult && seriesResult.ok ? seriesResult.data : [];
   const topics = topicsResult && topicsResult.ok ? topicsResult.data : [];
@@ -237,7 +243,7 @@ export default async function BlogFeedPage({
           <ReadingShell className={searching ? "mt-6" : "mt-4"}>
             <FeedContentTransition index={tabIndex} contentKey={contentKey}>
               {searching ? (
-                <SearchEmpty query={query} tags={[]} locale={locale} />
+                <SearchEmpty query={query} tags={emptySearchTopics?.ok ? emptySearchTopics.data : []} locale={locale} />
               ) : (
                 <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
               )}
