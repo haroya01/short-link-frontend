@@ -78,18 +78,12 @@ export function AppHeader({
           {/* Blog header → the logo returns to the blog home, not the links app root. blogHref keeps
               the right host (blog.kurl.me, or /blog-preview on apex); BlogChromeLink upgrades the hop
               to a client-side navigation when already on that origin, so the chrome stays mounted.
-              On the slim mobile surfaces the "blog.kurl" wordmark drops to just the mark so the screen
-              leads with context (the author / post) — the full brand + product switch live in the
-              bottom-nav 계정 sheet. The full wordmark returns at sm+ (and always in the workspace). */}
+              모바일(<sm)에선 표면을 가리지 않고 마크만 — slim 공개 표면은 물론 워크스페이스도:
+              워크스페이스는 우측 클러스터(검색·벨·전환 pill·아바타)가 모바일에서도 다 살아 있어
+              풀 워드마크까지 들어가면 390px 에서 컨트롤들이 워드마크 위로 겹쳤다. */}
           <BlogChromeLink href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable shrink-0">
-            {slimMobile ? (
-              <>
-                <Logo variant="blog" animated showText={false} className="sm:hidden" />
-                <Logo variant="blog" animated className="hidden sm:inline-flex" />
-              </>
-            ) : (
-              <Logo variant="blog" animated />
-            )}
+            <Logo variant="blog" animated showText={false} className="sm:hidden" />
+            <Logo variant="blog" animated className="hidden sm:inline-flex" />
           </BlogChromeLink>
         </div>
 
@@ -99,8 +93,10 @@ export function AppHeader({
             brand mark beside the search field, and keeps the expanded search pill from sitting flush
             against the same-shaped switcher pill. */}
         {/* 모바일 글쓰기 — 하단 탭바 중앙 FAB 에서 이동: 스크롤 중 떠 있는 원형이 본문을 가리고
-            거슬린다는 피드백. 콘텐츠 앱의 주 행동을 우상단 고정(헤더는 sticky)으로. */}
-        {product === "blog" && (
+            거슬린다는 피드백. 콘텐츠 앱의 주 행동을 우상단 고정(헤더는 sticky)으로. slim 공개
+            표면 전용 — 워크스페이스는 이미 글쓰기 안이고, 우측 클러스터가 모바일에도 살아 있어
+            원형까지 끼면 헤더가 넘친다(워드마크 위 겹침 버그의 절반). */}
+        {product === "blog" && slimMobile && (
           <BlogChromeLink
             href={showAuthed ? blogHref("/write/new") : `${blogHref("/login")}?next=${encodeURIComponent("/write/new")}`}
             aria-label={t("write")}
