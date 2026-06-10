@@ -30,7 +30,7 @@ export async function FeedMasthead({
               {eyebrow}
             </p>
           )}
-          <h1 className="text-balance font-serif text-headline-sm font-semibold leading-[1.15] tracking-display text-slate-900 dark:text-slate-100 sm:text-headline-lg sm:leading-[1.1]">
+          <h1 className="text-balance text-headline-sm font-semibold leading-[1.15] tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg sm:leading-[1.1]">
             {heading}
           </h1>
           {/* Sub-line is brand flourish — hide on mobile to get the first post above the fold sooner. */}

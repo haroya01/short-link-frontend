@@ -97,9 +97,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         autoComplete="off"
         data-1p-ignore
         data-lpignore="true"
-        // Same headline treatment as the published post <h1> (font-serif, text-headline-sm→md,
-        // tracking-display) so the title you type is the title that ships.
-        className="mt-6 w-full border-0 bg-transparent font-serif text-headline-sm font-semibold tracking-display text-slate-900 outline-none placeholder:text-slate-300 dark:text-slate-100 dark:placeholder:text-slate-600 sm:text-headline-md"
+        // Same headline token as the published post <h1> (text-headline-sm→md, tracking-headline) so the
+        // title you type is the title that ships.
+        className="mt-6 w-full border-0 bg-transparent text-headline-sm font-semibold tracking-headline text-slate-900 outline-none placeholder:text-slate-300 dark:text-slate-100 dark:placeholder:text-slate-600 sm:text-headline-md"
         placeholder={t("titlePlaceholder")}
         aria-label={t("titlePlaceholder")}
       />

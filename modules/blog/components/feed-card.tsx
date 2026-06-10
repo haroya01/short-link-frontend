@@ -202,10 +202,10 @@ export function FeedCard({
               item.tags[0] && <TagEyebrow tag={item.tags[0]} />
             )}
             <h2
-              className={`mt-1 line-clamp-2 font-serif font-bold leading-[1.3] tracking-display text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400 ${
+              className={`mt-1 line-clamp-2 font-bold leading-[1.3] text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400 ${
                 featured
-                  ? "text-[23px] sm:text-[27px] sm:leading-[1.18]"
-                  : "text-[18px]"
+                  ? "text-[23px] tracking-headline sm:text-[27px] sm:leading-[1.18]"
+                  : "text-[18px] tracking-tight"
               }`}
             >
               {item.title}

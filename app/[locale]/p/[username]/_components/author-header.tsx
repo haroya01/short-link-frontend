@@ -36,7 +36,7 @@ export async function AuthorHeader({ author }: { author: PublicAuthor }) {
       <div className="flex items-start gap-5">
         <Avatar src={author.avatarUrl} name={author.username} size="xl" />
         <div className="min-w-0 flex-1 pt-1">
-          <h1 className="font-serif text-headline-sm font-semibold tracking-display text-slate-900 dark:text-slate-100 sm:text-headline-md">
+          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             @{author.username}
           </h1>
           {author.bio && (
