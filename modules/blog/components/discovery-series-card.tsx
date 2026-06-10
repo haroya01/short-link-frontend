@@ -52,59 +52,16 @@ export function DiscoverySeriesCard({
   });
 
   const [idx, setIdx] = useState(0);
-  const [paused, setPaused] = useState(false); // hover/focus
-  const [onScreen, setOnScreen] = useState(true); // 뷰포트 밖이면 정지
-  const [tabVisible, setTabVisible] = useState(true); // 백그라운드 탭이면 정지
-  const [reduced, setReduced] = useState(false); // prefers-reduced-motion (런타임 변경 추적)
-  const sectionRef = useRef<HTMLElement>(null);
-  const advanceRef = useRef(() => setIdx((i) => (i + 1) % n));
-  advanceRef.current = () => setIdx((i) => (i + 1) % n);
-
-  // reduced-motion 은 사용자가 OS 설정에서 켜고 끌 수 있으므로 한 번 읽고 끝내지 않고 change 를 구독한다.
-  useEffect(() => {
-    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
-    if (!mq) return;
-    setReduced(mq.matches);
-    const onChange = () => setReduced(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-
-  // 화면 밖으로 스크롤되면 자동 넘김을 멈춘다(보이지도 않는 카드가 setState 를 돌리지 않게).
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el || !("IntersectionObserver" in window)) return;
-    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { threshold: 0.3 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  // 탭이 백그라운드면 정지(불필요한 타이머/리렌더 차단).
-  useEffect(() => {
-    const onVis = () => setTabVisible(!document.hidden);
-    document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, []);
-
-  useEffect(() => {
-    if (paused || reduced || !onScreen || !tabVisible || n <= 1) return;
-    const id = window.setInterval(() => advanceRef.current(), AUTOPLAY_MS);
-    return () => window.clearInterval(id);
-  }, [paused, reduced, onScreen, tabVisible, n]);
+  // 자동 넘김은 폐기 — 정적인 그리드에서 혼자 3.4s 마다 도는 카드는 화면에서 가장 시끄러운
+  // 존재였고(iPad 실기기에서 "깜빡임" 신고), §10.7 의 "ambient 는 희소할 때만"과도 어긋났다.
+  // 한 장 넘김은 우측 플립 엣지(수동)만 남는다.
+  const advance = () => setIdx((i) => (i + 1) % n);
 
   if (n === 0) return null;
 
   return (
-    <section
-      ref={sectionRef}
-      aria-label={series.title}
-      className="group"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
-    >
-      {/* 스크린리더에 현재 보이는 에피소드를 알린다(자동/수동 넘김 모두). 시각적으로는 숨김. */}
+    <section aria-label={series.title} className="group">
+      {/* 스크린리더에 현재 보이는 에피소드를 알린다(수동 넘김). 시각적으로는 숨김. */}
       <span className="sr-only" aria-live="polite">
         {t("seriesEpisodeOf", { current: idx + 1, total: series.postCount })}
       </span>
@@ -140,14 +97,19 @@ export function DiscoverySeriesCard({
             >
               <div
                 className={`relative h-full w-full overflow-hidden rounded-2xl shadow-[0_1px_3px_rgba(15,23,42,0.06)] ${
-                  p.ogImageUrl ? "bg-slate-700 ring-1 ring-white/15" : "bg-white ring-1 ring-accent-200/60 dark:bg-slate-900 dark:ring-accent-500/20"
+                  // 뒷장은 내용물 없이 중립 종이 — 어두운 사진 모서리가 비죽 나오면 경계선처럼 읽힌다.
+                  !front
+                    ? "bg-white ring-1 ring-slate-200/80 dark:bg-slate-900 dark:ring-slate-700/60"
+                    : p.ogImageUrl
+                      ? "bg-slate-700 ring-1 ring-white/15"
+                      : "bg-white ring-1 ring-accent-200/60 dark:bg-slate-900 dark:ring-accent-500/20"
                 } ${
                   front
                     ? "transition-[transform,box-shadow] duration-300 ease-[var(--ease)] group-hover:-translate-y-1 group-hover:shadow-card-hover has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950"
                     : ""
                 }`}
               >
-                {p.ogImageUrl ? (
+                {front && (p.ogImageUrl ? (
                   // 에피소드에 사진이 있으면 그 사진을 커버로 — 톤 하모나이즈도 글 카드와 동일
                   // 규칙(블렌드 모드 ❌ — iPad Safari 타일 seam/깜빡임, 글 카드 주석 참조).
                   <>
@@ -157,8 +119,8 @@ export function DiscoverySeriesCard({
                   </>
                 ) : (
                   <div className={`absolute inset-0 bg-gradient-to-br ${EP_GRADS[i % EP_GRADS.length]} dark:opacity-[0.06]`} />
-                )}
-                {p.ogImageUrl && (
+                ))}
+                {front && p.ogImageUrl && (
                   <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
                 )}
 
@@ -168,12 +130,15 @@ export function DiscoverySeriesCard({
                     <SeriesSubscribeButton seriesId={series.id} />
                   </div>
                 )}
-                <Nav
-                  href={authorHref(series.author.username, locale, p.slug)}
-                  aria-label={p.title}
-                  className="absolute inset-0 z-10"
-                />
+                {front && (
+                  <Nav
+                    href={authorHref(series.author.username, locale, p.slug)}
+                    aria-label={p.title}
+                    className="absolute inset-0 z-10"
+                  />
+                )}
 
+                {front && (
                 <div className={`pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4 ${p.ogImageUrl ? "text-white" : "text-slate-900 dark:text-slate-100"}`}>
                   {/* Series identity (opens series). pr clears the subscribe button at top-right. */}
                   <div className="flex pr-9">
@@ -200,13 +165,14 @@ export function DiscoverySeriesCard({
                     </div>
                   </div>
                 </div>
+                )}
 
                 {/* Right flip edge → next episode (한 장 넘김). top-14: 우상단 구독 버튼 히트박스를 비워둬
                     겹치지 않게(예전엔 inset-y-0 z-30 이 구독 버튼을 덮어 구독 탭이 거의 안 먹었음). */}
                 {front && n > 1 && (
                   <button
                     type="button"
-                    onClick={advanceRef.current}
+                    onClick={advance}
                     aria-label={t("seriesNextEpisode")}
                     className="absolute bottom-0 right-0 top-14 z-30 flex w-12 items-center justify-center bg-gradient-to-l from-black/30 to-transparent text-white/85 transition hover:text-white"
                   >
