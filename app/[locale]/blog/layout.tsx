@@ -153,9 +153,14 @@ function WorkspaceBody({ children }: { children: React.ReactNode }) {
   }
 
   const sections = buildBlogSections(tBlog, tCommon, { isAdmin });
+  // 에디터 캔버스(/write/new · /write/{id})에선 데스크톱 사이드바를 내린다 — 글쓰기는 종이가
+  // 주인공이라 워크스페이스 내비는 소음이고, 사이드바 폭만큼 캔버스가 뷰포트 중앙에서 밀려
+  // "왼쪽에 치우친 에디터"로 읽혔다. 돌아가는 길은 에디터 헤더의 ← 글 목록. 모바일 드로어는
+  // 유지(헤더 햄버거가 여는 대상이 사라지면 죽은 버튼이 된다).
+  const isEditorCanvas = /^\/write\/[^/]+$/.test(stripLocale(pathname));
   return (
     <div className="flex flex-1">
-      <Sidebar sections={sections} basePath={base} />
+      {!isEditorCanvas && <Sidebar sections={sections} basePath={base} />}
       <MobileSidebar sections={sections} basePath={base} />
       <main className="min-w-0 flex-1">{children}</main>
     </div>
