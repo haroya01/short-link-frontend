@@ -14,7 +14,7 @@ read 면은 컬럼이 맞다는 판단. **AGENTS.md §10.1 에 이 예외를 명
   - `DiscoveryCard(item, locale, featured?)` — `PublicFeedItem` 1개를 타일로. ogImageUrl 있으면 **사진 커버**,
     없으면 **테마색 자동 커버**(post id 결정적 + 3-bar 마크 = 시그니처). → 이미지 강제 없이 그리드 균일.
   - 정보는 `FeedCard` 와 동일: 대표 태그 · 작가 · 날짜 · ♥좋아요(>0) · 👁조회수(≥10, `public-metrics` 규칙) · 북마크.
-  - `DiscoveryGrid` / `DiscoveryCell` — CSS columns 메이슨리(모바일 2 → 4열).
+  - `DiscoveryGrid` / `DiscoveryCell` — CSS columns 메이슨리. **md+ 전용** — <md 는 1열 `FeedCard` 행(`feed-infinite.tsx`/`following-feed.tsx` 의 `md:hidden`/`hidden md:block` 분기). 2열 타일은 한국어 제목이 잘리고, columns 는 append/이미지 로드마다 전 카드를 재배치해 모바일 스크롤 중 점프가 났다.
 - `feed-infinite.tsx` — `variant?: "list" | "grid"` 추가. **기본 "list"(기존 면 전부 보존)**, "grid" 일 때만 그리드.
 - `app/[locale]/blog/page.tsx` — **최신/검색 flat 피드만** 와이드 그리드(`max-w-6xl`, rail 생략). 인기(주제별 carousel)·
   팔로잉·시리즈·작가 페이지·태그 페이지는 **그대로**.
@@ -30,7 +30,7 @@ read 면은 컬럼이 맞다는 판단. **AGENTS.md §10.1 에 이 예외를 명
   - 1 failed = `lib/i18n-literals.test.ts` → `app/[locale]/p/[username]/[slug]/opengraph-image.tsx` 의
     하드코딩 "분 읽기"/"分で読めます". **기존 이슈(HEAD 에서도 실패), 이 작업과 무관.** OG 라우트의 의도적
     인라인이라 별도 정리 권장.
-- mock 모드 렌더 확인: `/ko/blog`(최신 그리드) · 모바일 2열 · 다크 · `?sort=trending`(인기 carousel 유지) · `/ko/p/{user}`(작가 리스트 유지).
+- mock 모드 렌더 확인: `/ko/blog`(최신 그리드) · 모바일 1열 행 · 다크 · `?sort=trending`(인기 carousel 유지) · `/ko/p/{user}`(작가 리스트 유지).
 
 ## 후속 (별도 작업)
 - **Phase 2 — 탭×태그 합성 + URL 동기화**: 태그 칩(인기 `/public/tags` + 로그인 시 관심 태그 pin) ×

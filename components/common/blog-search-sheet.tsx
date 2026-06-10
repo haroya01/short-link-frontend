@@ -114,7 +114,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
       role="dialog"
       aria-modal="true"
       aria-label={t("searchLabel")}
-      className="fixed inset-0 z-50 flex flex-col bg-white origin-top animate-[search-sheet-in_240ms_cubic-bezier(0.22,1,0.36,1)_both] motion-reduce:animate-none dark:bg-slate-950 sm:hidden"
+      className="fixed inset-0 z-50 flex flex-col bg-white origin-top animate-[search-sheet-in_240ms_var(--ease)_both] motion-reduce:animate-none dark:bg-slate-950 sm:hidden"
     >
       <form onSubmit={goToAll} role="search" className="flex h-14 shrink-0 items-center gap-2 px-3">
         <button

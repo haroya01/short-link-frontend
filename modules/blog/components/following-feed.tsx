@@ -8,13 +8,13 @@ import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
 import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
 import {
   DiscoveryCard,
   DiscoveryGrid,
   DiscoveryCell,
   DiscoveryGridSkeleton,
 } from "@/modules/blog/components/discovery-card";
+import { authorHref, FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
 import { FollowFilterChips, type FeedFacet } from "@/modules/blog/components/follow-filter-chips";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -169,7 +169,12 @@ export function FollowingFeed({
   if (!ready || items === null) {
     return (
       <div className="mx-auto mt-4 max-w-4xl">
-        <DiscoveryGridSkeleton />
+        <div className="mx-auto max-w-2xl md:hidden">
+          <FeedListSkeleton />
+        </div>
+        <div className="hidden md:block">
+          <DiscoveryGridSkeleton />
+        </div>
       </div>
     );
   }
@@ -237,13 +242,25 @@ export function FollowingFeed({
   return (
     <div className="mx-auto mt-4 max-w-4xl">
       <FollowFilterChips authors={followed} tags={presentTags} active={activeFacet} onSelect={setFacet} />
-      <DiscoveryGrid>
-        {shown.map((item) => (
-          <DiscoveryCell key={`${item.author.username}/${item.slug}`}>
-            <DiscoveryCard item={item} locale={locale} />
-          </DiscoveryCell>
-        ))}
-      </DiscoveryGrid>
+      {/* <md = single-column reading rows, md+ = discovery masonry — same split (and reasoning) as
+          the grid branch of feed-infinite: 2-col tiles truncate titles and the CSS-columns masonry
+          rebalances under the thumb. */}
+      <div className="mx-auto max-w-2xl md:hidden">
+        <FeedList>
+          {shown.map((item) => (
+            <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
+          ))}
+        </FeedList>
+      </div>
+      <div className="hidden md:block">
+        <DiscoveryGrid>
+          {shown.map((item) => (
+            <DiscoveryCell key={`${item.author.username}/${item.slug}`}>
+              <DiscoveryCard item={item} locale={locale} />
+            </DiscoveryCell>
+          ))}
+        </DiscoveryGrid>
+      </div>
     </div>
   );
 }

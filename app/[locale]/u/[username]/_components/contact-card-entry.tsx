@@ -172,7 +172,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
           className="relative [transform-style:preserve-3d]"
           style={{
             transform: `rotateY(${flipped ? 180 : 0}deg)`,
-            transition: "transform 600ms cubic-bezier(0.22, 1, 0.36, 1)",
+            transition: "transform 600ms var(--ease)",
           }}
         >
           <div

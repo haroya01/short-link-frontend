@@ -102,7 +102,7 @@ export function FeedSortTabs({ tabs }: { tabs: FeedSortTab[] }) {
       {bar && (
         <span
           aria-hidden
-          className="pointer-events-none absolute -bottom-[13px] left-0 h-0.5 rounded-full bg-accent-600 transition-[transform,width] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+          className="pointer-events-none absolute -bottom-[13px] left-0 h-0.5 rounded-full bg-accent-600 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none"
           style={{
             transform: `translateX(${bar.left}px)`,
             width: `${bar.width}px`,
