@@ -24,14 +24,15 @@ export function SkeletonHeader({ subtitle = false }: { subtitle?: boolean }) {
   );
 }
 
-/** Stat cards row (analytics / links overview). */
+/** Stat row (analytics overview / per-post / series) — 실제 StatCard 와 같은 비박스 활자 스탯
+ *  모양. 보더 타일 스켈레톤이 뜨면 로딩 끝에 레이아웃이 "박스 → 활자"로 점프한다. */
 export function SkeletonStatCards({ count = 4 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+        <div key={i}>
           <Skeleton className="h-4 w-20" />
-          <Skeleton className="mt-3 h-7 w-16" />
+          <Skeleton className="mt-2 h-7 w-16" />
         </div>
       ))}
     </div>

@@ -142,8 +142,9 @@ export default function WriteIndexPage() {
         </div>
       </header>
 
-      {/* 전체 ↔ 시리즈별 — same content, two lenses. 시리즈별 is where series get curated. */}
-      <div className="mb-5 inline-flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-800">
+      {/* 전체 ↔ 시리즈별 — same content, two lenses. 시리즈별 is where series get curated.
+          분석의 WindowTabs 와 같은 pill 세그먼트 — 워크스페이스 전환 컨트롤 한 가지 모양. */}
+      <div className="mb-5 inline-flex rounded-full border border-slate-200 p-0.5 dark:border-slate-800">
         {([
           ["all", t("viewAll"), List],
           ["series", t("viewBySeries"), Layers],
@@ -153,7 +154,7 @@ export default function WriteIndexPage() {
             type="button"
             onClick={() => changeView(v)}
             aria-pressed={view === v}
-            className={`focus-ring inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors ${
+            className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
               view === v
                 ? "bg-accent-700 text-white"
                 : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"

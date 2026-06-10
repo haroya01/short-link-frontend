@@ -5,7 +5,9 @@ import { ChevronRight, Eye, Heart, UserPlus, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { SeriesMemberStat } from "@/modules/blog/api/analytics";
 
-/** Small stat tile for the analytics dashboards. */
+/** Editorial stat for the analytics dashboards — 라벨 위 큰 숫자, 박스 없음. 예전의 보더 타일은
+ *  워크스페이스의 타이포 문법(내 글·시리즈 = 행과 헤어라인) 사이에서 혼자 SaaS 대시보드처럼
+ *  읽혔다 — 숫자가 면이 아니라 활자로 서게 한다. */
 export function StatCard({
   icon,
   label,
@@ -16,12 +18,12 @@ export function StatCard({
   value: number;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+    <div>
       <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
         {icon}
         <span className="text-[12px] font-medium">{label}</span>
       </div>
-      <div className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+      <div className="mt-1 text-[26px] font-bold tabular-nums tracking-tight text-slate-900 dark:text-slate-100">
         {value.toLocaleString()}
       </div>
     </div>
