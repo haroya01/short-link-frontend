@@ -176,14 +176,14 @@ export default async function PublicPostPage({
           magazine masthead. */}
       {post.ogImageUrl && (
         <div className="mb-10 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
-          {/* viewTransitionName: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이
-              히어로로 모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음. */}
+          {/* vt-post-cover: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이 히어로로
+              모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
+              이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={post.ogImageUrl}
             alt=""
-            className="aspect-[2/1] w-full object-cover"
-            style={{ viewTransitionName: "post-cover" }}
+            className="vt-post-cover aspect-[2/1] w-full object-cover"
           />
         </div>
       )}

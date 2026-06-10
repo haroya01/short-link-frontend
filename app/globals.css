@@ -1515,10 +1515,32 @@ html:not([data-theme-vt])::view-transition-new(root) {
   width: 100%;
   object-fit: cover;
 }
+/* 페어가 안 맺힌 전환(:only-child) — 뒤로가기(피드 쪽엔 이름 없음)와 첫 방문 진입(소프트 내비가
+   loading.tsx 스켈레톤으로 먼저 커밋돼 히어로가 아직 없음)에선 스냅샷이 한쪽만 잡힌다. 위의
+   animation: none 이 그대로 적용되면 그 스냅샷이 전환이 끝날 때까지 풀 오피시티로 화면에 남아
+   "이미지가 뒤늦게 사라지는" 잔상이 됐다 — 루트와 같은 vt-leave/vt-enter 를 태워 페이지와
+   한 몸으로 빠지고 들어오게 한다. (모핑은 페어가 맺힌 재방문/캐시 내비에서만 발동) */
+::view-transition-old(post-cover):only-child {
+  animation: vt-leave 240ms var(--ease) both;
+}
+::view-transition-new(post-cover):only-child {
+  animation: vt-enter 440ms var(--ease) both;
+}
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(post-cover),
   ::view-transition-old(post-cover),
-  ::view-transition-new(post-cover) {
+  ::view-transition-new(post-cover),
+  ::view-transition-old(post-cover):only-child,
+  ::view-transition-new(post-cover):only-child {
     animation: none;
   }
+}
+
+/* 글 히어로의 모핑 이름 — 헤더/탭바(.vt-app-header 패턴)처럼 클래스로 달아, 테마 토글 전환에선
+   이름을 떼어 루트 wipe 한 장으로 합쳐지게 한다. */
+.vt-post-cover {
+  view-transition-name: post-cover;
+}
+html[data-theme-vt] .vt-post-cover {
+  view-transition-name: none;
 }
