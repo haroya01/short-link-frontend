@@ -156,9 +156,10 @@ export function DiscoveryCard({
     const wavePhase = { animationDelay: `-${(item.id % 9) * 1.7}s` } as const;
     return (
       <div className={`${SHELL} ${CARD_SHADOW} border border-slate-200/80 bg-white p-4 pb-7 dark:border-slate-800 dark:bg-slate-900`}>
-        {/* 잔잔한 물결 — 이미지 없는 글의 "심심함"을 채우는 ambient. 브랜드 그린 저채도 두 겹이
-            서로 다른 속도로 흐르고(패럴랙스), hover 에서만 한 단계 짙어진다. transform-only 라
-            컴포지터 비용만 들고, reduced-motion 은 globals 가드가 정지시킨다. */}
+        {/* 잔잔한 물결 — 이미지 없는 글의 "심심함"을 채우는 형태. 쉬는 상태에선 정지된 수면
+            (카드별 위상이 달라 형태도 제각각), hover/포커스에서만 두 겹이 속도 차로 흐른다 —
+            상시 재생은 타이포 카드가 다수가 된 그리드에서 패턴 소음이었다. transform-only,
+            reduced-motion 은 globals 가드가 영구 정지. */}
         <div aria-hidden className="absolute inset-x-0 bottom-0 z-0 h-12 overflow-hidden opacity-70 transition-opacity duration-300 ease-[var(--ease)] group-hover:opacity-100">
           <svg
             viewBox="0 0 600 24"
