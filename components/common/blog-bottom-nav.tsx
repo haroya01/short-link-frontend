@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Bell, Home, PenSquare, Search, User } from "lucide-react";
+import { Bell, Home, Search, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -59,7 +59,6 @@ export function BlogBottomNav() {
   const isNotif = sheet === null && /\/notifications(\/|$)/.test(pathname);
   // Signed-out → kurl's branded login (then Google), carrying where they wanted to go.
   const loginHref = (next: string) => `${blogHref("/login")}?next=${encodeURIComponent(next)}`;
-  const writeHref = authenticated ? blogHref("/write/new") : loginHref("/write/new");
   const notifHref = authenticated ? blogHref("/notifications") : loginHref("/notifications");
 
   return (
@@ -88,18 +87,6 @@ export function BlogBottomNav() {
           <Search className="h-5 w-5" />
           {t("explore")}
         </button>
-
-        {/* Center write FAB — raised above the bar (the content-app hero action). Icon-only; the accent
-            circle + pencil reads as "write" and gives the bar a deliberate, non-empty center. */}
-        <div className="flex flex-1 items-start justify-center">
-          <BlogChromeLink
-            href={writeHref}
-            aria-label={t("write")}
-            className="focus-ring -mt-5 grid h-12 w-12 place-items-center rounded-full bg-accent-700 text-white shadow-[0_6px_16px_-4px_rgba(15,23,42,0.4)] ring-4 ring-white transition-colors hover:bg-accent-700 dark:ring-slate-950"
-          >
-            <PenSquare className="h-5 w-5" />
-          </BlogChromeLink>
-        </div>
 
         <BlogChromeLink
           href={notifHref}
