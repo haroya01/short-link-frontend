@@ -330,12 +330,12 @@ export function MarkdownEditor({
           await uploadAndInsertMany(editor, files, width);
         }}
       />
-      {/* Always-on top toolbar — the resting-state affordance so every tool (굵게·표·…) is visible
-          without selecting text or knowing `/`. Sits above the scrolling body so it never scrolls away;
-          the selection bubble + floating insert bar still work as contextual shortcuts. */}
+      {/* Always-on top toolbar — 블록 도구(헤딩·리스트·인용·코드·삽입)만의 쉼 상태 affordance.
+          인라인 마크(B·I·S·코드·링크)는 여기서 뺐다: 선택해야 의미 있는 동작이라 selection 버블이
+          정확한 자리고(링크는 빈 캐럿에선 어차피 no-op), 두 줄로 중복 노출되니 툴바가 도구 패널처럼
+          시끄러웠다. Sits above the scrolling body so it never scrolls away. */}
       <EditorToolbar
         editor={editor}
-        onEditLink={(href) => setUrlDialog({ mode: "link", initial: href })}
         onPickImage={pickImage}
         onPickEmbed={() => setUrlDialog({ mode: "embed", initial: "" })}
       />
@@ -381,21 +381,19 @@ export function MarkdownEditor({
 }
 
 /**
- * Always-on top toolbar. Readers asked for a resting-state toolbar so every tool is visible without
- * selecting text or knowing the `/` menu / shift+enter — text marks, headings, lists, quote, code,
- * divider, and the inserts (image · table · embed), each reflecting its active state live (Tiptap v3
- * useEditor doesn't re-render on transactions → useEditorState). Block labels reuse the localized
- * slash.* strings; commands mirror the bubble / floating bars. `onMouseDown`+preventDefault keeps the
- * selection/caret from collapsing before the command runs (so Link + mark toggles work).
+ * Always-on top toolbar — block tools only: headings, lists, quote, code block, and the inserts
+ * (image · table · embed · divider), each reflecting its active state live (Tiptap v3 useEditor
+ * doesn't re-render on transactions → useEditorState). 원래는 인라인 마크까지 전부 노출했지만
+ * (resting-state 가시성 요청), 같은 버튼이 selection 버블과 두 벌로 떠서 슬림화 — 인라인 마크의
+ * 정식 자리는 버블(+단축키·마크다운 입력 규칙)이다. Block labels reuse the localized slash.*
+ * strings. `onMouseDown`+preventDefault keeps the caret from collapsing before the command runs.
  */
 function EditorToolbar({
   editor,
-  onEditLink,
   onPickImage,
   onPickEmbed,
 }: {
   editor: Editor;
-  onEditLink: (href: string) => void;
   onPickImage: (opts?: ImagePickOptions) => void;
   onPickEmbed: () => void;
 }) {
@@ -403,11 +401,6 @@ function EditorToolbar({
   const a = useEditorState({
     editor,
     selector: ({ editor }) => ({
-      bold: editor.isActive("bold"),
-      italic: editor.isActive("italic"),
-      strike: editor.isActive("strike"),
-      code: editor.isActive("code"),
-      link: editor.isActive("link"),
       h1: editor.isActive("heading", { level: 1 }),
       h2: editor.isActive("heading", { level: 2 }),
       h3: editor.isActive("heading", { level: 3 }),
@@ -417,17 +410,9 @@ function EditorToolbar({
       codeBlock: editor.isActive("codeBlock"),
     }),
   });
-  const setLink = () => onEditLink((editor.getAttributes("link").href as string | undefined) ?? "");
 
   type Item = { icon: LucideIcon; label: string; active?: boolean; run: () => void };
   const groups: Item[][] = [
-    [
-      { icon: Bold, label: t("toolbar.bold"), active: a.bold, run: () => editor.chain().focus().toggleBold().run() },
-      { icon: Italic, label: t("toolbar.italic"), active: a.italic, run: () => editor.chain().focus().toggleItalic().run() },
-      { icon: Strikethrough, label: t("toolbar.strike"), active: a.strike, run: () => editor.chain().focus().toggleStrike().run() },
-      { icon: Code2, label: t("toolbar.inlineCode"), active: a.code, run: () => editor.chain().focus().toggleCode().run() },
-      { icon: LinkIcon, label: t("toolbar.link"), active: a.link, run: setLink },
-    ],
     [
       { icon: Heading1, label: t("slash.heading1"), active: a.h1, run: () => editor.chain().focus().toggleHeading({ level: 1 }).run() },
       { icon: Heading2, label: t("slash.heading2"), active: a.h2, run: () => editor.chain().focus().toggleHeading({ level: 2 }).run() },

@@ -17,6 +17,7 @@ export function EditorHeader({
   status,
   saving,
   saved,
+  lastSavedAt,
   busy,
   onSave,
   onBack,
@@ -30,6 +31,8 @@ export function EditorHeader({
   status: PostStatus;
   saving: boolean;
   saved: boolean;
+  /** 이 세션의 마지막 성공 저장 시각 — "✓ 저장됨" 2초가 지나간 뒤에도 시각으로 안심. */
+  lastSavedAt: Date | null;
   busy: boolean;
   onSave: () => void;
   /** Plain-click leaves via here (saves a dirty draft first). Modified clicks keep the raw link. */
@@ -42,6 +45,9 @@ export function EditorHeader({
 }) {
   const t = useTranslations("postEditor");
   const isDraft = status === "DRAFT";
+  // 로케일 무관 HH:MM — 분 단위면 충분하고, 상대 시각("2분 전")은 1분마다 틱이 필요해 과함.
+  const savedTime =
+    lastSavedAt?.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", hour12: false }) ?? null;
   return (
     <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 dark:border-slate-800">
       <a
@@ -73,6 +79,9 @@ export function EditorHeader({
                 <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />
                 {t("saved")}
               </>
+            ) : savedTime ? (
+              // 체크 2초가 지나간 쉼 상태 — "마지막 저장이 언제였나"를 시각으로.
+              <span className="text-slate-400 dark:text-slate-500">{t("savedAt", { time: savedTime })}</span>
             ) : (
               t("autoSave")
             )}
@@ -82,6 +91,12 @@ export function EditorHeader({
           // mid-edit) — keep the explicit 저장 button.
           <>
             <PostStatusBadge status={status} />
+            {/* 공개 글은 명시 저장 — 버튼 옆 시각이 "마지막으로 반영된 때"를 말해 준다. */}
+            {!saving && !saved && savedTime && (
+              <span className="hidden text-[12px] text-slate-400 dark:text-slate-500 sm:inline">
+                {t("savedAt", { time: savedTime })}
+              </span>
+            )}
             <button
               type="button"
               onClick={onSave}

@@ -85,7 +85,7 @@ export default function SeriesAnalyticsPage() {
         <>
           {detail && (
             <>
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
                 <StatCard icon={<Users className="h-4 w-4" />} label={t("analyticsSubscribers")} value={detail.series.subscriberCount} />
                 <StatCard icon={<FileText className="h-4 w-4" />} label={t("analyticsPosts")} value={detail.series.postCount} />
                 <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={detail.series.totalViews} />

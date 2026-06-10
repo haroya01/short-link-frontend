@@ -60,6 +60,8 @@ export function usePostEditor(
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  // 마지막 저장이 "언제"였는지 — saved 가 2초 뒤 꺼진 뒤에도 헤더가 시각으로 안심시켜 준다.
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   // Unsaved-edits flag, distinct from `saved` (which is also false right after load) — drives autosave.
   const [dirty, setDirty] = useState(false);
   // The /write list path with the current prefix preserved (locale + /blog-preview on the apex).
@@ -183,6 +185,7 @@ export function usePostEditor(
       lastSaved.current = sig;
       setDirty(false);
       setSaved(true);
+      setLastSavedAt(new Date());
       window.setTimeout(() => setSaved(false), 2000);
     } catch (e) {
       // A duplicate slug (same author) returns 409 — show a fixable hint, not a raw "HTTP 409".
@@ -396,6 +399,7 @@ export function usePostEditor(
     busy,
     error,
     saved,
+    lastSavedAt,
     writeBase,
     save,
     changeStatus,

@@ -45,7 +45,9 @@ export default function BlogAnalyticsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
+    // max-w-3xl: 내 글(2xl)·알림(2xl)과 같은 워크스페이스 호흡에 차트·지표 행만큼만 넓게 —
+    // 4xl 은 행 목록이 황량하게 벌어져 혼자 대시보드 같았다.
+    <main className="mx-auto max-w-3xl px-6 py-10">
       {/* 분석은 계정 메뉴의 전용 진입점에서 들어오는 독립 화면 — '내 글로 돌아가기' 백링크는 두지 않는다. */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("analyticsTitle")}</h1>
@@ -63,7 +65,7 @@ export default function BlogAnalyticsPage() {
         <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
         <>
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
             <StatCard icon={<TrendingUp className="h-4 w-4" />} label={days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })} value={data.windowViews} />
             <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
             <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
@@ -71,9 +73,10 @@ export default function BlogAnalyticsPage() {
             <StatCard icon={<FileText className="h-4 w-4" />} label={t("analyticsPublished")} value={data.publishedPosts} />
           </div>
 
-          {/* kurl 연동 차별점 — 글 안 kurl 링크가 만든 클릭. 다른 카드와 같은 중립 surface 로 두되,
-              아이콘·숫자만 brand-green 으로 두어 'kurl 클릭'임을 조용히 표시(혼자 초록 패널로 튀지 않게). */}
-          <div className="mt-3 flex items-center justify-between rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+          {/* kurl 연동 차별점 — 글 안 kurl 링크가 만든 클릭. 스탯 그룹의 마무리 행으로 헤어라인에
+              얹고(박스 ❌ — 위 스탯과 같은 활자 문법), 아이콘·숫자만 brand-green 으로 'kurl 클릭'임을
+              조용히 표시. */}
+          <div className="mt-6 flex items-center justify-between border-y border-slate-100 py-4 dark:border-slate-800">
             <div>
               <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
                 <MousePointerClick className="h-4 w-4 text-accent-600 dark:text-accent-400" />
@@ -85,12 +88,13 @@ export default function BlogAnalyticsPage() {
                   : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
               </p>
             </div>
-            <span className="text-2xl font-bold tracking-tight text-accent-700 dark:text-accent-300">
+            <span className="text-2xl font-bold tabular-nums tracking-tight text-accent-700 dark:text-accent-300">
               {data.lifetimeLinkClicks.toLocaleString()}
             </span>
           </div>
 
-          <section className="mt-8 rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
+          {/* 차트도 비박스 — 섹션 라벨 + 면. 보더 패널은 위 스탯·아래 행 목록과 결이 달랐다. */}
+          <section className="mt-10">
             <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsOverTime")}</h2>
             <AnalyticsAreaChart data={data.daily} />
           </section>
@@ -197,14 +201,15 @@ function PostPerformanceList() {
     <section className="mt-8">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsPerPost")}</h2>
-        <div className="inline-flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-800">
+        {/* WindowTabs(7일/30일/전체)와 같은 pill 세그먼트 — 워크스페이스의 전환 컨트롤 한 가지 모양. */}
+        <div className="inline-flex rounded-full border border-slate-200 p-0.5 dark:border-slate-800">
           {SORTS.map((s) => (
             <button
               key={s}
               type="button"
               onClick={() => setSort(s)}
               aria-pressed={sort === s}
-              className={`focus-ring rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors ${
+              className={`focus-ring rounded-full px-2.5 py-1 text-[12px] font-medium transition-colors ${
                 sort === s
                   ? "bg-accent-700 text-white"
                   : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
