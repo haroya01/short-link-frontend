@@ -5,6 +5,7 @@ import { LogIn, Menu, PenSquare, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref, type Product } from "@/lib/host";
+import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { Button } from "@/components/ui/button";
 import { AccountMenu } from "@/components/common/account-menu";
 import { HeaderAvatarSlot } from "@/components/common/header-avatar-slot";
@@ -74,12 +75,13 @@ export function AppHeader({
               {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
           )}
-          {/* Blog header → the logo returns to the blog home, not the links app root. Plain anchor
-              with blogHref so it lands on the right host (blog.kurl.me, or /blog-preview on apex).
+          {/* Blog header → the logo returns to the blog home, not the links app root. blogHref keeps
+              the right host (blog.kurl.me, or /blog-preview on apex); BlogChromeLink upgrades the hop
+              to a client-side navigation when already on that origin, so the chrome stays mounted.
               On the slim mobile surfaces the "blog.kurl" wordmark drops to just the mark so the screen
               leads with context (the author / post) — the full brand + product switch live in the
               bottom-nav 계정 sheet. The full wordmark returns at sm+ (and always in the workspace). */}
-          <a href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable shrink-0">
+          <BlogChromeLink href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable shrink-0">
             {slimMobile ? (
               <>
                 <Logo variant="blog" animated showText={false} className="sm:hidden" />
@@ -88,7 +90,7 @@ export function AppHeader({
             ) : (
               <Logo variant="blog" animated />
             )}
-          </a>
+          </BlogChromeLink>
         </div>
 
         {/* Right cluster split into two zones: utilities for *this* surface (search + language) on
@@ -107,13 +109,13 @@ export function AppHeader({
           {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row —
               a standard, expected home for the primary action. Mobile uses the bottom tab bar. */}
           {showAuthed && (
-            <a
+            <BlogChromeLink
               href={blogHref("/write/new")}
               className="focus-ring hidden h-8 items-center gap-1.5 rounded-full bg-accent-700 px-3.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 sm:inline-flex"
             >
               <PenSquare className="h-3.5 w-3.5" />
               {t("write")}
-            </a>
+            </BlogChromeLink>
           )}
           {showAuthed && <NotificationBell />}
           <AppsGrid current={product} />

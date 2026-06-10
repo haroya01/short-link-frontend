@@ -105,7 +105,7 @@ export function AccountSheet({
         onClick={onClose}
         className="absolute inset-0 animate-fade-in bg-slate-900/30"
       />
-      <div className="absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col animate-[sheet-up_280ms_cubic-bezier(0.22,1,0.36,1)_both] rounded-t-2xl bg-white p-2 pb-0 shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] motion-reduce:animate-none dark:bg-slate-900">
+      <div className="absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col animate-[sheet-up_280ms_var(--ease)_both] rounded-t-2xl bg-white p-2 pb-0 shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] motion-reduce:animate-none dark:bg-slate-900">
         <div className="mx-auto mb-1 mt-1 h-1 w-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden />
 
         {/* Scrollable menu body. The sheet pins to the bottom and grows upward, so without a height cap

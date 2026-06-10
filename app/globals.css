@@ -701,10 +701,10 @@ h1, h2, h3, p {
   }
 }
 .content-slide-fwd {
-  animation: content-slide-fwd 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: content-slide-fwd 460ms var(--ease) both;
 }
 .content-slide-back {
-  animation: content-slide-back 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: content-slide-back 460ms var(--ease) both;
 }
 @media (prefers-reduced-motion: reduce) {
   .content-slide-fwd,
@@ -1327,7 +1327,7 @@ body[data-cookie-consent="visible"] {
   height: 0;
   pointer-events: none;
 }
-/* Editor table (flat, matches the reader's §10.7 table look). table-layout:fixed = columns keep a
+/* Editor table (flat, matches the reader's §10.8 table look). table-layout:fixed = columns keep a
    stable width as you type (content wraps inside the cell) instead of the column growing and shoving
    the others sideways — the Notion / Obsidian behaviour. */
 .tiptap table {

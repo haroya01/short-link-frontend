@@ -150,7 +150,7 @@ export function PhotoLightbox({ images, initialIdx, onClose }: Props) {
               onClick={(e) => e.stopPropagation()}
               style={{
                 transition:
-                  "transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease-out",
+                  "transform 320ms var(--ease), opacity 220ms ease-out",
                 transform: entered
                   ? "translateY(0) scale(1)"
                   : "translateY(12px) scale(0.94)",

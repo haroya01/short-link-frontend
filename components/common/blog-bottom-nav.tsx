@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
+import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
 import { cn } from "@/lib/utils";
 import { AccountSheet } from "@/components/common/account-sheet";
@@ -69,14 +70,14 @@ export function BlogBottomNav() {
           hidden && "translate-y-full",
         )}
       >
-        <a
+        <BlogChromeLink
           href={blogHref("/")}
           aria-current={isHome ? "page" : undefined}
           className={cn(TAB, isHome ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
         >
           <Home className="h-5 w-5" />
           {t("home")}
-        </a>
+        </BlogChromeLink>
         <button
           type="button"
           onClick={() => setSheet("search")}
@@ -91,16 +92,16 @@ export function BlogBottomNav() {
         {/* Center write FAB — raised above the bar (the content-app hero action). Icon-only; the accent
             circle + pencil reads as "write" and gives the bar a deliberate, non-empty center. */}
         <div className="flex flex-1 items-start justify-center">
-          <a
+          <BlogChromeLink
             href={writeHref}
             aria-label={t("write")}
             className="focus-ring -mt-5 grid h-12 w-12 place-items-center rounded-full bg-accent-700 text-white shadow-[0_6px_16px_-4px_rgba(15,23,42,0.4)] ring-4 ring-white transition-colors hover:bg-accent-700 dark:ring-slate-950"
           >
             <PenSquare className="h-5 w-5" />
-          </a>
+          </BlogChromeLink>
         </div>
 
-        <a
+        <BlogChromeLink
           href={notifHref}
           aria-current={isNotif ? "page" : undefined}
           className={cn(TAB, isNotif ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
@@ -114,7 +115,7 @@ export function BlogBottomNav() {
             )}
           </span>
           {tNotif("title")}
-        </a>
+        </BlogChromeLink>
         <button
           type="button"
           onClick={() => setSheet("account")}

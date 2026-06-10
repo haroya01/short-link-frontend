@@ -127,7 +127,7 @@ function CardMeta({ item, locale, over }: { item: PublicFeedItem; locale: string
 // 퍼지는 ambient)로 평면이 아니라 살짝 떠 있게, hover 시 -translate-y-1 로 깊게 떠오르며 그림자 확장.
 // focus-within ring = 전면 링크 카드의 키보드 포커스 가시화(WCAG 2.4.7).
 const SHELL =
-  "group relative overflow-hidden rounded-2xl transition-[transform,box-shadow] duration-300 ease-[var(--ease)] hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_rgba(15,23,42,0.28)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950";
+  "group relative overflow-hidden rounded-2xl transition-[transform,box-shadow] duration-300 ease-[var(--ease)] hover:-translate-y-1 hover:shadow-card-hover has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950";
 const CARD_SHADOW =
   "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_6px_16px_-8px_rgba(15,23,42,0.12)]";
 

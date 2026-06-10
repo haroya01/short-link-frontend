@@ -28,7 +28,8 @@ export function PageTransition({
     <motion.div
       initial={settle ? { opacity: 0, y: 6, scale: 0.995 } : { opacity: 0 }}
       animate={settle ? { opacity: 1, y: 0, scale: 1 } : { opacity: 1 }}
-      transition={{ duration: mode === "fade" ? 0.2 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+      // framer는 var() 참조가 안 되니 --ease(globals.css :root)와 같은 곡선을 배열로 미러링.
+      transition={{ duration: mode === "fade" ? 0.2 : 0.28, ease: [0.16, 1, 0.3, 1] }}
       style={{ willChange: "opacity, transform" }}
     >
       {children}

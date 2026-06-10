@@ -126,44 +126,58 @@ export function FeedInfinite({
       : items.filter((i) => !i.tags?.some((tg) => hiddenSet.has(tg)));
   const hiddenCount = items.length - visible.length;
 
+  const listRows = (
+    <FeedList>
+      {visible.map((item, i) => (
+        <Fragment key={itemKey(item)}>
+          <FeedCard
+            item={item}
+            locale={locale}
+            featured={featuredFirst && i === 0}
+            featuredLabel={featuredLabel}
+          />
+          {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
+            // Bracketed by rules top + bottom so the series block reads as a distinct insert in the
+            // feed flow, not just another post row.
+            <li className="list-none border-y border-slate-200 py-3.5 dark:border-slate-700">
+              {interleaveNode}
+            </li>
+          )}
+        </Fragment>
+      ))}
+    </FeedList>
+  );
+
   return (
     <>
       {variant === "grid" ? (
-        // Discovery masonry — every post is a visual tile (cover or generated theme cover). The
-        // featured lead is just a taller tile (columns can't span), and the interleaved block (series)
-        // drops in as one grid cell.
-        <DiscoveryGrid>
-          {visible.map((item, i) => (
-            <Fragment key={itemKey(item)}>
-              <DiscoveryCell>
-                <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} />
-              </DiscoveryCell>
-              {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
-                <DiscoveryCell>{interleaveNode}</DiscoveryCell>
-              )}
-            </Fragment>
-          ))}
-        </DiscoveryGrid>
+        // Browse surface, split by viewport:
+        // - <md: the same single-column reading rows as every other feed. Two tile columns truncate
+        //   Korean titles within ~8 characters, and the masonry (CSS columns) rebalances EVERY card
+        //   whenever a page appends or an image resolves — content visibly jumps under the thumb
+        //   mid-scroll. List rows append at the end only, so the scroll position never lies.
+        // - md+: the discovery masonry, where 3 columns earn the packing and appends land mostly
+        //   below the fold. Both trees stay mounted (CSS-only switch) so a rotation/resize never
+        //   refetches; images are lazy, so the hidden tree doesn't download covers.
+        <>
+          <div className="mx-auto max-w-2xl md:hidden">{listRows}</div>
+          <div className="hidden md:block">
+            <DiscoveryGrid>
+              {visible.map((item, i) => (
+                <Fragment key={itemKey(item)}>
+                  <DiscoveryCell>
+                    <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} />
+                  </DiscoveryCell>
+                  {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
+                    <DiscoveryCell>{interleaveNode}</DiscoveryCell>
+                  )}
+                </Fragment>
+              ))}
+            </DiscoveryGrid>
+          </div>
+        </>
       ) : (
-        <FeedList>
-          {visible.map((item, i) => (
-            <Fragment key={itemKey(item)}>
-              <FeedCard
-                item={item}
-                locale={locale}
-                featured={featuredFirst && i === 0}
-                featuredLabel={featuredLabel}
-              />
-              {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
-                // Bracketed by rules top + bottom so the series block reads as a distinct insert in the
-                // feed flow, not just another post row.
-                <li className="list-none border-y border-slate-200 py-3.5 dark:border-slate-700">
-                  {interleaveNode}
-                </li>
-              )}
-            </Fragment>
-          ))}
-        </FeedList>
+        listRows
       )}
 
       {hiddenCount > 0 && (
