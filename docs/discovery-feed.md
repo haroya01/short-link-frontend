@@ -88,3 +88,6 @@ read 면은 컬럼이 맞다는 판단. **AGENTS.md §10.1 에 이 예외를 명
 - **duration**: micro/hover = `300ms` · 큰 이동(시리즈 카드 넘김) = `500ms`. 이 2단계만 사용.
 - **hover(카드)**: `-translate-y-0.5` (lift) + 이미지 `scale-[1.03]`, 둘 다 `duration-300 ease-[var(--ease)]`.
 - **칩**: filled slate(`bg-slate-100`)·`rounded-full`, 활성 = `bg-accent-600 text-white`. (시스템 칩 언어와 동일)
+
+- **자동표지(그린 그라디언트) 폐기**: 이미지 없는 글은 전부 흰 타이포 카드(소개글은 있을 때만 한 단락). 텍스트 위주 피드에서 같은 초록 타일이 도배돼 스캔성이 죽던 문제(그린 월). 그린은 §10.3 그린 실에서만.
+- **append 스태거**: 무한스크롤로 마운트되는 그리드 셀은 25ms 간격 fade(fill backwards, reduced-motion 시 전체 무효).

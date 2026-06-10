@@ -151,7 +151,7 @@ export function FeedInfinite({
   return (
     <>
       {variant === "grid" ? (
-        // Browse surface, split by viewport:
+        // Browse surface, split by viewport (타일 = 사진 cover 또는 흰 타이포 카드):
         // - <md: the same single-column reading rows as every other feed. Two tile columns truncate
         //   Korean titles within ~8 characters, and the masonry (CSS columns) rebalances EVERY card
         //   whenever a page appends or an image resolves — content visibly jumps under the thumb
@@ -165,7 +165,9 @@ export function FeedInfinite({
             <DiscoveryGrid>
               {visible.map((item, i) => (
                 <Fragment key={itemKey(item)}>
-                  <DiscoveryCell>
+                  {/* 페이지 청크 안 순서(i % size)대로 25ms 스태거 — append 된 카드만 새로 마운트되므로
+                      기존 카드는 다시 돌지 않고, 새 페이지가 "뚝"이 아니라 줄지어 떠오른다. */}
+                  <DiscoveryCell entranceDelay={Math.min((i % PAGE_SIZE) * 25, 250)}>
                     <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} />
                   </DiscoveryCell>
                   {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (

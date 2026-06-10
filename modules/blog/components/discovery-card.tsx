@@ -38,33 +38,12 @@ function fmtDate(iso: string, locale: string): string {
 // 못박던 핵도 함께 사라진다.
 const tagHref = (tag: string) => blogPath(`/tags/${encodeURIComponent(tag)}`);
 
-// Theme covers for image-less posts — single-accent(emerald) + slate family only, so a grid of them
-// stays on-brand (no rainbow) and dark enough that white text passes contrast. Indexed by post id.
-const COVER_GRADS = [
-  "from-emerald-500 via-teal-600 to-emerald-800",
-  "from-teal-600 via-emerald-700 to-slate-900",
-  "from-emerald-600 via-emerald-800 to-slate-900",
-  "from-slate-700 via-emerald-800 to-slate-950",
-  "from-teal-500 via-emerald-700 to-emerald-900",
-  "from-slate-600 via-slate-800 to-slate-950",
-];
-
-function Mark({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 28 18" aria-hidden className={className} fill="currentColor">
-      <rect x="6" y="1" width="20" height="3.4" rx="1.7" />
-      <rect x="0" y="7.3" width="28" height="3.4" rx="1.7" />
-      <rect x="9" y="13.6" width="17" height="3.4" rx="1.7" />
-    </svg>
-  );
-}
-
 function TagLink({ tag, over }: { tag: string; over?: boolean }) {
   return (
     <BlogLink
       href={tagHref(tag)}
       className={`pointer-events-auto rounded text-[12px] font-medium transition hover:underline ${
-        over ? "text-white/85 hover:text-white" : "text-slate-400 hover:text-accent-600 dark:text-slate-500"
+        over ? "text-white/85 hover:text-white" : "text-slate-500 hover:text-accent-600 dark:text-slate-400"
       }`}
     >
       #{tag}
@@ -149,9 +128,11 @@ export function DiscoveryCard({
   const hasImage = Boolean(item.ogImageUrl);
   const tag = item.tags[0];
   const reason = item.followReason ?? null;
-  // 카드 변형(결정적): 사진 있으면 cover / 없고 소개글 있으면 text(흰 글 카드) / 둘 다 없으면 auto(테마 표지).
-  // → 표지 강제 없이, 글만 있는 글은 깔끔한 텍스트 카드. 표지·소개 둘 다 없을 때만 브랜드 자동표지(§10.4).
-  const variant: "cover" | "text" | "auto" = hasImage ? "cover" : item.excerpt ? "text" : "auto";
+  // 카드 변형(결정적): 사진 있으면 cover, 없으면 text(흰 타이포 카드 — 소개글은 있을 때만 한 단락).
+  // 이전의 auto(그린 그라디언트 자동표지)는 폐기: 텍스트 위주 피드에서 같은 초록 타일이 도배돼
+  // 스캔성이 죽고("그린 월"), 글이 주인인 표면에서 표지가 콘텐츠 행세를 했다. 그린은 마커·밑줄·
+  // featured 의 "그린 실"(§10.3)에서만 빛난다. 공유 미리보기는 여전히 OG 자동 생성이 담당(§10.4).
+  const variant: "cover" | "text" = hasImage ? "cover" : "text";
   // 카드 → 글 이동에 통일된 은은한 전환(페이드+살짝 스케일, View Transitions). 전 카드 타입(이미지·글·자동)
   // 동일하게 적용 — 소프트 내비(상대경로, dev/path)에서만 동작, 절대경로(prod 서브도메인)는 하드 내비라 미적용.
   const internal = postUrl.startsWith("/");
@@ -173,36 +154,30 @@ export function DiscoveryCard({
           <h3 className={`text-balance font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100 ${featured ? "text-[19px]" : "text-[17px]"}`}>
             {item.title}
           </h3>
-          <p className="line-clamp-4 text-[13.5px] leading-relaxed text-slate-500 dark:text-slate-400">
-            {item.excerpt}
-          </p>
+          {item.excerpt && (
+            <p className="line-clamp-4 text-[13.5px] leading-relaxed text-slate-500 dark:text-slate-400">
+              {item.excerpt}
+            </p>
+          )}
           <CardMeta item={item} locale={locale} />
         </div>
       </div>
     );
   }
 
-  // ── cover / auto: 사진 또는 테마색 자동표지 ──
-  const grad = COVER_GRADS[item.id % COVER_GRADS.length];
-  const ratio = hasImage ? (featured ? "aspect-[3/4]" : "aspect-[4/3]") : featured ? "aspect-[4/5]" : "aspect-square";
+  // ── cover: 사진이 카드 전체 배경 ──
+  const ratio = featured ? "aspect-[3/4]" : "aspect-[4/3]";
 
   return (
     // ring-inset white/10: 어두운 커버 가장자리에 유리 같은 얇은 빛 테두리 → 입체감.
     <div className={`${SHELL} ${CARD_SHADOW} bg-slate-200 ring-1 ring-inset ring-white/10 dark:bg-slate-800`}>
       <div className={ratio}>
-        {hasImage ? (
-          <img
-            src={item.ogImageUrl as string}
-            alt=""
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none"
-          />
-        ) : (
-          <>
-            <div className={`absolute inset-0 bg-gradient-to-br ${grad}`} />
-            <div className="absolute inset-0 bg-[radial-gradient(130%_110%_at_15%_0%,rgba(255,255,255,0.22),transparent_55%)]" />
-          </>
-        )}
+        <img
+          src={item.ogImageUrl as string}
+          alt=""
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none"
+        />
         {/* 텍스트 가독성 scrim — 상·하단 모두(상단 태그, 하단 제목/메타). WCAG 대비 확보용으로 통일. */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/35 to-transparent" />
@@ -218,7 +193,6 @@ export function DiscoveryCard({
       <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4">
         <div className="flex flex-wrap items-center gap-2">
           {tag && <TagLink tag={tag} over />}
-          {!hasImage && <Mark className="h-3.5 w-auto text-white/85" />}
           {reason && <ReasonPill reason={reason} over t={t} />}
         </div>
         <div className="space-y-2">
@@ -239,9 +213,23 @@ export function DiscoveryGrid({ children }: { children: ReactNode }) {
   return <div className="gap-4 columns-2 sm:gap-5 md:columns-3">{children}</div>;
 }
 
-/** A child cell of {@link DiscoveryGrid} — 칼럼 사이에서 카드가 쪼개지지 않게 막는다. */
-export function DiscoveryCell({ children }: { children: ReactNode }) {
-  return <div className="mb-4 break-inside-avoid sm:mb-5">{children}</div>;
+/** A child cell of {@link DiscoveryGrid} — 칼럼 사이에서 카드가 쪼개지지 않게 막는다.
+ *  `entranceDelay` 가 오면 마운트 시 짧은 스태거 페이드(fill backwards — 딜레이 동안 안 보이게).
+ *  무한스크롤 append 가 "뚝" 나타나는 걸 지우는 용도 — 이미 마운트된 카드는 다시 돌지 않고,
+ *  reduced-motion 은 globals 의 animate-fade-in 가드가 통째로 끈다. */
+export function DiscoveryCell({ children, entranceDelay }: { children: ReactNode; entranceDelay?: number }) {
+  return (
+    <div
+      className={`mb-4 break-inside-avoid sm:mb-5 ${entranceDelay != null ? "animate-fade-in" : ""}`}
+      style={
+        entranceDelay != null
+          ? { animationDelay: `${entranceDelay}ms`, animationFillMode: "backwards" }
+          : undefined
+      }
+    >
+      {children}
+    </div>
+  );
 }
 
 // 로딩 placeholder — 리스트 행이 아니라 실제 카드 그리드와 같은 메이슨리 모양으로(높이 섞인 카드 블록)
