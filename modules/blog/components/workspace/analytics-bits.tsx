@@ -44,7 +44,7 @@ export function WindowTabs({ days, onChange }: { days: number; onChange: (d: num
           aria-pressed={days === d}
           className={`focus-ring rounded-full px-3 py-1 text-[13px] font-medium transition-colors ${
             days === d
-              ? "bg-accent-600 text-white"
+              ? "bg-accent-700 text-white"
               : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
           }`}
         >
@@ -105,7 +105,7 @@ export function SeriesReadThrough({
                 <div className="h-full rounded-full bg-accent-500" style={{ width: `${pct}%` }} />
               </div>
               {/* Per-episode performance — secondary to the funnel. */}
-              <div className="mt-1.5 flex items-center gap-3 text-[11px] tabular-nums text-slate-400 dark:text-slate-500">
+              <div className="mt-1.5 flex items-center gap-3 text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
                 <span className="inline-flex items-center gap-1">
                   <Eye className="h-3 w-3" />
                   {m.views.toLocaleString()}

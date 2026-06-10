@@ -182,7 +182,7 @@ function LinkCardView({ node, deleteNode, selected }: NodeViewProps) {
                   {data.description}
                 </span>
               )}
-              <span className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-slate-400 dark:text-slate-500">
+              <span className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-slate-500 dark:text-slate-400">
                 {rich ? <ArrowUpRight className="h-3 w-3 shrink-0 text-accent-600" /> : <Link2 className="h-3 w-3 shrink-0 text-accent-600" />}
                 {host}
               </span>

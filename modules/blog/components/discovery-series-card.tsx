@@ -135,7 +135,7 @@ export function DiscoverySeriesCard({
               <div
                 className={`relative h-full w-full overflow-hidden rounded-2xl bg-slate-700 shadow-[0_1px_3px_rgba(15,23,42,0.06)] ring-1 ring-white/15 ${
                   front
-                    ? "transition-[transform,box-shadow] duration-300 ease-[var(--ease)] group-hover:-translate-y-1 group-hover:shadow-[0_18px_40px_-12px_rgba(15,23,42,0.28)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-500 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950"
+                    ? "transition-[transform,box-shadow] duration-300 ease-[var(--ease)] group-hover:-translate-y-1 group-hover:shadow-[0_18px_40px_-12px_rgba(15,23,42,0.28)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950"
                     : ""
                 }`}
               >

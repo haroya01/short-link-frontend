@@ -113,10 +113,10 @@ export function PlaceSearchDialog({
           placeholder={t("placePlaceholder")}
           className="focus-ring w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
         />
-        <p className="mt-1.5 text-[12px] text-slate-400">{t("placeHint")}</p>
+        <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">{t("placeHint")}</p>
         <ul className="mt-3 max-h-72 overflow-y-auto">
           {q.trim() && !loading && results.length === 0 && (
-            <li className="px-1 py-6 text-center text-[13px] text-slate-400">{t("placeEmpty")}</li>
+            <li className="px-1 py-6 text-center text-[13px] text-slate-500 dark:text-slate-400">{t("placeEmpty")}</li>
           )}
           {results.map((s) => (
             <li key={s.placeId}>

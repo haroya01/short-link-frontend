@@ -120,7 +120,7 @@ export default function ProfileLeadsCampaignPage() {
             maxLength={60}
           />
           {slug && (
-            <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
+            <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
               {t("nameSlugHint", { slug })}
             </p>
           )}
@@ -138,7 +138,7 @@ export default function ProfileLeadsCampaignPage() {
             rows={10}
             className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm leading-relaxed focus:border-slate-400 focus:outline-none dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100"
           />
-          <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
+          <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
             {detectedUrls.length === 0
               ? t("bodyNoLinks")
               : t("bodyDetected", { count: detectedUrls.length })}

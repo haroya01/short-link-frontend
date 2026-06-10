@@ -130,7 +130,7 @@ export function FollowButton({
 
   const stateCls = following
     ? "border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600"
-    : "border-transparent bg-accent-600 text-white hover:bg-accent-700";
+    : "border-transparent bg-accent-700 text-white hover:bg-accent-800";
   const sizeCls = compact ? "h-7 px-3 text-[12px]" : "h-9 px-4 text-[14px]";
   const gapCls = compact ? "gap-1" : "gap-1.5";
   const iconCls = compact ? "h-3.5 w-3.5" : "h-4 w-4";

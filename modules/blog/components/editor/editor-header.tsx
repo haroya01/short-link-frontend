@@ -61,7 +61,7 @@ export function EditorHeader({
           // reassures: 저장 중… → 저장됨, and 자동 저장 at rest so it's clear saving is automatic.
           <span
             aria-live="polite"
-            className="inline-flex items-center gap-1.5 px-2 text-[13px] font-medium text-slate-400 dark:text-slate-500"
+            className="inline-flex items-center gap-1.5 px-2 text-[13px] font-medium text-slate-500 dark:text-slate-400"
           >
             {saving ? (
               t("saving")
@@ -94,7 +94,7 @@ export function EditorHeader({
           type="button"
           onClick={onOpenPublish}
           disabled={busy}
-          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-600 px-4 py-1.5 text-sm font-semibold text-white shadow-[0_1px_2px_rgba(15,23,42,0.08)] transition-colors hover:bg-accent-700 disabled:opacity-50"
+          className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-1.5 text-sm font-semibold text-white shadow-[0_1px_2px_rgba(15,23,42,0.08)] transition-colors hover:bg-accent-800 disabled:opacity-50"
         >
           {isDraft ? <Send className="h-4 w-4" /> : <Settings2 className="h-4 w-4" />}
           {/* Already-public posts aren't being "published" — this opens metadata + 내리기/예약, so it

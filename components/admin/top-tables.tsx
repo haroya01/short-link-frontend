@@ -210,7 +210,7 @@ function PageControls({
         </Button>
         {numbers.map((n, i) =>
           n === "…" ? (
-            <span key={`gap-${i}`} className="px-1 text-xs text-slate-400 dark:text-slate-500">
+            <span key={`gap-${i}`} className="px-1 text-xs text-slate-500 dark:text-slate-400">
               …
             </span>
           ) : (

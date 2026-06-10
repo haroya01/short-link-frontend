@@ -105,7 +105,7 @@ export default function BlogSettingsPage() {
         <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("settingsDisplay")}</h2>
         <div className="rounded-2xl border border-slate-200 p-2 dark:border-slate-800">
           <ThemeToggle className={rowClass} />
-          <div className="px-3 pb-1 pt-3 text-[11px] font-medium text-slate-400 dark:text-slate-500">
+          <div className="px-3 pb-1 pt-3 text-[11px] font-medium text-slate-500 dark:text-slate-400">
             {tLang("label")}
           </div>
           {routing.locales.map((l) => (

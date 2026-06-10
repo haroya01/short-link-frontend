@@ -193,9 +193,23 @@ export function usePostEditor(
     }
   }
 
+  // Tab close / refresh / hard navigation with unsaved edits → native "leave site?" prompt. Drafts
+  // are mostly covered by autosave, but the 1.8s debounce window and every non-DRAFT edit (which only
+  // persists on an explicit action) would otherwise discard silently.
+  useEffect(() => {
+    if (!dirty) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [dirty]);
+
   // Leave the editor for the list. Save a dirty DRAFT first so the last keystrokes (still inside the
   // 1.8s autosave debounce) aren't lost to the full-page back navigation — the reported data-loss path.
-  // Published posts persist only via explicit actions, so they navigate without an implicit save.
+  // Published posts persist only via explicit actions, so a dirty one asks before discarding instead
+  // of navigating the edits away without a word.
   async function leave() {
     if (dirty && post?.status === "DRAFT") {
       try {
@@ -203,6 +217,14 @@ export function usePostEditor(
       } catch {
         /* error is already surfaced via setError; still let the user leave */
       }
+    } else if (dirty && post != null) {
+      const ok = await confirm({
+        title: t("unsavedLeaveTitle"),
+        description: t("unsavedLeaveDescription"),
+        confirmLabel: t("unsavedLeaveAction"),
+        destructive: true,
+      });
+      if (!ok) return;
     }
     router.push(writeBase);
   }

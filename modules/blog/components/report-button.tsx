@@ -53,7 +53,7 @@ export function ReportButton({ subjectType, subjectId }: Props) {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="touch-target inline-flex items-center gap-1 rounded text-xs text-slate-400 transition-colors hover:text-slate-600 focus-ring dark:text-slate-500 dark:hover:text-slate-300"
+        className="touch-target inline-flex items-center gap-1 rounded text-xs text-slate-500 transition-colors hover:text-slate-600 focus-ring dark:text-slate-500 dark:hover:text-slate-300"
       >
         <Flag className="h-3 w-3" />
         {t("report")}

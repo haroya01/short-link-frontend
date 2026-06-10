@@ -109,7 +109,7 @@ export function AppHeader({
           {showAuthed && (
             <a
               href={blogHref("/write/new")}
-              className="focus-ring hidden h-8 items-center gap-1.5 rounded-full bg-accent-600 px-3.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-700 sm:inline-flex"
+              className="focus-ring hidden h-8 items-center gap-1.5 rounded-full bg-accent-700 px-3.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 sm:inline-flex"
             >
               <PenSquare className="h-3.5 w-3.5" />
               {t("write")}

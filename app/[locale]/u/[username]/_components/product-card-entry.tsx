@@ -142,7 +142,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                   {item.badge && (
                     <span
                       className={
-                        "pointer-events-none absolute left-1.5 top-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider shadow-sm " +
+                        "pointer-events-none absolute left-1.5 top-1.5 inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider shadow-sm " +
                         BADGE_COLOR[item.badge]
                       }
                     >
@@ -162,7 +162,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                         <p
                           className={
                             soldOut
-                              ? "text-[12px] font-bold text-slate-400 line-through"
+                              ? "text-[12px] font-bold text-slate-500 line-through"
                               : "text-[12px] font-bold text-accent-700"
                           }
                         >
@@ -175,7 +175,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                         </p>
                       )}
                       {discountPct != null && !soldOut && (
-                        <span className="rounded bg-red-50 px-1 py-0 text-[9px] font-semibold text-red-600">
+                        <span className="rounded bg-red-50 px-1 py-0 text-[10px] font-semibold text-red-600">
                           {t("discount", { pct: discountPct })}
                         </span>
                       )}
@@ -272,7 +272,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                         </p>
                       )}
                       {item.originalPrice && !soldOut && (
-                        <p className="text-[12px] text-slate-400 line-through">
+                        <p className="text-[12px] text-slate-500 line-through">
                           {item.originalPrice}
                         </p>
                       )}
@@ -307,7 +307,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
                 )}
                 {item.ctaUrl && soldOut && (
                   <div
-                    className={`border-t px-3 py-3 text-center text-[13px] font-medium text-slate-400 ${colors.cardBorder}`}
+                    className={`border-t px-3 py-3 text-center text-[13px] font-medium text-slate-500 ${colors.cardBorder}`}
                   >
                     {t("badge.SOLD_OUT")}
                   </div>
@@ -318,20 +318,28 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
         })}
       </div>
       {config.items.length > 1 && (
-        <div className="mt-2 flex items-center justify-center gap-1.5">
+        // 24px dot buttons (WCAG 2.5.8 minimum) around the 6px visuals — bare dots can't be hit
+        // on touch, and they're the only non-swipe pagination on mobile.
+        <div className="mt-1 flex items-center justify-center">
           {config.items.map((_, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => scrollToIdx(idx)}
-              aria-label={`Go to card ${idx + 1}`}
-              className={
-                "h-1.5 rounded-full transition-all duration-200 " +
-                (idx === activeIdx
-                  ? `w-5 ${colors.primary.replace("text-", "bg-")}`
-                  : "w-1.5 bg-slate-300")
-              }
-            />
+              aria-label={t("goTo", { idx: idx + 1 })}
+              aria-current={idx === activeIdx}
+              className="focus-ring grid h-6 w-6 place-items-center rounded-full"
+            >
+              <span
+                aria-hidden
+                className={
+                  "h-1.5 rounded-full transition-all duration-200 " +
+                  (idx === activeIdx
+                    ? `w-5 ${colors.primary.replace("text-", "bg-")}`
+                    : "w-1.5 bg-slate-300")
+                }
+              />
+            </button>
           ))}
         </div>
       )}
@@ -376,12 +384,19 @@ function CardImages({
 
   return (
     <>
-      <div onMouseEnter={pauseAutoplay} onMouseLeave={resumeAutoplay} onTouchStart={pauseAutoplay}>
+      <div
+        onMouseEnter={pauseAutoplay}
+        onMouseLeave={resumeAutoplay}
+        onTouchStart={pauseAutoplay}
+        // Keyboard parity with hover: a slide mustn't advance under the user mid-interaction.
+        onFocusCapture={pauseAutoplay}
+        onBlurCapture={resumeAutoplay}
+      >
         <div className="relative">
           <button
             type="button"
             onClick={() => setLightboxIdx(safeIdx)}
-            aria-label="Open image"
+            aria-label={t("openImage")}
             className="block aspect-[4/3] w-full cursor-zoom-in overflow-hidden bg-slate-100"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -417,7 +432,7 @@ function CardImages({
                 key={idx}
                 type="button"
                 onClick={() => setHeroIdx(idx)}
-                aria-label={`Image ${idx + 1}`}
+                aria-label={t("imageN", { idx: idx + 1 })}
                 className={
                   "h-10 w-12 shrink-0 overflow-hidden rounded border transition " +
                   (idx === safeIdx

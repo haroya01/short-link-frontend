@@ -74,7 +74,7 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
                 placeholder={config.placeholder ?? t("defaultPlaceholder")}
                 maxLength={254}
                 disabled={status === "submitting"}
-                className={`h-10 flex-1 rounded-xl border bg-white/90 px-3 text-sm text-slate-900 outline-none ring-accent-500 placeholder:text-slate-400 focus:ring-2 ${colors.cardBorder}`}
+                className={`h-10 flex-1 rounded-xl border bg-white/90 px-3 text-sm text-slate-900 outline-none ring-accent-600 placeholder:text-slate-400 focus:ring-2 ${colors.cardBorder}`}
               />
               <button
                 type="submit"

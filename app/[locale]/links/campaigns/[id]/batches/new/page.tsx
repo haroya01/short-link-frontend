@@ -435,7 +435,7 @@ function Cell({
       {error ? (
         <p className="text-[11px] leading-snug text-rose-600">{error}</p>
       ) : (
-        hint && <p className="text-[11px] leading-snug text-slate-400 dark:text-slate-500 lg:hidden">{hint}</p>
+        hint && <p className="text-[11px] leading-snug text-slate-500 dark:text-slate-400 lg:hidden">{hint}</p>
       )}
     </div>
   );

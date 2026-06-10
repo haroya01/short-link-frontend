@@ -54,7 +54,7 @@ export function FeedDefaultTabSetting({ rowClass }: { rowClass: string }) {
     <section className="mt-8">
       <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("settingsFeed")}</h2>
       <div className="rounded-2xl border border-slate-200 p-2 dark:border-slate-800">
-        <p className="px-3 pb-1 pt-2 text-[11px] font-medium text-slate-400 dark:text-slate-500">
+        <p className="px-3 pb-1 pt-2 text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("settingsDefaultTab")}
         </p>
         {FEED_TABS.map((opt) => (

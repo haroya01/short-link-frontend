@@ -170,7 +170,7 @@ export function ProfileFeedEditor({
       </div>
 
       {links === null ? (
-        <p className="text-xs text-slate-400">{t("loading")}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>
       ) : (
         <>
           {items.length === 0 ? (
@@ -222,7 +222,7 @@ export function ProfileFeedEditor({
                         onSave={onEditLabel}
                         t={t}
                       />
-                      <p className="truncate font-mono text-[11px] text-slate-400">
+                      <p className="truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
                         /{link.shortCode} · {link.originalUrl}
                       </p>
                     </div>
@@ -761,7 +761,7 @@ function FeedItemRow({
           onSave={onEditLabel}
           t={t}
         />
-        <p className="truncate font-mono text-[11px] text-slate-400">
+        <p className="truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
           /{link.shortCode} · {link.originalUrl}
         </p>
       </div>

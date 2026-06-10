@@ -242,7 +242,7 @@ export function AbuseReportsManager() {
                       )}
                     </div>
                   ) : (
-                    <span className="text-xs text-slate-400 dark:text-slate-500">
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
                       {r.resolvedAt ? new Date(r.resolvedAt).toLocaleString() : "—"}
                     </span>
                   )}

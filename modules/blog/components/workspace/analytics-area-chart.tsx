@@ -20,7 +20,7 @@ import type { DailyPoint } from "@/modules/blog/api/analytics";
 export function AnalyticsAreaChart({ data }: { data: DailyPoint[] }) {
   const t = useTranslations("blogWorkspace");
   if (data.length === 0 || data.every((d) => d.views === 0)) {
-    return <p className="py-16 text-center text-sm text-slate-400 dark:text-slate-500">{t("analyticsNoViews")}</p>;
+    return <p className="py-16 text-center text-sm text-slate-500 dark:text-slate-400">{t("analyticsNoViews")}</p>;
   }
   return (
     <div className="h-64 w-full">

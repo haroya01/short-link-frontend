@@ -28,6 +28,7 @@ export function useAutoSlide({ intervalMs = 5000, enabled, onTick }: Options) {
 
   const [pausedByUser, setPausedByUser] = useState(false);
   const [pausedByPage, setPausedByPage] = useState(false);
+  const [pausedByMotionPref, setPausedByMotionPref] = useState(false);
 
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -37,7 +38,18 @@ export function useAutoSlide({ intervalMs = 5000, enabled, onTick }: Options) {
     return () => document.removeEventListener("visibilitychange", update);
   }, []);
 
-  const paused = pausedByUser || pausedByPage;
+  // prefers-reduced-motion kills autoplay outright (WCAG 2.2.2 — moving content that starts on its
+  // own must respect the user's motion setting). Manual navigation (dots / arrows / swipe) stays.
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setPausedByMotionPref(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  const paused = pausedByUser || pausedByPage || pausedByMotionPref;
 
   useEffect(() => {
     if (!enabled || paused) return;

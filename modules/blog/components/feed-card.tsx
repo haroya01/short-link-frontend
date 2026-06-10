@@ -52,7 +52,7 @@ function Avatar({ author }: { author: PublicFeedItem["author"] }) {
  * dressing one up as a category would be a lie; this just hints at the post's subject.
  */
 function TagEyebrow({ tag }: { tag: string }) {
-  return <span className="text-[12px] font-medium text-slate-400 dark:text-slate-500">{tag}</span>;
+  return <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">{tag}</span>;
 }
 
 /**
@@ -92,7 +92,7 @@ function MetaRow({
         <>
           <span aria-hidden>·</span>
           <span className="flex shrink-0 items-center gap-1">
-            <Heart className="h-3 w-3 text-accent-500" />
+            <Heart className="h-3 w-3 text-accent-600" />
             {item.likeCount}
           </span>
         </>
@@ -195,7 +195,7 @@ export function FeedCard({
                 representative tag. Never both — stacking them reads as a confusing category pair. */}
             {featured && featuredLabel ? (
               <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-accent-700 dark:text-accent-400">
-                <span aria-hidden className="h-1 w-1 rounded-full bg-accent-500" />
+                <span aria-hidden className="h-1 w-1 rounded-full bg-accent-600" />
                 {featuredLabel}
               </span>
             ) : (

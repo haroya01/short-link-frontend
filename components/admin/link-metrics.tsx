@@ -179,7 +179,7 @@ export function AdminLinkMetrics() {
                       <span className={cn("font-mono", hot && "font-semibold text-slate-900 dark:text-slate-100")}>
                         {formatNumber(r.windowedRedirects)}
                       </span>
-                      <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">
+                      <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">
                         /{formatNumber(r.totalRedirects)}
                       </span>
                     </span>

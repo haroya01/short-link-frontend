@@ -72,7 +72,7 @@ export default async function PublicSeriesPage({
       <FollowButton username={author.username} initialFollowerCount={0} compact />
       <BlogLink
         href={authorHref(author.username, locale, "series")}
-        className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"
+        className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-500 dark:text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"
       >
         {tf("seriesAllByAuthor")}
         <ArrowRight className="h-3.5 w-3.5" />
@@ -125,7 +125,7 @@ export default async function PublicSeriesPage({
             <FollowButton username={author.username} initialFollowerCount={0} compact />
             <BlogLink
               href={authorHref(author.username, locale, "series")}
-              className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"
+              className="focus-ring inline-flex w-fit items-center gap-1 rounded text-[13px] font-medium text-slate-500 dark:text-slate-400 transition-colors hover:text-accent-700 dark:hover:text-accent-400"
             >
               {tf("seriesAllByAuthor")}
               <ArrowRight className="h-3.5 w-3.5" />

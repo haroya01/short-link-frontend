@@ -232,7 +232,7 @@ function PreviewPane({
   if (body.length === 0) {
     return (
       <div className="profile-card-static rounded-2xl border-slate-200 bg-slate-50/50 px-4 py-3">
-        <p className="text-[11px] italic text-slate-400">{t("textPreviewEmpty")}</p>
+        <p className="text-[11px] italic text-slate-500 dark:text-slate-400">{t("textPreviewEmpty")}</p>
       </div>
     );
   }

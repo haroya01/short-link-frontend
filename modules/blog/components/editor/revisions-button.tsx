@@ -57,9 +57,9 @@ export function RevisionsButton({
             {t("revisions")}
           </div>
           {loading ? (
-            <p className="px-3 py-4 text-[13px] text-slate-400">{t("loading")}</p>
+            <p className="px-3 py-4 text-[13px] text-slate-500 dark:text-slate-400">{t("loading")}</p>
           ) : !revisions || revisions.length === 0 ? (
-            <p className="px-3 py-4 text-[13px] text-slate-400">{t("revisionsEmpty")}</p>
+            <p className="px-3 py-4 text-[13px] text-slate-500 dark:text-slate-400">{t("revisionsEmpty")}</p>
           ) : (
             <ul className="max-h-72 overflow-y-auto py-1">
               {revisions.map((r) => (
@@ -72,7 +72,7 @@ export function RevisionsButton({
                       {t("revisionVersion", { n: r.versionNumber })}
                       {r.titleSnapshot ? ` · ${r.titleSnapshot}` : ""}
                     </span>
-                    <span className="block text-[11px] text-slate-400">{fmt(r.createdAt)}</span>
+                    <span className="block text-[11px] text-slate-500 dark:text-slate-400">{fmt(r.createdAt)}</span>
                   </span>
                   <button
                     type="button"

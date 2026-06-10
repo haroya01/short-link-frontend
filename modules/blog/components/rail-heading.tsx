@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
  * re-inline the `h-3 w-[3px]` span).
  */
 export function BrandTick() {
-  return <span aria-hidden className="h-3 w-[3px] shrink-0 rounded-full bg-accent-500" />;
+  return <span aria-hidden className="h-3 w-[3px] shrink-0 rounded-full bg-accent-600" />;
 }
 
 /**

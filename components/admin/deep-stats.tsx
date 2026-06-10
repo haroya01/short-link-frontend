@@ -68,7 +68,7 @@ function ActiveUsersSection({ t }: { t: T }) {
             onClick={() => setPeriod(p)}
             className={cn(
               "rounded px-3 py-1 text-xs font-mono transition",
-              period === p ? "bg-accent-600 text-white" : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50",
+              period === p ? "bg-accent-700 text-white" : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50",
             )}
           >
             {p}

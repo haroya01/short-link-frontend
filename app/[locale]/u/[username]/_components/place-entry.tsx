@@ -126,7 +126,7 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
             type="button"
             onClick={share}
             aria-label={t("share")}
-            className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60"
+            className="focus-ring absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60"
           >
             <Share2 className="h-3.5 w-3.5" />
           </button>

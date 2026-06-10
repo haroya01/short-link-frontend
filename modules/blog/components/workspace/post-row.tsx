@@ -22,10 +22,10 @@ export function PostRow({ post, onDelete }: { post: PostView; onDelete?: (post: 
           <span className="block truncate text-[15px] font-medium text-slate-900 group-hover/row:text-accent-700 dark:text-slate-100 dark:group-hover/row:text-accent-400">
             {post.title || post.slug}
           </span>
-          <span className="block truncate font-mono text-[12px] text-slate-400 dark:text-slate-500">/{post.slug}</span>
+          <span className="block truncate font-mono text-[12px] text-slate-500 dark:text-slate-400">/{post.slug}</span>
         </span>
         {post.status === "PUBLISHED" && (
-          <span className="flex shrink-0 items-center gap-1 text-[12px] text-slate-400 dark:text-slate-500">
+          <span className="flex shrink-0 items-center gap-1 text-[12px] text-slate-500 dark:text-slate-400">
             <Eye className="h-3.5 w-3.5" />
             {t("views", { count: post.viewCount })}
           </span>

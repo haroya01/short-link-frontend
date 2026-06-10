@@ -78,7 +78,7 @@ export async function AuthorRail({
                   <span className="truncate text-[14px] font-medium text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-slate-100">
                     {s.title}
                   </span>
-                  <span className="shrink-0 text-[12px] text-slate-400">
+                  <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
                     {t("railPostCount", { count: s.postCount })}
                   </span>
                 </BlogLink>
@@ -123,7 +123,7 @@ export async function AuthorRail({
 
       <a
         href={authorHref(username, locale, "feed")}
-        className="focus-ring inline-flex w-fit items-center gap-1.5 rounded text-[12px] font-medium text-slate-400 transition-colors hover:text-accent-700"
+        className="focus-ring inline-flex w-fit items-center gap-1.5 rounded text-[12px] font-medium text-slate-500 dark:text-slate-400 transition-colors hover:text-accent-700"
       >
         <Rss className="h-3.5 w-3.5" />
         RSS

@@ -693,7 +693,7 @@ function PhoneScreen({
           <span className="text-[7px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
             {nextLabel}
           </span>
-          <span className="rounded-md bg-accent-600 px-1.5 py-0.5 text-[8px] font-medium text-white">
+          <span className="rounded-md bg-accent-700 px-1.5 py-0.5 text-[10px] font-medium text-white">
             {chipLabel}
           </span>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BarChart3,
   Bell,
@@ -25,6 +25,7 @@ import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { blogHref, linksHref, type Product } from "@/lib/host";
 import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { Logo } from "@/components/common/logo";
@@ -62,18 +63,25 @@ export function AccountSheet({
   const pathname = usePathname();
   const { me, authenticated, signOut } = useAuth();
   const [langOpen, setLangOpen] = useState(false);
+  const sheetRef = useRef<HTMLDivElement | null>(null);
+
+  // Escape + keyboard containment + focus restore to the avatar trigger — the sheet declares
+  // aria-modal, so Tab must not walk into the page behind the scrim.
+  useFocusTrap(sheetRef, { active: open, onEscape: onClose });
 
   useEffect(() => {
     if (!open) {
       setLangOpen(false);
       return;
     }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+    // Scrim + sheet own the gesture space; without the lock the page behind keeps scrolling
+    // under the sheet on overscroll.
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
 
   if (!open) return null;
 
@@ -89,7 +97,7 @@ export function AccountSheet({
   }
 
   return (
-    <div role="dialog" aria-modal="true" aria-label={t("account")} className="fixed inset-0 z-50 sm:hidden">
+    <div ref={sheetRef} role="dialog" aria-modal="true" aria-label={t("account")} className="fixed inset-0 z-50 sm:hidden">
       <button
         type="button"
         aria-hidden
@@ -170,7 +178,7 @@ export function AccountSheet({
                 {tNotif("title")}
               </span>
               {unread > 0 && (
-                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent-600 px-1 text-[11px] font-bold text-white">
+                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-accent-700 px-1 text-[11px] font-bold text-white">
                   {unread > 99 ? "99+" : unread}
                 </span>
               )}
@@ -225,7 +233,7 @@ export function AccountSheet({
             <Globe className="h-5 w-5 text-slate-500 dark:text-slate-400" />
             {tLang("label")}
           </span>
-          <span className="inline-flex items-center gap-1 text-[13px] text-slate-400">
+          <span className="inline-flex items-center gap-1 text-[13px] text-slate-500 dark:text-slate-400">
             {tLang(locale)}
             <ChevronDown className={cn("h-4 w-4 transition-transform", langOpen && "rotate-180")} />
           </span>

@@ -127,7 +127,7 @@ export default function ProfileLeadsPage() {
           <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
             {t("intro", { count: total })}
           </p>
-          <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{t("csvExcludesOptedOut")}</p>
+          <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{t("csvExcludesOptedOut")}</p>
         </div>
         <div className="flex items-center gap-2">
           <a

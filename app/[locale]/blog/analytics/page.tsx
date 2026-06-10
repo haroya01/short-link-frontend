@@ -60,7 +60,7 @@ export default function BlogAnalyticsPage() {
           </div>
         </div>
       ) : !data ? (
-        <p className="mt-8 text-sm text-slate-400 dark:text-slate-500">{t("analyticsEmpty")}</p>
+        <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
         <>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -79,7 +79,7 @@ export default function BlogAnalyticsPage() {
                 <MousePointerClick className="h-4 w-4 text-accent-600 dark:text-accent-400" />
                 <span className="text-[13px] font-semibold">{t("analyticsLinkClicksAll")}</span>
               </div>
-              <p className="mt-0.5 text-[12px] text-slate-400 dark:text-slate-500">
+              <p className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">
                 {days === 0
                   ? t("analyticsAllClicks", { count: data.windowLinkClicks })
                   : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
@@ -206,7 +206,7 @@ function PostPerformanceList() {
               aria-pressed={sort === s}
               className={`focus-ring rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors ${
                 sort === s
-                  ? "bg-accent-600 text-white"
+                  ? "bg-accent-700 text-white"
                   : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
               }`}
             >
@@ -218,7 +218,7 @@ function PostPerformanceList() {
       {items.length === 0 && loading ? (
         <SkeletonRows count={5} />
       ) : items.length === 0 ? (
-        <p className="py-6 text-center text-sm text-slate-400 dark:text-slate-500">{t("analyticsEmpty")}</p>
+        <p className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
         {(expanded ? items : items.slice(0, COLLAPSED_ROWS)).map((p) => (
@@ -230,7 +230,7 @@ function PostPerformanceList() {
               <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
                 {p.title || p.slug}
               </span>
-              <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-400 dark:text-slate-500">
+              <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-500 dark:text-slate-400">
                 <span className="inline-flex items-center gap-1">
                   <Eye className="h-3.5 w-3.5" />
                   {p.viewCount.toLocaleString()}
@@ -256,7 +256,7 @@ function PostPerformanceList() {
       )}
       {expanded && <div ref={sentinelRef} aria-hidden className="h-px" />}
       {expanded && loading && items.length > 0 && (
-        <p className="py-4 text-center text-[12px] text-slate-400 dark:text-slate-500">···</p>
+        <p className="py-4 text-center text-[12px] text-slate-500 dark:text-slate-400">···</p>
       )}
     </section>
   );
@@ -292,7 +292,7 @@ function SeriesAnalyticsSection() {
               <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
                 {s.title}
               </span>
-              <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-400 dark:text-slate-500">
+              <span className="flex shrink-0 items-center gap-3 text-[12px] text-slate-500 dark:text-slate-400">
                 {/* 구독자 — 시리즈의 헤드라인 지표, 브랜드 그린 강조. */}
                 <span className="inline-flex items-center gap-1 text-accent-600 dark:text-accent-400">
                   <Users className="h-3.5 w-3.5" />
@@ -392,7 +392,7 @@ function LinksBreakdownSection({ days }: { days: number }) {
                 <span className="block truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
                   {r.title || r.slug}
                 </span>
-                <span className="block truncate font-mono text-[12px] text-slate-400 dark:text-slate-500">
+                <span className="block truncate font-mono text-[12px] text-slate-500 dark:text-slate-400">
                   /{r.slug}
                 </span>
               </span>

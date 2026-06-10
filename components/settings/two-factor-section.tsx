@@ -138,7 +138,7 @@ export function TwoFactorSection() {
   }
 
   if (mode === "loading") {
-    return <p className="text-xs text-slate-400 dark:text-slate-500">{t("loading")}</p>;
+    return <p className="text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>;
   }
 
   return (

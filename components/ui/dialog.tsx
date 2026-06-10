@@ -4,6 +4,7 @@ import * as React from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 
 type DialogProps = {
   open: boolean;
@@ -27,9 +28,6 @@ type DialogProps = {
   compact?: boolean;
 };
 
-const FOCUSABLE =
-  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
 export function ConfirmDialog({
   open,
   onOpenChange,
@@ -48,7 +46,6 @@ export function ConfirmDialog({
   const [busy, setBusy] = React.useState(false);
   const busyRef = React.useRef(false);
   const dialogRef = React.useRef<HTMLDivElement | null>(null);
-  const restoreFocusRef = React.useRef<HTMLElement | null>(null);
   const titleId = React.useId();
   const descriptionId = React.useId();
 
@@ -56,41 +53,23 @@ export function ConfirmDialog({
     busyRef.current = busy;
   }, [busy]);
 
+  useFocusTrap(dialogRef, {
+    active: open,
+    onEscape: () => {
+      if (!busyRef.current) onOpenChange(false);
+    },
+  });
+
+  // The backdrop owns scrolling (overflow-y-auto below); without locking <body> the wheel chains
+  // through and scrolls the page behind the dialog once the panel fits the viewport.
   React.useEffect(() => {
     if (!open) return;
-    restoreFocusRef.current = document.activeElement as HTMLElement | null;
-    requestAnimationFrame(() => {
-      const target = firstFocusable(dialogRef.current) ?? dialogRef.current;
-      target?.focus();
-    });
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !busyRef.current) {
-        onOpenChange(false);
-        return;
-      }
-      if (e.key !== "Tab") return;
-      const focusable = focusableElements(dialogRef.current);
-      if (focusable.length === 0) {
-        e.preventDefault();
-        dialogRef.current?.focus();
-        return;
-      }
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
-      window.removeEventListener("keydown", onKey);
-      restoreFocusRef.current?.focus?.();
+      document.body.style.overflow = prev;
     };
-  }, [open, onOpenChange]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -167,15 +146,4 @@ export function ConfirmDialog({
       </div>
     </div>
   );
-}
-
-function focusableElements(root: HTMLElement | null): HTMLElement[] {
-  if (!root) return [];
-  return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-    (el) => !el.hasAttribute("disabled") && el.tabIndex !== -1,
-  );
-}
-
-function firstFocusable(root: HTMLElement | null): HTMLElement | null {
-  return focusableElements(root)[0] ?? null;
 }

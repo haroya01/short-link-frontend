@@ -136,7 +136,7 @@ export function ApiKeysSection() {
       )}
 
       {keys === null ? (
-        <p className="text-xs text-slate-400 dark:text-slate-500">{t("loading")}</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{t("loading")}</p>
       ) : keys.length === 0 ? (
         <p className="text-xs text-slate-500 dark:text-slate-400">{t("empty")}</p>
       ) : (
