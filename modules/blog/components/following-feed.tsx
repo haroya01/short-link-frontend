@@ -216,7 +216,7 @@ export function FollowingFeed({
 
   if (!ready || items === null) {
     return (
-      <div className="mx-auto mt-4 max-w-4xl">
+      <div className="mx-auto mt-4 max-w-4xl xl:max-w-5xl">
         <div className="mx-auto max-w-2xl md:hidden">
           <FeedListSkeleton />
         </div>
@@ -289,7 +289,7 @@ export function FollowingFeed({
   // 다른 발견 탭과 동일한 와이드 카드 그리드. 팔로우(사람+주제) 필터는 사이드 rail 대신 상단 칩으로.
   return (
     // animate-fade-in: 스켈레톤 → 실제 그리드가 스왑이 아니라 짧은 크로스페이드로 읽히게.
-    <div className="mx-auto mt-4 max-w-4xl animate-fade-in">
+    <div className="mx-auto mt-4 max-w-4xl animate-fade-in xl:max-w-5xl">
       <FollowFilterChips authors={followed} tags={presentTags} active={activeFacet} onSelect={setFacet} />
       {/* <md = single-column reading rows, md+ = discovery masonry — same split (and reasoning) as
           the grid branch of feed-infinite: 2-col tiles truncate titles and the CSS-columns masonry
