@@ -147,6 +147,7 @@ export function FeedCard({
   featuredLabel,
   flushTop = false,
   showBookmark = true,
+  eager = false,
 }: {
   item: PublicFeedItem;
   locale: string;
@@ -163,6 +164,9 @@ export function FeedCard({
   flushTop?: boolean;
   /** Show the save-to-reading-list toggle in the card's top-right (needs a numeric post id). */
   showBookmark?: boolean;
+  /** Above-fold row: load the thumbnail eagerly. Lazy thumbnails in the first viewport made the
+   *  feed's LCP image wait for hydration — Lighthouse modeled that as LCP ≈ TTI. */
+  eager?: boolean;
 }) {
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
@@ -236,7 +240,8 @@ export function FeedCard({
             <img
               src={item.ogImageUrl as string}
               alt=""
-              loading="lazy"
+              loading={eager ? "eager" : "lazy"}
+              {...(eager ? { fetchpriority: "high" } : {})}
               className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
             />
           </BlogLink>

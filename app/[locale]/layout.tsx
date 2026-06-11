@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { ViewTransitions } from "next-view-transitions";
-import { AuthHintProvider } from "@/components/common/auth-hint";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
@@ -120,12 +118,18 @@ export default async function RootLayout({
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  // First-paint sign-in guess for the header (avoids the auth-dependent chrome flashing in on cold
-  // load). The access token is per-origin localStorage (client-only), but the refresh cookie is
-  // server-readable; its presence ≈ a recoverable session. Mocks have no real cookie, so assume authed
-  // (the mock fixture is the signed-in demo user). The client `/me` reconciles either way.
-  const initialAuthed =
-    process.env.NEXT_PUBLIC_USE_MOCKS === "1" || cookies().has("refresh_token");
+  // First-paint sign-in guess for the header — used to live here as cookies().has("refresh_token"),
+  // but ONE dynamic-API read in the root layout forced EVERY route in the app into per-request
+  // rendering (no edge cache, ~0.5–1.3s TTFB on all public pages). The guess now comes from a
+  // pre-paint inline script (authHintScript below) reading the per-origin localStorage access
+  // token, with the header CSS-gating both chrome variants until the client /me settles. Cost: a
+  // visitor whose session lives only in the cross-subdomain refresh cookie (first hop to a new
+  // subdomain) briefly sees the signed-out chrome — same-origin repeat visits stay flash-free.
+  const authHintScript =
+    process.env.NEXT_PUBLIC_USE_MOCKS === "1"
+      ? // Mock fixture is the signed-in demo user; no real token exists on first load.
+        "document.documentElement.dataset.authHint='1';"
+      : "if(localStorage.getItem('short-link:access-token')){document.documentElement.dataset.authHint='1';}";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -173,10 +177,14 @@ export default async function RootLayout({
   // `prefers-color-scheme` — that flipped surfaces inconsistently across hosts and read as "it forced
   // dark mode on me." (Earlier this was scoped to blog-only because the links product had no dark styles
   // and `.dark` painted its root slate-950 over un-themed UI; that scoping is no longer needed.)
+  // The auth hint shares this tag: a second standalone inline <script> in <head> was dropped from
+  // the streamed head on some routes (React head reconciliation), so both pre-paint flags ride the
+  // one tag that's proven to survive everywhere.
   const themeInitScript =
     "(function(){try{" +
     "var m=document.cookie.match(/(?:^|; )theme=(dark|light)/);var t=m?m[1]:localStorage.getItem('theme');" +
     "if(t==='dark'){document.documentElement.classList.add('dark');}" +
+    authHintScript +
     "}catch(e){}})()";
 
   return (
@@ -234,7 +242,7 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <NextIntlClientProvider locale={locale}>
-          <AuthHintProvider initialAuthed={initialAuthed}>{children}</AuthHintProvider>
+          {children}
         </NextIntlClientProvider>
         <script
           type="application/ld+json"

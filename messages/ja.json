@@ -556,7 +556,7 @@
     "ariaLabel": "Cookieのお知らせ",
     "message": "ログイン保持のための必須クッキーのみを使用します。分析/広告用は使いません。",
     "accept": "同意する",
-    "learnMore": "詳細"
+    "learnMore": "プライバシーポリシー"
   },
   "meta": {
     "title": "kurl · URL短縮とクリック分析",

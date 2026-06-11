@@ -556,7 +556,7 @@
     "ariaLabel": "Cookie notice",
     "message": "We only use strictly-necessary cookies to keep you signed in. No analytics or ad cookies.",
     "accept": "Got it",
-    "learnMore": "Learn more"
+    "learnMore": "Privacy policy"
   },
   "meta": {
     "title": "kurl · URL shortener with click analytics",
