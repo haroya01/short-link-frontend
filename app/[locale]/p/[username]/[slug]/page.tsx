@@ -132,10 +132,41 @@ export default async function PublicPostPage({
       r.ok ? r.data.posts.map((p) => ({ slug: p.slug, title: p.title })) : [],
     ));
 
+  // Article schema — the og:article tags above only feed social unfurls; Google's article rich
+  // results (headline + byline + image in SERP) need this JSON-LD. Mirrors the ProfilePage>Person
+  // pattern on the profile pages. Previews are noindex'd drafts, so they don't emit one.
+  const articleJsonLd = isPreview
+    ? null
+    : {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: post.title,
+        ...(post.excerpt ? { description: post.excerpt } : {}),
+        image: [post.ogImageUrl ?? `${postUrl}/opengraph-image`],
+        url: postUrl,
+        mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+        datePublished: post.publishedAt,
+        ...(post.lastEditedAt ? { dateModified: post.lastEditedAt } : {}),
+        inLanguage: post.languageTag,
+        ...(post.tags && post.tags.length > 0 ? { keywords: post.tags.join(", ") } : {}),
+        author: {
+          "@type": "Person",
+          name: author.username,
+          alternateName: `@${author.username}`,
+          url: origin,
+        },
+      };
+
   return (
     // Symmetric 3-column grid: equal side gutters keep the 42rem article in the exact page center,
     // the same reading band as the feed/profile. Rails live in the gutters and never shift it.
     <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr]">
+      {articleJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        />
+      )}
       {/* Left rail (xl+): a persistent author identity + follow that stays once the in-article header
           scrolls away. In the left gutter, so the centered article doesn't move. */}
       <aside className="hidden py-20 xl:block xl:justify-self-end">

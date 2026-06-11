@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { marketingOg } from "@/lib/marketing-og";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -19,6 +20,12 @@ export async function generateMetadata({
     // 명시 안 하면 root layout 의 `${SITE_URL}/${locale}` 가 상속돼서 Lighthouse 가
     // "canonical 이 다른 hreflang 위치를 가리킴" 경고. self URL 박아서 SEO 점수 회복.
     alternates: { canonical: `${SITE_URL}/${locale}/qr-campaigns` },
+    ...marketingOg({
+      locale,
+      path: "/qr-campaigns",
+      title: t("title"),
+      description: t("description"),
+    }),
   };
 }
 

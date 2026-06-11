@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 import { blogPath } from "@/lib/host";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts";
@@ -12,6 +13,14 @@ import { RailHeading } from "@/modules/blog/components/rail-heading";
 // base, which isn't available during static generation.
 export const dynamic = "force-dynamic";
 
+// Same absolute-origin constant as the feed home (and sitemap.ts) — metadata canonicals must be
+// absolute on the blog host, not the kurl.me metadataBase the root layout sets.
+const BLOG_URL =
+  process.env.NEXT_PUBLIC_BLOG_URL ??
+  (process.env.NEXT_PUBLIC_BLOG_HOST
+    ? `https://${process.env.NEXT_PUBLIC_BLOG_HOST}`
+    : "https://blog.kurl.me");
+
 export async function generateMetadata({
   params,
 }: {
@@ -19,7 +28,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "publicFeed" });
-  return { title: `${t("topics")} · blog.kurl` };
+  return {
+    title: `${t("topics")} · blog.kurl`,
+    description: t("topicsIntro"),
+    alternates: {
+      canonical: `${BLOG_URL}/${locale}/tags`,
+      languages: {
+        ...Object.fromEntries(routing.locales.map((l) => [l, `${BLOG_URL}/${l}/tags`])),
+        "x-default": `${BLOG_URL}/${routing.defaultLocale}/tags`,
+      },
+    },
+  };
 }
 
 export default async function TagsIndexPage({

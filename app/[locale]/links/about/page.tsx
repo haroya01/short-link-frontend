@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { marketingOg } from "@/lib/marketing-og";
 import { Link } from "@/i18n/navigation";
 
 const SITE_URL =
@@ -18,6 +19,7 @@ export async function generateMetadata({
     title: t("title"),
     description: t("lead"),
     alternates: { canonical: `${SITE_URL}/${locale}/about` },
+    ...marketingOg({ locale, path: "/about", title: t("title"), description: t("lead") }),
   };
 }
 

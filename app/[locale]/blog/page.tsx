@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { PenSquare, X } from "lucide-react";
+import { routing } from "@/i18n/routing";
 import { FEED_TAB_COOKIE, isFeedTab } from "@/modules/blog/api/feed-prefs";
 import { blogHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
@@ -59,6 +60,12 @@ export async function generateMetadata({
     description,
     alternates: {
       canonical: url,
+      // hreflang on the blog's own host — the root layout's alternates point at kurl.me, which is
+      // a different site to a crawler; without these the ko/en/ja feeds index as duplicates.
+      languages: {
+        ...Object.fromEntries(routing.locales.map((l) => [l, `${BLOG_URL}/${l}`])),
+        "x-default": `${BLOG_URL}/${routing.defaultLocale}`,
+      },
       types: { "application/rss+xml": `${BLOG_URL}/feed` },
     },
     openGraph: {
