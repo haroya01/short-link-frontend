@@ -239,7 +239,8 @@
     "rowDeleteFailed": "Couldn't delete.",
     "curationLiked": "Liked posts",
     "curationLikedHint": "Posts you've liked.",
-    "curationLikedEmpty": "No liked posts yet."
+    "curationLikedEmpty": "No liked posts yet.",
+    "analyticsReferrers": "Traffic sources"
   },
   "postEditor": {
     "backToList": "Posts",

@@ -17,6 +17,12 @@ export interface TopPost {
   followsGained: number;
 }
 
+/** 윈도우 안 한 유입 호스트의 사람 조회 수 — direct(레퍼러 없음)는 행이 없다. */
+export interface ReferrerPoint {
+  host: string;
+  views: number;
+}
+
 export interface AuthorAnalyticsOverview {
   totalPosts: number;
   publishedPosts: number;
@@ -29,6 +35,7 @@ export interface AuthorAnalyticsOverview {
   lifetimeFollows: number;
   windowFollows: number;
   daily: DailyPoint[];
+  referrers: ReferrerPoint[];
 }
 
 /** Sort dimension for the per-post performance table (post-column metrics only). */
@@ -261,6 +268,13 @@ function mockOverview(days: number): AuthorAnalyticsOverview {
     lifetimeFollows,
     windowFollows: allTime ? lifetimeFollows : 18,
     daily,
+    referrers: [
+      { host: "google.com", views: allTime ? 412 : 96 },
+      { host: "news.ycombinator.com", views: allTime ? 268 : 71 },
+      { host: "t.co", views: allTime ? 141 : 38 },
+      { host: "blog.kurl.me", views: allTime ? 97 : 24 },
+      { host: "velog.io", views: allTime ? 33 : 9 },
+    ],
   };
 }
 
