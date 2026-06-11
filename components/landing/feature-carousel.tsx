@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { BarChart3, Globe2, Sparkles } from "lucide-react";
+import { ArrowUpRight, BarChart3, Globe2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ROTATE_MS = 5500;
@@ -366,7 +366,8 @@ function InsightsPreview() {
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("heading")}</p>
         <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-200">
-          ↗ 24%
+          <ArrowUpRight className="h-3 w-3" />
+          24%
         </span>
       </div>
       <div className="grid grid-cols-2 gap-3">
