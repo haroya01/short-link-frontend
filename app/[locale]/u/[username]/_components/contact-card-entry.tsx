@@ -194,7 +194,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                   shareCard();
                 }}
                 aria-label={t("dockShare")}
-                className="focus-ring absolute right-3 top-3 z-20 grid h-7 w-7 place-items-center rounded-full bg-white/10 text-white/80 backdrop-blur-sm transition hover:bg-white/20 hover:text-white"
+                className="focus-ring absolute right-3 top-3 z-20 grid h-7 w-7 place-items-center rounded-full bg-white/10 text-white/90 backdrop-blur-sm transition before:absolute before:left-1/2 before:top-1/2 before:h-11 before:w-11 before:-translate-x-1/2 before:-translate-y-1/2 before:content-[''] hover:bg-white/20 hover:text-white"
               >
                 <Share2 className="h-3.5 w-3.5" />
               </button>
@@ -204,7 +204,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                     {card.name}
                   </p>
                   {(card.title || card.company) && (
-                    <p className="mt-1 text-sm text-slate-300">
+                    <p className="mt-1 text-sm text-slate-200">
                       {[card.title, card.company].filter(Boolean).join(" · ")}
                     </p>
                   )}
@@ -232,7 +232,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                     <a
                       href={`mailto:${card.email}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="truncate hover:underline"
+                      className="truncate underline decoration-white/40 underline-offset-2 transition hover:decoration-white"
                     >
                       {card.email}
                     </a>
@@ -243,7 +243,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                     <a
                       href={`tel:${card.phone.replace(/\s/g, "")}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="truncate hover:underline"
+                      className="truncate underline decoration-white/40 underline-offset-2 transition hover:decoration-white"
                     >
                       {card.phone}
                     </a>
@@ -256,7 +256,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                       target="_blank"
                       rel="noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="truncate hover:underline"
+                      className="truncate underline decoration-white/40 underline-offset-2 transition hover:decoration-white"
                     >
                       {hostWithoutScheme(card.website)}
                     </a>
@@ -441,7 +441,7 @@ function CardFace({
             : "var(--background-x, 50%) var(--background-y, 50%)",
           filter: "brightness(0.85) contrast(2.2) saturate(0.85)",
           mixBlendMode: "color-dodge",
-          opacity: "calc(var(--card-opacity, 0.55) * 0.95)",
+          opacity: "calc(var(--card-opacity, 0.3) * 0.95)",
           transition: "opacity 220ms ease-out",
         }}
       />
@@ -459,7 +459,7 @@ function CardFace({
             : "var(--pointer-x, 50%) var(--pointer-y, 50%)",
           filter: "brightness(0.85) contrast(1.7) saturate(0.8)",
           mixBlendMode: "color-dodge",
-          opacity: "calc(var(--card-opacity, 0.55) * 0.55)",
+          opacity: "calc(var(--card-opacity, 0.3) * 0.55)",
           transition: "opacity 220ms ease-out",
         }}
       />
@@ -473,7 +473,7 @@ function CardFace({
             ? "radial-gradient(farthest-corner circle at calc(100% - var(--pointer-x, 50%)) var(--pointer-y, 50%), hsla(0,0%,100%,0.6) 8%, hsla(0,0%,100%,0.25) 22%, hsla(0,0%,0%,0.4) 90%)"
             : "radial-gradient(farthest-corner circle at var(--pointer-x, 50%) var(--pointer-y, 50%), hsla(0,0%,100%,0.6) 8%, hsla(0,0%,100%,0.25) 22%, hsla(0,0%,0%,0.4) 90%)",
           mixBlendMode: "overlay",
-          opacity: "calc(var(--card-opacity, 0.55) * 0.7 + 0.18)",
+          opacity: "calc(var(--card-opacity, 0.3) * 0.7 + 0.12)",
           transition: "opacity 220ms ease-out",
         }}
       />
@@ -494,8 +494,8 @@ function CardFace({
 
 function Row({ icon, children }: { icon: React.ReactNode; children: React.ReactNode }) {
   return (
-    <li className="flex items-center gap-2 text-[13px] text-slate-200/90">
-      <span className="shrink-0 text-slate-400">{icon}</span>
+    <li className="flex items-center gap-2 text-[13px] text-slate-100">
+      <span className="shrink-0 text-slate-300">{icon}</span>
       <span className="min-w-0 flex-1">{children}</span>
     </li>
   );
