@@ -80,8 +80,11 @@ export function useCardTilt(): {
   );
 
   // Scroll-driven pseudo-pointer position — simulates the visitor's "look angle" changing as the
-  // card scrolls through the viewport. Lower opacity (0.55 vs 0.9) so the surface is alive but
-  // calmer when the visitor isn't actively engaging.
+  // card scrolls through the viewport. Rest opacity sits well below the pointer-engaged 0.9: at
+  // 0.55 the color-dodge shine washed the dark substrate bright enough that static screenshots
+  // read it as a low-contrast colored background (and the foil stripe as a rendering artifact
+  // across the website row — the daily UX judge flagged both for weeks). 0.3 keeps the surface
+  // breathing on scroll while the text sits on a properly dark base until the visitor engages.
   const applyScrollVars = useCallback(() => {
     const el = cardRef.current;
     if (!el || pointerOverRef.current) return;
@@ -89,7 +92,7 @@ export function useCardTilt(): {
     const vh = window.innerHeight || 1;
     const cardMid = rect.top + rect.height / 2;
     const yPct = Math.max(0, Math.min(100, (cardMid / vh) * 100));
-    applyVars(50, yPct, 0.55);
+    applyVars(50, yPct, 0.3);
   }, [applyVars]);
 
   // Target getter (not `window` directly) so SSR doesn't trip on the global lookup at render

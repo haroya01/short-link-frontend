@@ -977,9 +977,14 @@ canvas.qr-canvas-fit {
  * border-white/10 borders to black variants matching the mono aesthetic.
  */
 .mono-card .text-white { color: rgb(15 23 42); /* slate-900 */ }
+.mono-card .text-slate-100 { color: rgb(30 41 59); /* slate-800 */ }
 .mono-card .text-slate-300 { color: rgb(71 85 105); /* slate-600 */ }
 .mono-card .text-slate-200 { color: rgb(51 65 85); /* slate-700 */ }
 .mono-card .text-slate-400 { color: rgb(100 116 139); /* slate-500 */ }
+/* Contact anchors carry an always-on underline (decoration-white/40) for touch affordance —
+ * on the white mono card that decoration must flip dark like the text it underlines. */
+.mono-card .decoration-white\/40 { text-decoration-color: rgb(15 23 42 / 0.4); }
+.mono-card a:hover { text-decoration-color: rgb(15 23 42); }
 /* Tailwind's opacity-modifier variants (e.g. {@code text-slate-200/90}) compile to a separate
  * class name with an escaped slash — the rules above don't catch them. ContactCardEntry uses
  * {@code text-slate-200/90} for the email / phone / website rows, and on the mono variant they
