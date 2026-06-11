@@ -60,7 +60,8 @@ export async function AuthorRail({
     return new Date(y, m - 1).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
       year: "numeric",
       month: "long",
-    });
+    timeZone: "Asia/Seoul",
+  });
   };
 
   return (

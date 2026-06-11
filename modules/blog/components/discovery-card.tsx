@@ -28,8 +28,11 @@ import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
  * ♥좋아요(>0) · 👁조회수(≥10) · 북마크. Only layout differs.
  */
 
+// timeZone 고정: Vercel(UTC) 프리렌더와 KST 방문자 하이드레이션이 UTC 자정 경계의 글에서
+// 다른 날짜 텍스트를 만들어 React #425(hydration mismatch)가 터졌다. 발행일은 플랫폼 시간대
+// (Asia/Seoul) 기준 절대 날짜로 고정 — 서버/클라이언트가 항상 같은 문자열을 그린다.
 function fmtDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", { month: "long", day: "numeric" });
+  return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", { month: "long", day: "numeric", timeZone: "Asia/Seoul" });
 }
 // 카드 #태그 = 주제의 정식 목적지인 /tags/[tag] 읽기 페이지. 이전엔 ?sort=recent&tag= 그리드
 // 필터였는데, 같은 #태그 affordance 가 화면에 따라 세 목적지(recent 필터·trending 필터·읽기

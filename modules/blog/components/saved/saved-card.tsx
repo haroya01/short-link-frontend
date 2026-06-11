@@ -45,6 +45,7 @@ export function SavedCard({
   const date = new Date(item.publishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
     month: "long",
     day: "numeric",
+    timeZone: "Asia/Seoul",
   });
 
   function submitNew() {

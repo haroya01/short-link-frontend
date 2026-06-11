@@ -148,7 +148,8 @@ export function PostComments({
       year: "numeric",
       month: "short",
       day: "numeric",
-    });
+    timeZone: "Asia/Seoul",
+  });
   }
 
   return (

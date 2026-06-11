@@ -47,6 +47,7 @@ export function DiscoverySeriesCard({
   const date = new Date(series.lastPublishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
     month: "long",
     day: "numeric",
+    timeZone: "Asia/Seoul",
   });
 
   const [idx, setIdx] = useState(0);

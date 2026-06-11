@@ -59,7 +59,8 @@ export function SeriesReadingShell({
       year: "numeric",
       month: "long",
       day: "numeric",
-    });
+    timeZone: "Asia/Seoul",
+  });
 
   // Tags this series uses, most-common first (then first-seen) — same ordering as the author rail.
   const tags = useMemo(() => {
@@ -142,10 +143,11 @@ export function SeriesReadingShell({
   const yearStr = (key: string) =>
     new Date(Number(key.slice(0, 4)), 0, 1).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
       year: "numeric",
-    });
+    timeZone: "Asia/Seoul",
+  });
   const monthStr = (key: string) => {
     const [y, m] = key.split("-").map(Number);
-    return new Date(y, m - 1, 1).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", { month: "long" });
+    return new Date(y, m - 1, 1).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", { month: "long", timeZone: "Asia/Seoul" });
   };
 
   const rail = (
