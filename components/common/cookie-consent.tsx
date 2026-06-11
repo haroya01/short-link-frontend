@@ -3,22 +3,48 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
+import {
+  CONSENT_COOKIE,
+  LEGACY_CONSENT_STORAGE_KEY,
+  hasAcceptedConsent,
+  writeConsentCookie,
+} from "@/lib/cookie-consent";
 import { linksHref } from "@/lib/host";
-import { readStorageString, writeStorageString } from "@/lib/storage-json";
 import { cn } from "@/lib/utils";
 
-const STORAGE_KEY = "kurl:cookie-consent:v1";
+// Runs during HTML parse, before the banner below it can paint (same no-FOUC trick as the theme
+// script in the root layout). Consented visitors — cookie, or the legacy localStorage flag — get
+// `data-cc-accepted` on <html>, and the globals.css rule hides the banner until hydration unmounts
+// it. Everyone else gets the body flag that reserves scroll room for the fixed bar. The flag can't
+// leak onto suppressed surfaces because those never render this component, and so never ship this
+// script.
+const consentInitScript =
+  "(function(){try{" +
+  `var ok=/(?:^|; )${CONSENT_COOKIE}=accepted/.test(document.cookie)||localStorage.getItem('${LEGACY_CONSENT_STORAGE_KEY}')==='accepted';` +
+  "if(ok){document.documentElement.setAttribute('data-cc-accepted','');}" +
+  "else{document.body.dataset.cookieConsent='visible';}" +
+  "}catch(e){}})()";
 
 /** `darkAware` opts this instance into `dark:` variants. Set on both products now that kurl supports
- *  dark mode too (it was blog-only before the links dark sweep). */
+ *  dark mode too (it was blog-only before the links dark sweep).
+ *
+ *  The banner is SERVER-rendered (initial `show` = true) so first-time visitors see it at first
+ *  paint instead of a hydration-late beat after the page — as a localStorage-gated mount it also
+ *  became the landing page's LCP element at ≈TTI under throttling, because the hero h1 never
+ *  registers a paint-time LCP record (PR #710). Consented visitors are hidden pre-paint by the
+ *  inline script above; hydration then flips `show` off and unmounts. */
 export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
   const t = useTranslations("cookieConsent");
   const locale = useLocale();
   const pathname = usePathname();
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
 
   useEffect(() => {
-    if (readStorageString(STORAGE_KEY) !== "accepted") setShow(true);
+    if (hasAcceptedConsent()) {
+      // Also refreshes max-age and migrates legacy localStorage-only consent to the cookie.
+      writeConsentCookie();
+      setShow(false);
+    }
   }, []);
 
   // Suppress on chrome-less surfaces (public profile pages) — visitors who land via someone's
@@ -30,7 +56,10 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
   // on suppressed surfaces, and on unmount.
   useEffect(() => {
     if (typeof document === "undefined") return;
-    if (show && !suppressed) {
+    // The consent re-check guards the first post-hydration pass for already-consented visitors:
+    // `show` is still true there (the unmount effect hasn't re-rendered yet) and would otherwise
+    // re-flag the body for one frame.
+    if (show && !suppressed && !hasAcceptedConsent()) {
       document.body.dataset.cookieConsent = "visible";
     } else {
       delete document.body.dataset.cookieConsent;
@@ -44,17 +73,23 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
   if (!show) return null;
 
   function accept() {
-    writeStorageString(STORAGE_KEY, "accepted");
+    writeConsentCookie();
     setShow(false);
   }
 
   return (
-    <div
-      role="region"
-      aria-live="polite"
-      aria-label={t("ariaLabel")}
-      className="fixed inset-x-0 bottom-[var(--cookie-bottom)] z-40 sm:bottom-4 sm:px-4"
-    >
+    <>
+      <script
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: consentInitScript }}
+      />
+      <div
+        data-cc-banner
+        role="region"
+        aria-live="polite"
+        aria-label={t("ariaLabel")}
+        className="fixed inset-x-0 bottom-[var(--cookie-bottom)] z-40 sm:bottom-4 sm:px-4"
+      >
       {/* Phones: an edge-to-edge bar (top border + upward shadow) that sits directly above the bottom
           tab bar so it reads as system chrome and never covers the tabs. sm+: the compact
           right-aligned rounded card returns. */}
@@ -94,6 +129,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
           </button>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
