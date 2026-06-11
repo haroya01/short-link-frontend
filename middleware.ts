@@ -239,12 +239,15 @@ export default function middleware(req: NextRequest) {
       url.pathname = `/${localePathMatch[1]}/links${sub}`;
       return NextResponse.rewrite(url);
     }
-    // Locale-prefixed internal routes serve as-is. Falling through to intlMiddleware attached a
-    // NEXT_LOCALE Set-Cookie to every response, and a response with Set-Cookie is uncacheable —
-    // it single-handedly kept the prerendered blog/p/u pages off the edge cache. The locale is
-    // already in the path; the cookie is written on locale-less entry and by the language
-    // switchers, so nothing is lost by skipping detection here.
-    return NextResponse.next();
+    // Blog routes serve as-is. Falling through to intlMiddleware attached a NEXT_LOCALE
+    // Set-Cookie to every response, and a response with Set-Cookie is uncacheable — it
+    // single-handedly kept the prerendered blog pages (the ISR feed above all) off the edge
+    // cache. Scoped to /blog only: its server pages all pass the locale explicitly, while p/u
+    // pages still resolve their request locale through intlMiddleware (they're force-dynamic,
+    // so the cookie costs them nothing).
+    if (sub.match(/^\/blog(\/|$)/)) {
+      return NextResponse.next();
+    }
   }
   // /{locale} 만 (path 없음) → /{locale}/links
   if (localePathMatch && !localePathMatch[2]) {
