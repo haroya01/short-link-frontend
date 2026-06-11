@@ -412,7 +412,9 @@
     "importMd": "Import .md",
     "importProgress": "Importing {done}/{total}…",
     "importPartialError": "Some files could not be imported. Check the files and try again.",
-    "savedAt": "Saved at {time}"
+    "savedAt": "Saved at {time}",
+    "continueWriting": "Continue writing",
+    "noPostsHint": "Your posts will pile up here. Drafts stay private until you publish."
   },
   "savedLibrary": {
     "private": "Only you can see this.",
