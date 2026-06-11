@@ -112,6 +112,13 @@ export default function WriteIndexPage() {
   const pinned = posts
     .filter((p) => p.pinOrder != null)
     .sort((a, b) => (a.pinOrder as number) - (b.pinOrder as number));
+  // Hub summary inputs — derived from the already-loaded list, no extra fetch.
+  const totalViews = posts.reduce((n, p) => n + (p.status === "PUBLISHED" ? p.viewCount : 0), 0);
+  const totalLikes = posts.reduce((n, p) => n + (p.likeCount ?? 0), 0);
+  // "이어서 쓰기" — the most recently touched draft, the thing a returning writer looks for first.
+  const latestDraft = posts
+    .filter((p) => p.status === "DRAFT")
+    .sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt))[0];
   const pinnedIds = () => pinned.map((p) => p.id);
   const togglePin = (post: PostView) => {
     const ids = pinnedIds();
@@ -129,12 +136,22 @@ export default function WriteIndexPage() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">
       <header className="mb-6 flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
+          {/* Cumulative reach — the one summary the filter chips don't already carry. Counts per
+              status live on the chips below; this line answers "내 글이 얼마나 읽혔나" at a glance. */}
+          {totalViews > 0 && (
+            <p className="mt-1 text-[12.5px] text-slate-500 dark:text-slate-400">
+              {t("viewCount", { count: totalViews })}
+              {totalLikes > 0 && <> · {t("likeCount", { count: totalLikes })}</>}
+            </p>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <ImportMdButton onDone={load} />
           <a
             href={`${writeBase}/new`}
-            className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800"
+            className="focus-ring inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 sm:px-4"
           >
             <PenSquare className="h-4 w-4" />
             {t("newPost")}
@@ -170,6 +187,30 @@ export default function WriteIndexPage() {
         <SeriesGroupedView writeBase={writeBase} />
       ) : (
         <>
+      {/* 이어서 쓰기 — 돌아온 작가의 첫 질문("어디까지 썼더라")에 바로 답하는 진입. 가장 최근
+          임시저장 1건만, 조용한 그린 틴트 카드로. 임시저장이 없으면 섹션 자체가 없다. */}
+      {!loading && latestDraft && (
+        <a
+          href={`${writeBase}/${latestDraft.id}`}
+          className="focus-ring group mb-5 flex items-center gap-3 rounded-xl border border-accent-200/70 bg-accent-50/50 px-4 py-3 transition-colors hover:border-accent-300 hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/15"
+        >
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-transform duration-200 ease-[var(--ease)] group-hover:scale-105 motion-reduce:transform-none">
+            <PenSquare className="h-4 w-4" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[12px] font-medium uppercase tracking-wide text-accent-700 dark:text-accent-400">
+              {t("continueWriting")}
+            </span>
+            <span className="mt-0.5 block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+              {latestDraft.title.trim() || t("untitled")}
+            </span>
+          </span>
+          <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
+            {relativeTime(latestDraft.updatedAt, locale)}
+          </span>
+        </a>
+      )}
+
       {/* 대표글 관리 — 핀한 글을 공개 블로그 '대표글' 섹션에 이 순서로 노출. 순서 조정·해제는 여기서. */}
       {!loading && pinned.length > 0 && (
         <section className="mb-5 rounded-xl border border-slate-200 p-3 dark:border-slate-800">
@@ -241,22 +282,43 @@ export default function WriteIndexPage() {
 
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
       {loading && <SkeletonRows count={6} thumb />}
-      {!loading && posts.length === 0 && <p className="text-slate-400 dark:text-slate-500">{t("noPosts")}</p>}
+      {!loading && posts.length === 0 && (
+        <div className="flex flex-col items-center gap-3 py-16 text-center">
+          <span className="grid h-12 w-12 place-items-center rounded-full bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-400">
+            <PenSquare className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{t("noPosts")}</p>
+            <p className="mt-1 text-[13.5px] text-slate-500 dark:text-slate-400">{t("noPostsHint")}</p>
+          </div>
+          <a
+            href={`${writeBase}/new`}
+            className="focus-ring mt-1 inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800"
+          >
+            <PenSquare className="h-4 w-4" />
+            {t("newPost")}
+          </a>
+        </div>
+      )}
       {!loading && posts.length > 0 && (
         // Typography-first rows (§10.2): no placeholder thumbnail — a post with no cover is a complete
         // text row; the cover shows only when it exists. Lead = 대표 태그(muted) + status, then title,
         // 2-line excerpt, quiet meta. -mx-3/px-3 keeps text aligned with the heading while hover spills.
         <ul className="-mx-3 flex flex-col">
-          {visible.map((p) => {
+          {visible.map((p, rowIdx) => {
             const titled = p.title.trim();
             // Analytics only means something once a post has gone public — drafts·scheduled have no reads.
             const hasAnalytics = p.status === "PUBLISHED" || p.status === "UNPUBLISHED";
             return (
-              <li key={p.id} className="group/row relative">
+              <li
+                key={p.id}
+                className="profile-fade group/row relative border-b border-slate-100 last:border-b-0 dark:border-slate-800"
+                style={{ ["--idx" as string]: Math.min(rowIdx, 8) } as React.CSSProperties}
+              >
                 <a
                   href={`${writeBase}/${p.id}`}
                   className={`focus-ring group block rounded-xl px-3 py-4 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
-                    p.status === "PUBLISHED" ? "pr-32" : hasAnalytics ? "pr-28" : "pr-3"
+                    p.status === "PUBLISHED" ? "pr-24 sm:pr-32" : hasAnalytics ? "pr-16 sm:pr-28" : "pr-3"
                   }`}
                 >
                   <div className="flex gap-4">
@@ -279,13 +341,13 @@ export default function WriteIndexPage() {
                           {p.excerpt}
                         </p>
                       )}
-                      <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
-                        <span>{relativeTime(p.updatedAt, locale)}</span>
+                      <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px] text-slate-500 dark:text-slate-400">
+                        <span className="whitespace-nowrap">{relativeTime(p.updatedAt, locale)}</span>
                         {p.status === "PUBLISHED" && p.viewCount > 0 && (
-                          <span>· {t("viewCount", { count: p.viewCount })}</span>
+                          <span className="whitespace-nowrap">· {t("viewCount", { count: p.viewCount })}</span>
                         )}
                         {showLikes(p.likeCount ?? 0) && (
-                          <span>· {t("likeCount", { count: p.likeCount })}</span>
+                          <span className="whitespace-nowrap">· {t("likeCount", { count: p.likeCount })}</span>
                         )}
                         <span className="truncate font-mono text-slate-300 dark:text-slate-600">{p.slug}</span>
                       </div>
@@ -327,7 +389,7 @@ export default function WriteIndexPage() {
                         className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/80 px-2.5 py-1.5 text-[12px] font-medium text-slate-500 backdrop-blur transition-colors hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
                       >
                         <BarChart3 className="h-4 w-4" />
-                        {t("viewAnalytics")}
+                        <span className="hidden sm:inline">{t("viewAnalytics")}</span>
                       </a>
                     )}
                   </div>
@@ -335,6 +397,17 @@ export default function WriteIndexPage() {
               </li>
             );
           })}
+          {/* 조용한 종결 CTA — 리스트가 끝났을 때 다음 행동이 손 닿는 곳에. 대시 보더 = "아직
+              없는 글"의 자리라는 어휘. */}
+          <li className="profile-fade" style={{ ["--idx" as string]: Math.min(visible.length, 9) } as React.CSSProperties}>
+            <a
+              href={`${writeBase}/new`}
+              className="focus-ring mt-3 flex items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 px-3 py-4 text-[13.5px] font-medium text-slate-500 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
+            >
+              <PenSquare className="h-4 w-4" />
+              {t("newPost")}
+            </a>
+          </li>
         </ul>
       )}
         </>

@@ -412,7 +412,9 @@
     "importMd": ".md インポート",
     "importProgress": "{done}/{total} インポート中…",
     "importPartialError": "一部のファイルをインポートできませんでした。ファイルを確認して再試行してください。",
-    "savedAt": "{time} 保存済み"
+    "savedAt": "{time} 保存済み",
+    "continueWriting": "続きを書く",
+    "noPostsHint": "書いた記事はここに積まれます。公開するまでは下書きのままです。"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
