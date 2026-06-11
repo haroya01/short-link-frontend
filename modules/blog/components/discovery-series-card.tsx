@@ -150,7 +150,11 @@ export function DiscoverySeriesCard({
                 <div className={`pointer-events-none absolute inset-0 z-10 flex flex-col justify-between p-4 ${p.ogImageUrl ? "text-white" : "text-slate-900 dark:text-slate-100"}`}>
                   {/* Series identity (opens series). pr clears the subscribe button at top-right. */}
                   <div className="flex pr-9">
-                    <Nav href={seriesUrl} className="pointer-events-auto flex min-w-0 items-center gap-1.5">
+                    <Nav
+                      href={seriesUrl}
+                      // -m/p pair: ≥24px tap box without visual change (target-size on touch).
+                      className="pointer-events-auto -mx-1 -my-1.5 flex min-w-0 items-center gap-1.5 rounded px-1 py-1.5"
+                    >
                       <Mark className={`h-2.5 w-auto shrink-0 ${p.ogImageUrl ? "" : "text-accent-600 dark:text-accent-400"}`} animated />
                       <span className="truncate text-[12px] font-semibold tracking-wide">{series.title}</span>
                     </Nav>

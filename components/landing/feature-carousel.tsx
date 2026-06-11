@@ -87,7 +87,7 @@ export function FeatureCarousel() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       className={cn(
-        "transition-all duration-700",
+        "transition-[opacity,transform] duration-700",
         visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
       )}
     >
@@ -105,13 +105,13 @@ export function FeatureCarousel() {
                   setPaused(true);
                 }}
                 className={cn(
-                  "relative flex items-start gap-3 border-b border-slate-100 dark:border-slate-800 px-4 text-left transition-all last:border-b-0",
+                  "relative flex items-start gap-3 border-b border-slate-100 dark:border-slate-800 px-4 text-left transition-colors last:border-b-0",
                   isActive ? "bg-accent-50/60 dark:bg-accent-500/10 py-3" : "py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50",
                 )}
               >
                 <span
                   className={cn(
-                    "absolute left-0 top-0 h-full w-0.5 transition-all duration-300",
+                    "absolute left-0 top-0 h-full w-0.5 transition-colors duration-300",
                     isActive ? "bg-accent-600" : "bg-transparent",
                   )}
                 />
@@ -132,11 +132,25 @@ export function FeatureCarousel() {
                   >
                     {t(`${f.key}.title`)}
                   </h3>
-                  {isActive && (
-                    <p className="mt-1 text-[11px] leading-snug text-slate-500 dark:text-slate-400">
-                      {t(`${f.key}.desc`)}
-                    </p>
-                  )}
+                  {/* Always mounted, height-animated via grid-template-rows (0fr ↔ 1fr) — the
+                      previous conditional mount made the row height POP when a tab activated,
+                      the one visibly rough beat in this cascade. The buttons themselves only
+                      transition colors now; the 2px padding step hides inside this motion. */}
+                  <div
+                    className={cn(
+                      "grid transition-[grid-template-rows,opacity] duration-300 motion-reduce:transition-none",
+                      isActive
+                        ? "[grid-template-rows:1fr] opacity-100"
+                        : "[grid-template-rows:0fr] opacity-0",
+                    )}
+                    aria-hidden={!isActive}
+                  >
+                    <div className="min-h-0 overflow-hidden">
+                      <p className="mt-1 text-[11px] leading-snug text-slate-500 dark:text-slate-400">
+                        {t(`${f.key}.desc`)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </button>
             );
@@ -147,7 +161,7 @@ export function FeatureCarousel() {
                 <span
                   key={i}
                   className={cn(
-                    "h-1.5 rounded-full transition-all duration-300",
+                    "h-1.5 rounded-full transition-[width,background-color] duration-300",
                     i === active ? "w-6 bg-accent-600" : "w-1.5 bg-slate-300 dark:bg-slate-700",
                   )}
                 />

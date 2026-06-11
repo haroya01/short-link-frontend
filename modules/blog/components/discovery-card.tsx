@@ -59,7 +59,9 @@ function TagLink({ tag, over }: { tag: string; over?: boolean }) {
   return (
     <BlogLink
       href={tagHref(tag)}
-      className={`pointer-events-auto rounded text-[12px] font-medium transition hover:underline ${
+      // Padding + negative margin: grows the tap box past the 24px minimum without moving a
+      // pixel visually — these bare-text chips sat at ~16px tall and failed target-size on touch.
+      className={`pointer-events-auto -mx-1.5 -my-1.5 rounded px-1.5 py-1.5 text-[12px] font-medium transition hover:underline ${
         over ? "text-white/85 hover:text-white" : "text-slate-500 hover:text-accent-600 dark:text-slate-400"
       }`}
     >
@@ -98,7 +100,7 @@ function CardMeta({ item, locale, over }: { item: PublicFeedItem; locale: string
     <div className={`flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[12px] ${tone}`}>
       <BlogLink
         href={authorHref(item.author.username, locale)}
-        className="pointer-events-auto flex min-w-0 items-center gap-1.5 transition-opacity hover:opacity-80"
+        className="pointer-events-auto -mx-1 -my-1.5 flex min-w-0 items-center gap-1.5 rounded px-1 py-1.5 transition-opacity hover:opacity-80"
       >
         <Avatar src={item.author.avatarUrl} name={item.author.username} size="xs" />
         <span className="truncate font-medium">{item.author.username}</span>
