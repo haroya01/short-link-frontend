@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Hash } from "lucide-react";
+import { routing } from "@/i18n/routing";
 import { blogHref } from "@/lib/host";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import {
@@ -19,13 +20,33 @@ import { TagFollowControls } from "@/modules/blog/components/tag-follow-controls
 
 export const revalidate = 30;
 
+// Same absolute-origin constant as the feed home (and sitemap.ts) — metadata canonicals must be
+// absolute on the blog host, not the kurl.me metadataBase the root layout sets.
+const BLOG_URL =
+  process.env.NEXT_PUBLIC_BLOG_URL ??
+  (process.env.NEXT_PUBLIC_BLOG_HOST
+    ? `https://${process.env.NEXT_PUBLIC_BLOG_HOST}`
+    : "https://blog.kurl.me");
+
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ tag: string }>;
+  params: Promise<{ locale: string; tag: string }>;
 }): Promise<Metadata> {
-  const { tag } = await params;
-  return { title: `#${decodeURIComponent(tag)} · blog.kurl` };
+  const { locale, tag } = await params;
+  const t = await getTranslations({ locale, namespace: "publicFeed" });
+  const path = `/tags/${tag}`;
+  return {
+    title: `#${decodeURIComponent(tag)} · blog.kurl`,
+    description: t("tagFeedSubtitle"),
+    alternates: {
+      canonical: `${BLOG_URL}/${locale}${path}`,
+      languages: {
+        ...Object.fromEntries(routing.locales.map((l) => [l, `${BLOG_URL}/${l}${path}`])),
+        "x-default": `${BLOG_URL}/${routing.defaultLocale}${path}`,
+      },
+    },
+  };
 }
 
 /**

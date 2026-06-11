@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { marketingOg } from "@/lib/marketing-og";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -15,7 +16,9 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "terms" });
   return {
     title: t("title"),
+    description: t("p1"),
     alternates: { canonical: `${SITE_URL}/${locale}/terms` },
+    ...marketingOg({ locale, path: "/terms", title: t("title"), description: t("p1") }),
   };
 }
 

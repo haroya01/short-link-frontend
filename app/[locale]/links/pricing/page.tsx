@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Shield, Lock } from "lucide-react";
+import { marketingOg } from "@/lib/marketing-og";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -20,6 +21,12 @@ export async function generateMetadata({
     title: t("meta.title"),
     description: t("meta.description"),
     alternates: { canonical: `${SITE_URL}/${locale}/pricing` },
+    ...marketingOg({
+      locale,
+      path: "/pricing",
+      title: t("meta.title"),
+      description: t("meta.description"),
+    }),
   };
 }
 
