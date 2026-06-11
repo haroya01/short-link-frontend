@@ -174,6 +174,23 @@ export function FeatureCarousel() {
         </div>
 
         <div className="relative min-h-[420px] overflow-hidden bg-white dark:bg-slate-900">
+          {/* Glyph warmup — every slide renders here permanently, laid out but invisible
+              (visibility:hidden still triggers font loads; display:none would not). Without this,
+              a slide rotating in mid-measurement pulls a NEW Pretendard dynamic subset for its
+              first-seen glyphs, and that late font-face event re-records the hero h1 as the page
+              LCP at the rotation timestamp (the #710 mechanism) — the source of the home score
+              oscillating between Lighthouse runs. The visible panel below keeps its keyed remount
+              so the per-slide entrance animations still replay. */}
+          <div aria-hidden className="invisible absolute inset-0 overflow-hidden">
+            {FEATURES.map((f) => {
+              const WarmPreview = f.preview;
+              return (
+                <div key={f.key} className="absolute inset-0 p-6">
+                  <WarmPreview />
+                </div>
+              );
+            })}
+          </div>
           <div key={active} className="absolute inset-0 flex animate-fade-in flex-col p-6">
             <div className="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
               <ActiveIcon className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" />

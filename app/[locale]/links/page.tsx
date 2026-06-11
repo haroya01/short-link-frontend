@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { ShortenForm } from "@/components/links/shorten/form";
 import { ResultCard } from "@/components/links/shorten/result-card";
+import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
 import { usePublicTotals } from "@/lib/api/stats.queries";
 import { RecentLinks } from "@/components/links/recent-links";
@@ -15,11 +16,14 @@ import { Link } from "@/i18n/navigation";
 import type { CreateLinkResponse } from "@/types";
 
 // Below-fold sections split into their own chunks (SSR HTML unchanged) so the above-fold form +
-// header hydrate without parsing the carousel/preview/FAQ code first — on a throttled phone
-// that's the difference between the first tap landing instantly or during hydration jank.
-const FeatureCarousel = dynamic(
-  () => import("@/components/landing/feature-carousel").then((m) => m.FeatureCarousel),
-);
+// header hydrate without parsing the preview/FAQ code first — on a throttled phone that's the
+// difference between the first tap landing instantly or during hydration jank. The feature
+// carousel is the one EXCEPTION and stays statically imported (see the import block above): it
+// autoplays, so its glyph-warmup layer (feature-carousel.tsx) must request every slide's font
+// subsets at first paint — as a lazy chunk those loads slid to chunk-arrival time and the late
+// font-face events re-recorded the hero h1 as the LCP mid-measurement. The other sections only
+// reveal new glyphs on scroll, and scrolling is a user input that finalizes LCP, so lazy chunks
+// are safe there.
 const LandingPreviews = dynamic(
   () => import("@/components/landing/landing-previews").then((m) => m.LandingPreviews),
 );
