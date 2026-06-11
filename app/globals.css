@@ -1059,6 +1059,36 @@ html[data-cc-accepted] [data-cc-banner] {
 }
 
 /*
+ * Pre-paint auth hint. The root layout is static now (its cookies() read forced the WHOLE app into
+ * per-request rendering), so until the client /me settles the header renders BOTH chrome variants
+ * inside [data-auth-slot] wrappers and the inline script's html[data-auth-hint] flag (from the
+ * localStorage access token) picks one before first paint. display:contents keeps the visible
+ * variant's children as direct flex items of the header cluster.
+ */
+[data-auth-slot] {
+  display: contents;
+}
+html:not([data-auth-hint]) [data-auth-slot="authed"],
+html[data-auth-hint] [data-auth-slot="anon"] {
+  display: none;
+}
+
+/*
+ * Root 404 locale pick (app/not-found.tsx). The page is fully static — all three locale copies are
+ * in the DOM and the page's pre-paint script flags <html data-nf-locale> from the NEXT_LOCALE
+ * cookie (no flag = ko). Reading the cookie server-side opted the WHOLE app out of static
+ * rendering, because the root not-found boundary renders into every page tree.
+ */
+[data-nf] {
+  display: none;
+}
+html:not([data-nf-locale]) [data-nf="ko"],
+html[data-nf-locale="en"] [data-nf="en"],
+html[data-nf-locale="ja"] [data-nf="ja"] {
+  display: block;
+}
+
+/*
  * Cookie consent makes room. The banner is position:fixed at the viewport bottom, so on phones it
  * overlaps the last feed card and the blog write FAB. While it's visible (CookieConsent toggles the
  * body data-attribute) we reserve scroll space at the page bottom and lift the FAB clear of the

@@ -139,7 +139,7 @@ export function FeedInfinite({
               {/* 페이지 청크 안 순서(i % size)대로 25ms 스태거 — append 된 카드만 새로 마운트되므로
                   기존 카드는 다시 돌지 않고, 새 페이지가 "뚝"이 아니라 줄지어 떠오른다. */}
               <DiscoveryCell entranceDelay={Math.min((i % PAGE_SIZE) * 25, 250)}>
-                <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} />
+                <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} eager={i < 4} />
               </DiscoveryCell>
               {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
                 <DiscoveryCell>{interleaveNode}</DiscoveryCell>
@@ -156,6 +156,7 @@ export function FeedInfinite({
                 locale={locale}
                 featured={featuredFirst && i === 0}
                 featuredLabel={featuredLabel}
+                eager={i < 4}
               />
               {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
                 // Bracketed by rules top + bottom so the series block reads as a distinct insert in

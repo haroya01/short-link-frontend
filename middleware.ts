@@ -4,6 +4,28 @@ import { routing } from "./i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
+// Mirror of FEED_TAB_COOKIE / FEED_TABS in modules/blog/api/feed-prefs.ts — re-declared here so the
+// edge middleware doesn't pull the API client (and its mock layer) into its bundle. Keep in sync.
+const FEED_TAB_COOKIE = "kurl_blog_default_tab";
+const FEED_TAB_VALUES = new Set(["trending", "following", "series"]);
+
+/**
+ * Feed route split. The bare feed URL (/{locale}/blog) is a STATIC ISR page; every parameterized
+ * view — ?sort/?q/?tag/?lang, or a visitor whose saved default-tab cookie isn't "recent" — is
+ * served by the per-request ./browse sibling. Mutates `url` in place (pathname + sort param);
+ * the visitor-facing URL never changes because these are rewrites.
+ */
+function routeFeedVariant(req: NextRequest, url: URL): void {
+  if (!/^\/[a-z]{2}\/blog\/?$/.test(url.pathname)) return;
+  const hasParams = ["sort", "q", "tag", "lang"].some((k) => url.searchParams.has(k));
+  if (!hasParams) {
+    const saved = req.cookies.get(FEED_TAB_COOKIE)?.value;
+    if (!saved || !FEED_TAB_VALUES.has(saved)) return;
+    url.searchParams.set("sort", saved);
+  }
+  url.pathname = `${url.pathname.replace(/\/$/, "")}/browse`;
+}
+
 // Cloudflare Worker 가 *.kurl.me 요청을 Vercel 로 proxy 할 때 set 하는 헤더.
 const ORIGINAL_HOST_HEADER = "x-original-host";
 
@@ -178,6 +200,7 @@ export default function middleware(req: NextRequest) {
     }
     if (!url.pathname.match(/^\/[a-z]{2}\/blog(\/|$)/)) {
       url.pathname = `/${locale}/blog${rest === "/" ? "" : rest}`;
+      routeFeedVariant(req, url);
       return NextResponse.rewrite(url);
     }
   }
@@ -191,7 +214,17 @@ export default function middleware(req: NextRequest) {
     const locale = previewMatch[1] ?? `/${DEFAULT_LOCALE}`;
     const rest = previewMatch[2] ?? "";
     url.pathname = `${locale}/blog${rest}`;
+    routeFeedVariant(req, url);
     return NextResponse.rewrite(url);
+  }
+
+  // Direct /{locale}/blog hits that didn't pass the host rewrites above (dev/preview serving the
+  // feed on the apex) still need the static/browse split.
+  {
+    const url = req.nextUrl.clone();
+    const before = url.pathname;
+    routeFeedVariant(req, url);
+    if (url.pathname !== before) return NextResponse.rewrite(url);
   }
 
   // 5. kurl.me / default — /{locale}/foo → /{locale}/links/foo rewrite
@@ -205,6 +238,15 @@ export default function middleware(req: NextRequest) {
       const url = req.nextUrl.clone();
       url.pathname = `/${localePathMatch[1]}/links${sub}`;
       return NextResponse.rewrite(url);
+    }
+    // Blog routes serve as-is. Falling through to intlMiddleware attached a NEXT_LOCALE
+    // Set-Cookie to every response, and a response with Set-Cookie is uncacheable — it
+    // single-handedly kept the prerendered blog pages (the ISR feed above all) off the edge
+    // cache. Scoped to /blog only: its server pages all pass the locale explicitly, while p/u
+    // pages still resolve their request locale through intlMiddleware (they're force-dynamic,
+    // so the cookie costs them nothing).
+    if (sub.match(/^\/blog(\/|$)/)) {
+      return NextResponse.next();
     }
   }
   // /{locale} 만 (path 없음) → /{locale}/links

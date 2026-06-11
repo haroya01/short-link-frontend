@@ -187,17 +187,24 @@ async function fetchPublic<T>(
   // up to the revalidate window). List/feed fetches stay on ISR — a momentarily missing card is far
   // cheaper than a broken shared link. The backend reads straight from the DB, so no-store here just
   // means one DB read per view.
-  const res = await fetch(
-    url,
-    opts?.noStore ? { cache: "no-store" } : { next: { revalidate: REVALIDATE_SECONDS } },
-  );
-  if (res.status === 200) {
-    const data = (await res.json()) as T;
-    return { ok: true, data };
+  // try/catch: a thrown fetch (backend down, or the API unreachable while a STATIC feed page
+  // prerenders at build) must degrade to the page's empty state — not 500 the render or fail the
+  // build. ISR refills within REVALIDATE_SECONDS once the API answers again.
+  try {
+    const res = await fetch(
+      url,
+      opts?.noStore ? { cache: "no-store" } : { next: { revalidate: REVALIDATE_SECONDS } },
+    );
+    if (res.status === 200) {
+      const data = (await res.json()) as T;
+      return { ok: true, data };
+    }
+    if (res.status === 404) return { ok: false, status: 404 };
+    if (res.status === 410) return { ok: false, status: 410 };
+    return { ok: false, status: "error" };
+  } catch {
+    return { ok: false, status: "error" };
   }
-  if (res.status === 404) return { ok: false, status: 404 };
-  if (res.status === 410) return { ok: false, status: 410 };
-  return { ok: false, status: "error" };
 }
 
 export function listPublicFeed(

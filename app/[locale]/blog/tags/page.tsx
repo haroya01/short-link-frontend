@@ -9,9 +9,10 @@ import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedTabs } from "@/modules/blog/components/feed-tabs";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 
-// Rendered per request (not prerendered at build): the popular-tags fetch needs the runtime API
-// base, which isn't available during static generation.
-export const dynamic = "force-dynamic";
+// Static + ISR: nothing here is per-visitor, and the public fetches degrade to an empty state if
+// the API is unreachable while the page prerenders at build (fetchPublic catches), so the index
+// can live on the edge cache and refresh every 30s instead of paying per-request SSR.
+export const revalidate = 30;
 
 // Same absolute-origin constant as the feed home (and sitemap.ts) — metadata canonicals must be
 // absolute on the blog host, not the kurl.me metadataBase the root layout sets.

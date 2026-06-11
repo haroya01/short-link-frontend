@@ -132,10 +132,14 @@ export function DiscoveryCard({
   item,
   locale,
   featured = false,
+  eager = false,
 }: {
   item: PublicFeedItem;
   locale: string;
   featured?: boolean;
+  /** Above-fold card: load the cover eagerly. Lazy covers in the first viewport made the feed's
+   *  LCP image wait for hydration + IntersectionObserver — Lighthouse modeled that as LCP ≈ TTI. */
+  eager?: boolean;
 }) {
   const t = useTranslations("publicFeed");
   const postUrl = postHref(item.author.username, item.slug, locale);
@@ -199,7 +203,8 @@ export function DiscoveryCard({
         <img
           src={item.ogImageUrl as string}
           alt=""
-          loading="lazy"
+          loading={eager ? "eager" : "lazy"}
+          {...(eager ? { fetchpriority: "high" } : {})}
           data-vt-cover
           className="absolute inset-0 h-full w-full object-cover saturate-[.85] transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none"
         />
