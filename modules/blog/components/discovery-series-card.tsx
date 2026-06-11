@@ -12,7 +12,6 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverMorphLink } from "@/modules/blog/components/cover-morph-link";
 import { Link as TransitionLink } from "next-view-transitions";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
-import { BrandTick } from "@/modules/blog/components/rail-heading";
 
 /**
  * Series tile for the discovery grid — full-size episode pages you flip through in place. Each
@@ -216,45 +215,6 @@ export function DiscoverySeriesCard({
   );
 }
 
-/**
- * 모바일 1열 리스트용 시리즈 인서트 — 메이슨리 덱 타일(4:5 비주얼)을 리스트에 그대로 끼우면
- * 화면을 가득 채우는 빈 비주얼 블록이 돼 읽기 흐름을 깬다(아이패드/모바일 실기기 신고).
- * FeedCard 행과 같은 타이포 문법의 조용한 행: 시리즈 라벨 + 제목 + 최신화 + 메타 + 구독.
- */
-export function DiscoverySeriesRow({ series, locale }: { series: PublicSeriesCard; locale: string }) {
-  const t = useTranslations("publicFeed");
-  const seriesUrl = authorHref(series.author.username, locale, `series/${series.slug}`);
-  const Nav = seriesUrl.startsWith("/") ? TransitionLink : BlogLink;
-  const latest = (series.posts ?? [])[series.posts ? series.posts.length - 1 : 0];
-  const date = new Date(series.lastPublishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-    month: "long",
-    day: "numeric",
-  });
-  return (
-    <div>
-      <div className="flex items-center justify-between gap-3">
-        <span className="inline-flex items-center gap-1.5 text-[12px] font-bold text-slate-800 dark:text-slate-200">
-          <BrandTick />
-          {t("seriesEyebrow")}
-        </span>
-        <SeriesSubscribeButton seriesId={series.id} />
-      </div>
-      <Nav href={seriesUrl} className="group mt-1.5 block rounded focus-ring">
-        <h3 className="text-[17px] font-semibold leading-snug tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
-          {series.title}
-        </h3>
-        {latest && (
-          <p className="mt-1 line-clamp-1 text-[14px] text-slate-500 dark:text-slate-400">{latest.title}</p>
-        )}
-        <div className="mt-2 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
-          <Avatar src={series.author.avatarUrl} name={series.author.username} size="xs" />
-          <span className="truncate font-medium">{series.author.username}</span>
-          <span aria-hidden>·</span>
-          <span className="shrink-0">{t("seriesEpisodeCount", { count: series.postCount })}</span>
-          <span aria-hidden>·</span>
-          <span className="shrink-0">{date}</span>
-        </div>
-      </Nav>
-    </div>
-  );
-}
+// (모바일 리스트용 DiscoverySeriesRow 는 폐기 — 피드가 전 뷰포트 카드 그리드가 되면서 1열에서도
+// 덱 카드가 그대로 들어간다. 카드 피드 문법에선 전폭 덱이 "거대한 비주얼 블록"이 아니라 이웃
+// 사진 카드들과 같은 결이다.)

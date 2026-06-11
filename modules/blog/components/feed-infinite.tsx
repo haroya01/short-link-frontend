@@ -30,7 +30,6 @@ export function FeedInfinite({
   featuredFirst = false,
   featuredLabel,
   interleaveNode,
-  interleaveListNode,
   interleaveAfter = 3,
   variant = "list",
 }: {
@@ -55,9 +54,6 @@ export function FeedInfinite({
   /** A non-post block (e.g. a series card) dropped into the feed after {@link interleaveAfter} rows.
    *  Only shown when the feed has rows past that point, so it never trails a short feed. */
   interleaveNode?: ReactNode;
-  /** 리스트(1열) 분기 전용 인서트 — 메이슨리 타일을 리스트에 끼우면 거대한 비주얼 블록이 되므로,
-   *  행 문법의 대체 노드를 받는다. 없으면 interleaveNode 폴백. */
-  interleaveListNode?: ReactNode;
   /** Zero-based row index the interleaved node is inserted after (default: after the 4th row). */
   interleaveAfter?: number;
 }) {
@@ -130,61 +126,47 @@ export function FeedInfinite({
       : items.filter((i) => !i.tags?.some((tg) => hiddenSet.has(tg)));
   const hiddenCount = items.length - visible.length;
 
-  const listInsert = interleaveListNode ?? interleaveNode;
-  const listRows = (
-    <FeedList>
-      {visible.map((item, i) => (
-        <Fragment key={itemKey(item)}>
-          <FeedCard
-            item={item}
-            locale={locale}
-            featured={featuredFirst && i === 0}
-            featuredLabel={featuredLabel}
-          />
-          {listInsert && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
-            // Bracketed by rules top + bottom so the series block reads as a distinct insert in the
-            // feed flow, not just another post row.
-            <li className="list-none border-y border-slate-200 py-3.5 dark:border-slate-700">
-              {listInsert}
-            </li>
-          )}
-        </Fragment>
-      ))}
-    </FeedList>
-  );
-
   return (
     <>
       {variant === "grid" ? (
-        // Browse surface, split by viewport (타일 = 사진 cover 또는 흰 타이포 카드):
-        // - <md: the same single-column reading rows as every other feed. Two tile columns truncate
-        //   Korean titles within ~8 characters, and the masonry (CSS columns) rebalances EVERY card
-        //   whenever a page appends or an image resolves — content visibly jumps under the thumb
-        //   mid-scroll. List rows append at the end only, so the scroll position never lies.
-        // - md+: the discovery masonry, where 3 columns earn the packing and appends land mostly
-        //   below the fold. Both trees stay mounted (CSS-only switch) so a rotation/resize never
-        //   refetches; images are lazy, so the hidden tree doesn't download covers.
-        <>
-          <div className="mx-auto max-w-2xl md:hidden">{listRows}</div>
-          <div className="hidden md:block">
-            <DiscoveryGrid>
-              {visible.map((item, i) => (
-                <Fragment key={itemKey(item)}>
-                  {/* 페이지 청크 안 순서(i % size)대로 25ms 스태거 — append 된 카드만 새로 마운트되므로
-                      기존 카드는 다시 돌지 않고, 새 페이지가 "뚝"이 아니라 줄지어 떠오른다. */}
-                  <DiscoveryCell entranceDelay={Math.min((i % PAGE_SIZE) * 25, 250)}>
-                    <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} />
-                  </DiscoveryCell>
-                  {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
-                    <DiscoveryCell>{interleaveNode}</DiscoveryCell>
-                  )}
-                </Fragment>
-              ))}
-            </DiscoveryGrid>
-          </div>
-        </>
+        // Browse surface — 전 뷰포트 카드 그리드(타일 = 사진 cover 또는 흰 타이포 카드). 모바일은
+        // DiscoveryGrid 의 1열: 예전의 "모바일 = 리스트 행" 분기는 2열 타일의 제목 잘림·masonry
+        // 재배치 점프 때문이었는데, 1열 카드는 둘 다 없어서(전폭 제목, 끝에만 append) 카드 문법을
+        // 그대로 내려보낼 수 있다 — 두 DOM 트리(md:hidden 페어)도 함께 사라졌다.
+        <DiscoveryGrid>
+          {visible.map((item, i) => (
+            <Fragment key={itemKey(item)}>
+              {/* 페이지 청크 안 순서(i % size)대로 25ms 스태거 — append 된 카드만 새로 마운트되므로
+                  기존 카드는 다시 돌지 않고, 새 페이지가 "뚝"이 아니라 줄지어 떠오른다. */}
+              <DiscoveryCell entranceDelay={Math.min((i % PAGE_SIZE) * 25, 250)}>
+                <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} />
+              </DiscoveryCell>
+              {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
+                <DiscoveryCell>{interleaveNode}</DiscoveryCell>
+              )}
+            </Fragment>
+          ))}
+        </DiscoveryGrid>
       ) : (
-        listRows
+        <FeedList>
+          {visible.map((item, i) => (
+            <Fragment key={itemKey(item)}>
+              <FeedCard
+                item={item}
+                locale={locale}
+                featured={featuredFirst && i === 0}
+                featuredLabel={featuredLabel}
+              />
+              {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
+                // Bracketed by rules top + bottom so the series block reads as a distinct insert in
+                // the feed flow, not just another post row.
+                <li className="list-none border-y border-slate-200 py-3.5 dark:border-slate-700">
+                  {interleaveNode}
+                </li>
+              )}
+            </Fragment>
+          ))}
+        </FeedList>
       )}
 
       {hiddenCount > 0 && (
