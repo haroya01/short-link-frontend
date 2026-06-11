@@ -909,6 +909,12 @@
       "clicks": "クリック",
       "actions": "操作"
     },
+    "card": {
+      "week": "今週 {count}",
+      "expiresToday": "本日期限",
+      "expiresIn": "あと{days}日",
+      "expired": "期限切れ"
+    },
     "actions": {
       "stats": "統計",
       "edit": "編集",

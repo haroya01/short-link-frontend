@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpDown, BarChart3, ExternalLink, Pencil, Trash2 } from "lucide-react";
+import type { CSSProperties } from "react";
+import { ArrowUpDown, BarChart3, Clock3, ExternalLink, Pencil, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
@@ -131,14 +132,16 @@ export function LinksTable({
         </div>
       )}
 
-      {/* Mobile card list — table columns don't fit a phone viewport, so the same row data
-          is laid out vertically with the high-signal bits (shortCode + clicks) on top, original
-          URL below, and actions on the bottom-right. Desktop keeps the table view. */}
-      <div className="space-y-2 sm:hidden">
-        {items.map((item) => (
+      {/* Mobile card list — table columns don't fit a phone viewport, so each row becomes a
+          metric card: favicon tile + shortCode as the title, click count as the hero number,
+          the 7-day sparkline (desktop-only in the table) surfaced, and expiry as a status chip.
+          Desktop keeps the table view. */}
+      <div className="space-y-2.5 sm:hidden">
+        {items.map((item, index) => (
           <MobileLinkCard
             key={item.shortCode}
             item={item}
+            index={index}
             selected={selected.has(item.shortCode)}
             onToggleSelect={() => toggleOne(item.shortCode)}
             onTagClick={onTagClick}
@@ -344,8 +347,26 @@ export function LinksTable({
   );
 }
 
+type ExpiryState =
+  | { kind: "expired" }
+  | { kind: "soon"; days: number }
+  | { kind: "later" }
+  | null;
+
+function expiryState(expiresAt: string | null | undefined): ExpiryState {
+  if (!expiresAt) return null;
+  const expires = +new Date(expiresAt);
+  if (!Number.isFinite(expires)) return null;
+  const now = Date.now();
+  if (expires < now) return { kind: "expired" };
+  const days = Math.floor((expires - now) / 86_400_000);
+  if (days <= 7) return { kind: "soon", days };
+  return { kind: "later" };
+}
+
 function MobileLinkCard({
   item,
+  index,
   selected,
   onToggleSelect,
   onTagClick,
@@ -355,6 +376,7 @@ function MobileLinkCard({
   t,
 }: {
   item: MyLink;
+  index: number;
   selected: boolean;
   onToggleSelect: () => void;
   onTagClick?: (tag: string) => void;
@@ -363,49 +385,101 @@ function MobileLinkCard({
   onDelete: () => void;
   t: ReturnType<typeof useTranslations<"dashboard">>;
 }) {
+  const last7d = item.clicksLast7d ?? [];
+  const weekClicks = last7d.reduce((sum, n) => sum + n, 0);
+  const expiry = expiryState(item.expiresAt);
+
   return (
-    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3">
-      <div className="flex items-center gap-2">
+    <div
+      className="profile-fade rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-transform duration-200 ease-[var(--ease)] active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100"
+      style={{ "--idx": Math.min(index, 8) } as CSSProperties}
+    >
+      <div className="flex items-start gap-2.5">
         <input
           type="checkbox"
           aria-label={t("bulkSelectRow", { code: item.shortCode })}
           checked={selected}
           onChange={onToggleSelect}
-          className="h-3.5 w-3.5 shrink-0 cursor-pointer"
+          className="mt-2.5 h-3.5 w-3.5 shrink-0 cursor-pointer"
         />
-        <Link
-          href={`/links/stats/${item.shortCode}`}
-          className="truncate font-mono text-sm font-medium text-slate-900 dark:text-slate-100 hover:underline"
-        >
-          /{item.shortCode}
-        </Link>
-        <CopyButton
-          size="sm"
-          variant="ghost"
-          label=""
-          value={item.shortUrl}
-          onCopied={onCopied}
-        />
-        <span className="ml-auto shrink-0 text-sm font-medium tabular-nums text-slate-900 dark:text-slate-100">
-          {formatNumber(item.clickCount)}
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-50 dark:bg-slate-800/50">
+          <Favicon url={item.originalUrl} size={18} />
         </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1">
+            <Link
+              href={`/links/stats/${item.shortCode}`}
+              className="truncate font-mono text-[15px] font-semibold leading-tight text-slate-900 dark:text-slate-100 hover:underline"
+            >
+              /{item.shortCode}
+            </Link>
+            <CopyButton
+              size="sm"
+              variant="ghost"
+              label=""
+              value={item.shortUrl}
+              onCopied={onCopied}
+            />
+          </div>
+          <a
+            href={item.originalUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-0.5 flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+            title={item.originalUrl}
+          >
+            <span className="truncate text-xs">{truncateMiddle(item.originalUrl, 40)}</span>
+            <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
+          </a>
+        </div>
+        <div className="shrink-0 text-right">
+          <p className="font-mono text-2xl font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
+            {formatNumber(item.clickCount)}
+          </p>
+          <p className="mt-1 text-[11px] leading-none text-slate-500 dark:text-slate-400">
+            {t("ops.clicks")}
+          </p>
+        </div>
       </div>
 
-      <a
-        href={item.originalUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="mt-2 flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
-        title={item.originalUrl}
-      >
-        <Favicon url={item.originalUrl} />
-        <span className="truncate text-xs">{truncateMiddle(item.originalUrl, 44)}</span>
-        <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
-      </a>
+      {last7d.length > 0 && (
+        <div className="mt-3 flex items-center gap-2.5">
+          <Sparkline
+            values={last7d}
+            width={96}
+            height={22}
+            className="shrink-0 text-accent-600 dark:text-accent-400"
+          />
+          <span
+            className={cn(
+              "text-[12px]",
+              weekClicks > 0
+                ? "font-medium text-accent-700 dark:text-accent-400"
+                : "text-slate-500 dark:text-slate-400",
+            )}
+          >
+            {t("card.week", {
+              count: weekClicks > 0 ? `+${formatNumber(weekClicks)}` : "0",
+            })}
+          </span>
+        </div>
+      )}
 
-      {item.tags && item.tags.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {item.tags.map((tag) => (
+      {(expiry?.kind === "expired" || expiry?.kind === "soon" || (item.tags?.length ?? 0) > 0) && (
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          {expiry?.kind === "expired" && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-700 dark:text-red-300">
+              <Clock3 className="h-2.5 w-2.5" />
+              {t("card.expired")}
+            </span>
+          )}
+          {expiry?.kind === "soon" && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-800 dark:text-amber-300">
+              <Clock3 className="h-2.5 w-2.5" />
+              {expiry.days === 0 ? t("card.expiresToday") : t("card.expiresIn", { days: expiry.days })}
+            </span>
+          )}
+          {item.tags?.map((tag) => (
             <button
               key={tag}
               type="button"
@@ -418,11 +492,11 @@ function MobileLinkCard({
         </div>
       )}
 
-      <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-        <span className="truncate">
+      <div className="mt-3 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-1.5">
+        <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">
           {formatDate(item.createdAt)}
-          {item.expiresAt && (
-            <span className="ml-2 text-slate-400 dark:text-slate-500">→ {formatDate(item.expiresAt)}</span>
+          {expiry?.kind === "later" && item.expiresAt && (
+            <span className="ml-2 text-slate-500 dark:text-slate-400">→ {formatDate(item.expiresAt)}</span>
           )}
         </span>
         <div className="inline-flex shrink-0 items-center gap-0.5">
