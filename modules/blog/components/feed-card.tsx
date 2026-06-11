@@ -39,6 +39,7 @@ function formatDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
     month: "long",
     day: "numeric",
+    timeZone: "Asia/Seoul",
   });
 }
 

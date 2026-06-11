@@ -29,6 +29,7 @@ export async function SeriesFeedCard({
   const date = new Date(series.lastPublishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
     month: "long",
     day: "numeric",
+    timeZone: "Asia/Seoul",
   });
   // Defensive: tolerate a payload without `posts` (e.g. a brief window before the backend that adds it
   // finishes deploying) instead of throwing on .length / .map.
