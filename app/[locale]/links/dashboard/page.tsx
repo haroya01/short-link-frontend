@@ -540,43 +540,69 @@ function DashboardPreviewItem({
 
 function LoadingTable({ t }: { t: (k: string) => string }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-      <Table>
-        <THead>
-          <TR>
-            <TH>{t("table.shortUrl")}</TH>
-            <TH>{t("table.originalUrl")}</TH>
-            <TH className="hidden md:table-cell">{t("table.createdAt")}</TH>
-            <TH className="hidden lg:table-cell">{t("table.expiresAt")}</TH>
-            <TH className="text-right">{t("table.clicks")}</TH>
-            <TH className="text-right">{t("table.actions")}</TH>
-          </TR>
-        </THead>
-        <TBody>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <TR key={i}>
-              <TD>
-                <Skeleton className="h-4 w-28" />
-              </TD>
-              <TD>
-                <Skeleton className="h-4 w-64" />
-              </TD>
-              <TD className="hidden md:table-cell">
-                <Skeleton className="h-4 w-20" />
-              </TD>
-              <TD className="hidden lg:table-cell">
-                <Skeleton className="h-4 w-16" />
-              </TD>
-              <TD className="text-right">
-                <Skeleton className="ml-auto h-4 w-10" />
-              </TD>
-              <TD className="text-right">
-                <Skeleton className="ml-auto h-4 w-16" />
-              </TD>
+    <>
+      {/* Mirrors the loaded layout per breakpoint: card skeletons below sm, table skeleton above —
+          otherwise mobile flashes a table shape and jumps to cards once data lands. */}
+      <div className="space-y-2.5 sm:hidden">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4"
+          >
+            <div className="flex items-start gap-2.5">
+              <Skeleton className="h-9 w-9 shrink-0 rounded-lg" />
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-40" />
+              </div>
+              <Skeleton className="h-7 w-12 shrink-0" />
+            </div>
+            <div className="mt-3 flex items-center justify-between">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-3 w-16" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="hidden overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sm:block">
+        <Table>
+          <THead>
+            <TR>
+              <TH>{t("table.shortUrl")}</TH>
+              <TH>{t("table.originalUrl")}</TH>
+              <TH className="hidden md:table-cell">{t("table.createdAt")}</TH>
+              <TH className="hidden lg:table-cell">{t("table.expiresAt")}</TH>
+              <TH className="text-right">{t("table.clicks")}</TH>
+              <TH className="text-right">{t("table.actions")}</TH>
             </TR>
-          ))}
-        </TBody>
-      </Table>
-    </div>
+          </THead>
+          <TBody>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <TR key={i}>
+                <TD>
+                  <Skeleton className="h-4 w-28" />
+                </TD>
+                <TD>
+                  <Skeleton className="h-4 w-64" />
+                </TD>
+                <TD className="hidden md:table-cell">
+                  <Skeleton className="h-4 w-20" />
+                </TD>
+                <TD className="hidden lg:table-cell">
+                  <Skeleton className="h-4 w-16" />
+                </TD>
+                <TD className="text-right">
+                  <Skeleton className="ml-auto h-4 w-10" />
+                </TD>
+                <TD className="text-right">
+                  <Skeleton className="ml-auto h-4 w-16" />
+                </TD>
+              </TR>
+            ))}
+          </TBody>
+        </Table>
+      </div>
+    </>
   );
 }

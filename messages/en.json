@@ -909,6 +909,12 @@
       "clicks": "Clicks",
       "actions": "Actions"
     },
+    "card": {
+      "week": "{count} this week",
+      "expiresToday": "Expires today",
+      "expiresIn": "{days}d left",
+      "expired": "Expired"
+    },
     "actions": {
       "stats": "Stats",
       "edit": "Edit",

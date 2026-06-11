@@ -909,6 +909,12 @@
       "clicks": "클릭",
       "actions": "액션"
     },
+    "card": {
+      "week": "이번 주 {count}",
+      "expiresToday": "오늘 만료",
+      "expiresIn": "만료 D-{days}",
+      "expired": "만료됨"
+    },
     "actions": {
       "stats": "통계",
       "edit": "편집",
