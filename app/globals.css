@@ -135,6 +135,21 @@ h1, h2, h3, p {
 }
 
 /*
+ * Kill the double-tap-to-zoom wait on interactive elements: without this, mobile Safari holds
+ * every tap ~300ms to see if a second one follows, which reads as the whole UI being sluggish.
+ * `manipulation` only drops double-tap zoom — pinch zoom and panning keep working.
+ */
+a,
+button,
+input,
+select,
+textarea,
+summary,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+/*
  * iOS Safari auto-zooms on focus when a form control's font-size is below 16px. Our base Input
  * (text-sm = 14px) tripped this on every URL input tap, and the resulting zoom-in made the
  * landing page feel like a cheap mobile site. Bumping form controls to 16px on phones suppresses

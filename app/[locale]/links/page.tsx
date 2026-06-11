@@ -3,12 +3,9 @@
 import { useState } from "react";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import dynamic from "next/dynamic";
 import { ShortenForm } from "@/components/links/shorten/form";
 import { ResultCard } from "@/components/links/shorten/result-card";
-import { FeatureCarousel } from "@/components/landing/feature-carousel";
-import { LandingPreviews } from "@/components/landing/landing-previews";
-import { WhyKurl } from "@/components/landing/why-kurl";
-import { HomeFaq } from "@/components/landing/home-faq";
 import { HomeCounters } from "@/components/landing/home-counters";
 import { usePublicTotals } from "@/lib/api/stats.queries";
 import { RecentLinks } from "@/components/links/recent-links";
@@ -16,6 +13,18 @@ import { useAuth } from "@/lib/auth";
 import { recordRecent, useRecentLinks } from "@/lib/recent-links";
 import { Link } from "@/i18n/navigation";
 import type { CreateLinkResponse } from "@/types";
+
+// Below-fold sections split into their own chunks (SSR HTML unchanged) so the above-fold form +
+// header hydrate without parsing the carousel/preview/FAQ code first — on a throttled phone
+// that's the difference between the first tap landing instantly or during hydration jank.
+const FeatureCarousel = dynamic(
+  () => import("@/components/landing/feature-carousel").then((m) => m.FeatureCarousel),
+);
+const LandingPreviews = dynamic(
+  () => import("@/components/landing/landing-previews").then((m) => m.LandingPreviews),
+);
+const WhyKurl = dynamic(() => import("@/components/landing/why-kurl").then((m) => m.WhyKurl));
+const HomeFaq = dynamic(() => import("@/components/landing/home-faq").then((m) => m.HomeFaq));
 
 export default function HomePage() {
   const { authenticated } = useAuth();

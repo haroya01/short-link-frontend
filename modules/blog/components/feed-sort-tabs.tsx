@@ -92,7 +92,10 @@ export function FeedSortTabs({ tabs }: { tabs: FeedSortTab[] }) {
             className={`focus-ring touch-target relative rounded px-2.5 py-1.5 transition-colors ${
               t.active
                 ? "text-accent-700 dark:text-accent-400"
-                : "text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
+                : // slate-500: slate-400 on white was 2.6:1 — under the 4.5:1 AA bar at this
+                  // size. One shade down passes (4.8:1) and the active accent still dominates.
+                  // Dark mirror bumped 500→400 for the same reason.
+                  "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
             }`}
           >
             {t.label}

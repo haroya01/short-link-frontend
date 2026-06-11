@@ -200,6 +200,11 @@ export default async function RootLayout({
             immediately in the system fallback, and a tiny inline script flips it to media="all" once
             loaded — upgrading to Pretendard without ever blocking first paint. */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        {/* PostHog warms up off the critical path, but its first config/flags fetches still paid
+            full DNS+TLS on mobile (~660ms est. in Lighthouse). us-assets serves plain <script>
+            loads (no-cors), us.i is fetch/XHR (cors) — hence the crossOrigin split. */}
+        <link rel="preconnect" href="https://us-assets.i.posthog.com" />
+        <link rel="preconnect" href="https://us.i.posthog.com" crossOrigin="anonymous" />
         <link
           rel="preload"
           as="style"
