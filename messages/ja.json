@@ -239,7 +239,8 @@
     "rowDeleteFailed": "削除に失敗しました。",
     "curationLiked": "いいねした記事",
     "curationLikedHint": "あなたがいいねした記事。",
-    "curationLikedEmpty": "まだいいねした記事がありません。"
+    "curationLikedEmpty": "まだいいねした記事がありません。",
+    "analyticsReferrers": "流入元"
   },
   "postEditor": {
     "backToList": "記事一覧",

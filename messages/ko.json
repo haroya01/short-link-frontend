@@ -239,7 +239,8 @@
     "rowDeleteFailed": "삭제에 실패했어요.",
     "curationLiked": "좋아요한 글",
     "curationLikedHint": "내가 공감한 글 모음.",
-    "curationLikedEmpty": "아직 좋아요한 글이 없어요."
+    "curationLikedEmpty": "아직 좋아요한 글이 없어요.",
+    "analyticsReferrers": "유입 경로"
   },
   "postEditor": {
     "backToList": "글 목록",

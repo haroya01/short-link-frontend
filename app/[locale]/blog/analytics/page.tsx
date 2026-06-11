@@ -99,6 +99,46 @@ export default function BlogAnalyticsPage() {
             <AnalyticsAreaChart data={data.daily} />
           </section>
 
+          {/* 유입 경로 — 같은 윈도우의 top 호스트. 막대는 1위 대비 상대폭(SeriesReadThrough 와
+              같은 문법). direct(레퍼러 없음)는 집계에 없어 행도 없다. ?? []: 백엔드(referrers
+              필드)보다 프론트가 먼저 배포되는 짧은 창에서도 페이지가 안 죽게. */}
+          {(data.referrers ?? []).length > 0 && (
+            <section className="mt-10">
+              <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+                {t("analyticsReferrers")}
+              </h2>
+              <ol className="space-y-1">
+                {data.referrers.map((r, i) => {
+                  const max = data.referrers[0]?.views || 1;
+                  const pct = Math.max(4, Math.round((r.views / max) * 100));
+                  return (
+                    <li key={r.host} className="-mx-3 flex items-center gap-3 rounded-xl px-3 py-2">
+                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold tabular-nums text-slate-300 dark:text-slate-500">
+                        {i + 1}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-baseline justify-between gap-3">
+                          <span className="truncate font-mono text-[13px] text-slate-700 dark:text-slate-200">
+                            {r.host}
+                          </span>
+                          <span className="shrink-0 text-[13px] font-semibold tabular-nums text-slate-700 dark:text-slate-200">
+                            {r.views.toLocaleString()}
+                          </span>
+                        </span>
+                        <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                          <span
+                            className="block h-full rounded-full bg-accent-500"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </span>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          )}
+
           {/* Series — the recurring-readership unit; subscriber count is the headline metric. */}
           <SeriesAnalyticsSection />
 
