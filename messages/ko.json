@@ -439,6 +439,7 @@
   },
   "publicPost": {
     "like": "좋아요",
+    "highlight": "하이라이트",
     "readingTime": "약 {minutes}분",
     "ogReadingTime": "{minutes}분 읽기",
     "previewBanner": "미리보기 — 아직 발행되지 않은 글이에요. 이 링크가 있는 사람만 볼 수 있어요.",

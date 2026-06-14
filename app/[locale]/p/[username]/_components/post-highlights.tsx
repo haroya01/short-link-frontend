@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import {
   createHighlight,
@@ -24,6 +25,7 @@ const MARK_STYLE = "background-color: rgba(5,150,105,0.18); border-radius: 2px;"
  * char offsets too, so future precision rendering can use them. NEEDS in-browser verification.
  */
 export function PostHighlights({ postId }: { postId: number }) {
+  const t = useTranslations("publicPost");
   const { authenticated, signInWithGoogle } = useAuth();
   const [highlights, setHighlights] = useState<HighlightView[]>([]);
   const [menu, setMenu] = useState<{ left: number; top: number; payload: NewHighlight } | null>(
@@ -94,7 +96,7 @@ export function PostHighlights({ postId }: { postId: number }) {
       onMouseDown={(e) => e.preventDefault()}
       onClick={commit}
     >
-      하이라이트
+      {t("highlight")}
     </button>
   );
 }

@@ -439,6 +439,7 @@
   },
   "publicPost": {
     "like": "いいね",
+    "highlight": "ハイライト",
     "readingTime": "約{minutes}分",
     "ogReadingTime": "{minutes}分で読めます",
     "previewBanner": "プレビュー — まだ公開されていない記事です。このリンクを知っている人だけが閲覧できます。",
