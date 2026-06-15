@@ -5,6 +5,7 @@ import type { PublicAuthor } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FollowButton } from "@/modules/blog/components/follow-button";
+import { FollowCounts } from "@/modules/blog/components/follow-counts";
 import { AuthorTabs } from "./author-tabs";
 
 type Tab = "posts" | "series" | "about";
@@ -43,7 +44,9 @@ export async function AuthorHeader({ author }: { author: PublicAuthor }) {
             <p className="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">{author.bio}</p>
           )}
           <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
-            <FollowButton username={author.username} initialFollowerCount={0} />
+            <FollowButton username={author.username} initialFollowerCount={0} showCount={false} />
+            {/* Tappable follower / following counts — each opens the list at the matching tab. */}
+            <FollowCounts username={author.username} />
             {/* Cross-surface link to the same person's link-in-bio (separate product, shared
                 identity). Shown only when they actually have one. */}
             {author.hasLinkInBio && (

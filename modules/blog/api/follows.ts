@@ -45,3 +45,44 @@ export function unfollowUser(username: string): Promise<FollowStatus> {
     method: "DELETE",
   });
 }
+
+/** One row of a followers / following list — author info + the viewer's own follow state. */
+export interface FollowUser {
+  id: number;
+  username: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  followerCount: number;
+  followedByMe: boolean;
+}
+
+export interface FollowListPage {
+  items: FollowUser[];
+  page: number;
+  size: number;
+  hasNext: boolean;
+}
+
+const MOCK_FOLLOW_USERS: FollowUser[] = [
+  { id: 9101, username: "haneul", bio: "프로덕트 디자이너", avatarUrl: null, followerCount: 320, followedByMe: false },
+  { id: 9102, username: "minseo", bio: "백엔드 엔지니어", avatarUrl: null, followerCount: 88, followedByMe: true },
+  { id: 9103, username: "yuna", bio: null, avatarUrl: null, followerCount: 12, followedByMe: false },
+];
+
+/** Public — users who follow `username` (newest first). */
+export function listFollowers(username: string, page = 0, size = 20): Promise<FollowListPage> {
+  if (USE_MOCKS) return Promise.resolve({ items: MOCK_FOLLOW_USERS, page, size, hasNext: false });
+  return request<FollowListPage>(
+    `/api/v1/users/${encodeURIComponent(username)}/followers?page=${page}&size=${size}`,
+    { method: "GET" },
+  );
+}
+
+/** Public — users `username` follows (most recently followed first). */
+export function listFollowing(username: string, page = 0, size = 20): Promise<FollowListPage> {
+  if (USE_MOCKS) return Promise.resolve({ items: MOCK_FOLLOW_USERS, page, size, hasNext: false });
+  return request<FollowListPage>(
+    `/api/v1/users/${encodeURIComponent(username)}/following?page=${page}&size=${size}`,
+    { method: "GET" },
+  );
+}
