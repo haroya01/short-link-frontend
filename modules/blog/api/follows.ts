@@ -10,6 +10,18 @@ export function listFollowingFeed(page = 0, size = 24): Promise<PublicFeedView> 
   });
 }
 
+/**
+ * Authenticated — the "For You" feed: posts ranked by the reader's tag affinity (followed tags +
+ * tags of what they've read/liked), excluding already-read. Cold-start (no signal) falls back to
+ * trending server-side, so a signed-in reader always gets something.
+ */
+export function listForYouFeed(page = 0, size = 24): Promise<PublicFeedView> {
+  if (USE_MOCKS) return Promise.resolve(mockFollowingView());
+  return request<PublicFeedView>(`/api/v1/feed/for-you?page=${page}&size=${size}`, {
+    method: "GET",
+  });
+}
+
 export interface FollowStatus {
   following: boolean;
   followerCount: number;

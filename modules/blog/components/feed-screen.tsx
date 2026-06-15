@@ -25,6 +25,7 @@ import { SearchEmpty } from "./search-empty";
 import { FeedInfinite } from "./feed-infinite";
 import { ReadingShell } from "./reading-shell";
 import { FollowingFeed } from "./following-feed";
+import { ForYouFeed } from "./for-you-feed";
 import { SubscribedSeriesFeed } from "./subscribed-series-feed";
 import { FeedTabCookieSync } from "./feed-tab-cookie-sync";
 import { DiscoverySeriesCard } from "./discovery-series-card";
@@ -111,8 +112,11 @@ export async function FeedScreen({
 
   // "following" is client-rendered (auth needed); recent/trending are server-fetched here. A search
   // spans every author, so it only honors recent/trending — the following sort collapses to recent.
-  const tab: "recent" | "trending" | "following" | "series" =
-    resolvedSort === "trending" || resolvedSort === "following" || resolvedSort === "series"
+  const tab: "recent" | "trending" | "for-you" | "following" | "series" =
+    resolvedSort === "trending" ||
+    resolvedSort === "for-you" ||
+    resolvedSort === "following" ||
+    resolvedSort === "series"
       ? resolvedSort
       : "recent";
   const sort: FeedSort = tab === "trending" ? "trending" : "recent";
@@ -123,7 +127,8 @@ export async function FeedScreen({
   // 발견 탭 통일: 최신·인기·검색·태그 전부 동일한 카드 그리드 프레임(폭·카드 언어 일치). 인기는
   // 인기순 정렬일 뿐 같은 그리드 — 예전 "주제별 인기 carousel"은 탭 일관성을 깨서 제거. 팔로잉/시리즈는
   // 인증이 필요한 자체 클라이언트 면(아래에서 각자 그리드로 렌더).
-  const showsServerFeed = searching || (tab !== "following" && tab !== "series");
+  const showsServerFeed =
+    searching || (tab !== "following" && tab !== "series" && tab !== "for-you");
   const needFlat = showsServerFeed;
   // Series 카드는 기본(비검색·비태그) 최신 그리드에만 끼워넣는다.
   const wantSeries = !searching && !activeTag && tab === "recent";
@@ -163,7 +168,15 @@ export async function FeedScreen({
   const contentKey = `${activeTab}:${searching ? query : ""}`;
   // Tab order drives the slide direction (FeedContentTransition): recent → trending → following.
   const tabIndex =
-    activeTab === "trending" ? 1 : activeTab === "following" ? 2 : activeTab === "series" ? 3 : 0;
+    activeTab === "trending"
+      ? 1
+      : activeTab === "for-you"
+        ? 2
+        : activeTab === "following"
+          ? 3
+          : activeTab === "series"
+            ? 4
+            : 0;
 
   // No separate hero card. On the default (non-search) recent feed the lead post just gets a quiet
   // "오늘의 글" emphasis as the first list row — same grammar as the rest of the list, only louder by a
@@ -219,6 +232,14 @@ export async function FeedScreen({
                 active: activeTab === "trending",
               },
               {
+                key: "for-you",
+                label: t("forYou"),
+                href: "?sort=for-you",
+                active: !searching && tab === "for-you",
+                // For You is per-reader, so it can't apply to a cross-author search.
+                disabled: searching,
+              },
+              {
                 key: "following",
                 label: t("feed"),
                 href: "?sort=following",
@@ -242,7 +263,11 @@ export async function FeedScreen({
 
         {/* Following is its own client surface with its own rail (followed authors), so it animates as
             a whole — there's no shared discovery rail to hold still here. */}
-        {tab === "following" && !searching ? (
+        {tab === "for-you" && !searching ? (
+          <FeedContentTransition index={tabIndex} contentKey={contentKey}>
+            <ForYouFeed locale={locale} />
+          </FeedContentTransition>
+        ) : tab === "following" && !searching ? (
           <FeedContentTransition index={tabIndex} contentKey={contentKey}>
             <FollowingFeed locale={locale} suggestedAuthors={authors} />
           </FeedContentTransition>
