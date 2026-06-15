@@ -1,10 +1,11 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Bookmark, Heart } from "lucide-react";
+import { Bookmark, Clock, Heart } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { SmartShelf } from "@/modules/blog/components/saved/smart-shelf";
 import { LikedList } from "@/modules/blog/components/saved/liked-list";
+import { ReadingHistoryList } from "@/modules/blog/components/saved/reading-history-list";
 
 /**
  * 저장한 글 — the reader's own reading list: bookmarked posts (account-synced via the bookmark toggle
@@ -50,6 +51,19 @@ export default function SavedPostsPage() {
 
         <div className="mt-5">
           <LikedList username={me?.username ?? ""} locale={locale} />
+        </div>
+      </section>
+
+      {/* 읽기 기록 — posts the reader has read (account-synced, newest first; private to the owner). */}
+      <section className="mt-12">
+        <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
+          <Clock className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+          <h2 className="text-sm font-semibold">{t("curationHistory")}</h2>
+        </div>
+        <p className="mt-1 text-[12px] text-slate-500 dark:text-slate-400">{t("curationHistoryHint")}</p>
+
+        <div className="mt-5">
+          <ReadingHistoryList username={me?.username ?? ""} locale={locale} />
         </div>
       </section>
     </main>

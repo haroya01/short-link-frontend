@@ -240,6 +240,8 @@
     "curationLiked": "좋아요한 글",
     "curationLikedHint": "내가 공감한 글 모음.",
     "curationLikedEmpty": "아직 좋아요한 글이 없어요.",
+    "curationHistory": "읽기 기록",
+    "curationHistoryHint": "읽은 글이 기기를 넘어 이어집니다. 기록은 나만 봅니다.",
     "analyticsReferrers": "유입 경로"
   },
   "postEditor": {
@@ -437,6 +439,13 @@
     "emptyLiked": "아직 좋아요한 글이 없어요",
     "emptyLikedBody": "마음에 드는 글에 좋아요를 누르면 여기에 모입니다.",
     "browseFeed": "피드 둘러보기",
+    "emptyHistory": "아직 읽기 기록이 없어요.",
+    "emptyHistoryBody": "글을 읽으면 여기에 기록돼요.",
+    "clearHistory": "기록 지우기",
+    "clearHistoryConfirm": "전체 기록을 지울까요?",
+    "clearHistoryCancel": "취소",
+    "forget": "기록에서 지우기",
+    "loadMore": "더 보기",
     "emptyFolder": "이 폴더는 비어 있어요."
   },
   "publicPost": {

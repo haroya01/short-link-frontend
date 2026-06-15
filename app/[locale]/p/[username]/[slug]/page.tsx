@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
+import { ReadBeacon } from "@/modules/blog/components/read-beacon";
 import { PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
 import { PostComments } from "@/modules/blog/components/comments";
 import { LikeButton } from "@/modules/blog/components/like-button";
@@ -201,7 +202,11 @@ export default async function PublicPostPage({
             {t("previewBanner")}
           </div>
         ) : (
-          <ViewBeacon username={username} slug={slug} />
+          <>
+            <ViewBeacon username={username} slug={slug} />
+            {/* Account-synced reading history for signed-in readers (no-op for anonymous). */}
+            <ReadBeacon postId={post.id} />
+          </>
         )}
 
       {/* Cover (when set) — contained to the reading column + rounded, not a full-bleed banner, so it
