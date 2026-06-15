@@ -13,6 +13,7 @@ import { LikeButton } from "@/modules/blog/components/like-button";
 import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
+import { PostHighlights } from "../_components/post-highlights";
 import { TagChips } from "../_components/post-meta";
 import { PostOwnerActions } from "../_components/post-owner-actions";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
@@ -283,6 +284,7 @@ export default async function PublicPostPage({
       )}
 
       <ArticleBody blocks={blocks} postId={post.id} className={headings.length >= 1 ? "has-toc" : undefined} />
+      <PostHighlights postId={post.id} />
 
       {result.data.series && (
         <SeriesNext series={result.data.series} username={author.username} locale={locale} />

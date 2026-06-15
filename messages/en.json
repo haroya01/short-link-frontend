@@ -441,6 +441,7 @@
   },
   "publicPost": {
     "like": "Like",
+    "highlight": "Highlight",
     "readingTime": "{minutes} min read",
     "ogReadingTime": "{minutes} min read",
     "previewBanner": "Preview — this post isn't published yet. Only people with this link can see it.",
