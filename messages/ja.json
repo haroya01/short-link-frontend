@@ -240,6 +240,8 @@
     "curationLiked": "いいねした記事",
     "curationLikedHint": "あなたがいいねした記事。",
     "curationLikedEmpty": "まだいいねした記事がありません。",
+    "curationHistory": "閲覧履歴",
+    "curationHistoryHint": "読んだ記事がデバイスを越えて残ります。履歴は自分だけが見られます。",
     "analyticsReferrers": "流入元"
   },
   "postEditor": {
@@ -437,6 +439,13 @@
     "emptyLiked": "いいねした記事はまだありません",
     "emptyLikedBody": "気に入った記事にいいねすると、ここに集まります。",
     "browseFeed": "フィードを見る",
+    "emptyHistory": "閲覧履歴がまだありません。",
+    "emptyHistoryBody": "記事を読むとここに記録されます。",
+    "clearHistory": "履歴を消去",
+    "clearHistoryConfirm": "履歴をすべて消去しますか?",
+    "clearHistoryCancel": "キャンセル",
+    "forget": "履歴から削除",
+    "loadMore": "もっと見る",
     "emptyFolder": "このフォルダは空です。"
   },
   "publicPost": {

@@ -240,6 +240,8 @@
     "curationLiked": "Liked posts",
     "curationLikedHint": "Posts you've liked.",
     "curationLikedEmpty": "No liked posts yet.",
+    "curationHistory": "Reading history",
+    "curationHistoryHint": "Posts you read follow you across devices. Only you can see this.",
     "analyticsReferrers": "Traffic sources"
   },
   "postEditor": {
@@ -437,6 +439,13 @@
     "emptyLiked": "No liked posts yet",
     "emptyLikedBody": "Posts you like will gather here.",
     "browseFeed": "Browse the feed",
+    "emptyHistory": "No reading history yet.",
+    "emptyHistoryBody": "Posts you read will show up here.",
+    "clearHistory": "Clear history",
+    "clearHistoryConfirm": "Clear your whole history?",
+    "clearHistoryCancel": "Cancel",
+    "forget": "Remove from history",
+    "loadMore": "Load more",
     "emptyFolder": "This folder is empty."
   },
   "publicPost": {
