@@ -5,12 +5,26 @@
  * `wrapAtOffsets` is the precise path: it paints the exact stored span (block index + char offsets),
  * which hits the right occurrence when a phrase repeats and spans inline formatting. `wrapFirstQuote`
  * is the fallback for when those offsets drift (the post was edited after the highlight was made).
+ *
+ * Every `<mark>` carries `data-hl-id` so a click can open that highlight's reply thread; a highlight
+ * that already has a note or replies gets a solid accent underline (invite to read), and its note rides
+ * along as a tooltip.
  */
 export const MARK_CLASS = "kurl-highlight";
-export const MARK_STYLE = "background-color: rgba(5,150,105,0.18); border-radius: 2px;";
-// A highlight that carries a memo gets a dashed underline + native tooltip so the margin note is
-// discoverable without a heavier reveal UI.
-export const NOTE_STYLE = MARK_STYLE + " border-bottom: 1.5px dashed rgba(5,150,105,0.65); cursor: help;";
+const BASE_STYLE = "background-color: rgba(5,150,105,0.18); border-radius: 2px; cursor: pointer;";
+// A highlight with a thread (an author note or at least one reply) gets a solid accent underline.
+const THREAD_STYLE = BASE_STYLE + " border-bottom: 1.5px solid rgba(5,150,105,0.6);";
+
+/** What a painted mark needs to know: which highlight it is, and whether it carries a conversation. */
+export type HighlightMeta = { id: number; note: string | null; replyCount: number };
+
+function styleMark(mark: HTMLElement, meta: HighlightMeta) {
+  mark.className = MARK_CLASS;
+  mark.dataset.hlId = String(meta.id);
+  const hasThread = !!meta.note || meta.replyCount > 0;
+  mark.setAttribute("style", hasThread ? THREAD_STYLE : BASE_STYLE);
+  if (meta.note) mark.title = meta.note;
+}
 
 /** Unwrap every highlight `<mark>` (so the set can be repainted from scratch). */
 export function clearMarks(root: HTMLElement) {
@@ -35,7 +49,7 @@ export function wrapAtOffsets(
   blockOrder: number,
   startOffset: number,
   endOffset: number,
-  note: string | null,
+  meta: HighlightMeta,
 ): boolean {
   const block = root.children[blockOrder];
   if (!block || startOffset >= endOffset) return false;
@@ -60,9 +74,7 @@ export function wrapAtOffsets(
     range.setStart(slice.node, slice.from);
     range.setEnd(slice.node, slice.to);
     const mark = document.createElement("mark");
-    mark.className = MARK_CLASS;
-    mark.setAttribute("style", note ? NOTE_STYLE : MARK_STYLE);
-    if (note) mark.title = note;
+    styleMark(mark, meta);
     try {
       range.surroundContents(mark);
     } catch {
@@ -72,10 +84,9 @@ export function wrapAtOffsets(
   return true;
 }
 
-/** Wrap the first occurrence of `quote` (within a single text node) in a highlight `<mark>`. A memo,
- *  if present, rides along as a dashed underline + native tooltip. Fallback for when precise offsets
- *  drift (post edited after the highlight). */
-export function wrapFirstQuote(root: HTMLElement, quote: string, note: string | null) {
+/** Wrap the first occurrence of `quote` (within a single text node) in a highlight `<mark>`. Fallback
+ *  for when precise offsets drift (post edited after the highlight). */
+export function wrapFirstQuote(root: HTMLElement, quote: string, meta: HighlightMeta) {
   if (!quote) return;
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode: (n) =>
@@ -89,9 +100,7 @@ export function wrapFirstQuote(root: HTMLElement, quote: string, note: string | 
       range.setStart(n, idx);
       range.setEnd(n, idx + quote.length);
       const mark = document.createElement("mark");
-      mark.className = MARK_CLASS;
-      mark.setAttribute("style", note ? NOTE_STYLE : MARK_STYLE);
-      if (note) mark.title = note;
+      styleMark(mark, meta);
       try {
         range.surroundContents(mark);
       } catch {
