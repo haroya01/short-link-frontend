@@ -33,6 +33,11 @@ import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 // that needs a cache, the right layer is the backend / CDN, not an ISR window that breaks freshness.
 export const dynamic = "force-dynamic";
 
+// 브랜드(publisher) URL — Article rich result 의 publisher.logo 는 kurl.me 기준(글은 작가 서브도메인).
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.NEXT_PUBLIC_FRONTEND_URL ??
+  "https://kurl.me";
 
 function formatDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
@@ -142,7 +147,8 @@ export default async function PublicPostPage({
     ? null
     : {
         "@context": "https://schema.org",
-        "@type": "Article",
+        // BlogPosting = Article 의 블로그 특화 하위 타입(같은 rich result, 더 정확한 신호).
+        "@type": "BlogPosting",
         headline: post.title,
         ...(post.excerpt ? { description: post.excerpt } : {}),
         image: [post.ogImageUrl ?? `${postUrl}/opengraph-image`],
@@ -158,6 +164,25 @@ export default async function PublicPostPage({
           alternateName: `@${author.username}`,
           url: origin,
         },
+        // publisher(+logo) — Google Article rich result 가 권장하는 발행처 엔티티(브랜드 = kurl).
+        publisher: {
+          "@type": "Organization",
+          name: "kurl",
+          url: SITE_URL,
+          logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.svg` },
+        },
+      };
+
+  // 빵부스러기 — 작가 홈 → 이 글. SERP 의 breadcrumb 표시 + 사이트 구조 신호.
+  const breadcrumbJsonLd = isPreview
+    ? null
+    : {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: `@${author.username}`, item: origin },
+          { "@type": "ListItem", position: 2, name: post.title, item: postUrl },
+        ],
       };
 
   return (
@@ -168,6 +193,12 @@ export default async function PublicPostPage({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        />
+      )}
+      {breadcrumbJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
         />
       )}
       {/* Left rail (xl+): a persistent author identity + follow that stays once the in-article header
