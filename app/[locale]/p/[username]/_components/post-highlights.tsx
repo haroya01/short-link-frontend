@@ -16,7 +16,7 @@ import {
 } from "@/modules/blog/api/highlights";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentComposer } from "@/modules/blog/components/comment-composer";
-import { clearMarks, wrapAtOffsets, wrapFirstQuote, MARK_CLASS } from "./highlight-anchor";
+import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
 
 type Anchor = { left: number; top: number; bottom: number };
 
@@ -67,13 +67,9 @@ export function PostHighlights({ postId }: { postId: number }) {
     if (!root) return;
     clearMarks(root);
     for (const h of highlights) {
-      const meta = { id: h.id, note: h.note, replyCount: h.replyCount };
-      // Precise: paint the exact stored span (block + char offsets), which survives a quote that
-      // recurs and spans inline formatting. Fall back to a text search only when the offsets no longer
-      // line up (the post was edited after the highlight was made).
-      if (!wrapAtOffsets(root, h.blockOrder, h.startOffset, h.endOffset, meta)) {
-        wrapFirstQuote(root, h.quote, meta);
-      }
+      // Precise span paint (single- or multi-block), using the stored block + char offsets so it hits
+      // the right occurrence and crosses inline formatting; quote-search fallback if offsets drifted.
+      wrapHighlight(root, h, { id: h.id, note: h.note, replyCount: h.replyCount });
     }
   }, [highlights]);
 
@@ -538,14 +534,18 @@ function readSelection(root: HTMLElement): NewHighlight | null {
   const range = sel.getRangeAt(0);
   if (!root.contains(range.commonAncestorContainer)) return null;
   const quote = sel.toString().trim();
-  if (quote.length < 1 || quote.length > 1000) return null;
-  const block = directChild(root, range.startContainer);
-  if (!block || directChild(root, range.endContainer) !== block) return null; // single block (v1)
-  const blockOrder = Array.prototype.indexOf.call(root.children, block);
-  const startOffset = offsetWithin(block, range.startContainer, range.startOffset);
-  const endOffset = offsetWithin(block, range.endContainer, range.endOffset);
-  if (endOffset <= startOffset) return null;
-  return { blockOrder, startOffset, endOffset, quote };
+  if (quote.length < 1 || quote.length > 2000) return null;
+  // The span may cross blocks: start in `startBlock`, end in `endBlock` (== same block for the common case).
+  const startBlock = directChild(root, range.startContainer);
+  const endBlock = directChild(root, range.endContainer);
+  if (!startBlock || !endBlock) return null;
+  const blockOrder = Array.prototype.indexOf.call(root.children, startBlock);
+  const endBlockOrder = Array.prototype.indexOf.call(root.children, endBlock);
+  if (blockOrder < 0 || endBlockOrder < blockOrder) return null;
+  const startOffset = offsetWithin(startBlock, range.startContainer, range.startOffset);
+  const endOffset = offsetWithin(endBlock, range.endContainer, range.endOffset);
+  if (blockOrder === endBlockOrder && endOffset <= startOffset) return null;
+  return { blockOrder, endBlockOrder, startOffset, endOffset, quote };
 }
 
 /** The `.prose-post` direct-child element that contains `node` (a block), or null. */
