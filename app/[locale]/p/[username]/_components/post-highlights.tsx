@@ -9,12 +9,7 @@ import {
   type HighlightView,
   type NewHighlight,
 } from "@/modules/blog/api/highlights";
-
-const MARK_CLASS = "kurl-highlight";
-const MARK_STYLE = "background-color: rgba(5,150,105,0.18); border-radius: 2px;";
-// A highlight that carries a memo gets a dashed underline + native tooltip so the margin note is
-// discoverable without a heavier reveal UI.
-const NOTE_STYLE = MARK_STYLE + " border-bottom: 1.5px dashed rgba(5,150,105,0.65); cursor: help;";
+import { clearMarks, wrapAtOffsets, wrapFirstQuote } from "./highlight-anchor";
 
 type Anchor = { left: number; top: number; bottom: number };
 
@@ -62,7 +57,14 @@ export function PostHighlights({ postId }: { postId: number }) {
     const root = document.querySelector<HTMLElement>(".prose-post");
     if (!root) return;
     clearMarks(root);
-    for (const h of highlights) wrapFirstQuote(root, h.quote, h.note);
+    for (const h of highlights) {
+      // Precise: paint the exact stored span (block + char offsets), which survives a quote that
+      // recurs and spans inline formatting. Fall back to a text search only when the offsets no longer
+      // line up (the post was edited after the highlight was made).
+      if (!wrapAtOffsets(root, h.blockOrder, h.startOffset, h.endOffset, h.note)) {
+        wrapFirstQuote(root, h.quote, h.note);
+      }
+    }
   }, [highlights]);
 
   // Capture a selection inside the prose and offer the highlight actions at the selection. Finalize on
@@ -354,47 +356,4 @@ function offsetWithin(block: Element, node: Node, offset: number): number {
     n = walker.nextNode();
   }
   return count + offset;
-}
-
-/** Unwrap every highlight `<mark>` (so the set can be repainted from scratch). */
-function clearMarks(root: HTMLElement) {
-  root.querySelectorAll(`mark.${MARK_CLASS}`).forEach((mark) => {
-    const parent = mark.parentNode;
-    if (!parent) return;
-    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
-    parent.removeChild(mark);
-    parent.normalize();
-  });
-}
-
-/** Wrap the first occurrence of `quote` (within a single text node) in a highlight `<mark>`. A memo,
- *  if present, rides along as a dashed underline + native tooltip. */
-function wrapFirstQuote(root: HTMLElement, quote: string, note: string | null) {
-  if (!quote) return;
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-    acceptNode: (n) =>
-      n.parentElement?.closest(`mark.${MARK_CLASS}`)
-        ? NodeFilter.FILTER_REJECT
-        : NodeFilter.FILTER_ACCEPT,
-  });
-  let n = walker.nextNode() as Text | null;
-  while (n) {
-    const idx = n.data.indexOf(quote);
-    if (idx >= 0) {
-      const range = document.createRange();
-      range.setStart(n, idx);
-      range.setEnd(n, idx + quote.length);
-      const mark = document.createElement("mark");
-      mark.className = MARK_CLASS;
-      mark.setAttribute("style", note ? NOTE_STYLE : MARK_STYLE);
-      if (note) mark.title = note;
-      try {
-        range.surroundContents(mark);
-      } catch {
-        /* range crosses element boundaries — skip painting this one (v1) */
-      }
-      return;
-    }
-    n = walker.nextNode() as Text | null;
-  }
 }
