@@ -7,6 +7,7 @@ import {
   Bookmark,
   Check,
   ChevronDown,
+  CornerDownRight,
   FileText,
   Globe,
   Inbox,
@@ -55,6 +56,7 @@ export function AccountSheet({
   const t = useTranslations("nav");
   const tNotif = useTranslations("notifications");
   const tBlog = useTranslations("sidebar.blog");
+  const tColl = useTranslations("collections");
   const unread = useUnreadCount();
   const tLang = useTranslations("languageSwitcher");
   const locale = useLocale();
@@ -169,6 +171,11 @@ export function AccountSheet({
             <a href={blogHref("/curation")} className={ITEM}>
               <Bookmark className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("library")}
+            </a>
+            {/* 연결 발견 — the curator-connection flow (collections / reading paths). */}
+            <a href={blogHref("/connections")} className={ITEM}>
+              <CornerDownRight className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+              {tColl("discoverTitle")}
             </a>
             {/* Notifications — mobile reaches the full page here (the desktop header bell has a
                 dropdown). Unread badge mirrors the desktop bell. */}
