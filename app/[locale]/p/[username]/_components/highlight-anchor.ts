@@ -111,3 +111,46 @@ export function wrapFirstQuote(root: HTMLElement, quote: string, meta: Highlight
     n = walker.nextNode() as Text | null;
   }
 }
+
+/** A highlight span — start in `blockOrder` at `startOffset`, end in `endBlockOrder` at `endOffset`
+ *  (== blockOrder for a single-block highlight). */
+export type HighlightSpan = {
+  blockOrder: number;
+  endBlockOrder: number;
+  startOffset: number;
+  endOffset: number;
+  quote: string;
+};
+
+function blockTextLength(el: Element): number {
+  return el.textContent?.length ?? 0;
+}
+
+/**
+ * Paint a highlight that may cross blocks: the start block from `startOffset` to its end, every block
+ * in between whole, and the end block up to `endOffset`. The single-block case (`endBlockOrder ==
+ * blockOrder`) is the common path. Every slice carries the same `meta` (id/note/replyCount), so a tap
+ * anywhere in the span opens the one thread. Falls back to a quote search if nothing landed (the body
+ * was edited after the highlight was made).
+ */
+export function wrapHighlight(root: HTMLElement, span: HighlightSpan, meta: HighlightMeta) {
+  const endBlock = span.endBlockOrder ?? span.blockOrder;
+  if (endBlock <= span.blockOrder) {
+    if (!wrapAtOffsets(root, span.blockOrder, span.startOffset, span.endOffset, meta)) {
+      wrapFirstQuote(root, span.quote, meta);
+    }
+    return;
+  }
+  let painted = false;
+  const first = root.children[span.blockOrder];
+  if (first) {
+    painted = wrapAtOffsets(root, span.blockOrder, span.startOffset, blockTextLength(first), meta) || painted;
+  }
+  for (let b = span.blockOrder + 1; b < endBlock; b++) {
+    const mid = root.children[b];
+    if (mid) painted = wrapAtOffsets(root, b, 0, blockTextLength(mid), meta) || painted;
+  }
+  const last = root.children[endBlock];
+  if (last) painted = wrapAtOffsets(root, endBlock, 0, span.endOffset, meta) || painted;
+  if (!painted) wrapFirstQuote(root, span.quote, meta);
+}

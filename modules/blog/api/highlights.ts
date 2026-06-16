@@ -9,7 +9,11 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 export interface HighlightView {
   id: number;
   author: PublicAuthor | null;
+  /** First block of the span. */
   blockOrder: number;
+  /** Last block of the span (== blockOrder for a single-block highlight). */
+  endBlockOrder: number;
+  /** Char offset of the start within blockOrder, and of the end within endBlockOrder. */
   startOffset: number;
   endOffset: number;
   quote: string;
@@ -21,6 +25,7 @@ export interface HighlightView {
 
 export interface NewHighlight {
   blockOrder: number;
+  endBlockOrder: number;
   startOffset: number;
   endOffset: number;
   quote: string;

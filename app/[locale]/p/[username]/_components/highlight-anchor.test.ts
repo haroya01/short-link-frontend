@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { wrapAtOffsets, clearMarks, MARK_CLASS, type HighlightMeta } from "./highlight-anchor";
+import { wrapAtOffsets, wrapHighlight, clearMarks, MARK_CLASS, type HighlightMeta } from "./highlight-anchor";
 
 function makeRoot(html: string): HTMLElement {
   const el = document.createElement("div");
@@ -72,5 +72,27 @@ describe("wrapAtOffsets — precise highlight anchoring", () => {
     clearMarks(r);
     expect(marks(r)).toHaveLength(0);
     expect(r.children[0].textContent).toBe("abc");
+  });
+});
+
+describe("wrapHighlight — multi-block spans", () => {
+  it("paints a span crossing blocks: start tail + whole middle + end head, one shared id", () => {
+    const r = makeRoot("<p>alpha beta</p><p>gamma</p><p>delta epsilon</p>");
+    // start block 0 @6 ("beta"…) → through block 1 whole ("gamma") → end block 2 @5 ("delta")
+    wrapHighlight(
+      r,
+      { blockOrder: 0, endBlockOrder: 2, startOffset: 6, endOffset: 5, quote: "beta gamma delta" },
+      meta(99),
+    );
+    expect(r.children[0].querySelector("mark")?.textContent).toBe("beta");
+    expect(r.children[1].querySelector("mark")?.textContent).toBe("gamma");
+    expect(r.children[2].querySelector("mark")?.textContent).toBe("delta");
+    expect(marks(r).every((m) => m.dataset.hlId === "99")).toBe(true);
+  });
+
+  it("single-block (endBlockOrder == blockOrder) goes through the precise path", () => {
+    const r = makeRoot("<p>just one block here</p>");
+    wrapHighlight(r, { blockOrder: 0, endBlockOrder: 0, startOffset: 0, endOffset: 4, quote: "just" }, meta(1));
+    expect(r.querySelector("mark")?.textContent).toBe("just");
   });
 });
