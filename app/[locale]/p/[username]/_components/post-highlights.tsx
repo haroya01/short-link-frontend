@@ -16,6 +16,14 @@ import {
 } from "@/modules/blog/api/highlights";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentComposer } from "@/modules/blog/components/comment-composer";
+import { CornerDownRight, FolderPlus, Globe, Link as LinkIcon, Lock } from "lucide-react";
+import { blogPath } from "@/lib/host";
+import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
+import {
+  listCollectionsContainingHighlight,
+  type CollectionSummary,
+} from "@/modules/blog/api/collections";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
 
 type Anchor = { left: number; top: number; bottom: number };
@@ -71,6 +79,23 @@ export function PostHighlights({ postId }: { postId: number }) {
       // the right occurrence and crosses inline formatting; quote-search fallback if offsets drifted.
       wrapHighlight(root, h, { id: h.id, note: h.note, replyCount: h.replyCount });
     }
+  }, [highlights]);
+
+  // Deep-link to a sentence: a `?hl=<quote>` from a path step / connection / discovery card scrolls to
+  // the matching painted span and flashes it (mirrors the iOS postFocusQuote deep-link). Runs after a
+  // paint pass so the <mark>s exist; falls back to a plain-text search when the span wasn't painted.
+  useEffect(() => {
+    if (highlights.length === 0) return;
+    const quote = new URLSearchParams(window.location.search).get("hl");
+    if (!quote) return;
+    const id = window.setTimeout(() => {
+      const root = document.querySelector<HTMLElement>(".prose-post");
+      const target = root && findQuoteTarget(root, quote);
+      if (!target) return;
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      flashQuote(target);
+    }, 120);
+    return () => window.clearTimeout(id);
   }, [highlights]);
 
   // Tapping a painted highlight opens its reply thread (a plain click, not a drag-select — a drag
@@ -247,11 +272,18 @@ function HighlightThread({
   onChanged: () => void;
 }) {
   const t = useTranslations("publicPost");
+  const tc = useTranslations("collections");
   const locale = useLocale();
   const [replies, setReplies] = useState<HighlightReplyView[]>([]);
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
+  // The public paths/collections this sentence is woven into ("이 문장이 속한 길" — A-척추 discovery loop).
+  const [inCollections, setInCollections] = useState<CollectionSummary[]>([]);
+  // When true, the connect sheet is open over the thread (file this sentence into a collection / path).
+  const [connecting, setConnecting] = useState(false);
   const inset = useKeyboardInset();
+  // Connect needs a server-side highlight (positive id); an optimistic one (negative id) has no refId.
+  const canConnect = authenticated && highlight.id > 0;
 
   const load = useCallback(() => {
     listHighlightReplies(highlight.id)
@@ -259,9 +291,17 @@ function HighlightThread({
       .catch(() => setReplies([]));
   }, [highlight.id]);
 
+  const loadContaining = useCallback(() => {
+    if (highlight.id <= 0) return;
+    listCollectionsContainingHighlight(highlight.id)
+      .then(setInCollections)
+      .catch(() => setInCollections([]));
+  }, [highlight.id]);
+
   useEffect(() => {
     load();
-  }, [load]);
+    loadContaining();
+  }, [load, loadContaining]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -308,6 +348,7 @@ function HighlightThread({
   }
 
   return (
+    <>
     <div
       className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4"
       style={{ paddingBottom: inset }}
@@ -318,9 +359,23 @@ function HighlightThread({
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="border-b border-slate-100 p-5 dark:border-slate-800">
-          <blockquote className="line-clamp-3 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
-            {highlight.quote}
-          </blockquote>
+          <div className="flex items-start gap-3">
+            <blockquote className="line-clamp-3 flex-1 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
+              {highlight.quote}
+            </blockquote>
+            {/* Connect this sentence into a collection / path — the entry into the connection graph. */}
+            {canConnect && (
+              <button
+                type="button"
+                onClick={() => setConnecting(true)}
+                aria-label={tc("connectThisSentence")}
+                title={tc("connectThisSentence")}
+                className="focus-ring -mr-1 -mt-1 shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:hover:bg-slate-800 dark:hover:text-accent-400"
+              >
+                <FolderPlus className="h-4 w-4" />
+              </button>
+            )}
+          </div>
           {/* The curator's note is the thread opener. */}
           {highlight.note && (
             <div className="mt-3 flex items-start gap-2">
@@ -365,6 +420,37 @@ function HighlightThread({
               ))}
             </ul>
           )}
+
+          {/* 이 문장이 속한 길 — from one sentence to the paths/collections it's woven into. */}
+          {inCollections.length > 0 && (
+            <div className="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                {tc("inPathTitle")}
+              </p>
+              <ul className="mt-2 space-y-1">
+                {inCollections.map((c) => (
+                  <li key={c.id}>
+                    <BlogLink
+                      href={blogPath(`/collections/${c.id}`)}
+                      className="focus-ring flex items-center gap-2 rounded-lg px-1 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+                    >
+                      {c.kind === "PATH" ? (
+                        <CornerDownRight className="h-3.5 w-3.5 shrink-0 text-accent-600 dark:text-accent-500" />
+                      ) : (
+                        <ContainingGlyph visibility={c.visibility} />
+                      )}
+                      <span className="min-w-0 flex-1 truncate text-[14px] text-slate-800 dark:text-slate-200">
+                        {c.title}
+                      </span>
+                      <span className="shrink-0 text-[12px] text-slate-400 dark:text-slate-500">
+                        {c.count}
+                      </span>
+                    </BlogLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         <div className="border-t border-slate-100 p-4 dark:border-slate-800">
@@ -383,7 +469,29 @@ function HighlightThread({
         </div>
       </div>
     </div>
+    {connecting && (
+      <ConnectSheet
+        blockType="HIGHLIGHT"
+        refId={highlight.id}
+        targetLabel={tc("blockHighlight")}
+        targetTitle={highlight.quote}
+        onClose={() => setConnecting(false)}
+        onDone={() => {
+          setConnecting(false);
+          loadContaining();
+        }}
+      />
+    )}
+    </>
   );
+}
+
+/** A small glyph for a containing collection's visibility (paths use the path arrow instead). */
+function ContainingGlyph({ visibility }: { visibility: CollectionSummary["visibility"] }) {
+  const cls = "h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500";
+  if (visibility === "PUBLIC") return <Globe className={cls} />;
+  if (visibility === "UNLISTED") return <LinkIcon className={cls} />;
+  return <Lock className={cls} />;
 }
 
 /** Floating two-action bar pinned to the selection. Placed above the span, or below it when the span
@@ -566,4 +674,29 @@ function offsetWithin(block: Element, node: Node, offset: number): number {
     n = walker.nextNode();
   }
   return count + offset;
+}
+
+/** Find the element to scroll to for a `?hl=` quote: a painted `<mark>` whose text contains the quote
+ *  (the precise target), else the block element whose text contains it (fallback when not painted). */
+function findQuoteTarget(root: HTMLElement, quote: string): HTMLElement | null {
+  const needle = quote.trim();
+  if (!needle) return null;
+  const marks = Array.from(root.querySelectorAll<HTMLElement>(`mark.${MARK_CLASS}`));
+  const mark = marks.find((m) => (m.textContent ?? "").includes(needle.slice(0, 40)));
+  if (mark) return mark;
+  return (
+    Array.from(root.children).find((el) => (el.textContent ?? "").includes(needle)) as
+      | HTMLElement
+      | undefined
+  ) ?? null;
+}
+
+/** Briefly flash a deep-linked target so the eye lands on it (mirrors the iOS focus blink). */
+function flashQuote(el: HTMLElement) {
+  el.style.transition = "background-color 0.4s ease";
+  const prev = el.style.backgroundColor;
+  el.style.backgroundColor = "rgba(5,150,105,0.32)";
+  window.setTimeout(() => {
+    el.style.backgroundColor = prev;
+  }, 1100);
 }
