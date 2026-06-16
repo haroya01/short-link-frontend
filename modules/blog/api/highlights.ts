@@ -4,7 +4,8 @@ import type { PublicAuthor } from "./public-posts";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
-/** A public, attributed reader highlight — who highlighted which span (block + char offsets + quote). */
+/** A public, attributed reader highlight — who highlighted which span (block + char offsets + quote),
+ *  with an optional public memo (the curator's margin note shown alongside the highlight). */
 export interface HighlightView {
   id: number;
   author: PublicAuthor | null;
@@ -12,6 +13,7 @@ export interface HighlightView {
   startOffset: number;
   endOffset: number;
   quote: string;
+  note: string | null;
   createdAt: string;
 }
 
@@ -20,6 +22,7 @@ export interface NewHighlight {
   startOffset: number;
   endOffset: number;
   quote: string;
+  note?: string | null;
 }
 
 const MOCK_VIEWER: PublicAuthor = { id: 9001, username: "reader", bio: null, avatarUrl: null };
@@ -43,6 +46,7 @@ export function createHighlight(postId: number, payload: NewHighlight): Promise<
       id: ++mockSeq,
       author: MOCK_VIEWER,
       ...payload,
+      note: payload.note?.trim() || null,
       createdAt: new Date().toISOString(),
     };
     mockHighlights = [...mockHighlights, h];
