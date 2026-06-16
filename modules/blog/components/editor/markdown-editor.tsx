@@ -34,6 +34,7 @@ import {
   Video,
   type LucideIcon,
 } from "lucide-react";
+import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-shortcuts";
 import { CodeMirrorBlock, insertCodeBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
@@ -223,6 +224,9 @@ export function MarkdownEditor({
         link: { openOnClick: false, enableClickSelection: true },
       }),
       EnterSoftBreak,
+      // Convert markdown shortcuts (#, **, *, `, ~~, -, 1., >) the instant they're typed — including on
+      // mobile keyboards, where ProseMirror's native input rules don't fire (see markdown-shortcuts.ts).
+      MarkdownShortcuts,
       CodeMirrorBlock,
       LinkCardNode,
       Image.configure({ inline: false }),
