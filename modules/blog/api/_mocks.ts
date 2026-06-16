@@ -293,6 +293,21 @@ export function mockSeriesDetail(username: string, slug: string): PublicSeriesDe
 // Cross-author active series for the feed's discovery cards, most recently active first.
 const MOCK_DISCOVER_SERIES: PublicSeriesCard[] = [
   {
+    // 전 에피소드 무이미지 — 시리즈 덱의 워터마크 숫자 표지(이미지 없는 장)를 눈으로 확인하는 용도.
+    id: 3,
+    author: AUTHORS.haruka,
+    slug: "quiet-architecture-notes",
+    title: "조용한 아키텍처 노트",
+    postCount: 4,
+    lastPublishedAt: "2026-06-08T09:00:00Z",
+    posts: [
+      { slug: "hexagonal-too-much", title: "헥사고날 아키텍처, 작은 서비스에 과했을까" },
+      { slug: "typescript-generics-hard", title: "타입스크립트 제네릭이 어려운 진짜 이유" },
+      { slug: "design-tokens-to-tailwind", title: "디자인 시스템 토큰을 Tailwind로 옮기며" },
+      { slug: "spring-tx-propagation", title: "Spring Boot 트랜잭션 전파, 다시 정리" },
+    ],
+  },
+  {
     id: 1,
     author: AUTHORS.dohyun,
     slug: "nextjs-deep-dive",
