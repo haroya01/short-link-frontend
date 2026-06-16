@@ -18,6 +18,18 @@ export interface CommentLikeStatus {
   liked: boolean;
 }
 
+/** One of the viewer's own comments, with enough post context to link back to where it was written. */
+export interface MyComment {
+  id: number;
+  parentId: number | null;
+  body: string;
+  createdAt: string;
+  likeCount: number;
+  postSlug: string;
+  postTitle: string;
+  postUsername: string;
+}
+
 // In-memory mock thread (demo mode) so the comment list / reply / submit / delete all work without a
 // backend. Shared across posts — fine for a demo.
 const MOCK_VIEWER: PublicAuthor = { id: 9001, username: "reader", bio: null, avatarUrl: null };
@@ -102,4 +114,44 @@ export function unlikeComment(id: number): Promise<CommentLikeStatus> {
 export function listLikedCommentIds(postId: number): Promise<number[]> {
   if (USE_MOCKS) return Promise.resolve([...mockLiked]);
   return request<number[]>(`/api/v1/posts/${postId}/comments/liked`, { method: "GET" });
+}
+
+// "내 댓글 모아보기" — the viewer's own comments across all posts, newest first, with post context.
+const mockMyComments: MyComment[] = [
+  {
+    id: 9101,
+    parentId: null,
+    body: "RSC 전환 부분 정리가 깔끔해요. 저도 `loading.tsx` 도입하면서 비슷한 고민을 했는데 **스트리밍** 경계 잡는 게 핵심이더라고요.",
+    createdAt: "2026-06-12T09:20:00Z",
+    likeCount: 4,
+    postSlug: "nextjs-14-app-router-blog",
+    postTitle: "Next.js 14 App Router로 블로그 만들기",
+    postUsername: "dohyun",
+  },
+  {
+    id: 9102,
+    parentId: 1,
+    body: "> 작은 서비스엔 과했을까\n\n저는 결국 포트만 남기고 어댑터는 단순화했어요. 트레이드오프 표가 특히 도움됐습니다.",
+    createdAt: "2026-06-09T14:05:00Z",
+    likeCount: 1,
+    postSlug: "hexagonal-too-much",
+    postTitle: "헥사고날 아키텍처, 작은 서비스에 과했을까",
+    postUsername: "haruka",
+  },
+  {
+    id: 9103,
+    parentId: null,
+    body: "디자인 토큰을 Tailwind로 옮기는 흐름 좋네요 👍",
+    createdAt: "2026-06-03T20:41:00Z",
+    likeCount: 0,
+    postSlug: "design-tokens-to-tailwind",
+    postTitle: "디자인 시스템 토큰을 Tailwind로 옮기며",
+    postUsername: "minji",
+  },
+];
+
+/** Authenticated — the viewer's own comments across every post (newest first, with post context). */
+export function listMyComments(): Promise<MyComment[]> {
+  if (USE_MOCKS) return Promise.resolve([...mockMyComments]);
+  return request<MyComment[]>("/api/v1/users/me/comments", { method: "GET" });
 }
