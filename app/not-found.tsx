@@ -1,6 +1,8 @@
 import en from "@/messages/en.json";
+import hi from "@/messages/hi.json";
 import ja from "@/messages/ja.json";
 import ko from "@/messages/ko.json";
+import vi from "@/messages/vi.json";
 import "./globals.css";
 
 /**
@@ -22,13 +24,15 @@ const COPY: Record<string, { title: string; description: string; cta: string }> 
   ko: ko.notFound,
   en: en.notFound,
   ja: ja.notFound,
+  vi: vi.notFound,
+  hi: hi.notFound,
 };
 
-const LOCALES = ["ko", "en", "ja"] as const;
+const LOCALES = ["ko", "en", "ja", "vi", "hi"] as const;
 
 const localeInitScript =
   "(function(){try{" +
-  "var m=document.cookie.match(/(?:^|; )NEXT_LOCALE=(en|ja)/);" +
+  "var m=document.cookie.match(/(?:^|; )NEXT_LOCALE=(en|ja|vi|hi)/);" +
   "if(m){document.documentElement.lang=m[1];document.documentElement.setAttribute('data-nf-locale',m[1]);}" +
   "}catch(e){}})()";
 
