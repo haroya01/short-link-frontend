@@ -1,20 +1,22 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { DATE_LOCALE } from "@/lib/date";
 import { useAuth } from "@/lib/auth";
 import {
   createHighlight,
+  createHighlightReply,
+  deleteHighlightReply,
+  listHighlightReplies,
   listHighlights,
+  type HighlightReplyView,
   type HighlightView,
   type NewHighlight,
 } from "@/modules/blog/api/highlights";
-
-const MARK_CLASS = "kurl-highlight";
-const MARK_STYLE = "background-color: rgba(5,150,105,0.18); border-radius: 2px;";
-// A highlight that carries a memo gets a dashed underline + native tooltip so the margin note is
-// discoverable without a heavier reveal UI.
-const NOTE_STYLE = MARK_STYLE + " border-bottom: 1.5px dashed rgba(5,150,105,0.65); cursor: help;";
+import { CommentBody } from "@/modules/blog/components/comment-markdown";
+import { CommentComposer } from "@/modules/blog/components/comment-composer";
+import { clearMarks, wrapAtOffsets, wrapFirstQuote, MARK_CLASS } from "./highlight-anchor";
 
 type Anchor = { left: number; top: number; bottom: number };
 
@@ -37,8 +39,10 @@ type Anchor = { left: number; top: number; bottom: number };
  */
 export function PostHighlights({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
-  const { authenticated, signInWithGoogle } = useAuth();
+  const { authenticated, me, signInWithGoogle } = useAuth();
   const [highlights, setHighlights] = useState<HighlightView[]>([]);
+  // When set, the reply-thread sheet is open for this highlight.
+  const [threadFor, setThreadFor] = useState<HighlightView | null>(null);
   // The live selection → drives the floating action bar.
   const [sel, setSel] = useState<{ anchor: Anchor; payload: NewHighlight } | null>(null);
   // When set, the memo sheet is open for this span.
@@ -62,7 +66,35 @@ export function PostHighlights({ postId }: { postId: number }) {
     const root = document.querySelector<HTMLElement>(".prose-post");
     if (!root) return;
     clearMarks(root);
-    for (const h of highlights) wrapFirstQuote(root, h.quote, h.note);
+    for (const h of highlights) {
+      const meta = { id: h.id, note: h.note, replyCount: h.replyCount };
+      // Precise: paint the exact stored span (block + char offsets), which survives a quote that
+      // recurs and spans inline formatting. Fall back to a text search only when the offsets no longer
+      // line up (the post was edited after the highlight was made).
+      if (!wrapAtOffsets(root, h.blockOrder, h.startOffset, h.endOffset, meta)) {
+        wrapFirstQuote(root, h.quote, meta);
+      }
+    }
+  }, [highlights]);
+
+  // Tapping a painted highlight opens its reply thread (a plain click, not a drag-select — a drag
+  // doesn't emit a click, so it stays out of the highlight-creation path).
+  useEffect(() => {
+    const root = document.querySelector<HTMLElement>(".prose-post");
+    if (!root) return;
+    const onClick = (e: MouseEvent) => {
+      const mark = (e.target as HTMLElement | null)?.closest?.(`mark.${MARK_CLASS}[data-hl-id]`) as
+        | HTMLElement
+        | null;
+      if (!mark) return;
+      const hl = highlights.find((h) => h.id === Number(mark.dataset.hlId));
+      if (hl) {
+        e.preventDefault();
+        setThreadFor(hl);
+      }
+    };
+    root.addEventListener("click", onClick);
+    return () => root.removeEventListener("click", onClick);
   }, [highlights]);
 
   // Capture a selection inside the prose and offer the highlight actions at the selection. Finalize on
@@ -115,6 +147,15 @@ export function PostHighlights({ postId }: { postId: number }) {
     },
     [postId],
   );
+
+  // After a reply is added/removed, re-pull so the painted marks reflect the new replyCount.
+  const refreshHighlights = useCallback(async () => {
+    try {
+      setHighlights(await listHighlights(postId));
+    } catch {
+      /* keep the current set on a refresh failure */
+    }
+  }, [postId]);
 
   // Quick highlight (no memo).
   const commitQuick = useCallback(() => {
@@ -174,7 +215,178 @@ export function PostHighlights({ postId }: { postId: number }) {
           onSave={saveNote}
         />
       )}
+      {threadFor && (
+        <HighlightThread
+          highlight={threadFor}
+          meId={me?.id ?? null}
+          authenticated={authenticated}
+          onSignIn={signInWithGoogle}
+          onClose={() => setThreadFor(null)}
+          onChanged={refreshHighlights}
+        />
+      )}
     </>
+  );
+}
+
+/**
+ * The reply thread on a highlight (Are.na-style margin conversation): the quoted passage + the
+ * curator's note (the opener) + a flat list of replies + a composer. A bottom sheet on mobile (lifted
+ * above the keyboard) / centered card on desktop, matching {@link NoteSheet}. Reuses the comment
+ * markdown renderer + composer so a reply reads and writes exactly like a comment.
+ */
+function HighlightThread({
+  highlight,
+  meId,
+  authenticated,
+  onSignIn,
+  onClose,
+  onChanged,
+}: {
+  highlight: HighlightView;
+  meId: number | null;
+  authenticated: boolean;
+  onSignIn: () => void;
+  onClose: () => void;
+  onChanged: () => void;
+}) {
+  const t = useTranslations("publicPost");
+  const locale = useLocale();
+  const [replies, setReplies] = useState<HighlightReplyView[]>([]);
+  const [body, setBody] = useState("");
+  const [busy, setBusy] = useState(false);
+  const inset = useKeyboardInset();
+
+  const load = useCallback(() => {
+    listHighlightReplies(highlight.id)
+      .then(setReplies)
+      .catch(() => setReplies([]));
+  }, [highlight.id]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  async function submit() {
+    if (!authenticated) {
+      onSignIn();
+      return;
+    }
+    if (!body.trim() || busy) return;
+    setBusy(true);
+    try {
+      await createHighlightReply(highlight.id, body.trim());
+      setBody("");
+      load();
+      onChanged(); // refresh the marks' replyCount
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove(id: number) {
+    setBusy(true);
+    try {
+      await deleteHighlightReply(id);
+      load();
+      onChanged();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function fmt(iso: string) {
+    return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
+      month: "short",
+      day: "numeric",
+      timeZone: "Asia/Seoul",
+    });
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4"
+      style={{ paddingBottom: inset }}
+      onMouseDown={onClose}
+    >
+      <div
+        className="flex max-h-[80vh] w-full flex-col rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <div className="border-b border-slate-100 p-5 dark:border-slate-800">
+          <blockquote className="line-clamp-3 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
+            {highlight.quote}
+          </blockquote>
+          {/* The curator's note is the thread opener. */}
+          {highlight.note && (
+            <div className="mt-3 flex items-start gap-2">
+              <span className="mt-0.5 text-[13px] font-medium text-slate-900 dark:text-slate-100">
+                @{highlight.author?.username ?? "?"}
+              </span>
+              <div className="min-w-0 flex-1 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
+                <CommentBody text={highlight.note} locale={locale} />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+          {replies.length === 0 ? (
+            <p className="py-6 text-center text-[13px] text-slate-500 dark:text-slate-400">
+              {t("highlightThreadEmpty")}
+            </p>
+          ) : (
+            <ul className="space-y-4">
+              {replies.map((r) => (
+                <li key={r.id}>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
+                      @{r.author?.username ?? "?"}
+                    </span>
+                    <span className="text-[12px] text-slate-400">{fmt(r.createdAt)}</span>
+                    {meId != null && r.author?.id === meId && (
+                      <button
+                        type="button"
+                        onClick={() => void remove(r.id)}
+                        className="touch-target ml-auto rounded text-[12px] text-slate-400 transition-colors hover:text-red-500 focus-ring"
+                      >
+                        {t("highlightReplyDelete")}
+                      </button>
+                    )}
+                  </div>
+                  <div className="mt-1 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
+                    <CommentBody text={r.body} locale={locale} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="border-t border-slate-100 p-4 dark:border-slate-800">
+          <CommentComposer
+            value={body}
+            onChange={setBody}
+            onSubmit={() => void submit()}
+            placeholder={t("highlightReplyPlaceholder")}
+            submitLabel={t("highlightReplySubmit")}
+            submitting={busy}
+            canSubmit={!authenticated || !!body.trim()}
+            rows={2}
+            compact
+            footer={authenticated ? "" : t("highlightReplyLogin")}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -354,47 +566,4 @@ function offsetWithin(block: Element, node: Node, offset: number): number {
     n = walker.nextNode();
   }
   return count + offset;
-}
-
-/** Unwrap every highlight `<mark>` (so the set can be repainted from scratch). */
-function clearMarks(root: HTMLElement) {
-  root.querySelectorAll(`mark.${MARK_CLASS}`).forEach((mark) => {
-    const parent = mark.parentNode;
-    if (!parent) return;
-    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
-    parent.removeChild(mark);
-    parent.normalize();
-  });
-}
-
-/** Wrap the first occurrence of `quote` (within a single text node) in a highlight `<mark>`. A memo,
- *  if present, rides along as a dashed underline + native tooltip. */
-function wrapFirstQuote(root: HTMLElement, quote: string, note: string | null) {
-  if (!quote) return;
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-    acceptNode: (n) =>
-      n.parentElement?.closest(`mark.${MARK_CLASS}`)
-        ? NodeFilter.FILTER_REJECT
-        : NodeFilter.FILTER_ACCEPT,
-  });
-  let n = walker.nextNode() as Text | null;
-  while (n) {
-    const idx = n.data.indexOf(quote);
-    if (idx >= 0) {
-      const range = document.createRange();
-      range.setStart(n, idx);
-      range.setEnd(n, idx + quote.length);
-      const mark = document.createElement("mark");
-      mark.className = MARK_CLASS;
-      mark.setAttribute("style", note ? NOTE_STYLE : MARK_STYLE);
-      if (note) mark.title = note;
-      try {
-        range.surroundContents(mark);
-      } catch {
-        /* range crosses element boundaries — skip painting this one (v1) */
-      }
-      return;
-    }
-    n = walker.nextNode() as Text | null;
-  }
 }
