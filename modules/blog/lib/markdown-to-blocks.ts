@@ -135,13 +135,20 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
 
     // One OR MORE images on a line (a side-by-side «half» pair serializes adjacent: `![a](u)![b](u)`)
     // → one IMAGE block each, so the 2-up row round-trips. Only when the line is *nothing but* images.
-    const imgMatches = [...line.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g)];
+    // 표준 마크다운 image title `![alt](url "캡션")` 의 title 을 캡션으로 싣는다(리더 figcaption).
+    const imgMatches = [...line.matchAll(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g)];
     if (imgMatches.length > 0 && line.replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim() === "") {
       for (const im of imgMatches) {
         const { width, alt } = parseImageAlt(im[1]);
+        const caption = im[3]?.trim();
         blocks.push({
           type: "IMAGE",
-          content: JSON.stringify({ url: im[2], alt, ...(width ? { width } : {}) }),
+          content: JSON.stringify({
+            url: im[2],
+            alt,
+            ...(width ? { width } : {}),
+            ...(caption ? { caption } : {}),
+          }),
         });
       }
       i++;
@@ -228,7 +235,12 @@ export function blocksToMarkdown(blocks: { type: string; content: string | null 
         try {
           const parsed = b.content ? JSON.parse(b.content) : null;
           if (parsed && typeof parsed.url === "string") {
-            parts.push(`![${altWithWidth(parsed.alt ?? "", parsed.width)}](${parsed.url})`);
+            // 캡션은 표준 image title 로 — `"` 는 title 을 깨므로 `'` 로 치환.
+            const cap =
+              typeof parsed.caption === "string" && parsed.caption.trim()
+                ? ` "${parsed.caption.trim().replace(/"/g, "'")}"`
+                : "";
+            parts.push(`![${altWithWidth(parsed.alt ?? "", parsed.width)}](${parsed.url}${cap})`);
           }
         } catch {
           // ignore malformed

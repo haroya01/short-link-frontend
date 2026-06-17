@@ -60,6 +60,22 @@ describe("markdownToBlocks", () => {
     expect(parsed).toEqual({ url: "https://cdn/x.png", alt: "cover" });
   });
 
+  it("round-trips an image caption via the markdown title", () => {
+    const md = '![«wide» 사진](https://cdn/x.png "어느 봄날, 도쿄")';
+    const blocks = markdownToBlocks(md);
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0].type).toBe("IMAGE");
+    const parsed = JSON.parse(blocks[0].content!);
+    expect(parsed).toEqual({
+      url: "https://cdn/x.png",
+      alt: "사진",
+      width: "wide",
+      caption: "어느 봄날, 도쿄",
+    });
+    // blocks → markdown emits the caption back as the image title.
+    expect(blocksToMarkdown(blocks)).toBe(md);
+  });
+
   it("groups bullet list", () => {
     const blocks = markdownToBlocks("- one\n- two\n- three");
     expect(blocks).toHaveLength(1);

@@ -6,7 +6,7 @@ import { useEditor, useEditorState, EditorContent, type Editor } from "@tiptap/r
 import { BubbleMenu } from "@tiptap/react/menus";
 import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import { ImageWithCaption } from "@/modules/blog/components/editor/image-with-caption";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table-row";
@@ -229,7 +229,7 @@ export function MarkdownEditor({
       MarkdownShortcuts,
       CodeMirrorBlock,
       LinkCardNode,
-      Image.configure({ inline: false }),
+      ImageWithCaption.configure({ inline: false }),
       Table.configure({ resizable: false }),
       TableRow,
       TableHeader,
