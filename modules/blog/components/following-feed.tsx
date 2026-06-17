@@ -21,6 +21,7 @@ import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 
 /** Authors that appear in the feed, de-duplicated and in first-seen order — i.e. the followed authors
  *  you're actually reading right now. Capped so the rail stays a glance, not a directory. */
@@ -209,6 +210,13 @@ export function FollowingFeed({
               </ul>
             </section>
           )}
+          {/* Fallback when the server didn't pass a list (e.g. authenticated cold-start) — self-fetch
+              curators so this never dead-ends. */}
+          {suggestedAuthors.length === 0 && (
+            <section className="mt-10 w-full max-w-md border-t border-slate-100 pt-8 dark:border-slate-800">
+              <SuggestedCurators locale={locale} />
+            </section>
+          )}
         </FeedEmpty>
       </div>
     );
@@ -253,6 +261,13 @@ export function FollowingFeed({
                   />
                 ))}
               </ul>
+            </section>
+          )}
+          {/* Fallback when the server didn't pass a list (e.g. authenticated cold-start) — self-fetch
+              curators so this never dead-ends. */}
+          {suggestedAuthors.length === 0 && (
+            <section className="mt-10 w-full max-w-md border-t border-slate-100 pt-8 dark:border-slate-800">
+              <SuggestedCurators locale={locale} />
             </section>
           )}
         </FeedEmpty>

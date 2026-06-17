@@ -9,6 +9,7 @@ import { listDiscoverConnections, type ConnectionEvent } from "@/modules/blog/ap
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ConnectionBlock, eventBlock } from "@/modules/blog/components/connection-block";
+import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 
 /**
@@ -63,6 +64,11 @@ export function DiscoverConnections({ locale }: { locale: string }) {
         <a href={blogHref("/")} className={`mt-6 inline-block ${blogCta({ variant: "secondary" })}`}>
           {t("discoverEmptyCta")}
         </a>
+        {/* The connection graph is empty until you follow someone — hand the new reader curators to
+            follow so this core surface isn't a day-1 dead-end. */}
+        <div className="mt-10">
+          <SuggestedCurators locale={locale} />
+        </div>
       </div>
     );
   }
