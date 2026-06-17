@@ -185,9 +185,18 @@ export default async function RootLayout({
   // The auth hint shares this tag: a second standalone inline <script> in <head> was dropped from
   // the streamed head on some routes (React head reconciliation), so both pre-paint flags ride the
   // one tag that's proven to survive everywhere.
+  // The choice is a `.kurl.me` cookie shared across the apex feed + author subdomains. localStorage is
+  // per-origin, so ON the platform (any *.kurl.me) we must NOT fall back to it: a stale 'dark' left in one
+  // subdomain's localStorage would paint a post ({author}.kurl.me) dark while the shared cookie — and the
+  // feed (blog.kurl.me) — are light. So on-platform the shared cookie is the SOLE source of truth (light is
+  // the safe default when it's absent, e.g. after iOS Safari's 7-day script-cookie cap expires); only
+  // off-platform (localhost / Vercel previews, a single origin) does the localStorage fallback still apply.
+  const platformHost = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
   const themeInitScript =
     "(function(){try{" +
-    "var m=document.cookie.match(/(?:^|; )theme=(dark|light)/);var t=m?m[1]:localStorage.getItem('theme');" +
+    "var h=location.hostname,P=" + JSON.stringify(platformHost) + ",onP=(h===P||h.endsWith('.'+P));" +
+    "var m=document.cookie.match(/(?:^|; )theme=(dark|light)/);" +
+    "var t=m?m[1]:(onP?null:localStorage.getItem('theme'));" +
     "if(t==='dark'){document.documentElement.classList.add('dark');}" +
     authHintScript +
     "}catch(e){}})()";
