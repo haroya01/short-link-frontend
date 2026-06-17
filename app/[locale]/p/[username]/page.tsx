@@ -26,6 +26,9 @@ export async function generateMetadata({
   const { author } = result.data;
   const h = await headers();
   const origin = authorBaseUrl(h, username);
+  const ogImage = author.avatarUrl
+    ? [{ url: author.avatarUrl, width: 1200, height: 630, alt: `@${author.username}` }]
+    : undefined;
   return {
     title: `@${author.username}`,
     description: author.bio ?? undefined,
@@ -37,7 +40,15 @@ export async function generateMetadata({
       title: `@${author.username}`,
       description: author.bio ?? undefined,
       url: `${origin}/`,
-      images: author.avatarUrl ? [{ url: author.avatarUrl }] : undefined,
+      type: "profile",
+      images: ogImage,
+    },
+    // Without an explicit twitter card the author home inherits the generic site card on X/Slack.
+    twitter: {
+      card: author.avatarUrl ? "summary" : "summary",
+      title: `@${author.username}`,
+      description: author.bio ?? undefined,
+      images: author.avatarUrl ? [author.avatarUrl] : undefined,
     },
   };
 }
@@ -59,6 +70,25 @@ export default async function PublicProfileHomepage({
   const series = seriesResult.ok ? seriesResult.data.series : [];
   const t = await getTranslations({ locale, namespace: "publicPost" });
 
+  // ProfilePage > Person — the author entity for this weblog home. Mirrors the link-in-bio profile
+  // (/u/{user}) Person node so Google can tie the two surfaces to one person (rich-snippet byline,
+  // knowledge-panel candidate). Author subdomain is the canonical home, so url points there.
+  const h = await headers();
+  const origin = authorBaseUrl(h, username);
+  const profileJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    url: `${origin}/`,
+    mainEntity: {
+      "@type": "Person",
+      name: author.username,
+      alternateName: `@${author.username}`,
+      url: `${origin}/`,
+      ...(author.bio ? { description: author.bio } : {}),
+      ...(author.avatarUrl ? { image: author.avatarUrl } : {}),
+    },
+  };
+
   // Tag filter is author-scoped: it narrows THIS author's posts (the rail links here with ?tag=),
   // never the cross-author topic feed. Keep the full list for the rail's tag/archive derivation.
   const activeTag = rawTag?.trim() || undefined;
@@ -73,6 +103,11 @@ export default async function PublicProfileHomepage({
   // The author header (identity + tabs) is rendered once by the persistent layout (ProfileChrome) so
   // it never re-mounts on a tab switch; this page renders only its content column + rail.
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }}
+      />
       <ReadingShell
         className="mt-8"
         rail={
@@ -151,5 +186,6 @@ export default async function PublicProfileHomepage({
         </footer>
         </AuthorContentTransition>
       </ReadingShell>
+    </>
   );
 }

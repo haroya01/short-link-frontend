@@ -36,16 +36,31 @@ export async function generateMetadata({
   const { locale, tag } = await params;
   const t = await getTranslations({ locale, namespace: "publicFeed" });
   const path = `/tags/${tag}`;
+  const title = `#${decodeURIComponent(tag)} · blog.kurl`;
+  const description = t("tagFeedSubtitle");
+  const url = `${BLOG_URL}/${locale}${path}`;
+  // Without OG/twitter the tag feed unfurled as a bare title. Reuse the blog's generated card so a
+  // shared topic link shows the brand image instead of a blank preview.
+  const ogImage = `${BLOG_URL}/${locale}/blog/opengraph-image`;
   return {
-    title: `#${decodeURIComponent(tag)} · blog.kurl`,
-    description: t("tagFeedSubtitle"),
+    title,
+    description,
     alternates: {
-      canonical: `${BLOG_URL}/${locale}${path}`,
+      canonical: url,
       languages: {
         ...Object.fromEntries(routing.locales.map((l) => [l, `${BLOG_URL}/${l}${path}`])),
         "x-default": `${BLOG_URL}/${routing.defaultLocale}${path}`,
       },
     },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      siteName: "blog.kurl",
+      images: [{ url: ogImage, width: 2400, height: 1260, alt: title }],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
   };
 }
 

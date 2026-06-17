@@ -83,6 +83,11 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
+      // Brand-account attribution (@handle) — env-gated so it's omitted until a real handle is set,
+      // rather than shipping a guessed one. Mirrors the verification-token pattern below.
+      ...(process.env.NEXT_PUBLIC_TWITTER_SITE
+        ? { site: process.env.NEXT_PUBLIC_TWITTER_SITE }
+        : {}),
       title,
       description,
       images: [ogImageUrl],
