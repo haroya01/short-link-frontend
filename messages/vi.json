@@ -616,6 +616,8 @@
     "ogSubline": "Thiết bị · kênh · quốc gia · thời gian — xem mỗi lượt nhấp đến từ đâu, trong nháy mắt"
   },
   "notifications": {
+    "webPushLabel": "Thông báo trên trình duyệt",
+    "webPushDenied": "Thông báo đang bị chặn trong trình duyệt. Hãy cho phép trong cài đặt trang.",
     "title": "Thông báo",
     "empty": "Chưa có thông báo nào",
     "markAllRead": "Đánh dấu tất cả đã đọc",

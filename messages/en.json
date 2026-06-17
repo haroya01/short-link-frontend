@@ -616,6 +616,8 @@
     "ogSubline": "Device · channel · country · time — see where every click comes from, at a glance"
   },
   "notifications": {
+    "webPushLabel": "Browser notifications",
+    "webPushDenied": "Notifications are blocked in your browser. Allow them in site settings.",
     "title": "Notifications",
     "empty": "No notifications yet",
     "markAllRead": "Mark all read",

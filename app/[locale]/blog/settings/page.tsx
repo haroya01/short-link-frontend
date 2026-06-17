@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { FeedDefaultTabSetting } from "@/modules/blog/components/feed-default-tab-setting";
+import { WebPushToggle } from "@/modules/notifications/components/web-push-toggle";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -122,6 +123,9 @@ export default function BlogSettingsPage() {
           ))}
         </div>
       </section>
+
+      {/* 알림 — 브라우저 웹푸시(미지원/VAPID 미설정이면 스스로 숨음) */}
+      <WebPushToggle />
 
       {/* 피드 */}
       <FeedDefaultTabSetting rowClass={rowClass} />
