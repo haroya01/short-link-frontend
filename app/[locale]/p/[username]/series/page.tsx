@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ArrowRight } from "lucide-react";
 import { listPublicSeries } from "@/modules/blog/api/public-posts";
+import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
@@ -19,7 +21,14 @@ export async function generateMetadata({
   params: Promise<{ username: string }>;
 }): Promise<Metadata> {
   const { username } = await params;
-  return { title: `Series · @${username}` };
+  const h = await headers();
+  const url = `${authorBaseUrl(h, username)}/series`;
+  const title = `Series · @${username}`;
+  return {
+    title,
+    alternates: { canonical: url },
+    openGraph: { title, url, type: "website", siteName: `@${username}` },
+  };
 }
 
 export default async function PublicSeriesIndexPage({
@@ -37,6 +46,22 @@ export default async function PublicSeriesIndexPage({
 
   const { author, series } = result.data;
   const seriesHome = authorHref(username, locale, "series");
+
+  // ItemList of the author's series — a collection signal for this index (each entry → its series URL).
+  const h = await headers();
+  const origin = authorBaseUrl(h, username);
+  const seriesListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `Series · @${author.username}`,
+    numberOfItems: series.length,
+    itemListElement: series.map((s, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${origin}/series/${s.slug}`,
+      name: s.title,
+    })),
+  };
 
   // Tag filter is series-scoped: it narrows THIS author's series by the tags their member posts carry
   // (the backend aggregates them onto each series). Counts = how many series sit under each tag.
@@ -57,6 +82,11 @@ export default async function PublicSeriesIndexPage({
 
   // Header lives in the persistent layout (ProfileChrome) — this page renders only its content.
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(seriesListJsonLd) }}
+      />
       <ReadingShell
         className="mt-8"
         rail={
@@ -133,5 +163,6 @@ export default async function PublicSeriesIndexPage({
         )}
         </AuthorContentTransition>
       </ReadingShell>
+    </>
   );
 }

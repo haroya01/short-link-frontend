@@ -82,7 +82,7 @@ export async function generateMetadata({
       url,
       type: "article",
       siteName: `@${author.username}`,
-      images: [{ url: ogImage }],
+      images: [{ url: ogImage, width: 2400, height: 1260, alt: post.title }],
       locale: post.languageTag,
       publishedTime: post.publishedAt,
       modifiedTime: post.lastEditedAt ?? undefined,

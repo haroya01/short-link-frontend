@@ -1,9 +1,11 @@
 import { DATE_LOCALE } from "@/lib/date";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ArrowRight } from "lucide-react";
 import { findPublicSeries } from "@/modules/blog/api/public-posts";
+import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 import { Mark } from "@/components/common/logo";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
@@ -26,7 +28,33 @@ export async function generateMetadata({
   const { username, slug } = await params;
   const result = await findPublicSeries(username, slug);
   if (!result.ok) return { title: `@${username}` };
-  return { title: `${result.data.series.title} · @${result.data.author.username}` };
+  const { author, series, posts } = result.data;
+  const h = await headers();
+  const url = `${authorBaseUrl(h, username)}/series/${series.slug}`;
+  const title = `${series.title} · @${author.username}`;
+  // The series has no description/cover of its own — borrow the first episode that carries one so the
+  // unfurl isn't a bare title and crawlers get a representative image.
+  const description = posts.find((p) => p.excerpt)?.excerpt ?? undefined;
+  const ogImage = posts.find((p) => p.ogImageUrl)?.ogImageUrl ?? undefined;
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      siteName: `@${author.username}`,
+      images: ogImage ? [{ url: ogImage, width: 2400, height: 1260, alt: series.title }] : undefined,
+    },
+    twitter: {
+      card: ogImage ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
+  };
 }
 
 export default async function PublicSeriesPage({
@@ -41,6 +69,38 @@ export default async function PublicSeriesPage({
   if (!result.ok) notFound();
 
   const { author, series, posts } = result.data;
+  const h = await headers();
+  const origin = authorBaseUrl(h, username);
+  const seriesUrl = `${origin}/series/${series.slug}`;
+  // CollectionPage with the episodes as an ordered ItemList — tells Google this URL is a curated set
+  // of posts (the series), each episode pointing at its own canonical. BreadcrumbList places it under
+  // the author home. Mirrors the post page's BlogPosting + breadcrumb pattern.
+  const seriesJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: series.title,
+    url: seriesUrl,
+    isPartOf: { "@type": "WebSite", url: origin, name: `@${author.username}` },
+    author: { "@type": "Person", name: author.username, alternateName: `@${author.username}`, url: `${origin}/` },
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: posts.length,
+      itemListElement: posts.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${origin}/${p.slug}`,
+        name: p.title,
+      })),
+    },
+  };
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: `@${author.username}`, item: `${origin}/` },
+      { "@type": "ListItem", position: 2, name: series.title, item: seriesUrl },
+    ],
+  };
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
       year: "numeric",
@@ -139,6 +199,14 @@ export default async function PublicSeriesPage({
   // there); the header + author card are server-rendered and passed in as held nodes.
   return (
     <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(seriesJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <SeriesReadingShell
         leftRail={authorRail}
         header={header}
