@@ -30,7 +30,9 @@ export function PageTransition({
       animate={settle ? { opacity: 1, y: 0, scale: 1 } : { opacity: 1 }}
       // framer는 var() 참조가 안 되니 --ease(globals.css :root)와 같은 곡선을 배열로 미러링.
       transition={{ duration: mode === "fade" ? 0.2 : 0.28, ease: [0.16, 1, 0.3, 1] }}
-      style={{ willChange: "opacity, transform" }}
+      // will-change를 정적으로 박지 않는다: framer가 애니메이션 동안에만 자동으로 걸고 끝나면 푼다.
+      // 정적 transform will-change는 이 페이지 래퍼를 position:fixed 자손의 containing block으로 만들어
+      // 모달·시트·FAB가 뷰포트가 아니라 래퍼 박스에 갇히게 한다(페이지 전역 오버레이 깨짐).
     >
       {children}
     </motion.div>

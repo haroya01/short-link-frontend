@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
 import { useAuth } from "@/lib/auth";
@@ -56,6 +57,9 @@ export function PostHighlights({ postId }: { postId: number }) {
   // When set, the memo sheet is open for this span.
   const [noteFor, setNoteFor] = useState<NewHighlight | null>(null);
   const barRef = useRef<HTMLDivElement>(null);
+  // Mounted gate so the portal (in the return) only reaches for document.body on the client.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     let alive = true;
@@ -213,7 +217,13 @@ export function PostHighlights({ postId }: { postId: number }) {
     [noteFor, persist],
   );
 
-  return (
+  // These overlays are viewport-level UI (full-screen backdrop + a selection bar pinned to viewport
+  // coords), so they must render against the viewport. The post body lives under `.post-enter`, whose
+  // hero-rise animation ends on `transform: translateY(0)` (fill-mode both) and so keeps <article> a
+  // containing block for `position: fixed`. Portaling to <body> escapes that — otherwise the backdrop
+  // and sheets pin to the 42rem reading column instead of the screen.
+  if (!mounted) return null;
+  return createPortal(
     <>
       {sel && (
         <SelectionBar
@@ -246,7 +256,8 @@ export function PostHighlights({ postId }: { postId: number }) {
           onChanged={refreshHighlights}
         />
       )}
-    </>
+    </>,
+    document.body,
   );
 }
 
