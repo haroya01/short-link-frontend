@@ -152,6 +152,8 @@ export default async function PublicProfilePage({
           <img
             src={profile.bannerUrl}
             alt=""
+            width={1500}
+            height={500}
             className="h-full w-full object-cover"
           />
         </div>

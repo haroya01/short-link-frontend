@@ -210,7 +210,7 @@ function StatusPill({
   }
   if (inAutoWindow) {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[10px] font-medium text-sky-700 ring-1 ring-inset ring-sky-200">
+      <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 text-[10px] font-medium text-sky-700 dark:text-sky-400 ring-1 ring-inset ring-sky-200 dark:ring-sky-500/30">
         <Loader2 className="h-2.5 w-2.5 animate-spin" />
         {t("statusAutoChecking", { time: formatRemaining(remainingMs) })}
       </span>

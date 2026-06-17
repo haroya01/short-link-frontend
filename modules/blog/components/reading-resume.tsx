@@ -95,7 +95,7 @@ export function ReadingResume({ postKey }: { postKey: string }) {
   // Portal to <body>: the post page's `.post-enter` article is a containing block for fixed
   // descendants, which would otherwise pin this chip to the reading column instead of the viewport.
   return createPortal(
-    <div className="fixed bottom-20 left-1/2 z-30 -translate-x-1/2 sm:bottom-6">
+    <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-1/2 z-30 -translate-x-1/2 sm:bottom-6">
       <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-white/95 py-1 pl-1.5 pr-1 shadow-[0_6px_20px_-8px_rgba(15,23,42,0.3)] backdrop-blur animate-fade-in dark:border-slate-700 dark:bg-slate-900/95">
         <button
           type="button"

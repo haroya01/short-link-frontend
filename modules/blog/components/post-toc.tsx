@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { List, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 
 export type TocHeading = { id: string; text: string; level: number };
 
@@ -78,15 +79,10 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
 export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
   const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
-    }
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
+  // Escape + Tab cycling within the sheet + focus restore to the 목차 button on close.
+  useFocusTrap(dialogRef, { active: open, onEscape: () => setOpen(false) });
 
   if (headings.length < 1) return null;
 
@@ -97,13 +93,13 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
         onClick={() => setOpen(true)}
         aria-label={t("toc")}
         aria-haspopup="dialog"
-        className="focus-ring fixed bottom-20 right-4 z-30 inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/95 px-4 py-2.5 text-[13px] font-medium text-slate-700 shadow-[0_6px_20px_-8px_rgba(15,23,42,0.3)] backdrop-blur transition-colors hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-200 sm:bottom-5"
+        className="focus-ring fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-30 inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/95 px-4 py-2.5 text-[13px] font-medium text-slate-700 shadow-[0_6px_20px_-8px_rgba(15,23,42,0.3)] backdrop-blur transition-colors hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-200 sm:bottom-5"
       >
         <List className="h-4 w-4 text-accent-600" />
         {t("toc")}
       </button>
       {open && (
-        <div role="dialog" aria-modal="true" aria-label={t("toc")} className="fixed inset-0 z-50">
+        <div ref={dialogRef} role="dialog" aria-modal="true" aria-label={t("toc")} className="fixed inset-0 z-50">
           <button
             type="button"
             aria-hidden

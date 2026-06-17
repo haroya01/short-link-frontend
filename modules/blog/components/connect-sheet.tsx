@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Check, CornerDownRight, Globe, Link as LinkIcon, Loader2, Lock, Plus } from "lucide-react";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import {
   connectBlock,
   createCollection,
@@ -41,6 +42,7 @@ export function ConnectSheet({
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [why, setWhy] = useState("");
   const [saving, setSaving] = useState(false);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let alive = true;
@@ -53,11 +55,9 @@ export function ConnectSheet({
     };
   }, []);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  // Keyboard containment: Escape + Tab cycling within the sheet + focus restore to the opener. Step 2
+  // places its own initial focus (the 왜 textarea autoFocuses), so don't fight it.
+  useFocusTrap(sheetRef, { active: true, onEscape: onClose, autoFocus: step === 1 });
 
   function toggle(id: number) {
     setSelected((prev) => {
@@ -99,11 +99,15 @@ export function ConnectSheet({
       onMouseDown={onClose}
     >
       <div
+        ref={sheetRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="connect-sheet-title"
         className="flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="border-b border-slate-100 px-5 py-4 dark:border-slate-800">
-          <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+          <h3 id="connect-sheet-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
             {step === 1 ? t("connectStep1Title") : t("connectStep2Title")}
           </h3>
         </div>

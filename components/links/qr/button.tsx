@@ -259,7 +259,7 @@ function QrModal({
                     onClick={() => setPaletteId(p.id)}
                     className={
                       "h-7 w-7 rounded-full border transition " +
-                      (active ? "ring-2 ring-offset-1 ring-slate-900" : "border-slate-200 dark:border-slate-800")
+                      (active ? "ring-2 ring-offset-1 ring-slate-900 dark:ring-slate-100 dark:ring-offset-slate-950" : "border-slate-200 dark:border-slate-800")
                     }
                     style={{ backgroundColor: p.dark }}
                   />
