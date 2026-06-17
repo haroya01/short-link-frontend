@@ -17,7 +17,7 @@ import {
 } from "@/modules/blog/api/highlights";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentComposer } from "@/modules/blog/components/comment-composer";
-import { CornerDownRight, FolderPlus, Globe, Link as LinkIcon, Lock } from "lucide-react";
+import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import {
@@ -528,25 +528,41 @@ function SelectionBar({
   const above = anchor.top > 64;
   const left = Math.min(Math.max(anchor.left, 90), (typeof window !== "undefined" ? window.innerWidth : 360) - 90);
   return (
+    // Outer node carries ONLY the viewport-positioning transform; the inner pill owns the entrance
+    // animation, so an animated transform never overrides the left/top anchoring.
     <div
       ref={innerRef}
-      role="toolbar"
-      // Keep the text selection alive through the click so it doesn't visibly collapse mid-tap.
-      onMouseDown={(e) => e.preventDefault()}
-      className="fixed z-50 flex -translate-x-1/2 items-center overflow-hidden rounded-full bg-slate-900 text-[13px] font-medium text-white shadow-lg dark:bg-white dark:text-slate-900"
+      className="fixed z-50"
       style={{
         left,
-        top: above ? anchor.top - 10 : anchor.bottom + 10,
+        top: above ? anchor.top - 12 : anchor.bottom + 12,
         transform: `translateX(-50%)${above ? " translateY(-100%)" : ""}`,
       }}
     >
-      <button type="button" onClick={onHighlight} className="px-3.5 py-1.5 transition-colors hover:bg-white/10 focus-ring dark:hover:bg-slate-900/10">
-        {highlightLabel}
-      </button>
-      <span aria-hidden className="h-4 w-px bg-white/20 dark:bg-slate-900/15" />
-      <button type="button" onClick={onNote} className="px-3.5 py-1.5 transition-colors hover:bg-white/10 focus-ring dark:hover:bg-slate-900/10">
-        {noteLabel}
-      </button>
+      <div
+        role="toolbar"
+        // Keep the text selection alive through the click so it doesn't visibly collapse mid-tap.
+        onMouseDown={(e) => e.preventDefault()}
+        className="flex animate-fade-in items-center gap-0.5 rounded-full bg-slate-900 p-1 text-[13px] font-medium text-white shadow-[0_10px_34px_-12px_rgba(2,6,23,0.7)] ring-1 ring-white/10 dark:bg-white dark:text-slate-900 dark:ring-slate-900/10"
+      >
+        <button
+          type="button"
+          onClick={onHighlight}
+          className="focus-ring flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors hover:bg-white/10 dark:hover:bg-slate-900/10"
+        >
+          {/* Green tie to the painted mark — the icon previews what the action leaves behind. */}
+          <Highlighter className="h-3.5 w-3.5 text-accent-400 dark:text-accent-600" />
+          {highlightLabel}
+        </button>
+        <button
+          type="button"
+          onClick={onNote}
+          className="focus-ring flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors hover:bg-white/10 dark:hover:bg-slate-900/10"
+        >
+          <PenLine className="h-3.5 w-3.5 text-accent-400 dark:text-accent-600" />
+          {noteLabel}
+        </button>
+      </div>
     </div>
   );
 }
