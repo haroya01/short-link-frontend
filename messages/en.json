@@ -507,6 +507,8 @@
     "tabPosts": "Posts",
     "tabSeries": "Series",
     "tabAbout": "About",
+    "tabCollections": "Collections",
+    "collectionsEmpty": "No public collections yet.",
     "tabLiked": "Liked",
     "tabBookmarks": "Bookmarks",
     "railTags": "Tags",

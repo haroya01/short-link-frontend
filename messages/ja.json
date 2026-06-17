@@ -507,6 +507,8 @@
     "tabPosts": "記事",
     "tabSeries": "シリーズ",
     "tabAbout": "紹介",
+    "tabCollections": "コレクション",
+    "collectionsEmpty": "公開コレクションはまだありません。",
     "tabLiked": "いいね",
     "tabBookmarks": "ブックマーク",
     "railTags": "タグ",
