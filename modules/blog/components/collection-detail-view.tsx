@@ -11,6 +11,8 @@ import {
   type Connection,
 } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { authorHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { PathReorder } from "@/modules/blog/components/path-reorder";
 
@@ -85,7 +87,7 @@ export function CollectionDetailView({
 
   return (
     <div>
-      <CollectionHeader detail={detail} />
+      <CollectionHeader detail={detail} locale={locale} />
 
       {reordering && isPath ? (
         <PathReorder
@@ -123,7 +125,7 @@ export function CollectionDetailView({
   );
 }
 
-function CollectionHeader({ detail }: { detail: CollectionDetail }) {
+function CollectionHeader({ detail, locale }: { detail: CollectionDetail; locale: string }) {
   const t = useTranslations("collections");
   const isPath = detail.kind === "PATH";
   return (
@@ -145,12 +147,17 @@ function CollectionHeader({ detail }: { detail: CollectionDetail }) {
       <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-slate-500 dark:text-slate-400">
         {detail.curatorUsername && (
           <>
-            <span className="inline-flex items-center gap-1.5">
+            {/* The curator is a link to their home — the connection graph's "discover who, then follow"
+                step. Tap a path's curator → their posts/series → follow. */}
+            <BlogLink
+              href={authorHref(detail.curatorUsername, locale)}
+              className="focus-ring group inline-flex items-center gap-1.5 rounded"
+            >
               <Avatar src={null} name={detail.curatorUsername} size="xs" />
-              <span className="font-medium text-slate-700 dark:text-slate-300">
+              <span className="font-medium text-slate-700 transition-colors group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
                 @{detail.curatorUsername}
               </span>
-            </span>
+            </BlogLink>
             <span aria-hidden>·</span>
           </>
         )}

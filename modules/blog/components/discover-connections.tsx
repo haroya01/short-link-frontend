@@ -7,6 +7,7 @@ import { blogHref, blogPath } from "@/lib/host";
 import { DATE_LOCALE } from "@/lib/date";
 import { listDiscoverConnections, type ConnectionEvent } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ConnectionBlock, eventBlock } from "@/modules/blog/components/connection-block";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
@@ -93,8 +94,16 @@ function ConnectionEventCard({ event, locale }: { event: ConnectionEvent; locale
     <article>
       {/* Attribution, quiet — who, when. */}
       <div className="flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
-        <Avatar src={event.curator.avatarUrl} name={event.curator.username} size="xs" />
-        <span className="font-medium text-slate-700 dark:text-slate-300">@{event.curator.username}</span>
+        {/* Curator → their home: the "discover who curates, then follow" step of the loop. */}
+        <BlogLink
+          href={authorHref(event.curator.username, locale)}
+          className="focus-ring group inline-flex items-center gap-2 rounded"
+        >
+          <Avatar src={event.curator.avatarUrl} name={event.curator.username} size="xs" />
+          <span className="font-medium text-slate-700 transition-colors group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
+            @{event.curator.username}
+          </span>
+        </BlogLink>
         {event.connectedAt && (
           <>
             <span aria-hidden>·</span>
