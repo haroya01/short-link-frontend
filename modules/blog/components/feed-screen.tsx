@@ -30,7 +30,6 @@ import { SubscribedSeriesFeed } from "./subscribed-series-feed";
 import { FeedTabCookieSync } from "./feed-tab-cookie-sync";
 import { DiscoverySeriesCard } from "./discovery-series-card";
 import { TrendingTopics } from "./trending-topics";
-import { WelcomeCard } from "./welcome-card";
 
 // blog.kurl.me is its own surface — the root layout's canonical/OG point at kurl.me (the URL
 // shortener), so the feed must override them or share links preview as the shortener. og:image is
@@ -292,9 +291,6 @@ export async function FeedScreen({
           // xl 부터 5xl: 1440+ 에서 중앙 60%만 쓰며 허전하던 좌우를 카드 폭(3열 유지)을 키워 채운다.
           // 탭 헤더(위)도 같은 폭 — §10.1 의 "탭 밑줄이 그리드 폭과 연결" 규칙 유지.
           <div className={cn("mx-auto max-w-4xl xl:max-w-5xl", searching ? "mt-6" : "mt-4")}>
-            {/* First-run welcome (signed-in, zero follows) — soft nudge to seed the graph. Self-gates;
-                hidden during search so it never interrupts a query. */}
-            {!searching && <WelcomeCard locale={locale} />}
             {wantTopics && <TrendingTopics topics={topics} locale={locale} activeTag={activeTag} />}
             {/* 인기 탭(주제 strip 노출 중)에선 strip 의 활성 칩이 필터 상태를 보여주므로 별도 해제 칩은 숨김
                 — 두 표시가 겹치지 않게. 최신 탭(카드 #태그 클릭) 등 strip 없는 면에선 이 칩으로 해제. */}
