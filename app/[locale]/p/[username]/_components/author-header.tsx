@@ -8,7 +8,7 @@ import { FollowButton } from "@/modules/blog/components/follow-button";
 import { FollowCounts } from "@/modules/blog/components/follow-counts";
 import { AuthorTabs } from "./author-tabs";
 
-type Tab = "posts" | "series" | "about";
+type Tab = "posts" | "series" | "collections" | "about";
 
 /**
  * Shared header for the author's blog pages (velog @user style): avatar + handle + bio, then a
@@ -25,6 +25,11 @@ export async function AuthorHeader({ author }: { author: PublicAuthor }) {
   const tabs: { key: Tab; href: string; label: string }[] = [
     { key: "posts", href: authorHref(author.username, locale), label: t("tabPosts") },
     { key: "series", href: authorHref(author.username, locale, "series"), label: t("tabSeries") },
+    {
+      key: "collections",
+      href: authorHref(author.username, locale, "collections"),
+      label: t("tabCollections"),
+    },
     { key: "about", href: authorHref(author.username, locale, "about"), label: t("tabAbout") },
   ];
 

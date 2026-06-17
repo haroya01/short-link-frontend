@@ -507,6 +507,8 @@
     "tabPosts": "글",
     "tabSeries": "시리즈",
     "tabAbout": "소개",
+    "tabCollections": "컬렉션",
+    "collectionsEmpty": "아직 공개한 컬렉션이 없어요.",
     "tabLiked": "좋아요",
     "tabBookmarks": "북마크",
     "railTags": "태그",

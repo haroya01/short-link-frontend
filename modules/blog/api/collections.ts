@@ -106,6 +106,22 @@ export function listMyCollections(): Promise<CollectionSummary[]> {
   return request<CollectionSummary[]>("/api/v1/users/me/collections", { method: "GET" });
 }
 
+/** A curator's PUBLIC collections/paths — backs the author home "컬렉션" tab. Public (readable
+ *  signed-out), so a raw fetch (no auth); a missing/empty handle just yields []. */
+export async function listPublicCollectionsByUsername(
+  username: string,
+): Promise<CollectionSummary[]> {
+  if (USE_MOCKS) {
+    return Promise.resolve(mockMineCollections().filter((c) => c.visibility === "PUBLIC"));
+  }
+  const res = await fetch(
+    `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/collections`,
+    { cache: "no-store" },
+  );
+  if (!res.ok) return [];
+  return (await res.json()) as CollectionSummary[];
+}
+
 /** Collection detail — connected blocks resolved (ordered). Public collections are readable signed-out;
  *  private ones need ownership (the backend enforces it). */
 export async function getCollection(id: number): Promise<CollectionDetail | null> {
