@@ -616,6 +616,8 @@
     "learnMore": "개인정보 처리방침"
   },
   "notifications": {
+    "webPushLabel": "브라우저 알림 받기",
+    "webPushDenied": "브라우저에서 알림이 차단돼 있어요. 사이트 설정에서 허용해 주세요.",
     "title": "알림",
     "empty": "아직 알림이 없어요",
     "markAllRead": "모두 읽음",

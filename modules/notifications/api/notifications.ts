@@ -63,3 +63,21 @@ export function markAllNotificationsRead(): Promise<{ count: number }> {
   if (USE_MOCKS) return Promise.resolve({ count: 0 });
   return request<{ count: number }>(`/api/v1/notifications/read-all`, { method: "POST" });
 }
+
+/** Register a browser web-push subscription (idempotent upsert by endpoint). Backend mirrors the
+ *  in-app bell to it via VAPID. */
+export function subscribeWebPush(endpoint: string, p256dh: string, auth: string): Promise<void> {
+  if (USE_MOCKS) return Promise.resolve();
+  return request<void>(`/api/v1/notifications/web-push`, {
+    method: "POST",
+    body: { endpoint, p256dh, auth },
+  });
+}
+
+export function unsubscribeWebPush(endpoint: string): Promise<void> {
+  if (USE_MOCKS) return Promise.resolve();
+  return request<void>(
+    `/api/v1/notifications/web-push?endpoint=${encodeURIComponent(endpoint)}`,
+    { method: "DELETE" },
+  );
+}

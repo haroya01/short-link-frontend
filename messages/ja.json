@@ -616,6 +616,8 @@
     "ogSubline": "デバイス・チャネル・国・時間 — どこから誰がクリックしたか、ひと目でわかる"
   },
   "notifications": {
+    "webPushLabel": "ブラウザ通知を受け取る",
+    "webPushDenied": "ブラウザで通知がブロックされています。サイト設定で許可してください。",
     "title": "通知",
     "empty": "まだ通知はありません",
     "markAllRead": "すべて既読",
