@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { createPortal } from "react-dom";
 
 type DialogProps = {
   open: boolean;
@@ -48,6 +49,10 @@ export function ConfirmDialog({
   const dialogRef = React.useRef<HTMLDivElement | null>(null);
   const titleId = React.useId();
   const descriptionId = React.useId();
+  // Portal target (<body>) only exists on the client; gate so SSR/first paint render nothing —
+  // matches the closed state and avoids a hydration mismatch.
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
 
   React.useEffect(() => {
     busyRef.current = busy;
@@ -71,9 +76,12 @@ export function ConfirmDialog({
     };
   }, [open]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
+  // Portal to <body>: a transformed/animated ancestor (the post page's `.post-enter` article, a
+  // will-change page wrapper, etc.) would otherwise make this `fixed inset-0` overlay resolve against
+  // that ancestor's box instead of the viewport — clipping the backdrop to a column.
+  return createPortal(
     // Top-anchored, scrollable backdrop — previously {@code grid place-items-center} which
     // vertically centered the panel. Centering meant the Save button visibly "jumped up" when
     // the user toggled into a dialog with fewer fields (contact card, etc.) because the panel
@@ -144,6 +152,7 @@ export function ConfirmDialog({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

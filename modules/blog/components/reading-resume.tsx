@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { BookOpen, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { createPortal } from "react-dom";
 
 const KEY_PREFIX = "kurl:read-pos:";
 const MIN_SAVE_Y = 600; // 이만큼도 안 내렸으면 "읽다 만" 게 아니다
@@ -40,6 +41,9 @@ function pruneOld() {
 export function ReadingResume({ postKey }: { postKey: string }) {
   const t = useTranslations("publicPost");
   const [resumeY, setResumeY] = useState<number | null>(null);
+  // Portal gate: only mount the fixed chip on the client (avoids SSR document access + hydration skew).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   // 복원 제안: 마운트 시 저장된 위치가 있고, 지금 막 위에서 시작했다면 칩을 띄운다.
   useEffect(() => {
@@ -86,9 +90,11 @@ export function ReadingResume({ postKey }: { postKey: string }) {
     };
   }, [postKey]);
 
-  if (resumeY == null) return null;
+  if (resumeY == null || !mounted) return null;
 
-  return (
+  // Portal to <body>: the post page's `.post-enter` article is a containing block for fixed
+  // descendants, which would otherwise pin this chip to the reading column instead of the viewport.
+  return createPortal(
     <div className="fixed bottom-20 left-1/2 z-30 -translate-x-1/2 sm:bottom-6">
       <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-white/95 py-1 pl-1.5 pr-1 shadow-[0_6px_20px_-8px_rgba(15,23,42,0.3)] backdrop-blur animate-fade-in dark:border-slate-700 dark:bg-slate-900/95">
         <button
@@ -112,6 +118,7 @@ export function ReadingResume({ postKey }: { postKey: string }) {
           <X className="h-3.5 w-3.5" />
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
