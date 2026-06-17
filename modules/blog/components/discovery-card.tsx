@@ -247,11 +247,12 @@ export function DiscoveryCard({
 }
 
 // 메이슨리(JS-free CSS columns) — 카드를 크기대로 빈틈없이 퍼즐처럼 채운다(행 강제 정렬 X).
-// 모바일 1열 → sm 2열 → md 3열. 모바일 2열은 한글 제목이 ~8자에서 잘리고 append 마다 모든
+// 모바일 1열 → sm 2열 → lg 3열. 모바일 2열은 한글 제목이 ~8자에서 잘리고 append 마다 모든
 // 카드가 재배치돼 스크롤이 점프했는데, 1열은 카드 문법을 유지하면서 둘 다 없다(전폭 제목,
 // 끝에만 append). 행순서 그리드 대신 메이슨리인 이유는 밑 여백 들쭉날쭉 회피(시각 우선).
+// 3열은 lg(1024+)부터 — md(768~1023, 태블릿 세로)에서 3열이면 카드가 ~250px로 짜부라져 2열 유지.
 export function DiscoveryGrid({ children }: { children: ReactNode }) {
-  return <div className="columns-1 gap-4 sm:columns-2 sm:gap-5 md:columns-3">{children}</div>;
+  return <div className="columns-1 gap-4 sm:columns-2 sm:gap-5 lg:columns-3">{children}</div>;
 }
 
 /** A child cell of {@link DiscoveryGrid} — 칼럼 사이에서 카드가 쪼개지지 않게 막는다.
@@ -285,7 +286,7 @@ const SKELETON_RATIOS = [
 ];
 export function DiscoveryGridSkeleton({ count = 6 }: { count?: number }) {
   return (
-    <div role="status" aria-busy="true" className="columns-1 gap-4 sm:columns-2 sm:gap-5 md:columns-3">
+    <div role="status" aria-busy="true" className="columns-1 gap-4 sm:columns-2 sm:gap-5 lg:columns-3">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="mb-4 break-inside-avoid sm:mb-5">
           <div

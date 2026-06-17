@@ -72,14 +72,21 @@ export function FeedSortTabs({ tabs }: { tabs: FeedSortTab[] }) {
   }, [sig]);
 
   return (
-    <nav ref={navRef} className="relative flex gap-1 text-[15px] font-bold">
+    // min-w-0 lets the nav shrink inside the masthead's flex row so its own overflow-x-auto kicks in
+    // (a swipeable strip) instead of pushing the right-side control off-screen; pb-3.5/-mb-3.5 carves
+    // room for the sliding underline (which overflow-x-auto would otherwise clip) without growing the row.
+    // 영문·와이드 로케일에서 "For You"/"Following" 이 좁은 폰에서 한 탭 안에 줄바꿈되던 걸 막는다.
+    <nav
+      ref={navRef}
+      className="relative flex min-w-0 gap-1 overflow-x-auto pb-3.5 -mb-3.5 text-[15px] font-bold [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    >
       {tabs.map((t) =>
         t.disabled ? (
           <span
             key={t.key}
             aria-disabled
             aria-current={t.active ? "page" : undefined}
-            className="relative cursor-default px-2.5 py-1.5 text-slate-300"
+            className="relative cursor-default whitespace-nowrap px-2.5 py-1.5 text-slate-300"
           >
             {t.label}
           </span>
@@ -89,7 +96,7 @@ export function FeedSortTabs({ tabs }: { tabs: FeedSortTab[] }) {
             href={t.href}
             data-active={t.active ? "true" : undefined}
             aria-current={t.active ? "page" : undefined}
-            className={`focus-ring touch-target relative rounded px-2.5 py-1.5 transition-colors ${
+            className={`focus-ring touch-target relative whitespace-nowrap rounded px-2.5 py-1.5 transition-colors ${
               t.active
                 ? "text-accent-700 dark:text-accent-400"
                 : // slate-500: slate-400 on white was 2.6:1 — under the 4.5:1 AA bar at this
@@ -105,7 +112,7 @@ export function FeedSortTabs({ tabs }: { tabs: FeedSortTab[] }) {
       {bar && (
         <span
           aria-hidden
-          className="pointer-events-none absolute -bottom-[13px] left-0 h-0.5 rounded-full bg-accent-600 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none"
+          className="pointer-events-none absolute bottom-0.5 left-0 h-0.5 rounded-full bg-accent-600 transition-[transform,width] ease-[var(--ease)] motion-reduce:transition-none"
           style={{
             transform: `translateX(${bar.left}px)`,
             width: `${bar.width}px`,
