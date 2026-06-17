@@ -113,6 +113,8 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
               src={`https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`}
               alt=""
               loading="lazy"
+              width={1280}
+              height={720}
               className="h-full w-full object-cover"
             />
             {/* Play overlay sized to match the cross-card "video play" token in AGENTS.md §4

@@ -17,7 +17,7 @@ import {
 } from "@/modules/blog/api/highlights";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentComposer } from "@/modules/blog/components/comment-composer";
-import { CornerDownRight, FolderPlus, Globe, Link as LinkIcon, Lock } from "lucide-react";
+import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import {
@@ -25,6 +25,7 @@ import {
   type CollectionSummary,
 } from "@/modules/blog/api/collections";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
 
 type Anchor = { left: number; top: number; bottom: number };
@@ -293,8 +294,13 @@ function HighlightThread({
   // When true, the connect sheet is open over the thread (file this sentence into a collection / path).
   const [connecting, setConnecting] = useState(false);
   const inset = useKeyboardInset();
+  const contentRef = useRef<HTMLDivElement>(null);
   // Connect needs a server-side highlight (positive id); an optimistic one (negative id) has no refId.
   const canConnect = authenticated && highlight.id > 0;
+
+  // Keyboard containment: Escape + Tab cycling + focus restore. Goes inert while the ConnectSheet is
+  // open over the thread so the two traps don't fight over Tab (ConnectSheet runs its own then).
+  useFocusTrap(contentRef, { active: !connecting, onEscape: onClose });
 
   const load = useCallback(() => {
     listHighlightReplies(highlight.id)
@@ -313,14 +319,6 @@ function HighlightThread({
     load();
     loadContaining();
   }, [load, loadContaining]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
 
   async function submit() {
     if (!authenticated) {
@@ -366,12 +364,16 @@ function HighlightThread({
       onMouseDown={onClose}
     >
       <div
+        ref={contentRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="hl-thread-quote"
         className="flex max-h-[80vh] w-full flex-col rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="border-b border-slate-100 p-5 dark:border-slate-800">
           <div className="flex items-start gap-3">
-            <blockquote className="line-clamp-3 flex-1 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
+            <blockquote id="hl-thread-quote" className="line-clamp-3 flex-1 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
               {highlight.quote}
             </blockquote>
             {/* Connect this sentence into a collection / path — the entry into the connection graph. */}
@@ -526,25 +528,41 @@ function SelectionBar({
   const above = anchor.top > 64;
   const left = Math.min(Math.max(anchor.left, 90), (typeof window !== "undefined" ? window.innerWidth : 360) - 90);
   return (
+    // Outer node carries ONLY the viewport-positioning transform; the inner pill owns the entrance
+    // animation, so an animated transform never overrides the left/top anchoring.
     <div
       ref={innerRef}
-      role="toolbar"
-      // Keep the text selection alive through the click so it doesn't visibly collapse mid-tap.
-      onMouseDown={(e) => e.preventDefault()}
-      className="fixed z-50 flex -translate-x-1/2 items-center overflow-hidden rounded-full bg-slate-900 text-[13px] font-medium text-white shadow-lg dark:bg-white dark:text-slate-900"
+      className="fixed z-50"
       style={{
         left,
-        top: above ? anchor.top - 10 : anchor.bottom + 10,
+        top: above ? anchor.top - 12 : anchor.bottom + 12,
         transform: `translateX(-50%)${above ? " translateY(-100%)" : ""}`,
       }}
     >
-      <button type="button" onClick={onHighlight} className="px-3.5 py-1.5 transition-colors hover:bg-white/10 focus-ring dark:hover:bg-slate-900/10">
-        {highlightLabel}
-      </button>
-      <span aria-hidden className="h-4 w-px bg-white/20 dark:bg-slate-900/15" />
-      <button type="button" onClick={onNote} className="px-3.5 py-1.5 transition-colors hover:bg-white/10 focus-ring dark:hover:bg-slate-900/10">
-        {noteLabel}
-      </button>
+      <div
+        role="toolbar"
+        // Keep the text selection alive through the click so it doesn't visibly collapse mid-tap.
+        onMouseDown={(e) => e.preventDefault()}
+        className="flex animate-fade-in items-center gap-0.5 rounded-full bg-slate-900 p-1 text-[13px] font-medium text-white shadow-[0_10px_34px_-12px_rgba(2,6,23,0.7)] ring-1 ring-white/10 dark:bg-white dark:text-slate-900 dark:ring-slate-900/10"
+      >
+        <button
+          type="button"
+          onClick={onHighlight}
+          className="focus-ring flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors hover:bg-white/10 dark:hover:bg-slate-900/10"
+        >
+          {/* Green tie to the painted mark — the icon previews what the action leaves behind. */}
+          <Highlighter className="h-3.5 w-3.5 text-accent-400 dark:text-accent-600" />
+          {highlightLabel}
+        </button>
+        <button
+          type="button"
+          onClick={onNote}
+          className="focus-ring flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors hover:bg-white/10 dark:hover:bg-slate-900/10"
+        >
+          <PenLine className="h-3.5 w-3.5 text-accent-400 dark:text-accent-600" />
+          {noteLabel}
+        </button>
+      </div>
     </div>
   );
 }
@@ -571,15 +589,10 @@ function NoteSheet({
 }) {
   const [note, setNote] = useState("");
   const inset = useKeyboardInset();
+  const sheetRef = useRef<HTMLDivElement>(null);
 
-  // Esc closes the sheet.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onCancel();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onCancel]);
+  // Escape + Tab cycling + focus restore. The textarea autoFocuses itself, so don't double-focus.
+  useFocusTrap(sheetRef, { active: true, onEscape: onCancel, autoFocus: false });
 
   return (
     <div
@@ -588,10 +601,14 @@ function NoteSheet({
       onMouseDown={onCancel}
     >
       <div
+        ref={sheetRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="note-sheet-title"
         className="w-full rounded-t-2xl bg-white p-5 shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
+        <h3 id="note-sheet-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
         <blockquote className="mt-3 line-clamp-3 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
           {quote}
         </blockquote>
@@ -602,9 +619,13 @@ function NoteSheet({
           maxLength={500}
           rows={3}
           aria-label={title}
+          aria-describedby="note-sheet-count"
           placeholder={placeholder}
           className="mt-3 w-full resize-none rounded-xl border border-slate-200 px-3.5 py-2.5 text-[15px] leading-relaxed outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500"
         />
+        <p id="note-sheet-count" aria-live="polite" className="mt-1 text-right text-[12px] tabular-nums text-slate-400 dark:text-slate-500">
+          {note.length}/500
+        </p>
         <div className="mt-3 flex justify-end gap-2">
           <button
             type="button"

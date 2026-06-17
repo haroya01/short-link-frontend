@@ -80,7 +80,7 @@ export function BlogBottomNav() {
         <button
           type="button"
           onClick={() => setSheet("search")}
-          aria-current={sheet === "search" ? "page" : undefined}
+          aria-expanded={sheet === "search"}
           aria-haspopup="dialog"
           className={cn(TAB, sheet === "search" ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
         >
@@ -106,7 +106,7 @@ export function BlogBottomNav() {
         <button
           type="button"
           onClick={() => setSheet("account")}
-          aria-current={sheet === "account" ? "page" : undefined}
+          aria-expanded={sheet === "account"}
           aria-haspopup="dialog"
           className={cn(TAB, sheet === "account" ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
         >
