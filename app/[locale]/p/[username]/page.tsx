@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { ReportButton } from "@/modules/blog/components/report-button";
+import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { FeedCard, FeedList, authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -181,7 +182,10 @@ export default async function PublicProfileHomepage({
           </FeedList>
         )}
 
-        <footer className="mt-16 flex justify-end border-t border-slate-100 pt-8 dark:border-slate-800">
+        <footer className="mt-16 flex items-center justify-between border-t border-slate-100 pt-8 dark:border-slate-800">
+          {/* Viral-loop badge — followable link back to kurl; on a custom-domain profile it's a real
+              external backlink, elsewhere quiet brand exposure. */}
+          <MadeWithKurl />
           <ReportButton subjectType="USER" subjectId={author.id} />
         </footer>
         </AuthorContentTransition>
