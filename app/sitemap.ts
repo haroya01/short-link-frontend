@@ -110,6 +110,27 @@ async function fetchPublicProfiles(): Promise<string[]> {
   return handles;
 }
 
+// Popular tags back the topic feeds (blog.kurl.me/{locale}/tags/{tag}). These pages already emit
+// canonical + OG + hreflang but were absent from the sitemap, so crawlers only reached them via
+// chip-click. Cap to the most-used tags — the long tail is covered by the posts that carry them.
+const TAG_SITEMAP_CAP = 200;
+type TagCountResponse = { tag: string; count: number };
+
+async function fetchPopularTags(): Promise<string[]> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/public/tags?limit=${TAG_SITEMAP_CAP}`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    const data = (await res.json()) as TagCountResponse[];
+    return data.map((t) => t.tag).filter(Boolean);
+  } catch {
+    // Same graceful-degradation rule as posts/profiles — a backend hiccup drops the tag block, not
+    // the whole sitemap.
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const entries: MetadataRoute.Sitemap = [];
@@ -159,6 +180,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
+  // Topic index + popular topic feeds (blog.kurl.me/{locale}/tags[/{tag}]) — the taxonomy surface.
+  for (const locale of routing.locales) {
+    entries.push({
+      url: `${BLOG_URL}/${locale}/tags`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.5,
+      alternates: {
+        languages: Object.fromEntries(routing.locales.map((l) => [l, `${BLOG_URL}/${l}/tags`])),
+      },
+    });
+  }
+  const tags = await fetchPopularTags();
+  for (const tag of tags) {
+    const enc = encodeURIComponent(tag);
+    // One entry at the default locale carrying the full hreflang set — keeps the per-tag block bounded
+    // (cap × 1) instead of cap × locales while still declaring every language variant.
+    entries.push({
+      url: `${BLOG_URL}/${routing.defaultLocale}/tags/${enc}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.6,
+      alternates: {
+        languages: Object.fromEntries(routing.locales.map((l) => [l, `${BLOG_URL}/${l}/tags/${enc}`])),
+      },
+    });
+  }
+
   // Blog posts + their author homes. URLs are {username}.kurl.me/{slug} (post) and {username}.kurl.me/
   // (author home) — the exact canonicals, no locale prefix. Dedupe author homes across their posts.
   const posts = await fetchPublicPosts();
@@ -180,6 +229,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.6,
+    });
+    // Author's series index — host-root like the home (no locale prefix). The series-detail pages
+    // carry CollectionPage JSON-LD and are reached by crawl from here; the index is the entry point.
+    entries.push({
+      url: `${origin}/series`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.5,
     });
   }
 

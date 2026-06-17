@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight, Check } from "lucide-react";
 import { linksHref } from "@/lib/host";
+import { routing } from "@/i18n/routing";
 import { SEO_PAGES, getSeoContent, getSeoPage } from "@/modules/marketing/seo-landing";
 
 export const revalidate = 3600;
@@ -26,7 +27,15 @@ export async function generateMetadata({
   return {
     title: c.title,
     description: c.description,
-    alternates: { canonical: url },
+    // These pages are generated for every locale (generateStaticParams), so each must point crawlers
+    // at its sibling-locale variants — without hreflang the locales competed as near-duplicates.
+    alternates: {
+      canonical: url,
+      languages: {
+        ...Object.fromEntries(routing.locales.map((l) => [l, `${SITE_URL}/${l}/use/${slug}`])),
+        "x-default": `${SITE_URL}/${routing.defaultLocale}/use/${slug}`,
+      },
+    },
     openGraph: { title: c.title, description: c.description, url, type: "website", siteName: "kurl" },
     twitter: { card: "summary", title: c.title, description: c.description },
   };
