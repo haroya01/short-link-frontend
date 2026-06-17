@@ -1,7 +1,10 @@
 import { ImageResponse } from "next/og";
 import { getTranslations } from "next-intl/server";
 
-export const runtime = "edge";
+// nodejs 런타임 — Edge Function 1 MB 한도를 next/og + next-intl 번들(1.07 MB)이 초과해 Vercel
+// 배포가 실패했다. Node 서버리스(50 MB 한도)로 전환(형제 p/[username] OG 라우트와 동일). next/og·
+// getTranslations 둘 다 node 에서 동작하고, OG 이미지는 크롤러용이라 콜드스타트가 critical 하지 않다.
+export const runtime = "nodejs";
 export const alt = "blog.kurl";
 // 2400×1260 = 권장 1200×630 의 2x. Retina / 카톡 인앱 미리보기에서 워드마크 가장자리 또렷.
 // 브랜드 OG 와 동일 비율 — blog 면은 워드마크와 태그라인만 blog.kurl 로 교체.

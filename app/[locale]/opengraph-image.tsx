@@ -1,7 +1,9 @@
 import { ImageResponse } from "next/og";
 import { getTranslations } from "next-intl/server";
 
-export const runtime = "edge";
+// nodejs 런타임 — blog OG 와 같은 패턴이라 Edge 1 MB 한도를 칠 위험을 선제 차단(형제 p/ 라우트와
+// 통일). next/og + getTranslations 는 node 서버리스(50 MB)에서 동작, OG 는 크롤러용이라 콜드스타트 무관.
+export const runtime = "nodejs";
 export const alt = "kurl.me";
 // 2400×1260 = 권장 1200×630 의 2x. Retina / 카톡 인앱 미리보기에서 워드마크 가장자리 또렷.
 // 모든 내부 치수(padding/font/mark) 도 동일 비율로 2배 — 1x 비례 그대로 유지.
