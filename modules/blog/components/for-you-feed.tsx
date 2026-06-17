@@ -15,6 +15,7 @@ import {
 } from "@/modules/blog/components/discovery-card";
 import { FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 
 /**
@@ -131,7 +132,10 @@ export function ForYouFeed({ locale }: { locale: string }) {
               {t("followingBrowseLatest")}
             </Link>
           }
-        />
+        >
+          {/* Cold-start: For You can't personalize without follows — seed the graph with curators. */}
+          <SuggestedCurators locale={locale} />
+        </FeedEmpty>
       </div>
     );
   }
