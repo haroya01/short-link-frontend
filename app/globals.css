@@ -1473,6 +1473,29 @@ body[data-cookie-consent="visible"] {
   height: auto;
   border-radius: 0.75rem;
 }
+/* 이미지 캡션(figcaption) — 노드 title 에 저장, 편집 가능. 폭 마커(«wide» 등)는 img 를 직접 타깃하므로 유지. */
+.tiptap-figure {
+  margin: 1.5rem 0;
+}
+.tiptap-figcaption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #64748b;
+  outline: none;
+}
+.tiptap-figcaption:empty::before {
+  content: attr(data-placeholder);
+  color: #cbd5e1;
+  pointer-events: none;
+}
+.dark .tiptap-figcaption {
+  color: #94a3b8;
+}
+.dark .tiptap-figcaption:empty::before {
+  color: #475569;
+}
 .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   color: #cbd5e1;
