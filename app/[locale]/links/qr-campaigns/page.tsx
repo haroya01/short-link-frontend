@@ -81,7 +81,7 @@ function FloatingCta({ ctaHref }: { ctaHref: string }) {
         <Button
           variant="accent"
           size="xl"
-          className="font-medium shadow-[0_10px_28px_rgba(5,150,105,0.32)]"
+          className="font-medium shadow-cta"
         >
           {t("cta")}
           <ArrowRight className="h-4 w-4" aria-hidden />
@@ -395,7 +395,7 @@ function HeroBody({ s }: { s: HeroSpec }) {
       <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards]">
         {s.eyebrow}
       </p>
-      <h1 className="mt-2 break-keep text-[26px] font-semibold leading-[1.1] tracking-headline text-slate-900 dark:text-slate-100 sm:mt-4 sm:text-[36px] sm:leading-[1.15] lg:text-[52px]">
+      <h1 className="mt-2 break-keep text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:mt-4 sm:text-headline-md lg:text-headline-xl">
         <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards]">
           {s.title1}
         </span>
@@ -428,7 +428,7 @@ function HeroBody({ s }: { s: HeroSpec }) {
 function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean }) {
   return (
     <>
-      <h2 className="break-keep text-[22px] font-semibold leading-[1.1] tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px] sm:leading-[1.2] lg:text-[40px]">
+      <h2 className="break-keep text-headline-xs font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md lg:text-headline-lg">
         <span
           className="inline-block transition-opacity duration-700"
           style={{
@@ -496,14 +496,14 @@ function FinalCta({
         <p className="mt-6 font-mono text-[11px] uppercase tracking-tagline text-accent-400">
           {t("eyebrow")}
         </p>
-        <h2 className="mt-3 text-[32px] font-semibold leading-tight tracking-headline sm:text-[44px]">
+        <h2 className="mt-3 text-headline-md font-semibold tracking-headline sm:text-headline-lg">
           {t("title")}
         </h2>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link href={ctaHref}>
             <Button
               variant="accent"
-              className="h-14 rounded-xl px-10 text-[15px] font-semibold shadow-[0_10px_28px_rgba(5,150,105,0.35)]"
+              className="h-14 rounded-xl px-10 text-[15px] font-semibold shadow-cta"
             >
               {t("primary")}
               <ArrowRight className="h-5 w-5" aria-hidden />

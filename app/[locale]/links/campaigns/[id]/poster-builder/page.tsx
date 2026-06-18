@@ -196,7 +196,7 @@ export default function PosterBuilderPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("loginRequired")}
         </h1>
       </div>
@@ -213,7 +213,7 @@ export default function PosterBuilderPage() {
       </Link>
 
       <div>
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -361,14 +361,15 @@ function PreviewWithBox({
     <div className="space-y-2">
       <div className="flex items-center justify-between text-[12px] text-slate-500 dark:text-slate-400">
         <span className="truncate font-mono">{file.name}</span>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onRemove}
           aria-label={t("removePdf")}
-          className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300"
         >
           <Trash2 className="h-3.5 w-3.5" aria-hidden /> {t("otherPdf")}
-        </button>
+        </Button>
       </div>
       <PdfPreview file={file} box={box} onBoxChange={onBoxChange} qrDataUrl={qrDataUrl} />
       <p className="text-[11px] text-slate-500 dark:text-slate-400">

@@ -116,7 +116,7 @@ export default function AdminPage() {
         <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500 dark:text-slate-400">
           {t("label")}
         </p>
-        <h2 className="mt-1 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">{t("title")}</h2>
+        <h2 className="mt-1 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t("subtitle")}</p>
       </div>
 

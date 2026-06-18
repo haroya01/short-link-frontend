@@ -96,7 +96,7 @@ export default async function ShowcasePage({
               <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
             </div>
             <h1
-              className="text-balance text-[34px] font-semibold leading-[1.05] tracking-headline text-slate-900 dark:text-slate-100 sm:text-[48px]"
+              className="text-balance text-headline-lg font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-xl"
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
               {t("ctaTitle")}
@@ -113,7 +113,7 @@ export default async function ShowcasePage({
             >
               <Link
                 href="/login?next=/profile/auto"
-                className="group inline-flex items-center gap-1.5 rounded-xl bg-accent-700 px-5 py-3 text-sm font-medium text-white shadow-cta transition hover:bg-accent-800 hover:shadow-[0_12px_32px_-8px_rgba(5,150,105,0.55)]"
+                className="group inline-flex items-center gap-1.5 rounded-xl bg-accent-700 px-5 py-3 text-sm font-medium text-white shadow-cta transition hover:bg-accent-800"
               >
                 {t("cta")}
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
@@ -139,7 +139,7 @@ export default async function ShowcasePage({
         <div className="container max-w-3xl mb-10">
           <div className="section-divider mx-auto mb-10 w-full max-w-xl" aria-hidden />
           <div className="text-center">
-            <h2 className="text-balance text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+            <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
               {t("title")}
             </h2>
             <p className="mx-auto mt-3 max-w-md text-balance text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">

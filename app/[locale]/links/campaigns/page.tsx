@@ -48,7 +48,7 @@ export default function CampaignsPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("authTitle")}
         </h1>
         <p className="mt-2 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
@@ -65,7 +65,7 @@ export default function CampaignsPage() {
     <div className="container max-w-5xl space-y-6 py-10">
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("title")}
           </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">

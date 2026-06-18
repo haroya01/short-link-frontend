@@ -104,11 +104,7 @@ export default function ProfileEditPage() {
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          {/* Heading scale unified with dashboard / stats / leads — text-[24px] mobile up to
-              text-[30px] sm+ with tracking-headline, per PR #243/#245 unified hierarchy. The
-              earlier text-2xl was a half-step short on desktop and made the editor heading
-              visually subordinate to its surrounding cards. */}
-          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("title")}
           </h1>
           <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("intro")}</p>
@@ -194,7 +190,7 @@ function OnboardingStep({
         className={
           "grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-semibold transition " +
           (done
-            ? "bg-emerald-500 text-white"
+            ? "bg-accent-500 text-white"
             : "border border-accent-300 bg-white dark:bg-slate-900 text-accent-700 dark:text-accent-400")
         }
         aria-hidden

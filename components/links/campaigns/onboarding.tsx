@@ -36,7 +36,7 @@ export function CampaignOnboarding() {
         <p className="text-[12px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
           {t("eyebrow")}
         </p>
-        <h2 className="mt-2 text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
+        <h2 className="mt-2 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h2>
         <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">

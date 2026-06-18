@@ -113,7 +113,7 @@ export default function CampaignStatsPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("loginRequired")}
         </h1>
       </div>
@@ -130,7 +130,7 @@ export default function CampaignStatsPage() {
       </Link>
 
       <div>
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -241,7 +241,7 @@ function CompareSection({
                 className={
                   "rounded-xl border p-3 " +
                   (isCurrent
-                    ? "border-accent-200 bg-accent-50/40 dark:bg-accent-500/10"
+                    ? "border-accent-200 bg-accent-50/40 dark:bg-accent-600/10"
                     : "border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40")
                 }
               >
@@ -299,7 +299,7 @@ function RecommendationCard({ data }: { data: CampaignRecommendation }) {
 function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number] }) {
   const t = useTranslations("campaignApp.campaignStats");
   const verdictStyle: Record<string, string> = {
-    BOOST: "bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400",
+    BOOST: "bg-accent-100 dark:bg-accent-600/10 text-accent-700 dark:text-accent-400",
     KEEP: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
     REDUCE: "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400",
     PRUNE: "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400",
@@ -364,7 +364,7 @@ function DailyChart({ data }: { data: CampaignStats["byDay"] }) {
             <div key={day} className="flex flex-1 flex-col items-center gap-1">
               <span className="text-[10px] tabular-nums text-slate-500 dark:text-slate-400">{clicks}</span>
               <div
-                className="w-full rounded-t-sm bg-accent-500"
+                className="w-full rounded-t-sm bg-accent-600"
                 style={{ height: `${heightPct}%` }}
                 title={`${day}: ${clicks}`}
               />
@@ -400,7 +400,7 @@ function HourlyChart({ data }: { data: CampaignStats["byHour"] }) {
           return (
             <div
               key={hour}
-              className="rounded-t-sm bg-accent-500"
+              className="rounded-t-sm bg-accent-600"
               style={{ height: `${Math.max(heightPct, 2)}%` }}
               title={t("hourly.tooltip", { hour, clicks })}
             />
@@ -489,7 +489,7 @@ function Kpi({
     <li
       className={
         "rounded-2xl border bg-white dark:bg-slate-900 px-4 py-4 " +
-        (accent ? "border-accent-200 bg-accent-50/40 dark:bg-accent-500/10" : "border-slate-200 dark:border-slate-800")
+        (accent ? "border-accent-200 bg-accent-50/40 dark:bg-accent-600/10" : "border-slate-200 dark:border-slate-800")
       }
     >
       <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</p>

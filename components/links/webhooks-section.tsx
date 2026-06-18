@@ -181,7 +181,7 @@ export function LinkWebhooksSection({ shortCode }: { shortCode: string }) {
           </div>
           <button
             type="button"
-            className="mt-2 text-amber-700 dark:text-amber-400 underline hover:text-amber-900"
+            className="mt-2 text-amber-700 dark:text-amber-400 underline hover:text-amber-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-1 rounded"
             onClick={() => setIssued(null)}
           >
             {t("dismiss")}
@@ -458,7 +458,7 @@ function StatusPill({
     <span
       className={
         "rounded px-1.5 py-0.5 text-[10px] font-medium " +
-        (ok ? "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400" : "bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400")
+        (ok ? "bg-accent-100 dark:bg-accent-500/15 text-accent-700 dark:text-accent-400" : "bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-400")
       }
     >
       {hook.lastStatusCode}

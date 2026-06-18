@@ -162,7 +162,7 @@ export default function NewBatchPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("loginRequired")}
         </h1>
       </div>
@@ -179,7 +179,7 @@ export default function NewBatchPage() {
       </Link>
 
       <div>
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -396,15 +396,16 @@ function RowItem({
           />
         </Cell>
         <div className="flex items-end justify-end lg:items-start lg:pt-1">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={onRemove}
             disabled={!canRemove}
             aria-label={t("removeRow", { index: index + 1 })}
-            className="grid h-9 w-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400"
           >
             <Trash2 className="h-3.5 w-3.5" aria-hidden />
-          </button>
+          </Button>
         </div>
       </div>
     </li>
@@ -467,14 +468,16 @@ function PastePanel({
             })}
           </p>
         </div>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={onClose}
           aria-label={t("close")}
-          className="grid h-7 w-7 place-items-center rounded-lg text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300"
+          className="h-7 w-7"
         >
           <X className="h-3.5 w-3.5" aria-hidden />
-        </button>
+        </Button>
       </div>
       <Textarea
         value={text}

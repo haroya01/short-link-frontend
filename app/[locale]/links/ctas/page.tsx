@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
 import {
   createCta,
   deleteCta,
@@ -74,16 +75,17 @@ export default function CtaLibraryPage() {
     <main className="mx-auto max-w-3xl px-6 py-12">
       <header className="mb-8 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{t("title")}</h1>
+          <h1 className="text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{t("description")}</p>
         </div>
-        <button
+        <Button
           type="button"
+          variant="accent"
+          size="sm"
           onClick={() => setEditing("new")}
-          className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
         >
           {t("new")}
-        </button>
+        </Button>
       </header>
 
       {editing && (
@@ -120,7 +122,7 @@ export default function CtaLibraryPage() {
               <span
                 className={`rounded px-2 py-1 text-xs font-medium ${
                   cta.style === "PRIMARY"
-                    ? "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300"
+                    ? "bg-accent-100 dark:bg-accent-500/15 text-accent-800 dark:text-accent-300"
                     : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
                 }`}
               >
@@ -133,20 +135,22 @@ export default function CtaLibraryPage() {
                 <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">{cta.label}</p>
                 <p className="truncate text-xs text-slate-500 dark:text-slate-400">{cta.url}</p>
               </div>
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => setEditing(cta)}
-                className="rounded border border-slate-200 dark:border-slate-700 px-3 py-1 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 {t("edit")}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="destructive"
+                size="sm"
                 onClick={() => handleDelete(cta)}
-                className="rounded border border-red-200 dark:border-red-500/30 px-3 py-1 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
               >
                 {t("delete")}
-              </button>
+              </Button>
             </li>
           ))}
         </ul>
@@ -254,20 +258,22 @@ function CtaEditor({
       </div>
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
       <div className="flex justify-end gap-2 pt-2">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onCancel}
-          className="rounded px-3 py-1.5 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
         >
           {tc("cancel")}
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
+          variant="accent"
+          size="sm"
           disabled={saving}
-          className="rounded bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
         >
           {saving ? t("saving") : initial ? t("save") : t("create")}
-        </button>
+        </Button>
       </div>
     </form>
   );
