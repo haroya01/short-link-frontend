@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { createPortal } from "react-dom";
 
@@ -16,6 +16,9 @@ type DialogProps = {
   confirmDisabled?: boolean;
   cancelLabel?: string;
   destructive?: boolean;
+  /** Override the confirm button variant (e.g. "accent" for a primary save). Defaults to default,
+   *  or destructive when {@code destructive}. */
+  confirmVariant?: ButtonProps["variant"];
   onConfirm: () => void | Promise<void>;
   children?: React.ReactNode;
   /**
@@ -38,6 +41,7 @@ export function ConfirmDialog({
   confirmDisabled,
   cancelLabel,
   destructive,
+  confirmVariant,
   onConfirm,
   children,
   maxWidthClass = "max-w-md",
@@ -136,13 +140,16 @@ export function ConfirmDialog({
             {cancelLabel ?? t("cancel")}
           </Button>
           <Button
-            variant={destructive ? "destructive" : "default"}
+            variant={confirmVariant ?? (destructive ? "destructive" : "default")}
             disabled={busy || confirmDisabled}
             onClick={async () => {
               setBusy(true);
               try {
                 await onConfirm();
                 onOpenChange(false);
+              } catch {
+                // onConfirm rejected (e.g. inline validation / save failure) — keep the dialog open
+                // so the caller's error stays visible instead of discarding the unsaved form.
               } finally {
                 setBusy(false);
               }

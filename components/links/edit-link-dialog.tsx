@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import {
   isValidUrl,
@@ -92,14 +92,7 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     setExpiredMessage(detail.expiredMessage ?? "");
   }, [detail]);
 
-  useEffect(() => {
-    if (!link) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !busy) onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [link, busy, onClose]);
+  // Escape / backdrop / focus-trap / scroll-lock / portal are all handled by ConfirmDialog now.
 
   const ogPlaceholders = useMemo(
     () => ({
@@ -112,13 +105,15 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
 
   if (!link) return null;
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault();
+  // ConfirmDialog's onConfirm contract: resolve → it closes the dialog; throw → it stays open.
+  // So we throw on validation/save failure (the inline error stays visible) and resolve on success
+  // (onSaved refreshes the list + closes the parent).
+  async function handleSave() {
     setError(null);
     if (!link) return;
     if (originalUrl.trim() && !isValidUrl(originalUrl.trim())) {
       setError(t("invalidUrl"));
-      return;
+      throw new Error("invalid-url");
     }
     setBusy(true);
     try {
@@ -130,6 +125,7 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
       onSaved();
     } catch (err) {
       setError(errorMessage(err, t("saveFailed")));
+      throw err;
     } finally {
       setBusy(false);
     }
@@ -207,18 +203,22 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center p-4">
-      <div className="absolute inset-0 bg-slate-900/50" onClick={() => !busy && onClose()} />
-      <form
-        onSubmit={handleSave}
-        className="relative w-full max-w-md animate-fade-in rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-xl"
-      >
-        <div className="mb-4 flex items-baseline justify-between">
-          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">{t("title")}</h2>
-          <span className="font-mono text-xs text-slate-500 dark:text-slate-400">/{link.shortCode}</span>
-        </div>
+    <ConfirmDialog
+      open
+      onOpenChange={(o) => {
+        if (!o) onClose();
+      }}
+      title={t("title")}
+      maxWidthClass="max-w-md"
+      confirmLabel={t("save")}
+      cancelLabel={t("cancel")}
+      confirmVariant="accent"
+      confirmDisabled={loadingDetail}
+      onConfirm={handleSave}
+    >
+      <p className="-mt-1 mb-3 font-mono text-xs text-slate-500 dark:text-slate-400">/{link.shortCode}</p>
 
-        <SectionTabs active={section} onSelect={setSection} t={t} />
+      <SectionTabs active={section} onSelect={setSection} t={t} />
 
         {section === "basic" && (
           <BasicSection
@@ -281,16 +281,6 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
             {error}
           </p>
         )}
-
-        <div className="mt-6 flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onClose} disabled={busy}>
-            {t("cancel")}
-          </Button>
-          <Button type="submit" variant="accent" disabled={busy || loadingDetail}>
-            {busy ? t("saving") : t("save")}
-          </Button>
-        </div>
-      </form>
-    </div>
+    </ConfirmDialog>
   );
 }
