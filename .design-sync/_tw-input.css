@@ -1,0 +1,1635 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* devices.css — open-source CSS-only phone/laptop frames used by the landing-page profile
+   showcase. Only the iPhone variants render; the rest is dead CSS but the whole file is ~5KB
+   minified so we don't bother tree-shaking. */
+/* devices.css import stripped for DS bundle */
+
+/*
+ * devices.css ships {@code .device .device-screen { background: #000 }} — a descendant selector
+ * with specificity (0,2,0), higher than Tailwind utilities (0,1,0). Previous attempts here
+ * (`.device-screen { transparent }` and `:where(.device-screen) { transparent }`) both lost the
+ * cascade. The real fix lives in {@code ShowcaseCard} / {@code ProfilePreview}: inline
+ * {@code style.backgroundColor} (specificity 1,0,0,0) beats the descendant selector and the
+ * theme's {@code pageBgHex} actually paints. No CSS rule is needed here anymore.
+ */
+
+:root {
+  color-scheme: light;
+  /* qr-campaigns 히어로 + 일반 entrance easing token. 이전엔 GlobalStyles 의
+     `<style jsx global>` 안에 있었는데, styled-jsx hydration race 때문에 hero 텍스트가
+     opacity-0 에서 안 풀리는 경우 발생. 정식 stylesheet 로 끌어내려 초기 CSS 와 같이 로드. */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* 모바일 하단 탭바(Blog/LinksBottomNav) 높이 — home-indicator inset 포함. 쿠키 배너를 탭바 위로
+     띄우는 데 씀. 없으면 배너가 탭바를 덮어 탭(계정 → 로그아웃/제품 전환) 클릭을 가로챈다. */
+  --bottom-nav-h: calc(3.5rem + env(safe-area-inset-bottom));
+  /* 쿠키 배너가 뷰포트 하단에서 얼마나 떠 있나. 기본은 home-indicator 만 비키고, 하단 탭바가 있는
+     표면(body[data-bottom-nav])에선 탭바 높이만큼 올린다. */
+  --cookie-bottom: env(safe-area-inset-bottom);
+  /* 토스트가 뷰포트 하단에서 얼마나 떠 있나. 기본은 데스크톱과 같은 1.5rem. 하단 탭바·쿠키 배너가
+     있는 표면(아래 body[...] 규칙)에선 그 위로 올려 충돌을 피한다. 모바일 전용 — 토스트는 sm+ 에서
+     sm:bottom-6 으로 되돌아간다(탭바가 sm:hidden 이라 lift 가 필요 없음). */
+  --toast-bottom: 1.5rem;
+  /* recharts(daily-chart) 색은 inline SVG/style 이라 Tailwind dark: 가 안 닿는다. CSS 변수로
+     테마를 끌어 .dark 에서 한 번에 덮는다 — 작가 방문통계가 다크 표면에서 라이트 격자/툴팁로 깨지던 문제. */
+  --chart-grid: #e2e8f0;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: #e2e8f0;
+  --chart-tooltip-text: #0f172a;
+}
+
+.dark {
+  --chart-grid: #334155;
+  --chart-tooltip-bg: #0f172a;
+  --chart-tooltip-border: #334155;
+  --chart-tooltip-text: #e2e8f0;
+}
+
+/* 하단 탭바가 있는 표면에선 쿠키 배너를 탭바 바로 위로 올려 탭을 가리지 않게 한다.
+   토스트도 탭바 위로 올린다 — 안 그러면 bottom-6 토스트가 탭을 덮어 클릭을 가로챈다. */
+body[data-bottom-nav] {
+  --cookie-bottom: var(--bottom-nav-h);
+  --toast-bottom: calc(var(--bottom-nav-h) + 0.75rem);
+}
+
+/* qr-campaigns 히어로 진입 애니메이션. opacity-0 으로 시작 → 100% 에서 1 로. forwards 로
+   끝 상태 유지. 같은 race 이유로 globals.css 에 둠 (styled-jsx 가 아님). */
+@keyframes hero-fade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes hero-rise {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes dot-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Blog search open animation — the mobile 탐색 sheet unfolds down from the top (transform-origin set
+   via origin-top on the element). The header field unfolds by width (transition, not a keyframe). */
+@keyframes search-sheet-in {
+  from { opacity: 0; transform: scaleY(0.92) translateY(-8px); }
+  to { opacity: 1; transform: scaleY(1) translateY(0); }
+}
+/* Mobile bottom sheet (account / profile) — slides up from the bottom edge as it unfolds. */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/*
+ * Reserve gutter for the scrollbar at the root so layout doesn't reflow when content grows past
+ * the viewport height. Previously the scrollbar appearance was shrinking viewport width by ~15px,
+ * flipping `md:`/`lg:` breakpoints, and visibly resizing the banner / avatar grid.
+ */
+html {
+  scrollbar-gutter: stable;
+}
+
+html,
+body {
+  @apply bg-white text-slate-900 antialiased;
+}
+
+/* Both products support dark now (toggle via the ThemeToggle in the account sheet). Darken BOTH <html>
+   (kills the iOS rubber-band overscroll / home-indicator white edge, and drives color-scheme so the
+   native scrollbar follows) AND <body>. The body matters: `html, body { bg-white }` left the body white,
+   so any section with a transparent or semi-transparent dark background (e.g. a 40%-opacity tint) let
+   the white body bleed through as a light band. A dark body is the correct base layer for both products. */
+html.dark,
+html.dark body {
+  @apply bg-slate-950;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+/* Avoid orphans (single-character last lines). Modern browsers (Chrome 117+, Safari 17.4+, FF 121+). */
+h1, h2, h3, p {
+  text-wrap: pretty;
+}
+
+/* CJK typesetting:
+ *  1. `word-break: keep-all` keeps phrases (eojeol / bunsetsu) intact instead of breaking on every
+ *     character — fixes "이." / "で。" style orphan tails.
+ *  2. `overflow-wrap: break-word` (not `anywhere`) is the softer fallback for the few cases that
+ *     still don't fit — `anywhere` was so aggressive it overrode (1) and broke mid-phrase.
+ *  3. `line-break: strict` is the actual fix for the lone `。` / `、` / closing-paren on the next
+ *     line: it applies the Japanese Layout Requirements line-start prohibition (kinsoku shori).
+ *     Modern browsers all support it; older fallbacks just see normal CJK break behaviour.
+ * Applies broadly because the bug surfaces on any text node a CJK string ends up in (span / div /
+ * a / button labels, etc) — explicit element lists kept missing one.
+ */
+:lang(ko), :lang(ja), :lang(zh) {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  line-break: strict;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/*
+ * Kill the double-tap-to-zoom wait on interactive elements: without this, mobile Safari holds
+ * every tap ~300ms to see if a second one follows, which reads as the whole UI being sluggish.
+ * `manipulation` only drops double-tap zoom — pinch zoom and panning keep working.
+ */
+a,
+button,
+input,
+select,
+textarea,
+summary,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+/*
+ * iOS Safari auto-zooms on focus when a form control's font-size is below 16px. Our base Input
+ * (text-sm = 14px) tripped this on every URL input tap, and the resulting zoom-in made the
+ * landing page feel like a cheap mobile site. Bumping form controls to 16px on phones suppresses
+ * the auto-zoom without touching the viewport meta — pinch-zoom still works for accessibility.
+ * Scoped to the same breakpoint Tailwind uses for `sm:` (640px) so desktop keeps its tighter
+ * 14px typography. `!important` is needed because the call sites set `text-sm` / `text-xs` /
+ * `text-[12px]` utility classes that would otherwise out-specify a plain element selector.
+ */
+@media (max-width: 640px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+::selection {
+  background: #d1fae5;
+  color: #064e3b;
+}
+/* 다크 본문 위에서 라이트용 민트 면은 너무 밝게 번쩍인다 — 반투명 그린로 가라앉힘. */
+.dark ::selection {
+  background: rgba(16, 185, 129, 0.32);
+  color: #ecfdf5;
+}
+
+@layer utilities {
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /*
+   * Section divider — replaces the recurring `border-t border-slate-100`. A hairline rule that fades
+   * in from both ends so the section break reads softer than a hard full-width border. Light mode uses
+   * a dark slate tint; dark mode a light slate tint, so the line stays visible on a near-black page
+   * instead of vanishing (the old dark-slate gradient was invisible there).
+   */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(15, 23, 42, 0.08) 18%,
+      rgba(15, 23, 42, 0.08) 82%,
+      transparent 100%
+    );
+  }
+  .dark .section-divider {
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(148, 163, 184, 0.22) 18%,
+      rgba(148, 163, 184, 0.22) 82%,
+      transparent 100%
+    );
+  }
+
+  /*
+   * Hero stagger — rise+fade cascade for hero children (eyebrow → headline → subhead → CTA).
+   * Reuses the `hero-rise` keyframe (translateY 16px → 0 + opacity 0 → 1) so landing /
+   * showcase / login share the same entrance feel as qr-campaigns' sticky-narrative hero.
+   * Children set `--hi` (hero index) via inline style; `animation-delay` scales from that
+   * with a 180ms stagger so the cascade reads as deliberate, not staccato. Initial state
+   * (opacity 0 + translateY) is set on the element itself so the pre-delay frame doesn't
+   * flash the final position.
+   */
+  .hero-stagger > * {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: hero-rise 900ms var(--ease) forwards;
+    animation-delay: calc(var(--hi, 0) * 180ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-stagger > * {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* 글 내용 등장 — 스켈레톤이 실제 글로 바뀔 때(또는 직접 진입 시) 본문이 살짝 떠오르며 페이드인.
+     View Transitions 는 "피드→스켈레톤"까지만 덮으므로, 정작 "스켈레톤→내용"이 툭 바뀌던 부분을 이게
+     채운다 = 사용자가 원한 "내용이 뜨는" 애니메이션. 마운트마다 1회 재생(브라우저 무관). */
+  .post-enter {
+    animation: hero-rise 520ms var(--ease) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .post-enter {
+      animation: none;
+    }
+  }
+
+  /*
+   * Card surface — single soft 1px falloff at rest, a slightly deeper falloff on hover. The
+   * earlier version layered three shadows (inner highlight + near + far) to fake a printed-card
+   * bevel; on a luxury / refined surface that read as ornament rather than depth. We keep the
+   * class so existing call sites do not have to change, but the shadow is now a single near
+   * layer that pairs with the card's own border for separation.
+   */
+  .card-highlight {
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  }
+  .card-highlight:hover {
+    box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.08);
+  }
+
+  /*
+   * Tighter tracking utility for the Pretendard headline path — Pretendard's default tracking
+   * is generous for body comfort, which makes large headlines feel airy. Applying -0.025em on
+   * h1/h2 size only restores the editorial density without affecting body comfort. Pretendard
+   * is the single sans family across the app (Korean + Latin); headlines lean on weight + this
+   * tracking utility for editorial density rather than a display-serif swap.
+   */
+  .tracking-headline {
+    letter-spacing: -0.025em;
+  }
+  .tracking-tagline {
+    letter-spacing: 0.22em;
+  }
+
+  /*
+   * Hover lift for clickable cards. Pairs with `transition` (250ms ease) to glide. Active state
+   * snaps the card back down so the click feels tactile. Reduced-motion users get the shadow
+   * change but no transform.
+   */
+  .hover-lift {
+    @apply transition-all duration-200 ease-out will-change-transform;
+  }
+  .hover-lift:hover {
+    @apply -translate-y-0.5 shadow-md;
+  }
+  .hover-lift:active {
+    @apply translate-y-0 shadow-sm;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hover-lift:hover {
+      transform: none;
+    }
+  }
+
+  /*
+   * Unified public-profile card surface — single source of truth for every block on the public
+   * page (link / embed / image / gallery / product / booking / event / email form). Border,
+   * radius, baseline shadow, and the transition contract are owned here so the page reads as one
+   * design language. Individual entries layer their own inner layout (aspect ratios, padding,
+   * meta strips) on top, but never override the wrapper-level tokens.
+   *
+   * <p>Shape choice: <code>rounded-2xl</code> (16px). Twelve is too rigid for a creator profile,
+   * twenty-four reads as casual / playful — the 16 px sweet spot matches Stan Store's commerce
+   * cards and Beacons' default surface, both of which target the same Korean creator audience
+   * short-link does.
+   *
+   * <p>Shadow contract: nearly-flat at rest (1 px of falloff is enough for separation when the
+   * border is doing the bulk of the work), then a soft 4-by-16 spread on hover that maps the
+   * card visually closer to the cursor. This pattern survives dark themes — a heavy resting
+   * shadow on a dark surface reads as a stain — and keeps the page feeling premium without the
+   * material-design "every card is a paper sheet" look.
+   *
+   * <p>Interactive feedback: the hover lift (<code>-translate-y-0.5</code>) is shared with the
+   * legacy <code>.hover-lift</code> class so existing instances behave consistently. We
+   * deliberately scope the transition to <code>transform</code>, <code>box-shadow</code>, and
+   * <code>border-color</code> only — a blanket <code>transition-all</code> kicked in during the
+   * embed-card swap and made the card visibly judder (see PR #91).
+   *
+   * <p>Use <code>.profile-card-static</code> for non-interactive surfaces (e.g. the email-form
+   * card body that wraps its own input + button) — same resting visual, no hover transform so
+   * the wrapper doesn't fight the inner controls' own focus states.
+   */
+  .profile-card,
+  .profile-card-static {
+    @apply rounded-2xl border;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition:
+      transform 200ms ease-out,
+      box-shadow 200ms ease-out,
+      border-color 200ms ease-out;
+    will-change: transform;
+  }
+  .profile-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+  }
+  /* Keyboard focus — every interactive card gets the same accent ring so visitors tabbing through
+   * the feed always see where focus landed. Scoped to :focus-visible (not :focus) so mouse clicks
+   * don't trigger the ring. `outline-offset` keeps the ring 2 px outside the card border so it
+   * never clips against the rounded-2xl corner. Using `outline` instead of `box-shadow` because
+   * the wrapper already uses box-shadow for its baseline + hover lift — combining them is fragile,
+   * outline sits on its own paint layer. */
+  .profile-card:focus-visible {
+    outline: 2px solid theme(colors.accent.600);
+    outline-offset: 2px;
+  }
+
+  /* Shared focus ring for inner buttons inside .profile-card-static wrappers (Gallery nav,
+   * Contact dock, Place action grid, Event calendar dropdown, etc.). These widgets aren't on the
+   * card wrapper itself so they don't pick up the .profile-card:focus-visible rule — applying
+   * .focus-ring directly to the button gives them the same accent outline.
+   *
+   * <p>Single utility instead of typing out `focus-visible:outline focus-visible:outline-2 ...`
+   * on every clickable inside a card — repeated 6+ times across the entry components, easy to
+   * forget on a new one. */
+  /* Single source for the keyboard focus ring across the blog. Ring-based (not outline) so it
+     composes with an element's existing drop shadow via Tailwind's ring/shadow vars. Change the
+     focus treatment here once instead of in every call site. */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2;
+  }
+  /* Tailwind's default ring-offset color is white — on a dark surface the 2px offset reads as a white
+     halo around the focus ring. Match it to the page base instead. */
+  .dark .focus-ring {
+    @apply focus-visible:ring-offset-slate-950;
+  }
+  /* Expands the TOUCH target of a compact control (like/share/follow pills sit ~32px tall) to the
+     44px WCAG 2.5.5 minimum WITHOUT growing its visual size — a transparent overlay centered on the
+     control captures the taps. Keeps the minimal pill look while staying thumb-friendly on mobile. */
+  .touch-target {
+    position: relative;
+  }
+  .touch-target::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    min-width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+  .profile-card:active {
+    /* Press feedback — Stan Store pattern (scale 0.98). Combined translateY(0) cancels the hover
+     * lift mid-press, so the cursor and the card track each other instead of fighting. */
+    transform: scale(0.98) translateY(0);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .profile-card:hover,
+    .profile-card:active {
+      transform: none;
+    }
+  }
+
+  /*
+   * Stagger fade-in for the public profile feed. Each entry sets `--idx` inline (0,1,2,…) and
+   * the animation delay derives from it so the items cascade in. Header / footer use the same
+   * keyframe with no delay. Reduced-motion users skip the animation entirely.
+   */
+  .profile-fade {
+    opacity: 0;
+    animation: profile-fade-in 360ms ease-out forwards;
+    animation-delay: calc(var(--idx, 0) * 50ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .profile-fade {
+      animation: none;
+      opacity: 1;
+    }
+  }
+}
+
+  /*
+   * Notion-style typography for the TEXT block's markdown body. Scoped to .prose-text-block so it
+   * doesn't bleed into other markdown surfaces (we may add a long-form bio editor later that wants
+   * different sizing). Specificity is per-element under the wrapper — easier to tweak in isolation
+   * than building a full @tailwindcss/typography custom plugin for one block type.
+   *
+   * <p>Sizing scaled down vs. a typical Notion document because the TEXT block sits inside a
+   * 600-ish-px profile column on mobile and shouldn't dominate the feed.
+   */
+  .prose-text-block > :first-child {
+    margin-top: 0;
+  }
+  .prose-text-block > :last-child {
+    margin-bottom: 0;
+  }
+  .prose-text-block h1 {
+    @apply mb-1 mt-3 text-xl font-bold leading-tight;
+  }
+  .prose-text-block h2 {
+    @apply mb-1 mt-3 text-lg font-bold leading-tight;
+  }
+  .prose-text-block h3 {
+    @apply mb-1 mt-2 text-base font-semibold leading-tight;
+  }
+  .prose-text-block p {
+    @apply mb-1.5 text-sm leading-relaxed;
+  }
+  .prose-text-block ul {
+    @apply mb-1.5 list-disc pl-5;
+  }
+  .prose-text-block ol {
+    @apply mb-1.5 list-decimal pl-5;
+  }
+  .prose-text-block li {
+    @apply mb-0.5 text-sm leading-relaxed;
+  }
+  .prose-text-block li > p {
+    @apply mb-0;
+  }
+  .prose-text-block strong {
+    @apply font-semibold;
+  }
+  .prose-text-block em {
+    @apply italic;
+  }
+  .prose-text-block code {
+    @apply rounded bg-slate-100 px-1 py-0.5 text-[12px] font-mono;
+  }
+  .prose-text-block pre {
+    @apply mb-1.5 overflow-x-auto rounded-md bg-slate-900 p-3 text-[12px] text-slate-100;
+  }
+  .prose-text-block pre code {
+    @apply bg-transparent p-0 text-slate-100;
+  }
+  .prose-text-block a {
+    @apply text-accent-700 underline-offset-2 hover:underline;
+  }
+  .prose-text-block blockquote {
+    @apply mb-1.5 border-l-2 border-slate-300 pl-3 italic text-slate-600;
+  }
+  .prose-text-block hr {
+    @apply my-3 border-slate-200;
+  }
+  .prose-text-block table {
+    @apply mb-1.5 w-full border-collapse text-[12px];
+  }
+  .prose-text-block th,
+  .prose-text-block td {
+    @apply border border-slate-200 px-2 py-1;
+  }
+  .prose-text-block th {
+    @apply bg-slate-50 font-semibold;
+  }
+
+  /*
+   * Long-form reading typography for the public blog post body. Distinct from .prose-text-block:
+   * that one is tuned small for a card-sized markdown block inside the profile feed; this one is a
+   * full article column (max-w-2xl) and leans editorial — 18px body, 1.55 leading, generous block
+   * rhythm, accent-green links. We render each post block as a discrete semantic element under this
+   * wrapper, so element selectors here carry the styling rather than @tailwindcss/typography (which
+   * the project deliberately doesn't pull in — one custom surface doesn't justify the plugin).
+   */
+  .prose-post > :first-child {
+    margin-top: 0;
+  }
+  .prose-post > :last-child {
+    margin-bottom: 0;
+  }
+  .prose-post p {
+    @apply my-[0.625rem] text-[1.125rem] leading-[1.55] text-slate-700 dark:text-slate-300;
+  }
+  /* Reader twin of .tiptap > p + p: a real paragraph break (double-Enter) reads clearly wider than a
+     soft line break (a <br>), so the editor and the published post separate paragraphs identically. */
+  .prose-post p + p {
+    @apply mt-[1.3rem];
+  }
+  /* scroll-margin keeps a TOC jump target clear of the sticky header instead of tucking it
+     underneath. Applies to the heading anchors PostToc links to. */
+  .prose-post h2 {
+    @apply mb-3 mt-8 scroll-mt-24 text-[1.5rem] font-bold leading-snug tracking-tight text-slate-900 dark:text-slate-100;
+  }
+  .prose-post h3 {
+    @apply mb-2 mt-7 scroll-mt-24 text-[1.25rem] font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100;
+  }
+  .prose-post h4 {
+    @apply mb-2 mt-6 scroll-mt-24 text-[1.0625rem] font-semibold leading-snug text-slate-900 dark:text-slate-100;
+  }
+  .prose-post ul {
+    @apply my-4 list-disc space-y-1.5 pl-6;
+  }
+  .prose-post ol {
+    @apply my-4 list-decimal space-y-1.5 pl-6;
+  }
+  .prose-post li {
+    @apply text-[1.125rem] leading-[1.55] text-slate-700 dark:text-slate-300;
+  }
+  .prose-post li::marker {
+    @apply text-accent-500;
+  }
+  .prose-post li > p {
+    @apply my-0;
+  }
+  .prose-post strong {
+    @apply font-semibold text-slate-900 dark:text-slate-100;
+  }
+  .prose-post em {
+    @apply italic;
+  }
+  .prose-post s,
+  .prose-post del {
+    @apply text-slate-500 line-through dark:text-slate-400;
+  }
+  /* 밑줄은 글자에서 살짝 떨어진 1px 헤어라인(em 기반 offset — 글자 크기를 따라간다). */
+  .prose-post a {
+    @apply font-medium text-accent-700 underline decoration-accent-300 decoration-1 underline-offset-[0.2em] transition-colors hover:decoration-accent-600 dark:text-accent-400 dark:decoration-accent-600 dark:hover:decoration-accent-400;
+  }
+  .prose-post code {
+    @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.875em] text-accent-800 dark:bg-slate-800 dark:text-accent-300;
+  }
+  .prose-post pre {
+    @apply my-6 overflow-x-auto rounded-xl bg-slate-900 p-4 text-[0.875rem] leading-relaxed text-slate-100;
+  }
+  .prose-post pre code {
+    @apply bg-transparent p-0 text-slate-100;
+  }
+  .prose-post blockquote {
+    @apply my-7 border-l-[3px] border-accent-400 pl-5 text-[1.125rem] italic leading-relaxed text-slate-600 dark:text-slate-400;
+  }
+  /* 구분선 = 애스터리즘(✳ ✳ ✳) — 선 하나보다 "장이 넘어간다"를 인쇄물의 어휘로 말한다.
+     음수 margin-right 는 마지막 글자 뒤에 붙는 letter-spacing 만큼 되밀어 진짜 가운데 정렬. */
+  .prose-post hr {
+    @apply my-12 flex items-center justify-center border-0;
+  }
+  .prose-post hr::before {
+    content: "✳ ✳ ✳";
+    @apply text-[12px] text-slate-300 dark:text-slate-600;
+    letter-spacing: 0.5em;
+    margin-right: -0.5em;
+  }
+  .prose-post figure {
+    @apply my-8;
+  }
+  .prose-post img {
+    @apply h-auto max-w-full;
+  }
+  .prose-post figure img {
+    @apply mx-auto rounded-2xl;
+  }
+  .prose-post figcaption {
+    @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-400;
+  }
+  /* Tables (TABLE block / markdown) — flat editorial: header underline + light row dividers, no heavy
+     grid (matches the §1 flat philosophy). The Markdown renderer wraps each table in .prose-table-wrap
+     so a too-wide one scrolls horizontally within the reading column (the margin lives on the wrap so
+     overflow-x-auto doesn't clip it) instead of squishing cells on a phone. */
+  .prose-post .prose-table-wrap {
+    @apply my-7 overflow-x-auto;
+  }
+  .prose-post table {
+    @apply w-full border-collapse text-[0.9375rem] leading-snug;
+  }
+  .prose-post thead th {
+    @apply border-b-2 border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100;
+  }
+  .prose-post tbody td {
+    @apply border-b border-slate-100 px-3 py-2 align-top text-slate-700 dark:border-slate-800 dark:text-slate-300;
+  }
+  .prose-post tbody tr:last-child td {
+    @apply border-b-0;
+  }
+  /* Hover a heading → a faint "#" deep-link appears in the left gutter (the section's TOC anchor).
+     The wrapping link stays heading-styled, not the accent link style. Hover-only by nature. */
+  .prose-post :is(h2, h3, h4) a {
+    @apply relative text-inherit no-underline;
+    font-weight: inherit;
+  }
+  .prose-post :is(h2, h3, h4) a::before {
+    content: "#";
+    @apply absolute -left-5 font-normal text-accent-400 opacity-0 transition-opacity;
+  }
+  .prose-post :is(h2, h3, h4):hover a::before {
+    @apply opacity-100;
+  }
+  /*
+   * Syntax highlighting for fenced code blocks. rehype-highlight tags tokens with `.hljs-*`
+   * classes; this is a compact dark palette tuned for the slate-900 `pre` background above
+   * (no separate highlight.js theme stylesheet — one surface doesn't justify the import).
+   */
+  .prose-post pre code.hljs {
+    @apply bg-transparent p-0;
+    color: #e2e8f0;
+  }
+  .prose-post .hljs-comment,
+  .prose-post .hljs-quote {
+    color: #94a3b8;
+    font-style: italic;
+  }
+  .prose-post .hljs-keyword,
+  .prose-post .hljs-selector-tag,
+  .prose-post .hljs-literal,
+  .prose-post .hljs-section,
+  .prose-post .hljs-link {
+    color: #93c5fd;
+  }
+  .prose-post .hljs-string,
+  .prose-post .hljs-attr,
+  .prose-post .hljs-template-tag,
+  .prose-post .hljs-addition {
+    color: #6ee7b7;
+  }
+  .prose-post .hljs-number,
+  .prose-post .hljs-built_in,
+  .prose-post .hljs-builtin-name,
+  .prose-post .hljs-symbol,
+  .prose-post .hljs-meta {
+    color: #fca5a5;
+  }
+  .prose-post .hljs-title,
+  .prose-post .hljs-type {
+    color: #fcd34d;
+  }
+  .prose-post .hljs-variable,
+  .prose-post .hljs-name,
+  .prose-post .hljs-tag {
+    color: #f9a8d4;
+  }
+  .prose-post .hljs-emphasis {
+    font-style: italic;
+  }
+  .prose-post .hljs-strong {
+    font-weight: 700;
+  }
+
+@keyframes profile-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* A just-posted comment slides + fades in so submitting feels alive (matches the quiet entrance
+   language elsewhere). Applied only to the new comment's row; honors reduced-motion. */
+@keyframes comment-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.comment-in {
+  animation: comment-in 360ms var(--ease, ease-out) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .comment-in {
+    animation: none;
+  }
+}
+
+/*
+ * Author tab content (글/시리즈/소개) reuses the feed's direction-aware content-slide (below) via
+ * AuthorContentTransition, so switching author tabs pages left/right exactly like 최신/인기/팔로잉 —
+ * one motion language across both surfaces. The shared header reconciles in place; the underline glides
+ * (AuthorTabs). No separate author-only keyframe.
+ */
+
+/*
+ * Feed content swap — keyed by the active tab/search so the block remounts and replays this on every
+ * Latest/Popular/Following switch. The tabs sit side by side, so the swap slides in laterally and is
+ * *direction-aware*: moving to a tab on the right enters from the right (`-fwd`), moving back to a tab
+ * on the left enters from the left (`-back`) — so it reads as paging across, not always one way. The
+ * direction class is chosen client-side (FeedContentTransition). `both` holds the from-state so there's
+ * no flash before it starts.
+ */
+@keyframes content-slide-fwd {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes content-slide-back {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.content-slide-fwd {
+  animation: content-slide-fwd 460ms var(--ease) both;
+}
+.content-slide-back {
+  animation: content-slide-back 460ms var(--ease) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .content-slide-fwd,
+  .content-slide-back {
+    animation: none;
+  }
+}
+
+/*
+ * Theme switch (light ↔ dark) — the ThemeToggle wraps the class flip in document.startViewTransition,
+ * and these drive the snapshot: the OLD theme is held underneath while the NEW theme wipes down over
+ * it top-to-bottom, so the new palette pours in like a blind dropping. Unsupported browsers /
+ * reduced-motion fall back to an instant flip (the toggle skips startViewTransition).
+ */
+@keyframes theme-wipe-down {
+  from {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0.5;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+/* Scoped to the theme toggle (it sets data-theme-vt on <html> for the transition's duration) so the
+   wipe does NOT bleed into the cross-document page-navigation transition below, which shares root. */
+html[data-theme-vt]::view-transition-old(root) {
+  animation: none;
+}
+html[data-theme-vt]::view-transition-new(root) {
+  /* Softer than a hard guillotine: a slower ease-in-out sweep + an opacity ramp so the new theme
+     blends in over the old as it pours down, instead of a stark moving edge. */
+  animation: theme-wipe-down 650ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  mix-blend-mode: normal;
+}
+
+/*
+ * Cross-document page transitions (same-origin blog navigations — clicking a topic chip / tag, etc).
+ * Without this, a full navigation re-paints the whole page including the header, which flickers each
+ * time. `navigation: auto` lets the browser snapshot the old page and crossfade to the new one — the
+ * header reconciles smoothly instead of blinking. Scoped to NOT the theme transition (data-theme-vt).
+ * Cross-origin navs (author/post subdomains) are unaffected; unsupported browsers just navigate
+ * instantly; reduced-motion is honored by the UA.
+ */
+@view-transition {
+  navigation: auto;
+}
+/* The root enter/leave motion for page navigations lives in the "카드 → 글 전환" block near the end
+   of this file (vt-leave / vt-enter). The named chrome groups (header, bottom nav) would get the UA
+   default fade too and blink on every navigation — pin them to `animation: none` so they hold still
+   while only the body transitions. */
+::view-transition-old(app-header),
+::view-transition-new(app-header),
+::view-transition-old(bottom-nav),
+::view-transition-new(bottom-nav) {
+  animation: none;
+}
+/* The sticky app header + mobile tab bar are the SAME across blog pages, so name them as their own
+   view-transition groups: identical position → they hold still while only the body crossfades, instead
+   of getting swept into the root fade and blinking on every navigation. */
+.vt-app-header {
+  view-transition-name: app-header;
+}
+.vt-bottom-nav {
+  view-transition-name: bottom-nav;
+}
+/* Theme toggle snapshots the whole page as one image, so the named groups must collapse back into the
+   root there (a same-named group on both snapshots would otherwise try to morph the header too). */
+html[data-theme-vt] .vt-app-header,
+html[data-theme-vt] .vt-bottom-nav {
+  view-transition-name: none;
+}
+
+/*
+ * Author tab content (글 · 시리즈 · 소개 · 좋아요 · 북마크) AND the identity block both ride the calm
+ * site-wide root crossfade on a tab switch — neither is its own view-transition group.
+ *
+ * The content used to be an `author-content` group that slid horizontally, but the tabs' heights differ
+ * wildly (글 = a tall post list, 소개 = a short bio), so the group morphed its box — a diagonal, laggy
+ * slide. The identity used to be an `author-identity` group "to hold still", but a named group does a
+ * crossfade (old fades OUT while new fades in), and the new page's snapshot is the pre-hydration server
+ * HTML (follow button + count not loaded yet) — different from the old → the whole block dipped in
+ * opacity and flickered. Under the root crossfade the OLD page is HELD at full opacity (it doesn't fade
+ * out), so the identical avatar/handle/bio stay visually static and only the follow row settles.
+ */
+
+/*
+ * Series subscribe toggle (구독 ↔ 구독중) — keyed by state so the icon+label remount and replay this on
+ * every toggle: a quick pop (scale + fade) so the swap reads as a deliberate state change, not just a
+ * silent color flip. Reduced-motion skips it.
+ */
+@keyframes subscribe-pop {
+  from {
+    transform: scale(0.55);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.subscribe-pop {
+  animation: subscribe-pop 240ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/*
+ * Tag-feed POST LIST crossfade — keyed by the topic, so only the changing post list fades on a topic
+ * soft-nav. The topic title, follow controls and filter strip stay put (they update in place), and the
+ * header/bottom-nav (layout) stay mounted — only the list itself, the part that actually changes,
+ * transitions. Pure opacity (no rise) keeps it smooth, not jumpy.
+ */
+@keyframes tag-list-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.tag-list-enter {
+  animation: tag-list-fade 300ms ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tag-list-enter {
+    animation: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .subscribe-pop {
+    animation: none;
+  }
+}
+
+
+
+/*
+ * The `qrcode` lib sets inline `style.width: 512px` on the canvas after toCanvas() runs, which
+ * beats Tailwind's stylesheet `.h-full .w-full` rules. Result: the canvas momentarily renders
+ * at 512px and bursts out of its 256px wrapper. !important here pins the canvas to its parent
+ * regardless of what the lib writes inline.
+ */
+canvas.qr-canvas-fit {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/*
+ * Aurora theme — slow gradient-position animation. Same colors as a typical Apple Keynote
+ * "aurora" wallpaper: violet / fuchsia / cyan / emerald cycling. We honor prefers-reduced-motion
+ * by freezing the gradient (same colors, no animation) so the visual identity stays but motion
+ * doesn't fire for users who opt out.
+ */
+.theme-aurora-anim,
+.theme-aurora-static {
+  background-image: linear-gradient(
+    135deg,
+    #a78bfa 0%,
+    #f472b6 25%,
+    #22d3ee 50%,
+    #34d399 75%,
+    #a78bfa 100%
+  );
+  background-size: 300% 300%;
+}
+.theme-aurora-anim {
+  animation: aurora-shift 18s ease-in-out infinite;
+}
+@keyframes aurora-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/*
+ * Wave — sky/cyan/deep-ocean stack with a vertical position oscillation. The eye reads the slow
+ * top-to-bottom shift as a swell on the sea surface; faster than aurora (8s vs 18s) so the motion
+ * feels like water, not weather.
+ */
+.theme-wave-anim,
+.theme-wave-static {
+  background-image: linear-gradient(
+    180deg,
+    #bae6fd 0%,
+    #7dd3fc 25%,
+    #0ea5e9 55%,
+    #0369a1 80%,
+    #075985 100%
+  );
+  background-size: 100% 300%;
+}
+.theme-wave-anim {
+  animation: wave-shift 8s ease-in-out infinite;
+}
+@keyframes wave-shift {
+  0%, 100% { background-position: 50% 0%; }
+  50% { background-position: 50% 100%; }
+}
+
+/*
+ * Ember — warm amber→orange→crimson diagonal flicker. Diagonal shift (vs wave's vertical) plus a
+ * tighter color range keeps it from reading as "another aurora"; 14s sits between aurora's calm
+ * and wave's lively pace.
+ */
+.theme-ember-anim,
+.theme-ember-static {
+  background-image: linear-gradient(
+    135deg,
+    #fde68a 0%,
+    #fbbf24 25%,
+    #f97316 55%,
+    #dc2626 80%,
+    #7c2d12 100%
+  );
+  background-size: 300% 300%;
+}
+.theme-ember-anim {
+  animation: ember-shift 14s ease-in-out infinite;
+}
+@keyframes ember-shift {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-aurora-anim,
+  .theme-wave-anim,
+  .theme-ember-anim {
+    animation: none;
+  }
+}
+
+/*
+ * Mono-theme contact card — descendant overrides for children authored for the foil
+ * (dark-substrate) parent. Reuses the same JSX in ContactCardEntry but maps the near-white
+ * text variants (text-slate-300/200, text-white) to readable dark variants, and the
+ * border-white/10 borders to black variants matching the mono aesthetic.
+ */
+.mono-card .text-white { color: rgb(15 23 42); /* slate-900 */ }
+.mono-card .text-slate-100 { color: rgb(30 41 59); /* slate-800 */ }
+.mono-card .text-slate-300 { color: rgb(71 85 105); /* slate-600 */ }
+.mono-card .text-slate-200 { color: rgb(51 65 85); /* slate-700 */ }
+.mono-card .text-slate-400 { color: rgb(100 116 139); /* slate-500 */ }
+/* Contact anchors carry an always-on underline (decoration-white/40) for touch affordance —
+ * on the white mono card that decoration must flip dark like the text it underlines. */
+.mono-card .decoration-white\/40 { text-decoration-color: rgb(15 23 42 / 0.4); }
+.mono-card a:hover { text-decoration-color: rgb(15 23 42); }
+/* Tailwind's opacity-modifier variants (e.g. {@code text-slate-200/90}) compile to a separate
+ * class name with an escaped slash — the rules above don't catch them. ContactCardEntry uses
+ * {@code text-slate-200/90} for the email / phone / website rows, and on the mono variant they
+ * were rendering as 90 %-opacity light grey on a white card → effectively invisible. */
+.mono-card .text-slate-200\/90 { color: rgb(51 65 85); }
+.mono-card .text-white\/80 { color: rgb(15 23 42); }
+.mono-card .text-white\/90 { color: rgb(15 23 42); }
+.mono-card .border-white\/10 { border-color: rgb(0 0 0 / 0.12); }
+.mono-card .border-white\/20 { border-color: rgb(0 0 0 / 0.18); }
+.mono-card .bg-white\/5,
+.mono-card .bg-white\/10 { background-color: rgb(0 0 0 / 0.04); }
+.mono-card .bg-white\/20 { background-color: rgb(0 0 0 / 0.08); }
+.mono-card .ring-white\/20 { --tw-ring-color: rgb(0 0 0 / 0.18); }
+.mono-card .bg-black\/30 { background-color: rgb(0 0 0 / 0.08); }
+.mono-card button:hover { background-color: rgb(0 0 0 / 0.04); }
+
+/* Login BrandRotator: phrase ↔ wordmark morph.
+ *
+ * 기본 = phrase 모드 "당신의 url. [verb] .me." 전부 표시. cycling 끝나면 .brand-settled
+ * 추가 → lead/join/tail/end/verb-wrap 가 max-width:0+opacity:0 으로 collapse, url+.me 가
+ * 양옆에서 붙고 폰트가 wordmark 사이즈로 커지고 k 가 prepend.
+ *
+ * opacity 와 max-width transition duration 을 동일하게 묶어서 mid-transition 의 "fade 만
+ * 끝나고 공간은 남아있는" gap 을 차단.
+ *
+ * .brand-no-transition = 첫 paint 에서 즉시 settled 인 경우 flash 없이 settled 직행. */
+.brand-rotator {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+  transition: font-size 0.55s ease-in-out, letter-spacing 0.55s ease-in-out,
+    font-weight 0.55s ease-in-out;
+}
+.brand-rotator > span {
+  display: inline-block;
+  white-space: pre;
+}
+.brand-rotator [data-fade] {
+  overflow: hidden;
+  max-width: 200px;
+  opacity: 1;
+  transition: max-width 0.55s ease-in-out, opacity 0.55s ease-in-out;
+}
+.brand-rotator [data-k] {
+  overflow: hidden;
+  max-width: 0;
+  opacity: 0;
+  transition: max-width 0.55s 0.15s ease-out, opacity 0.55s 0.15s ease-out;
+}
+.brand-rotator.brand-settled {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+.brand-rotator.brand-settled [data-fade] {
+  max-width: 0;
+  opacity: 0;
+}
+.brand-rotator.brand-settled [data-k] {
+  max-width: 0.65em;
+  opacity: 1;
+}
+.brand-no-transition,
+.brand-no-transition * {
+  transition: none !important;
+}
+
+/*
+ * Cookie consent is server-rendered so first-time visitors see it at first paint (it used to mount
+ * in a useEffect, a hydration-late beat after the page). For visitors who already consented, the
+ * inline script in cookie-consent.tsx sets `data-cc-accepted` on <html> before the banner can
+ * paint, and this rule keeps it hidden until hydration unmounts it — same no-FOUC pattern as the
+ * theme script in the root layout.
+ */
+html[data-cc-accepted] [data-cc-banner] {
+  display: none;
+}
+
+/*
+ * Pre-paint auth hint. The root layout is static now (its cookies() read forced the WHOLE app into
+ * per-request rendering), so until the client /me settles the header renders BOTH chrome variants
+ * inside [data-auth-slot] wrappers and the inline script's html[data-auth-hint] flag (from the
+ * localStorage access token) picks one before first paint. display:contents keeps the visible
+ * variant's children as direct flex items of the header cluster.
+ */
+[data-auth-slot] {
+  display: contents;
+}
+html:not([data-auth-hint]) [data-auth-slot="authed"],
+html[data-auth-hint] [data-auth-slot="anon"] {
+  display: none;
+}
+
+/*
+ * Root 404 locale pick (app/not-found.tsx). The page is fully static — all three locale copies are
+ * in the DOM and the page's pre-paint script flags <html data-nf-locale> from the NEXT_LOCALE
+ * cookie (no flag = ko). Reading the cookie server-side opted the WHOLE app out of static
+ * rendering, because the root not-found boundary renders into every page tree.
+ */
+[data-nf] {
+  display: none;
+}
+html:not([data-nf-locale]) [data-nf="ko"],
+html[data-nf-locale="en"] [data-nf="en"],
+html[data-nf-locale="ja"] [data-nf="ja"] {
+  display: block;
+}
+
+/*
+ * Cookie consent makes room. The banner is position:fixed at the viewport bottom, so on phones it
+ * overlaps the last feed card and the blog write FAB. While it's visible (CookieConsent toggles the
+ * body data-attribute) we reserve scroll space at the page bottom and lift the FAB clear of the
+ * full-width bar (its height + the safe-area inset) via --fab-bottom. On sm+ the banner is a compact
+ * right-aligned card and the FAB is hidden, so no offset is needed there.
+ */
+body[data-cookie-consent="visible"] {
+  padding-bottom: 6rem;
+  --fab-bottom: calc(7rem + env(safe-area-inset-bottom));
+  /* 쿠키 배너가 떠 있으면 토스트를 배너 위로 더 올린다. --cookie-bottom 은 탭바 유무까지 이미
+     반영하므로 여기에 배너 높이(~3.5rem)만 더하면 탭바·배너 둘 다 비킨다. 이 규칙이 위
+     body[data-bottom-nav] 보다 뒤라, 둘 다 켜져도 (배너가 최상단이라) 이 값이 이긴다. */
+  --toast-bottom: calc(var(--cookie-bottom) + 3.5rem);
+}
+@media (min-width: 640px) {
+  body[data-cookie-consent="visible"] {
+    padding-bottom: 0;
+    --fab-bottom: 1.5rem;
+  }
+}
+
+/*
+ * 🔒 LOCKED — 제품 전환 warp 키프레임 (디자인 확정). 소유자 승인 없이 수정 금지. 다른 세션의
+ * AI/에이전트 포함. 마커 컴포넌트: components/common/apps-grid.tsx. 상세: AGENTS.md §0.
+ *
+ * Product-switch warp. Jumping between kurl and blog.kurl is a cross-origin reload; this white
+ * overlay covers the hard load with a branded motion built from the logo mark: the three lines
+ * draw on left-to-right (staggered), then the destination wordmark fades in beneath them as a logo
+ * lockup. Honors reduced-motion (the switcher skips the overlay and navigates straight).
+ */
+@keyframes warp-stroke {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes warp-word {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.warp-stroke {
+  transform: scaleX(0);
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: warp-stroke 0.24s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.warp-stroke-1 {
+  animation-delay: 0s;
+}
+.warp-stroke-2 {
+  animation-delay: 0.08s;
+}
+.warp-stroke-3 {
+  animation-delay: 0.16s;
+}
+/* Wordmark fades in once the mark has finished drawing (~0.4s). */
+.warp-word {
+  opacity: 0;
+  animation: warp-word 0.34s ease-out 0.46s forwards;
+  will-change: transform, opacity;
+}
+
+/*
+ * Header logo hover — replays the product-switch warp's line-draw as a micro-interaction.
+ * Hovering the mark redraws its three lines left-to-right with the same stagger and easing as the
+ * warp overlay, so the brand mark feels alive on hover and previews the transition motion. Mirrors
+ * the warp's look without touching the locked warp keyframes. Honors reduced-motion.
+ */
+@keyframes mark-line-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.mark-line {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mark-hoverable:hover .mark-line {
+    animation: mark-line-draw 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .mark-hoverable:hover .mark-line-2 {
+    animation-delay: 0.08s;
+  }
+  .mark-hoverable:hover .mark-line-3 {
+    animation-delay: 0.16s;
+  }
+}
+
+/*
+ * Login centerpiece — the mark draws on as its entrance (same line-draw as the warp), instead of
+ * fading up with the rest of the hero cascade. The container drops the hero-rise so the draw IS the
+ * reveal; the three lines sweep on left-to-right just after the eyebrow. Reduced-motion shows the
+ * mark statically (no animation, full opacity via the hero-stagger reduce override).
+ */
+.hero-stagger > .mark-draw-in {
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mark-draw-in .mark-line {
+    animation: mark-line-draw 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.22s;
+  }
+  .mark-draw-in .mark-line-2 {
+    animation-delay: 0.3s;
+  }
+  .mark-draw-in .mark-line-3 {
+    animation-delay: 0.38s;
+  }
+}
+
+/* Post image lightbox — fade the backdrop, scale the image in. */
+@keyframes post-lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes post-lightbox-img-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.post-lightbox {
+  animation: post-lightbox-in 0.18s ease-out;
+}
+.post-lightbox-img {
+  animation: post-lightbox-img-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .post-lightbox,
+  .post-lightbox-img {
+    animation: none;
+  }
+}
+
+/*
+ * Wide / full-bleed post images — break out of the reading column. Reader centers on the viewport;
+ * the editor mirrors the intent (wider than the writing column) via the «wide»/«full» alt marker so
+ * "wide" is visible while you write. Open for extension: add a width = add a WIDTH_CLASS + one rule.
+ */
+.post-img-wide,
+.post-img-full {
+  position: relative;
+  left: 50%;
+  max-width: none;
+  transform: translateX(-50%);
+}
+.post-img-wide {
+  width: min(56rem, calc(100vw - 2rem));
+}
+/* 고정 TOC(≥1100px, 중앙+360px 에서 시작)와 wide 이미지(우단 중앙+448px)가 88px 겹치던 충돌 —
+   TOC 가 있는 글에선 wide 폭을 TOC 시작선 안쪽(45rem)으로 캡. full 은 TOC 의 반투명 배경이 감당. */
+@media (min-width: 1100px) {
+  .prose-post.has-toc .post-img-wide {
+    width: min(45rem, calc(100vw - 2rem));
+  }
+}
+.post-img-full {
+  width: calc(100vw - 2rem);
+}
+/* Half-column image — two consecutive halves form a 2-up row (inline-block side-by-side); the
+   whitespace between them is the gutter. Stacks to full width on phones. */
+.prose-post figure.post-img-half {
+  display: inline-block;
+  width: calc(50% - 0.4rem);
+  vertical-align: top;
+}
+/* Gutter between a side-by-side pair. The reader renders consecutive IMAGE blocks as adjacent
+   <figure> siblings with NO whitespace text node between them (React doesn't emit it), so the inline
+   gap the layout assumed never existed — the two halves butted together. Add it explicitly. */
+.prose-post figure.post-img-half + figure.post-img-half {
+  margin-left: 0.8rem;
+}
+@media (max-width: 640px) {
+  .prose-post figure.post-img-half {
+    display: block;
+    width: 100%;
+  }
+}
+
+/* Editor (Tiptap) mirrors the width markers so the layout you write matches what ships. */
+.tiptap img[alt^="«wide»"] {
+  max-width: none;
+  width: calc(100% + 6rem);
+  margin-inline: -3rem;
+}
+.tiptap img[alt^="«full»"] {
+  max-width: none;
+  width: calc(100% + 10rem);
+  margin-inline: -5rem;
+}
+.tiptap img[alt^="«half»"] {
+  display: inline-block;
+  width: calc(50% - 0.4rem);
+  vertical-align: top;
+}
+@media (max-width: 640px) {
+  .tiptap img[alt^="«half»"] {
+    display: block;
+    width: 100%;
+  }
+}
+
+/* ── featured 라이브 펄스 ────────────────────────────────────────────────────
+   "오늘의 글" 점에서 그린 링이 2.4s 주기로 한 번씩 번진다 — 라이브 인디케이터 문법.
+   ::after 가 transform/opacity 만 애니메이션(컴포지터 전용). reduced-motion 은 아래에서 정지. */
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: theme(colors.accent.500);
+  animation: live-ping 2.4s var(--ease) infinite;
+}
+@keyframes live-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* ── scroll-driven 헤더 깊이 (progressive enhancement) ───────────────────────
+   스크롤 진행(0→120px)에 비례해 헤더 아래 그림자가 떠오른다 — JS 스크롤 리스너 없이 CSS
+   scroll() 타임라인만으로. 미지원 브라우저는 기존 모습(보더+블러) 그대로. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vt-app-header {
+      animation: chrome-float linear both;
+      animation-timeline: scroll();
+      animation-range: 0 120px;
+    }
+  }
+}
+@keyframes chrome-float {
+  to {
+    box-shadow: 0 8px 24px -16px rgba(15, 23, 42, 0.18);
+  }
+}
+
+/* The Tailwind `animate-fade-in` utility (dialogs, sheets, the mobile TOC) has no reduced-motion
+   guard of its own — collapse it for users who ask for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ── Tiptap post editor content ──────────────────────────────────────────────────────────────
+   Editable typography for the Tiptap body editor. Mirrors the published `.prose-post` reading look
+   (18px / 1.55 / slate-700) so what you write matches what ships; the code block is a CodeMirror
+   node (codemirror-block.ts) that styles itself. Dark-aware for the blog theme. */
+.tiptap {
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: #334155;
+  outline: none;
+  /* Scroll-past-end gutter: lets the LAST line be scrolled up to the typewriter position (≈2/3
+   * height) instead of being pinned to the bottom edge. keepCaretInView relies on this room. */
+  padding-bottom: 40vh;
+}
+.dark .tiptap {
+  color: #cbd5e1;
+}
+/* Block rhythm mirrors the published .prose-post (18px font, tightened block gap so lines don't float). */
+.tiptap > * + * {
+  margin-top: 0.625rem;
+}
+/* Paragraph ↔ paragraph (a double-Enter "new paragraph") gets a clearly wider gap than the tight
+   single-Enter soft break (a <br>, line-height only) — so pressing Enter twice visibly separates into
+   the next paragraph instead of reading like one more tight line. Matches .prose-post below. */
+.tiptap > p + p {
+  margin-top: 1.3rem;
+}
+.tiptap :is(h1, h2, h3) {
+  color: #0f172a;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.dark .tiptap :is(h1, h2, h3) {
+  color: #f1f5f9;
+}
+/* Heading top margins match .prose-post so heading rhythm ships unchanged. */
+/* 발행면(.prose-post h2/h3/h4)과 같은 크기·무게 — 에디터의 H1/H2/H3 은 발행 시 페이지 <h1>(제목)
+   아래 h2→h3→h4 contiguous run 으로 강등되므로(post-blocks.tsx headingRanks), 에디터가 발행 크기를
+   미리 보여줘야 WYSIWYG 가 선다. 이전엔 H1 이 1.9rem 으로 그려지고 1.5rem 으로 발행돼 위계가 어긋났다. */
+.tiptap h1 { font-size: 1.5rem; font-weight: 700; margin-top: 2rem; }
+.tiptap h2 { font-size: 1.25rem; font-weight: 600; margin-top: 1.75rem; }
+.tiptap h3 { font-size: 1.0625rem; font-weight: 600; margin-top: 1.5rem; }
+.tiptap ul { list-style: disc; padding-left: 1.5rem; }
+.tiptap ol { list-style: decimal; padding-left: 1.5rem; }
+.tiptap li { margin: 0.3rem 0; }
+.tiptap blockquote {
+  border-left: 3px solid #34d399;
+  padding: 0.1rem 0 0.1rem 1.1rem;
+  color: #475569;
+}
+/* 발행본(.prose-post hr)의 애스터리즘 구분선과 동일. */
+.tiptap hr {
+  border: 0;
+  margin: 2.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tiptap hr::before {
+  content: "✳ ✳ ✳";
+  font-size: 12px;
+  color: #cbd5e1;
+  letter-spacing: 0.5em;
+  margin-right: -0.5em;
+}
+.dark .tiptap hr::before {
+  color: #475569;
+}
+/* Inline marks — explicit so a Tailwind/preflight change can't flatten bold/italic/strike in the
+   editor (the published .prose-post styles these too; keep them in lockstep). */
+.tiptap strong {
+  font-weight: 700;
+}
+.tiptap em {
+  font-style: italic;
+}
+.tiptap s,
+.tiptap del {
+  text-decoration: line-through;
+}
+.tiptap :not(pre) > code {
+  background: rgba(15, 23, 42, 0.06);
+  border-radius: 0.3rem;
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
+}
+.dark .tiptap :not(pre) > code {
+  background: rgba(255, 255, 255, 0.1);
+}
+.tiptap a {
+  color: #047857;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+}
+/* 이미지 캡션(figcaption) — 노드 title 에 저장, 편집 가능. 폭 마커(«wide» 등)는 img 를 직접 타깃하므로 유지. */
+.tiptap-figure {
+  margin: 1.5rem 0;
+}
+.tiptap-figcaption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #64748b;
+  outline: none;
+}
+.tiptap-figcaption:empty::before {
+  content: attr(data-placeholder);
+  color: #cbd5e1;
+  pointer-events: none;
+}
+.dark .tiptap-figcaption {
+  color: #94a3b8;
+}
+.dark .tiptap-figcaption:empty::before {
+  color: #475569;
+}
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #cbd5e1;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+/* Editor table (flat, matches the reader's §10.8 table look). table-layout:fixed = columns keep a
+   stable width as you type (content wraps inside the cell) instead of the column growing and shoving
+   the others sideways — the Notion / Obsidian behaviour. */
+.tiptap table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 1.2rem 0;
+}
+.tiptap th,
+.tiptap td {
+  border: 1px solid #e2e8f0;
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+.dark .tiptap th,
+.dark .tiptap td {
+  border-color: #334155;
+}
+.tiptap th {
+  background: #f8fafc;
+  font-weight: 600;
+}
+.dark .tiptap th {
+  background: #1e293b;
+}
+.tiptap .selectedCell {
+  background: rgba(52, 211, 153, 0.12);
+}
+
+/* ── 카드 → 글 전환 (View Transitions) ───────────────────────────────────────
+   기본은 화면 전체가 부드럽게 교차되는 통일 전환 — 현재 화면은 살짝 축소되며 사라지고, 새 화면은
+   살짝 확대되며 들어온다. 소프트 내비에서만 동작.
+
+   사진 카드는 그 위에 커버 모핑이 얹힌다(아래 post-cover 블록). 1차 시도는 카드 커버↔글 히어로
+   비율 차(4:3↔2:1)로 사진이 stretch 돼 폐기했었는데, 그 원인은 스냅샷이 그룹 박스에 늘어붙는
+   기본 동작이었다 — ::view-transition-old/new 는 replaced element 라 object-fit: cover 를 주면
+   박스가 변하는 동안 사진은 비율을 지키고 크롭만 미끄러진다. 텍스트/종이 카드는 모핑할 피사체가
+   없어 통일 전환 그대로.
+
+   셀렉터에 html:not([data-theme-vt]) 프리픽스 필수: 테마 토글의 wipe 와 root 를 공유하기 때문이기도
+   하고, 무엇보다 특이도 때문이다 — 프리픽스 없는 ::view-transition-*(root) (0,0,1) 은 위쪽 테마
+   스코프 규칙(0,1,2)에 항상 져서 이 모션이 한 번도 렌더되지 않는 죽은 코드가 된다 (실제로 그랬다).
+   reduced-motion 가드도 같은 이유로 같은 특이도를 맞춘다. */
+html:not([data-theme-vt])::view-transition-old(root) {
+  animation: vt-leave 240ms var(--ease) both;
+}
+html:not([data-theme-vt])::view-transition-new(root) {
+  animation: vt-enter 440ms var(--ease) both;
+}
+/* 현재 화면: 뒤로 물러나며(축소) 페이드아웃. */
+@keyframes vt-leave {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+/* 새 화면: 아래에서 올라오며(translateY) 확대되어 들어옴 + 페이드인 — 또렷이 보이는 전환. */
+@keyframes vt-enter {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-theme-vt])::view-transition-old(root),
+  html:not([data-theme-vt])::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* 커버 모핑(post-cover) — 클릭된 카드 커버(CoverMorphLink 가 클릭 순간 명명)와 글 히어로가
+   한 그룹으로 묶여 박스가 모핑한다. 그룹이 root 의 vt-leave/enter(축소·페이드) 바깥에서 날아가는
+   동안에도 사진은 또렷해야 하므로 old/new 의 기본 crossfade 만 남기고:
+   - object-fit: cover + 100%: 비율이 다른 두 스냅샷이 그룹 박스에 늘어붙지 않게(1차 폐기 사유).
+   - isolation 해제 + blend 정상화: 교차 중 반투명 겹침이 어둡게 번지는 것 방지.
+   - 그룹에 카드/히어로 공통의 rounded-2xl 을 줘 비행 중에도 모서리가 각지지 않게. */
+::view-transition-group(post-cover) {
+  animation-duration: 360ms;
+  animation-timing-function: var(--ease);
+  border-radius: 1rem;
+  overflow: clip;
+}
+::view-transition-image-pair(post-cover) {
+  isolation: none;
+}
+::view-transition-old(post-cover),
+::view-transition-new(post-cover) {
+  animation: none;
+  mix-blend-mode: normal;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+/* 페어가 안 맺힌 전환(:only-child) — 뒤로가기(피드 쪽엔 이름 없음)와 첫 방문 진입(소프트 내비가
+   loading.tsx 스켈레톤으로 먼저 커밋돼 히어로가 아직 없음)에선 스냅샷이 한쪽만 잡힌다. 위의
+   animation: none 이 그대로 적용되면 그 스냅샷이 전환이 끝날 때까지 풀 오피시티로 화면에 남아
+   "이미지가 뒤늦게 사라지는" 잔상이 됐다 — 루트와 같은 vt-leave/vt-enter 를 태워 페이지와
+   한 몸으로 빠지고 들어오게 한다. (모핑은 페어가 맺힌 재방문/캐시 내비에서만 발동) */
+::view-transition-old(post-cover):only-child {
+  animation: vt-leave 240ms var(--ease) both;
+}
+::view-transition-new(post-cover):only-child {
+  animation: vt-enter 440ms var(--ease) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(post-cover),
+  ::view-transition-old(post-cover),
+  ::view-transition-new(post-cover),
+  ::view-transition-old(post-cover):only-child,
+  ::view-transition-new(post-cover):only-child {
+    animation: none;
+  }
+}
+
+/* 글 히어로의 모핑 이름 — 헤더/탭바(.vt-app-header 패턴)처럼 클래스로 달아, 테마 토글 전환에선
+   이름을 떼어 루트 wipe 한 장으로 합쳐지게 한다. */
+.vt-post-cover {
+  view-transition-name: post-cover;
+}
+html[data-theme-vt] .vt-post-cover {
+  view-transition-name: none;
+}
+
+@layer base {
+  html, body { font-family: "Pretendard Variable", Pretendard, ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+}

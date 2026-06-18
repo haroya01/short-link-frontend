@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": "..",
+    "paths": {
+      "next/link": ["./.design-sync/stubs/next-link.tsx"],
+      "next/navigation": ["./.design-sync/stubs/next-navigation.ts"],
+      "next/image": ["./.design-sync/stubs/next-image.tsx"],
+      "next-view-transitions": ["./.design-sync/stubs/next-view-transitions.tsx"],
+      "@sentry/nextjs": ["./.design-sync/stubs/sentry.ts"],
+      "@/lib/api/stats": ["./.design-sync/stubs/api-stats.ts"],
+      "@/*": ["./*"]
+    }
+  }
+}

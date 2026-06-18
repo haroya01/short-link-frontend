@@ -1,0 +1,32 @@
+{
+  "pkg": "url-shortener",
+  "globalName": "KurlDS",
+  "projectId": "3919dade-8f86-444a-b448-5027af8558ff",
+  "shape": "package",
+  "tsconfig": ".design-sync/tsconfig.json",
+  "cssEntry": ".design-sync/ds-styles.css",
+  "runtimeFontPrefixes": ["Pretendard", "Apple SD Gothic Neo", "JetBrains Mono"],
+  "provider": { "component": "DSProvider" },
+  "libOverrides": { "source-kit.mjs": "app has no .d.ts — seed `exported` from the --entry barrel so the provider gate keeps DSProvider" },
+  "componentSrcMap": {
+    "Button": "components/ui/button.tsx",
+    "Card": "components/ui/card.tsx",
+    "Input": "components/ui/input.tsx",
+    "Textarea": "components/ui/textarea.tsx",
+    "Table": "components/ui/table.tsx",
+    "Skeleton": "components/ui/skeleton.tsx",
+    "ConfirmDialog": "components/ui/dialog.tsx",
+    "FeedCard": "modules/blog/components/feed-card.tsx",
+    "DiscoveryCard": "modules/blog/components/discovery-card.tsx",
+    "KurlLinkCard": "modules/blog/components/kurl-link-card.tsx",
+    "TagChip": "modules/blog/components/tag-chip.tsx",
+    "PostStatusBadge": "modules/blog/components/post-status-badge.tsx",
+    "Avatar": "modules/blog/components/avatar.tsx",
+    "ResultCard": "components/links/shorten/result-card.tsx",
+    "CampaignsEntryCard": "components/links/campaigns/entry-card.tsx",
+    "StatsCards": "components/links/stats/cards.tsx"
+  },
+  "overrides": {
+    "ConfirmDialog": { "cardMode": "single", "viewport": "480x600" }
+  }
+}
