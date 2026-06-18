@@ -50,6 +50,17 @@ preview-only stubs in `.design-sync/stubs/` via `.design-sync/tsconfig.json` pat
 - `@/lib/api/stats` → stub returning sample `LinkStats` for code `"spring"` (rejects others) so the
   REAL `KurlLinkCard` renders BOTH its "ok" dashboard and "fallback" states — no reimplementation.
 
+### Contracts (.d.ts) & guidelines
+- No `.d.ts` in the app → ts-morph extraction collapses every emitted `<Name>Props` to
+  `{ [key: string]: unknown }`, erasing real prop types. `cfg.dtsPropsFor` supplies a hand-written
+  body per component (the union/object props the design agent codes against). Keep these in sync
+  with the real source props; `import * as React` is already in the emitted `.d.ts`, so `React.*`
+  types are fine in the bodies. Pure-native primitives (Card/Table/Skeleton) are left as-is.
+- `cfg.guidelinesGlob` allow-lists ONLY design docs (`docs/brand-mark.md`, `docs/discovery-feed.md`).
+  Do NOT drop it — the default sweeps all of `docs/*.md`, which ships internal backend/eng docs
+  (admin-endpoints, auth-cross-subdomain, feed-home-api, blog-refactor) as "design guidance" — pure
+  noise that misleads the design agent (and leaks internal API/security posture).
+
 ### tsconfig.json gotchas (these cost real debugging time)
 - **No `"//"` comment key** in `.design-sync/tsconfig.json` — the converter's tsconfigPathsPlugin
   strips `//` comments and a `"//"` key mangles the JSON → `JSON.parse` fails → ALL paths silently
@@ -73,7 +84,24 @@ preview-only stubs in `.design-sync/stubs/` via `.design-sync/tsconfig.json` pat
 - `StatsCards` previews MUST pass `animate={false}` — its `useCountUp` renders `0` in a static
   capture otherwise.
 - `ConfirmDialog` is an overlay (`createPortal(document.body)`); `cfg.overrides.ConfirmDialog`
-  sets `cardMode: single` + a viewport so the open state renders inside the card.
+  sets `cardMode: single` + a viewport so the open state renders inside the card. Its focus trap
+  auto-focuses the cancel button on mount; the preview wraps each story in an `AtRest` helper that
+  blurs after rAF so the static capture doesn't freeze a misleading green focus ring.
+- `StatsCards`' signature 1.5x-hero KPI strip only renders at the Tailwind `lg:` (≥1024px) VIEWPORT
+  breakpoint — a wrapper `maxWidth` can't trigger a media query. `cfg.overrides.StatsCards.viewport`
+  = `1280x760` captures it at desktop width. Previews also pass `animate={false}` (count-up shows 0
+  in a static capture otherwise).
+- `Avatar` image-vs-initials previews must use a clearly photo-like data-URI (gradient + shapes, NO
+  text) for the image sweep — a flat-fill or lettered tile looks identical to the initials disc and
+  the variant axis reads as not varying.
+
+## Known, deliberately deferred (NOT bugs in this sync)
+- `ds-bundle/README.md` calls the source a "published library" and labels Tailwind runtime CSS vars
+  as brand "tokens" — both come from the converter's `emitReadme` template (don't-fork), so they're
+  not fixable via config. Human-facing only; low impact.
+- App i18n bug (separate from design-sync): `components/links/stats/cards.tsx` hardcodes English
+  `"… % of human"` in the hero subline (the satellite card uses `t("uniqueOfHuman")`). Fix in app
+  code + `messages/ko.json` if/when touching that component; it's visible in the StatsCards preview.
 
 ## Re-sync risks
 - The Tailwind CSS is a build-time snapshot — if component classes change, re-run the

@@ -146,21 +146,23 @@ export const GridFull = () => (
     <div style={{ marginBottom: 12, fontSize: 13, color: "#64748b", fontWeight: 500 }}>
       DiscoveryGrid — 5-card mix (featured · cover · text · topic-reason · no-excerpt)
     </div>
+    {/* Order matters in the masonry (CSS columns): keep the tall featured tile last so it never
+        sits at a column break that clips the card below it; topic-reason cover leads column 1. */}
     <DiscoveryGrid>
       <DiscoveryCell entranceDelay={0}>
-        <DiscoveryCard item={postFeatured as never} locale="ko" featured eager />
-      </DiscoveryCell>
-      <DiscoveryCell entranceDelay={60}>
         <DiscoveryCard item={postTopic as never} locale="ko" />
       </DiscoveryCell>
-      <DiscoveryCell entranceDelay={120}>
+      <DiscoveryCell entranceDelay={60}>
         <DiscoveryCard item={postText as never} locale="ko" />
       </DiscoveryCell>
-      <DiscoveryCell entranceDelay={180}>
+      <DiscoveryCell entranceDelay={120}>
         <DiscoveryCard item={postCover as never} locale="ko" />
       </DiscoveryCell>
-      <DiscoveryCell entranceDelay={240}>
+      <DiscoveryCell entranceDelay={180}>
         <DiscoveryCard item={postMinimal as never} locale="ko" />
+      </DiscoveryCell>
+      <DiscoveryCell entranceDelay={240}>
+        <DiscoveryCard item={postFeatured as never} locale="ko" featured eager />
       </DiscoveryCell>
     </DiscoveryGrid>
   </div>

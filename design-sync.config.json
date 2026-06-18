@@ -6,6 +6,7 @@
   "tsconfig": ".design-sync/tsconfig.json",
   "cssEntry": ".design-sync/ds-styles.css",
   "runtimeFontPrefixes": ["Pretendard", "Apple SD Gothic Neo", "JetBrains Mono"],
+  "guidelinesGlob": ["docs/brand-mark.md", "docs/discovery-feed.md"],
   "provider": { "component": "DSProvider" },
   "libOverrides": { "source-kit.mjs": "app has no .d.ts — seed `exported` from the --entry barrel so the provider gate keeps DSProvider" },
   "componentSrcMap": {
@@ -26,7 +27,22 @@
     "CampaignsEntryCard": "components/links/campaigns/entry-card.tsx",
     "StatsCards": "components/links/stats/cards.tsx"
   },
+  "dtsPropsFor": {
+    "Button": "/** Visual style. Brand CTA = \"accent\" (green). */\nvariant?: \"default\" | \"accent\" | \"outline\" | \"ghost\" | \"subtle\" | \"destructive\" | \"link\";\n/** Control height. \"icon\" is a 36px square for icon-only buttons. */\nsize?: \"sm\" | \"md\" | \"lg\" | \"xl\" | \"icon\";\n// plus all native <button> attributes (onClick, disabled, type, …)",
+    "Input": "type?: string;\nplaceholder?: string;\nvalue?: string | number;\ndefaultValue?: string | number;\ndisabled?: boolean;\nrequired?: boolean;\nonChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;\nclassName?: string;\n// plus all native <input> attributes",
+    "Textarea": "rows?: number;\nplaceholder?: string;\nvalue?: string;\ndefaultValue?: string;\ndisabled?: boolean;\nonChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;\nclassName?: string;\n// plus all native <textarea> attributes",
+    "ConfirmDialog": "open: boolean;\nonOpenChange: (open: boolean) => void;\ntitle: string;\ndescription?: string;\nconfirmLabel?: string;\nconfirmDisabled?: boolean;\ncancelLabel?: string;\n/** Red confirm button for irreversible actions. */\ndestructive?: boolean;\nonConfirm: () => void | Promise<void>;\nchildren?: React.ReactNode;\n/** Panel max-width Tailwind class. Default \"max-w-md\". */\nmaxWidthClass?: string;\n/** Size to content (no min-height) — for lightweight confirms. */\ncompact?: boolean;",
+    "FeedCard": "/** A published post. */\nitem: { id: number; author: { username: string; avatarUrl: string | null }; slug: string; title: string; excerpt: string | null; ogImageUrl: string | null; tags: string[]; publishedAt: string; likeCount: number };\n/** Active locale, e.g. \"ko\". */\nlocale: string;\nclassName?: string;\n/** Drop the author from the meta row (single-author surfaces). */\nhideAuthor?: boolean;\n/** Lead post: larger title + an editorial label above it. */\nfeatured?: boolean;\nfeaturedLabel?: string;\nflushTop?: boolean;\n/** Show the save-to-reading-list toggle (needs a numeric item.id). */\nshowBookmark?: boolean;\neager?: boolean;",
+    "DiscoveryCard": "/** A published post; cover variant when ogImageUrl is set, else a text variant. */\nitem: { id: number; author: { username: string; avatarUrl: string | null }; slug: string; title: string; excerpt: string | null; ogImageUrl: string | null; tags: string[]; publishedAt: string; likeCount: number; followReason?: { kind: \"AUTHOR\" | \"SERIES\" | \"TOPIC\"; tag: string | null } | null };\nlocale: string;\n/** Larger lead tile. */\nfeatured?: boolean;\neager?: boolean;",
+    "KurlLinkCard": "/** Short-link code, e.g. \"spring\" (renders kurl.me/<code>). */\ncode: string;\n/** Destination URL the card links to. */\nurl: string;",
+    "TagChip": "href: string;\nlabel: string;\n/** Post count; hidden on the active chip. */\ncount?: number;\n/** Brand-fill selected state (filter strips). */\nactive?: boolean;\nariaCurrent?: \"page\" | \"true\";\nclassName?: string;\n/** Render as a soft client-nav link (pass a same-origin relative href). */\nsoft?: boolean;\nonClick?: () => void;",
+    "PostStatusBadge": "status: \"DRAFT\" | \"SCHEDULED\" | \"PUBLISHED\" | \"UNPUBLISHED\";",
+    "Avatar": "/** Image URL; null/undefined falls back to the initial on an accent disc. */\nsrc: string | null | undefined;\n/** Author name — its first character is the fallback initial. */\nname: string;\n/** xs 20 · sm 28 · md 36 · lg 44 · xl 80 (px). */\nsize?: \"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\";\nshrink?: boolean;",
+    "ResultCard": "/** The created short link. */\nresult: { shortCode: string; shortUrl: string; claimToken: string | null };\n/** The original long URL that was shortened. */\noriginalUrl: string;\n/** Signed-in viewer → stats/profile CTAs; false → anonymous claim + 24h-expiry banner. */\nauthenticated: boolean;",
+    "StatsCards": "total: number;\nhuman: number;\nbot: number;\nunique?: number | null;\n/** Clicks from the owner's public profile; renders an extra KPI only when > 0. */\nprofileClicks?: number | null;\ntimeToFirstClickMinutes?: number | null;\nvelocityRatio?: number | null;\n/** Animate the count-up. Set false for static/SSR render. */\nanimate?: boolean;\nonNavigate?: (section: string) => void;"
+  },
   "overrides": {
-    "ConfirmDialog": { "cardMode": "single", "viewport": "480x600" }
+    "ConfirmDialog": { "cardMode": "single", "viewport": "480x600" },
+    "StatsCards": { "viewport": "1280x760" }
   }
 }

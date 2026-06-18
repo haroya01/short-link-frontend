@@ -1,7 +1,9 @@
 import { StatsCards } from "url-shortener";
 
 export const StatsCanonical = () => (
-  <div style={{ maxWidth: 900, padding: "24px" }}>
+  // >1024px content width so the lg: breakpoint hits and the 1.5x-hero KPI strip renders
+  // (the component's signature layout); below it the grid stays in the 3-col tablet tier.
+  <div style={{ maxWidth: 1240, padding: "24px" }}>
     <p
       style={{
         fontSize: 11,

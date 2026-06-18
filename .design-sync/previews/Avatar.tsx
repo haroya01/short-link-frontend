@@ -3,12 +3,18 @@ import { Avatar } from "url-shortener";
 // ── Avatar preview ────────────────────────────────────────────────────────────
 // Axes: size sweep (xs→xl) with initials fallback; real image via data-URI.
 
+// A photo-like data-URI (sky gradient + sun + hill silhouette, no text) so the image
+// sweep reads unmistakably as a cropped photo — distinct from the lettered accent disc.
 const avatarImg =
   "data:image/svg+xml," +
   encodeURIComponent(
     "<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'>" +
-      "<rect width='80' height='80' fill='#a7f3d0'/>" +
-      "<text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-size='32' font-family='sans-serif' fill='#065f46'>지</text>" +
+      "<defs><linearGradient id='sky' x1='0' y1='0' x2='1' y2='1'>" +
+      "<stop offset='0' stop-color='#fcd34d'/><stop offset='0.5' stop-color='#fb923c'/><stop offset='1' stop-color='#7c3aed'/>" +
+      "</linearGradient></defs>" +
+      "<rect width='80' height='80' fill='url(#sky)'/>" +
+      "<circle cx='25' cy='27' r='12' fill='#fffbeb' opacity='0.9'/>" +
+      "<path d='M0 62 L26 42 L46 58 L80 32 L80 80 L0 80 Z' fill='#065f46' opacity='0.6'/>" +
       "</svg>",
   );
 

@@ -28,3 +28,19 @@ export const States = () => (
     <Button variant="outline" disabled>비활성</Button>
   </div>
 );
+
+// size="icon" → 36px square for icon-only actions. Icon is any child (here inline SVGs).
+const CopyIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+  </svg>
+);
+
+export const IconButtons = () => (
+  <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
+    <Button variant="outline" size="icon" aria-label="링크 복사">{CopyIcon}</Button>
+    <Button variant="subtle" size="icon" aria-label="링크 복사">{CopyIcon}</Button>
+    <Button variant="accent" size="icon" aria-label="링크 복사">{CopyIcon}</Button>
+    <Button variant="ghost" size="icon" aria-label="링크 복사">{CopyIcon}</Button>
+  </div>
+);
