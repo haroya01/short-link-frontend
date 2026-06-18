@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Shield, Lock } from "lucide-react";
 import { marketingOg } from "@/lib/marketing-og";
+import { Button } from "@/components/ui/button";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -66,7 +67,7 @@ export default async function PricingPage({
   return (
     <article className="container max-w-3xl space-y-10 py-16">
       <header className="space-y-3 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h1>
         <p className="text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("lead")}</p>
@@ -121,15 +122,16 @@ export default async function PricingPage({
             ))}
           </ul>
           <div className="mt-5 space-y-2">
-            <button
+            <Button
               type="button"
+              variant="outline"
               disabled
               aria-disabled
-              className="inline-flex h-10 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 text-[13px] font-medium text-slate-500 dark:text-slate-400"
+              className="w-full rounded-xl cursor-not-allowed"
             >
               <Lock className="h-3.5 w-3.5" />
               {t("proHoldCta")}
-            </button>
+            </Button>
             <p className="text-center text-[11px] text-slate-500 dark:text-slate-400">{t("proEta")}</p>
           </div>
         </section>

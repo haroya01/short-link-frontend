@@ -78,7 +78,7 @@ export default function PrintSheetPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("loginRequired")}
         </h1>
       </div>
@@ -98,7 +98,7 @@ export default function PrintSheetPage() {
 
         <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
           <div>
-            <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+            <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
               {t("title")}
             </h1>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">

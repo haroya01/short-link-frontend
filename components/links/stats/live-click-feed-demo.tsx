@@ -58,10 +58,10 @@ export function LiveClickFeedDemo() {
         <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t("title")}</h3>
         <div className="flex items-center gap-1.5 text-xs">
           <span
-            className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-500"
+            className="inline-block h-2 w-2 animate-pulse rounded-full bg-accent-600"
             aria-hidden
           />
-          <span className="text-emerald-700 dark:text-emerald-400">{t("connected")}</span>
+          <span className="text-accent-700 dark:text-accent-400">{t("connected")}</span>
         </div>
       </div>
       <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">

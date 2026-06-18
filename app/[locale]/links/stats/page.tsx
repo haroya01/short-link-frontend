@@ -54,7 +54,7 @@ export default function AnalyticsPage() {
   return (
     <main className="mx-auto max-w-4xl px-6 py-12">
       <header className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{t("title")}</h1>
+        <h1 className="text-headline-sm font-bold text-slate-900 dark:text-slate-100">{t("title")}</h1>
         <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{t("description")}</p>
       </header>
 
@@ -91,7 +91,7 @@ export default function AnalyticsPage() {
                   <td className="px-2 py-3 max-w-xs">
                     <a
                       href={`/write/${p.id}`}
-                      className="block truncate text-slate-900 dark:text-slate-100 hover:underline"
+                      className="block truncate text-slate-900 dark:text-slate-100 hover:underline rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2"
                     >
                       {p.title}
                     </a>
@@ -117,7 +117,7 @@ export default function AnalyticsPage() {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
       <p className="text-xs uppercase text-slate-500 dark:text-slate-400">{label}</p>
       <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
     </div>
@@ -128,7 +128,7 @@ function StatusBadge({ status }: { status: PostStatus }) {
   const map: Record<PostStatus, string> = {
     DRAFT: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
     SCHEDULED: "bg-blue-100 dark:bg-blue-500/15 text-blue-800 dark:text-blue-300",
-    PUBLISHED: "bg-emerald-100 dark:bg-emerald-500/15 text-emerald-800 dark:text-emerald-300",
+    PUBLISHED: "bg-accent-100 dark:bg-accent-500/15 text-accent-800 dark:text-accent-300",
     UNPUBLISHED: "bg-amber-100 dark:bg-amber-500/15 text-amber-800 dark:text-amber-300",
   };
   return (

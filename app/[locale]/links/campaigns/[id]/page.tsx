@@ -80,7 +80,7 @@ export default function CampaignDetailPage() {
   if (ready && !authenticated) {
     return (
       <div className="container max-w-md py-20 text-center">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("loginRequired")}
         </h1>
       </div>
@@ -189,7 +189,7 @@ function Header({
         </span>
       </div>
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
-        <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {campaign.name}
         </h1>
         <div className="flex flex-wrap items-center gap-2">
@@ -346,13 +346,15 @@ function PolicySummary({
               {t("policy.messageLabel")}
             </p>
             {editable && !editing && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={startEdit}
-                className="text-[12px] font-medium text-accent-700 dark:text-accent-400 hover:underline"
+                className="h-auto px-1 py-0 text-[12px] font-medium text-accent-700 dark:text-accent-400 hover:bg-transparent hover:underline"
               >
                 {campaign.postEndMessage ? t("policy.edit") : t("policy.add")}
-              </button>
+              </Button>
             )}
           </div>
           {editing ? (

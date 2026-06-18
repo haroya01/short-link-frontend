@@ -437,7 +437,7 @@ function DemoLinkWebhooksPreview() {
                 {DEMO_WEBHOOK.url}
               </code>
               <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
-                <span className="rounded bg-emerald-100 dark:bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-400">
+                <span className="rounded bg-accent-100 dark:bg-accent-500/15 px-1.5 py-0.5 text-[10px] font-medium text-accent-700 dark:text-accent-400">
                   {DEMO_WEBHOOK.lastStatusCode}
                 </span>
                 <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-600 dark:text-slate-300">

@@ -385,7 +385,7 @@ function BrandMark({ className }: { className?: string }) {
     <svg viewBox="0 0 28 18" aria-hidden className={className}>
       <defs>
         <linearGradient id="kurl-login-mark" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#10B981" />
+          <stop offset="0%" stopColor="#059669" />
           <stop offset="100%" stopColor="#047857" />
         </linearGradient>
       </defs>

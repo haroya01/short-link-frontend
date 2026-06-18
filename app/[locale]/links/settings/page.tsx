@@ -89,7 +89,7 @@ export default function SettingsPage() {
 
   return (
     <div className="container max-w-2xl space-y-6 py-12">
-      <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+      <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
         {t("title")}
       </h1>
 
