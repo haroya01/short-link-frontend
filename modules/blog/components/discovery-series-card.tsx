@@ -113,20 +113,39 @@ export function DiscoverySeriesCard({
                 ) : (
                   <>
                     <div className={`absolute inset-0 bg-gradient-to-br ${EP_GRADS[i % EP_GRADS.length]} dark:opacity-[0.06]`} />
-                    {/* 무이미지 장의 표지 아트 = 에피소드 번호 그 자체 — 거대한 mono 숫자가 우상단
-                        모서리에서 비껴 잘리는 워터마크. 위(시리즈명)와 아래(번호+제목) 사이 빈 가운데가
-                        "미완성"으로 읽히던 걸 의도된 구성으로 바꾼다. 01/04 표기의 확대라 새 문법이
-                        아니고, 장마다 숫자가 달라 시리즈 탭에 여러 장 모여도 도배가 안 된다. */}
-                    <span
-                      aria-hidden
-                      className="absolute -right-3 -top-9 select-none font-mono text-[148px] font-bold leading-none tracking-tighter tabular-nums text-accent-600/[0.09] dark:text-accent-400/[0.08]"
-                    >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
+                    {/* 소프트 그린 글로우 — 평면 틴트에 깊이(라이트 블룸이라 무거워지지 않음 → featured
+                        타일과의 주인공 경합 회피 결정 보존). 큰 회차 번호는 사진/종이 공통 모티프라 아래
+                        공유 블록으로 뺐다(통일성). */}
+                    <div aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-accent-300/30 blur-3xl dark:bg-accent-500/10" />
+                    <div aria-hidden className="absolute -bottom-16 -left-12 h-40 w-40 rounded-full bg-emerald-200/30 blur-3xl dark:bg-accent-500/[0.06]" />
                   </>
                 ))}
                 {front && p.ogImageUrl && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                  <>
+                    {/* 위 스크림: 사진이 밝아도 시리즈 eyebrow·구독 토글이 읽힌다. 아래 스크림: 번호·제목
+                        가독 + 시네마틱(2/3 높이로 깊게, via 단계로 부드럽게). 블렌드 모드는 여전히 ❌. */}
+                    <div aria-hidden className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/45 via-black/10 to-transparent" />
+                    <div aria-hidden className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  </>
+                )}
+
+                {/* 회차 번호 = 표지의 공통 주인공(사진/종이 통일): 같은 위치·크기, 필드에 따라 색만 —
+                    종이는 그린 그라디언트, 사진은 흰 번호(스크림 위, drop-shadow 가독). 빈 가운데를 채운다. */}
+                {front && (
+                  <div aria-hidden className="pointer-events-none absolute left-4 top-[15%] z-10 select-none font-mono font-bold leading-[0.8] tracking-tighter tabular-nums">
+                    <span
+                      className={
+                        p.ogImageUrl
+                          ? "text-[112px] text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]"
+                          : "bg-gradient-to-br from-accent-600 to-accent-300 bg-clip-text text-[112px] text-transparent dark:from-accent-400 dark:to-accent-600"
+                      }
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className={`ml-1.5 align-top text-[22px] font-bold ${p.ogImageUrl ? "text-white/75" : "text-accent-500/45 dark:text-accent-400/45"}`}>
+                      /{String(series.postCount).padStart(2, "0")}
+                    </span>
+                  </div>
                 )}
 
                 {/* Subscribe (front only) + the whole card → this episode. */}
@@ -161,13 +180,9 @@ export function DiscoverySeriesCard({
                     </Nav>
                   </div>
 
-                  {/* Episode number(+total) + title (the card's subject). */}
+                  {/* 제목 — 사진/종이 공통(큰 회차 번호가 표지 주인공, 제목은 하단에 일관 크기로). */}
                   <div>
-                    <p className={`font-mono font-bold leading-none tabular-nums ${p.ogImageUrl ? "text-white/85" : "text-accent-700 dark:text-accent-400"}`}>
-                      <span className="text-[34px]">{String(i + 1).padStart(2, "0")}</span>
-                      <span className={`text-[15px] ${p.ogImageUrl ? "text-white/70" : "text-slate-500 dark:text-slate-400"}`}> / {String(series.postCount).padStart(2, "0")}</span>
-                    </p>
-                    <h3 className="mt-2 line-clamp-3 text-balance text-[18px] font-bold leading-tight tracking-tight">
+                    <h3 className="line-clamp-3 text-balance text-[19px] font-bold leading-snug tracking-tight">
                       {p.title}
                     </h3>
                     <div className={`mt-2.5 flex items-center gap-1.5 text-[12px] ${p.ogImageUrl ? "text-white/85" : "text-slate-600 dark:text-slate-400"}`}>
@@ -175,6 +190,14 @@ export function DiscoverySeriesCard({
                       <span className="truncate font-medium">{series.author.username}</span>
                       <span aria-hidden>·</span>
                       <span className="shrink-0">{date}</span>
+                    </div>
+                    {/* 시리즈 진행 막대 — 이 회차가 전체에서 어디쯤인지(덱 길이 + 현재 위치를 조용히
+                        알림). 사진 장은 화이트, 종이 장은 브랜드 그린. */}
+                    <div className={`mt-3 h-[3px] w-full overflow-hidden rounded-full ${p.ogImageUrl ? "bg-white/25" : "bg-slate-200 dark:bg-slate-700/60"}`}>
+                      <div
+                        className={`h-full rounded-full ${p.ogImageUrl ? "bg-white" : "bg-accent-600 dark:bg-accent-400"}`}
+                        style={{ width: `${Math.round(((i + 1) / Math.max(series.postCount, i + 1)) * 100)}%` }}
+                      />
                     </div>
                   </div>
                 </div>
