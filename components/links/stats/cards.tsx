@@ -118,7 +118,7 @@ export function StatsCards({
               {formatNumber(unique as number)}
             </span>{" "}
             {t("unique").toLowerCase()}{" "}
-            <span className="text-slate-400 dark:text-slate-500">· {uniqueRatio.toFixed(0)}% of human</span>
+            <span className="text-slate-400 dark:text-slate-500">· {t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) })}</span>
           </p>
         )}
         <div
