@@ -41,7 +41,7 @@ export default function HomePage() {
   const headlineSizeClass =
     locale === "ja"
       ? "text-[32px] leading-[1.08] min-[390px]:text-[33px] sm:text-[40px] sm:leading-[1.15] [text-wrap:nowrap] sm:[text-wrap:balance]"
-      : "text-[32px] leading-[1.08] min-[390px]:text-[33px] sm:text-[60px] sm:leading-[1.04]";
+      : "text-headline-md min-[390px]:text-headline-md sm:text-headline-xl";
   const [results, setResults] = useState<
     { res: CreateLinkResponse; original: string }[] | null
   >(null);
@@ -146,7 +146,7 @@ export default function HomePage() {
                 {!authenticated ? (
                   <Link
                     href="/login"
-                    className="group flex items-center justify-between rounded-lg bg-slate-900 dark:bg-white px-4 py-3 text-sm text-slate-100 dark:text-slate-900 shadow-sm transition hover:bg-slate-800 dark:hover:bg-slate-200"
+                    className="focus-ring group flex items-center justify-between rounded-lg bg-slate-900 dark:bg-white px-4 py-3 text-sm text-white dark:text-slate-900 transition hover:bg-slate-800 dark:hover:bg-slate-200"
                   >
                     <span>
                       {t.rich("loginCta", {
@@ -160,7 +160,7 @@ export default function HomePage() {
                 ) : (
                   <Link
                     href="/links"
-                    className="group flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 transition hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                    className="focus-ring group flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 transition hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                   >
                     <span>{t("ctaSeeLinks")}</span>
                     <ArrowRight className="h-4 w-4 shrink-0 transition group-hover:translate-x-0.5" />
@@ -283,7 +283,7 @@ function Section({
               </p>
             )}
             {title && (
-              <h2 className="text-balance text-[26px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[34px]">
+              <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
                 {title}
               </h2>
             )}

@@ -41,7 +41,7 @@ export function BreakdownList({ items }: Props) {
                 <div
                   className={cn(
                     "h-full rounded-full",
-                    isLeader ? "bg-accent-700" : "bg-accent-500",
+                    isLeader ? "bg-accent-700" : "bg-accent-600",
                   )}
                   style={{
                     width: `${pct}%`,

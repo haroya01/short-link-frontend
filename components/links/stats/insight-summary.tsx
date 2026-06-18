@@ -86,7 +86,7 @@ export function InsightSummary({ data }: { data: LinkStats }) {
   ];
 
   return (
-    <section className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+    <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-400">
@@ -108,13 +108,13 @@ function InsightCard({ insight }: { insight: Insight }) {
   const Icon = insight.icon;
   const tone =
     insight.tone === "positive"
-      ? "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10"
+      ? "text-accent-700 dark:text-accent-400 bg-accent-50 dark:bg-accent-500/10"
       : insight.tone === "warning"
-        ? "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10"
+        ? "text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800"
         : "text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800";
 
   return (
-    <div className="rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 p-3">
+    <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 p-3">
       <div className="flex items-center justify-between gap-2">
         <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
           {insight.label}

@@ -33,7 +33,7 @@ export function ReferrerChart({ data }: Props) {
           layout="vertical"
           margin={{ top: 4, right: 16, bottom: 0, left: 0 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" horizontal={false} />
           <XAxis
             type="number"
             tick={{ fontSize: 10, fill: "#94a3b8" }}
@@ -53,17 +53,21 @@ export function ReferrerChart({ data }: Props) {
             cursor={{ fill: "rgba(5,150,105,0.06)" }}
             contentStyle={{
               borderRadius: 12,
-              border: "1px solid #e2e8f0",
+              border: "1px solid var(--chart-tooltip-border)",
+              backgroundColor: "var(--chart-tooltip-bg)",
+              color: "var(--chart-tooltip-text)",
               fontSize: 12,
               boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
               padding: "8px 12px",
             }}
+            itemStyle={{ color: "var(--chart-tooltip-text)" }}
+            labelStyle={{ color: "var(--chart-tooltip-text)" }}
             formatter={(value) => [value, ""]}
             labelFormatter={(_l, payload) => payload?.[0]?.payload?.referrer ?? ""}
           />
           <Bar
             dataKey="count"
-            fill="#10B981"
+            fill="#059669"
             radius={[0, 4, 4, 0]}
             barSize={12}
             isAnimationActive

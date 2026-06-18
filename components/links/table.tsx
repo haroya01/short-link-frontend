@@ -153,7 +153,7 @@ export function LinksTable({
         ))}
       </div>
 
-      <div className="hidden overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sm:block">
+      <div className="hidden overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sm:block">
         <Table>
           <THead>
             <TR>
@@ -241,14 +241,11 @@ export function LinksTable({
                     {item.tags && item.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {item.tags.map((tag) => (
-                          <button
+                          <TagFilterChip
                             key={tag}
-                            type="button"
+                            tag={tag}
                             onClick={() => onTagClick?.(tag)}
-                            className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] text-slate-600 dark:text-slate-300 hover:bg-slate-200"
-                          >
-                            {tag}
-                          </button>
+                          />
                         ))}
                       </div>
                     )}
@@ -480,14 +477,11 @@ function MobileLinkCard({
             </span>
           )}
           {item.tags?.map((tag) => (
-            <button
+            <TagFilterChip
               key={tag}
-              type="button"
+              tag={tag}
               onClick={() => onTagClick?.(tag)}
-              className="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] text-slate-600 dark:text-slate-300 hover:bg-slate-200"
-            >
-              {tag}
-            </button>
+            />
           ))}
         </div>
       )}
@@ -532,6 +526,23 @@ function MobileLinkCard({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Tag filter chip used in both the desktop table row and the mobile card. Matches TagChip's
+ * tokens (focus-ring, px-3 py-1.5, text-[13px] font-medium, accent hover) but rendered as a
+ * <button> (not an anchor) because it applies a filter via onClick rather than navigating.
+ */
+function TagFilterChip({ tag, onClick }: { tag: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="focus-ring inline-flex items-center rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+    >
+      {tag}
+    </button>
   );
 }
 
