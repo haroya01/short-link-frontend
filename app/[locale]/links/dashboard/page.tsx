@@ -110,7 +110,7 @@ export default function DashboardPage() {
           <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
             dashboard
           </p>
-          <h1 className="mt-3 text-[26px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[32px]">
+          <h1 className="mt-3 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("loginRequired")}
           </h1>
           <p className="mt-2 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
@@ -141,7 +141,7 @@ export default function DashboardPage() {
     <div className="container max-w-5xl space-y-5 py-10">
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
         <div>
-          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 dark:text-slate-100 sm:text-[30px]">
+          <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("title")}
           </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -194,7 +194,7 @@ export default function DashboardPage() {
               type="button"
               onClick={() => setQuery("")}
               aria-label={t("clearSearch")}
-              className="absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700"
+              className="focus-ring absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
             >
               <X className="h-3.5 w-3.5" />
             </button>

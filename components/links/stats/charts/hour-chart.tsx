@@ -22,7 +22,7 @@ export function HourChart({ data }: Props) {
     <div className="h-64 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={filled} margin={{ top: 8, right: 4, bottom: 0, left: -20 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
           <XAxis
             dataKey="hour"
             tick={{ fontSize: 10, fill: "#94a3b8" }}
@@ -40,11 +40,15 @@ export function HourChart({ data }: Props) {
             cursor={{ fill: "rgba(15,23,42,0.04)" }}
             contentStyle={{
               borderRadius: 12,
-              border: "1px solid #e2e8f0",
+              border: "1px solid var(--chart-tooltip-border)",
+              backgroundColor: "var(--chart-tooltip-bg)",
+              color: "var(--chart-tooltip-text)",
               fontSize: 12,
               boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
               padding: "8px 12px",
             }}
+            itemStyle={{ color: "var(--chart-tooltip-text)" }}
+            labelStyle={{ color: "var(--chart-tooltip-text)" }}
             formatter={(value) => [value, ""]}
             labelFormatter={(label: number) => `${label}:00`}
           />

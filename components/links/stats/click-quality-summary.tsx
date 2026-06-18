@@ -6,9 +6,8 @@ import type { LinkStats } from "@/types";
 /**
  * Compact "how is this link being used" summary that distills the data the page already has into
  * the four numbers people actually look at: returning ratio, clicks per unique, peak hour, and
- * social-preview hits separated from real clicks. Cards use {@code rounded-xl} (12 px) — nested
- * one tier below the {@code rounded-2xl} Section wrapper so the radii read concentric when this
- * summary lives inside the overview tab.
+ * social-preview hits separated from real clicks. Cards use {@code rounded-2xl} (16 px) —
+ * matching the canonical slate card surface token (AGENTS §1).
  */
 export function ClickQualitySummary({ data }: { data: LinkStats }) {
   const t = useTranslations("stats.quality");
@@ -56,7 +55,7 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
         {cards.map((c) => (
           <div
             key={c.label}
-            className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
+            className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
           >
             <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
               {c.label}

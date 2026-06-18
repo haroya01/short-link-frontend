@@ -7,7 +7,7 @@ import { formatNumber } from "@/lib/utils";
 
 type Props = { data: DeviceClick[] };
 
-const COLORS = ["#059669", "#10B981", "#34D399", "#6EE7B7", "#A7F3D0"];
+const COLORS = ["#059669", "#047857", "#34D399", "#6EE7B7", "#A7F3D0"];
 
 export function DeviceChart({ data }: Props) {
   const t = useTranslations("stats");
@@ -41,11 +41,15 @@ export function DeviceChart({ data }: Props) {
             <Tooltip
               contentStyle={{
                 borderRadius: 12,
-                border: "1px solid #e2e8f0",
+                border: "1px solid var(--chart-tooltip-border)",
+                backgroundColor: "var(--chart-tooltip-bg)",
+                color: "var(--chart-tooltip-text)",
                 fontSize: 12,
                 boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
                 padding: "8px 12px",
               }}
+              itemStyle={{ color: "var(--chart-tooltip-text)" }}
+              labelStyle={{ color: "var(--chart-tooltip-text)" }}
               formatter={(value: number, _name, ctx) => [
                 `${t("clickCount", { count: formatNumber(value) })} (${((value / total) * 100).toFixed(1)}%)`,
                 labelFor(ctx.payload.device as string),

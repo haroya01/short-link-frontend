@@ -38,7 +38,7 @@ export function WeeklyInsightsCard() {
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         <div className="flex items-center justify-between p-5">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-5 w-16 rounded-full" />
@@ -58,7 +58,7 @@ export function WeeklyInsightsCard() {
 
   if (!data || data.totalClicks === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 p-5">
+      <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 p-5">
         <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("eyebrow")}</p>
         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t("emptyDesc")}</p>
       </div>
@@ -66,7 +66,7 @@ export function WeeklyInsightsCard() {
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
       <button
         type="button"
         onClick={() => setMobileOpen((v) => !v)}
@@ -160,7 +160,7 @@ function DeltaBadge({
   const tone = flat
     ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
     : positive
-      ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-200 dark:ring-emerald-500/30"
+      ? "bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 ring-1 ring-inset ring-accent-200 dark:ring-accent-500/30"
       : "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-500/30";
   return (
     <span className={"inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium " + tone}>

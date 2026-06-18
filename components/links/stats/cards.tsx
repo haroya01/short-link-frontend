@@ -28,9 +28,8 @@ type Props = {
 
 /**
  * Six-up KPI grid that anchors the stats page. Hero (total clicks) is a {@code rounded-2xl}
- * accent card sized 1.5× the others so the eye lands there first; satellite cards are
- * {@code rounded-xl} (12 px) so the radii read as concentric tiers when the hero is the outer
- * ring (Apple nested-radius math: 16 − 4 padding ≈ 12). Each card is clickable — jump-scrolls
+ * flat card sized 1.5× the others so the eye lands there first; satellite cards are also
+ * {@code rounded-2xl} per AGENTS §1 (16 px canonical corner token). Each card is clickable — jump-scrolls
  * to the matching detail section, turning the KPI grid into a navigation control rather than
  * dead chrome. Hover state lifts each card {@code -translate-y-0.5} + soft shadow; active state
  * snaps it back with a {@code scale(0.99)} press tactile.
@@ -95,9 +94,9 @@ export function StatsCards({
         disabled={!interactive}
         aria-disabled={!interactive}
         className={cn(
-          "relative col-span-2 overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50 via-accent-50/40 to-white p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 ease-out sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:from-accent-500/10 dark:via-accent-500/5 dark:to-slate-900 dark:shadow-none",
+          "relative col-span-2 overflow-hidden rounded-2xl border border-accent-200 bg-white p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 ease-out sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:bg-slate-900 dark:shadow-none",
           interactive
-            ? "group cursor-pointer hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-[0_8px_24px_rgba(5,150,105,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-accent-500/50"
+            ? "group cursor-pointer hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-accent-500/50"
             : "cursor-default",
         )}
       >
@@ -121,10 +120,6 @@ export function StatsCards({
             <span className="text-slate-400 dark:text-slate-500">· {t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) })}</span>
           </p>
         )}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-8 -bottom-8 h-28 w-28 rounded-full bg-accent-200/40 blur-2xl transition-opacity duration-200 ease-out group-hover:opacity-80"
-        />
       </button>
 
       <CountStat
@@ -210,7 +205,7 @@ function Stat({
       disabled={!interactive}
       aria-disabled={!interactive}
       className={cn(
-        "flex flex-col rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-200 ease-out dark:border-slate-800 dark:bg-slate-900 dark:shadow-none",
+        "flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-200 ease-out dark:shadow-none",
         interactive
           ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-slate-700"
           : "cursor-default",

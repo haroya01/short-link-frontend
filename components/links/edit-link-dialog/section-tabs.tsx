@@ -42,9 +42,9 @@ function Pill({
       type="button"
       onClick={onClick}
       className={
-        "flex-1 rounded px-2 py-1.5 text-center transition " +
+        "focus-ring flex-1 rounded px-2 py-1.5 text-center transition " +
         (active
-          ? "bg-white dark:bg-slate-900 font-medium text-slate-900 dark:text-slate-100 shadow-sm"
+          ? "bg-white dark:bg-slate-900 font-medium text-accent-700 dark:text-accent-400 shadow-sm"
           : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100")
       }
     >

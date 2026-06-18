@@ -39,10 +39,11 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={() => setOpen((v) => !v)}
-          className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
         >
           {t("toggle")}
           {activeCount > 0 && (
@@ -53,7 +54,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
           <ChevronDown
             className={cn("h-3.5 w-3.5 transition", open && "rotate-180")}
           />
-        </button>
+        </Button>
 
         {filters.tag && (
           <Chip label={`#${filters.tag}`} onRemove={() => patch({ tag: undefined })} />
@@ -112,7 +113,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
               <select
                 value={filters.tag ?? ""}
                 onChange={(e) => patch({ tag: e.target.value || undefined })}
-                className="block w-full rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+                className="block h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
               >
                 <option value="">{t("any")}</option>
                 {tagOptions.map((name) => (
@@ -142,7 +143,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
                     (e.target.value as MyLinksFilters["expiry"]) || undefined,
                 })
               }
-              className="block w-full rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+              className="block h-11 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
             >
               <option value="">{t("any")}</option>
               {EXPIRY_OPTIONS.map((value) => (

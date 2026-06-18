@@ -36,7 +36,7 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
   return (
     <div
       data-testid="result-card"
-      className="animate-fade-in rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5"
+      className="animate-fade-in rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)] p-4 sm:p-5"
     >
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
