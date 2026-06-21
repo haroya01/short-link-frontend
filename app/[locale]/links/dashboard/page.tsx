@@ -252,6 +252,8 @@ type DashboardOps = {
   clicks7d: number;
   zeroClickLinks: number;
   expiringLinks: number;
+  /** 내 클릭의 중앙값 — "나에게 히트인가"의 기준선(전역 순위 아님). */
+  medianClicks: number;
   topLink: {
     shortCode: string;
     shortUrl: string;
@@ -296,7 +298,15 @@ function buildDashboardOps(items: MyLink[]): DashboardOps {
     }
   }
 
-  return { totalClicks, clicks7d, zeroClickLinks, expiringLinks, topLink };
+  // 자기상대 벤치마크 — 내 링크 클릭의 중앙값(전역 리더보드 X, 허영 대신 "나에게 히트인가").
+  const counts = items.map((i) => i.clickCount).sort((a, b) => a - b);
+  const medianClicks = counts.length
+    ? counts.length % 2 === 1
+      ? counts[(counts.length - 1) / 2]
+      : (counts[counts.length / 2 - 1] + counts[counts.length / 2]) / 2
+    : 0;
+
+  return { totalClicks, clicks7d, zeroClickLinks, expiringLinks, medianClicks, topLink };
 }
 
 function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
@@ -335,9 +345,16 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
       <div className="min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
         <div className="flex h-full min-w-0 flex-col gap-4">
           <div className="flex items-start justify-between gap-3">
-            <p className="text-[12px] font-semibold leading-snug text-accent-700 dark:text-accent-400">
-              {t("topLink")}
-            </p>
+            <div className="flex min-w-0 items-center gap-2">
+              <p className="text-[12px] font-semibold leading-snug text-accent-700 dark:text-accent-400">
+                {t("topLink")}
+              </p>
+              {topLink && ops.medianClicks > 0 && topLink.clickCount / ops.medianClicks >= 2 && (
+                <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-accent-50 dark:bg-accent-500/10 px-2 py-0.5 text-[11px] font-semibold text-accent-700 dark:text-accent-400">
+                  {t("vsMedian", { multiple: (topLink.clickCount / ops.medianClicks).toFixed(1) })}
+                </span>
+              )}
+            </div>
             {topLink && (
               <div className="inline-flex shrink-0 items-baseline gap-1 rounded-full bg-accent-50 dark:bg-accent-500/10 px-2.5 py-1 text-accent-700 dark:text-accent-400">
                 <span className="font-mono text-sm font-semibold tabular-nums">

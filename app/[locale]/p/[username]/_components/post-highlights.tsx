@@ -22,8 +22,11 @@ import { blogPath } from "@/lib/host";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import {
   listCollectionsContainingHighlight,
+  listRelatedBlocks,
   type CollectionSummary,
+  type RelatedBlock,
 } from "@/modules/blog/api/collections";
+import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
@@ -291,6 +294,8 @@ function HighlightThread({
   const [busy, setBusy] = useState(false);
   // The public paths/collections this sentence is woven into ("이 문장이 속한 길" — A-척추 discovery loop).
   const [inCollections, setInCollections] = useState<CollectionSummary[]>([]);
+  // Blocks curators wove alongside this sentence in the same public collections ("이것과 이어진 것").
+  const [related, setRelated] = useState<RelatedBlock[]>([]);
   // When true, the connect sheet is open over the thread (file this sentence into a collection / path).
   const [connecting, setConnecting] = useState(false);
   const inset = useKeyboardInset();
@@ -313,6 +318,9 @@ function HighlightThread({
     listCollectionsContainingHighlight(highlight.id)
       .then(setInCollections)
       .catch(() => setInCollections([]));
+    listRelatedBlocks("HIGHLIGHT", highlight.id)
+      .then(setRelated)
+      .catch(() => setRelated([]));
   }, [highlight.id]);
 
   useEffect(() => {
@@ -459,6 +467,22 @@ function HighlightThread({
                         {c.count}
                       </span>
                     </BlogLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* 이것과 이어진 것 — other blocks curators wove alongside this sentence (co-occurrence hop). */}
+          {related.length > 0 && (
+            <div className="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                {tc("relatedBlocksTitle")}
+              </p>
+              <ul className="mt-3 space-y-3">
+                {related.map((b) => (
+                  <li key={`${b.blockType}-${b.refId}`}>
+                    <ConnectionBlock block={b} locale={locale} />
                   </li>
                 ))}
               </ul>
