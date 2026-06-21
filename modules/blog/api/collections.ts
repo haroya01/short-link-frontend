@@ -93,6 +93,30 @@ export interface DiscoverFeed {
   hasNext: boolean;
 }
 
+/** A block curated alongside another in the same PUBLIC collections — the "이것과 이어진 것" discovery
+ *  hop. Same flat block shape as {@link Connection} (only the fields for `blockType` are set), plus
+ *  `sharedCount` = how many public collections place the two together (the human co-occurrence weight).
+ *  Backend `RelatedBlockView`. */
+export interface RelatedBlock {
+  blockType: ConnectionBlockType;
+  refId: number;
+  title: string | null;
+  excerpt: string | null;
+  slug: string | null;
+  username: string | null;
+  quote: string | null;
+  body: string | null;
+  sharedCount: number;
+}
+
+/** A curator whose taste overlaps — they wove some of the same blocks into their own public collections.
+ *  `sharedItems` = how many blocks overlap. Connection by what-you-curate, not by follows. Backend
+ *  `KindredCuratorView`. */
+export interface KindredCurator {
+  curator: { id: number; username: string; bio: string | null; avatarUrl: string | null };
+  sharedItems: number;
+}
+
 export interface NewCollection {
   title: string;
   description?: string | null;
@@ -148,6 +172,35 @@ export async function listCollectionsContainingHighlight(
   });
   if (!res.ok) return [];
   return (await res.json()) as CollectionSummary[];
+}
+
+/** "이것과 이어진 것" — blocks placed in the same PUBLIC collections as this one (most co-curated
+ *  first). The Are.na connect-not-broadcast hop: one block → what curators wove alongside it. Readable
+ *  signed-out; a missing block just yields []. */
+export async function listRelatedBlocks(
+  blockType: ConnectionBlockType,
+  refId: number,
+): Promise<RelatedBlock[]> {
+  if (USE_MOCKS) return Promise.resolve([]);
+  const res = await fetch(
+    `${API_BASE}/api/v1/public/graph/blocks/${encodeURIComponent(blockType)}/${refId}/related`,
+    { cache: "no-store" },
+  );
+  if (!res.ok) return [];
+  return (await res.json()) as RelatedBlock[];
+}
+
+/** "취향이 겹치는 큐레이터" — curators who wove some of the same blocks into their own public
+ *  collections (most overlap first). Discovery by shared taste, not follows. Readable signed-out; an
+ *  unknown handle yields []. */
+export async function listKindredCurators(username: string): Promise<KindredCurator[]> {
+  if (USE_MOCKS) return Promise.resolve([]);
+  const res = await fetch(
+    `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/kindred`,
+    { cache: "no-store" },
+  );
+  if (!res.ok) return [];
+  return (await res.json()) as KindredCurator[];
 }
 
 /** Authenticated — create a collection / path. Returns the new summary (count 0). */

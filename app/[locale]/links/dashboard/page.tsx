@@ -351,7 +351,7 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
               </p>
               {topLink && ops.medianClicks > 0 && topLink.clickCount / ops.medianClicks >= 2 && (
                 <span className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-accent-50 dark:bg-accent-500/10 px-2 py-0.5 text-[11px] font-semibold text-accent-700 dark:text-accent-400">
-                  🔥 내 중앙값의 ×{(topLink.clickCount / ops.medianClicks).toFixed(1)}
+                  {t("vsMedian", { multiple: (topLink.clickCount / ops.medianClicks).toFixed(1) })}
                 </span>
               )}
             </div>

@@ -2,10 +2,14 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { CornerDownRight, FolderOpen } from "lucide-react";
 import { blogPath } from "@/lib/host";
-import { listPublicCollectionsByUsername } from "@/modules/blog/api/collections";
+import {
+  listKindredCurators,
+  listPublicCollectionsByUsername,
+} from "@/modules/blog/api/collections";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { KindredCurators } from "@/modules/blog/components/kindred-curators";
 
 export const revalidate = 30;
 
@@ -31,7 +35,10 @@ export default async function PublicCollectionsIndexPage({
   const { locale, username } = await params;
   const t = await getTranslations({ locale, namespace: "publicPost" });
   const tc = await getTranslations({ locale, namespace: "collections" });
-  const collections = await listPublicCollectionsByUsername(username);
+  const [collections, kindred] = await Promise.all([
+    listPublicCollectionsByUsername(username),
+    listKindredCurators(username),
+  ]);
 
   return (
     <ReadingShell className="mt-8">
@@ -74,6 +81,12 @@ export default async function PublicCollectionsIndexPage({
             ))}
           </ol>
         )}
+        <KindredCurators
+          curators={kindred}
+          locale={locale}
+          title={tc("kindredCuratorsTitle")}
+          sharedLabel={(count) => tc("sharedItems", { count })}
+        />
       </AuthorContentTransition>
     </ReadingShell>
   );
