@@ -5,6 +5,9 @@ import { createPortal } from "react-dom";
 import type { Editor } from "@tiptap/react";
 import { useTranslations } from "next-intl";
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   ArrowDownToLine,
   ArrowLeftToLine,
   ArrowRightToLine,
@@ -14,6 +17,7 @@ import {
   Trash2,
   type LucideIcon,
 } from "lucide-react";
+import type { ColumnAlign } from "@/modules/blog/components/editor/table-with-align";
 
 /**
  * iPhone 메모앱식 표 편집 — 표 안에 커서가 들어가면 각 열 위에 ··· 핸들, 각 행 왼쪽에 ⋮ 핸들이 뜬다.
@@ -121,14 +125,55 @@ export function TableHandles({ editor }: { editor: Editor }) {
     setMenu(null);
   }
 
+  // 한 열의 모든 셀에 정렬 속성을 한 트랜잭션으로 박는다(GFM 정렬=열 단위). 직렬화기는 헤더 셀의
+  // align 으로 구분행을 쓰고, 본문 셀도 같이 칠해 에디터에서 보이는 정렬과 저장 결과가 어긋나지 않게 한다.
+  function setColumnAlign(index: number, align: ColumnAlign) {
+    const table = tableRef.current;
+    if (!table) return;
+    const rows = Array.from(table.querySelectorAll("tr"));
+    let tr = editor.state.tr;
+    const docSize = editor.state.doc.content.size;
+    let touched = false;
+    for (const r of rows) {
+      const cellEl = r.children[index] as HTMLElement | undefined;
+      if (!cellEl) continue;
+      let inside: number;
+      try {
+        inside = editor.view.posAtDOM(cellEl, 0);
+      } catch {
+        continue;
+      }
+      if (inside < 0) continue;
+      const $pos = editor.state.doc.resolve(Math.min(inside, docSize));
+      for (let d = $pos.depth; d > 0; d--) {
+        const name = $pos.node(d).type.name;
+        if (name === "tableCell" || name === "tableHeader") {
+          tr = tr.setNodeAttribute($pos.before(d), "align", align);
+          touched = true;
+          break;
+        }
+      }
+    }
+    if (touched) editor.view.dispatch(tr);
+    editor.commands.focus();
+    setMenu(null);
+  }
+
   function openMenu(axis: "col" | "row", index: number, e: React.MouseEvent<HTMLButtonElement>) {
     const r = e.currentTarget.getBoundingClientRect();
-    // Anchor the menu just inside the table edge so it never opens off-screen on a phone.
+    // Clamp into the viewport so the menu never opens off-screen — a right-edge column on a phone
+    // would otherwise push the 176px(w-44) menu past the screen and clip "Delete table"/the align row.
+    const MENU_W = 176; // w-44
+    const MENU_H = 248; // col menu (header + 3 items + align row + delete table) — the tallest case
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const wantX = axis === "col" ? r.left - 4 : r.right + 6;
+    const wantY = axis === "col" ? r.bottom + 6 : r.top - 4;
     setMenu({
       axis,
       index,
-      x: axis === "col" ? Math.max(8, r.left - 4) : r.right + 6,
-      y: axis === "col" ? r.bottom + 6 : Math.max(8, r.top - 4),
+      x: Math.max(8, Math.min(wantX, vw - MENU_W - 8)),
+      y: Math.max(8, Math.min(wantY, vh - MENU_H - 8)),
     });
   }
 
@@ -228,6 +273,31 @@ export function TableHandles({ editor }: { editor: Editor }) {
                 {it.label}
               </button>
             ))}
+            {menu.axis === "col" && (
+              <div className="mt-0.5 flex items-center gap-1 px-2 py-1">
+                {(
+                  [
+                    { value: "left", icon: AlignLeft, label: t("alignLeft") },
+                    { value: "center", icon: AlignCenter, label: t("alignCenter") },
+                    { value: "right", icon: AlignRight, label: t("alignRight") },
+                  ] as const
+                ).map((a) => (
+                  <button
+                    key={a.value}
+                    type="button"
+                    title={a.label}
+                    aria-label={a.label}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setColumnAlign(menu.index, a.value);
+                    }}
+                    className="touch-target focus-ring grid place-items-center rounded-md p-1.5 text-slate-500 transition-colors hover:bg-emerald-50 hover:text-emerald-600 dark:text-slate-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400"
+                  >
+                    <a.icon className="h-4 w-4" />
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
             <button
               type="button"

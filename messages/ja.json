@@ -291,7 +291,10 @@
       "row": "行",
       "deleteColumn": "列を削除",
       "deleteRow": "行を削除",
-      "deleteTable": "表を削除"
+      "deleteTable": "表を削除",
+      "alignLeft": "左揃え",
+      "alignCenter": "中央揃え",
+      "alignRight": "右揃え"
     },
     "write": "編集",
     "preview": "プレビュー",

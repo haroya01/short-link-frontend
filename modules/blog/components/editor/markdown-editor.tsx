@@ -8,10 +8,12 @@ import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { ImageWithCaption } from "@/modules/blog/components/editor/image-with-caption";
 import Placeholder from "@tiptap/extension-placeholder";
-import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table-row";
-import { TableHeader } from "@tiptap/extension-table-header";
-import { TableCell } from "@tiptap/extension-table-cell";
+import {
+  AlignableTable,
+  AlignableTableCell,
+  AlignableTableHeader,
+} from "@/modules/blog/components/editor/table-with-align";
 import { Markdown } from "tiptap-markdown";
 import {
   Bold,
@@ -231,10 +233,10 @@ export function MarkdownEditor({
       CodeMirrorBlock,
       LinkCardNode,
       ImageWithCaption.configure({ inline: false }),
-      Table.configure({ resizable: false }),
+      AlignableTable.configure({ resizable: false }),
       TableRow,
-      TableHeader,
-      TableCell,
+      AlignableTableHeader,
+      AlignableTableCell,
       // Show a hint on the empty body so it's obvious where to start writing (CSS at .tiptap
       // p.is-editor-empty::before renders this).
       Placeholder.configure({ placeholder: t("bodyPlaceholder") }),

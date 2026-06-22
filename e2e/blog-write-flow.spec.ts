@@ -260,6 +260,45 @@ test("table edge handles add a column and a row (Notes-style), persisted to mark
   expect(rowCount(afterRow), "a row was added").toBe(rows0 + 1);
 });
 
+test("table column alignment serializes to the GFM separator (center → :---:)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Table\b/ }).click();
+  await save(page, captured);
+
+  // First column handle → "Align center" → the separator row must carry :---: for that column.
+  captured.blocks = null;
+  await page.getByRole("button", { name: "Column", exact: true }).first().click();
+  await page.getByRole("button", { name: "Align center", exact: true }).click();
+  const md = (await save(page, captured)).find((b) => b.type === "TABLE")?.content ?? "";
+  expect(md, "centered column encodes :---: in the separator").toContain(":---:");
+});
+
+test("table column alignment loads back from markdown (:---: → centered cell)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  // Seed a stored post whose body is a table with a centered first column (registered after
+  // setupMocks so it wins). The editor parses GFM → the cell must come back text-align:center.
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) => {
+    if (route.request().method() === "PUT") {
+      captured.blocks = route.request().postDataJSON()?.blocks ?? null;
+      return route.fulfill({ json: [] });
+    }
+    return route.fulfill({
+      json: [{ type: "TABLE", content: "| A | B |\n| :---: | --- |\n| c | d |" }],
+    });
+  });
+  await openEditor(page);
+
+  const firstHeader = page.locator(".tiptap table th").first();
+  await expect(firstHeader).toHaveText("A");
+  await expect(firstHeader).toHaveCSS("text-align", "center");
+});
+
 test("slash menu inserts a code block", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
