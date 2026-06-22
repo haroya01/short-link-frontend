@@ -26,7 +26,13 @@ test("a published post renders every block type for the reader", async ({ page }
   await expect(article.locator("h2").first()).toBeVisible();
   await expect(article.locator("ul li").first()).toBeVisible();
   await expect(article.locator("blockquote").first()).toBeVisible();
-  await expect(article.locator("img").first()).toBeVisible();
+  // The image block renders an <img> with its src. (toBeVisible flaked in CI: the seeded image is an
+  // EXTERNAL, lazy-loaded picsum.photos URL that often never paints headless — asserting it's *visible*
+  // tests the network + lazy-load, not our renderer. The renderer's contract is "image block → <img>
+  // with a src", so assert THAT — what this code is responsible for.)
+  const img = article.locator("img").first();
+  await expect(img).toBeAttached();
+  await expect(img).toHaveAttribute("src", /\S/);
   await expect(article.locator("table td").first()).toBeVisible();
   await expect(article.locator("pre").first()).toBeVisible();
   await expect(article).toContainText("function add");
@@ -134,6 +140,84 @@ test("a comment's @author handle links to the commenter's profile", async ({ pag
   const authorLink = page.locator('a[href*="/p/minji"]').first(); // seeded mock comment by @minji
   await expect(authorLink).toBeVisible();
   await expect(authorLink).toContainText("minji");
+});
+
+test("the comment composer is WYSIWYG — a rich editor, not a raw-markdown textarea + preview pane", async ({
+  page,
+}) => {
+  // The regression this guards: the comment box used to be a <textarea> where you typed raw markdown
+  // (`**bold**`) with a SEPARATE live "Preview" pane below. It's now a contenteditable WYSIWYG — the
+  // input itself shows the formatting, no markers, no second pane. (A whole writing surface can sit
+  // un-migrated while build/typecheck stay green — only driving the UI catches that.)
+  await page.goto(POST_PATH);
+  const comments = page
+    .locator("section")
+    .filter({ has: page.getByRole("heading", { name: /comment/i }) });
+  await expect(comments).toBeVisible({ timeout: 30_000 });
+
+  // The input is a contenteditable rich editor, not a <textarea>, and the duplicate "Preview" pane is gone.
+  const editor = comments.locator('[contenteditable="true"].tiptap-comment').first();
+  await expect(editor).toBeVisible();
+  await expect(comments.locator("textarea")).toHaveCount(0);
+  await expect(comments.getByText("Preview", { exact: true })).toHaveCount(0);
+
+  // Proof it's WYSIWYG: the Bold tool makes the next typing render as a real <strong>, NOT `**text**`.
+  await editor.click();
+  await comments.getByRole("button", { name: "Bold" }).click();
+  await page.keyboard.type("loud");
+  await expect(editor.locator("strong")).toHaveText("loud");
+  await expect(editor).not.toContainText("**");
+});
+
+test("the highlight-note composer is WYSIWYG too — selecting text → Note opens a rich editor, not a textarea", async ({
+  page,
+}) => {
+  // The surface that slipped the first pass: leaving a highlight NOTE was its own <textarea>, separate
+  // from the comment composer. mock-on seeds a session token → the reader is authenticated, so Note
+  // opens the sheet (no Google redirect).
+  await page.goto(POST_PATH);
+  await expect(page.locator(".prose-post")).toBeVisible({ timeout: 30_000 });
+  // The comment composer mounting proves the comments client island hydrated; a short settle then lets
+  // the in-memory mock /me resolve so the reader is authenticated (Note opens the sheet, not a redirect).
+  // (networkidle never fires here — the page keeps a live connection open.)
+  await expect(page.locator(".tiptap-comment").first()).toBeVisible({ timeout: 15_000 });
+  await page.waitForTimeout(1500);
+
+  // Select a run of text inside a direct-child block of .prose-post and finalize on mouseup — exactly
+  // what the highlight action bar listens for (readSelection requires a non-collapsed in-prose range).
+  await page.evaluate(() => {
+    const root = document.querySelector(".prose-post")!;
+    const block = Array.from(root.children).find(
+      (el) => (el.textContent || "").trim().length > 20,
+    ) as HTMLElement;
+    const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+    let textNode: Node | null = null;
+    while (walker.nextNode()) {
+      if ((walker.currentNode.textContent || "").trim().length >= 8) {
+        textNode = walker.currentNode;
+        break;
+      }
+    }
+    const node = textNode ?? block.firstChild!;
+    const range = document.createRange();
+    range.setStart(node, 0);
+    range.setEnd(node, Math.min(8, (node.textContent || "").length));
+    const sel = window.getSelection()!;
+    sel.removeAllRanges();
+    sel.addRange(range);
+    document.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+  });
+
+  // The selection action bar appears → tap Note.
+  const bar = page.getByRole("toolbar");
+  await expect(bar).toBeVisible();
+  await bar.getByRole("button", { name: "Note" }).click();
+
+  // The note sheet is the SAME WYSIWYG editor — contenteditable, and crucially NOT a <textarea>.
+  const sheet = page.getByRole("dialog", { name: "Add a note" });
+  await expect(sheet).toBeVisible();
+  await expect(sheet.locator('[contenteditable="true"].tiptap-comment')).toBeVisible();
+  await expect(sheet.locator("textarea")).toHaveCount(0);
 });
 
 test("feed → post is a client-side navigation (so loading skeletons show, no freeze-then-pop)", async ({

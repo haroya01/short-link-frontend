@@ -28,9 +28,12 @@ function linkifyMentions(text: string, locale: string, keyBase: string): ReactNo
   return nodes;
 }
 
-// 인라인 마크다운: `code` → [라벨](http URL) → **굵게** → *기울임* 순서로 한 토큰씩 소비하고,
-// 남는 plain 텍스트는 멘션 링크화. React 노드를 직접 조립하므로(raw HTML 없음) XSS 표면이 없다.
-const INLINE_RE = /(`[^`\n]+`)|(\[[^\]\n]+\]\(https?:\/\/[^\s)]+\))|(\*\*[^*\n]+\*\*)|(\*[^*\n]+\*)/;
+// 인라인 마크다운: \이스케이프 → `code` → [라벨](http URL) → **굵게** → *기울임* 순서로 한 토큰씩
+// 소비하고, 남는 plain 텍스트는 멘션 링크화. React 노드를 직접 조립하므로(raw HTML 없음) XSS 표면이 없다.
+// \X 는 X 가 ASCII 구두점일 때만 이스케이프로 본다 — WYSIWYG 직렬화(tiptap-markdown)가 본문의 리터럴
+// `* [ ] _ ~ \` 등을 \로 막아 내보내므로, 여기서 풀어 줘야 역슬래시가 화면에 새지 않는다. \t·C:\Users
+// 처럼 구두점이 아닌 문자 앞의 역슬래시는 그대로 둔다(경로·정규식 보호).
+const INLINE_RE = /(\\[!-/:-@[-`{-~])|(`[^`\n]+`)|(\[[^\]\n]+\]\(https?:\/\/[^\s)]+\))|(\*\*[^*\n]+\*\*)|(\*[^*\n]+\*)/;
 
 function renderInline(text: string, locale: string, keyBase = "i"): ReactNode[] {
   const out: ReactNode[] = [];
@@ -45,7 +48,10 @@ function renderInline(text: string, locale: string, keyBase = "i"): ReactNode[] 
     if (m.index > 0) out.push(...linkifyMentions(rest.slice(0, m.index), locale, `${keyBase}-${k}`));
     const tok = m[0];
     const key = `${keyBase}-${k++}`;
-    if (tok.startsWith("`")) {
+    if (tok.startsWith("\\")) {
+      // \X → 리터럴 X (역슬래시는 버린다). 한 글자 구두점이라 멘션은 없다.
+      out.push(tok.slice(1));
+    } else if (tok.startsWith("`")) {
       out.push(
         <code key={key} className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[12.5px] text-slate-800 dark:bg-slate-800 dark:text-slate-200">
           {tok.slice(1, -1)}

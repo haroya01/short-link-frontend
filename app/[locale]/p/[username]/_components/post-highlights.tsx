@@ -17,6 +17,7 @@ import {
 } from "@/modules/blog/api/highlights";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentComposer } from "@/modules/blog/components/comment-composer";
+import { RichCommentInput } from "@/modules/blog/components/rich-comment-input";
 import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
@@ -636,17 +637,19 @@ function NoteSheet({
         <blockquote className="mt-3 line-clamp-3 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
           {quote}
         </blockquote>
-        <textarea
-          autoFocus
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          maxLength={500}
-          rows={3}
-          aria-label={title}
-          aria-describedby="note-sheet-count"
-          placeholder={placeholder}
-          className="mt-3 w-full resize-none rounded-xl border border-slate-200 px-3.5 py-2.5 text-[15px] leading-relaxed outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500"
-        />
+        {/* WYSIWYG — 노트도 댓글과 같은 입력기(마크다운 기호·미리보기 칸 없음). */}
+        <div className="mt-3">
+          <RichCommentInput
+            value={note}
+            onChange={setNote}
+            placeholder={placeholder}
+            maxLength={500}
+            rows={3}
+            autoFocus
+            compact
+            onSubmitShortcut={() => onSave(note)}
+          />
+        </div>
         <p id="note-sheet-count" aria-live="polite" className="mt-1 text-right text-[12px] tabular-nums text-slate-400 dark:text-slate-500">
           {note.length}/500
         </p>
