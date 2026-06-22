@@ -291,7 +291,10 @@
       "row": "Row",
       "deleteColumn": "Delete column",
       "deleteRow": "Delete row",
-      "deleteTable": "Delete table"
+      "deleteTable": "Delete table",
+      "alignLeft": "Align left",
+      "alignCenter": "Align center",
+      "alignRight": "Align right"
     },
     "write": "Write",
     "preview": "Preview",

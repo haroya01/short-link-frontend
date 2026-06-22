@@ -291,7 +291,10 @@
       "row": "पंक्ति",
       "deleteColumn": "कॉलम हटाएँ",
       "deleteRow": "पंक्ति हटाएँ",
-      "deleteTable": "टेबल हटाएँ"
+      "deleteTable": "टेबल हटाएँ",
+      "alignLeft": "बायाँ संरेखण",
+      "alignCenter": "केंद्र संरेखण",
+      "alignRight": "दायाँ संरेखण"
     },
     "write": "लिखें",
     "preview": "पूर्वावलोकन",

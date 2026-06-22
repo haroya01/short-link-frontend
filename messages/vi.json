@@ -291,7 +291,10 @@
       "row": "Hàng",
       "deleteColumn": "Xóa cột",
       "deleteRow": "Xóa hàng",
-      "deleteTable": "Xóa bảng"
+      "deleteTable": "Xóa bảng",
+      "alignLeft": "Căn trái",
+      "alignCenter": "Căn giữa",
+      "alignRight": "Căn phải"
     },
     "write": "Viết",
     "preview": "Xem trước",
