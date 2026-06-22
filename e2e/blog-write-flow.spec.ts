@@ -226,6 +226,40 @@ test("slash menu inserts a table (GFM round-trips through save)", async ({ page 
   expect(table!.content).toContain("---");
 });
 
+test("table edge handles add a column and a row (Notes-style), persisted to markdown", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  // GFM column count = "---" cells in the separator row; row count = lines starting with "|".
+  const colCount = (md: string) => (md.match(/---/g) ?? []).length;
+  const rowCount = (md: string) => md.split("\n").filter((l) => l.trim().startsWith("|")).length;
+  const tableMd = (blocks: Block[]) => blocks.find((b) => b.type === "TABLE")?.content ?? "";
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Table\b/ }).click();
+
+  const base = tableMd(await save(page, captured));
+  const cols0 = colCount(base);
+  const rows0 = rowCount(base);
+  expect(cols0).toBeGreaterThanOrEqual(3);
+
+  // Column handle (aria-label "Column") → "Insert column right" → one more column persists.
+  captured.blocks = null;
+  await page.getByRole("button", { name: "Column", exact: true }).first().click();
+  await page.getByRole("menuitem", { name: "Insert column right" }).click();
+  const afterCol = tableMd(await save(page, captured));
+  expect(colCount(afterCol), "a column was added").toBe(cols0 + 1);
+
+  // Row handle (aria-label "Row") → "Insert row below" → one more body row persists.
+  captured.blocks = null;
+  await page.getByRole("button", { name: "Row", exact: true }).first().click();
+  await page.getByRole("menuitem", { name: "Insert row below" }).click();
+  const afterRow = tableMd(await save(page, captured));
+  expect(rowCount(afterRow), "a row was added").toBe(rows0 + 1);
+});
+
 test("slash menu inserts a code block", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
@@ -928,30 +962,6 @@ test("slash 'Two images' saves a side-by-side pair as two IMAGE blocks", async (
   await expect(page.locator(".tiptap img")).toHaveCount(2, { timeout: 10_000 });
   const blocks = await save(page, captured);
   expect(blocks.filter((b) => b.type === "IMAGE")).toHaveLength(2);
-});
-
-test("table toolbar grows a 3×3 into a 4×4", async ({ page }) => {
-  const captured: Captured = { blocks: null };
-  await setupMocks(page, captured);
-  await openEditor(page);
-  await page.locator(".tiptap").click();
-  await page.keyboard.type("/");
-  await page.getByRole("option", { name: /^Table\b/ }).click();
-  await expect(page.locator(".tiptap table")).toBeVisible({ timeout: 10_000 });
-  // Each toolbar command does editor.chain().focus().<cmd>() — firing it before the cell selection has
-  // propagated to ProseMirror (or while the toolbar is repositioning after the previous edit) restores
-  // a stale selection and no-ops. Re-anchor the caret in a cell + let it settle before each action;
-  // adding isn't idempotent so re-clicking the cell (which is) is safer than a click-retry, and each
-  // action asserts its own result so too short a settle fails loudly rather than passing wrong.
-  const tableAction = async (name: string) => {
-    await page.locator(".tiptap table td").first().click();
-    await page.waitForTimeout(350);
-    await page.getByRole("button", { name, exact: true }).click();
-  };
-  await tableAction("Add column");
-  await expect(page.locator(".tiptap table tr").first().locator("th, td")).toHaveCount(4);
-  await tableAction("Add row");
-  await expect(page.locator(".tiptap table tr")).toHaveCount(4);
 });
 
 test("published post: 'Save changes' persists edits without changing status", async ({ page }) => {

@@ -283,6 +283,12 @@
     "table": {
       "addColumn": "열 추가",
       "addRow": "행 추가",
+      "insertColumnLeft": "왼쪽에 열 추가",
+      "insertColumnRight": "오른쪽에 열 추가",
+      "insertRowAbove": "위에 행 추가",
+      "insertRowBelow": "아래에 행 추가",
+      "column": "열",
+      "row": "행",
       "deleteColumn": "열 삭제",
       "deleteRow": "행 삭제",
       "deleteTable": "표 삭제"

@@ -283,6 +283,12 @@
     "table": {
       "addColumn": "कॉलम जोड़ें",
       "addRow": "पंक्ति जोड़ें",
+      "insertColumnLeft": "बायाँ कॉलम जोड़ें",
+      "insertColumnRight": "दायाँ कॉलम जोड़ें",
+      "insertRowAbove": "ऊपर पंक्ति जोड़ें",
+      "insertRowBelow": "नीचे पंक्ति जोड़ें",
+      "column": "कॉलम",
+      "row": "पंक्ति",
       "deleteColumn": "कॉलम हटाएँ",
       "deleteRow": "पंक्ति हटाएँ",
       "deleteTable": "टेबल हटाएँ"

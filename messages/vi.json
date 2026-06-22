@@ -283,6 +283,12 @@
     "table": {
       "addColumn": "Thêm cột",
       "addRow": "Thêm hàng",
+      "insertColumnLeft": "Thêm cột bên trái",
+      "insertColumnRight": "Thêm cột bên phải",
+      "insertRowAbove": "Thêm hàng phía trên",
+      "insertRowBelow": "Thêm hàng phía dưới",
+      "column": "Cột",
+      "row": "Hàng",
       "deleteColumn": "Xóa cột",
       "deleteRow": "Xóa hàng",
       "deleteTable": "Xóa bảng"

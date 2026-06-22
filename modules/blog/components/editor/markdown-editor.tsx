@@ -38,6 +38,7 @@ import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-sho
 import { CodeMirrorBlock, insertCodeBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
+import { TableHandles } from "@/modules/blog/components/editor/table-handles";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
 import { UrlDialog } from "@/modules/blog/components/editor/url-dialog";
 import {
@@ -320,7 +321,7 @@ export function MarkdownEditor({
   return (
     <div className="flex h-full flex-col">
       <BubbleBar editor={editor} onEditLink={(href) => setUrlDialog({ mode: "link", initial: href })} />
-      <TableMenu editor={editor} />
+      <TableHandles editor={editor} />
       <EditorBlockHandle editor={editor} />
       <input
         ref={fileRef}
@@ -546,45 +547,3 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
   );
 }
 
-/**
- * Table controls — a small toolbar that appears above the table while the caret is inside one (and no
- * text is selected, so it never collides with the selection BubbleBar). Answers "how do I grow a 3×3?":
- * add/remove columns + rows, or drop the whole table. Tiptap's table commands do the work.
- */
-function TableMenu({ editor }: { editor: Editor }) {
-  const t = useTranslations("postEditor.table");
-  const items = [
-    { icon: Plus, label: t("addColumn"), run: () => editor.chain().focus().addColumnAfter().run() },
-    { icon: Plus, label: t("addRow"), run: () => editor.chain().focus().addRowAfter().run() },
-    { icon: Minus, label: t("deleteColumn"), run: () => editor.chain().focus().deleteColumn().run() },
-    { icon: Minus, label: t("deleteRow"), run: () => editor.chain().focus().deleteRow().run() },
-    { icon: Trash2, label: t("deleteTable"), run: () => editor.chain().focus().deleteTable().run(), danger: true },
-  ];
-  return (
-    <BubbleMenu
-      editor={editor}
-      pluginKey="tableMenu"
-      shouldShow={({ editor }) => editor.isActive("table") && editor.state.selection.empty}
-      options={{ placement: "top" }}
-      className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
-    >
-      {items.map((it, i) => (
-        <button
-          key={i}
-          type="button"
-          title={it.label}
-          aria-label={it.label}
-          onClick={it.run}
-          className={`touch-target focus-ring inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium transition-colors ${
-            it.danger
-              ? "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
-              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-          }`}
-        >
-          <it.icon className="h-3.5 w-3.5" />
-          {it.label}
-        </button>
-      ))}
-    </BubbleMenu>
-  );
-}
