@@ -161,12 +161,19 @@ export function TableHandles({ editor }: { editor: Editor }) {
 
   function openMenu(axis: "col" | "row", index: number, e: React.MouseEvent<HTMLButtonElement>) {
     const r = e.currentTarget.getBoundingClientRect();
-    // Anchor the menu just inside the table edge so it never opens off-screen on a phone.
+    // Clamp into the viewport so the menu never opens off-screen — a right-edge column on a phone
+    // would otherwise push the 176px(w-44) menu past the screen and clip "Delete table"/the align row.
+    const MENU_W = 176; // w-44
+    const MENU_H = 248; // col menu (header + 3 items + align row + delete table) — the tallest case
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const wantX = axis === "col" ? r.left - 4 : r.right + 6;
+    const wantY = axis === "col" ? r.bottom + 6 : r.top - 4;
     setMenu({
       axis,
       index,
-      x: axis === "col" ? Math.max(8, r.left - 4) : r.right + 6,
-      y: axis === "col" ? r.bottom + 6 : Math.max(8, r.top - 4),
+      x: Math.max(8, Math.min(wantX, vw - MENU_W - 8)),
+      y: Math.max(8, Math.min(wantY, vh - MENU_H - 8)),
     });
   }
 
