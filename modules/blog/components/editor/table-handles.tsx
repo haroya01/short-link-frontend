@@ -166,7 +166,8 @@ export function TableHandles({ editor }: { editor: Editor }) {
           onMouseDown={(e) => e.preventDefault()}
           onClick={(e) => openMenu("col", i, e)}
           className={HANDLE}
-          style={{ left: c.center - 11, top: geom.table.top - 18, width: 22, height: 14 }}
+          // Clamp top so the grip stays on-screen when the table is scrolled up under the toolbar.
+          style={{ left: c.center - 11, top: Math.max(geom.table.top - 18, 2), width: 22, height: 14 }}
         >
           <MoreHorizontal className="h-3.5 w-3.5" />
         </button>
@@ -181,7 +182,9 @@ export function TableHandles({ editor }: { editor: Editor }) {
           onMouseDown={(e) => e.preventDefault()}
           onClick={(e) => openMenu("row", i, e)}
           className={HANDLE}
-          style={{ left: geom.table.left - 18, top: r.center - 11, width: 14, height: 22 }}
+          // Clamp to ≥2px so the row grip never slides off-screen on a narrow phone where the
+          // reading column hugs the left edge (table.left can be < the 18px gutter we want).
+          style={{ left: Math.max(geom.table.left - 18, 2), top: r.center - 11, width: 14, height: 22 }}
         >
           <MoreVertical className="h-3.5 w-3.5" />
         </button>
