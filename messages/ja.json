@@ -283,6 +283,12 @@
     "table": {
       "addColumn": "列を追加",
       "addRow": "行を追加",
+      "insertColumnLeft": "左に列を追加",
+      "insertColumnRight": "右に列を追加",
+      "insertRowAbove": "上に行を追加",
+      "insertRowBelow": "下に行を追加",
+      "column": "列",
+      "row": "行",
       "deleteColumn": "列を削除",
       "deleteRow": "行を削除",
       "deleteTable": "表を削除"
