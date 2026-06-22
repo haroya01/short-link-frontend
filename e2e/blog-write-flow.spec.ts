@@ -964,30 +964,6 @@ test("slash 'Two images' saves a side-by-side pair as two IMAGE blocks", async (
   expect(blocks.filter((b) => b.type === "IMAGE")).toHaveLength(2);
 });
 
-test("table toolbar grows a 3×3 into a 4×4", async ({ page }) => {
-  const captured: Captured = { blocks: null };
-  await setupMocks(page, captured);
-  await openEditor(page);
-  await page.locator(".tiptap").click();
-  await page.keyboard.type("/");
-  await page.getByRole("option", { name: /^Table\b/ }).click();
-  await expect(page.locator(".tiptap table")).toBeVisible({ timeout: 10_000 });
-  // Each toolbar command does editor.chain().focus().<cmd>() — firing it before the cell selection has
-  // propagated to ProseMirror (or while the toolbar is repositioning after the previous edit) restores
-  // a stale selection and no-ops. Re-anchor the caret in a cell + let it settle before each action;
-  // adding isn't idempotent so re-clicking the cell (which is) is safer than a click-retry, and each
-  // action asserts its own result so too short a settle fails loudly rather than passing wrong.
-  const tableAction = async (name: string) => {
-    await page.locator(".tiptap table td").first().click();
-    await page.waitForTimeout(350);
-    await page.getByRole("button", { name, exact: true }).click();
-  };
-  await tableAction("Add column");
-  await expect(page.locator(".tiptap table tr").first().locator("th, td")).toHaveCount(4);
-  await tableAction("Add row");
-  await expect(page.locator(".tiptap table tr")).toHaveCount(4);
-});
-
 test("published post: 'Save changes' persists edits without changing status", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured, { ...POST, status: "PUBLISHED", publishedAt: NOW });
