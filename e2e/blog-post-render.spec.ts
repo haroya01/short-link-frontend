@@ -26,7 +26,13 @@ test("a published post renders every block type for the reader", async ({ page }
   await expect(article.locator("h2").first()).toBeVisible();
   await expect(article.locator("ul li").first()).toBeVisible();
   await expect(article.locator("blockquote").first()).toBeVisible();
-  await expect(article.locator("img").first()).toBeVisible();
+  // The image block renders an <img> with its src. (toBeVisible flaked in CI: the seeded image is an
+  // EXTERNAL, lazy-loaded picsum.photos URL that often never paints headless — asserting it's *visible*
+  // tests the network + lazy-load, not our renderer. The renderer's contract is "image block → <img>
+  // with a src", so assert THAT — what this code is responsible for.)
+  const img = article.locator("img").first();
+  await expect(img).toBeAttached();
+  await expect(img).toHaveAttribute("src", /\S/);
   await expect(article.locator("table td").first()).toBeVisible();
   await expect(article.locator("pre").first()).toBeVisible();
   await expect(article).toContainText("function add");
