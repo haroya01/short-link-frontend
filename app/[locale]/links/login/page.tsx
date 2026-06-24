@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { writeStorageString } from "@/lib/storage-json";
 import { Button } from "@/components/ui/button";
 import { GoogleIcon } from "@/components/common/google-icon";
+import { AppleSignInButton } from "@/components/auth/apple-sign-in-button";
 import { cn } from "@/lib/utils";
 
 const LOGIN_NEXT_KEY = "kurl:login-next";
@@ -37,17 +38,17 @@ export default function LoginPage() {
 
 function LoginInner() {
   const searchParams = useSearchParams();
+  const next = sanitizeNext(searchParams.get("next"));
 
   // OAuth round-trip drops the query string, so stash `next` here for the callback to read.
   useEffect(() => {
-    const next = sanitizeNext(searchParams.get("next"));
     if (next) writeStorageString(LOGIN_NEXT_KEY, next, { session: true });
-  }, [searchParams]);
+  }, [next]);
 
-  return <LoginShell />;
+  return <LoginShell next={next} />;
 }
 
-function LoginShell() {
+function LoginShell({ next = null }: { next?: string | null }) {
   const t = useTranslations("login");
   const { signInWithGoogle } = useAuth();
   return (
@@ -89,7 +90,7 @@ function LoginShell() {
         </div>
 
         <div
-          className="profile-fade mt-10 px-4 sm:px-0"
+          className="profile-fade mt-10 space-y-3 px-4 sm:px-0"
           style={{ ["--idx" as string]: 4 } as React.CSSProperties}
         >
           <Button
@@ -100,6 +101,7 @@ function LoginShell() {
             <GoogleIcon className="h-4 w-4" />
             {t("google")}
           </Button>
+          <AppleSignInButton successHref={next ?? "/dashboard"} />
         </div>
 
         <div

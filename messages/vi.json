@@ -859,6 +859,8 @@
     "tokenInvalid": "Không đọc được token.",
     "oauthFailed": "Đăng nhập Google thất bại ({reason}).",
     "backToLogin": "Quay lại đăng nhập",
+    "apple": "Đăng nhập với Apple",
+    "appleFailed": "Đăng nhập với Apple thất bại.",
     "twofa": {
       "title": "Xác minh hai bước",
       "desc": "Nhập mã 6 chữ số từ ứng dụng xác thực của bạn.",

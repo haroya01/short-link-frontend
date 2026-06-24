@@ -859,6 +859,8 @@
     "tokenInvalid": "Could not read token.",
     "oauthFailed": "Google sign-in failed ({reason}).",
     "backToLogin": "Back to sign in",
+    "apple": "Sign in with Apple",
+    "appleFailed": "Sign in with Apple failed.",
     "twofa": {
       "title": "Two-factor verification",
       "desc": "Enter the 6-digit code from your authenticator app.",

@@ -859,6 +859,8 @@
     "tokenInvalid": "टोकन नहीं पढ़ा जा सका।",
     "oauthFailed": "Google साइन इन विफल ({reason})।",
     "backToLogin": "साइन इन पर वापस",
+    "apple": "Apple से साइन इन करें",
+    "appleFailed": "Apple से साइन इन विफल रहा।",
     "twofa": {
       "title": "दो-कारक सत्यापन",
       "desc": "अपने ऑथेंटिकेटर ऐप से 6-अंकीय कोड दर्ज करें।",
