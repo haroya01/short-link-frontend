@@ -138,7 +138,7 @@ export function RichCommentInput({
     }
   }
 
-  const minHeight = `${(compact ? rows : Math.max(rows, 3)) * 1.6 + 1}rem`;
+  const minHeight = `${(compact ? rows : Math.max(rows, 2)) * 1.6 + 1}rem`;
 
   if (!editor) {
     return (

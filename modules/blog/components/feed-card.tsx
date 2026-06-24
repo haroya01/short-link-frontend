@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Heart } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
+import { cleanPreview } from "@/modules/blog/lib/markdown-lead";
 import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -213,7 +214,7 @@ export function FeedCard({
                   : "text-[18px] tracking-tight"
               }`}
             >
-              {item.title}
+              {cleanPreview(item.title)}
             </h2>
             {item.excerpt && (
               <p
@@ -221,7 +222,7 @@ export function FeedCard({
                   featured ? "line-clamp-2 sm:line-clamp-3" : "line-clamp-2"
                 }`}
               >
-                {item.excerpt}
+                {cleanPreview(item.excerpt)}
               </p>
             )}
           </BlogLink>

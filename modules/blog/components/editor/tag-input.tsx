@@ -10,13 +10,18 @@ type Props = {
   max?: number;
 };
 
+// Matches the backend cap (PostEntity.MAX_TAG_LENGTH = 40); the server truncates too, but capping
+// here keeps the chip honest. '#' is stripped so a "#tag"/"##tag" habit can't leak the marker into
+// the stored tag (tags aren't hashtags — the topic index uses the bare word).
+const MAX_TAG_LEN = 40;
+
 /** Chip input: type + Enter/comma to add, Backspace on empty to remove the last. */
 export function TagInput({ tags, onChange, placeholder, max = 10 }: Props) {
   const [draft, setDraft] = useState("");
 
   let pending = tags;
   function add(raw: string) {
-    const value = raw.replace(/,/g, "").trim();
+    const value = raw.replace(/#/g, "").replace(/,/g, "").trim().slice(0, MAX_TAG_LEN);
     if (!value) return;
     const exists = pending.some((t) => t.toLowerCase() === value.toLowerCase());
     if (!exists && pending.length < max) {
@@ -28,7 +33,9 @@ export function TagInput({ tags, onChange, placeholder, max = 10 }: Props) {
   // Split on comma here so it works regardless of how the comma arrives — typed, pasted, or
   // committed by a Korean IME (where the comma keydown alone is unreliable). The trailing,
   // comma-less fragment stays in the draft.
-  function onChangeValue(v: string) {
+  function onChangeValue(raw: string) {
+    // Strip '#' as it's typed so the marker never even shows in the draft (tags ≠ hashtags).
+    const v = raw.replace(/#/g, "");
     if (v.includes(",")) {
       const parts = v.split(",");
       parts.slice(0, -1).forEach(add);

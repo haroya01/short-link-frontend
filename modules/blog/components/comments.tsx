@@ -171,6 +171,7 @@ export function PostComments({
           submitting={busy}
           canSubmit={!authenticated || !!body.trim()}
           footer={ready && !authenticated ? t("loginPrompt") : ""}
+          rows={2}
         />
       </div>
 
