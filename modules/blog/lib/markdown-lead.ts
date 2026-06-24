@@ -32,6 +32,9 @@ export function markdownLead(markdown: string, max = 200): string {
   }
   const text = collected
     .join(" ")
+    // Drop the backslash from WYSIWYG-escaped punctuation (\[ \] \* \_ …) so "\[HDL 1장\]" reads as
+    // "[HDL 1장]" instead of leaking the slashes — tiptap-markdown escapes these on serialize.
+    .replace(/\\([!-/:-@[-`{-~])/g, "$1")
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
     .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/[*_`~]+/g, "")
@@ -42,12 +45,14 @@ export function markdownLead(markdown: string, max = 200): string {
 
 /**
  * Strip stray markdown markers from an ALREADY-STORED title/excerpt so a one-line preview reads as
- * clean text — covers old rows whose excerpt captured raw markup (e.g. "오늘의 글 ##digital circuit").
- * Conservative on '#': only runs at a word start (after start/space) so "C#" and "a#b" survive.
+ * clean text — covers old rows whose excerpt captured raw markup ("오늘의 글 ##digital circuit",
+ * "\[HDL 1장\] …"). Conservative on '#': only at a word start (after start/space) so "C#"/"a#b"
+ * survive. Escaped punctuation is unescaped (drop the backslash), bracketed text is kept.
  */
 export function cleanPreview(s: string | null | undefined): string {
   if (!s) return "";
   return s
+    .replace(/\\([!-/:-@[-`{-~])/g, "$1")
     .replace(/(^|\s)#{1,6}(?=\S)/g, "$1")
     .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
     .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")

@@ -26,6 +26,12 @@ describe("cleanPreview", () => {
     expect(cleanPreview("a#b")).toBe("a#b");
   });
 
+  it("unescapes \\[ \\] from WYSIWYG serialization but keeps the brackets", () => {
+    expect(cleanPreview("\\[HDL 1장\\] Testbench에서 Clock 생성하기")).toBe(
+      "[HDL 1장] Testbench에서 Clock 생성하기",
+    );
+  });
+
   it("strips emphasis / link syntax and collapses whitespace", () => {
     expect(cleanPreview("**굵게** 그리고 [라벨](https://x.com)")).toBe("굵게 그리고 라벨");
   });
