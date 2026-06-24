@@ -859,6 +859,8 @@
     "tokenInvalid": "トークンを読み取れません。",
     "oauthFailed": "Googleログインに失敗しました ({reason})。",
     "backToLogin": "ログインページへ",
+    "apple": "Appleでログイン",
+    "appleFailed": "Appleでのログインに失敗しました。",
     "twofa": {
       "title": "2段階認証",
       "desc": "認証アプリに表示された 6 桁のコードを入力してください。",

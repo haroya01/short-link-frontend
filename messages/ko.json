@@ -859,6 +859,8 @@
     "tokenInvalid": "토큰을 읽을 수 없습니다.",
     "oauthFailed": "Google 로그인에 실패했습니다 ({reason}).",
     "backToLogin": "로그인 페이지로",
+    "apple": "Apple로 로그인",
+    "appleFailed": "Apple 로그인에 실패했어요.",
     "twofa": {
       "title": "2단계 인증 코드 입력",
       "desc": "인증 앱에 표시된 6자리 코드를 입력하세요.",

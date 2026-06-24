@@ -9,6 +9,7 @@ import { writeLoginNextCookie } from "@/lib/login-next-cookie";
 import { Button } from "@/components/ui/button";
 import { Mark } from "@/components/common/logo";
 import { GoogleIcon } from "@/components/common/google-icon";
+import { AppleSignInButton } from "@/components/auth/apple-sign-in-button";
 
 // ?next= 는 같은 오리진 내부 경로만 허용 — callback 의 동일 가드와 맞춰 open-redirect 차단.
 function sanitizeNext(raw: string | null): string | null {
@@ -97,7 +98,7 @@ function BlogLoginShell({ next }: { next: string | null }) {
           </p>
         </div>
 
-        <div className="profile-fade mt-10" style={{ ["--idx" as string]: 4 } as React.CSSProperties}>
+        <div className="profile-fade mt-10 space-y-3" style={{ ["--idx" as string]: 4 } as React.CSSProperties}>
           <Button
             variant="outline"
             className="h-11 w-full justify-center rounded-xl"
@@ -106,6 +107,7 @@ function BlogLoginShell({ next }: { next: string | null }) {
             <GoogleIcon className="h-4 w-4" />
             {t("google")}
           </Button>
+          <AppleSignInButton successHref={blogHref(next ?? "/")} />
         </div>
 
         <div
