@@ -33,6 +33,21 @@ export function commitPostImage(postId: number, key: string): Promise<CommitResu
 }
 
 /**
+ * Re-host an external image URL into our bucket (server fetches it). For images pasted from Notion
+ * 등 where the clipboard carries an `<img src>` pointing at an expiring/CORS-locked URL — hotlinking
+ * those would rot after publish, so the server re-hosts to a kurl-owned URL.
+ */
+export async function importPostImage(postId: number, url: string): Promise<string> {
+  // Mock: no backend to re-host through, so leave the external URL as-is — the editor still shows it.
+  if (USE_MOCKS) return url;
+  const result = await request<CommitResult>(`/api/v1/posts/${postId}/images/import`, {
+    method: "POST",
+    body: { url },
+  });
+  return result.imageUrl;
+}
+
+/**
  * Two-step upload: presign → PUT → commit. 결과적으로 markdown 에 박을 수 있는 public URL 반환.
  */
 export async function uploadPostImage(postId: number, file: File): Promise<string> {
