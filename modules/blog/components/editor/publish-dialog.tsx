@@ -82,10 +82,14 @@ export function PublishDialog({
   const addressPrefix = blogHref(`/@${me?.username ?? ""}/`).replace(/^https?:\/\//, "");
   const fileRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const tagsFieldRef = useRef<HTMLDivElement>(null);
   const [uploading, setUploading] = useState(false);
   const [coverError, setCoverError] = useState<string | null>(null);
   const [scheduleAt, setScheduleAt] = useState("");
   const [showSchedule, setShowSchedule] = useState(false);
+  // Teachable click: instead of a silently-disabled Publish, clicking with no topics scrolls the tag
+  // field into view and flags it. Set on a failed publish attempt, cleared once a tag is added.
+  const [tagNudge, setTagNudge] = useState(false);
   // Which in-post links to auto-shorten through kurl on publish — all on by default; the author can
   // opt any out (kept as the original URL). Seeded when the dialog opens (body isn't edited while it's
   // open, so the detected set is stable for the session).
@@ -98,7 +102,8 @@ export function PublishDialog({
   // (changeStatus guards + returns false, so the dialog stays open) — a teachable click beats a
   // silently dead button.
   const canPublish = tags.length > 0;
-  const needTags = tags.length === 0 && (status === "DRAFT" || status === "UNPUBLISHED");
+  // The nudge shows only after a publish attempt with no tags, and clears the moment a tag lands.
+  const showTagNudge = tagNudge && tags.length === 0;
   // Draft → "발행 설정" (about to go live); already-public → "글 설정" (managing the live post).
   const dialogTitle = status === "DRAFT" ? t("publishSettings") : t("postSettings");
 
@@ -175,8 +180,22 @@ export function PublishDialog({
         </header>
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
+          {/* 태그 — the one required field, so it leads the dialog (you can't miss it) instead of being
+              buried mid-column. A standing hint, not role="alert" (the * + a failed-publish nudge carry
+              the "required" signal). */}
+          <div ref={tagsFieldRef} className="mb-5 scroll-mt-4">
+            <Field label={t("tags")} hint={t("tagsHint")} required>
+              <TagInput tags={tags} onChange={onTagsChange} placeholder={t("tagsPlaceholder")} />
+              {showTagNudge && (
+                <p className="mt-1.5 text-[12px] font-medium text-amber-600 dark:text-amber-400" role="alert">
+                  {t("tagsRequired")}
+                </p>
+              )}
+            </Field>
+          </div>
+
           {/* velog-style two columns: LEFT = how the post will look (cover + summary), RIGHT = the
-              publish settings (series · topics · address). Stacks to one column on mobile. */}
+              publish settings (series · address). Stacks to one column on mobile. */}
           <div className="grid gap-x-7 gap-y-5 sm:grid-cols-2">
             {/* LEFT — 보이는 모습 */}
             <div className="space-y-5">
@@ -259,21 +278,11 @@ export function PublishDialog({
             />
           </Field>
 
-          {/* 태그 — 발행 필수 (주제 1개 이상). Persistent guidance, not a transient error — so NOT
-              role="alert" (the disabled Publish button + the * marker already signal "required", and a
-              standing hint shouldn't assertively re-announce; this also keeps it out of the dialog's
-              single error-alert slot used by the cover-upload failure). */}
-          <Field label={t("tags")} hint={needTags ? undefined : t("tagsHint")} required>
-            <TagInput tags={tags} onChange={onTagsChange} placeholder={t("tagsPlaceholder")} />
-            {needTags && (
-              <p className="mt-1.5 text-[12px] font-medium text-amber-600 dark:text-amber-400">
-                {t("tagsRequired")}
-              </p>
-            )}
-          </Field>
-
-          {/* slug — 초안 동안만 편집 */}
-          <Field label={t("slugLabel")}>
+          {/* slug — 초안 동안만 편집. 발행 후 고정되므로 미리 경고. */}
+          <Field
+            label={t("slugLabel")}
+            hint={status === "DRAFT" ? t("slugFreezeWarn") : undefined}
+          >
             {status === "DRAFT" ? (
               <div className="flex items-center gap-1.5">
                 <span className="min-w-0 truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">{addressPrefix}</span>
@@ -340,16 +349,31 @@ export function PublishDialog({
             </Field>
           )}
 
-          {/* 예약 (초안일 때) */}
-          {status === "DRAFT" && showSchedule && (
-            <Field label={t("scheduleAt")}>
-              <input
-                type="datetime-local"
-                min={localMin}
-                value={scheduleAt}
-                onChange={(e) => setScheduleAt(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark]"
-              />
+          {/* 발행 시점 — 지금 / 예약을 명시적 세그먼트로 고른다. 예전엔 푸터의 숨은 토글이 본문 필드를
+              드러내는 식이라 "언제 나가는지"가 잘 안 보였다. */}
+          {status === "DRAFT" && (
+            <Field label={t("publishTiming")}>
+              <div
+                role="radiogroup"
+                aria-label={t("publishTiming")}
+                className="inline-flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-700"
+              >
+                <button type="button" onClick={() => setShowSchedule(false)} role="radio" aria-checked={!showSchedule} className={segBtn(!showSchedule)}>
+                  {t("publishNow")}
+                </button>
+                <button type="button" onClick={() => setShowSchedule(true)} role="radio" aria-checked={showSchedule} className={segBtn(showSchedule)}>
+                  {t("schedule")}
+                </button>
+              </div>
+              {showSchedule && (
+                <input
+                  type="datetime-local"
+                  min={localMin}
+                  value={scheduleAt}
+                  onChange={(e) => setScheduleAt(e.target.value)}
+                  className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark]"
+                />
+              )}
             </Field>
           )}
             </div>
@@ -367,20 +391,6 @@ export function PublishDialog({
           )}
           <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            {status === "DRAFT" && (
-              <button
-                type="button"
-                onClick={() => setShowSchedule((v) => !v)}
-                className={`focus-ring inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  showSchedule
-                    ? "bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300"
-                    : "text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-                }`}
-              >
-                <CalendarClock className="h-4 w-4" />
-                {t("schedule")}
-              </button>
-            )}
             {status === "SCHEDULED" && scheduledAt && (
               <span className="text-[12px] text-slate-500 dark:text-slate-400">
                 {t("scheduledFor", { when: new Date(scheduledAt).toLocaleString() })}
@@ -390,20 +400,23 @@ export function PublishDialog({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={async () => {
-                await onSave();
-              }}
-              disabled={saving || busy}
-              className="focus-ring rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800/60"
-            >
-              {saving ? t("saving") : t("saveDraft")}
-            </button>
+            {/* Standalone save only where there's no autosave + no save-on-action — i.e. NOT a draft.
+                A draft autosaves and Publish saves first, so a separate 임시저장 here was a double-save. */}
+            {status !== "DRAFT" && (
+              <button
+                type="button"
+                onClick={async () => {
+                  await onSave();
+                }}
+                disabled={saving || busy}
+                className="focus-ring rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800/60"
+              >
+                {saving ? t("saving") : t("save")}
+              </button>
+            )}
             <PrimaryAction
               status={status}
               busy={busy}
-              canPublish={canPublish}
               scheduleMode={showSchedule}
               scheduleReady={Boolean(scheduleAt)}
               t={t}
@@ -411,6 +424,13 @@ export function PublishDialog({
               // (no title, server 409, …) keeps the dialog open with the error in the footer, instead
               // of closing and reading as a phantom "published".
               onPublish={async () => {
+                // Teachable click instead of a dead button: no topics → scroll the tag field up and
+                // flag it, don't fire /publish.
+                if (!canPublish) {
+                  setTagNudge(true);
+                  tagsFieldRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  return;
+                }
                 await onSave();
                 const ok =
                   showSchedule && scheduleAt
@@ -430,6 +450,11 @@ export function PublishDialog({
                 await onChangeStatus("unpublish");
               }}
               onRepublish={async () => {
+                if (!canPublish) {
+                  setTagNudge(true);
+                  tagsFieldRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  return;
+                }
                 await onSave();
                 await onChangeStatus("republish", { shortenLinks: enabledLinks });
               }}
@@ -444,6 +469,15 @@ export function PublishDialog({
       </div>
     </div>
   );
+}
+
+/** Segmented-control button — the active segment gets the accent fill, the rest stay quiet. */
+function segBtn(active: boolean) {
+  return `focus-ring rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors ${
+    active
+      ? "bg-accent-700 text-white"
+      : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+  }`;
 }
 
 /** Right-aligned character counter for a length-capped field; warns (amber) within 10% of the cap. */
@@ -492,7 +526,6 @@ function Field({
 function PrimaryAction({
   status,
   busy,
-  canPublish,
   scheduleMode,
   scheduleReady,
   t,
@@ -504,7 +537,6 @@ function PrimaryAction({
 }: {
   status: PostStatus;
   busy: boolean;
-  canPublish: boolean;
   /** The schedule panel is open — the primary action parks the post instead of publishing now. */
   scheduleMode: boolean;
   /** A publish time has been picked; gates the schedule action so an empty time can't fall through. */
@@ -519,16 +551,16 @@ function PrimaryAction({
   const solid =
     "focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50";
   if (status === "DRAFT") {
-    // Schedule mode swaps the primary action wholesale: label, icon, and gating. With the panel
-    // open but no time picked, the old single "발행" button silently fell through to an immediate
-    // publish — the opposite of what the author was setting up.
+    // The tag requirement is a teachable click (onPublish nudges the tag field) rather than a
+    // disabled button, so Publish/Schedule stay enabled. Schedule still gates on a picked time —
+    // that input sits right there, so it's not a silent dead-end.
     if (scheduleMode)
       return (
         <button
           type="button"
           onClick={onPublish}
-          disabled={busy || !canPublish || !scheduleReady}
-          title={!canPublish ? t("tagsRequired") : !scheduleReady ? t("scheduleInvalid") : undefined}
+          disabled={busy || !scheduleReady}
+          title={!scheduleReady ? t("scheduleInvalid") : undefined}
           className={solid}
         >
           <CalendarClock className="h-4 w-4" />
@@ -536,13 +568,7 @@ function PrimaryAction({
         </button>
       );
     return (
-      <button
-        type="button"
-        onClick={onPublish}
-        disabled={busy || !canPublish}
-        title={canPublish ? undefined : t("tagsRequired")}
-        className={solid}
-      >
+      <button type="button" onClick={onPublish} disabled={busy} className={solid}>
         <Check className="h-4 w-4" />
         {t("publish")}
       </button>
@@ -566,13 +592,7 @@ function PrimaryAction({
     );
   if (status === "UNPUBLISHED")
     return (
-      <button
-        type="button"
-        onClick={onRepublish}
-        disabled={busy || !canPublish}
-        title={canPublish ? undefined : t("tagsRequired")}
-        className={solid}
-      >
+      <button type="button" onClick={onRepublish} disabled={busy} className={solid}>
         {t("republish")}
       </button>
     );
