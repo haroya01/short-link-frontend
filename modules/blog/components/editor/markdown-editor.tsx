@@ -49,6 +49,7 @@ import {
   type PickedPlace,
 } from "@/modules/blog/components/editor/place-search-dialog";
 import { altWithWidth, type ImageWidth } from "@/modules/blog/lib/image-width";
+import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
 
 /** Options for opening the image picker: a width (wide/full/half) and whether to allow multi-select
  *  (for a side-by-side "half" pair). Carried to the file-input change handler via a ref. */
@@ -150,12 +151,16 @@ export function MarkdownEditor({
   initialValue,
   onChange,
   onUploadImage,
+  onImportImageUrl,
   onUploadError,
   liveMarkdownRef,
 }: {
   initialValue: string;
   onChange: (markdown: string) => void;
   onUploadImage: (file: Blob) => Promise<string>;
+  // Re-host an external image URL (e.g. pasted from Notion) to a kurl-owned URL. When absent, pasted
+  // <img> HTML falls through to the default handler (which strips it).
+  onImportImageUrl?: (url: string) => Promise<string>;
   onUploadError?: (message: string) => void;
   // Exposes a synchronous "serialize the doc to markdown right now" getter to the parent, so Save/
   // Publish can read the LATEST content instead of the debounced onChange state.
@@ -212,6 +217,21 @@ export function MarkdownEditor({
     }
   }
 
+  // Re-host each external image URL (pasted <img src>) then insert it. Same caret-collapse dance as
+  // uploadAndInsertMany so multiple images don't overwrite each other.
+  async function importAndInsertMany(ed: Editor, urls: string[]) {
+    if (!onImportImageUrl) return;
+    for (const url of urls) {
+      try {
+        const hosted = await onImportImageUrl(url);
+        ed.chain().focus().setImage({ src: hosted, alt: "" }).run();
+        ed.commands.setTextSelection(ed.state.selection.to);
+      } catch (e) {
+        onUploadError?.(e instanceof Error ? e.message : "image import failed");
+      }
+    }
+  }
+
   const editor = useEditor({
     // Next SSR: Tiptap must not render on the server (hydration mismatch otherwise).
     immediatelyRender: false,
@@ -258,6 +278,19 @@ export function MarkdownEditor({
           event.preventDefault();
           void uploadAndInsertMany(editor, imageFiles);
           return true;
+        }
+        // Pasted from Notion 등: the clipboard has no image bytes, just text/html with <img src="https…">
+        // pointing at an external (often expiring) URL. tiptap-markdown's html:false would strip the tag
+        // and the image vanishes — so pull the img URLs out and re-host them. Only intercept when the
+        // HTML is image-only (no real text), else fall through so mixed rich pastes keep their text.
+        const html = event.clipboardData?.getData("text/html");
+        if (html && onImportImageUrl) {
+          const { urls, textIsEmpty } = externalImageUrlsFromHtml(html);
+          if (urls.length && textIsEmpty) {
+            event.preventDefault();
+            void importAndInsertMany(editor, urls);
+            return true;
+          }
         }
         // A bare URL pasted onto an empty line → a live link-preview card (velog/Notion). Pasting a
         // URL over text or into a non-empty line stays a normal link (default behaviour).

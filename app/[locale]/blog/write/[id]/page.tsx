@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
-import { uploadPostImage } from "@/modules/blog/api/post-images";
+import { importPostImage, uploadPostImage } from "@/modules/blog/api/post-images";
 import { MarkdownEditor } from "@/modules/blog/components/editor/markdown-editor";
 import { EditorHeader } from "@/modules/blog/components/editor/editor-header";
 import { PublishDialog } from "@/modules/blog/components/editor/publish-dialog";
@@ -123,6 +123,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           onChange={ed.setMarkdown}
           liveMarkdownRef={ed.liveMarkdown}
           onUploadImage={(blob) => uploadPostImage(post.id, blob as File)}
+          // Pasted-from-Notion images carry an external <img src> (expiring/CORS-locked) — re-host it.
+          onImportImageUrl={(url) => importPostImage(post.id, url)}
           onUploadError={(msg) => toast(msg, "error")}
         />
       </div>
