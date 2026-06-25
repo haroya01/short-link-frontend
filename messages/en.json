@@ -1970,8 +1970,8 @@
   },
   "terms": {
     "title": "Terms of Service",
-    "updatedAt": "Last updated: 2026-05-08",
-    "p1": "These terms govern your use of kurl. Using the service means you accept them.",
+    "updatedAt": "Last updated: 2026-06-25",
+    "p1": "These terms govern your use of kurl. Using the service means you accept them. These terms apply to both the web and the iOS app.",
     "h1": "1. Acceptable use",
     "p2": "kurl is for shortening lawful URLs only. Shortening is rejected or revoked for: malicious/phishing destinations, spam, copyright violations, hate content, doxxing.",
     "h2": "2. Shortenable URLs",
@@ -1985,10 +1985,10 @@
   },
   "privacy": {
     "title": "Privacy Policy",
-    "updatedAt": "Last updated: 2026-05-08",
+    "updatedAt": "Last updated: 2026-06-25",
     "p1": "kurl collects the minimum data needed and anonymizes by default. This policy follows GDPR Article 13 and Korea's PIPA.",
     "h1": "1. What we collect",
-    "p2": "OAuth sign-in: email, provider (Google), signup date. Shortening: original URL, short code, expiry. Clicks: timestamp, User-Agent, Referer, IP with last octet masked, GeoIP-derived country/region/city.",
+    "p2": "OAuth sign-in: email, provider (Google or Apple, including Apple's Hide My Email relay), signup date. Push notifications (if enabled in the iOS app): APNs device token. Shortening: original URL, short code, expiry. Clicks: timestamp, User-Agent, Referer, IP with last octet masked, GeoIP-derived country/region/city.",
     "h2": "2. Why",
     "p3": "Service operation (redirect, stats), abuse protection, security incident response. Never sold or used for marketing.",
     "h3": "3. Retention",
@@ -1998,11 +1998,11 @@
     "h5": "5. Your rights",
     "p6": "GDPR Article 17 (erasure) and Article 20 (portability) honored. Settings page exposes data download (JSON) and permanent account deletion.",
     "h6": "6. Third parties",
-    "p7": "Google OAuth (email, name), Google Safe Browsing API (URL hashes for malware checks), MaxMind GeoLite2 (offline GeoIP — no outbound calls).",
+    "p7": "Google OAuth and Apple Sign in with Apple (email, name), Apple Push Notification service (APNs, for iOS push), Google Safe Browsing API (URL hashes for malware checks), MaxMind GeoLite2 (offline GeoIP — no outbound calls).",
     "h7": "7. Cookies",
-    "p8": "One HttpOnly + Secure + SameSite=Strict cookie for the JWT refresh token. No analytics or ad cookies.",
+    "p8": "One HttpOnly + Secure + SameSite=Strict cookie for the JWT refresh token. No analytics or ad cookies. The iOS app stores tokens in the device Keychain instead of cookies.",
     "h8": "8. Contact",
-    "p9": "Data inquiries: GitHub issues or the operator's email."
+    "p9": "Data inquiries: haroya0117@gmail.com (or GitHub issues)."
   },
   "settings": {
     "title": "Settings",

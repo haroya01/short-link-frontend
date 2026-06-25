@@ -1970,8 +1970,8 @@
   },
   "terms": {
     "title": "Điều khoản dịch vụ",
-    "updatedAt": "Cập nhật lần cuối: 2026-05-08",
-    "p1": "Các điều khoản này điều chỉnh việc bạn sử dụng kurl. Sử dụng dịch vụ nghĩa là bạn chấp nhận chúng.",
+    "updatedAt": "Cập nhật lần cuối: 2026-06-25",
+    "p1": "Các điều khoản này điều chỉnh việc bạn sử dụng kurl. Sử dụng dịch vụ nghĩa là bạn chấp nhận chúng. Các điều khoản này áp dụng cho cả web và ứng dụng iOS.",
     "h1": "1. Sử dụng hợp lệ",
     "p2": "kurl chỉ dùng để rút gọn URL hợp pháp. Việc rút gọn bị từ chối hoặc thu hồi đối với: điểm đến độc hại/lừa đảo, spam, vi phạm bản quyền, nội dung thù ghét, lộ thông tin cá nhân.",
     "h2": "2. URL được phép rút gọn",
@@ -1985,10 +1985,10 @@
   },
   "privacy": {
     "title": "Chính sách quyền riêng tư",
-    "updatedAt": "Cập nhật lần cuối: 2026-05-08",
+    "updatedAt": "Cập nhật lần cuối: 2026-06-25",
     "p1": "kurl thu thập dữ liệu tối thiểu cần thiết và ẩn danh theo mặc định. Chính sách này tuân theo Điều 13 GDPR và PIPA của Hàn Quốc.",
     "h1": "1. Chúng tôi thu thập gì",
-    "p2": "Đăng nhập OAuth: email, nhà cung cấp (Google), ngày đăng ký. Rút gọn: URL gốc, mã rút gọn, hạn. Lượt nhấp: dấu thời gian, User-Agent, Referer, IP với octet cuối bị che, quốc gia/khu vực/thành phố suy ra từ GeoIP.",
+    "p2": "Đăng nhập OAuth: email, nhà cung cấp (Google hoặc Apple — bao gồm email ẩn danh của Apple), ngày đăng ký. Thông báo đẩy (nếu bật trong ứng dụng iOS): mã thông báo thiết bị APNs. Rút gọn: URL gốc, mã rút gọn, hạn. Lượt nhấp: dấu thời gian, User-Agent, Referer, IP với octet cuối bị che, quốc gia/khu vực/thành phố suy ra từ GeoIP.",
     "h2": "2. Vì sao",
     "p3": "Vận hành dịch vụ (chuyển hướng, thống kê), chống lạm dụng, ứng phó sự cố an ninh. Không bao giờ bán hay dùng cho tiếp thị.",
     "h3": "3. Lưu trữ",
@@ -1998,11 +1998,11 @@
     "h5": "5. Quyền của bạn",
     "p6": "Điều 17 GDPR (xóa bỏ) và Điều 20 (di chuyển dữ liệu) được tôn trọng. Trang cài đặt cho phép tải dữ liệu (JSON) và xóa tài khoản vĩnh viễn.",
     "h6": "6. Bên thứ ba",
-    "p7": "Google OAuth (email, tên), Google Safe Browsing API (băm URL để kiểm tra mã độc), MaxMind GeoLite2 (GeoIP ngoại tuyến — không có lệnh gọi ra ngoài).",
+    "p7": "Google OAuth và Apple Sign in with Apple (email, tên), dịch vụ Thông báo đẩy của Apple (APNs, để đẩy trên iOS), Google Safe Browsing API (băm URL để kiểm tra mã độc), MaxMind GeoLite2 (GeoIP ngoại tuyến — không có lệnh gọi ra ngoài).",
     "h7": "7. Cookie",
-    "p8": "Một cookie HttpOnly + Secure + SameSite=Strict cho token làm mới JWT. Không cookie phân tích hay quảng cáo.",
+    "p8": "Một cookie HttpOnly + Secure + SameSite=Strict cho token làm mới JWT. Không cookie phân tích hay quảng cáo. Ứng dụng iOS lưu token trong Keychain của thiết bị thay vì cookie.",
     "h8": "8. Liên hệ",
-    "p9": "Hỏi về dữ liệu: GitHub issues hoặc email của nhà vận hành."
+    "p9": "Hỏi về dữ liệu: haroya0117@gmail.com (hoặc GitHub issues)."
   },
   "settings": {
     "title": "Cài đặt",

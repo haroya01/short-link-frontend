@@ -1970,8 +1970,8 @@
   },
   "terms": {
     "title": "이용약관",
-    "updatedAt": "최종 업데이트: 2026-05-08",
-    "p1": "본 약관은 kurl 서비스 이용에 관한 조건을 정합니다. 서비스를 사용함으로써 본 약관에 동의한 것으로 간주됩니다.",
+    "updatedAt": "최종 업데이트: 2026-06-25",
+    "p1": "본 약관은 kurl 서비스 이용에 관한 조건을 정합니다. 서비스를 사용함으로써 본 약관에 동의한 것으로 간주됩니다. 본 약관은 웹과 iOS 앱 모두에 적용됩니다.",
     "h1": "1. 허용되는 사용",
     "p2": "kurl은 합법적인 URL 단축에만 사용할 수 있습니다. 다음 URL은 단축이 거절되거나 사후 차단됩니다: 악성/피싱 사이트, 스팸·도배, 저작권 침해, 차별·혐오 콘텐츠, 본인 동의 없는 개인정보 노출.",
     "h2": "2. 단축 가능한 URL",
@@ -1985,10 +1985,10 @@
   },
   "privacy": {
     "title": "개인정보처리방침",
-    "updatedAt": "최종 업데이트: 2026-05-08",
+    "updatedAt": "최종 업데이트: 2026-06-25",
     "p1": "kurl은 사용자의 개인정보를 최소 수집·익명 처리합니다. 본 방침은 GDPR Article 13 및 한국 PIPA를 준수합니다.",
     "h1": "1. 수집 항목",
-    "p2": "OAuth 로그인 시: 이메일, 인증 제공자(Google), 가입일. 단축 시: 원본 URL, 단축 코드, 만료일. 클릭 발생 시: 클릭 시각, User-Agent, Referer, 첫 옥텟 마스킹된 IP, GeoIP 기반 국가/지역/도시.",
+    "p2": "OAuth 로그인 시: 이메일, 인증 제공자(Google 또는 Apple — Apple 비공개 이메일 릴레이 포함), 가입일. iOS 앱 푸시 알림에 동의하면: APNs 디바이스 토큰. 단축 시: 원본 URL, 단축 코드, 만료일. 클릭 발생 시: 클릭 시각, User-Agent, Referer, 첫 옥텟 마스킹된 IP, GeoIP 기반 국가/지역/도시.",
     "h2": "2. 수집 목적",
     "p3": "서비스 제공(링크 redirect 통계), 어뷰즈 차단, 보안 침해 대응. 마케팅/광고에 사용하지 않습니다.",
     "h3": "3. 보존 기간",
@@ -1998,11 +1998,11 @@
     "h5": "5. 사용자 권리",
     "p6": "GDPR Article 17 (right-to-erasure), Article 20 (data portability) 보장. 설정 페이지에서 데이터 다운로드 (JSON) / 계정 영구 삭제 가능합니다.",
     "h6": "6. 외부 서비스",
-    "p7": "Google OAuth 로그인 (이메일/이름), Google Safe Browsing API (URL 검사용 도메인 해시 전송), MaxMind GeoLite2 (오프라인 GeoIP 룩업, 외부 호출 없음).",
+    "p7": "Google·Apple Sign in with Apple 로그인 (이메일/이름), Apple 푸시 알림 서비스(APNs, iOS 푸시 전송), Google Safe Browsing API (URL 검사용 도메인 해시 전송), MaxMind GeoLite2 (오프라인 GeoIP 룩업, 외부 호출 없음).",
     "h7": "7. 쿠키",
-    "p8": "JWT refresh token 저장용 HttpOnly + Secure + SameSite=Strict 쿠키 1개만 사용합니다. 분석/광고 쿠키 없음.",
+    "p8": "JWT refresh token 저장용 HttpOnly + Secure + SameSite=Strict 쿠키 1개만 사용합니다. 분석/광고 쿠키 없음. iOS 앱은 토큰을 쿠키 대신 기기 Keychain 에 저장합니다.",
     "h8": "8. 문의",
-    "p9": "데이터 관련 문의: GitHub issue 또는 운영자 이메일."
+    "p9": "데이터 관련 문의: haroya0117@gmail.com (또는 GitHub issue)."
   },
   "settings": {
     "title": "설정",
