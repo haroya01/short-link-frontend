@@ -2002,7 +2002,7 @@
     "h7": "7. クッキー",
     "p8": "JWT refresh token 保存用の HttpOnly + Secure + SameSite=Strict クッキー 1 つのみ使用します。分析/広告クッキーはありません。iOS アプリはトークンをクッキーではなく端末の Keychain に保存します。",
     "h8": "8. お問い合わせ",
-    "p9": "データに関するお問い合わせ: privacy@kurl.me (または GitHub issue) まで。"
+    "p9": "データに関するお問い合わせ: haroya0117@gmail.com (または GitHub issue) まで。"
   },
   "settings": {
     "title": "設定",

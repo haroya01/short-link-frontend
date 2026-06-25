@@ -2002,7 +2002,7 @@
     "h7": "7. Cookie",
     "p8": "Một cookie HttpOnly + Secure + SameSite=Strict cho token làm mới JWT. Không cookie phân tích hay quảng cáo. Ứng dụng iOS lưu token trong Keychain của thiết bị thay vì cookie.",
     "h8": "8. Liên hệ",
-    "p9": "Hỏi về dữ liệu: privacy@kurl.me (hoặc GitHub issues)."
+    "p9": "Hỏi về dữ liệu: haroya0117@gmail.com (hoặc GitHub issues)."
   },
   "settings": {
     "title": "Cài đặt",

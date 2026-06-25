@@ -2002,7 +2002,7 @@
     "h7": "7. 쿠키",
     "p8": "JWT refresh token 저장용 HttpOnly + Secure + SameSite=Strict 쿠키 1개만 사용합니다. 분석/광고 쿠키 없음. iOS 앱은 토큰을 쿠키 대신 기기 Keychain 에 저장합니다.",
     "h8": "8. 문의",
-    "p9": "데이터 관련 문의: privacy@kurl.me (또는 GitHub issue)."
+    "p9": "데이터 관련 문의: haroya0117@gmail.com (또는 GitHub issue)."
   },
   "settings": {
     "title": "설정",

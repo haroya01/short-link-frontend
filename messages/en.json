@@ -2002,7 +2002,7 @@
     "h7": "7. Cookies",
     "p8": "One HttpOnly + Secure + SameSite=Strict cookie for the JWT refresh token. No analytics or ad cookies. The iOS app stores tokens in the device Keychain instead of cookies.",
     "h8": "8. Contact",
-    "p9": "Data inquiries: privacy@kurl.me (or GitHub issues)."
+    "p9": "Data inquiries: haroya0117@gmail.com (or GitHub issues)."
   },
   "settings": {
     "title": "Settings",
