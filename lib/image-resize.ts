@@ -103,6 +103,26 @@ export function computeBox(
   };
 }
 
+const REENCODABLE = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+/**
+ * Drops embedded metadata (EXIF — including capture GPS) by re-encoding through a canvas, which
+ * keeps pixels only. Avatar/banner/profile images already pass through the cropper (same canvas
+ * trick); this is for the direct upload paths (e.g. blog body images) that ship the raw File.
+ * Preserves the input type so PNG screenshots stay lossless; downscales only if huge. Non-raster
+ * or undecodable inputs (svg/gif/heic) pass through untouched — they don't carry GPS EXIF, and we
+ * never want metadata-stripping to block an upload.
+ */
+export async function stripImageMetadata(file: File, maxDim = 2400): Promise<File> {
+  const type = file.type;
+  if (type !== "image/jpeg" && type !== "image/png" && type !== "image/webp") return file;
+  try {
+    return await resizeImage(file, { maxDim, type, quality: 0.92, filename: file.name });
+  } catch {
+    return file;
+  }
+}
+
 function readFileAsDataURL(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const r = new FileReader();

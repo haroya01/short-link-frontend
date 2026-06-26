@@ -102,11 +102,33 @@ function LoginShell({ next = null }: { next?: string | null }) {
             {t("google")}
           </Button>
           <AppleSignInButton successHref={next ?? "/dashboard"} />
+          <p
+            className="px-2 pt-1 text-center text-[12px] leading-relaxed text-slate-400 dark:text-slate-500"
+          >
+            {t.rich("consent", {
+              terms: (c) => (
+                <Link
+                  href="/links/terms"
+                  className="underline underline-offset-2 hover:text-slate-600 dark:hover:text-slate-300"
+                >
+                  {c}
+                </Link>
+              ),
+              privacy: (c) => (
+                <Link
+                  href="/links/privacy"
+                  className="underline underline-offset-2 hover:text-slate-600 dark:hover:text-slate-300"
+                >
+                  {c}
+                </Link>
+              ),
+            })}
+          </p>
         </div>
 
         <div
           className="profile-fade mt-8 text-center"
-          style={{ ["--idx" as string]: 5 } as React.CSSProperties}
+          style={{ ["--idx" as string]: 6 } as React.CSSProperties}
         >
           <Link
             href="/"

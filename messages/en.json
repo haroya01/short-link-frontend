@@ -613,7 +613,7 @@
   },
   "cookieConsent": {
     "ariaLabel": "Cookie notice",
-    "message": "We only use strictly-necessary cookies to keep you signed in. No analytics or ad cookies.",
+    "message": "This site uses cookies to keep you signed in and product analytics that help us improve the service.",
     "accept": "Got it",
     "learnMore": "Privacy policy"
   },
@@ -851,7 +851,8 @@
         "Analytics",
         "Insights"
       ]
-    }
+    },
+    "consent": "By continuing, you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
   },
   "auth": {
     "signedIn": "Signed in",
@@ -1888,7 +1889,7 @@
   },
   "about": {
     "title": "kurl — URL shortener with click analytics",
-    "lead": "Shrink long URLs and see where your clicks come from. Free, no ads.",
+    "lead": "Shorten long URLs and see where your clicks come from. Free to use, and currently ad-free.",
     "section1Title": "Why",
     "section1Body": "Most shorteners hide analytics behind a paywall. kurl gives you device, OS, browser, channel, country, and hour-of-day breakdowns for free.",
     "section2Title": "How it works",
@@ -1958,7 +1959,7 @@
     "rightsLead": "GDPR / privacy-law guarantees — available to every user regardless of plan.",
     "right1": "Export my data (JSON)",
     "right2": "Permanent account deletion + cascade",
-    "right3": "Only one cookie (sign-in) — no analytics or ad cookies",
+    "right3": "We never sell your personal data",
     "proHoldBadge": "Coming soon",
     "proHoldNotice": "Pro is on hold while we finish the billing pipeline. The Free plan still includes 200 links, 8 analytics dimensions, 5 webhooks per link, and 2FA — every feature listed below is live today.",
     "proHoldCta": "Not available yet",
@@ -1970,39 +1971,133 @@
   },
   "terms": {
     "title": "Terms of Service",
-    "updatedAt": "Last updated: 2026-06-25",
-    "p1": "These terms govern your use of kurl. Using the service means you accept them. These terms apply to both the web and the iOS app.",
-    "h1": "1. Acceptable use",
-    "p2": "kurl is for shortening lawful URLs only. Shortening is rejected or revoked for: malicious/phishing destinations, spam, copyright violations, hate content, doxxing.",
-    "h2": "2. Shortenable URLs",
-    "p3": "Public http/https URLs only. Private IPs, localhost, file:// and similar are blocked.",
-    "h3": "3. Abuse handling",
-    "p4": "We screen with Google Safe Browsing plus custom bot heuristics. Abusive accounts may be suspended without notice.",
-    "h4": "4. Availability",
-    "p5": "Service provided AS-IS without availability guarantees. Operators are not liable for data loss or downtime.",
-    "h5": "5. Changes",
-    "p6": "Terms may change with notice via the \"Last updated\" timestamp and, where possible, email."
+    "updatedAt": "Last updated: 2026-06-26",
+    "intro": "These terms govern your use of kurl (the \"Service\"). By using the Service you agree to them. If you do not agree, do not use the Service.",
+    "sections": [
+      {
+        "h": "1. The Service",
+        "p": "kurl provides URL shortening and click analytics, along with features for publishing and sharing content — posts, profiles, comments, and collections — on the web and in the iOS app. We may add, change, or remove features over time."
+      },
+      {
+        "h": "2. Eligibility and accounts",
+        "p": "You must be at least 14 years old (16, or the age set by your country's law, in the EU). By using the Service you represent that you meet this age. Keep your account information accurate. You are responsible for your account's security and for activity under it."
+      },
+      {
+        "h": "3. Link shortening — acceptable use",
+        "p": "Only public http/https URLs may be shortened; file:// and other non-http/https resources are rejected. Shortening to private or internal network addresses is discouraged and some server features (such as link previews) may not work for them. Shortening for malicious or phishing destinations, spam, copyright violations, hate or discrimination, or doxxing is rejected or revoked."
+      },
+      {
+        "h": "4. Your content — ownership and license",
+        "p": "You own the content you create or upload — posts, comments, profile, images. You grant us a non-exclusive, royalty-free license to store, display, transmit, cache, and back it up — including via the hosting and CDN sub-processors needed to do so — to run the Service. This license does not extend to marketing or resale. When you delete content it stops being shown within a reasonable time; copies may persist briefly in backups and caches."
+      },
+      {
+        "h": "5. Prohibited content and conduct",
+        "p": "No unlawful content, infringement of others' rights, hate, harassment or discrimination, sexual content involving minors, spam or malware, impersonation, posting others' personal data without consent, or abusive automated scraping or overloading of the Service."
+      },
+      {
+        "h": "6. Reporting and takedown",
+        "p": "Anyone (including signed-out visitors) can report a post, profile, or comment that violates these terms (unlawful, rights-infringing, hateful, harassing, doxxing, spam, etc.) using its report button. Copyright holders may also report infringement to haroya01@naver.com with the work concerned, the basis of their rights, and contact details. After review we may remove content or act on an account, and where possible we notify the affected user of the reason (except where urgent or legally required). A user subject to action may appeal at the same contact, and content is restored if no violation is confirmed. Repeat infringers' accounts may be suspended."
+      },
+      {
+        "h": "7. Operator rights and abuse handling",
+        "p": "We screen with Google Safe Browsing and our own bot-detection rules. For content or accounts that violate these terms or the law, we act proportionately to the severity (warning, temporary restriction, suspension) and, as a rule, give notice of the reason before acting. Where there is a legal violation, a clear security threat, or an urgent need to prevent harm, we may act without prior notice and notify afterward."
+      },
+      {
+        "h": "8. Termination",
+        "p": "You may delete your account at any time from the settings page. When you delete it, it is hidden immediately and permanently erased after a grace period (currently 30 days); signing in again with the same account within that period restores it. We may terminate accounts that materially violate these terms, following the process in Section 7. Handling of personal data on termination follows the Privacy Policy."
+      },
+      {
+        "h": "9. Disclaimer and availability",
+        "p": "We provide the Service using commercially reasonable efforts but make no warranties of any kind, express or implied — including fitness for a particular purpose or uninterrupted, error-free operation — and do not guarantee availability."
+      },
+      {
+        "h": "10. Limitation of liability",
+        "p": "To the fullest extent permitted by law, we are not liable for data loss, downtime, or indirect, incidental, or consequential damages. This does not exclude liability for our willful misconduct or gross negligence, or any liability that cannot be excluded by law."
+      },
+      {
+        "h": "11. Your responsibility and indemnity",
+        "p": "You warrant that your content does not infringe third-party rights, and you indemnify us against disputes or claims arising from your content or your breach of these terms — except to the extent of our willful misconduct, gross negligence, or fault attributable to us."
+      },
+      {
+        "h": "12. Governing law and disputes",
+        "p": "These terms are governed by the laws of the Republic of Korea, and disputes are resolved in the courts having jurisdiction under Korean civil procedure. If you are a consumer, this choice of law does not deprive you of the protection of the mandatory consumer rules of your country of habitual residence, and you may also bring proceedings in the courts of your residence. Disputes may also be addressed through mediation by the Korea Consumer Agency or the Electronic Commerce Mediation Committee."
+      },
+      {
+        "h": "13. Changes",
+        "p": "We may change these terms. We announce material changes in the Service at least 7 days before they take effect (30 days for changes that disadvantage users) and, where possible, notify account holders by email. If you do not agree to a change you may terminate your account; continuing to use the Service after the effective date means you accept the change."
+      },
+      {
+        "h": "14. iOS app",
+        "p": "For the iOS app, these terms are between you and the operator only, not Apple. Apple's standard licensed application end-user license agreement (EULA) also applies; where these terms fall short of its minimum terms, Apple's standard EULA controls for that part. Maintenance and support, product liability, and any third-party intellectual-property claims are the operator's responsibility, not Apple's. Apple and its subsidiaries are third-party beneficiaries of these terms and may enforce them against you."
+      },
+      {
+        "h": "15. General",
+        "p": "If any part of these terms is invalid or unenforceable, the rest remains in effect (severability). These terms are the entire agreement between you and the operator about using the Service. You may not assign your rights or obligations without our prior consent; we may transfer our position under these terms on a merger, division, or business transfer, giving advance notice of that fact and of the transferee. Our notices are given by your account email or by posting in the Service, and are deemed delivered when sent or posted. Our failure or delay in exercising a right is not a waiver of it. Provisions meant by their nature to survive termination (Section 4's residual license, Sections 9–12) continue to apply."
+      },
+      {
+        "h": "16. Contact",
+        "p": "Questions about these terms: haroya01@naver.com."
+      }
+    ]
   },
   "privacy": {
     "title": "Privacy Policy",
-    "updatedAt": "Last updated: 2026-06-25",
-    "p1": "kurl collects the minimum data needed and anonymizes by default. This policy follows GDPR Article 13 and Korea's PIPA.",
-    "h1": "1. What we collect",
-    "p2": "OAuth sign-in: email, provider (Google or Apple, including Apple's Hide My Email relay), signup date. Push notifications (if enabled in the iOS app): APNs device token. Shortening: original URL, short code, expiry. Clicks: timestamp, User-Agent, Referer, IP with last octet masked, GeoIP-derived country/region/city.",
-    "h2": "2. Why",
-    "p3": "Service operation (redirect, stats), abuse protection, security incident response. Never sold or used for marketing.",
-    "h3": "3. Retention",
-    "p4": "Anonymous links auto-expire after 24h. Authenticated links persist until you delete. Expired links + their clicks are auto-cleaned 30 days after expiry. Account deletion erases everything immediately.",
-    "h4": "4. IP anonymization",
-    "p5": "Stored IPs are masked (IPv4 last octet / IPv6 beyond first two groups). Raw IPs exist transiently in memory and logs only — never written to the database.",
-    "h5": "5. Your rights",
-    "p6": "GDPR Article 17 (erasure) and Article 20 (portability) honored. Settings page exposes data download (JSON) and permanent account deletion.",
-    "h6": "6. Third parties",
-    "p7": "Google OAuth and Apple Sign in with Apple (email, name), Apple Push Notification service (APNs, for iOS push), Google Safe Browsing API (URL hashes for malware checks), MaxMind GeoLite2 (offline GeoIP — no outbound calls).",
-    "h7": "7. Cookies",
-    "p8": "One HttpOnly + Secure + SameSite=Strict cookie for the JWT refresh token. No analytics or ad cookies. The iOS app stores tokens in the device Keychain instead of cookies.",
-    "h8": "8. Contact",
-    "p9": "Data inquiries: haroya0117@gmail.com (or GitHub issues)."
+    "updatedAt": "Last updated: 2026-06-26",
+    "intro": "kurl collects only the minimum personal data needed to run the Service and anonymizes by default. This policy follows Korea's Personal Information Protection Act (PIPA) and the EU GDPR (Article 13).",
+    "sections": [
+      {
+        "h": "1. What we collect",
+        "p": "Sign-in: email (including Apple's private email relay if you use Apple), auth provider (Google or Apple), signup date. Shortening: original URL, short code, expiry. Content: your posts, comments, profile, and uploaded images (EXIF metadata such as capture location is stripped on upload). If you enable push notifications: an APNs device token (iOS app) or web push subscription. On shortened-link clicks, post views, and public profile visits: timestamp, User-Agent, Referer, traffic source (UTM, etc.), IP with the last octet masked, GeoIP-derived country/region/city, browser language, device type/OS/browser, and network operator (ASN/organization). For repeat-visit stats we derive and store a one-way hash (a pseudonymous identifier) from IP and User-Agent; the raw IP itself is not stored. For operation and security we keep request logs (timestamp, path, status code, latency, and when signed in, a user identifier and short code) for a limited period. If a visitor submits a profile's email capture form: the email they enter and an IP hash."
+      },
+      {
+        "h": "2. Purpose and legal basis",
+        "p": "We process data to run the Service (redirects, stats, content publishing), for product analytics to improve the Service, to prevent abuse, and to respond to security incidents. Our legal bases are performance of the user agreement (redirects, content), legitimate interests (analytics, abuse, security), and consent (e.g., push notifications). If we introduce advertising in the future, we will give separate notice in advance and obtain any required consent. We do not sell your personal data."
+      },
+      {
+        "h": "3. Retention",
+        "p": "Anonymous links auto-expire after 24h. Authenticated users' links and content persist until you delete them. Expired links and their click events are auto-cleaned 30 days after expiry. When you delete your account, it and its data are hidden immediately and permanently erased after a 30-day grace period; signing in again within that period restores the account. Security/audit logs are kept about 180 days and operational request logs about 90 days before cleanup, and deleting your account anonymizes your identifier left in those logs."
+      },
+      {
+        "h": "4. IP anonymization",
+        "p": "Stored IPs are masked (IPv4 last octet / IPv6 beyond the first two groups). Raw IPs exist only transiently in memory and logs and are never written to the database."
+      },
+      {
+        "h": "5. Third parties and processors",
+        "p": "We use these processors to run the Service: Google and Apple (social sign-in), Google Safe Browsing (the shortened destination URL is sent for malware checks), MaxMind GeoLite2 (offline GeoIP — no visitor data leaves our servers), PostHog (product usage analytics), Sentry (error tracking), Cloudflare (CDN and bot filtering), and Amazon Web Services and Vercel (server and frontend hosting). If you enable push notifications, they are delivered via Apple (APNs) and, for web push, the push service chosen by your browser (e.g., Google, Mozilla, Microsoft). An email a visitor submits through a profile's email capture form is shared with that profile's owner. In addition, events for a user's links and blog interactions may be sent to webhooks the user configures (Discord, Slack, or any HTTPS endpoint); the destination and its handling and security are the user's responsibility. If we introduce advertising, we will add the relevant processors to this policy and give advance notice."
+      },
+      {
+        "h": "6. International transfers",
+        "p": "Some processors above (Google, Google Safe Browsing, Apple, PostHog, Sentry, Cloudflare, Vercel, Amazon Web Services, and push delivery services) may process data outside Korea, mainly in the United States. (MaxMind GeoLite2 looks up locally and does not send visitor data abroad.) Only the data listed under \"What we collect\" is transferred, solely for the operations described here, and kept under the same retention rules. Transfers to the US and elsewhere rely on each processor's data processing agreement, including GDPR Standard Contractual Clauses (SCCs) or EU-US Data Privacy Framework certification. Transfer is by network transmission; for questions or to object, contact haroya01@naver.com (objecting may limit some features)."
+      },
+      {
+        "h": "7. Cookies",
+        "p": "We use essential and functional cookies and local storage: the authentication token that keeps you signed in (HttpOnly, Secure, SameSite), a temporary cookie for returning from OAuth sign-in, your language and theme, some view preferences, and whether the cookie notice was dismissed. Product analytics (PostHog) uses browser local storage rather than cookies. We currently use no advertising cookies; if we introduce advertising we will give notice and seek consent in advance. The iOS app stores its tokens in the device Keychain instead of cookies."
+      },
+      {
+        "h": "8. Your rights",
+        "p": "You may access, correct, delete, restrict processing of, and withdraw consent for your personal data, and exercise GDPR rights of access (Art. 15), rectification (Art. 16), erasure (Art. 17), restriction (Art. 18), portability (Art. 20), and objection (Art. 21). In particular, you may object at any time to processing based on legitimate interests (such as analytics), and when your browser sends a Global Privacy Control (Sec-GPC) signal we do not generate the repeat-visit hash. Withdrawing consent does not affect processing carried out beforehand. The settings page lets you download your data as JSON or permanently delete your account — the JSON covers your account, links, and click stats; other data such as posts and profile is provided on request at haroya01@naver.com. A visitor who submitted their email through a profile's email capture form may request access, deletion, or opt-out at the same address."
+      },
+      {
+        "h": "9. Children under 14",
+        "p": "kurl is not directed to children under 14 and does not collect personal data from children under 14 without a legal guardian's consent (16, or the age set by your country's law, for EU residents)."
+      },
+      {
+        "h": "10. Security measures",
+        "p": "We apply transport encryption (TLS), hashed/encrypted storage of authentication tokens and two-factor secrets, access controls, IP masking, and data minimization."
+      },
+      {
+        "h": "11. Data protection officer and contact",
+        "p": "Data protection officer: Kim Donghyun (operator). For privacy inquiries, access, or deletion requests: haroya01@naver.com."
+      },
+      {
+        "h": "12. Complaints",
+        "p": "In Korea: the Personal Information Dispute Mediation Committee (kopico.go.kr), KISA's privacy report center (privacy.kisa.or.kr, 118), and the Personal Information Protection Commission (PIPC). EU/EEA residents have the right to lodge a complaint with their local supervisory authority (GDPR Art. 77)."
+      },
+      {
+        "h": "13. Changes",
+        "p": "We may update this policy; we revise the \"Last updated\" date on change and announce material changes separately where possible."
+      }
+    ]
   },
   "settings": {
     "title": "Settings",
