@@ -613,7 +613,7 @@
   },
   "cookieConsent": {
     "ariaLabel": "Thông báo cookie",
-    "message": "Trang này chỉ dùng các cookie thiết yếu cần để vận hành dịch vụ. Không có cookie phân tích hay quảng cáo.",
+    "message": "Trang này dùng cookie để giữ bạn đăng nhập và phân tích sản phẩm giúp cải thiện dịch vụ.",
     "accept": "Đã hiểu",
     "learnMore": "Chính sách quyền riêng tư"
   },
@@ -1958,7 +1958,7 @@
     "rightsLead": "Bảo đảm GDPR / luật quyền riêng tư — dành cho mọi người dùng bất kể gói nào.",
     "right1": "Xuất dữ liệu của tôi (JSON)",
     "right2": "Xóa tài khoản vĩnh viễn + lan tỏa",
-    "right3": "Chỉ cookie thiết yếu — không có cookie phân tích hay quảng cáo",
+    "right3": "Không bao giờ bán dữ liệu cá nhân của bạn",
     "proHoldBadge": "Sắp có",
     "proHoldNotice": "Pro đang tạm hoãn trong khi chúng tôi hoàn thiện quy trình thanh toán. Gói Miễn phí vẫn gồm 200 liên kết, 8 chiều phân tích, 5 webhook mỗi liên kết, và 2FA — mọi tính năng liệt kê bên dưới đều đang hoạt động hôm nay.",
     "proHoldCta": "Chưa khả dụng",
@@ -2038,11 +2038,11 @@
     "sections": [
       {
         "h": "1. Dữ liệu chúng tôi thu thập",
-        "p": "Đăng nhập: email (gồm cả email chuyển tiếp riêng tư của Apple nếu bạn dùng Apple), nhà cung cấp xác thực (Google hoặc Apple), ngày đăng ký. Rút gọn: URL gốc, mã rút gọn, hạn dùng. Nội dung: bài viết, bình luận, hồ sơ và hình ảnh bạn tải lên. Nếu bạn bật thông báo đẩy: token thiết bị APNs (ứng dụng iOS) hoặc thông tin đăng ký web push. Lượt nhấp: thời điểm, User-Agent, Referer, IP đã che octet cuối, quốc gia/khu vực/thành phố suy ra từ GeoIP. Nếu khách truy cập gửi qua khối thu thập email của một hồ sơ: email họ nhập và một hash IP."
+        "p": "Đăng nhập: email (gồm cả email chuyển tiếp riêng tư của Apple nếu bạn dùng Apple), nhà cung cấp xác thực (Google hoặc Apple), ngày đăng ký. Rút gọn: URL gốc, mã rút gọn, hạn dùng. Nội dung: bài viết, bình luận, hồ sơ và hình ảnh bạn tải lên. Nếu bạn bật thông báo đẩy: token thiết bị APNs (ứng dụng iOS) hoặc thông tin đăng ký web push. Khi nhấp và xem: thời điểm, User-Agent, Referer, IP đã che octet cuối, quốc gia/khu vực/thành phố từ GeoIP, ngôn ngữ trình duyệt, loại thiết bị/OS/trình duyệt, và nhà mạng (ASN/tổ chức). Để thống kê lượt truy cập lại, chúng tôi tạo và lưu một hash một chiều (định danh giả danh) từ IP và User-Agent; bản thân IP gốc không được lưu. Nếu khách truy cập gửi qua khối thu thập email của một hồ sơ: email họ nhập và một hash IP."
       },
       {
         "h": "2. Mục đích và cơ sở pháp lý",
-        "p": "Chúng tôi xử lý dữ liệu để vận hành Dịch vụ (chuyển hướng, thống kê, đăng nội dung), ngăn lạm dụng và xử lý sự cố bảo mật. Cơ sở là thực hiện thỏa thuận người dùng, lợi ích hợp pháp trong việc ngăn lạm dụng và bảo mật, và sự đồng ý khi cần. Chúng tôi không dùng cho tiếp thị hay bán dữ liệu."
+        "p": "Chúng tôi xử lý dữ liệu để vận hành Dịch vụ (chuyển hướng, thống kê, đăng nội dung), để phân tích sản phẩm nhằm cải thiện Dịch vụ, để ngăn lạm dụng và để xử lý sự cố bảo mật. Cơ sở pháp lý là thực hiện thỏa thuận người dùng (chuyển hướng, nội dung), lợi ích hợp pháp (phân tích, chống lạm dụng, bảo mật) và sự đồng ý (ví dụ thông báo đẩy). Nếu chúng tôi giới thiệu quảng cáo trong tương lai, chúng tôi sẽ thông báo riêng trước và xin sự đồng ý cần thiết. Chúng tôi không bán dữ liệu cá nhân của bạn."
       },
       {
         "h": "3. Thời gian lưu giữ",
@@ -2054,23 +2054,23 @@
       },
       {
         "h": "5. Bên thứ ba và đơn vị xử lý",
-        "p": "Chúng tôi sử dụng các đơn vị xử lý sau để vận hành Dịch vụ: Google và Apple (đăng nhập mạng xã hội), Google Safe Browsing (gửi hash tên miền để kiểm tra mã độc), MaxMind GeoLite2 (GeoIP ngoại tuyến — không gọi ra ngoài), Sentry (theo dõi lỗi), Cloudflare (CDN và lọc bot), Amazon Web Services và Vercel (lưu trữ máy chủ và giao diện). Email mà khách truy cập gửi qua khối thu thập email của một hồ sơ sẽ được chia sẻ với chủ hồ sơ đó. Ngoài ra, chúng tôi không chia sẻ dữ liệu với bên thứ ba cho mục đích tiếp thị."
+        "p": "Chúng tôi sử dụng các đơn vị xử lý sau để vận hành Dịch vụ: Google và Apple (đăng nhập mạng xã hội), Google Safe Browsing (gửi hash tên miền để kiểm tra mã độc), MaxMind GeoLite2 (GeoIP ngoại tuyến — không gọi ra ngoài), PostHog (phân tích sử dụng sản phẩm), Sentry (theo dõi lỗi), Cloudflare (CDN và lọc bot), Amazon Web Services và Vercel (lưu trữ máy chủ và giao diện). Email mà khách truy cập gửi qua khối thu thập email của một hồ sơ sẽ được chia sẻ với chủ hồ sơ đó. Nếu chúng tôi giới thiệu quảng cáo, chúng tôi sẽ bổ sung các đơn vị xử lý liên quan vào chính sách này và thông báo trước."
       },
       {
         "h": "6. Chuyển dữ liệu ra nước ngoài",
-        "p": "Một số đơn vị xử lý nêu trên (Google, Apple, Sentry, Cloudflare, Vercel, MaxMind) có thể xử lý dữ liệu bên ngoài Hàn Quốc, chủ yếu tại Hoa Kỳ. Chỉ những dữ liệu liệt kê trong \"Dữ liệu chúng tôi thu thập\" được chuyển đi, chỉ nhằm các hoạt động mô tả ở đây, và được giữ theo cùng quy tắc lưu giữ."
+        "p": "Một số đơn vị xử lý nêu trên (Google, Apple, PostHog, Sentry, Cloudflare, Vercel, Amazon Web Services, MaxMind) có thể xử lý dữ liệu bên ngoài Hàn Quốc, chủ yếu tại Hoa Kỳ. Chỉ những dữ liệu liệt kê trong \"Dữ liệu chúng tôi thu thập\" được chuyển đi, chỉ nhằm các hoạt động mô tả ở đây, và được giữ theo cùng quy tắc lưu giữ. Việc chuyển sang Hoa Kỳ và nơi khác dựa trên thỏa thuận xử lý dữ liệu của mỗi đơn vị, bao gồm Điều khoản Hợp đồng Tiêu chuẩn (SCC) của GDPR hoặc chứng nhận EU-US Data Privacy Framework. Việc chuyển được thực hiện qua truyền mạng; để hỏi hoặc phản đối, liên hệ haroya01@naver.com (việc phản đối có thể hạn chế một số tính năng)."
       },
       {
         "h": "7. Cookie",
-        "p": "Chúng tôi chỉ dùng cookie thiết yếu: token xác thực giữ bạn đăng nhập (HttpOnly, Secure, SameSite), lựa chọn ngôn ngữ, lựa chọn giao diện, và việc bạn đã đóng thông báo cookie hay chưa. Không có cookie phân tích hay quảng cáo. Ứng dụng iOS lưu token trong Keychain của thiết bị thay vì cookie."
+        "p": "Chúng tôi dùng cookie thiết yếu và chức năng cùng bộ nhớ cục bộ: token xác thực giữ bạn đăng nhập (HttpOnly, Secure, SameSite), một cookie tạm để quay lại từ đăng nhập OAuth, ngôn ngữ và giao diện, một số tùy chọn hiển thị, và việc bạn đã đóng thông báo cookie hay chưa. Phân tích sản phẩm (PostHog) dùng bộ nhớ cục bộ của trình duyệt thay vì cookie. Hiện chúng tôi không dùng cookie quảng cáo; nếu giới thiệu quảng cáo, chúng tôi sẽ thông báo và xin sự đồng ý trước. Ứng dụng iOS lưu token trong Keychain của thiết bị thay vì cookie."
       },
       {
         "h": "8. Quyền của bạn",
-        "p": "Bạn có thể truy cập, sửa, xóa, hạn chế xử lý và rút lại sự đồng ý đối với dữ liệu cá nhân của mình, và thực hiện các quyền GDPR về truy cập (Điều 15), chỉnh sửa (Điều 16), xóa (Điều 17) và di chuyển dữ liệu (Điều 20). Trang cài đặt cho phép bạn tải dữ liệu dưới dạng JSON hoặc xóa vĩnh viễn tài khoản."
+        "p": "Bạn có thể truy cập, sửa, xóa, hạn chế xử lý và rút lại sự đồng ý đối với dữ liệu cá nhân của mình, và thực hiện các quyền GDPR về truy cập (Điều 15), chỉnh sửa (Điều 16), xóa (Điều 17), hạn chế (Điều 18), di chuyển dữ liệu (Điều 20) và phản đối (Điều 21). Đặc biệt, bạn có thể phản đối bất kỳ lúc nào đối với việc xử lý dựa trên lợi ích hợp pháp (như phân tích), và việc rút lại sự đồng ý không ảnh hưởng đến việc xử lý đã thực hiện trước đó. Trang cài đặt cho phép bạn tải dữ liệu dưới dạng JSON hoặc xóa vĩnh viễn tài khoản."
       },
       {
         "h": "9. Trẻ em dưới 14 tuổi",
-        "p": "kurl không hướng đến trẻ em dưới 14 tuổi và không thu thập dữ liệu cá nhân của trẻ dưới 14 tuổi khi chưa có sự đồng ý của người giám hộ hợp pháp (16 tuổi đối với cư dân EU)."
+        "p": "kurl không hướng đến trẻ em dưới 14 tuổi và không thu thập dữ liệu cá nhân của trẻ dưới 14 tuổi khi chưa có sự đồng ý của người giám hộ hợp pháp (16 tuổi, hoặc theo độ tuổi luật pháp quốc gia bạn quy định, đối với cư dân EU)."
       },
       {
         "h": "10. Biện pháp bảo mật",
@@ -2082,7 +2082,7 @@
       },
       {
         "h": "12. Khiếu nại",
-        "p": "Tại Hàn Quốc: Ủy ban Hòa giải Tranh chấp Thông tin Cá nhân (kopico.go.kr) và Trung tâm báo cáo quyền riêng tư của KISA (privacy.kisa.or.kr, 118). Cư dân EU/EEA có quyền khiếu nại với cơ quan giám sát địa phương (GDPR Điều 77)."
+        "p": "Tại Hàn Quốc: Ủy ban Hòa giải Tranh chấp Thông tin Cá nhân (kopico.go.kr), Trung tâm báo cáo quyền riêng tư của KISA (privacy.kisa.or.kr, 118), và Ủy ban Bảo vệ Thông tin Cá nhân (PIPC). Cư dân EU/EEA có quyền khiếu nại với cơ quan giám sát địa phương (GDPR Điều 77)."
       },
       {
         "h": "13. Thay đổi",

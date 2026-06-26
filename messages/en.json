@@ -613,7 +613,7 @@
   },
   "cookieConsent": {
     "ariaLabel": "Cookie notice",
-    "message": "This site uses only the essential cookies needed to run the service. No analytics or advertising cookies.",
+    "message": "This site uses cookies to keep you signed in and product analytics that help us improve the service.",
     "accept": "Got it",
     "learnMore": "Privacy policy"
   },
@@ -1958,7 +1958,7 @@
     "rightsLead": "GDPR / privacy-law guarantees — available to every user regardless of plan.",
     "right1": "Export my data (JSON)",
     "right2": "Permanent account deletion + cascade",
-    "right3": "Essential cookies only — no analytics or ad cookies",
+    "right3": "We never sell your personal data",
     "proHoldBadge": "Coming soon",
     "proHoldNotice": "Pro is on hold while we finish the billing pipeline. The Free plan still includes 200 links, 8 analytics dimensions, 5 webhooks per link, and 2FA — every feature listed below is live today.",
     "proHoldCta": "Not available yet",
@@ -2038,11 +2038,11 @@
     "sections": [
       {
         "h": "1. What we collect",
-        "p": "Sign-in: email (including Apple's private email relay if you use Apple), auth provider (Google or Apple), signup date. Shortening: original URL, short code, expiry. Content: your posts, comments, profile, and uploaded images. If you enable push notifications: an APNs device token (iOS app) or web push subscription. Clicks: timestamp, User-Agent, Referer, IP with the last octet masked, GeoIP-derived country/region/city. If a visitor submits a profile's email capture block: the email they enter and an IP hash."
+        "p": "Sign-in: email (including Apple's private email relay if you use Apple), auth provider (Google or Apple), signup date. Shortening: original URL, short code, expiry. Content: your posts, comments, profile, and uploaded images. If you enable push notifications: an APNs device token (iOS app) or web push subscription. On clicks and views: timestamp, User-Agent, Referer, IP with the last octet masked, GeoIP-derived country/region/city, browser language, device type/OS/browser, and network operator (ASN/organization). For repeat-visit stats we derive and store a one-way hash (a pseudonymous identifier) from IP and User-Agent; the raw IP itself is not stored. If a visitor submits a profile's email capture block: the email they enter and an IP hash."
       },
       {
         "h": "2. Purpose and legal basis",
-        "p": "We process data to run the Service (redirects, stats, content publishing), to prevent abuse, and to respond to security incidents. Our bases are performance of the user agreement, the legitimate interest of abuse and security prevention, and consent where required. We never use it for marketing or sell it."
+        "p": "We process data to run the Service (redirects, stats, content publishing), for product analytics to improve the Service, to prevent abuse, and to respond to security incidents. Our legal bases are performance of the user agreement (redirects, content), legitimate interests (analytics, abuse, security), and consent (e.g., push notifications). If we introduce advertising in the future, we will give separate notice in advance and obtain any required consent. We do not sell your personal data."
       },
       {
         "h": "3. Retention",
@@ -2054,23 +2054,23 @@
       },
       {
         "h": "5. Third parties and processors",
-        "p": "We use these processors to run the Service: Google and Apple (social sign-in), Google Safe Browsing (domain hashes for malware checks), MaxMind GeoLite2 (offline GeoIP — no outbound calls), Sentry (error tracking), Cloudflare (CDN and bot filtering), and Amazon Web Services and Vercel (server and frontend hosting). An email a visitor submits through a profile's email capture block is shared with that profile's owner. Otherwise we do not share data with third parties for marketing."
+        "p": "We use these processors to run the Service: Google and Apple (social sign-in), Google Safe Browsing (domain hashes for malware checks), MaxMind GeoLite2 (offline GeoIP — no outbound calls), PostHog (product usage analytics), Sentry (error tracking), Cloudflare (CDN and bot filtering), and Amazon Web Services and Vercel (server and frontend hosting). An email a visitor submits through a profile's email capture block is shared with that profile's owner. If we introduce advertising, we will add the relevant processors to this policy and give advance notice."
       },
       {
         "h": "6. International transfers",
-        "p": "Some processors above (Google, Apple, Sentry, Cloudflare, Vercel, MaxMind) may process data outside Korea, mainly in the United States. Only the data listed under \"What we collect\" is transferred, solely for the operations described here, and kept under the same retention rules."
+        "p": "Some processors above (Google, Apple, PostHog, Sentry, Cloudflare, Vercel, Amazon Web Services, MaxMind) may process data outside Korea, mainly in the United States. Only the data listed under \"What we collect\" is transferred, solely for the operations described here, and kept under the same retention rules. Transfers to the US and elsewhere rely on each processor's data processing agreement, including GDPR Standard Contractual Clauses (SCCs) or EU-US Data Privacy Framework certification. Transfer is by network transmission; for questions or to object, contact haroya01@naver.com (objecting may limit some features)."
       },
       {
         "h": "7. Cookies",
-        "p": "We use essential cookies only: the authentication token that keeps you signed in (HttpOnly, Secure, SameSite), your language choice, your theme choice, and whether the cookie notice was dismissed. No analytics or advertising cookies. The iOS app stores its tokens in the device Keychain instead of cookies."
+        "p": "We use essential and functional cookies and local storage: the authentication token that keeps you signed in (HttpOnly, Secure, SameSite), a temporary cookie for returning from OAuth sign-in, your language and theme, some view preferences, and whether the cookie notice was dismissed. Product analytics (PostHog) uses browser local storage rather than cookies. We currently use no advertising cookies; if we introduce advertising we will give notice and seek consent in advance. The iOS app stores its tokens in the device Keychain instead of cookies."
       },
       {
         "h": "8. Your rights",
-        "p": "You may access, correct, delete, restrict processing of, and withdraw consent for your personal data, and exercise GDPR rights of access (Art. 15), rectification (Art. 16), erasure (Art. 17), and portability (Art. 20). The settings page lets you download your data as JSON or permanently delete your account."
+        "p": "You may access, correct, delete, restrict processing of, and withdraw consent for your personal data, and exercise GDPR rights of access (Art. 15), rectification (Art. 16), erasure (Art. 17), restriction (Art. 18), portability (Art. 20), and objection (Art. 21). In particular, you may object at any time to processing based on legitimate interests (such as analytics), and withdrawing consent does not affect processing carried out beforehand. The settings page lets you download your data as JSON or permanently delete your account."
       },
       {
         "h": "9. Children under 14",
-        "p": "kurl is not directed to children under 14 and does not collect personal data from children under 14 without a legal guardian's consent (16 for EU residents)."
+        "p": "kurl is not directed to children under 14 and does not collect personal data from children under 14 without a legal guardian's consent (16, or the age set by your country's law, for EU residents)."
       },
       {
         "h": "10. Security measures",
@@ -2082,7 +2082,7 @@
       },
       {
         "h": "12. Complaints",
-        "p": "In Korea: the Personal Information Dispute Mediation Committee (kopico.go.kr) and KISA's privacy report center (privacy.kisa.or.kr, 118). EU/EEA residents have the right to lodge a complaint with their local supervisory authority (GDPR Art. 77)."
+        "p": "In Korea: the Personal Information Dispute Mediation Committee (kopico.go.kr), KISA's privacy report center (privacy.kisa.or.kr, 118), and the Personal Information Protection Commission (PIPC). EU/EEA residents have the right to lodge a complaint with their local supervisory authority (GDPR Art. 77)."
       },
       {
         "h": "13. Changes",
