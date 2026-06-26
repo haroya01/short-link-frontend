@@ -1,4 +1,5 @@
 import { request } from "@/lib/api/client";
+import { stripImageMetadata } from "@/lib/image-resize";
 import { USE_MOCKS } from "@/modules/blog/api/_mocks";
 
 export interface PresignResult {
@@ -57,10 +58,13 @@ export async function uploadPostImage(postId: number, file: File): Promise<strin
   // Mock: skip presign→PUT→commit (no backend / object store) and hand back a local object URL so the
   // image drops into the editor markdown immediately. Lives only for this session — fine for a demo.
   if (USE_MOCKS) return URL.createObjectURL(file);
-  const presigned = await presignPostImage(postId, file.type);
-  if (file.size > presigned.maxBytes) {
+  // Re-encode to drop EXIF (incl. capture GPS) before it reaches our bucket / a public post. The
+  // cropper already does this for avatar/banner/profile images; body images uploaded raw did not.
+  const safe = await stripImageMetadata(file);
+  const presigned = await presignPostImage(postId, safe.type);
+  if (safe.size > presigned.maxBytes) {
     throw new Error(
-      `파일 크기가 너무 큽니다 (${(file.size / 1024 / 1024).toFixed(1)}MB > ${(
+      `파일 크기가 너무 큽니다 (${(safe.size / 1024 / 1024).toFixed(1)}MB > ${(
         presigned.maxBytes /
         1024 /
         1024
@@ -69,8 +73,8 @@ export async function uploadPostImage(postId: number, file: File): Promise<strin
   }
   const putRes = await fetch(presigned.uploadUrl, {
     method: "PUT",
-    headers: { "Content-Type": file.type },
-    body: file,
+    headers: { "Content-Type": safe.type },
+    body: safe,
   });
   if (!putRes.ok) {
     throw new Error(`업로드 실패: ${putRes.status}`);
