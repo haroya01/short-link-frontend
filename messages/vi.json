@@ -851,7 +851,8 @@
         "Phân tích",
         "Thông tin"
       ]
-    }
+    },
+    "consent": "Khi tiếp tục, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>."
   },
   "auth": {
     "signedIn": "Đã đăng nhập",
@@ -1975,58 +1976,66 @@
     "sections": [
       {
         "h": "1. Giới thiệu dịch vụ",
-        "p": "kurl cung cấp rút gọn URL và phân tích lượt nhấp, cùng các tính năng đăng và chia sẻ nội dung — bài viết, hồ sơ, bình luận và bộ sưu tập. Các tính năng có thể thay đổi theo nhu cầu vận hành."
+        "p": "kurl cung cấp rút gọn URL và phân tích lượt nhấp, cùng các tính năng đăng và chia sẻ nội dung — bài viết, hồ sơ, bình luận và bộ sưu tập — trên web và ứng dụng iOS. Chúng tôi có thể thêm, thay đổi hoặc gỡ bỏ tính năng theo thời gian."
       },
       {
         "h": "2. Điều kiện và tài khoản",
-        "p": "Bạn phải từ 14 tuổi trở lên (16 tuổi, hoặc theo độ tuổi luật pháp quốc gia bạn quy định, tại EU). Hãy giữ thông tin tài khoản chính xác. Bạn chịu trách nhiệm về bảo mật tài khoản và các hoạt động trong tài khoản của mình."
+        "p": "Bạn phải từ 14 tuổi trở lên (16 tuổi, hoặc theo độ tuổi luật pháp quốc gia bạn quy định, tại EU). Khi sử dụng Dịch vụ, bạn cam đoan rằng mình đủ độ tuổi này. Hãy giữ thông tin tài khoản chính xác. Bạn chịu trách nhiệm về bảo mật tài khoản và các hoạt động trong tài khoản của mình."
       },
       {
         "h": "3. Rút gọn liên kết — sử dụng hợp lệ",
-        "p": "Chỉ rút gọn được URL http/https công khai; IP riêng, localhost, file:// và tương tự sẽ bị từ chối. Việc rút gọn nhằm mục đích độc hại/lừa đảo, spam, vi phạm bản quyền, thù ghét hoặc phân biệt đối xử, hay tiết lộ thông tin cá nhân không có sự đồng ý sẽ bị từ chối hoặc thu hồi."
+        "p": "Chỉ rút gọn được URL http/https công khai; file:// và các tài nguyên không phải http/https sẽ bị từ chối. Việc rút gọn tới địa chỉ mạng riêng/nội bộ không được khuyến khích và một số tính năng máy chủ (như xem trước liên kết) có thể không hoạt động. Việc rút gọn nhằm mục đích độc hại/lừa đảo, spam, vi phạm bản quyền, thù ghét hoặc phân biệt đối xử, hay tiết lộ thông tin cá nhân không có sự đồng ý (doxxing) sẽ bị từ chối hoặc thu hồi."
       },
       {
         "h": "4. Nội dung của bạn — quyền sở hữu và giấy phép",
-        "p": "Bạn sở hữu nội dung bạn tạo hoặc tải lên — bài viết, bình luận, hồ sơ, hình ảnh. Bạn cấp cho nhà vận hành giấy phép không độc quyền, miễn phí để lưu trữ, hiển thị, truyền, lưu đệm và sao lưu nhằm vận hành Dịch vụ. Khi bạn xóa nội dung, nội dung sẽ ngừng hiển thị trong thời gian hợp lý; bản sao có thể tồn tại tạm thời trong bản sao lưu và bộ nhớ đệm."
+        "p": "Bạn sở hữu nội dung bạn tạo hoặc tải lên — bài viết, bình luận, hồ sơ, hình ảnh. Bạn cấp cho nhà vận hành giấy phép không độc quyền, miễn phí để lưu trữ, hiển thị, truyền, lưu đệm và sao lưu — bao gồm qua các đơn vị xử lý lưu trữ và CDN cần thiết — nhằm vận hành Dịch vụ. Giấy phép này không mở rộng sang tiếp thị hay bán lại. Khi bạn xóa nội dung, nội dung sẽ ngừng hiển thị trong thời gian hợp lý; bản sao có thể tồn tại tạm thời trong bản sao lưu và bộ nhớ đệm."
       },
       {
         "h": "5. Nội dung và hành vi bị cấm",
         "p": "Không đăng nội dung bất hợp pháp, xâm phạm quyền của người khác, thù ghét, quấy rối hoặc phân biệt đối xử, nội dung tình dục liên quan đến trẻ vị thành niên, spam hoặc mã độc, mạo danh, đăng dữ liệu cá nhân của người khác khi chưa được đồng ý, hoặc thu thập tự động và gây quá tải Dịch vụ."
       },
       {
-        "h": "6. Khiếu nại bản quyền và gỡ bỏ",
-        "p": "Chủ sở hữu quyền có thể báo cáo vi phạm tới haroya01@naver.com kèm tác phẩm liên quan, căn cứ về quyền và thông tin liên hệ. Chúng tôi có thể gỡ nội dung sau khi xem xét, và các tài khoản vi phạm nhiều lần có thể bị đình chỉ."
+        "h": "6. Báo cáo và gỡ bỏ",
+        "p": "Bất kỳ ai (kể cả khách chưa đăng nhập) có thể báo cáo một bài viết, hồ sơ hoặc bình luận vi phạm các điều khoản này (bất hợp pháp, xâm phạm quyền, thù ghét, quấy rối, doxxing, spam, v.v.) bằng nút báo cáo. Chủ sở hữu bản quyền cũng có thể báo cáo vi phạm tới haroya01@naver.com kèm tác phẩm liên quan, căn cứ về quyền và thông tin liên hệ. Sau khi xem xét, chúng tôi có thể gỡ nội dung hoặc xử lý tài khoản, và khi có thể, thông báo cho người dùng bị ảnh hưởng về lý do (trừ trường hợp khẩn cấp hoặc theo yêu cầu pháp luật). Người dùng bị xử lý có thể khiếu nại tại cùng địa chỉ liên hệ, và nội dung được khôi phục nếu không xác định được vi phạm. Tài khoản vi phạm nhiều lần có thể bị đình chỉ."
       },
       {
         "h": "7. Quyền của nhà vận hành và xử lý lạm dụng",
-        "p": "Chúng tôi kiểm tra bằng Google Safe Browsing và bộ quy tắc phát hiện bot, và có thể gỡ, chặn hoặc đình chỉ nội dung hay tài khoản vi phạm các điều khoản này hoặc pháp luật mà không cần báo trước."
+        "p": "Chúng tôi kiểm tra bằng Google Safe Browsing và bộ quy tắc phát hiện bot của riêng mình. Với nội dung hoặc tài khoản vi phạm các điều khoản này hoặc pháp luật, chúng tôi xử lý tương xứng với mức độ nghiêm trọng (cảnh báo, hạn chế tạm thời, đình chỉ) và theo nguyên tắc thông báo lý do trước khi xử lý. Khi có vi phạm pháp luật, mối đe dọa bảo mật rõ ràng, hoặc nhu cầu khẩn cấp ngăn ngừa thiệt hại, chúng tôi có thể xử lý mà không cần báo trước và thông báo sau."
       },
       {
         "h": "8. Chấm dứt",
-        "p": "Bạn có thể xóa tài khoản bất kỳ lúc nào trong trang cài đặt. Chúng tôi có thể chấm dứt tài khoản vi phạm nghiêm trọng các điều khoản này. Việc xử lý dữ liệu cá nhân khi chấm dứt tuân theo Chính sách quyền riêng tư."
+        "p": "Bạn có thể xóa tài khoản bất kỳ lúc nào trong trang cài đặt. Khi bạn xóa, tài khoản được ẩn ngay lập tức và bị xóa vĩnh viễn sau thời gian chờ (hiện tại 30 ngày); đăng nhập lại bằng cùng tài khoản trong thời gian đó sẽ khôi phục nó. Chúng tôi có thể chấm dứt tài khoản vi phạm nghiêm trọng các điều khoản này, theo quy trình ở Mục 7. Việc xử lý dữ liệu cá nhân khi chấm dứt tuân theo Chính sách quyền riêng tư."
       },
       {
         "h": "9. Tuyên bố miễn trừ và tính khả dụng",
-        "p": "Dịch vụ được cung cấp NGUYÊN TRẠNG, không có bảo đảm nào dưới bất kỳ hình thức nào, dù rõ ràng hay ngụ ý, kể cả tính phù hợp cho một mục đích cụ thể hay hoạt động liên tục, không lỗi. Chúng tôi không bảo đảm tính khả dụng."
+        "p": "Chúng tôi cung cấp Dịch vụ bằng nỗ lực hợp lý về mặt thương mại nhưng không đưa ra bảo đảm nào dưới bất kỳ hình thức nào, dù rõ ràng hay ngụ ý — kể cả tính phù hợp cho một mục đích cụ thể hay hoạt động liên tục, không lỗi — và không bảo đảm tính khả dụng."
       },
       {
         "h": "10. Giới hạn trách nhiệm",
-        "p": "Trong phạm vi tối đa pháp luật cho phép, nhà vận hành không chịu trách nhiệm về mất dữ liệu, gián đoạn dịch vụ, hay các thiệt hại gián tiếp, ngẫu nhiên hoặc do hậu quả."
+        "p": "Trong phạm vi tối đa pháp luật cho phép, nhà vận hành không chịu trách nhiệm về mất dữ liệu, gián đoạn dịch vụ, hay các thiệt hại gián tiếp, ngẫu nhiên hoặc do hậu quả. Điều này không loại trừ trách nhiệm đối với hành vi cố ý hoặc lỗi nghiêm trọng của chúng tôi, hay bất kỳ trách nhiệm nào không thể loại trừ theo luật."
       },
       {
         "h": "11. Trách nhiệm và bồi thường của bạn",
-        "p": "Bạn cam đoan rằng nội dung của mình không xâm phạm quyền của bên thứ ba, và bồi thường cho nhà vận hành đối với các tranh chấp hoặc khiếu nại phát sinh từ nội dung của bạn hoặc việc bạn vi phạm các điều khoản này."
+        "p": "Bạn cam đoan rằng nội dung của mình không xâm phạm quyền của bên thứ ba, và bồi thường cho nhà vận hành đối với các tranh chấp hoặc khiếu nại phát sinh từ nội dung của bạn hoặc việc bạn vi phạm các điều khoản này — trừ phần do hành vi cố ý, lỗi nghiêm trọng hoặc lỗi thuộc về chúng tôi."
       },
       {
         "h": "12. Luật áp dụng và giải quyết tranh chấp",
-        "p": "Các điều khoản này được điều chỉnh bởi luật pháp Hàn Quốc, và tranh chấp được giải quyết tại tòa án có thẩm quyền theo tố tụng dân sự Hàn Quốc."
+        "p": "Các điều khoản này được điều chỉnh bởi luật pháp Hàn Quốc, và tranh chấp được giải quyết tại tòa án có thẩm quyền theo tố tụng dân sự Hàn Quốc. Nếu bạn là người tiêu dùng, việc chọn luật này không tước đi sự bảo vệ của các quy định bảo vệ người tiêu dùng bắt buộc tại quốc gia nơi bạn thường trú, và bạn cũng có thể khởi kiện tại tòa án nơi cư trú. Tranh chấp cũng có thể được giải quyết qua hòa giải bởi Cơ quan Người tiêu dùng Hàn Quốc hoặc Ủy ban Hòa giải Thương mại Điện tử."
       },
       {
         "h": "13. Thay đổi",
-        "p": "Các điều khoản này có thể thay đổi kèm thông báo. Các thay đổi quan trọng được phản ánh ở ngày \"Cập nhật lần cuối\" và, nếu có thể, được thông báo qua email."
+        "p": "Chúng tôi có thể thay đổi các điều khoản này. Các thay đổi quan trọng được thông báo trong Dịch vụ ít nhất 7 ngày trước khi có hiệu lực (30 ngày đối với thay đổi bất lợi cho người dùng) và, nếu có thể, thông báo cho chủ tài khoản qua email. Nếu không đồng ý với thay đổi, bạn có thể chấm dứt tài khoản; tiếp tục sử dụng Dịch vụ sau ngày hiệu lực nghĩa là bạn chấp nhận thay đổi."
       },
       {
-        "h": "14. Liên hệ",
+        "h": "14. Ứng dụng iOS",
+        "p": "Đối với ứng dụng iOS, các điều khoản này chỉ giữa bạn và nhà vận hành, không phải Apple. Thỏa thuận cấp phép người dùng cuối tiêu chuẩn (EULA) của Apple cũng được áp dụng; nếu các điều khoản này không đạt mức tối thiểu của EULA đó, EULA tiêu chuẩn của Apple sẽ điều chỉnh phần đó. Bảo trì và hỗ trợ, trách nhiệm sản phẩm, và mọi khiếu nại về sở hữu trí tuệ của bên thứ ba là trách nhiệm của nhà vận hành, không phải Apple. Apple và các công ty con của họ là người thụ hưởng bên thứ ba của các điều khoản này và có thể thực thi chúng đối với bạn."
+      },
+      {
+        "h": "15. Điều khoản chung",
+        "p": "Nếu bất kỳ phần nào của các điều khoản này vô hiệu hoặc không thể thực thi, phần còn lại vẫn có hiệu lực (tính tách biệt). Các điều khoản này là toàn bộ thỏa thuận giữa bạn và nhà vận hành về việc sử dụng Dịch vụ. Bạn không được chuyển nhượng quyền hoặc nghĩa vụ khi chưa có sự đồng ý trước của chúng tôi; chúng tôi có thể chuyển giao vị trí của mình theo các điều khoản này khi sáp nhập, chia tách hoặc chuyển nhượng kinh doanh, với thông báo trước về việc đó và bên nhận chuyển giao. Thông báo của chúng tôi được gửi qua email tài khoản của bạn hoặc đăng trong Dịch vụ, và được xem là đã gửi khi gửi đi hoặc đăng tải. Việc chúng tôi không hoặc chậm thực hiện một quyền không phải là từ bỏ quyền đó. Các điều khoản theo bản chất dự kiến tồn tại sau khi chấm dứt (giấy phép còn lại ở Mục 4, các Mục 9–12) tiếp tục được áp dụng."
+      },
+      {
+        "h": "16. Liên hệ",
         "p": "Thắc mắc về các điều khoản này: haroya01@naver.com."
       }
     ]

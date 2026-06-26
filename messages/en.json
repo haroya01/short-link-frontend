@@ -851,7 +851,8 @@
         "Analytics",
         "Insights"
       ]
-    }
+    },
+    "consent": "By continuing, you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
   },
   "auth": {
     "signedIn": "Signed in",
@@ -1975,58 +1976,66 @@
     "sections": [
       {
         "h": "1. The Service",
-        "p": "kurl provides URL shortening and click analytics, along with features for publishing and sharing content — posts, profiles, comments, and collections. We may add, change, or remove features over time."
+        "p": "kurl provides URL shortening and click analytics, along with features for publishing and sharing content — posts, profiles, comments, and collections — on the web and in the iOS app. We may add, change, or remove features over time."
       },
       {
         "h": "2. Eligibility and accounts",
-        "p": "You must be at least 14 years old (16, or the age set by your country's law, in the EU). Keep your account information accurate. You are responsible for your account's security and for activity under it."
+        "p": "You must be at least 14 years old (16, or the age set by your country's law, in the EU). By using the Service you represent that you meet this age. Keep your account information accurate. You are responsible for your account's security and for activity under it."
       },
       {
         "h": "3. Link shortening — acceptable use",
-        "p": "Only public http/https URLs may be shortened; private IPs, localhost, file:// and similar are rejected. Shortening for malicious or phishing destinations, spam, copyright violations, hate or discrimination, or doxxing is rejected or revoked."
+        "p": "Only public http/https URLs may be shortened; file:// and other non-http/https resources are rejected. Shortening to private or internal network addresses is discouraged and some server features (such as link previews) may not work for them. Shortening for malicious or phishing destinations, spam, copyright violations, hate or discrimination, or doxxing is rejected or revoked."
       },
       {
         "h": "4. Your content — ownership and license",
-        "p": "You own the content you create or upload — posts, comments, profile, images. You grant us a non-exclusive, royalty-free license to store, display, transmit, cache, and back it up as needed to run the Service. When you delete content it stops being shown within a reasonable time; copies may persist briefly in backups and caches."
+        "p": "You own the content you create or upload — posts, comments, profile, images. You grant us a non-exclusive, royalty-free license to store, display, transmit, cache, and back it up — including via the hosting and CDN sub-processors needed to do so — to run the Service. This license does not extend to marketing or resale. When you delete content it stops being shown within a reasonable time; copies may persist briefly in backups and caches."
       },
       {
         "h": "5. Prohibited content and conduct",
         "p": "No unlawful content, infringement of others' rights, hate, harassment or discrimination, sexual content involving minors, spam or malware, impersonation, posting others' personal data without consent, or abusive automated scraping or overloading of the Service."
       },
       {
-        "h": "6. Copyright complaints and takedown",
-        "p": "Rights holders may report infringement to haroya01@naver.com with the work concerned, the basis of their rights, and contact details. We may remove the content after review, and repeat infringers' accounts may be suspended."
+        "h": "6. Reporting and takedown",
+        "p": "Anyone (including signed-out visitors) can report a post, profile, or comment that violates these terms (unlawful, rights-infringing, hateful, harassing, doxxing, spam, etc.) using its report button. Copyright holders may also report infringement to haroya01@naver.com with the work concerned, the basis of their rights, and contact details. After review we may remove content or act on an account, and where possible we notify the affected user of the reason (except where urgent or legally required). A user subject to action may appeal at the same contact, and content is restored if no violation is confirmed. Repeat infringers' accounts may be suspended."
       },
       {
         "h": "7. Operator rights and abuse handling",
-        "p": "We screen with Google Safe Browsing and our own bot-detection rules, and may remove, block, or suspend content or accounts that violate these terms or the law, without prior notice."
+        "p": "We screen with Google Safe Browsing and our own bot-detection rules. For content or accounts that violate these terms or the law, we act proportionately to the severity (warning, temporary restriction, suspension) and, as a rule, give notice of the reason before acting. Where there is a legal violation, a clear security threat, or an urgent need to prevent harm, we may act without prior notice and notify afterward."
       },
       {
         "h": "8. Termination",
-        "p": "You may delete your account at any time from the settings page. We may terminate accounts that materially violate these terms. Handling of personal data on termination follows the Privacy Policy."
+        "p": "You may delete your account at any time from the settings page. When you delete it, it is hidden immediately and permanently erased after a grace period (currently 30 days); signing in again with the same account within that period restores it. We may terminate accounts that materially violate these terms, following the process in Section 7. Handling of personal data on termination follows the Privacy Policy."
       },
       {
         "h": "9. Disclaimer and availability",
-        "p": "The Service is provided \"as is\", without warranties of any kind, express or implied, including fitness for a particular purpose or uninterrupted, error-free operation. We do not guarantee availability."
+        "p": "We provide the Service using commercially reasonable efforts but make no warranties of any kind, express or implied — including fitness for a particular purpose or uninterrupted, error-free operation — and do not guarantee availability."
       },
       {
         "h": "10. Limitation of liability",
-        "p": "To the fullest extent permitted by law, we are not liable for data loss, downtime, or indirect, incidental, or consequential damages."
+        "p": "To the fullest extent permitted by law, we are not liable for data loss, downtime, or indirect, incidental, or consequential damages. This does not exclude liability for our willful misconduct or gross negligence, or any liability that cannot be excluded by law."
       },
       {
         "h": "11. Your responsibility and indemnity",
-        "p": "You warrant that your content does not infringe third-party rights, and you indemnify us against disputes or claims arising from your content or your breach of these terms."
+        "p": "You warrant that your content does not infringe third-party rights, and you indemnify us against disputes or claims arising from your content or your breach of these terms — except to the extent of our willful misconduct, gross negligence, or fault attributable to us."
       },
       {
         "h": "12. Governing law and disputes",
-        "p": "These terms are governed by the laws of the Republic of Korea, and disputes are resolved in the courts having jurisdiction under Korean civil procedure."
+        "p": "These terms are governed by the laws of the Republic of Korea, and disputes are resolved in the courts having jurisdiction under Korean civil procedure. If you are a consumer, this choice of law does not deprive you of the protection of the mandatory consumer rules of your country of habitual residence, and you may also bring proceedings in the courts of your residence. Disputes may also be addressed through mediation by the Korea Consumer Agency or the Electronic Commerce Mediation Committee."
       },
       {
         "h": "13. Changes",
-        "p": "These terms may change with notice. Material changes are reflected in the \"Last updated\" date and, where possible, announced by email."
+        "p": "We may change these terms. We announce material changes in the Service at least 7 days before they take effect (30 days for changes that disadvantage users) and, where possible, notify account holders by email. If you do not agree to a change you may terminate your account; continuing to use the Service after the effective date means you accept the change."
       },
       {
-        "h": "14. Contact",
+        "h": "14. iOS app",
+        "p": "For the iOS app, these terms are between you and the operator only, not Apple. Apple's standard licensed application end-user license agreement (EULA) also applies; where these terms fall short of its minimum terms, Apple's standard EULA controls for that part. Maintenance and support, product liability, and any third-party intellectual-property claims are the operator's responsibility, not Apple's. Apple and its subsidiaries are third-party beneficiaries of these terms and may enforce them against you."
+      },
+      {
+        "h": "15. General",
+        "p": "If any part of these terms is invalid or unenforceable, the rest remains in effect (severability). These terms are the entire agreement between you and the operator about using the Service. You may not assign your rights or obligations without our prior consent; we may transfer our position under these terms on a merger, division, or business transfer, giving advance notice of that fact and of the transferee. Our notices are given by your account email or by posting in the Service, and are deemed delivered when sent or posted. Our failure or delay in exercising a right is not a waiver of it. Provisions meant by their nature to survive termination (Section 4's residual license, Sections 9–12) continue to apply."
+      },
+      {
+        "h": "16. Contact",
         "p": "Questions about these terms: haroya01@naver.com."
       }
     ]
