@@ -613,7 +613,7 @@
   },
   "cookieConsent": {
     "ariaLabel": "Thông báo cookie",
-    "message": "Chúng tôi chỉ dùng cookie thực sự cần thiết để giữ bạn đăng nhập. Không có cookie phân tích hay quảng cáo.",
+    "message": "Trang này chỉ dùng các cookie thiết yếu cần để vận hành dịch vụ. Không có cookie phân tích hay quảng cáo.",
     "accept": "Đã hiểu",
     "learnMore": "Chính sách quyền riêng tư"
   },
@@ -1958,7 +1958,7 @@
     "rightsLead": "Bảo đảm GDPR / luật quyền riêng tư — dành cho mọi người dùng bất kể gói nào.",
     "right1": "Xuất dữ liệu của tôi (JSON)",
     "right2": "Xóa tài khoản vĩnh viễn + lan tỏa",
-    "right3": "Chỉ một cookie (đăng nhập) — không cookie phân tích hay quảng cáo",
+    "right3": "Chỉ cookie thiết yếu — không có cookie phân tích hay quảng cáo",
     "proHoldBadge": "Sắp có",
     "proHoldNotice": "Pro đang tạm hoãn trong khi chúng tôi hoàn thiện quy trình thanh toán. Gói Miễn phí vẫn gồm 200 liên kết, 8 chiều phân tích, 5 webhook mỗi liên kết, và 2FA — mọi tính năng liệt kê bên dưới đều đang hoạt động hôm nay.",
     "proHoldCta": "Chưa khả dụng",
@@ -1970,39 +1970,125 @@
   },
   "terms": {
     "title": "Điều khoản dịch vụ",
-    "updatedAt": "Cập nhật lần cuối: 2026-05-08",
-    "p1": "Các điều khoản này điều chỉnh việc bạn sử dụng kurl. Sử dụng dịch vụ nghĩa là bạn chấp nhận chúng.",
-    "h1": "1. Sử dụng hợp lệ",
-    "p2": "kurl chỉ dùng để rút gọn URL hợp pháp. Việc rút gọn bị từ chối hoặc thu hồi đối với: điểm đến độc hại/lừa đảo, spam, vi phạm bản quyền, nội dung thù ghét, lộ thông tin cá nhân.",
-    "h2": "2. URL được phép rút gọn",
-    "p3": "Chỉ URL http/https công khai. IP riêng tư, localhost, file:// và tương tự đều bị chặn.",
-    "h3": "3. Xử lý lạm dụng",
-    "p4": "Chúng tôi sàng lọc bằng Google Safe Browsing cùng các phương pháp phát hiện bot tùy chỉnh. Tài khoản lạm dụng có thể bị đình chỉ mà không cần thông báo.",
-    "h4": "4. Khả dụng",
-    "p5": "Dịch vụ được cung cấp NGUYÊN TRẠNG, không bảo đảm về tính khả dụng. Nhà vận hành không chịu trách nhiệm cho việc mất dữ liệu hay gián đoạn.",
-    "h5": "5. Thay đổi",
-    "p6": "Điều khoản có thể thay đổi với thông báo qua mốc thời gian \"Cập nhật lần cuối\" và, khi có thể, qua email."
+    "updatedAt": "Cập nhật lần cuối: 2026-06-26",
+    "intro": "Các điều khoản này điều chỉnh việc bạn sử dụng kurl (\"Dịch vụ\"). Khi sử dụng Dịch vụ, bạn đồng ý với các điều khoản này. Nếu không đồng ý, vui lòng không sử dụng Dịch vụ.",
+    "sections": [
+      {
+        "h": "1. Giới thiệu dịch vụ",
+        "p": "kurl cung cấp rút gọn URL và phân tích lượt nhấp, cùng các tính năng đăng và chia sẻ nội dung — bài viết, hồ sơ, bình luận và bộ sưu tập. Các tính năng có thể thay đổi theo nhu cầu vận hành."
+      },
+      {
+        "h": "2. Điều kiện và tài khoản",
+        "p": "Bạn phải từ 14 tuổi trở lên (16 tuổi, hoặc theo độ tuổi luật pháp quốc gia bạn quy định, tại EU). Hãy giữ thông tin tài khoản chính xác. Bạn chịu trách nhiệm về bảo mật tài khoản và các hoạt động trong tài khoản của mình."
+      },
+      {
+        "h": "3. Rút gọn liên kết — sử dụng hợp lệ",
+        "p": "Chỉ rút gọn được URL http/https công khai; IP riêng, localhost, file:// và tương tự sẽ bị từ chối. Việc rút gọn nhằm mục đích độc hại/lừa đảo, spam, vi phạm bản quyền, thù ghét hoặc phân biệt đối xử, hay tiết lộ thông tin cá nhân không có sự đồng ý sẽ bị từ chối hoặc thu hồi."
+      },
+      {
+        "h": "4. Nội dung của bạn — quyền sở hữu và giấy phép",
+        "p": "Bạn sở hữu nội dung bạn tạo hoặc tải lên — bài viết, bình luận, hồ sơ, hình ảnh. Bạn cấp cho nhà vận hành giấy phép không độc quyền, miễn phí để lưu trữ, hiển thị, truyền, lưu đệm và sao lưu nhằm vận hành Dịch vụ. Khi bạn xóa nội dung, nội dung sẽ ngừng hiển thị trong thời gian hợp lý; bản sao có thể tồn tại tạm thời trong bản sao lưu và bộ nhớ đệm."
+      },
+      {
+        "h": "5. Nội dung và hành vi bị cấm",
+        "p": "Không đăng nội dung bất hợp pháp, xâm phạm quyền của người khác, thù ghét, quấy rối hoặc phân biệt đối xử, nội dung tình dục liên quan đến trẻ vị thành niên, spam hoặc mã độc, mạo danh, đăng dữ liệu cá nhân của người khác khi chưa được đồng ý, hoặc thu thập tự động và gây quá tải Dịch vụ."
+      },
+      {
+        "h": "6. Khiếu nại bản quyền và gỡ bỏ",
+        "p": "Chủ sở hữu quyền có thể báo cáo vi phạm tới haroya01@naver.com kèm tác phẩm liên quan, căn cứ về quyền và thông tin liên hệ. Chúng tôi có thể gỡ nội dung sau khi xem xét, và các tài khoản vi phạm nhiều lần có thể bị đình chỉ."
+      },
+      {
+        "h": "7. Quyền của nhà vận hành và xử lý lạm dụng",
+        "p": "Chúng tôi kiểm tra bằng Google Safe Browsing và bộ quy tắc phát hiện bot, và có thể gỡ, chặn hoặc đình chỉ nội dung hay tài khoản vi phạm các điều khoản này hoặc pháp luật mà không cần báo trước."
+      },
+      {
+        "h": "8. Chấm dứt",
+        "p": "Bạn có thể xóa tài khoản bất kỳ lúc nào trong trang cài đặt. Chúng tôi có thể chấm dứt tài khoản vi phạm nghiêm trọng các điều khoản này. Việc xử lý dữ liệu cá nhân khi chấm dứt tuân theo Chính sách quyền riêng tư."
+      },
+      {
+        "h": "9. Tuyên bố miễn trừ và tính khả dụng",
+        "p": "Dịch vụ được cung cấp NGUYÊN TRẠNG, không có bảo đảm nào dưới bất kỳ hình thức nào, dù rõ ràng hay ngụ ý, kể cả tính phù hợp cho một mục đích cụ thể hay hoạt động liên tục, không lỗi. Chúng tôi không bảo đảm tính khả dụng."
+      },
+      {
+        "h": "10. Giới hạn trách nhiệm",
+        "p": "Trong phạm vi tối đa pháp luật cho phép, nhà vận hành không chịu trách nhiệm về mất dữ liệu, gián đoạn dịch vụ, hay các thiệt hại gián tiếp, ngẫu nhiên hoặc do hậu quả."
+      },
+      {
+        "h": "11. Trách nhiệm và bồi thường của bạn",
+        "p": "Bạn cam đoan rằng nội dung của mình không xâm phạm quyền của bên thứ ba, và bồi thường cho nhà vận hành đối với các tranh chấp hoặc khiếu nại phát sinh từ nội dung của bạn hoặc việc bạn vi phạm các điều khoản này."
+      },
+      {
+        "h": "12. Luật áp dụng và giải quyết tranh chấp",
+        "p": "Các điều khoản này được điều chỉnh bởi luật pháp Hàn Quốc, và tranh chấp được giải quyết tại tòa án có thẩm quyền theo tố tụng dân sự Hàn Quốc."
+      },
+      {
+        "h": "13. Thay đổi",
+        "p": "Các điều khoản này có thể thay đổi kèm thông báo. Các thay đổi quan trọng được phản ánh ở ngày \"Cập nhật lần cuối\" và, nếu có thể, được thông báo qua email."
+      },
+      {
+        "h": "14. Liên hệ",
+        "p": "Thắc mắc về các điều khoản này: haroya01@naver.com."
+      }
+    ]
   },
   "privacy": {
     "title": "Chính sách quyền riêng tư",
-    "updatedAt": "Cập nhật lần cuối: 2026-05-08",
-    "p1": "kurl thu thập dữ liệu tối thiểu cần thiết và ẩn danh theo mặc định. Chính sách này tuân theo Điều 13 GDPR và PIPA của Hàn Quốc.",
-    "h1": "1. Chúng tôi thu thập gì",
-    "p2": "Đăng nhập OAuth: email, nhà cung cấp (Google), ngày đăng ký. Rút gọn: URL gốc, mã rút gọn, hạn. Lượt nhấp: dấu thời gian, User-Agent, Referer, IP với octet cuối bị che, quốc gia/khu vực/thành phố suy ra từ GeoIP.",
-    "h2": "2. Vì sao",
-    "p3": "Vận hành dịch vụ (chuyển hướng, thống kê), chống lạm dụng, ứng phó sự cố an ninh. Không bao giờ bán hay dùng cho tiếp thị.",
-    "h3": "3. Lưu trữ",
-    "p4": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Liên kết đã xác thực tồn tại đến khi bạn xóa. Liên kết hết hạn + lượt nhấp của chúng được tự dọn dẹp 30 ngày sau khi hết hạn. Xóa tài khoản sẽ xóa mọi thứ ngay lập tức.",
-    "h4": "4. Ẩn danh hóa IP",
-    "p5": "IP được lưu đã bị che (octet cuối IPv4 / quá hai nhóm đầu của IPv6). IP thô chỉ tồn tại tạm thời trong bộ nhớ và nhật ký — không bao giờ ghi vào cơ sở dữ liệu.",
-    "h5": "5. Quyền của bạn",
-    "p6": "Điều 17 GDPR (xóa bỏ) và Điều 20 (di chuyển dữ liệu) được tôn trọng. Trang cài đặt cho phép tải dữ liệu (JSON) và xóa tài khoản vĩnh viễn.",
-    "h6": "6. Bên thứ ba",
-    "p7": "Google OAuth (email, tên), Google Safe Browsing API (băm URL để kiểm tra mã độc), MaxMind GeoLite2 (GeoIP ngoại tuyến — không có lệnh gọi ra ngoài).",
-    "h7": "7. Cookie",
-    "p8": "Một cookie HttpOnly + Secure + SameSite=Strict cho token làm mới JWT. Không cookie phân tích hay quảng cáo.",
-    "h8": "8. Liên hệ",
-    "p9": "Hỏi về dữ liệu: GitHub issues hoặc email của nhà vận hành."
+    "updatedAt": "Cập nhật lần cuối: 2026-06-26",
+    "intro": "kurl chỉ thu thập lượng dữ liệu cá nhân tối thiểu cần thiết để vận hành Dịch vụ và ẩn danh theo mặc định. Chính sách này tuân theo Luật Bảo vệ Thông tin Cá nhân Hàn Quốc (PIPA) và GDPR của EU (Điều 13).",
+    "sections": [
+      {
+        "h": "1. Dữ liệu chúng tôi thu thập",
+        "p": "Đăng nhập: email (gồm cả email chuyển tiếp riêng tư của Apple nếu bạn dùng Apple), nhà cung cấp xác thực (Google hoặc Apple), ngày đăng ký. Rút gọn: URL gốc, mã rút gọn, hạn dùng. Nội dung: bài viết, bình luận, hồ sơ và hình ảnh bạn tải lên. Nếu bạn bật thông báo đẩy: token thiết bị APNs (ứng dụng iOS) hoặc thông tin đăng ký web push. Lượt nhấp: thời điểm, User-Agent, Referer, IP đã che octet cuối, quốc gia/khu vực/thành phố suy ra từ GeoIP. Nếu khách truy cập gửi qua khối thu thập email của một hồ sơ: email họ nhập và một hash IP."
+      },
+      {
+        "h": "2. Mục đích và cơ sở pháp lý",
+        "p": "Chúng tôi xử lý dữ liệu để vận hành Dịch vụ (chuyển hướng, thống kê, đăng nội dung), ngăn lạm dụng và xử lý sự cố bảo mật. Cơ sở là thực hiện thỏa thuận người dùng, lợi ích hợp pháp trong việc ngăn lạm dụng và bảo mật, và sự đồng ý khi cần. Chúng tôi không dùng cho tiếp thị hay bán dữ liệu."
+      },
+      {
+        "h": "3. Thời gian lưu giữ",
+        "p": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Liên kết và nội dung của người dùng đã xác thực được lưu cho đến khi bạn xóa. Liên kết hết hạn và các lượt nhấp của chúng được tự dọn 30 ngày sau khi hết hạn. Khi bạn xóa tài khoản, tài khoản và dữ liệu được ẩn ngay lập tức và bị xóa vĩnh viễn sau thời gian gia hạn 30 ngày; đăng nhập lại trong thời gian đó sẽ khôi phục tài khoản."
+      },
+      {
+        "h": "4. Ẩn danh IP",
+        "p": "IP được lưu ở dạng đã che (octet cuối của IPv4 / phần sau hai nhóm đầu của IPv6). IP gốc chỉ tồn tại tạm thời trong bộ nhớ và nhật ký, không bao giờ được ghi vào cơ sở dữ liệu."
+      },
+      {
+        "h": "5. Bên thứ ba và đơn vị xử lý",
+        "p": "Chúng tôi sử dụng các đơn vị xử lý sau để vận hành Dịch vụ: Google và Apple (đăng nhập mạng xã hội), Google Safe Browsing (gửi hash tên miền để kiểm tra mã độc), MaxMind GeoLite2 (GeoIP ngoại tuyến — không gọi ra ngoài), Sentry (theo dõi lỗi), Cloudflare (CDN và lọc bot), Amazon Web Services và Vercel (lưu trữ máy chủ và giao diện). Email mà khách truy cập gửi qua khối thu thập email của một hồ sơ sẽ được chia sẻ với chủ hồ sơ đó. Ngoài ra, chúng tôi không chia sẻ dữ liệu với bên thứ ba cho mục đích tiếp thị."
+      },
+      {
+        "h": "6. Chuyển dữ liệu ra nước ngoài",
+        "p": "Một số đơn vị xử lý nêu trên (Google, Apple, Sentry, Cloudflare, Vercel, MaxMind) có thể xử lý dữ liệu bên ngoài Hàn Quốc, chủ yếu tại Hoa Kỳ. Chỉ những dữ liệu liệt kê trong \"Dữ liệu chúng tôi thu thập\" được chuyển đi, chỉ nhằm các hoạt động mô tả ở đây, và được giữ theo cùng quy tắc lưu giữ."
+      },
+      {
+        "h": "7. Cookie",
+        "p": "Chúng tôi chỉ dùng cookie thiết yếu: token xác thực giữ bạn đăng nhập (HttpOnly, Secure, SameSite), lựa chọn ngôn ngữ, lựa chọn giao diện, và việc bạn đã đóng thông báo cookie hay chưa. Không có cookie phân tích hay quảng cáo. Ứng dụng iOS lưu token trong Keychain của thiết bị thay vì cookie."
+      },
+      {
+        "h": "8. Quyền của bạn",
+        "p": "Bạn có thể truy cập, sửa, xóa, hạn chế xử lý và rút lại sự đồng ý đối với dữ liệu cá nhân của mình, và thực hiện các quyền GDPR về truy cập (Điều 15), chỉnh sửa (Điều 16), xóa (Điều 17) và di chuyển dữ liệu (Điều 20). Trang cài đặt cho phép bạn tải dữ liệu dưới dạng JSON hoặc xóa vĩnh viễn tài khoản."
+      },
+      {
+        "h": "9. Trẻ em dưới 14 tuổi",
+        "p": "kurl không hướng đến trẻ em dưới 14 tuổi và không thu thập dữ liệu cá nhân của trẻ dưới 14 tuổi khi chưa có sự đồng ý của người giám hộ hợp pháp (16 tuổi đối với cư dân EU)."
+      },
+      {
+        "h": "10. Biện pháp bảo mật",
+        "p": "Chúng tôi áp dụng mã hóa đường truyền (TLS), lưu trữ mật khẩu và token dưới dạng băm/mã hóa, kiểm soát quyền truy cập, che IP và tối thiểu hóa dữ liệu."
+      },
+      {
+        "h": "11. Người phụ trách bảo vệ dữ liệu và liên hệ",
+        "p": "Người phụ trách bảo vệ dữ liệu: Kim Donghyun (nhà vận hành). Đối với thắc mắc về quyền riêng tư, yêu cầu truy cập hoặc xóa: haroya01@naver.com."
+      },
+      {
+        "h": "12. Khiếu nại",
+        "p": "Tại Hàn Quốc: Ủy ban Hòa giải Tranh chấp Thông tin Cá nhân (kopico.go.kr) và Trung tâm báo cáo quyền riêng tư của KISA (privacy.kisa.or.kr, 118). Cư dân EU/EEA có quyền khiếu nại với cơ quan giám sát địa phương (GDPR Điều 77)."
+      },
+      {
+        "h": "13. Thay đổi",
+        "p": "Chúng tôi có thể cập nhật chính sách này; chúng tôi sửa ngày \"Cập nhật lần cuối\" khi có thay đổi và thông báo các thay đổi quan trọng riêng khi có thể."
+      }
+    ]
   },
   "settings": {
     "title": "Cài đặt",

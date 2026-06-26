@@ -613,7 +613,7 @@
   },
   "cookieConsent": {
     "ariaLabel": "Cookie notice",
-    "message": "We only use strictly-necessary cookies to keep you signed in. No analytics or ad cookies.",
+    "message": "This site uses only the essential cookies needed to run the service. No analytics or advertising cookies.",
     "accept": "Got it",
     "learnMore": "Privacy policy"
   },
@@ -1958,7 +1958,7 @@
     "rightsLead": "GDPR / privacy-law guarantees — available to every user regardless of plan.",
     "right1": "Export my data (JSON)",
     "right2": "Permanent account deletion + cascade",
-    "right3": "Only one cookie (sign-in) — no analytics or ad cookies",
+    "right3": "Essential cookies only — no analytics or ad cookies",
     "proHoldBadge": "Coming soon",
     "proHoldNotice": "Pro is on hold while we finish the billing pipeline. The Free plan still includes 200 links, 8 analytics dimensions, 5 webhooks per link, and 2FA — every feature listed below is live today.",
     "proHoldCta": "Not available yet",
@@ -1970,39 +1970,125 @@
   },
   "terms": {
     "title": "Terms of Service",
-    "updatedAt": "Last updated: 2026-05-08",
-    "p1": "These terms govern your use of kurl. Using the service means you accept them.",
-    "h1": "1. Acceptable use",
-    "p2": "kurl is for shortening lawful URLs only. Shortening is rejected or revoked for: malicious/phishing destinations, spam, copyright violations, hate content, doxxing.",
-    "h2": "2. Shortenable URLs",
-    "p3": "Public http/https URLs only. Private IPs, localhost, file:// and similar are blocked.",
-    "h3": "3. Abuse handling",
-    "p4": "We screen with Google Safe Browsing plus custom bot heuristics. Abusive accounts may be suspended without notice.",
-    "h4": "4. Availability",
-    "p5": "Service provided AS-IS without availability guarantees. Operators are not liable for data loss or downtime.",
-    "h5": "5. Changes",
-    "p6": "Terms may change with notice via the \"Last updated\" timestamp and, where possible, email."
+    "updatedAt": "Last updated: 2026-06-26",
+    "intro": "These terms govern your use of kurl (the \"Service\"). By using the Service you agree to them. If you do not agree, do not use the Service.",
+    "sections": [
+      {
+        "h": "1. The Service",
+        "p": "kurl provides URL shortening and click analytics, along with features for publishing and sharing content — posts, profiles, comments, and collections. The Service's features may change as needed for operation."
+      },
+      {
+        "h": "2. Eligibility and accounts",
+        "p": "You must be at least 14 years old (16, or the age set by your country's law, in the EU). Keep your account information accurate. You are responsible for your account's security and for activity under it."
+      },
+      {
+        "h": "3. Link shortening — acceptable use",
+        "p": "Only public http/https URLs may be shortened; private IPs, localhost, file:// and similar are rejected. Shortening for malicious/phishing destinations, spam, copyright violations, hate or discrimination, or doxxing is rejected or revoked."
+      },
+      {
+        "h": "4. Your content — ownership and license",
+        "p": "You own the content you create or upload — posts, comments, profile, images. You grant the operator a non-exclusive, royalty-free license to store, display, transmit, cache, and back it up as needed to run the Service. When you delete content it stops being shown within a reasonable time; copies may persist briefly in backups and caches."
+      },
+      {
+        "h": "5. Prohibited content and conduct",
+        "p": "No unlawful content, infringement of others' rights, hate, harassment or discrimination, sexual content involving minors, spam or malware, impersonation, posting others' personal data without consent, or abusive automated scraping or overloading of the Service."
+      },
+      {
+        "h": "6. Copyright complaints and takedown",
+        "p": "Rights holders may report infringement to haroya01@naver.com with the work concerned, the basis of their rights, and contact details. We may remove the content after review, and repeat infringers' accounts may be suspended."
+      },
+      {
+        "h": "7. Operator rights and abuse handling",
+        "p": "We screen with Google Safe Browsing and custom bot heuristics, and may remove, block, or suspend content or accounts that violate these terms or the law, without prior notice."
+      },
+      {
+        "h": "8. Termination",
+        "p": "You may delete your account at any time from the settings page. We may terminate accounts that materially violate these terms. Handling of personal data on termination follows the Privacy Policy."
+      },
+      {
+        "h": "9. Disclaimer and availability",
+        "p": "The Service is provided AS-IS, without warranties of any kind, express or implied, including fitness for a particular purpose or uninterrupted, error-free operation. We do not guarantee availability."
+      },
+      {
+        "h": "10. Limitation of liability",
+        "p": "To the fullest extent permitted by law, the operator is not liable for data loss, downtime, or indirect, incidental, or consequential damages."
+      },
+      {
+        "h": "11. Your responsibility and indemnity",
+        "p": "You warrant that your content does not infringe third-party rights, and you indemnify the operator against disputes or claims arising from your content or your breach of these terms."
+      },
+      {
+        "h": "12. Governing law and disputes",
+        "p": "These terms are governed by the laws of the Republic of Korea, and disputes are resolved in the courts having jurisdiction under Korean civil procedure."
+      },
+      {
+        "h": "13. Changes",
+        "p": "These terms may change with notice. Material changes are reflected in the \"Last updated\" date and, where possible, announced by email."
+      },
+      {
+        "h": "14. Contact",
+        "p": "Questions about these terms: haroya01@naver.com."
+      }
+    ]
   },
   "privacy": {
     "title": "Privacy Policy",
-    "updatedAt": "Last updated: 2026-05-08",
-    "p1": "kurl collects the minimum data needed and anonymizes by default. This policy follows GDPR Article 13 and Korea's PIPA.",
-    "h1": "1. What we collect",
-    "p2": "OAuth sign-in: email, provider (Google), signup date. Shortening: original URL, short code, expiry. Clicks: timestamp, User-Agent, Referer, IP with last octet masked, GeoIP-derived country/region/city.",
-    "h2": "2. Why",
-    "p3": "Service operation (redirect, stats), abuse protection, security incident response. Never sold or used for marketing.",
-    "h3": "3. Retention",
-    "p4": "Anonymous links auto-expire after 24h. Authenticated links persist until you delete. Expired links + their clicks are auto-cleaned 30 days after expiry. Account deletion erases everything immediately.",
-    "h4": "4. IP anonymization",
-    "p5": "Stored IPs are masked (IPv4 last octet / IPv6 beyond first two groups). Raw IPs exist transiently in memory and logs only — never written to the database.",
-    "h5": "5. Your rights",
-    "p6": "GDPR Article 17 (erasure) and Article 20 (portability) honored. Settings page exposes data download (JSON) and permanent account deletion.",
-    "h6": "6. Third parties",
-    "p7": "Google OAuth (email, name), Google Safe Browsing API (URL hashes for malware checks), MaxMind GeoLite2 (offline GeoIP — no outbound calls).",
-    "h7": "7. Cookies",
-    "p8": "One HttpOnly + Secure + SameSite=Strict cookie for the JWT refresh token. No analytics or ad cookies.",
-    "h8": "8. Contact",
-    "p9": "Data inquiries: GitHub issues or the operator's email."
+    "updatedAt": "Last updated: 2026-06-26",
+    "intro": "kurl collects only the minimum personal data needed to run the Service and anonymizes by default. This policy follows Korea's Personal Information Protection Act (PIPA) and the EU GDPR (Article 13).",
+    "sections": [
+      {
+        "h": "1. What we collect",
+        "p": "Sign-in: email (including Apple's private email relay if you use Apple), auth provider (Google or Apple), signup date. Shortening: original URL, short code, expiry. Content: your posts, comments, profile, and uploaded images. If you enable push notifications: an APNs device token (iOS app) or web push subscription. Clicks: timestamp, User-Agent, Referer, IP with the last octet masked, GeoIP-derived country/region/city. If a visitor submits a profile's email capture block: the email they enter and an IP hash."
+      },
+      {
+        "h": "2. Purpose and legal basis",
+        "p": "We process data to run the Service (redirects, stats, content publishing), to prevent abuse, and to respond to security incidents. Our bases are performance of the user agreement, the legitimate interest of abuse and security prevention, and consent where required. We never use it for marketing or sell it."
+      },
+      {
+        "h": "3. Retention",
+        "p": "Anonymous links auto-expire after 24h. Authenticated users' links and content persist until you delete them. Expired links and their click events are auto-cleaned 30 days after expiry. When you delete your account, it and its data are hidden immediately and permanently erased after a 30-day grace period; signing in again within that period restores the account."
+      },
+      {
+        "h": "4. IP anonymization",
+        "p": "Stored IPs are masked (IPv4 last octet / IPv6 beyond the first two groups). Raw IPs exist only transiently in memory and logs and are never written to the database."
+      },
+      {
+        "h": "5. Third parties and processors",
+        "p": "We use these processors to run the Service: Google and Apple (social sign-in), Google Safe Browsing (domain hashes for malware checks), MaxMind GeoLite2 (offline GeoIP — no outbound calls), Sentry (error tracking), Cloudflare (CDN and bot filtering), and Amazon Web Services and Vercel (server and frontend hosting). An email a visitor submits through a profile's email capture block is shared with that profile's owner. Otherwise we do not share data with third parties for marketing."
+      },
+      {
+        "h": "6. International transfers",
+        "p": "Some processors above (Google, Apple, Sentry, Cloudflare, Vercel, MaxMind) may process data outside Korea, mainly in the United States. Only the data listed under \"What we collect\" is transferred, solely for the operations described here, and kept under the same retention rules."
+      },
+      {
+        "h": "7. Cookies",
+        "p": "We use essential cookies only: the authentication token that keeps you signed in (HttpOnly, Secure, SameSite), your language choice, your theme choice, and whether the cookie notice was dismissed. No analytics or advertising cookies. The iOS app stores its tokens in the device Keychain instead of cookies."
+      },
+      {
+        "h": "8. Your rights",
+        "p": "You may access, correct, delete, restrict processing of, and withdraw consent for your personal data, and exercise GDPR rights of access (Art. 15), rectification (Art. 16), erasure (Art. 17), and portability (Art. 20). The settings page lets you download your data as JSON or permanently delete your account."
+      },
+      {
+        "h": "9. Children under 14",
+        "p": "kurl is not directed to children under 14 and does not collect personal data from children under 14 without a legal guardian's consent (16 for EU residents)."
+      },
+      {
+        "h": "10. Security measures",
+        "p": "We apply transport encryption (TLS), hashed/encrypted storage of passwords and tokens, access controls, IP masking, and data minimization."
+      },
+      {
+        "h": "11. Data protection officer and contact",
+        "p": "Data protection officer: Kim Donghyun (operator). For privacy inquiries, access, or deletion requests: haroya01@naver.com."
+      },
+      {
+        "h": "12. Complaints",
+        "p": "In Korea: the Personal Information Dispute Mediation Committee (kopico.go.kr) and KISA's privacy report center (privacy.kisa.or.kr, 118). EU/EEA residents have the right to lodge a complaint with their local supervisory authority (GDPR Art. 77)."
+      },
+      {
+        "h": "13. Changes",
+        "p": "We may update this policy; we revise the \"Last updated\" date on change and announce material changes separately where possible."
+      }
+    ]
   },
   "settings": {
     "title": "Settings",
