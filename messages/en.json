@@ -1888,7 +1888,7 @@
   },
   "about": {
     "title": "kurl — URL shortener with click analytics",
-    "lead": "Shrink long URLs and see where your clicks come from. Free, no ads.",
+    "lead": "Shorten long URLs and see where your clicks come from. Free to use, and currently ad-free.",
     "section1Title": "Why",
     "section1Body": "Most shorteners hide analytics behind a paywall. kurl gives you device, OS, browser, channel, country, and hour-of-day breakdowns for free.",
     "section2Title": "How it works",
@@ -1975,7 +1975,7 @@
     "sections": [
       {
         "h": "1. The Service",
-        "p": "kurl provides URL shortening and click analytics, along with features for publishing and sharing content — posts, profiles, comments, and collections. The Service's features may change as needed for operation."
+        "p": "kurl provides URL shortening and click analytics, along with features for publishing and sharing content — posts, profiles, comments, and collections. We may add, change, or remove features over time."
       },
       {
         "h": "2. Eligibility and accounts",
@@ -1983,11 +1983,11 @@
       },
       {
         "h": "3. Link shortening — acceptable use",
-        "p": "Only public http/https URLs may be shortened; private IPs, localhost, file:// and similar are rejected. Shortening for malicious/phishing destinations, spam, copyright violations, hate or discrimination, or doxxing is rejected or revoked."
+        "p": "Only public http/https URLs may be shortened; private IPs, localhost, file:// and similar are rejected. Shortening for malicious or phishing destinations, spam, copyright violations, hate or discrimination, or doxxing is rejected or revoked."
       },
       {
         "h": "4. Your content — ownership and license",
-        "p": "You own the content you create or upload — posts, comments, profile, images. You grant the operator a non-exclusive, royalty-free license to store, display, transmit, cache, and back it up as needed to run the Service. When you delete content it stops being shown within a reasonable time; copies may persist briefly in backups and caches."
+        "p": "You own the content you create or upload — posts, comments, profile, images. You grant us a non-exclusive, royalty-free license to store, display, transmit, cache, and back it up as needed to run the Service. When you delete content it stops being shown within a reasonable time; copies may persist briefly in backups and caches."
       },
       {
         "h": "5. Prohibited content and conduct",
@@ -1999,7 +1999,7 @@
       },
       {
         "h": "7. Operator rights and abuse handling",
-        "p": "We screen with Google Safe Browsing and custom bot heuristics, and may remove, block, or suspend content or accounts that violate these terms or the law, without prior notice."
+        "p": "We screen with Google Safe Browsing and our own bot-detection rules, and may remove, block, or suspend content or accounts that violate these terms or the law, without prior notice."
       },
       {
         "h": "8. Termination",
@@ -2007,15 +2007,15 @@
       },
       {
         "h": "9. Disclaimer and availability",
-        "p": "The Service is provided AS-IS, without warranties of any kind, express or implied, including fitness for a particular purpose or uninterrupted, error-free operation. We do not guarantee availability."
+        "p": "The Service is provided \"as is\", without warranties of any kind, express or implied, including fitness for a particular purpose or uninterrupted, error-free operation. We do not guarantee availability."
       },
       {
         "h": "10. Limitation of liability",
-        "p": "To the fullest extent permitted by law, the operator is not liable for data loss, downtime, or indirect, incidental, or consequential damages."
+        "p": "To the fullest extent permitted by law, we are not liable for data loss, downtime, or indirect, incidental, or consequential damages."
       },
       {
         "h": "11. Your responsibility and indemnity",
-        "p": "You warrant that your content does not infringe third-party rights, and you indemnify the operator against disputes or claims arising from your content or your breach of these terms."
+        "p": "You warrant that your content does not infringe third-party rights, and you indemnify us against disputes or claims arising from your content or your breach of these terms."
       },
       {
         "h": "12. Governing law and disputes",
@@ -2074,7 +2074,7 @@
       },
       {
         "h": "10. Security measures",
-        "p": "We apply transport encryption (TLS), hashed/encrypted storage of passwords and tokens, access controls, IP masking, and data minimization."
+        "p": "We apply transport encryption (TLS), hashed/encrypted storage of authentication tokens and two-factor secrets, access controls, IP masking, and data minimization."
       },
       {
         "h": "11. Data protection officer and contact",

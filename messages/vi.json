@@ -1888,7 +1888,7 @@
   },
   "about": {
     "title": "kurl — Rút gọn URL kèm phân tích lượt nhấp",
-    "lead": "Thu nhỏ URL dài và xem lượt nhấp của bạn đến từ đâu. Miễn phí, không quảng cáo.",
+    "lead": "Rút gọn URL dài và xem lượt nhấp của bạn đến từ đâu. Miễn phí, hiện chưa có quảng cáo.",
     "section1Title": "Vì sao",
     "section1Body": "Hầu hết dịch vụ rút gọn giấu phân tích sau bức tường trả phí. kurl cho bạn phân tách theo thiết bị, hệ điều hành, trình duyệt, kênh, quốc gia và thời điểm trong ngày, miễn phí.",
     "section2Title": "Cách hoạt động",
@@ -2038,7 +2038,7 @@
     "sections": [
       {
         "h": "1. Dữ liệu chúng tôi thu thập",
-        "p": "Đăng nhập: email (gồm cả email chuyển tiếp riêng tư của Apple nếu bạn dùng Apple), nhà cung cấp xác thực (Google hoặc Apple), ngày đăng ký. Rút gọn: URL gốc, mã rút gọn, hạn dùng. Nội dung: bài viết, bình luận, hồ sơ và hình ảnh bạn tải lên. Nếu bạn bật thông báo đẩy: token thiết bị APNs (ứng dụng iOS) hoặc thông tin đăng ký web push. Khi nhấp và xem: thời điểm, User-Agent, Referer, IP đã che octet cuối, quốc gia/khu vực/thành phố từ GeoIP, ngôn ngữ trình duyệt, loại thiết bị/OS/trình duyệt, và nhà mạng (ASN/tổ chức). Để thống kê lượt truy cập lại, chúng tôi tạo và lưu một hash một chiều (định danh giả danh) từ IP và User-Agent; bản thân IP gốc không được lưu. Nếu khách truy cập gửi qua khối thu thập email của một hồ sơ: email họ nhập và một hash IP."
+        "p": "Đăng nhập: email (gồm cả email chuyển tiếp riêng tư của Apple nếu bạn dùng Apple), nhà cung cấp xác thực (Google hoặc Apple), ngày đăng ký. Rút gọn: URL gốc, mã rút gọn, ngày hết hạn. Nội dung: bài viết, bình luận, hồ sơ và hình ảnh bạn tải lên. Nếu bạn bật thông báo đẩy: token thiết bị APNs (ứng dụng iOS) hoặc thông tin đăng ký web push. Khi nhấp và xem: thời điểm, User-Agent, Referer, IP đã che octet cuối, quốc gia/khu vực/thành phố từ GeoIP, ngôn ngữ trình duyệt, loại thiết bị/OS/trình duyệt, và nhà mạng (ASN/tổ chức). Để thống kê lượt truy cập lại, chúng tôi tạo và lưu một hash một chiều (định danh giả danh) từ IP và User-Agent; bản thân IP gốc không được lưu. Nếu khách truy cập gửi qua biểu mẫu thu thập email trên một hồ sơ: email họ nhập và một hash IP."
       },
       {
         "h": "2. Mục đích và cơ sở pháp lý",
@@ -2046,15 +2046,15 @@
       },
       {
         "h": "3. Thời gian lưu giữ",
-        "p": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Liên kết và nội dung của người dùng đã xác thực được lưu cho đến khi bạn xóa. Liên kết hết hạn và các lượt nhấp của chúng được tự dọn 30 ngày sau khi hết hạn. Khi bạn xóa tài khoản, tài khoản và dữ liệu được ẩn ngay lập tức và bị xóa vĩnh viễn sau thời gian gia hạn 30 ngày; đăng nhập lại trong thời gian đó sẽ khôi phục tài khoản."
+        "p": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Liên kết và nội dung của người dùng đã xác thực được lưu cho đến khi bạn xóa. Liên kết hết hạn và các lượt nhấp của chúng được tự dọn 30 ngày sau khi hết hạn. Khi bạn xóa tài khoản, tài khoản và dữ liệu được ẩn ngay lập tức và bị xóa vĩnh viễn sau thời gian chờ 30 ngày; đăng nhập lại trong thời gian đó sẽ khôi phục tài khoản."
       },
       {
         "h": "4. Ẩn danh IP",
-        "p": "IP được lưu ở dạng đã che (octet cuối của IPv4 / phần sau hai nhóm đầu của IPv6). IP gốc chỉ tồn tại tạm thời trong bộ nhớ và nhật ký, không bao giờ được ghi vào cơ sở dữ liệu."
+        "p": "IP được lưu ở dạng đã che (octet cuối của IPv4 / chỉ giữ hai nhóm đầu của IPv6). IP gốc chỉ tồn tại tạm thời trong bộ nhớ và nhật ký, không bao giờ được ghi vào cơ sở dữ liệu."
       },
       {
         "h": "5. Bên thứ ba và đơn vị xử lý",
-        "p": "Chúng tôi sử dụng các đơn vị xử lý sau để vận hành Dịch vụ: Google và Apple (đăng nhập mạng xã hội), Google Safe Browsing (gửi hash tên miền để kiểm tra mã độc), MaxMind GeoLite2 (GeoIP ngoại tuyến — không gọi ra ngoài), PostHog (phân tích sử dụng sản phẩm), Sentry (theo dõi lỗi), Cloudflare (CDN và lọc bot), Amazon Web Services và Vercel (lưu trữ máy chủ và giao diện). Email mà khách truy cập gửi qua khối thu thập email của một hồ sơ sẽ được chia sẻ với chủ hồ sơ đó. Nếu chúng tôi giới thiệu quảng cáo, chúng tôi sẽ bổ sung các đơn vị xử lý liên quan vào chính sách này và thông báo trước."
+        "p": "Chúng tôi sử dụng các đơn vị xử lý sau để vận hành Dịch vụ: Google và Apple (đăng nhập bằng tài khoản), Google Safe Browsing (gửi hash tên miền để kiểm tra mã độc), MaxMind GeoLite2 (GeoIP ngoại tuyến — không gọi ra ngoài), PostHog (phân tích sử dụng sản phẩm), Sentry (theo dõi lỗi), Cloudflare (CDN và lọc bot), Amazon Web Services và Vercel (lưu trữ máy chủ và giao diện). Email mà khách truy cập gửi qua biểu mẫu thu thập email trên một hồ sơ sẽ được chia sẻ với chủ hồ sơ đó. Nếu chúng tôi giới thiệu quảng cáo, chúng tôi sẽ bổ sung các đơn vị xử lý liên quan vào chính sách này và thông báo trước."
       },
       {
         "h": "6. Chuyển dữ liệu ra nước ngoài",
@@ -2074,7 +2074,7 @@
       },
       {
         "h": "10. Biện pháp bảo mật",
-        "p": "Chúng tôi áp dụng mã hóa đường truyền (TLS), lưu trữ mật khẩu và token dưới dạng băm/mã hóa, kiểm soát quyền truy cập, che IP và tối thiểu hóa dữ liệu."
+        "p": "Chúng tôi áp dụng mã hóa đường truyền (TLS), lưu trữ token xác thực và bí mật xác thực hai yếu tố dưới dạng băm/mã hóa, kiểm soát quyền truy cập, che IP và tối thiểu hóa dữ liệu."
       },
       {
         "h": "11. Người phụ trách bảo vệ dữ liệu và liên hệ",
