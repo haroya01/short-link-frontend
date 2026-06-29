@@ -110,6 +110,28 @@ describe("video embeds", () => {
     expect(markdownToBlocks("see https://example.com/article for more")[0].type).toBe("PARAGRAPH");
   });
 
+  it("turns a standalone image URL into an IMAGE block, not a link card", () => {
+    expect(
+      markdownToBlocks(
+        "https://paiza-webapp.s3.ap-northeast-1.amazonaws.com/studentjoboffer/35546/large-x.jpg",
+      ),
+    ).toEqual([
+      {
+        type: "IMAGE",
+        content: JSON.stringify({
+          url: "https://paiza-webapp.s3.ap-northeast-1.amazonaws.com/studentjoboffer/35546/large-x.jpg",
+          alt: "",
+        }),
+      },
+    ]);
+    expect(markdownToBlocks("https://cdn.example.com/a/b.png?v=2&w=800")[0].type).toBe("IMAGE");
+    expect(markdownToBlocks("<https://cdn.example.com/a/b.webp>")[0].type).toBe("IMAGE");
+  });
+
+  it("keeps a labeled link to an image as an EMBED (author meant a link)", () => {
+    expect(markdownToBlocks("[my photo](https://cdn.example.com/a/b.jpg)")[0].type).toBe("EMBED");
+  });
+
   it("splits a video URL out of surrounding text", () => {
     const blocks = markdownToBlocks("intro line\nhttps://youtu.be/dQw4w9WgXcQ\noutro line");
     expect(blocks.map((b) => b.type)).toEqual(["PARAGRAPH", "EMBED", "PARAGRAPH"]);

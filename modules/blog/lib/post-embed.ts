@@ -11,6 +11,25 @@ export type EmbedPlan =
   | { kind: "map"; lat: number; lng: number; label: string | null; url: string }
   | { kind: "link"; url: string };
 
+/** URL paths ending in an image format our upload/import pipeline handles (jpeg/png/gif/webp). */
+const IMAGE_PATH_RE = /\.(?:jpe?g|png|gif|webp)$/i;
+
+/**
+ * A standalone URL that points at an image file (by extension) — pasted/inserted on its own it
+ * should render as the image, not a link-preview card. Query/hash are ignored (CDN params like
+ * `?w=800`). Limited to the formats the server's image-import endpoint can re-host.
+ */
+export function isImageUrl(raw: string): boolean {
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    return false;
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return false;
+  return IMAGE_PATH_RE.test(parsed.pathname);
+}
+
 export function planEmbed(raw: string | null): EmbedPlan | null {
   const url = extractUrl(raw);
   if (!url) return null;
