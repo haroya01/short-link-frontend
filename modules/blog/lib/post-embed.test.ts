@@ -1,5 +1,29 @@
 import { describe, expect, it } from "vitest";
-import { planEmbed } from "./post-embed";
+import { isImageUrl, planEmbed } from "./post-embed";
+
+describe("isImageUrl", () => {
+  it("is true for http(s) URLs ending in a supported image extension", () => {
+    expect(isImageUrl("https://cdn.example.com/a/b.jpg")).toBe(true);
+    expect(isImageUrl("https://cdn.example.com/a/b.JPEG")).toBe(true);
+    expect(isImageUrl("https://cdn.example.com/a/b.png")).toBe(true);
+    expect(isImageUrl("https://cdn.example.com/a/b.gif")).toBe(true);
+    expect(isImageUrl("https://cdn.example.com/a/b.webp")).toBe(true);
+    // Query / hash are ignored (CDN params).
+    expect(isImageUrl("https://cdn.example.com/a/b.png?v=2&w=800")).toBe(true);
+    expect(
+      isImageUrl(
+        "https://paiza-webapp.s3.ap-northeast-1.amazonaws.com/studentjoboffer/35546/large-x.jpg",
+      ),
+    ).toBe(true);
+  });
+
+  it("is false for non-image URLs, bad schemes, and garbage", () => {
+    expect(isImageUrl("https://example.com/article")).toBe(false);
+    expect(isImageUrl("https://example.com/a.jpg.html")).toBe(false);
+    expect(isImageUrl("ftp://example.com/a.jpg")).toBe(false);
+    expect(isImageUrl("not a url")).toBe(false);
+  });
+});
 
 describe("planEmbed", () => {
   it("returns null for empty / blank / invalid", () => {

@@ -1,7 +1,7 @@
 import type { BlockInput } from "@/modules/blog/api/posts";
 import { altWithWidth, parseImageAlt } from "@/modules/blog/lib/image-width";
 import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
-import { planEmbed } from "@/modules/blog/lib/post-embed";
+import { isImageUrl, planEmbed } from "@/modules/blog/lib/post-embed";
 
 /**
  * A line that is just a video URL (bare, an `<autolink>`, or a `[text](url)` link) → return that
@@ -26,6 +26,19 @@ function isTableStart(line: string, next: string | undefined): boolean {
  * embeddable on its own → return that URL. Embeddable = a video provider (YouTube / Vimeo) or a
  * kurl short link (rendered as a live link-stats card). Other URLs stay a normal paragraph.
  */
+/**
+ * A line that is just a bare (or `<autolink>`) URL pointing at an image file (by extension) → that
+ * URL, so a pasted external image renders as an IMAGE block instead of a link-preview EMBED. A
+ * labeled `[text](url)` link is left to the embed path (the author meant a link). Mirrored by the
+ * backend's {@code standaloneImageUrl}.
+ */
+function standaloneImageUrl(line: string): string | null {
+  const t = line.trim();
+  const m = t.match(/^<(https?:\/\/[^>\s]+)>$/) || t.match(/^(https?:\/\/\S+)$/);
+  if (!m) return null;
+  return isImageUrl(m[1]) ? m[1] : null;
+}
+
 function standaloneEmbedUrl(line: string): string | null {
   const t = line.trim();
   const m =
@@ -151,6 +164,15 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
           }),
         });
       }
+      i++;
+      continue;
+    }
+
+    // A standalone bare image URL → IMAGE block, so a pasted external image renders as the image
+    // and not a link-preview card. Must run before the embed check, which claims any standalone URL.
+    const imageUrl = standaloneImageUrl(line);
+    if (imageUrl) {
+      blocks.push({ type: "IMAGE", content: JSON.stringify({ url: imageUrl, alt: "" }) });
       i++;
       continue;
     }

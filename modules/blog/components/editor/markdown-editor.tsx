@@ -50,6 +50,7 @@ import {
 } from "@/modules/blog/components/editor/place-search-dialog";
 import { altWithWidth, type ImageWidth } from "@/modules/blog/lib/image-width";
 import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
+import { isImageUrl } from "@/modules/blog/lib/post-embed";
 
 /** Options for opening the image picker: a width (wide/full/half) and whether to allow multi-select
  *  (for a side-by-side "half" pair). Carried to the file-input change handler via a ref. */
@@ -292,9 +293,21 @@ export function MarkdownEditor({
             return true;
           }
         }
+        // A bare image URL pasted onto an empty line (e.g. an external <img> src copied as text) →
+        // re-host & insert as an image, not a link card. Same empty-line gate and re-hosting path as
+        // the <img>-in-HTML branch above, so the image survives after the source URL expires.
+        const text = event.clipboardData?.getData("text/plain")?.trim();
+        if (text && onImportImageUrl && isImageUrl(text)) {
+          const { $from, empty } = editor.state.selection;
+          const para = $from.parent;
+          if (empty && para.type.name === "paragraph" && para.content.size === 0) {
+            event.preventDefault();
+            void importAndInsertMany(editor, [text]);
+            return true;
+          }
+        }
         // A bare URL pasted onto an empty line → a live link-preview card (velog/Notion). Pasting a
         // URL over text or into a non-empty line stays a normal link (default behaviour).
-        const text = event.clipboardData?.getData("text/plain")?.trim();
         if (text && LINK_CARD_URL_RE.test(text)) {
           const { $from, empty } = editor.state.selection;
           const para = $from.parent;
