@@ -29,6 +29,14 @@ describe("normalizeTag", () => {
     expect(normalizeTag("#")).toBe("");
     expect(normalizeTag("")).toBe("");
   });
+
+  it("keeps internal spaces (a multi-word topic stays one tag)", () => {
+    expect(normalizeTag("machine learning")).toBe("machine learning");
+  });
+
+  it("strips the leading # and the entry-separating commas together", () => {
+    expect(normalizeTag(" #, react ,")).toBe("react");
+  });
 });
 
 describe("addTag", () => {

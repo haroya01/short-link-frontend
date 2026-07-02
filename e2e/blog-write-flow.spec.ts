@@ -1318,3 +1318,162 @@ test("restoring a revision reseeds the editor with the restored content (A17)", 
   // The restored content is now shown in the editor (remounted from the reloaded blocks).
   await expect(page.locator(".tiptap h2")).toHaveText("Restored heading", { timeout: 15_000 });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Tag & publish usability (#788) — one-tap suggestion chips, the shared tag rules, the canvas
+// "topics" line, and the "use the body's first image" cover suggestion. These lean on two endpoints
+// the suggestions hook calls (followed tag-prefs + popular tags); they're mocked per test. Routes
+// registered AFTER setupMocks win over its generic `**/api/v1/**` fallback (last registration wins).
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+/** Seed the two endpoints behind useTagSuggestions: the viewer's followed tags (account tag-prefs)
+ *  and the most-used published tags. Call after setupMocks so these specific routes take priority. */
+async function setupTagSuggestions(
+  page: Page,
+  opts: { followed?: string[]; popular?: string[] } = {},
+) {
+  const followed = opts.followed ?? [];
+  const popular = opts.popular ?? [];
+  await page.route("**/api/v1/users/me/tag-prefs", (route) =>
+    route.fulfill({ json: { followed, hidden: [] } }),
+  );
+  await page.route("**/api/v1/public/tags**", (route) =>
+    route.fulfill({ json: popular.map((tag, i) => ({ tag, count: popular.length - i })) }),
+  );
+}
+
+/** A ghost suggestion chip renders as a "+ <tag>" button. */
+function suggestionChip(scope: Locator, tag: string) {
+  return scope.getByRole("button", { name: `+ ${tag}`, exact: true });
+}
+
+test("publish dialog: followed + popular tags render as one-tap suggestion chips (deduped)", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  // "react" is BOTH followed and popular — the merge must surface it once (followed first, no dup below).
+  await setupTagSuggestions(page, {
+    followed: ["react", "nextjs"],
+    popular: ["react", "typescript", "css"],
+  });
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  for (const tag of ["react", "nextjs", "typescript", "css"]) {
+    await expect(suggestionChip(dialog, tag)).toBeVisible();
+  }
+  // Case-insensitive dedupe: "react" is offered exactly once despite being in both lists.
+  await expect(suggestionChip(dialog, "react")).toHaveCount(1);
+  // One tap adds the topic as a chip and drops it from the suggestion row.
+  await suggestionChip(dialog, "nextjs").click();
+  await expect(dialog.getByRole("button", { name: "Remove tag nextjs" })).toBeVisible();
+  await expect(suggestionChip(dialog, "nextjs")).toHaveCount(0);
+  // …and it reaches the metadata PATCH on autosave (a real add, not just a visual chip).
+  await expect.poll(() => captured.meta?.tags, { timeout: 15_000 }).toContain("nextjs");
+});
+
+test("publish dialog: typing filters the tag suggestions (substring, case-insensitive)", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await setupTagSuggestions(page, { popular: ["react", "redux", "typescript", "css"] });
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  await expect(suggestionChip(dialog, "react")).toBeVisible();
+  const tagInput = dialog.locator('input[autocomplete="off"]');
+  await tagInput.fill("re");
+  await expect(suggestionChip(dialog, "react")).toBeVisible();
+  await expect(suggestionChip(dialog, "redux")).toBeVisible();
+  await expect(suggestionChip(dialog, "typescript")).toHaveCount(0);
+  await expect(suggestionChip(dialog, "css")).toHaveCount(0);
+  // Uppercase query still matches (the filter lowercases both sides).
+  await tagInput.fill("RED");
+  await expect(suggestionChip(dialog, "redux")).toBeVisible();
+  await expect(suggestionChip(dialog, "react")).toHaveCount(0);
+});
+
+test("publish dialog: tag entry strips a leading # and caps length at 40", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  const tagInput = dialog.locator('input[autocomplete="off"]');
+  // A pasted "#react" stores as "react" (leading # stripped, matching the app's rule).
+  await tagInput.fill("#react");
+  await tagInput.press("Enter");
+  await expect(dialog.getByRole("button", { name: "Remove tag react" })).toBeVisible();
+  // A 50-char entry is capped to exactly 40.
+  const capped = "a".repeat(40);
+  await tagInput.fill("a".repeat(50));
+  await tagInput.press("Enter");
+  await expect(dialog.getByRole("button", { name: `Remove tag ${capped}` })).toBeVisible();
+  await expect.poll(() => captured.meta?.tags, { timeout: 15_000 }).toEqual(["react", capped]);
+});
+
+test("publish dialog: the tag field shows n/10 and stops accepting more at the 10-tag cap", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  const dialog = await openPublishDialog(page);
+  const tagInput = dialog.locator('input[autocomplete="off"]');
+  for (let i = 1; i <= 10; i++) {
+    await tagInput.fill(`t${i}`);
+    await tagInput.press("Enter");
+  }
+  // The counter reads 10/10 and the soft cap note appears — the old build silently dropped the 11th.
+  await expect(dialog.getByText("10/10")).toBeVisible();
+  await expect(dialog.getByText("Up to 10 tags")).toBeVisible();
+  // The field disables at the cap, so an 11th can't even be typed.
+  await expect(tagInput).toBeDisabled();
+});
+
+test("canvas topics: the '+ Add topics' ghost expands and its chip shows in the publish dialog (shared state)", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  // With no tags, a quiet "+ Add topics" affordance sits under the title (not hidden behind 발행).
+  const addTopics = page.getByRole("button", { name: "Add topics" });
+  await expect(addTopics).toBeVisible();
+  await addTopics.click();
+  // It expands into the SAME chip input. (Scoped by the tag placeholder — the title input is separate.)
+  const canvasTag = page.getByPlaceholder(/add a tag/i);
+  await canvasTag.fill("canvastopic");
+  await canvasTag.press("Enter");
+  await page.getByRole("button", { name: "Done", exact: true }).click();
+  // Collapsed, the canvas shows the topic as muted "#tag" text.
+  await expect(page.getByText("#canvastopic")).toBeVisible();
+  // Opening the publish dialog shows the SAME topic (one shared ed.tags source of truth)…
+  const dialog = await openPublishDialog(page);
+  await expect(dialog.getByRole("button", { name: "Remove tag canvastopic" })).toBeVisible();
+  // …and it persists through autosave.
+  await expect.poll(() => captured.meta?.tags, { timeout: 15_000 }).toContain("canvastopic");
+});
+
+test("publish dialog: offers the body's first image as a one-tap cover, applied on tap", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  // Put an image in the body via the real presign → S3 → commit path (mocked → IMAGE_URL).
+  await page.locator(".tiptap").click();
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "shot.png", mimeType: "image/png", buffer: Buffer.from("png-bytes") });
+  await expect(page.locator(".tiptap img")).toBeVisible({ timeout: 10_000 });
+  const dialog = await openPublishDialog(page);
+  // Cover is empty + the body has an image → the "use the first image" suggestion shows.
+  const suggest = dialog.getByRole("button", { name: "Use the first image from your post" });
+  await expect(suggest).toBeVisible({ timeout: 10_000 });
+  await suggest.click();
+  // Tapping applies it (never silent): the cover preview swaps in the image and the suggestion is gone.
+  await expect(dialog.locator(`img[src="${IMAGE_URL}"]`)).toBeVisible();
+  await expect(suggest).toHaveCount(0);
+  // The applied cover persists to the metadata PATCH.
+  await expect.poll(() => captured.meta?.ogImageUrl, { timeout: 15_000 }).toBe(IMAGE_URL);
+});
