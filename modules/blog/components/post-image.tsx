@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { usePresence } from "@/hooks/use-presence";
 import type { ImageWidth } from "@/modules/blog/lib/image-width";
 
 // Wider-than-column layouts. Reader uses these; the editor mirrors them via img[alt^="«wide»"] CSS.
@@ -33,6 +34,8 @@ export function PostImage({
 }) {
   const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
+  // Hold the lightbox mounted while backdrop + image fade back out (post-lightbox-closing).
+  const { mounted, closing } = usePresence(open, 200);
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const label = alt || caption || "";
 
@@ -57,11 +60,11 @@ export function PostImage({
         className="focus-ring block w-full cursor-zoom-in"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt={label} loading="lazy" />
+        <img src={src} alt={label} loading="lazy" className="img-fade" />
       </button>
       {caption && <figcaption>{caption}</figcaption>}
 
-      {open &&
+      {mounted &&
         typeof document !== "undefined" &&
         createPortal(
           <div
@@ -70,7 +73,7 @@ export function PostImage({
             aria-modal="true"
             aria-label={label || t("imageZoom")}
             onClick={() => setOpen(false)}
-            className="post-lightbox fixed inset-0 z-[100] flex cursor-zoom-out items-center justify-center bg-slate-950/90 p-4 backdrop-blur-sm"
+            className={`post-lightbox${closing ? " post-lightbox-closing" : ""} fixed inset-0 z-[100] flex cursor-zoom-out items-center justify-center bg-slate-950/90 p-4 backdrop-blur-sm`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

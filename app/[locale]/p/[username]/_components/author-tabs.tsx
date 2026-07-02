@@ -20,7 +20,8 @@ const PAD = 16;
 // 시리즈 and takes visibly longer than an adjacent hop. Mirrors the feed's FeedSortTabs.
 const MS_PER_PX = 3;
 const MIN_MS = 180;
-const MAX_MS = 640;
+// Capped at the move tier's ceiling (§10.7) — mirrors FeedSortTabs.
+const MAX_MS = 320;
 
 /**
  * Author tab bar (글 · 시리즈 · 소개 · 좋아요 · 북마크) with a single underline that *glides* from the

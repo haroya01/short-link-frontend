@@ -18,7 +18,8 @@ const PAD = 10;
 // takes visibly longer and sweeps across the middle tab, while an adjacent hop stays quick.
 const MS_PER_PX = 3;
 const MIN_MS = 180;
-const MAX_MS = 640;
+// Capped at the move tier's ceiling (§10.7) — a two-tab jump still sweeps, just not slowly.
+const MAX_MS = 320;
 
 /**
  * Feed-home sort tabs (최신 · 인기 · 팔로잉) with a single underline that *slides* between tabs — it

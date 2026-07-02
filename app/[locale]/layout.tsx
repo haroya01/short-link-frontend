@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { JetBrains_Mono } from "next/font/google";
+import { ImageFade } from "@/components/common/image-fade";
 import "../globals.css";
 
 /*
@@ -258,6 +259,8 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale}>
           {children}
         </NextIntlClientProvider>
+        {/* Load-fade marker for lazy content images (img.img-fade) — see the component doc. */}
+        <ImageFade />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

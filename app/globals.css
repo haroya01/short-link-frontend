@@ -80,6 +80,16 @@ body[data-bottom-nav] {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
+/* Exit mirrors for use-presence overlays: the sheet slides back below the fold while its
+   backdrop container fades out. Reduced-motion never sees these — the hook unmounts instantly. */
+@keyframes sheet-down {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+@keyframes overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
 
 /*
  * Reserve gutter for the scrollbar at the root so layout doesn't reflow when content grows past
@@ -279,7 +289,7 @@ summary,
    * change but no transform.
    */
   .hover-lift {
-    @apply transition-all duration-200 ease-out will-change-transform;
+    @apply transition-all duration-200 ease-out;
   }
   .hover-lift:hover {
     @apply -translate-y-0.5 shadow-md;
@@ -329,7 +339,6 @@ summary,
       transform 200ms ease-out,
       box-shadow 200ms ease-out,
       border-color 200ms ease-out;
-    will-change: transform;
   }
   .profile-card:hover {
     transform: translateY(-2px);
@@ -401,7 +410,7 @@ summary,
    */
   .profile-fade {
     opacity: 0;
-    animation: profile-fade-in 360ms ease-out forwards;
+    animation: profile-fade-in 360ms var(--ease) forwards;
     animation-delay: calc(var(--idx, 0) * 50ms);
   }
   @media (prefers-reduced-motion: reduce) {
@@ -733,10 +742,10 @@ summary,
   }
 }
 .content-slide-fwd {
-  animation: content-slide-fwd 460ms var(--ease) both;
+  animation: content-slide-fwd 300ms var(--ease) both;
 }
 .content-slide-back {
-  animation: content-slide-back 460ms var(--ease) both;
+  animation: content-slide-back 300ms var(--ease) both;
 }
 @media (prefers-reduced-motion: reduce) {
   .content-slide-fwd,
@@ -834,7 +843,7 @@ html[data-theme-vt] .vt-bottom-nav {
     opacity: 0;
   }
   60% {
-    transform: scale(1.12);
+    transform: scale(1.06);
   }
   to {
     transform: scale(1);
@@ -842,7 +851,8 @@ html[data-theme-vt] .vt-bottom-nav {
   }
 }
 .subscribe-pop {
-  animation: subscribe-pop 240ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  /* 살짝만 넘치는 스프링 — 과한 오버슛(1.56/1.12)은 조용한 표면에서 혼자 시끄러웠다. */
+  animation: subscribe-pop 240ms cubic-bezier(0.34, 1.25, 0.64, 1) both;
 }
 
 /*
@@ -860,7 +870,7 @@ html[data-theme-vt] .vt-bottom-nav {
   }
 }
 .tag-list-enter {
-  animation: tag-list-fade 300ms ease both;
+  animation: tag-list-fade 300ms var(--ease) both;
 }
 @media (prefers-reduced-motion: reduce) {
   .tag-list-enter {
@@ -1243,9 +1253,36 @@ body[data-cookie-consent="visible"] {
 .post-lightbox-img {
   animation: post-lightbox-img-in 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+/* Exit phase (use-presence): backdrop fades while the image settles back down a hair. */
+@keyframes post-lightbox-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes post-lightbox-img-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+.post-lightbox-closing {
+  animation: post-lightbox-out 200ms var(--ease) both;
+}
+.post-lightbox-closing .post-lightbox-img {
+  animation: post-lightbox-img-out 200ms var(--ease) both;
+}
 @media (prefers-reduced-motion: reduce) {
   .post-lightbox,
-  .post-lightbox-img {
+  .post-lightbox-img,
+  .post-lightbox-closing,
+  .post-lightbox-closing .post-lightbox-img {
     animation: none;
   }
 }
@@ -1365,12 +1402,33 @@ body[data-cookie-consent="visible"] {
   }
 }
 
-/* The Tailwind `animate-fade-in` utility (dialogs, sheets, the mobile TOC) has no reduced-motion
-   guard of its own — collapse it for users who ask for less motion. */
+/* The Tailwind animation utilities (dialogs, sheets, dropdowns, toasts) have no reduced-motion
+   guard of their own — collapse them for users who ask for less motion. The exit classes are here
+   too: their overlays unmount instantly under reduced motion (use-presence), so they must never
+   hold an invisible frame. */
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-in {
+  .animate-fade-in,
+  .animate-fade-out,
+  .animate-dropdown-in,
+  .animate-dropdown-out,
+  .animate-toast-in,
+  .animate-toast-out {
     animation: none !important;
     opacity: 1 !important;
+  }
+}
+
+/* 지연 로드 이미지 페이드인 — 픽셀이 도착하는 순간 "뚝" 나타나던 걸 지운다. ImageFade
+   (components/common/image-fade.tsx)가 로드 완료를 data-loaded 로 마킹하고, 루트 플래그
+   (data-img-fade)는 하이드레이션 뒤에만 켜지므로 이미 로드된(캐시) 이미지는 절대 숨겨지지
+   않고 LCP 도 건드리지 않는다. reduced-motion 은 페이드 없이 즉시 표시. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-img-fade] img.img-fade {
+    opacity: 0;
+    transition: opacity 300ms var(--ease);
+  }
+  html[data-img-fade] img.img-fade[data-loaded] {
+    opacity: 1;
   }
 }
 

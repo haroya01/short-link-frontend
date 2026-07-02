@@ -79,7 +79,7 @@ export function DiscoverySeriesCard({
               // transition-all 은 zIndex 의 이산 점프까지 페인트 사이클에 끌어들여 Safari 에서
               // 전환마다 번쩍였다 — transform/opacity 만 전환하고, translateZ(0) 로 각 페이지를
               // 자기 컴포지터 레이어에 고정해 재래스터 플래시를 막는다.
-              className="absolute inset-0 transition-[transform,opacity] duration-500 ease-[var(--ease)] will-change-transform"
+              className="absolute inset-0 transition-[transform,opacity] duration-500 ease-[var(--ease)]"
               style={{
                 transform: `scale(${front ? 1 : 0.97}) translateZ(0)`,
                 zIndex: front ? 2 : 1,
@@ -98,7 +98,7 @@ export function DiscoverySeriesCard({
                       : "bg-white ring-1 ring-slate-200/80 dark:bg-slate-900 dark:ring-slate-700/60"
                 } ${
                   front
-                    ? "transition-[transform,box-shadow] duration-300 ease-[var(--ease)] group-hover:-translate-y-1 group-hover:shadow-card-hover has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950"
+                    ? "transition-[transform,box-shadow] duration-300 ease-[var(--ease)] group-hover:-translate-y-1 group-hover:shadow-card-hover motion-reduce:transform-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950"
                     : ""
                 }`}
               >
@@ -107,7 +107,7 @@ export function DiscoverySeriesCard({
                   // 규칙(블렌드 모드 ❌ — iPad Safari 타일 seam/깜빡임, 글 카드 주석 참조).
                   <>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.ogImageUrl} alt="" loading="lazy" data-vt-cover className="absolute inset-0 h-full w-full object-cover saturate-[.85]" />
+                    <img src={p.ogImageUrl} alt="" loading="lazy" data-vt-cover className="img-fade absolute inset-0 h-full w-full object-cover saturate-[.85]" />
                     <div aria-hidden className="absolute inset-0 bg-accent-900/10" />
                   </>
                 ) : (

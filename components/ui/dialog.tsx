@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { usePresence } from "@/hooks/use-presence";
 import { createPortal } from "react-dom";
 
 type DialogProps = {
@@ -57,6 +58,8 @@ export function ConfirmDialog({
   // matches the closed state and avoids a hydration mismatch.
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
+  // Exit phase: hold the dialog mounted while panel + backdrop fade back out (mirrors the enter).
+  const { mounted: present, closing } = usePresence(open, 160);
 
   React.useEffect(() => {
     busyRef.current = busy;
@@ -80,7 +83,7 @@ export function ConfirmDialog({
     };
   }, [open]);
 
-  if (!open || !mounted) return null;
+  if (!present || !mounted) return null;
 
   // Portal to <body>: a transformed/animated ancestor (the post page's `.post-enter` article, a
   // will-change page wrapper, etc.) would otherwise make this `fixed inset-0` overlay resolve against
@@ -93,7 +96,11 @@ export function ConfirmDialog({
     // offset keeps the Save button position predictable regardless of body length.
     <div className="fixed inset-0 z-50 overflow-y-auto px-4 pt-12 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pt-16">
       <div
-        className="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/70"
+        className={cn(
+          "fixed inset-0 bg-slate-900/50 dark:bg-slate-950/70",
+          // The backdrop fades with the panel — it used to snap in/out around the panel's fade.
+          closing ? "animate-fade-out" : "animate-fade-in",
+        )}
         onClick={() => !busy && onOpenChange(false)}
         aria-hidden
       />
@@ -118,7 +125,7 @@ export function ConfirmDialog({
           // Compact confirms size to content; form dialogs pin a min height so Save doesn't jump.
           !compact && "min-h-[min(540px,calc(100dvh-4rem))]",
           maxWidthClass,
-          "animate-fade-in",
+          closing ? "animate-fade-out" : "animate-fade-in",
         )}
       >
         <div className="flex-1 overflow-y-auto px-6 py-6">
