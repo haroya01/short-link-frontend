@@ -82,9 +82,33 @@ const config: Config = {
         "headline-md": ["2rem", { lineHeight: "1.15" }],
         "headline-lg": ["2.5rem", { lineHeight: "1.1" }],
         "headline-xl": ["3.5rem", { lineHeight: "1.05" }],
+        /*
+         * Card-title scale — 목록/그리드 카드 제목이 컴포넌트마다 `text-[NNpx]` 로 흩어져 있던 것을
+         * 한 스케일로 모은다(타입 산발 방지). size 만 정의하는 이유: 같은 px 가 카드에 따라 다른
+         * line-height 로 쓰인다(18px = feed 1.3 / cover 1.25, 20px = cover 1.25 / series 1.375).
+         * line-height·tracking 은 콜사이트의 `leading-*`/`tracking-*` 로 유지 → 토큰 교체는 무변화.
+         *
+         * - xs (17px): discovery 텍스트 카드
+         * - sm (18px): feed 행 · discovery 커버 카드
+         * - md (19px): discovery 텍스트 featured · discovery 시리즈 카드
+         * - lg (20px): discovery 커버 featured · series feed 카드
+         * - xl (22px): 검색 빈 화면 heading
+         * - 2xl (23px): feed featured 리드 (모바일)
+         * - 3xl (27px): feed featured 리드 (sm+)
+         */
+        "card-title-xs": "1.0625rem",
+        "card-title-sm": "1.125rem",
+        "card-title-md": "1.1875rem",
+        "card-title-lg": "1.25rem",
+        "card-title-xl": "1.375rem",
+        "card-title-2xl": "1.4375rem",
+        "card-title-3xl": "1.6875rem",
       },
       boxShadow: {
         // Blog surface shadows as named tokens so call sites stop hand-rolling arbitrary values.
+        // Browse(발견) 타일의 안정(resting) 상태 그림자 — 닿는 면 가까운 1px + 퍼지는 ambient 로
+        // 평면이 아니라 살짝 떠 있게. hover lift(card-hover)와 짝을 이룬다.
+        card: "0 1px 2px rgba(15,23,42,0.04), 0 6px 16px -8px rgba(15,23,42,0.12)",
         // Browse(발견) 타일 hover lift — 읽기면 flat 철학의 명시적 예외(AGENTS §10.1)라서,
         // 그 농도를 이 토큰 한 곳이 소유한다. 콜사이트에서 임의값으로 다시 들고 다니지 말 것.
         "card-hover": "0 18px 40px -12px rgba(15,23,42,0.28)",

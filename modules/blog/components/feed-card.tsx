@@ -219,8 +219,8 @@ export function FeedCard({
             <h2
               className={`mt-1 line-clamp-2 font-bold leading-[1.3] text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400 ${
                 featured
-                  ? "text-[23px] tracking-headline sm:text-[27px] sm:leading-[1.18]"
-                  : "text-[18px] tracking-tight"
+                  ? "text-card-title-2xl tracking-headline sm:text-card-title-3xl sm:leading-[1.18]"
+                  : "text-card-title-sm tracking-tight"
               }`}
             >
               {item.title}

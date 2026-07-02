@@ -115,7 +115,7 @@ function CardMeta({ item, locale, over }: { item: PublicFeedItem; locale: string
       {/* 조회수는 카드에서 제거(§10.2 와 동일 규칙으로 통일) — 작은 카드에 숫자 신호는 하나(좋아요)면 충분. */}
       {showLikes(item.likeCount) && (
         <span className="flex shrink-0 items-center gap-0.5">
-          <Heart className={`ml-0.5 h-3 w-3 ${over ? "" : "text-accent-500"}`} />
+          <Heart className={`ml-0.5 h-3 w-3 ${over ? "" : "text-accent-600"}`} />
           {item.likeCount}
         </span>
       )}
@@ -128,8 +128,7 @@ function CardMeta({ item, locale, over }: { item: PublicFeedItem; locale: string
 // focus-within ring = 전면 링크 카드의 키보드 포커스 가시화(WCAG 2.4.7).
 const SHELL =
   "group relative overflow-hidden rounded-2xl transition-[transform,box-shadow] duration-300 ease-[var(--ease)] hover:-translate-y-1 hover:shadow-card-hover motion-reduce:transform-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950";
-const CARD_SHADOW =
-  "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_6px_16px_-8px_rgba(15,23,42,0.12)]";
+const CARD_SHADOW = "shadow-card";
 
 export function DiscoveryCard({
   item,
@@ -173,7 +172,7 @@ export function DiscoveryCard({
             {tag && <TagLink tag={tag} />}
             {reason && <ReasonPill reason={reason} t={t} />}
           </div>
-          <h3 className={`text-balance font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100 ${featured ? "text-[19px]" : "text-[17px]"}`}>
+          <h3 className={`text-balance font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100 ${featured ? "text-card-title-md" : "text-card-title-xs"}`}>
             {item.title}
           </h3>
           {item.excerpt && (
@@ -237,7 +236,7 @@ export function DiscoveryCard({
         </div>
         <div className="space-y-2">
           {/* 제목 스케일은 변형(이미지 유무)이 아니라 중요도(featured) 한 축으로만 — 위계 역전 방지. */}
-          <h3 className={`line-clamp-3 text-balance font-semibold leading-tight tracking-tight text-white ${featured ? "text-[20px]" : "text-[18px]"}`}>
+          <h3 className={`line-clamp-3 text-balance font-semibold leading-tight tracking-tight text-white ${featured ? "text-card-title-lg" : "text-card-title-sm"}`}>
             {item.title}
           </h3>
           <CardMeta item={item} locale={locale} over />
