@@ -316,7 +316,6 @@
     "bodyLinks": "本文のリンク",
     "bodyLinksHint": "公開時にkurlリンクへ短縮され、クリックが計測されます。オフにすると元のURLのままになります。",
     "close": "閉じる",
-    "saveDraft": "下書き保存",
     "previewCopyLink": "プレビューリンクをコピー",
     "previewCopiedShort": "コピー済み",
     "previewCopied": "プレビューリンクをコピーしました",
