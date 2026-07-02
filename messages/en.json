@@ -379,7 +379,11 @@
     "scheduledToast": "Scheduled to publish on {when}.",
     "scheduledFor": "Publishes {when}",
     "cancelSchedule": "Cancel schedule",
-    "tagsHint": "Separate with comma or Enter",
+    "tagsHint": "Separate with comma or Enter · tap a suggestion below to add",
+    "addTopics": "Add topics",
+    "tagsDone": "Done",
+    "tagsEdit": "Edit topics",
+    "coverFromBody": "Use the first image from your post",
     "tagsRequired": "Add at least one topic (tag) to publish",
     "boldMode": "Bold",
     "toolbar": {

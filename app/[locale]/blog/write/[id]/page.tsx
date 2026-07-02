@@ -10,8 +10,11 @@ import { EditorHeader } from "@/modules/blog/components/editor/editor-header";
 import { PublishDialog } from "@/modules/blog/components/editor/publish-dialog";
 import { PreviewLinkButton } from "@/modules/blog/components/editor/preview-link-button";
 import { usePostEditor } from "@/modules/blog/components/editor/use-post-editor";
+import { useTagSuggestions } from "@/modules/blog/components/editor/use-tag-suggestions";
+import { CanvasTags } from "@/modules/blog/components/editor/canvas-tags";
 import { EditorSkeleton } from "@/modules/blog/components/editor/editor-skeleton";
 import { markdownLead } from "@/modules/blog/lib/markdown-lead";
+import { firstImageUrl } from "@/modules/blog/lib/markdown-image";
 import { extractExternalLinks } from "@/modules/blog/lib/post-links";
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
@@ -23,6 +26,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   // External links the author wrote in the body — offered for kurl auto-shortening in the publish
   // dialog. Computed before the early returns so the hook order stays stable.
   const bodyLinks = useMemo(() => extractExternalLinks(ed.markdown), [ed.markdown]);
+  // First body image — offered as a one-tap cover suggestion in the publish dialog.
+  const coverSuggestion = useMemo(() => firstImageUrl(ed.markdown), [ed.markdown]);
+  // Followed + popular tags, shared by the canvas tags line and the publish dialog (one fetch).
+  const tagSuggestions = useTagSuggestions();
 
   if (!ready) return null;
   if (!authenticated) {
@@ -112,6 +119,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         </p>
       )}
 
+      {/* One quiet tags line under the title so topics are visible (and editable) while writing, not
+          hidden behind the 발행 button. Shares ed.tags with the publish dialog — one source of truth. */}
+      <CanvasTags tags={ed.tags} onChange={ed.setTags} suggestions={tagSuggestions} />
+
       {/* Clean writing surface: title flows straight into the body — no form strip. All publish
           metadata (cover · 요약 · 시리즈 · 태그 · slug) lives in the 발행 설정 dialog. */}
       <div className="-mx-5 mt-4 min-h-0 flex-1 overflow-hidden">
@@ -140,6 +151,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         cover={ed.coverUrl}
         onCoverChange={ed.setCover}
         onUploadCover={(file) => uploadPostImage(post.id, file)}
+        coverSuggestion={coverSuggestion}
         excerpt={ed.excerpt}
         onExcerptChange={ed.setExcerpt}
         excerptSuggestion={markdownLead(ed.markdown)}
@@ -147,6 +159,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         onSlugChange={ed.setSlug}
         tags={ed.tags}
         onTagsChange={ed.setTags}
+        tagSuggestions={tagSuggestions}
         seriesId={ed.seriesId}
         onSeriesChange={ed.setSeriesId}
         bodyLinks={bodyLinks}

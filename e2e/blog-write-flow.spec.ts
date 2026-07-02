@@ -1016,7 +1016,7 @@ test("removing a tag chip drops it from the metadata PATCH", async ({ page }) =>
   await setupMocks(page, captured, { ...POST, tags: ["keep", "drop"] });
   await openEditor(page);
   const dialog = await openPublishDialog(page);
-  await dialog.getByRole("button", { name: "remove drop", exact: true }).click();
+  await dialog.getByRole("button", { name: "Remove tag drop", exact: true }).click();
   // Draft autosave persists the tag removal.
   await expect.poll(() => captured.meta?.tags, { timeout: 15_000 }).toEqual(["keep"]);
 });

@@ -379,7 +379,11 @@
     "scheduledToast": "{when}に公開予約しました。",
     "scheduledFor": "{when} に公開予定",
     "cancelSchedule": "予約取消",
-    "tagsHint": "カンマかEnterで区切る",
+    "tagsHint": "カンマかEnterで区切る · 下の候補をタップして追加",
+    "addTopics": "トピックを追加",
+    "tagsDone": "完了",
+    "tagsEdit": "トピックを編集",
+    "coverFromBody": "本文の最初の画像を使う",
     "tagsRequired": "公開するにはトピック（タグ）を1つ以上追加してください",
     "boldMode": "太字",
     "toolbar": {

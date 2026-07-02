@@ -9,6 +9,7 @@ import { BrandTick } from "@/modules/blog/components/rail-heading";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 
@@ -25,6 +26,7 @@ export function PublishDialog({
   cover,
   onCoverChange,
   onUploadCover,
+  coverSuggestion,
   excerpt,
   onExcerptChange,
   excerptSuggestion,
@@ -32,6 +34,7 @@ export function PublishDialog({
   onSlugChange,
   tags,
   onTagsChange,
+  tagSuggestions,
   seriesId,
   onSeriesChange,
   bodyLinks,
@@ -50,6 +53,8 @@ export function PublishDialog({
   cover: string | null;
   onCoverChange: (url: string | null) => void;
   onUploadCover: (file: File) => Promise<string>;
+  /** First image in the body — offered as a one-tap cover when none is set (never applied silently). */
+  coverSuggestion?: string | null;
   excerpt: string;
   onExcerptChange: (v: string) => void;
   /** Body's opening line — prefilled into an empty 요약 on open so the author edits, not starts blank. */
@@ -58,6 +63,8 @@ export function PublishDialog({
   onSlugChange: (v: string) => void;
   tags: string[];
   onTagsChange: (v: string[]) => void;
+  /** Followed + popular tags offered as one-tap chips under the tag input. */
+  tagSuggestions?: string[];
   seriesId: number | null;
   onSeriesChange: (v: number | null) => void;
   /** External http(s) links found in the body — offered for auto-shortening through kurl on publish. */
@@ -77,6 +84,9 @@ export function PublishDialog({
 }) {
   const t = useTranslations("postEditor");
   const { me } = useAuth();
+  // On mobile the on-screen keyboard shrinks the visual viewport; lift the sheet by that inset so the
+  // sticky footer (Publish) and lower fields stay reachable while a field is focused (0 on desktop).
+  const keyboardInset = useKeyboardInset();
   // 실제 발행 주소(blog.kurl.me/@user/…)를 보여준다 — 이전 표기 "kurl.me/{slug}" 는 단축링크
   // 도메인이라 발행되는 URL 과 달랐다. dev(path-based)에선 /blog-preview/@user/… 로 그대로 표시.
   const addressPrefix = blogHref(`/@${me?.username ?? ""}/`).replace(/^https?:\/\//, "");
@@ -159,13 +169,20 @@ export function PublishDialog({
   const localMin = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      // Push the whole sheet up above the on-screen keyboard on mobile (0 on desktop).
+      style={{ paddingBottom: keyboardInset || undefined }}
+    >
       <div
         ref={panelRef}
         role="dialog"
         aria-modal
         aria-label={dialogTitle}
-        className="flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:rounded-2xl sm:max-w-3xl"
+        className="flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:rounded-2xl sm:max-w-3xl"
+        // With the keyboard up, cap the sheet to the remaining visual viewport so its scroll area shrinks
+        // (rather than the footer sliding under the keyboard). dvh tracks the shrunken viewport itself.
+        style={keyboardInset ? { maxHeight: `calc(100dvh - ${keyboardInset}px)` } : undefined}
       >
         <header className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5 dark:border-slate-800">
           <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100">{dialogTitle}</h2>
@@ -185,7 +202,12 @@ export function PublishDialog({
               the "required" signal). */}
           <div ref={tagsFieldRef} className="mb-5 scroll-mt-4">
             <Field label={t("tags")} hint={t("tagsHint")} required>
-              <TagInput tags={tags} onChange={onTagsChange} placeholder={t("tagsPlaceholder")} />
+              <TagInput
+                tags={tags}
+                onChange={onTagsChange}
+                suggestions={tagSuggestions}
+                placeholder={t("tagsPlaceholder")}
+              />
               {showTagNudge && (
                 <p className="mt-1.5 text-[12px] font-medium text-amber-600 dark:text-amber-400" role="alert">
                   {t("tagsRequired")}
@@ -243,6 +265,18 @@ export function PublishDialog({
               >
                 {uploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ImagePlus className="h-6 w-6" />}
                 <span className="text-[13px] font-medium">{uploading ? t("coverUploading") : t("coverAdd")}</span>
+              </button>
+            )}
+            {/* Smart default: the body already has an image — offer its first as a one-tap cover. Tapped,
+                not auto-set, so the author stays in control of what the share card shows. */}
+            {!cover && !uploading && coverSuggestion && (
+              <button
+                type="button"
+                onClick={() => onCoverChange(coverSuggestion)}
+                className="focus-ring mt-1.5 inline-flex items-center gap-1.5 rounded-lg px-1 text-[12px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
+              >
+                <ImagePlus className="h-3.5 w-3.5" />
+                {t("coverFromBody")}
               </button>
             )}
             {coverError && (

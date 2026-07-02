@@ -18,6 +18,7 @@ import {
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentComposer } from "@/modules/blog/components/comment-composer";
 import { RichCommentInput } from "@/modules/blog/components/rich-comment-input";
+import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
 import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
@@ -672,26 +673,6 @@ function NoteSheet({
       </div>
     </div>
   );
-}
-
-/** The on-screen keyboard height: how much shorter the visual viewport is than the layout viewport.
- *  Used to lift the bottom sheet above the keyboard on mobile (no-op on desktop / browsers without
- *  visualViewport). */
-function useKeyboardInset(): number {
-  const [inset, setInset] = useState(0);
-  useEffect(() => {
-    const vv = window.visualViewport;
-    if (!vv) return;
-    const update = () => setInset(Math.max(0, window.innerHeight - vv.height - vv.offsetTop));
-    update();
-    vv.addEventListener("resize", update);
-    vv.addEventListener("scroll", update);
-    return () => {
-      vv.removeEventListener("resize", update);
-      vv.removeEventListener("scroll", update);
-    };
-  }, []);
-  return inset;
 }
 
 /** Read the current selection as a single-block highlight payload, or null if it isn't one. */

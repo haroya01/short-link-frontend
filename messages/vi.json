@@ -379,7 +379,11 @@
     "scheduledToast": "Đã lên lịch xuất bản vào {when}.",
     "scheduledFor": "Xuất bản {when}",
     "cancelSchedule": "Hủy lịch",
-    "tagsHint": "Phân tách bằng dấu phẩy hoặc Enter",
+    "tagsHint": "Phân tách bằng dấu phẩy hoặc Enter · chạm gợi ý bên dưới để thêm",
+    "addTopics": "Thêm chủ đề",
+    "tagsDone": "Xong",
+    "tagsEdit": "Sửa chủ đề",
+    "coverFromBody": "Dùng ảnh đầu tiên trong bài",
     "tagsRequired": "Thêm ít nhất một chủ đề (thẻ) để xuất bản",
     "boldMode": "Đậm",
     "toolbar": {
