@@ -337,6 +337,7 @@
     "deleteConfirm": "Xóa bài này? Nội dung và mọi phiên bản cũng bị xóa.",
     "uploading": "Đang tải lên…",
     "imageError": "Tải ảnh lên thất bại.",
+    "pasteImportFailed": "Không thể nhập {count, plural, one {# ảnh} other {# ảnh}} — đã giữ liên kết gốc. Nếu ảnh không hiển thị, hãy xóa và tải tệp lên.",
     "loginRequired": "Vui lòng đăng nhập.",
     "loading": "Đang tải…",
     "notFound": "Không tìm thấy bài viết.",

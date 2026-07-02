@@ -218,19 +218,71 @@ export function MarkdownEditor({
     }
   }
 
+  // Re-host one external URL; null = failed (caller decides the fallback).
+  async function tryImport(url: string): Promise<string | null> {
+    if (!onImportImageUrl) return null;
+    try {
+      return await onImportImageUrl(url);
+    } catch {
+      return null;
+    }
+  }
+
+  // Swap every image node whose src is `from` to `to` in one transaction — used by the post-paste
+  // re-host pass so the swap doesn't disturb the caret or undo grouping of the paste itself.
+  function replaceImageSrc(ed: Editor, from: string, to: string) {
+    const tr = ed.state.tr;
+    ed.state.doc.descendants((node, pos) => {
+      if (node.type.name === "image" && node.attrs.src === from) {
+        tr.setNodeAttribute(pos, "src", to);
+      }
+    });
+    if (tr.docChanged) ed.view.dispatch(tr);
+  }
+
   // Re-host each external image URL (pasted <img src>) then insert it. Same caret-collapse dance as
-  // uploadAndInsertMany so multiple images don't overwrite each other.
+  // uploadAndInsertMany so multiple images don't overwrite each other. Import failures still insert
+  // the ORIGINAL url (an expiring hotlink beats silently losing the image) and surface as ONE
+  // consolidated toast instead of one per image.
   async function importAndInsertMany(ed: Editor, urls: string[]) {
     if (!onImportImageUrl) return;
+    let failures = 0;
     for (const url of urls) {
-      try {
-        const hosted = await onImportImageUrl(url);
-        ed.chain().focus().setImage({ src: hosted, alt: "" }).run();
-        ed.commands.setTextSelection(ed.state.selection.to);
-      } catch (e) {
-        onUploadError?.(e instanceof Error ? e.message : "image import failed");
-      }
+      const hosted = await tryImport(url);
+      if (!hosted) failures += 1;
+      ed.chain().focus().setImage({ src: hosted ?? url, alt: "" }).run();
+      ed.commands.setTextSelection(ed.state.selection.to);
     }
+    if (failures) onUploadError?.(t("pasteImportFailed", { count: failures }));
+  }
+
+  // Mixed rich paste (text + external images, e.g. a whole Notion block selection): the default
+  // handler has already inserted the parsed HTML — external <img> that survived the schema parse are
+  // re-hosted IN PLACE; any the parse dropped are appended at the caret so nothing is silently lost.
+  async function rehostPastedImages(ed: Editor, urls: string[]) {
+    if (!onImportImageUrl) return;
+    let failures = 0;
+    const dropped: string[] = [];
+    for (const url of Array.from(new Set(urls))) {
+      let present = false;
+      ed.state.doc.descendants((node) => {
+        if (node.type.name === "image" && node.attrs.src === url) present = true;
+      });
+      if (!present) {
+        dropped.push(url);
+        continue;
+      }
+      const hosted = await tryImport(url);
+      if (hosted) replaceImageSrc(ed, url, hosted);
+      else failures += 1; // leave the external src in place — still renders while the URL lives
+    }
+    for (const url of dropped) {
+      const hosted = await tryImport(url);
+      if (!hosted) failures += 1;
+      ed.chain().setImage({ src: hosted ?? url, alt: "" }).run();
+      ed.commands.setTextSelection(ed.state.selection.to);
+    }
+    if (failures) onUploadError?.(t("pasteImportFailed", { count: failures }));
   }
 
   const editor = useEditor({
@@ -281,9 +333,10 @@ export function MarkdownEditor({
           return true;
         }
         // Pasted from Notion 등: the clipboard has no image bytes, just text/html with <img src="https…">
-        // pointing at an external (often expiring) URL. tiptap-markdown's html:false would strip the tag
-        // and the image vanishes — so pull the img URLs out and re-host them. Only intercept when the
-        // HTML is image-only (no real text), else fall through so mixed rich pastes keep their text.
+        // pointing at an external (often expiring) URL. Image-only pastes are intercepted and
+        // re-hosted directly; mixed pastes (text + images) fall through so the default handler keeps
+        // the text, then a deferred pass re-hosts (or re-inserts) the external images — before, the
+        // mixed case dropped the images with no feedback.
         const html = event.clipboardData?.getData("text/html");
         if (html && onImportImageUrl) {
           const { urls, textIsEmpty } = externalImageUrlsFromHtml(html);
@@ -291,6 +344,11 @@ export function MarkdownEditor({
             event.preventDefault();
             void importAndInsertMany(editor, urls);
             return true;
+          }
+          if (urls.length) {
+            // setTimeout(0) so the default paste transaction lands first (same tick), then we scan.
+            window.setTimeout(() => void rehostPastedImages(editor, urls), 0);
+            return false;
           }
         }
         // A bare image URL pasted onto an empty line (e.g. an external <img> src copied as text) →
