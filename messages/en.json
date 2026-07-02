@@ -337,6 +337,7 @@
     "deleteConfirm": "Delete this post? The body and all revisions are removed too.",
     "uploading": "Uploading…",
     "imageError": "Image upload failed.",
+    "pasteImportFailed": "Couldn't import {count, plural, one {# image} other {# images}} — kept the original link. If it doesn't show, delete it and upload the file.",
     "loginRequired": "Please sign in.",
     "loading": "Loading…",
     "notFound": "Post not found.",

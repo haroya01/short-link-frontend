@@ -337,6 +337,7 @@
     "deleteConfirm": "本当に削除しますか？本文とすべてのリビジョンも削除されます。",
     "uploading": "アップロード中…",
     "imageError": "画像のアップロードに失敗しました。",
+    "pasteImportFailed": "画像{count, plural, one {#枚} other {#枚}}を取り込めなかったため、元のリンクのまま挿入しました。表示されない場合は削除してファイルをアップロードしてください。",
     "loginRequired": "ログインが必要です。",
     "loading": "読み込み中…",
     "notFound": "記事が見つかりません。",
