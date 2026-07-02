@@ -566,6 +566,9 @@ summary,
   .prose-post pre code {
     @apply bg-transparent p-0 text-slate-100;
   }
+  /* 인용구에 italic 금지(재발 방지) — Pretendard 에 이탤릭 자형이 없어 한글/일본어가 합성 기울임
+     (가짜 oblique)으로 찌그러진다. 구분은 왼쪽 그린 바 + 색이 담당하고, em(인라인 강조)만 이탤릭을
+     유지한다. .prose-text-block blockquote 도 같은 이유로 non-italic. */
   .prose-post blockquote {
     @apply my-7 border-l-[3px] border-accent-400 pl-5 text-[1.125rem] leading-relaxed text-slate-600 dark:text-slate-400;
   }
