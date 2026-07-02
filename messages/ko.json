@@ -380,7 +380,11 @@
     "scheduledToast": "{when}에 발행 예약됐어요.",
     "scheduledFor": "{when} 발행 예정",
     "cancelSchedule": "예약 취소",
-    "tagsHint": "쉼표(,)나 Enter로 구분",
+    "tagsHint": "쉼표(,)나 Enter로 구분 · 아래 추천을 눌러 바로 추가",
+    "addTopics": "주제 추가",
+    "tagsDone": "완료",
+    "tagsEdit": "주제 편집",
+    "coverFromBody": "본문 첫 이미지 사용",
     "tagsRequired": "발행하려면 주제(태그)를 1개 이상 추가하세요",
     "boldMode": "굵게 쓰기",
     "toolbar": {
