@@ -53,7 +53,7 @@ describe("wrapAtOffsets — precise highlight anchoring", () => {
     const m = r.querySelector<HTMLElement>("mark");
     expect(m?.dataset.hlId).toBe("42");
     expect(m?.getAttribute("title")).toBe("my memo");
-    expect(m?.getAttribute("style")).toContain("solid"); // thread underline
+    expect(m?.classList.contains("kurl-highlight--thread")).toBe(true); // thread underline
   });
 
   it("a plain highlight (no note, no replies) is still clickable but without the underline", () => {
@@ -61,8 +61,8 @@ describe("wrapAtOffsets — precise highlight anchoring", () => {
     wrapAtOffsets(r, 0, 0, 5, meta(7));
     const m = r.querySelector<HTMLElement>("mark");
     expect(m?.dataset.hlId).toBe("7");
-    expect(m?.getAttribute("style")).toContain("cursor: pointer");
-    expect(m?.getAttribute("style")).not.toContain("solid");
+    expect(m?.classList.contains(MARK_CLASS)).toBe(true);
+    expect(m?.classList.contains("kurl-highlight--thread")).toBe(false);
   });
 
   it("clearMarks fully unwraps so the body repaints clean", () => {

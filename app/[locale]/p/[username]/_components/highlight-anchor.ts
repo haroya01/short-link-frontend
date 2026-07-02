@@ -7,22 +7,23 @@
  * is the fallback for when those offsets drift (the post was edited after the highlight was made).
  *
  * Every `<mark>` carries `data-hl-id` so a click can open that highlight's reply thread; a highlight
- * that already has a note or replies gets a solid accent underline (invite to read), and its note rides
+ * that already has a note or replies gets an accent underline (invite to read), and its note rides
  * along as a tooltip.
  */
 export const MARK_CLASS = "kurl-highlight";
-const BASE_STYLE = "background-color: rgba(5,150,105,0.18); border-radius: 2px; cursor: pointer;";
-// A highlight with a thread (an author note or at least one reply) gets a solid accent underline.
-const THREAD_STYLE = BASE_STYLE + " border-bottom: 1.5px solid rgba(5,150,105,0.6);";
+// A highlight with a thread (an author note or at least one reply) gets an accent underline.
+// The fill/underline/text colors — and their dark-mode variants — live in globals.css keyed off these
+// classes (a `<mark>`'s UA default is a yellow fill + hardcoded dark text, both wrong here and
+// unreadable in dark mode), so the painter only decides *which* classes a span carries.
+const THREAD_CLASS = "kurl-highlight--thread";
 
 /** What a painted mark needs to know: which highlight it is, and whether it carries a conversation. */
 export type HighlightMeta = { id: number; note: string | null; replyCount: number };
 
 function styleMark(mark: HTMLElement, meta: HighlightMeta) {
-  mark.className = MARK_CLASS;
-  mark.dataset.hlId = String(meta.id);
   const hasThread = !!meta.note || meta.replyCount > 0;
-  mark.setAttribute("style", hasThread ? THREAD_STYLE : BASE_STYLE);
+  mark.className = hasThread ? `${MARK_CLASS} ${THREAD_CLASS}` : MARK_CLASS;
+  mark.dataset.hlId = String(meta.id);
   if (meta.note) mark.title = meta.note;
 }
 

@@ -186,6 +186,30 @@ summary,
   color: #ecfdf5;
 }
 
+/*
+ * Reader highlights painted on the post body (see highlight-anchor.ts). A native `<mark>` has a UA
+ * default of `background: yellow; color: black` — the black text is the dark-mode readability killer
+ * (black on a dark page), so we force `color: inherit` to follow the surrounding body text and paint our
+ * own green tint. Light = accent-600 @ 0.18. Dark = accent-500 (a mid-tone that stays visible on a dark
+ * page — accent-600 muddies into the background) @ 0.28; with body text at slate-300 the composite keeps
+ * ≥ 8:1 contrast. Threaded highlights add an accent underline as the "there's a conversation" signal.
+ */
+mark.kurl-highlight {
+  color: inherit;
+  background-color: rgba(5, 150, 105, 0.18);
+  border-radius: 2px;
+  cursor: pointer;
+}
+mark.kurl-highlight--thread {
+  border-bottom: 1.5px solid rgba(5, 150, 105, 0.6);
+}
+.dark mark.kurl-highlight {
+  background-color: rgba(16, 185, 129, 0.28);
+}
+.dark mark.kurl-highlight--thread {
+  border-bottom-color: rgba(52, 211, 153, 0.6);
+}
+
 @layer utilities {
   .grid-bg {
     background-image:
