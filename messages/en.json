@@ -316,7 +316,6 @@
     "bodyLinks": "In-post links",
     "bodyLinksHint": "Shortened to kurl links on publish so clicks are tracked. Turn one off to keep its original URL.",
     "close": "Close",
-    "saveDraft": "Save draft",
     "previewCopyLink": "Copy preview link",
     "previewCopiedShort": "Copied",
     "previewCopied": "Preview link copied",
