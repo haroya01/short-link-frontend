@@ -133,6 +133,9 @@ export default async function PublicPostPage({
       ? formatDate(post.lastEditedAt, locale)
       : null;
   const headings = extractHeadings(blocks);
+  // 제목 위 조용한 eyebrow — 시리즈에 속하면 시리즈명, 아니면 대표 태그(tags[0]), 둘 다 없으면 없음.
+  // 컬러 배지 없이 회색 muted 한 줄(피드 카드 TagEyebrow 와 같은 어휘) — 제목 앞에 맥락 한 겹만.
+  const eyebrow = result.data.series ? result.data.series.title : (post.tags[0] ?? null);
   // For a series post, pull the full ordered episode list so the banner can show the whole arc with
   // the current part highlighted (the post payload only carries position/total + prev/next).
   const seriesEpisodes =
@@ -241,27 +244,17 @@ export default async function PublicPostPage({
           </>
         )}
 
-      {/* Cover (when set) — contained to the reading column + rounded, not a full-bleed banner, so it
-          reads as a quiet lead image in keeping with §10 (조용한 웹로그), the Notion-ish touch without the
-          magazine masthead. */}
-      {post.ogImageUrl && (
-        <div className="mb-10 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
-          {/* vt-post-cover: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이 히어로로
-              모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
-              이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={post.ogImageUrl}
-            alt=""
-            className="vt-post-cover aspect-[2/1] w-full object-cover"
-          />
-        </div>
-      )}
-
-      <header className="mb-12">
-        {/* headline-md + bold 고정: 모바일에서 headline-sm(24px semibold)이 본문 h2(24px bold)와
-            같은 크기·더 약한 무게라 위계가 뒤집혀 보였다. 제목 32px bold > h2 24px bold > h3 20px. */}
-        <h1 className="text-headline-md font-bold tracking-headline text-slate-900 dark:text-slate-100">
+      {/* 마스트헤드 아래 조용한 헤어라인(§10.1 border-slate-100 계열)으로 제목·메타를 하나의 블록으로
+          닫는다 — xl 에선 헤더가 얇은 메타 한 줄뿐이라 닫는 선이 없으면 본문과 경계가 흐릿했다. */}
+      <header className="mb-12 border-b border-slate-100 pb-8 dark:border-slate-800">
+        {eyebrow && (
+          <p className="mb-3 text-[12px] font-medium text-slate-500 dark:text-slate-400">{eyebrow}</p>
+        )}
+        {/* 모바일 headline-md(32px) → sm+ headline-lg(40px): 피드 마스트헤드(40px)와 같은 무게로
+            데스크톱에서 제목이 먼저 눈에 든다. 본문 h2(24px)보다는 항상 크게 유지.
+            headline-md + bold 고정: 모바일 headline-sm(24px semibold)은 본문 h2(24px bold)와 같은
+            크기·약한 무게라 위계가 뒤집혀 보였다. 제목 32/40px bold > h2 24px bold > h3 20px. */}
+        <h1 className="text-headline-md font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
           {post.title}
         </h1>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -309,6 +302,23 @@ export default async function PublicPostPage({
           </div>
         </div>
       </header>
+
+      {/* Cover — Fork A(제목-먼저): 커버를 헤더(제목·byline) 아래로 내려 도착 페이지를 OG 카드의
+          "제목이 히어로" 구성과 일치시킨다. 읽기 컬럼 폭 + rounded-2xl + ring 은 그대로 두고, 2:1
+          리드에 max-h 캡을 둬 뷰포트에서 과도하게 커져 본문 시작을 밀지 않게 한다. 모바일도 동일 순서. */}
+      {post.ogImageUrl && (
+        <div className="mb-10 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-200/70 dark:bg-slate-800 dark:ring-slate-800">
+          {/* vt-post-cover: 카드에서 클릭된 커버(CoverMorphLink 가 같은 이름을 붙임)가 이 히어로로
+              모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
+              이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={post.ogImageUrl}
+            alt=""
+            className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover"
+          />
+        </div>
+      )}
 
       {result.data.series && (
         <SeriesNav

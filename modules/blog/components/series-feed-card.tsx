@@ -54,7 +54,7 @@ export async function SeriesFeedCard({
         <SeriesSubscribeButton seriesId={series.id} />
       </div>
       <BlogLink href={seriesUrl} className="focus-ring group/title mt-1 block rounded">
-        <h3 className="line-clamp-2 text-[20px] font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover/title:text-accent-700 dark:text-slate-100 dark:group-hover/title:text-accent-400">
+        <h3 className="line-clamp-2 text-card-title-lg font-bold leading-snug tracking-tight text-slate-900 transition-colors group-hover/title:text-accent-700 dark:text-slate-100 dark:group-hover/title:text-accent-400">
           {series.title}
         </h3>
       </BlogLink>

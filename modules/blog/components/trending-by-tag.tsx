@@ -41,7 +41,7 @@ export function TrendingByTag({
           <section key={section.tag}>
             <div className="mb-1 flex items-baseline justify-between gap-3">
               <h2 className="flex items-center gap-2 text-[15px] font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                <span aria-hidden className="h-3.5 w-[3px] shrink-0 rounded-full bg-accent-500" />
+                <span aria-hidden className="h-3.5 w-[3px] shrink-0 rounded-full bg-accent-600" />
                 {section.tag}
               </h2>
               <Link

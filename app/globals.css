@@ -503,7 +503,7 @@ mark.kurl-highlight--thread {
     @apply text-accent-700 underline-offset-2 hover:underline;
   }
   .prose-text-block blockquote {
-    @apply mb-1.5 border-l-2 border-slate-300 pl-3 italic text-slate-600;
+    @apply mb-1.5 border-l-2 border-slate-300 pl-3 text-slate-600;
   }
   .prose-text-block hr {
     @apply my-3 border-slate-200;
@@ -562,7 +562,7 @@ mark.kurl-highlight--thread {
     @apply text-[1.125rem] leading-[1.55] text-slate-700 dark:text-slate-300;
   }
   .prose-post li::marker {
-    @apply text-accent-500;
+    @apply text-accent-600;
   }
   .prose-post li > p {
     @apply my-0;
@@ -590,8 +590,11 @@ mark.kurl-highlight--thread {
   .prose-post pre code {
     @apply bg-transparent p-0 text-slate-100;
   }
+  /* 인용구에 italic 금지(재발 방지) — Pretendard 에 이탤릭 자형이 없어 한글/일본어가 합성 기울임
+     (가짜 oblique)으로 찌그러진다. 구분은 왼쪽 그린 바 + 색이 담당하고, em(인라인 강조)만 이탤릭을
+     유지한다. .prose-text-block blockquote 도 같은 이유로 non-italic. */
   .prose-post blockquote {
-    @apply my-7 border-l-[3px] border-accent-400 pl-5 text-[1.125rem] italic leading-relaxed text-slate-600 dark:text-slate-400;
+    @apply my-7 border-l-[3px] border-accent-400 pl-5 text-[1.125rem] leading-relaxed text-slate-600 dark:text-slate-400;
   }
   /* 구분선 = 애스터리즘(✳ ✳ ✳) — 선 하나보다 "장이 넘어간다"를 인쇄물의 어휘로 말한다.
      음수 margin-right 는 마지막 글자 뒤에 붙는 letter-spacing 만큼 되밀어 진짜 가운데 정렬. */
@@ -611,10 +614,10 @@ mark.kurl-highlight--thread {
     @apply h-auto max-w-full;
   }
   .prose-post figure img {
-    @apply mx-auto rounded-2xl;
+    @apply mx-auto rounded-2xl ring-1 ring-slate-200/70 dark:ring-slate-800;
   }
   .prose-post figcaption {
-    @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-400;
+    @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-500 dark:text-slate-400;
   }
   /* Tables (TABLE block / markdown) — flat editorial: header underline + light row dividers, no heavy
      grid (matches the §1 flat philosophy). The Markdown renderer wraps each table in .prose-table-wrap
