@@ -316,7 +316,6 @@
     "bodyLinks": "본문 링크",
     "bodyLinksHint": "발행 시 kurl 링크로 단축돼 클릭이 추적됩니다. 끄면 원래 주소 그대로 둡니다.",
     "close": "닫기",
-    "saveDraft": "임시저장",
     "previewCopyLink": "미리보기 링크 복사",
     "previewCopiedShort": "복사됨",
     "previewCopied": "미리보기 링크를 복사했어요",

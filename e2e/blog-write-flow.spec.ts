@@ -697,8 +697,8 @@ async function openPublishDialog(page: Page) {
   return dialog;
 }
 
-/** Add a topic (tag) in the dialog — going public now requires ≥1, so publish/republish/schedule
- *  tests must seed one or the primary action stays disabled. */
+/** Add a topic (tag) in the dialog — going public requires ≥1, so publish/republish/schedule tests
+ *  must seed one; otherwise the primary action nudges the tag field and fires no lifecycle call. */
 async function addDialogTag(dialog: Locator, name = "dev") {
   const input = dialog.getByPlaceholder(/tag/i);
   await input.fill(name);
@@ -773,7 +773,8 @@ test("schedule: a draft can be parked for a future publish (POST /schedule)", as
   await titleInput(page).fill("Scheduled one");
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog); // scheduling is a deferred publish → topic required too
-  await dialog.getByRole("button", { name: "Schedule", exact: true }).click();
+  // The 발행 시점 toggle is a segmented radio now (Publish now / Schedule), not a footer button.
+  await dialog.getByRole("radio", { name: "Schedule", exact: true }).click();
   // Schedule mode swaps the primary action: "Publish" becomes "Schedule post", disabled until a
   // time is picked (an empty time used to fall through to an immediate publish).
   await expect(dialog.getByRole("button", { name: "Schedule post", exact: true })).toBeDisabled();
@@ -808,10 +809,9 @@ test("tags entered in the dialog persist to the metadata PATCH", async ({ page }
   await tagInput.press("Enter");
   await tagInput.fill("testing");
   await tagInput.press("Enter");
-  captured.meta = null;
-  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
-  await expect.poll(() => captured.meta).not.toBeNull();
-  expect(captured.meta).toMatchObject({ tags: ["nextjs", "testing"] });
+  // A draft has no manual Save button — it autosaves ~1.8s after the last edit. Wait for the
+  // metadata PATCH to carry both topics.
+  await expect.poll(() => captured.meta?.tags, { timeout: 15_000 }).toEqual(["nextjs", "testing"]);
 });
 
 test("excerpt entered in the dialog persists to the metadata PATCH", async ({ page }) => {
@@ -820,10 +820,8 @@ test("excerpt entered in the dialog persists to the metadata PATCH", async ({ pa
   await openEditor(page);
   const dialog = await openPublishDialog(page);
   await dialog.getByPlaceholder("One-line summary").fill("a short summary");
-  captured.meta = null;
-  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
-  await expect.poll(() => captured.meta).not.toBeNull();
-  expect(captured.meta).toMatchObject({ excerpt: "a short summary" });
+  // Draft autosave persists the excerpt (no manual Save button).
+  await expect.poll(() => captured.meta?.excerpt, { timeout: 15_000 }).toBe("a short summary");
 });
 
 test("slug is normalized (edge hyphens trimmed, lowercased) before the PATCH", async ({ page }) => {
@@ -832,10 +830,8 @@ test("slug is normalized (edge hyphens trimmed, lowercased) before the PATCH", a
   await openEditor(page);
   const dialog = await openPublishDialog(page);
   await dialog.locator('input[spellcheck="false"]').fill("-Hello-World-");
-  captured.meta = null;
-  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
-  await expect.poll(() => captured.meta).not.toBeNull();
-  expect(captured.meta).toMatchObject({ slug: "hello-world" });
+  // Draft autosave normalizes + persists the slug (edge hyphens trimmed, lowercased).
+  await expect.poll(() => captured.meta?.slug, { timeout: 15_000 }).toBe("hello-world");
 });
 
 test("a cover image uploaded in the dialog persists to the metadata PATCH", async ({ page }) => {
@@ -847,10 +843,8 @@ test("a cover image uploaded in the dialog persists to the metadata PATCH", asyn
     .locator('input[type="file"]')
     .setInputFiles({ name: "cover.png", mimeType: "image/png", buffer: Buffer.from("png-bytes") });
   await expect(dialog.locator("img")).toBeVisible({ timeout: 10_000 });
-  captured.meta = null;
-  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
-  await expect.poll(() => captured.meta).not.toBeNull();
-  expect(captured.meta).toMatchObject({ ogImageUrl: IMAGE_URL });
+  // Draft autosave persists the uploaded cover URL.
+  await expect.poll(() => captured.meta?.ogImageUrl, { timeout: 15_000 }).toBe(IMAGE_URL);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1023,10 +1017,8 @@ test("removing a tag chip drops it from the metadata PATCH", async ({ page }) =>
   await openEditor(page);
   const dialog = await openPublishDialog(page);
   await dialog.getByRole("button", { name: "remove drop", exact: true }).click();
-  captured.meta = null;
-  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
-  await expect.poll(() => captured.meta).not.toBeNull();
-  expect(captured.meta).toMatchObject({ tags: ["keep"] });
+  // Draft autosave persists the tag removal.
+  await expect.poll(() => captured.meta?.tags, { timeout: 15_000 }).toEqual(["keep"]);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1064,9 +1056,8 @@ test("assigning a freshly created series persists membership (PUT /series/:id/po
   const name = dialog.getByPlaceholder("New series name");
   await name.fill("My series");
   await name.press("Enter");
-  captured.blocks = null;
-  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
-  await expect.poll(() => seriesPostIds).not.toBeNull();
+  // Draft autosave syncs series membership (PUT /series/:id/posts) — no manual Save button.
+  await expect.poll(() => seriesPostIds, { timeout: 15_000 }).not.toBeNull();
   expect(seriesPostIds, "the post is appended to the new series").toContain(POST_ID);
 });
 
@@ -1134,10 +1125,8 @@ test("removing the cover image clears ogImageUrl in the metadata PATCH", async (
   await expect(dialog.locator("img")).toBeVisible({ timeout: 10_000 });
   await dialog.getByRole("button", { name: "Remove", exact: true }).click();
   await expect(dialog.locator("img")).toHaveCount(0);
-  captured.meta = null;
-  await dialog.getByRole("button", { name: "Save draft", exact: true }).click();
-  await expect.poll(() => captured.meta).not.toBeNull();
-  expect(captured.meta).toMatchObject({ ogImageUrl: "" });
+  // Draft autosave clears the cover URL in the metadata PATCH.
+  await expect.poll(() => captured.meta?.ogImageUrl, { timeout: 15_000 }).toBe("");
 });
 
 test("the slug field normalizes input live (caps/spaces/symbols → hyphen-case)", async ({ page }) => {
@@ -1295,7 +1284,7 @@ test("scheduling a past time is rejected with no /schedule call (A22)", async ({
   await titleInput(page).fill("Scheduled one");
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog); // pass the topic gate so the PAST-TIME guard is what blocks it
-  await dialog.getByRole("button", { name: "Schedule", exact: true }).click();
+  await dialog.getByRole("radio", { name: "Schedule", exact: true }).click();
   await dialog.locator('input[type="datetime-local"]').fill("2020-01-01T10:00");
   await dialog.getByRole("button", { name: "Schedule post", exact: true }).click();
   await expect(page.getByText("Pick a future time")).toBeVisible();
