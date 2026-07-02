@@ -182,7 +182,7 @@ export function DiscoverySeriesCard({
 
                   {/* 제목 — 사진/종이 공통(큰 회차 번호가 표지 주인공, 제목은 하단에 일관 크기로). */}
                   <div>
-                    <h3 className="line-clamp-3 text-balance text-[19px] font-bold leading-snug tracking-tight">
+                    <h3 className="line-clamp-3 text-balance text-card-title-md font-bold leading-snug tracking-tight">
                       {p.title}
                     </h3>
                     <div className={`mt-2.5 flex items-center gap-1.5 text-[12px] ${p.ogImageUrl ? "text-white/85" : "text-slate-600 dark:text-slate-400"}`}>

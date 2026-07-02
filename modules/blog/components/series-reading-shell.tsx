@@ -269,7 +269,7 @@ export function SeriesReadingShell({
                         <>
                           <span aria-hidden>·</span>
                           <span className="flex items-center gap-1">
-                            <Heart className="h-3 w-3 text-accent-500" />
+                            <Heart className="h-3 w-3 text-accent-600" />
                             {p.likeCount}
                           </span>
                         </>

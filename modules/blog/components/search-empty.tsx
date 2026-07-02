@@ -26,7 +26,7 @@ export async function SearchEmpty({
     <div className="flex flex-col items-center px-4 py-20 text-center sm:py-28">
       <Mark className="h-6 w-auto text-accent-600 dark:text-accent-400" animated />
 
-      <h2 className="mt-7 max-w-md text-[22px] font-bold leading-snug tracking-tight text-slate-900 dark:text-slate-100">
+      <h2 className="mt-7 max-w-md text-card-title-xl font-bold leading-snug tracking-tight text-slate-900 dark:text-slate-100">
         {t("searchEmptyHeading", { q: query })}
       </h2>
       <p className="mt-2 max-w-sm text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">

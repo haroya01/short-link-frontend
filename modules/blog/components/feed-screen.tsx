@@ -18,6 +18,7 @@ import {
 } from "../api/public-posts";
 import { BlogLink } from "./blog-link";
 import { FeedMasthead } from "./feed-masthead";
+import { GuestMasthead } from "./guest-masthead";
 import { FeedContentTransition } from "./feed-content-transition";
 import { FeedSortTabs } from "./feed-sort-tabs";
 import { FeedEmpty } from "./feed-empty";
@@ -199,12 +200,14 @@ export async function FeedScreen({
       : `?sort=${s}${langSuffix}`;
   return (
     <>
-      {/* Editorial masthead — the brand tagline by default; on search it becomes the search heading
-          (query + scope) so the band reflects what you're looking at instead of a static slogan. */}
-      {/* No marketing hero on the home feed — a quiet weblog leads with the posts (the top app header
-          already carries blog.kurl + search + write). The masthead band stays only for search, where
-          it states what you're looking at (query + scope). */}
-      {searching && (
+      {/* Editorial masthead band. On search it becomes the search heading (query + scope) so the band
+          reflects what you're looking at. Off search it's the quiet brand tagline — but shown to
+          signed-OUT visitors only (Fork B): a first-time reader gets one line of "what this is", while
+          a signed-in reader still leads straight into the posts (a quiet weblog, no marketing hero; the
+          top app header already carries blog.kurl + search + write). The signed-out gate is read on the
+          client (GuestMasthead/useAuth), so the home feed route stays static — no server cookies()
+          that would downgrade the whole route to dynamic. */}
+      {searching ? (
         <FeedMasthead
           locale={locale}
           eyebrow={t("searchLabel")}
@@ -215,6 +218,10 @@ export async function FeedScreen({
           }
           sub={t("searchScopeAll")}
         />
+      ) : activeTag ? null : (
+        // Default home landing only — a `?tag=` filtered view already states its context (#tag label),
+        // so the generic tagline would just push those results down.
+        <GuestMasthead />
       )}
 
       {/* pb-24 gives the last feed card tail room; the layout's pb-16 already clears the bottom tab
