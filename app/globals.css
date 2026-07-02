@@ -538,7 +538,7 @@ summary,
     @apply text-[1.125rem] leading-[1.55] text-slate-700 dark:text-slate-300;
   }
   .prose-post li::marker {
-    @apply text-accent-500;
+    @apply text-accent-600;
   }
   .prose-post li > p {
     @apply my-0;
@@ -587,10 +587,10 @@ summary,
     @apply h-auto max-w-full;
   }
   .prose-post figure img {
-    @apply mx-auto rounded-2xl;
+    @apply mx-auto rounded-2xl ring-1 ring-slate-200/70 dark:ring-slate-800;
   }
   .prose-post figcaption {
-    @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-400;
+    @apply mt-3 text-center text-[0.8125rem] leading-snug text-slate-500 dark:text-slate-400;
   }
   /* Tables (TABLE block / markdown) — flat editorial: header underline + light row dividers, no heavy
      grid (matches the §1 flat philosophy). The Markdown renderer wraps each table in .prose-table-wrap
