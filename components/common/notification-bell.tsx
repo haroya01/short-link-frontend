@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { usePresence } from "@/hooks/use-presence";
 import { blogHref } from "@/lib/host";
 import {
   useMarkAllRead,
@@ -21,6 +22,8 @@ export function NotificationBell() {
   const t = useTranslations("notifications");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  // Hold the dropdown mounted through its dropdown-out exit (mirror of the entrance).
+  const { mounted, closing } = usePresence(open, 160);
   useDismiss(open, ref, () => setOpen(false));
 
   const unread = useUnreadCount();
@@ -46,10 +49,12 @@ export function NotificationBell() {
         )}
       </button>
 
-      {open && (
+      {mounted && (
         <div
           role="menu"
-          className="absolute right-0 z-30 mt-2 w-80 origin-top-right animate-dropdown-in overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950"
+          className={`absolute right-0 z-30 mt-2 w-80 origin-top-right overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950 ${
+            closing ? "animate-dropdown-out" : "animate-dropdown-in"
+          }`}
         >
           <div className="flex items-center justify-between px-3 py-2.5">
             <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t("title")}</p>

@@ -174,7 +174,10 @@ export function SlashMenu({
   return (
     <div
       role="listbox"
-      className="fixed z-50 max-h-80 w-72 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-700 dark:bg-slate-900"
+      // Same dropdown entrance as the header menus; scale from the caret side (flip-aware origin).
+      className={`fixed z-50 max-h-80 w-72 animate-dropdown-in overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-700 dark:bg-slate-900 ${
+        menu.bottom != null ? "origin-bottom-left" : "origin-top-left"
+      }`}
       style={menu.bottom != null ? { bottom: menu.bottom, left: menu.left } : { top: menu.top, left: menu.left }}
     >
       {filtered.length === 0 ? (

@@ -17,6 +17,7 @@ import { usePathname, useRouter as useIntlRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { usePresence } from "@/hooks/use-presence";
 import { cacheMeAvatar, cacheMeInitial } from "@/components/common/header-avatar-slot";
 import { blogHref, linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
@@ -41,6 +42,8 @@ export function AccountMenu() {
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  // Hold the menu mounted through its dropdown-out exit (mirror of the dropdown-in entrance).
+  const { mounted, closing } = usePresence(open, 160);
 
   useDismiss(open, ref, () => setOpen(false));
 
@@ -90,10 +93,13 @@ export function AccountMenu() {
           initial
         )}
       </button>
-      {open && (
+      {mounted && (
         <div
           role="menu"
-          className="absolute right-0 z-30 mt-2 w-60 origin-top-right animate-dropdown-in rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
+          className={cn(
+            "absolute right-0 z-30 mt-2 w-60 origin-top-right rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:shadow-none",
+            closing ? "animate-dropdown-out" : "animate-dropdown-in",
+          )}
         >
           {(username || me?.email) && (
             <div className="px-3 py-2">
@@ -150,19 +156,32 @@ export function AccountMenu() {
               />
             </span>
           </button>
-          {langOpen &&
-            routing.locales.map((l) => (
-              <button
-                key={l}
-                type="button"
-                role="menuitem"
-                onClick={() => switchLocale(l)}
-                className={cn(itemClass, "justify-between pl-9", l === locale && "text-accent-700 dark:text-accent-400")}
-              >
-                {tLang(l)}
-                {l === locale && <Check className="h-4 w-4 text-accent-600" />}
-              </button>
-            ))}
+          {/* Locale rows collapse via the grid 0fr↔1fr trick (series-reading-shell) — height-auto in
+              both directions, no measured pixels. They stay in the DOM while folded, so aria-hidden +
+              tabIndex keep them out of the focus order / accessibility tree until expanded. */}
+          <div
+            aria-hidden={!langOpen}
+            className={cn(
+              "grid transition-[grid-template-rows] duration-300 ease-[var(--ease)] motion-reduce:transition-none",
+              langOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+            )}
+          >
+            <div className="overflow-hidden">
+              {routing.locales.map((l) => (
+                <button
+                  key={l}
+                  type="button"
+                  role="menuitem"
+                  tabIndex={langOpen ? undefined : -1}
+                  onClick={() => switchLocale(l)}
+                  className={cn(itemClass, "justify-between pl-9", l === locale && "text-accent-700 dark:text-accent-400")}
+                >
+                  {tLang(l)}
+                  {l === locale && <Check className="h-4 w-4 text-accent-600" />}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
           <ThemeToggle className={itemClass} />

@@ -260,7 +260,7 @@ function EmbedBlock({ content, postId }: { content: string | null; postId?: numb
           <img
             src={img}
             alt={plan.label ?? "Google Maps"}
-            className="aspect-[16/9] w-full bg-slate-100 object-cover dark:bg-slate-800"
+            className="img-fade aspect-[16/9] w-full bg-slate-100 object-cover dark:bg-slate-800"
             loading="lazy"
           />
         ) : (
@@ -340,7 +340,7 @@ async function LinkPreviewCard({ url }: { url: string }) {
       {data?.image && (
         <span className="hidden w-32 shrink-0 self-stretch bg-slate-100 dark:bg-slate-800 sm:block sm:w-44">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={data.image} alt="" loading="lazy" className="h-full w-full object-cover" />
+          <img src={data.image} alt="" loading="lazy" className="img-fade h-full w-full object-cover" />
         </span>
       )}
     </a>

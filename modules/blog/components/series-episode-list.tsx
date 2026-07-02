@@ -59,7 +59,7 @@ export function SeriesEpisodeList({
             >
               <SeriesIndex n={i + 1} current={on} className="shrink-0 text-[13px]" />
               <span
-                className={`truncate text-[14px] transition-all duration-500 group-hover/ep:text-accent-700 dark:group-hover/ep:text-accent-300 ${
+                className={`truncate text-[14px] transition-colors duration-200 group-hover/ep:text-accent-700 dark:group-hover/ep:text-accent-300 ${
                   on
                     ? "font-bold text-slate-900 dark:text-slate-50"
                     : "font-medium text-slate-600 dark:text-slate-400"

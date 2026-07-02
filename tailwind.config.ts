@@ -91,27 +91,45 @@ const config: Config = {
         cta: "0 8px 24px -8px rgba(5,150,105,0.45)", // brand-green CTA glow
         fab: "0 8px 24px -6px rgba(5,150,105,0.5)", // floating action button (slightly stronger)
       },
+      // Enter/exit pairs. Exits mirror their entrance, ride the same --ease curve, run slightly
+      // quicker, and hold their end state (`both`) so the overlay never flashes back to full
+      // opacity between the animation finishing and use-presence unmounting it.
       keyframes: {
         "fade-in": {
           from: { opacity: "0", transform: "translateY(2px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "fade-out": {
+          from: { opacity: "1", transform: "translateY(0)" },
+          to: { opacity: "0", transform: "translateY(2px)" },
+        },
         "dropdown-in": {
           from: { opacity: "0", transform: "translateY(-6px) scale(0.96)" },
           to: { opacity: "1", transform: "translateY(0) scale(1)" },
         },
+        "dropdown-out": {
+          from: { opacity: "1", transform: "translateY(0) scale(1)" },
+          to: { opacity: "0", transform: "translateY(-6px) scale(0.96)" },
+        },
         "toast-in": {
           from: { opacity: "0", transform: "translateY(8px) scale(0.98)" },
           to: { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        "toast-out": {
+          from: { opacity: "1", transform: "translateY(0) scale(1)" },
+          to: { opacity: "0", transform: "translateY(8px) scale(0.98)" },
         },
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
       },
       animation: {
-        "fade-in": "fade-in 180ms ease-out",
+        "fade-in": "fade-in 180ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "fade-out": "fade-out 160ms cubic-bezier(0.16, 1, 0.3, 1) both",
         "dropdown-in": "dropdown-in 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "dropdown-out": "dropdown-out 160ms cubic-bezier(0.16, 1, 0.3, 1) both",
         "toast-in": "toast-in 220ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "toast-out": "toast-out 200ms cubic-bezier(0.16, 1, 0.3, 1) both",
         shimmer: "shimmer 1.5s infinite",
       },
     },

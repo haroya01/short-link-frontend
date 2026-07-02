@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Check, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { usePresence } from "@/hooks/use-presence";
 import {
   buildAuthorShareUrl,
   buildSharePlatformIntent,
@@ -29,6 +30,8 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  // Hold the dropdown mounted through its dropdown-out exit (mirror of the entrance).
+  const { mounted, closing } = usePresence(open, 160);
   useDismiss(open, ref, () => setOpen(false));
 
   async function handlePlatform(platform: SharePlatform) {
@@ -75,10 +78,12 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
         <Share2 className="h-3.5 w-3.5" />
         {t("label")}
       </button>
-      {open && (
+      {mounted && (
         <div
           role="menu"
-          className="absolute right-0 z-20 mt-2 w-48 origin-top-right animate-dropdown-in rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
+          className={`absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900 ${
+            closing ? "animate-dropdown-out" : "animate-dropdown-in"
+          }`}
         >
           {PLATFORMS.map((p) => (
             <button

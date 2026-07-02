@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Check, CornerDownRight, Globe, Link as LinkIcon, Loader2, Lock, Plus } from "lucide-react";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { usePresence } from "@/hooks/use-presence";
 import {
   connectBlock,
   createCollection,
@@ -44,6 +45,24 @@ export function ConnectSheet({
   const [saving, setSaving] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
+  // The parent unmounts this component on onClose/onDone, so the exit phase has to be owned here:
+  // closing flips `open` false, use-presence plays the sheet-down/fade exit, and only when it
+  // unmounts do we hand control back to the parent (which then drops the whole subtree).
+  const [open, setOpen] = useState(true);
+  const { mounted, closing } = usePresence(open, 240);
+  const doneRef = useRef(false);
+  const firedRef = useRef(false);
+  const requestClose = () => setOpen(false);
+  const finish = () => {
+    doneRef.current = true;
+    setOpen(false);
+  };
+  useEffect(() => {
+    if (mounted || firedRef.current) return;
+    firedRef.current = true;
+    (doneRef.current ? onDone : onClose)();
+  }, [mounted, onClose, onDone]);
+
   useEffect(() => {
     let alive = true;
     listMyCollections()
@@ -57,7 +76,7 @@ export function ConnectSheet({
 
   // Keyboard containment: Escape + Tab cycling within the sheet + focus restore to the opener. Step 2
   // places its own initial focus (the 왜 textarea autoFocuses), so don't fight it.
-  useFocusTrap(sheetRef, { active: true, onEscape: onClose, autoFocus: step === 1 });
+  useFocusTrap(sheetRef, { active: open, onEscape: requestClose, autoFocus: step === 1 });
 
   function toggle(id: number) {
     setSelected((prev) => {
@@ -90,20 +109,31 @@ export function ConnectSheet({
       ),
     );
     setSaving(false);
-    onDone();
+    finish();
   }
 
+  if (!mounted) return null;
+
   return (
+    // Backdrop fades in with the sheet and back out on close (the exit rides the same container).
     <div
-      className="fixed inset-0 z-[70] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4"
-      onMouseDown={onClose}
+      className={`fixed inset-0 z-[70] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm motion-reduce:animate-none sm:items-center sm:p-4 ${
+        closing ? "animate-[overlay-out_240ms_var(--ease)_both]" : "animate-fade-in"
+      }`}
+      onMouseDown={requestClose}
     >
       <div
         ref={sheetRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="connect-sheet-title"
-        className="flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl"
+        // Bottom sheet slides up/down on mobile (same grammar as the account sheet); the sm+
+        // centered card keeps the quiet fade pair instead.
+        className={`flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-white shadow-xl motion-reduce:animate-none dark:bg-slate-900 sm:max-w-md sm:rounded-2xl ${
+          closing
+            ? "animate-[sheet-down_240ms_var(--ease)_both] sm:animate-fade-out"
+            : "animate-[sheet-up_280ms_var(--ease)_both] sm:animate-fade-in"
+        }`}
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="border-b border-slate-100 px-5 py-4 dark:border-slate-800">
@@ -112,6 +142,8 @@ export function ConnectSheet({
           </h3>
         </div>
 
+        {/* Keyed on the step so the ①→② swap fades instead of snapping. */}
+        <div key={step} className="flex min-h-0 flex-1 flex-col animate-fade-in">
         {step === 1 ? (
           <>
             <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
@@ -237,6 +269,7 @@ export function ConnectSheet({
             </div>
           </>
         )}
+        </div>
       </div>
     </div>
   );

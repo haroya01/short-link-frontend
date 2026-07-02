@@ -118,7 +118,7 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
             className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
           >
             <ChevronDown
-              className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${showAdvanced ? "rotate-180" : ""}`}
+              className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[var(--ease)] ${showAdvanced ? "rotate-180" : ""}`}
             />
             {t("advancedToggle")}
           </button>
@@ -132,7 +132,7 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
           <div
             id="shorten-advanced-section"
             aria-hidden={!showAdvanced}
-            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none ${
+            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[var(--ease)] motion-reduce:transition-none ${
               showAdvanced
                 ? "mt-2 grid-rows-[1fr] opacity-100"
                 : "mt-0 grid-rows-[0fr] opacity-0"

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { request } from "@/lib/api/client";
@@ -117,6 +117,11 @@ export function FeedInfinite({
     return () => io.disconnect();
   }, [hasNext, error, loadMore]);
 
+  // Appended rows (not in the SSR seed) fade in on mount, list variant included — same stagger the
+  // grid's DiscoveryCell already does. Identity-based (not index) so hidden-tag filtering can't
+  // shift an SSR row across the boundary and replay it.
+  const initialKeys = useMemo(() => new Set(initialItems.map(itemKey)), [initialItems]);
+
   // "보고싶은 태그만": drop posts carrying a hidden tag (per-device). The tag currently being viewed
   // is exempt, so a hidden tag's own page still shows its posts. Featured stays pinned to index 0.
   const hiddenSet = new Set(prefs.hidden.filter((h) => h !== tag));
@@ -157,6 +162,9 @@ export function FeedInfinite({
                 featured={featuredFirst && i === 0}
                 featuredLabel={featuredLabel}
                 eager={i < 4}
+                entranceDelay={
+                  initialKeys.has(itemKey(item)) ? undefined : Math.min((i % PAGE_SIZE) * 25, 250)
+                }
               />
               {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
                 // Bracketed by rules top + bottom so the series block reads as a distinct insert in

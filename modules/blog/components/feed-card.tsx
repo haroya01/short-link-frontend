@@ -149,6 +149,7 @@ export function FeedCard({
   flushTop = false,
   showBookmark = true,
   eager = false,
+  entranceDelay,
 }: {
   item: PublicFeedItem;
   locale: string;
@@ -168,6 +169,9 @@ export function FeedCard({
   /** Above-fold row: load the thumbnail eagerly. Lazy thumbnails in the first viewport made the
    *  feed's LCP image wait for hydration — Lighthouse modeled that as LCP ≈ TTI. */
   eager?: boolean;
+  /** Mount fade + stagger (ms) for rows appended by the infinite scroll — mirrors DiscoveryCell.
+   *  Left unset on the initial SSR rows so they never re-animate. */
+  entranceDelay?: number;
 }) {
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
@@ -177,7 +181,13 @@ export function FeedCard({
     <li
       className={
         "group relative border-b border-slate-100 last:border-b-0 dark:border-slate-800" +
+        (entranceDelay != null ? " animate-fade-in" : "") +
         (className ? ` ${className}` : "")
+      }
+      style={
+        entranceDelay != null
+          ? { animationDelay: `${entranceDelay}ms`, animationFillMode: "backwards" }
+          : undefined
       }
     >
       {/* -mx/px lets the hover highlight breathe past the text without moving the content edge (it
@@ -243,7 +253,9 @@ export function FeedCard({
               alt=""
               loading={eager ? "eager" : "lazy"}
               {...(eager ? { fetchpriority: "high" } : {})}
-              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none"
+              // img-fade only on the lazy rows — the eager above-fold thumbnails are LCP candidates
+              // and must never start transparent.
+              className={`h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none${eager ? "" : " img-fade"}`}
             />
           </BlogLink>
         )}
