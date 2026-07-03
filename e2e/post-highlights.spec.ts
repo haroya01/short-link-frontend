@@ -169,3 +169,89 @@ test("the highlight <mark> stays readable in dark mode (dark tint + inherited li
   // Dark tint is the brighter accent-500 @ 0.28 variant (accent-600 muddies into a dark page).
   expectTint(seen.bg, DARK_TINT);
 });
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Notes · threads · deep links — the highlight's social layer past the plain paint. A note turns a
+// mark into a thread carrier (underlined); clicking any mark opens its thread; a reply lands in it;
+// and a ?hl link scrolls a passage into view. All in-memory in mock-on (see modules/blog/api/highlights.ts).
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+test("selecting text → Note saves a memo and paints the mark as a thread carrier (underlined)", async ({
+  page,
+}) => {
+  await page.goto(POST_PATH);
+  await waitReady(page);
+  const quote = await selectRun(page);
+  const bar = page.getByRole("toolbar");
+  await expect(bar).toBeVisible();
+  await bar.getByRole("button", { name: "Note", exact: true }).click();
+
+  // The memo composer is a dialog with the same WYSIWYG input as comments (no raw-markdown textarea).
+  const sheet = page.getByRole("dialog");
+  await expect(sheet).toBeVisible();
+  await sheet.locator(".tiptap-comment").click();
+  await page.keyboard.type("worth remembering");
+  await sheet.getByRole("button", { name: "Save", exact: true }).click();
+
+  // A noted highlight is a "thread carrier": it paints with the extra .kurl-highlight--thread class
+  // (the underline that says "there's a conversation here"), even as a single reader's mark.
+  const threadMark = page.locator("mark.kurl-highlight--thread").first();
+  await expect(threadMark).toBeVisible({ timeout: 10_000 });
+  await expect(threadMark).toHaveText(quote);
+});
+
+test("clicking a painted highlight opens its thread sheet showing the exact quote", async ({ page }) => {
+  await page.goto(POST_PATH);
+  await waitReady(page);
+  const { mark, quote } = await makeHighlight(page);
+
+  await mark.click();
+  // The thread dialog is labelled by its quoted passage (aria-labelledby="hl-thread-quote").
+  const thread = page.getByRole("dialog");
+  await expect(thread).toBeVisible({ timeout: 10_000 });
+  await expect(thread.locator("#hl-thread-quote")).toContainText(quote);
+});
+
+test("replying in a highlight's thread posts the reply into the thread", async ({ page }) => {
+  await page.goto(POST_PATH);
+  await waitReady(page);
+  const { mark } = await makeHighlight(page);
+
+  await mark.click();
+  const thread = page.getByRole("dialog");
+  await expect(thread).toBeVisible({ timeout: 10_000 });
+  // Empty thread first — the reply composer reads/writes like a comment (WYSIWYG, not a textarea).
+  await thread.locator(".tiptap-comment").click();
+  await page.keyboard.type("this resonated");
+  await thread.getByRole("button", { name: "Reply", exact: true }).click();
+  await expect(thread.getByText("this resonated")).toBeVisible({ timeout: 10_000 });
+});
+
+test("a ?hl deep link scrolls the quoted passage into view", async ({ page }) => {
+  // Read a contiguous slice of the LAST sizable block (below the fold on this 900px viewport, so the
+  // scroll is observable). The mock post is deterministic, so the same slice is present next load.
+  await page.goto(POST_PATH);
+  await waitReady(page);
+  const quote = await page.evaluate(() => {
+    const root = document.querySelector(".prose-post")!;
+    const blocks = Array.from(root.children).filter((el) => (el.textContent || "").trim().length > 24);
+    const block = blocks[blocks.length - 1] as HTMLElement;
+    return (block.textContent || "").trim().slice(0, 24);
+  });
+
+  await page.goto(`${POST_PATH}?hl=${encodeURIComponent(quote)}`);
+  await waitReady(page);
+  // The ?hl effect only arms once the post has ≥1 highlight (it bails on an empty list — see
+  // post-highlights.tsx). Creating a highlight anywhere triggers it to read the ?hl already in the URL
+  // and scroll to the quoted block — the path a reader hits arriving on a highlighted post.
+  await makeHighlight(page);
+
+  const target = page.locator(".prose-post > *", { hasText: quote }).last();
+  await expect(async () => {
+    const box = await target.boundingBox();
+    expect(box, "the quoted block was found").not.toBeNull();
+    // In the viewport (0 ≤ top < viewport height) — it started below the fold and was scrolled up.
+    expect(box!.y).toBeGreaterThanOrEqual(0);
+    expect(box!.y).toBeLessThan(900);
+  }).toPass({ timeout: 10_000 });
+});
