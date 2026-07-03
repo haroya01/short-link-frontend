@@ -17,7 +17,7 @@ import {
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { MyLinksFilters } from "@/lib/api";
-import { cn, formatNumber } from "@/lib/utils";
+import { formatNumber } from "@/lib/utils";
 import { readStorageString, removeStorageItem } from "@/lib/storage-json";
 import type { MyLink } from "@/types";
 import {
@@ -36,6 +36,7 @@ import { MyLinksFiltersBar } from "@/components/links/my-links-filters";
 import { WeeklyInsightsCard } from "@/components/links/stats/weekly-insights-card";
 import { ExpiringSoonBanner } from "@/components/links/expiring-soon-banner";
 import { CampaignsEntryCard } from "@/components/links/campaigns/entry-card";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import { DashboardOnboarding } from "@/components/common/dashboard-onboarding";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
@@ -105,35 +106,17 @@ export default function DashboardPage() {
 
   if (ready && !authenticated) {
     return (
-      <div className="container grid min-h-[calc(100vh-3.5rem-3rem)] max-w-5xl items-center gap-8 py-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)]">
-        <div className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 text-left shadow-[0_1px_3px_rgba(15,23,42,0.04)] sm:p-8">
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
-            dashboard
-          </p>
-          <h1 className="mt-3 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-            {t("loginRequired")}
-          </h1>
-          <p className="mt-2 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
-            {t("loginRequiredDesc")}
-          </p>
-          <div className="mt-6 grid gap-2 text-[13px] text-slate-600 dark:text-slate-300 sm:grid-cols-3">
-            <AuthBenefit icon={Link2} label={t("loginRequiredBenefits.links")} />
-            <AuthBenefit icon={BarChart3} label={t("loginRequiredBenefits.stats")} />
-            <AuthBenefit icon={QrCode} label={t("loginRequiredBenefits.campaigns")} />
-          </div>
-          <div className="mt-7 flex flex-col gap-2 sm:flex-row">
-            <Link href="/login">
-              <Button className="w-full sm:w-auto">{t("goToLogin")}</Button>
-            </Link>
-            <Link href="/">
-              <Button variant="outline" className="w-full sm:w-auto">
-                {t("loginRequiredBack")}
-              </Button>
-            </Link>
-          </div>
-        </div>
-        <DashboardPreview />
-      </div>
+      <LinksAuthGate
+        eyebrow="dashboard"
+        title={t("loginRequired")}
+        description={t("loginRequiredDesc")}
+        benefits={[
+          { icon: Link2, label: t("loginRequiredBenefits.links") },
+          { icon: BarChart3, label: t("loginRequiredBenefits.stats") },
+          { icon: QrCode, label: t("loginRequiredBenefits.campaigns") },
+        ]}
+        next="/dashboard"
+      />
     );
   }
 
@@ -484,73 +467,6 @@ function OpsMetric({
           {value}
         </p>
       </div>
-    </div>
-  );
-}
-
-function AuthBenefit({
-  icon: Icon,
-  label,
-}: {
-  icon: ComponentType<{ className?: string }>;
-  label: string;
-}) {
-  return (
-    <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 p-3">
-      <span className="grid h-7 w-7 place-items-center rounded-md bg-white dark:bg-slate-900 text-accent-700 dark:text-accent-400 shadow-sm">
-        <Icon className="h-3.5 w-3.5" />
-      </span>
-      <p className="mt-2 leading-snug">{label}</p>
-    </div>
-  );
-}
-
-function DashboardPreview() {
-  const t = useTranslations("dashboard.preview");
-  return (
-    <div className="hidden lg:block">
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
-        <div className="flex items-center justify-between">
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
-            {t("eyebrow")}
-          </p>
-          <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-slate-600 dark:text-slate-300">
-            30d
-          </span>
-        </div>
-        <p className="mt-3 text-[18px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">
-          {t("title")}
-        </p>
-        <div className="mt-5 space-y-2">
-          <DashboardPreviewItem code="/spring" clicks="842" status={t("active")} />
-          <DashboardPreviewItem code="/bio" clicks="316" status={t("active")} />
-          <DashboardPreviewItem code="/event" clicks="90" status={t("expiring")} muted />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DashboardPreviewItem({
-  code,
-  clicks,
-  status,
-  muted,
-}: {
-  code: string;
-  clicks: string;
-  status: string;
-  muted?: boolean;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-2.5">
-      <div className="min-w-0">
-        <p className="font-mono text-[13px] font-semibold text-slate-900 dark:text-slate-100">{code}</p>
-        <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">{status}</p>
-      </div>
-      <p className={cn("font-mono text-[14px] font-semibold", muted ? "text-slate-500 dark:text-slate-400" : "text-accent-700 dark:text-accent-400")}>
-        {clicks}
-      </p>
     </div>
   );
 }

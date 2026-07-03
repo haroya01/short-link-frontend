@@ -31,6 +31,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import { useToast } from "@/components/ui/toast";
 import { BatchEditDialog } from "@/components/links/batch-edit-dialog";
 import { BatchDeleteDialog } from "@/components/links/batch-delete-dialog";
@@ -78,13 +79,7 @@ export default function CampaignDetailPage() {
   }, [ready, authenticated, campaignId, reload, t]);
 
   if (ready && !authenticated) {
-    return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-          {t("loginRequired")}
-        </h1>
-      </div>
-    );
+    return <LinksAuthGate eyebrow="campaigns" title={t("loginRequired")} />;
   }
 
   return (

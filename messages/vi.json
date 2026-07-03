@@ -1,4 +1,9 @@
 {
+  "authGate": {
+    "login": "Đăng nhập",
+    "explore": "Xem qua mà không cần đăng nhập",
+    "defaultDesc": "Đăng nhập để tiếp tục quản lý liên kết và chiến dịch của bạn."
+  },
   "comments": {
     "count": "{count, plural, =0 {Bình luận} one {# bình luận} other {# bình luận}}",
     "placeholder": "Viết bình luận",

@@ -1,4 +1,9 @@
 {
+  "authGate": {
+    "login": "ログイン",
+    "explore": "ログインせずに見てまわる",
+    "defaultDesc": "ログインすると、リンクとキャンペーンの続きを管理できます。"
+  },
   "comments": {
     "count": "コメント{count}件",
     "placeholder": "コメントを入力",

@@ -11,6 +11,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/common/error-state";
 import { EmptyState } from "@/components/common/empty-state";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import { useToast } from "@/components/ui/toast";
 import { HeaderSkeleton } from "./_components/header";
 import { StatsBody } from "./_components/stats-body";
@@ -50,15 +51,11 @@ export default function StatsPage() {
 
   if (ready && !authenticated) {
     return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-          {t("loginRequired")}
-        </h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">{t("loginRequiredDesc")}</p>
-        <Link href="/login" className="mt-6 inline-block">
-          <Button>{t("backToDashboard")}</Button>
-        </Link>
-      </div>
+      <LinksAuthGate
+        eyebrow="stats"
+        title={t("loginRequired")}
+        description={t("loginRequiredDesc")}
+      />
     );
   }
 

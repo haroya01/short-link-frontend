@@ -1,4 +1,9 @@
 {
+  "authGate": {
+    "login": "로그인",
+    "explore": "로그인 없이 둘러보기",
+    "defaultDesc": "로그인하면 링크와 캠페인을 이어서 관리할 수 있어요."
+  },
   "comments": {
     "count": "댓글 {count}개",
     "placeholder": "댓글을 입력하세요",

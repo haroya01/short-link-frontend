@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
 import { CampaignOnboarding } from "@/components/links/campaigns/onboarding";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import type { CampaignSummary } from "@/types";
 
 export default function CampaignsPage() {
@@ -47,17 +48,12 @@ export default function CampaignsPage() {
 
   if (ready && !authenticated) {
     return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-          {t("authTitle")}
-        </h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
-          {t("authDesc")}
-        </p>
-        <Link href="/login" className="mt-6 inline-block">
-          <Button>{t("loginCta")}</Button>
-        </Link>
-      </div>
+      <LinksAuthGate
+        eyebrow="campaigns"
+        title={t("authTitle")}
+        description={t("authDesc")}
+        next="/campaigns"
+      />
     );
   }
 
