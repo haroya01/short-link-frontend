@@ -1629,6 +1629,54 @@
       "copied": "Đã sao chép",
       "expires": "Hết hạn sau {minutes} phút",
       "hint": "Dùng cho việc seed dữ liệu hoặc script mà không phải lục trong devtools."
+    },
+    "browse": {
+      "usersTab": "Tất cả người dùng",
+      "linksTab": "Tất cả liên kết",
+      "search": "Tìm kiếm",
+      "users": {
+        "title": "Tất cả người dùng",
+        "subtitle": "Tìm kiếm và duyệt mọi tài khoản",
+        "searchPlaceholder": "Tìm email hoặc tên người dùng",
+        "role": {
+          "all": "Tất cả vai trò",
+          "user": "Người dùng",
+          "admin": "Quản trị"
+        },
+        "col": {
+          "user": "Người dùng",
+          "role": "Vai trò",
+          "tier": "Gói",
+          "links": "Liên kết",
+          "joined": "Ngày tham gia",
+          "status": "Trạng thái"
+        },
+        "active": "Hoạt động",
+        "deleted": "Đã xóa",
+        "noResults": "Không có người dùng phù hợp"
+      },
+      "links": {
+        "title": "Tất cả liên kết",
+        "subtitle": "Tìm kiếm và duyệt mọi liên kết rút gọn",
+        "searchPlaceholder": "Tìm mã hoặc URL đích",
+        "col": {
+          "code": "Mã",
+          "destination": "Đích",
+          "owner": "Chủ sở hữu",
+          "clicks": "Lượt nhấp",
+          "status": "Trạng thái",
+          "created": "Ngày tạo"
+        },
+        "status": {
+          "active": "Hoạt động",
+          "expired": "Hết hạn",
+          "limitReached": "Đạt giới hạn"
+        },
+        "ownerFilter": "Chủ sở hữu #{id}",
+        "clearFilter": "Xóa bộ lọc",
+        "locked": "Được bảo vệ bằng mật khẩu",
+        "noResults": "Không có liên kết phù hợp"
+      }
     }
   },
   "common": {

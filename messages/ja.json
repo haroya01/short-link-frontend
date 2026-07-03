@@ -1629,6 +1629,54 @@
       "copied": "コピー済み",
       "expires": "{minutes}分後に失効",
       "hint": "devtoolsなしでシード・スクリプトにそのまま使えます。"
+    },
+    "browse": {
+      "usersTab": "全ユーザー",
+      "linksTab": "全リンク",
+      "search": "検索",
+      "users": {
+        "title": "全ユーザー",
+        "subtitle": "すべてのアカウントを検索・閲覧",
+        "searchPlaceholder": "メールまたはハンドルを検索",
+        "role": {
+          "all": "すべての権限",
+          "user": "一般",
+          "admin": "管理者"
+        },
+        "col": {
+          "user": "ユーザー",
+          "role": "権限",
+          "tier": "プラン",
+          "links": "リンク",
+          "joined": "登録日",
+          "status": "状態"
+        },
+        "active": "有効",
+        "deleted": "退会",
+        "noResults": "該当するユーザーがいません"
+      },
+      "links": {
+        "title": "全リンク",
+        "subtitle": "すべての短縮リンクを検索・閲覧",
+        "searchPlaceholder": "コードまたはリンク先URLを検索",
+        "col": {
+          "code": "コード",
+          "destination": "リンク先",
+          "owner": "所有者",
+          "clicks": "クリック",
+          "status": "状態",
+          "created": "作成日"
+        },
+        "status": {
+          "active": "有効",
+          "expired": "期限切れ",
+          "limitReached": "上限到達"
+        },
+        "ownerFilter": "所有者 #{id}",
+        "clearFilter": "フィルター解除",
+        "locked": "パスワード保護",
+        "noResults": "該当するリンクがありません"
+      }
     }
   },
   "common": {

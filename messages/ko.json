@@ -1629,6 +1629,54 @@
       "copied": "복사됨",
       "expires": "{minutes}분 후 만료",
       "hint": "devtools 없이 시딩·스크립트에 바로 사용하세요."
+    },
+    "browse": {
+      "usersTab": "전체 유저",
+      "linksTab": "전체 링크",
+      "search": "검색",
+      "users": {
+        "title": "전체 유저",
+        "subtitle": "모든 계정을 검색하고 살펴봅니다",
+        "searchPlaceholder": "이메일 또는 핸들 검색",
+        "role": {
+          "all": "전체 역할",
+          "user": "일반",
+          "admin": "관리자"
+        },
+        "col": {
+          "user": "사용자",
+          "role": "역할",
+          "tier": "요금제",
+          "links": "링크",
+          "joined": "가입일",
+          "status": "상태"
+        },
+        "active": "활성",
+        "deleted": "탈퇴",
+        "noResults": "일치하는 유저가 없어요"
+      },
+      "links": {
+        "title": "전체 링크",
+        "subtitle": "모든 단축 링크를 검색하고 살펴봅니다",
+        "searchPlaceholder": "코드 또는 목적지 URL 검색",
+        "col": {
+          "code": "코드",
+          "destination": "목적지",
+          "owner": "소유자",
+          "clicks": "클릭",
+          "status": "상태",
+          "created": "생성일"
+        },
+        "status": {
+          "active": "활성",
+          "expired": "만료",
+          "limitReached": "한도 도달"
+        },
+        "ownerFilter": "소유자 #{id}",
+        "clearFilter": "필터 해제",
+        "locked": "비밀번호 보호",
+        "noResults": "일치하는 링크가 없어요"
+      }
     }
   },
   "common": {

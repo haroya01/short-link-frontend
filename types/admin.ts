@@ -177,3 +177,35 @@ export type AdminTopLinkStat = {
 };
 export type AdminTopUsersPage = { items: AdminTopUserStat[]; total: number };
 export type AdminTopLinksPage = { items: AdminTopLinkStat[]; total: number };
+
+export type AdminUserRole = "USER" | "ADMIN";
+
+export type AdminUserRow = {
+  id: number;
+  email: string;
+  username: string | null;
+  role: AdminUserRole;
+  tier: "FREE" | "PRO";
+  deleted: boolean;
+  createdAt: string;
+  linkCount: number;
+};
+
+export type AdminLinkStatus = "ACTIVE" | "EXPIRED" | "LIMIT_REACHED";
+
+export type AdminLinkRow = {
+  shortCode: string;
+  originalUrl: string;
+  ownerId: number | null;
+  ownerEmail: string | null;
+  clickCount: number;
+  passwordProtected: boolean;
+  maxViews: number | null;
+  viewCount: number;
+  createdAt: string;
+  expiresAt: string | null;
+  status: AdminLinkStatus;
+};
+
+export type AdminUsersPage = { items: AdminUserRow[]; total: number };
+export type AdminLinksPage = { items: AdminLinkRow[]; total: number };

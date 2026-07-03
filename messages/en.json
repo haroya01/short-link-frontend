@@ -1629,6 +1629,54 @@
       "copied": "Copied",
       "expires": "Expires in {minutes} min",
       "hint": "Use it for seeding or scripts without digging through devtools."
+    },
+    "browse": {
+      "usersTab": "All users",
+      "linksTab": "All links",
+      "search": "Search",
+      "users": {
+        "title": "All users",
+        "subtitle": "Search and browse every account",
+        "searchPlaceholder": "Search email or handle",
+        "role": {
+          "all": "All roles",
+          "user": "User",
+          "admin": "Admin"
+        },
+        "col": {
+          "user": "User",
+          "role": "Role",
+          "tier": "Plan",
+          "links": "Links",
+          "joined": "Joined",
+          "status": "Status"
+        },
+        "active": "Active",
+        "deleted": "Deleted",
+        "noResults": "No matching users"
+      },
+      "links": {
+        "title": "All links",
+        "subtitle": "Search and browse every short link",
+        "searchPlaceholder": "Search code or destination URL",
+        "col": {
+          "code": "Code",
+          "destination": "Destination",
+          "owner": "Owner",
+          "clicks": "Clicks",
+          "status": "Status",
+          "created": "Created"
+        },
+        "status": {
+          "active": "Active",
+          "expired": "Expired",
+          "limitReached": "Limit reached"
+        },
+        "ownerFilter": "Owner #{id}",
+        "clearFilter": "Clear filter",
+        "locked": "Password protected",
+        "noResults": "No matching links"
+      }
     }
   },
   "common": {
