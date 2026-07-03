@@ -227,9 +227,13 @@ test("replying in a highlight's thread posts the reply into the thread", async (
   await expect(thread.getByText("this resonated")).toBeVisible({ timeout: 10_000 });
 });
 
-test("a ?hl deep link scrolls the quoted passage into view", async ({ page }) => {
-  // Read a contiguous slice of the LAST sizable block (below the fold on this 900px viewport, so the
-  // scroll is observable). The mock post is deterministic, so the same slice is present next load.
+test("a ?hl deep link scrolls into view on a post with ZERO highlights (plain-text fallback)", async ({
+  page,
+}) => {
+  // The reported bug: on a post carrying NO highlights, a ?hl deep link did nothing — the effect bailed
+  // on the empty highlight list before ever reaching findQuoteTarget's plain-text fallback. The mock
+  // post seeds an empty highlight set (mockHighlights = []) and each goto reloads it, so this is a
+  // genuinely zero-highlight post; the quote must still scroll in WITHOUT any highlight to arm it.
   await page.goto(POST_PATH);
   await waitReady(page);
   const quote = await page.evaluate(() => {
@@ -241,16 +245,14 @@ test("a ?hl deep link scrolls the quoted passage into view", async ({ page }) =>
 
   await page.goto(`${POST_PATH}?hl=${encodeURIComponent(quote)}`);
   await waitReady(page);
-  // The ?hl effect only arms once the post has ≥1 highlight (it bails on an empty list — see
-  // post-highlights.tsx). Creating a highlight anywhere triggers it to read the ?hl already in the URL
-  // and scroll to the quoted block — the path a reader hits arriving on a highlighted post.
-  await makeHighlight(page);
+  // Prove the premise: nothing is painted, so the scroll below can only come from the plain-text path.
+  await expect(page.locator("mark.kurl-highlight")).toHaveCount(0);
 
   const target = page.locator(".prose-post > *", { hasText: quote }).last();
   await expect(async () => {
     const box = await target.boundingBox();
     expect(box, "the quoted block was found").not.toBeNull();
-    // In the viewport (0 ≤ top < viewport height) — it started below the fold and was scrolled up.
+    // Scrolled up from below the fold into the viewport (0 ≤ top < viewport height).
     expect(box!.y).toBeGreaterThanOrEqual(0);
     expect(box!.y).toBeLessThan(900);
   }).toPass({ timeout: 10_000 });

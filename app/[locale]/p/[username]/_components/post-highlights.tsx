@@ -57,6 +57,9 @@ export function PostHighlights({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
   const { authenticated, me, signInWithGoogle } = useAuth();
   const [highlights, setHighlights] = useState<HighlightView[]>([]);
+  // Whether the highlight fetch has settled (resolved or failed) at least once. The deep-link scroll
+  // waits on this — not on there being any highlights — so a post with zero highlights still runs.
+  const [highlightsLoaded, setHighlightsLoaded] = useState(false);
   // When set, the reply-thread sheet is open for this highlight.
   const [threadFor, setThreadFor] = useState<HighlightView | null>(null);
   // The live selection → drives the floating action bar.
@@ -74,7 +77,10 @@ export function PostHighlights({ postId }: { postId: number }) {
       .then((h) => {
         if (alive) setHighlights(h);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        if (alive) setHighlightsLoaded(true);
+      });
     return () => {
       alive = false;
     };
@@ -98,10 +104,12 @@ export function PostHighlights({ postId }: { postId: number }) {
   }, [highlights, me?.id]);
 
   // Deep-link to a sentence: a `?hl=<quote>` from a path step / connection / discovery card scrolls to
-  // the matching painted span and flashes it (mirrors the iOS postFocusQuote deep-link). Runs after a
-  // paint pass so the <mark>s exist; falls back to a plain-text search when the span wasn't painted.
+  // the matching span and flashes it (mirrors the iOS postFocusQuote deep-link). Gated on the highlight
+  // fetch having *settled* — not on there being any highlights — so a post with zero highlights still
+  // resolves the quote via findQuoteTarget's plain-text fallback; a painted <mark> is preferred when one
+  // exists (the paint pass runs first, so by the timeout the marks are in the DOM).
   useEffect(() => {
-    if (highlights.length === 0) return;
+    if (!highlightsLoaded) return;
     const quote = new URLSearchParams(window.location.search).get("hl");
     if (!quote) return;
     const id = window.setTimeout(() => {
@@ -112,7 +120,7 @@ export function PostHighlights({ postId }: { postId: number }) {
       flashQuote(target);
     }, 120);
     return () => window.clearTimeout(id);
-  }, [highlights]);
+  }, [highlightsLoaded]);
 
   // Tapping a painted highlight opens its reply thread (a plain click, not a drag-select — a drag
   // doesn't emit a click, so it stays out of the highlight-creation path).
