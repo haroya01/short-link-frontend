@@ -25,6 +25,7 @@ import { AdminTopLinksTable, AdminTopUsersTable } from "@/components/admin/top-t
 import { Section } from "@/components/common/section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
+import { Link } from "@/i18n/navigation";
 import { formatNumber } from "@/lib/utils";
 import type { AdminHealthMetrics, AdminOverview } from "@/types";
 
@@ -118,6 +119,22 @@ export default function AdminPage() {
         </p>
         <h2 className="mt-1 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h2>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t("subtitle")}</p>
+        <nav className="mt-4 flex flex-wrap gap-2">
+          <Link
+            href="/admin/users"
+            className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            <Users className="h-3.5 w-3.5 text-accent-600" />
+            {t("browse.usersTab")}
+          </Link>
+          <Link
+            href="/admin/links"
+            className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            <Link2 className="h-3.5 w-3.5 text-accent-600" />
+            {t("browse.linksTab")}
+          </Link>
+        </nav>
       </div>
 
       <AdminAccessToken />
