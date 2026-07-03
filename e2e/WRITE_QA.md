@@ -171,7 +171,7 @@
 | **선택 → Note 메모 → 스레드 캐리어(밑줄) 페인트** | `selecting text → Note saves a memo and paints the mark as a thread carrier` | **new** |
 | **마크 클릭 → 스레드 시트(정확한 quote)** | `clicking a painted highlight opens its thread sheet showing the exact quote` | **new** |
 | **스레드에 답글 게시** | `replying in a highlight's thread posts the reply into the thread` | **new** |
-| **?hl 딥링크 → 해당 문장으로 스크롤** | `a ?hl deep link scrolls the quoted passage into view` | **new** |
+| **?hl 딥링크 → 해당 문장으로 스크롤(하이라이트 0개 글 포함 · 평문 폴백)** | `a ?hl deep link scrolls into view on a post with ZERO highlights (plain-text fallback)` | **new** |
 | 페인트 규칙(내 것 항상 · 스레드 캐리어 · 톱 하이라이트 임계=2 #793) + 군집화 | highlight-clustering.test.ts (19) | unit |
 | 오프셋/quote DOM 페인팅 | highlight-anchor.test.ts (8) | unit |
 | 톱 하이라이트 임계(#793) e2e — 서로 다른 독자 ≥2 | — | **manual/unit-only** (mock 뷰어 정체성이 단일이라 타 저자 하이라이트 seed 불가; 규칙은 유닛으로 covered) |
