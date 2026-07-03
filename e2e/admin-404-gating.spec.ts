@@ -11,6 +11,7 @@ const ADMIN_PATHS = [
   "/admin/abuse-reports",
   "/admin/users",
   "/admin/links",
+  "/admin/links/demo123",
   "/admin",
 ];
 

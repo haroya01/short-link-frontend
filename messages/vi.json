@@ -1673,6 +1673,10 @@
         "title": "Tất cả liên kết",
         "subtitle": "Tìm kiếm và duyệt mọi liên kết rút gọn",
         "searchPlaceholder": "Tìm mã hoặc URL đích",
+        "sort": {
+          "recent": "Mới nhất",
+          "clicks": "Nhiều nhấp nhất"
+        },
         "col": {
           "code": "Mã",
           "destination": "Đích",
@@ -1690,6 +1694,60 @@
         "clearFilter": "Xóa bộ lọc",
         "locked": "Được bảo vệ bằng mật khẩu",
         "noResults": "Không có liên kết phù hợp"
+      }
+    },
+    "detail": {
+      "title": "Chi tiết liên kết",
+      "back": "Quay lại tất cả liên kết",
+      "anonymousOwner": "Ẩn danh",
+      "meta": {
+        "code": "Mã rút gọn",
+        "owner": "Chủ sở hữu",
+        "destination": "Đích đến",
+        "clicks": "Tổng lượt nhấp",
+        "views": "Lượt xem",
+        "created": "Ngày tạo",
+        "expires": "Hết hạn",
+        "noExpiry": "Không hết hạn",
+        "locked": "Bảo vệ bằng mật khẩu"
+      },
+      "section": {
+        "daily": {
+          "title": "Lượt nhấp theo ngày",
+          "desc": "Theo ngày · {tz}"
+        },
+        "hourly": {
+          "title": "Theo giờ",
+          "desc": "Phân bố theo giờ trong ngày"
+        },
+        "referrers": {
+          "title": "Nguồn giới thiệu",
+          "desc": "Nơi lượt nhấp đến từ"
+        },
+        "devices": {
+          "title": "Thiết bị",
+          "desc": "Phân tích theo thiết bị"
+        },
+        "countries": {
+          "title": "Quốc gia",
+          "desc": "Lượt nhấp theo quốc gia"
+        }
+      },
+      "empty": {
+        "countries": "Chưa có dữ liệu quốc gia"
+      }
+    },
+    "activity": {
+      "recentLinksTitle": "Liên kết gần đây",
+      "recentLinksDesc": "Vừa được tạo",
+      "recentClicksTitle": "Lượt nhấp gần đây",
+      "recentClicksDesc": "Luồng nhấp trực tiếp",
+      "trendingTitle": "Thịnh hành · 24h",
+      "trendingDesc": "Hàng đầu theo lượt nhấp thật",
+      "empty": {
+        "links": "Chưa có liên kết",
+        "clicks": "Chưa có lượt nhấp",
+        "trending": "Chưa có gì thịnh hành"
       }
     }
   },

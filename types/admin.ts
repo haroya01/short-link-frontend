@@ -1,3 +1,5 @@
+import type { LinkStats } from "./stats";
+
 export type AdminActiveUsers = {
   period: string;
   buckets: { bucket: string; active: number }[];
@@ -209,3 +211,36 @@ export type AdminLinkRow = {
 
 export type AdminUsersPage = { items: AdminUserRow[]; total: number };
 export type AdminLinksPage = { items: AdminLinkRow[]; total: number };
+
+export type AdminLinkSort = "recent" | "clicks";
+
+/** One row of the admin link browser paired with the same {@link LinkStats} the owner stats page renders. */
+export type AdminLinkDetail = { meta: AdminLinkRow; stats: LinkStats };
+
+export type RecentLink = {
+  shortCode: string;
+  originalUrl: string;
+  ownerEmail: string | null;
+  createdAt: string;
+};
+
+export type RecentClick = {
+  shortCode: string;
+  clickedAt: string;
+  country: string | null;
+  referrerHost: string | null;
+  deviceClass: string | null;
+};
+
+export type TrendingLink = {
+  shortCode: string;
+  ownerEmail: string | null;
+  clickCount: number;
+};
+
+/** Live admin activity feed — recent links, recent clicks, and the 24h human-click leaderboard. */
+export type AdminActivity = {
+  recentLinks: RecentLink[];
+  recentClicks: RecentClick[];
+  trending24h: TrendingLink[];
+};

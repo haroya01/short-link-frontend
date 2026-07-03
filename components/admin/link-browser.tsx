@@ -13,17 +13,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { Link } from "@/i18n/navigation";
 import { cn, formatDate, formatNumber, truncateMiddle } from "@/lib/utils";
-import type { AdminLinkRow, AdminLinkStatus } from "@/types";
+import type { AdminLinkRow, AdminLinkSort, AdminLinkStatus } from "@/types";
 
 const PAGE_SIZE = 20;
+const SORT_OPTIONS: AdminLinkSort[] = ["recent", "clicks"];
 
-const STATUS_STYLES: Record<AdminLinkStatus, string> = {
+// Exported so the admin link-detail page renders the same status badge from one source of truth.
+export const STATUS_STYLES: Record<AdminLinkStatus, string> = {
   ACTIVE: "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-300",
   EXPIRED: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
   LIMIT_REACHED: "bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300",
 };
 
-const STATUS_KEY: Record<AdminLinkStatus, string> = {
+export const STATUS_KEY: Record<AdminLinkStatus, string> = {
   ACTIVE: "active",
   EXPIRED: "expired",
   LIMIT_REACHED: "limitReached",
@@ -38,6 +40,7 @@ export function LinkBrowser() {
 
   const [term, setTerm] = useState("");
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<AdminLinkSort>("recent");
   const [items, setItems] = useState<AdminLinkRow[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
@@ -54,7 +57,7 @@ export function LinkBrowser() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    getAdminLinks({ q: query || undefined, ownerId, page, size: PAGE_SIZE })
+    getAdminLinks({ q: query || undefined, ownerId, sort, page, size: PAGE_SIZE })
       .then((data) => {
         if (!cancelled) {
           setItems(data.items);
@@ -75,7 +78,7 @@ export function LinkBrowser() {
     return () => {
       cancelled = true;
     };
-  }, [query, ownerId, page, tick]);
+  }, [query, ownerId, sort, page, tick]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const initialLoading = loading && items.length === 0;
@@ -84,6 +87,12 @@ export function LinkBrowser() {
     e.preventDefault();
     setPage(0);
     setQuery(term.trim());
+  }
+
+  // A new sort is a different result ordering — restart at the first page.
+  function pickSort(next: AdminLinkSort) {
+    setPage(0);
+    setSort(next);
   }
 
   return (
@@ -100,6 +109,23 @@ export function LinkBrowser() {
               className="pl-9"
             />
           </form>
+          <div className="flex gap-1.5">
+            {SORT_OPTIONS.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => pickSort(s)}
+                className={cn(
+                  "focus-ring rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                  sort === s
+                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700",
+                )}
+              >
+                {t(`browse.links.sort.${s}`)}
+              </button>
+            ))}
+          </div>
           {ownerId != null && (
             <Link
               href="/admin/links"
@@ -143,7 +169,7 @@ export function LinkBrowser() {
                       <TD>
                         <span className="inline-flex items-center gap-1.5">
                           <Link
-                            href={`/links/stats/${l.shortCode}`}
+                            href={`/admin/links/${l.shortCode}`}
                             className="font-mono text-sm font-medium text-slate-900 hover:underline dark:text-slate-100"
                           >
                             /{l.shortCode}
@@ -168,7 +194,16 @@ export function LinkBrowser() {
                         </a>
                       </TD>
                       <TD className="text-xs text-slate-500 dark:text-slate-400">
-                        {l.ownerEmail ?? t("table.anonymous")}
+                        {l.ownerId != null ? (
+                          <Link
+                            href={`/admin/links?ownerId=${l.ownerId}`}
+                            className="text-accent-700 hover:underline dark:text-accent-400"
+                          >
+                            {l.ownerEmail ?? t("table.anonymous")}
+                          </Link>
+                        ) : (
+                          t("table.anonymous")
+                        )}
                       </TD>
                       <TD className="text-right tabular-nums font-medium">
                         {formatNumber(l.clickCount)}
