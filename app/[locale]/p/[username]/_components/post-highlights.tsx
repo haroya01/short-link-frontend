@@ -31,6 +31,7 @@ import {
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
 
 type Anchor = { left: number; top: number; bottom: number };
@@ -79,17 +80,22 @@ export function PostHighlights({ postId }: { postId: number }) {
     };
   }, [postId]);
 
-  // Paint highlights into the static prose. Re-runs whenever the set changes.
+  // Paint highlights into the static prose. Re-runs whenever the set (or the viewer) changes.
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(".prose-post");
     if (!root) return;
     clearMarks(root);
+    // Medium "Top highlight" rule: paint the viewer's own + any that carry a thread + passages shared
+    // by enough distinct other readers; a lone reader's bare highlight stays in the data (and its
+    // thread stays reachable via ?hl=) but doesn't clutter the body. See highlight-clustering.ts.
+    const toPaint = selectPaintedHighlightIds(highlights, me?.id ?? null);
     for (const h of highlights) {
+      if (!toPaint.has(h.id)) continue;
       // Precise span paint (single- or multi-block), using the stored block + char offsets so it hits
       // the right occurrence and crosses inline formatting; quote-search fallback if offsets drifted.
       wrapHighlight(root, h, { id: h.id, note: h.note, replyCount: h.replyCount });
     }
-  }, [highlights]);
+  }, [highlights, me?.id]);
 
   // Deep-link to a sentence: a `?hl=<quote>` from a path step / connection / discovery card scrolls to
   // the matching painted span and flashes it (mirrors the iOS postFocusQuote deep-link). Runs after a

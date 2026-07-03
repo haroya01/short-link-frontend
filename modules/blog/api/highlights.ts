@@ -40,7 +40,10 @@ export interface HighlightReplyView {
   createdAt: string;
 }
 
-const MOCK_VIEWER: PublicAuthor = { id: 9001, username: "reader", bio: null, avatarUrl: null };
+// The demo viewer — same identity as the mock `me` (lib/api/client MOCK_ME), so a highlight the viewer
+// creates comes back attributed to them (author.id === me.id), exactly as the real backend attributes
+// it. That's what marks it "your own" for the always-paint rule (see highlight-clustering.ts).
+const MOCK_VIEWER: PublicAuthor = { id: 1, username: "dohyun", bio: null, avatarUrl: null };
 let mockHighlights: HighlightView[] = [];
 let mockSeq = 5000;
 // highlightId → its replies (demo mode).
