@@ -257,3 +257,34 @@ test("a ?hl deep link scrolls into view on a post with ZERO highlights (plain-te
     expect(box!.y).toBeLessThan(900);
   }).toPass({ timeout: 10_000 });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Deleting your own highlight — the reader thread sheet is the only web surface for it (no highlights
+// rail/library). A freshly-created highlight is attributed to the signed-in mock viewer (MOCK_VIEWER
+// === me, id 1), so its thread exposes the owner-only delete. Tapping it closes the thread, raises the
+// shared destructive confirm, and — on confirm — optimistically unpaints the <mark> (which also
+// recomputes the top-highlight clusters). Backend is a hard cascade (note + replies go with it).
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+test("deleting your own highlight unpaints its <mark> (create → thread → delete → gone)", async ({
+  page,
+}) => {
+  await page.goto(POST_PATH);
+  await waitReady(page);
+  const { mark } = await makeHighlight(page);
+  await expect(page.locator("mark.kurl-highlight")).toHaveCount(1);
+
+  // The mark opens its thread, which — because the highlight is the viewer's own — offers delete.
+  await mark.click();
+  const thread = page.getByRole("dialog");
+  await expect(thread).toBeVisible({ timeout: 10_000 });
+
+  // Owner delete: closes the thread and raises the destructive confirm over the page.
+  await thread.getByRole("button", { name: "Delete highlight" }).click();
+  const confirm = page.getByRole("dialog");
+  await expect(confirm).toBeVisible();
+  await confirm.getByRole("button", { name: "Delete", exact: true }).click();
+
+  // Optimistic unpaint — the mark is gone from the body.
+  await expect(page.locator("mark.kurl-highlight")).toHaveCount(0, { timeout: 10_000 });
+});

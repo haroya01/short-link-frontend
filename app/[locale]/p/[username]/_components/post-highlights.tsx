@@ -5,9 +5,12 @@ import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
 import { useAuth } from "@/lib/auth";
+import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/use-confirm";
 import {
   createHighlight,
   createHighlightReply,
+  deleteHighlight,
   deleteHighlightReply,
   listHighlightReplies,
   listHighlights,
@@ -19,7 +22,7 @@ import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { CommentComposer } from "@/modules/blog/components/comment-composer";
 import { RichCommentInput } from "@/modules/blog/components/rich-comment-input";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
-import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine } from "lucide-react";
+import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine, Trash2 } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import {
@@ -56,6 +59,8 @@ type Anchor = { left: number; top: number; bottom: number };
 export function PostHighlights({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
   const { authenticated, me, signInWithGoogle } = useAuth();
+  const { toast } = useToast();
+  const [confirm, confirmDialog] = useConfirm();
   const [highlights, setHighlights] = useState<HighlightView[]>([]);
   // Whether the highlight fetch has settled (resolved or failed) at least once. The deep-link scroll
   // waits on this — not on there being any highlights — so a post with zero highlights still runs.
@@ -202,6 +207,33 @@ export function PostHighlights({ postId }: { postId: number }) {
     }
   }, [postId]);
 
+  // Delete the viewer's own highlight — a hard cascade on the backend (the opener note + every reply go
+  // with it). The thread sheet is z-60 and the shared confirm is z-50, so close the sheet first, then
+  // raise the destructive confirm over the page. Optimistic: drop the highlight from state up front so
+  // the paint effect unpaints its <mark> and recomputes the top-highlight clusters; restore + toast on
+  // failure.
+  const removeHighlight = useCallback(
+    async (h: HighlightView) => {
+      setThreadFor(null);
+      const threaded = !!h.note?.trim() || h.replyCount > 0;
+      const ok = await confirm({
+        title: t("highlightDeleteConfirm"),
+        description: threaded ? t("highlightDeleteConfirmBody") : t("highlightDeleteConfirmBodyBare"),
+        destructive: true,
+      });
+      if (!ok) return;
+      const prev = highlights;
+      setHighlights((cur) => cur.filter((x) => x.id !== h.id));
+      try {
+        await deleteHighlight(h.id);
+      } catch {
+        setHighlights(prev);
+        toast(t("highlightDeleteError"), "error");
+      }
+    },
+    [confirm, highlights, t, toast],
+  );
+
   // Quick highlight (no memo).
   const commitQuick = useCallback(() => {
     if (!sel) return;
@@ -274,8 +306,10 @@ export function PostHighlights({ postId }: { postId: number }) {
           onSignIn={signInWithGoogle}
           onClose={() => setThreadFor(null)}
           onChanged={refreshHighlights}
+          onDelete={() => void removeHighlight(threadFor)}
         />
       )}
+      {confirmDialog}
     </>,
     document.body,
   );
@@ -294,6 +328,7 @@ function HighlightThread({
   onSignIn,
   onClose,
   onChanged,
+  onDelete,
 }: {
   highlight: HighlightView;
   meId: number | null;
@@ -301,6 +336,7 @@ function HighlightThread({
   onSignIn: () => void;
   onClose: () => void;
   onChanged: () => void;
+  onDelete: () => void;
 }) {
   const t = useTranslations("publicPost");
   const tc = useTranslations("collections");
@@ -318,6 +354,8 @@ function HighlightThread({
   const contentRef = useRef<HTMLDivElement>(null);
   // Connect needs a server-side highlight (positive id); an optimistic one (negative id) has no refId.
   const canConnect = authenticated && highlight.id > 0;
+  // The delete affordance is owner-only — the viewer's own highlight (same gate as the per-reply delete).
+  const isMine = meId != null && highlight.author?.id === meId;
 
   // Keyboard containment: Escape + Tab cycling + focus restore. Goes inert while the ConnectSheet is
   // open over the thread so the two traps don't fight over Tab (ConnectSheet runs its own then).
@@ -400,17 +438,33 @@ function HighlightThread({
             <blockquote id="hl-thread-quote" className="line-clamp-3 flex-1 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
               {highlight.quote}
             </blockquote>
-            {/* Connect this sentence into a collection / path — the entry into the connection graph. */}
-            {canConnect && (
-              <button
-                type="button"
-                onClick={() => setConnecting(true)}
-                aria-label={tc("connectThisSentence")}
-                title={tc("connectThisSentence")}
-                className="focus-ring -mr-1 -mt-1 shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:hover:bg-slate-800 dark:hover:text-accent-400"
-              >
-                <FolderPlus className="h-4 w-4" />
-              </button>
+            {(canConnect || isMine) && (
+              <div className="-mr-1 -mt-1 flex shrink-0 items-center gap-0.5">
+                {/* Connect this sentence into a collection / path — the entry into the connection graph. */}
+                {canConnect && (
+                  <button
+                    type="button"
+                    onClick={() => setConnecting(true)}
+                    aria-label={tc("connectThisSentence")}
+                    title={tc("connectThisSentence")}
+                    className="focus-ring shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:hover:bg-slate-800 dark:hover:text-accent-400"
+                  >
+                    <FolderPlus className="h-4 w-4" />
+                  </button>
+                )}
+                {/* Owner-only: delete this highlight (a hard cascade — its note + every reply). Confirms first. */}
+                {isMine && (
+                  <button
+                    type="button"
+                    onClick={onDelete}
+                    aria-label={t("highlightDelete")}
+                    title={t("highlightDelete")}
+                    className="focus-ring shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/15 dark:hover:text-red-400"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
             )}
           </div>
           {/* The curator's note is the thread opener. */}
