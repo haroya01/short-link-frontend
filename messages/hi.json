@@ -1416,6 +1416,9 @@
       "colLocation": "स्थान",
       "colDevice": "डिवाइस",
       "colReferrer": "रेफ़रर"
+    },
+    "chart": {
+      "peak": "शिखर"
     }
   },
   "admin": {
@@ -2923,7 +2926,8 @@
         "areaTitle": "क्षेत्र के अनुसार प्रदर्शन",
         "areaHint": "अगला वितरण स्थान तय करने के लिए इसका उपयोग करें।",
         "tooltip": "{rate} / 100 शीट · क्लिक {clicks} / वितरित {quantity}",
-        "efficiency": "दक्षता"
+        "efficiency": "दक्षता",
+        "meta": "क्लिक {clicks} · {quantity} शीट"
       },
       "compare": {
         "title": "किसी अन्य कैंपेन से तुलना करें",

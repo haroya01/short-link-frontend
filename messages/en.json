@@ -1416,6 +1416,9 @@
       "colLocation": "Location",
       "colDevice": "Device",
       "colReferrer": "Referrer"
+    },
+    "chart": {
+      "peak": "Peak"
     }
   },
   "admin": {
@@ -2923,7 +2926,8 @@
         "areaTitle": "Performance by area",
         "areaHint": "Use this to decide the next distribution location.",
         "tooltip": "{rate} / 100 sheets · clicks {clicks} / distributed {quantity}",
-        "efficiency": "Efficiency"
+        "efficiency": "Efficiency",
+        "meta": "clicks {clicks} · {quantity} sheets"
       },
       "compare": {
         "title": "Compare with another campaign",

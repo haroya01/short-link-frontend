@@ -1416,6 +1416,9 @@
       "colLocation": "Vị trí",
       "colDevice": "Thiết bị",
       "colReferrer": "Nguồn giới thiệu"
+    },
+    "chart": {
+      "peak": "Đỉnh"
     }
   },
   "admin": {
@@ -2923,7 +2926,8 @@
         "areaTitle": "Hiệu quả theo khu vực",
         "areaHint": "Dùng cái này để quyết định nơi phát tiếp theo.",
         "tooltip": "{rate} / 100 tờ · lượt nhấp {clicks} / đã phát {quantity}",
-        "efficiency": "Hiệu suất"
+        "efficiency": "Hiệu suất",
+        "meta": "lượt nhấp {clicks} · {quantity} tờ"
       },
       "compare": {
         "title": "So sánh với chiến dịch khác",

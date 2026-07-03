@@ -1416,6 +1416,9 @@
       "colLocation": "地域",
       "colDevice": "デバイス",
       "colReferrer": "参照元"
+    },
+    "chart": {
+      "peak": "ピーク"
     }
   },
   "admin": {
@@ -2923,7 +2926,8 @@
         "areaTitle": "エリア別の成果",
         "areaHint": "次の配布場所を決める基準です。",
         "tooltip": "{rate}回 / 100枚 · クリック {clicks} / 配布 {quantity}",
-        "efficiency": "効率"
+        "efficiency": "効率",
+        "meta": "クリック {clicks} · {quantity}枚"
       },
       "compare": {
         "title": "他キャンペーンと比較",
