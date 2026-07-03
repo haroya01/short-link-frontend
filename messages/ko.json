@@ -1416,6 +1416,9 @@
       "colLocation": "위치",
       "colDevice": "기기",
       "colReferrer": "유입"
+    },
+    "chart": {
+      "peak": "피크"
     }
   },
   "admin": {
@@ -2923,7 +2926,8 @@
         "areaTitle": "지역별 성과",
         "areaHint": "다음 배포 위치 선정의 기준.",
         "tooltip": "{rate}회 / 100장 · 클릭 {clicks} / 배포 {quantity}",
-        "efficiency": "효율"
+        "efficiency": "효율",
+        "meta": "클릭 {clicks} · {quantity}장"
       },
       "compare": {
         "title": "다른 캠페인과 비교",
