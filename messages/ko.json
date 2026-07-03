@@ -1428,7 +1428,7 @@
   },
   "admin": {
     "label": "admin",
-    "title": "서비스 overview",
+    "title": "서비스 개요",
     "subtitle": "최근 30일 추세 · 5분 캐시",
     "kpi": {
       "users": "사용자",
