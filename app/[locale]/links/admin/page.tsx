@@ -17,6 +17,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { ApiError, getAdminHealthMetrics, getAdminOverview } from "@/lib/api";
 import { AdminAccessToken } from "@/components/admin/access-token";
+import { ActivityFeed } from "@/components/admin/activity-feed";
 import { AdminDeepStats } from "@/components/admin/deep-stats";
 import { AdminLinkMetrics } from "@/components/admin/link-metrics";
 import { AdminRequestMetrics } from "@/components/admin/request-metrics";
@@ -231,6 +232,8 @@ export default function AdminPage() {
           </ResponsiveContainer>
         </div>
       </Section>
+
+      <ActivityFeed />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section

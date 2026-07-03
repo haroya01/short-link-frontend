@@ -1673,6 +1673,10 @@
         "title": "全リンク",
         "subtitle": "すべての短縮リンクを検索・閲覧",
         "searchPlaceholder": "コードまたはリンク先URLを検索",
+        "sort": {
+          "recent": "新着順",
+          "clicks": "クリック数順"
+        },
         "col": {
           "code": "コード",
           "destination": "リンク先",
@@ -1690,6 +1694,60 @@
         "clearFilter": "フィルター解除",
         "locked": "パスワード保護",
         "noResults": "該当するリンクがありません"
+      }
+    },
+    "detail": {
+      "title": "リンク詳細",
+      "back": "すべてのリンクに戻る",
+      "anonymousOwner": "匿名",
+      "meta": {
+        "code": "短縮コード",
+        "owner": "所有者",
+        "destination": "リンク先",
+        "clicks": "総クリック数",
+        "views": "閲覧",
+        "created": "作成日",
+        "expires": "有効期限",
+        "noExpiry": "期限なし",
+        "locked": "パスワード保護"
+      },
+      "section": {
+        "daily": {
+          "title": "日別クリック",
+          "desc": "日単位 · {tz}"
+        },
+        "hourly": {
+          "title": "時間帯別",
+          "desc": "時間帯ごとの分布"
+        },
+        "referrers": {
+          "title": "リファラー",
+          "desc": "クリックの流入元"
+        },
+        "devices": {
+          "title": "デバイス",
+          "desc": "デバイス別の内訳"
+        },
+        "countries": {
+          "title": "国",
+          "desc": "国別のクリック"
+        }
+      },
+      "empty": {
+        "countries": "国データはまだありません"
+      }
+    },
+    "activity": {
+      "recentLinksTitle": "最近のリンク",
+      "recentLinksDesc": "新しく作成されたリンク",
+      "recentClicksTitle": "最近のクリック",
+      "recentClicksDesc": "リアルタイムのクリック",
+      "trendingTitle": "24時間の人気",
+      "trendingDesc": "人によるクリック上位",
+      "empty": {
+        "links": "まだリンクがありません",
+        "clicks": "まだクリックがありません",
+        "trending": "まだ人気のリンクはありません"
       }
     }
   },

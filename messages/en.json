@@ -1673,6 +1673,10 @@
         "title": "All links",
         "subtitle": "Search and browse every short link",
         "searchPlaceholder": "Search code or destination URL",
+        "sort": {
+          "recent": "Most recent",
+          "clicks": "Most clicks"
+        },
         "col": {
           "code": "Code",
           "destination": "Destination",
@@ -1690,6 +1694,60 @@
         "clearFilter": "Clear filter",
         "locked": "Password protected",
         "noResults": "No matching links"
+      }
+    },
+    "detail": {
+      "title": "Link detail",
+      "back": "Back to all links",
+      "anonymousOwner": "Anonymous",
+      "meta": {
+        "code": "Short code",
+        "owner": "Owner",
+        "destination": "Destination",
+        "clicks": "Total clicks",
+        "views": "Views",
+        "created": "Created",
+        "expires": "Expires",
+        "noExpiry": "No expiry",
+        "locked": "Password protected"
+      },
+      "section": {
+        "daily": {
+          "title": "Daily clicks",
+          "desc": "By day · {tz}"
+        },
+        "hourly": {
+          "title": "By hour",
+          "desc": "Hour-of-day distribution"
+        },
+        "referrers": {
+          "title": "Referrers",
+          "desc": "Where clicks came from"
+        },
+        "devices": {
+          "title": "Devices",
+          "desc": "Device breakdown"
+        },
+        "countries": {
+          "title": "Countries",
+          "desc": "Clicks by country"
+        }
+      },
+      "empty": {
+        "countries": "No country data yet"
+      }
+    },
+    "activity": {
+      "recentLinksTitle": "Recent links",
+      "recentLinksDesc": "Newly created",
+      "recentClicksTitle": "Recent clicks",
+      "recentClicksDesc": "Latest click stream",
+      "trendingTitle": "Trending · 24h",
+      "trendingDesc": "Top links by human clicks",
+      "empty": {
+        "links": "No links yet",
+        "clicks": "No clicks yet",
+        "trending": "Nothing trending yet"
       }
     }
   },

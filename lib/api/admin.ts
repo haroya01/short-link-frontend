@@ -1,11 +1,14 @@
 import type {
   AdminActiveUsers,
+  AdminActivity,
   AdminCohort,
   AdminHealthMetrics,
   AdminLifecycle,
+  AdminLinkDetail,
   AdminLinkMetric,
   AdminLinkMetricsSort,
   AdminLinkMetricsWindow,
+  AdminLinkSort,
   AdminLinksPage,
   AdminOutcomeDistribution,
   AdminOverview,
@@ -112,15 +115,27 @@ export async function getAdminUsers(params: {
 export async function getAdminLinks(params: {
   q?: string;
   ownerId?: number;
+  sort?: AdminLinkSort;
   page: number;
   size: number;
 }): Promise<AdminLinksPage> {
   const qs = new URLSearchParams();
   if (params.q) qs.set("q", params.q);
   if (params.ownerId != null) qs.set("ownerId", String(params.ownerId));
+  if (params.sort) qs.set("sort", params.sort);
   qs.set("page", String(params.page));
   qs.set("size", String(params.size));
   return request<AdminLinksPage>(`/api/v1/admin/links?${qs.toString()}`, { method: "GET" });
+}
+
+export async function getAdminLinkDetail(code: string): Promise<AdminLinkDetail> {
+  return request<AdminLinkDetail>(`/api/v1/admin/links/${encodeURIComponent(code)}`, {
+    method: "GET",
+  });
+}
+
+export async function getAdminActivity(): Promise<AdminActivity> {
+  return request<AdminActivity>("/api/v1/admin/links/activity", { method: "GET" });
 }
 
 export async function getAdminRouteMetrics(

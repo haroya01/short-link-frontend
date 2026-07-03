@@ -1673,6 +1673,10 @@
         "title": "सभी लिंक",
         "subtitle": "सभी छोटे लिंक खोजें और ब्राउज़ करें",
         "searchPlaceholder": "कोड या गंतव्य URL खोजें",
+        "sort": {
+          "recent": "सबसे नए",
+          "clicks": "सर्वाधिक क्लिक"
+        },
         "col": {
           "code": "कोड",
           "destination": "गंतव्य",
@@ -1690,6 +1694,60 @@
         "clearFilter": "फ़िल्टर हटाएँ",
         "locked": "पासवर्ड संरक्षित",
         "noResults": "कोई मिलान करने वाला लिंक नहीं"
+      }
+    },
+    "detail": {
+      "title": "लिंक विवरण",
+      "back": "सभी लिंक पर वापस जाएँ",
+      "anonymousOwner": "अनाम",
+      "meta": {
+        "code": "शॉर्ट कोड",
+        "owner": "स्वामी",
+        "destination": "गंतव्य",
+        "clicks": "कुल क्लिक",
+        "views": "व्यू",
+        "created": "बनाया गया",
+        "expires": "समाप्ति",
+        "noExpiry": "कोई समाप्ति नहीं",
+        "locked": "पासवर्ड सुरक्षित"
+      },
+      "section": {
+        "daily": {
+          "title": "दैनिक क्लिक",
+          "desc": "दिन के अनुसार · {tz}"
+        },
+        "hourly": {
+          "title": "घंटे के अनुसार",
+          "desc": "दिन के घंटे का वितरण"
+        },
+        "referrers": {
+          "title": "रेफ़रर",
+          "desc": "क्लिक कहाँ से आए"
+        },
+        "devices": {
+          "title": "डिवाइस",
+          "desc": "डिवाइस विवरण"
+        },
+        "countries": {
+          "title": "देश",
+          "desc": "देश के अनुसार क्लिक"
+        }
+      },
+      "empty": {
+        "countries": "अभी तक कोई देश डेटा नहीं"
+      }
+    },
+    "activity": {
+      "recentLinksTitle": "हाल के लिंक",
+      "recentLinksDesc": "नए बनाए गए",
+      "recentClicksTitle": "हाल के क्लिक",
+      "recentClicksDesc": "लाइव क्लिक स्ट्रीम",
+      "trendingTitle": "ट्रेंडिंग · 24 घंटे",
+      "trendingDesc": "मानव क्लिक के आधार पर शीर्ष",
+      "empty": {
+        "links": "अभी तक कोई लिंक नहीं",
+        "clicks": "अभी तक कोई क्लिक नहीं",
+        "trending": "अभी तक कुछ भी ट्रेंडिंग नहीं"
       }
     }
   },

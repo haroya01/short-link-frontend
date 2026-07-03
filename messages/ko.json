@@ -1673,6 +1673,10 @@
         "title": "전체 링크",
         "subtitle": "모든 단축 링크를 검색하고 살펴봅니다",
         "searchPlaceholder": "코드 또는 목적지 URL 검색",
+        "sort": {
+          "recent": "최신순",
+          "clicks": "클릭순"
+        },
         "col": {
           "code": "코드",
           "destination": "목적지",
@@ -1690,6 +1694,60 @@
         "clearFilter": "필터 해제",
         "locked": "비밀번호 보호",
         "noResults": "일치하는 링크가 없어요"
+      }
+    },
+    "detail": {
+      "title": "링크 상세",
+      "back": "전체 링크로 돌아가기",
+      "anonymousOwner": "익명",
+      "meta": {
+        "code": "단축 코드",
+        "owner": "소유자",
+        "destination": "목적지",
+        "clicks": "총 클릭",
+        "views": "조회",
+        "created": "생성일",
+        "expires": "만료일",
+        "noExpiry": "만료 없음",
+        "locked": "비밀번호 보호"
+      },
+      "section": {
+        "daily": {
+          "title": "일별 클릭",
+          "desc": "일 단위 · {tz}"
+        },
+        "hourly": {
+          "title": "시간대별",
+          "desc": "하루 중 시간대 분포"
+        },
+        "referrers": {
+          "title": "리퍼러",
+          "desc": "클릭 유입 경로"
+        },
+        "devices": {
+          "title": "기기",
+          "desc": "기기별 분포"
+        },
+        "countries": {
+          "title": "국가",
+          "desc": "국가별 클릭"
+        }
+      },
+      "empty": {
+        "countries": "아직 국가 데이터가 없어요"
+      }
+    },
+    "activity": {
+      "recentLinksTitle": "최근 링크",
+      "recentLinksDesc": "새로 만들어진 링크",
+      "recentClicksTitle": "최근 클릭",
+      "recentClicksDesc": "실시간 클릭 흐름",
+      "trendingTitle": "24시간 인기",
+      "trendingDesc": "사람 클릭 기준 상위",
+      "empty": {
+        "links": "아직 링크가 없어요",
+        "clicks": "아직 클릭이 없어요",
+        "trending": "아직 인기 링크가 없어요"
       }
     }
   },
