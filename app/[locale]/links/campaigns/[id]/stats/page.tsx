@@ -24,6 +24,7 @@ import {
 import { Link } from "@/i18n/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import { Section } from "@/components/common/section";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import type { HeatmapCell } from "@/types";
@@ -111,13 +112,7 @@ export default function CampaignStatsPage() {
   }, [campaignId, compareWithId]);
 
   if (ready && !authenticated) {
-    return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-          {t("loginRequired")}
-        </h1>
-      </div>
-    );
+    return <LinksAuthGate eyebrow="campaigns" title={t("loginRequired")} />;
   }
 
   return (

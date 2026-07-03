@@ -1,4 +1,9 @@
 {
+  "authGate": {
+    "login": "Sign in",
+    "explore": "Look around without signing in",
+    "defaultDesc": "Sign in to pick up your links and campaigns where you left off."
+  },
   "comments": {
     "count": "{count, plural, =0 {Comments} one {# comment} other {# comments}}",
     "placeholder": "Write a comment",
