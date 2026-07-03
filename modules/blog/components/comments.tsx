@@ -168,9 +168,12 @@ export function PostComments({
           onSubmit={() => void submitTop()}
           placeholder={t("placeholder")}
           submitLabel={busy ? t("submitting") : t("submit")}
+          cancelLabel={t("cancel")}
           submitting={busy}
           canSubmit={!authenticated || !!body.trim()}
           footer={ready && !authenticated ? t("loginPrompt") : ""}
+          rows={2}
+          collapsible
         />
       </div>
 
@@ -234,11 +237,14 @@ export function PostComments({
                     onSubmit={() => void submitReply(c.id)}
                     placeholder={t("replyPlaceholder")}
                     submitLabel={t("reply")}
+                    cancelLabel={t("cancel")}
                     submitting={busy}
                     canSubmit={!!replyBody.trim()}
                     rows={2}
                     autoFocus
                     compact
+                    collapsible
+                    onCancel={() => setReplyTo(null)}
                   />
                 </div>
               )}
