@@ -108,7 +108,7 @@ function LoginShell({ next = null }: { next?: string | null }) {
             {t.rich("consent", {
               terms: (c) => (
                 <Link
-                  href="/links/terms"
+                  href="/terms"
                   className="underline underline-offset-2 hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   {c}
@@ -116,7 +116,7 @@ function LoginShell({ next = null }: { next?: string | null }) {
               ),
               privacy: (c) => (
                 <Link
-                  href="/links/privacy"
+                  href="/privacy"
                   className="underline underline-offset-2 hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   {c}

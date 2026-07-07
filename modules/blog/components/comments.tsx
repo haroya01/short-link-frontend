@@ -2,6 +2,7 @@
 
 import { DATE_LOCALE } from "@/lib/date";
 import { useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { CornerDownRight, Trash2, Heart } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -17,9 +18,25 @@ import {
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
-import { CommentComposer } from "@/modules/blog/components/comment-composer";
 import { ReportButton } from "@/modules/blog/components/report-button";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useConfirm } from "@/components/ui/use-confirm";
+
+// 대부분의 방문자는 댓글을 쓰지 않는다. 에디터(Tiptap/ProseMirror, ~120KB+)는 실제로 입력칸을
+// 건드릴 때만 로드한다 — ssr:false 로 서버 번들에서 빼고, 답글 컴포저는 열 때 마운트되며(아래),
+// 항상 보이는 상단 컴포저는 첫 포커스 전까지 같은 한 줄 자리 표시자로 대신한다.
+const CommentComposer = dynamic(
+  () => import("@/modules/blog/components/comment-composer").then((m) => m.CommentComposer),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="min-h-[76px] rounded-xl border border-slate-200 dark:border-slate-700"
+        aria-hidden
+      />
+    ),
+  },
+);
 
 
 export function PostComments({
@@ -38,10 +55,14 @@ export function PostComments({
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyBody, setReplyBody] = useState("");
   const [busy, setBusy] = useState(false);
+  // 쓰기 경로(작성·답글·삭제) 실패를 알리는 인라인 문구 — 실패가 조용히 새면 사용자는 등록된 줄 안다.
+  const [error, setError] = useState<string | null>(null);
   // The just-posted comment's id — drives its slide-in entrance animation once it renders.
   const [justAddedId, setJustAddedId] = useState<number | null>(null);
   // 보는 사람이 좋아요한 댓글 id — 공개 목록은 비인증이라 인증 후 별도 엔드포인트로 한 번 hydrate.
   const [likedIds, setLikedIds] = useState<Set<number>>(new Set());
+  // 상단 컴포저를 켜기 전엔 에디터 청크를 받지 않는다 — 포커스/클릭 시에만 실제 컴포저를 마운트.
+  const [topComposerActive, setTopComposerActive] = useState(false);
   const [confirm, confirmDialog] = useConfirm();
 
   const load = useCallback(() => {
@@ -105,11 +126,15 @@ export function PostComments({
     }
     if (!body.trim() || busy) return;
     setBusy(true);
+    setError(null);
     try {
       const created = await createComment(postId, body.trim());
       setBody("");
-      await load();
+      // 서버가 돌려준 완성 댓글을 낙관 추가 — 전체 재조회(load)는 실패 시 목록을 [] 로 덮으므로 피한다.
+      setComments((prev) => [...prev, created]);
       setJustAddedId(created.id); // animate the new comment in once it renders
+    } catch {
+      setError(t("submitError"));
     } finally {
       setBusy(false);
     }
@@ -122,12 +147,15 @@ export function PostComments({
     }
     if (!replyBody.trim() || busy) return;
     setBusy(true);
+    setError(null);
     try {
       const created = await createComment(postId, replyBody.trim(), parentId);
       setReplyBody("");
       setReplyTo(null);
-      await load();
+      setComments((prev) => [...prev, created]);
       setJustAddedId(created.id);
+    } catch {
+      setError(t("submitError"));
     } finally {
       setBusy(false);
     }
@@ -136,9 +164,13 @@ export function PostComments({
   async function remove(id: number) {
     if (!(await confirm({ title: t("deleteConfirm"), destructive: true }))) return;
     setBusy(true);
+    setError(null);
     try {
       await deleteComment(id);
-      await load();
+      // 삭제한 댓글(+그 답글)만 걷어낸다 — 재조회 대신 로컬 반영으로 목록 증발을 막는다.
+      setComments((prev) => prev.filter((x) => x.id !== id && x.parentId !== id));
+    } catch {
+      setError(t("deleteError"));
     } finally {
       setBusy(false);
     }
@@ -162,19 +194,38 @@ export function PostComments({
       {/* The input is ALWAYS visible so there's always a way to comment. Signed-out (or pre-auth)
           submit kicks off login instead of hiding the field. */}
       <div className="mt-4">
-        <CommentComposer
-          value={body}
-          onChange={setBody}
-          onSubmit={() => void submitTop()}
-          placeholder={t("placeholder")}
-          submitLabel={busy ? t("submitting") : t("submit")}
-          cancelLabel={t("cancel")}
-          submitting={busy}
-          canSubmit={!authenticated || !!body.trim()}
-          footer={ready && !authenticated ? t("loginPrompt") : ""}
-          rows={2}
-          collapsible
-        />
+        {topComposerActive ? (
+          <CommentComposer
+            value={body}
+            onChange={setBody}
+            onSubmit={() => void submitTop()}
+            placeholder={t("placeholder")}
+            submitLabel={busy ? t("submitting") : t("submit")}
+            cancelLabel={t("cancel")}
+            submitting={busy}
+            canSubmit={!authenticated || !!body.trim()}
+            footer={ready && !authenticated ? t("loginPrompt") : ""}
+            rows={2}
+            collapsible
+            autoFocus
+          />
+        ) : (
+          // 쉬는 상태의 한 줄 컴포저와 같은 모양의 정적 자리 표시자 — 여기서 포커스가 들어오면
+          // 실제 컴포저(+에디터 청크)를 마운트한다.
+          <button
+            type="button"
+            onClick={() => setTopComposerActive(true)}
+            onFocus={() => setTopComposerActive(true)}
+            className="focus-ring block w-full rounded-xl border border-slate-200 px-4 py-3 text-left text-[15px] text-slate-400 transition-colors hover:border-slate-300 dark:border-slate-700 dark:text-slate-500 dark:hover:border-slate-600"
+          >
+            {t("placeholder")}
+          </button>
+        )}
+        {error && (
+          <p className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
+            {error}
+          </p>
+        )}
       </div>
 
       {comments.length === 0 ? (
@@ -289,8 +340,9 @@ function CommentRow({
   return (
     <div className={isNew ? "comment-in" : undefined}>
       <div className="flex items-center gap-2">
-        {/* Avatar + @handle link to the commenter's profile (cross-host on prod). */}
-        <a
+        {/* Avatar + @handle link to the commenter's profile (soft nav when same-origin, hard on the
+            author subdomain). */}
+        <BlogLink
           href={profileHref ?? "#"}
           className={`group/author flex min-w-0 items-center gap-2 rounded focus-ring ${hasAuthor ? "" : "pointer-events-none"}`}
           aria-disabled={!hasAuthor}
@@ -299,7 +351,7 @@ function CommentRow({
           <span className="truncate text-sm font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
             @{username}
           </span>
-        </a>
+        </BlogLink>
         <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">{fmt(comment.createdAt)}</span>
         <div className="ml-auto flex shrink-0 items-center gap-1">
           {/* 신고는 내가 지울 수 없는 (= 내 글/내 댓글이 아닌) 댓글에만 노출 — 내 것엔 휴지통만. */}

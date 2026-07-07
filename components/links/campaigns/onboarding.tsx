@@ -59,7 +59,7 @@ export function CampaignOnboarding() {
       <FlowStrip />
 
       <div className="flex flex-col items-center gap-2 pt-2">
-        <Link href="/links/campaigns/new">
+        <Link href="/campaigns/new">
           <Button variant="accent" className="h-11 rounded-xl px-6 text-[13px] font-medium">
             {t("createCta")}
             <ArrowRight className="h-4 w-4" aria-hidden />

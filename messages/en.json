@@ -24,7 +24,9 @@
     "list": "List",
     "quote": "Quote",
     "preview": "Preview",
-    "linkText": "link text"
+    "linkText": "link text",
+    "submitError": "Couldn't post your comment. Please try again.",
+    "deleteError": "Couldn't delete the comment. Please try again."
   },
   "publicFeed": {
     "recent": "Latest",
@@ -109,7 +111,9 @@
     "seriesNextEpisode": "Next episode",
     "seriesEpisodeOf": "Episode {current} of {total}",
     "feedReasonTopic": "Following ‘{tag}’",
-    "feedReasonSeries": "Subscribed series"
+    "feedReasonSeries": "Subscribed series",
+    "bookmarkFailed": "Couldn't save. Please try again.",
+    "seriesSubscribeFailed": "Couldn't update subscription. Please try again."
   },
   "blogWebhooks": {
     "loginRequired": "Sign in required.",
@@ -441,7 +445,8 @@
       "placePlaceholder": "Search a place name or address",
       "placeEmpty": "No results.",
       "placeHint": "Pick a place to insert a map card into the post.",
-      "placeClose": "Close"
+      "placeClose": "Close",
+      "placeError": "Couldn't load place details. Please try again."
     },
     "autoSave": "Autosaves",
     "unsavedLeaveTitle": "You have unsaved changes",
@@ -453,7 +458,9 @@
     "importPartialError": "Some files could not be imported. Check the files and try again.",
     "savedAt": "Saved at {time}",
     "continueWriting": "Continue writing",
-    "noPostsHint": "Your posts will pile up here. Drafts stay private until you publish."
+    "noPostsHint": "Your posts will pile up here. Drafts stay private until you publish.",
+    "seriesCreateConflict": "A series with this name already exists. Try a different name.",
+    "seriesCreateError": "Couldn't create the series. Please try again."
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -485,7 +492,11 @@
     "clearHistoryCancel": "Cancel",
     "forget": "Remove from history",
     "loadMore": "Load more",
-    "emptyFolder": "This folder is empty."
+    "emptyFolder": "This folder is empty.",
+    "saveFailed": "Couldn't save your change. Please try again.",
+    "bulkMoveFailed": "Couldn't move {count} items. Please try again.",
+    "loadError": "Couldn't load your reading history.",
+    "retry": "Try again"
   },
   "publicPost": {
     "like": "Like",
@@ -581,7 +592,8 @@
     "seriesViewAll": "View all {total} parts",
     "relatedHeading": "Read next",
     "resumeReading": "Resume reading",
-    "resumeDismiss": "Dismiss"
+    "resumeDismiss": "Dismiss",
+    "replyError": "Couldn't post your reply. Please try again."
   },
   "imageCropper": {
     "title": "Crop image",
@@ -2684,7 +2696,9 @@
       "recoveryCopyAll": "Copy all",
       "recoveryCopied": "Recovery codes copied.",
       "recoveryCopyFailed": "Copy failed.",
-      "recoveryDismiss": "I've saved them, close"
+      "recoveryDismiss": "I've saved them, close",
+      "loadError": "Couldn't load your 2FA status.",
+      "retry": "Retry"
     },
     "apiKeys": {
       "title": "API keys",
@@ -2816,7 +2830,8 @@
       "redirectHint": "The redirect URL is applied to printed QR codes when the campaign ends.",
       "cancel": "Cancel",
       "creating": "Creating...",
-      "submit": "Create QR campaign"
+      "submit": "Create QR campaign",
+      "leaveConfirm": "Leave without saving? Your changes will be lost."
     },
     "detail": {
       "loadFailed": "Load failed",
@@ -2868,7 +2883,8 @@
         "emptyTitle": "No distribution batches yet",
         "emptyDescription": "Add the first batch to issue a QR code. Scan it before ordering print.",
         "addFirst": "Add first batch"
-      }
+      },
+      "csvFailed": "CSV download failed"
     },
     "batchesNew": {
       "loadFailed": "Load failed",
@@ -3398,6 +3414,7 @@
     "add": "Add",
     "whyLabel": "Why did you connect it?",
     "whyPlaceholder": "One line (optional)",
-    "addToCount": "Added to {count} collection(s)."
+    "addToCount": "Added to {count} collection(s).",
+    "connectError": "Couldn't save. Please try again."
   }
 }

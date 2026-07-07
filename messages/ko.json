@@ -24,7 +24,9 @@
     "list": "목록",
     "quote": "인용",
     "preview": "미리보기",
-    "linkText": "링크 텍스트"
+    "linkText": "링크 텍스트",
+    "submitError": "댓글을 등록하지 못했어요. 다시 시도해 주세요.",
+    "deleteError": "댓글을 삭제하지 못했어요. 다시 시도해 주세요."
   },
   "publicFeed": {
     "recent": "최신",
@@ -109,7 +111,9 @@
     "seriesNextEpisode": "다음 편",
     "seriesEpisodeOf": "{total}편 중 {current}편",
     "feedReasonTopic": "‘{tag}’ 팔로우",
-    "feedReasonSeries": "구독 시리즈"
+    "feedReasonSeries": "구독 시리즈",
+    "bookmarkFailed": "저장하지 못했어요. 다시 시도해 주세요.",
+    "seriesSubscribeFailed": "구독을 변경하지 못했어요. 다시 시도해 주세요."
   },
   "blogWebhooks": {
     "loginRequired": "로그인이 필요해요.",
@@ -441,7 +445,8 @@
       "placePlaceholder": "장소 이름이나 주소 검색",
       "placeEmpty": "검색 결과가 없어요.",
       "placeHint": "장소를 고르면 지도 카드가 글에 삽입돼요.",
-      "placeClose": "닫기"
+      "placeClose": "닫기",
+      "placeError": "장소 정보를 불러오지 못했어요. 다시 시도해주세요."
     },
     "autoSave": "자동 저장",
     "unsavedLeaveTitle": "저장하지 않은 변경이 있어요",
@@ -453,7 +458,9 @@
     "importPartialError": "일부 파일을 가져오지 못했어요. 파일을 확인하고 다시 시도해주세요.",
     "savedAt": "{time} 저장됨",
     "continueWriting": "이어서 쓰기",
-    "noPostsHint": "첫 글을 쓰면 여기에 쌓여요. 발행 전까지는 임시저장으로 남아요."
+    "noPostsHint": "첫 글을 쓰면 여기에 쌓여요. 발행 전까지는 임시저장으로 남아요.",
+    "seriesCreateConflict": "같은 이름의 시리즈가 이미 있어요. 다른 이름을 써주세요.",
+    "seriesCreateError": "시리즈를 만들지 못했어요. 다시 시도해주세요."
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -485,7 +492,11 @@
     "clearHistoryCancel": "취소",
     "forget": "기록에서 지우기",
     "loadMore": "더 보기",
-    "emptyFolder": "이 폴더는 비어 있어요."
+    "emptyFolder": "이 폴더는 비어 있어요.",
+    "saveFailed": "변경 사항을 저장하지 못했어요. 다시 시도해 주세요.",
+    "bulkMoveFailed": "{count}개를 옮기지 못했어요. 다시 시도해 주세요.",
+    "loadError": "읽기 기록을 불러오지 못했어요.",
+    "retry": "다시 시도"
   },
   "publicPost": {
     "like": "좋아요",
@@ -581,7 +592,8 @@
     "seriesViewAll": "시리즈 전체 {total}편 보기",
     "relatedHeading": "다음 읽을 글",
     "resumeReading": "이어서 읽기",
-    "resumeDismiss": "이어읽기 닫기"
+    "resumeDismiss": "이어읽기 닫기",
+    "replyError": "답글을 등록하지 못했어요. 다시 시도해 주세요."
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -2684,7 +2696,9 @@
       "recoveryCopyAll": "전체 복사",
       "recoveryCopied": "복구 코드가 복사되었어요.",
       "recoveryCopyFailed": "복사 실패",
-      "recoveryDismiss": "확인했어요, 닫기"
+      "recoveryDismiss": "확인했어요, 닫기",
+      "loadError": "2FA 상태를 불러오지 못했어요.",
+      "retry": "다시 시도"
     },
     "customDomains": {
       "title": "커스텀 도메인",
@@ -2816,7 +2830,8 @@
       "redirectHint": "자동 전환 대상 URL — QR 캠페인 종료 시점에 인쇄된 QR 들에 일괄 적용됩니다.",
       "cancel": "취소",
       "creating": "만드는 중...",
-      "submit": "QR 캠페인 만들기"
+      "submit": "QR 캠페인 만들기",
+      "leaveConfirm": "저장하지 않고 나갈까요? 입력한 내용이 사라집니다."
     },
     "detail": {
       "loadFailed": "불러오기 실패",
@@ -2868,7 +2883,8 @@
         "emptyTitle": "아직 배포 묶음이 없어요",
         "emptyDescription": "첫 묶음을 추가하면 QR 코드가 즉시 발급됩니다. 인쇄·발주 전에 스캔해서 작동 확인 가능.",
         "addFirst": "첫 배포 묶음 추가"
-      }
+      },
+      "csvFailed": "CSV 다운로드 실패"
     },
     "batchesNew": {
       "loadFailed": "불러오기 실패",
@@ -3398,6 +3414,7 @@
     "add": "추가",
     "whyLabel": "왜 이었나요",
     "whyPlaceholder": "한 줄 (선택)",
-    "addToCount": "{count}개 컬렉션에 추가됩니다."
+    "addToCount": "{count}개 컬렉션에 추가됩니다.",
+    "connectError": "저장하지 못했어요. 다시 시도해 주세요."
   }
 }

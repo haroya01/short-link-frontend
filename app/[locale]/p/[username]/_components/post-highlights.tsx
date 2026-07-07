@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
 import { useAuth } from "@/lib/auth";
@@ -19,8 +20,6 @@ import {
   type NewHighlight,
 } from "@/modules/blog/api/highlights";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
-import { CommentComposer } from "@/modules/blog/components/comment-composer";
-import { RichCommentInput } from "@/modules/blog/components/rich-comment-input";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
 import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine, Trash2 } from "lucide-react";
 import { blogPath } from "@/lib/host";
@@ -36,6 +35,19 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
+
+// The comment editor pulls in Tiptap/ProseMirror (~120KB). These surfaces only render inside
+// interaction-opened sheets (the reply thread / the memo sheet), so load their chunk on first use
+// instead of shipping it in the post-route bundle. comments.tsx dynamic-imports the same modules,
+// so both surfaces must defer for the editor to actually drop out of the initial chunk.
+const CommentComposer = dynamic(
+  () => import("@/modules/blog/components/comment-composer").then((m) => m.CommentComposer),
+  { ssr: false },
+);
+const RichCommentInput = dynamic(
+  () => import("@/modules/blog/components/rich-comment-input").then((m) => m.RichCommentInput),
+  { ssr: false },
+);
 
 type Anchor = { left: number; top: number; bottom: number };
 
@@ -344,6 +356,7 @@ function HighlightThread({
   const [replies, setReplies] = useState<HighlightReplyView[]>([]);
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   // The public paths/collections this sentence is woven into ("이 문장이 속한 길" — A-척추 discovery loop).
   const [inCollections, setInCollections] = useState<CollectionSummary[]>([]);
   // Blocks curators wove alongside this sentence in the same public collections ("이것과 이어진 것").
@@ -389,11 +402,16 @@ function HighlightThread({
     }
     if (!body.trim() || busy) return;
     setBusy(true);
+    setError(null);
     try {
-      await createHighlightReply(highlight.id, body.trim());
+      // Optimistic append with the created reply — a re-fetch (listHighlightReplies) returns [] on a
+      // read failure, which would blank the whole thread on an otherwise-successful post.
+      const created = await createHighlightReply(highlight.id, body.trim());
+      setReplies((prev) => [...prev, created]);
       setBody("");
-      load();
       onChanged(); // refresh the marks' replyCount
+    } catch {
+      setError(t("replyError"));
     } finally {
       setBusy(false);
     }
@@ -401,10 +419,13 @@ function HighlightThread({
 
   async function remove(id: number) {
     setBusy(true);
+    setError(null);
     try {
       await deleteHighlightReply(id);
-      load();
+      setReplies((prev) => prev.filter((r) => r.id !== id));
       onChanged();
+    } catch {
+      setError(t("replyError"));
     } finally {
       setBusy(false);
     }
@@ -573,6 +594,11 @@ function HighlightThread({
             compact
             footer={authenticated ? "" : t("highlightReplyLogin")}
           />
+          {error && (
+            <p role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">
+              {error}
+            </p>
+          )}
         </div>
       </div>
     </div>

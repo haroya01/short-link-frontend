@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { blogHref } from "@/lib/host";
+import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 
 type TabKey = "recent" | "trending" | "following";
 
@@ -25,7 +26,9 @@ export async function FeedTabs({
   return (
     <nav className="flex gap-1 text-[15px] font-bold">
       {tabs.map((tab) => (
-        <a
+        // Absolute blogHref (works from the author subdomain too), but same-origin clicks on the
+        // blog host soft-navigate — no full reload / tab-bar remount on this lateral feed hop.
+        <BlogChromeLink
           key={tab.key}
           href={blogHref(`/?sort=${tab.key}`)}
           aria-current={active === tab.key ? "page" : undefined}
@@ -39,7 +42,7 @@ export async function FeedTabs({
           }`}
         >
           {tab.label}
-        </a>
+        </BlogChromeLink>
       ))}
     </nav>
   );

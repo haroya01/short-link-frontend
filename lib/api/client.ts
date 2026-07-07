@@ -2,6 +2,7 @@ import * as Sentry from "@sentry/nextjs";
 
 import type { ProblemDetail } from "@/types";
 import { readStorageString, removeStorageItem, writeStorageString } from "@/lib/storage-json";
+import { clearSessionHint, hasSessionHint, writeSessionHint } from "@/lib/session-hint";
 import { mockLinksResponse } from "@/lib/api/_links-mocks";
 
 const ACCESS_TOKEN_KEY = "short-link:access-token";
@@ -47,8 +48,15 @@ export function setToken(token: string | null) {
   if (memoryToken === token) return;
   memoryToken = token;
   if (typeof window === "undefined") return;
-  if (token) writeStorageString(ACCESS_TOKEN_KEY, token);
-  else removeStorageItem(ACCESS_TOKEN_KEY);
+  if (token) {
+    writeStorageString(ACCESS_TOKEN_KEY, token);
+    // .kurl.me hint so anonymous visitors skip the refresh POST while cross-subdomain sessions
+    // still recover (see bootstrapSession).
+    writeSessionHint();
+  } else {
+    removeStorageItem(ACCESS_TOKEN_KEY);
+    clearSessionHint();
+  }
   window.dispatchEvent(new CustomEvent("auth:change"));
 }
 
@@ -66,7 +74,15 @@ export async function bootstrapSession(): Promise<boolean> {
     if (!readToken()) setToken("mock-session-token");
     return true;
   }
-  if (readToken()) return true;
+  if (readToken()) {
+    // Keep the shared .kurl.me hint fresh whenever this origin already holds a token, so the next
+    // subdomain we land on knows a session exists and can recover it.
+    writeSessionHint();
+    return true;
+  }
+  // No token in this origin's storage. A pure anonymous visitor has no session to recover, so skip
+  // the guaranteed-401 refresh POST; only attempt it when the hint says a session exists somewhere.
+  if (!hasSessionHint()) return false;
   return (await tryRefresh()) != null;
 }
 

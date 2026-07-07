@@ -25,8 +25,14 @@ export type SharedSetStore<K> = {
   /**
    * Optimistically flip {@code key}'s membership, run {@code mutate(had)}, and roll back if it throws.
    * {@code mutate} receives whether the key was present before the flip so it can pick add vs remove.
+   * {@code onError} (optional) fires after the rollback so callers can tell the user the toggle didn't
+   * stick (e.g. a toast) — without it the store rolls back silently, which reads as an unexplained revert.
    */
-  optimisticToggle: (key: K, mutate: (had: boolean) => Promise<unknown>) => Promise<void>;
+  optimisticToggle: (
+    key: K,
+    mutate: (had: boolean) => Promise<unknown>,
+    onError?: (error: unknown) => void,
+  ) => Promise<void>;
 };
 
 export function createSharedSetStore<K>(load: () => Promise<Iterable<K>>): SharedSetStore<K> {
@@ -64,17 +70,22 @@ export function createSharedSetStore<K>(load: () => Promise<Iterable<K>>): Share
     for (const l of listeners) l();
   }
 
-  async function optimisticToggle(key: K, mutate: (had: boolean) => Promise<unknown>) {
+  async function optimisticToggle(
+    key: K,
+    mutate: (had: boolean) => Promise<unknown>,
+    onError?: (error: unknown) => void,
+  ) {
     const had = members.has(key);
     if (had) members.delete(key);
     else members.add(key);
     emit(); // optimistic
     try {
       await mutate(had);
-    } catch {
+    } catch (error) {
       if (had) members.add(key);
       else members.delete(key);
       emit(); // rollback
+      onError?.(error);
     }
   }
 

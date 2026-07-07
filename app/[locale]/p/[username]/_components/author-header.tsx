@@ -2,13 +2,27 @@ import { Link2 } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { cardHref } from "@/lib/host";
 import type { PublicAuthor } from "@/modules/blog/api/public-posts";
-import { authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { FollowCounts } from "@/modules/blog/components/follow-counts";
 import { AuthorTabs } from "./author-tabs";
 
 type Tab = "posts" | "series" | "collections" | "about";
+
+const BLOG_HOST = process.env.NEXT_PUBLIC_BLOG_HOST;
+
+/**
+ * Same-origin RELATIVE path to an author tab, so the bar soft-navigates (BlogLink → next/link) and
+ * ProfileChrome's persistent header stays mounted (no avatar/handle/tab blink, no scroll reset on a
+ * tab switch). authorHref() returns an ABSOLUTE blog.kurl.me URL in prod, which BlogLink downgrades
+ * to a hard <a> reload. prod: the profile is served at blog.kurl.me/@{user} (middleware rewrites →
+ * /{locale}/p/{user}), so the visible path is /@{user}[/sub]; dev/preview: the apex path route
+ * /{locale}/p/{user}[/sub]. Full base paths (not a bare "/series") so both deployments resolve.
+ */
+function authorTabHref(username: string, locale: string, sub = ""): string {
+  const base = BLOG_HOST ? `/@${username}` : `/${locale}/p/${username}`;
+  return sub ? `${base}/${sub}` : base;
+}
 
 /**
  * Shared header for the author's blog pages (velog @user style): avatar + handle + bio, then a
@@ -18,19 +32,18 @@ export async function AuthorHeader({ author }: { author: PublicAuthor }) {
   const t = await getTranslations("publicPost");
   const tNav = await getTranslations("nav");
   const locale = await getLocale();
-  // Full author-base paths (not bare "/series") so the tabs work on the path-based deployment
-  // (kurl.me/{locale}/p/{user}) as well as the author subdomain. The profile is the author's PUBLIC
-  // surface; the viewer's own private reading list (좋아요 / 북마크) lives in the workspace
-  // (/blog/curation), reachable from the account menu — not as owner-only tabs on a public page.
+  // The profile is the author's PUBLIC surface; the viewer's own private reading list (좋아요 /
+  // 북마크) lives in the workspace (/blog/curation), reachable from the account menu — not as
+  // owner-only tabs on a public page.
   const tabs: { key: Tab; href: string; label: string }[] = [
-    { key: "posts", href: authorHref(author.username, locale), label: t("tabPosts") },
-    { key: "series", href: authorHref(author.username, locale, "series"), label: t("tabSeries") },
+    { key: "posts", href: authorTabHref(author.username, locale), label: t("tabPosts") },
+    { key: "series", href: authorTabHref(author.username, locale, "series"), label: t("tabSeries") },
     {
       key: "collections",
-      href: authorHref(author.username, locale, "collections"),
+      href: authorTabHref(author.username, locale, "collections"),
       label: t("tabCollections"),
     },
-    { key: "about", href: authorHref(author.username, locale, "about"), label: t("tabAbout") },
+    { key: "about", href: authorTabHref(author.username, locale, "about"), label: t("tabAbout") },
   ];
 
   return (
@@ -40,7 +53,7 @@ export async function AuthorHeader({ author }: { author: PublicAuthor }) {
           handle / bio stay visually static instead of dipping. (A named group did the opposite: it
           crossfaded old-out/new-in, and the new snapshot is pre-hydration, so the whole block blinked.) */}
       <div className="flex items-start gap-5">
-        <Avatar src={author.avatarUrl} name={author.username} size="xl" />
+        <Avatar src={author.avatarUrl} name={author.username} size="xl" eager />
         <div className="min-w-0 flex-1 pt-1">
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             @{author.username}

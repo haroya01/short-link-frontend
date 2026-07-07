@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
 import {
@@ -26,6 +26,35 @@ const EVENT = "kurl:tagprefs";
 
 const EMPTY: TagPrefs = { followed: [], hidden: [] };
 
+// useLayoutEffect on the client (seed before paint → no flash), useEffect on the server (no warning).
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+// Module-level so every mounted hook shares one account load instead of each firing its own GET (the
+// tag page mounts TagFollowControls + FeedInfinite together), and a remounting feed can seed prefs
+// synchronously — before the first paint — instead of flashing hidden-tag posts in and dropping them
+// a round-trip later. `accountCache` is null during SSR/hydration (getTagPrefs is client-only and
+// never resolves before the first paint), so the first client render still matches the server (empty).
+let accountCache: TagPrefs | null = null;
+let inflight: Promise<TagPrefs> | null = null;
+
+/** Load the signed-in account's prefs once per session; concurrent/later callers share the result. */
+function loadAccountOnce(): Promise<TagPrefs> {
+  if (accountCache) return Promise.resolve(accountCache);
+  if (!inflight) {
+    inflight = getTagPrefs()
+      .then((p) => {
+        accountCache = p;
+        // Mirror to the device store so a cold reload (fresh module) can also seed before paint.
+        writeLocal(p);
+        return p;
+      })
+      .finally(() => {
+        inflight = null;
+      });
+  }
+  return inflight;
+}
+
 const isObject = (v: unknown): v is Partial<TagPrefs> => typeof v === "object" && v !== null;
 
 function readLocal(): TagPrefs {
@@ -50,18 +79,31 @@ export type { TagPrefs };
 
 export function useTagPrefs() {
   const { ready, authenticated } = useAuth();
-  // Start empty so SSR and first client paint agree (avoids hydration mismatch); the effect fills
-  // from the account (signed-in) or localStorage (signed-out) after mount.
-  const [prefs, setPrefs] = useState<TagPrefs>(EMPTY);
+  // Seed from the per-session cache when it's warm (a remounting feed then filters hidden tags on the
+  // first paint, no flash-then-collapse). The cache is null during SSR/hydration, so the first client
+  // paint still matches the server (empty) — no hydration mismatch.
+  const [prefs, setPrefs] = useState<TagPrefs>(() => accountCache ?? EMPTY);
+
+  // Cold reload (module just loaded, cache empty): fall back to the device store before paint, so
+  // hidden tags apply on the first frame instead of after the auth+prefs round-trips. localStorage is
+  // available regardless of auth readiness; the account fetch below refines it for signed-in users.
+  useIsoLayoutEffect(() => {
+    if (accountCache) return;
+    const local = readLocal();
+    if (local.followed.length || local.hidden.length) setPrefs(local);
+  }, []);
 
   useEffect(() => {
     if (!ready) return;
     let active = true;
     if (authenticated) {
-      getTagPrefs()
+      loadAccountOnce()
         .then((p) => active && setPrefs(p))
         .catch(() => {});
     } else {
+      // Signed out: drop any prior account cache so a later sign-in reloads fresh, and trust the
+      // device store as the source of truth.
+      accountCache = null;
       setPrefs(readLocal());
     }
     const sync = (e: Event) => setPrefs((e as CustomEvent<TagPrefs>).detail ?? readLocal());
@@ -80,19 +122,22 @@ export function useTagPrefs() {
 
   // Optimistically update + broadcast, then persist (account API when signed in, localStorage when
   // not). On API failure the next event/refetch corrects it; local writes can't fail meaningfully.
+  // Either way the session cache + device mirror move with the state, so a remount seeds the new value.
   const apply = useCallback(
     (next: TagPrefs, remote: () => Promise<TagPrefs>) => {
       setPrefs(next);
       broadcast(next);
+      if (authenticated) accountCache = next;
+      writeLocal(next);
       if (authenticated) {
         remote()
           .then((fresh) => {
+            accountCache = fresh;
+            writeLocal(fresh);
             setPrefs(fresh);
             broadcast(fresh);
           })
           .catch(() => {});
-      } else {
-        writeLocal(next);
       }
     },
     [authenticated],

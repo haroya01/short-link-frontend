@@ -24,6 +24,9 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   const [series, setSeries] = useState<PublicSeriesCard[] | null>(null);
   // 구독한 시리즈를 작가별로 거르는 필터 — 팔로잉 탭과 동일한 아바타 칩 패턴.
   const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
+  // 첫 로드 실패를 '구독 없음' 빈 상태와 구분한다(아래 initialError 분기) — reloadKey 로 재조회.
+  const [initialError, setInitialError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (!ready) return;
@@ -31,14 +34,34 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
       setSeries([]);
       return;
     }
+    setInitialError(false);
+    setSeries(null);
     let alive = true;
     listSubscribedSeries()
       .then((s) => alive && (setSeries(s), setSelectedAuthor(null)))
-      .catch(() => alive && setSeries([]));
+      .catch(() => {
+        // 일시적 오류를 빈 상태로 위장하지 않는다 — 별도 오류 분기에서 '다시 시도'를 준다.
+        if (alive) setInitialError(true);
+      });
     return () => {
       alive = false;
     };
-  }, [ready, authenticated]);
+  }, [ready, authenticated, reloadKey]);
+
+  if (initialError) {
+    return (
+      <div className="mt-4 flex flex-col items-center gap-3 py-20 text-center">
+        <p className="text-[14px] text-slate-500 dark:text-slate-400">{t("loadMoreError")}</p>
+        <button
+          type="button"
+          onClick={() => setReloadKey((k) => k + 1)}
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
+        >
+          {t("retry")}
+        </button>
+      </div>
+    );
+  }
 
   if (!ready || series === null) {
     return (

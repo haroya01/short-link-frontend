@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
 import { useMarkRead } from "@/modules/notifications/lib/use-notifications";
 import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
@@ -170,8 +171,8 @@ export function NotificationItem({
     );
   }
   return (
-    <a href={href} onClick={handleClick} className={rowClass}>
+    <BlogLink href={href} onClick={handleClick} className={rowClass}>
       {body}
-    </a>
+    </BlogLink>
   );
 }

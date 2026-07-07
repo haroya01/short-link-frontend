@@ -27,9 +27,6 @@ export function NotificationBell() {
   useDismiss(open, ref, () => setOpen(false));
 
   const unread = useUnreadCount();
-  const { data, isLoading } = useNotifications();
-  const markAll = useMarkAllRead();
-  const items = data?.pages[0]?.items ?? [];
 
   return (
     <div className="relative hidden sm:block" ref={ref}>
@@ -49,50 +46,71 @@ export function NotificationBell() {
         )}
       </button>
 
+      {/* The list query lives inside the dropdown so it only fires once opened — never on mobile,
+          where the bell is CSS-hidden and so can never mount this. */}
       {mounted && (
-        <div
-          role="menu"
-          className={`absolute right-0 z-30 mt-2 w-80 origin-top-right overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950 ${
-            closing ? "animate-dropdown-out" : "animate-dropdown-in"
-          }`}
-        >
-          <div className="flex items-center justify-between px-3 py-2.5">
-            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t("title")}</p>
-            {unread > 0 && (
-              <button
-                type="button"
-                onClick={() => markAll.mutate()}
-                className="focus-ring rounded text-[12px] font-medium text-accent-700 hover:text-accent-800 dark:text-accent-400"
-              >
-                {t("markAllRead")}
-              </button>
-            )}
-          </div>
-          <div className="h-px bg-slate-100 dark:bg-slate-800" />
-
-          <div className="max-h-96 overflow-y-auto p-1">
-            {isLoading ? (
-              <p className="px-3 py-8 text-center text-[13px] text-slate-500 dark:text-slate-400">…</p>
-            ) : items.length === 0 ? (
-              <p className="px-3 py-10 text-center text-[13px] text-slate-500 dark:text-slate-400">
-                {t("empty")}
-              </p>
-            ) : (
-              items.map((item) => (
-                <NotificationItem key={item.id} item={item} onNavigate={() => setOpen(false)} />
-              ))
-            )}
-          </div>
-
-          <div className="h-px bg-slate-100 dark:bg-slate-800" />
-          <a
-            href={blogHref("/notifications")}
-            className="focus-ring block px-3 py-2.5 text-center text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/60"
-          >
-            {t("viewAll")}
-          </a>
-        </div>
+        <NotificationDropdown unread={unread} closing={closing} onClose={() => setOpen(false)} />
       )}
+    </div>
+  );
+}
+
+function NotificationDropdown({
+  unread,
+  closing,
+  onClose,
+}: {
+  unread: number;
+  closing: boolean;
+  onClose: () => void;
+}) {
+  const t = useTranslations("notifications");
+  const { data, isLoading } = useNotifications();
+  const markAll = useMarkAllRead();
+  const items = data?.pages[0]?.items ?? [];
+
+  return (
+    <div
+      role="menu"
+      className={`absolute right-0 z-30 mt-2 w-80 origin-top-right overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950 ${
+        closing ? "animate-dropdown-out" : "animate-dropdown-in"
+      }`}
+    >
+      <div className="flex items-center justify-between px-3 py-2.5">
+        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t("title")}</p>
+        {unread > 0 && (
+          <button
+            type="button"
+            onClick={() => markAll.mutate()}
+            className="focus-ring rounded text-[12px] font-medium text-accent-700 hover:text-accent-800 dark:text-accent-400"
+          >
+            {t("markAllRead")}
+          </button>
+        )}
+      </div>
+      <div className="h-px bg-slate-100 dark:bg-slate-800" />
+
+      <div className="max-h-96 overflow-y-auto p-1">
+        {isLoading ? (
+          <p className="px-3 py-8 text-center text-[13px] text-slate-500 dark:text-slate-400">…</p>
+        ) : items.length === 0 ? (
+          <p className="px-3 py-10 text-center text-[13px] text-slate-500 dark:text-slate-400">
+            {t("empty")}
+          </p>
+        ) : (
+          items.map((item) => (
+            <NotificationItem key={item.id} item={item} onNavigate={onClose} />
+          ))
+        )}
+      </div>
+
+      <div className="h-px bg-slate-100 dark:bg-slate-800" />
+      <a
+        href={blogHref("/notifications")}
+        className="focus-ring block px-3 py-2.5 text-center text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/60"
+      >
+        {t("viewAll")}
+      </a>
     </div>
   );
 }

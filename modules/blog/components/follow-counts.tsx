@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
-import { getFollowStatus } from "@/modules/blog/api/follows";
+import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
 import { FollowListDialog, type FollowTab } from "./follow-list-dialog";
 
 type Counts = { followers: number; following: number };
@@ -34,7 +34,7 @@ export function FollowCounts({ username }: { username: string }) {
       { session: true },
     );
     if (cached) setCounts(cached);
-    getFollowStatus(username)
+    fetchFollowStatus(username)
       .then((s) => {
         const next = { followers: s.followerCount, following: s.followingCount };
         setCounts(next);

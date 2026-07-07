@@ -32,11 +32,19 @@ export function ForYouFeed({ locale }: { locale: string }) {
   const [hasNext, setHasNext] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  // 첫 로드 실패는 '빈 피드'와 구분한다(아래 initialError 분기) — reloadKey 를 올리면 이펙트가 다시 돈다.
+  const [initialError, setInitialError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  // md 이상=발견 그리드, 그 아래=리스트 행 — 뷰포트에 맞는 한쪽 트리만 마운트(무한 스크롤이라 반대편
+  // display:none 트윈까지 항목 수의 2배로 커지지 않게).
+  const [isWide, setIsWide] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!ready || !authenticated) return;
     let alive = true;
+    setInitialError(false);
+    setItems(null);
     listForYouFeed(0, 24)
       .then((view) => {
         if (!alive) return;
@@ -45,12 +53,21 @@ export function ForYouFeed({ locale }: { locale: string }) {
         setPage(0);
       })
       .catch(() => {
-        if (alive) setItems([]);
+        // 일시적 오류를 빈 상태로 위장하지 않는다 — 별도 오류 분기에서 '다시 시도'를 준다.
+        if (alive) setInitialError(true);
       });
     return () => {
       alive = false;
     };
-  }, [ready, authenticated]);
+  }, [ready, authenticated, reloadKey]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsWide(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasNext) return;
@@ -107,6 +124,21 @@ export function ForYouFeed({ locale }: { locale: string }) {
     );
   }
 
+  if (initialError) {
+    return (
+      <div className="mt-4 flex flex-col items-center gap-3 py-20 text-center">
+        <p className="text-[14px] text-slate-500 dark:text-slate-400">{t("loadMoreError")}</p>
+        <button
+          type="button"
+          onClick={() => setReloadKey((k) => k + 1)}
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
+        >
+          {t("retry")}
+        </button>
+      </div>
+    );
+  }
+
   if (!ready || items === null) {
     return (
       <div className="mx-auto mt-4 max-w-4xl xl:max-w-5xl">
@@ -142,14 +174,10 @@ export function ForYouFeed({ locale }: { locale: string }) {
 
   return (
     <div className="mx-auto mt-4 max-w-4xl animate-fade-in xl:max-w-5xl">
-      <div className="mx-auto max-w-2xl md:hidden">
-        <FeedList>
-          {items.map((item) => (
-            <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
-          ))}
-        </FeedList>
-      </div>
-      <div className="hidden md:block">
+      {/* <md = single-column reading rows, md+ = discovery masonry. Only the matching viewport's tree
+          mounts (matchMedia) — the infinite list would otherwise double every card (and its bookmark
+          hook) into a display:none twin that still mounts and re-renders. */}
+      {isWide ? (
         <DiscoveryGrid>
           {items.map((item, i) => (
             <DiscoveryCell key={`${item.author.username}/${item.slug}`} entranceDelay={Math.min((i % 24) * 25, 250)}>
@@ -157,7 +185,15 @@ export function ForYouFeed({ locale }: { locale: string }) {
             </DiscoveryCell>
           ))}
         </DiscoveryGrid>
-      </div>
+      ) : (
+        <div className="mx-auto max-w-2xl">
+          <FeedList>
+            {items.map((item) => (
+              <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
+            ))}
+          </FeedList>
+        </div>
+      )}
 
       {hasNext && (
         <div ref={sentinelRef} role="status" aria-live="polite" className="mt-8 flex flex-col items-center gap-2">

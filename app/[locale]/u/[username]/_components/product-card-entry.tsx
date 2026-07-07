@@ -369,6 +369,7 @@ function CardImages({
 }) {
   const [heroIdx, setHeroIdx] = useState(0);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const safeIdx = heroIdx < images.length ? heroIdx : images.length - 1;
   const soldOut = badge === "SOLD_OUT";
@@ -377,6 +378,9 @@ function CardImages({
     intervalMs: 5000,
     enabled: images.length > 1 && lightboxIdx === null,
     onTick: () => setHeroIdx((i) => (i + 1) % images.length),
+    // Pause hero swaps while this card is off-screen — batches of off-viewport cards otherwise
+    // multiply the setHeroIdx re-render cost on image-heavy profiles.
+    viewportRef: rootRef,
   });
 
   if (images.length === 0) return null;
@@ -385,6 +389,7 @@ function CardImages({
   return (
     <>
       <div
+        ref={rootRef}
         onMouseEnter={pauseAutoplay}
         onMouseLeave={resumeAutoplay}
         onTouchStart={pauseAutoplay}

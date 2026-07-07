@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useEffect,
   useRef,
   type PointerEvent as ReactPointerEvent,
   type RefObject,
@@ -39,6 +40,11 @@ export function useCardTilt(): {
 } {
   const cardRef = useRef<HTMLDivElement>(null);
   const pointerOverRef = useRef(false);
+  // Gates the scroll-driven measurement on viewport visibility. Offscreen the rect read + var
+  // writes are wasted (the look angle clamps to a constant), so we skip them. A ref keeps this off
+  // the render path; defaults to true so behavior is unchanged where IntersectionObserver is
+  // unavailable (SSR / old engines).
+  const visibleRef = useRef(true);
 
   const applyVars = useCallback((x: number, y: number, opacity: number) => {
     const el = cardRef.current;
@@ -87,13 +93,29 @@ export function useCardTilt(): {
   // breathing on scroll while the text sits on a properly dark base until the visitor engages.
   const applyScrollVars = useCallback(() => {
     const el = cardRef.current;
-    if (!el || pointerOverRef.current) return;
+    if (!el || pointerOverRef.current || !visibleRef.current) return;
     const rect = el.getBoundingClientRect();
     const vh = window.innerHeight || 1;
     const cardMid = rect.top + rect.height / 2;
     const yPct = Math.max(0, Math.min(100, (cardMid / vh) * 100));
     applyVars(50, yPct, 0.3);
   }, [applyVars]);
+
+  // Only measure while the card is actually on screen. The passive scroll listener stays
+  // subscribed, but offscreen its callback short-circuits (via visibleRef) instead of reading
+  // layout + writing CSS vars every frame — pure waste on long profiles. Re-sync on entry so the
+  // card doesn't wait for the next scroll frame to pick up its look angle.
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.some((entry) => entry.isIntersecting);
+      visibleRef.current = visible;
+      if (visible) applyScrollVars();
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [applyScrollVars]);
 
   // Target getter (not `window` directly) so SSR doesn't trip on the global lookup at render
   // time — useEffect runs client-side only, where the getter resolves safely.

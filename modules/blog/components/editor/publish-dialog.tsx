@@ -29,6 +29,7 @@ export function PublishDialog({
   coverSuggestion,
   excerpt,
   onExcerptChange,
+  onExcerptPrefill,
   excerptSuggestion,
   slug,
   onSlugChange,
@@ -57,6 +58,10 @@ export function PublishDialog({
   coverSuggestion?: string | null;
   excerpt: string;
   onExcerptChange: (v: string) => void;
+  /** Writes the open-time excerpt prefill WITHOUT marking the post dirty (a machine prefill isn't a user
+   *  edit — otherwise opening the dialog alone arms discard-confirm / draft autosave). Falls back to
+   *  onExcerptChange when not wired. */
+  onExcerptPrefill?: (v: string) => void;
   /** Body's opening line — prefilled into an empty 요약 on open so the author edits, not starts blank. */
   excerptSuggestion?: string;
   slug: string;
@@ -76,7 +81,10 @@ export function PublishDialog({
   error: string | null;
   saving: boolean;
   busy: boolean;
-  onSave: () => Promise<void> | void;
+  /** Persists pending edits. Resolves false when the save failed (or was a no-op that left content
+   *  unsaved) so a lifecycle action can hold instead of publishing a stale snapshot / dropping edits.
+   *  A permissive void return is treated as "not a failure" for back-compat. */
+  onSave: () => Promise<boolean | void> | boolean | void;
   /** Resolves true once the status change succeeds — the dialog closes only then. */
   onChangeStatus: (a: StatusAction, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
   /** Resolves true once the post is parked for a future publish — the dialog closes only then. */
@@ -145,9 +153,11 @@ export function PublishDialog({
     }
     if (!prefilled.current && !excerpt.trim() && excerptSuggestion?.trim()) {
       prefilled.current = true;
-      onExcerptChange(excerptSuggestion);
+      // A programmatic prefill must not mark the post dirty — otherwise merely opening and closing the
+      // dialog arms the discard-confirm (published) or the draft autosave of a machine excerpt.
+      (onExcerptPrefill ?? onExcerptChange)(excerptSuggestion);
     }
-  }, [open, excerpt, excerptSuggestion, onExcerptChange]);
+  }, [open, excerpt, excerptSuggestion, onExcerptChange, onExcerptPrefill]);
 
   if (!open) return null;
 
@@ -465,7 +475,10 @@ export function PublishDialog({
                   tagsFieldRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                   return;
                 }
-                await onSave();
+                // Save first, and abort the publish if it didn't land — otherwise we'd publish a stale
+                // server snapshot (missing the last edits) and the save error would be wiped by the
+                // lifecycle call. The error stays in the footer with the dialog open.
+                if ((await onSave()) === false) return;
                 const ok =
                   showSchedule && scheduleAt
                     ? await onSchedule(scheduleAt, { shortenLinks: enabledLinks })
@@ -473,14 +486,15 @@ export function PublishDialog({
                 if (ok) onClose();
               }}
               onSaveChanges={async () => {
-                await onSave();
+                // Don't close on a failed save — that would read as a phantom success and drop the edits.
+                if ((await onSave()) === false) return;
                 onClose();
               }}
               // Persist pending edits BEFORE the status flip — otherwise editing then Republish /
               // Cancel-schedule / Unpublish silently drops the new content (changeStatus only POSTs the
               // lifecycle endpoint, it doesn't save blocks/meta). Matches Publish / Save changes.
               onUnpublish={async () => {
-                await onSave();
+                if ((await onSave()) === false) return;
                 await onChangeStatus("unpublish");
               }}
               onRepublish={async () => {
@@ -489,11 +503,11 @@ export function PublishDialog({
                   tagsFieldRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                   return;
                 }
-                await onSave();
+                if ((await onSave()) === false) return;
                 await onChangeStatus("republish", { shortenLinks: enabledLinks });
               }}
               onCancelSchedule={async () => {
-                await onSave();
+                if ((await onSave()) === false) return;
                 await onChangeStatus("backToDraft");
               }}
             />

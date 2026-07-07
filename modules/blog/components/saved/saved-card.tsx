@@ -6,6 +6,7 @@ import { Check, FolderPlus, MoreHorizontal, Plus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import type { BookmarkFolder, SavedPost } from "@/modules/blog/api/saved";
 
 
@@ -93,17 +94,17 @@ export function SavedCard({
       {selectMode ? (
         <div>{body}</div>
       ) : (
-        <a href={postHref(item.author.username, item.slug, locale)} className="focus-ring block rounded">
+        <BlogLink href={postHref(item.author.username, item.slug, locale)} className="focus-ring block rounded">
           {body}
-        </a>
+        </BlogLink>
       )}
       <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
         {selectMode ? (
           <span className="font-medium">{item.author.username}</span>
         ) : (
-          <a href={authorHref(item.author.username, locale)} className="focus-ring rounded font-medium hover:text-accent-700 dark:hover:text-accent-400">
+          <BlogLink href={authorHref(item.author.username, locale)} className="focus-ring rounded font-medium hover:text-accent-700 dark:hover:text-accent-400">
             {item.author.username}
-          </a>
+          </BlogLink>
         )}
         <span aria-hidden>·</span>
         <span>{date}</span>

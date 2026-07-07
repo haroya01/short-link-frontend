@@ -8,12 +8,14 @@ import { getWeeklyInsights } from "@/lib/api";
 import type { WeeklyInsights } from "@/types";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/lib/auth";
 
 const DAY_NAMES = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
 export function WeeklyInsightsCard() {
   const t = useTranslations("weeklyInsights");
   const fmt = useFormatter();
+  const { ready, authenticated } = useAuth();
   const [data, setData] = useState<WeeklyInsights | null>(null);
   const [loading, setLoading] = useState(true);
   // Collapsed on mobile so the dashboard table sits one viewport away instead of three.
@@ -22,6 +24,10 @@ export function WeeklyInsightsCard() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
+    // The insights endpoint is authenticated (401 for anon). Wait for auth to settle and gate on a
+    // signed-in viewer so we never fire a guaranteed-401 (which triggers a cross-subdomain refresh);
+    // a signed-out viewer keeps the skeleton until the dashboard's login-wall branch unmounts this.
+    if (!ready || !authenticated) return;
     let cancelled = false;
     getWeeklyInsights()
       .then((d) => {
@@ -34,7 +40,7 @@ export function WeeklyInsightsCard() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [ready, authenticated]);
 
   if (loading) {
     return (

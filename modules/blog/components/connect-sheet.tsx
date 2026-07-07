@@ -37,12 +37,14 @@ export function ConnectSheet({
   onDone: () => void;
 }) {
   const t = useTranslations("collections");
+  const tCommon = useTranslations("common");
   const [step, setStep] = useState<1 | 2>(1);
   const [collections, setCollections] = useState<CollectionSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [why, setWhy] = useState("");
   const [saving, setSaving] = useState(false);
+  const [failed, setFailed] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
   // The parent unmounts this component on onClose/onDone, so the exit phase has to be owned here:
@@ -102,13 +104,20 @@ export function ConnectSheet({
   async function connectAll() {
     if (selected.size === 0) return;
     setSaving(true);
+    setFailed(false);
     const line = why.trim();
-    await Promise.allSettled(
+    // connectBlock is idempotent, so on a partial failure re-running all of them is safe:
+    // keep the sheet open (the typed "왜" survives) and let the Add button retry.
+    const results = await Promise.allSettled(
       [...selected].map((collectionId) =>
         connectBlock(collectionId, { blockType, refId, why: line || null }),
       ),
     );
     setSaving(false);
+    if (results.some((r) => r.status === "rejected")) {
+      setFailed(true);
+      return;
+    }
     finish();
   }
 
@@ -249,6 +258,11 @@ export function ConnectSheet({
               <p className="mt-3 text-[12px] text-slate-400 dark:text-slate-500">
                 {t("addToCount", { count: selected.size })}
               </p>
+              {failed && (
+                <p className="mt-3 text-[12px] text-red-600 dark:text-red-400" role="alert">
+                  {t("connectError")}
+                </p>
+              )}
             </div>
             <div className="flex gap-2 border-t border-slate-100 p-4 dark:border-slate-800">
               <button
@@ -264,7 +278,7 @@ export function ConnectSheet({
                 onClick={() => void connectAll()}
                 className="focus-ring flex flex-1 items-center justify-center rounded-xl bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
               >
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : t("add")}
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : failed ? tCommon("retry") : t("add")}
               </button>
             </div>
           </>

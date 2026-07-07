@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { useToast } from "@/components/ui/toast";
 import {
   listSubscribedSeriesIds,
   subscribeSeries,
@@ -19,6 +21,8 @@ const store = createSharedSetStore<number>(() => listSubscribedSeriesIds());
 export function useSeriesSubscriptions() {
   const { authenticated, ready, signInWithGoogle } = useAuth();
   const set = useSetStore(store, { ready, authenticated });
+  const { toast } = useToast();
+  const t = useTranslations("publicFeed");
 
   const isSubscribed = useCallback((seriesId: number) => set.has(seriesId), [set]);
 
@@ -28,11 +32,13 @@ export function useSeriesSubscriptions() {
         signInWithGoogle();
         return;
       }
-      await store.optimisticToggle(seriesId, (had) =>
-        had ? unsubscribeSeries(seriesId) : subscribeSeries(seriesId),
+      await store.optimisticToggle(
+        seriesId,
+        (had) => (had ? unsubscribeSeries(seriesId) : subscribeSeries(seriesId)),
+        () => toast(t("seriesSubscribeFailed"), "error"),
       );
     },
-    [authenticated, signInWithGoogle],
+    [authenticated, signInWithGoogle, toast, t],
   );
 
   return { isSubscribed, toggle };

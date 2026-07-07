@@ -9,7 +9,15 @@ export type ToggleState = { on: boolean; count?: number };
 // Process-wide store keyed by syncKey, so multiple buttons for the SAME thing (e.g. the like button
 // rendered both at the top and bottom of a post) stay in lockstep — a click on one updates the other
 // with no reload. Without a syncKey each hook instance gets a unique key (useId) → effectively local.
-type Entry = { state: ToggleState; listeners: Set<() => void> };
+// loadToken/loading dedupe the initial fetch across instances sharing a syncKey: the top+bottom copies
+// of the same button mount together and would each fire the same GET. The first records the in-flight
+// promise; the rest await it. A changed token (new post, or auth flip) starts a fresh load.
+type Entry = {
+  state: ToggleState;
+  listeners: Set<() => void>;
+  loadToken?: string;
+  loading?: Promise<void>;
+};
 const stores = new Map<string, Entry>();
 
 function entryFor(key: string, init: ToggleState): Entry {
@@ -26,6 +34,26 @@ function emit(key: string, next: ToggleState) {
   if (!e) return;
   e.state = next;
   e.listeners.forEach((l) => l());
+}
+
+// Run {@code load} once per (key, token): concurrent instances of the same toggle share the pending
+// request instead of each firing their own. Returns the shared promise so every caller can flip its own
+// `loaded` flag when it settles.
+function loadInto(key: string, token: string, load: () => Promise<ToggleState>): Promise<void> {
+  const e = stores.get(key);
+  if (!e) return Promise.resolve();
+  if (e.loadToken === token && e.loading) return e.loading;
+  e.loadToken = token;
+  const p = load()
+    .then((s) =>
+      emit(key, {
+        on: s.on,
+        count: s.count !== undefined ? s.count : stores.get(key)?.state.count,
+      }),
+    )
+    .catch(() => {});
+  e.loading = p;
+  return p;
 }
 
 /**
@@ -96,15 +124,9 @@ export function useOptimisticToggle({
   useEffect(() => {
     if (!ready) return;
     if (loadWhen === "authenticated" && !authenticated) return;
-    load()
-      .then((s) =>
-        emit(key, {
-          on: s.on,
-          count: s.count !== undefined ? s.count : entryFor(key, initRef.current).state.count,
-        }),
-      )
-      .catch(() => {})
-      .finally(() => setLoaded(true));
+    // Token mirrors the effect's own triggers so an auth flip / new depKey still re-loads, while two
+    // instances with the same triggers collapse onto one request.
+    loadInto(key, `${depKey}:${authenticated}`, load).finally(() => setLoaded(true));
     // load is recreated each render; depKey/key are the real triggers.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, authenticated, depKey, key]);

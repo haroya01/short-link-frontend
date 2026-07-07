@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -16,6 +16,7 @@ import {
   updateProfileBlock,
 } from "@/lib/api";
 import { track } from "@/components/common/posthog-provider";
+import { ErrorState } from "@/components/common/error-state";
 import type {
   MyLink,
   MyProfile,
@@ -72,6 +73,12 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
   const [profile, setProfile] = useState<MyProfile | null>(null);
+  // 최초 로드 성공 여부와 실패 여부를 따로 추적한다. 이 구분이 없으면 getMyProfile
+  // 일시 실패가 '핸들 미보유'와 뒤섞여 유저네임 클레임 폼으로 위장한다. loadedRef 는
+  // 로드 이펙트 안에서 재렌더 없이 '이미 로드됐는지'를 읽기 위한 것(백그라운드 새로고침 구분).
+  const [loaded, setLoaded] = useState(false);
+  const loadedRef = useRef(false);
+  const [loadError, setLoadError] = useState(false);
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [theme, setTheme] = useState<ProfileTheme | null>(null);
@@ -199,9 +206,15 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
         setTheme(prof.theme ?? null);
         setSocials(prof.socials ?? []);
         setLinks(allLinks);
+        loadedRef.current = true;
+        setLoaded(true);
+        setLoadError(false);
       })
       .catch(() => {
-        if (!cancelled) setLinks([]);
+        if (cancelled) return;
+        // 최초 로드 실패는 에러 화면으로 구분해 재시도를 유도한다. 한 번 로드된 뒤의
+        // 백그라운드 새로고침(링크 추가 등) 실패는 편집기를 그대로 유지한다.
+        if (!loadedRef.current) setLoadError(true);
       });
     return () => {
       cancelled = true;
@@ -491,6 +504,22 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
       t={t}
     />
   );
+
+  // 최초 로드가 끝나기 전이나 실패했을 때를 '핸들 미보유'와 구분한다. 구분하지 않으면
+  // getMyProfile 일시 실패가 유저네임 클레임 폼으로 위장해 계정이 초기화된 것처럼 보인다.
+  if (!loaded) {
+    if (loadError) {
+      return (
+        <ErrorState
+          onRetry={() => {
+            setLoadError(false);
+            refresh();
+          }}
+        />
+      );
+    }
+    return <p className="px-1 text-xs text-slate-500">{t("loading")}</p>;
+  }
 
   // No username yet → just show the claim flow.
   if (!profile?.username) {

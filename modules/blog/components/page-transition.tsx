@@ -1,40 +1,22 @@
-"use client";
-
 import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
 
 /**
- * Per-navigation entry transition. Lives in a Next `template.tsx`, which re-mounts on every route
- * change — so each navigation re-runs this `initial → animate`. `prefers-reduced-motion` collapses
- * any mode to an instant opacity swap.
+ * 라우트 진입 페이드. Next `template.tsx` 안에 살아서 내비게이션마다 재마운트되고, 그때 진입이 다시 재생된다.
  *
- * Two modes, chosen per surface so a page isn't double-animated:
- * - `settle` (default, blog workspace/feed): a quiet fade + 6px settle + a hair of scale — the page
- *   composes in place. These surfaces have no per-component entrance, so this IS the entrance.
- * - `fade` (public profile/post, link-in-bio, links product): opacity-only. Those surfaces already
- *   run their own CSS content entrance (profile-fade / hero-stagger); a plain
- *   crossfade on route change rides on top WITHOUT adding a second "rise from the bottom".
+ * framer-motion 을 쓰지 않는다: framer 의 `initial`(opacity:0) 은 SSR 마크업에 인라인 style="opacity:0" 로
+ * 박혀, 하이드레이션 전까지(그리고 JS 가 막히면 영구히) 페이지 전체가 투명해지고 LCP 가 하이드레이션 시점으로
+ * 밀린다. 대신 페인트 시점에 도는 Tailwind 키프레임 클래스(`animate-fade-in`)만 쓴다 — JS 없이도 내용이
+ * 보이고, reduced-motion 은 globals.css 에서 이 클래스를 즉시 불투명으로 접는다.
+ *
+ * 진입은 끝 상태에 transform 을 남기지 않는(fill:none) opacity 페이드로 통일한다. 페이지 래퍼에 정적 transform
+ * 이 남으면 position:fixed 자손의 containing block 이 되어 모달·시트·FAB 가 뷰포트가 아니라 래퍼에 갇힌다.
+ * 그래서 rise/scale(translateY 유지) 진입은 쓰지 않는다. `mode` 는 호출부(template.tsx) 계약을 위해 남긴다.
  */
 export function PageTransition({
   children,
-  mode = "settle",
 }: {
   children: ReactNode;
   mode?: "settle" | "fade";
 }) {
-  const reduce = useReducedMotion();
-  const settle = mode === "settle" && !reduce;
-  return (
-    <motion.div
-      initial={settle ? { opacity: 0, y: 6, scale: 0.995 } : { opacity: 0 }}
-      animate={settle ? { opacity: 1, y: 0, scale: 1 } : { opacity: 1 }}
-      // framer는 var() 참조가 안 되니 --ease(globals.css :root)와 같은 곡선을 배열로 미러링.
-      transition={{ duration: mode === "fade" ? 0.2 : 0.28, ease: [0.16, 1, 0.3, 1] }}
-      // will-change를 정적으로 박지 않는다: framer가 애니메이션 동안에만 자동으로 걸고 끝나면 푼다.
-      // 정적 transform will-change는 이 페이지 래퍼를 position:fixed 자손의 containing block으로 만들어
-      // 모달·시트·FAB가 뷰포트가 아니라 래퍼 박스에 갇히게 한다(페이지 전역 오버레이 깨짐).
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className="animate-fade-in">{children}</div>;
 }

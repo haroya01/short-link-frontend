@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MapPin, X } from "lucide-react";
+import { Loader2, MapPin, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   autocompletePlaces,
@@ -35,12 +35,15 @@ export function PlaceSearchDialog({
   const [q, setQ] = useState("");
   const [results, setResults] = useState<PlaceSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
+  const [picking, setPicking] = useState<string | null>(null);
+  const [pickError, setPickError] = useState(false);
   const token = useRef("");
 
   useEffect(() => {
     if (!open) return;
     setQ("");
     setResults([]);
+    setPickError(false);
     token.current = newSessionToken();
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -50,6 +53,7 @@ export function PlaceSearchDialog({
   }, [open, onClose]);
 
   useEffect(() => {
+    setPickError(false);
     if (!open || !q.trim()) {
       setResults([]);
       return;
@@ -69,12 +73,17 @@ export function PlaceSearchDialog({
   }, [q, open]);
 
   async function pick(s: PlaceSuggestion) {
+    setPicking(s.placeId);
+    setPickError(false);
     try {
       const d = await getPlaceDetails(s.placeId, token.current);
       onPick({ name: d.name, lat: d.lat, lng: d.lng });
       onClose();
     } catch {
-      // ignore — keep the dialog open so the user can retry
+      // 다이얼로그는 열어둔 채 인라인 에러로 재시도 유도
+      setPickError(true);
+    } finally {
+      setPicking(null);
     }
   }
 
@@ -123,9 +132,14 @@ export function PlaceSearchDialog({
               <button
                 type="button"
                 onClick={() => pick(s)}
-                className="focus-ring flex w-full items-start gap-2 rounded-lg px-2 py-2 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+                disabled={picking !== null}
+                className="focus-ring flex w-full items-start gap-2 rounded-lg px-2 py-2 text-left transition-colors hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-800"
               >
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                {picking === s.placeId ? (
+                  <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-accent-600" />
+                ) : (
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                )}
                 <span className="min-w-0">
                   <span className="block truncate text-sm font-medium text-slate-900 dark:text-slate-100">
                     {s.primary}
@@ -138,6 +152,9 @@ export function PlaceSearchDialog({
             </li>
           ))}
         </ul>
+        {pickError && (
+          <p className="mt-2 text-[12px] text-red-600 dark:text-red-400">{t("placeError")}</p>
+        )}
       </div>
     </div>
   );
