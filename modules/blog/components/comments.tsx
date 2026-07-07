@@ -2,7 +2,6 @@
 
 import { DATE_LOCALE } from "@/lib/date";
 import { useCallback, useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { CornerDownRight, Trash2, Heart } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -20,24 +19,8 @@ import { authorHref } from "@/modules/blog/components/feed-card";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { CommentComposer } from "@/modules/blog/components/comment-composer";
 import { useConfirm } from "@/components/ui/use-confirm";
-
-// 대부분의 방문자는 댓글을 쓰지 않는다. 에디터(Tiptap/ProseMirror, ~120KB+)는 실제로 입력칸을
-// 건드릴 때만 로드한다 — ssr:false 로 서버 번들에서 빼고, 답글 컴포저는 열 때 마운트되며(아래),
-// 항상 보이는 상단 컴포저는 첫 포커스 전까지 같은 한 줄 자리 표시자로 대신한다.
-const CommentComposer = dynamic(
-  () => import("@/modules/blog/components/comment-composer").then((m) => m.CommentComposer),
-  {
-    ssr: false,
-    loading: () => (
-      <div
-        className="min-h-[76px] rounded-xl border border-slate-200 dark:border-slate-700"
-        aria-hidden
-      />
-    ),
-  },
-);
-
 
 export function PostComments({
   postId,
@@ -61,8 +44,6 @@ export function PostComments({
   const [justAddedId, setJustAddedId] = useState<number | null>(null);
   // 보는 사람이 좋아요한 댓글 id — 공개 목록은 비인증이라 인증 후 별도 엔드포인트로 한 번 hydrate.
   const [likedIds, setLikedIds] = useState<Set<number>>(new Set());
-  // 상단 컴포저를 켜기 전엔 에디터 청크를 받지 않는다 — 포커스/클릭 시에만 실제 컴포저를 마운트.
-  const [topComposerActive, setTopComposerActive] = useState(false);
   const [confirm, confirmDialog] = useConfirm();
 
   const load = useCallback(() => {
@@ -192,35 +173,23 @@ export function PostComments({
       </h2>
 
       {/* The input is ALWAYS visible so there's always a way to comment. Signed-out (or pre-auth)
-          submit kicks off login instead of hiding the field. */}
+          submit kicks off login instead of hiding the field. 에디터(Tiptap/ProseMirror)는 dynamic
+          import 로 SSR·초기 번들에서 빠지고 하이드레이션 후 로드되지만, 컴포저 자체는 쉴 때 한 줄로
+          접혀 있다가(collapsible) 포커스 시 펼쳐진다 — 항상 보이고 바로 입력 가능한 원래 동작 유지. */}
       <div className="mt-4">
-        {topComposerActive ? (
-          <CommentComposer
-            value={body}
-            onChange={setBody}
-            onSubmit={() => void submitTop()}
-            placeholder={t("placeholder")}
-            submitLabel={busy ? t("submitting") : t("submit")}
-            cancelLabel={t("cancel")}
-            submitting={busy}
-            canSubmit={!authenticated || !!body.trim()}
-            footer={ready && !authenticated ? t("loginPrompt") : ""}
-            rows={2}
-            collapsible
-            autoFocus
-          />
-        ) : (
-          // 쉬는 상태의 한 줄 컴포저와 같은 모양의 정적 자리 표시자 — 여기서 포커스가 들어오면
-          // 실제 컴포저(+에디터 청크)를 마운트한다.
-          <button
-            type="button"
-            onClick={() => setTopComposerActive(true)}
-            onFocus={() => setTopComposerActive(true)}
-            className="focus-ring block w-full rounded-xl border border-slate-200 px-4 py-3 text-left text-[15px] text-slate-400 transition-colors hover:border-slate-300 dark:border-slate-700 dark:text-slate-500 dark:hover:border-slate-600"
-          >
-            {t("placeholder")}
-          </button>
-        )}
+        <CommentComposer
+          value={body}
+          onChange={setBody}
+          onSubmit={() => void submitTop()}
+          placeholder={t("placeholder")}
+          submitLabel={busy ? t("submitting") : t("submit")}
+          cancelLabel={t("cancel")}
+          submitting={busy}
+          canSubmit={!authenticated || !!body.trim()}
+          footer={ready && !authenticated ? t("loginPrompt") : ""}
+          rows={2}
+          collapsible
+        />
         {error && (
           <p className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
             {error}

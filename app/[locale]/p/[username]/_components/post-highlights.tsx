@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
 import { useAuth } from "@/lib/auth";
@@ -35,19 +34,8 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
-
-// The comment editor pulls in Tiptap/ProseMirror (~120KB). These surfaces only render inside
-// interaction-opened sheets (the reply thread / the memo sheet), so load their chunk on first use
-// instead of shipping it in the post-route bundle. comments.tsx dynamic-imports the same modules,
-// so both surfaces must defer for the editor to actually drop out of the initial chunk.
-const CommentComposer = dynamic(
-  () => import("@/modules/blog/components/comment-composer").then((m) => m.CommentComposer),
-  { ssr: false },
-);
-const RichCommentInput = dynamic(
-  () => import("@/modules/blog/components/rich-comment-input").then((m) => m.RichCommentInput),
-  { ssr: false },
-);
+import { CommentComposer } from "@/modules/blog/components/comment-composer";
+import { RichCommentInput } from "@/modules/blog/components/rich-comment-input";
 
 type Anchor = { left: number; top: number; bottom: number };
 
