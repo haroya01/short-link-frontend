@@ -70,14 +70,14 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
           rel="noreferrer"
           className={`profile-card group block overflow-hidden ${colors.card} ${colors.cardBorder} ${colors.cardHover}`}
         >
-          <div
-            className="relative aspect-[1.91/1] w-full bg-slate-100"
-            style={{
-              backgroundImage: `url(${entry.ogImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          >
+          <div className="relative aspect-[1.91/1] w-full bg-slate-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={entry.ogImage}
+              alt={entry.ogTitle ?? ""}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
             <CardFloatingChip position="top-left">★ Featured</CardFloatingChip>
           </div>
           <div className="flex items-center gap-3 px-4 py-3">

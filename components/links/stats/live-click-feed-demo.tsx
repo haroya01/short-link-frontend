@@ -45,6 +45,8 @@ export function LiveClickFeedDemo() {
     let i = 0;
     let nextId = 1000;
     const handle = window.setInterval(() => {
+      // 탭이 숨겨져 있으면 보이지도 않는 리렌더로 CPU만 쓰므로 건너뛴다.
+      if (document.hidden) return;
       const entry = scripted[i % scripted.length];
       i += 1;
       setItems((prev) => [{ id: nextId++, ...entry }, ...prev].slice(0, 6));

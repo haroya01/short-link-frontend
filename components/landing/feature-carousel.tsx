@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, BarChart3, Globe2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAutoSlide } from "@/hooks/use-auto-slide";
 
 const ROTATE_MS = 5500;
 
@@ -55,7 +56,6 @@ const FEATURES: Feature[] = [
 export function FeatureCarousel() {
   const t = useTranslations("home.features");
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -71,11 +71,15 @@ export function FeatureCarousel() {
     return () => obs.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (paused) return;
-    const id = setInterval(() => setActive((a) => (a + 1) % FEATURES.length), ROTATE_MS);
-    return () => clearInterval(id);
-  }, [paused]);
+  // Rotation goes through the shared autoplay hook so it inherits the same gates as the profile
+  // carousels: tab hidden, prefers-reduced-motion, and (via viewportRef) scrolled out of view.
+  // Hover / tab-click pause through the returned handles.
+  const { pause, resume } = useAutoSlide({
+    intervalMs: ROTATE_MS,
+    enabled: FEATURES.length > 1,
+    onTick: () => setActive((a) => (a + 1) % FEATURES.length),
+    viewportRef: ref,
+  });
 
   const current = FEATURES[active];
   const Preview = current.preview;
@@ -84,8 +88,8 @@ export function FeatureCarousel() {
   return (
     <div
       ref={ref}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onMouseEnter={pause}
+      onMouseLeave={resume}
       className={cn(
         "transition-[opacity,transform] duration-700",
         visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
@@ -102,7 +106,7 @@ export function FeatureCarousel() {
                 type="button"
                 onClick={() => {
                   setActive(i);
-                  setPaused(true);
+                  pause();
                 }}
                 className={cn(
                   "relative flex items-start gap-3 border-b border-slate-100 dark:border-slate-800 px-4 text-left transition-colors last:border-b-0",

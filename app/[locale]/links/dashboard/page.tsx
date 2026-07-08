@@ -352,7 +352,7 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
             <div className="min-w-0 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-3">
               <div className="min-w-0">
                 <Link
-                  href={`/links/stats/${topLink.shortCode}`}
+                  href={`/stats/${topLink.shortCode}`}
                   className="block truncate font-mono text-[17px] font-semibold leading-tight text-slate-900 dark:text-slate-100 hover:underline"
                 >
                   /{topLink.shortCode}
@@ -375,7 +375,7 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
                 value={topLink.shortUrl}
               />
               <Link
-                href={`/links/stats/${topLink.shortCode}`}
+                href={`/stats/${topLink.shortCode}`}
                 className={buttonVariants({ size: "sm", variant: "outline" })}
               >
                 <BarChart3 className="h-3.5 w-3.5" />

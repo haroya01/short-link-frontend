@@ -17,10 +17,11 @@ type ShortenedItem = {
 
 type Props = {
   authenticated: boolean;
+  ready: boolean;
   onShortened: (results: ShortenedItem[]) => void;
 };
 
-export function ShortenForm({ authenticated, onShortened }: Props) {
+export function ShortenForm({ authenticated, ready, onShortened }: Props) {
   const t = useTranslations("shortenForm");
   const [url, setUrl] = useState("");
   const [customCode, setCustomCode] = useState("");
@@ -30,12 +31,14 @@ export function ShortenForm({ authenticated, onShortened }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   // Pre-warm one proof-of-work token while the user is typing so the first POST doesn't pay the
-  // mining cost. Authenticated users skip PoW server-side, so don't bother computing.
+  // mining cost. Authenticated users skip PoW server-side, so don't bother computing. Wait for
+  // `ready` — before /me resolves, a logged-in user's first render is authenticated=false, so an
+  // unguarded prewarm would fetch a single-use challenge and mine a throwaway token every visit.
   useEffect(() => {
-    if (!authenticated) {
+    if (ready && !authenticated) {
       prewarmPowToken();
     }
-  }, [authenticated]);
+  }, [ready, authenticated]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

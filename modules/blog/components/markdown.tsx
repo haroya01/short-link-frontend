@@ -1,5 +1,3 @@
-"use client";
-
 import type { Element, Root } from "hast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";

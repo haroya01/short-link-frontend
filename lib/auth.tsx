@@ -28,26 +28,40 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-// Module-level guard so that overlapping mount effects (Strict Mode double-fires in dev, plus an
-// auth:change event arriving mid-mount) don't race to claim the same anonymous tokens.
-let claimAttempted = false;
+// Module-level guards so that overlapping mount effects (Strict Mode double-fires in dev, plus an
+// auth:change event arriving mid-mount) don't race to claim the same anonymous tokens. claimInFlight
+// stays set across the retry wait too, so a concurrent trigger can't storm.
+let claimInFlight = false;
+let claimDone = false;
+const CLAIM_RETRY_DELAY_MS = 4000;
 
-async function tryClaimPendingLinks() {
-  if (claimAttempted) return;
-  claimAttempted = true;
+// 토큰은 성공했을 때만 지운다. 실패 시 지우면 익명 링크가 영영 귀속 불가일 뿐 아니라 24h TTL 이 그대로
+// 흘러 링크 자체가 조용히 만료된다 — 그래서 실패엔 토큰을 보존하고(다음 로그인/세션에서 재시도, 24h 지나면
+// localStorage 에서 자연 만료) 일시 블립만 세션 내 1회 지연 재시도한다.
+async function tryClaimPendingLinks(retriesLeft = 1) {
+  if (claimInFlight || claimDone) return;
   const tokens = readPendingClaimTokens();
   if (tokens.length === 0) return;
+  claimInFlight = true;
   try {
     const result = await claimAnonymousLinks(tokens);
+    clearClaimTokens(tokens);
+    claimDone = true;
+    claimInFlight = false;
     if (result.claimed > 0 && typeof window !== "undefined") {
       window.dispatchEvent(
         new CustomEvent("kurl:claimed", { detail: { count: result.claimed } }),
       );
     }
   } catch {
-    // best-effort; still clear local tokens below to avoid retry storms
-  } finally {
-    clearClaimTokens(tokens);
+    if (retriesLeft > 0 && typeof window !== "undefined") {
+      window.setTimeout(() => {
+        claimInFlight = false;
+        void tryClaimPendingLinks(retriesLeft - 1);
+      }, CLAIM_RETRY_DELAY_MS);
+    } else {
+      claimInFlight = false;
+    }
   }
 }
 

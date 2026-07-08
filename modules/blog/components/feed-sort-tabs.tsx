@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useLayoutEffect, useRef, useState, useTransition } from "react";
 
 export type FeedSortTab = {
   key: string;
@@ -29,12 +30,28 @@ const MAX_MS = 320;
  * are any width); soft-nav keeps this mounted, so the bar transitions rather than jumps.
  */
 export function FeedSortTabs({ tabs }: { tabs: FeedSortTab[] }) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  // 클릭 즉시 반응: 서버가 새 active 를 SSR 로 돌려주기 전까지 눌린 탭을 활성으로 그려 밑줄을 선이동시킨다
+  // (없으면 payload 도착까지 밑줄·색이 그대로여서 클릭이 씹힌 것처럼 보이고 더블 클릭을 부른다).
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
   const navRef = useRef<HTMLElement>(null);
   const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
   const [durationMs, setDurationMs] = useState(300);
 
-  // Re-measure whenever the active tab (or its label, on locale change) changes.
-  const sig = tabs.map((t) => `${t.label}:${t.active ? 1 : 0}`).join("|");
+  // The tab drawn as active — the optimistic pending tab while its route loads, else the
+  // server-resolved one.
+  const activeKey = pendingKey ?? tabs.find((t) => t.active)?.key ?? null;
+
+  // Re-measure whenever the active tab (or its label, on locale change) changes — including the
+  // optimistic pending tab, so the underline glides on click, not only when the payload arrives.
+  const sig = tabs.map((t) => `${t.label}:${t.key === activeKey ? 1 : 0}`).join("|");
+
+  // Transition settled (new RSC committed) → the server `active` now reflects the tab, so drop the
+  // optimism; the freshly-committed prop keeps the same tab highlighted with no re-glide.
+  useEffect(() => {
+    if (!isPending) setPendingKey(null);
+  }, [isPending]);
 
   useLayoutEffect(() => {
     const nav = navRef.current;
@@ -79,6 +96,7 @@ export function FeedSortTabs({ tabs }: { tabs: FeedSortTab[] }) {
     // 영문·와이드 로케일에서 "For You"/"Following" 이 좁은 폰에서 한 탭 안에 줄바꿈되던 걸 막는다.
     <nav
       ref={navRef}
+      aria-busy={isPending}
       className="relative flex min-w-0 gap-1 overflow-x-auto pb-3.5 -mb-3.5 text-[15px] font-bold [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {tabs.map((t) =>
@@ -95,10 +113,20 @@ export function FeedSortTabs({ tabs }: { tabs: FeedSortTab[] }) {
           <Link
             key={t.key}
             href={t.href}
-            data-active={t.active ? "true" : undefined}
-            aria-current={t.active ? "page" : undefined}
+            data-active={t.key === activeKey ? "true" : undefined}
+            aria-current={t.key === activeKey ? "page" : undefined}
+            onClick={(e) => {
+              // Modifier / middle clicks keep native anchor behaviour (new tab / window).
+              if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+              e.preventDefault();
+              // Resolve the relative ?sort= href against the current URL before pushing — mirrors
+              // BlogChromeLink. Wrapped in a transition so isPending flags the pending nav.
+              const url = new URL(t.href, window.location.href);
+              setPendingKey(t.key);
+              startTransition(() => router.push(url.pathname + url.search + url.hash));
+            }}
             className={`focus-ring touch-target relative whitespace-nowrap rounded px-2.5 py-1.5 transition-colors ${
-              t.active
+              t.key === activeKey
                 ? "text-accent-700 dark:text-accent-400"
                 : // slate-500: slate-400 on white was 2.6:1 — under the 4.5:1 AA bar at this
                   // size. One shade down passes (4.8:1) and the active accent still dominates.

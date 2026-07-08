@@ -24,7 +24,9 @@
     "list": "リスト",
     "quote": "引用",
     "preview": "プレビュー",
-    "linkText": "リンクテキスト"
+    "linkText": "リンクテキスト",
+    "submitError": "コメントを投稿できませんでした。もう一度お試しください。",
+    "deleteError": "コメントを削除できませんでした。もう一度お試しください。"
   },
   "publicFeed": {
     "recent": "最新",
@@ -109,7 +111,9 @@
     "seriesNextEpisode": "次の話",
     "seriesEpisodeOf": "全{total}話中{current}話",
     "feedReasonTopic": "「{tag}」をフォロー中",
-    "feedReasonSeries": "購読中シリーズ"
+    "feedReasonSeries": "購読中シリーズ",
+    "bookmarkFailed": "保存できませんでした。もう一度お試しください。",
+    "seriesSubscribeFailed": "購読を変更できませんでした。もう一度お試しください。"
   },
   "blogWebhooks": {
     "loginRequired": "ログインが必要です。",
@@ -441,7 +445,8 @@
       "placePlaceholder": "場所名や住所を検索",
       "placeEmpty": "結果がありません。",
       "placeHint": "場所を選ぶと地図カードが記事に挿入されます。",
-      "placeClose": "閉じる"
+      "placeClose": "閉じる",
+      "placeError": "場所の情報を読み込めませんでした。もう一度お試しください。"
     },
     "autoSave": "自動保存",
     "unsavedLeaveTitle": "保存されていない変更があります",
@@ -453,7 +458,9 @@
     "importPartialError": "一部のファイルをインポートできませんでした。ファイルを確認して再試行してください。",
     "savedAt": "{time} 保存済み",
     "continueWriting": "続きを書く",
-    "noPostsHint": "書いた記事はここに積まれます。公開するまでは下書きのままです。"
+    "noPostsHint": "書いた記事はここに積まれます。公開するまでは下書きのままです。",
+    "seriesCreateConflict": "同じ名前のシリーズがすでにあります。別の名前をお試しください。",
+    "seriesCreateError": "シリーズを作成できませんでした。もう一度お試しください。"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
@@ -485,7 +492,11 @@
     "clearHistoryCancel": "キャンセル",
     "forget": "履歴から削除",
     "loadMore": "もっと見る",
-    "emptyFolder": "このフォルダは空です。"
+    "emptyFolder": "このフォルダは空です。",
+    "saveFailed": "変更を保存できませんでした。もう一度お試しください。",
+    "bulkMoveFailed": "{count}件を移動できませんでした。もう一度お試しください。",
+    "loadError": "読んだ記録を読み込めませんでした。",
+    "retry": "再試行"
   },
   "publicPost": {
     "like": "いいね",
@@ -581,7 +592,8 @@
     "seriesViewAll": "シリーズ全{total}話を見る",
     "relatedHeading": "次に読む",
     "resumeReading": "続きを読む",
-    "resumeDismiss": "閉じる"
+    "resumeDismiss": "閉じる",
+    "replyError": "返信を投稿できませんでした。もう一度お試しください。"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -2684,7 +2696,9 @@
       "recoveryCopyAll": "すべてコピー",
       "recoveryCopied": "リカバリコードをコピーしました。",
       "recoveryCopyFailed": "コピー失敗",
-      "recoveryDismiss": "保存しました（閉じる）"
+      "recoveryDismiss": "保存しました（閉じる）",
+      "loadError": "2FAの状態を読み込めませんでした。",
+      "retry": "再試行"
     },
     "apiKeys": {
       "title": "APIキー",
@@ -2816,7 +2830,8 @@
       "redirectHint": "キャンペーン終了時に、印刷済み QR へ一括適用される転送先 URL です。",
       "cancel": "キャンセル",
       "creating": "作成中...",
-      "submit": "QR キャンペーンを作成"
+      "submit": "QR キャンペーンを作成",
+      "leaveConfirm": "保存せずに移動しますか？入力した内容は失われます。"
     },
     "detail": {
       "loadFailed": "読み込みに失敗しました",
@@ -2868,7 +2883,8 @@
         "emptyTitle": "配布バッチはまだありません",
         "emptyDescription": "最初のバッチを追加すると QR コードが発行されます。印刷・発注前にスキャンして動作確認できます。",
         "addFirst": "最初の配布バッチを追加"
-      }
+      },
+      "csvFailed": "CSVのダウンロードに失敗しました"
     },
     "batchesNew": {
       "loadFailed": "読み込みに失敗しました",
@@ -3398,6 +3414,7 @@
     "add": "追加",
     "whyLabel": "なぜつなげましたか？",
     "whyPlaceholder": "One line (optional)",
-    "addToCount": "{count}件のコレクションに追加されます。"
+    "addToCount": "{count}件のコレクションに追加されます。",
+    "connectError": "保存できませんでした。もう一度お試しください。"
   }
 }

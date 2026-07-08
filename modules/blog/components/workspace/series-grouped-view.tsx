@@ -15,6 +15,7 @@ import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { Mark } from "@/components/common/logo";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useConfirm } from "@/components/ui/use-confirm";
 
 /**
@@ -79,17 +80,24 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
   const memberIds = (seriesId: number) =>
     groups.find((g) => g.series.id === seriesId)?.members.map((m) => m.id) ?? [];
 
-  async function commitMembers(seriesId: number, ids: number[]) {
-    setBusy(true);
+  // 순서·소속 변경은 로컬 posts 를 먼저 재배열해 즉시 반영하고 PUT 만 발사한다(대표글 applyPins 와 같은
+  // 낙관 패턴). busy 로 뷰 전체를 잠그지 않으므로 화살표 연속 클릭이 매번 왕복을 기다리지 않는다. 실패
+  // 시에만 load() 로 서버 상태에 맞춰 되돌린다.
+  function commitMembers(seriesId: number, ids: number[]) {
+    setPosts((prev) =>
+      prev.map((p) => {
+        const idx = ids.indexOf(p.id);
+        if (idx >= 0) return { ...p, seriesId, seriesOrder: idx };
+        // 이 시리즈에 있었지만 새 목록에서 빠진 글은 '시리즈 없음'으로 되돌린다.
+        if (p.seriesId === seriesId) return { ...p, seriesId: null, seriesOrder: null };
+        return p;
+      }),
+    );
     setError(null);
-    try {
-      await setSeriesPosts(seriesId, ids);
-      await load();
-    } catch (e) {
+    void setSeriesPosts(seriesId, ids).catch((e) => {
       setError(e instanceof Error ? e.message : "update failed");
-    } finally {
-      setBusy(false);
-    }
+      void load();
+    });
   }
 
   function move(seriesId: number, index: number, dir: -1 | 1) {
@@ -288,14 +296,14 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                   {t("postCount", { count: members.length })}
                 </span>
                 <span className="flex shrink-0 items-center gap-0.5">
-                  <a
+                  <BlogLink
                     href={`${analyticsBase}/series/${s.id}`}
                     aria-label={t("seriesAnalytics")}
                     title={t("seriesAnalytics")}
                     className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-accent-300"
                   >
                     <BarChart3 className="h-4 w-4" />
-                  </a>
+                  </BlogLink>
                   <button
                     type="button"
                     onClick={() => startRename(s)}
@@ -334,12 +342,12 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 font-mono text-[12px] font-semibold tabular-nums text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <a
+                    <BlogLink
                       href={`${writeBase}/${p.id}`}
                       className="focus-ring min-w-0 flex-1 truncate rounded text-sm text-slate-800 transition-colors hover:text-accent-700 dark:text-slate-200 dark:hover:text-accent-300"
                     >
                       {p.title || p.slug}
-                    </a>
+                    </BlogLink>
                     <PostStatusBadge status={p.status} />
                     <span className="flex shrink-0 items-center gap-0.5">
                       <button
@@ -483,7 +491,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
           <ol className="border-t border-slate-100 px-3 py-3 dark:border-slate-800">
             {ungrouped.map((p) => (
               <li key={p.id}>
-                <a
+                <BlogLink
                   href={`${writeBase}/${p.id}`}
                   className="focus-ring flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
                 >
@@ -491,7 +499,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     {p.title || p.slug}
                   </span>
                   <PostStatusBadge status={p.status} />
-                </a>
+                </BlogLink>
               </li>
             ))}
           </ol>

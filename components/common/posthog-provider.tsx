@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PostHogReactProvider } from "posthog-js/react";
@@ -44,6 +44,7 @@ if (typeof window !== "undefined" && POSTHOG_KEY && !(posthog as unknown as { __
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { me } = useAuth();
+  const wasIdentifiedRef = useRef(false);
 
   useEffect(() => {
     if (!POSTHOG_KEY) return;
@@ -60,8 +61,13 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         email: me.email,
         tier: me.tier,
       });
-    } else {
+      wasIdentifiedRef.current = true;
+    } else if (wasIdentifiedRef.current) {
+      // reset()은 로그인→로그아웃 전이에서만. 익명 최초 마운트(또는 /me 로딩 전
+      // 일시적 null)에서 호출하면 localStorage에 유지되던 익명 distinct_id가
+      // 하드 로드마다 파기돼 유니크 방문자가 조각난다.
       posthog.reset();
+      wasIdentifiedRef.current = false;
     }
   }, [me?.id, me?.username, me?.email, me?.tier]);
 

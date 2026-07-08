@@ -1,8 +1,9 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 import { Markdown } from "@/modules/blog/components/markdown";
+import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 import { KurlLinkCard } from "@/modules/blog/components/kurl-link-card";
 import { PostCode } from "@/modules/blog/components/post-code";
 import { PostImage } from "@/modules/blog/components/post-image";
@@ -217,7 +218,14 @@ function CodeBlock({ content }: { content: string | null }) {
     code = content; // tolerate a plain-string legacy payload
   }
   if (!code) return null;
-  return <PostCode lang={lang} code={code} />;
+  // Highlight through the shared markdown pipeline HERE (server component) and hand the rendered nodes
+  // to PostCode (client shell) as children — keeps the markdown/highlight pipeline out of the client bundle.
+  const fence = fenceFor(code);
+  return (
+    <PostCode lang={lang} code={code}>
+      <Markdown>{`${fence}${lang}\n${code}\n${fence}`}</Markdown>
+    </PostCode>
+  );
 }
 
 function EmbedBlock({ content, postId }: { content: string | null; postId?: number }) {
@@ -282,7 +290,23 @@ function EmbedBlock({ content, postId }: { content: string | null; postId?: numb
   }
 
   // General link → velog-style preview card (og:title/description/image via the unfurl endpoint).
-  return <LinkPreviewCard url={plan.url} />;
+  // LinkPreviewCard awaits an external OG scrape; isolate it behind Suspense so a slow target streams
+  // a card-shaped skeleton instead of gating the whole article body (the page's only body boundary).
+  return (
+    <Suspense fallback={<LinkPreviewSkeleton />}>
+      <LinkPreviewCard url={plan.url} />
+    </Suspense>
+  );
+}
+
+/** Card-shaped placeholder while the link's Open Graph is fetched server-side (see LinkPreviewCard). */
+function LinkPreviewSkeleton() {
+  return (
+    <div
+      className="my-8 h-28 animate-pulse rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900"
+      aria-hidden
+    />
+  );
 }
 
 /**

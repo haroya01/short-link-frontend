@@ -5,7 +5,8 @@ import { UserPlus, UserCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
-import { followUser, getFollowStatus, unfollowUser } from "@/modules/blog/api/follows";
+import { followUser, unfollowUser } from "@/modules/blog/api/follows";
+import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
 
 // useLayoutEffect on the client (seed before paint → no flash), useEffect on the server (no warning).
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -91,7 +92,7 @@ export function FollowButton({
   useEffect(() => {
     if (!ready) return;
     const self = me?.username === username;
-    getFollowStatus(username)
+    fetchFollowStatus(username)
       .then((s) => {
         setCount(s.followerCount);
         setFollowing(s.following);

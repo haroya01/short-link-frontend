@@ -24,7 +24,9 @@
     "list": "Danh sách",
     "quote": "Trích dẫn",
     "preview": "Xem trước",
-    "linkText": "văn bản liên kết"
+    "linkText": "văn bản liên kết",
+    "submitError": "Không thể đăng bình luận. Vui lòng thử lại.",
+    "deleteError": "Không thể xóa bình luận. Vui lòng thử lại."
   },
   "publicFeed": {
     "recent": "Mới nhất",
@@ -109,7 +111,9 @@
     "seriesNextEpisode": "Tập tiếp theo",
     "seriesEpisodeOf": "Tập {current} trên {total}",
     "feedReasonTopic": "Đang theo dõi ‘{tag}’",
-    "feedReasonSeries": "Series đã đăng ký"
+    "feedReasonSeries": "Series đã đăng ký",
+    "bookmarkFailed": "Không thể lưu. Vui lòng thử lại.",
+    "seriesSubscribeFailed": "Không thể cập nhật đăng ký. Vui lòng thử lại."
   },
   "blogWebhooks": {
     "loginRequired": "Cần đăng nhập.",
@@ -441,7 +445,8 @@
       "placePlaceholder": "Tìm theo tên hoặc địa chỉ địa điểm",
       "placeEmpty": "Không có kết quả.",
       "placeHint": "Chọn một địa điểm để chèn thẻ bản đồ vào bài.",
-      "placeClose": "Đóng"
+      "placeClose": "Đóng",
+      "placeError": "Không tải được thông tin địa điểm. Vui lòng thử lại."
     },
     "autoSave": "Tự động lưu",
     "unsavedLeaveTitle": "Bạn có thay đổi chưa lưu",
@@ -453,7 +458,9 @@
     "importPartialError": "Một số tệp không nhập được. Kiểm tra lại các tệp và thử lại.",
     "savedAt": "Đã lưu lúc {time}",
     "continueWriting": "Viết tiếp",
-    "noPostsHint": "Bài viết của bạn sẽ tích lại ở đây. Bản nháp luôn riêng tư cho đến khi bạn xuất bản."
+    "noPostsHint": "Bài viết của bạn sẽ tích lại ở đây. Bản nháp luôn riêng tư cho đến khi bạn xuất bản.",
+    "seriesCreateConflict": "Đã có series trùng tên. Hãy thử tên khác.",
+    "seriesCreateError": "Không thể tạo series. Vui lòng thử lại."
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -485,7 +492,11 @@
     "clearHistoryCancel": "Hủy",
     "forget": "Xóa khỏi lịch sử",
     "loadMore": "Xem thêm",
-    "emptyFolder": "Thư mục này trống."
+    "emptyFolder": "Thư mục này trống.",
+    "saveFailed": "Không thể lưu thay đổi của bạn. Vui lòng thử lại.",
+    "bulkMoveFailed": "Không thể di chuyển {count} mục. Vui lòng thử lại.",
+    "loadError": "Không thể tải lịch sử đọc của bạn.",
+    "retry": "Thử lại"
   },
   "imageCropper": {
     "title": "Cắt ảnh",
@@ -594,7 +605,8 @@
     "seriesViewAll": "Xem tất cả {total} phần",
     "relatedHeading": "Đọc tiếp",
     "resumeReading": "Đọc tiếp",
-    "resumeDismiss": "Bỏ qua"
+    "resumeDismiss": "Bỏ qua",
+    "replyError": "Không thể đăng câu trả lời. Vui lòng thử lại."
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",
@@ -2684,7 +2696,9 @@
       "recoveryCopyAll": "Sao chép tất cả",
       "recoveryCopied": "Đã sao chép mã khôi phục.",
       "recoveryCopyFailed": "Sao chép thất bại.",
-      "recoveryDismiss": "Tôi đã lưu, đóng"
+      "recoveryDismiss": "Tôi đã lưu, đóng",
+      "loadError": "Không tải được trạng thái 2FA của bạn.",
+      "retry": "Thử lại"
     },
     "apiKeys": {
       "title": "Khóa API",
@@ -2816,7 +2830,8 @@
       "redirectHint": "URL chuyển hướng được áp dụng cho mã QR đã in khi chiến dịch kết thúc.",
       "cancel": "Hủy",
       "creating": "Đang tạo...",
-      "submit": "Tạo chiến dịch QR"
+      "submit": "Tạo chiến dịch QR",
+      "leaveConfirm": "Rời đi mà không lưu? Nội dung bạn đã nhập sẽ bị mất."
     },
     "detail": {
       "loadFailed": "Tải thất bại",
@@ -2868,7 +2883,8 @@
         "emptyTitle": "Chưa có đợt phát nào",
         "emptyDescription": "Thêm đợt đầu tiên để cấp một mã QR. Quét thử trước khi đặt in.",
         "addFirst": "Thêm đợt đầu tiên"
-      }
+      },
+      "csvFailed": "Tải CSV thất bại"
     },
     "batchesNew": {
       "loadFailed": "Tải thất bại",
@@ -3398,6 +3414,7 @@
     "add": "Thêm",
     "whyLabel": "Vì sao bạn kết nối nó?",
     "whyPlaceholder": "One line (optional)",
-    "addToCount": "Đã thêm vào {count} bộ sưu tập."
+    "addToCount": "Đã thêm vào {count} bộ sưu tập.",
+    "connectError": "Không thể lưu. Vui lòng thử lại."
   }
 }

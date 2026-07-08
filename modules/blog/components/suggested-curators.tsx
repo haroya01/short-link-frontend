@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { listSuggestedAuthors, type SuggestedAuthor } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 
@@ -37,7 +38,7 @@ export function SuggestedCurators({ locale, limit = 6 }: { locale: string; limit
       <ul className="space-y-1">
         {authors.map(({ author, postCount }) => (
           <li key={author.username} className="flex items-center gap-3 rounded-lg px-2 py-1.5">
-            <a
+            <BlogLink
               href={authorHref(author.username, locale)}
               className="focus-ring group flex min-w-0 flex-1 items-center gap-3 rounded-lg"
             >
@@ -50,7 +51,7 @@ export function SuggestedCurators({ locale, limit = 6 }: { locale: string; limit
                   {t("railPostCount", { count: postCount })}
                 </span>
               </span>
-            </a>
+            </BlogLink>
             <FollowButton username={author.username} initialFollowerCount={0} showCount={false} compact />
           </li>
         ))}

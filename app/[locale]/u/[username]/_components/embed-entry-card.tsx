@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ExternalLink, Play } from "lucide-react";
 import type { Oembed } from "@/types";
 import { sanitizeOembedHtml } from "@/lib/embed-autoplay";
@@ -32,11 +32,38 @@ type Props = {
  * {@link sanitizeOembedHtml} dispatches on host and drops everything except a safe iframe.
  */
 export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
+  const wrapperRef = useRef<HTMLLIElement | null>(null);
+  const [inView, setInView] = useState(false);
   const [meta, setMeta] = useState<Oembed | null>(null);
   const [active, setActive] = useState(false);
   const safeHtml = meta?.html ? sanitizeOembedHtml(meta.html) : "";
 
+  // Gate the oembed meta fetch on viewport proximity. Profiles can carry many EMBED blocks, and
+  // firing every meta request (plus its thumbnail load) at mount piles them onto page entry
+  // regardless of fold position. The rootMargin pre-fetches just ahead of the card so the
+  // thumbnail is ready as it scrolls in. Fires once, then disconnects (many-block profiles).
   useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" },
+    );
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView) return;
     let cancelled = false;
     fetch(`${API_BASE}/api/v1/public/oembed?url=${encodeURIComponent(url)}`)
       .then((r) => (r.ok ? r.json() : null))
@@ -47,13 +74,13 @@ export function EmbedEntryCard({ url, colors, fadeStyle }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [url]);
+  }, [inView, url]);
 
   const host = hostOf(url);
   const title = meta?.title ?? host;
 
   return (
-    <li className="profile-fade" style={fadeStyle}>
+    <li ref={wrapperRef} className="profile-fade" style={fadeStyle}>
       <div
         className={`profile-card-static overflow-hidden ${colors.card} ${colors.cardBorder}`}
       >

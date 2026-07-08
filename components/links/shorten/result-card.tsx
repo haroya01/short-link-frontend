@@ -48,7 +48,7 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
           </div>
           {authenticated && (
             <Link
-              href={`/links/stats/${result.shortCode}`}
+              href={`/stats/${result.shortCode}`}
               className={buttonVariants({ size: "sm", variant: "outline" })}
             >
               <BarChart3 className="h-3.5 w-3.5" />
@@ -103,7 +103,7 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
         {authenticated && (
           <div className="grid gap-2 pt-1 sm:grid-cols-2">
             <Link
-              href={`/links/stats/${result.shortCode}`}
+              href={`/stats/${result.shortCode}`}
               className="group flex items-center justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-2.5 text-left hover:border-slate-300 hover:bg-white dark:hover:border-slate-700 dark:hover:bg-slate-800"
             >
               <span className="min-w-0">

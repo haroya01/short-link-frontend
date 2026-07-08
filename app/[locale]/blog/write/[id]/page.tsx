@@ -154,6 +154,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         coverSuggestion={coverSuggestion}
         excerpt={ed.excerpt}
         onExcerptChange={ed.setExcerpt}
+        onExcerptPrefill={ed.setExcerptRaw}
         excerptSuggestion={markdownLead(ed.markdown)}
         slug={ed.slug}
         onSlugChange={ed.setSlug}
