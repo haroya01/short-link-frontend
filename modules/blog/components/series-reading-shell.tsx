@@ -132,7 +132,7 @@ export function SeriesReadingShell({
           className={chipCls(active)}
         >
           <span>{tag}</span>
-          {!active && <span className="text-slate-500 dark:text-slate-500">{count}</span>}
+          {!active && <span className="text-slate-600 dark:text-slate-400">{count}</span>}
         </button>
       </li>
     );

@@ -18,8 +18,9 @@ type Props = {
 /**
  * Visitor-facing email capture form. Renders the EMAIL_FORM block as
  * title → optional subtitle → input + submit → small trust footer. On success it swaps to the
- * success message permanently (per-render only — no localStorage) so the visitor doesn't
- * accidentally resubmit. Errors keep the form available with an inline note.
+ * success message (per-render only — no localStorage) so the visitor doesn't accidentally resubmit;
+ * a quiet "다시 보내기" resets to the form so a typo'd address isn't a dead end. Errors keep the form
+ * available with an inline note.
  *
  * <p>The trust footer is a deliberate addition (PR #...) — sellers were collecting emails without
  * any visitor-side reassurance about where the address goes, and visitors hesitated to submit.
@@ -56,9 +57,21 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
           </p>
         )}
         {status === "done" ? (
-          <p className={`mt-2 text-[12px] ${colors.muted}`}>
-            {config.successMessage ?? t("defaultSuccess")}
-          </p>
+          <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <p className={`text-[12px] ${colors.muted}`}>
+              {config.successMessage ?? t("defaultSuccess")}
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail("");
+                setStatus("idle");
+              }}
+              className={`text-[11px] underline underline-offset-2 transition-opacity hover:opacity-80 ${colors.muted}`}
+            >
+              {t("sendAgain")}
+            </button>
+          </div>
         ) : (
           <>
             {/* Input + submit share the same h-10 rounded-xl shell so they read as one paired
