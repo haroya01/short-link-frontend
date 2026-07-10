@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { createLink } from "./helpers/links";
+
 // Short codes redirect from the backend host directly (kurl.me/{code}), not through the Next proxy,
 // so hit BACKEND_URL rather than the frontend baseURL the other specs use.
 const BACKEND = process.env.BACKEND_URL || "http://localhost:8080";
@@ -10,9 +12,8 @@ const BACKEND = process.env.BACKEND_URL || "http://localhost:8080";
 test.describe("short-code redirect tolerates tracking query strings", () => {
   test("redirects bare, ?src, and ?utm without 401", async ({ request }) => {
     const target = "https://example.com/redirect-qs-regression";
-    const created = await request.post("/api/v1/links", { data: { url: target } });
-    expect(created.status()).toBe(201);
-    const { shortCode } = await created.json();
+    // Anonymous shorten goes through the PoW handshake (see helpers/links + helpers/pow).
+    const { shortCode } = await createLink(request, target);
 
     for (const path of [
       `/${shortCode}`,

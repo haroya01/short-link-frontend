@@ -34,6 +34,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
+      # `npm start` runs a production Next server (NODE_ENV=production), where the /api proxy
+      # rewrites are off by default. E2E=1 turns them back on so Playwright's same-origin calls
+      # reach the backend on localhost:8080. It has no effect outside this lane.
+      E2E: '1'
       BACKEND_URL: http://localhost:8080
       PLAYWRIGHT_BASE_URL: http://localhost:3001
       SPRING_PROFILES_ACTIVE: test
