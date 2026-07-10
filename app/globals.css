@@ -28,6 +28,9 @@
   /* 쿠키 배너가 뷰포트 하단에서 얼마나 떠 있나. 기본은 home-indicator 만 비키고, 하단 탭바가 있는
      표면(body[data-bottom-nav])에선 탭바 높이만큼 올린다. */
   --cookie-bottom: env(safe-area-inset-bottom);
+  /* 쿠키 배너 자체 높이(모바일 edge-to-edge 바, py-3 + 한 줄 카피 ≈ 3.5rem). 배너가 떠 있을 때
+     페이지 하단에 확보할 스크롤 여백은 --cookie-bottom(탭바 유무 반영) + 이 높이로 계산한다. */
+  --banner-h: 3.5rem;
   /* 토스트가 뷰포트 하단에서 얼마나 떠 있나. 기본은 데스크톱과 같은 1.5rem. 하단 탭바·쿠키 배너가
      있는 표면(아래 body[...] 규칙)에선 그 위로 올려 충돌을 피한다. 모바일 전용 — 토스트는 sm+ 에서
      sm:bottom-6 으로 되돌아간다(탭바가 sm:hidden 이라 lift 가 필요 없음). */
@@ -1138,12 +1141,15 @@ html[data-nf-locale="ja"] [data-nf="ja"] {
  * right-aligned card and the FAB is hidden, so no offset is needed there.
  */
 body[data-cookie-consent="visible"] {
-  padding-bottom: 6rem;
+  /* 배너 상단 = --cookie-bottom(탭바 있으면 그 높이까지 이미 반영) + 배너 높이. 이 만큼 하단 여백을
+     확보해 마지막 피드 카드 꼬리가 배너 밑으로 안 들어가게 한다. 탭바+배너가 동시에 뜨는 표면에서도
+     --cookie-bottom 이 탭바 높이를 이미 담고 있어 여백이 정확히 겹침 없이 쌓인다. */
+  padding-bottom: calc(var(--cookie-bottom) + var(--banner-h) + 0.5rem);
   --fab-bottom: calc(7rem + env(safe-area-inset-bottom));
   /* 쿠키 배너가 떠 있으면 토스트를 배너 위로 더 올린다. --cookie-bottom 은 탭바 유무까지 이미
-     반영하므로 여기에 배너 높이(~3.5rem)만 더하면 탭바·배너 둘 다 비킨다. 이 규칙이 위
+     반영하므로 여기에 배너 높이(--banner-h)만 더하면 탭바·배너 둘 다 비킨다. 이 규칙이 위
      body[data-bottom-nav] 보다 뒤라, 둘 다 켜져도 (배너가 최상단이라) 이 값이 이긴다. */
-  --toast-bottom: calc(var(--cookie-bottom) + 3.5rem);
+  --toast-bottom: calc(var(--cookie-bottom) + var(--banner-h));
 }
 @media (min-width: 640px) {
   body[data-cookie-consent="visible"] {

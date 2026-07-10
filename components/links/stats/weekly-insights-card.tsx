@@ -62,7 +62,10 @@ export function WeeklyInsightsCard() {
     );
   }
 
-  if (!data || data.totalClicks === 0) {
+  // `!== 0` alone let a malformed/absent totalClicks (undefined or a non-finite division result) skip
+  // the empty state, and the card then rendered "NaN" through every fmt.number. Fall back to the
+  // intended empty state whenever there's no finite, positive click count to show.
+  if (!data || !Number.isFinite(data.totalClicks) || data.totalClicks <= 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 p-5">
         <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("eyebrow")}</p>
@@ -102,8 +105,8 @@ export function WeeklyInsightsCard() {
           label={t("humanClicks")}
           value={fmt.number(data.humanClicks)}
           sub={
-            data.humanRatio != null
-              ? t("humanRatio", { percent: Math.round(data.humanRatio * 100) })
+            Number.isFinite(data.humanRatio)
+              ? t("humanRatio", { percent: Math.round((data.humanRatio as number) * 100) })
               : undefined
           }
         />
@@ -152,7 +155,9 @@ function DeltaBadge({
   t: ReturnType<typeof useTranslations<"weeklyInsights">>;
   fmt: ReturnType<typeof useFormatter>;
 }) {
-  if (delta == null) {
+  // `== null` alone let a NaN delta (a 0/0 growth ratio when the prior week had no clicks) render as
+  // "NaN%". Treat any non-finite delta as "no baseline" — the same intent the null case already had.
+  if (!Number.isFinite(delta)) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400">
         <Minus className="h-3 w-3" />
@@ -160,8 +165,9 @@ function DeltaBadge({
       </span>
     );
   }
-  const positive = delta > 0;
-  const flat = Math.abs(delta) < 0.005;
+  const value = delta as number;
+  const positive = value > 0;
+  const flat = Math.abs(value) < 0.005;
   const Icon = flat ? Minus : positive ? ArrowUpRight : ArrowDownRight;
   const tone = flat
     ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
@@ -171,7 +177,7 @@ function DeltaBadge({
   return (
     <span className={"inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium " + tone}>
       <Icon className="h-3 w-3" />
-      {fmt.number(delta, { style: "percent", maximumFractionDigits: 0 })}
+      {fmt.number(value, { style: "percent", maximumFractionDigits: 0 })}
     </span>
   );
 }

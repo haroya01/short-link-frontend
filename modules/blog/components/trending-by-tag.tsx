@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import type { TrendingTagSection } from "@/modules/blog/api/public-posts";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
+import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 
 /** A topic section shows a handful of its posts, then "더 보기" deep-links into the full tag feed. */
 const POSTS_PER_TOPIC = 3;
@@ -37,7 +38,9 @@ export function TrendingByTag({
         <p className="mb-8 text-[14px] text-slate-500 dark:text-slate-400">{heading}</p>
       )}
       <div className="flex flex-col gap-12">
-        {sections.map((section) => (
+        {sections
+          .filter((section) => isDisplayableTag(section.tag))
+          .map((section) => (
           <section key={section.tag}>
             <div className="mb-1 flex items-baseline justify-between gap-3">
               <h2 className="flex items-center gap-2 text-[15px] font-bold tracking-tight text-slate-900 dark:text-slate-100">

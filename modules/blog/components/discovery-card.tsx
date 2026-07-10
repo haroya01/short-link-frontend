@@ -6,7 +6,8 @@ import { Link as TransitionLink } from "next-view-transitions";
 import { blogPath } from "@/lib/host";
 import { DATE_LOCALE } from "@/lib/date";
 import type { FollowReason, PublicFeedItem } from "@/modules/blog/api/public-posts";
-import { showLikes } from "@/modules/blog/lib/public-metrics";
+import { isRenderablePost, showLikes } from "@/modules/blog/lib/public-metrics";
+import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { postHref, authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -144,9 +145,14 @@ export function DiscoveryCard({
   eager?: boolean;
 }) {
   const t = useTranslations("publicFeed");
+  // A blank-title, no-excerpt post is effectively empty — skip it rather than render a hollow cell.
+  // After the hook call so the rules of hooks hold (this component always calls useTranslations).
+  if (!isRenderablePost(item)) return null;
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
-  const tag = item.tags[0];
+  // First DISPLAYABLE tag — skip junk (incomplete jamo, single-char, mash) so the card's one-tag
+  // chip never surfaces "#ㄴ" / "#dddd" as a clickable, indexable link.
+  const tag = item.tags.find(isDisplayableTag);
   const reason = item.followReason ?? null;
   // 카드 변형(결정적): 사진 있으면 cover, 없으면 text(흰 타이포 카드 — 소개글은 있을 때만 한 단락).
   // 이전의 auto(그린 그라디언트 자동표지)는 폐기: 텍스트 위주 피드에서 같은 초록 타일이 도배돼

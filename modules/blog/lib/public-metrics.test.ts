@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { MIN_PUBLIC_VIEWS, showLikes, showViews } from "./public-metrics";
+import { isRenderablePost, MIN_PUBLIC_VIEWS, showLikes, showViews } from "./public-metrics";
 
 describe("public engagement metrics visibility", () => {
   it("hides view counts below the threshold so a new blog doesn't read as empty", () => {
@@ -17,5 +17,21 @@ describe("public engagement metrics visibility", () => {
     expect(showLikes(0)).toBe(false);
     expect(showLikes(1)).toBe(true);
     expect(showLikes(42)).toBe(true);
+  });
+});
+
+describe("isRenderablePost", () => {
+  it("renders a post with a real title", () => {
+    expect(isRenderablePost({ title: "제목", excerpt: null })).toBe(true);
+  });
+
+  it("renders a title-less post that still has an excerpt", () => {
+    expect(isRenderablePost({ title: "", excerpt: "요약은 있어요" })).toBe(true);
+  });
+
+  it("skips a post that is blank in both title and excerpt", () => {
+    expect(isRenderablePost({ title: "", excerpt: null })).toBe(false);
+    expect(isRenderablePost({ title: "   ", excerpt: "  " })).toBe(false);
+    expect(isRenderablePost({})).toBe(false);
   });
 });

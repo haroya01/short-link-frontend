@@ -36,9 +36,12 @@ export function mockLinksResponse(path: string, method: string): unknown | undef
       return [];
     case "/api/v1/ctas":
       return [];
-    // Weekly insights (dashboard/stats summary) — zeroed but well-formed.
+    // Weekly insights (dashboard/stats summary) — a well-formed WeeklyInsights so the card renders its
+    // populated state. The prior shape ({ clicks, links, topLinks, byDay }) predated the type and left
+    // totalClicks/humanClicks/deltaPercent undefined, so the card's `totalClicks === 0` empty-state
+    // guard fell through (undefined !== 0) and every fmt.number(undefined) printed "NaN".
     case "/api/v1/users/me/insights/week":
-      return { clicks: 0, links: 0, topLinks: [], byDay: [] };
+      return mockWeeklyInsights();
     // Owner profile visit stats (방문자/readers + /u/<user>/stats) — a populated ProfileStats so the
     // dashboard renders its full chart breakdown (the page errored without this, blocking dark-mode QA).
     case "/api/v1/users/me/profile/stats":
@@ -117,5 +120,32 @@ function mockProfileStats(): unknown {
       { source: "twitter", count: 160 },
       { source: "instagram", count: 110 },
     ],
+  };
+}
+
+// A populated WeeklyInsights (matches types/stats.ts). Every derived field — deltaPercent, humanRatio
+// — is a finite number here, never NaN, so the dashboard card shows real values in mock mode. from/to
+// span the trailing 7 days so the eyebrow ("지난 7일 인사이트") reads truthfully.
+function mockWeeklyInsights(): unknown {
+  const now = new Date();
+  const to = now.toISOString();
+  const from = new Date(now.getTime() - 7 * 86_400_000).toISOString();
+  const humanClicks = 1180;
+  const previousHumanClicks = 1020;
+  return {
+    from,
+    to,
+    totalClicks: 1340,
+    humanClicks,
+    previousHumanClicks,
+    deltaPercent: (humanClicks - previousHumanClicks) / previousHumanClicks,
+    humanRatio: humanClicks / 1340,
+    topLink: {
+      shortCode: "launch",
+      originalUrl: "https://example.com/launch",
+      clicks: 512,
+      topUtmSource: "twitter",
+    },
+    peak: { dayOfWeek: 4, hour: 21, clicks: 96 },
   };
 }

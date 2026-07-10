@@ -16,3 +16,13 @@ export function showViews(viewCount: number): boolean {
 export function showLikes(likeCount: number): boolean {
   return likeCount > 0;
 }
+
+/**
+ * Whether a post carries enough to earn a full card. A published post with a blank title AND no
+ * excerpt is effectively empty — rendering it as full chrome (image slot, meta row, save toggle)
+ * gives a hollow row a reader can't parse. Feeds skip these so a stray empty post never breaks the
+ * scan. `title` is typed non-null but can be an empty string at runtime, so trim both.
+ */
+export function isRenderablePost(post: { title?: string | null; excerpt?: string | null }): boolean {
+  return Boolean(post.title?.trim() || post.excerpt?.trim());
+}

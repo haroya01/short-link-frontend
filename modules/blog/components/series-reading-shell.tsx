@@ -12,6 +12,7 @@ import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
+import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 
 // Cap the tag cloud so a wide-ranging series doesn't fill the rail with chips; the rest expand on tap.
 const TAG_CAP = 12;
@@ -68,6 +69,7 @@ export function SeriesReadingShell({
     const order: string[] = [];
     for (const p of posts) {
       for (const tag of p.tags) {
+        if (!isDisplayableTag(tag)) continue; // skip junk tags (incomplete jamo, single-char, mash)
         if (!counts.has(tag)) order.push(tag);
         counts.set(tag, (counts.get(tag) ?? 0) + 1);
       }

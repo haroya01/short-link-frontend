@@ -7,6 +7,7 @@ import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { TagChip } from "@/modules/blog/components/tag-chip";
+import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 
 /**
  * Desktop discovery rail beside the feed — popular tags + suggested authors. Each section hides
@@ -23,6 +24,9 @@ export async function DiscoveryRail({
   authors: SuggestedAuthor[];
 }) {
   const t = await getTranslations({ locale, namespace: "publicFeed" });
+  // Junk tags (incomplete jamo, single-char, mash) never make the rail — its section hides when the
+  // cleaned list is empty, same as the raw one did.
+  const topics = tags.filter((tag) => isDisplayableTag(tag.tag));
 
   return (
     <div className="flex flex-col gap-6">
@@ -52,7 +56,7 @@ export async function DiscoveryRail({
         </section>
       )}
 
-      {tags.length > 0 && (
+      {topics.length > 0 && (
         <section>
           <div className="mb-3 flex items-baseline justify-between">
             <RailHeading>{t("railTopics")}</RailHeading>
@@ -64,7 +68,7 @@ export async function DiscoveryRail({
             </Link>
           </div>
           <ul className="flex flex-wrap gap-2">
-            {tags.map((tag) => (
+            {topics.map((tag) => (
               <li key={tag.tag}>
                 <TagChip
                   href={blogPath(`/tags/${encodeURIComponent(tag.tag)}`)}
