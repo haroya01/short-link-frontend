@@ -19,6 +19,7 @@ import type {
   DiscoverFeed,
   NewCollection,
 } from "@/modules/blog/api/collections";
+import type { MyHighlightItem } from "@/modules/blog/api/highlights";
 
 // Mock authors (mirror _mocks.ts AUTHORS) — only what the discovery card needs.
 const CURATORS = {
@@ -81,6 +82,45 @@ const COLLECTION: CollectionDetail = {
   curatorUsername: "dohyun",
   connections: collectionConnections,
 };
+
+// The viewer's own highlights (내 서재) — drawn on the mock posts above, quoting sentences that appear
+// in those bodies so the `?hl=` deep-link back lands on the painted span. Newest first.
+const myHighlights: MyHighlightItem[] = [
+  {
+    id: 401,
+    quote: Q_SIMPLE,
+    note: "작은 서비스에서 매번 돌아오게 되는 문장.",
+    postId: 3001,
+    username: "haruka",
+    slug: "hexagonal-too-much",
+    title: "헥사고날 아키텍처, 작은 서비스에 과했을까",
+    createdAt: new Date(Date.now() - 2 * 3_600_000).toISOString(),
+  },
+  {
+    id: 402,
+    quote: Q_MEASURE,
+    note: null,
+    postId: 3002,
+    username: "dohyun",
+    slug: "spring-tx-propagation",
+    title: "Spring Boot 트랜잭션 전파, 다시 정리",
+    createdAt: new Date(Date.now() - 26 * 3_600_000).toISOString(),
+  },
+  {
+    id: 403,
+    quote: Q_PROCESS,
+    note: "결정 회고를 남길 때 다시 꺼내 읽는 구절.",
+    postId: 3001,
+    username: "haruka",
+    slug: "hexagonal-too-much",
+    title: "헥사고날 아키텍처, 작은 서비스에 과했을까",
+    createdAt: new Date(Date.now() - 5 * 86_400_000).toISOString(),
+  },
+];
+
+export function mockMyHighlights(): MyHighlightItem[] {
+  return [...myHighlights];
+}
 
 function toSummary(c: CollectionDetail): CollectionSummary {
   return {

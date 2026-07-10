@@ -341,7 +341,8 @@ function CommentRow({
         <CommentBody text={comment.body} locale={locale} />
       </div>
       <div className="mt-1.5 flex items-center gap-3 pl-9">
-        {/* 댓글 공감 — 포스트 LikeButton 과 같은 문법(하트 fill + pop), 카운트는 >0 일 때만. */}
+        {/* 댓글 공감 — 포스트 LikeButton 과 같은 문법(하트 fill + pop). 카운트 숫자는 표시하지 않고
+            하트 상태로만 전한다(연결·깊이가 점수판이 되지 않도록). 모델·API·aria 는 그대로. */}
         <button
           type="button"
           onClick={onToggleLike}
@@ -356,7 +357,6 @@ function CommentRow({
           <span key={liked ? "on" : "off"} className="subscribe-pop inline-flex">
             <Heart className={`h-3.5 w-3.5 ${liked ? "fill-accent-600 text-accent-600" : ""}`} />
           </span>
-          <span aria-live="polite">{comment.likeCount > 0 ? comment.likeCount : ""}</span>
         </button>
         {children}
       </div>
