@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { FeedDefaultTabSetting } from "@/modules/blog/components/feed-default-tab-setting";
+import { FollowerCountSetting } from "@/modules/blog/components/follower-count-setting";
 import { WebPushToggle } from "@/modules/notifications/components/web-push-toggle";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -129,6 +130,9 @@ export default function BlogSettingsPage() {
 
       {/* 피드 */}
       <FeedDefaultTabSetting rowClass={rowClass} />
+
+      {/* 공개 범위 — 팔로워 수 숨기기 */}
+      <FollowerCountSetting />
 
       {/* 로그아웃 */}
       <section className="mt-8">

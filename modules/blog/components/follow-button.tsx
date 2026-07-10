@@ -68,6 +68,9 @@ export function FollowButton({
   const [interacted, setInteracted] = useState(false);
   // Gates the count's visibility so it never flashes "0 → 128"; seeded true from cache on a revisit.
   const [loaded, setLoaded] = useState(false);
+  // True once the status confirms the author hides their counts — the count text is dropped, the
+  // button stays. Starts false so a hidden author never flashes the seeded "0" before status loads.
+  const [countHidden, setCountHidden] = useState(false);
   // Button visibility seeded from cache before auth resolves (null = unknown / cold cache).
   const [seedVisible, setSeedVisible] = useState<boolean | null>(null);
 
@@ -94,8 +97,15 @@ export function FollowButton({
     const self = me?.username === username;
     fetchFollowStatus(username)
       .then((s) => {
-        setCount(s.followerCount);
         setFollowing(s.following);
+        // Hidden author: no count key in the response. Keep the button, drop the count text.
+        if (s.hideFollowerCount || s.followerCount == null) {
+          setCountHidden(true);
+          writeFollowCache(username, { following: s.following, count: 0, self });
+          return;
+        }
+        setCountHidden(false);
+        setCount(s.followerCount);
         writeFollowCache(username, { following: s.following, count: s.followerCount, self });
       })
       .catch(() => {})
@@ -115,10 +125,13 @@ export function FollowButton({
     try {
       const s = next ? await followUser(username, sourcePostId) : await unfollowUser(username);
       setFollowing(s.following);
-      setCount(s.followerCount);
+      const nextCount = s.followerCount;
+      const hide = s.hideFollowerCount || nextCount == null;
+      setCountHidden(hide);
+      if (nextCount != null) setCount(nextCount);
       writeFollowCache(username, {
         following: s.following,
-        count: s.followerCount,
+        count: nextCount ?? 0,
         self: me?.username === username,
       });
     } catch {
@@ -164,9 +177,10 @@ export function FollowButton({
           </span>
         </button>
       )}
-      {showCount && (
+      {showCount && !countHidden && (
         // Always in the DOM (reserves its width → no layout shift) but invisible until the real count
-        // loads, then fades in — so the misleading initial "0" is never seen.
+        // loads, then fades in — so the misleading initial "0" is never seen. Dropped entirely for an
+        // author who hides their counts (countHidden), leaving just the follow button.
         <span
           className={`text-[13px] text-slate-500 transition-opacity duration-300 dark:text-slate-400 ${
             loaded ? "opacity-100" : "opacity-0"
