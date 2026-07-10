@@ -267,7 +267,11 @@
     "curationLikedEmpty": "Chưa có bài nào được thích.",
     "curationHistory": "Lịch sử đọc",
     "curationHistoryHint": "Bài bạn đọc theo bạn qua mọi thiết bị. Chỉ mình bạn thấy được.",
-    "analyticsReferrers": "Nguồn truy cập"
+    "analyticsReferrers": "Nguồn truy cập",
+    "analyticsTabOverview": "Tổng quan",
+    "analyticsTabSeries": "Chuỗi",
+    "analyticsTabLinks": "Liên kết",
+    "analyticsTabPosts": "Bài viết"
   },
   "postEditor": {
     "backToList": "Bài viết",
