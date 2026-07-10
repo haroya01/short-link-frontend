@@ -24,14 +24,25 @@ export function listForYouFeed(page = 0, size = 24): Promise<PublicFeedView> {
 
 export interface FollowStatus {
   following: boolean;
-  followerCount: number;
-  followingCount: number;
+  /**
+   * Absent when the author hides their counts (`hideFollowerCount` true) — the backend omits the
+   * key entirely (`@JsonInclude(NON_NULL)`), so it deserializes to `undefined` here. Surfaces treat
+   * `undefined` the same as the flag: show the follow control, hide the number.
+   */
+  followerCount?: number;
+  followingCount?: number;
+  hideFollowerCount: boolean;
 }
 
 /** Public — follower count for everyone; `following` is false for anonymous viewers. */
 export function getFollowStatus(username: string): Promise<FollowStatus> {
   if (USE_MOCKS)
-    return Promise.resolve({ following: false, followerCount: 128, followingCount: 12 });
+    return Promise.resolve({
+      following: false,
+      followerCount: 128,
+      followingCount: 12,
+      hideFollowerCount: false,
+    });
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {
     method: "GET",
   });
@@ -43,7 +54,12 @@ export function getFollowStatus(username: string): Promise<FollowStatus> {
  */
 export function followUser(username: string, sourcePostId?: number): Promise<FollowStatus> {
   if (USE_MOCKS)
-    return Promise.resolve({ following: true, followerCount: 129, followingCount: 12 });
+    return Promise.resolve({
+      following: true,
+      followerCount: 129,
+      followingCount: 12,
+      hideFollowerCount: false,
+    });
   const q = sourcePostId != null ? `?sourcePostId=${sourcePostId}` : "";
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow${q}`, {
     method: "PUT",
@@ -52,7 +68,12 @@ export function followUser(username: string, sourcePostId?: number): Promise<Fol
 
 export function unfollowUser(username: string): Promise<FollowStatus> {
   if (USE_MOCKS)
-    return Promise.resolve({ following: false, followerCount: 128, followingCount: 12 });
+    return Promise.resolve({
+      following: false,
+      followerCount: 128,
+      followingCount: 12,
+      hideFollowerCount: false,
+    });
   return request<FollowStatus>(`/api/v1/users/${encodeURIComponent(username)}/follow`, {
     method: "DELETE",
   });

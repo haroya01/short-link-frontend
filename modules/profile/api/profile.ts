@@ -23,6 +23,8 @@ export async function updateMyProfile(payload: {
    * allowed list and requires http(s) URLs. Pass an empty string `""` to clear all socials.
    */
   socials?: string;
+  /** Hide the author's follower/following counts everywhere (the follow action itself stays). */
+  hideFollowerCount?: boolean;
 }): Promise<MyProfile> {
   return request<MyProfile>("/api/v1/users/me/profile", { method: "PUT", body: payload });
 }

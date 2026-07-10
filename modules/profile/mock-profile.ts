@@ -36,6 +36,7 @@ export function mockPublicProfile(username: string): PublicProfile {
     bannerUrl: null,
     socials: [],
     publishedPostCount: 12,
+    hideFollowerCount: false,
     entries: [
       link(1, "gh", `https://github.com/${username}`, "GitHub", 128, true),
       link(2, "x", `https://x.com/${username}`, "X (Twitter)", 64),

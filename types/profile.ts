@@ -37,6 +37,8 @@ export type MyProfile = {
   avatarUrl: string | null;
   bannerUrl: string | null;
   socials: Social[];
+  /** When true, the author's follower/following counts are hidden from everyone (follow still works). */
+  hideFollowerCount: boolean;
 };
 
 export type PublicProfile = {
@@ -49,6 +51,8 @@ export type PublicProfile = {
   entries: PublicProfileEntry[];
   /** Count of the author's published blog posts — drives the "글 보기" entry-point into /p/<user>. */
   publishedPostCount: number;
+  /** When true, this author hides their follower/following counts on every public surface. */
+  hideFollowerCount: boolean;
 };
 
 export type PublicProfileEntry = {

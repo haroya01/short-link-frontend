@@ -26,6 +26,9 @@ export function FollowCounts({ username }: { username: string }) {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<FollowTab>("followers");
 
+  // Null once we know the author hides their counts — the row unmounts entirely (see below).
+  const [hidden, setHidden] = useState(false);
+
   useEffect(() => {
     const cached = readStorageJson<Counts | null>(
       cacheKey(username),
@@ -36,6 +39,12 @@ export function FollowCounts({ username }: { username: string }) {
     if (cached) setCounts(cached);
     fetchFollowStatus(username)
       .then((s) => {
+        // Hidden author: the backend omits the count keys entirely. Drop the row rather than showing
+        // a stale "0" — the follow button beside it still carries the relationship.
+        if (s.hideFollowerCount || s.followerCount == null || s.followingCount == null) {
+          setHidden(true);
+          return;
+        }
         const next = { followers: s.followerCount, following: s.followingCount };
         setCounts(next);
         writeStorageJson(cacheKey(username), next, { session: true });
@@ -47,6 +56,10 @@ export function FollowCounts({ username }: { username: string }) {
     setTab(next);
     setOpen(true);
   }
+
+  // The author opted out of showing counts — render nothing (not even the modal trigger). The
+  // followers/following lists are the count made visible, so we hide them together.
+  if (hidden) return null;
 
   return (
     <>
