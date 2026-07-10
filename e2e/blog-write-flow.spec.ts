@@ -137,6 +137,19 @@ function titleInput(page: Page) {
 }
 
 /**
+ * Fire an editor mark shortcut (bold/italic/…) with the modifier ProseMirror actually listens to.
+ * Tiptap binds `Mod-b`, and ProseMirror resolves `Mod` from the *browser's* reported platform: Cmd on
+ * Mac, Ctrl everywhere else. Playwright's `ControlOrMeta` instead resolves from the *host* OS, so on a
+ * Mac host it sends Cmd — but headless Chromium reports itself as Windows, where `Mod` = Ctrl. The two
+ * diverge and the keypress lands on no binding. Deriving the modifier from `navigator.platform` (the
+ * same check ProseMirror uses) keeps the shortcut hitting the binding on every host/browser combo.
+ */
+async function pressMarkShortcut(page: Page, key: string) {
+  const isMac = await page.evaluate(() => /Mac|iP(hone|[oa]d)/.test(navigator.platform));
+  await page.keyboard.press(`${isMac ? "Meta" : "Control"}+${key}`);
+}
+
+/**
  * Make a keyboard selection (which leaves a stable ProseMirror selection with the editor focused, so
  * the bubble survives a button click) and wait for the named bubble button to appear. The whole
  * select-then-assert is retried: the BubbleMenu can lag a frame behind the selection, so a one-shot
@@ -455,7 +468,7 @@ test("bold writing mode: Mod+B at an empty caret saves typed text as **bold**", 
   await openEditor(page);
 
   await page.locator(".tiptap").click();
-  await page.keyboard.press("ControlOrMeta+b");
+  await pressMarkShortcut(page, "b");
   await page.keyboard.type("bold words");
 
   const blocks = await save(page, captured);
