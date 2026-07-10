@@ -5,6 +5,7 @@ import { AlertTriangle, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { MyLinksFilters } from "@/lib/api";
 import { useMyLinks } from "@/lib/api/links.queries";
+import { useAuth } from "@/lib/auth";
 import { readStorageString, writeStorageString } from "@/lib/storage-json";
 
 type Props = {
@@ -17,8 +18,11 @@ const EXPIRING_FILTERS: MyLinksFilters = { expiry: "EXPIRING_SOON", size: 5 };
 
 export function ExpiringSoonBanner({ onShowAll }: Props) {
   const t = useTranslations("expiringBanner");
+  const { ready, authenticated } = useAuth();
   const [dismissed, setDismissed] = useState(false);
-  const { data } = useMyLinks(EXPIRING_FILTERS);
+  // The dashboard renders this widget while auth is still bootstrapping (!ready), so gate the query
+  // to avoid a guaranteed-401 (anonymous) / doubled 401→refresh (cross-subdomain) authed request.
+  const { data } = useMyLinks(EXPIRING_FILTERS, { enabled: ready && authenticated });
   const items = data?.pages[0]?.items ?? [];
 
   useEffect(() => {

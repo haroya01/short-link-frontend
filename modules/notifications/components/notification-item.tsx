@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
 import { useMarkRead } from "@/modules/notifications/lib/use-notifications";
 import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
@@ -89,12 +90,24 @@ export function NotificationItem({
   const markRead = useMarkRead();
 
   const actor = item.actorUsername ?? t("someone");
+  // 행위자 이름/아바타는 그 사람 프로필로 가는 섬 링크 — 행의 기본 액션(글/시리즈)과 별개.
+  const actorHref = item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
   // 행위자만 굵게(<b> 태그는 메시지 파일에) — 문장 전체가 같은 무게면 누가/무엇이 안 잡힌다.
+  // 이름 자체가 프로필 링크(있을 때) — pointer-events 를 되살려 행 오버레이 위로.
   const message = t.rich(MESSAGE_KEY[item.type], {
     actor,
-    b: (chunks) => (
-      <b className="font-semibold text-slate-900 dark:text-slate-100">{chunks}</b>
-    ),
+    b: (chunks) =>
+      actorHref ? (
+        <BlogLink
+          href={actorHref}
+          onClick={handleClick}
+          className="focus-ring pointer-events-auto rounded font-semibold text-slate-900 transition-colors hover:text-accent-700 hover:underline dark:text-slate-100 dark:hover:text-accent-400"
+        >
+          {chunks}
+        </BlogLink>
+      ) : (
+        <b className="font-semibold text-slate-900 dark:text-slate-100">{chunks}</b>
+      ),
   });
   const subtitle = item.type === "SERIES_SUBSCRIBE" ? item.seriesTitle : item.postTitle;
   const TypeIcon = TYPE_ICON[item.type];
@@ -109,7 +122,18 @@ export function NotificationItem({
   const body = (
     <>
       <span className="relative shrink-0">
-        <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} size="sm" />
+        {actorHref ? (
+          <BlogLink
+            href={actorHref}
+            onClick={handleClick}
+            aria-label={item.actorUsername ?? undefined}
+            className="focus-ring pointer-events-auto block rounded-full"
+          >
+            <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} size="sm" />
+          </BlogLink>
+        ) : (
+          <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} size="sm" />
+        )}
         {!item.read && (
           <span
             aria-hidden
@@ -158,20 +182,30 @@ export function NotificationItem({
   );
 
   const rowClass = cn(
-    "focus-ring flex w-full items-start gap-3 rounded-lg text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60",
+    "relative block w-full rounded-lg text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60",
     roomy ? "px-2 py-3.5 rounded-xl" : "px-3 py-2.5",
   );
 
-  if (!href) {
-    return (
-      <button type="button" onClick={handleClick} className={rowClass}>
-        {body}
-      </button>
-    );
-  }
+  // 행 전체의 기본 액션(타입별 타깃)은 내용 밑에 깔리는 스트레치 링크 — 아바타·행위자 이름만
+  // pointer-events 를 되살려 프로필로 빠진다(중첩 앵커 금지 → 형제 오버레이 + 클릭 섬).
   return (
-    <a href={href} onClick={handleClick} className={rowClass}>
-      {body}
-    </a>
+    <div className={rowClass}>
+      {href ? (
+        <BlogLink
+          href={href}
+          onClick={handleClick}
+          aria-label={subtitle || actor}
+          className="focus-ring absolute inset-0 rounded-lg"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={handleClick}
+          aria-label={subtitle || actor}
+          className="focus-ring absolute inset-0 rounded-lg"
+        />
+      )}
+      <div className="pointer-events-none relative flex items-start gap-3">{body}</div>
+    </div>
   );
 }

@@ -69,10 +69,18 @@ export async function SeriesFeedCard({
         seriesUrl={seriesUrl}
       />
 
-      {/* Author/date meta — same grammar as a post card's meta line. */}
+      {/* Author/date meta — same grammar as a post card's meta line. The author (avatar + name) is its
+          own link to their profile (a sibling anchor, never nested); the count/date stay plain text. */}
       <div className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
-        <Avatar src={series.author.avatarUrl} name={series.author.username} size="xs" />
-        <span className="truncate font-medium">{series.author.username}</span>
+        <BlogLink
+          href={authorHref(series.author.username, locale)}
+          className="group/author focus-ring flex min-w-0 items-center gap-2 rounded"
+        >
+          <Avatar src={series.author.avatarUrl} name={series.author.username} size="xs" />
+          <span className="truncate font-medium transition-colors group-hover/author:text-accent-700 dark:group-hover/author:text-accent-400">
+            {series.author.username}
+          </span>
+        </BlogLink>
         <span aria-hidden>·</span>
         <span className="shrink-0">{t("seriesEpisodeCount", { count: series.postCount })}</span>
         <span aria-hidden>·</span>

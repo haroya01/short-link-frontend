@@ -26,7 +26,7 @@ export default function QrCampaignsLandingPage() {
   const { authenticated } = useAuth();
   // 로그인 안 했어도 클릭 의도는 "캠페인 만들기". 로그인 후 dashboard 가 아니라 /campaigns/new
   // 로 이어지게 ?next= 부착 (ALLOWED_NEXT_PATHS 화이트리스트에 추가됨).
-  const ctaHref = authenticated ? "/links/campaigns/new" : "/login?next=/links/campaigns/new";
+  const ctaHref = authenticated ? "/campaigns/new" : "/login?next=/campaigns/new";
   const locale = useLocale();
   const mock = MOCK_BY_LOCALE[locale] ?? MOCK_BY_LOCALE.en;
 
@@ -128,9 +128,26 @@ function StickyNarrative({ mock }: { mock: MockData }) {
   // again" stutter the user reported.
   const scrollingRef = useRef(false);
 
+  // 백그라운드 탭이거나 reduced-motion 이면 오토플레이(자동 스크롤) 정지 — 안 보이는 탭에서
+  // 실제 스크롤 위치를 바꾸거나(WCAG 2.2.2) 사용자의 모션 설정을 무시하지 않도록. 수동 스크롤과
+  // TopProgressBar 는 유지.
+  const [autoplayPaused, setAutoplayPaused] = useState(false);
+
   useEffect(() => {
     const t = window.setTimeout(() => setActive(0), 50);
     return () => window.clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setAutoplayPaused(document.hidden || mq.matches);
+    update();
+    document.addEventListener("visibilitychange", update);
+    mq.addEventListener("change", update);
+    return () => {
+      document.removeEventListener("visibilitychange", update);
+      mq.removeEventListener("change", update);
+    };
   }, []);
 
   // 모바일: 섹션이 viewport 중앙에 가까운지 → active.
@@ -197,7 +214,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
   // 데스크탑은 desktopContainer 내부의 nextIdx × 100vh 지점으로 직접 scroll,
   // 모바일은 기존 mobile 섹션의 scrollIntoView.
   useEffect(() => {
-    if (active < 0) return;
+    if (active < 0 || autoplayPaused) return;
     const timer = window.setTimeout(() => {
       const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
       const nextIdx = (active + 1) % SECTION_COUNT;
@@ -244,7 +261,7 @@ function StickyNarrative({ mock }: { mock: MockData }) {
       }
     }, AUTOPLAY_MS);
     return () => window.clearTimeout(timer);
-  }, [active]);
+  }, [active, autoplayPaused]);
 
   const sections: SectionSpec[] = [
     {
@@ -510,7 +527,7 @@ function FinalCta({
             </Button>
           </Link>
           {!authenticated && (
-            <Link href="/login?next=/links/campaigns">
+            <Link href="/login?next=/campaigns">
               <Button
                 variant="ghost"
                 size="xl"

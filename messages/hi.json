@@ -1,9 +1,15 @@
 {
+  "authGate": {
+    "login": "साइन इन करें",
+    "explore": "बिना साइन इन के देखें",
+    "defaultDesc": "अपने लिंक और कैंपेन का प्रबंधन जारी रखने के लिए साइन इन करें।"
+  },
   "comments": {
     "count": "{count, plural, =0 {टिप्पणियाँ} one {# टिप्पणी} other {# टिप्पणियाँ}}",
     "placeholder": "एक टिप्पणी लिखें",
     "submit": "टिप्पणी करें",
     "submitting": "पोस्ट हो रहा है…",
+    "cancel": "रद्द करें",
     "reply": "जवाब दें",
     "replyPlaceholder": "एक जवाब लिखें",
     "delete": "हटाएँ",
@@ -18,7 +24,9 @@
     "list": "सूची",
     "quote": "उद्धरण",
     "preview": "पूर्वावलोकन",
-    "linkText": "लिंक टेक्स्ट"
+    "linkText": "लिंक टेक्स्ट",
+    "submitError": "टिप्पणी पोस्ट नहीं हो सकी। कृपया पुनः प्रयास करें।",
+    "deleteError": "टिप्पणी हटाई नहीं जा सकी। कृपया पुनः प्रयास करें।"
   },
   "publicFeed": {
     "recent": "नवीनतम",
@@ -103,7 +111,9 @@
     "seriesNextEpisode": "अगला एपिसोड",
     "seriesEpisodeOf": "{total} में से एपिसोड {current}",
     "feedReasonTopic": "‘{tag}’ फ़ॉलो किया गया",
-    "feedReasonSeries": "सब्सक्राइब की गई सीरीज़"
+    "feedReasonSeries": "सब्सक्राइब की गई सीरीज़",
+    "bookmarkFailed": "सहेजा नहीं जा सका. कृपया फिर से प्रयास करें.",
+    "seriesSubscribeFailed": "सदस्यता अपडेट नहीं हो सकी. कृपया फिर से प्रयास करें."
   },
   "blogWebhooks": {
     "loginRequired": "साइन इन ज़रूरी है।",
@@ -439,7 +449,8 @@
       "placePlaceholder": "स्थान का नाम या पता खोजें",
       "placeEmpty": "कोई परिणाम नहीं।",
       "placeHint": "पोस्ट में मानचित्र कार्ड डालने के लिए एक स्थान चुनें।",
-      "placeClose": "बंद करें"
+      "placeClose": "बंद करें",
+      "placeError": "स्थान की जानकारी लोड नहीं हो सकी। कृपया फिर से प्रयास करें।"
     },
     "autoSave": "स्वतः सहेजता है",
     "unsavedLeaveTitle": "आपके पास बिना सहेजे बदलाव हैं",
@@ -451,7 +462,9 @@
     "importPartialError": "कुछ फ़ाइलें आयात नहीं हो सकीं। फ़ाइलें जाँचें और फिर से प्रयास करें।",
     "savedAt": "{time} पर सहेजा गया",
     "continueWriting": "लिखना जारी रखें",
-    "noPostsHint": "आपकी पोस्ट यहाँ इकट्ठा होंगी। प्रकाशित करने तक ड्राफ़्ट निजी रहते हैं।"
+    "noPostsHint": "आपकी पोस्ट यहाँ इकट्ठा होंगी। प्रकाशित करने तक ड्राफ़्ट निजी रहते हैं।",
+    "seriesCreateConflict": "इस नाम की सीरीज़ पहले से मौजूद है। कोई दूसरा नाम आज़माएँ।",
+    "seriesCreateError": "सीरीज़ नहीं बन सकी। कृपया फिर से प्रयास करें।"
   },
   "savedLibrary": {
     "private": "इसे केवल आप देख सकते हैं।",
@@ -483,7 +496,11 @@
     "clearHistoryCancel": "रद्द करें",
     "forget": "इतिहास से हटाएँ",
     "loadMore": "और देखें",
-    "emptyFolder": "यह फ़ोल्डर खाली है।"
+    "emptyFolder": "यह फ़ोल्डर खाली है।",
+    "saveFailed": "आपका बदलाव सहेजा नहीं जा सका। कृपया फिर से प्रयास करें।",
+    "bulkMoveFailed": "{count} आइटम स्थानांतरित नहीं किए जा सके। कृपया फिर से प्रयास करें।",
+    "loadError": "आपका पढ़ने का इतिहास लोड नहीं हो सका।",
+    "retry": "फिर से कोशिश करें"
   },
   "publicPost": {
     "like": "पसंद",
@@ -498,6 +515,11 @@
     "highlightReplySubmit": "जवाब दें",
     "highlightReplyDelete": "हटाएँ",
     "highlightReplyLogin": "जवाब देने के लिए साइन इन करें",
+    "highlightDelete": "हाइलाइट हटाएँ",
+    "highlightDeleteConfirm": "यह हाइलाइट हटाएँ?",
+    "highlightDeleteConfirmBody": "आपका नोट और सभी जवाब भी हट जाएंगे. इसे पूर्ववत नहीं किया जा सकता.",
+    "highlightDeleteConfirmBodyBare": "इसे पूर्ववत नहीं किया जा सकता.",
+    "highlightDeleteError": "हटाया नहीं जा सका. कृपया फिर से प्रयास करें.",
     "readingTime": "{minutes} मिनट पठन",
     "ogReadingTime": "{minutes} मिनट पठन",
     "previewBanner": "पूर्वावलोकन — यह पोस्ट अभी प्रकाशित नहीं हुई। केवल इस लिंक वाले लोग इसे देख सकते हैं।",
@@ -574,7 +596,8 @@
     "seriesViewAll": "सभी {total} भाग देखें",
     "relatedHeading": "आगे पढ़ें",
     "resumeReading": "पढ़ना जारी रखें",
-    "resumeDismiss": "खारिज करें"
+    "resumeDismiss": "खारिज करें",
+    "replyError": "जवाब पोस्ट नहीं हो सका। कृपया पुनः प्रयास करें।"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -1414,6 +1437,9 @@
       "colLocation": "स्थान",
       "colDevice": "डिवाइस",
       "colReferrer": "रेफ़रर"
+    },
+    "chart": {
+      "peak": "शिखर"
     }
   },
   "admin": {
@@ -1633,6 +1659,112 @@
       "copied": "कॉपी किया गया",
       "expires": "{minutes} मिनट में समाप्त",
       "hint": "devtools खंगाले बिना सीडिंग या स्क्रिप्ट के लिए इसका उपयोग करें।"
+    },
+    "browse": {
+      "usersTab": "सभी उपयोगकर्ता",
+      "linksTab": "सभी लिंक",
+      "search": "खोजें",
+      "users": {
+        "title": "सभी उपयोगकर्ता",
+        "subtitle": "सभी खातों को खोजें और ब्राउज़ करें",
+        "searchPlaceholder": "ईमेल या हैंडल खोजें",
+        "role": {
+          "all": "सभी भूमिकाएँ",
+          "user": "उपयोगकर्ता",
+          "admin": "एडमिन"
+        },
+        "col": {
+          "user": "उपयोगकर्ता",
+          "role": "भूमिका",
+          "tier": "प्लान",
+          "links": "लिंक",
+          "joined": "शामिल हुए",
+          "status": "स्थिति"
+        },
+        "active": "सक्रिय",
+        "deleted": "हटाया गया",
+        "noResults": "कोई मिलान करने वाला उपयोगकर्ता नहीं"
+      },
+      "links": {
+        "title": "सभी लिंक",
+        "subtitle": "सभी छोटे लिंक खोजें और ब्राउज़ करें",
+        "searchPlaceholder": "कोड या गंतव्य URL खोजें",
+        "sort": {
+          "recent": "सबसे नए",
+          "clicks": "सर्वाधिक क्लिक"
+        },
+        "col": {
+          "code": "कोड",
+          "destination": "गंतव्य",
+          "owner": "स्वामी",
+          "clicks": "क्लिक",
+          "status": "स्थिति",
+          "created": "बनाया गया"
+        },
+        "status": {
+          "active": "सक्रिय",
+          "expired": "समाप्त",
+          "limitReached": "सीमा पूरी"
+        },
+        "ownerFilter": "स्वामी #{id}",
+        "clearFilter": "फ़िल्टर हटाएँ",
+        "locked": "पासवर्ड संरक्षित",
+        "noResults": "कोई मिलान करने वाला लिंक नहीं"
+      }
+    },
+    "detail": {
+      "title": "लिंक विवरण",
+      "back": "सभी लिंक पर वापस जाएँ",
+      "anonymousOwner": "अनाम",
+      "meta": {
+        "code": "शॉर्ट कोड",
+        "owner": "स्वामी",
+        "destination": "गंतव्य",
+        "clicks": "कुल क्लिक",
+        "views": "व्यू",
+        "created": "बनाया गया",
+        "expires": "समाप्ति",
+        "noExpiry": "कोई समाप्ति नहीं",
+        "locked": "पासवर्ड सुरक्षित"
+      },
+      "section": {
+        "daily": {
+          "title": "दैनिक क्लिक",
+          "desc": "दिन के अनुसार · {tz}"
+        },
+        "hourly": {
+          "title": "घंटे के अनुसार",
+          "desc": "दिन के घंटे का वितरण"
+        },
+        "referrers": {
+          "title": "रेफ़रर",
+          "desc": "क्लिक कहाँ से आए"
+        },
+        "devices": {
+          "title": "डिवाइस",
+          "desc": "डिवाइस विवरण"
+        },
+        "countries": {
+          "title": "देश",
+          "desc": "देश के अनुसार क्लिक"
+        }
+      },
+      "empty": {
+        "countries": "अभी तक कोई देश डेटा नहीं"
+      }
+    },
+    "activity": {
+      "recentLinksTitle": "हाल के लिंक",
+      "recentLinksDesc": "नए बनाए गए",
+      "recentClicksTitle": "हाल के क्लिक",
+      "recentClicksDesc": "लाइव क्लिक स्ट्रीम",
+      "trendingTitle": "ट्रेंडिंग · 24 घंटे",
+      "trendingDesc": "मानव क्लिक के आधार पर शीर्ष",
+      "empty": {
+        "links": "अभी तक कोई लिंक नहीं",
+        "clicks": "अभी तक कोई क्लिक नहीं",
+        "trending": "अभी तक कुछ भी ट्रेंडिंग नहीं"
+      }
     }
   },
   "common": {
@@ -2568,7 +2700,9 @@
       "recoveryCopyAll": "सभी कॉपी करें",
       "recoveryCopied": "रिकवरी कोड कॉपी किए गए।",
       "recoveryCopyFailed": "कॉपी विफल।",
-      "recoveryDismiss": "मैंने इन्हें सहेज लिया, बंद करें"
+      "recoveryDismiss": "मैंने इन्हें सहेज लिया, बंद करें",
+      "loadError": "आपकी 2FA स्थिति लोड नहीं हो सकी।",
+      "retry": "पुनः प्रयास करें"
     },
     "apiKeys": {
       "title": "API कुंजियाँ",
@@ -2700,7 +2834,8 @@
       "redirectHint": "कैंपेन समाप्त होने पर रीडायरेक्ट URL प्रिंट किए QR कोड पर लागू होता है।",
       "cancel": "रद्द करें",
       "creating": "बनाया जा रहा है...",
-      "submit": "QR कैंपेन बनाएँ"
+      "submit": "QR कैंपेन बनाएँ",
+      "leaveConfirm": "बिना सहेजे छोड़ें? आपके द्वारा दर्ज की गई जानकारी खो जाएगी।"
     },
     "detail": {
       "loadFailed": "लोड विफल",
@@ -2752,7 +2887,8 @@
         "emptyTitle": "अभी तक कोई वितरण बैच नहीं",
         "emptyDescription": "QR कोड जारी करने के लिए पहला बैच जोड़ें। प्रिंट ऑर्डर करने से पहले इसे स्कैन करें।",
         "addFirst": "पहला बैच जोड़ें"
-      }
+      },
+      "csvFailed": "CSV डाउनलोड विफल"
     },
     "batchesNew": {
       "loadFailed": "लोड विफल",
@@ -2873,7 +3009,8 @@
         "areaTitle": "क्षेत्र के अनुसार प्रदर्शन",
         "areaHint": "अगला वितरण स्थान तय करने के लिए इसका उपयोग करें।",
         "tooltip": "{rate} / 100 शीट · क्लिक {clicks} / वितरित {quantity}",
-        "efficiency": "दक्षता"
+        "efficiency": "दक्षता",
+        "meta": "क्लिक {clicks} · {quantity} शीट"
       },
       "compare": {
         "title": "किसी अन्य कैंपेन से तुलना करें",
@@ -3281,6 +3418,7 @@
     "add": "जोड़ें",
     "whyLabel": "आपने इसे क्यों जोड़ा?",
     "whyPlaceholder": "One line (optional)",
-    "addToCount": "{count} संग्रह में जोड़ा गया।"
+    "addToCount": "{count} संग्रह में जोड़ा गया।",
+    "connectError": "सहेजा नहीं जा सका. कृपया पुनः प्रयास करें."
   }
 }

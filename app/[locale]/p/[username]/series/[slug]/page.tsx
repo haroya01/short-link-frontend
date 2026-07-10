@@ -106,6 +106,7 @@ export default async function PublicSeriesPage({
       year: "numeric",
       month: "long",
       day: "numeric",
+      timeZone: "Asia/Seoul",
     });
   // Series order ≠ publish order, so derive the latest publish for the header summary.
   const lastPublished = posts.reduce<string | null>(

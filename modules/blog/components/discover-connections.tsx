@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { CornerDownRight, Loader2 } from "lucide-react";
+import { CornerDownRight } from "lucide-react";
 import { blogHref, blogPath } from "@/lib/host";
 import { DATE_LOCALE } from "@/lib/date";
 import { listDiscoverConnections, type ConnectionEvent } from "@/modules/blog/api/collections";
@@ -38,11 +38,7 @@ export function DiscoverConnections({ locale }: { locale: string }) {
   }, []);
 
   if (state === "loading") {
-    return (
-      <div className="flex justify-center py-24 text-slate-400">
-        <Loader2 className="h-5 w-5 animate-spin" />
-      </div>
-    );
+    return <ConnectionFeedSkeleton />;
   }
 
   if (state === "failed") {
@@ -55,7 +51,7 @@ export function DiscoverConnections({ locale }: { locale: string }) {
 
   if (events.length === 0) {
     return (
-      <div className="py-16 text-center">
+      <div className="pb-16 pt-6 text-center">
         <p className="text-[15px] font-medium text-slate-700 dark:text-slate-200">
           {t("discoverEmptyTitle")}
         </p>
@@ -74,11 +70,42 @@ export function DiscoverConnections({ locale }: { locale: string }) {
     );
   }
 
+  // profile-fade + --idx: the connection cards cascade in (rise+fade, 50ms apart) so the feed
+  // "flows" the way its copy promises, instead of snapping in as a block. reduced-motion is
+  // handled by the .profile-fade guard in globals.
   return (
     <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-      {events.map((event) => (
-        <li key={event.id} className="py-6 first:pt-0">
+      {events.map((event, i) => (
+        <li
+          key={event.id}
+          className="profile-fade py-6 first:pt-0"
+          style={{ "--idx": i } as CSSProperties}
+        >
           <ConnectionEventCard event={event} locale={locale} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Loading placeholder — three rows echoing the connection card's rhythm (curator meta → collection
+ *  chip → the curator's line → block) so the swap to real content is a settle, not a pop. Mirrors the
+ *  divide-y list, matching the feed's skeleton idiom rather than a lone spinner. */
+function ConnectionFeedSkeleton() {
+  return (
+    <ul aria-hidden className="animate-pulse divide-y divide-slate-100 dark:divide-slate-800">
+      {[0, 1, 2].map((i) => (
+        <li key={i} className="py-6 first:pt-0">
+          <div className="flex items-center gap-2">
+            <span className="h-5 w-5 rounded-full bg-slate-200 dark:bg-slate-800" />
+            <span className="h-3 w-24 rounded bg-slate-200 dark:bg-slate-800" />
+          </div>
+          <span className="mt-2.5 block h-3 w-40 rounded bg-slate-200 dark:bg-slate-800" />
+          <span className="mt-3 block h-4 w-4/5 rounded bg-slate-200/90 dark:bg-slate-800/90" />
+          <div className="mt-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
+            <span className="block h-3.5 w-3/4 rounded bg-slate-200 dark:bg-slate-800" />
+            <span className="mt-2 block h-3 w-1/2 rounded bg-slate-200/80 dark:bg-slate-800/80" />
+          </div>
         </li>
       ))}
     </ul>

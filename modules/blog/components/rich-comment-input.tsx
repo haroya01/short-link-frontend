@@ -51,6 +51,8 @@ export function RichCommentInput({
   autoFocus = false,
   maxLength = 2000,
   rows = 3,
+  expanded = true,
+  maxHeight,
   onSubmitShortcut,
 }: {
   value: string;
@@ -61,6 +63,11 @@ export function RichCommentInput({
   autoFocus?: boolean;
   maxLength?: number;
   rows?: number;
+  /** Collapsed rest state — hides the format toolbar and shrinks the field to a single line. The
+   *  host (CommentComposer) flips this to `true` on focus / while a draft exists. */
+  expanded?: boolean;
+  /** Cap on the auto-grow height; content past it scrolls inside the field. */
+  maxHeight?: string;
   /** Fired on Cmd/Ctrl+Enter — lets the host submit without the user reaching for the button. */
   onSubmitShortcut?: () => void;
 }) {
@@ -138,7 +145,9 @@ export function RichCommentInput({
     }
   }
 
-  const minHeight = `${(compact ? rows : Math.max(rows, 3)) * 1.6 + 1}rem`;
+  // Expanded floor honours the caller's rows; collapsed is a single text line so the resting field
+  // reads as a quiet one-line affordance (~48px with the vertical padding).
+  const minHeight = expanded ? `${rows * 1.6 + 1}rem` : "1.5rem";
 
   if (!editor) {
     return (
@@ -151,8 +160,19 @@ export function RichCommentInput({
 
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 transition-colors focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
-      <RichToolbar editor={editor} compact={compact} onLink={() => setLinkOpen(true)} />
-      <RichEditable editor={editor} placeholder={placeholder} minHeight={minHeight} />
+      {/* Format chrome shows only when expanded — the resting field is a bare one-line input. The
+          grid-rows 0fr→1fr reveal animates the height with no mount jump; `invisible` keeps the
+          clipped toolbar out of the tab order while collapsed. */}
+      <div
+        className={`grid transition-[grid-template-rows] duration-200 ease-[var(--ease)] motion-reduce:transition-none ${
+          expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className={`overflow-hidden ${expanded ? "" : "invisible"}`}>
+          <RichToolbar editor={editor} compact={compact} onLink={() => setLinkOpen(true)} />
+        </div>
+      </div>
+      <RichEditable editor={editor} placeholder={placeholder} minHeight={minHeight} maxHeight={maxHeight} />
       <UrlDialog
         open={linkOpen}
         title={t("link")}
@@ -175,10 +195,12 @@ function RichEditable({
   editor,
   placeholder,
   minHeight,
+  maxHeight,
 }: {
   editor: Editor;
   placeholder: string;
   minHeight: string;
+  maxHeight?: string;
 }) {
   // Tiptap v3 useEditor doesn't re-render on transactions → subscribe so the placeholder hides the
   // instant the first character lands.
@@ -193,10 +215,15 @@ function RichEditable({
       )}
       <EditorContent
         editor={editor}
-        style={{ minHeight }}
+        style={{ minHeight, maxHeight }}
         className={
-          "px-4 py-3 text-[15px] leading-relaxed dark:text-slate-100 " +
-          "[&_.tiptap-comment]:min-h-[inherit] [&_.tiptap-comment]:outline-none " +
+          "px-4 py-3 text-[15px] leading-relaxed transition-[min-height] duration-200 ease-[var(--ease)] motion-reduce:transition-none dark:text-slate-100 " +
+          (maxHeight ? "overflow-y-auto " : "") +
+          // The shared `.tiptap` style is the FULL-PAGE writing editor's: it adds a 40vh scroll-past-end
+          // gutter (padding-bottom) and an 18px body font. Both leak into this inline comment field via the
+          // shared class — the gutter inflated the box to ~400px even when empty, and 18px mismatched the
+          // 15px rendered comment (CommentBody). Pin the field back to its intended compact 15px, no gutter.
+          "[&_.tiptap-comment]:min-h-[inherit] [&_.tiptap-comment]:pb-0 [&_.tiptap-comment]:text-[15px] [&_.tiptap-comment]:outline-none " +
           "[&_strong]:font-semibold [&_em]:italic " +
           "[&_a]:text-accent-700 [&_a]:underline [&_a]:decoration-accent-300 [&_a]:underline-offset-2 dark:[&_a]:text-accent-400 " +
           "[&_code]:rounded [&_code]:bg-slate-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[12.5px] [&_code]:text-slate-800 dark:[&_code]:bg-slate-800 dark:[&_code]:text-slate-200 " +

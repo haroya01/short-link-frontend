@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, ChevronDown, Folder, FolderPlus, ListChecks, Loader2, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useToast } from "@/components/ui/toast";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { useDismiss } from "@/hooks/use-dismiss";
@@ -27,6 +28,7 @@ import { blogCta } from "@/modules/blog/components/blog-cta";
  */
 export function SmartShelf({ username, locale }: { username: string; locale: string }) {
   const t = useTranslations("savedLibrary");
+  const { toast } = useToast();
   const { ready, me } = useAuth();
   const isOwner = ready && me?.username === username;
 
@@ -58,30 +60,48 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   const recount = (list: SavedPost[]): BookmarkFolder[] =>
     folders.map((f) => ({ ...f, count: list.filter((s) => s.folderId === f.id).length }));
 
+  // 낙관적 이동 — 실패하면 옮기기 전 상태로 되돌리고 알린다(다음 방문 때 원위치로 되살아나 혼란한 걸 방지).
   function move(postId: number, folderId: number | null) {
+    const prevSaved = saved;
+    const prevFolders = folders;
     setSaved((prev) => {
       const next = prev.map((s) => (s.id === postId ? { ...s, folderId } : s));
       setFolders(recount(next));
       return next;
     });
-    void moveSavedToFolder(postId, folderId);
+    moveSavedToFolder(postId, folderId).catch(() => {
+      setSaved(prevSaved);
+      setFolders(prevFolders);
+      toast(t("saveFailed"), "error");
+    });
   }
   function remove(postId: number) {
+    const prevSaved = saved;
+    const prevFolders = folders;
     setSaved((prev) => {
       const next = prev.filter((s) => s.id !== postId);
       setFolders(recount(next));
       return next;
     });
-    void removeSaved(postId);
+    removeSaved(postId).catch(() => {
+      setSaved(prevSaved);
+      setFolders(prevFolders);
+      toast(t("saveFailed"), "error");
+    });
   }
   async function addFolder(name: string, thenMovePostId?: number) {
-    const f = await apiCreateFolder(name);
-    setFolders((prev) => [...prev, { ...f, count: 0 }]);
-    if (thenMovePostId != null) move(thenMovePostId, f.id);
+    try {
+      const f = await apiCreateFolder(name);
+      setFolders((prev) => [...prev, { ...f, count: 0 }]);
+      if (thenMovePostId != null) move(thenMovePostId, f.id);
+    } catch {
+      toast(t("saveFailed"), "error");
+    }
   }
 
   // 일괄 이동 — 선택된 글들을 한 번에 folderId 로. extraFolder 가 있으면(새 폴더) 카운트 계산에 포함.
   function applyBulkMove(ids: number[], folderId: number | null, extraFolder?: BookmarkFolder) {
+    const prevSaved = saved;
     setSaved((prev) => {
       const next = prev.map((s) => (ids.includes(s.id) ? { ...s, folderId } : s));
       setFolders((prevF) => {
@@ -90,7 +110,14 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
       });
       return next;
     });
-    ids.forEach((id) => void moveSavedToFolder(id, folderId));
+    Promise.allSettled(ids.map((id) => moveSavedToFolder(id, folderId))).then((results) => {
+      const failed = results.filter((r) => r.status === "rejected").length;
+      if (failed === 0) return;
+      // 하나라도 서버 반영 실패 → 옮기기 전 상태로 되돌린다(새 폴더는 이미 생성됐으므로 유지, 카운트만 원복).
+      setSaved(prevSaved);
+      setFolders((prevF) => prevF.map((f) => ({ ...f, count: prevSaved.filter((s) => s.folderId === f.id).length })));
+      toast(t("bulkMoveFailed", { count: failed }), "error");
+    });
   }
   function togglePick(id: number) {
     setPicked((prev) => {
@@ -110,9 +137,13 @@ export function SmartShelf({ username, locale }: { username: string; locale: str
   async function bulkNewFolder(name: string) {
     const trimmed = name.trim();
     if (!trimmed) return;
-    const f = await apiCreateFolder(trimmed);
-    applyBulkMove([...picked], f.id, { ...f, count: 0 });
-    exitSelect();
+    try {
+      const f = await apiCreateFolder(trimmed);
+      applyBulkMove([...picked], f.id, { ...f, count: 0 });
+      exitSelect();
+    } catch {
+      toast(t("saveFailed"), "error");
+    }
   }
 
   const unfiled = useMemo(() => saved.filter((s) => s.folderId == null), [saved]);

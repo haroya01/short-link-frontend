@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Hash } from "lucide-react";
 import { routing } from "@/i18n/routing";
-import { blogHref } from "@/lib/host";
+import { blogPath } from "@/lib/host";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import {
   listFeedByTag,
@@ -121,10 +122,10 @@ export default async function TagFeedPage({
             icon={Hash}
             title={t("emptyTagTitle")}
             action={
-              <a href={blogHref("/tags")} className={blogCta({ variant: "secondary" })}>
+              <BlogLink href={blogPath("/tags")} className={blogCta({ variant: "secondary" })}>
                 <Hash className="h-4 w-4 text-accent-600" />
                 {t("browseTopics")}
-              </a>
+              </BlogLink>
             }
           />
         ) : (

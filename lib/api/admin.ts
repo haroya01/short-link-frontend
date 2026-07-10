@@ -1,11 +1,15 @@
 import type {
   AdminActiveUsers,
+  AdminActivity,
   AdminCohort,
   AdminHealthMetrics,
   AdminLifecycle,
+  AdminLinkDetail,
   AdminLinkMetric,
   AdminLinkMetricsSort,
   AdminLinkMetricsWindow,
+  AdminLinkSort,
+  AdminLinksPage,
   AdminOutcomeDistribution,
   AdminOverview,
   AdminRecentError,
@@ -17,6 +21,8 @@ import type {
   AdminRouteMetricsWindow,
   AdminTopLinksPage,
   AdminTopUsersPage,
+  AdminUserRole,
+  AdminUsersPage,
 } from "@/types";
 
 import { request } from "./client";
@@ -90,6 +96,46 @@ export async function getAdminTopLinksByClicks(
     `/api/v1/admin/top-links-by-clicks?page=${page}&size=${size}`,
     { method: "GET" },
   );
+}
+
+export async function getAdminUsers(params: {
+  q?: string;
+  role?: AdminUserRole;
+  page: number;
+  size: number;
+}): Promise<AdminUsersPage> {
+  const qs = new URLSearchParams();
+  if (params.q) qs.set("q", params.q);
+  if (params.role) qs.set("role", params.role);
+  qs.set("page", String(params.page));
+  qs.set("size", String(params.size));
+  return request<AdminUsersPage>(`/api/v1/admin/users?${qs.toString()}`, { method: "GET" });
+}
+
+export async function getAdminLinks(params: {
+  q?: string;
+  ownerId?: number;
+  sort?: AdminLinkSort;
+  page: number;
+  size: number;
+}): Promise<AdminLinksPage> {
+  const qs = new URLSearchParams();
+  if (params.q) qs.set("q", params.q);
+  if (params.ownerId != null) qs.set("ownerId", String(params.ownerId));
+  if (params.sort) qs.set("sort", params.sort);
+  qs.set("page", String(params.page));
+  qs.set("size", String(params.size));
+  return request<AdminLinksPage>(`/api/v1/admin/links?${qs.toString()}`, { method: "GET" });
+}
+
+export async function getAdminLinkDetail(code: string): Promise<AdminLinkDetail> {
+  return request<AdminLinkDetail>(`/api/v1/admin/links/${encodeURIComponent(code)}`, {
+    method: "GET",
+  });
+}
+
+export async function getAdminActivity(): Promise<AdminActivity> {
+  return request<AdminActivity>("/api/v1/admin/links/activity", { method: "GET" });
 }
 
 export async function getAdminRouteMetrics(

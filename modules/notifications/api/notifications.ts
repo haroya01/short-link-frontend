@@ -56,7 +56,9 @@ export function getUnreadCount(): Promise<{ count: number }> {
 
 export function markNotificationRead(id: number): Promise<void> {
   if (USE_MOCKS) return Promise.resolve();
-  return request<void>(`/api/v1/notifications/${id}/read`, { method: "POST" });
+  // keepalive: 알림을 눌러 하드 내비(서브도메인 배포는 절대 URL이라 소프트 내비 불가)할 때
+  // 언로드로 읽음 처리 POST가 취소되지 않게 한다(view-beacon·postProfileVisit 관례).
+  return request<void>(`/api/v1/notifications/${id}/read`, { method: "POST", keepalive: true });
 }
 
 export function markAllNotificationsRead(): Promise<{ count: number }> {

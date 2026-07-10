@@ -1477,3 +1477,210 @@ test("publish dialog: offers the body's first image as a one-tap cover, applied 
   // The applied cover persists to the metadata PATCH.
   await expect.poll(() => captured.meta?.ogImageUrl, { timeout: 15_000 }).toBe(IMAGE_URL);
 });
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Batch 3 — the paths a writer reaches by PASTING or through the ⋮⋮ block gutter rather than by typing:
+// the Notion image re-host, a pasted URL → card, publish-time kurl link-shortening, "turn into", and
+// the markdown export. Batches 1–2 drove the keyboard/toolbar/slash surface; these close the rest.
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+const IMPORTED_URL = "https://mock-s3.test/imported.png";
+const SHORT_URL = "https://kurl.me/AbC123";
+
+/**
+ * Dispatch a synthetic paste at the ProseMirror editable. Headless can't drive the OS clipboard (and
+ * writing text/html to it is blocked anyway), so we hand the editor's own `handlePaste` a DataTransfer
+ * directly — the exact object shape the browser delivers. `.tiptap` IS the contenteditable ProseMirror
+ * listens on, so a `paste` dispatched there runs the real paste pipeline (image re-host / link-card /
+ * bare-URL branches in markdown-editor.tsx), not a shortcut around it.
+ */
+async function pasteInto(page: Page, data: { html?: string; text?: string }) {
+  await page.locator(".tiptap").click();
+  await page.evaluate(({ html, text }) => {
+    const dt = new DataTransfer();
+    if (html != null) dt.setData("text/html", html);
+    if (text != null) dt.setData("text/plain", text);
+    document
+      .querySelector(".tiptap")!
+      .dispatchEvent(new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true }));
+  }, data);
+}
+
+/** Route the server-side image re-host (POST …/images/import) the Notion-paste path calls. */
+async function mockImageImport(page: Page) {
+  await page.route(`**/api/v1/posts/${POST_ID}/images/import`, (route) =>
+    route.fulfill({ json: { imageUrl: IMPORTED_URL, key: "imported-key" } }),
+  );
+}
+
+/** Route POST /api/v1/links (the kurl shortener) and record which URL was sent to be shortened. */
+async function mockShorten(page: Page, seen: { url: string | null }) {
+  await page.route("**/api/v1/links", (route) => {
+    if (route.request().method() === "POST") {
+      seen.url = route.request().postDataJSON()?.url ?? null;
+      return route.fulfill({ json: { shortCode: "AbC123", shortUrl: SHORT_URL, claimToken: null } });
+    }
+    return route.fulfill({ json: [] });
+  });
+}
+
+test("paste from Notion: an image-only HTML paste re-hosts the external <img> into an IMAGE block (#588)", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await mockImageImport(page);
+  await openEditor(page);
+  // A Notion block copy carries no image bytes — only text/html with an <img> at an expiring URL. The
+  // image-only branch re-hosts it through …/images/import before inserting, so the post keeps the
+  // image after the source URL rots. Before the fix this dropped the image with no feedback.
+  await pasteInto(page, { html: '<img src="https://external.test/remote-shot.png">' });
+  // The re-hosted URL lands in the editor (assert presence, not paint — the mock S3 returns an empty
+  // body so the <img> never fires `load`, and the load-fade keeps a broken image hidden).
+  await expect(page.locator(`.tiptap img[src="${IMPORTED_URL}"]`)).toBeAttached({ timeout: 10_000 });
+  const blocks = await save(page, captured);
+  const img = blocks.find((b) => b.type === "IMAGE");
+  expect(img, "an IMAGE block was saved from the pasted <img>").toBeTruthy();
+  expect(img!.content, "the external URL was swapped for the re-hosted one").toContain(IMPORTED_URL);
+  expect(img!.content, "the expiring external URL is gone").not.toContain("external.test");
+});
+
+test("paste a bare page URL on an empty line becomes a link card that round-trips to an EMBED block", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  // The velog/Notion habit: pasting a URL onto an empty line makes a live preview card, not a raw
+  // link — the same EMBED contract the embed dialog proves, but reached by paste.
+  await pasteInto(page, { text: "https://example.com/an-article" });
+  await expect(page.locator(".tiptap [data-link-card]")).toBeVisible({ timeout: 10_000 });
+  const blocks = await save(page, captured);
+  const embed = blocks.find((b) => b.type === "EMBED");
+  expect(embed, "an EMBED block was saved from the pasted URL").toBeTruthy();
+  expect(embed!.content).toContain("example.com/an-article");
+});
+
+test("paste a bare IMAGE URL on an empty line re-hosts as an IMAGE, not a link card", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await mockImageImport(page);
+  await openEditor(page);
+  // A URL that points at an image file is an image, not a page to preview — it takes the isImageUrl
+  // branch (re-host → IMAGE), distinct from the link-card branch above. Guards the two from crossing.
+  await pasteInto(page, { text: "https://external.test/photo.png" });
+  await expect(page.locator(`.tiptap img[src="${IMPORTED_URL}"]`)).toBeAttached({ timeout: 10_000 });
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "IMAGE")?.content).toContain(IMPORTED_URL);
+  expect(blocks.some((b) => b.type === "EMBED"), "an image URL must NOT become an embed card").toBe(false);
+});
+
+test("publish auto-shortens an in-body link through kurl and swaps the short URL into the saved body (#589)", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  const seen = { url: null as string | null };
+  await setupMocks(page, captured);
+  await mockShorten(page, seen);
+  await openEditor(page);
+  await titleInput(page).fill("A post that links out");
+  // Write a real markdown link (bubble → Link dialog) — the only form the shortener touches (bare URLs
+  // and image srcs are left alone). See post-links.ts.
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("read this");
+  const link = await awaitBubbleButton(
+    page,
+    async () => {
+      await page.keyboard.press("Home");
+      await page.keyboard.press("Shift+End");
+    },
+    "Link",
+  );
+  await link.click();
+  await page.getByPlaceholder("https://example.com").fill("https://example.com/an-article");
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("read this");
+
+  const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog); // topic required to publish
+  // The link shows in the "In-post links" list, on by default (about to be shortened).
+  await expect(dialog.getByRole("button", { name: /example\.com\/an-article/ })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+
+  await expect.poll(() => captured.status).toBe("publish");
+  expect(seen.url, "the original URL was sent to the shortener").toBe("https://example.com/an-article");
+  // The body that persisted carries the kurl short URL, not the original — clicks are now tracked.
+  await expect
+    .poll(() => captured.blocks?.map((b) => b.content ?? "").join("\n"), { timeout: 15_000 })
+    .toContain(SHORT_URL);
+});
+
+test("publish: an in-post link toggled OFF keeps its original URL (not shortened)", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  const seen = { url: null as string | null };
+  await setupMocks(page, captured);
+  await mockShorten(page, seen);
+  await openEditor(page);
+  await titleInput(page).fill("Keep my link as-is");
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("read this");
+  const link = await awaitBubbleButton(
+    page,
+    async () => {
+      await page.keyboard.press("Home");
+      await page.keyboard.press("Shift+End");
+    },
+    "Link",
+  );
+  await link.click();
+  await page.getByPlaceholder("https://example.com").fill("https://example.com/an-article");
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("read this");
+
+  const dialog = await openPublishDialog(page);
+  await addDialogTag(dialog);
+  // Turn the link OFF so it stays exactly as the author wrote it.
+  const toggle = dialog.getByRole("button", { name: /example\.com\/an-article/ });
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+
+  await expect.poll(() => captured.status).toBe("publish");
+  // The shortener was never asked, and the saved body still has the original URL.
+  expect(seen.url, "no link was sent to the shortener").toBeNull();
+  await expect
+    .poll(() => captured.blocks?.map((b) => b.content ?? "").join("\n"), { timeout: 15_000 })
+    .toContain("example.com/an-article");
+  expect(captured.blocks!.map((b) => b.content ?? "").join("\n")).not.toContain(SHORT_URL);
+});
+
+// NOTE: the ⋮⋮ block-gutter menu (Turn into · Duplicate · Delete) and drag-to-reorder are NOT
+// automated here. They ride on Tiptap's drag-handle plugin, which claims the pointer for a drag and
+// swallows a synthetic/actionability click, so the menu can't be opened deterministically headless.
+// The same block transforms (paragraph↔heading/list/quote) ARE covered via the slash menu, markdown
+// shortcuts, and the always-on toolbar. The gutter path is a manual QA item — see e2e/WRITE_QA.md.
+
+test("Export .md downloads the post as markdown carrying the title and body", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await titleInput(page).fill("My exportable post");
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("The body that should ride along in the export.");
+  // The header Export button builds a .md from liveMarkdown (latest keystrokes) + frontmatter.
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    page.getByRole("button", { name: "Export .md" }).click(),
+  ]);
+  const stream = await download.createReadStream();
+  const chunks: Buffer[] = [];
+  for await (const c of stream) chunks.push(c as Buffer);
+  const md = Buffer.concat(chunks).toString("utf8");
+  expect(md, "frontmatter carries the title").toContain("My exportable post");
+  expect(md, "the body rides along").toContain("The body that should ride along in the export.");
+});

@@ -8,6 +8,7 @@ import { blogHref } from "@/lib/host";
 import { searchPublicFeed, type PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/components/feed-card";
 import { cn } from "@/lib/utils";
+import { useDismiss } from "@/hooks/use-dismiss";
 
 /**
  * Global blog search — the single search entry point, in the header so it's reachable from every
@@ -31,9 +32,16 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   // the field open (icon stays put, placeholder reveals as it widens — no scaleX text squish).
   const [expanded, setExpanded] = useState(false);
   const [value, setValue] = useState("");
+  // The live dropdown's own visibility, decoupled from the field's width `open`: on the hub the field
+  // rests open with a query, but the panel must still dismiss on outside-click/Esc without collapsing
+  // the field or clearing the query. Reopens on focus/typing.
+  const [panelOpen, setPanelOpen] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   // Only steal focus when the user opens the field by tapping the glyph — not on the resting/URL open.
   const focusOnOpen = useRef(false);
+
+  useDismiss(panelOpen, formRef, () => setPanelOpen(false));
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get("q")?.trim() ?? "";
@@ -96,6 +104,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const q = value.trim();
+    setPanelOpen(false);
     if (!q) {
       setOpen(false);
       return;
@@ -120,7 +129,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
   }
 
   return (
-    <form onSubmit={submit} role="search" className="relative">
+    <form ref={formRef} onSubmit={submit} role="search" className="relative">
       <Search
         aria-hidden
         className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
@@ -129,7 +138,11 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
         ref={inputRef}
         type="search"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => {
+          setValue(e.target.value);
+          setPanelOpen(true);
+        }}
+        onFocus={() => setPanelOpen(true)}
         onBlur={() => {
           // Keep the field open on the hub even when empty; elsewhere an empty blur collapses it.
           if (!value.trim() && !defaultOpen) setOpen(false);
@@ -162,7 +175,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
         </button>
       )}
 
-      {value.trim() && (
+      {value.trim() && panelOpen && (
         <div className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
           {loading && results.length === 0 ? (
             <div className="flex justify-center py-6 text-slate-400">
@@ -174,6 +187,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
                 <li key={`${item.author.username}/${item.slug}`}>
                   <a
                     href={postHref(item.author.username, item.slug, locale)}
+                    onClick={() => setPanelOpen(false)}
                     className="block px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
                   >
                     {item.tags[0] && (

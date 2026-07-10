@@ -1,9 +1,15 @@
 {
+  "authGate": {
+    "login": "로그인",
+    "explore": "로그인 없이 둘러보기",
+    "defaultDesc": "로그인하면 링크와 캠페인을 이어서 관리할 수 있어요."
+  },
   "comments": {
     "count": "댓글 {count}개",
     "placeholder": "댓글을 입력하세요",
     "submit": "댓글 작성",
     "submitting": "작성 중…",
+    "cancel": "취소",
     "reply": "답글",
     "replyPlaceholder": "답글을 입력하세요",
     "delete": "삭제",
@@ -18,7 +24,9 @@
     "list": "목록",
     "quote": "인용",
     "preview": "미리보기",
-    "linkText": "링크 텍스트"
+    "linkText": "링크 텍스트",
+    "submitError": "댓글을 등록하지 못했어요. 다시 시도해 주세요.",
+    "deleteError": "댓글을 삭제하지 못했어요. 다시 시도해 주세요."
   },
   "publicFeed": {
     "recent": "최신",
@@ -103,7 +111,9 @@
     "seriesNextEpisode": "다음 편",
     "seriesEpisodeOf": "{total}편 중 {current}편",
     "feedReasonTopic": "‘{tag}’ 팔로우",
-    "feedReasonSeries": "구독 시리즈"
+    "feedReasonSeries": "구독 시리즈",
+    "bookmarkFailed": "저장하지 못했어요. 다시 시도해 주세요.",
+    "seriesSubscribeFailed": "구독을 변경하지 못했어요. 다시 시도해 주세요."
   },
   "blogWebhooks": {
     "loginRequired": "로그인이 필요해요.",
@@ -439,7 +449,8 @@
       "placePlaceholder": "장소 이름이나 주소 검색",
       "placeEmpty": "검색 결과가 없어요.",
       "placeHint": "장소를 고르면 지도 카드가 글에 삽입돼요.",
-      "placeClose": "닫기"
+      "placeClose": "닫기",
+      "placeError": "장소 정보를 불러오지 못했어요. 다시 시도해주세요."
     },
     "autoSave": "자동 저장",
     "unsavedLeaveTitle": "저장하지 않은 변경이 있어요",
@@ -451,7 +462,9 @@
     "importPartialError": "일부 파일을 가져오지 못했어요. 파일을 확인하고 다시 시도해주세요.",
     "savedAt": "{time} 저장됨",
     "continueWriting": "이어서 쓰기",
-    "noPostsHint": "첫 글을 쓰면 여기에 쌓여요. 발행 전까지는 임시저장으로 남아요."
+    "noPostsHint": "첫 글을 쓰면 여기에 쌓여요. 발행 전까지는 임시저장으로 남아요.",
+    "seriesCreateConflict": "같은 이름의 시리즈가 이미 있어요. 다른 이름을 써주세요.",
+    "seriesCreateError": "시리즈를 만들지 못했어요. 다시 시도해주세요."
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -483,7 +496,11 @@
     "clearHistoryCancel": "취소",
     "forget": "기록에서 지우기",
     "loadMore": "더 보기",
-    "emptyFolder": "이 폴더는 비어 있어요."
+    "emptyFolder": "이 폴더는 비어 있어요.",
+    "saveFailed": "변경 사항을 저장하지 못했어요. 다시 시도해 주세요.",
+    "bulkMoveFailed": "{count}개를 옮기지 못했어요. 다시 시도해 주세요.",
+    "loadError": "읽기 기록을 불러오지 못했어요.",
+    "retry": "다시 시도"
   },
   "publicPost": {
     "like": "좋아요",
@@ -498,6 +515,11 @@
     "highlightReplySubmit": "답글",
     "highlightReplyDelete": "삭제",
     "highlightReplyLogin": "로그인하고 답글을 남겨보세요",
+    "highlightDelete": "하이라이트 삭제",
+    "highlightDeleteConfirm": "하이라이트를 삭제할까요?",
+    "highlightDeleteConfirmBody": "남긴 메모와 답글도 함께 사라져요. 되돌릴 수 없어요.",
+    "highlightDeleteConfirmBodyBare": "삭제하면 되돌릴 수 없어요.",
+    "highlightDeleteError": "삭제하지 못했어요. 다시 시도해 주세요.",
     "readingTime": "약 {minutes}분",
     "ogReadingTime": "{minutes}분 읽기",
     "previewBanner": "미리보기 — 아직 발행되지 않은 글이에요. 이 링크가 있는 사람만 볼 수 있어요.",
@@ -574,7 +596,8 @@
     "seriesViewAll": "시리즈 전체 {total}편 보기",
     "relatedHeading": "다음 읽을 글",
     "resumeReading": "이어서 읽기",
-    "resumeDismiss": "이어읽기 닫기"
+    "resumeDismiss": "이어읽기 닫기",
+    "replyError": "답글을 등록하지 못했어요. 다시 시도해 주세요."
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -1414,11 +1437,14 @@
       "colLocation": "위치",
       "colDevice": "기기",
       "colReferrer": "유입"
+    },
+    "chart": {
+      "peak": "피크"
     }
   },
   "admin": {
     "label": "admin",
-    "title": "서비스 overview",
+    "title": "서비스 개요",
     "subtitle": "최근 30일 추세 · 5분 캐시",
     "kpi": {
       "users": "사용자",
@@ -1633,6 +1659,112 @@
       "copied": "복사됨",
       "expires": "{minutes}분 후 만료",
       "hint": "devtools 없이 시딩·스크립트에 바로 사용하세요."
+    },
+    "browse": {
+      "usersTab": "전체 유저",
+      "linksTab": "전체 링크",
+      "search": "검색",
+      "users": {
+        "title": "전체 유저",
+        "subtitle": "모든 계정을 검색하고 살펴봅니다",
+        "searchPlaceholder": "이메일 또는 핸들 검색",
+        "role": {
+          "all": "전체 역할",
+          "user": "일반",
+          "admin": "관리자"
+        },
+        "col": {
+          "user": "사용자",
+          "role": "역할",
+          "tier": "요금제",
+          "links": "링크",
+          "joined": "가입일",
+          "status": "상태"
+        },
+        "active": "활성",
+        "deleted": "탈퇴",
+        "noResults": "일치하는 유저가 없어요"
+      },
+      "links": {
+        "title": "전체 링크",
+        "subtitle": "모든 단축 링크를 검색하고 살펴봅니다",
+        "searchPlaceholder": "코드 또는 목적지 URL 검색",
+        "sort": {
+          "recent": "최신순",
+          "clicks": "클릭순"
+        },
+        "col": {
+          "code": "코드",
+          "destination": "목적지",
+          "owner": "소유자",
+          "clicks": "클릭",
+          "status": "상태",
+          "created": "생성일"
+        },
+        "status": {
+          "active": "활성",
+          "expired": "만료",
+          "limitReached": "한도 도달"
+        },
+        "ownerFilter": "소유자 #{id}",
+        "clearFilter": "필터 해제",
+        "locked": "비밀번호 보호",
+        "noResults": "일치하는 링크가 없어요"
+      }
+    },
+    "detail": {
+      "title": "링크 상세",
+      "back": "전체 링크로 돌아가기",
+      "anonymousOwner": "익명",
+      "meta": {
+        "code": "단축 코드",
+        "owner": "소유자",
+        "destination": "목적지",
+        "clicks": "총 클릭",
+        "views": "조회",
+        "created": "생성일",
+        "expires": "만료일",
+        "noExpiry": "만료 없음",
+        "locked": "비밀번호 보호"
+      },
+      "section": {
+        "daily": {
+          "title": "일별 클릭",
+          "desc": "일 단위 · {tz}"
+        },
+        "hourly": {
+          "title": "시간대별",
+          "desc": "하루 중 시간대 분포"
+        },
+        "referrers": {
+          "title": "리퍼러",
+          "desc": "클릭 유입 경로"
+        },
+        "devices": {
+          "title": "기기",
+          "desc": "기기별 분포"
+        },
+        "countries": {
+          "title": "국가",
+          "desc": "국가별 클릭"
+        }
+      },
+      "empty": {
+        "countries": "아직 국가 데이터가 없어요"
+      }
+    },
+    "activity": {
+      "recentLinksTitle": "최근 링크",
+      "recentLinksDesc": "새로 만들어진 링크",
+      "recentClicksTitle": "최근 클릭",
+      "recentClicksDesc": "실시간 클릭 흐름",
+      "trendingTitle": "24시간 인기",
+      "trendingDesc": "사람 클릭 기준 상위",
+      "empty": {
+        "links": "아직 링크가 없어요",
+        "clicks": "아직 클릭이 없어요",
+        "trending": "아직 인기 링크가 없어요"
+      }
     }
   },
   "common": {
@@ -2568,7 +2700,9 @@
       "recoveryCopyAll": "전체 복사",
       "recoveryCopied": "복구 코드가 복사되었어요.",
       "recoveryCopyFailed": "복사 실패",
-      "recoveryDismiss": "확인했어요, 닫기"
+      "recoveryDismiss": "확인했어요, 닫기",
+      "loadError": "2FA 상태를 불러오지 못했어요.",
+      "retry": "다시 시도"
     },
     "customDomains": {
       "title": "커스텀 도메인",
@@ -2700,7 +2834,8 @@
       "redirectHint": "자동 전환 대상 URL — QR 캠페인 종료 시점에 인쇄된 QR 들에 일괄 적용됩니다.",
       "cancel": "취소",
       "creating": "만드는 중...",
-      "submit": "QR 캠페인 만들기"
+      "submit": "QR 캠페인 만들기",
+      "leaveConfirm": "저장하지 않고 나갈까요? 입력한 내용이 사라집니다."
     },
     "detail": {
       "loadFailed": "불러오기 실패",
@@ -2752,7 +2887,8 @@
         "emptyTitle": "아직 배포 묶음이 없어요",
         "emptyDescription": "첫 묶음을 추가하면 QR 코드가 즉시 발급됩니다. 인쇄·발주 전에 스캔해서 작동 확인 가능.",
         "addFirst": "첫 배포 묶음 추가"
-      }
+      },
+      "csvFailed": "CSV 다운로드 실패"
     },
     "batchesNew": {
       "loadFailed": "불러오기 실패",
@@ -2873,7 +3009,8 @@
         "areaTitle": "지역별 성과",
         "areaHint": "다음 배포 위치 선정의 기준.",
         "tooltip": "{rate}회 / 100장 · 클릭 {clicks} / 배포 {quantity}",
-        "efficiency": "효율"
+        "efficiency": "효율",
+        "meta": "클릭 {clicks} · {quantity}장"
       },
       "compare": {
         "title": "다른 캠페인과 비교",
@@ -3281,6 +3418,7 @@
     "add": "추가",
     "whyLabel": "왜 이었나요",
     "whyPlaceholder": "한 줄 (선택)",
-    "addToCount": "{count}개 컬렉션에 추가됩니다."
+    "addToCount": "{count}개 컬렉션에 추가됩니다.",
+    "connectError": "저장하지 못했어요. 다시 시도해 주세요."
   }
 }

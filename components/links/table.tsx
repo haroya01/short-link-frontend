@@ -209,7 +209,7 @@ export function LinksTable({
                 <TD>
                   <div className="flex items-center gap-1.5">
                     <Link
-                      href={`/links/stats/${item.shortCode}`}
+                      href={`/stats/${item.shortCode}`}
                       className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100 hover:underline"
                     >
                       /{item.shortCode}
@@ -270,7 +270,7 @@ export function LinksTable({
                 </TD>
                 <TD className="whitespace-nowrap text-right">
                   <div className="inline-flex flex-nowrap items-center gap-0.5">
-                    <Link href={`/links/stats/${item.shortCode}`}>
+                    <Link href={`/stats/${item.shortCode}`}>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -405,7 +405,7 @@ function MobileLinkCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
             <Link
-              href={`/links/stats/${item.shortCode}`}
+              href={`/stats/${item.shortCode}`}
               className="truncate font-mono text-[15px] font-semibold leading-tight text-slate-900 dark:text-slate-100 hover:underline"
             >
               /{item.shortCode}
@@ -494,7 +494,7 @@ function MobileLinkCard({
           )}
         </span>
         <div className="inline-flex shrink-0 items-center gap-0.5">
-          <Link href={`/links/stats/${item.shortCode}`}>
+          <Link href={`/stats/${item.shortCode}`}>
             <Button
               variant="ghost"
               size="icon"

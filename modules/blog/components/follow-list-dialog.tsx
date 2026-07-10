@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import {
   followUser,
   listFollowers,
@@ -194,7 +195,7 @@ function FollowRow({
 }) {
   return (
     <li className="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50">
-      <a
+      <BlogLink
         href={authorHref(user.username, locale)}
         onClick={onNavigate}
         className="focus-ring group flex min-w-0 flex-1 items-center gap-3"
@@ -208,7 +209,7 @@ function FollowRow({
             <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">{user.bio}</span>
           )}
         </span>
-      </a>
+      </BlogLink>
       <RowFollowButton username={user.username} initialFollowing={user.followedByMe} />
     </li>
   );

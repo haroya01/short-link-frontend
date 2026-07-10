@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
@@ -16,6 +16,7 @@ import {
   DiscoveryGridSkeleton,
 } from "@/modules/blog/components/discovery-card";
 import { authorHref, FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FollowFilterChips, type FeedFacet } from "@/modules/blog/components/follow-filter-chips";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -53,7 +54,7 @@ function AuthorRow({
 }) {
   return (
     <li>
-      <a
+      <BlogLink
         href={authorHref(author.username, locale)}
         className="group flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
       >
@@ -64,7 +65,7 @@ function AuthorRow({
           </span>
           {subtitle && <span className="truncate text-[12px] text-slate-500 dark:text-slate-400">{subtitle}</span>}
         </span>
-      </a>
+      </BlogLink>
     </li>
   );
 }
@@ -89,7 +90,6 @@ export function FollowingFeed({
   const t = useTranslations("publicFeed");
   const { authenticated, ready, signInWithGoogle } = useAuth();
   const { prefs } = useTagPrefs();
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [items, setItems] = useState<PublicFeedItem[] | null>(null);
@@ -99,6 +99,11 @@ export function FollowingFeed({
   const [hasNext, setHasNext] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  // 첫 로드 실패는 '빈 피드'와 구분한다(아래 initialError 분기) — reloadKey 를 올리면 이펙트가 다시 돈다.
+  const [initialError, setInitialError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  // md 이상만 발견 그리드, 그 아래는 리스트 행 — 뷰포트에 맞는 한쪽 트리만 마운트(아래 참고).
+  const [isWide, setIsWide] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   // Active filter facet lives in the URL (?author= / ?topic=), so it survives reload and is shareable.
@@ -118,12 +123,17 @@ export function FollowingFeed({
     if (next?.kind === "author") params.set("author", next.value);
     else if (next?.kind === "tag") params.set("topic", next.value);
     const qs = params.toString();
-    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    // 칩은 로드된 items 를 클라이언트에서 거를 뿐이라 서버 데이터가 필요 없다 — router.replace 의
+    // RSC 왕복(동적 browse 라우트 재렌더) 대신 URL 만 갱신한다. Next 14.2 의 history 통합으로
+    // useSearchParams 는 그대로 반응해 칩 하이라이트/필터가 즉시 갱신된다.
+    window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
   };
 
   useEffect(() => {
     if (!ready || !authenticated) return;
     let alive = true;
+    setInitialError(false);
+    setItems(null);
     listFollowingFeed(0, 24)
       .then((view) => {
         if (!alive) return;
@@ -132,12 +142,25 @@ export function FollowingFeed({
         setPage(0);
       })
       .catch(() => {
-        if (alive) setItems([]);
+        // 일시적 오류를 빈 상태로 위장하지 않는다 — 팔로우 중인데 데이터가 사라진 걸로 오인하지
+        // 않게 별도 오류 분기에서 '다시 시도'를 준다.
+        if (alive) setInitialError(true);
       });
     return () => {
       alive = false;
     };
-  }, [ready, authenticated]);
+  }, [ready, authenticated, reloadKey]);
+
+  // 무한 스크롤이라 안 보이는 반대 뷰포트 트리까지 항목 수의 2배로 커지던 걸 막는다 — 아래 콘텐츠는
+  // md 이상=발견 그리드, 그 아래=리스트 행으로 뷰포트에 맞는 한쪽만 마운트한다. 목록은 클라이언트
+  // fetch 이후에만 나타나므로(그 전엔 스켈레톤) 이 값이 정해진 뒤에 그려져 깜빡임이 없다.
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsWide(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasNext) return;
@@ -218,6 +241,21 @@ export function FollowingFeed({
             </section>
           )}
         </FeedEmpty>
+      </div>
+    );
+  }
+
+  if (initialError) {
+    return (
+      <div className="mt-4 flex flex-col items-center gap-3 py-20 text-center">
+        <p className="text-[14px] text-slate-500 dark:text-slate-400">{t("loadMoreError")}</p>
+        <button
+          type="button"
+          onClick={() => setReloadKey((k) => k + 1)}
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-slate-300 hover:bg-slate-50 focus-ring dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
+        >
+          {t("retry")}
+        </button>
       </div>
     );
   }
@@ -306,17 +344,10 @@ export function FollowingFeed({
     // animate-fade-in: 스켈레톤 → 실제 그리드가 스왑이 아니라 짧은 크로스페이드로 읽히게.
     <div className="mx-auto mt-4 max-w-4xl animate-fade-in xl:max-w-5xl">
       <FollowFilterChips authors={followed} tags={presentTags} active={activeFacet} onSelect={setFacet} />
-      {/* <md = single-column reading rows, md+ = discovery masonry — same split (and reasoning) as
-          the grid branch of feed-infinite: 2-col tiles truncate titles and the CSS-columns masonry
-          rebalances under the thumb. */}
-      <div className="mx-auto max-w-2xl md:hidden">
-        <FeedList>
-          {shown.map((item) => (
-            <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
-          ))}
-        </FeedList>
-      </div>
-      <div className="hidden md:block">
+      {/* <md = single-column reading rows, md+ = discovery masonry. Only the matching viewport's tree
+          mounts (matchMedia) — the infinite list would otherwise double every card (and its bookmark
+          hook) into a display:none twin that still mounts and re-renders. */}
+      {isWide ? (
         <DiscoveryGrid>
           {shown.map((item, i) => (
             <DiscoveryCell key={`${item.author.username}/${item.slug}`} entranceDelay={Math.min((i % 24) * 25, 250)}>
@@ -324,7 +355,15 @@ export function FollowingFeed({
             </DiscoveryCell>
           ))}
         </DiscoveryGrid>
-      </div>
+      ) : (
+        <div className="mx-auto max-w-2xl">
+          <FeedList>
+            {shown.map((item) => (
+              <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
+            ))}
+          </FeedList>
+        </div>
+      )}
 
       {hasNext && (
         <div ref={sentinelRef} role="status" aria-live="polite" className="mt-8 flex flex-col items-center gap-2">

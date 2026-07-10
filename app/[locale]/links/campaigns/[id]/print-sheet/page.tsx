@@ -10,6 +10,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import type { CampaignBatch, CampaignDetail } from "@/types";
 
 type Layout = {
@@ -76,13 +77,7 @@ export default function PrintSheetPage() {
   );
 
   if (ready && !authenticated) {
-    return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-          {t("loginRequired")}
-        </h1>
-      </div>
-    );
+    return <LinksAuthGate eyebrow="campaigns" title={t("loginRequired")} />;
   }
 
   return (

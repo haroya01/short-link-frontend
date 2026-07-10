@@ -4,6 +4,7 @@ import { blogPath } from "@/lib/host";
 import type { SuggestedAuthor, TagCount } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 
@@ -31,7 +32,7 @@ export async function DiscoveryRail({
           <ul className="flex flex-col gap-1">
             {authors.map(({ author, postCount }) => (
               <li key={author.username}>
-                <a
+                <BlogLink
                   href={authorHref(author.username, locale)}
                   className="group flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 focus-ring dark:hover:bg-slate-800/50"
                 >
@@ -44,7 +45,7 @@ export async function DiscoveryRail({
                       {t("railPostCount", { count: postCount })}
                     </span>
                   </span>
-                </a>
+                </BlogLink>
               </li>
             ))}
           </ul>

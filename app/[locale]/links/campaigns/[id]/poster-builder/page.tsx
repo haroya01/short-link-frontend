@@ -11,6 +11,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import type { CampaignBatch, CampaignDetail } from "@/types";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -194,13 +195,7 @@ export default function PosterBuilderPage() {
   const canCompose = !!pdfBytes && batchCount > 0 && !composing;
 
   if (ready && !authenticated) {
-    return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-          {t("loginRequired")}
-        </h1>
-      </div>
-    );
+    return <LinksAuthGate eyebrow="campaigns" title={t("loginRequired")} />;
   }
 
   return (

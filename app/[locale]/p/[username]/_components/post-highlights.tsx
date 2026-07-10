@@ -5,9 +5,12 @@ import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
 import { useAuth } from "@/lib/auth";
+import { useToast } from "@/components/ui/toast";
+import { useConfirm } from "@/components/ui/use-confirm";
 import {
   createHighlight,
   createHighlightReply,
+  deleteHighlight,
   deleteHighlightReply,
   listHighlightReplies,
   listHighlights,
@@ -16,10 +19,8 @@ import {
   type NewHighlight,
 } from "@/modules/blog/api/highlights";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
-import { CommentComposer } from "@/modules/blog/components/comment-composer";
-import { RichCommentInput } from "@/modules/blog/components/rich-comment-input";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
-import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine } from "lucide-react";
+import { CornerDownRight, FolderPlus, Globe, Highlighter, Link as LinkIcon, Lock, PenLine, Trash2 } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { ConnectSheet } from "@/modules/blog/components/connect-sheet";
 import {
@@ -30,9 +31,12 @@ import {
 } from "@/modules/blog/api/collections";
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { authorHref } from "@/modules/blog/components/feed-card";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
+import { CommentComposer } from "@/modules/blog/components/comment-composer";
+import { RichCommentInput } from "@/modules/blog/components/rich-comment-input";
 
 type Anchor = { left: number; top: number; bottom: number };
 
@@ -56,7 +60,12 @@ type Anchor = { left: number; top: number; bottom: number };
 export function PostHighlights({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
   const { authenticated, me, signInWithGoogle } = useAuth();
+  const { toast } = useToast();
+  const [confirm, confirmDialog] = useConfirm();
   const [highlights, setHighlights] = useState<HighlightView[]>([]);
+  // Whether the highlight fetch has settled (resolved or failed) at least once. The deep-link scroll
+  // waits on this — not on there being any highlights — so a post with zero highlights still runs.
+  const [highlightsLoaded, setHighlightsLoaded] = useState(false);
   // When set, the reply-thread sheet is open for this highlight.
   const [threadFor, setThreadFor] = useState<HighlightView | null>(null);
   // The live selection → drives the floating action bar.
@@ -74,7 +83,10 @@ export function PostHighlights({ postId }: { postId: number }) {
       .then((h) => {
         if (alive) setHighlights(h);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        if (alive) setHighlightsLoaded(true);
+      });
     return () => {
       alive = false;
     };
@@ -98,10 +110,12 @@ export function PostHighlights({ postId }: { postId: number }) {
   }, [highlights, me?.id]);
 
   // Deep-link to a sentence: a `?hl=<quote>` from a path step / connection / discovery card scrolls to
-  // the matching painted span and flashes it (mirrors the iOS postFocusQuote deep-link). Runs after a
-  // paint pass so the <mark>s exist; falls back to a plain-text search when the span wasn't painted.
+  // the matching span and flashes it (mirrors the iOS postFocusQuote deep-link). Gated on the highlight
+  // fetch having *settled* — not on there being any highlights — so a post with zero highlights still
+  // resolves the quote via findQuoteTarget's plain-text fallback; a painted <mark> is preferred when one
+  // exists (the paint pass runs first, so by the timeout the marks are in the DOM).
   useEffect(() => {
-    if (highlights.length === 0) return;
+    if (!highlightsLoaded) return;
     const quote = new URLSearchParams(window.location.search).get("hl");
     if (!quote) return;
     const id = window.setTimeout(() => {
@@ -112,7 +126,7 @@ export function PostHighlights({ postId }: { postId: number }) {
       flashQuote(target);
     }, 120);
     return () => window.clearTimeout(id);
-  }, [highlights]);
+  }, [highlightsLoaded]);
 
   // Tapping a painted highlight opens its reply thread (a plain click, not a drag-select — a drag
   // doesn't emit a click, so it stays out of the highlight-creation path).
@@ -194,6 +208,33 @@ export function PostHighlights({ postId }: { postId: number }) {
     }
   }, [postId]);
 
+  // Delete the viewer's own highlight — a hard cascade on the backend (the opener note + every reply go
+  // with it). The thread sheet is z-60 and the shared confirm is z-50, so close the sheet first, then
+  // raise the destructive confirm over the page. Optimistic: drop the highlight from state up front so
+  // the paint effect unpaints its <mark> and recomputes the top-highlight clusters; restore + toast on
+  // failure.
+  const removeHighlight = useCallback(
+    async (h: HighlightView) => {
+      setThreadFor(null);
+      const threaded = !!h.note?.trim() || h.replyCount > 0;
+      const ok = await confirm({
+        title: t("highlightDeleteConfirm"),
+        description: threaded ? t("highlightDeleteConfirmBody") : t("highlightDeleteConfirmBodyBare"),
+        destructive: true,
+      });
+      if (!ok) return;
+      const prev = highlights;
+      setHighlights((cur) => cur.filter((x) => x.id !== h.id));
+      try {
+        await deleteHighlight(h.id);
+      } catch {
+        setHighlights(prev);
+        toast(t("highlightDeleteError"), "error");
+      }
+    },
+    [confirm, highlights, t, toast],
+  );
+
   // Quick highlight (no memo).
   const commitQuick = useCallback(() => {
     if (!sel) return;
@@ -266,8 +307,10 @@ export function PostHighlights({ postId }: { postId: number }) {
           onSignIn={signInWithGoogle}
           onClose={() => setThreadFor(null)}
           onChanged={refreshHighlights}
+          onDelete={() => void removeHighlight(threadFor)}
         />
       )}
+      {confirmDialog}
     </>,
     document.body,
   );
@@ -286,6 +329,7 @@ function HighlightThread({
   onSignIn,
   onClose,
   onChanged,
+  onDelete,
 }: {
   highlight: HighlightView;
   meId: number | null;
@@ -293,6 +337,7 @@ function HighlightThread({
   onSignIn: () => void;
   onClose: () => void;
   onChanged: () => void;
+  onDelete: () => void;
 }) {
   const t = useTranslations("publicPost");
   const tc = useTranslations("collections");
@@ -300,6 +345,7 @@ function HighlightThread({
   const [replies, setReplies] = useState<HighlightReplyView[]>([]);
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   // The public paths/collections this sentence is woven into ("이 문장이 속한 길" — A-척추 discovery loop).
   const [inCollections, setInCollections] = useState<CollectionSummary[]>([]);
   // Blocks curators wove alongside this sentence in the same public collections ("이것과 이어진 것").
@@ -310,6 +356,8 @@ function HighlightThread({
   const contentRef = useRef<HTMLDivElement>(null);
   // Connect needs a server-side highlight (positive id); an optimistic one (negative id) has no refId.
   const canConnect = authenticated && highlight.id > 0;
+  // The delete affordance is owner-only — the viewer's own highlight (same gate as the per-reply delete).
+  const isMine = meId != null && highlight.author?.id === meId;
 
   // Keyboard containment: Escape + Tab cycling + focus restore. Goes inert while the ConnectSheet is
   // open over the thread so the two traps don't fight over Tab (ConnectSheet runs its own then).
@@ -343,11 +391,16 @@ function HighlightThread({
     }
     if (!body.trim() || busy) return;
     setBusy(true);
+    setError(null);
     try {
-      await createHighlightReply(highlight.id, body.trim());
+      // Optimistic append with the created reply — a re-fetch (listHighlightReplies) returns [] on a
+      // read failure, which would blank the whole thread on an otherwise-successful post.
+      const created = await createHighlightReply(highlight.id, body.trim());
+      setReplies((prev) => [...prev, created]);
       setBody("");
-      load();
       onChanged(); // refresh the marks' replyCount
+    } catch {
+      setError(t("replyError"));
     } finally {
       setBusy(false);
     }
@@ -355,10 +408,13 @@ function HighlightThread({
 
   async function remove(id: number) {
     setBusy(true);
+    setError(null);
     try {
       await deleteHighlightReply(id);
-      load();
+      setReplies((prev) => prev.filter((r) => r.id !== id));
       onChanged();
+    } catch {
+      setError(t("replyError"));
     } finally {
       setBusy(false);
     }
@@ -392,25 +448,50 @@ function HighlightThread({
             <blockquote id="hl-thread-quote" className="line-clamp-3 flex-1 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
               {highlight.quote}
             </blockquote>
-            {/* Connect this sentence into a collection / path — the entry into the connection graph. */}
-            {canConnect && (
-              <button
-                type="button"
-                onClick={() => setConnecting(true)}
-                aria-label={tc("connectThisSentence")}
-                title={tc("connectThisSentence")}
-                className="focus-ring -mr-1 -mt-1 shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:hover:bg-slate-800 dark:hover:text-accent-400"
-              >
-                <FolderPlus className="h-4 w-4" />
-              </button>
+            {(canConnect || isMine) && (
+              <div className="-mr-1 -mt-1 flex shrink-0 items-center gap-0.5">
+                {/* Connect this sentence into a collection / path — the entry into the connection graph. */}
+                {canConnect && (
+                  <button
+                    type="button"
+                    onClick={() => setConnecting(true)}
+                    aria-label={tc("connectThisSentence")}
+                    title={tc("connectThisSentence")}
+                    className="focus-ring shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:hover:bg-slate-800 dark:hover:text-accent-400"
+                  >
+                    <FolderPlus className="h-4 w-4" />
+                  </button>
+                )}
+                {/* Owner-only: delete this highlight (a hard cascade — its note + every reply). Confirms first. */}
+                {isMine && (
+                  <button
+                    type="button"
+                    onClick={onDelete}
+                    aria-label={t("highlightDelete")}
+                    title={t("highlightDelete")}
+                    className="focus-ring shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/15 dark:hover:text-red-400"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
             )}
           </div>
           {/* The curator's note is the thread opener. */}
           {highlight.note && (
             <div className="mt-3 flex items-start gap-2">
-              <span className="mt-0.5 text-[13px] font-medium text-slate-900 dark:text-slate-100">
-                @{highlight.author?.username ?? "?"}
-              </span>
+              {highlight.author?.username ? (
+                <BlogLink
+                  href={authorHref(highlight.author.username, locale)}
+                  className="focus-ring mt-0.5 shrink-0 rounded text-[13px] font-medium text-slate-900 transition-colors hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-400"
+                >
+                  @{highlight.author.username}
+                </BlogLink>
+              ) : (
+                <span className="mt-0.5 text-[13px] font-medium text-slate-900 dark:text-slate-100">
+                  @?
+                </span>
+              )}
               <div className="min-w-0 flex-1 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
                 <CommentBody text={highlight.note} locale={locale} />
               </div>
@@ -428,9 +509,18 @@ function HighlightThread({
               {replies.map((r) => (
                 <li key={r.id}>
                   <div className="flex items-center gap-2">
-                    <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
-                      @{r.author?.username ?? "?"}
-                    </span>
+                    {r.author?.username ? (
+                      <BlogLink
+                        href={authorHref(r.author.username, locale)}
+                        className="focus-ring rounded text-[13px] font-medium text-slate-900 transition-colors hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-400"
+                      >
+                        @{r.author.username}
+                      </BlogLink>
+                    ) : (
+                      <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
+                        @?
+                      </span>
+                    )}
                     <span className="text-[12px] text-slate-400">{fmt(r.createdAt)}</span>
                     {meId != null && r.author?.id === meId && (
                       <button
@@ -511,6 +601,11 @@ function HighlightThread({
             compact
             footer={authenticated ? "" : t("highlightReplyLogin")}
           />
+          {error && (
+            <p role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">
+              {error}
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -186,8 +186,15 @@ export function DiscoverySeriesCard({
                       {p.title}
                     </h3>
                     <div className={`mt-2.5 flex items-center gap-1.5 text-[12px] ${p.ogImageUrl ? "text-white/85" : "text-slate-600 dark:text-slate-400"}`}>
-                      <Avatar src={series.author.avatarUrl} name={series.author.username} size="xs" />
-                      <span className="truncate font-medium">{series.author.username}</span>
+                      {/* Author (avatar + name) opens their profile — an island above the card's post
+                          overlay (pointer-events re-enabled), same as the series eyebrow above. */}
+                      <Nav
+                        href={authorHref(series.author.username, locale)}
+                        className="pointer-events-auto -mx-1 -my-1 flex min-w-0 items-center gap-1.5 rounded px-1 py-1"
+                      >
+                        <Avatar src={series.author.avatarUrl} name={series.author.username} size="xs" />
+                        <span className="truncate font-medium">{series.author.username}</span>
+                      </Nav>
                       <span aria-hidden>·</span>
                       <span className="shrink-0">{date}</span>
                     </div>

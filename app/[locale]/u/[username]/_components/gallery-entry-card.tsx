@@ -42,6 +42,8 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
     intervalMs: 5000,
     enabled: config.images.length > 1 && lightboxIdx === null,
     onTick: () => scrollToIdx((activeIdx + 1) % config.images.length),
+    // Pause the 5 s advance while this card is scrolled out of view (off-screen rAF/re-render waste).
+    viewportRef: scrollerRef,
   });
 
   if (config.images.length === 0) return null;
