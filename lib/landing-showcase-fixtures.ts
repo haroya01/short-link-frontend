@@ -422,5 +422,6 @@ export const SHOWCASE_PROFILES: PublicProfile[] = SPECS.map((spec) => ({
   bannerUrl: local(spec.bannerPhotoId),
   socials: [],
   publishedPostCount: 0,
+  hideFollowerCount: false,
   entries: spec.entries.map((e, i) => entry(e, i)),
 }));
