@@ -1,4 +1,5 @@
 import type { ThemeColors } from "../_lib/theme";
+import { ProfileAvatar } from "./profile-avatar";
 
 type Props = {
   username: string;
@@ -30,7 +31,6 @@ export function ProfileHeader({
   colors,
   bannerInline = true,
 }: Props) {
-  const initial = (username[0] ?? "·").toUpperCase();
   return (
     <div
       className="profile-fade flex flex-col items-center gap-3 text-center"
@@ -51,35 +51,12 @@ export function ProfileHeader({
           />
         </div>
       )}
-      {avatarUrl ? (
-        <div
-          className={`h-24 w-24 overflow-hidden rounded-full shadow-sm ring-4 ${
-            bannerUrl ? "-mt-14 ring-white/95" : "ring-transparent"
-          }`}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={avatarUrl}
-            alt={username}
-            width={96}
-            height={96}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-            className="h-full w-full object-cover"
-          />
-        </div>
-      ) : (
-        <div
-          className={
-            "grid h-24 w-24 place-items-center rounded-full text-[28px] font-semibold shadow-sm ring-4 " +
-            (bannerUrl ? "-mt-14 ring-white/95 " : "ring-transparent ") +
-            `${colors.avatar} ${colors.avatarText}`
-          }
-        >
-          {initial}
-        </div>
-      )}
+      <ProfileAvatar
+        avatarUrl={avatarUrl}
+        username={username}
+        hasBanner={Boolean(bannerUrl)}
+        colors={colors}
+      />
       {/* Handle scale unified with dashboard / stats pages — 18 px semibold with tracking-headline
           is the brand voice for the page's primary identifier. Previously 14 px regular which
           read as caption-weight on a Linktree-equivalent landing page. */}

@@ -517,6 +517,7 @@
   },
   "publicPost": {
     "like": "Thích",
+    "likePost": "Thích bài viết {title}",
     "highlight": "Đánh dấu",
     "highlightNote": "Ghi chú",
     "highlightNoteTitle": "Thêm ghi chú",
