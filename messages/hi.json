@@ -504,6 +504,7 @@
   },
   "publicPost": {
     "like": "पसंद",
+    "likePost": "{title} पोस्ट को पसंद करें",
     "highlight": "हाइलाइट",
     "highlightNote": "नोट",
     "highlightNoteTitle": "एक नोट जोड़ें",

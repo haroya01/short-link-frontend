@@ -104,7 +104,7 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
           </>
         )}
         {status === "error" && (
-          <p className="mt-2 text-[11px] text-red-500">{t("error")}</p>
+          <p className="mt-2 text-[11px] text-red-600 dark:text-red-400">{t("error")}</p>
         )}
       </div>
     </li>
