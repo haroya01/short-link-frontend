@@ -145,7 +145,14 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
                 {relative}
               </span>
             )}
-            <p className={`mt-1 text-base font-semibold leading-tight ${colors.primary}`}>
+            {/* Past events mute the title too (not just opacity-60 on the card) so the "ended"
+                state reads as a deliberate muted-text treatment rather than a disabled-looking
+                dim — matches the muted relative-time pill and the "종료" CTA badge below. */}
+            <p
+              className={`mt-1 text-base font-semibold leading-tight ${
+                isPast ? colors.muted : colors.primary
+              }`}
+            >
               {config.title}
             </p>
             <p

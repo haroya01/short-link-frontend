@@ -504,6 +504,7 @@
   },
   "publicPost": {
     "like": "いいね",
+    "likePost": "{title}のいいね",
     "highlight": "ハイライト",
     "highlightNote": "メモ",
     "highlightNoteTitle": "メモを追加",

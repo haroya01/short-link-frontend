@@ -504,6 +504,7 @@
   },
   "publicPost": {
     "like": "Like",
+    "likePost": "Like the post {title}",
     "highlight": "Highlight",
     "highlightNote": "Note",
     "highlightNoteTitle": "Add a note",

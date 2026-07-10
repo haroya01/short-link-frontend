@@ -504,6 +504,7 @@
   },
   "publicPost": {
     "like": "좋아요",
+    "likePost": "{title} 글 좋아요",
     "highlight": "하이라이트",
     "highlightNote": "메모",
     "highlightNoteTitle": "메모 추가",

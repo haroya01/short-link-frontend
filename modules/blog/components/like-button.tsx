@@ -11,7 +11,17 @@ import { useOptimisticToggle } from "@/modules/blog/lib/use-optimistic-toggle";
  * Like (공감) toggle. Shows the public count for everyone; the liked state loads for signed-in
  * users. Anonymous click starts the login flow. Optimistic with rollback on error.
  */
-export function LikeButton({ postId, initialCount }: { postId: number; initialCount: number }) {
+export function LikeButton({
+  postId,
+  initialCount,
+  postTitle,
+}: {
+  postId: number;
+  initialCount: number;
+  /** Post title, scoped into the aria-label so a screen reader hears which post the button acts on
+      when several like buttons share a page (e.g. header + footer clusters). */
+  postTitle?: string;
+}) {
   const t = useTranslations("publicPost");
   // Pop only on click (not when the liked state loads from the server) — same gate as the follow/구독 button.
   const [interacted, setInteracted] = useState(false);
@@ -39,7 +49,7 @@ export function LikeButton({ postId, initialCount }: { postId: number; initialCo
         toggle();
       }}
       aria-pressed={liked}
-      aria-label={t("like")}
+      aria-label={postTitle ? t("likePost", { title: postTitle }) : t("like")}
       className={`touch-target inline-flex items-center gap-1.5 rounded px-1.5 py-1 text-[14px] font-medium transition-colors focus-ring ${
         liked
           ? "text-accent-700 dark:text-accent-400"

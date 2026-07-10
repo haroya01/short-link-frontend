@@ -294,7 +294,7 @@ export default async function PublicPostPage({
             </span>
             {/* Like/bookmark at the top too (synced with the footer cluster via syncKey) so the
                 reader can react without scrolling to the end. */}
-            <LikeButton postId={post.id} initialCount={post.likeCount} />
+            <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
             <BookmarkButton postId={post.id} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
             {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
@@ -360,7 +360,7 @@ export default async function PublicPostPage({
               quiet 신고 (a popover, so it never breaks the row) so it reads as a secondary action in the
               group rather than a button orphaned on its own line below. */}
           <div className="flex items-center gap-3">
-            <LikeButton postId={post.id} initialCount={post.likeCount} />
+            <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
             <BookmarkButton postId={post.id} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
             <span aria-hidden className="h-4 w-px bg-slate-200 dark:bg-slate-700" />

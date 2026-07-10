@@ -27,8 +27,10 @@ export async function TrendingTopics({
     <div className="mb-7">
       <RailHeading className="mb-3">{t("trendingTopicsLabel")}</RailHeading>
       {/* 한 줄 가로 스크롤 + 우측 엣지 페이드 마스크: 줄바꿈 없이 12개가 이어지고, 잘리는 끝이
-          mask 로 자연스럽게 사라져 "더 있다"는 신호가 된다(스크롤바는 숨김, 스냅으로 정착). */}
-      <div className="flex snap-x gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          mask 로 자연스럽게 사라져 "더 있다"는 신호가 된다(스크롤바는 숨김, 스냅으로 정착).
+          pr-12 로 끝까지 스크롤하면 마지막 칩 대신 빈 여백이 페이드 아래로 들어가 마지막 칩이
+          가려지지 않고 탭 가능하다. */}
+      <div className="flex snap-x gap-2 overflow-x-auto pb-1 pr-12 [-ms-overflow-style:none] [mask-image:linear-gradient(to_right,black_calc(100%-3rem),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {topics.slice(0, 12).map((tg) => {
           const active = tg.tag.toLowerCase() === lower;
           return (
