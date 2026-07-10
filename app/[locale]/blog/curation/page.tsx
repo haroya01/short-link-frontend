@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { CollapsibleSection } from "@/modules/blog/components/saved/collapsible-section";
 import { SmartShelf } from "@/modules/blog/components/saved/smart-shelf";
 import { LikedList } from "@/modules/blog/components/saved/liked-list";
+import { HighlightsList } from "@/modules/blog/components/saved/highlights-list";
 import { MyCommentsList } from "@/modules/blog/components/saved/my-comments-list";
 import { ReadingHistoryList } from "@/modules/blog/components/saved/reading-history-list";
 
@@ -36,6 +37,10 @@ export default function SavedPostsPage() {
         </CollapsibleSection>
         <CollapsibleSection title={t("curationLiked")} hint={t("curationLikedHint")}>
           <LikedList username={me?.username ?? ""} locale={locale} />
+        </CollapsibleSection>
+        <CollapsibleSection title={t("curationHighlights")} hint={t("curationHighlightsHint")}>
+          {/* 내 서재 — 내가 그은 구절 모음, 원문 문장으로 되돌아가는 딥링크. */}
+          <HighlightsList username={me?.username ?? ""} locale={locale} />
         </CollapsibleSection>
         <CollapsibleSection title={t("curationComments")} hint={t("curationCommentsHint")}>
           <MyCommentsList locale={locale} />
