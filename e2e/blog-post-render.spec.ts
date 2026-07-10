@@ -155,7 +155,13 @@ test("the comment composer is WYSIWYG — a rich editor, not a raw-markdown text
     .filter({ has: page.getByRole("heading", { name: /comment/i }) });
   await expect(comments).toBeVisible({ timeout: 30_000 });
 
-  // The input is a contenteditable rich editor, not a <textarea>, and the duplicate "Preview" pane is gone.
+  // The editor is lazy: the resting field is a placeholder button, and tapping it mounts the real
+  // Tiptap composer (keeping the heavy editor chunk out of the post page's initial JS).
+  const placeholder = comments.getByTestId("comment-composer-placeholder");
+  await expect(placeholder).toBeVisible();
+  await placeholder.click();
+
+  // Once mounted the input is a contenteditable rich editor, not a <textarea>, and no "Preview" pane.
   const editor = comments.locator('[contenteditable="true"].tiptap-comment').first();
   await expect(editor).toBeVisible();
   await expect(comments.locator("textarea")).toHaveCount(0);
@@ -177,10 +183,11 @@ test("the highlight-note composer is WYSIWYG too — selecting text → Note ope
   // opens the sheet (no Google redirect).
   await page.goto(POST_PATH);
   await expect(page.locator(".prose-post")).toBeVisible({ timeout: 30_000 });
-  // The comment composer mounting proves the comments client island hydrated; a short settle then lets
-  // the in-memory mock /me resolve so the reader is authenticated (Note opens the sheet, not a redirect).
-  // (networkidle never fires here — the page keeps a live connection open.)
-  await expect(page.locator(".tiptap-comment").first()).toBeVisible({ timeout: 15_000 });
+  // The comment composer's resting placeholder proves the comments client island hydrated; a short
+  // settle then lets the in-memory mock /me resolve so the reader is authenticated (Note opens the
+  // sheet, not a redirect). We don't click it — the Tiptap editor is lazy, and the note sheet below
+  // mounts its own instance. (networkidle never fires here — the page keeps a live connection open.)
+  await expect(page.getByTestId("comment-composer-placeholder")).toBeVisible({ timeout: 15_000 });
   await page.waitForTimeout(1500);
 
   // Select a run of text inside a direct-child block of .prose-post and finalize on mouseup — exactly

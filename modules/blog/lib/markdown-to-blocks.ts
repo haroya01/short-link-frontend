@@ -152,7 +152,7 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
     const imgMatches = [...line.matchAll(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g)];
     if (imgMatches.length > 0 && line.replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim() === "") {
       for (const im of imgMatches) {
-        const { width, alt } = parseImageAlt(im[1]);
+        const { width, dims, alt } = parseImageAlt(im[1]);
         const caption = im[3]?.trim();
         blocks.push({
           type: "IMAGE",
@@ -160,6 +160,9 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
             url: im[2],
             alt,
             ...(width ? { width } : {}),
+            // Intrinsic size → reader reserves the aspect-ratio box up front (CLS-free). `naturalWidth`
+            // avoids colliding with the layout `width` ("wide"/"full"/"half") above.
+            ...(dims ? { naturalWidth: dims.w, naturalHeight: dims.h } : {}),
             ...(caption ? { caption } : {}),
           }),
         });
@@ -263,7 +266,11 @@ export function blocksToMarkdown(blocks: { type: string; content: string | null 
               typeof parsed.caption === "string" && parsed.caption.trim()
                 ? ` "${parsed.caption.trim().replace(/"/g, "'")}"`
                 : "";
-            parts.push(`![${altWithWidth(parsed.alt ?? "", parsed.width)}](${parsed.url}${cap})`);
+            const dims =
+              typeof parsed.naturalWidth === "number" && typeof parsed.naturalHeight === "number"
+                ? { w: parsed.naturalWidth, h: parsed.naturalHeight }
+                : undefined;
+            parts.push(`![${altWithWidth(parsed.alt ?? "", parsed.width, dims)}](${parsed.url}${cap})`);
           }
         } catch {
           // ignore malformed

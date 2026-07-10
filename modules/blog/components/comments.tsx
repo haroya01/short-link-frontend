@@ -2,6 +2,7 @@
 
 import { DATE_LOCALE } from "@/lib/date";
 import { useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { CornerDownRight, Trash2, Heart } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -19,8 +20,21 @@ import { authorHref } from "@/modules/blog/components/feed-card";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { ReportButton } from "@/modules/blog/components/report-button";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { CommentComposer } from "@/modules/blog/components/comment-composer";
 import { useConfirm } from "@/components/ui/use-confirm";
+
+// The composer pulls in the Tiptap/ProseMirror editor (rich-comment-input) — a heavy graph that most
+// readers never touch. Splitting it into its own chunk keeps the editor out of the post page's initial
+// JS; it loads on the first click of the placeholder field (top-level) or the Reply button. A resting
+// one-line placeholder matching the collapsed field holds its place until then.
+const CommentComposer = dynamic(
+  () => import("@/modules/blog/components/comment-composer").then((m) => m.CommentComposer),
+  { ssr: false, loading: () => <ComposerSkeleton /> },
+);
+
+/** Matches the collapsed rest-state height of the real composer so the mount doesn't shift layout. */
+function ComposerSkeleton() {
+  return <div className="h-12 rounded-xl border border-slate-200 dark:border-slate-700" />;
+}
 
 /** Append a just-created comment, dropping any existing row with the same id — guards a double-submit
  *  (or a refetch that already merged it) from showing the same comment twice. */
@@ -41,6 +55,8 @@ export function PostComments({
 
   const [comments, setComments] = useState<CommentView[]>([]);
   const [body, setBody] = useState("");
+  // The top composer mounts (and its Tiptap chunk loads) only after the reader taps the placeholder.
+  const [composerActive, setComposerActive] = useState(false);
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyBody, setReplyBody] = useState("");
   const [busy, setBusy] = useState(false);
@@ -178,24 +194,36 @@ export function PostComments({
         {t("count", { count: comments.length })}
       </h2>
 
-      {/* The input is ALWAYS visible so there's always a way to comment. Signed-out (or pre-auth)
-          submit kicks off login instead of hiding the field. 에디터(Tiptap/ProseMirror)는 dynamic
-          import 로 SSR·초기 번들에서 빠지고 하이드레이션 후 로드되지만, 컴포저 자체는 쉴 때 한 줄로
-          접혀 있다가(collapsible) 포커스 시 펼쳐진다 — 항상 보이고 바로 입력 가능한 원래 동작 유지. */}
+      {/* There's ALWAYS a way to comment: a resting one-line placeholder that, on tap, mounts the real
+          composer (and lazy-loads its Tiptap chunk) already focused. Signed-out (or pre-auth) submit
+          kicks off login instead of hiding the field. Once mounted the composer stays (collapsing to a
+          quiet one-line at rest via `collapsible`) so the deferral is a one-time first-tap cost only. */}
       <div className="mt-4">
-        <CommentComposer
-          value={body}
-          onChange={setBody}
-          onSubmit={() => void submitTop()}
-          placeholder={t("placeholder")}
-          submitLabel={busy ? t("submitting") : t("submit")}
-          cancelLabel={t("cancel")}
-          submitting={busy}
-          canSubmit={!authenticated || !!body.trim()}
-          footer={ready && !authenticated ? t("loginPrompt") : ""}
-          rows={2}
-          collapsible
-        />
+        {composerActive ? (
+          <CommentComposer
+            value={body}
+            onChange={setBody}
+            onSubmit={() => void submitTop()}
+            placeholder={t("placeholder")}
+            submitLabel={busy ? t("submitting") : t("submit")}
+            cancelLabel={t("cancel")}
+            submitting={busy}
+            canSubmit={!authenticated || !!body.trim()}
+            footer={ready && !authenticated ? t("loginPrompt") : ""}
+            rows={2}
+            collapsible
+            autoFocus
+          />
+        ) : (
+          <button
+            type="button"
+            data-testid="comment-composer-placeholder"
+            onClick={() => setComposerActive(true)}
+            className="flex w-full items-center rounded-xl border border-slate-200 px-4 py-3 text-left text-[15px] text-slate-400 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-500"
+          >
+            {t("placeholder")}
+          </button>
+        )}
         {error && (
           <p className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
             {error}

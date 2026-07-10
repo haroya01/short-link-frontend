@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
@@ -35,8 +36,25 @@ import { authorHref } from "@/modules/blog/components/feed-card";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
-import { CommentComposer } from "@/modules/blog/components/comment-composer";
-import { RichCommentInput } from "@/modules/blog/components/rich-comment-input";
+
+// The reply composer (HighlightThread) and note editor (NoteSheet) both pull in the Tiptap/ProseMirror
+// editor — a heavy graph no reader touches until they open a thread or write a memo. Both only render
+// inside an already-open overlay, so a dynamic (ssr:false) import splits the editor into its own chunk
+// and keeps it out of the post page's initial JS: it loads when the sheet opens, not on page load. A
+// resting skeleton the size of the collapsed field holds its place while the chunk streams in.
+const CommentComposer = dynamic(
+  () => import("@/modules/blog/components/comment-composer").then((m) => m.CommentComposer),
+  { ssr: false, loading: () => <ComposerSkeleton /> },
+);
+const RichCommentInput = dynamic(
+  () => import("@/modules/blog/components/rich-comment-input").then((m) => m.RichCommentInput),
+  { ssr: false, loading: () => <ComposerSkeleton /> },
+);
+
+/** Matches the collapsed rest-state height of the real editor so the mount doesn't shift layout. */
+function ComposerSkeleton() {
+  return <div className="h-12 rounded-xl border border-slate-200 dark:border-slate-700" />;
+}
 
 type Anchor = { left: number; top: number; bottom: number };
 
