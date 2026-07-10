@@ -48,7 +48,7 @@ import {
   mapsPlaceUrl,
   type PickedPlace,
 } from "@/modules/blog/components/editor/place-search-dialog";
-import { altWithWidth, type ImageWidth } from "@/modules/blog/lib/image-width";
+import { altWithWidth, imageNaturalSize, type ImageWidth } from "@/modules/blog/lib/image-width";
 import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
 import { isImageUrl } from "@/modules/blog/lib/post-embed";
 import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
@@ -201,9 +201,11 @@ export function MarkdownEditor({
 
   async function uploadAndInsert(ed: Editor, file: File, width?: ImageWidth) {
     try {
-      const url = await onUploadImage(file);
-      // Width rides on the alt marker so it survives markdown↔block round-trip (image-width.ts).
-      ed.chain().focus().setImage({ src: url, alt: altWithWidth(file.name, width) }).run();
+      // Decode the intrinsic size before/while uploading so the reader can reserve the exact
+      // aspect-ratio box (no layout shift as the image streams in). null on decode failure → omit.
+      const [url, dims] = await Promise.all([onUploadImage(file), imageNaturalSize(file)]);
+      // Width + dims ride on the alt marker so they survive markdown↔block round-trip (image-width.ts).
+      ed.chain().focus().setImage({ src: url, alt: altWithWidth(file.name, width, dims ?? undefined) }).run();
     } catch (e) {
       // Typed image errors carry a code (+ sizes); resolve to localized copy here, not in the data layer.
       const { key, values } = postImageErrorMessageKey(e);

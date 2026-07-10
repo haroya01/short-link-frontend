@@ -188,6 +188,8 @@ function ImageBlock({ content }: { content: string | null }) {
   let alt = "";
   let caption = "";
   let width: ImageWidth | undefined;
+  let naturalWidth: number | undefined;
+  let naturalHeight: number | undefined;
   try {
     const parsed = JSON.parse(content);
     if (parsed && typeof parsed === "object") {
@@ -198,12 +200,24 @@ function ImageBlock({ content }: { content: string | null }) {
         parsed.width === "wide" || parsed.width === "full" || parsed.width === "half"
           ? parsed.width
           : undefined;
+      // Intrinsic size (legacy blocks lack it) → reader reserves the aspect-ratio box, no CLS.
+      if (typeof parsed.naturalWidth === "number" && parsed.naturalWidth > 0) naturalWidth = parsed.naturalWidth;
+      if (typeof parsed.naturalHeight === "number" && parsed.naturalHeight > 0) naturalHeight = parsed.naturalHeight;
     }
   } catch {
     url = content.trim();
   }
   if (!url) return null;
-  return <PostImage src={url} alt={alt} caption={caption} width={width} />;
+  return (
+    <PostImage
+      src={url}
+      alt={alt}
+      caption={caption}
+      width={width}
+      naturalWidth={naturalWidth}
+      naturalHeight={naturalHeight}
+    />
+  );
 }
 
 function CodeBlock({ content }: { content: string | null }) {

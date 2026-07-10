@@ -24,6 +24,7 @@ import { postHref } from "@/modules/blog/components/feed-card";
 import { rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
+import { setEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { useConfirm } from "@/components/ui/use-confirm";
 
 export type StatusAction = "publish" | "unpublish" | "republish" | "backToDraft";
@@ -261,6 +262,14 @@ export function usePostEditor(
     };
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [dirty]);
+
+  // Publish the dirty flag so the surrounding chrome (header logo / Write CTA, mobile sidebar) — which
+  // soft-navigates and so never triggers the beforeunload above — can fall back to a hard navigation
+  // that does. Cleared on unmount so a leftover flag doesn't guard navigation on other pages.
+  useEffect(() => {
+    setEditorDirty(dirty);
+    return () => setEditorDirty(false);
   }, [dirty]);
 
   // Leave the editor for the list. Save a dirty DRAFT first so the last keystrokes (still inside the

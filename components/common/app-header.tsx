@@ -1,5 +1,6 @@
 "use client";
 
+import { type ComponentProps } from "react";
 import { usePathname } from "next/navigation";
 import { LogIn, Menu, PenSquare, X, Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -15,6 +16,27 @@ import { BlogHeaderSearch } from "@/components/common/blog-header-search";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { useSidebarState } from "@/components/common/sidebar-state";
+import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
+
+/**
+ * A chrome link that normally soft-navigates (BlogChromeLink) but falls back to a plain <a> hard
+ * navigation while the post editor has unsaved edits. A soft navigation never triggers the editor's
+ * beforeunload guard, so clicking the logo / Write CTA mid-edit would drop the unsaved work silently;
+ * the hard navigation makes the browser show its "leave site?" prompt. Inert outside the editor —
+ * useEditorDirty() is false everywhere else, so every other surface keeps the soft-nav behaviour.
+ */
+function ChromeNavLink(props: ComponentProps<typeof BlogChromeLink>) {
+  const dirty = useEditorDirty();
+  if (dirty) {
+    const { href, children, ...rest } = props;
+    return (
+      <a href={href} {...rest}>
+        {children}
+      </a>
+    );
+  }
+  return <BlogChromeLink {...props} />;
+}
 
 /**
  * `showMenu` toggles the mobile sidebar button — off for the public feed, which has no sidebar.
@@ -61,13 +83,13 @@ export function AppHeader({
   const pathname = usePathname();
 
   const mobileWriteCircle = (authed: boolean) => (
-    <BlogChromeLink
+    <ChromeNavLink
       href={authed ? blogHref("/write/new") : `${blogHref("/login")}?next=${encodeURIComponent("/write/new")}`}
       aria-label={t("write")}
       className="focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden"
     >
       <PenSquare className="h-4 w-4" />
-    </BlogChromeLink>
+    </ChromeNavLink>
   );
 
   // The auth-dependent right cluster, rendered for a known auth state. Pre-`ready` BOTH variants
@@ -84,13 +106,13 @@ export function AppHeader({
       {/* Persistent Write action lives here (top-right) rather than floating in the feed tab row —
           a standard, expected home for the primary action. Mobile uses the bottom tab bar. */}
       {authed && (
-        <BlogChromeLink
+        <ChromeNavLink
           href={blogHref("/write/new")}
           className="focus-ring hidden h-8 items-center gap-1.5 rounded-full bg-accent-700 px-3.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 sm:inline-flex"
         >
           <PenSquare className="h-3.5 w-3.5" />
           {t("write")}
-        </BlogChromeLink>
+        </ChromeNavLink>
       )}
       {authed &&
         (ready ? (
@@ -138,10 +160,10 @@ export function AppHeader({
               모바일(<sm)에선 표면을 가리지 않고 마크만 — slim 공개 표면은 물론 워크스페이스도:
               워크스페이스는 우측 클러스터(검색·벨·전환 pill·아바타)가 모바일에서도 다 살아 있어
               풀 워드마크까지 들어가면 390px 에서 컨트롤들이 워드마크 위로 겹쳤다. */}
-          <BlogChromeLink href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable shrink-0">
+          <ChromeNavLink href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable shrink-0">
             <Logo variant="blog" animated showText={false} className="sm:hidden" />
             <Logo variant="blog" animated className="hidden sm:inline-flex" />
-          </BlogChromeLink>
+          </ChromeNavLink>
         </div>
 
         {/* Right cluster split into two zones: utilities for *this* surface (search + language) on

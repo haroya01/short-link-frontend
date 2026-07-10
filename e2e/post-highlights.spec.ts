@@ -47,13 +47,15 @@ function expectTint(actual: string, want: Rgba) {
   expect(Math.abs(got.a - want.a)).toBeLessThan(0.02);
 }
 
-/** Wait until the reader is signed-in and the client islands have hydrated. The comment composer is a
- *  reliable proxy (same auth gate as the highlight action); the settle lets the mock /me resolve so the
+/** Wait until the reader is signed-in and the client islands have hydrated. The comment composer's
+ *  resting placeholder is a reliable proxy that the comments island mounted — it renders in place of the
+ *  Tiptap editor, which is now lazy-loaded on first tap (we do NOT click it here: that would mount the
+ *  editor and steal focus from the highlight selection). The settle lets the mock /me resolve so the
  *  quick-highlight commits instead of redirecting to Google. (networkidle never fires — the page holds
  *  a live connection open.) */
 async function waitReady(page: Page) {
   await expect(page.locator(".prose-post")).toBeVisible({ timeout: 30_000 });
-  await expect(page.locator(".tiptap-comment").first()).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId("comment-composer-placeholder")).toBeVisible({ timeout: 15_000 });
   await page.waitForTimeout(1500);
 }
 
