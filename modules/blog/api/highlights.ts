@@ -1,5 +1,6 @@
 import { request } from "@/lib/api/client";
 import { USE_MOCKS } from "@/modules/blog/api/_mocks";
+import { mockMyHighlights } from "@/modules/blog/api/_mocks-collections";
 import type { PublicAuthor } from "./public-posts";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -32,6 +33,21 @@ export interface NewHighlight {
   note?: string | null;
 }
 
+/** One of the viewer's own highlights, carrying the source post it was drawn on so the library can
+ *  group by post and deep-link back to the sentence (`?hl=`). Mirrors the iOS MyHighlightsView shape /
+ *  the backend `GET /users/me/highlights`. */
+export interface MyHighlightItem {
+  id: number;
+  quote: string;
+  note: string | null;
+  /** The post this highlight lives on. */
+  postId: number;
+  username: string;
+  slug: string;
+  title: string;
+  createdAt: string;
+}
+
 /** One reply in a highlight's thread (the author's note is the thread opener; these sit under it). */
 export interface HighlightReplyView {
   id: number;
@@ -58,6 +74,13 @@ export async function listHighlights(postId: number): Promise<HighlightView[]> {
   });
   if (!res.ok) return [];
   return (await res.json()) as HighlightView[];
+}
+
+/** Authenticated — every highlight the viewer has drawn, newest first, each with its source post
+ *  (their private "내 서재"). */
+export async function listMyHighlights(): Promise<MyHighlightItem[]> {
+  if (USE_MOCKS) return mockMyHighlights();
+  return request<MyHighlightItem[]>(`/api/v1/users/me/highlights`, { method: "GET" });
 }
 
 /** Authenticated — create a highlight on a published post. */
