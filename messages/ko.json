@@ -1860,6 +1860,7 @@
     "emailForm": {
       "submit": "등록",
       "submitting": "등록 중...",
+      "sendAgain": "다시 보내기",
       "error": "등록에 실패했어요. 잠시 후 다시 시도해 주세요.",
       "defaultPlaceholder": "you@example.com",
       "defaultSuccess": "등록 완료. 감사합니다.",

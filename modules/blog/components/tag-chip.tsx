@@ -42,7 +42,7 @@ export function TagChip({
     <>
       <span>{label}</span>
       {count != null && !active && (
-        <span className="text-slate-500 dark:text-slate-500">{count}</span>
+        <span className="text-slate-600 dark:text-slate-400">{count}</span>
       )}
     </>
   );

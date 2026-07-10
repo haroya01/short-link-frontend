@@ -1860,6 +1860,7 @@
     "emailForm": {
       "submit": "साइन अप करें",
       "submitting": "साइन अप हो रहा है...",
+      "sendAgain": "फिर से भेजें",
       "error": "साइन अप नहीं हो सका। कृपया फिर से प्रयास करें।",
       "defaultPlaceholder": "you@example.com",
       "defaultSuccess": "आप शामिल हो गए। धन्यवाद!",
