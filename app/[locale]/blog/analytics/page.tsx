@@ -23,12 +23,67 @@ import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytic
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
 import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
 
+type AnalyticsTab = "overview" | "series" | "links" | "posts";
+
+/** 분석 화면의 섹션 탭 — 통계 카드 아래에서 개요/시리즈/링크/글 패널을 전환한다(라우팅 없이 인페이지).
+ *  활성 탭은 accent 밑줄 한 줄로만 표시(§10 절제). role=tablist 로 키보드·스크린리더 대응. */
+function SectionTabs({
+  active,
+  onChange,
+  tabs,
+}: {
+  active: AnalyticsTab;
+  onChange: (key: AnalyticsTab) => void;
+  tabs: { key: AnalyticsTab; label: string }[];
+}) {
+  return (
+    <div
+      role="tablist"
+      className="flex gap-1 overflow-x-auto border-b border-slate-100 dark:border-slate-800 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    >
+      {tabs.map((tabItem) => {
+        const isActive = tabItem.key === active;
+        return (
+          <button
+            key={tabItem.key}
+            type="button"
+            role="tab"
+            aria-selected={isActive}
+            onClick={() => onChange(tabItem.key)}
+            className={`focus-ring relative -mb-px whitespace-nowrap rounded-t px-3 py-2 text-[14px] font-semibold transition-colors ${
+              isActive
+                ? "text-accent-700 dark:text-accent-400"
+                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+            }`}
+          >
+            {tabItem.label}
+            {isActive && (
+              <span
+                aria-hidden
+                className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-accent-600"
+              />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function BlogAnalyticsPage() {
   const t = useTranslations("blogWorkspace");
   const { ready, authenticated } = useAuth();
   const [days, setDays] = useState(30);
   const [data, setData] = useState<AuthorAnalyticsOverview | null>(null);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<AnalyticsTab>("overview");
+
+  const TABS: { key: AnalyticsTab; label: string }[] = [
+    { key: "overview", label: t("analyticsTabOverview") },
+    { key: "series", label: t("analyticsTabSeries") },
+    { key: "links", label: t("analyticsTabLinks") },
+    { key: "posts", label: t("analyticsTabPosts") },
+  ];
 
   useEffect(() => {
     if (!ready || !authenticated) return;
@@ -93,6 +148,13 @@ export default function BlogAnalyticsPage() {
             </span>
           </div>
 
+          {/* 통계 카드는 위에 고정, 그 아래를 개요/시리즈/링크/글 탭으로 나눠 한 화면에 몰리지 않게 뎁스를 준다. */}
+          <div className="mt-8">
+            <SectionTabs active={tab} onChange={setTab} tabs={TABS} />
+          </div>
+
+          {tab === "overview" && (
+            <>
           {/* 차트도 비박스 — 섹션 라벨 + 면. 보더 패널은 위 스탯·아래 행 목록과 결이 달랐다. */}
           <section className="mt-10">
             <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsOverTime")}</h2>
@@ -138,16 +200,25 @@ export default function BlogAnalyticsPage() {
               </ol>
             </section>
           )}
+            </>
+          )}
 
           {/* Series — the recurring-readership unit; subscriber count is the headline metric. */}
-          <SeriesAnalyticsSection />
+          {tab === "series" && <SeriesAnalyticsSection />}
 
           {/* 글 안 링크 — kurl × 웹로그 차별점을 라벨된 섹션으로. 위 클릭 카드의 by-post 분해. */}
-          <LinksBreakdownSection days={days} />
+          {tab === "links" && <LinksBreakdownSection days={days} />}
 
-          {/* Every post, views-first, lazy-loaded — so a few hundred posts don't all arrive at once.
-              Infinite-scroll, so it stays LAST — anything below it would be unreachable until fully paged. */}
-          {data.totalPosts > 0 && <PostPerformanceList />}
+          {/* Every post, views-first, lazy-loaded. Infinite-scroll, so it lives in its own tab — anything
+              below it would be unreachable until fully paged. */}
+          {tab === "posts" &&
+            (data.totalPosts > 0 ? (
+              <PostPerformanceList />
+            ) : (
+              <p className="mt-8 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                {t("analyticsEmpty")}
+              </p>
+            ))}
         </>
       )}
     </main>

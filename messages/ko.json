@@ -257,7 +257,11 @@
     "curationLikedEmpty": "아직 좋아요한 글이 없어요.",
     "curationHistory": "읽기 기록",
     "curationHistoryHint": "읽은 글이 기기를 넘어 이어집니다. 기록은 나만 봅니다.",
-    "analyticsReferrers": "유입 경로"
+    "analyticsReferrers": "유입 경로",
+    "analyticsTabOverview": "개요",
+    "analyticsTabSeries": "시리즈",
+    "analyticsTabLinks": "링크",
+    "analyticsTabPosts": "글"
   },
   "postEditor": {
     "backToList": "글 목록",

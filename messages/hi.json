@@ -257,7 +257,11 @@
     "curationLikedEmpty": "अभी तक कोई पसंद की गई पोस्ट नहीं।",
     "curationHistory": "पठन इतिहास",
     "curationHistoryHint": "आपकी पढ़ी पोस्ट सभी डिवाइसों पर आपके साथ चलती हैं। इसे केवल आप देख सकते हैं।",
-    "analyticsReferrers": "ट्रैफ़िक स्रोत"
+    "analyticsReferrers": "ट्रैफ़िक स्रोत",
+    "analyticsTabOverview": "अवलोकन",
+    "analyticsTabSeries": "सीरीज़",
+    "analyticsTabLinks": "लिंक",
+    "analyticsTabPosts": "पोस्ट"
   },
   "postEditor": {
     "backToList": "पोस्ट",

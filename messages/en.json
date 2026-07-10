@@ -257,7 +257,11 @@
     "curationLikedEmpty": "No liked posts yet.",
     "curationHistory": "Reading history",
     "curationHistoryHint": "Posts you read follow you across devices. Only you can see this.",
-    "analyticsReferrers": "Traffic sources"
+    "analyticsReferrers": "Traffic sources",
+    "analyticsTabOverview": "Overview",
+    "analyticsTabSeries": "Series",
+    "analyticsTabLinks": "Links",
+    "analyticsTabPosts": "Posts"
   },
   "postEditor": {
     "backToList": "Posts",

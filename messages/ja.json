@@ -257,7 +257,11 @@
     "curationLikedEmpty": "まだいいねした記事がありません。",
     "curationHistory": "閲覧履歴",
     "curationHistoryHint": "読んだ記事がデバイスを越えて残ります。履歴は自分だけが見られます。",
-    "analyticsReferrers": "流入元"
+    "analyticsReferrers": "流入元",
+    "analyticsTabOverview": "概要",
+    "analyticsTabSeries": "シリーズ",
+    "analyticsTabLinks": "リンク",
+    "analyticsTabPosts": "記事"
   },
   "postEditor": {
     "backToList": "記事一覧",
