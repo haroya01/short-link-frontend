@@ -4,7 +4,9 @@ import { useTranslations } from "next-intl";
 import { cn, formatNumber } from "@/lib/utils";
 
 type Props = {
-  items: { label: string; count: number }[];
+  // `title` overrides the hover tooltip when the visible `label` is a truncated stand-in for a
+  // longer string (e.g. a referrer URL shown host-first but hovered for the full path).
+  items: { label: string; count: number; title?: string }[];
 };
 
 export function BreakdownList({ items }: Props) {
@@ -32,7 +34,7 @@ export function BreakdownList({ items }: Props) {
                 "w-20 shrink-0 truncate text-[13px] sm:w-32",
                 isLeader ? "font-medium text-slate-900 dark:text-slate-100" : "text-slate-700 dark:text-slate-300",
               )}
-              title={item.label}
+              title={item.title ?? item.label}
             >
               {item.label}
             </span>

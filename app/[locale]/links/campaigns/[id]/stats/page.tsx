@@ -4,15 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowLeft, ExternalLink, FlaskConical } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 import { useAuth } from "@/lib/auth";
 import {
   compareCampaignStats,
@@ -24,8 +15,11 @@ import {
 import { Link } from "@/i18n/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import { Section } from "@/components/common/section";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
+import { DailyChart as DailyTrendChart } from "@/components/links/stats/charts/daily-chart";
+import { HourChart as HourRhythmChart } from "@/components/links/stats/charts/hour-chart";
 import type { HeatmapCell } from "@/types";
 import type {
   CampaignDetail,
@@ -34,9 +28,6 @@ import type {
   CampaignStatsCompareResponse,
   CampaignSummary,
 } from "@/types";
-
-const ACCENT = "#059669";
-const ACCENT_LIGHT = "#a7f3d0";
 
 export default function CampaignStatsPage() {
   const { id } = useParams<{ id: string }>();
@@ -111,13 +102,7 @@ export default function CampaignStatsPage() {
   }, [campaignId, compareWithId]);
 
   if (ready && !authenticated) {
-    return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-          {t("loginRequired")}
-        </h1>
-      </div>
-    );
+    return <LinksAuthGate eyebrow="campaigns" title={t("loginRequired")} />;
   }
 
   return (
@@ -133,7 +118,9 @@ export default function CampaignStatsPage() {
         <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
           {t("title")}
         </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        {/* div, not p: the loading Skeleton renders a block element, and a block inside a <p> is
+            invalid HTML that trips a hydration mismatch (which reset the no-FOUC dark class). */}
+        <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           {loading ? (
             <Skeleton className="inline-block h-4 w-40" />
           ) : campaign ? (
@@ -143,7 +130,7 @@ export default function CampaignStatsPage() {
               })}
             </>
           ) : null}
-        </p>
+        </div>
       </div>
 
       {loading ? (
@@ -354,66 +341,23 @@ function CompareCell({ label, value }: { label: string; value: string }) {
 
 function DailyChart({ data }: { data: CampaignStats["byDay"] }) {
   const t = useTranslations("campaignApp.campaignStats");
-  const max = useMemo(() => Math.max(...data.map((d) => d.clicks), 1), [data]);
+  // Daily volume is a trend, so it reuses the link-stats area chart (line + faint fill + peak dot)
+  // instead of a bar row — same reading language across the whole product.
+  const series = useMemo(() => data.map((d) => ({ date: d.day, count: d.clicks })), [data]);
   return (
     <Section title={t("daily.title")} description={t("daily.description")}>
-      <div className="flex h-32 items-end gap-1">
-        {data.map(({ day, clicks }) => {
-          const heightPct = (clicks / max) * 100;
-          return (
-            <div key={day} className="flex flex-1 flex-col items-center gap-1">
-              <span className="text-[10px] tabular-nums text-slate-500 dark:text-slate-400">{clicks}</span>
-              <div
-                className="w-full rounded-t-sm bg-accent-600"
-                style={{ height: `${heightPct}%` }}
-                title={`${day}: ${clicks}`}
-              />
-            </div>
-          );
-        })}
-      </div>
-      <div className="mt-2 flex justify-between text-[10px] tabular-nums text-slate-500 dark:text-slate-400">
-        <span>{data[0]?.day}</span>
-        <span>{data[data.length - 1]?.day}</span>
-      </div>
+      <DailyTrendChart data={series} />
     </Section>
   );
 }
 
 function HourlyChart({ data }: { data: CampaignStats["byHour"] }) {
   const t = useTranslations("campaignApp.campaignStats");
-  // 0–23 시간대 채움 — 클릭 없는 시간대도 빈 bar 로 보여서 분포 의미 명확.
-  const full = useMemo(() => {
-    const map = new Map(data.map((d) => [d.hour, d.clicks]));
-    return Array.from({ length: 24 }, (_, h) => ({ hour: h, clicks: map.get(h) ?? 0 }));
-  }, [data]);
-  const max = Math.max(...full.map((d) => d.clicks), 1);
-
+  // Hour-of-day is a continuous rhythm → the shared curve (it fills the empty 0–23 hours itself).
+  const series = useMemo(() => data.map((d) => ({ hour: d.hour, count: d.clicks })), [data]);
   return (
     <Section title={t("hourly.title")} description={t("hourly.description")}>
-      <div
-        className="grid h-28 items-end gap-0.5"
-        style={{ gridTemplateColumns: "repeat(24, minmax(0, 1fr))" }}
-      >
-        {full.map(({ hour, clicks }) => {
-          const heightPct = (clicks / max) * 100;
-          return (
-            <div
-              key={hour}
-              className="rounded-t-sm bg-accent-600"
-              style={{ height: `${Math.max(heightPct, 2)}%` }}
-              title={t("hourly.tooltip", { hour, clicks })}
-            />
-          );
-        })}
-      </div>
-      <div className="mt-2 flex justify-between text-[10px] tabular-nums text-slate-500 dark:text-slate-400">
-        <span>0</span>
-        <span>6</span>
-        <span>12</span>
-        <span>18</span>
-        <span>23</span>
-      </div>
+      <HourRhythmChart data={series} />
     </Section>
   );
 }
@@ -614,66 +558,47 @@ function GroupChart({
   groups: CampaignStats["byDistributor"];
 }) {
   const t = useTranslations("campaignApp.campaignStats");
-  const data = useMemo(
-    () =>
-      [...groups]
-        .sort((a, b) => b.clickRatePerHundred - a.clickRatePerHundred)
-        .map((g) => ({
-          key: g.key,
-          ratePerHundred: Number(g.clickRatePerHundred.toFixed(2)),
-          clicks: g.clicks,
-          quantity: g.totalQuantity,
-        })),
+  // Efficiency ranking (clicks per 100 sheets) reads as a text + fill-bar list — same language as
+  // ByBatchTable right above it, and it renders correctly in dark mode (the old recharts axes were
+  // pinned to light-mode slate hex and went near-invisible on a dark card).
+  const rows = useMemo(
+    () => [...groups].sort((a, b) => b.clickRatePerHundred - a.clickRatePerHundred),
     [groups],
   );
+  const max = Math.max(...rows.map((g) => g.clickRatePerHundred), 1);
   return (
-    <Section title={title} description={hint}>
-      <div className="h-[220px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} layout="vertical" margin={{ left: 8, right: 24, top: 4, bottom: 4 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
-            <XAxis
-              type="number"
-              tick={{ fontSize: 11, fill: "#64748b" }}
-              axisLine={{ stroke: "#e2e8f0" }}
-              tickLine={false}
-            />
-            <YAxis
-              type="category"
-              dataKey="key"
-              tick={{ fontSize: 12, fill: "#0f172a" }}
-              axisLine={{ stroke: "#e2e8f0" }}
-              tickLine={false}
-              width={100}
-            />
-            <Tooltip
-              cursor={{ fill: ACCENT_LIGHT, opacity: 0.3 }}
-              contentStyle={{
-                borderRadius: 8,
-                border: "1px solid #e2e8f0",
-                fontSize: 12,
-                padding: "8px 12px",
-              }}
-              formatter={(_value: number, _name: string, item) => {
-                const row = item?.payload as {
-                  ratePerHundred: number;
-                  clicks: number;
-                  quantity: number;
-                };
-                return [
-                  t("groups.tooltip", {
-                    rate: row.ratePerHundred,
-                    clicks: row.clicks.toLocaleString(),
-                    quantity: row.quantity.toLocaleString(),
-                  }),
-                  t("groups.efficiency"),
-                ];
-              }}
-            />
-            <Bar dataKey="ratePerHundred" fill={ACCENT} radius={[0, 4, 4, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+    <Section title={title} description={hint} bodyClassName="p-0">
+      <ul className="divide-y divide-slate-200 dark:divide-slate-800">
+        {rows.map((g) => {
+          const widthPct = (g.clickRatePerHundred / max) * 100;
+          return (
+            <li key={g.key} className="px-4 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="min-w-0 truncate text-sm font-medium text-slate-900 dark:text-slate-100">
+                  {g.key}
+                </p>
+                <div className="flex flex-shrink-0 items-baseline gap-3 text-right">
+                  <span className="text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+                    {g.clickRatePerHundred.toFixed(1)}
+                  </span>
+                  <span className="text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
+                    {t("groups.meta", {
+                      clicks: g.clicks.toLocaleString(),
+                      quantity: g.totalQuantity.toLocaleString(),
+                    })}
+                  </span>
+                </div>
+              </div>
+              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                <div
+                  className="h-full rounded-full bg-accent-600"
+                  style={{ width: `${widthPct}%` }}
+                />
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </Section>
   );
 }

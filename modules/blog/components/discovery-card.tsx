@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import type { ReactNode } from "react";
+import { Children, type ReactNode } from "react";
 import { Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link as TransitionLink } from "next-view-transitions";
@@ -246,13 +246,31 @@ export function DiscoveryCard({
   );
 }
 
-// 메이슨리(JS-free CSS columns) — 카드를 크기대로 빈틈없이 퍼즐처럼 채운다(행 강제 정렬 X).
-// 모바일 1열 → sm 2열 → lg 3열. 모바일 2열은 한글 제목이 ~8자에서 잘리고 append 마다 모든
-// 카드가 재배치돼 스크롤이 점프했는데, 1열은 카드 문법을 유지하면서 둘 다 없다(전폭 제목,
-// 끝에만 append). 행순서 그리드 대신 메이슨리인 이유는 밑 여백 들쭉날쭉 회피(시각 우선).
-// 3열은 lg(1024+)부터 — md(768~1023, 태블릿 세로)에서 3열이면 카드가 ~250px로 짜부라져 2열 유지.
+// 메이슨리(CSS columns) — 카드를 크기대로 빈틈없이 퍼즐처럼 채운다(행 강제 정렬 X, 밑 여백
+// 들쭉날쭉 회피). 모바일 1열 → sm 2열 → lg 3열(md 태블릿 세로에서 3열이면 카드가 ~250px로
+// 짜부라져 2열 유지). 모바일이 1열인 또 다른 이유는 2열에서 한글 제목이 ~8자에 잘려서다.
+const GRID_COLS = "columns-1 gap-4 sm:columns-2 sm:gap-5 lg:columns-3";
+// CSS multi-column 은 column-fill:balance 라 아이템이 붙을 때마다 전체 컬럼 높이를 재분배한다 →
+// 무한스크롤 append 순간 이미 보이던 카드가 열 사이로 튀어 그리드가 눈앞에서 뒤섞였다. 그래서
+// 한 컨테이너에 다 넣지 않고 페이지 단위로 컬럼 블록을 끊어 세로로 잇는다: 새 페이지는 아래에
+// 새 블록으로만 쌓이고 앞 블록의 카드 집합은 불변이라 재배치가 없다(청크 경계의 얕은 가로
+// 이음새가 유일한 비용). 청크 크기 = feed 페이지 크기여야 부분 청크가 다음 append 에 커지며
+// 재배치되는 일을 막는다.
+const GRID_CHUNK = 24;
+
 export function DiscoveryGrid({ children }: { children: ReactNode }) {
-  return <div className="columns-1 gap-4 sm:columns-2 sm:gap-5 lg:columns-3">{children}</div>;
+  const items = Children.toArray(children);
+  const chunks: ReactNode[][] = [];
+  for (let i = 0; i < items.length; i += GRID_CHUNK) chunks.push(items.slice(i, i + GRID_CHUNK));
+  return (
+    <>
+      {chunks.map((chunk, i) => (
+        <div key={i} className={GRID_COLS}>
+          {chunk}
+        </div>
+      ))}
+    </>
+  );
 }
 
 /** A child cell of {@link DiscoveryGrid} — 칼럼 사이에서 카드가 쪼개지지 않게 막는다.
@@ -286,7 +304,7 @@ const SKELETON_RATIOS = [
 ];
 export function DiscoveryGridSkeleton({ count = 6 }: { count?: number }) {
   return (
-    <div role="status" aria-busy="true" className="columns-1 gap-4 sm:columns-2 sm:gap-5 lg:columns-3">
+    <div role="status" aria-busy="true" className={GRID_COLS}>
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="mb-4 break-inside-avoid sm:mb-5">
           <div

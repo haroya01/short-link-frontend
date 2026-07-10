@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 import { postHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
@@ -29,15 +30,20 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
 
   const load = useCallback(async (next: number) => {
     setLoading(true);
+    setError(false);
     try {
       const res = await listReadingHistory(next);
       setItems((prev) => (next === 0 ? res.items : [...prev, ...res.items]));
       setPage(res.page);
       setHasNext(res.hasNext);
+    } catch {
+      // 실패를 '기록 없음' 빈 상태로 위장하지 않도록 에러 상태를 세워 재시도를 노출한다.
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -75,6 +81,20 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
     return (
       <div className="flex justify-center py-20 text-slate-400">
         <Loader2 className="h-5 w-5 animate-spin" />
+      </div>
+    );
+  }
+  if (error && items.length === 0) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-20 text-center">
+        <p className="text-[14px] text-slate-500 dark:text-slate-400">{t("loadError")}</p>
+        <button
+          type="button"
+          onClick={() => void load(0)}
+          className="focus-ring rounded-full px-4 py-2 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+        >
+          {t("retry")}
+        </button>
       </div>
     );
   }
@@ -128,7 +148,7 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
         {items.map((item) => (
           <li key={item.postId} className="flex items-start gap-3 py-3.5">
-            <a
+            <BlogLink
               href={postHref(item.username, item.slug, locale)}
               className="focus-ring group flex min-w-0 flex-1 items-start gap-3"
             >
@@ -144,7 +164,7 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
                   </span>
                 )}
               </span>
-            </a>
+            </BlogLink>
             <button
               type="button"
               onClick={() => forget(item.postId)}
@@ -158,14 +178,15 @@ export function ReadingHistoryList({ username, locale }: { username: string; loc
       </ul>
 
       {hasNext && (
-        <div className="mt-4 flex justify-center">
+        <div className="mt-4 flex flex-col items-center gap-2">
+          {error && <span className="text-[13px] text-rose-600 dark:text-rose-400">{t("loadError")}</span>}
           <button
             type="button"
             onClick={() => void load(page + 1)}
             disabled={loading}
             className="focus-ring rounded-full px-4 py-2 text-[13px] font-medium text-accent-700 transition-colors hover:bg-accent-50 disabled:opacity-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("loadMore")}
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t(error ? "retry" : "loadMore")}
           </button>
         </div>
       )}

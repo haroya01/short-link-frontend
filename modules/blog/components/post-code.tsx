@@ -1,17 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Check, Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Markdown } from "@/modules/blog/components/markdown";
-import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 
 /**
- * A post code block: syntax-highlighted (through the shared markdown pipeline) with a language label
- * and a copy button — the table stakes for a developer-facing blog. The button reveals on hover and
- * copies the raw code (not the highlighted HTML).
+ * A post code block: syntax-highlighted (through the shared markdown pipeline, rendered on the server
+ * and passed in as `children`) with a language label and a copy button — the table stakes for a
+ * developer-facing blog. The button reveals on hover and copies the raw code (not the highlighted HTML).
  */
-export function PostCode({ lang, code }: { lang: string; code: string }) {
+export function PostCode({ lang, code, children }: { lang: string; code: string; children: ReactNode }) {
   const t = useTranslations("common");
   const [copied, setCopied] = useState(false);
 
@@ -25,7 +23,6 @@ export function PostCode({ lang, code }: { lang: string; code: string }) {
     }
   };
 
-  const fence = fenceFor(code);
   return (
     <div className="group relative">
       {lang && (
@@ -51,7 +48,7 @@ export function PostCode({ lang, code }: { lang: string; code: string }) {
           </>
         )}
       </button>
-      <Markdown>{`${fence}${lang}\n${code}\n${fence}`}</Markdown>
+      {children}
     </div>
   );
 }

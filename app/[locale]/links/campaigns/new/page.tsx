@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -10,6 +10,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import type { CampaignPostEndAction } from "@/types";
 
 type StartMode = "now" | "schedule";
@@ -30,16 +31,34 @@ export default function NewCampaignPage() {
   const [postEndMessage, setPostEndMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  // 채워둔 이름·메시지·URL 은 전부 로컬 상태라 이 화면을 벗어나면 무경고로 사라진다. 날짜는
+  // 기본값이 있으니 텍스트 입력·비기본 선택만 dirty 로 본다.
+  const dirty =
+    name.trim().length > 0 ||
+    defaultDestinationUrl.trim().length > 0 ||
+    postEndDestinationUrl.trim().length > 0 ||
+    postEndMessage.trim().length > 0 ||
+    startMode !== "now" ||
+    postEndAction !== "KEEP";
+
+  // 새로고침·탭 닫기·브라우저 뒤로가기(하드 내비)에서 입력값을 지키는 브라우저 확인창.
+  useEffect(() => {
+    if (!dirty || submitting) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [dirty, submitting]);
+
   if (ready && !authenticated) {
     return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-          {t("loginRequired")}
-        </h1>
-        <Link href="/login" className="mt-6 inline-block">
-          <Button>{t("goToLogin")}</Button>
-        </Link>
-      </div>
+      <LinksAuthGate
+        eyebrow="campaigns"
+        title={t("loginRequired")}
+        next="/campaigns/new"
+      />
     );
   }
 
@@ -75,11 +94,19 @@ export default function NewCampaignPage() {
     }
   }
 
+  // 목록으로 나가는 소프트 내비는 beforeunload 가 안 걸리므로 dirty 면 여기서 한 번 확인한다.
+  function confirmLeave(e: React.MouseEvent) {
+    if (dirty && !submitting && !window.confirm(t("leaveConfirm"))) {
+      e.preventDefault();
+    }
+  }
+
   return (
     <div className="container max-w-2xl space-y-6 py-10">
       <div>
         <Link
           href="/campaigns"
+          onClick={confirmLeave}
           className="inline-flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToList")}
@@ -209,7 +236,7 @@ export default function NewCampaignPage() {
         </Field>
 
         <div className="flex items-center justify-end gap-2 border-t border-slate-200 dark:border-slate-800 pt-4">
-          <Link href="/campaigns">
+          <Link href="/campaigns" onClick={confirmLeave}>
             <Button type="button" variant="outline">
               {t("cancel")}
             </Button>

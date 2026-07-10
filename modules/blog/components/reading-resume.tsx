@@ -9,6 +9,7 @@ const KEY_PREFIX = "kurl:read-pos:";
 const MIN_SAVE_Y = 600; // 이만큼도 안 내렸으면 "읽다 만" 게 아니다
 const DONE_RATIO = 0.92; // 여기까지 갔으면 완독 — 기록 삭제
 const MAX_KEYS = 50; // localStorage 위생: 가장 오래된 기록부터 정리
+const SAVE_THROTTLE_MS = 800; // 스크롤 중 스토리지 쓰기 상한(마지막 위치만 트레일링으로 반영)
 
 type Saved = { y: number; ratio: number; at: number };
 
@@ -59,9 +60,32 @@ export function ReadingResume({ postKey }: { postKey: string }) {
     }
   }, [postKey]);
 
-  // 위치 기록: 스크롤을 rAF 스로틀로 관찰해 저장. 끝까지 가면 완독 처리(삭제).
+  // 위치 기록: 스크롤은 rAF 로 관찰하되, 실제 localStorage 쓰기는 트레일링 스로틀로 묶는다.
+  // 매 프레임 동기 쓰기(≈60Hz JSON 직렬화+setItem)를 피하려 마지막 상태만 ref 에 담아 두고,
+  // 최대 SAVE_THROTTLE_MS 마다 그리고 탭이 숨거나/떠날 때 한 번씩만 반영한다. 끝까지 가면 완독 처리(삭제).
   useEffect(() => {
     let raf = 0;
+    let timer = 0;
+    const pending: { current: Saved | "done" | null } = { current: null };
+
+    const flush = () => {
+      const p = pending.current;
+      if (p == null) return;
+      pending.current = null;
+      try {
+        if (p === "done") localStorage.removeItem(storageKey(postKey));
+        else localStorage.setItem(storageKey(postKey), JSON.stringify(p));
+      } catch {
+        /* noop */
+      }
+    };
+    const flushNow = () => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = 0;
+      }
+      flush();
+    };
     const onScroll = () => {
       if (raf) return;
       raf = requestAnimationFrame(() => {
@@ -71,22 +95,30 @@ export function ReadingResume({ postKey }: { postKey: string }) {
         if (max <= 0) return;
         const y = window.scrollY;
         const ratio = y / max;
-        try {
-          if (ratio >= DONE_RATIO) {
-            localStorage.removeItem(storageKey(postKey));
-          } else if (y > MIN_SAVE_Y) {
-            localStorage.setItem(storageKey(postKey), JSON.stringify({ y, ratio, at: Date.now() } satisfies Saved));
-          }
-        } catch {
-          /* noop */
-        }
+        if (ratio >= DONE_RATIO) pending.current = "done";
+        else if (y > MIN_SAVE_Y) pending.current = { y, ratio, at: Date.now() };
+        else return; // 상단 근처 — 기록 대상 아님
+        if (!timer)
+          timer = window.setTimeout(() => {
+            timer = 0;
+            flush();
+          }, SAVE_THROTTLE_MS);
       });
+    };
+    // 탭을 숨기거나 떠날 때는 스로틀 창을 기다리지 않고 즉시 마지막 위치를 남긴다.
+    const onHide = () => {
+      if (document.visibilityState === "hidden") flushNow();
     };
     pruneOld();
     window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", flushNow);
     return () => {
       window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", flushNow);
       if (raf) cancelAnimationFrame(raf);
+      flushNow(); // 언마운트(SPA 이탈) 시 마지막 위치 보존
     };
   }, [postKey]);
 

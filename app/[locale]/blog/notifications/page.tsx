@@ -9,6 +9,7 @@ import {
   useUnreadCount,
 } from "@/modules/notifications/lib/use-notifications";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
+import { ErrorState } from "@/components/common/error-state";
 import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
 
 /**
@@ -40,10 +41,11 @@ export default function NotificationsPage() {
   const { ready, authenticated } = useAuth();
   const unread = useUnreadCount();
   const markAll = useMarkAllRead();
-  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useNotifications();
+  const { data, isLoading, isError, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useNotifications();
 
-  if (!ready) return null;
-  if (!authenticated) {
+  // 로그인 여부가 확정되기 전(!ready)에는 로그인 안내 대신 스켈레톤을 유지 — 하드 로드 시 빈 화면 플래시 방지.
+  if (ready && !authenticated) {
     return (
       <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>
     );
@@ -77,7 +79,7 @@ export default function NotificationsPage() {
       </div>
 
       <div className="mt-4">
-        {isLoading ? (
+        {!ready || isLoading ? (
           // 실제 행 모양의 펄스 스켈레톤 — "…" 한 글자는 빈 화면과 구분이 안 됐다.
           <div role="status" aria-busy="true" className="space-y-1 py-2">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -90,6 +92,9 @@ export default function NotificationsPage() {
               </div>
             ))}
           </div>
+        ) : isError ? (
+          // 로드 실패를 '알림 없음' 빈 상태로 위장하지 않는다 — 명시적 에러 + 재시도.
+          <ErrorState onRetry={() => refetch()} />
         ) : items.length === 0 ? (
           <div className="flex flex-col items-center py-24 text-center">
             <Bell aria-hidden className="h-6 w-6 text-slate-300 dark:text-slate-600" />

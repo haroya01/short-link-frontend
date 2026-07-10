@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
 import { useMarkRead } from "@/modules/notifications/lib/use-notifications";
 import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
@@ -92,18 +93,18 @@ export function NotificationItem({
   // 행위자 이름/아바타는 그 사람 프로필로 가는 섬 링크 — 행의 기본 액션(글/시리즈)과 별개.
   const actorHref = item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
   // 행위자만 굵게(<b> 태그는 메시지 파일에) — 문장 전체가 같은 무게면 누가/무엇이 안 잡힌다.
-  // 이름 자체가 프로필 링크(있을 때) — 행 오버레이 밑이 아니라 pointer-events 를 되살려 앞으로.
+  // 이름 자체가 프로필 링크(있을 때) — pointer-events 를 되살려 행 오버레이 위로.
   const message = t.rich(MESSAGE_KEY[item.type], {
     actor,
     b: (chunks) =>
       actorHref ? (
-        <a
+        <BlogLink
           href={actorHref}
           onClick={handleClick}
           className="focus-ring pointer-events-auto rounded font-semibold text-slate-900 transition-colors hover:text-accent-700 hover:underline dark:text-slate-100 dark:hover:text-accent-400"
         >
           {chunks}
-        </a>
+        </BlogLink>
       ) : (
         <b className="font-semibold text-slate-900 dark:text-slate-100">{chunks}</b>
       ),
@@ -122,14 +123,14 @@ export function NotificationItem({
     <>
       <span className="relative shrink-0">
         {actorHref ? (
-          <a
+          <BlogLink
             href={actorHref}
             onClick={handleClick}
             aria-label={item.actorUsername ?? undefined}
             className="focus-ring pointer-events-auto block rounded-full"
           >
             <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} size="sm" />
-          </a>
+          </BlogLink>
         ) : (
           <Avatar src={item.actorAvatarUrl} name={item.actorUsername ?? "?"} size="sm" />
         )}
@@ -190,7 +191,7 @@ export function NotificationItem({
   return (
     <div className={rowClass}>
       {href ? (
-        <a
+        <BlogLink
           href={href}
           onClick={handleClick}
           aria-label={subtitle || actor}

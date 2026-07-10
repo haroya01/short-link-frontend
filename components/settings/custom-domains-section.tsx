@@ -54,7 +54,9 @@ export function CustomDomainsSection() {
     try {
       setItems(await listCustomDomains());
     } catch {
-      setItems([]);
+      // Keep the existing list on a transient failure so a single failed poll doesn't wipe the
+      // rows and stop the auto-verify poller. Only the initial load falls back to an empty list.
+      setItems((prev) => (prev === null ? [] : prev));
     }
   }
 

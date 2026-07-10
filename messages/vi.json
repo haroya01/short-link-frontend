@@ -1,9 +1,15 @@
 {
+  "authGate": {
+    "login": "Đăng nhập",
+    "explore": "Xem qua mà không cần đăng nhập",
+    "defaultDesc": "Đăng nhập để tiếp tục quản lý liên kết và chiến dịch của bạn."
+  },
   "comments": {
     "count": "{count, plural, =0 {Bình luận} one {# bình luận} other {# bình luận}}",
     "placeholder": "Viết bình luận",
     "submit": "Bình luận",
     "submitting": "Đang đăng…",
+    "cancel": "Hủy",
     "reply": "Trả lời",
     "replyPlaceholder": "Viết câu trả lời",
     "delete": "Xóa",
@@ -18,7 +24,9 @@
     "list": "Danh sách",
     "quote": "Trích dẫn",
     "preview": "Xem trước",
-    "linkText": "văn bản liên kết"
+    "linkText": "văn bản liên kết",
+    "submitError": "Không thể đăng bình luận. Vui lòng thử lại.",
+    "deleteError": "Không thể xóa bình luận. Vui lòng thử lại."
   },
   "publicFeed": {
     "recent": "Mới nhất",
@@ -103,7 +111,9 @@
     "seriesNextEpisode": "Tập tiếp theo",
     "seriesEpisodeOf": "Tập {current} trên {total}",
     "feedReasonTopic": "Đang theo dõi ‘{tag}’",
-    "feedReasonSeries": "Series đã đăng ký"
+    "feedReasonSeries": "Series đã đăng ký",
+    "bookmarkFailed": "Không thể lưu. Vui lòng thử lại.",
+    "seriesSubscribeFailed": "Không thể cập nhật đăng ký. Vui lòng thử lại."
   },
   "blogWebhooks": {
     "loginRequired": "Cần đăng nhập.",
@@ -435,7 +445,8 @@
       "placePlaceholder": "Tìm theo tên hoặc địa chỉ địa điểm",
       "placeEmpty": "Không có kết quả.",
       "placeHint": "Chọn một địa điểm để chèn thẻ bản đồ vào bài.",
-      "placeClose": "Đóng"
+      "placeClose": "Đóng",
+      "placeError": "Không tải được thông tin địa điểm. Vui lòng thử lại."
     },
     "autoSave": "Tự động lưu",
     "unsavedLeaveTitle": "Bạn có thay đổi chưa lưu",
@@ -447,7 +458,9 @@
     "importPartialError": "Một số tệp không nhập được. Kiểm tra lại các tệp và thử lại.",
     "savedAt": "Đã lưu lúc {time}",
     "continueWriting": "Viết tiếp",
-    "noPostsHint": "Bài viết của bạn sẽ tích lại ở đây. Bản nháp luôn riêng tư cho đến khi bạn xuất bản."
+    "noPostsHint": "Bài viết của bạn sẽ tích lại ở đây. Bản nháp luôn riêng tư cho đến khi bạn xuất bản.",
+    "seriesCreateConflict": "Đã có series trùng tên. Hãy thử tên khác.",
+    "seriesCreateError": "Không thể tạo series. Vui lòng thử lại."
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -479,7 +492,11 @@
     "clearHistoryCancel": "Hủy",
     "forget": "Xóa khỏi lịch sử",
     "loadMore": "Xem thêm",
-    "emptyFolder": "Thư mục này trống."
+    "emptyFolder": "Thư mục này trống.",
+    "saveFailed": "Không thể lưu thay đổi của bạn. Vui lòng thử lại.",
+    "bulkMoveFailed": "Không thể di chuyển {count} mục. Vui lòng thử lại.",
+    "loadError": "Không thể tải lịch sử đọc của bạn.",
+    "retry": "Thử lại"
   },
   "imageCropper": {
     "title": "Cắt ảnh",
@@ -507,6 +524,11 @@
     "highlightReplySubmit": "Trả lời",
     "highlightReplyDelete": "Xóa",
     "highlightReplyLogin": "Đăng nhập để trả lời",
+    "highlightDelete": "Xóa đánh dấu",
+    "highlightDeleteConfirm": "Xóa đánh dấu này?",
+    "highlightDeleteConfirmBody": "Ghi chú và các câu trả lời cũng sẽ bị xóa. Không thể hoàn tác.",
+    "highlightDeleteConfirmBodyBare": "Không thể hoàn tác.",
+    "highlightDeleteError": "Không thể xóa. Vui lòng thử lại.",
     "readingTime": "Đọc {minutes} phút",
     "ogReadingTime": "Đọc {minutes} phút",
     "previewBanner": "Xem trước — bài này chưa được xuất bản. Chỉ người có liên kết này mới xem được.",
@@ -583,7 +605,8 @@
     "seriesViewAll": "Xem tất cả {total} phần",
     "relatedHeading": "Đọc tiếp",
     "resumeReading": "Đọc tiếp",
-    "resumeDismiss": "Bỏ qua"
+    "resumeDismiss": "Bỏ qua",
+    "replyError": "Không thể đăng câu trả lời. Vui lòng thử lại."
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",
@@ -1410,6 +1433,9 @@
       "colLocation": "Vị trí",
       "colDevice": "Thiết bị",
       "colReferrer": "Nguồn giới thiệu"
+    },
+    "chart": {
+      "peak": "Đỉnh"
     }
   },
   "admin": {
@@ -1629,6 +1655,112 @@
       "copied": "Đã sao chép",
       "expires": "Hết hạn sau {minutes} phút",
       "hint": "Dùng cho việc seed dữ liệu hoặc script mà không phải lục trong devtools."
+    },
+    "browse": {
+      "usersTab": "Tất cả người dùng",
+      "linksTab": "Tất cả liên kết",
+      "search": "Tìm kiếm",
+      "users": {
+        "title": "Tất cả người dùng",
+        "subtitle": "Tìm kiếm và duyệt mọi tài khoản",
+        "searchPlaceholder": "Tìm email hoặc tên người dùng",
+        "role": {
+          "all": "Tất cả vai trò",
+          "user": "Người dùng",
+          "admin": "Quản trị"
+        },
+        "col": {
+          "user": "Người dùng",
+          "role": "Vai trò",
+          "tier": "Gói",
+          "links": "Liên kết",
+          "joined": "Ngày tham gia",
+          "status": "Trạng thái"
+        },
+        "active": "Hoạt động",
+        "deleted": "Đã xóa",
+        "noResults": "Không có người dùng phù hợp"
+      },
+      "links": {
+        "title": "Tất cả liên kết",
+        "subtitle": "Tìm kiếm và duyệt mọi liên kết rút gọn",
+        "searchPlaceholder": "Tìm mã hoặc URL đích",
+        "sort": {
+          "recent": "Mới nhất",
+          "clicks": "Nhiều nhấp nhất"
+        },
+        "col": {
+          "code": "Mã",
+          "destination": "Đích",
+          "owner": "Chủ sở hữu",
+          "clicks": "Lượt nhấp",
+          "status": "Trạng thái",
+          "created": "Ngày tạo"
+        },
+        "status": {
+          "active": "Hoạt động",
+          "expired": "Hết hạn",
+          "limitReached": "Đạt giới hạn"
+        },
+        "ownerFilter": "Chủ sở hữu #{id}",
+        "clearFilter": "Xóa bộ lọc",
+        "locked": "Được bảo vệ bằng mật khẩu",
+        "noResults": "Không có liên kết phù hợp"
+      }
+    },
+    "detail": {
+      "title": "Chi tiết liên kết",
+      "back": "Quay lại tất cả liên kết",
+      "anonymousOwner": "Ẩn danh",
+      "meta": {
+        "code": "Mã rút gọn",
+        "owner": "Chủ sở hữu",
+        "destination": "Đích đến",
+        "clicks": "Tổng lượt nhấp",
+        "views": "Lượt xem",
+        "created": "Ngày tạo",
+        "expires": "Hết hạn",
+        "noExpiry": "Không hết hạn",
+        "locked": "Bảo vệ bằng mật khẩu"
+      },
+      "section": {
+        "daily": {
+          "title": "Lượt nhấp theo ngày",
+          "desc": "Theo ngày · {tz}"
+        },
+        "hourly": {
+          "title": "Theo giờ",
+          "desc": "Phân bố theo giờ trong ngày"
+        },
+        "referrers": {
+          "title": "Nguồn giới thiệu",
+          "desc": "Nơi lượt nhấp đến từ"
+        },
+        "devices": {
+          "title": "Thiết bị",
+          "desc": "Phân tích theo thiết bị"
+        },
+        "countries": {
+          "title": "Quốc gia",
+          "desc": "Lượt nhấp theo quốc gia"
+        }
+      },
+      "empty": {
+        "countries": "Chưa có dữ liệu quốc gia"
+      }
+    },
+    "activity": {
+      "recentLinksTitle": "Liên kết gần đây",
+      "recentLinksDesc": "Vừa được tạo",
+      "recentClicksTitle": "Lượt nhấp gần đây",
+      "recentClicksDesc": "Luồng nhấp trực tiếp",
+      "trendingTitle": "Thịnh hành · 24h",
+      "trendingDesc": "Hàng đầu theo lượt nhấp thật",
+      "empty": {
+        "links": "Chưa có liên kết",
+        "clicks": "Chưa có lượt nhấp",
+        "trending": "Chưa có gì thịnh hành"
+      }
     }
   },
   "common": {
@@ -2564,7 +2696,9 @@
       "recoveryCopyAll": "Sao chép tất cả",
       "recoveryCopied": "Đã sao chép mã khôi phục.",
       "recoveryCopyFailed": "Sao chép thất bại.",
-      "recoveryDismiss": "Tôi đã lưu, đóng"
+      "recoveryDismiss": "Tôi đã lưu, đóng",
+      "loadError": "Không tải được trạng thái 2FA của bạn.",
+      "retry": "Thử lại"
     },
     "apiKeys": {
       "title": "Khóa API",
@@ -2696,7 +2830,8 @@
       "redirectHint": "URL chuyển hướng được áp dụng cho mã QR đã in khi chiến dịch kết thúc.",
       "cancel": "Hủy",
       "creating": "Đang tạo...",
-      "submit": "Tạo chiến dịch QR"
+      "submit": "Tạo chiến dịch QR",
+      "leaveConfirm": "Rời đi mà không lưu? Nội dung bạn đã nhập sẽ bị mất."
     },
     "detail": {
       "loadFailed": "Tải thất bại",
@@ -2748,7 +2883,8 @@
         "emptyTitle": "Chưa có đợt phát nào",
         "emptyDescription": "Thêm đợt đầu tiên để cấp một mã QR. Quét thử trước khi đặt in.",
         "addFirst": "Thêm đợt đầu tiên"
-      }
+      },
+      "csvFailed": "Tải CSV thất bại"
     },
     "batchesNew": {
       "loadFailed": "Tải thất bại",
@@ -2869,7 +3005,8 @@
         "areaTitle": "Hiệu quả theo khu vực",
         "areaHint": "Dùng cái này để quyết định nơi phát tiếp theo.",
         "tooltip": "{rate} / 100 tờ · lượt nhấp {clicks} / đã phát {quantity}",
-        "efficiency": "Hiệu suất"
+        "efficiency": "Hiệu suất",
+        "meta": "lượt nhấp {clicks} · {quantity} tờ"
       },
       "compare": {
         "title": "So sánh với chiến dịch khác",
@@ -3277,6 +3414,7 @@
     "add": "Thêm",
     "whyLabel": "Vì sao bạn kết nối nó?",
     "whyPlaceholder": "One line (optional)",
-    "addToCount": "Đã thêm vào {count} bộ sưu tập."
+    "addToCount": "Đã thêm vào {count} bộ sưu tập.",
+    "connectError": "Không thể lưu. Vui lòng thử lại."
   }
 }

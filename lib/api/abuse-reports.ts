@@ -1,4 +1,5 @@
 import { request } from "./client";
+import { MOCK_REPORTS } from "./abuse-reports-mock-data";
 
 const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
@@ -44,6 +45,11 @@ export async function submitAbuseReport(payload: {
 
 /** Admin only. */
 export async function listAbuseReports(status?: AbuseReportStatus): Promise<AbuseReportView[]> {
+  if (USE_MOCKS) {
+    return Promise.resolve(
+      status ? MOCK_REPORTS.filter((r) => r.status === status) : MOCK_REPORTS,
+    );
+  }
   const qs = status ? `?status=${status}` : "";
   return request<AbuseReportView[]>(`/api/v1/admin/abuse-reports${qs}`, { method: "GET" });
 }
@@ -53,6 +59,25 @@ export async function resolveAbuseReport(
   id: number,
   payload: { resolution: AbuseResolution; adminNote?: string },
 ): Promise<AbuseReportView> {
+  if (USE_MOCKS) {
+    const base = MOCK_REPORTS.find((r) => r.id === id);
+    const now = new Date().toISOString();
+    return Promise.resolve({
+      id,
+      reporterUserId: base?.reporterUserId ?? null,
+      subjectType: base?.subjectType ?? "POST",
+      subjectId: base?.subjectId ?? id,
+      reason: base?.reason ?? null,
+      status: payload.resolution,
+      adminNote: payload.adminNote ?? base?.adminNote ?? null,
+      createdAt: base?.createdAt ?? now,
+      resolvedAt: payload.resolution === "REVIEWING" ? null : now,
+      subjectTitle: base?.subjectTitle,
+      subjectAuthorHandle: base?.subjectAuthorHandle,
+      subjectUrl: base?.subjectUrl,
+      subjectRemoved: base?.subjectRemoved,
+    });
+  }
   return request<AbuseReportView>(`/api/v1/admin/abuse-reports/${id}/resolve`, {
     method: "POST",
     body: payload,

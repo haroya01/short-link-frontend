@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import type { TwoFactorSetup, TwoFactorStatus } from "@/types";
 
-type Mode = "loading" | "off" | "enrolling" | "on";
+type Mode = "loading" | "off" | "enrolling" | "on" | "error";
 
 /**
  * TOTP enrolment / disable / recovery-code regeneration. Drops the secret + QR data on disk only
@@ -67,7 +67,8 @@ export function TwoFactorSection() {
       setStatus(s);
       setMode(s.enabled ? "on" : "off");
     } catch {
-      setMode("off");
+      // 로드 실패를 "꺼짐"으로 위장하지 않는다 — 켜둔 사용자가 설정이 풀린 것으로 오인하는 것을 막는다.
+      setMode("error");
     }
   }
 
@@ -156,6 +157,22 @@ export function TwoFactorSection() {
           </span>
           <Button size="sm" variant="accent" onClick={handleStart} disabled={busy}>
             {busy ? t("starting") : t("enableButton")}
+          </Button>
+        </div>
+      )}
+
+      {mode === "error" && (
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-500 dark:text-slate-400">{t("loadError")}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setMode("loading");
+              refresh();
+            }}
+          >
+            {t("retry")}
           </Button>
         </div>
       )}

@@ -312,9 +312,13 @@ export default async function PublicPostPage({
               모핑해 들어온다. 페이지에 히어로는 하나뿐이라 정적 이름이어도 충돌 없음 — 클래스인
               이유는 테마 토글 전환에서 이름을 떼기 위해(globals 의 html[data-theme-vt] 규칙). */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
+          {/* 커버는 대부분 이 페이지의 LCP 요소 — 프로필/쇼케이스 배너와 같이 high 우선순위로
+              큐잉해 느린 회선에서 본문 위 히어로가 늦게 채워지지 않게 한다. */}
           <img
             src={post.ogImageUrl}
             alt=""
+            fetchPriority="high"
+            decoding="async"
             className="vt-post-cover aspect-[2/1] max-h-[380px] w-full object-cover"
           />
         </div>

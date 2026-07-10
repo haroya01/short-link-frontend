@@ -31,7 +31,7 @@ const WhyKurl = dynamic(() => import("@/components/landing/why-kurl").then((m) =
 const HomeFaq = dynamic(() => import("@/components/landing/home-faq").then((m) => m.HomeFaq));
 
 export default function HomePage() {
-  const { authenticated } = useAuth();
+  const { authenticated, ready } = useAuth();
   const t = useTranslations("home");
   const locale = useLocale();
   // headline2 가 ja 에서 「クリックの「いつ・どこから・誰が」を一目で」 23자로 늘어나
@@ -112,6 +112,7 @@ export default function HomePage() {
           >
             <ShortenForm
               authenticated={authenticated}
+              ready={ready}
               onShortened={(items) => {
                 setResults(
                   items.map((it) => ({
@@ -196,7 +197,9 @@ export default function HomePage() {
 
       <LandingPreviews />
 
-      {!authenticated && recent.length > 0 && (
+      {/* `ready` 게이트: /me 해석 전엔 렌더하지 않는다 — 로그인 사용자의 첫 렌더(authenticated=false)에
+          섹션이 잠깐 나타났다 사라지는 왕복 깜빡임을 막는다. */}
+      {ready && !authenticated && recent.length > 0 && (
         <Section eyebrow={t("recentEyebrow")} title={t("recentTitle")} subhead={t("recentSubhead")}>
           <RecentLinks />
         </Section>

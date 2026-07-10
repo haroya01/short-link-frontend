@@ -25,12 +25,14 @@ import {
   getCampaign,
   listCampaignBatches,
   reapplyCampaignPolicy,
+  requestBlob,
   updateCampaign,
 } from "@/lib/api";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/error-state";
+import { LinksAuthGate } from "@/components/links/auth-gate";
 import { useToast } from "@/components/ui/toast";
 import { BatchEditDialog } from "@/components/links/batch-edit-dialog";
 import { BatchDeleteDialog } from "@/components/links/batch-delete-dialog";
@@ -78,13 +80,7 @@ export default function CampaignDetailPage() {
   }, [ready, authenticated, campaignId, reload, t]);
 
   if (ready && !authenticated) {
-    return (
-      <div className="container max-w-md py-20 text-center">
-        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-          {t("loginRequired")}
-        </h1>
-      </div>
-    );
+    return <LinksAuthGate eyebrow="campaigns" title={t("loginRequired")} />;
   }
 
   return (
@@ -96,11 +92,9 @@ export default function CampaignDetailPage() {
         <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> {t("backToList")}
       </Link>
 
-      {loading ? (
-        <DetailSkeleton />
-      ) : error ? (
-        <ErrorState message={error} onRetry={() => setReload((n) => n + 1)} />
-      ) : campaign ? (
+      {/* 로드된 콘텐츠가 있으면 항상 그것을 우선 렌더 — 액션 후 재검증(setReload)에서는 스켈레톤으로
+          갈아끼우지 않고 기존 화면을 유지한 채 백그라운드로 refetch 한다(초기 진입에만 스켈레톤). */}
+      {campaign ? (
         <>
           <Header
             campaign={campaign}
@@ -160,6 +154,10 @@ export default function CampaignDetailPage() {
             onChanged={() => setReload((n) => n + 1)}
           />
         </>
+      ) : loading ? (
+        <DetailSkeleton />
+      ) : error ? (
+        <ErrorState message={error} onRetry={() => setReload((n) => n + 1)} />
       ) : null}
     </div>
   );
@@ -227,7 +225,33 @@ function PrepareSection({
   batchCount: number;
 }) {
   const [zipDialogOpen, setZipDialogOpen] = useState(false);
+  const [csvPending, setCsvPending] = useState(false);
   const t = useTranslations("campaignApp.detail");
+  const { toast } = useToast();
+
+  // CSV 는 인증(Bearer)이 필요한 엔드포인트라 raw 앵커 내비게이션(헤더 없음)은 401. QR ZIP 과 같은
+  // requestBlob(인증 fetch → blob) 경로로 받아 다운로드를 트리거한다.
+  async function downloadCsv() {
+    if (csvPending) return;
+    setCsvPending(true);
+    try {
+      const { blob, filename } = await requestBlob(campaignBatchesCsvUrl(campaignId), {
+        method: "GET",
+      });
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename ?? `campaign-${campaignId}-batches.csv`;
+      a.rel = "noopener";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+    } catch (e) {
+      toast(e instanceof Error ? e.message : t("csvFailed"), "error");
+    } finally {
+      setCsvPending(false);
+    }
+  }
+
   return (
     <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -246,11 +270,9 @@ function PrepareSection({
           <Button variant="outline" onClick={() => setZipDialogOpen(true)}>
             <Download className="h-4 w-4" aria-hidden /> QR ZIP
           </Button>
-          <a href={campaignBatchesCsvUrl(campaignId)} download>
-            <Button variant="outline">
-              <FileText className="h-4 w-4" aria-hidden /> Batch CSV
-            </Button>
-          </a>
+          <Button variant="outline" onClick={downloadCsv} disabled={csvPending}>
+            <FileText className="h-4 w-4" aria-hidden /> Batch CSV
+          </Button>
           <Link href={`/campaigns/${campaignId}/print-sheet`}>
             <Button variant="outline">
               <Printer className="h-4 w-4" aria-hidden /> {t("prepare.printSheet")}

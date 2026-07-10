@@ -39,8 +39,9 @@ export default function BlogAnalyticsPage() {
       .finally(() => setLoading(false));
   }, [ready, authenticated, days]);
 
-  if (!ready) return null;
-  if (!authenticated) {
+  // 로그인 여부가 확정되기 전(!ready)에는 로그인 안내를 띄우지 않는다 — loading 초기값이 true 라
+  // 아래 `loading && !data` 스켈레톤이 그대로 노출되어 하드 로드 시 빈 화면 플래시를 막는다.
+  if (ready && !authenticated) {
     return <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>;
   }
 
@@ -143,7 +144,7 @@ export default function BlogAnalyticsPage() {
           <SeriesAnalyticsSection />
 
           {/* 글 안 링크 — kurl × 웹로그 차별점을 라벨된 섹션으로. 위 클릭 카드의 by-post 분해. */}
-          <LinksBreakdownSection days={days} />
+          <LinksBreakdownSection />
 
           {/* Every post, views-first, lazy-loaded — so a few hundred posts don't all arrive at once.
               Infinite-scroll, so it stays LAST — anything below it would be unreachable until fully paged. */}
@@ -177,22 +178,27 @@ const SORTS: PostPerformanceSort[] = ["views", "likes", "recent"];
 /** Per-post performance, sortable, appended page-by-page as the reader nears the end. */
 function PostPerformanceList() {
   const t = useTranslations("blogWorkspace");
+  const tc = useTranslations("common");
   const [sort, setSort] = useState<PostPerformanceSort>("views");
   const [items, setItems] = useState<TopPost[]>([]);
   const [nextPage, setNextPage] = useState(0);
   const [hasNext, setHasNext] = useState(true);
   const [loading, setLoading] = useState(false);
+  // 실패를 '다음 페이지 없음'으로 위장하지 않는다 — error 는 자동 로더만 멈추고 재시도를 노출한다.
+  const [error, setError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   // Collapsed by default to 10 rows; '전체보기' activates the infinite-scroll sentinel.
   const [expanded, setExpanded] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  // Reset + load the first page whenever the sort changes (and on mount).
+  // Reset + load the first page whenever the sort changes (and on mount / retry).
   useEffect(() => {
     let alive = true;
     setItems([]);
     setNextPage(0);
     setHasNext(true);
     setExpanded(false);
+    setError(false);
     setLoading(true);
     getPostPerformance(0, 20, sort)
       .then((res) => {
@@ -201,32 +207,35 @@ function PostPerformanceList() {
         setHasNext(res.hasNext);
         setNextPage(1);
       })
-      .catch(() => alive && setHasNext(false))
+      .catch(() => alive && setError(true))
       .finally(() => alive && setLoading(false));
     return () => {
       alive = false;
     };
-  }, [sort]);
+  }, [sort, reloadKey]);
 
   const loadMore = useCallback(async () => {
     if (loading || !hasNext || nextPage === 0) return; // nextPage 0 = first page not in yet
     setLoading(true);
+    setError(false);
     try {
       const res = await getPostPerformance(nextPage, 20, sort);
       setItems((prev) => [...prev, ...res.items]);
       setHasNext(res.hasNext);
       setNextPage((p) => p + 1);
     } catch {
-      setHasNext(false);
+      // hasNext 는 그대로 두고 error 로만 자동 로더를 멈춘다 — 재시도 버튼이 남아 다시 이어 받는다.
+      setError(true);
     } finally {
       setLoading(false);
     }
   }, [loading, hasNext, nextPage, sort]);
 
-  // Append subsequent pages when the sentinel scrolls into view.
+  // Append subsequent pages when the sentinel scrolls into view. error 상태에선 관찰을 멈춰
+  // 깨진 fetch 로 옵저버가 무한히 재시도하지 않게 한다(재시도 성공 시 다시 붙는다).
   useEffect(() => {
     const el = sentinelRef.current;
-    if (!el) return;
+    if (!el || error) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) void loadMore();
@@ -235,7 +244,7 @@ function PostPerformanceList() {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [loadMore]);
+  }, [loadMore, error]);
 
   return (
     <section className="mt-8">
@@ -262,6 +271,16 @@ function PostPerformanceList() {
       </div>
       {items.length === 0 && loading ? (
         <SkeletonRows count={5} />
+      ) : items.length === 0 && error ? (
+        <div className="py-6 text-center">
+          <button
+            type="button"
+            onClick={() => setReloadKey((k) => k + 1)}
+            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
+          >
+            {tc("retry")}
+          </button>
+        </div>
       ) : items.length === 0 ? (
         <p className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
@@ -302,6 +321,17 @@ function PostPerformanceList() {
       {expanded && <div ref={sentinelRef} aria-hidden className="h-px" />}
       {expanded && loading && items.length > 0 && (
         <p className="py-4 text-center text-[12px] text-slate-500 dark:text-slate-400">···</p>
+      )}
+      {expanded && error && !loading && items.length > 0 && (
+        <div className="py-4 text-center">
+          <button
+            type="button"
+            onClick={() => void loadMore()}
+            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
+          >
+            {tc("retry")}
+          </button>
+        </div>
       )}
     </section>
   );
@@ -373,9 +403,10 @@ type LinkRow = { postId: number; title: string; slug: string; clicks: number };
  * 글 안 링크 — kurl × 웹로그 차별점을 분석 안의 라벨된 섹션으로 흡수(옛 /links 페이지). 위 클릭 카드가
  * 합계라면 여기는 "어느 글의 kurl 링크가 그 클릭을 끌었나"의 by-post 분해다. 클릭이 있을 때만 노출.
  * 글별 클릭을 한 번에 주는 list endpoint 가 아직 없어 발행 글마다 fan-out — 백엔드 역인덱스가 들어오면
- * 이 fetch 만 교체한다.
+ * 이 fetch 만 교체한다. 표시값은 lifetimeLinkClicks(윈도우 무관)이라 마운트 1회만 발사하고 윈도우 탭
+ * 전환에는 재요청하지 않는다.
  */
-function LinksBreakdownSection({ days }: { days: number }) {
+function LinksBreakdownSection() {
   const t = useTranslations("blogWorkspace");
   const [rows, setRows] = useState<LinkRow[] | null>(null);
   const [expanded, setExpanded] = useState(false);
@@ -386,7 +417,7 @@ function LinksBreakdownSection({ days }: { days: number }) {
       try {
         const published = (await listMyPosts()).filter((p) => p.status === "PUBLISHED");
         const detail = await Promise.all(
-          published.map((p) => getPostAnalytics(p.id, days).catch(() => null)),
+          published.map((p) => getPostAnalytics(p.id).catch(() => null)),
         );
         if (cancelled) return;
         const built = detail
@@ -402,7 +433,7 @@ function LinksBreakdownSection({ days }: { days: number }) {
     return () => {
       cancelled = true;
     };
-  }, [days]);
+  }, []);
 
   if (!rows || rows.length === 0) return null;
 

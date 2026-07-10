@@ -22,6 +22,7 @@ export function Avatar({
   name,
   size = "md",
   shrink = true,
+  eager = false,
 }: {
   src: string | null | undefined;
   /** Author name — its first character is the fallback initial. */
@@ -29,12 +30,25 @@ export function Avatar({
   size?: AvatarSize;
   /** `shrink-0` so the avatar keeps its size in a flex row. Off only where the original markup omitted it. */
   shrink?: boolean;
+  /**
+   * Feed/comment rows render dozens of avatars below the fold, so the default is lazy. Only above-fold
+   * callers (e.g. the author header) opt into eager so their avatar isn't deferred behind layout.
+   */
+  eager?: boolean;
 }) {
   const { box, text } = SIZES[size];
   const shrinkCls = shrink ? "shrink-0 " : "";
   if (src) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt="" className={`${box} ${shrinkCls}rounded-full object-cover`} />;
+    return (
+      <img
+        src={src}
+        alt=""
+        loading={eager ? "eager" : "lazy"}
+        decoding="async"
+        className={`${box} ${shrinkCls}rounded-full object-cover`}
+      />
+    );
   }
   return (
     <span

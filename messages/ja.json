@@ -1,9 +1,15 @@
 {
+  "authGate": {
+    "login": "ログイン",
+    "explore": "ログインせずに見てまわる",
+    "defaultDesc": "ログインすると、リンクとキャンペーンの続きを管理できます。"
+  },
   "comments": {
     "count": "コメント{count}件",
     "placeholder": "コメントを入力",
     "submit": "コメント",
     "submitting": "投稿中…",
+    "cancel": "キャンセル",
     "reply": "返信",
     "replyPlaceholder": "返信を入力",
     "delete": "削除",
@@ -18,7 +24,9 @@
     "list": "リスト",
     "quote": "引用",
     "preview": "プレビュー",
-    "linkText": "リンクテキスト"
+    "linkText": "リンクテキスト",
+    "submitError": "コメントを投稿できませんでした。もう一度お試しください。",
+    "deleteError": "コメントを削除できませんでした。もう一度お試しください。"
   },
   "publicFeed": {
     "recent": "最新",
@@ -103,7 +111,9 @@
     "seriesNextEpisode": "次の話",
     "seriesEpisodeOf": "全{total}話中{current}話",
     "feedReasonTopic": "「{tag}」をフォロー中",
-    "feedReasonSeries": "購読中シリーズ"
+    "feedReasonSeries": "購読中シリーズ",
+    "bookmarkFailed": "保存できませんでした。もう一度お試しください。",
+    "seriesSubscribeFailed": "購読を変更できませんでした。もう一度お試しください。"
   },
   "blogWebhooks": {
     "loginRequired": "ログインが必要です。",
@@ -435,7 +445,8 @@
       "placePlaceholder": "場所名や住所を検索",
       "placeEmpty": "結果がありません。",
       "placeHint": "場所を選ぶと地図カードが記事に挿入されます。",
-      "placeClose": "閉じる"
+      "placeClose": "閉じる",
+      "placeError": "場所の情報を読み込めませんでした。もう一度お試しください。"
     },
     "autoSave": "自動保存",
     "unsavedLeaveTitle": "保存されていない変更があります",
@@ -447,7 +458,9 @@
     "importPartialError": "一部のファイルをインポートできませんでした。ファイルを確認して再試行してください。",
     "savedAt": "{time} 保存済み",
     "continueWriting": "続きを書く",
-    "noPostsHint": "書いた記事はここに積まれます。公開するまでは下書きのままです。"
+    "noPostsHint": "書いた記事はここに積まれます。公開するまでは下書きのままです。",
+    "seriesCreateConflict": "同じ名前のシリーズがすでにあります。別の名前をお試しください。",
+    "seriesCreateError": "シリーズを作成できませんでした。もう一度お試しください。"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
@@ -479,7 +492,11 @@
     "clearHistoryCancel": "キャンセル",
     "forget": "履歴から削除",
     "loadMore": "もっと見る",
-    "emptyFolder": "このフォルダは空です。"
+    "emptyFolder": "このフォルダは空です。",
+    "saveFailed": "変更を保存できませんでした。もう一度お試しください。",
+    "bulkMoveFailed": "{count}件を移動できませんでした。もう一度お試しください。",
+    "loadError": "読んだ記録を読み込めませんでした。",
+    "retry": "再試行"
   },
   "publicPost": {
     "like": "いいね",
@@ -494,6 +511,11 @@
     "highlightReplySubmit": "返信",
     "highlightReplyDelete": "削除",
     "highlightReplyLogin": "ログインして返信しましょう",
+    "highlightDelete": "ハイライトを削除",
+    "highlightDeleteConfirm": "このハイライトを削除しますか？",
+    "highlightDeleteConfirmBody": "残したメモや返信も一緒に消えます。元に戻せません。",
+    "highlightDeleteConfirmBodyBare": "削除すると元に戻せません。",
+    "highlightDeleteError": "削除できませんでした。もう一度お試しください。",
     "readingTime": "約{minutes}分",
     "ogReadingTime": "{minutes}分で読めます",
     "previewBanner": "プレビュー — まだ公開されていない記事です。このリンクを知っている人だけが閲覧できます。",
@@ -570,7 +592,8 @@
     "seriesViewAll": "シリーズ全{total}話を見る",
     "relatedHeading": "次に読む",
     "resumeReading": "続きを読む",
-    "resumeDismiss": "閉じる"
+    "resumeDismiss": "閉じる",
+    "replyError": "返信を投稿できませんでした。もう一度お試しください。"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -1410,6 +1433,9 @@
       "colLocation": "地域",
       "colDevice": "デバイス",
       "colReferrer": "参照元"
+    },
+    "chart": {
+      "peak": "ピーク"
     }
   },
   "admin": {
@@ -1629,6 +1655,112 @@
       "copied": "コピー済み",
       "expires": "{minutes}分後に失効",
       "hint": "devtoolsなしでシード・スクリプトにそのまま使えます。"
+    },
+    "browse": {
+      "usersTab": "全ユーザー",
+      "linksTab": "全リンク",
+      "search": "検索",
+      "users": {
+        "title": "全ユーザー",
+        "subtitle": "すべてのアカウントを検索・閲覧",
+        "searchPlaceholder": "メールまたはハンドルを検索",
+        "role": {
+          "all": "すべての権限",
+          "user": "一般",
+          "admin": "管理者"
+        },
+        "col": {
+          "user": "ユーザー",
+          "role": "権限",
+          "tier": "プラン",
+          "links": "リンク",
+          "joined": "登録日",
+          "status": "状態"
+        },
+        "active": "有効",
+        "deleted": "退会",
+        "noResults": "該当するユーザーがいません"
+      },
+      "links": {
+        "title": "全リンク",
+        "subtitle": "すべての短縮リンクを検索・閲覧",
+        "searchPlaceholder": "コードまたはリンク先URLを検索",
+        "sort": {
+          "recent": "新着順",
+          "clicks": "クリック数順"
+        },
+        "col": {
+          "code": "コード",
+          "destination": "リンク先",
+          "owner": "所有者",
+          "clicks": "クリック",
+          "status": "状態",
+          "created": "作成日"
+        },
+        "status": {
+          "active": "有効",
+          "expired": "期限切れ",
+          "limitReached": "上限到達"
+        },
+        "ownerFilter": "所有者 #{id}",
+        "clearFilter": "フィルター解除",
+        "locked": "パスワード保護",
+        "noResults": "該当するリンクがありません"
+      }
+    },
+    "detail": {
+      "title": "リンク詳細",
+      "back": "すべてのリンクに戻る",
+      "anonymousOwner": "匿名",
+      "meta": {
+        "code": "短縮コード",
+        "owner": "所有者",
+        "destination": "リンク先",
+        "clicks": "総クリック数",
+        "views": "閲覧",
+        "created": "作成日",
+        "expires": "有効期限",
+        "noExpiry": "期限なし",
+        "locked": "パスワード保護"
+      },
+      "section": {
+        "daily": {
+          "title": "日別クリック",
+          "desc": "日単位 · {tz}"
+        },
+        "hourly": {
+          "title": "時間帯別",
+          "desc": "時間帯ごとの分布"
+        },
+        "referrers": {
+          "title": "リファラー",
+          "desc": "クリックの流入元"
+        },
+        "devices": {
+          "title": "デバイス",
+          "desc": "デバイス別の内訳"
+        },
+        "countries": {
+          "title": "国",
+          "desc": "国別のクリック"
+        }
+      },
+      "empty": {
+        "countries": "国データはまだありません"
+      }
+    },
+    "activity": {
+      "recentLinksTitle": "最近のリンク",
+      "recentLinksDesc": "新しく作成されたリンク",
+      "recentClicksTitle": "最近のクリック",
+      "recentClicksDesc": "リアルタイムのクリック",
+      "trendingTitle": "24時間の人気",
+      "trendingDesc": "人によるクリック上位",
+      "empty": {
+        "links": "まだリンクがありません",
+        "clicks": "まだクリックがありません",
+        "trending": "まだ人気のリンクはありません"
+      }
     }
   },
   "common": {
@@ -2564,7 +2696,9 @@
       "recoveryCopyAll": "すべてコピー",
       "recoveryCopied": "リカバリコードをコピーしました。",
       "recoveryCopyFailed": "コピー失敗",
-      "recoveryDismiss": "保存しました（閉じる）"
+      "recoveryDismiss": "保存しました（閉じる）",
+      "loadError": "2FAの状態を読み込めませんでした。",
+      "retry": "再試行"
     },
     "apiKeys": {
       "title": "APIキー",
@@ -2696,7 +2830,8 @@
       "redirectHint": "キャンペーン終了時に、印刷済み QR へ一括適用される転送先 URL です。",
       "cancel": "キャンセル",
       "creating": "作成中...",
-      "submit": "QR キャンペーンを作成"
+      "submit": "QR キャンペーンを作成",
+      "leaveConfirm": "保存せずに移動しますか？入力した内容は失われます。"
     },
     "detail": {
       "loadFailed": "読み込みに失敗しました",
@@ -2748,7 +2883,8 @@
         "emptyTitle": "配布バッチはまだありません",
         "emptyDescription": "最初のバッチを追加すると QR コードが発行されます。印刷・発注前にスキャンして動作確認できます。",
         "addFirst": "最初の配布バッチを追加"
-      }
+      },
+      "csvFailed": "CSVのダウンロードに失敗しました"
     },
     "batchesNew": {
       "loadFailed": "読み込みに失敗しました",
@@ -2869,7 +3005,8 @@
         "areaTitle": "エリア別の成果",
         "areaHint": "次の配布場所を決める基準です。",
         "tooltip": "{rate}回 / 100枚 · クリック {clicks} / 配布 {quantity}",
-        "efficiency": "効率"
+        "efficiency": "効率",
+        "meta": "クリック {clicks} · {quantity}枚"
       },
       "compare": {
         "title": "他キャンペーンと比較",
@@ -3277,6 +3414,7 @@
     "add": "追加",
     "whyLabel": "なぜつなげましたか？",
     "whyPlaceholder": "One line (optional)",
-    "addToCount": "{count}件のコレクションに追加されます。"
+    "addToCount": "{count}件のコレクションに追加されます。",
+    "connectError": "保存できませんでした。もう一度お試しください。"
   }
 }

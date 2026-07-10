@@ -10,8 +10,47 @@ import { DiscoveryCard, DiscoveryGrid, DiscoveryCell } from "@/modules/blog/comp
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 
 const PAGE_SIZE = 24;
+// 이 시간을 넘긴 세션 스냅샷은 되살리지 않고 새로 시작한다(오래 열려 있던 탭의 낡은 피드 방지).
+const RESTORE_TTL_MS = 30 * 60 * 1000;
 
 const itemKey = (i: PublicFeedItem) => `${i.author.username}/${i.slug}`;
+
+type FeedSnapshot = { items: PublicFeedItem[]; page: number; hasNext: boolean; savedAt: number };
+
+// 재마운트(주로 글 상세 → 뒤로가기) 시, sessionStorage 에 저장해 둔 이 피드의 로드했던 페이지들을
+// 복원한다. page 0 시드는 서버 최신본을 그대로 두고 그 뒤 tail 만 이어 붙여, 목록이 24개로 접히며
+// "보던 글이 사라지는" 문제를 막는다. 복원할 게 없으면 null.
+function restoreFeed(
+  feedKey: string,
+  seedItems: PublicFeedItem[],
+  seedHasNext: boolean,
+): { items: PublicFeedItem[]; page: number; hasNext: boolean } | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(feedKey);
+    if (!raw) return null;
+    const snap = JSON.parse(raw) as FeedSnapshot;
+    if (
+      !snap ||
+      !Array.isArray(snap.items) ||
+      snap.items.length <= seedItems.length ||
+      typeof snap.savedAt !== "number" ||
+      Date.now() - snap.savedAt > RESTORE_TTL_MS
+    ) {
+      return null;
+    }
+    const seen = new Set(seedItems.map(itemKey));
+    const tail = snap.items.filter((i) => i?.author?.username && i.slug && !seen.has(itemKey(i)));
+    if (tail.length === 0) return null;
+    return {
+      items: [...seedItems, ...tail],
+      page: typeof snap.page === "number" ? snap.page : 0,
+      hasNext: typeof snap.hasNext === "boolean" ? snap.hasNext : seedHasNext,
+    };
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Client-side continuation of the feed: the first page is server-rendered (SSR/ISR) and handed in as
@@ -59,25 +98,62 @@ export function FeedInfinite({
 }) {
   const t = useTranslations("publicFeed");
   const { prefs } = useTagPrefs();
+  // 피드 정체성: 정렬·검색·태그·언어·표면이 같으면 같은 스냅샷을 공유한다.
+  const feedKey = useMemo(
+    () => `kurl.feed:${variant}:${locale}:${sort}:${tag ?? ""}:${lang ?? ""}:${query?.trim() ?? ""}`,
+    [variant, locale, sort, tag, lang, query],
+  );
+
   const [items, setItems] = useState(initialItems);
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(initialHasNext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  // 진행 중이던 loadMore 응답이 필터 전환 뒤 도착해 새 피드에 섞이지 않게 하는 세대 토큰.
+  const requestGen = useRef(0);
+  const feedKeyRef = useRef(feedKey);
 
-  // A new server render (tab switch / new search) replaces the seed — reset to its page 0.
+  // 재마운트 시 이 피드의 이전 페이지들을 세션 스냅샷에서 복원한다. 하이드레이션 불일치를 피하려
+  // 상태는 SSR 시드로 시작하고, 마운트 후에만 목록을 늘린다(이후 필터 변경은 아래 reset effect 담당).
   useEffect(() => {
+    const restored = restoreFeed(feedKey, initialItems, initialHasNext);
+    if (restored) {
+      setItems(restored.items);
+      setPage(restored.page);
+      setHasNext(restored.hasNext);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 필터/정렬이 바뀌면(소프트 nav, 리마운트 없음) 시드가 교체된다 — 새 피드의 page 0 으로 초기화하고
+  // 세대 토큰을 올려 진행 중이던 이전 필터의 페이지 응답을 무효화한다. (마운트는 위 복원 effect 가 담당)
+  useEffect(() => {
+    if (feedKeyRef.current === feedKey) return;
+    feedKeyRef.current = feedKey;
+    requestGen.current += 1;
     setItems(initialItems);
     setPage(0);
     setHasNext(initialHasNext);
     setError(false);
-  }, [initialItems, initialHasNext]);
+  }, [feedKey, initialItems, initialHasNext]);
+
+  // 로드한 페이지 스냅샷을 세션에 저장해 뒤로가기 복원에 쓴다. page 0(추가 로드 전)은 저장 불필요.
+  useEffect(() => {
+    if (typeof window === "undefined" || page === 0) return;
+    try {
+      const snapshot: FeedSnapshot = { items, page, hasNext, savedAt: Date.now() };
+      window.sessionStorage.setItem(feedKey, JSON.stringify(snapshot));
+    } catch {
+      // 용량 초과·스토리지 비활성: 복원은 best-effort 이므로 조용히 무시한다.
+    }
+  }, [feedKey, items, page, hasNext]);
 
   const loadMore = useCallback(async () => {
     if (loading || !hasNext) return;
     setLoading(true);
     setError(false);
+    const gen = requestGen.current;
     const next = page + 1;
     const q = query?.trim();
     const langSuffix = lang ? `&lang=${encodeURIComponent(lang)}` : "";
@@ -88,6 +164,8 @@ export function FeedInfinite({
         : `/api/v1/public/posts?sort=${sort}&page=${next}&size=${PAGE_SIZE}${langSuffix}`;
     try {
       const view = await request<PublicFeedView>(path, { method: "GET" });
+      // 필터(정렬/태그/언어)가 바뀌었으면 이 응답은 이전 필터 것 — 새 피드에 섞지 않고 버린다.
+      if (gen !== requestGen.current) return;
       // De-dupe defensively: a publish at the head between fetches can shift a post across pages.
       setItems((prev) => {
         const seen = new Set(prev.map(itemKey));
@@ -96,6 +174,8 @@ export function FeedInfinite({
       setPage(next);
       setHasNext(view.hasNext);
     } catch {
+      // 이전 필터의 실패는 현재 피드에 반영하지 않는다(새 피드의 오토로더를 잘못 잠그지 않도록).
+      if (gen !== requestGen.current) return;
       // Surface a retry instead of silently ending the feed. `hasNext` stays true so the button
       // remains; `error` gates the auto-loader below so the observer doesn't spin on a broken fetch.
       setError(true);
@@ -131,6 +211,12 @@ export function FeedInfinite({
       : items.filter((i) => !i.tags?.some((tg) => hiddenSet.has(tg)));
   const hiddenCount = items.length - visible.length;
 
+  // DiscoveryGrid 는 balanced CSS multicol(1/2/3열): 문서순 i<4 는 전부 1열에 쌓여, 2·3열의 폴드
+  // 위 상단 커버(≈ seed/3, 2·seed/3)가 lazy 로 남고 LCP 커버가 지연된다. 각 열의 첫 카드만 eager 로.
+  // append 된 페이지는 항상 폴드 아래이므로 seed 범위 안에서만 계산한다.
+  const seedLen = Math.min(visible.length, PAGE_SIZE);
+  const gridEager = new Set([0, Math.ceil(seedLen / 3), Math.ceil((seedLen * 2) / 3)]);
+
   return (
     <>
       {variant === "grid" ? (
@@ -144,7 +230,7 @@ export function FeedInfinite({
               {/* 페이지 청크 안 순서(i % size)대로 25ms 스태거 — append 된 카드만 새로 마운트되므로
                   기존 카드는 다시 돌지 않고, 새 페이지가 "뚝"이 아니라 줄지어 떠오른다. */}
               <DiscoveryCell entranceDelay={Math.min((i % PAGE_SIZE) * 25, 250)}>
-                <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} eager={i < 4} />
+                <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} eager={gridEager.has(i)} />
               </DiscoveryCell>
               {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
                 <DiscoveryCell>{interleaveNode}</DiscoveryCell>

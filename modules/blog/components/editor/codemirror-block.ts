@@ -166,14 +166,17 @@ class CodeMirrorNodeView {
 
   // Mirror CM's changes AND selection into ProseMirror (canonical prosemirror-codemirror bridge).
   // Force the entire CM buffer into the PM node — used on blur, when forwardUpdate's focus guard would
-  // otherwise skip the final sync. Idempotent: replacing identical text is a no-op-shaped transaction.
+  // otherwise skip the final sync. Skips when the buffer already matches the PM node: replaceWith on
+  // identical text still emits a ReplaceStep (docChanged=true), which would dirty the doc and trigger a
+  // spurious save / undo step on a plain click-in-click-out with no edit.
   private commitToPM() {
     if (this.updating) return;
     const pos = this.getPos();
     if (pos == null) return;
+    const text = this.cm.state.doc.toString();
+    if (text === this.node.textContent) return;
     const from = pos + 1;
     const to = pos + this.node.nodeSize - 1;
-    const text = this.cm.state.doc.toString();
     const tr = this.view.state.tr;
     if (text.length) {
       tr.replaceWith(from, to, this.view.state.schema.text(text));

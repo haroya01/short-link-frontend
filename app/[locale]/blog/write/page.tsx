@@ -12,6 +12,7 @@ import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
 import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { SeriesGroupedView } from "@/modules/blog/components/workspace/series-grouped-view";
 import { SkeletonRows } from "@/modules/blog/components/skeleton";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 
 const RELATIVE_UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
   ["year", 31_536_000_000],
@@ -39,9 +40,15 @@ export default function WriteIndexPage() {
   const router = useRouter();
   const pathname = usePathname();
   // "시리즈별 보기" is a view of this same list, driven by ?view=series (so /series can forward here and
-  // the choice is shareable). Read from the live URL rather than useSearchParams() so the page doesn't
-  // bail into the CSR-only build path. Series management lives in that view — no separate series page.
-  const [view, setView] = useState<"all" | "series">("all");
+  // the choice is shareable). Derive the initial view synchronously from the live URL (not
+  // useSearchParams(), which bails into the CSR-only build path) so a ?view=series entry doesn't paint
+  // the 'all' view for a frame first. Series management lives in that view — no separate series page.
+  const [view, setView] = useState<"all" | "series">(() =>
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("view") === "series"
+      ? "series"
+      : "all",
+  );
   const [posts, setPosts] = useState<PostView[]>([]);
   const [filter, setFilter] = useState<"all" | PostStatus>("all");
   const [loading, setLoading] = useState(true);
@@ -53,7 +60,6 @@ export default function WriteIndexPage() {
   useEffect(() => {
     const i = window.location.pathname.indexOf("/write");
     if (i >= 0) setWriteBase(window.location.pathname.slice(0, i + "/write".length));
-    setView(new URLSearchParams(window.location.search).get("view") === "series" ? "series" : "all");
   }, []);
 
   function changeView(v: "all" | "series") {
@@ -149,13 +155,13 @@ export default function WriteIndexPage() {
         </div>
         <div className="flex items-center gap-2">
           <ImportMdButton onDone={load} />
-          <a
+          <BlogLink
             href={`${writeBase}/new`}
             className="focus-ring inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg bg-accent-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 sm:px-4"
           >
             <PenSquare className="h-4 w-4" />
             {t("newPost")}
-          </a>
+          </BlogLink>
         </div>
       </header>
 
@@ -190,7 +196,7 @@ export default function WriteIndexPage() {
       {/* 이어서 쓰기 — 돌아온 작가의 첫 질문("어디까지 썼더라")에 바로 답하는 진입. 가장 최근
           임시저장 1건만, 조용한 그린 틴트 카드로. 임시저장이 없으면 섹션 자체가 없다. */}
       {!loading && latestDraft && (
-        <a
+        <BlogLink
           href={`${writeBase}/${latestDraft.id}`}
           className="focus-ring group mb-5 flex items-center gap-3 rounded-xl border border-accent-200/70 bg-accent-50/50 px-4 py-3 transition-colors hover:border-accent-300 hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/15"
         >
@@ -208,7 +214,7 @@ export default function WriteIndexPage() {
           <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
             {relativeTime(latestDraft.updatedAt, locale)}
           </span>
-        </a>
+        </BlogLink>
       )}
 
       {/* 대표글 관리 — 핀한 글을 공개 블로그 '대표글' 섹션에 이 순서로 노출. 순서 조정·해제는 여기서. */}
@@ -291,13 +297,13 @@ export default function WriteIndexPage() {
             <p className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{t("noPosts")}</p>
             <p className="mt-1 text-[13.5px] text-slate-500 dark:text-slate-400">{t("noPostsHint")}</p>
           </div>
-          <a
+          <BlogLink
             href={`${writeBase}/new`}
             className="focus-ring mt-1 inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800"
           >
             <PenSquare className="h-4 w-4" />
             {t("newPost")}
-          </a>
+          </BlogLink>
         </div>
       )}
       {!loading && posts.length > 0 && (
@@ -315,7 +321,7 @@ export default function WriteIndexPage() {
                 className="profile-fade group/row relative border-b border-slate-100 last:border-b-0 dark:border-slate-800"
                 style={{ ["--idx" as string]: Math.min(rowIdx, 8) } as React.CSSProperties}
               >
-                <a
+                <BlogLink
                   href={`${writeBase}/${p.id}`}
                   className={`focus-ring group block rounded-xl px-3 py-4 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
                     p.status === "PUBLISHED" ? "pr-24 sm:pr-32" : hasAnalytics ? "pr-16 sm:pr-28" : "pr-3"
@@ -361,7 +367,7 @@ export default function WriteIndexPage() {
                       />
                     )}
                   </div>
-                </a>
+                </BlogLink>
                 {/* Action cluster — siblings of the editor link (never nested). 대표글 toggle (published
                     only) + per-post 성과. This list is the hub: pinning and analytics live inline. */}
                 {(hasAnalytics || p.status === "PUBLISHED") && (
@@ -383,14 +389,14 @@ export default function WriteIndexPage() {
                       </button>
                     )}
                     {hasAnalytics && (
-                      <a
+                      <BlogLink
                         href={`${analyticsBase}/${p.id}`}
                         aria-label={t("viewAnalytics")}
                         className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/80 px-2.5 py-1.5 text-[12px] font-medium text-slate-500 backdrop-blur transition-colors hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
                       >
                         <BarChart3 className="h-4 w-4" />
                         <span className="hidden sm:inline">{t("viewAnalytics")}</span>
-                      </a>
+                      </BlogLink>
                     )}
                   </div>
                 )}
@@ -400,13 +406,13 @@ export default function WriteIndexPage() {
           {/* 조용한 종결 CTA — 리스트가 끝났을 때 다음 행동이 손 닿는 곳에. 대시 보더 = "아직
               없는 글"의 자리라는 어휘. */}
           <li className="profile-fade" style={{ ["--idx" as string]: Math.min(visible.length, 9) } as React.CSSProperties}>
-            <a
+            <BlogLink
               href={`${writeBase}/new`}
               className="focus-ring mt-3 flex items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 px-3 py-4 text-[13.5px] font-medium text-slate-500 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
             >
               <PenSquare className="h-4 w-4" />
               {t("newPost")}
-            </a>
+            </BlogLink>
           </li>
         </ul>
       )}

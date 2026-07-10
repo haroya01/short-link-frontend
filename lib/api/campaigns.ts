@@ -128,7 +128,7 @@ function qrQueryString(options?: Partial<QrDownloadOptions>): string {
   return `?size=${o.size}&ec=${o.ec}&label=${o.label ? "true" : "false"}`;
 }
 
-/** 다운로드 URL — 토큰 없는 navigator 다운로드 트리거에 쓰임. 인증은 cookie/세션이 처리. */
+/** 다운로드 URL 빌더 — requestBlob(인증 fetch → blob, Authorization: Bearer)로 소비된다. */
 export function campaignBatchQrUrl(
   campaignId: number,
   batchId: number,

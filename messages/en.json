@@ -1,9 +1,15 @@
 {
+  "authGate": {
+    "login": "Sign in",
+    "explore": "Look around without signing in",
+    "defaultDesc": "Sign in to pick up your links and campaigns where you left off."
+  },
   "comments": {
     "count": "{count, plural, =0 {Comments} one {# comment} other {# comments}}",
     "placeholder": "Write a comment",
     "submit": "Comment",
     "submitting": "Posting…",
+    "cancel": "Cancel",
     "reply": "Reply",
     "replyPlaceholder": "Write a reply",
     "delete": "Delete",
@@ -18,7 +24,9 @@
     "list": "List",
     "quote": "Quote",
     "preview": "Preview",
-    "linkText": "link text"
+    "linkText": "link text",
+    "submitError": "Couldn't post your comment. Please try again.",
+    "deleteError": "Couldn't delete the comment. Please try again."
   },
   "publicFeed": {
     "recent": "Latest",
@@ -103,7 +111,9 @@
     "seriesNextEpisode": "Next episode",
     "seriesEpisodeOf": "Episode {current} of {total}",
     "feedReasonTopic": "Following ‘{tag}’",
-    "feedReasonSeries": "Subscribed series"
+    "feedReasonSeries": "Subscribed series",
+    "bookmarkFailed": "Couldn't save. Please try again.",
+    "seriesSubscribeFailed": "Couldn't update subscription. Please try again."
   },
   "blogWebhooks": {
     "loginRequired": "Sign in required.",
@@ -435,7 +445,8 @@
       "placePlaceholder": "Search a place name or address",
       "placeEmpty": "No results.",
       "placeHint": "Pick a place to insert a map card into the post.",
-      "placeClose": "Close"
+      "placeClose": "Close",
+      "placeError": "Couldn't load place details. Please try again."
     },
     "autoSave": "Autosaves",
     "unsavedLeaveTitle": "You have unsaved changes",
@@ -447,7 +458,9 @@
     "importPartialError": "Some files could not be imported. Check the files and try again.",
     "savedAt": "Saved at {time}",
     "continueWriting": "Continue writing",
-    "noPostsHint": "Your posts will pile up here. Drafts stay private until you publish."
+    "noPostsHint": "Your posts will pile up here. Drafts stay private until you publish.",
+    "seriesCreateConflict": "A series with this name already exists. Try a different name.",
+    "seriesCreateError": "Couldn't create the series. Please try again."
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -479,7 +492,11 @@
     "clearHistoryCancel": "Cancel",
     "forget": "Remove from history",
     "loadMore": "Load more",
-    "emptyFolder": "This folder is empty."
+    "emptyFolder": "This folder is empty.",
+    "saveFailed": "Couldn't save your change. Please try again.",
+    "bulkMoveFailed": "Couldn't move {count} items. Please try again.",
+    "loadError": "Couldn't load your reading history.",
+    "retry": "Try again"
   },
   "publicPost": {
     "like": "Like",
@@ -494,6 +511,11 @@
     "highlightReplySubmit": "Reply",
     "highlightReplyDelete": "Delete",
     "highlightReplyLogin": "Sign in to reply",
+    "highlightDelete": "Delete highlight",
+    "highlightDeleteConfirm": "Delete this highlight?",
+    "highlightDeleteConfirmBody": "The note and any replies will be removed too. This can't be undone.",
+    "highlightDeleteConfirmBodyBare": "This can't be undone.",
+    "highlightDeleteError": "Couldn't delete. Please try again.",
     "readingTime": "{minutes} min read",
     "ogReadingTime": "{minutes} min read",
     "previewBanner": "Preview — this post isn't published yet. Only people with this link can see it.",
@@ -570,7 +592,8 @@
     "seriesViewAll": "View all {total} parts",
     "relatedHeading": "Read next",
     "resumeReading": "Resume reading",
-    "resumeDismiss": "Dismiss"
+    "resumeDismiss": "Dismiss",
+    "replyError": "Couldn't post your reply. Please try again."
   },
   "imageCropper": {
     "title": "Crop image",
@@ -1410,6 +1433,9 @@
       "colLocation": "Location",
       "colDevice": "Device",
       "colReferrer": "Referrer"
+    },
+    "chart": {
+      "peak": "Peak"
     }
   },
   "admin": {
@@ -1629,6 +1655,112 @@
       "copied": "Copied",
       "expires": "Expires in {minutes} min",
       "hint": "Use it for seeding or scripts without digging through devtools."
+    },
+    "browse": {
+      "usersTab": "All users",
+      "linksTab": "All links",
+      "search": "Search",
+      "users": {
+        "title": "All users",
+        "subtitle": "Search and browse every account",
+        "searchPlaceholder": "Search email or handle",
+        "role": {
+          "all": "All roles",
+          "user": "User",
+          "admin": "Admin"
+        },
+        "col": {
+          "user": "User",
+          "role": "Role",
+          "tier": "Plan",
+          "links": "Links",
+          "joined": "Joined",
+          "status": "Status"
+        },
+        "active": "Active",
+        "deleted": "Deleted",
+        "noResults": "No matching users"
+      },
+      "links": {
+        "title": "All links",
+        "subtitle": "Search and browse every short link",
+        "searchPlaceholder": "Search code or destination URL",
+        "sort": {
+          "recent": "Most recent",
+          "clicks": "Most clicks"
+        },
+        "col": {
+          "code": "Code",
+          "destination": "Destination",
+          "owner": "Owner",
+          "clicks": "Clicks",
+          "status": "Status",
+          "created": "Created"
+        },
+        "status": {
+          "active": "Active",
+          "expired": "Expired",
+          "limitReached": "Limit reached"
+        },
+        "ownerFilter": "Owner #{id}",
+        "clearFilter": "Clear filter",
+        "locked": "Password protected",
+        "noResults": "No matching links"
+      }
+    },
+    "detail": {
+      "title": "Link detail",
+      "back": "Back to all links",
+      "anonymousOwner": "Anonymous",
+      "meta": {
+        "code": "Short code",
+        "owner": "Owner",
+        "destination": "Destination",
+        "clicks": "Total clicks",
+        "views": "Views",
+        "created": "Created",
+        "expires": "Expires",
+        "noExpiry": "No expiry",
+        "locked": "Password protected"
+      },
+      "section": {
+        "daily": {
+          "title": "Daily clicks",
+          "desc": "By day · {tz}"
+        },
+        "hourly": {
+          "title": "By hour",
+          "desc": "Hour-of-day distribution"
+        },
+        "referrers": {
+          "title": "Referrers",
+          "desc": "Where clicks came from"
+        },
+        "devices": {
+          "title": "Devices",
+          "desc": "Device breakdown"
+        },
+        "countries": {
+          "title": "Countries",
+          "desc": "Clicks by country"
+        }
+      },
+      "empty": {
+        "countries": "No country data yet"
+      }
+    },
+    "activity": {
+      "recentLinksTitle": "Recent links",
+      "recentLinksDesc": "Newly created",
+      "recentClicksTitle": "Recent clicks",
+      "recentClicksDesc": "Latest click stream",
+      "trendingTitle": "Trending · 24h",
+      "trendingDesc": "Top links by human clicks",
+      "empty": {
+        "links": "No links yet",
+        "clicks": "No clicks yet",
+        "trending": "Nothing trending yet"
+      }
     }
   },
   "common": {
@@ -2564,7 +2696,9 @@
       "recoveryCopyAll": "Copy all",
       "recoveryCopied": "Recovery codes copied.",
       "recoveryCopyFailed": "Copy failed.",
-      "recoveryDismiss": "I've saved them, close"
+      "recoveryDismiss": "I've saved them, close",
+      "loadError": "Couldn't load your 2FA status.",
+      "retry": "Retry"
     },
     "apiKeys": {
       "title": "API keys",
@@ -2696,7 +2830,8 @@
       "redirectHint": "The redirect URL is applied to printed QR codes when the campaign ends.",
       "cancel": "Cancel",
       "creating": "Creating...",
-      "submit": "Create QR campaign"
+      "submit": "Create QR campaign",
+      "leaveConfirm": "Leave without saving? Your changes will be lost."
     },
     "detail": {
       "loadFailed": "Load failed",
@@ -2748,7 +2883,8 @@
         "emptyTitle": "No distribution batches yet",
         "emptyDescription": "Add the first batch to issue a QR code. Scan it before ordering print.",
         "addFirst": "Add first batch"
-      }
+      },
+      "csvFailed": "CSV download failed"
     },
     "batchesNew": {
       "loadFailed": "Load failed",
@@ -2869,7 +3005,8 @@
         "areaTitle": "Performance by area",
         "areaHint": "Use this to decide the next distribution location.",
         "tooltip": "{rate} / 100 sheets · clicks {clicks} / distributed {quantity}",
-        "efficiency": "Efficiency"
+        "efficiency": "Efficiency",
+        "meta": "clicks {clicks} · {quantity} sheets"
       },
       "compare": {
         "title": "Compare with another campaign",
@@ -3277,6 +3414,7 @@
     "add": "Add",
     "whyLabel": "Why did you connect it?",
     "whyPlaceholder": "One line (optional)",
-    "addToCount": "Added to {count} collection(s)."
+    "addToCount": "Added to {count} collection(s).",
+    "connectError": "Couldn't save. Please try again."
   }
 }

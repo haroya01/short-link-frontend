@@ -9,6 +9,9 @@ const ADMIN_PATHS = [
   "/blog/admin",
   "/blog/admin/metrics",
   "/admin/abuse-reports",
+  "/admin/users",
+  "/admin/links",
+  "/admin/links/demo123",
   "/admin",
 ];
 
