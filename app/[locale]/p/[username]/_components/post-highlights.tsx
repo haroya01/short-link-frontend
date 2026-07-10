@@ -31,6 +31,7 @@ import {
 } from "@/modules/blog/api/collections";
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { authorHref } from "@/modules/blog/components/feed-card";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
@@ -479,9 +480,18 @@ function HighlightThread({
           {/* The curator's note is the thread opener. */}
           {highlight.note && (
             <div className="mt-3 flex items-start gap-2">
-              <span className="mt-0.5 text-[13px] font-medium text-slate-900 dark:text-slate-100">
-                @{highlight.author?.username ?? "?"}
-              </span>
+              {highlight.author?.username ? (
+                <BlogLink
+                  href={authorHref(highlight.author.username, locale)}
+                  className="focus-ring mt-0.5 shrink-0 rounded text-[13px] font-medium text-slate-900 transition-colors hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-400"
+                >
+                  @{highlight.author.username}
+                </BlogLink>
+              ) : (
+                <span className="mt-0.5 text-[13px] font-medium text-slate-900 dark:text-slate-100">
+                  @?
+                </span>
+              )}
               <div className="min-w-0 flex-1 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
                 <CommentBody text={highlight.note} locale={locale} />
               </div>
@@ -499,9 +509,18 @@ function HighlightThread({
               {replies.map((r) => (
                 <li key={r.id}>
                   <div className="flex items-center gap-2">
-                    <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
-                      @{r.author?.username ?? "?"}
-                    </span>
+                    {r.author?.username ? (
+                      <BlogLink
+                        href={authorHref(r.author.username, locale)}
+                        className="focus-ring rounded text-[13px] font-medium text-slate-900 transition-colors hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-400"
+                      >
+                        @{r.author.username}
+                      </BlogLink>
+                    ) : (
+                      <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
+                        @?
+                      </span>
+                    )}
                     <span className="text-[12px] text-slate-400">{fmt(r.createdAt)}</span>
                     {meId != null && r.author?.id === meId && (
                       <button
