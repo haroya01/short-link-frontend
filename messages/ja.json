@@ -1860,6 +1860,7 @@
     "emailForm": {
       "submit": "登録",
       "submitting": "登録中...",
+      "sendAgain": "もう一度送る",
       "error": "登録に失敗しました。しばらくしてからお試しください。",
       "defaultPlaceholder": "you@example.com",
       "defaultSuccess": "登録完了。ありがとうございます。",
