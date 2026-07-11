@@ -9,6 +9,7 @@ import {
   Globe,
   LogOut,
   Newspaper,
+  Settings,
   User,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -19,19 +20,25 @@ import { useAuth } from "@/lib/auth";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { usePresence } from "@/hooks/use-presence";
 import { cacheMeAvatar, cacheMeInitial } from "@/components/common/header-avatar-slot";
-import { blogHref, linksHref } from "@/lib/host";
+import { blogHref, linksHref, type Product } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
 /**
  * Signed-in account control. An avatar button (the viewer's initial — `Me` carries no photo) opens a
- * dropdown that gathers everything personal in one place: the viewer's two public surfaces (블로그 /
- * 프로필 — separate products, shared identity), language, and sign out. Keeps "sign out" off the bar
- * and consolidates the surface-level controls, Google/Naver style; the cross-product app switcher
- * (AppsGrid) stays a separate control. Closes on outside-click or Escape.
+ * dropdown that gathers everything personal in one place: language, theme, and sign out. Keeps "sign
+ * out" off the bar and consolidates the surface-level controls, Google/Naver style; the cross-product
+ * app switcher (AppsGrid) stays a separate control. Closes on outside-click or Escape.
+ *
+ * `product` slims the personal rows per surface, mirroring the mobile AccountSheet:
+ *  - "blog" (default): the viewer's two public surfaces (블로그 / 프로필 — separate products, shared
+ *    identity) plus analytics + library.
+ *  - "links": kurl is its own app, so just 설정 — its profile + blog↔kurl switch live in the top Nav
+ *    (AppsGrid) instead, not duplicated here. Same account vocabulary (avatar → menu) as blog.
  */
-export function AccountMenu() {
+export function AccountMenu({ product = "blog" }: { product?: Product }) {
+  const isLinks = product === "links";
   const t = useTranslations("nav");
   const tLang = useTranslations("languageSwitcher");
   const locale = useLocale();
@@ -110,7 +117,19 @@ export function AccountMenu() {
             </div>
           )}
 
-          {username && (
+          {/* kurl: just 설정 here — profile is a top-nav entry, the blog switch is the AppsGrid pill.
+              Mirrors the mobile AccountSheet product="links" slim menu. */}
+          {isLinks && (
+            <>
+              <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+              <a href={linksHref(`/${locale}/settings`)} role="menuitem" className={itemClass}>
+                <Settings className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                {t("settings")}
+              </a>
+            </>
+          )}
+
+          {!isLinks && username && (
             <>
               <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
               {/* 분석 진입은 글 목록 strip 이 아니라 여기 — 프로필 바로 아래의 전용 버튼. */}

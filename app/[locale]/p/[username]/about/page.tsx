@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, Link2 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { linksHref } from "@/lib/host";
+import { SwitchLink } from "@/components/common/switch-link";
 import { listPublicPosts, listPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -81,13 +82,14 @@ export default async function PublicAuthorAboutPage({
 
             {/* Jump to the same person's link-in-bio (separate product, shared identity). */}
             {author.hasLinkInBio && (
-              <a
+              <SwitchLink
                 href={linksHref(`/${locale}/u/${author.username}`)}
-                className="focus-ring mt-6 inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-4 py-2 text-[14px] font-medium text-slate-700 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-200 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
+                icon={Link2}
+                size="md"
+                className="mt-6"
               >
-                <Link2 className="h-4 w-4" />
                 {t("aboutViewProfile")}
-              </a>
+              </SwitchLink>
             )}
           </section>
 

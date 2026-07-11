@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Mail, Sparkles } from "lucide-react";
 import { blogHref } from "@/lib/host";
+import { SwitchLink } from "@/components/common/switch-link";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { MobilePreviewSheet } from "@/modules/profile/components/mobile-preview-sheet";
@@ -111,20 +112,21 @@ export default function ProfileEditPage() {
         </div>
         {/* Leads 페이지 link 를 *항상* 노출 — 이전엔 EMAIL_FORM block 있을 때만 표시했는데, 폼을
             나중에 추가하는 사용자는 "leads dashboard 자체" 가 어디 있는지 발견 못함 (orphan).
-            폼 없을 때는 disabled 톤으로 *비활성* 시각 표시. */}
-        <a
-          href={blogHref("/leads")}
-          className={
-            "inline-flex shrink-0 items-center gap-1.5 rounded-md border bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium transition " +
-            (hasEmailForm
-              ? "border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-              : "border-dashed border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 hover:text-slate-600")
-          }
-          title={hasEmailForm ? undefined : t("leadsDisabledTitle")}
-        >
-          <Mail className="h-3.5 w-3.5" />
-          {t("leadsLink")}
-        </a>
+            폼 있으면 공통 전환 캡슐(SwitchLink)로 다른 크로스-표면 링크와 한 관용구; 폼 없을 땐
+            disabled 톤 점선으로 *비활성* 시각 표시(살아 있는 hop 이 아니라 "아직 미설정" 표시). */}
+        {hasEmailForm ? (
+          <SwitchLink href={blogHref("/leads")} icon={Mail} className="shrink-0">
+            {t("leadsLink")}
+          </SwitchLink>
+        ) : (
+          <span
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-dashed border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-400 dark:border-slate-800 dark:text-slate-500"
+            title={t("leadsDisabledTitle")}
+          >
+            <Mail className="h-3.5 w-3.5" aria-hidden />
+            {t("leadsLink")}
+          </span>
+        )}
       </div>
 
       {/* Visit-stats summary — only renders when the user has claimed a username AND has at
