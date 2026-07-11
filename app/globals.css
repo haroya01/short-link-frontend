@@ -192,25 +192,31 @@ summary,
 /*
  * Reader highlights painted on the post body (see highlight-anchor.ts). A native `<mark>` has a UA
  * default of `background: yellow; color: black` — the black text is the dark-mode readability killer
- * (black on a dark page), so we force `color: inherit` to follow the surrounding body text and paint our
- * own green tint. Light = accent-600 @ 0.18. Dark = accent-500 (a mid-tone that stays visible on a dark
- * page — accent-600 muddies into the background) @ 0.28; with body text at slate-300 the composite keeps
- * ≥ 8:1 contrast. Threaded highlights add an accent underline as the "there's a conversation" signal.
+ * (black on a dark page), so we force `color: inherit` to follow the surrounding body text.
+ *
+ * The tint is intentionally a document-quiet whisper of green, not a highlighter flash: a felt-pen fill
+ * fought the premium reading column (§10 조용한 웹로그). Light = accent-600 @ 0.10, dark = accent-500
+ * @ 0.16 — soft enough to read as "marked" rather than colored-over, yet still unmistakably there. To
+ * keep it legible at that low fill we pair it with a hairline green underline on every highlight (the
+ * cue survives even where the tint alone would be missed, e.g. over a colored inline span). Threaded
+ * highlights step that underline up (thicker + more opaque) as the "there's a conversation" signal.
  */
 mark.kurl-highlight {
   color: inherit;
-  background-color: rgba(5, 150, 105, 0.18);
+  background-color: rgba(5, 150, 105, 0.1);
   border-radius: 2px;
+  box-shadow: inset 0 -1px 0 rgba(5, 150, 105, 0.4);
   cursor: pointer;
 }
 mark.kurl-highlight--thread {
-  border-bottom: 1.5px solid rgba(5, 150, 105, 0.6);
+  box-shadow: inset 0 -2px 0 rgba(5, 150, 105, 0.7);
 }
 .dark mark.kurl-highlight {
-  background-color: rgba(16, 185, 129, 0.28);
+  background-color: rgba(16, 185, 129, 0.16);
+  box-shadow: inset 0 -1px 0 rgba(52, 211, 153, 0.45);
 }
 .dark mark.kurl-highlight--thread {
-  border-bottom-color: rgba(52, 211, 153, 0.6);
+  box-shadow: inset 0 -2px 0 rgba(52, 211, 153, 0.75);
 }
 
 @layer utilities {

@@ -193,8 +193,11 @@ export default async function PublicPostPage({
 
   return (
     // Symmetric 3-column grid: equal side gutters keep the 42rem article in the exact page center,
-    // the same reading band as the feed/profile. Rails live in the gutters and never shift it.
-    <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr]">
+    // the same reading band as the feed/profile (§10.1 max-w-7xl 불변식). Rails live in the gutters and
+    // never shift it. xl:gap-6 (not gap-10) tightens the two gutters so the rail content sits closer to
+    // the reading column — the wide gutter left the author block floating alone far to the left; a
+    // snugger gap gives the three columns a shared rhythm without touching the 42rem band.
+    <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 sm:px-6 xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-6">
       {articleJsonLd && (
         <script
           type="application/ld+json"
@@ -208,9 +211,12 @@ export default async function PublicPostPage({
         />
       )}
       {/* Left rail (xl+): a persistent author identity + follow that stays once the in-article header
-          scrolls away. In the left gutter, so the centered article doesn't move. */}
+          scrolls away. In the left gutter, justify-self-end so it hugs the reading column instead of
+          floating alone at the far edge; w-64 fills the gutter so the void reads as an even ~24px inset
+          on either side of the rail (matching the grid gap) rather than a lonely avatar in wide empty
+          space. The centered 42rem article never moves. */}
       <aside className="hidden py-20 xl:block xl:justify-self-end">
-        <div className="sticky top-24 w-52">
+        <div className="sticky top-28 w-64">
           <a
             href={authorHref(author.username, locale)}
             className="group flex items-center gap-3 rounded focus-ring"
