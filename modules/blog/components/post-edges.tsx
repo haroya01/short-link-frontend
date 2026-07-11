@@ -10,6 +10,7 @@ import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
 import { KindredCurators } from "@/modules/blog/components/kindred-curators";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 /**
  * PostEdges — the end of an article, turned from a dead end into a fork in the graph. After the body
@@ -56,7 +57,7 @@ export async function PostEdges({
     <section className="mt-12 border-t border-slate-100 pt-8 dark:border-slate-800/80">
       {collections.length > 0 && (
         <div>
-          <EdgeHeading>{t("postEdgesPathsTitle")}</EdgeHeading>
+          <RailHeading>{t("postEdgesPathsTitle")}</RailHeading>
           <ul className="mt-3 space-y-0.5">
             {collections.map((c) => (
               <li key={c.id}>
@@ -69,7 +70,7 @@ export async function PostEdges({
 
       {related.length > 0 && (
         <div className={collections.length > 0 ? "mt-8" : undefined}>
-          <EdgeHeading>{t("postEdgesRelatedTitle")}</EdgeHeading>
+          <RailHeading>{t("postEdgesRelatedTitle")}</RailHeading>
           <ul className="mt-3 space-y-3">
             {related.map((b) => (
               <li key={`${b.blockType}-${b.refId}`}>
@@ -92,16 +93,6 @@ export async function PostEdges({
         </div>
       )}
     </section>
-  );
-}
-
-/** The quiet eyebrow that heads each edge group — same voice as the highlight sheet's path labels. */
-function EdgeHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
-      <span aria-hidden className="h-3 w-[3px] shrink-0 rounded-full bg-accent-600 dark:bg-accent-500" />
-      {children}
-    </p>
   );
 }
 
@@ -130,7 +121,7 @@ function PathRow({
           {c.title}
         </span>
         {rich && (
-          <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-400 dark:text-slate-500">
+          <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
             {c.curatorUsername && (
               <span className="truncate text-slate-500 dark:text-slate-400">
                 @{c.curatorUsername}
@@ -146,7 +137,7 @@ function PathRow({
         )}
       </span>
       {!rich && (
-        <span className="shrink-0 text-[12px] text-slate-400 dark:text-slate-500">{c.count}</span>
+        <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">{c.count}</span>
       )}
     </BlogLink>
   );

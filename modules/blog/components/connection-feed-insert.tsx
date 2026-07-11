@@ -31,7 +31,7 @@ export function ConnectionFeedInsert({
 }) {
   return (
     <div
-      className="profile-fade rounded-2xl border border-slate-200/80 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-900"
+      className="profile-fade rounded-card-lg border border-slate-200/80 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-900"
       style={{ "--idx": idx } as CSSProperties}
     >
       {lead && <RailHeading className="mb-3">{label}</RailHeading>}
