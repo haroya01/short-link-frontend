@@ -74,7 +74,6 @@ const SCREENS: { name: string; path: string }[] = [
   { name: "links · campaign create", path: "/ko/campaigns/new" },
   { name: "links · settings/profile", path: "/ko/settings/profile" },
   { name: "links · profile auto-setup", path: "/ko/profile/auto" },
-  { name: "links · admin abuse-reports", path: "/ko/admin/abuse-reports" },
   { name: "blog · post analytics", path: "/ko/blog/analytics/1" },
   { name: "blog · editor (write/[id])", path: "/ko/blog/write/16" },
 ];
@@ -85,7 +84,8 @@ const SCREENS: { name: string; path: string }[] = [
 //     cost / low marginal value. Add cases to lib/api/_links-mocks.ts to enable.
 //   • Tool surfaces — /campaigns/{id}/poster-builder (canvas), /print-sheet, /batches/new.
 //   • Redirect/flow handlers (not content screens) — /use/{slug}, /auth/callback, /auth/2fa.
-//   • Role-gated — /admin root (needs an admin-role mock); /showcase/{handle} (needs showcase mock).
+//   • Role-gated — /admin root and /admin/abuse-reports (both hard-404 for a non-admin via notFound(),
+//     so the mock reader can't render them — needs an admin-role mock); /showcase/{handle} (needs showcase mock).
 
 for (const s of SCREENS) {
   test(`renders: ${s.name}`, async ({ page }) => {
