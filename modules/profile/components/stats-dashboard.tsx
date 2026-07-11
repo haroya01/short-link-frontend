@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { ProfileStats } from "@/types";
 import { StatsCards } from "@/components/links/stats/cards";
 import { DailyChart } from "@/components/links/stats/charts/daily-chart";
+import { HourChart } from "@/components/links/stats/charts/hour-chart";
 import { Heatmap } from "@/components/links/stats/charts/heatmap";
 import { CountryTable } from "@/components/links/stats/country-table";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
@@ -29,9 +30,14 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
         unique={data.uniqueVisits}
       />
 
-      <Section title={t("daily.title")} description={t("daily.desc")}>
-        <DailyChart data={data.dailyVisits} />
-      </Section>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <Section title={t("daily.title")} description={t("daily.desc")} className="lg:col-span-2">
+          <DailyChart data={data.dailyVisits} />
+        </Section>
+        <Section title={t("hourly.title")} description={t("hourly.desc")}>
+          <HourChart data={data.hourVisits} />
+        </Section>
+      </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t("heatmap.title")} description={t("heatmap.desc")}>

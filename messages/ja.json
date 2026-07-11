@@ -276,7 +276,11 @@
     "analyticsTabOverview": "概要",
     "analyticsTabSeries": "シリーズ",
     "analyticsTabLinks": "リンク",
-    "analyticsTabPosts": "記事"
+    "analyticsTabPosts": "記事",
+    "settingsFollowedTags": "フォロー中のタグ",
+    "settingsFollowedTagsHint": "フォロー中のトピック — 最近の投稿がないものも含めて。これらの投稿はフィード上部の帯に表示されます。",
+    "settingsFollowedTagsEmpty": "まだフォロー中のトピックはありません。",
+    "settingsUnfollowTag": "{tag} のフォローを解除"
   },
   "postEditor": {
     "backToList": "記事一覧",
@@ -1812,8 +1816,7 @@
     "srcLabel": "トラッキングタグ (任意)",
     "srcPlaceholder": "例: poster, offline-card",
     "colorLabel": "色",
-    "logoLabel": "QR 中央に遷移先のファビコンを表示",
-    "comingSoon": "近日公開。"
+    "logoLabel": "QR 中央に遷移先のファビコンを表示"
   },
   "share": {
     "label": "共有",
@@ -2475,6 +2478,10 @@
         "daily": {
           "title": "直近 30 日",
           "desc": "日別の人による訪問数 (ボット除外)"
+        },
+        "hourly": {
+          "title": "時間帯",
+          "desc": "0〜23時の分布"
         },
         "heatmap": {
           "title": "曜日 × 時間ヒートマップ",
