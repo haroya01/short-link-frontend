@@ -10,6 +10,7 @@ import {
   createCollection,
   listMyCollections,
   type CollectionSummary,
+  type CollectionVisibility,
   type ConnectionBlockType,
 } from "@/modules/blog/api/collections";
 
@@ -42,6 +43,10 @@ export function ConnectSheet({
   const [collections, setCollections] = useState<CollectionSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Set<number>>(new Set());
+  // Visibility for a collection/path created here. Defaults to PRIVATE (a new curation starts as
+  // yours to shape); the toggle lets you open it up at create time so a public collection doesn't need
+  // a second trip to the detail editor.
+  const [newVisibility, setNewVisibility] = useState<CollectionVisibility>("PRIVATE");
   const [why, setWhy] = useState("");
   const [saving, setSaving] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -93,7 +98,7 @@ export function ConnectSheet({
     const fallback = kind === "PATH" ? t("newPathFallback") : t("newCollectionFallback");
     const title = targetTitle.trim().slice(0, 60) || fallback;
     try {
-      const created = await createCollection({ title, visibility: "PRIVATE", kind });
+      const created = await createCollection({ title, visibility: newVisibility, kind });
       setCollections((prev) => [created, ...prev]);
       setSelected((prev) => new Set(prev).add(created.id));
     } catch {
@@ -202,6 +207,12 @@ export function ConnectSheet({
                       </button>
                     </li>
                   ))}
+                  {/* Visibility for anything created below — so a public collection can be born public
+                      instead of defaulting to private and needing an edit. Sits with the create rows
+                      (it only governs them), quiet segmented pair. */}
+                  <li className="px-3 pt-2">
+                    <NewVisibilityToggle value={newVisibility} onChange={setNewVisibility} />
+                  </li>
                   <li>
                     <NewRow
                       icon={<Plus className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />}
@@ -317,4 +328,49 @@ function VisibilityGlyph({ visibility }: { visibility: CollectionSummary["visibi
   if (visibility === "PUBLIC") return <Globe className="h-3 w-3" />;
   if (visibility === "UNLISTED") return <LinkIcon className="h-3 w-3" />;
   return <Lock className="h-3 w-3" />;
+}
+
+/** A quiet private/public segmented pair governing the visibility of a collection created from this
+ *  sheet — so a public collection is born public. (UNLISTED stays a detail-editor choice; the create
+ *  flow keeps to the two everyday options.) */
+function NewVisibilityToggle({
+  value,
+  onChange,
+}: {
+  value: CollectionVisibility;
+  onChange: (v: CollectionVisibility) => void;
+}) {
+  const t = useTranslations("collections");
+  const opts: { key: CollectionVisibility; label: string; Icon: typeof Lock }[] = [
+    { key: "PRIVATE", label: t("visibilityPrivate"), Icon: Lock },
+    { key: "PUBLIC", label: t("visibilityPublic"), Icon: Globe },
+  ];
+  return (
+    <div
+      role="radiogroup"
+      aria-label={t("visibilityLabel")}
+      className="inline-flex gap-1 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
+    >
+      {opts.map(({ key, label, Icon }) => {
+        const active = value === key;
+        return (
+          <button
+            key={key}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            onClick={() => onChange(key)}
+            className={`focus-ring inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors ${
+              active
+                ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-slate-100"
+                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            }`}
+          >
+            <Icon className="h-3 w-3" />
+            {label}
+          </button>
+        );
+      })}
+    </div>
+  );
 }

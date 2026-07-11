@@ -32,6 +32,7 @@ import { FeedTabCookieSync } from "./feed-tab-cookie-sync";
 import { DiscoverySeriesCard } from "./discovery-series-card";
 import { TrendingTopics } from "./trending-topics";
 import { ConnectionFeedInsert } from "./connection-feed-insert";
+import { FeedErrorState } from "./feed-error-state";
 import { listPublicConnectionFeed } from "../api/collections";
 
 // blog.kurl.me is its own surface — the root layout's canonical/OG point at kurl.me (the URL
@@ -163,6 +164,12 @@ export async function FeedScreen({
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
   const hasNext = feedResult && feedResult.ok ? feedResult.data.hasNext : false;
+  // A server feed fetch that failed outright (backend/network down) — distinct from a genuinely empty
+  // feed. Collapsing it to [] would render FeedEmpty ("첫 글을 써보세요"), disguising an outage as a fresh
+  // account. `status: "error"` is the fetch-failure case (a 404/410 is a real "nothing here"); when it's
+  // that, we show a retry state instead of the empty state. Mirrors for-you-feed's initialError branch.
+  const feedErrored =
+    showsServerFeed && !!feedResult && !feedResult.ok && feedResult.status === "error";
   // 검색이 비었을 때만 인기 주제를 한 번 더 가져온다 — SearchEmpty 의 "다른 주제 둘러보기" 칩이
   // 빈 배열로 죽어 있던 dead end 수정. 흔치 않은 경로라 순차 fetch 비용은 무시 가능.
   const emptySearchTopics =
@@ -312,7 +319,11 @@ export async function FeedScreen({
         ) : items.length === 0 ? (
           <ReadingShell className={searching ? "mt-6" : "mt-4"}>
             <FeedContentTransition index={tabIndex} contentKey={contentKey}>
-              {searching ? (
+              {feedErrored ? (
+                // Backend/network failure — a retry state, never the "write the first post" empty state
+                // (that would tell a reader on a broken backend the site is empty).
+                <FeedErrorState />
+              ) : searching ? (
                 <SearchEmpty query={query} tags={emptySearchTopics?.ok ? emptySearchTopics.data : []} locale={locale} />
               ) : (
                 <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />

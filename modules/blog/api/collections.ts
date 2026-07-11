@@ -14,12 +14,15 @@ import {
   mockCollectionsContainingHighlight,
   mockConnect,
   mockCreateCollection,
+  mockDeleteCollection,
+  mockDisconnect,
   mockDiscoverConnections,
   mockMineCollections,
   mockPostCollections,
   mockPostCollectionsBatch,
   mockPublicConnectionFeed,
   mockReorderConnections,
+  mockUpdateCollection,
 } from "@/modules/blog/api/_mocks-collections";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -311,6 +314,32 @@ export function createCollection(payload: NewCollection): Promise<CollectionSumm
   return request<CollectionSummary>("/api/v1/collections", { method: "POST", body: payload });
 }
 
+/** The owner-editable fields of a collection — title / blurb / visibility. `kind` is fixed at create
+ *  (the edit endpoint doesn't know it), matching the backend `EditCollectionRequest` and the kurl-ios
+ *  `CollectionsAPI.edit` body. */
+export interface CollectionEdit {
+  title: string;
+  description?: string | null;
+  visibility: CollectionVisibility;
+}
+
+/** Authenticated — edit a collection's name / blurb / visibility (owner only, enforced by the backend).
+ *  `PUT /collections/{id}`. Returns the updated summary. Mirrors the kurl-ios `CollectionsAPI.edit`. */
+export function updateCollection(id: number, payload: CollectionEdit): Promise<CollectionSummary> {
+  if (USE_MOCKS) return Promise.resolve(mockUpdateCollection(id, payload));
+  return request<CollectionSummary>(`/api/v1/collections/${id}`, { method: "PUT", body: payload });
+}
+
+/** Authenticated — delete a collection (its connections go with it; owner only, backend-enforced). 204.
+ *  `DELETE /collections/{id}`. Mirrors the kurl-ios `CollectionsAPI.delete`. */
+export function deleteCollection(id: number): Promise<void> {
+  if (USE_MOCKS) {
+    mockDeleteCollection(id);
+    return Promise.resolve();
+  }
+  return request(`/api/v1/collections/${id}`, { method: "DELETE" });
+}
+
 /** Authenticated — connect a block (idempotent). 201, no body. */
 export function connectBlock(
   collectionId: number,
@@ -338,9 +367,13 @@ export function reorderConnections(collectionId: number, connectionIds: number[]
   });
 }
 
-/** Authenticated — remove a connection. 204. */
+/** Authenticated — remove a connection from a collection (owner only, backend-enforced). 204.
+ *  `DELETE /collections/{id}/connections/{connectionId}`. Mirrors the kurl-ios `CollectionsAPI.disconnect`. */
 export function disconnect(collectionId: number, connectionId: number): Promise<void> {
-  if (USE_MOCKS) return Promise.resolve();
+  if (USE_MOCKS) {
+    mockDisconnect(collectionId, connectionId);
+    return Promise.resolve();
+  }
   return request(`/api/v1/collections/${collectionId}/connections/${connectionId}`, {
     method: "DELETE",
   });
