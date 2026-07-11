@@ -49,7 +49,7 @@ export default function RootNotFound() {
         {LOCALES.map((locale) => {
           const t = COPY[locale];
           return (
-            <div key={locale} data-nf={locale} className="container max-w-md py-24 text-center">
+            <div key={locale} data-nf={locale} data-testid="not-found" className="container max-w-md py-24 text-center">
               <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500">404</p>
               <h1 className="mt-3 text-2xl font-semibold tracking-headline text-slate-900">
                 {t.title}

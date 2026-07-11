@@ -276,7 +276,11 @@
     "analyticsTabOverview": "Overview",
     "analyticsTabSeries": "Series",
     "analyticsTabLinks": "Links",
-    "analyticsTabPosts": "Posts"
+    "analyticsTabPosts": "Posts",
+    "settingsFollowedTags": "Followed tags",
+    "settingsFollowedTagsHint": "Topics you follow — including ones with no recent posts. Their posts surface in your feed strip.",
+    "settingsFollowedTagsEmpty": "You're not following any topics yet.",
+    "settingsUnfollowTag": "Unfollow {tag}"
   },
   "postEditor": {
     "backToList": "Posts",
@@ -1830,8 +1834,7 @@
     "srcLabel": "Tracking tag (optional)",
     "srcPlaceholder": "e.g. poster, offline-card",
     "colorLabel": "Color",
-    "logoLabel": "Show destination favicon in the center",
-    "comingSoon": "Soon."
+    "logoLabel": "Show destination favicon in the center"
   },
   "share": {
     "label": "Share",
@@ -2493,6 +2496,10 @@
         "daily": {
           "title": "Last 30 days",
           "desc": "Daily human visits (bots excluded)"
+        },
+        "hourly": {
+          "title": "Hour of day",
+          "desc": "0-23 distribution"
         },
         "heatmap": {
           "title": "Day × hour heatmap",

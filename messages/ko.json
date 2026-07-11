@@ -276,7 +276,11 @@
     "analyticsTabOverview": "개요",
     "analyticsTabSeries": "시리즈",
     "analyticsTabLinks": "링크",
-    "analyticsTabPosts": "글"
+    "analyticsTabPosts": "글",
+    "settingsFollowedTags": "팔로우한 태그",
+    "settingsFollowedTagsHint": "팔로우한 주제 — 최근 글이 없는 태그까지 모두. 이 주제의 글은 피드 상단 띠에 모여요.",
+    "settingsFollowedTagsEmpty": "아직 팔로우한 주제가 없어요.",
+    "settingsUnfollowTag": "{tag} 팔로우 해제"
   },
   "postEditor": {
     "backToList": "글 목록",
@@ -1830,8 +1834,7 @@
     "srcLabel": "추적 태그 (선택)",
     "srcPlaceholder": "예: poster, offline-card",
     "colorLabel": "색상",
-    "logoLabel": "도착지 사이트 아이콘을 가운데에 넣기",
-    "comingSoon": "곧."
+    "logoLabel": "도착지 사이트 아이콘을 가운데에 넣기"
   },
   "share": {
     "label": "공유",
@@ -2493,6 +2496,10 @@
         "daily": {
           "title": "최근 30 일 방문 추이",
           "desc": "일별 사람 방문 수 (봇 제외)"
+        },
+        "hourly": {
+          "title": "시간대",
+          "desc": "0~23시 분포"
         },
         "heatmap": {
           "title": "요일 × 시간 히트맵",

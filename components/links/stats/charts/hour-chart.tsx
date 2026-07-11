@@ -26,8 +26,18 @@ export function HourChart({ data }: Props) {
     const found = data.find((d) => d.hour === hour);
     return { hour, count: found?.count ?? 0 };
   });
+  // The chart always has 24 buckets, so an all-zero payload never reads as "empty" on its own — it
+  // paints a flat baseline curve. Next to DailyChart's "no clicks" copy in the analytics dashboard
+  // that looks like an error, so match its empty state (same copy + h-72 track) when nothing landed.
+  if (filled.every((d) => d.count === 0)) {
+    return (
+      <div className="grid h-72 w-full place-items-center">
+        <p className="text-center text-xs text-slate-500 dark:text-slate-400">{t("noClicks")}</p>
+      </div>
+    );
+  }
   return (
-    <div className="h-64 w-full">
+    <div className="h-72 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={filled} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
           <defs>

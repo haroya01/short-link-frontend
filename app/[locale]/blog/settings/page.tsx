@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { FeedDefaultTabSetting } from "@/modules/blog/components/feed-default-tab-setting";
+import { FollowedTagsSetting } from "@/modules/blog/components/followed-tags-setting";
 import { FollowerCountSetting } from "@/modules/blog/components/follower-count-setting";
 import { BlogNotificationSettings } from "@/modules/notifications/components/blog-notification-settings";
 import { WebPushToggle } from "@/modules/notifications/components/web-push-toggle";
@@ -134,6 +135,9 @@ export default function BlogSettingsPage() {
 
       {/* 피드 */}
       <FeedDefaultTabSetting rowClass={rowClass} />
+
+      {/* 팔로우한 태그 — 최근 글 없는 태그까지 전부 보이는 유일한 관리처 */}
+      <FollowedTagsSetting />
 
       {/* 공개 범위 — 팔로워 수 숨기기 */}
       <FollowerCountSetting />
