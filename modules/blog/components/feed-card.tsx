@@ -2,7 +2,7 @@ import { DATE_LOCALE } from "@/lib/date";
 import type { ReactNode } from "react";
 import { Heart } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
-import { showLikes } from "@/modules/blog/lib/public-metrics";
+import { isRenderablePost, showLikes } from "@/modules/blog/lib/public-metrics";
 import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -173,6 +173,8 @@ export function FeedCard({
    *  Left unset on the initial SSR rows so they never re-animate. */
   entranceDelay?: number;
 }) {
+  // A blank-title, no-excerpt post is effectively empty — skip it rather than render hollow chrome.
+  if (!isRenderablePost(item)) return null;
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
   const bookmarkable = showBookmark && typeof item.id === "number";

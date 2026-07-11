@@ -4,6 +4,7 @@ import { routing } from "@/i18n/routing";
 import { blogPath } from "@/lib/host";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { listPopularTags, listPublicFeed } from "@/modules/blog/api/public-posts";
+import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { FeedCard, FeedList } from "@/modules/blog/components/feed-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedTabs } from "@/modules/blog/components/feed-tabs";
@@ -69,7 +70,8 @@ export default async function TagsIndexPage({
     // A small peek, not a second home feed — the tag cloud is this page's job.
     listPublicFeed("recent", 0, 3),
   ]);
-  const tags = tagsResult.ok ? tagsResult.data : [];
+  // Drop junk tags (incomplete jamo, single-char, mash) so the cloud only offers real topics.
+  const tags = (tagsResult.ok ? tagsResult.data : []).filter((tag) => isDisplayableTag(tag.tag));
   // Slice to a small peek (the mock returns a full page; the real API honors size=3).
   const recent = recentResult.ok ? recentResult.data.items.slice(0, 3) : [];
 

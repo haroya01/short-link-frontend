@@ -6,6 +6,7 @@ import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { TagChip } from "@/modules/blog/components/tag-chip";
+import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 
 const MAX_TAGS = 12;
 const MAX_ARCHIVE = 8;
@@ -42,7 +43,10 @@ export async function AuthorRail({
 
   const tagCounts = new Map<string, number>();
   for (const post of posts) {
-    for (const tag of post.tags) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+    for (const tag of post.tags) {
+      if (!isDisplayableTag(tag)) continue; // skip junk tags (incomplete jamo, single-char, mash)
+      tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+    }
   }
   const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, MAX_TAGS);
 

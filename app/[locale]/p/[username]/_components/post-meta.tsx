@@ -1,5 +1,6 @@
 import { blogHref } from "@/lib/host";
 import { BlogChromeLink } from "@/modules/blog/components/blog-link";
+import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 
 /**
  * Tags at the foot of a post — rendered as quiet `#tag` text links, not pills. In the reading
@@ -9,10 +10,12 @@ import { BlogChromeLink } from "@/modules/blog/components/blog-link";
  * match (and hard-falls-back on any remaining author-subdomain render).
  */
 export function TagChips({ tags }: { tags: string[] }) {
-  if (!tags || tags.length === 0) return null;
+  // Filter junk tags (incomplete jamo, single-char, mash) so the hashtag line never carries them.
+  const clean = (tags ?? []).filter(isDisplayableTag);
+  if (clean.length === 0) return null;
   return (
     <ul className="flex flex-wrap gap-x-4 gap-y-1.5">
-      {tags.map((tag) => (
+      {clean.map((tag) => (
         <li key={tag}>
           <BlogChromeLink
             href={blogHref(`/tags/${encodeURIComponent(tag)}`)}
