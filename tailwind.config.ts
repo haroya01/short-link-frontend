@@ -83,6 +83,13 @@ const config: Config = {
         "headline-lg": ["2.5rem", { lineHeight: "1.1" }],
         "headline-xl": ["3.5rem", { lineHeight: "1.05" }],
         /*
+         * 글 상세 제목 — 본문 컬럼 안에서 읽는 editorial h1. 위 5단계(hero/섹션 heading)와 다른
+         * 리듬(30px→37px)이라 별도 스텝: 콜사이트의 `text-[1.875rem] sm:text-[2.3125rem]` 산발을
+         * 없애고 크기를 한 곳에 둔다. `text-headline-post sm:text-headline-post-lg`.
+         */
+        "headline-post": ["1.875rem", { lineHeight: "1.15" }],
+        "headline-post-lg": ["2.3125rem", { lineHeight: "1.1" }],
+        /*
          * Card-title scale — 목록/그리드 카드 제목이 컴포넌트마다 `text-[NNpx]` 로 흩어져 있던 것을
          * 한 스케일로 모은다(타입 산발 방지). size 만 정의하는 이유: 같은 px 가 카드에 따라 다른
          * line-height 로 쓰인다(18px = feed 1.3 / cover 1.25, 20px = cover 1.25 / series 1.375).
@@ -123,6 +130,9 @@ const config: Config = {
         // Browse(발견) 타일의 안정(resting) 상태 그림자 — 닿는 면 가까운 1px + 퍼지는 ambient 로
         // 평면이 아니라 살짝 떠 있게. hover lift(card-hover)와 짝을 이룬다.
         card: "0 1px 2px rgba(15,23,42,0.04), 0 6px 16px -8px rgba(15,23,42,0.12)",
+        // 읽기·설정면의 정적 카드(발견 타일이 아님) — lift 없이 가장자리만 살짝 떼어놓는 near-flat.
+        // browse 타일의 뜬(card) 그림자를 평평한 표면에 얹지 않도록 이 토큰으로 구분한다.
+        "card-flat": "0 1px 2px rgba(15,23,42,0.04)",
         // Browse(발견) 타일 hover lift — 읽기면 flat 철학의 명시적 예외(AGENTS §10.1)라서,
         // 그 농도를 이 토큰 한 곳이 소유한다. 콜사이트에서 임의값으로 다시 들고 다니지 말 것.
         "card-hover": "0 18px 40px -12px rgba(15,23,42,0.28)",

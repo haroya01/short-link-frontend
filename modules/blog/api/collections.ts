@@ -190,14 +190,15 @@ export function listDiscoverConnections(): Promise<DiscoverFeed> {
  * which public collection/path, and why. Same {@link ConnectionEvent} shape as the authed follow-graph
  * feed, so the same cards render it. Readable signed-out (the `/api/v1/public/**` slice is permitAll),
  * so a raw fetch (no auth). A backend/empty response degrades to an empty page, never throws — the
- * feed just shows no connection rows.
+ * feed just shows no connection rows. Non-personalized, so it's ISR-cached (revalidate 30s) to keep
+ * `/blog` static — matching the sibling public-post feed reads, not per-request `no-store`.
  */
 export async function listPublicConnectionFeed(page = 0, size = 12): Promise<DiscoverFeed> {
   if (USE_MOCKS) return Promise.resolve(mockPublicConnectionFeed(page, size));
   try {
     const res = await fetch(
       `${API_BASE}/api/v1/public/feed/connections?page=${page}&size=${size}`,
-      { cache: "no-store" },
+      { next: { revalidate: 30 } },
     );
     if (!res.ok) return { items: [], hasNext: false, page, size };
     return (await res.json()) as DiscoverFeed;

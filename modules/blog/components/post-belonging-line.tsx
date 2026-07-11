@@ -57,7 +57,7 @@ export function PostBelongingLine({
     <div ref={ref}>
       <BlogLink
         href={blogPath(`/collections/${first.id}`)}
-        className={`focus-ring pointer-events-auto -mx-1 -my-1 inline-flex max-w-full items-center gap-1 rounded px-1 py-1 text-[11.5px] transition-colors ${tone}`}
+        className={`focus-ring pointer-events-auto -mx-1 -my-1 inline-flex max-w-full items-center gap-1 rounded px-1 py-1 text-[11px] transition-colors ${tone}`}
       >
         {isPath ? (
           <CornerDownRight className={`h-3 w-3 shrink-0 ${over ? "" : "text-accent-600"}`} />
