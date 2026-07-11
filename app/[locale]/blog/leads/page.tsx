@@ -143,7 +143,7 @@ export default function ProfileLeadsPage() {
             </Button>
           </a>
           <Link href={blogPath("/leads/campaign")}>
-            <Button>
+            <Button variant="accent">
               <Sparkles className="mr-1 h-4 w-4" />
               {t("buildCampaign")}
             </Button>
@@ -175,7 +175,7 @@ export default function ProfileLeadsPage() {
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)] dark:border-slate-800 dark:bg-slate-900">
           <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500 dark:bg-slate-800/40 dark:text-slate-400">
+            <thead className="bg-slate-50 text-[11px] text-slate-500 dark:bg-slate-800/40 dark:text-slate-400">
               <tr>
                 <th className="px-4 py-2 font-medium">{t("colEmail")}</th>
                 <th className="px-4 py-2 font-medium">{t("colBlock")}</th>

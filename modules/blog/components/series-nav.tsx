@@ -58,7 +58,7 @@ export function SeriesNav({
           <span
             key={i}
             className={`h-1 flex-1 rounded-full ${
-              i < series.position ? "bg-accent-500" : "bg-slate-200 dark:bg-slate-700"
+              i < series.position ? "bg-accent-600" : "bg-slate-200 dark:bg-slate-700"
             }`}
           />
         ))}

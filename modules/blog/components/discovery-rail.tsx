@@ -62,7 +62,7 @@ export async function DiscoveryRail({
             <RailHeading>{t("railTopics")}</RailHeading>
             <Link
               href={blogPath("/tags")}
-              className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring"
+              className="rounded text-[12px] font-medium text-accent-700 transition-colors hover:text-accent-800 focus-ring dark:text-accent-400 dark:hover:text-accent-300"
             >
               {t("railSeeAll")}
             </Link>
