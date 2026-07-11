@@ -620,7 +620,11 @@
     "relatedHeading": "Read next",
     "resumeReading": "Resume reading",
     "resumeDismiss": "Dismiss",
-    "replyError": "Couldn't post your reply. Please try again."
+    "replyError": "Couldn't post your reply. Please try again.",
+    "linkClicks": "clicks",
+    "linkTopCountry": "top country",
+    "linkTopDevice": "top device",
+    "linkFullStats": "Full stats on kurl"
   },
   "imageCropper": {
     "title": "Crop image",
@@ -1042,6 +1046,7 @@
     },
     "noResultTitle": "No matches",
     "noResultDesc": "Could not find any link matching \"{query}\".",
+    "noResultDescFiltered": "No links match the current filters. Try adjusting them.",
     "table": {
       "shortUrl": "Short URL",
       "originalUrl": "Original URL",

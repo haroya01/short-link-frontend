@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Heart } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
 import { isRenderablePost, showLikes } from "@/modules/blog/lib/public-metrics";
+import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -178,6 +179,9 @@ export function FeedCard({
   const postUrl = postHref(item.author.username, item.slug, locale);
   const hasImage = Boolean(item.ogImageUrl);
   const bookmarkable = showBookmark && typeof item.id === "number";
+  // Representative tag = first DISPLAYABLE tag (skip junk — incomplete jamo, single-char, mash), so a
+  // reading-surface row never surfaces "#ㄴ" / "#dddd" as its eyebrow. Mirrors DiscoveryCard.
+  const eyebrowTag = item.tags.find(isDisplayableTag);
 
   return (
     <li
@@ -216,7 +220,7 @@ export function FeedCard({
                 {featuredLabel}
               </span>
             ) : (
-              item.tags[0] && <TagEyebrow tag={item.tags[0]} />
+              eyebrowTag && <TagEyebrow tag={eyebrowTag} />
             )}
             <h2
               className={`mt-1 line-clamp-2 font-bold leading-[1.3] text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400 ${

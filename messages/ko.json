@@ -620,7 +620,11 @@
     "relatedHeading": "다음 읽을 글",
     "resumeReading": "이어서 읽기",
     "resumeDismiss": "이어읽기 닫기",
-    "replyError": "답글을 등록하지 못했어요. 다시 시도해 주세요."
+    "replyError": "답글을 등록하지 못했어요. 다시 시도해 주세요.",
+    "linkClicks": "클릭",
+    "linkTopCountry": "상위 국가",
+    "linkTopDevice": "상위 기기",
+    "linkFullStats": "kurl에서 전체 통계 보기"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -1042,6 +1046,7 @@
     },
     "noResultTitle": "검색 결과가 없어요",
     "noResultDesc": "\"{query}\"와 일치하는 링크를 찾지 못했어요.",
+    "noResultDescFiltered": "지금 조건에 맞는 링크가 없어요. 필터를 조정해 보세요.",
     "table": {
       "shortUrl": "짧은 URL",
       "originalUrl": "원본 URL",
