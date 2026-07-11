@@ -66,8 +66,10 @@ async function AuthorHeaderSlot({
   const { username } = await params;
   // cached → deduped with the tab pages, so the header doesn't re-fetch on a tab switch.
   const result = await listPublicPosts(username);
-  const author = result.ok ? result.data.author : null;
-  return author ? <AuthorHeader author={author} /> : null;
+  if (!result.ok) return null;
+  // Pass the post list so the header can surface the author's 대표 주제 (top tags) — the same list the
+  // tab pages already hold, so this adds no fetch.
+  return <AuthorHeader author={result.data.author} posts={result.data.posts} />;
 }
 
 /** Header-shaped placeholder while the author streams in (avatar · handle · bio · tab row). */
