@@ -1,6 +1,7 @@
 import { Link2 } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { cardHref } from "@/lib/host";
+import { SwitchLink } from "@/components/common/switch-link";
 import type { PublicAuthor, PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
@@ -121,13 +122,9 @@ export async function AuthorHeader({
             {/* Cross-surface link to the same person's link-in-bio (separate product, shared
                 identity). Shown only when they actually have one. */}
             {author.hasLinkInBio && (
-              <a
-                href={cardHref(author.username, locale)}
-                className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-300 dark:hover:border-accent-500/50 dark:hover:text-accent-400"
-              >
-                <Link2 className="h-3.5 w-3.5" />
+              <SwitchLink href={cardHref(author.username, locale)} icon={Link2}>
                 {tNav("profile")}
-              </a>
+              </SwitchLink>
             )}
           </div>
         </div>
