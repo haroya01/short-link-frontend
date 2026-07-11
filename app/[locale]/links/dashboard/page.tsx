@@ -77,6 +77,21 @@ export default function DashboardPage() {
     : null;
   const ops = useMemo(() => buildDashboardOps(items), [items]);
 
+  // A search or filter is narrowing the list — the zero-result state then means "nothing matched",
+  // not "no links yet", so we keep the search + filter chrome up (so it can be cleared).
+  const hasActiveFilter =
+    Boolean(query.trim()) ||
+    Boolean(filters.q) ||
+    Boolean(filters.tag) ||
+    Boolean(filters.domain) ||
+    Boolean(filters.expiry) ||
+    Boolean(filters.createdAfter) ||
+    Boolean(filters.createdBefore);
+  // First run = a signed-in user who has no links at all and isn't filtering. The whole dashboard
+  // collapses to the onboarding panel; the ops/insights/campaign chrome and the search + filter bar
+  // only earn their place once there's data to act on (otherwise it reads as an empty SaaS shell).
+  const firstRun = !loading && !error && items.length === 0 && !hasActiveFilter;
+
   // Debounce the search box into the server-side `q` filter so the user doesn't have to wait for
   // each keystroke to round-trip and the query covers the full link set, not just the first page.
   useEffect(() => {
@@ -149,80 +164,82 @@ export default function DashboardPage() {
         onImported={() => void invalidateLinks()}
       />
 
-      {loading ? (
-        <DashboardOpsSkeleton />
-      ) : items.length > 0 ? (
-        <DashboardOpsPanel ops={ops} />
-      ) : null}
-
-      <CampaignsEntryCard />
-
-      <ExpiringSoonBanner
-        onShowAll={() => setFilters((f) => ({ ...f, expiry: "EXPIRING_SOON", after: undefined }))}
-      />
-
-      <WeeklyInsightsCard />
-
-      <div className="space-y-3">
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("searchPlaceholder")}
-            className="pl-9 pr-9"
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              aria-label={t("clearSearch")}
-              className="focus-ring absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
-
-        <MyLinksFiltersBar
-          filters={filters}
-          onChange={setFilters}
-          tagOptions={tagOptions}
-        />
-      </div>
-
-      {loading ? (
-        <LoadingTable t={t} />
-      ) : error ? (
-        <ErrorState message={error} onRetry={() => void linksQuery.refetch()} />
-      ) : items.length === 0 ? (
-        query.trim() || filters.tag || filters.domain || filters.expiry ? (
-          <EmptyState title={t("noResultTitle")} description={t("noResultDesc", { query })} />
-        ) : (
-          <DashboardOnboarding />
-        )
+      {firstRun ? (
+        // No links yet, no filter → a single clear next step. The stats, campaign card, weekly
+        // insights, search and filters would all be empty shells here, so they wait for real data.
+        <DashboardOnboarding />
       ) : (
         <>
-          <LinksTable
-            items={items}
-            sortKey={filters.sort ?? "createdAt"}
-            sortDir={filters.dir ?? "desc"}
-            onSortChange={(sort, dir) =>
-              setFilters((f) => ({ ...f, sort, dir, after: undefined }))
+          {loading ? (
+            <DashboardOpsSkeleton />
+          ) : items.length > 0 ? (
+            <DashboardOpsPanel ops={ops} />
+          ) : null}
+
+          <CampaignsEntryCard />
+
+          <ExpiringSoonBanner
+            onShowAll={() =>
+              setFilters((f) => ({ ...f, expiry: "EXPIRING_SOON", after: undefined }))
             }
-            onChanged={() => void invalidateLinks()}
-            onTagClick={(tag) => setFilters((f) => ({ ...f, tag, after: undefined }))}
           />
-          {linksQuery.hasNextPage && (
-            <div className="flex justify-center pt-2">
-              <Button
-                variant="outline"
-                onClick={handleLoadMore}
-                disabled={linksQuery.isFetchingNextPage}
-              >
-                {linksQuery.isFetchingNextPage ? t("loadingMore") : t("loadMore")}
-              </Button>
+
+          <WeeklyInsightsCard />
+
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={t("searchPlaceholder")}
+                className="pl-9 pr-9"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  aria-label={t("clearSearch")}
+                  className="focus-ring absolute right-2 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
             </div>
+
+            <MyLinksFiltersBar filters={filters} onChange={setFilters} tagOptions={tagOptions} />
+          </div>
+
+          {loading ? (
+            <LoadingTable t={t} />
+          ) : error ? (
+            <ErrorState message={error} onRetry={() => void linksQuery.refetch()} />
+          ) : items.length === 0 ? (
+            <EmptyState title={t("noResultTitle")} description={t("noResultDesc", { query })} />
+          ) : (
+            <>
+              <LinksTable
+                items={items}
+                sortKey={filters.sort ?? "createdAt"}
+                sortDir={filters.dir ?? "desc"}
+                onSortChange={(sort, dir) =>
+                  setFilters((f) => ({ ...f, sort, dir, after: undefined }))
+                }
+                onChanged={() => void invalidateLinks()}
+                onTagClick={(tag) => setFilters((f) => ({ ...f, tag, after: undefined }))}
+              />
+              {linksQuery.hasNextPage && (
+                <div className="flex justify-center pt-2">
+                  <Button
+                    variant="outline"
+                    onClick={handleLoadMore}
+                    disabled={linksQuery.isFetchingNextPage}
+                  >
+                    {linksQuery.isFetchingNextPage ? t("loadingMore") : t("loadMore")}
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </>
       )}

@@ -16,11 +16,13 @@ export async function FeedMasthead({
   locale: string;
   eyebrow?: string;
   title?: string;
-  sub?: string;
+  // A string sets the sub-line; `null` suppresses it (e.g. search results, where the count in the
+  // title already states the scope). `undefined` falls back to the home tagline.
+  sub?: string | null;
 }) {
   const t = await getTranslations({ locale, namespace: "publicFeed" });
   const heading = title ?? t("mastheadTagline");
-  const subText = sub ?? t("mastheadSub");
+  const subText = sub === null ? null : (sub ?? t("mastheadSub"));
   return (
     <section className="border-b border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-950">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-14">
