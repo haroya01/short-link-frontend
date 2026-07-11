@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Link } from "@/i18n/navigation";
-import { Ban, Download, Sparkles, Trash2, Undo2 } from "lucide-react";
+import { Ban, Download, SlidersHorizontal, Sparkles, Trash2, Undo2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { blogPath, linksHref } from "@/lib/host";
+import { SwitchLink } from "@/components/common/switch-link";
 import {
   deleteEmailLead,
   emailLeadsExportUrl,
@@ -130,12 +131,11 @@ export default function ProfileLeadsPage() {
           <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{t("csvExcludesOptedOut")}</p>
         </div>
         <div className="flex items-center gap-2">
-          <a
-            href={linksHref("/settings/profile")}
-            className="text-xs text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
-          >
+          {/* Leads live on blog, the profile editor lives on kurl — the same cross-surface capsule
+              (SwitchLink) as the other blog↔kurl↔프로필 hops, not a bare grey text link. */}
+          <SwitchLink href={linksHref("/settings/profile")} icon={SlidersHorizontal}>
             {t("backToEditor")}
-          </a>
+          </SwitchLink>
           <a href={emailLeadsExportUrl()} download>
             <Button variant="outline">
               <Download className="mr-1 h-4 w-4" />

@@ -110,7 +110,7 @@ export function AppHeader({
           loginButton
         )
       ) : authenticated ? (
-        <AccountMenu />
+        <AccountMenu product={product} />
       ) : (
         loginButton
       )}

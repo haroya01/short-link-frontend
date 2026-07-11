@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { LogOut, Settings } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { AccountMenu } from "@/components/common/account-menu";
 import { AccountSheet } from "@/components/common/account-sheet";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
@@ -59,10 +58,8 @@ function authenticatedEntries(t: (k: string) => string, hasProfile: boolean): Na
 
 export function Nav() {
   const pathname = usePathname();
-  const router = useRouter();
-  const locale = useLocale();
   const t = useTranslations("nav");
-  const { authenticated, ready, signOut, me } = useAuth();
+  const { authenticated, ready, me } = useAuth();
   const [sheet, setSheet] = useState(false);
 
   // 공개 프로필 페이지(u/) 는 standalone 느낌 유지 — Footer 도 같은 분기.
@@ -145,45 +142,34 @@ export function Nav() {
           )}
         </div>
 
-        {/* Desktop-only — on mobile the blog switch + account live in the mobile cluster above. */}
+        {/* Desktop-only — on mobile the blog switch + account live in the mobile cluster above.
+            Signed in: the AppsGrid switch pill + the shared AccountMenu (avatar → 설정·테마·언어·
+            로그아웃), the same account vocabulary blog's header uses. Settings/logout/theme/language
+            live inside the menu instead of as loose bar controls; product="links" slims the menu to
+            kurl's own entries (profile + blog switch stay in the top Nav / AppsGrid, not duplicated).
+            Signed out: language + theme stay visible on the bar since there's no account menu yet. */}
         <div className="hidden shrink-0 items-center gap-2 sm:flex">
           <AppsGrid />
-          <LanguageSwitcher />
-          {/* kurl desktop theme toggle — the mobile account sheet has one, blog's desktop header has
-              its own; without this kurl-on-desktop could only inherit the shared cookie, never set it. */}
-          <ThemeToggle
-            iconOnly
-            className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
-          />
           {!ready ? (
-            <div className="h-8 w-20 animate-pulse rounded-md bg-slate-100 dark:bg-slate-800" />
+            <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
           ) : authenticated ? (
-            <>
-              <Link
-                href="/settings"
-                aria-label={t("settings")}
-                className="grid h-8 w-8 place-items-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
-              >
-                <Settings className="h-4 w-4" />
-              </Link>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={async () => {
-                  await signOut();
-                  router.push(`/${locale}`);
-                }}
-              >
-                <LogOut className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{t("logout")}</span>
-              </Button>
-            </>
+            <AccountMenu product="links" />
           ) : (
-            <Link href={loginHrefFor(pathname)}>
-              <Button size="sm" variant="default">
-                {t("login")}
-              </Button>
-            </Link>
+            <>
+              <LanguageSwitcher />
+              {/* kurl desktop theme toggle — signed-out visitors have no account menu, so the toggle
+                  stays on the bar; without it kurl-on-desktop could only inherit the shared cookie,
+                  never set it. */}
+              <ThemeToggle
+                iconOnly
+                className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+              />
+              <Link href={loginHrefFor(pathname)}>
+                <Button size="sm" variant="default">
+                  {t("login")}
+                </Button>
+              </Link>
+            </>
           )}
         </div>
       </div>
