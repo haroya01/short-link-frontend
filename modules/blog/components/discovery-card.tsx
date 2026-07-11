@@ -14,12 +14,12 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverMorphLink } from "@/modules/blog/components/cover-morph-link";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
+import { BelongingProvider } from "@/modules/blog/components/post-belonging-context";
 
-// "속함" 한 올(모든 카드가 그물의 매듭임을 보여주는 한 줄) — 카드마다 개별 lazy fetch 라 N+1 우려가
-// 있어 기본 OFF. 배치 엔드포인트가 생기거나 명시 승인이 나면 이 플래그로 켠다(그때 카드마다 한 요청이
-// 아니라 피드 단위 배치로 갈아끼우는 게 정석). 목 모드에선 자동 ON 이라 데모/스샷에서 렌더된다.
-const SHOW_BELONGING =
-  process.env.NEXT_PUBLIC_FEED_BELONGING === "1" || process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+// "속함" 한 올(모든 카드가 그물의 매듭임을 보여주는 한 줄) — 기본 ON. 카드마다 개별 fetch(N+1) 였던
+// 초기 우려는 배치 엔드포인트로 해소됐다: 보이는 카드들의 id 를 BelongingProvider(DiscoveryGrid 안)
+// 가 모아 한 번에 조회하고, 담긴 게 없는 글은 줄 자체를 안 그린다. 끄고 싶으면 플래그로 명시적으로만.
+const SHOW_BELONGING = process.env.NEXT_PUBLIC_FEED_BELONGING !== "0";
 
 /**
  * Discovery feed card — the *browse* surface (blog home 최신 / 검색), vs the *reading* surfaces
@@ -277,7 +277,7 @@ export function DiscoveryGrid({ children }: { children: ReactNode }) {
   const items = Children.toArray(children);
   const chunks: ReactNode[][] = [];
   for (let i = 0; i < items.length; i += GRID_CHUNK) chunks.push(items.slice(i, i + GRID_CHUNK));
-  return (
+  const grid = (
     <>
       {chunks.map((chunk, i) => (
         <div key={i} className={GRID_COLS}>
@@ -286,6 +286,10 @@ export function DiscoveryGrid({ children }: { children: ReactNode }) {
       ))}
     </>
   );
+  // One "속함" batch resolver spans the whole grid — every DiscoveryCard's belonging line registers
+  // its in-view id here, so a viewport of cards resolves in one request (see BelongingProvider). When
+  // the line is off, the provider is a pure passthrough (no id ever registers), so it costs nothing.
+  return SHOW_BELONGING ? <BelongingProvider>{grid}</BelongingProvider> : grid;
 }
 
 /** A child cell of {@link DiscoveryGrid} — 칼럼 사이에서 카드가 쪼개지지 않게 막는다.

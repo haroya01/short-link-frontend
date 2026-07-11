@@ -17,6 +17,7 @@ import {
   mockDiscoverConnections,
   mockMineCollections,
   mockPostCollections,
+  mockPostCollectionsBatch,
   mockPublicConnectionFeed,
   mockReorderConnections,
 } from "@/modules/blog/api/_mocks-collections";
@@ -200,6 +201,51 @@ export async function listPublicPostCollections(postId: number): Promise<Collect
   } catch {
     return [];
   }
+}
+
+/** One post's public-collection membership, keyed by post — the batch shape. Backend `PostCollectionsView`.
+ *  `collections` is `[]` for a post that belongs to no PUBLIC collection (or doesn't exist). */
+export interface PostCollectionsView {
+  postId: number;
+  collections: CollectionSummary[];
+}
+
+/** Server caps `ids` at 50 per request; we chunk to stay under it. */
+const POST_COLLECTIONS_BATCH_CAP = 50;
+
+/**
+ * Public — resolve the "속함" membership for MANY posts in one round-trip (the feed batch that replaces
+ * the per-card N+1). `GET /api/v1/public/posts/collections?ids=5,6,7` → one {@link PostCollectionsView}
+ * per requested id, order preserved, `collections:[]` for posts with no public collection. Readable
+ * signed-out (permitAll slice) so a raw fetch. Chunked at {@link POST_COLLECTIONS_BATCH_CAP}; a failed
+ * chunk degrades to empty membership for its ids (the belonging line simply doesn't render), never throws.
+ */
+export async function listPublicPostCollectionsBatch(
+  ids: number[],
+): Promise<PostCollectionsView[]> {
+  const unique = Array.from(new Set(ids.filter((id) => Number.isFinite(id))));
+  if (unique.length === 0) return [];
+  if (USE_MOCKS) return Promise.resolve(mockPostCollectionsBatch(unique));
+
+  const chunks: number[][] = [];
+  for (let i = 0; i < unique.length; i += POST_COLLECTIONS_BATCH_CAP) {
+    chunks.push(unique.slice(i, i + POST_COLLECTIONS_BATCH_CAP));
+  }
+  const results = await Promise.all(
+    chunks.map(async (chunk): Promise<PostCollectionsView[]> => {
+      try {
+        const res = await fetch(
+          `${API_BASE}/api/v1/public/posts/collections?ids=${chunk.join(",")}`,
+          { cache: "no-store" },
+        );
+        if (!res.ok) return chunk.map((postId) => ({ postId, collections: [] }));
+        return (await res.json()) as PostCollectionsView[];
+      } catch {
+        return chunk.map((postId) => ({ postId, collections: [] }));
+      }
+    }),
+  );
+  return results.flat();
 }
 
 /** "이 문장이 속한 길" — public collections/paths containing this highlight (newest first). Readable
