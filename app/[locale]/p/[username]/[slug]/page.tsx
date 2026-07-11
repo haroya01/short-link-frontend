@@ -20,6 +20,7 @@ import { TagChips } from "../_components/post-meta";
 import { PostOwnerActions } from "../_components/post-owner-actions";
 import { SeriesNav } from "@/modules/blog/components/series-nav";
 import { SeriesNext } from "@/modules/blog/components/series-next";
+import { PostEdges } from "@/modules/blog/components/post-edges";
 import { RelatedPosts } from "@/modules/blog/components/related-posts";
 import { ReadingResume } from "@/modules/blog/components/reading-resume";
 import { authorHref } from "@/modules/blog/components/feed-card";
@@ -336,6 +337,11 @@ export default async function PublicPostPage({
 
       <ArticleBody blocks={blocks} postId={post.id} className={headings.length >= 1 ? "has-toc" : undefined} />
       <PostHighlights postId={post.id} />
+
+      {/* 이 글이 놓인 길 · 이어진 것 · 이은 사람 — the post as a node with visible edges. Renders
+          nothing when the post sits on no edge yet; the tag-based RelatedPosts below is the fallback
+          so the article is never a dead end (§10: one green thread, no node-graph). */}
+      <PostEdges postId={post.id} authorUsername={author.username} locale={locale} />
 
       {result.data.series && (
         <SeriesNext series={result.data.series} username={author.username} locale={locale} />
