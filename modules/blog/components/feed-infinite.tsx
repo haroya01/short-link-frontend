@@ -70,6 +70,8 @@ export function FeedInfinite({
   featuredLabel,
   interleaveNode,
   interleaveAfter = 3,
+  interleaveNodes,
+  interleaveEvery = 5,
   variant = "list",
 }: {
   locale: string;
@@ -95,6 +97,13 @@ export function FeedInfinite({
   interleaveNode?: ReactNode;
   /** Zero-based row index the interleaved node is inserted after (default: after the 4th row). */
   interleaveAfter?: number;
+  /** Several nodes threaded through the feed one every {@link interleaveEvery} rows (the "지금 이어지는
+   *  것들" connection thread). Distinct from {@link interleaveNode} (a single insert): both can coexist
+   *  — the series card at {@link interleaveAfter}, the connection thread spaced after it. Each is only
+   *  placed when the feed actually has a row past that point (never trails a short feed). */
+  interleaveNodes?: ReactNode[];
+  /** Row spacing between {@link interleaveNodes} inserts (default: one every 5 rows). */
+  interleaveEvery?: number;
 }) {
   const t = useTranslations("publicFeed");
   const { prefs } = useTagPrefs();
@@ -217,6 +226,18 @@ export function FeedInfinite({
   const seedLen = Math.min(visible.length, PAGE_SIZE);
   const gridEager = new Set([0, Math.ceil(seedLen / 3), Math.ceil((seedLen * 2) / 3)]);
 
+  // Connection thread: place interleaveNodes[k] after row (interleaveAfter + 1) + k*interleaveEvery,
+  // one every few rows — but only where a real post row follows, so the thread never trails the feed.
+  // Keyed by the row index it sits AFTER. The single interleaveNode (series card) is handled inline.
+  const connectAfter = new Map<number, ReactNode>();
+  if (interleaveNodes && interleaveNodes.length > 0) {
+    const first = interleaveAfter + 2; // clear the series-card slot (at interleaveAfter) by a row
+    for (let k = 0; k < interleaveNodes.length; k++) {
+      const rowIdx = first + k * Math.max(1, interleaveEvery);
+      if (rowIdx < visible.length) connectAfter.set(rowIdx, interleaveNodes[k]);
+    }
+  }
+
   return (
     <>
       {variant === "grid" ? (
@@ -235,6 +256,7 @@ export function FeedInfinite({
               {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
                 <DiscoveryCell>{interleaveNode}</DiscoveryCell>
               )}
+              {connectAfter.has(i) && <DiscoveryCell>{connectAfter.get(i)}</DiscoveryCell>}
             </Fragment>
           ))}
         </DiscoveryGrid>
@@ -259,6 +281,7 @@ export function FeedInfinite({
                   {interleaveNode}
                 </li>
               )}
+              {connectAfter.has(i) && <li className="list-none py-2">{connectAfter.get(i)}</li>}
             </Fragment>
           ))}
         </FeedList>
