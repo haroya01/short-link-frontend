@@ -250,11 +250,11 @@ export default async function PublicPostPage({
         {eyebrow && (
           <p className="mb-3 text-[12px] font-medium text-slate-500 dark:text-slate-400">{eyebrow}</p>
         )}
-        {/* 모바일 headline-md(32px) → sm+ headline-lg(40px): 피드 마스트헤드(40px)와 같은 무게로
-            데스크톱에서 제목이 먼저 눈에 든다. 본문 h2(24px)보다는 항상 크게 유지.
-            headline-md + bold 고정: 모바일 headline-sm(24px semibold)은 본문 h2(24px bold)와 같은
-            크기·약한 무게라 위계가 뒤집혀 보였다. 제목 32/40px bold > h2 24px bold > h3 20px. */}
-        <h1 className="text-headline-md font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
+        {/* 모바일 30px → sm+ 37px: 힘은 크기가 아니라 weight(bold)+tight tracking 에서. 이전 32/40px 은
+            좁은 뷰포트에서 두 줄로 크게 쏟아져 포트폴리오 목업처럼 읽혔다 — 스텝만 ~6% 줄여 절제하되,
+            본문 h2(24px)보다는 항상 확실히 크게(30 > 24) 유지해 위계는 그대로. leading 은 큰 디스플레이의
+            tight 감(1.15/1.1)을 이어간다. */}
+        <h1 className="text-[1.875rem] font-bold leading-[1.15] tracking-headline text-slate-900 dark:text-slate-100 sm:text-[2.3125rem] sm:leading-[1.1]">
           {post.title}
         </h1>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
