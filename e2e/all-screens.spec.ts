@@ -11,7 +11,19 @@ import { test, expect, type Page } from "@playwright/test";
  */
 test.use({ viewport: { width: 1280, height: 900 } });
 
-async function rendersCleanly(page: Page, name: string) {
+async function rendersCleanly(page: Page, name: string, status: number | null) {
+  // The branded 404 page (not-found.tsx) has an h1 + full-height body, so it otherwise sails through
+  // every structural check below — the sweep would greenlight a deleted route. Two gates catch it:
+  //   1. HTTP status < 400 — the plain case (a request that resolves straight to a 404 response).
+  //   2. The not-found boundary itself — a deleted /{locale}/foo can rewrite through middleware to a
+  //      still-registered handler that renders the 404 body with a 200 status (e.g. the /qr → links/qr
+  //      chain), so the status alone won't flag it. not-found.tsx carries data-testid="not-found".
+  expect(status, `${name}: HTTP status < 400`).not.toBeNull();
+  expect(status as number, `${name}: HTTP status < 400`).toBeLessThan(400);
+  await expect(
+    page.locator("[data-testid='not-found']"),
+    `${name}: not the 404 not-found page`,
+  ).toHaveCount(0);
   await expect(page.locator("body")).toBeVisible();
   // No framework error boundary surfaced.
   await expect(
@@ -38,7 +50,6 @@ const SCREENS: { name: string; path: string }[] = [
   { name: "marketing · login", path: "/ko/login" },
   { name: "marketing · showcase", path: "/ko/showcase" },
   { name: "marketing · demo", path: "/ko/demo" },
-  { name: "marketing · qr", path: "/ko/qr" },
   // ── link-in-bio (public) ──
   { name: "link-in-bio · u/{user}", path: "/ko/u/dohyun" },
   // ── links app (auth; backed by the links mock layer in lib/api/_links-mocks.ts) ──
@@ -78,10 +89,10 @@ const SCREENS: { name: string; path: string }[] = [
 
 for (const s of SCREENS) {
   test(`renders: ${s.name}`, async ({ page }) => {
-    await page.goto(s.path);
+    const response = await page.goto(s.path);
     // load + a beat for hydration/auth to resolve (auth-gated pages swap the login wall for content).
     await page.waitForLoadState("load");
     await page.waitForTimeout(900);
-    await rendersCleanly(page, s.name);
+    await rendersCleanly(page, s.name, response?.status() ?? null);
   });
 }

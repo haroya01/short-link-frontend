@@ -9,13 +9,16 @@ import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
 /**
  * Blog-settings block that lists every followed topic with an unfollow control. The feed's tag strip
  * only surfaces followed tags that currently have posts in view, so a tag whose recent posts have
- * aged out becomes impossible to drop from there — this is the one place that reads the full
- * `prefs.followed` set, so it can always unfollow. Series subscriptions get the same "see them all,
- * remove any" treatment on the 시리즈 tab; this is the topic twin of that.
+ * aged out becomes impossible to drop from there — this reads the full `prefs.followed` set, so it
+ * covers those aged-out tags too. It lives on the blog settings page (behind the sign-in gate), so
+ * it's the management home for signed-in readers; a signed-out guest who followed tags device-locally
+ * still toggles from the feed strip. Series subscriptions get the same "see them all, remove any"
+ * treatment on the 시리즈 tab; this is the topic twin of that.
  *
  * Each chip links to the tag feed (soft nav — stays in the blog surface); the trailing × unfollows
  * in place. `toggleFollow` persists to the account when signed in and to localStorage otherwise, and
- * broadcasts so the feed strip updates in step.
+ * broadcasts so the feed strip updates in step. (The component itself is auth-agnostic — the gate is
+ * the page, not this block.)
  */
 export function FollowedTagsSetting() {
   const t = useTranslations("blogWorkspace");
@@ -39,7 +42,7 @@ export function FollowedTagsSetting() {
           <ul className="mt-3 flex flex-wrap gap-2">
             {followed.map((tag) => (
               <li key={tag}>
-                <span className="focus-ring inline-flex items-center gap-1 rounded-full bg-slate-100 py-1 pl-3 pr-1 text-[13px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 py-1 pl-3 pr-1 text-[13px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                   <Link
                     href={blogPath(`/tags/${encodeURIComponent(tag)}`)}
                     className="focus-ring rounded-full transition-colors hover:text-accent-700 dark:hover:text-accent-400"
