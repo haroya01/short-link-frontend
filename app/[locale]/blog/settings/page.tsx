@@ -10,6 +10,7 @@ import { linksHref } from "@/lib/host";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { FeedDefaultTabSetting } from "@/modules/blog/components/feed-default-tab-setting";
 import { FollowerCountSetting } from "@/modules/blog/components/follower-count-setting";
+import { BlogNotificationSettings } from "@/modules/notifications/components/blog-notification-settings";
 import { WebPushToggle } from "@/modules/notifications/components/web-push-toggle";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -127,6 +128,9 @@ export default function BlogSettingsPage() {
 
       {/* 알림 — 브라우저 웹푸시(미지원/VAPID 미설정이면 스스로 숨음) */}
       <WebPushToggle />
+
+      {/* 알림 종류별 받기/끄기 (좋아요·댓글·팔로우·시리즈·답글·새 글·멘션) */}
+      <BlogNotificationSettings />
 
       {/* 피드 */}
       <FeedDefaultTabSetting rowClass={rowClass} />
