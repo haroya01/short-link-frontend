@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 export default async function NotFound() {
   const t = await getTranslations("notFound");
   return (
-    <div className="container max-w-md py-24 text-center">
+    <div data-testid="not-found" className="container max-w-md py-24 text-center">
       <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500">404</p>
       <h1 className="mt-3 text-2xl font-semibold tracking-headline text-slate-900">
         {t("title")}

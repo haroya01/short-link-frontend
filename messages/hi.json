@@ -276,7 +276,11 @@
     "analyticsTabOverview": "अवलोकन",
     "analyticsTabSeries": "सीरीज़",
     "analyticsTabLinks": "लिंक",
-    "analyticsTabPosts": "पोस्ट"
+    "analyticsTabPosts": "पोस्ट",
+    "settingsFollowedTags": "फ़ॉलो किए गए विषय",
+    "settingsFollowedTagsHint": "आपके फ़ॉलो किए विषय — वे भी जिनमें हाल की कोई पोस्ट नहीं है। इनकी पोस्ट आपकी फ़ीड की पट्टी में दिखती हैं।",
+    "settingsFollowedTagsEmpty": "आपने अभी तक किसी विषय को फ़ॉलो नहीं किया है।",
+    "settingsUnfollowTag": "{tag} को अनफ़ॉलो करें"
   },
   "postEditor": {
     "backToList": "पोस्ट",
@@ -1830,8 +1834,7 @@
     "srcLabel": "ट्रैकिंग टैग (वैकल्पिक)",
     "srcPlaceholder": "जैसे poster, offline-card",
     "colorLabel": "रंग",
-    "logoLabel": "केंद्र में गंतव्य फ़ेविकॉन दिखाएँ",
-    "comingSoon": "जल्द।"
+    "logoLabel": "केंद्र में गंतव्य फ़ेविकॉन दिखाएँ"
   },
   "share": {
     "label": "साझा करें",
@@ -2493,6 +2496,10 @@
         "daily": {
           "title": "पिछले 30 दिन",
           "desc": "दैनिक मानव विज़िट (बॉट शामिल नहीं)"
+        },
+        "hourly": {
+          "title": "दिन का घंटा",
+          "desc": "0-23 वितरण"
         },
         "heatmap": {
           "title": "दिन × घंटा हीटमैप",
