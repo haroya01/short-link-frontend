@@ -23,10 +23,12 @@ export async function TagFilterStrip({
   // Drop junk tags (incomplete jamo, single-char, mash) so they never become clickable filters.
   const clean = tags.filter((t) => isDisplayableTag(t.tag));
   if (clean.length === 0) return null;
-  // Guarantee the current tag shows even if it isn't in the popular set.
-  const list = clean.some((t) => t.tag === activeTag)
-    ? clean
-    : [{ tag: activeTag, count: 0 }, ...clean];
+  // Guarantee the current tag shows even if it isn't in the popular set — but never re-insert a junk
+  // activeTag (a "#ㄴ" someone navigated to directly) as a chip; the filter above would have dropped it.
+  const list =
+    clean.some((t) => t.tag === activeTag) || !isDisplayableTag(activeTag)
+      ? clean
+      : [{ tag: activeTag, count: 0 }, ...clean];
   const qs = sort === "trending" ? "?sort=trending" : "";
 
   return (

@@ -215,7 +215,17 @@ export default function DashboardPage() {
           ) : error ? (
             <ErrorState message={error} onRetry={() => void linksQuery.refetch()} />
           ) : items.length === 0 ? (
-            <EmptyState title={t("noResultTitle")} description={t("noResultDesc", { query })} />
+            <EmptyState
+              title={t("noResultTitle")}
+              // With a search term the message quotes it; when only filters (tag/domain/expiry/date)
+              // are narrowing the list, the query is empty — use the query-less variant so the copy
+              // never reads 'matching ""'.
+              description={
+                query.trim()
+                  ? t("noResultDesc", { query })
+                  : t("noResultDescFiltered")
+              }
+            />
           ) : (
             <>
               <LinksTable

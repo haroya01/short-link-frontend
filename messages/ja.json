@@ -620,7 +620,11 @@
     "relatedHeading": "次に読む",
     "resumeReading": "続きを読む",
     "resumeDismiss": "閉じる",
-    "replyError": "返信を投稿できませんでした。もう一度お試しください。"
+    "replyError": "返信を投稿できませんでした。もう一度お試しください。",
+    "linkClicks": "クリック",
+    "linkTopCountry": "上位の国",
+    "linkTopDevice": "上位のデバイス",
+    "linkFullStats": "kurl で詳しい統計を見る"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -1042,6 +1046,7 @@
     },
     "noResultTitle": "該当する結果がありません",
     "noResultDesc": "「{query}」と一致するリンクが見つかりませんでした。",
+    "noResultDescFiltered": "現在の条件に一致するリンクがありません。フィルターを調整してみてください。",
     "table": {
       "shortUrl": "短縮URL",
       "originalUrl": "元のURL",
