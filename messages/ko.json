@@ -514,6 +514,7 @@
   "publicPost": {
     "like": "좋아요",
     "likePost": "{title} 글 좋아요",
+    "connectPost": "{title} 글을 컬렉션이나 길에 엮기",
     "highlight": "하이라이트",
     "highlightNote": "메모",
     "highlightNoteTitle": "메모 추가",

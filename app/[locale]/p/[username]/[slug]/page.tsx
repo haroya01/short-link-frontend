@@ -13,6 +13,7 @@ import { PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
 import { PostComments } from "@/modules/blog/components/comments";
 import { LikeButton } from "@/modules/blog/components/like-button";
 import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
+import { ConnectButton } from "@/modules/blog/components/connect-button";
 import { FollowButton } from "@/modules/blog/components/follow-button";
 import { ArticleBody, extractHeadings, readingMinutes } from "../_components/post-blocks";
 import { PostHighlights } from "../_components/post-highlights";
@@ -297,6 +298,7 @@ export default async function PublicPostPage({
                 reader can react without scrolling to the end. */}
             <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
             <BookmarkButton postId={post.id} />
+            <ConnectButton postId={post.id} postTitle={post.title} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
             {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
             <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />
@@ -368,6 +370,7 @@ export default async function PublicPostPage({
           <div className="flex items-center gap-3">
             <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
             <BookmarkButton postId={post.id} />
+            <ConnectButton postId={post.id} postTitle={post.title} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
             <span aria-hidden className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
             <ReportButton subjectType="POST" subjectId={post.id} />
