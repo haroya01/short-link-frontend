@@ -3448,6 +3448,20 @@
     "whyLabel": "왜 이었나요",
     "whyPlaceholder": "한 줄 (선택)",
     "addToCount": "{count}개 컬렉션에 추가됩니다.",
-    "connectError": "저장하지 못했어요. 다시 시도해 주세요."
+    "connectError": "저장하지 못했어요. 다시 시도해 주세요.",
+    "edit": "편집",
+    "editTitle": "컬렉션 편집",
+    "titleLabel": "이름",
+    "descriptionLabel": "소개",
+    "descriptionPlaceholder": "한 줄 소개 (선택)",
+    "visibilityLabel": "공개 범위",
+    "deleteCollection": "컬렉션 삭제",
+    "deleteConfirmTitle": "이 컬렉션을 삭제할까요?",
+    "deleteConfirmBody": "연결된 항목도 함께 사라지고, 되돌릴 수 없어요.",
+    "delete": "삭제",
+    "removeItem": "연결 끊기",
+    "removeItemConfirmTitle": "이 연결을 끊을까요?",
+    "removeItemConfirmBody": "이 항목이 컬렉션에서 빠져요. 항목 자체는 지워지지 않아요.",
+    "manageHint": "이 컬렉션은 내가 만들었어요"
   }
 }

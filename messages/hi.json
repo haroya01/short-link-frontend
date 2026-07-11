@@ -3448,6 +3448,20 @@
     "whyLabel": "आपने इसे क्यों जोड़ा?",
     "whyPlaceholder": "One line (optional)",
     "addToCount": "{count} संग्रह में जोड़ा गया।",
-    "connectError": "सहेजा नहीं जा सका. कृपया पुनः प्रयास करें."
+    "connectError": "सहेजा नहीं जा सका. कृपया पुनः प्रयास करें.",
+    "edit": "संपादित करें",
+    "editTitle": "संग्रह संपादित करें",
+    "titleLabel": "नाम",
+    "descriptionLabel": "परिचय",
+    "descriptionPlaceholder": "एक पंक्ति का परिचय (वैकल्पिक)",
+    "visibilityLabel": "दृश्यता",
+    "deleteCollection": "संग्रह हटाएँ",
+    "deleteConfirmTitle": "यह संग्रह हटाएँ?",
+    "deleteConfirmBody": "इसके कनेक्शन भी हट जाएँगे। इसे पूर्ववत नहीं किया जा सकता।",
+    "delete": "हटाएँ",
+    "removeItem": "हटाएँ",
+    "removeItemConfirmTitle": "यह कनेक्शन हटाएँ?",
+    "removeItemConfirmBody": "यह आइटम इस संग्रह से हट जाएगा। आइटम स्वयं नहीं हटेगा।",
+    "manageHint": "यह आपका संग्रह है"
   }
 }

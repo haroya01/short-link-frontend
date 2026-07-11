@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   ArrowRight,
@@ -10,8 +11,12 @@ import {
   Link as LinkIcon,
   Loader2,
   Lock,
+  Pencil,
+  Trash2,
+  X,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { useConfirm } from "@/components/ui/use-confirm";
 import {
   currentStepIndex,
   estimatePathMinutes,
@@ -21,9 +26,13 @@ import {
   readOpenedSteps,
 } from "@/lib/path-progress";
 import {
+  deleteCollection,
+  disconnect,
   getCollection,
   reorderConnections,
+  updateCollection,
   type CollectionDetail,
+  type CollectionVisibility,
   type Connection,
 } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
@@ -47,9 +56,15 @@ export function CollectionDetailView({
 }) {
   const t = useTranslations("collections");
   const { me } = useAuth();
+  const router = useRouter();
+  const [confirm, confirmDialog] = useConfirm();
   const [detail, setDetail] = useState<CollectionDetail | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "missing">("loading");
   const [reordering, setReordering] = useState(false);
+  // Owner-only meta editor (name / blurb / visibility). Off = read view; on = the inline form.
+  const [editing, setEditing] = useState(false);
+  // A connection id currently being removed (disconnect), so its row can dim while the request runs.
+  const [removingId, setRemovingId] = useState<number | null>(null);
 
   const load = useCallback(() => {
     setState("loading");
@@ -85,6 +100,71 @@ export function CollectionDetailView({
     [detail, load],
   );
 
+  // Save the meta edit — optimistic (the header repaints from the returned summary), reload on failure.
+  const onEditSave = useCallback(
+    async (patch: { title: string; description: string | null; visibility: CollectionVisibility }) => {
+      if (!detail) return;
+      setDetail({ ...detail, ...patch });
+      setEditing(false);
+      try {
+        await updateCollection(detail.id, patch);
+      } catch {
+        load();
+      }
+    },
+    [detail, load],
+  );
+
+  // Delete the whole collection — confirm first (destructive, irreversible), then leave for the owner's
+  // home once it's gone (the detail page would 404 in place).
+  const onDelete = useCallback(async () => {
+    if (!detail) return;
+    const ok = await confirm({
+      title: t("deleteConfirmTitle"),
+      description: t("deleteConfirmBody"),
+      confirmLabel: t("delete"),
+      cancelLabel: t("cancel"),
+      destructive: true,
+    });
+    if (!ok) return;
+    try {
+      await deleteCollection(detail.id);
+      if (detail.curatorUsername) {
+        window.location.assign(authorHref(detail.curatorUsername, locale));
+      } else {
+        router.back();
+      }
+    } catch {
+      load(); // surface nothing changed; the collection is still here
+    }
+  }, [detail, confirm, t, locale, router, load]);
+
+  // Remove one connection (disconnect) — confirm, then drop the row optimistically; reload on failure.
+  const onRemoveConnection = useCallback(
+    async (connectionId: number) => {
+      if (!detail) return;
+      const ok = await confirm({
+        title: t("removeItemConfirmTitle"),
+        description: t("removeItemConfirmBody"),
+        confirmLabel: t("removeItem"),
+        cancelLabel: t("cancel"),
+        destructive: true,
+      });
+      if (!ok) return;
+      setRemovingId(connectionId);
+      const prev = detail.connections;
+      setDetail({ ...detail, connections: prev.filter((c) => c.id !== connectionId) });
+      try {
+        await disconnect(detail.id, connectionId);
+      } catch {
+        load(); // restore the removed row on failure
+      } finally {
+        setRemovingId(null);
+      }
+    },
+    [detail, confirm, t, load],
+  );
+
   if (state === "loading") {
     return (
       <div className="flex justify-center py-24 text-slate-400">
@@ -103,7 +183,11 @@ export function CollectionDetailView({
 
   return (
     <div>
-      <CollectionHeader detail={detail} locale={locale} />
+      {editing && isOwner ? (
+        <CollectionEditor detail={detail} onCancel={() => setEditing(false)} onSave={onEditSave} />
+      ) : (
+        <CollectionHeader detail={detail} locale={locale} />
+      )}
 
       {reordering && isPath ? (
         <PathReorder
@@ -113,15 +197,35 @@ export function CollectionDetailView({
         />
       ) : (
         <>
-          {canReorder && (
-            <div className="mb-2 flex justify-end">
+          {/* Owner controls — a quiet action row (edit meta · reorder a path · delete). Hidden while
+              the inline editor is open (it carries its own save/cancel). */}
+          {isOwner && !editing && (
+            <div className="mb-2 flex flex-wrap items-center justify-end gap-1">
               <button
                 type="button"
-                onClick={() => setReordering(true)}
+                onClick={() => setEditing(true)}
                 className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
               >
-                <ArrowUpDown className="h-3.5 w-3.5" />
-                {t("reorder")}
+                <Pencil className="h-3.5 w-3.5" />
+                {t("edit")}
+              </button>
+              {canReorder && (
+                <button
+                  type="button"
+                  onClick={() => setReordering(true)}
+                  className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                >
+                  <ArrowUpDown className="h-3.5 w-3.5" />
+                  {t("reorder")}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => void onDelete()}
+                className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                {t("deleteCollection")}
               </button>
             </div>
           )}
@@ -131,12 +235,144 @@ export function CollectionDetailView({
               {t("empty")}
             </p>
           ) : isPath ? (
-            <PathWalk collectionId={detail.id} connections={detail.connections} locale={locale} />
+            <PathWalk
+              collectionId={detail.id}
+              connections={detail.connections}
+              locale={locale}
+              ownerRemove={isOwner ? onRemoveConnection : undefined}
+              removingId={removingId}
+            />
           ) : (
-            <ConnectionList connections={detail.connections} locale={locale} />
+            <ConnectionList
+              connections={detail.connections}
+              locale={locale}
+              ownerRemove={isOwner ? onRemoveConnection : undefined}
+              removingId={removingId}
+            />
           )}
         </>
       )}
+      {confirmDialog}
+    </div>
+  );
+}
+
+/**
+ * Owner-only inline meta editor — name / one-line blurb / visibility. Replaces the read header while
+ * open; saving writes to the edit endpoint and repaints the header. Quiet: bare-underline inputs, a
+ * segmented visibility pair (the same three the read badge shows), one save + cancel. Limits mirror the
+ * backend `EditCollectionRequest` (title ≤ 120, description ≤ 280).
+ */
+function CollectionEditor({
+  detail,
+  onCancel,
+  onSave,
+}: {
+  detail: CollectionDetail;
+  onCancel: () => void;
+  onSave: (patch: {
+    title: string;
+    description: string | null;
+    visibility: CollectionVisibility;
+  }) => void;
+}) {
+  const t = useTranslations("collections");
+  const [title, setTitle] = useState(detail.title);
+  const [description, setDescription] = useState(detail.description ?? "");
+  const [visibility, setVisibility] = useState<CollectionVisibility>(detail.visibility);
+  const trimmedTitle = title.trim();
+
+  const options: { key: CollectionVisibility; label: string; Icon: typeof Lock }[] = [
+    { key: "PRIVATE", label: t("visibilityPrivate"), Icon: Lock },
+    { key: "UNLISTED", label: t("visibilityUnlisted"), Icon: LinkIcon },
+    { key: "PUBLIC", label: t("visibilityPublic"), Icon: Globe },
+  ];
+
+  return (
+    <div className="mb-8 border-b border-slate-100 pb-6 dark:border-slate-800">
+      <h2 className="mb-4 text-[13px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+        {t("editTitle")}
+      </h2>
+      <label className="block">
+        <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">
+          {t("titleLabel")}
+        </span>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          maxLength={120}
+          aria-label={t("titleLabel")}
+          className="mt-1 w-full border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-headline-sm font-bold tracking-headline text-slate-900 outline-none transition-colors focus:border-accent-500 dark:border-slate-700 dark:text-slate-100"
+        />
+      </label>
+      <label className="mt-4 block">
+        <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">
+          {t("descriptionLabel")}
+        </span>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          maxLength={280}
+          rows={2}
+          placeholder={t("descriptionPlaceholder")}
+          aria-label={t("descriptionLabel")}
+          className="mt-1 w-full resize-none border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-[15px] leading-relaxed text-slate-600 outline-none transition-colors focus:border-accent-500 dark:border-slate-700 dark:text-slate-300 dark:placeholder:text-slate-500"
+        />
+      </label>
+      <div className="mt-4">
+        <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">
+          {t("visibilityLabel")}
+        </span>
+        <div
+          role="radiogroup"
+          aria-label={t("visibilityLabel")}
+          className="mt-1.5 inline-flex gap-1 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
+        >
+          {options.map(({ key, label, Icon }) => {
+            const active = visibility === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                onClick={() => setVisibility(key)}
+                className={`focus-ring inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors ${
+                  active
+                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-slate-100"
+                    : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="mt-6 flex items-center gap-2">
+        <button
+          type="button"
+          disabled={!trimmedTitle}
+          onClick={() =>
+            onSave({
+              title: trimmedTitle,
+              description: description.trim() || null,
+              visibility,
+            })
+          }
+          className="focus-ring rounded-lg bg-accent-700 px-4 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+        >
+          {t("save")}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="focus-ring rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+        >
+          {t("cancel")}
+        </button>
+      </div>
     </div>
   );
 }
@@ -222,10 +458,14 @@ function PathWalk({
   collectionId,
   connections,
   locale,
+  ownerRemove,
+  removingId,
 }: {
   collectionId: number;
   connections: Connection[];
   locale: string;
+  ownerRemove?: (connectionId: number) => void;
+  removingId: number | null;
 }) {
   const t = useTranslations("collections");
   // Opened-step set is read on the client only (localStorage), mirroring ReadingResume's mount gate —
@@ -294,19 +534,31 @@ function PathWalk({
                 />
               )}
             </div>
-            <div className={isLast ? "min-w-0 flex-1 pb-2" : "min-w-0 flex-1 pb-8"}>
-              {/* Steps ahead of where you are dim — the eye lands on the current step. Marking a step
-                  opened on click into its block is the device-local "I've read this" signal. */}
-              <div
-                className={i > currentIndex ? "opacity-50 transition-opacity" : "transition-opacity"}
-                onClickCapture={() => onOpen(c.id)}
-              >
-                {c.why && (
-                  <p className="mb-2.5 text-[15px] leading-relaxed text-slate-900 dark:text-slate-100">
-                    {c.why}
-                  </p>
+            <div
+              className={`${isLast ? "min-w-0 flex-1 pb-2" : "min-w-0 flex-1 pb-8"} ${
+                removingId === c.id ? "opacity-50 transition-opacity" : ""
+              }`}
+            >
+              <div className="flex items-start gap-2">
+                {/* Steps ahead of where you are dim — the eye lands on the current step. Marking a step
+                    opened on click into its block is the device-local "I've read this" signal. */}
+                <div
+                  className={`min-w-0 flex-1 ${i > currentIndex ? "opacity-50 transition-opacity" : "transition-opacity"}`}
+                  onClickCapture={() => onOpen(c.id)}
+                >
+                  {c.why && (
+                    <p className="mb-2.5 text-[15px] leading-relaxed text-slate-900 dark:text-slate-100">
+                      {c.why}
+                    </p>
+                  )}
+                  <ConnectionBlock block={c} locale={locale} />
+                </div>
+                {ownerRemove && (
+                  <RemoveConnectionButton
+                    onRemove={() => ownerRemove(c.id)}
+                    disabled={removingId === c.id}
+                  />
                 )}
-                <ConnectionBlock block={c} locale={locale} />
               </div>
               {isCurrent && continueTarget && (
                 <ContinuityBar
@@ -382,20 +634,68 @@ function ContinuityBar({
   );
 }
 
-/** COLLECTION — a simple connection list, each with its optional `why`. */
-function ConnectionList({ connections, locale }: { connections: Connection[]; locale: string }) {
+/** COLLECTION — a simple connection list, each with its optional `why`. The owner gets a quiet remove
+ *  (disconnect) affordance per row. */
+function ConnectionList({
+  connections,
+  locale,
+  ownerRemove,
+  removingId,
+}: {
+  connections: Connection[];
+  locale: string;
+  ownerRemove?: (connectionId: number) => void;
+  removingId: number | null;
+}) {
   return (
     <ul className="divide-y divide-slate-100 dark:divide-slate-800">
       {connections.map((c) => (
-        <li key={c.id} className="py-5 first:pt-0">
-          {c.why && (
-            <p className="mb-2.5 text-[15px] leading-relaxed text-slate-900 dark:text-slate-100">
-              {c.why}
-            </p>
-          )}
-          <ConnectionBlock block={c} locale={locale} />
+        <li
+          key={c.id}
+          className={`py-5 first:pt-0 ${removingId === c.id ? "opacity-50 transition-opacity" : ""}`}
+        >
+          <div className="flex items-start gap-2">
+            <div className="min-w-0 flex-1">
+              {c.why && (
+                <p className="mb-2.5 text-[15px] leading-relaxed text-slate-900 dark:text-slate-100">
+                  {c.why}
+                </p>
+              )}
+              <ConnectionBlock block={c} locale={locale} />
+            </div>
+            {ownerRemove && (
+              <RemoveConnectionButton
+                onRemove={() => ownerRemove(c.id)}
+                disabled={removingId === c.id}
+              />
+            )}
+          </div>
         </li>
       ))}
     </ul>
+  );
+}
+
+/** Quiet per-connection remove (disconnect) — an icon-only ghost button, red only on hover, so it never
+ *  competes with the reading content. Shared by the collection list and the path walk. */
+function RemoveConnectionButton({
+  onRemove,
+  disabled,
+}: {
+  onRemove: () => void;
+  disabled?: boolean;
+}) {
+  const t = useTranslations("collections");
+  return (
+    <button
+      type="button"
+      onClick={onRemove}
+      disabled={disabled}
+      aria-label={t("removeItem")}
+      title={t("removeItem")}
+      className="focus-ring mt-0.5 shrink-0 rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+    >
+      <X className="h-4 w-4" />
+    </button>
   );
 }
