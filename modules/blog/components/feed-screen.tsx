@@ -225,8 +225,8 @@ export async function FeedScreen({
       : `?sort=${s}${langSuffix}`;
   return (
     <>
-      {/* Editorial masthead band. On search it becomes the search heading (query + scope) so the band
-          reflects what you're looking at. Off search it's the quiet brand tagline — but shown to
+      {/* Editorial masthead band. On search it becomes the search heading (query + result count) so
+          the band reflects what you're looking at. Off search it's the quiet brand tagline — but shown to
           signed-OUT visitors only (Fork B): a first-time reader gets one line of "what this is", while
           a signed-in reader still leads straight into the posts (a quiet weblog, no marketing hero; the
           top app header already carries blog.kurl + search + write). The signed-out gate is read on the
@@ -241,7 +241,9 @@ export async function FeedScreen({
               ? t("searchResultsFor", { q: query })
               : t("searchResultsCount", { q: query, count: items.length })
           }
-          sub={t("searchScopeAll")}
+          // The result count in the title already carries the scope, and the search box placeholder
+          // spells out what's searched (posts · tags · authors) — a second scope line just added noise.
+          sub={null}
         />
       ) : activeTag ? null : (
         // Default home landing only — a `?tag=` filtered view already states its context (#tag label),
