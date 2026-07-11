@@ -84,3 +84,10 @@ export function estimatePathMinutes(steps: PathStep[]): number {
   const readable = steps.filter(isReadableStep).length;
   return Math.max(1, readable * MINUTES_PER_STEP);
 }
+
+/** Same coarse estimate keyed on a bare connection count — for surfaces (e.g. the discovery entrance
+ *  rows) that carry a collection's size but not its resolved steps. Same MINUTES_PER_STEP so the "약 N분"
+ *  reads consistently with {@link estimatePathMinutes} on the collection detail. */
+export function estimateMinutesForCount(count: number): number {
+  return Math.max(1, count * MINUTES_PER_STEP);
+}
