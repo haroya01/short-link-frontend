@@ -13,6 +13,7 @@
  */
 import type {
   CollectionDetail,
+  CollectionEdit,
   CollectionSummary,
   Connection,
   ConnectionEvent,
@@ -192,6 +193,29 @@ export function mockReorderConnections(collectionId: number, connectionIds: numb
   if (!target) return;
   const byId = new Map(target.connections.map((x) => [x.id, x]));
   target.connections = connectionIds.map((id) => byId.get(id)).filter((x): x is Connection => !!x);
+}
+
+export function mockUpdateCollection(id: number, payload: CollectionEdit): CollectionSummary {
+  const target = mockStore.find((c) => c.id === id);
+  if (!target) {
+    // Mirror a not-found edit as a bare summary so the demo doesn't throw.
+    return { id, title: payload.title, description: payload.description ?? null, visibility: payload.visibility, kind: "COLLECTION", count: 0, preview: [] };
+  }
+  target.title = payload.title;
+  target.description = payload.description?.trim() || null;
+  target.visibility = payload.visibility;
+  return toSummary(target);
+}
+
+export function mockDeleteCollection(id: number): void {
+  const i = mockStore.findIndex((c) => c.id === id);
+  if (i >= 0) mockStore.splice(i, 1);
+}
+
+export function mockDisconnect(collectionId: number, connectionId: number): void {
+  const target = mockStore.find((c) => c.id === collectionId);
+  if (!target) return;
+  target.connections = target.connections.filter((x) => x.id !== connectionId);
 }
 
 export function mockDiscoverConnections(): DiscoverFeed {

@@ -3448,6 +3448,20 @@
     "whyLabel": "Why did you connect it?",
     "whyPlaceholder": "One line (optional)",
     "addToCount": "Added to {count} collection(s).",
-    "connectError": "Couldn't save. Please try again."
+    "connectError": "Couldn't save. Please try again.",
+    "edit": "Edit",
+    "editTitle": "Edit collection",
+    "titleLabel": "Name",
+    "descriptionLabel": "About",
+    "descriptionPlaceholder": "A one-line intro (optional)",
+    "visibilityLabel": "Visibility",
+    "deleteCollection": "Delete collection",
+    "deleteConfirmTitle": "Delete this collection?",
+    "deleteConfirmBody": "Its connections are removed with it. This can't be undone.",
+    "delete": "Delete",
+    "removeItem": "Remove",
+    "removeItemConfirmTitle": "Remove this connection?",
+    "removeItemConfirmBody": "It leaves this collection. The item itself isn't deleted.",
+    "manageHint": "This is your collection"
   }
 }

@@ -3448,6 +3448,20 @@
     "whyLabel": "なぜつなげましたか？",
     "whyPlaceholder": "One line (optional)",
     "addToCount": "{count}件のコレクションに追加されます。",
-    "connectError": "保存できませんでした。もう一度お試しください。"
+    "connectError": "保存できませんでした。もう一度お試しください。",
+    "edit": "編集",
+    "editTitle": "コレクションを編集",
+    "titleLabel": "名前",
+    "descriptionLabel": "紹介",
+    "descriptionPlaceholder": "一行の紹介（任意）",
+    "visibilityLabel": "公開範囲",
+    "deleteCollection": "コレクションを削除",
+    "deleteConfirmTitle": "このコレクションを削除しますか？",
+    "deleteConfirmBody": "つながりも一緒に消え、元に戻せません。",
+    "delete": "削除",
+    "removeItem": "外す",
+    "removeItemConfirmTitle": "このつながりを外しますか？",
+    "removeItemConfirmBody": "この項目がコレクションから外れます。項目自体は削除されません。",
+    "manageHint": "これはあなたのコレクションです"
   }
 }
