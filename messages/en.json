@@ -514,6 +514,7 @@
   "publicPost": {
     "like": "Like",
     "likePost": "Like the post {title}",
+    "connectPost": "Connect the post {title} to a collection or path",
     "highlight": "Highlight",
     "highlightNote": "Note",
     "highlightNoteTitle": "Add a note",

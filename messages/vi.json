@@ -527,6 +527,7 @@
   "publicPost": {
     "like": "Thích",
     "likePost": "Thích bài viết {title}",
+    "connectPost": "Kết nối bài viết {title} vào một bộ sưu tập hoặc lối đi",
     "highlight": "Đánh dấu",
     "highlightNote": "Ghi chú",
     "highlightNoteTitle": "Thêm ghi chú",

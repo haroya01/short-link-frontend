@@ -514,6 +514,7 @@
   "publicPost": {
     "like": "いいね",
     "likePost": "{title}のいいね",
+    "connectPost": "「{title}」をコレクションやパスにつなぐ",
     "highlight": "ハイライト",
     "highlightNote": "メモ",
     "highlightNoteTitle": "メモを追加",

@@ -514,6 +514,7 @@
   "publicPost": {
     "like": "पसंद",
     "likePost": "{title} पोस्ट को पसंद करें",
+    "connectPost": "{title} पोस्ट को किसी संग्रह या पथ से जोड़ें",
     "highlight": "हाइलाइट",
     "highlightNote": "नोट",
     "highlightNoteTitle": "एक नोट जोड़ें",
