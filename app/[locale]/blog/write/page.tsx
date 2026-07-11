@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp, BarChart3, Layers, List, PenSquare, Pin, X } from "lucide-react";
 import { ImportMdButton } from "@/modules/blog/components/workspace/import-md-button";
 import { useAuth } from "@/lib/auth";
+import { dateLocale } from "@/lib/date";
 import { listMyPosts, type PostStatus, type PostView } from "@/modules/blog/api/posts";
 import { setPinnedPosts } from "@/modules/blog/api/curation";
 import { PostStatusBadge } from "@/modules/blog/components/post-status-badge";
@@ -31,6 +32,24 @@ function relativeTime(iso: string, locale: string): string {
     if (Math.abs(diff) >= ms || unit === "minute") return rtf.format(Math.round(diff / ms), unit);
   }
   return rtf.format(0, "minute");
+}
+
+/** Absolute publish instant for a scheduled row — the author needs the exact date·time, not "in 3
+ *  days". Pinned to Asia/Seoul (the app's canonical publish clock) so server and client agree and it
+ *  doesn't drift with the reader's device timezone. */
+function scheduledLabel(iso: string, locale: string): string {
+  const when = new Date(iso);
+  // Show the year only when it isn't this year — a post scheduled for next January reading as just
+  // "Jan 3" would be ambiguous, but carrying the year on every near-term row is noise.
+  const showYear = when.getFullYear() !== new Date().getFullYear();
+  return when.toLocaleString(dateLocale(locale), {
+    ...(showYear ? { year: "numeric" } : {}),
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Asia/Seoul",
+  });
 }
 
 export default function WriteIndexPage() {
@@ -349,6 +368,13 @@ export default function WriteIndexPage() {
                       )}
                       <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px] text-slate-500 dark:text-slate-400">
                         <span className="whitespace-nowrap">{relativeTime(p.updatedAt, locale)}</span>
+                        {p.status === "SCHEDULED" && p.scheduledAt && (
+                          // The row time above is 마지막 수정; a scheduled draft's whole point is *when*
+                          // it goes live, so surface that instant explicitly (populated but hidden before).
+                          <span className="whitespace-nowrap text-accent-700 dark:text-accent-300">
+                            · {t("scheduledFor", { when: scheduledLabel(p.scheduledAt, locale) })}
+                          </span>
+                        )}
                         {p.status === "PUBLISHED" && p.viewCount > 0 && (
                           <span className="whitespace-nowrap">· {t("viewCount", { count: p.viewCount })}</span>
                         )}

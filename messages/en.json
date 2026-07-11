@@ -1810,7 +1810,8 @@
     "copyFailed": "Copy failed.",
     "close": "Close",
     "loginRequired": "Please sign in.",
-    "errorPrefix": "Error:"
+    "errorPrefix": "Error:",
+    "offline": "You're offline. We'll reconnect automatically."
   },
   "notFound": {
     "title": "Page not found",
