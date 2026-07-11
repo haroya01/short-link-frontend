@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { JetBrains_Mono } from "next/font/google";
 import { ImageFade } from "@/components/common/image-fade";
+import { OfflineBanner } from "@/components/common/offline-banner";
 import "../globals.css";
 
 /*
@@ -257,6 +258,7 @@ export default async function RootLayout({
       </head>
       <body className="min-h-screen flex flex-col">
         <NextIntlClientProvider locale={locale}>
+          <OfflineBanner />
           {children}
         </NextIntlClientProvider>
         {/* Load-fade marker for lazy content images (img.img-fade) — see the component doc. */}
