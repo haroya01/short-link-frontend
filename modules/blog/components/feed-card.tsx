@@ -195,7 +195,7 @@ export function FeedCard({
       {/* -mx/px lets the hover highlight breathe past the text without moving the content edge (it
           stays aligned with the divider + header). A quiet affordance that the whole row is a link. */}
       <div
-        className={`-mx-3 flex gap-4 rounded-xl px-3 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40 sm:gap-6 ${
+        className={`-mx-3 flex gap-4 rounded-card px-3 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40 sm:gap-6 ${
           // A row flush to the top of the feed (the featured lead, or the first row of a lead-less feed)
           // gets only a hair of top padding — any more reads as an empty band under the tabs and pushes
           // the content below the rail. Featured keeps a generous bottom so its larger title has weight.

@@ -46,7 +46,7 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
 
   if (state === "loading") {
     return (
-      <div className="my-8 h-28 animate-pulse rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900" />
+      <div className="my-8 h-28 animate-pulse rounded-card-lg border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900" />
     );
   }
 
@@ -56,7 +56,7 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="my-8 flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50/60 px-5 py-4 no-underline transition-colors hover:border-accent-300 hover:bg-accent-50/50 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-accent-500/40 dark:hover:bg-slate-800"
+        className="my-8 flex items-center justify-between gap-3 rounded-card-lg border border-slate-200 bg-slate-50/60 px-5 py-4 no-underline transition-colors hover:border-accent-300 hover:bg-accent-50/50 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-accent-500/40 dark:hover:bg-slate-800"
       >
         <span className="flex min-w-0 items-center gap-2 text-sm font-medium text-slate-900 dark:text-slate-100">
           <MousePointerClick className="h-4 w-4 shrink-0 text-accent-600" />
@@ -73,7 +73,7 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
   const sparkMax = Math.max(1, ...spark.map((d) => d.count));
 
   return (
-    <div className="my-8 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+    <div className="my-8 overflow-hidden rounded-card-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
       <a
         href={url}
         target="_blank"
