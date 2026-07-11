@@ -13,6 +13,13 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverMorphLink } from "@/modules/blog/components/cover-morph-link";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
+import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
+
+// "속함" 한 올(모든 카드가 그물의 매듭임을 보여주는 한 줄) — 카드마다 개별 lazy fetch 라 N+1 우려가
+// 있어 기본 OFF. 배치 엔드포인트가 생기거나 명시 승인이 나면 이 플래그로 켠다(그때 카드마다 한 요청이
+// 아니라 피드 단위 배치로 갈아끼우는 게 정석). 목 모드에선 자동 ON 이라 데모/스샷에서 렌더된다.
+const SHOW_BELONGING =
+  process.env.NEXT_PUBLIC_FEED_BELONGING === "1" || process.env.NEXT_PUBLIC_USE_MOCKS === "1";
 
 /**
  * Discovery feed card — the *browse* surface (blog home 최신 / 검색), vs the *reading* surfaces
@@ -187,6 +194,7 @@ export function DiscoveryCard({
             </p>
           )}
           <CardMeta item={item} locale={locale} />
+          {SHOW_BELONGING && <PostBelongingLine postId={item.id} />}
         </div>
       </div>
     );
@@ -246,6 +254,7 @@ export function DiscoveryCard({
             {item.title}
           </h3>
           <CardMeta item={item} locale={locale} over />
+          {SHOW_BELONGING && <PostBelongingLine postId={item.id} over />}
         </div>
       </div>
     </div>

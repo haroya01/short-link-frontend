@@ -112,7 +112,9 @@ function ConnectionFeedSkeleton() {
   );
 }
 
-function ConnectionEventCard({ event, locale }: { event: ConnectionEvent; locale: string }) {
+/** One connection event — "누가 → 어느 컬렉션/길에 → 왜 → 무엇을" in list-row rhythm. Shared by the
+ *  discovery feed (this file) and the public feed insert ("지금 이어지는 것들"). */
+export function ConnectionEventCard({ event, locale }: { event: ConnectionEvent; locale: string }) {
   const t = useTranslations("collections");
   const uiLocale = useLocale();
   const isPath = event.collectionKind === "PATH";

@@ -31,6 +31,8 @@ import { SubscribedSeriesFeed } from "./subscribed-series-feed";
 import { FeedTabCookieSync } from "./feed-tab-cookie-sync";
 import { DiscoverySeriesCard } from "./discovery-series-card";
 import { TrendingTopics } from "./trending-topics";
+import { ConnectionFeedInsert } from "./connection-feed-insert";
+import { listPublicConnectionFeed } from "../api/collections";
 
 // blog.kurl.me is its own surface — the root layout's canonical/OG point at kurl.me (the URL
 // shortener), so the feed must override them or share links preview as the shortener. og:image is
@@ -133,24 +135,31 @@ export async function FeedScreen({
   const needFlat = showsServerFeed;
   // Series 카드는 기본(비검색·비태그) 최신 그리드에만 끼워넣는다.
   const wantSeries = !searching && !activeTag && tab === "recent";
+  // "지금 이어지는 것들" — 공개 연결 이벤트를 발견 그리드(최신·인기, 비검색·비태그)에 몇 칸마다 하나씩
+  // 끼운다. 비로그인 포함 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
+  const wantConnections = showsServerFeed && !searching && !activeTag;
   // "지금 뜨는 주제" — 인기 탭(비검색·비필터)에서 그리드 위에 랭킹 주제 칩으로. carousel 없이 정보만.
   // 인기 탭에선 태그가 선택돼도 주제 strip 을 계속 보여준다(선택 칩만 강조) — strip 이 사라졌다 나타나며
   // 카드가 위로 점프하는 레이아웃 흔들림 방지. 선택 상태는 TrendingTopics 가 활성 칩으로 표현.
   const wantTopics = tab === "trending" && !searching;
 
-  const [feedResult, authorsResult, seriesResult, topicsResult] = await Promise.all([
-    needFlat
-      ? searching
-        ? searchPublicFeed(query, sort, 0, 24, activeLang || undefined)
-        : activeTag
-          ? listFeedByTag(activeTag, sort, 0, 24)
-          : listPublicFeed(sort, 0, 24, activeLang || undefined)
-      : Promise.resolve(null),
-    // 팔로잉 탭의 추천 작가(빈 상태 dead-end 방지).
-    tab === "following" ? listSuggestedAuthors(5) : Promise.resolve(null),
-    wantSeries ? listDiscoverSeries(4) : Promise.resolve(null),
-    wantTopics ? listPopularTags(10) : Promise.resolve(null),
-  ]);
+  const [feedResult, authorsResult, seriesResult, topicsResult, connectionsResult] =
+    await Promise.all([
+      needFlat
+        ? searching
+          ? searchPublicFeed(query, sort, 0, 24, activeLang || undefined)
+          : activeTag
+            ? listFeedByTag(activeTag, sort, 0, 24)
+            : listPublicFeed(sort, 0, 24, activeLang || undefined)
+        : Promise.resolve(null),
+      // 팔로잉 탭의 추천 작가(빈 상태 dead-end 방지).
+      tab === "following" ? listSuggestedAuthors(5) : Promise.resolve(null),
+      wantSeries ? listDiscoverSeries(4) : Promise.resolve(null),
+      wantTopics ? listPopularTags(10) : Promise.resolve(null),
+      // 공개 연결 이벤트(비개인화) — 발견 그리드에 몇 칸마다 하나씩. 자체 degrade(빈 배열)라 실패해도
+      // 피드는 그대로 뜬다.
+      wantConnections ? listPublicConnectionFeed(0, 6) : Promise.resolve(null),
+    ]);
 
   const items = feedResult && feedResult.ok ? feedResult.data.items : [];
   const hasNext = feedResult && feedResult.ok ? feedResult.data.hasNext : false;
@@ -163,6 +172,22 @@ export async function FeedScreen({
   const authors = authorsResult && authorsResult.ok ? authorsResult.data : [];
   const series = seriesResult && seriesResult.ok ? seriesResult.data : [];
   const topics = topicsResult && topicsResult.ok ? topicsResult.data : [];
+
+  // "지금 이어지는 것들" — 공개 연결 이벤트를 발견 그리드에 몇 칸마다 하나씩 끼울 노드로 만든다. 첫
+  // 노드만 섹션 라벨(RailHeading)을 이고, 나머지는 행만 — 스레드가 한 번만 이름을 밝힌다. 라벨 카피는
+  // collections 네임스페이스에서 서버측으로 읽어 leaf 컴포넌트에 넘긴다(클라이언트 훅 불필요).
+  const tCollections = await getTranslations({ locale, namespace: "collections" });
+  const connectionEvents = connectionsResult?.items ?? [];
+  const connectionNodes = connectionEvents.map((event, i) => (
+    <ConnectionFeedInsert
+      key={event.id}
+      event={event}
+      locale={locale}
+      lead={i === 0}
+      idx={i}
+      label={tCollections("connectingNow")}
+    />
+  ));
 
   // Remount key for the feed content: changes on every Latest/Popular/Following switch (and on a new
   // search), so the content block replays its slide instead of swapping abruptly.
@@ -331,6 +356,7 @@ export async function FeedScreen({
                 interleave={
                   series.length > 0 ? <DiscoverySeriesCard series={series[0]} locale={locale} /> : null
                 }
+                connectionNodes={connectionNodes.length > 0 ? connectionNodes : undefined}
               />
             </FeedContentTransition>
           </div>
@@ -356,6 +382,7 @@ function FeedColumn({
   featuredFirst,
   featuredLabel,
   interleave,
+  connectionNodes,
   variant,
   tag,
 }: {
@@ -368,6 +395,7 @@ function FeedColumn({
   featuredFirst: boolean;
   featuredLabel: string;
   interleave?: ReactNode;
+  connectionNodes?: ReactNode[];
   variant?: "list" | "grid";
   tag?: string;
 }) {
@@ -383,6 +411,7 @@ function FeedColumn({
       featuredFirst={featuredFirst}
       featuredLabel={featuredLabel}
       interleaveNode={interleave}
+      interleaveNodes={connectionNodes}
       variant={variant}
     />
   );
