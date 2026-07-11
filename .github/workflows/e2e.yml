@@ -43,10 +43,10 @@ jobs:
       SPRING_PROFILES_ACTIVE: test
       DB_URL: jdbc:mysql://localhost:3306/short_link?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       DB_USERNAME: short_link
-      DB_PASSWORD: ${{ secrets.E2E_DB_PASSWORD || 'haroya0117!' }}
+      DB_PASSWORD: ${{ secrets.E2E_DB_PASSWORD || 'e2e-ci-local' }}
       REDIS_HOST: localhost
       REDIS_PORT: '6379'
-      REDIS_PASSWORD: ${{ secrets.E2E_REDIS_PASSWORD || 'haroya0117!' }}
+      REDIS_PASSWORD: ${{ secrets.E2E_REDIS_PASSWORD || 'e2e-ci-local' }}
       SHORT_LINK_BASE_URL: http://localhost:8080
       SHORT_LINK_FRONTEND_BASE_URL: http://localhost:3001
       SAFE_BROWSING_ENABLED: 'false'
