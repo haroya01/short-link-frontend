@@ -1,8 +1,8 @@
-import { Users } from "lucide-react";
 import type { KindredCurator } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/components/feed-card";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 
 /**
  * 취향이 겹치는 큐레이터 — this curator and the people who wove some of the SAME blocks into their own
@@ -25,10 +25,7 @@ export function KindredCurators({
   if (curators.length === 0) return null;
   return (
     <section className="mt-12 border-t border-slate-100 pt-6 dark:border-slate-800/80">
-      <h2 className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
-        <Users className="h-3.5 w-3.5" />
-        {title}
-      </h2>
+      <RailHeading>{title}</RailHeading>
       <ul className="mt-3">
         {curators.map(({ curator, sharedItems }) => (
           <li key={curator.id}>
@@ -47,7 +44,7 @@ export function KindredCurators({
                   </span>
                 )}
               </span>
-              <span className="shrink-0 text-[12px] text-slate-400 dark:text-slate-500">
+              <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
                 {sharedLabel(sharedItems)}
               </span>
             </BlogLink>

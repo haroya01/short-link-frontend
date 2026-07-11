@@ -35,7 +35,7 @@ export function ProfileVisitSummaryCard({ hasUsername }: { hasUsername: boolean 
   ];
 
   return (
-    <div className="rounded-card-lg border border-slate-200 bg-white p-5 shadow-card">
+    <div className="rounded-card-lg border border-slate-200 bg-white p-5 shadow-card-flat">
       <div className="flex items-center gap-2 text-xs font-medium text-slate-700">
         <BarChart3 className="h-3.5 w-3.5" />
         {t("summary.title")}

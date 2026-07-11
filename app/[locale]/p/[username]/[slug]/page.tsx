@@ -262,7 +262,7 @@ export default async function PublicPostPage({
             좁은 뷰포트에서 두 줄로 크게 쏟아져 포트폴리오 목업처럼 읽혔다 — 스텝만 ~6% 줄여 절제하되,
             본문 h2(24px)보다는 항상 확실히 크게(30 > 24) 유지해 위계는 그대로. leading 은 큰 디스플레이의
             tight 감(1.15/1.1)을 이어간다. */}
-        <h1 className="text-[1.875rem] font-bold leading-[1.15] tracking-headline text-slate-900 dark:text-slate-100 sm:text-[2.3125rem] sm:leading-[1.1]">
+        <h1 className="text-headline-post font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-post-lg">
           {post.title}
         </h1>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">

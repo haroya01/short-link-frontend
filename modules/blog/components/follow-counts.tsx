@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
+import { readStorageJson, removeStorageItem, writeStorageJson } from "@/lib/storage-json";
 import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
 import { FollowListDialog, type FollowTab } from "./follow-list-dialog";
 
@@ -40,9 +40,12 @@ export function FollowCounts({ username }: { username: string }) {
     fetchFollowStatus(username)
       .then((s) => {
         // Hidden author: the backend omits the count keys entirely. Drop the row rather than showing
-        // a stale "0" — the follow button beside it still carries the relationship.
+        // a stale "0" — the follow button beside it still carries the relationship. Purge any cached
+        // visible numbers too, so an author who just hid their counts stops flashing the old values on
+        // the next visit before this refetch resolves.
         if (s.hideFollowerCount || s.followerCount == null || s.followingCount == null) {
           setHidden(true);
+          removeStorageItem(cacheKey(username), { session: true });
           return;
         }
         const next = { followers: s.followerCount, following: s.followingCount };

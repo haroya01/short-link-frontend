@@ -18,6 +18,7 @@ import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ConnectionBlock, eventBlock } from "@/modules/blog/components/connection-block";
 import { KindredCurators } from "@/modules/blog/components/kindred-curators";
+import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 
@@ -253,16 +254,6 @@ function TabButton({
         )}
       </span>
     </button>
-  );
-}
-
-/** Section label with the brand tick — matches the "이 글이 놓인 길" heading on the post edges. */
-function RailHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-      <span aria-hidden className="h-3 w-[3px] rounded-full bg-accent-600" />
-      {children}
-    </h2>
   );
 }
 
