@@ -1,23 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { CornerDownRight, Layers } from "lucide-react";
 import { blogPath } from "@/lib/host";
 import { useInView } from "@/lib/animations";
-import { listPublicPostCollections, type CollectionSummary } from "@/modules/blog/api/collections";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { usePostBelonging } from "@/modules/blog/components/post-belonging-context";
 
 /**
  * "속함" 한 올 — the quietest thread: every post is a knot in the graph. Under a feed card's meta, one
- * micro line naming the first PUBLIC collection this post is connected into ("@doha의 '느린 사고' 외 N개
+ * micro line naming the first PUBLIC collection this post is connected into ("'느린 사고' 외 N개
  * 컬렉션에 속함"). Taps through to that collection (a graph channel).
  *
  * Legibility rules honored:
  *  - If the post belongs to no public collection, the line does NOT render at all (no placeholder).
- *  - LAZY: only fetches once the card scrolls into view ({@link useInView}) — never on mount, so an
- *    off-screen feed card costs nothing. One request per visible card (see the N+1 note at the call
- *    site); this component is deliberately decoupled so it stays dormant until wired in.
+ *  - LAZY: the card registers its id only once it scrolls into view ({@link useInView}) — never on
+ *    mount, so an off-screen feed card costs nothing.
+ *  - BATCHED: the id goes to the surrounding {@link BelongingProvider}, which resolves a whole
+ *    viewport-worth of visible cards in ONE request (no per-card fetch, no N+1). Outside a provider
+ *    the line simply stays hidden.
  *  - The green is a single thread: the path glyph / layers icon is the non-text 600 marker; the text
  *    itself stays slate (chrome), so this never becomes a green wall.
  */
@@ -31,22 +32,11 @@ export function PostBelongingLine({
 }) {
   const t = useTranslations("collections");
   const { ref, seen } = useInView(0.1);
-  const [collections, setCollections] = useState<CollectionSummary[] | null>(null);
-
-  useEffect(() => {
-    if (!seen) return;
-    let alive = true;
-    listPublicPostCollections(postId)
-      .then((cols) => alive && setCollections(cols))
-      .catch(() => alive && setCollections([]));
-    return () => {
-      alive = false;
-    };
-  }, [seen, postId]);
+  const collections = usePostBelonging(postId, seen);
 
   // Reserve nothing until we know: the observed node is a zero-height div, so a post with no
-  // collections leaves the card meta untouched (no reflow, no placeholder). The div also carries the
-  // IntersectionObserver ref (useInView types it as a div), so it stays mounted either way.
+  // collections leaves the card meta untouched (no reflow, no placeholder). The div carries the
+  // IntersectionObserver ref so the id registers on scroll-in, and stays mounted either way.
   if (!collections || collections.length === 0) {
     return <div ref={ref} aria-hidden className="h-0 w-0" />;
   }
