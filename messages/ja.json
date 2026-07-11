@@ -3422,6 +3422,7 @@
     "postEdgesPathsTitle": "この記事が置かれた道",
     "postEdgesRelatedTitle": "つながるもの",
     "postEdgesCuratorsTitle": "この記事を編んだ人",
+    "postEdgesPathPosition": "{total}編中 {position}番目",
     "connectStep1Title": "どこに残しますか？",
     "connectStep2Title": "なぜつなげましたか？",
     "kindPath": "道",

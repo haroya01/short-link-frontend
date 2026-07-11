@@ -3422,6 +3422,7 @@
     "postEdgesPathsTitle": "Những đường bài viết này nằm trên",
     "postEdgesRelatedTitle": "Đọc liên quan",
     "postEdgesCuratorsTitle": "Người đã kết nối bài viết này",
+    "postEdgesPathPosition": "Bài {position} trên {total}",
     "connectStep1Title": "Đặt vào đâu nhỉ?",
     "connectStep2Title": "Vì sao bạn kết nối nó?",
     "kindPath": "Đường",

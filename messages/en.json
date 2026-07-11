@@ -3422,6 +3422,7 @@
     "postEdgesPathsTitle": "Paths this post is on",
     "postEdgesRelatedTitle": "Connected reads",
     "postEdgesCuratorsTitle": "Curators who wove this post",
+    "postEdgesPathPosition": "{position} of {total}",
     "connectStep1Title": "Where should this go?",
     "connectStep2Title": "Why did you connect it?",
     "kindPath": "Path",

@@ -3422,6 +3422,7 @@
     "postEdgesPathsTitle": "이 글이 놓인 길",
     "postEdgesRelatedTitle": "이어진 것",
     "postEdgesCuratorsTitle": "이 글을 엮은 사람",
+    "postEdgesPathPosition": "{total}편 중 {position}번째",
     "connectStep1Title": "어디에 남길까요?",
     "connectStep2Title": "왜 이었나요",
     "kindPath": "길",

@@ -54,21 +54,10 @@ export async function PostEdges({
       {collections.length > 0 && (
         <div>
           <EdgeHeading>{t("postEdgesPathsTitle")}</EdgeHeading>
-          <ul className="mt-3 space-y-1">
+          <ul className="mt-3 space-y-0.5">
             {collections.map((c) => (
               <li key={c.id}>
-                <BlogLink
-                  href={blogPath(`/collections/${c.id}`)}
-                  className="focus-ring flex items-center gap-2 rounded-lg px-1 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
-                >
-                  <ContainingGlyph kind={c.kind} visibility={c.visibility} />
-                  <span className="min-w-0 flex-1 truncate text-[14px] text-slate-800 dark:text-slate-200">
-                    {c.title}
-                  </span>
-                  <span className="shrink-0 text-[12px] text-slate-400 dark:text-slate-500">
-                    {c.count}
-                  </span>
-                </BlogLink>
+                <PathRow collection={c} positionLabel={pathPositionLabel(c, t)} />
               </li>
             ))}
           </ul>
@@ -111,6 +100,63 @@ function EdgeHeading({ children }: { children: React.ReactNode }) {
       {children}
     </p>
   );
+}
+
+/**
+ * One "이 글이 놓인 길" row. When the membership enrichment is present (backend #607 — a curator wove
+ * this post into the collection and we know where it sits), the row reads as *someone's path a post is
+ * on*: the collection title, then a quiet meta line "@curator · N편 중 M번째". Without that enrichment
+ * (bare list surfaces), it falls back to the original title + `count` — never a broken half-rich row.
+ */
+function PathRow({
+  collection: c,
+  positionLabel,
+}: {
+  collection: CollectionSummary;
+  positionLabel: string | null;
+}) {
+  const rich = !!c.curatorUsername || positionLabel !== null;
+  return (
+    <BlogLink
+      href={blogPath(`/collections/${c.id}`)}
+      className="focus-ring flex items-center gap-2.5 rounded-lg px-1 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+    >
+      <ContainingGlyph kind={c.kind} visibility={c.visibility} />
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[14px] text-slate-800 dark:text-slate-200">
+          {c.title}
+        </span>
+        {rich && (
+          <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-400 dark:text-slate-500">
+            {c.curatorUsername && (
+              <span className="truncate text-slate-500 dark:text-slate-400">
+                @{c.curatorUsername}
+              </span>
+            )}
+            {c.curatorUsername && positionLabel && (
+              <span aria-hidden className="text-slate-300 dark:text-slate-600">
+                ·
+              </span>
+            )}
+            {positionLabel && <span className="shrink-0">{positionLabel}</span>}
+          </span>
+        )}
+      </span>
+      {!rich && (
+        <span className="shrink-0 text-[12px] text-slate-400 dark:text-slate-500">{c.count}</span>
+      )}
+    </BlogLink>
+  );
+}
+
+/** "N편 중 M번째" — this post's rank within a curator's path — or null when the endpoint didn't send
+ *  position/total (list surfaces), so the row falls back to the bare `count`. */
+function pathPositionLabel(
+  c: CollectionSummary,
+  t: (key: string, values?: Record<string, string | number>) => string,
+): string | null {
+  if (typeof c.position !== "number" || typeof c.total !== "number") return null;
+  return t("postEdgesPathPosition", { position: c.position, total: c.total });
 }
 
 /** A collection row's glyph — a path reads with the green path arrow, a themed bundle with its
