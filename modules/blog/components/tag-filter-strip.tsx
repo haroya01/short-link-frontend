@@ -1,6 +1,7 @@
 import { blogPath } from "@/lib/host";
 import type { TagCount } from "@/modules/blog/api/public-posts";
 import { TagChip } from "@/modules/blog/components/tag-chip";
+import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 
 /**
  * Persistent popular-tag chips on a tag's feed page — so clicking into a topic doesn't strip away
@@ -17,11 +18,13 @@ export function TagFilterStrip({
   activeTag: string;
   sort?: "recent" | "trending";
 }) {
-  if (tags.length === 0) return null;
+  // Drop junk tags (incomplete jamo, single-char, mash) so they never become clickable filters.
+  const clean = tags.filter((t) => isDisplayableTag(t.tag));
+  if (clean.length === 0) return null;
   // Guarantee the current tag shows even if it isn't in the popular set.
-  const list = tags.some((t) => t.tag === activeTag)
-    ? tags
-    : [{ tag: activeTag, count: 0 }, ...tags];
+  const list = clean.some((t) => t.tag === activeTag)
+    ? clean
+    : [{ tag: activeTag, count: 0 }, ...clean];
   const qs = sort === "trending" ? "?sort=trending" : "";
 
   return (

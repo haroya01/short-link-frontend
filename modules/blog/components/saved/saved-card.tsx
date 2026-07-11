@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { isRenderablePost } from "@/modules/blog/lib/public-metrics";
 import type { BookmarkFolder, SavedPost } from "@/modules/blog/api/saved";
 
 
@@ -42,6 +43,10 @@ export function SavedCard({
   const [name, setName] = useState("");
   const ref = useRef<HTMLDivElement>(null);
   useDismiss(open, ref, () => setOpen(false));
+
+  // A blank-title, no-excerpt post is effectively empty — skip the hollow shelf row. After the hooks
+  // so the rules of hooks hold (this card always runs the same hook sequence).
+  if (!isRenderablePost(item)) return null;
 
   const date = new Date(item.publishedAt).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
     month: "long",
