@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   currentStepIndex,
+  estimateMinutesForCount,
   estimatePathMinutes,
   isReadableStep,
   markStepOpened,
@@ -88,6 +89,17 @@ describe("estimatePathMinutes", () => {
   });
   it("is at least 1 even for a notes-only path", () => {
     expect(estimatePathMinutes([note(1), note(2)])).toBe(1);
+  });
+});
+
+describe("estimateMinutesForCount", () => {
+  it("uses the same per-step minutes as the resolved-step estimate", () => {
+    // The discovery entrance rows carry a size but not resolved steps — the "약 N분" must still read
+    // consistently with the collection detail (4 items × 4 min).
+    expect(estimateMinutesForCount(4)).toBe(16);
+  });
+  it("never drops below 1 minute for an empty count", () => {
+    expect(estimateMinutesForCount(0)).toBe(1);
   });
 });
 
