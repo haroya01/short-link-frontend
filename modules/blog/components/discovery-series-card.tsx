@@ -89,7 +89,7 @@ export function DiscoverySeriesCard({
             >
               <div
                 data-vt-cover-scope
-                className={`relative h-full w-full overflow-hidden rounded-2xl shadow-[0_1px_3px_rgba(15,23,42,0.06)] ${
+                className={`relative h-full w-full overflow-hidden rounded-card-lg shadow-[0_1px_3px_rgba(15,23,42,0.06)] ${
                   // 뒷장은 내용물 없이 중립 종이 — 넘김 크로스페이드 중 빈 장이 어둡게 비치지 않게.
                   !front
                     ? "bg-white ring-1 ring-slate-200/80 dark:bg-slate-900 dark:ring-slate-700/60"

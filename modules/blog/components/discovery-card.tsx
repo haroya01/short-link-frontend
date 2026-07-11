@@ -131,11 +131,11 @@ function CardMeta({ item, locale, over }: { item: PublicFeedItem; locale: string
   );
 }
 
-// 카드 공통 surface/motion 토큰 — rounded-2xl, --ease, 300ms. 입체감: 다층 그림자(닿는 면 가까운 1px +
-// 퍼지는 ambient)로 평면이 아니라 살짝 떠 있게, hover 시 -translate-y-1 로 깊게 떠오르며 그림자 확장.
-// focus-within ring = 전면 링크 카드의 키보드 포커스 가시화(WCAG 2.4.7).
+// 카드 공통 surface/motion 토큰 — rounded-card-lg(그리드/커버 카드 표준 16px), --ease, 300ms. 입체감:
+// 다층 그림자(닿는 면 가까운 1px + 퍼지는 ambient)로 평면이 아니라 살짝 떠 있게, hover 시 -translate-y-1
+// 로 깊게 떠오르며 그림자 확장. focus-within ring = 전면 링크 카드의 키보드 포커스 가시화(WCAG 2.4.7).
 const SHELL =
-  "group relative overflow-hidden rounded-2xl transition-[transform,box-shadow] duration-300 ease-[var(--ease)] hover:-translate-y-1 hover:shadow-card-hover motion-reduce:transform-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950";
+  "group relative overflow-hidden rounded-card-lg transition-[transform,box-shadow] duration-300 ease-[var(--ease)] hover:-translate-y-1 hover:shadow-card-hover motion-reduce:transform-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent-600 has-[:focus-visible]:ring-offset-2 dark:has-[:focus-visible]:ring-offset-slate-950";
 const CARD_SHADOW = "shadow-card";
 
 export function DiscoveryCard({
@@ -323,7 +323,7 @@ export function DiscoveryGridSkeleton({ count = 6 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="mb-4 break-inside-avoid sm:mb-5">
           <div
-            className={`w-full animate-pulse rounded-2xl bg-slate-200/80 dark:bg-slate-800 ${SKELETON_RATIOS[i % SKELETON_RATIOS.length]}`}
+            className={`w-full animate-pulse rounded-card-lg bg-slate-200/80 dark:bg-slate-800 ${SKELETON_RATIOS[i % SKELETON_RATIOS.length]}`}
           />
         </div>
       ))}

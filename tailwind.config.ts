@@ -104,6 +104,20 @@ const config: Config = {
         "card-title-2xl": "1.4375rem",
         "card-title-3xl": "1.6875rem",
       },
+      /*
+       * Card corner radius — 두 값으로 통일. 카드 표면이 화면마다 rounded-lg(8)/rounded-xl(12)/
+       * rounded-2xl(16) 로 흩어져 "화면마다 다른 제품" 인상을 줬다. 카드의 밀도로 두 단계만 남긴다:
+       *
+       * - card    (12px): 리스트/행 카드 — 촘촘한 세로 목록의 행(피드 행·보관함 행·기본 Card).
+       * - card-lg (16px): 그리드/커버/덱·넓은 임베드 카드 — 면적이 큰 표면일수록 한 단계 더 둥글게.
+       *
+       * 값 자체는 Tailwind 기본 xl/2xl 과 같다(12/16px) — 토큰화의 목적은 콜사이트가 "카드니까
+       * card/card-lg" 로 의도를 적게 표현하고, 다음에 바뀔 때 한 곳만 고치면 되게 하는 것.
+       */
+      borderRadius: {
+        card: "0.75rem", // 12px — list/row cards
+        "card-lg": "1rem", // 16px — grid/cover/deck & wide embed cards
+      },
       boxShadow: {
         // Blog surface shadows as named tokens so call sites stop hand-rolling arbitrary values.
         // Browse(발견) 타일의 안정(resting) 상태 그림자 — 닿는 면 가까운 1px + 퍼지는 ambient 로
