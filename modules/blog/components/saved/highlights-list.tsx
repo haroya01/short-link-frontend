@@ -48,7 +48,7 @@ export function HighlightsList({ username, locale }: { username: string; locale:
     const q = query.trim().toLowerCase();
     if (!q) return items;
     return items.filter(
-      (h) => h.quote.toLowerCase().includes(q) || h.title.toLowerCase().includes(q),
+      (h) => h.quote.toLowerCase().includes(q) || h.postTitle.toLowerCase().includes(q),
     );
   }, [items, query]);
 
@@ -115,12 +115,12 @@ export function HighlightsList({ username, locale }: { username: string; locale:
           {filtered.map((h) => (
             <li key={h.id} className="group border-b border-slate-100 last:border-b-0 dark:border-slate-800">
               <BlogLink
-                href={quoteHref(h.username, h.slug, h.quote, locale)}
+                href={quoteHref(h.postUsername, h.postSlug, h.quote, locale)}
                 className="focus-ring -mx-3 block rounded-xl px-3 py-5 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40"
               >
                 {/* The post this passage was drawn on — a quiet eyebrow that doubles as the link back. */}
                 <span className="line-clamp-1 text-[12px] font-medium text-slate-500 transition-colors group-hover:text-accent-700 dark:text-slate-400 dark:group-hover:text-accent-400">
-                  {h.title}
+                  {h.postTitle}
                 </span>
                 <span className="mt-1.5 flex gap-3">
                   <span

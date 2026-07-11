@@ -481,14 +481,19 @@ function PathWalk({
     [connections, opened],
   );
   const currentIndex = Math.min(rawIndex, connections.length - 1);
-  // The step the continuity bar continues INTO: the next readable step AFTER where you are. Skips
-  // notes; null once nothing readable remains (a trailing note, or you're on the last step).
+  // The step the continuity bar continues INTO: the next readable step AT OR AFTER the first *unopened*
+  // step (`rawIndex`) — the walk continues into the next thing to read, not past it. Keyed on the
+  // unclamped `rawIndex` (not the clamped `currentIndex`) so that once every step is opened it resolves
+  // to null instead of re-pointing at the already-read final step. Skips notes; null once nothing
+  // readable remains (a trailing note, or you're done).
   const continueTarget = useMemo(
-    () => nextReadableStep(connections, currentIndex + 1),
-    [connections, currentIndex],
+    () => nextReadableStep(connections, rawIndex),
+    [connections, rawIndex],
   );
-  // Complete = every step opened (rawIndex ran past the end). A quiet closing line, no CTA.
-  const isComplete = opened != null && rawIndex >= connections.length;
+  // Exhausted = the reading layer has loaded and nothing readable remains to continue into — either every
+  // step is opened (rawIndex ran past the end) or you're parked on a trailing NOTE that has no
+  // destination. Either way the walk is done, so the quiet closing line shows instead of a dead CTA.
+  const walkExhausted = opened != null && continueTarget === null;
 
   const onOpen = useCallback(
     (connectionId: number) => {
@@ -496,6 +501,17 @@ function PathWalk({
       setOpened(readOpenedSteps(collectionId));
     },
     [collectionId],
+  );
+
+  // Advance the walk past every step from where you are up to (and including) the readable target. This
+  // marks any intervening NOTE opened too — a NOTE never gets its own click (no destination), so without
+  // this the current step would stay unopened and the walk would stick there, never reaching completion.
+  const onContinue = useCallback(
+    (targetIndex: number) => {
+      for (let i = currentIndex; i <= targetIndex; i++) markStepOpened(collectionId, connections[i].id);
+      setOpened(readOpenedSteps(collectionId));
+    },
+    [collectionId, connections, currentIndex],
   );
 
   return (
@@ -567,11 +583,11 @@ function PathWalk({
                   nextStep={continueTarget.index + 1}
                   total={connections.length}
                   locale={locale}
-                  onOpen={onOpen}
+                  onContinue={() => onContinue(continueTarget.index)}
                   t={t}
                 />
               )}
-              {isCurrent && !continueTarget && isComplete && (
+              {isCurrent && !continueTarget && walkExhausted && (
                 <p className="mt-3 text-[13px] font-medium text-accent-700 dark:text-accent-400">
                   {t("pathComplete")}
                 </p>
@@ -596,7 +612,7 @@ function ContinuityBar({
   nextStep,
   total,
   locale,
-  onOpen,
+  onContinue,
   t,
 }: {
   target: Connection;
@@ -604,7 +620,7 @@ function ContinuityBar({
   nextStep: number;
   total: number;
   locale: string;
-  onOpen: (id: number) => void;
+  onContinue: () => void;
   t: ReturnType<typeof useTranslations>;
 }) {
   const href =
@@ -615,7 +631,7 @@ function ContinuityBar({
   return (
     <BlogLink
       href={href}
-      onClick={() => onOpen(target.id)}
+      onClick={onContinue}
       className="focus-ring mt-3 flex items-center justify-between gap-3 rounded-xl border border-accent-100 bg-accent-50/60 px-4 py-3 transition-colors hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:bg-accent-500/15"
     >
       <span className="min-w-0">

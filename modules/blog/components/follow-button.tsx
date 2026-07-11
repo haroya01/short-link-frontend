@@ -17,7 +17,10 @@ const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : use
 // `self` lets a revisit seed the button's VISIBILITY before auth resolves — without it the button
 // re-hides until `ready` flips on every hard navigation, popping in (and reflowing the 프로필 link
 // beside it) each tab switch. Optional so caches written by the older shape still validate.
-type FollowSnap = { following: boolean; count: number; self?: boolean };
+// `hidden` remembers that the author hides their follower count, so a revisit seeds `countHidden` and
+// never flashes the placeholder "0" the cache carries — without it a hard-nav remount reads the seeded
+// count at full opacity before the status refetch re-drops it. Optional so older-shape caches validate.
+type FollowSnap = { following: boolean; count: number; self?: boolean; hidden?: boolean };
 const cacheKey = (u: string) => `kurl:follow:${u}`;
 const isSnap = (v: unknown): v is FollowSnap | null =>
   v === null ||
@@ -25,7 +28,8 @@ const isSnap = (v: unknown): v is FollowSnap | null =>
     v !== null &&
     typeof (v as FollowSnap).following === "boolean" &&
     typeof (v as FollowSnap).count === "number" &&
-    (typeof (v as FollowSnap).self === "boolean" || (v as FollowSnap).self === undefined));
+    (typeof (v as FollowSnap).self === "boolean" || (v as FollowSnap).self === undefined) &&
+    (typeof (v as FollowSnap).hidden === "boolean" || (v as FollowSnap).hidden === undefined));
 function readFollowCache(u: string): FollowSnap | null {
   return readStorageJson<FollowSnap | null>(cacheKey(u), isSnap, null, { session: true });
 }
@@ -86,8 +90,14 @@ export function FollowButton({
     const cached = readFollowCache(username);
     if (cached) {
       setFollowing(cached.following);
-      setCount(cached.count);
-      setLoaded(true);
+      // A hidden-count author cached a placeholder count; seed `countHidden` (not the count) so the count
+      // text stays dropped on remount rather than flashing "팔로워 0명" until the status refetch.
+      if (cached.hidden) {
+        setCountHidden(true);
+      } else {
+        setCount(cached.count);
+        setLoaded(true);
+      }
       if (typeof cached.self === "boolean") setSeedVisible(!cached.self);
     }
   }, [username]);
@@ -101,7 +111,7 @@ export function FollowButton({
         // Hidden author: no count key in the response. Keep the button, drop the count text.
         if (s.hideFollowerCount || s.followerCount == null) {
           setCountHidden(true);
-          writeFollowCache(username, { following: s.following, count: 0, self });
+          writeFollowCache(username, { following: s.following, count: 0, self, hidden: true });
           return;
         }
         setCountHidden(false);
@@ -133,6 +143,7 @@ export function FollowButton({
         following: s.following,
         count: nextCount ?? 0,
         self: me?.username === username,
+        hidden: hide,
       });
     } catch {
       setFollowing(!next);

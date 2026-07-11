@@ -36,10 +36,13 @@ export async function PostEdges({
   authorUsername: string;
   locale: string;
 }) {
+  // A transient network error on any one read degrades that edge group to empty — a foot-of-article
+  // section must never throw the whole post page to the error boundary (mirrors the try/catch these
+  // reads already carry internally).
   const [collections, related, kindred] = await Promise.all([
-    listPublicPostCollections(postId),
-    listRelatedBlocks("POST", postId),
-    listKindredCurators(authorUsername),
+    listPublicPostCollections(postId).catch(() => []),
+    listRelatedBlocks("POST", postId).catch(() => []),
+    listKindredCurators(authorUsername).catch(() => []),
   ]);
 
   // No edges yet → no section (the tag-based RelatedPosts fallback carries the "read next").
@@ -150,13 +153,15 @@ function PathRow({
 }
 
 /** "N편 중 M번째" — this post's rank within a curator's path — or null when the endpoint didn't send
- *  position/total (list surfaces), so the row falls back to the bare `count`. */
+ *  `position` (list surfaces), so the row falls back to the bare `count`. The denominator is `total`
+ *  when present, else `count` (backend `CollectionSummaryView` sends `count`, not a separate `total`). */
 function pathPositionLabel(
   c: CollectionSummary,
   t: (key: string, values?: Record<string, string | number>) => string,
 ): string | null {
-  if (typeof c.position !== "number" || typeof c.total !== "number") return null;
-  return t("postEdgesPathPosition", { position: c.position, total: c.total });
+  if (typeof c.position !== "number") return null;
+  const total = c.total ?? c.count;
+  return t("postEdgesPathPosition", { position: c.position, total });
 }
 
 /** A collection row's glyph — a path reads with the green path arrow, a themed bundle with its

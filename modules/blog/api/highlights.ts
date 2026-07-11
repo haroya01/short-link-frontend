@@ -41,10 +41,9 @@ export interface MyHighlightItem {
   quote: string;
   note: string | null;
   /** The post this highlight lives on. */
-  postId: number;
-  username: string;
-  slug: string;
-  title: string;
+  postUsername: string;
+  postSlug: string;
+  postTitle: string;
   createdAt: string;
 }
 
