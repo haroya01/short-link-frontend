@@ -38,7 +38,12 @@ function relativeTime(iso: string, locale: string): string {
  *  days". Pinned to Asia/Seoul (the app's canonical publish clock) so server and client agree and it
  *  doesn't drift with the reader's device timezone. */
 function scheduledLabel(iso: string, locale: string): string {
-  return new Date(iso).toLocaleString(dateLocale(locale), {
+  const when = new Date(iso);
+  // Show the year only when it isn't this year — a post scheduled for next January reading as just
+  // "Jan 3" would be ambiguous, but carrying the year on every near-term row is noise.
+  const showYear = when.getFullYear() !== new Date().getFullYear();
+  return when.toLocaleString(dateLocale(locale), {
+    ...(showYear ? { year: "numeric" } : {}),
     month: "short",
     day: "numeric",
     hour: "2-digit",

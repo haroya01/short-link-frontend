@@ -18,18 +18,29 @@ export function OfflineBanner() {
   const online = useOnline();
   const { mounted, closing } = usePresence(!online, 160);
 
-  if (!mounted) return null;
-
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className={`fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-2 border-b border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 dark:text-slate-300 ${
-        closing ? "animate-fade-out" : "animate-fade-in"
-      }`}
-    >
-      <WifiOff className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
-      <span>{t("offline")}</span>
-    </div>
+    <>
+      {/* Announcer kept permanently in the tree — screen readers reliably read text inserted into an
+          already-live region, but an empty status region mounted together with its text (as when the
+          banner appears) is often skipped. So the region is always present and only its text toggles. */}
+      <div role="status" aria-live="polite" className="sr-only">
+        {online ? "" : t("offline")}
+      </div>
+      {/* Purely a visual strip: it's fixed over the sticky header's top edge, so without
+          pointer-events-none it would silently swallow clicks landing in that band. Offline still
+          allows navigating cached pages, so those clicks must pass through. Not a live region — the
+          sr-only announcer above owns the announcement. */}
+      {mounted && (
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-2 border-b border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 dark:text-slate-300 ${
+            closing ? "animate-fade-out" : "animate-fade-in"
+          }`}
+        >
+          <WifiOff className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+          <span>{t("offline")}</span>
+        </div>
+      )}
+    </>
   );
 }
