@@ -18,6 +18,7 @@ import type {
   ConnectionEvent,
   DiscoverFeed,
   NewCollection,
+  PostCollectionsView,
 } from "@/modules/blog/api/collections";
 import type { MyHighlightItem } from "@/modules/blog/api/highlights";
 
@@ -369,4 +370,9 @@ const POST_COLLECTIONS: Record<number, CollectionSummary[]> = {
 
 export function mockPostCollections(postId: number): CollectionSummary[] {
   return POST_COLLECTIONS[postId] ?? [];
+}
+
+// 배치 목 — 요청한 id 순서 그대로, 담긴 게 없으면 collections:[](줄이 안 뜬다). 실서버 계약과 동일 shape.
+export function mockPostCollectionsBatch(ids: number[]): PostCollectionsView[] {
+  return ids.map((postId) => ({ postId, collections: POST_COLLECTIONS[postId] ?? [] }));
 }
