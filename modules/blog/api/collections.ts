@@ -30,7 +30,13 @@ export type CollectionKind = "COLLECTION" | "PATH";
 export type ConnectionBlockType = "POST" | "HIGHLIGHT" | "NOTE";
 
 /** A collection list row — title/blurb/visibility + count + a few recent item labels (no vanity
- *  metrics). Backend `CollectionSummaryView`. */
+ *  metrics). Backend `CollectionSummaryView`.
+ *
+ *  The last four fields are the "membership" enrichment the post-collections endpoint
+ *  (`/public/posts/{id}/collections`, single + batch) adds per row (backend #607): who wove this post
+ *  into the collection, and where the post sits in it. They read a collection as *someone's path a post
+ *  is on* ("@curator's '길' · N편 중 M번째"), not a bare category. Absent on the plain list surfaces
+ *  (author-home collections, the highlight sheet) — those keep the `count` display. */
 export interface CollectionSummary {
   id: number;
   title: string;
@@ -40,6 +46,15 @@ export interface CollectionSummary {
   count: number;
   /** Recent item labels — "what's inside", to help decide where to file a new connection. */
   preview: string[];
+  /** The curator who wove this post into the collection (post-collections responses only). */
+  curatorUsername?: string | null;
+  /** That curator's avatar (post-collections responses only). */
+  curatorAvatarUrl?: string | null;
+  /** This post's 1-based position within the collection/path (post-collections responses only). */
+  position?: number | null;
+  /** Total connections in the collection/path — the denominator for `position` (post-collections
+   *  responses only; equals `count` but named to read as "M of N"). */
+  total?: number | null;
 }
 
 /** One connection in a collection — a flat block payload (the backend folds post/highlight/note into

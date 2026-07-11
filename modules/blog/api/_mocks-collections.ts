@@ -351,20 +351,23 @@ export function mockPublicConnectionFeed(page = 0, size = 12): DiscoverFeed {
 const POST_COLLECTIONS: Record<number, CollectionSummary[]> = {
   // _mocks.ts SEEDS 의 목 글 id(= index+1) 중 몇 개만 담김 — 나머지는 [](줄 자체가 안 뜬다).
   // id 3 = hexagonal-too-much, 6 = spring-tx-propagation, 7 = killed-side-project, 9 = naming-things.
+  // 백엔드 #607: 글 소속 응답의 각 컬렉션엔 curator/position/total 이 붙어 "@큐레이터의 '길' ·
+  // N편 중 M번째"로 읽힌다. 세 번째 줄(느린 사고)은 그 필드들을 일부러 비워, 리스트 표면 폴백
+  // (count 표시)이 같은 화면에 함께 보이게 한다.
   3: [
-    { id: 1, title: "결정을 남기는 법", description: null, visibility: "PUBLIC", kind: "PATH", count: 4, preview: [] },
-    { id: 2, title: "프로덕트 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 8, preview: [] },
+    { id: 1, title: "결정을 남기는 법", description: null, visibility: "PUBLIC", kind: "PATH", count: 4, preview: [], curatorUsername: "jiwon", curatorAvatarUrl: null, position: 2, total: 4 },
+    { id: 2, title: "프로덕트 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 8, preview: [], curatorUsername: "mina", curatorAvatarUrl: null, position: 5, total: 8 },
     { id: 11, title: "느린 사고", description: null, visibility: "PUBLIC", kind: "PATH", count: 5, preview: [] },
   ],
   6: [
-    { id: 1, title: "결정을 남기는 법", description: null, visibility: "PUBLIC", kind: "PATH", count: 4, preview: [] },
+    { id: 1, title: "결정을 남기는 법", description: null, visibility: "PUBLIC", kind: "PATH", count: 4, preview: [], curatorUsername: "jiwon", curatorAvatarUrl: null, position: 1, total: 4 },
   ],
   7: [
-    { id: 2, title: "프로덕트 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 8, preview: [] },
-    { id: 12, title: "경계를 긋는다는 것", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 3, preview: [] },
+    { id: 2, title: "프로덕트 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 8, preview: [], curatorUsername: "mina", curatorAvatarUrl: null, position: 3, total: 8 },
+    { id: 12, title: "경계를 긋는다는 것", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 3, preview: [], curatorUsername: "jiwon", curatorAvatarUrl: null, position: 2, total: 3 },
   ],
   9: [
-    { id: 13, title: "작업실 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 6, preview: [] },
+    { id: 13, title: "작업실 노트", description: null, visibility: "PUBLIC", kind: "COLLECTION", count: 6, preview: [], curatorUsername: "haruka", curatorAvatarUrl: null, position: 4, total: 6 },
   ],
 };
 
