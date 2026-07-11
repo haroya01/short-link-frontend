@@ -23,10 +23,22 @@ test("collection renders its title and a connected highlight quote", async ({ pa
   await expect(page.locator("body")).toContainText("좋은 이름은 주석을 지운다.");
 });
 
-test("discovery feed (connections) renders the curator connection flow", async ({ page }) => {
+test("discovery (connections) opens on entrances, and preserves the recent timeline in a tab", async ({
+  page,
+}) => {
   await page.goto("/en/blog/connections");
-  // 큐레이터가 컬렉션에 이은 흐름 — 시드된 연결(컬렉션 제목 + 글)이 보인다.
-  await expect(page.locator("body")).toContainText("결정을 남기는 법");
+
+  // 기본 = 입구 모음. 열린 길(PATH)이 입구 행으로 뜬다 — 시드된 컬렉션 제목으로 확인.
+  await expect(page.getByRole("tab", { name: /Entrances/ })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(page.locator("body")).toContainText("결정을 남기는 법"); // 입구(길) 제목
+  // 입구는 활동 로그가 아니다 — 시간순 카드의 히어로(큐레이터 why/블록)는 기본 화면에 없다.
+  await expect(page.locator("body")).not.toContainText("헥사고날 아키텍처, 작은 서비스에 과했을까");
+
+  // 칭찬받은 시간순 타임라인은 삭제되지 않고 "최근" 탭으로 보존된다 — 회귀 없음.
+  await page.getByRole("tab", { name: /Recent/ }).click();
   await expect(page.locator("body")).toContainText("헥사고날 아키텍처, 작은 서비스에 과했을까");
 });
 
