@@ -1,5 +1,10 @@
 import { request } from "@/lib/api/client";
-import { USE_MOCKS, mockNotificationsPage, mockUnreadCount } from "./_mocks";
+import {
+  USE_MOCKS,
+  mockBlogNotificationPreferences,
+  mockNotificationsPage,
+  mockUnreadCount,
+} from "./_mocks";
 
 export type NotificationType =
   | "LIKE"
@@ -9,6 +14,13 @@ export type NotificationType =
   | "REPLY"
   | "NEW_POST"
   | "MENTION";
+
+/**
+ * Per-type opt-out map for blog (in-app + push) notifications. Every type is present; a missing row
+ * on the backend defaults to enabled, so the map is always exhaustive. This is separate from the
+ * link-product notification preferences (`/api/v1/notifications/preferences`) — different surface.
+ */
+export type BlogNotificationPreferences = Record<NotificationType, boolean>;
 
 /**
  * One in-app notification, as returned by the backend. The actor's display fields are flat and null
@@ -47,6 +59,29 @@ export function getNotifications(before?: number, limit = 20): Promise<Notificat
   if (before != null) q.set("before", String(before));
   q.set("limit", String(limit));
   return request<NotificationsPage>(`/api/v1/notifications?${q.toString()}`, { method: "GET" });
+}
+
+/**
+ * The author's per-type opt-out map for blog notifications. Always returns all seven types (a row
+ * that was never toggled defaults to enabled). Separate endpoint from the link-product preferences.
+ */
+export function getBlogNotificationPreferences(): Promise<BlogNotificationPreferences> {
+  if (USE_MOCKS) return Promise.resolve(mockBlogNotificationPreferences());
+  return request<BlogNotificationPreferences>("/api/v1/notifications/blog-preferences", {
+    method: "GET",
+  });
+}
+
+/** Flip a single blog notification type on/off. Backend upserts the row and returns 204. */
+export function updateBlogNotificationPreference(
+  type: NotificationType,
+  enabled: boolean,
+): Promise<void> {
+  if (USE_MOCKS) return Promise.resolve();
+  return request<void>("/api/v1/notifications/blog-preferences", {
+    method: "PUT",
+    body: { type, enabled },
+  });
 }
 
 export function getUnreadCount(): Promise<{ count: number }> {

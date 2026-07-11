@@ -1,4 +1,4 @@
-import type { NotificationsPage } from "./notifications";
+import type { BlogNotificationPreferences, NotificationsPage } from "./notifications";
 
 /** Demo/mock mode — lets the bell + page render and interact without a backend. */
 export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS === "1";
@@ -114,4 +114,17 @@ export function mockNotificationsPage(): NotificationsPage {
 
 export function mockUnreadCount(): { count: number } {
   return { count: 4 };
+}
+
+/** Demo preferences with a couple of types muted, so the off-state is visible without a backend. */
+export function mockBlogNotificationPreferences(): BlogNotificationPreferences {
+  return {
+    LIKE: true,
+    COMMENT: true,
+    FOLLOW: false,
+    SERIES_SUBSCRIBE: true,
+    REPLY: true,
+    NEW_POST: false,
+    MENTION: true,
+  };
 }
