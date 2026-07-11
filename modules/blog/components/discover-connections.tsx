@@ -262,7 +262,7 @@ function TabButton({
       <span className="relative inline-block pb-2">
         {children}
         {active && (
-          <span className="absolute inset-x-0 -bottom-[9px] h-0.5 rounded-full bg-accent-700 dark:bg-accent-400" />
+          <span className="absolute inset-x-0 -bottom-[9px] h-0.5 rounded-full bg-accent-600 dark:bg-accent-400" />
         )}
       </span>
     </button>
@@ -325,11 +325,11 @@ export function ConnectionEventCard({ event, locale }: { event: ConnectionEvent;
       {/* The collection chip — the verb "connected to …", a tap-through to the channel. */}
       <BlogLink
         href={blogPath(`/collections/${event.collectionId}`)}
-        className="focus-ring mt-2 inline-flex items-center gap-1.5 rounded text-[12px] font-bold uppercase tracking-wide text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+        className="focus-ring mt-2 inline-flex items-center gap-1.5 rounded text-[12px] font-bold text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
       >
         {isPath && <CornerDownRight className="h-3 w-3" />}
         <span>{event.collectionTitle}</span>
-        <span className="font-medium normal-case tracking-normal text-slate-500 dark:text-slate-400">
+        <span className="font-medium text-slate-500 dark:text-slate-400">
           {isPath ? t("connectedToPath") : t("connectedTo")}
         </span>
       </BlogLink>

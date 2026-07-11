@@ -381,7 +381,7 @@ export default function WriteIndexPage() {
                         {showLikes(p.likeCount ?? 0) && (
                           <span className="whitespace-nowrap">· {t("likeCount", { count: p.likeCount })}</span>
                         )}
-                        <span className="truncate font-mono text-slate-300 dark:text-slate-600">{p.slug}</span>
+                        <span className="truncate font-mono text-slate-500 dark:text-slate-600">{p.slug}</span>
                       </div>
                     </div>
                     {p.ogImageUrl && (
