@@ -27,8 +27,8 @@ test.use({ viewport: { width: 1280, height: 900 } });
 // A seeded mock post whose body covers every block type (see modules/blog/api/_mocks.ts).
 const POST_PATH = "/en/p/dohyun/nextjs-14-app-router-blog";
 
-const LIGHT_TINT = { r: 5, g: 150, b: 105, a: 0.18 };
-const DARK_TINT = { r: 16, g: 185, b: 129, a: 0.28 };
+const LIGHT_TINT = { r: 5, g: 150, b: 105, a: 0.1 };
+const DARK_TINT = { r: 16, g: 185, b: 129, a: 0.16 };
 
 type Rgba = { r: number; g: number; b: number; a: number };
 
@@ -140,7 +140,7 @@ test("the highlight <mark> inherits body text color and shows the light-mode gre
   // Text color follows the surrounding body (color: inherit), NOT the UA <mark> black.
   expect(seen.color).toBe(seen.parentColor);
   expect(seen.color, "the mark must not fall back to the UA <mark> black").not.toBe("rgb(0, 0, 0)");
-  // The fill is the class tint (accent-600 @ 0.18), not the UA <mark> yellow.
+  // The fill is the document-quiet class tint (accent-600 @ 0.10), not the UA <mark> yellow.
   expectTint(seen.bg, LIGHT_TINT);
 });
 
@@ -166,7 +166,7 @@ test("the highlight <mark> stays readable in dark mode (dark tint + inherited li
   // The killer bug: UA black text on a dark page. The mark must inherit the light body text instead.
   expect(seen.color).toBe(seen.parentColor);
   expect(seen.color, "dark-mode text must not be UA <mark> black").not.toBe("rgb(0, 0, 0)");
-  // Dark tint is the brighter accent-500 @ 0.28 variant (accent-600 muddies into a dark page).
+  // Dark tint is the brighter accent-500 @ 0.16 variant (accent-600 muddies into a dark page).
   expectTint(seen.bg, DARK_TINT);
 });
 

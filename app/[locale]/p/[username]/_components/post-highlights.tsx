@@ -832,13 +832,14 @@ function findQuoteTarget(root: HTMLElement, quote: string): HTMLElement | null {
   ) ?? null;
 }
 
-/** Briefly flash a deep-linked target so the eye lands on it (mirrors the iOS focus blink). Dark mode
- *  gets a brighter accent-500 tint — accent-600 sinks into a dark page and the blink goes unseen. */
+/** Briefly settle a soft green over a deep-linked target so the eye lands on it (mirrors the iOS focus
+ *  blink). Toned to match the document-quiet highlight tint (not a felt-pen flash): light rises to a
+ *  gentle accent-600 @ 0.20, dark to a brighter accent-500 @ 0.28 — accent-600 sinks into a dark page. */
 function flashQuote(el: HTMLElement) {
   el.style.transition = "background-color 0.4s ease";
   const prev = el.style.backgroundColor;
   const dark = document.documentElement.classList.contains("dark");
-  el.style.backgroundColor = dark ? "rgba(16,185,129,0.42)" : "rgba(5,150,105,0.32)";
+  el.style.backgroundColor = dark ? "rgba(16,185,129,0.28)" : "rgba(5,150,105,0.20)";
   window.setTimeout(() => {
     el.style.backgroundColor = prev;
   }, 1100);
