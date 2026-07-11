@@ -78,6 +78,19 @@ let seq = 7000;
   });
   posts.set(draft.id, draft);
   blocks.set(draft.id, toBlocks([["paragraph", "여기에 이어서 작성하세요…"]]));
+
+  // A scheduled post so the write list can show the "발행 예정" instant on its own row.
+  const scheduled = blankPost({
+    id: ++seq,
+    slug: "mock-scheduled",
+    title: "예약해둔 다음 글",
+    status: "SCHEDULED",
+    scheduledAt: new Date(Date.now() + 3 * 86_400_000).toISOString(),
+    excerpt: "미래 시각에 자동 발행되도록 예약된 예시 글.",
+    tags: ["공지"],
+  });
+  posts.set(scheduled.id, scheduled);
+  blocks.set(scheduled.id, toBlocks([["paragraph", "발행 예정 시각이 되면 자동으로 공개됩니다."]]));
 })();
 
 function touch(id: number, patch: Partial<PostView>): PostView {
