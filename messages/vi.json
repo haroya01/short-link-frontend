@@ -1810,7 +1810,8 @@
     "copyFailed": "Sao chép thất bại.",
     "close": "Đóng",
     "loginRequired": "Vui lòng đăng nhập.",
-    "errorPrefix": "Lỗi:"
+    "errorPrefix": "Lỗi:",
+    "offline": "Bạn đang ngoại tuyến. Chúng tôi sẽ tự động kết nối lại."
   },
   "notFound": {
     "title": "Không tìm thấy trang",

@@ -1810,7 +1810,8 @@
     "copyFailed": "コピーに失敗しました",
     "close": "閉じる",
     "loginRequired": "ログインが必要です。",
-    "errorPrefix": "エラー:"
+    "errorPrefix": "エラー:",
+    "offline": "オフラインです。接続が戻ると自動的に再試行します。"
   },
   "notFound": {
     "title": "ページが見つかりません",
