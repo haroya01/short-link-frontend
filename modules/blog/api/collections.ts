@@ -16,6 +16,8 @@ import {
   mockCreateCollection,
   mockDiscoverConnections,
   mockMineCollections,
+  mockPostCollections,
+  mockPublicConnectionFeed,
   mockReorderConnections,
 } from "@/modules/blog/api/_mocks-collections";
 
@@ -91,6 +93,9 @@ export interface ConnectionEvent {
 export interface DiscoverFeed {
   items: ConnectionEvent[];
   hasNext: boolean;
+  /** Present on the public (paged) feed; the authed follow-graph feed omits them. */
+  page?: number;
+  size?: number;
 }
 
 /** A block curated alongside another in the same PUBLIC collections — the "이것과 이어진 것" discovery
@@ -159,6 +164,42 @@ export async function getCollection(id: number): Promise<CollectionDetail | null
 export function listDiscoverConnections(): Promise<DiscoverFeed> {
   if (USE_MOCKS) return Promise.resolve(mockDiscoverConnections());
   return request<DiscoverFeed>("/api/v1/feed/connections", { method: "GET" });
+}
+
+/**
+ * Public — the GLOBAL, non-personalized connection stream (newest first): who connected what, to
+ * which public collection/path, and why. Same {@link ConnectionEvent} shape as the authed follow-graph
+ * feed, so the same cards render it. Readable signed-out (the `/api/v1/public/**` slice is permitAll),
+ * so a raw fetch (no auth). A backend/empty response degrades to an empty page, never throws — the
+ * feed just shows no connection rows.
+ */
+export async function listPublicConnectionFeed(page = 0, size = 12): Promise<DiscoverFeed> {
+  if (USE_MOCKS) return Promise.resolve(mockPublicConnectionFeed(page, size));
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/v1/public/feed/connections?page=${page}&size=${size}`,
+      { cache: "no-store" },
+    );
+    if (!res.ok) return { items: [], hasNext: false, page, size };
+    return (await res.json()) as DiscoverFeed;
+  } catch {
+    return { items: [], hasNext: false, page, size };
+  }
+}
+
+/** Public — which PUBLIC collections/paths a post is connected into (most recently touched first).
+ *  Backs the feed card's "속함" line. Readable signed-out; a missing post just yields []. */
+export async function listPublicPostCollections(postId: number): Promise<CollectionSummary[]> {
+  if (USE_MOCKS) return Promise.resolve(mockPostCollections(postId));
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/collections`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    return (await res.json()) as CollectionSummary[];
+  } catch {
+    return [];
+  }
 }
 
 /** "이 문장이 속한 길" — public collections/paths containing this highlight (newest first). Readable
