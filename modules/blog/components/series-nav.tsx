@@ -34,7 +34,7 @@ export function SeriesNav({
   const seriesHref = authorHref(username, locale, `series/${series.slug}`);
 
   return (
-    <nav className="mb-10 border-l-2 border-accent-500 pl-4">
+    <nav className="mb-10 border-l-2 border-accent-600 pl-4 dark:border-accent-400">
       <div className="flex items-center justify-between gap-3">
         <BlogLink href={seriesHref} className="focus-ring group flex min-w-0 items-center gap-2 rounded">
           {/* The kurl mark draws itself in (사사삭) when the banner appears — the series surface's

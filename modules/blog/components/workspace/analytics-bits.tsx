@@ -104,7 +104,7 @@ export function SeriesReadThrough({
               </div>
               {/* Reader bar, sized against the strongest episode. */}
               <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-                <div className="h-full rounded-full bg-accent-500" style={{ width: `${pct}%` }} />
+                <div className="h-full rounded-full bg-accent-600" style={{ width: `${pct}%` }} />
               </div>
               {/* Per-episode performance — secondary to the funnel. */}
               <div className="mt-1.5 flex items-center gap-3 text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
@@ -125,7 +125,7 @@ export function SeriesReadThrough({
             {/* Continue-rate connector to the next episode. */}
             {!isLast && (
               <div className="flex items-center gap-1.5 px-3 py-1 text-[12px] text-slate-500 dark:text-slate-400">
-                <ChevronRight className="h-3.5 w-3.5 rotate-90 text-accent-500" />
+                <ChevronRight className="h-3.5 w-3.5 rotate-90 text-accent-600 dark:text-accent-400" />
                 <span className="font-medium text-accent-700 dark:text-accent-300">{rate}%</span>
                 <span>{t("analyticsContinued", { count: m.continuedToNext })}</span>
               </div>

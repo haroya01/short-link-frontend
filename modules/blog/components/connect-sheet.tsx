@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { Check, CornerDownRight, Globe, Link as LinkIcon, Loader2, Lock, Plus } from "lucide-react";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
@@ -57,6 +58,10 @@ export function ConnectSheet({
   // unmounts do we hand control back to the parent (which then drops the whole subtree).
   const [open, setOpen] = useState(true);
   const { mounted, closing } = usePresence(open, 240);
+  // Portal target (<body>) only exists on the client; gate so the first render matches SSR (nothing)
+  // and avoids a hydration mismatch before we can portal out.
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => setPortalReady(true), []);
   const doneRef = useRef(false);
   const firedRef = useRef(false);
   const requestClose = () => setOpen(false);
@@ -126,9 +131,12 @@ export function ConnectSheet({
     finish();
   }
 
-  if (!mounted) return null;
+  if (!mounted || !portalReady) return null;
 
-  return (
+  // Portal to <body>: a transformed/animated ancestor (a will-change page wrapper, an entering
+  // article, etc.) would otherwise make this `fixed inset-0` overlay resolve against that ancestor's
+  // box instead of the viewport — clipping the backdrop to a column.
+  return createPortal(
     // Backdrop fades in with the sheet and back out on close (the exit rides the same container).
     <div
       className={`fixed inset-0 z-[70] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm motion-reduce:animate-none sm:items-center sm:p-4 ${
@@ -183,7 +191,7 @@ export function ConnectSheet({
                               {c.preview.join(" · ")}
                             </span>
                           )}
-                          <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-400 dark:text-slate-500">
+                          <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
                             {c.kind === "PATH" && (
                               <>
                                 <CornerDownRight className="h-3 w-3 text-accent-600 dark:text-accent-500" />
@@ -246,14 +254,14 @@ export function ConnectSheet({
           <>
             <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
               <div className="flex items-baseline gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                <span className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   {targetLabel}
                 </span>
                 <span className="line-clamp-2 text-[14px] font-medium text-slate-700 dark:text-slate-300">
                   {targetTitle}
                 </span>
               </div>
-              <p className="mt-5 text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+              <p className="mt-5 text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 {t("whyLabel")}
               </p>
               <textarea
@@ -266,7 +274,7 @@ export function ConnectSheet({
                 aria-label={t("whyLabel")}
                 className="mt-2 w-full resize-none border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-[15px] leading-relaxed text-slate-900 outline-none transition-colors focus:border-accent-500 dark:border-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500"
               />
-              <p className="mt-3 text-[12px] text-slate-400 dark:text-slate-500">
+              <p className="mt-3 text-[12px] text-slate-500 dark:text-slate-400">
                 {t("addToCount", { count: selected.size })}
               </p>
               {failed && (
@@ -296,7 +304,8 @@ export function ConnectSheet({
         )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -319,7 +328,7 @@ function NewRow({
     >
       <span className="grid h-5 w-5 place-items-center">{icon}</span>
       <span className="text-[14px] font-medium text-slate-900 dark:text-slate-100">{label}</span>
-      {hint && <span className="text-[12px] text-slate-400 dark:text-slate-500">{hint}</span>}
+      {hint && <span className="text-[12px] text-slate-500 dark:text-slate-400">{hint}</span>}
     </button>
   );
 }
