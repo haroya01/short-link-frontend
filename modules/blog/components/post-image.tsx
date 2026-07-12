@@ -26,11 +26,17 @@ export function PostImage({
   alt,
   caption,
   width,
+  naturalWidth,
+  naturalHeight,
 }: {
   src: string;
   alt: string;
   caption: string;
   width?: ImageWidth;
+  /** Intrinsic pixel size (when known). Sets width/height on the <img> so the browser reserves the
+   *  aspect-ratio box up front — the image never shifts the article as it streams in (CLS-free). */
+  naturalWidth?: number;
+  naturalHeight?: number;
 }) {
   const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
@@ -59,8 +65,17 @@ export function PostImage({
         aria-label={t("imageZoom")}
         className="focus-ring block w-full cursor-zoom-in"
       >
+        {/* width+height give the browser the intrinsic ratio; with `.prose-post img { height:auto;
+            max-width:100% }` it reserves the scaled box up front, so the article never shifts (CLS). */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt={label} loading="lazy" className="img-fade" />
+        <img
+          src={src}
+          alt={label}
+          loading="lazy"
+          className="img-fade"
+          width={naturalWidth && naturalHeight ? naturalWidth : undefined}
+          height={naturalWidth && naturalHeight ? naturalHeight : undefined}
+        />
       </button>
       {caption && <figcaption>{caption}</figcaption>}
 
