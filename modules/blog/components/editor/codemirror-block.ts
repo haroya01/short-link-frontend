@@ -66,6 +66,9 @@ class CodeMirrorNodeView {
     public node: PMNode,
     private view: PMEditorView,
     private getPos: () => number | undefined,
+    // Localized label for the language picker (title + aria-label); the editor injects it via the
+    // extension option so no i18n lives in this framework-agnostic NodeView.
+    private languageLabel: string,
   ) {
     this.cm = new CMView({
       doc: this.node.textContent,
@@ -115,7 +118,8 @@ class CodeMirrorNodeView {
     this.languageSelect = document.createElement("select");
     this.languageSelect.className =
       "cursor-pointer rounded-md border border-white/15 bg-white/5 px-2 py-0.5 text-[11px] font-medium text-slate-200 outline-none transition-colors hover:bg-white/10 hover:text-white";
-    this.languageSelect.title = "코드 언어";
+    this.languageSelect.title = this.languageLabel;
+    this.languageSelect.setAttribute("aria-label", this.languageLabel);
     this.languageSelect.contentEditable = "false";
     for (const lang of LANGUAGES) {
       const opt = document.createElement("option");
@@ -320,11 +324,23 @@ class CodeMirrorNodeView {
   }
 }
 
+export interface CodeMirrorBlockOptions {
+  /** Localized label for the code-language picker (title + aria-label). The editor passes t("codeLanguage"). */
+  languageLabel: string;
+}
+
 /** Tiptap CodeBlock with the CodeMirror editing surface. Disable StarterKit's `codeBlock` and use this. */
-export const CodeMirrorBlock = CodeBlock.extend({
+export const CodeMirrorBlock = CodeBlock.extend<CodeMirrorBlockOptions>({
+  addOptions() {
+    return {
+      ...this.parent?.(),
+      languageLabel: "",
+    };
+  },
   addNodeView() {
+    const { languageLabel } = this.options;
     return ({ node, editor, getPos }) =>
-      new CodeMirrorNodeView(node, editor.view, getPos as () => number | undefined);
+      new CodeMirrorNodeView(node, editor.view, getPos as () => number | undefined, languageLabel);
   },
   // Keep CodeBlock's own ``` rules (they fire only at a paragraph START) and add one for the
   // Medium-style Enter flow: new visual lines are soft breaks (hardBreak) inside ONE paragraph, so a
