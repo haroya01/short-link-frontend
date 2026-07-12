@@ -11,11 +11,43 @@ const BASE = {
   seriesId: null,
   seriesSlug: null,
   seriesTitle: null,
+  collectionId: null,
+  collectionName: null,
 } as const;
 
 export function mockNotificationsPage(): NotificationsPage {
   return {
     items: [
+      {
+        ...BASE,
+        id: 9,
+        type: "CONNECTED",
+        actorId: 15,
+        actorUsername: "yuna",
+        actorAvatarUrl: "https://i.pravatar.cc/120?img=20",
+        postId: 5,
+        postSlug: "typescript-generics",
+        postTitle: "타입스크립트 제네릭이 어려운 이유",
+        collectionId: 3,
+        collectionName: "타입 시스템 깊게 읽기",
+        read: false,
+        createdAt: "2026-06-07T11:20:00Z",
+      },
+      {
+        ...BASE,
+        id: 8,
+        type: "PATH_GREW",
+        actorId: 16,
+        actorUsername: "daniel",
+        actorAvatarUrl: null,
+        postId: 21,
+        postSlug: "structural-typing",
+        postTitle: "구조적 타이핑으로 다시 보는 인터페이스",
+        collectionId: 3,
+        collectionName: "타입 시스템 깊게 읽기",
+        read: false,
+        createdAt: "2026-06-07T11:12:00Z",
+      },
       {
         ...BASE,
         id: 7,
@@ -113,7 +145,7 @@ export function mockNotificationsPage(): NotificationsPage {
 }
 
 export function mockUnreadCount(): { count: number } {
-  return { count: 4 };
+  return { count: 6 };
 }
 
 /** Demo preferences with a couple of types muted, so the off-state is visible without a backend. */
@@ -126,5 +158,7 @@ export function mockBlogNotificationPreferences(): BlogNotificationPreferences {
     REPLY: true,
     NEW_POST: false,
     MENTION: true,
+    CONNECTED: true,
+    PATH_GREW: true,
   };
 }

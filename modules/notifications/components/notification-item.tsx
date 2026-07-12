@@ -1,9 +1,20 @@
 "use client";
 
 import { Children, isValidElement, type ComponentType, type ReactNode } from "react";
-import { AtSign, Heart, MessageCircle, PenLine, Reply, Rss, UserPlus } from "lucide-react";
+import {
+  AtSign,
+  GitBranch,
+  Heart,
+  Link2,
+  MessageCircle,
+  PenLine,
+  Reply,
+  Rss,
+  UserPlus,
+} from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { blogPath } from "@/lib/host";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
@@ -24,10 +35,17 @@ function flattenText(node: ReactNode): string {
 /**
  * Where a row navigates, by type. The recipient (`myUsername`) authors LIKE/COMMENT posts and owns
  * the subscribed series; REPLY carries the post owner's handle (the post may be someone else's);
- * NEW_POST's author is the actor. Returns undefined when the needed handle/slug is missing.
+ * NEW_POST's author is the actor. The graph events (CONNECTED / PATH_GREW) land on the collection
+ * that changed. Returns undefined when the needed handle/slug/id is missing.
  */
 function resolveHref(item: Item, myUsername: string | null, locale: string): string | undefined {
   switch (item.type) {
+    case "CONNECTED":
+    case "PATH_GREW":
+      // 그래프 이벤트 — 엮인/이어진 그 컬렉션으로. 컬렉션은 블로그 같은 오리진이라 소프트 내비(blogPath).
+      return item.collectionId != null
+        ? blogPath(`/collections/${item.collectionId}`)
+        : undefined;
     case "FOLLOW":
       return item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
     case "SERIES_SUBSCRIBE":
@@ -59,6 +77,8 @@ const MESSAGE_KEY: Record<Item["type"], string> = {
   REPLY: "reply",
   NEW_POST: "new_post",
   MENTION: "mention",
+  CONNECTED: "connected",
+  PATH_GREW: "path_grew",
 };
 
 // 아바타 우하단의 종류 글리프 — 글만으로는 좋아요/댓글/팔로우 행이 전부 같은 얼굴이라,
@@ -71,6 +91,9 @@ const TYPE_ICON: Record<Item["type"], ComponentType<{ className?: string }>> = {
   SERIES_SUBSCRIBE: Rss,
   NEW_POST: PenLine,
   MENTION: AtSign,
+  // 그래프 이벤트: 엮임 = 사슬 고리(Link2), 길에 새 글 = 가지가 뻗음(GitBranch).
+  CONNECTED: Link2,
+  PATH_GREW: GitBranch,
 };
 
 /**
@@ -103,8 +126,11 @@ export function NotificationItem({
   const actorHref = item.actorUsername ? authorHref(item.actorUsername, locale) : undefined;
   // 행위자만 굵게(<b> 태그는 메시지 파일에) — 문장 전체가 같은 무게면 누가/무엇이 안 잡힌다.
   // 이름 자체가 프로필 링크(있을 때) — pointer-events 를 되살려 행 오버레이 위로.
+  // 컬렉션 이름은 그래프 이벤트 문장에서 강조어(<c>{collection}</c>) — 없으면 안전한 폴백 라벨.
+  const collection = item.collectionName ?? t("aCollection");
   const message = t.rich(MESSAGE_KEY[item.type], {
     actor,
+    collection,
     b: (chunks) =>
       actorHref ? (
         <BlogLink
@@ -117,12 +143,18 @@ export function NotificationItem({
       ) : (
         <b className="font-semibold text-slate-900 dark:text-slate-100">{chunks}</b>
       ),
+    c: (chunks) => <b className="font-semibold text-slate-900 dark:text-slate-100">{chunks}</b>,
   });
   const subtitle = item.type === "SERIES_SUBSCRIBE" ? item.seriesTitle : item.postTitle;
   // Plain-text twin of the rich `message` for the row's aria-label (a ReactNode can't be a label). The
   // `<b>` handler returns the actor string as-is, so the whole `t.rich` result is plain strings we join.
   const messageText = flattenText(
-    t.rich(MESSAGE_KEY[item.type], { actor, b: (chunks) => chunks }),
+    t.rich(MESSAGE_KEY[item.type], {
+      actor,
+      collection,
+      b: (chunks) => chunks,
+      c: (chunks) => chunks,
+    }),
   );
   const rowLabel = subtitle ? `${messageText}, ${subtitle}` : messageText;
   const TypeIcon = TYPE_ICON[item.type];

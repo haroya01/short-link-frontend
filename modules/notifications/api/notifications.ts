@@ -13,7 +13,9 @@ export type NotificationType =
   | "SERIES_SUBSCRIBE"
   | "REPLY"
   | "NEW_POST"
-  | "MENTION";
+  | "MENTION"
+  | "CONNECTED"
+  | "PATH_GREW";
 
 /**
  * Per-type opt-out map for blog (in-app + push) notifications. Every type is present; a missing row
@@ -27,7 +29,9 @@ export type BlogNotificationPreferences = Record<NotificationType, boolean>;
  * when the actor was deleted (the UI falls back to an anonymous label). Post fields are set for
  * LIKE/COMMENT/REPLY/NEW_POST (null otherwise); `postAuthorUsername` is set only when the recipient
  * isn't the post's author (REPLY / NEW_POST), so the post link resolves. Series fields are set only
- * for SERIES_SUBSCRIBE. References are point-in-time snapshots, so titles survive a later edit.
+ * for SERIES_SUBSCRIBE. Collection fields are set only for CONNECTED / PATH_GREW (the graph events),
+ * and the row deep-links to that collection. References are point-in-time snapshots, so titles
+ * survive a later edit.
  */
 export interface NotificationItem {
   id: number;
@@ -42,6 +46,8 @@ export interface NotificationItem {
   seriesId: number | null;
   seriesSlug: string | null;
   seriesTitle: string | null;
+  collectionId: number | null;
+  collectionName: string | null;
   read: boolean;
   createdAt: string;
 }
@@ -62,8 +68,8 @@ export function getNotifications(before?: number, limit = 20): Promise<Notificat
 }
 
 /**
- * The author's per-type opt-out map for blog notifications. Always returns all seven types (a row
- * that was never toggled defaults to enabled). Separate endpoint from the link-product preferences.
+ * The author's per-type opt-out map for blog notifications. Always returns every type (a row that was
+ * never toggled defaults to enabled). Separate endpoint from the link-product preferences.
  */
 export function getBlogNotificationPreferences(): Promise<BlogNotificationPreferences> {
   if (USE_MOCKS) return Promise.resolve(mockBlogNotificationPreferences());

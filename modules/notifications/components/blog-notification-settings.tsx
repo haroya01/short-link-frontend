@@ -5,7 +5,9 @@ import {
   AtSign,
   Bell,
   BookMarked,
+  GitBranch,
   Heart,
+  Link2,
   MessageCircle,
   Reply,
   UserPlus,
@@ -24,11 +26,11 @@ import {
 } from "@/modules/notifications/api/notifications";
 
 /**
- * Per-type mute controls for blog notifications (좋아요·댓글·팔로우·시리즈 구독·답글·새 글·멘션). Loads the
- * author's opt-out map once, then flips each row optimistically and reconciles against the PUT — the
- * same load-then-mutate shape as the other settings rows. On is the default for every type, so an
- * empty backend still renders seven "on" switches. Separate from the browser web-push toggle above
- * (that's the transport; this is which kinds of notifications get produced at all).
+ * Per-type mute controls for blog notifications. Loads the author's opt-out map once, then flips each
+ * row optimistically and reconciles against the PUT — the same load-then-mutate shape as the other
+ * settings rows. On is the default for every type, so an empty backend still renders every switch
+ * "on". Separate from the browser web-push toggle above (that's the transport; this is which kinds of
+ * notifications get produced at all).
  */
 
 /** Render order + icon per type. Labels/hints come from the `notifications` catalog by type key. */
@@ -45,6 +47,8 @@ const ROWS: { type: NotificationType; icon: LucideIcon; labelKey: string; hintKe
     hintKey: "prefSeriesSubscribeHint",
   },
   { type: "NEW_POST", icon: Bell, labelKey: "prefNewPost", hintKey: "prefNewPostHint" },
+  { type: "CONNECTED", icon: Link2, labelKey: "prefConnected", hintKey: "prefConnectedHint" },
+  { type: "PATH_GREW", icon: GitBranch, labelKey: "prefPathGrew", hintKey: "prefPathGrewHint" },
 ];
 
 export function BlogNotificationSettings() {
