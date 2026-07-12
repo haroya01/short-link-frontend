@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   BarChart3,
   Bell,
@@ -27,6 +28,7 @@ import { useAuth } from "@/lib/auth";
 import { blogHref, linksHref, type Product } from "@/lib/host";
 import { useUnreadCount } from "@/modules/notifications/lib/use-notifications";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { usePresence } from "@/hooks/use-presence";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { AppsGrid } from "@/components/common/apps-grid";
 import { Logo } from "@/components/common/logo";
@@ -66,9 +68,14 @@ export function AccountSheet({
   const { me, authenticated, signOut } = useAuth();
   const [langOpen, setLangOpen] = useState(false);
   const sheetRef = useRef<HTMLDivElement | null>(null);
+  // Hold the sheet mounted through its exit (sheet-down / scrim fade) instead of popping on close.
+  const { mounted, closing } = usePresence(open, 240);
+  // Portal target (<body>) only exists on the client; gate so the first render matches SSR (nothing).
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => setPortalReady(true), []);
 
   // Escape + keyboard containment + focus restore to the avatar trigger — the sheet declares
-  // aria-modal, so Tab must not walk into the page behind the scrim.
+  // aria-modal, so Tab must not walk into the page behind the scrim. Released once closing begins.
   useFocusTrap(sheetRef, { active: open, onEscape: onClose });
 
   useEffect(() => {
@@ -85,7 +92,7 @@ export function AccountSheet({
     };
   }, [open]);
 
-  if (!open) return null;
+  if (!mounted || !portalReady) return null;
 
   const username = me?.username ?? "";
   const initial = (username || me?.email || "?").charAt(0).toUpperCase();
@@ -98,16 +105,26 @@ export function AccountSheet({
     onClose();
   }
 
-  return (
+  // Portal to <body>: a transformed / will-change page-wrapper ancestor would otherwise make this
+  // `fixed inset-0` sheet resolve against that ancestor's box and clip the scrim to a column.
+  return createPortal(
     <div ref={sheetRef} role="dialog" aria-modal="true" aria-label={t("account")} className="fixed inset-0 z-50 sm:hidden">
       <button
         type="button"
         aria-hidden
         tabIndex={-1}
         onClick={onClose}
-        className="absolute inset-0 animate-fade-in bg-slate-900/30"
+        className={`absolute inset-0 bg-slate-900/30 motion-reduce:animate-none ${
+          closing ? "animate-[overlay-out_240ms_var(--ease)_both]" : "animate-fade-in"
+        }`}
       />
-      <div className="absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col animate-[sheet-up_280ms_var(--ease)_both] rounded-t-2xl bg-white p-2 pb-0 shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] motion-reduce:animate-none dark:bg-slate-900">
+      <div
+        className={`absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-2xl bg-white p-2 pb-0 shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] motion-reduce:animate-none dark:bg-slate-900 ${
+          closing
+            ? "animate-[sheet-down_240ms_var(--ease)_both]"
+            : "animate-[sheet-up_280ms_var(--ease)_both]"
+        }`}
+      >
         <div className="mx-auto mb-1 mt-1 h-1 w-10 shrink-0 rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden />
 
         {/* Scrollable menu body. The sheet pins to the bottom and grows upward, so without a height cap
@@ -289,6 +306,7 @@ export function AccountSheet({
         )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -35,7 +35,7 @@ export function FeedEmpty({
         </span>
       )}
       <h2
-        className={`max-w-md text-[19px] font-semibold tracking-tight text-slate-900 dark:text-slate-100 ${
+        className={`max-w-md text-card-title-md font-semibold tracking-tight text-slate-900 dark:text-slate-100 ${
           mark ? "mt-7" : "mt-6"
         }`}
       >

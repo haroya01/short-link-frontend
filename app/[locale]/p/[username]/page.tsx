@@ -132,7 +132,7 @@ export default async function PublicProfileHomepage({
             <span className="font-semibold text-slate-900 dark:text-slate-100">#{activeTag}</span>
             <BlogLink
               href={authorHref(author.username, locale)}
-              className="focus-ring ml-1 rounded text-[13px] font-medium text-accent-600 transition-colors hover:text-accent-700 dark:text-accent-400"
+              className="focus-ring ml-1 rounded text-[13px] font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
             >
               {t("tagFilterClear")}
             </BlogLink>
