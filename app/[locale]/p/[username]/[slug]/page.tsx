@@ -237,7 +237,7 @@ export default async function PublicPostPage({
         </div>
       </aside>
 
-      <article className="post-enter mx-auto w-full max-w-2xl py-14 sm:py-20" lang={post.languageTag}>
+      <article className="post-enter mx-auto w-full max-w-2xl pb-14 pt-16 sm:py-20" lang={post.languageTag}>
         {/* A preview is an unlisted draft shared by its author — don't record a view, and flag it so
             the owner knows this isn't the live page. */}
         {isPreview ? (
