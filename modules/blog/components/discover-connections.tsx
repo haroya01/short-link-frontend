@@ -17,10 +17,13 @@ import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { ConnectionBlock, eventBlock } from "@/modules/blog/components/connection-block";
+import { HighlightsFeed } from "@/modules/blog/components/highlights-feed";
 import { KindredCurators } from "@/modules/blog/components/kindred-curators";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
 import { blogCta } from "@/modules/blog/components/blog-cta";
+
+type DiscoverTab = "entrances" | "recent" | "highlights";
 
 /**
  * Discovery — reframed from a chronological activity log into a collection of *entrances*. You don't
@@ -38,7 +41,7 @@ export function DiscoverConnections({ locale }: { locale: string }) {
   const [events, setEvents] = useState<ConnectionEvent[]>([]);
   const [entrances, setEntrances] = useState<Entrance[]>([]);
   const [state, setState] = useState<"loading" | "ready" | "failed">("loading");
-  const [tab, setTab] = useState<"entrances" | "recent">("entrances");
+  const [tab, setTab] = useState<DiscoverTab>("entrances");
 
   useEffect(() => {
     let alive = true;
@@ -63,39 +66,9 @@ export function DiscoverConnections({ locale }: { locale: string }) {
   // active first. Reuses the KindredCurators component (which renders nothing when empty).
   const curators = useMemo<KindredCurator[]>(() => deriveCurators(events), [events]);
 
-  if (state === "loading") {
-    return <ConnectionFeedSkeleton />;
-  }
-
-  if (state === "failed") {
-    return (
-      <p className="py-20 text-center text-[14px] text-slate-500 dark:text-slate-400">
-        {t("discoverFailed")}
-      </p>
-    );
-  }
-
-  if (events.length === 0) {
-    return (
-      <div className="pb-16 pt-6 text-center">
-        <p className="text-[15px] font-medium text-slate-700 dark:text-slate-200">
-          {t("discoverEmptyTitle")}
-        </p>
-        <p className="mx-auto mt-2 max-w-sm text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
-          {t("discoverEmptyBody")}
-        </p>
-        <a href={blogHref("/")} className={`mt-6 inline-block ${blogCta({ variant: "secondary" })}`}>
-          {t("discoverEmptyCta")}
-        </a>
-        {/* The connection graph is empty until you follow someone — hand the new reader curators to
-            follow so this core surface isn't a day-1 dead-end. */}
-        <div className="mt-10">
-          <SuggestedCurators locale={locale} />
-        </div>
-      </div>
-    );
-  }
-
+  // The tab strip always renders — the highlights tab is its own follow-graph surface that must be
+  // reachable even when the connection feed is empty/failed, so the connection feed's loading/failed/
+  // empty states live INSIDE the 입구/최근 views (below), not as a top-level gate over all three tabs.
   return (
     <div>
       <DiscoverTabs
@@ -103,13 +76,46 @@ export function DiscoverConnections({ locale }: { locale: string }) {
         onChange={setTab}
         entrancesLabel={t("discoverTabEntrances")}
         recentLabel={t("discoverTabRecent")}
+        highlightsLabel={t("discoverTabHighlights")}
       />
       <div className="mt-6">
-        {tab === "entrances" ? (
+        {tab === "highlights" ? (
+          <HighlightsFeed locale={locale} onFindWriters={() => setTab("entrances")} />
+        ) : state === "loading" ? (
+          <ConnectionFeedSkeleton />
+        ) : state === "failed" ? (
+          <p className="py-20 text-center text-[14px] text-slate-500 dark:text-slate-400">
+            {t("discoverFailed")}
+          </p>
+        ) : events.length === 0 ? (
+          <ConnectionFeedEmpty locale={locale} />
+        ) : tab === "entrances" ? (
           <EntrancesView entrances={entrances} curators={curators} locale={locale} />
         ) : (
           <RecentTimeline events={events} locale={locale} />
         )}
+      </div>
+    </div>
+  );
+}
+
+/** The connection graph is empty until you follow someone — hand the new reader curators to follow so
+ *  this core surface isn't a day-1 dead-end (shared by the 입구/최근 views, which read the same feed). */
+function ConnectionFeedEmpty({ locale }: { locale: string }) {
+  const t = useTranslations("collections");
+  return (
+    <div className="pb-16 pt-6 text-center">
+      <p className="text-[15px] font-medium text-slate-700 dark:text-slate-200">
+        {t("discoverEmptyTitle")}
+      </p>
+      <p className="mx-auto mt-2 max-w-sm text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
+        {t("discoverEmptyBody")}
+      </p>
+      <a href={blogHref("/")} className={`mt-6 inline-block ${blogCta({ variant: "secondary" })}`}>
+        {t("discoverEmptyCta")}
+      </a>
+      <div className="mt-10">
+        <SuggestedCurators locale={locale} />
       </div>
     </div>
   );
@@ -201,18 +207,21 @@ function RecentTimeline({ events, locale }: { events: ConnectionEvent[]; locale:
   );
 }
 
-/** Entrance / recent tab strip — local-state segments (no server round-trip; both datasets are already
- *  in hand), the quiet accent-underline idiom shared with the followers/following dialog. */
+/** Entrance / recent / highlights tab strip — local-state segments (no server round-trip; the first two
+ *  datasets are already in hand, the highlights tab fetches on first select), the quiet accent-underline
+ *  idiom shared with the followers/following dialog. */
 function DiscoverTabs({
   tab,
   onChange,
   entrancesLabel,
   recentLabel,
+  highlightsLabel,
 }: {
-  tab: "entrances" | "recent";
-  onChange: (t: "entrances" | "recent") => void;
+  tab: DiscoverTab;
+  onChange: (t: DiscoverTab) => void;
   entrancesLabel: string;
   recentLabel: string;
+  highlightsLabel: string;
 }) {
   return (
     <div role="tablist" className="flex items-center gap-1 border-b border-slate-100 dark:border-slate-800">
@@ -221,6 +230,9 @@ function DiscoverTabs({
       </TabButton>
       <TabButton active={tab === "recent"} onClick={() => onChange("recent")}>
         {recentLabel}
+      </TabButton>
+      <TabButton active={tab === "highlights"} onClick={() => onChange("highlights")}>
+        {highlightsLabel}
       </TabButton>
     </div>
   );
