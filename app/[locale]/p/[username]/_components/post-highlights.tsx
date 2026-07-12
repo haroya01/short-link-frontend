@@ -539,12 +539,12 @@ function HighlightThread({
                         @?
                       </span>
                     )}
-                    <span className="text-[12px] text-slate-500 dark:text-slate-400">{fmt(r.createdAt)}</span>
+                    <span className="text-[12px] text-slate-400">{fmt(r.createdAt)}</span>
                     {meId != null && r.author?.id === meId && (
                       <button
                         type="button"
                         onClick={() => void remove(r.id)}
-                        className="touch-target ml-auto rounded text-[12px] text-slate-500 transition-colors hover:text-red-500 focus-ring dark:text-slate-400"
+                        className="touch-target ml-auto rounded text-[12px] text-slate-400 transition-colors hover:text-red-500 focus-ring"
                       >
                         {t("highlightReplyDelete")}
                       </button>

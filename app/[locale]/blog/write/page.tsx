@@ -223,7 +223,7 @@ export default function WriteIndexPage() {
             <PenSquare className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[12px] font-medium text-accent-700 dark:text-accent-400">
+            <span className="block text-[12px] font-medium uppercase tracking-wide text-accent-700 dark:text-accent-400">
               {t("continueWriting")}
             </span>
             <span className="mt-0.5 block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
