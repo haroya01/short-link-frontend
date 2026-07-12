@@ -225,6 +225,10 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
     ["IMAGE", item.ogImageUrl ?? "https://picsum.photos/seed/kurl-body/1200/700"],
     ["H2", "측정"],
     ["PARAGRAPH", "도입 전후를 같은 부하로 비교했다."],
+    // 본문에 심은 kurl 숏링크 — 리더에서 라이브 링크 카드로 뜨고, 아웃바운드 url 에 ?post= 가 붙어
+    // 이 글이 만든 클릭으로 귀속된다(블로그×숏너 융합). 아래 일반 링크는 kurl 이 아니라 ?post= 가 안 붙는다.
+    ["EMBED", "https://kurl.me/abc123"],
+    ["PARAGRAPH", "자세한 벤치 방법은 [k6 문서](https://k6.io/docs)를 참고했다."],
     ["TABLE", "| 지표 | 이전 | 이후 |\n|---|---|---|\n| p95 응답 | 180ms | 96ms |\n| 처리량 | 0.8k/s | 1.4k/s |\n| 에러율 | 0.7% | 0.1% |"],
     ["H2", "정리"],
     ["PARAGRAPH", "요약하면, 작은 서비스일수록 단순함이 이긴다. 다음 글에서 이어서 다룬다."],
