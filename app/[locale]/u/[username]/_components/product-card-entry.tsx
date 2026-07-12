@@ -441,7 +441,7 @@ function CardImages({
                 className={
                   "h-10 w-12 shrink-0 overflow-hidden rounded border transition " +
                   (idx === safeIdx
-                    ? "border-accent-500 ring-1 ring-accent-300"
+                    ? "border-accent-600 ring-1 ring-accent-300"
                     : "border-slate-200 opacity-70 hover:opacity-100")
                 }
               >

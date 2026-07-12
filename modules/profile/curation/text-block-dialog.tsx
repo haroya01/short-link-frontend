@@ -127,7 +127,7 @@ export function TextBlockDialog({ open, initialContent, onOpenChange, onSubmit, 
               <Sparkles className="h-3 w-3" />
               {t("textMarkdownHint")}
             </span>
-            <span className={overLimit ? "text-red-600" : "text-slate-400"}>
+            <span className={overLimit ? "text-red-600" : "text-slate-500"}>
               {charCount}/{MAX_CHARS}
             </span>
           </div>

@@ -97,7 +97,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
           <span className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full bg-white dark:bg-slate-900 px-2 py-0.5 text-[10px] font-medium text-accent-700 dark:text-accent-400 shadow-sm">
             <span
               className={
-                "h-1.5 w-1.5 rounded-full bg-accent-500 " +
+                "h-1.5 w-1.5 rounded-full bg-accent-600 " +
                 (active ? "animate-pulse" : "")
               }
             />
@@ -141,7 +141,7 @@ function KpiCellMini({
             : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900")
       }
     >
-      <p className="truncate text-[9px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <p className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
         {label}
       </p>
       <p
@@ -374,7 +374,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
                     </span>
                     {isTop && (
                       <span
-                        className="rounded-md bg-accent-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-accent-700 dark:text-accent-400 transition-all duration-500"
+                        className="rounded-md bg-accent-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent-700 dark:text-accent-400 transition-all duration-500"
                         style={{
                           transitionTimingFunction: EASE,
                           transitionDelay: active ? `${delay + 900}ms` : "0ms",
@@ -414,7 +414,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
           transform: active ? "translateY(0)" : "translateY(12px)",
         }}
       >
-        <p className="text-[10px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
+        <p className="text-[10px] font-medium text-accent-700 dark:text-accent-400">
           {t("barsRecoTitle")}
         </p>
         <p className="mt-1 text-[14px] font-medium text-slate-900 dark:text-slate-100">{mock.reco}</p>
@@ -680,7 +680,7 @@ function PhoneScreen({
       />
       <div
         className={
-          "h-1.5 w-3/5 rounded-full " + (isAfter ? "bg-accent-500" : "bg-rose-500")
+          "h-1.5 w-3/5 rounded-full " + (isAfter ? "bg-accent-600" : "bg-rose-500")
         }
       />
       <div className="space-y-1">
@@ -690,7 +690,7 @@ function PhoneScreen({
       </div>
       {isAfter && nextLabel && chipLabel ? (
         <div className="mt-auto flex flex-col items-start gap-1">
-          <span className="text-[7px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
             {nextLabel}
           </span>
           <span className="rounded-md bg-accent-700 px-1.5 py-0.5 text-[10px] font-medium text-white">

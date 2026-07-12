@@ -249,7 +249,7 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
           <span className="text-[12px] font-medium">
             {remaining <= 0 ? t("galleryFull") : t("galleryDropzone")}
           </span>
-          <span className="text-[10px] text-slate-400">
+          <span className="text-[10px] text-slate-500">
             {t("galleryCounter", { count: slots.length, max: MAX_IMAGES })}
           </span>
           <input
@@ -298,7 +298,7 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
                           className="h-full w-full object-cover"
                         />
                         {idx === 0 && (
-                          <span className="absolute left-1 top-1 inline-flex items-center gap-0.5 rounded bg-black/70 px-1 py-0.5 text-[9px] font-medium text-white">
+                          <span className="absolute left-1 top-1 inline-flex items-center gap-0.5 rounded bg-black/70 px-1 py-0.5 text-[10px] font-medium text-white">
                             <Star className="h-2 w-2 fill-current" />
                             {t("galleryCoverBadge")}
                           </span>
@@ -317,7 +317,7 @@ export function GalleryBlockDialog({ open, initialJson, onOpenChange, onSubmit, 
                 );
               })}
             </div>
-            <p className="text-[10px] text-slate-400">{t("galleryReorderHint")}</p>
+            <p className="text-[10px] text-slate-500">{t("galleryReorderHint")}</p>
           </div>
         )}
       </div>

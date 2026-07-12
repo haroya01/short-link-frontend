@@ -65,7 +65,7 @@ export function WebPushToggle() {
         <span className="flex flex-col">
           {t("webPushLabel")}
           {denied && (
-            <span className="text-[12px] text-slate-400 dark:text-slate-500">
+            <span className="text-[12px] text-slate-500 dark:text-slate-500">
               {t("webPushDenied")}
             </span>
           )}

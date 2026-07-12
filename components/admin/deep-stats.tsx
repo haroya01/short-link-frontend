@@ -379,7 +379,7 @@ function RecentErrorsSection({ t }: { t: T }) {
                     <DetailGrid e={e} t={t} />
                     {e.causeChain && e.causeChain.length > 0 && (
                       <div>
-                        <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        <p className="font-mono text-[10px] text-slate-500 dark:text-slate-400">
                           {t("section.recentErrors.detail.causeChain")}
                         </p>
                         <ol className="mt-1 space-y-0.5 font-mono text-[11px] text-slate-700 dark:text-slate-300">
@@ -394,7 +394,7 @@ function RecentErrorsSection({ t }: { t: T }) {
                     {e.stackTrace && (
                       <div>
                         <div className="flex items-center justify-between">
-                          <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                          <p className="font-mono text-[10px] text-slate-500 dark:text-slate-400">
                             {t("section.recentErrors.detail.stackTrace")}
                           </p>
                           <button

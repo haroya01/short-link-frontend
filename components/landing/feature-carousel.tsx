@@ -235,12 +235,12 @@ function RealtimePreview() {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-400">
+        <h3 className="text-[10px] font-semibold text-accent-700 dark:text-accent-400">
           {t("eyebrow")}
         </h3>
         <div className="flex items-center gap-1.5 text-[11px]">
           <span
-            className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+            className="inline-block h-2 w-2 animate-pulse rounded-full bg-accent-600 shadow-[0_0_8px_rgba(5,150,105,0.5)]"
             aria-hidden
           />
           <span className="font-medium text-emerald-700 dark:text-emerald-400">{t("live")}</span>

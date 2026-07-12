@@ -177,7 +177,7 @@ export function ProfilePreview({
         </div>
       </div>
 
-      <p className="text-center text-[10px] text-slate-400">kurl.me/u/{username || "..."}</p>
+      <p className="text-center text-[10px] text-slate-500">kurl.me/u/{username || "..."}</p>
     </div>
   );
 }

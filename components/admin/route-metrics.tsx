@@ -378,7 +378,7 @@ function Stat({
 }) {
   return (
     <div>
-      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
+      <p className="truncate text-[10px] text-slate-500 dark:text-slate-500">{label}</p>
       <p
         className={cn(
           "mt-0.5 inline-flex items-center gap-1 font-mono tabular-nums",

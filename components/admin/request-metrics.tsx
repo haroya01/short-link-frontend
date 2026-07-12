@@ -193,7 +193,7 @@ function RouteAggregateCard({
               className="inline-flex items-center gap-1 rounded-full bg-slate-50 dark:bg-slate-800/50 px-2 py-0.5 text-[10px] text-slate-600 dark:text-slate-300"
             >
               <span className="font-medium">{outcome}</span>
-              <span className="tabular-nums text-slate-400 dark:text-slate-500">{formatNumber(count)}</span>
+              <span className="tabular-nums text-slate-500 dark:text-slate-500">{formatNumber(count)}</span>
             </span>
           ))}
         </div>
@@ -281,7 +281,7 @@ function OutcomeLookup({
                     <span className="w-24 shrink-0 truncate font-medium text-slate-700 dark:text-slate-300">{outcome}</span>
                     <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                       <div
-                        className="h-full rounded-full bg-accent-500"
+                        className="h-full rounded-full bg-accent-600"
                         style={{ width: `${(pct * 100).toFixed(1)}%` }}
                       />
                     </div>
@@ -414,7 +414,7 @@ function RawRow({
 function Sub({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="mb-2 text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <h3 className="mb-2 text-[11px] font-medium text-slate-500 dark:text-slate-400">
         {title}
       </h3>
       {children}
@@ -439,7 +439,7 @@ function MetricStat({
 }) {
   return (
     <div>
-      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
+      <p className="truncate text-[10px] text-slate-500 dark:text-slate-500">{label}</p>
       <p
         className={cn(
           "mt-0.5 inline-flex items-center gap-1 font-mono tabular-nums",

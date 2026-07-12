@@ -105,7 +105,7 @@ function CampaignList({ items }: { items: CampaignSummary[] }) {
           >
             <div className="flex items-center justify-between gap-2">
               <StatusBadge status={c.status} />
-              <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
                 {t("batchCount", { count: c.batchCount })}
               </span>
             </div>

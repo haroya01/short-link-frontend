@@ -97,7 +97,7 @@ export function AdminLinkMetrics() {
     <Section title={t("section.linkMetrics.title")} description={t("section.linkMetrics.desc")}>
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
             {t("section.linkMetrics.windowSort")}
           </span>
           {WINDOWS.map((w) => (
@@ -118,7 +118,7 @@ export function AdminLinkMetrics() {
           ))}
         </div>
         <div className="ml-auto flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
             {t("section.linkMetrics.sortLabel")}
           </span>
           {SORTS.map((s) => (
@@ -433,7 +433,7 @@ function LinkStat({
 }) {
   return (
     <div>
-      <p className="truncate text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
+      <p className="truncate text-[10px] text-slate-500 dark:text-slate-500">{label}</p>
       <p
         className={cn(
           "mt-0.5 inline-flex items-center gap-1 font-mono tabular-nums",

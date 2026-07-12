@@ -93,7 +93,7 @@ export function ShareRow({ url, colors, socials, labels }: Props) {
         className={buttonClass}
       >
         {copied ? (
-          <Check className="h-3.5 w-3.5 text-emerald-500" />
+          <Check className="h-3.5 w-3.5 text-accent-600" />
         ) : (
           <Copy className={`h-3.5 w-3.5 ${colors.muted}`} />
         )}

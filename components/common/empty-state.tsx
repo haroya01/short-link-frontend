@@ -21,7 +21,7 @@ export function EmptyState({ icon: Icon = Inbox, title, description, action, cla
         <div className="absolute inset-0 -z-0 bg-gradient-radial from-accent-50 to-transparent blur-2xl" />
         <div className="relative grid h-14 w-14 place-items-center rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
           <Icon className="h-5 w-5 text-slate-500 dark:text-slate-400" strokeWidth={1.5} />
-          <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-accent-500" />
+          <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-accent-600" />
         </div>
         <svg
           className="absolute -left-3 -top-2 h-3 w-3 text-slate-200 dark:text-slate-700"

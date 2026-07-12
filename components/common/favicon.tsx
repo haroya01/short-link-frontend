@@ -41,7 +41,7 @@ export function Favicon({ url, size = 16, className }: Props) {
       <span
         aria-hidden
         className={
-          "inline-flex items-center justify-center rounded bg-slate-100 text-[9px] font-semibold uppercase text-slate-500 " +
+          "inline-flex items-center justify-center rounded bg-slate-100 text-[10px] font-semibold uppercase text-slate-500 " +
           (className ?? "")
         }
         style={{ width: size, height: size }}
