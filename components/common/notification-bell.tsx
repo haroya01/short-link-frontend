@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { usePresence } from "@/hooks/use-presence";
 import { blogHref } from "@/lib/host";
+import { BlogChromeLink } from "@/modules/blog/components/blog-link";
 import {
   useMarkAllRead,
   useNotifications,
@@ -92,7 +93,18 @@ function NotificationDropdown({
 
       <div className="max-h-96 overflow-y-auto p-1">
         {isLoading ? (
-          <p className="px-3 py-8 text-center text-[13px] text-slate-500 dark:text-slate-400">…</p>
+          // Row-shaped pulse rows (compact 3) instead of a lone "…", which read as an empty dropdown.
+          <div role="status" aria-busy="true" className="space-y-1 py-1">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-start gap-3 px-3 py-2.5">
+                <div className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-slate-200/80 dark:bg-slate-800" />
+                <div className="min-w-0 flex-1 space-y-2 pt-0.5">
+                  <div className="h-3.5 w-3/4 animate-pulse rounded bg-slate-200/80 dark:bg-slate-800" />
+                  <div className="h-3 w-1/3 animate-pulse rounded bg-slate-100 dark:bg-slate-800/60" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : items.length === 0 ? (
           <p className="px-3 py-10 text-center text-[13px] text-slate-500 dark:text-slate-400">
             {t("empty")}
@@ -105,12 +117,13 @@ function NotificationDropdown({
       </div>
 
       <div className="h-px bg-slate-100 dark:bg-slate-800" />
-      <a
+      <BlogChromeLink
         href={blogHref("/notifications")}
+        onClick={onClose}
         className="focus-ring block px-3 py-2.5 text-center text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/60"
       >
         {t("viewAll")}
-      </a>
+      </BlogChromeLink>
     </div>
   );
 }

@@ -67,8 +67,11 @@ export function FollowCounts({ username }: { username: string }) {
   return (
     <>
       <div
+        // Until the counts land the row is invisible; also make it inert (no clicks, out of the a11y
+        // tree) so an invisible button can't open the list with a placeholder "0".
+        aria-hidden={!counts}
         className={`flex items-center gap-2.5 text-[13px] text-slate-500 transition-opacity duration-300 dark:text-slate-400 ${
-          counts ? "opacity-100" : "opacity-0"
+          counts ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
         <button

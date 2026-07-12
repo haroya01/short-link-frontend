@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { wrapAtOffsets, wrapHighlight, clearMarks, MARK_CLASS, type HighlightMeta } from "./highlight-anchor";
+import {
+  wrapAtOffsets,
+  wrapHighlight,
+  wrapFirstQuote,
+  clearMarks,
+  MARK_CLASS,
+  type HighlightMeta,
+} from "./highlight-anchor";
 
 function makeRoot(html: string): HTMLElement {
   const el = document.createElement("div");
@@ -65,6 +72,14 @@ describe("wrapAtOffsets — precise highlight anchoring", () => {
     expect(m?.classList.contains("kurl-highlight--thread")).toBe(false);
   });
 
+  it("a painted mark is keyboard-reachable (focusable button)", () => {
+    const r = makeRoot("<p>reach me by keyboard</p>");
+    wrapAtOffsets(r, 0, 0, 5, meta(8));
+    const m = r.querySelector<HTMLElement>("mark");
+    expect(m?.getAttribute("role")).toBe("button");
+    expect(m?.tabIndex).toBe(0);
+  });
+
   it("clearMarks fully unwraps so the body repaints clean", () => {
     const r = makeRoot("<p>abc</p>");
     wrapAtOffsets(r, 0, 0, 3, meta(5));
@@ -94,5 +109,44 @@ describe("wrapHighlight — multi-block spans", () => {
     const r = makeRoot("<p>just one block here</p>");
     wrapHighlight(r, { blockOrder: 0, endBlockOrder: 0, startOffset: 0, endOffset: 4, quote: "just" }, meta(1));
     expect(r.querySelector("mark")?.textContent).toBe("just");
+  });
+});
+
+describe("wrapFirstQuote — quote fallback across nodes", () => {
+  it("paints a quote that crosses inline formatting (multiple text nodes)", () => {
+    const r = makeRoot("<p>Hello <strong>brave</strong> world</p>");
+    // "brave world" spans the <strong> text node and the trailing text node — a single-node indexOf misses it.
+    wrapFirstQuote(r, "brave world", meta(1));
+    const m = marks(r);
+    expect(m.length).toBeGreaterThan(0);
+    expect(m.map((x) => x.textContent).join("")).toBe("brave world");
+    expect(r.querySelector("strong")?.textContent).toContain("brave");
+  });
+
+  it("still paints when the stored quote's whitespace differs from the rendered body", () => {
+    const r = makeRoot("<p>the quick   brown fox</p>");
+    // Stored quote has single spaces / a newline; body has a collapsed run — normalization bridges them.
+    wrapFirstQuote(r, "quick brown\nfox", meta(2));
+    expect(marks(r).map((x) => x.textContent).join("")).toBe("quick   brown fox");
+  });
+
+  it("paints the whole quote even when it starts/ends mid text node", () => {
+    const r = makeRoot("<p>abcHELLOdef</p>");
+    wrapFirstQuote(r, "HELLO", meta(3));
+    expect(r.querySelector("mark")?.textContent).toBe("HELLO");
+  });
+
+  it("no-ops when the quote is absent (nothing painted)", () => {
+    const r = makeRoot("<p>nothing to see</p>");
+    wrapFirstQuote(r, "absent phrase", meta(4));
+    expect(marks(r)).toHaveLength(0);
+  });
+
+  it("skips text already inside a highlight so a repaint can't double-wrap", () => {
+    const r = makeRoot("<p>alpha beta</p>");
+    wrapAtOffsets(r, 0, 0, 5, meta(1)); // "alpha" already marked
+    wrapFirstQuote(r, "alpha", meta(2)); // must not re-wrap the already-painted "alpha"
+    expect(marks(r)).toHaveLength(1);
+    expect(marks(r)[0].dataset.hlId).toBe("1");
   });
 });
