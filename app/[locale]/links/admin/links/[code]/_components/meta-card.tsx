@@ -91,7 +91,7 @@ function Field({
 }) {
   return (
     <div className={cn("min-w-0", className)}>
-      <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+      <dt className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
         {label}
       </dt>
       <dd className="mt-1 text-sm">{children}</dd>

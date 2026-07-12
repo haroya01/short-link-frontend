@@ -233,7 +233,7 @@ function CompareSection({
                 }
               >
                 <p className="truncate text-[12px] font-semibold text-slate-900 dark:text-slate-100">{c.name}</p>
-                <p className="mt-0.5 text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <p className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
                   {isCurrent ? t("compare.current") : t("compare.comparison")}
                 </p>
                 <dl className="mt-2.5 grid grid-cols-3 gap-2">
@@ -331,7 +331,7 @@ function RecRow({ rec }: { rec: CampaignRecommendation["recommendations"][number
 function CompareCell({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[9px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</dt>
+      <dt className="text-[10px] font-medium text-slate-500 dark:text-slate-400">{label}</dt>
       <dd className="mt-0.5 truncate text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
         {value}
       </dd>
@@ -458,7 +458,7 @@ function TestScansCard({ count, lastAt }: { count: number; lastAt: string | null
       <div className="flex items-start gap-2">
         <FlaskConical className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-500 dark:text-slate-400" aria-hidden />
         <div className="flex-1">
-          <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
             {t("testScans.title")}
           </p>
           <p className="mt-1.5 text-sm text-slate-700 dark:text-slate-300">

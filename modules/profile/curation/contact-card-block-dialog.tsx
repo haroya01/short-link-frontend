@@ -118,7 +118,7 @@ export function ContactCardBlockDialog({ open, initialJson, onOpenChange, onSubm
         </div>
         <div className="text-[11px] text-slate-500">
           <p className="font-medium text-slate-700">{t("contactFieldLogo")}</p>
-          <p className="mt-0.5 text-slate-400">{t("contactFieldLogoHint")}</p>
+          <p className="mt-0.5 text-slate-500">{t("contactFieldLogoHint")}</p>
         </div>
       </div>
       <div className="mb-4">

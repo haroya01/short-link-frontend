@@ -85,7 +85,7 @@ export function BasicSection({
           maxLength={280}
           disabled={busy || loadingDetail}
         />
-        <p className="text-[10px] text-slate-400 dark:text-slate-500">{t("noteHint")}</p>
+        <p className="text-[10px] text-slate-500 dark:text-slate-500">{t("noteHint")}</p>
       </label>
       <label className="block space-y-1">
         <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -99,7 +99,7 @@ export function BasicSection({
           disabled={busy || loadingDetail}
           rows={2}
         />
-        <p className="text-[10px] text-slate-400 dark:text-slate-500">{t("expiredMessageHint")}</p>
+        <p className="text-[10px] text-slate-500 dark:text-slate-500">{t("expiredMessageHint")}</p>
       </label>
     </div>
   );

@@ -31,7 +31,7 @@ export function FollowedTagsSetting() {
         {t("settingsFollowedTags")}
       </h2>
       <div className="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
-        <p className="text-[12px] text-slate-400 dark:text-slate-500">
+        <p className="text-[12px] text-slate-500 dark:text-slate-500">
           {t("settingsFollowedTagsHint")}
         </p>
         {followed.length === 0 ? (

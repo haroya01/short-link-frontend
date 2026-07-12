@@ -223,7 +223,7 @@ export default function WriteIndexPage() {
             <PenSquare className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[12px] font-medium uppercase tracking-wide text-accent-700 dark:text-accent-400">
+            <span className="block text-[12px] font-medium text-accent-700 dark:text-accent-400">
               {t("continueWriting")}
             </span>
             <span className="mt-0.5 block truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
@@ -299,7 +299,7 @@ export default function WriteIndexPage() {
               }`}
             >
               {s === "all" ? t("filterAll") : t(`status${s}`)}
-              <span className={filter === s ? "text-white/70" : "text-slate-400 dark:text-slate-500"}>{count(s)}</span>
+              <span className={filter === s ? "text-white/70" : "text-slate-500 dark:text-slate-500"}>{count(s)}</span>
             </button>
           ))}
         </div>
@@ -351,7 +351,7 @@ export default function WriteIndexPage() {
                       <div className="flex items-center gap-2 text-[12px]">
                         <PostStatusBadge status={p.status} />
                         {p.tags[0] && (
-                          <span className="truncate text-slate-400 dark:text-slate-500">{p.tags[0]}</span>
+                          <span className="truncate text-slate-500 dark:text-slate-500">{p.tags[0]}</span>
                         )}
                       </div>
                       <h3

@@ -121,7 +121,7 @@ export function BlogNotificationSettings() {
                   <Icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
                   <span className="flex flex-col">
                     {t(labelKey)}
-                    <span className="text-[12px] text-slate-400 dark:text-slate-500">
+                    <span className="text-[12px] text-slate-500 dark:text-slate-500">
                       {t(hintKey)}
                     </span>
                   </span>

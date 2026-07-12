@@ -101,7 +101,7 @@ export function StatsCards({
         )}
       >
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-300">
+          <span className="text-[10px] font-semibold text-accent-700 dark:text-accent-300">
             {t("totalClicks")}
           </span>
           <span className="grid h-7 w-7 place-items-center rounded-full bg-accent-700 text-white shadow-sm transition-transform duration-200 ease-out group-hover:scale-110">
@@ -212,7 +212,7 @@ function Stat({
       )}
     >
       <div className="flex items-center justify-between">
-        <span className="truncate text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
+        <span className="truncate text-[10px] font-semibold text-slate-500 dark:text-slate-400 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
           {label}
         </span>
         <Icon

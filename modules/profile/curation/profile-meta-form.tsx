@@ -221,7 +221,7 @@ export function ProfileMetaForm({
                       <div className={`h-2 rounded-sm ${tm.card}`} />
                     </div>
                   </div>
-                  <div className="relative px-1 py-1 text-[9px] font-medium leading-none text-white mix-blend-difference">
+                  <div className="relative px-1 py-1 text-[10px] font-medium leading-none text-white mix-blend-difference">
                     {tm.label}
                   </div>
                 </button>
@@ -332,7 +332,7 @@ function SocialsPicker({
           <Eye className="h-3 w-3 text-slate-400" />
           {t("socialsLabel")}
         </span>
-        <span className="text-[10px] text-slate-400">
+        <span className="text-[10px] text-slate-500">
           {t("socialsCount", { count: socials.length, max: MAX_SOCIALS })}
         </span>
       </div>
@@ -360,7 +360,7 @@ function SocialsPicker({
             >
               <ChannelIcon channel={ch} className="h-3 w-3" />
               {channelLabel(ch, t)}
-              {active && <span className="text-[9px] text-accent-600">#{order}</span>}
+              {active && <span className="text-[10px] text-accent-600">#{order}</span>}
             </button>
           );
         })}

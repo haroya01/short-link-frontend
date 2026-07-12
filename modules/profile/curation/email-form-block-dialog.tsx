@@ -110,7 +110,7 @@ export function EmailFormBlockDialog({ open, initialJson, onOpenChange, onSubmit
             onChange={(e) => setConfig((c) => ({ ...c, subtitle: e.target.value }))}
             placeholder={t("emailFormFieldSubtitlePlaceholder")}
           />
-          <p className="mt-0.5 text-[10px] text-slate-400">{t("emailFormFieldSubtitleHint")}</p>
+          <p className="mt-0.5 text-[10px] text-slate-500">{t("emailFormFieldSubtitleHint")}</p>
         </FormField>
         <FormField label={t("emailFormFieldPlaceholder")}>
           <Input

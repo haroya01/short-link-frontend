@@ -107,7 +107,7 @@ export default function SettingsPage() {
                 <Section title={t("preferencesTitle")}>
                   <div className="space-y-3">
                     <label className="block space-y-1.5">
-                      <span className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                         {t("timezoneLabel")}
                       </span>
                       <select
@@ -129,7 +129,7 @@ export default function SettingsPage() {
                   </div>
 
                   <div className="mt-6 space-y-2 border-t border-slate-100 dark:border-slate-800 pt-4">
-                    <span className="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                       {t("interfaceLanguage")}
                     </span>
                     <div className="flex gap-2">

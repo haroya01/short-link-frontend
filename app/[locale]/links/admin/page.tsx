@@ -350,7 +350,7 @@ function Kpi({
   return (
     <div className="bg-white dark:bg-slate-900 p-4">
       <div className="flex items-center justify-between">
-        <span className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="truncate text-[10px] font-medium text-slate-500 dark:text-slate-400">
           {label}
         </span>
         <Icon
