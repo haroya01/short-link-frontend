@@ -216,6 +216,11 @@ export async function FeedScreen({
   // notch. Trending/search feeds have no lead emphasis.
   const featuredFirst = !searching && !activeTag && tab === "recent" && items.length > 1;
 
+  // 검색 결과가 1~2건뿐일 땐 와이드 메이슨리 그리드가 반쪽 타일 하나를 덩그러니 남긴다. 이 경우엔
+  // 읽기 컬럼(max-w-2xl) 안 전폭 목록 행으로 떨어뜨려, 결과가 완성된 한 줄로 읽히게 한다(0건 빈 상태·
+  // 3건 이상 그리드는 그대로).
+  const sparseSearch = searching && items.length > 0 && items.length <= 2;
+
   const writeCta = (
     <a href={blogHref("/write/new")} className={cn(blogCta(), "shrink-0")}>
       <PenSquare className="h-4 w-4" />
@@ -328,6 +333,24 @@ export async function FeedScreen({
               ) : (
                 <FeedEmpty mark title={t("emptyTitle")} body={t("emptyBody")} action={writeCta} />
               )}
+            </FeedContentTransition>
+          </ReadingShell>
+        ) : sparseSearch ? (
+          // 검색 결과 1~2건: 그리드가 남기는 고아 반쪽 타일 대신 읽기 컬럼 목록 행으로. 태그 filter chip
+          // 이나 series/connection interleave 없이, 결과 자체만 전폭 한 줄씩 읽히게 한다.
+          <ReadingShell className="mt-6">
+            <FeedContentTransition index={tabIndex} contentKey={contentKey}>
+              <FeedColumn
+                locale={locale}
+                items={items}
+                hasNext={hasNext}
+                sort={sort}
+                query={query}
+                lang={activeLang || undefined}
+                featuredFirst={false}
+                featuredLabel={t("featuredLabel")}
+                variant="list"
+              />
             </FeedContentTransition>
           </ReadingShell>
         ) : (

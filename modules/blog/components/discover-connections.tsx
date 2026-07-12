@@ -329,7 +329,7 @@ export function ConnectionEventCard({ event, locale }: { event: ConnectionEvent;
       >
         {isPath && <CornerDownRight className="h-3 w-3" />}
         <span>{event.collectionTitle}</span>
-        <span className="font-medium normal-case tracking-normal text-slate-400 dark:text-slate-500">
+        <span className="font-medium normal-case tracking-normal text-slate-500 dark:text-slate-400">
           {isPath ? t("connectedToPath") : t("connectedTo")}
         </span>
       </BlogLink>

@@ -117,7 +117,7 @@ export function DiscoverySeriesCard({
                         타일과의 주인공 경합 회피 결정 보존). 큰 회차 번호는 사진/종이 공통 모티프라 아래
                         공유 블록으로 뺐다(통일성). */}
                     <div aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-accent-300/30 blur-3xl dark:bg-accent-500/10" />
-                    <div aria-hidden className="absolute -bottom-16 -left-12 h-40 w-40 rounded-full bg-emerald-200/30 blur-3xl dark:bg-accent-500/[0.06]" />
+                    <div aria-hidden className="absolute -bottom-16 -left-12 h-40 w-40 rounded-full bg-accent-200/30 blur-3xl dark:bg-accent-500/[0.06]" />
                   </>
                 ))}
                 {front && p.ogImageUrl && (

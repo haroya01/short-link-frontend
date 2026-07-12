@@ -190,7 +190,7 @@ export default function BlogAnalyticsPage() {
                         </span>
                         <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                           <span
-                            className="block h-full rounded-full bg-accent-500"
+                            className="block h-full rounded-full bg-accent-600"
                             style={{ width: `${pct}%` }}
                           />
                         </span>
