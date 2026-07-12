@@ -368,10 +368,15 @@ export function usePostEditor(
       return false;
     }
     // Reject a past instant up front (the datetime-local `min` is only advisory and editable).
-    if (!scheduledAt || new Date(scheduledAt).getTime() <= Date.now()) {
+    const at = new Date(scheduledAt);
+    if (!scheduledAt || Number.isNaN(at.getTime()) || at.getTime() <= Date.now()) {
       setError(t("scheduleInvalid"));
       return false;
     }
+    // The picker hands us a zoneless datetime-local string ("2026-07-12T15:00"); the API wants an ISO
+    // instant. `new Date(...)` reads that string in the author's local zone, so toISOString() pins the
+    // exact instant they picked — no server-side zone guessing.
+    const scheduledAtIso = at.toISOString();
     setBusy(true);
     setError(null);
     try {
@@ -386,7 +391,7 @@ export function usePostEditor(
           setReloadKey((k) => k + 1);
         }
       }
-      setPost(await schedulePost(post.id, scheduledAt));
+      setPost(await schedulePost(post.id, scheduledAtIso));
       return true;
     } catch (e) {
       if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
