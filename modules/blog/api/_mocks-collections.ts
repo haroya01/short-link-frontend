@@ -21,7 +21,11 @@ import type {
   NewCollection,
   PostCollectionsView,
 } from "@/modules/blog/api/collections";
-import type { MyHighlightItem } from "@/modules/blog/api/highlights";
+import type {
+  HighlightFeedItem,
+  HighlightFeedPage,
+  MyHighlightItem,
+} from "@/modules/blog/api/highlights";
 
 // Mock authors (mirror _mocks.ts AUTHORS) — only what the discovery card needs.
 const CURATORS = {
@@ -122,6 +126,66 @@ const myHighlights: MyHighlightItem[] = [
 
 export function mockMyHighlights(): MyHighlightItem[] {
   return [...myHighlights];
+}
+
+// "남들 하이라이트" 피드 — 팔로우한 큐레이터가 최근 칠한 구절(최신순). 큐레이터(칠한 사람) ≠ 글 작가.
+// 인용문은 mock 본문에 실제로 있는 문장이라 탭하면 그 구절로 스크롤된다.
+const now = Date.now();
+const highlightFeed: HighlightFeedItem[] = [
+  {
+    id: 8101,
+    postId: 1,
+    curator: CURATORS.haruka,
+    postSlug: "hexagonal-too-much",
+    postTitle: "헥사고날 아키텍처, 작은 서비스에 과했을까",
+    postAuthorUsername: "haruka",
+    blockOrder: 2,
+    endBlockOrder: 2,
+    startOffset: 0,
+    endOffset: Q_SIMPLE.length,
+    quote: Q_SIMPLE,
+    note: "결국 남는 건 이 한 줄이었다.",
+    createdAt: new Date(now - 3 * 3_600_000).toISOString(),
+    replyCount: 2,
+  },
+  {
+    id: 8102,
+    postId: 4,
+    curator: CURATORS.minji,
+    postSlug: "side-project-pricing",
+    postTitle: "1인 개발자의 가격 정책 실험",
+    postAuthorUsername: "minji",
+    blockOrder: 1,
+    endBlockOrder: 1,
+    startOffset: 0,
+    endOffset: Q_PROCESS.length,
+    quote: Q_PROCESS,
+    note: null,
+    createdAt: new Date(now - 20 * 3_600_000).toISOString(),
+    replyCount: 0,
+  },
+  {
+    id: 8103,
+    postId: 2,
+    curator: CURATORS.jinhwa,
+    postSlug: "spring-boot-tx-propagation",
+    postTitle: "Spring Boot 트랜잭션 전파, 다시 정리",
+    postAuthorUsername: "dohyun",
+    blockOrder: 3,
+    endBlockOrder: 3,
+    startOffset: 0,
+    endOffset: Q_MEASURE.length,
+    quote: Q_MEASURE,
+    note: "측정 먼저 — 이 태도가 좋다.",
+    createdAt: new Date(now - 2 * 86_400_000).toISOString(),
+    replyCount: 5,
+  },
+];
+
+export function mockHighlightFeed(page: number, size: number): HighlightFeedPage {
+  const start = page * size;
+  const items = highlightFeed.slice(start, start + size);
+  return { items, page, size, hasNext: start + size < highlightFeed.length };
 }
 
 function toSummary(c: CollectionDetail): CollectionSummary {

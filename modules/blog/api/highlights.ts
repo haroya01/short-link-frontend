@@ -1,6 +1,6 @@
 import { request } from "@/lib/api/client";
 import { USE_MOCKS } from "@/modules/blog/api/_mocks";
-import { mockMyHighlights } from "@/modules/blog/api/_mocks-collections";
+import { mockHighlightFeed, mockMyHighlights } from "@/modules/blog/api/_mocks-collections";
 import type { PublicAuthor } from "./public-posts";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -47,6 +47,38 @@ export interface MyHighlightItem {
   createdAt: string;
 }
 
+/** One entry in the "남들 하이라이트" feed — a passage a followed curator drew, carried with the post it
+ *  lives in so the reader can jump to that sentence (`?hl=`). `curator` highlighted it; `postAuthorUsername`
+ *  wrote the post (they can differ). Mirrors the backend `HighlightFeedItem` / the iOS `HighlightFeedItemView`. */
+export interface HighlightFeedItem {
+  id: number;
+  postId: number;
+  /** Who drew the highlight (the curator) — null only for an optimistic local add. */
+  curator: PublicAuthor | null;
+  postSlug: string;
+  postTitle: string;
+  /** Who wrote the post (attribution + the deep-link's author segment). */
+  postAuthorUsername: string | null;
+  blockOrder: number;
+  endBlockOrder: number;
+  startOffset: number;
+  endOffset: number;
+  quote: string;
+  /** The curator's public margin note, if any. */
+  note: string | null;
+  createdAt: string;
+  /** Replies in the highlight's thread — drives the "conversation here" marker. */
+  replyCount: number;
+}
+
+/** One page of the highlight feed (newest first). Mirrors the backend `HighlightFeedView`. */
+export interface HighlightFeedPage {
+  items: HighlightFeedItem[];
+  page: number;
+  size: number;
+  hasNext: boolean;
+}
+
 /** One reply in a highlight's thread (the author's note is the thread opener; these sit under it). */
 export interface HighlightReplyView {
   id: number;
@@ -80,6 +112,15 @@ export async function listHighlights(postId: number): Promise<HighlightView[]> {
 export async function listMyHighlights(): Promise<MyHighlightItem[]> {
   if (USE_MOCKS) return mockMyHighlights();
   return request<MyHighlightItem[]>(`/api/v1/users/me/highlights`, { method: "GET" });
+}
+
+/** Authenticated — "남들 하이라이트" 피드: 팔로우한 큐레이터가 최근 칠한 공개 구절(최신순, 페이지). 팔로우가
+ *  없으면 빈 페이지(콜드스타트는 클라 안내). */
+export function getHighlightFeed(page = 0, size = 20): Promise<HighlightFeedPage> {
+  if (USE_MOCKS) return Promise.resolve(mockHighlightFeed(page, size));
+  return request<HighlightFeedPage>(`/api/v1/highlights/feed?page=${page}&size=${size}`, {
+    method: "GET",
+  });
 }
 
 /** Authenticated — create a highlight on a published post. */
