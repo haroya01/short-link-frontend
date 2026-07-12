@@ -290,3 +290,44 @@ test("deleting your own highlight unpaints its <mark> (create → thread → del
   // Optimistic unpaint — the mark is gone from the body.
   await expect(page.locator("mark.kurl-highlight")).toHaveCount(0, { timeout: 10_000 });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Connect (연결) from a highlight → "새 컬렉션" on a MOBILE viewport. The reported bug: on mobile the
+// "새 컬렉션" row looked dead — tapping it did nothing visible. Two causes fixed together: the create
+// row's onClick works over touch (the sheet portals to <body>, so no transformed ancestor traps its
+// fixed backdrop), AND a create failure used to be swallowed by an empty catch (no row, no feedback,
+// no step change = "무반응"). This pins the observable success contract on the small screen: tapping
+// "New collection" appends a selected row named after the quote, flipping the CTA from "pick" → "next".
+// ─────────────────────────────────────────────────────────────────────────────────────────────────
+test.describe("connect a highlight to a new collection (mobile)", () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+
+  test("tapping 'New collection' adds a selected row and enables the Next step", async ({ page }) => {
+    await page.goto(POST_PATH);
+    await waitReady(page);
+
+    // Paint a highlight, then open its thread to reach the connect action.
+    const { mark } = await makeHighlight(page);
+    await mark.click();
+    const thread = page.getByRole("dialog");
+    await expect(thread).toBeVisible({ timeout: 10_000 });
+
+    // The connect (FolderPlus) button opens the ConnectSheet over the thread (its own dialog).
+    await thread.getByRole("button", { name: "Connect to a collection or path" }).click();
+    const sheet = page.getByRole("dialog").last();
+    await expect(sheet).toBeVisible();
+
+    // The two seeded mock collections render as rows; the CTA rests on "Pick a collection".
+    const cta = sheet.getByRole("button", { name: "Pick a collection" });
+    await expect(cta).toBeVisible();
+    const rowsBefore = await sheet.locator("ul > li").count();
+
+    // Tap "New collection" — the core repro. A working create appends a new row AND selects it.
+    await sheet.getByRole("button", { name: "New collection" }).click();
+
+    // A new list row appears (create round-tripped, not swallowed) …
+    await expect(sheet.locator("ul > li")).toHaveCount(rowsBefore + 1, { timeout: 10_000 });
+    // … and it's selected, so the CTA advances from "pick" to "Next" (proves the tap did something).
+    await expect(sheet.getByRole("button", { name: "Next", exact: true })).toBeVisible();
+  });
+});

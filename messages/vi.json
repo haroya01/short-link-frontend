@@ -3509,6 +3509,7 @@
     "whyPlaceholder": "One line (optional)",
     "addToCount": "Đã thêm vào {count} bộ sưu tập.",
     "connectError": "Không thể lưu. Vui lòng thử lại.",
+    "createError": "Không thể tạo. Vui lòng thử lại.",
     "edit": "Chỉnh sửa",
     "editTitle": "Chỉnh sửa bộ sưu tập",
     "titleLabel": "Tên",

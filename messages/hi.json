@@ -3509,6 +3509,7 @@
     "whyPlaceholder": "One line (optional)",
     "addToCount": "{count} संग्रह में जोड़ा गया।",
     "connectError": "सहेजा नहीं जा सका. कृपया पुनः प्रयास करें.",
+    "createError": "इसे बनाया नहीं जा सका. कृपया पुनः प्रयास करें.",
     "edit": "संपादित करें",
     "editTitle": "संग्रह संपादित करें",
     "titleLabel": "नाम",
