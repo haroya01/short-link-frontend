@@ -28,7 +28,7 @@ export async function FeedMasthead({
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-14">
         <div className="hero-stagger max-w-2xl">
           {eyebrow && (
-            <p className="mb-2 text-[12px] font-semibold text-accent-700">
+            <p className="mb-2 text-[12px] font-semibold text-accent-700 dark:text-accent-400">
               {eyebrow}
             </p>
           )}

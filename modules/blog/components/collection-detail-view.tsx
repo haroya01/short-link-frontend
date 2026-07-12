@@ -528,7 +528,7 @@ function PathWalk({
               <span
                 className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-[12px] font-bold ${
                   isCurrent
-                    ? "bg-accent-600 text-white dark:bg-accent-500"
+                    ? "bg-accent-700 text-white dark:bg-accent-500 dark:text-slate-950"
                     : isReached
                       ? "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-400"
                       : "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500"
@@ -642,7 +642,7 @@ function ContinuityBar({
           {t("pathContinue", { step: nextStep })}
         </span>
       </span>
-      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-accent-600 px-3.5 py-1.5 text-[12.5px] font-bold text-white dark:bg-accent-500">
+      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-accent-700 px-3.5 py-1.5 text-[12.5px] font-bold text-white dark:bg-accent-500 dark:text-slate-950">
         {t("pathContinueCta")}
         <ArrowRight className="h-3.5 w-3.5" />
       </span>

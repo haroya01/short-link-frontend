@@ -19,7 +19,7 @@ export function EditorSkeleton() {
           <Skeleton className="h-8 w-16" />
         </div>
       </div>
-      <Skeleton className="mt-6 h-9 w-3/4" />
+      <Skeleton className="mt-6 h-10 w-3/4" />
       <div className="mt-3 flex gap-2 border-b border-slate-100 pb-5 dark:border-slate-800">
         <Skeleton className="h-7 w-44" />
         <Skeleton className="h-7 w-24" />
