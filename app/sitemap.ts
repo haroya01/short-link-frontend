@@ -10,9 +10,9 @@ const SITE_URL =
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? SITE_URL;
 
-// Blog lives on its own host; each author is a {username}.kurl.me subdomain. A single sitemap may
-// list these cross-subdomain URLs because they're all owned under one Search Console *Domain*
-// property (kurl.me). Post/author canonicals are host-root (no locale prefix) — match them exactly.
+// Blog lives on its own host (blog.kurl.me); each author's public surface is blog.kurl.me/@{username},
+// velog-style. All of it sits under one Search Console *Domain* property (kurl.me), so a single sitemap
+// may list the cross-host URLs. Post/author canonicals are host-root (no locale prefix) — match exactly.
 const PLATFORM_DOMAIN = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
 const BLOG_URL =
   process.env.NEXT_PUBLIC_BLOG_URL ??
@@ -208,24 +208,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  // Blog posts + their author homes. URLs are {username}.kurl.me/{slug} (post) and {username}.kurl.me/
-  // (author home) — the exact canonicals, no locale prefix. Dedupe author homes across their posts.
+  // Blog posts + their author homes. The canonical shape is blog.kurl.me/@{username}[/{slug}] — the
+  // {username}.kurl.me subdomain was re-purposed to the link-in-bio 명함 (middleware rewrites it), so a
+  // subdomain post URL 404s. Mirror the post page's own canonical (authorBaseUrl → BLOG_URL/@{user}).
+  // No locale prefix — author surfaces are host-root, single-language. Dedupe author homes across posts.
   const posts = await fetchPublicPosts();
   const authorHomes = new Set<string>();
   for (const post of posts) {
     if (!post.author?.username || !post.slug) continue;
-    const origin = `https://${post.author.username}.${PLATFORM_DOMAIN}`;
-    authorHomes.add(origin);
+    const authorBase = `${BLOG_URL}/@${post.author.username}`;
+    authorHomes.add(authorBase);
     entries.push({
-      url: `${origin}/${post.slug}`,
+      url: `${authorBase}/${post.slug}`,
       lastModified: post.publishedAt ? new Date(post.publishedAt) : now,
       changeFrequency: "monthly",
       priority: 0.7,
     });
   }
-  for (const origin of authorHomes) {
+  for (const authorBase of authorHomes) {
     entries.push({
-      url: `${origin}/`,
+      url: `${authorBase}/`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.6,
@@ -233,7 +235,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Author's series index — host-root like the home (no locale prefix). The series-detail pages
     // carry CollectionPage JSON-LD and are reached by crawl from here; the index is the entry point.
     entries.push({
-      url: `${origin}/series`,
+      url: `${authorBase}/series`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.5,
