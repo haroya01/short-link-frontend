@@ -555,8 +555,8 @@
     "postCount": "{count, plural, one {# पोस्ट} other {# पोस्ट}}",
     "report": "रिपोर्ट करें",
     "reportTitle": "इस पोस्ट की रिपोर्ट करें",
-    "reportReason": "कारण (वैकल्पिक)",
-    "reportPlaceholder": "कोई विशिष्ट विवरण जोड़ें",
+    "reportReason": "कारण",
+    "reportPlaceholder": "कोई विशिष्ट विवरण जोड़ें (वैकल्पिक)",
     "reportSubmit": "रिपोर्ट करें",
     "reportSubmitting": "भेजा जा रहा है…",
     "reportDone": "धन्यवाद — आपकी रिपोर्ट मिल गई।",
@@ -624,7 +624,16 @@
     "linkClicks": "क्लिक",
     "linkTopCountry": "शीर्ष देश",
     "linkTopDevice": "शीर्ष डिवाइस",
-    "linkFullStats": "kurl पर पूरे आँकड़े देखें"
+    "linkFullStats": "kurl पर पूरे आँकड़े देखें",
+    "reportDetail": "विवरण (वैकल्पिक)",
+    "reasons": {
+      "SPAM": "स्पैम या विज्ञापन",
+      "HARASSMENT": "नफ़रत या उत्पीड़न",
+      "VIOLENCE": "हिंसा या ख़तरा",
+      "SEXUAL": "यौन सामग्री",
+      "COPYRIGHT": "कॉपीराइट उल्लंघन",
+      "OTHER": "अन्य"
+    }
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -668,7 +677,10 @@
     "MALFORMED_REQUEST": "उस अनुरोध में कुछ ग़लत लगता है। कृपया फिर से प्रयास करें।",
     "UNAUTHORIZED": "कृपया साइन इन करें।",
     "NOT_FOUND": "नहीं मिला।",
-    "INTERNAL_ERROR": "हमारी ओर से कुछ ग़लत हो गया। कृपया फिर से प्रयास करें।"
+    "INTERNAL_ERROR": "हमारी ओर से कुछ ग़लत हो गया। कृपया फिर से प्रयास करें।",
+    "DUPLICATE_REPORT": "आप इसकी रिपोर्ट पहले ही कर चुके हैं.",
+    "SUBJECT_NOT_FOUND": "रिपोर्ट किया गया आइटम नहीं मिला.",
+    "SUSPEND_REQUIRES_EXPIRY": "निलंबन के लिए समाप्ति तिथि आवश्यक है."
   },
   "cookieConsent": {
     "ariaLabel": "कुकी सूचना",
@@ -3405,16 +3417,32 @@
       "reviewing": "समीक्षाधीन",
       "resolve": "हल करें",
       "reject": "अस्वीकार करें",
-      "takedown": "अप्रकाशित करें"
+      "UNPUBLISH_POST": "पोस्ट अप्रकाशित करें",
+      "DELETE_COMMENT": "टिप्पणी हटाएँ",
+      "SUSPEND_USER": "खाता निलंबित करें",
+      "BAN_USER": "स्थायी रूप से प्रतिबंधित करें"
     },
     "subjectType": {
       "POST": "पोस्ट",
       "USER": "लेखक",
       "COMMENT": "टिप्पणी"
     },
-    "takedownConfirm": "इस पोस्ट को अप्रकाशित करें? यह सार्वजनिक फ़ीड से हट जाती है (लेखक के पास ड्राफ़्ट रहता है)।",
-    "takedownFailed": "पोस्ट अप्रकाशित नहीं हो सकी।",
-    "removed": "अप्रकाशित"
+    "removed": "अप्रकाशित",
+    "reasons": {
+      "SPAM": "स्पैम या विज्ञापन",
+      "HARASSMENT": "नफ़रत या उत्पीड़न",
+      "VIOLENCE": "हिंसा या ख़तरा",
+      "SEXUAL": "यौन सामग्री",
+      "COPYRIGHT": "कॉपीराइट उल्लंघन",
+      "OTHER": "अन्य"
+    },
+    "actionConfirm": {
+      "UNPUBLISH_POST": "इस पोस्ट को अप्रकाशित करें? यह सार्वजनिक फ़ीड से हट जाती है (लेखक के पास ड्राफ़्ट रहता है)।",
+      "DELETE_COMMENT": "यह टिप्पणी हटाएँ? इसे पूर्ववत नहीं किया जा सकता।",
+      "BAN_USER": "इस खाते को स्थायी रूप से प्रतिबंधित करें? इसे पलटना कठिन है।"
+    },
+    "suspendDaysPrompt": "कितने दिनों के लिए निलंबित करें?",
+    "suspendDaysInvalid": "1 या अधिक की संख्या दर्ज करें।"
   },
   "blogAdminMetrics": {
     "title": "ब्लॉग मेट्रिक्स",

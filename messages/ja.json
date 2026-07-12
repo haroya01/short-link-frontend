@@ -555,11 +555,11 @@
     "postCount": "記事{count}件",
     "report": "報告",
     "reportTitle": "この記事を報告",
-    "reportReason": "報告理由（任意）",
+    "reportReason": "報告理由",
     "reportSubmit": "報告",
     "reportSubmitting": "送信中…",
     "reportDone": "報告を受け付けました。",
-    "reportPlaceholder": "具体的な理由があれば記入してください",
+    "reportPlaceholder": "具体的な内容があれば記入してください（任意）",
     "ctaUnavailable": "{label} · 現在利用できないリンク",
     "ctaDeleted": "削除されたリンク",
     "toc": "目次",
@@ -624,7 +624,16 @@
     "linkClicks": "クリック",
     "linkTopCountry": "上位の国",
     "linkTopDevice": "上位のデバイス",
-    "linkFullStats": "kurl で詳しい統計を見る"
+    "linkFullStats": "kurl で詳しい統計を見る",
+    "reportDetail": "詳細（任意）",
+    "reasons": {
+      "SPAM": "スパム・宣伝",
+      "HARASSMENT": "ヘイト・嫌がらせ",
+      "VIOLENCE": "暴力・危険",
+      "SEXUAL": "性的なコンテンツ",
+      "COPYRIGHT": "著作権侵害",
+      "OTHER": "その他"
+    }
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -668,7 +677,10 @@
     "MALFORMED_REQUEST": "リクエスト形式が不正です。",
     "UNAUTHORIZED": "ログインが必要です。",
     "NOT_FOUND": "見つかりません。",
-    "INTERNAL_ERROR": "サーバエラーが発生しました。後でもう一度お試しください。"
+    "INTERNAL_ERROR": "サーバエラーが発生しました。後でもう一度お試しください。",
+    "DUPLICATE_REPORT": "すでに報告済みの対象です。",
+    "SUBJECT_NOT_FOUND": "対象が見つかりません。",
+    "SUSPEND_REQUIRES_EXPIRY": "停止には期限が必要です。"
   },
   "cookieConsent": {
     "ariaLabel": "Cookieのお知らせ",
@@ -3405,16 +3417,32 @@
       "reviewing": "確認を開始",
       "resolve": "処理",
       "reject": "却下",
-      "takedown": "非公開"
+      "UNPUBLISH_POST": "記事を非公開",
+      "DELETE_COMMENT": "コメント削除",
+      "SUSPEND_USER": "アカウント停止",
+      "BAN_USER": "永久停止"
     },
     "subjectType": {
       "POST": "投稿",
       "USER": "作者",
       "COMMENT": "コメント"
     },
-    "takedownConfirm": "この投稿を非公開にしますか？公開フィードから外れます（下書きは作者に残ります）。",
-    "takedownFailed": "非公開処理に失敗しました。",
-    "removed": "非公開"
+    "removed": "非公開",
+    "reasons": {
+      "SPAM": "スパム・宣伝",
+      "HARASSMENT": "ヘイト・嫌がらせ",
+      "VIOLENCE": "暴力・危険",
+      "SEXUAL": "性的なコンテンツ",
+      "COPYRIGHT": "著作権侵害",
+      "OTHER": "その他"
+    },
+    "actionConfirm": {
+      "UNPUBLISH_POST": "この投稿を非公開にしますか？公開フィードから外れます（下書きは作者に残ります）。",
+      "DELETE_COMMENT": "このコメントを削除しますか？元に戻せません。",
+      "BAN_USER": "このアカウントを永久停止しますか？取り消しは困難です。"
+    },
+    "suspendDaysPrompt": "何日間停止しますか？（日）",
+    "suspendDaysInvalid": "1 以上の数値を入力してください。"
   },
   "blogAdminMetrics": {
     "title": "ブログ指標",

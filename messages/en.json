@@ -555,8 +555,8 @@
     "postCount": "{count, plural, one {# post} other {# posts}}",
     "report": "Report",
     "reportTitle": "Report this post",
-    "reportReason": "Reason (optional)",
-    "reportPlaceholder": "Add any specific details",
+    "reportReason": "Reason",
+    "reportPlaceholder": "Add any specific details (optional)",
     "reportSubmit": "Report",
     "reportSubmitting": "Sending…",
     "reportDone": "Thanks — your report was received.",
@@ -624,7 +624,16 @@
     "linkClicks": "clicks",
     "linkTopCountry": "top country",
     "linkTopDevice": "top device",
-    "linkFullStats": "Full stats on kurl"
+    "linkFullStats": "Full stats on kurl",
+    "reportDetail": "Details (optional)",
+    "reasons": {
+      "SPAM": "Spam or advertising",
+      "HARASSMENT": "Hate or harassment",
+      "VIOLENCE": "Violence or danger",
+      "SEXUAL": "Sexual content",
+      "COPYRIGHT": "Copyright infringement",
+      "OTHER": "Other"
+    }
   },
   "imageCropper": {
     "title": "Crop image",
@@ -668,7 +677,10 @@
     "MALFORMED_REQUEST": "Something looks wrong with that request. Please try again.",
     "UNAUTHORIZED": "Please sign in.",
     "NOT_FOUND": "Not found.",
-    "INTERNAL_ERROR": "Something went wrong on our side. Please try again."
+    "INTERNAL_ERROR": "Something went wrong on our side. Please try again.",
+    "DUPLICATE_REPORT": "You've already reported this.",
+    "SUBJECT_NOT_FOUND": "The reported item no longer exists.",
+    "SUSPEND_REQUIRES_EXPIRY": "A suspension needs an expiry date."
   },
   "cookieConsent": {
     "ariaLabel": "Cookie notice",
@@ -3405,16 +3417,32 @@
       "reviewing": "Reviewing",
       "resolve": "Resolve",
       "reject": "Reject",
-      "takedown": "Unpublish"
+      "UNPUBLISH_POST": "Unpublish post",
+      "DELETE_COMMENT": "Delete comment",
+      "SUSPEND_USER": "Suspend account",
+      "BAN_USER": "Ban permanently"
     },
     "subjectType": {
       "POST": "Post",
       "USER": "Author",
       "COMMENT": "Comment"
     },
-    "takedownConfirm": "Unpublish this post? It leaves the public feed (the author keeps the draft).",
-    "takedownFailed": "Couldn't unpublish the post.",
-    "removed": "Unpublished"
+    "removed": "Unpublished",
+    "reasons": {
+      "SPAM": "Spam or advertising",
+      "HARASSMENT": "Hate or harassment",
+      "VIOLENCE": "Violence or danger",
+      "SEXUAL": "Sexual content",
+      "COPYRIGHT": "Copyright infringement",
+      "OTHER": "Other"
+    },
+    "actionConfirm": {
+      "UNPUBLISH_POST": "Unpublish this post? It leaves the public feed (the author keeps the draft).",
+      "DELETE_COMMENT": "Delete this comment? This can't be undone.",
+      "BAN_USER": "Permanently ban this account? This is hard to reverse."
+    },
+    "suspendDaysPrompt": "Suspend for how many days?",
+    "suspendDaysInvalid": "Enter a number of 1 or more."
   },
   "blogAdminMetrics": {
     "title": "Blog metrics",

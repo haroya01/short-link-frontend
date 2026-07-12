@@ -555,8 +555,8 @@
     "postCount": "글 {count}개",
     "report": "신고",
     "reportTitle": "이 글 신고",
-    "reportReason": "신고 사유 (선택)",
-    "reportPlaceholder": "구체적인 사유가 있으면 적어주세요",
+    "reportReason": "신고 사유",
+    "reportPlaceholder": "구체적인 내용이 있으면 적어주세요 (선택)",
     "reportSubmit": "신고",
     "reportSubmitting": "전송 중…",
     "reportDone": "신고가 접수됐어요.",
@@ -624,7 +624,16 @@
     "linkClicks": "클릭",
     "linkTopCountry": "상위 국가",
     "linkTopDevice": "상위 기기",
-    "linkFullStats": "kurl에서 전체 통계 보기"
+    "linkFullStats": "kurl에서 전체 통계 보기",
+    "reportDetail": "세부 내용 (선택)",
+    "reasons": {
+      "SPAM": "스팸·광고",
+      "HARASSMENT": "혐오·괴롭힘",
+      "VIOLENCE": "폭력·위험",
+      "SEXUAL": "성적인 콘텐츠",
+      "COPYRIGHT": "저작권 침해",
+      "OTHER": "기타"
+    }
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
@@ -675,7 +684,10 @@
     "MALFORMED_REQUEST": "요청 형식이 잘못됐어요.",
     "UNAUTHORIZED": "로그인이 필요해요.",
     "NOT_FOUND": "찾을 수 없어요.",
-    "INTERNAL_ERROR": "서버 오류가 발생했어요. 잠시 후 다시 시도해 주세요."
+    "INTERNAL_ERROR": "서버 오류가 발생했어요. 잠시 후 다시 시도해 주세요.",
+    "DUPLICATE_REPORT": "이미 신고한 대상입니다.",
+    "SUBJECT_NOT_FOUND": "대상을 찾을 수 없습니다.",
+    "SUSPEND_REQUIRES_EXPIRY": "정지에는 만료일이 필요합니다."
   },
   "cookieConsent": {
     "ariaLabel": "쿠키 안내",
@@ -3405,16 +3417,32 @@
       "reviewing": "검토 시작",
       "resolve": "처리",
       "reject": "반려",
-      "takedown": "비공개"
+      "UNPUBLISH_POST": "글 비공개",
+      "DELETE_COMMENT": "댓글 삭제",
+      "SUSPEND_USER": "계정 정지",
+      "BAN_USER": "영구 차단"
     },
     "subjectType": {
       "POST": "글",
       "USER": "작가",
       "COMMENT": "댓글"
     },
-    "takedownConfirm": "이 글을 비공개 처리할까요? 공개 피드에서 내려갑니다 (작성자 초안은 유지).",
-    "takedownFailed": "비공개 처리에 실패했어요.",
-    "removed": "비공개됨"
+    "removed": "비공개됨",
+    "reasons": {
+      "SPAM": "스팸·광고",
+      "HARASSMENT": "혐오·괴롭힘",
+      "VIOLENCE": "폭력·위험",
+      "SEXUAL": "성적인 콘텐츠",
+      "COPYRIGHT": "저작권 침해",
+      "OTHER": "기타"
+    },
+    "actionConfirm": {
+      "UNPUBLISH_POST": "이 글을 비공개 처리할까요? 공개 피드에서 내려갑니다 (작성자 초안은 유지).",
+      "DELETE_COMMENT": "이 댓글을 삭제할까요? 되돌릴 수 없습니다.",
+      "BAN_USER": "이 계정을 영구 차단할까요? 되돌리기 어렵습니다."
+    },
+    "suspendDaysPrompt": "며칠 동안 정지할까요? (일)",
+    "suspendDaysInvalid": "1 이상의 숫자를 입력하세요."
   },
   "blogAdminMetrics": {
     "title": "블로그 지표",
