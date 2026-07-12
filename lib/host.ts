@@ -43,6 +43,25 @@ export function blogPath(path: string = "/"): string {
   return `/blog-preview${path === "/" ? "" : path}`;
 }
 
+/**
+ * The visitor-facing origin for a route-handler request (feeds, etc.). Behind the Cloudflare Worker
+ * proxy, `req.url` carries the internal Vercel deployment host (…vercel.app); the proxy forwards the
+ * real host in `x-original-host`. Prefer it so the channel <link>, atom:link rel=self, and any
+ * dev-relative item URLs point at the public host; fall back to the request origin (dev/preview, no
+ * proxy). Mirrors the header precedence in {@link authorBaseUrl}.
+ */
+export function publicOrigin(req: Request): string {
+  const originalHost = req.headers.get("x-original-host");
+  if (originalHost) return `https://${originalHost.split(":")[0]}`;
+  return new URL(req.url).origin;
+}
+
+/** Public self URL for atom:link rel=self — the request path/query on the visitor-facing origin. */
+export function publicSelfUrl(req: Request): string {
+  const url = new URL(req.url);
+  return `${publicOrigin(req)}${url.pathname}${url.search}`;
+}
+
 export type Product = "links" | "blog";
 
 /**

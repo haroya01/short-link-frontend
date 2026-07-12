@@ -1,15 +1,16 @@
+import { publicOrigin, publicSelfUrl } from "@/lib/host";
 import { listPublicPosts } from "@/modules/blog/api/public-posts";
 import { authorPostForRss, buildRss } from "@/modules/blog/lib/rss";
 
 export const revalidate = 300;
 
-/** Per-author RSS — `{username}.kurl.me/feed` (rewrites to /{locale}/p/{username}/feed). */
+/** Per-author RSS — `blog.kurl.me/@{username}/feed` (rewrites to /{locale}/p/{username}/feed). */
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ locale: string; username: string }> },
 ) {
   const { locale, username } = await params;
-  const origin = new URL(req.url).origin;
+  const origin = publicOrigin(req);
 
   const result = await listPublicPosts(username);
   if (!result.ok) {
@@ -21,7 +22,7 @@ export async function GET(
     title: `@${author.username}`,
     link: origin,
     description: author.bio ?? `@${author.username}`,
-    selfUrl: req.url,
+    selfUrl: publicSelfUrl(req),
     locale,
     items: posts.map((p) => authorPostForRss(p, author)),
     origin,
