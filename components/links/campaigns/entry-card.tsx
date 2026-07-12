@@ -24,7 +24,7 @@ export function CampaignsEntryCard() {
             <h2 className="text-[15px] font-semibold leading-tight text-slate-900 dark:text-slate-100">
               {t("title")}
             </h2>
-            <span className="rounded-full bg-white dark:bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400 ring-1 ring-accent-200">
+            <span className="rounded-full bg-white dark:bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium text-accent-700 dark:text-accent-400 ring-1 ring-accent-200">
               {t("badge")}
             </span>
           </div>

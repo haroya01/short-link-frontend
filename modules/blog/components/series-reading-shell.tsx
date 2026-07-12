@@ -211,7 +211,7 @@ export function SeriesReadingShell({
                           )}
                         >
                           <span>{monthStr(key)}</span>
-                          <span className={active ? "" : "text-slate-400"}>{count}</span>
+                          <span className={active ? "" : "text-slate-500"}>{count}</span>
                         </button>
                       </li>
                     );

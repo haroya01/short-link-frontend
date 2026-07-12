@@ -81,7 +81,7 @@ export function EditorHeader({
               </>
             ) : savedTime ? (
               // 체크 2초가 지나간 쉼 상태 — "마지막 저장이 언제였나"를 시각으로.
-              <span className="text-slate-400 dark:text-slate-500">{t("savedAt", { time: savedTime })}</span>
+              <span className="text-slate-500 dark:text-slate-500">{t("savedAt", { time: savedTime })}</span>
             ) : (
               t("autoSave")
             )}
@@ -93,7 +93,7 @@ export function EditorHeader({
             <PostStatusBadge status={status} />
             {/* 공개 글은 명시 저장 — 버튼 옆 시각이 "마지막으로 반영된 때"를 말해 준다. */}
             {!saving && !saved && savedTime && (
-              <span className="hidden text-[12px] text-slate-400 dark:text-slate-500 sm:inline">
+              <span className="hidden text-[12px] text-slate-500 dark:text-slate-500 sm:inline">
                 {t("savedAt", { time: savedTime })}
               </span>
             )}

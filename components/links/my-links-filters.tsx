@@ -198,7 +198,7 @@ function Chip({ label, onRemove }: { label: string; onRemove: () => void }) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block space-y-1">
-      <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
         {label}
       </span>
       {children}

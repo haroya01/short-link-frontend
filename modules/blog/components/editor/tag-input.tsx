@@ -138,7 +138,7 @@ export function TagInput({ tags, onChange, placeholder, max = MAX_TAGS, suggesti
         <span className="text-[11px] text-slate-500 dark:text-slate-400">
           {atMax ? t("maxReached", { max }) : ""}
         </span>
-        <span className="text-[11px] tabular-nums text-slate-400 dark:text-slate-500">
+        <span className="text-[11px] tabular-nums text-slate-500 dark:text-slate-500">
           {tags.length}/{max}
         </span>
       </div>

@@ -14,14 +14,14 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-400">
+        <h3 className="text-[10px] font-semibold text-accent-700 dark:text-accent-400">
           {t("title")}
         </h3>
         <div className="flex items-center gap-1.5 text-[11px]">
           <span
             className={
               "inline-block h-2 w-2 rounded-full " +
-              (connected ? "animate-pulse bg-accent-500" : "bg-slate-300 dark:bg-slate-700")
+              (connected ? "animate-pulse bg-accent-600" : "bg-slate-300 dark:bg-slate-700")
             }
             aria-hidden
           />

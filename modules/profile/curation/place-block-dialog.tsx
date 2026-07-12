@@ -210,7 +210,7 @@ export function PlaceBlockDialog({ open, initialJson, onOpenChange, onSubmit, t 
                   className={
                     "flex aspect-square flex-col items-center justify-center gap-0.5 rounded-md border text-[10px] font-medium transition " +
                     (active
-                      ? "border-accent-500 bg-accent-50 text-accent-700"
+                      ? "border-accent-600 bg-accent-50 text-accent-700"
                       : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700")
                   }
                 >
