@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ArrowUpRight, MousePointerClick } from "lucide-react";
 import { getPublicLinkStats } from "@/lib/api/stats";
 import { linksHref } from "@/lib/host";
@@ -23,6 +24,7 @@ function pct(n: number, total: number): string {
  * Links that aren't opted into public stats fall back to a plain link card.
  */
 export function KurlLinkCard({ code, url }: { code: string; url: string }) {
+  const t = useTranslations("publicPost");
   // Plain fetch (not react-query) — the public reader isn't wrapped in a QueryProvider.
   const [data, setData] = useState<LinkStats | null>(null);
   const [state, setState] = useState<"loading" | "ok" | "fallback">("loading");
@@ -93,15 +95,15 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
             {data.totalClicks.toLocaleString()}
           </div>
           <div className="mt-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
-            clicks
+            {t("linkClicks")}
           </div>
         </div>
 
         {country && (
-          <Metric label="top country" value={country.country} sub={pct(country.count, data.totalClicks)} />
+          <Metric label={t("linkTopCountry")} value={country.country} sub={pct(country.count, data.totalClicks)} />
         )}
         {device && (
-          <Metric label="top device" value={device.device} sub={pct(device.count, data.totalClicks)} />
+          <Metric label={t("linkTopDevice")} value={device.device} sub={pct(device.count, data.totalClicks)} />
         )}
 
         {spark.length > 1 && (
@@ -121,9 +123,10 @@ export function KurlLinkCard({ code, url }: { code: string; url: string }) {
         href={linksHref(`/stats/${code}/public`)}
         target="_blank"
         rel="noopener noreferrer"
-        className="block border-t border-slate-100 px-5 py-2 text-[12px] font-medium text-accent-700 no-underline transition-colors hover:bg-accent-50/40 dark:border-slate-800 dark:text-accent-400 dark:hover:bg-accent-500/10"
+        className="flex items-center gap-1 border-t border-slate-100 px-5 py-2 text-[12px] font-medium text-accent-700 no-underline transition-colors hover:bg-accent-50/40 dark:border-slate-800 dark:text-accent-400 dark:hover:bg-accent-500/10"
       >
-        Full stats on kurl →
+        {t("linkFullStats")}
+        <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
       </a>
     </div>
   );

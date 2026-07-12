@@ -634,7 +634,11 @@
     "relatedHeading": "Đọc tiếp",
     "resumeReading": "Đọc tiếp",
     "resumeDismiss": "Bỏ qua",
-    "replyError": "Không thể đăng câu trả lời. Vui lòng thử lại."
+    "replyError": "Không thể đăng câu trả lời. Vui lòng thử lại.",
+    "linkClicks": "lượt nhấp",
+    "linkTopCountry": "quốc gia hàng đầu",
+    "linkTopDevice": "thiết bị hàng đầu",
+    "linkFullStats": "Xem thống kê đầy đủ trên kurl"
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",
@@ -1042,6 +1046,7 @@
     },
     "noResultTitle": "Không có kết quả",
     "noResultDesc": "Không tìm thấy liên kết nào khớp với \"{query}\".",
+    "noResultDescFiltered": "Không có liên kết nào khớp với bộ lọc hiện tại. Hãy thử điều chỉnh.",
     "table": {
       "shortUrl": "URL ngắn",
       "originalUrl": "URL gốc",

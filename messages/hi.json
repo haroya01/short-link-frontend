@@ -620,7 +620,11 @@
     "relatedHeading": "आगे पढ़ें",
     "resumeReading": "पढ़ना जारी रखें",
     "resumeDismiss": "खारिज करें",
-    "replyError": "जवाब पोस्ट नहीं हो सका। कृपया पुनः प्रयास करें।"
+    "replyError": "जवाब पोस्ट नहीं हो सका। कृपया पुनः प्रयास करें।",
+    "linkClicks": "क्लिक",
+    "linkTopCountry": "शीर्ष देश",
+    "linkTopDevice": "शीर्ष डिवाइस",
+    "linkFullStats": "kurl पर पूरे आँकड़े देखें"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
@@ -1042,6 +1046,7 @@
     },
     "noResultTitle": "कोई मेल नहीं",
     "noResultDesc": "\"{query}\" से मेल खाने वाला कोई लिंक नहीं मिला।",
+    "noResultDescFiltered": "मौजूदा फ़िल्टर से मेल खाने वाला कोई लिंक नहीं है। उन्हें समायोजित करके देखें।",
     "table": {
       "shortUrl": "छोटा URL",
       "originalUrl": "मूल URL",

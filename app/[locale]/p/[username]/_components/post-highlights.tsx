@@ -463,7 +463,7 @@ function HighlightThread({
       >
         <div className="border-b border-slate-100 p-5 dark:border-slate-800">
           <div className="flex items-start gap-3">
-            <blockquote id="hl-thread-quote" className="line-clamp-3 flex-1 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
+            <blockquote id="hl-thread-quote" className="line-clamp-3 flex-1 border-l-2 border-accent-600 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
               {highlight.quote}
             </blockquote>
             {(canConnect || isMine) && (
