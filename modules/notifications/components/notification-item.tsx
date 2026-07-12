@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentType } from "react";
+import { Children, isValidElement, type ComponentType, type ReactNode } from "react";
 import { AtSign, Heart, MessageCircle, PenLine, Reply, Rss, UserPlus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
@@ -11,6 +11,15 @@ import { useRelativeTime } from "@/modules/notifications/lib/relative-time";
 import { useMarkRead } from "@/modules/notifications/lib/use-notifications";
 import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
 import { cn } from "@/lib/utils";
+
+/** Flatten a (possibly nested) ReactNode to its text — used to derive a plain aria-label from a rich
+ *  `t.rich` result whose tag handlers return raw strings. */
+function flattenText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(flattenText).join("");
+  if (isValidElement(node)) return flattenText((node.props as { children?: ReactNode }).children);
+  return "";
+}
 
 /**
  * Where a row navigates, by type. The recipient (`myUsername`) authors LIKE/COMMENT posts and owns
@@ -110,6 +119,12 @@ export function NotificationItem({
       ),
   });
   const subtitle = item.type === "SERIES_SUBSCRIBE" ? item.seriesTitle : item.postTitle;
+  // Plain-text twin of the rich `message` for the row's aria-label (a ReactNode can't be a label). The
+  // `<b>` handler returns the actor string as-is, so the whole `t.rich` result is plain strings we join.
+  const messageText = flattenText(
+    t.rich(MESSAGE_KEY[item.type], { actor, b: (chunks) => chunks }),
+  );
+  const rowLabel = subtitle ? `${messageText}, ${subtitle}` : messageText;
   const TypeIcon = TYPE_ICON[item.type];
 
   const href = resolveHref(item, me?.username ?? null, locale);
@@ -194,14 +209,14 @@ export function NotificationItem({
         <BlogLink
           href={href}
           onClick={handleClick}
-          aria-label={subtitle || actor}
+          aria-label={rowLabel}
           className="focus-ring absolute inset-0 rounded-lg"
         />
       ) : (
         <button
           type="button"
           onClick={handleClick}
-          aria-label={subtitle || actor}
+          aria-label={rowLabel}
           className="focus-ring absolute inset-0 rounded-lg"
         />
       )}

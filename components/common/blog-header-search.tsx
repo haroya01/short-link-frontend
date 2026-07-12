@@ -121,7 +121,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
           setOpen(true);
         }}
         aria-label={t("searchLabel")}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 dark:focus-visible:ring-offset-slate-950"
+        className="focus-ring inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
       >
         <Search className="h-4 w-4" />
       </button>
@@ -169,7 +169,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
             }
           }}
           aria-label={t("searchClear")}
-          className="absolute right-1.5 top-1/2 grid h-5 w-5 -translate-y-1/2 place-items-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600"
+          className="focus-ring absolute right-1.5 top-1/2 grid h-5 w-5 -translate-y-1/2 place-items-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -191,7 +191,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
                     className="block px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
                   >
                     {item.tags[0] && (
-                      <span className="text-[10px] font-semibold uppercase tracking-wide text-accent-700 dark:text-accent-400">
+                      <span className="text-[10px] font-semibold text-accent-700 dark:text-accent-400">
                         {item.tags[0]}
                       </span>
                     )}

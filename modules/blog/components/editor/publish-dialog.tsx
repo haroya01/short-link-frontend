@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { CalendarClock, Check, ImagePlus, Link2, Loader2, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PostStatus } from "@/modules/blog/api/posts";
+import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
 import { BrandTick } from "@/modules/blog/components/rail-heading";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
@@ -167,8 +168,10 @@ export function PublishDialog({
     try {
       onCoverChange(await onUploadCover(file));
     } catch (e) {
-      // Don't fail silently (the dropzone just snapping back read as "nothing happened") — surface it.
-      setCoverError(e instanceof Error ? e.message : t("imageError"));
+      // Don't fail silently (the dropzone just snapping back read as "nothing happened") — surface a
+      // localized reason (typed image errors carry a code + sizes; else the generic upload error).
+      const { key, values } = postImageErrorMessageKey(e);
+      setCoverError(t(key, values));
     } finally {
       setUploading(false);
     }

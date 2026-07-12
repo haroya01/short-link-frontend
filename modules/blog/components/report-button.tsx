@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Flag, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDismiss } from "@/hooks/use-dismiss";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { submitAbuseReport, type AbuseSubjectType } from "@/lib/api/abuse-reports";
 
 type Props = {
@@ -25,7 +26,12 @@ export function ReportButton({ subjectType, subjectId }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   useDismiss(open, ref, () => setOpen(false));
+  // Contain Tab within the popover + restore focus to the flag trigger on close. The textarea places
+  // its own initial focus (autoFocus), so the trap doesn't move it.
+  useFocusTrap(dialogRef, { active: open, onEscape: () => setOpen(false), autoFocus: false });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -61,11 +67,15 @@ export function ReportButton({ subjectType, subjectId }: Props) {
 
       {open && (
         <div
+          ref={dialogRef}
           role="dialog"
           aria-modal="true"
-          aria-label={t("report")}
+          aria-labelledby={titleId}
           className="absolute bottom-full right-0 z-30 mb-2 w-72 rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-900"
         >
+          <h2 id={titleId} className="mb-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
+            {t("report")}
+          </h2>
           {submitted ? (
             <p role="status" className="text-sm text-slate-600 dark:text-slate-300">{t("reportDone")}</p>
           ) : (

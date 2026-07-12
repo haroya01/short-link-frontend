@@ -16,11 +16,9 @@ const TAB =
   "focus-ring flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium transition-colors";
 
 /**
- * Mobile-only bottom tab bar (blog surfaces). Deliberately a DIFFERENT shape from the kurl bar (even
- * 4-tabs): a content app's centered 글쓰기 FAB (velog/brunch-style) flanked by 홈·탐색 and 알림·계정.
- * The raised accent button anchors the bar so it doesn't read empty, and makes writing the hero
- * action. 탐색/계정 open full-width sheets; 알림 carries the unread badge (mirrors the desktop bell).
- * Signed-out, the FAB + 알림 route to login. Auto-hides on scroll-down, returns on scroll-up.
+ * Mobile-only bottom tab bar (blog surfaces). Four tabs: 홈 · 탐색 · 알림 · 계정. 탐색/계정 open
+ * full-width sheets; 홈/알림 navigate. 알림 carries the unread badge (mirrors the desktop bell).
+ * Signed-out, 알림/계정 route to login. Auto-hides on scroll-down, returns on scroll-up.
  */
 export function BlogBottomNav() {
   const t = useTranslations("nav");
@@ -91,12 +89,18 @@ export function BlogBottomNav() {
         <BlogChromeLink
           href={notifHref}
           aria-current={isNotif ? "page" : undefined}
+          // Fold the unread count into the tab's name so a screen reader announces it — the numeric badge
+          // is otherwise decorative (aria-hidden) and silent.
+          aria-label={authenticated && unread > 0 ? `${tNotif("title")}, ${tNotif("unreadCount", { count: unread })}` : undefined}
           className={cn(TAB, isNotif ? "text-accent-600 dark:text-accent-400" : "text-slate-500 dark:text-slate-400")}
         >
           <span className="relative">
             <Bell className="h-5 w-5" />
             {authenticated && unread > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent-700 px-1 text-[10px] font-bold leading-none text-white">
+              <span
+                aria-hidden
+                className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent-700 px-1 text-[10px] font-bold leading-none text-white"
+              >
                 {unread > 99 ? "99+" : unread}
               </span>
             )}

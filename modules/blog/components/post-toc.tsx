@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { List, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
+import { usePresence } from "@/hooks/use-presence";
 
 export type TocHeading = { id: string; text: string; level: number };
 
@@ -80,6 +82,11 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
   const t = useTranslations("publicPost");
   const [open, setOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
+  // Hold the sheet mounted through its exit (sheet-down / scrim fade) instead of popping on close.
+  const { mounted, closing } = usePresence(open, 240);
+  // Portal target (<body>) only exists on the client; gate so the first render matches SSR (nothing).
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => setPortalReady(true), []);
 
   // Escape + Tab cycling within the sheet + focus restore to the 목차 button on close.
   useFocusTrap(dialogRef, { active: open, onEscape: () => setOpen(false) });
@@ -98,16 +105,23 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
         <List className="h-4 w-4 text-accent-600" />
         {t("toc")}
       </button>
-      {open && (
+      {mounted && portalReady && createPortal(
+        // Portal to <body>: a transformed / will-change ancestor would clip this `fixed inset-0` sheet.
         <div ref={dialogRef} role="dialog" aria-modal="true" aria-label={t("toc")} className="fixed inset-0 z-50">
           <button
             type="button"
             aria-hidden
             tabIndex={-1}
             onClick={() => setOpen(false)}
-            className="absolute inset-0 animate-fade-in bg-slate-900/30"
+            className={`absolute inset-0 bg-slate-900/30 motion-reduce:animate-none ${
+              closing ? "animate-[overlay-out_240ms_var(--ease)_both]" : "animate-fade-in"
+            }`}
           />
-          <div className="absolute inset-x-0 bottom-0 max-h-[70vh] animate-fade-in overflow-y-auto rounded-t-2xl bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] dark:bg-slate-900">
+          <div
+            className={`absolute inset-x-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-2xl bg-white p-2 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-8px_30px_-12px_rgba(15,23,42,0.3)] motion-reduce:animate-none dark:bg-slate-900 ${
+              closing ? "animate-[sheet-down_240ms_var(--ease)_both]" : "animate-[sheet-up_280ms_var(--ease)_both]"
+            }`}
+          >
             <div className="mx-auto mb-2 mt-1 h-1 w-10 rounded-full bg-slate-200 dark:bg-slate-700" aria-hidden />
             <div className="flex items-center justify-between px-3 pb-1">
               <RailHeading>{t("toc")}</RailHeading>
@@ -138,7 +152,8 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
               ))}
             </ul>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );

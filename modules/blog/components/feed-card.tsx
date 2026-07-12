@@ -257,7 +257,7 @@ export function FeedCard({
               {...(eager ? { fetchpriority: "high" } : {})}
               // img-fade only on the lazy rows — the eager above-fold thumbnails are LCP candidates
               // and must never start transparent.
-              className={`h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transform-none${eager ? "" : " img-fade"}`}
+              className={`h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none${eager ? "" : " img-fade"}`}
             />
           </BlogLink>
         )}

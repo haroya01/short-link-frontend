@@ -113,7 +113,7 @@ function LinkCardView({ node, deleteNode, selected }: NodeViewProps) {
             <div className="relative aspect-video">
               <iframe
                 src={plan.src}
-                title="Embedded media"
+                title={t("embedMedia")}
                 loading="lazy"
                 allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 allowFullScreen

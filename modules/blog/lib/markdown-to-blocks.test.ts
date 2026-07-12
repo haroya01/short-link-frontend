@@ -137,6 +137,11 @@ describe("video embeds", () => {
     expect(blocks.map((b) => b.type)).toEqual(["PARAGRAPH", "EMBED", "PARAGRAPH"]);
   });
 
+  it("splits a bare image URL out of a preceding paragraph (own IMAGE block, not absorbed)", () => {
+    const blocks = markdownToBlocks("intro line\nhttps://cdn.example.com/a/b.png\noutro line");
+    expect(blocks.map((b) => b.type)).toEqual(["PARAGRAPH", "IMAGE", "PARAGRAPH"]);
+  });
+
   it("roundtrips an EMBED block through markdown", () => {
     const blocks = markdownToBlocks("https://youtu.be/dQw4w9WgXcQ");
     expect(markdownToBlocks(blocksToMarkdown(blocks))).toEqual(blocks);

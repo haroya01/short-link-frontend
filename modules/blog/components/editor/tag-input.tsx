@@ -106,6 +106,7 @@ export function TagInput({ tags, onChange, placeholder, max = MAX_TAGS, suggesti
             setDraft("");
           }}
           disabled={atMax}
+          aria-label={t("label")}
           placeholder={tags.length === 0 ? placeholder : ""}
           // No mobile autofill (address/card/wallet) bar on a tag field.
           autoComplete="off"
