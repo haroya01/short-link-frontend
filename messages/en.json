@@ -2246,7 +2246,7 @@
       },
       {
         "h": "3. Retention",
-        "p": "Anonymous links auto-expire after 24h. Authenticated users' links and content persist until you delete them. Expired links and their click events are auto-cleaned 30 days after expiry. When you delete your account, it and its data are hidden immediately and permanently erased after a 30-day grace period; signing in again within that period restores the account. Security/audit logs are kept about 180 days and operational request logs about 90 days before cleanup, and deleting your account anonymizes your identifier left in those logs."
+        "p": "Anonymous links auto-expire after 24h. Authenticated users' links and content persist until you delete them. Expired links and their click events are auto-cleaned 30 days after expiry. When you delete your account, it and its data are hidden immediately and permanently erased after a 30-day grace period; signing in again within that period restores the account. Security/audit logs are kept about 180 days and operational request logs about 90 days before cleanup, and deleting your account anonymizes your identifier left in those logs. Destruction procedure and method: personal data held in electronic files is permanently deleted in a way that makes recovery or reconstruction impossible — this includes the permanent, unrecoverable deletion carried out after the 30-day grace period when you delete your account. Information retained separately under applicable law is destroyed without delay once its retention period ends."
       },
       {
         "h": "4. IP anonymization",
@@ -2262,7 +2262,7 @@
       },
       {
         "h": "7. Cookies",
-        "p": "We use essential and functional cookies and local storage: the authentication token that keeps you signed in (HttpOnly, Secure, SameSite), a temporary cookie for returning from OAuth sign-in, your language and theme, some view preferences, and whether the cookie notice was dismissed. Product analytics (PostHog) uses browser local storage rather than cookies. We currently use no advertising cookies; if we introduce advertising we will give notice and seek consent in advance. The iOS app stores its tokens in the device Keychain instead of cookies."
+        "p": "We use essential and functional cookies and local storage: the authentication token that keeps you signed in (HttpOnly, Secure, SameSite), a temporary cookie for returning from OAuth sign-in, your language and theme, some view preferences, and whether the cookie notice was dismissed. Product analytics (PostHog) uses browser local storage rather than cookies. We currently use no advertising cookies; if we introduce advertising we will give notice and seek consent in advance. The iOS app stores its tokens in the device Keychain instead of cookies. How to refuse cookies: you can refuse cookie storage or delete already-stored cookies in your web browser settings — for example, under [Settings] → [Privacy and security] → [Cookies and site data]. Note, however, that if you refuse cookies essential to operating the service (such as those that keep you signed in), some features may be limited."
       },
       {
         "h": "8. Your rights",

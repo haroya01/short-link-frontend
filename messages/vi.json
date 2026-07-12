@@ -2246,7 +2246,7 @@
       },
       {
         "h": "3. Thời gian lưu giữ",
-        "p": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Liên kết và nội dung của người dùng đã xác thực được lưu cho đến khi bạn xóa. Liên kết hết hạn và các lượt nhấp của chúng được tự dọn 30 ngày sau khi hết hạn. Khi bạn xóa tài khoản, tài khoản và dữ liệu được ẩn ngay lập tức và bị xóa vĩnh viễn sau thời gian chờ 30 ngày; đăng nhập lại trong thời gian đó sẽ khôi phục tài khoản. Nhật ký bảo mật/kiểm toán được giữ khoảng 180 ngày và nhật ký yêu cầu vận hành khoảng 90 ngày trước khi dọn, và việc xóa tài khoản sẽ ẩn danh định danh của bạn còn lại trong các nhật ký đó."
+        "p": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Liên kết và nội dung của người dùng đã xác thực được lưu cho đến khi bạn xóa. Liên kết hết hạn và các lượt nhấp của chúng được tự dọn 30 ngày sau khi hết hạn. Khi bạn xóa tài khoản, tài khoản và dữ liệu được ẩn ngay lập tức và bị xóa vĩnh viễn sau thời gian chờ 30 ngày; đăng nhập lại trong thời gian đó sẽ khôi phục tài khoản. Nhật ký bảo mật/kiểm toán được giữ khoảng 180 ngày và nhật ký yêu cầu vận hành khoảng 90 ngày trước khi dọn, và việc xóa tài khoản sẽ ẩn danh định danh của bạn còn lại trong các nhật ký đó. Quy trình và phương thức tiêu hủy như sau: thông tin cá nhân ở dạng tệp điện tử được xóa vĩnh viễn theo cách không thể khôi phục hay tái tạo — bao gồm việc xóa vĩnh viễn (không thể khôi phục) được thực hiện sau thời gian chờ 30 ngày khi bạn xóa tài khoản. Thông tin được lưu riêng theo quy định của pháp luật sẽ được tiêu hủy không chậm trễ khi hết thời gian lưu giữ."
       },
       {
         "h": "4. Ẩn danh IP",
@@ -2262,7 +2262,7 @@
       },
       {
         "h": "7. Cookie",
-        "p": "Chúng tôi dùng cookie thiết yếu và chức năng cùng bộ nhớ cục bộ: token xác thực giữ bạn đăng nhập (HttpOnly, Secure, SameSite), một cookie tạm để quay lại từ đăng nhập OAuth, ngôn ngữ và giao diện, một số tùy chọn hiển thị, và việc bạn đã đóng thông báo cookie hay chưa. Phân tích sản phẩm (PostHog) dùng bộ nhớ cục bộ của trình duyệt thay vì cookie. Hiện chúng tôi không dùng cookie quảng cáo; nếu giới thiệu quảng cáo, chúng tôi sẽ thông báo và xin sự đồng ý trước. Ứng dụng iOS lưu token trong Keychain của thiết bị thay vì cookie."
+        "p": "Chúng tôi dùng cookie thiết yếu và chức năng cùng bộ nhớ cục bộ: token xác thực giữ bạn đăng nhập (HttpOnly, Secure, SameSite), một cookie tạm để quay lại từ đăng nhập OAuth, ngôn ngữ và giao diện, một số tùy chọn hiển thị, và việc bạn đã đóng thông báo cookie hay chưa. Phân tích sản phẩm (PostHog) dùng bộ nhớ cục bộ của trình duyệt thay vì cookie. Hiện chúng tôi không dùng cookie quảng cáo; nếu giới thiệu quảng cáo, chúng tôi sẽ thông báo và xin sự đồng ý trước. Ứng dụng iOS lưu token trong Keychain của thiết bị thay vì cookie. Cách từ chối cookie: bạn có thể từ chối lưu cookie hoặc xóa cookie đã lưu trong phần cài đặt của trình duyệt web — ví dụ tại [Cài đặt] → [Quyền riêng tư và bảo mật] → [Cookie và dữ liệu trang web]. Tuy nhiên, nếu bạn từ chối những cookie thiết yếu cho việc vận hành dịch vụ (chẳng hạn cookie giữ bạn đăng nhập), một số tính năng có thể bị hạn chế."
       },
       {
         "h": "8. Quyền của bạn",
