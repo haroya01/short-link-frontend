@@ -216,6 +216,7 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
       !/^(```|~~~)/.test(lines[i]) &&
       !isTableStart(lines[i], lines[i + 1]) &&
       !/^(#{1,3}\s|>\s|!\[|[-*]\s|\d+\.\s)/.test(lines[i]) &&
+      !standaloneImageUrl(lines[i]) &&
       !standaloneEmbedUrl(lines[i])
     ) {
       paraLines.push(lines[i]);

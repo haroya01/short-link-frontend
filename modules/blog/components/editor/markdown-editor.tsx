@@ -51,6 +51,7 @@ import {
 import { altWithWidth, type ImageWidth } from "@/modules/blog/lib/image-width";
 import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
 import { isImageUrl } from "@/modules/blog/lib/post-embed";
+import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
 
 /** Options for opening the image picker: a width (wide/full/half) and whether to allow multi-select
  *  (for a side-by-side "half" pair). Carried to the file-input change handler via a ref. */
@@ -204,7 +205,9 @@ export function MarkdownEditor({
       // Width rides on the alt marker so it survives markdown↔block round-trip (image-width.ts).
       ed.chain().focus().setImage({ src: url, alt: altWithWidth(file.name, width) }).run();
     } catch (e) {
-      onUploadError?.(e instanceof Error ? e.message : "image upload failed");
+      // Typed image errors carry a code (+ sizes); resolve to localized copy here, not in the data layer.
+      const { key, values } = postImageErrorMessageKey(e);
+      onUploadError?.(t(key, values));
     }
   }
 
@@ -303,7 +306,7 @@ export function MarkdownEditor({
       // Convert markdown shortcuts (#, **, *, `, ~~, -, 1., >) the instant they're typed — including on
       // mobile keyboards, where ProseMirror's native input rules don't fire (see markdown-shortcuts.ts).
       MarkdownShortcuts,
-      CodeMirrorBlock,
+      CodeMirrorBlock.configure({ languageLabel: t("codeLanguage") }),
       LinkCardNode,
       ImageWithCaption.configure({ inline: false }),
       AlignableTable.configure({ resizable: false }),

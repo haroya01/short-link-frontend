@@ -22,6 +22,12 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CommentComposer } from "@/modules/blog/components/comment-composer";
 import { useConfirm } from "@/components/ui/use-confirm";
 
+/** Append a just-created comment, dropping any existing row with the same id — guards a double-submit
+ *  (or a refetch that already merged it) from showing the same comment twice. */
+function appendUnique(prev: CommentView[], created: CommentView): CommentView[] {
+  return [...prev.filter((c) => c.id !== created.id), created];
+}
+
 export function PostComments({
   postId,
   authorUsername,
@@ -112,7 +118,7 @@ export function PostComments({
       const created = await createComment(postId, body.trim());
       setBody("");
       // 서버가 돌려준 완성 댓글을 낙관 추가 — 전체 재조회(load)는 실패 시 목록을 [] 로 덮으므로 피한다.
-      setComments((prev) => [...prev, created]);
+      setComments((prev) => appendUnique(prev, created));
       setJustAddedId(created.id); // animate the new comment in once it renders
     } catch {
       setError(t("submitError"));
@@ -133,7 +139,7 @@ export function PostComments({
       const created = await createComment(postId, replyBody.trim(), parentId);
       setReplyBody("");
       setReplyTo(null);
-      setComments((prev) => [...prev, created]);
+      setComments((prev) => appendUnique(prev, created));
       setJustAddedId(created.id);
     } catch {
       setError(t("submitError"));

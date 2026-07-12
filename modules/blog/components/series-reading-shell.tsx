@@ -290,7 +290,7 @@ export function SeriesReadingShell({
                         src={p.ogImageUrl as string}
                         alt=""
                         loading="lazy"
-                        className="img-fade h-full w-full object-cover transition-transform duration-500 ease-out group-hover/row:scale-[1.03] motion-reduce:transform-none"
+                        className="img-fade h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover/row:scale-[1.03] motion-reduce:transform-none"
                       />
                     </span>
                   )}

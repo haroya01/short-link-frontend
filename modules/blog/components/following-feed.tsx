@@ -318,6 +318,26 @@ export function FollowingFeed({
   const hiddenSet = new Set(prefs.hidden);
   const visible =
     hiddenSet.size === 0 ? items : items.filter((it) => !it.tags?.some((x) => hiddenSet.has(x)));
+  const hiddenCount = items.length - visible.length;
+
+  // Everything the follow feed had is masked by the reader's hidden topics — explain it (instead of a
+  // blank grid) and offer the latest-feed escape hatch. `tagAllHidden` names the muted-topic cause.
+  if (visible.length === 0) {
+    return (
+      <div className="mt-4">
+        <FeedEmpty
+          mark
+          title={t("tagAllHiddenTitle")}
+          body={t("tagAllHiddenBody", { count: hiddenCount })}
+          action={
+            <Link href="?sort=recent" className={blogCta({ variant: "secondary" })}>
+              {t("followingBrowseLatest")}
+            </Link>
+          }
+        />
+      </div>
+    );
+  }
 
   // 사람(피드에 등장하는 작가) + 주제(내가 팔로우한 태그 중 이 피드에 실제로 글이 있는 것)를 필터 축으로.
   const followed = feedAuthors(visible);
@@ -363,6 +383,13 @@ export function FollowingFeed({
             ))}
           </FeedList>
         </div>
+      )}
+
+      {/* Some (not all) followed posts were dropped by hidden topics — same footnote as the public feed. */}
+      {hiddenCount > 0 && !activeFacet && (
+        <p className="mt-4 text-center text-[12px] text-slate-500 dark:text-slate-400">
+          {t("tagHiddenCount", { count: hiddenCount })}
+        </p>
       )}
 
       {hasNext && (

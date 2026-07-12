@@ -3,25 +3,35 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
-const TAB_SEGMENTS = ["series", "about", "liked", "bookmarks"];
+const TAB_SEGMENTS = ["series", "collections", "about", "liked", "bookmarks"];
 
-/** True on the author's tab pages (글 · 시리즈 · 소개 · 좋아요 · 북마크) — NOT a post (/p/user/{slug})
+/** True on the author's tab pages (글 · 시리즈 · 컬렉션 · 소개 · 좋아요 · 북마크) — NOT a post (/p/user/{slug})
  *  or a series detail (/p/user/series/{slug}). Static tab segments win route resolution over [slug],
  *  so a post can never own one of those names.
  *
- *  Two URL topologies reach this layout, and `usePathname()` reflects the VISIBLE browser URL:
+ *  THREE URL topologies reach this layout, and `usePathname()` reflects the VISIBLE browser URL:
  *   - apex path form `/{locale}/p/{user}/...` → take the segments after the username.
- *   - author subdomain `{user}.kurl.me/...` → the middleware rewrites the host to `/p/{user}`
- *     SERVER-SIDE, so the browser path has NO `/p/{user}` prefix (it's just `/`, `/series`, `/{slug}`,
- *     …). ProfileChrome only ever mounts under the /p/[username] layout, so "no `/p/` segment here"
- *     means we're on the subdomain → the whole path IS the post-username tail (no locale prefix on
- *     the subdomain either). Missing this case dropped the avatar + tab bar on every author subdomain
- *     home — they showed only on the apex `/p/` path. */
-function isTabRoute(pathname: string): boolean {
+ *   - blog host `blog.kurl.me/@{user}[/...]` (the canonical author URL byline links use — middleware
+ *     rewrites to `/{locale}/p/{user}[/...]` server-side, so the browser keeps the `@handle` path).
+ *     The first segment is the `@handle`, so the tail starts AFTER it; an optional leading locale
+ *     (`/ko/@{user}`, reachable by hand / an old link) is stripped first. Treating the handle as the
+ *     tail made `/@user` (and every tab under it) drop the avatar + tab bar + page frame entirely.
+ *   - author subdomain `{user}.kurl.me/...` → rewritten to `/p/{user}` server-side too, so the
+ *     browser path has NO `/p/` and NO `@` — the whole path IS the post-username tail.
+ *  Exported for unit tests (topology matrix). */
+export function isTabRoute(pathname: string): boolean {
   const parts = pathname.replace(/\/+$/, "").split("/").filter(Boolean);
   const pIdx = parts.indexOf("p");
-  const after = pIdx === -1 ? parts : parts.slice(pIdx + 2); // subdomain tail vs segments after username
-  if (after.length === 0) return true; // /p/{user} or subdomain root → 글
+  // Drop a leading 2-letter locale so the @handle check sees `@user` first on either `/@user` or
+  // `/ko/@user` (only when it isn't the apex /p/ form, which carries its own locale before /p).
+  const handleParts = pIdx === -1 && /^[a-z]{2}$/.test(parts[0] ?? "") ? parts.slice(1) : parts;
+  const after =
+    pIdx !== -1
+      ? parts.slice(pIdx + 2) // apex: segments after the username
+      : handleParts[0]?.startsWith("@")
+        ? handleParts.slice(1) // blog-host @handle: tail after the handle
+        : parts; // subdomain: the whole path is the tail
+  if (after.length === 0) return true; // /p/{user}, /@{user} or subdomain root → 글
   if (after.length === 1) return TAB_SEGMENTS.includes(after[0]); // tab vs post slug
   return false; // /p/{user}/series/{slug}, deeper → not a tab
 }

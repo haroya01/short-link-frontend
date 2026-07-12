@@ -228,7 +228,7 @@ function CodeBlock({ content }: { content: string | null }) {
   );
 }
 
-function EmbedBlock({ content, postId }: { content: string | null; postId?: number }) {
+async function EmbedBlock({ content, postId }: { content: string | null; postId?: number }) {
   // A kurl short link → live link-stats card (the "post backed by measured links" signal). The
   // outbound url carries ?post= so the click attributes to this post ("이 글이 만든 클릭").
   const code = content ? kurlShortCode(content) : null;
@@ -238,12 +238,13 @@ function EmbedBlock({ content, postId }: { content: string | null; postId?: numb
   const plan = planEmbed(content);
   if (!plan) return null;
   if (plan.kind === "video") {
+    const t = await getTranslations("publicPost");
     return (
       <div className="my-8 overflow-hidden rounded-2xl bg-slate-900">
         <div className="relative aspect-video">
           <iframe
             src={plan.src}
-            title="Embedded media"
+            title={t("embedMedia")}
             loading="lazy"
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             allowFullScreen

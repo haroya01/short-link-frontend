@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useSidebarState } from "@/components/common/sidebar-state";
 
 export type SidebarEntry = {
@@ -28,6 +30,12 @@ export function Sidebar({ sections, basePath = "" }: { sections: SidebarSection[
 export function MobileSidebar({ sections, basePath = "" }: { sections: SidebarSection[]; basePath?: string }) {
   const pathname = usePathname();
   const { open, close } = useSidebarState();
+  const t = useTranslations("nav");
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Escape + Tab containment within the drawer + focus restore to the opener (the hamburger) on close.
+  // The drawer stays mounted (it slides via transform), so the trap is gated on `open`.
+  useFocusTrap(panelRef, { active: open, onEscape: close });
 
   // 라우트 변경 시 자동 닫힘
   useEffect(() => {
@@ -36,16 +44,11 @@ export function MobileSidebar({ sections, basePath = "" }: { sections: SidebarSe
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-    document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [open, close]);
+  }, [open]);
 
   return (
     <>
@@ -58,9 +61,10 @@ export function MobileSidebar({ sections, basePath = "" }: { sections: SidebarSe
         )}
       />
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label="navigation"
+        aria-label={t("menu")}
         className={cn(
           "fixed left-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-r border-slate-200 bg-white shadow-xl transition-transform duration-[280ms] ease-[var(--ease)] dark:border-slate-800 dark:bg-slate-950 sm:hidden",
           open ? "translate-x-0" : "-translate-x-full",

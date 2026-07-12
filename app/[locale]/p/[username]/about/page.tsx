@@ -45,7 +45,7 @@ export default async function PublicAuthorAboutPage({
       ? new Date(Math.min(...posts.map((p) => new Date(p.publishedAt).getTime())))
       : null;
   const sinceLabel = since
-    ? since.toLocaleDateString(dateLocale, { year: "numeric", month: "long" })
+    ? since.toLocaleDateString(dateLocale, { year: "numeric", month: "long", timeZone: "Asia/Seoul" })
     : "";
 
   // The about surface's at-a-glance numbers — derived purely from the post/series lists. Likes use the

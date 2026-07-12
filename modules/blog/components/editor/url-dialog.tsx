@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link2 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { usePresence } from "@/hooks/use-presence";
 
 /**
  * In-app URL prompt for the editor's link + embed actions — replaces the native `window.prompt`,
@@ -32,6 +33,8 @@ export function UrlDialog({
   const t = useTranslations("postEditor.urlDialog");
   const [value, setValue] = useState(initialValue);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Hold the dialog mounted through a brief fade-out on close instead of popping.
+  const { mounted: present, closing } = usePresence(open, 160);
 
   useEffect(() => {
     if (!open) return;
@@ -40,7 +43,7 @@ export function UrlDialog({
     return () => window.clearTimeout(id);
   }, [open, initialValue]);
 
-  if (!open) return null;
+  if (!present) return null;
 
   const submit = () => {
     const url = value.trim();
@@ -51,7 +54,9 @@ export function UrlDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[60] grid place-items-start justify-center bg-slate-900/30 pt-[18vh] backdrop-blur-[1px] animate-fade-in"
+      className={`fixed inset-0 z-[60] grid place-items-start justify-center bg-slate-900/30 pt-[18vh] backdrop-blur-[1px] motion-reduce:animate-none ${
+        closing ? "animate-fade-out" : "animate-fade-in"
+      }`}
       onMouseDown={onClose}
     >
       <div
