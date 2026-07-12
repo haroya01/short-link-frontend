@@ -119,7 +119,7 @@ export async function AuthorRail({
             {archive.map(([key, count]) => (
               <li key={key} className="flex items-baseline justify-between gap-3 px-2 text-slate-500">
                 <span>{monthLabel(key)}</span>
-                <span className="text-slate-500 dark:text-slate-400">{count}</span>
+                <span className="text-slate-400">{count}</span>
               </li>
             ))}
           </ul>
