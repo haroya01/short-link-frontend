@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader2, MapPin, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { usePresence } from "@/hooks/use-presence";
 import {
   autocompletePlaces,
   getPlaceDetails,
@@ -38,6 +39,8 @@ export function PlaceSearchDialog({
   const [picking, setPicking] = useState<string | null>(null);
   const [pickError, setPickError] = useState(false);
   const token = useRef("");
+  // Hold the dialog mounted through a brief fade-out on close instead of popping.
+  const { mounted: present, closing } = usePresence(open, 160);
 
   useEffect(() => {
     if (!open) return;
@@ -87,7 +90,7 @@ export function PlaceSearchDialog({
     }
   }
 
-  if (!open) return null;
+  if (!present) return null;
 
   return (
     <div role="dialog" aria-modal="true" aria-label={t("placeTitle")} className="fixed inset-0 z-50">
@@ -96,9 +99,15 @@ export function PlaceSearchDialog({
         aria-hidden
         tabIndex={-1}
         onClick={onClose}
-        className="absolute inset-0 animate-fade-in bg-slate-900/30"
+        className={`absolute inset-0 bg-slate-900/30 motion-reduce:animate-none ${
+          closing ? "animate-fade-out" : "animate-fade-in"
+        }`}
       />
-      <div className="absolute left-1/2 top-24 w-[min(92vw,32rem)] -translate-x-1/2 animate-fade-in rounded-2xl bg-white p-4 shadow-[0_12px_40px_-12px_rgba(15,23,42,0.4)] dark:bg-slate-900">
+      <div
+        className={`absolute left-1/2 top-24 w-[min(92vw,32rem)] -translate-x-1/2 rounded-2xl bg-white p-4 shadow-[0_12px_40px_-12px_rgba(15,23,42,0.4)] motion-reduce:animate-none dark:bg-slate-900 ${
+          closing ? "animate-fade-out" : "animate-fade-in"
+        }`}
+      >
         <div className="mb-2 flex items-center justify-between">
           <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
             <MapPin className="h-4 w-4 text-accent-600" />

@@ -65,7 +65,7 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
 
   if (!ready || series === null) {
     return (
-      <div className="mx-auto mt-6 max-w-4xl">
+      <div className="mx-auto mt-6 max-w-4xl xl:max-w-5xl">
         <DiscoveryGridSkeleton />
       </div>
     );
@@ -124,7 +124,7 @@ export function SubscribedSeriesFeed({ locale }: { locale: string }) {
   // 다른 발견 탭과 동일한 와이드 카드 그리드 — 구독한 시리즈를 시리즈 덱 카드로. 작가별 필터(아바타 칩) 상단.
   // mt-6: 덱 카드는 크고 위쪽 그림자가 있어 탭에 붙으면 침범처럼 보임 → 다른 탭(mt-4)보다 살짝 더 띄움.
   return (
-    <div className="mx-auto mt-6 max-w-4xl">
+    <div className="mx-auto mt-6 max-w-4xl xl:max-w-5xl">
       <AuthorFilterChips authors={seriesAuthors} active={activeAuthor} onSelect={setSelectedAuthor} />
       <DiscoveryGrid>
         {shown.map((s) => (

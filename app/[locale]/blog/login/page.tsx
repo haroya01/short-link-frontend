@@ -64,7 +64,7 @@ function BlogLoginShell({ next }: { next: string | null }) {
             style={{ ["--hi" as string]: 0 } as React.CSSProperties}
           >
             <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 dark:bg-accent-500/40 sm:block" />
-            <span className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+            <span className="font-mono text-[11px] font-medium text-accent-700 dark:text-accent-400">
               {t("eyebrow")}
             </span>
             <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 dark:bg-accent-500/40 sm:block" />

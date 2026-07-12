@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Search, X } from "lucide-react";
@@ -42,6 +43,9 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
   const [discoveryLoaded, setDiscoveryLoaded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
+  // Portal target (<body>) only exists on the client; gate so the first render matches SSR (nothing).
+  const [portalReady, setPortalReady] = useState(false);
+  useEffect(() => setPortalReady(true), []);
 
   // Escape + Tab containment + focus restore; the sheet places initial focus on its input itself.
   useFocusTrap(sheetRef, { active: open, onEscape: onClose, autoFocus: false });
@@ -92,7 +96,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
     };
   }, [value, open]);
 
-  if (!open) return null;
+  if (!open || !portalReady) return null;
 
   function navigate(href: string) {
     const url = new URL(href, window.location.origin);
@@ -108,7 +112,8 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
 
   const q = value.trim();
 
-  return (
+  // Portal to <body>: a transformed / will-change ancestor would otherwise clip this fixed sheet.
+  return createPortal(
     <div
       ref={sheetRef}
       role="dialog"
@@ -155,7 +160,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                       onClose();
                       navigate(blogPath("/tags"));
                     }}
-                    className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring"
+                    className="rounded text-[12px] font-medium text-accent-600 transition-colors hover:text-accent-700 focus-ring dark:text-accent-400 dark:hover:text-accent-300"
                   >
                     {t("railSeeAll")}
                   </button>
@@ -204,20 +209,20 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
           </div>
         )}
         {q && loading && results.length === 0 && (
-          <ul className="animate-pulse divide-y divide-slate-100" aria-busy>
+          <ul className="animate-pulse divide-y divide-slate-100 dark:divide-slate-800" aria-busy>
             {Array.from({ length: 5 }).map((_, i) => (
               <li key={i} className="px-3 py-3">
-                <div className="h-2.5 w-12 rounded bg-slate-100" />
-                <div className="mt-2 h-4 w-3/4 rounded bg-slate-200/80" />
+                <div className="h-2.5 w-12 rounded bg-slate-100 dark:bg-slate-800" />
+                <div className="mt-2 h-4 w-3/4 rounded bg-slate-200/80 dark:bg-slate-800/80" />
               </li>
             ))}
           </ul>
         )}
         {q && !loading && results.length === 0 && (
-          <p className="px-3 py-10 text-center text-sm text-slate-500">{t("searchEmptyTitle")}</p>
+          <p className="px-3 py-10 text-center text-sm text-slate-500 dark:text-slate-400">{t("searchEmptyTitle")}</p>
         )}
         {results.length > 0 && (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {results.map((item) => (
               <li key={`${item.author.username}/${item.slug}`}>
                 <a
@@ -227,14 +232,14 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                 >
                   <span className="min-w-0 flex-1">
                     {item.tags[0] && (
-                      <span className="text-[11px] font-semibold text-accent-700">
+                      <span className="text-[11px] font-semibold text-accent-700 dark:text-accent-400">
                         {item.tags[0]}
                       </span>
                     )}
                     <span className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 dark:text-slate-100">
                       {item.title}
                     </span>
-                    <span className="mt-0.5 block truncate text-[12px] text-slate-500">
+                    <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">
                       @{item.author.username}
                     </span>
                   </span>
@@ -247,13 +252,14 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
           <button
             type="button"
             onClick={() => goToAll()}
-            className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl px-3 py-3 text-sm font-medium text-accent-700 transition-colors hover:bg-accent-50"
+            className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl px-3 py-3 text-sm font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
           >
             {t("searchResultsFor", { q })}
             <ArrowRight className="h-4 w-4" />
           </button>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

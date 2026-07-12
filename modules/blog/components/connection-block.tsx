@@ -100,7 +100,7 @@ export function eventBlock(event: ConnectionEvent): BlockFields {
 
 function KindTag({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400">
       {icon}
       {label}
     </span>
