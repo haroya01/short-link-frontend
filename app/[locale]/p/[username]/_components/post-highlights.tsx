@@ -118,34 +118,52 @@ export function PostHighlights({ postId }: { postId: number }) {
     if (!highlightsLoaded) return;
     const quote = new URLSearchParams(window.location.search).get("hl");
     if (!quote) return;
-    const id = window.setTimeout(() => {
+    // Retry on a short backoff instead of a single fixed delay: the paint pass and any late layout
+    // (images settling, fonts) can push the mark in after the first tick — keep looking, then give up.
+    const delays = [120, 400, 1000];
+    let timer = 0;
+    const attempt = (i: number) => {
       const root = document.querySelector<HTMLElement>(".prose-post");
       const target = root && findQuoteTarget(root, quote);
-      if (!target) return;
-      target.scrollIntoView({ behavior: "smooth", block: "center" });
-      flashQuote(target);
-    }, 120);
-    return () => window.clearTimeout(id);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        flashQuote(target);
+        return;
+      }
+      if (i + 1 < delays.length) timer = window.setTimeout(() => attempt(i + 1), delays[i + 1]);
+    };
+    timer = window.setTimeout(() => attempt(0), delays[0]);
+    return () => window.clearTimeout(timer);
   }, [highlightsLoaded]);
 
   // Tapping a painted highlight opens its reply thread (a plain click, not a drag-select — a drag
-  // doesn't emit a click, so it stays out of the highlight-creation path).
+  // doesn't emit a click, so it stays out of the highlight-creation path). Enter/Space on a focused
+  // mark does the same, so a keyboard reader reaches the thread the marks are `role="button"`.
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(".prose-post");
     if (!root) return;
-    const onClick = (e: MouseEvent) => {
-      const mark = (e.target as HTMLElement | null)?.closest?.(`mark.${MARK_CLASS}[data-hl-id]`) as
-        | HTMLElement
-        | null;
-      if (!mark) return;
+    const openFromMark = (mark: HTMLElement | null) => {
+      if (!mark) return false;
       const hl = highlights.find((h) => h.id === Number(mark.dataset.hlId));
-      if (hl) {
-        e.preventDefault();
-        setThreadFor(hl);
-      }
+      if (!hl) return false;
+      setThreadFor(hl);
+      return true;
+    };
+    const markAt = (target: EventTarget | null) =>
+      (target as HTMLElement | null)?.closest?.(`mark.${MARK_CLASS}[data-hl-id]`) as HTMLElement | null;
+    const onClick = (e: MouseEvent) => {
+      if (openFromMark(markAt(e.target))) e.preventDefault();
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      if (openFromMark(markAt(e.target))) e.preventDefault();
     };
     root.addEventListener("click", onClick);
-    return () => root.removeEventListener("click", onClick);
+    root.addEventListener("keydown", onKeyDown);
+    return () => {
+      root.removeEventListener("click", onClick);
+      root.removeEventListener("keydown", onKeyDown);
+    };
   }, [highlights]);
 
   // Capture a selection inside the prose and offer the highlight actions at the selection. Finalize on
@@ -521,12 +539,12 @@ function HighlightThread({
                         @?
                       </span>
                     )}
-                    <span className="text-[12px] text-slate-400">{fmt(r.createdAt)}</span>
+                    <span className="text-[12px] text-slate-500 dark:text-slate-400">{fmt(r.createdAt)}</span>
                     {meId != null && r.author?.id === meId && (
                       <button
                         type="button"
                         onClick={() => void remove(r.id)}
-                        className="touch-target ml-auto rounded text-[12px] text-slate-400 transition-colors hover:text-red-500 focus-ring"
+                        className="touch-target ml-auto rounded text-[12px] text-slate-500 transition-colors hover:text-red-500 focus-ring dark:text-slate-400"
                       >
                         {t("highlightReplyDelete")}
                       </button>
@@ -817,16 +835,26 @@ function offsetWithin(block: Element, node: Node, offset: number): number {
   return count + offset;
 }
 
-/** Find the element to scroll to for a `?hl=` quote: a painted `<mark>` whose text contains the quote
- *  (the precise target), else the block element whose text contains it (fallback when not painted). */
+/** Collapse whitespace runs so a stored quote matches the rendered body across newline / spacing drift. */
+function normSpace(s: string): string {
+  return s.replace(/\s+/g, " ").trim();
+}
+
+/** Find the element to scroll to for a `?hl=` quote: a painted `<mark>` whose text contains the full
+ *  quote (the precise target), else the block element whose text contains it (fallback when not painted).
+ *  Matching is whitespace-normalized and uses the whole quote (not a 40-char prefix, which could collide
+ *  on a shared opening); when several marks match, the longest is the best fit for the shared span. */
 function findQuoteTarget(root: HTMLElement, quote: string): HTMLElement | null {
-  const needle = quote.trim();
+  const needle = normSpace(quote);
   if (!needle) return null;
   const marks = Array.from(root.querySelectorAll<HTMLElement>(`mark.${MARK_CLASS}`));
-  const mark = marks.find((m) => (m.textContent ?? "").includes(needle.slice(0, 40)));
-  if (mark) return mark;
+  const hits = marks.filter((m) => normSpace(m.textContent ?? "").includes(needle));
+  if (hits.length > 0) {
+    // Prefer the longest matching mark: a repeated opening can appear in several, the fullest is the span.
+    return hits.reduce((best, m) => ((m.textContent?.length ?? 0) > (best.textContent?.length ?? 0) ? m : best));
+  }
   return (
-    Array.from(root.children).find((el) => (el.textContent ?? "").includes(needle)) as
+    Array.from(root.children).find((el) => normSpace(el.textContent ?? "").includes(needle)) as
       | HTMLElement
       | undefined
   ) ?? null;

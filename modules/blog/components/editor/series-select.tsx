@@ -62,6 +62,7 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
         <div className="flex items-center gap-1.5">
           <input
             autoFocus
+            aria-label={t("seriesNew")}
             value={newTitle}
             onChange={(e) => {
               setNewTitle(e.target.value);
@@ -118,6 +119,7 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
         <select
           value={value ?? ""}
           onChange={(e) => onChange(e.target.value === "" ? null : Number(e.target.value))}
+          aria-label={t("series")}
           className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-base text-slate-900 outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-accent-500 sm:text-sm"
         >
           <option value="">{noneLabel}</option>
