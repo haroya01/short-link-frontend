@@ -150,7 +150,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
         placeholder={t("searchPlaceholder")}
         aria-label={t("searchLabel")}
         className={cn(
-          "h-8 rounded-full border border-slate-200 bg-white pl-8 pr-7 text-[13px] text-slate-900 placeholder:text-slate-400 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 [&::-webkit-search-cancel-button]:appearance-none",
+          "h-8 rounded-full border border-slate-200 bg-white pl-8 pr-7 text-[13px] text-slate-900 placeholder:text-slate-400 focus:border-accent-600 focus:outline-none focus:ring-2 focus:ring-accent-600/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 [&::-webkit-search-cancel-button]:appearance-none",
           "transition-[width,box-shadow] duration-200 ease-out motion-reduce:transition-none",
           // Unfold by width from the glyph: collapsed ≈ the 🔍 button, expands to the full field.
           expanded ? "w-40 sm:w-56" : "w-8",

@@ -48,7 +48,7 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
 
   return (
     <section>
-      <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-400">
+      <h2 className="mb-3 text-[10px] font-semibold text-accent-700 dark:text-accent-400">
         {t("title")}
       </h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -57,7 +57,7 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
             key={c.label}
             className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
           >
-            <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+            <div className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">
               {c.label}
             </div>
             <div className="mt-1.5 font-mono text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">

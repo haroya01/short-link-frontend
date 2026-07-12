@@ -41,7 +41,7 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-700 dark:text-accent-400">
+            <p className="text-[11px] font-semibold text-accent-700 dark:text-accent-400">
               {t("completed")}
             </p>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t("nextStepHint")}</p>

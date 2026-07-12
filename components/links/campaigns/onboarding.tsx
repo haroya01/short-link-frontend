@@ -33,7 +33,7 @@ export function CampaignOnboarding() {
   return (
     <section className="space-y-8">
       <header className="text-center">
-        <p className="text-[12px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
+        <p className="text-[12px] font-medium text-accent-700 dark:text-accent-400">
           {t("eyebrow")}
         </p>
         <h2 className="mt-2 text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
@@ -106,7 +106,7 @@ function FlowStrip() {
   const steps = t.raw("flowSteps") as string[];
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-4 py-4">
-      <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
         {t("flowLabel")}
       </p>
       <div className="mt-3 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-1.5">

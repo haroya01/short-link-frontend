@@ -27,7 +27,7 @@ function Stat({ value, label }: { value: string; label: string }) {
       <dd className="font-mono text-4xl font-semibold tracking-tight tabular-nums text-slate-900 dark:text-slate-100 sm:text-5xl">
         {value}
       </dd>
-      <dt className="mt-2 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</dt>
+      <dt className="mt-2 text-xs text-slate-500 dark:text-slate-400">{label}</dt>
     </div>
   );
 }

@@ -210,7 +210,7 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
               </button>
             ))}
           </div>
-          <p className="text-[10px] text-slate-400">
+          <p className="text-[10px] text-slate-500">
             {layout === "grid"
               ? t("productCardLayoutGridHint")
               : t("productCardLayoutCarouselHint")}
@@ -224,7 +224,7 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
               className="space-y-2 rounded-md border border-slate-200 bg-slate-50/50 p-3"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+                <span className="text-[11px] font-medium text-slate-500">
                   {t("productCardItemLabel", { idx: idx + 1 })}
                 </span>
                 <button
@@ -319,7 +319,7 @@ export function ProductCardBlockDialog({ open, initialJson, onOpenChange, onSubm
         >
           <Plus className="h-3.5 w-3.5" />
           {t("productCardAddItem")}
-          <span className="text-[10px] text-slate-400">
+          <span className="text-[10px] text-slate-500">
             ({items.length}/{MAX_ITEMS})
           </span>
         </button>
@@ -637,7 +637,7 @@ function ImageThumbEditor({
         >
           <ArrowLeft className="h-3 w-3" />
         </button>
-        <span className="text-[10px] text-slate-400">
+        <span className="text-[10px] text-slate-500">
           {idx + 1}/{total}
         </span>
         <button

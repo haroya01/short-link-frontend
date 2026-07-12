@@ -290,7 +290,7 @@ function CollectionEditor({
 
   return (
     <div className="mb-8 border-b border-slate-100 pb-6 dark:border-slate-800">
-      <h2 className="mb-4 text-[13px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+      <h2 className="mb-4 text-[13px] font-bold text-slate-400 dark:text-slate-500">
         {t("editTitle")}
       </h2>
       <label className="block">
@@ -302,7 +302,7 @@ function CollectionEditor({
           onChange={(e) => setTitle(e.target.value)}
           maxLength={120}
           aria-label={t("titleLabel")}
-          className="mt-1 w-full border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-headline-sm font-bold tracking-headline text-slate-900 outline-none transition-colors focus:border-accent-500 dark:border-slate-700 dark:text-slate-100"
+          className="mt-1 w-full border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-headline-sm font-bold tracking-headline text-slate-900 outline-none transition-colors focus:border-accent-600 dark:border-slate-700 dark:text-slate-100"
         />
       </label>
       <label className="mt-4 block">
@@ -316,7 +316,7 @@ function CollectionEditor({
           rows={2}
           placeholder={t("descriptionPlaceholder")}
           aria-label={t("descriptionLabel")}
-          className="mt-1 w-full resize-none border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-[15px] leading-relaxed text-slate-600 outline-none transition-colors focus:border-accent-500 dark:border-slate-700 dark:text-slate-300 dark:placeholder:text-slate-500"
+          className="mt-1 w-full resize-none border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-[15px] leading-relaxed text-slate-600 outline-none transition-colors focus:border-accent-600 dark:border-slate-700 dark:text-slate-300 dark:placeholder:text-slate-500"
         />
       </label>
       <div className="mt-4">
@@ -383,7 +383,7 @@ function CollectionHeader({ detail, locale }: { detail: CollectionDetail; locale
   return (
     <header className="mb-8 border-b border-slate-100 pb-6 dark:border-slate-800">
       {isPath && (
-        <span className="mb-2 inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-accent-700 dark:text-accent-400">
+        <span className="mb-2 inline-flex items-center gap-1.5 text-[12px] font-bold text-accent-700 dark:text-accent-400">
           <CornerDownRight className="h-3.5 w-3.5" />
           {t("pathEyebrow")}
         </span>
@@ -542,7 +542,7 @@ function PathWalk({
                   aria-hidden
                   className={`w-px flex-1 ${
                     isCurrent
-                      ? "bg-gradient-to-b from-accent-500 to-slate-200 dark:from-accent-500 dark:to-slate-700"
+                      ? "bg-gradient-to-b from-accent-600 to-slate-200 dark:from-accent-500 dark:to-slate-700"
                       : isReached
                         ? "bg-accent-200 dark:bg-accent-500/30"
                         : "bg-slate-200 dark:bg-slate-700"

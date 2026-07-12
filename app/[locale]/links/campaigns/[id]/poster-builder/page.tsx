@@ -247,7 +247,7 @@ export default function PosterBuilderPage() {
 
         <aside className="space-y-3">
           <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-4">
-            <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
               {t("targetLabel")}
             </p>
             <p className="mt-2 text-sm text-slate-700 dark:text-slate-300">
@@ -314,7 +314,7 @@ function DropZone({ onPick }: { onPick: (file: File) => void }) {
       }}
       className={
         "flex aspect-[1/1.414] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-white dark:bg-slate-900 text-center transition-colors " +
-        (hover ? "border-accent-500 bg-accent-50/40 dark:bg-accent-500/10" : "border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50")
+        (hover ? "border-accent-600 bg-accent-50/40 dark:bg-accent-500/10" : "border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50")
       }
     >
       <input

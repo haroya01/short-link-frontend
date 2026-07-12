@@ -89,7 +89,7 @@ export function InsightSummary({ data }: { data: LinkStats }) {
     <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-accent-700 dark:text-accent-400">
+          <h2 className="text-[11px] font-semibold text-accent-700 dark:text-accent-400">
             {t("title")}
           </h2>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t("description")}</p>
@@ -116,7 +116,7 @@ function InsightCard({ insight }: { insight: Insight }) {
   return (
     <div className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 p-3">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+        <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">
           {insight.label}
         </p>
         <span className={`grid h-7 w-7 place-items-center rounded-md ${tone}`}>

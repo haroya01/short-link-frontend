@@ -71,7 +71,7 @@ export default async function PublicCollectionsIndexPage({
                         {c.description}
                       </span>
                     )}
-                    <span className="mt-1 block text-[13px] text-slate-400 dark:text-slate-500">
+                    <span className="mt-1 block text-[13px] text-slate-500 dark:text-slate-500">
                       {c.kind === "PATH" ? `${tc("kindPath")} · ` : ""}
                       {tc("itemCount", { count: c.count })}
                     </span>

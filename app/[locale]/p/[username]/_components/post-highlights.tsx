@@ -539,7 +539,7 @@ function HighlightThread({
                         @?
                       </span>
                     )}
-                    <span className="text-[12px] text-slate-400">{fmt(r.createdAt)}</span>
+                    <span className="text-[12px] text-slate-500">{fmt(r.createdAt)}</span>
                     {meId != null && r.author?.id === meId && (
                       <button
                         type="button"
@@ -561,7 +561,7 @@ function HighlightThread({
           {/* 이 문장이 속한 길 — from one sentence to the paths/collections it's woven into. */}
           {inCollections.length > 0 && (
             <div className="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-500">
                 {tc("inPathTitle")}
               </p>
               <ul className="mt-2 space-y-1">
@@ -579,7 +579,7 @@ function HighlightThread({
                       <span className="min-w-0 flex-1 truncate text-[14px] text-slate-800 dark:text-slate-200">
                         {c.title}
                       </span>
-                      <span className="shrink-0 text-[12px] text-slate-400 dark:text-slate-500">
+                      <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-500">
                         {c.count}
                       </span>
                     </BlogLink>
@@ -592,7 +592,7 @@ function HighlightThread({
           {/* 이것과 이어진 것 — other blocks curators wove alongside this sentence (co-occurrence hop). */}
           {related.length > 0 && (
             <div className="mt-6 border-t border-slate-100 pt-4 dark:border-slate-800">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-500">
                 {tc("relatedBlocksTitle")}
               </p>
               <ul className="mt-3 space-y-3">

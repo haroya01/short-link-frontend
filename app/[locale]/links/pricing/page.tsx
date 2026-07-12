@@ -108,7 +108,7 @@ export default async function PricingPage({
         >
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-[15px] font-semibold tracking-headline text-slate-500 dark:text-slate-400">{t("paidTitle")}</h2>
-            <span className="rounded-full border border-accent-200 bg-white dark:bg-slate-900 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-accent-700 dark:text-accent-400">
+            <span className="rounded-full border border-accent-200 bg-white dark:bg-slate-900 px-2 py-0.5 font-mono text-[10px] text-accent-700 dark:text-accent-400">
               {t("proHoldBadge")}
             </span>
           </div>

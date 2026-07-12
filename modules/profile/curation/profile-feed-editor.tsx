@@ -331,7 +331,7 @@ function AddMenu({
           <MenuItem onClick={() => fire(onAddEmbed)} icon={<Play className="h-3.5 w-3.5" />}>
             {t("addEmbed")}
           </MenuItem>
-          <div className="border-t border-slate-100 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-slate-400">
+          <div className="border-t border-slate-100 px-3 py-1 text-[10px] font-medium text-slate-400">
             {t("addMoreBlocks")}
           </div>
           <MenuItem onClick={() => fire(onAddDivider)} icon={<Minus className="h-3.5 w-3.5" />}>
@@ -606,7 +606,7 @@ function FeedItemRow({
   // no longer clears overIndex, (2) keep the indicator out of the layout flow so siblings don't
   // shift even when isOver flips quickly.
   const dropIndicator = isOver
-    ? "before:pointer-events-none before:absolute before:inset-x-2 before:-top-[2px] before:h-1 before:rounded-full before:bg-accent-500 before:shadow-[0_0_10px_rgba(99,102,241,0.6)] "
+    ? "before:pointer-events-none before:absolute before:inset-x-2 before:-top-[2px] before:h-1 before:rounded-full before:bg-accent-600 before:shadow-[0_0_10px_rgba(99,102,241,0.6)] "
     : "";
   // Lifted/transparent state while being dragged so the user perceives the dragged row as "in
   // their hand" rather than just half-faded in place.

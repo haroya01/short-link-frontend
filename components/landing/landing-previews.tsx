@@ -231,7 +231,7 @@ function DomainVisual() {
         <span className="min-w-0 flex-1 truncate font-mono text-[11px] font-medium text-slate-900 dark:text-slate-100">
           go.brand.com/spring
         </span>
-        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden />
+        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-600" aria-hidden />
       </div>
       <div className="flex min-w-0 items-center gap-1.5 px-1 font-mono text-[10px] text-slate-500 dark:text-slate-400">
         <span className="shrink-0 whitespace-nowrap uppercase tracking-wider text-accent-700 dark:text-accent-400">

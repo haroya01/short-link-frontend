@@ -43,7 +43,7 @@ export function ProfileVisitSummaryCard({ hasUsername }: { hasUsername: boolean 
       <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {buckets.map((b) => (
           <div key={b.label} className="rounded-md border border-slate-100 bg-slate-50/50 p-3">
-            <dt className="text-[10px] uppercase tracking-wider text-slate-500">{b.label}</dt>
+            <dt className="text-[10px] text-slate-500">{b.label}</dt>
             <dd className="mt-1 text-lg font-semibold tabular-nums text-slate-900">
               {formatNumber(b.value)}
             </dd>

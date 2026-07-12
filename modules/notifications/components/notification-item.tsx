@@ -189,7 +189,7 @@ export function NotificationItem({
             {subtitle}
           </span>
         )}
-        <span className="mt-0.5 block text-[11px] text-slate-400 dark:text-slate-500">
+        <span className="mt-0.5 block text-[11px] text-slate-500 dark:text-slate-500">
           {relative(item.createdAt)}
         </span>
       </span>

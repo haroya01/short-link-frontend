@@ -192,7 +192,7 @@ function OnboardingStep({
         className={
           "grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-semibold transition " +
           (done
-            ? "bg-accent-500 text-white"
+            ? "bg-accent-700 text-white"
             : "border border-accent-300 bg-white dark:bg-slate-900 text-accent-700 dark:text-accent-400")
         }
         aria-hidden

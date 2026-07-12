@@ -384,7 +384,7 @@ export function PublishDialog({
                         <Link2 className="h-3.5 w-3.5 shrink-0 text-slate-400" />
                         <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-200">
                           {host}
-                          <span className="text-slate-400 dark:text-slate-500">
+                          <span className="text-slate-500 dark:text-slate-500">
                             {url.slice(url.indexOf(host) + host.length)}
                           </span>
                         </span>
@@ -538,7 +538,7 @@ function CharCount({ value, max }: { value: string; max: number }) {
   return (
     <p
       className={`mt-1 text-right text-[11px] tabular-nums ${
-        near ? "text-amber-600 dark:text-amber-400" : "text-slate-400 dark:text-slate-500"
+        near ? "text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-500"
       }`}
     >
       {n}/{max}
