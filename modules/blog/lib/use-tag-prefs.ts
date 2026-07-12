@@ -121,10 +121,13 @@ export function useTagPrefs() {
   const isHidden = useCallback((tag: string) => prefs.hidden.includes(tag), [prefs]);
 
   // Optimistically update + broadcast, then persist (account API when signed in, localStorage when
-  // not). On API failure the next event/refetch corrects it; local writes can't fail meaningfully.
-  // Either way the session cache + device mirror move with the state, so a remount seeds the new value.
+  // not). On API failure roll every layer back to the pre-toggle state (state, broadcast, session cache,
+  // device mirror) so the pill can't sit "on" while the server still has it off. Local writes can't fail
+  // meaningfully, so the signed-out path just persists. The session cache + device mirror move with the
+  // state either way, so a remount seeds the current value.
   const apply = useCallback(
     (next: TagPrefs, remote: () => Promise<TagPrefs>) => {
+      const prev: TagPrefs = accountCache ?? readLocal();
       setPrefs(next);
       broadcast(next);
       if (authenticated) accountCache = next;
@@ -137,7 +140,12 @@ export function useTagPrefs() {
             setPrefs(fresh);
             broadcast(fresh);
           })
-          .catch(() => {});
+          .catch(() => {
+            accountCache = prev;
+            writeLocal(prev);
+            setPrefs(prev);
+            broadcast(prev);
+          });
       }
     },
     [authenticated],

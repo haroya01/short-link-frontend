@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 /**
@@ -11,15 +11,17 @@ import { useTranslations } from "next-intl";
  */
 export function PostCode({ lang, code, children }: { lang: string; code: string; children: ReactNode }) {
   const t = useTranslations("common");
-  const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
 
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
+      setStatus("copied");
+      setTimeout(() => setStatus("idle"), 1600);
     } catch {
-      /* clipboard blocked (insecure context / permissions) — nothing to do */
+      // clipboard blocked (insecure context / permissions) — surface it instead of a silent no-op.
+      setStatus("failed");
+      setTimeout(() => setStatus("idle"), 1600);
     }
   };
 
@@ -36,10 +38,15 @@ export function PostCode({ lang, code, children }: { lang: string; code: string;
         aria-label={t("copy")}
         className="absolute right-3 top-2.5 z-10 inline-flex items-center gap-1 rounded-md bg-white/10 px-2 py-1 text-[12px] font-medium text-slate-300 opacity-100 backdrop-blur transition-opacity hover:bg-white/20 hover:text-white focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 sm:opacity-0 sm:group-hover:opacity-100"
       >
-        {copied ? (
+        {status === "copied" ? (
           <>
             <Check className="h-3.5 w-3.5" />
             {t("copied")}
+          </>
+        ) : status === "failed" ? (
+          <>
+            <X className="h-3.5 w-3.5" />
+            {t("copyFailed")}
           </>
         ) : (
           <>
