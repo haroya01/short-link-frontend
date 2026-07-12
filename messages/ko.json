@@ -3509,6 +3509,7 @@
     "whyPlaceholder": "한 줄 (선택)",
     "addToCount": "{count}개 컬렉션에 추가됩니다.",
     "connectError": "저장하지 못했어요. 다시 시도해 주세요.",
+    "createError": "만들지 못했어요. 다시 시도해 주세요.",
     "edit": "편집",
     "editTitle": "컬렉션 편집",
     "titleLabel": "이름",

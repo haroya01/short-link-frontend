@@ -51,6 +51,10 @@ export function ConnectSheet({
   const [why, setWhy] = useState("");
   const [saving, setSaving] = useState(false);
   const [failed, setFailed] = useState(false);
+  // Which "new …" row is mid-create (its spinner), and whether the last create failed. Without these
+  // a failed create was silently swallowed — the row never appeared and the tap looked dead.
+  const [creating, setCreating] = useState<"COLLECTION" | "PATH" | null>(null);
+  const [createFailed, setCreateFailed] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
   // The parent unmounts this component on onClose/onDone, so the exit phase has to be owned here:
@@ -111,14 +115,21 @@ export function ConnectSheet({
   }
 
   async function createAndSelect(kind: "COLLECTION" | "PATH") {
+    if (creating) return;
     const fallback = kind === "PATH" ? t("newPathFallback") : t("newCollectionFallback");
     const title = targetTitle.trim().slice(0, 60) || fallback;
+    setCreating(kind);
+    setCreateFailed(false);
     try {
       const created = await createCollection({ title, visibility: newVisibility, kind });
       setCollections((prev) => [created, ...prev]);
       setSelected((prev) => new Set(prev).add(created.id));
     } catch {
-      /* swallow — the row just won't appear */
+      // Surface it instead of swallowing — a silently-swallowed failure here is the "tapped and
+      // nothing happened" bug. The row stays a retry (tapping it again re-runs the create).
+      setCreateFailed(true);
+    } finally {
+      setCreating(null);
     }
   }
 
@@ -245,6 +256,8 @@ export function ConnectSheet({
                     <NewRow
                       icon={<Plus className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />}
                       label={t("newCollection")}
+                      busy={creating === "COLLECTION"}
+                      disabled={creating !== null}
                       onClick={() => createAndSelect("COLLECTION")}
                     />
                   </li>
@@ -253,9 +266,18 @@ export function ConnectSheet({
                       icon={<CornerDownRight className="h-3.5 w-3.5 text-accent-600 dark:text-accent-500" />}
                       label={t("newPath")}
                       hint={t("newPathHint")}
+                      busy={creating === "PATH"}
+                      disabled={creating !== null}
                       onClick={() => createAndSelect("PATH")}
                     />
                   </li>
+                  {createFailed && (
+                    <li className="px-3 pb-1 pt-1">
+                      <p className="text-[12px] text-red-600 dark:text-red-400" role="alert">
+                        {t("createError")}
+                      </p>
+                    </li>
+                  )}
                 </ul>
               )}
             </div>
@@ -333,20 +355,30 @@ function NewRow({
   icon,
   label,
   hint,
+  busy = false,
+  disabled = false,
   onClick,
 }: {
   icon: React.ReactNode;
   label: string;
   hint?: string;
+  /** This row's own create is in flight — swaps its glyph for a spinner. */
+  busy?: boolean;
+  /** Any create is in flight — the row is inert (so a double-tap can't fire two creates). */
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="focus-ring flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+      disabled={disabled}
+      aria-busy={busy}
+      className="focus-ring flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-800"
     >
-      <span className="grid h-5 w-5 place-items-center">{icon}</span>
+      <span className="grid h-5 w-5 place-items-center">
+        {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" /> : icon}
+      </span>
       <span className="text-[14px] font-medium text-slate-900 dark:text-slate-100">{label}</span>
       {hint && <span className="text-[12px] text-slate-500 dark:text-slate-400">{hint}</span>}
     </button>
