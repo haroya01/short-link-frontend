@@ -65,7 +65,7 @@ export function ConnectionBlock({ block, locale }: { block: BlockFields; locale:
             {block.quote}
           </span>
           {block.title && (
-            <span className="mt-1 block truncate text-[12px] text-slate-400 dark:text-slate-500">
+            <span className="mt-1 block truncate text-[12px] text-slate-500 dark:text-slate-400">
               {block.title}
             </span>
           )}

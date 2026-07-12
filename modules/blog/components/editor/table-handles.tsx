@@ -180,7 +180,7 @@ export function TableHandles({ editor }: { editor: Editor }) {
   if (!geom) return null;
 
   const HANDLE =
-    "pointer-events-auto absolute grid place-items-center rounded-md border border-slate-200 bg-white text-slate-400 shadow-sm transition-colors hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-500 dark:hover:border-emerald-700 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400";
+    "pointer-events-auto absolute grid place-items-center rounded-md border border-slate-200 bg-white text-slate-400 shadow-sm transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-500 dark:hover:border-accent-700 dark:hover:bg-accent-500/10 dark:hover:text-accent-400";
 
   const colItems: { icon: LucideIcon; label: string; run: () => boolean; danger?: boolean }[] = [
     { icon: ArrowLeftToLine, label: t("insertColumnLeft"), run: () => editor.commands.addColumnBefore() },
@@ -238,7 +238,7 @@ export function TableHandles({ editor }: { editor: Editor }) {
       {/* The column/row about to be acted on, lit green so it's obvious what the menu targets. */}
       {menu && activeBand && activeBand.left != null && (
         <div
-          className="pointer-events-none absolute rounded-sm bg-emerald-400/15 ring-1 ring-emerald-400/40"
+          className="pointer-events-none absolute rounded-sm bg-accent-400/15 ring-1 ring-accent-400/40"
           style={{ left: activeBand.left, top: activeBand.top, width: activeBand.width, height: activeBand.height }}
         />
       )}
@@ -291,7 +291,7 @@ export function TableHandles({ editor }: { editor: Editor }) {
                       e.preventDefault();
                       setColumnAlign(menu.index, a.value);
                     }}
-                    className="touch-target focus-ring grid place-items-center rounded-md p-1.5 text-slate-500 transition-colors hover:bg-emerald-50 hover:text-emerald-600 dark:text-slate-400 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400"
+                    className="touch-target focus-ring grid place-items-center rounded-md p-1.5 text-slate-500 transition-colors hover:bg-accent-50 hover:text-accent-600 dark:text-slate-400 dark:hover:bg-accent-500/10 dark:hover:text-accent-400"
                   >
                     <a.icon className="h-4 w-4" />
                   </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Loader2, UserCheck, UserPlus, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -45,6 +46,10 @@ export function FollowListDialog({
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
   const [loading, setLoading] = useState(false);
+  // Portal target (<body>) only exists on the client; gate so SSR/first paint render nothing —
+  // matches the closed state and avoids a hydration mismatch.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useFocusTrap(panelRef, { active: open, onEscape: () => onOpenChange(false) });
 
@@ -84,11 +89,14 @@ export function FollowListDialog({
     void load(0);
   }, [open, tab, load]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
   const empty = !loading && items.length === 0;
 
-  return (
+  // Portal to <body>: a transformed/animated ancestor (a will-change page wrapper, the post
+  // article's enter animation, etc.) would otherwise make this `fixed inset-0` overlay resolve
+  // against that ancestor's box instead of the viewport — clipping the backdrop to a column.
+  return createPortal(
     <div className="fixed inset-0 z-50 overflow-y-auto px-4 pt-12 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pt-16">
       <div
         className="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/70"
@@ -148,7 +156,8 @@ export function FollowListDialog({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

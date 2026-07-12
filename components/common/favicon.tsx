@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Mail } from "lucide-react";
 
 type Props = {
   url: string;
@@ -16,6 +17,24 @@ type Props = {
 export function Favicon({ url, size = 16, className }: Props) {
   const host = safeHost(url);
   const [errored, setErrored] = useState(false);
+
+  // Email rows have no host (mailto: parses to an empty hostname), so they'd otherwise fall to the
+  // blank monogram square. Give them a mail glyph — same tile styling as the letter fallback — so an
+  // email link reads as one, next to the real favicons of the other rows.
+  if (url.startsWith("mailto:")) {
+    return (
+      <span
+        aria-hidden
+        className={
+          "inline-flex items-center justify-center rounded bg-slate-100 text-slate-500 " +
+          (className ?? "")
+        }
+        style={{ width: size, height: size }}
+      >
+        <Mail style={{ width: size * 0.6, height: size * 0.6 }} strokeWidth={2} />
+      </span>
+    );
+  }
 
   if (!host || errored) {
     return (

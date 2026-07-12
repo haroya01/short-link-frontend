@@ -427,7 +427,7 @@ function Section({
   return (
     <section>
       <h2 className="mb-4 flex items-center gap-1.5 text-[13px] font-bold text-slate-800 dark:text-slate-200">
-        <span className="text-accent-500">{icon}</span>
+        <span className="text-accent-600 dark:text-accent-400">{icon}</span>
         {title}
         {hint && <span className="font-medium text-slate-400 dark:text-slate-500">· {hint}</span>}
       </h2>
