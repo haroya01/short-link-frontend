@@ -20,7 +20,9 @@ export async function GET(
 
   const xml = buildRss({
     title: `@${author.username}`,
-    link: origin,
+    // Channel <link> is the HTML page this feed represents — the author's home (velog-style
+    // /@{user}), not the bare host root. Item links already resolve via postHref.
+    link: `${origin}/@${author.username}`,
     description: author.bio ?? `@${author.username}`,
     selfUrl: publicSelfUrl(req),
     locale,
