@@ -81,3 +81,29 @@ test("the 하이라이트 discover tab renders the follow-graph highlight feed f
   const passageLink = page.locator('a[href*="hl="]').first();
   await expect(passageLink).toBeVisible();
 });
+
+test("the 하이라이트 feed paginates — Load more brings in the second page", async ({ page }) => {
+  // The mock feed spans 2 pages (28 items @ size 20). The first page renders exactly 20 rows with a
+  // "Load more" control; fetching page 2 appends the remaining 8, and the control then goes away.
+  await page.goto("/en/blog/connections");
+  await waitConnectionsReady(page);
+  await page.getByRole("tab", { name: "Highlights" }).click();
+  await expect(page.getByText("단순함이 이긴다", { exact: false }).first()).toBeVisible({
+    timeout: 15_000,
+  });
+
+  // The first page is exactly PAGE_SIZE rows — the feed didn't dump everything at once — and the
+  // load-more control is present (the follow-graph feed continues past page 1, no dead end).
+  const rows = page.locator("ul > li");
+  await expect(rows).toHaveCount(20);
+  await expect(page.getByRole("button", { name: "Load more" })).toBeVisible();
+
+  // Fetch page 2 by scrolling the end into view — the IntersectionObserver auto-loader (the primary
+  // house pattern; the button is its no-JS fallback) brings the next page in. Driving it by scroll is
+  // deterministic; racing a button click against the same observer detaches the button mid-click.
+  await rows.last().scrollIntoViewIfNeeded();
+
+  // All 28 rows are now present and the control is gone — pagination works, no dead end after page 1.
+  await expect(rows).toHaveCount(28, { timeout: 15_000 });
+  await expect(page.getByRole("button", { name: "Load more" })).toHaveCount(0);
+});

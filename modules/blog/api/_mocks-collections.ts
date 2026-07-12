@@ -129,9 +129,10 @@ export function mockMyHighlights(): MyHighlightItem[] {
 }
 
 // "남들 하이라이트" 피드 — 팔로우한 큐레이터가 최근 칠한 구절(최신순). 큐레이터(칠한 사람) ≠ 글 작가.
-// 인용문은 mock 본문에 실제로 있는 문장이라 탭하면 그 구절로 스크롤된다.
+// 인용문은 mock 본문에 실제로 있는 문장이라 탭하면 그 구절로 스크롤된다. 첫 세 개는 본문의 실제 문장을
+// 그대로 그어 딥링크가 그 자리로 스크롤되게 하고, 뒤는 팔로잉 피드처럼 페이지가 넘어가도록 채운다(2페이지 이상).
 const now = Date.now();
-const highlightFeed: HighlightFeedItem[] = [
+const HEAD_FEED: HighlightFeedItem[] = [
   {
     id: 8101,
     postId: 1,
@@ -181,6 +182,42 @@ const highlightFeed: HighlightFeedItem[] = [
     replyCount: 5,
   },
 ];
+
+// 페이지네이션이 실제로 넘어가도록 뒤를 채운다 — 다양한 큐레이터가 여러 글에서 그은 구절(총 28개 =
+// size 20 기준 2페이지). 각 인용은 페이지 번호를 담아, 둘째 페이지가 로드됐는지 e2e 가 짚을 수 있다.
+const FILLER_QUOTES = [
+  "여기서 한 번 멈추고, 왜 이렇게 했는지 적어두기로 했다.",
+  "빠른 길과 옳은 길이 갈릴 때, 나는 옳은 길을 택했다.",
+  "숫자는 거짓말을 안 하지만, 질문이 틀리면 답도 틀린다.",
+  "작게 시작해서 오래 가는 편이, 크게 시작해서 멈추는 편보다 낫다.",
+];
+const FILLER_CURATORS = [CURATORS.doha, CURATORS.sol, CURATORS.minji, CURATORS.haruka, CURATORS.jinhwa];
+const FILLER_POSTS: Array<[number, string, string, string]> = [
+  [3, "naming-is-hard", "리팩터링: 이름 짓기에 하루를 쓰는 이유", "dohyun"],
+  [6, "docker-compose-prod", "작은 EC2에 docker compose로 배포하기", "haruka"],
+  [7, "rotating-refresh-tokens", "리프레시 토큰 회전, 로그아웃 폭탄을 피하는 법", "dohyun"],
+];
+const FILLER_FEED: HighlightFeedItem[] = Array.from({ length: 25 }, (_, i) => {
+  const q = `${FILLER_QUOTES[i % FILLER_QUOTES.length]} (${i + 1}번째 밑줄)`;
+  const [postId, postSlug, postTitle, postAuthorUsername] = FILLER_POSTS[i % FILLER_POSTS.length];
+  return {
+    id: 8200 + i,
+    postId,
+    curator: FILLER_CURATORS[i % FILLER_CURATORS.length],
+    postSlug,
+    postTitle,
+    postAuthorUsername,
+    blockOrder: 1,
+    endBlockOrder: 1,
+    startOffset: 0,
+    endOffset: q.length,
+    quote: q,
+    note: i % 3 === 0 ? "이 문장에 오래 머물렀다." : null,
+    createdAt: new Date(now - (3 + i) * 86_400_000).toISOString(),
+    replyCount: i % 4,
+  };
+});
+const highlightFeed: HighlightFeedItem[] = [...HEAD_FEED, ...FILLER_FEED];
 
 export function mockHighlightFeed(page: number, size: number): HighlightFeedPage {
   const start = page * size;

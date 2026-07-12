@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
-import { MessageCircle } from "lucide-react";
+import { Loader2, MessageCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { dateLocale } from "@/lib/date";
 import { getHighlightFeed, type HighlightFeedItem } from "@/modules/blog/api/highlights";
@@ -12,6 +12,8 @@ import { quoteHref } from "@/modules/blog/components/connection-block";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { blogCta } from "@/modules/blog/components/blog-cta";
+
+const PAGE_SIZE = 20;
 
 /**
  * "남들 하이라이트" — the follow-graph highlight feed, the web twin of the iOS Discover 하이라이트 tab:
@@ -35,20 +37,68 @@ export function HighlightsFeed({
   const [items, setItems] = useState<HighlightFeedItem[] | null>(null);
   const [failed, setFailed] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  // 페이지네이션 — 첫 페이지만 받으면 초기 항목 뒤가 막다른 길이 된다. 백엔드 계약의 hasNext 를 따라
+  // 팔로잉 피드와 같은 문법(무한 스크롤 + '더 보기' 버튼 폴백)으로 이어 받는다.
+  const [page, setPage] = useState(0);
+  const [hasNext, setHasNext] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!ready || !authenticated) return;
     let alive = true;
     setFailed(false);
     setItems(null);
-    getHighlightFeed()
-      .then((page) => alive && setItems(page.items))
+    getHighlightFeed(0, PAGE_SIZE)
+      .then((res) => {
+        if (!alive) return;
+        setItems(res.items);
+        setHasNext(res.hasNext);
+        setPage(0);
+      })
       // 일시적 오류를 빈 상태로 위장하지 않는다 — 별도 오류 분기에서 '다시 시도'를 준다.
       .catch(() => alive && setFailed(true));
     return () => {
       alive = false;
     };
   }, [ready, authenticated, reloadKey]);
+
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasNext) return;
+    setLoadingMore(true);
+    setLoadError(false);
+    const next = page + 1;
+    try {
+      const res = await getHighlightFeed(next, PAGE_SIZE);
+      // 페이지 사이에 새 하이라이트가 앞에 끼면 이미 본 항목이 경계를 넘어올 수 있어 id 로 방어적 dedupe.
+      setItems((prev) => {
+        const seen = new Set((prev ?? []).map((h) => h.id));
+        return [...(prev ?? []), ...res.items.filter((h) => !seen.has(h.id))];
+      });
+      setPage(next);
+      setHasNext(res.hasNext);
+    } catch {
+      // hasNext 는 유지해 버튼이 재시도로 남게 하고, 아래 자동 로더는 loadError 로 멈춘다.
+      setLoadError(true);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, hasNext, page]);
+
+  // 끝에 가까워지면 자동 로드; 아래 버튼은 no-JS/재시도 폴백으로 남긴다(팔로잉 피드와 같은 문법).
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasNext || loadError) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore();
+      },
+      { rootMargin: "600px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasNext, loadError, loadMore]);
 
   // 비로그인 게이트 — 하이라이트 피드는 팔로우 그래프(인증 필요). 막다른 길 대신 로그인/둘러보기로.
   if (ready && !authenticated) {
@@ -105,17 +155,51 @@ export function HighlightsFeed({
   }
 
   return (
-    <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-      {items.map((item, i) => (
-        <li
-          key={item.id}
-          className="profile-fade py-6 first:pt-0"
-          style={{ "--idx": i } as CSSProperties}
+    <div>
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+        {items.map((item, i) => (
+          <li
+            key={item.id}
+            className="profile-fade py-6 first:pt-0"
+            style={{ "--idx": Math.min(i % PAGE_SIZE, 12) } as CSSProperties}
+          >
+            <HighlightFeedRow item={item} locale={locale} />
+          </li>
+        ))}
+      </ul>
+
+      {hasNext && (
+        <div
+          ref={sentinelRef}
+          role="status"
+          aria-live="polite"
+          className="mt-8 flex flex-col items-center gap-2"
         >
-          <HighlightFeedRow item={item} locale={locale} />
-        </li>
-      ))}
-    </ul>
+          <button
+            type="button"
+            onClick={loadMore}
+            disabled={loadingMore}
+            className={`${blogCta({ variant: "secondary" })} disabled:opacity-60`}
+          >
+            {loadingMore ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {t("highlightsLoadingMore")}
+              </>
+            ) : loadError ? (
+              t("highlightsRetry")
+            ) : (
+              t("highlightsLoadMore")
+            )}
+          </button>
+          {loadError && !loadingMore && (
+            <p className="text-[12px] text-slate-500 dark:text-slate-400">
+              {t("highlightsLoadMoreError")}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
