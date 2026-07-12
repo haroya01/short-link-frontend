@@ -86,6 +86,17 @@ export function ConnectSheet({
     };
   }, []);
 
+  // Lock the page behind the scrim while open (same as the account sheet) so an overscroll behind the
+  // sheet — or a tap the browser is still deciding might be a page scroll — can't steal the gesture.
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   // Keyboard containment: Escape + Tab cycling within the sheet + focus restore to the opener. Step 2
   // places its own initial focus (the 왜 textarea autoFocuses), so don't fight it.
   useFocusTrap(sheetRef, { active: open, onEscape: requestClose, autoFocus: step === 1 });
@@ -137,26 +148,35 @@ export function ConnectSheet({
   // article, etc.) would otherwise make this `fixed inset-0` overlay resolve against that ancestor's
   // box instead of the viewport — clipping the backdrop to a column.
   return createPortal(
-    // Backdrop fades in with the sheet and back out on close (the exit rides the same container).
-    <div
-      className={`fixed inset-0 z-[70] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm motion-reduce:animate-none sm:items-center sm:p-4 ${
-        closing ? "animate-[overlay-out_240ms_var(--ease)_both]" : "animate-fade-in"
-      }`}
-      onMouseDown={requestClose}
-    >
+    // Outer positioning shell only — no close handler on it. Outside-click close lives on the scrim
+    // BUTTON below (a sibling of the sheet), not as a mousedown on a container the sheet nests inside.
+    // The old nested `onMouseDown={requestClose}` + `onMouseDown stopPropagation` pair raced on touch:
+    // a tap synthesises mousedown → the scrim's mousedown-close flipped `open` false → use-presence
+    // began the sheet-down exit → the passage under the finger MOVED, so iOS dropped the pending
+    // `click` and the row/새-컬렉션 tap did nothing. Sibling scrim + click-close (the account sheet's
+    // grammar) removes the race — a tap inside the sheet never reaches the scrim at all.
+    <div className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-4">
+      <button
+        type="button"
+        aria-hidden
+        tabIndex={-1}
+        onClick={requestClose}
+        className={`absolute inset-0 bg-slate-900/40 backdrop-blur-sm motion-reduce:animate-none ${
+          closing ? "animate-[overlay-out_240ms_var(--ease)_both]" : "animate-fade-in"
+        }`}
+      />
       <div
         ref={sheetRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="connect-sheet-title"
         // Bottom sheet slides up/down on mobile (same grammar as the account sheet); the sm+
-        // centered card keeps the quiet fade pair instead.
-        className={`flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-white shadow-xl motion-reduce:animate-none dark:bg-slate-900 sm:max-w-md sm:rounded-2xl ${
+        // centered card keeps the quiet fade pair instead. `relative` lifts it above the absolute scrim.
+        className={`relative flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-white shadow-xl motion-reduce:animate-none dark:bg-slate-900 sm:max-w-md sm:rounded-2xl ${
           closing
             ? "animate-[sheet-down_240ms_var(--ease)_both] sm:animate-fade-out"
             : "animate-[sheet-up_280ms_var(--ease)_both] sm:animate-fade-in"
         }`}
-        onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="border-b border-slate-100 px-5 py-4 dark:border-slate-800">
           <h3 id="connect-sheet-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
