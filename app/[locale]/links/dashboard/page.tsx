@@ -11,14 +11,16 @@ import {
   Plus,
   QrCode,
   Search,
+  Star,
   TrendingUp,
   X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { MyLinksFilters } from "@/lib/api";
-import { formatNumber } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import { readStorageString, removeStorageItem } from "@/lib/storage-json";
+import { pinFavoritesFirst, useLinkFavorites } from "@/lib/use-link-favorites";
 import type { MyLink } from "@/types";
 import {
   useInvalidateLinks,
@@ -55,6 +57,8 @@ export default function DashboardPage() {
     dir: "desc",
   });
   const [bulkOpen, setBulkOpen] = useState(false);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const favorites = useLinkFavorites();
 
   const enabled = ready && authenticated;
   const linksQuery = useMyLinks(filters, { enabled });
@@ -65,6 +69,12 @@ export default function DashboardPage() {
     () => linksQuery.data?.pages.flatMap((p) => p.items) ?? [],
     [linksQuery.data],
   );
+  // 즐겨찾기를 맨 위로 고정(그 외 서버 정렬은 보존). 서버 페이지네이션이라 고정·필터는 현재
+  // 로드된 페이지 범위 안에서만 동작한다.
+  const displayItems = useMemo(() => {
+    const pinned = pinFavoritesFirst(items, favorites.codes, (l) => l.shortCode);
+    return favoritesOnly ? pinned.filter((l) => favorites.codes.has(l.shortCode)) : pinned;
+  }, [items, favorites.codes, favoritesOnly]);
   const tagOptions = useMemo(
     () => tagsQuery.data?.map((t) => t.name) ?? [],
     [tagsQuery.data],
@@ -208,6 +218,23 @@ export default function DashboardPage() {
             </div>
 
             <MyLinksFiltersBar filters={filters} onChange={setFilters} tagOptions={tagOptions} />
+
+            {(favorites.hasAny || favoritesOnly) && (
+              <button
+                type="button"
+                aria-pressed={favoritesOnly}
+                onClick={() => setFavoritesOnly((v) => !v)}
+                className={cn(
+                  "focus-ring inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors",
+                  favoritesOnly
+                    ? "border-accent-200 bg-accent-50 text-accent-700 dark:border-accent-500/30 dark:bg-accent-500/10 dark:text-accent-400"
+                    : "border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800/50",
+                )}
+              >
+                <Star className={cn("h-3.5 w-3.5", favoritesOnly && "fill-current")} />
+                {t("favorite.filter")}
+              </button>
+            )}
           </div>
 
           {loading ? (
@@ -226,10 +253,16 @@ export default function DashboardPage() {
                   : t("noResultDescFiltered")
               }
             />
+          ) : displayItems.length === 0 ? (
+            // 즐겨찾기만 필터가 켜졌지만 현재 페이지에 별표 링크가 없는 경우.
+            <EmptyState
+              title={t("favorite.emptyTitle")}
+              description={t("favorite.emptyDesc")}
+            />
           ) : (
             <>
               <LinksTable
-                items={items}
+                items={displayItems}
                 sortKey={filters.sort ?? "createdAt"}
                 sortDir={filters.dir ?? "desc"}
                 onSortChange={(sort, dir) =>
@@ -237,6 +270,8 @@ export default function DashboardPage() {
                 }
                 onChanged={() => void invalidateLinks()}
                 onTagClick={(tag) => setFilters((f) => ({ ...f, tag, after: undefined }))}
+                isFavorite={favorites.isFavorite}
+                onToggleFavorite={favorites.toggle}
               />
               {linksQuery.hasNextPage && (
                 <div className="flex justify-center pt-2">

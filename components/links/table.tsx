@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { CSSProperties } from "react";
-import { ArrowUpDown, BarChart3, Clock3, ExternalLink, Pencil, Trash2 } from "lucide-react";
+import { ArrowUpDown, BarChart3, Clock3, ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,8 @@ type Props = {
   sortKey: SortKey;
   sortDir: SortDir;
   onSortChange: (key: SortKey, dir: SortDir) => void;
+  isFavorite: (shortCode: string) => boolean;
+  onToggleFavorite: (shortCode: string) => void;
 };
 
 export function LinksTable({
@@ -37,6 +39,8 @@ export function LinksTable({
   sortKey,
   sortDir,
   onSortChange,
+  isFavorite,
+  onToggleFavorite,
 }: Props) {
   const t = useTranslations("dashboard");
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
@@ -143,6 +147,8 @@ export function LinksTable({
             item={item}
             index={index}
             selected={selected.has(item.shortCode)}
+            favorite={isFavorite(item.shortCode)}
+            onToggleFavorite={() => onToggleFavorite(item.shortCode)}
             onToggleSelect={() => toggleOne(item.shortCode)}
             onTagClick={onTagClick}
             onCopied={() => toast("✓", "success")}
@@ -208,6 +214,15 @@ export function LinksTable({
                 </TD>
                 <TD>
                   <div className="flex items-center gap-1.5">
+                    <FavoriteButton
+                      active={isFavorite(item.shortCode)}
+                      onToggle={() => onToggleFavorite(item.shortCode)}
+                      label={
+                        isFavorite(item.shortCode)
+                          ? t("favorite.remove")
+                          : t("favorite.add")
+                      }
+                    />
                     <Link
                       href={`/stats/${item.shortCode}`}
                       className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100 hover:underline"
@@ -365,6 +380,8 @@ function MobileLinkCard({
   item,
   index,
   selected,
+  favorite,
+  onToggleFavorite,
   onToggleSelect,
   onTagClick,
   onCopied,
@@ -375,6 +392,8 @@ function MobileLinkCard({
   item: MyLink;
   index: number;
   selected: boolean;
+  favorite: boolean;
+  onToggleFavorite: () => void;
   onToggleSelect: () => void;
   onTagClick?: (tag: string) => void;
   onCopied: () => void;
@@ -494,6 +513,12 @@ function MobileLinkCard({
           )}
         </span>
         <div className="inline-flex shrink-0 items-center gap-0.5">
+          <FavoriteButton
+            active={favorite}
+            onToggle={onToggleFavorite}
+            label={favorite ? t("favorite.remove") : t("favorite.add")}
+            className="h-9 w-9"
+          />
           <Link href={`/stats/${item.shortCode}`}>
             <Button
               variant="ghost"
@@ -526,6 +551,41 @@ function MobileLinkCard({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * 별표 토글 — 즐겨찾기한 링크를 목록 맨 위로 고정한다. 행/링크 클릭과 히트가 겹치지 않게 <button>
+ * 으로 분리하고, 채움(브랜드 그린)/비움으로 상태를 나타낸다. 별칭 색은 §10.3 마커(accent-600).
+ */
+function FavoriteButton({
+  active,
+  onToggle,
+  label,
+  className,
+}: {
+  active: boolean;
+  onToggle: () => void;
+  label: string;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      aria-label={label}
+      title={label}
+      onClick={onToggle}
+      className={cn(
+        "focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-md transition-colors",
+        active
+          ? "text-accent-600 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-500/10"
+          : "text-slate-400 dark:text-slate-500 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300",
+        className,
+      )}
+    >
+      <Star className={cn("h-3.5 w-3.5", active && "fill-current")} />
+    </button>
   );
 }
 

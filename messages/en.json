@@ -1096,6 +1096,13 @@
       "edit": "Edit",
       "delete": "Delete"
     },
+    "favorite": {
+      "add": "Add to favorites",
+      "remove": "Remove from favorites",
+      "filter": "Favorites",
+      "emptyTitle": "No favorite links yet",
+      "emptyDesc": "Tap the star on a link to add it to favorites and pin it to the top."
+    },
     "deleteConfirmTitle": "Delete this link?",
     "deleteConfirmDesc": "Deleted links cannot be recovered. Click stats are also lost.",
     "deleteOk": "Delete",
