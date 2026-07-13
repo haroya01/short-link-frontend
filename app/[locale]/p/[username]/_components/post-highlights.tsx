@@ -223,16 +223,21 @@ export function PostHighlights({ postId }: { postId: number }) {
     };
   }, []);
 
+  // Create a highlight (bare or with a note) and confirm the outcome. The paint pass is the primary
+  // "it landed" cue, but the mark can be off-screen (you selected, then the list re-pull repaints below
+  // the fold) or fail to anchor on since-edited prose — so a brief toast tells you it saved either way.
+  // On failure it says so instead of silently dropping the highlight (which read as "it worked").
   const persist = useCallback(
-    async (payload: NewHighlight) => {
+    async (payload: NewHighlight, okMessage: string) => {
       try {
         await createHighlight(postId, payload);
         setHighlights(await listHighlights(postId));
+        toast(okMessage, "success");
       } catch {
-        /* swallow — a failed highlight shouldn't disrupt reading */
+        toast(t("highlightSaveError"), "error");
       }
     },
-    [postId],
+    [postId, t, toast],
   );
 
   // After a reply is added/removed, re-pull so the painted marks reflect the new replyCount.
@@ -281,8 +286,8 @@ export function PostHighlights({ postId }: { postId: number }) {
     const payload = sel.payload;
     setSel(null);
     window.getSelection()?.removeAllRanges();
-    void persist(payload);
-  }, [sel, authenticated, signInWithGoogle, persist]);
+    void persist(payload, t("highlightSaved"));
+  }, [sel, authenticated, signInWithGoogle, persist, t]);
 
   // Open the memo composer. Auth-gate up front so a Google redirect never discards a written note.
   const openNote = useCallback(() => {
@@ -299,11 +304,13 @@ export function PostHighlights({ postId }: { postId: number }) {
   const saveNote = useCallback(
     (note: string) => {
       if (!noteFor) return;
-      const payload = { ...noteFor, note: note.trim() || null };
+      const trimmed = note.trim();
+      const payload = { ...noteFor, note: trimmed || null };
       setNoteFor(null);
-      void persist(payload);
+      // A saved memo confirms as "note added"; an empty save is really just a plain highlight.
+      void persist(payload, trimmed ? t("highlightNoteSaved") : t("highlightSaved"));
     },
-    [noteFor, persist],
+    [noteFor, persist, t],
   );
 
   // These overlays are viewport-level UI (full-screen backdrop + a selection bar pinned to viewport
