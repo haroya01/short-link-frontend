@@ -35,6 +35,7 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
+import { useShowHighlights } from "@/modules/blog/lib/use-show-highlights";
 import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
 
 // The reply composer (HighlightThread) and note editor (NoteSheet) both pull in the Tiptap/ProseMirror
@@ -80,6 +81,9 @@ export function PostHighlights({ postId }: { postId: number }) {
   const { authenticated, me, signInWithGoogle } = useAuth();
   const { toast } = useToast();
   const [confirm, confirmDialog] = useConfirm();
+  // Reader-level "paint highlights or read clean" toggle (device-local, default ON). Hiding stops the
+  // painting but never the ability to create a highlight from a selection.
+  const { show: showHighlights, toggle: toggleHighlights } = useShowHighlights();
   const [highlights, setHighlights] = useState<HighlightView[]>([]);
   // Whether the highlight fetch has settled (resolved or failed) at least once. The deep-link scroll
   // waits on this — not on there being any highlights — so a post with zero highlights still runs.
@@ -110,7 +114,12 @@ export function PostHighlights({ postId }: { postId: number }) {
     };
   }, [postId]);
 
-  // Paint highlights into the static prose. Re-runs whenever the set (or the viewer) changes.
+  // How many highlights would paint under the Medium clustering rule — drives whether the "hide
+  // highlights" toggle is worth showing (a control that hides nothing is just noise).
+  const [paintableCount, setPaintableCount] = useState(0);
+
+  // Paint highlights into the static prose. Re-runs whenever the set (or the viewer) changes, or when
+  // the reader flips the show/hide toggle — hiding clears every mark and paints nothing.
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(".prose-post");
     if (!root) return;
@@ -119,13 +128,15 @@ export function PostHighlights({ postId }: { postId: number }) {
     // by enough distinct other readers; a lone reader's bare highlight stays in the data (and its
     // thread stays reachable via ?hl=) but doesn't clutter the body. See highlight-clustering.ts.
     const toPaint = selectPaintedHighlightIds(highlights, me?.id ?? null);
+    setPaintableCount(toPaint.size);
+    if (!showHighlights) return; // reader chose a clean read — leave the prose bare (marks cleared above)
     for (const h of highlights) {
       if (!toPaint.has(h.id)) continue;
       // Precise span paint (single- or multi-block), using the stored block + char offsets so it hits
       // the right occurrence and crosses inline formatting; quote-search fallback if offsets drifted.
       wrapHighlight(root, h, { id: h.id, note: h.note, replyCount: h.replyCount });
     }
-  }, [highlights, me?.id]);
+  }, [highlights, me?.id, showHighlights]);
 
   // Deep-link to a sentence: a `?hl=<quote>` from a path step / connection / discovery card scrolls to
   // the matching span and flashes it (mirrors the iOS postFocusQuote deep-link). Gated on the highlight
@@ -313,49 +324,103 @@ export function PostHighlights({ postId }: { postId: number }) {
     [noteFor, persist, t],
   );
 
-  // These overlays are viewport-level UI (full-screen backdrop + a selection bar pinned to viewport
-  // coords), so they must render against the viewport. The post body lives under `.post-enter`, whose
-  // hero-rise animation ends on `transform: translateY(0)` (fill-mode both) and so keeps <article> a
-  // containing block for `position: fixed`. Portaling to <body> escapes that — otherwise the backdrop
-  // and sheets pin to the 42rem reading column instead of the screen.
-  if (!mounted) return null;
-  return createPortal(
+  // Two parts: (1) an in-flow, quiet toggle to hide/show the painted marks — rendered only when there
+  // is at least one paintable highlight, so it never sits as a dead control on a bare post; (2) the
+  // viewport-level overlays (selection bar + sheets), portaled to <body>. The overlays must render
+  // against the viewport: the post body lives under `.post-enter`, whose hero-rise animation ends on
+  // `transform: translateY(0)` (fill-mode both) and so keeps <article> a containing block for
+  // `position: fixed` — portaling to <body> escapes that, so the backdrop/sheets pin to the screen and
+  // not the 42rem reading column.
+  return (
     <>
-      {sel && (
-        <SelectionBar
-          innerRef={barRef}
-          anchor={sel.anchor}
-          highlightLabel={t("highlight")}
-          noteLabel={t("highlightNote")}
-          onHighlight={commitQuick}
-          onNote={openNote}
+      {paintableCount > 0 && (
+        <HighlightVisibilityToggle
+          show={showHighlights}
+          onToggle={toggleHighlights}
+          shownLabel={t("highlightsShownCount", { count: paintableCount })}
+          hiddenLabel={t("highlightsHidden")}
+          hideLabel={t("highlightsHide")}
+          showLabel={t("highlightsShow")}
         />
       )}
-      {noteFor && (
-        <NoteSheet
-          quote={noteFor.quote}
-          title={t("highlightNoteTitle")}
-          placeholder={t("highlightNotePlaceholder")}
-          saveLabel={t("highlightNoteSave")}
-          cancelLabel={t("highlightNoteCancel")}
-          onCancel={() => setNoteFor(null)}
-          onSave={saveNote}
-        />
-      )}
-      {threadFor && (
-        <HighlightThread
-          highlight={threadFor}
-          meId={me?.id ?? null}
-          authenticated={authenticated}
-          onSignIn={signInWithGoogle}
-          onClose={() => setThreadFor(null)}
-          onChanged={refreshHighlights}
-          onDelete={() => void removeHighlight(threadFor)}
-        />
-      )}
-      {confirmDialog}
-    </>,
-    document.body,
+      {mounted &&
+        createPortal(
+          <>
+            {sel && (
+              <SelectionBar
+                innerRef={barRef}
+                anchor={sel.anchor}
+                highlightLabel={t("highlight")}
+                noteLabel={t("highlightNote")}
+                onHighlight={commitQuick}
+                onNote={openNote}
+              />
+            )}
+            {noteFor && (
+              <NoteSheet
+                quote={noteFor.quote}
+                title={t("highlightNoteTitle")}
+                placeholder={t("highlightNotePlaceholder")}
+                saveLabel={t("highlightNoteSave")}
+                cancelLabel={t("highlightNoteCancel")}
+                onCancel={() => setNoteFor(null)}
+                onSave={saveNote}
+              />
+            )}
+            {threadFor && (
+              <HighlightThread
+                highlight={threadFor}
+                meId={me?.id ?? null}
+                authenticated={authenticated}
+                onSignIn={signInWithGoogle}
+                onClose={() => setThreadFor(null)}
+                onChanged={refreshHighlights}
+                onDelete={() => void removeHighlight(threadFor)}
+              />
+            )}
+            {confirmDialog}
+          </>,
+          document.body,
+        )}
+    </>
+  );
+}
+
+/**
+ * A quiet in-flow control under the article body: "N개 밑줄" with a hide/show toggle. Lets a reader
+ * read the post clean (no painted marks) without losing the ability to make their own — hiding only
+ * stops the painting. Muted so it reads as a colophon-level affordance, not a button competing with the
+ * post actions (§10). The count is the paintable set (the marks actually on the page).
+ */
+function HighlightVisibilityToggle({
+  show,
+  onToggle,
+  shownLabel,
+  hiddenLabel,
+  hideLabel,
+  showLabel,
+}: {
+  show: boolean;
+  onToggle: () => void;
+  shownLabel: string;
+  hiddenLabel: string;
+  hideLabel: string;
+  showLabel: string;
+}) {
+  return (
+    <div className="mt-8 flex items-center gap-2 text-[12px] text-slate-400 dark:text-slate-500">
+      <Highlighter className="h-3.5 w-3.5 text-accent-600/70 dark:text-accent-500/70" aria-hidden />
+      <span>{show ? shownLabel : hiddenLabel}</span>
+      <span aria-hidden>·</span>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-pressed={!show}
+        className="focus-ring rounded font-medium text-slate-500 underline-offset-2 transition-colors hover:text-accent-700 hover:underline dark:text-slate-400 dark:hover:text-accent-400"
+      >
+        {show ? hideLabel : showLabel}
+      </button>
+    </div>
   );
 }
 
