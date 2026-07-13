@@ -5,11 +5,16 @@ import { useTranslations } from "next-intl";
 import {
   listAbuseReports,
   resolveAbuseReport,
-  unpublishReportedPost,
+  type AbuseAction,
   type AbuseReportStatus,
   type AbuseReportView,
   type AbuseResolution,
 } from "@/lib/api/abuse-reports";
+import {
+  actionRequiresExpiry,
+  availableActions,
+  reasonLabelKey,
+} from "@/lib/api/abuse-report-reasons";
 
 const STATUS_FILTERS: (AbuseReportStatus | "ALL")[] = [
   "ALL",
@@ -26,13 +31,24 @@ const STATUS_BADGE: Record<AbuseReportStatus, string> = {
   REJECTED: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400",
 };
 
+/** Destructive actions (unpublish/delete/ban) get the red treatment; suspend is a softer sanction. */
+const ACTION_DESTRUCTIVE: Record<AbuseAction, boolean> = {
+  UNPUBLISH_POST: true,
+  DELETE_COMMENT: true,
+  SUSPEND_USER: false,
+  BAN_USER: true,
+};
+
 /**
- * Abuse-report moderation queue — list, filter by status, and resolve (review/resolve/reject)
- * reports submitted via {@link submitAbuseReport}. Extracted from the links admin page so the blog
- * workspace can host the same queue without duplicating the table + resolve logic. Both the apex
- * `/admin/abuse-reports` page and `blog.kurl.me/admin` render this; each supplies its own shell +
- * isAdmin gate. All reports are blog content (subjectType is POST | USER), so the same list serves
- * the blog moderation surface directly.
+ * Abuse-report moderation queue — list, filter by status, and resolve reports with the moderation
+ * context the #611 contract now supplies: a structured `reasonCode` + reporter `detail`, and a
+ * `subjectExcerpt` snapshot so COMMENT and USER reports (which have no title/URL) are judgeable in
+ * the row. Each subject type offers its own enforcement actions (unpublish post / delete comment /
+ * suspend or ban user); an action is folded into the resolve call, or a report is resolved with no
+ * action ("reviewed, no violation").
+ *
+ * Both the apex `/admin/abuse-reports` page and `blog.kurl.me/admin` render this; each supplies its
+ * own shell + isAdmin gate.
  */
 export function AbuseReportsManager() {
   const t = useTranslations("abuseReports");
@@ -60,35 +76,67 @@ export function AbuseReportsManager() {
     void load();
   }, [load]);
 
+  const apply = useCallback((updated: AbuseReportView) => {
+    setReports((prev) => {
+      const next = prev.map((r) => (r.id === updated.id ? updated : r));
+      // A takedown on a POST/COMMENT should show as removed on every report that points at the same
+      // subject — one popular post can gather several reports and they'd otherwise disagree.
+      if (updated.subjectRemoved) {
+        return next.map((r) =>
+          r.subjectType === updated.subjectType && r.subjectId === updated.subjectId
+            ? { ...r, subjectRemoved: true }
+            : r,
+        );
+      }
+      return next;
+    });
+  }, []);
+
+  /** Resolve with no enforcement — review/resolve/reject transitions. */
   async function handleResolve(report: AbuseReportView, resolution: AbuseResolution) {
-    const note = window.prompt(t("notePrompt", { resolution }), "");
+    const note = window.prompt(t("notePrompt", { resolution: t(`status.${resolution}`) }), "");
     if (note === null) return;
     try {
       const updated = await resolveAbuseReport(report.id, {
         resolution,
         adminNote: note.trim() || undefined,
       });
-      setReports((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+      apply(updated);
     } catch (e) {
       window.alert(e instanceof Error ? e.message : t("resolveFailed"));
     }
   }
 
-  async function handleTakedown(report: AbuseReportView) {
-    if (!window.confirm(t("takedownConfirm"))) return;
+  /**
+   * Resolve + enforce in one call. A SUSPEND_USER needs an expiry, so we collect it (the backend
+   * rejects it as SUSPEND_REQUIRES_EXPIRY otherwise). Everything else just confirms first.
+   */
+  async function handleAction(report: AbuseReportView, action: AbuseAction) {
+    let suspendUntil: string | undefined;
+    if (actionRequiresExpiry(action)) {
+      const days = window.prompt(t("suspendDaysPrompt"), "7");
+      if (days === null) return;
+      const n = Number.parseInt(days, 10);
+      if (!Number.isFinite(n) || n <= 0) {
+        window.alert(t("suspendDaysInvalid"));
+        return;
+      }
+      suspendUntil = new Date(Date.now() + n * 24 * 60 * 60 * 1000).toISOString();
+    } else if (!window.confirm(t(`actionConfirm.${action}`))) {
+      return;
+    }
+    const note = window.prompt(t("notePrompt", { resolution: t(`action.${action}`) }), "");
+    if (note === null) return;
     try {
-      await unpublishReportedPost(report.subjectId);
-      // Reflect the takedown locally on every report that points at the same post — a popular post
-      // can have several open reports, and they should all show "비공개됨" without a reload.
-      setReports((prev) =>
-        prev.map((r) =>
-          r.subjectType === "POST" && r.subjectId === report.subjectId
-            ? { ...r, subjectRemoved: true }
-            : r,
-        ),
-      );
+      const updated = await resolveAbuseReport(report.id, {
+        resolution: "RESOLVED",
+        action,
+        suspendUntil,
+        adminNote: note.trim() || undefined,
+      });
+      apply(updated);
     } catch (e) {
-      window.alert(e instanceof Error ? e.message : t("takedownFailed"));
+      window.alert(e instanceof Error ? e.message : t("resolveFailed"));
     }
   }
 
@@ -172,7 +220,7 @@ export function AbuseReportsManager() {
                         </a>
                       ) : (
                         <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
-                          {r.subjectTitle ?? `${r.subjectType} #${r.subjectId}`}
+                          {r.subjectTitle ?? `${t(`subjectType.${r.subjectType}`)} #${r.subjectId}`}
                         </p>
                       )}
                       <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
@@ -185,6 +233,12 @@ export function AbuseReportsManager() {
                       {t(`subjectType.${r.subjectType}`)} #{r.subjectId}
                     </code>
                   )}
+                  {/* Content snapshot — the only handle a moderator has on COMMENT / USER reports. */}
+                  {r.subjectExcerpt && (
+                    <p className="mt-1 line-clamp-2 rounded bg-slate-50 dark:bg-slate-800/60 px-2 py-1 text-xs italic text-slate-600 dark:text-slate-400">
+                      “{r.subjectExcerpt}”
+                    </p>
+                  )}
                   {r.subjectRemoved && (
                     <span className="mt-1 inline-block rounded px-1.5 py-0.5 text-[11px] font-medium bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                       {t("removed")}
@@ -195,9 +249,16 @@ export function AbuseReportsManager() {
                   {r.reporterUserId ?? <span className="text-slate-400 dark:text-slate-500">{t("anonymous")}</span>}
                 </td>
                 <td className="px-2 py-3 max-w-xs">
-                  <p className="text-slate-700 dark:text-slate-300 line-clamp-3">
-                    {r.reason ?? <span className="text-slate-400 dark:text-slate-500">—</span>}
-                  </p>
+                  {r.reasonCode ? (
+                    <span className="inline-block rounded bg-red-50 dark:bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-700 dark:text-red-300">
+                      {t(reasonLabelKey(r.reasonCode))}
+                    </span>
+                  ) : (
+                    <span className="text-slate-400 dark:text-slate-500">—</span>
+                  )}
+                  {r.detail && (
+                    <p className="mt-1 text-slate-700 dark:text-slate-300 line-clamp-3">{r.detail}</p>
+                  )}
                   {r.adminNote && (
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t("noteLabel")}: {r.adminNote}</p>
                   )}
@@ -231,14 +292,21 @@ export function AbuseReportsManager() {
                       >
                         {t("action.reject")}
                       </button>
-                      {r.subjectType === "POST" && !r.subjectRemoved && (
-                        <button
-                          type="button"
-                          onClick={() => handleTakedown(r)}
-                          className="rounded border border-red-200 dark:border-red-500/30 px-2 py-0.5 text-xs text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
-                        >
-                          {t("action.takedown")}
-                        </button>
+                      {availableActions(r.subjectType, { subjectRemoved: r.subjectRemoved }).map(
+                        (action) => (
+                          <button
+                            key={action}
+                            type="button"
+                            onClick={() => handleAction(r, action)}
+                            className={`rounded border px-2 py-0.5 text-xs ${
+                              ACTION_DESTRUCTIVE[action]
+                                ? "border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
+                                : "border-orange-200 dark:border-orange-500/30 text-orange-700 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-500/10"
+                            }`}
+                          >
+                            {t(`action.${action}`)}
+                          </button>
+                        ),
                       )}
                     </div>
                   ) : (

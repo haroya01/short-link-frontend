@@ -572,8 +572,8 @@
     "postCount": "{count, plural, one {# bài} other {# bài}}",
     "report": "Báo cáo",
     "reportTitle": "Báo cáo bài này",
-    "reportReason": "Lý do (tùy chọn)",
-    "reportPlaceholder": "Thêm chi tiết cụ thể nếu có",
+    "reportReason": "Lý do",
+    "reportPlaceholder": "Thêm chi tiết cụ thể nếu có (tùy chọn)",
     "reportSubmit": "Báo cáo",
     "reportSubmitting": "Đang gửi…",
     "reportDone": "Cảm ơn — chúng tôi đã nhận báo cáo của bạn.",
@@ -641,7 +641,16 @@
     "linkClicks": "lượt nhấp",
     "linkTopCountry": "quốc gia hàng đầu",
     "linkTopDevice": "thiết bị hàng đầu",
-    "linkFullStats": "Xem thống kê đầy đủ trên kurl"
+    "linkFullStats": "Xem thống kê đầy đủ trên kurl",
+    "reportDetail": "Chi tiết (tùy chọn)",
+    "reasons": {
+      "SPAM": "Spam hoặc quảng cáo",
+      "HARASSMENT": "Thù ghét hoặc quấy rối",
+      "VIOLENCE": "Bạo lực hoặc nguy hiểm",
+      "SEXUAL": "Nội dung tình dục",
+      "COPYRIGHT": "Vi phạm bản quyền",
+      "OTHER": "Khác"
+    }
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",
@@ -671,7 +680,10 @@
     "MALFORMED_REQUEST": "Yêu cầu đó có vẻ không ổn. Vui lòng thử lại.",
     "UNAUTHORIZED": "Vui lòng đăng nhập.",
     "NOT_FOUND": "Không tìm thấy.",
-    "INTERNAL_ERROR": "Đã có lỗi từ phía chúng tôi. Vui lòng thử lại."
+    "INTERNAL_ERROR": "Đã có lỗi từ phía chúng tôi. Vui lòng thử lại.",
+    "DUPLICATE_REPORT": "Bạn đã báo cáo mục này rồi.",
+    "SUBJECT_NOT_FOUND": "Không tìm thấy mục được báo cáo.",
+    "SUSPEND_REQUIRES_EXPIRY": "Việc tạm ngưng cần có ngày hết hạn."
   },
   "cookieConsent": {
     "ariaLabel": "Thông báo cookie",
@@ -3408,16 +3420,32 @@
       "reviewing": "Đang xem xét",
       "resolve": "Xử lý",
       "reject": "Từ chối",
-      "takedown": "Hủy xuất bản"
+      "UNPUBLISH_POST": "Hủy xuất bản bài",
+      "DELETE_COMMENT": "Xóa bình luận",
+      "SUSPEND_USER": "Tạm ngưng tài khoản",
+      "BAN_USER": "Cấm vĩnh viễn"
     },
     "subjectType": {
       "POST": "Bài viết",
       "USER": "Tác giả",
       "COMMENT": "Bình luận"
     },
-    "takedownConfirm": "Hủy xuất bản bài này? Nó rời khỏi dòng tin công khai (tác giả vẫn giữ bản nháp).",
-    "takedownFailed": "Không hủy xuất bản được bài.",
-    "removed": "Đã hủy xuất bản"
+    "removed": "Đã hủy xuất bản",
+    "reasons": {
+      "SPAM": "Spam hoặc quảng cáo",
+      "HARASSMENT": "Thù ghét hoặc quấy rối",
+      "VIOLENCE": "Bạo lực hoặc nguy hiểm",
+      "SEXUAL": "Nội dung tình dục",
+      "COPYRIGHT": "Vi phạm bản quyền",
+      "OTHER": "Khác"
+    },
+    "actionConfirm": {
+      "UNPUBLISH_POST": "Hủy xuất bản bài này? Nó rời khỏi dòng tin công khai (tác giả vẫn giữ bản nháp).",
+      "DELETE_COMMENT": "Xóa bình luận này? Không thể hoàn tác.",
+      "BAN_USER": "Cấm vĩnh viễn tài khoản này? Rất khó đảo ngược."
+    },
+    "suspendDaysPrompt": "Tạm ngưng trong bao nhiêu ngày?",
+    "suspendDaysInvalid": "Nhập số từ 1 trở lên."
   },
   "blogAdminMetrics": {
     "title": "Chỉ số blog",
