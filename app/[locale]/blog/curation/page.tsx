@@ -8,6 +8,7 @@ import { LikedList } from "@/modules/blog/components/saved/liked-list";
 import { HighlightsList } from "@/modules/blog/components/saved/highlights-list";
 import { MyCommentsList } from "@/modules/blog/components/saved/my-comments-list";
 import { ReadingHistoryList } from "@/modules/blog/components/saved/reading-history-list";
+import { FollowedTagsShelf } from "@/modules/blog/components/saved/followed-tags-shelf";
 
 /**
  * 저장한 글 — the reader's own corner: bookmarked posts, liked posts, the comments they've written, and
@@ -47,6 +48,10 @@ export default function SavedPostsPage() {
         </CollapsibleSection>
         <CollapsibleSection title={t("curationHistory")} hint={t("curationHistoryHint")}>
           <ReadingHistoryList username={me?.username ?? ""} locale={locale} />
+        </CollapsibleSection>
+        {/* 구독한 태그 — 팔로우한 주제를 한눈에, 눌러서 그 주제 피드로. 관리(언팔로우)는 설정에 둔다. */}
+        <CollapsibleSection title={t("curationTags")} hint={t("curationTagsHint")}>
+          <FollowedTagsShelf />
         </CollapsibleSection>
       </div>
     </main>
