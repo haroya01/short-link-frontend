@@ -1096,6 +1096,13 @@
       "edit": "편집",
       "delete": "삭제"
     },
+    "favorite": {
+      "add": "즐겨찾기에 추가",
+      "remove": "즐겨찾기 해제",
+      "filter": "즐겨찾기",
+      "emptyTitle": "즐겨찾기한 링크가 없어요",
+      "emptyDesc": "링크의 별표를 눌러 즐겨찾기에 추가하면 목록 맨 위에 고정돼요."
+    },
     "deleteConfirmTitle": "링크를 삭제할까요?",
     "deleteConfirmDesc": "삭제된 링크는 복구할 수 없어요. 클릭 통계도 함께 사라져요.",
     "deleteOk": "삭제",

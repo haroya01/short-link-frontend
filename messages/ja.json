@@ -1096,6 +1096,13 @@
       "edit": "編集",
       "delete": "削除"
     },
+    "favorite": {
+      "add": "お気に入りに追加",
+      "remove": "お気に入りを解除",
+      "filter": "お気に入り",
+      "emptyTitle": "お気に入りのリンクはまだありません",
+      "emptyDesc": "リンクの星をタップするとお気に入りに追加され、一番上に固定されます。"
+    },
     "deleteConfirmTitle": "このリンクを削除しますか？",
     "deleteConfirmDesc": "削除されたリンクは復旧できません。クリック統計も失われます。",
     "deleteOk": "削除",

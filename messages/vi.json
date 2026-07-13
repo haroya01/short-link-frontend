@@ -1096,6 +1096,13 @@
       "edit": "Chỉnh sửa",
       "delete": "Xóa"
     },
+    "favorite": {
+      "add": "Thêm vào mục yêu thích",
+      "remove": "Bỏ khỏi mục yêu thích",
+      "filter": "Yêu thích",
+      "emptyTitle": "Chưa có liên kết yêu thích",
+      "emptyDesc": "Nhấn vào ngôi sao trên liên kết để thêm vào mục yêu thích và ghim lên đầu."
+    },
     "deleteConfirmTitle": "Xóa liên kết này?",
     "deleteConfirmDesc": "Liên kết đã xóa không thể khôi phục. Thống kê lượt nhấp cũng mất theo.",
     "deleteOk": "Xóa",
