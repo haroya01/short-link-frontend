@@ -856,7 +856,7 @@
       },
       "insights": {
         "title": "Automatic insights",
-        "desc": "Peak hour, return rate, half-life, velocity — surfaced without any setup",
+        "desc": "Peak hour, return rate, velocity — surfaced without any setup",
         "preview": {
           "heading": "This week's insights",
           "humanLabel": "Human clicks",
@@ -2083,7 +2083,7 @@
       },
       "webhooks": {
         "label": "Click notifications (Slack / Discord / your server)",
-        "note": "Every click POSTs to your endpoint, signed so you can trust the payload."
+        "note": "Every click notifies Slack, Discord or your endpoint. Direct POSTs are HMAC-signed automatically."
       },
       "realtime": {
         "label": "Live click feed",
@@ -2091,11 +2091,11 @@
       },
       "insights": {
         "label": "Automatic insights",
-        "note": "Peak hour, return rate, half-life, velocity — surfaced without setup."
+        "note": "Peak hour, return rate, velocity — surfaced without setup."
       },
       "asnTracking": {
         "label": "Auto-separate datacenter clicks",
-        "note": "Cloud egress (AWS / GCP / Azure) auto-flagged as bots — only on kurl."
+        "note": "Clicks from major cloud ranges (AWS / GCP and more) are flagged as bots — rare elsewhere."
       },
       "botDefense": {
         "label": "Layered bot defence",
