@@ -78,6 +78,12 @@ export function DiscoverySeriesCard({
         {posts.map((p, i) => {
           const order = (i - idx + n) % n; // 0 = front
           const front = order === 0;
+          // 정지 상태엔 앞장만 마운트한다 — opacity 0 뒷장들이 겹쳐 있으면 WebKit 이
+          // 다단 컬럼 조각을 다시 그릴 때(레티나 스크롤 타일 재활용) 그 조각째 페인트를
+          // 건너뛸 수 있다(아이패드 "스크롤하면 또 사라짐" 신고). 나가는 장은 넘김이
+          // 진행되는 동안만 함께 살아 크로스페이드를 완성하고 곧 내려간다.
+          const leaving = order === n - 1;
+          if (!front && !(flipping && leaving)) return null;
           return (
             <div
               key={p.slug}
@@ -88,7 +94,9 @@ export function DiscoverySeriesCard({
               // 레티나(DPR≥2)에서 그 컬럼 조각째 페인트 누락시킨다(아이패드 가로 "빈 카드" 신고의
               // 원인 — 자리와 클릭은 살아 있는데 그림만 없음). 그래서 정지 상태엔 레이어를 만들지
               // 않고, 넘김이 진행되는 동안만 will-change 로 잠깐 승격해 재래스터 플래시를 막는다.
-              className="absolute inset-0 transition-[transform,opacity] duration-500 ease-[var(--ease)]"
+              // 들어오는 앞장은 방금 마운트돼 transition 시작값이 없다 — 넘김 중엔 fade-in
+              // 애니메이션으로 크로스페이드의 들어오는 절반을 맡긴다(나가는 장은 transition).
+              className={`absolute inset-0 transition-[transform,opacity] duration-500 ease-[var(--ease)] ${front && flipping ? "animate-fade-in" : ""}`}
               style={{
                 transform: `scale(${front ? 1 : 0.97})`,
                 zIndex: front ? 2 : 1,
