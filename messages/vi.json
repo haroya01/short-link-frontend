@@ -856,7 +856,7 @@
       },
       "insights": {
         "title": "Thông tin tự động",
-        "desc": "Giờ cao điểm, tỷ lệ quay lại, chu kỳ bán rã, tốc độ — hiển thị mà không cần thiết lập gì",
+        "desc": "Giờ cao điểm, tỷ lệ quay lại, tốc độ — hiển thị mà không cần thiết lập gì",
         "preview": {
           "heading": "Thông tin tuần này",
           "humanLabel": "Lượt nhấp của người",
@@ -2083,7 +2083,7 @@
       },
       "webhooks": {
         "label": "Thông báo lượt nhấp (Slack / Discord / máy chủ của bạn)",
-        "note": "Mỗi lượt nhấp POST tới endpoint của bạn, có ký để bạn tin được payload."
+        "note": "Mỗi lượt nhấp báo về Slack, Discord hoặc endpoint của bạn. POST trực tiếp được ký HMAC tự động."
       },
       "realtime": {
         "label": "Dòng nhấp trực tiếp",
@@ -2091,11 +2091,11 @@
       },
       "insights": {
         "label": "Thông tin tự động",
-        "note": "Giờ cao điểm, tỷ lệ quay lại, chu kỳ bán rã, tốc độ — hiển thị mà không cần thiết lập."
+        "note": "Giờ cao điểm, tỷ lệ quay lại, tốc độ — hiển thị mà không cần thiết lập."
       },
       "asnTracking": {
         "label": "Tự tách lượt nhấp từ trung tâm dữ liệu",
-        "note": "Lưu lượng ra từ đám mây (AWS / GCP / Azure) tự động gắn cờ là bot — chỉ có ở kurl."
+        "note": "Lượt nhấp từ các dải đám mây lớn (AWS / GCP...) được gắn cờ bot — hiếm nơi có."
       },
       "botDefense": {
         "label": "Phòng vệ bot nhiều lớp",

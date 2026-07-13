@@ -856,7 +856,7 @@
       },
       "insights": {
         "title": "自動インサイト",
-        "desc": "ピーク時間 / 再訪率 / Half-life / Velocity — 設定なしで即可視化",
+        "desc": "ピーク時間 / 再訪率 / Velocity — 設定なしで即可視化",
         "preview": {
           "heading": "今週のインサイト",
           "humanLabel": "人間クリック",
@@ -2083,7 +2083,7 @@
       },
       "webhooks": {
         "label": "クリック自動通知 (Slack · Discord · 自前サーバー)",
-        "note": "クリックごとに、ご自身の endpoint へ POST。署名付きで安心。"
+        "note": "クリックごとに Slack・Discord・自社 endpoint へ通知。直接 POST には HMAC 署名を自動付与。"
       },
       "realtime": {
         "label": "ライブクリックフィード",
@@ -2091,11 +2091,11 @@
       },
       "insights": {
         "label": "自動インサイト",
-        "note": "ピーク時間 / 再訪率 / Half-life / Velocity — 設定なしで即可視化。"
+        "note": "ピーク時間 / 再訪率 / Velocity — 設定なしで即可視化。"
       },
       "asnTracking": {
         "label": "データセンタークリックを自動分離",
-        "note": "クラウド (AWS / GCP / Azure) からのクリックを自動でボット判定 — kurl 独自。"
+        "note": "主要クラウド帯域 (AWS / GCP など) からのクリックをボット判定。他ではあまり見ない機能。"
       },
       "botDefense": {
         "label": "多層のボット対策",
