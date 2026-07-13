@@ -764,6 +764,7 @@
     "bookmarks": "Dấu trang",
     "liked": "Bài đã thích",
     "library": "Thư viện",
+    "myCollections": "Bộ sưu tập của tôi",
     "showcase": "Hồ sơ",
     "campaigns": "Chiến dịch QR",
     "pricing": "Bảng giá",
@@ -3569,6 +3570,22 @@
     "removeItem": "Gỡ",
     "removeItemConfirmTitle": "Gỡ kết nối này?",
     "removeItemConfirmBody": "Mục này sẽ rời khỏi bộ sưu tập. Bản thân mục không bị xóa.",
-    "manageHint": "Đây là bộ sưu tập của bạn"
+    "manageHint": "Đây là bộ sưu tập của bạn",
+    "connectedBadge": "Đã thêm",
+    "unlink": "Gỡ",
+    "unlinkError": "Không gỡ được. Vui lòng thử lại.",
+    "connectedToast": "{count, plural, other {Đã thêm vào # bộ sưu tập}}",
+    "connectedPartialToast": "Chỉ thêm được một phần. Vui lòng thử lại.",
+    "newCollectionNamePlaceholder": "Tên bộ sưu tập",
+    "newCollectionNameLabel": "Tên",
+    "create": "Tạo",
+    "connectLabel": "Kết nối",
+    "myCollectionsMetaTitle": "Bộ sưu tập của tôi",
+    "myCollectionsTitle": "Bộ sưu tập của tôi",
+    "myCollectionsSubtitle": "Những bộ sưu tập và lối đọc bạn đã tạo — cả những cái riêng tư cũng ở đây.",
+    "myCollectionsLoadError": "Không tải được.",
+    "myCollectionsEmptyTitle": "Chưa có bộ sưu tập nào",
+    "myCollectionsEmptyBody": "Khi đang đọc một bài hay một câu, hãy dùng “Kết nối” để bắt đầu bộ sưu tập đầu tiên.",
+    "myCollectionsEmptyCta": "Tìm bài để đọc"
   }
 }

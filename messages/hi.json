@@ -764,6 +764,7 @@
     "bookmarks": "बुकमार्क",
     "liked": "पसंद की गई पोस्ट",
     "library": "लाइब्रेरी",
+    "myCollections": "मेरे कलेक्शन",
     "showcase": "प्रोफ़ाइल",
     "campaigns": "QR कैंपेन",
     "pricing": "मूल्य",
@@ -3569,6 +3570,22 @@
     "removeItem": "हटाएँ",
     "removeItemConfirmTitle": "यह कनेक्शन हटाएँ?",
     "removeItemConfirmBody": "यह आइटम इस संग्रह से हट जाएगा। आइटम स्वयं नहीं हटेगा।",
-    "manageHint": "यह आपका संग्रह है"
+    "manageHint": "यह आपका संग्रह है",
+    "connectedBadge": "जोड़ा गया",
+    "unlink": "हटाएँ",
+    "unlinkError": "हटाया नहीं जा सका। कृपया फिर से आज़माएँ।",
+    "connectedToast": "{count, plural, one {# कलेक्शन में जोड़ा} other {# कलेक्शन में जोड़ा}}",
+    "connectedPartialToast": "सिर्फ़ कुछ ही जुड़े। कृपया फिर से आज़माएँ।",
+    "newCollectionNamePlaceholder": "कलेक्शन का नाम",
+    "newCollectionNameLabel": "नाम",
+    "create": "बनाएँ",
+    "connectLabel": "जोड़ें",
+    "myCollectionsMetaTitle": "मेरे कलेक्शन",
+    "myCollectionsTitle": "मेरे कलेक्शन",
+    "myCollectionsSubtitle": "आपके बनाए कलेक्शन और पथ — निजी वाले भी यहीं रहते हैं।",
+    "myCollectionsLoadError": "इन्हें लोड नहीं किया जा सका।",
+    "myCollectionsEmptyTitle": "अभी कोई कलेक्शन नहीं",
+    "myCollectionsEmptyBody": "किसी पोस्ट या वाक्य को पढ़ते हुए “जोड़ें” से अपना पहला कलेक्शन शुरू करें।",
+    "myCollectionsEmptyCta": "पढ़ने के लिए कुछ खोजें"
   }
 }

@@ -12,6 +12,7 @@ import {
   FileText,
   Globe,
   Inbox,
+  Layers,
   LogIn,
   LogOut,
   Newspaper,
@@ -193,6 +194,11 @@ export function AccountSheet({
             <a href={blogHref("/connections")} className={ITEM}>
               <CornerDownRight className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tColl("discoverTitle")}
+            </a>
+            {/* 내 컬렉션 — the reader's own collections/paths (private included), paired with 연결 발견. */}
+            <a href={blogHref("/collections")} className={ITEM}>
+              <Layers className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+              {t("myCollections")}
             </a>
             {/* Notifications — mobile reaches the full page here (the desktop header bell has a
                 dropdown). Unread badge mirrors the desktop bell. */}

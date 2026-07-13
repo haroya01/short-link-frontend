@@ -6,9 +6,11 @@ import { useTranslations } from "next-intl";
 import { Check, CornerDownRight, Globe, Link as LinkIcon, Loader2, Lock, Plus } from "lucide-react";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
+import { useToast } from "@/components/ui/toast";
 import {
   connectBlock,
   createCollection,
+  disconnect,
   listMyCollections,
   type CollectionSummary,
   type CollectionVisibility,
@@ -17,9 +19,14 @@ import {
 
 /**
  * "연결" — the verb. Connect a block (post / highlight / note) to a collection or PATH (not broadcast).
- * Two depths: ① where to file it (pick collections, or create a new collection / path) → ② add (the
- * one-line "왜" + confirm). The "왜" is what separates a collection from a plain bookmark, so it gets
- * its own focused moment after picking. A bottom sheet (mobile) / centered card (sm+).
+ * Two depths: ① where to file it (pick collections, or make a new one) → ② add (the one-line "왜" +
+ * confirm). The "왜" is what separates a collection from a plain bookmark, so it gets its own focused
+ * moment after picking. A bottom sheet (mobile) / centered card (sm+).
+ *
+ * Rows the block is ALREADY in show a "담김" badge + an unlink (해제) instead of a checkbox — the block
+ * context (blockType + refId) is passed to the list fetch so the backend marks them (#617). A new
+ * collection is made through an inline mini-form (name + visibility) rather than silently borrowing the
+ * post's title. On success a toast confirms and the sheet closes.
  */
 export function ConnectSheet({
   blockType,
@@ -33,26 +40,32 @@ export function ConnectSheet({
   refId: number;
   /** A short kind label for the target (e.g. "하이라이트"). */
   targetLabel: string;
-  /** The target's text (the quote / title) — shown in step 2 and used to name a new collection. */
+  /** The target's text (the quote / title) — shown in step 2 and used to name a new path. */
   targetTitle: string;
   onClose: () => void;
   onDone: () => void;
 }) {
   const t = useTranslations("collections");
   const tCommon = useTranslations("common");
+  const { toast } = useToast();
   const [step, setStep] = useState<1 | 2>(1);
   const [collections, setCollections] = useState<CollectionSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Set<number>>(new Set());
-  // Visibility for a collection/path created here. Defaults to PRIVATE (a new curation starts as
-  // yours to shape); the toggle lets you open it up at create time so a public collection doesn't need
-  // a second trip to the detail editor.
-  const [newVisibility, setNewVisibility] = useState<CollectionVisibility>("PRIVATE");
+  // Which collections already hold THIS block: collectionId → the existing connection's id. Seeded from
+  // the list fetch (rows carry `connectionId`), then kept current as the user unlinks (delete → drop the
+  // entry) so a row can flip back to selectable in place. A held row can't also be picked to add.
+  const [heldBy, setHeldBy] = useState<Map<number, number>>(new Map());
+  // The id of a row whose unlink is in flight, so it can show a spinner and go inert.
+  const [unlinking, setUnlinking] = useState<number | null>(null);
   const [why, setWhy] = useState("");
   const [saving, setSaving] = useState(false);
   const [failed, setFailed] = useState(false);
-  // Which "new …" row is mid-create (its spinner), and whether the last create failed. Without these
-  // a failed create was silently swallowed — the row never appeared and the tap looked dead.
+  // The inline "new collection" mini-form (name + visibility). Null = closed; open replaces the plain
+  // create row with the form so a collection is named on purpose, not silently titled from the post.
+  const [newForm, setNewForm] = useState<{ name: string; visibility: CollectionVisibility } | null>(
+    null,
+  );
   const [creating, setCreating] = useState<"COLLECTION" | "PATH" | null>(null);
   const [createFailed, setCreateFailed] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -81,14 +94,21 @@ export function ConnectSheet({
 
   useEffect(() => {
     let alive = true;
-    listMyCollections()
-      .then((list) => alive && setCollections(list))
+    // Pass the block context so each row comes back knowing whether it already holds this block.
+    listMyCollections({ blockType, refId })
+      .then((list) => {
+        if (!alive) return;
+        setCollections(list);
+        const held = new Map<number, number>();
+        for (const c of list) if (c.connectionId != null) held.set(c.id, c.connectionId);
+        setHeldBy(held);
+      })
       .catch(() => alive && setCollections([]))
       .finally(() => alive && setLoading(false));
     return () => {
       alive = false;
     };
-  }, []);
+  }, [blockType, refId]);
 
   // Lock the page behind the scrim while open (same as the account sheet) so an overscroll behind the
   // sheet — or a tap the browser is still deciding might be a page scroll — can't steal the gesture.
@@ -106,6 +126,7 @@ export function ConnectSheet({
   useFocusTrap(sheetRef, { active: open, onEscape: requestClose, autoFocus: step === 1 });
 
   function toggle(id: number) {
+    if (heldBy.has(id)) return; // already in — pick is a no-op (the unlink control governs it instead)
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -114,19 +135,63 @@ export function ConnectSheet({
     });
   }
 
-  async function createAndSelect(kind: "COLLECTION" | "PATH") {
+  // Unlink a row the block is already in — DELETE the existing connection, then drop it from `heldBy`
+  // so the row flips back to a plain (selectable) row. Failure is surfaced as a toast; the row stays
+  // "담김" (nothing changed).
+  async function unlink(collectionId: number) {
+    const connectionId = heldBy.get(collectionId);
+    if (connectionId == null || unlinking != null) return;
+    setUnlinking(collectionId);
+    try {
+      await disconnect(collectionId, connectionId);
+      setHeldBy((prev) => {
+        const next = new Map(prev);
+        next.delete(collectionId);
+        return next;
+      });
+    } catch {
+      toast(t("unlinkError"), "error");
+    } finally {
+      setUnlinking(null);
+    }
+  }
+
+  // Create a PATH from the plain row (unchanged): borrow the target's text as the title, private by
+  // default, then select it. (COLLECTION goes through the mini-form instead — see NewCollectionForm.)
+  async function createPathAndSelect() {
     if (creating) return;
-    const fallback = kind === "PATH" ? t("newPathFallback") : t("newCollectionFallback");
-    const title = targetTitle.trim().slice(0, 60) || fallback;
-    setCreating(kind);
+    const title = targetTitle.trim().slice(0, 60) || t("newPathFallback");
+    setCreating("PATH");
     setCreateFailed(false);
     try {
-      const created = await createCollection({ title, visibility: newVisibility, kind });
+      const created = await createCollection({ title, visibility: "PRIVATE", kind: "PATH" });
       setCollections((prev) => [created, ...prev]);
       setSelected((prev) => new Set(prev).add(created.id));
     } catch {
-      // Surface it instead of swallowing — a silently-swallowed failure here is the "tapped and
-      // nothing happened" bug. The row stays a retry (tapping it again re-runs the create).
+      setCreateFailed(true);
+    } finally {
+      setCreating(null);
+    }
+  }
+
+  // Create a COLLECTION from the mini-form — a named collection with a chosen visibility. Inserts it at
+  // the top and selects it; closes the form. A failed create is surfaced (the form stays open to retry).
+  async function createCollectionFromForm() {
+    if (creating || !newForm) return;
+    const title = newForm.name.trim();
+    if (!title) return;
+    setCreating("COLLECTION");
+    setCreateFailed(false);
+    try {
+      const created = await createCollection({
+        title,
+        visibility: newForm.visibility,
+        kind: "COLLECTION",
+      });
+      setCollections((prev) => [created, ...prev]);
+      setSelected((prev) => new Set(prev).add(created.id));
+      setNewForm(null);
+    } catch {
       setCreateFailed(true);
     } finally {
       setCreating(null);
@@ -148,8 +213,11 @@ export function ConnectSheet({
     setSaving(false);
     if (results.some((r) => r.status === "rejected")) {
       setFailed(true);
+      toast(t("connectedPartialToast"), "error");
       return;
     }
+    // Confirm the weave and close — the toast is the completion feedback the sheet used to lack.
+    toast(t("connectedToast", { count: selected.size }), "success");
     finish();
   }
 
@@ -206,60 +274,94 @@ export function ConnectSheet({
                 </div>
               ) : (
                 <ul>
-                  {collections.map((c) => (
-                    <li key={c.id}>
-                      <button
-                        type="button"
-                        onClick={() => toggle(c.id)}
-                        className="focus-ring flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
-                      >
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-[14px] font-medium text-slate-900 dark:text-slate-100">
-                            {c.title}
-                          </span>
-                          {c.preview.length > 0 && (
-                            <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">
-                              {c.preview.join(" · ")}
-                            </span>
-                          )}
-                          <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
-                            {c.kind === "PATH" && (
-                              <>
-                                <CornerDownRight className="h-3 w-3 text-accent-600 dark:text-accent-500" />
-                                <span className="text-accent-700 dark:text-accent-400">{t("kindPath")}</span>
-                                <span aria-hidden>·</span>
-                              </>
-                            )}
-                            <VisibilityGlyph visibility={c.visibility} />
-                            <span>{t("itemCount", { count: c.count })}</span>
-                          </span>
-                        </span>
-                        <span
-                          className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${
-                            selected.has(c.id)
-                              ? "border-accent-600 bg-accent-600 text-white dark:border-accent-500 dark:bg-accent-500"
-                              : "border-slate-300 dark:border-slate-600"
+                  {collections.map((c) => {
+                    const held = heldBy.has(c.id);
+                    return (
+                      <li key={c.id}>
+                        <div
+                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left ${
+                            held ? "" : "transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                           }`}
                         >
-                          {selected.has(c.id) && <Check className="h-3 w-3" strokeWidth={3} />}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                  {/* Visibility for anything created below — so a public collection can be born public
-                      instead of defaulting to private and needing an edit. Sits with the create rows
-                      (it only governs them), quiet segmented pair. */}
-                  <li className="px-3 pt-2">
-                    <NewVisibilityToggle value={newVisibility} onChange={setNewVisibility} />
-                  </li>
+                          {/* The tappable label. When the block is already in this collection the label
+                              is inert (the unlink control on the right governs it) — kept as a div so it
+                              isn't a dead button; otherwise it's the pick button. */}
+                          {held ? (
+                            <span className="min-w-0 flex-1">
+                              <CollectionRowText c={c} t={t} />
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              role="checkbox"
+                              aria-checked={selected.has(c.id)}
+                              onClick={() => toggle(c.id)}
+                              className="focus-ring -m-1 flex min-w-0 flex-1 items-center rounded-lg p-1 text-left"
+                            >
+                              <span className="min-w-0 flex-1">
+                                <CollectionRowText c={c} t={t} />
+                              </span>
+                            </button>
+                          )}
+                          {held ? (
+                            <span className="flex shrink-0 items-center gap-2">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-accent-50 px-2 py-0.5 text-[11px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-400">
+                                <Check className="h-3 w-3" strokeWidth={3} />
+                                {t("connectedBadge")}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => void unlink(c.id)}
+                                disabled={unlinking != null}
+                                className="focus-ring rounded-md px-1.5 py-1 text-[12px] font-medium text-slate-500 transition-colors hover:text-red-600 disabled:opacity-50 dark:text-slate-400 dark:hover:text-red-400"
+                              >
+                                {unlinking === c.id ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  t("unlink")
+                                )}
+                              </button>
+                            </span>
+                          ) : (
+                            // Multi-select, so a checkbox square (not a radio circle) — the shape reads
+                            // "pick several". The role/aria live on the label button above.
+                            <span
+                              aria-hidden
+                              className={`grid h-5 w-5 shrink-0 place-items-center rounded-md border ${
+                                selected.has(c.id)
+                                  ? "border-accent-600 bg-accent-600 text-white dark:border-accent-500 dark:bg-accent-500"
+                                  : "border-slate-300 dark:border-slate-600"
+                              }`}
+                            >
+                              {selected.has(c.id) && <Check className="h-3 w-3" strokeWidth={3} />}
+                            </span>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                  {/* New collection — a named mini-form (name + visibility), so it's created on purpose
+                      instead of silently borrowing the post's title. Closed = a plain "만들기" row. */}
                   <li>
-                    <NewRow
-                      icon={<Plus className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />}
-                      label={t("newCollection")}
-                      busy={creating === "COLLECTION"}
-                      disabled={creating !== null}
-                      onClick={() => createAndSelect("COLLECTION")}
-                    />
+                    {newForm ? (
+                      <NewCollectionForm
+                        value={newForm}
+                        busy={creating === "COLLECTION"}
+                        onChange={setNewForm}
+                        onSubmit={() => void createCollectionFromForm()}
+                        onCancel={() => {
+                          setNewForm(null);
+                          setCreateFailed(false);
+                        }}
+                      />
+                    ) : (
+                      <NewRow
+                        icon={<Plus className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />}
+                        label={t("newCollection")}
+                        disabled={creating !== null}
+                        onClick={() => setNewForm({ name: "", visibility: "PRIVATE" })}
+                      />
+                    )}
                   </li>
                   <li>
                     <NewRow
@@ -268,7 +370,7 @@ export function ConnectSheet({
                       hint={t("newPathHint")}
                       busy={creating === "PATH"}
                       disabled={creating !== null}
-                      onClick={() => createAndSelect("PATH")}
+                      onClick={() => void createPathAndSelect()}
                     />
                   </li>
                   {createFailed && (
@@ -316,7 +418,12 @@ export function ConnectSheet({
                 aria-label={t("whyLabel")}
                 className="mt-2 w-full resize-none border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-[15px] leading-relaxed text-slate-900 outline-none transition-colors focus:border-accent-600 dark:border-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500"
               />
-              <p className="mt-3 text-[12px] text-slate-500 dark:text-slate-400">
+              {/* Quiet remaining-length counter, right-aligned under the field (maxLength already caps it;
+                  this just makes the limit legible as you approach it). Digits only — no i18n needed. */}
+              <p className="mt-1 text-right text-[12px] tabular-nums text-slate-400 dark:text-slate-500">
+                {why.length}/280
+              </p>
+              <p className="mt-2 text-[12px] text-slate-500 dark:text-slate-400">
                 {t("addToCount", { count: selected.size })}
               </p>
               {failed && (
@@ -348,6 +455,40 @@ export function ConnectSheet({
       </div>
     </div>,
     document.body,
+  );
+}
+
+/** The text column of a collection row — title, a recent-items preview, and the kind/visibility/count
+ *  meta line. Shared by the pick button and the inert (already-in) row. */
+function CollectionRowText({
+  c,
+  t,
+}: {
+  c: CollectionSummary;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  return (
+    <>
+      <span className="block truncate text-[14px] font-medium text-slate-900 dark:text-slate-100">
+        {c.title}
+      </span>
+      {c.preview.length > 0 && (
+        <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">
+          {c.preview.join(" · ")}
+        </span>
+      )}
+      <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
+        {c.kind === "PATH" && (
+          <>
+            <CornerDownRight className="h-3 w-3 text-accent-600 dark:text-accent-500" />
+            <span className="text-accent-700 dark:text-accent-400">{t("kindPath")}</span>
+            <span aria-hidden>·</span>
+          </>
+        )}
+        <VisibilityGlyph visibility={c.visibility} />
+        <span>{t("itemCount", { count: c.count })}</span>
+      </span>
+    </>
   );
 }
 
@@ -385,6 +526,72 @@ function NewRow({
   );
 }
 
+/**
+ * Inline "new collection" mini-form — a required name plus the everyday visibility pair (private /
+ * public; UNLISTED stays a detail-editor choice). Replaces the plain create row so a collection is
+ * named on purpose, born with the visibility you choose, instead of silently inheriting the post title.
+ * "만들기" is disabled until the name is non-empty.
+ */
+function NewCollectionForm({
+  value,
+  busy,
+  onChange,
+  onSubmit,
+  onCancel,
+}: {
+  value: { name: string; visibility: CollectionVisibility };
+  busy: boolean;
+  onChange: (v: { name: string; visibility: CollectionVisibility }) => void;
+  onSubmit: () => void;
+  onCancel: () => void;
+}) {
+  const t = useTranslations("collections");
+  const canCreate = value.name.trim().length > 0 && !busy;
+  return (
+    <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-800/60">
+      <input
+        autoFocus
+        value={value.name}
+        onChange={(e) => onChange({ ...value, name: e.target.value })}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && canCreate) {
+            e.preventDefault();
+            onSubmit();
+          }
+        }}
+        maxLength={120}
+        placeholder={t("newCollectionNamePlaceholder")}
+        aria-label={t("newCollectionNameLabel")}
+        className="w-full border-0 border-b border-slate-200 bg-transparent px-0 py-1.5 text-[14px] font-medium text-slate-900 outline-none transition-colors focus:border-accent-600 dark:border-slate-600 dark:text-slate-100 dark:placeholder:text-slate-500"
+      />
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <NewVisibilityToggle
+          value={value.visibility}
+          onChange={(v) => onChange({ ...value, visibility: v })}
+        />
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="focus-ring rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700"
+          >
+            {t("cancel")}
+          </button>
+          <button
+            type="button"
+            disabled={!canCreate}
+            onClick={onSubmit}
+            className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-3 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+          >
+            {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+            {t("create")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function VisibilityGlyph({ visibility }: { visibility: CollectionSummary["visibility"] }) {
   if (visibility === "PUBLIC") return <Globe className="h-3 w-3" />;
   if (visibility === "UNLISTED") return <LinkIcon className="h-3 w-3" />;
@@ -410,7 +617,7 @@ function NewVisibilityToggle({
     <div
       role="radiogroup"
       aria-label={t("visibilityLabel")}
-      className="inline-flex gap-1 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
+      className="inline-flex gap-1 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-700/70"
     >
       {opts.map(({ key, label, Icon }) => {
         const active = value === key;
@@ -423,7 +630,7 @@ function NewVisibilityToggle({
             onClick={() => onChange(key)}
             className={`focus-ring inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors ${
               active
-                ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-slate-100"
+                ? "bg-white text-slate-900 shadow-sm dark:bg-slate-600 dark:text-slate-100"
                 : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >

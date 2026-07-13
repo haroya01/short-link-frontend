@@ -764,6 +764,7 @@
     "bookmarks": "Bookmarks",
     "liked": "Liked posts",
     "library": "Library",
+    "myCollections": "My collections",
     "showcase": "Profiles",
     "campaigns": "QR Campaigns",
     "pricing": "Pricing",
@@ -3569,6 +3570,22 @@
     "removeItem": "Remove",
     "removeItemConfirmTitle": "Remove this connection?",
     "removeItemConfirmBody": "It leaves this collection. The item itself isn't deleted.",
-    "manageHint": "This is your collection"
+    "manageHint": "This is your collection",
+    "connectedBadge": "Added",
+    "unlink": "Remove",
+    "unlinkError": "Couldn't remove it. Please try again.",
+    "connectedToast": "{count, plural, one {Added to # collection} other {Added to # collections}}",
+    "connectedPartialToast": "Only some were added. Please try again.",
+    "newCollectionNamePlaceholder": "Collection name",
+    "newCollectionNameLabel": "Name",
+    "create": "Create",
+    "connectLabel": "Connect",
+    "myCollectionsMetaTitle": "My collections",
+    "myCollectionsTitle": "My collections",
+    "myCollectionsSubtitle": "The collections and paths you've made — private ones live here too.",
+    "myCollectionsLoadError": "Couldn't load them.",
+    "myCollectionsEmptyTitle": "No collections yet",
+    "myCollectionsEmptyBody": "While reading a post or a sentence, use “Connect” to start your first collection.",
+    "myCollectionsEmptyCta": "Find something to read"
   }
 }
