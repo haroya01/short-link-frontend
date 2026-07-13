@@ -47,3 +47,31 @@ test("unknown collection id is a graceful 404, not a 500 crash", async ({ page }
   // 없는 컬렉션 = notFound() 로 떨어져야지, 라우트가 throw 해서 500 나면 안 된다.
   expect(res?.status()).toBeLessThan(500);
 });
+
+test("my collections page lists the viewer's own collections, private included", async ({ page }) => {
+  // 목 모드는 시드 토큰으로 로그인 상태 → 내 컬렉션(비공개 포함)이 나열된다. 시드된 두 컬렉션 제목 +
+  // 길(PATH) 표식으로 실제로 목록이 그려졌는지 확인(빈/에러 상태가 아님).
+  await page.goto("/en/blog/collections");
+  await expect(page.getByRole("heading", { name: "My collections" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /결정을 남기는 법/ })).toBeVisible(); // 시드 PATH
+  await expect(page.getByRole("link", { name: /프로덕트 노트/ })).toBeVisible(); // 시드 COLLECTION
+  // 행을 누르면 그 컬렉션 상세로 — blogPath 는 dev(호스트 미설정)에서 /blog-preview 로 떨어지므로
+  // 접두사와 무관하게 컬렉션 2 상세 경로로 갔는지만 본다.
+  await page.getByRole("link", { name: /프로덕트 노트/ }).click();
+  await expect(page).toHaveURL(/\/collections\/2$/);
+});
+
+test("connect sheet marks a collection the post is already in, and offers to unlink", async ({
+  page,
+}) => {
+  // 시드: POST id 3(haruka/hexagonal-too-much)은 이미 COLLECTION "프로덕트 노트"에 연결돼 있다.
+  // 그 글에서 연결 시트를 열면 그 컬렉션 행이 "담김" 배지 + "해제"로 뜨고, 체크 사각이 아니다.
+  await page.goto("/en/p/haruka/hexagonal-too-much");
+  // 연결 버튼(아이콘 + "Connect" 라벨) — 액션열에 둘(상·하단) 있으니 첫 번째를 연다.
+  await page.getByRole("button", { name: /connect/i }).first().click();
+  const sheet = page.getByRole("dialog");
+  await expect(sheet).toBeVisible();
+  // 이미 담긴 컬렉션 = "Added" 배지 + "Remove"(해제) 버튼.
+  await expect(sheet).toContainText("Added");
+  await expect(sheet.getByRole("button", { name: "Remove" })).toBeVisible();
+});

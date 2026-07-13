@@ -43,6 +43,9 @@ export function ConnectButton({ postId, postTitle }: { postId: number; postTitle
         <span className={`inline-flex ${interacted ? "subscribe-pop" : ""}`}>
           <Link2 className="h-4 w-4" />
         </span>
+        {/* Icon + word (동형 with the share button) — "연결" is the verb, so labelling it makes the
+            action legible instead of a bare glyph the reader has to guess. */}
+        <span>{tc("connectLabel")}</span>
       </button>
       {open && (
         <ConnectSheet

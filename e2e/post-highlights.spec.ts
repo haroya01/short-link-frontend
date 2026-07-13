@@ -292,17 +292,19 @@ test("deleting your own highlight unpaints its <mark> (create → thread → del
 });
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
-// Connect (연결) from a highlight → "새 컬렉션" on a MOBILE viewport. The reported bug: on mobile the
-// "새 컬렉션" row looked dead — tapping it did nothing visible. Two causes fixed together: the create
-// row's onClick works over touch (the sheet portals to <body>, so no transformed ancestor traps its
-// fixed backdrop), AND a create failure used to be swallowed by an empty catch (no row, no feedback,
-// no step change = "무반응"). This pins the observable success contract on the small screen: tapping
-// "New collection" appends a selected row named after the quote, flipping the CTA from "pick" → "next".
+// Connect (연결) from a highlight → the "New collection" mini-form on a MOBILE viewport. Two things are
+// pinned here on the small screen: (1) the create controls respond to touch at all — the sheet portals
+// to <body>, so no transformed ancestor traps its fixed backdrop and a tap over the form isn't dropped;
+// (2) the create now goes through a named mini-form (name + visibility) instead of silently borrowing
+// the quote as the title, and a successful create appends a SELECTED row, flipping the CTA "pick" →
+// "Next". (The earlier "무반응" bug — a swallowed create failure — is now surfaced inline in the form.)
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 test.describe("connect a highlight to a new collection (mobile)", () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
 
-  test("tapping 'New collection' adds a selected row and enables the Next step", async ({ page }) => {
+  test("the New collection mini-form creates a named collection and enables the Next step", async ({
+    page,
+  }) => {
     await page.goto(POST_PATH);
     await waitReady(page);
 
@@ -322,12 +324,19 @@ test.describe("connect a highlight to a new collection (mobile)", () => {
     await expect(cta).toBeVisible();
     const rowsBefore = await sheet.locator("ul > li").count();
 
-    // Tap "New collection" — the core repro. A working create appends a new row AND selects it.
+    // Tap "New collection" — opens the inline mini-form (name + visibility), not an instant create.
     await sheet.getByRole("button", { name: "New collection" }).click();
+    const nameInput = sheet.getByPlaceholder("Collection name");
+    await expect(nameInput).toBeVisible();
+    // Create is inert until the name is non-empty (a collection is named on purpose).
+    await expect(sheet.getByRole("button", { name: "Create", exact: true })).toBeDisabled();
 
-    // A new list row appears (create round-tripped, not swallowed) …
+    // Name it and create — the core mobile-touch repro: the form controls actually respond.
+    await nameInput.fill("모바일에서 만든 컬렉션");
+    await sheet.getByRole("button", { name: "Create", exact: true }).click();
+
+    // A new list row appears (create round-tripped) AND it's selected, so the CTA advances to "Next".
     await expect(sheet.locator("ul > li")).toHaveCount(rowsBefore + 1, { timeout: 10_000 });
-    // … and it's selected, so the CTA advances from "pick" to "Next" (proves the tap did something).
     await expect(sheet.getByRole("button", { name: "Next", exact: true })).toBeVisible();
   });
 });

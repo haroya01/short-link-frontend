@@ -7,6 +7,7 @@ import {
   Check,
   ChevronDown,
   Globe,
+  Layers,
   LogOut,
   Newspaper,
   Settings,
@@ -151,6 +152,12 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
               <a href={blogHref("/curation")} role="menuitem" className={itemClass}>
                 <Bookmark className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("library")}
+              </a>
+              {/* 내 컬렉션 — the reader's own collections/paths (private included), the make-side twin of
+                  the discover feed. */}
+              <a href={blogHref("/collections")} role="menuitem" className={itemClass}>
+                <Layers className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                {t("myCollections")}
               </a>
             </>
           )}

@@ -1,7 +1,10 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { ChevronRight, Layers } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { blogPath } from "@/lib/host";
+import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CollapsibleSection } from "@/modules/blog/components/saved/collapsible-section";
 import { SmartShelf } from "@/modules/blog/components/saved/smart-shelf";
 import { LikedList } from "@/modules/blog/components/saved/liked-list";
@@ -17,6 +20,7 @@ import { FollowedTagsShelf } from "@/modules/blog/components/saved/followed-tags
  */
 export default function SavedPostsPage() {
   const t = useTranslations("blogWorkspace");
+  const tColl = useTranslations("collections");
   const locale = useLocale();
   const { ready, authenticated, me } = useAuth();
 
@@ -30,8 +34,26 @@ export default function SavedPostsPage() {
       <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("savedTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("savedSubtitle")}</p>
 
+      {/* 내 컬렉션 — 저장한 글(읽기 위주)과 나란히 두는, 내가 엮은 컬렉션/길로 가는 진입점. 여기 섹션들과
+          달리 별도 페이지라 접히는 목록이 아니라 링크 행으로 둔다. */}
+      <BlogLink
+        href={blogPath("/collections")}
+        className="focus-ring mt-6 flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/40"
+      >
+        <Layers className="h-4 w-4 shrink-0 text-accent-600 dark:text-accent-500" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13px] font-bold text-slate-800 dark:text-slate-200">
+            {tColl("myCollectionsTitle")}
+          </span>
+          <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">
+            {tColl("myCollectionsSubtitle")}
+          </span>
+        </span>
+        <ChevronRight className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+      </BlogLink>
+
       {/* 저장한 글 = 한 번에 한 곳에 집중 — 각 섹션을 필요할 때 펼친다(읽기 리스트만 기본 열림). */}
-      <div className="mt-8 space-y-3">
+      <div className="mt-6 space-y-3">
         <CollapsibleSection title={t("curationReadingList")} hint={t("curationReadingListHint")} defaultOpen>
           {/* Unified with the profile's 보관함 — smart shelf (manual folders + auto tag groups). */}
           <SmartShelf username={me?.username ?? ""} locale={locale} />

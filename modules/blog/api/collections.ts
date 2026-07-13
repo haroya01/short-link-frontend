@@ -58,6 +58,11 @@ export interface CollectionSummary {
   /** Total connections in the collection/path — the denominator for `position` (post-collections
    *  responses only; equals `count` but named to read as "M of N"). */
   total?: number | null;
+  /** When `listMyCollections` is asked about a specific block (blockType + refId), the PK of the
+   *  existing connection that already ties THAT block into THIS collection — or `null` if it isn't in
+   *  it yet. Lets the connect sheet show "이미 담김" + an unlink affordance (the connect endpoint stays
+   *  idempotent, but the UI avoids re-adding). Absent when the list is fetched without a block context. */
+  connectionId?: number | null;
 }
 
 /** One connection in a collection — a flat block payload (the backend folds post/highlight/note into
@@ -148,10 +153,22 @@ export interface NewCollection {
   kind: CollectionKind;
 }
 
-/** Authenticated — my collections (most recently touched first). */
-export function listMyCollections(): Promise<CollectionSummary[]> {
-  if (USE_MOCKS) return Promise.resolve(mockMineCollections());
-  return request<CollectionSummary[]>("/api/v1/users/me/collections", { method: "GET" });
+/**
+ * Authenticated — my collections (most recently touched first). Pass a `block` context (blockType +
+ * refId) and each returned row carries `connectionId`: the PK of the existing connection tying that
+ * block into the collection, or `null` if it isn't in it yet (backend #617). The connect sheet uses it
+ * to mark rows already holding the block and offer an unlink; the plain list surfaces call it with no
+ * argument.
+ */
+export function listMyCollections(block?: {
+  blockType: ConnectionBlockType;
+  refId: number;
+}): Promise<CollectionSummary[]> {
+  if (USE_MOCKS) return Promise.resolve(mockMineCollections(block));
+  const query = block
+    ? `?blockType=${encodeURIComponent(block.blockType)}&refId=${block.refId}`
+    : "";
+  return request<CollectionSummary[]>(`/api/v1/users/me/collections${query}`, { method: "GET" });
 }
 
 /** A curator's PUBLIC collections/paths — backs the author home "컬렉션" tab. Public (readable
