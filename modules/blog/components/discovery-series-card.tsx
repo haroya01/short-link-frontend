@@ -51,10 +51,16 @@ export function DiscoverySeriesCard({
   });
 
   const [idx, setIdx] = useState(0);
+  // 넘김 순간에만 참 — 이때만 will-change 로 레이어를 승격한다(아래 주석).
+  const [flipping, setFlipping] = useState(false);
   // 자동 넘김은 폐기 — 정적인 그리드에서 혼자 3.4s 마다 도는 카드는 화면에서 가장 시끄러운
   // 존재였고(iPad 실기기에서 "깜빡임" 신고), §10.7 의 "ambient 는 희소할 때만"과도 어긋났다.
   // 한 장 넘김은 우측 플립 엣지(수동)만 남는다.
-  const advance = () => setIdx((i) => (i + 1) % n);
+  const advance = () => {
+    setFlipping(true);
+    setIdx((i) => (i + 1) % n);
+    window.setTimeout(() => setFlipping(false), 620);
+  };
 
   if (n === 0) return null;
 
@@ -77,14 +83,18 @@ export function DiscoverySeriesCard({
               key={p.slug}
               aria-hidden={!front}
               // transition-all 은 zIndex 의 이산 점프까지 페인트 사이클에 끌어들여 Safari 에서
-              // 전환마다 번쩍였다 — transform/opacity 만 전환하고, translateZ(0) 로 각 페이지를
-              // 자기 컴포지터 레이어에 고정해 재래스터 플래시를 막는다.
+              // 전환마다 번쩍였다 — transform/opacity 만 전환한다. 예전엔 translateZ(0) 로 페이지를
+              // 상시 컴포지터 레이어에 고정했지만, WebKit 은 다단 컬럼(columns) 안의 상시 레이어를
+              // 레티나(DPR≥2)에서 그 컬럼 조각째 페인트 누락시킨다(아이패드 가로 "빈 카드" 신고의
+              // 원인 — 자리와 클릭은 살아 있는데 그림만 없음). 그래서 정지 상태엔 레이어를 만들지
+              // 않고, 넘김이 진행되는 동안만 will-change 로 잠깐 승격해 재래스터 플래시를 막는다.
               className="absolute inset-0 transition-[transform,opacity] duration-500 ease-[var(--ease)]"
               style={{
-                transform: `scale(${front ? 1 : 0.97}) translateZ(0)`,
+                transform: `scale(${front ? 1 : 0.97})`,
                 zIndex: front ? 2 : 1,
                 opacity: front ? 1 : 0,
                 pointerEvents: front ? "auto" : "none",
+                willChange: flipping ? "transform, opacity" : undefined,
               }}
             >
               <div
