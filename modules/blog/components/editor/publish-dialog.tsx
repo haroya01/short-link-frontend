@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CalendarClock, Check, ChevronDown, ImagePlus, Link2, Loader2, Trash2, X } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { CalendarClock, Check, ChevronDown, ImagePlus, Link2, Loader2, X } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { DATE_LOCALE } from "@/lib/date";
 import type { PostStatus } from "@/modules/blog/api/posts";
 import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
 import { BrandTick } from "@/modules/blog/components/rail-heading";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
+import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useKeyboardInset } from "@/hooks/use-keyboard-inset";
 import { useAuth } from "@/lib/auth";
@@ -104,6 +106,7 @@ export function PublishDialog({
   onSchedule: (iso: string, opts?: { shortenLinks?: string[] }) => Promise<boolean>;
 }) {
   const t = useTranslations("postEditor");
+  const locale = useLocale();
   const { me } = useAuth();
   // On mobile the on-screen keyboard shrinks the visual viewport; lift the sheet by that inset so the
   // sticky footer (Publish) and lower fields stay reachable while a field is focused (0 on desktop).
@@ -219,6 +222,15 @@ export function PublishDialog({
   const goingPublic = status === "DRAFT" || status === "UNPUBLISHED";
   const showLinkNote = goingPublic && enabledLinks.length > 0;
 
+  // Card preview mirrors the real FeedCard: eyebrow = first DISPLAYABLE tag, date pinned to Seoul
+  // (the hydration rule for date formatting) — the meta line is display-only realism.
+  const eyebrowTag = tags.find(isDisplayableTag);
+  const todayLabel = new Date().toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
+    month: "long",
+    day: "numeric",
+    timeZone: "Asia/Seoul",
+  });
+
   // local datetime min (now) for the schedule input.
   const now = new Date();
   const localMin = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
@@ -259,14 +271,15 @@ export function PublishDialog({
         </header>
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
-          {/* ── 카드 미리보기: 커버 · 제목 · 요약 · 태그가 독자에게 보일 모양 그대로. 요약은 카드 안에서
-              바로 고치고, 라벨 달린 폼 필드(대표 이미지 / 요약)와 그 힌트 문장들을 이 한 덩어리가
-              대체한다 — 보여주는 게 설명하는 것보다 빠르다. */}
+          {/* ── 카드 미리보기: 실제 피드 카드(FeedCard §10.2)와 같은 행 문법 — 대표 태그 → 제목 →
+              요약 → 작가·날짜, 이미지는 오른쪽 작은 4:3 썸네일(없으면 완성된 타이포 행). 요약은 행
+              안에서 바로 고치고, 커버 조작은 카드 아래 한 줄로 뺀다(축소된 썸네일 위 오버레이는
+              들어갈 자리가 없다). 라벨 달린 폼 필드와 힌트 문장들을 이 한 덩어리가 대체한다. */}
           <section aria-label={t("previewCardLabel")}>
             <p className="mb-2 text-[12px] font-medium text-slate-500 dark:text-slate-400">
               {t("previewCardLabel")}
             </p>
-            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+            <div className="rounded-xl border border-slate-200 px-4 py-4 dark:border-slate-700">
               <input
                 ref={fileRef}
                 type="file"
@@ -278,90 +291,97 @@ export function PublishDialog({
                   if (f) void pickCover(f);
                 }}
               />
-              {cover ? (
-                <div className="relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={cover} alt="" className="aspect-[1200/630] w-full object-cover" />
-                  {autoCover && (
-                    <span className="absolute left-2 top-2 rounded-md bg-slate-900/70 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur">
-                      {t("coverAuto")}
-                    </span>
+              <div className="flex gap-4 sm:gap-6">
+                <div className="min-w-0 flex-1">
+                  {eyebrowTag && (
+                    <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">{eyebrowTag}</span>
                   )}
-                  <div className="absolute right-2 top-2 flex gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => fileRef.current?.click()}
-                      className="rounded-lg bg-slate-900/70 px-2.5 py-1 text-[12px] font-medium text-white backdrop-blur transition-colors hover:bg-slate-900/85"
-                    >
-                      {t("coverReplace")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={removeCover}
-                      aria-label={t("coverRemove")}
-                      className="grid h-7 w-7 place-items-center rounded-lg bg-slate-900/70 text-white backdrop-blur transition-colors hover:bg-red-600/90"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                // 이미지 없는 글 = 타이포 카드(§10.4)가 기본이라, 빈 커버는 큰 드롭존이 아니라 카드 위의
-                // 얇은 선택지 한 줄이다. 본문에 이미지가 있으면(자동 커버를 지웠던 경우) 1탭 복구도 함께.
-                <div className="px-4 pt-4">
-                  <div className="flex min-h-[3rem] flex-wrap items-center justify-center gap-x-4 gap-y-1 rounded-lg border border-dashed border-slate-200 px-3 py-1.5 dark:border-slate-700">
-                    <button
-                      type="button"
-                      onClick={() => fileRef.current?.click()}
-                      disabled={uploading}
-                      className="focus-ring inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[12px] font-medium text-slate-500 transition-colors hover:text-accent-700 disabled:opacity-60 dark:text-slate-400 dark:hover:text-accent-300"
-                    >
-                      {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
-                      {uploading ? t("coverUploading") : t("coverAdd")}
-                    </button>
-                    {!uploading && coverSuggestion && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAutoCover(false); // tapped back on deliberately — no machine badge
-                          onCoverChange(coverSuggestion);
-                        }}
-                        className="focus-ring inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[12px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
-                      >
-                        {t("coverFromBody")}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
-              <div className="px-4 pb-4 pt-3.5">
-                <p
-                  className={`truncate text-[16px] font-bold ${
-                    title.trim() ? "text-slate-900 dark:text-slate-100" : "text-slate-400 dark:text-slate-500"
-                  }`}
-                >
-                  {title.trim() || t("untitled")}
-                </p>
-                <textarea
-                  value={excerpt}
-                  onChange={(e) => onExcerptChange(e.target.value)}
-                  maxLength={300}
-                  rows={3}
-                  placeholder={t("excerptPlaceholder")}
-                  aria-label={t("excerptPlaceholder")}
-                  className="mt-1 w-full resize-none border-b border-transparent bg-transparent text-[14px] leading-relaxed text-slate-600 outline-none transition-colors placeholder:text-slate-400 focus:border-accent-400 dark:text-slate-300 dark:focus:border-accent-500"
-                />
-                {/* Count only as the cap nears — a standing 47/300 under every 요약 was noise. */}
-                {excerpt.length >= 270 && <CharCount value={excerpt} max={300} />}
-                {tags.length > 0 && (
-                  <p className="mt-1 truncate text-[13px] text-slate-500 dark:text-slate-400">
-                    {tags.map((tag) => `#${tag}`).join("  ")}
+                  <p
+                    className={`mt-1 line-clamp-2 text-card-title-sm font-bold leading-[1.3] tracking-tight ${
+                      title.trim() ? "text-slate-900 dark:text-slate-100" : "text-slate-400 dark:text-slate-500"
+                    }`}
+                  >
+                    {title.trim() || t("untitled")}
                   </p>
+                  <textarea
+                    value={excerpt}
+                    onChange={(e) => onExcerptChange(e.target.value)}
+                    maxLength={300}
+                    rows={2}
+                    placeholder={t("excerptPlaceholder")}
+                    aria-label={t("excerptPlaceholder")}
+                    className="mt-1.5 w-full resize-none border-b border-transparent bg-transparent text-[14px] leading-relaxed text-slate-500 outline-none transition-colors placeholder:text-slate-400 focus:border-accent-400 dark:text-slate-400 dark:focus:border-accent-500"
+                  />
+                  {/* Count only as the cap nears — a standing 47/300 under every 요약 was noise. */}
+                  {excerpt.length >= 270 && <CharCount value={excerpt} max={300} />}
+                  <p className="mt-1 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
+                    <span className="truncate font-medium">{me?.username}</span>
+                    <span aria-hidden>·</span>
+                    <span className="shrink-0">{todayLabel}</span>
+                  </p>
+                </div>
+                {cover && (
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={cover} alt="" className="h-full w-full object-cover" />
+                  </div>
                 )}
               </div>
             </div>
+            {/* 커버 조작 한 줄 — 자동 적용 출처 라벨 + 교체/제거, 커버가 없으면 추가(+본문 첫 이미지). */}
+            <div className="mt-1.5 flex flex-wrap items-center justify-end gap-x-3 gap-y-1 px-1">
+              {uploading ? (
+                <span className="inline-flex items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  {t("coverUploading")}
+                </span>
+              ) : cover ? (
+                <>
+                  {autoCover && (
+                    <span className="text-[11px] text-slate-400 dark:text-slate-500">{t("coverAuto")}</span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="focus-ring rounded px-1 text-[12px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
+                  >
+                    {t("coverReplace")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={removeCover}
+                    className="focus-ring rounded px-1 text-[12px] font-medium text-slate-500 transition-colors hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
+                  >
+                    {t("coverRemove")}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="focus-ring inline-flex items-center gap-1.5 rounded px-1 text-[12px] font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
+                  >
+                    <ImagePlus className="h-3.5 w-3.5" />
+                    {t("coverAdd")}
+                  </button>
+                  {coverSuggestion && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAutoCover(false); // tapped back on deliberately — no machine label
+                        onCoverChange(coverSuggestion);
+                      }}
+                      className="focus-ring rounded px-1 text-[12px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
+                    >
+                      {t("coverFromBody")}
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
             {coverError && (
-              <p className="mt-1.5 text-[12px] text-red-600 dark:text-red-400" role="alert">
+              <p className="mt-1 text-[12px] text-red-600 dark:text-red-400" role="alert">
                 {coverError}
               </p>
             )}
