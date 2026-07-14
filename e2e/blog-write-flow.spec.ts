@@ -842,6 +842,9 @@ test("slug is normalized (edge hyphens trimmed, lowercased) before the PATCH", a
   await setupMocks(page, captured);
   await openEditor(page);
   const dialog = await openPublishDialog(page);
+  // The address/slug field lives under the "Advanced settings" disclosure now (the dialog leads with
+  // the essentials — tags, cover, excerpt, series — and tucks slug + body-links away). Expand it first.
+  await dialog.getByRole("button", { name: "Advanced settings" }).click();
   await dialog.locator('input[spellcheck="false"]').fill("-Hello-World-");
   // Draft autosave normalizes + persists the slug (edge hyphens trimmed, lowercased).
   await expect.poll(() => captured.meta?.slug, { timeout: 15_000 }).toBe("hello-world");

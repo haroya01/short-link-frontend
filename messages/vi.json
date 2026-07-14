@@ -406,6 +406,7 @@
     "scheduleConfirm": "Lên lịch bài viết",
     "publishTiming": "Thời điểm đăng",
     "publishNow": "Đăng ngay",
+    "advancedSettings": "Cài đặt nâng cao",
     "slugFreezeWarn": "Địa chỉ sẽ bị khóa sau khi đăng.",
     "scheduleInvalid": "Chọn một thời điểm trong tương lai.",
     "slugTaken": "Địa chỉ này đã được dùng — hãy thử một địa chỉ khác.",
@@ -425,6 +426,14 @@
       "strike": "Gạch ngang",
       "inlineCode": "Mã nội dòng",
       "link": "Liên kết"
+    },
+    "imageBubble": {
+      "half": "Nửa chiều rộng",
+      "normal": "Chiều rộng mặc định",
+      "wide": "Rộng",
+      "alignLeft": "Căn trái",
+      "alignCenter": "Căn giữa",
+      "alignRight": "Căn phải"
     },
     "slash": {
       "groupBasic": "Cơ bản",

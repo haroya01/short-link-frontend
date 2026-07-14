@@ -1286,6 +1286,17 @@ body[data-cookie-consent="visible"] {
     transform: scale(1);
   }
 }
+/*
+ * Publish-dialog panel height cap. The `vh` line is the fallback for engines without `dvh` support
+ * (iOS Safari <15.4, older in-app WebViews): they drop the `dvh` line and keep this one, so the panel
+ * always has a height bound and its sticky footer (the 발행 button) stays on-screen. Modern engines
+ * take the `dvh` line, which tracks the dynamic viewport (URL bar show/hide). Order matters — the
+ * fallback must come first — which is why this lives in CSS, not two Tailwind arbitrary classes.
+ */
+.dialog-max-h {
+  max-height: 92vh;
+  max-height: 92dvh;
+}
 .post-lightbox {
   animation: post-lightbox-in 0.18s ease-out;
 }
@@ -1368,6 +1379,74 @@ body[data-cookie-consent="visible"] {
   .prose-post figure.post-img-half {
     display: block;
     width: 100%;
+  }
+}
+
+/*
+ * Left / right image alignment. A default (full-column) image has nowhere to shift, so left/right
+ * cap it to ~62% of the column and push it to that edge (the shift only reads when there's slack).
+ * A «half» image already carries its own 50% width, so align there just changes which side it hugs.
+ * Center is the default and needs no rule. Stacks to full width on phones (align is moot at that size).
+ */
+.prose-post figure.post-img-left,
+.prose-post figure.post-img-right {
+  display: block;
+  width: min(62%, 34rem);
+}
+.prose-post figure.post-img-left {
+  margin-right: auto;
+  margin-left: 0;
+}
+.prose-post figure.post-img-right {
+  margin-left: auto;
+  margin-right: 0;
+}
+/* A «half» image aligned left/right keeps its 50% width (the two-class selector outranks the 62% rule
+   above), only changing which edge it hugs — the align rule mustn't widen a half to 62%. */
+.prose-post figure.post-img-half.post-img-left {
+  width: calc(50% - 0.4rem);
+  margin-left: 0;
+  margin-right: auto;
+}
+.prose-post figure.post-img-half.post-img-right {
+  width: calc(50% - 0.4rem);
+  margin-left: auto;
+  margin-right: 0;
+}
+@media (max-width: 640px) {
+  .prose-post figure.post-img-left,
+  .prose-post figure.post-img-right {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* Editor (Tiptap) mirrors the align markers so placement reads while you write. Width markers stay
+   FIRST on the alt, so match them anywhere the align marker follows (^= would miss «wide» «left»). */
+.tiptap img[alt*="«left»"] {
+  display: block;
+  width: min(62%, 34rem);
+  margin-right: auto;
+  margin-left: 0;
+}
+.tiptap img[alt*="«right»"] {
+  display: block;
+  width: min(62%, 34rem);
+  margin-left: auto;
+  margin-right: 0;
+}
+.tiptap img[alt*="«center»"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (max-width: 640px) {
+  .tiptap img[alt*="«left»"],
+  .tiptap img[alt*="«right»"] {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
   }
 }
 

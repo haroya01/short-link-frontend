@@ -24,6 +24,15 @@ const BLOCK: { re: RegExp; kind: "heading" | "bullet" | "ordered" | "quote" }[] 
   { re: /^(>) $/, kind: "quote" },
 ];
 
+// A whole-paragraph divider marker → horizontal rule. Covers `---`, `***`, `___` (all CommonMark
+// thematic breaks). This has to live here, not just in StarterKit's native input rule, for two
+// reasons: (1) a phone IME bypasses `handleTextInput`, so `---` typed on mobile never triggered the
+// native rule and serialized as an escaped `\---` PARAGRAPH (no divider in the published post); and
+// (2) StarterKit's rule only matches `---`, so `***`/`___` never converted on any platform. The rule
+// fires the moment the third marker char completes an otherwise-empty paragraph — no trailing space
+// needed (a divider has no text after it).
+const DIVIDER_RE = /^(-{3,}|\*{3,}|_{3,})$/;
+
 // Inline marks — a "<marker>text<marker>" run whose closing marker was just typed. Ordered so the
 // greedier/compound markers are tested before their single-char counterparts (code/**/~~ before *).
 const INLINE: { mark: string; re: RegExp; len: number }[] = [
@@ -59,6 +68,15 @@ export const MarkdownShortcuts = Extension.create({
 
           // --- Block: only a plain top-level paragraph promotes (lists/quotes/headings keep their own). ---
           if (parent.type.name === "paragraph") {
+            // Divider — the whole paragraph is just `---`/`***`/`___`. Replace the paragraph with a
+            // horizontalRule so it round-trips as a DIVIDER block (the reader draws the section rule).
+            const horizontalRule = schema.nodes.horizontalRule;
+            if (horizontalRule && DIVIDER_RE.test(before) && before === parent.textContent) {
+              // Swap the whole marker paragraph (its outer boundaries) for an HR, so the `---` text is
+              // gone rather than left sitting above the rule.
+              const tr = newState.tr.replaceRangeWith($from.before(), $from.after(), horizontalRule.create());
+              return tr.setMeta(KEY, true);
+            }
             for (const { re, kind } of BLOCK) {
               const m = before.match(re);
               if (!m) continue;

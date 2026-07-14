@@ -406,6 +406,7 @@
     "scheduleConfirm": "पोस्ट शेड्यूल करें",
     "publishTiming": "प्रकाशन समय",
     "publishNow": "अभी प्रकाशित करें",
+    "advancedSettings": "उन्नत सेटिंग्स",
     "slugFreezeWarn": "प्रकाशित होने के बाद पता बदला नहीं जा सकता।",
     "scheduleInvalid": "भविष्य का समय चुनें।",
     "slugTaken": "यह पता पहले से लिया जा चुका है — कोई और आज़माएँ।",
@@ -425,6 +426,14 @@
       "strike": "स्ट्राइकथ्रू",
       "inlineCode": "इनलाइन कोड",
       "link": "लिंक"
+    },
+    "imageBubble": {
+      "half": "आधी चौड़ाई",
+      "normal": "डिफ़ॉल्ट चौड़ाई",
+      "wide": "चौड़ा",
+      "alignLeft": "बाएँ संरेखित",
+      "alignCenter": "मध्य संरेखित",
+      "alignRight": "दाएँ संरेखित"
     },
     "slash": {
       "groupBasic": "बुनियादी",

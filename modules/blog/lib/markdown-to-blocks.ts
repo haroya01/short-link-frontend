@@ -8,6 +8,16 @@ import { isImageUrl, planEmbed } from "@/modules/blog/lib/post-embed";
  * URL when it's an embeddable provider (YouTube / Vimeo). velog-style: drop a YouTube link on its
  * own line and it becomes a player. Other URLs return null and stay a normal paragraph/link.
  */
+// A full markdown image incl. an optional title that may contain escaped quotes — used to test that a
+// line is "nothing but images". Mirrors the capturing regex below; `[^)\s]+` keeps the URL paren-free
+// (kurl-hosted image URLs are), so a `)` inside a title still ends the match at the closing paren.
+const IMG_STRIP_RE = /!\[[^\]]*\]\([^)\s]+(?:\s+"(?:[^"\\]|\\.)*")?\)/g;
+
+/** Undo tiptap-markdown's title escaping (`\"` → `"`, `\\` → `\`) when reading a caption back out. */
+function unescapeTitle(s: string): string {
+  return s.replace(/\\(["\\])/g, "$1");
+}
+
 /** A backtick fence longer than any run of backticks in the code, so the code can't break out. */
 export function fenceFor(code: string): string {
   const longest = (code.match(/`+/g) ?? []).reduce((m, s) => Math.max(m, s.length), 0);
@@ -148,18 +158,23 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
 
     // One OR MORE images on a line (a side-by-side «half» pair serializes adjacent: `![a](u)![b](u)`)
     // → one IMAGE block each, so the 2-up row round-trips. Only when the line is *nothing but* images.
-    // 표준 마크다운 image title `![alt](url "캡션")` 의 title 을 캡션으로 싣는다(리더 figcaption).
-    const imgMatches = [...line.matchAll(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g)];
-    if (imgMatches.length > 0 && line.replace(/!\[[^\]]*\]\([^)]+\)/g, "").trim() === "") {
+    // 표준 마크다운 image title `![alt](url "캡션")` 의 title 을 캡션으로 싣는다(리더 figcaption). The
+    // title allows escaped quotes (`\"`) — tiptap-markdown backslash-escapes a `"` inside the caption,
+    // so a caption like `she said "hi"` serializes as `"she said \"hi\""`; without honoring the escape
+    // the whole image match failed and the image fell back to a literal-text PARAGRAPH.
+    const imgMatches = [...line.matchAll(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"((?:[^"\\]|\\.)*)")?\)/g)];
+    if (imgMatches.length > 0 && line.replace(IMG_STRIP_RE, "").trim() === "") {
       for (const im of imgMatches) {
-        const { width, dims, alt } = parseImageAlt(im[1]);
-        const caption = im[3]?.trim();
+        const { width, align, dims, alt } = parseImageAlt(im[1]);
+        const caption = im[3] != null ? unescapeTitle(im[3]).trim() : undefined;
         blocks.push({
           type: "IMAGE",
           content: JSON.stringify({
             url: im[2],
             alt,
             ...(width ? { width } : {}),
+            // Horizontal placement (left/center/right). "center" is the default so it's never emitted.
+            ...(align ? { align } : {}),
             // Intrinsic size → reader reserves the aspect-ratio box up front (CLS-free). `naturalWidth`
             // avoids colliding with the layout `width` ("wide"/"full"/"half") above.
             ...(dims ? { naturalWidth: dims.w, naturalHeight: dims.h } : {}),
@@ -261,16 +276,21 @@ export function blocksToMarkdown(blocks: { type: string; content: string | null 
         try {
           const parsed = b.content ? JSON.parse(b.content) : null;
           if (parsed && typeof parsed.url === "string") {
-            // 캡션은 표준 image title 로 — `"` 는 title 을 깨므로 `'` 로 치환.
+            // 캡션은 표준 image title 로 — `"`/`\` 는 이스케이프해 title 을 깨지 않고 그대로 왕복시킨다
+            // (markdown-it 이 로드 시 `\"` 를 다시 `"` 로 읽어 figcaption 에 원문 그대로 뜬다).
             const cap =
               typeof parsed.caption === "string" && parsed.caption.trim()
-                ? ` "${parsed.caption.trim().replace(/"/g, "'")}"`
+                ? ` "${parsed.caption.trim().replace(/[\\"]/g, "\\$&")}"`
                 : "";
             const dims =
               typeof parsed.naturalWidth === "number" && typeof parsed.naturalHeight === "number"
                 ? { w: parsed.naturalWidth, h: parsed.naturalHeight }
                 : undefined;
-            parts.push(`![${altWithWidth(parsed.alt ?? "", parsed.width, dims)}](${parsed.url}${cap})`);
+            const align =
+              parsed.align === "left" || parsed.align === "right" || parsed.align === "center"
+                ? parsed.align
+                : undefined;
+            parts.push(`![${altWithWidth(parsed.alt ?? "", parsed.width, dims, align)}](${parsed.url}${cap})`);
           }
         } catch {
           // ignore malformed

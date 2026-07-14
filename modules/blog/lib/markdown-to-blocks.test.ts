@@ -76,6 +76,20 @@ describe("markdownToBlocks", () => {
     expect(blocksToMarkdown(blocks)).toBe(md);
   });
 
+  it("keeps an image whose caption contains a double-quote (escaped title round-trips)", () => {
+    // tiptap-markdown backslash-escapes a `"` inside the caption: `she said "hi"` → `"she said \"hi\""`.
+    // Before, the parser's title group stopped at the first inner quote, the whole image match failed,
+    // and the image degraded to a literal-text PARAGRAPH — the caption AND the image were lost.
+    const md = '![p](https://cdn/x.png "she said \\"hi\\"")';
+    const blocks = markdownToBlocks(md);
+    expect(blocks).toHaveLength(1);
+    expect(blocks[0].type).toBe("IMAGE");
+    const parsed = JSON.parse(blocks[0].content!);
+    expect(parsed).toEqual({ url: "https://cdn/x.png", alt: "p", caption: 'she said "hi"' });
+    // Round-trips: block caption re-escapes back to the same markdown, re-parses to the same block.
+    expect(markdownToBlocks(blocksToMarkdown(blocks))).toEqual(blocks);
+  });
+
   it("groups bullet list", () => {
     const blocks = markdownToBlocks("- one\n- two\n- three");
     expect(blocks).toHaveLength(1);
@@ -202,6 +216,32 @@ describe("image width", () => {
   it("a plain image has no width", () => {
     const [block] = markdownToBlocks("![plain](https://x/b.png)");
     expect(JSON.parse(block.content!)).toEqual({ url: "https://x/b.png", alt: "plain" });
+  });
+});
+
+describe("image align", () => {
+  it("parses a left/right-aligned image and round-trips it", () => {
+    const blocks = markdownToBlocks("![«left» My photo](https://x/a.png)");
+    expect(blocks).toEqual([
+      { type: "IMAGE", content: JSON.stringify({ url: "https://x/a.png", alt: "My photo", align: "left" }) },
+    ]);
+    expect(markdownToBlocks(blocksToMarkdown(blocks))).toEqual(blocks);
+  });
+
+  it("carries align alongside a width (half + right) and round-trips", () => {
+    const blocks = markdownToBlocks("![«half» «right» p](https://x/c.png)");
+    expect(JSON.parse(blocks[0].content!)).toEqual({ url: "https://x/c.png", alt: "p", width: "half", align: "right" });
+    expect(markdownToBlocks(blocksToMarkdown(blocks))).toEqual(blocks);
+  });
+
+  it("a center-aligned block emits a clean image with no align marker (center is the default)", () => {
+    // Author picked "center" (align:"center" in the block) → serialized markdown has no «center» marker,
+    // and re-parsing yields a block with no align key (clean).
+    const md = blocksToMarkdown([
+      { type: "IMAGE", content: JSON.stringify({ url: "https://x/d.png", alt: "p", align: "center" }) },
+    ]);
+    expect(md).toBe("![p](https://x/d.png)");
+    expect(JSON.parse(markdownToBlocks(md)[0].content!)).toEqual({ url: "https://x/d.png", alt: "p" });
   });
 });
 
