@@ -651,7 +651,8 @@
       "SEXUAL": "성적인 콘텐츠",
       "COPYRIGHT": "저작권 침해",
       "OTHER": "기타"
-    }
+    },
+    "publishedCelebration": "발행됐어요"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",

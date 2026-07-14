@@ -23,6 +23,7 @@ import { ApiError } from "@/lib/api/client";
 import { postHref } from "@/modules/blog/components/feed-card";
 import { rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
+import { stampPublishCelebration } from "@/modules/blog/lib/celebrate-publish";
 import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
 import { setEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -352,6 +353,8 @@ export function usePostEditor(
       // publishing ends on "here's my post", not back in the editor. Full assign covers the
       // cross-subdomain prod URL (postHref returns an absolute origin there).
       if (updated.status === "PUBLISHED" && username) {
+        // 첫 발행만 도착지에서 축하 연출 1회 — 재발행은 이미 나갔던 글이라 조용히 지나간다.
+        if (action === "publish") stampPublishCelebration(updated.slug);
         window.location.assign(postHref(username, updated.slug, locale));
       }
       return true;

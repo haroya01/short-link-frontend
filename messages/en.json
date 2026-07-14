@@ -651,7 +651,8 @@
       "SEXUAL": "Sexual content",
       "COPYRIGHT": "Copyright infringement",
       "OTHER": "Other"
-    }
+    },
+    "publishedCelebration": "Your post is live"
   },
   "imageCropper": {
     "title": "Crop image",

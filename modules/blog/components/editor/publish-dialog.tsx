@@ -7,6 +7,7 @@ import { DATE_LOCALE } from "@/lib/date";
 import type { PostStatus } from "@/modules/blog/api/posts";
 import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
 import type { StatusAction } from "@/modules/blog/components/editor/use-post-editor";
+import { Avatar } from "@/modules/blog/components/avatar";
 import { BrandTick } from "@/modules/blog/components/rail-heading";
 import { SeriesSelect } from "@/modules/blog/components/editor/series-select";
 import { TagInput } from "@/modules/blog/components/editor/tag-input";
@@ -314,8 +315,14 @@ export function PublishDialog({
                   />
                   {/* Count only as the cap nears — a standing 47/300 under every 요약 was noise. */}
                   {excerpt.length >= 270 && <CharCount value={excerpt} max={300} />}
-                  <p className="mt-1 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
-                    <span className="truncate font-medium">{me?.username}</span>
+                  {/* Meta mirrors FeedCard's MetaRow (mt-2 · avatar · name · date). Auth carries no
+                      avatarUrl, so the disc falls back to the initial — the same rendering an
+                      avatar-less author gets in the real feed; not worth a profile fetch here. */}
+                  <p className="mt-2 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
+                    <span className="flex min-w-0 items-center gap-1.5">
+                      <Avatar src={null} name={me?.username ?? ""} size="xs" />
+                      <span className="truncate font-medium">{me?.username}</span>
+                    </span>
                     <span aria-hidden>·</span>
                     <span className="shrink-0">{todayLabel}</span>
                   </p>
