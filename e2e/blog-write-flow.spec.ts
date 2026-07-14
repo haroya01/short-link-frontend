@@ -1150,6 +1150,8 @@ test("the slug field normalizes input live (caps/spaces/symbols → hyphen-case)
   await setupMocks(page, captured);
   await openEditor(page);
   const dialog = await openPublishDialog(page);
+  // 슬러그는 간소화된 폼의 "추가 설정" 아래로 접혀 있다 — 펼치고 채운다.
+  await dialog.getByRole("button", { name: /Advanced settings|추가 설정/ }).click();
   const slug = dialog.locator('input[spellcheck="false"]');
   await slug.fill("Hello World!");
   // normalizeSlugInput lowercases, turns invalid chars into single hyphens, drops a leading hyphen;
