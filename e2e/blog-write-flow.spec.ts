@@ -718,6 +718,13 @@ async function addDialogTag(dialog: Locator, name = "dev") {
   await input.press("Enter");
 }
 
+/** 시리즈 · 주소 · 발행 시점 · 본문 링크 live in the collapsed 추가 설정 section — expand it before
+ *  touching those fields. Substring match (getByRole's default): the toggle's accessible name also
+ *  carries the publish address shown on its row. */
+async function openAdvanced(dialog: Locator) {
+  await dialog.getByRole("button", { name: "Advanced settings" }).click();
+}
+
 test("publish: dialog Publish fires POST /publish and lands on the published post", async ({ page }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
@@ -786,7 +793,8 @@ test("schedule: a draft can be parked for a future publish (POST /schedule)", as
   await titleInput(page).fill("Scheduled one");
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog); // scheduling is a deferred publish → topic required too
-  // The 발행 시점 toggle is a segmented radio now (Publish now / Schedule), not a footer button.
+  // The 발행 시점 segment (Publish now / Schedule) folds into 추가 설정 — expand, then pick.
+  await openAdvanced(dialog);
   await dialog.getByRole("radio", { name: "Schedule", exact: true }).click();
   // Schedule mode swaps the primary action: "Publish" becomes "Schedule post", disabled until a
   // time is picked (an empty time used to fall through to an immediate publish).
@@ -1068,6 +1076,7 @@ test("assigning a freshly created series persists membership (PUT /series/:id/po
   });
   await openEditor(page);
   const dialog = await openPublishDialog(page);
+  await openAdvanced(dialog); // 시리즈 folds into 추가 설정
   await dialog.getByRole("button", { name: "New series", exact: true }).click();
   const name = dialog.getByPlaceholder("New series name");
   await name.fill("My series");
@@ -1302,6 +1311,7 @@ test("scheduling a past time is rejected with no /schedule call (A22)", async ({
   await titleInput(page).fill("Scheduled one");
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog); // pass the topic gate so the PAST-TIME guard is what blocks it
+  await openAdvanced(dialog); // the 발행 시점 segment folds into 추가 설정
   await dialog.getByRole("radio", { name: "Schedule", exact: true }).click();
   await dialog.locator('input[type="datetime-local"]').fill("2020-01-01T10:00");
   await dialog.getByRole("button", { name: "Schedule post", exact: true }).click();
@@ -1377,6 +1387,8 @@ test("publish dialog: followed + popular tags render as one-tap suggestion chips
   });
   await openEditor(page);
   const dialog = await openPublishDialog(page);
+  // Suggestions are help-at-the-moment-of-typing: they render only while the tag field has focus.
+  await dialog.locator('input[autocomplete="off"]').click();
   for (const tag of ["react", "nextjs", "typescript", "css"]) {
     await expect(suggestionChip(dialog, tag)).toBeVisible();
   }
@@ -1398,8 +1410,9 @@ test("publish dialog: typing filters the tag suggestions (substring, case-insens
   await setupTagSuggestions(page, { popular: ["react", "redux", "typescript", "css"] });
   await openEditor(page);
   const dialog = await openPublishDialog(page);
-  await expect(suggestionChip(dialog, "react")).toBeVisible();
   const tagInput = dialog.locator('input[autocomplete="off"]');
+  await tagInput.click(); // suggestions render only while the field has focus
+  await expect(suggestionChip(dialog, "react")).toBeVisible();
   await tagInput.fill("re");
   await expect(suggestionChip(dialog, "react")).toBeVisible();
   await expect(suggestionChip(dialog, "redux")).toBeVisible();
@@ -1472,12 +1485,13 @@ test("canvas topics: the '+ Add topics' ghost expands and its chip shows in the 
   await expect.poll(() => captured.meta?.tags, { timeout: 15_000 }).toContain("canvastopic");
 });
 
-test("publish dialog: offers the body's first image as a one-tap cover, applied on tap", async ({
+test("publish dialog: auto-applies the body's first image as the draft's cover, persisted on publish", async ({
   page,
 }) => {
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
+  await titleInput(page).fill("Post with a picture");
   // Put an image in the body via the real presign → S3 → commit path (mocked → IMAGE_URL).
   await page.locator(".tiptap").click();
   await page
@@ -1485,15 +1499,40 @@ test("publish dialog: offers the body's first image as a one-tap cover, applied 
     .setInputFiles({ name: "shot.png", mimeType: "image/png", buffer: Buffer.from("png-bytes") });
   await expect(page.locator(".tiptap img")).toBeVisible({ timeout: 10_000 });
   const dialog = await openPublishDialog(page);
-  // Cover is empty + the body has an image → the "use the first image" suggestion shows.
-  const suggest = dialog.getByRole("button", { name: "Use the first image from your post" });
-  await expect(suggest).toBeVisible({ timeout: 10_000 });
-  await suggest.click();
-  // Tapping applies it (never silent): the cover preview swaps in the image and the suggestion is gone.
-  await expect(dialog.locator(`img[src="${IMAGE_URL}"]`)).toBeVisible();
-  await expect(suggest).toHaveCount(0);
-  // The applied cover persists to the metadata PATCH.
+  // A draft with no cover gets the body's first image auto-applied — visible in the card preview,
+  // badged as the machine's pick (so the author knows it wasn't theirs and can replace/remove).
+  await expect(dialog.locator(`img[src="${IMAGE_URL}"]`)).toBeVisible({ timeout: 10_000 });
+  await expect(dialog.getByText("First image from the post")).toBeVisible();
+  // The auto-cover reaches the metadata PATCH — publish saves first, so the snapshot going live
+  // carries what the preview showed.
+  await addDialogTag(dialog);
+  await dialog.getByRole("button", { name: "Publish", exact: true }).click();
+  await expect.poll(() => captured.status).toBe("publish");
   await expect.poll(() => captured.meta?.ogImageUrl, { timeout: 15_000 }).toBe(IMAGE_URL);
+});
+
+test("publish dialog: a removed auto-cover stays removed — no re-apply on reopen", async ({
+  page,
+}) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "shot.png", mimeType: "image/png", buffer: Buffer.from("png-bytes") });
+  await expect(page.locator(".tiptap img")).toBeVisible({ timeout: 10_000 });
+  const dialog = await openPublishDialog(page);
+  await expect(dialog.locator(`img[src="${IMAGE_URL}"]`)).toBeVisible({ timeout: 10_000 });
+  // Removing the auto-cover is a real "no cover" decision…
+  await dialog.getByRole("button", { name: "Remove", exact: true }).click();
+  await expect(dialog.locator("img")).toHaveCount(0);
+  // …and reopening the dialog must not overrule it: the machine offers (one-tap suggestion), but
+  // doesn't re-apply.
+  await dialog.getByRole("button", { name: "Close", exact: true }).click();
+  const reopened = await openPublishDialog(page);
+  await expect(reopened.getByRole("button", { name: "Use the first image from your post" })).toBeVisible();
+  await expect(reopened.locator("img")).toHaveCount(0);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1623,7 +1662,8 @@ test("publish auto-shortens an in-body link through kurl and swaps the short URL
 
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog); // topic required to publish
-  // The link shows in the "In-post links" list, on by default (about to be shortened).
+  // The link shows in the "In-post links" list (inside 추가 설정), on by default (about to be shortened).
+  await openAdvanced(dialog);
   await expect(dialog.getByRole("button", { name: /example\.com\/an-article/ })).toHaveAttribute(
     "aria-pressed",
     "true",
@@ -1662,7 +1702,8 @@ test("publish: an in-post link toggled OFF keeps its original URL (not shortened
 
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog);
-  // Turn the link OFF so it stays exactly as the author wrote it.
+  // Turn the link OFF (inside 추가 설정) so it stays exactly as the author wrote it.
+  await openAdvanced(dialog);
   const toggle = dialog.getByRole("button", { name: /example\.com\/an-article/ });
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-pressed", "false");

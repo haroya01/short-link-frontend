@@ -457,6 +457,9 @@ export function usePostEditor(
     setSeriesId,
     coverUrl,
     setCover,
+    // Raw cover setter — bypasses touchDirty so the publish dialog's auto-cover (body's first image)
+    // doesn't mark the post dirty. Used for onCoverPrefill.
+    setCoverRaw,
     excerpt,
     setExcerpt,
     // Raw excerpt setter — bypasses touchDirty so a machine prefill (publish dialog open) doesn't mark

@@ -15,8 +15,11 @@ import { useAuth } from "@/lib/auth";
 import { blogHref } from "@/lib/host";
 
 /**
- * Publish settings panel (velog/Medium style) — keeps the writing surface Zen while gathering the
- * publish decisions in one place: 대표 이미지(cover) · 요약 · 시리즈 · 태그 · slug, then the status action.
+ * Publish panel — a confirmation, not a form. The centerpiece is a live card preview (cover · title ·
+ * 요약 · tags) of how the post will appear in the feed and share cards, with the cover auto-filled from
+ * the body's first image and the 요약 prefilled from the opening line — so for most posts the author
+ * only adds a topic and hits 발행. Everything decided rarely (시리즈 · 주소 · 발행 시점 · 본문 링크)
+ * folds into the collapsed 추가 설정 section; the publish address stays readable on its collapsed row.
  * Settings are saved first so a publish/schedule snapshot matches what's set here. Dark-aware.
  */
 export function PublishDialog({
@@ -24,9 +27,11 @@ export function PublishDialog({
   onClose,
   status,
   scheduledAt,
+  title,
   cover,
   onCoverChange,
   onUploadCover,
+  onCoverPrefill,
   coverSuggestion,
   excerpt,
   onExcerptChange,
@@ -52,10 +57,17 @@ export function PublishDialog({
   onClose: () => void;
   status: PostStatus;
   scheduledAt: string | null;
+  /** Canvas title, mirrored read-only in the card preview (empty → the 제목 없음 placeholder). */
+  title: string;
   cover: string | null;
   onCoverChange: (url: string | null) => void;
   onUploadCover: (file: File) => Promise<string>;
-  /** First image in the body — offered as a one-tap cover when none is set (never applied silently). */
+  /** Writes the auto-cover WITHOUT marking the post dirty — same contract as onExcerptPrefill (a
+   *  machine prefill isn't a user edit). Falls back to onCoverChange when not wired. */
+  onCoverPrefill?: (url: string | null) => void;
+  /** First image in the body. On a DRAFT it's auto-applied as the cover when none is set (badged,
+   *  removable); on an already-public post it stays a one-tap offer — a live share card must not
+   *  change just because this dialog opened. */
   coverSuggestion?: string | null;
   excerpt: string;
   onExcerptChange: (v: string) => void;
@@ -69,7 +81,7 @@ export function PublishDialog({
   onSlugChange: (v: string) => void;
   tags: string[];
   onTagsChange: (v: string[]) => void;
-  /** Followed + popular tags offered as one-tap chips under the tag input. */
+  /** Followed + popular tags, offered as one-tap chips while the tag field has focus. */
   tagSuggestions?: string[];
   seriesId: number | null;
   onSeriesChange: (v: number | null) => void;
@@ -106,9 +118,14 @@ export function PublishDialog({
   const [coverError, setCoverError] = useState<string | null>(null);
   const [scheduleAt, setScheduleAt] = useState("");
   const [showSchedule, setShowSchedule] = useState(false);
-  // 부가 설정(주소·본문 링크)은 접어 둔다 — 앱 발행 폼처럼 필수(태그·커버·요약·시리즈)만 한 열로 보이고,
-  // 나머지는 펼쳐야 나온다. 편집할 게 있으면(주소를 손봤거나 링크가 있으면) 열려서 시작.
+  // 추가 설정(시리즈·주소·발행 시점·본문 링크)은 접어 둔다 — 매번 정하는 게 아닌 것들이라 필수(카드
+  // 미리보기·태그)만 한 열로 보인다. 발행 주소는 접힌 줄에서도 읽힌다.
   const [showAdvanced, setShowAdvanced] = useState(false);
+  // The current cover came from the auto-apply below (drives the "본문 첫 이미지" badge). Cleared the
+  // moment the author uploads or picks one deliberately.
+  const [autoCover, setAutoCover] = useState(false);
+  // The author explicitly removed the cover — don't auto-apply one on a later open this session.
+  const coverDismissed = useRef(false);
   // Teachable click: instead of a silently-disabled Publish, clicking with no topics scrolls the tag
   // field into view and flags it. Set on a failed publish attempt, cleared once a tag is added.
   const [tagNudge, setTagNudge] = useState(false);
@@ -117,7 +134,6 @@ export function PublishDialog({
   // open, so the detected set is stable for the session).
   const [shortenSet, setShortenSet] = useState<Set<string>>(new Set());
 
-  // A public post must carry at least one topic (tag) AND a title — the reader's whole discovery
   // A public post needs at least one topic (tag) — the reader's whole discovery surface is
   // tag-driven — so tags gate the button (disabled) and the tag field nudges. A missing title does
   // NOT disable Publish: clicking it surfaces the inline "add a title" hint and fires no /publish
@@ -134,12 +150,7 @@ export function PublishDialog({
   useFocusTrap(panelRef, { active: open, onEscape: onClose });
 
   useEffect(() => {
-    if (open) {
-      setShortenSet(new Set(bodyLinks));
-      // Body links get auto-shortened on publish — surface them (open the advanced section) so the
-      // author sees what's about to be rewritten instead of it happening behind a collapsed panel.
-      if (bodyLinks.length > 0) setShowAdvanced(true);
-    }
+    if (open) setShortenSet(new Set(bodyLinks));
   }, [open, bodyLinks]);
 
   const enabledLinks = bodyLinks.filter((l) => shortenSet.has(l));
@@ -168,6 +179,16 @@ export function PublishDialog({
     }
   }, [open, excerpt, excerptSuggestion, onExcerptChange, onExcerptPrefill]);
 
+  // Auto-cover: a DRAFT with no cover gets the body's first image applied on open — the author sees it
+  // already ON (badged, replace/remove at hand) instead of discovering a bare share card after
+  // publishing. A prefill, not an edit (no dirty); never for an already-public post, whose live share
+  // card must not change because a dialog opened. Once removed, it stays removed for the session.
+  useEffect(() => {
+    if (!open || status !== "DRAFT" || cover || coverDismissed.current || !coverSuggestion) return;
+    (onCoverPrefill ?? onCoverChange)(coverSuggestion);
+    setAutoCover(true);
+  }, [open, status, cover, coverSuggestion, onCoverChange, onCoverPrefill]);
+
   if (!open) return null;
 
   async function pickCover(file: File) {
@@ -175,6 +196,7 @@ export function PublishDialog({
     setCoverError(null);
     try {
       onCoverChange(await onUploadCover(file));
+      setAutoCover(false); // a deliberate pick, not the machine's
     } catch (e) {
       // Don't fail silently (the dropzone just snapping back read as "nothing happened") — surface a
       // localized reason (typed image errors carry a code + sizes; else the generic upload error).
@@ -184,6 +206,18 @@ export function PublishDialog({
       setUploading(false);
     }
   }
+
+  function removeCover() {
+    // Any explicit remove means "no cover, and don't decide for me again this session" — whether the
+    // removed image was the machine's or the author's own upload.
+    coverDismissed.current = true;
+    setAutoCover(false);
+    onCoverChange(null);
+  }
+
+  // 본문 링크 단축은 공개로 나가는 발행에서만 실제로 돈다 — 그때만 접힌 줄에 고지한다.
+  const goingPublic = status === "DRAFT" || status === "UNPUBLISHED";
+  const showLinkNote = goingPublic && enabledLinks.length > 0;
 
   // local datetime min (now) for the schedule input.
   const now = new Date();
@@ -206,7 +240,7 @@ export function PublishDialog({
         // bound, grew to full content height, and pushed the sticky footer (the 발행 button) off-screen
         // (reported "특정 브라우저에서 발행 버튼 안 보임"). Declared in CSS, not two Tailwind arbitrary
         // classes, so the vh→dvh source order (and thus the cascade) is guaranteed.
-        className="dialog-max-h flex w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:rounded-2xl"
+        className="dialog-max-h flex w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:max-w-xl sm:rounded-2xl"
         // With the keyboard up, cap the sheet to the remaining visual viewport so its scroll area shrinks
         // (rather than the footer sliding under the keyboard). `100vh - keyboardInset` already subtracts
         // the keyboard height, so it works on every engine (including no-dvh ones) without needing dvh.
@@ -225,11 +259,118 @@ export function PublishDialog({
         </header>
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
-          {/* 태그 — the one required field, so it leads the dialog (you can't miss it) instead of being
-              buried mid-column. A standing hint, not role="alert" (the * + a failed-publish nudge carry
-              the "required" signal). */}
-          <div ref={tagsFieldRef} className="mb-5 scroll-mt-4">
-            <Field label={t("tags")} hint={t("tagsHint")} required>
+          {/* ── 카드 미리보기: 커버 · 제목 · 요약 · 태그가 독자에게 보일 모양 그대로. 요약은 카드 안에서
+              바로 고치고, 라벨 달린 폼 필드(대표 이미지 / 요약)와 그 힌트 문장들을 이 한 덩어리가
+              대체한다 — 보여주는 게 설명하는 것보다 빠르다. */}
+          <section aria-label={t("previewCardLabel")}>
+            <p className="mb-2 text-[12px] font-medium text-slate-500 dark:text-slate-400">
+              {t("previewCardLabel")}
+            </p>
+            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  e.target.value = "";
+                  if (f) void pickCover(f);
+                }}
+              />
+              {cover ? (
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={cover} alt="" className="aspect-[1200/630] w-full object-cover" />
+                  {autoCover && (
+                    <span className="absolute left-2 top-2 rounded-md bg-slate-900/70 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur">
+                      {t("coverAuto")}
+                    </span>
+                  )}
+                  <div className="absolute right-2 top-2 flex gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => fileRef.current?.click()}
+                      className="rounded-lg bg-slate-900/70 px-2.5 py-1 text-[12px] font-medium text-white backdrop-blur transition-colors hover:bg-slate-900/85"
+                    >
+                      {t("coverReplace")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={removeCover}
+                      aria-label={t("coverRemove")}
+                      className="grid h-7 w-7 place-items-center rounded-lg bg-slate-900/70 text-white backdrop-blur transition-colors hover:bg-red-600/90"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // 이미지 없는 글 = 타이포 카드(§10.4)가 기본이라, 빈 커버는 큰 드롭존이 아니라 카드 위의
+                // 얇은 선택지 한 줄이다. 본문에 이미지가 있으면(자동 커버를 지웠던 경우) 1탭 복구도 함께.
+                <div className="px-4 pt-4">
+                  <div className="flex min-h-[3rem] flex-wrap items-center justify-center gap-x-4 gap-y-1 rounded-lg border border-dashed border-slate-200 px-3 py-1.5 dark:border-slate-700">
+                    <button
+                      type="button"
+                      onClick={() => fileRef.current?.click()}
+                      disabled={uploading}
+                      className="focus-ring inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[12px] font-medium text-slate-500 transition-colors hover:text-accent-700 disabled:opacity-60 dark:text-slate-400 dark:hover:text-accent-300"
+                    >
+                      {uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
+                      {uploading ? t("coverUploading") : t("coverAdd")}
+                    </button>
+                    {!uploading && coverSuggestion && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAutoCover(false); // tapped back on deliberately — no machine badge
+                          onCoverChange(coverSuggestion);
+                        }}
+                        className="focus-ring inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[12px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
+                      >
+                        {t("coverFromBody")}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+              <div className="px-4 pb-4 pt-3.5">
+                <p
+                  className={`truncate text-[16px] font-bold ${
+                    title.trim() ? "text-slate-900 dark:text-slate-100" : "text-slate-400 dark:text-slate-500"
+                  }`}
+                >
+                  {title.trim() || t("untitled")}
+                </p>
+                <textarea
+                  value={excerpt}
+                  onChange={(e) => onExcerptChange(e.target.value)}
+                  maxLength={300}
+                  rows={3}
+                  placeholder={t("excerptPlaceholder")}
+                  aria-label={t("excerptPlaceholder")}
+                  className="mt-1 w-full resize-none border-b border-transparent bg-transparent text-[14px] leading-relaxed text-slate-600 outline-none transition-colors placeholder:text-slate-400 focus:border-accent-400 dark:text-slate-300 dark:focus:border-accent-500"
+                />
+                {/* Count only as the cap nears — a standing 47/300 under every 요약 was noise. */}
+                {excerpt.length >= 270 && <CharCount value={excerpt} max={300} />}
+                {tags.length > 0 && (
+                  <p className="mt-1 truncate text-[13px] text-slate-500 dark:text-slate-400">
+                    {tags.map((tag) => `#${tag}`).join("  ")}
+                  </p>
+                )}
+              </div>
+            </div>
+            {coverError && (
+              <p className="mt-1.5 text-[12px] text-red-600 dark:text-red-400" role="alert">
+                {coverError}
+              </p>
+            )}
+          </section>
+
+          {/* 태그 — the one required field. A standing hint isn't needed: the placeholder carries the
+              how-to, and the * + a failed-publish nudge carry the "required" signal. */}
+          <div ref={tagsFieldRef} className="mt-5 scroll-mt-4">
+            <Field label={t("tags")} required>
               <TagInput
                 tags={tags}
                 onChange={onTagsChange}
@@ -244,141 +385,45 @@ export function PublishDialog({
             </Field>
           </div>
 
-          {/* One column, essentials only (앱 발행 폼처럼): 커버 → 요약 → 시리즈 → 발행 시점. 주소·본문
-              링크 같은 부가 항목은 아래 "추가 설정" 안에 접어 둔다. */}
-          <div className="space-y-5">
-          {/* 대표 이미지 */}
-          <Field label={t("coverImage")} hint={t("coverImageHint")}>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                e.target.value = "";
-                if (f) void pickCover(f);
-              }}
-            />
-            {cover ? (
-              <div className="group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={cover} alt="" className="aspect-[1200/630] w-full object-cover" />
-                <div className="absolute right-2 top-2 flex gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => fileRef.current?.click()}
-                    className="rounded-lg bg-slate-900/70 px-2.5 py-1 text-[12px] font-medium text-white backdrop-blur transition-colors hover:bg-slate-900/85"
-                  >
-                    {t("coverReplace")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onCoverChange(null)}
-                    aria-label={t("coverRemove")}
-                    className="grid h-7 w-7 place-items-center rounded-lg bg-slate-900/70 text-white backdrop-blur transition-colors hover:bg-red-600/90"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => fileRef.current?.click()}
-                disabled={uploading}
-                className="focus-ring flex aspect-[1200/630] w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 text-slate-400 transition-colors hover:border-accent-400 hover:text-accent-600 disabled:opacity-60 dark:border-slate-700 dark:text-slate-500 dark:hover:border-accent-500 dark:hover:text-accent-400"
-              >
-                {uploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ImagePlus className="h-6 w-6" />}
-                <span className="text-[13px] font-medium">{uploading ? t("coverUploading") : t("coverAdd")}</span>
-              </button>
-            )}
-            {/* Smart default: the body already has an image — offer its first as a one-tap cover. Tapped,
-                not auto-set, so the author stays in control of what the share card shows. */}
-            {!cover && !uploading && coverSuggestion && (
-              <button
-                type="button"
-                onClick={() => onCoverChange(coverSuggestion)}
-                className="focus-ring mt-1.5 inline-flex items-center gap-1.5 rounded-lg px-1 text-[12px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
-              >
-                <ImagePlus className="h-3.5 w-3.5" />
-                {t("coverFromBody")}
-              </button>
-            )}
-            {coverError && (
-              <p className="mt-1.5 text-[12px] text-red-600 dark:text-red-400" role="alert">
-                {coverError}
-              </p>
-            )}
-          </Field>
-
-          {/* 요약 */}
-          <Field label={t("excerpt")} hint={t("excerptHint")}>
-            <textarea
-              value={excerpt}
-              onChange={(e) => onExcerptChange(e.target.value)}
-              maxLength={300}
-              rows={4}
-              placeholder={t("excerptPlaceholder")}
-              className="w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-accent-500"
-            />
-            <CharCount value={excerpt} max={300} />
-          </Field>
-
-          {/* 시리즈 */}
-          <Field label={t("series")}>
-            <SeriesSelect
-              value={seriesId}
-              onChange={onSeriesChange}
-              noneLabel={t("seriesNone")}
-              emptyHint={t("seriesEmptyHint")}
-            />
-          </Field>
-
-          {/* 발행 시점 — 지금 / 예약을 명시적 세그먼트로 고른다. "언제 나가는지"는 필수 결정이라 접지
-              않고 한 열에 그대로 둔다. */}
-          {status === "DRAFT" && (
-            <Field label={t("publishTiming")}>
-              <div
-                role="radiogroup"
-                aria-label={t("publishTiming")}
-                className="inline-flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-700"
-              >
-                <button type="button" onClick={() => setShowSchedule(false)} role="radio" aria-checked={!showSchedule} className={segBtn(!showSchedule)}>
-                  {t("publishNow")}
-                </button>
-                <button type="button" onClick={() => setShowSchedule(true)} role="radio" aria-checked={showSchedule} className={segBtn(showSchedule)}>
-                  {t("schedule")}
-                </button>
-              </div>
-              {showSchedule && (
-                <input
-                  type="datetime-local"
-                  min={localMin}
-                  value={scheduleAt}
-                  onChange={(e) => setScheduleAt(e.target.value)}
-                  className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark]"
-                />
-              )}
-            </Field>
-          )}
-
-          {/* 추가 설정 — 주소·본문 링크는 대부분 손댈 일이 없으니 접어 둔다(앱처럼 필수만 먼저). 손댈
-              것이 있으면(초안이라 주소를 바꿀 수 있거나 본문에 링크가 있으면) 펼쳐 준다. */}
-          <div className="border-t border-slate-100 pt-4 dark:border-slate-800">
+          {/* ── 추가 설정: 매번 정하지 않는 것들(시리즈 · 주소 · 발행 시점 · 본문 링크)은 접어 둔다.
+              발행 주소만은 접힌 줄에서도 읽히게 — 어디로 나가는지는 펼치지 않아도 보여야 한다. */}
+          <div className="mt-5 border-t border-slate-100 pt-1.5 dark:border-slate-800">
             <button
               type="button"
               onClick={() => setShowAdvanced((v) => !v)}
               aria-expanded={showAdvanced}
-              className="focus-ring flex w-full items-center justify-between rounded-lg py-1 text-[13px] font-semibold text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
+              className="focus-ring flex w-full items-center justify-between gap-3 rounded-lg px-1 py-2 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
-              {t("advancedSettings")}
-              <ChevronDown
-                className={`h-4 w-4 text-slate-400 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
-              />
+              <span className="inline-flex shrink-0 items-center gap-1.5 text-[13px] font-semibold text-slate-600 dark:text-slate-300">
+                {t("advancedSettings")}
+                <ChevronDown
+                  className={`h-4 w-4 text-slate-400 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
+                />
+              </span>
+              <span className="min-w-0 truncate font-mono text-[11px] text-slate-400 dark:text-slate-500">
+                {addressPrefix}
+                {slug}
+              </span>
             </button>
+            {/* 접혀 있어도 링크 재작성은 무언의 변경이면 안 된다 — 한 줄로 알리고, 펼치면 끌 수 있다. */}
+            {!showAdvanced && showLinkNote && (
+              <p className="px-1 pb-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                {t("linkShortenNote", { count: enabledLinks.length })}
+              </p>
+            )}
+
             {showAdvanced && (
-              <div className="mt-4 space-y-5">
+              <div className="space-y-5 px-1 pb-1.5 pt-2">
+                {/* 시리즈 */}
+                <Field label={t("series")}>
+                  <SeriesSelect
+                    value={seriesId}
+                    onChange={onSeriesChange}
+                    noneLabel={t("seriesNone")}
+                    emptyHint={t("seriesEmptyHint")}
+                  />
+                </Field>
+
                 {/* slug — 초안 동안만 편집. 발행 후 고정되므로 미리 경고. */}
                 <Field
                   label={t("slugLabel")}
@@ -405,6 +450,33 @@ export function PublishDialog({
                     </p>
                   )}
                 </Field>
+
+                {/* 발행 시점 — 지금 / 예약을 명시적 세그먼트로 고른다. */}
+                {status === "DRAFT" && (
+                  <Field label={t("publishTiming")}>
+                    <div
+                      role="radiogroup"
+                      aria-label={t("publishTiming")}
+                      className="inline-flex rounded-lg border border-slate-200 p-0.5 dark:border-slate-700"
+                    >
+                      <button type="button" onClick={() => setShowSchedule(false)} role="radio" aria-checked={!showSchedule} className={segBtn(!showSchedule)}>
+                        {t("publishNow")}
+                      </button>
+                      <button type="button" onClick={() => setShowSchedule(true)} role="radio" aria-checked={showSchedule} className={segBtn(showSchedule)}>
+                        {t("schedule")}
+                      </button>
+                    </div>
+                    {showSchedule && (
+                      <input
+                        type="datetime-local"
+                        min={localMin}
+                        value={scheduleAt}
+                        onChange={(e) => setScheduleAt(e.target.value)}
+                        className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:[color-scheme:dark]"
+                      />
+                    )}
+                  </Field>
+                )}
 
                 {/* 본문 링크 — 발행 시 kurl 단축링크로 변환해 클릭 추적. 링크별로 끌 수 있음. */}
                 {bodyLinks.length > 0 && (
@@ -451,7 +523,6 @@ export function PublishDialog({
                 )}
               </div>
             )}
-          </div>
           </div>
         </div>
 

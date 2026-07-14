@@ -75,10 +75,10 @@ export function TagInput({ tags, onChange, placeholder, max = MAX_TAGS, suggesti
   const filtered = (suggestions ?? [])
     .filter((s) => !tags.some((tag) => tag.toLowerCase() === s.toLowerCase()))
     .filter((s) => query === "" || s.toLowerCase().includes(query))
-    .slice(0, 8);
+    .slice(0, 6);
 
   return (
-    <div>
+    <div className="group/tags">
       <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-2 focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
         {tags.map((tag) => (
           <span
@@ -117,13 +117,17 @@ export function TagInput({ tags, onChange, placeholder, max = MAX_TAGS, suggesti
         />
       </div>
 
-      {/* Ghost suggestion chips — one tap to add. Quiet by design: bordered slate, brand-green on hover. */}
+      {/* Ghost suggestion chips — one tap to add. Shown only while the field holds focus: help at the
+          moment of typing, not standing furniture (the publish dialog stays quiet until you're in the
+          field). mousedown is prevented so tapping a chip doesn't blur the input first — in Safari a
+          button click never focuses it, so without this the blur would hide the chip mid-click. */}
       {!atMax && filtered.length > 0 && (
-        <div className="mt-1.5 flex flex-wrap gap-1.5">
+        <div className="mt-1.5 hidden flex-wrap gap-1.5 group-focus-within/tags:flex">
           {filtered.map((s) => (
             <button
               key={s}
               type="button"
+              onMouseDown={(e) => e.preventDefault()}
               onClick={() => addSuggestion(s)}
               className="focus-ring rounded-full border border-slate-200 px-2.5 py-1 text-[12px] text-slate-500 transition-colors hover:border-accent-400 hover:text-accent-700 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500 dark:hover:text-accent-300"
             >
@@ -133,15 +137,18 @@ export function TagInput({ tags, onChange, placeholder, max = MAX_TAGS, suggesti
         </div>
       )}
 
-      {/* Live count so the cap never surprises; a soft note replaces the old silent drop at the limit. */}
-      <div className="mt-1 flex items-center justify-between gap-2">
-        <span className="text-[11px] text-slate-500 dark:text-slate-400">
-          {atMax ? t("maxReached", { max }) : ""}
-        </span>
-        <span className="text-[11px] tabular-nums text-slate-500 dark:text-slate-500">
-          {tags.length}/{max}
-        </span>
-      </div>
+      {/* The count appears only as the cap nears (and the soft note at the limit) — a standing n/10 on
+          a one-tag post was dead weight. */}
+      {(atMax || tags.length >= max - 2) && (
+        <div className="mt-1 flex items-center justify-between gap-2">
+          <span className="text-[11px] text-slate-500 dark:text-slate-400">
+            {atMax ? t("maxReached", { max }) : ""}
+          </span>
+          <span className="text-[11px] tabular-nums text-slate-500 dark:text-slate-500">
+            {tags.length}/{max}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
