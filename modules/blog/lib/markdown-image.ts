@@ -1,9 +1,9 @@
 /**
- * Finds the first embedded image in a post's markdown body — used to offer that image as a one-tap
- * cover suggestion in the publish dialog (the author taps to accept; it's never set silently). Skips
- * fenced code so an image URL written inside a code sample isn't mistaken for a real embed. Matches
- * standard `![alt](url)` embeds (the shape the editor emits for uploaded/pasted images); the URL is
- * usually kurl-hosted. No React/DOM deps so it stays unit-testable and server-safe.
+ * Finds the first embedded image in a post's markdown body — the publish dialog auto-applies it as a
+ * draft's cover (badged, removable) and offers it as a one-tap suggestion on already-public posts.
+ * Skips fenced code so an image URL written inside a code sample isn't mistaken for a real embed.
+ * Matches standard `![alt](url)` embeds (the shape the editor emits for uploaded/pasted images); the
+ * URL is usually kurl-hosted. No React/DOM deps so it stays unit-testable and server-safe.
  */
 const IMAGE = /!\[[^\]]*\]\(\s*([^()\s]+?)\s*(?:"[^"]*")?\)/;
 

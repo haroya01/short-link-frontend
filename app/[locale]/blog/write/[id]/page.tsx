@@ -148,9 +148,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         onClose={() => setPublishOpen(false)}
         status={post.status}
         scheduledAt={post.scheduledAt}
+        title={ed.title}
         cover={ed.coverUrl}
         onCoverChange={ed.setCover}
         onUploadCover={(file) => uploadPostImage(post.id, file)}
+        onCoverPrefill={ed.setCoverRaw}
         coverSuggestion={coverSuggestion}
         excerpt={ed.excerpt}
         onExcerptChange={ed.setExcerpt}
