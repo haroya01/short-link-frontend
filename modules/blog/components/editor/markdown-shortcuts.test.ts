@@ -103,6 +103,32 @@ describe("MarkdownShortcuts (mobile input path)", () => {
     expect(text?.marks?.[0]?.type).toBe("strike");
   });
 
+  it("turns a whole-paragraph '---' into a horizontal rule (mobile path)", () => {
+    // The `type` helper dispatches insertText, so handleTextInput never fires — exactly the phone-IME
+    // path where StarterKit's native `---` rule stayed silent and the divider was lost on publish.
+    makeEditor();
+    type("---");
+    expect((editor.getJSON() as any).content?.[0]?.type).toBe("horizontalRule");
+  });
+
+  it("also accepts '***' and '___' as dividers (StarterKit's native rule only knew '---')", () => {
+    makeEditor();
+    type("***");
+    expect((editor.getJSON() as any).content?.[0]?.type).toBe("horizontalRule");
+    makeEditor();
+    type("___");
+    expect((editor.getJSON() as any).content?.[0]?.type).toBe("horizontalRule");
+  });
+
+  it("does NOT turn '--' (only two) or '---text' into a divider", () => {
+    makeEditor();
+    type("--");
+    expect((editor.getJSON() as any).content?.[0]?.type).toBe("paragraph");
+    makeEditor();
+    type("---text");
+    expect((editor.getJSON() as any).content?.[0]?.type).toBe("paragraph");
+  });
+
   it("does NOT bold a half-open '**bold*'", () => {
     makeEditor();
     type("**bold*");

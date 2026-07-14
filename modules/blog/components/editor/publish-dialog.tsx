@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CalendarClock, Check, ImagePlus, Link2, Loader2, Trash2, X } from "lucide-react";
+import { CalendarClock, Check, ChevronDown, ImagePlus, Link2, Loader2, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PostStatus } from "@/modules/blog/api/posts";
 import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
@@ -106,6 +106,9 @@ export function PublishDialog({
   const [coverError, setCoverError] = useState<string | null>(null);
   const [scheduleAt, setScheduleAt] = useState("");
   const [showSchedule, setShowSchedule] = useState(false);
+  // 부가 설정(주소·본문 링크)은 접어 둔다 — 앱 발행 폼처럼 필수(태그·커버·요약·시리즈)만 한 열로 보이고,
+  // 나머지는 펼쳐야 나온다. 편집할 게 있으면(주소를 손봤거나 링크가 있으면) 열려서 시작.
+  const [showAdvanced, setShowAdvanced] = useState(false);
   // Teachable click: instead of a silently-disabled Publish, clicking with no topics scrolls the tag
   // field into view and flags it. Set on a failed publish attempt, cleared once a tag is added.
   const [tagNudge, setTagNudge] = useState(false);
@@ -131,7 +134,12 @@ export function PublishDialog({
   useFocusTrap(panelRef, { active: open, onEscape: onClose });
 
   useEffect(() => {
-    if (open) setShortenSet(new Set(bodyLinks));
+    if (open) {
+      setShortenSet(new Set(bodyLinks));
+      // Body links get auto-shortened on publish — surface them (open the advanced section) so the
+      // author sees what's about to be rewritten instead of it happening behind a collapsed panel.
+      if (bodyLinks.length > 0) setShowAdvanced(true);
+    }
   }, [open, bodyLinks]);
 
   const enabledLinks = bodyLinks.filter((l) => shortenSet.has(l));
@@ -192,10 +200,17 @@ export function PublishDialog({
         role="dialog"
         aria-modal
         aria-label={dialogTitle}
-        className="flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:rounded-2xl sm:max-w-3xl"
+        // `dialog-max-h` caps the panel at 92vh with a 92dvh refinement (globals.css). The `vh`
+        // fallback is load-bearing: an engine that doesn't understand `dvh` (iOS Safari <15.4, older
+        // in-app WebViews) drops the `dvh` line — without the `vh` cap first the panel had NO height
+        // bound, grew to full content height, and pushed the sticky footer (the 발행 button) off-screen
+        // (reported "특정 브라우저에서 발행 버튼 안 보임"). Declared in CSS, not two Tailwind arbitrary
+        // classes, so the vh→dvh source order (and thus the cascade) is guaranteed.
+        className="dialog-max-h flex w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl dark:bg-slate-900 sm:rounded-2xl"
         // With the keyboard up, cap the sheet to the remaining visual viewport so its scroll area shrinks
-        // (rather than the footer sliding under the keyboard). dvh tracks the shrunken viewport itself.
-        style={keyboardInset ? { maxHeight: `calc(100dvh - ${keyboardInset}px)` } : undefined}
+        // (rather than the footer sliding under the keyboard). `100vh - keyboardInset` already subtracts
+        // the keyboard height, so it works on every engine (including no-dvh ones) without needing dvh.
+        style={keyboardInset ? { maxHeight: `calc(100vh - ${keyboardInset}px)` } : undefined}
       >
         <header className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3.5 dark:border-slate-800">
           <h2 className="text-[15px] font-bold text-slate-900 dark:text-slate-100">{dialogTitle}</h2>
@@ -229,11 +244,9 @@ export function PublishDialog({
             </Field>
           </div>
 
-          {/* velog-style two columns: LEFT = how the post will look (cover + summary), RIGHT = the
-              publish settings (series · address). Stacks to one column on mobile. */}
-          <div className="grid gap-x-7 gap-y-5 sm:grid-cols-2">
-            {/* LEFT — 보이는 모습 */}
-            <div className="space-y-5">
+          {/* One column, essentials only (앱 발행 폼처럼): 커버 → 요약 → 시리즈 → 발행 시점. 주소·본문
+              링크 같은 부가 항목은 아래 "추가 설정" 안에 접어 둔다. */}
+          <div className="space-y-5">
           {/* 대표 이미지 */}
           <Field label={t("coverImage")} hint={t("coverImageHint")}>
             <input
@@ -311,10 +324,7 @@ export function PublishDialog({
             />
             <CharCount value={excerpt} max={300} />
           </Field>
-            </div>
 
-            {/* RIGHT — 발행 설정 */}
-            <div className="space-y-5">
           {/* 시리즈 */}
           <Field label={t("series")}>
             <SeriesSelect
@@ -325,79 +335,8 @@ export function PublishDialog({
             />
           </Field>
 
-          {/* slug — 초안 동안만 편집. 발행 후 고정되므로 미리 경고. */}
-          <Field
-            label={t("slugLabel")}
-            hint={status === "DRAFT" ? t("slugFreezeWarn") : undefined}
-          >
-            {status === "DRAFT" ? (
-              <div className="flex items-center gap-1.5">
-                <span className="min-w-0 truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">{addressPrefix}</span>
-                <input
-                  type="text"
-                  value={slug}
-                  onChange={(e) => onSlugChange(e.target.value)}
-                  maxLength={200}
-                  autoCapitalize="off"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[13px] text-slate-700 outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:focus:border-accent-500"
-                />
-              </div>
-            ) : (
-              <p className="truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">
-                {addressPrefix}
-                {slug}
-              </p>
-            )}
-          </Field>
-
-          {/* 본문 링크 — 발행 시 kurl 단축링크로 변환해 클릭 추적. 링크별로 끌 수 있음. */}
-          {bodyLinks.length > 0 && (
-            <Field label={t("bodyLinks")} hint={t("bodyLinksHint")}>
-              <ul className="space-y-1 rounded-lg border border-slate-200 p-1.5 dark:border-slate-700">
-                {bodyLinks.map((url) => {
-                  const on = shortenSet.has(url);
-                  let host = url;
-                  try {
-                    host = new URL(url).host.replace(/^www\./, "");
-                  } catch {
-                    /* keep raw */
-                  }
-                  return (
-                    <li key={url}>
-                      <button
-                        type="button"
-                        onClick={() => toggleLink(url)}
-                        aria-pressed={on}
-                        className="focus-ring flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                      >
-                        <span
-                          className={`grid h-4 w-4 shrink-0 place-items-center rounded border transition-colors ${
-                            on
-                              ? "border-accent-600 bg-accent-700 text-white dark:border-accent-500 dark:bg-accent-500"
-                              : "border-slate-300 dark:border-slate-600"
-                          }`}
-                        >
-                          {on && <Check className="h-3 w-3" />}
-                        </span>
-                        <Link2 className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                        <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-200">
-                          {host}
-                          <span className="text-slate-500 dark:text-slate-500">
-                            {url.slice(url.indexOf(host) + host.length)}
-                          </span>
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </Field>
-          )}
-
-          {/* 발행 시점 — 지금 / 예약을 명시적 세그먼트로 고른다. 예전엔 푸터의 숨은 토글이 본문 필드를
-              드러내는 식이라 "언제 나가는지"가 잘 안 보였다. */}
+          {/* 발행 시점 — 지금 / 예약을 명시적 세그먼트로 고른다. "언제 나가는지"는 필수 결정이라 접지
+              않고 한 열에 그대로 둔다. */}
           {status === "DRAFT" && (
             <Field label={t("publishTiming")}>
               <div
@@ -423,7 +362,96 @@ export function PublishDialog({
               )}
             </Field>
           )}
-            </div>
+
+          {/* 추가 설정 — 주소·본문 링크는 대부분 손댈 일이 없으니 접어 둔다(앱처럼 필수만 먼저). 손댈
+              것이 있으면(초안이라 주소를 바꿀 수 있거나 본문에 링크가 있으면) 펼쳐 준다. */}
+          <div className="border-t border-slate-100 pt-4 dark:border-slate-800">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              aria-expanded={showAdvanced}
+              className="focus-ring flex w-full items-center justify-between rounded-lg py-1 text-[13px] font-semibold text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
+            >
+              {t("advancedSettings")}
+              <ChevronDown
+                className={`h-4 w-4 text-slate-400 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
+              />
+            </button>
+            {showAdvanced && (
+              <div className="mt-4 space-y-5">
+                {/* slug — 초안 동안만 편집. 발행 후 고정되므로 미리 경고. */}
+                <Field
+                  label={t("slugLabel")}
+                  hint={status === "DRAFT" ? t("slugFreezeWarn") : undefined}
+                >
+                  {status === "DRAFT" ? (
+                    <div className="flex items-center gap-1.5">
+                      <span className="min-w-0 truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">{addressPrefix}</span>
+                      <input
+                        type="text"
+                        value={slug}
+                        onChange={(e) => onSlugChange(e.target.value)}
+                        maxLength={200}
+                        autoCapitalize="off"
+                        autoCorrect="off"
+                        spellCheck={false}
+                        className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[13px] text-slate-700 outline-none transition-colors focus:border-accent-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:focus:border-accent-500"
+                      />
+                    </div>
+                  ) : (
+                    <p className="truncate font-mono text-[13px] text-slate-500 dark:text-slate-400">
+                      {addressPrefix}
+                      {slug}
+                    </p>
+                  )}
+                </Field>
+
+                {/* 본문 링크 — 발행 시 kurl 단축링크로 변환해 클릭 추적. 링크별로 끌 수 있음. */}
+                {bodyLinks.length > 0 && (
+                  <Field label={t("bodyLinks")} hint={t("bodyLinksHint")}>
+                    <ul className="space-y-1 rounded-lg border border-slate-200 p-1.5 dark:border-slate-700">
+                      {bodyLinks.map((url) => {
+                        const on = shortenSet.has(url);
+                        let host = url;
+                        try {
+                          host = new URL(url).host.replace(/^www\./, "");
+                        } catch {
+                          /* keep raw */
+                        }
+                        return (
+                          <li key={url}>
+                            <button
+                              type="button"
+                              onClick={() => toggleLink(url)}
+                              aria-pressed={on}
+                              className="focus-ring flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                            >
+                              <span
+                                className={`grid h-4 w-4 shrink-0 place-items-center rounded border transition-colors ${
+                                  on
+                                    ? "border-accent-600 bg-accent-700 text-white dark:border-accent-500 dark:bg-accent-500"
+                                    : "border-slate-300 dark:border-slate-600"
+                                }`}
+                              >
+                                {on && <Check className="h-3 w-3" />}
+                              </span>
+                              <Link2 className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                              <span className="min-w-0 flex-1 truncate text-[13px] text-slate-700 dark:text-slate-200">
+                                {host}
+                                <span className="text-slate-500 dark:text-slate-500">
+                                  {url.slice(url.indexOf(host) + host.length)}
+                                </span>
+                              </span>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </Field>
+                )}
+              </div>
+            )}
+          </div>
           </div>
         </div>
 

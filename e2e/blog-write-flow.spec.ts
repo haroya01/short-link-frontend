@@ -842,6 +842,9 @@ test("slug is normalized (edge hyphens trimmed, lowercased) before the PATCH", a
   await setupMocks(page, captured);
   await openEditor(page);
   const dialog = await openPublishDialog(page);
+  // The address/slug field lives under the "Advanced settings" disclosure now (the dialog leads with
+  // the essentials — tags, cover, excerpt, series — and tucks slug + body-links away). Expand it first.
+  await dialog.getByRole("button", { name: "Advanced settings" }).click();
   await dialog.locator('input[spellcheck="false"]').fill("-Hello-World-");
   // Draft autosave normalizes + persists the slug (edge hyphens trimmed, lowercased).
   await expect.poll(() => captured.meta?.slug, { timeout: 15_000 }).toBe("hello-world");
@@ -1147,6 +1150,8 @@ test("the slug field normalizes input live (caps/spaces/symbols → hyphen-case)
   await setupMocks(page, captured);
   await openEditor(page);
   const dialog = await openPublishDialog(page);
+  // 슬러그는 간소화된 폼의 "추가 설정" 아래로 접혀 있다 — 펼치고 채운다.
+  await dialog.getByRole("button", { name: /Advanced settings|추가 설정/ }).click();
   const slug = dialog.locator('input[spellcheck="false"]');
   await slug.fill("Hello World!");
   // normalizeSlugInput lowercases, turns invalid chars into single hyphens, drops a leading hyphen;

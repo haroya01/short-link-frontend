@@ -29,3 +29,33 @@ describe("image width markers", () => {
     expect(parseImageAlt("«wide» Shot")).toEqual({ width: "wide", alt: "Shot" });
   });
 });
+
+describe("image align markers", () => {
+  it("round-trips left / right through the alt marker", () => {
+    expect(parseImageAlt(altWithWidth("Shot", undefined, undefined, "left"))).toEqual({
+      align: "left",
+      alt: "Shot",
+    });
+    expect(parseImageAlt(altWithWidth("Shot", undefined, undefined, "right"))).toEqual({
+      align: "right",
+      alt: "Shot",
+    });
+  });
+  it("does NOT emit a marker for center (the default) so a centered image's alt stays clean", () => {
+    expect(altWithWidth("Shot", undefined, undefined, "center")).toBe("Shot");
+    expect(parseImageAlt("Shot")).toEqual({ alt: "Shot" });
+  });
+  it("keeps width FIRST, then align, then dims", () => {
+    expect(altWithWidth("Shot", "half", { w: 1200, h: 800 }, "right")).toBe("«half» «right» «1200x800» Shot");
+    expect(parseImageAlt("«half» «right» «1200x800» Shot")).toEqual({
+      width: "half",
+      align: "right",
+      dims: { w: 1200, h: 800 },
+      alt: "Shot",
+    });
+  });
+  it("parses align on its own and alongside a width", () => {
+    expect(parseImageAlt("«left» Shot")).toEqual({ align: "left", alt: "Shot" });
+    expect(parseImageAlt("«wide» «left» Shot")).toEqual({ width: "wide", align: "left", alt: "Shot" });
+  });
+});

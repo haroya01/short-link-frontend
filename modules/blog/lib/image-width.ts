@@ -1,26 +1,38 @@
 /**
- * Per-image width (Medium-style "wide" / full-bleed) + intrinsic dimensions (for CLS-free layout).
- * Toast's image node only round-trips `src` and `alt`, so both ride as marker prefixes on the alt
- * text — the only metadata that survives the WYSIWYG ↔ markdown ↔ block conversion. Markers are
- * stripped before the block is stored (so the published alt is clean) and re-attached on serialize.
- * The editor renders wide images via `img[alt^="«wide»"]` CSS, so the WIDTH marker must stay FIRST;
- * the dimensions marker (`«1200x800»`) follows it. The reader uses the parsed width + dims. No
- * bracket/paren chars in either marker — those would break the image markdown regex.
+ * Per-image width (Medium-style "wide" / full-bleed) + horizontal alignment + intrinsic dimensions
+ * (for CLS-free layout). The image node only round-trips `src` and `alt`, so all three ride as marker
+ * prefixes on the alt text — the only metadata that survives the WYSIWYG ↔ markdown ↔ block
+ * conversion. Markers are stripped before the block is stored (so the published alt is clean) and
+ * re-attached on serialize. The editor renders wide images via `img[alt^="«wide»"]` CSS, so the WIDTH
+ * marker must stay FIRST; the align marker (`«left»`/`«center»`/`«right»`) and then the dimensions
+ * marker (`«1200x800»`) follow it. The reader uses the parsed width + align + dims. No bracket/paren
+ * chars in any marker — those would break the image markdown regex.
  */
 // "wide" / "full" = wider than the column. "half" = column-half, so two consecutive halves render
 // side by side (a 2-up image row), stacking on mobile.
 export type ImageWidth = "wide" | "full" | "half";
+
+// Horizontal placement of a column-width (or «half») image. "center" is the default, so it's only
+// serialized when the author picks left/right (a bare image stays clean + centered, matching iOS).
+export type ImageAlign = "left" | "center" | "right";
 
 /** Intrinsic pixel size of the source image, used to reserve layout space (aspect-ratio) up front. */
 export type ImageDims = { w: number; h: number };
 
 const MARK: Record<ImageWidth, string> = { wide: "«wide» ", full: "«full» ", half: "«half» " };
 const WIDTHS: ImageWidth[] = ["wide", "full", "half"];
+const ALIGN_MARK: Record<ImageAlign, string> = { left: "«left» ", center: "«center» ", right: "«right» " };
+const ALIGNS: ImageAlign[] = ["left", "center", "right"];
 // A dimensions marker, e.g. "«1200x800» " — digits + a literal "x", guillemets only (no bracket/paren).
 const DIMS_RE = /^«(\d+)x(\d+)»\s/;
 
-/** Split width- and dimension-marker prefixes out of an image's alt text. */
-export function parseImageAlt(alt: string): { width?: ImageWidth; dims?: ImageDims; alt: string } {
+/** Split width-, align-, and dimension-marker prefixes out of an image's alt text. */
+export function parseImageAlt(alt: string): {
+  width?: ImageWidth;
+  align?: ImageAlign;
+  dims?: ImageDims;
+  alt: string;
+} {
   let rest = alt;
   let width: ImageWidth | undefined;
   for (const w of WIDTHS) {
@@ -30,19 +42,39 @@ export function parseImageAlt(alt: string): { width?: ImageWidth; dims?: ImageDi
       break;
     }
   }
+  let align: ImageAlign | undefined;
+  for (const al of ALIGNS) {
+    if (rest.startsWith(ALIGN_MARK[al])) {
+      align = al;
+      rest = rest.slice(ALIGN_MARK[al].length);
+      break;
+    }
+  }
   let dims: ImageDims | undefined;
   const dm = rest.match(DIMS_RE);
   if (dm) {
     dims = { w: Number(dm[1]), h: Number(dm[2]) };
     rest = rest.slice(dm[0].length);
   }
-  return { ...(width ? { width } : {}), ...(dims ? { dims } : {}), alt: rest };
+  return {
+    ...(width ? { width } : {}),
+    ...(align ? { align } : {}),
+    ...(dims ? { dims } : {}),
+    alt: rest,
+  };
 }
 
-/** Re-attach the width + dimension markers to an alt for serialization back to markdown / Toast. */
-export function altWithWidth(alt: string, width?: ImageWidth, dims?: ImageDims): string {
+/** Re-attach the width + align + dimension markers to an alt for serialization back to markdown. */
+export function altWithWidth(
+  alt: string,
+  width?: ImageWidth,
+  dims?: ImageDims,
+  align?: ImageAlign,
+): string {
   const dimsMark = dims && dims.w > 0 && dims.h > 0 ? `«${dims.w}x${dims.h}» ` : "";
-  return (width ? MARK[width] : "") + dimsMark + alt;
+  // "center" is the default, so don't emit a marker for it — keeps a plain centered image's alt clean.
+  const alignMark = align && align !== "center" ? ALIGN_MARK[align] : "";
+  return (width ? MARK[width] : "") + alignMark + dimsMark + alt;
 }
 
 /**

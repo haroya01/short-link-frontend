@@ -8,7 +8,7 @@ import { KurlLinkCard } from "@/modules/blog/components/kurl-link-card";
 import { PostCode } from "@/modules/blog/components/post-code";
 import { PostImage } from "@/modules/blog/components/post-image";
 import type { TocHeading } from "@/modules/blog/components/post-toc";
-import type { ImageWidth } from "@/modules/blog/lib/image-width";
+import type { ImageAlign, ImageWidth } from "@/modules/blog/lib/image-width";
 import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
 import { slugify } from "@/modules/blog/lib/slugify";
@@ -188,6 +188,7 @@ function ImageBlock({ content }: { content: string | null }) {
   let alt = "";
   let caption = "";
   let width: ImageWidth | undefined;
+  let align: ImageAlign | undefined;
   let naturalWidth: number | undefined;
   let naturalHeight: number | undefined;
   try {
@@ -199,6 +200,10 @@ function ImageBlock({ content }: { content: string | null }) {
       width =
         parsed.width === "wide" || parsed.width === "full" || parsed.width === "half"
           ? parsed.width
+          : undefined;
+      align =
+        parsed.align === "left" || parsed.align === "center" || parsed.align === "right"
+          ? parsed.align
           : undefined;
       // Intrinsic size (legacy blocks lack it) → reader reserves the aspect-ratio box, no CLS.
       if (typeof parsed.naturalWidth === "number" && parsed.naturalWidth > 0) naturalWidth = parsed.naturalWidth;
@@ -214,6 +219,7 @@ function ImageBlock({ content }: { content: string | null }) {
       alt={alt}
       caption={caption}
       width={width}
+      align={align}
       naturalWidth={naturalWidth}
       naturalHeight={naturalHeight}
     />

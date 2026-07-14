@@ -406,6 +406,7 @@
     "scheduleConfirm": "予約する",
     "publishTiming": "公開タイミング",
     "publishNow": "今すぐ公開",
+    "advancedSettings": "詳細設定",
     "slugFreezeWarn": "公開後はURLを変更できません。",
     "scheduleInvalid": "未来の時刻を選んでください。",
     "slugTaken": "このURLは既に使われています。別のURLにしてください。",
@@ -425,6 +426,14 @@
       "strike": "取り消し線",
       "inlineCode": "インラインコード",
       "link": "リンク"
+    },
+    "imageBubble": {
+      "half": "半分の幅",
+      "normal": "標準の幅",
+      "wide": "ワイド",
+      "alignLeft": "左揃え",
+      "alignCenter": "中央揃え",
+      "alignRight": "右揃え"
     },
     "slash": {
       "groupBasic": "基本",

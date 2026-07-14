@@ -16,6 +16,9 @@ import {
 } from "@/modules/blog/components/editor/table-with-align";
 import { Markdown } from "tiptap-markdown";
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   Bold,
   Code2,
   Heading1,
@@ -48,7 +51,13 @@ import {
   mapsPlaceUrl,
   type PickedPlace,
 } from "@/modules/blog/components/editor/place-search-dialog";
-import { altWithWidth, imageNaturalSize, type ImageWidth } from "@/modules/blog/lib/image-width";
+import {
+  altWithWidth,
+  imageNaturalSize,
+  parseImageAlt,
+  type ImageAlign,
+  type ImageWidth,
+} from "@/modules/blog/lib/image-width";
 import { externalImageUrlsFromHtml } from "@/modules/blog/lib/paste-images";
 import { isImageUrl } from "@/modules/blog/lib/post-embed";
 import { postImageErrorMessageKey } from "@/modules/blog/api/post-images";
@@ -432,6 +441,7 @@ export function MarkdownEditor({
   return (
     <div className="flex h-full flex-col">
       <BubbleBar editor={editor} onEditLink={(href) => setUrlDialog({ mode: "link", initial: href })} />
+      <ImageBubble editor={editor} />
       <TableHandles editor={editor} />
       <EditorBlockHandle editor={editor} />
       <input
@@ -628,7 +638,16 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
   ];
 
   return (
-    <BubbleMenu editor={editor}>
+    <BubbleMenu
+      editor={editor}
+      pluginKey="textBubble"
+      // Text formatting only — an image is a NodeSelection (no text run to mark), and it has its own
+      // bubble (ImageBubble). Without this the default text bubble popped over a selected image too.
+      shouldShow={({ editor, state }) => {
+        const { empty } = state.selection;
+        return !empty && !editor.isActive("image");
+      }}
+    >
       {/* Inner div carries the chrome + a testid so tests target the bubble's marks, not the
           identically-labelled always-on toolbar buttons. */}
       <div
@@ -653,6 +672,102 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
             <it.icon className="h-4 w-4" />
           </button>
         ))}
+      </div>
+    </BubbleMenu>
+  );
+}
+
+/**
+ * Image bubble — appears over a selected image so its layout can be changed AFTER insertion (width was
+ * previously only pickable at insert time, and alignment had no control at all — the reported "이미지
+ * 정렬 안 됨"). Width («half»/기본/«wide») and align (좌/가운데/우) both ride on the alt-text marker
+ * (image-width.ts), so a change round-trips through markdown → block → the reader. Align only reads on
+ * a column-width or «half» image (wide/full bleed the column), so it's hidden for those widths.
+ */
+function ImageBubble({ editor }: { editor: Editor }) {
+  const t = useTranslations("postEditor");
+  // useEditor doesn't re-render on transactions → subscribe so the active width/align highlight tracks
+  // the current selection (and the bubble re-reads the alt after each change).
+  const state = useEditorState({
+    editor,
+    selector: ({ editor }) => {
+      if (!editor.isActive("image")) return { isImage: false, width: undefined, align: undefined } as const;
+      const alt = (editor.getAttributes("image").alt as string | undefined) ?? "";
+      const { width, align } = parseImageAlt(alt);
+      return { isImage: true, width, align } as const;
+    },
+  });
+
+  // Rewrite the selected image's alt with a new width / align, preserving the other axis + the clean
+  // alt text. Dims are re-derived from the image node's own width/height when present (kept off the alt
+  // here; the marker only needs width+align to drive layout). setNodeSelection keeps the image selected
+  // so the bubble stays open for a follow-up tweak.
+  const rewrite = (next: { width?: ImageWidth | null; align?: ImageAlign | null }) => {
+    const attrs = editor.getAttributes("image");
+    const parsed = parseImageAlt((attrs.alt as string | undefined) ?? "");
+    const width = next.width === null ? undefined : (next.width ?? parsed.width);
+    const align = next.align === null ? undefined : (next.align ?? parsed.align);
+    const alt = altWithWidth(parsed.alt, width, parsed.dims, align);
+    editor.chain().focus().updateAttributes("image", { alt }).run();
+  };
+
+  if (!state.isImage) return null;
+  const wideOrFull = state.width === "wide" || state.width === "full";
+
+  const btn = (active: boolean) =>
+    `touch-target focus-ring grid h-8 w-8 place-items-center rounded-md transition-colors ${
+      active
+        ? "bg-accent-50 text-accent-700 dark:bg-accent-500/20 dark:text-accent-300"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+    }`;
+
+  const widthItems: { icon: LucideIcon; label: string; active: boolean; run: () => void }[] = [
+    { icon: Minus, label: t("imageBubble.half"), active: state.width === "half", run: () => rewrite({ width: "half" }) },
+    { icon: ImageIcon, label: t("imageBubble.normal"), active: !state.width, run: () => rewrite({ width: null }) },
+    { icon: Plus, label: t("imageBubble.wide"), active: state.width === "wide", run: () => rewrite({ width: "wide" }) },
+  ];
+  const alignItems: { icon: LucideIcon; label: string; active: boolean; run: () => void }[] = [
+    { icon: AlignLeft, label: t("imageBubble.alignLeft"), active: state.align === "left", run: () => rewrite({ align: "left" }) },
+    { icon: AlignCenter, label: t("imageBubble.alignCenter"), active: !state.align || state.align === "center", run: () => rewrite({ align: "center" }) },
+    { icon: AlignRight, label: t("imageBubble.alignRight"), active: state.align === "right", run: () => rewrite({ align: "right" }) },
+  ];
+
+  const group = (items: typeof widthItems) =>
+    items.map((it, i) => (
+      <button
+        key={i}
+        type="button"
+        aria-label={it.label}
+        title={it.label}
+        aria-pressed={it.active}
+        className={btn(it.active)}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          it.run();
+        }}
+      >
+        <it.icon className="h-4 w-4" />
+      </button>
+    ));
+
+  return (
+    <BubbleMenu
+      editor={editor}
+      pluginKey="imageBubble"
+      shouldShow={({ editor }) => editor.isActive("image")}
+    >
+      <div
+        data-testid="image-bubble"
+        className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
+      >
+        {group(widthItems)}
+        {/* Align only moves a column-width or «half» image; wide/full bleed the column, so hide it. */}
+        {!wideOrFull && (
+          <>
+            <span className="mx-0.5 h-5 w-px shrink-0 bg-slate-200 dark:bg-slate-700" aria-hidden />
+            {group(alignItems)}
+          </>
+        )}
       </div>
     </BubbleMenu>
   );

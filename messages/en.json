@@ -406,6 +406,7 @@
     "scheduleConfirm": "Schedule post",
     "publishTiming": "When to publish",
     "publishNow": "Publish now",
+    "advancedSettings": "Advanced settings",
     "slugFreezeWarn": "The address locks once published.",
     "scheduleInvalid": "Pick a future time.",
     "slugTaken": "This address is already taken — try a different one.",
@@ -425,6 +426,14 @@
       "strike": "Strikethrough",
       "inlineCode": "Inline code",
       "link": "Link"
+    },
+    "imageBubble": {
+      "half": "Half width",
+      "normal": "Default width",
+      "wide": "Wide",
+      "alignLeft": "Align left",
+      "alignCenter": "Align center",
+      "alignRight": "Align right"
     },
     "slash": {
       "groupBasic": "Basic",

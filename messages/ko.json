@@ -406,6 +406,7 @@
     "scheduleConfirm": "예약하기",
     "publishTiming": "발행 시점",
     "publishNow": "지금 발행",
+    "advancedSettings": "추가 설정",
     "slugFreezeWarn": "발행 후에는 주소를 바꿀 수 없어요",
     "scheduleInvalid": "미래 시각을 선택해주세요.",
     "slugTaken": "이 주소는 이미 사용 중이에요. 다른 주소로 바꿔주세요.",
@@ -425,6 +426,14 @@
       "strike": "취소선",
       "inlineCode": "인라인 코드",
       "link": "링크"
+    },
+    "imageBubble": {
+      "half": "절반 너비",
+      "normal": "기본 너비",
+      "wide": "넓게",
+      "alignLeft": "왼쪽 정렬",
+      "alignCenter": "가운데 정렬",
+      "alignRight": "오른쪽 정렬"
     },
     "slash": {
       "groupBasic": "기본",

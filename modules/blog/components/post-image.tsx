@@ -6,13 +6,21 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
-import type { ImageWidth } from "@/modules/blog/lib/image-width";
+import type { ImageAlign, ImageWidth } from "@/modules/blog/lib/image-width";
 
 // Wider-than-column layouts. Reader uses these; the editor mirrors them via img[alt^="«wide»"] CSS.
 const WIDTH_CLASS: Record<ImageWidth, string> = {
   wide: "post-img-wide",
   full: "post-img-full",
   half: "post-img-half",
+};
+
+// Horizontal placement of a column-width (or «half») image. Left/right cap the figure so the shift is
+// visible (a full-column image has nowhere to go); center is the default and adds nothing.
+const ALIGN_CLASS: Record<ImageAlign, string> = {
+  left: "post-img-left",
+  center: "",
+  right: "post-img-right",
 };
 
 /**
@@ -26,6 +34,7 @@ export function PostImage({
   alt,
   caption,
   width,
+  align,
   naturalWidth,
   naturalHeight,
 }: {
@@ -33,6 +42,8 @@ export function PostImage({
   alt: string;
   caption: string;
   width?: ImageWidth;
+  /** Left/center/right placement of a column-width (or «half») image. Center is the default. */
+  align?: ImageAlign;
   /** Intrinsic pixel size (when known). Sets width/height on the <img> so the browser reserves the
    *  aspect-ratio box up front — the image never shifts the article as it streams in (CLS-free). */
   naturalWidth?: number;
@@ -57,8 +68,12 @@ export function PostImage({
     };
   }, [open]);
 
+  // Wide/full images bleed the full column, so alignment can't move them — only apply align to
+  // default- and «half»-width images. Center adds no class (it's the default).
+  const alignClass = width === "wide" || width === "full" ? "" : align ? ALIGN_CLASS[align] : "";
+  const figureClass = [width ? WIDTH_CLASS[width] : "", alignClass].filter(Boolean).join(" ") || undefined;
   return (
-    <figure className={width ? WIDTH_CLASS[width] : undefined}>
+    <figure className={figureClass}>
       <button
         type="button"
         onClick={() => setOpen(true)}
