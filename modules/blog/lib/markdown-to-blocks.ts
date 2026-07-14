@@ -82,7 +82,9 @@ function standaloneEmbedUrl(line: string): string | null {
 export function markdownToBlocks(markdown: string): BlockInput[] {
   if (!markdown.trim()) return [];
 
-  const lines = markdown.split("\n");
+  // Normalize CRLF pastes (Windows / external editors) — otherwise a stray \r rides every line into
+  // block contents and line-head matching. Mirrored in the backend MarkdownBlocksConverter.
+  const lines = markdown.replace(/\r\n/g, "\n").split("\n");
   const blocks: BlockInput[] = [];
   let i = 0;
 
