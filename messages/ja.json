@@ -651,7 +651,8 @@
       "SEXUAL": "性的なコンテンツ",
       "COPYRIGHT": "著作権侵害",
       "OTHER": "その他"
-    }
+    },
+    "publishedCelebration": "公開されました"
   },
   "imageCropper": {
     "title": "画像を切り抜く",

@@ -665,7 +665,8 @@
       "SEXUAL": "Nội dung tình dục",
       "COPYRIGHT": "Vi phạm bản quyền",
       "OTHER": "Khác"
-    }
+    },
+    "publishedCelebration": "Bài viết đã được xuất bản"
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",

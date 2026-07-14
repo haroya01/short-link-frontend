@@ -892,6 +892,56 @@ html[data-theme-vt] .vt-bottom-nav {
 }
 
 /*
+ * 발행 축하(publish-celebration.tsx) — 발행 직후 도착한 글 페이지에서 1회. 색지 낙하는 linear
+ * (낙하는 가속이 자연스럽고, 지속시간 편차가 흩날림을 만든다), 필 등장·그린 실은 var(--ease).
+ * reduced-motion 은 필/실을 완성 상태로 그냥 보여준다(색지는 컴포넌트가 아예 안 그린다).
+ */
+@keyframes celebrate-fall {
+  0% {
+    transform: translate3d(0, -8vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift, 0px), 106vh, 0) rotate(var(--spin, 240deg));
+    opacity: 0.85;
+  }
+}
+@keyframes celebrate-pill-in {
+  from {
+    transform: translateY(10px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+.celebrate-pill-in {
+  animation: celebrate-pill-in 440ms var(--ease) both;
+}
+@keyframes celebrate-thread-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.celebrate-thread {
+  transform-origin: left;
+  animation: celebrate-thread-draw 640ms var(--ease) 300ms both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .celebrate-pill-in,
+  .celebrate-thread {
+    animation: none !important;
+  }
+}
+
+/*
  * Tag-feed POST LIST crossfade — keyed by the topic, so only the changing post list fades on a topic
  * soft-nav. The topic title, follow controls and filter strip stay put (they update in place), and the
  * header/bottom-nav (layout) stay mounted — only the list itself, the part that actually changes,

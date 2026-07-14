@@ -651,7 +651,8 @@
       "SEXUAL": "यौन सामग्री",
       "COPYRIGHT": "कॉपीराइट उल्लंघन",
       "OTHER": "अन्य"
-    }
+    },
+    "publishedCelebration": "आपकी पोस्ट प्रकाशित हो गई"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",
