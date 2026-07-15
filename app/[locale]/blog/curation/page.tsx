@@ -1,10 +1,11 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { ChevronRight, Layers } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { blogPath } from "@/lib/host";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { BrandTick } from "@/modules/blog/components/rail-heading";
 import { CollapsibleSection } from "@/modules/blog/components/saved/collapsible-section";
 import { SmartShelf } from "@/modules/blog/components/saved/smart-shelf";
 import { LikedList } from "@/modules/blog/components/saved/liked-list";
@@ -30,34 +31,43 @@ export default function SavedPostsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
+    // max-w-3xl: 글·분석·리드와 같은 워크스페이스 공통 폭.
+    <main className="mx-auto max-w-3xl px-6 py-10">
       <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("savedTitle")}</h1>
       <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{t("savedSubtitle")}</p>
 
-      {/* 내 컬렉션 — 저장한 글(읽기 위주)과 나란히 두는, 내가 엮은 컬렉션/길로 가는 진입점. 여기 섹션들과
-          달리 별도 페이지라 접히는 목록이 아니라 링크 행으로 둔다. */}
-      <BlogLink
-        href={blogPath("/collections")}
-        className="focus-ring mt-6 flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3.5 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/40"
-      >
-        <Layers className="h-4 w-4 shrink-0 text-accent-600 dark:text-accent-500" />
-        <span className="min-w-0 flex-1">
-          <span className="block text-[13px] font-bold text-slate-800 dark:text-slate-200">
-            {tColl("myCollectionsTitle")}
-          </span>
-          <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">
-            {tColl("myCollectionsSubtitle")}
-          </span>
-        </span>
-        <ChevronRight className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
-      </BlogLink>
-
-      {/* 저장한 글 = 한 번에 한 곳에 집중 — 각 섹션을 필요할 때 펼친다(읽기 리스트만 기본 열림). */}
-      <div className="mt-6 space-y-3">
-        <CollapsibleSection title={t("curationReadingList")} hint={t("curationReadingListHint")} defaultOpen>
+      {/* 읽기 리스트 = 이 페이지의 본문 — "다시 읽으러 온" 사람이 서랍을 열 필요 없이 바로
+          만나는 열린 섹션. 나머지 보관 성격 목록들은 아래 조용한 인덱스로 강등(서랍장 6개가
+          동급으로 서 있던 판을 본문 1 + 색인 6으로). */}
+      <section className="mt-8">
+        <h2 className="flex items-center gap-2 text-[15px] font-bold text-slate-900 dark:text-slate-100">
+          <BrandTick />
+          {t("curationReadingList")}
+        </h2>
+        <p className="mt-1 text-[12px] text-slate-500 dark:text-slate-400">{t("curationReadingListHint")}</p>
+        <div className="mt-4">
           {/* Unified with the profile's 보관함 — smart shelf (manual folders + auto tag groups). */}
           <SmartShelf username={me?.username ?? ""} locale={locale} />
-        </CollapsibleSection>
+        </div>
+      </section>
+
+      {/* 보관함 인덱스 — 내 컬렉션(별도 페이지 링크)과 접이식 목록들을 한 가지 행 문법으로. */}
+      <div className="mt-10 divide-y divide-slate-100 border-y border-slate-100 dark:divide-slate-800 dark:border-slate-800">
+        <BlogLink
+          href={blogPath("/collections")}
+          className="focus-ring flex w-full items-center gap-3 px-1 py-3.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
+        >
+          <span className="flex min-w-0 flex-1 flex-col gap-1">
+            <span className="flex items-center gap-2 text-[13px] font-bold text-slate-800 dark:text-slate-200">
+              <BrandTick />
+              {tColl("myCollectionsTitle")}
+            </span>
+            <span className="truncate text-[12px] font-normal text-slate-500 dark:text-slate-400">
+              {tColl("myCollectionsSubtitle")}
+            </span>
+          </span>
+          <ChevronRight className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+        </BlogLink>
         <CollapsibleSection title={t("curationLiked")} hint={t("curationLikedHint")}>
           <LikedList username={me?.username ?? ""} locale={locale} />
         </CollapsibleSection>

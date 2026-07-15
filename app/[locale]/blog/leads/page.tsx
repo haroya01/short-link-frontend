@@ -118,36 +118,56 @@ export default function ProfileLeadsPage() {
 
   const lastPage = Math.max(0, Math.ceil(total / PAGE_SIZE) - 1);
 
+  const hasLeads = total > 0;
+
   return (
-    <div className="container max-w-3xl space-y-6 py-12">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-[24px] font-semibold leading-tight tracking-headline text-slate-900 sm:text-[30px] dark:text-slate-100">
+    // 워크스페이스 공통 그리드(글·분석·저장한 글과 같은 폭·헤더 문법).
+    <div className="mx-auto max-w-3xl space-y-6 px-6 py-10">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             {t("title")}
           </h1>
           <p className="mt-1 text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
             {t("intro", { count: total })}
           </p>
           <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{t("csvExcludesOptedOut")}</p>
+          {/* 항해(프로필 편집기로)는 액션 무리에서 분리 — 폼을 고치러 가는 크로스 표면 hop 은
+              같은 캡슐(SwitchLink)로 소개문 아래에. 오른쪽엔 이 페이지의 액션만 남는다. */}
+          <div className="mt-3">
+            <SwitchLink href={linksHref("/settings/profile")} icon={SlidersHorizontal}>
+              {t("backToEditor")}
+            </SwitchLink>
+          </div>
         </div>
         <div className="flex items-center gap-2">
-          {/* Leads live on blog, the profile editor lives on kurl — the same cross-surface capsule
-              (SwitchLink) as the other blog↔kurl↔프로필 hops, not a bare grey text link. */}
-          <SwitchLink href={linksHref("/settings/profile")} icon={SlidersHorizontal}>
-            {t("backToEditor")}
-          </SwitchLink>
-          <a href={emailLeadsExportUrl()} download>
-            <Button variant="outline">
+          {/* 0건이면 내보낼 것도 보낼 대상도 없다 — 죽은 액션은 비활성으로 정직하게. */}
+          {hasLeads ? (
+            <a href={emailLeadsExportUrl()} download>
+              <Button variant="outline">
+                <Download className="mr-1 h-4 w-4" />
+                {t("downloadCsv")}
+              </Button>
+            </a>
+          ) : (
+            <Button variant="outline" disabled title={t("emptyTitle")}>
               <Download className="mr-1 h-4 w-4" />
               {t("downloadCsv")}
             </Button>
-          </a>
-          <Link href={blogPath("/leads/campaign")}>
-            <Button variant="accent">
+          )}
+          {hasLeads ? (
+            <Link href={blogPath("/leads/campaign")}>
+              <Button variant="accent">
+                <Sparkles className="mr-1 h-4 w-4" />
+                {t("buildCampaign")}
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="accent" disabled title={t("emptyTitle")}>
               <Sparkles className="mr-1 h-4 w-4" />
               {t("buildCampaign")}
             </Button>
-          </Link>
+          )}
         </div>
       </div>
 

@@ -12,10 +12,13 @@ export function StatCard({
   icon,
   label,
   value,
+  tone,
 }: {
   icon: ReactNode;
   label: string;
   value: number;
+  /** "accent" = 숫자를 brand-green 으로 — kurl 연동 지표(링크 클릭)의 조용한 구분. */
+  tone?: "accent";
 }) {
   return (
     <div>
@@ -23,7 +26,13 @@ export function StatCard({
         {icon}
         <span className="text-[12px] font-medium">{label}</span>
       </div>
-      <div className="mt-1 text-[26px] font-bold tabular-nums tracking-tight text-slate-900 dark:text-slate-100">
+      <div
+        className={`mt-1 text-[26px] font-bold tabular-nums tracking-tight ${
+          tone === "accent"
+            ? "text-accent-700 dark:text-accent-300"
+            : "text-slate-900 dark:text-slate-100"
+        }`}
+      >
         {value.toLocaleString()}
       </div>
     </div>

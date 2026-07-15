@@ -286,7 +286,8 @@
     "settingsFollowedTags": "팔로우한 태그",
     "settingsFollowedTagsHint": "팔로우한 주제 — 최근 글이 없는 태그까지 모두. 이 주제의 글은 피드 상단 띠에 모여요.",
     "settingsFollowedTagsEmpty": "아직 팔로우한 주제가 없어요.",
-    "settingsUnfollowTag": "{tag} 팔로우 해제"
+    "settingsUnfollowTag": "{tag} 팔로우 해제",
+    "analyticsPeakDay": "최고 하루 {date} · {count}회"
   },
   "postEditor": {
     "backToList": "글 목록",
