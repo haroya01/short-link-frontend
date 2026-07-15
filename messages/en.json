@@ -790,6 +790,8 @@
     "closeMenu": "Close menu",
     "menu": "Menu",
     "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
     "write": "Write",
     "apps": {
       "trigger": "Other apps",
@@ -2833,7 +2835,12 @@
       "revoked": "Revoked.",
       "revokeFailed": "Failed to revoke.",
       "revokeConfirm": "Revoking this key disables it immediately. Continue?",
-      "revokedLabel": "Revoked"
+      "revokedLabel": "Revoked",
+      "usageTitle": "What this key can do right away",
+      "usageShorten": "Shorten a link",
+      "usagePublish": "Publish a Markdown file (kurl-publish CLI)",
+      "usageExport": "Back up all your posts (zip)",
+      "usageCliHint": "Get the kurl-publish.py script (GitHub)"
     },
     "customDomains": {
       "title": "Custom domains",

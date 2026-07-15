@@ -790,6 +790,8 @@
     "closeMenu": "メニューを閉じる",
     "menu": "メニュー",
     "theme": "テーマ",
+    "themeLight": "ライト",
+    "themeDark": "ダーク",
     "write": "投稿",
     "apps": {
       "trigger": "他のアプリ",
@@ -2833,7 +2835,12 @@
       "revoked": "失効しました。",
       "revokeFailed": "失効に失敗しました。",
       "revokeConfirm": "このキーを失効するとすぐに使えなくなります。続行しますか？",
-      "revokedLabel": "失効済み"
+      "revokedLabel": "失効済み",
+      "usageTitle": "このキーですぐにできること",
+      "usageShorten": "リンクを短縮",
+      "usagePublish": "Markdownファイルで記事を公開 (kurl-publish CLI)",
+      "usageExport": "記事をまるごとバックアップ (zip)",
+      "usageCliHint": "kurl-publish.py スクリプトを入手 (GitHub)"
     },
     "customDomains": {
       "title": "カスタムドメイン",

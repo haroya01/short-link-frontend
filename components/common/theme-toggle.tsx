@@ -67,14 +67,22 @@ export function ThemeToggle({
       title={iconOnly ? t("theme") : undefined}
       className={className}
     >
+      {/* 아이콘 문법이 렌더별로 다르다: iconOnly(상단 바)는 누르면 갈 모드(라이트에서 달) — 행동
+          버튼이라 목적지를 보여준다. 행 렌더는 현재 모드 아이콘 + 오른쪽 현재값 라벨 — "옵션"이니
+          지금 상태가 읽혀야 한다(언어 행이 현재 로케일을 보여주는 것과 같은 문법). */}
       <span className="inline-flex items-center gap-3">
-        {dark ? (
-          <Sun className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-        ) : (
+        {(iconOnly ? !dark : dark) ? (
           <Moon className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+        ) : (
+          <Sun className="h-5 w-5 text-slate-500 dark:text-slate-400" />
         )}
         {!iconOnly && t("theme")}
       </span>
+      {!iconOnly && (
+        <span className="ml-auto pl-3 text-[13px] text-slate-500 dark:text-slate-400">
+          {dark ? t("themeDark") : t("themeLight")}
+        </span>
+      )}
     </button>
   );
 }

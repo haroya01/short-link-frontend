@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { ApiKeysSection } from "@/components/settings/api-keys-section";
+import { ThemeToggle } from "@/components/common/theme-toggle";
 import { TwoFactorSection } from "@/components/settings/two-factor-section";
 import { CustomDomainsSection } from "@/components/settings/custom-domains-section";
 import { Section as SharedSection } from "@/components/common/section";
@@ -149,6 +150,12 @@ export default function SettingsPage() {
                       ))}
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400">{t("languageHint")}</p>
+                  </div>
+
+                  {/* 테마도 환경설정의 1급 항목 — 상단 바/계정 메뉴에만 있으면 "설정"에서 찾는
+                      사용자가 못 본다. blog 설정의 화면 섹션과 같은 행 문법(현재값 표시 포함). */}
+                  <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4">
+                    <ThemeToggle className="flex w-full items-center rounded-md px-2 py-2 text-sm text-slate-700 dark:text-slate-300 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50" />
                   </div>
                 </Section>
               </div>

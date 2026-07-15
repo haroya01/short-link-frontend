@@ -200,6 +200,10 @@ export default async function RootLayout({
     "var m=document.cookie.match(/(?:^|; )theme=(dark|light)/);" +
     "var t=m?m[1]:(onP?null:localStorage.getItem('theme'));" +
     "if(t==='dark'){document.documentElement.classList.add('dark');}" +
+    // Safari(ITP)는 스크립트가 쓴 쿠키를 7일로 캡한다 — 방문할 때마다 같은 값으로 재기입해
+    // 창을 밀어 둔다(주 1회만 와도 선택이 유지). 서버 Set-Cookie 경유가 정석이지만 /api/* 는
+    // 프록시 계층에서 백엔드로 넘어갈 수 있어 여기서 처리한다.
+    "if(m){document.cookie='theme='+m[1]+'; path=/; max-age=31536000; samesite=lax'+(onP?'; domain=.'+P:'');}" +
     authHintScript +
     "}catch(e){}})()";
 

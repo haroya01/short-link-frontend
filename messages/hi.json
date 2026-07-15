@@ -790,6 +790,8 @@
     "closeMenu": "मेनू बंद करें",
     "menu": "मेनू",
     "theme": "थीम",
+    "themeLight": "लाइट",
+    "themeDark": "डार्क",
     "write": "लिखें",
     "apps": {
       "trigger": "अन्य ऐप",
@@ -2833,7 +2835,12 @@
       "revoked": "रद्द किया गया।",
       "revokeFailed": "रद्द करने में विफल।",
       "revokeConfirm": "इस कुंजी को रद्द करने पर यह तुरंत अक्षम हो जाती है। जारी रखें?",
-      "revokedLabel": "रद्द किया गया"
+      "revokedLabel": "रद्द किया गया",
+      "usageTitle": "इस key से तुरंत क्या कर सकते हैं",
+      "usageShorten": "लिंक छोटा करें",
+      "usagePublish": "Markdown फ़ाइल से पोस्ट प्रकाशित करें (kurl-publish CLI)",
+      "usageExport": "अपनी सभी पोस्ट का बैकअप (zip)",
+      "usageCliHint": "kurl-publish.py स्क्रिप्ट पाएँ (GitHub)"
     },
     "customDomains": {
       "title": "कस्टम डोमेन",
