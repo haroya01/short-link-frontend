@@ -77,7 +77,9 @@ export function FollowerCountSetting() {
           >
             <span
               className={cn(
-                "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform",
+                // left-0 anchors the knob: without it the absolutely-positioned span falls back
+                // to its static position, which the button's UA text-align:center puts mid-pill.
+                "absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform",
                 hidden ? "translate-x-[1.375rem]" : "translate-x-0.5",
               )}
             />
