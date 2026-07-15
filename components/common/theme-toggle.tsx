@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { writeStorageString } from "@/lib/storage-json";
-import { writeThemeCookie } from "@/lib/theme-cookie";
+import { themeCookieName, writeThemeCookie } from "@/lib/theme-cookie";
 
 /**
  * Dark-mode toggle. Flips the `dark` class on <html> and persists the choice to a `.kurl.me` cookie
- * (shared across the apex feed + author subdomains) plus localStorage (same-origin fallback), read
- * back by the no-FOUC script in the root layout. Dark is an explicit opt-in — light until the user
- * picks dark (we don't auto-follow the OS theme). Default render is a full-width row (account menu /
- * sheet); `iconOnly` drops the label for a compact icon button (e.g. the kurl desktop top nav).
+ * plus localStorage (same-origin fallback), read back by the no-FOUC script in the root layout.
+ * 쿠키 이름은 제품별(themeCookieName: 블로그=theme, kurl=kurl_theme) — 블로그에서 다크를 써도
+ * kurl 은 기본 백을 지킨다. Dark is an explicit opt-in — light until the user picks dark (we don't
+ * auto-follow the OS theme). Default render is a full-width row (account menu / sheet); `iconOnly`
+ * drops the label for a compact icon button (e.g. the kurl desktop top nav).
  */
 export function ThemeToggle({
   className,
@@ -33,8 +34,8 @@ export function ThemeToggle({
       setDark(next);
       document.documentElement.classList.toggle("dark", next);
       const value = next ? "dark" : "light";
-      writeThemeCookie(value); // shared across apex ↔ author subdomains
-      writeStorageString("theme", value); // same-origin fallback
+      writeThemeCookie(value); // per-product cookie (blog=theme, kurl=kurl_theme)
+      writeStorageString(themeCookieName(), value); // same-origin fallback, same per-product key
     };
 
     // Sweep the new theme down over the old via the View Transitions API (CSS in globals.css drives
