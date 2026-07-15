@@ -278,32 +278,13 @@ export function ConnectSheet({
                     const held = heldBy.has(c.id);
                     return (
                       <li key={c.id}>
-                        <div
-                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left ${
-                            held ? "" : "transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
-                          }`}
-                        >
-                          {/* The tappable label. When the block is already in this collection the label
-                              is inert (the unlink control on the right governs it) — kept as a div so it
-                              isn't a dead button; otherwise it's the pick button. */}
-                          {held ? (
+                        {held ? (
+                          /* Already in — the label is inert (the unlink control on the right governs it),
+                             so the row stays a div with the badge + 해제 beside it. */
+                          <div className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left">
                             <span className="min-w-0 flex-1">
                               <CollectionRowText c={c} t={t} />
                             </span>
-                          ) : (
-                            <button
-                              type="button"
-                              role="checkbox"
-                              aria-checked={selected.has(c.id)}
-                              onClick={() => toggle(c.id)}
-                              className="focus-ring -m-1 flex min-w-0 flex-1 items-center rounded-lg p-1 text-left"
-                            >
-                              <span className="min-w-0 flex-1">
-                                <CollectionRowText c={c} t={t} />
-                              </span>
-                            </button>
-                          )}
-                          {held ? (
                             <span className="flex shrink-0 items-center gap-2">
                               <span className="inline-flex items-center gap-1 rounded-full bg-accent-50 px-2 py-0.5 text-[11px] font-semibold text-accent-700 dark:bg-accent-500/15 dark:text-accent-400">
                                 <Check className="h-3 w-3" strokeWidth={3} />
@@ -322,9 +303,23 @@ export function ConnectSheet({
                                 )}
                               </button>
                             </span>
-                          ) : (
-                            // Multi-select, so a checkbox square (not a radio circle) — the shape reads
-                            // "pick several". The role/aria live on the label button above.
+                          </div>
+                        ) : (
+                          /* One button spans the whole row — label AND the checkbox square — so a tap
+                             right on the square picks the row. (The square used to be a decorative
+                             sibling outside the pick button, so tapping it did nothing.) */
+                          <button
+                            type="button"
+                            role="checkbox"
+                            aria-checked={selected.has(c.id)}
+                            onClick={() => toggle(c.id)}
+                            className="focus-ring flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+                          >
+                            <span className="min-w-0 flex-1">
+                              <CollectionRowText c={c} t={t} />
+                            </span>
+                            {/* Multi-select, so a checkbox square (not a radio circle) — the shape reads
+                                "pick several". */}
                             <span
                               aria-hidden
                               className={`grid h-5 w-5 shrink-0 place-items-center rounded-md border ${
@@ -335,8 +330,8 @@ export function ConnectSheet({
                             >
                               {selected.has(c.id) && <Check className="h-3 w-3" strokeWidth={3} />}
                             </span>
-                          )}
-                        </div>
+                          </button>
+                        )}
                       </li>
                     );
                   })}

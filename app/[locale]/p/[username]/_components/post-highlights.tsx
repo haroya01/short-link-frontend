@@ -31,6 +31,7 @@ import {
   type RelatedBlock,
 } from "@/modules/blog/api/collections";
 import { ConnectionBlock } from "@/modules/blog/components/connection-block";
+import { Avatar } from "@/modules/blog/components/avatar";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
@@ -528,8 +529,10 @@ function HighlightThread({
     }
   }
 
+  // Same shape as the comment section's date (year included) — the thread reads like comments.
   function fmt(iso: string) {
     return new Date(iso).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
+      year: "numeric",
       month: "short",
       day: "numeric",
       timeZone: "Asia/Seoul",
@@ -585,24 +588,38 @@ function HighlightThread({
               </div>
             )}
           </div>
-          {/* The curator's note is the thread opener. */}
-          {highlight.note && (
-            <div className="mt-3 flex items-start gap-2">
-              {highlight.author?.username ? (
-                <BlogLink
-                  href={authorHref(highlight.author.username, locale)}
-                  className="focus-ring mt-0.5 shrink-0 rounded text-[13px] font-medium text-slate-900 transition-colors hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-400"
-                >
+          {/* The opener: who drew the highlight, when — always shown (a bare highlight included, which
+              used to render as an anonymous quote), in the same avatar + @handle + date row grammar as
+              the comment section and the replies below. The curator's note, if any, sits under it. */}
+          <div className="mt-3 flex items-center gap-2">
+            {highlight.author?.username ? (
+              <BlogLink
+                href={authorHref(highlight.author.username, locale)}
+                className="group/author flex min-w-0 items-center gap-2 rounded focus-ring"
+              >
+                <Avatar
+                  src={highlight.author.avatarUrl}
+                  name={highlight.author.username}
+                  size="sm"
+                  shrink={false}
+                />
+                <span className="truncate text-[13px] font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
                   @{highlight.author.username}
-                </BlogLink>
-              ) : (
-                <span className="mt-0.5 text-[13px] font-medium text-slate-900 dark:text-slate-100">
-                  @?
                 </span>
-              )}
-              <div className="min-w-0 flex-1 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
-                <CommentBody text={highlight.note} locale={locale} />
-              </div>
+              </BlogLink>
+            ) : (
+              <span className="flex min-w-0 items-center gap-2">
+                <Avatar src={null} name="?" size="sm" shrink={false} />
+                <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">@?</span>
+              </span>
+            )}
+            <span className="shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
+              {fmt(highlight.createdAt)}
+            </span>
+          </div>
+          {highlight.note && (
+            <div className="mt-1.5 min-w-0 pl-9 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
+              <CommentBody text={highlight.note} locale={locale} />
             </div>
           )}
         </div>
@@ -616,20 +633,32 @@ function HighlightThread({
             <ul className="space-y-4">
               {replies.map((r) => (
                 <li key={r.id}>
+                  {/* Same row grammar as the opener/comments: avatar + @handle + date. */}
                   <div className="flex items-center gap-2">
                     {r.author?.username ? (
                       <BlogLink
                         href={authorHref(r.author.username, locale)}
-                        className="focus-ring rounded text-[13px] font-medium text-slate-900 transition-colors hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-400"
+                        className="group/author flex min-w-0 items-center gap-2 rounded focus-ring"
                       >
-                        @{r.author.username}
+                        <Avatar
+                          src={r.author.avatarUrl}
+                          name={r.author.username}
+                          size="sm"
+                          shrink={false}
+                        />
+                        <span className="truncate text-[13px] font-medium text-slate-900 transition-colors group-hover/author:text-accent-700 dark:text-slate-100 dark:group-hover/author:text-accent-400">
+                          @{r.author.username}
+                        </span>
                       </BlogLink>
                     ) : (
-                      <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
-                        @?
+                      <span className="flex min-w-0 items-center gap-2">
+                        <Avatar src={null} name="?" size="sm" shrink={false} />
+                        <span className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
+                          @?
+                        </span>
                       </span>
                     )}
-                    <span className="text-[12px] text-slate-500">{fmt(r.createdAt)}</span>
+                    <span className="shrink-0 text-[12px] text-slate-500">{fmt(r.createdAt)}</span>
                     {meId != null && r.author?.id === meId && (
                       <button
                         type="button"
@@ -640,7 +669,7 @@ function HighlightThread({
                       </button>
                     )}
                   </div>
-                  <div className="mt-1 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
+                  <div className="mt-1 min-w-0 pl-9 text-[14px] leading-relaxed text-slate-700 dark:text-slate-300">
                     <CommentBody text={r.body} locale={locale} />
                   </div>
                 </li>

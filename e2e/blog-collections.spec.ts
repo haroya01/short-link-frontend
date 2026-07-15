@@ -67,11 +67,30 @@ test("connect sheet marks a collection the post is already in, and offers to unl
   // 시드: POST id 3(haruka/hexagonal-too-much)은 이미 COLLECTION "프로덕트 노트"에 연결돼 있다.
   // 그 글에서 연결 시트를 열면 그 컬렉션 행이 "담김" 배지 + "해제"로 뜨고, 체크 사각이 아니다.
   await page.goto("/en/p/haruka/hexagonal-too-much");
-  // 연결 버튼(아이콘 + "Connect" 라벨) — 액션열에 둘(상·하단) 있으니 첫 번째를 연다.
-  await page.getByRole("button", { name: /connect/i }).first().click();
+  // 연결 버튼(아이콘 + "Collection" 라벨) — 액션열에 둘(상·하단) 있으니 첫 번째를 연다.
+  await page.getByRole("button", { name: /collection/i }).first().click();
   const sheet = page.getByRole("dialog");
   await expect(sheet).toBeVisible();
   // 이미 담긴 컬렉션 = "Added" 배지 + "Remove"(해제) 버튼.
   await expect(sheet).toContainText("Added");
   await expect(sheet.getByRole("button", { name: "Remove" })).toBeVisible();
+});
+
+test("tapping the checkbox square itself picks the row in the connect sheet", async ({ page }) => {
+  // 회귀: 체크 사각이 픽 버튼 밖 장식 span 이던 시절엔 사각을 직접 탭해도 아무 일도 없었다.
+  // 이제 행 전체(라벨+사각)가 한 버튼이라, 사각 좌표를 찍어 눌러도 선택돼야 한다.
+  await page.goto("/en/p/haruka/hexagonal-too-much");
+  await page.getByRole("button", { name: /collection/i }).first().click();
+  const sheet = page.getByRole("dialog");
+  await expect(sheet).toBeVisible();
+
+  const row = sheet.getByRole("checkbox").first();
+  await expect(row).toHaveAttribute("aria-checked", "false");
+  const box = await row.boundingBox();
+  if (!box) throw new Error("checkbox row not rendered");
+  // 사각은 행 오른쪽 끝(px-3 안쪽의 20px 정사각) — 그 중심 좌표를 정확히 찍는다.
+  await page.mouse.click(box.x + box.width - 22, box.y + box.height / 2);
+  await expect(row).toHaveAttribute("aria-checked", "true");
+  // 선택이 생기면 하단 CTA 가 "Next" 로 살아난다.
+  await expect(sheet.getByRole("button", { name: "Next" })).toBeEnabled();
 });
