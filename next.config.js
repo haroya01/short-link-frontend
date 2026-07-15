@@ -44,6 +44,19 @@ const nextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  // kurl.blog = 블로그의 "부르기 좋은 입구"(명함·구두·SNS) — 캐노니컬은 blog.kurl.me 그대로 두고
+  // 영구 리다이렉트만 한다(별칭 결정 2026-07-15: 도메인을 옮기면 .kurl.me 공유 쿠키 SSO·SEO가
+  // 전부 딸려오므로 이전이 아니라 별칭). config redirects 는 middleware 보다 먼저 돌아서 locale
+  // 리다이렉트와 얽히지 않는다. 도메인이 Vercel 프로젝트에 붙기 전에는 이 host 로 요청이 올 일이
+  // 없으니 미리 심어둬도 무해.
+  async redirects() {
+    return ["kurl.blog", "www.kurl.blog"].map((host) => ({
+      source: "/:path*",
+      has: [{ type: "host", value: host }],
+      destination: "https://blog.kurl.me/:path*",
+      permanent: true,
+    }));
+  },
   async rewrites() {
     if (!PROXY_BACKEND) return [];
     return [
