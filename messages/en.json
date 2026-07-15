@@ -286,7 +286,8 @@
     "settingsFollowedTags": "Followed tags",
     "settingsFollowedTagsHint": "Topics you follow — including ones with no recent posts. Their posts surface in your feed strip.",
     "settingsFollowedTagsEmpty": "You're not following any topics yet.",
-    "settingsUnfollowTag": "Unfollow {tag}"
+    "settingsUnfollowTag": "Unfollow {tag}",
+    "analyticsPeakDay": "Peak day {date} · {count} views"
   },
   "postEditor": {
     "backToList": "Posts",

@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDown, ExternalLink, Eye, FileText, Heart, Link2, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
+import { dateLocale } from "@/lib/date";
 import { blogPath, linksHref } from "@/lib/host";
 import { Mark } from "@/components/common/logo";
 import {
@@ -23,10 +24,11 @@ import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytic
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
 import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
 
-type AnalyticsTab = "overview" | "series" | "links" | "posts";
+type AnalyticsTab = "referrers" | "series" | "links" | "posts";
 
-/** 분석 화면의 섹션 탭 — 통계 카드 아래에서 개요/시리즈/링크/글 패널을 전환한다(라우팅 없이 인페이지).
- *  활성 탭은 accent 밑줄 한 줄로만 표시(§10 절제). role=tablist 로 키보드·스크린리더 대응. */
+/** 분석 화면의 섹션 탭 — 히어로 아래에서 유입 경로/시리즈/링크/글 패널을 전환한다(라우팅 없이
+ *  인페이지). WindowTabs·내 글의 보기 전환과 같은 pill 세그먼트 — 워크스페이스 전환 컨트롤을
+ *  한 가지 모양으로(밑줄 탭은 여기서만 쓰이는 두 번째 문법이었다). role=tab 으로 접근성 유지. */
 function SectionTabs({
   active,
   onChange,
@@ -39,7 +41,7 @@ function SectionTabs({
   return (
     <div
       role="tablist"
-      className="flex gap-1 overflow-x-auto border-b border-slate-100 dark:border-slate-800 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="inline-flex max-w-full overflow-x-auto rounded-full border border-slate-200 p-0.5 dark:border-slate-800 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {tabs.map((tabItem) => {
         const isActive = tabItem.key === active;
@@ -50,19 +52,13 @@ function SectionTabs({
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(tabItem.key)}
-            className={`focus-ring relative -mb-px whitespace-nowrap rounded-t px-3 py-2 text-[14px] font-semibold transition-colors ${
+            className={`focus-ring whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
               isActive
-                ? "text-accent-700 dark:text-accent-400"
-                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
+                ? "bg-accent-700 text-white"
+                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             {tabItem.label}
-            {isActive && (
-              <span
-                aria-hidden
-                className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-accent-600"
-              />
-            )}
           </button>
         );
       })}
@@ -72,14 +68,15 @@ function SectionTabs({
 
 export default function BlogAnalyticsPage() {
   const t = useTranslations("blogWorkspace");
+  const locale = useLocale();
   const { ready, authenticated } = useAuth();
   const [days, setDays] = useState(30);
   const [data, setData] = useState<AuthorAnalyticsOverview | null>(null);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<AnalyticsTab>("overview");
+  const [tab, setTab] = useState<AnalyticsTab>("referrers");
 
   const TABS: { key: AnalyticsTab; label: string }[] = [
-    { key: "overview", label: t("analyticsTabOverview") },
+    { key: "referrers", label: t("analyticsReferrers") },
     { key: "series", label: t("analyticsTabSeries") },
     { key: "links", label: t("analyticsTabLinks") },
     { key: "posts", label: t("analyticsTabPosts") },
@@ -93,6 +90,22 @@ export default function BlogAnalyticsPage() {
       .catch(() => setData(null))
       .finally(() => setLoading(false));
   }, [ready, authenticated, days]);
+
+  // 히어로 옆 한 줄 — 이 기간에서 가장 읽힌 하루. 새 데이터 없이 daily 에서 그대로 나온다.
+  const peakPoint = (data?.daily ?? []).reduce<{ date: string; views: number } | null>(
+    (best, p) => (p.views > 0 && (!best || p.views > best.views) ? p : best),
+    null,
+  );
+  const peak = peakPoint
+    ? {
+        date: new Date(peakPoint.date).toLocaleDateString(dateLocale(locale), {
+          month: "short",
+          day: "numeric",
+          timeZone: "Asia/Seoul",
+        }),
+        views: peakPoint.views,
+      }
+    : null;
 
   // 로그인 여부가 확정되기 전(!ready)에는 로그인 안내를 띄우지 않는다 — loading 초기값이 true 라
   // 아래 `loading && !data` 스켈레톤이 그대로 노출되어 하드 로드 시 빈 화면 플래시를 막는다.
@@ -121,55 +134,59 @@ export default function BlogAnalyticsPage() {
         <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
         <>
-          <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
-            <StatCard icon={<TrendingUp className="h-4 w-4" />} label={days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })} value={data.windowViews} />
+          {/* 히어로 — 이 페이지의 질문("요즘 얼마나 읽혔나")에 한 숫자로 먼저 답한다. 기간 조회가
+              주인공이고 바로 아래 추이 차트가 그 숫자의 전개 — 숫자와 차트를 한 덩어리로 묶어,
+              다섯 동급 숫자가 흩어져 있던 판을 위계로 바꾼다. */}
+          <section className="mt-7">
+            <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
+              <div>
+                <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
+                  <TrendingUp className="h-4 w-4" />
+                  <span className="text-[12px] font-medium">
+                    {days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })}
+                  </span>
+                </div>
+                <div className="mt-1 text-[40px] font-bold leading-none tabular-nums tracking-tight text-slate-900 dark:text-slate-100">
+                  {data.windowViews.toLocaleString()}
+                </div>
+              </div>
+              {peak && (
+                <p className="pb-0.5 text-[12px] text-slate-500 dark:text-slate-400">
+                  {t("analyticsPeakDay", { date: peak.date, count: peak.views })}
+                </p>
+              )}
+            </div>
+            <div className="mt-5">
+              <AnalyticsAreaChart data={data.daily} />
+            </div>
+          </section>
+
+          {/* 누적 보조 지표 — lifetime 숫자들은 히어로(기간)와 결이 달라 한 단 아래 행으로.
+              링크 클릭은 kurl 연동 차별점이라 숫자만 brand-green 으로 조용히 구분. */}
+          <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-6 border-y border-slate-100 py-5 sm:grid-cols-3 lg:grid-cols-5 dark:border-slate-800">
             <StatCard icon={<Eye className="h-4 w-4" />} label={t("analyticsLifetimeViews")} value={data.lifetimeViews} />
             <StatCard icon={<Heart className="h-4 w-4" />} label={t("analyticsLifetimeLikes")} value={data.lifetimeLikes} />
             <StatCard icon={<UserPlus className="h-4 w-4" />} label={t("analyticsFollows")} value={data.lifetimeFollows} />
             <StatCard icon={<FileText className="h-4 w-4" />} label={t("analyticsPublished")} value={data.publishedPosts} />
+            <StatCard
+              icon={<MousePointerClick className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
+              label={t("analyticsLinkClicksAll")}
+              value={data.lifetimeLinkClicks}
+              tone="accent"
+            />
           </div>
 
-          {/* kurl 연동 차별점 — 글 안 kurl 링크가 만든 클릭. 스탯 그룹의 마무리 행으로 헤어라인에
-              얹고(박스 ❌ — 위 스탯과 같은 활자 문법), 아이콘·숫자만 brand-green 으로 'kurl 클릭'임을
-              조용히 표시. */}
-          <div className="mt-6 flex items-center justify-between border-y border-slate-100 py-4 dark:border-slate-800">
-            <div>
-              <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
-                <MousePointerClick className="h-4 w-4 text-accent-600 dark:text-accent-400" />
-                <span className="text-[13px] font-semibold">{t("analyticsLinkClicksAll")}</span>
-              </div>
-              <p className="mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">
-                {days === 0
-                  ? t("analyticsAllClicks", { count: data.windowLinkClicks })
-                  : t("analyticsWindowClicks", { days, count: data.windowLinkClicks })}
-              </p>
-            </div>
-            <span className="text-2xl font-bold tabular-nums tracking-tight text-accent-700 dark:text-accent-300">
-              {data.lifetimeLinkClicks.toLocaleString()}
-            </span>
-          </div>
-
-          {/* 통계 카드는 위에 고정, 그 아래를 개요/시리즈/링크/글 탭으로 나눠 한 화면에 몰리지 않게 뎁스를 준다. */}
+          {/* 히어로 아래를 유입 경로/시리즈/링크/글 탭으로 나눠 한 화면에 몰리지 않게 뎁스를 준다. */}
           <div className="mt-8">
             <SectionTabs active={tab} onChange={setTab} tabs={TABS} />
           </div>
 
-          {tab === "overview" && (
-            <>
-          {/* 차트도 비박스 — 섹션 라벨 + 면. 보더 패널은 위 스탯·아래 행 목록과 결이 달랐다. */}
-          <section className="mt-10">
-            <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsOverTime")}</h2>
-            <AnalyticsAreaChart data={data.daily} />
-          </section>
-
           {/* 유입 경로 — 같은 윈도우의 top 호스트. 막대는 1위 대비 상대폭(SeriesReadThrough 와
               같은 문법). direct(레퍼러 없음)는 집계에 없어 행도 없다. ?? []: 백엔드(referrers
               필드)보다 프론트가 먼저 배포되는 짧은 창에서도 페이지가 안 죽게. */}
-          {(data.referrers ?? []).length > 0 && (
-            <section className="mt-10">
-              <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                {t("analyticsReferrers")}
-              </h2>
+          {tab === "referrers" &&
+            ((data.referrers ?? []).length > 0 ? (
+            <section className="mt-8">
               <ol className="space-y-1">
                 {data.referrers.map((r, i) => {
                   const max = data.referrers[0]?.views || 1;
@@ -200,9 +217,11 @@ export default function BlogAnalyticsPage() {
                 })}
               </ol>
             </section>
-          )}
-            </>
-          )}
+            ) : (
+              <p className="mt-8 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                {t("analyticsEmpty")}
+              </p>
+            ))}
 
           {/* Series — the recurring-readership unit; subscriber count is the headline metric. */}
           {tab === "series" && <SeriesAnalyticsSection />}

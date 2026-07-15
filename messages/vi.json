@@ -286,7 +286,8 @@
     "settingsFollowedTags": "Chủ đề đang theo dõi",
     "settingsFollowedTagsHint": "Các chủ đề bạn theo dõi — kể cả những chủ đề chưa có bài gần đây. Bài của chúng hiện ở dải trên bảng tin của bạn.",
     "settingsFollowedTagsEmpty": "Bạn chưa theo dõi chủ đề nào.",
-    "settingsUnfollowTag": "Bỏ theo dõi {tag}"
+    "settingsUnfollowTag": "Bỏ theo dõi {tag}",
+    "analyticsPeakDay": "Ngày cao nhất {date} · {count} lượt xem"
   },
   "postEditor": {
     "backToList": "Bài viết",

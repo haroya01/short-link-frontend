@@ -286,7 +286,8 @@
     "settingsFollowedTags": "फ़ॉलो किए गए विषय",
     "settingsFollowedTagsHint": "आपके फ़ॉलो किए विषय — वे भी जिनमें हाल की कोई पोस्ट नहीं है। इनकी पोस्ट आपकी फ़ीड की पट्टी में दिखती हैं।",
     "settingsFollowedTagsEmpty": "आपने अभी तक किसी विषय को फ़ॉलो नहीं किया है।",
-    "settingsUnfollowTag": "{tag} को अनफ़ॉलो करें"
+    "settingsUnfollowTag": "{tag} को अनफ़ॉलो करें",
+    "analyticsPeakDay": "सबसे व्यस्त दिन {date} · {count} व्यू"
   },
   "postEditor": {
     "backToList": "पोस्ट",

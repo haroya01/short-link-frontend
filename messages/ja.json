@@ -286,7 +286,8 @@
     "settingsFollowedTags": "フォロー中のタグ",
     "settingsFollowedTagsHint": "フォロー中のトピック — 最近の投稿がないものも含めて。これらの投稿はフィード上部の帯に表示されます。",
     "settingsFollowedTagsEmpty": "まだフォロー中のトピックはありません。",
-    "settingsUnfollowTag": "{tag} のフォローを解除"
+    "settingsUnfollowTag": "{tag} のフォローを解除",
+    "analyticsPeakDay": "最多日 {date} · {count}回"
   },
   "postEditor": {
     "backToList": "記事一覧",

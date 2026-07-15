@@ -160,7 +160,9 @@ export default function WriteIndexPage() {
   };
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-10">
+    // max-w-3xl: 분석·리드·저장한 글과 같은 워크스페이스 공통 폭 — 사이드바 형제 화면끼리
+    // 본문 시작·끝점이 같아야 한 공간으로 읽힌다.
+    <main className="mx-auto max-w-3xl px-6 py-10">
       <header className="mb-6 flex items-center justify-between gap-4">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
@@ -186,36 +188,9 @@ export default function WriteIndexPage() {
         </div>
       </header>
 
-      {/* 전체 ↔ 시리즈별 — same content, two lenses. 시리즈별 is where series get curated.
-          분석의 WindowTabs 와 같은 pill 세그먼트 — 워크스페이스 전환 컨트롤 한 가지 모양. */}
-      <div className="mb-5 inline-flex rounded-full border border-slate-200 p-0.5 dark:border-slate-800">
-        {([
-          ["all", t("viewAll"), List],
-          ["series", t("viewBySeries"), Layers],
-        ] as const).map(([v, label, Icon]) => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => changeView(v)}
-            aria-pressed={view === v}
-            className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
-              view === v
-                ? "bg-accent-700 text-white"
-                : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
-            }`}
-          >
-            <Icon className="h-3.5 w-3.5" />
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {view === "series" ? (
-        <SeriesGroupedView writeBase={writeBase} />
-      ) : (
-        <>
-      {/* 이어서 쓰기 — 돌아온 작가의 첫 질문("어디까지 썼더라")에 바로 답하는 진입. 가장 최근
-          임시저장 1건만, 조용한 그린 틴트 카드로. 임시저장이 없으면 섹션 자체가 없다. */}
+      {/* 이어서 쓰기 — 돌아온 작가의 첫 질문("어디까지 썼더라")에 컨트롤보다 먼저 답한다.
+          가장 최근 임시저장 1건만, 조용한 그린 틴트 카드로 헤더 바로 아래 고정(보기와 무관).
+          임시저장이 없으면 섹션 자체가 없다. */}
       {!loading && latestDraft && (
         <BlogLink
           href={`${writeBase}/${latestDraft.id}`}
@@ -238,6 +213,56 @@ export default function WriteIndexPage() {
         </BlogLink>
       )}
 
+      {/* 한 줄 툴바 — 보기 전환(왼쪽)과 상태 필터(오른쪽)를 같은 행에 접는다. 컨트롤이 세 줄로
+          쌓여 콘텐츠보다 먼저 쏟아지던 판을 정리. 상태 칩은 전체 보기에서만 의미가 있다. */}
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <div className="inline-flex rounded-full border border-slate-200 p-0.5 dark:border-slate-800">
+          {([
+            ["all", t("viewAll"), List],
+            ["series", t("viewBySeries"), Layers],
+          ] as const).map(([v, label, Icon]) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => changeView(v)}
+              aria-pressed={view === v}
+              className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
+                view === v
+                  ? "bg-accent-700 text-white"
+                  : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {label}
+            </button>
+          ))}
+        </div>
+        {view === "all" && !loading && posts.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {tabs.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setFilter(s)}
+                aria-pressed={filter === s}
+                className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
+                  filter === s
+                    ? "bg-accent-700 text-white"
+                    : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+                }`}
+              >
+                {s === "all" ? t("filterAll") : t(`status${s}`)}
+                <span className={filter === s ? "text-white/70" : "text-slate-500 dark:text-slate-500"}>{count(s)}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {view === "series" ? (
+        <SeriesGroupedView writeBase={writeBase} />
+      ) : (
+        <>
       {/* 대표글 관리 — 핀한 글을 공개 블로그 '대표글' 섹션에 이 순서로 노출. 순서 조정·해제는 여기서. */}
       {!loading && pinned.length > 0 && (
         <section className="mb-5 rounded-xl border border-slate-200 p-3 dark:border-slate-800">
@@ -284,27 +309,6 @@ export default function WriteIndexPage() {
             ))}
           </ul>
         </section>
-      )}
-
-      {!loading && posts.length > 0 && (
-        <div className="mb-5 flex flex-wrap gap-1.5">
-          {tabs.map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setFilter(s)}
-              aria-pressed={filter === s}
-              className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
-                filter === s
-                  ? "bg-accent-700 text-white"
-                  : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
-              }`}
-            >
-              {s === "all" ? t("filterAll") : t(`status${s}`)}
-              <span className={filter === s ? "text-white/70" : "text-slate-500 dark:text-slate-500"}>{count(s)}</span>
-            </button>
-          ))}
-        </div>
       )}
 
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
@@ -383,7 +387,6 @@ export default function WriteIndexPage() {
                         {showLikes(p.likeCount ?? 0) && (
                           <span className="whitespace-nowrap">· {t("likeCount", { count: p.likeCount })}</span>
                         )}
-                        <span className="truncate font-mono text-slate-500 dark:text-slate-600">{p.slug}</span>
                       </div>
                     </div>
                     {p.ogImageUrl && (
@@ -431,17 +434,6 @@ export default function WriteIndexPage() {
               </li>
             );
           })}
-          {/* 조용한 종결 CTA — 리스트가 끝났을 때 다음 행동이 손 닿는 곳에. 대시 보더 = "아직
-              없는 글"의 자리라는 어휘. */}
-          <li className="profile-fade" style={{ ["--idx" as string]: Math.min(visible.length, 9) } as React.CSSProperties}>
-            <BlogLink
-              href={`${writeBase}/new`}
-              className="focus-ring mt-3 flex items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 px-3 py-4 text-[13.5px] font-medium text-slate-500 transition-colors hover:border-accent-300 hover:text-accent-700 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
-            >
-              <PenSquare className="h-4 w-4" />
-              {t("newPost")}
-            </BlogLink>
-          </li>
         </ul>
       )}
         </>

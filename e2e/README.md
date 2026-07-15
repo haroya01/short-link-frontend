@@ -9,10 +9,10 @@ You need both backend and frontend up:
 ```bash
 # in the backend repo (../short-link)
 docker compose -f resources/docker-compose.yml up -d
-SPRING_PROFILES_ACTIVE=test ./gradlew bootRun
+SPRING_PROFILES_ACTIVE=local ./gradlew bootRun
 
 # in this repo
-npm run dev   # http://localhost:3001
+PORT=3001 npm run dev   # http://localhost:3001
 
 # in another terminal
 npm run e2e            # headless
@@ -20,7 +20,10 @@ npm run e2e:headed     # with browser window
 ```
 
 The `dev-login` endpoint (`@Profile({"local","test"})`) is required for auth specs.
-Set `SPRING_PROFILES_ACTIVE=test` (or `local`) so it's exposed.
+Use the `local` profile with `bootRun`: the `test` profile's config lives in
+`src/test/resources`, which isn't on the bootRun classpath, so booting with it fails on a
+missing datasource. If your local Redis runs on a nonstandard port, override it with
+`SPRING_DATA_REDIS_PORT`.
 
 ## Update visual baselines
 
