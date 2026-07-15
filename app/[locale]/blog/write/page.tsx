@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowDown, ArrowUp, BarChart3, Layers, List, PenSquare, Pin, X } from "lucide-react";
+import { ExportMdButton } from "@/modules/blog/components/workspace/export-md-button";
 import { ImportMdButton } from "@/modules/blog/components/workspace/import-md-button";
 import { useAuth } from "@/lib/auth";
 import { dateLocale } from "@/lib/date";
@@ -173,6 +174,7 @@ export default function WriteIndexPage() {
           )}
         </div>
         <div className="flex items-center gap-2">
+          <ExportMdButton />
           <ImportMdButton onDone={load} />
           <BlogLink
             href={`${writeBase}/new`}
