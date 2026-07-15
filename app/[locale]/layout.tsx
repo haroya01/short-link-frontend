@@ -177,33 +177,36 @@ export default async function RootLayout({
     ],
   };
 
-  // No-FOUC theme. Dark mode is now supported on BOTH products (blog + kurl/links — the links surfaces
-  // carry `dark:` variants as of the P1–P3 sweep), so we apply `.dark` on every surface, gated only on
-  // the reader's EXPLICIT choice: the shared `.kurl.me` cookie FIRST (so the apex + author subdomains
-  // agree), then the per-origin localStorage fallback. We deliberately do NOT auto-darken from the OS
-  // `prefers-color-scheme` — that flipped surfaces inconsistently across hosts and read as "it forced
-  // dark mode on me." (Earlier this was scoped to blog-only because the links product had no dark styles
-  // and `.dark` painted its root slate-950 over un-themed UI; that scoping is no longer needed.)
+  // No-FOUC theme. Dark mode is supported on BOTH products, but the PREFERENCE is per-product
+  // (사용자 결정 2026-07-15): 블로그에서 다크를 써도 kurl(링크단축)은 기본 백을 지킨다. 블로그
+  // 표면은 기존 `theme` 쿠키(피드 blog.kurl.me ↔ 작가 {author}.kurl.me 가 같은 글 경험이라 반드시
+  // 공유), kurl 표면은 전용 `kurl_theme`. 표면 판정: 플랫폼 서브도메인이면 블로그, apex 는
+  // /{locale}/blog|p 경로만 블로그, 나머지가 kurl; 오프플랫폼(단일 오리진)은 경로만 본다.
+  // ※ lib/theme-cookie.ts 의 isBlogSurface()/themeCookieName() 이 같은 판정의 원본 — 바꾸면 같이.
+  // We deliberately do NOT auto-darken from the OS `prefers-color-scheme` — that flipped surfaces
+  // inconsistently across hosts and read as "it forced dark mode on me."
   // The auth hint shares this tag: a second standalone inline <script> in <head> was dropped from
   // the streamed head on some routes (React head reconciliation), so both pre-paint flags ride the
   // one tag that's proven to survive everywhere.
-  // The choice is a `.kurl.me` cookie shared across the apex feed + author subdomains. localStorage is
-  // per-origin, so ON the platform (any *.kurl.me) we must NOT fall back to it: a stale 'dark' left in one
-  // subdomain's localStorage would paint a post ({author}.kurl.me) dark while the shared cookie — and the
-  // feed (blog.kurl.me) — are light. So on-platform the shared cookie is the SOLE source of truth (light is
-  // the safe default when it's absent, e.g. after iOS Safari's 7-day script-cookie cap expires); only
-  // off-platform (localhost / Vercel previews, a single origin) does the localStorage fallback still apply.
+  // The choice is a `.kurl.me` cookie. localStorage is per-origin, so ON the platform (any *.kurl.me)
+  // we must NOT fall back to it: a stale 'dark' left in one subdomain's localStorage would paint a post
+  // ({author}.kurl.me) dark while the shared cookie — and the feed (blog.kurl.me) — are light. So
+  // on-platform the cookie is the SOLE source of truth (light is the safe default when it's absent,
+  // e.g. after iOS Safari's 7-day script-cookie cap expires); only off-platform (localhost / Vercel
+  // previews, a single origin) does the localStorage fallback still apply.
   const platformHost = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
   const themeInitScript =
     "(function(){try{" +
     "var h=location.hostname,P=" + JSON.stringify(platformHost) + ",onP=(h===P||h.endsWith('.'+P));" +
-    "var m=document.cookie.match(/(?:^|; )theme=(dark|light)/);" +
-    "var t=m?m[1]:(onP?null:localStorage.getItem('theme'));" +
+    "var seg=location.pathname.split('/')[2];" +
+    "var n=((onP&&h!==P)||seg==='blog'||seg==='p')?'theme':'kurl_theme';" +
+    "var m=document.cookie.match(new RegExp('(?:^|; )'+n+'=(dark|light)'));" +
+    "var t=m?m[1]:(onP?null:localStorage.getItem(n));" +
     "if(t==='dark'){document.documentElement.classList.add('dark');}" +
     // Safari(ITP)는 스크립트가 쓴 쿠키를 7일로 캡한다 — 방문할 때마다 같은 값으로 재기입해
     // 창을 밀어 둔다(주 1회만 와도 선택이 유지). 서버 Set-Cookie 경유가 정석이지만 /api/* 는
     // 프록시 계층에서 백엔드로 넘어갈 수 있어 여기서 처리한다.
-    "if(m){document.cookie='theme='+m[1]+'; path=/; max-age=31536000; samesite=lax'+(onP?'; domain=.'+P:'');}" +
+    "if(m){document.cookie=n+'='+m[1]+'; path=/; max-age=31536000; samesite=lax'+(onP?'; domain=.'+P:'');}" +
     authHintScript +
     "}catch(e){}})()";
 
