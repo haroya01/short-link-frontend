@@ -134,11 +134,18 @@ export function Nav() {
               )}
             </button>
           ) : (
-            <Link href={loginHrefFor(pathname)}>
-              <Button size="sm" variant="default">
-                {t("login")}
-              </Button>
-            </Link>
+            <>
+              {/* 비로그인 모바일은 계정 시트가 없어 테마를 바꿀 곳이 여기뿐 — 데스크톱 바와 같은 이유. */}
+              <ThemeToggle
+                iconOnly
+                className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+              />
+              <Link href={loginHrefFor(pathname)}>
+                <Button size="sm" variant="default">
+                  {t("login")}
+                </Button>
+              </Link>
+            </>
           )}
         </div>
 

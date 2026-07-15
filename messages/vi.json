@@ -790,6 +790,8 @@
     "closeMenu": "Đóng menu",
     "menu": "Menu",
     "theme": "Giao diện",
+    "themeLight": "Sáng",
+    "themeDark": "Tối",
     "write": "Viết",
     "apps": {
       "trigger": "Ứng dụng khác",
@@ -2833,7 +2835,12 @@
       "revoked": "Đã thu hồi.",
       "revokeFailed": "Thu hồi thất bại.",
       "revokeConfirm": "Thu hồi khóa này sẽ vô hiệu nó ngay lập tức. Tiếp tục?",
-      "revokedLabel": "Đã thu hồi"
+      "revokedLabel": "Đã thu hồi",
+      "usageTitle": "Khóa này có thể làm gì ngay",
+      "usageShorten": "Rút gọn liên kết",
+      "usagePublish": "Đăng bài từ tệp Markdown (kurl-publish CLI)",
+      "usageExport": "Sao lưu toàn bộ bài viết (zip)",
+      "usageCliHint": "Tải script kurl-publish.py (GitHub)"
     },
     "customDomains": {
       "title": "Tên miền tùy chỉnh",

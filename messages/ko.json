@@ -790,6 +790,8 @@
     "closeMenu": "메뉴 닫기",
     "menu": "메뉴",
     "theme": "테마",
+    "themeLight": "라이트",
+    "themeDark": "다크",
     "write": "글쓰기",
     "apps": {
       "trigger": "다른 앱",
@@ -2855,7 +2857,12 @@
       "revoked": "폐기되었어요.",
       "revokeFailed": "폐기에 실패했어요.",
       "revokeConfirm": "이 키를 폐기하면 즉시 사용 불가능해요. 계속할까요?",
-      "revokedLabel": "폐기됨"
+      "revokedLabel": "폐기됨",
+      "usageTitle": "이 키로 바로 할 수 있는 것",
+      "usageShorten": "링크 단축",
+      "usagePublish": "마크다운 파일로 글 발행 (kurl-publish CLI)",
+      "usageExport": "내 글 전체 백업 (zip)",
+      "usageCliHint": "kurl-publish.py 스크립트 받기 (GitHub)"
     }
   },
   "homeStats": {
