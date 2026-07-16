@@ -1,5 +1,7 @@
+"use client";
 /* eslint-disable @next/next/no-img-element */
-import { Children, type ReactNode } from "react";
+
+import { Children, useEffect, useRef, useState, type ReactNode } from "react";
 import { Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link as TransitionLink } from "next-view-transitions";
@@ -261,30 +263,64 @@ export function DiscoveryCard({
   );
 }
 
-// 메이슨리(CSS columns) — 카드를 크기대로 빈틈없이 퍼즐처럼 채운다(행 강제 정렬 X, 밑 여백
-// 들쭉날쭉 회피). 모바일 1열 → sm 2열 → lg 3열(md 태블릿 세로에서 3열이면 카드가 ~250px로
-// 짜부라져 2열 유지). 모바일이 1열인 또 다른 이유는 2열에서 한글 제목이 ~8자에 잘려서다.
-const GRID_COLS = "columns-1 gap-4 sm:columns-2 sm:gap-5 lg:columns-3";
-// CSS multi-column 은 column-fill:balance 라 아이템이 붙을 때마다 전체 컬럼 높이를 재분배한다 →
-// 무한스크롤 append 순간 이미 보이던 카드가 열 사이로 튀어 그리드가 눈앞에서 뒤섞였다. 그래서
-// 한 컨테이너에 다 넣지 않고 페이지 단위로 컬럼 블록을 끊어 세로로 잇는다: 새 페이지는 아래에
-// 새 블록으로만 쌓이고 앞 블록의 카드 집합은 불변이라 재배치가 없다(청크 경계의 얕은 가로
-// 이음새가 유일한 비용). 청크 크기 = feed 페이지 크기여야 부분 청크가 다음 append 에 커지며
-// 재배치되는 일을 막는다.
+// 메이슨리 — 카드를 크기대로 빈틈없이 퍼즐처럼 채운다(행 강제 정렬 X, 밑 여백 들쭉날쭉 회피).
+// 모바일 1열 → sm 2열 → lg 3열(md 태블릿 세로에서 3열이면 카드가 ~250px로 짜부라져 2열 유지).
+// 모바일이 1열인 또 다른 이유는 2열에서 한글 제목이 ~8자에 잘려서다.
+//
+// 구현: CSS multi-column(column-fill:balance) 을 버리고 flex 컬럼 + 측정 기반 최단열 배치로 바꿨다.
+// balance 는 큰 카드(예: "지금 이어지는 것들" 연결 카드)가 한 열에 들어가면 그 열만 크게 늘어나고
+// 다른 열 밑을 통째로 비워(사용자 신고: "카드 없는 빈 공간") — 아이템을 쪼갤 수 없는(break-inside)
+// 큰 타일이 열 경계에서 다음 열로 튀며 남기는 void 다. flex 컬럼은 각 열이 독립 스택이라 큰 카드는
+// 자기 열 밑만 길어질 뿐(정상 메이슨리의 들쭉 밑변) void 를 안 만든다. 마운트 후 실제 높이를 재
+// 최단열에 순서대로 넣어 높이까지 고르게 맞춘다.
 const GRID_CHUNK = 24;
+// Tailwind 브레이크포인트와 일치: <640 = 1열, <1024 = 2열, ≥1024 = 3열.
+const BP_SM = 640;
+const BP_LG = 1024;
+const MAX_COLUMNS = 3;
+// 서버·첫 클라 렌더는 1열(모바일 우선)로 그린다 — 폭을 모르는 SSR 에서 3열을 그리면 모바일 첫
+// 페인트가 1/3 폭으로 짜부라졌다가(하이드레이션 뒤) 1열로 튀는 깜빡임이 난다. 1열 SSR 은 전 폭에서
+// 안전하고, 데스크톱만 마운트 후 3열로 한 번 재배치된다(위→아래 정착, 모바일 짜부라짐 없음).
+const SSR_COLUMNS = 1;
+
+function columnsForWidth(w: number): number {
+  if (w < BP_SM) return 1;
+  if (w < BP_LG) return 2;
+  return MAX_COLUMNS;
+}
+
+/** 문서순 → 열 배치. heights 가 있으면(마운트 후) 최단열 greedy, 없으면(SSR/첫 렌더) 라운드로빈.
+ *  둘 다 결정적이라 heights 없는 동안 서버·클라 마크업이 일치한다. */
+function distribute(count: number, cols: number, heights: number[] | null): number[][] {
+  const buckets: number[][] = Array.from({ length: cols }, () => []);
+  const colH = new Array(cols).fill(0);
+  for (let i = 0; i < count; i++) {
+    let target = i % cols;
+    if (heights) {
+      // 지금까지 가장 짧은 열에 넣는다 — 동률이면 왼쪽 열 우선(안정적·결정적).
+      let min = 0;
+      for (let c = 1; c < cols; c++) if (colH[c] < colH[min]) min = c;
+      target = min;
+    }
+    buckets[target].push(i);
+    if (heights) colH[target] += heights[i] ?? 0;
+  }
+  return buckets;
+}
 
 export function DiscoveryGrid({ children }: { children: ReactNode }) {
   const items = Children.toArray(children);
   const chunks: ReactNode[][] = [];
   for (let i = 0; i < items.length; i += GRID_CHUNK) chunks.push(items.slice(i, i + GRID_CHUNK));
+  // 페이지(청크) 단위로 컬럼 블록을 끊어 세로로 잇는다: 새 페이지는 아래 새 블록으로만 쌓이고 앞
+  // 블록의 카드 집합은 불변이라 무한스크롤 append 시 이미 보이던 카드가 재배치되지 않는다(청크
+  // 경계의 얕은 가로 이음새가 유일한 비용). 청크 크기 = feed 페이지 크기.
   const grid = (
-    <>
+    <div className="flex flex-col gap-4 sm:gap-5">
       {chunks.map((chunk, i) => (
-        <div key={i} className={GRID_COLS}>
-          {chunk}
-        </div>
+        <MasonryChunk key={i}>{chunk}</MasonryChunk>
       ))}
-    </>
+    </div>
   );
   // One "속함" batch resolver spans the whole grid — every DiscoveryCard's belonging line registers
   // its in-view id here, so a viewport of cards resolves in one request (see BelongingProvider). When
@@ -292,14 +328,80 @@ export function DiscoveryGrid({ children }: { children: ReactNode }) {
   return SHOW_BELONGING ? <BelongingProvider>{grid}</BelongingProvider> : grid;
 }
 
-/** A child cell of {@link DiscoveryGrid} — 칼럼 사이에서 카드가 쪼개지지 않게 막는다.
- *  `entranceDelay` 가 오면 마운트 시 짧은 스태거 페이드(fill backwards — 딜레이 동안 안 보이게).
- *  무한스크롤 append 가 "뚝" 나타나는 걸 지우는 용도 — 이미 마운트된 카드는 다시 돌지 않고,
- *  reduced-motion 은 globals 의 animate-fade-in 가드가 통째로 끈다. */
+/** 한 페이지(청크)의 카드들을 flex 컬럼 메이슨리로 배치. SSR/첫 렌더는 라운드로빈(결정적, void 없음),
+ *  마운트 후 실제 셀 높이를 재 최단열로 재배치해 열 높이를 고르게 맞춘다. */
+function MasonryChunk({ children }: { children: ReactNode }) {
+  const cells = Children.toArray(children);
+  const [cols, setCols] = useState(SSR_COLUMNS);
+  const [heights, setHeights] = useState<number[] | null>(null);
+  const cellRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // 뷰포트 폭 → 열 수. 리사이즈(브레이크포인트 통과)마다 재계산.
+  useEffect(() => {
+    const apply = () => setCols(columnsForWidth(window.innerWidth));
+    apply();
+    window.addEventListener("resize", apply);
+    return () => window.removeEventListener("resize", apply);
+  }, []);
+
+  // 셀 실제 높이 측정 → 최단열 배치. 리플로우로 노드가 열 사이를 옮겨다녀도 ref 는 원래 인덱스(i)에
+  // 고정돼 있어, 매 렌더 현재 ref 들을 다시 관찰한다. 이미지·폰트 로드로 높이가 늦게 바뀌므로
+  // ResizeObserver 로 추적하고, 값이 실제로 바뀔 때만 setHeights 해 리플로우 루프를 끊는다.
+  const cellCount = cells.length;
+  useEffect(() => {
+    const measure = () => {
+      const nodes = cellRefs.current;
+      const hs: number[] = [];
+      for (let i = 0; i < cellCount; i++) hs[i] = nodes[i]?.getBoundingClientRect().height ?? 0;
+      // 아직 아무 셀도 실측되지 않았으면(전부 0) 라운드로빈 유지 — 0 을 높이로 믿어 한 열에 몰지 않는다.
+      if (hs.every((h) => h === 0)) return;
+      setHeights((prev) =>
+        prev && prev.length === hs.length && prev.every((h, i) => Math.abs(h - hs[i]) < 1) ? prev : hs,
+      );
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    for (let i = 0; i < cellCount; i++) {
+      const n = cellRefs.current[i];
+      if (n) ro.observe(n);
+    }
+    return () => ro.disconnect();
+    // cols·cellCount 이 바뀌면 열 폭/셀 수가 달라져 재측정. buckets 변화는 같은 노드 재관찰이라 불필요.
+  }, [cellCount, cols]);
+
+  const buckets = distribute(cells.length, cols, heights);
+  // flex 컬럼: 각 열이 독립 세로 스택 → 큰 카드가 자기 열만 늘리고 다른 열에 void 를 안 만든다.
+  // items-start: 기본 stretch 는 짧은 열을 가장 긴 열 높이로 늘려 카드 밑에 빈 칸을 만든다 — 각 열이
+  // 콘텐츠 자연 높이만 갖게 해 밑변만 들쭉날쭉(정상 메이슨리)하게 둔다.
+  return (
+    <div className="flex items-start gap-4 sm:gap-5">
+      {buckets.map((idxs, c) => (
+        <div key={c} className="flex min-w-0 flex-1 flex-col gap-4 sm:gap-5">
+          {idxs.map((i) => (
+            <div
+              key={i}
+              ref={(el) => {
+                cellRefs.current[i] = el;
+              }}
+            >
+              {cells[i]}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** A child cell of {@link DiscoveryGrid}. 카드 간격은 이제 flex 컬럼의 gap 이 준다(예전 CSS columns
+ *  의 mb + break-inside-avoid 는 flex 메이슨리에선 불필요 — 제거). `entranceDelay` 가 오면 마운트 시
+ *  짧은 스태거 페이드(fill backwards — 딜레이 동안 안 보이게). 무한스크롤 append 가 "뚝" 나타나는 걸
+ *  지우는 용도 — 이미 마운트된 카드는 다시 돌지 않고, reduced-motion 은 globals 의 animate-fade-in
+ *  가드가 통째로 끈다. */
 export function DiscoveryCell({ children, entranceDelay }: { children: ReactNode; entranceDelay?: number }) {
   return (
     <div
-      className={`mb-4 break-inside-avoid sm:mb-5 ${entranceDelay != null ? "animate-fade-in" : ""}`}
+      className={entranceDelay != null ? "animate-fade-in" : undefined}
       style={
         entranceDelay != null
           ? { animationDelay: `${entranceDelay}ms`, animationFillMode: "backwards" }
@@ -322,8 +424,10 @@ const SKELETON_RATIOS = [
   "aspect-[4/3]",
 ];
 export function DiscoveryGridSkeleton({ count = 6 }: { count?: number }) {
+  // 로딩 플레이스홀더는 마운트 후에만 뜨므로(SSR 짜부라짐 무관) 반응형 CSS columns 로 간단히 그린다 —
+  // 균일한 회색 블록이라 실제 그리드의 balance-gap 문제도 여기선 무해하다.
   return (
-    <div role="status" aria-busy="true" className={GRID_COLS}>
+    <div role="status" aria-busy="true" className="columns-1 gap-4 sm:columns-2 sm:gap-5 lg:columns-3">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="mb-4 break-inside-avoid sm:mb-5">
           <div

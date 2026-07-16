@@ -310,57 +310,69 @@ function ConnectionFeedSkeleton() {
   );
 }
 
-/** One connection event — "누가 → 어느 컬렉션/길에 → 왜 → 무엇을" in list-row rhythm. Shared by the
- *  discovery feed (this file) and the public feed insert ("지금 이어지는 것들"). */
+/** One connection event — "누가 → 어느 길에 → 왜 → 무엇을" 를 한눈에 읽히는 종이 문법으로. 큐레이터가
+ *  행 머리(아바타+이름+날짜), 컬렉션은 초록 알약 진입점("~에 연결"의 대상이 죽은 텍스트가 아니라 들어갈
+ *  수 있는 문), why 는 세로 스파인을 얹은 인용, 실린 것은 미니 카드. 발견 피드(이 파일)와 공개 피드
+ *  인서트("지금 이어지는 것들")가 공유. */
 export function ConnectionEventCard({ event, locale }: { event: ConnectionEvent; locale: string }) {
   const t = useTranslations("collections");
   const uiLocale = useLocale();
   const isPath = event.collectionKind === "PATH";
 
   return (
-    <article>
-      {/* Attribution, quiet — who, when. */}
+    <article className="flex flex-col gap-2.5">
+      {/* 행 머리 — 큐레이터(아바타+이름) → 홈, 날짜. 피드 카드 작가 행과 같은 결이라 "사람이 이었다"가
+          제일 먼저 읽힌다. */}
       <div className="flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
-        {/* Curator → their home: the "discover who curates, then follow" step of the loop. */}
         <BlogLink
           href={authorHref(event.curator.username, locale)}
-          className="focus-ring group inline-flex items-center gap-2 rounded"
+          className="focus-ring group inline-flex min-w-0 items-center gap-2 rounded"
         >
-          <Avatar src={event.curator.avatarUrl} name={event.curator.username} size="xs" />
-          <span className="font-medium text-slate-700 transition-colors group-hover:text-accent-700 dark:text-slate-300 dark:group-hover:text-accent-400">
+          <Avatar src={event.curator.avatarUrl} name={event.curator.username} size="sm" />
+          <span className="truncate font-semibold text-slate-800 transition-colors group-hover:text-accent-700 dark:text-slate-200 dark:group-hover:text-accent-400">
             @{event.curator.username}
           </span>
         </BlogLink>
         {event.connectedAt && (
           <>
-            <span aria-hidden>·</span>
-            <time dateTime={event.connectedAt}>{formatDate(event.connectedAt, uiLocale)}</time>
+            <span aria-hidden className="text-slate-300 dark:text-slate-600">·</span>
+            <time dateTime={event.connectedAt} className="shrink-0">
+              {formatDate(event.connectedAt, uiLocale)}
+            </time>
           </>
         )}
       </div>
 
-      {/* The collection chip — the verb "connected to …", a tap-through to the channel. */}
-      <BlogLink
-        href={blogPath(`/collections/${event.collectionId}`)}
-        className="focus-ring mt-2 inline-flex items-center gap-1.5 rounded text-[12px] font-bold text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
-      >
-        {isPath && <CornerDownRight className="h-3 w-3" />}
-        <span>{event.collectionTitle}</span>
-        <span className="font-medium text-slate-500 dark:text-slate-400">
-          {isPath ? t("connectedToPath") : t("connectedTo")}
-        </span>
-      </BlogLink>
+      {/* 컬렉션 진입점 — "~에 연결" 의 대상을 초록 알약 링크로 세워 죽은 텍스트가 아니라 들어갈 수 있는
+          문(채널)으로 읽히게. 알약 안에 길 글리프 + 이름, 앞에 조용한 "연결" 접두. */}
+      <p className="flex flex-wrap items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
+        <span>{isPath ? t("connectedToPath") : t("connectedTo")}</span>
+        <BlogLink
+          href={blogPath(`/collections/${event.collectionId}`)}
+          className="focus-ring inline-flex max-w-full items-center gap-1 rounded-full bg-accent-50 px-2.5 py-1 text-[12px] font-semibold text-accent-700 transition-colors hover:bg-accent-100 dark:bg-accent-500/15 dark:text-accent-300 dark:hover:bg-accent-500/25"
+        >
+          {isPath ? (
+            <CornerDownRight className="h-3 w-3 shrink-0" />
+          ) : (
+            <Layers className="h-3 w-3 shrink-0" />
+          )}
+          <span className="truncate">{event.collectionTitle}</span>
+        </BlogLink>
+      </p>
 
-      {/* The curator's line — the hero, the clearest signal this is human curation, not an algorithm. */}
+      {/* why — 큐레이터의 한 줄. 초록 세로 스파인을 얹은 인용으로(iOS 연결 카드 문법) 밋밋한 본문과
+          구분해 "왜 이었나"가 히어로로 읽히게. 사람 큐레이션의 가장 분명한 신호. */}
       {event.why && (
-        <p className="mt-2.5 text-[16px] font-medium leading-relaxed text-slate-900 dark:text-slate-100">
-          {event.why}
-        </p>
+        <div className="flex gap-2.5">
+          <span aria-hidden className="mt-0.5 w-[3px] shrink-0 rounded-full bg-accent-600 dark:bg-accent-500" />
+          <p className="text-[15px] font-medium leading-relaxed text-slate-900 dark:text-slate-100">
+            {event.why}
+          </p>
+        </div>
       )}
 
-      <div className="mt-3">
-        <ConnectionBlock block={eventBlock(event)} locale={locale} />
-      </div>
+      {/* 실린 것 — 미니 카드(hairline·제목·작가 한 줄). */}
+      <ConnectionBlock block={eventBlock(event)} locale={locale} compact />
     </article>
   );
 }
