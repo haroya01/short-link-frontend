@@ -279,6 +279,7 @@
     "curationTagsHint": "आपके फ़ॉलो किए विषय. किसी को टैप करके उसकी पोस्ट एक साथ देखें.",
     "curationTagsEmpty": "आपने अभी तक कोई टैग फ़ॉलो नहीं किया. किसी पोस्ट या टैग पेज से कोई विषय फ़ॉलो करें.",
     "curationTagsManage": "टैग प्रबंधित करें",
+    "curationTagsBrowse": "टैग देखें",
     "analyticsReferrers": "ट्रैफ़िक स्रोत",
     "analyticsTabOverview": "अवलोकन",
     "analyticsTabSeries": "सीरीज़",
@@ -706,7 +707,8 @@
     "INTERNAL_ERROR": "हमारी ओर से कुछ ग़लत हो गया। कृपया फिर से प्रयास करें।",
     "DUPLICATE_REPORT": "आप इसकी रिपोर्ट पहले ही कर चुके हैं.",
     "SUBJECT_NOT_FOUND": "रिपोर्ट किया गया आइटम नहीं मिला.",
-    "SUSPEND_REQUIRES_EXPIRY": "निलंबन के लिए समाप्ति तिथि आवश्यक है."
+    "SUSPEND_REQUIRES_EXPIRY": "निलंबन के लिए समाप्ति तिथि आवश्यक है.",
+    "toggleFailed": "बदलाव सेव नहीं हो सका। कृपया थोड़ी देर बाद फिर कोशिश करें।"
   },
   "cookieConsent": {
     "ariaLabel": "कुकी सूचना",
@@ -731,6 +733,7 @@
     "loadMore": "और देखें",
     "viewAll": "सभी सूचनाएँ देखें",
     "loginRequired": "साइन इन ज़रूरी है",
+    "loginCta": "साइन इन करें",
     "someone": "किसी ने",
     "like": "<b>{actor}</b> ने आपकी पोस्ट को पसंद किया",
     "comment": "<b>{actor}</b> ने आपकी पोस्ट पर टिप्पणी की",

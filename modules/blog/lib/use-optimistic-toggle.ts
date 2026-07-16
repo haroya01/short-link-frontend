@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { useToast } from "@/components/ui/toast";
 
 /** The viewer-relative state a toggle owns: whether it's on, plus an optional public counter. */
 export type ToggleState = { on: boolean; count?: number };
@@ -93,6 +95,8 @@ export function useOptimisticToggle({
   syncKey?: string;
 }) {
   const { authenticated, ready, signInWithGoogle } = useAuth();
+  const { toast } = useToast();
+  const tErr = useTranslations("errors");
   const fallbackId = useId();
   const key = syncKey ?? fallbackId;
   const initRef = useRef<ToggleState>({ on: initialOn, count: initialCount });
@@ -150,6 +154,8 @@ export function useOptimisticToggle({
     } catch {
       const c = entryFor(key, initRef.current).state;
       emit(key, { on: !next, count: tracksCount ? (c.count ?? 0) + (next ? -1 : 1) : c.count });
+      // 조용한 롤백은 "눌렀는데 스스로 꺼졌다"로 읽힌다 — 실패였음을 한 줄로 알린다.
+      toast(tErr("toggleFailed"), "error");
     } finally {
       setBusy(false);
     }

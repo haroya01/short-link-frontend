@@ -279,6 +279,7 @@
     "curationTagsHint": "Chủ đề bạn theo dõi. Chạm để xem các bài của chủ đề đó gom lại.",
     "curationTagsEmpty": "Bạn chưa theo dõi thẻ nào. Hãy theo dõi một chủ đề từ bài viết hoặc trang thẻ.",
     "curationTagsManage": "Quản lý thẻ",
+    "curationTagsBrowse": "Xem các thẻ",
     "analyticsReferrers": "Nguồn truy cập",
     "analyticsTabOverview": "Tổng quan",
     "analyticsTabSeries": "Chuỗi",
@@ -706,7 +707,8 @@
     "INTERNAL_ERROR": "Đã có lỗi từ phía chúng tôi. Vui lòng thử lại.",
     "DUPLICATE_REPORT": "Bạn đã báo cáo mục này rồi.",
     "SUBJECT_NOT_FOUND": "Không tìm thấy mục được báo cáo.",
-    "SUSPEND_REQUIRES_EXPIRY": "Việc tạm ngưng cần có ngày hết hạn."
+    "SUSPEND_REQUIRES_EXPIRY": "Việc tạm ngưng cần có ngày hết hạn.",
+    "toggleFailed": "Không thể lưu thay đổi. Vui lòng thử lại sau."
   },
   "cookieConsent": {
     "ariaLabel": "Thông báo cookie",
@@ -731,6 +733,7 @@
     "loadMore": "Xem thêm",
     "viewAll": "Xem tất cả thông báo",
     "loginRequired": "Cần đăng nhập",
+    "loginCta": "Đăng nhập",
     "someone": "Ai đó",
     "like": "<b>{actor}</b> đã thích bài của bạn",
     "comment": "<b>{actor}</b> đã bình luận bài của bạn",

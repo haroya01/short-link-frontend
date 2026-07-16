@@ -21,7 +21,19 @@ export function FollowedTagsShelf() {
   const followed = prefs.followed;
 
   if (followed.length === 0) {
-    return <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("curationTagsEmpty")}</p>;
+    // 빈 안내만 두면 막다른 길 — 팔로우할 태그를 찾을 곳(태그 목록)을 같은 링크 문법으로 이어준다.
+    return (
+      <div>
+        <p className="text-[13px] text-slate-500 dark:text-slate-400">{t("curationTagsEmpty")}</p>
+        <BlogLink
+          href={blogPath("/tags")}
+          className="focus-ring mt-3 inline-flex items-center gap-1 rounded text-[12px] font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+        >
+          {t("curationTagsBrowse")}
+          <ArrowRight className="h-3 w-3" />
+        </BlogLink>
+      </div>
+    );
   }
 
   return (

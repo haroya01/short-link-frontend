@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Copy, Loader2, Send, Sparkles } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { shortenUrl } from "@/lib/api";
@@ -30,8 +29,8 @@ import { Button } from "@/components/ui/button";
  */
 export default function ProfileLeadsCampaignPage() {
   const t = useTranslations("settings.profile.leads.campaign");
-  const router = useRouter();
-  const locale = useLocale();
+  // 비로그인 진입은 워크스페이스 레이아웃이 blog 로그인(next= 포함)으로 보낸다 — 여기서
+  // `/${locale}/login`으로 또 보내면 블로그 호스트 밖의 links 로그인과 경합하던 중복 리다이렉트.
   const { authenticated, ready } = useAuth();
   const { toast } = useToast();
   const errorMessage = useApiErrorMessage();
@@ -40,10 +39,6 @@ export default function ProfileLeadsCampaignPage() {
   const [body, setBody] = useState("");
   const [output, setOutput] = useState<CampaignOutput | null>(null);
   const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    if (ready && !authenticated) router.replace(`/${locale}/login`);
-  }, [ready, authenticated, locale, router]);
 
   const slug = useMemo(() => slugifyCampaign(campaignName), [campaignName]);
   const detectedUrls = useMemo(() => extractUrls(body), [body]);
