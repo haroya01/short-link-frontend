@@ -550,7 +550,7 @@
     "highlightNotePlaceholder": "이 부분에 대한 메모를 남겨보세요",
     "highlightNoteSave": "저장",
     "highlightNoteCancel": "취소",
-    "highlightThreadEmpty": "첫 답글을 남겨보세요.",
+    "highlightThreadNoReplies": "아직 답글이 없어요",
     "highlightReplyPlaceholder": "답글 남기기…",
     "highlightReplySubmit": "답글",
     "highlightReplyDelete": "삭제",

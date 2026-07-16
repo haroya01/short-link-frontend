@@ -626,8 +626,11 @@ function HighlightThread({
 
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
           {replies.length === 0 ? (
-            <p className="py-6 text-center text-[13px] text-slate-500 dark:text-slate-400">
-              {t("highlightThreadEmpty")}
+            // 답글이 아직 없음 — 하이라이트는 이미 위(따옴표+작성자)에 있으므로, 이 자리는 "답글이 없다"만
+            // 조용히 말한다. 예전 "첫 답글을 남겨보세요"는 큰 중앙 블록이라 "여기 비어 있다/하이라이트 없다"
+            // 로 오독됐다(사장님 신고) — 왼쪽 정렬 muted 한 줄로 낮춰 답글에 한정된 상태임을 분명히 한다.
+            <p className="text-[13px] text-slate-400 dark:text-slate-500">
+              {t("highlightThreadNoReplies")}
             </p>
           ) : (
             <ul className="space-y-4">

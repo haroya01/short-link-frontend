@@ -550,7 +550,7 @@
     "highlightNotePlaceholder": "इस अंश पर एक नोट छोड़ें",
     "highlightNoteSave": "सहेजें",
     "highlightNoteCancel": "रद्द करें",
-    "highlightThreadEmpty": "जवाब देने वाले पहले व्यक्ति बनें।",
+    "highlightThreadNoReplies": "अभी कोई जवाब नहीं",
     "highlightReplyPlaceholder": "एक जवाब लिखें…",
     "highlightReplySubmit": "जवाब दें",
     "highlightReplyDelete": "हटाएँ",
