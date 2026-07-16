@@ -3547,6 +3547,7 @@
     "discoverTabEntrances": "प्रवेश",
     "discoverTabRecent": "हाल के",
     "discoverTabHighlights": "हाइलाइट",
+    "highlightReplyCount": "{count, plural, one {# जवाब} other {# जवाब}}",
     "highlightsSignedOutTitle": "साथ पढ़ने लायक अंश",
     "highlightsSignedOut": "साइन इन करें, और आप जिन क्यूरेटर को फ़ॉलो करते हैं उनके रेखांकित अंश यहाँ जमा होंगे।",
     "highlightsSignIn": "साइन इन करें",
