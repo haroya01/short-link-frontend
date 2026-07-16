@@ -11,6 +11,7 @@ import {
   listPublicCollectionsByUsername,
   type CollectionSummary,
   type ConnectionEvent,
+  type FeedSource,
   type KindredCurator,
 } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
@@ -42,6 +43,10 @@ export function DiscoverConnections({ locale }: { locale: string }) {
   const [entrances, setEntrances] = useState<Entrance[]>([]);
   const [state, setState] = useState<"loading" | "ready" | "failed">("loading");
   const [tab, setTab] = useState<DiscoverTab>("entrances");
+  // 콜드스타트 폴백 — 팔로우가 없으면 백엔드가 전역 연결 흐름을 내리고 source:"global" 로 알린다. 이 표면은
+  // 단일 페치라 scope 고정은 필요 없고(페이지네이션 없음), 전역임을 조용히 알리는 캡션만 붙인다. 구 서버는
+  // source 부재(undefined) → 캡션 없음(기존 동작).
+  const [source, setSource] = useState<FeedSource | undefined>(undefined);
 
   useEffect(() => {
     let alive = true;
@@ -49,6 +54,7 @@ export function DiscoverConnections({ locale }: { locale: string }) {
       .then(async (feed) => {
         if (!alive) return;
         setEvents(feed.items);
+        setSource(feed.source);
         setState("ready");
         // Resolve the open paths behind the feed: each distinct curator's public collections, matched
         // to the collections they connected into here. Best-effort — a failed lookup just drops that
@@ -89,10 +95,21 @@ export function DiscoverConnections({ locale }: { locale: string }) {
           </p>
         ) : events.length === 0 ? (
           <ConnectionFeedEmpty locale={locale} />
-        ) : tab === "entrances" ? (
-          <EntrancesView entrances={entrances} curators={curators} locale={locale} />
         ) : (
-          <RecentTimeline events={events} locale={locale} />
+          <>
+            {/* 콜드스타트 폴백 안내 — 팔로우가 없어 전역 연결 흐름을 보여줄 때, 내 팔로우 그래프가 아니라
+                전역 흐름임을 조용히 한 줄로 알린다(§10: 배지·색 없이 muted 한 줄). 팔로잉이면 없음. */}
+            {source === "global" && (
+              <p className="mb-5 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+                {t("discoverGlobalFallback")}
+              </p>
+            )}
+            {tab === "entrances" ? (
+              <EntrancesView entrances={entrances} curators={curators} locale={locale} />
+            ) : (
+              <RecentTimeline events={events} locale={locale} />
+            )}
+          </>
         )}
       </div>
     </div>

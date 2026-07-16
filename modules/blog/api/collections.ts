@@ -114,12 +114,24 @@ export interface ConnectionEvent {
   body: string | null;
 }
 
+/**
+ * Which stream a personalized (authed) feed page actually came from. "following" = the viewer's
+ * follow graph; "global" = the non-personalized global stream the backend falls back to on a cold
+ * start (following nobody, or an empty personalized page 0). A page carrying "global" must pin the
+ * scope on every follow-up request so the pages never mix. Absent on an old server that predates the
+ * field — callers treat `undefined` as "following" (the prior behaviour).
+ */
+export type FeedSource = "following" | "global";
+
 export interface DiscoverFeed {
   items: ConnectionEvent[];
   hasNext: boolean;
   /** Present on the public (paged) feed; the authed follow-graph feed omits them. */
   page?: number;
   size?: number;
+  /** "global" when the backend served the cold-start fallback instead of the follow graph. Absent on
+   *  a server that predates the field → treated as "following". */
+  source?: FeedSource;
 }
 
 /** A block curated alongside another in the same PUBLIC collections — the "이것과 이어진 것" discovery

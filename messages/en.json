@@ -3535,6 +3535,8 @@
     "discoverFailed": "Could not load.",
     "discoverEmptyTitle": "Nothing flowing yet",
     "discoverEmptyBody": "Follow a writer and the posts they connect into collections will flow here.",
+    "discoverGlobalFallback": "You're not following anyone yet, so this shows connections from every curator for now.",
+    "highlightsGlobalFallback": "You're not following anyone yet, so this shows passages every curator has highlighted for now.",
     "discoverEmptyCta": "Find something to read",
     "discoverTabEntrances": "Entrances",
     "discoverTabRecent": "Recent",
