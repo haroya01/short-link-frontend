@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { Children, useEffect, useRef, useState, type ReactNode } from "react";
+import { Children, isValidElement, useEffect, useRef, useState, type ReactNode } from "react";
 import { Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link as TransitionLink } from "next-view-transitions";
@@ -289,18 +289,45 @@ function columnsForWidth(w: number): number {
   return MAX_COLUMNS;
 }
 
-/** 문서순 → 열 배치. heights 가 있으면(마운트 후) 최단열 greedy, 없으면(SSR/첫 렌더) 라운드로빈.
- *  둘 다 결정적이라 heights 없는 동안 서버·클라 마크업이 일치한다. */
-function distribute(count: number, cols: number, heights: number[] | null): number[][] {
+/**
+ * 문서순 → 열 배치. heights 가 있으면(마운트 후) 최단열 greedy, 없으면(SSR/첫 렌더) 라운드로빈. 둘 다
+ * 결정적이라 heights 없는 동안 서버·클라 마크업이 일치한다.
+ *
+ * spread(특수 카드: 연결·시리즈 삽입)는 greedy 로 자유 재배치하지 않는다 — 크고(포스트 2~3배 높이)
+ * 문서상 서로 가까워, greedy 에 맡기면 같은 열에 뭉쳐 "몇 행마다 하나씩 짜넣기"라는 설계 의도가
+ * 깨졌다(사장님 "특수 카드 정렬 이상" 신고). 대신 k 번째 특수 카드를 (그 시점 최단열 + 직전 특수
+ * 카드가 쓴 열 회피)로 흩뿌려, 서로 다른 열에 짜여 들게 한다. 일반 포스트는 그대로 최단열 greedy 로
+ * 그 주위를 채워 #885 void-fix 를 유지한다.
+ */
+function distribute(
+  count: number,
+  cols: number,
+  heights: number[] | null,
+  isSpread: (i: number) => boolean,
+): number[][] {
   const buckets: number[][] = Array.from({ length: cols }, () => []);
   const colH = new Array(cols).fill(0);
+  const shortest = (avoid: number) => {
+    let min = -1;
+    for (let c = 0; c < cols; c++) {
+      if (c === avoid && cols > 1) continue;
+      if (min === -1 || colH[c] < colH[min]) min = c;
+    }
+    return min === -1 ? 0 : min;
+  };
+  let lastSpreadCol = -1;
   for (let i = 0; i < count; i++) {
-    let target = i % cols;
-    if (heights) {
-      // 지금까지 가장 짧은 열에 넣는다 — 동률이면 왼쪽 열 우선(안정적·결정적).
-      let min = 0;
-      for (let c = 1; c < cols; c++) if (colH[c] < colH[min]) min = c;
-      target = min;
+    let target: number;
+    if (!heights) {
+      // SSR/첫 렌더: 결정적 라운드로빈(특수 카드도 동일 — 하이드레이션 일치가 최우선).
+      target = i % cols;
+    } else if (isSpread(i)) {
+      // 특수 카드: 최단열에 넣되 직전 특수 카드가 쓴 열은 피해 서로 다른 열로 흩뿌린다.
+      target = shortest(lastSpreadCol);
+      lastSpreadCol = target;
+    } else {
+      // 일반 포스트: 순수 최단열 greedy.
+      target = shortest(-1);
     }
     buckets[target].push(i);
     if (heights) colH[target] += heights[i] ?? 0;
@@ -332,6 +359,11 @@ export function DiscoveryGrid({ children }: { children: ReactNode }) {
  *  마운트 후 실제 셀 높이를 재 최단열로 재배치해 열 높이를 고르게 맞춘다. */
 function MasonryChunk({ children }: { children: ReactNode }) {
   const cells = Children.toArray(children);
+  // 특수 카드(DiscoveryCell spread) 위치 — 배치에서 greedy 자유이동 대신 열 흩뿌림으로 다룬다.
+  const spreadSet = new Set<number>();
+  cells.forEach((cell, i) => {
+    if (isValidElement(cell) && cell.type === DiscoveryCell && cell.props?.spread) spreadSet.add(i);
+  });
   const [cols, setCols] = useState(SSR_COLUMNS);
   const [heights, setHeights] = useState<number[] | null>(null);
   const cellRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -369,7 +401,7 @@ function MasonryChunk({ children }: { children: ReactNode }) {
     // cols·cellCount 이 바뀌면 열 폭/셀 수가 달라져 재측정. buckets 변화는 같은 노드 재관찰이라 불필요.
   }, [cellCount, cols]);
 
-  const buckets = distribute(cells.length, cols, heights);
+  const buckets = distribute(cells.length, cols, heights, (i) => spreadSet.has(i));
   // flex 컬럼: 각 열이 독립 세로 스택 → 큰 카드가 자기 열만 늘리고 다른 열에 void 를 안 만든다.
   // items-start: 기본 stretch 는 짧은 열을 가장 긴 열 높이로 늘려 카드 밑에 빈 칸을 만든다 — 각 열이
   // 콘텐츠 자연 높이만 갖게 해 밑변만 들쭉날쭉(정상 메이슨리)하게 둔다.
@@ -398,7 +430,19 @@ function MasonryChunk({ children }: { children: ReactNode }) {
  *  짧은 스태거 페이드(fill backwards — 딜레이 동안 안 보이게). 무한스크롤 append 가 "뚝" 나타나는 걸
  *  지우는 용도 — 이미 마운트된 카드는 다시 돌지 않고, reduced-motion 은 globals 의 animate-fade-in
  *  가드가 통째로 끈다. */
-export function DiscoveryCell({ children, entranceDelay }: { children: ReactNode; entranceDelay?: number }) {
+export function DiscoveryCell({
+  children,
+  entranceDelay,
+  spread,
+}: {
+  children: ReactNode;
+  entranceDelay?: number;
+  /** 특수 카드(연결·시리즈 삽입)를 표시 — 최단열 greedy 로 자유 재배치하지 않고, 문서순대로 서로 다른
+   *  열에 흩뿌려(spread) 한 열에 뭉치지 않게 한다. MasonryChunk 가 이 플래그를 읽어 배치를 가른다.
+   *  값은 배치 로직에서만 쓰이고 DOM 에는 남지 않는다. */
+  spread?: boolean;
+}) {
+  void spread;
   return (
     <div
       className={entranceDelay != null ? "animate-fade-in" : undefined}
