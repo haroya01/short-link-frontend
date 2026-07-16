@@ -21,19 +21,27 @@ export function RevisionsButton({
   onRestore: (versionNumber: number) => void;
 }) {
   const t = useTranslations("postEditor");
+  const tCommon = useTranslations("common");
   const [open, setOpen] = useState(false);
   const [revisions, setRevisions] = useState<PostRevisionView[] | null>(null);
   const [loading, setLoading] = useState(false);
+  // 로드 실패 — 복구하려는 순간에 "저장된 버전 없음"으로 위장되면 최악(재시도 제공).
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
     setLoading(true);
+    setLoadFailed(false);
     listRevisions(postId)
       .then(setRevisions)
-      .catch(() => setRevisions([]))
+      .catch(() => {
+        setRevisions([]);
+        setLoadFailed(true);
+      })
       .finally(() => setLoading(false));
-  }, [open, postId]);
+  }, [open, postId, reloadKey]);
 
   useDismiss(open, ref, () => setOpen(false));
 
@@ -58,6 +66,17 @@ export function RevisionsButton({
           </div>
           {loading ? (
             <p className="px-3 py-4 text-[13px] text-slate-500 dark:text-slate-400">{t("loading")}</p>
+          ) : loadFailed ? (
+            <p className="px-3 py-4 text-[13px] text-slate-500 dark:text-slate-400" role="alert">
+              {t("revisionsLoadFailed")}{" "}
+              <button
+                type="button"
+                onClick={() => setReloadKey((k) => k + 1)}
+                className="focus-ring rounded underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-200"
+              >
+                {tCommon("retry")}
+              </button>
+            </p>
           ) : !revisions || revisions.length === 0 ? (
             <p className="px-3 py-4 text-[13px] text-slate-500 dark:text-slate-400">{t("revisionsEmpty")}</p>
           ) : (

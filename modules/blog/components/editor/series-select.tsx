@@ -20,19 +20,27 @@ type Props = {
  */
 export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
   const t = useTranslations("postEditor");
+  const tCommon = useTranslations("common");
   const [series, setSeries] = useState<SeriesView[]>([]);
   const [loaded, setLoaded] = useState(false);
+  // 로드 실패 — "시리즈 없음"으로 위장하지 않는다(빈 상태 ≠ 에러, 재시도 제공).
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [creating, setCreating] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoadFailed(false);
     listSeries()
       .then(setSeries)
-      .catch(() => setSeries([]))
+      .catch(() => {
+        setSeries([]);
+        setLoadFailed(true);
+      })
       .finally(() => setLoaded(true));
-  }, []);
+  }, [reloadKey]);
 
   async function create() {
     const title = newTitle.trim();
@@ -138,7 +146,22 @@ export function SeriesSelect({ value, onChange, noneLabel, emptyHint }: Props) {
           {t("seriesNew")}
         </button>
       </div>
-      {loaded && series.length === 0 && (
+      {loaded && loadFailed && (
+        <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400" role="alert">
+          {t("seriesLoadFailed")}{" "}
+          <button
+            type="button"
+            onClick={() => {
+              setLoaded(false);
+              setReloadKey((k) => k + 1);
+            }}
+            className="focus-ring rounded underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-200"
+          >
+            {tCommon("retry")}
+          </button>
+        </p>
+      )}
+      {loaded && !loadFailed && series.length === 0 && (
         <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{emptyHint}</p>
       )}
     </div>

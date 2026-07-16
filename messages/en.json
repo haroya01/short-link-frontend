@@ -26,7 +26,8 @@
     "preview": "Preview",
     "linkText": "link text",
     "submitError": "Couldn't post your comment. Please try again.",
-    "deleteError": "Couldn't delete the comment. Please try again."
+    "deleteError": "Couldn't delete the comment. Please try again.",
+    "loadFailed": "Couldn't load comments."
   },
   "publicFeed": {
     "recent": "Latest",
@@ -494,7 +495,9 @@
     "continueWriting": "Continue writing",
     "noPostsHint": "Your posts will pile up here. Drafts stay private until you publish.",
     "seriesCreateConflict": "A series with this name already exists. Try a different name.",
-    "seriesCreateError": "Couldn't create the series. Please try again."
+    "seriesCreateError": "Couldn't create the series. Please try again.",
+    "seriesLoadFailed": "Couldn't load your series.",
+    "revisionsLoadFailed": "Couldn't load saved versions."
   },
   "savedLibrary": {
     "private": "Only you can see this.",

@@ -1,4 +1,4 @@
-import { Suspense, type ReactNode } from "react";
+import { Fragment, Suspense, type ReactNode } from "react";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
@@ -67,7 +67,12 @@ export function ArticleBody({
   return (
     <div className={className ? `prose-post ${className}` : "prose-post"}>
       {blocks.map((block, i) => (
-        <Block key={i} block={block} ranks={ranks} postId={postId} />
+        // keyed Fragment 로 블록별 키 스코프를 세운다 — 서버 컴포넌트 출력이 평탄화되며 각
+        // 블록의 react-markdown 내부 키(p-0…)가 형제로 충돌하던 콘솔 오염의 근원. Fragment 라
+        // DOM 은 불변 → .prose-post > :first/last-child 여백 트림도 그대로다.
+        <Fragment key={`block-${i}`}>
+          <Block block={block} ranks={ranks} postId={postId} />
+        </Fragment>
       ))}
     </div>
   );

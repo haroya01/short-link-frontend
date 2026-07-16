@@ -50,6 +50,7 @@ export function PostComments({
   authorUsername: string;
 }) {
   const t = useTranslations("comments");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
   const { authenticated, ready, me, signInWithGoogle } = useAuth();
 
@@ -66,12 +67,18 @@ export function PostComments({
   const [justAddedId, setJustAddedId] = useState<number | null>(null);
   // 보는 사람이 좋아요한 댓글 id — 공개 목록은 비인증이라 인증 후 별도 엔드포인트로 한 번 hydrate.
   const [likedIds, setLikedIds] = useState<Set<number>>(new Set());
+  // 목록 로드 실패 — "댓글 없음"으로 위장하지 않고 재시도를 내민다(빈 상태 ≠ 에러).
+  const [loadFailed, setLoadFailed] = useState(false);
   const [confirm, confirmDialog] = useConfirm();
 
   const load = useCallback(() => {
+    setLoadFailed(false);
     return listComments(postId)
       .then(setComments)
-      .catch(() => setComments([]));
+      .catch(() => {
+        setComments([]);
+        setLoadFailed(true);
+      });
   }, [postId]);
 
   useEffect(() => {
@@ -231,7 +238,18 @@ export function PostComments({
         )}
       </div>
 
-      {comments.length === 0 ? (
+      {loadFailed && comments.length === 0 ? (
+        <p className="mt-8 text-sm text-slate-500 dark:text-slate-400" role="alert">
+          {t("loadFailed")}{" "}
+          <button
+            type="button"
+            onClick={() => void load()}
+            className="focus-ring rounded underline underline-offset-2 hover:text-slate-700 dark:hover:text-slate-200"
+          >
+            {tCommon("retry")}
+          </button>
+        </p>
+      ) : comments.length === 0 ? (
         <p className="mt-8 text-sm text-slate-500">{t("empty")}</p>
       ) : (
         <ul className="mt-8 space-y-6">
