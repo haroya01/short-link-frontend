@@ -18,6 +18,7 @@ import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
 import { BelongingProvider } from "@/modules/blog/components/post-belonging-context";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
+import { SSR_COLUMNS, columnsForWidth, distribute } from "@/modules/blog/lib/discovery-masonry";
 
 // "속함" 한 올(모든 카드가 그물의 매듭임을 보여주는 한 줄) — 기본 ON. 카드마다 개별 fetch(N+1) 였던
 // 초기 우려는 배치 엔드포인트로 해소됐다: 보이는 카드들의 id 를 BelongingProvider(DiscoveryGrid 안)
@@ -272,91 +273,29 @@ export function DiscoveryCard({
 // 다른 열 밑을 통째로 비워(사용자 신고: "카드 없는 빈 공간") — 아이템을 쪼갤 수 없는(break-inside)
 // 큰 타일이 열 경계에서 다음 열로 튀며 남기는 void 다. flex 컬럼은 각 열이 독립 스택이라 큰 카드는
 // 자기 열 밑만 길어질 뿐(정상 메이슨리의 들쭉 밑변) void 를 안 만든다. 마운트 후 실제 높이를 재
-// 최단열에 순서대로 넣어 높이까지 고르게 맞춘다.
-const GRID_CHUNK = 24;
-// Tailwind 브레이크포인트와 일치: <640 = 1열, <1024 = 2열, ≥1024 = 3열.
-const BP_SM = 640;
-const BP_LG = 1024;
-const MAX_COLUMNS = 3;
-// 서버·첫 클라 렌더는 1열(모바일 우선)로 그린다 — 폭을 모르는 SSR 에서 3열을 그리면 모바일 첫
-// 페인트가 1/3 폭으로 짜부라졌다가(하이드레이션 뒤) 1열로 튀는 깜빡임이 난다. 1열 SSR 은 전 폭에서
-// 안전하고, 데스크톱만 마운트 후 3열로 한 번 재배치된다(위→아래 정착, 모바일 짜부라짐 없음).
-const SSR_COLUMNS = 1;
-
-function columnsForWidth(w: number): number {
-  if (w < BP_SM) return 1;
-  if (w < BP_LG) return 2;
-  return MAX_COLUMNS;
-}
-
-/**
- * 문서순 → 열 배치. heights 가 있으면(마운트 후) 최단열 greedy, 없으면(SSR/첫 렌더) 라운드로빈. 둘 다
- * 결정적이라 heights 없는 동안 서버·클라 마크업이 일치한다.
- *
- * spread(특수 카드: 연결·시리즈 삽입)는 greedy 로 자유 재배치하지 않는다 — 크고(포스트 2~3배 높이)
- * 문서상 서로 가까워, greedy 에 맡기면 같은 열에 뭉쳐 "몇 행마다 하나씩 짜넣기"라는 설계 의도가
- * 깨졌다(사장님 "특수 카드 정렬 이상" 신고). 대신 k 번째 특수 카드를 (그 시점 최단열 + 직전 특수
- * 카드가 쓴 열 회피)로 흩뿌려, 서로 다른 열에 짜여 들게 한다. 일반 포스트는 그대로 최단열 greedy 로
- * 그 주위를 채워 #885 void-fix 를 유지한다.
- */
-function distribute(
-  count: number,
-  cols: number,
-  heights: number[] | null,
-  isSpread: (i: number) => boolean,
-): number[][] {
-  const buckets: number[][] = Array.from({ length: cols }, () => []);
-  const colH = new Array(cols).fill(0);
-  const shortest = (avoid: number) => {
-    let min = -1;
-    for (let c = 0; c < cols; c++) {
-      if (c === avoid && cols > 1) continue;
-      if (min === -1 || colH[c] < colH[min]) min = c;
-    }
-    return min === -1 ? 0 : min;
-  };
-  let lastSpreadCol = -1;
-  for (let i = 0; i < count; i++) {
-    let target: number;
-    if (!heights) {
-      // SSR/첫 렌더: 결정적 라운드로빈(특수 카드도 동일 — 하이드레이션 일치가 최우선).
-      target = i % cols;
-    } else if (isSpread(i)) {
-      // 특수 카드: 최단열에 넣되 직전 특수 카드가 쓴 열은 피해 서로 다른 열로 흩뿌린다.
-      target = shortest(lastSpreadCol);
-      lastSpreadCol = target;
-    } else {
-      // 일반 포스트: 순수 최단열 greedy.
-      target = shortest(-1);
-    }
-    buckets[target].push(i);
-    if (heights) colH[target] += heights[i] ?? 0;
-  }
-  return buckets;
-}
+// 최단열에 순서대로 넣어 높이까지 고르게 맞춘다. 전 아이템을 단일 컨테이너로 배치한다(예전의 페이지
+// 단위 청크는 경계마다 가로 이음새를 만들어 폐기 — DiscoveryGrid 주석 참조. greedy 는 prefix-stable 라
+// 청크 없이도 append 재배치가 없다).
+// 순수 배치 로직(열 수·greedy·spread)은 modules/blog/lib/discovery-masonry 로 뺐다(단위 테스트 공유).
 
 export function DiscoveryGrid({ children }: { children: ReactNode }) {
-  const items = Children.toArray(children);
-  const chunks: ReactNode[][] = [];
-  for (let i = 0; i < items.length; i += GRID_CHUNK) chunks.push(items.slice(i, i + GRID_CHUNK));
-  // 페이지(청크) 단위로 컬럼 블록을 끊어 세로로 잇는다: 새 페이지는 아래 새 블록으로만 쌓이고 앞
-  // 블록의 카드 집합은 불변이라 무한스크롤 append 시 이미 보이던 카드가 재배치되지 않는다(청크
-  // 경계의 얕은 가로 이음새가 유일한 비용). 청크 크기 = feed 페이지 크기.
-  const grid = (
-    <div className="flex flex-col gap-4 sm:gap-5">
-      {chunks.map((chunk, i) => (
-        <MasonryChunk key={i}>{chunk}</MasonryChunk>
-      ))}
-    </div>
-  );
+  // 전 아이템을 단일 메이슨리로 배치한다 — 페이지 단위로 컬럼 블록을 끊어 세로로 쌓던 예전 방식은
+  // 각 블록 높이가 그 블록의 최장 열이라, 페이지 경계마다 짧은 열 밑에 빈 사각 공간이 생기고 다음
+  // 묶음이 평평한 수평선에서 시작했다(사장님 "페이지네이션 지점 자로 댄 절단" 신고). 청크는 원래 CSS
+  // multicol(column-fill:balance)이 append 마다 전체를 재분배해 앞 카드를 뒤섞는 걸 막으려던 것인데,
+  // 지금의 최단열 greedy 는 prefix-stable — i 번째 배치가 0..i-1 에만 의존하므로 뒤에 카드가 붙어도
+  // 앞 카드 배치는 불변이다. 그래서 청크 없이 한 컨테이너로 둬도 append 재배치가 없고, 경계 이음새도
+  // 사라진다.
+  const grid = <MasonryChunk>{children}</MasonryChunk>;
   // One "속함" batch resolver spans the whole grid — every DiscoveryCard's belonging line registers
   // its in-view id here, so a viewport of cards resolves in one request (see BelongingProvider). When
   // the line is off, the provider is a pure passthrough (no id ever registers), so it costs nothing.
   return SHOW_BELONGING ? <BelongingProvider>{grid}</BelongingProvider> : grid;
 }
 
-/** 한 페이지(청크)의 카드들을 flex 컬럼 메이슨리로 배치. SSR/첫 렌더는 라운드로빈(결정적, void 없음),
- *  마운트 후 실제 셀 높이를 재 최단열로 재배치해 열 높이를 고르게 맞춘다. */
+/** 그리드 전체 카드를 flex 컬럼 메이슨리로 배치. SSR/첫 렌더는 라운드로빈(결정적, void 없음), 마운트
+ *  후 실제 셀 높이를 재 최단열로 재배치해 열 높이를 고르게 맞춘다. greedy 가 prefix-stable 라(배치가
+ *  앞 셀에만 의존) 무한스크롤 append 시 앞 카드는 재배치되지 않는다. */
 function MasonryChunk({ children }: { children: ReactNode }) {
   const cells = Children.toArray(children);
   // 특수 카드(DiscoveryCell spread) 위치 — 배치에서 greedy 자유이동 대신 열 흩뿌림으로 다룬다.
