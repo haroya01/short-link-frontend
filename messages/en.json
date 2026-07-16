@@ -550,7 +550,7 @@
     "highlightNotePlaceholder": "Leave a note on this passage",
     "highlightNoteSave": "Save",
     "highlightNoteCancel": "Cancel",
-    "highlightThreadEmpty": "Be the first to reply.",
+    "highlightThreadNoReplies": "No replies yet",
     "highlightReplyPlaceholder": "Write a reply…",
     "highlightReplySubmit": "Reply",
     "highlightReplyDelete": "Delete",

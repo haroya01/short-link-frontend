@@ -550,7 +550,7 @@
     "highlightNotePlaceholder": "この部分へのメモを残しましょう",
     "highlightNoteSave": "保存",
     "highlightNoteCancel": "キャンセル",
-    "highlightThreadEmpty": "最初の返信を残しましょう。",
+    "highlightThreadNoReplies": "まだ返信はありません",
     "highlightReplyPlaceholder": "返信を入力…",
     "highlightReplySubmit": "返信",
     "highlightReplyDelete": "削除",

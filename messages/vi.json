@@ -564,7 +564,7 @@
     "highlightNotePlaceholder": "Để lại ghi chú cho đoạn này",
     "highlightNoteSave": "Lưu",
     "highlightNoteCancel": "Hủy",
-    "highlightThreadEmpty": "Hãy là người trả lời đầu tiên.",
+    "highlightThreadNoReplies": "Chưa có phản hồi",
     "highlightReplyPlaceholder": "Viết câu trả lời…",
     "highlightReplySubmit": "Trả lời",
     "highlightReplyDelete": "Xóa",

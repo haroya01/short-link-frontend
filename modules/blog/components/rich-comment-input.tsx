@@ -54,6 +54,7 @@ export function RichCommentInput({
   expanded = true,
   maxHeight,
   onSubmitShortcut,
+  hideToolbar = false,
 }: {
   value: string;
   onChange: (markdown: string) => void;
@@ -70,6 +71,9 @@ export function RichCommentInput({
   maxHeight?: string;
   /** Fired on Cmd/Ctrl+Enter — lets the host submit without the user reaching for the button. */
   onSubmitShortcut?: () => void;
+  /** Drop the format toolbar entirely — 하이라이트 답글처럼 짧은 표면에서 서식 버튼 6개가 과하고
+   *  본질(한 줄 답글)만 필요한 경우. 입력기는 여전히 WYSIWYG(contenteditable)로 남는다. */
+  hideToolbar?: boolean;
 }) {
   const t = useTranslations("comments");
   const [linkOpen, setLinkOpen] = useState(false);
@@ -162,16 +166,19 @@ export function RichCommentInput({
     <div className="overflow-hidden rounded-xl border border-slate-200 transition-colors focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
       {/* Format chrome shows only when expanded — the resting field is a bare one-line input. The
           grid-rows 0fr→1fr reveal animates the height with no mount jump; `invisible` keeps the
-          clipped toolbar out of the tab order while collapsed. */}
-      <div
-        className={`grid transition-[grid-template-rows] duration-200 ease-[var(--ease)] motion-reduce:transition-none ${
-          expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-        }`}
-      >
-        <div className={`overflow-hidden ${expanded ? "" : "invisible"}`}>
-          <RichToolbar editor={editor} compact={compact} onLink={() => setLinkOpen(true)} />
+          clipped toolbar out of the tab order while collapsed. hideToolbar drops it entirely for short
+          surfaces(하이라이트 답글). */}
+      {!hideToolbar && (
+        <div
+          className={`grid transition-[grid-template-rows] duration-200 ease-[var(--ease)] motion-reduce:transition-none ${
+            expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          }`}
+        >
+          <div className={`overflow-hidden ${expanded ? "" : "invisible"}`}>
+            <RichToolbar editor={editor} compact={compact} onLink={() => setLinkOpen(true)} />
+          </div>
         </div>
-      </div>
+      )}
       <RichEditable editor={editor} placeholder={placeholder} minHeight={minHeight} maxHeight={maxHeight} />
       <UrlDialog
         open={linkOpen}
