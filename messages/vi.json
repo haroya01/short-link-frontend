@@ -3560,6 +3560,8 @@
     "belongsToJust": "Trong “{title}”",
     "belongsToRest": "Trong “{title}” và {count} bộ sưu tập khác",
     "connectedTo": "đã kết nối",
+    "connectionMeta": "<curator>{curatorName}</curator> đã kết nối vào <collection>{collectionName}</collection>",
+    "connectionMetaPath": "<curator>{curatorName}</curator> đã đan vào <collection>{collectionName}</collection>",
     "connectedToPath": "woven into a path",
     "connectThisSentence": "Kết nối vào bộ sưu tập hoặc đường",
     "inPathTitle": "Những đường mà câu này thuộc về",

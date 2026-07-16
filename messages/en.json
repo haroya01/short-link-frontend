@@ -3560,6 +3560,8 @@
     "belongsToJust": "In “{title}”",
     "belongsToRest": "In “{title}” and {count} more collections",
     "connectedTo": "connected",
+    "connectionMeta": "<curator>{curatorName}</curator> connected into <collection>{collectionName}</collection>",
+    "connectionMetaPath": "<curator>{curatorName}</curator> wove into <collection>{collectionName}</collection>",
     "connectedToPath": "woven into a path",
     "connectThisSentence": "Connect to a collection or path",
     "inPathTitle": "Paths this sentence belongs to",

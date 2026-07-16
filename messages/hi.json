@@ -3560,6 +3560,8 @@
     "belongsToJust": "“{title}” में",
     "belongsToRest": "“{title}” और {count} अन्य कलेक्शन में",
     "connectedTo": "से जुड़ा",
+    "connectionMeta": "<curator>{curatorName}</curator> ने <collection>{collectionName}</collection> से जोड़ा",
+    "connectionMetaPath": "<curator>{curatorName}</curator> ने <collection>{collectionName}</collection> पथ में पिरोया",
     "connectedToPath": "woven into a path",
     "connectThisSentence": "किसी संग्रह या राह से जोड़ें",
     "inPathTitle": "वे राहें जिनसे यह वाक्य जुड़ा है",

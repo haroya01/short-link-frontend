@@ -3560,6 +3560,8 @@
     "belongsToJust": "‘{title}’에 속함",
     "belongsToRest": "‘{title}’ 외 {count}개 컬렉션에 속함",
     "connectedTo": "에 연결",
+    "connectionMeta": "<curator>{curatorName}</curator>가 <collection>{collectionName}</collection>에 연결",
+    "connectionMetaPath": "<curator>{curatorName}</curator>가 <collection>{collectionName}</collection> 길에 엮음",
     "connectedToPath": "길에 엮음",
     "connectThisSentence": "컬렉션·길에 연결",
     "inPathTitle": "이 문장이 속한 길",

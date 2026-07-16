@@ -30,40 +30,10 @@ export function quoteHref(username: string, slug: string, quote: string, locale:
  * A post block links to the post; a highlight block deep-links to the source post at that sentence; a
  * note has no destination (it lives where it is).
  */
-export function ConnectionBlock({
-  block,
-  locale,
-  compact = false,
-}: {
-  block: BlockFields;
-  locale: string;
-  /** compact = 발견 피드/인서트용 미니 카드(제목 + 작가 한 줄, 소개글 생략, 여백 축소). 기본(false)은
-   *  경로/컬렉션 읽기 면의 넉넉한 카드. */
-  compact?: boolean;
-}) {
+export function ConnectionBlock({ block, locale }: { block: BlockFields; locale: string }) {
   const t = useTranslations("collections");
 
   if (block.blockType === "POST" && block.slug && block.username) {
-    if (compact) {
-      // 미니 글 카드 — hairline 보더 안에 글 아이콘 + 제목 + 작가 한 줄. 발견 카드가 늘어지지 않게
-      // 소개글은 생략하고 밀도를 한 단계 조인다.
-      return (
-        <BlogLink
-          href={postHref(block.username, block.slug, locale)}
-          className="focus-ring group flex items-start gap-2.5 rounded-xl border border-slate-200/80 bg-white px-3 py-2.5 transition-colors hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700"
-        >
-          <FileText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
-          <span className="min-w-0">
-            <span className="line-clamp-1 text-[14px] font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
-              {block.title}
-            </span>
-            <span className="mt-0.5 block truncate text-[12px] text-slate-500 dark:text-slate-400">
-              @{block.username}
-            </span>
-          </span>
-        </BlogLink>
-      );
-    }
     return (
       <BlogLink
         href={postHref(block.username, block.slug, locale)}
