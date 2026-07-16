@@ -188,12 +188,15 @@ export async function listPublicCollectionsByUsername(
 }
 
 /** Collection detail — connected blocks resolved (ordered). Public collections are readable signed-out;
- *  private ones need ownership (the backend enforces it). */
+ *  private ones need ownership (the backend enforces it). 인증을 실어야 소유자가 자기 비공개
+ *  컬렉션을 볼 수 있다 — 이전의 헤더 없는 raw fetch 는 로그인 상태에서도 401 → "찾을 수 없어요". */
 export async function getCollection(id: number): Promise<CollectionDetail | null> {
   if (USE_MOCKS) return Promise.resolve(mockCollectionDetail(id));
-  const res = await fetch(`${API_BASE}/api/v1/collections/${id}`, { cache: "no-store" });
-  if (!res.ok) return null;
-  return (await res.json()) as CollectionDetail;
+  try {
+    return await request<CollectionDetail>(`/api/v1/collections/${id}`, { method: "GET" });
+  } catch {
+    return null;
+  }
 }
 
 /** Discover — connection flow of curators the viewer follows (newest first). Empty when following 0. */
