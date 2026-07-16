@@ -3535,6 +3535,8 @@
     "discoverFailed": "불러오지 못했어요.",
     "discoverEmptyTitle": "아직 흐를 게 없어요",
     "discoverEmptyBody": "작가를 팔로우하면, 그들이 컬렉션에 이은 글이 여기에 흘러요.",
+    "discoverGlobalFallback": "아직 팔로우한 사람이 없어, 지금은 전체 큐레이터의 연결을 보여드려요.",
+    "highlightsGlobalFallback": "아직 팔로우한 사람이 없어, 지금은 전체 큐레이터가 밑줄 친 문장을 보여드려요.",
     "discoverEmptyCta": "읽을 글 찾기",
     "discoverTabEntrances": "입구",
     "discoverTabRecent": "최근",

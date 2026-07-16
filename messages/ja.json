@@ -3535,6 +3535,8 @@
     "discoverFailed": "読み込めませんでした。",
     "discoverEmptyTitle": "まだ流れてくるものがありません",
     "discoverEmptyBody": "ライターをフォローすると、その人がコレクションにつないだ記事がここに流れてきます。",
+    "discoverGlobalFallback": "まだ誰もフォローしていないので、今はすべてのキュレーターの連なりを表示しています。",
+    "highlightsGlobalFallback": "まだ誰もフォローしていないので、今はすべてのキュレーターが引いた一節を表示しています。",
     "discoverEmptyCta": "読む記事を探す",
     "discoverTabEntrances": "入口",
     "discoverTabRecent": "最近",

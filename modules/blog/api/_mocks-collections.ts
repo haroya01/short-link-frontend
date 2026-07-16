@@ -18,6 +18,7 @@ import type {
   Connection,
   ConnectionEvent,
   DiscoverFeed,
+  FeedSource,
   NewCollection,
   PostCollectionsView,
 } from "@/modules/blog/api/collections";
@@ -225,10 +226,17 @@ const FILLER_FEED: HighlightFeedItem[] = Array.from({ length: 25 }, (_, i) => {
 });
 const highlightFeed: HighlightFeedItem[] = [...HEAD_FEED, ...FILLER_FEED];
 
-export function mockHighlightFeed(page: number, size: number): HighlightFeedPage {
+export function mockHighlightFeed(
+  page: number,
+  size: number,
+  scope?: FeedSource,
+): HighlightFeedPage {
   const start = page * size;
   const items = highlightFeed.slice(start, start + size);
-  return { items, page, size, hasNext: start + size < highlightFeed.length };
+  // Mock viewer follows curators, so the feed is "following" unless the caller pins scope=global
+  // (exercising the cold-start fallback path + the pinned-scope caption without a backend).
+  const source: FeedSource = scope === "global" ? "global" : "following";
+  return { items, page, size, hasNext: start + size < highlightFeed.length, source };
 }
 
 // A stored collection whose connections carry the internal `refId` (so membership is resolvable).
@@ -383,7 +391,8 @@ export function mockDiscoverConnections(): DiscoverFeed {
       body: null,
     },
   ];
-  return { items, hasNext: false };
+  // Mock viewer follows curators → the follow-graph feed (not the cold-start fallback).
+  return { items, hasNext: false, source: "following" satisfies FeedSource };
 }
 
 export function mockCollectionsContainingHighlight(_highlightId: number): CollectionSummary[] {

@@ -3535,6 +3535,8 @@
     "discoverFailed": "Không thể tải.",
     "discoverEmptyTitle": "Chưa có gì chảy về đây",
     "discoverEmptyBody": "Hãy theo dõi một tác giả, rồi những bài viết họ kết nối vào bộ sưu tập sẽ chảy về đây.",
+    "discoverGlobalFallback": "Bạn chưa theo dõi ai, nên hiện tại đây hiển thị các kết nối từ mọi người tuyển chọn.",
+    "highlightsGlobalFallback": "Bạn chưa theo dõi ai, nên hiện tại đây hiển thị những đoạn mà mọi người tuyển chọn đã tô sáng.",
     "discoverEmptyCta": "Tìm bài để đọc",
     "discoverTabEntrances": "Lối vào",
     "discoverTabRecent": "Gần đây",

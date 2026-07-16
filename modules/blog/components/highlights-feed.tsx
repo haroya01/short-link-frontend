@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Loader2, MessageCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { dateLocale } from "@/lib/date";
+import type { FeedSource } from "@/modules/blog/api/collections";
 import { getHighlightFeed, type HighlightFeedItem } from "@/modules/blog/api/highlights";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
@@ -41,6 +42,10 @@ export function HighlightsFeed({
   // 팔로잉 피드와 같은 문법(무한 스크롤 + '더 보기' 버튼 폴백)으로 이어 받는다.
   const [page, setPage] = useState(0);
   const [hasNext, setHasNext] = useState(false);
+  // 콜드스타트 폴백 — 팔로우 0/개인화 첫 페이지 공백이면 백엔드가 전역 스트림을 내리고 source:"global"
+  // 로 알린다. 그때 이후 페이지를 scope=global 로 고정해 받아야 팔로잉↔전역이 섞이지 않는다. 구 서버는
+  // source 부재(undefined) → 고정 없이 기존 동작 유지.
+  const [source, setSource] = useState<FeedSource | undefined>(undefined);
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -56,6 +61,7 @@ export function HighlightsFeed({
         setItems(res.items);
         setHasNext(res.hasNext);
         setPage(0);
+        setSource(res.source);
       })
       // 일시적 오류를 빈 상태로 위장하지 않는다 — 별도 오류 분기에서 '다시 시도'를 준다.
       .catch(() => alive && setFailed(true));
@@ -70,7 +76,9 @@ export function HighlightsFeed({
     setLoadError(false);
     const next = page + 1;
     try {
-      const res = await getHighlightFeed(next, PAGE_SIZE);
+      // page 0 이 전역 폴백이었으면 이후 페이지도 scope=global 로 고정 — 안 그러면 백엔드가 페이지마다
+      // 폴백 규칙을 다시 판단해 팔로잉↔전역 페이지가 섞인다(page>0 은 폴백 안 하므로 특히 위험).
+      const res = await getHighlightFeed(next, PAGE_SIZE, source === "global" ? "global" : undefined);
       // 페이지 사이에 새 하이라이트가 앞에 끼면 이미 본 항목이 경계를 넘어올 수 있어 id 로 방어적 dedupe.
       setItems((prev) => {
         const seen = new Set((prev ?? []).map((h) => h.id));
@@ -84,7 +92,7 @@ export function HighlightsFeed({
     } finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, hasNext, page]);
+  }, [loadingMore, hasNext, page, source]);
 
   // 끝에 가까워지면 자동 로드; 아래 버튼은 no-JS/재시도 폴백으로 남긴다(팔로잉 피드와 같은 문법).
   useEffect(() => {
@@ -156,6 +164,13 @@ export function HighlightsFeed({
 
   return (
     <div>
+      {/* 콜드스타트 폴백 안내 — 팔로우가 없어 전역 하이라이트를 보여줄 때, 이게 내 팔로우 그래프가 아니라
+          전역 흐름임을 조용히 한 줄로 알린다(§10: 배지·색 없이 muted 한 줄). 팔로잉이면 없음. */}
+      {source === "global" && (
+        <p className="mb-5 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+          {t("highlightsGlobalFallback")}
+        </p>
+      )}
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
         {items.map((item, i) => (
           <li

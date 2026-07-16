@@ -1,6 +1,7 @@
 import { request } from "@/lib/api/client";
 import { USE_MOCKS } from "@/modules/blog/api/_mocks";
 import { mockHighlightFeed, mockMyHighlights } from "@/modules/blog/api/_mocks-collections";
+import type { FeedSource } from "./collections";
 import type { PublicAuthor } from "./public-posts";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -77,6 +78,10 @@ export interface HighlightFeedPage {
   page: number;
   size: number;
   hasNext: boolean;
+  /** "global" when the backend served the cold-start fallback (following nobody / empty page 0)
+   *  instead of the follow graph. Absent on a server that predates the field → treated as
+   *  "following". See {@link FeedSource}. */
+  source?: FeedSource;
 }
 
 /** One reply in a highlight's thread (the author's note is the thread opener; these sit under it). */
@@ -114,13 +119,23 @@ export async function listMyHighlights(): Promise<MyHighlightItem[]> {
   return request<MyHighlightItem[]>(`/api/v1/users/me/highlights`, { method: "GET" });
 }
 
-/** Authenticated — "남들 하이라이트" 피드: 팔로우한 큐레이터가 최근 칠한 공개 구절(최신순, 페이지). 팔로우가
- *  없으면 빈 페이지(콜드스타트는 클라 안내). */
-export function getHighlightFeed(page = 0, size = 20): Promise<HighlightFeedPage> {
-  if (USE_MOCKS) return Promise.resolve(mockHighlightFeed(page, size));
-  return request<HighlightFeedPage>(`/api/v1/highlights/feed?page=${page}&size=${size}`, {
-    method: "GET",
-  });
+/**
+ * Authenticated — "남들 하이라이트" 피드: 팔로우한 큐레이터가 최근 칠한 공개 구절(최신순, 페이지).
+ * 팔로우가 0이거나 개인화 첫 페이지가 비면 백엔드가 전역 스트림으로 폴백하고 `source: "global"` 로
+ * 알린다. 그때 이후 페이지는 `scope: "global"` 로 고정해 받아야 팔로잉↔전역 페이지가 섞이지 않는다
+ * (page>0 빈 결과는 폴백 안 함 — 정상 끝). scope 미지정 시 백엔드가 폴백 규칙을 스스로 판단.
+ */
+export function getHighlightFeed(
+  page = 0,
+  size = 20,
+  scope?: FeedSource,
+): Promise<HighlightFeedPage> {
+  if (USE_MOCKS) return Promise.resolve(mockHighlightFeed(page, size, scope));
+  const scopeParam = scope === "global" ? "&scope=global" : "";
+  return request<HighlightFeedPage>(
+    `/api/v1/highlights/feed?page=${page}&size=${size}${scopeParam}`,
+    { method: "GET" },
+  );
 }
 
 /** Authenticated — create a highlight on a published post. */
