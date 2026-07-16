@@ -14,6 +14,8 @@ import {
   updateDestination,
 } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
+import { countryFlag } from "@/lib/utils";
+import { CountryCombobox } from "@/components/links/country-combobox";
 import type { DestinationClick, DestinationSummary } from "@/types";
 
 /**
@@ -155,7 +157,7 @@ export function LinkDestinationsSection({
           disabled={busy}
         />
         <div className="flex flex-wrap items-center gap-2 sm:col-span-3">
-          <CountrySelect value={country} onChange={setCountry} disabled={busy} t={t} />
+          <CountryCombobox value={country} onChange={setCountry} disabled={busy} allowAny />
           <DeviceClassSelect value={deviceClass} onChange={setDeviceClass} disabled={busy} t={t} />
           <OsSelect value={os} onChange={setOs} disabled={busy} t={t} />
           <Button
@@ -322,10 +324,11 @@ function DestinationRow({
             />
           )}
           {onCountryChange && (
-            <RowCountrySelect
+            <CountryCombobox
               value={countryCode ?? ""}
               onChange={(v) => onCountryChange(v || null)}
-              t={t}
+              size="sm"
+              allowAny
             />
           )}
           {onDeviceClassChange && (
@@ -367,26 +370,6 @@ function DestinationRow({
     </div>
   );
 }
-
-const COUNTRY_OPTIONS: { code: string; flag: string }[] = [
-  { code: "KR", flag: "🇰🇷" },
-  { code: "JP", flag: "🇯🇵" },
-  { code: "US", flag: "🇺🇸" },
-  { code: "CN", flag: "🇨🇳" },
-  { code: "TW", flag: "🇹🇼" },
-  { code: "HK", flag: "🇭🇰" },
-  { code: "SG", flag: "🇸🇬" },
-  { code: "VN", flag: "🇻🇳" },
-  { code: "TH", flag: "🇹🇭" },
-  { code: "ID", flag: "🇮🇩" },
-  { code: "IN", flag: "🇮🇳" },
-  { code: "GB", flag: "🇬🇧" },
-  { code: "DE", flag: "🇩🇪" },
-  { code: "FR", flag: "🇫🇷" },
-  { code: "CA", flag: "🇨🇦" },
-  { code: "AU", flag: "🇦🇺" },
-  { code: "BR", flag: "🇧🇷" },
-];
 
 // Mirrors the backend @Pattern on destination requests (mobile|tablet|desktop, and the OS set).
 const DEVICE_CLASS_OPTIONS = ["mobile", "tablet", "desktop"] as const;
@@ -451,7 +434,7 @@ export function LinkBlockedCountriesSection({ shortCode }: { shortCode: string }
       </div>
 
       <div className="flex items-center gap-2">
-        <CountrySelect value={pick} onChange={add} disabled={busy} t={t} />
+        <CountryCombobox value={pick} onChange={add} disabled={busy} />
         <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("blockedAddHint")}</span>
       </div>
 
@@ -483,66 +466,6 @@ export function LinkBlockedCountriesSection({ shortCode }: { shortCode: string }
         )}
       </div>
     </section>
-  );
-}
-
-function countryFlag(code: string): string {
-  const found = COUNTRY_OPTIONS.find((c) => c.code === code.toUpperCase());
-  return found ? found.flag : "🏳️";
-}
-
-function CountrySelect({
-  value,
-  onChange,
-  disabled,
-  t,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  disabled?: boolean;
-  t: ReturnType<typeof useTranslations>;
-}) {
-  return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      disabled={disabled}
-      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 disabled:opacity-50"
-      aria-label={t("countryLabel")}
-    >
-      <option value="">{t("countryAny")}</option>
-      {COUNTRY_OPTIONS.map((c) => (
-        <option key={c.code} value={c.code}>
-          {c.flag} {c.code}
-        </option>
-      ))}
-    </select>
-  );
-}
-
-function RowCountrySelect({
-  value,
-  onChange,
-  t,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  t: ReturnType<typeof useTranslations>;
-}) {
-  return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-1.5 py-0.5 text-[11px]"
-      aria-label={t("countryLabel")}
-    >
-      <option value="">{t("countryAny")}</option>
-      {COUNTRY_OPTIONS.map((c) => (
-        <option key={c.code} value={c.code}>
-          {c.flag} {c.code}
-        </option>
-      ))}
-    </select>
   );
 }
 

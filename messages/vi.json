@@ -1345,6 +1345,9 @@
       "description": "Phân phối lượt nhấp tới các điểm đến theo trọng số, hoặc gửi khách từ một số quốc gia tới trang phù hợp. Biến thể gắn quốc gia chỉ kích hoạt với khách khớp; nếu không, lưu lượng quay về các biến thể không gắn quốc gia, rồi đến URL gốc. Tối đa 4 mỗi liên kết.",
       "countryLabel": "Quốc gia mục tiêu",
       "countryAny": "🌐 Mọi quốc gia",
+      "countryPlaceholder": "Chọn quốc gia",
+      "countrySearch": "Tìm quốc gia",
+      "countryNoResults": "Không có quốc gia phù hợp",
       "deviceLabel": "Thiết bị mục tiêu",
       "deviceAny": "Mọi thiết bị",
       "device": {
