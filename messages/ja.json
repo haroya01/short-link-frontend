@@ -3547,6 +3547,7 @@
     "discoverTabEntrances": "入口",
     "discoverTabRecent": "最近",
     "discoverTabHighlights": "ハイライト",
+    "highlightReplyCount": "返信 {count}",
     "highlightsSignedOutTitle": "たどって読む一節",
     "highlightsSignedOut": "ログインすると、フォローしているキュレーターが引いた一節がここに集まります。",
     "highlightsSignIn": "ログイン",

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
-import { Loader2, MessageCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { dateLocale } from "@/lib/date";
 import type { FeedSource } from "@/modules/blog/api/collections";
@@ -241,9 +241,8 @@ function HighlightFeedRow({ item, locale }: { item: HighlightFeedItem; locale: s
         <span aria-hidden>·</span>
         <time dateTime={item.createdAt}>{formatDate(item.createdAt, locale)}</time>
         {item.replyCount > 0 && (
-          <span className="ml-auto inline-flex items-center gap-1 text-slate-400 dark:text-slate-500">
-            <MessageCircle className="h-3.5 w-3.5" />
-            <span className="tabular-nums">{item.replyCount}</span>
+          <span className="ml-auto tabular-nums text-slate-400 dark:text-slate-500">
+            {t("highlightReplyCount", { count: item.replyCount })}
           </span>
         )}
       </div>

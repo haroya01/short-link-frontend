@@ -3547,6 +3547,7 @@
     "discoverTabEntrances": "입구",
     "discoverTabRecent": "최근",
     "discoverTabHighlights": "하이라이트",
+    "highlightReplyCount": "답글 {count}",
     "highlightsSignedOutTitle": "따라 읽을 밑줄",
     "highlightsSignedOut": "로그인하면 팔로우한 큐레이터가 밑줄 친 문장이 여기 모여요.",
     "highlightsSignIn": "로그인",

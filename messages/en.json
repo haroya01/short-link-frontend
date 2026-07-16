@@ -3547,6 +3547,7 @@
     "discoverTabEntrances": "Entrances",
     "discoverTabRecent": "Recent",
     "discoverTabHighlights": "Highlights",
+    "highlightReplyCount": "{count, plural, one {# reply} other {# replies}}",
     "highlightsSignedOutTitle": "Passages to read along",
     "highlightsSignedOut": "Sign in and the passages curators you follow underline will gather here.",
     "highlightsSignIn": "Sign in",

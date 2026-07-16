@@ -1,7 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { FileText, Quote, StickyNote } from "lucide-react";
 import type { Connection, ConnectionEvent } from "@/modules/blog/api/collections";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { postHref } from "@/modules/blog/components/feed-card";
@@ -22,33 +20,31 @@ export function quoteHref(username: string, slug: string, quote: string, locale:
 }
 
 /**
- * A connected block — each kind in a DIFFERENT silhouette so the eye reads the type at a glance
- * (repeating one rhythm is what reads monotonous). Post = white bordered card (an artifact to read
- * into) · highlight = green left-rule quote (a pulled passage) · note = the quietest, plain on the
- * paper. Shared by the path read, the simple collection list, and the discovery feed.
+ * A connected block — converged to the 일반 글 카드 문법(#891): the block's own content is the card,
+ * with no type-tag pill, no decorative icon, and no nested box. Post = title as a plain card-title link
+ * on the paper (like any feed card) · highlight = green left-rule quote (the pulled passage IS the
+ * content, so its spine stays) · note = the held thought, plain and quietest. Shared by the path read,
+ * the collection list, related blocks, and the highlight thread panel.
  *
  * A post block links to the post; a highlight block deep-links to the source post at that sentence; a
  * note has no destination (it lives where it is).
  */
 export function ConnectionBlock({ block, locale }: { block: BlockFields; locale: string }) {
-  const t = useTranslations("collections");
-
   if (block.blockType === "POST" && block.slug && block.username) {
     return (
-      <BlogLink
-        href={postHref(block.username, block.slug, locale)}
-        className="focus-ring group block rounded-xl border border-slate-200 bg-white p-4 transition-colors hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700"
-      >
-        <KindTag icon={<FileText className="h-3 w-3" />} label={t("blockPost")} />
-        <p className="mt-1.5 line-clamp-2 text-[15px] font-semibold leading-snug text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
+      <div>
+        <BlogLink
+          href={postHref(block.username, block.slug, locale)}
+          className="focus-ring rounded text-card-title-xs font-semibold leading-snug tracking-tight text-slate-900 transition-colors hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-400"
+        >
           {block.title}
-        </p>
+        </BlogLink>
         {block.excerpt && (
           <p className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
             {block.excerpt}
           </p>
         )}
-      </BlogLink>
+      </div>
     );
   }
 
@@ -56,12 +52,11 @@ export function ConnectionBlock({ block, locale }: { block: BlockFields; locale:
     return (
       <BlogLink
         href={quoteHref(block.username, block.slug, block.quote ?? "", locale)}
-        className="focus-ring group flex gap-3 rounded"
+        className="focus-ring group flex gap-2.5 rounded"
       >
         <span aria-hidden className="mt-0.5 w-[3px] shrink-0 rounded-full bg-accent-600 dark:bg-accent-500" />
         <span className="min-w-0">
-          <KindTag icon={<Quote className="h-3 w-3" />} label={t("blockHighlight")} />
-          <span className="mt-1.5 block text-[15px] leading-relaxed text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-slate-100">
+          <span className="block text-[15px] leading-relaxed text-slate-700 group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-slate-100">
             {block.quote}
           </span>
           {block.title && (
@@ -74,14 +69,11 @@ export function ConnectionBlock({ block, locale }: { block: BlockFields; locale:
     );
   }
 
-  // NOTE — a held thought. No box; sits plainly on the paper, the quietest of the three.
+  // NOTE — a held thought. Plain on the paper, the quietest of the three.
   return (
-    <div>
-      <KindTag icon={<StickyNote className="h-3 w-3" />} label={t("blockNote")} />
-      <p className="mt-1.5 whitespace-pre-line text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
-        {block.body}
-      </p>
-    </div>
+    <p className="whitespace-pre-line text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
+      {block.body}
+    </p>
   );
 }
 
@@ -96,13 +88,4 @@ export function eventBlock(event: ConnectionEvent): BlockFields {
     quote: event.quote,
     body: event.body,
   };
-}
-
-function KindTag({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-500">
-      {icon}
-      {label}
-    </span>
-  );
 }
