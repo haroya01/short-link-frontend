@@ -54,6 +54,16 @@ export function DiscoverySeriesCard({
   const [idx, setIdx] = useState(0);
   // 넘김 순간에만 참 — 이때만 will-change 로 레이어를 승격한다(아래 주석).
   const [flipping, setFlipping] = useState(false);
+  // 움직임 최소화 요청이면 방향성 슬라이드를 빼고 제자리 크로스페이드만 준다(나가는 장의 inline
+  // translateX 제거). 들어오는 장은 CSS 가드(globals 의 .animate-series-flip-in)에서 페이드로 떨어진다.
+  const [reduceMotion, setReduceMotion] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const apply = () => setReduceMotion(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
   // 자동 넘김은 폐기 — 정적인 그리드에서 혼자 3.4s 마다 도는 카드는 화면에서 가장 시끄러운
   // 존재였고(iPad 실기기에서 "깜빡임" 신고), §10.7 의 "ambient 는 희소할 때만"과도 어긋났다.
   // 한 장 넘김은 우측 플립 엣지(수동)만 남는다.
@@ -97,9 +107,15 @@ export function DiscoverySeriesCard({
               // 않고, 넘김이 진행되는 동안만 will-change 로 잠깐 승격해 재래스터 플래시를 막는다.
               // 들어오는 앞장은 방금 마운트돼 transition 시작값이 없다 — 넘김 중엔 fade-in
               // 애니메이션으로 크로스페이드의 들어오는 절반을 맡긴다(나가는 장은 transition).
-              className={`absolute inset-0 transition-[transform,opacity] duration-500 ease-[var(--ease)] ${front && flipping ? "animate-fade-in" : ""}`}
+              // 넘김 격상: 제자리 크로스페이드 → 방향성 슬라이드 + 크로스페이드(순환=항상 전진).
+              // 들어오는 앞장은 오른쪽에서 밀려 들어오며 페이드(animate-series-flip-in), 나가는 장은
+              // 왼쪽으로 미세하게 밀려 나가며 페이드(아래 inline transform + transition). reduce-motion 은
+              // 슬라이드를 빼고 제자리 크로스페이드만(들어오는 장=CSS 가드, 나가는 장=inline translateX 제거).
+              className={`absolute inset-0 transition-[transform,opacity] duration-500 ease-[var(--ease)] ${front && flipping ? "animate-series-flip-in" : ""}`}
               style={{
-                transform: `scale(${front ? 1 : 0.97})`,
+                transform: front
+                  ? "translateX(0) scale(1)"
+                  : `translateX(${reduceMotion ? 0 : -18}px) scale(0.98)`,
                 zIndex: front ? 2 : 1,
                 opacity: front ? 1 : 0,
                 pointerEvents: front ? "auto" : "none",

@@ -1584,6 +1584,20 @@ body[data-cookie-consent="visible"] {
     animation: none !important;
     opacity: 1 !important;
   }
+  /* 시리즈 덱 넘김: 움직임 최소화 요청 시 방향성 슬라이드를 버리고 제자리 크로스페이드만 남긴다
+     (translateX 없이 opacity 만). 나가는 장의 inline transform 도 컴포넌트에서 reduce-motion 을
+     읽어 슬라이드를 빼므로, 여기선 들어오는 장을 순수 페이드로 되돌린다. */
+  .animate-series-flip-in {
+    animation: series-crossfade 260ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  }
+}
+@keyframes series-crossfade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* 지연 로드 이미지 페이드인 — 픽셀이 도착하는 순간 "뚝" 나타나던 걸 지운다. ImageFade
