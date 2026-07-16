@@ -9,6 +9,7 @@ import type { PublicSeriesCard } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { CoverMorphLink } from "@/modules/blog/components/cover-morph-link";
 import { Link as TransitionLink } from "next-view-transitions";
 import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscribe-button";
@@ -124,8 +125,12 @@ export function DiscoverySeriesCard({
                   // 에피소드에 사진이 있으면 그 사진을 커버로 — 톤 하모나이즈도 글 카드와 동일
                   // 규칙(블렌드 모드 ❌ — iPad Safari 타일 seam/깜빡임, 글 카드 주석 참조).
                   <>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.ogImageUrl} alt="" loading="lazy" data-vt-cover className="img-fade absolute inset-0 h-full w-full object-cover saturate-[.85]" />
+                    <CoverThumb
+                      src={p.ogImageUrl}
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 60vw"
+                      vtCover
+                      className="absolute inset-0 h-full w-full object-cover saturate-[.85]"
+                    />
                     <div aria-hidden className="absolute inset-0 bg-accent-900/10" />
                   </>
                 ) : (

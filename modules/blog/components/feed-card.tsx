@@ -7,6 +7,7 @@ import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 
 const BLOG_HOST = process.env.NEXT_PUBLIC_BLOG_HOST;
 
@@ -253,15 +254,13 @@ export function FeedCard({
               featured ? "h-24 w-24 sm:h-28 sm:w-[150px]" : "h-20 w-20 sm:h-24 sm:w-32"
             }`}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            {/* 96~150px 슬롯에 원본(수 MB 가능)이 통째로 내려오던 자리 — 허용 호스트는
+                next/image 변형, 그 외 원본 폴백. img-fade 는 lazy 행에만(기존 규칙). */}
+            <CoverThumb
               src={item.ogImageUrl as string}
-              alt=""
-              loading={eager ? "eager" : "lazy"}
-              {...(eager ? { fetchpriority: "high" } : {})}
-              // img-fade only on the lazy rows — the eager above-fold thumbnails are LCP candidates
-              // and must never start transparent.
-              className={`h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none${eager ? "" : " img-fade"}`}
+              sizes={featured ? "(min-width: 640px) 150px, 96px" : "(min-width: 640px) 128px, 80px"}
+              eager={eager}
+              className="h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none"
             />
           </BlogLink>
         )}
