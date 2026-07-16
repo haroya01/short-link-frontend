@@ -739,6 +739,7 @@ function HighlightThread({
             canSubmit={!authenticated || !!body.trim()}
             rows={2}
             compact
+            hideToolbar
             footer={authenticated ? "" : t("highlightReplyLogin")}
           />
           {error && (

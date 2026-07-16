@@ -26,6 +26,7 @@ export function CommentComposer({
   autoFocus = false,
   compact = false,
   collapsible = false,
+  hideToolbar = false,
   onCancel,
   footer,
 }: {
@@ -45,6 +46,8 @@ export function CommentComposer({
   compact?: boolean;
   /** Quiet rest state — a one-line field that expands on focus / while a draft exists. */
   collapsible?: boolean;
+  /** Drop the format toolbar — short surfaces (하이라이트 답글) where 6 서식 버튼이 과한 경우. */
+  hideToolbar?: boolean;
   /** Extra work the Cancel button should do (e.g. close the reply slot). Runs after the field clears. */
   onCancel?: () => void;
   /** Left-aligned slot on the action row (e.g. a login hint). */
@@ -122,6 +125,7 @@ export function CommentComposer({
         rows={rows}
         expanded={expanded}
         maxHeight={collapsible ? "40vh" : undefined}
+        hideToolbar={hideToolbar}
         onSubmitShortcut={() => {
           if (canSubmit) onSubmit();
         }}
