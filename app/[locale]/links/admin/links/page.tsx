@@ -1,21 +1,11 @@
-"use client";
+import { guardAdminServer } from "@/lib/admin-guard";
+import { AdminLinksView } from "./links-view";
 
-import { Suspense } from "react";
-import { notFound } from "next/navigation";
-import { useAuth } from "@/lib/auth";
-import { LinkBrowser } from "@/components/admin/link-browser";
+// force-dynamic + 서버 가드: 익명 방문자에게 하드 404(존재 은닉). notFound() 는 반드시 페이지 세그먼트
+// (레이아웃/제너레이트메타데이터 X)에서 던져야 404 상태코드가 나간다 — 자세한 근거는 lib/admin-guard.ts.
+export const dynamic = "force-dynamic";
 
 export default function AdminLinksPage() {
-  const { ready, authenticated, isAdmin } = useAuth();
-  // Keep the skeleton until `ready` so a legitimate admin on a slow /me never flashes 404.
-  if (!ready) return null;
-  if (!authenticated || !isAdmin) notFound();
-  return (
-    <main className="container max-w-6xl py-10">
-      {/* LinkBrowser reads ownerId from the query string via useSearchParams. */}
-      <Suspense fallback={null}>
-        <LinkBrowser />
-      </Suspense>
-    </main>
-  );
+  guardAdminServer();
+  return <AdminLinksView />;
 }

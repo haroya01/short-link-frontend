@@ -27,7 +27,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { username, slug } = await params;
   const result = await findPublicSeries(username, slug);
-  if (!result.ok) return { title: `@${username}` };
+  // 존재하지 않는 시리즈는 여기서 404 를 확정한다 — 페이지에서만 notFound() 를 던지면 레이아웃 스트리밍이
+  // 먼저 커밋돼 HTTP 200 + not-found UI 로 나간다(soft-404). generateMetadata 는 응답 커밋 전에 끝나므로
+  // 여기서 던져야 404 상태코드가 나간다. 일시적 백엔드 오류("error")는 던지지 않고 폴백 제목만 둔다.
+  if (!result.ok) {
+    if (result.status === 404) notFound();
+    return { title: `@${username}` };
+  }
   const { author, series, posts } = result.data;
   const h = await headers();
   const url = `${authorBaseUrl(h, username)}/series/${series.slug}`;
