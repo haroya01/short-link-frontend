@@ -31,10 +31,10 @@ export function ConnectionFeedInsert({
 }) {
   return (
     <div
-      className="profile-fade rounded-card-lg border border-slate-200/80 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-900"
+      className="profile-fade rounded-card-lg border border-slate-200/80 bg-white px-4 py-3.5 dark:border-slate-800 dark:bg-slate-900"
       style={{ "--idx": idx } as CSSProperties}
     >
-      {lead && <RailHeading className="mb-3">{label}</RailHeading>}
+      {lead && <RailHeading className="mb-2.5">{label}</RailHeading>}
       <ConnectionEventCard event={event} locale={locale} />
     </div>
   );
