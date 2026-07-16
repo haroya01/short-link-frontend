@@ -246,19 +246,36 @@ export function FeedInfinite({
         // 재배치 점프 때문이었는데, 1열 카드는 둘 다 없어서(전폭 제목, 끝에만 append) 카드 문법을
         // 그대로 내려보낼 수 있다 — 두 DOM 트리(md:hidden 페어)도 함께 사라졌다.
         <DiscoveryGrid>
-          {visible.map((item, i) => (
-            <Fragment key={itemKey(item)}>
-              {/* 페이지 청크 안 순서(i % size)대로 25ms 스태거 — append 된 카드만 새로 마운트되므로
-                  기존 카드는 다시 돌지 않고, 새 페이지가 "뚝"이 아니라 줄지어 떠오른다. */}
-              <DiscoveryCell entranceDelay={Math.min((i % PAGE_SIZE) * 25, 250)}>
+          {/* 셀은 반드시 flat 배열로 — DiscoveryGrid/MasonryChunk 의 Children.toArray 는 Fragment 를
+              펼치지 않아, post + 특수 카드를 한 Fragment 로 묶으면 그 둘이 한 셀(한 열)로 붙어 배치된다
+              (사장님 "특수 카드 정렬 이상" 근본: 특수 카드가 이웃 포스트에 접착돼 같은 열에 뭉침).
+              flatMap 으로 각 셀을 최상위 형제로 내보내면 MasonryChunk 가 특수 카드를 독립적으로 흩뿌린다. */}
+          {visible.flatMap((item, i) => {
+            const cells: ReactNode[] = [
+              // 페이지 청크 안 순서(i % size)대로 25ms 스태거 — append 된 카드만 새로 마운트되므로
+              // 기존 카드는 다시 돌지 않고, 새 페이지가 "뚝"이 아니라 줄지어 떠오른다.
+              <DiscoveryCell key={itemKey(item)} entranceDelay={Math.min((i % PAGE_SIZE) * 25, 250)}>
                 <DiscoveryCard item={item} locale={locale} featured={featuredFirst && i === 0} eager={gridEager.has(i)} />
-              </DiscoveryCell>
-              {interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1 && (
-                <DiscoveryCell>{interleaveNode}</DiscoveryCell>
-              )}
-              {connectAfter.has(i) && <DiscoveryCell>{connectAfter.get(i)}</DiscoveryCell>}
-            </Fragment>
-          ))}
+              </DiscoveryCell>,
+            ];
+            // 특수 카드(시리즈·연결)는 spread — 최단열 greedy 로 뭉치지 않고 서로 다른 열에 흩뿌려
+            // "몇 행마다 하나씩 짜넣기" 의도를 지킨다(discovery-card MasonryChunk 참조).
+            if (interleaveNode && i === interleaveAfter && visible.length > interleaveAfter + 1) {
+              cells.push(
+                <DiscoveryCell key={`series-${itemKey(item)}`} spread>
+                  {interleaveNode}
+                </DiscoveryCell>,
+              );
+            }
+            if (connectAfter.has(i)) {
+              cells.push(
+                <DiscoveryCell key={`connect-${i}`} spread>
+                  {connectAfter.get(i)}
+                </DiscoveryCell>,
+              );
+            }
+            return cells;
+          })}
         </DiscoveryGrid>
       ) : (
         <FeedList>
