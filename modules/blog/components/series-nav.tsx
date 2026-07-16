@@ -7,6 +7,7 @@ import { Mark } from "@/components/common/logo";
 import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
+import { SeriesSwitchButtons } from "@/modules/blog/components/series-swipe";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 
 type Episode = { slug: string; title: string };
@@ -44,12 +45,19 @@ export function SeriesNav({
             {series.title}
           </span>
         </BlogLink>
-        <span className="shrink-0 font-mono text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
-          {t("seriesPosition", {
-            position: String(series.position).padStart(2, "0"),
-            total: String(series.total).padStart(2, "0"),
-          })}
-        </span>
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="font-mono text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
+            {t("seriesPosition", {
+              position: String(series.position).padStart(2, "0"),
+              total: String(series.total).padStart(2, "0"),
+            })}
+          </span>
+          {/* 이전/다음 회차 — 데스크톱(hover 입력)에서만. 모바일은 좌우 스와이프가 담당하므로 숨긴다
+              (버튼 중복 노이즈 방지). SeriesSwipe 에 카드 슬라이드 전환을 위임. */}
+          <span className="hidden sm:inline-flex">
+            <SeriesSwitchButtons series={series} username={username} locale={locale} />
+          </span>
+        </div>
       </div>
 
       {/* Progress stepper — filled up to and including the current part. */}

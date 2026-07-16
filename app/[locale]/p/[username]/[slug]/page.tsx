@@ -27,6 +27,7 @@ import { PublishCelebration } from "@/modules/blog/components/publish-celebratio
 import { ReadingResume } from "@/modules/blog/components/reading-resume";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { SeriesSwipe } from "@/modules/blog/components/series-swipe";
 import { findPreviewPost, findPublicPost, findPublicSeries } from "@/modules/blog/api/public-posts";
 import { authorBaseUrl } from "@/modules/blog/lib/subdomain-origin";
 
@@ -245,6 +246,13 @@ export default async function PublicPostPage({
         </div>
       </aside>
 
+      {/* 시리즈 회차 스와이프 — 시리즈 소속 글에서만(프리뷰 제외) 본문 컬럼을 감싸 좌우 스와이프로
+          이전/다음 회차 이동. 시리즈가 없으면 SeriesSwipe 는 렌더되지 않는다(아래 분기). */}
+      <SeriesSwipe
+        series={result.data.series ?? undefined}
+        username={author.username}
+        locale={locale}
+      >
       <article className="post-enter mx-auto w-full max-w-2xl pb-14 pt-16 sm:py-20" lang={post.languageTag}>
         {/* A preview is an unlisted draft shared by its author — don't record a view, and flag it so
             the owner knows this isn't the live page. */}
@@ -410,6 +418,7 @@ export default async function PublicPostPage({
         </div>
       )}
       </article>
+      </SeriesSwipe>
 
       {/* velog-style TOC pinned just right of the centered column. Fixed (not a grid gutter) so it
           shows from landscape-tablet width up (~1100px) without shrinking the 42rem reading column or
