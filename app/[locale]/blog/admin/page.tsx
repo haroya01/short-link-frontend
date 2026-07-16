@@ -1,25 +1,11 @@
-"use client";
+import { guardAdminServer } from "@/lib/admin-guard";
+import { BlogAdminView } from "./admin-view";
 
-import { notFound } from "next/navigation";
-import { useAuth } from "@/lib/auth";
-import { AbuseReportsManager } from "@/components/admin/abuse-reports-manager";
+// force-dynamic + 서버 가드: 익명 방문자에게 하드 404(존재 은닉). notFound() 는 반드시 페이지 세그먼트
+// (레이아웃/제너레이트메타데이터 X)에서 던져야 404 상태코드가 나간다 — 자세한 근거는 lib/admin-guard.ts.
+export const dynamic = "force-dynamic";
 
-/**
- * Blog moderation queue — the author-workspace home for admins. The blog layout's WorkspaceBody
- * already gates on authentication (signed-out visitors are bounced to /blog/login) and renders the
- * sidebar shell, so here we only need the admin role check. Non-admins (incl. signed-in authors who
- * reach the URL directly) get a 404 rather than a "you're not allowed" page, matching the apex
- * /admin behaviour. The queue itself reuses {@link AbuseReportsManager}.
- */
 export default function BlogAdminPage() {
-  const { ready, authenticated, isAdmin } = useAuth();
-
-  if (!ready) return null;
-  if (!authenticated || !isAdmin) notFound();
-
-  return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
-      <AbuseReportsManager />
-    </main>
-  );
+  guardAdminServer();
+  return <BlogAdminView />;
 }

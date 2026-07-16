@@ -62,7 +62,14 @@ export async function generateMetadata({
   const { username, slug } = await params;
   const { preview } = await searchParams;
   const result = preview ? await findPreviewPost(preview) : await findPublicPost(username, slug);
-  if (!result.ok) return { title: `@${username}` };
+  // 404/삭제(410)는 여기서 notFound() 로 확정한다. 페이지 컴포넌트에서만 notFound() 를 던지면,
+  // 부모 레이아웃이 스트리밍을 먼저 커밋해 HTTP 200 으로 나가고 not-found UI 만 뒤늦게 실린다
+  // (soft-404). generateMetadata 는 응답 커밋 전에 완료되므로 여기서 던져야 상태코드가 404 로 나간다.
+  // 410(삭제됨)은 페이지가 GonePage 를 그리므로 여기서 던지지 않는다.
+  if (!result.ok) {
+    if (result.status === 404) notFound();
+    return { title: `@${username}` };
+  }
   const { author, post } = result.data;
   // A preview is an unlisted draft — never let search engines index the shared link.
   if (preview) {

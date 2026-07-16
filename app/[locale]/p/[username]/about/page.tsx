@@ -22,6 +22,10 @@ export async function generateMetadata({
   params: Promise<{ username: string }>;
 }): Promise<Metadata> {
   const { username } = await params;
+  // 존재하지 않는 작가는 여기서 404 를 확정한다 — 페이지의 notFound() 만으로는 레이아웃 스트리밍이
+  // 먼저 커밋돼 HTTP 200 으로 나가는 soft-404 가 된다(같은 이유는 [slug]/page.tsx 참조).
+  const result = await listPublicPosts(username);
+  if (!result.ok && result.status === 404) notFound();
   return { title: `About · @${username}` };
 }
 

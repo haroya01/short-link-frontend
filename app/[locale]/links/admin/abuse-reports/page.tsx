@@ -1,20 +1,11 @@
-"use client";
+import { guardAdminServer } from "@/lib/admin-guard";
+import { AdminAbuseReportsView } from "./abuse-reports-view";
 
-import { notFound } from "next/navigation";
-import { useAuth } from "@/lib/auth";
-import { AbuseReportsManager } from "@/components/admin/abuse-reports-manager";
+// force-dynamic + 서버 가드: 익명 방문자에게 하드 404(존재 은닉). notFound() 는 반드시 페이지 세그먼트
+// (레이아웃/제너레이트메타데이터 X)에서 던져야 404 상태코드가 나간다 — 자세한 근거는 lib/admin-guard.ts.
+export const dynamic = "force-dynamic";
 
 export default function AdminAbuseReportsPage() {
-  const { ready, authenticated, isAdmin } = useAuth();
-
-  // No login bounce, no 403 — anyone who isn't a signed-in admin gets a hard 404 so the surface's
-  // existence never leaks. Matches the apex /admin overview.
-  if (!ready) return null;
-  if (!authenticated || !isAdmin) notFound();
-
-  return (
-    <main className="mx-auto max-w-5xl px-6 py-12">
-      <AbuseReportsManager />
-    </main>
-  );
+  guardAdminServer();
+  return <AdminAbuseReportsView />;
 }
