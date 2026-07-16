@@ -15,9 +15,9 @@ import {
   type KindredCurator,
 } from "@/modules/blog/api/collections";
 import { Avatar } from "@/modules/blog/components/avatar";
-import { authorHref } from "@/modules/blog/components/feed-card";
+import { authorHref, postHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
-import { ConnectionBlock, eventBlock } from "@/modules/blog/components/connection-block";
+import { quoteHref } from "@/modules/blog/components/connection-block";
 import { HighlightsFeed } from "@/modules/blog/components/highlights-feed";
 import { KindredCurators } from "@/modules/blog/components/kindred-curators";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -310,69 +310,94 @@ function ConnectionFeedSkeleton() {
   );
 }
 
-/** One connection event — "누가 → 어느 길에 → 왜 → 무엇을" 를 한눈에 읽히는 종이 문법으로. 큐레이터가
- *  행 머리(아바타+이름+날짜), 컬렉션은 초록 알약 진입점("~에 연결"의 대상이 죽은 텍스트가 아니라 들어갈
- *  수 있는 문), why 는 세로 스파인을 얹은 인용, 실린 것은 미니 카드. 발견 피드(이 파일)와 공개 피드
- *  인서트("지금 이어지는 것들")가 공유. */
+/** One connection event — 일반 글 카드 문법으로 수렴한 미니멀 카드(≤3층, 장식 아이콘 0). 연결된 글의
+ *  제목이 카드의 주인공(중첩 박스·보더·아이콘 없이 본문에 직접), why 인용 한 줄, 맥락은 조용한 메타
+ *  한 줄("@큐레이터가 컬렉션에 연결 · 날짜"). 발견 피드(이 파일)와 공개 피드 인서트("지금 이어지는
+ *  것들")가 공유 — eyebrow 는 인서트의 lead 헤딩이 한 번만 이름을 밝힌다. */
 export function ConnectionEventCard({ event, locale }: { event: ConnectionEvent; locale: string }) {
   const t = useTranslations("collections");
   const uiLocale = useLocale();
+
+  // 연결된 것의 목적지 — 글/하이라이트는 그 글(하이라이트는 문장까지), 노트는 목적지 없음.
+  const isPost = event.blockType === "POST" && event.slug && event.username;
+  const isHighlight = event.blockType === "HIGHLIGHT" && event.slug && event.username;
+  const heroHref = isHighlight
+    ? quoteHref(event.username as string, event.slug as string, event.quote ?? "", locale)
+    : isPost
+      ? postHref(event.username as string, event.slug as string, locale)
+      : null;
+  // 주인공 텍스트: 글=제목, 하이라이트=칠한 구절, 노트=본문.
+  const heroText =
+    event.blockType === "HIGHLIGHT" ? event.quote : event.blockType === "NOTE" ? event.body : event.title;
+
   const isPath = event.collectionKind === "PATH";
 
   return (
-    <article className="flex flex-col gap-2.5">
-      {/* 행 머리 — 큐레이터(아바타+이름) → 홈, 날짜. 피드 카드 작가 행과 같은 결이라 "사람이 이었다"가
-          제일 먼저 읽힌다. */}
-      <div className="flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
-        <BlogLink
-          href={authorHref(event.curator.username, locale)}
-          className="focus-ring group inline-flex min-w-0 items-center gap-2 rounded"
-        >
-          <Avatar src={event.curator.avatarUrl} name={event.curator.username} size="sm" />
-          <span className="truncate font-semibold text-slate-800 transition-colors group-hover:text-accent-700 dark:text-slate-200 dark:group-hover:text-accent-400">
-            @{event.curator.username}
-          </span>
-        </BlogLink>
+    <article className="flex flex-col gap-2">
+      {/* 주인공 — 연결된 글 제목(일반 카드 제목과 같은 급). 중첩 박스·아이콘 없이 본문에 직접. 하이라이트
+          는 칠한 구절이 주인공이라 세로 스파인 인용으로(그건 콘텐츠라 유지), 노트는 본문 그대로. */}
+      {heroText &&
+        (isHighlight ? (
+          <BlogLink href={heroHref as string} className="focus-ring group flex gap-2.5 rounded">
+            <span aria-hidden className="mt-1 w-[3px] shrink-0 rounded-full bg-accent-600 dark:bg-accent-500" />
+            <span className="text-card-title-xs font-semibold leading-snug tracking-tight text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
+              {heroText}
+            </span>
+          </BlogLink>
+        ) : heroHref ? (
+          <BlogLink
+            href={heroHref}
+            className="focus-ring rounded text-card-title-xs font-semibold leading-snug tracking-tight text-slate-900 transition-colors hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-400"
+          >
+            {heroText}
+          </BlogLink>
+        ) : (
+          <p className="text-card-title-xs font-semibold leading-snug tracking-tight text-slate-900 dark:text-slate-100">
+            {heroText}
+          </p>
+        ))}
+
+      {/* why — 큐레이터의 한 줄(콘텐츠라 유지). 일반 카드의 소개글 자리. 스파인 없이 조용히. */}
+      {event.why && (
+        <p className="text-[14px] leading-relaxed text-slate-600 dark:text-slate-400">{event.why}</p>
+      )}
+
+      {/* 맥락 한 줄 — 일반 카드 작가 행과 같은 결. 아바타 + "@큐레이터가 [컬렉션]에 연결 · 날짜".
+          장식 아이콘 0. 큐레이터·컬렉션 이름은 링크로 t.rich 태그에 주입해 로케일별 어순을 지킨다
+          (ko "…가 …에 연결" · en "… connected … into"). connectionMeta/connectionMetaPath 키. */}
+      <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[12px] text-slate-500 dark:text-slate-400">
+        <Avatar src={event.curator.avatarUrl} name={event.curator.username} size="xs" />
+        <span className="min-w-0">
+          {t.rich(isPath ? "connectionMetaPath" : "connectionMeta", {
+            curator: (chunks) => (
+              <BlogLink
+                href={authorHref(event.curator.username, locale)}
+                className="focus-ring rounded font-medium text-slate-600 transition-colors hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400"
+              >
+                {chunks}
+              </BlogLink>
+            ),
+            collection: (chunks) => (
+              <BlogLink
+                href={blogPath(`/collections/${event.collectionId}`)}
+                className="focus-ring rounded font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+              >
+                {chunks}
+              </BlogLink>
+            ),
+            curatorName: event.curator.username,
+            collectionName: event.collectionTitle,
+          })}
+        </span>
         {event.connectedAt && (
           <>
-            <span aria-hidden className="text-slate-300 dark:text-slate-600">·</span>
+            <span aria-hidden>·</span>
             <time dateTime={event.connectedAt} className="shrink-0">
               {formatDate(event.connectedAt, uiLocale)}
             </time>
           </>
         )}
       </div>
-
-      {/* 컬렉션 진입점 — "~에 연결" 의 대상을 초록 알약 링크로 세워 죽은 텍스트가 아니라 들어갈 수 있는
-          문(채널)으로 읽히게. 알약 안에 길 글리프 + 이름, 앞에 조용한 "연결" 접두. */}
-      <p className="flex flex-wrap items-center gap-1.5 text-[12px] text-slate-500 dark:text-slate-400">
-        <span>{isPath ? t("connectedToPath") : t("connectedTo")}</span>
-        <BlogLink
-          href={blogPath(`/collections/${event.collectionId}`)}
-          className="focus-ring inline-flex max-w-full items-center gap-1 rounded-full bg-accent-50 px-2.5 py-1 text-[12px] font-semibold text-accent-700 transition-colors hover:bg-accent-100 dark:bg-accent-500/15 dark:text-accent-300 dark:hover:bg-accent-500/25"
-        >
-          {isPath ? (
-            <CornerDownRight className="h-3 w-3 shrink-0" />
-          ) : (
-            <Layers className="h-3 w-3 shrink-0" />
-          )}
-          <span className="truncate">{event.collectionTitle}</span>
-        </BlogLink>
-      </p>
-
-      {/* why — 큐레이터의 한 줄. 초록 세로 스파인을 얹은 인용으로(iOS 연결 카드 문법) 밋밋한 본문과
-          구분해 "왜 이었나"가 히어로로 읽히게. 사람 큐레이션의 가장 분명한 신호. */}
-      {event.why && (
-        <div className="flex gap-2.5">
-          <span aria-hidden className="mt-0.5 w-[3px] shrink-0 rounded-full bg-accent-600 dark:bg-accent-500" />
-          <p className="text-[15px] font-medium leading-relaxed text-slate-900 dark:text-slate-100">
-            {event.why}
-          </p>
-        </div>
-      )}
-
-      {/* 실린 것 — 미니 카드(hairline·제목·작가 한 줄). */}
-      <ConnectionBlock block={eventBlock(event)} locale={locale} compact />
     </article>
   );
 }

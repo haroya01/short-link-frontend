@@ -3560,6 +3560,8 @@
     "belongsToJust": "「{title}」に収録",
     "belongsToRest": "「{title}」ほか{count}件のコレクションに収録",
     "connectedTo": "につなげた",
+    "connectionMeta": "<curator>{curatorName}</curator>が<collection>{collectionName}</collection>につなげた",
+    "connectionMetaPath": "<curator>{curatorName}</curator>が<collection>{collectionName}</collection>の道に編んだ",
     "connectedToPath": "woven into a path",
     "connectThisSentence": "コレクションや道につなげる",
     "inPathTitle": "この文が属する道",
