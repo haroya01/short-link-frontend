@@ -1345,6 +1345,9 @@
       "description": "Distribute clicks across destinations by weight, or send visitors from specific countries to a tailored page. Country-tagged variants only fire for matching visitors; otherwise traffic falls back to country-agnostic variants, then the original URL. Up to 4 per link.",
       "countryLabel": "Target country",
       "countryAny": "🌐 Any country",
+      "countryPlaceholder": "Select country",
+      "countrySearch": "Search countries",
+      "countryNoResults": "No matching country",
       "deviceLabel": "Target device",
       "deviceAny": "Any device",
       "device": {

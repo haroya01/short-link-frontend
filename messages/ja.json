@@ -1345,6 +1345,9 @@
       "description": "同じ短縮 URL のクリックを重みで分散したり、訪問者の国に合わせて遷移先を切り替えられます。国を指定した遷移先は該当国の訪問者にのみ表示され、合致しない場合は国指定なしの遷移先、それも無ければ元の URL にフォールバックします。リンクごとに最大 4 件。",
       "countryLabel": "対象国",
       "countryAny": "🌐 全体",
+      "countryPlaceholder": "国を選択",
+      "countrySearch": "国を検索",
+      "countryNoResults": "該当する国がありません",
       "deviceLabel": "対象デバイス",
       "deviceAny": "すべてのデバイス",
       "device": {
