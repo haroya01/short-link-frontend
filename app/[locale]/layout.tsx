@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { ViewTransitions } from "next-view-transitions";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import { rootClientMessages } from "@/i18n/client-namespaces";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -264,7 +265,10 @@ export default async function RootLayout({
         </noscript>
       </head>
       <body className="min-h-screen flex flex-col">
-        <NextIntlClientProvider locale={locale}>
+        {/* messages 미지정 시 next-intl 이 카탈로그 전체를 자동 임베드(45–56KB gz/페이지) —
+            공용 클라이언트 네임스페이스만 싣고, links·admin 전용분은 각 세그먼트 레이아웃의
+            중첩 프로바이더가 공급한다(i18n/client-namespaces.ts). */}
+        <NextIntlClientProvider locale={locale} messages={rootClientMessages(await getMessages())}>
           <OfflineBanner />
           {children}
         </NextIntlClientProvider>
