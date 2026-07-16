@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
 import { postHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
+import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
@@ -285,12 +286,10 @@ export function SeriesReadingShell({
                   </span>
                   {hasImage && (
                     <span className="block h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <CoverThumb
                         src={p.ogImageUrl as string}
-                        alt=""
-                        loading="lazy"
-                        className="img-fade h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover/row:scale-[1.03] motion-reduce:transform-none"
+                        sizes="(min-width: 640px) 128px, 80px"
+                        className="h-full w-full object-cover transition-transform duration-300 ease-[var(--ease)] group-hover/row:scale-[1.03] motion-reduce:transform-none"
                       />
                     </span>
                   )}

@@ -15,6 +15,7 @@ import { CoverMorphLink } from "@/modules/blog/components/cover-morph-link";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
 import { BelongingProvider } from "@/modules/blog/components/post-belonging-context";
+import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 
 // "속함" 한 올(모든 카드가 그물의 매듭임을 보여주는 한 줄) — 기본 ON. 카드마다 개별 fetch(N+1) 였던
 // 초기 우려는 배치 엔드포인트로 해소됐다: 보이는 카드들의 id 를 BelongingProvider(DiscoveryGrid 안)
@@ -216,14 +217,13 @@ export function DiscoveryCard({
             더 강했지만 iPad Safari 가 블렌드 영역을 타일로 합성하며 경계선(seam)과 깜빡임을
             그렸다 — 블렌드 모드 없이 filter + 단순 오버레이로(전 브라우저 안정). hover 전환도
             없음(스크롤 중 hover 연사 깜빡임, #693). */}
-        <img
+        {/* 그리드 커버도 원본 대신 뷰포트 열 폭 변형 — 허용 밖 호스트는 원본 폴백(CoverThumb). */}
+        <CoverThumb
           src={item.ogImageUrl as string}
-          alt=""
-          loading={eager ? "eager" : "lazy"}
-          {...(eager ? { fetchpriority: "high" } : {})}
-          data-vt-cover
-          // img-fade only on lazy covers — the eager above-fold tiles are LCP candidates.
-          className={`absolute inset-0 h-full w-full object-cover saturate-[.85] transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none${eager ? "" : " img-fade"}`}
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          eager={eager}
+          vtCover
+          className="absolute inset-0 h-full w-full object-cover saturate-[.85] transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none"
         />
         <div aria-hidden className="absolute inset-0 bg-accent-900/10" />
         {/* 텍스트 가독성 scrim — 상·하단 모두(상단 태그, 하단 제목/메타). WCAG 대비 확보용으로 통일. */}
