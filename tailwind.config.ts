@@ -170,6 +170,12 @@ const config: Config = {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
+        // 시리즈 덱 넘김 — 새 장이 오른쪽에서 살짝 밀려 들어오며 페이드 인(순환=항상 전진). 이동량은
+        // 절제(§10, 18px). reduce-motion 은 globals 의 가드에서 제자리 크로스페이드로 떨어진다.
+        "series-flip-in": {
+          from: { opacity: "0", transform: "translateX(18px)" },
+          to: { opacity: "1", transform: "translateX(0)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 180ms cubic-bezier(0.16, 1, 0.3, 1)",
@@ -178,6 +184,7 @@ const config: Config = {
         "dropdown-out": "dropdown-out 160ms cubic-bezier(0.16, 1, 0.3, 1) both",
         "toast-in": "toast-in 220ms cubic-bezier(0.16, 1, 0.3, 1)",
         "toast-out": "toast-out 200ms cubic-bezier(0.16, 1, 0.3, 1) both",
+        "series-flip-in": "series-flip-in 500ms cubic-bezier(0.16, 1, 0.3, 1) both",
         shimmer: "shimmer 1.5s infinite",
       },
     },
