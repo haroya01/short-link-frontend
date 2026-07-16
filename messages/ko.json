@@ -26,7 +26,8 @@
     "preview": "미리보기",
     "linkText": "링크 텍스트",
     "submitError": "댓글을 등록하지 못했어요. 다시 시도해 주세요.",
-    "deleteError": "댓글을 삭제하지 못했어요. 다시 시도해 주세요."
+    "deleteError": "댓글을 삭제하지 못했어요. 다시 시도해 주세요.",
+    "loadFailed": "댓글을 불러오지 못했어요."
   },
   "publicFeed": {
     "recent": "최신",
@@ -494,7 +495,9 @@
     "continueWriting": "이어서 쓰기",
     "noPostsHint": "첫 글을 쓰면 여기에 쌓여요. 발행 전까지는 임시저장으로 남아요.",
     "seriesCreateConflict": "같은 이름의 시리즈가 이미 있어요. 다른 이름을 써주세요.",
-    "seriesCreateError": "시리즈를 만들지 못했어요. 다시 시도해주세요."
+    "seriesCreateError": "시리즈를 만들지 못했어요. 다시 시도해주세요.",
+    "seriesLoadFailed": "시리즈 목록을 불러오지 못했어요.",
+    "revisionsLoadFailed": "저장된 버전을 불러오지 못했어요."
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",

@@ -26,7 +26,8 @@
     "preview": "Xem trước",
     "linkText": "văn bản liên kết",
     "submitError": "Không thể đăng bình luận. Vui lòng thử lại.",
-    "deleteError": "Không thể xóa bình luận. Vui lòng thử lại."
+    "deleteError": "Không thể xóa bình luận. Vui lòng thử lại.",
+    "loadFailed": "Không tải được bình luận."
   },
   "publicFeed": {
     "recent": "Mới nhất",
@@ -494,7 +495,9 @@
     "continueWriting": "Viết tiếp",
     "noPostsHint": "Bài viết của bạn sẽ tích lại ở đây. Bản nháp luôn riêng tư cho đến khi bạn xuất bản.",
     "seriesCreateConflict": "Đã có series trùng tên. Hãy thử tên khác.",
-    "seriesCreateError": "Không thể tạo series. Vui lòng thử lại."
+    "seriesCreateError": "Không thể tạo series. Vui lòng thử lại.",
+    "seriesLoadFailed": "Không tải được danh sách series.",
+    "revisionsLoadFailed": "Không tải được các phiên bản đã lưu."
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",

@@ -51,6 +51,9 @@ export function ConnectSheet({
   const [step, setStep] = useState<1 | 2>(1);
   const [collections, setCollections] = useState<CollectionSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  // 목록 로드 실패 — 빈 계정과 헷갈리지 않게 재시도를 내민다(빈 상태 ≠ 에러).
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   // Which collections already hold THIS block: collectionId → the existing connection's id. Seeded from
   // the list fetch (rows carry `connectionId`), then kept current as the user unlinks (delete → drop the
@@ -94,6 +97,8 @@ export function ConnectSheet({
 
   useEffect(() => {
     let alive = true;
+    setLoading(true);
+    setLoadFailed(false);
     // Pass the block context so each row comes back knowing whether it already holds this block.
     listMyCollections({ blockType, refId })
       .then((list) => {
@@ -103,12 +108,17 @@ export function ConnectSheet({
         for (const c of list) if (c.connectionId != null) held.set(c.id, c.connectionId);
         setHeldBy(held);
       })
-      .catch(() => alive && setCollections([]))
+      .catch(() => {
+        // 실패를 "컬렉션 없음"으로 위장하지 않는다 — iOS 시트의 failedState 와 같은 계약.
+        if (!alive) return;
+        setCollections([]);
+        setLoadFailed(true);
+      })
       .finally(() => alive && setLoading(false));
     return () => {
       alive = false;
     };
-  }, [blockType, refId]);
+  }, [blockType, refId, reloadKey]);
 
   // Lock the page behind the scrim while open (same as the account sheet) so an overscroll behind the
   // sheet — or a tap the browser is still deciding might be a page scroll — can't steal the gesture.
@@ -271,6 +281,19 @@ export function ConnectSheet({
               {loading ? (
                 <div className="flex justify-center py-12 text-slate-400">
                   <Loader2 className="h-5 w-5 animate-spin" />
+                </div>
+              ) : loadFailed && collections.length === 0 ? (
+                <div className="py-10 text-center" role="alert">
+                  <p className="text-[13px] text-slate-500 dark:text-slate-400">
+                    {t("myCollectionsLoadError")}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setReloadKey((k) => k + 1)}
+                    className="focus-ring mt-3 rounded-lg border border-slate-200 px-3 py-1.5 text-[12px] font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800/60"
+                  >
+                    {tCommon("retry")}
+                  </button>
                 </div>
               ) : (
                 <ul>

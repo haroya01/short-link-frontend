@@ -26,7 +26,8 @@
     "preview": "プレビュー",
     "linkText": "リンクテキスト",
     "submitError": "コメントを投稿できませんでした。もう一度お試しください。",
-    "deleteError": "コメントを削除できませんでした。もう一度お試しください。"
+    "deleteError": "コメントを削除できませんでした。もう一度お試しください。",
+    "loadFailed": "コメントを読み込めませんでした。"
   },
   "publicFeed": {
     "recent": "最新",
@@ -494,7 +495,9 @@
     "continueWriting": "続きを書く",
     "noPostsHint": "書いた記事はここに積まれます。公開するまでは下書きのままです。",
     "seriesCreateConflict": "同じ名前のシリーズがすでにあります。別の名前をお試しください。",
-    "seriesCreateError": "シリーズを作成できませんでした。もう一度お試しください。"
+    "seriesCreateError": "シリーズを作成できませんでした。もう一度お試しください。",
+    "seriesLoadFailed": "シリーズ一覧を読み込めませんでした。",
+    "revisionsLoadFailed": "保存されたバージョンを読み込めませんでした。"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
