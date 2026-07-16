@@ -223,9 +223,15 @@ function CreateForm({ onCreated, disabled }: { onCreated: () => void; disabled: 
             </code>
             <button
               type="button"
-              onClick={() => {
-                void navigator.clipboard?.writeText(secret);
-                setCopied(true);
+              onClick={async () => {
+                // 클립보드 거부(권한/비보안 컨텍스트)가 unhandled rejection 으로 새지 않게 —
+                // 캠페인 복사와 같은 패턴. 실패면 '복사됨' 거짓 표시도 내지 않는다.
+                try {
+                  await navigator.clipboard.writeText(secret);
+                  setCopied(true);
+                } catch {
+                  setCopied(false);
+                }
               }}
               className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-accent-800"
             >
