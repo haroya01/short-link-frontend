@@ -8,6 +8,8 @@ import {
   useNotifications,
   useUnreadCount,
 } from "@/modules/notifications/lib/use-notifications";
+import { blogHref } from "@/lib/host";
+import { blogCta } from "@/modules/blog/components/blog-cta";
 import { NotificationItem } from "@/modules/notifications/components/notification-item";
 import { ErrorState } from "@/components/common/error-state";
 import type { NotificationItem as Item } from "@/modules/notifications/api/notifications";
@@ -46,8 +48,17 @@ export default function NotificationsPage() {
 
   // 로그인 여부가 확정되기 전(!ready)에는 로그인 안내 대신 스켈레톤을 유지 — 하드 로드 시 빈 화면 플래시 방지.
   if (ready && !authenticated) {
+    // 안내문만 두면 막다른 길 — 로그인으로 가는 문(돌아올 next= 포함)을 같이 내민다.
     return (
-      <main className="px-6 py-12 text-slate-600 dark:text-slate-300">{t("loginRequired")}</main>
+      <main className="flex flex-col items-start gap-4 px-6 py-12">
+        <p className="text-slate-600 dark:text-slate-300">{t("loginRequired")}</p>
+        <a
+          href={`${blogHref("/login")}?next=${encodeURIComponent("/notifications")}`}
+          className={blogCta({ variant: "secondary" })}
+        >
+          {t("loginCta")}
+        </a>
+      </main>
     );
   }
 

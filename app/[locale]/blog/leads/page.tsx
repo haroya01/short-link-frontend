@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Ban, Download, SlidersHorizontal, Sparkles, Trash2, Undo2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -30,7 +29,6 @@ const PAGE_SIZE = 50;
  */
 export default function ProfileLeadsPage() {
   const t = useTranslations("settings.profile.leads");
-  const router = useRouter();
   const locale = useLocale();
   const { authenticated, ready } = useAuth();
   const { toast } = useToast();
@@ -46,9 +44,8 @@ export default function ProfileLeadsPage() {
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
-  useEffect(() => {
-    if (ready && !authenticated) router.replace(`/${locale}/login`);
-  }, [ready, authenticated, locale, router]);
+  // 비로그인 진입은 워크스페이스 레이아웃이 blog 로그인(next= 포함)으로 보낸다 — 여기서
+  // `/${locale}/login`으로 또 보내면 블로그 호스트 밖의 links 로그인과 경합하던 중복 리다이렉트.
 
   // Inline-effect form — the previous `useCallback(load, [page, errorMessage, t, toast])` +
   // `useEffect([authenticated, load])` setup hit an infinite render loop because next-intl's

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CornerDownRight, Heart, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { DATE_LOCALE } from "@/lib/date";
@@ -9,6 +9,7 @@ import { BlogLink } from "@/modules/blog/components/blog-link";
 import { postHref } from "@/modules/blog/components/feed-card";
 import { CommentBody } from "@/modules/blog/components/comment-markdown";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
+import { ErrorState } from "@/components/common/error-state";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { listMyComments, type MyComment } from "@/modules/blog/api/comments";
 
@@ -21,16 +22,24 @@ export function MyCommentsList({ locale }: { locale: string }) {
   const t = useTranslations("savedLibrary");
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<MyComment[]>([]);
+  const [error, setError] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      setItems(await listMyComments());
+    } catch {
+      // 목록 로드 실패는 "댓글 없음" 빈 상태로 위장하지 않고 재시도를 노출한다 (liked-list와 동일).
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    let alive = true;
-    listMyComments()
-      .then((list) => alive && setItems(list))
-      .finally(() => alive && setLoading(false));
-    return () => {
-      alive = false;
-    };
-  }, []);
+    void load();
+  }, [load]);
 
   if (loading) {
     return (
@@ -38,6 +47,9 @@ export function MyCommentsList({ locale }: { locale: string }) {
         <Loader2 className="h-5 w-5 animate-spin" />
       </div>
     );
+  }
+  if (error) {
+    return <ErrorState onRetry={() => void load()} />;
   }
   if (items.length === 0) {
     return (

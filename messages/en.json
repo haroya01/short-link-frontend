@@ -279,6 +279,7 @@
     "curationTagsHint": "Topics you follow. Tap one to see its posts gathered together.",
     "curationTagsEmpty": "You're not following any tags yet. Follow a topic from a post or a tag page.",
     "curationTagsManage": "Manage tags",
+    "curationTagsBrowse": "Browse tags",
     "analyticsReferrers": "Traffic sources",
     "analyticsTabOverview": "Overview",
     "analyticsTabSeries": "Series",
@@ -706,7 +707,8 @@
     "INTERNAL_ERROR": "Something went wrong on our side. Please try again.",
     "DUPLICATE_REPORT": "You've already reported this.",
     "SUBJECT_NOT_FOUND": "The reported item no longer exists.",
-    "SUSPEND_REQUIRES_EXPIRY": "A suspension needs an expiry date."
+    "SUSPEND_REQUIRES_EXPIRY": "A suspension needs an expiry date.",
+    "toggleFailed": "Couldn't save that. Please try again in a moment."
   },
   "cookieConsent": {
     "ariaLabel": "Cookie notice",
@@ -731,6 +733,7 @@
     "loadMore": "Load more",
     "viewAll": "View all notifications",
     "loginRequired": "Sign in required",
+    "loginCta": "Sign in",
     "someone": "Someone",
     "like": "<b>{actor}</b> liked your post",
     "comment": "<b>{actor}</b> commented on your post",

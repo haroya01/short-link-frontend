@@ -279,6 +279,7 @@
     "curationTagsHint": "フォローしているトピック。タップするとその話題の記事をまとめて見られます。",
     "curationTagsEmpty": "まだフォロー中のタグはありません。記事やタグページから気になる話題をフォローしてみましょう。",
     "curationTagsManage": "タグを管理",
+    "curationTagsBrowse": "タグを見る",
     "analyticsReferrers": "流入元",
     "analyticsTabOverview": "概要",
     "analyticsTabSeries": "シリーズ",
@@ -706,7 +707,8 @@
     "INTERNAL_ERROR": "サーバエラーが発生しました。後でもう一度お試しください。",
     "DUPLICATE_REPORT": "すでに報告済みの対象です。",
     "SUBJECT_NOT_FOUND": "対象が見つかりません。",
-    "SUSPEND_REQUIRES_EXPIRY": "停止には期限が必要です。"
+    "SUSPEND_REQUIRES_EXPIRY": "停止には期限が必要です。",
+    "toggleFailed": "反映できませんでした。しばらくしてからもう一度お試しください。"
   },
   "cookieConsent": {
     "ariaLabel": "Cookieのお知らせ",
@@ -731,6 +733,7 @@
     "loadMore": "もっと見る",
     "viewAll": "すべての通知を見る",
     "loginRequired": "ログインが必要です",
+    "loginCta": "ログイン",
     "someone": "誰か",
     "like": "<b>{actor}</b>さんがあなたの記事にいいねしました",
     "comment": "<b>{actor}</b>さんがあなたの記事にコメントしました",
