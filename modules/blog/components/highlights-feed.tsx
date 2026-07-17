@@ -240,11 +240,23 @@ function HighlightFeedRow({ item, locale }: { item: HighlightFeedItem; locale: s
         )}
         <span aria-hidden>·</span>
         <time dateTime={item.createdAt}>{formatDate(item.createdAt, locale)}</time>
-        {item.replyCount > 0 && (
-          <span className="ml-auto tabular-nums text-slate-400 dark:text-slate-500">
-            {t("highlightReplyCount", { count: item.replyCount })}
-          </span>
-        )}
+        {item.replyCount > 0 &&
+          (item.postAuthorUsername ? (
+            // "답글 N" is the reader's intent (see the replies), not just a stat — so it's the entry
+            // point to the conversation. It deep-links to the source post at that sentence with the
+            // thread panel already open (?hl=…&thread=1). Falls back to a static count only when the
+            // post author is unknown (no destination to open the thread on).
+            <BlogLink
+              href={`${quoteHref(item.postAuthorUsername, item.postSlug, item.quote, locale)}&thread=1`}
+              className="focus-ring ml-auto rounded tabular-nums text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+            >
+              {t("highlightReplyCount", { count: item.replyCount })}
+            </BlogLink>
+          ) : (
+            <span className="ml-auto tabular-nums text-slate-400 dark:text-slate-500">
+              {t("highlightReplyCount", { count: item.replyCount })}
+            </span>
+          ))}
       </div>
 
       {/* The drawn passage — green left-rule quote (the connection-block silhouette), deep-linking to

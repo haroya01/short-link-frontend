@@ -146,8 +146,18 @@ export function PostHighlights({ postId }: { postId: number }) {
   // exists (the paint pass runs first, so by the timeout the marks are in the DOM).
   useEffect(() => {
     if (!highlightsLoaded) return;
-    const quote = new URLSearchParams(window.location.search).get("hl");
+    const params = new URLSearchParams(window.location.search);
+    const quote = params.get("hl");
     if (!quote) return;
+    // `?hl=…&thread=1` — coming from a surface that pointed AT the conversation (the feed's "답글 N"),
+    // not just the sentence. Open that highlight's thread once, so the reader lands on the replies they
+    // clicked toward rather than on the passage in the body. Matched by quote, the same key the paint
+    // and scroll use; only the viewer's-visible highlights are here, which is exactly the clickable set.
+    const openThread = params.get("thread") === "1";
+    if (openThread) {
+      const hl = highlights.find((h) => h.quote === quote);
+      if (hl) setThreadFor(hl);
+    }
     // Retry on a short backoff instead of a single fixed delay: the paint pass and any late layout
     // (images settling, fonts) can push the mark in after the first tick — keep looking, then give up.
     const delays = [120, 400, 1000];
@@ -164,6 +174,9 @@ export function PostHighlights({ postId }: { postId: number }) {
     };
     timer = window.setTimeout(() => attempt(0), delays[0]);
     return () => window.clearTimeout(timer);
+    // Runs once per settle; `highlights` is read for the quote→thread match but is intentionally NOT a
+    // dep — re-firing this scroll/open on every highlights refresh would yank the reader.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highlightsLoaded]);
 
   // Tapping a painted highlight opens its reply thread (a plain click, not a drag-select — a drag
