@@ -3230,38 +3230,19 @@
       "eyebrow": "Offline campaigns",
       "title": "Improve offline promotion like online ads",
       "body": "Split posters, flyers, and QR codes by distributor, area, and batch. Measure which batch performed best, then tune the next distribution with data.",
-      "useCases": {
-        "distribution": {
-          "title": "Optimize distribution batches",
-          "body": "Area A: 500 flyers → 80 visitors. Area B: 500 → 5. Increase A next time and reduce B."
+      "steps": [
+        {
+          "title": "Distribute",
+          "desc": "Split posters, flyers, and QR codes by distributor, area, and batch."
         },
-        "distributor": {
-          "title": "Compare distributor performance",
-          "body": "Distributor A: 1,000 flyers → 120 visits. B: 1,000 → 18. Useful for settlement, validation, and indirect proof of distribution."
+        {
+          "title": "Measure batches",
+          "desc": "Area A: 500 → 80, Area B: 500 → 5. See which batch won."
         },
-        "copy": {
-          "title": "A/B test copy and design",
-          "body": "\"Free consultation\" vs \"50% off first month\" — run two versions in the same area and see which earns clicks."
-        },
-        "location": {
-          "title": "Plan by location",
-          "body": "Station exit responds well, residential street does not — choose the next poster or banner spot accordingly."
-        },
-        "reuse": {
-          "title": "Reuse QR after the campaign",
-          "body": "Event ended but posters remain? Route expired QR codes to reviews, a waitlist, or the next promotion."
-        },
-        "conversion": {
-          "title": "Track beyond clicks",
-          "body": "Measure inquiries, bookings, coupon downloads, and purchases so you know which batch created real customers."
+        {
+          "title": "Tune & route",
+          "desc": "Scale up what worked; route expired QR codes to the next page."
         }
-      },
-      "flowLabel": "Repeatable loop",
-      "flowSteps": [
-        "Distribute",
-        "Measure batches",
-        "Tune next run",
-        "Route after end"
       ],
       "createCta": "Create first QR campaign",
       "createHint": "For the first campaign, you only need a name and an end time."
