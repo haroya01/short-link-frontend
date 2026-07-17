@@ -16,6 +16,7 @@ import {
   type CollectionVisibility,
   type ConnectionBlockType,
 } from "@/modules/blog/api/collections";
+import { emitBelongingChanged } from "@/modules/blog/lib/consequence-events";
 
 /** heldBy value for a row added THIS session, before the list re-fetch has handed us its real
  *  connectionId. The 담김 badge only needs the row present; unlink() resolves the real id on demand. */
@@ -170,6 +171,8 @@ export function ConnectSheet({
         next.delete(collectionId);
         return next;
       });
+      // A POST's feed "속함" line just lost a membership — tell any live BelongingProvider to re-resolve.
+      if (blockType === "POST") emitBelongingChanged(refId);
     } catch {
       toast(t("unlinkError"), "error");
     } finally {
@@ -254,6 +257,9 @@ export function ConnectSheet({
     setWhy("");
     setStep(1);
     toast(t("connectedToast", { count: picked.length }), "success");
+    // A POST just gained membership(s) — tell any live BelongingProvider (feed) to re-resolve its 속함
+    // line so the just-added collections show in the same session, not only on a later revisit.
+    if (blockType === "POST") emitBelongingChanged(refId);
   }
 
   if (!mounted || !portalReady) return null;

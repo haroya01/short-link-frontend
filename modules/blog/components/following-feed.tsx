@@ -19,6 +19,7 @@ import { authorHref, FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FollowFilterChips, type FeedFacet } from "@/modules/blog/components/follow-filter-chips";
 import { useTagPrefs } from "@/modules/blog/lib/use-tag-prefs";
+import { onFollowChanged } from "@/modules/blog/lib/consequence-events";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { blogCta } from "@/modules/blog/components/blog-cta";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
@@ -128,6 +129,29 @@ export function FollowingFeed({
     // useSearchParams 는 그대로 반응해 칩 하이라이트/필터가 즉시 갱신된다.
     window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
   };
+
+  // A follow/unfollow elsewhere changes who this feed should show. Mark it stale rather than yanking a
+  // feed the reader is mid-scroll (라이브 refetch는 과함) — then refresh the next time the tab is shown or
+  // refocused, so a return to the feed reflects the new follow. The `reloadKey` bump re-runs the load.
+  const staleRef = useRef(false);
+  useEffect(() => {
+    const off = onFollowChanged(() => {
+      staleRef.current = true;
+    });
+    const refreshIfStale = () => {
+      if (staleRef.current && document.visibilityState === "visible") {
+        staleRef.current = false;
+        setReloadKey((k) => k + 1);
+      }
+    };
+    document.addEventListener("visibilitychange", refreshIfStale);
+    window.addEventListener("focus", refreshIfStale);
+    return () => {
+      off();
+      document.removeEventListener("visibilitychange", refreshIfStale);
+      window.removeEventListener("focus", refreshIfStale);
+    };
+  }, []);
 
   useEffect(() => {
     if (!ready || !authenticated) return;

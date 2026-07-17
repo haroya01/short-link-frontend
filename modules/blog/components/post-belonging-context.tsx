@@ -14,6 +14,7 @@ import {
   listPublicPostCollectionsBatch,
   type CollectionSummary,
 } from "@/modules/blog/api/collections";
+import { onBelongingChanged } from "@/modules/blog/lib/consequence-events";
 
 /**
  * The feed's "속함" batch resolver — the single fix for the per-card N+1.
@@ -113,6 +114,24 @@ export function BelongingProvider({ children }: { children: ReactNode }) {
     },
     [flush],
   );
+
+  // Membership just changed for a post (a connect/disconnect elsewhere — the sheet fires the event).
+  // Forget its cached answer + "already asked" mark, then re-register so the next flush re-fetches it.
+  // Only touches a post the provider already resolved (in `requested`), so an unrelated feed's event is
+  // a cheap no-op. This is what keeps a feed's 담김 line in step with the sheet's badge in one session.
+  useEffect(() => {
+    return onBelongingChanged((postId) => {
+      if (!requested.current.has(postId)) return;
+      requested.current.delete(postId);
+      setResolved((prev) => {
+        if (!prev.has(postId)) return prev;
+        const next = new Map(prev);
+        next.delete(postId);
+        return next;
+      });
+      register(postId);
+    });
+  }, [register]);
 
   const get = useCallback((postId: number) => resolved.get(postId), [resolved]);
 
