@@ -7,6 +7,8 @@ import { useAuth } from "@/lib/auth";
 import { readStorageJson, writeStorageJson } from "@/lib/storage-json";
 import { followUser, unfollowUser } from "@/modules/blog/api/follows";
 import { fetchFollowStatus } from "@/modules/blog/lib/follow-status-cache";
+import { useFollowShared } from "@/modules/blog/lib/follow-store";
+import { emitFollowChanged } from "@/modules/blog/lib/consequence-events";
 
 // useLayoutEffect on the client (seed before paint → no flash), useEffect on the server (no warning).
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -65,16 +67,20 @@ export function FollowButton({
 }) {
   const t = useTranslations("publicPost");
   const { authenticated, ready, me, signInWithGoogle } = useAuth();
-  const [count, setCount] = useState(initialFollowerCount);
-  const [following, setFollowing] = useState(false);
+  // following / count / countHidden live in a process-wide store keyed by username, so two buttons for
+  // the same author (rail + header on a post) move in lockstep this session. Seeded from the initial
+  // follower count; the cache seed + status load below write through it, so all instances share one truth.
+  const [shared, setShared] = useFollowShared(username, {
+    following: false,
+    count: initialFollowerCount,
+    countHidden: false,
+  });
+  const { following, count, countHidden } = shared;
   const [busy, setBusy] = useState(false);
   // Pop only on click (not on mount) — so navigating between tabs doesn't replay it.
   const [interacted, setInteracted] = useState(false);
   // Gates the count's visibility so it never flashes "0 → 128"; seeded true from cache on a revisit.
   const [loaded, setLoaded] = useState(false);
-  // True once the status confirms the author hides their counts — the count text is dropped, the
-  // button stays. Starts false so a hidden author never flashes the seeded "0" before status loads.
-  const [countHidden, setCountHidden] = useState(false);
   // Button visibility seeded from cache before auth resolves (null = unknown / cold cache).
   const [seedVisible, setSeedVisible] = useState<boolean | null>(null);
 
@@ -85,17 +91,17 @@ export function FollowButton({
   const isSelf = ready && me?.username === username;
   const showButton = ready ? !isSelf : seedVisible === true;
 
-  // Seed from the session cache before paint → no flash on tab navigation.
+  // Seed from the session cache before paint → no flash on tab navigation. Writes through the shared
+  // store so a co-mounted button for the same author seeds identically.
   useIsoLayoutEffect(() => {
     const cached = readFollowCache(username);
     if (cached) {
-      setFollowing(cached.following);
       // A hidden-count author cached a placeholder count; seed `countHidden` (not the count) so the count
       // text stays dropped on remount rather than flashing "팔로워 0명" until the status refetch.
       if (cached.hidden) {
-        setCountHidden(true);
+        setShared({ following: cached.following, count: initialFollowerCount, countHidden: true });
       } else {
-        setCount(cached.count);
+        setShared({ following: cached.following, count: cached.count, countHidden: false });
         setLoaded(true);
       }
       if (typeof cached.self === "boolean") setSeedVisible(!cached.self);
@@ -107,19 +113,20 @@ export function FollowButton({
     const self = me?.username === username;
     fetchFollowStatus(username)
       .then((s) => {
-        setFollowing(s.following);
         // Hidden author: no count key in the response. Keep the button, drop the count text.
         if (s.hideFollowerCount || s.followerCount == null) {
-          setCountHidden(true);
+          setShared({ following: s.following, count: initialFollowerCount, countHidden: true });
           writeFollowCache(username, { following: s.following, count: 0, self, hidden: true });
           return;
         }
-        setCountHidden(false);
-        setCount(s.followerCount);
+        setShared({ following: s.following, count: s.followerCount, countHidden: false });
         writeFollowCache(username, { following: s.following, count: s.followerCount, self });
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
+    // setShared is stable (keyed by username); initialFollowerCount is only a hidden-count fallback and
+    // must not re-trigger the status load. The real triggers are ready/username/viewer.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, username, me?.username]);
 
   async function toggle() {
@@ -130,24 +137,23 @@ export function FollowButton({
     if (busy) return;
     setBusy(true);
     const next = !following;
-    setFollowing(next);
-    setCount((c) => c + (next ? 1 : -1));
+    // Optimistic — write through the shared store so a co-mounted button for this author flips too.
+    setShared({ following: next, count: count + (next ? 1 : -1), countHidden });
     try {
       const s = next ? await followUser(username, sourcePostId) : await unfollowUser(username);
-      setFollowing(s.following);
       const nextCount = s.followerCount;
       const hide = s.hideFollowerCount || nextCount == null;
-      setCountHidden(hide);
-      if (nextCount != null) setCount(nextCount);
+      setShared({ following: s.following, count: nextCount ?? count, countHidden: hide });
       writeFollowCache(username, {
         following: s.following,
         count: nextCount ?? 0,
         self: me?.username === username,
         hidden: hide,
       });
+      // The following feed's contents changed — mark it stale so it re-fetches on the next visit.
+      emitFollowChanged();
     } catch {
-      setFollowing(!next);
-      setCount((c) => c + (next ? -1 : 1));
+      setShared({ following: !next, count, countHidden });
     } finally {
       setBusy(false);
     }
