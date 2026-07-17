@@ -3230,38 +3230,19 @@
       "eyebrow": "Chiến dịch ngoại tuyến",
       "title": "Cải thiện quảng bá ngoại tuyến như quảng cáo trực tuyến",
       "body": "Chia áp phích, tờ rơi, và mã QR theo người phát, khu vực, và đợt. Đo đợt nào hiệu quả nhất, rồi tinh chỉnh lần phát sau bằng dữ liệu.",
-      "useCases": {
-        "distribution": {
-          "title": "Tối ưu các đợt phát",
-          "body": "Khu A: 500 tờ rơi → 80 khách. Khu B: 500 → 5. Lần sau tăng A và giảm B."
+      "steps": [
+        {
+          "title": "Phát",
+          "desc": "Chia áp phích, tờ rơi và mã QR theo người phát, khu vực và đợt."
         },
-        "distributor": {
-          "title": "So sánh hiệu quả người phát",
-          "body": "Người phát A: 1.000 tờ rơi → 120 lượt ghé. B: 1.000 → 18. Hữu ích cho quyết toán, xác minh, và bằng chứng gián tiếp về việc phát."
+        {
+          "title": "Đo các đợt",
+          "desc": "Khu A: 500 → 80, khu B: 500 → 5. Xem đợt nào thắng."
         },
-        "copy": {
-          "title": "Thử A/B nội dung và thiết kế",
-          "body": "\"Tư vấn miễn phí\" vs \"Giảm 50% tháng đầu\" — chạy hai phiên bản ở cùng khu vực và xem cái nào được nhấp."
-        },
-        "location": {
-          "title": "Lập kế hoạch theo vị trí",
-          "body": "Cửa ra ga phản hồi tốt, đường khu dân cư thì không — chọn nơi đặt áp phích hoặc băng rôn tiếp theo cho phù hợp."
-        },
-        "reuse": {
-          "title": "Tái sử dụng QR sau chiến dịch",
-          "body": "Sự kiện đã kết thúc nhưng áp phích vẫn còn? Định tuyến mã QR hết hạn tới đánh giá, danh sách chờ, hay đợt khuyến mãi tiếp theo."
-        },
-        "conversion": {
-          "title": "Đo lường vượt ngoài lượt nhấp",
-          "body": "Đo các lượt hỏi, đặt lịch, tải coupon, và mua hàng để bạn biết đợt nào tạo ra khách hàng thật."
+        {
+          "title": "Tinh chỉnh & định tuyến",
+          "desc": "Nhân rộng cái hiệu quả; định tuyến QR hết hạn tới trang tiếp theo."
         }
-      },
-      "flowLabel": "Vòng lặp lặp lại được",
-      "flowSteps": [
-        "Phát",
-        "Đo các đợt",
-        "Tinh chỉnh lần sau",
-        "Định tuyến sau khi kết thúc"
       ],
       "createCta": "Tạo chiến dịch QR đầu tiên",
       "createHint": "Với chiến dịch đầu tiên, bạn chỉ cần một cái tên và một thời điểm kết thúc."
