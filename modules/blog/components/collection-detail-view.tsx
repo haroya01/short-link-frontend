@@ -13,7 +13,6 @@ import {
   Lock,
   Pencil,
   Trash2,
-  X,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useConfirm } from "@/components/ui/use-confirm";
@@ -55,7 +54,7 @@ export function CollectionDetailView({
   locale: string;
 }) {
   const t = useTranslations("collections");
-  const { me } = useAuth();
+  const { me, authenticated, ready, signInWithGoogle } = useAuth();
   const router = useRouter();
   const [confirm, confirmDialog] = useConfirm();
   const [detail, setDetail] = useState<CollectionDetail | null>(null);
@@ -250,9 +249,73 @@ export function CollectionDetailView({
               removingId={removingId}
             />
           )}
+
+          {/* A closing edge so a short collection (the common 2–4 item case) reads as complete rather
+              than trailing into empty page. For a signed-out visitor it doubles as the quiet login door
+              this public surface (#627) otherwise lacks — one line + a soft sign-in, never a wall. Hidden
+              while the collection is empty (that state already speaks for itself) and until auth settles. */}
+          {detail.connections.length > 0 && ready && (
+            <CollectionFooter
+              isPath={isPath}
+              authenticated={authenticated}
+              curatorUsername={isOwner ? null : detail.curatorUsername}
+              locale={locale}
+              onSignIn={signInWithGoogle}
+            />
+          )}
         </>
       )}
       {confirmDialog}
+    </div>
+  );
+}
+
+/**
+ * The closing edge under a collection's blocks. Two jobs: (1) give a short collection a finished bottom
+ * so it doesn't dissolve into empty page, and (2) on this public surface, be the quiet login door for a
+ * signed-out reader — a single context line + a soft sign-in (never a wall). A signed-in reader gets just
+ * the closing line (+ a follow nudge toward the curator, the connection graph's "discover → follow" step).
+ */
+function CollectionFooter({
+  isPath,
+  authenticated,
+  curatorUsername,
+  locale,
+  onSignIn,
+}: {
+  isPath: boolean;
+  authenticated: boolean;
+  curatorUsername: string | null;
+  locale: string;
+  onSignIn: () => void;
+}) {
+  const t = useTranslations("collections");
+  return (
+    <div className="mt-10 border-t border-slate-100 pt-6 text-[13px] leading-relaxed text-slate-500 dark:border-slate-800 dark:text-slate-400">
+      <p>{isPath ? t("footerPathEnd") : t("footerCollectionEnd")}</p>
+      {!authenticated ? (
+        <p className="mt-1.5">
+          {t("footerGuestPrompt")}{" "}
+          <button
+            type="button"
+            onClick={onSignIn}
+            className="focus-ring rounded font-medium text-accent-700 transition-colors hover:text-accent-800 dark:text-accent-400 dark:hover:text-accent-300"
+          >
+            {t("footerGuestSignIn")}
+          </button>
+        </p>
+      ) : (
+        curatorUsername && (
+          <p className="mt-1.5">
+            <BlogLink
+              href={authorHref(curatorUsername, locale)}
+              className="focus-ring rounded font-medium text-slate-600 transition-colors hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400"
+            >
+              {t("footerCuratorMore", { curator: curatorUsername })}
+            </BlogLink>
+          </p>
+        )
+      )}
     </div>
   );
 }
@@ -692,8 +755,9 @@ function ConnectionList({
   );
 }
 
-/** Quiet per-connection remove (disconnect) — an icon-only ghost button, red only on hover, so it never
- *  competes with the reading content. Shared by the collection list and the path walk. */
+/** Quiet per-connection remove (disconnect) — a small text "해제" ghost button, red only on hover, so it
+ *  never competes with the reading content. A bare × read as "close/dismiss" (사장님 신고); the word names
+ *  the action (unlink from this collection). Shared by the collection list and the path walk. */
 function RemoveConnectionButton({
   onRemove,
   disabled,
@@ -707,11 +771,9 @@ function RemoveConnectionButton({
       type="button"
       onClick={onRemove}
       disabled={disabled}
-      aria-label={t("removeItem")}
-      title={t("removeItem")}
-      className="focus-ring mt-0.5 shrink-0 rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+      className="focus-ring mt-0.5 shrink-0 rounded-lg px-2 py-1 text-[12px] font-medium text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-400"
     >
-      <X className="h-4 w-4" />
+      {t("unlink")}
     </button>
   );
 }
