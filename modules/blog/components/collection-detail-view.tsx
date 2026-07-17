@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   ArrowRight,
   ArrowUpDown,
+  Check,
   CornerDownRight,
   Globe,
   Link as LinkIcon,
@@ -191,7 +192,12 @@ export function CollectionDetailView({
   return (
     <div>
       {editing && isOwner ? (
-        <CollectionEditor detail={detail} onCancel={() => setEditing(false)} onSave={onEditSave} />
+        <CollectionEditor
+          detail={detail}
+          onCancel={() => setEditing(false)}
+          onSave={onEditSave}
+          onDelete={onDelete}
+        />
       ) : (
         <CollectionHeader detail={detail} locale={locale} />
       )}
@@ -204,8 +210,9 @@ export function CollectionDetailView({
         />
       ) : (
         <>
-          {/* Owner controls — a quiet action row (edit meta · reorder a path · delete). Hidden while
-              the inline editor is open (it carries its own save/cancel). */}
+          {/* Owner controls — a quiet action row (edit meta · reorder a path). Delete moved into the
+              editor's danger zone, so this row stays to the two safe, everyday actions. Hidden while the
+              inline editor is open (it carries its own save/cancel/delete). */}
           {isOwner && !editing && (
             <div className="mb-2 flex flex-wrap items-center justify-end gap-1">
               <button
@@ -226,14 +233,6 @@ export function CollectionDetailView({
                   {t("reorder")}
                 </button>
               )}
-              <button
-                type="button"
-                onClick={() => void onDelete()}
-                className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-                {t("deleteCollection")}
-              </button>
             </div>
           )}
 
@@ -338,6 +337,7 @@ function CollectionEditor({
   detail,
   onCancel,
   onSave,
+  onDelete,
 }: {
   detail: CollectionDetail;
   onCancel: () => void;
@@ -346,6 +346,7 @@ function CollectionEditor({
     description: string | null;
     visibility: CollectionVisibility;
   }) => void;
+  onDelete: () => void;
 }) {
   const t = useTranslations("collections");
   const [title, setTitle] = useState(detail.title);
@@ -353,33 +354,30 @@ function CollectionEditor({
   const [visibility, setVisibility] = useState<CollectionVisibility>(detail.visibility);
   const trimmedTitle = title.trim();
 
-  const options: { key: CollectionVisibility; label: string; Icon: typeof Lock }[] = [
-    { key: "PRIVATE", label: t("visibilityPrivate"), Icon: Lock },
-    { key: "UNLISTED", label: t("visibilityUnlisted"), Icon: LinkIcon },
-    { key: "PUBLIC", label: t("visibilityPublic"), Icon: Globe },
+  // Each visibility is a titled row with a one-line "what this actually does" line — verified against the
+  // API (PUBLIC = listed on the author's 컬렉션 tab + flows into 연결 발견; UNLISTED = link-only, unlisted,
+  // not discovered; PRIVATE = owner only). The description is the point, the icon just anchors it.
+  const options: { key: CollectionVisibility; label: string; desc: string; Icon: typeof Lock }[] = [
+    { key: "PRIVATE", label: t("visibilityPrivate"), desc: t("visibilityPrivateDesc"), Icon: Lock },
+    { key: "UNLISTED", label: t("visibilityUnlisted"), desc: t("visibilityUnlistedDesc"), Icon: LinkIcon },
+    { key: "PUBLIC", label: t("visibilityPublic"), desc: t("visibilityPublicDesc"), Icon: Globe },
   ];
 
   return (
-    <div className="mb-8 border-b border-slate-100 pb-6 dark:border-slate-800">
-      <h2 className="mb-4 text-[13px] font-bold text-slate-400 dark:text-slate-500">
-        {t("editTitle")}
-      </h2>
-      <label className="block">
-        <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">
-          {t("titleLabel")}
-        </span>
+    <div className="mb-8">
+      {/* Each field is its own section — an eyebrow label + a generous gap between — so 이름/설명/공개
+          범위/위험이 뚜렷이 다른 층으로 읽힌다(연속 밑줄 나열이 뭉쳐 보이던 게 불만의 뿌리). */}
+      <EditorSection label={t("titleLabel")}>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={120}
           aria-label={t("titleLabel")}
-          className="mt-1 w-full border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-headline-sm font-bold tracking-headline text-slate-900 outline-none transition-colors focus:border-accent-600 dark:border-slate-700 dark:text-slate-100"
+          className="w-full border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-headline-sm font-bold tracking-headline text-slate-900 outline-none transition-colors focus:border-accent-600 dark:border-slate-700 dark:text-slate-100"
         />
-      </label>
-      <label className="mt-4 block">
-        <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">
-          {t("descriptionLabel")}
-        </span>
+      </EditorSection>
+
+      <EditorSection label={t("descriptionLabel")}>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -387,19 +385,15 @@ function CollectionEditor({
           rows={2}
           placeholder={t("descriptionPlaceholder")}
           aria-label={t("descriptionLabel")}
-          className="mt-1 w-full resize-none border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-[15px] leading-relaxed text-slate-600 outline-none transition-colors focus:border-accent-600 dark:border-slate-700 dark:text-slate-300 dark:placeholder:text-slate-500"
+          className="w-full resize-none border-0 border-b border-slate-200 bg-transparent px-0 py-2 text-[15px] leading-relaxed text-slate-600 outline-none transition-colors focus:border-accent-600 dark:border-slate-700 dark:text-slate-300 dark:placeholder:text-slate-500"
         />
-      </label>
-      <div className="mt-4">
-        <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">
-          {t("visibilityLabel")}
-        </span>
-        <div
-          role="radiogroup"
-          aria-label={t("visibilityLabel")}
-          className="mt-1.5 inline-flex gap-1 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
-        >
-          {options.map(({ key, label, Icon }) => {
+      </EditorSection>
+
+      <EditorSection label={t("visibilityLabel")}>
+        {/* Radio ROWS (not a compressed segment): each choice carries its own one-line meaning, and the
+            selected one reads as selected at a glance (green ring + check). Clarity over compactness. */}
+        <div role="radiogroup" aria-label={t("visibilityLabel")} className="flex flex-col gap-2">
+          {options.map(({ key, label, desc, Icon }) => {
             const active = visibility === key;
             return (
               <button
@@ -408,43 +402,101 @@ function CollectionEditor({
                 role="radio"
                 aria-checked={active}
                 onClick={() => setVisibility(key)}
-                className={`focus-ring inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors ${
+                className={`focus-ring flex items-start gap-3 rounded-xl border p-3.5 text-left transition-colors ${
                   active
-                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-slate-100"
-                    : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                    ? "border-accent-600 bg-accent-50/50 dark:border-accent-500 dark:bg-accent-500/10"
+                    : "border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
                 }`}
               >
-                <Icon className="h-3.5 w-3.5" />
-                {label}
+                <Icon
+                  className={`mt-0.5 h-4 w-4 shrink-0 ${
+                    active ? "text-accent-700 dark:text-accent-400" : "text-slate-400 dark:text-slate-500"
+                  }`}
+                />
+                <span className="min-w-0 flex-1">
+                  <span
+                    className={`block text-[14px] font-semibold ${
+                      active ? "text-slate-900 dark:text-slate-100" : "text-slate-700 dark:text-slate-300"
+                    }`}
+                  >
+                    {label}
+                  </span>
+                  <span className="mt-0.5 block text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+                    {desc}
+                  </span>
+                </span>
+                {/* Selected state is self-evident — a green check disc, empty ring otherwise. */}
+                <span
+                  aria-hidden
+                  className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border ${
+                    active
+                      ? "border-accent-600 bg-accent-600 text-white dark:border-accent-500 dark:bg-accent-500"
+                      : "border-slate-300 dark:border-slate-600"
+                  }`}
+                >
+                  {active && <Check className="h-3 w-3" strokeWidth={3} />}
+                </span>
               </button>
             );
           })}
         </div>
-      </div>
-      <div className="mt-6 flex items-center gap-2">
+      </EditorSection>
+
+      {/* Save / cancel — the primary action row, clearly above the danger zone (never adjacent to it). */}
+      <div className="mt-7 flex items-center gap-2">
         <button
           type="button"
           disabled={!trimmedTitle}
           onClick={() =>
-            onSave({
-              title: trimmedTitle,
-              description: description.trim() || null,
-              visibility,
-            })
+            onSave({ title: trimmedTitle, description: description.trim() || null, visibility })
           }
-          className="focus-ring rounded-lg bg-accent-700 px-4 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+          className="focus-ring rounded-lg bg-accent-700 px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
         >
           {t("save")}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="focus-ring rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+          className="focus-ring rounded-lg px-3 py-2 text-[14px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
         >
           {t("cancel")}
         </button>
       </div>
+
+      {/* Danger zone — a separated, red-framed section at the bottom so an irreversible delete can't be
+          fired by muscle memory next to Save. The confirm dialog still gates the actual delete. */}
+      <div className="mt-8 rounded-xl border border-red-200 p-4 dark:border-red-500/30">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-red-600/80 dark:text-red-400/80">
+          {t("dangerZone")}
+        </p>
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+            {t("deleteCollectionDesc")}
+          </p>
+          <button
+            type="button"
+            onClick={onDelete}
+            className="focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-red-200 px-3 py-1.5 text-[13px] font-medium text-red-600 transition-colors hover:bg-red-50 dark:border-red-500/40 dark:text-red-400 dark:hover:bg-red-500/10"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            {t("deleteCollection")}
+          </button>
+        </div>
+      </div>
     </div>
+  );
+}
+
+/** One field section of the editor — an eyebrow label + its control, with the section rhythm that makes
+ *  이름/설명/공개 범위 read as distinct layers rather than one run of underlines. */
+function EditorSection({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <section className="mt-6 first:mt-0">
+      <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+        {label}
+      </p>
+      {children}
+    </section>
   );
 }
 
