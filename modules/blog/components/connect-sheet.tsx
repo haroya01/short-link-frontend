@@ -17,6 +17,10 @@ import {
   type ConnectionBlockType,
 } from "@/modules/blog/api/collections";
 
+/** heldBy value for a row added THIS session, before the list re-fetch has handed us its real
+ *  connectionId. The 담김 badge only needs the row present; unlink() resolves the real id on demand. */
+const PENDING_CONNECTION = -1;
+
 /**
  * "연결" — the verb. Connect a block (post / highlight / note) to a collection or PATH (not broadcast).
  * Two depths: ① where to file it (pick collections, or make a new one) → ② add (the one-line "왜" +
@@ -147,12 +151,19 @@ export function ConnectSheet({
 
   // Unlink a row the block is already in — DELETE the existing connection, then drop it from `heldBy`
   // so the row flips back to a plain (selectable) row. Failure is surfaced as a toast; the row stays
-  // "담김" (nothing changed).
+  // "담김" (nothing changed). A row just added this session carries a PENDING_CONNECTION sentinel
+  // instead of a real id (connectBlock returns none), so resolve it from a fresh list fetch first.
   async function unlink(collectionId: number) {
-    const connectionId = heldBy.get(collectionId);
+    let connectionId = heldBy.get(collectionId);
     if (connectionId == null || unlinking != null) return;
     setUnlinking(collectionId);
     try {
+      if (connectionId === PENDING_CONNECTION) {
+        const list = await listMyCollections({ blockType, refId });
+        const resolved = list.find((c) => c.id === collectionId)?.connectionId;
+        if (resolved == null) throw new Error("unresolved connection");
+        connectionId = resolved;
+      }
       await disconnect(collectionId, connectionId);
       setHeldBy((prev) => {
         const next = new Map(prev);
@@ -213,10 +224,11 @@ export function ConnectSheet({
     setSaving(true);
     setFailed(false);
     const line = why.trim();
+    const picked = [...selected];
     // connectBlock is idempotent, so on a partial failure re-running all of them is safe:
     // keep the sheet open (the typed "왜" survives) and let the Add button retry.
     const results = await Promise.allSettled(
-      [...selected].map((collectionId) =>
+      picked.map((collectionId) =>
         connectBlock(collectionId, { blockType, refId, why: line || null }),
       ),
     );
@@ -226,9 +238,22 @@ export function ConnectSheet({
       toast(t("connectedPartialToast"), "error");
       return;
     }
-    // Confirm the weave and close — the toast is the completion feedback the sheet used to lack.
-    toast(t("connectedToast", { count: selected.size }), "success");
-    finish();
+    // Success — instead of just toasting and vanishing, show the add landing: flip the picked rows to
+    // the green "담김" badge and drop back to the list (step 1) so the user SEES the collections they
+    // just added, mirroring the iOS connect sheet. The toast confirms in the same breath; the sheet
+    // stays open so a follow-up add is one tap away and the confirmation isn't a blink-and-miss close.
+    // The flip is optimistic with a PENDING_CONNECTION sentinel (connectBlock returns no id) — the badge
+    // only needs the row present; unlink() resolves the real connectionId on demand if hit before a
+    // reload. No list re-fetch here, so the rows don't flash a loading spinner over a successful add.
+    setHeldBy((prev) => {
+      const next = new Map(prev);
+      for (const id of picked) if (!next.has(id)) next.set(id, PENDING_CONNECTION);
+      return next;
+    });
+    setSelected(new Set());
+    setWhy("");
+    setStep(1);
+    toast(t("connectedToast", { count: picked.length }), "success");
   }
 
   if (!mounted || !portalReady) return null;
