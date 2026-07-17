@@ -455,6 +455,12 @@ function HighlightThread({
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // The reply the viewer just posted — after it renders, scroll it into view so a new reply added from
+  // the bottom composer doesn't land below the fold. Cleared once scrolled (a ref, so it doesn't
+  // re-trigger on later renders). A load re-fetch never sets this, so only a just-posted reply scrolls.
+  const justPostedIdRef = useRef<number | null>(null);
+  const repliesEndRef = useRef<HTMLDivElement>(null);
+  const threadScrollRef = useRef<HTMLDivElement>(null);
   // The public paths/collections this sentence is woven into ("이 문장이 속한 길" — A-척추 discovery loop).
   const [inCollections, setInCollections] = useState<CollectionSummary[]>([]);
   // Blocks curators wove alongside this sentence in the same public collections ("이것과 이어진 것").
@@ -493,6 +499,24 @@ function HighlightThread({
     loadContaining();
   }, [load, loadContaining]);
 
+  // After a just-posted reply renders, bring it into view. Only fires when submit() armed the ref, so a
+  // background re-load never yanks the scroll. Scrolls the thread's own container (not the page) to the
+  // reply-list end so the newest reply sits at the bottom of the list — the "이 문장이 속한 길"/"이어진
+  // 것" sections that follow it in the same scroller stay below. Honors reduced-motion (instant jump).
+  useEffect(() => {
+    if (justPostedIdRef.current == null) return;
+    justPostedIdRef.current = null;
+    const scroller = threadScrollRef.current;
+    const end = repliesEndRef.current;
+    if (!scroller || !end) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Target: the reply-list end (sentinel) aligned to the bottom of the visible scroller. Rect-based so
+    // it's independent of offsetParent — how far to move = sentinel's bottom minus the scroller's bottom.
+    const delta = end.getBoundingClientRect().bottom - scroller.getBoundingClientRect().bottom;
+    if (delta <= 0) return; // already visible — don't jump
+    scroller.scrollTo({ top: scroller.scrollTop + delta, behavior: reduce ? "auto" : "smooth" });
+  }, [replies]);
+
   async function submit() {
     if (!authenticated) {
       onSignIn();
@@ -507,6 +531,10 @@ function HighlightThread({
       const created = await createHighlightReply(highlight.id, body.trim());
       setReplies((prev) => [...prev, created]);
       setBody("");
+      // Scroll the just-posted reply into view once it renders — from the bottom composer a new reply
+      // otherwise lands below the fold (the scroll area doesn't move on append). The effect below reads
+      // this ref after the list re-renders. The composer keeps focus so a follow-up reply flows.
+      justPostedIdRef.current = created.id;
       onChanged(); // refresh the marks' replyCount
     } catch {
       setError(t("replyError"));
@@ -624,7 +652,7 @@ function HighlightThread({
           )}
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+        <div ref={threadScrollRef} className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
           {replies.length === 0 ? (
             // 답글이 아직 없음 — 하이라이트는 이미 위(따옴표+작성자)에 있으므로, 이 자리는 "답글이 없다"만
             // 조용히 말한다. 예전 "첫 답글을 남겨보세요"는 큰 중앙 블록이라 "여기 비어 있다/하이라이트 없다"
@@ -679,6 +707,9 @@ function HighlightThread({
               ))}
             </ul>
           )}
+          {/* Scroll anchor for a just-posted reply — sits right after the list so scrolling it into view
+              lands on the newest reply (see the submit scroll effect). */}
+          <div ref={repliesEndRef} aria-hidden />
 
           {/* 이 문장이 속한 길 — from one sentence to the paths/collections it's woven into. */}
           {inCollections.length > 0 && (
