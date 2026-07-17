@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useConfirm } from "@/components/ui/use-confirm";
+import { useToast } from "@/components/ui/toast";
 import {
   currentStepIndex,
   estimatePathMinutes,
@@ -56,6 +57,7 @@ export function CollectionDetailView({
   const t = useTranslations("collections");
   const { me, authenticated, ready, signInWithGoogle } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [confirm, confirmDialog] = useConfirm();
   const [detail, setDetail] = useState<CollectionDetail | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "missing">("loading");
@@ -99,7 +101,9 @@ export function CollectionDetailView({
     [detail, load],
   );
 
-  // Save the meta edit — optimistic (the header repaints from the returned summary), reload on failure.
+  // Save the meta edit — optimistic (the header repaints from the returned summary). A save is a silent
+  // action otherwise (the header just changes), so it confirms with a toast; a failure reverts AND says
+  // so — no 조용한 실패 (the sheet/담기 surfaces already follow this).
   const onEditSave = useCallback(
     async (patch: { title: string; description: string | null; visibility: CollectionVisibility }) => {
       if (!detail) return;
@@ -107,11 +111,13 @@ export function CollectionDetailView({
       setEditing(false);
       try {
         await updateCollection(detail.id, patch);
+        toast(t("editSavedToast"), "success");
       } catch {
-        load();
+        load(); // restore the server copy
+        toast(t("editError"), "error");
       }
     },
-    [detail, load],
+    [detail, load, toast, t],
   );
 
   // Delete the whole collection — confirm first (destructive, irreversible), then leave for the owner's
@@ -134,9 +140,10 @@ export function CollectionDetailView({
         router.back();
       }
     } catch {
-      load(); // surface nothing changed; the collection is still here
+      load(); // the collection is still here — say the delete didn't take (no 조용한 실패)
+      toast(t("deleteError"), "error");
     }
-  }, [detail, confirm, t, locale, router, load]);
+  }, [detail, confirm, t, locale, router, load, toast]);
 
   // Remove one connection (disconnect) — confirm, then drop the row optimistically; reload on failure.
   const onRemoveConnection = useCallback(
@@ -156,12 +163,13 @@ export function CollectionDetailView({
       try {
         await disconnect(detail.id, connectionId);
       } catch {
-        load(); // restore the removed row on failure
+        load(); // restore the removed row AND say the unlink failed (no 조용한 실패)
+        toast(t("unlinkError"), "error");
       } finally {
         setRemovingId(null);
       }
     },
-    [detail, confirm, t, load],
+    [detail, confirm, t, load, toast],
   );
 
   if (state === "loading") {
