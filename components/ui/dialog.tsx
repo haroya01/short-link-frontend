@@ -94,7 +94,14 @@ export function ConfirmDialog({
     // the user toggled into a dialog with fewer fields (contact card, etc.) because the panel
     // shrunk and re-centered around the smaller content. Anchoring to top + a fixed top
     // offset keeps the Save button position predictable regardless of body length.
-    <div className="fixed inset-0 z-50 overflow-y-auto px-4 pt-12 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pt-16">
+    <div
+      // 닫히는 동안 전면 컨테이너가 클릭을 삼키지도, 접근성 트리에 남지도 않게(전면 오버레이 공통 규칙).
+      aria-hidden={closing || undefined}
+      className={cn(
+        "fixed inset-0 z-50 overflow-y-auto px-4 pt-12 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pt-16",
+        closing && "pointer-events-none",
+      )}
+    >
       <div
         className={cn(
           "fixed inset-0 bg-slate-900/50 dark:bg-slate-950/70",

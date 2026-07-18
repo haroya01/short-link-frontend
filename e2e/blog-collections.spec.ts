@@ -34,12 +34,15 @@ test("discovery (connections) opens on entrances, and preserves the recent timel
     "true",
   );
   await expect(page.locator("body")).toContainText("결정을 남기는 법"); // 입구(길) 제목
-  // 입구는 활동 로그가 아니다 — 시간순 카드의 히어로(큐레이터 why/블록)는 기본 화면에 없다.
-  await expect(page.locator("body")).not.toContainText("헥사고날 아키텍처, 작은 서비스에 과했을까");
+  // 입구는 활동 로그가 아니다 — 시간순 카드의 히어로(하이라이트 인용)는 기본 화면에 없다.
+  // (#891 미니멀 재작업 이후 HIGHLIGHT 카드의 리드는 글 제목이 아니라 인용문 — 제목은 카드에 없다.)
+  await expect(page.locator("body")).not.toContainText("요약하면, 작은 서비스일수록 단순함이 이긴다.");
 
-  // 칭찬받은 시간순 타임라인은 삭제되지 않고 "최근" 탭으로 보존된다 — 회귀 없음.
+  // 칭찬받은 시간순 타임라인은 삭제되지 않고 "최근" 탭으로 보존된다 — 회귀 없음. 시드 이벤트의
+  // 인용 리드 + 큐레이터 줄(why)로 타임라인 카드가 실제로 그려졌는지 본다.
   await page.getByRole("tab", { name: /Recent/ }).click();
-  await expect(page.locator("body")).toContainText("헥사고날 아키텍처, 작은 서비스에 과했을까");
+  await expect(page.locator("body")).toContainText("요약하면, 작은 서비스일수록 단순함이 이긴다.");
+  await expect(page.locator("body")).toContainText("측정이 내린 결론은 늘 같았다 — 단순함.");
 });
 
 test("unknown collection id is a graceful 404, not a 500 crash", async ({ page }) => {

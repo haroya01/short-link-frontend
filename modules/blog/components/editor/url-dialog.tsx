@@ -54,8 +54,13 @@ export function UrlDialog({
 
   return (
     <div
+      // 나가는 중인 오버레이는 시각적으로도, 접근성 트리에서도 이미 없는 존재다 — aria-hidden 이 없으면
+      // 보조기술(과 role 셀렉터)이 퇴장 애니메이션 동안 유령 다이얼로그를 계속 본다.
+      aria-hidden={closing || undefined}
       className={`fixed inset-0 z-[60] grid place-items-start justify-center bg-slate-900/30 pt-[18vh] backdrop-blur-[1px] motion-reduce:animate-none ${
-        closing ? "animate-fade-out" : "animate-fade-in"
+        // 닫히는 160ms 동안 이 전면 백드롭이 클릭을 삼키면 안 된다 — 삽입 직후 본문을 클릭한
+        // 타이핑이 통째로 증발하는 원인이었다(모든 use-presence 전면 오버레이 공통 규칙).
+        closing ? "pointer-events-none animate-fade-out" : "animate-fade-in"
       }`}
       onMouseDown={onClose}
     >

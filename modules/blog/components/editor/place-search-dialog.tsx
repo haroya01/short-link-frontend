@@ -93,7 +93,14 @@ export function PlaceSearchDialog({
   if (!present) return null;
 
   return (
-    <div role="dialog" aria-modal="true" aria-label={t("placeTitle")} className="fixed inset-0 z-50">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={t("placeTitle")}
+      // 닫히는 동안 전면 컨테이너가 클릭을 삼키지도, 접근성 트리에 남지도 않게(전면 오버레이 공통 규칙).
+      aria-hidden={closing || undefined}
+      className={`fixed inset-0 z-50 ${closing ? "pointer-events-none" : ""}`}
+    >
       <button
         type="button"
         aria-hidden

@@ -103,7 +103,11 @@ export function PostImage({
             aria-modal="true"
             aria-label={label || t("imageZoom")}
             onClick={() => setOpen(false)}
-            className={`post-lightbox${closing ? " post-lightbox-closing" : ""} fixed inset-0 z-[100] flex cursor-zoom-out items-center justify-center bg-slate-950/90 p-4 backdrop-blur-sm`}
+            // 닫히는 동안 전면 컨테이너가 클릭을 삼키지도, 접근성 트리에 남지도 않게(전면 오버레이 공통 규칙).
+            aria-hidden={closing || undefined}
+            className={`post-lightbox${
+              closing ? " post-lightbox-closing pointer-events-none" : ""
+            } fixed inset-0 z-[100] flex cursor-zoom-out items-center justify-center bg-slate-950/90 p-4 backdrop-blur-sm`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
