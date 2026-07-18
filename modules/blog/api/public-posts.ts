@@ -261,28 +261,31 @@ export const listPublicPosts = cache(
   },
 );
 
-export function findPublicPost(
-  username: string,
-  slug: string,
-): Promise<FetchResult<PublicPostDetail>> {
-  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostDetail(username, slug) });
-  return fetchPublic<PublicPostDetail>(
-    `/api/v1/public/profiles/${encodeURIComponent(username)}/posts/${encodeURIComponent(slug)}`,
-    { noStore: true },
-  );
-}
+// cache() so generateMetadata + the page component (+ opengraph-image) share ONE fetch per render.
+// no-store opts out of Next's fetch memoization, so without this the reader page hits the backend
+// twice per view; cache() dedupes within the render pass regardless of the fetch cache policy.
+export const findPublicPost = cache(
+  (username: string, slug: string): Promise<FetchResult<PublicPostDetail>> => {
+    if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostDetail(username, slug) });
+    return fetchPublic<PublicPostDetail>(
+      `/api/v1/public/profiles/${encodeURIComponent(username)}/posts/${encodeURIComponent(slug)}`,
+      { noStore: true },
+    );
+  },
+);
 
 /**
  * Reads a not-yet-public post by its share token (the owner's preview link). Bypasses the status
  * guard server-side; the token is the authorization, so no username/slug is needed. Always no-store.
  */
-export function findPreviewPost(token: string): Promise<FetchResult<PublicPostDetail>> {
-  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostDetail("me", "preview") });
-  return fetchPublic<PublicPostDetail>(
-    `/api/v1/public/preview/${encodeURIComponent(token)}`,
-    { noStore: true },
-  );
-}
+export const findPreviewPost = cache(
+  (token: string): Promise<FetchResult<PublicPostDetail>> => {
+    if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockPostDetail("me", "preview") });
+    return fetchPublic<PublicPostDetail>(`/api/v1/public/preview/${encodeURIComponent(token)}`, {
+      noStore: true,
+    });
+  },
+);
 
 export interface TagCount {
   tag: string;
@@ -341,16 +344,15 @@ export function listPublicSeries(username: string): Promise<FetchResult<PublicSe
   );
 }
 
-export function findPublicSeries(
-  username: string,
-  slug: string,
-): Promise<FetchResult<PublicSeriesDetail>> {
-  if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockSeriesDetail(username, slug) });
-  return fetchPublic<PublicSeriesDetail>(
-    `/api/v1/public/profiles/${encodeURIComponent(username)}/series/${encodeURIComponent(slug)}`,
-    { noStore: true },
-  );
-}
+export const findPublicSeries = cache(
+  (username: string, slug: string): Promise<FetchResult<PublicSeriesDetail>> => {
+    if (USE_MOCKS) return Promise.resolve({ ok: true, data: mockSeriesDetail(username, slug) });
+    return fetchPublic<PublicSeriesDetail>(
+      `/api/v1/public/profiles/${encodeURIComponent(username)}/series/${encodeURIComponent(slug)}`,
+      { noStore: true },
+    );
+  },
+);
 
 /** Link-preview (unfurl) for a URL embedded in a post — og:title/description/image, or nulls when
  *  the target has no Open Graph (the card then falls back to a bare domain row). */
