@@ -275,7 +275,11 @@ export function ConnectSheet({
     // began the sheet-down exit → the passage under the finger MOVED, so iOS dropped the pending
     // `click` and the row/새-컬렉션 tap did nothing. Sibling scrim + click-close (the account sheet's
     // grammar) removes the race — a tap inside the sheet never reaches the scrim at all.
-    <div className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-4">
+    <div
+      // 닫히는 동안 전면 컨테이너가 클릭을 삼키지도, 접근성 트리에 남지도 않게(전면 오버레이 공통 규칙).
+      aria-hidden={closing || undefined}
+      className={`fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-4 ${closing ? "pointer-events-none" : ""}`}
+    >
       <button
         type="button"
         aria-hidden

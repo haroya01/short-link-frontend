@@ -15,12 +15,10 @@ export function usePresence(
   exitMs = 200,
 ): { mounted: boolean; closing: boolean } {
   const [mounted, setMounted] = useState(open);
-  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     if (open) {
       setMounted(true);
-      setClosing(false);
       return;
     }
     if (!mounted) return;
@@ -28,14 +26,15 @@ export function usePresence(
       setMounted(false);
       return;
     }
-    setClosing(true);
-    const id = window.setTimeout(() => {
-      setClosing(false);
-      setMounted(false);
-    }, exitMs);
+    const id = window.setTimeout(() => setMounted(false), exitMs);
     // Reopening mid-exit lands in the `open` branch above; this clears the pending unmount.
     return () => window.clearTimeout(id);
   }, [open, mounted, exitMs]);
 
-  return { mounted, closing };
+  // Derived, not state: `closing` must be true on the very render where `open` flips false. As a
+  // second state set in an effect it lagged one paint behind, leaving a frame where the overlay was
+  // exit-bound but still wore its entrance class — and, worse, still swallowed pointer events
+  // (overlays gate `pointer-events-none` on `closing`). A click in that frame died on an invisible
+  // backdrop.
+  return { mounted, closing: mounted && !open };
 }
