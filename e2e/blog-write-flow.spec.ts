@@ -759,6 +759,66 @@ test("Korean IME composition in the image caption is not interrupted", async ({ 
   expect(blocks.find((b) => b.type === "IMAGE")?.content).toContain("간판");
 });
 
+test("body typed below a captioned image stays a separate PARAGRAPH and the image survives", async ({ page }) => {
+  // The reported corruption: the stock tiptap-markdown image serializer is inline-flavored, so a
+  // block image didn't close its block — the next paragraph glued onto the same line
+  // (`![…](u "cap")body…`), markdownToBlocks no longer saw an image-only line, and the whole thing
+  // saved as a literal-text PARAGRAPH: the published post lost the image. The custom serializer
+  // (closeBlock) keeps the boundary; this pins IMAGE + PARAGRAPH arriving as two blocks.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "shot.png", mimeType: "image/png", buffer: Buffer.from("png-bytes") });
+  await expect(page.locator(".tiptap img")).toBeVisible({ timeout: 10_000 });
+
+  const cap = page.locator(".tiptap .tiptap-figcaption");
+  await cap.click();
+  await page.keyboard.type("caption line");
+
+  // The natural gesture: click the editor's bottom whitespace, keep writing under the image.
+  const box = (await page.locator(".tiptap").boundingBox())!;
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height - 8);
+  await page.keyboard.type("body under image");
+
+  captured.blocks = null;
+  const blocks = await save(page, captured);
+  const img = blocks.find((b) => b.type === "IMAGE");
+  expect(img?.content).toContain(IMAGE_URL);
+  expect(img?.content).toContain("caption line");
+  expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toBe("body under image");
+});
+
+test("Enter in the caption drops the caret into the paragraph below the image", async ({ page }) => {
+  // Enter used to just blur — focus fell to <body> and the writer's next keystrokes vanished. Now it
+  // moves the caret to the block after the image (creating a paragraph if none), so caption → Enter
+  // → keep typing is one continuous writing motion.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "shot.png", mimeType: "image/png", buffer: Buffer.from("png-bytes") });
+  await expect(page.locator(".tiptap img")).toBeVisible({ timeout: 10_000 });
+
+  const cap = page.locator(".tiptap .tiptap-figcaption");
+  await cap.click();
+  await page.keyboard.type("done captioning");
+  await page.keyboard.press("Enter");
+  // The focus handoff (figcaption → ProseMirror root) settles within a frame; Playwright's 0ms
+  // keystrokes can outrun it in a way human typing can't. Wait for the editor to hold focus, then type.
+  await expect(page.locator(".tiptap")).toBeFocused();
+  await page.keyboard.type("straight into the body");
+
+  captured.blocks = null;
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "IMAGE")?.content).toContain("done captioning");
+  expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toBe("straight into the body");
+});
+
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 // Publish lifecycle — open the 발행 설정 dialog and prove each status action hits the right endpoint.
 // Each test seeds the post in the relevant starting state via setupMocks(…, post).
