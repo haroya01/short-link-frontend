@@ -37,7 +37,12 @@ export function SeriesNav({
   return (
     <nav className="mb-10 border-l-2 border-accent-600 pl-4 dark:border-accent-400">
       <div className="flex items-center justify-between gap-3">
-        <BlogLink href={seriesHref} className="focus-ring group flex min-w-0 items-center gap-2 rounded">
+        <BlogLink
+          href={seriesHref}
+          className="focus-ring group flex min-w-0 items-center gap-2 rounded"
+          data-bhv="series"
+          data-bhv-id={series.slug}
+        >
           {/* The kurl mark draws itself in (사사삭) when the banner appears — the series surface's
               signature entrance, shared with the series detail header + feed card. */}
           <Mark animated className="mark-draw-in h-3 w-auto shrink-0 text-accent-600 dark:text-accent-400" />
@@ -104,6 +109,8 @@ export function SeriesNav({
                       <BlogLink
                         href={postHref(username, ep.slug, locale)}
                         className="focus-ring flex items-start gap-2 rounded px-1 py-0.5 text-[13px] text-slate-600 transition-colors hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400"
+                        data-bhv="series"
+                        data-bhv-id={`${username}/${ep.slug}`}
                       >
                         {ep1}
                         <span>{ep.title}</span>

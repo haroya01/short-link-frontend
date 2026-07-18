@@ -20,6 +20,8 @@ export function TagChips({ tags }: { tags: string[] }) {
           <BlogChromeLink
             href={blogHref(`/tags/${encodeURIComponent(tag)}`)}
             className="focus-ring rounded text-[14px] text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
+            data-bhv="tag"
+            data-bhv-id={tag}
           >
             #{tag}
           </BlogChromeLink>

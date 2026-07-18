@@ -211,7 +211,12 @@ export function FeedCard({
           {/* Text-only rows reserve a right gutter so the title never runs under the bookmark (pinned
               to the whole card's top-right below); image rows don't need it — the button sits over the
               thumbnail, clear of the narrower text column. */}
-          <BlogLink href={postUrl} className={`block ${bookmarkable && !hasImage ? "pr-9" : ""}`}>
+          <BlogLink
+            href={postUrl}
+            className={`block ${bookmarkable && !hasImage ? "pr-9" : ""}`}
+            data-bhv="post"
+            data-bhv-id={`${item.author.username}/${item.slug}`}
+          >
             {/* One marker per row. The featured lead shows a quiet editorial label (with a small
                 brand-green dot so it reads as the chosen post); every other row shows its muted
                 representative tag. Never both — stacking them reads as a confusing category pair. */}
@@ -250,6 +255,8 @@ export function FeedCard({
             href={postUrl}
             aria-hidden
             tabIndex={-1}
+            data-bhv="post"
+            data-bhv-id={`${item.author.username}/${item.slug}`}
             className={`block shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 ${
               featured ? "h-24 w-24 sm:h-28 sm:w-[150px]" : "h-20 w-20 sm:h-24 sm:w-32"
             }`}
