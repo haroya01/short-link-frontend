@@ -28,6 +28,8 @@ export async function SeriesNext({
         <BlogLink
           href={postHref(username, series.next.slug, locale)}
           className="mark-hoverable focus-ring group block rounded-2xl border border-slate-200 p-5 transition-colors hover:border-accent-300 dark:border-slate-700 dark:hover:border-accent-500/50"
+          data-bhv="series"
+          data-bhv-id={`${username}/${series.next.slug}`}
         >
           <span className="flex items-center gap-1.5 text-[12px] font-semibold text-accent-700 dark:text-accent-400">
             {/* Hovering the next-up card replays the mark's draw — same cue as the feed series card. */}
@@ -50,6 +52,8 @@ export async function SeriesNext({
         className={`focus-ring inline-block rounded text-[13px] text-slate-500 underline-offset-4 transition-colors hover:text-accent-700 hover:underline dark:text-slate-400 dark:hover:text-accent-400 ${
           series.next ? "mt-3" : ""
         }`}
+        data-bhv="series"
+        data-bhv-id={series.slug}
       >
         {t("seriesViewAll", { total: series.total })}
       </BlogLink>

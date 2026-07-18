@@ -9,6 +9,7 @@ import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { ReadBeacon } from "@/modules/blog/components/read-beacon";
+import { ReadProgressBeacon } from "@/modules/blog/components/read-progress-beacon";
 import { PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
 import { PostComments } from "@/modules/blog/components/comments";
 import { LikeButton } from "@/modules/blog/components/like-button";
@@ -229,6 +230,8 @@ export default async function PublicPostPage({
           <a
             href={authorHref(author.username, locale)}
             className="group flex items-center gap-3 rounded focus-ring"
+            data-bhv="profile"
+            data-bhv-id={author.username}
           >
             <Avatar src={author.avatarUrl} name={author.username} size="lg" />
             <span className="block truncate text-sm font-semibold text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400">
@@ -253,7 +256,13 @@ export default async function PublicPostPage({
         username={author.username}
         locale={locale}
       >
-      <article className="post-enter mx-auto w-full max-w-2xl pb-14 pt-16 sm:py-20" lang={post.languageTag}>
+      {/* data-bhv-post: BehaviorTracker 의 클릭 위임이 읽는 페이지 컨텍스트 — 두 번째 행동이 어느 글에서
+          났는지의 출처. */}
+      <article
+        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-16 sm:py-20"
+        lang={post.languageTag}
+        data-bhv-post={post.id}
+      >
         {/* A preview is an unlisted draft shared by its author — don't record a view, and flag it so
             the owner knows this isn't the live page. */}
         {isPreview ? (
@@ -265,6 +274,8 @@ export default async function PublicPostPage({
             <ViewBeacon username={username} slug={slug} />
             {/* Account-synced reading history for signed-in readers (no-op for anonymous). */}
             <ReadBeacon postId={post.id} />
+            {/* First-party 완독·체류 계측 — behavior_event 로 간다(조회 비콘과 같은 세션). */}
+            <ReadProgressBeacon postId={post.id} />
           </>
         )}
 
@@ -287,6 +298,8 @@ export default async function PublicPostPage({
           <a
             href={authorHref(author.username, locale)}
             className="group flex min-w-0 items-center gap-3 rounded focus-ring xl:hidden"
+            data-bhv="profile"
+            data-bhv-id={author.username}
           >
             <Avatar src={author.avatarUrl} name={author.username} size="lg" />
             <span className="min-w-0">
@@ -382,6 +395,8 @@ export default async function PublicPostPage({
           <a
             href={authorHref(author.username, locale)}
             className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400 focus-ring"
+            data-bhv="profile"
+            data-bhv-id={author.username}
           >
             <ArrowLeft className="h-4 w-4" />
             {t("morePosts", { username: author.username })}

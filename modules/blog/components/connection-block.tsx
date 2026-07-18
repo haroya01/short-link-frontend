@@ -36,6 +36,8 @@ export function ConnectionBlock({ block, locale }: { block: BlockFields; locale:
         <BlogLink
           href={postHref(block.username, block.slug, locale)}
           className="focus-ring rounded text-card-title-xs font-semibold leading-snug tracking-tight text-slate-900 transition-colors hover:text-accent-700 dark:text-slate-100 dark:hover:text-accent-400"
+          data-bhv="connection"
+          data-bhv-id={`${block.username}/${block.slug}`}
         >
           {block.title}
         </BlogLink>
@@ -53,6 +55,8 @@ export function ConnectionBlock({ block, locale }: { block: BlockFields; locale:
       <BlogLink
         href={quoteHref(block.username, block.slug, block.quote ?? "", locale)}
         className="focus-ring group flex gap-2.5 rounded"
+        data-bhv="connection"
+        data-bhv-id={`${block.username}/${block.slug}`}
       >
         <span aria-hidden className="mt-0.5 w-[3px] shrink-0 rounded-full bg-accent-600 dark:bg-accent-500" />
         <span className="min-w-0">

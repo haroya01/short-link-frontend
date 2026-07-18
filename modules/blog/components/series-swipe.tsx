@@ -13,6 +13,7 @@ import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { postHref } from "@/modules/blog/components/feed-card";
+import { trackBehavior } from "@/lib/analytics/behavior";
 import type { PublicPostSeriesNav } from "@/modules/blog/api/public-posts";
 
 /** 수평 의도 판별: 첫 이동에서 이 각도(≈30°)보다 평평하고 아래 거리 이상이면 스와이프로 본다. */
@@ -134,6 +135,8 @@ function SeriesSwipeInner({
     (dir: Dir) => {
       const t = target(dir);
       if (!t) return;
+      // 스와이프는 [data-bhv] 클릭 위임 밖의 프로그램적 항해 — 직접 기록한다.
+      trackBehavior({ name: "second_action", targetType: "series", targetId: `${username}/${t.slug}` });
       const dest = pathnameFor(t.slug);
       if (dest.startsWith("http")) {
         window.location.assign(dest); // cross-origin 배포 폴백(하드 내비)
@@ -141,7 +144,7 @@ function SeriesSwipeInner({
         router.push(dest);
       }
     },
-    [target, pathnameFor, router],
+    [target, pathnameFor, router, username],
   );
 
   const applyTransform = useCallback((px: number) => {
