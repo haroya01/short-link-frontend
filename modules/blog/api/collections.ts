@@ -8,6 +8,7 @@
  * "이 문장이 속한 길" (which paths a sentence belongs to).
  */
 import { request } from "@/lib/api/client";
+import { fetchWithTimeout } from "@/lib/api/fetch-timeout";
 import { USE_MOCKS } from "@/modules/blog/api/_mocks";
 import {
   mockCollectionDetail,
@@ -191,7 +192,7 @@ export async function listPublicCollectionsByUsername(
   if (USE_MOCKS) {
     return Promise.resolve(mockMineCollections().filter((c) => c.visibility === "PUBLIC"));
   }
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/collections`,
     { cache: "no-store" },
   );
@@ -228,7 +229,7 @@ export function listDiscoverConnections(): Promise<DiscoverFeed> {
 export async function listPublicConnectionFeed(page = 0, size = 12): Promise<DiscoverFeed> {
   if (USE_MOCKS) return Promise.resolve(mockPublicConnectionFeed(page, size));
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${API_BASE}/api/v1/public/feed/connections?page=${page}&size=${size}`,
       { next: { revalidate: 30 } },
     );
@@ -244,7 +245,7 @@ export async function listPublicConnectionFeed(page = 0, size = 12): Promise<Dis
 export async function listPublicPostCollections(postId: number): Promise<CollectionSummary[]> {
   if (USE_MOCKS) return Promise.resolve(mockPostCollections(postId));
   try {
-    const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/collections`, {
+    const res = await fetchWithTimeout(`${API_BASE}/api/v1/public/posts/${postId}/collections`, {
       cache: "no-store",
     });
     if (!res.ok) return [];
@@ -285,7 +286,7 @@ export async function listPublicPostCollectionsBatch(
   const results = await Promise.all(
     chunks.map(async (chunk): Promise<PostCollectionsView[]> => {
       try {
-        const res = await fetch(
+        const res = await fetchWithTimeout(
           `${API_BASE}/api/v1/public/posts/collections?ids=${chunk.join(",")}`,
           { cache: "no-store" },
         );
@@ -305,7 +306,7 @@ export async function listCollectionsContainingHighlight(
   highlightId: number,
 ): Promise<CollectionSummary[]> {
   if (USE_MOCKS) return Promise.resolve(mockCollectionsContainingHighlight(highlightId));
-  const res = await fetch(`${API_BASE}/api/v1/public/highlights/${highlightId}/collections`, {
+  const res = await fetchWithTimeout(`${API_BASE}/api/v1/public/highlights/${highlightId}/collections`, {
     cache: "no-store",
   });
   if (!res.ok) return [];
@@ -320,7 +321,7 @@ export async function listRelatedBlocks(
   refId: number,
 ): Promise<RelatedBlock[]> {
   if (USE_MOCKS) return Promise.resolve([]);
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `${API_BASE}/api/v1/public/graph/blocks/${encodeURIComponent(blockType)}/${refId}/related`,
     { cache: "no-store" },
   );
@@ -333,7 +334,7 @@ export async function listRelatedBlocks(
  *  unknown handle yields []. */
 export async function listKindredCurators(username: string): Promise<KindredCurator[]> {
   if (USE_MOCKS) return Promise.resolve([]);
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `${API_BASE}/api/v1/public/profiles/${encodeURIComponent(username)}/kindred`,
     { cache: "no-store" },
   );
