@@ -2242,7 +2242,7 @@
       },
       {
         "h": "3. Link shortening — acceptable use",
-        "p": "Only public http/https URLs may be shortened; file:// and other non-http/https resources are rejected. Shortening to private or internal network addresses is discouraged and some server features (such as link previews) may not work for them. Shortening for malicious or phishing destinations, spam, copyright violations, hate or discrimination, or doxxing is rejected or revoked. Links created without signing in expire automatically after 24 hours."
+        "p": "Only public http/https URLs may be shortened; file:// and other non-http/https resources are rejected. Shortening to private or internal network addresses is discouraged and some server features (such as link previews) may not work for them. Shortening for malicious or phishing destinations, spam, copyright violations, hate or discrimination, doxxing, or tracking or surveilling a specific individual without their consent is rejected or revoked. Links created without signing in expire automatically after 24 hours."
       },
       {
         "h": "4. Your content — ownership and license",

@@ -2242,7 +2242,7 @@
       },
       {
         "h": "3. Rút gọn liên kết — sử dụng hợp lệ",
-        "p": "Chỉ rút gọn được URL http/https công khai; file:// và các tài nguyên không phải http/https sẽ bị từ chối. Việc rút gọn tới địa chỉ mạng riêng/nội bộ không được khuyến khích và một số tính năng máy chủ (như xem trước liên kết) có thể không hoạt động. Việc rút gọn nhằm mục đích độc hại/lừa đảo, spam, vi phạm bản quyền, thù ghét hoặc phân biệt đối xử, hay tiết lộ thông tin cá nhân không có sự đồng ý (doxxing) sẽ bị từ chối hoặc thu hồi. Liên kết được tạo khi chưa đăng nhập sẽ tự động hết hạn sau 24 giờ."
+        "p": "Chỉ rút gọn được URL http/https công khai; file:// và các tài nguyên không phải http/https sẽ bị từ chối. Việc rút gọn tới địa chỉ mạng riêng/nội bộ không được khuyến khích và một số tính năng máy chủ (như xem trước liên kết) có thể không hoạt động. Việc rút gọn nhằm mục đích độc hại/lừa đảo, spam, vi phạm bản quyền, thù ghét hoặc phân biệt đối xử, tiết lộ thông tin cá nhân không có sự đồng ý (doxxing), hay theo dõi/giám sát một cá nhân cụ thể khi chưa có sự đồng ý sẽ bị từ chối hoặc thu hồi. Liên kết được tạo khi chưa đăng nhập sẽ tự động hết hạn sau 24 giờ."
       },
       {
         "h": "4. Nội dung của bạn — quyền sở hữu và giấy phép",
