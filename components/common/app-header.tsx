@@ -160,7 +160,7 @@ export function AppHeader({
               모바일(<sm)에선 표면을 가리지 않고 마크만 — slim 공개 표면은 물론 워크스페이스도:
               워크스페이스는 우측 클러스터(검색·벨·전환 pill·아바타)가 모바일에서도 다 살아 있어
               풀 워드마크까지 들어가면 390px 에서 컨트롤들이 워드마크 위로 겹쳤다. */}
-          <ChromeNavLink href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable shrink-0">
+          <ChromeNavLink href={blogHref("/")} aria-label="kurl log" className="mark-hoverable shrink-0">
             <Logo variant="blog" animated showText={false} className="sm:hidden" />
             <Logo variant="blog" animated className="hidden sm:inline-flex" />
           </ChromeNavLink>
@@ -168,7 +168,7 @@ export function AppHeader({
 
         {/* Right cluster split into two zones: utilities for *this* surface (search + language) on
             the left, then a hairline divider, then the cross-product switcher + account on the right.
-            The divider stops the switcher's "kurl/blog.kurl" wordmark pill from reading as a second
+            The divider stops the switcher's "kurl/kurl log" wordmark pill from reading as a second
             brand mark beside the search field, and keeps the expanded search pill from sitting flush
             against the same-shaped switcher pill. */}
         {/* 모바일 글쓰기 — 하단 탭바 중앙 FAB 에서 이동: 스크롤 중 떠 있는 원형이 본문을 가리고
