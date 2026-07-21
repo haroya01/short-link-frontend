@@ -2226,7 +2226,7 @@
   },
   "terms": {
     "title": "Terms of Service",
-    "updatedAt": "Last updated: 2026-06-26",
+    "updatedAt": "Last updated: 2026-07-21",
     "intro": "These terms govern your use of kurl (the \"Service\"). By using the Service you agree to them. If you do not agree, do not use the Service.",
     "sections": [
       {
@@ -2235,11 +2235,11 @@
       },
       {
         "h": "2. Eligibility and accounts",
-        "p": "You must be at least 14 years old (16, or the age set by your country's law, in the EU). By using the Service you represent that you meet this age. Keep your account information accurate. You are responsible for your account's security and for activity under it."
+        "p": "You must be at least 14 years old (16, or the age set by your country's law, in the EU). By using the Service you represent that you meet this age. Keep your account information accurate. You are responsible for your account's security and for activity under it. You have a single kurl account that applies across the web and all kurl iOS apps (the link app and the blog app); deleting your account removes your data across all of them under Section 8."
       },
       {
         "h": "3. Link shortening — acceptable use",
-        "p": "Only public http/https URLs may be shortened; file:// and other non-http/https resources are rejected. Shortening to private or internal network addresses is discouraged and some server features (such as link previews) may not work for them. Shortening for malicious or phishing destinations, spam, copyright violations, hate or discrimination, or doxxing is rejected or revoked."
+        "p": "Only public http/https URLs may be shortened; file:// and other non-http/https resources are rejected. Shortening to private or internal network addresses is discouraged and some server features (such as link previews) may not work for them. Shortening for malicious or phishing destinations, spam, copyright violations, hate or discrimination, or doxxing is rejected or revoked. Links created without signing in expire automatically after 24 hours."
       },
       {
         "h": "4. Your content — ownership and license",
@@ -2297,12 +2297,12 @@
   },
   "privacy": {
     "title": "Privacy Policy",
-    "updatedAt": "Last updated: 2026-07-18",
+    "updatedAt": "Last updated: 2026-07-21",
     "intro": "kurl collects only the minimum personal data needed to run the Service and anonymizes by default. This policy follows Korea's Personal Information Protection Act (PIPA) and the EU GDPR (Article 13).",
     "sections": [
       {
         "h": "1. What we collect",
-        "p": "Sign-in: email (including Apple's private email relay if you use Apple), auth provider (Google or Apple), signup date. Shortening: original URL, short code, expiry. Content: your posts, comments, profile, and uploaded images (EXIF metadata such as capture location is stripped on upload). If you enable push notifications: an APNs device token (iOS app) or web push subscription. On shortened-link clicks, post views, and public profile visits: timestamp, User-Agent, Referer, traffic source (UTM, etc.), IP with the last octet masked, GeoIP-derived country/region/city, browser language, device type/OS/browser, and network operator (ASN/organization). For repeat-visit stats we derive and store a one-way hash (a pseudonymous identifier) from IP and User-Agent; the raw IP itself is not stored. For operation and security we keep request logs (timestamp, path, status code, latency, and when signed in, a user identifier and short code) for a limited period. If a visitor submits a profile's email capture form: the email they enter and an IP hash. On post pages we also collect reading-behavior events to improve the Service: scroll depth reached, visible reading time, and the kind of element clicked within the post screen. These events are linked only by a temporary session ID that disappears when the tab closes and by the pseudonymous hash above; no tracking cookies are used, and no pseudonymous hash is created when your browser sends a GPC (Global Privacy Control) signal."
+        "p": "Sign-in: email (including Apple's private email relay if you use Apple), auth provider (Google or Apple), signup date. Shortening: original URL, short code, expiry. Content: your posts, comments, profile, and uploaded images (EXIF metadata such as capture location is stripped on upload). If you enable push notifications: an APNs device token (iOS app) or web push subscription. On shortened-link clicks, post views, and public profile visits: timestamp, User-Agent, Referer, traffic source (UTM, etc.), IP with the last octet masked, GeoIP-derived country/region/city, browser language, device type/OS/browser, and network operator (ASN/organization). For repeat-visit stats we derive and store a one-way hash (a pseudonymous identifier) from IP and User-Agent; the raw IP itself is not stored. For operation and security we keep request logs (timestamp, path, status code, latency, and when signed in, a user identifier and short code) for a limited period. If a visitor submits a profile's email capture form: the email they enter and an IP hash. On post pages we also collect reading-behavior events to improve the Service: scroll depth reached, visible reading time, and the kind of element clicked within the post screen. These events are linked only by a temporary session ID that disappears when the tab closes and by the pseudonymous hash above; no tracking cookies are used, and no pseudonymous hash is created when your browser sends a GPC (Global Privacy Control) signal. When you read or save content: reading history and bookmarks (reading list, stored with your account only while signed in). Both are visible only to you and can be deleted at any time."
       },
       {
         "h": "2. Purpose and legal basis",
