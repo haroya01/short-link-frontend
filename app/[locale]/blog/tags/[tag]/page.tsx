@@ -37,7 +37,7 @@ export async function generateMetadata({
   const { locale, tag } = await params;
   const t = await getTranslations({ locale, namespace: "publicFeed" });
   const path = `/tags/${tag}`;
-  const title = `#${decodeURIComponent(tag)} · blog.kurl`;
+  const title = `#${decodeURIComponent(tag)} · kurl log`;
   const description = t("tagFeedSubtitle");
   const url = `${BLOG_URL}/${locale}${path}`;
   // Without OG/twitter the tag feed unfurled as a bare title. Reuse the blog's generated card so a
@@ -58,7 +58,7 @@ export async function generateMetadata({
       description,
       url,
       type: "website",
-      siteName: "blog.kurl",
+      siteName: "kurl log",
       images: [{ url: ogImage, width: 2400, height: 1260, alt: title }],
     },
     twitter: { card: "summary_large_image", title, description, images: [ogImage] },

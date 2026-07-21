@@ -4,7 +4,7 @@ import { OG, OgMark, ogFonts } from "@/lib/og";
 // nodejs (not edge): next/og + the brand font exceed Edge's 1 MB limit (the earlier edge build failed
 // at 1.07 MB). Node serverless (50 MB) is fine and OG is crawler-facing.
 export const runtime = "nodejs";
-export const alt = "blog.kurl";
+export const alt = "kurl log";
 export const size = OG.size;
 export const contentType = "image/png";
 
@@ -37,10 +37,10 @@ export default async function BlogOgImage() {
             color: OG.ink,
           }}
         >
-          blog<span style={{ color: OG.faint }}>.kurl</span>
+          kurl<span style={{ color: OG.faint }}> log</span>
         </div>
       </div>
     ),
-    { ...size, fonts: await ogFonts("blog.kurl") },
+    { ...size, fonts: await ogFonts("kurl log") },
   );
 }

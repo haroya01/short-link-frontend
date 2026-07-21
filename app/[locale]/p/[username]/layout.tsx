@@ -34,7 +34,7 @@ export default function AuthorChromeLayout({
             white body) — otherwise the sticky nav reads as a washed grey band in dark mode. */}
         <div className="flex min-h-screen flex-col dark:bg-slate-950 dark:text-slate-300">
           {/* Author/post pages are the blog product → tell the switcher so it offers "kurl" (links),
-              not "blog.kurl" (currentProduct() doesn't recognise the /p/ + author-subdomain surface). */}
+              not "kurl log" (currentProduct() doesn't recognise the /p/ + author-subdomain surface). */}
           <AppHeader showMenu={false} slimMobile product="blog" />
           <div className="flex-1 pb-16 sm:pb-0">
             {/* ProfileChrome renders the header slot ONLY on the tab routes (글·시리즈·소개·…); on a

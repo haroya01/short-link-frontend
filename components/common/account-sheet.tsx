@@ -143,11 +143,11 @@ export function AccountSheet({
             home indicator. */}
         <div className="overflow-y-auto pb-[max(env(safe-area-inset-bottom),0.75rem)]">
         {/* The blog brand lives here on mobile (it's dropped from the slim top bar so the screen leads
-            with the author/post). This anchors the sheet as "where blog.kurl + the product switch are."
+            with the author/post). This anchors the sheet as "where kurl log + the product switch are."
             On kurl the switch is in the top Nav, so the sheet leads straight with the account. */}
         {!isLinks && (
           <>
-            <a href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable flex items-center px-3 py-2">
+            <a href={blogHref("/")} aria-label="kurl log" className="mark-hoverable flex items-center px-3 py-2">
               <Logo variant="blog" />
             </a>
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />

@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 type Props = {
   className?: string;
   showText?: boolean;
-  /** "blog" renders the blog.kurl wordmark for the (now independent) blog product header. */
+  /** "blog" renders the kurl log wordmark for the (now independent) blog product header. */
   variant?: "kurl" | "blog";
   /** Tags the mark's lines so a `.mark-hoverable` ancestor can replay the warp line-draw on hover. */
   animated?: boolean;
@@ -17,14 +17,14 @@ export function Logo({ className, showText = true, variant = "kurl", animated = 
         // Wordmark in Pretendard 700 — one sans family across the app keeps the brand voice
         // consistent with the hero headline (also Pretendard). Tight tracking (-0.04em) gives
         // the mark the density a logo needs at 18px without a separate display face. The blog is
-        // an independent surface, so it carries a "blog.kurl" wordmark.
+        // an independent surface, so it carries a "kurl log" wordmark.
         <span
           className="text-[18px] font-bold leading-none"
           style={{ letterSpacing: "-0.04em" }}
         >
           {variant === "blog" ? (
             <>
-              <span className="text-slate-400 dark:text-slate-500">blog.</span>kurl
+              kurl<span className="text-slate-400 dark:text-slate-500"> log</span>
             </>
           ) : (
             "kurl"

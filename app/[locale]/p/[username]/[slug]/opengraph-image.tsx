@@ -4,7 +4,7 @@ import { OG, OgMark, loadAvatar, ogFonts } from "@/lib/og";
 
 // nodejs (not edge): we fetch the post for its title/byline + load the brand font (>1 MB).
 export const runtime = "nodejs";
-export const alt = "blog.kurl";
+export const alt = "kurl log";
 export const size = OG.size;
 export const contentType = "image/png";
 
@@ -21,7 +21,7 @@ export default async function PostOgImage({
 }) {
   const { username, slug } = await params;
 
-  let title = "blog.kurl";
+  let title = "kurl log";
   let handle = username;
   let avatar: string | null = null;
   try {
@@ -70,7 +70,7 @@ export default async function PostOgImage({
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
           <OgMark width={96} id="post-mark" />
           <div style={{ display: "flex", fontFamily: "Pretendard", fontSize: 50, fontWeight: 700, letterSpacing: -1.5, color: OG.ink }}>
-            blog<span style={{ color: OG.faint }}>.kurl</span>
+            kurl<span style={{ color: OG.faint }}> log</span>
           </div>
         </div>
 
