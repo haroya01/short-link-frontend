@@ -951,6 +951,9 @@
       "urlBlank": "Please enter a URL.",
       "urlGeneric": "Invalid URL.",
       "generic": "Failed to shorten.",
+      "selfReferencing": "kurl.me links can't be shortened again — they're already short.",
+      "reservedCode": "That code is reserved — try another one.",
+      "quota": "You've reached your link limit — clean up old links to make room.",
       "validation": "Invalid input."
     }
   },
