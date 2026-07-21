@@ -190,11 +190,15 @@ function messageOf(err: unknown, t: (key: string) => string): string {
   if (err instanceof ApiError) {
     if (err.detail.code === "MALICIOUS_URL") return t("errors.malicious");
     if (err.detail.code === "DUPLICATE_SHORT_CODE") return t("errors.duplicate");
+    if (err.detail.code === "SELF_REFERENCING_URL") return t("errors.selfReferencing");
+    if (err.detail.code === "RESERVED_SHORT_CODE") return t("errors.reservedCode");
+    if (err.detail.code === "LINK_QUOTA_EXCEEDED") return t("errors.quota");
     if (err.detail.code === "VALIDATION_FAILED") {
       const fields = err.detail.errors?.map((e) => translateValidation(e.field, e.message, t));
       return fields?.join(", ") ?? t("errors.validation");
     }
-    return err.detail.detail ?? t("errors.generic");
+    // detail 은 서버의 영문 로그 원문 — 사용자 화면엔 매핑된 카피만 내보낸다.
+    return t("errors.generic");
   }
   if (err instanceof Error) return err.message;
   return t("errors.generic");

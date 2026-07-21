@@ -951,6 +951,9 @@
       "urlBlank": "URL을 입력해 주세요.",
       "urlGeneric": "올바른 URL이 아니에요.",
       "generic": "단축에 실패했어요.",
+      "selfReferencing": "kurl.me 주소는 다시 단축할 수 없어요 — 이미 짧은 주소예요.",
+      "reservedCode": "예약된 코드예요. 다른 커스텀 코드를 골라 주세요.",
+      "quota": "링크 한도에 도달했어요. 오래된 링크를 정리하면 새로 만들 수 있어요.",
       "validation": "입력값이 올바르지 않아요."
     }
   },

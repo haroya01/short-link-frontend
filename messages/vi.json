@@ -951,6 +951,9 @@
       "urlBlank": "Vui lòng nhập URL.",
       "urlGeneric": "URL không hợp lệ.",
       "generic": "Rút gọn thất bại.",
+      "selfReferencing": "Liên kết kurl.me không thể rút gọn thêm — nó đã ngắn rồi.",
+      "reservedCode": "Mã này đã được dành riêng — hãy thử mã khác.",
+      "quota": "Bạn đã đạt giới hạn liên kết — dọn bớt liên kết cũ để tạo mới.",
       "validation": "Dữ liệu nhập không hợp lệ."
     }
   },
