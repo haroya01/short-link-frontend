@@ -36,8 +36,13 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
   return (
     <div
       data-testid="result-card"
-      className="animate-fade-in rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)] p-4 sm:p-5"
+      className="result-in relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)] p-4 sm:p-5"
     >
+      {/* 완료의 실 — 카드 상단을 그린 실이 왼→오로 그으며 "됐다"를 서명한다 */}
+      <span
+        aria-hidden
+        className="result-thread absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-accent-600 via-accent-400 to-accent-300"
+      />
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
@@ -70,13 +75,20 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
         </a>
 
         <div className="flex flex-wrap items-center gap-1.5">
-          <CopyButton
-            size="sm"
-            variant="accent"
-            label={t("copy")}
-            value={result.shortUrl}
-            onCopied={() => toast(t("copied"), "success")}
-          />
+          {/* 복사 비콘 — 카드 등장 직후 두 번의 파동으로 다음 행동(복사)에 시선을 모은다 */}
+          <span className="relative inline-flex">
+            <span
+              aria-hidden
+              className="copy-beacon pointer-events-none absolute inset-0 rounded-lg bg-accent-500/40 motion-reduce:hidden"
+            />
+            <CopyButton
+              size="sm"
+              variant="accent"
+              label={t("copy")}
+              value={result.shortUrl}
+              onCopied={() => toast(t("copied"), "success")}
+            />
+          </span>
           <a
             href={result.shortUrl}
             target="_blank"
