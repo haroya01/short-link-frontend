@@ -73,7 +73,7 @@ function NotificationDropdown({
   return (
     <div
       role="menu"
-      className={`absolute right-0 z-30 mt-2 w-80 origin-top-right overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950 ${
+      className={`absolute right-0 z-30 mt-2 w-80 origin-top-right overflow-hidden glass-panel rounded-xl border border-slate-200/70 dark:border-slate-700/70 ${
         closing ? "animate-dropdown-out" : "animate-dropdown-in"
       }`}
     >

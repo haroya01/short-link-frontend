@@ -81,7 +81,7 @@ function ToastItem({
         closing ? "animate-toast-out" : "animate-toast-in",
         toast.variant === "success" && "bg-accent-700 text-white",
         toast.variant === "error" && "bg-red-600 text-white",
-        (!toast.variant || toast.variant === "default") && "bg-slate-900 text-white",
+        (!toast.variant || toast.variant === "default") && "glass-toast text-white",
       )}
       role="status"
       aria-live="polite"

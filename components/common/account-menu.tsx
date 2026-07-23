@@ -105,7 +105,7 @@ export function AccountMenu({ product = "blog" }: { product?: Product }) {
         <div
           role="menu"
           className={cn(
-            "absolute right-0 z-30 mt-2 w-60 origin-top-right rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-800 dark:bg-slate-900 dark:shadow-none",
+            "absolute right-0 z-30 mt-2 w-60 origin-top-right glass-panel rounded-xl border border-slate-200/70 p-1 dark:border-slate-700/70 dark:shadow-none",
             closing ? "animate-dropdown-out" : "animate-dropdown-in",
           )}
         >

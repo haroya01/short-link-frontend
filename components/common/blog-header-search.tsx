@@ -176,7 +176,7 @@ export function BlogHeaderSearch({ defaultOpen = false }: { defaultOpen?: boolea
       )}
 
       {value.trim() && panelOpen && (
-        <div className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
+        <div className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[85vw] overflow-hidden glass-panel rounded-xl border border-slate-200/70 dark:border-slate-700/70">
           {loading && results.length === 0 ? (
             <div className="flex justify-center py-6 text-slate-400">
               <Loader2 className="h-4 w-4 animate-spin" />
