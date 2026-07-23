@@ -914,7 +914,17 @@
     "featuresSubhead": "실시간 클릭 피드, 자동 인사이트, A/B + 국가 분기까지. HMAC 웹훅·2FA TOTP·Google Safe Browsing 은 기본으로 들어가 있어요.",
     "whyEyebrow": "why kurl",
     "whyTitle": "왜 다른 곳에선 이걸 안 주는 걸까요?",
-    "whySubhead": "보통 엔터프라이즈 플랜에서나 주는 기능을, 여기선 무료로 기본 제공해요."
+    "whySubhead": "보통 엔터프라이즈 플랜에서나 주는 기능을, 여기선 무료로 기본 제공해요.",
+    "stage": {
+      "scene2Eyebrow": "공유",
+      "scene2Title": "붙여넣는 곳마다, 클릭이 돌아옵니다",
+      "scene2Desc": "인스타 바이오 · X · 유튜브 · 메일 — 어디에서 온 클릭인지 실시간으로 잡혀요.",
+      "scene3Eyebrow": "분석",
+      "scene3Title": "클릭 하나하나가 그림이 됩니다",
+      "scene3Desc": "누가, 언제, 어디서 — 사람과 봇을 갈라 30일 리듬까지. 다른 단축기 유료 플랜의 깊이를 무료로.",
+      "scene3CtaDemo": "데모로 미리 보기",
+      "scene3CtaStart": "무료로 시작하기"
+    }
   },
   "showcase": {
     "eyebrow": "공개 프로필 · 실제 예시",

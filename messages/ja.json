@@ -914,7 +914,17 @@
     "featuresSubhead": "ライブクリックフィード · 自動インサイト · A/B + 国別ルーティング。HMAC Webhook · 2FA TOTP · Google Safe Browsing は標準装備。",
     "whyEyebrow": "why kurl",
     "whyTitle": "なぜ他では出てこないのか",
-    "whySubhead": "通常は enterprise プランで提供される機能を、ここでは無料・標準装備で。"
+    "whySubhead": "通常は enterprise プランで提供される機能を、ここでは無料・標準装備で。",
+    "stage": {
+      "scene2Eyebrow": "共有",
+      "scene2Title": "貼った場所ごとに、クリックが返ってくる",
+      "scene2Desc": "Instagramのbio・X・YouTube・メール — どこから来たクリックかがリアルタイムでわかります。",
+      "scene3Eyebrow": "分析",
+      "scene3Title": "クリックの一つひとつが絵になる",
+      "scene3Desc": "誰が、いつ、どこから — 人とボットを分けて30日のリズムまで。他社の有料プラン級の深さを無料で。",
+      "scene3CtaDemo": "デモで先に見る",
+      "scene3CtaStart": "無料ではじめる"
+    }
   },
   "showcase": {
     "eyebrow": "公開プロフィール · 実例",

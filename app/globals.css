@@ -1982,3 +1982,83 @@ html[data-theme-vt] .vt-post-cover {
     opacity: 0;
   }
 }
+
+/* 무대 어휘 확장 — 여정 장면(stage-scenes.tsx)용. 규칙은 위 stage-* 블록과 동일:
+   view() 연동은 @supports 게이트, 기본 상태 = 완성 상태, reduced-motion = 정적. */
+@keyframes stage-thread-draw-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.stage-thread-x {
+  transform-origin: left;
+}
+.stage-thread-x.stage-from-right {
+  transform-origin: right;
+}
+@keyframes stage-rise {
+  from {
+    transform: translateY(36px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes stage-draw-line {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.stage-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0; /* 기본 = 완성 상태 (미지원/RM 폴백) */
+}
+@keyframes stage-bar-rise {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+.stage-bar {
+  transform-origin: bottom;
+}
+@supports (animation-timeline: view()) {
+  .stage-thread-x {
+    animation: stage-thread-draw-x linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 45%;
+  }
+  .stage-rise {
+    animation: stage-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 90%;
+  }
+  .stage-draw {
+    animation: stage-draw-line linear both;
+    animation-timeline: view();
+    animation-range: entry 20% cover 65%;
+  }
+  .stage-bar {
+    animation: stage-bar-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 15% cover 55%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage-thread-x,
+  .stage-rise,
+  .stage-draw,
+  .stage-bar {
+    animation: none !important;
+  }
+}

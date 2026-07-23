@@ -914,7 +914,17 @@
     "featuresSubhead": "Live click feed · auto-insights · A/B + geo routing. HMAC webhooks · 2FA TOTP · Google Safe Browsing are built in.",
     "whyEyebrow": "why kurl",
     "whyTitle": "Why doesn't every shortener include this?",
-    "whySubhead": "Features usually locked behind enterprise plans — free here, enabled by default."
+    "whySubhead": "Features usually locked behind enterprise plans — free here, enabled by default.",
+    "stage": {
+      "scene2Eyebrow": "Share",
+      "scene2Title": "Wherever you paste it, clicks come back",
+      "scene2Desc": "Instagram bio, X, YouTube, email — see where every click came from, live.",
+      "scene3Eyebrow": "Analytics",
+      "scene3Title": "Every click becomes a picture",
+      "scene3Desc": "Who, when, where — humans split from bots, down to your 30-day rhythm. The depth other shorteners paywall, free.",
+      "scene3CtaDemo": "Preview the demo",
+      "scene3CtaStart": "Start free"
+    }
   },
   "showcase": {
     "eyebrow": "Public profiles · real examples",
