@@ -85,7 +85,8 @@ export function StatsCards({
         // Mobile: 2-col so KPI cards stack densely on iPhone; the hero "total" card spans both
         // columns (col-span-2 below). Tablet: 3-col, hero spans 3. Desktop keeps the bespoke
         // explicit track widths so the hero is 1.5x the others (Apple nested-radius math).
-        "grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4",
+        // 모바일 2열에서 마지막 카드가 홀수로 남으면 고아 — 풀폭으로 펴서 구멍을 없앤다.
+        "grid grid-cols-2 gap-3 max-sm:[&>*:nth-child(even):last-child]:col-span-2 sm:grid-cols-3 sm:gap-4",
         showProfile
           ? "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr]"
           : "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]",
@@ -128,6 +129,7 @@ export function StatsCards({
         label={t("human")}
         target={human}
         sub={`${humanRatio.toFixed(1)}%`}
+        ratio={humanRatio / 100}
         animate={animate}
         onJump={interactive ? () => jump("section-device") : undefined}
       />
@@ -135,6 +137,7 @@ export function StatsCards({
         label={t("unique")}
         target={hasUnique ? (unique as number) : null}
         sub={hasUnique ? t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) }) : undefined}
+        ratio={hasUnique ? uniqueRatio / 100 : undefined}
         animate={animate}
         onJump={interactive ? () => jump("section-daily") : undefined}
       />
@@ -142,6 +145,7 @@ export function StatsCards({
         label={t("bot")}
         target={bot}
         sub={`${botRatio.toFixed(1)}%`}
+        ratio={botRatio / 100}
         muted
         animate={animate}
         onJump={interactive ? () => jump("section-bots") : undefined}
@@ -150,6 +154,7 @@ export function StatsCards({
         <CountStat
           label={t("profile")}
           target={profileClicks as number}
+          ratio={profileRatio / 100}
           sub={t("profileSub", { ratio: profileRatio.toFixed(0) })}
           animate={animate}
           onJump={interactive ? () => jump("section-sources") : undefined}
@@ -183,12 +188,15 @@ function Stat({
   label,
   value,
   sub,
+  ratio,
   muted,
   onJump,
 }: {
   label: string;
   value: string;
   sub?: string;
+  /** 0~1 — 카드 하단 미니 비율바(아이콘 제거 후의 데이터 드로잉). */
+  ratio?: number;
   muted?: boolean;
   onJump?: () => void;
 }) {
@@ -221,6 +229,20 @@ function Stat({
         {value}
       </p>
       {sub && <p className="mt-2 truncate text-[11px] text-slate-500 dark:text-slate-400">{sub}</p>}
+      {typeof ratio === "number" && Number.isFinite(ratio) && (
+        <span
+          aria-hidden
+          className="mt-3 block h-1 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
+        >
+          <span
+            className={cn(
+              "block h-full rounded-full",
+              muted ? "bg-slate-300 dark:bg-slate-600" : "bg-accent-500 dark:bg-accent-400",
+            )}
+            style={{ width: `${Math.round(Math.min(1, Math.max(0, ratio)) * 100)}%` }}
+          />
+        </span>
+      )}
     </button>
   );
 }
@@ -229,6 +251,7 @@ function CountStat({
   label,
   target,
   sub,
+  ratio,
   muted,
   onJump,
   animate = true,
@@ -236,6 +259,7 @@ function CountStat({
   label: string;
   target: number | null;
   sub?: string;
+  ratio?: number;
   muted?: boolean;
   onJump?: () => void;
   animate?: boolean;
@@ -243,7 +267,7 @@ function CountStat({
   const animated = useCountUp(target ?? 0, 700, animate && target !== null);
   const display = target === null ? "—" : formatNumber(animated);
   return (
-    <Stat label={label} value={display} sub={sub} muted={muted} onJump={onJump} />
+    <Stat label={label} value={display} sub={sub} ratio={ratio} muted={muted} onJump={onJump} />
   );
 }
 

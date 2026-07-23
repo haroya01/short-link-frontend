@@ -1412,7 +1412,7 @@
       "unique": "ユニーク",
       "human": "人間",
       "bot": "ボット",
-      "velocityHot": "🔥 クリック急増",
+      "velocityHot": "クリック急増",
       "velocityHour": "直近1時間",
       "ttfc": "初回クリックまで",
       "noActivity": "未計測",
