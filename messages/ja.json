@@ -1255,7 +1255,7 @@
       "audience": "訪問者",
       "settings": "設定",
       "descriptions": {
-        "overview": "要点だけ — クリック品質 / ライブクリック / 曜日×時間ヒートマップ。",
+        "overview": "選び抜いた概要 — 日誌5行と3つの扉(誰が・いつ・どこから)。詳細は扉の中に。",
         "traffic": "トラフィックの動き — 日別トレンド・時間帯分布・国別分布。",
         "sources": "どこから来たか — Referrer、UTM 4 種、チャネル/src タグ。",
         "audience": "誰が来たか — デバイス・OS・ブラウザ・地域・言語・ボット。",
@@ -1412,7 +1412,7 @@
       "unique": "ユニーク",
       "human": "人間",
       "bot": "ボット",
-      "velocityHot": "🔥 クリック急増",
+      "velocityHot": "クリック急増",
       "velocityHour": "直近1時間",
       "ttfc": "初回クリックまで",
       "noActivity": "未計測",
@@ -1567,6 +1567,29 @@
     },
     "chart": {
       "peak": "ピーク"
+    },
+    "exportCsv": "CSVエクスポート",
+    "chapters": {
+      "who": "誰が",
+      "when": "いつ",
+      "where": "どこから"
+    },
+    "journal": {
+      "title": "リンク日誌",
+      "evidence": "根拠",
+      "velocity": "いま平常の{x}倍のペースでクリックされています",
+      "trendUp": "直近7日は前週より{percent}%増 — {count}クリック",
+      "trendDown": "直近7日は前週より{percent}%減 — {count}クリック",
+      "peakDay": "{date}にピーク — 1日{count}クリック",
+      "topSource": "{host}が流入の{percent}%を連れてきました",
+      "peakHour": "1日の中では{hour}時がいちばん賑わいます",
+      "returning": "訪れた人の{percent}%が戻ってきました",
+      "topCountry": "{country}から{percent}%が来ています",
+      "mobileHeavy": "モバイルが{percent}% — スマホで押されるリンクです",
+      "desktopHeavy": "デスクトップが{percent}% — 机の前で開かれるリンクです",
+      "botHigh": "ボットが{percent}%も — 人は{human}人です",
+      "botFiltered": "ボット{percent}%を除くと、人は{human}人でした",
+      "fastFirstClick": "作成から{minutes}分で最初のクリックが来ました"
     }
   },
   "admin": {

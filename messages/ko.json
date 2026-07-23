@@ -1255,7 +1255,7 @@
       "audience": "방문자",
       "settings": "설정",
       "descriptions": {
-        "overview": "오늘 본질만 — 클릭 품질 / 라이브 클릭 / 시간대 히트맵.",
+        "overview": "엄선한 개요 — 일지 다섯 문장과 세 장의 문(누가·언제·어디서). 상세는 문 안에.",
         "traffic": "양적 흐름 — 일자별 트렌드, 시간대 분포, 국가별 분포.",
         "sources": "어디서 왔는지 — Referrer, UTM 4종, 채널/src 태그.",
         "audience": "누가 왔는지 — 디바이스, OS, 브라우저, 지역, 언어, 봇.",
@@ -1412,7 +1412,7 @@
       "unique": "유니크",
       "human": "사람",
       "bot": "봇",
-      "velocityHot": "🔥 클릭 가속",
+      "velocityHot": "클릭 가속",
       "velocityHour": "최근 1시간",
       "ttfc": "첫 클릭까지",
       "noActivity": "활동",
@@ -1567,6 +1567,29 @@
     },
     "chart": {
       "peak": "피크"
+    },
+    "exportCsv": "CSV 내보내기",
+    "chapters": {
+      "who": "누가",
+      "when": "언제",
+      "where": "어디서"
+    },
+    "journal": {
+      "title": "링크 일지",
+      "evidence": "근거",
+      "velocity": "지금 평소의 {x}배 속도로 눌리고 있어요",
+      "trendUp": "최근 7일이 그 전보다 {percent}% 늘었어요 — {count}클릭",
+      "trendDown": "최근 7일이 그 전보다 {percent}% 줄었어요 — {count}클릭",
+      "peakDay": "{date}에 최고점을 찍었어요 — 하루 {count}클릭",
+      "topSource": "{host}가 유입의 {percent}%를 데려왔어요",
+      "peakHour": "하루 중엔 {hour}시가 가장 붐벼요",
+      "returning": "다녀간 사람 {percent}%가 다시 왔어요",
+      "topCountry": "{country}에서 {percent}%가 왔어요",
+      "mobileHeavy": "모바일이 {percent}% — 폰에서 눌리는 링크예요",
+      "desktopHeavy": "데스크톱이 {percent}% — 책상 앞에서 열리는 링크예요",
+      "botHigh": "봇이 {percent}%나 돼요 — 사람은 {human}명이에요",
+      "botFiltered": "봇 {percent}%를 걷어내면 사람 {human}명이 다녀갔어요",
+      "fastFirstClick": "만든 지 {minutes}분 만에 첫 클릭이 왔어요"
     }
   },
   "admin": {

@@ -6,6 +6,8 @@ import type { TabKey } from "../_lib/use-tab-hash";
 type Props = {
   active: TabKey;
   onSelect: (tab: TabKey) => void;
+  /** 표시할 탭 부분집합 — 단일 스크롤 허브 전환 후 분석/설정 2탭만 쓴다(기본 = 전체). */
+  items?: TabKey[];
 };
 
 /**
@@ -15,15 +17,16 @@ type Props = {
  * the outer container's {@code rounded-full} so the radii read as concentric. Hash-synced via
  * the parent's setter.
  */
-export function TabBar({ active, onSelect }: Props) {
+export function TabBar({ active, onSelect, items }: Props) {
   const t = useTranslations("stats");
-  const tabs: { key: TabKey; label: string }[] = [
+  const all: { key: TabKey; label: string }[] = [
     { key: "overview", label: t("tabs.overview") },
-    { key: "traffic", label: t("tabs.traffic") },
-    { key: "sources", label: t("tabs.sources") },
-    { key: "audience", label: t("tabs.audience") },
+    { key: "who", label: t("chapters.who") },
+    { key: "when", label: t("chapters.when") },
+    { key: "where", label: t("chapters.where") },
     { key: "settings", label: t("tabs.settings") },
   ];
+  const tabs = items ? all.filter((it) => items.includes(it.key)) : all;
   return (
     <div className="space-y-2.5">
       <div

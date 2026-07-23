@@ -23,7 +23,8 @@ export function Footer() {
     <footer className="border-t border-slate-200 py-6 dark:border-slate-800">
       <div className="container flex flex-col items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 sm:flex-row">
         <span>{t("copyright", { year: new Date().getFullYear() })}</span>
-        <nav className="flex items-center gap-3">
+        {/* 320px 급 극소폭에서 링크 행이 줄바꿈 없이 6px 넘치던 전역 결함 — wrap 허용으로 수리. */}
+        <nav className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
           <a href={marketingHref("/about")} className="hover:text-slate-900 dark:hover:text-slate-100">
             {t("about")}
           </a>

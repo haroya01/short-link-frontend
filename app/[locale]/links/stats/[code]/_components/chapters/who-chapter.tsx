@@ -3,13 +3,18 @@
 import { useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
+import { ClickQualitySummary } from "@/components/links/stats/click-quality-summary";
 import { Section } from "@/components/common/section";
 import type { LinkStats } from "@/types";
+import { ChapterHeading } from "./chapter-heading";
 
-export function AudienceTab({ data }: { data: LinkStats }) {
+/** 1장 누가 — 사람/봇 품질, 기기·OS·브라우저·언어, 봇 정체, ASN. (구 개요 품질 + 방문자 탭) */
+export function WhoChapter({ data }: { data: LinkStats }) {
   const t = useTranslations("stats");
   return (
-    <div className="space-y-4">
+    <div id="chapter-who" className="scroll-mt-28 space-y-4">
+      <ChapterHeading index={1} title={t("chapters.who")} />
+      <ClickQualitySummary data={data} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Section
           id="section-device"
@@ -24,18 +29,6 @@ export function AudienceTab({ data }: { data: LinkStats }) {
         <Section title={t("section.browser.title")} description={t("section.browser.desc")}>
           <BreakdownList
             items={data.browserClicks.map((b) => ({ label: b.browser, count: b.count }))}
-          />
-        </Section>
-      </div>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Section title={t("section.region.title")} description={t("section.region.desc")}>
-          <BreakdownList
-            items={data.regionClicks.map((r) => ({ label: r.region, count: r.count }))}
-          />
-        </Section>
-        <Section title={t("section.city.title")} description={t("section.city.desc")}>
-          <BreakdownList
-            items={data.cityClicks.map((c) => ({ label: c.city, count: c.count }))}
           />
         </Section>
       </div>

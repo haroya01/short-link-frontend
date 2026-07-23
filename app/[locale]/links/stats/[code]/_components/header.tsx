@@ -1,8 +1,11 @@
-import { ExternalLink, Link2 } from "lucide-react";
+import { Download, ExternalLink, Link2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/common/copy-button";
 import { PublicStatsToggle } from "@/components/links/stats/public-stats-toggle";
 import { QrButton } from "@/components/links/qr/button";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { buildStatsCsv, statsCsvFilename } from "@/lib/stats-csv";
 import type { LinkStats } from "@/types";
 
 type Props = {
@@ -29,7 +32,19 @@ type Props = {
  * Copy + QR still work because they read from the local value.
  */
 export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }: Props) {
+  const t = useTranslations("stats");
   const display = shortUrl || `/${data.shortCode}`;
+
+  // 데이터 소유권: 화면의 수치는 언제나 들고 나갈 수 있어야 한다(마크다운 개방 캠페인의 통계판).
+  function exportCsv() {
+    const blob = new Blob([buildStatsCsv(data)], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = statsCsvFilename(data.shortCode);
+    a.click();
+    URL.revokeObjectURL(url);
+  }
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
       <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
@@ -62,6 +77,9 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }:
           <div className="flex items-center gap-1.5">
             <CopyButton variant="outline" size="sm" value={display} onCopied={onCopy} />
             <QrButton value={display} filename={`${data.shortCode}.png`} />
+            <Button variant="outline" size="sm" onClick={exportCsv}>
+              <Download className="h-3.5 w-3.5" /> {t("exportCsv")}
+            </Button>
           </div>
         </div>
       </div>

@@ -1255,7 +1255,7 @@
       "audience": "दर्शक",
       "settings": "सेटिंग्स",
       "descriptions": {
-        "overview": "आवश्यक चीज़ें — क्लिक गुणवत्ता, लाइव फ़ीड, दिन×घंटा हीटमैप।",
+        "overview": "चुना हुआ सार — डायरी की पाँच पंक्तियाँ और तीन द्वार (कौन, कब, कहाँ से)। विवरण अंदर।",
         "traffic": "मात्रा का स्वरूप — दैनिक रुझान, दिन का घंटा, देश विभाजन।",
         "sources": "यह कहाँ से आया — रेफ़रर, UTM (4), चैनल/src टैग।",
         "audience": "कौन आया — डिवाइस, OS, ब्राउज़र, क्षेत्र, भाषा, बॉट।",
@@ -1412,7 +1412,7 @@
       "unique": "अद्वितीय",
       "human": "मानव",
       "bot": "बॉट",
-      "velocityHot": "🔥 क्लिक उछाल",
+      "velocityHot": "क्लिक उछाल",
       "velocityHour": "पिछला घंटा",
       "ttfc": "बाद में पहला क्लिक",
       "noActivity": "गतिविधि",
@@ -1567,6 +1567,29 @@
     },
     "chart": {
       "peak": "शिखर"
+    },
+    "exportCsv": "CSV निर्यात",
+    "chapters": {
+      "who": "कौन",
+      "when": "कब",
+      "where": "कहाँ से"
+    },
+    "journal": {
+      "title": "लिंक डायरी",
+      "evidence": "प्रमाण",
+      "velocity": "अभी सामान्य से {x} गुना तेज़ क्लिक हो रहा है",
+      "trendUp": "पिछले 7 दिन {percent}% ऊपर — {count} क्लिक",
+      "trendDown": "पिछले 7 दिन {percent}% नीचे — {count} क्लिक",
+      "peakDay": "{date} को शिखर — एक दिन में {count} क्लिक",
+      "topSource": "{host} से {percent}% ट्रैफ़िक आया",
+      "peakHour": "दिन में {hour} बजे सबसे व्यस्त",
+      "returning": "{percent}% विज़िटर लौटकर आए",
+      "topCountry": "{percent}% {country} से आए",
+      "mobileHeavy": "{percent}% मोबाइल पर — फोन पर खुलने वाला लिंक",
+      "desktopHeavy": "{percent}% डेस्कटॉप पर — डेस्क पर खुलता है",
+      "botHigh": "बॉट {percent}% हैं — इंसान: {human}",
+      "botFiltered": "{percent}% बॉट हटाएँ तो {human} लोग आए",
+      "fastFirstClick": "बनाने के {minutes} मिनट में पहला क्लिक"
     }
   },
   "admin": {
