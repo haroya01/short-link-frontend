@@ -15,7 +15,11 @@ import { useTranslations } from "next-intl";
 import type { DailyClick } from "@/types";
 import { formatNumber } from "@/lib/utils";
 
-type Props = { data: DailyClick[] };
+type Props = {
+  data: DailyClick[];
+  /** 벤토 타일용 압축 높이(h-52) — 기본은 챕터 상세의 h-72. */
+  compact?: boolean;
+};
 
 // Full ISO dates (YYYY-MM-DD) collapse to MM-DD; anything already short (a campaign day bucket
 // that arrives pre-shortened) is left as-is so the axis never shows an empty tick.
@@ -23,7 +27,7 @@ function shortDate(v: string): string {
   return v.length >= 10 ? v.slice(5) : v;
 }
 
-export function DailyChart({ data }: Props) {
+export function DailyChart({ data, compact = false }: Props) {
   const t = useTranslations("stats");
   // On mobile (< 640 px) the recharts default Y-axis tick label needs the full computed track
   // width — pulling the chart back with `left: -16` cuts off "100" / "1k" on narrow viewports.
@@ -50,7 +54,7 @@ export function DailyChart({ data }: Props) {
           </span>
         </p>
       )}
-      <div className="h-72 w-full">
+      <div className={compact ? "h-52 w-full" : "h-72 w-full"}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { memo, Fragment, useState } from "react";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,7 @@ const MOBILE_BUCKET_STARTS = Array.from(
 type Hover = { day: string; hour: number; count: number; span: number };
 type Selected = Hover;
 
-export function Heatmap({ data }: { data: HeatmapCell[] }) {
+function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
   const t = useTranslations("stats.heatmap");
   const tDay = useTranslations("stats.weekday");
   const tShared = useTranslations("stats");
@@ -323,3 +323,6 @@ function ActiveCellLabel({
     </div>
   );
 }
+
+// 부모 상태 변화(라이브 틱·기간 프리셋)에 데이터가 같으면 재렌더 생략 — 벤토 부드러움의 절반.
+export const Heatmap = memo(HeatmapImpl);

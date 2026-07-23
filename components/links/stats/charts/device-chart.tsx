@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useTranslations } from "next-intl";
 import type { DeviceClick } from "@/types";
 import { formatNumber } from "@/lib/utils";
@@ -13,7 +14,7 @@ const COLORS = ["#059669", "#047857", "#34D399", "#6EE7B7", "#A7F3D0"];
  * single 100% ratio bar with a legend, not a donut. The bar answers the share question at a glance;
  * the legend carries the exact counts + percentages in tabular figures.
  */
-export function DeviceChart({ data }: Props) {
+function DeviceChartImpl({ data }: Props) {
   const t = useTranslations("stats");
   if (data.length === 0) {
     return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noData")}</p>;
@@ -82,3 +83,6 @@ function deviceLabel(device: string, t: ReturnType<typeof useTranslations>): str
       return device;
   }
 }
+
+// 부모 상태 변화(라이브 틱·기간 프리셋)에 데이터가 같으면 재렌더 생략 — 벤토 부드러움의 절반.
+export const DeviceChart = memo(DeviceChartImpl);

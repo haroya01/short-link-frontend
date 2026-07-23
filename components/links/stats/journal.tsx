@@ -32,7 +32,7 @@ export function StatsJournal({
             <button
               type="button"
               onClick={() => onNavigate(entry.evidence)}
-              className="focus-ring group w-full rounded-lg px-1 py-3 text-left transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40"
+              className="focus-ring group w-full rounded-lg px-1 py-3 text-left transition-[background-color,transform] duration-150 ease-out hover:bg-slate-50/70 active:scale-[0.995] active:bg-slate-100/70 dark:hover:bg-slate-800/40 dark:active:bg-slate-800/60"
             >
               <span className="flex items-start gap-3">
                 <span

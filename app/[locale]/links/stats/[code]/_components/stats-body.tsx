@@ -4,9 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { LinkStats } from "@/types";
-import { StatsCards } from "@/components/links/stats/cards";
-import { StatsJournal } from "@/components/links/stats/journal";
-import { ChapterCards } from "./chapter-cards";
+import { OverviewBento } from "./overview-bento";
 import { WhenChapter, type RangeDays } from "./chapters/when-chapter";
 import { WhereChapter } from "./chapters/where-chapter";
 import { WhoChapter } from "./chapters/who-chapter";
@@ -105,34 +103,29 @@ export function StatsBody({
           {data.totalClicks === 0 && (
             <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />
           )}
-          <StatsCards
-            total={data.totalClicks}
-            human={data.humanClicks}
-            bot={data.botClicks}
-            unique={data.uniqueClicks}
-            profileClicks={data.profileClicks}
-            timeToFirstClickMinutes={data.timeToFirstClickMinutes}
-            velocityRatio={data.velocity?.ratio ?? 0}
-            dailySeries={slicedDaily.map((d) => d.count)}
-            animate={!demo}
-            onNavigate={handleNavigate}
-          />
-          {view === "overview" && (
-            <StatsJournal data={data} onNavigate={handleNavigate} />
-          )}
           <TabBar
             active={view === "settings" ? "settings" : "overview"}
             onSelect={(k) => setView(k === "settings" ? "settings" : "overview")}
             items={["overview", "settings"]}
           />
-          {view === "overview" ? (
-            <ChapterCards data={data} onOpen={(c) => handleNavigate(`chapter-${c}`)} />
-          ) : (
-            <SettingsTab data={data} onTick={onTick} demo={demo} />
-          )}
+          <div key={view} className="view-enter">
+            {view === "overview" ? (
+              <OverviewBento
+                data={data}
+                slicedDaily={slicedDaily}
+                range={rangeDays}
+                onRange={setRangeDays}
+                onNavigate={handleNavigate}
+                onTick={onTick}
+                demo={demo}
+              />
+            ) : (
+              <SettingsTab data={data} onTick={onTick} demo={demo} />
+            )}
+          </div>
         </>
       ) : (
-        <div className="space-y-5">
+        <div key={view} className="view-enter space-y-5">
           {/* 2층 챕터 상세 — 돌아가는 길은 항상 같은 자리(좌상단), 브라우저 뒤로가기도 동작 */}
           <button
             type="button"

@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useTranslations } from "next-intl";
 import { cn, formatNumber } from "@/lib/utils";
 
@@ -9,7 +10,7 @@ type Props = {
   items: { label: string; count: number; title?: string }[];
 };
 
-export function BreakdownList({ items }: Props) {
+function BreakdownListImpl({ items }: Props) {
   const t = useTranslations("stats");
   if (items.length === 0) {
     return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noData")}</p>;
@@ -71,3 +72,6 @@ export function BreakdownList({ items }: Props) {
     </ul>
   );
 }
+
+// 부모 상태 변화(라이브 틱·기간 프리셋)에 데이터가 같으면 재렌더 생략 — 벤토 부드러움의 절반.
+export const BreakdownList = memo(BreakdownListImpl);

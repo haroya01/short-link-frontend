@@ -45,7 +45,7 @@ export function TabBar({ active, onSelect, items }: Props) {
                 aria-selected={selected}
                 onClick={() => onSelect(it.key)}
                 className={
-                  "relative shrink-0 rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 " +
+                  "relative shrink-0 rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-all duration-200 ease-out active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 " +
                   (selected
                     ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-[0_1px_3px_rgba(15,23,42,0.08)]"
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100")
