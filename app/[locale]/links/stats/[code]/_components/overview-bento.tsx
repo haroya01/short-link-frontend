@@ -111,7 +111,7 @@ export function OverviewBento({
                 onClick={() => onRange(d)}
                 aria-pressed={range === d}
                 className={cn(
-                  "rounded-full px-2 py-0.5 font-mono text-[10px] font-medium uppercase transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
+                  "rounded-full px-2 py-0.5 font-mono text-[10px] font-medium uppercase transition-[color,background-color,transform] duration-150 ease-out active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
                   range === d
                     ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(15,23,42,0.08)] dark:bg-slate-900 dark:text-slate-100"
                     : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
@@ -134,7 +134,7 @@ export function OverviewBento({
         label={t("section.heatmap.title")}
         section="section-heatmap"
         onNavigate={onNavigate}
-        className="lg:col-span-7"
+        className="cv-auto lg:col-span-7"
       >
         <Heatmap data={data.heatmap} />
       </Tile>
@@ -143,7 +143,7 @@ export function OverviewBento({
         label={t("section.referrerHost.title")}
         section="section-sources"
         onNavigate={onNavigate}
-        className="lg:col-span-5"
+        className="cv-auto lg:col-span-5"
       >
         <BreakdownList
           items={data.referrerHostClicks.slice(0, 5).map((r) => ({ label: r.host, count: r.count }))}
@@ -154,7 +154,7 @@ export function OverviewBento({
         label={t("section.device.title")}
         section="section-device"
         onNavigate={onNavigate}
-        className="lg:col-span-6"
+        className="cv-auto lg:col-span-6"
       >
         <DeviceChart data={data.deviceClicks} />
       </Tile>
@@ -163,7 +163,7 @@ export function OverviewBento({
         label={t("section.country.title")}
         section="chapter-where"
         onNavigate={onNavigate}
-        className="lg:col-span-6"
+        className="cv-auto lg:col-span-6"
       >
         <BreakdownList
           items={data.countryClicks.slice(0, 5).map((c) => ({ label: c.country, count: c.count }))}
@@ -238,7 +238,7 @@ function Tile({
                 type="button"
                 onClick={() => onNavigate(section)}
                 aria-label={label}
-                className="focus-ring rounded-md p-1 text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+                className="focus-ring rounded-md p-1 text-slate-400 transition-[color,transform] duration-150 ease-out hover:text-accent-700 active:scale-90 dark:text-slate-500 dark:hover:text-accent-400"
               >
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </button>

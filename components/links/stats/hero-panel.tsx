@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { memo, useId } from "react";
 import { cn, formatNumber } from "@/lib/utils";
 
 type Props = {
@@ -25,7 +25,7 @@ type Props = {
  * **같은 컴포넌트**를 렌더한다. 랜딩이 보여주는 카드 = 제품에 실존하는 카드라는 계약
  * (과장광고 방지)이므로, 이 파일을 고치면 두 표면이 함께 변한다는 걸 전제로 고칠 것.
  */
-export function StatsHeroCore({ label, caption, total, series, draw = "static", className }: Props) {
+function StatsHeroCoreImpl({ label, caption, total, series, draw = "static", className }: Props) {
   const gradId = useId();
   const points = buildPoints(series);
   return (
@@ -87,3 +87,6 @@ function buildPoints(series?: number[] | null) {
     lastY: coords[coords.length - 1][1],
   };
 }
+
+// 부모 상태 변화(라이브 틱·기간 프리셋)에 데이터가 같으면 재렌더 생략 — 벤토 부드러움의 절반.
+export const StatsHeroCore = memo(StatsHeroCoreImpl);

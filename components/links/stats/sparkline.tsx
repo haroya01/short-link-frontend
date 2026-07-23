@@ -1,3 +1,4 @@
+import { memo } from "react";
 type Props = {
   values: number[];
   width?: number;
@@ -10,7 +11,7 @@ type Props = {
  * to live inside a table cell. Auto-scaled to its own range so a flat zero series renders as a
  * thin baseline rather than a misleading peak.
  */
-export function Sparkline({ values, width = 64, height = 18, className }: Props) {
+function SparklineImpl({ values, width = 64, height = 18, className }: Props) {
   if (!values || values.length === 0) {
     return <span aria-hidden className={className} style={{ display: "inline-block", width, height }} />;
   }
@@ -49,3 +50,6 @@ export function Sparkline({ values, width = 64, height = 18, className }: Props)
     </svg>
   );
 }
+
+// 부모 상태 변화(라이브 틱·기간 프리셋)에 데이터가 같으면 재렌더 생략 — 벤토 부드러움의 절반.
+export const Sparkline = memo(SparklineImpl);

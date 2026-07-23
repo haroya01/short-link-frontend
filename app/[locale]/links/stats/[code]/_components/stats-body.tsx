@@ -108,22 +108,24 @@ export function StatsBody({
             onSelect={(k) => setView(k === "settings" ? "settings" : "overview")}
             items={["overview", "settings"]}
           />
-          {view === "overview" ? (
-            <OverviewBento
-              data={data}
-              slicedDaily={slicedDaily}
-              range={rangeDays}
-              onRange={setRangeDays}
-              onNavigate={handleNavigate}
-              onTick={onTick}
-              demo={demo}
-            />
-          ) : (
-            <SettingsTab data={data} onTick={onTick} demo={demo} />
-          )}
+          <div key={view} className="view-enter">
+            {view === "overview" ? (
+              <OverviewBento
+                data={data}
+                slicedDaily={slicedDaily}
+                range={rangeDays}
+                onRange={setRangeDays}
+                onNavigate={handleNavigate}
+                onTick={onTick}
+                demo={demo}
+              />
+            ) : (
+              <SettingsTab data={data} onTick={onTick} demo={demo} />
+            )}
+          </div>
         </>
       ) : (
-        <div className="space-y-5">
+        <div key={view} className="view-enter space-y-5">
           {/* 2층 챕터 상세 — 돌아가는 길은 항상 같은 자리(좌상단), 브라우저 뒤로가기도 동작 */}
           <button
             type="button"

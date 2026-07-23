@@ -2141,3 +2141,29 @@ html[data-theme-vt] .vt-post-cover {
     animation: hero-line-draw 700ms var(--ease) 120ms both;
   }
 }
+
+/* 뷰 전환(개요↔챕터↔설정) 진입 — 이동 tier 280ms, 컴포지터 전용(opacity/transform). */
+@keyframes view-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.view-enter {
+  animation: view-enter 280ms var(--ease) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .view-enter {
+    animation: none;
+  }
+}
+
+/* 화면 밖 무거운 타일/섹션의 렌더 비용 제거 — 스크롤 도달 시에만 페인트. */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
+}
