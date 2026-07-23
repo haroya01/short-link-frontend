@@ -914,7 +914,17 @@
     "featuresSubhead": "Dòng nhấp trực tiếp · thông tin tự động · định tuyến A/B + vị trí. Webhook HMAC · 2FA TOTP · Google Safe Browsing đều có sẵn.",
     "whyEyebrow": "vì sao chọn kurl",
     "whyTitle": "Sao không phải dịch vụ rút gọn nào cũng có điều này?",
-    "whySubhead": "Những tính năng thường bị khóa sau các gói doanh nghiệp — ở đây miễn phí, bật sẵn theo mặc định."
+    "whySubhead": "Những tính năng thường bị khóa sau các gói doanh nghiệp — ở đây miễn phí, bật sẵn theo mặc định.",
+    "stage": {
+      "scene2Eyebrow": "Chia sẻ",
+      "scene2Title": "Dán ở đâu, click quay về từ đó",
+      "scene2Desc": "Bio Instagram, X, YouTube, email — biết mỗi click đến từ đâu, theo thời gian thực.",
+      "scene3Eyebrow": "Phân tích",
+      "scene3Title": "Từng click trở thành một bức tranh",
+      "scene3Desc": "Ai, khi nào, từ đâu — tách người và bot, đến cả nhịp 30 ngày. Độ sâu nơi khác thu phí, ở đây miễn phí.",
+      "scene3CtaDemo": "Xem trước bản demo",
+      "scene3CtaStart": "Bắt đầu miễn phí"
+    }
   },
   "showcase": {
     "eyebrow": "Hồ sơ công khai · ví dụ thật",

@@ -1868,3 +1868,197 @@ html:not([data-theme-vt])::view-transition-new(root) {
 html[data-theme-vt] .vt-post-cover {
   view-transition-name: none;
 }
+
+/*
+ * ===== 무대(Stage) 모션 어휘 — AGENTS.md §11 =====
+ * "한 번 보는 화면" 전용 연출 레이어. kurl_stage 플래그(lib/stage-flag.ts) 뒤에서만 마운트되고,
+ * 전부 aria-hidden 장식이라 꺼져도(기본값) 정보 손실이 없다.
+ *
+ * 어휘 4종 (iOS 웰컴 종이 문법의 웹 쌍둥이 — celebrate-* 가 배아):
+ *   실-그리기 stage-thread   — 그린 실이 여정을 따라 그려짐 (스크롤 연동)
+ *   클릭-맥박 stage-pulse    — 점 도착 + 파동 = 클릭 유입
+ *   형광-스윕 stage-sweep    — 강조 면 위로 형광펜 밴드가 지나감 (스크롤 연동)
+ *   알약    stage-pill-in   — 단축 결과물(알약)의 물질화
+ *
+ * 스크롤 연동은 CSS scroll-driven animations 만 사용(의존성 0). 미지원 브라우저는 @supports
+ * 밖의 기본 상태 = 완성 상태를 보므로 깨지지 않고, reduced-motion 은 전부 정적 완성 상태.
+ */
+@keyframes stage-thread-draw {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+.stage-thread {
+  transform-origin: top;
+}
+@keyframes stage-pill-in {
+  from {
+    transform: translateY(12px) scale(0.94);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+@keyframes stage-pulse-ring {
+  from {
+    transform: scale(0.6);
+    opacity: 0.55;
+  }
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+.stage-pulse-ring {
+  animation: stage-pulse-ring 2400ms var(--ease) infinite;
+}
+@keyframes stage-sweep-band {
+  0% {
+    transform: translateX(-70%);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(170%);
+    opacity: 0;
+  }
+}
+/* 폼 위 형광 밴드 — 루트 스크롤 0→260px 에 1:1 로 물린다(시간이 아니라 손이 재생점).
+   미지원 브라우저는 opacity:0 그대로라 아무것도 안 보인다(밴드는 순수 장식). */
+.stage-sweep-host {
+  position: relative;
+}
+.stage-sweep-host::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: -6px -4px;
+  border-radius: 12px;
+  opacity: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 12%,
+    rgba(5, 150, 105, 0.1) 42%,
+    rgba(52, 211, 153, 0.16) 52%,
+    transparent 88%
+  );
+}
+@supports (animation-timeline: scroll()) {
+  .stage-sweep-host::after {
+    animation: stage-sweep-band linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0px 260px;
+  }
+}
+/* 실은 자기 가시성(view())에 물려 자라고, 알약·맥박은 실이 자란 뒤 범위에서 물질화. */
+@supports (animation-timeline: view()) {
+  .stage-thread {
+    animation: stage-thread-draw linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 45%;
+  }
+  .stage-pill {
+    animation: stage-pill-in linear both;
+    animation-timeline: view();
+    animation-range: entry 30% cover 60%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage-thread,
+  .stage-pill,
+  .stage-pulse-ring,
+  .stage-sweep-host::after {
+    animation: none !important;
+  }
+  /* 정적 완성 상태 유지 — 스윕 밴드만은 과정 그 자체라 아예 숨긴다. */
+  .stage-sweep-host::after {
+    opacity: 0;
+  }
+}
+
+/* 무대 어휘 확장 — 여정 장면(stage-scenes.tsx)용. 규칙은 위 stage-* 블록과 동일:
+   view() 연동은 @supports 게이트, 기본 상태 = 완성 상태, reduced-motion = 정적. */
+@keyframes stage-thread-draw-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.stage-thread-x {
+  transform-origin: left;
+}
+.stage-thread-x.stage-from-right {
+  transform-origin: right;
+}
+@keyframes stage-rise {
+  from {
+    transform: translateY(36px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes stage-draw-line {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.stage-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0; /* 기본 = 완성 상태 (미지원/RM 폴백) */
+}
+@keyframes stage-bar-rise {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+.stage-bar {
+  transform-origin: bottom;
+}
+@supports (animation-timeline: view()) {
+  .stage-thread-x {
+    animation: stage-thread-draw-x linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 45%;
+  }
+  .stage-rise {
+    animation: stage-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 90%;
+  }
+  .stage-draw {
+    animation: stage-draw-line linear both;
+    animation-timeline: view();
+    animation-range: entry 20% cover 65%;
+  }
+  .stage-bar {
+    animation: stage-bar-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 15% cover 55%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage-thread-x,
+  .stage-rise,
+  .stage-draw,
+  .stage-bar {
+    animation: none !important;
+  }
+}
