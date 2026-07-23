@@ -3,6 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
+import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Link } from "@/i18n/navigation";
 
 /**
@@ -10,20 +11,13 @@ import { Link } from "@/i18n/navigation";
  * 플래그 on 에서 기존 프리뷰 카드·카운터·기능 캐러셀 섹션을 대체한다. 장면 1(폼→실→알약)은
  * stage-journey.tsx.
  *
- * 장면 2 — 공유: 리퍼러 칩(종이)들이 가로 실로 중앙 스파인에 합류, 접점마다 클릭 맥박.
+ * 장면 2 — 공유: 제품 실물 듀엣(단축 결과 카드 + 실제 LiveClickFeedDemo) — 추상 다이어그램 기각(2026-07-23).
  * 장면 3 — 분석 클라이맥스: 풀블리드 딥그린(accent-900) 필드 위에 라이트그린 데이터 드로잉
  *   (스파크라인 자가-드로잉·주간 막대 상승). kurl 의 "검정 무대"에 해당하는 유일한 색 필드.
  *
  * 데이터 드로잉은 전부 장식(aria-hidden) SVG/DOM — 수치·칩 라벨은 로케일 무관 데모 리터럴.
  * 스크롤 연동/폴백/reduced-motion 규칙은 globals.css stage-* 블록이 소유(AGENTS §11).
  */
-
-const REFERRER_CHIPS = [
-  { label: "instagram bio", side: "left", top: "8%" },
-  { label: "x.com", side: "right", top: "30%" },
-  { label: "youtube", side: "left", top: "54%" },
-  { label: "newsletter", side: "right", top: "76%" },
-] as const;
 
 // 장면 3 데모 시계열 — 실제 StatsHeroCore 가 그대로 그린다(우상향 11포인트).
 const DEMO_SERIES = [12, 20, 17, 32, 28, 46, 41, 62, 58, 84, 96];
@@ -33,63 +27,50 @@ export function StageScenes() {
 
   return (
     <>
-      {/* ── 장면 2: 공유 → 클릭 합류 ─────────────────────────────── */}
+      {/* ── 장면 2: 공유 → 클릭 회귀 — 추상 다이어그램 대신 제품 실물 듀엣.
+          왼쪽 = 카피 + 단축 결과 카드(장식 데모), 오른쪽 = 실제 통계 화면의 LiveClickFeedDemo
+          컴포넌트 그대로(랜딩이 보여주는 것 = 실존 화면, StatsHeroCore 와 같은 계약). */}
       <section className="bg-white dark:bg-slate-950">
-        <div className="container max-w-3xl pb-8 pt-16 sm:pb-10 sm:pt-20">
-          <div className="mb-10 space-y-3 text-center sm:mb-12">
-            <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
-              {t("scene2Eyebrow")}
-            </p>
-            <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
-              {t("scene2Title")}
-            </h2>
-            <p className="mx-auto max-w-md text-balance text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">
-              {t("scene2Desc")}
-            </p>
-          </div>
-
-          {/* 합류 다이어그램 — sm+: 스파인 좌우에서 칩이 실을 타고 합류. <sm: 칩 2×2 + 짧은 스파인 */}
-          <div aria-hidden className="relative mx-auto hidden h-[340px] max-w-xl sm:block">
-            <div className="stage-thread absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 rounded-full bg-gradient-to-b from-accent-300/40 via-accent-500/70 to-accent-600" />
-            {/* 각 행은 컨테이너 가장자리~중앙 스파인까지 절대 스팬 — 연결선이 flex-1 로 스파인에
-                실제로 닿고, 접점 위에서 클릭 맥박이 뛴다("합류"가 구도의 요점). */}
-            {REFERRER_CHIPS.map((chip) => (
+        <div className="container max-w-5xl pb-10 pt-16 sm:pb-14 sm:pt-24">
+          <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-14">
+            <div className="space-y-4">
+              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+                {t("scene2Eyebrow")}
+              </p>
+              <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
+                {t("scene2Title")}
+              </h2>
+              <p className="max-w-md text-balance text-[14px] leading-relaxed text-slate-500 dark:text-slate-400 sm:text-[15px]">
+                {t("scene2Desc")}
+              </p>
               <div
-                key={chip.label}
-                className={
-                  "absolute flex items-center " +
-                  (chip.side === "left"
-                    ? "left-[4%] right-[calc(50%-4px)] flex-row"
-                    : "left-[calc(50%-4px)] right-[4%] flex-row-reverse")
-                }
-                style={{ top: chip.top }}
+                aria-hidden
+                className="select-none rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_16px_44px_-24px_rgba(5,150,105,0.4)] dark:border-slate-700 dark:bg-slate-900"
               >
-                <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1.5 font-mono text-[12px] text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
-                  {chip.label}
-                </span>
-                <span
-                  className={
-                    "stage-thread-x h-px flex-1 bg-accent-300/70 " +
-                    (chip.side === "right" ? "stage-from-right" : "")
-                  }
-                />
-                <span className="relative flex h-2 w-2 shrink-0 items-center justify-center">
-                  <span className="stage-pulse-ring absolute inline-flex h-full w-full rounded-full bg-accent-500 motion-reduce:hidden" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-600" />
-                </span>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="min-w-0">
+                    <span className="block font-mono text-[16px] font-bold tracking-tight text-accent-700 dark:text-accent-400">
+                      kurl.me/demo01
+                    </span>
+                    <span className="mt-1 block truncate font-mono text-[11px] text-slate-400 dark:text-slate-500">
+                      https://your-very-long-url.com/path?with=query
+                    </span>
+                  </span>
+                  <span className="flex shrink-0 items-center gap-1.5">
+                    <span className="rounded-lg border border-slate-200 px-2.5 py-1.5 font-mono text-[10px] font-medium uppercase tracking-tagline text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                      copy
+                    </span>
+                    <span className="rounded-lg border border-slate-200 px-2.5 py-1.5 font-mono text-[10px] font-medium uppercase tracking-tagline text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                      qr
+                    </span>
+                  </span>
+                </div>
               </div>
-            ))}
-          </div>
-          <div aria-hidden className="flex flex-wrap items-center justify-center gap-2 sm:hidden">
-            {REFERRER_CHIPS.map((chip) => (
-              <span
-                key={chip.label}
-                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-mono text-[11px] text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
-              >
-                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-accent-600" />
-                {chip.label}
-              </span>
-            ))}
+            </div>
+            {/* 실제 통계 화면의 라이브 피드가 그대로 — 행이 3.2초마다 실제로 도착한다 */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_20px_56px_-28px_rgba(15,23,42,0.28)] dark:border-slate-800 dark:bg-slate-900">
+              <LiveClickFeedDemo />
+            </div>
           </div>
         </div>
       </section>

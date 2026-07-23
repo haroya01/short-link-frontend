@@ -19,9 +19,14 @@ type Props = {
   authenticated: boolean;
   ready: boolean;
   onShortened: (results: ShortenedItem[]) => void;
+  /**
+   * 랜딩 폴드의 카드-폼 변형 — 바깥 카드(page.tsx)가 보더·포커스 링을 소유하므로
+   * 메인 입력은 무테로 키우고, 버튼은 카드 라운드에 맞춘다. 고급 옵션 필드는 무관.
+   */
+  hero?: boolean;
 };
 
-export function ShortenForm({ authenticated, ready, onShortened }: Props) {
+export function ShortenForm({ authenticated, ready, onShortened, hero = false }: Props) {
   const t = useTranslations("shortenForm");
   const [url, setUrl] = useState("");
   const [customCode, setCustomCode] = useState("");
@@ -94,14 +99,22 @@ export function ShortenForm({ authenticated, ready, onShortened }: Props) {
           placeholder={t("placeholder")}
           disabled={busy}
           aria-invalid={!!error}
-          className="h-12 sm:flex-1"
+          className={
+            hero
+              ? "h-12 border-0 bg-transparent px-4 text-[15px] shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent sm:h-14 sm:flex-1"
+              : "h-12 sm:flex-1"
+          }
         />
         <Button
           type="submit"
           size="lg"
           variant="accent"
           disabled={busy}
-          className="h-12 w-full sm:h-11 sm:w-auto sm:min-w-32"
+          className={
+            hero
+              ? "h-12 w-full rounded-xl sm:h-14 sm:w-auto sm:min-w-36 sm:text-[15px]"
+              : "h-12 w-full sm:h-11 sm:w-auto sm:min-w-32"
+          }
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : t("submit")}
         </Button>
