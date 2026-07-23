@@ -8,6 +8,8 @@ import { ShortenForm } from "@/components/links/shorten/form";
 import { ResultCard } from "@/components/links/shorten/result-card";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
+import { StageJourney } from "@/components/landing/stage-journey";
+import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
 import { RecentLinks } from "@/components/links/recent-links";
 import { useAuth } from "@/lib/auth";
@@ -34,6 +36,9 @@ export default function HomePage() {
   const { authenticated, ready } = useAuth();
   const t = useTranslations("home");
   const locale = useLocale();
+  // 무대(Stage) 연출 레이어 — kurl_stage 플래그(?stage=on|off / 쿠키 / split env)로만 켜진다.
+  // off(기본)면 이 페이지는 플래그 도입 전과 픽셀 단위로 동일해야 한다(롤백 계약).
+  const stage = useStageVariant();
   // headline2 가 ja 에서 「クリックの「いつ・どこから・誰が」を一目で」 23자로 늘어나
   // 기본 sm:text-[60px] 컨테이너 (max-w-3xl) 를 초과해 wrap. ko/en 은 short copy
   // (12/24자) 라 60px 유지 가능 — locale 별로 hero font scale 분기. mobile 도 동일
@@ -107,7 +112,7 @@ export default function HomePage() {
            * `profile-fade` keyframe gives it the same fade-in feel without the cascading delay.
            */}
           <div
-            className="profile-fade"
+            className={"profile-fade" + (stage === "on" ? " stage-sweep-host" : "")}
             style={{ ["--idx" as string]: 4 } as React.CSSProperties}
           >
             <ShortenForm
@@ -194,6 +199,8 @@ export default function HomePage() {
           <ChevronDown className="h-4 w-4 motion-safe:animate-bounce" />
         </div>
       </section>
+
+      {stage === "on" && <StageJourney />}
 
       <LandingPreviews />
 
