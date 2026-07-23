@@ -17,6 +17,8 @@ import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { useSidebarState } from "@/components/common/sidebar-state";
 import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
+import { useCondensedChrome } from "@/lib/use-condensed-chrome";
+import { cn } from "@/lib/utils";
 
 /**
  * A chrome link that normally soft-navigates (BlogChromeLink) but falls back to a plain <a> hard
@@ -81,6 +83,7 @@ export function AppHeader({
   );
   const { open, toggle } = useSidebarState();
   const pathname = usePathname();
+  const condensed = useCondensedChrome();
 
   const mobileWriteCircle = (authed: boolean) => (
     <ChromeNavLink
@@ -140,8 +143,16 @@ export function AppHeader({
   );
 
   return (
-    <header className="vt-app-header glass-chrome sticky top-0 z-30 border-b border-slate-200/60 dark:border-slate-800/60">
-      <div className="container flex h-14 items-center justify-between gap-2">
+    <header className="vt-app-header sticky top-0 z-30">
+      {/* 유리는 내부 셸 — 스크롤 시작 시 떠 있는 캡슐로 축소 (nav.tsx 와 같은 §12 패턴). */}
+      <div
+        className={cn(
+          "glass-chrome border-b border-slate-200/60 transition-all duration-300 ease-[var(--ease)] [transition-property:margin,max-width,border-radius,box-shadow] motion-reduce:transition-none dark:border-slate-800/60",
+          condensed &&
+            "mx-3 mt-2 max-w-5xl rounded-full border shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] lg:mx-auto",
+        )}
+      >
+      <div className={cn("container flex items-center justify-between gap-2 transition-[height] duration-300 ease-[var(--ease)] motion-reduce:transition-none", condensed ? "h-12" : "h-14")}>
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           {showMenu && (
             <button
@@ -198,6 +209,7 @@ export function AppHeader({
             authCluster(showAuthed)
           )}
         </div>
+      </div>
       </div>
     </header>
   );

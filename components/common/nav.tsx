@@ -11,6 +11,7 @@ import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
+import { useCondensedChrome } from "@/lib/use-condensed-chrome";
 import { cn } from "@/lib/utils";
 
 /**
@@ -61,6 +62,7 @@ export function Nav() {
   const t = useTranslations("nav");
   const { authenticated, ready, me } = useAuth();
   const [sheet, setSheet] = useState(false);
+  const condensed = useCondensedChrome();
 
   // 공개 프로필 페이지(u/) 는 standalone 느낌 유지 — Footer 도 같은 분기.
   if (pathname.startsWith("/u/")) return null;
@@ -75,8 +77,17 @@ export function Nav() {
 
   return (
     <>
-    <header className="glass-chrome sticky top-0 z-30 border-b border-slate-200/60 dark:border-slate-800/60">
-      <div className="container flex h-14 items-center justify-between gap-2">
+    {/* 외곽은 투명 sticky, 유리는 내부 셸 — 스크롤이 시작되면 셸이 떠 있는 캡슐로 축소된다
+        (seed 류 condensed nav, AGENTS §12). 축소 시 하단 헤어라인이 전체 보더로 승격. */}
+    <header className="sticky top-0 z-30">
+      <div
+        className={cn(
+          "glass-chrome border-b border-slate-200/60 transition-all duration-300 ease-[var(--ease)] [transition-property:margin,max-width,border-radius,box-shadow] motion-reduce:transition-none dark:border-slate-800/60",
+          condensed &&
+            "mx-3 mt-2 max-w-5xl rounded-full border shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] lg:mx-auto",
+        )}
+      >
+      <div className={cn("container flex items-center justify-between gap-2 transition-[height] duration-300 ease-[var(--ease)] motion-reduce:transition-none", condensed ? "h-12" : "h-14")}>
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">
           {/* Mobile nav lives in the bottom tab bar (LinksBottomNav) — no hamburger here. */}
           <Link href="/" aria-label="kurl" className="mark-hoverable shrink-0">
@@ -179,6 +190,7 @@ export function Nav() {
             </>
           )}
         </div>
+      </div>
       </div>
     </header>
     <AccountSheet open={sheet} onClose={() => setSheet(false)} product="links" />
