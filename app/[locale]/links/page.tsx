@@ -46,8 +46,8 @@ export default function HomePage() {
   // 이유로 ja 만 base 24/26px 으로 축소.
   const headlineSizeClass =
     locale === "ja"
-      ? "text-[32px] leading-[1.08] min-[390px]:text-[33px] sm:text-[40px] sm:leading-[1.15] [text-wrap:nowrap] sm:[text-wrap:balance]"
-      : "text-headline-md min-[390px]:text-headline-md sm:text-headline-xl";
+      ? "text-[33px] leading-[1.08] min-[390px]:text-[34px] sm:text-[46px] sm:leading-[1.12] [text-wrap:nowrap] sm:[text-wrap:balance]"
+      : "text-[38px] leading-[1.08] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.02]";
   const [results, setResults] = useState<
     { res: CreateLinkResponse; original: string }[] | null
   >(null);
@@ -69,20 +69,12 @@ export default function HomePage() {
        */}
       <section className="relative isolate overflow-hidden bg-white dark:bg-slate-950">
         <div className="container relative z-10 max-w-3xl py-20 sm:py-28">
-          <div className="hero-stagger mb-10 space-y-4 sm:mb-12">
-            <div
-              className="flex items-center justify-center gap-3 text-center"
-              style={{ ["--hi" as string]: 0 } as React.CSSProperties}
-            >
-              <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
-                {t("tagline")}
-              </p>
-              <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
-            </div>
+          {/* "kurl v1" 아이브로+헤어라인은 철거 — 버전 배지는 방문자에게 무의미한 크롬이었고,
+              폴드는 헤드라인·폼 카드 둘만 남길수록 강해진다. */}
+          <div className="hero-stagger mb-10 space-y-5 sm:mb-12">
             <h1
               data-testid="home-hero-heading"
-              className={`text-balance text-center font-semibold tracking-headline text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
+              className={`text-balance text-center font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
               <span className="sm:hidden">
@@ -116,9 +108,13 @@ export default function HomePage() {
             className={"profile-fade" + (stage === "on" ? " stage-sweep-host" : "")}
             style={{ ["--idx" as string]: 4 } as React.CSSProperties}
           >
-            <ShortenForm
-              authenticated={authenticated}
-              ready={ready}
+            {/* 폼 = 떠 있는 카드 — 그린 틴트의 큰 소프트 섀도가 폴드의 유일한 깊이. 포커스가
+                들어오면 보더·섀도가 그린으로 응답한다(입력이 무대의 주인공이라는 신호). */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-1.5 shadow-[0_24px_64px_-28px_rgba(5,150,105,0.45)] transition-[border-color,box-shadow] duration-200 ease-out focus-within:border-accent-300 focus-within:shadow-[0_24px_64px_-22px_rgba(5,150,105,0.55)] dark:border-slate-700 dark:bg-slate-900 sm:p-2">
+              <ShortenForm
+                hero
+                authenticated={authenticated}
+                ready={ready}
               onShortened={(items) => {
                 setResults(
                   items.map((it) => ({
@@ -136,7 +132,8 @@ export default function HomePage() {
                   });
                 }
               }}
-            />
+              />
+            </div>
           </div>
 
           <div className="mt-6 min-h-[64px]">
@@ -213,8 +210,9 @@ export default function HomePage() {
       )}
 
       {/* `ready` 게이트: /me 해석 전엔 렌더하지 않는다 — 로그인 사용자의 첫 렌더(authenticated=false)에
-          섹션이 잠깐 나타났다 사라지는 왕복 깜빡임을 막는다. */}
-      {ready && !authenticated && recent.length > 0 && (
+          섹션이 잠깐 나타났다 사라지는 왕복 깜빡임을 막는다.
+          stage on 은 여정으로 끝나는 한 편의 페이지 — 최근 링크·비교표·FAQ 꼬리를 달지 않는다. */}
+      {stage !== "on" && ready && !authenticated && recent.length > 0 && (
         <Section eyebrow={t("recentEyebrow")} title={t("recentTitle")} subhead={t("recentSubhead")}>
           <RecentLinks />
         </Section>
@@ -256,18 +254,22 @@ export default function HomePage() {
         </>
       )}
 
-      <Section
-        wide
-        eyebrow={t("whyEyebrow")}
-        title={t("whyTitle")}
-        subhead={t("whySubhead")}
-      >
-        <WhyKurl />
-      </Section>
+      {stage !== "on" && (
+        <>
+          <Section
+            wide
+            eyebrow={t("whyEyebrow")}
+            title={t("whyTitle")}
+            subhead={t("whySubhead")}
+          >
+            <WhyKurl />
+          </Section>
 
-      <Section>
-        <HomeFaq />
-      </Section>
+          <Section>
+            <HomeFaq />
+          </Section>
+        </>
+      )}
     </div>
   );
 }

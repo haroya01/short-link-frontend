@@ -11,7 +11,6 @@ import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
-import { useCondensedChrome } from "@/lib/use-condensed-chrome";
 import { cn } from "@/lib/utils";
 
 /**
@@ -62,7 +61,6 @@ export function Nav() {
   const t = useTranslations("nav");
   const { authenticated, ready, me } = useAuth();
   const [sheet, setSheet] = useState(false);
-  const condensed = useCondensedChrome();
 
   // 공개 프로필 페이지(u/) 는 standalone 느낌 유지 — Footer 도 같은 분기.
   if (pathname.startsWith("/u/")) return null;
@@ -77,24 +75,13 @@ export function Nav() {
 
   return (
     <>
-    {/* condensed 크롬 = "정적 콘텐츠 + 플레이트 2장 크로스페이드" (AGENTS §12). 콘텐츠는 한 픽셀도
-        움직이지 않고, 풀폭 바 판(A)과 떠 있는 캡슐 판(B)이 opacity/transform 으로만 교차한다 —
-        레이아웃 속성 전환은 매 프레임 리플로우+유리 재연산이라 저프레임으로 읽혔던 원인. */}
+    {/* 상시 유리 캡슐(§12) — 스크롤 상태 무관, 첫 화면부터 떠 있는 투명 카드로 보인다.
+        (스크롤 시에만 캡슐화되던 2장 크로스페이드를 단일 상태로 단순화) */}
     <header className="sticky top-0 z-30">
       <div className="relative">
         <div
           aria-hidden
-          className={cn(
-            "glass-chrome absolute inset-0 border-b border-slate-200/60 transition-[opacity,visibility] duration-300 ease-[var(--ease)] motion-reduce:transition-none dark:border-slate-800/60",
-            condensed && "invisible opacity-0",
-          )}
-        />
-        <div
-          aria-hidden
-          className={cn(
-            "glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-full border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-[opacity,transform,visibility] duration-300 ease-[var(--ease)] motion-reduce:transition-none dark:border-slate-800/60",
-            condensed ? "scale-100 opacity-100" : "invisible scale-[0.985] opacity-0",
-          )}
+          className="glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-full border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] dark:border-slate-800/60"
         />
       <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">
