@@ -1,21 +1,36 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { LinkStats } from "@/types";
-import { JumpBar, type RangeDays } from "./jump-bar";
 import { StatsCards } from "@/components/links/stats/cards";
 import { StatsJournal } from "@/components/links/stats/journal";
-import { WhenChapter } from "./chapters/when-chapter";
+import { ChapterCards } from "./chapter-cards";
+import { WhenChapter, type RangeDays } from "./chapters/when-chapter";
 import { WhereChapter } from "./chapters/where-chapter";
 import { WhoChapter } from "./chapters/who-chapter";
 import { Header } from "./header";
 import { StatsEmptyState } from "./stats-empty-state";
 import { TabBar } from "./tab-bar";
 import { SettingsTab } from "./tabs/settings-tab";
-import { useTabHash } from "../_lib/use-tab-hash";
+import { useTabHash, type TabKey } from "../_lib/use-tab-hash";
 
-// 분석은 이제 단일 스크롤 허브 — 콘텐츠 섹션은 전부 같은 뷰에 있으므로 KPI 점프는 순수
-// 스크롤이다. 탭 전환이 필요한 건 설정뿐(5탭 시절의 SECTION_TAB 매핑은 그래서 죽었다).
+// 뎁스 2층 구조: 1층(개요) = 히어로 KPI + 링크 일지 + 챕터 카드 3장(엄선), 2층 = 챕터 상세.
+// 근거/KPI 점프는 섹션이 사는 챕터로 내려간 뒤 그 섹션으로 스크롤한다 — 해시 기반이라
+// 브라우저 뒤로가기가 그대로 "개요로 복귀"가 되는 예측 가능한 동작.
+const SECTION_CHAPTER: Record<string, TabKey> = {
+  "section-device": "who",
+  "section-bots": "who",
+  "section-live": "when",
+  "section-heatmap": "when",
+  "section-daily": "when",
+  "section-hourly": "when",
+  "section-sources": "where",
+  "chapter-who": "who",
+  "chapter-when": "when",
+  "chapter-where": "where",
+};
 
 /**
  * Body of the stats page, lifted out of {@code page.tsx} so the public {@code /demo} route can
@@ -42,7 +57,8 @@ export function StatsBody({
   onTick: () => void;
   demo?: boolean;
 }) {
-  const [tab, setTab] = useTabHash();
+  const t = useTranslations("stats");
+  const [view, setView] = useTabHash();
   const [pendingScroll, setPendingScroll] = useState<string | null>(null);
   const [rangeDays, setRangeDays] = useState<RangeDays>(30);
   // 기간 프리셋은 클라이언트 절환 — API 는 최근 30일치 일별 시계열을 주므로 그 안에서 자른다.
@@ -53,22 +69,26 @@ export function StatsBody({
 
   useEffect(() => {
     if (!pendingScroll) return;
-    // The target section only enters the DOM after the tab switch re-renders. requestAnimationFrame
-    // pushes the scroll to the next paint so the element exists when we look it up.
+    // 챕터 뷰가 렌더된 다음 페인트에 목적지 섹션이 생긴다 — rAF 로 한 박자 늦춰 스크롤.
     const id = pendingScroll;
     const raf = requestAnimationFrame(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
       setPendingScroll(null);
     });
     return () => cancelAnimationFrame(raf);
-  }, [pendingScroll, tab]);
+  }, [pendingScroll, view]);
 
   function handleNavigate(section: string) {
-    // 콘텐츠 섹션은 전부 분석 허브에 있다 — 설정 뷰에서 눌렀을 때만 허브로 복귀 후 스크롤.
-    if (tab === "settings") {
-      setTab("overview");
-    }
+    const target = SECTION_CHAPTER[section] ?? "when";
+    if (target !== view) setView(target);
     setPendingScroll(section);
+  }
+
+  function backToOverview() {
+    setView("overview");
+    setPendingScroll(null);
+    window.scrollTo({ top: 0 });
   }
 
   return (
@@ -80,36 +100,60 @@ export function StatsBody({
         onCopy={onCopy}
         demo={demo}
       />
-      {data.totalClicks === 0 && <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />}
-      <StatsCards
-        total={data.totalClicks}
-        human={data.humanClicks}
-        bot={data.botClicks}
-        unique={data.uniqueClicks}
-        profileClicks={data.profileClicks}
-        timeToFirstClickMinutes={data.timeToFirstClickMinutes}
-        velocityRatio={data.velocity?.ratio ?? 0}
-        dailySeries={slicedDaily.map((d) => d.count)}
-        animate={!demo}
-        onNavigate={handleNavigate}
-      />
-      {/* 링크 일지 — 문장이 1급, 차트는 증거(문장 클릭 = 근거 점프). 구 해석 요약 카드 대체. */}
-      <StatsJournal data={data} onNavigate={handleNavigate} />
-      <TabBar
-        active={tab === "settings" ? "settings" : "overview"}
-        onSelect={(k) => setTab(k === "settings" ? "settings" : "overview")}
-        items={["overview", "settings"]}
-      />
-      {tab !== "settings" ? (
-        <div className="space-y-8">
-          <JumpBar range={rangeDays} onRange={setRangeDays} />
-          {/* 랜딩의 약속 그대로 — 누가, 언제, 어디서 3장. */}
-          <WhoChapter data={data} />
-          <WhenChapter data={data} dailyClicks={slicedDaily} onTick={onTick} demo={demo} />
-          <WhereChapter data={data} />
-        </div>
+      {view === "overview" || view === "settings" ? (
+        <>
+          {data.totalClicks === 0 && (
+            <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />
+          )}
+          <StatsCards
+            total={data.totalClicks}
+            human={data.humanClicks}
+            bot={data.botClicks}
+            unique={data.uniqueClicks}
+            profileClicks={data.profileClicks}
+            timeToFirstClickMinutes={data.timeToFirstClickMinutes}
+            velocityRatio={data.velocity?.ratio ?? 0}
+            dailySeries={slicedDaily.map((d) => d.count)}
+            animate={!demo}
+            onNavigate={handleNavigate}
+          />
+          {view === "overview" && (
+            <StatsJournal data={data} onNavigate={handleNavigate} />
+          )}
+          <TabBar
+            active={view === "settings" ? "settings" : "overview"}
+            onSelect={(k) => setView(k === "settings" ? "settings" : "overview")}
+            items={["overview", "settings"]}
+          />
+          {view === "overview" ? (
+            <ChapterCards data={data} onOpen={(c) => handleNavigate(`chapter-${c}`)} />
+          ) : (
+            <SettingsTab data={data} onTick={onTick} demo={demo} />
+          )}
+        </>
       ) : (
-        <SettingsTab data={data} onTick={onTick} demo={demo} />
+        <div className="space-y-5">
+          {/* 2층 챕터 상세 — 돌아가는 길은 항상 같은 자리(좌상단), 브라우저 뒤로가기도 동작 */}
+          <button
+            type="button"
+            onClick={backToOverview}
+            className="focus-ring inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[13px] font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> {t("tabs.overview")}
+          </button>
+          {view === "who" && <WhoChapter data={data} />}
+          {view === "when" && (
+            <WhenChapter
+              data={data}
+              dailyClicks={slicedDaily}
+              range={rangeDays}
+              onRange={setRangeDays}
+              onTick={onTick}
+              demo={demo}
+            />
+          )}
+          {view === "where" && <WhereChapter data={data} />}
+        </div>
       )}
     </>
   );

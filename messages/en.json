@@ -1255,7 +1255,7 @@
       "audience": "Audience",
       "settings": "Settings",
       "descriptions": {
-        "overview": "One-screen hub — quality, live, heatmap, trend, sources and audience in a single scroll. Settings lives apart.",
+        "overview": "A curated overview — five journal lines and three doors (who, when, where). Details live inside.",
         "traffic": "Volume shape — daily trend, hour-of-day, country split.",
         "sources": "Where it came from — referrers, UTM (4), channel/src tags.",
         "audience": "Who came — device, OS, browser, region, language, bots.",

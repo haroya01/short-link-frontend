@@ -23,8 +23,8 @@ test.describe("stats page", () => {
 
     await page.goto(`/ko/stats/${link.shortCode}`);
     await expect(page.getByText("총 클릭")).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText("해석 요약")).toBeVisible();
-    await expect(page.getByText("7일 추세")).toBeVisible();
+    await expect(page.getByText("링크 일지")).toBeVisible();
+    await expect(page.getByRole("button", { name: "누가" })).toBeVisible();
   });
 
   test("public toggle exposes /public route", async ({ page, context }) => {

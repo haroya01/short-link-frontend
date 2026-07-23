@@ -1255,7 +1255,7 @@
       "audience": "Đối tượng",
       "settings": "Cài đặt",
       "descriptions": {
-        "overview": "Một màn hình duy nhất — chất lượng, trực tiếp, khung giờ, xu hướng, nguồn và khách truy cập. Cài đặt tách riêng.",
+        "overview": "Tổng quan chọn lọc — năm dòng nhật ký và ba cánh cửa (ai, khi nào, từ đâu). Chi tiết ở bên trong.",
         "traffic": "Hình dạng khối lượng — xu hướng ngày, giờ trong ngày, phân tách theo quốc gia.",
         "sources": "Đến từ đâu — nguồn giới thiệu, UTM (4), thẻ kênh/src.",
         "audience": "Ai đã đến — thiết bị, hệ điều hành, trình duyệt, khu vực, ngôn ngữ, bot.",

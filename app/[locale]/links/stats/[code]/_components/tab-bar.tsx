@@ -21,9 +21,9 @@ export function TabBar({ active, onSelect, items }: Props) {
   const t = useTranslations("stats");
   const all: { key: TabKey; label: string }[] = [
     { key: "overview", label: t("tabs.overview") },
-    { key: "traffic", label: t("tabs.traffic") },
-    { key: "sources", label: t("tabs.sources") },
-    { key: "audience", label: t("tabs.audience") },
+    { key: "who", label: t("chapters.who") },
+    { key: "when", label: t("chapters.when") },
+    { key: "where", label: t("chapters.where") },
     { key: "settings", label: t("tabs.settings") },
   ];
   const tabs = items ? all.filter((it) => items.includes(it.key)) : all;
