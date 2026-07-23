@@ -8,7 +8,6 @@ import { ShortenForm } from "@/components/links/shorten/form";
 import { ResultCard } from "@/components/links/shorten/result-card";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
-import { StageJourney } from "@/components/landing/stage-journey";
 import { StageScenes } from "@/components/landing/stage-scenes";
 import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
@@ -200,14 +199,7 @@ export default function HomePage() {
 
       {/* 무대 on = "잉크 스파인 + 딥그린 클라이맥스" 여정이 프리뷰 카드·카운터·기능 캐러셀을
           대체한다(vault kurl-web-stage-design). off = 기존 구성 그대로(롤백 계약). */}
-      {stage === "on" ? (
-        <>
-          <StageJourney />
-          <StageScenes />
-        </>
-      ) : (
-        <LandingPreviews />
-      )}
+      {stage === "on" ? <StageScenes /> : <LandingPreviews />}
 
       {/* `ready` 게이트: /me 해석 전엔 렌더하지 않는다 — 로그인 사용자의 첫 렌더(authenticated=false)에
           섹션이 잠깐 나타났다 사라지는 왕복 깜빡임을 막는다.
