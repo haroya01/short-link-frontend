@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { cn, formatNumber } from "@/lib/utils";
 
 type Props = {
@@ -25,9 +26,10 @@ type Props = {
  * (과장광고 방지)이므로, 이 파일을 고치면 두 표면이 함께 변한다는 걸 전제로 고칠 것.
  */
 export function StatsHeroCore({ label, caption, total, series, draw = "static", className }: Props) {
+  const gradId = useId();
   const points = buildPoints(series);
   return (
-    <div className={cn("rounded-2xl bg-accent-900 p-5", className)}>
+    <div className={cn("flex flex-col rounded-2xl bg-accent-900 p-5", className)}>
       <div className="flex items-baseline justify-between gap-3">
         <span className="text-[10px] font-semibold uppercase tracking-tagline text-accent-300">
           {label}
@@ -40,7 +42,15 @@ export function StatsHeroCore({ label, caption, total, series, draw = "static", 
         {formatNumber(total)}
       </p>
       {points && (
-        <svg viewBox="0 0 320 88" fill="none" aria-hidden className="mt-4 w-full">
+        <svg viewBox="0 0 320 88" fill="none" aria-hidden className="mt-auto w-full pt-4">
+          <defs>
+            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#6EE7B7" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#6EE7B7" stopOpacity="0.03" />
+            </linearGradient>
+          </defs>
+          {/* 선 아래 면 채움 — 맨 선만 있으면 필드가 텅 빈 골짜기로 읽힌다(딥그린 위 질량 부여) */}
+          <polygon points={`0,83 ${points.line} ${points.lastX},83`} fill={`url(#${gradId})`} />
           <polyline
             points={points.line}
             pathLength={1}
