@@ -11,6 +11,7 @@ import { AppsGrid } from "@/components/common/apps-grid";
 import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { ThemeToggle } from "@/components/common/theme-toggle";
+import { useCondensedChrome } from "@/lib/use-condensed-chrome";
 import { cn } from "@/lib/utils";
 
 /**
@@ -61,6 +62,7 @@ export function Nav() {
   const t = useTranslations("nav");
   const { authenticated, ready, me } = useAuth();
   const [sheet, setSheet] = useState(false);
+  const condensed = useCondensedChrome();
 
   // 공개 프로필 페이지(u/) 는 standalone 느낌 유지 — Footer 도 같은 분기.
   if (pathname.startsWith("/u/")) return null;
@@ -75,8 +77,26 @@ export function Nav() {
 
   return (
     <>
-    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/85">
-      <div className="container flex h-14 items-center justify-between gap-2">
+    {/* condensed 크롬 = "정적 콘텐츠 + 플레이트 2장 크로스페이드" (AGENTS §12). 콘텐츠는 한 픽셀도
+        움직이지 않고, 풀폭 바 판(A)과 떠 있는 캡슐 판(B)이 opacity/transform 으로만 교차한다 —
+        레이아웃 속성 전환은 매 프레임 리플로우+유리 재연산이라 저프레임으로 읽혔던 원인. */}
+    <header className="sticky top-0 z-30">
+      <div className="relative">
+        <div
+          aria-hidden
+          className={cn(
+            "glass-chrome absolute inset-0 border-b border-slate-200/60 transition-[opacity,visibility] duration-300 ease-[var(--ease)] motion-reduce:transition-none dark:border-slate-800/60",
+            condensed && "invisible opacity-0",
+          )}
+        />
+        <div
+          aria-hidden
+          className={cn(
+            "glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-full border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-[opacity,transform,visibility] duration-300 ease-[var(--ease)] motion-reduce:transition-none dark:border-slate-800/60",
+            condensed ? "scale-100 opacity-100" : "invisible scale-[0.985] opacity-0",
+          )}
+        />
+      <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">
           {/* Mobile nav lives in the bottom tab bar (LinksBottomNav) — no hamburger here. */}
           <Link href="/" aria-label="kurl" className="mark-hoverable shrink-0">
@@ -179,6 +199,7 @@ export function Nav() {
             </>
           )}
         </div>
+      </div>
       </div>
     </header>
     <AccountSheet open={sheet} onClose={() => setSheet(false)} product="links" />

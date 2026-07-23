@@ -63,7 +63,7 @@ export function BlogBottomNav() {
     <>
       <nav
         className={cn(
-          "vt-bottom-nav fixed inset-x-0 bottom-0 z-40 flex overflow-visible border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800 dark:bg-slate-950/90 sm:hidden",
+          "vt-bottom-nav glass-chrome fixed inset-x-0 bottom-0 z-40 flex overflow-visible border-t border-slate-200/60 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
           hidden && "translate-y-full",
         )}
       >

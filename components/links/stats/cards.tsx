@@ -3,6 +3,7 @@
 import { Bot, Clock, IdCard, MousePointerClick, TrendingUp, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCountUp } from "@/lib/animations";
+import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { cn, formatNumber } from "@/lib/utils";
 
 type Props = {
@@ -18,6 +19,8 @@ type Props = {
   profileClicks?: number | null;
   timeToFirstClickMinutes?: number | null;
   velocityRatio?: number | null;
+  /** 일별 클릭 시계열(카운트만) — 있으면 히어로 카드에 자가-드로잉 스파크라인. */
+  dailySeries?: number[] | null;
   animate?: boolean;
   /**
    * Called when a card is clicked. Hosts on a tabbed surface use this to switch tab + scroll;
@@ -42,6 +45,7 @@ export function StatsCards({
   profileClicks,
   timeToFirstClickMinutes,
   velocityRatio,
+  dailySeries,
   animate = true,
   onNavigate,
 }: Props) {
@@ -88,36 +92,35 @@ export function StatsCards({
           : "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]",
       )}
     >
+      {/* 히어로 = 딥그린 시그니처 패널(StatsHeroCore) — 랜딩 무대 장면 3과 같은 컴포넌트.
+          랜딩이 약속하는 카드가 실제 화면의 이 카드다(과장광고 방지 계약). */}
       <button
         type="button"
         onClick={() => jump("section-daily")}
         disabled={!interactive}
         aria-disabled={!interactive}
         className={cn(
-          "relative col-span-2 overflow-hidden rounded-2xl border border-accent-200 bg-white p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 ease-out sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:bg-slate-900 dark:shadow-none",
+          "relative col-span-2 overflow-hidden rounded-2xl border border-accent-800 p-0 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 ease-out sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:shadow-none",
           interactive
-            ? "group cursor-pointer hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-accent-500/50"
+            ? "group cursor-pointer hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(15,23,42,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
             : "cursor-default",
         )}
       >
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-semibold text-accent-700 dark:text-accent-300">
-            {t("totalClicks")}
-          </span>
-          <span className="grid h-7 w-7 place-items-center rounded-full bg-accent-700 text-white shadow-sm transition-transform duration-200 ease-out group-hover:scale-110">
-            <MousePointerClick className="h-3.5 w-3.5" />
-          </span>
-        </div>
-        <p className="mt-3 font-mono text-[34px] font-bold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
-          {formatNumber(animatedTotal)}
-        </p>
+        <StatsHeroCore
+          label={t("totalClicks")}
+          caption={`${t("human")} ${humanRatio.toFixed(0)}%`}
+          total={animatedTotal}
+          series={dailySeries}
+          draw={animate ? "mount" : "static"}
+          className="rounded-none"
+        />
         {hasUnique && (
-          <p className="mt-3 text-[11px] text-slate-600 dark:text-slate-400">
-            <span className="font-mono font-medium tabular-nums text-slate-900 dark:text-slate-100">
+          <p className="bg-accent-900 px-5 pb-4 text-[11px] text-accent-100/70">
+            <span className="font-mono font-medium tabular-nums text-white">
               {formatNumber(unique as number)}
             </span>{" "}
             {t("unique").toLowerCase()}{" "}
-            <span className="text-slate-400 dark:text-slate-500">· {t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) })}</span>
+            <span className="text-accent-300/70">· {t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) })}</span>
           </p>
         )}
       </button>

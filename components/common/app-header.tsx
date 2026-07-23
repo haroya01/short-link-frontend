@@ -17,6 +17,8 @@ import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { useSidebarState } from "@/components/common/sidebar-state";
 import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
+import { useCondensedChrome } from "@/lib/use-condensed-chrome";
+import { cn } from "@/lib/utils";
 
 /**
  * A chrome link that normally soft-navigates (BlogChromeLink) but falls back to a plain <a> hard
@@ -81,6 +83,7 @@ export function AppHeader({
   );
   const { open, toggle } = useSidebarState();
   const pathname = usePathname();
+  const condensed = useCondensedChrome();
 
   const mobileWriteCircle = (authed: boolean) => (
     <ChromeNavLink
@@ -140,8 +143,25 @@ export function AppHeader({
   );
 
   return (
-    <header className="vt-app-header sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
-      <div className="container flex h-14 items-center justify-between gap-2">
+    <header className="vt-app-header sticky top-0 z-30">
+      {/* condensed 크롬 = 플레이트 2장 크로스페이드 — nav.tsx 와 같은 §12 패턴(콘텐츠 정적,
+          opacity/transform 만 전환 = 컴포지터 전용). */}
+      <div className="relative">
+        <div
+          aria-hidden
+          className={cn(
+            "glass-chrome absolute inset-0 border-b border-slate-200/60 transition-[opacity,visibility] duration-300 ease-[var(--ease)] motion-reduce:transition-none dark:border-slate-800/60",
+            condensed && "invisible opacity-0",
+          )}
+        />
+        <div
+          aria-hidden
+          className={cn(
+            "glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-full border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-[opacity,transform,visibility] duration-300 ease-[var(--ease)] motion-reduce:transition-none dark:border-slate-800/60",
+            condensed ? "scale-100 opacity-100" : "invisible scale-[0.985] opacity-0",
+          )}
+        />
+      <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           {showMenu && (
             <button
@@ -198,6 +218,7 @@ export function AppHeader({
             authCluster(showAuthed)
           )}
         </div>
+      </div>
       </div>
     </header>
   );

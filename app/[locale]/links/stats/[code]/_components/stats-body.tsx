@@ -91,6 +91,7 @@ export function StatsBody({
         profileClicks={data.profileClicks}
         timeToFirstClickMinutes={data.timeToFirstClickMinutes}
         velocityRatio={data.velocity?.ratio ?? 0}
+        dailySeries={data.dailyClicks?.map((d) => d.count)}
         animate={!demo}
         onNavigate={handleNavigate}
       />
