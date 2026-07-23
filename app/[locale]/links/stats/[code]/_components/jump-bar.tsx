@@ -7,12 +7,9 @@ import { cn } from "@/lib/utils";
 export type RangeDays = 7 | 30;
 
 const SECTIONS = [
-  { id: "section-live", labelKey: null },
-  { id: "section-heatmap", labelKey: "section.heatmap.title" },
-  { id: "section-daily", labelKey: "section.daily.title" },
-  { id: "section-hourly", labelKey: "section.hourly.title" },
-  { id: "section-sources", labelKey: "tabs.sources" },
-  { id: "section-device", labelKey: "tabs.audience" },
+  { id: "chapter-who", labelKey: "chapters.who" },
+  { id: "chapter-when", labelKey: "chapters.when" },
+  { id: "chapter-where", labelKey: "chapters.where" },
 ] as const;
 
 /**
@@ -74,7 +71,7 @@ export function JumpBar({
                   : "text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100",
               )}
             >
-              {s.labelKey === null ? "LIVE" : t(s.labelKey)}
+              {t(s.labelKey)}
             </button>
           );
         })}

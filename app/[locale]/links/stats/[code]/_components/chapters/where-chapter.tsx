@@ -3,10 +3,13 @@
 import { useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
 import { ReferrerChart } from "@/components/links/stats/charts/referrer-chart";
+import { CountryTable } from "@/components/links/stats/country-table";
 import { Section } from "@/components/common/section";
 import type { LinkStats } from "@/types";
+import { ChapterHeading } from "./chapter-heading";
 
-export function SourcesTab({ data }: { data: LinkStats }) {
+/** 3장 어디서 — 유입(호스트/URL/UTM/채널), 지리(국가/지역/도시). (구 유입 탭 + 트래픽의 국가 + 방문자의 지리) */
+export function WhereChapter({ data }: { data: LinkStats }) {
   const t = useTranslations("stats");
   const utmHasAny =
     data.utmSourceClicks.length +
@@ -16,7 +19,8 @@ export function SourcesTab({ data }: { data: LinkStats }) {
     0;
 
   return (
-    <div className="space-y-4">
+    <div id="chapter-where" className="scroll-mt-28 space-y-4">
+      <ChapterHeading index={3} title={t("chapters.where")} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section
           id="section-sources"
@@ -103,6 +107,22 @@ export function SourcesTab({ data }: { data: LinkStats }) {
               items={data.sourceChannelClicks.map((s) => ({ label: s.source, count: s.count }))}
             />
           )}
+        </Section>
+      </div>
+
+      <Section title={t("section.country.title")} description={t("section.country.desc")}>
+        <CountryTable data={data.countryClicks} />
+      </Section>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <Section title={t("section.region.title")} description={t("section.region.desc")}>
+          <BreakdownList
+            items={data.regionClicks.map((r) => ({ label: r.region, count: r.count }))}
+          />
+        </Section>
+        <Section title={t("section.city.title")} description={t("section.city.desc")}>
+          <BreakdownList
+            items={data.cityClicks.map((c) => ({ label: c.city, count: c.count }))}
+          />
         </Section>
       </div>
     </div>

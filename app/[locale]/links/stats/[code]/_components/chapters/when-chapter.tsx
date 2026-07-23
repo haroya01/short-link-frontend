@@ -2,14 +2,16 @@
 
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { CountryTable } from "@/components/links/stats/country-table";
+import { Heatmap } from "@/components/links/stats/charts/heatmap";
+import { LiveClickFeed } from "@/components/links/stats/live-click-feed";
+import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Reveal } from "@/components/common/reveal";
 import { Section } from "@/components/common/section";
 import type { LinkStats } from "@/types";
+import { ChapterHeading } from "./chapter-heading";
 
-// 두 차트만 recharts(~90KB gz)를 끌어온다 — 기본 탭은 overview(recharts 미사용)라, 이 무게가 stats
-// 라우트 첫 로드에 실리지 않게 트래픽 탭이 실제로 열릴 때만 청크를 받는다. 로딩 중엔 차트 높이만큼의
-// 자리표시자를 두어 하이드레이션 시 레이아웃이 튀지 않게 한다(블로그 분석 차트와 같은 문법).
+// recharts(~90KB gz)는 이 두 차트만 쓴다 — 뷰포트에 실제로 들어올 때만 청크를 받도록 동적 로드,
+// 자리표시자로 하이드레이션 레이아웃 점프 방지(구 트래픽 탭 문법 그대로).
 function ChartSkeleton({ className = "h-64" }: { className?: string }) {
   return (
     <div
@@ -28,18 +30,40 @@ const HourChart = dynamic(
   { ssr: false, loading: () => <ChartSkeleton className="h-72" /> },
 );
 
-export function TrafficTab({
+/** 2장 언제 — 라이브 피드, 히트맵, 일별 추이(기간 프리셋 적용), 시간대. (구 개요 라이브/히트맵 + 트래픽) */
+export function WhenChapter({
   data,
   dailyClicks,
+  onTick,
+  demo = false,
 }: {
   data: LinkStats;
-  /** 기간 프리셋(JumpBar)이 자른 일별 시계열 — 없으면 전체(data.dailyClicks). */
+  /** JumpBar 기간 프리셋이 자른 일별 시계열 */
   dailyClicks?: LinkStats["dailyClicks"];
+  onTick: () => void;
+  demo?: boolean;
 }) {
   const t = useTranslations("stats");
   return (
-    <div className="space-y-5">
+    <div id="chapter-when" className="scroll-mt-28 space-y-4">
+      <ChapterHeading index={2} title={t("chapters.when")} />
+      <div id="section-live">
+        {demo ? (
+          <LiveClickFeedDemo />
+        ) : (
+          <LiveClickFeed shortCode={data.shortCode} onTick={onTick} />
+        )}
+      </div>
       <Reveal>
+        <Section
+          id="section-heatmap"
+          title={t("section.heatmap.title")}
+          description={t("section.heatmap.desc", { tz: data.timezone })}
+        >
+          <Heatmap data={data.heatmap} />
+        </Section>
+      </Reveal>
+      <Reveal delay={60}>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <Section
             id="section-daily"
@@ -57,11 +81,6 @@ export function TrafficTab({
             <HourChart data={data.hourClicks} />
           </Section>
         </div>
-      </Reveal>
-      <Reveal delay={60}>
-        <Section title={t("section.country.title")} description={t("section.country.desc")}>
-          <CountryTable data={data.countryClicks} />
-        </Section>
       </Reveal>
     </div>
   );

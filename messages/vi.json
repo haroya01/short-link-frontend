@@ -1568,7 +1568,29 @@
     "chart": {
       "peak": "Đỉnh"
     },
-    "exportCsv": "Xuất CSV"
+    "exportCsv": "Xuất CSV",
+    "chapters": {
+      "who": "Ai",
+      "when": "Khi nào",
+      "where": "Từ đâu"
+    },
+    "journal": {
+      "title": "Nhật ký liên kết",
+      "evidence": "bằng chứng",
+      "velocity": "Đang được nhấn nhanh gấp {x} lần bình thường",
+      "trendUp": "7 ngày qua tăng {percent}% so với tuần trước — {count} lượt nhấn",
+      "trendDown": "7 ngày qua giảm {percent}% so với tuần trước — {count} lượt nhấn",
+      "peakDay": "Đạt đỉnh ngày {date} — {count} lượt trong một ngày",
+      "topSource": "{host} mang về {percent}% lượt truy cập",
+      "peakHour": "Nhộn nhịp nhất quanh {hour} giờ",
+      "returning": "{percent}% khách đã quay lại",
+      "topCountry": "{percent}% đến từ {country}",
+      "mobileHeavy": "{percent}% trên di động — liên kết được bấm trên điện thoại",
+      "desktopHeavy": "{percent}% trên máy tính — mở tại bàn làm việc",
+      "botHigh": "Bot chiếm {percent}% — người thật: {human}",
+      "botFiltered": "Bỏ {percent}% bot, còn {human} người thật đã ghé",
+      "fastFirstClick": "Lượt nhấn đầu tiên đến sau {minutes} phút"
+    }
   },
   "admin": {
     "label": "quản trị",

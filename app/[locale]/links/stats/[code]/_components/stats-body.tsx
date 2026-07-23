@@ -4,15 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import type { LinkStats } from "@/types";
 import { JumpBar, type RangeDays } from "./jump-bar";
 import { StatsCards } from "@/components/links/stats/cards";
-import { InsightSummary } from "@/components/links/stats/insight-summary";
+import { StatsJournal } from "@/components/links/stats/journal";
+import { WhenChapter } from "./chapters/when-chapter";
+import { WhereChapter } from "./chapters/where-chapter";
+import { WhoChapter } from "./chapters/who-chapter";
 import { Header } from "./header";
 import { StatsEmptyState } from "./stats-empty-state";
 import { TabBar } from "./tab-bar";
-import { AudienceTab } from "./tabs/audience-tab";
-import { OverviewTab } from "./tabs/overview-tab";
 import { SettingsTab } from "./tabs/settings-tab";
-import { SourcesTab } from "./tabs/sources-tab";
-import { TrafficTab } from "./tabs/traffic-tab";
 import { useTabHash } from "../_lib/use-tab-hash";
 
 // 분석은 이제 단일 스크롤 허브 — 콘텐츠 섹션은 전부 같은 뷰에 있으므로 KPI 점프는 순수
@@ -94,19 +93,20 @@ export function StatsBody({
         animate={!demo}
         onNavigate={handleNavigate}
       />
-      <InsightSummary data={data} />
+      {/* 링크 일지 — 문장이 1급, 차트는 증거(문장 클릭 = 근거 점프). 구 해석 요약 카드 대체. */}
+      <StatsJournal data={data} onNavigate={handleNavigate} />
       <TabBar
         active={tab === "settings" ? "settings" : "overview"}
         onSelect={(k) => setTab(k === "settings" ? "settings" : "overview")}
         items={["overview", "settings"]}
       />
       {tab !== "settings" ? (
-        <div className="space-y-5">
+        <div className="space-y-8">
           <JumpBar range={rangeDays} onRange={setRangeDays} />
-          <OverviewTab data={data} onTick={onTick} demo={demo} />
-          <TrafficTab data={data} dailyClicks={slicedDaily} />
-          <SourcesTab data={data} />
-          <AudienceTab data={data} />
+          {/* 랜딩의 약속 그대로 — 누가, 언제, 어디서 3장. */}
+          <WhoChapter data={data} />
+          <WhenChapter data={data} dailyClicks={slicedDaily} onTick={onTick} demo={demo} />
+          <WhereChapter data={data} />
         </div>
       ) : (
         <SettingsTab data={data} onTick={onTick} demo={demo} />

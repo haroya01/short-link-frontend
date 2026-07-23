@@ -1568,7 +1568,29 @@
     "chart": {
       "peak": "Peak"
     },
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "chapters": {
+      "who": "Who",
+      "when": "When",
+      "where": "Where"
+    },
+    "journal": {
+      "title": "Link journal",
+      "evidence": "evidence",
+      "velocity": "Being clicked at {x}× the usual pace right now",
+      "trendUp": "Last 7 days up {percent}% on the week before — {count} clicks",
+      "trendDown": "Last 7 days down {percent}% on the week before — {count} clicks",
+      "peakDay": "Peaked on {date} — {count} clicks in a day",
+      "topSource": "{host} brought {percent}% of your traffic",
+      "peakHour": "Busiest around {hour}:00",
+      "returning": "{percent}% of visitors came back",
+      "topCountry": "{percent}% arrived from {country}",
+      "mobileHeavy": "{percent}% on mobile — this link gets tapped on phones",
+      "desktopHeavy": "{percent}% on desktop — opened at a desk",
+      "botHigh": "Bots make up {percent}% — humans: {human}",
+      "botFiltered": "Strip the {percent}% bots and {human} humans visited",
+      "fastFirstClick": "First click landed {minutes} min after creation"
+    }
   },
   "admin": {
     "label": "admin",
