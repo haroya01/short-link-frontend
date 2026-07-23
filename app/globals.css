@@ -2062,3 +2062,63 @@ html[data-theme-vt] .vt-post-cover {
     animation: none !important;
   }
 }
+
+/*
+ * ===== 유리(Glass) 크롬 재질 — AGENTS.md §12 =====
+ * iOS 확정 문법 "종이 본문, 액체 크롬"의 웹 쌍둥이. 유리는 크롬(항해·플로팅 바·배너·오버레이
+ * 캡슐)에만 — 콘텐츠 카드에 바르면 §10 flat 철학 위반이자 가독성 사고(NN/g 경고).
+ * 종전에 bg-white/85 + backdrop-blur 로 7곳에 흩어져 있던 유사-유리를 이 두 클래스가 소유한다.
+ *
+ * 가드레일(리서치 수렴값): blur 10–14px 고정 · backdrop-filter 애니메이션 금지 · 큰 콘텐츠
+ * 면적 금지 · 텍스트 대비 4.5:1 유지(배경 불투명도 0.62 미만 금지) · 미지원/저투명 선호는
+ * 불투명 폴백.
+ */
+.glass-chrome {
+  background: rgba(255, 255, 255, 0.68);
+  -webkit-backdrop-filter: blur(14px) saturate(1.7);
+  backdrop-filter: blur(14px) saturate(1.7);
+}
+.dark .glass-chrome {
+  background: rgba(2, 6, 23, 0.62);
+}
+.glass-capsule {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(10px) saturate(1.6);
+  backdrop-filter: blur(10px) saturate(1.6);
+}
+.dark .glass-capsule {
+  background: rgba(15, 23, 42, 0.55);
+}
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass-chrome {
+    background: rgba(255, 255, 255, 0.97);
+  }
+  .dark .glass-chrome {
+    background: rgba(2, 6, 23, 0.95);
+  }
+  .glass-capsule {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .dark .glass-capsule {
+    background: rgba(15, 23, 42, 0.92);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass-chrome,
+  .glass-capsule {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .glass-chrome {
+    background: rgb(255 255 255);
+  }
+  .dark .glass-chrome {
+    background: rgb(2 6 23);
+  }
+  .glass-capsule {
+    background: rgb(255 255 255);
+  }
+  .dark .glass-capsule {
+    background: rgb(15 23 42);
+  }
+}

@@ -95,8 +95,8 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
           right-aligned rounded card returns. */}
       <div
         className={cn(
-          "mx-auto flex max-w-3xl items-center gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] backdrop-blur sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:shadow-md",
-          darkAware && "dark:border-slate-800 dark:bg-slate-900/95",
+          "glass-chrome mx-auto flex max-w-3xl items-center gap-2 border-t border-slate-200/60 px-4 py-3 shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:shadow-md",
+          darkAware && "dark:border-slate-800/60",
         )}
       >
         <p

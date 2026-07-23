@@ -33,7 +33,7 @@ export function OfflineBanner() {
       {mounted && (
         <div
           aria-hidden="true"
-          className={`pointer-events-none fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-2 border-b border-slate-200 bg-white/95 px-4 py-2 text-xs text-slate-600 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 dark:text-slate-300 ${
+          className={`glass-chrome pointer-events-none fixed inset-x-0 top-0 z-50 flex items-center justify-center gap-2 border-b border-slate-200/60 px-4 py-2 text-xs text-slate-600 shadow-sm dark:border-slate-800/60 dark:text-slate-300 ${
             closing ? "animate-fade-out" : "animate-fade-in"
           }`}
         >

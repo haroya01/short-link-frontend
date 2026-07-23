@@ -140,7 +140,7 @@ export function AppHeader({
   );
 
   return (
-    <header className="vt-app-header sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
+    <header className="vt-app-header glass-chrome sticky top-0 z-30 border-b border-slate-200/60 dark:border-slate-800/60">
       <div className="container flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           {showMenu && (
