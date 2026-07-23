@@ -1255,7 +1255,7 @@
       "audience": "Audience",
       "settings": "Settings",
       "descriptions": {
-        "overview": "A curated overview — five journal lines and three doors (who, when, where). Details live inside.",
+        "overview": "One-screen bento — numbers, journal, trend, live, heatmap, sources, devices and countries at a glance. Tile arrows open the detail.",
         "traffic": "Volume shape — daily trend, hour-of-day, country split.",
         "sources": "Where it came from — referrers, UTM (4), channel/src tags.",
         "audience": "Who came — device, OS, browser, region, language, bots.",
