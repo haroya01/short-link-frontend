@@ -76,9 +76,7 @@ export function StageScenes() {
       </section>
 
       {/* ── 장면 3: 분석 클라이맥스 — 딥그린 필드 ─────────────────── */}
-      <section className="bg-white dark:bg-slate-950">
-        {/* 스파인이 필드로 스며드는 이음새 */}
-        <div aria-hidden className="mx-auto h-14 w-[2px] rounded-full bg-gradient-to-b from-accent-600 to-accent-800 sm:h-20" />
+      <section className="bg-white pt-4 dark:bg-slate-950 sm:pt-8">
         <div className="stage-rise bg-accent-900 sm:mx-4 sm:rounded-[40px] xl:mx-8">
           <div className="container max-w-5xl py-16 sm:py-24">
             <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">

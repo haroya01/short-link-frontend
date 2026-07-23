@@ -36,8 +36,8 @@ export default function HomePage() {
   const { authenticated, ready } = useAuth();
   const t = useTranslations("home");
   const locale = useLocale();
-  // 무대(Stage) 연출 레이어 — kurl_stage 플래그(?stage=on|off / 쿠키 / split env)로만 켜진다.
-  // off(기본)면 이 페이지는 플래그 도입 전과 픽셀 단위로 동일해야 한다(롤백 계약).
+  // 무대(Stage)가 기본 랜딩(2026-07-23 졸업). ?stage=off(쿠키/비상 env)로만 레거시 구성이
+  // 남아 있다 — 완전 철거 전까지의 안전핀.
   const stage = useStageVariant();
   // headline2 가 ja 에서 「クリックの「いつ・どこから・誰が」を一目で」 23자로 늘어나
   // 기본 sm:text-[60px] 컨테이너 (max-w-3xl) 를 초과해 wrap. ko/en 은 short copy

@@ -39,7 +39,7 @@ test.describe("landing previews — domain card edge cases", () => {
   for (const vp of VIEWPORTS) {
     test(`${vp.name} (${vp.gridCols}-col) — domain card no-wrap`, async ({ page }) => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
-      await page.goto("/ko", { waitUntil: "networkidle" });
+      await page.goto("/ko?stage=off", { waitUntil: "networkidle" });
 
       const previews = page.locator("ul.grid").first();
       await previews.scrollIntoViewIfNeeded();

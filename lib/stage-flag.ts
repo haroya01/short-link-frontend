@@ -68,17 +68,17 @@ export function resolveStageVariant(input: ResolveInput): Resolution {
     return { variant, persist: true, assigned: true };
   }
 
-  if (input.envDefault === "on") return { variant: "on", persist: false, assigned: false };
-  return { variant: "off", persist: false, assigned: false };
+  // 2026-07-23 졸업: 무대가 기본값. envDefault="off" 는 비상 강등 스위치로 남긴다.
+  if (input.envDefault === "off") return { variant: "off", persist: false, assigned: false };
+  return { variant: "on", persist: false, assigned: false };
 }
 
 /**
- * 마운트 후 한 번 결정하고 이후 고정. SSR/첫 페인트는 항상 "off" (장식 레이어 부재) —
- * 결정이 "on" 이면 스크롤 연동 연출이 뒤늦게 마운트되고, 진입 자체가 스크롤에 물려 있어
- * 지연 마운트가 시각적으로 드러나지 않는다.
+ * 마운트 후 한 번 결정하고 이후 고정. 졸업 후 SSR/첫 페인트 = "on"(무대가 기본) —
+ * off 쿠키/파라미터 보유자(레거시 opt-out)만 하이드레이션 후 구버전으로 스왑된다(소수).
  */
 export function useStageVariant(): StageVariant {
-  const [variant, setVariant] = useState<StageVariant>("off");
+  const [variant, setVariant] = useState<StageVariant>("on");
 
   useEffect(() => {
     const res = resolveStageVariant({

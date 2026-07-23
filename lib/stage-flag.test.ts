@@ -35,14 +35,14 @@ describe("resolveStageVariant", () => {
     expect(off).toEqual({ variant: "off", persist: true, assigned: true });
   });
 
-  it("split=0 또는 비수치면 배정 없이 envDefault 로 폴백", () => {
-    expect(resolveStageVariant({ ...base, envSplit: "0", envDefault: "on" }).variant).toBe("on");
-    expect(resolveStageVariant({ ...base, envSplit: "abc" }).variant).toBe("off");
+  it("split=0 또는 비수치면 배정 없이 기본값(on)으로, envDefault=off 는 비상 강등", () => {
+    expect(resolveStageVariant({ ...base, envSplit: "0" }).variant).toBe("on");
+    expect(resolveStageVariant({ ...base, envSplit: "abc", envDefault: "off" }).variant).toBe("off");
   });
 
-  it("아무 신호도 없으면 off — 머지 자체는 무위험", () => {
+  it("아무 신호도 없으면 on — 무대가 기본(2026-07-23 졸업)", () => {
     expect(resolveStageVariant(base)).toEqual({
-      variant: "off",
+      variant: "on",
       persist: false,
       assigned: false,
     });
