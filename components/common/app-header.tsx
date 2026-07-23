@@ -144,15 +144,24 @@ export function AppHeader({
 
   return (
     <header className="vt-app-header sticky top-0 z-30">
-      {/* 유리는 내부 셸 — 스크롤 시작 시 떠 있는 캡슐로 축소 (nav.tsx 와 같은 §12 패턴). */}
-      <div
-        className={cn(
-          "glass-chrome border-b border-slate-200/60 transition-all duration-300 ease-[var(--ease)] [transition-property:margin,max-width,border-radius,box-shadow] motion-reduce:transition-none dark:border-slate-800/60",
-          condensed &&
-            "mx-3 mt-2 max-w-5xl rounded-full border shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] lg:mx-auto",
-        )}
-      >
-      <div className={cn("container flex items-center justify-between gap-2 transition-[height] duration-300 ease-[var(--ease)] motion-reduce:transition-none", condensed ? "h-12" : "h-14")}>
+      {/* condensed 크롬 = 플레이트 2장 크로스페이드 — nav.tsx 와 같은 §12 패턴(콘텐츠 정적,
+          opacity/transform 만 전환 = 컴포지터 전용). */}
+      <div className="relative">
+        <div
+          aria-hidden
+          className={cn(
+            "glass-chrome absolute inset-0 border-b border-slate-200/60 transition-[opacity,visibility] duration-300 ease-[var(--ease)] motion-reduce:transition-none dark:border-slate-800/60",
+            condensed && "invisible opacity-0",
+          )}
+        />
+        <div
+          aria-hidden
+          className={cn(
+            "glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-full border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-[opacity,transform,visibility] duration-300 ease-[var(--ease)] motion-reduce:transition-none dark:border-slate-800/60",
+            condensed ? "scale-100 opacity-100" : "invisible scale-[0.985] opacity-0",
+          )}
+        />
+      <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           {showMenu && (
             <button

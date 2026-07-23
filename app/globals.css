@@ -2122,3 +2122,22 @@ html[data-theme-vt] .vt-post-cover {
     background: rgb(15 23 42);
   }
 }
+
+/* 통계 히어로 스파크라인 1회 자가-드로잉 — 실제 데이터의 등장이므로 모션=정보(§10 합격).
+   time 기반이라 무대 아님. RM 은 완성 상태 그대로. */
+@keyframes hero-line-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.hero-draw-once {
+  stroke-dasharray: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-draw-once {
+    animation: hero-line-draw 700ms var(--ease) 120ms both;
+  }
+}

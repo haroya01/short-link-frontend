@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { Link } from "@/i18n/navigation";
 
 /**
@@ -23,6 +24,9 @@ const REFERRER_CHIPS = [
   { label: "youtube", side: "left", top: "54%" },
   { label: "newsletter", side: "right", top: "76%" },
 ] as const;
+
+// 장면 3 데모 시계열 — 실제 StatsHeroCore 가 그대로 그린다(우상향 11포인트).
+const DEMO_SERIES = [12, 20, 17, 32, 28, 46, 41, 62, 58, 84, 96];
 
 export function StageScenes() {
   const t = useTranslations("home.stage");
@@ -123,45 +127,17 @@ export function StageScenes() {
                 </div>
               </div>
 
-              {/* 데이터 드로잉 패널 — 스파크라인이 스스로 그려지고 주간 막대가 차오른다 */}
+              {/* 통계 히어로 패널 — 실제 통계 화면(StatsCards 히어로)과 동일한 StatsHeroCore.
+                  랜딩이 보여주는 카드 = 제품에 실존하는 카드 (과장광고 방지 계약). */}
               <div aria-hidden className="select-none">
-                <div className="rounded-2xl border border-accent-300/15 bg-accent-800/40 p-5 sm:p-6">
-                  <div className="mb-4 flex items-baseline justify-between font-mono">
-                    <span className="text-[22px] font-semibold tracking-tight text-white">1,247</span>
-                    <span className="text-[11px] uppercase tracking-tagline text-accent-300/80">
-                      30d &middot; human 92%
-                    </span>
-                  </div>
-                  <svg viewBox="0 0 320 96" fill="none" className="w-full">
-                    <path
-                      d="M4 84 L36 76 L68 79 L100 64 L132 68 L164 52 L196 57 L228 40 L260 44 L292 22 L316 12"
-                      pathLength={1}
-                      className="stage-draw stroke-accent-300"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <circle cx="316" cy="12" r="3" className="fill-accent-200" />
-                  </svg>
-                  <div className="mt-5 flex items-end justify-between gap-1.5">
-                    {[34, 52, 40, 66, 48, 88, 72].map((h, i) => (
-                      <div
-                        key={i}
-                        className="stage-bar w-full rounded-sm bg-accent-300/50"
-                        style={{ height: `${h * 0.5}px` }}
-                      />
-                    ))}
-                  </div>
-                  <div className="mt-2 flex justify-between font-mono text-[10px] uppercase text-accent-300/60">
-                    <span>mon</span>
-                    <span>tue</span>
-                    <span>wed</span>
-                    <span>thu</span>
-                    <span>fri</span>
-                    <span>sat</span>
-                    <span>sun</span>
-                  </div>
-                </div>
+                <StatsHeroCore
+                  label={t("scene3Eyebrow")}
+                  caption="30d · human 92%"
+                  total={1247}
+                  series={DEMO_SERIES}
+                  draw="scroll"
+                  className="border border-accent-300/15 bg-accent-800/40"
+                />
               </div>
             </div>
           </div>

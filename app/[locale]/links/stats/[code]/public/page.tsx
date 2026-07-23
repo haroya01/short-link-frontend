@@ -84,6 +84,7 @@ export default function PublicStatsPage() {
         unique={data.uniqueClicks}
         timeToFirstClickMinutes={data.timeToFirstClickMinutes}
         velocityRatio={data.velocity?.ratio ?? 0}
+        dailySeries={data.dailyClicks?.map((d) => d.count)}
       />
 
       <Section

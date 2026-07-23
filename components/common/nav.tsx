@@ -77,17 +77,26 @@ export function Nav() {
 
   return (
     <>
-    {/* 외곽은 투명 sticky, 유리는 내부 셸 — 스크롤이 시작되면 셸이 떠 있는 캡슐로 축소된다
-        (seed 류 condensed nav, AGENTS §12). 축소 시 하단 헤어라인이 전체 보더로 승격. */}
+    {/* condensed 크롬 = "정적 콘텐츠 + 플레이트 2장 크로스페이드" (AGENTS §12). 콘텐츠는 한 픽셀도
+        움직이지 않고, 풀폭 바 판(A)과 떠 있는 캡슐 판(B)이 opacity/transform 으로만 교차한다 —
+        레이아웃 속성 전환은 매 프레임 리플로우+유리 재연산이라 저프레임으로 읽혔던 원인. */}
     <header className="sticky top-0 z-30">
-      <div
-        className={cn(
-          "glass-chrome border-b border-slate-200/60 transition-all duration-300 ease-[var(--ease)] [transition-property:margin,max-width,border-radius,box-shadow] motion-reduce:transition-none dark:border-slate-800/60",
-          condensed &&
-            "mx-3 mt-2 max-w-5xl rounded-full border shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] lg:mx-auto",
-        )}
-      >
-      <div className={cn("container flex items-center justify-between gap-2 transition-[height] duration-300 ease-[var(--ease)] motion-reduce:transition-none", condensed ? "h-12" : "h-14")}>
+      <div className="relative">
+        <div
+          aria-hidden
+          className={cn(
+            "glass-chrome absolute inset-0 border-b border-slate-200/60 transition-[opacity,visibility] duration-300 ease-[var(--ease)] motion-reduce:transition-none dark:border-slate-800/60",
+            condensed && "invisible opacity-0",
+          )}
+        />
+        <div
+          aria-hidden
+          className={cn(
+            "glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-full border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-[opacity,transform,visibility] duration-300 ease-[var(--ease)] motion-reduce:transition-none dark:border-slate-800/60",
+            condensed ? "scale-100 opacity-100" : "invisible scale-[0.985] opacity-0",
+          )}
+        />
+      <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">
           {/* Mobile nav lives in the bottom tab bar (LinksBottomNav) — no hamburger here. */}
           <Link href="/" aria-label="kurl" className="mark-hoverable shrink-0">
