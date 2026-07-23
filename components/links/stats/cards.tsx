@@ -1,6 +1,5 @@
 "use client";
 
-import { Bot, Clock, IdCard, MousePointerClick, TrendingUp, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCountUp } from "@/lib/animations";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
@@ -128,7 +127,6 @@ export function StatsCards({
       <CountStat
         label={t("human")}
         target={human}
-        icon={MousePointerClick}
         sub={`${humanRatio.toFixed(1)}%`}
         animate={animate}
         onJump={interactive ? () => jump("section-device") : undefined}
@@ -136,7 +134,6 @@ export function StatsCards({
       <CountStat
         label={t("unique")}
         target={hasUnique ? (unique as number) : null}
-        icon={Users}
         sub={hasUnique ? t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) }) : undefined}
         animate={animate}
         onJump={interactive ? () => jump("section-daily") : undefined}
@@ -144,7 +141,6 @@ export function StatsCards({
       <CountStat
         label={t("bot")}
         target={bot}
-        icon={Bot}
         sub={`${botRatio.toFixed(1)}%`}
         muted
         animate={animate}
@@ -154,7 +150,6 @@ export function StatsCards({
         <CountStat
           label={t("profile")}
           target={profileClicks as number}
-          icon={IdCard}
           sub={t("profileSub", { ratio: profileRatio.toFixed(0) })}
           animate={animate}
           onJump={interactive ? () => jump("section-sources") : undefined}
@@ -177,7 +172,6 @@ export function StatsCards({
               ? formatLatency(timeToFirstClickMinutes as number)
               : "—"
         }
-        icon={showVelocity && (velocityRatio as number) >= 1.5 ? TrendingUp : Clock}
         sub={showVelocity ? t("vsBaseline") : showLatency ? t("afterCreation") : t("noData")}
         onJump={interactive ? () => jump("section-hourly") : undefined}
       />
@@ -189,14 +183,12 @@ function Stat({
   label,
   value,
   sub,
-  icon: Icon,
   muted,
   onJump,
 }: {
   label: string;
   value: string;
   sub?: string;
-  icon: React.ComponentType<{ className?: string }>;
   muted?: boolean;
   onJump?: () => void;
 }) {
@@ -214,18 +206,17 @@ function Stat({
           : "cursor-default",
       )}
     >
-      <div className="flex items-center justify-between">
-        <span className="truncate text-[10px] font-semibold text-slate-500 dark:text-slate-400 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
-          {label}
-        </span>
-        <Icon
-          className={cn(
-            "h-3.5 w-3.5 shrink-0 transition-transform duration-200 ease-out",
-            muted ? "text-slate-400 dark:text-slate-500" : "text-slate-500 dark:text-slate-400",
-            interactive && "group-hover:scale-110",
-          )}
-        />
-      </div>
+      {/* 아이콘 배지 제거(아이덴티티 v2 절제 패스) — 라벨은 mono 소문자 톤, muted 는 라벨 색으로 표현. */}
+      <span
+        className={cn(
+          "truncate text-[10px] font-semibold transition-colors",
+          muted
+            ? "text-slate-400 dark:text-slate-500"
+            : "text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200",
+        )}
+      >
+        {label}
+      </span>
       <p className="mt-2 font-mono text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
         {value}
       </p>
@@ -238,7 +229,6 @@ function CountStat({
   label,
   target,
   sub,
-  icon,
   muted,
   onJump,
   animate = true,
@@ -246,7 +236,6 @@ function CountStat({
   label: string;
   target: number | null;
   sub?: string;
-  icon: React.ComponentType<{ className?: string }>;
   muted?: boolean;
   onJump?: () => void;
   animate?: boolean;
@@ -254,7 +243,7 @@ function CountStat({
   const animated = useCountUp(target ?? 0, 700, animate && target !== null);
   const display = target === null ? "—" : formatNumber(animated);
   return (
-    <Stat label={label} value={display} sub={sub} icon={icon} muted={muted} onJump={onJump} />
+    <Stat label={label} value={display} sub={sub} muted={muted} onJump={onJump} />
   );
 }
 

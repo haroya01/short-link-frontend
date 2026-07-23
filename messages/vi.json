@@ -1255,7 +1255,7 @@
       "audience": "Đối tượng",
       "settings": "Cài đặt",
       "descriptions": {
-        "overview": "Những điều cốt lõi — chất lượng lượt nhấp, dòng trực tiếp, bản đồ nhiệt ngày × giờ.",
+        "overview": "Một màn hình duy nhất — chất lượng, trực tiếp, khung giờ, xu hướng, nguồn và khách truy cập. Cài đặt tách riêng.",
         "traffic": "Hình dạng khối lượng — xu hướng ngày, giờ trong ngày, phân tách theo quốc gia.",
         "sources": "Đến từ đâu — nguồn giới thiệu, UTM (4), thẻ kênh/src.",
         "audience": "Ai đã đến — thiết bị, hệ điều hành, trình duyệt, khu vực, ngôn ngữ, bot.",
@@ -1567,7 +1567,8 @@
     },
     "chart": {
       "peak": "Đỉnh"
-    }
+    },
+    "exportCsv": "Xuất CSV"
   },
   "admin": {
     "label": "quản trị",

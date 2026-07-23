@@ -29,13 +29,17 @@ export function OverviewTab({
   return (
     <div className="space-y-5">
       <ClickQualitySummary data={data} />
-      {demo ? (
-        <LiveClickFeedDemo />
-      ) : (
-        <LiveClickFeed shortCode={data.shortCode} onTick={onTick} />
-      )}
+      {/* 점프 바 스크롤 스파이 대상 — 라이브 피드에 앵커 id 를 준다. */}
+      <div id="section-live">
+        {demo ? (
+          <LiveClickFeedDemo />
+        ) : (
+          <LiveClickFeed shortCode={data.shortCode} onTick={onTick} />
+        )}
+      </div>
       <Reveal>
         <Section
+          id="section-heatmap"
           title={t("section.heatmap.title")}
           description={t("section.heatmap.desc", { tz: data.timezone })}
         >

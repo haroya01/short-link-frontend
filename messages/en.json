@@ -1255,7 +1255,7 @@
       "audience": "Audience",
       "settings": "Settings",
       "descriptions": {
-        "overview": "The essentials — click quality, live feed, day×hour heatmap.",
+        "overview": "One-screen hub — quality, live, heatmap, trend, sources and audience in a single scroll. Settings lives apart.",
         "traffic": "Volume shape — daily trend, hour-of-day, country split.",
         "sources": "Where it came from — referrers, UTM (4), channel/src tags.",
         "audience": "Who came — device, OS, browser, region, language, bots.",
@@ -1567,7 +1567,8 @@
     },
     "chart": {
       "peak": "Peak"
-    }
+    },
+    "exportCsv": "Export CSV"
   },
   "admin": {
     "label": "admin",

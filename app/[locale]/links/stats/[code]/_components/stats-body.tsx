@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { LinkStats } from "@/types";
+import { JumpBar, type RangeDays } from "./jump-bar";
 import { StatsCards } from "@/components/links/stats/cards";
 import { InsightSummary } from "@/components/links/stats/insight-summary";
 import { Header } from "./header";
@@ -12,18 +13,10 @@ import { OverviewTab } from "./tabs/overview-tab";
 import { SettingsTab } from "./tabs/settings-tab";
 import { SourcesTab } from "./tabs/sources-tab";
 import { TrafficTab } from "./tabs/traffic-tab";
-import { useTabHash, type TabKey } from "../_lib/use-tab-hash";
+import { useTabHash } from "../_lib/use-tab-hash";
 
-// Each KPI card jumps to a section that lives inside a specific tab. Tab content is
-// conditionally rendered (StatsBody only mounts the active tab), so clicking a card has to
-// switch tabs first and then scroll once the section is in the DOM.
-const SECTION_TAB: Record<string, TabKey> = {
-  "section-daily": "traffic",
-  "section-hourly": "traffic",
-  "section-device": "audience",
-  "section-bots": "audience",
-  "section-sources": "sources",
-};
+// 분석은 이제 단일 스크롤 허브 — 콘텐츠 섹션은 전부 같은 뷰에 있으므로 KPI 점프는 순수
+// 스크롤이다. 탭 전환이 필요한 건 설정뿐(5탭 시절의 SECTION_TAB 매핑은 그래서 죽었다).
 
 /**
  * Body of the stats page, lifted out of {@code page.tsx} so the public {@code /demo} route can
@@ -52,6 +45,12 @@ export function StatsBody({
 }) {
   const [tab, setTab] = useTabHash();
   const [pendingScroll, setPendingScroll] = useState<string | null>(null);
+  const [rangeDays, setRangeDays] = useState<RangeDays>(30);
+  // 기간 프리셋은 클라이언트 절환 — API 는 최근 30일치 일별 시계열을 주므로 그 안에서 자른다.
+  const slicedDaily = useMemo(
+    () => (data.dailyClicks ?? []).slice(-rangeDays),
+    [data.dailyClicks, rangeDays],
+  );
 
   useEffect(() => {
     if (!pendingScroll) return;
@@ -66,9 +65,9 @@ export function StatsBody({
   }, [pendingScroll, tab]);
 
   function handleNavigate(section: string) {
-    const targetTab = SECTION_TAB[section];
-    if (targetTab && targetTab !== tab) {
-      setTab(targetTab);
+    // 콘텐츠 섹션은 전부 분석 허브에 있다 — 설정 뷰에서 눌렀을 때만 허브로 복귀 후 스크롤.
+    if (tab === "settings") {
+      setTab("overview");
     }
     setPendingScroll(section);
   }
@@ -91,17 +90,27 @@ export function StatsBody({
         profileClicks={data.profileClicks}
         timeToFirstClickMinutes={data.timeToFirstClickMinutes}
         velocityRatio={data.velocity?.ratio ?? 0}
-        dailySeries={data.dailyClicks?.map((d) => d.count)}
+        dailySeries={slicedDaily.map((d) => d.count)}
         animate={!demo}
         onNavigate={handleNavigate}
       />
       <InsightSummary data={data} />
-      <TabBar active={tab} onSelect={setTab} />
-      {tab === "overview" && <OverviewTab data={data} onTick={onTick} demo={demo} />}
-      {tab === "traffic" && <TrafficTab data={data} />}
-      {tab === "sources" && <SourcesTab data={data} />}
-      {tab === "audience" && <AudienceTab data={data} />}
-      {tab === "settings" && <SettingsTab data={data} onTick={onTick} demo={demo} />}
+      <TabBar
+        active={tab === "settings" ? "settings" : "overview"}
+        onSelect={(k) => setTab(k === "settings" ? "settings" : "overview")}
+        items={["overview", "settings"]}
+      />
+      {tab !== "settings" ? (
+        <div className="space-y-5">
+          <JumpBar range={rangeDays} onRange={setRangeDays} />
+          <OverviewTab data={data} onTick={onTick} demo={demo} />
+          <TrafficTab data={data} dailyClicks={slicedDaily} />
+          <SourcesTab data={data} />
+          <AudienceTab data={data} />
+        </div>
+      ) : (
+        <SettingsTab data={data} onTick={onTick} demo={demo} />
+      )}
     </>
   );
 }

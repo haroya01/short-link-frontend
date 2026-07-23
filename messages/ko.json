@@ -1255,7 +1255,7 @@
       "audience": "방문자",
       "settings": "설정",
       "descriptions": {
-        "overview": "오늘 본질만 — 클릭 품질 / 라이브 클릭 / 시간대 히트맵.",
+        "overview": "한 화면 허브 — 품질·라이브·시간대·추이·유입·방문자를 이어서. 설정만 분리.",
         "traffic": "양적 흐름 — 일자별 트렌드, 시간대 분포, 국가별 분포.",
         "sources": "어디서 왔는지 — Referrer, UTM 4종, 채널/src 태그.",
         "audience": "누가 왔는지 — 디바이스, OS, 브라우저, 지역, 언어, 봇.",
@@ -1567,7 +1567,8 @@
     },
     "chart": {
       "peak": "피크"
-    }
+    },
+    "exportCsv": "CSV 내보내기"
   },
   "admin": {
     "label": "admin",

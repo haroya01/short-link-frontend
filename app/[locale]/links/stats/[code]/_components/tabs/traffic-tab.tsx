@@ -28,7 +28,14 @@ const HourChart = dynamic(
   { ssr: false, loading: () => <ChartSkeleton className="h-72" /> },
 );
 
-export function TrafficTab({ data }: { data: LinkStats }) {
+export function TrafficTab({
+  data,
+  dailyClicks,
+}: {
+  data: LinkStats;
+  /** 기간 프리셋(JumpBar)이 자른 일별 시계열 — 없으면 전체(data.dailyClicks). */
+  dailyClicks?: LinkStats["dailyClicks"];
+}) {
   const t = useTranslations("stats");
   return (
     <div className="space-y-5">
@@ -40,7 +47,7 @@ export function TrafficTab({ data }: { data: LinkStats }) {
             description={t("section.daily.desc", { tz: data.timezone })}
             className="lg:col-span-2"
           >
-            <DailyChart data={data.dailyClicks} />
+            <DailyChart data={dailyClicks ?? data.dailyClicks} />
           </Section>
           <Section
             id="section-hourly"
