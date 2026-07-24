@@ -128,7 +128,7 @@ export function ConfirmDialog({
           // dvh (not vh): on iOS Safari 100vh is the toolbar-expanded height, so with the toolbar
           // visible a vh-sized panel pushes its sticky footer (cancel/confirm) below the visible area,
           // forcing a scroll to reach it. dvh tracks the actual viewport.
-          "relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full flex-col rounded-lg border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900",
+          "glass-panel relative mx-auto flex max-h-[calc(100dvh-4rem)] w-full flex-col rounded-lg border border-slate-200/70 dark:border-slate-700/70",
           // Compact confirms size to content; form dialogs pin a min height so Save doesn't jump.
           !compact && "min-h-[min(540px,calc(100dvh-4rem))]",
           maxWidthClass,
@@ -149,7 +149,7 @@ export function ConfirmDialog({
         {/* Sticky footer — actions always at the bottom of the panel regardless of body
             scroll position. Border separates it visually from the body so the user knows
             it's a fixed control rather than another field. */}
-        <div className="flex justify-end gap-2 border-t border-slate-100 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
+        <div className="flex justify-end gap-2 border-t border-slate-100/80 px-6 py-4 dark:border-slate-800/80">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>
             {cancelLabel ?? t("cancel")}
           </Button>

@@ -219,7 +219,7 @@ function QrModal({
         role="dialog"
         aria-modal="true"
         aria-label={t("title")}
-        className="relative w-full max-w-sm animate-fade-in rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl"
+        className="relative w-full max-w-sm animate-fade-in glass-panel rounded-lg border border-slate-200/70 dark:border-slate-700/70"
       >
         <button
           type="button"

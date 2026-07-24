@@ -2167,3 +2167,62 @@ html[data-theme-vt] .vt-post-cover {
   content-visibility: auto;
   contain-intrinsic-size: auto 320px;
 }
+
+/* 유리 패널 — 떠 있는 레이어(다이얼로그·시트·드롭다운·검색 패널) 전용 재질(§12 확장).
+   리퀴드 립 = 상단 안쪽 1px 하이라이트(유리 윗면에 빛이 걸리는 애플 리퀴드 글래스 문법).
+   토큰이 립+드롭섀도를 함께 소유한다 — 적용처에서 shadow-* 유틸을 얹지 말 것. */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  backdrop-filter: blur(20px) saturate(1.8);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.55),
+    0 16px 48px -16px rgba(15, 23, 42, 0.25);
+}
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.07),
+    0 16px 48px -16px rgba(0, 0, 0, 0.55);
+}
+/* 다크 고정 토스트 재질 — 어떤 배경 위에서도 대비 유지 */
+.glass-toast {
+  background: rgba(15, 23, 42, 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  backdrop-filter: blur(14px) saturate(1.6);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.09);
+}
+/* 하단 부착 크롬용 립(탭바·쿠키 배너) — 윗변에 빛 */
+.glass-lip {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+}
+.dark .glass-lip {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+}
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.98);
+  }
+  .dark .glass-panel {
+    background: rgba(15, 23, 42, 0.97);
+  }
+  .glass-toast {
+    background: rgb(15 23 42);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass-panel,
+  .glass-toast {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .glass-panel {
+    background: rgb(255 255 255);
+  }
+  .dark .glass-panel {
+    background: rgb(15 23 42);
+  }
+  .glass-toast {
+    background: rgb(15 23 42);
+  }
+}

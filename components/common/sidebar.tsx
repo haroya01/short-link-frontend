@@ -66,7 +66,7 @@ export function MobileSidebar({ sections, basePath = "" }: { sections: SidebarSe
         aria-modal="true"
         aria-label={t("menu")}
         className={cn(
-          "fixed left-0 top-14 z-20 h-[calc(100vh-3.5rem)] w-72 max-w-[80vw] border-r border-slate-200 bg-white shadow-xl transition-transform duration-[280ms] ease-[var(--ease)] dark:border-slate-800 dark:bg-slate-950 sm:hidden",
+          "fixed left-0 top-14 z-20 h-[calc(100vh-3.5rem)] glass-panel w-72 max-w-[80vw] border-r border-slate-200/70 transition-transform duration-[280ms] ease-[var(--ease)] dark:border-slate-700/70 sm:hidden",
           open ? "translate-x-0" : "-translate-x-full",
         )}
       >

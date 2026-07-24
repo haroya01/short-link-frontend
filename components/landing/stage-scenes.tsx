@@ -93,13 +93,13 @@ export function StageScenes() {
                 <div className="flex flex-wrap items-center gap-3 pt-2">
                   <Link
                     href="/demo"
-                    className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-accent-900 transition hover:bg-accent-50"
+                    className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-white/90 px-4 py-2.5 text-sm font-medium text-accent-900 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8)] backdrop-blur-md transition hover:bg-white"
                   >
                     {t("scene3CtaDemo")} <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link
                     href="/login"
-                    className="focus-ring inline-flex items-center rounded-lg border border-accent-300/40 px-4 py-2.5 text-sm text-accent-100 transition hover:border-accent-300/70 hover:text-white"
+                    className="focus-ring inline-flex items-center rounded-lg border border-accent-300/40 bg-white/10 px-4 py-2.5 text-sm text-accent-100 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.18)] backdrop-blur-md transition hover:border-accent-300/70 hover:bg-white/15 hover:text-white"
                   >
                     {t("scene3CtaStart")}
                   </Link>

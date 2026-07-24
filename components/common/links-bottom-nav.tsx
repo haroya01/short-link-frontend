@@ -80,7 +80,7 @@ export function LinksBottomNav() {
   return (
     <nav
       className={cn(
-        "glass-chrome fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200/60 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
+        "glass-chrome glass-lip fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200/60 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
         hidden && "translate-y-full",
       )}
     >
