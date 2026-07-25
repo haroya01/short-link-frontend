@@ -21,11 +21,13 @@ type Props = {
    * the user picked their own {@code expiresAt}) so we skip the strip entirely.
    */
   authenticated: boolean;
+  /** 같은 배치에서 몇 번째 카드인가 — 등장 계단(70ms)과 안쪽 박자의 기준. */
+  enterIndex?: number;
 };
 
 const ANONYMOUS_TTL_HOURS = 24;
 
-export function ResultCard({ result, originalUrl, authenticated }: Props) {
+export function ResultCard({ result, originalUrl, authenticated, enterIndex = 0 }: Props) {
   const t = useTranslations("result");
   const { toast } = useToast();
 
@@ -36,10 +38,14 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
   return (
     <div
       data-testid="result-card"
-      className="animate-fade-in rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)] p-4 sm:p-5"
+      className="result-enter rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)] p-4 sm:p-5"
+      style={{ ["--idx" as string]: enterIndex } as React.CSSProperties}
     >
       <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div
+          className="result-beat flex flex-wrap items-center justify-between gap-2"
+          style={{ ["--beat" as string]: 0 } as React.CSSProperties}
+        >
           <div>
             <p className="text-[11px] font-semibold text-accent-700 dark:text-accent-400">
               {t("completed")}
@@ -61,15 +67,21 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
           href={result.shortUrl}
           target="_blank"
           rel="noreferrer"
-          className="block min-w-0"
+          className="result-beat block min-w-0"
+          style={{ ["--beat" as string]: 1 } as React.CSSProperties}
           aria-label={t("open")}
         >
-          <span className="block truncate font-mono text-[15px] font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-base">
+          {/* 주소가 이 카드의 주인공 — 자리에 앉으면 밑에 초록이 왼→오로 그어진다(형광 긋기 문법).
+              inline-block이라 밑줄 폭이 컨테이너가 아니라 주소 글자 폭을 따른다. */}
+          <span className="result-underline inline-block max-w-full truncate align-top font-mono text-[15px] font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-base">
             {result.shortUrl}
           </span>
         </a>
 
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div
+          className="result-beat flex flex-wrap items-center gap-1.5"
+          style={{ ["--beat" as string]: 2 } as React.CSSProperties}
+        >
           <CopyButton
             size="sm"
             variant="accent"
@@ -91,6 +103,10 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
         </div>
       </div>
 
+      <div
+        className="result-beat"
+        style={{ ["--beat" as string]: 3 } as React.CSSProperties}
+      >
       <div className="my-4 h-px bg-slate-100 dark:bg-slate-800" aria-hidden />
 
       <div className="space-y-2 text-[12px]">
@@ -150,6 +166,7 @@ export function ResultCard({ result, originalUrl, authenticated }: Props) {
             </Link>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

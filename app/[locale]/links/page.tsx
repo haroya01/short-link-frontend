@@ -139,18 +139,21 @@ export default function HomePage() {
           <div className="mt-6 min-h-[64px]">
             {results && results.length > 0 ? (
               <div className="space-y-3">
-                {results.map((r) => (
+                {results.map((r, i) => (
                   <ResultCard
                     key={r.res.shortCode}
                     result={r.res}
                     originalUrl={r.original}
                     authenticated={authenticated}
+                    enterIndex={i}
                   />
                 ))}
+                {/* 카드 뒤 CTA 도 같은 결로 반박자 늦게 — 결과가 먼저, 권유는 그다음. */}
                 {!authenticated ? (
                   <Link
                     href="/login"
-                    className="focus-ring group flex items-center justify-between rounded-lg bg-slate-900 dark:bg-white px-4 py-3 text-sm text-white dark:text-slate-900 transition hover:bg-slate-800 dark:hover:bg-slate-200"
+                    className="result-enter focus-ring group flex items-center justify-between rounded-lg bg-slate-900 dark:bg-white px-4 py-3 text-sm text-white dark:text-slate-900 transition hover:bg-slate-800 dark:hover:bg-slate-200"
+                    style={{ ["--idx" as string]: results.length + 1 } as React.CSSProperties}
                   >
                     <span>
                       {t.rich("loginCta", {
@@ -164,7 +167,8 @@ export default function HomePage() {
                 ) : (
                   <Link
                     href="/links"
-                    className="focus-ring group flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 transition hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                    className="result-enter focus-ring group flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 transition hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                    style={{ ["--idx" as string]: results.length + 1 } as React.CSSProperties}
                   >
                     <span>{t("ctaSeeLinks")}</span>
                     <ArrowRight className="h-4 w-4 shrink-0 transition group-hover:translate-x-0.5" />
