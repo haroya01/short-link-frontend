@@ -317,26 +317,6 @@ mark.kurl-highlight--thread {
   }
 
   /*
-   * Hover lift for clickable cards. Pairs with `transition` (250ms ease) to glide. Active state
-   * snaps the card back down so the click feels tactile. Reduced-motion users get the shadow
-   * change but no transform.
-   */
-  .hover-lift {
-    @apply transition-all duration-200 ease-out;
-  }
-  .hover-lift:hover {
-    @apply -translate-y-0.5 shadow-md;
-  }
-  .hover-lift:active {
-    @apply translate-y-0 shadow-sm;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hover-lift:hover {
-      transform: none;
-    }
-  }
-
-  /*
    * Unified public-profile card surface — single source of truth for every block on the public
    * page (link / embed / image / gallery / product / booking / event / email form). Border,
    * radius, baseline shadow, and the transition contract are owned here so the page reads as one
@@ -484,6 +464,13 @@ mark.kurl-highlight--thread {
   .dark .result-underline::after {
     background: #34d399;
   }
+  /* 스켈레톤 shimmer — 로딩 표시지만 무한 루프라 reduce 에선 정지(정적 워시로 남는다). */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-shimmer {
+      animation: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .result-enter,
     .result-enter .result-beat {
