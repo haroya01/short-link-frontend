@@ -4,12 +4,12 @@ test.describe("anonymous shorten flow", () => {
   test("home page renders hero and form", async ({ page }) => {
     await page.goto("/ko");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.getByPlaceholder(/your-very-long-url/)).toBeVisible();
+    await expect(page.getByPlaceholder(/긴 주소를 여기에/)).toBeVisible();
   });
 
   test("shortens a valid URL and shows result card", async ({ page }) => {
     await page.goto("/ko");
-    const input = page.getByPlaceholder(/your-very-long-url/);
+    const input = page.getByPlaceholder(/긴 주소를 여기에/);
     await input.fill("https://example.com/playwright-test");
     await page.getByRole("button", { name: "단축하기" }).click();
 
@@ -30,7 +30,7 @@ test.describe("anonymous shorten flow", () => {
 
   test("rejects non-http URL with inline error", async ({ page }) => {
     await page.goto("/ko");
-    await page.getByPlaceholder(/your-very-long-url/).fill("ftp://example.com");
+    await page.getByPlaceholder(/긴 주소를 여기에/).fill("ftp://example.com");
     await page.getByRole("button", { name: "단축하기" }).click();
     await expect(
       page.getByText(/http:\/\/ 또는 https:\/\/.*올바른 URL/),
@@ -39,7 +39,7 @@ test.describe("anonymous shorten flow", () => {
 
   test("shows login CTA below result for anonymous user", async ({ page }) => {
     await page.goto("/ko");
-    await page.getByPlaceholder(/your-very-long-url/).fill("https://example.com/cta-test");
+    await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/cta-test");
     await page.getByRole("button", { name: "단축하기" }).click();
     await expect(page.getByText(/로그인하면.*클릭 통계/)).toBeVisible({ timeout: 10000 });
   });

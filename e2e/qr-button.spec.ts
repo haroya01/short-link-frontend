@@ -9,7 +9,7 @@ import { expect, test } from "@playwright/test";
 test.describe("QR modal layout", () => {
   test("canvas stays inside its wrapper", async ({ page }) => {
     await page.goto("/");
-    await page.getByPlaceholder(/your-very-long-url/).fill("https://example.com/qr-layout-test");
+    await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/qr-layout-test");
     await page.getByRole("button", { name: "단축하기" }).click();
 
     // Wait for the result card so the QR button is in the DOM. The button shows only the icon

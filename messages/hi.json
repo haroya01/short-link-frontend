@@ -945,8 +945,9 @@
     }
   },
   "shortenForm": {
-    "placeholder": "https://your-very-long-url.com/path?with=query",
+    "placeholder": "अपना लंबा URL यहां पेस्ट करें",
     "submit": "छोटा करें",
+    "heroSubmit": "छोटा करें",
     "advancedToggle": "उन्नत विकल्प",
     "customCodeLabel": "कस्टम कोड (केवल 3-16 अक्षर/अंक)",
     "customCodePlaceholder": "myLink2026",

@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("recent links (localStorage)", () => {
   test("persists shortenings across reload", async ({ page }) => {
     await page.goto("/");
-    await page.getByPlaceholder(/your-very-long-url/).fill("https://example.com/recent-1");
+    await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/recent-1");
     await page.getByRole("button", { name: "단축하기" }).click();
     await expect(page.locator("a", { hasText: /\/[0-9A-Za-z]{7}/ }).first()).toBeVisible({
       timeout: 10000,
@@ -22,7 +22,7 @@ test.describe("recent links (localStorage)", () => {
       "https://example.com/recent-b",
       "https://example.com/recent-c",
     ]) {
-      await page.getByPlaceholder(/your-very-long-url/).fill(url);
+      await page.getByPlaceholder(/긴 주소를 여기에/).fill(url);
       await page.getByRole("button", { name: "단축하기" }).click();
       await expect(page.locator("a", { hasText: /\/[0-9A-Za-z]{7}/ }).first()).toBeVisible({
         timeout: 10000,

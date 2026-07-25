@@ -107,9 +107,10 @@ export default function HomePage() {
             className={"profile-fade" + (stage === "on" ? " stage-sweep-host" : "")}
             style={{ ["--idx" as string]: 4 } as React.CSSProperties}
           >
-            {/* 폼 = 떠 있는 카드 — 그린 틴트의 큰 소프트 섀도가 폴드의 유일한 깊이. 포커스가
-                들어오면 보더·섀도가 그린으로 응답한다(입력이 무대의 주인공이라는 신호). */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-1.5 shadow-[0_24px_64px_-28px_rgba(5,150,105,0.45)] transition-[border-color,box-shadow] duration-200 ease-out focus-within:border-accent-300 focus-within:shadow-[0_24px_64px_-22px_rgba(5,150,105,0.55)] dark:border-slate-700 dark:bg-slate-900 sm:p-2">
+            {/* 폼 = 카드가 아니라 한 줄. 헤드라인이 "단축은 한 줄"이라 말하니 입력도 문자
+                그대로 밑줄 한 줄로 받는다 — 떠 있는 카드+그린 글로우는 어느 제품에 놔도
+                성립하는 모양이라 걷어냈다(글로우 조명 ❌, 초록은 포커스 밑줄 마커로만). */}
+            <div className="mx-auto max-w-xl">
               <ShortenForm
                 hero
                 authenticated={authenticated}

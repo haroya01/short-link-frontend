@@ -945,8 +945,9 @@
     }
   },
   "shortenForm": {
-    "placeholder": "https://url-rat-dai-cua-ban.com/duong-dan?co=truy-van",
+    "placeholder": "Dán URL dài của bạn vào đây",
     "submit": "Rút gọn",
+    "heroSubmit": "Rút gọn",
     "advancedToggle": "Tùy chọn nâng cao",
     "customCodeLabel": "Mã tùy chỉnh (chỉ 3-16 chữ cái/chữ số)",
     "customCodePlaceholder": "lienKet2026",

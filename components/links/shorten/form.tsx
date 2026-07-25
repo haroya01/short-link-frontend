@@ -47,8 +47,26 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false }:
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    await shorten(url.trim());
+  }
+
+  /**
+   * 히어로의 "붙여넣으면 바로 짧아진다" — 빈 한 줄에 유효한 URL 이 붙으면 제출까지 한 호흡.
+   * 고급 옵션(코드·만료)을 만지는 중이거나 이미 타이핑한 내용이 있으면 끼어들지 않는다 —
+   * 자동 제출은 의도가 명백한 경우(빈 필드 + 완결된 URL 붙여넣기)에만.
+   */
+  function handleHeroPaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    if (!hero || busy) return;
+    if (url.trim() || showAdvanced || customCode.trim() || expiresAt) return;
+    const pasted = e.clipboardData.getData("text").trim();
+    if (!isValidUrl(pasted)) return;
+    e.preventDefault();
+    setUrl(pasted);
+    void shorten(pasted);
+  }
+
+  async function shorten(trimmed: string) {
     setError(null);
-    const trimmed = url.trim();
     if (!trimmed) {
       setError(t("errors.empty"));
       return;
@@ -90,35 +108,63 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false }:
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <Input
-          type="url"
-          inputMode="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder={t("placeholder")}
-          disabled={busy}
-          aria-invalid={!!error}
-          className={
-            hero
-              ? "h-12 border-0 bg-transparent px-4 text-[15px] shadow-none focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent sm:h-14 sm:flex-1"
-              : "h-12 sm:flex-1"
-          }
-        />
-        <Button
-          type="submit"
-          size="lg"
-          variant="accent"
-          disabled={busy}
-          className={
-            hero
-              ? "h-12 w-full rounded-xl sm:h-14 sm:w-auto sm:min-w-36 sm:text-[15px]"
-              : "h-12 w-full sm:h-11 sm:w-auto sm:min-w-32"
-          }
-        >
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : t("submit")}
-        </Button>
-      </div>
+      {hero ? (
+        /* 히어로 = 카드가 아니라 진짜 "한 줄" — 헤드라인(단축은 한 줄)과 같은 문장. 밑줄이
+           입력의 전부고, 포커스가 오면 밑줄만 초록으로 응답한다(초록=마커라는 kurl 문법).
+           버튼도 상자 없이 밑줄 위의 초록 글자 — ↵ 는 엔터로 끝난다는 힌트. */
+        <div className="flex items-end gap-4 border-b-2 border-slate-900/80 pb-2 transition-colors duration-200 focus-within:border-accent-600 dark:border-slate-100/80 dark:focus-within:border-accent-500">
+          <Input
+            type="url"
+            inputMode="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            onPaste={handleHeroPaste}
+            placeholder={t("placeholder")}
+            disabled={busy}
+            aria-invalid={!!error}
+            className="h-11 flex-1 rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-400 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-500 sm:h-12 sm:text-[19px]"
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            aria-label={t("submit")}
+            className="focus-ring mb-1.5 inline-flex shrink-0 items-baseline gap-1.5 text-[15px] font-extrabold tracking-tight text-accent-700 transition-colors hover:text-accent-800 disabled:opacity-60 dark:text-accent-400 dark:hover:text-accent-300 sm:text-base"
+          >
+            {busy ? (
+              <Loader2 className="h-4 w-4 animate-spin self-center" />
+            ) : (
+              <>
+                {t("heroSubmit")}
+                <span aria-hidden className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">
+                  ↵
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Input
+            type="url"
+            inputMode="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder={t("placeholder")}
+            disabled={busy}
+            aria-invalid={!!error}
+            className="h-12 sm:flex-1"
+          />
+          <Button
+            type="submit"
+            size="lg"
+            variant="accent"
+            disabled={busy}
+            className="h-12 w-full sm:h-11 sm:w-auto sm:min-w-32"
+          >
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : t("submit")}
+          </Button>
+        </div>
+      )}
 
       {/* Advanced section is auth-only — customCode + expiresAt require a logged-in account
           server-side, and anonymous visitors no longer have channel chips to expand into, so the

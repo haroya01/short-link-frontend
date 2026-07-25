@@ -945,8 +945,9 @@
     }
   },
   "shortenForm": {
-    "placeholder": "https://your-very-long-url.com/path?with=query",
+    "placeholder": "Paste your long URL here",
     "submit": "Shorten",
+    "heroSubmit": "Shorten",
     "advancedToggle": "Advanced options",
     "customCodeLabel": "Custom code (3-16 letters/digits only)",
     "customCodePlaceholder": "myLink2026",
