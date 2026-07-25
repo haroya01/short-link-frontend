@@ -127,7 +127,7 @@ export default async function PricingPage({
               variant="outline"
               disabled
               aria-disabled
-              className="w-full rounded-xl cursor-not-allowed"
+              className="w-full rounded-lg cursor-not-allowed"
             >
               <Lock className="h-3.5 w-3.5" />
               {t("proHoldCta")}

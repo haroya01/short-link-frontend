@@ -172,7 +172,7 @@ export function PlaceEntry({ content, colors, fadeStyle }: Props) {
             href={directions}
             target="_blank"
             rel="noreferrer"
-            className={`flex h-10 w-full items-center justify-center gap-2 rounded-xl text-[13px] font-medium transition active:scale-[0.98] ${colors.ctaPrimary}`}
+            className={`flex h-10 w-full items-center justify-center gap-2 rounded-lg text-[13px] font-medium transition active:scale-[0.98] ${colors.ctaPrimary}`}
           >
             <Navigation className="h-4 w-4" />
             {t("directions")}

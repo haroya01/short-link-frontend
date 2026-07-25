@@ -156,7 +156,7 @@ export function PhotoLightbox({ images, initialIdx, onClose }: Props) {
                   : "translateY(12px) scale(0.94)",
                 opacity: entered ? 1 : 0,
               }}
-              className="max-h-[78vh] max-w-[88vw] rounded-xl object-contain shadow-2xl shadow-black/40 ring-1 ring-white/10 sm:max-h-[80vh] sm:max-w-[78vw]"
+              className="max-h-[78vh] max-w-[88vw] rounded-2xl object-contain shadow-2xl shadow-black/40 ring-1 ring-white/10 sm:max-h-[80vh] sm:max-w-[78vw]"
             />
           </div>
         ))}

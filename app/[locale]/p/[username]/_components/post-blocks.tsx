@@ -408,7 +408,7 @@ async function CtaBlock({ cta, postId }: { cta: PublicCtaInfo | null; postId?: n
   }
   const primary = cta.style === "PRIMARY";
   const base =
-    "my-8 inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-[15px] font-semibold no-underline transition-colors";
+    "my-8 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-[15px] font-semibold no-underline transition-colors";
   const tone = primary
     ? "bg-accent-700 text-white hover:bg-accent-800"
     : "border border-slate-200 text-slate-900 hover:border-accent-300 hover:bg-accent-50/50 dark:border-slate-700 dark:text-slate-100 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10";

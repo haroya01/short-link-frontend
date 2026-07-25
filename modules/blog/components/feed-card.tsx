@@ -127,7 +127,7 @@ export function FeedListSkeleton({ count = 4 }: { count?: number }) {
               <div className="h-3.5 w-full rounded bg-slate-100 dark:bg-slate-800" />
               <div className="h-3 w-28 rounded bg-slate-100 dark:bg-slate-800" />
             </div>
-            <div className="h-20 w-20 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32" />
+            <div className="h-20 w-20 shrink-0 rounded-2xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32" />
           </div>
         </li>
       ))}
@@ -257,7 +257,7 @@ export function FeedCard({
             tabIndex={-1}
             data-bhv="post"
             data-bhv-id={`${item.author.username}/${item.slug}`}
-            className={`block shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 ${
+            className={`block shrink-0 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 ${
               featured ? "h-24 w-24 sm:h-28 sm:w-[150px]" : "h-20 w-20 sm:h-24 sm:w-32"
             }`}
           >

@@ -194,7 +194,7 @@ export default function WriteIndexPage() {
       {!loading && latestDraft && (
         <BlogLink
           href={`${writeBase}/${latestDraft.id}`}
-          className="focus-ring group mb-5 flex items-center gap-3 rounded-xl border border-accent-200/70 bg-accent-50/50 px-4 py-3 transition-colors hover:border-accent-300 hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/15"
+          className="focus-ring group mb-5 flex items-center gap-3 rounded-2xl border border-accent-200/70 bg-accent-50/50 px-4 py-3 transition-colors hover:border-accent-300 hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/15"
         >
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-transform duration-200 ease-[var(--ease)] group-hover:scale-105 motion-reduce:transform-none">
             <PenSquare className="h-4 w-4" />
@@ -265,7 +265,7 @@ export default function WriteIndexPage() {
         <>
       {/* 대표글 관리 — 핀한 글을 공개 블로그 '대표글' 섹션에 이 순서로 노출. 순서 조정·해제는 여기서. */}
       {!loading && pinned.length > 0 && (
-        <section className="mb-5 rounded-xl border border-slate-200 p-3 dark:border-slate-800">
+        <section className="mb-5 rounded-2xl border border-slate-200 p-3 dark:border-slate-800">
           <h2 className="mb-2 flex items-center gap-1.5 px-1 text-[13px] font-semibold text-slate-600 dark:text-slate-300">
             <Pin className="h-3.5 w-3.5 fill-current text-accent-600 dark:text-accent-400" />
             {t("featuredManageTitle")}
@@ -348,7 +348,7 @@ export default function WriteIndexPage() {
               >
                 <BlogLink
                   href={`${writeBase}/${p.id}`}
-                  className={`focus-ring group block rounded-xl px-3 py-4 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
+                  className={`focus-ring group block rounded-lg px-3 py-4 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
                     p.status === "PUBLISHED" ? "pr-24 sm:pr-32" : hasAnalytics ? "pr-16 sm:pr-28" : "pr-3"
                   }`}
                 >

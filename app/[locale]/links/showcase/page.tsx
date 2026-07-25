@@ -113,7 +113,7 @@ export default async function ShowcasePage({
             >
               <Link
                 href="/login?next=/profile/auto"
-                className="group inline-flex items-center gap-1.5 rounded-xl bg-accent-700 px-5 py-3 text-sm font-medium text-white shadow-cta transition hover:bg-accent-800"
+                className="group inline-flex items-center gap-1.5 rounded-lg bg-accent-700 px-5 py-3 text-sm font-medium text-white shadow-cta transition hover:bg-accent-800"
               >
                 {t("cta")}
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />

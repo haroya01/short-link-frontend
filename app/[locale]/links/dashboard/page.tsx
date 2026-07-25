@@ -387,7 +387,7 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
         />
       </div>
 
-      <div className="min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <div className="min-w-0 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
         <div className="flex h-full min-w-0 flex-col gap-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2">
@@ -466,7 +466,7 @@ function DashboardOpsSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
+            className="min-w-0 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
           >
             <div className="flex min-w-0 items-start justify-between gap-3">
               <div className="flex min-w-0 items-start gap-2.5">
@@ -481,7 +481,7 @@ function DashboardOpsSkeleton() {
           </div>
         ))}
       </div>
-      <div className="min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <div className="min-w-0 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
         <div className="flex h-full min-w-0 flex-col gap-4">
           <div className="flex items-start justify-between gap-3">
             <Skeleton className="h-3 w-20" />
@@ -514,7 +514,7 @@ function OpsMetric({
   hint: string;
 }) {
   return (
-    <div className="min-w-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+    <div className="min-w-0 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-2.5">
           <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-slate-50 dark:bg-slate-800/50 text-accent-700 dark:text-accent-400">

@@ -37,7 +37,7 @@ import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const ITEM =
-  "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
+  "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
 
 /**
  * Mobile account bottom sheet. `product` slims it per surface:

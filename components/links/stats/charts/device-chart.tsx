@@ -49,7 +49,7 @@ function DeviceChartImpl({ data }: Props) {
           <li key={d.device} className="flex items-center justify-between text-xs">
             <span className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
               <span
-                className="h-2.5 w-2.5 rounded-[3px]"
+                className="h-2.5 w-2.5 rounded-sm"
                 style={{ background: COLORS[i % COLORS.length] }}
               />
               {labelFor(d.device)}

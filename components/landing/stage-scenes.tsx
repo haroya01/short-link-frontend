@@ -77,7 +77,7 @@ export function StageScenes() {
 
       {/* ── 장면 3: 분석 클라이맥스 — 딥그린 필드 ─────────────────── */}
       <section className="bg-white pt-4 dark:bg-slate-950 sm:pt-8">
-        <div className="stage-rise bg-accent-900 sm:mx-4 sm:rounded-[40px] xl:mx-8">
+        <div className="stage-rise bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
           <div className="container max-w-5xl py-16 sm:py-24">
             <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
               <div className="space-y-4">

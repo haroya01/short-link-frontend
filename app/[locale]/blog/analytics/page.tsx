@@ -192,7 +192,7 @@ export default function BlogAnalyticsPage() {
                   const max = data.referrers[0]?.views || 1;
                   const pct = Math.max(4, Math.round((r.views / max) * 100));
                   return (
-                    <li key={r.host} className="-mx-3 flex items-center gap-3 rounded-xl px-3 py-2">
+                    <li key={r.host} className="-mx-3 flex items-center gap-3 rounded-lg px-3 py-2">
                       <span className="w-5 shrink-0 text-center text-[13px] font-semibold tabular-nums text-slate-300 dark:text-slate-500">
                         {i + 1}
                       </span>
@@ -255,7 +255,7 @@ function ViewAllToggle({ expanded, onToggle }: { expanded: boolean; onToggle: ()
       type="button"
       onClick={onToggle}
       aria-expanded={expanded}
-      className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
+      className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
     >
       {expanded ? t("analyticsCollapse") : t("analyticsViewAll")}
       <ChevronDown className={`h-3.5 w-3.5 transition-transform ${expanded ? "rotate-180" : ""}`} />
@@ -366,7 +366,7 @@ function PostPerformanceList() {
           <button
             type="button"
             onClick={() => setReloadKey((k) => k + 1)}
-            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
+            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
           >
             {tc("retry")}
           </button>
@@ -379,7 +379,7 @@ function PostPerformanceList() {
           <li key={p.postId}>
             <Link
               href={blogPath(`/analytics/${p.postId}`)}
-              className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+              className="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
               <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
                 {p.title || p.slug}
@@ -417,7 +417,7 @@ function PostPerformanceList() {
           <button
             type="button"
             onClick={() => void loadMore()}
-            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
+            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
           >
             {tc("retry")}
           </button>
@@ -452,7 +452,7 @@ function SeriesAnalyticsSection() {
           <li key={s.seriesId}>
             <Link
               href={blogPath(`/analytics/series/${s.seriesId}`)}
-              className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+              className="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
               <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
                 {s.title}
@@ -549,7 +549,7 @@ function LinksBreakdownSection() {
           <li key={r.postId}>
             <Link
               href={blogPath(`/analytics/${r.postId}`)}
-              className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+              className="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
               <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-500">
                 {i + 1}

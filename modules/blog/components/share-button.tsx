@@ -81,7 +81,7 @@ export function ShareButton({ postUrl, postSlug, postTitle }: Props) {
       {mounted && (
         <div
           role="menu"
-          className={`absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900 ${
+          className={`absolute right-0 z-20 mt-2 w-48 origin-top-right rounded-2xl border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900 ${
             closing ? "animate-dropdown-out" : "animate-dropdown-in"
           }`}
         >

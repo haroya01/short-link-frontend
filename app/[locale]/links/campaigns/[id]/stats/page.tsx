@@ -226,7 +226,7 @@ function CompareSection({
               <div
                 key={c.campaignId}
                 className={
-                  "rounded-xl border p-3 " +
+                  "rounded-lg border p-3 " +
                   (isCurrent
                     ? "border-accent-200 bg-accent-50/40 dark:bg-accent-600/10"
                     : "border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40")
@@ -274,7 +274,7 @@ function RecommendationCard({ data }: { data: CampaignRecommendation }) {
       })}
       footnote={t("recommendation.footnote")}
     >
-      <ul className="divide-y divide-slate-200 dark:divide-slate-800 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+      <ul className="divide-y divide-slate-200 dark:divide-slate-800 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         {data.recommendations.map((r) => (
           <RecRow key={r.batchId} rec={r} />
         ))}
@@ -525,7 +525,7 @@ function ByBatchTable({ stats }: { stats: CampaignStats }) {
               </div>
               <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                 <div
-                  className="h-full rounded-full bg-accent-600 transition-all duration-500"
+                  className="h-full rounded-full bg-accent-600 transition-[width] duration-500 ease-[var(--ease)]"
                   style={{ width: `${widthPct}%` }}
                 />
               </div>

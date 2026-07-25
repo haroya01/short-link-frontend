@@ -60,7 +60,7 @@ export function RevisionsButton({
         <History className="h-4 w-4" />
       </button>
       {open && (
-        <div className="absolute right-0 z-30 mt-2 w-72 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
+        <div className="absolute right-0 z-30 mt-2 w-72 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
           <div className="border-b border-slate-100 px-3 py-2 text-[12px] font-semibold text-slate-500 dark:border-slate-800 dark:text-slate-400">
             {t("revisions")}
           </div>

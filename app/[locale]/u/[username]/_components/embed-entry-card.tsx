@@ -20,7 +20,7 @@ type Props = {
  * Tapping the play overlay mounts the provider's iframe in the *same* absolute slot — the card
  * wrapper, aspect-ratio container, and meta strip stay structurally identical between the two
  * states. Earlier the inactive card was a `<button>` with `.hover-lift` and the active card was a
- * `<div>` without it, so a hover-lifted card snapped back down on click (transition-all kicked in)
+ * `<div>` without it, so a hover-lifted card snapped back down on click (the hover transition kicked in)
  * and the inner element type swapped at the same time — visible as the "카드 크기가 변하면서"
  * judder. Now hover-lift lives on the play button only; once clicked it unmounts and the iframe
  * takes its absolute slot. The thumbnail sits underneath as a backdrop so the iframe's loading

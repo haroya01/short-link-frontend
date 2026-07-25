@@ -12,10 +12,10 @@ export function PostRow({ post, onDelete }: { post: PostView; onDelete?: (post: 
   // The whole row links to the editor, so the delete control is a sibling of the <a> (not nested —
   // a button inside an anchor is invalid + un-clickable). Shown on hover / focus-within.
   return (
-    <li className="group/row -mx-3 flex items-center rounded-xl transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60">
+    <li className="group/row -mx-3 flex items-center rounded-lg transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60">
       <Link
         href={blogPath(`/write/${post.id}`)}
-        className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3 py-3"
+        className="focus-ring flex min-w-0 flex-1 items-center gap-3 rounded-lg px-3 py-3"
       >
         <PostStatusBadge status={post.status} />
         <span className="min-w-0 flex-1">

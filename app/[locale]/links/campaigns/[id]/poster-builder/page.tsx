@@ -276,12 +276,12 @@ export default function PosterBuilderPage() {
             {composing ? t("composing") : t("download", { count: batchCount })}
           </Button>
 
-          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 text-[11px] leading-snug text-slate-500 dark:text-slate-400">
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 text-[11px] leading-snug text-slate-500 dark:text-slate-400">
             {t("notSavedHint")}
           </div>
 
           {error && (
-            <div className="rounded-xl border border-rose-200 bg-rose-50/60 px-3 py-2 text-[12px] text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-400">
+            <div className="rounded-lg border border-rose-200 bg-rose-50/60 px-3 py-2 text-[12px] text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-400">
               {error}
             </div>
           )}

@@ -266,7 +266,7 @@ export default async function PublicPostPage({
         {/* A preview is an unlisted draft shared by its author — don't record a view, and flag it so
             the owner knows this isn't the live page. */}
         {isPreview ? (
-          <div className="mb-8 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-medium text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
+          <div className="mb-8 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-[13px] font-medium text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
             {t("previewBanner")}
           </div>
         ) : (
@@ -441,7 +441,7 @@ export default async function PublicPostPage({
           반투명 블러 배경(헤더와 같은 언어): full-bleed 이미지가 TOC 뒤를 지나갈 때 텍스트가
           이미지와 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이 겹침 자체를 제거. */}
       {headings.length >= 1 && (
-        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-xl bg-white/85 p-3 backdrop-blur-sm min-[1100px]:block xl:w-52 dark:bg-slate-950/85">
+        <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-2xl bg-white/85 p-3 backdrop-blur-sm min-[1100px]:block xl:w-52 dark:bg-slate-950/85">
           <PostToc headings={headings} />
         </aside>
       )}

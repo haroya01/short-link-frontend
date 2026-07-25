@@ -125,7 +125,7 @@ export function GalleryEntryCard({ content, colors, fadeStyle }: Props) {
                     <span
                       aria-hidden
                       className={
-                        "h-1.5 rounded-full transition-all duration-200 " +
+                        "h-1.5 rounded-full transition-[width,background-color] duration-200 ease-[var(--ease)] " +
                         (idx === activeIdx ? "w-4 bg-white" : "w-1.5 bg-white/40")
                       }
                     />

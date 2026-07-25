@@ -36,7 +36,7 @@ type Feature = {
  *
  * <ul>
  *   <li>{@code RealtimePreview} → {@code live-click-feed.tsx} (eyebrow heading + pulsing dot +
- *       {@code divide-y rounded-xl} list, same row composition: time / country pill / device /
+ *       {@code divide-y rounded-2xl} list, same row composition: time / country pill / device /
  *       channel)</li>
  *   <li>{@code AbTestPreview} → {@code link-destinations-section.tsx} ({@code rounded-md
  *       border} per-destination card, {@code w} weight pill, country code chip, brand-green
@@ -219,7 +219,7 @@ export function FeatureCarousel() {
 
 /**
  * Mirror of {@code live-click-feed.tsx} — same eyebrow heading style, pulsing emerald dot, and
- * {@code divide-y rounded-xl} feed with {@code time / country pill / device / channel} row
+ * {@code divide-y rounded-2xl} feed with {@code time / country pill / device / channel} row
  * composition. Mock data is a scripted ring of 5 international events; the chrome is
  * pixel-equivalent so the user recognises this screen when they reach the real stats page.
  */
@@ -246,7 +246,7 @@ function RealtimePreview() {
           <span className="font-medium text-emerald-700 dark:text-emerald-400">{t("live")}</span>
         </div>
       </div>
-      <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
         {events.map((e, i) => (
           <li
             key={e.ts}

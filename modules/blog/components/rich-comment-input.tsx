@@ -156,14 +156,14 @@ export function RichCommentInput({
   if (!editor) {
     return (
       <div
-        className="rounded-xl border border-slate-200 dark:border-slate-700"
+        className="rounded-lg border border-slate-200 dark:border-slate-700"
         style={{ minHeight }}
       />
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 transition-colors focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
+    <div className="overflow-hidden rounded-lg border border-slate-200 transition-colors focus-within:border-accent-400 dark:border-slate-700 dark:focus-within:border-accent-500">
       {/* Format chrome shows only when expanded — the resting field is a bare one-line input. The
           grid-rows 0fr→1fr reveal animates the height with no mount jump; `invisible` keeps the
           clipped toolbar out of the tab order while collapsed. hideToolbar drops it entirely for short

@@ -160,7 +160,7 @@ export default async function PublicSeriesIndexPage({
                       {t("postCount", { count: s.postCount })}
                     </span>
                   </span>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-all group-hover:translate-x-0.5 group-hover:text-accent-600 dark:text-slate-600 dark:group-hover:text-accent-400" />
+                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-[color,transform] ease-[var(--ease)] group-hover:translate-x-0.5 group-hover:text-accent-600 dark:text-slate-600 dark:group-hover:text-accent-400" />
                 </BlogLink>
               </li>
             ))}
