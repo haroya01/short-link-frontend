@@ -452,6 +452,49 @@ mark.kurl-highlight--thread {
       opacity: 1;
     }
   }
+
+  /*
+   * 단축 결과 등장 — "완료"의 한 박자. 카드가 실크 커브로 떠오르고(scale 없이 rise만),
+   * 안의 아이브로 → 주소 → 액션이 반박자(60ms)씩 따라 앉는다. 주소 밑 초록 밑줄은
+   * 웰컴 형광 긋기·게이트 해제와 같은 왼→오 긋기 문법 — 그어진 채로 남아 "이게 결과"라는
+   * 마커가 된다(초록=마커). 여러 장이면 카드 단위로 --idx 가 70ms 씩 계단.
+   */
+  .result-enter {
+    opacity: 0;
+    animation: result-rise 560ms var(--ease) forwards;
+    animation-delay: calc(var(--idx, 0) * 70ms);
+  }
+  .result-enter .result-beat {
+    opacity: 0;
+    animation: result-beat 460ms var(--ease) forwards;
+    animation-delay: calc(var(--idx, 0) * 70ms + var(--beat, 0) * 60ms + 90ms);
+  }
+  .result-underline::after {
+    content: "";
+    display: block;
+    height: 1.5px;
+    margin-top: 2px;
+    border-radius: 1px;
+    background: #059669;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: result-underline-draw 420ms var(--ease) forwards;
+    animation-delay: calc(var(--idx, 0) * 70ms + 360ms);
+  }
+  .dark .result-underline::after {
+    background: #34d399;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .result-enter,
+    .result-enter .result-beat {
+      animation: none;
+      opacity: 1;
+    }
+    .result-underline::after {
+      animation: none;
+      transform: scaleX(1);
+    }
+  }
 }
 
   /*
@@ -710,6 +753,31 @@ mark.kurl-highlight--thread {
     font-weight: 700;
   }
 
+@keyframes result-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes result-beat {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes result-underline-draw {
+  to {
+    transform: scaleX(1);
+  }
+}
 @keyframes profile-fade-in {
   from {
     opacity: 0;
