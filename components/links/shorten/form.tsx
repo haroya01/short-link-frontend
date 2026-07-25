@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,8 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false }:
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** 히어로 성공 시 blur 용 — 모바일 키보드를 내려야 결과 카드가 실제 뷰포트에 들어온다. */
+  const heroInputRef = useRef<HTMLInputElement>(null);
 
   // Pre-warm one proof-of-work token while the user is typing so the first POST doesn't pay the
   // mining cost. Authenticated users skip PoW server-side, so don't bother computing. Wait for
@@ -99,6 +101,9 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false }:
       setUrl("");
       setCustomCode("");
       setExpiresAt("");
+      // 모바일: 키보드가 서 있으면 결과 카드가 가시 뷰포트 밖(키보드 뒤)에 깔린다 —
+      // 성공했으니 입력의 소임은 끝, 키보드를 내리고 무대를 결과에 넘긴다(page 가 스크롤 인도).
+      if (hero) heroInputRef.current?.blur();
     } catch (err) {
       setError(messageOf(err, t));
     } finally {
@@ -111,13 +116,31 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false }:
       {hero ? (
         /* 히어로 = 카드가 아니라 진짜 "한 줄" — 헤드라인(단축은 한 줄)과 같은 문장. 밑줄이
            입력의 전부고, 포커스가 오면 밑줄만 초록으로 응답한다(초록=마커라는 kurl 문법).
-           버튼도 상자 없이 밑줄 위의 초록 글자 — ↵ 는 엔터로 끝난다는 힌트. */
-        <div className="flex items-end gap-4 border-b-2 border-slate-900/80 pb-2 transition-colors duration-200 focus-within:border-accent-600 dark:border-slate-100/80 dark:focus-within:border-accent-500">
+           버튼도 상자 없이 밑줄 위의 초록 글자 — ↵ 는 엔터로 끝난다는 힌트.
+           에러도 같은 줄의 문법 — 밑줄이 빨강으로 갈리고 메시지가 줄 바로 밑에 앉는다.
+           (다시 포커스하면 초록이 이겨 "고치는 중"이 보인다. 넛지는 메시지 행에만 —
+           입력 줄을 key 로 리마운트하면 타이핑 중 포커스가 날아간다.) */
+        <div
+          className={
+            "flex items-end gap-4 border-b-2 pb-2 transition-colors duration-200 " +
+            (error
+              ? // 에러 중엔 빨강이 포커스보다 세다 — 제출 직후 포커스가 버튼(줄 안)에 남아
+                // focus-within 초록이 이기면 빨간 메시지와 신호가 엇갈린다. 타이핑을 시작하면
+                // onChange 가 에러를 걷어 초록 포커스로 자연 복귀("고치는 중").
+                "border-red-500 dark:border-red-400"
+              : "border-slate-900/80 focus-within:border-accent-600 dark:border-slate-100/80 dark:focus-within:border-accent-500")
+          }
+        >
           <Input
+            ref={heroInputRef}
             type="url"
             inputMode="url"
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={(e) => {
+              setUrl(e.target.value);
+              // 고치기 시작하면 에러는 소임을 다했다 — 빨간 줄을 들고 있지 않는다.
+              if (error) setError(null);
+            }}
             onPaste={handleHeroPaste}
             placeholder={t("placeholder")}
             disabled={busy}
@@ -142,7 +165,20 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false }:
             )}
           </button>
         </div>
-      ) : (
+      ) : null}
+      {hero && error && (
+        /* 메시지는 줄 바로 밑 — 빨간 짧은 바(마커 문법의 에러 판)가 앞장서고, 행 전체가
+           옆으로 한 번 살짝 어긋났다 돌아온다(err-nudge 1회). key=문구라 같은 에러 재제출도 재발화. */
+        <p
+          key={error}
+          role="alert"
+          className="motion-safe:animate-[err-nudge_240ms_var(--ease)] flex items-center gap-2 text-[13px] font-medium text-red-600 dark:text-red-400"
+        >
+          <span aria-hidden className="h-[3px] w-3.5 shrink-0 rounded-full bg-red-500 dark:bg-red-400" />
+          {error}
+        </p>
+      )}
+      {!hero && (
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             type="url"
@@ -236,7 +272,8 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false }:
         </div>
       )}
 
-      {error && (
+      {/* 히어로는 줄 밑에서 이미 말했다 — 여기(폼 꼬리)는 카드형 폼의 자리만. */}
+      {!hero && error && (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {error}
         </p>

@@ -131,6 +131,16 @@ export default function HomePage() {
                     claimToken: it.res.claimToken,
                   });
                 }
+                // 모바일에서 결과 카드가 폴드 밑에 깔려 "아무 일도 없는" 화면이 됐다 —
+                // 마운트 다음 프레임에 첫 카드를 최소 이동으로 뷰포트에 들인다(reduce=점프).
+                requestAnimationFrame(() =>
+                  requestAnimationFrame(() => {
+                    const card = document.querySelector('[data-testid="result-card"]');
+                    if (!card) return;
+                    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                    card.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
+                  }),
+                );
               }}
               />
             </div>
