@@ -11,7 +11,8 @@ type Props = {
 
 export function Logo({ className, showText = true, variant = "kurl", animated = false }: Props) {
   return (
-    <span className={cn("inline-flex items-center gap-2 text-accent-600", className)}>
+    // 마크-워드마크 7px — 8px 는 마크가 워드마크와 따로 놀아 좌측 끝 3줄이 메뉴 버튼처럼 읽혔다.
+    <span className={cn("inline-flex items-center gap-[7px] text-accent-600", className)}>
       <Mark className="h-4" animated={animated} />
       {showText && (
         // Wordmark in Pretendard 700 — one sans family across the app keeps the brand voice
@@ -43,9 +44,9 @@ export function Mark({ className, animated = false }: { className?: string; anim
       aria-hidden
       className={cn("h-auto", className)}
     >
-      <rect className={animated ? "mark-line mark-line-1" : undefined} x="6" y="1" width="20" height="3.4" rx="1.7" />
-      <rect className={animated ? "mark-line mark-line-2" : undefined} x="0" y="7.3" width="28" height="3.4" rx="1.7" />
-      <rect className={animated ? "mark-line mark-line-3" : undefined} x="9" y="13.6" width="17" height="3.4" rx="1.7" />
+      <rect className={animated ? "mark-line mark-line-1" : undefined} x="6" y="1" width="20" height="3.4" rx="1" />
+      <rect className={animated ? "mark-line mark-line-2" : undefined} x="0" y="7.3" width="28" height="3.4" rx="1" />
+      <rect className={animated ? "mark-line mark-line-3" : undefined} x="9" y="13.6" width="17" height="3.4" rx="1" />
     </svg>
   );
 }

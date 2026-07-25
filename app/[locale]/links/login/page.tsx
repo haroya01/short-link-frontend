@@ -414,9 +414,9 @@ function BrandMark({ className }: { className?: string }) {
         </linearGradient>
       </defs>
       <g fill="url(#kurl-login-mark)">
-        <rect className="mark-line mark-line-1" x="6" y="1" width="20" height="3.4" rx="1.7" />
-        <rect className="mark-line mark-line-2" x="0" y="7.3" width="28" height="3.4" rx="1.7" />
-        <rect className="mark-line mark-line-3" x="9" y="13.6" width="17" height="3.4" rx="1.7" />
+        <rect className="mark-line mark-line-1" x="6" y="1" width="20" height="3.4" rx="1" />
+        <rect className="mark-line mark-line-2" x="0" y="7.3" width="28" height="3.4" rx="1" />
+        <rect className="mark-line mark-line-3" x="9" y="13.6" width="17" height="3.4" rx="1" />
       </g>
     </svg>
   );

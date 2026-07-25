@@ -945,8 +945,9 @@
     }
   },
   "shortenForm": {
-    "placeholder": "https://your-very-long-url.com/path?with=query",
+    "placeholder": "긴 주소를 여기에 붙여넣으세요",
     "submit": "단축하기",
+    "heroSubmit": "단축",
     "advancedToggle": "고급 옵션",
     "customCodeLabel": "커스텀 코드 (3-16자, 영문/숫자만)",
     "customCodePlaceholder": "myLink2026",

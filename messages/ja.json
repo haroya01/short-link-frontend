@@ -945,8 +945,9 @@
     }
   },
   "shortenForm": {
-    "placeholder": "https://your-very-long-url.com/path?with=query",
+    "placeholder": "長いURLをここに貼り付け",
     "submit": "短縮する",
+    "heroSubmit": "短縮",
     "advancedToggle": "詳細オプション",
     "customCodeLabel": "カスタムコード (3-16文字、英数字のみ)",
     "customCodePlaceholder": "myLink2026",
