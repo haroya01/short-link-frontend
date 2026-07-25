@@ -108,9 +108,9 @@ export function AppsGrid({ current }: { current?: Product }) {
                 fill="currentColor"
                 className="h-[72px] w-auto text-accent-600"
               >
-                <rect className="warp-stroke warp-stroke-1" x="6" y="1" width="20" height="3.4" rx="1.7" />
-                <rect className="warp-stroke warp-stroke-2" x="0" y="7.3" width="28" height="3.4" rx="1.7" />
-                <rect className="warp-stroke warp-stroke-3" x="9" y="13.6" width="17" height="3.4" rx="1.7" />
+                <rect className="warp-stroke warp-stroke-1" x="6" y="1" width="20" height="3.4" rx="1" />
+                <rect className="warp-stroke warp-stroke-2" x="0" y="7.3" width="28" height="3.4" rx="1" />
+                <rect className="warp-stroke warp-stroke-3" x="9" y="13.6" width="17" height="3.4" rx="1" />
               </svg>
               <span className="warp-word text-[22px] font-bold tracking-[-0.04em] text-slate-900">
                 <Wordmark product={warp.product} muted="text-slate-400" />

@@ -60,9 +60,9 @@ export function OgMark({ width = 132, id }: { width?: number; id: string }) {
         </linearGradient>
       </defs>
       <g fill={`url(#${id})`}>
-        <rect x="6" y="1" width="20" height="3.4" rx="1.7" />
-        <rect x="0" y="7.3" width="28" height="3.4" rx="1.7" />
-        <rect x="9" y="13.6" width="17" height="3.4" rx="1.7" />
+        <rect x="6" y="1" width="20" height="3.4" rx="1" />
+        <rect x="0" y="7.3" width="28" height="3.4" rx="1" />
+        <rect x="9" y="13.6" width="17" height="3.4" rx="1" />
       </g>
     </svg>
   );
