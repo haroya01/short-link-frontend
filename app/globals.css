@@ -753,6 +753,11 @@ mark.kurl-highlight--thread {
     font-weight: 700;
   }
 
+@keyframes err-nudge {
+  0%, 100% { transform: translateX(0); }
+  30% { transform: translateX(-3px); }
+  70% { transform: translateX(3px); }
+}
 @keyframes result-rise {
   from {
     opacity: 0;
