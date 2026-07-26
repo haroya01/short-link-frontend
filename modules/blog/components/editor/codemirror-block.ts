@@ -97,7 +97,7 @@ class CodeMirrorNodeView {
 
     this.dom = document.createElement("div");
     this.dom.className =
-      "cm-codeblock relative my-4 overflow-hidden rounded-xl bg-slate-900 text-slate-100";
+      "cm-codeblock relative my-4 overflow-hidden rounded-2xl bg-slate-900 text-slate-100";
 
     const bar = document.createElement("div");
     bar.className = "flex items-center justify-between border-b border-white/10 px-3 py-1.5";

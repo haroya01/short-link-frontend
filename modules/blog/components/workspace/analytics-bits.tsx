@@ -92,7 +92,7 @@ export function SeriesReadThrough({
             <a
               href={postHref(m.postId)}
               aria-label={`${t("analyticsViewPost")}: ${m.title || m.slug}`}
-              className="focus-ring group block rounded-xl px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/60"
+              className="focus-ring group block rounded-lg px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/60"
             >
               <div className="flex items-baseline gap-2">
                 <span className="shrink-0 text-[12px] font-semibold tabular-nums text-accent-700 dark:text-accent-300">

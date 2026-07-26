@@ -99,7 +99,7 @@ export function DiscoverySeriesCard({
             <div
               key={p.slug}
               aria-hidden={!front}
-              // transition-all 은 zIndex 의 이산 점프까지 페인트 사이클에 끌어들여 Safari 에서
+              // 전 속성 전환(all)은 zIndex 의 이산 점프까지 페인트 사이클에 끌어들여 Safari 에서
               // 전환마다 번쩍였다 — transform/opacity 만 전환한다. 예전엔 translateZ(0) 로 페이지를
               // 상시 컴포지터 레이어에 고정했지만, WebKit 은 다단 컬럼(columns) 안의 상시 레이어를
               // 레티나(DPR≥2)에서 그 컬럼 조각째 페인트 누락시킨다(아이패드 가로 "빈 카드" 신고의

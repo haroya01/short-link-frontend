@@ -37,7 +37,7 @@ export function ProfileHeader({
       style={{ "--idx": 0 } as React.CSSProperties}
     >
       {bannerUrl && bannerInline && (
-        <div className="-mx-4 mb-2 aspect-[3/1] w-[calc(100%+2rem)] overflow-hidden sm:mx-0 sm:w-full sm:rounded-xl">
+        <div className="-mx-4 mb-2 aspect-[3/1] w-[calc(100%+2rem)] overflow-hidden sm:mx-0 sm:w-full sm:rounded-2xl">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={bannerUrl}

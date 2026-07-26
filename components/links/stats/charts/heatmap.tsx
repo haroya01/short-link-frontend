@@ -129,7 +129,7 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
                           aria-label={t("tooltip", { day: tDay(day), hour: h, count })}
                           aria-pressed={isSel}
                           className={cn(
-                            "h-6 rounded-md transition-all duration-150 ease-out",
+                            "h-6 rounded-md transition-[transform,box-shadow,background-color] duration-150 ease-[var(--ease)]",
                             colorFor(count, max),
                             count === 0 && "ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/50",
                             isHover && "scale-110 ring-2 ring-accent-700 ring-offset-1 dark:ring-accent-400 dark:ring-offset-slate-950",
@@ -206,7 +206,7 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
                       })}
                       aria-pressed={isSel}
                       className={cn(
-                        "h-7 rounded-md transition-all duration-150 ease-out",
+                        "h-7 rounded-md transition-[transform,box-shadow,background-color] duration-150 ease-[var(--ease)]",
                         colorFor(count, mobileMax),
                         count === 0 && "ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/50",
                         isHover && "scale-105 ring-2 ring-accent-700 ring-offset-1",
@@ -234,11 +234,11 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           <span>{t("less")}</span>
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-slate-50 dark:bg-slate-800/50 ring-1 ring-inset ring-slate-200 dark:bg-slate-800/60 dark:ring-slate-700/50" />
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-100" />
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-300" />
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-500" />
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-700" />
+          <div className="h-2.5 w-2.5 rounded-sm bg-slate-50 dark:bg-slate-800/50 ring-1 ring-inset ring-slate-200 dark:bg-slate-800/60 dark:ring-slate-700/50" />
+          <div className="h-2.5 w-2.5 rounded-sm bg-accent-100" />
+          <div className="h-2.5 w-2.5 rounded-sm bg-accent-300" />
+          <div className="h-2.5 w-2.5 rounded-sm bg-accent-500" />
+          <div className="h-2.5 w-2.5 rounded-sm bg-accent-700" />
           <span>{t("more")}</span>
         </div>
       </div>

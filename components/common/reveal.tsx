@@ -16,7 +16,7 @@ export function Reveal({ children, delay = 0, className }: Props) {
       ref={ref}
       style={{ transitionDelay: seen ? `${delay}ms` : "0ms" }}
       className={cn(
-        "transition-all duration-700",
+        "transition-[opacity,transform] duration-700 ease-[var(--ease)]",
         seen ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
         className,
       )}

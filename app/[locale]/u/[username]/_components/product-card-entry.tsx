@@ -122,8 +122,8 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
               <article
                 className={
                   // rounded-2xl matches the cross-card design token (PlaceEntry / LinkEntry /
-                  // BookingEntry / etc.); grid mode previously used the smaller rounded-xl which
-                  // was a system violation — caught in the consistency audit, this is the fix.
+                  // BookingEntry / etc.); grid mode previously used a smaller off-template radius
+                  // which was a system violation — caught in the consistency audit, this is the fix.
                   `overflow-hidden rounded-2xl border transition ${colors.card} ${colors.cardBorder} ` +
                   (soldOut ? "opacity-70" : `${colors.cardHover}`)
                 }
@@ -333,7 +333,7 @@ export function ProductCardEntry({ content, colors, fadeStyle }: Props) {
               <span
                 aria-hidden
                 className={
-                  "h-1.5 rounded-full transition-all duration-200 " +
+                  "h-1.5 rounded-full transition-[width,background-color] duration-200 ease-[var(--ease)] " +
                   (idx === activeIdx
                     ? `w-5 ${colors.primary.replace("text-", "bg-")}`
                     : "w-1.5 bg-slate-300")
@@ -410,7 +410,7 @@ function CardImages({
               alt=""
               loading="lazy"
               className={
-                "h-full w-full object-cover transition-opacity duration-500 " +
+                "h-full w-full object-cover transition-opacity duration-[440ms] " +
                 (soldOut ? "grayscale" : "")
               }
               style={{ objectPosition: `${hero.focalX}% ${hero.focalY}%` }}

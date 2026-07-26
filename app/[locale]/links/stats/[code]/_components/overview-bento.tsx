@@ -80,7 +80,7 @@ export function OverviewBento({
       <button
         type="button"
         onClick={() => onNavigate("section-daily")}
-        className="focus-ring group overflow-hidden rounded-2xl border border-accent-800 text-left transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(15,23,42,0.14)] active:translate-y-0 dark:border-accent-500/30 lg:col-span-5"
+        className="focus-ring group overflow-hidden rounded-2xl border border-accent-800 text-left transition-[transform,box-shadow] duration-200 ease-[var(--ease)] hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 dark:border-accent-500/30 lg:col-span-5"
       >
         <StatsHeroCore
           label={t("kpi.totalClicks")}
@@ -111,7 +111,7 @@ export function OverviewBento({
                 onClick={() => onRange(d)}
                 aria-pressed={range === d}
                 className={cn(
-                  "rounded-full px-2 py-0.5 font-mono text-[10px] font-medium uppercase transition-[color,background-color,transform] duration-150 ease-out active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
+                  "rounded-full px-2 py-0.5 font-mono text-[10px] font-medium uppercase transition-[color,background-color,transform] duration-150 ease-[var(--ease)] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
                   range === d
                     ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(15,23,42,0.08)] dark:bg-slate-900 dark:text-slate-100"
                     : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
@@ -238,7 +238,7 @@ function Tile({
                 type="button"
                 onClick={() => onNavigate(section)}
                 aria-label={label}
-                className="focus-ring rounded-md p-1 text-slate-400 transition-[color,transform] duration-150 ease-out hover:text-accent-700 active:scale-90 dark:text-slate-500 dark:hover:text-accent-400"
+                className="focus-ring rounded-md p-1 text-slate-400 transition-[color,transform] duration-150 ease-[var(--ease)] hover:text-accent-700 active:scale-90 dark:text-slate-500 dark:hover:text-accent-400"
               >
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </button>

@@ -125,7 +125,7 @@ export function QrDownloadDialog({
           </div>
         </OptionGroup>
         <OptionGroup label={t("labelText")} hint={t("labelHint")}>
-          <label className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50">
+          <label className="flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50">
             <input
               type="checkbox"
               checked={label}
@@ -135,7 +135,7 @@ export function QrDownloadDialog({
             <span className="text-[13px] text-slate-700 dark:text-slate-300">{t("labelCheckbox")}</span>
           </label>
         </OptionGroup>
-        <div className="rounded-xl bg-slate-50 dark:bg-slate-800/50 px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400">
+        <div className="rounded-lg bg-slate-50 dark:bg-slate-800/50 px-3 py-2 text-[11px] text-slate-500 dark:text-slate-400">
           <Download className="mr-1 inline-block h-3 w-3" aria-hidden />
           {t("notSaved")}
         </div>
@@ -180,7 +180,7 @@ function SegmentButton({
       type="button"
       onClick={onClick}
       className={
-        "flex flex-col items-center justify-center rounded-xl border px-2 py-2 text-center transition-colors " +
+        "flex flex-col items-center justify-center rounded-lg border px-2 py-2 text-center transition-colors " +
         (active
           ? "border-accent-600 bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400"
           : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50")

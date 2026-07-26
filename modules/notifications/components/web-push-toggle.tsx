@@ -59,7 +59,7 @@ export function WebPushToggle() {
     <section className="mt-8">
       <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("title")}</h2>
       <div className="rounded-2xl border border-slate-200 p-2 dark:border-slate-800">
-        <div className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 text-sm">
+        <div className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm">
           <span className="flex items-center gap-2.5 text-slate-700 dark:text-slate-200">
         <Bell className="h-4 w-4 text-slate-400 dark:text-slate-500" />
         <span className="flex flex-col">

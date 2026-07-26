@@ -67,7 +67,7 @@ export function LinksAuthGate({
             {benefits.map(({ icon: Icon, label }, i) => (
               <li
                 key={i}
-                className="flex items-center gap-2.5 rounded-xl border border-slate-100 bg-slate-50/70 px-3 py-2.5 dark:border-slate-800 dark:bg-slate-800/50 sm:flex-col sm:items-start sm:gap-2"
+                className="flex items-center gap-2.5 rounded-2xl border border-slate-100 bg-slate-50/70 px-3 py-2.5 dark:border-slate-800 dark:bg-slate-800/50 sm:flex-col sm:items-start sm:gap-2"
               >
                 <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-white text-accent-700 shadow-sm dark:bg-slate-900 dark:text-accent-400">
                   <Icon className="h-3.5 w-3.5" />

@@ -31,7 +31,7 @@ export function KindredCurators({
           <li key={curator.id}>
             <BlogLink
               href={authorHref(curator.username, locale)}
-              className="focus-ring group flex items-center gap-3 rounded-xl px-1 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+              className="focus-ring group flex items-center gap-3 rounded-lg px-1 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
               <Avatar src={curator.avatarUrl} name={curator.username} size="md" />
               <span className="min-w-0 flex-1">

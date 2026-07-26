@@ -119,7 +119,7 @@ export function BlogNotificationSettings() {
             return (
               <div
                 key={type}
-                className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 text-sm"
+                className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm"
               >
                 <span className="flex items-center gap-2.5 text-slate-700 dark:text-slate-200">
                   <Icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />

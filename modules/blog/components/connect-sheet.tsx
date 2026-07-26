@@ -339,7 +339,7 @@ export function ConnectSheet({
                         {held ? (
                           /* Already in — the label is inert (the unlink control on the right governs it),
                              so the row stays a div with the badge + 해제 beside it. */
-                          <div className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left">
+                          <div className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left">
                             <span className="min-w-0 flex-1">
                               <CollectionRowText c={c} t={t} />
                             </span>
@@ -371,7 +371,7 @@ export function ConnectSheet({
                             role="checkbox"
                             aria-checked={selected.has(c.id)}
                             onClick={() => toggle(c.id)}
-                            className="focus-ring flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+                            className="focus-ring flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
                           >
                             <span className="min-w-0 flex-1">
                               <CollectionRowText c={c} t={t} />
@@ -441,7 +441,7 @@ export function ConnectSheet({
                 type="button"
                 disabled={selected.size === 0}
                 onClick={() => setStep(2)}
-                className="focus-ring w-full rounded-xl bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
+                className="focus-ring w-full rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-40"
               >
                 {selected.size === 0 ? t("pickToContinue") : t("next")}
               </button>
@@ -489,7 +489,7 @@ export function ConnectSheet({
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="focus-ring rounded-xl px-4 py-3 text-[14px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                className="focus-ring rounded-lg px-4 py-3 text-[14px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
               >
                 {t("back")}
               </button>
@@ -497,7 +497,7 @@ export function ConnectSheet({
                 type="button"
                 disabled={saving}
                 onClick={() => void connectAll()}
-                className="focus-ring flex flex-1 items-center justify-center rounded-xl bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
+                className="focus-ring flex flex-1 items-center justify-center rounded-lg bg-accent-700 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-accent-800 disabled:opacity-50"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : failed ? tCommon("retry") : t("add")}
               </button>
@@ -568,7 +568,7 @@ function NewRow({
       onClick={onClick}
       disabled={disabled}
       aria-busy={busy}
-      className="focus-ring flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-800"
+      className="focus-ring flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-60 dark:hover:bg-slate-800"
     >
       <span className="grid h-5 w-5 place-items-center">
         {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" /> : icon}
@@ -601,7 +601,7 @@ function NewCollectionForm({
   const t = useTranslations("collections");
   const canCreate = value.name.trim().length > 0 && !busy;
   return (
-    <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-800/60">
+    <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-800/60">
       <input
         autoFocus
         value={value.name}

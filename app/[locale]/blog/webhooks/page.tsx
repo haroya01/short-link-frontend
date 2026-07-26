@@ -121,7 +121,7 @@ function WebhookRow({ hook, onChanged }: { hook: BlogWebhookSummary; onChanged: 
             }`}
           >
             <span
-              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${
+              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-[left] ease-[var(--ease)] ${
                 hook.enabled ? "left-[18px]" : "left-0.5"
               }`}
             />

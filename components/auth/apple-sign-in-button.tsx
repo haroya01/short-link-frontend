@@ -114,7 +114,7 @@ export function AppleSignInButton({ successHref }: { successHref: string }) {
     <div>
       <Button
         variant="outline"
-        className="h-11 w-full justify-center rounded-xl"
+        className="h-11 w-full justify-center rounded-lg"
         onClick={onClick}
         disabled={busy}
       >

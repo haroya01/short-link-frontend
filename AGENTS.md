@@ -618,6 +618,12 @@ EMAIL_FORM 블록은 다른 카드와 다르게 **사용자 입력을 수집**�
 - **browse 타일 hover 그림자는 `shadow-card-hover` 토큰** (tailwind.config) — 읽기면 flat 철학의 명시적 예외라 그 농도를 토큰 한 곳이 소유한다. 임의 shadow-[...] 재발 ❌.
 - **크롬(헤더·하단 탭) same-origin 이동은 `BlogChromeLink`** (blog-link.tsx) — 절대 blogHref 를 유지하면서 같은 origin 이면 클라이언트 내비로 승격(흰 화면 ❌). 작가 서브도메인 등 진짜 cross-origin 만 하드 폴백.
 
+### 10.7.1 반경 4단 + 토큰 가드 (전 표면 공통 — 블로그 밖에도 적용)
+- **반경은 네 단**: `rounded-md`(마이크로 — 배지·인라인 코드·kbd) · `rounded-lg`(컨트롤 — 버튼·입력·셀렉트·작은 인터랙티브) · `rounded-2xl`(카드·패널·시트·다이얼로그) · `rounded-full`(알약·칩·아바타). **`rounded-xl` 과 임의 반경(`rounded-[…]`)은 폐지** — 새 티어가 필요하면 화면에서 발명하지 말고 이 표를 고치는 결정부터. (좁은 예외 둘: 기기 목업 프레임의 `rounded-3xl`, `u/_lib/theme.ts` 테마 토큰 원장 — 후자는 가드에서도 제외.)
+- **hover 리프트 그림자 두 톤**: browse 타일 = `shadow-card-hover`(깊음, §10.7), 대시보드(통계 등) 작업 카드 = `shadow-lift`(얕음) — 임의 `hover:shadow-[…]` 는 가드가 잡는다.
+- **가드**: `lib/design-tokens.test.ts` 가 소스에서 `transition-all`·`rounded-xl`·`rounded-[`·`hover:shadow-[`·비하우스 `cubic-bezier(` 재유입을 CI 로 잡는다(i18n 리터럴 가드와 같은 방식). 하우스 곡선 미러 `cubic-bezier(0.16, 1, 0.3, 1)` 만 허용.
+- 2026-07 정렬: 전역 버튼 `transition-all` 분해(+눌림 스케일 var(--ease)), Input md→lg, xl 전수 재분류, stats·QR 캠페인 표면의 방언(ease-out 이동·임의 그림자) 회수.
+
 ### 10.8 포스트 본문 타이포 = `.prose-post`
 - 포스트 본문(문단·헤딩·리스트·인용·코드·테이블·이미지)의 읽기 타이포는 **`app/globals.css` 의 `.prose-post`** 한 곳에 모음 — 본문 스타일은 컴포넌트가 아니라 여기서 수정.
 - 본문 18px / `leading-[1.55]` / `slate-700`(가독 우선), 헤딩 h2→h4 contiguous(`post-blocks.tsx`), 헤딩 hover 시 `#` 딥링크, 테이블은 flat(헤더 밑줄 + 행 구분선), 코드는 `slate-900` + hljs 팔레트. 링크/마커는 브랜드 그린.

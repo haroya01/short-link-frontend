@@ -42,7 +42,7 @@ export function ProfilePublicUrlBanner({
   const display = url.replace(/^https?:\/\//, "");
 
   return (
-    <div className="group flex items-stretch overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-md">
+    <div className="group flex items-stretch overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-md">
       {/* Site chip — matches the kurl wordmark + favicon, gives the row a recognizable left edge */}
       <div className="flex items-center gap-2 border-r border-slate-200 bg-slate-50/60 px-3 py-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -101,7 +101,7 @@ function BlogLoginShell({ next }: { next: string | null }) {
         <div className="profile-fade mt-10 space-y-3" style={{ ["--idx" as string]: 4 } as React.CSSProperties}>
           <Button
             variant="outline"
-            className="h-11 w-full justify-center rounded-xl"
+            className="h-11 w-full justify-center rounded-lg"
             onClick={onSignIn}
           >
             <GoogleIcon className="h-4 w-4" />

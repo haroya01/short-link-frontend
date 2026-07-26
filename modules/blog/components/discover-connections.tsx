@@ -187,7 +187,7 @@ function EntranceRow({ entrance }: { entrance: Entrance }) {
       href={blogPath(`/collections/${entrance.id}`)}
       className="focus-ring group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3.5 py-3 transition-colors hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900/40 dark:hover:border-slate-700"
     >
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent-50 text-accent-700 dark:bg-accent-500/10 dark:text-accent-400">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent-50 text-accent-700 dark:bg-accent-500/10 dark:text-accent-400">
         <Glyph className="h-[18px] w-[18px]" />
       </span>
       <span className="min-w-0 flex-1">
@@ -300,7 +300,7 @@ function ConnectionFeedSkeleton() {
           </div>
           <span className="mt-2.5 block h-3 w-40 rounded bg-slate-200 dark:bg-slate-800" />
           <span className="mt-3 block h-4 w-4/5 rounded bg-slate-200/90 dark:bg-slate-800/90" />
-          <div className="mt-3 rounded-xl border border-slate-200 p-4 dark:border-slate-800">
+          <div className="mt-3 rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
             <span className="block h-3.5 w-3/4 rounded bg-slate-200 dark:bg-slate-800" />
             <span className="mt-2 block h-3 w-1/2 rounded bg-slate-200/80 dark:bg-slate-800/80" />
           </div>

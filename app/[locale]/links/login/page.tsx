@@ -95,7 +95,7 @@ function LoginShell({ next = null }: { next?: string | null }) {
         >
           <Button
             variant="outline"
-            className="h-11 w-full justify-center rounded-xl"
+            className="h-11 w-full justify-center rounded-lg"
             onClick={signInWithGoogle}
           >
             <GoogleIcon className="h-4 w-4" />

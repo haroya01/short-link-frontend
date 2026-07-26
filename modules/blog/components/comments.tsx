@@ -33,7 +33,7 @@ const CommentComposer = dynamic(
 
 /** Matches the collapsed rest-state height of the real composer so the mount doesn't shift layout. */
 function ComposerSkeleton() {
-  return <div className="h-12 rounded-xl border border-slate-200 dark:border-slate-700" />;
+  return <div className="h-12 rounded-lg border border-slate-200 dark:border-slate-700" />;
 }
 
 /** Append a just-created comment, dropping any existing row with the same id — guards a double-submit
@@ -226,7 +226,7 @@ export function PostComments({
             type="button"
             data-testid="comment-composer-placeholder"
             onClick={() => setComposerActive(true)}
-            className="flex w-full items-center rounded-xl border border-slate-200 px-4 py-3 text-left text-[15px] text-slate-400 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-500"
+            className="flex w-full items-center rounded-lg border border-slate-200 px-4 py-3 text-left text-[15px] text-slate-400 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-500"
           >
             {t("placeholder")}
           </button>

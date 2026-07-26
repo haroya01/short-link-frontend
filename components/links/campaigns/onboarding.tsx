@@ -14,7 +14,7 @@ export function CampaignOnboarding() {
   const steps = t.raw("steps") as { title: string; desc: string }[];
 
   return (
-    <div className="overflow-hidden rounded-xl border border-accent-200 bg-gradient-to-br from-accent-50/60 via-white to-white p-6 shadow-sm dark:border-accent-500/30 dark:from-accent-500/10 dark:via-slate-900 dark:to-slate-900">
+    <div className="overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50/60 via-white to-white p-6 shadow-sm dark:border-accent-500/30 dark:from-accent-500/10 dark:via-slate-900 dark:to-slate-900">
       <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
         <Sparkles className="h-3.5 w-3.5" aria-hidden />
         {t("eyebrow")}

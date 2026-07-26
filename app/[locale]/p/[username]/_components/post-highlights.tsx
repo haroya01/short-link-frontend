@@ -55,7 +55,7 @@ const RichCommentInput = dynamic(
 
 /** Matches the collapsed rest-state height of the real editor so the mount doesn't shift layout. */
 function ComposerSkeleton() {
-  return <div className="h-12 rounded-xl border border-slate-200 dark:border-slate-700" />;
+  return <div className="h-12 rounded-lg border border-slate-200 dark:border-slate-700" />;
 }
 
 type Anchor = { left: number; top: number; bottom: number };
@@ -160,14 +160,18 @@ export function PostHighlights({ postId }: { postId: number }) {
     }
     // Retry on a short backoff instead of a single fixed delay: the paint pass and any late layout
     // (images settling, fonts) can push the mark in after the first tick — keep looking, then give up.
+    // prefers-reduced-motion lands on the final state at once: instant jump, no smooth glide, no
+    // color pulse (same contract as use-auto-slide's autoplay kill).
+    const reduceMotion =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     const delays = [120, 400, 1000];
     let timer = 0;
     const attempt = (i: number) => {
       const root = document.querySelector<HTMLElement>(".prose-post");
       const target = root && findQuoteTarget(root, quote);
       if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "center" });
-        flashQuote(target);
+        target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+        if (!reduceMotion) flashQuote(target);
         return;
       }
       if (i + 1 < delays.length) timer = window.setTimeout(() => attempt(i + 1), delays[i + 1]);

@@ -210,7 +210,7 @@ export function ContactCardEntry({ content, colors, fadeStyle }: Props) {
                   )}
                 </div>
                 {card.logoUrl && (
-                  <div className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl bg-black/30 ring-1 ring-white/20 backdrop-blur-sm">
+                  <div className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-lg bg-black/30 ring-1 ring-white/20 backdrop-blur-sm">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={card.logoUrl}
