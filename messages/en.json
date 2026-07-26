@@ -1250,20 +1250,14 @@
     },
     "back": "Back",
     "shortCode": "short code",
+    "detailsTitle": "Details",
     "tabs": {
       "aria": "Stats sections",
       "overview": "Overview",
       "traffic": "Traffic",
       "sources": "Sources",
       "audience": "Audience",
-      "settings": "Settings",
-      "descriptions": {
-        "overview": "One-screen bento — numbers, journal, trend, live, heatmap, sources, devices and countries at a glance. Tile arrows open the detail.",
-        "traffic": "Volume shape — daily trend, hour-of-day, country split.",
-        "sources": "Where it came from — referrers, UTM (4), channel/src tags.",
-        "audience": "Who came — device, OS, browser, region, language, bots.",
-        "settings": "Per-link config — A/B destinations, webhook delivery."
-      }
+      "settings": "Settings"
     },
     "live": {
       "title": "Live clicks",
@@ -1580,6 +1574,9 @@
     "journal": {
       "title": "Link journal",
       "evidence": "evidence",
+      "detail": "Open detail",
+      "newVisitors": "New visitors",
+      "returningVisitors": "Returning visitors",
       "velocity": "Being clicked at {x}× the usual pace right now",
       "trendUp": "Last 7 days up {percent}% on the week before — {count} clicks",
       "trendDown": "Last 7 days down {percent}% on the week before — {count} clicks",

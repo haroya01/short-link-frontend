@@ -1250,20 +1250,14 @@
     },
     "back": "Quay lại",
     "shortCode": "mã rút gọn",
+    "detailsTitle": "Chi tiết",
     "tabs": {
       "aria": "Các mục thống kê",
       "overview": "Tổng quan",
       "traffic": "Lưu lượng",
       "sources": "Nguồn",
       "audience": "Đối tượng",
-      "settings": "Cài đặt",
-      "descriptions": {
-        "overview": "Bento một màn hình — số liệu, nhật ký, xu hướng, trực tiếp, bản đồ nhiệt, nguồn, thiết bị và quốc gia trong nháy mắt. Mũi tên trên ô mở chi tiết.",
-        "traffic": "Hình dạng khối lượng — xu hướng ngày, giờ trong ngày, phân tách theo quốc gia.",
-        "sources": "Đến từ đâu — nguồn giới thiệu, UTM (4), thẻ kênh/src.",
-        "audience": "Ai đã đến — thiết bị, hệ điều hành, trình duyệt, khu vực, ngôn ngữ, bot.",
-        "settings": "Cấu hình từng liên kết — điểm đến A/B, gửi webhook."
-      }
+      "settings": "Cài đặt"
     },
     "live": {
       "title": "Lượt nhấp trực tiếp",
@@ -1580,6 +1574,9 @@
     "journal": {
       "title": "Nhật ký liên kết",
       "evidence": "bằng chứng",
+      "detail": "Xem chi tiết",
+      "newVisitors": "Khách mới",
+      "returningVisitors": "Khách quay lại",
       "velocity": "Đang được nhấn nhanh gấp {x} lần bình thường",
       "trendUp": "7 ngày qua tăng {percent}% so với tuần trước — {count} lượt nhấn",
       "trendDown": "7 ngày qua giảm {percent}% so với tuần trước — {count} lượt nhấn",

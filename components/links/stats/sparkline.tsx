@@ -51,5 +51,5 @@ function SparklineImpl({ values, width = 64, height = 18, className }: Props) {
   );
 }
 
-// 부모 상태 변화(라이브 틱·기간 프리셋)에 데이터가 같으면 재렌더 생략 — 벤토 부드러움의 절반.
+// 부모 상태 변화(라이브 틱·기간 프리셋)에 데이터가 같으면 재렌더 생략 — 개요 부드러움의 절반.
 export const Sparkline = memo(SparklineImpl);

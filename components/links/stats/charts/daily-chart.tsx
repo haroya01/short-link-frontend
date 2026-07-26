@@ -17,7 +17,7 @@ import { formatNumber } from "@/lib/utils";
 
 type Props = {
   data: DailyClick[];
-  /** 벤토 타일용 압축 높이(h-52) — 기본은 챕터 상세의 h-72. */
+  /** 개요 타일·일지 인라인 근거용 압축 높이(h-52) — 기본은 챕터 상세의 h-72. */
   compact?: boolean;
 };
 
