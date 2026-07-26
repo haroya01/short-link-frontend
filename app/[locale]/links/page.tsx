@@ -5,7 +5,7 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { ShortenForm } from "@/components/links/shorten/form";
-import { ResultCard } from "@/components/links/shorten/result-card";
+import { ResultLine } from "@/components/links/shorten/result-line";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
 import { StageScenes } from "@/components/landing/stage-scenes";
@@ -50,6 +50,9 @@ export default function HomePage() {
   const [results, setResults] = useState<
     { res: CreateLinkResponse; original: string }[] | null
   >(null);
+  /** 답 줄이 자리를 차지한 뒤 "다른 주소도 줄이기"로 빈 줄을 다시 불러온 상태. */
+  const [composing, setComposing] = useState(false);
+  const tResult = useTranslations("result");
   const recent = useRecentLinks();
   const { data: totals } = usePublicTotals();
   const showStats = totals != null && (totals.links > 0 || totals.clicks > 0);
@@ -107,85 +110,69 @@ export default function HomePage() {
             className={"profile-fade" + (stage === "on" ? " stage-sweep-host" : "")}
             style={{ ["--idx" as string]: 4 } as React.CSSProperties}
           >
-            {/* 폼 = 카드가 아니라 한 줄. 헤드라인이 "단축은 한 줄"이라 말하니 입력도 문자
-                그대로 밑줄 한 줄로 받는다 — 떠 있는 카드+그린 글로우는 어느 제품에 놔도
-                성립하는 모양이라 걷어냈다(글로우 조명 ❌, 초록은 포커스 밑줄 마커로만). */}
+            {/* 줄이 응답한다 — 단축이 끝나면 입력 줄이 사라지고 그 자리에 답 줄(ResultLine)이
+                내려앉는다. "다른 주소도 줄이기"를 누르면 빈 줄이 맨 위로 돌아오고 답들은
+                영수증처럼 아래로 밀린다. 카드·CTA 상자 문법은 폐지(§ 한 줄 미학). */}
             <div className="mx-auto max-w-xl">
-              <ShortenForm
-                hero
-                authenticated={authenticated}
-                ready={ready}
-              onShortened={(items) => {
-                setResults(
-                  items.map((it) => ({
-                    res: it.res,
-                    original: it.originalUrl,
-                  })),
-                );
-                for (const it of items) {
-                  recordRecent({
-                    shortCode: it.res.shortCode,
-                    shortUrl: it.res.shortUrl,
-                    originalUrl: it.originalUrl,
-                    createdAt: Date.now(),
-                    claimToken: it.res.claimToken,
-                  });
-                }
-                // 모바일에서 결과 카드가 폴드 밑에 깔려 "아무 일도 없는" 화면이 됐다 —
-                // 마운트 다음 프레임에 첫 카드를 최소 이동으로 뷰포트에 들인다(reduce=점프).
-                requestAnimationFrame(() =>
-                  requestAnimationFrame(() => {
-                    const card = document.querySelector('[data-testid="result-card"]');
-                    if (!card) return;
-                    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-                    card.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
-                  }),
-                );
-              }}
-              />
+              {(!results || results.length === 0 || composing) && (
+                <ShortenForm
+                  hero
+                  heroAutoFocus={Boolean(results && results.length > 0)}
+                  authenticated={authenticated}
+                  ready={ready}
+                  onShortened={(items) => {
+                    setComposing(false);
+                    // 새 답이 맨 위로 — 이번 세션의 영수증 스택(최대 5줄, 전체는 최근 단축이 보관).
+                    setResults((prev) => {
+                      const next = items.map((it) => ({ res: it.res, original: it.originalUrl }));
+                      const seen = new Set(next.map((n) => n.res.shortCode));
+                      const kept = (prev ?? []).filter((p) => !seen.has(p.res.shortCode));
+                      return [...next, ...kept].slice(0, 5);
+                    });
+                    for (const it of items) {
+                      recordRecent({
+                        shortCode: it.res.shortCode,
+                        shortUrl: it.res.shortUrl,
+                        originalUrl: it.originalUrl,
+                        createdAt: Date.now(),
+                        claimToken: it.res.claimToken,
+                      });
+                    }
+                  }}
+                />
+              )}
+
+              {results && results.length > 0 && (
+                <div className={composing ? "mt-9 space-y-8" : "space-y-8"}>
+                  {results.map((r, i) => (
+                    <ResultLine
+                      key={r.res.shortCode}
+                      result={r.res}
+                      originalUrl={r.original}
+                      authenticated={authenticated}
+                      enterIndex={i}
+                    />
+                  ))}
+                  {!composing && (
+                    <button
+                      type="button"
+                      onClick={() => setComposing(true)}
+                      className="focus-ring result-enter inline-flex items-baseline gap-1.5 rounded-sm text-[14px] font-semibold text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+                      style={{ ["--idx" as string]: results.length + 1 } as React.CSSProperties}
+                    >
+                      {tResult("moreShorten")}
+                      <span aria-hidden className="text-[12px] text-slate-300 dark:text-slate-600">
+                        ↵
+                      </span>
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
           <div className="mt-6 min-h-[64px]">
-            {results && results.length > 0 ? (
-              <div className="space-y-3">
-                {results.map((r, i) => (
-                  <ResultCard
-                    key={r.res.shortCode}
-                    result={r.res}
-                    originalUrl={r.original}
-                    authenticated={authenticated}
-                    enterIndex={i}
-                  />
-                ))}
-                {/* 카드 뒤 CTA 도 같은 결로 반박자 늦게 — 결과가 먼저, 권유는 그다음. */}
-                {!authenticated ? (
-                  <Link
-                    href="/login"
-                    className="result-enter focus-ring group flex items-center justify-between rounded-lg bg-slate-900 dark:bg-white px-4 py-3 text-sm text-white dark:text-slate-900 transition hover:bg-slate-800 dark:hover:bg-slate-200"
-                    style={{ ["--idx" as string]: results.length + 1 } as React.CSSProperties}
-                  >
-                    <span>
-                      {t.rich("loginCta", {
-                        clickStats: (chunks: React.ReactNode) => (
-                          <span className="font-semibold text-accent-300">{chunks}</span>
-                        ),
-                      })}
-                    </span>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-accent-300 transition group-hover:translate-x-0.5" />
-                  </Link>
-                ) : (
-                  <Link
-                    href="/links"
-                    className="result-enter focus-ring group flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 transition hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                    style={{ ["--idx" as string]: results.length + 1 } as React.CSSProperties}
-                  >
-                    <span>{t("ctaSeeLinks")}</span>
-                    <ArrowRight className="h-4 w-4 shrink-0 transition group-hover:translate-x-0.5" />
-                  </Link>
-                )}
-              </div>
-            ) : !authenticated ? (
+            {(!results || results.length === 0) && !authenticated ? (
               <div className="space-y-2 text-center">
                 <p className="text-xs text-slate-500 dark:text-slate-400">{t("anonymousHint")}</p>
                 <Link

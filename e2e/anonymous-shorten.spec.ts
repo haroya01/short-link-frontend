@@ -7,15 +7,18 @@ test.describe("anonymous shorten flow", () => {
     await expect(page.getByPlaceholder(/긴 주소를 여기에/)).toBeVisible();
   });
 
-  test("shortens a valid URL and shows result card", async ({ page }) => {
+  test("shortens a valid URL and answers on the line", async ({ page }) => {
     await page.goto("/ko");
     const input = page.getByPlaceholder(/긴 주소를 여기에/);
     await input.fill("https://example.com/playwright-test");
     await page.getByRole("button", { name: "단축하기" }).click();
 
-    const resultLink = page.locator("a", { hasText: /\/[0-9A-Za-z]{7}/ }).first();
-    await expect(resultLink).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText("단축 완료")).toBeVisible();
+    // 답 줄 — 카드가 아니라 입력 줄 자리에 짧은 주소가 내려앉는다.
+    const line = page.getByTestId("result-line").first();
+    await expect(line).toBeVisible({ timeout: 10000 });
+    const resultLink = line.locator("a", { hasText: /\/[0-9A-Za-z]{7}/ }).first();
+    await expect(resultLink).toBeVisible();
+    await expect(page.getByRole("button", { name: "복사" }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: "열기" }).first()).toBeVisible();
 
     const href = await resultLink.getAttribute("href");
@@ -37,11 +40,13 @@ test.describe("anonymous shorten flow", () => {
     ).toBeVisible();
   });
 
-  test("shows login CTA below result for anonymous user", async ({ page }) => {
+  test("whispers expiry + signup for anonymous user", async ({ page }) => {
     await page.goto("/ko");
     await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/cta-test");
     await page.getByRole("button", { name: "단축하기" }).click();
-    await expect(page.getByText(/로그인하면.*클릭 통계/)).toBeVisible({ timeout: 10000 });
+    // 속삭임 행 — 24h 만료 안내와 보관 유도가 답 줄 아래 한 줄로.
+    await expect(page.getByText(/24시간 후 만료/)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("link", { name: /가입하고 통계 보관하기/ })).toBeVisible();
   });
 
   test("home counters render numbers", async ({ page }) => {
