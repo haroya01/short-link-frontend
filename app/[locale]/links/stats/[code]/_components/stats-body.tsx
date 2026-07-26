@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { LinkStats } from "@/types";
-import { OverviewBento } from "./overview-bento";
+import { StatsOverview } from "./overview";
 import { WhenChapter, type RangeDays } from "./chapters/when-chapter";
 import { WhereChapter } from "./chapters/where-chapter";
 import { WhoChapter } from "./chapters/who-chapter";
@@ -14,7 +14,7 @@ import { TabBar } from "./tab-bar";
 import { SettingsTab } from "./tabs/settings-tab";
 import { useTabHash, type TabKey } from "../_lib/use-tab-hash";
 
-// 뎁스 2층 구조: 1층(개요) = 히어로 KPI + 링크 일지 + 챕터 카드 3장(엄선), 2층 = 챕터 상세.
+// 뎁스 2층 구조: 1층(개요) = 마스트헤드 + 링크 일지(1면) + 상세 타일, 2층 = 챕터 상세.
 // 근거/KPI 점프는 섹션이 사는 챕터로 내려간 뒤 그 섹션으로 스크롤한다 — 해시 기반이라
 // 브라우저 뒤로가기가 그대로 "개요로 복귀"가 되는 예측 가능한 동작.
 const SECTION_CHAPTER: Record<string, TabKey> = {
@@ -110,7 +110,7 @@ export function StatsBody({
           />
           <div key={view} className="view-enter">
             {view === "overview" ? (
-              <OverviewBento
+              <StatsOverview
                 data={data}
                 slicedDaily={slicedDaily}
                 range={rangeDays}

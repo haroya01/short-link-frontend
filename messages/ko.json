@@ -1250,20 +1250,14 @@
     },
     "back": "뒤로",
     "shortCode": "단축 코드",
+    "detailsTitle": "상세",
     "tabs": {
       "aria": "통계 섹션",
       "overview": "개요",
       "traffic": "트래픽",
       "sources": "유입",
       "audience": "방문자",
-      "settings": "설정",
-      "descriptions": {
-        "overview": "한 화면 벤토 — 수치·일지·추이·라이브·히트맵·유입·기기·국가를 한눈에. 타일 화살표가 상세로.",
-        "traffic": "양적 흐름 — 일자별 트렌드, 시간대 분포, 국가별 분포.",
-        "sources": "어디서 왔는지 — Referrer, UTM 4종, 채널/src 태그.",
-        "audience": "누가 왔는지 — 디바이스, OS, 브라우저, 지역, 언어, 봇.",
-        "settings": "이 링크의 설정 — A/B 도착지, Webhook 알림."
-      }
+      "settings": "설정"
     },
     "live": {
       "title": "실시간 클릭",
@@ -1580,6 +1574,9 @@
     "journal": {
       "title": "링크 일지",
       "evidence": "근거",
+      "detail": "상세 보기",
+      "newVisitors": "신규 방문",
+      "returningVisitors": "재방문",
       "velocity": "지금 평소의 {x}배 속도로 눌리고 있어요",
       "trendUp": "최근 7일이 그 전보다 {percent}% 늘었어요 — {count}클릭",
       "trendDown": "최근 7일이 그 전보다 {percent}% 줄었어요 — {count}클릭",

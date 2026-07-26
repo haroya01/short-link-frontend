@@ -1250,20 +1250,14 @@
     },
     "back": "戻る",
     "shortCode": "ショートコード",
+    "detailsTitle": "詳細",
     "tabs": {
       "aria": "統計セクション",
       "overview": "概要",
       "traffic": "トラフィック",
       "sources": "流入",
       "audience": "訪問者",
-      "settings": "設定",
-      "descriptions": {
-        "overview": "1画面ベント — 数値・日誌・推移・ライブ・ヒートマップ・流入・端末・国をひと目で。タイルの矢印が詳細へ。",
-        "traffic": "トラフィックの動き — 日別トレンド・時間帯分布・国別分布。",
-        "sources": "どこから来たか — Referrer、UTM 4 種、チャネル/src タグ。",
-        "audience": "誰が来たか — デバイス・OS・ブラウザ・地域・言語・ボット。",
-        "settings": "このリンクの設定 — A/B 遷移先、Webhook 通知。"
-      }
+      "settings": "設定"
     },
     "live": {
       "title": "リアルタイムクリック",
@@ -1580,6 +1574,9 @@
     "journal": {
       "title": "リンク日誌",
       "evidence": "根拠",
+      "detail": "詳細を見る",
+      "newVisitors": "新規訪問",
+      "returningVisitors": "再訪問",
       "velocity": "いま平常の{x}倍のペースでクリックされています",
       "trendUp": "直近7日は前週より{percent}%増 — {count}クリック",
       "trendDown": "直近7日は前週より{percent}%減 — {count}クリック",

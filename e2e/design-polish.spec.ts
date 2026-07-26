@@ -91,11 +91,24 @@ test.describe("design polish guards", () => {
     await expect(page.getByRole("link", { name: "지금 링크 단축하기" })).toBeVisible();
   });
 
-  test("demo stats KPI renders final numbers without a zero-count mismatch", async ({ page }) => {
+  test("demo stats masthead renders final numbers without a zero-count mismatch", async ({ page }) => {
     await page.goto("/ko/demo");
 
+    // 마스트헤드 한 줄 — 총 클릭 큰 숫자 + 유니크(수 · 사람 대비 %). 시드 데이터라 수치가 고정된다.
     await expect(page.getByText("총 클릭")).toBeVisible();
-    await expect(page.getByText("1,125")).toBeVisible();
-    await expect(page.getByText("698 유니크")).toBeVisible();
+    await expect(page.getByText("1,309")).toBeVisible();
+    await expect(page.getByText("698 · 62%")).toBeVisible();
+  });
+
+  test("demo journal sentence unfolds its evidence inline", async ({ page }) => {
+    await page.goto("/ko/demo");
+
+    await expect(page.getByText("링크 일지")).toBeVisible();
+    const row = page.locator('button[aria-controls^="journal-evidence-"]').first();
+    await expect(row).toHaveAttribute("aria-expanded", "false");
+    await row.click();
+    await expect(row).toHaveAttribute("aria-expanded", "true");
+    // 접이가 실제로 펼쳐지면 근거 패널 안의 챕터 점프 링크가 보인다.
+    await expect(page.getByRole("button", { name: "상세 보기" }).first()).toBeVisible();
   });
 });
