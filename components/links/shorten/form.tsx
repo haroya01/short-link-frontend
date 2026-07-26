@@ -24,9 +24,11 @@ type Props = {
    * 메인 입력은 무테로 키우고, 버튼은 카드 라운드에 맞춘다. 고급 옵션 필드는 무관.
    */
   hero?: boolean;
+  /** 답 줄 상태에서 "다른 주소도 줄이기"로 돌아온 빈 줄은 바로 받아쓸 수 있게 포커스. */
+  heroAutoFocus?: boolean;
 };
 
-export function ShortenForm({ authenticated, ready, onShortened, hero = false }: Props) {
+export function ShortenForm({ authenticated, ready, onShortened, hero = false, heroAutoFocus = false }: Props) {
   const t = useTranslations("shortenForm");
   const [url, setUrl] = useState("");
   const [customCode, setCustomCode] = useState("");
@@ -135,6 +137,7 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false }:
             ref={heroInputRef}
             type="url"
             inputMode="url"
+            autoFocus={heroAutoFocus}
             value={url}
             onChange={(e) => {
               setUrl(e.target.value);

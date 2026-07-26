@@ -449,21 +449,6 @@ mark.kurl-highlight--thread {
     animation: result-beat 460ms var(--ease) forwards;
     animation-delay: calc(var(--idx, 0) * 70ms + var(--beat, 0) * 60ms + 90ms);
   }
-  .result-underline::after {
-    content: "";
-    display: block;
-    height: 1.5px;
-    margin-top: 2px;
-    border-radius: 1px;
-    background: #059669;
-    transform: scaleX(0);
-    transform-origin: left;
-    animation: result-underline-draw 420ms var(--ease) forwards;
-    animation-delay: calc(var(--idx, 0) * 70ms + 360ms);
-  }
-  .dark .result-underline::after {
-    background: #34d399;
-  }
   /* 스켈레톤 shimmer — 로딩 표시지만 무한 루프라 reduce 에선 정지(정적 워시로 남는다). */
   @media (prefers-reduced-motion: reduce) {
     .animate-shimmer {
@@ -476,10 +461,6 @@ mark.kurl-highlight--thread {
     .result-enter .result-beat {
       animation: none;
       opacity: 1;
-    }
-    .result-underline::after {
-      animation: none;
-      transform: scaleX(1);
     }
   }
 }
