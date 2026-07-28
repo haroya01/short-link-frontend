@@ -260,6 +260,7 @@
     "settingsDisplay": "Display",
     "settingsFeed": "Feed",
     "settingsDefaultTab": "Default tab — opens first when you land on the blog home",
+    "settingsDefaultTabFailed": "Couldn't save. Please try again.",
     "settingsPrivacy": "Visibility",
     "settingsHideFollowerCount": "Hide follower count",
     "settingsHideFollowerCountHint": "When on, no one sees your follower or following numbers. Following still works.",

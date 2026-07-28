@@ -28,6 +28,8 @@ export function FeedDefaultTabSetting({ rowClass }: { rowClass: string }) {
   const t = useTranslations("blogWorkspace");
   const tFeed = useTranslations("publicFeed");
   const [tab, setTab] = useState<FeedTab | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -43,11 +45,28 @@ export function FeedDefaultTabSetting({ rowClass }: { rowClass: string }) {
     };
   }, []);
 
-  function choose(next: FeedTab) {
-    if (next === tab) return;
-    setTab(next); // optimistic
-    writeFeedTabCookie(next);
-    setDefaultTab(next).catch(() => {}); // best-effort; cookie already reflects the choice
+  /**
+   * The account is the source of truth: FeedTabCookieSync re-reads it on every blog-home load and
+   * writes it back over the cookie. So a failed save that we swallowed didn't just lose the choice —
+   * it made the setting look haunted ("I picked 최신 and it keeps opening on 시리즈"), because the
+   * cookie briefly agreed with the user and then the sync overwrote it. Wait for the save, and only
+   * then mirror it into the cookie; on failure put the old value back and say so.
+   */
+  async function choose(next: FeedTab) {
+    if (next === tab || saving) return;
+    const previous = tab;
+    setTab(next); // optimistic — reverted below if the account refuses
+    setFailed(false);
+    setSaving(true);
+    try {
+      await setDefaultTab(next);
+      writeFeedTabCookie(next);
+    } catch {
+      setTab(previous);
+      setFailed(true);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -63,13 +82,18 @@ export function FeedDefaultTabSetting({ rowClass }: { rowClass: string }) {
             type="button"
             onClick={() => choose(opt)}
             aria-pressed={tab === opt}
-            disabled={tab === null}
+            disabled={tab === null || saving}
             className={cn(rowClass, "w-full", tab === opt && "text-accent-700 dark:text-accent-300")}
           >
             {tFeed(TAB_LABEL_KEY[opt])}
             {tab === opt && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
           </button>
         ))}
+        {failed && (
+          <p role="alert" className="px-3 pb-2 pt-1 text-[12px] text-red-600 dark:text-red-400">
+            {t("settingsDefaultTabFailed")}
+          </p>
+        )}
       </div>
     </section>
   );

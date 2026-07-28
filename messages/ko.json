@@ -260,6 +260,7 @@
     "settingsDisplay": "화면",
     "settingsFeed": "피드",
     "settingsDefaultTab": "기본 탭 — 블로그 홈에 들어오면 먼저 열릴 탭",
+    "settingsDefaultTabFailed": "저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
     "settingsPrivacy": "공개 범위",
     "settingsHideFollowerCount": "팔로워 수 숨기기",
     "settingsHideFollowerCountHint": "켜면 팔로워·팔로잉 숫자가 아무에게도 보이지 않아요. 팔로우는 그대로 됩니다.",
