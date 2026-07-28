@@ -5,9 +5,11 @@ import dynamic from "next/dynamic";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
+import { ChannelDepthTable } from "@/components/links/stats/channel-depth-table";
 import { DeviceChart } from "@/components/links/stats/charts/device-chart";
+import { ClientAppBreakdown } from "@/components/links/stats/labeled-breakdowns";
 import { Sparkline } from "@/components/links/stats/sparkline";
-import { buildJournal } from "@/lib/stats-journal";
+import { buildJournal, type JournalEntry } from "@/lib/stats-journal";
 import { cn } from "@/lib/utils";
 import type { LinkStats } from "@/types";
 
@@ -87,9 +89,29 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
             .map((c) => ({ label: c.country, count: c.count }))}
         />
       );
+    case "section-client-app":
+      return <ClientAppBreakdown items={(data.clientAppClicks ?? []).slice(0, 5)} />;
+    case "section-channel-depth":
+      // 충성도 문장의 근거는 클릭 순위가 아니라 채널별 재방문율이다 — 상세와 같은 표를 그대로.
+      return (
+        <ChannelDepthTable data={(data.channelDepth ?? []).slice(0, 5)} timezone={data.timezone} />
+      );
     default:
       return null;
   }
+}
+
+/**
+ * 룰이 넘긴 파라미터 중 값 자체가 메시지 키인 것(예: 인앱 앱 이름)을 카탈로그로 한 번 옮긴다.
+ * 룰 엔진은 i18n 을 모르는 순수 함수로 두고, 번역은 렌더 직전 이 한 줄에서만 일어난다.
+ */
+function resolveParams(entry: JournalEntry, tStats: ReturnType<typeof useTranslations>) {
+  if (!entry.translatedParams?.length) return entry.params;
+  const resolved = { ...entry.params };
+  for (const name of entry.translatedParams) {
+    resolved[name] = tStats(String(entry.params[name]));
+  }
+  return resolved;
 }
 
 /**
@@ -106,6 +128,7 @@ export function StatsJournal({
   onNavigate: (section: string) => void;
 }) {
   const t = useTranslations("stats.journal");
+  const tStats = useTranslations("stats");
   const entries = buildJournal(data);
   const [openKeys, setOpenKeys] = useState<ReadonlySet<string>>(new Set());
   // 접힘 애니메이션 동안 내용이 사라지지 않도록, 한 번 펼친 근거는 마운트를 유지한다.
@@ -147,7 +170,7 @@ export function StatsJournal({
                     className="mt-[9px] inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-accent-600 dark:bg-accent-400"
                   />
                   <span className="min-w-0 flex-1 text-[15px] font-medium leading-relaxed text-slate-800 dark:text-slate-200 sm:text-[16px]">
-                    {t(entry.key, entry.params)}
+                    {t(entry.key, resolveParams(entry, tStats))}
                   </span>
                   <span className="mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-slate-400 transition-colors duration-150 ease-out group-hover:text-accent-700 dark:text-slate-500 dark:group-hover:text-accent-400">
                     {t("evidence")}

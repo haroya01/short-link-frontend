@@ -1397,7 +1397,9 @@
       "blockedEmpty": "ブロック中の国はありません。",
       "blockedLoading": "読み込み中…",
       "blockedRemove": "ブロック解除",
-      "blockedFailed": "国別ブロックの更新に失敗しました。"
+      "blockedFailed": "国別ブロックの更新に失敗しました。",
+      "configuredShare": "設定 {pct}%",
+      "actualShare": "実際 {pct}%"
     },
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "統計はリンクの所有者のみ表示できます。",
@@ -1473,10 +1475,30 @@
         "title": "UTM コンテンツ",
         "desc": "utm_content 別集計 (バナー / A-B 区分)"
       },
+      "utmTerm": {
+        "title": "UTM キーワード",
+        "desc": "utm_term 別集計（検索語・広告クリエイティブ）"
+      },
       "srcChannel": {
         "title": "共有チャネル (?src)",
         "desc": "短縮 URL に付与した ?src= パラメータで追跡（QR・LINE・オフラインなど referrer が空のチャネル）",
         "empty": "?src パラメータで来たクリックはありません"
+      },
+      "clientApp": {
+        "title": "アプリ内で開かれた",
+        "desc": "カカオトークや Instagram など、アプリ内ブラウザで開かれたクリック。ログインのリダイレクトやダウンロードがよく壊れる場所です。"
+      },
+      "fetchSite": {
+        "title": "どう開いたか",
+        "desc": "自分でアドレスを開いたのか、どこかのリンクをたどってきたのか。リファラーが消えたクリックも分かれます。"
+      },
+      "postClicks": {
+        "title": "どの記事から",
+        "desc": "このリンクを載せた記事ごとのクリック"
+      },
+      "channelDepth": {
+        "title": "チャネルの深さ",
+        "desc": "チャネルごとに、いつ最初に現れて、そのうち何%が戻ってきたか"
       },
       "bots": {
         "title": "ボット種別",
@@ -1503,6 +1525,31 @@
         "desc": "流入 IP の自律システム (ISP / クラウド) 分布。データセンター由来 {dc} 件は自動でボットとして分類されます。",
         "empty": "ASN データなし (GeoLite2-ASN 未導入)"
       }
+    },
+    "clientApp": {
+      "kakaotalk": "カカオトーク",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "facebook": "Facebook",
+      "naver": "Naver",
+      "daum": "Daum",
+      "tiktok": "TikTok",
+      "twitter": "X（Twitter）"
+    },
+    "fetchSite": {
+      "direct": "自分で開いた",
+      "crossSite": "リンクをたどって",
+      "sameSite": "同じサイトから",
+      "sameOrigin": "同じページから"
+    },
+    "channelDepth": {
+      "channel": "チャネル",
+      "clicks": "クリック",
+      "firstSeen": "初回",
+      "returning": "再訪問"
+    },
+    "postClicks": {
+      "deleted": "削除された記事"
     },
     "noData": "データなし",
     "referrerNoData": "リファラーデータはありません",
@@ -1589,7 +1636,9 @@
       "desktopHeavy": "デスクトップが{percent}% — 机の前で開かれるリンクです",
       "botHigh": "ボットが{percent}%も — 人は{human}人です",
       "botFiltered": "ボット{percent}%を除くと、人は{human}人でした",
-      "fastFirstClick": "作成から{minutes}分で最初のクリックが来ました"
+      "fastFirstClick": "作成から{minutes}分で最初のクリックが来ました",
+      "inAppBrowser": "{app}で開かれたのが{percent}% — アプリ内ブラウザの比率が高めです",
+      "channelLoyalty": "{host}から来た人の{percent}%が戻ってきました"
     }
   },
   "admin": {

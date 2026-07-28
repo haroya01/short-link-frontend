@@ -122,6 +122,7 @@ export function LinkDestinationsSection({
     if (dc.destinationId == null) defaultClicks += dc.count;
     else clicksByDestId.set(dc.destinationId, dc.count);
   }
+  const split = abSplit(items ?? [], clicksByDestId);
 
   return (
     <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
@@ -196,6 +197,7 @@ export function LinkDestinationsSection({
               count={clicksByDestId.get(d.id) ?? 0}
               total={totalClicks}
               weight={d.weight}
+              share={split.get(d.id)}
               enabled={d.enabled}
               countryCode={d.countryCode}
               deviceClass={d.deviceClass}
@@ -214,12 +216,46 @@ export function LinkDestinationsSection({
   );
 }
 
+/**
+ * "설정 50% · 실제 48%" 를 붙일 수 있는 행들 — 조건(국가·기기·OS)이 걸리지 않은 활성 도착지끼리의
+ * 가중치 추첨, 즉 진짜 A/B 인 행만이다.
+ *
+ * <p>조건이 걸린 도착지는 같은 추첨에 들어가지 않는다(백엔드 {@code CachedLink#pick}: 조건이
+ * 맞는 것들 중 <b>가장 구체적인</b> 무리가 이기고, 가중치 추첨은 그 무리 안에서만 돈다). JP 전용
+ * 도착지에 "설정 33%" 를 붙이면 설정과 실제가 영원히 어긋나 보여, 배포 버그를 잡으라고 만든
+ * 숫자가 매번 거짓 경보를 울린다. 그래서 그런 행에는 아예 안 붙인다.
+ *
+ * <p>분모도 이 무리 안으로 닫는다 — 설정 비율은 무리 안의 비율이니 실제도 무리 안의 비율이어야
+ * 두 수가 같은 질문에 답한다.
+ */
+function abSplit(
+  items: DestinationSummary[],
+  clicksByDestId: Map<number, number>,
+): Map<number, { configured: number; actual: number }> {
+  const pool = items.filter(
+    (d) => d.enabled && !d.countryCode && !d.deviceClass && !d.os && d.weight > 0,
+  );
+  const out = new Map<number, { configured: number; actual: number }>();
+  if (pool.length < 2) return out;
+  const weightSum = pool.reduce((s, d) => s + d.weight, 0);
+  const clickSum = pool.reduce((s, d) => s + (clicksByDestId.get(d.id) ?? 0), 0);
+  if (weightSum <= 0 || clickSum <= 0) return out;
+  for (const d of pool) {
+    out.set(d.id, {
+      configured: (d.weight / weightSum) * 100,
+      actual: ((clicksByDestId.get(d.id) ?? 0) / clickSum) * 100,
+    });
+  }
+  return out;
+}
+
 function DestinationRow({
   label,
   url,
   count,
   total,
   weight,
+  share,
   enabled,
   countryCode,
   deviceClass,
@@ -237,6 +273,8 @@ function DestinationRow({
   count: number;
   total: number;
   weight?: number;
+  /** A/B 추첨에 든 행에만 있는 설정/실제 비율(둘 다 %). */
+  share?: { configured: number; actual: number };
   enabled?: boolean;
   countryCode?: string | null;
   deviceClass?: string | null;
@@ -250,7 +288,8 @@ function DestinationRow({
   onDelete?: () => void;
 }) {
   const t = useTranslations("stats.destinations");
-  const pct = total === 0 ? 0 : (count / total) * 100;
+  // 막대와 옆의 숫자는 같은 질문에 답해야 한다 — A/B 행이면 둘 다 추첨 무리 안의 비율로.
+  const pct = share ? share.actual : total === 0 ? 0 : (count / total) * 100;
   return (
     <div
       className={
@@ -267,7 +306,7 @@ function DestinationRow({
             {t("controlBadge")}
           </span>
         )}
-        {weight != null && (
+        {weight != null && !share && (
           <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
             w {weight}
           </span>
@@ -292,9 +331,7 @@ function DestinationRow({
             {t("disabled")}
           </span>
         )}
-        <span className="ml-auto font-mono tabular-nums text-slate-700 dark:text-slate-300">
-          {count} · {pct.toFixed(1)}%
-        </span>
+        <ShareReadout count={count} pct={pct} share={share} />
       </div>
       {url && (
         <code
@@ -368,6 +405,42 @@ function DestinationRow({
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * 행 오른쪽 수치. A/B 추첨에 든 행에서는 <b>설정</b>과 <b>실제</b>를 나란히 세운다 — 이 둘이 크게
+ * 어긋나면 라우팅이 설정대로 안 돌고 있다는 뜻이고, 지금까지는 실제만 있어서 그걸 알아챌
+ * 방법이 없었다. 설정은 muted, 실제가 본문 — 눈이 먼저 가야 하는 건 실제 쪽이다.
+ */
+function ShareReadout({
+  count,
+  pct,
+  share,
+}: {
+  count: number;
+  pct: number;
+  share?: { configured: number; actual: number };
+}) {
+  const t = useTranslations("stats.destinations");
+  return (
+    <span className="ml-auto flex items-baseline gap-1.5 font-mono tabular-nums text-slate-700 dark:text-slate-300">
+      <span>{count}</span>
+      <span className="text-slate-300 dark:text-slate-600">·</span>
+      {share ? (
+        <>
+          <span className="text-slate-400 dark:text-slate-500">
+            {t("configuredShare", { pct: share.configured.toFixed(0) })}
+          </span>
+          <span className="text-slate-300 dark:text-slate-600">·</span>
+          <span className="font-medium text-slate-900 dark:text-slate-100">
+            {t("actualShare", { pct: share.actual.toFixed(0) })}
+          </span>
+        </>
+      ) : (
+        <span>{pct.toFixed(1)}%</span>
+      )}
+    </span>
   );
 }
 

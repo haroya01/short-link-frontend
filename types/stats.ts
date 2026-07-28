@@ -3,15 +3,19 @@ import type {
   BotClick,
   BrowserClick,
   ChannelClick,
+  ChannelDepth,
   CityClick,
+  ClientAppClick,
   CountryClick,
   DailyClick,
   DayOfWeekClick,
   DeviceClick,
+  FetchSiteClick,
   HeatmapCell,
   HourClick,
   LanguageClick,
   OsClick,
+  PostClick,
   ReferrerClick,
   ReferrerHostClick,
   RegionClick,
@@ -20,6 +24,7 @@ import type {
   UtmContentClick,
   UtmMediumClick,
   UtmSourceClick,
+  UtmTermClick,
   Velocity,
 } from "./clicks";
 import type { DestinationClick } from "./links";
@@ -54,7 +59,14 @@ export type LinkStats = {
   utmSourceClicks: UtmSourceClick[];
   utmMediumClicks: UtmMediumClick[];
   utmContentClicks: UtmContentClick[];
+  utmTermClicks?: UtmTermClick[];
   sourceChannelClicks: SourceChannelClick[];
+  // 아래 넷은 나중에 붙은 축이라 optional — 프론트가 백엔드보다 먼저 배포돼도(그리고 공개 통계
+  // 응답처럼 필드가 빠져도) 화면이 터지지 않게, 읽는 쪽은 전부 `?? []` 로 받는다.
+  clientAppClicks?: ClientAppClick[];
+  fetchSiteClicks?: FetchSiteClick[];
+  postClicks?: PostClick[];
+  channelDepth?: ChannelDepth[];
   destinationClicks: DestinationClick[];
   countryClicks: CountryClick[];
   regionClicks: RegionClick[];

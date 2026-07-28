@@ -1397,7 +1397,9 @@
       "blockedEmpty": "No countries blocked.",
       "blockedLoading": "Loading…",
       "blockedRemove": "Unblock",
-      "blockedFailed": "Couldn't update country blocking."
+      "blockedFailed": "Couldn't update country blocking.",
+      "configuredShare": "set {pct}%",
+      "actualShare": "actual {pct}%"
     },
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "Stats are visible to the link owner only.",
@@ -1473,10 +1475,30 @@
         "title": "UTM content",
         "desc": "By utm_content (banner / A-B slot)"
       },
+      "utmTerm": {
+        "title": "UTM term",
+        "desc": "By utm_term (search keyword / ad creative)"
+      },
       "srcChannel": {
         "title": "Share channel (?src)",
         "desc": "Tracked via the ?src= hint on the short URL itself — covers QR scans, KakaoTalk, offline channels where the referrer header is missing.",
         "empty": "No clicks carried a ?src parameter."
+      },
+      "clientApp": {
+        "title": "Opened in an app",
+        "desc": "Clicks that opened inside an in-app browser — KakaoTalk, Instagram and friends. Sign-in redirects and downloads often break in there."
+      },
+      "fetchSite": {
+        "title": "How they opened it",
+        "desc": "Whether they opened the address themselves or followed a link — this splits apart clicks that carry no referrer."
+      },
+      "postClicks": {
+        "title": "Which post",
+        "desc": "Clicks per blog post that carried this link"
+      },
+      "channelDepth": {
+        "title": "Channel depth",
+        "desc": "When each channel first showed up, and how many of its visitors came back"
       },
       "bots": {
         "title": "Bot types",
@@ -1503,6 +1525,31 @@
         "desc": "Autonomous system (ISP / cloud provider) distribution. {dc} datacenter clicks were auto-flagged as bots.",
         "empty": "No ASN data (GeoLite2-ASN not bundled)"
       }
+    },
+    "clientApp": {
+      "kakaotalk": "KakaoTalk",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "facebook": "Facebook",
+      "naver": "Naver",
+      "daum": "Daum",
+      "tiktok": "TikTok",
+      "twitter": "X (Twitter)"
+    },
+    "fetchSite": {
+      "direct": "Opened directly",
+      "crossSite": "Followed a link",
+      "sameSite": "From the same site",
+      "sameOrigin": "From the same page"
+    },
+    "channelDepth": {
+      "channel": "Channel",
+      "clicks": "Clicks",
+      "firstSeen": "First seen",
+      "returning": "Returning"
+    },
+    "postClicks": {
+      "deleted": "Deleted post"
     },
     "noData": "No data",
     "referrerNoData": "No referrer data",
@@ -1589,7 +1636,9 @@
       "desktopHeavy": "{percent}% on desktop — opened at a desk",
       "botHigh": "Bots make up {percent}% — humans: {human}",
       "botFiltered": "Strip the {percent}% bots and {human} humans visited",
-      "fastFirstClick": "First click landed {minutes} min after creation"
+      "fastFirstClick": "First click landed {minutes} min after creation",
+      "inAppBrowser": "{percent}% opened inside {app} — that is a lot of in-app browser traffic",
+      "channelLoyalty": "{percent}% of the people from {host} came back"
     }
   },
   "admin": {

@@ -2,21 +2,60 @@
 
 import { useTranslations } from "next-intl";
 import { BreakdownList } from "@/components/links/stats/breakdown-list";
+import { ChannelDepthTable } from "@/components/links/stats/channel-depth-table";
 import { ReferrerChart } from "@/components/links/stats/charts/referrer-chart";
 import { CountryTable } from "@/components/links/stats/country-table";
+import { FetchSiteBreakdown } from "@/components/links/stats/labeled-breakdowns";
 import { Section } from "@/components/common/section";
+import { cn } from "@/lib/utils";
 import type { LinkStats } from "@/types";
 import { ChapterHeading } from "./chapter-heading";
 
-/** 3장 어디서 — 유입(호스트/URL/UTM/채널), 지리(국가/지역/도시). (구 유입 탭 + 트래픽의 국가 + 방문자의 지리) */
+/** 3장 어디서 — 유입(호스트/URL/채널 깊이/UTM/채널/글), 지리(국가/지역/도시). */
 export function WhereChapter({ data }: { data: LinkStats }) {
   const t = useTranslations("stats");
+  const utmTermClicks = data.utmTermClicks ?? [];
   const utmHasAny =
     data.utmSourceClicks.length +
       data.utmMediumClicks.length +
       data.utmCampaignClicks.length +
-      data.utmContentClicks.length >
+      data.utmContentClicks.length +
+      utmTermClicks.length >
     0;
+  const channelDepth = data.channelDepth ?? [];
+  const fetchSites = data.fetchSiteClicks ?? [];
+  const postClicks = data.postClicks ?? [];
+
+  // fetch-site 는 옛 브라우저·과거 클릭에 값이 아예 없고, 글 귀속은 링크를 글에 실은 적이 있어야
+  // 생긴다 — 둘 다 대부분의 링크에서 빈 배열이다. 하나만 있을 때 반쪽 카드가 남지 않도록 열 수를
+  // 실제 개수에 맞춘다(빈 표는 애초에 안 그린다).
+  const arrivalSections = [
+    fetchSites.length > 0 && (
+      <Section
+        key="fetch-site"
+        id="section-fetch-site"
+        title={t("section.fetchSite.title")}
+        description={t("section.fetchSite.desc")}
+      >
+        <FetchSiteBreakdown items={fetchSites} />
+      </Section>
+    ),
+    postClicks.length > 0 && (
+      <Section
+        key="post-clicks"
+        id="section-post-clicks"
+        title={t("section.postClicks.title")}
+        description={t("section.postClicks.desc")}
+      >
+        <BreakdownList
+          items={postClicks.map((p) => ({
+            label: p.title ?? t("postClicks.deleted"),
+            count: p.count,
+          }))}
+        />
+      </Section>
+    ),
+  ].filter(Boolean);
 
   return (
     <div id="chapter-where" className="scroll-mt-28 space-y-4">
@@ -38,6 +77,27 @@ export function WhereChapter({ data }: { data: LinkStats }) {
           <ReferrerChart data={data.referrerClicks} />
         </Section>
       </div>
+
+      {channelDepth.length > 0 && (
+        <Section
+          id="section-channel-depth"
+          title={t("section.channelDepth.title")}
+          description={t("section.channelDepth.desc")}
+        >
+          <ChannelDepthTable data={channelDepth} timezone={data.timezone} />
+        </Section>
+      )}
+
+      {arrivalSections.length > 0 && (
+        <div
+          className={cn(
+            "grid grid-cols-1 gap-4",
+            arrivalSections.length > 1 && "lg:grid-cols-2",
+          )}
+        >
+          {arrivalSections}
+        </div>
+      )}
 
       {!utmHasAny ? (
         <Section title={t("section.utm.title")} description={t("section.utm.desc")}>
@@ -82,6 +142,13 @@ export function WhereChapter({ data }: { data: LinkStats }) {
             >
               <BreakdownList
                 items={data.utmContentClicks.map((u) => ({ label: u.content, count: u.count }))}
+              />
+            </Section>
+          )}
+          {utmTermClicks.length > 0 && (
+            <Section title={t("section.utmTerm.title")} description={t("section.utmTerm.desc")}>
+              <BreakdownList
+                items={utmTermClicks.map((u) => ({ label: u.term, count: u.count }))}
               />
             </Section>
           )}
