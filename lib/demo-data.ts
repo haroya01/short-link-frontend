@@ -3,16 +3,20 @@ import type {
   BotClick,
   BrowserClick,
   ChannelClick,
+  ChannelDepth,
   CityClick,
+  ClientAppClick,
   CountryClick,
   DailyClick,
   DestinationClick,
   DeviceClick,
+  FetchSiteClick,
   HeatmapCell,
   HourClick,
   LanguageClick,
   LinkStats,
   OsClick,
+  PostClick,
   ReferrerClick,
   ReferrerHostClick,
   RegionClick,
@@ -21,6 +25,7 @@ import type {
   UtmContentClick,
   UtmMediumClick,
   UtmSourceClick,
+  UtmTermClick,
   Velocity,
 } from "@/types";
 
@@ -89,7 +94,12 @@ export function buildDemoLinkStats(): LinkStats {
     utmSourceClicks: buildUtmSources(human),
     utmMediumClicks: buildUtmMediums(human),
     utmContentClicks: buildUtmContents(human),
+    utmTermClicks: buildUtmTerms(human),
     sourceChannelClicks: buildSourceChannels(human),
+    clientAppClicks: buildClientApps(human),
+    fetchSiteClicks: buildFetchSites(human),
+    postClicks: buildPostClicks(human),
+    channelDepth: buildChannelDepth(human),
     destinationClicks: buildDestinations(human),
     countryClicks: buildCountries(human),
     regionClicks: buildRegions(human),
@@ -319,6 +329,98 @@ function buildUtmContents(total: number): UtmContentClick[] {
     { content: "story-1", count: Math.round(total * 0.19) },
     { content: "reels-feature", count: Math.round(total * 0.12) },
     { content: "post-grid", count: Math.round(total * 0.08) },
+  ];
+}
+
+function buildUtmTerms(total: number): UtmTermClick[] {
+  return [
+    { term: "린넨 셔츠", count: Math.round(total * 0.14) },
+    { term: "여름 원피스", count: Math.round(total * 0.09) },
+    { term: "하루아틀리에", count: Math.round(total * 0.06) },
+    { term: "spring drop", count: Math.round(total * 0.03) },
+  ];
+}
+
+/**
+ * 인앱 브라우저 — 일반 브라우저는 이 목록에 아예 없다(그건 browserClicks 의 일). 합쳐서 사람
+ * 클릭의 ~31% 라, 링크 일지의 inAppBrowser 문장(20% 문턱)이 데모에서 실제로 뜬다: 한국 크리에이터
+ * 링크가 카톡·인스타 웹뷰로 열리는 비중이 큰 건 실제 모습이기도 하다.
+ */
+function buildClientApps(total: number): ClientAppClick[] {
+  return [
+    { app: "kakaotalk", count: Math.round(total * 0.17) },
+    { app: "instagram", count: Math.round(total * 0.09) },
+    { app: "naver", count: Math.round(total * 0.03) },
+    { app: "line", count: Math.round(total * 0.02) },
+  ];
+}
+
+/**
+ * Sec-Fetch-Site — 헤더를 보내는 브라우저의 클릭만 담긴다(합이 사람 클릭보다 작은 게 정상).
+ * none = 방문자가 주소를 직접 열었다(타이핑·북마크·QR), cross-site = 어딘가의 링크를 눌러 왔다.
+ */
+function buildFetchSites(total: number): FetchSiteClick[] {
+  return [
+    { fetchSite: "cross-site", count: Math.round(total * 0.52) },
+    { fetchSite: "none", count: Math.round(total * 0.31) },
+    { fetchSite: "same-origin", count: Math.round(total * 0.04) },
+    { fetchSite: "same-site", count: Math.round(total * 0.02) },
+  ];
+}
+
+/** 글 귀속 — 마지막 행은 발행 후 지워진 글(제목만 null, 클릭 수는 남는 계약). */
+function buildPostClicks(total: number): PostClick[] {
+  return [
+    { postId: 412, title: "봄 신상 린넨 셔츠 만드는 과정", count: Math.round(total * 0.21) },
+    { postId: 388, title: "작업실 이사하고 달라진 것들", count: Math.round(total * 0.11) },
+    { postId: 351, title: "재고 정리 노트", count: Math.round(total * 0.05) },
+    { postId: 209, title: null, count: Math.round(total * 0.02) },
+  ];
+}
+
+/**
+ * 채널 깊이 — referrerHostClicks 와 같은 호스트를 시간축 위에 다시 세운다. 인스타는 크게 터졌지만
+ * 재방문 11%로 타고 끝났고, 노션 문서는 클릭이 3분의 1인데 41%가 다시 온다. 이 대비가 이 표를
+ * 만든 이유이고, 링크 일지의 channelLoyalty 문장(재방문 30%·재방문자 5명 문턱)이 집는 행이다.
+ */
+function buildChannelDepth(total: number): ChannelDepth[] {
+  const daysAgo = (d: number) => new Date(TODAY_UTC.getTime() - d * 86_400_000).toISOString();
+  return [
+    {
+      host: "instagram.com",
+      count: Math.round(total * 0.34),
+      firstSeenAt: daysAgo(29),
+      returningVisitors: 38,
+      returnRatio: 0.11,
+    },
+    {
+      host: "pf.kakao.com",
+      count: Math.round(total * 0.21),
+      firstSeenAt: daysAgo(27),
+      returningVisitors: 34,
+      returnRatio: 0.18,
+    },
+    {
+      host: "haru.notion.site",
+      count: Math.round(total * 0.13),
+      firstSeenAt: daysAgo(21),
+      returningVisitors: 41,
+      returnRatio: 0.41,
+    },
+    {
+      host: "x.com",
+      count: Math.round(total * 0.09),
+      firstSeenAt: daysAgo(5),
+      returningVisitors: 4,
+      returnRatio: 0.07,
+    },
+    {
+      host: "blog.naver.com",
+      count: Math.round(total * 0.06),
+      firstSeenAt: daysAgo(9),
+      returningVisitors: 9,
+      returnRatio: 0.28,
+    },
   ];
 }
 

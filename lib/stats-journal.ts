@@ -1,9 +1,16 @@
-import type { LinkStats } from "@/types";
+import { CLIENT_APPS } from "@/lib/stats-labels";
+import type { ChannelDepth, LinkStats } from "@/types";
 
 export type JournalEntry = {
   /** i18n 키 (stats.journal.*) */
   key: string;
   params: Record<string, string | number>;
+  /**
+   * {@link params} 중 값 자체가 메시지 키(stats.* 기준)인 항목들. 저장된 원값(예:
+   * {@code kakaotalk})이 한국어 문장 한가운데 그대로 박히지 않도록, 렌더 직전에 카탈로그로
+   * 한 번 더 옮긴다. 룰 엔진은 i18n 을 모르는 순수 함수로 남는다.
+   */
+  translatedParams?: string[];
   /** 근거 층 앵커 — 문장 클릭 시 스크롤 목적지 */
   evidence: string;
   /** 인라인 미니 드로잉 — 시계열 조각 */
@@ -12,6 +19,16 @@ export type JournalEntry = {
   ratio?: number;
   weight: number;
 };
+
+/**
+ * 백엔드 {@code LinkInsights} 와 같은 문턱값. 백엔드도 같은 두 문장(IN_APP_BROWSER·
+ * CHANNEL_LOYALTY)을 만들지만 그 결과({@code insights})는 이 화면이 읽지 않는다 — 일지 문장의
+ * 진실원은 여기 한 곳이다. 문턱을 맞춰 둬야 같은 링크를 웹과 API 로 봤을 때 말이 갈리지 않는다.
+ */
+const MIN_TOTAL_FOR_INSIGHTS = 10;
+const IN_APP_SHARE_THRESHOLD = 0.2;
+const CHANNEL_LOYALTY_THRESHOLD = 0.3;
+const CHANNEL_LOYALTY_MIN_VISITORS = 5;
 
 /**
  * 링크 일지 — "읽는 통계"의 심장. LinkStats 를 판단이 실린 문장 후보로 바꾼다.
@@ -84,6 +101,55 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
     }
   }
 
+  // 채널 충성도 — 클릭 1등이 아니라 재방문율 1등을 집는다. 한 번 터지고 끝난 채널과 사람을
+  // 남긴 채널은 다른 이야기고, 다음에 어디에 올릴지를 정하는 건 후자다. 그래서 "언제 최고점을
+  // 찍었나"(회고)보다 위에 둔다.
+  const channels = data.channelDepth ?? [];
+  let loyal: ChannelDepth | null = null;
+  for (const c of channels) {
+    // 재방문 수 자체가 표본 하한 — 한두 명에 비율이 요동치면 신호가 아니라 잡음이다.
+    if (c.returningVisitors < CHANNEL_LOYALTY_MIN_VISITORS) continue;
+    if (c.returnRatio < CHANNEL_LOYALTY_THRESHOLD) continue;
+    if (!loyal || c.returnRatio > loyal.returnRatio) loyal = c;
+  }
+  if (loyal) {
+    entries.push({
+      key: "channelLoyalty",
+      params: { host: loyal.host, percent: Math.round(loyal.returnRatio * 100) },
+      evidence: "section-channel-depth",
+      ratio: loyal.returnRatio,
+      weight: 82,
+    });
+  }
+
+  // 인앱 브라우저 — 링크가 어디에 붙어 있나가 아니라 어디에서 *열렸나*. 앱 웹뷰에서 로그인
+  // 리다이렉트·다운로드·폰트가 곧잘 깨지니, 비중이 크면 오늘 고칠 수 있는 사실이 된다.
+  const apps = data.clientAppClicks ?? [];
+  const human = data.humanClicks ?? 0;
+  if (apps.length > 0 && human >= MIN_TOTAL_FOR_INSIGHTS) {
+    let inApp = 0;
+    let topApp = apps[0];
+    for (const a of apps) {
+      inApp += a.count;
+      if (a.count > topApp.count) topApp = a;
+    }
+    const share = inApp / human;
+    if (share >= IN_APP_SHARE_THRESHOLD) {
+      const known = CLIENT_APPS.has(topApp.app);
+      entries.push({
+        key: "inAppBrowser",
+        params: {
+          app: known ? `clientApp.${topApp.app}` : topApp.app,
+          percent: Math.round(share * 100),
+        },
+        translatedParams: known ? ["app"] : undefined,
+        evidence: "section-client-app",
+        ratio: share,
+        weight: 78,
+      });
+    }
+  }
+
   // 하루 중 피크 시간
   if (typeof data.peakHour === "number" && data.peakHour !== null) {
     entries.push({
@@ -94,9 +160,10 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
     });
   }
 
-  // 재방문 — 링크가 소모품이 아니라는 신호
+  // 재방문 — 링크가 소모품이 아니라는 신호. 채널별 충성도 문장이 이미 섰으면 쓰지 않는다:
+  // 재방문 이야기 두 줄이 나란히 서면 일지가 아니라 대시보드가 된다(채널별이 더 구체적).
   const returning = data.returnRate?.ratio ?? 0;
-  if (returning >= 0.15) {
+  if (!loyal && returning >= 0.15) {
     entries.push({
       key: "returning",
       params: { percent: Math.round(returning * 100) },

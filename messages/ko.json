@@ -1397,7 +1397,9 @@
       "blockedEmpty": "차단된 국가가 없어요.",
       "blockedLoading": "불러오는 중…",
       "blockedRemove": "차단 해제",
-      "blockedFailed": "국가 차단 변경에 실패했어요."
+      "blockedFailed": "국가 차단 변경에 실패했어요.",
+      "configuredShare": "설정 {pct}%",
+      "actualShare": "실제 {pct}%"
     },
     "loginRequired": "로그인이 필요해요",
     "loginRequiredDesc": "통계는 링크 소유자만 볼 수 있어요.",
@@ -1473,10 +1475,30 @@
         "title": "UTM 콘텐츠",
         "desc": "utm_content 별 집계 (배너, A/B 슬롯 구분)"
       },
+      "utmTerm": {
+        "title": "UTM 키워드",
+        "desc": "utm_term 별 집계 (검색어·광고 소재)"
+      },
       "srcChannel": {
         "title": "공유 채널 (?src)",
         "desc": "단축 URL 자체에 실은 ?src= 파라미터로 추적 (QR/카톡/오프라인 등 referrer 비어있는 경로)",
         "empty": "?src 파라미터로 들어온 클릭 없음"
+      },
+      "clientApp": {
+        "title": "앱에서 열림",
+        "desc": "카톡·인스타처럼 앱 안 브라우저로 열린 클릭. 앱 웹뷰에선 로그인 리다이렉트나 다운로드가 곧잘 막혀요."
+      },
+      "fetchSite": {
+        "title": "어떻게 열었나",
+        "desc": "주소를 스스로 열었는지, 어딘가의 링크를 눌러 왔는지. 레퍼러가 지워진 클릭도 갈립니다."
+      },
+      "postClicks": {
+        "title": "어느 글에서",
+        "desc": "이 링크를 실은 글별 클릭"
+      },
+      "channelDepth": {
+        "title": "채널 깊이",
+        "desc": "채널마다 언제 처음 나타났고, 그중 몇 %가 다시 왔는지"
       },
       "bots": {
         "title": "봇 종류",
@@ -1503,6 +1525,31 @@
         "desc": "유입 IP 의 자율 시스템 (ISP / 클라우드 사업자) 분포. 데이터센터 클릭 {dc}건은 봇으로 자동 분류됨.",
         "empty": "ASN 데이터 없음 (GeoLite2-ASN 미설치)"
       }
+    },
+    "clientApp": {
+      "kakaotalk": "카카오톡",
+      "instagram": "인스타그램",
+      "line": "라인",
+      "facebook": "페이스북",
+      "naver": "네이버",
+      "daum": "다음",
+      "tiktok": "틱톡",
+      "twitter": "X(트위터)"
+    },
+    "fetchSite": {
+      "direct": "직접 열기",
+      "crossSite": "링크를 눌러서",
+      "sameSite": "같은 사이트 안에서",
+      "sameOrigin": "같은 페이지 안에서"
+    },
+    "channelDepth": {
+      "channel": "채널",
+      "clicks": "클릭",
+      "firstSeen": "처음",
+      "returning": "재방문"
+    },
+    "postClicks": {
+      "deleted": "지워진 글"
     },
     "noData": "데이터 없음",
     "referrerNoData": "레퍼러 데이터 없음",
@@ -1589,7 +1636,9 @@
       "desktopHeavy": "데스크톱이 {percent}% — 책상 앞에서 열리는 링크예요",
       "botHigh": "봇이 {percent}%나 돼요 — 사람은 {human}명이에요",
       "botFiltered": "봇 {percent}%를 걷어내면 사람 {human}명이 다녀갔어요",
-      "fastFirstClick": "만든 지 {minutes}분 만에 첫 클릭이 왔어요"
+      "fastFirstClick": "만든 지 {minutes}분 만에 첫 클릭이 왔어요",
+      "inAppBrowser": "{app}에서 열린 게 {percent}% — 앱 안 브라우저 비중이 커요",
+      "channelLoyalty": "{host}에서 온 사람의 {percent}%가 다시 왔어요"
     }
   },
   "admin": {

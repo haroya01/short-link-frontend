@@ -1397,7 +1397,9 @@
       "blockedEmpty": "Không có quốc gia nào bị chặn.",
       "blockedLoading": "Đang tải…",
       "blockedRemove": "Bỏ chặn",
-      "blockedFailed": "Không cập nhật được chặn theo quốc gia."
+      "blockedFailed": "Không cập nhật được chặn theo quốc gia.",
+      "configuredShare": "đặt {pct}%",
+      "actualShare": "thực tế {pct}%"
     },
     "loginRequired": "Cần đăng nhập",
     "loginRequiredDesc": "Thống kê chỉ hiển thị cho chủ sở hữu liên kết.",
@@ -1473,10 +1475,30 @@
         "title": "Nội dung UTM",
         "desc": "Theo utm_content (banner / vị trí A-B)"
       },
+      "utmTerm": {
+        "title": "Từ khoá UTM",
+        "desc": "Theo utm_term (từ khoá tìm kiếm / mẫu quảng cáo)"
+      },
       "srcChannel": {
         "title": "Kênh chia sẻ (?src)",
         "desc": "Được theo dõi qua gợi ý ?src= trên chính URL ngắn — bao quát quét QR, KakaoTalk, các kênh ngoại tuyến nơi thiếu header giới thiệu.",
         "empty": "Không có lượt nhấp nào kèm tham số ?src."
+      },
+      "clientApp": {
+        "title": "Mở trong ứng dụng",
+        "desc": "Các lượt mở bên trong trình duyệt của ứng dụng — KakaoTalk, Instagram và tương tự. Chuyển hướng đăng nhập và tải xuống hay hỏng ở đó."
+      },
+      "fetchSite": {
+        "title": "Họ mở bằng cách nào",
+        "desc": "Tự mở địa chỉ hay bấm theo một liên kết — tách riêng những lượt nhấp không kèm referrer."
+      },
+      "postClicks": {
+        "title": "Từ bài viết nào",
+        "desc": "Lượt nhấp theo từng bài viết có gắn liên kết này"
+      },
+      "channelDepth": {
+        "title": "Chiều sâu kênh",
+        "desc": "Mỗi kênh xuất hiện lần đầu khi nào, và bao nhiêu khách của nó đã quay lại"
       },
       "bots": {
         "title": "Loại bot",
@@ -1503,6 +1525,31 @@
         "desc": "Phân bố hệ thống tự trị (ISP / nhà cung cấp đám mây). {dc} lượt nhấp từ trung tâm dữ liệu đã được tự động gắn cờ là bot.",
         "empty": "Không có dữ liệu ASN (GeoLite2-ASN không được đóng gói kèm)"
       }
+    },
+    "clientApp": {
+      "kakaotalk": "KakaoTalk",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "facebook": "Facebook",
+      "naver": "Naver",
+      "daum": "Daum",
+      "tiktok": "TikTok",
+      "twitter": "X (Twitter)"
+    },
+    "fetchSite": {
+      "direct": "Mở trực tiếp",
+      "crossSite": "Bấm vào một liên kết",
+      "sameSite": "Từ cùng trang web",
+      "sameOrigin": "Từ cùng một trang"
+    },
+    "channelDepth": {
+      "channel": "Kênh",
+      "clicks": "Lượt nhấp",
+      "firstSeen": "Lần đầu",
+      "returning": "Quay lại"
+    },
+    "postClicks": {
+      "deleted": "Bài viết đã xoá"
     },
     "noData": "Không có dữ liệu",
     "referrerNoData": "Không có dữ liệu giới thiệu",
@@ -1589,7 +1636,9 @@
       "desktopHeavy": "{percent}% trên máy tính — mở tại bàn làm việc",
       "botHigh": "Bot chiếm {percent}% — người thật: {human}",
       "botFiltered": "Bỏ {percent}% bot, còn {human} người thật đã ghé",
-      "fastFirstClick": "Lượt nhấn đầu tiên đến sau {minutes} phút"
+      "fastFirstClick": "Lượt nhấn đầu tiên đến sau {minutes} phút",
+      "inAppBrowser": "{percent}% mở trong {app} — tỷ lệ trình duyệt trong ứng dụng khá cao",
+      "channelLoyalty": "{percent}% người đến từ {host} đã quay lại"
     }
   },
   "admin": {

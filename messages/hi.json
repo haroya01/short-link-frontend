@@ -1397,7 +1397,9 @@
       "blockedEmpty": "कोई देश ब्लॉक नहीं किया गया।",
       "blockedLoading": "लोड हो रहा है…",
       "blockedRemove": "अनब्लॉक करें",
-      "blockedFailed": "देश ब्लॉकिंग अपडेट नहीं हो सकी।"
+      "blockedFailed": "देश ब्लॉकिंग अपडेट नहीं हो सकी।",
+      "configuredShare": "सेट {pct}%",
+      "actualShare": "वास्तविक {pct}%"
     },
     "loginRequired": "साइन इन ज़रूरी है",
     "loginRequiredDesc": "आँकड़े केवल लिंक के मालिक को दिखते हैं।",
@@ -1473,10 +1475,30 @@
         "title": "UTM सामग्री",
         "desc": "utm_content के अनुसार (banner / A-B slot)"
       },
+      "utmTerm": {
+        "title": "UTM कीवर्ड",
+        "desc": "utm_term के अनुसार (खोज शब्द / विज्ञापन सामग्री)"
+      },
       "srcChannel": {
         "title": "शेयर चैनल (?src)",
         "desc": "छोटे URL पर ?src= संकेत के ज़रिए ट्रैक किया जाता है — QR स्कैन, KakaoTalk, ऑफ़लाइन चैनल जहाँ रेफ़रर हेडर गायब होता है, उन्हें कवर करता है।",
         "empty": "किसी क्लिक में ?src पैरामीटर नहीं था।"
+      },
+      "clientApp": {
+        "title": "ऐप में खुला",
+        "desc": "KakaoTalk, Instagram जैसे ऐप के भीतर के ब्राउज़र में खुले क्लिक। वहाँ लॉगिन रीडायरेक्ट और डाउनलोड अक्सर टूटते हैं।"
+      },
+      "fetchSite": {
+        "title": "कैसे खोला",
+        "desc": "पता खुद खोला या किसी लिंक पर क्लिक करके आए — बिना रेफ़रर वाले क्लिक भी अलग हो जाते हैं।"
+      },
+      "postClicks": {
+        "title": "किस पोस्ट से",
+        "desc": "इस लिंक वाली हर पोस्ट के अनुसार क्लिक"
+      },
+      "channelDepth": {
+        "title": "चैनल की गहराई",
+        "desc": "हर चैनल पहली बार कब दिखा, और उसके कितने % विज़िटर लौटे"
       },
       "bots": {
         "title": "बॉट प्रकार",
@@ -1503,6 +1525,31 @@
         "desc": "स्वायत्त सिस्टम (ISP / क्लाउड प्रदाता) वितरण। {dc} डेटासेंटर क्लिक स्वतः बॉट के रूप में चिह्नित किए गए।",
         "empty": "कोई ASN डेटा नहीं (GeoLite2-ASN बंडल नहीं)"
       }
+    },
+    "clientApp": {
+      "kakaotalk": "KakaoTalk",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "facebook": "Facebook",
+      "naver": "Naver",
+      "daum": "Daum",
+      "tiktok": "TikTok",
+      "twitter": "X (Twitter)"
+    },
+    "fetchSite": {
+      "direct": "सीधे खोला",
+      "crossSite": "लिंक पर क्लिक करके",
+      "sameSite": "उसी साइट से",
+      "sameOrigin": "उसी पेज से"
+    },
+    "channelDepth": {
+      "channel": "चैनल",
+      "clicks": "क्लिक",
+      "firstSeen": "पहली बार",
+      "returning": "लौटे"
+    },
+    "postClicks": {
+      "deleted": "हटाई गई पोस्ट"
     },
     "noData": "कोई डेटा नहीं",
     "referrerNoData": "कोई रेफ़रर डेटा नहीं",
@@ -1589,7 +1636,9 @@
       "desktopHeavy": "{percent}% डेस्कटॉप पर — डेस्क पर खुलता है",
       "botHigh": "बॉट {percent}% हैं — इंसान: {human}",
       "botFiltered": "{percent}% बॉट हटाएँ तो {human} लोग आए",
-      "fastFirstClick": "बनाने के {minutes} मिनट में पहला क्लिक"
+      "fastFirstClick": "बनाने के {minutes} मिनट में पहला क्लिक",
+      "inAppBrowser": "{percent}% {app} में खुले — इन-ऐप ब्राउज़र का हिस्सा बड़ा है",
+      "channelLoyalty": "{host} से आए {percent}% लोग लौटकर आए"
     }
   },
   "admin": {

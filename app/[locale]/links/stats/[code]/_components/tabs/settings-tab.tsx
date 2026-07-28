@@ -215,6 +215,16 @@ function DemoLinkDestinationsPreview() {
   const lockMessage = tDemo("lockedToast");
   const lock = () => toast(lockMessage, "default");
   const total = DEMO_DESTINATIONS.reduce((s, d) => s + d.count, 0);
+  // 대시보드 행과 같은 계산 — 조건 없는 활성 도착지끼리만 설정/실제를 견준다(JP 전용은 제외).
+  const pool = DEMO_DESTINATIONS.filter((d) => d.enabled && !d.countryCode);
+  const poolWeight = pool.reduce((s, d) => s + d.weight, 0);
+  const poolCount = pool.reduce((s, d) => s + d.count, 0);
+  const shares = new Map(
+    pool.map((d) => [
+      d.id,
+      { configured: (d.weight / poolWeight) * 100, actual: (d.count / poolCount) * 100 },
+    ]),
+  );
 
   return (
     <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
@@ -281,7 +291,13 @@ function DemoLinkDestinationsPreview() {
 
       <div className="mt-4 space-y-2">
         {DEMO_DESTINATIONS.map((d) => (
-          <DemoDestinationRow key={d.id} d={d} total={total} onLock={lock} />
+          <DemoDestinationRow
+            key={d.id}
+            d={d}
+            total={total}
+            share={shares.get(d.id)}
+            onLock={lock}
+          />
         ))}
       </div>
     </section>
@@ -291,29 +307,47 @@ function DemoLinkDestinationsPreview() {
 function DemoDestinationRow({
   d,
   total,
+  share,
   onLock,
 }: {
   d: (typeof DEMO_DESTINATIONS)[number];
   total: number;
+  share?: { configured: number; actual: number };
   onLock: () => void;
 }) {
   const t = useTranslations("stats.destinations");
-  const pct = total === 0 ? 0 : (d.count / total) * 100;
+  const pct = share ? share.actual : total === 0 ? 0 : (d.count / total) * 100;
   const flag = d.countryCode === "JP" ? "🇯🇵" : d.countryCode === "KR" ? "🇰🇷" : "🇺🇸";
   return (
     <div className="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 text-xs">
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-medium text-slate-900 dark:text-slate-100">{d.label}</span>
-        <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
-          w {d.weight}
-        </span>
+        {!share && (
+          <span className="rounded bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
+            w {d.weight}
+          </span>
+        )}
         {d.countryCode && (
           <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
             {flag} {d.countryCode}
           </span>
         )}
-        <span className="ml-auto font-mono tabular-nums text-slate-700 dark:text-slate-300">
-          {d.count} · {pct.toFixed(1)}%
+        <span className="ml-auto flex items-baseline gap-1.5 font-mono tabular-nums text-slate-700 dark:text-slate-300">
+          <span>{d.count}</span>
+          <span className="text-slate-300 dark:text-slate-600">·</span>
+          {share ? (
+            <>
+              <span className="text-slate-400 dark:text-slate-500">
+                {t("configuredShare", { pct: share.configured.toFixed(0) })}
+              </span>
+              <span className="text-slate-300 dark:text-slate-600">·</span>
+              <span className="font-medium text-slate-900 dark:text-slate-100">
+                {t("actualShare", { pct: share.actual.toFixed(0) })}
+              </span>
+            </>
+          ) : (
+            <span>{pct.toFixed(1)}%</span>
+          )}
         </span>
       </div>
       <code className="mt-1 block break-all font-mono text-[11px] text-slate-500 dark:text-slate-400" title={d.url}>
