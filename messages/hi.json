@@ -87,6 +87,7 @@
     "searchEmptyTitle": "कोई पोस्ट नहीं मिली",
     "searchEmptyBody": "कोई और कीवर्ड आज़माएँ या विषय देखें।",
     "searchEmptyHeading": "“{q}” से अभी कुछ मेल नहीं खाता",
+    "searchSubmit": "खोजें",
     "searchEmptyTopics": "इसके बजाय इनमें से कोई विषय आज़माएँ",
     "browseTopics": "विषय देखें",
     "railPopularTags": "लोकप्रिय टैग",

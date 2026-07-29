@@ -87,6 +87,7 @@
     "searchEmptyTitle": "Không tìm thấy bài viết nào",
     "searchEmptyBody": "Thử từ khóa khác hoặc duyệt theo chủ đề.",
     "searchEmptyHeading": "Chưa có gì khớp với “{q}”",
+    "searchSubmit": "Tìm kiếm",
     "searchEmptyTopics": "Thử một trong những chủ đề này",
     "browseTopics": "Duyệt chủ đề",
     "railPopularTags": "Thẻ phổ biến",

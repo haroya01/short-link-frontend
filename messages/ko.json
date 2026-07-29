@@ -87,6 +87,7 @@
     "searchEmptyTitle": "검색 결과가 없어요",
     "searchEmptyBody": "다른 검색어를 시도하거나 주제를 둘러보세요.",
     "searchEmptyHeading": "‘{q}’ 와 맞는 글이 아직 없어요",
+    "searchSubmit": "검색",
     "searchEmptyTopics": "대신 이런 주제는 어때요",
     "browseTopics": "주제 둘러보기",
     "railPopularTags": "인기 태그",
