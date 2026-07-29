@@ -35,6 +35,10 @@ const localeInitScript =
   "(function(){try{" +
   "var m=document.cookie.match(/(?:^|; )NEXT_LOCALE=(en|ja|vi|hi)/);" +
   "if(m){document.documentElement.lang=m[1];document.documentElement.setAttribute('data-nf-locale',m[1]);}" +
+  // 다크 패리티 — 이 페이지는 독립 <html> 이라 로케일 레이아웃의 테마 스크립트를 안 탄다. 라이트
+  // 하드코딩이면 다크 사용자가 만료 링크를 밟는 순간 흰 화면 플래시(적대 검증 r7). 블로그(theme)·
+  // 링크(kurl_theme) 어느 쪽 쿠키든 dark 면 pre-paint 로 .dark 를 단다(같은 no-FOUC 패턴).
+  "if(/(?:^|; )(?:theme|kurl_theme)=dark/.test(document.cookie)){document.documentElement.classList.add('dark');}" +
   "}catch(e){}})()";
 
 export default function RootNotFound() {
@@ -46,22 +50,22 @@ export default function RootNotFound() {
           dangerouslySetInnerHTML={{ __html: localeInitScript }}
         />
       </head>
-      <body className="bg-white text-slate-900 antialiased">
+      <body className="bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
         {LOCALES.map((locale) => {
           const t = COPY[locale];
           return (
             <div key={locale} data-nf={locale} data-testid="not-found" className="container max-w-md py-24 text-center">
               {/* 이 화면의 주 방문자는 만료 단축링크를 밟고 온, kurl 을 처음 보는 사람 — 브랜드
                   0픽셀이던 것(적대 검증 r4)에 마크 하나로 발신자 서명을 남긴다. */}
-              <Mark className="mx-auto h-5 w-auto text-accent-600" />
-              <p className="mt-6 font-mono text-[11px] uppercase tracking-tagline text-slate-500">404</p>
-              <h1 className="mt-3 text-2xl font-semibold tracking-headline text-slate-900">
+              <Mark className="mx-auto h-5 w-auto text-accent-600 dark:text-accent-400" />
+              <p className="mt-6 font-mono text-[11px] uppercase tracking-tagline text-slate-500 dark:text-slate-400">404</p>
+              <h1 className="mt-3 text-2xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">
                 {t.title}
               </h1>
-              <p className="mt-2 text-sm leading-relaxed text-slate-500">{t.description}</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{t.description}</p>
               <a
                 href={`/${locale}`}
-                className="mt-8 inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+                className="mt-8 inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
               >
                 {t.cta}
               </a>
