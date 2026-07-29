@@ -3733,7 +3733,7 @@
       "viralHook": "このページは3分で作られました。",
       "viralCta": "自分の募集ページを作る →",
       "canceledNotice": "このイベントは中止になりました。",
-      "fullNotice": "定員に達しました。",
+      "fullNotice": "定員に達しました。キャンセルが出ると席が再び空くので、後ほどまたご確認ください。",
       "closedNotice": "受付は終了しました。",
       "cancelTitle": "申し込みキャンセル",
       "cancelBody": "「{title}」の申し込みをキャンセルしますか？空いた席は他の方に回ります。",
@@ -3768,6 +3768,7 @@
       "coverUploading": "アップロード中…",
       "coverFailed": "アップロードに失敗しました。もう一度お試しください。",
       "coverHint": "チャット・SNSのプレビューに大きく表示されます (JPG/PNG/WebP、2:1推奨)",
+      "optional": "任意",
       "authTitle": "募集ページ",
       "authDesc": "ログインすると募集ページの作成、参加者と流入元の確認ができます。"
     },

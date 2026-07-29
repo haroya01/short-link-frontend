@@ -3733,7 +3733,7 @@
       "viralHook": "이 페이지, 3분 만에 만들어졌어요.",
       "viralCta": "나도 모집 페이지 만들기 →",
       "canceledNotice": "이 모임은 취소되었어요.",
-      "fullNotice": "정원이 가득 찼어요.",
+      "fullNotice": "정원이 가득 찼어요. 취소가 나오면 자리가 다시 열리니 나중에 다시 확인해 주세요.",
       "closedNotice": "신청이 마감되었어요.",
       "cancelTitle": "신청 취소",
       "cancelBody": "\"{title}\" 신청을 취소할까요? 취소하면 자리가 다른 분에게 돌아가요.",
@@ -3768,6 +3768,7 @@
       "coverUploading": "업로드 중…",
       "coverFailed": "업로드에 실패했어요. 다시 시도해 주세요.",
       "coverHint": "단톡·SNS 미리보기에 크게 나와요 (JPG/PNG/WebP, 2:1 비율 권장)",
+      "optional": "선택",
       "authTitle": "모집 페이지",
       "authDesc": "로그인하면 신청 페이지를 만들고 신청자와 유입 채널을 볼 수 있어요."
     },
