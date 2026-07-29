@@ -1,9 +1,9 @@
 "use client";
 
-import { use, useCallback, useEffect, useState } from "react";
-import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useSearchParams } from "next/navigation";
+import { Link } from "@/i18n/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { ExternalLink, PartyPopper, Pencil } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { LinksAuthGate } from "@/components/links/auth-gate";
@@ -24,8 +24,8 @@ import { SharePanel } from "@/modules/events/components/share-panel";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_FRONTEND_URL ?? "https://kurl.me";
 
-export default function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id: idParam } = use(params);
+export default function EventDetailPage() {
+  const { id: idParam } = useParams<{ id: string }>();
   const id = Number(idParam);
   const t = useTranslations("events.detail");
   const locale = useLocale();

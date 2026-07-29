@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import type { PublicEvent } from "@/modules/events/api/events";
 import { PublicEventPage } from "@/modules/events/components/public-event-page";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
+// 서버 컴포넌트 fetch 는 상대 URL 불가 — dev(빈 API_BASE)에선 rewrites 와 같은 BACKEND_URL 로 직접 간다.
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE || process.env.BACKEND_URL || "http://localhost:8080";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_FRONTEND_URL ?? "https://kurl.me";

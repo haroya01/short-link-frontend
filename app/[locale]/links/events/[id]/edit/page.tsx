@@ -1,7 +1,8 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { LinksAuthGate } from "@/components/links/auth-gate";
@@ -9,8 +10,8 @@ import type { MyEvent } from "@/modules/events/api/events";
 import { getMyEvent, updateEvent } from "@/modules/events/api/events";
 import { EventForm } from "@/modules/events/components/event-form";
 
-export default function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id: idParam } = use(params);
+export default function EditEventPage() {
+  const { id: idParam } = useParams<{ id: string }>();
   const id = Number(idParam);
   const t = useTranslations("events.form");
   const router = useRouter();
