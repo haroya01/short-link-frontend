@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { CalendarPlus, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { LinksAuthGate } from "@/components/links/auth-gate";
