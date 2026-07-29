@@ -2208,3 +2208,35 @@ html[data-theme-vt] .vt-post-cover {
   content-visibility: auto;
   contain-intrinsic-size: auto 320px;
 }
+
+/* ── 모집(events) 인트로 데모 — 9s 루프: 페이지 생성 → 단톡에 링크 → 신청이 쌓임.
+   처음 보는 사람이 텍스트 없이도 "아, 신청 페이지 만들어서 뿌리는 거구나"를 3초 안에 잡게 하는 장치.
+   reduced-motion 이면 애니메이션 없이 완성 상태를 정지화면으로 보여준다. */
+@keyframes evi-card {
+  0%, 2% { opacity: 0; transform: translateY(18px) scale(0.97); }
+  10%, 93% { opacity: 1; transform: translateY(0) scale(1); }
+  98%, 100% { opacity: 0; transform: translateY(0) scale(1); }
+}
+@keyframes evi-fly {
+  0%, 20% { opacity: 0; transform: translate(-46px, -128px) scale(0.6); }
+  24% { opacity: 1; transform: translate(-46px, -128px) scale(1.05); }
+  27% { transform: translate(-46px, -128px) scale(1); }
+  36% { opacity: 1; transform: translate(0, 0) scale(1); }
+  38%, 100% { opacity: 0; transform: translate(0, 0) scale(1); }
+}
+@keyframes evi-bubble { 0%, 36% { opacity: 0; transform: translateY(8px) scale(0.85); } 40% { opacity: 1; transform: translateY(0) scale(1.04); } 42%, 93% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
+@keyframes evi-r1 { 0%, 48% { opacity: 0; transform: translateY(8px) scale(0.85); } 52% { opacity: 1; transform: translateY(0) scale(1.04); } 54%, 93% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
+@keyframes evi-r2 { 0%, 58% { opacity: 0; transform: translateY(8px) scale(0.85); } 62% { opacity: 1; transform: translateY(0) scale(1.04); } 64%, 93% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
+@keyframes evi-r3 { 0%, 68% { opacity: 0; transform: translateY(8px) scale(0.85); } 72% { opacity: 1; transform: translateY(0) scale(1.04); } 74%, 93% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
+@keyframes evi-badge { 0%, 80% { opacity: 0; transform: translateY(6px) scale(0.9); } 84% { opacity: 1; transform: translateY(0) scale(1.06); } 86%, 93% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; } }
+.evi-card { animation: evi-card 9s ease-out infinite; }
+.evi-fly { animation: evi-fly 9s ease-in-out infinite; }
+.evi-bubble { animation: evi-bubble 9s ease-out infinite; }
+.evi-r1 { animation: evi-r1 9s ease-out infinite; }
+.evi-r2 { animation: evi-r2 9s ease-out infinite; }
+.evi-r3 { animation: evi-r3 9s ease-out infinite; }
+.evi-badge { animation: evi-badge 9s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .evi-card, .evi-bubble, .evi-r1, .evi-r2, .evi-r3, .evi-badge { animation: none; opacity: 1; transform: none; }
+  .evi-fly { animation: none; opacity: 0; }
+}

@@ -3706,6 +3706,37 @@
     "myCollectionsEmptyCta": "Tìm bài để đọc"
   },
   "events": {
+    "intro": {
+      "eyebrow": "Trang sự kiện",
+      "title": "Nhận đăng ký cho buổi gặp chỉ với một liên kết",
+      "subtitle": "Nhóm học, meetup, câu lạc bộ — trang giới thiệu, mẫu đăng ký, giới hạn chỗ và nguồn người đăng ký. Một liên kết là đủ.",
+      "step1": {
+        "title": "Tạo trang",
+        "body": "Chỉ cần tiêu đề và ngày giờ — xong trong 3 phút."
+      },
+      "step2": {
+        "title": "Dán liên kết vào nhóm chat",
+        "body": "Liên kết ngắn và QR được tạo tự động."
+      },
+      "step3": {
+        "title": "Đăng ký tự đến",
+        "body": "Danh sách tự cập nhật, tự đóng khi đủ chỗ, biết cả người đến từ kênh nào."
+      },
+      "ctaLogin": "Bắt đầu miễn phí",
+      "ctaCreate": "Tạo sự kiện đầu tiên",
+      "ctaHint": "Người tham gia đăng ký không cần tài khoản.",
+      "demo": {
+        "eventTitle": "CLB đọc sách khu phố",
+        "eventDate": "T4, 5/8 · 19:00",
+        "eventPlace": "Quán cà phê tầng 2, Shibuya",
+        "registerButton": "Đăng ký",
+        "chatShare": "Mở đăng ký buổi tuần này!",
+        "reply1": "Mình! Đăng ký rồi 🙌",
+        "reply2": "Vừa xong luôn!",
+        "reply3": "Mình cũng đi~",
+        "badge": "7 người · còn 13 chỗ"
+      }
+    },
     "public": {
       "hostedBy": "Tổ chức bởi",
       "cta": "Đăng ký",

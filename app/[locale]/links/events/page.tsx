@@ -5,10 +5,10 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { CalendarPlus, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { LinksAuthGate } from "@/components/links/auth-gate";
 import type { MyEvent } from "@/modules/events/api/events";
 import { listMyEvents } from "@/modules/events/api/events";
 import { formatEventRange } from "@/modules/events/lib/format";
+import { EventsIntro } from "@/modules/events/components/events-intro";
 
 export default function EventsListPage() {
   const t = useTranslations("events.list");
@@ -30,14 +30,7 @@ export default function EventsListPage() {
   }, [ready, authenticated, load]);
 
   if (ready && !authenticated) {
-    return (
-      <LinksAuthGate
-        eyebrow="events"
-        title={t("authTitle")}
-        description={t("authDesc")}
-        next="/events"
-      />
-    );
+    return <EventsIntro mode="anonymous" />;
   }
 
   return (
@@ -58,7 +51,7 @@ export default function EventsListPage() {
       ) : events == null ? (
         <p className="mt-8 text-[13px] text-slate-400">{t("loading")}</p>
       ) : events.length === 0 ? (
-        <EmptyState />
+        <EventsIntro mode="empty" />
       ) : (
         <ul className="mt-6 flex flex-col gap-3">
           {events.map((event) => (
@@ -113,19 +106,5 @@ function StatusBadge({ status }: { status: MyEvent["status"] }) {
     <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-600 dark:bg-red-900/50 dark:text-red-300">
       {t("canceled")}
     </span>
-  );
-}
-
-function EmptyState() {
-  const t = useTranslations("events.list");
-  return (
-    <div className="mt-10 rounded-2xl border border-dashed border-slate-300 p-10 text-center dark:border-slate-700">
-      <p className="text-[15px] font-semibold text-slate-700 dark:text-slate-200">
-        {t("emptyTitle")}
-      </p>
-      <p className="mx-auto mt-1.5 max-w-sm text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
-        {t("emptyBody")}
-      </p>
-    </div>
   );
 }

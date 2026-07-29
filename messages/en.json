@@ -3706,6 +3706,37 @@
     "myCollectionsEmptyCta": "Find something to read"
   },
   "events": {
+    "intro": {
+      "eyebrow": "Event pages",
+      "title": "Collect signups for your gathering with one link",
+      "subtitle": "Study groups, meetups, clubs — the page, the form, the capacity cap, and where registrants came from. One link.",
+      "step1": {
+        "title": "Make a page",
+        "body": "Title and date — done in about 3 minutes."
+      },
+      "step2": {
+        "title": "Paste the link in your chat",
+        "body": "A short link and QR are created automatically."
+      },
+      "step3": {
+        "title": "Watch signups arrive",
+        "body": "The list keeps itself, capacity closes itself, and you see which channel people came from."
+      },
+      "ctaLogin": "Start for free",
+      "ctaCreate": "Create your first event",
+      "ctaHint": "Attendees register without an account.",
+      "demo": {
+        "eventTitle": "Neighborhood book club",
+        "eventDate": "Wed, Aug 5 · 7:00 PM",
+        "eventPlace": "Cafe 2F, Shibuya",
+        "registerButton": "Register",
+        "chatShare": "Signups open for this week!",
+        "reply1": "Me! Just registered 🙌",
+        "reply2": "Done, see you there!",
+        "reply3": "Count me in~",
+        "badge": "7 going · 13 spots left"
+      }
+    },
     "public": {
       "hostedBy": "Hosted by",
       "cta": "Register",
