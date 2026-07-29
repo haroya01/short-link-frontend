@@ -5,6 +5,7 @@
     "defaultDesc": "Đăng nhập để tiếp tục quản lý liên kết và chiến dịch của bạn."
   },
   "comments": {
+    "heading": "Bình luận",
     "count": "{count, plural, =0 {Bình luận} one {# bình luận} other {# bình luận}}",
     "placeholder": "Viết bình luận",
     "submit": "Bình luận",
@@ -1984,6 +1985,9 @@
     "offline": "Bạn đang ngoại tuyến. Chúng tôi sẽ tự động kết nối lại."
   },
   "notFound": {
+    "postTitle": "Không tìm thấy bài viết này",
+    "postDescription": "Bài viết có thể đã bị xoá hoặc đổi địa chỉ.",
+    "postTrending": "Đáng đọc thay thế",
     "title": "Không tìm thấy trang",
     "description": "Địa chỉ có thể sai, liên kết ngắn có thể đã hết hạn, hoặc trang không tồn tại.",
     "cta": "Về trang chủ",

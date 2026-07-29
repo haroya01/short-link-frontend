@@ -5,6 +5,7 @@
     "defaultDesc": "Sign in to pick up your links and campaigns where you left off."
   },
   "comments": {
+    "heading": "Comments",
     "count": "{count, plural, =0 {Comments} one {# comment} other {# comments}}",
     "placeholder": "Write a comment",
     "submit": "Comment",
@@ -1984,6 +1985,9 @@
     "offline": "You're offline. We'll reconnect automatically."
   },
   "notFound": {
+    "postTitle": "This post isn't here",
+    "postDescription": "It may have been deleted or its address changed.",
+    "postTrending": "Worth a read instead",
     "title": "Page not found",
     "description": "The address may be wrong, the short link may have expired, or the page may not exist.",
     "cta": "Back to home",

@@ -3,6 +3,7 @@ import hi from "@/messages/hi.json";
 import ja from "@/messages/ja.json";
 import ko from "@/messages/ko.json";
 import vi from "@/messages/vi.json";
+import { Mark } from "@/components/common/logo";
 import "./globals.css";
 
 /**
@@ -50,7 +51,10 @@ export default function RootNotFound() {
           const t = COPY[locale];
           return (
             <div key={locale} data-nf={locale} data-testid="not-found" className="container max-w-md py-24 text-center">
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-slate-500">404</p>
+              {/* 이 화면의 주 방문자는 만료 단축링크를 밟고 온, kurl 을 처음 보는 사람 — 브랜드
+                  0픽셀이던 것(적대 검증 r4)에 마크 하나로 발신자 서명을 남긴다. */}
+              <Mark className="mx-auto h-5 w-auto text-accent-600" />
+              <p className="mt-6 font-mono text-[11px] uppercase tracking-tagline text-slate-500">404</p>
               <h1 className="mt-3 text-2xl font-semibold tracking-headline text-slate-900">
                 {t.title}
               </h1>

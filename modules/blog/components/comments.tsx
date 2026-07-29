@@ -197,8 +197,10 @@ export function PostComments({
 
   return (
     <section className="mt-16 border-t border-slate-100 pt-10 dark:border-slate-800">
+      {/* 0일 때 카운트를 그리지 않는다 — "댓글 0개" 헤딩 + 빈 컴포저 + "첫 댓글" 문구로 공허를
+          세 번 반복하던 표면(적대 검증 r4). 숫자는 있을 때만 정보다. */}
       <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-        {t("count", { count: comments.length })}
+        {comments.length > 0 ? t("count", { count: comments.length }) : t("heading")}
       </h2>
 
       {/* There's ALWAYS a way to comment: a resting one-line placeholder that, on tap, mounts the real
@@ -228,7 +230,8 @@ export function PostComments({
             onClick={() => setComposerActive(true)}
             className="flex w-full items-center rounded-lg border border-slate-200 px-4 py-3 text-left text-[15px] text-slate-400 transition-colors hover:border-accent-400 focus-ring dark:border-slate-700 dark:text-slate-500"
           >
-            {t("placeholder")}
+            {/* 비로그인엔 탭의 결과(로그인 문)를 미리 말해준다 — 무예고 로그인 문은 놀람이다. */}
+            {ready && !authenticated ? t("loginPrompt") : t("placeholder")}
           </button>
         )}
         {error && (
@@ -249,9 +252,7 @@ export function PostComments({
             {tCommon("retry")}
           </button>
         </p>
-      ) : comments.length === 0 ? (
-        <p className="mt-8 text-sm text-slate-500">{t("empty")}</p>
-      ) : (
+      ) : comments.length === 0 ? null : (
         <ul className="mt-8 space-y-6">
           {tops.map((c) => (
             <li key={c.id}>
