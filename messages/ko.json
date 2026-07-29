@@ -3742,15 +3742,16 @@
       "cancelDoneBody": "다음에 또 만나요. 같은 연락처로 다시 신청할 수도 있어요.",
       "cancelError": "취소에 실패했어요. 링크가 만료되었거나 이미 취소되었을 수 있어요.",
       "errors": {
-        "answerRequired": "\"{label}\" 항목을 입력해 주세요",
+        "answerRequired": "\"{label}\" 항목을 적어 주세요",
+        "choiceRequired": "\"{label}\" 항목에서 하나를 골라 주세요",
         "consentRequired": "개인정보 제공에 동의해 주세요",
         "full": "방금 정원이 마감됐어요",
         "alreadyRegistered": "이미 이 연락처로 신청되어 있어요",
         "closed": "신청이 마감되었어요",
         "generic": "신청에 실패했어요. 잠시 후 다시 시도해 주세요.",
-        "invalidEmail": "올바른 이메일 주소를 입력해 주세요",
-        "invalidPhone": "올바른 전화번호를 입력해 주세요",
-        "invalidKakao": "올바른 카카오톡 ID를 입력해 주세요"
+        "invalidEmail": "이메일 주소를 다시 확인해 주세요 (예: hong@naver.com)",
+        "invalidPhone": "전화번호를 다시 확인해 주세요 (예: 010-1234-5678)",
+        "invalidKakao": "카카오톡 ID를 다시 확인해 주세요 (영문·숫자 2~30자)"
       }
     },
     "list": {

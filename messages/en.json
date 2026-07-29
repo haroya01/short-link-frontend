@@ -3742,15 +3742,16 @@
       "cancelDoneBody": "See you next time. You can register again with the same contact.",
       "cancelError": "Could not cancel. The link may be expired or already used.",
       "errors": {
-        "answerRequired": "Please answer \"{label}\"",
+        "answerRequired": "Please fill in \"{label}\"",
+        "choiceRequired": "Please pick one option for \"{label}\"",
         "consentRequired": "Please agree to share your contact info",
         "full": "The last spot was just taken",
         "alreadyRegistered": "This contact is already registered",
         "closed": "Registration is closed",
         "generic": "Registration failed. Please try again.",
-        "invalidEmail": "Please enter a valid email",
-        "invalidPhone": "Please enter a valid phone number",
-        "invalidKakao": "Please enter a valid KakaoTalk ID"
+        "invalidEmail": "Please check the email address (e.g. hong@gmail.com)",
+        "invalidPhone": "Please check the phone number (e.g. 010-1234-5678)",
+        "invalidKakao": "Please check the KakaoTalk ID (2–30 letters/numbers)"
       }
     },
     "list": {
