@@ -260,6 +260,7 @@
     "settingsDisplay": "प्रदर्शन",
     "settingsFeed": "फ़ीड",
     "settingsDefaultTab": "डिफ़ॉल्ट टैब — ब्लॉग होम पर पहुँचते ही सबसे पहले यही खुलता है",
+    "settingsDefaultTabFailed": "सहेजा नहीं जा सका. कृपया पुनः प्रयास करें.",
     "settingsPrivacy": "दृश्यता",
     "settingsHideFollowerCount": "फ़ॉलोअर संख्या छिपाएँ",
     "settingsHideFollowerCountHint": "चालू करने पर आपके फ़ॉलोअर और फ़ॉलोइंग की संख्या किसी को नहीं दिखती। फ़ॉलो करना फिर भी चलता है।",

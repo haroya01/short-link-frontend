@@ -260,6 +260,7 @@
     "settingsDisplay": "Hiển thị",
     "settingsFeed": "Dòng tin",
     "settingsDefaultTab": "Tab mặc định — mở đầu tiên khi bạn vào trang chủ blog",
+    "settingsDefaultTabFailed": "Không thể lưu. Vui lòng thử lại.",
     "settingsPrivacy": "Phạm vi hiển thị",
     "settingsHideFollowerCount": "Ẩn số người theo dõi",
     "settingsHideFollowerCountHint": "Khi bật, không ai thấy số người theo dõi hay đang theo dõi của bạn. Việc theo dõi vẫn hoạt động.",
