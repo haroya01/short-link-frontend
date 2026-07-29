@@ -260,6 +260,7 @@
     "settingsDisplay": "表示",
     "settingsFeed": "フィード",
     "settingsDefaultTab": "デフォルトタブ — ブログホームを開いたときに最初に表示",
+    "settingsDefaultTabFailed": "保存できませんでした。しばらくしてからもう一度お試しください。",
     "settingsPrivacy": "公開範囲",
     "settingsHideFollowerCount": "フォロワー数を隠す",
     "settingsHideFollowerCountHint": "オンにすると、フォロワー・フォロー中の数が誰にも表示されません。フォローはそのまま使えます。",
