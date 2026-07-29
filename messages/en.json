@@ -87,6 +87,7 @@
     "searchEmptyTitle": "No posts found",
     "searchEmptyBody": "Try another keyword or browse topics.",
     "searchEmptyHeading": "Nothing matches “{q}” yet",
+    "searchSubmit": "Search",
     "searchEmptyTopics": "Try one of these topics instead",
     "browseTopics": "Browse topics",
     "railPopularTags": "Popular tags",

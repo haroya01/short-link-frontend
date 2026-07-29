@@ -248,11 +248,30 @@ export default async function RootLayout({
           data-pretendard=""
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
+        {/* ja 로케일만: Pretendard JP(동일 파운드리·메트릭 호환)를 겹쳐 일본 신자체 자형을
+            네이티브로. KR판 단독으로는 신자체 한자(読·気 등) 상당수가 글자 단위 시스템 폴백으로
+            떨어져 자형 혼합("중화폰트" 질감)이 났다 — 일본 독자 즉시 이탈 신호. 로딩 패턴은 위
+            KR판과 동일한 비차단 3종 세트, globals.css 의 :lang(ja) font-family 가 소비한다. */}
+        {locale === "ja" && (
+          <>
+            <link
+              rel="preload"
+              as="style"
+              href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp-dynamic-subset.min.css"
+            />
+            <link
+              rel="stylesheet"
+              media="print"
+              data-pretendard=""
+              href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp-dynamic-subset.min.css"
+            />
+          </>
+        )}
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){var l=document.querySelector('link[data-pretendard]');if(!l)return;var a=function(){l.media='all'};if(l.sheet)a();else l.addEventListener('load',a,{once:true});})();",
+              "(function(){var ls=document.querySelectorAll('link[data-pretendard]');for(var i=0;i<ls.length;i++){(function(l){var a=function(){l.media='all'};if(l.sheet)a();else l.addEventListener('load',a,{once:true});})(ls[i]);}})();",
           }}
         />
         <noscript>
@@ -262,6 +281,13 @@ export default async function RootLayout({
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
           />
+          {locale === "ja" && (
+            // eslint-disable-next-line @next/next/no-css-tags
+            <link
+              rel="stylesheet"
+              href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp-dynamic-subset.min.css"
+            />
+          )}
         </noscript>
       </head>
       <body className="min-h-screen flex flex-col">
