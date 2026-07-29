@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import {
@@ -38,6 +38,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
   const locale = useLocale();
   const pathname = usePathname();
   const [show, setShow] = useState(true);
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (hasAcceptedConsent()) {
@@ -69,6 +70,22 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
     };
   }, [show, suppressed]);
 
+  // 배너 실높이 → --banner-h 동기화. 정적 3.5rem(globals :root)은 "한 줄 카피" 가정이라 ko 카피가
+  // 390px 에서 두 줄로 랩되면 ~1rem 부족해, body 하단 예약 여백이 모자라 마지막 콘텐츠(푸터 링크)가
+  // 배너 밑으로 들어갔다(적대 검증 r5 실측). 언마운트 시 인라인 값을 걷어 정적 폴백으로 복귀.
+  useEffect(() => {
+    const el = bannerRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const sync = () => document.body.style.setProperty("--banner-h", `${el.offsetHeight}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      document.body.style.removeProperty("--banner-h");
+    };
+  }, [show, suppressed]);
+
   if (suppressed) return null;
   if (!show) return null;
 
@@ -84,6 +101,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
         dangerouslySetInnerHTML={{ __html: consentInitScript }}
       />
       <div
+        ref={bannerRef}
         data-cc-banner
         role="region"
         aria-live="polite"

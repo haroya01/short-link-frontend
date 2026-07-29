@@ -30,9 +30,15 @@ function relativeTime(iso: string, locale: string): string {
   const diff = new Date(iso).getTime() - Date.now();
   const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
   for (const [unit, ms] of RELATIVE_UNITS) {
-    if (Math.abs(diff) >= ms || unit === "minute") return rtf.format(Math.round(diff / ms), unit);
+    if (Math.abs(diff) >= ms || unit === "minute") {
+      let n = Math.round(diff / ms);
+      // 1분 미만이 0으로 반올림되면 numeric:"auto"가 "현재 분"(this minute) 같은 기계 문구를
+      // 낸다 — 허브 최상단 이어서-쓰기 카드에 그대로 노출됐다(적대 검증 r6). 최소 ±1분으로 올림.
+      if (unit === "minute" && n === 0) n = diff <= 0 ? -1 : 1;
+      return rtf.format(n, unit);
+    }
   }
-  return rtf.format(0, "minute");
+  return rtf.format(-1, "minute");
 }
 
 /** Absolute publish instant for a scheduled row — the author needs the exact date·time, not "in 3
@@ -163,7 +169,9 @@ export default function WriteIndexPage() {
     // max-w-3xl: 분석·리드·저장한 글과 같은 워크스페이스 공통 폭 — 사이드바 형제 화면끼리
     // 본문 시작·끝점이 같아야 한 공간으로 읽힌다.
     <main className="mx-auto max-w-3xl px-6 py-10">
-      <header className="mb-6 flex items-center justify-between gap-4">
+      {/* <sm 세로 스택: 단일 행에선 우측 액션 3개가 폭을 다 먹어 h1 "내 글"이 낱자로 세로 낙하했다
+          (적대 검증 r6 — 워크스페이스 첫 화면의 첫 픽셀). */}
+      <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
           {/* Cumulative reach — the one summary the filter chips don't already carry. Counts per

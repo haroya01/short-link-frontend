@@ -8,9 +8,11 @@ import { DATE_LOCALE } from "@/lib/date";
 import { estimateMinutesForCount } from "@/lib/path-progress";
 import {
   listDiscoverConnections,
+  listPublicConnectionFeed,
   listPublicCollectionsByUsername,
   type CollectionSummary,
   type ConnectionEvent,
+  type DiscoverFeed,
   type FeedSource,
   type KindredCurator,
 } from "@/modules/blog/api/collections";
@@ -50,18 +52,26 @@ export function DiscoverConnections({ locale }: { locale: string }) {
 
   useEffect(() => {
     let alive = true;
+    const apply = async (feed: DiscoverFeed) => {
+      if (!alive) return;
+      setEvents(feed.items);
+      setSource(feed.source);
+      setState("ready");
+      // Resolve the open paths behind the feed: each distinct curator's public collections, matched
+      // to the collections they connected into here. Best-effort — a failed lookup just drops that
+      // curator's entrances, never the whole view.
+      const resolved = await resolveEntrances(feed.items);
+      if (alive) setEntrances(resolved);
+    };
     listDiscoverConnections()
-      .then(async (feed) => {
-        if (!alive) return;
-        setEvents(feed.items);
-        setSource(feed.source);
-        setState("ready");
-        // Resolve the open paths behind the feed: each distinct curator's public collections, matched
-        // to the collections they connected into here. Best-effort — a failed lookup just drops that
-        // curator's entrances, never the whole view.
-        const resolved = await resolveEntrances(feed.items);
-        if (alive) setEntrances(resolved);
-      })
+      .then(apply)
+      // 개인화 피드는 인증 클라이언트라 비로그인은 무조건 실패했고, 제품 테제의 관문이 게스트에게
+      // "불러오지 못했어요" 죽은 표면이었다(적대 검증 r5 — Are.na 는 로그아웃 Explore 가 실물을
+      // 보여준다). 공개 전역 스트림으로 폴백 — listPublicConnectionFeed 는 throw 하지 않고 빈
+      // 피드로 강등되므로, 여기서부터는 실패해도 빈 상태(콜드스타트 안내)지 에러 벽이 아니다.
+      .catch(() =>
+        listPublicConnectionFeed().then((feed: DiscoverFeed) => apply({ ...feed, source: "global" })),
+      )
       .catch(() => alive && setState("failed"));
     return () => {
       alive = false;

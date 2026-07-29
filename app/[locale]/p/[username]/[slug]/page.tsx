@@ -1,4 +1,5 @@
 import { DATE_LOCALE } from "@/lib/date";
+import { linksHref } from "@/lib/host";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
@@ -125,6 +126,7 @@ export default async function PublicPostPage({
   const isPreview = Boolean(preview);
   const result = preview ? await findPreviewPost(preview) : await findPublicPost(username, slug);
   const t = await getTranslations({ locale, namespace: "publicPost" });
+  const tFooter = await getTranslations({ locale, namespace: "footer" });
 
   if (!result.ok) {
     // backend: UNPUBLISHED → 410, DRAFT/SCHEDULED/missing → 404. A bad preview token is a plain 404.
@@ -415,7 +417,13 @@ export default async function PublicPostPage({
         </div>
       </footer>
 
-      <RelatedPosts locale={locale} author={author} currentSlug={post.slug} tags={post.tags} />
+      <RelatedPosts
+        locale={locale}
+        author={author}
+        currentSlug={post.slug}
+        currentTitle={post.title}
+        tags={post.tags}
+      />
 
       {/* 읽기 이어가기 — 기기 로컬(localStorage), 프리뷰(비공개 토큰 링크)에선 기록하지 않는다. */}
       {!isPreview && <ReadingResume postKey={`${author.username}/${post.slug}`} />}
@@ -426,10 +434,29 @@ export default async function PublicPostPage({
       <PostComments postId={post.id} authorUsername={author.username} />
 
       {/* Quiet viral-loop badge — every shared post carries a followable link back to kurl. Drafts
-          (preview) skip it. Centered + muted so it reads as a colophon, not an ad (§10). */}
+          (preview) skip it. Centered + muted so it reads as a colophon, not an ad (§10). 아래 법적
+          한 줄은 이 페이지가 알약 하나로 끝나며 ©·약관·프라이버시가 0 이던 것(적대 검증 r4 —
+          Substack/Ghost 는 푸터에 신뢰 장치 완비)의 최소 수리 — 콜로폰 톤 유지. */}
       {!isPreview && (
-        <div className="mt-16 flex justify-center">
+        <div className="mt-16 flex flex-col items-center gap-3">
           <MadeWithKurl />
+          <p className="flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
+            <span>{tFooter("copyright", { year: new Date().getFullYear() })}</span>
+            <span aria-hidden>·</span>
+            <a
+              href={linksHref(`/${locale}/terms`)}
+              className="focus-ring rounded underline-offset-2 hover:underline"
+            >
+              {tFooter("terms")}
+            </a>
+            <span aria-hidden>·</span>
+            <a
+              href={linksHref(`/${locale}/privacy`)}
+              className="focus-ring rounded underline-offset-2 hover:underline"
+            >
+              {tFooter("privacy")}
+            </a>
+          </p>
         </div>
       )}
       </article>

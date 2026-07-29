@@ -342,8 +342,13 @@ function LinkPreviewSkeleton() {
  */
 async function LinkPreviewCard({ url }: { url: string }) {
   let host = url;
+  // 폴백 보조줄은 스킴 포함 원시 URL 전문이 아니라 경로만 — 리치 카드와 나란히 설 때 원시 URL 이
+  // 언퍼얼 실패를 날것으로 드러냈다(적대 검증 r4). 루트("/")뿐이면 도메인 한 줄로 끝낸다.
+  let path = "";
   try {
-    host = new URL(url).host.replace(/^www\./, "");
+    const parsed = new URL(url);
+    host = parsed.host.replace(/^www\./, "");
+    path = parsed.pathname === "/" && !parsed.search ? "" : `${parsed.pathname}${parsed.search}`;
   } catch {
     /* keep raw */
   }
@@ -364,7 +369,9 @@ async function LinkPreviewCard({ url }: { url: string }) {
       >
         <span className="min-w-0">
           <span className="block truncate text-sm font-medium text-slate-900 dark:text-slate-100">{host}</span>
-          <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">{url}</span>
+          {path && (
+            <span className="block truncate text-[13px] text-slate-500 dark:text-slate-400">{path}</span>
+          )}
         </span>
         <ArrowUpRight className="h-4 w-4 shrink-0 text-accent-600" />
       </a>

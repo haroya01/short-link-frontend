@@ -132,7 +132,9 @@ function LoginShell({ next = null }: { next?: string | null }) {
         >
           <Link
             href="/"
-            className="text-[13px] text-slate-500 dark:text-slate-400 underline-offset-4 hover:text-slate-900 dark:hover:text-slate-100 hover:underline"
+            // 상시 밑줄 — hover 밑줄만으로는 모바일(hover 없음)에서 정적 문장으로 읽혀 게스트
+            // 귀환로가 안 보였다(적대 검증 r4). 장식색은 낮춰 조용함 유지.
+            className="text-[13px] text-slate-500 underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:text-slate-400 dark:decoration-slate-600 dark:hover:text-slate-100"
           >
             {t("anonymousButton")}
           </Link>
