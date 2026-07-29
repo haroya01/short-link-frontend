@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useTranslations } from "next-intl";
-import { CalendarPlus, CheckCircle2, Copy, Loader2 } from "lucide-react";
+import { AlertCircle, CalendarPlus, CheckCircle2, Copy, Loader2 } from "lucide-react";
 import { ApiError } from "@/lib/api/client";
 import { prewarmPowToken } from "@/lib/pow";
 import { Input } from "@/components/ui/input";
@@ -47,7 +47,14 @@ export function RegistrationPanel({
     setError(null);
     for (const question of event.questions) {
       if (question.required && !(answers[question.id] ?? "").trim()) {
-        setError(t("errors.answerRequired", { label: question.label }));
+        setError(
+          t(
+            question.type === "SINGLE_CHOICE"
+              ? "errors.choiceRequired"
+              : "errors.answerRequired",
+            { label: question.label },
+          ),
+        );
         return;
       }
     }
@@ -81,13 +88,14 @@ export function RegistrationPanel({
       id="register"
       className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900"
     >
-      <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-50">
+      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
         {t("formTitle")}
       </h2>
       <form onSubmit={submit} className="mt-4 flex flex-col gap-4" noValidate>
         <Field label={t("nameLabel")} htmlFor="ev-name" required>
           <Input
             id="ev-name"
+            className="h-12 text-base border-slate-500 dark:border-slate-500"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onFocus={() => prewarmPowToken()}
@@ -100,6 +108,7 @@ export function RegistrationPanel({
         <Field label={contactLabel(t, event.contactField)} htmlFor="ev-contact" required>
           <Input
             id="ev-contact"
+            className="h-12 text-base border-slate-500 dark:border-slate-500"
             value={contact}
             onChange={(e) => setContact(e.target.value)}
             type={event.contactField === "EMAIL" ? "email" : "text"}
@@ -141,8 +150,8 @@ export function RegistrationPanel({
                       }
                       className={
                         selected
-                          ? "min-h-11 rounded-full border border-slate-900 bg-slate-900 px-4 py-2.5 text-[13px] font-medium text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
-                          : "min-h-11 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-[13px] text-slate-700 transition-colors hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+                          ? "min-h-11 rounded-full border border-slate-900 bg-slate-900 px-4 py-2.5 text-[15px] font-medium text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
+                          : "min-h-11 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-[15px] text-slate-700 transition-colors hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
                       }
                     >
                       {option}
@@ -153,6 +162,7 @@ export function RegistrationPanel({
             ) : (
               <Input
                 id={`ev-q-${question.id}`}
+                className="h-12 text-base border-slate-500 dark:border-slate-500"
                 value={answers[question.id] ?? ""}
                 onChange={(e) =>
                   setAnswers((prev) => ({ ...prev, [question.id]: e.target.value }))
@@ -163,26 +173,30 @@ export function RegistrationPanel({
           </Field>
         ))}
 
-        <label className="flex cursor-pointer items-start gap-2.5 text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">
+        <label className="flex cursor-pointer items-start gap-3 text-[15px] leading-relaxed text-slate-700 dark:text-slate-300">
           <input
             type="checkbox"
             checked={consented}
             onChange={(e) => setConsented(e.target.checked)}
-            className="mt-0.5 h-5 w-5 cursor-pointer rounded border-slate-300 accent-slate-900 dark:accent-slate-100"
+            className="mt-1 h-6 w-6 cursor-pointer rounded border-slate-300 accent-slate-900 dark:accent-slate-100"
           />
           <span>{t("consent")}</span>
         </label>
 
         {error ? (
-          <p role="alert" className="text-[13px] font-medium text-red-600 dark:text-red-400">
-            {error}
+          <p
+            role="alert"
+            className="flex items-start gap-2 rounded-xl bg-red-50 px-3.5 py-3 text-[15px] font-medium leading-relaxed text-red-700 dark:bg-red-950/40 dark:text-red-300"
+          >
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+            <span>{error}</span>
           </p>
         ) : null}
 
         <button
           type="submit"
           disabled={phase === "submitting" || !name.trim() || !contact.trim()}
-          className="flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 text-[14px] font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
+          className="flex h-12 items-center justify-center gap-2 rounded-xl bg-slate-900 text-base font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
         >
           {phase === "submitting" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {phase === "submitting" ? t("submitting") : t("submit")}
@@ -214,11 +228,11 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
     >
       <div className="flex items-center gap-2.5">
         <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-        <h2 className="text-[15px] font-semibold text-emerald-900 dark:text-emerald-200">
+        <h2 className="text-lg font-semibold text-emerald-900 dark:text-emerald-200">
           {t("successTitle")}
         </h2>
       </div>
-      <p className="mt-2 text-[13px] leading-relaxed text-emerald-800 dark:text-emerald-300">
+      <p className="mt-2 text-[15px] leading-relaxed text-emerald-800 dark:text-emerald-300">
         {event.contactField === "EMAIL" ? t("successBodyEmail") : t("successBody")}
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
@@ -226,7 +240,7 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
           href={googleCalendarUrl(event)}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-emerald-500"
+          className="flex min-h-11 items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-[14px] font-semibold text-white transition-colors hover:bg-emerald-500"
         >
           <CalendarPlus className="h-3.5 w-3.5" />
           {t("addToCalendar")}
@@ -238,7 +252,7 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
           }}
-          className="flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-3 py-2 text-[12px] font-medium text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+          className="flex min-h-11 items-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-3.5 py-2 text-[14px] font-medium text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
         >
           <Copy className="h-3.5 w-3.5" />
           {copied ? t("cancelLinkCopied") : t("copyCancelLink")}
@@ -246,10 +260,10 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
       </div>
 
       <div className="mt-5 border-t border-emerald-200 pt-4 dark:border-emerald-900">
-        <p className="text-[12px] text-emerald-700 dark:text-emerald-400">{t("viralHook")}</p>
+        <p className="text-[14px] text-emerald-700 dark:text-emerald-400">{t("viralHook")}</p>
         <a
           href={linksHref("/events/new?ref=event-success")}
-          className="mt-2 inline-flex items-center rounded-lg border border-emerald-300 bg-white px-3 py-2 text-[13px] font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
+          className="mt-2 inline-flex min-h-11 items-center rounded-lg border border-emerald-300 bg-white px-3.5 py-2 text-[14px] font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
         >
           {t("viralCta")}
         </a>
@@ -260,7 +274,7 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
 
 function ClosedNotice({ message }: { message: string }) {
   return (
-    <section className="mt-6 rounded-2xl border border-slate-200 bg-slate-100 p-5 text-center text-[13px] font-medium text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+    <section className="mt-6 rounded-2xl border border-slate-200 bg-slate-100 p-5 text-center text-[15px] font-medium leading-relaxed text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
       {message}
     </section>
   );
@@ -281,7 +295,7 @@ function Field({
     <div className="flex flex-col gap-1.5">
       <label
         htmlFor={htmlFor}
-        className="text-[12px] font-medium text-slate-600 dark:text-slate-400"
+        className="text-[15px] font-medium text-slate-700 dark:text-slate-300"
       >
         {label}
         {required ? <span className="ml-0.5 text-red-500">*</span> : null}

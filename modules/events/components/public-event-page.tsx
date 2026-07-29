@@ -56,7 +56,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
         </h1>
 
         {event.organizerName ? (
-          <div className="mt-2.5 flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
+          <div className="mt-2.5 flex items-center gap-2 text-[15px] text-slate-500 dark:text-slate-400">
             {event.organizerAvatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -132,7 +132,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
             <button
               type="button"
               onClick={scrollToForm}
-              className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-slate-900 text-[14px] font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
+              className="mt-4 flex h-12 w-full items-center justify-center rounded-xl bg-slate-900 text-base font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
             >
               {t("cta")}
             </button>
@@ -207,8 +207,8 @@ function MetaRow({
       <span
         className={
           emphasize
-            ? "text-[13px] font-semibold text-amber-600 dark:text-amber-400 leading-7"
-            : "text-[13px] text-slate-700 dark:text-slate-300 leading-7"
+            ? "text-base font-semibold leading-7 text-amber-600 dark:text-amber-400"
+            : "text-base leading-7 text-slate-700 dark:text-slate-300"
         }
       >
         {primary}
