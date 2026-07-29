@@ -40,7 +40,20 @@ export function PostToc({ headings }: { headings: TocHeading[] }) {
       const el = document.getElementById(h.id);
       if (el) observer.observe(el);
     }
-    return () => observer.disconnect();
+    // 바닥 클램프 — 상단 25% 밴드 스파이는 문서 끝에서 마지막 헤딩이 밴드에 못 들어와 활성이
+    // 본문 중간 항목에 고착됐다(적대 검증 r4: 추천·댓글 영역인데 TOC 는 중간을 가리킴). 끝에
+    // 도달하면 마지막 항목으로 스냅.
+    const last = headings[headings.length - 1];
+    const clampToEnd = () => {
+      if (!last) return;
+      const doc = document.documentElement;
+      if (window.scrollY + window.innerHeight >= doc.scrollHeight - 160) setActive(last.id);
+    };
+    window.addEventListener("scroll", clampToEnd, { passive: true });
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", clampToEnd);
+    };
   }, [headings]);
 
   function jumpTo(e: React.MouseEvent, id: string) {
