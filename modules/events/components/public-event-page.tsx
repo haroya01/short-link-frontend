@@ -7,7 +7,12 @@ import { CalendarDays, Clock3, Globe, MapPin, UserRound, Users } from "lucide-re
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { Markdown } from "@/modules/blog/components/markdown";
 import type { PublicEvent } from "@/modules/events/api/events";
-import { formatEventDate, formatEventRange, formatEventTime } from "@/modules/events/lib/format";
+import {
+  formatEventDate,
+  formatEventRange,
+  formatEventTime,
+  timezoneLabel,
+} from "@/modules/events/lib/format";
 import { CancelRegistrationPanel } from "./cancel-registration-panel";
 import { RegistrationPanel } from "./registration-panel";
 
@@ -76,7 +81,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
             <MetaRow icon={<CalendarDays className="h-4 w-4" />} primary={dateLine} />
             <MetaRow
               icon={<Clock3 className="h-4 w-4" />}
-              primary={`${timeLine} (${event.timezone})`}
+              primary={`${timeLine} (${timezoneLabel(event.timezone, locale)})`}
             />
             {event.locationText ? (
               <MetaRow

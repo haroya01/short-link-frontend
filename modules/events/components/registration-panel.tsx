@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useTranslations } from "next-intl";
 import { CalendarPlus, CheckCircle2, Copy, Loader2 } from "lucide-react";
 import { ApiError } from "@/lib/api/client";
@@ -125,15 +125,14 @@ export function RegistrationPanel({
             required={question.required}
           >
             {question.type === "SINGLE_CHOICE" ? (
-              <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={question.label}>
+              <div className="flex flex-wrap gap-2" role="group" aria-label={question.label}>
                 {question.options.map((option) => {
                   const selected = answers[question.id] === option;
                   return (
                     <button
                       key={option}
                       type="button"
-                      role="radio"
-                      aria-checked={selected}
+                      aria-pressed={selected}
                       onClick={() =>
                         setAnswers((prev) => ({
                           ...prev,
@@ -142,8 +141,8 @@ export function RegistrationPanel({
                       }
                       className={
                         selected
-                          ? "rounded-full border border-slate-900 bg-slate-900 px-3.5 py-1.5 text-[13px] font-medium text-white transition-colors dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
-                          : "rounded-full border border-slate-300 bg-white px-3.5 py-1.5 text-[13px] text-slate-700 transition-colors hover:border-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+                          ? "min-h-11 rounded-full border border-slate-900 bg-slate-900 px-4 py-2.5 text-[13px] font-medium text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
+                          : "min-h-11 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-[13px] text-slate-700 transition-colors hover:border-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
                       }
                     >
                       {option}
@@ -164,12 +163,12 @@ export function RegistrationPanel({
           </Field>
         ))}
 
-        <label className="flex items-start gap-2.5 text-[12px] leading-snug text-slate-500 dark:text-slate-400">
+        <label className="flex cursor-pointer items-start gap-2.5 text-[12px] leading-relaxed text-slate-600 dark:text-slate-300">
           <input
             type="checkbox"
             checked={consented}
             onChange={(e) => setConsented(e.target.checked)}
-            className="mt-0.5 h-4 w-4 rounded border-slate-300 accent-slate-900 dark:accent-slate-100"
+            className="mt-0.5 h-5 w-5 cursor-pointer rounded border-slate-300 accent-slate-900 dark:accent-slate-100"
           />
           <span>{t("consent")}</span>
         </label>
@@ -196,13 +195,23 @@ export function RegistrationPanel({
 function SuccessPanel({ event, result }: { event: PublicEvent; result: RegistrationResult }) {
   const t = useTranslations("events.public");
   const [copied, setCopied] = useState(false);
+  const sectionRef = React.useRef<HTMLElement | null>(null);
+  React.useEffect(() => {
+    sectionRef.current?.focus();
+  }, []);
   const cancelUrl =
     typeof window === "undefined"
       ? ""
       : `${window.location.origin}${window.location.pathname}?cancel=${result.cancelToken}`;
 
   return (
-    <section className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-900 dark:bg-emerald-950/40">
+    <section
+      ref={sectionRef}
+      tabIndex={-1}
+      aria-live="polite"
+      aria-atomic="true"
+      className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 outline-none dark:border-emerald-900 dark:bg-emerald-950/40"
+    >
       <div className="flex items-center gap-2.5">
         <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
         <h2 className="text-[15px] font-semibold text-emerald-900 dark:text-emerald-200">
@@ -240,7 +249,7 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
         <p className="text-[12px] text-emerald-700 dark:text-emerald-400">{t("viralHook")}</p>
         <a
           href={linksHref("/events/new?ref=event-success")}
-          className="mt-1.5 inline-block text-[13px] font-semibold text-emerald-900 underline underline-offset-2 dark:text-emerald-200"
+          className="mt-2 inline-flex items-center rounded-lg border border-emerald-300 bg-white px-3 py-2 text-[13px] font-semibold text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
         >
           {t("viralCta")}
         </a>

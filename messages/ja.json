@@ -3722,7 +3722,7 @@
       "contactPhonePlaceholder": "090-1234-5678",
       "contactKakao": "カカオトークID",
       "contactKakaoPlaceholder": "kakao_id",
-      "consent": "イベント運営のため、氏名・連絡先(回答を含む)を収集し主催者に提供することに同意します。イベント終了30日後に自動削除されます。",
+      "consent": "イベント運営のため、お名前・連絡先(回答を含む)を主催者に提供することに同意します。イベント終了30日後に自動削除されます。",
       "submit": "申し込む",
       "submitting": "送信中…",
       "successTitle": "申し込み完了!",
