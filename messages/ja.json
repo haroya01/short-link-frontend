@@ -3742,15 +3742,16 @@
       "cancelDoneBody": "またの機会に。同じ連絡先で再度申し込むこともできます。",
       "cancelError": "キャンセルできませんでした。リンクが無効か、すでにキャンセル済みの可能性があります。",
       "errors": {
-        "answerRequired": "「{label}」を入力してください",
+        "answerRequired": "「{label}」をご記入ください",
+        "choiceRequired": "「{label}」から1つお選びください",
         "consentRequired": "個人情報の提供に同意してください",
         "full": "たった今定員に達しました",
         "alreadyRegistered": "この連絡先はすでに申し込み済みです",
         "closed": "受付は終了しました",
         "generic": "申し込みに失敗しました。しばらくしてから再度お試しください。",
-        "invalidEmail": "有効なメールアドレスを入力してください",
-        "invalidPhone": "有効な電話番号を入力してください",
-        "invalidKakao": "有効なカカオトークIDを入力してください"
+        "invalidEmail": "メールアドレスをご確認ください (例: hong@gmail.com)",
+        "invalidPhone": "電話番号をご確認ください (例: 090-1234-5678)",
+        "invalidKakao": "カカオトークIDをご確認ください (英数字2〜30文字)"
       }
     },
     "list": {

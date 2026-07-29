@@ -3742,15 +3742,16 @@
       "cancelDoneBody": "Hẹn gặp lần sau. Bạn có thể đăng ký lại với cùng liên hệ.",
       "cancelError": "Không thể hủy. Liên kết có thể đã hết hạn hoặc đã được dùng.",
       "errors": {
-        "answerRequired": "Vui lòng trả lời \"{label}\"",
+        "answerRequired": "Vui lòng điền \"{label}\"",
+        "choiceRequired": "Vui lòng chọn một mục cho \"{label}\"",
         "consentRequired": "Vui lòng đồng ý chia sẻ thông tin liên hệ",
         "full": "Chỗ cuối cùng vừa được lấy",
         "alreadyRegistered": "Liên hệ này đã đăng ký rồi",
         "closed": "Đã đóng đăng ký",
         "generic": "Đăng ký thất bại. Vui lòng thử lại.",
-        "invalidEmail": "Vui lòng nhập email hợp lệ",
-        "invalidPhone": "Vui lòng nhập số điện thoại hợp lệ",
-        "invalidKakao": "Vui lòng nhập KakaoTalk ID hợp lệ"
+        "invalidEmail": "Vui lòng kiểm tra lại email (VD: hong@gmail.com)",
+        "invalidPhone": "Vui lòng kiểm tra lại số điện thoại (VD: 090-1234-5678)",
+        "invalidKakao": "Vui lòng kiểm tra lại KakaoTalk ID (2–30 chữ/số)"
       }
     },
     "list": {
