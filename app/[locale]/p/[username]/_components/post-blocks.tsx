@@ -34,7 +34,9 @@ function headingRanks(blocks: PublicPostBlock[]): Map<number, number> {
 }
 
 /** Headings for the floating TOC. `level` is the 1-based rank (mirrors the body's contiguous run)
- *  so the TOC indentation matches the rendered heading depth. */
+ *  so the TOC indentation matches the rendered heading depth. The TOC keeps only the two shallowest
+ *  ranks — 3뎁스를 다 실으면 긴 기술 글에서 25행+ 덤프가 되어 지도가 아니라 목록이 된다(적대 검증
+ *  r1, velog 는 2뎁스). 본문 앵커(#딥링크)는 전 헤딩에 그대로 남는다. */
 export function extractHeadings(blocks: PublicPostBlock[]): TocHeading[] {
   const ranks = headingRanks(blocks);
   return blocks
@@ -44,7 +46,7 @@ export function extractHeadings(blocks: PublicPostBlock[]): TocHeading[] {
       text: (b.content as string).trim(),
       level: (ranks.get(Number(b.type[1])) ?? 0) + 1,
     }))
-    .filter((h) => h.id.length > 0);
+    .filter((h) => h.id.length > 0 && h.level <= 2);
 }
 
 /**

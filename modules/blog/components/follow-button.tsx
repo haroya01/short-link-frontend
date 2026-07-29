@@ -194,10 +194,11 @@ export function FollowButton({
           </span>
         </button>
       )}
-      {showCount && !countHidden && (
+      {showCount && !countHidden && !(loaded && count === 0) && (
         // Always in the DOM (reserves its width → no layout shift) but invisible until the real count
         // loads, then fades in — so the misleading initial "0" is never seen. Dropped entirely for an
-        // author who hides their counts (countHidden), leaving just the follow button.
+        // author who hides their counts (countHidden), leaving just the follow button. A loaded 0 is
+        // dropped too — "팔로워 0"은 역사회적 증거라 숫자가 생기기 전엔 조용히 비워 둔다.
         <span
           className={`text-[13px] text-slate-500 transition-opacity duration-300 dark:text-slate-400 ${
             loaded ? "opacity-100" : "opacity-0"

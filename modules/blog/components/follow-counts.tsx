@@ -18,7 +18,8 @@ const isCounts = (v: unknown): v is Counts =>
  * Tappable "팔로워 N · 팔로잉 N" on the author header. Each count opens the followers / following
  * modal at the matching tab. Seeds from a session cache (the author tabs hard-navigate in the
  * subdomain model, so without a seed the counts would fade in again on every tab switch) and never
- * flashes a misleading "0" — the row stays invisible until a count is known.
+ * flashes a misleading "0" — the row stays invisible until a count is known. A real 0 is also never
+ * rendered (zero-count segments drop; both zero → no row).
  */
 export function FollowCounts({ username }: { username: string }) {
   const t = useTranslations("publicPost");
@@ -64,6 +65,12 @@ export function FollowCounts({ username }: { username: string }) {
   // followers/following lists are the count made visible, so we hide them together.
   if (hidden) return null;
 
+  const followers = counts?.followers ?? 0;
+  const following = counts?.following ?? 0;
+  // 0 은 그리지 않는다 — 콜드스타트 작가 헤더의 "팔로워 0"은 역사회적 증거다(Medium/Substack 은
+  // 0 을 아예 안 그림). 한쪽만 0 이면 그 세그먼트만 빠지고, 둘 다 0 이면 행 자체가 사라진다.
+  if (counts && followers === 0 && following === 0) return null;
+
   return (
     <>
       <div
@@ -74,23 +81,29 @@ export function FollowCounts({ username }: { username: string }) {
           counts ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
-        <button
-          type="button"
-          onClick={() => openTab("followers")}
-          className="focus-ring rounded transition-colors hover:text-slate-900 dark:hover:text-slate-100"
-        >
-          {t("followers", { count: counts?.followers ?? 0 })}
-        </button>
-        <span aria-hidden className="text-slate-300 dark:text-slate-600">
-          ·
-        </span>
-        <button
-          type="button"
-          onClick={() => openTab("following")}
-          className="focus-ring rounded transition-colors hover:text-slate-900 dark:hover:text-slate-100"
-        >
-          {t("followingCount", { count: counts?.following ?? 0 })}
-        </button>
+        {followers > 0 && (
+          <button
+            type="button"
+            onClick={() => openTab("followers")}
+            className="focus-ring rounded transition-colors hover:text-slate-900 dark:hover:text-slate-100"
+          >
+            {t("followers", { count: followers })}
+          </button>
+        )}
+        {followers > 0 && following > 0 && (
+          <span aria-hidden className="text-slate-300 dark:text-slate-600">
+            ·
+          </span>
+        )}
+        {following > 0 && (
+          <button
+            type="button"
+            onClick={() => openTab("following")}
+            className="focus-ring rounded transition-colors hover:text-slate-900 dark:hover:text-slate-100"
+          >
+            {t("followingCount", { count: following })}
+          </button>
+        )}
       </div>
       <FollowListDialog
         username={username}
