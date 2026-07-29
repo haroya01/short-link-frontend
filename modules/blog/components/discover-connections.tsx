@@ -8,7 +8,7 @@ import { DATE_LOCALE } from "@/lib/date";
 import { estimateMinutesForCount } from "@/lib/path-progress";
 import {
   listDiscoverConnections,
-  listPublicCollectionFeed,
+  listPublicConnectionFeed,
   listPublicCollectionsByUsername,
   type CollectionSummary,
   type ConnectionEvent,
