@@ -41,7 +41,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <main className="mx-auto w-full max-w-xl px-4 pb-16 pt-6 sm:pt-10">
+      <main className="mx-auto w-full max-w-xl px-4 pb-16 pt-6 sm:max-w-2xl sm:pt-10">
         {event.coverImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img

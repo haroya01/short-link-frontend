@@ -3733,7 +3733,7 @@
       "viralHook": "This page took 3 minutes to make.",
       "viralCta": "Create your own event page →",
       "canceledNotice": "This event has been canceled.",
-      "fullNotice": "This event is full.",
+      "fullNotice": "This event is full. Spots reopen when someone cancels — check back later.",
       "closedNotice": "Registration is closed.",
       "cancelTitle": "Cancel registration",
       "cancelBody": "Cancel your registration for \"{title}\"? Your spot goes back to others.",
@@ -3768,6 +3768,7 @@
       "coverUploading": "Uploading…",
       "coverFailed": "Upload failed. Please try again.",
       "coverHint": "Shown large in chat/social previews (JPG/PNG/WebP, 2:1 recommended)",
+      "optional": "Optional",
       "authTitle": "Event pages",
       "authDesc": "Sign in to create registration pages and see attendees and traffic sources."
     },

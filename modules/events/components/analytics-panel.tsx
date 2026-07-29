@@ -52,7 +52,7 @@ export function AnalyticsPanel({ analytics }: { analytics: EventAnalytics }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-slate-50 px-4 py-3 dark:bg-slate-800/60">
+    <div className="rounded-xl bg-slate-50 px-4 py-3 dark:bg-slate-800">
       <div className="text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</div>
       <div className="mt-0.5 text-xl font-bold tabular-nums text-slate-900 dark:text-slate-50">
         {value}
@@ -90,7 +90,7 @@ function BucketBars({
                   className={
                     accent
                       ? "block h-full rounded bg-slate-900 dark:bg-slate-200"
-                      : "block h-full rounded bg-slate-300 dark:bg-slate-600"
+                      : "block h-full rounded bg-slate-300 dark:bg-slate-500"
                   }
                   style={{ width: `${Math.round((bucket.count / max) * 100)}%` }}
                 />

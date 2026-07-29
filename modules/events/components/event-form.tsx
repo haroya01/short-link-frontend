@@ -301,6 +301,7 @@ function CollapsibleSection({
   defaultOpen: boolean;
   children: React.ReactNode;
 }) {
+  const t = useTranslations("events.form");
   return (
     <details
       open={defaultOpen}
@@ -308,8 +309,11 @@ function CollapsibleSection({
     >
       <summary className="flex cursor-pointer list-none items-center justify-between p-5 text-[13px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 [&::-webkit-details-marker]:hidden">
         {title}
-        <span className="text-slate-300 transition-transform group-open:rotate-180 dark:text-slate-600">
-          ▾
+        <span className="flex items-center gap-1.5 text-[11px] font-medium normal-case tracking-normal text-slate-400 dark:text-slate-500">
+          {t("optional")}
+          <span className="text-slate-300 transition-transform group-open:rotate-180 dark:text-slate-600">
+            ▾
+          </span>
         </span>
       </summary>
       <div className="flex flex-col gap-4 px-5 pb-5">{children}</div>

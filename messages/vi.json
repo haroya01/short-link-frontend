@@ -3733,7 +3733,7 @@
       "viralHook": "Trang này được tạo trong 3 phút.",
       "viralCta": "Tạo trang sự kiện của bạn →",
       "canceledNotice": "Sự kiện đã bị hủy.",
-      "fullNotice": "Sự kiện đã đủ người.",
+      "fullNotice": "Sự kiện đã đủ người. Chỗ sẽ mở lại khi có người hủy — hãy quay lại sau.",
       "closedNotice": "Đã đóng đăng ký.",
       "cancelTitle": "Hủy đăng ký",
       "cancelBody": "Hủy đăng ký \"{title}\"? Chỗ của bạn sẽ dành cho người khác.",
@@ -3768,6 +3768,7 @@
       "coverUploading": "Đang tải lên…",
       "coverFailed": "Tải lên thất bại. Vui lòng thử lại.",
       "coverHint": "Hiển thị lớn trong bản xem trước chat/mạng xã hội (JPG/PNG/WebP, tỉ lệ 2:1)",
+      "optional": "Tùy chọn",
       "authTitle": "Trang sự kiện",
       "authDesc": "Đăng nhập để tạo trang đăng ký và xem người tham gia, nguồn truy cập."
     },
