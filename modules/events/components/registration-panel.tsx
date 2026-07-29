@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { CheckCircle2, Copy, Loader2 } from "lucide-react";
+import { CalendarPlus, CheckCircle2, Copy, Loader2 } from "lucide-react";
 import { ApiError } from "@/lib/api/client";
 import { prewarmPowToken } from "@/lib/pow";
 import { Input } from "@/components/ui/input";
 import { linksHref } from "@/lib/host";
 import type { PublicEvent, RegistrationResult } from "@/modules/events/api/events";
 import { registerForEvent } from "@/modules/events/api/events";
+import { googleCalendarUrl } from "@/modules/events/lib/format";
 
 type Phase = "idle" | "submitting" | "done";
 
@@ -211,18 +212,29 @@ function SuccessPanel({ event, result }: { event: PublicEvent; result: Registrat
       <p className="mt-2 text-[13px] leading-relaxed text-emerald-800 dark:text-emerald-300">
         {event.contactField === "EMAIL" ? t("successBodyEmail") : t("successBody")}
       </p>
-      <button
-        type="button"
-        onClick={async () => {
-          await navigator.clipboard.writeText(cancelUrl);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        }}
-        className="mt-3 flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-3 py-2 text-[12px] font-medium text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-      >
-        <Copy className="h-3.5 w-3.5" />
-        {copied ? t("cancelLinkCopied") : t("copyCancelLink")}
-      </button>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <a
+          href={googleCalendarUrl(event)}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-emerald-500"
+        >
+          <CalendarPlus className="h-3.5 w-3.5" />
+          {t("addToCalendar")}
+        </a>
+        <button
+          type="button"
+          onClick={async () => {
+            await navigator.clipboard.writeText(cancelUrl);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }}
+          className="flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-3 py-2 text-[12px] font-medium text-emerald-800 transition-colors hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+        >
+          <Copy className="h-3.5 w-3.5" />
+          {copied ? t("cancelLinkCopied") : t("copyCancelLink")}
+        </button>
+      </div>
 
       <div className="mt-5 border-t border-emerald-200 pt-4 dark:border-emerald-900">
         <p className="text-[12px] text-emerald-700 dark:text-emerald-400">{t("viralHook")}</p>

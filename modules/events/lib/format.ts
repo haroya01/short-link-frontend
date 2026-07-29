@@ -6,19 +6,30 @@ export function shortUrlOf(code: string): string {
 
 /** 이벤트 자체 타임존으로 표시 — 뷰어 로컬이 아니라 "모임이 열리는 곳"의 시간이 기준. */
 export function formatEventDate(iso: string, timezone: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale, {
+  const parts = new Intl.DateTimeFormat(locale, {
     timeZone: safeZone(timezone),
     year: "numeric",
     month: "long",
     day: "numeric",
     weekday: "short",
-  }).format(new Date(iso));
+  }).formatToParts(new Date(iso));
+  const weekday = parts.find((p) => p.type === "weekday")?.value;
+  const withoutWeekday = parts
+    .filter((p) => p.type !== "weekday")
+    .map((p) => p.value)
+    .join("")
+    .replace(/[\s,]+$/, "")
+    .trim();
+  // ko/ja 관례 — "8월 5일 (수)" / "8月5日(水)". Intl ko 는 괄호를 안 붙인다.
+  if (!weekday) return withoutWeekday;
+  if (locale.startsWith("ja")) return `${withoutWeekday}(${weekday})`;
+  return `${withoutWeekday} (${weekday})`;
 }
 
 export function formatEventTime(iso: string, timezone: string, locale: string): string {
   return new Intl.DateTimeFormat(locale, {
     timeZone: safeZone(timezone),
-    hour: "2-digit",
+    hour: "numeric",
     minute: "2-digit",
   }).format(new Date(iso));
 }
@@ -86,6 +97,27 @@ function zoneOffsetMs(date: Date, timeZone: string): number {
     get("second"),
   );
   return asUtc - date.getTime();
+}
+
+/** 확인 화면의 "캘린더에 추가" — .ics 없이 링크만으로 되는 Google Calendar 템플릿 URL. */
+export function googleCalendarUrl(event: {
+  title: string;
+  startsAt: string;
+  endsAt: string | null;
+  locationText: string | null;
+  onlineUrl: string | null;
+}): string {
+  const basic = (iso: string) => iso.replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const endIso =
+    event.endsAt ?? new Date(new Date(event.startsAt).getTime() + 2 * 3600_000).toISOString();
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.title,
+    dates: `${basic(event.startsAt)}/${basic(endIso)}`,
+  });
+  const location = event.locationText ?? event.onlineUrl;
+  if (location) params.set("location", location);
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
 function safeZone(timezone: string): string {

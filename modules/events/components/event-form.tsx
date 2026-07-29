@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ApiError } from "@/lib/api/client";
 import type { ContactField, EventDraft, MyEvent, QuestionSpec } from "@/modules/events/api/events";
+import { commitCover, presignCover } from "@/modules/events/api/events";
 import { isoToWallTime, wallTimeToIso } from "@/modules/events/lib/format";
 import { QuestionBuilder } from "./question-builder";
 
@@ -104,6 +105,7 @@ export function EventForm({
   return (
     <form onSubmit={submit} className="flex flex-col gap-5">
       <Section>
+        {event ? <CoverField eventId={event.id} initialUrl={event.coverImageUrl} /> : null}
         <Field label={t("title")} htmlFor="ef-title" required>
           <Input
             id="ef-title"
@@ -197,7 +199,10 @@ export function EventForm({
         </div>
       </Section>
 
-      <Section title={t("limitsTitle")}>
+      <CollapsibleSection
+        title={t("limitsTitle")}
+        defaultOpen={event != null && (event.capacity != null || event.closeAt != null)}
+      >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label={t("capacity")} htmlFor="ef-cap" hint={t("capacityHint")}>
             <Input
@@ -219,9 +224,12 @@ export function EventForm({
             />
           </Field>
         </div>
-      </Section>
+      </CollapsibleSection>
 
-      <Section title={t("formSectionTitle")}>
+      <CollapsibleSection
+        title={t("formSectionTitle")}
+        defaultOpen={event != null && event.questions.length > 0}
+      >
         {event == null ? (
           <Field label={t("contactField")} htmlFor="ef-contact" hint={t("contactFieldHint")}>
             <div className="flex gap-2">
@@ -250,7 +258,7 @@ export function EventForm({
             onChange={(questions) => set("questions", questions)}
           />
         )}
-      </Section>
+      </CollapsibleSection>
 
       {error ? (
         <p role="alert" className="text-[13px] font-medium text-red-600 dark:text-red-400">
@@ -280,6 +288,90 @@ function Section({ title, children }: { title?: string; children: React.ReactNod
       ) : null}
       {children}
     </section>
+  );
+}
+
+/** 선택 설정은 접어서 첫 발행 마찰을 줄인다 — 제목+일시만으로도 발행 가능해야 한다. */
+function CollapsibleSection({
+  title,
+  defaultOpen,
+  children,
+}: {
+  title: string;
+  defaultOpen: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <details
+      open={defaultOpen}
+      className="group rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
+    >
+      <summary className="flex cursor-pointer list-none items-center justify-between p-5 text-[13px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 [&::-webkit-details-marker]:hidden">
+        {title}
+        <span className="text-slate-300 transition-transform group-open:rotate-180 dark:text-slate-600">
+          ▾
+        </span>
+      </summary>
+      <div className="flex flex-col gap-4 px-5 pb-5">{children}</div>
+    </details>
+  );
+}
+
+function CoverField({ eventId, initialUrl }: { eventId: number; initialUrl: string | null }) {
+  const t = useTranslations("events.form");
+  const [url, setUrl] = useState<string | null>(initialUrl);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const upload = async (file: File) => {
+    setUploading(true);
+    setError(false);
+    try {
+      const presigned = await presignCover(eventId, file.type);
+      const put = await fetch(presigned.uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      if (!put.ok) throw new Error("upload failed");
+      const committed = await commitCover(eventId, presigned.key);
+      setUrl(committed.coverImageUrl);
+    } catch {
+      setError(true);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-[12px] font-medium text-slate-600 dark:text-slate-400">
+        {t("cover")}
+      </span>
+      {url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={url} alt="" className="aspect-[2/1] w-full rounded-xl object-cover" />
+      ) : null}
+      <label className="flex h-9 w-fit cursor-pointer items-center rounded-lg border border-slate-300 px-3 text-[12px] font-medium text-slate-600 transition-colors hover:border-slate-500 dark:border-slate-700 dark:text-slate-300">
+        {uploading ? t("coverUploading") : url ? t("coverReplace") : t("coverUpload")}
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          disabled={uploading}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) void upload(file);
+            e.target.value = "";
+          }}
+        />
+      </label>
+      {error ? (
+        <p className="text-[11px] text-red-500">{t("coverFailed")}</p>
+      ) : (
+        <p className="text-[11px] text-slate-400 dark:text-slate-500">{t("coverHint")}</p>
+      )}
+    </div>
   );
 }
 

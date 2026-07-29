@@ -35,6 +35,9 @@ export type PublicEvent = {
   contactField: ContactField;
   status: "OPEN" | "CLOSED" | "CANCELED";
   acceptingRegistrations: boolean;
+  attending: number;
+  organizerName: string | null;
+  organizerAvatarUrl: string | null;
   questions: EventQuestion[];
 };
 
