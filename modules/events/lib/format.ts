@@ -48,7 +48,24 @@ export function formatEventRange(
   const end = sameDay
     ? formatEventTime(endsAt, timezone, locale)
     : `${formatEventDate(endsAt, timezone, locale)} ${formatEventTime(endsAt, timezone, locale)}`;
-  return `${date} · ${start} – ${end}`;
+  const sep = locale.startsWith("ja") ? "〜" : " – ";
+  return `${date} · ${start}${sep}${end}`;
+}
+
+/** "(Asia/Tokyo)" 같은 IANA id 대신 "일본 시간"/"日本時間" 류의 로케일 라벨. 실패 시 도시명 폴백. */
+export function timezoneLabel(timezone: string, locale: string): string {
+  try {
+    const parts = new Intl.DateTimeFormat(locale, {
+      timeZone: safeZone(timezone),
+      timeZoneName: "shortGeneric",
+    }).formatToParts(new Date());
+    const name = parts.find((p) => p.type === "timeZoneName")?.value;
+    if (name && !/^GMT/.test(name)) return name;
+    if (name) return name;
+  } catch {
+    /* fall through */
+  }
+  return timezone.split("/").pop()?.replace(/_/g, " ") ?? timezone;
 }
 
 /** datetime-local 입력값(주최자 타임존 벽시계) ↔ ISO 변환. */
