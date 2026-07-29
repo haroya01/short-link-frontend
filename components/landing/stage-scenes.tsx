@@ -32,7 +32,9 @@ export function StageScenes() {
           컴포넌트 그대로(랜딩이 보여주는 것 = 실존 화면, StatsHeroCore 와 같은 계약). */}
       <section className="bg-white dark:bg-slate-950">
         <div className="container max-w-5xl pb-10 pt-16 sm:pb-14 sm:pt-24">
-          <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-14">
+          {/* grid-cols-1 명시 필수: 암시적 트랙은 min-content 폭이라 LiveClickFeedDemo 의 nowrap
+              행이 390px 뷰포트에서 섹션 전체를 우측으로 넘치게 했다(문장·카드 에지 절단). */}
+          <div className="grid grid-cols-1 items-center gap-10 sm:grid-cols-2 sm:gap-14">
             <div className="space-y-4">
               <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
                 {t("scene2Eyebrow")}
@@ -79,7 +81,7 @@ export function StageScenes() {
       <section className="bg-white pt-4 dark:bg-slate-950 sm:pt-8">
         <div className="stage-rise bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
           <div className="container max-w-5xl py-16 sm:py-24">
-            <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
+            <div className="grid grid-cols-1 items-center gap-10 sm:grid-cols-2 sm:gap-12">
               <div className="space-y-4">
                 <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-300">
                   {t("scene3Eyebrow")}

@@ -645,9 +645,30 @@ mark.kurl-highlight--thread {
      overflow-x-auto doesn't clip it) instead of squishing cells on a phone. */
   .prose-post .prose-table-wrap {
     @apply my-7 overflow-x-auto;
+    /* 스크롤 섀도 — 좁은 화면에서 넓은 표가 잘릴 때 잘린 쪽 에지에만 그림자를 띄운다(잘림 힌트가
+       0 이면 열이 통째로 숨는다 — 적대 검증 r1). 커버 레이어(background-attachment: local)가
+       스크롤을 따라 움직이며 반대쪽 섀도를 덮는 순수 CSS 패턴이라, 커버 색은 종이 배경과 동일해야
+       한다(라이트 white / 다크 slate-950 아래 별도 정의). */
+    background:
+      linear-gradient(to right, #fff 30%, rgba(255, 255, 255, 0)) left / 48px 100%,
+      linear-gradient(to left, #fff 30%, rgba(255, 255, 255, 0)) right / 48px 100%,
+      linear-gradient(to right, rgba(15, 23, 42, 0.1), rgba(15, 23, 42, 0)) left / 14px 100%,
+      linear-gradient(to left, rgba(15, 23, 42, 0.1), rgba(15, 23, 42, 0)) right / 14px 100%;
+    background-repeat: no-repeat;
+    background-attachment: local, local, scroll, scroll;
+  }
+  .dark .prose-post .prose-table-wrap {
+    background:
+      linear-gradient(to right, #020617 30%, rgba(2, 6, 23, 0)) left / 48px 100%,
+      linear-gradient(to left, #020617 30%, rgba(2, 6, 23, 0)) right / 48px 100%,
+      linear-gradient(to right, rgba(148, 163, 184, 0.14), rgba(148, 163, 184, 0)) left / 14px 100%,
+      linear-gradient(to left, rgba(148, 163, 184, 0.14), rgba(148, 163, 184, 0)) right / 14px 100%;
+    background-repeat: no-repeat;
+    background-attachment: local, local, scroll, scroll;
   }
   .prose-post table {
-    @apply w-full border-collapse text-[0.9375rem] leading-snug;
+    /* tabular-nums: 벤치마크 표(893 ms vs 1.12 s)에서 자릿수가 세로로 정렬돼야 비교 스캔이 된다. */
+    @apply w-full border-collapse text-[0.9375rem] leading-snug tabular-nums;
   }
   .prose-post thead th {
     @apply border-b-2 border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100;

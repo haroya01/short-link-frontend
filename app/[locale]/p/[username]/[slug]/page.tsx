@@ -139,6 +139,8 @@ export default async function PublicPostPage({
   const minutes = readingMinutes(blocks);
   // "수정 {date}" hint only when the last edit lands on a LATER DAY than publish — same-day edits
   // (incl. the save-at-publish stamp) read as part of publishing and stay quiet (조용한 웹로그).
+  // 렌더는 글 끝(푸터 직전)에서만 — 첫 화면 메타는 날짜·읽기시간 두 개로 절제(적대 검증 r1,
+  // 수정일은 도착 시점 정보가 아니라 다 읽은 독자를 위한 기록이다).
   const editedLabel =
     post.lastEditedAt &&
     formatDate(post.lastEditedAt, locale) !== formatDate(post.publishedAt, locale)
@@ -310,7 +312,6 @@ export default async function PublicPostPage({
                 <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
                 {" · "}
                 {t("readingTime", { minutes })}
-                {editedLabel ? ` · ${t("editedOn", { date: editedLabel })}` : ""}
               </span>
             </span>
           </a>
@@ -318,7 +319,6 @@ export default async function PublicPostPage({
             <time dateTime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
             {" · "}
             {t("readingTime", { minutes })}
-            {editedLabel ? ` · ${t("editedOn", { date: editedLabel })}` : ""}
           </p>
           <div className="flex shrink-0 items-center gap-2">
             <span className="xl:hidden">
@@ -388,6 +388,12 @@ export default async function PublicPostPage({
         <div className="mt-10">
           <TagChips tags={post.tags} />
         </div>
+      )}
+
+      {editedLabel && (
+        <p className="mt-10 text-[12px] text-slate-500 dark:text-slate-400">
+          {t("editedOn", { date: editedLabel })}
+        </p>
       )}
 
       <footer className="mt-20 border-t border-slate-100 pt-8 dark:border-slate-800">

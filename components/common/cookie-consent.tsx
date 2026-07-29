@@ -92,11 +92,13 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
       >
       {/* Phones: an edge-to-edge bar (top border + upward shadow) that sits directly above the bottom
           tab bar so it reads as system chrome and never covers the tabs. sm+: the compact
-          right-aligned rounded card returns. */}
+          right-aligned rounded card returns. 불투명 종이(유리 아님): 카드 그리드 위에 뜨는 배너라
+          반투명 블러는 뒤 콘텐츠 명도에 따라 텍스트 대비가 출렁이고 머디하게 읽혔다(적대 검증 r1
+          — 1티어 배너는 전부 불투명 단색 카드). */}
       <div
         className={cn(
-          "glass-chrome mx-auto flex max-w-3xl items-center gap-2 border-t border-slate-200/60 px-4 py-3 shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:shadow-md",
-          darkAware && "dark:border-slate-800/60",
+          "mx-auto flex max-w-3xl items-center gap-2 border-t border-slate-200 bg-white px-4 py-3 shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:shadow-md",
+          darkAware && "dark:border-slate-800 dark:bg-slate-900",
         )}
       >
         <p

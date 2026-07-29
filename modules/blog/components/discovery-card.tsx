@@ -229,8 +229,10 @@ export function DiscoveryCard({
           className="absolute inset-0 h-full w-full object-cover saturate-[.85] transition-transform duration-300 ease-[var(--ease)] group-hover:scale-[1.03] motion-reduce:transform-none"
         />
         <div aria-hidden className="absolute inset-0 bg-accent-900/10" />
-        {/* 텍스트 가독성 scrim — 상·하단 모두(상단 태그, 하단 제목/메타). WCAG 대비 확보용으로 통일. */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        {/* 텍스트 가독성 scrim — 상·하단 모두(상단 태그, 하단 제목/메타). WCAG 대비 확보용으로 통일.
+            via 35%: 커버가 밝은 코드 스크린샷/다이어그램일 때 3줄 제목의 윗줄이 via 구간에 걸리는데,
+            10% 로는 흰 제목이 커버 속 검은 글자와 그대로 겹쳤다(적대 검증 r1 — 대비 사고 최다 지점). */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/35 to-transparent" />
         {/* 위에서 빛이 닿는 1px 하이라이트 — 커버가 평면 아니라 살짝 솟은 듯한 입체감. */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/25" />
@@ -251,7 +253,8 @@ export function DiscoveryCard({
           {tag && <TagLink tag={tag} over />}
           {reason && <ReasonPill reason={reason} over t={t} />}
         </div>
-        <div className="space-y-2">
+        {/* text-shadow 는 scrim 이 감당 못 하는 최악 커버(백지에 가는 검은 글자)용 마지막 가드. */}
+        <div className="space-y-2 [text-shadow:0_1px_2px_rgba(0,0,0,0.45)]">
           {/* 제목 스케일은 변형(이미지 유무)이 아니라 중요도(featured) 한 축으로만 — 위계 역전 방지. */}
           <h3 className={`line-clamp-3 text-balance font-semibold leading-tight tracking-tight text-white ${featured ? "text-card-title-lg" : "text-card-title-sm"}`}>
             {item.title}
