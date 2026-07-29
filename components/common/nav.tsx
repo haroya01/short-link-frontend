@@ -48,6 +48,7 @@ function authenticatedEntries(t: (k: string) => string, hasProfile: boolean): Na
     // 시작 페이지로 돌아가게 바뀐 뒤로 데스크톱에서 대시보드 가는 visible 경로가 없었다.
     { href: "/dashboard", label: t("myLinks"), active: (p) => p.startsWith("/dashboard") },
     { href: "/campaigns", label: t("campaigns"), active: (p) => p.startsWith("/campaigns") },
+    { href: "/events", label: t("events"), active: (p) => p.startsWith("/events") },
     {
       href: profileHref,
       label: t("profile"),
