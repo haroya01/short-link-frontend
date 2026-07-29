@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { CalendarDays, Clock3, Globe, MapPin, Users } from "lucide-react";
+import { CalendarDays, Clock3, Globe, MapPin, UserRound, Users } from "lucide-react";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { Markdown } from "@/modules/blog/components/markdown";
 import type { PublicEvent } from "@/modules/events/api/events";
@@ -24,8 +24,15 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
   );
   const timeLine = useMemo(() => {
     const range = formatEventRange(event.startsAt, event.endsAt, event.timezone, locale);
-    return range.split(" · ").slice(1).join(" · ") || formatEventTime(event.startsAt, event.timezone, locale);
+    return (
+      range.split(" · ").slice(1).join(" · ") ||
+      formatEventTime(event.startsAt, event.timezone, locale)
+    );
   }, [event.startsAt, event.endsAt, event.timezone, locale]);
+
+  const scrollToForm = () => {
+    document.getElementById("register")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
@@ -42,6 +49,27 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
         <h1 className="text-2xl font-bold leading-tight text-slate-900 dark:text-slate-50 sm:text-3xl">
           {event.title}
         </h1>
+
+        {event.organizerName ? (
+          <div className="mt-2.5 flex items-center gap-2 text-[13px] text-slate-500 dark:text-slate-400">
+            {event.organizerAvatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={event.organizerAvatarUrl}
+                alt=""
+                className="h-5 w-5 rounded-full object-cover"
+              />
+            ) : (
+              <UserRound className="h-4 w-4" />
+            )}
+            <span>
+              {t("hostedBy")}{" "}
+              <span className="font-medium text-slate-700 dark:text-slate-300">
+                {event.organizerName}
+              </span>
+            </span>
+          </div>
+        ) : null}
 
         <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] dark:border-slate-800 dark:bg-slate-900">
           <div className="flex flex-col gap-3">
@@ -84,32 +112,51 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
                 }
               />
             ) : null}
-            {event.capacity != null ? (
+            {event.attending > 0 || event.capacity != null ? (
               <MetaRow
                 icon={<Users className="h-4 w-4" />}
-                primary={
-                  event.spotsLeft != null && event.spotsLeft <= 0
-                    ? t("full")
-                    : t("spotsLeft", { count: event.spotsLeft ?? 0, capacity: event.capacity })
+                primary={attendanceLine(t, event)}
+                emphasize={
+                  event.spotsLeft != null && event.spotsLeft > 0 && event.spotsLeft <= 3
                 }
-                emphasize={event.spotsLeft != null && event.spotsLeft > 0 && event.spotsLeft <= 3}
               />
             ) : null}
           </div>
+
+          {!cancelToken && event.acceptingRegistrations ? (
+            <button
+              type="button"
+              onClick={scrollToForm}
+              className="mt-4 flex h-11 w-full items-center justify-center rounded-xl bg-slate-900 text-[14px] font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
+            >
+              {t("cta")}
+            </button>
+          ) : null}
         </section>
 
         {cancelToken ? (
           <CancelRegistrationPanel token={cancelToken} eventTitle={event.title} />
-        ) : (
-          <RegistrationPanel event={event} onRegistered={(spotsLeft) => {
-            if (spotsLeft != null) setEvent((prev) => ({ ...prev, spotsLeft }));
-          }} />
-        )}
+        ) : null}
 
         {event.descriptionMd ? (
           <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
-            <Markdown>{event.descriptionMd}</Markdown>
+            <div className="prose-text-block text-slate-800 dark:text-slate-200">
+              <Markdown>{event.descriptionMd}</Markdown>
+            </div>
           </section>
+        ) : null}
+
+        {!cancelToken ? (
+          <RegistrationPanel
+            event={event}
+            onRegistered={(spotsLeft) => {
+              setEvent((prev) => ({
+                ...prev,
+                attending: prev.attending + 1,
+                spotsLeft: spotsLeft != null ? spotsLeft : prev.spotsLeft,
+              }));
+            }}
+          />
         ) : null}
 
         <footer className="mt-10 flex justify-center">
@@ -118,6 +165,24 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
       </main>
     </div>
   );
+}
+
+function attendanceLine(
+  t: (key: string, values?: Record<string, string | number>) => string,
+  event: PublicEvent,
+): string {
+  const parts: string[] = [];
+  if (event.attending > 0) {
+    parts.push(t("attending", { count: event.attending }));
+  }
+  if (event.capacity != null) {
+    parts.push(
+      event.spotsLeft != null && event.spotsLeft <= 0
+        ? t("full")
+        : t("spotsLeft", { count: event.spotsLeft ?? 0, capacity: event.capacity }),
+    );
+  }
+  return parts.join(" · ");
 }
 
 function MetaRow({

@@ -12,6 +12,7 @@ test.describe("event registration flow", () => {
     await page.goto("/ko/events/new");
     await page.getByLabel("제목", { exact: false }).fill("E2E 테스트 스터디");
     await page.locator("#ef-starts").fill("2030-01-15T19:00");
+    await page.getByText("정원과 마감").click();
     await page.locator("#ef-cap").fill("5");
     await page.getByRole("button", { name: "발행하기" }).click();
 
@@ -40,7 +41,7 @@ test.describe("event registration flow", () => {
     await anonPage.locator("#ev-name").fill("참가자");
     await anonPage.locator("#ev-contact").fill(uniqueEmail("guest"));
     await anonPage.getByRole("checkbox").check();
-    await anonPage.getByRole("button", { name: "신청하기" }).click();
+    await anonPage.locator("#register").getByRole("button", { name: "신청하기" }).click();
 
     await expect(anonPage.getByText("신청 완료!")).toBeVisible({ timeout: 15000 });
     await expect(anonPage.getByText(/나도 모집 페이지 만들기/)).toBeVisible();

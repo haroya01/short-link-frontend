@@ -79,19 +79,18 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
             </span>
             {link.shortCode ? (
               <>
-                <IconButton
-                  label={t("copy")}
-                  onClick={() => copy(link.shortCode!)}
-                >
+                <LabeledButton onClick={() => copy(link.shortCode!)}>
                   {copiedCode === link.shortCode ? (
-                    <Check className="h-4 w-4 text-emerald-500" />
+                    <Check className="h-3.5 w-3.5 text-emerald-500" />
                   ) : (
-                    <Copy className="h-4 w-4" />
+                    <Copy className="h-3.5 w-3.5" />
                   )}
-                </IconButton>
-                <IconButton label={t("downloadQr")} onClick={() => downloadQr(link)}>
-                  <Download className="h-4 w-4" />
-                </IconButton>
+                  {copiedCode === link.shortCode ? t("copied") : t("copy")}
+                </LabeledButton>
+                <LabeledButton onClick={() => downloadQr(link)}>
+                  <Download className="h-3.5 w-3.5" />
+                  {t("qr")}
+                </LabeledButton>
               </>
             ) : null}
           </li>
@@ -119,12 +118,10 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
   );
 }
 
-function IconButton({
-  label,
+function LabeledButton({
   onClick,
   children,
 }: {
-  label: string;
   onClick: () => void;
   children: React.ReactNode;
 }) {
@@ -132,9 +129,7 @@ function IconButton({
     <button
       type="button"
       onClick={onClick}
-      aria-label={label}
-      title={label}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+      className="flex h-8 shrink-0 items-center gap-1 rounded-lg border border-slate-200 px-2.5 text-[12px] font-medium text-slate-600 transition-colors hover:border-slate-400 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
     >
       {children}
     </button>

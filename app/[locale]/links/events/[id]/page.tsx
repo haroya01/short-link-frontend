@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useParams, useSearchParams } from "next/navigation";
-import { ExternalLink, PartyPopper, Pencil } from "lucide-react";
+import { Check, Copy, ExternalLink, PartyPopper, Pencil } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import { ConfirmDialog } from "@/components/ui/dialog";
@@ -16,7 +16,7 @@ import {
   getEventAnalytics,
   getMyEvent,
 } from "@/modules/events/api/events";
-import { formatEventRange } from "@/modules/events/lib/format";
+import { formatEventRange, shortUrlOf } from "@/modules/events/lib/format";
 import { AnalyticsPanel } from "@/modules/events/components/analytics-panel";
 import { AttendeeTable } from "@/modules/events/components/attendee-table";
 import { SharePanel } from "@/modules/events/components/share-panel";
@@ -39,6 +39,7 @@ export default function EventDetailPage() {
   const [analytics, setAnalytics] = useState<EventAnalytics | null>(null);
   const [failed, setFailed] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [heroCopied, setHeroCopied] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -92,9 +93,30 @@ export default function EventDetailPage() {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-8">
       {justCreated ? (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] font-medium text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300">
-          <PartyPopper className="h-4 w-4 shrink-0" />
-          {t("createdBanner")}
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900 dark:bg-emerald-950/40">
+          <div className="flex items-center gap-2.5 text-[13px] font-semibold text-emerald-900 dark:text-emerald-200">
+            <PartyPopper className="h-4 w-4 shrink-0" />
+            {t("createdBanner")}
+          </div>
+          {event.links[0]?.shortCode ? (
+            <div className="mt-3 flex items-center gap-2">
+              <span className="min-w-0 flex-1 truncate rounded-xl border border-emerald-200 bg-white px-3 py-2.5 font-mono text-[14px] text-slate-800 dark:border-emerald-900 dark:bg-slate-900 dark:text-slate-200">
+                {shortUrlOf(event.links[0].shortCode).replace(/^https?:\/\//, "")}
+              </span>
+              <button
+                type="button"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(shortUrlOf(event.links[0].shortCode!));
+                  setHeroCopied(true);
+                  setTimeout(() => setHeroCopied(false), 2000);
+                }}
+                className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-emerald-600 px-4 text-[13px] font-semibold text-white transition-colors hover:bg-emerald-500"
+              >
+                {heroCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {heroCopied ? t("heroCopied") : t("heroCopy")}
+              </button>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
