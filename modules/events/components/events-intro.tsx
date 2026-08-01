@@ -48,14 +48,14 @@ export function EventsIntro({ mode }: { mode: "anonymous" | "empty" }) {
         {mode === "anonymous" ? (
           <a
             href="/login?next=/events"
-            className="inline-flex h-12 items-center justify-center rounded-xl bg-slate-900 px-6 text-base font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
+            className="inline-flex h-12 items-center justify-center rounded-lg bg-slate-900 px-6 text-base font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
           >
             {t("ctaLogin")}
           </a>
         ) : (
           <Link
             href="/events/new"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 text-base font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 text-base font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
           >
             <CalendarPlus className="h-5 w-5" />
             {t("ctaCreate")}
@@ -76,7 +76,7 @@ function Demo() {
       className="relative mt-7 h-[300px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-100/70 p-4 dark:border-slate-800 dark:bg-slate-900/60 sm:h-[280px]"
     >
       {/* 1) 만든 모집 페이지 (미니어처) */}
-      <div className="evi-card absolute left-4 top-4 w-[58%] max-w-[260px] rounded-xl border border-slate-200 bg-white p-3.5 shadow-[0_4px_16px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-950">
+      <div className="evi-card absolute left-4 top-4 w-[58%] max-w-[260px] rounded-2xl border border-slate-200 bg-white p-3.5 shadow-[0_4px_16px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-950">
         <p className="text-[14px] font-bold leading-snug text-slate-900 dark:text-slate-100">
           {t("eventTitle")}
         </p>

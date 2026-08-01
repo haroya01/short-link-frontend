@@ -67,7 +67,7 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
         {event.links.map((link) => (
           <li
             key={link.linkId}
-            className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 dark:border-slate-700"
+            className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2.5 dark:border-slate-700"
           >
             <span className="min-w-0 flex-1">
               <span className="block text-[11px] font-medium uppercase tracking-wide text-slate-400">
@@ -108,7 +108,7 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
         <button
           type="submit"
           disabled={busy || !label.trim()}
-          className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl border border-slate-300 px-3.5 text-[13px] font-medium text-slate-700 transition-colors hover:border-slate-500 disabled:opacity-40 dark:border-slate-700 dark:text-slate-300"
+          className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 px-3.5 text-[13px] font-medium text-slate-700 transition-colors hover:border-slate-500 disabled:opacity-40 dark:border-slate-700 dark:text-slate-300"
         >
           <Plus className="h-4 w-4" />
           {t("addAlias")}

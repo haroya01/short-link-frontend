@@ -12,7 +12,7 @@ export function AnalyticsPanel({ analytics }: { analytics: EventAnalytics }) {
       <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-50">{t("title")}</h2>
 
       {analytics.totalClicks === 0 ? (
-        <p className="mt-3 rounded-xl bg-slate-50 px-4 py-3 text-[12px] leading-relaxed text-slate-500 dark:bg-slate-800/60 dark:text-slate-400">
+        <p className="mt-3 rounded-lg bg-slate-50 px-4 py-3 text-[12px] leading-relaxed text-slate-500 dark:bg-slate-800/60 dark:text-slate-400">
           {t("shareNudge")}
         </p>
       ) : null}
@@ -52,7 +52,7 @@ export function AnalyticsPanel({ analytics }: { analytics: EventAnalytics }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-slate-50 px-4 py-3 dark:bg-slate-800">
+    <div className="rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-800">
       <div className="text-[11px] font-medium uppercase tracking-wide text-slate-400">{label}</div>
       <div className="mt-0.5 text-xl font-bold tabular-nums text-slate-900 dark:text-slate-50">
         {value}

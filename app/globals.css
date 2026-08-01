@@ -1241,8 +1241,9 @@ body[data-cookie-consent="visible"] {
   /* 배너 상단 = --cookie-bottom(탭바 있으면 그 높이까지 이미 반영) + 배너 높이. 이 만큼 하단 여백을
      확보해 마지막 피드 카드 꼬리가 배너 밑으로 안 들어가게 한다. 탭바+배너가 동시에 뜨는 표면에서도
      --cookie-bottom 이 탭바 높이를 이미 담고 있어 여백이 정확히 겹침 없이 쌓인다. */
-  padding-bottom: calc(var(--cookie-bottom) + var(--banner-h) + 0.5rem);
-  --fab-bottom: calc(7rem + env(safe-area-inset-bottom));
+  /* --cookie-banner-h 는 배너가 자기 실제 높이를 재서 올려준다(CookieConsent). 없을 때만 상수 폴백. */
+  padding-bottom: calc(var(--cookie-bottom) + var(--cookie-banner-h, var(--banner-h)) + 0.5rem);
+  --fab-bottom: calc(var(--cookie-bottom) + var(--cookie-banner-h, var(--banner-h)) + 1.5rem);
   /* 쿠키 배너가 떠 있으면 토스트를 배너 위로 더 올린다. --cookie-bottom 은 탭바 유무까지 이미
      반영하므로 여기에 배너 높이(--banner-h)만 더하면 탭바·배너 둘 다 비킨다. 이 규칙이 위
      body[data-bottom-nav] 보다 뒤라, 둘 다 켜져도 (배너가 최상단이라) 이 값이 이긴다. */
@@ -1250,8 +1251,12 @@ body[data-cookie-consent="visible"] {
 }
 @media (min-width: 640px) {
   body[data-cookie-consent="visible"] {
-    padding-bottom: 0;
-    --fab-bottom: 1.5rem;
+    /* 데스크톱에서도 자리를 비워 둔다. 예전엔 0 이었는데("sm+ 는 작은 우측 카드라 비킬 필요 없음"),
+       그 카드가 뷰포트 하단 오른쪽 = 푸터의 링크 줄과 정확히 겹치는 자리라 서비스 소개·요금제·약관이
+       배너 밑에 깔려 클릭이 막혔다(신고). 카드 offset(bottom-4=1rem) + 실측 높이 + 한 숨. */
+    padding-bottom: calc(var(--cookie-banner-h, 4rem) + 2rem);
+    /* 떠 있는 버튼(QR 만들기 등)도 같은 만큼 올라가야 배너의 '확인' 을 덮지 않는다. */
+    --fab-bottom: calc(var(--cookie-banner-h, 4rem) + 2rem);
   }
 }
 

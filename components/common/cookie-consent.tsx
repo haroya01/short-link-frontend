@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import {
@@ -38,6 +38,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
   const locale = useLocale();
   const pathname = usePathname();
   const [show, setShow] = useState(true);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (hasAcceptedConsent()) {
@@ -69,6 +70,27 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
     };
   }, [show, suppressed]);
 
+  // Publish the banner's real height so the page can reserve room for it. A fixed bar can't be
+  // measured from CSS, and the copy wraps to two lines in some locales / widths, so a hard-coded
+  // constant under-reserves and the bar ends up sitting on the footer links — the reported
+  // "푸터가 안 눌려요". ResizeObserver keeps it right through locale switches and font loads.
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+    const publish = () =>
+      document.body.style.setProperty(
+        "--cookie-banner-h",
+        `${Math.ceil(el.getBoundingClientRect().height)}px`,
+      );
+    publish();
+    const ro = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(publish);
+    ro?.observe(el);
+    return () => {
+      ro?.disconnect();
+      document.body.style.removeProperty("--cookie-banner-h");
+    };
+  }, [show, suppressed]);
+
   if (suppressed) return null;
   if (!show) return null;
 
@@ -94,6 +116,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
           tab bar so it reads as system chrome and never covers the tabs. sm+: the compact
           right-aligned rounded card returns. */}
       <div
+        ref={cardRef}
         className={cn(
           "glass-chrome mx-auto flex max-w-3xl items-center gap-2 border-t border-slate-200/60 px-4 py-3 shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] sm:ml-auto sm:mr-0 sm:max-w-[520px] sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:shadow-md",
           darkAware && "dark:border-slate-800/60",

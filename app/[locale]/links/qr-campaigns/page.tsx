@@ -102,7 +102,9 @@ function FloatingCta({ ctaHref }: { ctaHref: string }) {
   const t = useTranslations("qrCampaigns.hero");
   // 어떤 § 에 있든 우하단 같은 자리. mount 직후 살짝 delay 후 fade-in.
   return (
-    <div className="fixed bottom-6 right-6 z-50 opacity-0 [animation:hero-fade_600ms_var(--ease)_800ms_forwards] motion-reduce:[animation:none] motion-reduce:opacity-100 sm:bottom-8 sm:right-8">
+    // bottom 은 --fab-bottom(globals) — 쿠키 배너가 떠 있으면 그 높이만큼 위로 올라간다. 고정 offset
+    // 이던 시절엔 이 버튼이 배너의 '확인' 버튼을 덮어, 이 페이지에선 배너를 닫을 수가 없었다.
+    <div className="fixed bottom-[var(--fab-bottom,1.5rem)] right-6 z-50 opacity-0 [animation:hero-fade_600ms_var(--ease)_800ms_forwards] motion-reduce:[animation:none] motion-reduce:opacity-100 sm:right-8">
       <Link href={ctaHref}>
         <Button
           variant="accent"
@@ -379,7 +381,10 @@ function StickyNarrative({ mock }: { mock: MockData }) {
         style={{ height: `${(SECTION_COUNT + 1) * 100}vh` }}
       >
         <div className="sticky top-0 h-screen">
-          <div className="flex h-full">
+          {/* 좌(목업)·우(설명) 한 쌍을 가운데로 묶는 상한. 예전엔 두 칸이 각각 뷰포트의 절반이라
+              2560 같은 초광폭에선 목업과 설명이 서로 멀어지고 오른쪽에 큰 공백이 남아, 설명 글이
+              화면 왼쪽으로 밀려 보였다(신고). 무대 폭을 사이트 컨테이너(1280)와 맞춰, 넓은 화면에서도 헤더·본문과 같은 축에 선다. */}
+          <div className="mx-auto flex h-full w-full max-w-[1280px]">
             <div className="relative w-1/2">
               {sections.map((s, i) => {
                 const isActive = i === active;
