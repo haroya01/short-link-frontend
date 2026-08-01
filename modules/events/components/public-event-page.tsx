@@ -132,7 +132,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
             <button
               type="button"
               onClick={scrollToForm}
-              className="mt-4 flex h-12 w-full items-center justify-center rounded-xl bg-slate-900 text-base font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
+              className="mt-4 flex h-12 w-full items-center justify-center rounded-lg bg-slate-900 text-base font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
             >
               {t("cta")}
             </button>

@@ -29,7 +29,7 @@ export function QuestionBuilder({
       {questions.map((question, index) => (
         <div
           key={index}
-          className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3.5 dark:border-slate-700 dark:bg-slate-800/50"
+          className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3.5 dark:border-slate-700 dark:bg-slate-800/50"
         >
           <div className="flex items-center gap-2">
             <Input
@@ -86,7 +86,7 @@ export function QuestionBuilder({
         <button
           type="button"
           onClick={add}
-          className="flex h-9 items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-300 text-[13px] font-medium text-slate-500 transition-colors hover:border-slate-500 hover:text-slate-700 dark:border-slate-700 dark:text-slate-400"
+          className="flex h-9 items-center justify-center gap-1.5 rounded-lg border border-dashed border-slate-300 text-[13px] font-medium text-slate-500 transition-colors hover:border-slate-500 hover:text-slate-700 dark:border-slate-700 dark:text-slate-400"
         >
           <Plus className="h-4 w-4" />
           {t("addQuestion")}

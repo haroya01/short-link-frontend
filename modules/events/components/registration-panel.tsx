@@ -186,7 +186,7 @@ export function RegistrationPanel({
         {error ? (
           <p
             role="alert"
-            className="flex items-start gap-2 rounded-xl bg-red-50 px-3.5 py-3 text-[15px] font-medium leading-relaxed text-red-700 dark:bg-red-950/40 dark:text-red-300"
+            className="flex items-start gap-2 rounded-lg bg-red-50 px-3.5 py-3 text-[15px] font-medium leading-relaxed text-red-700 dark:bg-red-950/40 dark:text-red-300"
           >
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
             <span>{error}</span>
@@ -196,7 +196,7 @@ export function RegistrationPanel({
         <button
           type="submit"
           disabled={phase === "submitting" || !name.trim() || !contact.trim()}
-          className="flex h-12 items-center justify-center gap-2 rounded-xl bg-slate-900 text-base font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-slate-900 text-base font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
         >
           {phase === "submitting" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {phase === "submitting" ? t("submitting") : t("submit")}
