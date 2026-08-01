@@ -12,7 +12,16 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: "1.25rem",
+      // 화면이 넓어질수록 여백도 같이 넓어진다. 전 구간 20px 고정이던 시절엔 1024~1280 구간에서
+      // 내비바와 본문이 화면 모서리에 붙어 답답했고, 폰에서도 글이 가장자리까지 차 있었다.
+      // 헤더·푸터·본문이 모두 이 하나의 container 를 쓰므로 값만 키우면 세로 정렬은 그대로 유지된다
+      // (내비바에만 패딩을 주면 로고가 아래 본문보다 안쪽으로 밀려 어긋나 보인다).
+      //
+      // 폭이 커질 때의 증가분은 globals.css 에 둔다. 여기서 padding 을 브레이크포인트 객체로 줘도
+      // 무시되기 때문 — container 플러그인은 container.screens 를 기준으로 미디어쿼리를 만드는데,
+      // 아래 screens 가 2xl 하나로 덮여 있어 sm·lg 자체가 존재하지 않는다. screens 에 sm·lg 를
+      // 되살리면 그 폭에서 max-width 까지 같이 생겨 레이아웃이 바뀐다.
+      padding: "1.5rem",
       screens: { "2xl": "1280px" },
     },
     extend: {

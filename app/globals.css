@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 화면이 넓어질수록 좌우 여백도 넓어진다. 기본값(1.5rem)은 tailwind.config 의 container.padding
+   이고, 여기서 위로 올린다 — config 에 브레이크포인트 객체로 주면 무시된다(container.screens 가
+   2xl 하나로 덮여 있어 sm·lg 미디어쿼리가 생성되지 않는다).
+
+   헤더·푸터·본문이 전부 이 .container 하나를 쓰므로, 여기만 바꾸면 세로 정렬이 유지된 채 전 표면이
+   같이 숨을 쉰다. 1280 이상에서는 max-width 가 먼저 걸려 화면 여백이 이 값보다 훨씬 커지므로
+   실질적으로 640~1280 구간과 폰에서 체감된다. @tailwind utilities 뒤에 두어 소스 순서로 이긴다. */
+@media (min-width: 640px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+}
+
 /* devices.css — open-source CSS-only phone/laptop frames used by the landing-page profile
    showcase. Only the iPhone variants render; the rest is dead CSS but the whole file is ~5KB
    minified so we don't bother tree-shaking. */
