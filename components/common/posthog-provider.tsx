@@ -4,6 +4,11 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import type { PostHog } from "posthog-js";
 import { useAuth } from "@/lib/auth";
+import {
+  CONSENT_CHANGE_EVENT,
+  hasAcceptedConsent,
+  purgeAnalyticsStorage,
+} from "@/lib/cookie-consent";
 
 /**
  * PostHog product analytics provider — tracks pageviews + autocapture (clicks / form submits)
@@ -33,6 +38,10 @@ const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posth
 let clientPromise: Promise<PostHog | null> | null = null;
 function loadPostHog(): Promise<PostHog | null> {
   if (typeof window === "undefined" || !POSTHOG_KEY) return Promise.resolve(null);
+  // 동의 관문. 예전엔 이 줄이 없어서, 방문자가 배너에 손도 대기 전에 SDK 가 붙고 localStorage 에
+  // 식별자(ph_…)가 심겼다 — 배너의 버튼은 배너만 닫았을 뿐 수집에는 아무 영향이 없었다.
+  // 청크 자체를 안 받는 게 중요하다: import 만 해도 init 이 돌아 저장소를 건드린다.
+  if (!hasAcceptedConsent()) return Promise.resolve(null);
   if (!clientPromise) {
     clientPromise = import("posthog-js").then(({ default: posthog }) => {
       if (!(posthog as unknown as { __loaded?: boolean }).__loaded) {
@@ -66,8 +75,26 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const url = window.location.origin + pathname + window.location.search;
-    loadPostHog().then((ph) => ph?.capture("$pageview", { $current_url: url }));
+    const capture = () => {
+      const url = window.location.origin + pathname + window.location.search;
+      loadPostHog().then((ph) => ph?.capture("$pageview", { $current_url: url }));
+    };
+    capture();
+
+    // 동의는 배너에서 나중에 온다. 그때 새로고침을 요구하지 않고 이 화면부터 세도록 다시 태운다.
+    // 거부로 바뀌면 이미 로드된 SDK 를 즉시 멈추고 단말에 남은 식별자까지 걷어낸다 — 철회가
+    // "다음 방문부터" 면 철회가 아니다.
+    const onConsentChange = (e: Event) => {
+      const value = (e as CustomEvent<string>).detail;
+      if (value === "accepted") {
+        capture();
+        return;
+      }
+      clientPromise?.then((ph) => ph?.opt_out_capturing());
+      purgeAnalyticsStorage();
+    };
+    window.addEventListener(CONSENT_CHANGE_EVENT, onConsentChange);
+    return () => window.removeEventListener(CONSENT_CHANGE_EVENT, onConsentChange);
   }, [pathname]);
 
   useEffect(() => {
