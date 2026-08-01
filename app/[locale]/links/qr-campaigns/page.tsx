@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   AUTOPLAY_MS,
   EASE,
@@ -100,11 +101,28 @@ function TopProgressBar({ count, active }: { count: number; active: number }) {
 
 function FloatingCta({ ctaHref }: { ctaHref: string }) {
   const t = useTranslations("qrCampaigns.hero");
-  // 어떤 § 에 있든 우하단 같은 자리. mount 직후 살짝 delay 후 fade-in.
+  // 페이지 끝(푸터)에 닿으면 물러난다. 이 버튼은 우하단 고정이고 푸터의 링크 줄도 우측 정렬이라,
+  // 바닥까지 스크롤하면 GitHub·개인정보처리방침 위에 그대로 앉아 클릭을 먹었다(감사에서 확인).
+  // 푸터가 보이는 동안엔 어차피 같은 행동을 하는 링크들이 화면에 있으니 CTA 는 비켜도 잃는 게 없다.
+  const [atFooter, setAtFooter] = useState(false);
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    if (!footer || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setAtFooter(e.isIntersecting), { rootMargin: "0px 0px -8px 0px" });
+    io.observe(footer);
+    return () => io.disconnect();
+  }, []);
+
   return (
     // bottom 은 --fab-bottom(globals) — 쿠키 배너가 떠 있으면 그 높이만큼 위로 올라간다. 고정 offset
     // 이던 시절엔 이 버튼이 배너의 '확인' 버튼을 덮어, 이 페이지에선 배너를 닫을 수가 없었다.
-    <div className="fixed bottom-[var(--fab-bottom,1.5rem)] right-6 z-50 opacity-0 [animation:hero-fade_600ms_var(--ease)_800ms_forwards] motion-reduce:[animation:none] motion-reduce:opacity-100 sm:right-8">
+    <div
+      aria-hidden={atFooter}
+      className={cn(
+        "fixed bottom-[var(--fab-bottom,1.5rem)] right-6 z-50 opacity-0 [animation:hero-fade_600ms_var(--ease)_800ms_forwards] motion-reduce:[animation:none] motion-reduce:opacity-100 sm:right-8",
+        atFooter && "pointer-events-none !opacity-0 transition-opacity duration-200 ease-[var(--ease)]",
+      )}
+    >
       <Link href={ctaHref}>
         <Button
           variant="accent"

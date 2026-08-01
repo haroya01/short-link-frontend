@@ -116,7 +116,11 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
         role="region"
         aria-live="polite"
         aria-label={t("ariaLabel")}
-        className="fixed inset-x-0 bottom-[var(--cookie-bottom)] z-40 sm:bottom-4 sm:px-4"
+        // pointer-events-none 은 장식이 아니라 버그 수리다. 이 래퍼는 inset-x-0 이라 화면 전폭을
+        // 차지하는데, 안의 카드는 sm+ 에서 오른쪽 520px 뿐이다. 래퍼가 클릭을 받으면 카드가 없는
+        // 왼쪽 전체(1440 에서 904px, 2560 에서 2024px)가 65px 높이의 투명한 클릭 차단막이 된다 —
+        // 그 띠에 걸린 피드 카드·버튼이 "눌러도 아무 일 없는" 상태가 됐다. 토스트 래퍼와 같은 처방.
+        className="pointer-events-none fixed inset-x-0 bottom-[var(--cookie-bottom)] z-40 sm:bottom-4 sm:px-4"
       >
       {/* Phones: an edge-to-edge bar (top border + upward shadow) that sits directly above the bottom
           tab bar so it reads as system chrome and never covers the tabs. sm+: the compact
@@ -124,9 +128,11 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
       <div
         ref={cardRef}
         className={cn(
+          // pointer-events-auto 는 래퍼의 pointer-events-none 과 짝이다 — 래퍼가 전폭이라
+          // 클릭을 받으면 카드 없는 왼쪽이 투명한 차단막이 된다.
           // 폰에선 문구 아래로 버튼 줄을 내린다 — 버튼이 둘이 되면서 한 줄에 다 넣으면 문구가
           // 서너 글자 폭으로 눌린다. sm+ 는 지금처럼 한 줄.
-          "glass-chrome mx-auto flex max-w-3xl flex-col gap-2 border-t border-slate-200/60 px-4 py-3 shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] sm:ml-auto sm:mr-0 sm:max-w-[560px] sm:flex-row sm:items-center sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:shadow-md",
+          "pointer-events-auto glass-chrome mx-auto flex max-w-3xl flex-col gap-2 border-t border-slate-200/60 px-4 py-3 shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] sm:ml-auto sm:mr-0 sm:max-w-[560px] sm:flex-row sm:items-center sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:shadow-md",
           darkAware && "dark:border-slate-800/60",
         )}
       >
