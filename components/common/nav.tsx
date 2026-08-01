@@ -89,8 +89,12 @@ export function Nav() {
       <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">
           {/* Mobile nav lives in the bottom tab bar (LinksBottomNav) — no hamburger here. */}
+          {/* 360px 미만에선 마크만. 풀 워드마크를 두면 우측 "blog.kurl" 필과 겹쳐 워드마크의 l 이
+              가려졌다(320 에서 4px). 여백을 넓히면 그 겹침이 더 커지므로 같이 처리한다. 블로그
+              헤더가 이미 같은 방식(<sm 마크만)이라 문법도 어긋나지 않는다. */}
           <Link href="/" aria-label="kurl" className="mark-hoverable shrink-0">
-            <Logo animated />
+            <Logo animated showText={false} className="min-[360px]:hidden" />
+            <Logo animated className="hidden min-[360px]:inline-flex" />
           </Link>
           {showEntries && (
             <nav className="hidden items-center gap-1 sm:flex">
