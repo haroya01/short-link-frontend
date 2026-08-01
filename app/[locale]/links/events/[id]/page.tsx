@@ -100,7 +100,7 @@ export default function EventDetailPage() {
           </div>
           {event.links[0]?.shortCode ? (
             <div className="mt-3 flex items-center gap-2">
-              <span className="min-w-0 flex-1 truncate rounded-xl border border-emerald-200 bg-white px-3 py-2.5 font-mono text-[14px] text-slate-800 dark:border-emerald-900 dark:bg-slate-900 dark:text-slate-200">
+              <span className="min-w-0 flex-1 truncate rounded-lg border border-emerald-200 bg-white px-3 py-2.5 font-mono text-[14px] text-slate-800 dark:border-emerald-900 dark:bg-slate-900 dark:text-slate-200">
                 {shortUrlOf(event.links[0].shortCode).replace(/^https?:\/\//, "")}
               </span>
               <button
@@ -110,7 +110,7 @@ export default function EventDetailPage() {
                   setHeroCopied(true);
                   setTimeout(() => setHeroCopied(false), 2000);
                 }}
-                className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-emerald-600 px-4 text-[13px] font-semibold text-white transition-colors hover:bg-emerald-500"
+                className="flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-emerald-600 px-4 text-[13px] font-semibold text-white transition-colors hover:bg-emerald-500"
               >
                 {heroCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 {heroCopied ? t("heroCopied") : t("heroCopy")}

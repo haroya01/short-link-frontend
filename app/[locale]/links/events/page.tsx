@@ -39,7 +39,7 @@ export default function EventsListPage() {
         <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50">{t("title")}</h1>
         <Link
           href="/events/new"
-          className="flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900"
+          className="flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900"
         >
           <CalendarPlus className="h-4 w-4" />
           {t("new")}
@@ -58,7 +58,7 @@ export default function EventsListPage() {
             <li key={event.id}>
               <Link
                 href={`/events/${event.id}`}
-                className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)] active:translate-y-0 active:scale-[0.98] dark:border-slate-800 dark:bg-slate-900"
+                className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 active:scale-[0.98] dark:border-slate-800 dark:bg-slate-900"
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">

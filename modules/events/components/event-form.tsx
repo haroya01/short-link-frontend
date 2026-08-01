@@ -269,7 +269,7 @@ export function EventForm({
       <button
         type="submit"
         disabled={busy || !form.title.trim()}
-        className="flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 text-[14px] font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900"
+        className="flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-900 text-[14px] font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {event ? t("save") : t("publish")}
@@ -354,7 +354,7 @@ function CoverField({ eventId, initialUrl }: { eventId: number; initialUrl: stri
       </span>
       {url ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={url} alt="" className="aspect-[2/1] w-full rounded-xl object-cover" />
+        <img src={url} alt="" className="aspect-[2/1] w-full rounded-2xl object-cover" />
       ) : null}
       <label className="flex h-9 w-fit cursor-pointer items-center rounded-lg border border-slate-300 px-3 text-[12px] font-medium text-slate-600 transition-colors hover:border-slate-500 dark:border-slate-700 dark:text-slate-300">
         {uploading ? t("coverUploading") : url ? t("coverReplace") : t("coverUpload")}
