@@ -65,3 +65,30 @@ test.describe("cookie banner vs footer", () => {
     expect(blocked, `covered banner controls: ${blocked.join(", ")}`).toEqual([]);
   });
 });
+
+/**
+ * The banner's wrapper is `fixed inset-x-0` while the card inside is only ~520px on sm+. If the
+ * wrapper takes pointer events, everything in the 65px strip to the LEFT of the card silently stops
+ * responding — 904px wide at 1440, 2024px at 2560. Nothing looks wrong, clicks just die.
+ */
+test.describe("cookie banner dead band", () => {
+  for (const width of [1440, 2560]) {
+    test(`the strip beside the banner card does not eat clicks (${width}px)`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("/ko");
+      const wrapper = page.locator("[data-cc-banner]");
+      await expect(wrapper).toBeVisible({ timeout: 15_000 });
+
+      const hit = await page.evaluate(() => {
+        const wrap = document.querySelector("[data-cc-banner]") as HTMLElement | null;
+        if (!wrap) return "no-banner";
+        const r = wrap.getBoundingClientRect();
+        // Probe well to the left of the visible card, inside the wrapper's band.
+        const el = document.elementFromPoint(Math.round(r.x + 60), Math.round(r.y + r.height / 2));
+        return el === wrap ? "wrapper" : "page";
+      });
+
+      expect(hit, "the transparent wrapper is swallowing clicks").toBe("page");
+    });
+  }
+});
