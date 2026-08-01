@@ -33,7 +33,11 @@ export function StageScenes() {
       <section className="bg-white dark:bg-slate-950">
         <div className="container max-w-5xl pb-10 pt-16 sm:pb-14 sm:pt-24">
           <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-14">
-            <div className="space-y-4">
+            {/* min-w-0: 그리드 아이템의 기본 min-width 는 auto 라 트랙이 콘텐츠의 min-content 아래로
+                못 줄어든다. 아래 카드의 긴 원본 URL 은 truncate(=nowrap) 라 min-content 가 449px 로
+                잡히고, 그게 1열 트랙을 469px 로 벌려 390 화면 전체를 79px 가로 스크롤시켰다
+                (헤더·쿠키바·하단탭이 같이 어긋남). truncate 는 줄일 수 있는 부모가 있어야 동작한다. */}
+            <div className="min-w-0 space-y-4">
               <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
                 {t("scene2Eyebrow")}
               </p>
