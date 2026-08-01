@@ -716,9 +716,15 @@
   },
   "cookieConsent": {
     "ariaLabel": "Thông báo cookie",
-    "message": "Trang này dùng cookie để giữ bạn đăng nhập và phân tích sản phẩm giúp cải thiện dịch vụ.",
-    "accept": "Đã hiểu",
-    "learnMore": "Chính sách quyền riêng tư"
+    "message": "Cookie cần thiết để giữ bạn đăng nhập luôn được bật. Phân tích sử dụng giúp cải thiện dịch vụ chỉ chạy khi bạn đồng ý.",
+    "accept": "Đồng ý",
+    "reject": "Từ chối",
+    "learnMore": "Chính sách quyền riêng tư",
+    "prefsTitle": "Phân tích sử dụng",
+    "prefsDesc": "Bật hoặc tắt phân tích sản phẩm. Khi tắt, mã định danh phân tích đã lưu trên thiết bị này cũng bị xoá. Cookie cần thiết để giữ bạn đăng nhập không bị ảnh hưởng.",
+    "stateOn": "Thiết lập hiện tại — phân tích đang bật.",
+    "stateOff": "Thiết lập hiện tại — phân tích đang tắt.",
+    "stateUnset": "Thiết lập hiện tại — bạn chưa chọn. Phân tích đang tắt."
   },
   "meta": {
     "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",

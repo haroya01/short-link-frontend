@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { ConsentPreferences } from "@/components/common/consent-preferences";
 import { marketingOg } from "@/lib/marketing-og";
 
 const SITE_URL =
@@ -43,6 +44,8 @@ export default async function PrivacyPage({
           <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">{s.p}</p>
         </section>
       ))}
+      {/* 배너는 한 번 고르면 다시 뜨지 않는다. 동의를 거두는 길이 여기 없으면 철회가 불가능해진다. */}
+      <ConsentPreferences />
     </article>
   );
 }

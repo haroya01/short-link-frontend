@@ -50,7 +50,7 @@ jobs:
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3001
           CI: "true"
-        run: npx playwright test e2e/blog-write-flow.spec.ts e2e/blog-crud-lifecycle.spec.ts e2e/feed-default-tab.spec.ts e2e/cookie-banner-footer.spec.ts e2e/no-horizontal-scroll.spec.ts
+        run: npx playwright test e2e/blog-write-flow.spec.ts e2e/blog-crud-lifecycle.spec.ts e2e/feed-default-tab.spec.ts e2e/cookie-banner-footer.spec.ts e2e/no-horizontal-scroll.spec.ts e2e/cookie-consent-gating.spec.ts
       - name: Upload report on failure
         if: failure()
         uses: actions/upload-artifact@v4

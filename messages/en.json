@@ -716,9 +716,15 @@
   },
   "cookieConsent": {
     "ariaLabel": "Cookie notice",
-    "message": "This site uses cookies to keep you signed in and product analytics that help us improve the service.",
-    "accept": "Got it",
-    "learnMore": "Privacy policy"
+    "message": "Cookies needed to keep you signed in are always on. Product analytics that help us improve run only if you agree.",
+    "accept": "Agree",
+    "reject": "Decline",
+    "learnMore": "Privacy policy",
+    "prefsTitle": "Usage analytics",
+    "prefsDesc": "Turn product analytics on or off. Turning it off also deletes the analytics identifier already stored on this device. Cookies needed to keep you signed in are unaffected.",
+    "stateOn": "Current setting — analytics is on.",
+    "stateOff": "Current setting — analytics is off.",
+    "stateUnset": "Current setting — not chosen yet. Analytics is off."
   },
   "meta": {
     "title": "kurl · URL shortener with click analytics",
