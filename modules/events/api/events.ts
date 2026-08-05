@@ -16,7 +16,7 @@ export type QuestionSpec = {
   required: boolean;
 };
 
-export type ContactField = "EMAIL" | "PHONE" | "KAKAO";
+export type ContactField = "EMAIL" | "PHONE" | "KAKAO" | "LINE" | "INSTAGRAM";
 
 export type PublicEvent = {
   slug: string;

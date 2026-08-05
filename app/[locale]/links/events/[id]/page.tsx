@@ -164,8 +164,8 @@ export default function EventDetailPage() {
 
       {analytics ? <AnalyticsPanel analytics={analytics} /> : null}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
-        <h2 className="text-[13px] font-semibold uppercase tracking-wide text-slate-400">
+      <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
+        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
           {t("manageTitle")}
         </h2>
         <div className="mt-3 flex flex-wrap gap-2">
