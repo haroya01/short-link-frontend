@@ -10,10 +10,11 @@ import { Markdown } from "@/modules/blog/components/markdown";
 import type { ContactField, EventDraft, MyEvent, QuestionSpec } from "@/modules/events/api/events";
 import { commitCover, presignCover } from "@/modules/events/api/events";
 import { isoToWallTime, wallTimeToIso } from "@/modules/events/lib/format";
+import { LocationField } from "./location-field";
 import { QuestionBuilder } from "./question-builder";
 
 const TIMEZONES = ["Asia/Tokyo", "Asia/Seoul", "UTC", "America/Los_Angeles", "Europe/London"];
-const CONTACT_FIELDS: ContactField[] = ["EMAIL", "PHONE", "KAKAO"];
+const CONTACT_FIELDS: ContactField[] = ["EMAIL", "PHONE", "KAKAO", "LINE", "INSTAGRAM"];
 
 type FormState = {
   title: string;
@@ -163,60 +164,21 @@ export function EventForm({
       </Section>
 
       <Section title={t("whereTitle")}>
-        <Field label={t("locationText")} htmlFor="ef-loc">
+        <LocationField
+          text={form.locationText}
+          url={form.locationUrl}
+          onTextChange={(value) => set("locationText", value)}
+          onUrlChange={(value) => set("locationUrl", value)}
+        />
+        <Field label={t("onlineUrl")} htmlFor="ef-online" hint={t("onlineUrlHint")}>
           <Input
-            id="ef-loc"
-            value={form.locationText}
-            onChange={(e) => set("locationText", e.target.value)}
-            maxLength={200}
-            placeholder={t("locationPlaceholder")}
+            id="ef-online"
+            type="url"
+            value={form.onlineUrl}
+            onChange={(e) => set("onlineUrl", e.target.value)}
+            placeholder="https://meet.google.com/…"
           />
         </Field>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label={t("locationUrl")} htmlFor="ef-locurl" hint={t("locationUrlHint")}>
-            <Input
-              id="ef-locurl"
-              type="url"
-              value={form.locationUrl}
-              onChange={(e) => set("locationUrl", e.target.value)}
-              placeholder="https://maps.google.com/…"
-            />
-            {form.locationText.trim() && !form.locationUrl.trim() ? (
-              // 장소 이름만 적으면 지도 링크는 만들어 준다 — 참석자 지도는 구글 지도로 통일.
-              <button
-                type="button"
-                onClick={() =>
-                  set(
-                    "locationUrl",
-                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(form.locationText.trim())}`,
-                  )
-                }
-                className="self-start text-[12px] font-medium text-emerald-700 underline underline-offset-2 hover:text-emerald-600 dark:text-emerald-400"
-              >
-                {t("useGoogleMaps", { place: form.locationText.trim() })}
-              </button>
-            ) : null}
-            {form.locationUrl.trim() ? (
-              <a
-                href={form.locationUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="self-start text-[12px] font-medium text-slate-500 underline underline-offset-2 hover:text-slate-700 dark:text-slate-400"
-              >
-                {t("openMap")}
-              </a>
-            ) : null}
-          </Field>
-          <Field label={t("onlineUrl")} htmlFor="ef-online" hint={t("onlineUrlHint")}>
-            <Input
-              id="ef-online"
-              type="url"
-              value={form.onlineUrl}
-              onChange={(e) => set("onlineUrl", e.target.value)}
-              placeholder="https://meet.google.com/…"
-            />
-          </Field>
-        </div>
       </Section>
 
       <CollapsibleSection
@@ -289,7 +251,7 @@ export function EventForm({
       <button
         type="submit"
         disabled={busy || !form.title.trim()}
-        className="flex h-11 items-center justify-center gap-2 rounded-lg bg-slate-900 text-[14px] font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900"
+        className="flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-600 text-[14px] font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {event ? t("save") : t("publish")}
@@ -298,8 +260,8 @@ export function EventForm({
   );
 }
 
-/** 설명 = 마크다운 — "쓸 수 있어요"라고 해놓고 결과를 안 보여주면 반쪽. 쓰기/미리보기 탭으로
- *  블로그와 같은 렌더러(Markdown)를 그대로 태워 발행 전에 확인하게 한다. */
+/** 설명 = 마크다운. 탭 전환 없이 **치는 즉시** 아래에 렌더된다 — 블로그와 같은 렌더러라
+ *  공개 페이지와 결과가 1:1 로 같다. 내용이 없으면 미리보기 영역 자체를 안 그린다(조용함). */
 function DescriptionField({
   value,
   onChange,
@@ -308,55 +270,29 @@ function DescriptionField({
   onChange: (value: string) => void;
 }) {
   const t = useTranslations("events.form");
-  const [tab, setTab] = useState<"write" | "preview">("write");
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between">
-        <label
-          htmlFor="ef-desc"
-          className="text-[12px] font-medium text-slate-600 dark:text-slate-400"
-        >
-          {t("description")}
-        </label>
-        <div className="flex gap-0.5 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
-          {(["write", "preview"] as const).map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              onClick={() => setTab(mode)}
-              className={
-                tab === mode
-                  ? "rounded-md bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-800 shadow-sm dark:bg-slate-900 dark:text-slate-100"
-                  : "rounded-md px-2.5 py-1 text-[11px] font-medium text-slate-500 dark:text-slate-400"
-              }
-            >
-              {mode === "write" ? t("descWrite") : t("descPreview")}
-            </button>
-          ))}
+      <label htmlFor="ef-desc" className="text-[12px] font-medium text-slate-600 dark:text-slate-400">
+        {t("description")}
+      </label>
+      <Textarea
+        id="ef-desc"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={7}
+        maxLength={50000}
+        placeholder={t("descriptionPlaceholder")}
+      />
+      {value.trim() ? (
+        <div className="rounded-lg border border-slate-200 px-3.5 py-3 dark:border-slate-700">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
+            {t("descPreview")}
+          </p>
+          <div className="prose-text-block text-slate-800 dark:text-slate-200">
+            <Markdown>{value}</Markdown>
+          </div>
         </div>
-      </div>
-      {tab === "write" ? (
-        <Textarea
-          id="ef-desc"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          rows={8}
-          maxLength={50000}
-          placeholder={t("descriptionPlaceholder")}
-        />
-      ) : (
-        <div className="min-h-[176px] rounded-lg border border-slate-200 bg-slate-50/60 px-3.5 py-3 dark:border-slate-700 dark:bg-slate-800/40">
-          {value.trim() ? (
-            <div className="prose-text-block text-slate-800 dark:text-slate-200">
-              <Markdown>{value}</Markdown>
-            </div>
-          ) : (
-            <p className="text-[13px] text-slate-400 dark:text-slate-500">
-              {t("descPreviewEmpty")}
-            </p>
-          )}
-        </div>
-      )}
+      ) : null}
       <p className="text-[11px] text-slate-400 dark:text-slate-500">{t("descriptionHint")}</p>
     </div>
   );
@@ -364,9 +300,9 @@ function DescriptionField({
 
 function Section({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
-    <section className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+    <section className="flex flex-col gap-4 border-t border-slate-200 pt-6 first:border-t-0 first:pt-0 dark:border-slate-800">
       {title ? (
-        <h2 className="text-[13px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
           {title}
         </h2>
       ) : null}
@@ -389,9 +325,9 @@ function CollapsibleSection({
   return (
     <details
       open={defaultOpen}
-      className="group rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
+      className="group border-t border-slate-200 pt-1 dark:border-slate-800"
     >
-      <summary className="flex cursor-pointer list-none items-center justify-between p-5 text-[13px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500 [&::-webkit-details-marker]:hidden">
         {title}
         <span className="flex items-center gap-1.5 text-[11px] font-medium normal-case tracking-normal text-slate-400 dark:text-slate-500">
           {t("optional")}
@@ -400,7 +336,7 @@ function CollapsibleSection({
           </span>
         </span>
       </summary>
-      <div className="flex flex-col gap-4 px-5 pb-5">{children}</div>
+      <div className="flex flex-col gap-4 pb-5">{children}</div>
     </details>
   );
 }

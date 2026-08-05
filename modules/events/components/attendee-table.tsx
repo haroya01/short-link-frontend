@@ -27,16 +27,16 @@ export function AttendeeTable({
   };
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+    <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
       <div className="flex items-center justify-between">
-        <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-50">
+        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
           {t("title", { count: attendees.filter((a) => a.status === "CONFIRMED").length })}
         </h2>
         {attendees.length > 0 ? (
           <button
             type="button"
             onClick={exportCsv}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-[12px] font-medium text-slate-600 transition-colors hover:border-slate-500 dark:border-slate-700 dark:text-slate-300"
+            className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 underline underline-offset-2 transition-colors hover:text-slate-700 dark:text-slate-400"
           >
             <Download className="h-3.5 w-3.5" />
             {t("exportCsv")}

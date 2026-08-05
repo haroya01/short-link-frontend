@@ -3789,13 +3789,19 @@
         "generic": "Registration failed. Please try again.",
         "invalidEmail": "Please check the email address (e.g. hong@gmail.com)",
         "invalidPhone": "Please check the phone number (e.g. 010-1234-5678)",
-        "invalidKakao": "Please check the KakaoTalk ID (2–30 letters/numbers)"
+        "invalidKakao": "Please check the KakaoTalk ID (2–30 letters/numbers)",
+        "invalidLine": "Please check the LINE ID format.",
+        "invalidInstagram": "Please check the Instagram handle."
       },
       "metaDate": "Date",
       "metaTime": "Time",
       "metaPlace": "Place",
       "metaOnline": "Online",
-      "metaAttendance": "Seats"
+      "metaAttendance": "Seats",
+      "contactLine": "LINE ID",
+      "contactLinePlaceholder": "line_id",
+      "contactInstagram": "Instagram handle",
+      "contactInstagramPlaceholder": "@handle"
     },
     "list": {
       "title": "Events",
@@ -3837,11 +3843,13 @@
       "closeAtHint": "No registrations after this time",
       "formSectionTitle": "Registration form",
       "contactField": "Contact to collect",
-      "contactFieldHint": "Email enables automatic confirmation & cancel emails",
+      "contactFieldHint": "Email sends confirmation/cancel mail automatically. Phone, KakaoTalk, LINE and Instagram are for reaching attendees yourself.",
       "contactFields": {
         "EMAIL": "Email",
         "PHONE": "Phone",
-        "KAKAO": "KakaoTalk ID"
+        "KAKAO": "KakaoTalk ID",
+        "LINE": "LINE ID",
+        "INSTAGRAM": "Instagram"
       },
       "questionsLocked": "Questions are locked because registrations exist.",
       "questionPlaceholder": "e.g. What topics are you interested in?",
