@@ -3790,7 +3790,12 @@
         "invalidEmail": "Please check the email address (e.g. hong@gmail.com)",
         "invalidPhone": "Please check the phone number (e.g. 010-1234-5678)",
         "invalidKakao": "Please check the KakaoTalk ID (2–30 letters/numbers)"
-      }
+      },
+      "metaDate": "Date",
+      "metaTime": "Time",
+      "metaPlace": "Place",
+      "metaOnline": "Online",
+      "metaAttendance": "Seats"
     },
     "list": {
       "title": "Events",
@@ -3799,15 +3804,6 @@
       "loadFailed": "Could not load events.",
       "emptyTitle": "Create your first event page",
       "emptyBody": "Study groups, meetups, workshops — one link handles the page, registration, capacity and channel analytics.",
-      "heroCopy": "Copy link",
-      "heroCopied": "Copied!",
-      "cover": "Cover image",
-      "coverUpload": "Choose image",
-      "coverReplace": "Replace image",
-      "coverUploading": "Uploading…",
-      "coverFailed": "Upload failed. Please try again.",
-      "coverHint": "Shown large in chat/social previews (JPG/PNG/WebP, 2:1 recommended)",
-      "optional": "Optional",
       "authTitle": "Event pages",
       "authDesc": "Sign in to create registration pages and see attendees and traffic sources."
     },
@@ -3854,7 +3850,7 @@
       "typeShortText": "Short answer",
       "typeSingleChoice": "Multiple choice",
       "required": "Required",
-      "addQuestion": "Add question (max 5)",
+      "addQuestion": "Add question (max 10)",
       "removeQuestion": "Remove question",
       "optionPlaceholder": "Option {n}",
       "addOption": "+ Add option",
@@ -3864,7 +3860,19 @@
       "errors": {
         "startRequired": "Please set a start time",
         "generic": "Could not save. Please check your input."
-      }
+      },
+      "optional": "Optional",
+      "cover": "Cover image",
+      "coverFailed": "Upload failed. Please try again.",
+      "coverHint": "Shown large in chat/social previews (JPG/PNG/WebP, 2:1 recommended)",
+      "coverReplace": "Replace image",
+      "coverUpload": "Choose image",
+      "coverUploading": "Uploading…",
+      "descWrite": "Write",
+      "descPreview": "Preview",
+      "descPreviewEmpty": "Nothing yet — write markdown in the Write tab and preview it here.",
+      "useGoogleMaps": "Create a Google Maps link for “{place}”",
+      "openMap": "Open map ↗"
     },
     "detail": {
       "authTitle": "Event pages",
@@ -3883,7 +3891,9 @@
       "statusChangeFailed": "Update failed",
       "cancelDialogTitle": "Cancel this event?",
       "cancelDialogBody": "The public page shows it as canceled and registration stops. This cannot be undone. To only stop new registrations, use 'Close registration'.",
-      "cancelDialogConfirm": "Cancel event"
+      "cancelDialogConfirm": "Cancel event",
+      "heroCopy": "Copy link",
+      "heroCopied": "Copied!"
     },
     "share": {
       "copied": "Copied",
