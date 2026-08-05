@@ -86,7 +86,7 @@ export function RegistrationPanel({
   return (
     <section
       id="register"
-      className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900"
+      className="mt-9 border-t border-slate-200 pt-7 dark:border-slate-800"
     >
       <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
         {t("formTitle")}
@@ -196,7 +196,7 @@ export function RegistrationPanel({
         <button
           type="submit"
           disabled={phase === "submitting" || !name.trim() || !contact.trim()}
-          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-slate-900 text-base font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
+          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-emerald-600 text-base font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {phase === "submitting" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           {phase === "submitting" ? t("submitting") : t("submit")}
