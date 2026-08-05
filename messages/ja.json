@@ -3790,7 +3790,12 @@
         "invalidEmail": "メールアドレスをご確認ください (例: hong@gmail.com)",
         "invalidPhone": "電話番号をご確認ください (例: 090-1234-5678)",
         "invalidKakao": "カカオトークIDをご確認ください (英数字2〜30文字)"
-      }
+      },
+      "metaDate": "日付",
+      "metaTime": "時間",
+      "metaPlace": "場所",
+      "metaOnline": "オンライン",
+      "metaAttendance": "定員"
     },
     "list": {
       "title": "イベント",
@@ -3799,15 +3804,6 @@
       "loadFailed": "読み込みに失敗しました。",
       "emptyTitle": "最初の募集ページを作りましょう",
       "emptyBody": "勉強会・ミートアップ・サークル — リンク1つで紹介・申し込み・締切・流入分析まで完結。",
-      "heroCopy": "リンクをコピー",
-      "heroCopied": "コピーしました!",
-      "cover": "カバー画像",
-      "coverUpload": "画像を選択",
-      "coverReplace": "画像を変更",
-      "coverUploading": "アップロード中…",
-      "coverFailed": "アップロードに失敗しました。もう一度お試しください。",
-      "coverHint": "チャット・SNSのプレビューに大きく表示されます (JPG/PNG/WebP、2:1推奨)",
-      "optional": "任意",
       "authTitle": "募集ページ",
       "authDesc": "ログインすると募集ページの作成、参加者と流入元の確認ができます。"
     },
@@ -3854,7 +3850,7 @@
       "typeShortText": "記述式",
       "typeSingleChoice": "選択式",
       "required": "必須",
-      "addQuestion": "質問を追加 (最大5)",
+      "addQuestion": "質問を追加 (最大10)",
       "removeQuestion": "質問を削除",
       "optionPlaceholder": "選択肢 {n}",
       "addOption": "+ 選択肢を追加",
@@ -3864,7 +3860,19 @@
       "errors": {
         "startRequired": "開始日時を入力してください",
         "generic": "保存に失敗しました。入力内容をご確認ください。"
-      }
+      },
+      "optional": "任意",
+      "cover": "カバー画像",
+      "coverFailed": "アップロードに失敗しました。もう一度お試しください。",
+      "coverHint": "チャット・SNSのプレビューに大きく表示されます (JPG/PNG/WebP、2:1推奨)",
+      "coverReplace": "画像を変更",
+      "coverUpload": "画像を選択",
+      "coverUploading": "アップロード中…",
+      "descWrite": "書く",
+      "descPreview": "プレビュー",
+      "descPreviewEmpty": "まだ内容がありません — 「書く」タブでマークダウンを書くとここで確認できます。",
+      "useGoogleMaps": "「{place}」のGoogleマップリンクを作成",
+      "openMap": "地図を開く ↗"
     },
     "detail": {
       "authTitle": "募集ページ",
@@ -3883,7 +3891,9 @@
       "statusChangeFailed": "変更に失敗しました",
       "cancelDialogTitle": "イベントを中止しますか?",
       "cancelDialogBody": "公開ページに中止と表示され、受付が停止します。元に戻せません。新規受付だけ止める場合は「受付を締め切る」を使ってください。",
-      "cancelDialogConfirm": "中止する"
+      "cancelDialogConfirm": "中止する",
+      "heroCopy": "リンクをコピー",
+      "heroCopied": "コピーしました!"
     },
     "share": {
       "copied": "コピー済み",

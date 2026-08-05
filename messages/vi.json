@@ -3790,7 +3790,12 @@
         "invalidEmail": "Vui lòng kiểm tra lại email (VD: hong@gmail.com)",
         "invalidPhone": "Vui lòng kiểm tra lại số điện thoại (VD: 090-1234-5678)",
         "invalidKakao": "Vui lòng kiểm tra lại KakaoTalk ID (2–30 chữ/số)"
-      }
+      },
+      "metaDate": "Ngày",
+      "metaTime": "Giờ",
+      "metaPlace": "Địa điểm",
+      "metaOnline": "Trực tuyến",
+      "metaAttendance": "Chỗ"
     },
     "list": {
       "title": "Sự kiện",
@@ -3799,15 +3804,6 @@
       "loadFailed": "Không tải được danh sách.",
       "emptyTitle": "Tạo trang sự kiện đầu tiên",
       "emptyBody": "Nhóm học, meetup, workshop — một liên kết lo cả trang, đăng ký, sĩ số và phân tích nguồn truy cập.",
-      "heroCopy": "Sao chép liên kết",
-      "heroCopied": "Đã sao chép!",
-      "cover": "Ảnh bìa",
-      "coverUpload": "Chọn ảnh",
-      "coverReplace": "Đổi ảnh",
-      "coverUploading": "Đang tải lên…",
-      "coverFailed": "Tải lên thất bại. Vui lòng thử lại.",
-      "coverHint": "Hiển thị lớn trong bản xem trước chat/mạng xã hội (JPG/PNG/WebP, tỉ lệ 2:1)",
-      "optional": "Tùy chọn",
       "authTitle": "Trang sự kiện",
       "authDesc": "Đăng nhập để tạo trang đăng ký và xem người tham gia, nguồn truy cập."
     },
@@ -3854,7 +3850,7 @@
       "typeShortText": "Trả lời ngắn",
       "typeSingleChoice": "Trắc nghiệm",
       "required": "Bắt buộc",
-      "addQuestion": "Thêm câu hỏi (tối đa 5)",
+      "addQuestion": "Thêm câu hỏi (tối đa 10)",
       "removeQuestion": "Xóa câu hỏi",
       "optionPlaceholder": "Lựa chọn {n}",
       "addOption": "+ Thêm lựa chọn",
@@ -3864,7 +3860,19 @@
       "errors": {
         "startRequired": "Vui lòng chọn thời gian bắt đầu",
         "generic": "Không lưu được. Vui lòng kiểm tra lại."
-      }
+      },
+      "optional": "Tùy chọn",
+      "cover": "Ảnh bìa",
+      "coverFailed": "Tải lên thất bại. Vui lòng thử lại.",
+      "coverHint": "Hiển thị lớn trong bản xem trước chat/mạng xã hội (JPG/PNG/WebP, tỉ lệ 2:1)",
+      "coverReplace": "Đổi ảnh",
+      "coverUpload": "Chọn ảnh",
+      "coverUploading": "Đang tải lên…",
+      "descWrite": "Viết",
+      "descPreview": "Xem trước",
+      "descPreviewEmpty": "Chưa có nội dung — viết markdown ở tab Viết để xem trước tại đây.",
+      "useGoogleMaps": "Tạo liên kết Google Maps cho “{place}”",
+      "openMap": "Mở bản đồ ↗"
     },
     "detail": {
       "authTitle": "Trang sự kiện",
@@ -3883,7 +3891,9 @@
       "statusChangeFailed": "Cập nhật thất bại",
       "cancelDialogTitle": "Hủy sự kiện này?",
       "cancelDialogBody": "Trang công khai sẽ hiển thị đã hủy và ngừng nhận đăng ký. Không thể hoàn tác. Nếu chỉ muốn ngừng nhận đăng ký mới, dùng 'Đóng đăng ký'.",
-      "cancelDialogConfirm": "Hủy sự kiện"
+      "cancelDialogConfirm": "Hủy sự kiện",
+      "heroCopy": "Sao chép liên kết",
+      "heroCopied": "Đã sao chép!"
     },
     "share": {
       "copied": "Đã sao chép",

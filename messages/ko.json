@@ -3790,7 +3790,12 @@
         "invalidEmail": "이메일 주소를 다시 확인해 주세요 (예: hong@naver.com)",
         "invalidPhone": "전화번호를 다시 확인해 주세요 (예: 010-1234-5678)",
         "invalidKakao": "카카오톡 ID를 다시 확인해 주세요 (영문·숫자 2~30자)"
-      }
+      },
+      "metaDate": "날짜",
+      "metaTime": "시간",
+      "metaPlace": "장소",
+      "metaOnline": "온라인",
+      "metaAttendance": "인원"
     },
     "list": {
       "title": "모집",
@@ -3799,15 +3804,6 @@
       "loadFailed": "목록을 불러오지 못했어요.",
       "emptyTitle": "첫 모집 페이지를 만들어 보세요",
       "emptyBody": "스터디, 밋업, 소모임 — 링크 하나로 소개·신청·마감·유입 분석까지 끝나요.",
-      "heroCopy": "링크 복사",
-      "heroCopied": "복사됨!",
-      "cover": "커버 이미지",
-      "coverUpload": "이미지 선택",
-      "coverReplace": "이미지 바꾸기",
-      "coverUploading": "업로드 중…",
-      "coverFailed": "업로드에 실패했어요. 다시 시도해 주세요.",
-      "coverHint": "단톡·SNS 미리보기에 크게 나와요 (JPG/PNG/WebP, 2:1 비율 권장)",
-      "optional": "선택",
       "authTitle": "모집 페이지",
       "authDesc": "로그인하면 신청 페이지를 만들고 신청자와 유입 채널을 볼 수 있어요."
     },
@@ -3854,7 +3850,7 @@
       "typeShortText": "주관식",
       "typeSingleChoice": "객관식",
       "required": "필수",
-      "addQuestion": "질문 추가 (최대 5개)",
+      "addQuestion": "질문 추가 (최대 10개)",
       "removeQuestion": "질문 삭제",
       "optionPlaceholder": "선택지 {n}",
       "addOption": "+ 선택지 추가",
@@ -3864,7 +3860,19 @@
       "errors": {
         "startRequired": "시작 일시를 입력해 주세요",
         "generic": "저장에 실패했어요. 입력값을 확인해 주세요."
-      }
+      },
+      "optional": "선택",
+      "cover": "커버 이미지",
+      "coverFailed": "업로드에 실패했어요. 다시 시도해 주세요.",
+      "coverHint": "단톡·SNS 미리보기에 크게 나와요 (JPG/PNG/WebP, 2:1 비율 권장)",
+      "coverReplace": "이미지 바꾸기",
+      "coverUpload": "이미지 선택",
+      "coverUploading": "업로드 중…",
+      "descWrite": "쓰기",
+      "descPreview": "미리보기",
+      "descPreviewEmpty": "아직 내용이 없어요 — 쓰기 탭에서 마크다운으로 적으면 여기서 미리 볼 수 있어요.",
+      "useGoogleMaps": "‘{place}’ 구글 지도 링크 만들기",
+      "openMap": "지도 미리 열기 ↗"
     },
     "detail": {
       "authTitle": "모집 페이지",
@@ -3883,7 +3891,9 @@
       "statusChangeFailed": "변경에 실패했어요",
       "cancelDialogTitle": "모임을 취소할까요?",
       "cancelDialogBody": "공개 페이지에 취소로 표시되고 신청을 더 받지 않아요. 되돌릴 수 없어요. 새 신청만 막으려면 '신청 마감하기'를 쓰세요.",
-      "cancelDialogConfirm": "모임 취소"
+      "cancelDialogConfirm": "모임 취소",
+      "heroCopy": "링크 복사",
+      "heroCopied": "복사됨!"
     },
     "share": {
       "copied": "복사됨",

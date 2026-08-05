@@ -3790,7 +3790,12 @@
         "invalidEmail": "कृपया ईमेल दोबारा जाँचें (जैसे: hong@gmail.com)",
         "invalidPhone": "कृपया फ़ोन नंबर दोबारा जाँचें (जैसे: 090-1234-5678)",
         "invalidKakao": "कृपया KakaoTalk ID दोबारा जाँचें (2–30 अक्षर/अंक)"
-      }
+      },
+      "metaDate": "तिथि",
+      "metaTime": "समय",
+      "metaPlace": "स्थान",
+      "metaOnline": "ऑनलाइन",
+      "metaAttendance": "सीटें"
     },
     "list": {
       "title": "इवेंट",
@@ -3799,15 +3804,6 @@
       "loadFailed": "सूची लोड नहीं हो सकी।",
       "emptyTitle": "अपना पहला इवेंट पेज बनाएं",
       "emptyBody": "स्टडी ग्रुप, मीटअप, वर्कशॉप — एक लिंक से पेज, पंजीकरण, सीमा और स्रोत विश्लेषण सब।",
-      "heroCopy": "लिंक कॉपी करें",
-      "heroCopied": "कॉपी हो गया!",
-      "cover": "कवर छवि",
-      "coverUpload": "छवि चुनें",
-      "coverReplace": "छवि बदलें",
-      "coverUploading": "अपलोड हो रहा है…",
-      "coverFailed": "अपलोड विफल। कृपया फिर प्रयास करें।",
-      "coverHint": "चैट/सोशल प्रीव्यू में बड़ा दिखता है (JPG/PNG/WebP, 2:1 अनुशंसित)",
-      "optional": "वैकल्पिक",
       "authTitle": "इवेंट पेज",
       "authDesc": "साइन इन करके पंजीकरण पेज बनाएं और प्रतिभागी व ट्रैफ़िक स्रोत देखें।"
     },
@@ -3854,7 +3850,7 @@
       "typeShortText": "संक्षिप्त उत्तर",
       "typeSingleChoice": "बहुविकल्पी",
       "required": "आवश्यक",
-      "addQuestion": "प्रश्न जोड़ें (अधिकतम 5)",
+      "addQuestion": "प्रश्न जोड़ें (अधिकतम 10)",
       "removeQuestion": "प्रश्न हटाएँ",
       "optionPlaceholder": "विकल्प {n}",
       "addOption": "+ विकल्प जोड़ें",
@@ -3864,7 +3860,19 @@
       "errors": {
         "startRequired": "कृपया शुरुआत का समय चुनें",
         "generic": "सहेज नहीं सके। कृपया इनपुट जाँचें।"
-      }
+      },
+      "optional": "वैकल्पिक",
+      "cover": "कवर छवि",
+      "coverFailed": "अपलोड विफल। कृपया फिर प्रयास करें।",
+      "coverHint": "चैट/सोशल प्रीव्यू में बड़ा दिखता है (JPG/PNG/WebP, 2:1 अनुशंसित)",
+      "coverReplace": "छवि बदलें",
+      "coverUpload": "छवि चुनें",
+      "coverUploading": "अपलोड हो रहा है…",
+      "descWrite": "लिखें",
+      "descPreview": "पूर्वावलोकन",
+      "descPreviewEmpty": "अभी कुछ नहीं — लिखें टैब में मार्कडाउन लिखें और यहाँ पूर्वावलोकन देखें।",
+      "useGoogleMaps": "“{place}” के लिए Google Maps लिंक बनाएँ",
+      "openMap": "नक्शा खोलें ↗"
     },
     "detail": {
       "authTitle": "इवेंट पेज",
@@ -3883,7 +3891,9 @@
       "statusChangeFailed": "अपडेट विफल",
       "cancelDialogTitle": "यह इवेंट रद्द करें?",
       "cancelDialogBody": "सार्वजनिक पेज पर रद्द दिखेगा और पंजीकरण रुक जाएगा। इसे वापस नहीं किया जा सकता। सिर्फ़ नए पंजीकरण रोकने हों तो 'पंजीकरण बंद करें' चुनें।",
-      "cancelDialogConfirm": "इवेंट रद्द करें"
+      "cancelDialogConfirm": "इवेंट रद्द करें",
+      "heroCopy": "लिंक कॉपी करें",
+      "heroCopied": "कॉपी हो गया!"
     },
     "share": {
       "copied": "कॉपी हो गया",
