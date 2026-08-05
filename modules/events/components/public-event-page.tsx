@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { CalendarDays, Clock3, Globe, MapPin, UserRound, Users } from "lucide-react";
+import { UserRound } from "lucide-react";
 import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { Markdown } from "@/modules/blog/components/markdown";
 import type { PublicEvent } from "@/modules/events/api/events";
@@ -16,6 +16,11 @@ import {
 import { CancelRegistrationPanel } from "./cancel-registration-panel";
 import { RegistrationPanel } from "./registration-panel";
 
+/**
+ * 참석자가 보는 초대장 — kurl 종이 문법. 카드 상자·아이콘 타일을 걷어내고 흰 종이 한 컬럼에
+ * 헤어라인으로만 단락을 가른다. 색은 브랜드 초록 한 가닥(CTA·라벨)만: 초대장은 조용할수록
+ * 이벤트가 주인공이 된다.
+ */
 export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent }) {
   const t = useTranslations("events.public");
   const locale = useLocale();
@@ -39,24 +44,26 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
     document.getElementById("register")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const nearlyFull = event.spotsLeft != null && event.spotsLeft > 0 && event.spotsLeft <= 3;
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <main className="mx-auto w-full max-w-xl px-4 pb-16 pt-6 sm:max-w-2xl sm:pt-10">
+    <div className="min-h-screen bg-white dark:bg-slate-950">
+      <main className="mx-auto w-full max-w-[42rem] px-5 pb-16 pt-8 sm:pt-12">
         {event.coverImageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={event.coverImageUrl}
             alt=""
-            className="mb-5 aspect-[2/1] w-full rounded-2xl border border-slate-200 object-cover dark:border-slate-800"
+            className="mb-7 aspect-[2/1] w-full rounded-2xl object-cover"
           />
         ) : null}
 
-        <h1 className="text-2xl font-bold leading-tight text-slate-900 dark:text-slate-50 sm:text-3xl">
+        <h1 className="text-[28px] font-bold leading-[1.25] tracking-tight text-slate-900 dark:text-slate-50 sm:text-[32px]">
           {event.title}
         </h1>
 
         {event.organizerName ? (
-          <div className="mt-2.5 flex items-center gap-2 text-[15px] text-slate-500 dark:text-slate-400">
+          <div className="mt-3 flex items-center gap-2 text-[14px] text-slate-500 dark:text-slate-400">
             {event.organizerAvatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -76,75 +83,68 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
           </div>
         ) : null}
 
-        <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)] dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex flex-col gap-3">
-            <MetaRow icon={<CalendarDays className="h-4 w-4" />} primary={dateLine} />
-            <MetaRow
-              icon={<Clock3 className="h-4 w-4" />}
-              primary={`${timeLine} (${timezoneLabel(event.timezone, locale)})`}
-            />
-            {event.locationText ? (
-              <MetaRow
-                icon={<MapPin className="h-4 w-4" />}
-                primary={
-                  event.locationUrl ? (
-                    <a
-                      href={event.locationUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline decoration-slate-300 underline-offset-2 hover:decoration-slate-500"
-                    >
-                      {event.locationText}
-                    </a>
-                  ) : (
-                    event.locationText
-                  )
-                }
-              />
-            ) : null}
-            {event.onlineUrl ? (
-              <MetaRow
-                icon={<Globe className="h-4 w-4" />}
-                primary={
-                  <a
-                    href={event.onlineUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline decoration-slate-300 underline-offset-2 hover:decoration-slate-500"
-                  >
-                    {t("onlineLink")}
-                  </a>
-                }
-              />
-            ) : null}
-            {event.attending > 0 || event.capacity != null ? (
-              <MetaRow
-                icon={<Users className="h-4 w-4" />}
-                primary={attendanceLine(t, event)}
-                emphasize={
-                  event.spotsLeft != null && event.spotsLeft > 0 && event.spotsLeft <= 3
-                }
-              />
-            ) : null}
-          </div>
-
-          {!cancelToken && event.acceptingRegistrations ? (
-            <button
-              type="button"
-              onClick={scrollToForm}
-              className="mt-4 flex h-12 w-full items-center justify-center rounded-lg bg-slate-900 text-base font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300"
-            >
-              {t("cta")}
-            </button>
+        {/* 일시·장소·인원 — 정의 리스트. 라벨은 초록 소문자 한 줄, 값은 본문 잉크. */}
+        <dl className="mt-7 border-t border-slate-200 dark:border-slate-800">
+          <MetaRow label={t("metaDate")}>{dateLine}</MetaRow>
+          <MetaRow label={t("metaTime")}>
+            {timeLine}{" "}
+            <span className="text-slate-400 dark:text-slate-500">
+              ({timezoneLabel(event.timezone, locale)})
+            </span>
+          </MetaRow>
+          {event.locationText ? (
+            <MetaRow label={t("metaPlace")}>
+              {event.locationUrl ? (
+                <a
+                  href={event.locationUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-500"
+                >
+                  {event.locationText}
+                </a>
+              ) : (
+                event.locationText
+              )}
+            </MetaRow>
           ) : null}
-        </section>
+          {event.onlineUrl ? (
+            <MetaRow label={t("metaOnline")}>
+              <a
+                href={event.onlineUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-500"
+              >
+                {t("onlineLink")}
+              </a>
+            </MetaRow>
+          ) : null}
+          {event.attending > 0 || event.capacity != null ? (
+            <MetaRow label={t("metaAttendance")}>
+              <span className={nearlyFull ? "font-semibold" : undefined}>
+                {attendanceLine(t, event)}
+              </span>
+            </MetaRow>
+          ) : null}
+        </dl>
+
+        {!cancelToken && event.acceptingRegistrations ? (
+          <button
+            type="button"
+            onClick={scrollToForm}
+            className="mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-emerald-600 text-base font-semibold text-white transition-colors hover:bg-emerald-700"
+          >
+            {t("cta")}
+          </button>
+        ) : null}
 
         {cancelToken ? (
           <CancelRegistrationPanel token={cancelToken} eventTitle={event.title} />
         ) : null}
 
         {event.descriptionMd ? (
-          <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+          <section className="mt-9 border-t border-slate-200 pt-7 dark:border-slate-800">
             <div className="prose-text-block text-slate-800 dark:text-slate-200">
               <Markdown>{event.descriptionMd}</Markdown>
             </div>
@@ -164,7 +164,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
           />
         ) : null}
 
-        <footer className="mt-10 flex justify-center">
+        <footer className="mt-12 flex justify-center">
           <MadeWithKurl />
         </footer>
       </main>
@@ -190,29 +190,15 @@ function attendanceLine(
   return parts.join(" · ");
 }
 
-function MetaRow({
-  icon,
-  primary,
-  emphasize = false,
-}: {
-  icon: React.ReactNode;
-  primary: React.ReactNode;
-  emphasize?: boolean;
-}) {
+function MetaRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-3">
-      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-        {icon}
-      </span>
-      <span
-        className={
-          emphasize
-            ? "text-base font-semibold leading-7 text-amber-600 dark:text-amber-400"
-            : "text-base leading-7 text-slate-700 dark:text-slate-300"
-        }
-      >
-        {primary}
-      </span>
+    <div className="flex items-baseline gap-4 border-b border-slate-100 py-3 dark:border-slate-800/60">
+      <dt className="w-14 shrink-0 text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
+        {label}
+      </dt>
+      <dd className="min-w-0 text-[15px] leading-relaxed text-slate-800 dark:text-slate-200">
+        {children}
+      </dd>
     </div>
   );
 }

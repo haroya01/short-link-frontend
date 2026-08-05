@@ -5,7 +5,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import type { QuestionSpec } from "@/modules/events/api/events";
 
-const MAX_QUESTIONS = 5;
+const MAX_QUESTIONS = 10;
 
 export function QuestionBuilder({
   questions,
