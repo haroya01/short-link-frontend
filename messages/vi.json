@@ -3789,13 +3789,19 @@
         "generic": "Đăng ký thất bại. Vui lòng thử lại.",
         "invalidEmail": "Vui lòng kiểm tra lại email (VD: hong@gmail.com)",
         "invalidPhone": "Vui lòng kiểm tra lại số điện thoại (VD: 090-1234-5678)",
-        "invalidKakao": "Vui lòng kiểm tra lại KakaoTalk ID (2–30 chữ/số)"
+        "invalidKakao": "Vui lòng kiểm tra lại KakaoTalk ID (2–30 chữ/số)",
+        "invalidLine": "Vui lòng kiểm tra LINE ID.",
+        "invalidInstagram": "Vui lòng kiểm tra tên Instagram."
       },
       "metaDate": "Ngày",
       "metaTime": "Giờ",
       "metaPlace": "Địa điểm",
       "metaOnline": "Trực tuyến",
-      "metaAttendance": "Chỗ"
+      "metaAttendance": "Chỗ",
+      "contactLine": "LINE ID",
+      "contactLinePlaceholder": "line_id",
+      "contactInstagram": "Tên Instagram",
+      "contactInstagramPlaceholder": "@handle"
     },
     "list": {
       "title": "Sự kiện",
@@ -3837,11 +3843,13 @@
       "closeAtHint": "Không nhận đăng ký sau thời điểm này",
       "formSectionTitle": "Mẫu đăng ký",
       "contactField": "Thông tin liên hệ thu thập",
-      "contactFieldHint": "Email cho phép gửi thư xác nhận & hủy tự động",
+      "contactFieldHint": "Chọn email để tự động gửi mail xác nhận/hủy. Điện thoại, KakaoTalk, LINE, Instagram dùng khi bạn tự liên hệ.",
       "contactFields": {
         "EMAIL": "Email",
         "PHONE": "Điện thoại",
-        "KAKAO": "KakaoTalk ID"
+        "KAKAO": "KakaoTalk ID",
+        "LINE": "LINE ID",
+        "INSTAGRAM": "Instagram"
       },
       "questionsLocked": "Câu hỏi bị khóa vì đã có người đăng ký.",
       "questionPlaceholder": "VD: Bạn quan tâm chủ đề nào?",

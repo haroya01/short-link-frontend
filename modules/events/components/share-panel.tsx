@@ -57,17 +57,17 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
   };
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
-      <h2 className="text-[15px] font-semibold text-slate-900 dark:text-slate-50">{t("title")}</h2>
+    <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
+      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">{t("title")}</h2>
       <p className="mt-1 text-[12px] leading-snug text-slate-500 dark:text-slate-400">
         {t("subtitle")}
       </p>
 
-      <ul className="mt-4 flex flex-col gap-2">
+      <ul className="mt-3 flex flex-col divide-y divide-slate-100 dark:divide-slate-800/60">
         {event.links.map((link) => (
           <li
             key={link.linkId}
-            className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2.5 dark:border-slate-700"
+            className="flex items-center gap-2 py-2.5"
           >
             <span className="min-w-0 flex-1">
               <span className="block text-[11px] font-medium uppercase tracking-wide text-slate-400">

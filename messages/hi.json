@@ -3789,13 +3789,19 @@
         "generic": "पंजीकरण विफल रहा। कृपया फिर से प्रयास करें।",
         "invalidEmail": "कृपया ईमेल दोबारा जाँचें (जैसे: hong@gmail.com)",
         "invalidPhone": "कृपया फ़ोन नंबर दोबारा जाँचें (जैसे: 090-1234-5678)",
-        "invalidKakao": "कृपया KakaoTalk ID दोबारा जाँचें (2–30 अक्षर/अंक)"
+        "invalidKakao": "कृपया KakaoTalk ID दोबारा जाँचें (2–30 अक्षर/अंक)",
+        "invalidLine": "कृपया LINE ID जाँचें।",
+        "invalidInstagram": "कृपया Instagram हैंडल जाँचें।"
       },
       "metaDate": "तिथि",
       "metaTime": "समय",
       "metaPlace": "स्थान",
       "metaOnline": "ऑनलाइन",
-      "metaAttendance": "सीटें"
+      "metaAttendance": "सीटें",
+      "contactLine": "LINE ID",
+      "contactLinePlaceholder": "line_id",
+      "contactInstagram": "Instagram हैंडल",
+      "contactInstagramPlaceholder": "@handle"
     },
     "list": {
       "title": "इवेंट",
@@ -3837,11 +3843,13 @@
       "closeAtHint": "इस समय के बाद पंजीकरण नहीं",
       "formSectionTitle": "पंजीकरण फ़ॉर्म",
       "contactField": "कौन-सा संपर्क लें",
-      "contactFieldHint": "ईमेल से पुष्टि और रद्दीकरण मेल अपने आप जाते हैं",
+      "contactFieldHint": "ईमेल चुनने पर पुष्टि/रद्द मेल अपने आप जाता है। फ़ोन, KakaoTalk, LINE, Instagram से आप स्वयं संपर्क करें।",
       "contactFields": {
         "EMAIL": "ईमेल",
         "PHONE": "फ़ोन",
-        "KAKAO": "KakaoTalk ID"
+        "KAKAO": "KakaoTalk ID",
+        "LINE": "LINE ID",
+        "INSTAGRAM": "Instagram"
       },
       "questionsLocked": "पंजीकरण मौजूद हैं इसलिए प्रश्न बदले नहीं जा सकते।",
       "questionPlaceholder": "जैसे: आपको किन विषयों में रुचि है?",

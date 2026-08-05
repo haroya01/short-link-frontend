@@ -308,17 +308,23 @@ function Field({
 function contactLabel(t: (k: string) => string, field: PublicEvent["contactField"]): string {
   if (field === "PHONE") return t("contactPhone");
   if (field === "KAKAO") return t("contactKakao");
+  if (field === "LINE") return t("contactLine");
+  if (field === "INSTAGRAM") return t("contactInstagram");
   return t("contactEmail");
 }
 
 function contactPlaceholder(t: (k: string) => string, field: PublicEvent["contactField"]): string {
   if (field === "PHONE") return t("contactPhonePlaceholder");
   if (field === "KAKAO") return t("contactKakaoPlaceholder");
+  if (field === "LINE") return t("contactLinePlaceholder");
+  if (field === "INSTAGRAM") return t("contactInstagramPlaceholder");
   return t("contactEmailPlaceholder");
 }
 
 function contactError(t: (k: string) => string, field: PublicEvent["contactField"]): string {
   if (field === "PHONE") return t("errors.invalidPhone");
   if (field === "KAKAO") return t("errors.invalidKakao");
+  if (field === "LINE") return t("errors.invalidLine");
+  if (field === "INSTAGRAM") return t("errors.invalidInstagram");
   return t("errors.invalidEmail");
 }

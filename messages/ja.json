@@ -3789,13 +3789,19 @@
         "generic": "申し込みに失敗しました。しばらくしてから再度お試しください。",
         "invalidEmail": "メールアドレスをご確認ください (例: hong@gmail.com)",
         "invalidPhone": "電話番号をご確認ください (例: 090-1234-5678)",
-        "invalidKakao": "カカオトークIDをご確認ください (英数字2〜30文字)"
+        "invalidKakao": "カカオトークIDをご確認ください (英数字2〜30文字)",
+        "invalidLine": "LINE IDの形式をご確認ください。",
+        "invalidInstagram": "Instagramハンドルをご確認ください。"
       },
       "metaDate": "日付",
       "metaTime": "時間",
       "metaPlace": "場所",
       "metaOnline": "オンライン",
-      "metaAttendance": "定員"
+      "metaAttendance": "定員",
+      "contactLine": "LINE ID",
+      "contactLinePlaceholder": "line_id",
+      "contactInstagram": "Instagramハンドル",
+      "contactInstagramPlaceholder": "@handle"
     },
     "list": {
       "title": "イベント",
@@ -3837,11 +3843,13 @@
       "closeAtHint": "この時刻以降は受け付けません",
       "formSectionTitle": "申し込みフォーム",
       "contactField": "収集する連絡先",
-      "contactFieldHint": "メールなら確認・キャンセルメールが自動送信されます",
+      "contactFieldHint": "メールを選ぶと確認・キャンセルメールが自動送信されます。電話・カカオトーク・LINE・Instagramは主催者が直接連絡する用です。",
       "contactFields": {
         "EMAIL": "メール",
         "PHONE": "電話番号",
-        "KAKAO": "カカオトークID"
+        "KAKAO": "カカオトークID",
+        "LINE": "LINE ID",
+        "INSTAGRAM": "Instagram"
       },
       "questionsLocked": "申込者がいるため質問は変更できません。",
       "questionPlaceholder": "例: 興味のあるテーマは?",
