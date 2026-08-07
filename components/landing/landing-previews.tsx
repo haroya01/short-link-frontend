@@ -16,14 +16,15 @@ import { Link } from "@/i18n/navigation";
  *    synthetic data. Same Header, same 5 tabs, same charts.
  *  - <b>profile</b> → {@code /showcase/dohyun.coffee}. One of the landing-carousel fixtures
  *    rendered as a full-screen public profile, identical to {@code /u/[username]}.
- *  - <b>domain</b> → {@code /pricing}. The TXT + CNAME verification flow ships under the PRO
- *    plan; pricing is the page that explains it.
+ *  - <b>domain</b> → {@code /settings}. The TXT + CNAME verification flow lives in the settings
+ *    page's custom-domain section. It's the one target behind the login gate — signed-out
+ *    visitors land on {@code /login} first, which is the next step to connect a domain anyway.
  *
  * A previous version of this strip had a fourth card ("viral / OG share card") but the live
  * OG-card-with-click-counter surface promised by the visual doesn't exist as a standalone
- * page yet. Pointing it at {@code /demo} or {@code /pricing} would either lie about what's
- * there or duplicate the stats card; per the "100% mirror" rule (cards point to real pages)
- * we dropped it until that surface ships.
+ * page yet. Pointing it at {@code /demo} would either lie about what's there or duplicate the
+ * stats card; per the "100% mirror" rule (cards point to real pages) we dropped it until that
+ * surface ships.
  *
  * Layout follows the AGENTS.md Information archetype: each card is a
  * {@code .profile-card-static}-style surface with {@code rounded-2xl}, fixed padding rhythm,
@@ -55,7 +56,7 @@ export function LandingPreviews() {
     },
     {
       key: "domain",
-      href: "/pricing",
+      href: "/settings",
       label: t("previews.domain.title"),
       desc: t("previews.domain.desc"),
       visual: <DomainVisual />,

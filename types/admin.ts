@@ -187,7 +187,6 @@ export type AdminUserRow = {
   email: string;
   username: string | null;
   role: AdminUserRole;
-  tier: "FREE" | "PRO";
   deleted: boolean;
   createdAt: string;
   linkCount: number;

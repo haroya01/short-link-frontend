@@ -30,7 +30,6 @@ const PUBLIC_PATHS = [
   "/showcase",
   "/learn",
   "/about",
-  "/pricing",
   "/terms",
   "/privacy",
 ] as const;
@@ -42,7 +41,7 @@ function priorityFor(path: string): number {
   if (path === "" || path === "/qr-campaigns") return 1.0;
   if (path === "/showcase") return 0.9;
   if (path === "/learn") return 0.7;
-  if (path === "/about" || path === "/pricing") return 0.5;
+  if (path === "/about") return 0.5;
   return 0.3;
 }
 

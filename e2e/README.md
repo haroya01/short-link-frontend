@@ -65,11 +65,11 @@ Optional secrets (otherwise generated/defaulted at runtime):
 | `stats` | empty state, totals after clicks, public toggle + /public route |
 | `settings` | profile, timezone save, delete-confirm gating |
 | `og-preview` | bot UA → OG html, regular UA → 302, X-Robots-Tag noindex |
-| `marketing-pages` | /about /pricing /terms /privacy + robots.txt + sitemap.xml |
+| `marketing-pages` | /about /terms /privacy + robots.txt + sitemap.xml |
 | `not-found` | friendly 404 |
 | `mobile-nav` | iPhone hamburger toggle, no horizontal overflow |
 | `i18n` | ko/en/ja hero text, hreflang alternates |
-| `a11y` | axe-core on 6 public pages (no critical/serious) |
-| `visual` | full-page screenshot snapshots on 6 pages |
+| `a11y` | axe-core on 5 public pages (no critical/serious) |
+| `visual` | full-page screenshot snapshots on 5 pages |
 | `auth-redirect` | unauthenticated dashboard/stats redirect to login |
 | `api-smoke` | backend API status codes via Next proxy |

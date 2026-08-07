@@ -796,7 +796,6 @@
     "myCollections": "My collections",
     "showcase": "Profiles",
     "campaigns": "QR Campaigns",
-    "pricing": "Pricing",
     "settings": "Settings",
     "login": "Sign in",
     "logout": "Sign out",
@@ -1883,7 +1882,6 @@
         "col": {
           "user": "User",
           "role": "Role",
-          "tier": "Plan",
           "links": "Links",
           "joined": "Joined",
           "status": "Status"
@@ -2230,7 +2228,6 @@
   "footer": {
     "copyright": "© {year} kurl",
     "about": "About",
-    "pricing": "Pricing",
     "terms": "Terms",
     "privacy": "Privacy",
     "github": "GitHub"
@@ -2274,48 +2271,11 @@
     },
     "q6": {
       "q": "Is it paid?",
-      "a": "All core features are free — shortening, analytics, profile pages, all eight block types.\n\nThe Pro plan adds custom domains with auto-TLS, unlimited links, and indefinite stats retention. See the pricing page for details."
+      "a": "Every feature is free — shortening, analytics, profile pages, all eight block types, and custom domains.\n\nThere's no paid plan, and no ads."
     },
     "ctaTitle": "Shorten one now",
     "ctaSubtitle": "No signup needed — sign in to keep your stats forever",
     "ctaButton": "Start shortening"
-  },
-  "pricing": {
-    "title": "Pricing",
-    "lead": "Free includes shortening and full analytics. Pro adds auto-TLS custom domains, unlimited links, and permanent stats.",
-    "ctaUpgrade": "Start Pro",
-    "ctaManage": "Manage billing",
-    "ctaLogin": "Sign in to start",
-    "ctaFailed": "Could not open checkout.",
-    "freeTitle": "Free",
-    "freePrice": "$0 / mo",
-    "freeFeature1": "Up to 200 links",
-    "freeFeature2": "8 click-analytics dimensions (time / device / country / channel / OS / browser / UTM / bot)",
-    "freeFeature3": "Live click feed (SSE)",
-    "freeFeature4": "A/B split + geo routing (4 destinations per link)",
-    "freeFeature5": "HMAC-signed webhooks (5 per link)",
-    "freeFeature6": "2FA TOTP + recovery codes",
-    "paidTitle": "Pro",
-    "paidPrice": "$5 / mo",
-    "paidFeature1": "Unlimited links",
-    "paidFeature2": "10× rate limit",
-    "paidFeature3": "Permanent stats retention (Free: 90 days)",
-    "paidFeature4": "Custom domains (e.g. go.yourcompany.com)",
-    "paidFeature5": "50 webhooks per link (Free: 5)",
-    "paidFeature6": "500k-row CSV export (Free: 50k)",
-    "rightsTitle": "User rights (any tier)",
-    "rightsLead": "GDPR / privacy-law guarantees — available to every user regardless of plan.",
-    "right1": "Export my data (JSON)",
-    "right2": "Permanent account deletion + cascade",
-    "right3": "We never sell your personal data",
-    "proHoldBadge": "Coming soon",
-    "proHoldNotice": "Pro is on hold while we finish the billing pipeline. The Free plan still includes 200 links, 8 analytics dimensions, 5 webhooks per link, and 2FA — every feature listed below is live today.",
-    "proHoldCta": "Not available yet",
-    "proEta": "We'll email you when it launches — start with Free for now.",
-    "meta": {
-      "title": "Pricing · Free URL shortener, Pro for unlimited - kurl",
-      "description": "Start free with URL shortening and click analytics. Pro adds unlimited links, custom-domain auto TLS, and permanent stats retention."
-    }
   },
   "terms": {
     "title": "Terms of Service",

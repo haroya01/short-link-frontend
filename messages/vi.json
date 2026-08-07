@@ -796,7 +796,6 @@
     "myCollections": "Bộ sưu tập của tôi",
     "showcase": "Hồ sơ",
     "campaigns": "Chiến dịch QR",
-    "pricing": "Bảng giá",
     "settings": "Cài đặt",
     "login": "Đăng nhập",
     "logout": "Đăng xuất",
@@ -1883,7 +1882,6 @@
         "col": {
           "user": "Người dùng",
           "role": "Vai trò",
-          "tier": "Gói",
           "links": "Liên kết",
           "joined": "Ngày tham gia",
           "status": "Trạng thái"
@@ -2230,7 +2228,6 @@
   "footer": {
     "copyright": "© {year} kurl",
     "about": "Giới thiệu",
-    "pricing": "Bảng giá",
     "terms": "Điều khoản",
     "privacy": "Quyền riêng tư",
     "github": "GitHub"
@@ -2274,48 +2271,11 @@
     },
     "q6": {
       "q": "Có tính phí không?",
-      "a": "Mọi tính năng cốt lõi đều miễn phí — rút gọn, phân tích, trang hồ sơ, cả tám loại khối.\n\nGói Pro bổ sung tên miền tùy chỉnh với tự động TLS, liên kết không giới hạn, và lưu thống kê vô thời hạn. Xem trang bảng giá để biết chi tiết."
+      "a": "Mọi tính năng đều miễn phí — rút gọn, phân tích, trang hồ sơ, cả tám loại khối, và tên miền tùy chỉnh.\n\nKhông có gói trả phí, cũng không có quảng cáo."
     },
     "ctaTitle": "Rút gọn một liên kết ngay",
     "ctaSubtitle": "Không cần đăng ký — đăng nhập để giữ thống kê mãi mãi",
     "ctaButton": "Bắt đầu rút gọn"
-  },
-  "pricing": {
-    "title": "Bảng giá",
-    "lead": "Gói miễn phí gồm rút gọn và phân tích đầy đủ. Pro bổ sung tên miền tùy chỉnh tự động TLS, liên kết không giới hạn, và thống kê vĩnh viễn.",
-    "ctaUpgrade": "Bắt đầu Pro",
-    "ctaManage": "Quản lý thanh toán",
-    "ctaLogin": "Đăng nhập để bắt đầu",
-    "ctaFailed": "Không mở được trang thanh toán.",
-    "freeTitle": "Miễn phí",
-    "freePrice": "0$ / tháng",
-    "freeFeature1": "Tối đa 200 liên kết",
-    "freeFeature2": "8 chiều phân tích lượt nhấp (thời gian / thiết bị / quốc gia / kênh / hệ điều hành / trình duyệt / UTM / bot)",
-    "freeFeature3": "Dòng nhấp trực tiếp (SSE)",
-    "freeFeature4": "Chia tách A/B + định tuyến vị trí (4 điểm đến mỗi liên kết)",
-    "freeFeature5": "Webhook ký HMAC (5 mỗi liên kết)",
-    "freeFeature6": "2FA TOTP + mã khôi phục",
-    "paidTitle": "Pro",
-    "paidPrice": "5$ / tháng",
-    "paidFeature1": "Liên kết không giới hạn",
-    "paidFeature2": "Giới hạn tốc độ gấp 10 lần",
-    "paidFeature3": "Lưu thống kê vĩnh viễn (Miễn phí: 90 ngày)",
-    "paidFeature4": "Tên miền tùy chỉnh (ví dụ go.congtycuaban.com)",
-    "paidFeature5": "50 webhook mỗi liên kết (Miễn phí: 5)",
-    "paidFeature6": "Xuất CSV 500k dòng (Miễn phí: 50k)",
-    "rightsTitle": "Quyền của người dùng (mọi gói)",
-    "rightsLead": "Bảo đảm GDPR / luật quyền riêng tư — dành cho mọi người dùng bất kể gói nào.",
-    "right1": "Xuất dữ liệu của tôi (JSON)",
-    "right2": "Xóa tài khoản vĩnh viễn + lan tỏa",
-    "right3": "Không bao giờ bán dữ liệu cá nhân của bạn",
-    "proHoldBadge": "Sắp có",
-    "proHoldNotice": "Pro đang tạm hoãn trong khi chúng tôi hoàn thiện quy trình thanh toán. Gói Miễn phí vẫn gồm 200 liên kết, 8 chiều phân tích, 5 webhook mỗi liên kết, và 2FA — mọi tính năng liệt kê bên dưới đều đang hoạt động hôm nay.",
-    "proHoldCta": "Chưa khả dụng",
-    "proEta": "Chúng tôi sẽ gửi email khi ra mắt — tạm thời cứ bắt đầu với Miễn phí.",
-    "meta": {
-      "title": "Bảng giá · Rút gọn URL miễn phí, Pro cho không giới hạn - kurl",
-      "description": "Bắt đầu miễn phí với rút gọn URL và phân tích lượt nhấp. Pro bổ sung liên kết không giới hạn, tự động TLS cho tên miền tùy chỉnh, và lưu thống kê vĩnh viễn."
-    }
   },
   "terms": {
     "title": "Điều khoản dịch vụ",

@@ -796,7 +796,6 @@
     "myCollections": "내 컬렉션",
     "showcase": "프로필",
     "campaigns": "QR 캠페인",
-    "pricing": "가격",
     "settings": "설정",
     "login": "로그인",
     "logout": "로그아웃",
@@ -1883,7 +1882,6 @@
         "col": {
           "user": "사용자",
           "role": "역할",
-          "tier": "요금제",
           "links": "링크",
           "joined": "가입일",
           "status": "상태"
@@ -2230,7 +2228,6 @@
   "footer": {
     "copyright": "© {year} kurl",
     "about": "서비스 소개",
-    "pricing": "요금제",
     "terms": "이용약관",
     "privacy": "개인정보처리방침",
     "github": "GitHub"
@@ -2274,48 +2271,11 @@
     },
     "q6": {
       "q": "유료인가요?",
-      "a": "기본 기능은 전부 무료입니다. URL 단축, 통계, 프로필 명함, 8가지 블록 모두 무료 플랜으로 사용할 수 있어요.\n\nPro 플랜은 커스텀 도메인 자동 TLS, 무제한 링크, 통계 영구 보존 등 파워유저용 기능을 제공합니다 (요금제 페이지 참고)."
+      "a": "기본 기능은 전부 무료입니다. URL 단축, 통계, 프로필 명함, 8가지 블록, 커스텀 도메인까지 모두 무료로 쓸 수 있어요.\n\n유료 플랜은 없고, 광고도 없습니다."
     },
     "ctaTitle": "지금 바로 단축해보기",
     "ctaSubtitle": "회원가입 없이 한 번에 — 가입하면 통계까지 평생 보관",
     "ctaButton": "URL 단축 시작"
-  },
-  "pricing": {
-    "title": "요금제",
-    "lead": "Free 플랜으로 단축과 분석은 평생 무료. Pro 플랜은 커스텀 도메인 자동 TLS·무제한 링크·통계 평생 보관.",
-    "ctaUpgrade": "Pro 시작하기",
-    "ctaManage": "결제 관리",
-    "ctaLogin": "로그인하고 시작",
-    "ctaFailed": "결제 페이지를 열지 못했어요.",
-    "freeTitle": "Free",
-    "freePrice": "₩0 / 월",
-    "freeFeature1": "링크 200개",
-    "freeFeature2": "8종 클릭 분석 (시간대 · 디바이스 · 국가 · 채널 · OS · 브라우저 · UTM · 봇)",
-    "freeFeature3": "실시간 클릭 피드 (SSE)",
-    "freeFeature4": "A/B 분배 + 국가별 라우팅 (링크당 4개 도착지)",
-    "freeFeature5": "HMAC 서명 웹훅 (링크당 5개)",
-    "freeFeature6": "2FA TOTP + 복구 코드",
-    "paidTitle": "Pro",
-    "paidPrice": "₩6,900 / 월",
-    "paidFeature1": "링크 무제한",
-    "paidFeature2": "rate limit 10배 상향",
-    "paidFeature3": "통계 평생 보관 (Free 90일 → Pro 무제한)",
-    "paidFeature4": "커스텀 도메인 (예: go.yourcompany.com)",
-    "paidFeature5": "Webhook 50개 / 링크 (Free 5개)",
-    "paidFeature6": "CSV export 50만 행 (Free 5만)",
-    "rightsTitle": "사용자 권리 (플랜 무관)",
-    "rightsLead": "GDPR / 개인정보보호법에 따라 모든 사용자에게 보장되는 권리. 플랜과 관계없이 언제든 가능합니다.",
-    "right1": "내 데이터 export (JSON)",
-    "right2": "계정 영구 삭제 + 데이터 cascade 삭제",
-    "right3": "개인정보를 제3자에게 판매하지 않음",
-    "proHoldBadge": "추후 출시",
-    "proHoldNotice": "Pro 플랜은 결제 시스템을 준비하고 있어 잠시 오픈을 미뤘어요. 지금은 Free 플랜의 200개 링크·8종 분석·웹훅 5개·2FA 를 모두 그대로 쓸 수 있어요.",
-    "proHoldCta": "준비 중",
-    "proEta": "출시되면 안내 메일로 알려드릴게요. 우선 무료 플랜으로 시작해 보세요.",
-    "meta": {
-      "title": "요금제 · 단축 URL Pro 무제한 - kurl",
-      "description": "Free 로 단축 URL과 클릭 분석을 무료로 시작. Pro 는 무제한 링크 · 커스텀 도메인 자동 TLS · 통계 영구 보존."
-    }
   },
   "terms": {
     "title": "이용약관",
