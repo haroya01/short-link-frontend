@@ -23,7 +23,6 @@ const ROUTES: { path: string; name: string }[] = [
   { path: "/demo", name: "demo" },
   { path: "/showcase", name: "showcase" },
   { path: "/learn", name: "learn" },
-  { path: "/pricing", name: "pricing" },
   { path: "/about", name: "about" },
   { path: "/login", name: "login" },
   { path: "/terms", name: "terms" },

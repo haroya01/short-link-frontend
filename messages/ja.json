@@ -796,7 +796,6 @@
     "myCollections": "マイコレクション",
     "showcase": "プロフィール",
     "campaigns": "QRキャンペーン",
-    "pricing": "料金",
     "settings": "設定",
     "login": "ログイン",
     "logout": "ログアウト",
@@ -1883,7 +1882,6 @@
         "col": {
           "user": "ユーザー",
           "role": "権限",
-          "tier": "プラン",
           "links": "リンク",
           "joined": "登録日",
           "status": "状態"
@@ -2230,7 +2228,6 @@
   "footer": {
     "copyright": "© {year} kurl",
     "about": "サービスについて",
-    "pricing": "料金",
     "terms": "利用規約",
     "privacy": "プライバシー",
     "github": "GitHub"
@@ -2274,48 +2271,11 @@
     },
     "q6": {
       "q": "有料ですか?",
-      "a": "コア機能はすべて無料です。URL短縮、分析、プロフィール名刺、8種類のブロック — すべて無料プランで使えます。\n\nPro プランはカスタムドメイン自動TLS、無制限リンク、統計の永久保存などパワーユーザー向け機能を提供します(料金ページ参照)。"
+      "a": "すべての機能が無料です。URL短縮、分析、プロフィール名刺、8種類のブロック、カスタムドメインまで無料で使えます。\n\n有料プランはなく、広告もありません。"
     },
     "ctaTitle": "今すぐ短縮してみる",
     "ctaSubtitle": "会員登録不要 — サインインで統計も永久保存",
     "ctaButton": "URL短縮を始める"
-  },
-  "pricing": {
-    "title": "料金",
-    "lead": "Free でも短縮 + 全分析が無料。Pro はカスタムドメイン自動 TLS・無制限リンク・統計の永久保存。",
-    "ctaUpgrade": "Pro を始める",
-    "ctaManage": "決済を管理",
-    "ctaLogin": "サインインして始める",
-    "ctaFailed": "決済ページを開けませんでした。",
-    "freeTitle": "Free",
-    "freePrice": "¥0 / 月",
-    "freeFeature1": "リンク 200 件",
-    "freeFeature2": "8 種類のクリック分析 (時間 · デバイス · 国 · チャネル · OS · ブラウザ · UTM · ボット)",
-    "freeFeature3": "ライブクリックフィード (SSE)",
-    "freeFeature4": "A/B 振り分け + 国別ルーティング (リンクあたり 4 件)",
-    "freeFeature5": "HMAC 署名 Webhook (リンクあたり 5 件)",
-    "freeFeature6": "2FA TOTP + リカバリコード",
-    "paidTitle": "Pro",
-    "paidPrice": "¥700 / 月",
-    "paidFeature1": "リンク無制限",
-    "paidFeature2": "rate limit 10 倍",
-    "paidFeature3": "統計を永久保存 (Free: 90 日)",
-    "paidFeature4": "カスタムドメイン (例: go.yourcompany.com)",
-    "paidFeature5": "Webhook 50 件 / リンク (Free: 5 件)",
-    "paidFeature6": "CSV エクスポート 50 万行 (Free: 5 万)",
-    "rightsTitle": "ユーザー権利 (プラン無関係)",
-    "rightsLead": "GDPR / 個人情報保護法に基づく保証。プランに関係なく常に利用できます。",
-    "right1": "自分のデータをエクスポート (JSON)",
-    "right2": "アカウントの完全削除 + 関連データの cascade 削除",
-    "right3": "個人情報を第三者に販売しません",
-    "proHoldBadge": "近日公開",
-    "proHoldNotice": "Pro プランは決済システムの整備中のため、現在一時停止しています。Free プランの 200 リンク · 8 種類の分析 · Webhook 5 件 · 2FA はすべて引き続きお使いいただけます。",
-    "proHoldCta": "準備中",
-    "proEta": "リリース時にメールでお知らせします — まずは無料プランから。",
-    "meta": {
-      "title": "料金プラン · 短縮URL Pro 無制限 - kurl",
-      "description": "Free プランで短縮URLとクリック分析を無料で利用。Pro は無制限リンク・カスタムドメイン自動TLS・統計の永久保存。"
-    }
   },
   "terms": {
     "title": "利用規約",

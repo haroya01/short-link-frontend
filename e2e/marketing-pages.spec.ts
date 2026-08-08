@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 
 const PAGES = [
   { path: "/about", heading: /kurl/ },
-  { path: "/pricing", heading: /요금제/ },
   { path: "/terms", heading: /이용약관/ },
   { path: "/privacy", heading: /개인정보/ },
 ];
