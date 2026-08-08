@@ -9,8 +9,8 @@ export function Footer() {
   const locale = useLocale();
   const pathname = usePathname();
 
-  // about/pricing/terms/privacy are canonical pages on the links product
-  // (app/[locale]/links/{about,pricing,terms,privacy}). This footer is shared chrome rendered on the
+  // about/terms/privacy are canonical pages on the links product
+  // (app/[locale]/links/{about,terms,privacy}). This footer is shared chrome rendered on the
   // blog too, where the blog host rewrites every path to /blog/* — so a bare /about would 404.
   // linksHref pins them to the links host (absolute in prod, same-origin path in dev) so they resolve
   // from any surface.
@@ -27,10 +27,6 @@ export function Footer() {
         <nav className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
           <a href={marketingHref("/about")} className="hover:text-slate-900 dark:hover:text-slate-100">
             {t("about")}
-          </a>
-          <span aria-hidden>·</span>
-          <a href={marketingHref("/pricing")} className="hover:text-slate-900 dark:hover:text-slate-100">
-            {t("pricing")}
           </a>
           <span aria-hidden>·</span>
           <a href={marketingHref("/terms")} className="hover:text-slate-900 dark:hover:text-slate-100">

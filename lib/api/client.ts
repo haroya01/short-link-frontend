@@ -249,7 +249,6 @@ const MOCK_ME: Me = {
   email: "dohyun@kurl.me",
   role: "USER",
   username: "dohyun",
-  tier: "FREE",
   createdAt: "2026-01-01T00:00:00Z",
   avatarUrl: "https://i.pravatar.cc/120?img=12",
 };

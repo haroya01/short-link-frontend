@@ -104,7 +104,6 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         ph.identify(String(me.id), {
           username: me.username ?? undefined,
           email: me.email,
-          tier: me.tier,
         });
         wasIdentifiedRef.current = true;
       } else if (wasIdentifiedRef.current) {
@@ -115,7 +114,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         wasIdentifiedRef.current = false;
       }
     });
-  }, [me?.id, me?.username, me?.email, me?.tier]);
+  }, [me?.id, me?.username, me?.email]);
 
   return <>{children}</>;
 }

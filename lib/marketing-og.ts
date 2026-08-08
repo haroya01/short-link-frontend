@@ -8,7 +8,7 @@ const SITE_URL =
 const OG_LOCALE: Record<string, string> = { ko: "ko_KR", ja: "ja_JP", en: "en_US" };
 
 /**
- * Shared og/twitter block for kurl.me marketing pages (pricing, learn, about, legal, …).
+ * Shared og/twitter block for kurl.me marketing pages (learn, about, legal, …).
  *
  * Next merges metadata SHALLOWLY per top-level key: a page that declares its own `openGraph`
  * (or none at all, next to a layout that does) ends up replacing the root layout's whole og
