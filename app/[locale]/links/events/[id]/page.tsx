@@ -96,8 +96,8 @@ export default function EventDetailPage() {
           이하 카드는 "공유 → 신청 현황 → 유입 분석 → 관리" 순서의 운영 도구. */}
       <header>
         {justCreated && event.links[0]?.shortCode ? (
-          <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 py-2.5 pl-3.5 pr-2 dark:border-emerald-900 dark:bg-emerald-950/40">
-            <p className="flex min-w-0 items-center gap-2 text-[13px] font-medium text-emerald-900 dark:text-emerald-200">
+          <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50 py-2.5 pl-3.5 pr-2 dark:border-accent-900 dark:bg-accent-950/40">
+            <p className="flex min-w-0 items-center gap-2 text-[13px] font-medium text-accent-900 dark:text-accent-200">
               <PartyPopper className="h-4 w-4 shrink-0" />
               <span className="truncate">
                 {t("createdBanner")}{" "}
@@ -113,7 +113,7 @@ export default function EventDetailPage() {
                 setHeroCopied(true);
                 setTimeout(() => setHeroCopied(false), 2000);
               }}
-              className="flex h-8 shrink-0 items-center gap-1.5 rounded-lg bg-emerald-600 px-3 text-[12px] font-semibold text-white transition-colors hover:bg-emerald-500"
+              className="flex h-8 shrink-0 items-center gap-1.5 rounded-full bg-accent-600 px-3.5 text-[12px] font-semibold text-white transition-colors hover:bg-accent-500"
             >
               {heroCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {heroCopied ? t("heroCopied") : t("heroCopy")}
@@ -165,7 +165,7 @@ export default function EventDetailPage() {
       {analytics ? <AnalyticsPanel analytics={analytics} /> : null}
 
       <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
-        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
+        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
           {t("manageTitle")}
         </h2>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -206,7 +206,7 @@ function StatusBadge({ status }: { status: MyEvent["status"] }) {
   const t = useTranslations("events.status");
   const cls =
     status === "OPEN"
-      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300"
+      ? "bg-accent-100 text-accent-700 dark:bg-accent-900/60 dark:text-accent-300"
       : status === "CLOSED"
         ? "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
         : "bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-300";

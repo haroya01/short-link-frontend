@@ -183,7 +183,7 @@ export function LocationField({
                 `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(text.trim())}`,
               )
             }
-            className="self-start text-[12px] font-medium text-emerald-700 underline underline-offset-2 hover:text-emerald-600 dark:text-emerald-400"
+            className="self-start text-[12px] font-medium text-accent-700 underline underline-offset-2 hover:text-accent-600 dark:text-accent-400"
           >
             {t("useGoogleMaps", { place: text.trim() })}
           </button>

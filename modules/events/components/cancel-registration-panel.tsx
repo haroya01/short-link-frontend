@@ -58,7 +58,7 @@ export function CancelRegistrationPanel({
         type="button"
         onClick={cancel}
         disabled={phase === "busy"}
-        className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-red-600 text-base font-semibold text-white transition-colors hover:bg-red-500 disabled:opacity-50"
+        className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-red-600 text-base font-semibold text-white transition-colors hover:bg-red-500 disabled:opacity-50"
       >
         {phase === "busy" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {t("cancelConfirm")}

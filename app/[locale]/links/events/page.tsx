@@ -39,7 +39,7 @@ export default function EventsListPage() {
         <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50">{t("title")}</h1>
         <Link
           href="/events/new"
-          className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-emerald-700"
+          className="flex items-center gap-1.5 rounded-full bg-accent-600 px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-accent-700"
         >
           <CalendarPlus className="h-4 w-4" />
           {t("new")}
@@ -90,7 +90,7 @@ function StatusBadge({ status }: { status: MyEvent["status"] }) {
   const t = useTranslations("events.status");
   if (status === "OPEN") {
     return (
-      <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300">
+      <span className="shrink-0 rounded-full bg-accent-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-700 dark:bg-accent-900/60 dark:text-accent-300">
         {t("open")}
       </span>
     );

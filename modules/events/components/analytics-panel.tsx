@@ -10,7 +10,7 @@ export function AnalyticsPanel({ analytics }: { analytics: EventAnalytics }) {
 
   return (
     <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
-      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
+      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
         {t("title")}
       </h2>
 
@@ -92,7 +92,7 @@ function BucketBars({
                 <span
                   className={
                     accent
-                      ? "block h-full rounded-full bg-emerald-600"
+                      ? "block h-full rounded-full bg-accent-600"
                       : "block h-full rounded-full bg-slate-300 dark:bg-slate-600"
                   }
                   style={{ width: `${Math.round((bucket.count / max) * 100)}%` }}

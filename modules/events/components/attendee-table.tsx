@@ -29,7 +29,7 @@ export function AttendeeTable({
   return (
     <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
       <div className="flex items-center justify-between">
-        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
+        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
           {t("title", { count: attendees.filter((a) => a.status === "CONFIRMED").length })}
         </h2>
         {attendees.length > 0 ? (
