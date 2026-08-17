@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BarChart3, Contact, Link2, Megaphone } from "lucide-react";
+import { BarChart3, CalendarDays, Contact, Link2, Megaphone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -12,7 +12,7 @@ const TAB =
 
 /**
  * Mobile-only bottom tab bar for the kurl (links) product. The tabs map to kurl's own features —
- * 단축(shortener) · 캠페인(QR) · 통계(short-link dashboard) · 프로필(online business card) — so it reads
+ * 단축(shortener) · 캠페인(QR) · 모집(events) · 통계(short-link dashboard) · 프로필(online business card) — so it reads
  * as a distinct app from the blog (only the session, via the `.kurl.me` refresh cookie, is shared).
  * Account + the blog↔kurl switch live in the top Nav on mobile, not here. All tabs are locale-aware
  * same-origin Links (NOT linksHref): an absolute apex URL without the locale, e.g.
@@ -59,6 +59,12 @@ export function LinksBottomNav() {
       label: t("campaigns"),
       Icon: Megaphone,
       active: pathname.startsWith("/campaigns") || pathname.startsWith("/qr-campaigns"),
+    },
+    {
+      href: "/events",
+      label: t("events"),
+      Icon: CalendarDays,
+      active: pathname.startsWith("/events"),
     },
     {
       href: "/dashboard",
