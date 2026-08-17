@@ -1098,7 +1098,7 @@
       "expiringReview": "延長または削除を検討",
       "expiringClear": "期限切れ間近はありません",
       "topLink": "トップリンク",
-      "vsMedian": "🔥 自分の中央値の ×{multiple}",
+      "weekDelta": "直近7日 +{count}",
       "topLinkEmpty": "まだ比較できるリンクがありません",
       "clicks": "クリック",
       "copy": "コピー",

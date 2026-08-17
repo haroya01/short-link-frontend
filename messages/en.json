@@ -1098,7 +1098,7 @@
       "expiringReview": "Extend or clean up soon",
       "expiringClear": "No urgent expirations",
       "topLink": "Top link",
-      "vsMedian": "🔥 {multiple}× your median",
+      "weekDelta": "+{count} last 7 days",
       "topLinkEmpty": "No links to compare yet",
       "clicks": "clicks",
       "copy": "Copy",
