@@ -1974,7 +1974,7 @@
     },
     "blocked": {
       "title": "Tên miền bị chặn",
-      "subtitle": "Tên miền trong danh sách này bị từ chối khi rút gọn mới, và mọi liên kết hiện có — kể cả tên miền phụ — lập tức hiển thị trang chặn.",
+      "subtitle": "Tên miền trong danh sách này bị từ chối khi rút gọn mới, và mọi liên kết hiện có — kể cả tên miền phụ — lập tức hiển thị trang chặn. Khi chặn, chủ sở hữu liên kết bị ảnh hưởng sẽ nhận cảnh cáo tự động.",
       "addPlaceholder": "spam.example.com",
       "reasonPlaceholder": "Lý do (tùy chọn)",
       "add": "Chặn",
@@ -1986,21 +1986,25 @@
       },
       "unblock": "Bỏ chặn",
       "unblockConfirm": "Bỏ chặn {domain}? Việc rút gọn và chuyển hướng tới tên miền này sẽ được cho phép trở lại.",
-      "addFailed": "Yêu cầu thất bại"
+      "addFailed": "Yêu cầu thất bại",
+      "warned": "Đã gửi cảnh cáo tới {count} chủ sở hữu liên kết bằng ngôn ngữ của họ.",
+      "warnedNone": "{domain} — không có liên kết thuộc tài khoản nào nên không gửi cảnh cáo."
     },
     "enforce": {
       "title": "Xử lý vi phạm",
       "subtitle": "Hành động đối với liên kết vi phạm điều khoản dịch vụ.",
       "blockDomain": "Chặn {domain}",
       "domainBlocked": "Đã chặn {domain}",
-      "blockConfirm": "Chặn {domain}? Mọi liên kết tới tên miền này (kể cả liên kết hiện có) sẽ chết ngay và việc rút gọn mới bị từ chối.",
+      "blockConfirm": "Chặn {domain}? Mọi liên kết tới tên miền này (kể cả liên kết hiện có) sẽ chết ngay và việc rút gọn mới bị từ chối. Chủ sở hữu liên kết sẽ được cảnh cáo tự động.",
       "warnTitle": "Gửi cảnh cáo cho chủ sở hữu",
       "warnHint": "Lưu vào hộp thông báo và đẩy push bất kể cài đặt thông báo.",
       "warnPlaceholder": "VD: Quảng bá trang web bất hợp pháp là vi phạm điều khoản. Liên kết đã bị chặn; tái phạm sẽ khiến tài khoản bị đình chỉ.",
       "warnSend": "Gửi cảnh cáo",
       "warnSent": "Đã gửi cảnh cáo.",
       "warnAnonymous": "Liên kết được tạo ẩn danh — không có tài khoản để cảnh cáo. Hãy dùng chặn tên miền.",
-      "failed": "Yêu cầu thất bại"
+      "failed": "Yêu cầu thất bại",
+      "blockShort": "Chặn",
+      "blockedShort": "Đã chặn"
     }
   },
   "common": {

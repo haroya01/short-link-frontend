@@ -4,23 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { MessageSquareWarning, ShieldBan, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { blockDomain, getBlockedDomains, warnUser } from "@/lib/api";
+import { hostOf, isDomainCovered } from "@/lib/blocked-domains";
 import { Section } from "@/components/common/section";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import type { AdminLinkRow } from "@/types";
-
-function hostOf(url: string): string | null {
-  try {
-    return new URL(url).hostname.toLowerCase();
-  } catch {
-    return null;
-  }
-}
-
-/** Same parent-domain walk the backend uses: a host is blocked by itself or any parent entry. */
-function isCovered(host: string, blocked: string[]): boolean {
-  return blocked.some((d) => host === d || host.endsWith(`.${d}`));
-}
 
 /**
  * Enforcement actions for one link — block its destination domain (kills every link to it,
@@ -32,6 +20,7 @@ export function EnforcementCard({ meta }: { meta: AdminLinkRow }) {
 
   const [blocked, setBlocked] = useState<boolean | null>(null);
   const [blocking, setBlocking] = useState(false);
+  const [warnedOwners, setWarnedOwners] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -42,7 +31,7 @@ export function EnforcementCard({ meta }: { meta: AdminLinkRow }) {
     let cancelled = false;
     getBlockedDomains()
       .then((list) => {
-        if (!cancelled) setBlocked(isCovered(host, list.map((d) => d.domain)));
+        if (!cancelled) setBlocked(isDomainCovered(host, list.map((d) => d.domain)));
       })
       .catch(() => {
         if (!cancelled) setBlocked(false);
@@ -58,8 +47,9 @@ export function EnforcementCard({ meta }: { meta: AdminLinkRow }) {
     setBlocking(true);
     setError(null);
     try {
-      await blockDomain(host, `/${meta.shortCode}`);
+      const res = await blockDomain(host, `/${meta.shortCode}`);
       setBlocked(true);
+      setWarnedOwners(res.warnedOwners ?? 0);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("enforce.failed"));
     } finally {
@@ -105,6 +95,11 @@ export function EnforcementCard({ meta }: { meta: AdminLinkRow }) {
               </Button>
             )
           ) : null}
+          {warnedOwners != null && warnedOwners > 0 && (
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              {t("blocked.warned", { count: warnedOwners })}
+            </span>
+          )}
         </div>
 
         <div className="space-y-2">

@@ -26,6 +26,7 @@ export function BlockedDomainManager() {
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [lastWarned, setLastWarned] = useState<{ domain: string; count: number } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -52,6 +53,7 @@ export function BlockedDomainManager() {
     try {
       const added = await blockDomain(value, reason.trim() || undefined);
       setItems((prev) => [added, ...prev.filter((d) => d.domain !== added.domain)]);
+      setLastWarned({ domain: added.domain, count: added.warnedOwners ?? 0 });
       setDomain("");
       setReason("");
     } catch (e) {
@@ -98,6 +100,13 @@ export function BlockedDomainManager() {
 
         {actionError && (
           <p className="text-sm text-red-600 dark:text-red-400">{actionError}</p>
+        )}
+        {lastWarned && !actionError && (
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            {lastWarned.count > 0
+              ? t("blocked.warned", { count: lastWarned.count })
+              : t("blocked.warnedNone", { domain: lastWarned.domain })}
+          </p>
         )}
 
         {error ? (

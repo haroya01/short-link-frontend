@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { notFound, useSearchParams } from "next/navigation";
-import { Lock, Search, X } from "lucide-react";
+import { Lock, Search, ShieldBan, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { ApiError, getAdminLinks } from "@/lib/api";
+import { ApiError, blockDomain, getAdminLinks, getBlockedDomains } from "@/lib/api";
+import { hostOf, isDomainCovered } from "@/lib/blocked-domains";
 import { PageControls } from "@/components/admin/page-controls";
 import { ErrorState } from "@/components/common/error-state";
 import { Section } from "@/components/common/section";
@@ -47,6 +48,37 @@ export function LinkBrowser() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
+  const [blockedDomains, setBlockedDomains] = useState<string[] | null>(null);
+  const [quickNote, setQuickNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    getBlockedDomains()
+      .then((list) => {
+        if (!cancelled) setBlockedDomains(list.map((d) => d.domain));
+      })
+      .catch(() => {
+        if (!cancelled) setBlockedDomains([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function quickBlock(host: string, shortCode: string) {
+    if (!window.confirm(t("enforce.blockConfirm", { domain: host }))) return;
+    try {
+      const res = await blockDomain(host, `/${shortCode}`);
+      setBlockedDomains((prev) => (prev ? [...prev, res.domain] : [res.domain]));
+      setQuickNote(
+        (res.warnedOwners ?? 0) > 0
+          ? t("blocked.warned", { count: res.warnedOwners ?? 0 })
+          : t("blocked.warnedNone", { domain: res.domain }),
+      );
+    } catch {
+      setQuickNote(t("enforce.failed"));
+    }
+  }
 
   // A change in the owner filter is a different result set — restart at the first page.
   useEffect(() => {
@@ -137,6 +169,10 @@ export function LinkBrowser() {
           )}
         </div>
 
+        {quickNote && (
+          <p className="text-xs text-slate-500 dark:text-slate-400">{quickNote}</p>
+        )}
+
         {error ? (
           <ErrorState message={error} onRetry={() => setTick((n) => n + 1)} />
         ) : initialLoading ? (
@@ -161,6 +197,7 @@ export function LinkBrowser() {
                     <TH className="text-right">{t("browse.links.col.clicks")}</TH>
                     <TH>{t("browse.links.col.status")}</TH>
                     <TH>{t("browse.links.col.created")}</TH>
+                    <TH />
                   </TR>
                 </THead>
                 <TBody>
@@ -221,6 +258,14 @@ export function LinkBrowser() {
                       <TD className="whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">
                         {formatDate(l.createdAt)}
                       </TD>
+                      <TD className="text-right">
+                        <QuickBlockCell
+                          url={l.originalUrl}
+                          shortCode={l.shortCode}
+                          blockedDomains={blockedDomains}
+                          onBlock={quickBlock}
+                        />
+                      </TD>
                     </TR>
                   ))}
                 </TBody>
@@ -233,5 +278,40 @@ export function LinkBrowser() {
         )}
       </div>
     </Section>
+  );
+}
+
+/** Per-row destination-domain kill switch — badge when already covered, red pill button otherwise. */
+function QuickBlockCell({
+  url,
+  shortCode,
+  blockedDomains,
+  onBlock,
+}: {
+  url: string;
+  shortCode: string;
+  blockedDomains: string[] | null;
+  onBlock: (host: string, shortCode: string) => Promise<void>;
+}) {
+  const t = useTranslations("admin");
+  const host = hostOf(url);
+  if (!host || !blockedDomains) return null;
+  if (isDomainCovered(host, blockedDomains)) {
+    return (
+      <span className="inline-flex rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-500/10 dark:text-red-300">
+        {t("enforce.blockedShort")}
+      </span>
+    );
+  }
+  return (
+    <button
+      type="button"
+      onClick={() => void onBlock(host, shortCode)}
+      title={t("enforce.blockDomain", { domain: host })}
+      className="focus-ring inline-flex items-center gap-1 rounded-full border border-red-200 px-2 py-0.5 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10"
+    >
+      <ShieldBan className="h-3.5 w-3.5" />
+      {t("enforce.blockShort")}
+    </button>
   );
 }

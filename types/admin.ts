@@ -218,6 +218,8 @@ export type BlockedDomain = {
   reason: string | null;
   blockedByUserId: number | null;
   blockedAt: string;
+  /** Owners auto-warned by this block — present only on the block response, not on list rows. */
+  warnedOwners?: number;
 };
 
 export type AdminLinkSort = "recent" | "clicks";

@@ -1974,7 +1974,7 @@
     },
     "blocked": {
       "title": "차단 도메인",
-      "subtitle": "여기 오른 도메인은 새 단축이 거절되고, 이미 만든 링크도 서브도메인까지 즉시 차단 페이지로 바뀝니다.",
+      "subtitle": "여기 오른 도메인은 새 단축이 거절되고, 이미 만든 링크도 서브도메인까지 즉시 차단 페이지로 바뀝니다. 차단 시 링크 소유자에게 자동으로 경고 알림이 발송됩니다.",
       "addPlaceholder": "spam.example.com",
       "reasonPlaceholder": "사유 (선택)",
       "add": "차단",
@@ -1986,21 +1986,25 @@
       },
       "unblock": "해제",
       "unblockConfirm": "{domain} 차단을 해제할까요? 이 도메인으로의 단축과 리다이렉트가 다시 허용됩니다.",
-      "addFailed": "요청에 실패했어요"
+      "addFailed": "요청에 실패했어요",
+      "warned": "링크 소유자 {count}명에게 각자의 언어로 경고 알림을 보냈어요.",
+      "warnedNone": "{domain} — 계정 소유 링크가 없어 보낸 경고는 없어요."
     },
     "enforce": {
       "title": "악용 대응",
       "subtitle": "이용약관을 위반한 링크에 대한 조치예요.",
       "blockDomain": "{domain} 차단",
       "domainBlocked": "{domain} 차단됨",
-      "blockConfirm": "{domain}을(를) 차단할까요? 이 도메인으로 가는 모든 링크(기존 포함)가 즉시 죽고 새 단축도 거절됩니다.",
+      "blockConfirm": "{domain}을(를) 차단할까요? 이 도메인으로 가는 모든 링크(기존 포함)가 즉시 죽고 새 단축도 거절됩니다. 링크 소유자에게는 자동으로 경고 알림이 발송됩니다.",
       "warnTitle": "소유자에게 경고 보내기",
       "warnHint": "링크 알림 인박스에 남고, 알림 설정과 무관하게 푸시돼요.",
       "warnPlaceholder": "예: 불법 사이트 홍보 링크는 이용약관 위반입니다. 해당 링크는 차단되었으며, 반복 시 계정이 정지됩니다.",
       "warnSend": "경고 전송",
       "warnSent": "경고를 보냈어요.",
       "warnAnonymous": "익명으로 만든 링크라 경고를 보낼 계정이 없어요. 도메인 차단으로 대응하세요.",
-      "failed": "요청에 실패했어요"
+      "failed": "요청에 실패했어요",
+      "blockShort": "차단",
+      "blockedShort": "차단됨"
     }
   },
   "common": {
