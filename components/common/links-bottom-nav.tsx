@@ -80,8 +80,11 @@ export function LinksBottomNav() {
   return (
     <nav
       className={cn(
-        "glass-chrome fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200/60 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
-        hidden && "translate-y-full",
+        /* 상단 Nav 와 같은 플로팅 글래스 캡슐(inset-x-3·rounded-2xl·보더·섀도우 동일 토큰).
+           safe-area 는 내부 패딩이 아니라 bottom 오프셋이 흡수 — 높이 계산은 globals.css
+           --bottom-nav-h 와 짝. 숨김은 100% 로는 오프셋+섀도우가 남아 200% 로 내린다. */
+        "glass-chrome fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
+        hidden && "translate-y-[200%]",
       )}
     >
       {tabs.map(({ href, label, Icon, active }) => (
