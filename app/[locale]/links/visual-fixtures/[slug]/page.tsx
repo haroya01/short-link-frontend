@@ -1,7 +1,10 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ContactCardEntry } from "@/app/[locale]/u/[username]/_components/contact-card-entry";
 import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import { Avatar } from "@/modules/blog/components/avatar";
+import { PublicEventPage } from "@/modules/events/components/public-event-page";
+import type { PublicEvent } from "@/modules/events/api/events";
 import type { ContactCardConfig } from "@/types";
 
 /**
@@ -44,6 +47,39 @@ const FIXTURES: Record<string, () => React.ReactNode> = {
     <ContactCardFixture config={{ ...SAMPLE_CONTACT_CARD, palette: "midnight" }} />
   ),
   "blog-avatars": () => <AvatarFixture />,
+  // useSearchParams(취소 토큰) 때문에 force-static 빌드에서 Suspense 경계가 필수.
+  "public-event": () => (
+    <Suspense>
+      <PublicEventPage initialEvent={SAMPLE_EVENT} />
+    </Suspense>
+  ),
+};
+
+const SAMPLE_EVENT: PublicEvent = {
+  slug: "fixture-meetup",
+  title: "여름밤 링크 밋업",
+  descriptionMd:
+    "가볍게 모여 **링크와 분석** 이야기를 나눠요.\n\n- 19:00 문 열림\n- 19:30 라이트닝 토크\n- 20:30 자유 네트워킹",
+  coverImageUrl: null,
+  startsAt: "2026-08-21T10:00:00Z",
+  endsAt: "2026-08-21T13:00:00Z",
+  timezone: "Asia/Seoul",
+  locationText: "성수 카페 어딘가",
+  locationUrl: "https://maps.google.com/?q=seongsu",
+  onlineUrl: null,
+  capacity: 30,
+  spotsLeft: 23,
+  closeAt: null,
+  contactField: "EMAIL",
+  status: "OPEN",
+  acceptingRegistrations: true,
+  attending: 7,
+  organizerName: "도현 김",
+  organizerAvatarUrl: null,
+  questions: [
+    { id: 1, type: "SHORT_TEXT", label: "한 줄 소개", options: [], required: true },
+    { id: 2, type: "SINGLE_CHOICE", label: "저녁 식사", options: ["참여", "불참"], required: false },
+  ],
 };
 
 export const dynamic = "force-static";

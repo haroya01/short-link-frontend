@@ -251,7 +251,7 @@ export function EventForm({
       <button
         type="submit"
         disabled={busy || !form.title.trim()}
-        className="flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-600 text-[14px] font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
+        className="flex h-11 items-center justify-center gap-2 rounded-full bg-accent-600 text-[14px] font-semibold text-white transition-colors hover:bg-accent-700 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
         {event ? t("save") : t("publish")}
@@ -285,7 +285,7 @@ function DescriptionField({
       />
       {value.trim() ? (
         <div className="rounded-lg border border-slate-200 px-3.5 py-3 dark:border-slate-700">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
             {t("descPreview")}
           </p>
           <div className="prose-text-block text-slate-800 dark:text-slate-200">
@@ -302,7 +302,7 @@ function Section({ title, children }: { title?: string; children: React.ReactNod
   return (
     <section className="flex flex-col gap-4 border-t border-slate-200 pt-6 first:border-t-0 first:pt-0 dark:border-slate-800">
       {title ? (
-        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
+        <h2 className="text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
           {title}
         </h2>
       ) : null}
@@ -327,7 +327,7 @@ function CollapsibleSection({
       open={defaultOpen}
       className="group border-t border-slate-200 pt-1 dark:border-slate-800"
     >
-      <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500 [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500 [&::-webkit-details-marker]:hidden">
         {title}
         <span className="flex items-center gap-1.5 text-[11px] font-medium normal-case tracking-normal text-slate-400 dark:text-slate-500">
           {t("optional")}

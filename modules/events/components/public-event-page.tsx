@@ -133,7 +133,7 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
           <button
             type="button"
             onClick={scrollToForm}
-            className="mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-emerald-600 text-base font-semibold text-white transition-colors hover:bg-emerald-700"
+            className="mt-6 flex h-12 w-full items-center justify-center rounded-full bg-accent-600 text-base font-semibold text-white transition-colors hover:bg-accent-700"
           >
             {t("cta")}
           </button>
@@ -193,7 +193,7 @@ function attendanceLine(
 function MetaRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex items-baseline gap-4 border-b border-slate-100 py-3 dark:border-slate-800/60">
-      <dt className="w-14 shrink-0 text-[11px] font-semibold uppercase tracking-widest text-emerald-700 dark:text-emerald-500">
+      <dt className="w-14 shrink-0 text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">
         {label}
       </dt>
       <dd className="min-w-0 text-[15px] leading-relaxed text-slate-800 dark:text-slate-200">
