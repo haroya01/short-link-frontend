@@ -1098,7 +1098,7 @@
       "expiringReview": "Gia hạn hoặc dọn dẹp sớm",
       "expiringClear": "Không có hết hạn gấp",
       "topLink": "Liên kết hàng đầu",
-      "vsMedian": "🔥 ×{multiple} trung vị của bạn",
+      "weekDelta": "+{count} trong 7 ngày qua",
       "topLinkEmpty": "Chưa có liên kết để so sánh",
       "clicks": "lượt nhấp",
       "copy": "Sao chép",

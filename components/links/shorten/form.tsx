@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { ArrowRight, ChevronDown, Link2, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,8 +20,8 @@ type Props = {
   ready: boolean;
   onShortened: (results: ShortenedItem[]) => void;
   /**
-   * 랜딩 폴드의 카드-폼 변형 — 바깥 카드(page.tsx)가 보더·포커스 링을 소유하므로
-   * 메인 입력은 무테로 키우고, 버튼은 카드 라운드에 맞춘다. 고급 옵션 필드는 무관.
+   * 랜딩 폴드의 캡슐 폼 변형 — 보더·포커스 링·에러 색은 캡슐 컨테이너가 소유하고
+   * 내부 입력은 무테. 고급 옵션 필드는 무관.
    */
   hero?: boolean;
   /** 답 줄 상태에서 "다른 주소도 줄이기"로 돌아온 빈 줄은 바로 받아쓸 수 있게 포커스. */
@@ -116,54 +116,53 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       {hero ? (
-        /* 히어로 = 카드가 아니라 진짜 "한 줄" — 헤드라인(단축은 한 줄)과 같은 문장. 밑줄이
-           입력의 전부고, 포커스가 오면 밑줄만 초록으로 응답한다(초록=마커라는 kurl 문법).
-           버튼도 상자 없이 밑줄 위의 초록 글자 — ↵ 는 엔터로 끝난다는 힌트.
-           에러도 같은 줄의 문법 — 밑줄이 빨강으로 갈리고 메시지가 줄 바로 밑에 앉는다.
-           (다시 포커스하면 초록이 이겨 "고치는 중"이 보인다. 넛지는 메시지 행에만 —
-           입력 줄을 key 로 리마운트하면 타이핑 중 포커스가 날아간다.) */
+        /* 에러 중엔 빨강이 포커스(초록 링)보다 세다 — 제출 직후 포커스가 버튼(캡슐 안)에 남아
+           focus-within 초록이 이기면 빨간 메시지와 신호가 엇갈린다. 타이핑을 시작하면
+           onChange 가 에러를 걷어 초록 포커스로 자연 복귀. 캡슐을 key 로 리마운트하면
+           타이핑 중 포커스가 날아가므로 넛지는 메시지 행에만. */
         <div
           className={
-            "flex items-end gap-4 border-b-2 pb-2 transition-colors duration-200 " +
+            "flex flex-col gap-2 rounded-2xl border bg-white p-2 shadow-card transition-[border-color,box-shadow] duration-200 dark:bg-slate-900 sm:flex-row sm:items-center sm:gap-3 sm:rounded-full sm:py-2 sm:pl-5 sm:pr-2 " +
             (error
-              ? // 에러 중엔 빨강이 포커스보다 세다 — 제출 직후 포커스가 버튼(줄 안)에 남아
-                // focus-within 초록이 이기면 빨간 메시지와 신호가 엇갈린다. 타이핑을 시작하면
-                // onChange 가 에러를 걷어 초록 포커스로 자연 복귀("고치는 중").
-                "border-red-500 dark:border-red-400"
-              : "border-slate-900/80 focus-within:border-accent-600 dark:border-slate-100/80 dark:focus-within:border-accent-500")
+              ? "border-red-400 dark:border-red-500/70"
+              : "border-slate-200 focus-within:border-accent-500 focus-within:shadow-lift focus-within:ring-4 focus-within:ring-accent-500/10 dark:border-slate-800 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
           }
         >
-          <Input
-            ref={heroInputRef}
-            type="url"
-            inputMode="url"
-            autoFocus={heroAutoFocus}
-            value={url}
-            onChange={(e) => {
-              setUrl(e.target.value);
-              // 고치기 시작하면 에러는 소임을 다했다 — 빨간 줄을 들고 있지 않는다.
-              if (error) setError(null);
-            }}
-            onPaste={handleHeroPaste}
-            placeholder={t("placeholder")}
-            disabled={busy}
-            aria-invalid={!!error}
-            className="h-11 flex-1 rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-400 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-500 sm:h-12 sm:text-[19px]"
-          />
+          <div className="flex min-w-0 flex-1 items-center gap-2.5 px-2 sm:px-0">
+            <Link2
+              aria-hidden
+              className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-500"
+            />
+            <Input
+              ref={heroInputRef}
+              type="url"
+              inputMode="url"
+              autoFocus={heroAutoFocus}
+              value={url}
+              onChange={(e) => {
+                setUrl(e.target.value);
+                if (error) setError(null);
+              }}
+              onPaste={handleHeroPaste}
+              placeholder={t("placeholder")}
+              disabled={busy}
+              aria-invalid={!!error}
+              /* 16px 미만이면 iOS 사파리가 포커스 시 강제 줌 — 모바일은 16px 고정. */
+              className="h-10 flex-1 rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-400 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-500 sm:h-11 sm:text-[17px]"
+            />
+          </div>
           <button
             type="submit"
             disabled={busy}
             aria-label={t("submit")}
-            className="focus-ring mb-1.5 inline-flex shrink-0 items-baseline gap-1.5 text-[15px] font-extrabold tracking-tight text-accent-700 transition-colors hover:text-accent-800 disabled:opacity-60 dark:text-accent-400 dark:hover:text-accent-300 sm:text-base"
+            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent-600 px-5 text-[15px] font-bold text-white transition-[background-color,transform] duration-200 hover:bg-accent-700 active:scale-[0.98] disabled:opacity-60 dark:bg-accent-600 dark:hover:bg-accent-500 sm:h-10 sm:rounded-full"
           >
             {busy ? (
-              <Loader2 className="h-4 w-4 animate-spin self-center" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <>
                 {t("heroSubmit")}
-                <span aria-hidden className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">
-                  ↵
-                </span>
+                <ArrowRight aria-hidden className="h-4 w-4" />
               </>
             )}
           </button>
