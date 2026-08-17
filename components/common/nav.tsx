@@ -155,7 +155,7 @@ export function Nav() {
                 className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               />
               <Link href={loginHrefFor(pathname)}>
-                <Button size="sm" variant="default">
+                <Button size="sm" variant="default" className="rounded-full">
                   {t("login")}
                 </Button>
               </Link>
@@ -186,7 +186,7 @@ export function Nav() {
                 className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               />
               <Link href={loginHrefFor(pathname)}>
-                <Button size="sm" variant="default">
+                <Button size="sm" variant="default" className="rounded-full">
                   {t("login")}
                 </Button>
               </Link>

@@ -122,47 +122,47 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
            타이핑 중 포커스가 날아가므로 넛지는 메시지 행에만. */
         <div
           className={
-            "flex flex-col gap-2 rounded-2xl border bg-white p-2 shadow-card transition-[border-color,box-shadow] duration-200 dark:bg-slate-900 sm:flex-row sm:items-center sm:gap-3 sm:rounded-full sm:py-2 sm:pl-5 sm:pr-2 " +
+            "flex items-center gap-2 rounded-full border bg-white py-1.5 pl-4 pr-1.5 shadow-card transition-[border-color,box-shadow] duration-200 dark:bg-slate-900 sm:gap-3 sm:py-2 sm:pl-5 sm:pr-2 " +
             (error
               ? "border-red-400 dark:border-red-500/70"
               : "border-slate-200 focus-within:border-accent-500 focus-within:shadow-lift focus-within:ring-4 focus-within:ring-accent-500/10 dark:border-slate-800 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
           }
         >
-          <div className="flex min-w-0 flex-1 items-center gap-2.5 px-2 sm:px-0">
-            <Link2
-              aria-hidden
-              className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-500"
-            />
-            <Input
-              ref={heroInputRef}
-              type="url"
-              inputMode="url"
-              autoFocus={heroAutoFocus}
-              value={url}
-              onChange={(e) => {
-                setUrl(e.target.value);
-                if (error) setError(null);
-              }}
-              onPaste={handleHeroPaste}
-              placeholder={t("placeholder")}
-              disabled={busy}
-              aria-invalid={!!error}
-              /* 16px 미만이면 iOS 사파리가 포커스 시 강제 줌 — 모바일은 16px 고정. */
-              className="h-10 flex-1 rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-400 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-500 sm:h-11 sm:text-[17px]"
-            />
-          </div>
+          <Link2
+            aria-hidden
+            className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-500"
+          />
+          <Input
+            ref={heroInputRef}
+            type="url"
+            inputMode="url"
+            autoFocus={heroAutoFocus}
+            value={url}
+            onChange={(e) => {
+              setUrl(e.target.value);
+              if (error) setError(null);
+            }}
+            onPaste={handleHeroPaste}
+            placeholder={t("placeholder")}
+            disabled={busy}
+            aria-invalid={!!error}
+            /* 16px 미만이면 iOS 사파리가 포커스 시 강제 줌 — 모바일은 16px 고정.
+               truncate: 좁은 폭에선 placeholder 가 원형 버튼에 닿기 전에 …로 접힌다. */
+            className="h-11 flex-1 truncate rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-400 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-500 sm:text-[17px]"
+          />
+          {/* 모바일=원형 화살표(44px 탭 타깃), sm+=라벨 있는 필. 라벨은 aria-label 이 대신 든다. */}
           <button
             type="submit"
             disabled={busy}
             aria-label={t("submit")}
-            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent-600 px-5 text-[15px] font-bold text-white transition-[background-color,transform] duration-200 hover:bg-accent-700 active:scale-[0.98] disabled:opacity-60 dark:bg-accent-600 dark:hover:bg-accent-500 sm:h-10 sm:rounded-full"
+            className="focus-ring inline-flex h-11 w-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-accent-600 text-[15px] font-bold text-white transition-[background-color,transform] duration-200 hover:bg-accent-700 active:scale-[0.98] disabled:opacity-60 dark:hover:bg-accent-500 sm:h-10 sm:w-auto sm:px-5"
           >
             {busy ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <>
-                {t("heroSubmit")}
-                <ArrowRight aria-hidden className="h-4 w-4" />
+                <span className="hidden sm:inline">{t("heroSubmit")}</span>
+                <ArrowRight aria-hidden className="h-5 w-5 sm:h-4 sm:w-4" />
               </>
             )}
           </button>
