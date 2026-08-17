@@ -26,11 +26,71 @@ export function mockLinksResponse(path: string, method: string): unknown | undef
   if (verb !== "GET") return undefined;
 
   switch (p) {
-    // Dashboard — the viewer's links (paged) + their tags.
+    // Dashboard — the viewer's links (paged) + their tags. 빈 배열이면 온보딩만 보여
+    // 목록·정렬·행 레이아웃 QA 가 불가능하다 — 길이·클릭수·태그가 갈리는 표본을 준다.
     case "/api/v1/links/me":
-      return { items: [], nextCursor: null, hasMore: false };
+      return {
+        items: [
+          {
+            shortCode: "spr1ng",
+            shortUrl: "https://kurl.me/spr1ng",
+            originalUrl: "https://blog.example.com/2026/08/spring-sale-landing?utm_source=instagram&utm_campaign=aug",
+            createdAt: "2026-08-01T09:00:00Z",
+            expiresAt: null,
+            clickCount: 1284,
+            tags: ["promo", "instagram"],
+            clicksLast7d: [102, 130, 121, 168, 190, 240, 333],
+          },
+          {
+            shortCode: "d0cs",
+            shortUrl: "https://kurl.me/d0cs",
+            originalUrl: "https://docs.example.com/handbook",
+            createdAt: "2026-07-21T05:30:00Z",
+            expiresAt: null,
+            clickCount: 342,
+            tags: [],
+            clicksLast7d: [30, 41, 22, 51, 44, 63, 48],
+          },
+          {
+            shortCode: "ev3nt",
+            shortUrl: "https://kurl.me/ev3nt",
+            originalUrl: "https://event.example.com/summer-meetup/2026/register",
+            createdAt: "2026-08-10T12:00:00Z",
+            expiresAt: "2026-08-30T15:00:00Z",
+            clickCount: 58,
+            tags: ["offline"],
+            clicksLast7d: [0, 2, 6, 9, 14, 12, 15],
+          },
+          {
+            shortCode: "r3sume",
+            shortUrl: "https://kurl.me/r3sume",
+            originalUrl: "https://drive.example.com/file/d/1a2b3c4d5e6f7g8h9i0j/view",
+            createdAt: "2026-06-02T01:00:00Z",
+            expiresAt: null,
+            clickCount: 7,
+            tags: [],
+            clicksLast7d: [1, 0, 2, 0, 1, 3, 0],
+          },
+          {
+            shortCode: "sh0p",
+            shortUrl: "https://kurl.me/sh0p",
+            originalUrl: "https://shop.example.com",
+            createdAt: "2026-05-11T11:00:00Z",
+            expiresAt: null,
+            clickCount: 0,
+            tags: ["promo"],
+            clicksLast7d: [0, 0, 0, 0, 0, 0, 0],
+          },
+        ],
+        nextCursor: null,
+        hasMore: false,
+      };
     case "/api/v1/tags":
-      return [];
+      return [
+        { id: 1, name: "promo", color: null, linkCount: 2, createdAt: "2026-05-11T11:00:00Z" },
+        { id: 2, name: "instagram", color: null, linkCount: 1, createdAt: "2026-06-01T11:00:00Z" },
+        { id: 3, name: "offline", color: null, linkCount: 1, createdAt: "2026-07-01T11:00:00Z" },
+      ];
     // Campaigns / CTAs / QR campaigns lists.
     case "/api/v1/campaigns":
       return [];

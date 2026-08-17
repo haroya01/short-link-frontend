@@ -47,9 +47,11 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }:
   }
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-      <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
+      {/* 모바일은 압축 — 아이브로·큰 코드·URL 칩·버튼 두 줄이 첫 폴드를 다 먹으면 정작
+          KPI(총 클릭)가 밀린다. 코드/URL 반 줄 + 액션 랩 한 덩어리로. sm+ 는 기존 위계 유지. */}
+      <div className="flex flex-col gap-3 px-4 py-3.5 sm:gap-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
         <div className="min-w-0">
-          <p className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+          <p className="hidden items-center gap-1.5 font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400 sm:flex">
             <Link2 className="h-3 w-3" />
             {shortCodeLabel}
           </p>
@@ -58,7 +60,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }:
             target="_blank"
             rel="noreferrer"
             aria-label={shortCodeLabel}
-            className="group mt-2 block truncate font-mono text-2xl font-bold leading-none tracking-tight text-slate-900 dark:text-slate-100 transition-colors hover:text-accent-700"
+            className="group block truncate font-mono text-xl font-bold leading-none tracking-tight text-slate-900 dark:text-slate-100 transition-colors hover:text-accent-700 sm:mt-2 sm:text-2xl"
           >
             /{data.shortCode}
           </a>
@@ -66,13 +68,13 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }:
             href={display}
             target="_blank"
             rel="noreferrer"
-            className="mt-2 inline-flex max-w-full items-center gap-1.5 truncate rounded-lg bg-slate-50 dark:bg-slate-800/50 px-2 py-1 text-[12px] text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300"
+            className="mt-1.5 inline-flex max-w-full items-center gap-1.5 truncate rounded-lg bg-slate-50 dark:bg-slate-800/50 px-2 py-1 text-[12px] text-slate-500 dark:text-slate-400 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-300 sm:mt-2"
           >
             <ExternalLink className="h-3 w-3 shrink-0" />
             <span className="truncate font-mono">{display}</span>
           </a>
         </div>
-        <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+        <div className="flex flex-wrap items-center gap-2">
           {!demo && <PublicStatsToggle shortCode={data.shortCode} />}
           <div className="flex items-center gap-1.5">
             <CopyButton variant="outline" size="sm" value={display} onCopied={onCopy} />

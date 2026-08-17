@@ -405,21 +405,24 @@ function MobileLinkCard({
   const weekClicks = last7d.reduce((sum, n) => sum + n, 0);
   const expiry = expiryState(item.expiresAt);
 
+  /* 2행 압축 카드 — 스파크·주간·날짜·액션이 각자 한 행씩 차지하던 4단 스택(카드당 ~210px)이
+     스크롤을 다 먹는다는 지적. 정체(코드·URL)+숫자(클릭·스파크)는 첫 행, 상태(만료·태그·날짜)+
+     액션은 둘째 행으로 — 정보 손실 없이 절반 높이. */
   return (
     <div
-      className="profile-fade rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-transform duration-200 ease-[var(--ease)] active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100"
+      className="profile-fade rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 py-3 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
       style={{ "--idx": Math.min(index, 8) } as CSSProperties}
     >
-      <div className="flex items-start gap-2.5">
+      <div className="flex items-center gap-2.5">
         <input
           type="checkbox"
           aria-label={t("bulkSelectRow", { code: item.shortCode })}
           checked={selected}
           onChange={onToggleSelect}
-          className="mt-2.5 h-3.5 w-3.5 shrink-0 cursor-pointer"
+          className="h-3.5 w-3.5 shrink-0 cursor-pointer"
         />
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-50 dark:bg-slate-800/50">
-          <Favicon url={item.originalUrl} size={18} />
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-slate-50 dark:bg-slate-800/50">
+          <Favicon url={item.originalUrl} size={16} />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
@@ -444,45 +447,34 @@ function MobileLinkCard({
             className="mt-0.5 flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
             title={item.originalUrl}
           >
-            <span className="truncate text-xs">{truncateMiddle(item.originalUrl, 40)}</span>
+            <span className="truncate text-xs">{truncateMiddle(item.originalUrl, 34)}</span>
             <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
           </a>
         </div>
         <div className="shrink-0 text-right">
-          <p className="font-mono text-2xl font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
+          <p className="font-mono text-lg font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
             {formatNumber(item.clickCount)}
           </p>
-          <p className="mt-1 text-[11px] leading-none text-slate-500 dark:text-slate-400">
-            {t("ops.clicks")}
-          </p>
+          {last7d.length > 0 && (
+            <div className="mt-1 flex items-center justify-end gap-1">
+              <Sparkline
+                values={last7d}
+                width={56}
+                height={16}
+                className="shrink-0 text-accent-600 dark:text-accent-400"
+              />
+              {weekClicks > 0 && (
+                <span className="text-[10px] font-medium tabular-nums text-accent-700 dark:text-accent-400">
+                  +{formatNumber(weekClicks)}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-      {last7d.length > 0 && (
-        <div className="mt-3 flex items-center gap-2.5">
-          <Sparkline
-            values={last7d}
-            width={96}
-            height={22}
-            className="shrink-0 text-accent-600 dark:text-accent-400"
-          />
-          <span
-            className={cn(
-              "text-[12px]",
-              weekClicks > 0
-                ? "font-medium text-accent-700 dark:text-accent-400"
-                : "text-slate-500 dark:text-slate-400",
-            )}
-          >
-            {t("card.week", {
-              count: weekClicks > 0 ? `+${formatNumber(weekClicks)}` : "0",
-            })}
-          </span>
-        </div>
-      )}
-
-      {(expiry?.kind === "expired" || expiry?.kind === "soon" || (item.tags?.length ?? 0) > 0) && (
-        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-1.5">
           {expiry?.kind === "expired" && (
             <span className="inline-flex items-center gap-1 rounded-full border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-700 dark:text-red-300">
               <Clock3 className="h-2.5 w-2.5" />
@@ -499,25 +491,22 @@ function MobileLinkCard({
             <TagFilterChip
               key={tag}
               tag={tag}
+              compact
               onClick={() => onTagClick?.(tag)}
             />
           ))}
+          <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">
+            {formatDate(item.createdAt)}
+            {expiry?.kind === "later" && item.expiresAt && (
+              <span className="ml-1.5">→ {formatDate(item.expiresAt)}</span>
+            )}
+          </span>
         </div>
-      )}
-
-      <div className="mt-3 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-1.5">
-        <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">
-          {formatDate(item.createdAt)}
-          {expiry?.kind === "later" && item.expiresAt && (
-            <span className="ml-2 text-slate-500 dark:text-slate-400">→ {formatDate(item.expiresAt)}</span>
-          )}
-        </span>
         <div className="inline-flex shrink-0 items-center gap-0.5">
           <FavoriteButton
             active={favorite}
             onToggle={onToggleFavorite}
             label={favorite ? t("favorite.remove") : t("favorite.add")}
-            className="h-9 w-9"
           />
           <Link href={`/stats/${item.shortCode}`}>
             <Button
@@ -525,6 +514,7 @@ function MobileLinkCard({
               size="icon"
               aria-label={t("actions.stats")}
               title={t("actions.stats")}
+              className="h-8 w-8"
             >
               <BarChart3 className="h-3.5 w-3.5" />
             </Button>
@@ -535,6 +525,7 @@ function MobileLinkCard({
             aria-label={t("actions.edit")}
             title={t("actions.edit")}
             onClick={onEdit}
+            className="h-8 w-8"
           >
             <Pencil className="h-3.5 w-3.5" />
           </Button>
@@ -544,7 +535,7 @@ function MobileLinkCard({
             aria-label={t("actions.delete")}
             title={t("actions.delete")}
             onClick={onDelete}
-            className="text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600"
+            className="h-8 w-8 text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
@@ -594,12 +585,24 @@ function FavoriteButton({
  * tokens (focus-ring, px-3 py-1.5, text-[13px] font-medium, accent hover) but rendered as a
  * <button> (not an anchor) because it applies a filter via onClick rather than navigating.
  */
-function TagFilterChip({ tag, onClick }: { tag: string; onClick: () => void }) {
+function TagFilterChip({
+  tag,
+  compact,
+  onClick,
+}: {
+  tag: string;
+  /** 압축 카드의 메타 행용 — 만료 칩과 같은 높이(text-[10px])로 줄인다. */
+  compact?: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="focus-ring inline-flex items-center rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+      className={cn(
+        "focus-ring inline-flex items-center rounded-full font-medium transition-colors bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400",
+        compact ? "px-2 py-0.5 text-[10px]" : "px-3 py-1.5 text-[13px]",
+      )}
     >
       {tag}
     </button>

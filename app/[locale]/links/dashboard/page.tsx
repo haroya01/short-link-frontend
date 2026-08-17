@@ -350,7 +350,8 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
 
   return (
     <section className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.72fr)]">
-      <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+      {/* 모바일도 2열 — 지표 4장이 세로로 한 장씩 쌓이면 목록이 두 폴드 밑으로 밀린다. */}
+      <div className="grid min-w-0 grid-cols-2 gap-3">
         <OpsMetric
           icon={MousePointerClick}
           label={t("totalClicks")}
@@ -505,17 +506,18 @@ function OpsMetric({
 }) {
   return (
     <div className="min-w-0 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      {/* 모바일 2열에선 아이콘·힌트를 접어 라벨+숫자만 — 타일 폭 ~170px 에서 줄바꿈 방지. */}
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-2.5">
-          <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-slate-50 dark:bg-slate-800/50 text-accent-700 dark:text-accent-400">
+          <span className="mt-0.5 hidden h-7 w-7 shrink-0 place-items-center rounded-lg bg-slate-50 dark:bg-slate-800/50 text-accent-700 dark:text-accent-400 sm:grid">
             <Icon className="h-3.5 w-3.5" />
           </span>
           <div className="min-w-0">
             <p className="text-[12px] font-semibold leading-snug text-slate-700 dark:text-slate-300">{label}</p>
-            <p className="mt-1 text-[11px] leading-snug text-slate-500 dark:text-slate-400">{hint}</p>
+            <p className="mt-1 hidden text-[11px] leading-snug text-slate-500 dark:text-slate-400 sm:block">{hint}</p>
           </div>
         </div>
-        <p className="shrink-0 font-mono text-2xl font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
+        <p className="shrink-0 font-mono text-xl font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100 sm:text-2xl">
           {value}
         </p>
       </div>

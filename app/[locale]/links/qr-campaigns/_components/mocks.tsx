@@ -63,7 +63,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
             {t("kpiStatus")}
           </span>
         </div>
-        <div className="mt-3 grid grid-cols-4 gap-1.5">
+        <div className="mt-3 grid grid-cols-4 divide-x divide-slate-100 dark:divide-slate-800">
           <KpiCellMini label={t("kpiDistributed")} value={mock.distributedValue} />
           <KpiCellMini label={t("kpiClicks")} value="?" muted />
           <KpiCellMini label={t("kpiPer100")} value="?" muted />
@@ -108,7 +108,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
             Live
           </span>
         </div>
-        <div className="mt-3 grid grid-cols-4 gap-1.5">
+        <div className="mt-3 grid grid-cols-4 divide-x divide-slate-100 dark:divide-slate-800">
           <KpiCellMini label={t("kpiDistributed")} value={mock.distributedValue} />
           <KpiCellMini
             label={t("kpiClicks")}
@@ -134,17 +134,9 @@ function KpiCellMini({
   muted?: boolean;
   accent?: boolean;
 }) {
+  /* 셀마다 상자를 두르던 타일 그리드는 "AI 상자" 문법 — 헤어라인 분할의 플랫 스탯 행으로. */
   return (
-    <div
-      className={
-        "rounded-lg border px-2 py-1.5 " +
-        (muted
-          ? "border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60"
-          : accent
-            ? "border-accent-200 bg-white dark:bg-slate-900"
-            : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900")
-      }
-    >
+    <div className="min-w-0 px-2 py-1 first:pl-0 last:pr-0">
       <p className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
         {label}
       </p>
