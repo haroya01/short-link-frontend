@@ -1915,7 +1915,8 @@
         "clearFilter": "필터 해제",
         "locked": "비밀번호 보호",
         "noResults": "일치하는 링크가 없어요"
-      }
+      },
+      "blockedTab": "차단 도메인"
     },
     "detail": {
       "title": "링크 상세",
@@ -1970,6 +1971,36 @@
         "clicks": "아직 클릭이 없어요",
         "trending": "아직 인기 링크가 없어요"
       }
+    },
+    "blocked": {
+      "title": "차단 도메인",
+      "subtitle": "여기 오른 도메인은 새 단축이 거절되고, 이미 만든 링크도 서브도메인까지 즉시 차단 페이지로 바뀝니다.",
+      "addPlaceholder": "spam.example.com",
+      "reasonPlaceholder": "사유 (선택)",
+      "add": "차단",
+      "empty": "차단된 도메인이 없어요.",
+      "col": {
+        "domain": "도메인",
+        "reason": "사유",
+        "blockedAt": "차단 시각"
+      },
+      "unblock": "해제",
+      "unblockConfirm": "{domain} 차단을 해제할까요? 이 도메인으로의 단축과 리다이렉트가 다시 허용됩니다.",
+      "addFailed": "요청에 실패했어요"
+    },
+    "enforce": {
+      "title": "악용 대응",
+      "subtitle": "이용약관을 위반한 링크에 대한 조치예요.",
+      "blockDomain": "{domain} 차단",
+      "domainBlocked": "{domain} 차단됨",
+      "blockConfirm": "{domain}을(를) 차단할까요? 이 도메인으로 가는 모든 링크(기존 포함)가 즉시 죽고 새 단축도 거절됩니다.",
+      "warnTitle": "소유자에게 경고 보내기",
+      "warnHint": "링크 알림 인박스에 남고, 알림 설정과 무관하게 푸시돼요.",
+      "warnPlaceholder": "예: 불법 사이트 홍보 링크는 이용약관 위반입니다. 해당 링크는 차단되었으며, 반복 시 계정이 정지됩니다.",
+      "warnSend": "경고 전송",
+      "warnSent": "경고를 보냈어요.",
+      "warnAnonymous": "익명으로 만든 링크라 경고를 보낼 계정이 없어요. 도메인 차단으로 대응하세요.",
+      "failed": "요청에 실패했어요"
     }
   },
   "common": {

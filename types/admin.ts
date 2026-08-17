@@ -211,6 +211,15 @@ export type AdminLinkRow = {
 export type AdminUsersPage = { items: AdminUserRow[]; total: number };
 export type AdminLinksPage = { items: AdminLinkRow[]; total: number };
 
+/** Operator domain blocklist entry — blocks new shortens and kills existing redirects. */
+export type BlockedDomain = {
+  id: number;
+  domain: string;
+  reason: string | null;
+  blockedByUserId: number | null;
+  blockedAt: string;
+};
+
 export type AdminLinkSort = "recent" | "clicks";
 
 /** One row of the admin link browser paired with the same {@link LinkStats} the owner stats page renders. */

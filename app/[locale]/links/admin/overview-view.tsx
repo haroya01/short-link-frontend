@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
-import { Activity, Link2, MousePointerClick, Users } from "lucide-react";
+import { Activity, Link2, MousePointerClick, ShieldBan, Users } from "lucide-react";
 import {
   CartesianGrid,
   Legend,
@@ -134,6 +134,13 @@ export function AdminOverviewView() {
           >
             <Link2 className="h-3.5 w-3.5 text-accent-600" />
             {t("browse.linksTab")}
+          </Link>
+          <Link
+            href="/admin/blocked-domains"
+            className="focus-ring inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+          >
+            <ShieldBan className="h-3.5 w-3.5 text-accent-600" />
+            {t("browse.blockedTab")}
           </Link>
         </nav>
       </div>

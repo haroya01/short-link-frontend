@@ -1915,7 +1915,8 @@
         "clearFilter": "Xóa bộ lọc",
         "locked": "Được bảo vệ bằng mật khẩu",
         "noResults": "Không có liên kết phù hợp"
-      }
+      },
+      "blockedTab": "Tên miền bị chặn"
     },
     "detail": {
       "title": "Chi tiết liên kết",
@@ -1970,6 +1971,36 @@
         "clicks": "Chưa có lượt nhấp",
         "trending": "Chưa có gì thịnh hành"
       }
+    },
+    "blocked": {
+      "title": "Tên miền bị chặn",
+      "subtitle": "Tên miền trong danh sách này bị từ chối khi rút gọn mới, và mọi liên kết hiện có — kể cả tên miền phụ — lập tức hiển thị trang chặn.",
+      "addPlaceholder": "spam.example.com",
+      "reasonPlaceholder": "Lý do (tùy chọn)",
+      "add": "Chặn",
+      "empty": "Chưa có tên miền nào bị chặn.",
+      "col": {
+        "domain": "Tên miền",
+        "reason": "Lý do",
+        "blockedAt": "Thời điểm chặn"
+      },
+      "unblock": "Bỏ chặn",
+      "unblockConfirm": "Bỏ chặn {domain}? Việc rút gọn và chuyển hướng tới tên miền này sẽ được cho phép trở lại.",
+      "addFailed": "Yêu cầu thất bại"
+    },
+    "enforce": {
+      "title": "Xử lý vi phạm",
+      "subtitle": "Hành động đối với liên kết vi phạm điều khoản dịch vụ.",
+      "blockDomain": "Chặn {domain}",
+      "domainBlocked": "Đã chặn {domain}",
+      "blockConfirm": "Chặn {domain}? Mọi liên kết tới tên miền này (kể cả liên kết hiện có) sẽ chết ngay và việc rút gọn mới bị từ chối.",
+      "warnTitle": "Gửi cảnh cáo cho chủ sở hữu",
+      "warnHint": "Lưu vào hộp thông báo và đẩy push bất kể cài đặt thông báo.",
+      "warnPlaceholder": "VD: Quảng bá trang web bất hợp pháp là vi phạm điều khoản. Liên kết đã bị chặn; tái phạm sẽ khiến tài khoản bị đình chỉ.",
+      "warnSend": "Gửi cảnh cáo",
+      "warnSent": "Đã gửi cảnh cáo.",
+      "warnAnonymous": "Liên kết được tạo ẩn danh — không có tài khoản để cảnh cáo. Hãy dùng chặn tên miền.",
+      "failed": "Yêu cầu thất bại"
     }
   },
   "common": {

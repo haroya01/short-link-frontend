@@ -1915,7 +1915,8 @@
         "clearFilter": "フィルター解除",
         "locked": "パスワード保護",
         "noResults": "該当するリンクがありません"
-      }
+      },
+      "blockedTab": "ブロックドメイン"
     },
     "detail": {
       "title": "リンク詳細",
@@ -1970,6 +1971,36 @@
         "clicks": "まだクリックがありません",
         "trending": "まだ人気のリンクはありません"
       }
+    },
+    "blocked": {
+      "title": "ブロックドメイン",
+      "subtitle": "ここに載せたドメインは新規短縮が拒否され、既存リンクもサブドメインを含めて即座にブロックページになります。",
+      "addPlaceholder": "spam.example.com",
+      "reasonPlaceholder": "理由(任意)",
+      "add": "ブロック",
+      "empty": "ブロック中のドメインはありません。",
+      "col": {
+        "domain": "ドメイン",
+        "reason": "理由",
+        "blockedAt": "ブロック日時"
+      },
+      "unblock": "解除",
+      "unblockConfirm": "{domain} のブロックを解除しますか?このドメインへの短縮とリダイレクトが再び許可されます。",
+      "addFailed": "リクエストに失敗しました"
+    },
+    "enforce": {
+      "title": "不正対応",
+      "subtitle": "利用規約に違反するリンクへの対応です。",
+      "blockDomain": "{domain} をブロック",
+      "domainBlocked": "{domain} ブロック済み",
+      "blockConfirm": "{domain} をブロックしますか?このドメインへの既存リンクも即座に無効になり、新規短縮も拒否されます。",
+      "warnTitle": "所有者に警告を送る",
+      "warnHint": "通知インボックスに残り、通知設定に関係なくプッシュされます。",
+      "warnPlaceholder": "例: 違法サイトの宣伝リンクは利用規約違反です。当該リンクはブロックされました。繰り返すとアカウントを停止します。",
+      "warnSend": "警告を送信",
+      "warnSent": "警告を送りました。",
+      "warnAnonymous": "匿名で作成されたリンクのため、警告を送るアカウントがありません。ドメインブロックで対応してください。",
+      "failed": "リクエストに失敗しました"
     }
   },
   "common": {

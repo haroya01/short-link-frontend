@@ -1915,7 +1915,8 @@
         "clearFilter": "Clear filter",
         "locked": "Password protected",
         "noResults": "No matching links"
-      }
+      },
+      "blockedTab": "Blocked domains"
     },
     "detail": {
       "title": "Link detail",
@@ -1970,6 +1971,36 @@
         "clicks": "No clicks yet",
         "trending": "Nothing trending yet"
       }
+    },
+    "blocked": {
+      "title": "Blocked domains",
+      "subtitle": "Domains listed here are rejected at shorten time, and every existing link to them — subdomains included — immediately serves the blocked page.",
+      "addPlaceholder": "spam.example.com",
+      "reasonPlaceholder": "Reason (optional)",
+      "add": "Block",
+      "empty": "No blocked domains.",
+      "col": {
+        "domain": "Domain",
+        "reason": "Reason",
+        "blockedAt": "Blocked at"
+      },
+      "unblock": "Unblock",
+      "unblockConfirm": "Unblock {domain}? Shortening and redirects to this domain will be allowed again.",
+      "addFailed": "Request failed"
+    },
+    "enforce": {
+      "title": "Enforcement",
+      "subtitle": "Actions for links that violate the terms of service.",
+      "blockDomain": "Block {domain}",
+      "domainBlocked": "{domain} blocked",
+      "blockConfirm": "Block {domain}? Every link to this domain (existing ones included) dies immediately and new shortens are rejected.",
+      "warnTitle": "Warn the owner",
+      "warnHint": "Lands in their notification inbox and pushes regardless of notification settings.",
+      "warnPlaceholder": "e.g. Promoting illegal sites violates our terms. The link has been blocked; repeated violations will suspend your account.",
+      "warnSend": "Send warning",
+      "warnSent": "Warning sent.",
+      "warnAnonymous": "This link was created anonymously — there is no account to warn. Use the domain block instead.",
+      "failed": "Request failed"
     }
   },
   "common": {
