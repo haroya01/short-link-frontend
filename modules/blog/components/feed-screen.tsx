@@ -263,7 +263,7 @@ export async function FeedScreen({
         <GuestMasthead />
       )}
 
-      {/* pb-24 gives the last feed card tail room; the layout's pb-16 already clears the bottom tab
+      {/* pb-24 gives the last feed card tail room; the layout's pb-20 already clears the bottom tab
           bar, and the body gets extra room while the cookie banner is up (see globals.css).
           A <div>, not <main> — the public blog layout already owns the single <main> landmark. */}
       <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">

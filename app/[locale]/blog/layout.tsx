@@ -93,7 +93,7 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
           {/* Feed home is the discovery hub → rest the header search open there; other public pages
               (post, tags, author) keep the compact 🔍. */}
           <AppHeader showMenu={false} searchOpen={internalPath === "/"} slimMobile product="blog" />
-          <main className="flex-1 pb-16 sm:pb-0">{children}</main>
+          <main className="flex-1 pb-20 sm:pb-0">{children}</main>
           <Footer />
         </div>
         {/* Mobile-only bottom tab bar (thumb-reachable nav); desktop uses the header. */}

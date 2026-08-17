@@ -63,8 +63,10 @@ export function BlogBottomNav() {
     <>
       <nav
         className={cn(
-          "vt-bottom-nav glass-chrome fixed inset-x-0 bottom-0 z-40 flex overflow-visible border-t border-slate-200/60 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
-          hidden && "translate-y-full",
+          /* 상단 AppHeader 와 같은 플로팅 글래스 캡슐 — LinksBottomNav 와 미러(토큰 동일 유지).
+             safe-area 는 bottom 오프셋이 흡수, 숨김은 오프셋+섀도우까지 걷어내는 200%. */
+          "vt-bottom-nav glass-chrome fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex overflow-visible rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
+          hidden && "translate-y-[200%]",
         )}
       >
         <BlogChromeLink
