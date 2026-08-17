@@ -110,10 +110,10 @@ export default function HomePage() {
             className={"profile-fade" + (stage === "on" ? " stage-sweep-host" : "")}
             style={{ ["--idx" as string]: 4 } as React.CSSProperties}
           >
-            {/* 줄이 응답한다 — 단축이 끝나면 입력 줄이 사라지고 그 자리에 답 줄(ResultLine)이
-                내려앉는다. "다른 주소도 줄이기"를 누르면 빈 줄이 맨 위로 돌아오고 답들은
-                영수증처럼 아래로 밀린다. 카드·CTA 상자 문법은 폐지(§ 한 줄 미학). */}
-            <div className="mx-auto max-w-xl">
+            {/* 단축이 끝나면 입력 캡슐이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.
+                "다른 주소도 줄이기"를 누르면 빈 캡슐이 맨 위로 돌아오고 답들은
+                영수증처럼 아래로 밀린다. */}
+            <div className="mx-auto max-w-2xl">
               {(!results || results.length === 0 || composing) && (
                 <ShortenForm
                   hero
