@@ -23,6 +23,7 @@ import type {
   AdminTopUsersPage,
   AdminUserRole,
   AdminUsersPage,
+  BlockedDomain,
 } from "@/types";
 
 import { request } from "./client";
@@ -131,6 +132,35 @@ export async function getAdminLinks(params: {
 export async function getAdminLinkDetail(code: string): Promise<AdminLinkDetail> {
   return request<AdminLinkDetail>(`/api/v1/admin/links/${encodeURIComponent(code)}`, {
     method: "GET",
+  });
+}
+
+export async function getBlockedDomains(): Promise<BlockedDomain[]> {
+  return request<BlockedDomain[]>("/api/v1/admin/blocked-domains", { method: "GET" });
+}
+
+export async function blockDomain(domain: string, reason?: string): Promise<BlockedDomain> {
+  return request<BlockedDomain>("/api/v1/admin/blocked-domains", {
+    method: "POST",
+    body: { domain, reason: reason || undefined },
+  });
+}
+
+export async function unblockDomain(domain: string): Promise<void> {
+  return request<void>(`/api/v1/admin/blocked-domains/${encodeURIComponent(domain)}`, {
+    method: "DELETE",
+  });
+}
+
+/** Operator warning — lands in the owner's link-notification inbox and pushes regardless of prefs. */
+export async function warnUser(
+  userId: number,
+  message: string,
+  shortCode?: string,
+): Promise<void> {
+  return request<void>(`/api/v1/admin/users/${userId}/warning`, {
+    method: "POST",
+    body: { message, shortCode: shortCode || undefined },
   });
 }
 

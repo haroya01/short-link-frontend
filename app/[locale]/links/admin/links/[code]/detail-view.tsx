@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/navigation";
 import type { AdminLinkDetail } from "@/types";
 import { DetailStats } from "./_components/detail-stats";
+import { EnforcementCard } from "./_components/enforcement-card";
 import { MetaCard } from "./_components/meta-card";
 
 export function AdminLinkDetailView() {
@@ -80,6 +81,7 @@ export function AdminLinkDetailView() {
       ) : data ? (
         <>
           <MetaCard meta={data.meta} />
+          <EnforcementCard meta={data.meta} />
           <DetailStats stats={data.stats} />
         </>
       ) : null}
