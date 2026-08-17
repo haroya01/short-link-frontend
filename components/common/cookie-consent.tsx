@@ -120,11 +120,12 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
         // 차지하는데, 안의 카드는 sm+ 에서 오른쪽 520px 뿐이다. 래퍼가 클릭을 받으면 카드가 없는
         // 왼쪽 전체(1440 에서 904px, 2560 에서 2024px)가 65px 높이의 투명한 클릭 차단막이 된다 —
         // 그 띠에 걸린 피드 카드·버튼이 "눌러도 아무 일 없는" 상태가 됐다. 토스트 래퍼와 같은 처방.
-        className="pointer-events-none fixed inset-x-0 bottom-[var(--cookie-bottom)] z-40 sm:bottom-4 sm:px-4"
+        /* 모바일 bottom 은 --cookie-bottom + 0.5rem — 플로팅 카드라 탭바 독과 한 숨 띄운다.
+           이 0.5rem 은 globals.css 의 body[data-cookie-consent] 하단 예약과 짝. */
+        className="pointer-events-none fixed inset-x-0 bottom-[calc(var(--cookie-bottom)+0.5rem)] z-40 sm:bottom-4 sm:px-4"
       >
-      {/* Phones: an edge-to-edge bar (top border + upward shadow) that sits directly above the bottom
-          tab bar so it reads as system chrome and never covers the tabs. sm+: the compact
-          right-aligned rounded card returns. */}
+      {/* Phones: 하단 탭바 독과 같은 플로팅 글래스 캡슐(inset 12px·rounded-2xl·동일 섀도우) —
+          엣지-투-엣지 슬랩은 상하단 캡슐 크롬 사이에서 혼자 문법을 깼다. sm+: 우측 정렬 카드. */}
       <div
         ref={cardRef}
         className={cn(
@@ -132,7 +133,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
           // 클릭을 받으면 카드 없는 왼쪽이 투명한 차단막이 된다.
           // 폰에선 문구 아래로 버튼 줄을 내린다 — 버튼이 둘이 되면서 한 줄에 다 넣으면 문구가
           // 서너 글자 폭으로 눌린다. sm+ 는 지금처럼 한 줄.
-          "pointer-events-auto glass-chrome mx-auto flex max-w-3xl flex-col gap-2 border-t border-slate-200/60 px-4 py-3 shadow-[0_-6px_20px_-12px_rgba(15,23,42,0.25)] sm:ml-auto sm:mr-0 sm:max-w-[560px] sm:flex-row sm:items-center sm:gap-3 sm:rounded-lg sm:border sm:px-3.5 sm:py-3 sm:shadow-md",
+          "pointer-events-auto glass-chrome mx-3 flex flex-col gap-2 rounded-2xl border border-slate-200/60 px-4 py-3 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] sm:ml-auto sm:mr-0 sm:max-w-[560px] sm:flex-row sm:items-center sm:gap-3 sm:px-3.5 sm:py-3",
           darkAware && "dark:border-slate-800/60",
         )}
       >
@@ -161,7 +162,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
             type="button"
             onClick={() => choose("rejected")}
             className={cn(
-              "focus-ring rounded-md border border-slate-300 px-3 py-1.5 text-[11px] font-medium text-slate-700 transition-colors hover:bg-slate-100 sm:px-4 sm:py-2 sm:text-xs",
+              "focus-ring rounded-full border border-slate-300 px-3 py-1.5 text-[11px] font-medium text-slate-700 transition-colors hover:bg-slate-100 sm:px-4 sm:py-2 sm:text-xs",
               darkAware &&
                 "dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800",
             )}
@@ -174,7 +175,7 @@ export function CookieConsent({ darkAware = false }: { darkAware?: boolean }) {
             className={cn(
               // border-transparent: 거부 버튼에만 테두리가 있으면 같은 padding 이라도 2px 더 높다.
               // 두 선택지의 높이가 어긋나면 "같은 급" 이라는 인상이 깨진다.
-              "focus-ring rounded-md border border-transparent bg-slate-900 px-3 py-1.5 text-[11px] font-medium text-white transition-colors hover:bg-slate-800 sm:px-4 sm:py-2 sm:text-xs",
+              "focus-ring rounded-full border border-transparent bg-slate-900 px-3 py-1.5 text-[11px] font-medium text-white transition-colors hover:bg-slate-800 sm:px-4 sm:py-2 sm:text-xs",
               darkAware && "dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white",
             )}
           >
