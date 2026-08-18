@@ -110,7 +110,7 @@ export default function StatsPage() {
       </button>
 
       {loading ? (
-        <HeaderSkeleton />
+        <HeaderSkeleton shortCode={code} />
       ) : realError ? (
         <ErrorState message={realError} onRetry={() => refetch()} />
       ) : notFound || !data ? (

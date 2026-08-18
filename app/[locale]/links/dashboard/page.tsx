@@ -28,6 +28,7 @@ import {
   useTags,
 } from "@/lib/api/links.queries";
 import { Link } from "@/i18n/navigation";
+import { StatsMorphLink } from "@/components/links/stats-morph-link";
 import { Input } from "@/components/ui/input";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -402,14 +403,17 @@ function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
           </div>
 
           {topLink ? (
-            <div className="min-w-0 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-3">
+            <div
+              data-vt-link-scope
+              className="min-w-0 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 px-3 py-3"
+            >
               <div className="min-w-0">
-                <Link
-                  href={`/stats/${topLink.shortCode}`}
+                <StatsMorphLink
+                  shortCode={topLink.shortCode}
                   className="block truncate font-mono text-[17px] font-semibold leading-tight text-slate-900 dark:text-slate-100 hover:underline"
                 >
-                  /{topLink.shortCode}
-                </Link>
+                  <span data-vt-link-code>/{topLink.shortCode}</span>
+                </StatsMorphLink>
                 <p className="mt-1 truncate text-xs leading-relaxed text-slate-500 dark:text-slate-400" title={topLink.originalUrl}>
                   {topLink.originalUrl}
                 </p>

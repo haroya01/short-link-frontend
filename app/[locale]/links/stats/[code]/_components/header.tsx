@@ -60,7 +60,7 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }:
             target="_blank"
             rel="noreferrer"
             aria-label={shortCodeLabel}
-            className="group block truncate font-mono text-xl font-bold leading-none tracking-tight text-slate-900 dark:text-slate-100 transition-colors hover:text-accent-700 sm:mt-2 sm:text-2xl"
+            className="vt-link-code group block truncate font-mono text-xl font-bold leading-none tracking-tight text-slate-900 dark:text-slate-100 transition-colors hover:text-accent-700 sm:mt-2 sm:text-2xl"
           >
             /{data.shortCode}
           </a>
@@ -89,11 +89,19 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false }:
   );
 }
 
-export function HeaderSkeleton() {
+export function HeaderSkeleton({ shortCode }: { shortCode?: string }) {
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-6">
       <Skeleton className="h-3 w-20" />
-      <Skeleton className="mt-3 h-7 w-56" />
+      {/* 코드는 라우트에서 이미 안다 — 스켈레톤 단계에 실코드를 그려야 대시보드 /코드 와의
+          view-transition 페어(vt-link-code)가 로딩 중에도 성립한다(늦으면 old 만 남아 모프 무산). */}
+      {shortCode ? (
+        <p className="vt-link-code mt-3 w-fit truncate font-mono text-xl font-bold leading-none tracking-tight text-slate-900 dark:text-slate-100 sm:text-2xl">
+          /{shortCode}
+        </p>
+      ) : (
+        <Skeleton className="mt-3 h-7 w-56" />
+      )}
       <Skeleton className="mt-3 h-4 w-72" />
     </div>
   );

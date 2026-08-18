@@ -80,7 +80,7 @@ export function Nav() {
     <>
     {/* 상시 유리 캡슐(§12) — 스크롤 상태 무관, 첫 화면부터 떠 있는 투명 카드로 보인다.
         (스크롤 시에만 캡슐화되던 2장 크로스페이드를 단일 상태로 단순화) */}
-    <header className="sticky top-0 z-30">
+    <header className="vt-app-header sticky top-0 z-30">
       <div className="relative">
         <div
           aria-hidden

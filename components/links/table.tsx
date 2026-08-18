@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { ArrowUpDown, BarChart3, Clock3, ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { StatsMorphLink } from "@/components/links/stats-morph-link";
 import { Button } from "@/components/ui/button";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { CopyButton } from "@/components/common/copy-button";
@@ -223,12 +224,13 @@ export function LinksTable({
                           : t("favorite.add")
                       }
                     />
-                    <Link
-                      href={`/stats/${item.shortCode}`}
+                    <StatsMorphLink
+                      shortCode={item.shortCode}
+                      data-vt-link-scope
                       className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100 hover:underline"
                     >
-                      /{item.shortCode}
-                    </Link>
+                      <span data-vt-link-code>/{item.shortCode}</span>
+                    </StatsMorphLink>
                     <CopyButton
                       size="sm"
                       variant="ghost"
@@ -426,12 +428,13 @@ function MobileLinkCard({
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
-            <Link
-              href={`/stats/${item.shortCode}`}
+            <StatsMorphLink
+              shortCode={item.shortCode}
+              data-vt-link-scope
               className="truncate font-mono text-[15px] font-semibold leading-tight text-slate-900 dark:text-slate-100 hover:underline"
             >
-              /{item.shortCode}
-            </Link>
+              <span data-vt-link-code>/{item.shortCode}</span>
+            </StatsMorphLink>
             <CopyButton
               size="sm"
               variant="ghost"
