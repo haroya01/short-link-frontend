@@ -8,6 +8,7 @@ import { ShortenForm } from "@/components/links/shorten/form";
 import { ResultLine } from "@/components/links/shorten/result-line";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
+import { LiveTotalsTicker } from "@/components/landing/live-totals-ticker";
 import { StageScenes } from "@/components/landing/stage-scenes";
 import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
@@ -171,7 +172,9 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="mt-6 min-h-[64px]">
+          <div className="mt-6 min-h-[64px] space-y-3">
+            {/* 라이브 티커 — 실데이터 누적이 폴드 안에서 숨쉰다(히어로 라이브 극장 1). */}
+            <LiveTotalsTicker />
             {(!results || results.length === 0) && !authenticated ? (
               <div className="space-y-2 text-center">
                 <p className="text-xs text-slate-500 dark:text-slate-400">{t("anonymousHint")}</p>
@@ -190,6 +193,15 @@ export default function HomePage() {
             visitors see that the page continues past the input. The element is `absolute` inside
             the hero, so it scrolls off with the hero itself once the user starts moving — no
             JS to fade it out. `motion-safe:animate-bounce` opts out for prefers-reduced-motion. */}
+        {/* 클릭 핑 수렴층 — 가장자리에서 캡슐 쪽으로 간헐히 모이는 라이브 신호(데스크탑 전용,
+            장식). 밀도는 §10 절제: 동시 가시 점 ~2개. */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 hidden sm:block">
+          <span className="hero-ping" style={{ left: "6%", top: "16%", "--tx": "38vw", "--ty": "240px" } as React.CSSProperties} />
+          <span className="hero-ping" style={{ left: "93%", top: "22%", "--tx": "-37vw", "--ty": "200px", animationDelay: "1.9s" } as React.CSSProperties} />
+          <span className="hero-ping" style={{ left: "10%", top: "88%", "--tx": "34vw", "--ty": "-150px", animationDelay: "3.4s" } as React.CSSProperties} />
+          <span className="hero-ping" style={{ left: "90%", top: "82%", "--tx": "-33vw", "--ty": "-120px", animationDelay: "4.6s" } as React.CSSProperties} />
+        </div>
+
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-4 hidden flex-col items-center gap-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 sm:flex"

@@ -2289,3 +2289,23 @@ html[data-theme-vt] .vt-post-cover {
   .obs-draw { animation: none; stroke-dashoffset: 0; }
   .obs-ping, .obs-pulse { animation: none; opacity: 0; }
 }
+
+/* 히어로 라이브 극장(hero-ping) — 화면 가장자리에서 캡슐 쪽으로 간헐 수렴하는 클릭 핑.
+   "클릭이 kurl 로 모인다"는 서사의 장식층. 밀도는 낮게(동시 2개 안팎), 데스크탑 전용. */
+@keyframes hero-ping {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.7); }
+  12% { opacity: 0.55; }
+  72% { opacity: 0.55; }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.45); }
+}
+.hero-ping {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: #34d399; /* accent-400 — 다크에서도 같은 톤이 살아있는 라이브 신호 */
+  animation: hero-ping 5.5s ease-in infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-ping { animation: none; opacity: 0; }
+}

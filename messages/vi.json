@@ -931,7 +931,8 @@
       "scene3Desc": "Ai, khi nào, từ đâu — tách người và bot, đến cả nhịp 30 ngày. Độ sâu nơi khác thu phí, ở đây miễn phí.",
       "scene3CtaDemo": "Xem trước bản demo",
       "scene3CtaStart": "Bắt đầu miễn phí"
-    }
+    },
+    "heroTicker": "Đến nay <l></l> liên kết · <c></c> lượt nhấp được phân tích tại đây"
   },
   "showcase": {
     "eyebrow": "Hồ sơ công khai · ví dụ thật",

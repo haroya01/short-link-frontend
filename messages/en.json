@@ -931,7 +931,8 @@
       "scene3Desc": "Who, when, where — humans split from bots, down to your 30-day rhythm. The depth other shorteners paywall, free.",
       "scene3CtaDemo": "Preview the demo",
       "scene3CtaStart": "Start free"
-    }
+    },
+    "heroTicker": "So far <l></l> links · <c></c> clicks analyzed here"
   },
   "showcase": {
     "eyebrow": "Public profiles · real examples",
