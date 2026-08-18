@@ -11,8 +11,11 @@ import {
   formatEventDate,
   formatEventRange,
   formatEventTime,
+  placeIdFromUrl,
   timezoneLabel,
 } from "@/modules/events/lib/format";
+
+const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 import { CancelRegistrationPanel } from "./cancel-registration-panel";
 import { RegistrationPanel } from "./registration-panel";
 
@@ -141,6 +144,19 @@ export function PublicEventPage({ initialEvent }: { initialEvent: PublicEvent })
 
         {cancelToken ? (
           <CancelRegistrationPanel token={cancelToken} eventTitle={event.title} />
+        ) : null}
+
+        {/* 지도 임베드 — Places 자동완성이 채운 장소(query_place_id 보유)에서만, 그리고
+            NEXT_PUBLIC_GOOGLE_MAPS_API_KEY 가 있을 때만 그린다. 키가 없으면 위 장소 링크가
+            폴백이라 이 블록은 조용히 사라진다(키 등록 즉시 켜지는 사전 배선). */}
+        {MAPS_KEY && event.locationUrl && placeIdFromUrl(event.locationUrl) ? (
+          <iframe
+            title={event.locationText ?? "map"}
+            className="mt-6 aspect-[2/1] w-full rounded-2xl border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            src={`https://www.google.com/maps/embed/v1/place?key=${MAPS_KEY}&q=place_id:${placeIdFromUrl(event.locationUrl)}&language=${locale}`}
+          />
         ) : null}
 
         {event.descriptionMd ? (
