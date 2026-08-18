@@ -68,8 +68,20 @@ const nextConfig = {
     }));
   },
   async rewrites() {
-    if (!PROXY_BACKEND) return [];
+    // Pretendard 를 자사 도메인으로 프록시 — jsdelivr 서드파티 연결(DNS+TLS+RTT, 모바일
+    // 스로틀에서 ~0.6-0.9s)을 제거하고 폰트 도착 시점을 안정화한다(LCP 재기록 지터의 진범).
+    // CSS 안의 상대 woff2 경로(./woff2-dynamic-subset/…)도 같은 프리픽스로 풀려 함께 프록시된다.
+    // jsdelivr 는 immutable 캐시 헤더를 주므로 Vercel 엣지가 그대로 캐시한다.
+    const fontProxy = [
+      {
+        source: "/pretendard/:path*",
+        destination:
+          "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/:path*",
+      },
+    ];
+    if (!PROXY_BACKEND) return fontProxy;
     return [
+      ...fontProxy,
       { source: "/api/v1/:path*", destination: `${BACKEND}/api/v1/:path*` },
       { source: "/oauth2/:path*", destination: `${BACKEND}/oauth2/:path*` },
       { source: "/login/oauth2/:path*", destination: `${BACKEND}/login/oauth2/:path*` },
