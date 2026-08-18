@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { DashboardOnboardingScene } from "@/components/common/onboarding-scenes";
 import { OnboardingSteps } from "@/components/common/onboarding-steps";
 
 /**
@@ -21,12 +22,19 @@ export function DashboardOnboarding() {
 
   return (
     <div className="overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50/60 via-white to-white p-6 shadow-sm dark:border-accent-500/30 dark:from-accent-500/10 dark:via-slate-900 dark:to-slate-900">
-      <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
-        <Sparkles className="h-3.5 w-3.5" />
-        {t("eyebrow")}
+      <div className="sm:grid sm:grid-cols-[minmax(0,1fr)_300px] sm:items-center sm:gap-8">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
+            <Sparkles className="h-3.5 w-3.5" />
+            {t("eyebrow")}
+          </div>
+          <h2 className="mt-1 text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h2>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{t("subtitle")}</p>
+        </div>
+        <div className="mt-4 sm:mt-0">
+          <DashboardOnboardingScene />
+        </div>
       </div>
-      <h2 className="mt-1 text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h2>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{t("subtitle")}</p>
 
       <OnboardingSteps steps={steps} />
 
