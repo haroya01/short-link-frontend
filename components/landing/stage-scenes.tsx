@@ -32,7 +32,15 @@ export function StageScenes() {
           컴포넌트 그대로(랜딩이 보여주는 것 = 실존 화면, StatsHeroCore 와 같은 계약). */}
       <section className="bg-white dark:bg-slate-950">
         <div className="container max-w-5xl pb-10 pt-16 sm:pb-14 sm:pt-24">
-          <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-14">
+          <div className="relative grid items-center gap-10 sm:grid-cols-2 sm:gap-14">
+            {/* 결과 카드 → 라이브 피드로 나는 링크 칩 — "공유하면 클릭이 돌아온다"의 궤적.
+                데스크탑 전용 장식, reduced-motion 제거. */}
+            <span
+              aria-hidden
+              className="s2-fly pointer-events-none absolute left-[16%] top-[68%] z-10 hidden select-none items-center gap-1 rounded-full border border-accent-300/60 bg-white px-2.5 py-1 font-mono text-[11px] font-semibold text-accent-700 shadow-sm dark:border-accent-700/60 dark:bg-slate-950 dark:text-accent-400 sm:inline-flex"
+            >
+              kurl.me/demo01
+            </span>
             {/* min-w-0: 그리드 아이템의 기본 min-width 는 auto 라 트랙이 콘텐츠의 min-content 아래로
                 못 줄어든다. 아래 카드의 긴 원본 URL 은 truncate(=nowrap) 라 min-content 가 449px 로
                 잡히고, 그게 1열 트랙을 469px 로 벌려 390 화면 전체를 79px 가로 스크롤시켰다
@@ -56,7 +64,7 @@ export function StageScenes() {
                     <span className="block font-mono text-[16px] font-bold tracking-tight text-accent-700 dark:text-accent-400">
                       kurl.me/demo01
                     </span>
-                    <span className="mt-1 block truncate font-mono text-[11px] text-slate-400 dark:text-slate-500">
+                    <span className="mt-1 block truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
                       https://your-very-long-url.com/path?with=query
                     </span>
                   </span>
@@ -81,7 +89,17 @@ export function StageScenes() {
 
       {/* ── 장면 3: 분석 클라이맥스 — 딥그린 필드 ─────────────────── */}
       <section className="bg-white pt-4 dark:bg-slate-950 sm:pt-8">
-        <div className="stage-rise bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
+        <div className="stage-rise relative overflow-hidden bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
+          {/* 딥그린 필드의 라이브 신호 — 라이트 그린 핑이 데이터 패널 쪽으로 수렴(장식). */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 hidden sm:block"
+            style={{ "--ping-color": "#6EE7B7" } as React.CSSProperties}
+          >
+            <span className="hero-ping" style={{ left: "8%", top: "18%", "--tx": "30vw", "--ty": "180px" } as React.CSSProperties} />
+            <span className="hero-ping" style={{ left: "12%", top: "84%", "--tx": "28vw", "--ty": "-140px", animationDelay: "2.1s" } as React.CSSProperties} />
+            <span className="hero-ping" style={{ left: "94%", top: "14%", "--tx": "-14vw", "--ty": "170px", animationDelay: "3.8s" } as React.CSSProperties} />
+          </div>
           <div className="container max-w-5xl py-16 sm:py-24">
             <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
               <div className="space-y-4">

@@ -2303,7 +2303,7 @@ html[data-theme-vt] .vt-post-cover {
   width: 5px;
   height: 5px;
   border-radius: 9999px;
-  background: #34d399; /* accent-400 — 다크에서도 같은 톤이 살아있는 라이브 신호 */
+  background: var(--ping-color, #34d399); /* accent-400 — 다크에서도 같은 톤이 살아있는 라이브 신호 */
   animation: hero-ping 5.5s ease-in infinite;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2318,4 +2318,17 @@ html[data-theme-vt] .vt-post-cover {
 }
 html[data-theme-vt] .vt-link-code {
   view-transition-name: none;
+}
+
+/* 무대 장면 2 — 결과 카드에서 라이브 피드로 날아가는 링크 칩(데스크탑 전용 장식).
+   "공유하면 클릭이 돌아온다"의 왕복을 실제 궤적으로 보여준다. 9s 주기, evi-* 계열. */
+@keyframes s2-fly {
+  0%, 8% { opacity: 0; transform: translate(0, 0) scale(0.8); }
+  14% { opacity: 1; transform: translate(0, 0) scale(1); }
+  38% { opacity: 1; transform: translate(26vw, -90px) scale(0.95); }
+  44%, 100% { opacity: 0; transform: translate(27vw, -96px) scale(0.7); }
+}
+.s2-fly { animation: s2-fly 9s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .s2-fly { animation: none; opacity: 0; }
 }

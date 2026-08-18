@@ -19,7 +19,7 @@ export function LiveTotalsTicker() {
   }
 
   return (
-    <p className="flex h-5 items-center justify-center gap-2 text-[12px] tabular-nums text-slate-400 dark:text-slate-500">
+    <p className="flex h-5 items-center justify-center gap-2 text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
       <span aria-hidden className="relative flex h-1.5 w-1.5 shrink-0">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-400 opacity-60" />
         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-500" />
@@ -27,12 +27,12 @@ export function LiveTotalsTicker() {
       <span>
         {t.rich("heroTicker", {
           l: () => (
-            <span className="font-medium text-slate-500 dark:text-slate-400">
+            <span className="font-medium text-slate-600 dark:text-slate-300">
               <RollingNumber value={data.links} />
             </span>
           ),
           c: () => (
-            <span className="font-medium text-slate-500 dark:text-slate-400">
+            <span className="font-medium text-slate-600 dark:text-slate-300">
               <RollingNumber value={data.clicks} />
             </span>
           ),

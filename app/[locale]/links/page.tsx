@@ -211,6 +211,18 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 글리프 워밍업 — 무대 씬 제목의 한글 서브셋을 첫 페인트 창에 미리 당긴다.
+          늦게 오는 font-face 이벤트가 뷰포트 안 씬 h2 를 LCP 로 재기록하던 것(#710 메커니즘,
+          모바일 render delay ~2.9s)의 처방. visibility:hidden 은 폰트 로드를 트리거한다. */}
+      {stage === "on" && (
+        <div aria-hidden className="invisible absolute h-0 overflow-hidden">
+          <span className="text-headline-sm font-semibold">{t("stage.scene2Title")}</span>
+          <span className="text-headline-sm font-semibold">{t("stage.scene3Title")}</span>
+          <span>{t("stage.scene2Desc")}</span>
+          <span>{t("stage.scene3Desc")}</span>
+        </div>
+      )}
+
       {/* 무대 on = "잉크 스파인 + 딥그린 클라이맥스" 여정이 프리뷰 카드·카운터·기능 캐러셀을
           대체한다(vault kurl-web-stage-design). off = 기존 구성 그대로(롤백 계약). */}
       {stage === "on" ? <StageScenes /> : <LandingPreviews />}
