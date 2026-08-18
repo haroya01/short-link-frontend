@@ -1646,6 +1646,11 @@
       "fastFirstClick": "First click landed {minutes} min after creation",
       "inAppBrowser": "{percent}% opened inside {app} — that is a lot of in-app browser traffic",
       "channelLoyalty": "{percent}% of the people from {host} came back"
+    },
+    "protection": {
+      "title": "Protection",
+      "saved": "Protection settings saved.",
+      "failed": "Couldn't save protection settings."
     }
   },
   "admin": {

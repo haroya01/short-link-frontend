@@ -1646,6 +1646,11 @@
       "fastFirstClick": "Lượt nhấn đầu tiên đến sau {minutes} phút",
       "inAppBrowser": "{percent}% mở trong {app} — tỷ lệ trình duyệt trong ứng dụng khá cao",
       "channelLoyalty": "{percent}% người đến từ {host} đã quay lại"
+    },
+    "protection": {
+      "title": "Bảo vệ",
+      "saved": "Đã lưu cài đặt bảo vệ.",
+      "failed": "Không thể lưu cài đặt bảo vệ."
     }
   },
   "admin": {

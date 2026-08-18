@@ -1646,6 +1646,11 @@
       "fastFirstClick": "बनाने के {minutes} मिनट में पहला क्लिक",
       "inAppBrowser": "{percent}% {app} में खुले — इन-ऐप ब्राउज़र का हिस्सा बड़ा है",
       "channelLoyalty": "{host} से आए {percent}% लोग लौटकर आए"
+    },
+    "protection": {
+      "title": "सुरक्षा",
+      "saved": "सुरक्षा सेटिंग सहेजी गई.",
+      "failed": "सुरक्षा सेटिंग सहेजी नहीं जा सकी."
     }
   },
   "admin": {

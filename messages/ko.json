@@ -1646,6 +1646,11 @@
       "fastFirstClick": "만든 지 {minutes}분 만에 첫 클릭이 왔어요",
       "inAppBrowser": "{app}에서 열린 게 {percent}% — 앱 안 브라우저 비중이 커요",
       "channelLoyalty": "{host}에서 온 사람의 {percent}%가 다시 왔어요"
+    },
+    "protection": {
+      "title": "보호",
+      "saved": "보호 설정을 저장했어요.",
+      "failed": "보호 설정을 저장하지 못했어요."
     }
   },
   "admin": {
