@@ -149,8 +149,11 @@ h1, h2, h3, p {
 }
 
 /* CJK typesetting:
- *  1. `word-break: keep-all` keeps phrases (eojeol / bunsetsu) intact instead of breaking on every
- *     character — fixes "이." / "で。" style orphan tails.
+ *  1. `word-break: keep-all` — **한국어 전용**. 어절은 공백으로 구분되므로 keep-all 이 어절을
+ *     지킨다("이." 꼬리 고아 방지). 일본어 문절(bunsetsu)은 공백 구분이 아니라서 keep-all 이
+ *     지킬 단위 자체가 없다 — 실효과는 "구두점까지 통째로 한 덩어리"가 되어 앞줄에 큰 구멍을
+ *     남기거나 overflow-wrap 비상 절단이 임의 위치에서 터졌다(JLReq 에 keep-all 류 제약 없음,
+ *     표준 일본어 조판은 글자 단위 줄바꿈 + 금칙 처리만). zh 도 동일 논리로 제외.
  *  2. `overflow-wrap: break-word` (not `anywhere`) is the softer fallback for the few cases that
  *     still don't fit — `anywhere` was so aggressive it overrode (1) and broke mid-phrase.
  *  3. `line-break: strict` is the actual fix for the lone `。` / `、` / closing-paren on the next
@@ -160,9 +163,21 @@ h1, h2, h3, p {
  * a / button labels, etc) — explicit element lists kept missing one.
  */
 :lang(ko), :lang(ja), :lang(zh) {
-  word-break: keep-all;
   overflow-wrap: break-word;
   line-break: strict;
+}
+:lang(ko) {
+  word-break: keep-all;
+}
+
+/* ja 활자 = Pretendard JP 우선(레이아웃이 ja 로케일에서만 스타일시트를 싣는다). KR판 단독으로는
+ * 일본 신자체 한자가 글자 단위로 시스템 폴백에 떨어져 자형이 섞였다("중화폰트" 질감 — 일본
+ * 독자 이탈 신호). JP판은 동일 파운드리·동일 메트릭이라 "Pretendard 단일 보이스" 정책(§10.9)을
+ * 유지한 채 자형만 일본화한다. 폴백 체인도 일본어 시스템 고딕을 앞세운다. */
+:lang(ja) {
+  font-family: "Pretendard JP Variable", "Pretendard Variable", Pretendard, ui-sans-serif,
+    system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP",
+    "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
 }
 
 * {
@@ -2148,7 +2163,10 @@ html[data-theme-vt] .vt-post-cover {
   backdrop-filter: blur(14px) saturate(1.7);
 }
 .dark .glass-chrome {
-  background: rgba(2, 6, 23, 0.62);
+  /* 라이트 0.68 미러였던 0.62 는 다크에선 투과가 훨씬 세게 읽혔다 — #020617 페이지 위 유리라
+     뒤 카드 텍스트가 크롬 문구와 같은 밝기로 겹쳐 "이중 노출"(모바일 탭바 뒤 그린 헤딩 블리드,
+     적대 검증 r2 실측 대비 1.03:1). 다크는 틴트를 진하게 눌러 유리 질감만 남긴다. */
+  background: rgba(2, 6, 23, 0.88);
 }
 .glass-capsule {
   background: rgba(255, 255, 255, 0.55);

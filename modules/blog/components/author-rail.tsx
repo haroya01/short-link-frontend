@@ -115,11 +115,12 @@ export async function AuthorRail({
       {archive.length > 0 && (
         <section>
           <RailHeading className="mb-3">{t("railArchive")}</RailHeading>
+          {/* 행 dark=400: slate-500 은 잉크 배경 4.24:1 로 소형 텍스트 AA(4.5:1) 미달. */}
           <ul className="flex flex-col gap-1.5 text-[13px]">
             {archive.map(([key, count]) => (
-              <li key={key} className="flex items-baseline justify-between gap-3 px-2 text-slate-500">
+              <li key={key} className="flex items-baseline justify-between gap-3 px-2 text-slate-500 dark:text-slate-400">
                 <span>{monthLabel(key)}</span>
-                <span className="text-slate-500">{count}</span>
+                <span>{count}</span>
               </li>
             ))}
           </ul>

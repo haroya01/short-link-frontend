@@ -33,9 +33,10 @@ export async function generateMetadata({
   const { author } = result.data;
   const h = await headers();
   const origin = authorBaseUrl(h, username);
-  const ogImage = author.avatarUrl
-    ? [{ url: author.avatarUrl, width: 1200, height: 630, alt: `@${author.username}` }]
-    : undefined;
+  // og:image 를 여기서 명시하지 않는다 — 명시하면 파일 컨벤션 opengraph-image.tsx(아바타 원형+
+  // @핸들+마크 합성 카드)를 완전히 덮어써, 아바타 "원본 JPEG"가 카드로 나갔다(적대 검증 r3):
+  // 1.91:1 크롭 플랫폼에선 얼굴 가로 띠만 남고, 개인 사진 원본이 스크레이퍼 캐시에 풀사이즈로
+  // 박제된다. 생성 카드가 공유 카드의 진실원이다.
   return {
     title: `@${author.username}`,
     description: author.bio ?? undefined,
@@ -48,14 +49,13 @@ export async function generateMetadata({
       description: author.bio ?? undefined,
       url: `${origin}/`,
       type: "profile",
-      images: ogImage,
     },
     // Without an explicit twitter card the author home inherits the generic site card on X/Slack.
+    // 이미지는 명시하지 않는다(위와 동일) — X 는 twitter:image 부재 시 og:image 로 폴백한다.
     twitter: {
-      card: author.avatarUrl ? "summary" : "summary",
+      card: "summary_large_image",
       title: `@${author.username}`,
       description: author.bio ?? undefined,
-      images: author.avatarUrl ? [author.avatarUrl] : undefined,
     },
   };
 }
