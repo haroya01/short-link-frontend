@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -74,6 +74,22 @@ export function EventForm({
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
+  // 새 이벤트의 시작 기본값 = 다음 주 19:00 (iOS 생성 폼과 동일) — 제목만 적으면 발행되는
+  // 폼이 되도록. 마운트 후에 채우는 건 하이드레이션 불일치(서버/클라이언트 now 차이) 회피.
+  useEffect(() => {
+    if (event != null) return;
+    setForm((prev) => {
+      if (prev.startsAtLocal) return prev;
+      const base = new Date();
+      base.setDate(base.getDate() + 7);
+      base.setHours(19, 0, 0, 0);
+      const pad = (n: number) => String(n).padStart(2, "0");
+      const wall = `${base.getFullYear()}-${pad(base.getMonth() + 1)}-${pad(base.getDate())}T${pad(base.getHours())}:${pad(base.getMinutes())}`;
+      return { ...prev, startsAtLocal: wall };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (busy) return;
@@ -144,12 +160,19 @@ export function EventForm({
             />
           </Field>
         </div>
-        <Field label={t("timezone")} htmlFor="ef-tz">
+        {/* 타임존은 기기값이 거의 항상 정답 — 풀폭 필드 대신 한 줄 조용한 행으로 강등. */}
+        <div className="flex items-center gap-2">
+          <label
+            htmlFor="ef-tz"
+            className="text-[12px] font-medium text-slate-500 dark:text-slate-400"
+          >
+            {t("timezone")}
+          </label>
           <select
             id="ef-tz"
             value={form.timezone}
             onChange={(e) => set("timezone", e.target.value)}
-            className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="h-8 rounded-lg border border-slate-200 bg-white px-2 font-mono text-[12px] text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
           >
             {(TIMEZONES.includes(form.timezone)
               ? TIMEZONES
@@ -160,7 +183,7 @@ export function EventForm({
               </option>
             ))}
           </select>
-        </Field>
+        </div>
       </Section>
 
       <Section title={t("whereTitle")}>
@@ -275,11 +298,13 @@ function DescriptionField({
       <label htmlFor="ef-desc" className="text-[12px] font-medium text-slate-600 dark:text-slate-400">
         {t("description")}
       </label>
+      {/* 빈 8줄 상자가 첫 폴드를 다 먹던 것 — 4줄로 시작하고, 내용이 붙으면 미리보기가
+          아래로 자란다. */}
       <Textarea
         id="ef-desc"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        rows={7}
+        rows={4}
         maxLength={50000}
         placeholder={t("descriptionPlaceholder")}
       />
