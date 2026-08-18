@@ -1646,6 +1646,11 @@
       "fastFirstClick": "作成から{minutes}分で最初のクリックが来ました",
       "inAppBrowser": "{app}で開かれたのが{percent}% — アプリ内ブラウザの比率が高めです",
       "channelLoyalty": "{host}から来た人の{percent}%が戻ってきました"
+    },
+    "protection": {
+      "title": "保護",
+      "saved": "保護設定を保存しました。",
+      "failed": "保護設定を保存できませんでした。"
     }
   },
   "admin": {

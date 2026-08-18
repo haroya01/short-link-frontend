@@ -7,6 +7,7 @@ import {
   LinkDestinationsSection,
 } from "@/components/links/destinations-section";
 import { LinkExportSection } from "@/components/links/link-export-section";
+import { LinkProtectionSection } from "@/components/links/link-protection-section";
 import { LinkWebhooksSection } from "@/components/links/webhooks-section";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,9 @@ export function SettingsTab({
   }
   return (
     <div className="space-y-5">
+      {/* 보호가 편집 다이얼로그에만 있으면 "설정에서 사라졌다"고 읽힌다 — 설정 탭이
+          이 링크의 모든 설정을 모으는 자리라는 기대에 맞춰 맨 앞에 앉힌다. */}
+      <LinkProtectionSection shortCode={data.shortCode} />
       <LinkDestinationsSection
         shortCode={data.shortCode}
         destinationClicks={data.destinationClicks}
