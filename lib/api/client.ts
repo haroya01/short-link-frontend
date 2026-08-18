@@ -4,6 +4,7 @@ import type { ProblemDetail } from "@/types";
 import { readStorageString, removeStorageItem, writeStorageString } from "@/lib/storage-json";
 import { clearSessionHint, hasSessionHint, writeSessionHint } from "@/lib/session-hint";
 import { mockLinksResponse } from "@/lib/api/_links-mocks";
+import { fetchWithTimeout, isTimeoutError } from "@/lib/api/fetch-timeout";
 
 const ACCESS_TOKEN_KEY = "short-link:access-token";
 
@@ -90,7 +91,7 @@ async function tryRefresh(): Promise<string | null> {
   if (refreshInFlight) return refreshInFlight;
   refreshInFlight = (async () => {
     try {
-      const res = await fetch(withBase("/api/v1/auth/refresh"), {
+      const res = await fetchWithTimeout(withBase("/api/v1/auth/refresh"), {
         method: "POST",
         credentials: "include",
       });
@@ -109,6 +110,8 @@ async function tryRefresh(): Promise<string | null> {
 
 export type RequestInitWithBody = Omit<RequestInit, "body"> & {
   body?: BodyInit | object | null;
+  /** Per-call abort ceiling. Omit for the 8s default; pass 0 to opt out (long-running exports). */
+  timeoutMs?: number;
 };
 
 async function fetchWithAuth(
@@ -123,12 +126,32 @@ async function fetchWithAuth(
   const token = readToken();
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
-  const res = await fetch(withBase(path), {
-    ...init,
-    credentials: "include",
-    headers,
-    body: hasJsonBody ? JSON.stringify(init.body) : (init.body as BodyInit | null | undefined),
-  });
+  let res: Response;
+  try {
+    res = await fetchWithTimeout(
+      withBase(path),
+      {
+        ...init,
+        credentials: "include",
+        headers,
+        body: hasJsonBody ? JSON.stringify(init.body) : (init.body as BodyInit | null | undefined),
+      },
+      init.timeoutMs,
+    );
+  } catch (err) {
+    // A hung request that aborted on the timeout — surface it as a normal 504 ApiError so callers'
+    // existing try/catch (and graceful-degradation fallbacks) handle it uniformly instead of a raw
+    // DOMException leaking through.
+    if (isTimeoutError(err)) {
+      throw new ApiError(504, {
+        status: 504,
+        title: "Gateway Timeout",
+        detail: "Request timed out",
+        code: "TIMEOUT",
+      } as ProblemDetail);
+    }
+    throw err;
+  }
 
   if (res.status === 401 && !retried) {
     const refreshed = await tryRefresh();
@@ -182,7 +205,9 @@ export async function requestBlob(
   init: RequestInitWithBody = {},
   retried = false,
 ): Promise<{ blob: Blob; filename: string | null; headers: Headers }> {
-  const res = await fetchWithAuth(path, init, retried);
+  // Exports (CSV/ZIP of all events) can legitimately run long — opt out of the abort ceiling
+  // unless the caller sets one explicitly.
+  const res = await fetchWithAuth(path, { timeoutMs: 0, ...init }, retried);
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     const body = text ? safeParse(text) : null;
