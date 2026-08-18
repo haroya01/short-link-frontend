@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { placeIdFromUrl } from "@/modules/events/lib/format";
 
 /**
  * 장소 입력 = 구글 지도 실연동. 장소명을 치면 Places API(New) 자동완성이 뜨고, 고르는 순간
@@ -204,7 +205,3 @@ export function LocationField({
   );
 }
 
-function placeIdFromUrl(url: string): string | null {
-  const match = /[?&]query_place_id=([\w-]+)/.exec(url);
-  return match ? match[1] : null;
-}

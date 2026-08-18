@@ -145,3 +145,9 @@ function safeZone(timezone: string): string {
     return "Asia/Seoul";
   }
 }
+
+/** 구글맵 검색 URL 의 query_place_id 파라미터 — 자동완성이 채운 링크에서만 존재한다. */
+export function placeIdFromUrl(url: string): string | null {
+  const match = /[?&]query_place_id=([\w-]+)/.exec(url);
+  return match ? match[1] : null;
+}
