@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { OnboardingSteps } from "@/components/common/onboarding-steps";
 
 /**
  * Campaigns wedge — QR 캠페인 0개일 때 노출. 단일 패널 안에 "배포 → 측정 → 조정" 3스텝만 보여줘 도구가 무엇을 하는지 한눈에 잡히게 하고,
@@ -24,20 +25,7 @@ export function CampaignOnboarding() {
       </h2>
       <p className="mt-1 max-w-2xl text-sm text-slate-600 dark:text-slate-400">{t("body")}</p>
 
-      <ol className="mt-5 grid gap-3 sm:grid-cols-3">
-        {steps.map((s, i) => (
-          <li
-            key={s.title}
-            className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/50"
-          >
-            <div className="grid h-7 w-7 place-items-center rounded-full bg-slate-900 text-xs font-semibold text-white dark:bg-slate-100 dark:text-slate-900">
-              {i + 1}
-            </div>
-            <p className="mt-2.5 text-sm font-medium text-slate-900 dark:text-slate-100">{s.title}</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">{s.desc}</p>
-          </li>
-        ))}
-      </ol>
+      <OnboardingSteps steps={steps} />
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <Link href="/campaigns/new">
