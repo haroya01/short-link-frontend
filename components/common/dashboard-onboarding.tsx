@@ -4,6 +4,8 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { DashboardOnboardingScene } from "@/components/common/onboarding-scenes";
+import { OnboardingSteps } from "@/components/common/onboarding-steps";
 
 /**
  * First-link onboarding panel shown on the dashboard when the user has no links yet. Walks
@@ -13,31 +15,28 @@ import { Button } from "@/components/ui/button";
 export function DashboardOnboarding() {
   const t = useTranslations("dashboard.onboarding");
   const steps = [
-    { num: 1, title: t("step1Title"), desc: t("step1Desc") },
-    { num: 2, title: t("step2Title"), desc: t("step2Desc") },
-    { num: 3, title: t("step3Title"), desc: t("step3Desc") },
+    { title: t("step1Title"), desc: t("step1Desc") },
+    { title: t("step2Title"), desc: t("step2Desc") },
+    { title: t("step3Title"), desc: t("step3Desc") },
   ];
 
   return (
     <div className="overflow-hidden rounded-2xl border border-accent-200 bg-gradient-to-br from-accent-50/60 via-white to-white p-6 shadow-sm dark:border-accent-500/30 dark:from-accent-500/10 dark:via-slate-900 dark:to-slate-900">
-      <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
-        <Sparkles className="h-3.5 w-3.5" />
-        {t("eyebrow")}
+      <div className="sm:grid sm:grid-cols-[minmax(0,1fr)_300px] sm:items-center sm:gap-8">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-medium text-accent-700 dark:text-accent-400">
+            <Sparkles className="h-3.5 w-3.5" />
+            {t("eyebrow")}
+          </div>
+          <h2 className="mt-1 text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h2>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{t("subtitle")}</p>
+        </div>
+        <div className="mt-4 sm:mt-0">
+          <DashboardOnboardingScene />
+        </div>
       </div>
-      <h2 className="mt-1 text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h2>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{t("subtitle")}</p>
 
-      <ol className="mt-5 grid gap-3 sm:grid-cols-3">
-        {steps.map((s) => (
-          <li key={s.num} className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800/50">
-            <div className="grid h-7 w-7 place-items-center rounded-full bg-slate-900 text-xs font-semibold text-white dark:bg-slate-100 dark:text-slate-900">
-              {s.num}
-            </div>
-            <p className="mt-2.5 text-sm font-medium text-slate-900 dark:text-slate-100">{s.title}</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">{s.desc}</p>
-          </li>
-        ))}
-      </ol>
+      <OnboardingSteps steps={steps} />
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <Link href="/">

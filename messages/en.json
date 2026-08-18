@@ -1119,7 +1119,10 @@
       "step3Title": "See the stats",
       "step3Desc": "Clicks come in → channel / country / device / time-of-day automatic.",
       "primaryCta": "Make your first link",
-      "secondaryCta": "Or preview the analytics screen →"
+      "secondaryCta": "Or preview the analytics screen →",
+      "scene": {
+        "weekClicks": "Clicks this week"
+      }
     },
     "noResultTitle": "No matches",
     "noResultDesc": "Could not find any link matching \"{query}\".",
@@ -3338,7 +3341,12 @@
         }
       ],
       "createCta": "Create first QR campaign",
-      "createHint": "For the first campaign, you only need a name and an end time."
+      "createHint": "For the first campaign, you only need a name and an end time.",
+      "scene": {
+        "scans": "Scans",
+        "place1": "Downtown",
+        "place2": "Riverside"
+      }
     }
   },
   "qrDownload": {

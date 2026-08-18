@@ -1119,7 +1119,10 @@
       "step3Title": "Xem thống kê",
       "step3Desc": "Lượt nhấp đến → kênh / quốc gia / thiết bị / thời điểm trong ngày tự động.",
       "primaryCta": "Tạo liên kết đầu tiên",
-      "secondaryCta": "Hoặc xem trước màn hình phân tích →"
+      "secondaryCta": "Hoặc xem trước màn hình phân tích →",
+      "scene": {
+        "weekClicks": "Lượt nhấp tuần này"
+      }
     },
     "noResultTitle": "Không có kết quả",
     "noResultDesc": "Không tìm thấy liên kết nào khớp với \"{query}\".",
@@ -3338,7 +3341,12 @@
         }
       ],
       "createCta": "Tạo chiến dịch QR đầu tiên",
-      "createHint": "Với chiến dịch đầu tiên, bạn chỉ cần một cái tên và một thời điểm kết thúc."
+      "createHint": "Với chiến dịch đầu tiên, bạn chỉ cần một cái tên và một thời điểm kết thúc.",
+      "scene": {
+        "scans": "Lượt quét",
+        "place1": "Quận 1",
+        "place2": "Quận 3"
+      }
     }
   },
   "qrDownload": {

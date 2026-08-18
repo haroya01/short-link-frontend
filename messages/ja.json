@@ -1119,7 +1119,10 @@
       "step3Title": "統計を確認",
       "step3Desc": "クリックが発生すると自動でチャネル/国/デバイス/時間帯を分析。",
       "primaryCta": "最初のリンクを作る",
-      "secondaryCta": "分析画面をデモで見る →"
+      "secondaryCta": "分析画面をデモで見る →",
+      "scene": {
+        "weekClicks": "今週のクリック"
+      }
     },
     "noResultTitle": "該当する結果がありません",
     "noResultDesc": "「{query}」と一致するリンクが見つかりませんでした。",
@@ -3338,7 +3341,12 @@
         }
       ],
       "createCta": "最初のQRキャンペーンを作成",
-      "createHint": "最初はキャンペーン名と終了時刻を決めるだけで始められます。"
+      "createHint": "最初はキャンペーン名と終了時刻を決めるだけで始められます。",
+      "scene": {
+        "scans": "スキャン",
+        "place1": "渋谷",
+        "place2": "新宿"
+      }
     }
   },
   "qrDownload": {

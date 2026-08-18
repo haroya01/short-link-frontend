@@ -2268,3 +2268,24 @@ html[data-theme-vt] .vt-post-cover {
   .evi-card, .evi-bubble, .evi-r1, .evi-r2, .evi-r3, .evi-badge { animation: none; opacity: 1; transform: none; }
   .evi-fly { animation: none; opacity: 0; }
 }
+
+/* 온보딩 장면(obs-*) — 대시보드·QR 캠페인 온보딩 패널의 미니어처 데모.
+   한 번 떠오르는 엔트런스(rise/pop/draw/bar) + 은은히 계속 도는 생명(핑·펄스).
+   이벤트 소개의 evi-* 와 같은 계열, 리듬만 원샷+지속으로 다르다. */
+@keyframes obs-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes obs-pop { 0% { opacity: 0; transform: scale(0.7); } 60% { opacity: 1; transform: scale(1.06); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes obs-draw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+@keyframes obs-bar { from { transform: scaleX(0.06); opacity: 0.4; } to { transform: scaleX(1); opacity: 1; } }
+@keyframes obs-ping { 0% { opacity: 0; transform: translate(0, 0) scale(0.8); } 15% { opacity: 0.9; } 70% { opacity: 0.9; } 100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); } }
+@keyframes obs-pulse { 0% { opacity: 0.7; transform: scale(0.55); } 100% { opacity: 0; transform: scale(2.2); } }
+.obs-rise { animation: obs-rise 0.6s var(--ease) both; }
+.obs-pop { animation: obs-pop 0.5s var(--ease) both; }
+.obs-draw { stroke-dasharray: 100; animation: obs-draw 1.4s ease-out both; }
+.obs-bar { transform-origin: left center; animation: obs-bar 0.8s var(--ease) both; }
+.obs-ping { animation: obs-ping 2.2s ease-in infinite; }
+.obs-pulse { animation: obs-pulse 1.8s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .obs-rise, .obs-pop, .obs-bar { animation: none; opacity: 1; transform: none; }
+  .obs-draw { animation: none; stroke-dashoffset: 0; }
+  .obs-ping, .obs-pulse { animation: none; opacity: 0; }
+}

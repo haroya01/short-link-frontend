@@ -1119,7 +1119,10 @@
       "step3Title": "통계 확인",
       "step3Desc": "클릭 들어오면 자동으로 채널/국가/디바이스/시간대 분석.",
       "primaryCta": "첫 링크 만들러 가기",
-      "secondaryCta": "통계 화면이 어떤지 데모로 보기 →"
+      "secondaryCta": "통계 화면이 어떤지 데모로 보기 →",
+      "scene": {
+        "weekClicks": "이번 주 클릭"
+      }
     },
     "noResultTitle": "검색 결과가 없어요",
     "noResultDesc": "\"{query}\"와 일치하는 링크를 찾지 못했어요.",
@@ -3338,7 +3341,12 @@
         }
       ],
       "createCta": "첫 QR 캠페인 만들기",
-      "createHint": "처음 만들 때는 QR 캠페인 이름과 종료 시점만 정하면 됩니다."
+      "createHint": "처음 만들 때는 QR 캠페인 이름과 종료 시점만 정하면 됩니다.",
+      "scene": {
+        "scans": "스캔",
+        "place1": "홍대입구",
+        "place2": "강남역"
+      }
     }
   },
   "qrDownload": {
