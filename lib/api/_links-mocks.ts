@@ -1,3 +1,4 @@
+import { buildDemoLinkStats } from "@/lib/demo-data";
 /**
  * Links-product mock layer (NEXT_PUBLIC_USE_MOCKS=1). The blog product mocks at its own API functions
  * (modules/blog/api/_mocks.ts) and short-circuits before `request()`; the links product calls
@@ -110,8 +111,34 @@ export function mockLinksResponse(path: string, method: string): unknown | undef
     case "/api/v1/users/me/profile/stats":
       return mockProfileStats();
     default:
-      return undefined;
+      break;
   }
+  // per-link 통계·상세 — 통계 페이지(모프·보호 섹션 포함)를 목 모드에서 QA 가능하게.
+  // 데모 페이지와 같은 합성 통계를 그대로 쓴다(화면 계약 일치).
+  const linkMatch = /^\/api\/v1\/links\/([^/]+)\/(stats|detail)$/.exec(p);
+  if (linkMatch) {
+    const [, code, kind] = linkMatch;
+    if (kind === "stats") return { ...buildDemoLinkStats(), shortCode: code };
+    return {
+      shortCode: code,
+      originalUrl: "https://blog.example.com/2026/08/spring-sale-landing",
+      expiresAt: null,
+      ogTitle: null,
+      ogDescription: null,
+      ogImage: null,
+      ogTitleOverride: null,
+      ogDescriptionOverride: null,
+      ogImageOverride: null,
+      passwordProtected: false,
+      maxViews: null,
+      viewCount: 1284,
+      statsPublic: false,
+      tags: ["promo"],
+      note: null,
+      expiredMessage: null,
+    };
+  }
+  return undefined;
 }
 
 function mockProfileStats(): unknown {
