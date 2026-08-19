@@ -2,7 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { PingCanvas } from "@/components/landing/ping-canvas";
+import { PingCanvas, type PingRoute } from "@/components/landing/ping-canvas";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Link } from "@/i18n/navigation";
@@ -23,11 +23,11 @@ import { Link } from "@/i18n/navigation";
 // 장면 3 데모 시계열 — 실제 StatsHeroCore 가 그대로 그린다(우상향 11포인트).
 const DEMO_SERIES = [12, 20, 17, 32, 28, 46, 41, 62, 58, 84, 96];
 
-/* 씬 3 혜성 경로 — 카피 밴드를 피해 필드 상·하단 가장자리로만. 좌표는 필드 비율. */
-const SCENE3_COMETS = [
-  { from: [0.05, 0.1] as [number, number], to: [0.44, 0.16] as [number, number], bow: 0.1 },
-  { from: [0.1, 0.9] as [number, number], to: [0.44, 0.82] as [number, number], bow: -0.1, delay: 3000 },
-  { from: [0.96, 0.08] as [number, number], to: [0.72, 0.16] as [number, number], bow: -0.1, delay: 6000 },
+/* 씬 3 혜성 라우트 — 카피 밴드를 피해 필드 상·하단 가장자리 존으로만. 좌표는 필드 비율. */
+const SCENE3_ROUTES: PingRoute[] = [
+  { from: [0.03, 0.05, 0.08, 0.1], to: [0.38, 0.1, 0.12, 0.09], bow: [-0.14, 0.14] },
+  { from: [0.05, 0.83, 0.09, 0.1], to: [0.38, 0.78, 0.12, 0.09], bow: [-0.14, 0.14] },
+  { from: [0.91, 0.05, 0.06, 0.1], to: [0.66, 0.1, 0.1, 0.09], bow: [-0.14, 0.14] },
 ];
 
 export function StageScenes() {
@@ -106,7 +106,7 @@ export function StageScenes() {
           <PingCanvas
             className="pointer-events-none absolute inset-0 hidden sm:block"
             color="#6EE7B7"
-            comets={SCENE3_COMETS}
+            routes={SCENE3_ROUTES}
           />
           <div className="stage-rise container max-w-5xl py-16 sm:py-24">
             <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">

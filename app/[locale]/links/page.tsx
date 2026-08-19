@@ -9,7 +9,7 @@ import { ResultLine } from "@/components/links/shorten/result-line";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
 import { LiveTotalsTicker } from "@/components/landing/live-totals-ticker";
-import { PingCanvas } from "@/components/landing/ping-canvas";
+import { PingCanvas, type PingRoute } from "@/components/landing/ping-canvas";
 import { StageScenes } from "@/components/landing/stage-scenes";
 import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
@@ -28,12 +28,11 @@ import type { CreateLinkResponse } from "@/types";
 // font-face events re-recorded the hero h1 as the LCP mid-measurement. The other sections only
 // reveal new glyphs on scroll, and scrolling is a user input that finalizes LCP, so lazy chunks
 // are safe there.
-/* 히어로 혜성 경로 — 가장자리 → 캡슐 측면. 좌표는 히어로 섹션 비율, bow 는 활공 휨. */
-const HERO_COMETS = [
-  { from: [0.03, 0.44] as [number, number], to: [0.26, 0.55] as [number, number], bow: 0.14 },
-  { from: [0.97, 0.4] as [number, number], to: [0.74, 0.55] as [number, number], bow: -0.14, delay: 2200 },
-  { from: [0.08, 0.88] as [number, number], to: [0.25, 0.62] as [number, number], bow: -0.12, delay: 4600 },
-  { from: [0.92, 0.9] as [number, number], to: [0.75, 0.61] as [number, number], bow: 0.12, delay: 6800 },
+/* 히어로 혜성 라우트 — 좌·우 가장자리 밴드(헤드라인 아래~하단)에서 캡슐 측면 존으로.
+   존 안 지점·휨·속도는 매 비행 랜덤(PingCanvas 스포너). */
+const HERO_ROUTES: PingRoute[] = [
+  { from: [0.02, 0.4, 0.06, 0.48], to: [0.2, 0.5, 0.09, 0.14], bow: [-0.18, 0.18] },
+  { from: [0.92, 0.38, 0.06, 0.52], to: [0.71, 0.5, 0.09, 0.14], bow: [-0.18, 0.18] },
 ];
 
 const LandingPreviews = dynamic(
@@ -208,7 +207,7 @@ export default function HomePage() {
             않게. 밀도는 §10 절제: 동시 가시 1~2개. */}
         <PingCanvas
           className="pointer-events-none absolute inset-0 hidden sm:block"
-          comets={HERO_COMETS}
+          routes={HERO_ROUTES}
         />
 
         <div
