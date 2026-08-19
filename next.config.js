@@ -27,7 +27,10 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  // same-origin(강)은 Apple 웹 로그인 팝업(web_message)의 opener 관계를 끊어 로그인 자체를
+  // 죽였다 — allow-popups 는 "남이 우리를 여는" XS-Leak 방어는 유지하면서 우리가 연 OAuth
+  // 팝업과의 postMessage 채널만 살린다(OAuth 팝업 표준 처방).
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
 ];
 
 /** @type {import('next').NextConfig} */
