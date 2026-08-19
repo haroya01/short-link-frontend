@@ -30,9 +30,10 @@ function relativeTime(iso: string, locale: string): string {
   const diff = new Date(iso).getTime() - Date.now();
   const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
   for (const [unit, ms] of RELATIVE_UNITS) {
-    if (Math.abs(diff) >= ms || unit === "minute") return rtf.format(Math.round(diff / ms), unit);
+    if (Math.abs(diff) >= ms) return rtf.format(Math.round(diff / ms), unit);
   }
-  return rtf.format(0, "minute");
+  // 1분 미만은 second/0 → "지금". minute/0 은 ko 에서 "현재 분"으로 깨진다.
+  return rtf.format(0, "second");
 }
 
 /** Absolute publish instant for a scheduled row — the author needs the exact date·time, not "in 3

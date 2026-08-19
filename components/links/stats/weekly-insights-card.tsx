@@ -217,7 +217,8 @@ function Stat({
         className="group block rounded-md border border-transparent p-1.5 -m-1.5 hover:border-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50"
       >
         {content}
-        <ArrowRight className="mt-1 h-3 w-3 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-500" />
+        {/* 이동 어포던스는 호버에서만 — 정지 상태의 외톨이 화살표는 잘린 요소처럼 읽힌다. */}
+        <ArrowRight className="mt-1 h-3 w-3 text-slate-400 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100 dark:text-slate-500" />
       </Link>
     );
   }

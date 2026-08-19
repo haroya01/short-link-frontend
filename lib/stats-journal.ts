@@ -43,9 +43,10 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   const daily = data.dailyClicks ?? [];
   const counts = daily.map((d) => d.count);
 
-  // 지금 이 순간 — 평소 대비 속도
+  // 지금 이 순간 — 평소 대비 속도. 저표본 게이트 필수: 총 2클릭짜리 링크가 "24.0배"를
+  // 말하면 통계 전체의 신뢰가 무너진다(과장광고 방지 계약).
   const velocity = data.velocity?.ratio ?? 0;
-  if (velocity >= 1.5) {
+  if (velocity >= 1.5 && total >= MIN_TOTAL_FOR_INSIGHTS) {
     entries.push({
       key: "velocity",
       params: { x: velocity.toFixed(1) },

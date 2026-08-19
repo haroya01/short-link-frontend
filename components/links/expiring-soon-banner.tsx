@@ -40,17 +40,17 @@ export function ExpiringSoonBanner({ onShowAll }: Props) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-4 py-3 text-sm text-amber-900">
+    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-200">
       <AlertTriangle className="h-4 w-4 shrink-0" />
       <div className="flex-1">
         <p className="font-medium">{t("title", { count: items.length })}</p>
-        <p className="mt-0.5 text-xs text-amber-800/80">{t("hint")}</p>
+        <p className="mt-0.5 text-xs text-amber-800/80 dark:text-amber-200/70">{t("hint")}</p>
       </div>
       {onShowAll && (
         <button
           type="button"
           onClick={onShowAll}
-          className="rounded-full bg-amber-100 dark:bg-amber-500/15 px-3 py-1 text-xs font-medium hover:bg-amber-200"
+          className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-900 hover:bg-amber-200 dark:bg-amber-400/20 dark:text-amber-100 dark:hover:bg-amber-400/30"
         >
           {t("showAll")}
         </button>
@@ -59,7 +59,7 @@ export function ExpiringSoonBanner({ onShowAll }: Props) {
         type="button"
         onClick={dismiss}
         aria-label={t("dismiss")}
-        className="rounded-full p-1 hover:bg-amber-100"
+        className="rounded-full p-1 hover:bg-amber-100 dark:hover:bg-amber-400/20"
       >
         <X className="h-3.5 w-3.5" />
       </button>

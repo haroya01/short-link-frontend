@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/lib/auth";
 import { listSuggestedAuthors, type SuggestedAuthor } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
 import { authorHref } from "@/modules/blog/components/feed-card";
@@ -18,6 +19,7 @@ import { RailHeading } from "@/modules/blog/components/rail-heading";
  */
 export function SuggestedCurators({ locale, limit = 6 }: { locale: string; limit?: number }) {
   const t = useTranslations("publicFeed");
+  const { me } = useAuth();
   const [authors, setAuthors] = useState<SuggestedAuthor[] | null>(null);
 
   useEffect(() => {
@@ -30,13 +32,15 @@ export function SuggestedCurators({ locale, limit = 6 }: { locale: string; limit
     };
   }, [limit]);
 
-  if (!authors || authors.length === 0) return null;
+  // 본인은 추천에서 제외 — 자기 자신 행은 팔로우 버튼도 없어 목록 리듬만 깬다.
+  const visible = (authors ?? []).filter(({ author }) => author.username !== me?.username);
+  if (visible.length === 0) return null;
 
   return (
     <div className="mx-auto mt-2 w-full max-w-md text-left">
       <RailHeading className="mb-3 justify-center">{t("railSuggestedAuthors")}</RailHeading>
       <ul className="space-y-1">
-        {authors.map(({ author, postCount }) => (
+        {visible.map(({ author, postCount }) => (
           <li key={author.username} className="flex items-center gap-3 rounded-lg px-2 py-1.5">
             <BlogLink
               href={authorHref(author.username, locale)}
