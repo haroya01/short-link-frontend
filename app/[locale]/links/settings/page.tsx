@@ -124,7 +124,7 @@ export default function SettingsPage() {
                       </select>
                       <p className="text-xs text-slate-500 dark:text-slate-400">{t("timezoneHint")}</p>
                     </label>
-                    <Button onClick={handleSaveTimezone} disabled={saving} size="sm">
+                    <Button variant="accent" onClick={handleSaveTimezone} disabled={saving} size="sm">
                       {t("save")}
                     </Button>
                   </div>

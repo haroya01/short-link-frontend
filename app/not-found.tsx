@@ -76,7 +76,7 @@ export default function RootNotFound() {
               <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{t.description}</p>
               <a
                 href={`/${locale}`}
-                className="mt-8 inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+                className="mt-8 inline-flex items-center justify-center rounded-md bg-accent-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
               >
                 {t.cta}
               </a>

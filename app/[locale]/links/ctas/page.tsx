@@ -114,7 +114,11 @@ export default function CtaLibraryPage() {
         <EmptyState
           icon={MousePointerClick}
           title={t("empty")}
-          action={<Button onClick={() => setEditing("new")}>{t("new")}</Button>}
+          action={
+            <Button variant="accent" onClick={() => setEditing("new")}>
+              {t("new")}
+            </Button>
+          }
           className="mt-6"
         />
       )}

@@ -88,7 +88,7 @@ export default async function LearnPage({
         </div>
         <Link
           href="/"
-          className="inline-flex shrink-0 items-center justify-center rounded-md bg-slate-900 dark:bg-white px-5 py-2 text-sm font-medium text-white dark:text-slate-900 transition hover:bg-slate-800 dark:hover:bg-slate-200"
+          className="inline-flex shrink-0 items-center justify-center rounded-md bg-accent-700 px-5 py-2 text-sm font-medium text-white transition hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
         >
           {t("ctaButton")}
         </Link>

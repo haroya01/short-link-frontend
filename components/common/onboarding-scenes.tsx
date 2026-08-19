@@ -83,20 +83,24 @@ export function CampaignOnboardingScene() {
       aria-hidden
       className="relative h-[190px] overflow-hidden rounded-2xl border border-slate-200/70 bg-white/70 dark:border-slate-700/70 dark:bg-slate-900/50"
     >
-      <div
-        className="obs-rise absolute left-5 top-1/2 w-[88px] -translate-y-1/2 rounded-lg border border-slate-200 bg-white p-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-900"
-        style={{ animationDelay: "0.1s" }}
-      >
-        <div className="mx-auto h-1.5 w-12 rounded bg-slate-100 dark:bg-slate-800" />
-        <div className="mx-auto mt-1 h-1.5 w-8 rounded bg-slate-100 dark:bg-slate-800" />
-        <div className="mt-2 h-9 rounded-md bg-accent-50 dark:bg-accent-500/10" />
-        <div className="relative mt-2 flex justify-center">
-          <span className="obs-pulse absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent-500/60" />
-          <span
-            className="obs-pulse absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent-500/60"
-            style={{ animationDelay: "0.9s" }}
-          />
-          <QrCode className="relative h-7 w-7 text-slate-900 dark:text-slate-100" />
+      {/* 포지셔닝(-translate-y-1/2)과 obs-rise 를 분리 — 키프레임의 transform:none 이
+          유틸리티 translate 를 밟아 포스터가 스테이지 아래로 넘쳐 잘려 보였다. */}
+      <div className="absolute left-5 top-1/2 w-[88px] -translate-y-1/2">
+        <div
+          className="obs-rise rounded-lg border border-slate-200 bg-white p-2.5 shadow-sm dark:border-slate-700 dark:bg-slate-900"
+          style={{ animationDelay: "0.1s" }}
+        >
+          <div className="mx-auto h-1.5 w-12 rounded bg-slate-100 dark:bg-slate-800" />
+          <div className="mx-auto mt-1 h-1.5 w-8 rounded bg-slate-100 dark:bg-slate-800" />
+          <div className="mt-2 h-9 rounded-md bg-accent-50 dark:bg-accent-500/10" />
+          <div className="relative mt-2 flex justify-center">
+            <span className="obs-pulse absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent-500/60" />
+            <span
+              className="obs-pulse absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent-500/60"
+              style={{ animationDelay: "0.9s" }}
+            />
+            <QrCode className="relative h-7 w-7 text-slate-900 dark:text-slate-100" />
+          </div>
         </div>
       </div>
 
