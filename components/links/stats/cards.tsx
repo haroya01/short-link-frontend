@@ -74,7 +74,9 @@ export function StatsCards({
   const uniqueRatio = hasUnique && human > 0 ? ((unique as number) / human) * 100 : 0;
   const profileRatio = showProfile && human > 0 ? ((profileClicks as number) / human) * 100 : 0;
 
-  const showVelocity = hasVelocity && (velocityRatio as number) > 0;
+  // 저표본 게이트 — lib/stats-journal 의 MIN_TOTAL_FOR_INSIGHTS(10)와 같은 문턱.
+  // 총 2클릭에 "클릭 가속 24.0x"가 뜨면 KPI 헤더가 과장으로 읽힌다.
+  const showVelocity = hasVelocity && (velocityRatio as number) > 0 && total >= 10;
   const showLatency = !showVelocity && hasLatency;
 
   const animatedTotal = useCountUp(total, 900, animate);

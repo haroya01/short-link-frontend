@@ -2,8 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { MousePointerClick } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/common/empty-state";
+import { ErrorState } from "@/components/common/error-state";
 import {
   createCta,
   deleteCta,
@@ -105,14 +108,15 @@ export default function CtaLibraryPage() {
       )}
 
       {loading && <p className="text-slate-500 dark:text-slate-400">{tc("loading")}</p>}
-      {error && (
-        <p className="text-red-600 dark:text-red-400">
-          {tc("errorPrefix")} {error}
-        </p>
-      )}
+      {error && <ErrorState message={error} onRetry={() => void load()} />}
 
       {!loading && !error && ctas.length === 0 && (
-        <p className="text-slate-500 dark:text-slate-400">{t("empty")}</p>
+        <EmptyState
+          icon={MousePointerClick}
+          title={t("empty")}
+          action={<Button onClick={() => setEditing("new")}>{t("new")}</Button>}
+          className="mt-6"
+        />
       )}
 
       {!loading && ctas.length > 0 && (

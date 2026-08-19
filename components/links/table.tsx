@@ -279,10 +279,13 @@ export function LinksTable({
                 </TD>
                 <TD className="whitespace-nowrap text-right">
                   <div className="inline-flex items-center gap-2">
-                    <Sparkline
-                      values={item.clicksLast7d ?? []}
-                      className="hidden text-slate-400 dark:text-slate-500 lg:inline-block"
-                    />
+                    {/* 7일 합이 0이면 스파크 생략 — 평평한 기준선이 숫자 밑에서 얼룩/밑줄로 읽힌다. */}
+                    {(item.clicksLast7d ?? []).some((v) => v > 0) && (
+                      <Sparkline
+                        values={item.clicksLast7d ?? []}
+                        className="hidden text-slate-400 dark:text-slate-500 lg:inline-block"
+                      />
+                    )}
                     <span className="tabular-nums font-medium text-slate-900 dark:text-slate-100">
                       {formatNumber(item.clickCount)}
                     </span>
@@ -461,7 +464,7 @@ function MobileLinkCard({
           <p className="font-mono text-lg font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
             {formatNumber(item.clickCount)}
           </p>
-          {last7d.length > 0 && (
+          {weekClicks > 0 && (
             <div className="mt-1 flex items-center justify-end gap-1">
               <Sparkline
                 values={last7d}

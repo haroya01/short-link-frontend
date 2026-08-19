@@ -83,8 +83,10 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
   return (
     <div>
       <div className="hidden md:block">
+        {/* xl 2열 그리드의 카드 내폭(~590px)보다 좁게 — 640 이면 카드 안에서 우측 시간대(21~23시)가
+            스크롤 뒤로 숨어 잘린 것처럼 보인다. */}
         <div className="overflow-x-auto">
-          <div className="min-w-[640px]">
+          <div className="min-w-[560px]">
             <div className="grid grid-cols-[36px_repeat(24,minmax(0,1fr))] gap-px">
               <div className="h-6" />
               {Array.from({ length: 24 }, (_, h) => (

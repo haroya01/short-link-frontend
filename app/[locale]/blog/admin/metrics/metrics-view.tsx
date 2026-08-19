@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
+import { ErrorState } from "@/components/common/error-state";
 import { formatNumber } from "@/lib/utils";
 import {
   getBlogAdminMetrics,
@@ -48,11 +49,7 @@ export function BlogAdminMetricsView() {
       </header>
 
       {loading && <p className="text-slate-500 dark:text-slate-400">{tc("loading")}</p>}
-      {error && (
-        <p className="text-red-600 dark:text-red-400">
-          {tc("errorPrefix")} {error}
-        </p>
-      )}
+      {error && <ErrorState message={error} />}
 
       {!loading && !error && data && (
         <>

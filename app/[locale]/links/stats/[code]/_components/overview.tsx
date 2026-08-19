@@ -82,7 +82,9 @@ export function StatsOverview({
               value={`${formatNumber(data.uniqueClicks ?? 0)} · ${uniqueRatio.toFixed(0)}%`}
             />
             <Metric label={t("kpi.bot")} value={`${botRatio.toFixed(1)}%`} muted />
-            {velocity >= 1.5 && (
+            {/* 저표본 게이트 — lib/stats-journal MIN_TOTAL_FOR_INSIGHTS(10)와 같은 문턱.
+                총 2클릭에 "24.0x"는 마스트헤드 전체를 과장으로 읽히게 한다. */}
+            {velocity >= 1.5 && total >= 10 && (
               <Metric label={t("kpi.velocityHot")} value={`${velocity.toFixed(1)}x`} accent />
             )}
           </dl>
