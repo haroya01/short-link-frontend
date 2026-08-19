@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { PingCanvas } from "@/components/landing/ping-canvas";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Link } from "@/i18n/navigation";
@@ -21,6 +22,13 @@ import { Link } from "@/i18n/navigation";
 
 // 장면 3 데모 시계열 — 실제 StatsHeroCore 가 그대로 그린다(우상향 11포인트).
 const DEMO_SERIES = [12, 20, 17, 32, 28, 46, 41, 62, 58, 84, 96];
+
+/* 씬 3 혜성 경로 — 카피 밴드를 피해 필드 상·하단 가장자리로만. 좌표는 필드 비율. */
+const SCENE3_COMETS = [
+  { from: [0.05, 0.1] as [number, number], to: [0.44, 0.16] as [number, number], bow: 0.1 },
+  { from: [0.1, 0.9] as [number, number], to: [0.44, 0.82] as [number, number], bow: -0.1, delay: 3000 },
+  { from: [0.96, 0.08] as [number, number], to: [0.72, 0.16] as [number, number], bow: -0.1, delay: 6000 },
+];
 
 export function StageScenes() {
   const t = useTranslations("home.stage");
@@ -89,20 +97,18 @@ export function StageScenes() {
 
       {/* ── 장면 3: 분석 클라이맥스 — 딥그린 필드 ─────────────────── */}
       <section className="bg-white pt-4 dark:bg-slate-950 sm:pt-8">
-        <div className="stage-rise relative overflow-hidden bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
-          {/* 딥그린 필드의 라이브 신호 — 라이트 그린 핑이 데이터 패널 쪽으로 수렴(장식).
-              혜성 문법(꼬리+링)이라 텍스트를 가로지르면 이제 눈에 띈다 — 경로는 카피 밴드를
-              피해 필드 상·하단 가장자리로만 흐른다. */}
-          <div
-            aria-hidden
+        {/* 필드(딥그린 판)는 항상 완전 불투명 — 판 자체에 stage-rise 를 걸면 진입 내내
+            빛바랜 반투명 슬래브로 노출된다("물드는" 어색함). 종이처럼 그냥 스크롤되어
+            들어오고, 떠오르는 건 안의 콘텐츠만. */}
+        <div className="relative overflow-hidden bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
+          {/* 딥그린 필드의 라이브 신호 — 라이트 그린 혜성이 필드 상·하단 가장자리로만
+              흐른다(카피 밴드 회피). 렌더러는 PingCanvas. */}
+          <PingCanvas
             className="pointer-events-none absolute inset-0 hidden sm:block"
-            style={{ "--ping-color": "#6EE7B7" } as React.CSSProperties}
-          >
-            <span className="hero-ping" style={{ left: "6%", top: "12%", "--tx": "38vw", "--ty": "40px" } as React.CSSProperties} />
-            <span className="hero-ping" style={{ left: "12%", top: "88%", "--tx": "32vw", "--ty": "-50px", animationDelay: "2.1s" } as React.CSSProperties} />
-            <span className="hero-ping" style={{ left: "95%", top: "10%", "--tx": "-22vw", "--ty": "60px", animationDelay: "3.8s" } as React.CSSProperties} />
-          </div>
-          <div className="container max-w-5xl py-16 sm:py-24">
+            color="#6EE7B7"
+            comets={SCENE3_COMETS}
+          />
+          <div className="stage-rise container max-w-5xl py-16 sm:py-24">
             <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
               <div className="space-y-4">
                 <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-300">

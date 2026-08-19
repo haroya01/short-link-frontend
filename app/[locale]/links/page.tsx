@@ -9,6 +9,7 @@ import { ResultLine } from "@/components/links/shorten/result-line";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
 import { LiveTotalsTicker } from "@/components/landing/live-totals-ticker";
+import { PingCanvas } from "@/components/landing/ping-canvas";
 import { StageScenes } from "@/components/landing/stage-scenes";
 import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
@@ -27,6 +28,14 @@ import type { CreateLinkResponse } from "@/types";
 // font-face events re-recorded the hero h1 as the LCP mid-measurement. The other sections only
 // reveal new glyphs on scroll, and scrolling is a user input that finalizes LCP, so lazy chunks
 // are safe there.
+/* 히어로 혜성 경로 — 가장자리 → 캡슐 측면. 좌표는 히어로 섹션 비율, bow 는 활공 휨. */
+const HERO_COMETS = [
+  { from: [0.03, 0.44] as [number, number], to: [0.26, 0.55] as [number, number], bow: 0.14 },
+  { from: [0.97, 0.4] as [number, number], to: [0.74, 0.55] as [number, number], bow: -0.14, delay: 2200 },
+  { from: [0.08, 0.88] as [number, number], to: [0.25, 0.62] as [number, number], bow: -0.12, delay: 4600 },
+  { from: [0.92, 0.9] as [number, number], to: [0.75, 0.61] as [number, number], bow: 0.12, delay: 6800 },
+];
+
 const LandingPreviews = dynamic(
   () => import("@/components/landing/landing-previews").then((m) => m.LandingPreviews),
 );
@@ -194,15 +203,13 @@ export default function HomePage() {
             the hero, so it scrolls off with the hero itself once the user starts moving — no
             JS to fade it out. `motion-safe:animate-bounce` opts out for prefers-reduced-motion. */}
         {/* 클릭 핑 수렴층 — 가장자리에서 캡슐 측면으로 간헐히 모이는 라이브 신호(데스크탑 전용,
-            장식). 혜성 문법(꼬리+도착 링)은 globals.css hero-ping. 경로는 헤드라인 밴드를 피해
-            캡슐 높이(~54-62%)로 수렴하고, 도착점은 캡슐 가장자리 직전 — 링이 폼 뒤에 묻히지
+            장식). 렌더러는 PingCanvas(곡선 활공+리본 꼬리+도착 파문). 경로는 헤드라인 밴드를
+            피해 캡슐 높이로 수렴하고, 도착점은 캡슐 가장자리 직전 — 파문이 폼 뒤에 묻히지
             않게. 밀도는 §10 절제: 동시 가시 1~2개. */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 hidden sm:block">
-          <span className="hero-ping" style={{ left: "4%", top: "46%", "--tx": "22vw", "--ty": "60px" } as React.CSSProperties} />
-          <span className="hero-ping" style={{ left: "96%", top: "42%", "--tx": "-22vw", "--ty": "90px", animationDelay: "2.2s" } as React.CSSProperties} />
-          <span className="hero-ping" style={{ left: "9%", top: "85%", "--tx": "16vw", "--ty": "-160px", animationDelay: "4.6s" } as React.CSSProperties} />
-          <span className="hero-ping" style={{ left: "91%", top: "88%", "--tx": "-16vw", "--ty": "-190px", animationDelay: "6.8s" } as React.CSSProperties} />
-        </div>
+        <PingCanvas
+          className="pointer-events-none absolute inset-0 hidden sm:block"
+          comets={HERO_COMETS}
+        />
 
         <div
           aria-hidden
