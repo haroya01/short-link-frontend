@@ -2,7 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { PingCanvas, type PingRoute } from "@/components/landing/ping-canvas";
+import { Meteors } from "@/components/landing/meteors";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Link } from "@/i18n/navigation";
@@ -22,13 +22,6 @@ import { Link } from "@/i18n/navigation";
 
 // 장면 3 데모 시계열 — 실제 StatsHeroCore 가 그대로 그린다(우상향 11포인트).
 const DEMO_SERIES = [12, 20, 17, 32, 28, 46, 41, 62, 58, 84, 96];
-
-/* 씬 3 혜성 라우트 — 카피 밴드를 피해 필드 상·하단 가장자리 존으로만. 좌표는 필드 비율. */
-const SCENE3_ROUTES: PingRoute[] = [
-  { from: [0.03, 0.05, 0.08, 0.1], to: [0.38, 0.1, 0.12, 0.09], bow: [-0.14, 0.14] },
-  { from: [0.05, 0.83, 0.09, 0.1], to: [0.38, 0.78, 0.12, 0.09], bow: [-0.14, 0.14] },
-  { from: [0.91, 0.05, 0.06, 0.1], to: [0.66, 0.1, 0.1, 0.09], bow: [-0.14, 0.14] },
-];
 
 export function StageScenes() {
   const t = useTranslations("home.stage");
@@ -101,13 +94,10 @@ export function StageScenes() {
             빛바랜 반투명 슬래브로 노출된다("물드는" 어색함). 종이처럼 그냥 스크롤되어
             들어오고, 떠오르는 건 안의 콘텐츠만. */}
         <div className="relative overflow-hidden bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
-          {/* 딥그린 필드의 라이브 신호 — 라이트 그린 혜성이 필드 상·하단 가장자리로만
-              흐른다(카피 밴드 회피). 렌더러는 PingCanvas. */}
-          <PingCanvas
-            className="pointer-events-none absolute inset-0 hidden sm:block"
-            color="#6EE7B7"
-            routes={SCENE3_ROUTES}
-          />
+          {/* 딥그린 필드의 유성층 — Magic UI Meteors 포팅. 콘텐츠 뒤에 깔린다. */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 hidden sm:block">
+            <Meteors number={6} className="text-accent-300" />
+          </div>
           <div className="stage-rise container max-w-5xl py-16 sm:py-24">
             <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
               <div className="space-y-4">

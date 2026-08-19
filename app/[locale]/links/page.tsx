@@ -9,7 +9,7 @@ import { ResultLine } from "@/components/links/shorten/result-line";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
 import { LiveTotalsTicker } from "@/components/landing/live-totals-ticker";
-import { PingCanvas, type PingRoute } from "@/components/landing/ping-canvas";
+import { Meteors } from "@/components/landing/meteors";
 import { StageScenes } from "@/components/landing/stage-scenes";
 import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
@@ -28,13 +28,6 @@ import type { CreateLinkResponse } from "@/types";
 // font-face events re-recorded the hero h1 as the LCP mid-measurement. The other sections only
 // reveal new glyphs on scroll, and scrolling is a user input that finalizes LCP, so lazy chunks
 // are safe there.
-/* 히어로 혜성 라우트 — 좌·우 가장자리 밴드(헤드라인 아래~하단)에서 캡슐 측면 존으로.
-   존 안 지점·휨·속도는 매 비행 랜덤(PingCanvas 스포너). */
-const HERO_ROUTES: PingRoute[] = [
-  { from: [0.02, 0.4, 0.06, 0.48], to: [0.2, 0.5, 0.09, 0.14], bow: [-0.18, 0.18] },
-  { from: [0.92, 0.38, 0.06, 0.52], to: [0.71, 0.5, 0.09, 0.14], bow: [-0.18, 0.18] },
-];
-
 const LandingPreviews = dynamic(
   () => import("@/components/landing/landing-previews").then((m) => m.LandingPreviews),
 );
@@ -201,14 +194,11 @@ export default function HomePage() {
             visitors see that the page continues past the input. The element is `absolute` inside
             the hero, so it scrolls off with the hero itself once the user starts moving — no
             JS to fade it out. `motion-safe:animate-bounce` opts out for prefers-reduced-motion. */}
-        {/* 클릭 핑 수렴층 — 가장자리에서 캡슐 측면으로 간헐히 모이는 라이브 신호(데스크탑 전용,
-            장식). 렌더러는 PingCanvas(곡선 활공+리본 꼬리+도착 파문). 경로는 헤드라인 밴드를
-            피해 캡슐 높이로 수렴하고, 도착점은 캡슐 가장자리 직전 — 파문이 폼 뒤에 묻히지
-            않게. 밀도는 §10 절제: 동시 가시 1~2개. */}
-        <PingCanvas
-          className="pointer-events-none absolute inset-0 hidden sm:block"
-          routes={HERO_ROUTES}
-        />
+        {/* 유성층 — Magic UI Meteors 포팅(데스크탑 전용, 장식). 콘텐츠(z-10) 뒤에 깔려
+            헤드라인·폼 뒤로 지나간다. 위치·지연·주기는 마운트마다 랜덤. */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 hidden sm:block">
+          <Meteors number={8} className="text-accent-400" />
+        </div>
 
         <div
           aria-hidden

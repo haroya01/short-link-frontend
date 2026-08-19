@@ -1986,44 +1986,82 @@ html[data-theme-vt] .vt-post-cover {
 .stage-pulse-ring {
   animation: stage-pulse-ring 2400ms var(--ease) infinite;
 }
-@keyframes stage-sweep-band {
-  0% {
-    transform: translateX(-70%);
-    opacity: 0;
-  }
-  25% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(170%);
-    opacity: 0;
-  }
-}
-/* 폼 위 형광 밴드 — 루트 스크롤 0→260px 에 1:1 로 물린다(시간이 아니라 손이 재생점).
-   미지원 브라우저는 opacity:0 그대로라 아무것도 안 보인다(밴드는 순수 장식). */
-.stage-sweep-host {
-  position: relative;
-}
-.stage-sweep-host::after {
-  content: "";
+/* 폼 캡슐 안 형광 스윕 — 밴드를 캡슐 내부 오버레이(.capsule-sweep)로 옮겨 알약 모양에
+   클리핑된다. 호스트 ::after 사각 밴드는 캡슐 위아래로 직선 잘림이 그대로 노출됐다.
+   루트 스크롤 0→320px 에 1:1(시간이 아니라 손이 재생점). 미지원 브라우저는 opacity:0
+   그대로라 아무것도 안 보인다(순수 장식). */
+.capsule-sweep {
   pointer-events: none;
   position: absolute;
-  inset: -6px -4px;
-  border-radius: 12px;
+  inset: 0;
   opacity: 0;
   background: linear-gradient(
     100deg,
-    transparent 12%,
-    rgba(5, 150, 105, 0.1) 42%,
-    rgba(52, 211, 153, 0.16) 52%,
-    transparent 88%
+    transparent 18%,
+    rgba(5, 150, 105, 0.09) 44%,
+    rgba(52, 211, 153, 0.15) 54%,
+    transparent 84%
   );
 }
 @supports (animation-timeline: scroll()) {
-  .stage-sweep-host::after {
-    animation: stage-sweep-band linear both;
+  .stage-sweep-host .capsule-sweep {
+    animation: capsule-sweep-band linear both;
     animation-timeline: scroll(root);
-    animation-range: 0px 260px;
+    animation-range: 0px 320px;
+  }
+}
+@keyframes capsule-sweep-band {
+  0% {
+    transform: translateX(-55%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(55%);
+    opacity: 0;
+  }
+}
+
+/* 유성(meteor) — Magic UI Meteors(MIT) 포팅의 스트릭 본체(components/landing/meteors.tsx).
+   머리(점) + 오른쪽으로 잦아드는 1px 꼬리, 215° 사선 낙하. 색은 currentColor — 호출부가
+   text-* 로 정한다. 기본 opacity 0 이라 reduced-motion(애니 정지)이면 아무것도 안 보인다. */
+.meteor {
+  background: currentColor;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1);
+  opacity: 0;
+}
+.meteor::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 1px;
+  width: 64px;
+  height: 1px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, currentColor, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .meteor {
+    animation: meteor linear infinite;
+  }
+}
+@keyframes meteor {
+  0% {
+    transform: rotate(215deg) translateX(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.9;
+  }
+  55% {
+    opacity: 0.9;
+  }
+  72%,
+  100% {
+    transform: rotate(215deg) translateX(-520px);
+    opacity: 0;
   }
 }
 /* 실은 자기 가시성(view())에 물려 자라고, 알약·맥박은 실이 자란 뒤 범위에서 물질화. */
@@ -2043,11 +2081,11 @@ html[data-theme-vt] .vt-post-cover {
   .stage-thread,
   .stage-pill,
   .stage-pulse-ring,
-  .stage-sweep-host::after {
+  .capsule-sweep {
     animation: none !important;
   }
   /* 정적 완성 상태 유지 — 스윕 밴드만은 과정 그 자체라 아예 숨긴다. */
-  .stage-sweep-host::after {
+  .capsule-sweep {
     opacity: 0;
   }
 }
