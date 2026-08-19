@@ -90,15 +90,17 @@ export function StageScenes() {
       {/* ── 장면 3: 분석 클라이맥스 — 딥그린 필드 ─────────────────── */}
       <section className="bg-white pt-4 dark:bg-slate-950 sm:pt-8">
         <div className="stage-rise relative overflow-hidden bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
-          {/* 딥그린 필드의 라이브 신호 — 라이트 그린 핑이 데이터 패널 쪽으로 수렴(장식). */}
+          {/* 딥그린 필드의 라이브 신호 — 라이트 그린 핑이 데이터 패널 쪽으로 수렴(장식).
+              혜성 문법(꼬리+링)이라 텍스트를 가로지르면 이제 눈에 띈다 — 경로는 카피 밴드를
+              피해 필드 상·하단 가장자리로만 흐른다. */}
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0 hidden sm:block"
             style={{ "--ping-color": "#6EE7B7" } as React.CSSProperties}
           >
-            <span className="hero-ping" style={{ left: "8%", top: "18%", "--tx": "30vw", "--ty": "180px" } as React.CSSProperties} />
-            <span className="hero-ping" style={{ left: "12%", top: "84%", "--tx": "28vw", "--ty": "-140px", animationDelay: "2.1s" } as React.CSSProperties} />
-            <span className="hero-ping" style={{ left: "94%", top: "14%", "--tx": "-14vw", "--ty": "170px", animationDelay: "3.8s" } as React.CSSProperties} />
+            <span className="hero-ping" style={{ left: "6%", top: "12%", "--tx": "38vw", "--ty": "40px" } as React.CSSProperties} />
+            <span className="hero-ping" style={{ left: "12%", top: "88%", "--tx": "32vw", "--ty": "-50px", animationDelay: "2.1s" } as React.CSSProperties} />
+            <span className="hero-ping" style={{ left: "95%", top: "10%", "--tx": "-22vw", "--ty": "60px", animationDelay: "3.8s" } as React.CSSProperties} />
           </div>
           <div className="container max-w-5xl py-16 sm:py-24">
             <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
