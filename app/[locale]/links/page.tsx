@@ -9,6 +9,7 @@ import { ResultLine } from "@/components/links/shorten/result-line";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
 import { LiveTotalsTicker } from "@/components/landing/live-totals-ticker";
+import { Meteors } from "@/components/landing/meteors";
 import { StageScenes } from "@/components/landing/stage-scenes";
 import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
@@ -193,15 +194,10 @@ export default function HomePage() {
             visitors see that the page continues past the input. The element is `absolute` inside
             the hero, so it scrolls off with the hero itself once the user starts moving — no
             JS to fade it out. `motion-safe:animate-bounce` opts out for prefers-reduced-motion. */}
-        {/* 클릭 핑 수렴층 — 가장자리에서 캡슐 측면으로 간헐히 모이는 라이브 신호(데스크탑 전용,
-            장식). 혜성 문법(꼬리+도착 링)은 globals.css hero-ping. 경로는 헤드라인 밴드를 피해
-            캡슐 높이(~54-62%)로 수렴하고, 도착점은 캡슐 가장자리 직전 — 링이 폼 뒤에 묻히지
-            않게. 밀도는 §10 절제: 동시 가시 1~2개. */}
+        {/* 유성층 — Magic UI Meteors 포팅(데스크탑 전용, 장식). 콘텐츠(z-10) 뒤에 깔려
+            헤드라인·폼 뒤로 지나간다. 위치·지연·주기는 마운트마다 랜덤. */}
         <div aria-hidden className="pointer-events-none absolute inset-0 hidden sm:block">
-          <span className="hero-ping" style={{ left: "4%", top: "46%", "--tx": "22vw", "--ty": "60px" } as React.CSSProperties} />
-          <span className="hero-ping" style={{ left: "96%", top: "42%", "--tx": "-22vw", "--ty": "90px", animationDelay: "2.2s" } as React.CSSProperties} />
-          <span className="hero-ping" style={{ left: "9%", top: "85%", "--tx": "16vw", "--ty": "-160px", animationDelay: "4.6s" } as React.CSSProperties} />
-          <span className="hero-ping" style={{ left: "91%", top: "88%", "--tx": "-16vw", "--ty": "-190px", animationDelay: "6.8s" } as React.CSSProperties} />
+          <Meteors number={8} className="text-accent-400" />
         </div>
 
         <div

@@ -122,12 +122,15 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
            타이핑 중 포커스가 날아가므로 넛지는 메시지 행에만. */
         <div
           className={
-            "flex items-center gap-2 rounded-full border bg-white py-1.5 pl-4 pr-1.5 shadow-card transition-[border-color,box-shadow] duration-200 dark:bg-slate-900 sm:gap-3 sm:py-2 sm:pl-5 sm:pr-2 " +
+            "relative flex items-center gap-2 overflow-hidden rounded-full border bg-white py-1.5 pl-4 pr-1.5 shadow-card transition-[border-color,box-shadow] duration-200 dark:bg-slate-900 sm:gap-3 sm:py-2 sm:pl-5 sm:pr-2 " +
             (error
               ? "border-red-400 dark:border-red-500/70"
               : "border-slate-200 focus-within:border-accent-500 focus-within:shadow-lift focus-within:ring-4 focus-within:ring-accent-500/10 dark:border-slate-800 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
           }
         >
+          {/* 스크롤 연동 형광 스윕 — stage-sweep-host 조상(무대 on)일 때만 애니메이션.
+              캡슐 안에 두는 이유: 밖에 두면 알약 곡률과 어긋난 사각 밴드가 노출된다. */}
+          <span aria-hidden className="capsule-sweep" />
           <Link2
             aria-hidden
             className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-500"

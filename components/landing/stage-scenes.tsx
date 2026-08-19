@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Meteors } from "@/components/landing/meteors";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Link } from "@/i18n/navigation";
@@ -89,20 +90,15 @@ export function StageScenes() {
 
       {/* ── 장면 3: 분석 클라이맥스 — 딥그린 필드 ─────────────────── */}
       <section className="bg-white pt-4 dark:bg-slate-950 sm:pt-8">
-        <div className="stage-rise relative overflow-hidden bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
-          {/* 딥그린 필드의 라이브 신호 — 라이트 그린 핑이 데이터 패널 쪽으로 수렴(장식).
-              혜성 문법(꼬리+링)이라 텍스트를 가로지르면 이제 눈에 띈다 — 경로는 카피 밴드를
-              피해 필드 상·하단 가장자리로만 흐른다. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 hidden sm:block"
-            style={{ "--ping-color": "#6EE7B7" } as React.CSSProperties}
-          >
-            <span className="hero-ping" style={{ left: "6%", top: "12%", "--tx": "38vw", "--ty": "40px" } as React.CSSProperties} />
-            <span className="hero-ping" style={{ left: "12%", top: "88%", "--tx": "32vw", "--ty": "-50px", animationDelay: "2.1s" } as React.CSSProperties} />
-            <span className="hero-ping" style={{ left: "95%", top: "10%", "--tx": "-22vw", "--ty": "60px", animationDelay: "3.8s" } as React.CSSProperties} />
+        {/* 필드(딥그린 판)는 항상 완전 불투명 — 판 자체에 stage-rise 를 걸면 진입 내내
+            빛바랜 반투명 슬래브로 노출된다("물드는" 어색함). 종이처럼 그냥 스크롤되어
+            들어오고, 떠오르는 건 안의 콘텐츠만. */}
+        <div className="relative overflow-hidden bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
+          {/* 딥그린 필드의 유성층 — Magic UI Meteors 포팅. 콘텐츠 뒤에 깔린다. */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 hidden sm:block">
+            <Meteors number={6} className="text-accent-300" />
           </div>
-          <div className="container max-w-5xl py-16 sm:py-24">
+          <div className="stage-rise container max-w-5xl py-16 sm:py-24">
             <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
               <div className="space-y-4">
                 <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-300">
