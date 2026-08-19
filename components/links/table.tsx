@@ -240,7 +240,10 @@ export function LinksTable({
                     />
                   </div>
                 </TD>
-                <TD className="max-w-[260px]">
+                {/* w-full + max-w-0 — 원본 URL 열이 남는 폭만 차지하고 줄어들게 한다. td 의
+                    max-width 는 auto 테이블 레이아웃이 무시해서, 긴 URL 이 표를 컨테이너 밖으로
+                    밀어 액션 열이 잘리는 원인이었다. */}
+                <TD className="w-full max-w-0">
                   <div className="flex flex-col gap-1">
                     <a
                       href={item.originalUrl}
