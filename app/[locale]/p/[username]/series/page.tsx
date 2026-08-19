@@ -47,7 +47,11 @@ export default async function PublicSeriesIndexPage({
   const { tag: rawTag } = await searchParams;
   const result = await listPublicSeries(username);
   const t = await getTranslations({ locale, namespace: "publicPost" });
-  if (!result.ok) notFound();
+  // 순단("error")을 404 로 위장하지 않는다 — 진짜 404 만 notFound(), 나머지는 에러 경계로.
+  if (!result.ok) {
+    if (result.status !== 404) throw new Error(`public series fetch failed: ${username}`);
+    notFound();
+  }
 
   const { author, series } = result.data;
   const seriesHome = authorHref(username, locale, "series");

@@ -129,6 +129,9 @@ export default async function PublicPostPage({
   if (!result.ok) {
     // backend: UNPUBLISHED → 410, DRAFT/SCHEDULED/missing → 404. A bad preview token is a plain 404.
     if (result.status === 410) return <GonePage username={username} locale={locale} t={t} />;
+    // 네트워크/백엔드 순단("error")을 404 로 위장하면 살아있는 공유 링크가 "페이지 없음"으로
+    // 보인다 — 진짜 404 만 notFound(), 순단은 에러 경계(재시도 UI)로.
+    if (result.status !== 404) throw new Error(`public post fetch failed: ${username}/${slug}`);
     notFound();
   }
 
