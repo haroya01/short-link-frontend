@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { LiveDot } from "@/components/common/live-dot";
 import { usePublicTotals } from "@/lib/api/stats.queries";
 
 /**
@@ -20,10 +21,7 @@ export function LiveTotalsTicker() {
 
   return (
     <p className="flex h-5 items-center justify-center gap-2 text-[12px] tabular-nums text-slate-500 dark:text-slate-400">
-      <span aria-hidden className="relative flex h-1.5 w-1.5 shrink-0">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-400 opacity-60" />
-        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-500" />
-      </span>
+      <LiveDot />
       <span>
         {t.rich("heroTicker", {
           l: () => (

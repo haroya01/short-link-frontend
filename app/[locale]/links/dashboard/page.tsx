@@ -21,6 +21,7 @@ import type { MyLinksFilters } from "@/lib/api";
 import { cn, formatNumber } from "@/lib/utils";
 import { readStorageString, removeStorageItem } from "@/lib/storage-json";
 import { pinFavoritesFirst, useLinkFavorites } from "@/lib/use-link-favorites";
+import { useAccountClickStream } from "@/hooks/use-account-click-stream";
 import type { MyLink } from "@/types";
 import {
   useInvalidateLinks,
@@ -33,7 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
-import { LinksTable } from "@/components/links/table";
+import { LinksTable, type LiveBump } from "@/components/links/table";
 import { BulkImportDialog } from "@/components/links/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/links/my-links-filters";
 import { WeeklyInsightsCard } from "@/components/links/stats/weekly-insights-card";
@@ -63,6 +64,23 @@ export default function DashboardPage() {
 
   const enabled = ready && authenticated;
   const linksQuery = useMyLinks(filters, { enabled });
+
+  // 클릭이 도착하는 순간 — 계정 스트림이 실어오는 클릭을 행별 가산분으로 쌓아 표를 깨운다.
+  // 봇 클릭은 조용히 무시(통계 표면과 동일한 신뢰 계약).
+  const [liveByCode, setLiveByCode] = useState<Record<string, LiveBump>>({});
+  useAccountClickStream({
+    enabled,
+    onClick: (click) => {
+      if (click.bot) return;
+      setLiveByCode((prev) => {
+        const cur = prev[click.shortCode];
+        return {
+          ...prev,
+          [click.shortCode]: { extra: (cur?.extra ?? 0) + 1, seq: (cur?.seq ?? 0) + 1 },
+        };
+      });
+    },
+  });
   const tagsQuery = useTags({ enabled });
   const invalidateLinks = useInvalidateLinks();
 
@@ -70,6 +88,18 @@ export default function DashboardPage() {
     () => linksQuery.data?.pages.flatMap((p) => p.items) ?? [],
     [linksQuery.data],
   );
+
+  // 서버 재조회가 도착하면 실값에 수렴 — 가산분(extra)만 접고, seq(라이브 닷·이 세션에 살아있던
+  // 흔적)는 남긴다. 접지 않으면 재조회분과 이중 계산된다.
+  useEffect(() => {
+    setLiveByCode((prev) => {
+      const entries = Object.entries(prev).filter(([, v]) => v.extra > 0);
+      if (entries.length === 0) return prev;
+      const next = { ...prev };
+      for (const [code, v] of entries) next[code] = { extra: 0, seq: v.seq };
+      return next;
+    });
+  }, [linksQuery.data]);
   // 즐겨찾기를 맨 위로 고정(그 외 서버 정렬은 보존). 서버 페이지네이션이라 고정·필터는 현재
   // 로드된 페이지 범위 안에서만 동작한다.
   const displayItems = useMemo(() => {
@@ -273,6 +303,7 @@ export default function DashboardPage() {
                 onTagClick={(tag) => setFilters((f) => ({ ...f, tag, after: undefined }))}
                 isFavorite={favorites.isFavorite}
                 onToggleFavorite={favorites.toggle}
+                liveByCode={liveByCode}
               />
               {linksQuery.hasNextPage && (
                 <div className="flex justify-center pt-2">
