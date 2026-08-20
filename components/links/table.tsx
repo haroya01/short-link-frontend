@@ -12,6 +12,7 @@ import { CopyButton } from "@/components/common/copy-button";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { EditLinkDialog } from "@/components/links/edit-link-dialog";
 import { Favicon } from "@/components/common/favicon";
+import { LiveDot } from "@/components/common/live-dot";
 import { Sparkline } from "@/components/links/stats/sparkline";
 import { useToast } from "@/components/ui/toast";
 import { deleteLink } from "@/lib/api";
@@ -22,6 +23,12 @@ import type { MyLink } from "@/types";
 type SortKey = "createdAt" | "clickCount";
 type SortDir = "asc" | "desc";
 
+/**
+ * 라이브 클릭 가산분 — extra 는 서버 재조회가 실값을 실어올 때 0 으로 접히고, seq 는 세션 내
+ * 도착 횟수로 남아 도착 모션 재시동(홀짝 클래스)과 라이브 닷 유지의 키가 된다.
+ */
+export type LiveBump = { extra: number; seq: number };
+
 type Props = {
   items: MyLink[];
   onChanged: () => void;
@@ -31,6 +38,8 @@ type Props = {
   onSortChange: (key: SortKey, dir: SortDir) => void;
   isFavorite: (shortCode: string) => boolean;
   onToggleFavorite: (shortCode: string) => void;
+  /** 계정 클릭 스트림이 실어온 행별 라이브 신호(없으면 정적 렌더). */
+  liveByCode?: Record<string, LiveBump>;
 };
 
 export function LinksTable({
@@ -42,6 +51,7 @@ export function LinksTable({
   onSortChange,
   isFavorite,
   onToggleFavorite,
+  liveByCode,
 }: Props) {
   const t = useTranslations("dashboard");
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
@@ -147,6 +157,7 @@ export function LinksTable({
             key={item.shortCode}
             item={item}
             index={index}
+            live={liveByCode?.[item.shortCode]}
             selected={selected.has(item.shortCode)}
             favorite={isFavorite(item.shortCode)}
             onToggleFavorite={() => onToggleFavorite(item.shortCode)}
@@ -202,8 +213,13 @@ export function LinksTable({
             </TR>
           </THead>
           <TBody>
-            {items.map((item) => (
-              <TR key={item.shortCode}>
+            {items.map((item) => {
+              const bump = liveByCode?.[item.shortCode];
+              return (
+              <TR
+                key={item.shortCode}
+                className={bump ? (bump.seq % 2 ? "click-arrive-a" : "click-arrive-b") : undefined}
+              >
                 <TD>
                   <input
                     type="checkbox"
@@ -286,8 +302,16 @@ export function LinksTable({
                         className="hidden text-slate-400 dark:text-slate-500 lg:inline-block"
                       />
                     )}
+                    {bump && <LiveDot />}
                     <span className="tabular-nums font-medium text-slate-900 dark:text-slate-100">
-                      {formatNumber(item.clickCount)}
+                      {bump ? (
+                        // key=seq — 도착마다 스팬을 갈아 끼워 솟음 모션을 재시동한다.
+                        <span key={bump.seq} className="count-bump">
+                          {formatNumber(item.clickCount + bump.extra)}
+                        </span>
+                      ) : (
+                        formatNumber(item.clickCount)
+                      )}
                     </span>
                   </div>
                 </TD>
@@ -327,7 +351,8 @@ export function LinksTable({
                   </div>
                 </TD>
               </TR>
-            ))}
+              );
+            })}
           </TBody>
         </Table>
       </div>
@@ -387,6 +412,7 @@ function expiryState(expiresAt: string | null | undefined): ExpiryState {
 function MobileLinkCard({
   item,
   index,
+  live,
   selected,
   favorite,
   onToggleFavorite,
@@ -399,6 +425,7 @@ function MobileLinkCard({
 }: {
   item: MyLink;
   index: number;
+  live?: LiveBump;
   selected: boolean;
   favorite: boolean;
   onToggleFavorite: () => void;
@@ -418,7 +445,10 @@ function MobileLinkCard({
      액션은 둘째 행으로 — 정보 손실 없이 절반 높이. */
   return (
     <div
-      className="profile-fade rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 py-3 shadow-[0_1px_2px_rgba(15,23,42,0.03)]"
+      className={cn(
+        "profile-fade rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3.5 py-3 shadow-[0_1px_2px_rgba(15,23,42,0.03)]",
+        live && (live.seq % 2 ? "click-arrive-a" : "click-arrive-b"),
+      )}
       style={{ "--idx": Math.min(index, 8) } as CSSProperties}
     >
       <div className="flex items-center gap-2.5">
@@ -461,8 +491,15 @@ function MobileLinkCard({
           </a>
         </div>
         <div className="shrink-0 text-right">
-          <p className="font-mono text-lg font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
-            {formatNumber(item.clickCount)}
+          <p className="flex items-center justify-end gap-1.5 font-mono text-lg font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
+            {live && <LiveDot />}
+            {live ? (
+              <span key={live.seq} className="count-bump">
+                {formatNumber(item.clickCount + live.extra)}
+              </span>
+            ) : (
+              formatNumber(item.clickCount)
+            )}
           </p>
           {weekClicks > 0 && (
             <div className="mt-1 flex items-center justify-end gap-1">
@@ -569,13 +606,18 @@ function FavoriteButton({
   label: string;
   className?: string;
 }) {
+  // 잉크 체크는 사용자가 누른 순간에만 — 초기 렌더의 이미 켜진 별들이 일제히 튀지 않게.
+  const [justToggled, setJustToggled] = useState(false);
   return (
     <button
       type="button"
       aria-pressed={active}
       aria-label={label}
       title={label}
-      onClick={onToggle}
+      onClick={() => {
+        setJustToggled(true);
+        onToggle();
+      }}
       className={cn(
         "focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-md transition-colors",
         active
@@ -584,7 +626,7 @@ function FavoriteButton({
         className,
       )}
     >
-      <Star className={cn("h-3.5 w-3.5", active && "fill-current")} />
+      <Star className={cn("h-3.5 w-3.5", active && "fill-current", active && justToggled && "ink-check")} />
     </button>
   );
 }
