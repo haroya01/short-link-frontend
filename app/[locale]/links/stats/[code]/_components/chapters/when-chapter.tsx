@@ -53,7 +53,7 @@ export function WhenChapter({
   const t = useTranslations("stats");
   return (
     <div id="chapter-when" className="scroll-mt-28 space-y-4">
-      <ChapterHeading index={2} title={t("chapters.when")} />
+      <ChapterHeading index={2} title={t("analysisTabs.when")} />
       <div id="section-live">
         {demo ? (
           <LiveClickFeedDemo />
@@ -81,13 +81,13 @@ export function WhenChapter({
               onClick={() => onRange(d)}
               aria-pressed={range === d}
               className={cn(
-                "rounded-full px-2.5 py-1 font-mono text-[11px] font-medium uppercase transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
+                "min-h-11 rounded-full px-3 text-[13px] font-medium uppercase transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
                 range === d
                   ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(15,23,42,0.08)] dark:bg-slate-900 dark:text-slate-100"
                   : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
               )}
             >
-              {d}D
+              {t("rangeDays", { days: d })}
             </button>
           ))}
         </div>
@@ -97,7 +97,7 @@ export function WhenChapter({
           <Section
             id="section-daily"
             title={t("section.daily.title")}
-            description={t("section.daily.desc", { tz: data.timezone })}
+            description={t("scope.daily", { days: range, tz: data.timezone })}
             className="lg:col-span-2"
           >
             <DailyChart data={dailyClicks ?? data.dailyClicks} />

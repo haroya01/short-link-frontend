@@ -1,44 +1,40 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ChevronLeft, ChevronRight, Eye, Heart, Link2, MousePointerClick, TrendingUp, UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/lib/auth";
 import { blogPath } from "@/lib/host";
-import { getPostAnalytics, getPostStats, type PostAnalytics } from "@/modules/blog/api/analytics";
+import { getPostAnalytics, getPostStats } from "@/modules/blog/api/analytics";
 import { listMyPosts, type PostView } from "@/modules/blog/api/posts";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
 import { StatCard, WindowTabs } from "@/modules/blog/components/workspace/analytics-bits";
 import { ProfileStatsDashboard } from "@/modules/profile/components/stats-dashboard";
 import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
-import type { ProfileStats } from "@/types";
+import { ErrorState } from "@/components/common/error-state";
 
 export default function PostAnalyticsPage() {
   const t = useTranslations("blogWorkspace");
   const params = useParams();
   const postId = Number(params.postId);
-  const { ready, authenticated } = useAuth();
+  const { ready, authenticated, me } = useAuth();
   const [days, setDays] = useState(30);
-  const [data, setData] = useState<PostAnalytics | null>(null);
-  const [deep, setDeep] = useState<ProfileStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const enabled = ready && authenticated && Number.isFinite(postId);
+  const { data, isLoading: loading, error, refetch } = useQuery({
+    queryKey: ["blog", "analytics", me?.id, "post", postId, days],
+    queryFn: () => getPostAnalytics(postId, days),
+    enabled,
+  });
+  const deepQuery = useQuery({
+    queryKey: ["blog", "analytics", me?.id, "post-stats", postId, days],
+    queryFn: () => getPostStats(postId, days),
+    enabled,
+  });
+  const deep = deepQuery.data;
   const [siblings, setSiblings] = useState<PostView[] | null>(null);
-
-  useEffect(() => {
-    if (!ready || !authenticated || !Number.isFinite(postId)) return;
-    setLoading(true);
-    getPostAnalytics(postId, days)
-      .then(setData)
-      .catch(() => setData(null))
-      .finally(() => setLoading(false));
-    // Deep reader breakdown (countries · devices · referrers · UTM · heatmap) — same depth as the
-    // profile-visit dashboard, scoped to this post. Loads independently so the light header isn't gated.
-    getPostStats(postId, days)
-      .then(setDeep)
-      .catch(() => setDeep(null));
-  }, [ready, authenticated, postId, days]);
 
   // Sibling published posts (newest first) power the prev/next 글 switcher — flip straight to the next
   // post's readers without bouncing back to the overview. Window-independent, so it loads once.
@@ -111,6 +107,8 @@ export default function PostAnalyticsPage() {
             <SkeletonRows count={4} />
           </div>
         </div>
+      ) : error ? (
+        <div className="mt-6"><ErrorState onRetry={() => void refetch()} /></div>
       ) : !data ? (
         <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
@@ -177,7 +175,9 @@ export default function PostAnalyticsPage() {
           </section>
 
           {/* Deep reader breakdown — short-link-stats depth, scoped to this post. */}
-          {deep && (
+          {deepQuery.error ? (
+            <div className="mt-8"><ErrorState onRetry={() => void deepQuery.refetch()} /></div>
+          ) : deep && (
             <div className="mt-8">
               <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsReaders")}</h2>
               <ProfileStatsDashboard data={deep} />

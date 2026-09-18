@@ -18,7 +18,7 @@ import { BasicSection } from "@/components/links/edit-link-dialog/sections/basic
 import { OgOverrideSection } from "@/components/links/edit-link-dialog/sections/og-override-section";
 import { ProtectionSection } from "@/components/links/edit-link-dialog/sections/protection-section";
 import { TagsSection } from "@/components/links/edit-link-dialog/sections/tags-section";
-import { blankToNull, toLocalInput, type Section } from "@/components/links/edit-link-dialog/utils";
+import { blankToNull, buildExpiryPatch, toLocalInput, type Section } from "@/components/links/edit-link-dialog/utils";
 import type { MyLink } from "@/types";
 
 type Props = {
@@ -135,15 +135,14 @@ export function EditLinkDialog({ link, onClose, onSaved }: Props) {
     if (!link) return;
     const trimmed = originalUrl.trim();
     const urlChanged = trimmed.length > 0 && trimmed !== link.originalUrl;
-    const beforeIso = link.expiresAt ?? null;
-    const afterIso = expiresAt ? new Date(expiresAt).toISOString() : null;
-    const expiresChanged = beforeIso !== afterIso;
+    const expiry = buildExpiryPatch(link.expiresAt ?? null, expiresAt);
+    const expiresChanged = Object.keys(expiry).length > 0;
     const noteChanged = (detail?.note ?? "") !== note;
     const expiredChanged = (detail?.expiredMessage ?? "") !== expiredMessage;
     if (!urlChanged && !expiresChanged && !noteChanged && !expiredChanged) return;
     await updateLink(link.shortCode, {
       originalUrl: urlChanged ? trimmed : undefined,
-      expiresAt: expiresChanged ? afterIso : undefined,
+      ...expiry,
       note: noteChanged ? note : undefined,
       expiredMessage: expiredChanged ? expiredMessage : undefined,
     });

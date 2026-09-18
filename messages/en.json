@@ -235,8 +235,9 @@
     "analyticsWindowFollows": "+{count} in {days}d",
     "linksByPost": "Clicks by post",
     "linksFullDashboard": "Full links dashboard",
-    "savedTitle": "Saved",
-    "savedSubtitle": "Your bookmarked and liked posts in one place.",
+    "libraryCollections": "Collections",
+    "savedTitle": "Library",
+    "savedSubtitle": "Return to saved posts and passages you want to remember.",
     "curationMockNote": "Preview — saved to this browser only for now.",
     "curationPinned": "Pinned posts",
     "curationPinnedHint": "Shown in this order at the top of your public profile.",
@@ -247,7 +248,7 @@
     "curationMoveUp": "Move up",
     "curationMoveDown": "Move down",
     "curationUnpin": "Unpin",
-    "curationReadingList": "Reading list",
+    "curationReadingList": "Saved posts",
     "curationReadingListHint": "Posts you saved to read later.",
     "curationReadingListEmpty": "No saved posts yet.",
     "curationRemoveBookmark": "Remove from list",
@@ -269,8 +270,8 @@
     "rowDeleteFailed": "Couldn't delete.",
     "curationLiked": "Liked posts",
     "curationLikedHint": "Posts you've liked.",
-    "curationHighlights": "My highlights",
-    "curationHighlightsHint": "The passages you've drawn. Jump back to the sentence in its source.",
+    "curationHighlights": "Highlights & notes",
+    "curationHighlightsHint": "Your highlighted passages and notes. Open one to return to the source.",
     "curationComments": "My comments",
     "curationCommentsHint": "Comments you've written.",
     "curationLikedEmpty": "No liked posts yet.",
@@ -533,7 +534,7 @@
     "clearHistoryCancel": "Cancel",
     "forget": "Remove from history",
     "loadMore": "Load more",
-    "highlightsSearch": "Search by passage or post title",
+    "highlightsSearch": "Search passages, notes, or post titles",
     "noResults": "No matching passages.",
     "emptyFolder": "This folder is empty.",
     "saveFailed": "Couldn't save your change. Please try again.",
@@ -550,6 +551,15 @@
     "highlightNoteTitle": "Add a note",
     "highlightNotePlaceholder": "Leave a note on this passage",
     "highlightNoteSave": "Save",
+    "highlightSourceUnavailable": "This passage could not be located in the current post. Your saved highlight is shown instead.",
+    "highlightPublicScope": "Highlights and notes are public and attributed to you.",
+    "highlightSaving": "Saving…",
+    "highlightChooseThread": "Notes on this passage",
+    "highlightDiscardConfirm": "Discard this note?",
+    "highlightDiscardBody": "Your unsaved text will be lost.",
+    "highlightKeepEditing": "Keep editing",
+    "highlightDiscard": "Discard",
+    "highlightSelectionTooLong": "Select up to 1,000 characters for a highlight.",
     "highlightNoteCancel": "Cancel",
     "highlightThreadNoReplies": "No replies yet",
     "highlightReplyPlaceholder": "Write a reply…",
@@ -829,7 +839,7 @@
       "series": "Series",
       "readers": "Readers",
       "leads": "Leads",
-      "curation": "Saved",
+      "curation": "Library",
       "webhooks": "Webhooks",
       "moderation": "Moderation",
       "adminMetrics": "Metrics"
@@ -1066,11 +1076,11 @@
   "dashboard": {
     "label": "dashboard",
     "title": "My Links",
-    "subtitle": "{count} links. Click a short code to see analytics.",
+    "subtitle": "{count} links · select a name to see analytics.",
     "newLink": "New link",
     "loadMore": "Load more",
     "loadingMore": "Loading...",
-    "searchPlaceholder": "Search by original URL or short code",
+    "searchPlaceholder": "Search name, destination URL or short code",
     "clearSearch": "Clear search",
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "My links and click stats are visible only after sign-in.",
@@ -1088,10 +1098,10 @@
       "expiring": "Expiring soon"
     },
     "ops": {
-      "totalClicks": "Total clicks",
-      "totalClicksHint": "All-time clicks in this list",
-      "weekClicks": "Last 7 days",
-      "weekClicksHint": "Recent movement",
+      "totalClicks": "Lifetime human clicks",
+      "totalClicksHint": "All account links · excludes automated traffic",
+      "weekClicks": "7-day human clicks",
+      "weekClicksHint": "Last 7 days · excludes automated traffic",
       "zeroClick": "Zero-click links",
       "zeroClickReview": "Review placement or CTA",
       "zeroClickClear": "Every link has received clicks",
@@ -1101,10 +1111,11 @@
       "topLink": "Top link",
       "weekDelta": "+{count} last 7 days",
       "topLinkEmpty": "No links to compare yet",
-      "clicks": "clicks",
+      "clicks": "human clicks",
       "copy": "Copy",
       "viewStats": "View stats",
-      "open": "Open"
+      "open": "Open",
+      "zeroClickHint": "Links with no clicks, including automated clicks"
     },
     "emptyTitle": "Make your first link",
     "emptyDesc": "Shorten one URL and within a minute the clicks / countries / channels / devices view fills in. Takes 30 seconds.",
@@ -1129,15 +1140,16 @@
     "noResultDesc": "Could not find any link matching \"{query}\".",
     "noResultDescFiltered": "No links match the current filters. Try adjusting them.",
     "table": {
-      "shortUrl": "Short URL",
+      "shortUrl": "Link name",
       "originalUrl": "Original URL",
       "createdAt": "Created",
       "expiresAt": "Expires",
-      "clicks": "Clicks",
-      "actions": "Actions"
+      "clicks": "Human clicks",
+      "actions": "Actions",
+      "sortAllClicks": "Sort by all clicks"
     },
     "card": {
-      "week": "{count} this week",
+      "week": "7-day human clicks: {count}",
       "expiresToday": "Expires today",
       "expiresIn": "{days}d left",
       "expired": "Expired"
@@ -1152,7 +1164,15 @@
       "remove": "Remove from favorites",
       "filter": "Favorites",
       "emptyTitle": "No favorite links yet",
-      "emptyDesc": "Tap the star on a link to add it to favorites and pin it to the top."
+      "emptyDesc": "Star a link in All links to save it here.",
+      "syncedHint": "Saved to your account and available in the app and on the web.",
+      "saveFailed": "Could not save favorites. Please try again.",
+      "loadFailed": "Could not load favorites.",
+      "orderTitle": "Favorite order",
+      "orderDone": "Done ordering",
+      "orderHint": "The same order is saved for the app and the web.",
+      "moveUp": "Move {name} up",
+      "moveDown": "Move {name} down"
     },
     "deleteConfirmTitle": "Delete this link?",
     "deleteConfirmDesc": "Deleted links cannot be recovered. Click stats are also lost.",
@@ -1205,15 +1225,21 @@
       "downloadResult": "Download result CSV",
       "uploadAnother": "Upload another",
       "done": "Done"
-    }
+    },
+    "librarySubtitle": "Find and copy your links, then check their performance.",
+    "loadFailed": "Could not load links. Please try again.",
+    "overviewFailed": "Could not load account statistics.",
+    "accountScope": "Whole account · {tz} · {total} lifetime clicks including automation · independent of list filters",
+    "libraryViews": "Link collection",
+    "allLinks": "All links"
   },
   "edit": {
     "title": "Edit link",
     "originalUrl": "Original URL",
     "expiresAt": "Expires at (leave blank for no expiry)",
-    "noteLabel": "Private memo (optional)",
+    "noteLabel": "Link name / note (optional)",
     "notePlaceholder": "e.g. Spring promo / used in Instagram story",
-    "noteHint": "Visible only to you. Never shown to visitors.",
+    "noteHint": "Shown in your library and favorites. Never shown to visitors.",
     "expiredMessageLabel": "Expired-page message (optional)",
     "expiredMessagePlaceholder": "e.g. Promo ended — see the next drop at example.com",
     "expiredMessageHint": "Shown instead of the default expiry page when the link expires or hits its view limit.",
@@ -1274,7 +1300,10 @@
       "title": "Live clicks",
       "connecting": "Connecting…",
       "connected": "Live",
-      "waiting": "Clicks will appear here as they come in."
+      "waiting": "Clicks will appear here as they come in.",
+      "scope": "Clicks since opening this view · device local time",
+      "reconnecting": "Disconnected · reconnecting",
+      "disconnectedHint": "Live clicks disconnected. Reconnecting automatically. Existing statistics are still available."
     },
     "quality": {
       "title": "Click quality",
@@ -1418,10 +1447,10 @@
     "notFoundDesc": "It may have been deleted or never existed.",
     "backToDashboard": "Back to my links",
     "kpi": {
-      "totalClicks": "Total clicks",
-      "unique": "Unique",
-      "human": "Human",
-      "bot": "Bots",
+      "totalClicks": "Lifetime clicks",
+      "unique": "Estimated visitors",
+      "human": "Human clicks",
+      "bot": "Automated traffic",
       "velocityHot": "Click surge",
       "velocityHour": "Last hour",
       "ttfc": "First click after",
@@ -1439,7 +1468,7 @@
         "desc": "{tz} · darker = more clicks"
       },
       "daily": {
-        "title": "Daily clicks",
+        "title": "Daily human clicks",
         "desc": "Last 30 days · {tz}"
       },
       "hourly": {
@@ -1630,7 +1659,7 @@
       "where": "Where"
     },
     "journal": {
-      "title": "Link journal",
+      "title": "Notable changes",
       "evidence": "evidence",
       "detail": "Open detail",
       "newVisitors": "New visitors",
@@ -1645,17 +1674,31 @@
       "topCountry": "{percent}% arrived from {country}",
       "mobileHeavy": "{percent}% on mobile — this link gets tapped on phones",
       "desktopHeavy": "{percent}% on desktop — opened at a desk",
-      "botHigh": "Bots make up {percent}% — humans: {human}",
-      "botFiltered": "Strip the {percent}% bots and {human} humans visited",
+      "botHigh": "Automated traffic is {percent}% · {human} human clicks",
+      "botFiltered": "Excluding {percent}% automated traffic leaves {human} human clicks",
       "fastFirstClick": "First click landed {minutes} min after creation",
       "inAppBrowser": "{percent}% opened inside {app} — that is a lot of in-app browser traffic",
-      "channelLoyalty": "{percent}% of the people from {host} came back"
+      "channelLoyalty": "{percent}% of the people from {host} came back",
+      "showMore": "Show {count} more changes",
+      "showLess": "Show less"
     },
     "protection": {
       "title": "Protection",
       "saved": "Protection settings saved.",
       "failed": "Couldn't save protection settings."
-    }
+    },
+    "analysisTabs": {
+      "when": "Click trends",
+      "where": "Traffic sources",
+      "who": "Visitor devices"
+    },
+    "linkSettings": "Link settings",
+    "scope": {
+      "report": "Lifetime totals · daily charts show human clicks in the selected period · {tz}",
+      "daily": "Human clicks in the last {days} days · {tz}"
+    },
+    "trendTitle": "Click trends",
+    "rangeDays": "{days} days"
   },
   "admin": {
     "label": "admin",
@@ -2190,7 +2233,9 @@
       "thu": "Thu",
       "fri": "Fri",
       "sat": "Sat"
-    }
+    },
+    "loadFailed": "Could not load this week’s insights.",
+    "retry": "Try again"
   },
   "recent": {
     "title": "Recently shortened",

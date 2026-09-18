@@ -15,3 +15,10 @@ export function toLocalInput(iso: string): string {
 }
 
 export type Section = "basic" | "tags" | "og" | "protection";
+
+/** Explicit expiry clearing; unchanged minute inputs preserve the original second precision. */
+export function buildExpiryPatch(previous: string | null, input: string): { expiresAt?: string | null; clearExpiresAt?: boolean } {
+  if (previous ? input === toLocalInput(previous) : !input) return {};
+  if (!input) return { expiresAt: null, clearExpiresAt: true };
+  return { expiresAt: new Date(input).toISOString() };
+}

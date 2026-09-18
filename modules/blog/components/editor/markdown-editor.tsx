@@ -161,13 +161,17 @@ const EnterSoftBreak = Extension.create({
 export function MarkdownEditor({
   initialValue,
   onChange,
+  onEdit,
   onUploadImage,
   onImportImageUrl,
   onUploadError,
   liveMarkdownRef,
+  focusEditorRef,
 }: {
   initialValue: string;
   onChange: (markdown: string) => void;
+  /** Mark an edit immediately; markdown serialization stays debounced for long documents. */
+  onEdit?: () => void;
   onUploadImage: (file: Blob) => Promise<string>;
   // Re-host an external image URL (e.g. pasted from Notion) to a kurl-owned URL. When absent, pasted
   // <img> HTML falls through to the default handler (which strips it).
@@ -176,6 +180,8 @@ export function MarkdownEditor({
   // Exposes a synchronous "serialize the doc to markdown right now" getter to the parent, so Save/
   // Publish can read the LATEST content instead of the debounced onChange state.
   liveMarkdownRef?: { current: (() => string) | null };
+  /** Lets the title move into the body without relying on editor DOM details. */
+  focusEditorRef?: { current: (() => void) | null };
 }) {
   const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -188,6 +194,8 @@ export function MarkdownEditor({
   // last edit. onChangeRef keeps the latest callback without re-creating the editor.
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
+  const onEditRef = useRef(onEdit);
+  onEditRef.current = onEdit;
   const flushTimer = useRef<number | undefined>(undefined);
   useEffect(
     () => () => {
@@ -406,6 +414,7 @@ export function MarkdownEditor({
       },
     },
     onUpdate: ({ editor }) => {
+      onEditRef.current?.();
       scheduleKeepCaret(caretRaf, editor, scrollerRef);
       window.clearTimeout(flushTimer.current);
       flushTimer.current = window.setTimeout(() => {
@@ -435,6 +444,12 @@ export function MarkdownEditor({
       if (liveMarkdownRef) liveMarkdownRef.current = null;
     };
   }, [editor, liveMarkdownRef]);
+
+  useEffect(() => {
+    if (!focusEditorRef) return;
+    focusEditorRef.current = editor ? () => { editor.commands.focus("start"); } : null;
+    return () => { focusEditorRef.current = null; };
+  }, [editor, focusEditorRef]);
 
   if (!editor) return <div className="h-full" />;
 
@@ -585,10 +600,8 @@ function EditorToolbar({
                 title={it.label}
                 aria-pressed={it.active}
                 className={cls(it.active)}
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  it.run();
-                }}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={it.run}
               >
                 <it.icon className="h-4 w-4" />
               </button>
@@ -666,13 +679,9 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
             aria-label={it.label}
             aria-pressed={it.active}
             className={btn(it.active)}
-            // onMouseDown + preventDefault (like the toolbar) so clicking doesn't blur the editor
-            // and collapse the selection before the command runs — a collapsed selection makes Link in
-            // particular a no-op (extendMarkRange finds no range), and weakens the mark toggles.
-            onMouseDown={(e) => {
-              e.preventDefault();
-              it.run();
-            }}
+            // Preserve the pointer selection on press; click also handles keyboard and assistive activation.
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={it.run}
           >
             <it.icon className="h-4 w-4" />
           </button>
@@ -746,10 +755,8 @@ function ImageBubble({ editor }: { editor: Editor }) {
         title={it.label}
         aria-pressed={it.active}
         className={btn(it.active)}
-        onMouseDown={(e) => {
-          e.preventDefault();
-          it.run();
-        }}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={it.run}
       >
         <it.icon className="h-4 w-4" />
       </button>
@@ -777,4 +784,3 @@ function ImageBubble({ editor }: { editor: Editor }) {
     </BubbleMenu>
   );
 }
-

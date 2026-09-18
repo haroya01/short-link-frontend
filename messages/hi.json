@@ -235,8 +235,9 @@
     "analyticsWindowFollows": "{days}दिन में +{count}",
     "linksByPost": "पोस्ट के अनुसार क्लिक",
     "linksFullDashboard": "पूरा लिंक डैशबोर्ड",
-    "savedTitle": "सहेजे गए",
-    "savedSubtitle": "आपकी बुकमार्क और पसंद की गई पोस्ट एक जगह।",
+    "libraryCollections": "कलेक्शन",
+    "savedTitle": "लाइब्रेरी",
+    "savedSubtitle": "सहेजी हुई पोस्ट और याद रखने वाले अंश फिर पढ़ें।",
     "curationMockNote": "पूर्वावलोकन — फ़िलहाल केवल इस ब्राउज़र में सहेजा गया।",
     "curationPinned": "पिन की गई पोस्ट",
     "curationPinnedHint": "आपके सार्वजनिक प्रोफ़ाइल में सबसे ऊपर इसी क्रम में दिखेंगी।",
@@ -247,7 +248,7 @@
     "curationMoveUp": "ऊपर ले जाएँ",
     "curationMoveDown": "नीचे ले जाएँ",
     "curationUnpin": "अनपिन करें",
-    "curationReadingList": "रीडिंग लिस्ट",
+    "curationReadingList": "सहेजी पोस्ट",
     "curationReadingListHint": "बाद में पढ़ने के लिए सहेजी गई पोस्ट।",
     "curationReadingListEmpty": "अभी तक कोई सहेजी गई पोस्ट नहीं।",
     "curationRemoveBookmark": "लिस्ट से हटाएँ",
@@ -269,8 +270,8 @@
     "rowDeleteFailed": "हटाया नहीं जा सका।",
     "curationLiked": "पसंद की गई पोस्ट",
     "curationLikedHint": "आपने जिन पोस्ट को पसंद किया।",
-    "curationHighlights": "मेरा संग्रह",
-    "curationHighlightsHint": "आपके द्वारा चुने गए अंश। मूल वाक्य पर वापस जाएँ।",
+    "curationHighlights": "हाइलाइट और नोट्स",
+    "curationHighlightsHint": "आपके हाइलाइट किए अंश और नोट्स। मूल पोस्ट पर लौटने के लिए कोई अंश चुनें।",
     "curationComments": "मेरी टिप्पणियाँ",
     "curationCommentsHint": "आपने जो टिप्पणियाँ लिखीं।",
     "curationLikedEmpty": "अभी तक कोई पसंद की गई पोस्ट नहीं।",
@@ -533,7 +534,7 @@
     "clearHistoryCancel": "रद्द करें",
     "forget": "इतिहास से हटाएँ",
     "loadMore": "और देखें",
-    "highlightsSearch": "अंश या पोस्ट शीर्षक से खोजें",
+    "highlightsSearch": "अंश, नोट या लेख के शीर्षक खोजें",
     "noResults": "कोई मिलता-जुलता अंश नहीं।",
     "emptyFolder": "यह फ़ोल्डर खाली है।",
     "saveFailed": "आपका बदलाव सहेजा नहीं जा सका। कृपया फिर से प्रयास करें।",
@@ -550,6 +551,15 @@
     "highlightNoteTitle": "एक नोट जोड़ें",
     "highlightNotePlaceholder": "इस अंश पर एक नोट छोड़ें",
     "highlightNoteSave": "सहेजें",
+    "highlightSourceUnavailable": "मौजूदा लेख में इस अंश का स्थान नहीं मिला। इसके बजाय आपका सहेजा हुआ हाइलाइट दिखाया गया है।",
+    "highlightPublicScope": "हाइलाइट और नोट आपके नाम के साथ सार्वजनिक होंगे।",
+    "highlightSaving": "सहेजा जा रहा है…",
+    "highlightChooseThread": "इस अंश पर नोट",
+    "highlightDiscardConfirm": "यह नोट छोड़ दें?",
+    "highlightDiscardBody": "आपका बिना सहेजा गया लेखन खो जाएगा।",
+    "highlightKeepEditing": "संपादन जारी रखें",
+    "highlightDiscard": "छोड़ दें",
+    "highlightSelectionTooLong": "हाइलाइट के लिए अधिकतम 1,000 अक्षर चुनें।",
     "highlightNoteCancel": "रद्द करें",
     "highlightThreadNoReplies": "अभी कोई जवाब नहीं",
     "highlightReplyPlaceholder": "एक जवाब लिखें…",
@@ -829,7 +839,7 @@
       "series": "सीरीज़",
       "readers": "पाठक",
       "leads": "लीड",
-      "curation": "सहेजे गए",
+      "curation": "लाइब्रेरी",
       "webhooks": "वेबहुक",
       "moderation": "मॉडरेशन",
       "adminMetrics": "मेट्रिक्स"
@@ -1066,11 +1076,11 @@
   "dashboard": {
     "label": "dashboard",
     "title": "मेरे लिंक",
-    "subtitle": "{count} लिंक। विश्लेषण देखने के लिए किसी शॉर्ट कोड पर क्लिक करें।",
+    "subtitle": "{count} लिंक · आँकड़े देखने के लिए नाम चुनें।",
     "newLink": "नया लिंक",
     "loadMore": "और देखें",
     "loadingMore": "लोड हो रहा है...",
-    "searchPlaceholder": "मूल URL या शॉर्ट कोड से खोजें",
+    "searchPlaceholder": "नाम, मूल URL या छोटा कोड खोजें",
     "clearSearch": "खोज साफ़ करें",
     "loginRequired": "साइन इन ज़रूरी है",
     "loginRequiredDesc": "मेरे लिंक और क्लिक आँकड़े केवल साइन इन के बाद दिखते हैं।",
@@ -1088,10 +1098,10 @@
       "expiring": "जल्द समाप्त होने वाले"
     },
     "ops": {
-      "totalClicks": "कुल क्लिक",
-      "totalClicksHint": "इस सूची में सर्वकालिक क्लिक",
-      "weekClicks": "पिछले 7 दिन",
-      "weekClicksHint": "हाल की हलचल",
+      "totalClicks": "अब तक के मानवीय क्लिक",
+      "totalClicksHint": "सभी लिंक · स्वचालित ट्रैफ़िक हटाकर",
+      "weekClicks": "7 दिन के मानवीय क्लिक",
+      "weekClicksHint": "पिछले 7 दिन · स्वचालित ट्रैफ़िक हटाकर",
       "zeroClick": "शून्य-क्लिक लिंक",
       "zeroClickReview": "प्लेसमेंट या CTA की समीक्षा करें",
       "zeroClickClear": "हर लिंक को क्लिक मिले हैं",
@@ -1101,10 +1111,11 @@
       "topLink": "शीर्ष लिंक",
       "weekDelta": "पिछले 7 दिनों में +{count}",
       "topLinkEmpty": "तुलना के लिए अभी कोई लिंक नहीं",
-      "clicks": "क्लिक",
+      "clicks": "मानवीय क्लिक",
       "copy": "कॉपी करें",
       "viewStats": "आँकड़े देखें",
-      "open": "खोलें"
+      "open": "खोलें",
+      "zeroClickHint": "ऐसे लिंक जिन पर स्वचालित क्लिक सहित कोई क्लिक नहीं हुआ"
     },
     "emptyTitle": "अपना पहला लिंक बनाएँ",
     "emptyDesc": "एक URL छोटा करें और एक मिनट के भीतर क्लिक / देश / चैनल / डिवाइस दृश्य भर जाता है। बस 30 सेकंड लगते हैं।",
@@ -1129,15 +1140,16 @@
     "noResultDesc": "\"{query}\" से मेल खाने वाला कोई लिंक नहीं मिला।",
     "noResultDescFiltered": "मौजूदा फ़िल्टर से मेल खाने वाला कोई लिंक नहीं है। उन्हें समायोजित करके देखें।",
     "table": {
-      "shortUrl": "छोटा URL",
+      "shortUrl": "लिंक का नाम",
       "originalUrl": "मूल URL",
       "createdAt": "बनाया गया",
       "expiresAt": "समाप्ति",
-      "clicks": "क्लिक",
-      "actions": "क्रियाएँ"
+      "clicks": "मानवीय क्लिक",
+      "actions": "क्रियाएँ",
+      "sortAllClicks": "सभी क्लिक के क्रम में"
     },
     "card": {
-      "week": "इस सप्ताह {count}",
+      "week": "7 दिन के मानवीय क्लिक: {count}",
       "expiresToday": "आज समाप्त",
       "expiresIn": "{days} दिन शेष",
       "expired": "समाप्त"
@@ -1152,7 +1164,15 @@
       "remove": "पसंदीदा से हटाएँ",
       "filter": "पसंदीदा",
       "emptyTitle": "अभी कोई पसंदीदा लिंक नहीं",
-      "emptyDesc": "किसी लिंक के स्टार पर टैप करके उसे पसंदीदा में जोड़ें और सबसे ऊपर पिन करें।"
+      "emptyDesc": "यहाँ सहेजने के लिए सभी लिंक में तारा दबाएँ।",
+      "syncedHint": "आपके खाते में सहेजे गए हैं और ऐप व वेब दोनों पर उपलब्ध हैं।",
+      "saveFailed": "पसंदीदा सहेजे नहीं जा सके। फिर कोशिश करें।",
+      "loadFailed": "पसंदीदा लोड नहीं हो सके।",
+      "orderTitle": "पसंदीदा का क्रम",
+      "orderDone": "क्रम पूरा हुआ",
+      "orderHint": "ऐप और वेब पर एक ही क्रम सहेजा जाता है।",
+      "moveUp": "{name} को ऊपर ले जाएँ",
+      "moveDown": "{name} को नीचे ले जाएँ"
     },
     "deleteConfirmTitle": "इस लिंक को हटाएँ?",
     "deleteConfirmDesc": "हटाए गए लिंक पुनर्प्राप्त नहीं किए जा सकते। क्लिक आँकड़े भी खो जाते हैं।",
@@ -1205,15 +1225,21 @@
       "downloadResult": "परिणाम CSV डाउनलोड करें",
       "uploadAnother": "एक और अपलोड करें",
       "done": "हो गया"
-    }
+    },
+    "librarySubtitle": "लिंक खोजें, कॉपी करें और प्रदर्शन देखें।",
+    "loadFailed": "लिंक लोड नहीं हो सके। फिर कोशिश करें।",
+    "overviewFailed": "खाते के आँकड़े लोड नहीं हो सके।",
+    "accountScope": "पूरा खाता · {tz} · स्वचालित सहित अब तक {total} क्लिक · सूची फ़िल्टर से अलग",
+    "libraryViews": "लिंक सूची चुनें",
+    "allLinks": "सभी लिंक"
   },
   "edit": {
     "title": "लिंक संपादित करें",
     "originalUrl": "मूल URL",
     "expiresAt": "समाप्ति समय (कोई समाप्ति न हो तो खाली छोड़ें)",
-    "noteLabel": "निजी मेमो (वैकल्पिक)",
+    "noteLabel": "लिंक का नाम / नोट (वैकल्पिक)",
     "notePlaceholder": "जैसे स्प्रिंग प्रोमो / Instagram स्टोरी में इस्तेमाल",
-    "noteHint": "केवल आपको दिखता है। आगंतुकों को कभी नहीं दिखाया जाता।",
+    "noteHint": "आपकी सूची और पसंदीदा में दिखता है। आगंतुकों को नहीं दिखता।",
     "expiredMessageLabel": "समाप्ति-पेज संदेश (वैकल्पिक)",
     "expiredMessagePlaceholder": "जैसे प्रोमो समाप्त — अगली पेशकश example.com पर देखें",
     "expiredMessageHint": "लिंक समाप्त होने या व्यू सीमा पर पहुँचने पर डिफ़ॉल्ट समाप्ति पेज के बजाय दिखाया जाता है।",
@@ -1274,7 +1300,10 @@
       "title": "लाइव क्लिक",
       "connecting": "कनेक्ट हो रहा है…",
       "connected": "लाइव",
-      "waiting": "क्लिक आते ही यहाँ दिखेंगे।"
+      "waiting": "क्लिक आते ही यहाँ दिखेंगे।",
+      "scope": "यह स्क्रीन खोलने के बाद के क्लिक · उपकरण का स्थानीय समय",
+      "reconnecting": "कनेक्शन टूटा · फिर जुड़ रहा है",
+      "disconnectedHint": "लाइव क्लिक का कनेक्शन टूट गया है। अपने आप फिर जुड़ रहा है। पुराने आँकड़े अभी भी उपलब्ध हैं।"
     },
     "quality": {
       "title": "क्लिक गुणवत्ता",
@@ -1418,10 +1447,10 @@
     "notFoundDesc": "शायद इसे हटा दिया गया या यह कभी अस्तित्व में नहीं था।",
     "backToDashboard": "मेरे लिंक पर वापस",
     "kpi": {
-      "totalClicks": "कुल क्लिक",
-      "unique": "अद्वितीय",
-      "human": "मानव",
-      "bot": "बॉट",
+      "totalClicks": "अब तक के क्लिक",
+      "unique": "अनुमानित आगंतुक",
+      "human": "मानवीय क्लिक",
+      "bot": "स्वचालित ट्रैफ़िक",
       "velocityHot": "क्लिक उछाल",
       "velocityHour": "पिछला घंटा",
       "ttfc": "बाद में पहला क्लिक",
@@ -1439,7 +1468,7 @@
         "desc": "{tz} · गहरा = ज़्यादा क्लिक"
       },
       "daily": {
-        "title": "दैनिक क्लिक",
+        "title": "दैनिक मानवीय क्लिक",
         "desc": "पिछले 30 दिन · {tz}"
       },
       "hourly": {
@@ -1630,7 +1659,7 @@
       "where": "कहाँ से"
     },
     "journal": {
-      "title": "लिंक डायरी",
+      "title": "उल्लेखनीय बदलाव",
       "evidence": "प्रमाण",
       "detail": "विवरण देखें",
       "newVisitors": "नए विज़िटर",
@@ -1645,17 +1674,31 @@
       "topCountry": "{percent}% {country} से आए",
       "mobileHeavy": "{percent}% मोबाइल पर — फोन पर खुलने वाला लिंक",
       "desktopHeavy": "{percent}% डेस्कटॉप पर — डेस्क पर खुलता है",
-      "botHigh": "बॉट {percent}% हैं — इंसान: {human}",
-      "botFiltered": "{percent}% बॉट हटाएँ तो {human} लोग आए",
+      "botHigh": "स्वचालित ट्रैफ़िक {percent}% है · {human} मानवीय क्लिक",
+      "botFiltered": "{percent}% स्वचालित ट्रैफ़िक हटाने पर {human} मानवीय क्लिक बचते हैं",
       "fastFirstClick": "बनाने के {minutes} मिनट में पहला क्लिक",
       "inAppBrowser": "{percent}% {app} में खुले — इन-ऐप ब्राउज़र का हिस्सा बड़ा है",
-      "channelLoyalty": "{host} से आए {percent}% लोग लौटकर आए"
+      "channelLoyalty": "{host} से आए {percent}% लोग लौटकर आए",
+      "showMore": "{count} और बदलाव देखें",
+      "showLess": "कम दिखाएँ"
     },
     "protection": {
       "title": "सुरक्षा",
       "saved": "सुरक्षा सेटिंग सहेजी गई.",
       "failed": "सुरक्षा सेटिंग सहेजी नहीं जा सकी."
-    }
+    },
+    "analysisTabs": {
+      "when": "क्लिक रुझान",
+      "where": "ट्रैफ़िक स्रोत",
+      "who": "आगंतुक उपकरण"
+    },
+    "linkSettings": "लिंक सेटिंग",
+    "scope": {
+      "report": "अब तक के कुल आँकड़े · दैनिक चार्ट में चुनी अवधि के मानवीय क्लिक · {tz}",
+      "daily": "पिछले {days} दिन के मानवीय क्लिक · {tz}"
+    },
+    "trendTitle": "क्लिक रुझान",
+    "rangeDays": "{days} दिन"
   },
   "admin": {
     "label": "admin",
@@ -2190,7 +2233,9 @@
       "thu": "गुरु",
       "fri": "शुक्र",
       "sat": "शनि"
-    }
+    },
+    "loadFailed": "इस सप्ताह का विश्लेषण लोड नहीं हो सका।",
+    "retry": "फिर कोशिश करें"
   },
   "recent": {
     "title": "हाल में छोटा किया गया",

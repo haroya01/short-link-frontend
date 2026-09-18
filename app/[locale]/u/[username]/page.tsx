@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ProfileOwnerFab } from "@/modules/profile/components/owner-fab";
@@ -134,7 +135,7 @@ export default async function PublicProfilePage({
     <div className={`min-h-screen ${colors.page}`}>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       {profile.bannerUrl && (
         // Full-bleed banner above the container so it reaches the top + side edges of the viewport.

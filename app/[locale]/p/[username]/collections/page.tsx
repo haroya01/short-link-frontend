@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { CornerDownRight, FolderOpen } from "lucide-react";
 import { blogPath } from "@/lib/host";
@@ -10,6 +11,7 @@ import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { KindredCurators } from "@/modules/blog/components/kindred-curators";
+import { authorSectionMetadata } from "@/modules/blog/lib/author-section-metadata";
 
 export const revalidate = 30;
 
@@ -19,7 +21,7 @@ export async function generateMetadata({
   params: Promise<{ username: string }>;
 }): Promise<Metadata> {
   const { username } = await params;
-  return { title: `Collections · @${username}` };
+  return authorSectionMetadata(await headers(), username, "collections");
 }
 
 /**

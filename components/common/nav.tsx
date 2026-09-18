@@ -48,7 +48,7 @@ function authenticatedEntries(t: (k: string) => string, hasProfile: boolean): Na
     { href: "/", label: t("shorten"), active: (p) => p === "/" },
     // 로그인하면 단축한 링크 목록(대시보드)으로 가는 진입점이 상단 바에 보여야 한다 — 콜백이 로그인
     // 시작 페이지로 돌아가게 바뀐 뒤로 데스크톱에서 대시보드 가는 visible 경로가 없었다.
-    { href: "/dashboard", label: t("myLinks"), active: (p) => p.startsWith("/dashboard") },
+    { href: "/dashboard", label: t("myLinks"), active: (p) => p.startsWith("/dashboard") || p.startsWith("/stats/") },
     { href: "/campaigns", label: t("campaigns"), active: (p) => p.startsWith("/campaigns") },
     { href: "/events", label: t("events"), active: (p) => p.startsWith("/events") },
     {

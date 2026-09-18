@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Check, Link2, Loader2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useToast } from "@/components/ui/toast";
-import { issuePreviewToken } from "@/modules/blog/api/posts";
+import { getPost, issuePreviewToken } from "@/modules/blog/api/posts";
+import { postHref } from "@/modules/blog/components/feed-card";
 
 /**
  * "미리보기 링크 복사" — issues the post's share token and copies a {slug}?preview={token} link to the
@@ -14,11 +15,11 @@ import { issuePreviewToken } from "@/modules/blog/api/posts";
 export function PreviewLinkButton({
   postId,
   username,
-  slug,
+  onSave,
 }: {
   postId: number;
   username: string | null | undefined;
-  slug: string;
+  onSave: () => Promise<boolean>;
 }) {
   const t = useTranslations("postEditor");
   const locale = useLocale();
@@ -30,9 +31,14 @@ export function PreviewLinkButton({
     if (busy || !username) return;
     setBusy(true);
     try {
+      // Preview reads the server draft. Flush edits first and use its persisted (normalized) slug,
+      // otherwise copying immediately after editing can share stale content or a nonexistent URL.
+      if (!(await onSave())) return;
       const { token } = await issuePreviewToken(postId);
-      const url = `${window.location.origin}/${locale}/p/${username}/${slug}?preview=${token}`;
-      await navigator.clipboard.writeText(url);
+      const post = await getPost(postId);
+      const url = new URL(postHref(username, post.slug, locale), window.location.origin);
+      url.searchParams.set("preview", token);
+      await navigator.clipboard.writeText(url.href);
       setCopied(true);
       toast(t("previewCopied"), "success");
       setTimeout(() => setCopied(false), 2000);

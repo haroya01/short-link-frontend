@@ -40,7 +40,8 @@ export type UseClickStreamResult = {
   items: LiveClick[];
   /** True once the backend has sent the {@code ready} event. */
   connected: boolean;
-  /** Total click events received across the lifetime of this hook (not capped by maxItems). */
+  reconnecting: boolean;
+  /** Total click events received for the current link/credential (not capped by maxItems). */
   count: number;
 };
 
@@ -63,6 +64,7 @@ export function useClickStream(
 
   const [items, setItems] = useState<LiveClick[]>([]);
   const [connected, setConnected] = useState(false);
+  const [reconnecting, setReconnecting] = useState(false);
   const [count, setCount] = useState(0);
   const seqRef = useRef(0);
   const onTickRef = useRef(onTick);
@@ -71,6 +73,14 @@ export function useClickStream(
   }, [onTick]);
 
   useEffect(() => {
+    setItems([]);
+    setCount(0);
+    seqRef.current = 0;
+  }, [shortCode, claimToken]);
+
+  useEffect(() => {
+    setConnected(false);
+    setReconnecting(false);
     if (!claimToken && !readToken()) return;
 
     let es: EventSource | null = null;
@@ -79,8 +89,9 @@ export function useClickStream(
     let timer: ReturnType<typeof setTimeout> | null = null;
 
     function scheduleReconnect() {
-      if (cancelled) return;
+      if (cancelled || timer) return;
       timer = setTimeout(() => {
+        timer = null;
         backoff = Math.min(backoff * 2, 30_000);
         void open();
       }, backoff);
@@ -101,7 +112,9 @@ export function useClickStream(
       try {
         auth = await credential();
       } catch {
+        if (cancelled) return;
         setConnected(false);
+        setReconnecting(true);
         scheduleReconnect();
         return;
       }
@@ -109,10 +122,13 @@ export function useClickStream(
       const url = `${withBase(`/api/v1/links/${shortCode}/stream`)}?${auth.param}=${encodeURIComponent(auth.value)}`;
       es = new EventSource(url);
       es.addEventListener("ready", () => {
+        if (cancelled) return;
         backoff = 1000;
         setConnected(true);
+        setReconnecting(false);
       });
       es.addEventListener("click", (event) => {
+        if (cancelled) return;
         try {
           const payload = JSON.parse((event as MessageEvent).data);
           const id = ++seqRef.current;
@@ -124,7 +140,9 @@ export function useClickStream(
         }
       });
       es.onerror = () => {
+        if (cancelled) return;
         setConnected(false);
+        setReconnecting(true);
         es?.close();
         scheduleReconnect();
       };
@@ -138,5 +156,5 @@ export function useClickStream(
     };
   }, [shortCode, claimToken, maxItems]);
 
-  return { items, connected, count };
+  return { items, connected, reconnecting, count };
 }

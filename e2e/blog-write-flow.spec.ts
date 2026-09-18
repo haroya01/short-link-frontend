@@ -133,7 +133,7 @@ async function openEditor(page: Page) {
 
 /** Title field (the only autocomplete-off text input — the URL dialog uses type=url). */
 function titleInput(page: Page) {
-  return page.locator('input[type="text"][autocomplete="off"]').first();
+  return page.locator('textarea[autocomplete="off"]').first();
 }
 
 /**

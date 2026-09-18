@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
@@ -94,7 +95,7 @@ export default async function PublicSeriesIndexPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(seriesListJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(seriesListJsonLd) }}
       />
       <ReadingShell
         className="mt-8"

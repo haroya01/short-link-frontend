@@ -68,9 +68,9 @@ export function LinksBottomNav() {
     },
     {
       href: "/dashboard",
-      label: t("stats"),
+      label: t("myLinks"),
       Icon: BarChart3,
-      active: pathname.startsWith("/dashboard"),
+      active: pathname.startsWith("/dashboard") || pathname.startsWith("/stats/"),
     },
     {
       href: profileHref,

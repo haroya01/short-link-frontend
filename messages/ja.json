@@ -235,8 +235,9 @@
     "analyticsWindowFollows": "直近{days}日 +{count}",
     "linksByPost": "記事別クリック",
     "linksFullDashboard": "リンクダッシュボード全体",
-    "savedTitle": "保存した記事",
-    "savedSubtitle": "ブックマークといいねした記事をまとめて。",
+    "libraryCollections": "コレクション",
+    "savedTitle": "ライブラリ",
+    "savedSubtitle": "保存した記事や、覚えておきたい一節をもう一度。",
     "curationMockNote": "プレビュー — 保存はこのブラウザだけに残ります。",
     "curationPinned": "代表記事",
     "curationPinnedHint": "公開プロフィールの記事一覧の先頭にこの順で表示されます。",
@@ -247,7 +248,7 @@
     "curationMoveUp": "上へ",
     "curationMoveDown": "下へ",
     "curationUnpin": "固定を解除",
-    "curationReadingList": "読みたいリスト",
+    "curationReadingList": "保存した記事",
     "curationReadingListHint": "あとで読むために保存した記事。",
     "curationReadingListEmpty": "保存した記事がありません。",
     "curationRemoveBookmark": "リストから外す",
@@ -269,8 +270,8 @@
     "rowDeleteFailed": "削除に失敗しました。",
     "curationLiked": "いいねした記事",
     "curationLikedHint": "あなたがいいねした記事。",
-    "curationHighlights": "マイ書斎",
-    "curationHighlightsHint": "引いた一節の記録。元の文へ戻れます。",
+    "curationHighlights": "ハイライト・メモ",
+    "curationHighlightsHint": "ハイライトした一節とメモ。選ぶと元の記事に戻れます。",
     "curationComments": "自分のコメント",
     "curationCommentsHint": "あなたが書いたコメント。",
     "curationLikedEmpty": "まだいいねした記事がありません。",
@@ -533,7 +534,7 @@
     "clearHistoryCancel": "キャンセル",
     "forget": "履歴から削除",
     "loadMore": "もっと見る",
-    "highlightsSearch": "一節や記事タイトルで探す",
+    "highlightsSearch": "引用・メモ・記事タイトルで検索",
     "noResults": "該当する一節がありません。",
     "emptyFolder": "このフォルダは空です。",
     "saveFailed": "変更を保存できませんでした。もう一度お試しください。",
@@ -550,6 +551,15 @@
     "highlightNoteTitle": "メモを追加",
     "highlightNotePlaceholder": "この部分へのメモを残しましょう",
     "highlightNoteSave": "保存",
+    "highlightSourceUnavailable": "現在の記事で引用の位置を確認できないため、保存されたハイライトを開きました。",
+    "highlightPublicScope": "ハイライトとメモは、あなたの名前とともに公開されます。",
+    "highlightSaving": "保存中…",
+    "highlightChooseThread": "この箇所のメモ",
+    "highlightDiscardConfirm": "このメモを破棄しますか？",
+    "highlightDiscardBody": "未保存の内容は失われます。",
+    "highlightKeepEditing": "編集を続ける",
+    "highlightDiscard": "破棄する",
+    "highlightSelectionTooLong": "ハイライトは1,000文字まで選択できます。",
     "highlightNoteCancel": "キャンセル",
     "highlightThreadNoReplies": "まだ返信はありません",
     "highlightReplyPlaceholder": "返信を入力…",
@@ -829,7 +839,7 @@
       "series": "シリーズ",
       "readers": "読者",
       "leads": "リード",
-      "curation": "保存した記事",
+      "curation": "ライブラリ",
       "webhooks": "Webhook",
       "moderation": "通報管理",
       "adminMetrics": "指標"
@@ -1066,11 +1076,11 @@
   "dashboard": {
     "label": "dashboard",
     "title": "マイリンク",
-    "subtitle": "短縮したリンク {count} 件。短縮コードをクリックすると統計を確認できます。",
+    "subtitle": "リンク{count}件 · 名前を押すと統計が開きます。",
     "newLink": "新規リンク",
     "loadMore": "もっと見る",
     "loadingMore": "読み込み中...",
-    "searchPlaceholder": "元のURLまたは短縮コードで検索",
+    "searchPlaceholder": "名前、元のURL、短縮コードで検索",
     "clearSearch": "検索をクリア",
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "マイリンクとクリック統計はログイン後に表示されます。",
@@ -1088,10 +1098,10 @@
       "expiring": "期限切れ予定"
     },
     "ops": {
-      "totalClicks": "総クリック",
-      "totalClicksHint": "一覧全体の累計",
-      "weekClicks": "直近7日",
-      "weekClicksHint": "直近の動き",
+      "totalClicks": "累計の人によるクリック",
+      "totalClicksHint": "全リンク · 自動アクセスを除く",
+      "weekClicks": "7日間の人によるクリック",
+      "weekClicksHint": "直近7日 · 自動アクセスを除く",
       "zeroClick": "未クリック",
       "zeroClickReview": "掲載場所・CTAを見直し",
       "zeroClickClear": "すべてのリンクにクリックがあります",
@@ -1101,10 +1111,11 @@
       "topLink": "トップリンク",
       "weekDelta": "直近7日 +{count}",
       "topLinkEmpty": "まだ比較できるリンクがありません",
-      "clicks": "クリック",
+      "clicks": "人によるクリック",
       "copy": "コピー",
       "viewStats": "統計を見る",
-      "open": "開く"
+      "open": "開く",
+      "zeroClickHint": "自動クリックを含めて、クリックがないリンク"
     },
     "emptyTitle": "最初のリンクを作ってみませんか",
     "emptyDesc": "URL を 1 つ短縮するだけで、1 分以内にクリック・国・チャネル・デバイスのデータが揃い始めます。所要 30 秒。",
@@ -1129,15 +1140,16 @@
     "noResultDesc": "「{query}」と一致するリンクが見つかりませんでした。",
     "noResultDescFiltered": "現在の条件に一致するリンクがありません。フィルターを調整してみてください。",
     "table": {
-      "shortUrl": "短縮URL",
+      "shortUrl": "リンク名",
       "originalUrl": "元のURL",
       "createdAt": "作成日",
       "expiresAt": "有効期限",
-      "clicks": "クリック",
-      "actions": "操作"
+      "clicks": "人によるクリック",
+      "actions": "操作",
+      "sortAllClicks": "全クリック順"
     },
     "card": {
-      "week": "今週 {count}",
+      "week": "7日間の人によるクリック{count}回",
       "expiresToday": "本日期限",
       "expiresIn": "あと{days}日",
       "expired": "期限切れ"
@@ -1152,7 +1164,15 @@
       "remove": "お気に入りを解除",
       "filter": "お気に入り",
       "emptyTitle": "お気に入りのリンクはまだありません",
-      "emptyDesc": "リンクの星をタップするとお気に入りに追加され、一番上に固定されます。"
+      "emptyDesc": "全リンクで星を押すと、ここに保存されます。",
+      "syncedHint": "アカウントに保存され、アプリとウェブで同じリンクを確認できます。",
+      "saveFailed": "お気に入りを保存できませんでした。もう一度お試しください。",
+      "loadFailed": "お気に入りを読み込めませんでした。",
+      "orderTitle": "お気に入りの順序",
+      "orderDone": "並べ替えを完了",
+      "orderHint": "アプリとウェブに同じ順序で保存します。",
+      "moveUp": "{name}を上に移動",
+      "moveDown": "{name}を下に移動"
     },
     "deleteConfirmTitle": "このリンクを削除しますか？",
     "deleteConfirmDesc": "削除されたリンクは復旧できません。クリック統計も失われます。",
@@ -1205,15 +1225,21 @@
       "downloadResult": "結果CSVをダウンロード",
       "uploadAnother": "別のファイルをアップロード",
       "done": "完了"
-    }
+    },
+    "librarySubtitle": "リンクを探してコピーし、成果を確認できます。",
+    "loadFailed": "リンクを読み込めませんでした。もう一度お試しください。",
+    "overviewFailed": "アカウントの統計を読み込めませんでした。",
+    "accountScope": "アカウント全体 · {tz} · 自動アクセスを含む累計{total}回 · リストの絞り込みとは別に集計",
+    "libraryViews": "リンク一覧の選択",
+    "allLinks": "全リンク"
   },
   "edit": {
     "title": "リンク編集",
     "originalUrl": "元のURL",
     "expiresAt": "有効期限 (空欄なら無期限)",
-    "noteLabel": "メモ (任意)",
+    "noteLabel": "リンク名 / メモ（任意）",
     "notePlaceholder": "例: 春キャンペーン用 / Instagram ストーリーで使用",
-    "noteHint": "本人のみ閲覧可能。訪問者には非表示。",
+    "noteHint": "一覧とお気に入りに表示されます。訪問者には表示されません。",
     "expiredMessageLabel": "期限切れ時の案内 (任意)",
     "expiredMessagePlaceholder": "例: イベント終了。次のキャンペーンは example.com にて。",
     "expiredMessageHint": "期限切れ/閲覧上限到達時に既定の案内の代わりにこの文章を表示。",
@@ -1274,7 +1300,10 @@
       "title": "リアルタイムクリック",
       "connecting": "接続中…",
       "connected": "ライブ",
-      "waiting": "新しいクリックがここに表示されます。"
+      "waiting": "新しいクリックがここに表示されます。",
+      "scope": "この画面を開いてからのクリック · 端末の現地時間",
+      "reconnecting": "切断 · 再接続中",
+      "disconnectedHint": "新しいクリックの接続が切れました。自動で再接続します。既存の統計は引き続き確認できます。"
     },
     "quality": {
       "title": "クリック品質",
@@ -1418,10 +1447,10 @@
     "notFoundDesc": "削除されたか存在しないリンクの可能性があります。",
     "backToDashboard": "マイリンクへ戻る",
     "kpi": {
-      "totalClicks": "総クリック",
-      "unique": "ユニーク",
-      "human": "人間",
-      "bot": "ボット",
+      "totalClicks": "累計クリック",
+      "unique": "推定訪問者",
+      "human": "人によるクリック",
+      "bot": "自動アクセス比率",
       "velocityHot": "クリック急増",
       "velocityHour": "直近1時間",
       "ttfc": "初回クリックまで",
@@ -1439,7 +1468,7 @@
         "desc": "{tz} · 濃いほどクリック多"
       },
       "daily": {
-        "title": "日別クリック",
+        "title": "日別の人によるクリック",
         "desc": "直近30日 · {tz}"
       },
       "hourly": {
@@ -1630,7 +1659,7 @@
       "where": "どこから"
     },
     "journal": {
-      "title": "リンク日誌",
+      "title": "注目の変化",
       "evidence": "根拠",
       "detail": "詳細を見る",
       "newVisitors": "新規訪問",
@@ -1645,17 +1674,31 @@
       "topCountry": "{country}から{percent}%が来ています",
       "mobileHeavy": "モバイルが{percent}% — スマホで押されるリンクです",
       "desktopHeavy": "デスクトップが{percent}% — 机の前で開かれるリンクです",
-      "botHigh": "ボットが{percent}%も — 人は{human}人です",
-      "botFiltered": "ボット{percent}%を除くと、人は{human}人でした",
+      "botHigh": "自動アクセスは{percent}% · 人によるクリックは{human}回",
+      "botFiltered": "自動アクセス{percent}%を除くと、人によるクリックは{human}回",
       "fastFirstClick": "作成から{minutes}分で最初のクリックが来ました",
       "inAppBrowser": "{app}で開かれたのが{percent}% — アプリ内ブラウザの比率が高めです",
-      "channelLoyalty": "{host}から来た人の{percent}%が戻ってきました"
+      "channelLoyalty": "{host}から来た人の{percent}%が戻ってきました",
+      "showMore": "変化をあと{count}件表示",
+      "showLess": "折りたたむ"
     },
     "protection": {
       "title": "保護",
       "saved": "保護設定を保存しました。",
       "failed": "保護設定を保存できませんでした。"
-    }
+    },
+    "analysisTabs": {
+      "when": "クリック推移",
+      "where": "流入元",
+      "who": "訪問環境"
+    },
+    "linkSettings": "リンク設定",
+    "scope": {
+      "report": "累計統計 · 日別グラフは選択期間の人によるクリック · {tz}",
+      "daily": "直近{days}日の人によるクリック · {tz}"
+    },
+    "trendTitle": "クリック推移",
+    "rangeDays": "{days}日"
   },
   "admin": {
     "label": "admin",
@@ -2190,7 +2233,9 @@
       "thu": "木",
       "fri": "金",
       "sat": "土"
-    }
+    },
+    "loadFailed": "今週の分析を読み込めませんでした。",
+    "retry": "再試行"
   },
   "recent": {
     "title": "最近の短縮",

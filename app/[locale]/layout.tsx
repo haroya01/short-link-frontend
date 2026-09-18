@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { ViewTransitions } from "next-view-transitions";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
@@ -278,7 +279,7 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         />
         {/* Privacy-friendly analytics — no cookies, no PII collection. Matches the cookie banner
             promise of "no analytics cookies." */}

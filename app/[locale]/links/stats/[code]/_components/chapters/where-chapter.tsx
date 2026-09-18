@@ -59,7 +59,7 @@ export function WhereChapter({ data }: { data: LinkStats }) {
 
   return (
     <div id="chapter-where" className="scroll-mt-28 space-y-4">
-      <ChapterHeading index={3} title={t("chapters.where")} />
+      <ChapterHeading index={3} title={t("analysisTabs.where")} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section
           id="section-sources"

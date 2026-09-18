@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
 import { ArrowRight, Check } from "lucide-react";
 import { linksHref } from "@/lib/host";
@@ -67,7 +68,7 @@ export default async function SeoLandingPage({
     <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
 
       <header className="max-w-2xl">
