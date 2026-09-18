@@ -22,6 +22,9 @@ export type BulkImportSummary = {
 };
 
 export type MyLink = {
+  note?: string | null;
+  timezone?: string;
+  humanClickCount?: number;
   shortCode: string;
   shortUrl: string;
   originalUrl: string;
@@ -48,6 +51,7 @@ export type MyLinksPage = {
 };
 
 export type UpdateLinkRequest = {
+  clearExpiresAt?: boolean;
   originalUrl?: string;
   expiresAt?: string | null;
   note?: string;

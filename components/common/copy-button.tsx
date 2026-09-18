@@ -30,7 +30,7 @@ export function CopyButton({ value, label, size = "md", variant = "default", onC
   }
 
   return (
-    <Button type="button" size={size} variant={variant} onClick={copy} aria-live="polite">
+    <Button type="button" size={size} variant={variant} onClick={copy} aria-label={copied ? t("copied") : buttonLabel || t("copy")} aria-live="polite">
       {copied ? (
         <>
           <Check className="h-4 w-4" />

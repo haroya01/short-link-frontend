@@ -108,7 +108,7 @@ export async function listHighlights(postId: number): Promise<HighlightView[]> {
   const res = await fetch(`${API_BASE}/api/v1/public/posts/${postId}/highlights`, {
     cache: "no-store",
   });
-  if (!res.ok) return [];
+  if (!res.ok) throw new Error(`Could not load highlights (${res.status})`);
   return (await res.json()) as HighlightView[];
 }
 

@@ -5,6 +5,9 @@ import {
   wrapFirstQuote,
   clearMarks,
   MARK_CLASS,
+  findQuoteTarget,
+  highlightIdsForMark,
+  readHighlightSelection,
   type HighlightMeta,
 } from "./highlight-anchor";
 
@@ -148,5 +151,114 @@ describe("wrapFirstQuote — quote fallback across nodes", () => {
     wrapFirstQuote(r, "alpha", meta(2)); // must not re-wrap the already-painted "alpha"
     expect(marks(r)).toHaveLength(1);
     expect(marks(r)[0].dataset.hlId).toBe("1");
+  });
+});
+
+// Regressions reproduced from real reader flows in the 2026-09-13 audit.
+describe("stable coordinates and source recovery", () => {
+  it("keeps later offsets when another passage in the same paragraph is already painted", () => {
+    const r = makeRoot("<p>alpha beta gamma</p>");
+    wrapHighlight(r, { blockOrder: 0, endBlockOrder: 0, startOffset: 0, endOffset: 5, quote: "alpha" }, meta(1));
+    wrapHighlight(r, { blockOrder: 0, endBlockOrder: 0, startOffset: 6, endOffset: 10, quote: "beta" }, meta(2));
+    expect(marks(r).map((m) => m.textContent)).toEqual(["alpha", "beta"]);
+    expect(r.textContent).toBe("alpha beta gamma");
+  });
+
+  it("retains all overlapping conversation IDs on a single readable layer", () => {
+    const r = makeRoot("<p>alpha beta gamma</p>");
+    wrapHighlight(r, { blockOrder: 0, endBlockOrder: 0, startOffset: 0, endOffset: 10, quote: "alpha beta" }, meta(1, "first"));
+    wrapHighlight(r, { blockOrder: 0, endBlockOrder: 0, startOffset: 6, endOffset: 16, quote: "beta gamma" }, meta(2, "second"));
+    expect(r.querySelector("mark mark")).toBeNull();
+    expect(marks(r).map((m) => [m.textContent, m.dataset.hlIds])).toEqual([
+      ["alpha ", "1"], ["beta", "1,2"], [" gamma", "2"],
+    ]);
+    expect(r.textContent).toBe("alpha beta gamma");
+    clearMarks(r);
+    expect(r.innerHTML).toBe("<p>alpha beta gamma</p>");
+  });
+
+  it("recovers the saved quote after text is inserted before it", () => {
+    const r = makeRoot("<p>Hello brave world</p>");
+    wrapHighlight(r, { blockOrder: 0, endBlockOrder: 0, startOffset: 6, endOffset: 11, quote: "world" }, meta(1));
+    expect(marks(r).map((m) => m.textContent)).toEqual(["world"]);
+  });
+
+  it("does not attribute a note to replacement text when the saved quote is gone", () => {
+    const r = makeRoot("<p>Hello brave people</p>");
+    wrapHighlight(r, { blockOrder: 0, endBlockOrder: 0, startOffset: 6, endOffset: 11, quote: "world" }, meta(1));
+    expect(marks(r)).toHaveLength(0);
+  });
+
+  it("does not guess between repeated quotes after the saved coordinates drift", () => {
+    const r = makeRoot("<p>Hello brave world and world</p>");
+    wrapHighlight(r, { blockOrder: 0, endBlockOrder: 0, startOffset: 6, endOffset: 11, quote: "world" }, meta(1));
+    expect(marks(r)).toHaveLength(0);
+  });
+
+  it("recovers across inserted blocks and does not partially paint an invalid span", () => {
+    const r = makeRoot("<p>new introduction</p><p>alpha beta</p><p>gamma</p><p>delta epsilon</p>");
+    wrapHighlight(r, { blockOrder: 0, endBlockOrder: 2, startOffset: 6, endOffset: 5, quote: "beta gamma delta" }, meta(1));
+    expect(marks(r).map((m) => m.textContent)).toEqual(["beta", "gamma", "delta"]);
+    expect(r.children[0].querySelector("mark")).toBeNull();
+  });
+});
+
+
+describe("source navigation uses the same resolved anchors", () => {
+  it("finds a quote split over multiple paragraphs, with and without painted marks", () => {
+    const r = makeRoot("<p>alpha beta</p><p>gamma</p><p>delta epsilon</p>");
+    const span = { blockOrder: 0, endBlockOrder: 2, startOffset: 6, endOffset: 5, quote: "beta gamma delta" };
+    expect(findQuoteTarget(r, span.quote)).toBe(r.children[0]);
+    wrapHighlight(r, span, meta(3));
+    expect(findQuoteTarget(r, span.quote)?.textContent).toBe("beta");
+    expect(highlightIdsForMark(findQuoteTarget(r, span.quote)!)).toEqual([3]);
+  });
+
+  it("uses the saved highlight identity to locate the right repeated phrase", () => {
+    const r = makeRoot("<p>world</p><p>another world</p>");
+    const span = { blockOrder: 1, endBlockOrder: 1, startOffset: 8, endOffset: 13, quote: "world" };
+    expect(findQuoteTarget(r, "world")).toBeNull();
+    expect(findQuoteTarget(r, "world", span)).toBe(r.children[1]);
+  });
+
+  it("finds a quote spanning inline formatting without depending on one whole mark", () => {
+    const r = makeRoot("<p>Hello <strong>brave</strong> world</p>");
+    const span = { blockOrder: 0, endBlockOrder: 0, startOffset: 6, endOffset: 17, quote: "brave world" };
+    wrapHighlight(r, span, meta(4));
+    expect(findQuoteTarget(r, span.quote)?.textContent).toBe("brave");
+  });
+});
+
+
+describe("selection endpoints", () => {
+  it("captures element boundaries across inline formatting in the original text coordinates", () => {
+    const r = makeRoot("<p>Hello <strong>brave</strong> world</p>");
+    const range = document.createRange();
+    range.setStart(r.children[0], 1);
+    range.setEnd(r.children[0], 3);
+    const selection = window.getSelection()!;
+    selection.removeAllRanges();
+    selection.addRange(range);
+    expect(readHighlightSelection(r)).toMatchObject({ blockOrder: 0, endBlockOrder: 0, startOffset: 6, endOffset: 17, quote: "brave world" });
+    selection.removeAllRanges();
+  });
+
+  it("captures root-level boundaries and refuses oversized selections before sending them", () => {
+    const r = makeRoot("<p>alpha</p><p>beta</p>");
+    const range = document.createRange();
+    range.selectNodeContents(r);
+    const selection = window.getSelection()!;
+    selection.removeAllRanges();
+    selection.addRange(range);
+    const captured = readHighlightSelection(r)!;
+    expect(captured).toMatchObject({ blockOrder: 0, endBlockOrder: 1, startOffset: 0, endOffset: 4 });
+    selection.removeAllRanges();
+    wrapHighlight(r, captured, meta(9));
+    expect(marks(r).map((mark) => mark.textContent)).toEqual(["alpha", "beta"]);
+    const long = makeRoot("<p>" + "a".repeat(1001) + "</p>");
+    range.selectNodeContents(long);
+    selection.addRange(range);
+    expect(readHighlightSelection(long)).toBeNull();
+    selection.removeAllRanges();
   });
 });

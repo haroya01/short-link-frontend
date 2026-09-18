@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { ProfileShowcase } from "@/modules/profile/components/showcase";
@@ -76,7 +77,7 @@ export default async function ShowcasePage({
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       {/* CTA-first hero — flat white surface (no mesh / no noise) so the page reads as restrained
           rather than busy. Single-CTA discipline (one slate-900 primary + scroll cue) kept so the

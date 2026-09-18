@@ -109,7 +109,8 @@ export function QrButton({
           <QrCode className="h-3.5 w-3.5" />
         </button>
       ) : (
-        <Button variant="outline" size="sm" onClick={() => setOpen(true)} disabled={!baseUrl}>
+        <Button variant="outline" size="sm" onClick={() => setOpen(true)} disabled={!baseUrl}
+          aria-label={t("triggerAria")} title={t("triggerAria")}>
           <QrCode className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">QR</span>
         </Button>

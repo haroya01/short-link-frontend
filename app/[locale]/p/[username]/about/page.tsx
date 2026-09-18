@@ -1,6 +1,7 @@
 import { DATE_LOCALE } from "@/lib/date";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import { ArrowRight, Link2 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { linksHref } from "@/lib/host";
@@ -12,6 +13,7 @@ import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
+import { authorSectionMetadata } from "@/modules/blog/lib/author-section-metadata";
 
 export const revalidate = 30;
 
@@ -26,7 +28,9 @@ export async function generateMetadata({
   // 먼저 커밋돼 HTTP 200 으로 나가는 soft-404 가 된다(같은 이유는 [slug]/page.tsx 참조).
   const result = await listPublicPosts(username);
   if (!result.ok && result.status === 404) notFound();
-  return { title: `About · @${username}` };
+  return authorSectionMetadata(
+    await headers(), username, "about", result.ok ? result.data.author.bio : null,
+  );
 }
 
 export default async function PublicAuthorAboutPage({

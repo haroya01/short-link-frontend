@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
 import { getTranslations } from "next-intl/server";
 import { marketingOg } from "@/lib/marketing-og";
 import { Link } from "@/i18n/navigation";
@@ -60,7 +61,7 @@ export default async function LearnPage({
     <article className="container max-w-3xl space-y-10 py-16">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqJsonLd) }}
       />
       <header className="space-y-3">
         <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">

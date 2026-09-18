@@ -69,7 +69,7 @@ export const ImageWithCaption = Image.extend({
       // 허공에 사라진다 — 캐럿을 이미지 다음 블록으로 옮기고, 다음 블록이 없거나 글이 아니면 문단을
       // 만들어 받는다. 캡션은 여전히 한 줄(줄바꿈 없음).
       cap.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && !e.isComposing && e.keyCode !== 229) {
           e.preventDefault();
           commit();
           const pos = typeof getPos === "function" ? getPos() : null;

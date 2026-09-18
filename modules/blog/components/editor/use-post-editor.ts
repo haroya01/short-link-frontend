@@ -57,6 +57,10 @@ export function usePostEditor(
   const [seriesId, setSeriesIdRaw] = useState<number | null>(null);
   const [coverUrl, setCoverRaw] = useState<string | null>(null);
   const [excerpt, setExcerptRaw] = useState("");
+  // A save can outlive the render that started it. Keep every editable field current so its next
+  // snapshot includes edits made while the preceding request was pending (including metadata).
+  const currentDraft = useRef({ post, title, slug, markdown, tags, seriesId, coverUrl, excerpt });
+  currentDraft.current = { post, title, slug, markdown, tags, seriesId, coverUrl, excerpt };
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -72,9 +76,8 @@ export function usePostEditor(
   // `markdown` state so a Save/Publish fired right after an edit (or with the editor still focused)
   // serializes the LATEST content — not a stale closure (the source of dropped last-keystroke saves).
   const liveMarkdown = useRef<(() => string) | null>(null);
-  // The in-flight save() promise, so overlapping callers (autosave + a Publish/leave firing mid-save)
-  // join it and then re-save the latest content — never treating an incomplete or stale-snapshot save
-  // as a success. Cleared in the run's finally.
+  // The in-flight save() promise covers all snapshots through the latest edit. Overlapping callers
+  // (autosave + Publish/leave/restore) join it; cleared only when that whole flight finishes.
   const inFlightSave = useRef<Promise<boolean> | null>(null);
   // Bumped on load/restore so the page can remount the editor with fresh content — Tiptap seeds from
   // initialValue only at mount, so without this a revision restore updates state but the editor keeps
@@ -106,30 +109,37 @@ export function usePostEditor(
     autoRetryBlocked.current = false;
   };
   const setTitle = (v: string) => {
+    currentDraft.current.title = v;
     setTitleRaw(v);
     touchDirty();
   };
   const setSlug = (v: string) => {
+    currentDraft.current.slug = normalizeSlugInput(v);
     setSlugRaw(normalizeSlugInput(v));
     touchDirty();
   };
   const setMarkdown = (v: string) => {
+    currentDraft.current.markdown = v;
     setMarkdownRaw(v);
     touchDirty();
   };
   const setTags = (v: string[]) => {
+    currentDraft.current.tags = v;
     setTagsRaw(v);
     touchDirty();
   };
   const setSeriesId = (v: number | null) => {
+    currentDraft.current.seriesId = v;
     setSeriesIdRaw(v);
     touchDirty();
   };
   const setCover = (v: string | null) => {
+    currentDraft.current.coverUrl = v;
     setCoverRaw(v);
     touchDirty();
   };
   const setExcerpt = (v: string) => {
+    currentDraft.current.excerpt = v;
     setExcerptRaw(v);
     touchDirty();
   };
@@ -182,57 +192,61 @@ export function usePostEditor(
   // false when the save failed — so a lifecycle action (Publish/Schedule) or leave() can hold instead
   // of proceeding on a stale snapshot or dropping edits.
   async function save(): Promise<boolean> {
-    if (post == null) return false;
-    // A save is already in flight — join it, then re-run so this caller persists the LATEST content
-    // (a Publish/leave fired mid-autosave must not treat the in-flight, possibly-stale save as its own).
+    if (currentDraft.current.post == null) return false;
+    // One flight includes any catch-up snapshots. Leave/publish/restore all await the whole flight,
+    // so none can navigate or replace server content while a newer save is still outstanding.
     const pending = inFlightSave.current;
-    if (pending) {
-      await pending;
-      return save();
-    }
-    // Pull the freshest markdown straight from the editor (falls back to state pre-mount).
-    const md = liveMarkdown.current?.() ?? markdown;
-    // 이 저장이 담는 편집 지점. 아래 비동기 요청이 도는 사이 새 타이핑이 들어오면 editSeq 가 커진다.
-    const seqAtSnapshot = editSeq.current;
-    const slugPart = post.status === "DRAFT" ? slugForSave(slug) : post.slug;
-    // Skip a save whose payload is identical to the last successful one — the idle autosave effect
-    // re-fires on unrelated dep changes, and a persistently-failing endpoint shouldn't re-send the
-    // same content on every keystroke.
-    const sig = JSON.stringify([title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", seriesId, md]);
-    if (sig === lastSaved.current) {
-      // 이미 저장된 내용과 동일 — 저장 중 들어온 무변화 flush(예: onBlur)가 남긴 헛 dirty 를 정리하고
-      // 성공으로 간주(발행/이탈 가드가 이미 저장된 내용을 실패로 오인하지 않도록).
-      setDirty(false);
-      return true;
-    }
-    const run = (async (): Promise<boolean> => {
+    if (pending) return pending;
+    // Defer the body until the promise ref is installed, including the identical-payload fast path.
+    const run = Promise.resolve().then(async (): Promise<boolean> => {
       setSaving(true);
       setError(null);
       try {
-        // Slug is editable only while DRAFT (frozen once public).
-        const updated = await updatePostMetadata(post.id, {
-          title: title.trim(),
-          tags,
-          excerpt: excerpt.trim(),
-          ogImageUrl: coverUrl ?? "",
-          // Trim edge hyphens the live input tolerates so the slug matches the backend regex.
-          ...(post.status === "DRAFT" ? { slug: slugForSave(slug) } : {}),
-        });
-        await replaceBlocks(post.id, markdownToBlocks(md));
-        await assignPostToSeries(post.id, seriesId, post.seriesId ?? null);
-        setPost({ ...updated, seriesId });
-        lastSaved.current = sig;
-        failStreak.current = 0;
-        autoRetryBlocked.current = false;
-        // 저장이 도는 사이 새 편집이 들어왔으면 dirty 를 유지한다 — 안 그러면 그 타이핑이 무경고로
-        // 사라지고 '저장됨' 이 잘못 뜬다. dirty 가 남으면 자동저장이 곧 최신 내용으로 다시 돈다.
-        if (editSeq.current === seqAtSnapshot) {
+        for (;;) {
+          const { post, title, slug, markdown, tags, seriesId, coverUrl, excerpt } = currentDraft.current;
+          if (post == null) return false;
+          const md = liveMarkdown.current?.() ?? markdown;
+          const seqAtSnapshot = editSeq.current;
+          const slugPart = post.status === "DRAFT" ? slugForSave(slug) : post.slug;
+          const sig = JSON.stringify([title.trim(), slugPart, tags, excerpt.trim(), coverUrl ?? "", seriesId, md]);
+          if (sig === lastSaved.current) {
+            setDirty(false);
+            setSaved(true);
+            window.setTimeout(() => setSaved(false), 2000);
+            return true;
+          }
+          // Slug is editable only while DRAFT (frozen once public).
+          const updated = await updatePostMetadata(post.id, {
+            title: title.trim(),
+            tags,
+            excerpt: excerpt.trim(),
+            ogImageUrl: coverUrl ?? "",
+            ...(post.status === "DRAFT" ? { slug: slugPart } : {}),
+          });
+          await replaceBlocks(post.id, markdownToBlocks(md));
+          await assignPostToSeries(post.id, seriesId, post.seriesId ?? null);
+          const savedPost = { ...updated, seriesId };
+          currentDraft.current.post = savedPost;
+          setPost(savedPost);
+          lastSaved.current = sig;
+          setLastSavedAt(new Date());
+          failStreak.current = 0;
+          autoRetryBlocked.current = false;
+          // Catch up before reporting success: Back must never leave with the final keystrokes still
+          // dirty, and a joined Publish must not publish an earlier metadata/body snapshot.
+          // Publish-panel prefills use raw setters (no dirty sequence), but must still join a save
+          // already in progress so its eventual preview/publish matches the visible cover/excerpt.
+          if (
+            editSeq.current !== seqAtSnapshot ||
+            (liveMarkdown.current?.() ?? md) !== md ||
+            currentDraft.current.coverUrl !== coverUrl ||
+            currentDraft.current.excerpt !== excerpt
+          ) continue;
           setDirty(false);
           setSaved(true);
-          setLastSavedAt(new Date());
           window.setTimeout(() => setSaved(false), 2000);
+          return true;
         }
-        return true;
       } catch (e) {
         // A duplicate slug (same author) returns 409 — show a fixable hint, not a raw "HTTP 409".
         if (e instanceof ApiError && e.status === 409) setError(t("slugTaken"));
@@ -247,7 +261,7 @@ export function usePostEditor(
         setSaving(false);
         inFlightSave.current = null;
       }
-    })();
+    });
     inFlightSave.current = run;
     return run;
   }
@@ -393,7 +407,7 @@ export function usePostEditor(
     setError(null);
     try {
       // Persist edits first so the scheduled snapshot matches what's on screen, then park it.
-      await save();
+      if (!(await save())) return false;
       // Shorten in-post links into the scheduled snapshot; reseed the editor so the author (who stays
       // here after scheduling) sees the rewritten links rather than stale originals.
       if (opts?.shortenLinks?.length) {
@@ -420,6 +434,9 @@ export function usePostEditor(
     setBusy(true);
     setError(null);
     try {
+      // An autosave already sent to the server cannot be cancelled by setting busy. Let it finish
+      // before restoring, otherwise its delayed blocks PUT can overwrite the restored revision.
+      await inFlightSave.current;
       await restoreRevisionApi(post.id, versionNumber);
       // Restore replaces server content with the revision's snapshot — reload so the editor reflects it.
       await load();
@@ -451,6 +468,7 @@ export function usePostEditor(
     setSlug,
     markdown,
     setMarkdown,
+    markDirty: touchDirty,
     liveMarkdown,
     reloadKey,
     leave,

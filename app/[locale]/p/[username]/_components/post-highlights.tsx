@@ -37,7 +37,8 @@ import { authorHref } from "@/modules/blog/components/feed-card";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { selectPaintedHighlightIds } from "@/modules/blog/lib/highlight-clustering";
 import { useShowHighlights } from "@/modules/blog/lib/use-show-highlights";
-import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
+import { clearMarks, findQuoteTarget, highlightIdsForMark, readHighlightSelection, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
+import { HighlightNoteSheet } from "@/modules/blog/components/highlight-note-sheet";
 
 // The reply composer (HighlightThread) and note editor (NoteSheet) both pull in the Tiptap/ProseMirror
 // editor — a heavy graph no reader touches until they open a thread or write a memo. Both only render
@@ -46,10 +47,6 @@ import { clearMarks, wrapHighlight, MARK_CLASS } from "./highlight-anchor";
 // resting skeleton the size of the collapsed field holds its place while the chunk streams in.
 const CommentComposer = dynamic(
   () => import("@/modules/blog/components/comment-composer").then((m) => m.CommentComposer),
-  { ssr: false, loading: () => <ComposerSkeleton /> },
-);
-const RichCommentInput = dynamic(
-  () => import("@/modules/blog/components/rich-comment-input").then((m) => m.RichCommentInput),
   { ssr: false, loading: () => <ComposerSkeleton /> },
 );
 
@@ -72,10 +69,9 @@ type Anchor = { left: number; top: number; bottom: number };
  * lifts above the on-screen keyboard via the visualViewport inset, so writing a note on mobile is
  * stable.
  *
- * v1 anchoring: rendering finds the FIRST occurrence of the stored quote in a single text node and
- * wraps it — robust for highlights within plain prose; a highlight spanning inline formatting
- * (bold/link) simply isn't painted yet (degrades, never breaks). Creation records the block index +
- * char offsets too, so future precision rendering can use them.
+ * Anchors validate the stored quote against live coordinates, then recover only an unambiguous quote.
+ * Inline and multi-block spans share that resolver with source navigation. Overlapping marks keep all
+ * conversation IDs on one layer, so readers can choose the note they meant to open.
  */
 export function PostHighlights({ postId }: { postId: number }) {
   const t = useTranslations("publicPost");
@@ -91,6 +87,7 @@ export function PostHighlights({ postId }: { postId: number }) {
   const [highlightsLoaded, setHighlightsLoaded] = useState(false);
   // When set, the reply-thread sheet is open for this highlight.
   const [threadFor, setThreadFor] = useState<HighlightView | null>(null);
+  const [threadChoices, setThreadChoices] = useState<HighlightView[]>([]);
   // The live selection → drives the floating action bar.
   const [sel, setSel] = useState<{ anchor: Anchor; payload: NewHighlight } | null>(null);
   // When set, the memo sheet is open for this span.
@@ -151,12 +148,16 @@ export function PostHighlights({ postId }: { postId: number }) {
     if (!quote) return;
     // `?hl=…&thread=1` — coming from a surface that pointed AT the conversation (the feed's "답글 N"),
     // not just the sentence. Open that highlight's thread once, so the reader lands on the replies they
-    // clicked toward rather than on the passage in the body. Matched by quote, the same key the paint
-    // and scroll use; only the viewer's-visible highlights are here, which is exactly the clickable set.
-    const openThread = params.get("thread") === "1";
-    if (openThread) {
-      const hl = highlights.find((h) => h.quote === quote);
-      if (hl) setThreadFor(hl);
+    // clicked toward rather than on the passage in the body. New links carry the highlight ID;
+    // legacy quote-only links require an unambiguous match or offer a conversation chooser.
+    const highlightId = Number(params.get("highlightId"));
+    const exact = Number.isSafeInteger(highlightId) && highlightId > 0
+      ? highlights.find((h) => h.id === highlightId) : undefined;
+    const matches = highlights.filter((h) => h.quote === quote);
+    const focused = exact ?? (matches.length === 1 ? matches[0] : undefined);
+    if (params.get("thread") === "1") {
+      if (focused) setThreadFor(focused);
+      else if (matches.length > 1) setThreadChoices(matches);
     }
     // Retry on a short backoff instead of a single fixed delay: the paint pass and any late layout
     // (images settling, fonts) can push the mark in after the first tick — keep looking, then give up.
@@ -168,13 +169,17 @@ export function PostHighlights({ postId }: { postId: number }) {
     let timer = 0;
     const attempt = (i: number) => {
       const root = document.querySelector<HTMLElement>(".prose-post");
-      const target = root && findQuoteTarget(root, quote);
+      const target = root && findQuoteTarget(root, quote, focused);
       if (target) {
         target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
         if (!reduceMotion) flashQuote(target);
         return;
       }
       if (i + 1 < delays.length) timer = window.setTimeout(() => attempt(i + 1), delays[i + 1]);
+      else if (focused) {
+        setThreadFor(focused);
+        toast(t("highlightSourceUnavailable"));
+      }
     };
     timer = window.setTimeout(() => attempt(0), delays[0]);
     return () => window.clearTimeout(timer);
@@ -191,14 +196,17 @@ export function PostHighlights({ postId }: { postId: number }) {
     if (!root) return;
     const openFromMark = (mark: HTMLElement | null) => {
       if (!mark) return false;
-      const hl = highlights.find((h) => h.id === Number(mark.dataset.hlId));
-      if (!hl) return false;
-      setThreadFor(hl);
+      const ids = highlightIdsForMark(mark);
+      const choices = highlights.filter((h) => ids.includes(h.id));
+      if (choices.length === 0) return false;
+      if (choices.length === 1) setThreadFor(choices[0]);
+      else setThreadChoices(choices);
       return true;
     };
     const markAt = (target: EventTarget | null) =>
       (target as HTMLElement | null)?.closest?.(`mark.${MARK_CLASS}[data-hl-id]`) as HTMLElement | null;
     const onClick = (e: MouseEvent) => {
+      if (!window.getSelection()?.isCollapsed) return;
       if (openFromMark(markAt(e.target))) e.preventDefault();
     };
     const onKeyDown = (e: KeyboardEvent) => {
@@ -222,7 +230,15 @@ export function PostHighlights({ postId }: { postId: number }) {
     const finalize = (e: Event) => {
       // Ignore releases on the action bar itself (tapping a button must not re-read / hide it).
       if (e.target instanceof Node && barRef.current?.contains(e.target)) return;
-      const payload = readSelection(root);
+      const selection = window.getSelection();
+      if (selection && !selection.isCollapsed && selection.rangeCount > 0
+        && root.contains(selection.getRangeAt(0).commonAncestorContainer)
+        && selection.toString().trim().length > 1000) {
+        setSel(null);
+        toast(t("highlightSelectionTooLong"), "error");
+        return;
+      }
+      const payload = readHighlightSelection(root);
       if (!payload) {
         setSel(null);
         return;
@@ -239,18 +255,24 @@ export function PostHighlights({ postId }: { postId: number }) {
       if (!s || s.isCollapsed) setSel(null);
     };
     const onScroll = () => setSel(null);
+    const onSelectionKeyUp = (event: KeyboardEvent) => {
+      if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)
+        || ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "a")) finalize(event);
+    };
 
+    document.addEventListener("keyup", onSelectionKeyUp);
     document.addEventListener("mouseup", finalize);
     document.addEventListener("touchend", finalize);
     document.addEventListener("selectionchange", onSelectionChange);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
+      document.removeEventListener("keyup", onSelectionKeyUp);
       document.removeEventListener("mouseup", finalize);
       document.removeEventListener("touchend", finalize);
       document.removeEventListener("selectionchange", onSelectionChange);
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [t, toast]);
 
   // Create a highlight (bare or with a note) and confirm the outcome. The paint pass is the primary
   // "it landed" cue, but the mark can be off-screen (you selected, then the list re-pull repaints below
@@ -260,11 +282,14 @@ export function PostHighlights({ postId }: { postId: number }) {
     async (payload: NewHighlight, okMessage: string) => {
       try {
         await createHighlight(postId, payload);
-        setHighlights(await listHighlights(postId));
-        toast(okMessage, "success");
       } catch {
         toast(t("highlightSaveError"), "error");
+        return false;
       }
+      // A failed refresh must not turn a confirmed write into a retry/duplicate creation.
+      try { setHighlights(await listHighlights(postId)); } catch { /* keep the last visible marks */ }
+      toast(okMessage, "success");
+      return true;
     },
     [postId, t, toast],
   );
@@ -331,13 +356,13 @@ export function PostHighlights({ postId }: { postId: number }) {
   }, [sel, authenticated, signInWithGoogle]);
 
   const saveNote = useCallback(
-    (note: string) => {
-      if (!noteFor) return;
+    async (note: string) => {
+      if (!noteFor) return false;
       const trimmed = note.trim();
       const payload = { ...noteFor, note: trimmed || null };
-      setNoteFor(null);
-      // A saved memo confirms as "note added"; an empty save is really just a plain highlight.
-      void persist(payload, trimmed ? t("highlightNoteSaved") : t("highlightSaved"));
+      const saved = await persist(payload, trimmed ? t("highlightNoteSaved") : t("highlightSaved"));
+      if (saved) setNoteFor(null);
+      return saved;
     },
     [noteFor, persist, t],
   );
@@ -375,14 +400,18 @@ export function PostHighlights({ postId }: { postId: number }) {
               />
             )}
             {noteFor && (
-              <NoteSheet
+              <HighlightNoteSheet
                 quote={noteFor.quote}
-                title={t("highlightNoteTitle")}
-                placeholder={t("highlightNotePlaceholder")}
-                saveLabel={t("highlightNoteSave")}
-                cancelLabel={t("highlightNoteCancel")}
                 onCancel={() => setNoteFor(null)}
                 onSave={saveNote}
+              />
+            )}
+            {threadChoices.length > 0 && (
+              <HighlightThreadChoices
+                highlights={threadChoices}
+                title={t("highlightChooseThread")}
+                onClose={() => setThreadChoices([])}
+                onChoose={(highlight) => { setThreadChoices([]); setThreadFor(highlight); }}
               />
             )}
             {threadFor && (
@@ -438,6 +467,37 @@ function HighlightVisibilityToggle({
       >
         {show ? hideLabel : showLabel}
       </button>
+    </div>
+  );
+}
+
+/** A shared painted span can carry several public conversations. Never guess which one was meant. */
+function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
+  highlights: HighlightView[];
+  title: string;
+  onClose: () => void;
+  onChoose: (highlight: HighlightView) => void;
+}) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("publicPost");
+  useFocusTrap(contentRef, { active: true, onEscape: onClose });
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4" onMouseDown={onClose}>
+      <div ref={contentRef} role="dialog" aria-modal="true" aria-labelledby="highlight-choices-title" className="max-h-[80dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl" onMouseDown={(event) => event.stopPropagation()}>
+        <h3 id="highlight-choices-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
+        <ul className="mt-3 divide-y divide-slate-100 dark:divide-slate-800">
+          {highlights.map((highlight) => (
+            <li key={highlight.id}>
+              <button type="button" className="focus-ring w-full rounded-lg py-3 text-left" onClick={() => onChoose(highlight)}>
+                <span className="block text-[13px] font-medium text-slate-900 dark:text-slate-100">@{highlight.author?.username ?? "?"}</span>
+                <span className="mt-1 block line-clamp-3 text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{highlight.note || highlight.quote}</span>
+                {highlight.replyCount > 0 && <span className="mt-1 block text-[12px] text-slate-500 dark:text-slate-400">{t("highlightReplyCount", { count: highlight.replyCount })}</span>}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <button type="button" onClick={onClose} className="focus-ring mt-3 rounded-lg px-3.5 py-2 text-sm text-slate-600 dark:text-slate-300">{t("highlightNoteCancel")}</button>
+      </div>
     </div>
   );
 }
@@ -881,154 +941,6 @@ function SelectionBar({
       </div>
     </div>
   );
-}
-
-/** Memo composer — a bottom sheet on mobile (centered card on sm+). The sheet sits at the bottom of a
- *  full-screen flex container whose bottom padding tracks the on-screen keyboard (visualViewport), so
- *  the textarea is never hidden behind the keyboard while writing. */
-function NoteSheet({
-  quote,
-  title,
-  placeholder,
-  saveLabel,
-  cancelLabel,
-  onCancel,
-  onSave,
-}: {
-  quote: string;
-  title: string;
-  placeholder: string;
-  saveLabel: string;
-  cancelLabel: string;
-  onCancel: () => void;
-  onSave: (note: string) => void;
-}) {
-  const [note, setNote] = useState("");
-  const inset = useKeyboardInset();
-  const sheetRef = useRef<HTMLDivElement>(null);
-
-  // Escape + Tab cycling + focus restore. The textarea autoFocuses itself, so don't double-focus.
-  useFocusTrap(sheetRef, { active: true, onEscape: onCancel, autoFocus: false });
-
-  return (
-    <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4"
-      style={{ paddingBottom: inset }}
-      onMouseDown={onCancel}
-    >
-      <div
-        ref={sheetRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="note-sheet-title"
-        className="w-full rounded-t-2xl bg-white p-5 shadow-xl dark:bg-slate-900 sm:max-w-md sm:rounded-2xl"
-        onMouseDown={(e) => e.stopPropagation()}
-      >
-        <h3 id="note-sheet-title" className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">{title}</h3>
-        <blockquote className="mt-3 line-clamp-3 border-l-2 border-accent-300 pl-3 text-[13px] leading-relaxed text-slate-500 dark:border-accent-500/40 dark:text-slate-400">
-          {quote}
-        </blockquote>
-        {/* WYSIWYG — 노트도 댓글과 같은 입력기(마크다운 기호·미리보기 칸 없음). */}
-        <div className="mt-3">
-          <RichCommentInput
-            value={note}
-            onChange={setNote}
-            placeholder={placeholder}
-            maxLength={500}
-            rows={3}
-            autoFocus
-            compact
-            onSubmitShortcut={() => onSave(note)}
-          />
-        </div>
-        <p id="note-sheet-count" aria-live="polite" className="mt-1 text-right text-[12px] tabular-nums text-slate-400 dark:text-slate-500">
-          {note.length}/500
-        </p>
-        <div className="mt-3 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 focus-ring dark:text-slate-300 dark:hover:bg-slate-800"
-          >
-            {cancelLabel}
-          </button>
-          <button
-            type="button"
-            onClick={() => onSave(note)}
-            className="rounded-lg bg-accent-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-800 focus-ring"
-          >
-            {saveLabel}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/** Read the current selection as a single-block highlight payload, or null if it isn't one. */
-function readSelection(root: HTMLElement): NewHighlight | null {
-  const sel = window.getSelection();
-  if (!sel || sel.isCollapsed || sel.rangeCount === 0) return null;
-  const range = sel.getRangeAt(0);
-  if (!root.contains(range.commonAncestorContainer)) return null;
-  const quote = sel.toString().trim();
-  if (quote.length < 1 || quote.length > 2000) return null;
-  // The span may cross blocks: start in `startBlock`, end in `endBlock` (== same block for the common case).
-  const startBlock = directChild(root, range.startContainer);
-  const endBlock = directChild(root, range.endContainer);
-  if (!startBlock || !endBlock) return null;
-  const blockOrder = Array.prototype.indexOf.call(root.children, startBlock);
-  const endBlockOrder = Array.prototype.indexOf.call(root.children, endBlock);
-  if (blockOrder < 0 || endBlockOrder < blockOrder) return null;
-  const startOffset = offsetWithin(startBlock, range.startContainer, range.startOffset);
-  const endOffset = offsetWithin(endBlock, range.endContainer, range.endOffset);
-  if (blockOrder === endBlockOrder && endOffset <= startOffset) return null;
-  return { blockOrder, endBlockOrder, startOffset, endOffset, quote };
-}
-
-/** The `.prose-post` direct-child element that contains `node` (a block), or null. */
-function directChild(root: HTMLElement, node: Node): Element | null {
-  let el: Node | null = node;
-  while (el && el.parentNode !== root) el = el.parentNode;
-  return el && el.nodeType === Node.ELEMENT_NODE ? (el as Element) : null;
-}
-
-/** Character offset of (node, offset) within `block`'s concatenated text. */
-function offsetWithin(block: Element, node: Node, offset: number): number {
-  const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
-  let count = 0;
-  let n = walker.nextNode();
-  while (n) {
-    if (n === node) return count + offset;
-    count += n.textContent?.length ?? 0;
-    n = walker.nextNode();
-  }
-  return count + offset;
-}
-
-/** Collapse whitespace runs so a stored quote matches the rendered body across newline / spacing drift. */
-function normSpace(s: string): string {
-  return s.replace(/\s+/g, " ").trim();
-}
-
-/** Find the element to scroll to for a `?hl=` quote: a painted `<mark>` whose text contains the full
- *  quote (the precise target), else the block element whose text contains it (fallback when not painted).
- *  Matching is whitespace-normalized and uses the whole quote (not a 40-char prefix, which could collide
- *  on a shared opening); when several marks match, the longest is the best fit for the shared span. */
-function findQuoteTarget(root: HTMLElement, quote: string): HTMLElement | null {
-  const needle = normSpace(quote);
-  if (!needle) return null;
-  const marks = Array.from(root.querySelectorAll<HTMLElement>(`mark.${MARK_CLASS}`));
-  const hits = marks.filter((m) => normSpace(m.textContent ?? "").includes(needle));
-  if (hits.length > 0) {
-    // Prefer the longest matching mark: a repeated opening can appear in several, the fullest is the span.
-    return hits.reduce((best, m) => ((m.textContent?.length ?? 0) > (best.textContent?.length ?? 0) ? m : best));
-  }
-  return (
-    Array.from(root.children).find((el) => normSpace(el.textContent ?? "").includes(needle)) as
-      | HTMLElement
-      | undefined
-  ) ?? null;
 }
 
 /** Briefly settle a soft green over a deep-linked target so the eye lands on it (mirrors the iOS focus

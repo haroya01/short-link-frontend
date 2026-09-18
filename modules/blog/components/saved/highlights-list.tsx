@@ -48,7 +48,7 @@ export function HighlightsList({ username, locale }: { username: string; locale:
     const q = query.trim().toLowerCase();
     if (!q) return items;
     return items.filter(
-      (h) => h.quote.toLowerCase().includes(q) || h.postTitle.toLowerCase().includes(q),
+      (h) => [h.quote, h.note, h.postTitle].some((text) => text?.toLowerCase().includes(q)),
     );
   }, [items, query]);
 
@@ -115,7 +115,7 @@ export function HighlightsList({ username, locale }: { username: string; locale:
           {filtered.map((h) => (
             <li key={h.id} className="group border-b border-slate-100 last:border-b-0 dark:border-slate-800">
               <BlogLink
-                href={quoteHref(h.postUsername, h.postSlug, h.quote, locale)}
+                href={quoteHref(h.postUsername, h.postSlug, h.quote, locale, h.id)}
                 className="focus-ring -mx-3 block rounded-lg px-3 py-5 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40"
               >
                 {/* The post this passage was drawn on — a quiet eyebrow that doubles as the link back. */}

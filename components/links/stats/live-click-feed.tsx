@@ -9,7 +9,7 @@ import { useClickStream } from "@/hooks/use-click-stream";
  */
 export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick?: () => void }) {
   const t = useTranslations("stats.live");
-  const { items, connected } = useClickStream(shortCode, { onTick });
+  const { items, connected, reconnecting } = useClickStream(shortCode, { onTick });
 
   return (
     <div className="space-y-3">
@@ -26,14 +26,15 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
             aria-hidden
           />
           <span className={connected ? "font-medium text-accent-700 dark:text-accent-400" : "text-slate-500 dark:text-slate-400"}>
-            {connected ? t("connected") : t("connecting")}
+            {connected ? t("connected") : reconnecting ? t("reconnecting") : t("connecting")}
           </span>
         </div>
       </div>
 
+      <p className="text-xs text-slate-500 dark:text-slate-400">{t("scope")}</p>
       {items.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 px-4 py-10 text-center text-[12px] text-slate-500 dark:text-slate-400">
-          {t("waiting")}
+          {reconnecting ? t("disconnectedHint") : t("waiting")}
         </p>
       ) : (
         <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">

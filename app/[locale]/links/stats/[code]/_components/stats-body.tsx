@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { LinkStats } from "@/types";
+import { fillDailyClicks } from "@/lib/stats-daily";
 import { StatsOverview } from "./overview";
 import { WhenChapter, type RangeDays } from "./chapters/when-chapter";
 import { WhereChapter } from "./chapters/where-chapter";
@@ -14,9 +14,7 @@ import { TabBar } from "./tab-bar";
 import { SettingsTab } from "./tabs/settings-tab";
 import { useTabHash, type TabKey } from "../_lib/use-tab-hash";
 
-// 뎁스 2층 구조: 1층(개요) = 마스트헤드 + 링크 일지(1면) + 상세 타일, 2층 = 챕터 상세.
-// 근거/KPI 점프는 섹션이 사는 챕터로 내려간 뒤 그 섹션으로 스크롤한다 — 해시 기반이라
-// 브라우저 뒤로가기가 그대로 "개요로 복귀"가 되는 예측 가능한 동작.
+// Evidence links select a persistent analysis tab before scrolling to its section.
 const SECTION_CHAPTER: Record<string, TabKey> = {
   "section-device": "who",
   "section-bots": "who",
@@ -45,7 +43,7 @@ const SECTION_CHAPTER: Record<string, TabKey> = {
  * see the chrome of every section without the page trying to authenticate or open an EventSource.
  */
 export function StatsBody({
-  data,
+  data: sourceData,
   shortUrl,
   shortCodeLabel,
   onCopy,
@@ -60,10 +58,22 @@ export function StatsBody({
   demo?: boolean;
 }) {
   const t = useTranslations("stats");
+  const data = useMemo(() => {
+    // Synthetic reports use a fixed snapshot date; live reports always end on today's report day.
+    const snapshot = demo || process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+    const lastDate = sourceData.dailyClicks?.at(-1)?.date;
+    return {
+      ...sourceData,
+      dailyClicks: fillDailyClicks(sourceData.dailyClicks ?? [], {
+        timezone: sourceData.timezone,
+        now: snapshot && lastDate ? new Date(`${lastDate}T12:00:00Z`) : new Date(),
+      }),
+    };
+  }, [sourceData, demo]);
   const [view, setView] = useTabHash();
   const [pendingScroll, setPendingScroll] = useState<string | null>(null);
   const [rangeDays, setRangeDays] = useState<RangeDays>(30);
-  // 기간 프리셋은 클라이언트 절환 — API 는 최근 30일치 일별 시계열을 주므로 그 안에서 자른다.
+  // Missing days are filled above so seven rows mean seven calendar days, including idle days.
   const slicedDaily = useMemo(
     () => (data.dailyClicks ?? []).slice(-rangeDays),
     [data.dailyClicks, rangeDays],
@@ -87,12 +97,6 @@ export function StatsBody({
     setPendingScroll(section);
   }
 
-  function backToOverview() {
-    setView("overview");
-    setPendingScroll(null);
-    window.scrollTo({ top: 0 });
-  }
-
   return (
     <>
       <Header
@@ -101,57 +105,23 @@ export function StatsBody({
         shortCodeLabel={shortCodeLabel}
         onCopy={onCopy}
         demo={demo}
+        onSettings={() => setView("settings")}
+        settingsActive={view === "settings"}
       />
-      {view === "overview" || view === "settings" ? (
-        <>
-          {data.totalClicks === 0 && (
-            <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />
-          )}
-          <TabBar
-            active={view === "settings" ? "settings" : "overview"}
-            onSelect={(k) => setView(k === "settings" ? "settings" : "overview")}
-            items={["overview", "settings"]}
-          />
-          <div key={view} className="view-enter">
-            {view === "overview" ? (
-              <StatsOverview
-                data={data}
-                slicedDaily={slicedDaily}
-                range={rangeDays}
-                onRange={setRangeDays}
-                onNavigate={handleNavigate}
-                onTick={onTick}
-                demo={demo}
-              />
-            ) : (
-              <SettingsTab data={data} onTick={onTick} demo={demo} />
-            )}
-          </div>
-        </>
-      ) : (
-        <div key={view} className="view-enter space-y-5">
-          {/* 2층 챕터 상세 — 돌아가는 길은 항상 같은 자리(좌상단), 브라우저 뒤로가기도 동작 */}
-          <button
-            type="button"
-            onClick={backToOverview}
-            className="focus-ring inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[13px] font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> {t("tabs.overview")}
-          </button>
-          {view === "who" && <WhoChapter data={data} />}
-          {view === "when" && (
-            <WhenChapter
-              data={data}
-              dailyClicks={slicedDaily}
-              range={rangeDays}
-              onRange={setRangeDays}
-              onTick={onTick}
-              demo={demo}
-            />
-          )}
-          {view === "where" && <WhereChapter data={data} />}
-        </div>
+      {data.totalClicks === 0 && view !== "settings" && (
+        <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />
       )}
+      <TabBar active={view} onSelect={setView} items={["overview", "when", "where", "who"]} />
+      {view !== "settings" && (
+        <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">{t("scope.report", { tz: data.timezone })}</p>
+      )}
+      <div key={view} role="tabpanel" aria-label={view === "settings" ? t("linkSettings") : undefined} id={`stats-panel-${view}`} aria-labelledby={view === "settings" ? undefined : `stats-tab-${view}`} className="view-enter">
+        {view === "overview" && <StatsOverview data={data} slicedDaily={slicedDaily} range={rangeDays} onRange={setRangeDays} onNavigate={handleNavigate} onTick={onTick} demo={demo} />}
+        {view === "who" && <WhoChapter data={data} />}
+        {view === "when" && <WhenChapter data={data} dailyClicks={slicedDaily} range={rangeDays} onRange={setRangeDays} onTick={onTick} demo={demo} />}
+        {view === "where" && <WhereChapter data={data} />}
+        {view === "settings" && <SettingsTab data={data} onTick={onTick} demo={demo} />}
+      </div>
     </>
   );
 }

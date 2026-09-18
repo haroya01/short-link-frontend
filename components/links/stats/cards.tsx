@@ -26,6 +26,8 @@ type Props = {
    * single-page hosts can omit it and the card falls back to in-page {@code scrollIntoView}.
    */
   onNavigate?: (section: string) => void;
+  /** Hosts with fewer breakdowns omit navigation affordances for unavailable sections. */
+  navigationTargets?: readonly string[];
 };
 
 /**
@@ -45,8 +47,9 @@ export function StatsCards({
   timeToFirstClickMinutes,
   velocityRatio,
   dailySeries,
-  animate = true,
+  animate = false,
   onNavigate,
+  navigationTargets,
 }: Props) {
   const t = useTranslations("stats.kpi");
   const hasUnique = typeof unique === "number" && Number.isFinite(unique);
@@ -59,14 +62,16 @@ export function StatsCards({
   // empty-state CTA above. Strip the interactive affordances on the KPI cards so the cursor /
   // hover / focus signal doesn't promise navigation we can't deliver.
   const interactive = total > 0;
+  const canNavigate = (section: string) => interactive && (!navigationTargets || navigationTargets.includes(section));
 
   function jump(section: string) {
-    if (!interactive) return;
+    if (!canNavigate(section)) return;
     if (onNavigate) {
       onNavigate(section);
       return;
     }
-    document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(section)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
   }
 
   const humanRatio = total > 0 ? (human / total) * 100 : 0;
@@ -99,11 +104,11 @@ export function StatsCards({
       <button
         type="button"
         onClick={() => jump("section-daily")}
-        disabled={!interactive}
-        aria-disabled={!interactive}
+        disabled={!canNavigate("section-daily")}
+        aria-disabled={!canNavigate("section-daily")}
         className={cn(
           "relative col-span-2 overflow-hidden rounded-2xl border border-accent-800 p-0 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[transform,box-shadow] duration-200 ease-[var(--ease)] sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:shadow-none",
-          interactive
+          canNavigate("section-daily")
             ? "group cursor-pointer hover:-translate-y-0.5 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
             : "cursor-default",
         )}
@@ -133,7 +138,7 @@ export function StatsCards({
         sub={`${humanRatio.toFixed(1)}%`}
         ratio={humanRatio / 100}
         animate={animate}
-        onJump={interactive ? () => jump("section-device") : undefined}
+        onJump={canNavigate("section-device") ? () => jump("section-device") : undefined}
       />
       <CountStat
         label={t("unique")}
@@ -141,7 +146,7 @@ export function StatsCards({
         sub={hasUnique ? t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) }) : undefined}
         ratio={hasUnique ? uniqueRatio / 100 : undefined}
         animate={animate}
-        onJump={interactive ? () => jump("section-daily") : undefined}
+        onJump={canNavigate("section-daily") ? () => jump("section-daily") : undefined}
       />
       <CountStat
         label={t("bot")}
@@ -150,7 +155,7 @@ export function StatsCards({
         ratio={botRatio / 100}
         muted
         animate={animate}
-        onJump={interactive ? () => jump("section-bots") : undefined}
+        onJump={canNavigate("section-bots") ? () => jump("section-bots") : undefined}
       />
       {showProfile && (
         <CountStat
@@ -159,7 +164,7 @@ export function StatsCards({
           ratio={profileRatio / 100}
           sub={t("profileSub", { ratio: profileRatio.toFixed(0) })}
           animate={animate}
-          onJump={interactive ? () => jump("section-sources") : undefined}
+          onJump={canNavigate("section-sources") ? () => jump("section-sources") : undefined}
         />
       )}
       <Stat
@@ -180,7 +185,7 @@ export function StatsCards({
               : "—"
         }
         sub={showVelocity ? t("vsBaseline") : showLatency ? t("afterCreation") : t("noData")}
-        onJump={interactive ? () => jump("section-hourly") : undefined}
+        onJump={(showVelocity || showLatency) && canNavigate("section-hourly") ? () => jump("section-hourly") : undefined}
       />
     </div>
   );

@@ -22,8 +22,8 @@ test.describe("stats page", () => {
     await context.request.get(`/${link.shortCode}`, { maxRedirects: 0 });
 
     await page.goto(`/ko/stats/${link.shortCode}`);
-    await expect(page.getByText("총 클릭")).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText("링크 일지")).toBeVisible();
+    await expect(page.getByText("누적 전체 클릭", { exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("주목할 변화", { exact: true })).toBeVisible();
     await expect(page.getByText("실시간 클릭")).toBeVisible();
   });
 

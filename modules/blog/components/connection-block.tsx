@@ -13,10 +13,10 @@ type BlockFields = Pick<
 /** Deep-link a highlight to its source post AT that sentence — `?hl=<encoded quote>` is read by
  *  PostHighlights, which scrolls to the matching painted span and flashes it (mirrors the iOS
  *  postFocusQuote deep-link). */
-export function quoteHref(username: string, slug: string, quote: string, locale: string): string {
+export function quoteHref(username: string, slug: string, quote: string, locale: string, highlightId?: number): string {
   const base = postHref(username, slug, locale);
   const sep = base.includes("?") ? "&" : "?";
-  return `${base}${sep}hl=${encodeURIComponent(quote)}`;
+  return `${base}${sep}hl=${encodeURIComponent(quote)}${highlightId != null && highlightId > 0 ? `&highlightId=${highlightId}` : ""}`;
 }
 
 /**

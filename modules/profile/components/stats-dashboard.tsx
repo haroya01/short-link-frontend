@@ -28,13 +28,14 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
         human={data.humanVisits}
         bot={data.botVisits}
         unique={data.uniqueVisits}
+        navigationTargets={["section-daily", "section-device", "section-hourly"]}
       />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <Section title={t("daily.title")} description={t("daily.desc")} className="lg:col-span-2">
+        <Section id="section-daily" title={t("daily.title")} description={t("daily.desc")} className="lg:col-span-2">
           <DailyChart data={data.dailyVisits} />
         </Section>
-        <Section title={t("hourly.title")} description={t("hourly.desc")}>
+        <Section id="section-hourly" title={t("hourly.title")} description={t("hourly.desc")}>
           <HourChart data={data.hourVisits} />
         </Section>
       </div>
@@ -49,7 +50,7 @@ export function ProfileStatsDashboard({ data }: { data: ProfileStats }) {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Section title={t("devices.title")} description={t("devices.desc")}>
+        <Section id="section-device" title={t("devices.title")} description={t("devices.desc")}>
           <BreakdownList
             items={data.deviceVisits.map((d) => ({
               label: d.device || tBreak("unknown"),

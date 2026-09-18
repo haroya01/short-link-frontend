@@ -99,11 +99,13 @@ test.describe("heatmap click → inline detail (mobile)", () => {
 
     const cellElement = cellHandle.asElement();
     expect(cellElement).not.toBeNull();
+    const bucket = (await cellElement!.getAttribute("aria-label"))!.match(/(\d+)–(\d+)시/);
+    expect(bucket).not.toBeNull();
     await cellElement!.click();
 
     const detail = page.getByRole("status").filter({ hasText: /클릭/ });
     await expect(detail).toBeVisible();
-    // Mobile span shows a "from–to" range, so the label includes a dash between two hours.
-    await expect(detail.locator("text=/\\d{2}:00–\\d{2}:59/")).toBeVisible();
+    // Verify the selected bucket's real hours; localized hour numbers aren't zero-padded.
+    await expect(detail).toContainText(`${bucket![1]}:00–${bucket![2]}:59`);
   });
 });

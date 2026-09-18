@@ -16,7 +16,7 @@ export function WhoChapter({ data }: { data: LinkStats }) {
   const clientApps = data.clientAppClicks ?? [];
   return (
     <div id="chapter-who" className="scroll-mt-28 space-y-4">
-      <ChapterHeading index={1} title={t("chapters.who")} />
+      <ChapterHeading index={1} title={t("analysisTabs.who")} />
       <ClickQualitySummary data={data} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Section

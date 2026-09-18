@@ -52,6 +52,7 @@ export function EditorHeader({
     <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 dark:border-slate-800">
       <a
         href={backHref}
+        aria-label={t("backToList")}
         onClick={(e) => {
           // Plain left-click → save-then-navigate via onBack (don't lose a dirty draft). Let
           // modified clicks (new tab / middle-click) keep the native link behaviour.
@@ -59,7 +60,7 @@ export function EditorHeader({
           e.preventDefault();
           onBack();
         }}
-        className="focus-ring -ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+        className="focus-ring touch-target -ml-2 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
       >
         <ArrowLeft className="h-4 w-4" />
         <span className="hidden sm:inline">{t("backToList")}</span>
@@ -100,7 +101,7 @@ export function EditorHeader({
             <button
               type="button"
               onClick={onSave}
-              disabled={saving}
+              disabled={saving || busy}
               className="focus-ring inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-50 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               {saved && <Check className="h-4 w-4 text-accent-600 dark:text-accent-400" />}
@@ -142,4 +143,3 @@ export function EditorHeader({
     </div>
   );
 }
-

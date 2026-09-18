@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
+import { parseImageAlt } from "@/modules/blog/lib/image-width";
 
 /**
  * Shared markdown renderer for the public reader. Post text blocks store raw markdown (the editor
@@ -65,19 +66,31 @@ export function Markdown({ children, inline = false }: { children: string; inlin
           ? [rehypeRaw, rehypeSafeStyle, [rehypeSanitize, schema]]
           : [rehypeRaw, rehypeSafeStyle, rehypeHighlight, [rehypeSanitize, schema]]
       }
-      components={
-        inline
-          ? { p: ({ children }) => <>{children}</> }
+      components={{
+        // Legacy paragraphs and list items can contain markdown images without becoming IMAGE
+        // blocks. Give them the same intrinsic-size reservation and lazy loading as PostImage.
+        img: ({ src, alt = "", title, width, height }) => {
+          const parsed = parseImageAlt(alt);
+          const dims = parsed.dims && Number.isFinite(parsed.dims.w) && Number.isFinite(parsed.dims.h)
+            && parsed.dims.w > 0 && parsed.dims.h > 0 ? parsed.dims : undefined;
+          return (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={src} alt={parsed.alt} title={title} loading="lazy" decoding="async"
+              width={dims?.w ?? width} height={dims?.h ?? height} />
+          );
+        },
+        ...(inline
+          ? { p: ({ children }: { children?: React.ReactNode }) => <>{children}</> }
           : {
               // Wrap tables so a too-wide one scrolls within the reading column instead of squishing
               // its cells unreadably on a phone (the .prose-post table CSS only sets w-full).
-              table: ({ children, className }) => (
+              table: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
                 <div className="prose-table-wrap">
                   <table className={className}>{children}</table>
                 </div>
               ),
-            }
-      }
+            }),
+      }}
     >
       {children}
     </ReactMarkdown>

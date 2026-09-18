@@ -235,8 +235,9 @@
     "analyticsWindowFollows": "+{count} trong {days} ngày",
     "linksByPost": "Lượt nhấp theo bài",
     "linksFullDashboard": "Bảng điều khiển liên kết đầy đủ",
-    "savedTitle": "Đã lưu",
-    "savedSubtitle": "Bài viết bạn đã đánh dấu và đã thích, gom về một chỗ.",
+    "libraryCollections": "Bộ sưu tập",
+    "savedTitle": "Thư viện",
+    "savedSubtitle": "Đọc lại bài viết đã lưu và những đoạn muốn ghi nhớ.",
     "curationMockNote": "Xem trước — hiện chỉ lưu trên trình duyệt này.",
     "curationPinned": "Bài ghim",
     "curationPinnedHint": "Hiển thị theo thứ tự này ở đầu trang công khai của bạn.",
@@ -247,7 +248,7 @@
     "curationMoveUp": "Lên trên",
     "curationMoveDown": "Xuống dưới",
     "curationUnpin": "Bỏ ghim",
-    "curationReadingList": "Danh sách đọc",
+    "curationReadingList": "Bài đã lưu",
     "curationReadingListHint": "Bài bạn đã lưu để đọc sau.",
     "curationReadingListEmpty": "Chưa có bài nào được lưu.",
     "curationRemoveBookmark": "Xóa khỏi danh sách",
@@ -269,8 +270,8 @@
     "rowDeleteFailed": "Không xóa được.",
     "curationLiked": "Bài đã thích",
     "curationLikedHint": "Những bài bạn đã thích.",
-    "curationHighlights": "Thư viện của tôi",
-    "curationHighlightsHint": "Những đoạn bạn đã tô. Quay lại đúng câu trong bài gốc.",
+    "curationHighlights": "Đánh dấu & ghi chú",
+    "curationHighlightsHint": "Những đoạn đã đánh dấu và ghi chú. Chọn một mục để trở lại bài gốc.",
     "curationComments": "Bình luận của tôi",
     "curationCommentsHint": "Những bình luận bạn đã viết.",
     "curationLikedEmpty": "Chưa có bài nào được thích.",
@@ -533,7 +534,7 @@
     "clearHistoryCancel": "Hủy",
     "forget": "Xóa khỏi lịch sử",
     "loadMore": "Xem thêm",
-    "highlightsSearch": "Tìm theo đoạn văn hoặc tiêu đề bài",
+    "highlightsSearch": "Tìm đoạn trích, ghi chú hoặc tiêu đề bài viết",
     "noResults": "Không có đoạn nào khớp.",
     "emptyFolder": "Thư mục này trống.",
     "saveFailed": "Không thể lưu thay đổi của bạn. Vui lòng thử lại.",
@@ -564,6 +565,15 @@
     "highlightNoteTitle": "Thêm ghi chú",
     "highlightNotePlaceholder": "Để lại ghi chú cho đoạn này",
     "highlightNoteSave": "Lưu",
+    "highlightSourceUnavailable": "Không tìm thấy vị trí đoạn trích trong bài viết hiện tại. Đoạn tô sáng đã lưu được hiển thị thay thế.",
+    "highlightPublicScope": "Đoạn tô sáng và ghi chú sẽ được công khai kèm tên của bạn.",
+    "highlightSaving": "Đang lưu…",
+    "highlightChooseThread": "Ghi chú về đoạn này",
+    "highlightDiscardConfirm": "Bỏ ghi chú này?",
+    "highlightDiscardBody": "Nội dung chưa lưu sẽ bị mất.",
+    "highlightKeepEditing": "Tiếp tục chỉnh sửa",
+    "highlightDiscard": "Bỏ",
+    "highlightSelectionTooLong": "Chọn tối đa 1.000 ký tự để tô sáng.",
     "highlightNoteCancel": "Hủy",
     "highlightThreadNoReplies": "Chưa có phản hồi",
     "highlightReplyPlaceholder": "Viết câu trả lời…",
@@ -829,7 +839,7 @@
       "series": "Series",
       "readers": "Độc giả",
       "leads": "Khách tiềm năng",
-      "curation": "Đã lưu",
+      "curation": "Thư viện",
       "webhooks": "Webhook",
       "moderation": "Kiểm duyệt",
       "adminMetrics": "Chỉ số"
@@ -1066,11 +1076,11 @@
   "dashboard": {
     "label": "bảng điều khiển",
     "title": "Liên kết của tôi",
-    "subtitle": "{count} liên kết. Nhấp vào mã rút gọn để xem phân tích.",
+    "subtitle": "{count} liên kết · chọn tên để xem thống kê.",
     "newLink": "Liên kết mới",
     "loadMore": "Xem thêm",
     "loadingMore": "Đang tải...",
-    "searchPlaceholder": "Tìm theo URL gốc hoặc mã rút gọn",
+    "searchPlaceholder": "Tìm tên, URL gốc hoặc mã rút gọn",
     "clearSearch": "Xóa tìm kiếm",
     "loginRequired": "Cần đăng nhập",
     "loginRequiredDesc": "Liên kết và thống kê lượt nhấp của tôi chỉ hiển thị sau khi đăng nhập.",
@@ -1088,10 +1098,10 @@
       "expiring": "Sắp hết hạn"
     },
     "ops": {
-      "totalClicks": "Tổng lượt nhấp",
-      "totalClicksHint": "Tổng lượt nhấp toàn thời gian trong danh sách này",
-      "weekClicks": "7 ngày qua",
-      "weekClicksHint": "Diễn biến gần đây",
+      "totalClicks": "Lượt nhấp của người tích lũy",
+      "totalClicksHint": "Mọi liên kết · loại truy cập tự động",
+      "weekClicks": "Lượt nhấp của người trong 7 ngày",
+      "weekClicksHint": "7 ngày qua · loại truy cập tự động",
       "zeroClick": "Liên kết không có lượt nhấp",
       "zeroClickReview": "Xem lại vị trí đặt hoặc CTA",
       "zeroClickClear": "Mọi liên kết đều đã có lượt nhấp",
@@ -1101,10 +1111,11 @@
       "topLink": "Liên kết hàng đầu",
       "weekDelta": "+{count} trong 7 ngày qua",
       "topLinkEmpty": "Chưa có liên kết để so sánh",
-      "clicks": "lượt nhấp",
+      "clicks": "lượt nhấp của người",
       "copy": "Sao chép",
       "viewStats": "Xem thống kê",
-      "open": "Mở"
+      "open": "Mở",
+      "zeroClickHint": "Liên kết chưa có lượt nhấp, kể cả lượt nhấp tự động"
     },
     "emptyTitle": "Tạo liên kết đầu tiên của bạn",
     "emptyDesc": "Rút gọn một URL và trong vòng một phút, các góc nhìn lượt nhấp / quốc gia / kênh / thiết bị sẽ được lấp đầy. Mất 30 giây.",
@@ -1129,15 +1140,16 @@
     "noResultDesc": "Không tìm thấy liên kết nào khớp với \"{query}\".",
     "noResultDescFiltered": "Không có liên kết nào khớp với bộ lọc hiện tại. Hãy thử điều chỉnh.",
     "table": {
-      "shortUrl": "URL ngắn",
+      "shortUrl": "Tên liên kết",
       "originalUrl": "URL gốc",
       "createdAt": "Tạo lúc",
       "expiresAt": "Hết hạn",
-      "clicks": "Lượt nhấp",
-      "actions": "Hành động"
+      "clicks": "Lượt nhấp của người",
+      "actions": "Hành động",
+      "sortAllClicks": "Xếp theo mọi lượt nhấp"
     },
     "card": {
-      "week": "{count} tuần này",
+      "week": "Lượt nhấp của người trong 7 ngày: {count}",
       "expiresToday": "Hết hạn hôm nay",
       "expiresIn": "Còn {days} ngày",
       "expired": "Đã hết hạn"
@@ -1152,7 +1164,15 @@
       "remove": "Bỏ khỏi mục yêu thích",
       "filter": "Yêu thích",
       "emptyTitle": "Chưa có liên kết yêu thích",
-      "emptyDesc": "Nhấn vào ngôi sao trên liên kết để thêm vào mục yêu thích và ghim lên đầu."
+      "emptyDesc": "Đánh dấu sao trong Tất cả liên kết để lưu vào đây.",
+      "syncedHint": "Đã lưu vào tài khoản, dùng chung trên ứng dụng và web.",
+      "saveFailed": "Không lưu được mục yêu thích. Vui lòng thử lại.",
+      "loadFailed": "Không tải được mục yêu thích.",
+      "orderTitle": "Thứ tự yêu thích",
+      "orderDone": "Xong sắp xếp",
+      "orderHint": "Lưu cùng thứ tự trên ứng dụng và web.",
+      "moveUp": "Chuyển {name} lên",
+      "moveDown": "Chuyển {name} xuống"
     },
     "deleteConfirmTitle": "Xóa liên kết này?",
     "deleteConfirmDesc": "Liên kết đã xóa không thể khôi phục. Thống kê lượt nhấp cũng mất theo.",
@@ -1205,15 +1225,21 @@
       "downloadResult": "Tải CSV kết quả",
       "uploadAnother": "Tải lên tệp khác",
       "done": "Xong"
-    }
+    },
+    "librarySubtitle": "Tìm và sao chép liên kết, rồi xem hiệu quả.",
+    "loadFailed": "Không tải được liên kết. Vui lòng thử lại.",
+    "overviewFailed": "Không tải được thống kê tài khoản.",
+    "accountScope": "Toàn tài khoản · {tz} · {total} lượt nhấp tích lũy gồm tự động · không phụ thuộc bộ lọc",
+    "libraryViews": "Chọn danh sách liên kết",
+    "allLinks": "Tất cả liên kết"
   },
   "edit": {
     "title": "Chỉnh sửa liên kết",
     "originalUrl": "URL gốc",
     "expiresAt": "Hết hạn lúc (để trống nếu không hết hạn)",
-    "noteLabel": "Ghi chú riêng (tùy chọn)",
+    "noteLabel": "Tên liên kết / ghi chú (tùy chọn)",
     "notePlaceholder": "ví dụ: Khuyến mãi xuân / dùng trong story Instagram",
-    "noteHint": "Chỉ mình bạn thấy. Không bao giờ hiển thị với khách.",
+    "noteHint": "Hiện trong danh sách và mục yêu thích, không hiện với khách.",
     "expiredMessageLabel": "Thông báo trang hết hạn (tùy chọn)",
     "expiredMessagePlaceholder": "ví dụ: Khuyến mãi đã kết thúc — xem đợt tiếp theo tại example.com",
     "expiredMessageHint": "Hiển thị thay cho trang hết hạn mặc định khi liên kết hết hạn hoặc đạt giới hạn lượt xem.",
@@ -1274,7 +1300,10 @@
       "title": "Lượt nhấp trực tiếp",
       "connecting": "Đang kết nối…",
       "connected": "Trực tiếp",
-      "waiting": "Lượt nhấp sẽ xuất hiện ở đây khi có."
+      "waiting": "Lượt nhấp sẽ xuất hiện ở đây khi có.",
+      "scope": "Lượt nhấp từ khi mở màn hình · giờ trên thiết bị",
+      "reconnecting": "Mất kết nối · đang kết nối lại",
+      "disconnectedHint": "Kết nối lượt nhấp trực tiếp bị ngắt. Đang tự động kết nối lại. Bạn vẫn có thể xem thống kê đã có."
     },
     "quality": {
       "title": "Chất lượng lượt nhấp",
@@ -1419,9 +1448,9 @@
     "backToDashboard": "Quay lại liên kết của tôi",
     "kpi": {
       "totalClicks": "Tổng lượt nhấp",
-      "unique": "Riêng biệt",
-      "human": "Người",
-      "bot": "Bot",
+      "unique": "Khách ước tính",
+      "human": "Lượt nhấp của người",
+      "bot": "Truy cập tự động",
       "velocityHot": "Lượt nhấp tăng vọt",
       "velocityHour": "Giờ qua",
       "ttfc": "Lượt nhấp đầu sau",
@@ -1439,7 +1468,7 @@
         "desc": "{tz} · đậm hơn = nhiều lượt nhấp hơn"
       },
       "daily": {
-        "title": "Lượt nhấp hằng ngày",
+        "title": "Lượt nhấp của người hàng ngày",
         "desc": "30 ngày qua · {tz}"
       },
       "hourly": {
@@ -1630,7 +1659,7 @@
       "where": "Từ đâu"
     },
     "journal": {
-      "title": "Nhật ký liên kết",
+      "title": "Thay đổi đáng chú ý",
       "evidence": "bằng chứng",
       "detail": "Xem chi tiết",
       "newVisitors": "Khách mới",
@@ -1645,17 +1674,31 @@
       "topCountry": "{percent}% đến từ {country}",
       "mobileHeavy": "{percent}% trên di động — liên kết được bấm trên điện thoại",
       "desktopHeavy": "{percent}% trên máy tính — mở tại bàn làm việc",
-      "botHigh": "Bot chiếm {percent}% — người thật: {human}",
-      "botFiltered": "Bỏ {percent}% bot, còn {human} người thật đã ghé",
+      "botHigh": "Truy cập tự động chiếm {percent}% · {human} lượt nhấp của người",
+      "botFiltered": "Bỏ {percent}% truy cập tự động, còn {human} lượt nhấp của người",
       "fastFirstClick": "Lượt nhấn đầu tiên đến sau {minutes} phút",
       "inAppBrowser": "{percent}% mở trong {app} — tỷ lệ trình duyệt trong ứng dụng khá cao",
-      "channelLoyalty": "{percent}% người đến từ {host} đã quay lại"
+      "channelLoyalty": "{percent}% người đến từ {host} đã quay lại",
+      "showMore": "Xem thêm {count} thay đổi",
+      "showLess": "Thu gọn"
     },
     "protection": {
       "title": "Bảo vệ",
       "saved": "Đã lưu cài đặt bảo vệ.",
       "failed": "Không thể lưu cài đặt bảo vệ."
-    }
+    },
+    "analysisTabs": {
+      "when": "Xu hướng nhấp",
+      "where": "Nguồn truy cập",
+      "who": "Thiết bị truy cập"
+    },
+    "linkSettings": "Cài đặt liên kết",
+    "scope": {
+      "report": "Tổng tích lũy · biểu đồ hàng ngày là lượt nhấp của người trong khoảng đã chọn · {tz}",
+      "daily": "Lượt nhấp của người trong {days} ngày qua · {tz}"
+    },
+    "trendTitle": "Xu hướng nhấp",
+    "rangeDays": "{days} ngày"
   },
   "admin": {
     "label": "quản trị",
@@ -2190,7 +2233,9 @@
       "thu": "T5",
       "fri": "T6",
       "sat": "T7"
-    }
+    },
+    "loadFailed": "Không tải được phân tích tuần này.",
+    "retry": "Thử lại"
   },
   "recent": {
     "title": "Vừa rút gọn",

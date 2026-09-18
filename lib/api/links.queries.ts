@@ -5,6 +5,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useAuth } from "@/lib/auth";
 import { useCallback } from "react";
 
 import { getLinkDetail, listMyLinks, listTags, type MyLinksFilters } from "./links";
@@ -25,8 +26,9 @@ export const tagsKeys = {
 };
 
 export function useMyLinks(filters: MyLinksFilters, options?: { enabled?: boolean }) {
+  const { me } = useAuth();
   return useInfiniteQuery({
-    queryKey: linksKeys.list(filters),
+    queryKey: [...linksKeys.list(filters), me?.id],
     queryFn: ({ pageParam }) => listMyLinks({ ...filters, after: pageParam }),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
@@ -36,8 +38,9 @@ export function useMyLinks(filters: MyLinksFilters, options?: { enabled?: boolea
 }
 
 export function useTags(options?: { enabled?: boolean }) {
+  const { me } = useAuth();
   return useQuery({
-    queryKey: tagsKeys.all,
+    queryKey: [...tagsKeys.all, me?.id],
     queryFn: listTags,
     enabled: options?.enabled ?? true,
   });

@@ -18,10 +18,10 @@ export function WeeklyInsightsCard() {
   const { ready, authenticated } = useAuth();
   const [data, setData] = useState<WeeklyInsights | null>(null);
   const [loading, setLoading] = useState(true);
-  // Collapsed on mobile so the dashboard table sits one viewport away instead of three.
-  // The delta badge + eyebrow stays visible — the high-signal "did this week go better" question
-  // is answerable without expanding. Desktop ignores this; the card is always open on sm+.
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [retry, setRetry] = useState(0);
+  // A one-line weekly summary keeps the link library within reach on every screen.
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     // The insights endpoint is authenticated (401 for anon). Wait for auth to settle and gate on a
@@ -29,18 +29,20 @@ export function WeeklyInsightsCard() {
     // a signed-out viewer keeps the skeleton until the dashboard's login-wall branch unmounts this.
     if (!ready || !authenticated) return;
     let cancelled = false;
+    setLoading(true);
+    setFailed(false);
     getWeeklyInsights()
       .then((d) => {
         if (!cancelled) setData(d);
       })
-      .catch(() => {})
+      .catch(() => { if (!cancelled) setFailed(true); })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
     return () => {
       cancelled = true;
     };
-  }, [ready, authenticated]);
+  }, [ready, authenticated, retry]);
 
   if (loading) {
     return (
@@ -49,7 +51,7 @@ export function WeeklyInsightsCard() {
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-5 w-16 rounded-full" />
         </div>
-        <div className="hidden gap-4 px-5 pb-5 sm:grid sm:grid-cols-2 lg:grid-cols-4">
+        <div className="hidden gap-4 px-5 pb-5">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="space-y-1.5 p-1.5 -m-1.5">
               <Skeleton className="h-3 w-16" />
@@ -61,6 +63,8 @@ export function WeeklyInsightsCard() {
       </div>
     );
   }
+
+  if (failed) return <div role="alert" className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 px-4 py-2 dark:border-slate-800"><p className="text-sm text-slate-600 dark:text-slate-300">{t("loadFailed")}</p><button type="button" onClick={() => setRetry((value) => value + 1)} className="focus-ring min-h-11 shrink-0 rounded-lg px-2 text-sm font-medium text-accent-700 dark:text-accent-400">{t("retry")}</button></div>;
 
   // `!== 0` alone let a malformed/absent totalClicks (undefined or a non-finite division result) skip
   // the empty state, and the card then rendered "NaN" through every fmt.number. Fall back to the
@@ -78,9 +82,9 @@ export function WeeklyInsightsCard() {
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
       <button
         type="button"
-        onClick={() => setMobileOpen((v) => !v)}
-        aria-expanded={mobileOpen}
-        className="flex w-full items-baseline justify-between gap-3 p-5 text-left sm:cursor-default"
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+        className="focus-ring flex min-h-14 w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left"
       >
         <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{t("eyebrow")}</p>
         <div className="flex items-center gap-2">
@@ -88,8 +92,8 @@ export function WeeklyInsightsCard() {
           <ChevronDown
             aria-hidden
             className={cn(
-              "h-4 w-4 text-slate-400 dark:text-slate-500 transition-transform sm:hidden",
-              mobileOpen && "rotate-180",
+              "h-4 w-4 text-slate-400 dark:text-slate-500 transition-transform",
+              expanded && "rotate-180",
             )}
           />
         </div>
@@ -97,8 +101,8 @@ export function WeeklyInsightsCard() {
 
       <div
         className={cn(
-          "grid gap-4 px-5 pb-5 sm:grid-cols-2 sm:!grid lg:grid-cols-4",
-          mobileOpen ? "grid" : "hidden",
+          "grid gap-4 px-5 pb-5 sm:grid-cols-2 lg:grid-cols-4",
+          expanded ? "grid" : "hidden",
         )}
       >
         <Stat

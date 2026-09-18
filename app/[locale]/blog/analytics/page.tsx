@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, ExternalLink, Eye, FileText, Heart, Link2, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -8,12 +9,12 @@ import { useAuth } from "@/lib/auth";
 import { dateLocale } from "@/lib/date";
 import { blogPath, linksHref } from "@/lib/host";
 import { Mark } from "@/components/common/logo";
+import { ErrorState } from "@/components/common/error-state";
 import {
   getAuthorAnalyticsOverview,
   getPostAnalytics,
   getPostPerformance,
   getSeriesAnalytics,
-  type AuthorAnalyticsOverview,
   type PostAnalytics,
   type PostPerformanceSort,
   type SeriesAnalyticsRow,
@@ -69,10 +70,14 @@ function SectionTabs({
 export default function BlogAnalyticsPage() {
   const t = useTranslations("blogWorkspace");
   const locale = useLocale();
-  const { ready, authenticated } = useAuth();
+  const { ready, authenticated, me } = useAuth();
   const [days, setDays] = useState(30);
-  const [data, setData] = useState<AuthorAnalyticsOverview | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["blog", "analytics", me?.id, "overview", days],
+    queryFn: () => getAuthorAnalyticsOverview(days),
+    enabled: ready && authenticated,
+  });
+  const loading = !ready || isLoading;
   const [tab, setTab] = useState<AnalyticsTab>("referrers");
 
   const TABS: { key: AnalyticsTab; label: string }[] = [
@@ -81,15 +86,6 @@ export default function BlogAnalyticsPage() {
     { key: "links", label: t("analyticsTabLinks") },
     { key: "posts", label: t("analyticsTabPosts") },
   ];
-
-  useEffect(() => {
-    if (!ready || !authenticated) return;
-    setLoading(true);
-    getAuthorAnalyticsOverview(days)
-      .then(setData)
-      .catch(() => setData(null))
-      .finally(() => setLoading(false));
-  }, [ready, authenticated, days]);
 
   // 히어로 옆 한 줄 — 이 기간에서 가장 읽힌 하루. 새 데이터 없이 daily 에서 그대로 나온다.
   const peakPoint = (data?.daily ?? []).reduce<{ date: string; views: number } | null>(
@@ -130,6 +126,8 @@ export default function BlogAnalyticsPage() {
             <SkeletonRows count={5} />
           </div>
         </div>
+      ) : error ? (
+        <div className="mt-8"><ErrorState onRetry={() => void refetch()} /></div>
       ) : !data ? (
         <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
@@ -280,10 +278,14 @@ function PostPerformanceList() {
   // Collapsed by default to 10 rows; '전체보기' activates the infinite-scroll sentinel.
   const [expanded, setExpanded] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const requestGeneration = useRef(0);
+  const requestInFlight = useRef(false);
 
   // Reset + load the first page whenever the sort changes (and on mount / retry).
   useEffect(() => {
     let alive = true;
+    const generation = ++requestGeneration.current;
+    requestInFlight.current = true;
     setItems([]);
     setNextPage(0);
     setHasNext(true);
@@ -298,26 +300,38 @@ function PostPerformanceList() {
         setNextPage(1);
       })
       .catch(() => alive && setError(true))
-      .finally(() => alive && setLoading(false));
+      .finally(() => {
+        if (!alive) return;
+        requestInFlight.current = false;
+        setLoading(false);
+      });
     return () => {
       alive = false;
+      requestGeneration.current = generation + 1;
     };
   }, [sort, reloadKey]);
 
   const loadMore = useCallback(async () => {
-    if (loading || !hasNext || nextPage === 0) return; // nextPage 0 = first page not in yet
+    if (requestInFlight.current || loading || !hasNext || nextPage === 0) return; // nextPage 0 = first page not in yet
+    requestInFlight.current = true;
+    const generation = requestGeneration.current;
     setLoading(true);
     setError(false);
     try {
       const res = await getPostPerformance(nextPage, 20, sort);
+      if (generation !== requestGeneration.current) return;
       setItems((prev) => [...prev, ...res.items]);
       setHasNext(res.hasNext);
       setNextPage((p) => p + 1);
     } catch {
+      if (generation !== requestGeneration.current) return;
       // hasNext 는 그대로 두고 error 로만 자동 로더를 멈춘다 — 재시도 버튼이 남아 다시 이어 받는다.
       setError(true);
     } finally {
-      setLoading(false);
+      if (generation === requestGeneration.current) {
+        requestInFlight.current = false;
+        setLoading(false);
+      }
     }
   }, [loading, hasNext, nextPage, sort]);
 
@@ -334,7 +348,7 @@ function PostPerformanceList() {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [loadMore, error]);
+  }, [loadMore, error, expanded]);
 
   return (
     <section className="mt-8">

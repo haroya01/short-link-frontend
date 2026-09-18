@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { blankToNull, toLocalInput } from "@/components/links/edit-link-dialog/utils";
+import { blankToNull, buildExpiryPatch, toLocalInput } from "@/components/links/edit-link-dialog/utils";
 
 describe("blankToNull", () => {
   it("returns null for empty + whitespace-only strings", () => {
@@ -42,5 +42,17 @@ describe("toLocalInput", () => {
     const out = toLocalInput("2026-07-15T18:45:00Z");
     const reparsed = new Date(out);
     expect(Number.isFinite(reparsed.getTime())).toBe(true);
+  });
+});
+
+
+describe("expiry clearing", () => {
+  it("uses an explicit clearing flag rather than a null-only no-op", () => {
+    expect(buildExpiryPatch("2026-10-01T05:20:33Z", "")).toEqual({ expiresAt: null, clearExpiresAt: true });
+  });
+  it("preserves an untouched expiry and its seconds when another field is edited", () => {
+    const previous = "2026-10-01T05:20:33Z";
+    expect(buildExpiryPatch(previous, toLocalInput(previous))).toEqual({});
+    expect(buildExpiryPatch(null, "")).toEqual({});
   });
 });

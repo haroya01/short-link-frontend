@@ -18,6 +18,7 @@ import { useToast } from "@/components/ui/toast";
 import { deleteLink } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
 import { cn, formatDate, formatNumber, truncateMiddle } from "@/lib/utils";
+import { linkDisplayName } from "@/lib/link-library-view";
 import type { MyLink } from "@/types";
 
 type SortKey = "createdAt" | "clickCount";
@@ -40,6 +41,8 @@ type Props = {
   onToggleFavorite: (shortCode: string) => void;
   /** 계정 클릭 스트림이 실어온 행별 라이브 신호(없으면 정적 렌더). */
   liveByCode?: Record<string, LiveBump>;
+  favoritesDisabled?: boolean;
+  sortingDisabled?: boolean;
 };
 
 export function LinksTable({
@@ -52,6 +55,8 @@ export function LinksTable({
   isFavorite,
   onToggleFavorite,
   liveByCode,
+  favoritesDisabled = false,
+  sortingDisabled = false,
 }: Props) {
   const t = useTranslations("dashboard");
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
@@ -67,6 +72,7 @@ export function LinksTable({
   const someSelected = !allSelected && allOnPage.some((c) => selected.has(c));
 
   function toggleSort(key: SortKey) {
+    if (sortingDisabled) return;
     if (sortKey !== key) {
       onSortChange(key, "desc");
     } else {
@@ -160,6 +166,7 @@ export function LinksTable({
             live={liveByCode?.[item.shortCode]}
             selected={selected.has(item.shortCode)}
             favorite={isFavorite(item.shortCode)}
+            favoritesDisabled={favoritesDisabled}
             onToggleFavorite={() => onToggleFavorite(item.shortCode)}
             onToggleSelect={() => toggleOne(item.shortCode)}
             onTagClick={onTagClick}
@@ -191,6 +198,7 @@ export function LinksTable({
               <TH>{t("table.originalUrl")}</TH>
               <TH className="hidden md:table-cell">
                 <SortHeader
+                  disabled={sortingDisabled}
                   active={sortKey === "createdAt"}
                   dir={sortDir}
                   onClick={() => toggleSort("createdAt")}
@@ -200,13 +208,15 @@ export function LinksTable({
               </TH>
               <TH className="hidden lg:table-cell">{t("table.expiresAt")}</TH>
               <TH className="text-right">
+                <span className="block text-xs">{t("table.clicks")}</span>
                 <SortHeader
+                  disabled={sortingDisabled}
                   active={sortKey === "clickCount"}
                   dir={sortDir}
                   onClick={() => toggleSort("clickCount")}
                   align="right"
                 >
-                  {t("table.clicks")}
+                  {t("table.sortAllClicks")}
                 </SortHeader>
               </TH>
               <TH className="w-[1%] whitespace-nowrap text-right">{t("table.actions")}</TH>
@@ -233,6 +243,7 @@ export function LinksTable({
                   <div className="flex items-center gap-1.5">
                     <FavoriteButton
                       active={isFavorite(item.shortCode)}
+                        disabled={favoritesDisabled}
                       onToggle={() => onToggleFavorite(item.shortCode)}
                       label={
                         isFavorite(item.shortCode)
@@ -245,7 +256,7 @@ export function LinksTable({
                       data-vt-link-scope
                       className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100 hover:underline"
                     >
-                      <span data-vt-link-code>/{item.shortCode}</span>
+                      <span className="block max-w-52 truncate font-sans">{linkDisplayName(item)}</span><span data-vt-link-code className="block font-mono text-xs font-normal text-slate-500 dark:text-slate-400">/{item.shortCode}</span>
                     </StatsMorphLink>
                     <CopyButton
                       size="sm"
@@ -307,10 +318,10 @@ export function LinksTable({
                       {bump ? (
                         // key=seq — 도착마다 스팬을 갈아 끼워 솟음 모션을 재시동한다.
                         <span key={bump.seq} className="count-bump">
-                          {formatNumber(item.clickCount + bump.extra)}
+                          {formatNumber((item.humanClickCount ?? item.clickCount) + bump.extra)}
                         </span>
                       ) : (
-                        formatNumber(item.clickCount)
+                        formatNumber(item.humanClickCount ?? item.clickCount)
                       )}
                     </span>
                   </div>
@@ -323,7 +334,7 @@ export function LinksTable({
                         size="icon"
                         aria-label={t("actions.stats")}
                         title={t("actions.stats")}
-                        className="h-8 w-8"
+                        className="h-11 w-11"
                       >
                         <BarChart3 className="h-3.5 w-3.5" />
                       </Button>
@@ -334,7 +345,7 @@ export function LinksTable({
                       aria-label={t("actions.edit")}
                       title={t("actions.edit")}
                       onClick={() => setEditing(item)}
-                      className="h-8 w-8"
+                      className="h-11 w-11"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
@@ -344,7 +355,7 @@ export function LinksTable({
                       aria-label={t("actions.delete")}
                       title={t("actions.delete")}
                       onClick={() => setConfirmCode(item.shortCode)}
-                      className="h-8 w-8 text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                      className="h-11 w-11 text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
@@ -415,6 +426,7 @@ function MobileLinkCard({
   live,
   selected,
   favorite,
+  favoritesDisabled,
   onToggleFavorite,
   onToggleSelect,
   onTagClick,
@@ -428,6 +440,7 @@ function MobileLinkCard({
   live?: LiveBump;
   selected: boolean;
   favorite: boolean;
+  favoritesDisabled?: boolean;
   onToggleFavorite: () => void;
   onToggleSelect: () => void;
   onTagClick?: (tag: string) => void;
@@ -440,9 +453,7 @@ function MobileLinkCard({
   const weekClicks = last7d.reduce((sum, n) => sum + n, 0);
   const expiry = expiryState(item.expiresAt);
 
-  /* 2행 압축 카드 — 스파크·주간·날짜·액션이 각자 한 행씩 차지하던 4단 스택(카드당 ~210px)이
-     스크롤을 다 먹는다는 지적. 정체(코드·URL)+숫자(클릭·스파크)는 첫 행, 상태(만료·태그·날짜)+
-     액션은 둘째 행으로 — 정보 손실 없이 절반 높이. */
+  // Identity gets its own row so counts and touch targets cannot squeeze a readable title away.
   return (
     <div
       className={cn(
@@ -451,75 +462,45 @@ function MobileLinkCard({
       )}
       style={{ "--idx": Math.min(index, 8) } as CSSProperties}
     >
-      <div className="flex items-center gap-2.5">
-        <input
-          type="checkbox"
-          aria-label={t("bulkSelectRow", { code: item.shortCode })}
-          checked={selected}
-          onChange={onToggleSelect}
-          className="h-3.5 w-3.5 shrink-0 cursor-pointer"
-        />
+      <div className="flex items-start gap-2.5">
         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-slate-50 dark:bg-slate-800/50">
           <Favicon url={item.originalUrl} size={16} />
         </span>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1">
-            <StatsMorphLink
-              shortCode={item.shortCode}
-              data-vt-link-scope
-              className="truncate font-mono text-[15px] font-semibold leading-tight text-slate-900 dark:text-slate-100 hover:underline"
-            >
-              <span data-vt-link-code>/{item.shortCode}</span>
-            </StatsMorphLink>
-            <CopyButton
-              size="sm"
-              variant="ghost"
-              label=""
-              value={item.shortUrl}
-              onCopied={onCopied}
-            />
-          </div>
+          <StatsMorphLink
+            shortCode={item.shortCode}
+            data-vt-link-scope
+            className="block font-semibold leading-snug text-slate-900 dark:text-slate-100 hover:underline"
+          >
+            <span className="block break-words text-[15px]">{linkDisplayName(item)}</span>
+            <span data-vt-link-code className="block font-mono text-xs font-normal text-slate-500 dark:text-slate-400">/{item.shortCode}</span>
+          </StatsMorphLink>
           <a
             href={item.originalUrl}
             target="_blank"
             rel="noreferrer"
-            className="mt-0.5 flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+            className="mt-1 flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
             title={item.originalUrl}
           >
-            <span className="truncate text-xs">{truncateMiddle(item.originalUrl, 34)}</span>
+            <span className="truncate text-xs">{item.originalUrl}</span>
             <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
           </a>
         </div>
-        <div className="shrink-0 text-right">
-          <p className="flex items-center justify-end gap-1.5 font-mono text-lg font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
-            {live && <LiveDot />}
-            {live ? (
-              <span key={live.seq} className="count-bump">
-                {formatNumber(item.clickCount + live.extra)}
-              </span>
-            ) : (
-              formatNumber(item.clickCount)
-            )}
-          </p>
-          {weekClicks > 0 && (
-            <div className="mt-1 flex items-center justify-end gap-1">
-              <Sparkline
-                values={last7d}
-                width={56}
-                height={16}
-                className="shrink-0 text-accent-600 dark:text-accent-400"
-              />
-              {weekClicks > 0 && (
-                <span className="text-[10px] font-medium tabular-nums text-accent-700 dark:text-accent-400">
-                  +{formatNumber(weekClicks)}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
       </div>
-
-      <div className="mt-2 flex items-center justify-between gap-2">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <p className="flex items-baseline gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+          {live && <LiveDot />}
+          <span key={live?.seq} className={cn("font-mono text-lg font-semibold tabular-nums text-slate-900 dark:text-slate-100", live && "count-bump")}>
+            {formatNumber((item.humanClickCount ?? item.clickCount) + (live?.extra ?? 0))}
+          </span>
+          {t("table.clicks")}
+        </p>
+        {weekClicks > 0 && <div className="flex items-center gap-1.5">
+          <Sparkline values={last7d} width={48} height={16} className="shrink-0 text-accent-600 dark:text-accent-400" />
+          <span className="text-xs font-medium tabular-nums text-accent-700 dark:text-accent-400">{t("card.week", { count: formatNumber(weekClicks) })}</span>
+        </div>}
+      </div>
+      <div className="mt-2 space-y-2">
         <div className="flex min-w-0 flex-wrap items-center gap-1.5">
           {expiry?.kind === "expired" && (
             <span className="inline-flex items-center gap-1 rounded-full border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-700 dark:text-red-300">
@@ -548,9 +529,20 @@ function MobileLinkCard({
             )}
           </span>
         </div>
-        <div className="inline-flex shrink-0 items-center gap-0.5">
+        <div className="flex items-center justify-between border-t border-slate-100 pt-1 dark:border-slate-800">
+          <label className="grid h-11 w-11 cursor-pointer place-items-center">
+            <input
+              type="checkbox"
+              aria-label={t("bulkSelectRow", { code: item.shortCode })}
+              checked={selected}
+              onChange={onToggleSelect}
+              className="h-4 w-4 cursor-pointer"
+            />
+          </label>
+          <CopyButton size="md" variant="ghost" label="" value={item.shortUrl} onCopied={onCopied} />
           <FavoriteButton
             active={favorite}
+            disabled={favoritesDisabled}
             onToggle={onToggleFavorite}
             label={favorite ? t("favorite.remove") : t("favorite.add")}
           />
@@ -560,7 +552,7 @@ function MobileLinkCard({
               size="icon"
               aria-label={t("actions.stats")}
               title={t("actions.stats")}
-              className="h-8 w-8"
+              className="h-11 w-11"
             >
               <BarChart3 className="h-3.5 w-3.5" />
             </Button>
@@ -571,7 +563,7 @@ function MobileLinkCard({
             aria-label={t("actions.edit")}
             title={t("actions.edit")}
             onClick={onEdit}
-            className="h-8 w-8"
+            className="h-11 w-11"
           >
             <Pencil className="h-3.5 w-3.5" />
           </Button>
@@ -581,7 +573,7 @@ function MobileLinkCard({
             aria-label={t("actions.delete")}
             title={t("actions.delete")}
             onClick={onDelete}
-            className="h-8 w-8 text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600"
+            className="h-11 w-11 text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
@@ -592,7 +584,7 @@ function MobileLinkCard({
 }
 
 /**
- * 별표 토글 — 즐겨찾기한 링크를 목록 맨 위로 고정한다. 행/링크 클릭과 히트가 겹치지 않게 <button>
+ * 별표 토글 — 계정 즐겨찾기 목록에 링크를 저장한다. 행/링크 클릭과 히트가 겹치지 않게 <button>
  * 으로 분리하고, 채움(브랜드 그린)/비움으로 상태를 나타낸다. 별칭 색은 §10.3 마커(accent-600).
  */
 function FavoriteButton({
@@ -600,8 +592,10 @@ function FavoriteButton({
   onToggle,
   label,
   className,
+  disabled,
 }: {
   active: boolean;
+  disabled?: boolean;
   onToggle: () => void;
   label: string;
   className?: string;
@@ -612,6 +606,7 @@ function FavoriteButton({
     <button
       type="button"
       aria-pressed={active}
+      disabled={disabled}
       aria-label={label}
       title={label}
       onClick={() => {
@@ -619,7 +614,7 @@ function FavoriteButton({
         onToggle();
       }}
       className={cn(
-        "focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-md transition-colors",
+        "focus-ring grid h-11 w-11 shrink-0 place-items-center rounded-lg transition-colors disabled:opacity-50",
         active
           ? "text-accent-600 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-500/10"
           : "text-slate-400 dark:text-slate-500 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300",
@@ -666,19 +661,22 @@ function SortHeader({
   onClick,
   align,
   children,
+  disabled,
 }: {
   active: boolean;
   dir: SortDir;
   onClick: () => void;
   align?: "right";
+  disabled?: boolean;
   children: React.ReactNode;
 }) {
+  if (disabled) return <span className="text-xs font-medium">{children}</span>;
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider hover:text-slate-900 dark:hover:text-slate-100",
+        "inline-flex min-h-11 items-center gap-1 text-[12px] font-medium uppercase tracking-wider hover:text-slate-900 dark:hover:text-slate-100",
         active ? "text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400",
         align === "right" && "ml-auto",
       )}

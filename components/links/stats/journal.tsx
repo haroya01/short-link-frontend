@@ -48,9 +48,8 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
     case "section-sources":
       return (
         <BreakdownList
-          items={(data.referrerHostClicks ?? [])
-            .slice(0, 5)
-            .map((r) => ({ label: r.host, count: r.count }))}
+          items={(data.referrerHostClicks ?? []).map((r) => ({ label: r.host, count: r.count }))}
+          maxItems={5}
         />
       );
     case "section-device":
@@ -59,7 +58,7 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
       const bots = data.botClicks2 ?? [];
       if (bots.length > 0) {
         return (
-          <BreakdownList items={bots.slice(0, 5).map((b) => ({ label: b.bot, count: b.count }))} />
+          <BreakdownList items={bots.map((b) => ({ label: b.bot, count: b.count }))} maxItems={5} />
         );
       }
       // 봇 분류가 없으면 사람/봇 비중 자체가 근거다.
@@ -84,13 +83,12 @@ function EvidenceBody({ evidence, data }: { evidence: string; data: LinkStats })
     case "chapter-where":
       return (
         <BreakdownList
-          items={(data.countryClicks ?? [])
-            .slice(0, 5)
-            .map((c) => ({ label: c.country, count: c.count }))}
+          items={(data.countryClicks ?? []).map((c) => ({ label: c.country, count: c.count }))}
+          maxItems={5}
         />
       );
     case "section-client-app":
-      return <ClientAppBreakdown items={(data.clientAppClicks ?? []).slice(0, 5)} />;
+      return <ClientAppBreakdown items={data.clientAppClicks ?? []} maxItems={5} />;
     case "section-channel-depth":
       // 충성도 문장의 근거는 클릭 순위가 아니라 채널별 재방문율이다 — 상세와 같은 표를 그대로.
       return (
@@ -123,13 +121,16 @@ function resolveParams(entry: JournalEntry, tStats: ReturnType<typeof useTransla
 export function StatsJournal({
   data,
   onNavigate,
+  initialVisible = 2,
 }: {
   data: LinkStats;
   onNavigate: (section: string) => void;
+  initialVisible?: number;
 }) {
   const t = useTranslations("stats.journal");
   const tStats = useTranslations("stats");
   const entries = buildJournal(data);
+  const [showAll, setShowAll] = useState(false);
   const [openKeys, setOpenKeys] = useState<ReadonlySet<string>>(new Set());
   // 접힘 애니메이션 동안 내용이 사라지지 않도록, 한 번 펼친 근거는 마운트를 유지한다.
   const [everOpened, setEverOpened] = useState<ReadonlySet<string>>(new Set());
@@ -152,7 +153,7 @@ export function StatsJournal({
         {t("title")}
       </h2>
       <ul className="mt-1 divide-y divide-slate-100 dark:divide-slate-800">
-        {entries.map((entry) => {
+        {(showAll ? entries : entries.slice(0, initialVisible)).map((entry) => {
           const open = openKeys.has(entry.key);
           const panelId = `journal-evidence-${entry.key}`;
           return (
@@ -224,7 +225,7 @@ export function StatsJournal({
                       type="button"
                       tabIndex={open ? 0 : -1}
                       onClick={() => onNavigate(entry.evidence)}
-                      className="focus-ring mt-3 inline-flex items-center gap-1 rounded-md px-1 py-0.5 text-[11px] font-medium text-slate-500 transition-colors duration-150 ease-out hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
+                      className="focus-ring mt-3 inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-[13px] font-medium text-slate-500 transition-colors duration-150 ease-out hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
                     >
                       {t("detail")}
                       <ArrowUpRight aria-hidden className="h-3 w-3" />
@@ -236,6 +237,7 @@ export function StatsJournal({
           );
         })}
       </ul>
+      {entries.length > initialVisible && <button type="button" onClick={() => setShowAll((value) => !value)} aria-expanded={showAll} className="focus-ring min-h-11 rounded-lg px-2 text-sm font-medium text-slate-600 dark:text-slate-300">{showAll ? t("showLess") : t("showMore", { count: entries.length - initialVisible })}</button>}
     </section>
   );
 }

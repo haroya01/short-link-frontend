@@ -85,6 +85,7 @@ export default function PublicStatsPage() {
         timeToFirstClickMinutes={data.timeToFirstClickMinutes}
         velocityRatio={data.velocity?.ratio ?? 0}
         dailySeries={data.dailyClicks?.map((d) => d.count)}
+        navigationTargets={["section-daily", "section-device"]}
       />
 
       <Section
