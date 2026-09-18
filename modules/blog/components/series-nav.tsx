@@ -65,13 +65,14 @@ export function SeriesNav({
         </div>
       </div>
 
-      {/* Progress stepper — filled up to and including the current part. */}
+      {/* Progress stepper — filled up to and including the current part.
+          비활성 트랙 dark=600: 700 은 잉크 배경 대비 1.95:1 로 WCAG 1.4.11(non-text 3:1) 미달. */}
       <div className="mt-2 flex items-center gap-1" aria-hidden>
         {Array.from({ length: series.total }).map((_, i) => (
           <span
             key={i}
             className={`h-1 flex-1 rounded-full ${
-              i < series.position ? "bg-accent-600" : "bg-slate-200 dark:bg-slate-700"
+              i < series.position ? "bg-accent-600" : "bg-slate-200 dark:bg-slate-600"
             }`}
           />
         ))}
