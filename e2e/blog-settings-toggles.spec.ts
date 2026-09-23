@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import type { Locator } from "@playwright/test";
-import { signInAs, uniqueEmail } from "./helpers/auth";
+import { MY_PROFILE, mockBackend, signIn } from "./helpers/mock-backend";
 
 /**
  * Regression for the settings-page switches rendering with the knob detached from its pill: the
@@ -31,9 +31,9 @@ async function expectKnobMatchesState(switchEl: Locator) {
 }
 
 test.describe("blog settings — toggle switches", () => {
-  test("every switch knob sits inside its pill on the correct side", async ({ page, context }) => {
-    const email = uniqueEmail("blog-settings-toggles");
-    await signInAs(page, context, email);
+  test("every switch knob sits inside its pill on the correct side", async ({ page }) => {
+    await signIn(page);
+    await mockBackend(page);
     await page.goto("/ko/blog/settings");
 
     // Both async sections (per-type notification prefs, follower-count privacy) load their state
@@ -50,12 +50,16 @@ test.describe("blog settings — toggle switches", () => {
     }
   });
 
-  test("hide-follower-count flips, persists across reload, and the knob follows", async ({
-    page,
-    context,
-  }) => {
-    const email = uniqueEmail("blog-settings-hide");
-    await signInAs(page, context, email);
+  test("hide-follower-count flips, persists across reload, and the knob follows", async ({ page }) => {
+    const profile = { ...MY_PROFILE };
+    await signIn(page);
+    await mockBackend(page, {
+      "GET /api/v1/users/me/profile": (route) => route.fulfill({ json: profile }),
+      "PUT /api/v1/users/me/profile": (route) => {
+        Object.assign(profile, JSON.parse(route.request().postData() ?? "{}"));
+        return route.fulfill({ json: profile });
+      },
+    });
     await page.goto("/ko/blog/settings");
 
     const hide = page.getByRole("switch", { name: "팔로워 수 숨기기" });

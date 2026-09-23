@@ -15,14 +15,14 @@ test.describe("locale persistence", () => {
     context,
   }) => {
     await page.goto("/ja");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(/長いURL|クリック/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/短縮はひと行で/);
 
     // Open the globe switcher and pick Korean.
     await page.getByRole("button", { name: "言語" }).click();
     await page.getByRole("menuitem", { name: /한국어/ }).click();
 
     await expect(page).toHaveURL(/\/ko(\/|$)/);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(/긴 URL|클릭/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/단축은 한 줄/);
 
     const cookies = await context.cookies();
     const nextLocale = cookies.find((c) => c.name === "NEXT_LOCALE");
@@ -31,12 +31,12 @@ test.describe("locale persistence", () => {
     // Soft nav via header link — should keep the ko prefix and ko content.
     await page.getByRole("link", { name: "단축" }).first().click();
     await expect(page).toHaveURL(/\/ko(\/|$)/);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(/긴 URL|클릭/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/단축은 한 줄/);
 
     // Hard nav to root — middleware should now use the ko cookie instead of bouncing to ja.
     await page.goto("/");
     await expect(page).toHaveURL(/\/ko(\/|$)/);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(/긴 URL|클릭/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/단축은 한 줄/);
   });
 
   test("switching back to en persists across reload", async ({ page, context }) => {
@@ -45,13 +45,13 @@ test.describe("locale persistence", () => {
     await page.getByRole("menuitem", { name: /English/ }).click();
 
     await expect(page).toHaveURL(/\/en(\/|$)/);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(/Long URLs|short line/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/Shorten in one line/);
 
     const cookies = await context.cookies();
     expect(cookies.find((c) => c.name === "NEXT_LOCALE")?.value).toBe("en");
 
     await page.reload();
     await expect(page).toHaveURL(/\/en(\/|$)/);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(/Long URLs|short line/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(/Shorten in one line/);
   });
 });

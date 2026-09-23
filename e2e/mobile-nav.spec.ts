@@ -3,43 +3,20 @@ import { devices, expect, test } from "@playwright/test";
 test.use({ ...devices["iPhone 14"] });
 
 test.describe("mobile navigation", () => {
-  test("hamburger toggle opens menu", async ({ page }) => {
-    await page.goto("/");
-    const toggle = page.getByLabel(/open menu|close menu/);
-    await expect(toggle).toBeVisible();
-    await toggle.click();
-    await expect(page.getByRole("link", { name: "단축" })).toBeVisible();
-  });
-
-  test("drawer slides in and Escape closes it", async ({ page }) => {
-    await page.goto("/");
-    const toggle = page.getByLabel(/open menu|close menu/);
-    await toggle.click();
-    const drawer = page.getByRole("dialog", { name: /navigation/ });
-    await expect(drawer).toBeVisible();
-    // Wait for the slide-in transition to settle so getBoundingClientRect reads the resting position
-    // instead of a frame mid-animation.
-    await page.waitForTimeout(320);
-    const settled = await drawer.evaluate((el) => {
-      const rect = el.getBoundingClientRect();
-      return { left: rect.left };
-    });
-    // The drawer should rest fully inside the viewport (left edge at or just past the left wall).
-    expect(Math.abs(settled.left)).toBeLessThanOrEqual(1);
-
-    await page.keyboard.press("Escape");
-    await page.waitForTimeout(320);
-    // After dismissal the drawer translates back off-screen — its right edge should sit at or before
-    // the viewport left edge.
-    const closed = await drawer.evaluate((el) => {
-      const rect = el.getBoundingClientRect();
-      return { right: rect.right };
-    });
-    expect(closed.right).toBeLessThanOrEqual(1);
+  test("bottom tab bar shows the four sections and moves between them", async ({ page }) => {
+    await page.goto("/ko");
+    const tabBar = page.locator("nav:visible").filter({ has: page.getByRole("link", { name: "QR 캠페인" }) });
+    for (const name of ["단축", "QR 캠페인", "모집", "프로필"]) {
+      await expect(tabBar.getByRole("link", { name, exact: true })).toBeVisible();
+    }
+    await tabBar.getByRole("link", { name: "모집", exact: true }).click();
+    await expect(page).toHaveURL(/\/ko\/events$/);
+    await tabBar.getByRole("link", { name: "단축", exact: true }).click();
+    await expect(page).toHaveURL(/\/ko$/);
   });
 
   test("home renders without horizontal overflow on iPhone", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/ko");
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
     );

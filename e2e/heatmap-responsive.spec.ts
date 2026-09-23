@@ -32,7 +32,7 @@ test.describe("heatmap mobile aggregate (4h × 7day)", () => {
       test.use({ viewport: { width: vp.width, height: vp.height } });
 
       test("renders 6-col mobile grid and hides desktop grid", async ({ page }) => {
-        await page.goto("/ko/demo");
+        await page.goto("/ko/demo#when");
         await page.waitForLoadState("networkidle");
 
         const mobileGrid = page.locator(MOBILE_GRID_SELECTOR).first();
@@ -44,7 +44,7 @@ test.describe("heatmap mobile aggregate (4h × 7day)", () => {
       });
 
       test("fits viewport width without horizontal scroll", async ({ page }) => {
-        await page.goto("/ko/demo");
+        await page.goto("/ko/demo#when");
         await page.waitForLoadState("networkidle");
 
         const dims = await page.evaluate((sel) => {
@@ -59,7 +59,7 @@ test.describe("heatmap mobile aggregate (4h × 7day)", () => {
       });
 
       test("renders 42 cells (6 cols × 7 rows)", async ({ page }) => {
-        await page.goto("/ko/demo");
+        await page.goto("/ko/demo#when");
         await page.waitForLoadState("networkidle");
 
         const cellCount = await page.evaluate((sel) => {
@@ -80,7 +80,7 @@ test.describe("heatmap desktop full grid (24h × 7day)", () => {
       test.use({ viewport: { width: vp.width, height: vp.height } });
 
       test("renders 24-col desktop grid and hides mobile grid", async ({ page }) => {
-        await page.goto("/ko/demo");
+        await page.goto("/ko/demo#when");
         await page.waitForLoadState("networkidle");
 
         const mobileGrid = page.locator(MOBILE_GRID_SELECTOR).first();
@@ -91,7 +91,7 @@ test.describe("heatmap desktop full grid (24h × 7day)", () => {
       });
 
       test("renders 168 hourly cells (24 cols × 7 rows)", async ({ page }) => {
-        await page.goto("/ko/demo");
+        await page.goto("/ko/demo#when");
         await page.waitForLoadState("networkidle");
 
         const cellCount = await page.evaluate((sel) => {
@@ -125,7 +125,7 @@ test.describe("heatmap aggregate correctness — mobile bucket = desktop 4h sum"
     }
 
     await page.setViewportSize({ width: 1280, height: 720 });
-    await page.goto("/ko/demo");
+    await page.goto("/ko/demo#when");
     await page.waitForLoadState("networkidle");
 
     const desktopCounts = await page.evaluate(
