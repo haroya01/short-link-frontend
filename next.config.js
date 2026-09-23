@@ -73,13 +73,19 @@ const nextConfig = {
   async rewrites() {
     // Pretendard 를 자사 도메인으로 프록시 — jsdelivr 서드파티 연결(DNS+TLS+RTT, 모바일
     // 스로틀에서 ~0.6-0.9s)을 제거하고 폰트 도착 시점을 안정화한다(LCP 재기록 지터의 진범).
-    // CSS 안의 상대 woff2 경로(./woff2-dynamic-subset/…)도 같은 프리픽스로 풀려 함께 프록시된다.
+    // CSS 안의 woff2 경로는 ../../../packages/pretendard/… 라 /pretendard/ 밖(/packages/…)으로 풀린다 —
+    // 그 경로도 같은 릴리스로 프록시해야 글꼴 파일이 404 없이 온다.
     // jsdelivr 는 immutable 캐시 헤더를 주므로 Vercel 엣지가 그대로 캐시한다.
     const fontProxy = [
       {
         source: "/pretendard/:path*",
         destination:
           "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/:path*",
+      },
+      {
+        source: "/packages/pretendard/:path*",
+        destination:
+          "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/:path*",
       },
     ];
     if (!PROXY_BACKEND) return fontProxy;
