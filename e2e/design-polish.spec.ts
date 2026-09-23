@@ -20,6 +20,9 @@ test.describe("design polish guards", () => {
 
       for (const locale of ["ko", "en", "ja"]) {
         await page.goto(`/${locale}`);
+        await page.waitForFunction(() => document.querySelector("link[data-pretendard]")?.getAttribute("media") === "all");
+        await page.evaluate(() => document.fonts.load('700 40px "Pretendard Variable"', "단축은 한 줄 클릭은 언제, 어디서"));
+        await page.evaluate(() => document.fonts.ready);
 
         const heading = page.getByTestId("home-hero-heading");
         const subhead = page.getByTestId("home-hero-subhead");

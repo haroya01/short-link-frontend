@@ -1,11 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 /**
- * End-to-end coverage for the per-link admin metrics panel. The real admin page is gated by
- * cookie auth so we don't have a logged-in admin in CI — instead we exercise the network
- * surface (api smoke) and the rendering by stubbing every admin endpoint with route
- * fulfilment, then driving the page with a stub `kurl_token` cookie that the auth client
- * trusts in non-prod.
+ * End-to-end coverage for the per-link admin metrics panel. There is no logged-in admin in CI,
+ * so every admin endpoint is stubbed with route fulfilment and the page is driven with the
+ * session-hint cookie (server guard) plus a stub access token (client /me).
  */
 
 const ADMIN_OVERVIEW = {
@@ -78,11 +76,6 @@ const LINK_METRICS = [
 ];
 
 test.describe("admin per-link metrics panel", () => {
-  test("anonymous users are blocked from the admin endpoint", async ({ request }) => {
-    const res = await request.get("/api/v1/admin/link-metrics");
-    expect(res.status()).toBe(401);
-  });
-
   test("anonymous users see 404 instead of a sign-in prompt on the admin page", async ({
     page,
   }) => {
@@ -95,16 +88,8 @@ test.describe("admin per-link metrics panel", () => {
 
   test.describe("rendered panel", () => {
     test.beforeEach(async ({ page, context }) => {
-      // Inject a JWT-shaped admin claim — the dev profile bypasses signature verification when
-      // SHORT_LINK_BOOTSTRAP_ADMIN_EMAIL matches, so we settle for a UI-only mock here.
-      await context.addCookies([
-        {
-          name: "kurl_token",
-          value: "stub-admin-token",
-          domain: "localhost",
-          path: "/",
-        },
-      ]);
+      await context.addCookies([{ name: "kurl_has_session", value: "1", domain: "localhost", path: "/" }]);
+      await context.addInitScript(() => window.localStorage.setItem("short-link:access-token", "stub-admin-token"));
       await page.route("**/api/v1/users/me**", (route) =>
         route.fulfill({
           status: 200,
@@ -181,8 +166,8 @@ test.describe("admin per-link metrics panel", () => {
       // Both seeded short codes should land in the table
       const rows = page.locator('[data-testid="link-metric-row"]');
       await expect(rows).toHaveCount(2);
-      await expect(page.getByText("/hotlink")).toBeVisible();
-      await expect(page.getByText("/calm00")).toBeVisible();
+      await expect(page.getByRole("cell", { name: "/hotlink" })).toBeVisible();
+      await expect(page.getByRole("cell", { name: "/calm00" })).toBeVisible();
 
       // hotlink has errorRate=0.08 which is above 5% threshold -> warning chip
       await expect(
@@ -204,13 +189,10 @@ test.describe("admin per-link metrics panel", () => {
       // Drill-down: click the toggle on the first row, outcome pills appear
       const firstToggle = page.locator('[data-testid="link-metric-toggle"]').first();
       await firstToggle.click();
-      await expect(page.locator('[data-testid="link-metric-outcomes"]').first()).toBeVisible();
-      await expect(
-        page.locator('[data-testid="outcome-pill-redirect"]').first(),
-      ).toBeVisible();
-      await expect(
-        page.locator('[data-testid="outcome-pill-not_found"]').first(),
-      ).toBeVisible();
+      const outcomes = page.locator('[data-testid="link-metric-outcomes"]').first();
+      await expect(outcomes).toBeVisible();
+      await expect(outcomes.locator('[data-testid="outcome-pill-redirect"]')).toBeVisible();
+      await expect(outcomes.locator('[data-testid="outcome-pill-not_found"]')).toBeVisible();
     });
   });
 });

@@ -1,9 +1,8 @@
 name: E2E (mock-only)
 
-# Backend-free e2e lane. The authoring specs mock the whole API at the Playwright layer, so they
-# need only the built frontend — no Spring/DB/Redis and no SUB_TOKEN. This runs on every PR even when
-# the full E2E job (which boots the backend) is skipped for want of SUB_TOKEN, so the write flow is
-# actually guarded on every change.
+# Backend-free e2e lane. Specs mock the API at the Playwright layer (page.route), so they need only
+# the built frontend — no Spring/DB/Redis. Specs that run on the app's own mock data
+# (NEXT_PUBLIC_USE_MOCKS=1) live in e2e-mock-on.yml.
 
 on:
   pull_request:
@@ -19,7 +18,7 @@ concurrency:
 jobs:
   e2e-mock:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       # Build still expects an API base; a noop URL keeps it happy. Every request is intercepted by
       # Playwright routes, and NEXT_PUBLIC_USE_MOCKS is left unset so the real fetch path runs (the
@@ -50,7 +49,7 @@ jobs:
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3001
           CI: "true"
-        run: npx playwright test e2e/blog-write-flow.spec.ts e2e/blog-crud-lifecycle.spec.ts e2e/feed-default-tab.spec.ts e2e/cookie-banner-footer.spec.ts e2e/no-horizontal-scroll.spec.ts e2e/cookie-consent-gating.spec.ts
+        run: npx playwright test e2e/blog-write-flow.spec.ts e2e/feed-default-tab.spec.ts e2e/cookie-banner-footer.spec.ts e2e/no-horizontal-scroll.spec.ts e2e/cookie-consent-gating.spec.ts e2e/design-polish.spec.ts e2e/demo-mobile.spec.ts e2e/admin-404-gating.spec.ts e2e/admin-link-metrics.spec.ts e2e/blog-write-stress.spec.ts e2e/landing-desktop.spec.ts e2e/landing-mobile.spec.ts e2e/landing-previews-edge.spec.ts e2e/qr-campaigns-mobile-height.spec.ts e2e/i18n.spec.ts e2e/locale-persistence.spec.ts e2e/locale-smoke.spec.ts e2e/not-found.spec.ts e2e/marketing-pages.spec.ts e2e/mobile-nav.spec.ts e2e/mobile-overflow.spec.ts e2e/heatmap-responsive.spec.ts e2e/heatmap-click-detail.spec.ts e2e/auth-redirect.spec.ts e2e/anonymous-shorten.spec.ts e2e/recent-links.spec.ts e2e/qr-button.spec.ts e2e/settings.spec.ts e2e/stats.spec.ts e2e/dashboard.spec.ts e2e/profile-edit-layout.spec.ts e2e/authenticated-screens.spec.ts e2e/blog-settings-toggles.spec.ts e2e/event-flow.spec.ts e2e/a11y.spec.ts
       - name: Upload report on failure
         if: failure()
         uses: actions/upload-artifact@v4

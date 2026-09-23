@@ -83,7 +83,7 @@ test.describe("mobile horizontal overflow", () => {
 test.describe("heatmap mobile fits viewport without horizontal scroll", () => {
   test.use({ viewport: { width: 375, height: 667 } });
   test("heatmap on /ko/demo: mobile grid <= viewport width", async ({ page }) => {
-    await page.goto("/ko/demo");
+    await page.goto("/ko/demo#when");
     await page.waitForLoadState("networkidle");
     const dims = await page.evaluate(() => {
       // The mobile heatmap uses the 6-bucket grid template.

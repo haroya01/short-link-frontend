@@ -20,6 +20,7 @@ export function Logo({ className, showText = true, variant = "kurl", animated = 
         // the mark the density a logo needs at 18px without a separate display face. The blog is
         // an independent surface, so it carries a "kurl log" wordmark.
         <span
+          data-wordmark
           className="text-[18px] font-bold leading-none"
           style={{ letterSpacing: "-0.04em" }}
         >

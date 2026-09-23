@@ -79,6 +79,7 @@ export function AppsGrid({ current }: { current?: Product }) {
       >
         <Mark className="h-3 text-accent-600" animated />
         <span
+          data-wordmark
           className="min-w-[2.5rem] text-[13px] font-bold leading-none tracking-[-0.04em]"
           aria-hidden={!dest}
         >

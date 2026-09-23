@@ -34,7 +34,7 @@ function StatsHeroCoreImpl({ label, caption, total, series, draw = "static", cla
         <span className="text-[10px] font-semibold uppercase tracking-tagline text-accent-300">
           {label}
         </span>
-        <span className="tabular-nums text-[11px] uppercase tracking-tagline text-accent-300/80">
+        <span className="tabular-nums text-[11px] uppercase tracking-tagline text-accent-300">
           {caption}
         </span>
       </div>

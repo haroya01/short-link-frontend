@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 const PAGES = [
-  { path: "/about", heading: /kurl/ },
-  { path: "/terms", heading: /이용약관/ },
-  { path: "/privacy", heading: /개인정보/ },
+  { path: "/ko/about", heading: /kurl/ },
+  { path: "/ko/terms", heading: /이용약관/ },
+  { path: "/ko/privacy", heading: /개인정보/ },
 ];
 
 test.describe("marketing & legal pages", () => {
@@ -12,7 +12,7 @@ test.describe("marketing & legal pages", () => {
       await page.goto(path);
       await expect(page.getByRole("heading", { name: heading }).first()).toBeVisible();
       await expect(page.getByRole("link", { name: "GitHub" })).toBeVisible();
-      await expect(page.getByRole("link", { name: "이용약관" })).toBeVisible();
+      await expect(page.getByRole("contentinfo").getByRole("link", { name: "이용약관" })).toBeVisible();
     });
   }
 

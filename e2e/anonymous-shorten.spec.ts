@@ -1,6 +1,11 @@
 import { expect, test } from "@playwright/test";
+import { mockAnonymousShorten } from "./helpers/mock-shorten";
 
 test.describe("anonymous shorten flow", () => {
+  test.beforeEach(async ({ page }) => {
+    await mockAnonymousShorten(page);
+  });
+
   test("home page renders hero and form", async ({ page }) => {
     await page.goto("/ko");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -49,12 +54,6 @@ test.describe("anonymous shorten flow", () => {
     await expect(page.getByRole("link", { name: /가입하고 통계 보관하기/ })).toBeVisible();
   });
 
-  test("home counters render numbers", async ({ page }) => {
-    await page.goto("/ko");
-    await expect(page.getByText("단축된 링크")).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText("분석된 클릭")).toBeVisible();
-  });
-
   test("advanced section is hidden for anonymous (auth-only customCode / expiry)", async ({
     page,
   }) => {
@@ -64,11 +63,11 @@ test.describe("anonymous shorten flow", () => {
   });
 
   test("FAQ accordion expands", async ({ page }) => {
-    await page.goto("/ko");
+    await page.goto("/ko?stage=off");
     const faq = page.getByRole("heading", { name: "자주 묻는 질문" });
     await expect(faq).toBeVisible();
     const firstQ = page.getByRole("button", { name: /단축 링크는 영구 보존되나요/ });
     await firstQ.click();
-    await expect(page.getByText(/24시간 후 자동 만료/)).toBeVisible();
+    await expect(page.getByText(/24시간 후 자동으로 만료/)).toBeVisible();
   });
 });

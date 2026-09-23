@@ -16,7 +16,7 @@ test.describe("heatmap click → inline detail (desktop)", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test("opens detail on click, closes on second click", async ({ page }) => {
-    await page.goto("/ko/demo");
+    await page.goto("/ko/demo#when");
     await page.waitForLoadState("networkidle");
 
     const grid = page.locator(DESKTOP_GRID_SELECTOR).first();
@@ -48,7 +48,7 @@ test.describe("heatmap click → inline detail (desktop)", () => {
   });
 
   test("close button hides the detail", async ({ page }) => {
-    await page.goto("/ko/demo");
+    await page.goto("/ko/demo#when");
     await page.waitForLoadState("networkidle");
 
     const cellHandle = await page.evaluateHandle((sel) => {
@@ -79,7 +79,7 @@ test.describe("heatmap click → inline detail (mobile)", () => {
   test.use({ viewport: { width: 375, height: 667 } });
 
   test("mobile bucket click reveals 4h range detail", async ({ page }) => {
-    await page.goto("/ko/demo");
+    await page.goto("/ko/demo#when");
     await page.waitForLoadState("networkidle");
 
     const grid = page.locator(MOBILE_GRID_SELECTOR).first();

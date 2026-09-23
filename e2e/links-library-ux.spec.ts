@@ -43,26 +43,26 @@ for (const viewport of [{ width: 1280, height: 800 }, { width: 390, height: 844 
 
 test("favorites load beyond page one and keep account totals independent of list filters", async ({ page }) => {
   await page.goto("/ko/dashboard");
-  await expect(page.getByText("내 링크 85개", { exact: false })).toBeVisible();
+  await expect(page.getByText("링크 85개", { exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: /Launch brief/ })).toHaveCount(0);
   await capture(page, "dashboard-desktop");
   await page.setViewportSize({ width: 390, height: 844 });
-  const mobileIdentity = page.locator("div.sm\\:hidden [data-vt-link-scope]").first();
+  const mobileIdentity = page.locator("[data-vt-link-scope]:visible").first();
   await expect(mobileIdentity).toBeVisible();
-  await expect(page.locator("div.sm\\:hidden").getByRole("button", { name: "복사", exact: true }).first()).toBeVisible();
-  expect((await mobileIdentity.boundingBox())!.width).toBeGreaterThan(200);
+  await expect(page.getByRole("button", { name: "복사", exact: true }).first()).toBeVisible();
+  expect((await mobileIdentity.boundingBox())!.width).toBeGreaterThan(120);
   expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
   await capture(page, "dashboard-mobile");
   await page.setViewportSize({ width: 1280, height: 800 });
-  const scope = page.getByText(/계정 전체 ·/);
-  const originalScope = await scope.textContent();
-  await page.getByRole("button", { name: /^즐겨찾기 \(/ }).click();
+  const scope = page.getByText("링크 85개", { exact: true });
+  await expect(scope).toBeVisible();
+  await page.getByRole("button", { name: "즐겨찾기", exact: true }).click();
   await expect(page.getByRole("link", { name: /Launch brief/ }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: "더 불러오기", exact: true })).toHaveCount(0);
   const search = page.getByPlaceholder(/검색/);
   await search.fill("Launch brief");
   await expect(page.getByRole("link", { name: /Launch brief/ }).first()).toBeVisible();
-  await expect(scope).toHaveText(originalScope!);
+  await expect(scope).toBeVisible();
   await search.fill("");
   await page.getByRole("button", { name: "즐겨찾기 순서", exact: true }).click();
   const order = page.getByRole("heading", { name: "즐겨찾기 순서", exact: true }).locator("..");

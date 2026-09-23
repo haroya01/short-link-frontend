@@ -22,7 +22,8 @@ test.describe("locale smoke (non-ko catalogs)", () => {
 
   test("/en demo stats renders English journal + masthead", async ({ page }) => {
     await page.goto("/en/demo");
-    await expect(page.getByText("Link journal")).toBeVisible();
-    await expect(page.getByText("링크 일지")).toHaveCount(0);
+    await expect(page.getByText("Notable changes")).toBeVisible();
+    await expect(page.getByText("Human clicks", { exact: true })).toBeVisible();
+    await expect(page.getByText("주목할 변화")).toHaveCount(0);
   });
 });
