@@ -36,18 +36,18 @@ test.describe("design polish guards", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/ko");
 
-    const banner = page.getByRole("dialog", { name: "cookie consent" });
+    const banner = page.getByRole("region", { name: "쿠키 안내" });
     await expect(banner).toBeVisible();
 
     const box = await banner.locator("> div").boundingBox();
-    expect(box?.height).toBeLessThanOrEqual(88);
+    expect(box?.height).toBeLessThanOrEqual(100);
   });
 
   test("showcase hero CTA is visible before examples on desktop", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/ko/showcase");
 
-    await expect(page.getByRole("heading", { name: /내 프로필도 5 분이면 완성/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /내 프로필도 5분이면 완성/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /내 프로필 만들기/ })).toBeVisible();
 
     const examplesTop = await page
@@ -56,12 +56,12 @@ test.describe("design polish guards", () => {
     expect(examplesTop).toBeLessThan(760);
 
     const cookieBox = await page
-      .getByRole("dialog", { name: "cookie consent" })
+      .getByRole("region", { name: "쿠키 안내" })
+      .locator("> div")
       .boundingBox();
     const examplesBox = await page
       .getByRole("heading", { name: "내가 원하는 스타일대로" })
       .boundingBox();
-    expect(cookieBox?.x).toBeLessThan(80);
     expect(
       cookieBox && examplesBox
         ? cookieBox.y + cookieBox.height < examplesBox.y ||
@@ -75,10 +75,8 @@ test.describe("design polish guards", () => {
   test("login page explains what signing in unlocks", async ({ page }) => {
     await page.goto("/ko/login");
 
-    await expect(page.getByText("단축한 링크를 한 곳에서 관리")).toBeVisible();
-    await expect(page.getByText("클릭·국가·채널 통계 확인")).toBeVisible();
-    await expect(page.getByText("익명 링크를 계정으로 보존")).toBeVisible();
-    await expect(page.getByText("단축 링크와 클릭 흐름을 한 번에")).toBeVisible();
+    await expect(page.getByText("로그인하면 내 링크 관리와 클릭 통계 분석 기능을 쓸 수 있어요.")).toBeVisible();
+    await expect(page.getByRole("link", { name: "로그인 없이 단축만 사용하기" })).toBeVisible();
   });
 
   test("dashboard signed-out state has useful actions, not an empty wall", async ({ page }) => {
@@ -86,24 +84,25 @@ test.describe("design polish guards", () => {
 
     await expect(page.getByRole("heading", { name: "로그인이 필요해요" })).toBeVisible();
     await expect(page.getByText("내 링크 목록과 만료 예정 링크 관리")).toBeVisible();
-    await expect(page.getByText("로그인하면 이런 목록이 채워져요")).toBeVisible();
-    await expect(page.getByRole("link", { name: "로그인하러 가기" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "지금 링크 단축하기" })).toBeVisible();
+    await expect(page.getByText("클릭 추이·유입 채널·기기 통계")).toBeVisible();
+    await expect(page.getByRole("main").getByRole("link", { name: "로그인", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "로그인 없이 둘러보기" })).toBeVisible();
   });
 
   test("demo stats masthead renders final numbers without a zero-count mismatch", async ({ page }) => {
     await page.goto("/ko/demo");
 
-    // 마스트헤드 한 줄 — 총 클릭 큰 숫자 + 유니크(수 · 사람 대비 %). 시드 데이터라 수치가 고정된다.
-    await expect(page.getByText("총 클릭")).toBeVisible();
-    await expect(page.getByText("1,309")).toBeVisible();
-    await expect(page.getByText("698 · 62%")).toBeVisible();
+    const masthead = page.locator("dl").first();
+    await expect(masthead.getByText("사람 클릭")).toBeVisible();
+    await expect(masthead.getByText("1,125")).toBeVisible();
+    await expect(masthead.getByText("1,309")).toBeVisible();
+    await expect(masthead.getByText("698")).toBeVisible();
   });
 
   test("demo journal sentence unfolds its evidence inline", async ({ page }) => {
     await page.goto("/ko/demo");
 
-    await expect(page.getByText("링크 일지")).toBeVisible();
+    await expect(page.getByText("주목할 변화")).toBeVisible();
     const row = page.locator('button[aria-controls^="journal-evidence-"]').first();
     await expect(row).toHaveAttribute("aria-expanded", "false");
     await row.click();

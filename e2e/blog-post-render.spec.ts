@@ -247,3 +247,20 @@ test("feed → post is a client-side navigation (so loading skeletons show, no f
     "the JS context survived → soft (client) navigation, not a full reload",
   ).toBe("alive");
 });
+
+test("feed home is one reading column and a series row opens its series", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/ko/blog");
+  await page.waitForLoadState("networkidle");
+
+  const rows = page.locator("main ul > li h2");
+  await expect(rows.first()).toBeVisible({ timeout: 15_000 });
+  const lefts = await rows.evaluateAll((els) => els.slice(0, 4).map((el) => Math.round(el.getBoundingClientRect().left)));
+  expect(new Set(lefts).size, "every post row starts at the same column edge").toBe(1);
+
+  const series = page.getByTestId("feed-card-series").first();
+  await expect(series).toBeVisible();
+  await expect(series).toHaveAttribute("href", /\/series\/nextjs-deep-dive$/);
+  await series.click();
+  await page.waitForURL(/\/series\/nextjs-deep-dive/, { timeout: 15_000 });
+});

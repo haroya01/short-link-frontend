@@ -860,10 +860,8 @@
   "home": {
     "tagline": "kurl v1",
     "headline1": "Shorten in one line",
-    "headline2": "See when and where it’s clicked",
+    "headline2": "See when and where",
     "subhead": "Live click feed, auto-insights, bot filtering — the analytics other shorteners lock behind paid plans, free here.",
-    "mobileHeadline1": "Shorten in one line",
-    "mobileHeadline2": "See when and where",
     "mobileSubhead": "Live clicks, insights, and bot filtering for free",
     "anonymousHint": "No sign-in required. Sign in if you want stats.",
     "demoLink": "Preview the analytics dashboard",

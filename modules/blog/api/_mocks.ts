@@ -48,6 +48,7 @@ type Seed = {
   views: number;
   likes: number;
   day: number; // 2026-05-DD
+  series?: PublicFeedItem["series"];
 };
 
 // Newest first. The lead (with a cover) becomes the featured card; image-less posts render the
@@ -63,7 +64,7 @@ const SEEDS: Seed[] = [
   { slug: "typescript-generics-hard", title: "타입스크립트 제네릭이 어려운 진짜 이유", excerpt: "추론이 무너지는 지점들을 예제로 짚어본다.", author: "haruka", tags: ["개발", "typescript"], views: 1410, likes: 47, day: 23 },
   { slug: "weekend-hiking-burnout", title: "주말 등산 기록, 그리고 번아웃", excerpt: "정상에서 깨달은 것: 쉬는 것도 일정이다.", author: "kazuki", tags: ["일상"], views: 540, likes: 29, day: 22 },
   { slug: "posthog-funnel", title: "PostHog로 퍼널 분석 붙이기", excerpt: "가입 → 첫 링크 → 공유. 이탈 지점을 숫자로 본 뒤 바뀐 것.", author: "sora", tags: ["상품", "분석"], cover: img("kurl-posthog"), views: 1180, likes: 36, day: 21 },
-  { slug: "naming-things", title: "리팩터링: 이름 짓기에 하루를 쓰는 이유", excerpt: "좋은 이름은 주석을 지운다. 실제 PR로 본 before/after.", author: "dohyun", tags: ["개발", "리팩터링"], views: 870, likes: 44, day: 20 },
+  { slug: "naming-things", title: "리팩터링: 이름 짓기에 하루를 쓰는 이유", excerpt: "좋은 이름은 주석을 지운다. 실제 PR로 본 before/after.", author: "dohyun", tags: ["개발", "리팩터링"], views: 870, likes: 44, day: 20, series: { slug: "nextjs-deep-dive", title: "Next.js 깊게 파기", postCount: 4 } },
   { slug: "coffee-routine", title: "커피 한 잔의 루틴, 생산성에 대하여", excerpt: "의식을 만들면 시작이 쉬워진다. 6개월의 작은 실험.", author: "minji", tags: ["일상"], views: 620, likes: 25, day: 19 },
 ];
 
@@ -80,6 +81,7 @@ function toItem(s: Seed, i: number): PublicFeedItem {
     publishedAt: `2026-05-${String(s.day).padStart(2, "0")}T09:00:00Z`,
     viewCount: s.views,
     likeCount: s.likes,
+    series: s.series ?? null,
   };
 }
 
