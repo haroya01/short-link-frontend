@@ -9,12 +9,6 @@ import { useAuth } from "@/lib/auth";
 import { listFollowingFeed } from "@/modules/blog/api/follows";
 import type { PublicAuthor, PublicFeedItem, SuggestedAuthor } from "@/modules/blog/api/public-posts";
 import { Avatar } from "@/modules/blog/components/avatar";
-import {
-  DiscoveryCard,
-  DiscoveryGrid,
-  DiscoveryCell,
-  DiscoveryGridSkeleton,
-} from "@/modules/blog/components/discovery-card";
 import { authorHref, FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { FollowFilterChips, type FeedFacet } from "@/modules/blog/components/follow-filter-chips";
@@ -103,8 +97,6 @@ export function FollowingFeed({
   // 첫 로드 실패는 '빈 피드'와 구분한다(아래 initialError 분기) — reloadKey 를 올리면 이펙트가 다시 돈다.
   const [initialError, setInitialError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
-  // md 이상만 발견 그리드, 그 아래는 리스트 행 — 뷰포트에 맞는 한쪽 트리만 마운트(아래 참고).
-  const [isWide, setIsWide] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   // Active filter facet lives in the URL (?author= / ?topic=), so it survives reload and is shareable.
@@ -174,17 +166,6 @@ export function FollowingFeed({
       alive = false;
     };
   }, [ready, authenticated, reloadKey]);
-
-  // 무한 스크롤이라 안 보이는 반대 뷰포트 트리까지 항목 수의 2배로 커지던 걸 막는다 — 아래 콘텐츠는
-  // md 이상=발견 그리드, 그 아래=리스트 행으로 뷰포트에 맞는 한쪽만 마운트한다. 목록은 클라이언트
-  // fetch 이후에만 나타나므로(그 전엔 스켈레톤) 이 값이 정해진 뒤에 그려져 깜빡임이 없다.
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const update = () => setIsWide(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasNext) return;
@@ -286,13 +267,8 @@ export function FollowingFeed({
 
   if (!ready || items === null) {
     return (
-      <div className="mx-auto mt-4 max-w-4xl xl:max-w-5xl">
-        <div className="mx-auto max-w-2xl md:hidden">
-          <FeedListSkeleton />
-        </div>
-        <div className="hidden md:block">
-          <DiscoveryGridSkeleton />
-        </div>
+      <div className="mx-auto mt-4 max-w-2xl">
+        <FeedListSkeleton />
       </div>
     );
   }
@@ -383,31 +359,16 @@ export function FollowingFeed({
       ? visible.filter((it) => it.author.username === activeFacet.value)
       : visible.filter((it) => hasTag(it, activeFacet.value));
 
-  // 다른 발견 탭과 동일한 와이드 카드 그리드. 팔로우(사람+주제) 필터는 사이드 rail 대신 상단 칩으로.
+  // 다른 발견 탭과 동일한 목록 행. 팔로우(사람+주제) 필터는 사이드 rail 대신 상단 칩으로.
   return (
-    // animate-fade-in: 스켈레톤 → 실제 그리드가 스왑이 아니라 짧은 크로스페이드로 읽히게.
-    <div className="mx-auto mt-4 max-w-4xl animate-fade-in xl:max-w-5xl">
+    // animate-fade-in: 스켈레톤 → 실제 목록이 스왑이 아니라 짧은 크로스페이드로 읽히게.
+    <div className="mx-auto mt-4 max-w-2xl animate-fade-in">
       <FollowFilterChips authors={followed} tags={presentTags} active={activeFacet} onSelect={setFacet} />
-      {/* <md = single-column reading rows, md+ = discovery masonry. Only the matching viewport's tree
-          mounts (matchMedia) — the infinite list would otherwise double every card (and its bookmark
-          hook) into a display:none twin that still mounts and re-renders. */}
-      {isWide ? (
-        <DiscoveryGrid>
-          {shown.map((item, i) => (
-            <DiscoveryCell key={`${item.author.username}/${item.slug}`} entranceDelay={Math.min((i % 24) * 25, 250)}>
-              <DiscoveryCard item={item} locale={locale} />
-            </DiscoveryCell>
-          ))}
-        </DiscoveryGrid>
-      ) : (
-        <div className="mx-auto max-w-2xl">
-          <FeedList>
-            {shown.map((item) => (
-              <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
-            ))}
-          </FeedList>
-        </div>
-      )}
+      <FeedList>
+        {shown.map((item) => (
+          <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
+        ))}
+      </FeedList>
 
       {/* Some (not all) followed posts were dropped by hidden topics — same footnote as the public feed. */}
       {hiddenCount > 0 && !activeFacet && (

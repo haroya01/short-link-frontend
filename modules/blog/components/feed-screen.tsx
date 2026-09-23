@@ -7,7 +7,6 @@ import { blogHref } from "@/lib/host";
 import { cn } from "@/lib/utils";
 import { blogCta } from "./blog-cta";
 import {
-  listDiscoverSeries,
   listFeedByTag,
   listPopularTags,
   listPublicFeed,
@@ -29,7 +28,6 @@ import { FollowingFeed } from "./following-feed";
 import { ForYouFeed } from "./for-you-feed";
 import { SubscribedSeriesFeed } from "./subscribed-series-feed";
 import { FeedTabCookieSync } from "./feed-tab-cookie-sync";
-import { DiscoverySeriesCard } from "./discovery-series-card";
 import { TrendingTopics } from "./trending-topics";
 import { ConnectionFeedInsert } from "./connection-feed-insert";
 import { FeedErrorState } from "./feed-error-state";
@@ -134,8 +132,6 @@ export async function FeedScreen({
   const showsServerFeed =
     searching || (tab !== "following" && tab !== "series" && tab !== "for-you");
   const needFlat = showsServerFeed;
-  // Series 카드는 기본(비검색·비태그) 최신 그리드에만 끼워넣는다.
-  const wantSeries = !searching && !activeTag && tab === "recent";
   // "지금 이어지는 것들" — 공개 연결 이벤트를 발견 그리드(최신·인기, 비검색·비태그)에 몇 칸마다 하나씩
   // 끼운다. 비로그인 포함 전원이 첫 화면에서 연결 그래프를 밟게 하는 표면(개인화 아님).
   const wantConnections = showsServerFeed && !searching && !activeTag;
@@ -144,7 +140,7 @@ export async function FeedScreen({
   // 카드가 위로 점프하는 레이아웃 흔들림 방지. 선택 상태는 TrendingTopics 가 활성 칩으로 표현.
   const wantTopics = tab === "trending" && !searching;
 
-  const [feedResult, authorsResult, seriesResult, topicsResult, connectionsResult] =
+  const [feedResult, authorsResult, topicsResult, connectionsResult] =
     await Promise.all([
       needFlat
         ? searching
@@ -155,7 +151,6 @@ export async function FeedScreen({
         : Promise.resolve(null),
       // 팔로잉 탭의 추천 작가(빈 상태 dead-end 방지).
       tab === "following" ? listSuggestedAuthors(5) : Promise.resolve(null),
-      wantSeries ? listDiscoverSeries(4) : Promise.resolve(null),
       wantTopics ? listPopularTags(10) : Promise.resolve(null),
       // 공개 연결 이벤트(비개인화) — 발견 그리드에 몇 칸마다 하나씩. 자체 degrade(빈 배열)라 실패해도
       // 피드는 그대로 뜬다.
@@ -177,7 +172,6 @@ export async function FeedScreen({
       ? await listPopularTags(8)
       : null;
   const authors = authorsResult && authorsResult.ok ? authorsResult.data : [];
-  const series = seriesResult && seriesResult.ok ? seriesResult.data : [];
   const topics = topicsResult && topicsResult.ok ? topicsResult.data : [];
 
   // "지금 이어지는 것들" — 공개 연결 이벤트를 발견 그리드에 몇 칸마다 하나씩 끼울 노드로 만든다. 첫
@@ -267,7 +261,12 @@ export async function FeedScreen({
           bar, and the body gets extra room while the cookie banner is up (see globals.css).
           A <div>, not <main> — the public blog layout already owns the single <main> landmark. */}
       <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-        <header className="mx-auto flex w-full max-w-4xl items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800 xl:max-w-5xl">
+        <header
+          className={cn(
+            "mx-auto flex w-full items-center justify-between gap-4 border-b border-slate-100 pb-3 dark:border-slate-800",
+            tab === "series" && !searching ? "max-w-4xl xl:max-w-5xl" : "max-w-2xl",
+          )}
+        >
           <FeedSortTabs
             tabs={[
               { key: "recent", label: t("recent"), href: sortHref("recent"), active: activeTab === "recent" },
@@ -351,16 +350,11 @@ export async function FeedScreen({
                 lang={activeLang || undefined}
                 featuredFirst={false}
                 featuredLabel={t("featuredLabel")}
-                variant="list"
               />
             </FeedContentTransition>
           </ReadingShell>
         ) : (
-          // 최신 / 검색 결과 = 발견(browse) 면 → 와이드 메이슨리 그리드 (reading-column 예외, AGENTS.md §10.1).
-          // 읽기 면(글/작가/태그)은 컬럼 유지. 사이드 rail 은 이 면에서 생략(모바일 탐색 시트가 발견을 담당).
-          // xl 부터 5xl: 1440+ 에서 중앙 60%만 쓰며 허전하던 좌우를 카드 폭(3열 유지)을 키워 채운다.
-          // 탭 헤더(위)도 같은 폭 — §10.1 의 "탭 밑줄이 그리드 폭과 연결" 규칙 유지.
-          <div className={cn("mx-auto max-w-4xl xl:max-w-5xl", searching ? "mt-6" : "mt-4")}>
+<div className={cn("mx-auto max-w-2xl", searching ? "mt-6" : "mt-4")}>
             {wantTopics && <TrendingTopics topics={topics} locale={locale} activeTag={activeTag} />}
             {/* 인기 탭(주제 strip 노출 중)에선 strip 의 활성 칩이 필터 상태를 보여주므로 별도 해제 칩은 숨김
                 — 두 표시가 겹치지 않게. 최신 탭(카드 #태그 클릭) 등 strip 없는 면에선 이 칩으로 해제. */}
@@ -390,10 +384,6 @@ export async function FeedScreen({
                 lang={activeLang || undefined}
                 featuredFirst={featuredFirst}
                 featuredLabel={t("featuredLabel")}
-                variant="grid"
-                interleave={
-                  series.length > 0 ? <DiscoverySeriesCard series={series[0]} locale={locale} /> : null
-                }
                 connectionNodes={connectionNodes.length > 0 ? connectionNodes : undefined}
               />
             </FeedContentTransition>
@@ -419,9 +409,7 @@ function FeedColumn({
   lang,
   featuredFirst,
   featuredLabel,
-  interleave,
   connectionNodes,
-  variant,
   tag,
 }: {
   locale: string;
@@ -432,9 +420,7 @@ function FeedColumn({
   lang?: string;
   featuredFirst: boolean;
   featuredLabel: string;
-  interleave?: ReactNode;
   connectionNodes?: ReactNode[];
-  variant?: "list" | "grid";
   tag?: string;
 }) {
   return (
@@ -448,9 +434,7 @@ function FeedColumn({
       lang={lang}
       featuredFirst={featuredFirst}
       featuredLabel={featuredLabel}
-      interleaveNode={interleave}
       interleaveNodes={connectionNodes}
-      variant={variant}
     />
   );
 }

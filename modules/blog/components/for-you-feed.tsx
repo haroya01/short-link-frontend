@@ -7,12 +7,6 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { listForYouFeed } from "@/modules/blog/api/follows";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
-import {
-  DiscoveryCard,
-  DiscoveryGrid,
-  DiscoveryCell,
-  DiscoveryGridSkeleton,
-} from "@/modules/blog/components/discovery-card";
 import { FeedCard, FeedList, FeedListSkeleton } from "@/modules/blog/components/feed-card";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { SuggestedCurators } from "@/modules/blog/components/suggested-curators";
@@ -22,7 +16,7 @@ import { blogCta } from "@/modules/blog/components/blog-cta";
  * The "For You" tab — a personalized discovery feed (tag affinity). Auth is required (the ranking is
  * per-reader); a signed-out visitor gets a sign-in prompt. Signed in, the server cold-starts to
  * trending, so the list is never empty for a new reader. Cards carry a 왜-추천 tag chip (followReason),
- * rendered by FeedCard/DiscoveryCard just like the following feed.
+ * rendered by FeedCard just like the following feed.
  */
 export function ForYouFeed({ locale }: { locale: string }) {
   const t = useTranslations("publicFeed");
@@ -35,9 +29,6 @@ export function ForYouFeed({ locale }: { locale: string }) {
   // 첫 로드 실패는 '빈 피드'와 구분한다(아래 initialError 분기) — reloadKey 를 올리면 이펙트가 다시 돈다.
   const [initialError, setInitialError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
-  // md 이상=발견 그리드, 그 아래=리스트 행 — 뷰포트에 맞는 한쪽 트리만 마운트(무한 스크롤이라 반대편
-  // display:none 트윈까지 항목 수의 2배로 커지지 않게).
-  const [isWide, setIsWide] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -60,14 +51,6 @@ export function ForYouFeed({ locale }: { locale: string }) {
       alive = false;
     };
   }, [ready, authenticated, reloadKey]);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const update = () => setIsWide(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !hasNext) return;
@@ -141,13 +124,8 @@ export function ForYouFeed({ locale }: { locale: string }) {
 
   if (!ready || items === null) {
     return (
-      <div className="mx-auto mt-4 max-w-4xl xl:max-w-5xl">
-        <div className="mx-auto max-w-2xl md:hidden">
-          <FeedListSkeleton />
-        </div>
-        <div className="hidden md:block">
-          <DiscoveryGridSkeleton />
-        </div>
+      <div className="mx-auto mt-4 max-w-2xl">
+        <FeedListSkeleton />
       </div>
     );
   }
@@ -173,27 +151,12 @@ export function ForYouFeed({ locale }: { locale: string }) {
   }
 
   return (
-    <div className="mx-auto mt-4 max-w-4xl animate-fade-in xl:max-w-5xl">
-      {/* <md = single-column reading rows, md+ = discovery masonry. Only the matching viewport's tree
-          mounts (matchMedia) — the infinite list would otherwise double every card (and its bookmark
-          hook) into a display:none twin that still mounts and re-renders. */}
-      {isWide ? (
-        <DiscoveryGrid>
-          {items.map((item, i) => (
-            <DiscoveryCell key={`${item.author.username}/${item.slug}`} entranceDelay={Math.min((i % 24) * 25, 250)}>
-              <DiscoveryCard item={item} locale={locale} />
-            </DiscoveryCell>
-          ))}
-        </DiscoveryGrid>
-      ) : (
-        <div className="mx-auto max-w-2xl">
-          <FeedList>
-            {items.map((item) => (
-              <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
-            ))}
-          </FeedList>
-        </div>
-      )}
+    <div className="mx-auto mt-4 max-w-2xl animate-fade-in">
+      <FeedList>
+        {items.map((item) => (
+          <FeedCard key={`${item.author.username}/${item.slug}`} item={item} locale={locale} />
+        ))}
+      </FeedList>
 
       {hasNext && (
         <div ref={sentinelRef} role="status" aria-live="polite" className="mt-8 flex flex-col items-center gap-2">
