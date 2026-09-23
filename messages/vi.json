@@ -860,10 +860,8 @@
   "home": {
     "tagline": "kurl v1",
     "headline1": "Rút gọn trong một dòng",
-    "headline2": "Xem khi nào, ở đâu được nhấp",
+    "headline2": "Khi nào, ở đâu",
     "subhead": "Dòng nhấp trực tiếp, thông tin tự động, lọc bot — phân tích mà các dịch vụ rút gọn khác khóa sau gói trả phí, ở đây miễn phí.",
-    "mobileHeadline1": "Rút gọn trong một dòng",
-    "mobileHeadline2": "Khi nào, ở đâu",
     "mobileSubhead": "Lượt nhấp trực tiếp, thông tin và lọc bot miễn phí",
     "anonymousHint": "Không cần đăng nhập. Đăng nhập nếu bạn muốn xem thống kê.",
     "demoLink": "Xem trước bảng phân tích",

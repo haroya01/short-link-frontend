@@ -69,7 +69,7 @@ export function StatsOverview({
             {/* 저표본 게이트 — lib/stats-journal MIN_TOTAL_FOR_INSIGHTS(10)와 같은 문턱.
                 총 2클릭에 "24.0x"는 마스트헤드 전체를 과장으로 읽히게 한다. */}
             {velocity >= 1.5 && (data.humanClicks ?? 0) >= 30 && (
-              <Metric label={t("kpi.velocityHot")} value={`${velocity.toFixed(1)}x`} />
+              <Metric label={t("kpi.velocityHot")} value={`${velocity.toFixed(1)}x`} className="hidden sm:flex" />
             )}
           </dl>
         </div>
@@ -77,10 +77,10 @@ export function StatsOverview({
 
       {/* 상세 — 시각화 타일 전부를 한 제목 아래로. */}
       <section className="mt-5">
-        <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+        <h2 className="sr-only text-base font-semibold sm:not-sr-only sm:block text-slate-900 dark:text-slate-100">
           {t("trendTitle")}
         </h2>
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-12">
+        <div className="grid grid-cols-1 gap-3 sm:mt-4 sm:gap-4 lg:grid-cols-12">
           <Tile
             label={t("section.daily.title")}
             section="section-daily"
@@ -157,13 +157,15 @@ function Metric({
   label,
   value,
   muted,
+  className,
 }: {
   label: string;
   value: string;
   muted?: boolean;
+  className?: string;
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-1 pb-0.5 sm:flex-row sm:items-baseline sm:gap-2">
+    <div className={cn("flex min-w-0 flex-col gap-1 pb-0.5 sm:flex-row sm:items-baseline sm:gap-2", className)}>
       <dt className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">{label}</dt>
       <dd
         className={cn(

@@ -8,7 +8,6 @@ import { ShortenForm } from "@/components/links/shorten/form";
 import { ResultLine } from "@/components/links/shorten/result-line";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
-import { Meteors } from "@/components/landing/meteors";
 import { StageScenes } from "@/components/landing/stage-scenes";
 import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
@@ -40,14 +39,14 @@ export default function HomePage() {
   // 무대(Stage)가 기본 랜딩(2026-07-23 졸업). ?stage=off(쿠키/비상 env)로만 레거시 구성이
   // 남아 있다 — 완전 철거 전까지의 안전핀.
   const stage = useStageVariant();
-  // headline2 가 ja 에서 「クリックの「いつ・どこから・誰が」を一目で」 23자로 늘어나
-  // 기본 sm:text-[60px] 컨테이너 (max-w-3xl) 를 초과해 wrap. ko/en 은 short copy
-  // (12/24자) 라 60px 유지 가능 — locale 별로 hero font scale 분기. mobile 도 동일
-  // 이유로 ja 만 base 24/26px 으로 축소.
   const headlineSizeClass =
     locale === "ja"
-      ? "text-[33px] leading-[1.08] min-[390px]:text-[34px] sm:text-[46px] sm:leading-[1.12] [text-wrap:nowrap] sm:[text-wrap:balance]"
-      : "text-[38px] leading-[1.08] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.02]";
+      ? "text-[34px] leading-[1.12] min-[390px]:text-[36px] sm:text-[46px]"
+      : locale === "en"
+        ? "text-[34px] leading-[1.08] min-[390px]:text-[36px] sm:text-[72px] sm:leading-[1.02]"
+        : locale === "vi"
+          ? "text-[30px] leading-[1.08] min-[390px]:text-[32px] sm:text-[72px] sm:leading-[1.02]"
+          : "text-[38px] leading-[1.08] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.02]";
   const [results, setResults] = useState<
     { res: CreateLinkResponse; original: string }[] | null
   >(null);
@@ -80,16 +79,9 @@ export default function HomePage() {
               className={`text-balance text-center font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
-              <span className="sm:hidden">
-                <span>{t("mobileHeadline1")}</span>
-                <br />
-                <span className="text-slate-500 dark:text-slate-400">{t("mobileHeadline2")}</span>
-              </span>
-              <span className="hidden sm:inline">
-                <span>{t("headline1")}</span>
-                <br />
-                <span className="text-slate-500 dark:text-slate-400">{t("headline2")}</span>
-              </span>
+              <span>{t("headline1")}</span>
+              <br />
+              <span className="text-slate-500 dark:text-slate-400">{t("headline2")}</span>
             </h1>
             <p
               data-testid="home-hero-subhead"
@@ -191,12 +183,6 @@ export default function HomePage() {
             visitors see that the page continues past the input. The element is `absolute` inside
             the hero, so it scrolls off with the hero itself once the user starts moving — no
             JS to fade it out. `motion-safe:animate-bounce` opts out for prefers-reduced-motion. */}
-        {/* 유성층 — Magic UI Meteors 포팅(데스크탑 전용, 장식). 콘텐츠(z-10) 뒤에 깔려
-            헤드라인·폼 뒤로 지나간다. 위치·지연·주기는 마운트마다 랜덤. */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 hidden sm:block">
-          <Meteors number={8} className="text-accent-400" />
-        </div>
-
         <div
           aria-hidden
           className="pointer-events-none absolute inset-x-0 bottom-4 hidden flex-col items-center gap-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 sm:flex"
