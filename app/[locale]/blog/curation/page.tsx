@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogPath } from "@/lib/host";
@@ -13,9 +15,17 @@ import { ReadingHistoryList } from "@/modules/blog/components/saved/reading-hist
 import { FollowedTagsShelf } from "@/modules/blog/components/saved/followed-tags-shelf";
 
 /** The reader's library: visible destinations for saved posts, passages, and collections. */
-export default function SavedPostsPage({ searchParams }: { searchParams?: { view?: string } }) {
+export default function SavedPostsPage() {
+  return (
+    <Suspense fallback={null}>
+      <Library />
+    </Suspense>
+  );
+}
+
+function Library() {
   const t = useTranslations("blogWorkspace");
-  const showingHighlights = searchParams?.view === "highlights";
+  const showingHighlights = useSearchParams().get("view") === "highlights";
   const locale = useLocale();
   const { ready, authenticated, me } = useAuth();
 
