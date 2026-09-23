@@ -41,7 +41,7 @@ export default function HomePage() {
   const stage = useStageVariant();
   const headlineSizeClass =
     locale === "ja"
-      ? "text-[34px] leading-[1.12] min-[390px]:text-[36px] sm:text-[46px]"
+      ? "text-[28px] leading-[1.12] min-[390px]:text-[29px] sm:text-[46px]"
       : locale === "en"
         ? "text-[34px] leading-[1.08] min-[390px]:text-[36px] sm:text-[72px] sm:leading-[1.02]"
         : locale === "vi"
