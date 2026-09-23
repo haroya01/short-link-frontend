@@ -1,6 +1,6 @@
-import { devices, expect, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-test.use({ ...devices["iPhone 14"] });
+test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
 
 test.describe("mobile navigation", () => {
   test("bottom tab bar shows the four sections and moves between them", async ({ page }) => {

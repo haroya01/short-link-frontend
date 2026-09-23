@@ -20,6 +20,8 @@ test.describe("design polish guards", () => {
 
       for (const locale of ["ko", "en", "ja"]) {
         await page.goto(`/${locale}`);
+        await page.waitForLoadState("networkidle");
+        await page.evaluate(() => document.fonts.ready);
 
         const heading = page.getByTestId("home-hero-heading");
         const subhead = page.getByTestId("home-hero-subhead");
