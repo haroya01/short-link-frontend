@@ -2,13 +2,12 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { Children, isValidElement, useEffect, useRef, useState, type ReactNode } from "react";
-import { Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link as TransitionLink } from "next-view-transitions";
 import { blogPath } from "@/lib/host";
 import { DATE_LOCALE } from "@/lib/date";
 import type { FollowReason, PublicFeedItem } from "@/modules/blog/api/public-posts";
-import { isRenderablePost, showLikes } from "@/modules/blog/lib/public-metrics";
+import { isRenderablePost } from "@/modules/blog/lib/public-metrics";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { postHref, authorHref } from "@/modules/blog/components/feed-card";
 import { Avatar } from "@/modules/blog/components/avatar";
@@ -124,13 +123,6 @@ function CardMeta({ item, locale, over }: { item: PublicFeedItem; locale: string
       <time dateTime={item.publishedAt} className="shrink-0">
         {fmtDate(item.publishedAt, locale)}
       </time>
-      {/* 조회수는 카드에서 제거(§10.2 와 동일 규칙으로 통일) — 작은 카드에 숫자 신호는 하나(좋아요)면 충분. */}
-      {showLikes(item.likeCount) && (
-        <span className="flex shrink-0 items-center gap-0.5">
-          <Heart className={`ml-0.5 h-3 w-3 ${over ? "" : "text-accent-600"}`} />
-          {item.likeCount}
-        </span>
-      )}
     </div>
   );
 }

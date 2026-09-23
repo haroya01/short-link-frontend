@@ -42,17 +42,17 @@ export function DemoStatsPage() {
       {/* Sample-data banner — minimal, single line, accent-tinted. Keeps the page honest about
           the numbers being seeded without competing with the dashboard chrome below. The CTA
           is intentionally low-weight so the eye lands on the charts. */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 dark:bg-accent-500/10 px-4 py-2.5 text-[12px]">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 dark:border-accent-500/20 dark:bg-accent-500/10 px-4 py-2.5 text-[12px]">
         <span className="inline-flex items-center gap-2 font-medium text-accent-800 dark:text-accent-300">
           <Sparkles className="h-3.5 w-3.5 shrink-0" />
           {t("sampleBanner")}
         </span>
         <Link
-          href="/login"
-          className="inline-flex items-center gap-1 font-medium text-accent-700 dark:text-accent-400 underline-offset-4 hover:text-accent-800 hover:underline"
+          href="/"
+          className="focus-ring inline-flex h-9 items-center gap-1.5 rounded-lg bg-accent-700 px-3.5 text-[13px] font-medium text-white hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
         >
-          {t("sampleCta")}
-          <ArrowRight className="h-3 w-3" />
+          {t("createCta")}
+          <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
 

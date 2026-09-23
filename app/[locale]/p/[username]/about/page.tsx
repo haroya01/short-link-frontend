@@ -51,7 +51,6 @@ export default async function PublicAuthorAboutPage({
   const t = await getTranslations({ locale, namespace: "publicPost" });
 
   const dateLocale = DATE_LOCALE[locale] ?? "ko-KR";
-  const totalLikes = posts.reduce((sum, p) => sum + p.likeCount, 0);
   const since =
     posts.length > 0
       ? new Date(Math.min(...posts.map((p) => new Date(p.publishedAt).getTime())))
@@ -60,18 +59,11 @@ export default async function PublicAuthorAboutPage({
     ? since.toLocaleDateString(dateLocale, { year: "numeric", month: "long", timeZone: "Asia/Seoul" })
     : "";
 
-  // The about surface's at-a-glance numbers — derived purely from the post/series lists. Likes use the
-  // brand's "공감" term to stay in the same vocabulary as the cards.
-  const stats = [
-    { value: posts.length, label: t("statPosts") },
-    { value: series.length, label: t("statSeries") },
-    { value: totalLikes, label: t("statLikes") },
-  ];
 
   // Header lives in the persistent layout (ProfileChrome) — this page renders only its content.
   return (
       <ReadingShell
-        className="mt-8"
+        className="mt-4 sm:mt-8"
         rail={
           posts.length > 0 ? (
             <AuthorRail username={author.username} locale={locale} posts={posts} series={series} />
@@ -107,26 +99,11 @@ export default async function PublicAuthorAboutPage({
 
           {posts.length > 0 && (
             <>
-              {/* At-a-glance stats — big numerals, quiet labels; a sense of the body of work. */}
-              <section className="mt-12 border-t border-slate-100 pt-8 dark:border-slate-800">
-                <dl className="grid grid-cols-3 gap-6">
-                  {stats.map((s) => (
-                    <div key={s.label}>
-                      <dd className="text-[28px] font-bold leading-none tracking-tight text-slate-900 tabular-nums dark:text-slate-100">
-                        {s.value.toLocaleString(dateLocale)}
-                      </dd>
-                      <dt className="mt-1.5 text-[13px] text-slate-500 dark:text-slate-400">
-                        {s.label}
-                      </dt>
-                    </div>
-                  ))}
-                </dl>
-                {since && (
-                  <p className="mt-5 text-[13px] text-slate-500 dark:text-slate-400">
-                    {t("aboutSince", { date: sinceLabel })}
-                  </p>
-                )}
-              </section>
+              {since && (
+                <p className="mt-10 border-t border-slate-100 pt-6 text-[13px] text-slate-500 dark:border-slate-800 dark:text-slate-400">
+                  {t("aboutSince", { date: sinceLabel })}
+                </p>
+              )}
 
               <div className="mt-10 flex justify-end">
                 <BlogLink

@@ -60,7 +60,7 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
             <div className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">
               {c.label}
             </div>
-            <div className="mt-1.5 font-mono text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
+            <div className="mt-1.5 text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
               {c.value}
             </div>
             {c.hint && <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">{c.hint}</div>}

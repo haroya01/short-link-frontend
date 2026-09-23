@@ -29,7 +29,6 @@ export default function EditEventPage() {
   if (ready && !authenticated) {
     return (
       <LinksAuthGate
-        eyebrow="events"
         title={t("authTitle")}
         description={t("authDesc")}
         next={`/events/${idParam}/edit`}

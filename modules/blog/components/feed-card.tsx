@@ -1,8 +1,7 @@
 import { DATE_LOCALE } from "@/lib/date";
 import type { ReactNode } from "react";
-import { Heart } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
-import { isRenderablePost, showLikes } from "@/modules/blog/lib/public-metrics";
+import { isRenderablePost } from "@/modules/blog/lib/public-metrics";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
@@ -89,17 +88,6 @@ function MetaRow({
       <time dateTime={item.publishedAt} className="shrink-0">
         {formatDate(item.publishedAt, locale)}
       </time>
-      {/* Likes sit inline right after the date — same position on every card, never floated to a
-          column edge that shifts with the thumbnail. Demoted: a faint marker, only shown when > 0. */}
-      {showLikes(item.likeCount) && (
-        <>
-          <span aria-hidden>·</span>
-          <span className="flex shrink-0 items-center gap-1">
-            <Heart className="h-3 w-3 text-accent-600" />
-            {item.likeCount}
-          </span>
-        </>
-      )}
     </div>
   );
 }

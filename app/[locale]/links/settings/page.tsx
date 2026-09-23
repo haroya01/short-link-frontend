@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
+import { ChevronRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { deleteMyAccount, downloadMyData, updateMyTimezone } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -18,6 +19,14 @@ import { TwoFactorSection } from "@/components/settings/two-factor-section";
 import { CustomDomainsSection } from "@/components/settings/custom-domains-section";
 import { Section as SharedSection } from "@/components/common/section";
 import type { Me } from "@/types";
+
+function localeName(l: string): string {
+  try {
+    return new Intl.DisplayNames([l], { type: "language" }).of(l) ?? l.toUpperCase();
+  } catch {
+    return l.toUpperCase();
+  }
+}
 
 const COMMON_TIMEZONES = [
   "UTC",
@@ -133,29 +142,53 @@ export default function SettingsPage() {
                     <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                       {t("interfaceLanguage")}
                     </span>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       {routing.locales.map((l) => (
                         <Link
                           key={l}
                           href={pathname}
                           locale={l}
+                          lang={l}
+                          aria-current={l === locale ? "true" : undefined}
                           className={
                             l === locale
-                              ? "rounded-md bg-slate-900 dark:bg-white px-3 py-1.5 text-xs text-white dark:text-slate-900"
-                              : "rounded-md border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                              ? "rounded-md bg-slate-900 dark:bg-white px-3 py-1.5 text-sm text-white dark:text-slate-900"
+                              : "rounded-md border border-slate-200 dark:border-slate-800 px-3 py-1.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                           }
                         >
-                          {l.toUpperCase()}
+                          {localeName(l)}
                         </Link>
                       ))}
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{t("languageHint")}</p>
                   </div>
 
                   {/* 테마도 환경설정의 1급 항목 — 상단 바/계정 메뉴에만 있으면 "설정"에서 찾는
                       사용자가 못 본다. blog 설정의 화면 섹션과 같은 행 문법(현재값 표시 포함). */}
                   <div className="mt-6 border-t border-slate-100 dark:border-slate-800 pt-4">
                     <ThemeToggle className="flex w-full items-center rounded-md px-2 py-2 text-sm text-slate-700 dark:text-slate-300 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50" />
+                  </div>
+                </Section>
+
+                <Section title={t("toolsTitle")}>
+                  <div className="-mx-2 divide-y divide-slate-100 dark:divide-slate-800">
+                    {([
+                      ["/settings/profile", "profile"],
+                      ["/campaigns", "campaigns"],
+                      ["/events", "events"],
+                      ["/ctas", "ctas"],
+                    ] as const).map(([href, key]) => (
+                      <Link
+                        key={key}
+                        href={href}
+                        className="focus-ring flex min-h-14 items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      >
+                        <span className="min-w-0">
+                          <span className="block text-sm font-medium text-slate-900 dark:text-slate-100">{t(`tools.${key}`)}</span>
+                          <span className="block text-xs text-slate-500 dark:text-slate-400">{t(`tools.${key}Desc`)}</span>
+                        </span>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-slate-400" />
+                      </Link>
+                    ))}
                   </div>
                 </Section>
               </div>
@@ -276,22 +309,37 @@ function SettingsTabs({
         <div
           role="tablist"
           aria-label={t("tabs.aria")}
-          className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+          className="inline-flex max-w-full gap-0.5 overflow-x-auto rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800"
         >
           {tabs.map((it) => {
             const active = tab === it.key;
             return (
               <button
                 key={it.key}
+                id={`settings-tab-${it.key}`}
                 type="button"
                 role="tab"
                 aria-selected={active}
+                aria-controls="settings-panel"
+                tabIndex={active ? 0 : -1}
                 onClick={() => selectTab(it.key)}
+                onKeyDown={(e) => {
+                  const i = tabs.findIndex((x) => x.key === it.key);
+                  const next =
+                    e.key === "ArrowRight" ? tabs[(i + 1) % tabs.length]
+                    : e.key === "ArrowLeft" ? tabs[(i - 1 + tabs.length) % tabs.length]
+                    : e.key === "Home" ? tabs[0]
+                    : e.key === "End" ? tabs[tabs.length - 1]
+                    : null;
+                  if (!next) return;
+                  e.preventDefault();
+                  document.getElementById(`settings-tab-${next.key}`)?.focus();
+                }}
                 className={
-                  "shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition " +
+                  "focus-ring min-h-10 shrink-0 rounded-md px-3.5 text-sm font-medium transition-colors " +
                   (active
-                    ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900"
-                    : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 ring-1 ring-inset ring-slate-200 dark:ring-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50")
+                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
+                    : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100")
                 }
               >
                 {it.label}
@@ -299,9 +347,10 @@ function SettingsTabs({
             );
           })}
         </div>
-        <p className="text-xs text-slate-500 dark:text-slate-400">{t(`tabs.descriptions.${tab}`)}</p>
       </div>
-      {children(tab)}
+      <div id="settings-panel" role="tabpanel" tabIndex={0} aria-labelledby={`settings-tab-${tab}`} className="focus-ring rounded-2xl">
+        {children(tab)}
+      </div>
     </div>
   );
 }
@@ -341,7 +390,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   return (
     <div className="flex justify-between border-b border-slate-100 dark:border-slate-800 py-2 text-sm last:border-b-0">
       <span className="text-slate-500 dark:text-slate-400">{label}</span>
-      <span className="font-mono text-slate-900 dark:text-slate-100">{children}</span>
+      <span className="tabular-nums text-slate-900 dark:text-slate-100">{children}</span>
     </div>
   );
 }

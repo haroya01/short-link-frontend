@@ -81,7 +81,7 @@ export function WhenChapter({
               onClick={() => onRange(d)}
               aria-pressed={range === d}
               className={cn(
-                "min-h-11 rounded-full px-3 text-[13px] font-medium uppercase transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
+                "min-h-11 whitespace-nowrap rounded-full px-3 text-[13px] font-medium transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600",
                 range === d
                   ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(15,23,42,0.08)] dark:bg-slate-900 dark:text-slate-100"
                   : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",

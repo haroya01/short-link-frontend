@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState, useTransition } from "react";
+import { useAuth } from "@/lib/auth";
 
 export type FeedSortTab = {
   key: string;
@@ -11,6 +12,7 @@ export type FeedSortTab = {
   active: boolean;
   /** Non-interactive (e.g. "팔로잉" while a search is active). */
   disabled?: boolean;
+  personal?: boolean;
 };
 
 // Tab horizontal padding (px-2.5 = 10px); the underline spans the label, inset past the padding.
@@ -29,7 +31,9 @@ const MAX_MS = 320;
  * jumping two tabs sweeps across the one between. The active position is measured client-side (labels
  * are any width); soft-nav keeps this mounted, so the bar transitions rather than jumps.
  */
-export function FeedSortTabs({ tabs }: { tabs: FeedSortTab[] }) {
+export function FeedSortTabs({ tabs: allTabs }: { tabs: FeedSortTab[] }) {
+  const { ready, authenticated } = useAuth();
+  const tabs = !(ready && authenticated) ? allTabs.filter((t) => !t.personal || t.active) : allTabs;
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   // 클릭 즉시 반응: 서버가 새 active 를 SSR 로 돌려주기 전까지 눌린 탭을 활성으로 그려 밑줄을 선이동시킨다

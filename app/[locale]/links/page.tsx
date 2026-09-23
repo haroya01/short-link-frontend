@@ -8,7 +8,6 @@ import { ShortenForm } from "@/components/links/shorten/form";
 import { ResultLine } from "@/components/links/shorten/result-line";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
-import { LiveTotalsTicker } from "@/components/landing/live-totals-ticker";
 import { Meteors } from "@/components/landing/meteors";
 import { StageScenes } from "@/components/landing/stage-scenes";
 import { useStageVariant } from "@/lib/stage-flag";
@@ -174,8 +173,6 @@ export default function HomePage() {
           </div>
 
           <div className="mt-6 min-h-[64px] space-y-3">
-            {/* 라이브 티커 — 실데이터 누적이 폴드 안에서 숨쉰다(히어로 라이브 극장 1). */}
-            <LiveTotalsTicker />
             {(!results || results.length === 0) && !authenticated ? (
               <div className="space-y-2 text-center">
                 <p className="text-xs text-slate-500 dark:text-slate-400">{t("anonymousHint")}</p>

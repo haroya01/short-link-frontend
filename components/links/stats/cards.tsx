@@ -81,7 +81,7 @@ export function StatsCards({
 
   // 저표본 게이트 — lib/stats-journal 의 MIN_TOTAL_FOR_INSIGHTS(10)와 같은 문턱.
   // 총 2클릭에 "클릭 가속 24.0x"가 뜨면 KPI 헤더가 과장으로 읽힌다.
-  const showVelocity = hasVelocity && (velocityRatio as number) > 0 && total >= 10;
+  const showVelocity = hasVelocity && (velocityRatio as number) >= 1.5 && human >= 30;
   const showLatency = !showVelocity && hasLatency;
 
   const animatedTotal = useCountUp(total, 900, animate);
@@ -123,7 +123,7 @@ export function StatsCards({
         />
         {hasUnique && (
           <p className="bg-accent-900 px-5 pb-4 text-[11px] text-accent-100/70">
-            <span className="font-mono font-medium tabular-nums text-white">
+            <span className="font-medium tabular-nums text-white">
               {formatNumber(unique as number)}
             </span>{" "}
             {t("unique").toLowerCase()}{" "}
@@ -232,7 +232,7 @@ function Stat({
       >
         {label}
       </span>
-      <p className="mt-2 font-mono text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
+      <p className="mt-2 text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
         {value}
       </p>
       {sub && <p className="mt-2 truncate text-[11px] text-slate-500 dark:text-slate-400">{sub}</p>}

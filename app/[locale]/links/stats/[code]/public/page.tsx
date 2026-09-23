@@ -65,10 +65,10 @@ export default function PublicStatsPage() {
     <div className="container max-w-6xl space-y-5 py-10">
       <header className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+          <p className="tabular-nums text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
             {tPublic("title")}
           </p>
-          <h1 className="mt-1.5 font-mono text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="mt-1.5 tabular-nums text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             /{data.shortCode}
           </h1>
         </div>

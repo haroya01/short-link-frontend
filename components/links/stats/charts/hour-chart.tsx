@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { useTranslations } from "next-intl";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import type { HourClick } from "@/types";
 
 type Props = {
@@ -25,6 +26,7 @@ type Props = {
  * time" charts on the Traffic tab read as one family.
  */
 export function HourChart({ data, compact = false }: Props) {
+  const reducedMotion = useReducedMotion();
   const t = useTranslations("stats");
   const track = compact ? "h-52 w-full" : "h-72 w-full";
   const filled = Array.from({ length: 24 }, (_, hour) => {
@@ -42,7 +44,7 @@ export function HourChart({ data, compact = false }: Props) {
     );
   }
   return (
-    <div className={track}>
+    <div className={`${track} text-slate-500 dark:text-slate-400`}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={filled} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
           <defs>
@@ -54,14 +56,14 @@ export function HourChart({ data, compact = false }: Props) {
           <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
           <XAxis
             dataKey="hour"
-            tick={{ fontSize: 10, fill: "#94a3b8" }}
+            tick={{ fontSize: 11, fill: "currentColor" }}
             tickLine={false}
             axisLine={false}
             interval={3}
             tickFormatter={(h: number) => String(h)}
           />
           <YAxis
-            tick={{ fontSize: 10, fill: "#94a3b8" }}
+            tick={{ fontSize: 11, fill: "currentColor" }}
             tickLine={false}
             axisLine={false}
             allowDecimals={false}
@@ -83,12 +85,12 @@ export function HourChart({ data, compact = false }: Props) {
             labelFormatter={(label: number) => `${String(label).padStart(2, "0")}:00`}
           />
           <Area
+            isAnimationActive={!reducedMotion}
             type="monotone"
             dataKey="count"
             stroke="#059669"
             strokeWidth={1.5}
             fill="url(#hourFill)"
-            isAnimationActive
             animationDuration={800}
             animationEasing="ease-out"
           />

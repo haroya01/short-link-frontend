@@ -84,7 +84,6 @@ export default function StatsPage() {
   if (ready && !authenticated) {
     return (
       <LinksAuthGate
-        eyebrow="stats"
         title={t("loginRequired")}
         description={t("loginRequiredDesc")}
       />

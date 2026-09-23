@@ -48,7 +48,7 @@
     "loadMoreError": "読み込めませんでした",
     "feed": "フォロー中",
     "followingSignedOut": "フォローした作家の新着記事がここに集まります。",
-    "forYou": "For You",
+    "forYou": "おすすめ",
     "forYouSignedOutTitle": "あなたへのおすすめ",
     "forYouSignedOut": "ログインすると、読んだ記事や関心のあるトピックをもとにおすすめを表示します。",
     "forYouEmptyTitle": "まだおすすめできる記事がありません",
@@ -578,7 +578,7 @@
     "highlightsHidden": "ハイライト非表示",
     "highlightsHide": "非表示",
     "highlightsShow": "表示",
-    "readingTime": "約{minutes}分",
+    "readingTime": "読了目安：約{minutes}分",
     "ogReadingTime": "{minutes}分で読めます",
     "previewBanner": "プレビュー — まだ公開されていない記事です。このリンクを知っている人だけが閲覧できます。",
     "editedOn": "更新 {date}",
@@ -620,9 +620,6 @@
     "aboutIntro": "自己紹介",
     "aboutSince": "{date}から活動",
     "aboutViewPosts": "記事をすべて見る",
-    "statPosts": "記事",
-    "statSeries": "シリーズ",
-    "statLikes": "共感",
     "activityHeading": "アクティビティ",
     "activitySummary": "直近1年で{count}件公開",
     "imageZoom": "画像を拡大",
@@ -674,7 +671,9 @@
       "COPYRIGHT": "著作権侵害",
       "OTHER": "その他"
     },
-    "publishedCelebration": "公開されました"
+    "publishedCelebration": "公開されました",
+    "followersList": "フォロワー",
+    "followingList": "フォロー中"
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -812,7 +811,7 @@
     "account": "アカウント",
     "home": "ホーム",
     "search": "検索",
-    "explore": "探索",
+    "explore": "探す",
     "openMenu": "メニューを開く",
     "closeMenu": "メニューを閉じる",
     "menu": "メニュー",
@@ -826,7 +825,8 @@
       "linksHint": "短縮リンク・QR・キャンペーン・CTA・統計",
       "blogLabel": "Blog",
       "blogHint": "執筆・作家ページ・読者分析"
-    }
+    },
+    "links": "リンク"
   },
   "sidebar": {
     "blog": {
@@ -860,10 +860,10 @@
   "home": {
     "tagline": "kurl v1",
     "headline1": "短縮はひと行で",
-    "headline2": "クリックの「いつ・どこから・誰が」を一目で",
+    "headline2": "クリックは、いつ・どこから",
     "subhead": "ライブクリックフィード・自動インサイト・ボット自動分離 — 他社の有料機能を、kurl は無料で",
     "mobileHeadline1": "短縮はひと行",
-    "mobileHeadline2": "いつ・どこから・誰が分析",
+    "mobileHeadline2": "いつ・どこから押されたか",
     "mobileSubhead": "ライブクリック・自動分析・ボット分離まで無料",
     "anonymousHint": "ログイン不要で短縮できます。統計はログイン後に確認できます。",
     "demoLink": "分析画面をデモで先に見る",
@@ -941,8 +941,7 @@
       "scene3Desc": "誰が、いつ、どこから — 人とボットを分けて30日のリズムまで。他社の有料プラン級の深さを無料で。",
       "scene3CtaDemo": "デモで先に見る",
       "scene3CtaStart": "無料ではじめる"
-    },
-    "heroTicker": "これまで <l></l> 本のリンク · <c></c> 回のクリックを分析"
+    }
   },
   "showcase": {
     "eyebrow": "公開プロフィール · 実例",
@@ -1020,7 +1019,8 @@
         "統計"
       ]
     },
-    "consent": "続行すると、<terms>利用規約</terms>および<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
+    "consent": "続行すると、<terms>利用規約</terms>および<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。",
+    "heading": "kurlにログイン"
   },
   "auth": {
     "signedIn": "ログインしました",
@@ -1146,7 +1146,10 @@
       "expiresAt": "有効期限",
       "clicks": "人によるクリック",
       "actions": "操作",
-      "sortAllClicks": "全クリック順"
+      "sortAllClicks": "総クリック順",
+      "sortNewest": "作成順",
+      "sortAsc": "昇順",
+      "sortDesc": "降順"
     },
     "card": {
       "week": "7日間の人によるクリック{count}回",
@@ -1157,7 +1160,9 @@
     "actions": {
       "stats": "統計",
       "edit": "編集",
-      "delete": "削除"
+      "delete": "削除",
+      "more": "その他",
+      "openOriginal": "元のURLを開く"
     },
     "favorite": {
       "add": "お気に入りに追加",
@@ -1231,7 +1236,13 @@
     "overviewFailed": "アカウントの統計を読み込めませんでした。",
     "accountScope": "アカウント全体 · {tz} · 自動アクセスを含む累計{total}回 · リストの絞り込みとは別に集計",
     "libraryViews": "リンク一覧の選択",
-    "allLinks": "全リンク"
+    "allLinks": "全リンク",
+    "copied": "リンクをコピーしました",
+    "subtitleCount": "リンク {count}件",
+    "toolCampaigns": "QRキャンペーン",
+    "toolEvents": "募集",
+    "selectMode": "選択",
+    "selectDone": "完了"
   },
   "edit": {
     "title": "リンク編集",
@@ -1301,9 +1312,10 @@
       "connecting": "接続中…",
       "connected": "ライブ",
       "waiting": "新しいクリックがここに表示されます。",
-      "scope": "この画面を開いてからのクリック · 端末の現地時間",
+      "scope": "この画面を開いてからのクリック · 端末のタイムゾーン",
       "reconnecting": "切断 · 再接続中",
-      "disconnectedHint": "新しいクリックの接続が切れました。自動で再接続します。既存の統計は引き続き確認できます。"
+      "disconnectedHint": "リアルタイム更新が途切れました。自動で再接続します。既存の統計は引き続き確認できます。",
+      "example": "サンプル"
     },
     "quality": {
       "title": "クリック品質",
@@ -1439,7 +1451,8 @@
       "blockedRemove": "ブロック解除",
       "blockedFailed": "国別ブロックの更新に失敗しました。",
       "configuredShare": "設定 {pct}%",
-      "actualShare": "実際 {pct}%"
+      "actualShare": "実際 {pct}%",
+      "blockedLoadFailed": "ブロック中の国を読み込めませんでした。"
     },
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "統計はリンクの所有者のみ表示できます。",
@@ -1685,7 +1698,8 @@
     "protection": {
       "title": "保護",
       "saved": "保護設定を保存しました。",
-      "failed": "保護設定を保存できませんでした。"
+      "failed": "保護設定を保存できませんでした。",
+      "loadFailed": "現在の保護設定を読み込めなかったため保存できません。再読み込みしてください。"
     },
     "analysisTabs": {
       "when": "クリック推移",
@@ -2113,7 +2127,8 @@
       "badge": "デモ",
       "lockedToast": "デモ画面です。サインアップ後にご自身のリンクで実際に登録・編集できます。",
       "payloadPreview": "送信されるペイロードのプレビュー"
-    }
+    },
+    "createCta": "自分のリンクを作る"
   },
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",
@@ -2497,19 +2512,13 @@
     ]
   },
   "settings": {
-    "title": "設定",
+    "title": "アカウント",
     "tabs": {
       "aria": "設定セクション",
       "account": "アカウント",
       "security": "セキュリティ",
       "domains": "ドメイン",
-      "data": "データ",
-      "descriptions": {
-        "account": "メール / 登録日 / タイムゾーン / UI 言語。",
-        "security": "2FA TOTP + リカバリコード / API キーの発行・失効。",
-        "domains": "短縮 URL をご自身のドメイン（go.brand.com）から配信。",
-        "data": "データエクスポート (JSON) / アカウント完全削除。"
-      }
+      "data": "データ"
     },
     "profile": {
       "title": "公開プロフィール",
@@ -2902,7 +2911,7 @@
       "noLinks": "まだリンクがありません。",
       "toggleFailed": "変更に失敗しました。"
     },
-    "profileTitle": "プロフィール",
+    "profileTitle": "アカウント情報",
     "email": "メール",
     "provider": "ログイン方法",
     "joinedAt": "登録日",
@@ -2914,7 +2923,6 @@
     "saved": "保存しました",
     "saveFailed": "保存に失敗しました。",
     "interfaceLanguage": "インターフェース言語",
-    "languageHint": "ヘッダー右上の言語切替でも変更できます。",
     "dataTitle": "データ",
     "exportButton": "自分のデータをダウンロード (JSON)",
     "exportHint": "ユーザー情報 + すべてのリンク + クリックイベント (IPはマスク済み)。",
@@ -3018,6 +3026,17 @@
       "deleteFailed": "削除に失敗しました。",
       "dnsTxtHint": "ドメイン所有確認用 — DNS に TXT レコードを追加",
       "dnsCnameHint": "トラフィック転送用 — 同じ DNS に CNAME も追加"
+    },
+    "toolsTitle": "ツール",
+    "tools": {
+      "profile": "公開プロフィール",
+      "profileDesc": "リンクを1ページにまとめて表示",
+      "campaigns": "QRキャンペーン",
+      "campaignsDesc": "ポスター・チラシのQRを配布先ごとに比較",
+      "events": "募集",
+      "eventsDesc": "イベントの申し込みをリンク1つで受付",
+      "ctas": "CTAライブラリ",
+      "ctasDesc": "リンクに表示する案内バナーを管理"
     }
   },
   "homeStats": {
@@ -3998,5 +4017,22 @@
       "closed": "締切",
       "canceled": "中止"
     }
+  },
+  "linkAnalytics": {
+    "title": "分析",
+    "loginTitle": "ログインするとすべてのリンクの成果をまとめて見られます",
+    "loginDesc": "人のクリック推移とよく押されたリンクをまとめて表示します。",
+    "loadFailed": "成果を読み込めませんでした。もう一度お試しください。",
+    "weekHumanClicks": "直近7日の人のクリック",
+    "todayAndLinks": "今日 {today} · リンク {links}件",
+    "scopeNote": "ボットのクリックは除外しています。時刻は{tz}基準です。",
+    "attention": "確認すること",
+    "zeroClick": "まだクリックのないリンク {count}件",
+    "expiring": "3日以内に期限切れになるリンク {count}件",
+    "topLinks": "よくクリックされたリンク",
+    "topLinksNote": "累計の人のクリック基準",
+    "humanClicks": "人のクリック",
+    "createFirst": "最初のリンクを作る",
+    "viewFewestClicks": "クリックの少ない順に見る"
   }
 }

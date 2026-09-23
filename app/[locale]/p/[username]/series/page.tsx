@@ -98,7 +98,7 @@ export default async function PublicSeriesIndexPage({
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(seriesListJsonLd) }}
       />
       <ReadingShell
-        className="mt-8"
+        className="mt-4 sm:mt-8"
         rail={
           tags.length > 0 ? (
             <section>

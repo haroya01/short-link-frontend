@@ -26,6 +26,7 @@ export type JournalEntry = {
  * 진실원은 여기 한 곳이다. 문턱을 맞춰 둬야 같은 링크를 웹과 API 로 봤을 때 말이 갈리지 않는다.
  */
 const MIN_TOTAL_FOR_INSIGHTS = 10;
+const MIN_HUMAN_FOR_VELOCITY = 30;
 const IN_APP_SHARE_THRESHOLD = 0.2;
 const CHANNEL_LOYALTY_THRESHOLD = 0.3;
 const CHANNEL_LOYALTY_MIN_VISITORS = 5;
@@ -46,7 +47,7 @@ export function buildJournal(data: LinkStats): JournalEntry[] {
   // 지금 이 순간 — 평소 대비 속도. 저표본 게이트 필수: 총 2클릭짜리 링크가 "24.0배"를
   // 말하면 통계 전체의 신뢰가 무너진다(과장광고 방지 계약).
   const velocity = data.velocity?.ratio ?? 0;
-  if (velocity >= 1.5 && total >= MIN_TOTAL_FOR_INSIGHTS) {
+  if (velocity >= 1.5 && (data.humanClicks ?? 0) >= MIN_HUMAN_FOR_VELOCITY) {
     entries.push({
       key: "velocity",
       params: { x: velocity.toFixed(1) },

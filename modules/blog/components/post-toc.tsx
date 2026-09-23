@@ -91,7 +91,7 @@ export function PostTocMobile({ headings }: { headings: TocHeading[] }) {
   // Escape + Tab cycling within the sheet + focus restore to the 목차 button on close.
   useFocusTrap(dialogRef, { active: open, onEscape: () => setOpen(false) });
 
-  if (headings.length < 1) return null;
+  if (headings.length < 3) return null;
 
   return (
     <div className="min-[1100px]:hidden">

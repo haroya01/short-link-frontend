@@ -190,18 +190,18 @@ export function AdminOverviewView() {
 
       <Section title={t("section.trend.title")} description={t("section.trend.desc")}>
         <div className="h-72 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer className="text-slate-500 dark:text-slate-400" width="100%" height="100%">
             <LineChart data={trendData} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
               <XAxis
                 dataKey="date"
-                tick={{ fontSize: 10, fill: "#94a3b8" }}
+                tick={{ fontSize: 11, fill: "currentColor" }}
                 tickFormatter={(v: string) => v.slice(5)}
                 tickLine={false}
                 axisLine={false}
               />
               <YAxis
-                tick={{ fontSize: 10, fill: "#94a3b8" }}
+                tick={{ fontSize: 11, fill: "currentColor" }}
                 tickLine={false}
                 axisLine={false}
                 allowDecimals={false}

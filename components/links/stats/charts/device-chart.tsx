@@ -54,7 +54,7 @@ function DeviceChartImpl({ data }: Props) {
               />
               {labelFor(d.device)}
             </span>
-            <span className="font-mono tabular-nums text-slate-600 dark:text-slate-300">
+            <span className="tabular-nums text-slate-600 dark:text-slate-300">
               {formatNumber(d.count)}
               <span className="ml-1.5 text-[10px] text-slate-500 dark:text-slate-400">
                 {((d.count / total) * 100).toFixed(0)}%

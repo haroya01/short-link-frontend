@@ -47,7 +47,7 @@ export function StageScenes() {
                 잡히고, 그게 1열 트랙을 469px 로 벌려 390 화면 전체를 79px 가로 스크롤시켰다
                 (헤더·쿠키바·하단탭이 같이 어긋남). truncate 는 줄일 수 있는 부모가 있어야 동작한다. */}
             <div className="min-w-0 space-y-4">
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+              <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
                 {t("scene2Eyebrow")}
               </p>
               <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
@@ -60,24 +60,12 @@ export function StageScenes() {
                 aria-hidden
                 className="select-none rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_16px_44px_-24px_rgba(5,150,105,0.4)] dark:border-slate-700 dark:bg-slate-900"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="min-w-0">
-                    <span className="block font-mono text-[16px] font-bold tracking-tight text-accent-700 dark:text-accent-400">
-                      kurl.me/demo01
-                    </span>
-                    <span className="mt-1 block truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
-                      https://your-very-long-url.com/path?with=query
-                    </span>
-                  </span>
-                  <span className="flex shrink-0 items-center gap-1.5">
-                    <span className="rounded-lg border border-slate-200 px-2.5 py-1.5 font-mono text-[10px] font-medium uppercase tracking-tagline text-slate-500 dark:border-slate-700 dark:text-slate-400">
-                      copy
-                    </span>
-                    <span className="rounded-lg border border-slate-200 px-2.5 py-1.5 font-mono text-[10px] font-medium uppercase tracking-tagline text-slate-500 dark:border-slate-700 dark:text-slate-400">
-                      qr
-                    </span>
-                  </span>
-                </div>
+                <span className="block font-mono text-[16px] font-bold tracking-tight text-accent-700 dark:text-accent-400">
+                  kurl.me/demo01
+                </span>
+                <span className="mt-1 block truncate text-xs text-slate-500 dark:text-slate-400">
+                  https://your-very-long-url.com/path?with=query
+                </span>
               </div>
             </div>
             {/* 실제 통계 화면의 라이브 피드가 그대로 — 행이 3.2초마다 실제로 도착한다 */}
@@ -101,7 +89,7 @@ export function StageScenes() {
           <div className="stage-rise container max-w-5xl py-16 sm:py-24">
             <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
               <div className="space-y-4">
-                <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-300">
+                <p className="text-[13px] font-semibold text-accent-100/80">
                   {t("scene3Eyebrow")}
                 </p>
                 <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-white sm:text-headline-lg">

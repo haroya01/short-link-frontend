@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { useTranslations } from "next-intl";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import type { DailyClick } from "@/types";
 import { formatNumber } from "@/lib/utils";
 
@@ -28,6 +29,7 @@ function shortDate(v: string): string {
 }
 
 export function DailyChart({ data, compact = false }: Props) {
+  const reducedMotion = useReducedMotion();
   const t = useTranslations("stats");
   // On mobile (< 640 px) the recharts default Y-axis tick label needs the full computed track
   // width — pulling the chart back with `left: -16` cuts off "100" / "1k" on narrow viewports.
@@ -45,16 +47,16 @@ export function DailyChart({ data, compact = false }: Props) {
           <span aria-hidden className="mx-1.5 text-slate-300 dark:text-slate-600">
             ·
           </span>
-          <span className="font-mono tabular-nums">{shortDate(peak.date)}</span>
+          <span className="tabular-nums">{shortDate(peak.date)}</span>
           <span aria-hidden className="mx-1.5 text-slate-300 dark:text-slate-600">
             ·
           </span>
-          <span className="font-mono tabular-nums">
+          <span className="tabular-nums">
             {t("clickCount", { count: formatNumber(peak.count) })}
           </span>
         </p>
       )}
-      <div className={compact ? "h-52 w-full" : "h-72 w-full"}>
+      <div className={`${compact ? "h-52" : "h-72"} w-full text-slate-500 dark:text-slate-400`}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
@@ -69,7 +71,7 @@ export function DailyChart({ data, compact = false }: Props) {
           <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 10, fill: "#94a3b8" }}
+            tick={{ fontSize: 11, fill: "currentColor" }}
             tickFormatter={shortDate}
             tickLine={false}
             axisLine={false}
@@ -77,7 +79,7 @@ export function DailyChart({ data, compact = false }: Props) {
             minTickGap={20}
           />
           <YAxis
-            tick={{ fontSize: 10, fill: "#94a3b8" }}
+            tick={{ fontSize: 11, fill: "currentColor" }}
             tickLine={false}
             axisLine={false}
             allowDecimals={false}
@@ -99,12 +101,12 @@ export function DailyChart({ data, compact = false }: Props) {
             labelFormatter={(label: string) => label}
           />
           <Area
+            isAnimationActive={!reducedMotion}
             type="monotone"
             dataKey="count"
             stroke="#059669"
             strokeWidth={1.5}
             fill="url(#dailyFill)"
-            isAnimationActive
             animationDuration={900}
             animationEasing="ease-out"
           />

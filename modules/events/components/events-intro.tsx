@@ -12,22 +12,25 @@ export function EventsIntro({ mode }: { mode: "anonymous" | "empty" }) {
   const t = useTranslations("events.intro");
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-14 sm:py-20">
-      <div className="space-y-4 text-center">
-        <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
-          {t("eyebrow")}
-        </p>
-        <h1 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
-          {t("title")}
-        </h1>
-        <p className="mx-auto max-w-md text-balance text-[14px] leading-relaxed text-slate-500 dark:text-slate-400 sm:text-[15px]">
-          {t("subtitle")}
-        </p>
-      </div>
+    <div className={mode === "empty" ? "w-full pt-6" : "mx-auto w-full max-w-2xl px-4 py-14 sm:py-20"}>
+      {mode === "anonymous" ? (
+        <>
+          <div className="space-y-4 text-center">
+            <p className="text-[13px] font-medium text-slate-500 dark:text-slate-400">{t("eyebrow")}</p>
+            <h1 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
+              {t("title")}
+            </h1>
+            <p className="mx-auto max-w-md text-balance text-[14px] leading-relaxed text-slate-500 dark:text-slate-400 sm:text-[15px]">
+              {t("subtitle")}
+            </p>
+          </div>
+          <Demo />
+        </>
+      ) : (
+        <p className="text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">{t("subtitle")}</p>
+      )}
 
-      <Demo />
-
-      <ol className="mt-10 border-y border-slate-100 dark:border-slate-800 sm:flex">
+      <ol className="mt-8 border-y border-slate-100 dark:border-slate-800 sm:flex">
         {(["step1", "step2", "step3"] as const).map((step, index) => (
           <li
             key={step}
@@ -38,7 +41,7 @@ export function EventsIntro({ mode }: { mode: "anonymous" | "empty" }) {
                 : "sm:pl-0")
             }
           >
-            <p className="font-mono text-[11px] font-medium text-accent-700 dark:text-accent-400">
+            <p className="text-[11px] font-medium tabular-nums text-slate-500 dark:text-slate-400">
               {String(index + 1).padStart(2, "0")}
             </p>
             <p className="mt-1.5 text-[14px] font-semibold text-slate-800 dark:text-slate-200">
@@ -51,18 +54,18 @@ export function EventsIntro({ mode }: { mode: "anonymous" | "empty" }) {
         ))}
       </ol>
 
-      <div className="mt-10 text-center">
+      <div className={mode === "empty" ? "hidden" : "mt-10 text-center"}>
         {mode === "anonymous" ? (
           <a
             href="/login?next=/events"
-            className="focus-ring inline-flex h-12 items-center justify-center rounded-full bg-accent-600 px-7 text-base font-semibold text-white transition-colors hover:bg-accent-700 dark:hover:bg-accent-500"
+            className="focus-ring inline-flex h-12 items-center justify-center rounded-full bg-accent-700 px-7 text-base font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
           >
             {t("ctaLogin")}
           </a>
         ) : (
           <Link
             href="/events/new"
-            className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-full bg-accent-600 px-7 text-base font-semibold text-white transition-colors hover:bg-accent-700 dark:hover:bg-accent-500"
+            className="focus-ring inline-flex h-12 items-center justify-center gap-2 rounded-full bg-accent-700 px-7 text-base font-semibold text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
           >
             <CalendarPlus className="h-5 w-5" />
             {t("ctaCreate")}
@@ -99,7 +102,7 @@ function Demo() {
       </div>
 
       {/* 2) 카톡으로 날아가는 링크 */}
-      <div className="evi-fly absolute bottom-[104px] right-4 flex items-center gap-1 rounded-full border border-accent-300 bg-white px-2.5 py-1 font-mono text-[11px] font-medium text-accent-700 shadow-sm dark:border-accent-700 dark:bg-slate-950 dark:text-accent-400">
+      <div className="evi-fly absolute bottom-[104px] right-4 flex items-center gap-1 rounded-full border border-accent-300 bg-white px-2.5 py-1 tabular-nums text-[11px] font-medium text-accent-700 shadow-sm dark:border-accent-700 dark:bg-slate-950 dark:text-accent-400">
         <Link2 className="h-3 w-3" /> kurl.me/ab3xk
       </div>
 
@@ -107,7 +110,7 @@ function Demo() {
       <div className="absolute bottom-4 right-4 flex w-[46%] max-w-[210px] flex-col items-end gap-1.5">
         <div className="evi-bubble w-full rounded-2xl rounded-tr-sm bg-amber-300 px-3 py-2 text-[12px] font-medium leading-snug text-slate-900">
           {t("chatShare")}
-          <span className="mt-1 flex items-center gap-1 rounded-md bg-white/70 px-1.5 py-0.5 font-mono text-[10px] text-accent-700">
+          <span className="mt-1 flex items-center gap-1 rounded-md bg-white/70 px-1.5 py-0.5 tabular-nums text-[10px] text-accent-700">
             <Link2 className="h-2.5 w-2.5" /> kurl.me/ab3xk
           </span>
         </div>

@@ -63,11 +63,11 @@
     "tagFeedSubtitle": "Posts published under this topic.",
     "tagFollow": "Follow",
     "tagFollowing": "Following",
-    "tagHide": "Hide",
-    "tagUnhide": "Unhide",
-    "tagHiddenCount": "{count} posts hidden by your muted tags",
+    "tagHide": "Mute topic",
+    "tagUnhide": "Unmute topic",
+    "tagHiddenCount": "{count, plural, one {# post} other {# posts}} hidden by your muted topics",
     "tagAllHiddenTitle": "All hidden by your muted topics",
-    "tagAllHiddenBody": "All {count} posts from people you follow are hidden by your muted topics. Unhide a topic in your topic settings to see them again.",
+    "tagAllHiddenBody": "All {count, plural, one {# post} other {# posts}} from people you follow are hidden by your muted topics. Unmute a topic in your topic settings to see them again.",
     "myTags": "My tags",
     "metaDescription": "Read. Write. Connect. The public blog by kurl.",
     "emptyTitle": "No posts published yet",
@@ -95,12 +95,12 @@
     "railFollowingAll": "Show all",
     "railWriters": "Writers",
     "railTopics": "Topics",
-    "railPostCount": "{count} posts",
+    "railPostCount": "{count, plural, one {# post} other {# posts}}",
     "railSeeAll": "See all",
     "bookmark": "Save to reading list",
     "bookmarkOn": "Remove from reading list",
     "seriesEyebrow": "Series",
-    "seriesEpisodeCount": "{count} posts",
+    "seriesEpisodeCount": "{count, plural, one {# post} other {# posts}}",
     "seriesLastPublished": "Last post {date}",
     "seriesMoreCount": "+{count} more",
     "seriesSubscribe": "Subscribe",
@@ -164,7 +164,7 @@
     "postsEmpty": "No published posts yet.",
     "draftsTitle": "Drafts",
     "draftsEmpty": "No drafts.",
-    "views": "{count} views",
+    "views": "{count, plural, one {# view} other {# views}}",
     "loginRequired": "Please sign in.",
     "loading": "Loading…",
     "seriesTitle": "Series",
@@ -175,7 +175,7 @@
     "seriesCreate": "Create",
     "seriesCancel": "Cancel",
     "seriesDelete": "Delete",
-    "postCount": "{count} posts",
+    "postCount": "{count, plural, one {# post} other {# posts}}",
     "seriesEmpty": "No series yet.",
     "seriesDeleteConfirm": "Delete this series? Posts stay — they're just removed from the series.",
     "seriesMembers": "Posts in series",
@@ -207,7 +207,7 @@
     "analyticsDays": "{days}d",
     "analyticsAll": "All",
     "analyticsAllViews": "All-time views",
-    "analyticsAllClicks": "{count} clicks all-time",
+    "analyticsAllClicks": "{count, plural, one {# click} other {# clicks}} all-time",
     "analyticsSeries": "Series",
     "analyticsSubscribers": "Subscribers",
     "analyticsPosts": "Posts",
@@ -266,7 +266,7 @@
     "settingsHideFollowerCount": "Hide follower count",
     "settingsHideFollowerCountHint": "When on, no one sees your follower or following numbers. Following still works.",
     "rowDelete": "Delete",
-    "rowDeleteConfirm": "Delete '{title}'? This can't be undone.",
+    "rowDeleteConfirm": "Delete “{title}”? This can't be undone.",
     "rowDeleteFailed": "Couldn't delete.",
     "curationLiked": "Liked posts",
     "curationLikedHint": "Posts you've liked.",
@@ -391,10 +391,10 @@
     "featuredPinnedLabel": "Featured",
     "featuredMoveUp": "Move up",
     "featuredMoveDown": "Move down",
-    "viewAll": "All",
+    "viewAll": "List",
     "viewBySeries": "By series",
-    "viewCount": "{count} views",
-    "likeCount": "{count} likes",
+    "viewCount": "{count, plural, one {# view} other {# views}}",
+    "likeCount": "{count, plural, one {# like} other {# likes}}",
     "noPosts": "No posts yet.",
     "listLoading": "Loading…",
     "slugHint": "Editable until published · lowercase letters, digits, hyphens",
@@ -538,7 +538,7 @@
     "noResults": "No matching passages.",
     "emptyFolder": "This folder is empty.",
     "saveFailed": "Couldn't save your change. Please try again.",
-    "bulkMoveFailed": "Couldn't move {count} items. Please try again.",
+    "bulkMoveFailed": "Couldn't move {count, plural, one {# item} other {# items}}. Please try again.",
     "loadError": "Couldn't load your reading history.",
     "retry": "Try again"
   },
@@ -611,7 +611,7 @@
     "railTags": "Tags",
     "embedMedia": "Embedded media",
     "railArchive": "Archive",
-    "railPostCount": "{count} posts",
+    "railPostCount": "{count, plural, one {# post} other {# posts}}",
     "aboutEmpty": "No bio yet.",
     "tagFilterLabel": "Filtered by",
     "tagFilterClear": "Show all",
@@ -620,9 +620,6 @@
     "aboutIntro": "About",
     "aboutSince": "Active since {date}",
     "aboutViewPosts": "View all posts",
-    "statPosts": "Posts",
-    "statSeries": "Series",
-    "statLikes": "Likes",
     "activityHeading": "Activity",
     "activitySummary": "{count} published in the last year",
     "imageZoom": "Enlarge image",
@@ -637,7 +634,7 @@
     "follow": "Follow",
     "followCuratorHint": "Follow the path this curator weaves",
     "following": "Following",
-    "followers": "{count} followers",
+    "followers": "{count, plural, one {# follower} other {# followers}}",
     "followingCount": "{count} following",
     "followersTab": "Followers",
     "followingTab": "Following",
@@ -674,7 +671,9 @@
       "COPYRIGHT": "Copyright infringement",
       "OTHER": "Other"
     },
-    "publishedCelebration": "Your post is live"
+    "publishedCelebration": "Your post is live",
+    "followersList": "Followers",
+    "followingList": "Following"
   },
   "imageCropper": {
     "title": "Crop image",
@@ -826,7 +825,8 @@
       "linksHint": "Short links · QR · Campaigns · CTA · Stats",
       "blogLabel": "Blog",
       "blogHint": "Writing · Author page · Reader analytics"
-    }
+    },
+    "links": "Links"
   },
   "sidebar": {
     "blog": {
@@ -860,10 +860,10 @@
   "home": {
     "tagline": "kurl v1",
     "headline1": "Shorten in one line",
-    "headline2": "Analyze who, when, where",
+    "headline2": "See when and where it’s clicked",
     "subhead": "Live click feed, auto-insights, bot filtering — the analytics other shorteners lock behind paid plans, free here.",
     "mobileHeadline1": "Shorten in one line",
-    "mobileHeadline2": "See who, when, where",
+    "mobileHeadline2": "See when and where",
     "mobileSubhead": "Live clicks, insights, and bot filtering for free",
     "anonymousHint": "No sign-in required. Sign in if you want stats.",
     "demoLink": "Preview the analytics dashboard",
@@ -934,15 +934,14 @@
     "whySubhead": "Features usually locked behind enterprise plans — free here, enabled by default.",
     "stage": {
       "scene2Eyebrow": "Share",
-      "scene2Title": "Wherever you paste it, clicks come back",
+      "scene2Title": "Share anywhere. See every click.",
       "scene2Desc": "Instagram bio, X, YouTube, email — see where every click came from, live.",
       "scene3Eyebrow": "Analytics",
       "scene3Title": "Every click becomes a picture",
       "scene3Desc": "Who, when, where — humans split from bots, down to your 30-day rhythm. The depth other shorteners paywall, free.",
       "scene3CtaDemo": "Preview the demo",
       "scene3CtaStart": "Start free"
-    },
-    "heroTicker": "So far <l></l> links · <c></c> clicks analyzed here"
+    }
   },
   "showcase": {
     "eyebrow": "Public profiles · real examples",
@@ -1020,7 +1019,8 @@
         "Insights"
       ]
     },
-    "consent": "By continuing, you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+    "consent": "By continuing, you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
+    "heading": "Sign in to kurl"
   },
   "auth": {
     "signedIn": "Signed in",
@@ -1068,7 +1068,7 @@
     "tooBig": "Image is too large"
   },
   "expiringBanner": {
-    "title": "{count} links expire in the next 3 days",
+    "title": "{count, plural, one {# link expires} other {# links expire}} in the next 3 days",
     "hint": "Extend the expiry or delete the ones you don't need.",
     "showAll": "Show all",
     "dismiss": "Dismiss"
@@ -1076,11 +1076,11 @@
   "dashboard": {
     "label": "dashboard",
     "title": "My Links",
-    "subtitle": "{count} links · select a name to see analytics.",
+    "subtitle": "{count, plural, one {# link} other {# links}} · select a name to see analytics.",
     "newLink": "New link",
     "loadMore": "Load more",
     "loadingMore": "Loading...",
-    "searchPlaceholder": "Search name, destination URL or short code",
+    "searchPlaceholder": "Search name, URL or code",
     "clearSearch": "Clear search",
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "My links and click stats are visible only after sign-in.",
@@ -1146,7 +1146,10 @@
       "expiresAt": "Expires",
       "clicks": "Human clicks",
       "actions": "Actions",
-      "sortAllClicks": "Sort by all clicks"
+      "sortAllClicks": "Total clicks",
+      "sortNewest": "Newest",
+      "sortAsc": "ascending",
+      "sortDesc": "descending"
     },
     "card": {
       "week": "7-day human clicks: {count}",
@@ -1157,7 +1160,9 @@
     "actions": {
       "stats": "Stats",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "more": "More",
+      "openOriginal": "Open destination"
     },
     "favorite": {
       "add": "Add to favorites",
@@ -1209,7 +1214,7 @@
     "bulkDeleted": "{count} deleted",
     "bulkDeleteFailed": "{failed} of {total} failed to delete",
     "bulkDeleteConfirmTitle": "Delete selected links?",
-    "bulkDeleteConfirmDesc": "{count} links and all their click stats will be permanently removed.",
+    "bulkDeleteConfirmDesc": "{count, plural, one {# link and all its click stats} other {# links and all their click stats}} will be permanently removed.",
     "bulkImport": {
       "button": "Import CSV",
       "title": "Bulk import from CSV",
@@ -1231,7 +1236,13 @@
     "overviewFailed": "Could not load account statistics.",
     "accountScope": "Whole account · {tz} · {total} lifetime clicks including automation · independent of list filters",
     "libraryViews": "Link collection",
-    "allLinks": "All links"
+    "allLinks": "All links",
+    "copied": "Link copied",
+    "subtitleCount": "{count, plural, one {# link} other {# links}}",
+    "toolCampaigns": "QR campaigns",
+    "toolEvents": "Sign-ups",
+    "selectMode": "Select",
+    "selectDone": "Done"
   },
   "edit": {
     "title": "Edit link",
@@ -1303,7 +1314,8 @@
       "waiting": "Clicks will appear here as they come in.",
       "scope": "Clicks since opening this view · device local time",
       "reconnecting": "Disconnected · reconnecting",
-      "disconnectedHint": "Live clicks disconnected. Reconnecting automatically. Existing statistics are still available."
+      "disconnectedHint": "Live updates paused. Reconnecting automatically. Existing stats are still available.",
+      "example": "Sample"
     },
     "quality": {
       "title": "Click quality",
@@ -1439,7 +1451,8 @@
       "blockedRemove": "Unblock",
       "blockedFailed": "Couldn't update country blocking.",
       "configuredShare": "set {pct}%",
-      "actualShare": "actual {pct}%"
+      "actualShare": "actual {pct}%",
+      "blockedLoadFailed": "Couldn’t load the blocked countries."
     },
     "loginRequired": "Sign-in required",
     "loginRequiredDesc": "Stats are visible to the link owner only.",
@@ -1629,7 +1642,7 @@
       "tooltipBucket": "{day} {from}–{to}h — {count} clicks",
       "detailHourly": "{day} {hour}:00–{hour}:59",
       "detailBucket": "{day} {from}:00–{to}:59",
-      "detailClicks": "{count} clicks",
+      "detailClicks": "{count, plural, one {# click} other {# clicks}}",
       "detailShare": "{share}% of total",
       "detailClose": "Close"
     },
@@ -1685,12 +1698,13 @@
     "protection": {
       "title": "Protection",
       "saved": "Protection settings saved.",
-      "failed": "Couldn't save protection settings."
+      "failed": "Couldn't save protection settings.",
+      "loadFailed": "Couldn’t load the current protection settings, so saving is disabled. Please refresh."
     },
     "analysisTabs": {
-      "when": "Click trends",
-      "where": "Traffic sources",
-      "who": "Visitor devices"
+      "when": "Trends",
+      "where": "Sources",
+      "who": "Devices"
     },
     "linkSettings": "Link settings",
     "scope": {
@@ -2113,11 +2127,12 @@
       "badge": "Demo",
       "lockedToast": "This is a demo preview. After signing up you can register and edit these on your own link.",
       "payloadPreview": "Preview the payload that gets sent"
-    }
+    },
+    "createCta": "Create my link"
   },
   "publicProfile": {
     "empty": "This user hasn't added any links yet.",
-    "viewBlog": "View {count} posts",
+    "viewBlog": "View {count, plural, one {# post} other {# posts}}",
     "madeWith": "Made with kurl.me",
     "editFab": "Edit",
     "share": {
@@ -2243,7 +2258,7 @@
     "viewStats": "View stats",
     "claimCta": "Sign up to save these links to your account permanently.",
     "anonymousNote": "Anonymous links auto-expire in 24h. Sign in and they're saved to your account — no expiration.",
-    "claimedToast": "Saved {count} link(s) to your account"
+    "claimedToast": "{count, plural, one {Saved # link} other {Saved # links}} to your account"
   },
   "statsEmpty": {
     "title": "No clicks yet",
@@ -2497,19 +2512,13 @@
     ]
   },
   "settings": {
-    "title": "Settings",
+    "title": "Account",
     "tabs": {
       "aria": "Settings sections",
       "account": "Account",
       "security": "Security",
       "domains": "Domains",
-      "data": "Data",
-      "descriptions": {
-        "account": "Email / joined date / timezone / UI language.",
-        "security": "2FA TOTP + recovery codes / API key issue & revoke.",
-        "domains": "Route short URLs through your own domain (go.brand.com).",
-        "data": "Data export (JSON) / permanent account deletion."
-      }
+      "data": "Data"
     },
     "profile": {
       "title": "Public profile",
@@ -2579,7 +2588,7 @@
       "featuredHint": "Drag to reorder (mobile uses ↑↓), ★ to highlight one as a hero card, 'Remove' to drop. Add a header to group items into a section — collapsible and movable as one.",
       "sectionExpand": "Expand section",
       "sectionCollapse": "Collapse section",
-      "sectionItemCount": "{count} items",
+      "sectionItemCount": "{count, plural, one {# item} other {# items}}",
       "featuredEmpty": "Add a link from below or insert a header / divider to start a section.",
       "featuredEmptyTitle": "Your profile feed is empty",
       "featuredEmptyHasOthers": "Use the 'Add link' form above, or pick from your other links ({count}) below.",
@@ -2902,7 +2911,7 @@
       "noLinks": "No links yet.",
       "toggleFailed": "Failed to update."
     },
-    "profileTitle": "Profile",
+    "profileTitle": "Account info",
     "email": "Email",
     "provider": "Sign-in provider",
     "joinedAt": "Joined",
@@ -2914,7 +2923,6 @@
     "saved": "Saved",
     "saveFailed": "Save failed.",
     "interfaceLanguage": "Interface language",
-    "languageHint": "You can also change this from the language switcher in the header.",
     "dataTitle": "Data",
     "exportButton": "Download my data (JSON)",
     "exportHint": "User info + all links + click events (IPs are masked).",
@@ -3018,6 +3026,17 @@
       "deleteFailed": "Failed to delete.",
       "dnsTxtHint": "Ownership check — add this TXT record at your DNS provider",
       "dnsCnameHint": "Traffic routing — add this CNAME record at the same provider"
+    },
+    "toolsTitle": "Tools",
+    "tools": {
+      "profile": "Public profile",
+      "profileDesc": "All your links on one page",
+      "campaigns": "QR campaigns",
+      "campaignsDesc": "Compare printed QR codes by location",
+      "events": "Sign-ups",
+      "eventsDesc": "Collect event sign-ups with one link",
+      "ctas": "CTA library",
+      "ctasDesc": "Manage banners shown on your links"
     }
   },
   "homeStats": {
@@ -3545,7 +3564,7 @@
     "empty": "No CTAs yet.",
     "edit": "Edit",
     "delete": "Delete",
-    "deleteConfirm": "Delete the '{label}' CTA? (soft-delete; analytics data is preserved)",
+    "deleteConfirm": "Delete the “{label}” CTA? (soft-delete; analytics data is preserved)",
     "editorTitleEdit": "Edit CTA",
     "editorTitleNew": "New CTA",
     "label": "Label",
@@ -3998,5 +4017,22 @@
       "closed": "Closed",
       "canceled": "Canceled"
     }
+  },
+  "linkAnalytics": {
+    "title": "Analytics",
+    "loginTitle": "Sign in to see how all your links perform",
+    "loginDesc": "Human-click trends and your top links, in one place.",
+    "loadFailed": "Couldn’t load your stats. Please try again.",
+    "weekHumanClicks": "Human clicks · last 7 days",
+    "todayAndLinks": "Today {today} · {links, plural, one {# link} other {# links}}",
+    "scopeNote": "Bot clicks excluded. Times in {tz}.",
+    "attention": "Worth a look",
+    "zeroClick": "{count, plural, one {# link} other {# links}} without clicks yet",
+    "expiring": "{count, plural, one {# link expires} other {# links expire}} within 3 days",
+    "topLinks": "Top links",
+    "topLinksNote": "All-time human clicks",
+    "humanClicks": "human clicks",
+    "createFirst": "Create your first link",
+    "viewFewestClicks": "Fewest clicks first"
   }
 }
