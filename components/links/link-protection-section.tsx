@@ -27,9 +27,12 @@ export function LinkProtectionSection({ shortCode }: { shortCode: string }) {
   const [viewCount, setViewCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadFailed(false);
     getLinkDetail(shortCode)
       .then((detail) => {
         if (!active) return;
@@ -38,7 +41,7 @@ export function LinkProtectionSection({ shortCode }: { shortCode: string }) {
         setMaxViewsInput(detail.maxViews != null ? String(detail.maxViews) : "");
         setViewCount(detail.viewCount ?? 0);
       })
-      .catch(() => {})
+      .catch(() => active && setLoadFailed(true))
       .finally(() => active && setLoading(false));
     return () => {
       active = false;
@@ -58,17 +61,19 @@ export function LinkProtectionSection({ shortCode }: { shortCode: string }) {
       }
       nextMaxViews = parsed;
     }
-    const passwordChanged = password.length > 0 || removePassword;
+    const newPassword = password.trim();
+    const passwordChanged = newPassword.length > 0 || removePassword;
     if (!passwordChanged && nextMaxViews === maxViews) return;
     setBusy(true);
     try {
       // 계약(편집 다이얼로그와 동일): password "" = 해제, null = 유지.
-      await setLinkProtection(shortCode, {
-        password: removePassword ? "" : password.length > 0 ? password : null,
+      const saved = await setLinkProtection(shortCode, {
+        password: removePassword ? "" : newPassword.length > 0 ? newPassword : null,
         maxViews: nextMaxViews,
       });
-      setPasswordProtected(removePassword ? false : password.length > 0 || passwordProtected);
-      setMaxViews(nextMaxViews);
+      setPasswordProtected(saved.passwordProtected);
+      setMaxViews(saved.maxViews ?? null);
+      setMaxViewsInput(saved.maxViews != null ? String(saved.maxViews) : "");
       setPassword("");
       setRemovePassword(false);
       toast(tSection("saved"), "success");
@@ -100,8 +105,11 @@ export function LinkProtectionSection({ shortCode }: { shortCode: string }) {
         onMaxViewsChange={setMaxViewsInput}
         t={t}
       />
-      <div className="mt-4 flex justify-end">
-        <Button variant="accent" size="sm" onClick={() => void save()} disabled={busy || loading}>
+      <div className="mt-4 flex items-center justify-end gap-3">
+        {loadFailed && (
+          <p role="alert" className="mr-auto text-[12px] text-red-600 dark:text-red-400">{tSection("loadFailed")}</p>
+        )}
+        <Button variant="accent" size="sm" onClick={() => void save()} disabled={busy || loading || loadFailed}>
           {t("save")}
         </Button>
       </div>

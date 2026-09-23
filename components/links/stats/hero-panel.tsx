@@ -34,11 +34,11 @@ function StatsHeroCoreImpl({ label, caption, total, series, draw = "static", cla
         <span className="text-[10px] font-semibold uppercase tracking-tagline text-accent-300">
           {label}
         </span>
-        <span className="font-mono text-[11px] uppercase tracking-tagline text-accent-300/80">
+        <span className="tabular-nums text-[11px] uppercase tracking-tagline text-accent-300/80">
           {caption}
         </span>
       </div>
-      <p className="mt-3 font-mono text-[34px] font-bold leading-none tracking-tight tabular-nums text-white">
+      <p className="mt-3 text-[34px] font-bold leading-none tracking-tight tabular-nums text-white">
         {formatNumber(total)}
       </p>
       {points && (

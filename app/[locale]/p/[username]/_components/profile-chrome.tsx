@@ -19,7 +19,7 @@ const TAB_SEGMENTS = ["series", "collections", "about", "liked", "bookmarks"];
  *   - author subdomain `{user}.kurl.me/...` → rewritten to `/p/{user}` server-side too, so the
  *     browser path has NO `/p/` and NO `@` — the whole path IS the post-username tail.
  *  Exported for unit tests (topology matrix). */
-export function isTabRoute(pathname: string): boolean {
+export function authorTail(pathname: string): string[] {
   const parts = pathname.replace(/\/+$/, "").split("/").filter(Boolean);
   const pIdx = parts.indexOf("p");
   // Drop a leading 2-letter locale so the @handle check sees `@user` first on either `/@user` or
@@ -31,6 +31,11 @@ export function isTabRoute(pathname: string): boolean {
       : handleParts[0]?.startsWith("@")
         ? handleParts.slice(1) // blog-host @handle: tail after the handle
         : parts; // subdomain: the whole path is the tail
+  return after;
+}
+
+export function isTabRoute(pathname: string): boolean {
+  const after = authorTail(pathname);
   if (after.length === 0) return true; // /p/{user}, /@{user} or subdomain root → 글
   if (after.length === 1) return TAB_SEGMENTS.includes(after[0]); // tab vs post slug
   return false; // /p/{user}/series/{slug}, deeper → not a tab
@@ -48,7 +53,7 @@ export function ProfileChrome({ header, children }: { header: ReactNode; childre
   const pathname = usePathname();
   if (!isTabRoute(pathname)) return <>{children}</>;
   return (
-    <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
+    <main className="mx-auto max-w-7xl px-4 pb-24 pt-6 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-2xl">{header}</div>
       {children}
     </main>

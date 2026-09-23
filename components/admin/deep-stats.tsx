@@ -76,7 +76,7 @@ function ActiveUsersSection({ t }: { t: T }) {
         ))}
       </div>
       <div className="h-56 w-full">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer className="text-slate-500 dark:text-slate-400" width="100%" height="100%">
           <BarChart
             data={data?.buckets ?? []}
             margin={{ top: 8, right: 8, bottom: 0, left: -16 }}
@@ -84,12 +84,12 @@ function ActiveUsersSection({ t }: { t: T }) {
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
             <XAxis
               dataKey="bucket"
-              tick={{ fontSize: 10, fill: "#94a3b8" }}
+              tick={{ fontSize: 11, fill: "currentColor" }}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: "#94a3b8" }}
+              tick={{ fontSize: 11, fill: "currentColor" }}
               tickLine={false}
               axisLine={false}
               allowDecimals={false}
@@ -114,7 +114,7 @@ function LifecycleSection({ t }: { t: T }) {
   return (
     <Section title={t("section.lifecycle.title")} description={t("section.lifecycle.desc")}>
       <div className="h-56 w-full">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer className="text-slate-500 dark:text-slate-400" width="100%" height="100%">
           <LineChart
             data={data?.days ?? []}
             margin={{ top: 8, right: 8, bottom: 0, left: -16 }}
@@ -122,13 +122,13 @@ function LifecycleSection({ t }: { t: T }) {
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
             <XAxis
               dataKey="day"
-              tick={{ fontSize: 10, fill: "#94a3b8" }}
+              tick={{ fontSize: 11, fill: "currentColor" }}
               tickLine={false}
               axisLine={false}
-              label={{ value: "day", fontSize: 10, fill: "#94a3b8", position: "insideBottom" }}
+              label={{ value: "day", fontSize: 11, fill: "currentColor", position: "insideBottom" }}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: "#94a3b8" }}
+              tick={{ fontSize: 11, fill: "currentColor" }}
               tickLine={false}
               axisLine={false}
               allowDecimals={false}

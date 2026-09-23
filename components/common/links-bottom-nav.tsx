@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BarChart3, CalendarDays, Contact, Link2, Megaphone } from "lucide-react";
+import { BarChart3, CalendarDays, CircleUserRound, Contact, Link2, Megaphone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -52,36 +52,32 @@ export function LinksBottomNav() {
   // 프로필: view the public online business card (or showcase onboarding when there's no card yet).
   const username = me?.username;
   const profileHref = authenticated && username ? `/u/${username}` : "/showcase";
-  const tabs = [
-    { href: "/", label: t("shorten"), Icon: Link2, active: pathname === "/" },
-    {
-      href: authenticated ? "/campaigns" : "/qr-campaigns",
-      label: t("campaigns"),
-      Icon: Megaphone,
-      active: pathname.startsWith("/campaigns") || pathname.startsWith("/qr-campaigns"),
-    },
-    {
-      href: "/events",
-      label: t("events"),
-      Icon: CalendarDays,
-      active: pathname.startsWith("/events"),
-    },
-    {
-      href: "/dashboard",
-      label: t("myLinks"),
-      Icon: BarChart3,
-      active: pathname.startsWith("/dashboard") || pathname.startsWith("/stats/"),
-    },
-    {
-      href: profileHref,
-      label: t("profile"),
-      Icon: Contact,
-      active:
-        pathname.startsWith("/u/") ||
-        pathname.startsWith("/showcase") ||
-        pathname.startsWith("/settings/profile"),
-    },
-  ];
+  const tabs = authenticated
+    ? [
+        {
+          href: "/dashboard",
+          label: t("links"),
+          Icon: Link2,
+          active: pathname === "/" || pathname.startsWith("/dashboard") || pathname.startsWith("/stats/"),
+        },
+        { href: "/analytics", label: t("analytics"), Icon: BarChart3, active: pathname.startsWith("/analytics") },
+        {
+          href: "/settings",
+          label: t("account"),
+          Icon: CircleUserRound,
+          active:
+            pathname.startsWith("/settings") ||
+            pathname.startsWith("/campaigns") ||
+            pathname.startsWith("/events") ||
+            pathname.startsWith("/ctas"),
+        },
+      ]
+    : [
+        { href: "/", label: t("shorten"), Icon: Link2, active: pathname === "/" },
+        { href: "/qr-campaigns", label: t("campaigns"), Icon: Megaphone, active: pathname.startsWith("/qr-campaigns") },
+        { href: "/events", label: t("events"), Icon: CalendarDays, active: pathname.startsWith("/events") },
+        { href: profileHref, label: t("profile"), Icon: Contact, active: pathname.startsWith("/u/") || pathname.startsWith("/showcase") },
+      ];
 
   return (
     <nav

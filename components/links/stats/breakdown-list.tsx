@@ -55,10 +55,10 @@ function BreakdownListImpl({ items, maxItems = 10 }: Props) {
                 />
               </div>
             </div>
-            <span className="w-12 shrink-0 text-right font-mono text-xs tabular-nums text-slate-600 dark:text-slate-300 sm:w-16">
+            <span className="w-12 shrink-0 text-right text-xs tabular-nums text-slate-600 dark:text-slate-300 sm:w-16">
               {formatNumber(item.count)}
             </span>
-            <span className="hidden w-12 text-right font-mono text-[11px] tabular-nums text-slate-500 dark:text-slate-400 sm:inline">
+            <span className="hidden w-12 text-right text-[11px] tabular-nums text-slate-500 dark:text-slate-400 sm:inline">
               {pct}%
             </span>
           </li>

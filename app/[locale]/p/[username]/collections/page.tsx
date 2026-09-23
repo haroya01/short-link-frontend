@@ -43,7 +43,7 @@ export default async function PublicCollectionsIndexPage({
   ]);
 
   return (
-    <ReadingShell className="mt-8">
+    <ReadingShell className="mt-4 sm:mt-8">
       <AuthorContentTransition>
         {collections.length === 0 ? (
           <p className="text-slate-500 dark:text-slate-400">{t("collectionsEmpty")}</p>

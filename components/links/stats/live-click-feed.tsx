@@ -14,7 +14,7 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-[10px] font-semibold text-accent-700 dark:text-accent-400">
+        <h3 className="text-[13px] font-semibold text-slate-900 dark:text-slate-100">
           {t("title")}
         </h3>
         <div className="flex items-center gap-1.5 text-[11px]">
@@ -40,11 +40,11 @@ export function LiveClickFeed({ shortCode, onTick }: { shortCode: string; onTick
         <ul className="divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           {items.map((item) => (
             <li key={item.id} className="flex items-center gap-3 px-4 py-2.5 text-[12px]">
-              <span className="font-mono tabular-nums text-slate-500 dark:text-slate-400" suppressHydrationWarning>
+              <span className="tabular-nums text-slate-500 dark:text-slate-400" suppressHydrationWarning>
                 {formatTime(item.occurredAt)}
               </span>
               {item.countryCode && (
-                <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-700 dark:text-slate-300">
+                <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 tabular-nums text-[10px] text-slate-700 dark:text-slate-300">
                   {item.countryCode}
                 </span>
               )}

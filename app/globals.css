@@ -79,6 +79,12 @@ body[data-bottom-nav] {
   --toast-bottom: calc(var(--bottom-nav-h) + 0.75rem);
 }
 
+@media (max-width: 639px) {
+  body[data-bottom-nav] .site-footer {
+    padding-bottom: calc(var(--bottom-nav-h) + 1.5rem);
+  }
+}
+
 /* qr-campaigns 히어로 진입 애니메이션. opacity-0 으로 시작 → 100% 에서 1 로. forwards 로
    끝 상태 유지. 같은 race 이유로 globals.css 에 둠 (styled-jsx 가 아님). */
 @keyframes hero-fade {
@@ -683,7 +689,7 @@ mark.kurl-highlight--thread {
   /* Hover a heading → a faint "#" deep-link appears in the left gutter (the section's TOC anchor).
      The wrapping link stays heading-styled, not the accent link style. Hover-only by nature. */
   .prose-post :is(h2, h3, h4) a {
-    @apply relative text-inherit no-underline;
+    @apply relative text-inherit no-underline dark:text-inherit;
     font-weight: inherit;
   }
   .prose-post :is(h2, h3, h4) a::before {

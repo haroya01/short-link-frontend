@@ -65,14 +65,14 @@ export function ChannelDepthTable({
                 >
                   {c.host}
                 </span>
-                <span className="mt-0.5 block whitespace-nowrap font-mono text-[11px] tabular-nums text-slate-500 dark:text-slate-400 sm:hidden">
+                <span className="mt-0.5 block whitespace-nowrap text-[11px] tabular-nums text-slate-500 dark:text-slate-400 sm:hidden">
                   {formatFirstSeen(c.firstSeenAt)}
                 </span>
               </TD>
-              <TD className="px-2 text-right font-mono text-[12px] tabular-nums sm:px-4 sm:text-sm">
+              <TD className="px-2 text-right text-[12px] tabular-nums sm:px-4 sm:text-sm">
                 {formatNumber(c.count)}
               </TD>
-              <TD className="hidden whitespace-nowrap text-right font-mono text-[12px] tabular-nums text-slate-500 dark:text-slate-400 sm:table-cell">
+              <TD className="hidden whitespace-nowrap text-right text-[12px] tabular-nums text-slate-500 dark:text-slate-400 sm:table-cell">
                 {formatFirstSeen(c.firstSeenAt)}
               </TD>
               <TD className="px-3 text-right sm:px-4">
@@ -91,7 +91,7 @@ export function ChannelDepthTable({
                   </span>
                   <span
                     className={cn(
-                      "w-8 text-right font-mono text-[11px] tabular-nums sm:w-9",
+                      "w-8 text-right text-[11px] tabular-nums sm:w-9",
                       isLeader
                         ? "font-medium text-slate-900 dark:text-slate-100"
                         : "text-slate-500 dark:text-slate-400",

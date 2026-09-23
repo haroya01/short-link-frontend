@@ -2,7 +2,6 @@
 
 import { DATE_LOCALE } from "@/lib/date";
 import { useMemo, useState, type ReactNode } from "react";
-import { Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import type { PublicPostListItem } from "@/modules/blog/api/public-posts";
@@ -12,7 +11,6 @@ import { CoverThumb } from "@/modules/blog/components/cover-thumb";
 import { SeriesIndex } from "@/modules/blog/components/series-index";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
-import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 
 // Cap the tag cloud so a wide-ranging series doesn't fill the rail with chips; the rest expand on tap.
@@ -268,15 +266,6 @@ export function SeriesReadingShell({
                     </span>
                     <span className="mt-1 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
                       <time dateTime={p.publishedAt}>{fmtDate(p.publishedAt)}</time>
-                      {showLikes(p.likeCount) && (
-                        <>
-                          <span aria-hidden>·</span>
-                          <span className="flex items-center gap-1">
-                            <Heart className="h-3 w-3 text-accent-600" />
-                            {p.likeCount}
-                          </span>
-                        </>
-                      )}
                     </span>
                     {p.excerpt && (
                       <span className="mt-1.5 line-clamp-2 block text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">

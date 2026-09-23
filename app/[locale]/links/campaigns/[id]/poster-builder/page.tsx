@@ -195,7 +195,7 @@ export default function PosterBuilderPage() {
   const canCompose = !!pdfBytes && batchCount > 0 && !composing;
 
   if (ready && !authenticated) {
-    return <LinksAuthGate eyebrow="campaigns" title={t("loginRequired")} />;
+    return <LinksAuthGate title={t("loginRequired")} />;
   }
 
   return (

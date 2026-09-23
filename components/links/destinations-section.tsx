@@ -455,23 +455,28 @@ const OS_OPTIONS = ["ios", "android", "windows", "macos", "linux"] as const;
  */
 export function LinkBlockedCountriesSection({ shortCode }: { shortCode: string }) {
   const t = useTranslations("stats.destinations");
+  const tCommon = useTranslations("common");
   const { toast } = useToast();
   const toMessage = useApiErrorMessage();
   const [codes, setCodes] = useState<string[]>([]);
   const [pick, setPick] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadFailed(false);
     getBlockedCountries(shortCode)
       .then((csv) => active && setCodes(csv ? csv.split(",").filter(Boolean) : []))
-      .catch(() => {})
+      .catch(() => active && setLoadFailed(true))
       .finally(() => active && setLoading(false));
     return () => {
       active = false;
     };
-  }, [shortCode]);
+  }, [shortCode, attempt]);
 
   async function persist(next: string[]) {
     setBusy(true);
@@ -507,13 +512,20 @@ export function LinkBlockedCountriesSection({ shortCode }: { shortCode: string }
       </div>
 
       <div className="flex items-center gap-2">
-        <CountryCombobox value={pick} onChange={add} disabled={busy} />
+        <CountryCombobox value={pick} onChange={add} disabled={busy || loading || loadFailed} />
         <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("blockedAddHint")}</span>
       </div>
 
       <div className="mt-3">
         {loading ? (
           <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("blockedLoading")}</p>
+        ) : loadFailed ? (
+          <p role="alert" className="text-[12px] text-red-600 dark:text-red-400">
+            {t("blockedLoadFailed")}{" "}
+            <button type="button" onClick={() => setAttempt((n) => n + 1)} className="focus-ring rounded font-medium underline underline-offset-2">
+              {tCommon("retry")}
+            </button>
+          </p>
         ) : codes.length === 0 ? (
           <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("blockedEmpty")}</p>
         ) : (

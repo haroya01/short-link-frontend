@@ -34,12 +34,12 @@ export default function EventsListPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50">{t("title")}</h1>
+    <div className="container max-w-3xl py-10">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">{t("title")}</h1>
         <Link
           href="/events/new"
-          className="flex items-center gap-1.5 rounded-full bg-accent-600 px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-accent-700"
+          className="focus-ring inline-flex h-10 items-center gap-1.5 rounded-lg bg-accent-700 px-4 text-sm font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
         >
           <CalendarPlus className="h-4 w-4" />
           {t("new")}

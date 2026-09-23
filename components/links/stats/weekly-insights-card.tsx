@@ -204,7 +204,7 @@ function Stat({
       <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
       <p
         className={
-          (mono ? "font-mono " : "") +
+          (mono ? "tabular-nums " : "") +
           "mt-1 truncate text-lg font-semibold text-slate-900 dark:text-slate-100"
         }
         title={value}

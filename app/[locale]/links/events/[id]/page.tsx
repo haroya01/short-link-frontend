@@ -63,7 +63,6 @@ export default function EventDetailPage() {
   if (ready && !authenticated) {
     return (
       <LinksAuthGate
-        eyebrow="events"
         title={t("authTitle")}
         description={t("authDesc")}
         next={`/events/${idParam}`}

@@ -48,7 +48,7 @@
     "loadMoreError": "Không tải thêm được.",
     "feed": "Đang theo dõi",
     "followingSignedOut": "Bài viết mới từ các tác giả bạn theo dõi sẽ tụ về đây.",
-    "forYou": "For You",
+    "forYou": "Dành cho bạn",
     "forYouSignedOutTitle": "Chọn riêng cho bạn",
     "forYouSignedOut": "Đăng nhập và chúng tôi sẽ gợi ý bài viết dựa trên những gì bạn đọc và chủ đề bạn quan tâm.",
     "forYouEmptyTitle": "Chưa có gì để gợi ý",
@@ -266,7 +266,7 @@
     "settingsHideFollowerCount": "Ẩn số người theo dõi",
     "settingsHideFollowerCountHint": "Khi bật, không ai thấy số người theo dõi hay đang theo dõi của bạn. Việc theo dõi vẫn hoạt động.",
     "rowDelete": "Xóa",
-    "rowDeleteConfirm": "Xóa '{title}'? Thao tác này không thể hoàn tác.",
+    "rowDeleteConfirm": "Xóa “{title}”? Thao tác này không thể hoàn tác.",
     "rowDeleteFailed": "Không xóa được.",
     "curationLiked": "Bài đã thích",
     "curationLikedHint": "Những bài bạn đã thích.",
@@ -634,9 +634,6 @@
     "aboutIntro": "Giới thiệu",
     "aboutSince": "Hoạt động từ {date}",
     "aboutViewPosts": "Xem tất cả bài viết",
-    "statPosts": "Bài viết",
-    "statSeries": "Series",
-    "statLikes": "Lượt thích",
     "activityHeading": "Hoạt động",
     "activitySummary": "Xuất bản {count} bài trong năm qua",
     "imageZoom": "Phóng to ảnh",
@@ -688,7 +685,9 @@
       "COPYRIGHT": "Vi phạm bản quyền",
       "OTHER": "Khác"
     },
-    "publishedCelebration": "Bài viết đã được xuất bản"
+    "publishedCelebration": "Bài viết đã được xuất bản",
+    "followersList": "Người theo dõi",
+    "followingList": "Đang theo dõi"
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",
@@ -826,7 +825,8 @@
       "linksHint": "Liên kết ngắn · QR · Chiến dịch · CTA · Thống kê",
       "blogLabel": "Blog",
       "blogHint": "Viết · Trang tác giả · Phân tích độc giả"
-    }
+    },
+    "links": "Liên kết"
   },
   "sidebar": {
     "blog": {
@@ -860,10 +860,10 @@
   "home": {
     "tagline": "kurl v1",
     "headline1": "Rút gọn trong một dòng",
-    "headline2": "Phân tích ai, khi nào, ở đâu",
+    "headline2": "Xem khi nào, ở đâu được nhấp",
     "subhead": "Dòng nhấp trực tiếp, thông tin tự động, lọc bot — phân tích mà các dịch vụ rút gọn khác khóa sau gói trả phí, ở đây miễn phí.",
     "mobileHeadline1": "Rút gọn trong một dòng",
-    "mobileHeadline2": "Xem ai, khi nào, ở đâu",
+    "mobileHeadline2": "Khi nào, ở đâu",
     "mobileSubhead": "Lượt nhấp trực tiếp, thông tin và lọc bot miễn phí",
     "anonymousHint": "Không cần đăng nhập. Đăng nhập nếu bạn muốn xem thống kê.",
     "demoLink": "Xem trước bảng phân tích",
@@ -941,8 +941,7 @@
       "scene3Desc": "Ai, khi nào, từ đâu — tách người và bot, đến cả nhịp 30 ngày. Độ sâu nơi khác thu phí, ở đây miễn phí.",
       "scene3CtaDemo": "Xem trước bản demo",
       "scene3CtaStart": "Bắt đầu miễn phí"
-    },
-    "heroTicker": "Đến nay <l></l> liên kết · <c></c> lượt nhấp được phân tích tại đây"
+    }
   },
   "showcase": {
     "eyebrow": "Hồ sơ công khai · ví dụ thật",
@@ -1020,7 +1019,8 @@
         "Thông tin"
       ]
     },
-    "consent": "Khi tiếp tục, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>."
+    "consent": "Khi tiếp tục, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>.",
+    "heading": "Đăng nhập kurl"
   },
   "auth": {
     "signedIn": "Đã đăng nhập",
@@ -1146,7 +1146,10 @@
       "expiresAt": "Hết hạn",
       "clicks": "Lượt nhấp của người",
       "actions": "Hành động",
-      "sortAllClicks": "Xếp theo mọi lượt nhấp"
+      "sortAllClicks": "Xếp theo mọi lượt nhấp",
+      "sortNewest": "Mới nhất",
+      "sortAsc": "tăng dần",
+      "sortDesc": "giảm dần"
     },
     "card": {
       "week": "Lượt nhấp của người trong 7 ngày: {count}",
@@ -1157,7 +1160,9 @@
     "actions": {
       "stats": "Thống kê",
       "edit": "Chỉnh sửa",
-      "delete": "Xóa"
+      "delete": "Xóa",
+      "more": "Thêm",
+      "openOriginal": "Mở liên kết gốc"
     },
     "favorite": {
       "add": "Thêm vào mục yêu thích",
@@ -1231,7 +1236,13 @@
     "overviewFailed": "Không tải được thống kê tài khoản.",
     "accountScope": "Toàn tài khoản · {tz} · {total} lượt nhấp tích lũy gồm tự động · không phụ thuộc bộ lọc",
     "libraryViews": "Chọn danh sách liên kết",
-    "allLinks": "Tất cả liên kết"
+    "allLinks": "Tất cả liên kết",
+    "copied": "Đã sao chép liên kết",
+    "subtitleCount": "{count} liên kết",
+    "toolCampaigns": "Chiến dịch QR",
+    "toolEvents": "Đăng ký",
+    "selectMode": "Chọn",
+    "selectDone": "Xong"
   },
   "edit": {
     "title": "Chỉnh sửa liên kết",
@@ -1303,7 +1314,8 @@
       "waiting": "Lượt nhấp sẽ xuất hiện ở đây khi có.",
       "scope": "Lượt nhấp từ khi mở màn hình · giờ trên thiết bị",
       "reconnecting": "Mất kết nối · đang kết nối lại",
-      "disconnectedHint": "Kết nối lượt nhấp trực tiếp bị ngắt. Đang tự động kết nối lại. Bạn vẫn có thể xem thống kê đã có."
+      "disconnectedHint": "Kết nối lượt nhấp trực tiếp bị ngắt. Đang tự động kết nối lại. Bạn vẫn có thể xem thống kê đã có.",
+      "example": "Ví dụ"
     },
     "quality": {
       "title": "Chất lượng lượt nhấp",
@@ -1439,7 +1451,8 @@
       "blockedRemove": "Bỏ chặn",
       "blockedFailed": "Không cập nhật được chặn theo quốc gia.",
       "configuredShare": "đặt {pct}%",
-      "actualShare": "thực tế {pct}%"
+      "actualShare": "thực tế {pct}%",
+      "blockedLoadFailed": "Không tải được danh sách quốc gia bị chặn."
     },
     "loginRequired": "Cần đăng nhập",
     "loginRequiredDesc": "Thống kê chỉ hiển thị cho chủ sở hữu liên kết.",
@@ -1685,7 +1698,8 @@
     "protection": {
       "title": "Bảo vệ",
       "saved": "Đã lưu cài đặt bảo vệ.",
-      "failed": "Không thể lưu cài đặt bảo vệ."
+      "failed": "Không thể lưu cài đặt bảo vệ.",
+      "loadFailed": "Không tải được cài đặt bảo vệ hiện tại nên không thể lưu. Hãy tải lại trang."
     },
     "analysisTabs": {
       "when": "Xu hướng nhấp",
@@ -2113,7 +2127,8 @@
       "badge": "Demo",
       "lockedToast": "Đây là bản xem trước demo. Sau khi đăng ký bạn có thể đăng ký và chỉnh sửa những thứ này trên liên kết của riêng mình.",
       "payloadPreview": "Xem trước payload được gửi đi"
-    }
+    },
+    "createCta": "Tạo liên kết của tôi"
   },
   "publicProfile": {
     "empty": "Người dùng này chưa thêm liên kết nào.",
@@ -2497,19 +2512,13 @@
     ]
   },
   "settings": {
-    "title": "Cài đặt",
+    "title": "Tài khoản",
     "tabs": {
       "aria": "Các mục cài đặt",
       "account": "Tài khoản",
       "security": "Bảo mật",
       "domains": "Tên miền",
-      "data": "Dữ liệu",
-      "descriptions": {
-        "account": "Email / ngày tham gia / múi giờ / ngôn ngữ giao diện.",
-        "security": "2FA TOTP + mã khôi phục / cấp & thu hồi khóa API.",
-        "domains": "Định tuyến URL ngắn qua tên miền của riêng bạn (go.brand.com).",
-        "data": "Xuất dữ liệu (JSON) / xóa tài khoản vĩnh viễn."
-      }
+      "data": "Dữ liệu"
     },
     "profile": {
       "title": "Hồ sơ công khai",
@@ -2902,7 +2911,7 @@
       "noLinks": "Chưa có liên kết.",
       "toggleFailed": "Cập nhật thất bại."
     },
-    "profileTitle": "Hồ sơ",
+    "profileTitle": "Thông tin tài khoản",
     "email": "Email",
     "provider": "Nhà cung cấp đăng nhập",
     "joinedAt": "Tham gia",
@@ -2914,7 +2923,6 @@
     "saved": "Đã lưu",
     "saveFailed": "Lưu thất bại.",
     "interfaceLanguage": "Ngôn ngữ giao diện",
-    "languageHint": "Bạn cũng có thể đổi từ trình chuyển ngôn ngữ ở phần đầu trang.",
     "dataTitle": "Dữ liệu",
     "exportButton": "Tải dữ liệu của tôi (JSON)",
     "exportHint": "Thông tin người dùng + tất cả liên kết + sự kiện nhấp (IP đã được che).",
@@ -3018,6 +3026,17 @@
       "deleteFailed": "Xóa thất bại.",
       "dnsTxtHint": "Kiểm tra quyền sở hữu — thêm bản ghi TXT này tại nhà cung cấp DNS của bạn",
       "dnsCnameHint": "Định tuyến lưu lượng — thêm bản ghi CNAME này tại cùng nhà cung cấp"
+    },
+    "toolsTitle": "Công cụ",
+    "tools": {
+      "profile": "Hồ sơ công khai",
+      "profileDesc": "Gom liên kết vào một trang",
+      "campaigns": "Chiến dịch QR",
+      "campaignsDesc": "So sánh mã QR in theo vị trí",
+      "events": "Đăng ký",
+      "eventsDesc": "Nhận đăng ký sự kiện bằng một liên kết",
+      "ctas": "Thư viện CTA",
+      "ctasDesc": "Quản lý banner hiển thị trên liên kết"
     }
   },
   "homeStats": {
@@ -3545,7 +3564,7 @@
     "empty": "Chưa có CTA nào.",
     "edit": "Sửa",
     "delete": "Xóa",
-    "deleteConfirm": "Xóa CTA '{label}'? (xóa mềm; dữ liệu phân tích được giữ lại)",
+    "deleteConfirm": "Xóa CTA “{label}”? (xóa mềm; dữ liệu phân tích được giữ lại)",
     "editorTitleEdit": "Sửa CTA",
     "editorTitleNew": "CTA mới",
     "label": "Nhãn",
@@ -3998,5 +4017,22 @@
       "closed": "Đã đóng",
       "canceled": "Đã hủy"
     }
+  },
+  "linkAnalytics": {
+    "title": "Phân tích",
+    "loginTitle": "Đăng nhập để xem hiệu quả của tất cả liên kết",
+    "loginDesc": "Xu hướng lượt nhấp thật và liên kết nổi bật ở một nơi.",
+    "loadFailed": "Không tải được số liệu. Vui lòng thử lại.",
+    "weekHumanClicks": "Lượt nhấp thật · 7 ngày qua",
+    "todayAndLinks": "Hôm nay {today} · {links} liên kết",
+    "scopeNote": "Đã loại trừ lượt nhấp của bot. Giờ theo {tz}.",
+    "attention": "Cần xem",
+    "zeroClick": "{count} liên kết chưa có lượt nhấp",
+    "expiring": "{count} liên kết hết hạn trong 3 ngày",
+    "topLinks": "Liên kết hàng đầu",
+    "topLinksNote": "Theo tổng lượt nhấp thật",
+    "humanClicks": "lượt nhấp thật",
+    "createFirst": "Tạo liên kết đầu tiên",
+    "viewFewestClicks": "Xem theo ít lượt nhấp nhất"
   }
 }

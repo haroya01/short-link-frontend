@@ -214,7 +214,7 @@ export async function FeedScreen({
   // No separate hero card. On the default (non-search) recent feed the lead post just gets a quiet
   // "오늘의 글" emphasis as the first list row — same grammar as the rest of the list, only louder by a
   // notch. Trending/search feeds have no lead emphasis.
-  const featuredFirst = !searching && !activeTag && tab === "recent" && items.length > 1;
+  const featuredFirst = false;
 
   // 검색 결과가 1~2건뿐일 땐 와이드 메이슨리 그리드가 반쪽 타일 하나를 덩그러니 남긴다. 이 경우엔
   // 읽기 컬럼(max-w-2xl) 안 전폭 목록 행으로 떨어뜨려, 결과가 완성된 한 줄로 읽히게 한다(0건 빈 상태·
@@ -281,6 +281,7 @@ export async function FeedScreen({
                 key: "for-you",
                 label: t("forYou"),
                 href: "?sort=for-you",
+                personal: true,
                 active: !searching && tab === "for-you",
                 // For You is per-reader, so it can't apply to a cross-author search.
                 disabled: searching,
@@ -289,6 +290,7 @@ export async function FeedScreen({
                 key: "following",
                 label: t("feed"),
                 href: "?sort=following",
+                personal: true,
                 active: !searching && tab === "following",
                 // A search spans every author, so "following" can't apply — disable it while searching.
                 disabled: searching,

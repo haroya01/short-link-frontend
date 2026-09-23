@@ -263,7 +263,7 @@ export default async function PublicPostPage({
       {/* data-bhv-post: BehaviorTracker 의 클릭 위임이 읽는 페이지 컨텍스트 — 두 번째 행동이 어느 글에서
           났는지의 출처. */}
       <article
-        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-16 sm:py-20"
+        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-8 sm:py-20"
         lang={post.languageTag}
         data-bhv-post={post.id}
       >
@@ -285,7 +285,7 @@ export default async function PublicPostPage({
 
       {/* 마스트헤드 아래 조용한 헤어라인(§10.1 border-slate-100 계열)으로 제목·메타를 하나의 블록으로
           닫는다 — xl 에선 헤더가 얇은 메타 한 줄뿐이라 닫는 선이 없으면 본문과 경계가 흐릿했다. */}
-      <header className="mb-12 border-b border-slate-100 pb-8 dark:border-slate-800">
+      <header className="mb-8 border-b border-slate-100 pb-6 dark:border-slate-800 sm:mb-12 sm:pb-8">
         {eyebrow && (
           <p className="mb-3 text-[12px] font-medium text-slate-500 dark:text-slate-400">{eyebrow}</p>
         )}
@@ -296,7 +296,7 @@ export default async function PublicPostPage({
         <h1 className="text-headline-post font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-post-lg">
           {post.title}
         </h1>
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 sm:mt-6">
           {/* <xl: full author identity + follow inline. xl: those move to the left rail, so the header
               keeps only date·reading time + share — no duplicated author/follow at the top. */}
           <a
@@ -333,11 +333,7 @@ export default async function PublicPostPage({
                 sourcePostId={post.id}
               />
             </span>
-            {/* Like/bookmark at the top too (synced with the footer cluster via syncKey) so the
-                reader can react without scrolling to the end. */}
-            <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
             <BookmarkButton postId={post.id} />
-            <ConnectButton postId={post.id} postTitle={post.title} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
             {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
             <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />

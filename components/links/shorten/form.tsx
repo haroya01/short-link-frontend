@@ -151,21 +151,20 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
             aria-invalid={!!error}
             /* 16px 미만이면 iOS 사파리가 포커스 시 강제 줌 — 모바일은 16px 고정.
                truncate: 좁은 폭에선 placeholder 가 원형 버튼에 닿기 전에 …로 접힌다. */
-            className="h-11 flex-1 truncate rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-400 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-500 sm:text-[17px]"
+            className="h-11 flex-1 truncate rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-500 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-400 sm:text-[17px]"
           />
-          {/* 모바일=원형 화살표(44px 탭 타깃), sm+=라벨 있는 필. 라벨은 aria-label 이 대신 든다. */}
           <button
             type="submit"
             disabled={busy}
             aria-label={t("submit")}
-            className="focus-ring inline-flex h-11 w-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-accent-600 text-[15px] font-bold text-white transition-[background-color,transform] duration-200 hover:bg-accent-700 active:scale-[0.98] disabled:opacity-60 dark:hover:bg-accent-500 sm:h-10 sm:w-auto sm:px-5"
+            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-accent-700 px-4 text-[15px] font-bold text-white transition-[background-color,transform] duration-200 hover:bg-accent-800 active:scale-[0.98] disabled:opacity-60 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:h-10 sm:px-5"
           >
             {busy ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <>
-                <span className="hidden sm:inline">{t("heroSubmit")}</span>
-                <ArrowRight aria-hidden className="h-5 w-5 sm:h-4 sm:w-4" />
+                <span>{t("heroSubmit")}</span>
+                <ArrowRight aria-hidden className="h-4 w-4" />
               </>
             )}
           </button>

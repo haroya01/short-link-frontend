@@ -16,7 +16,7 @@ export function OnboardingSteps({ steps }: { steps: { title: string; desc: strin
               : "sm:pl-0")
           }
         >
-          <p className="font-mono text-[11px] font-medium text-accent-700 dark:text-accent-400">
+          <p className="text-[11px] font-medium tabular-nums text-slate-500 dark:text-slate-400">
             {String(index + 1).padStart(2, "0")}
           </p>
           <p className="mt-1 text-sm font-medium text-slate-900 dark:text-slate-100">{step.title}</p>

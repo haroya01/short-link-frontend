@@ -149,7 +149,7 @@ export function StatsJournal({
   return (
     <section>
       {/* 한글 라벨엔 mono+tracking 이 자간을 벌려 "링 크 일 지"처럼 읽힌다(§10.3 계보) — 자간 없이. */}
-      <h2 className="text-[11px] font-semibold text-accent-700 dark:text-accent-400">
+      <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
         {t("title")}
       </h2>
       <ul className="mt-1 divide-y divide-slate-100 dark:divide-slate-800">
@@ -173,7 +173,7 @@ export function StatsJournal({
                   <span className="min-w-0 flex-1 text-[15px] font-medium leading-relaxed text-slate-800 dark:text-slate-200 sm:text-[16px]">
                     {t(entry.key, resolveParams(entry, tStats))}
                   </span>
-                  <span className="mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-slate-400 transition-colors duration-150 ease-out group-hover:text-accent-700 dark:text-slate-500 dark:group-hover:text-accent-400">
+                  <span className="mt-1 inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-slate-500 transition-colors duration-150 ease-out group-hover:text-accent-700 dark:text-slate-400 dark:group-hover:text-accent-400">
                     {t("evidence")}
                     <ChevronDown
                       aria-hidden

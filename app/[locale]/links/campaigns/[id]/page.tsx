@@ -80,7 +80,7 @@ export default function CampaignDetailPage() {
   }, [ready, authenticated, campaignId, reload, t]);
 
   if (ready && !authenticated) {
-    return <LinksAuthGate eyebrow="campaigns" title={t("loginRequired")} />;
+    return <LinksAuthGate title={t("loginRequired")} />;
   }
 
   return (

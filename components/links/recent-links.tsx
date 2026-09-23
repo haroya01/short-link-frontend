@@ -37,7 +37,7 @@ export function RecentLinks() {
               href={item.shortUrl}
               target="_blank"
               rel="noreferrer"
-              className="focus-ring rounded font-mono font-medium text-slate-900 dark:text-slate-100 hover:underline"
+              className="focus-ring rounded tabular-nums font-medium text-slate-900 dark:text-slate-100 hover:underline"
             >
               /{item.shortCode}
             </a>

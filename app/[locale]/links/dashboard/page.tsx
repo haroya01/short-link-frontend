@@ -1,24 +1,20 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { ComponentType } from "react";
 import {
   BarChart3,
-  Clock3,
   FileUp,
   Link2,
-  MousePointerClick,
   Plus,
   QrCode,
   Search,
   Star,
-  TrendingUp,
   X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import type { MyLinksFilters } from "@/lib/api";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { readStorageString, removeStorageItem } from "@/lib/storage-json";
 import { useLinkFavorites } from "@/lib/use-link-favorites";
 import { useAccountClickStream } from "@/hooks/use-account-click-stream";
@@ -32,7 +28,6 @@ import {
   useTags,
 } from "@/lib/api/links.queries";
 import { Link } from "@/i18n/navigation";
-import { StatsMorphLink } from "@/components/links/stats-morph-link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -40,14 +35,12 @@ import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { LinksTable, type LiveBump } from "@/components/links/table";
 import { BulkImportDialog } from "@/components/links/bulk-import-dialog";
 import { MyLinksFiltersBar } from "@/components/links/my-links-filters";
-import { WeeklyInsightsCard } from "@/components/links/stats/weekly-insights-card";
 import { ExpiringSoonBanner } from "@/components/links/expiring-soon-banner";
 import { LinksAuthGate } from "@/components/links/auth-gate";
 import { DashboardOnboarding } from "@/components/common/dashboard-onboarding";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import { useToast } from "@/components/ui/toast";
-import { CopyButton } from "@/components/common/copy-button";
 
 export default function DashboardPage() {
   const { authenticated, ready, me } = useAuth();
@@ -60,13 +53,23 @@ export default function DashboardPage() {
     sort: "createdAt",
     dir: "desc",
   });
+  const [urlFiltersRead, setUrlFiltersRead] = useState(false);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const expiry = params.get("expiry");
+    const sort = params.get("sort");
+    if (expiry === "EXPIRING_SOON") setFilters((f) => ({ ...f, expiry, after: undefined }));
+    if (sort === "clickCount") setFilters((f) => ({ ...f, sort, dir: params.get("dir") === "asc" ? "asc" : "desc", after: undefined }));
+    if (expiry || sort) history.replaceState(history.state, "", window.location.pathname + window.location.hash);
+    setUrlFiltersRead(true);
+  }, []);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [ordering, setOrdering] = useState(false);
   const favorites = useLinkFavorites();
 
   const enabled = ready && authenticated;
-  const linksQuery = useMyLinks(filters, { enabled: enabled && !favoritesOnly });
+  const linksQuery = useMyLinks(filters, { enabled: enabled && urlFiltersRead && !favoritesOnly });
   const overviewQuery = useQuery({ queryKey: ["links", "overview", me?.id], queryFn: ({ signal }) => getLinkOverview(signal), enabled: enabled && me?.id != null });
 
   // 클릭이 도착하는 순간 — 계정 스트림이 실어오는 클릭을 행별 가산분으로 쌓아 표를 깨운다.
@@ -109,12 +112,10 @@ export default function DashboardPage() {
     () => tagsQuery.data?.map((t) => t.name) ?? [],
     [tagsQuery.data],
   );
-  const loading = !ready || (favoritesOnly ? favorites.isLoading : linksQuery.isLoading);
+  const loading = !ready || !urlFiltersRead || (favoritesOnly ? favorites.isLoading : linksQuery.isLoading);
   const listError = favoritesOnly ? favorites.error : linksQuery.error;
   const error = listError ? t("loadFailed") : null;
   const account = overviewQuery.data;
-  const top = account?.topLinks[0];
-  const ops: DashboardOps | null = account ? { totalClicks: account.humanClicks, clicks7d: account.clicks7d, zeroClickLinks: account.zeroClickLinks, expiringLinks: account.expiringLinks, topLink: top ? { ...top, clickCount: top.humanClickCount ?? top.clickCount, clicks7d: (top.clicksLast7d ?? []).reduce((sum, n) => sum + n, 0) } : null } : null;
 
   async function toggleFavorite(code: string) {
     try { await favorites.toggle(code); } catch { toast(t("favorite.saveFailed"), "error"); }
@@ -168,7 +169,6 @@ export default function DashboardPage() {
   if (ready && !authenticated) {
     return (
       <LinksAuthGate
-        eyebrow="dashboard"
         title={t("loginRequired")}
         description={t("loginRequiredDesc")}
         benefits={[
@@ -183,17 +183,20 @@ export default function DashboardPage() {
 
   return (
     <div className="container max-w-5xl space-y-4 py-6">
-      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
+      <div className="flex items-end justify-between gap-3">
         <div>
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("title")}
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            {account ? t("subtitle", { count: account.totalLinks }) : t("librarySubtitle")}
+          <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500 dark:text-slate-400">
+            <span>{account ? t("subtitleCount", { count: account.totalLinks }) : t("librarySubtitle")}</span>
+            <Link href="/campaigns" className="underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:decoration-slate-600 dark:hover:text-slate-100">{t("toolCampaigns")}</Link>
+            <Link href="/events" className="underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:decoration-slate-600 dark:hover:text-slate-100">{t("toolEvents")}</Link>
+            <button type="button" onClick={() => setBulkOpen(true)} className="underline decoration-slate-300 underline-offset-4 hover:text-slate-900 dark:decoration-slate-600 dark:hover:text-slate-100 sm:hidden">{t("bulkImport.button")}</button>
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => setBulkOpen(true)}>
+          <Button variant="outline" className="hidden sm:inline-flex" onClick={() => setBulkOpen(true)}>
             <FileUp className="h-4 w-4" /> {t("bulkImport.button")}
           </Button>
           <Link href="/">
@@ -216,45 +219,59 @@ export default function DashboardPage() {
         <DashboardOnboarding />
       ) : (
         <>
-          {overviewQuery.isLoading ? <DashboardOpsSkeleton /> : overviewQuery.error ? <ErrorState message={t("overviewFailed")} onRetry={() => void overviewQuery.refetch()} /> : ops ? <DashboardOpsPanel ops={ops} /> : null}
-          {account && <p className="text-xs text-slate-500 dark:text-slate-400">{t("accountScope", { tz: account.timezone, total: formatNumber(account.totalClicks) })}</p>}
-
           <ExpiringSoonBanner count={account?.expiringLinks ?? 0} onShowAll={() => {
             setFavoritesOnly(false);
             setFilters((f) => ({ ...f, expiry: "EXPIRING_SOON", after: undefined }));
           }} />
 
-          <WeeklyInsightsCard />
-
           <div className="space-y-3">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t("searchPlaceholder")}
-                className="pl-9 pr-9"
-              />
-              {query && (
-                <button
-                  type="button"
-                  onClick={() => setQuery("")}
-                  aria-label={t("clearSearch")}
-                  className="focus-ring absolute right-0 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t("libraryViews")}>
-              <Button variant={!favoritesOnly ? "accent" : "outline"} className="min-h-11" onClick={() => { setFavoritesOnly(false); setOrdering(false); }} aria-pressed={!favoritesOnly}>{t("allLinks")}</Button>
-              <Button variant={favoritesOnly ? "accent" : "outline"} className="min-h-11" onClick={() => setFavoritesOnly(true)} aria-pressed={favoritesOnly}><Star className="h-4 w-4" />{t("favorite.filter")} {favorites.items.length > 0 ? `(${favorites.items.length})` : ""}</Button>
-              {favoritesOnly && favorites.items.length > 1 && <Button variant="ghost" className="min-h-11" onClick={() => setOrdering((value) => !value)} aria-expanded={ordering}>{ordering ? t("favorite.orderDone") : t("favorite.orderTitle")}</Button>}
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
+                <Input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t("searchPlaceholder")}
+                  aria-label={t("searchPlaceholder")}
+                  className="pl-9 pr-9"
+                />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    aria-label={t("clearSearch")}
+                    className="focus-ring absolute right-0 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800" role="group" aria-label={t("libraryViews")}>
+                  {[false, true].map((fav) => (
+                    <button
+                      key={String(fav)}
+                      type="button"
+                      aria-pressed={favoritesOnly === fav}
+                      onClick={() => { setFavoritesOnly(fav); if (!fav) setOrdering(false); }}
+                      className={cn(
+                        "focus-ring inline-flex min-h-10 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors",
+                        favoritesOnly === fav
+                          ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
+                          : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
+                      )}
+                    >
+                      {fav && <Star className="h-3.5 w-3.5" />}
+                      {fav ? t("favorite.filter") : t("allLinks")}
+                    </button>
+                  ))}
+                </div>
+                {favoritesOnly && favorites.items.length > 1 && <Button variant="ghost" className="min-h-10" onClick={() => setOrdering((value) => !value)} aria-expanded={ordering}>{ordering ? t("favorite.orderDone") : t("favorite.orderTitle")}</Button>}
+                <MyLinksFiltersBar className="contents" filters={filters} onChange={setFilters} tagOptions={tagOptions} />
+              </div>
             </div>
             {favoritesOnly && <p className="text-xs text-slate-500 dark:text-slate-400">{t("favorite.syncedHint")}</p>}
             {ordering && favoritesOnly && <FavoriteOrder items={favorites.items} busy={favorites.busy} onReorder={(codes) => void reorderFavorites(codes)} />}
-            <MyLinksFiltersBar filters={filters} onChange={setFilters} tagOptions={tagOptions} />
 
 
           </div>
@@ -317,62 +334,6 @@ export default function DashboardPage() {
       )}
     </div>
   );
-}
-
-type DashboardOps = {
-  totalClicks: number;
-  clicks7d: number;
-  zeroClickLinks: number;
-  expiringLinks: number;
-  topLink: {
-    shortCode: string;
-    note?: string | null;
-    shortUrl: string;
-    originalUrl: string;
-    clickCount: number;
-    clicks7d: number;
-  } | null;
-};
-
-function DashboardOpsPanel({ ops }: { ops: DashboardOps }) {
-  const t = useTranslations("dashboard.ops");
-  const top = ops.topLink;
-  return <section className="space-y-3">
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <OpsMetric icon={MousePointerClick} label={t("totalClicks")} value={formatNumber(ops.totalClicks)} hint={t("totalClicksHint")} />
-      <OpsMetric icon={TrendingUp} label={t("weekClicks")} value={formatNumber(ops.clicks7d)} hint={t("weekClicksHint")} />
-      <OpsMetric icon={Link2} label={t("zeroClick")} value={formatNumber(ops.zeroClickLinks)} hint={t("zeroClickHint")} />
-      <OpsMetric icon={Clock3} label={t("expiring")} value={formatNumber(ops.expiringLinks)} hint={ops.expiringLinks > 0 ? t("expiringReview") : t("expiringClear")} />
-    </div>
-    {top && <div className="grid min-h-14 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 rounded-lg bg-slate-50 px-3 py-2 dark:bg-slate-900 sm:flex sm:gap-x-4">
-      <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t("topLink")}</p>
-      <StatsMorphLink shortCode={top.shortCode} className="col-start-1 row-start-2 min-w-0 break-words text-sm font-semibold text-slate-900 dark:text-slate-100 sm:flex-1 sm:truncate" data-vt-link-scope><span data-vt-link-code>{top.note || `/${top.shortCode}`}</span></StatsMorphLink>
-      <span className="col-start-2 row-start-1 text-right text-xs tabular-nums text-slate-600 dark:text-slate-300">{formatNumber(top.clickCount)} {t("clicks")}</span>
-      <div className="col-start-2 row-start-2"><CopyButton size="sm" variant="ghost" label={t("copy")} value={top.shortUrl} /></div>
-    </div>}
-  </section>;
-}
-
-function DashboardOpsSkeleton() {
-  return <section className="space-y-3" aria-hidden><div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{[0, 1, 2, 3].map((index) => <Skeleton key={index} className="h-24 rounded-2xl" />)}</div><Skeleton className="h-14 rounded-lg" /></section>;
-}
-
-function OpsMetric({
-  icon: Icon,
-  label,
-  value,
-  hint,
-}: {
-  icon: ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
-  hint: string;
-}) {
-  return <div className="min-w-0 rounded-2xl border border-slate-200 px-3 py-3 dark:border-slate-800" title={hint}>
-    <p className="flex items-center gap-1.5 text-xs font-medium text-slate-600 dark:text-slate-300"><Icon className="hidden h-3.5 w-3.5 shrink-0 sm:block" />{label}</p>
-    <p className="mt-2 font-mono text-2xl font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">{value}</p>
-    <span className="sr-only">{hint}</span>
-  </div>;
 }
 
 function LoadingTable({ t }: { t: (k: string) => string }) {

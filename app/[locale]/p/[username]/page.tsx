@@ -121,7 +121,7 @@ export default async function PublicProfileHomepage({
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(profileJsonLd) }}
       />
       <ReadingShell
-        className="mt-8"
+        className="mt-4 sm:mt-8"
         rail={
           posts.length > 0 ? (
             <AuthorRail

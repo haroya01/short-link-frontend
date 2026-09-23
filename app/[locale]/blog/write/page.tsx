@@ -164,9 +164,9 @@ export default function WriteIndexPage() {
     // max-w-3xl: 분석·리드·저장한 글과 같은 워크스페이스 공통 폭 — 사이드바 형제 화면끼리
     // 본문 시작·끝점이 같아야 한 공간으로 읽힌다.
     <main className="mx-auto max-w-3xl px-6 py-10">
-      <header className="mb-6 flex items-center justify-between gap-4">
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
+          <h1 className="whitespace-nowrap text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{t("myPosts")}</h1>
           {/* Cumulative reach — the one summary the filter chips don't already carry. Counts per
               status live on the chips below; this line answers "내 글이 얼마나 읽혔나" at a glance. */}
           {totalViews > 0 && (
@@ -176,7 +176,7 @@ export default function WriteIndexPage() {
             </p>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <ExportMdButton />
           <ImportMdButton onDone={load} />
           <BlogLink
@@ -217,7 +217,7 @@ export default function WriteIndexPage() {
       {/* 한 줄 툴바 — 보기 전환(왼쪽)과 상태 필터(오른쪽)를 같은 행에 접는다. 컨트롤이 세 줄로
           쌓여 콘텐츠보다 먼저 쏟아지던 판을 정리. 상태 칩은 전체 보기에서만 의미가 있다. */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-        <div className="inline-flex rounded-full border border-slate-200 p-0.5 dark:border-slate-800">
+        <div className="inline-flex gap-0.5 rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
           {([
             ["all", t("viewAll"), List],
             ["series", t("viewBySeries"), Layers],
@@ -227,10 +227,10 @@ export default function WriteIndexPage() {
               type="button"
               onClick={() => changeView(v)}
               aria-pressed={view === v}
-              className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
+              className={`focus-ring inline-flex min-h-11 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition-colors ${
                 view === v
-                  ? "bg-accent-700 text-white"
-                  : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+                  ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
+                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
@@ -350,7 +350,7 @@ export default function WriteIndexPage() {
                 <BlogLink
                   href={`${writeBase}/${p.id}`}
                   className={`focus-ring group block rounded-lg px-3 py-4 transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
-                    p.status === "PUBLISHED" ? "pr-24 sm:pr-32" : hasAnalytics ? "pr-16 sm:pr-28" : "pr-3"
+                    p.status === "PUBLISHED" ? "pb-14 sm:pb-4 sm:pr-32" : hasAnalytics ? "pb-14 sm:pb-4 sm:pr-28" : "pr-3"
                   }`}
                 >
                   <div className="flex gap-4">
@@ -362,7 +362,7 @@ export default function WriteIndexPage() {
                         )}
                       </div>
                       <h3
-                        className={`mt-1.5 truncate text-[17px] font-semibold leading-snug transition-colors group-hover:text-accent-700 dark:group-hover:text-accent-300 ${
+                        className={`mt-1.5 line-clamp-2 text-[17px] font-semibold leading-snug transition-colors group-hover:text-accent-700 dark:group-hover:text-accent-300 ${
                           titled ? "text-slate-900 dark:text-slate-100" : "italic text-slate-400 dark:text-slate-500"
                         }`}
                       >
@@ -403,7 +403,7 @@ export default function WriteIndexPage() {
                 {/* Action cluster — siblings of the editor link (never nested). 대표글 toggle (published
                     only) + per-post 성과. This list is the hub: pinning and analytics live inline. */}
                 {(hasAnalytics || p.status === "PUBLISHED") && (
-                  <div className="absolute right-2 top-1/2 z-10 flex -translate-y-1/2 items-center gap-1.5">
+                  <div className="absolute bottom-3 right-3 z-10 flex items-center gap-3 sm:bottom-auto sm:right-2 sm:top-1/2 sm:-translate-y-1/2">
                     {p.status === "PUBLISHED" && (
                       <button
                         type="button"
@@ -411,7 +411,7 @@ export default function WriteIndexPage() {
                         aria-pressed={p.pinOrder != null}
                         aria-label={p.pinOrder != null ? t("featuredUnpin") : t("featuredPin")}
                         title={p.pinOrder != null ? t("featuredPinnedLabel") : t("featuredPin")}
-                        className={`focus-ring grid h-8 w-8 place-items-center rounded-lg border backdrop-blur transition-colors ${
+                        className={`focus-ring touch-target grid h-8 w-8 place-items-center rounded-lg border backdrop-blur transition-colors ${
                           p.pinOrder != null
                             ? "border-accent-300 bg-accent-50 text-accent-700 hover:bg-accent-100 dark:border-accent-500/40 dark:bg-accent-500/15 dark:text-accent-300"
                             : "border-slate-200 bg-white/80 text-slate-400 hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-500 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
@@ -424,7 +424,7 @@ export default function WriteIndexPage() {
                       <BlogLink
                         href={`${analyticsBase}/${p.id}`}
                         aria-label={t("viewAnalytics")}
-                        className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/80 px-2.5 py-1.5 text-[12px] font-medium text-slate-500 backdrop-blur transition-colors hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
+                        className="focus-ring touch-target inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/80 px-2.5 py-1.5 text-[12px] font-medium text-slate-500 backdrop-blur transition-colors hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
                       >
                         <BarChart3 className="h-4 w-4" />
                         <span className="hidden sm:inline">{t("viewAnalytics")}</span>

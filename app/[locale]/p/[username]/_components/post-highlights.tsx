@@ -480,6 +480,7 @@ function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
 }) {
   const contentRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("publicPost");
+  const tc = useTranslations("collections");
   useFocusTrap(contentRef, { active: true, onEscape: onClose });
   return (
     <div className="fixed inset-0 z-[60] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm sm:items-center sm:p-4" onMouseDown={onClose}>
@@ -491,7 +492,7 @@ function HighlightThreadChoices({ highlights, title, onClose, onChoose }: {
               <button type="button" className="focus-ring w-full rounded-lg py-3 text-left" onClick={() => onChoose(highlight)}>
                 <span className="block text-[13px] font-medium text-slate-900 dark:text-slate-100">@{highlight.author?.username ?? "?"}</span>
                 <span className="mt-1 block line-clamp-3 text-[14px] leading-relaxed text-slate-600 dark:text-slate-300">{highlight.note || highlight.quote}</span>
-                {highlight.replyCount > 0 && <span className="mt-1 block text-[12px] text-slate-500 dark:text-slate-400">{t("highlightReplyCount", { count: highlight.replyCount })}</span>}
+                {highlight.replyCount > 0 && <span className="mt-1 block text-[12px] text-slate-500 dark:text-slate-400">{tc("highlightReplyCount", { count: highlight.replyCount })}</span>}
               </button>
             </li>
           ))}
