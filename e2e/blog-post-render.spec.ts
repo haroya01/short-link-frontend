@@ -264,3 +264,18 @@ test("feed home is one reading column and a series row opens its series", async 
   await series.click();
   await page.waitForURL(/\/series\/nextjs-deep-dive/, { timeout: 15_000 });
 });
+
+test("post header keeps like and bookmark on the right, on phones too", async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/ko/p/dohyun/nextjs-14-app-router-blog");
+    const header = page.locator("article header").first();
+    const like = header.getByRole("button", { name: /좋아요/ });
+    const bookmark = header.getByRole("button", { name: "북마크에 저장" });
+    await expect(like).toBeVisible();
+    await expect(bookmark).toBeVisible();
+    const cluster = await like.locator("xpath=..").boundingBox();
+    const box = await header.boundingBox();
+    expect(box!.x + box!.width - (cluster!.x + cluster!.width)).toBeLessThanOrEqual(2);
+  }
+});

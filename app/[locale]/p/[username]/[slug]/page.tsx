@@ -324,7 +324,7 @@ export default async function PublicPostPage({
             {t("readingTime", { minutes })}
             {editedLabel ? ` · ${t("editedOn", { date: editedLabel })}` : ""}
           </p>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             <span className="xl:hidden">
               <FollowButton
                 username={author.username}
@@ -333,7 +333,11 @@ export default async function PublicPostPage({
                 sourcePostId={post.id}
               />
             </span>
+            {/* Like/bookmark at the top too (synced with the footer cluster via syncKey) so the
+                reader can react without scrolling to the end. */}
+            <LikeButton postId={post.id} initialCount={post.likeCount} postTitle={post.title} />
             <BookmarkButton postId={post.id} />
+            <ConnectButton postId={post.id} postTitle={post.title} />
             <ShareButton postUrl={postUrl} postSlug={post.slug} postTitle={post.title} />
             {/* Owner-only 수정/삭제 — renders nothing for other viewers (client-resolved ownership). */}
             <PostOwnerActions postId={post.id} authorUsername={author.username} locale={locale} />
