@@ -92,3 +92,18 @@ test("the theme is shared across blog surfaces via cookie (feed ↔ profile ↔ 
     ).toBe(true);
   }
 });
+
+test("feed tabs header stays in the same place on every tab", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const tabsHeader = page.locator("header").filter({ has: page.getByRole("link", { name: "시리즈" }) }).first();
+  const boxes = [];
+  for (const sort of ["recent", "trending", "series"]) {
+    await page.goto(`/ko/blog?sort=${sort}`);
+    await expect(tabsHeader).toBeVisible();
+    boxes.push(await tabsHeader.boundingBox());
+  }
+  for (const box of boxes) {
+    expect(Math.round(box!.x)).toBe(Math.round(boxes[0]!.x));
+    expect(Math.round(box!.width)).toBe(Math.round(boxes[0]!.width));
+  }
+});
