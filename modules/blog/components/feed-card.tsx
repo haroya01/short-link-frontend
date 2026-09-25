@@ -203,7 +203,7 @@ export function FeedCard({
   /** Above-fold row: load the thumbnail eagerly. Lazy thumbnails in the first viewport made the
    *  feed's LCP image wait for hydration — Lighthouse modeled that as LCP ≈ TTI. */
   eager?: boolean;
-  /** Mount fade + stagger (ms) for rows appended by the infinite scroll — mirrors DiscoveryCell.
+  /** Mount fade + stagger (ms) for rows appended by the infinite scroll.
    *  Left unset on the initial SSR rows so they never re-animate. */
   entranceDelay?: number;
 }) {
