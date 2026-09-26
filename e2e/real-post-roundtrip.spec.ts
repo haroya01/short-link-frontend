@@ -40,13 +40,9 @@ test.describe("real posts survive opening and saving in the web editor", () => {
       });
       await page.goto(`/en/blog/write/${POST_ID}`);
       await expect(page.locator(".tiptap")).toBeVisible({ timeout: 30_000 });
-      const put = page
-        .waitForRequest((req) => req.method() === "PUT" && req.url().endsWith(`/posts/${POST_ID}/blocks`), { timeout: 4_000 })
-        .catch(() => null);
       await page.getByRole("button", { name: "Save", exact: true }).click();
-      await put;
+      await expect.poll(() => saved, { timeout: 30_000 }).not.toBeNull();
 
-      if (saved === null) return;
       expect(await readerShape(saved as Block[]), `${post.slug}: the reader shows something different after just opening and saving`).toEqual(
         await readerShape(post.blocks),
       );
