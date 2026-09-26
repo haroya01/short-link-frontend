@@ -334,7 +334,7 @@ test("the embed dialog inserts a live link card that round-trips to an EMBED blo
 
   await page.locator(".tiptap").click();
   await page.keyboard.type("/");
-  await page.getByRole("option", { name: /^Embed\b/ }).click();
+  await page.getByRole("option", { name: /^Link card\b/ }).click();
 
   // The in-app URL dialog replaces window.prompt; type a YouTube link and confirm with Enter.
   const dialog = page.getByRole("dialog");
@@ -1933,4 +1933,38 @@ test("pasting a Qiita note turns it into a box", async ({ page }) => {
   const blocks = await save(page, captured);
   const quote = blocks.find((b) => b.type === "QUOTE")?.content ?? "";
   expect(quote.startsWith("[!WARNING]\n**Why?**")).toBe(true);
+});
+
+test.describe("on a phone, bold and link are one tap away without selecting text", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("toolbar bold and link work from an empty caret", async ({ page }) => {
+    const captured: Captured = { blocks: null };
+    await setupMocks(page, captured);
+    await openEditor(page);
+
+    const toolbar = page.getByTestId("editor-toolbar");
+    const bold = toolbar.getByRole("button", { name: "Bold", exact: true });
+    const link = toolbar.getByRole("button", { name: "Link", exact: true });
+    await expect(bold).toBeInViewport();
+    await expect(link).toBeInViewport();
+
+    await page.locator(".tiptap").click();
+    await page.keyboard.type("Plain ");
+    await bold.click();
+    await page.keyboard.type("strong");
+    await bold.click();
+    await page.keyboard.type(" and ");
+    await link.click();
+    const dialog = page.getByRole("dialog");
+    await dialog.locator('input[type="url"]').fill("https://kurl.me/docs");
+    await dialog.locator('input[type="url"]').press("Enter");
+    await expect(page.locator(".tiptap")).toBeFocused();
+    await page.keyboard.type(" end");
+
+    const blocks = await save(page, captured);
+    const paragraph = blocks.find((b) => b.type === "PARAGRAPH")?.content ?? "";
+    expect(paragraph).toContain("Plain **strong** and ");
+    expect(paragraph).toContain("<https://kurl.me/docs> end");
+  });
 });

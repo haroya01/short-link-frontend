@@ -30,13 +30,13 @@ import {
   List,
   ListOrdered,
   Minus,
+  PanelTop,
   Plus,
   Quote,
   SquareCode,
   Strikethrough,
   Table as TableIcon,
   Trash2,
-  Video,
   type LucideIcon,
 } from "lucide-react";
 import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-shortcuts";
@@ -502,6 +502,9 @@ export function MarkdownEditor({
         editor={editor}
         onPickImage={pickImage}
         onPickEmbed={() => setUrlDialog({ mode: "embed", initial: "" })}
+        onPickLink={() =>
+          setUrlDialog({ mode: "link", initial: (editor.getAttributes("link").href as string | undefined) ?? "" })
+        }
       />
       {/* px-5 matches the page's px-5 so the body text lines up with the title above (the wrapper
           breaks out of that padding with -mx-5 to let «wide»/«full» images bleed wider than the text). */}
@@ -539,6 +542,13 @@ export function MarkdownEditor({
           if (urlDialog?.mode === "embed") {
             // Insert a live link-preview card node (serializes back to the bare URL → EMBED block).
             editor.chain().focus().insertContent({ type: "linkCard", attrs: { url } }).run();
+          } else if (editor.state.selection.empty && !editor.isActive("link")) {
+            editor
+              .chain()
+              .focus()
+              .insertContent({ type: "text", text: url, marks: [{ type: "link", attrs: { href: url } }] })
+              .unsetMark("link")
+              .run();
           } else {
             editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
           }
@@ -561,10 +571,12 @@ function EditorToolbar({
   editor,
   onPickImage,
   onPickEmbed,
+  onPickLink,
 }: {
   editor: Editor;
   onPickImage: (opts?: ImagePickOptions) => void;
   onPickEmbed: () => void;
+  onPickLink: () => void;
 }) {
   const t = useTranslations("postEditor");
   const a = useEditorState({
@@ -577,11 +589,17 @@ function EditorToolbar({
       ordered: editor.isActive("orderedList"),
       quote: editor.isActive("blockquote"),
       codeBlock: editor.isActive("codeBlock"),
+      bold: editor.isActive("bold"),
+      link: editor.isActive("link"),
     }),
   });
 
   type Item = { icon: LucideIcon; label: string; active?: boolean; run: () => void };
   const groups: Item[][] = [
+    [
+      { icon: Bold, label: t("toolbar.bold"), active: a.bold, run: () => editor.chain().focus().toggleBold().run() },
+      { icon: LinkIcon, label: t("toolbar.link"), active: a.link, run: onPickLink },
+    ],
     [
       { icon: Heading1, label: t("slash.heading1"), active: a.h1, run: () => editor.chain().focus().toggleHeading({ level: 1 }).run() },
       { icon: Heading2, label: t("slash.heading2"), active: a.h2, run: () => editor.chain().focus().toggleHeading({ level: 2 }).run() },
@@ -594,7 +612,7 @@ function EditorToolbar({
     [
       { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() },
       { icon: TableIcon, label: t("slash.table"), run: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
-      { icon: Video, label: t("slash.embed"), run: onPickEmbed },
+      { icon: PanelTop, label: t("slash.embed"), run: onPickEmbed },
       { icon: Minus, label: t("slash.divider"), run: () => editor.chain().focus().setHorizontalRule().run() },
     ],
   ];
