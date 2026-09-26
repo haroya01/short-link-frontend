@@ -16,7 +16,7 @@ test.describe("real posts survive opening and saving in the web editor", () => {
   for (const post of CORPUS) {
     test(post.slug, async ({ page }) => {
       test.skip(IMPORT_BROKEN_CODE_FENCES.has(post.slug), "imported with code fences split across paragraphs — pending a data repair");
-      let saved: Block[] | null = null;
+      let saved = null as Block[] | null;
       await page.route("**/api/v1/**", (r) => r.fulfill({ status: 200, contentType: "application/json", body: "[]" }));
       await page.route("**/api/v1/users/me", (r) =>
         r.fulfill({ json: { id: 1, email: "e@kurl.test", role: "USER", createdAt: "2026-05-29T00:00:00Z", username: "author" } }),
