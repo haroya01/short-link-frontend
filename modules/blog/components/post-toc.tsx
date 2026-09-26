@@ -8,7 +8,7 @@ import { RailHeading } from "@/modules/blog/components/rail-heading";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePresence } from "@/hooks/use-presence";
 
-export type TocHeading = { id: string; text: string; level: number };
+export type TocHeading = { id: string; legacyId?: string; text: string; level: number };
 
 function scrollToHeading(id: string) {
   const el = document.getElementById(id);
@@ -17,6 +17,25 @@ function scrollToHeading(id: string) {
   el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
   history.replaceState(null, "", `#${id}`);
   return true;
+}
+
+export function LegacyHeadingHash({ headings }: { headings: TocHeading[] }) {
+  useEffect(() => {
+    const redirect = () => {
+      const raw = window.location.hash.slice(1);
+      if (!raw || document.getElementById(raw)) return;
+      let hash = raw;
+      try {
+        hash = decodeURIComponent(raw);
+      } catch {}
+      const match = headings.find((h) => h.legacyId === hash);
+      if (match) scrollToHeading(match.id);
+    };
+    redirect();
+    window.addEventListener("hashchange", redirect);
+    return () => window.removeEventListener("hashchange", redirect);
+  }, [headings]);
+  return null;
 }
 
 /**

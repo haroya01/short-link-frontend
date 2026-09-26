@@ -279,3 +279,32 @@ test("post header keeps like and bookmark on the right, on phones too", async ({
     expect(box!.x + box!.width - (cluster!.x + cluster!.width)).toBeLessThanOrEqual(2);
   }
 });
+
+test("imported markdown renders cleanly and heading links stay short", async ({ page }) => {
+  await page.goto("/ja/p/dohyun/spring-tx-propagation");
+  const article = page.locator(".prose-post");
+  await expect(article).toBeVisible({ timeout: 30_000 });
+
+  const heading = article.getByRole("heading", { name: "Reactive Streams バックプレッシャーのサポート" });
+  await expect(heading).toBeVisible();
+  await expect(heading).not.toContainText("**");
+  await expect(heading).toHaveAttribute("id", /^section-\d+$/);
+  await expect(article.getByRole("heading", { name: /はどう動く/ }).locator("code")).toHaveText("@Transactional");
+
+  await expect(article.getByText("----")).toHaveCount(0);
+  await expect(article.locator('[role="separator"]').last()).toBeAttached();
+
+  const callout = article.locator("blockquote", { hasText: "Note" });
+  await expect(callout).toContainText("バックプレッシャーとは？");
+
+  const id = await heading.getAttribute("id");
+  const legacy = `#${encodeURIComponent("reactive-streams-バックプレッシャーのサポート")}`;
+  await page.goto(`/ja/p/dohyun/spring-tx-propagation${legacy}`);
+  await expect(page).toHaveURL(new RegExp(`#${id}$`));
+
+  const fresh = await page.context().newPage();
+  await fresh.goto(`/ja/p/dohyun/spring-tx-propagation${legacy}`);
+  await expect(fresh).toHaveURL(new RegExp(`#${id}$`));
+  await expect(fresh.locator(`#${id}`)).toBeInViewport();
+});
+

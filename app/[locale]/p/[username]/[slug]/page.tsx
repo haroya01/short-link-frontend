@@ -11,7 +11,7 @@ import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { ReadBeacon } from "@/modules/blog/components/read-beacon";
 import { ReadProgressBeacon } from "@/modules/blog/components/read-progress-beacon";
-import { PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
+import { LegacyHeadingHash, PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
 import { PostComments } from "@/modules/blog/components/comments";
 import { LikeButton } from "@/modules/blog/components/like-button";
 import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
@@ -452,6 +452,7 @@ export default async function PublicPostPage({
 
       {/* Phone / portrait-tablet (<1100px) get the TOC as a floating button → bottom sheet. */}
       <PostTocMobile headings={headings} />
+      <LegacyHeadingHash headings={headings} />
     </div>
   );
 }
