@@ -479,7 +479,7 @@
         "calloutCaution": "위험하거나 되돌릴 수 없는 일"
       },
       "groupCallout": "박스",
-      "calloutNote": "노트",
+      "calloutNote": "참고",
       "calloutTip": "팁",
       "calloutImportant": "중요",
       "calloutWarning": "주의",
@@ -513,7 +513,7 @@
     "seriesLoadFailed": "시리즈 목록을 불러오지 못했어요.",
     "revisionsLoadFailed": "저장된 버전을 불러오지 못했어요.",
     "callout": {
-      "note": "노트",
+      "note": "참고",
       "tip": "팁",
       "important": "중요",
       "warning": "주의",
@@ -693,7 +693,7 @@
     "followersList": "팔로워",
     "followingList": "팔로잉",
     "callout": {
-      "note": "노트",
+      "note": "참고",
       "tip": "팁",
       "important": "중요",
       "warning": "주의",
