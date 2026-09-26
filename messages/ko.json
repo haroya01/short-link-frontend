@@ -476,14 +476,16 @@
         "calloutTip": "도움이 되는 팁",
         "calloutImportant": "꼭 알아야 할 내용",
         "calloutWarning": "조심해야 할 점",
-        "calloutCaution": "위험하거나 되돌릴 수 없는 일"
+        "calloutCaution": "위험하거나 되돌릴 수 없는 일",
+        "taskList": "☐ 할 일 목록"
       },
       "groupCallout": "박스",
       "calloutNote": "참고",
       "calloutTip": "팁",
       "calloutImportant": "중요",
       "calloutWarning": "주의",
-      "calloutCaution": "경고"
+      "calloutCaution": "경고",
+      "taskList": "체크리스트"
     },
     "slugLabel": "글 주소(slug)",
     "placeDialog": {

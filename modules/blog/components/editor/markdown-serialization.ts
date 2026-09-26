@@ -98,6 +98,24 @@ export const MarkdownHeading = Heading.extend({
   },
 }).configure({ levels: [1, 2, 3, 4, 5, 6] });
 
+export const TightTaskLists = Extension.create({
+  name: "tightTaskLists",
+  addGlobalAttributes() {
+    return [
+      {
+        types: ["taskList"],
+        attributes: {
+          tight: {
+            default: true,
+            parseHTML: (element: HTMLElement) => !element.querySelector("p"),
+            renderHTML: () => ({}),
+          },
+        },
+      },
+    ];
+  },
+});
+
 export const CjkFriendlyMarkdown = Extension.create({
   name: "cjkFriendlyMarkdown",
   addStorage() {

@@ -476,14 +476,16 @@
         "calloutTip": "Helpful advice",
         "calloutImportant": "Something readers must know",
         "calloutWarning": "Something to watch out for",
-        "calloutCaution": "Risky or irreversible"
+        "calloutCaution": "Risky or irreversible",
+        "taskList": "☐ To-do list"
       },
       "groupCallout": "Callouts",
       "calloutNote": "Note",
       "calloutTip": "Tip",
       "calloutImportant": "Important",
       "calloutWarning": "Warning",
-      "calloutCaution": "Caution"
+      "calloutCaution": "Caution",
+      "taskList": "Checklist"
     },
     "slugLabel": "Post URL slug",
     "placeDialog": {

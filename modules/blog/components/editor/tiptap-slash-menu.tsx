@@ -5,6 +5,7 @@ import type { Editor } from "@tiptap/react";
 import { useTranslations } from "next-intl";
 import {
   Info,
+  ListChecks,
   Lightbulb,
   OctagonAlert,
   Star,
@@ -66,6 +67,7 @@ function buildItems(
     { key: "h3", labelKey: "heading3", group: "basic", icon: Heading3, keywords: ["h3", "heading", "제목"], run: (e) => e.chain().focus().toggleHeading({ level: 3 }).run() },
     { key: "bullet", labelKey: "bulletList", group: "basic", icon: List, keywords: ["bullet", "list", "ul", "목록", "리스트", "リスト"], run: (e) => e.chain().focus().toggleBulletList().run() },
     { key: "ordered", labelKey: "orderedList", group: "basic", icon: ListOrdered, keywords: ["ordered", "number", "ol", "번호", "리스트"], run: (e) => e.chain().focus().toggleOrderedList().run() },
+    { key: "task", labelKey: "taskList", group: "basic", icon: ListChecks, keywords: ["todo", "task", "check", "checklist", "체크", "할 일", "チェック", "タスク"], run: (e) => e.chain().focus().toggleTaskList().run() },
     { key: "quote", labelKey: "quote", group: "basic", icon: Quote, keywords: ["quote", "blockquote", "인용", "引用"], run: (e) => e.chain().focus().toggleBlockquote().run() },
     { key: "calloutNote", labelKey: "calloutNote", group: "callout", icon: Info, keywords: ["note", "info", "callout", "노트", "참고", "메모", "ノート", "メモ", "補足"], run: (e) => e.chain().focus().setCallout("note").run() },
     { key: "calloutTip", labelKey: "calloutTip", group: "callout", icon: Lightbulb, keywords: ["tip", "hint", "callout", "팁", "ヒント"], run: (e) => e.chain().focus().setCallout("tip").run() },

@@ -1968,3 +1968,20 @@ test.describe("on a phone, bold and link are one tap away without selecting text
     expect(paragraph).toContain("<https://kurl.me/docs> end");
   });
 });
+
+test("slash menu makes a checklist that saves as GitHub task items", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Checklist\b/ }).click();
+  await page.keyboard.type("Add the dependency");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("Write the config");
+  await page.locator('.tiptap ul[data-type="taskList"] li').nth(1).locator('input[type="checkbox"]').check();
+
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "LIST_BULLET")?.content).toBe("- [ ] Add the dependency\n- [x] Write the config");
+});

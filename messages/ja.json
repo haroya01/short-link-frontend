@@ -476,14 +476,16 @@
         "calloutTip": "役立つヒント",
         "calloutImportant": "必ず知っておくこと",
         "calloutWarning": "気をつける点",
-        "calloutCaution": "危険・元に戻せないこと"
+        "calloutCaution": "危険・元に戻せないこと",
+        "taskList": "☐ ToDoリスト"
       },
       "groupCallout": "ボックス",
       "calloutNote": "ノート",
       "calloutTip": "ヒント",
       "calloutImportant": "重要",
       "calloutWarning": "注意",
-      "calloutCaution": "警告"
+      "calloutCaution": "警告",
+      "taskList": "チェックリスト"
     },
     "slugLabel": "記事のURLスラッグ",
     "placeDialog": {

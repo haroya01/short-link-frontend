@@ -213,6 +213,7 @@ function importedRows(): Array<[string, string | null]> {
     ["PARAGRAPH", "**バックプレッシャーとは？**\n消費者が処理可能なデータ量を生産者に要求する仕組みです。"],
     ["PARAGRAPH", "----"],
     ["QUOTE", "[!TIP]\n`@Transactional` は **publisher** に付けます。"],
+    ["LIST_BULLET", "- [ ] 依存関係を追加\n- [x] 設定を書く"],
     ["H3", "Reactive環境において `@Transactional` はどう動く？"],
   ];
 }

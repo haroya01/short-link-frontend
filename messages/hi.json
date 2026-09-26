@@ -476,14 +476,16 @@
         "calloutTip": "काम का सुझाव",
         "calloutImportant": "जो पाठक को ज़रूर जानना चाहिए",
         "calloutWarning": "जिस पर ध्यान देना है",
-        "calloutCaution": "जोखिम भरा या वापस न होने वाला"
+        "calloutCaution": "जोखिम भरा या वापस न होने वाला",
+        "taskList": "☐ करने की सूची"
       },
       "groupCallout": "बॉक्स",
       "calloutNote": "नोट",
       "calloutTip": "सुझाव",
       "calloutImportant": "महत्वपूर्ण",
       "calloutWarning": "चेतावनी",
-      "calloutCaution": "सावधानी"
+      "calloutCaution": "सावधानी",
+      "taskList": "चेकलिस्ट"
     },
     "slugLabel": "पोस्ट URL स्लग",
     "placeDialog": {

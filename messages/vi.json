@@ -476,14 +476,16 @@
         "calloutTip": "Mẹo hữu ích",
         "calloutImportant": "Điều người đọc cần biết",
         "calloutWarning": "Điều cần chú ý",
-        "calloutCaution": "Rủi ro hoặc không thể hoàn tác"
+        "calloutCaution": "Rủi ro hoặc không thể hoàn tác",
+        "taskList": "☐ Danh sách việc cần làm"
       },
       "groupCallout": "Hộp",
       "calloutNote": "Ghi chú",
       "calloutTip": "Mẹo",
       "calloutImportant": "Quan trọng",
       "calloutWarning": "Lưu ý",
-      "calloutCaution": "Cảnh báo"
+      "calloutCaution": "Cảnh báo",
+      "taskList": "Danh sách kiểm"
     },
     "slugLabel": "Slug URL của bài viết",
     "placeDialog": {

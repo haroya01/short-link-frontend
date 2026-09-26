@@ -61,3 +61,16 @@ describe("reader markdown line breaks", () => {
     expect(root.querySelector("br")).toBeNull();
   });
 });
+
+describe("reader markdown checklists", () => {
+  it("draws GitHub task items as read-only checkboxes", () => {
+    const root = render("- [ ] 買い物\n- [x] 洗濯");
+    const boxes = root.querySelectorAll('input[type="checkbox"]');
+    expect(boxes).toHaveLength(2);
+    expect((boxes[0] as HTMLInputElement).checked).toBe(false);
+    expect((boxes[1] as HTMLInputElement).checked).toBe(true);
+    expect((boxes[0] as HTMLInputElement).disabled).toBe(true);
+    expect(root.querySelector("li")?.className).toContain("task-list-item");
+    expect(root.textContent).not.toContain("[ ]");
+  });
+});
