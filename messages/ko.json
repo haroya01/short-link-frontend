@@ -313,7 +313,8 @@
       "embedPlaceholder": "https://… (링크·YouTube·Vimeo)",
       "confirm": "확인",
       "cancel": "취소",
-      "remove": "링크 제거"
+      "remove": "링크 제거",
+      "linkTextPlaceholder": "표시할 텍스트 (선택)"
     },
     "table": {
       "addColumn": "열 추가",
@@ -416,12 +417,12 @@
     "scheduledToast": "{when}에 발행 예약됐어요.",
     "scheduledFor": "{when} 발행 예정",
     "cancelSchedule": "예약 취소",
-    "addTopics": "주제 추가",
+    "addTopics": "태그 추가",
     "tagsDone": "완료",
-    "tagsEdit": "주제 편집",
+    "tagsEdit": "태그 편집",
     "coverFromBody": "본문 첫 이미지 사용",
     "coverAuto": "본문 첫 이미지",
-    "tagsRequired": "발행하려면 주제(태그)를 1개 이상 추가하세요",
+    "tagsRequired": "발행하려면 태그를 1개 이상 추가하세요",
     "boldMode": "굵게 쓰기",
     "toolbar": {
       "bold": "굵게",
@@ -520,7 +521,8 @@
       "important": "중요",
       "warning": "주의",
       "caution": "경고"
-    }
+    },
+    "bodyPlaceholderTouch": "그냥 작성하세요 — 서식은 위 도구 막대에서"
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",

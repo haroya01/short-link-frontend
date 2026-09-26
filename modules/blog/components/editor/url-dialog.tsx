@@ -17,6 +17,7 @@ export function UrlDialog({
   placeholder,
   initialValue = "",
   allowRemove = false,
+  askLabel = false,
   onClose,
   onSubmit,
   onRemove,
@@ -26,12 +27,14 @@ export function UrlDialog({
   placeholder: string;
   initialValue?: string;
   allowRemove?: boolean;
+  askLabel?: boolean;
   onClose: () => void;
-  onSubmit: (url: string) => void;
+  onSubmit: (url: string, label: string) => void;
   onRemove?: () => void;
 }) {
   const t = useTranslations("postEditor.urlDialog");
   const [value, setValue] = useState(initialValue);
+  const [label, setLabel] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   // Hold the dialog mounted through a brief fade-out on close instead of popping.
   const { mounted: present, closing } = usePresence(open, 160);
@@ -39,6 +42,7 @@ export function UrlDialog({
   useEffect(() => {
     if (!open) return;
     setValue(initialValue);
+    setLabel("");
     const id = window.setTimeout(() => inputRef.current?.select(), 20);
     return () => window.clearTimeout(id);
   }, [open, initialValue]);
@@ -48,7 +52,7 @@ export function UrlDialog({
   const submit = () => {
     const url = value.trim();
     if (!url) return;
-    onSubmit(url);
+    onSubmit(url, label.trim());
     onClose();
   };
 
@@ -89,6 +93,21 @@ export function UrlDialog({
           placeholder={placeholder}
           className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[14px] text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-accent-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-accent-500"
         />
+        {askLabel && (
+          <input
+            type="text"
+            autoComplete="off"
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.nativeEvent.isComposing) { e.preventDefault(); submit(); }
+              else if (e.key === "Escape") { e.preventDefault(); onClose(); }
+            }}
+            placeholder={t("linkTextPlaceholder")}
+            aria-label={t("linkTextPlaceholder")}
+            className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[14px] text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-accent-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-accent-500"
+          />
+        )}
         <div className="mt-3 flex items-center justify-end gap-2">
           {allowRemove && onRemove && (
             <button

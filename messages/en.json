@@ -313,7 +313,8 @@
       "embedPlaceholder": "https://… (link, YouTube, Vimeo)",
       "confirm": "Add",
       "cancel": "Cancel",
-      "remove": "Remove link"
+      "remove": "Remove link",
+      "linkTextPlaceholder": "Text to show (optional)"
     },
     "table": {
       "addColumn": "Add column",
@@ -416,12 +417,12 @@
     "scheduledToast": "Scheduled to publish on {when}.",
     "scheduledFor": "Publishes {when}",
     "cancelSchedule": "Cancel schedule",
-    "addTopics": "Add topics",
+    "addTopics": "Add tags",
     "tagsDone": "Done",
-    "tagsEdit": "Edit topics",
+    "tagsEdit": "Edit tags",
     "coverFromBody": "Use the first image from your post",
     "coverAuto": "First image from the post",
-    "tagsRequired": "Add at least one topic (tag) to publish",
+    "tagsRequired": "Add at least one tag to publish",
     "boldMode": "Bold",
     "toolbar": {
       "bold": "Bold",
@@ -520,7 +521,8 @@
       "important": "Important",
       "warning": "Warning",
       "caution": "Caution"
-    }
+    },
+    "bodyPlaceholderTouch": "Just start writing — formatting is in the toolbar above"
   },
   "savedLibrary": {
     "private": "Only you can see this.",
