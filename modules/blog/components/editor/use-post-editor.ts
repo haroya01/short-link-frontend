@@ -23,6 +23,7 @@ import { ApiError } from "@/lib/api/client";
 import { postHref } from "@/modules/blog/components/feed-card";
 import { rewriteMarkdownLinks } from "@/modules/blog/lib/post-links";
 import { blocksToMarkdown, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
+import { upgradeLegacyCallouts } from "@/modules/blog/lib/callout";
 import { stampPublishCelebration } from "@/modules/blog/lib/celebrate-publish";
 import { normalizeSlugInput, slugForSave } from "@/modules/blog/lib/slug";
 import { setEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
@@ -153,7 +154,7 @@ export function usePostEditor(
       setPost(p);
       setTitleRaw(p.title);
       setSlugRaw(p.slug);
-      setMarkdownRaw(blocksToMarkdown(blocks));
+      setMarkdownRaw(blocksToMarkdown(upgradeLegacyCallouts(blocks)));
       setTagsRaw(p.tags ?? []);
       setSeriesIdRaw(p.seriesId ?? null);
       setCoverRaw(p.ogImageUrl ?? null);

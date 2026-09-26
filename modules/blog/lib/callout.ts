@@ -15,6 +15,38 @@ export function calloutMarker(kind: CalloutKind): string {
   return `[!${kind.toUpperCase()}]`;
 }
 
+const LEGACY_LABEL = /^\s*\p{Extended_Pictographic}\uFE0F?\s*\*\*[^*\n]{1,12}\*\*\s*$/u;
+
+export function isLegacyCalloutLabel(content: string | null | undefined): boolean {
+  return !!content && LEGACY_LABEL.test(content);
+}
+
+export function legacyMultilineCallout(content: string): { kind: CalloutKind; body: string } | null {
+  const [first, ...rest] = content.split("\n");
+  if (rest.length === 0 || !LEGACY_LABEL.test(first)) return null;
+  return { kind: legacyCalloutKind(first), body: rest.join("\n").trim() };
+}
+
+export function upgradeLegacyCallouts<T extends { type: string; content: string | null }>(blocks: T[]): T[] {
+  const out: T[] = [];
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i];
+    const next = blocks[i + 1];
+    if (block.type !== "QUOTE" || !block.content) {
+      out.push(block);
+      continue;
+    }
+    if (isLegacyCalloutLabel(block.content) && next?.type === "PARAGRAPH" && next.content?.trim()) {
+      out.push({ ...block, content: `${calloutMarker(legacyCalloutKind(block.content))}\n${next.content}` });
+      i++;
+      continue;
+    }
+    const multiline = legacyMultilineCallout(block.content);
+    out.push(multiline ? { ...block, content: `${calloutMarker(multiline.kind)}\n${multiline.body}` } : block);
+  }
+  return out;
+}
+
 export function legacyCalloutKind(label: string): CalloutKind {
   if (/⚠|注意|주의|warn/i.test(label)) return "warning";
   if (/❗|‼|警告|경고|alert|caution/i.test(label)) return "caution";

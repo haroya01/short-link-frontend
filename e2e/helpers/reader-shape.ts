@@ -1,3 +1,5 @@
+import { parseCallout, upgradeLegacyCallouts } from "../../modules/blog/lib/callout";
+
 type Block = { type: string; content: string | null };
 type HastNode = { type: string; tagName?: string; value?: string; properties?: Record<string, unknown>; children?: HastNode[] };
 
@@ -56,7 +58,10 @@ export async function readerShape(blocks: Block[]): Promise<string[]> {
     await Promise.all([import("unified"), import("remark-parse"), import("remark-gfm"), import("remark-cjk-friendly"), import("remark-rehype")]);
   const processor = unified().use(remarkParse).use(remarkGfm).use(remarkCjkFriendly).use(remarkRehype, { allowDangerousHtml: true });
   const runs: string[] = [];
-  for (const block of blocks) {
+  for (const raw of upgradeLegacyCallouts(blocks)) {
+    const callout = raw.type === "QUOTE" ? parseCallout(raw.content) : null;
+    if (callout) runs.push(`callout|${callout.kind}`);
+    const block = callout ? { type: "QUOTE", content: callout.body } : raw;
     const tree = processor.runSync(processor.parse(blockMarkdown(block))) as HastNode;
     const walk = (node: HastNode, ctx: string[]) => {
       if (node.type === "text") {

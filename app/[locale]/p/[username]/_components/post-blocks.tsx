@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 import { Markdown } from "@/modules/blog/components/markdown";
 import { CalloutBlock } from "@/modules/blog/components/callout-block";
-import { legacyCalloutKind, parseCallout } from "@/modules/blog/lib/callout";
+import { isLegacyCalloutLabel, legacyCalloutKind, legacyMultilineCallout, parseCallout } from "@/modules/blog/lib/callout";
 import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 import { KurlLinkCard } from "@/modules/blog/components/kurl-link-card";
 import { PostCode } from "@/modules/blog/components/post-code";
@@ -57,19 +57,10 @@ function headingAnchorMap(blocks: PublicPostBlock[]): Map<PublicPostBlock, strin
 
 const THEMATIC_BREAK = /^\s*([-*_])(\s*\1){2,}\s*$/;
 
-const CALLOUT_LABEL = /^\s*\p{Extended_Pictographic}\uFE0F?\s*\*\*[^*\n]{1,12}\*\*\s*$/u;
-
-function legacyMultilineCallout(content: string) {
-  const [first, ...rest] = content.split("\n");
-  if (rest.length === 0 || !CALLOUT_LABEL.test(first)) return null;
-  return { kind: legacyCalloutKind(first), body: rest.join("\n").trim() };
-}
-
 function isCalloutLabel(block: PublicPostBlock, next?: PublicPostBlock): boolean {
   return (
     block.type === "QUOTE" &&
-    !!block.content &&
-    CALLOUT_LABEL.test(block.content) &&
+    isLegacyCalloutLabel(block.content) &&
     next?.type === "PARAGRAPH" &&
     !!next.content?.trim()
   );
