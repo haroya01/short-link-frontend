@@ -206,6 +206,16 @@ export function mockPostList(username: string): PublicPostList {
   return { author, posts };
 }
 
+function importedRows(): Array<[string, string | null]> {
+  return [
+    ["H2", "**Reactive Streams バックプレッシャーのサポート**"],
+    ["QUOTE", "ℹ️ **Note**"],
+    ["PARAGRAPH", "**バックプレッシャーとは？**\n消費者が処理可能なデータ量を生産者に要求する仕組みです。"],
+    ["PARAGRAPH", "----"],
+    ["H3", "Reactive環境において `@Transactional` はどう動く？"],
+  ];
+}
+
 function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
   const tag = item.tags[0] ?? "kurl";
   const rows: Array<[string, string | null]> = [
@@ -234,6 +244,7 @@ function sampleBlocks(item: PublicFeedItem): PublicPostBlock[] {
     ["TABLE", "| 지표 | 이전 | 이후 |\n|---|---|---|\n| p95 응답 | 180ms | 96ms |\n| 처리량 | 0.8k/s | 1.4k/s |\n| 에러율 | 0.7% | 0.1% |"],
     ["H2", "정리"],
     ["PARAGRAPH", "요약하면, 작은 서비스일수록 단순함이 이긴다. 다음 글에서 이어서 다룬다."],
+    ...(item.slug === "spring-tx-propagation" ? importedRows() : []),
   ];
   return rows.map(([type, content], blockOrder) => ({ type, content, blockOrder, cta: null }));
 }

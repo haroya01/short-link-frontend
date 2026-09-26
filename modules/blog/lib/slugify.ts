@@ -15,3 +15,21 @@ export function slugify(text: string): string {
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 }
+
+export function headingPlainText(text: string): string {
+  return text
+    .trim()
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/(\*\*|__)(.+?)\1/g, "$2")
+    .replace(/(^|[^\w*])[*_](?=\S)(.+?)(?<=\S)[*_](?![\w*])/g, "$1$2")
+    .replace(/`([^`]*)`/g, "$1")
+    .replace(/~~(.+?)~~/g, "$1")
+    .trim();
+}
+
+export function headingAnchors(texts: string[]): string[] {
+  return texts.map((text, i) => {
+    const slug = slugify(text);
+    return /^[a-z0-9-]+$/.test(slug) ? slug : `section-${i + 1}`;
+  });
+}
