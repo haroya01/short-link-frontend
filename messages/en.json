@@ -471,8 +471,19 @@
         "table": "Insert a table",
         "imageWide": "Image wider than text",
         "imagePair": "Two side by side",
-        "place": "Map place card"
-      }
+        "place": "Map place card",
+        "calloutNote": "Side information in a box",
+        "calloutTip": "Helpful advice",
+        "calloutImportant": "Something readers must know",
+        "calloutWarning": "Something to watch out for",
+        "calloutCaution": "Risky or irreversible"
+      },
+      "groupCallout": "Callouts",
+      "calloutNote": "Note",
+      "calloutTip": "Tip",
+      "calloutImportant": "Important",
+      "calloutWarning": "Warning",
+      "calloutCaution": "Caution"
     },
     "slugLabel": "Post URL slug",
     "placeDialog": {
@@ -500,7 +511,14 @@
     "seriesCreateConflict": "A series with this name already exists. Try a different name.",
     "seriesCreateError": "Couldn't create the series. Please try again.",
     "seriesLoadFailed": "Couldn't load your series.",
-    "revisionsLoadFailed": "Couldn't load saved versions."
+    "revisionsLoadFailed": "Couldn't load saved versions.",
+    "callout": {
+      "note": "Note",
+      "tip": "Tip",
+      "important": "Important",
+      "warning": "Warning",
+      "caution": "Caution"
+    }
   },
   "savedLibrary": {
     "private": "Only you can see this.",
@@ -673,7 +691,14 @@
     },
     "publishedCelebration": "Your post is live",
     "followersList": "Followers",
-    "followingList": "Following"
+    "followingList": "Following",
+    "callout": {
+      "note": "Note",
+      "tip": "Tip",
+      "important": "Important",
+      "warning": "Warning",
+      "caution": "Caution"
+    }
   },
   "imageCropper": {
     "title": "Crop image",

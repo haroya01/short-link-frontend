@@ -471,8 +471,19 @@
         "table": "표 삽입",
         "imageWide": "본문보다 넓은 이미지",
         "imagePair": "두 장 나란히",
-        "place": "지도 장소 카드"
-      }
+        "place": "지도 장소 카드",
+        "calloutNote": "참고할 내용을 박스로",
+        "calloutTip": "도움이 되는 팁",
+        "calloutImportant": "꼭 알아야 할 내용",
+        "calloutWarning": "조심해야 할 점",
+        "calloutCaution": "위험하거나 되돌릴 수 없는 일"
+      },
+      "groupCallout": "박스",
+      "calloutNote": "노트",
+      "calloutTip": "팁",
+      "calloutImportant": "중요",
+      "calloutWarning": "주의",
+      "calloutCaution": "경고"
     },
     "slugLabel": "글 주소(slug)",
     "placeDialog": {
@@ -500,7 +511,14 @@
     "seriesCreateConflict": "같은 이름의 시리즈가 이미 있어요. 다른 이름을 써주세요.",
     "seriesCreateError": "시리즈를 만들지 못했어요. 다시 시도해주세요.",
     "seriesLoadFailed": "시리즈 목록을 불러오지 못했어요.",
-    "revisionsLoadFailed": "저장된 버전을 불러오지 못했어요."
+    "revisionsLoadFailed": "저장된 버전을 불러오지 못했어요.",
+    "callout": {
+      "note": "노트",
+      "tip": "팁",
+      "important": "중요",
+      "warning": "주의",
+      "caution": "경고"
+    }
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -673,7 +691,14 @@
     },
     "publishedCelebration": "발행됐어요",
     "followersList": "팔로워",
-    "followingList": "팔로잉"
+    "followingList": "팔로잉",
+    "callout": {
+      "note": "노트",
+      "tip": "팁",
+      "important": "중요",
+      "warning": "주의",
+      "caution": "경고"
+    }
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",

@@ -4,6 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Editor } from "@tiptap/react";
 import { useTranslations } from "next-intl";
 import {
+  Info,
+  Lightbulb,
+  OctagonAlert,
+  Star,
+  TriangleAlert,
   Code2,
   Columns2,
   Heading1,
@@ -31,7 +36,7 @@ import type { ImagePickOptions } from "@/modules/blog/components/editor/markdown
  * runs the Tiptap command. The "+" button opens the same menu by typing a "/". Arrow / Enter / Esc
  * drive the menu while it's open.
  */
-type SlashGroup = "basic" | "media" | "advanced";
+type SlashGroup = "basic" | "callout" | "media" | "advanced";
 type SlashItem = {
   key: string;
   labelKey: string;
@@ -42,9 +47,10 @@ type SlashItem = {
 };
 
 // Notion-style grouping: text/structure first, then media, then advanced.
-const GROUP_ORDER: SlashGroup[] = ["basic", "media", "advanced"];
+const GROUP_ORDER: SlashGroup[] = ["basic", "callout", "media", "advanced"];
 const GROUP_LABEL: Record<SlashGroup, string> = {
   basic: "groupBasic",
+  callout: "groupCallout",
   media: "groupMedia",
   advanced: "groupAdvanced",
 };
@@ -61,6 +67,11 @@ function buildItems(
     { key: "bullet", labelKey: "bulletList", group: "basic", icon: List, keywords: ["bullet", "list", "ul", "목록", "리스트", "リスト"], run: (e) => e.chain().focus().toggleBulletList().run() },
     { key: "ordered", labelKey: "orderedList", group: "basic", icon: ListOrdered, keywords: ["ordered", "number", "ol", "번호", "리스트"], run: (e) => e.chain().focus().toggleOrderedList().run() },
     { key: "quote", labelKey: "quote", group: "basic", icon: Quote, keywords: ["quote", "blockquote", "인용", "引用"], run: (e) => e.chain().focus().toggleBlockquote().run() },
+    { key: "calloutNote", labelKey: "calloutNote", group: "callout", icon: Info, keywords: ["note", "info", "callout", "노트", "참고", "메모", "ノート", "メモ", "補足"], run: (e) => e.chain().focus().setCallout("note").run() },
+    { key: "calloutTip", labelKey: "calloutTip", group: "callout", icon: Lightbulb, keywords: ["tip", "hint", "callout", "팁", "ヒント"], run: (e) => e.chain().focus().setCallout("tip").run() },
+    { key: "calloutImportant", labelKey: "calloutImportant", group: "callout", icon: Star, keywords: ["important", "callout", "중요", "重要"], run: (e) => e.chain().focus().setCallout("important").run() },
+    { key: "calloutWarning", labelKey: "calloutWarning", group: "callout", icon: TriangleAlert, keywords: ["warning", "warn", "callout", "주의", "注意"], run: (e) => e.chain().focus().setCallout("warning").run() },
+    { key: "calloutCaution", labelKey: "calloutCaution", group: "callout", icon: OctagonAlert, keywords: ["caution", "danger", "alert", "callout", "경고", "위험", "警告"], run: (e) => e.chain().focus().setCallout("caution").run() },
     { key: "hr", labelKey: "divider", group: "basic", icon: Minus, keywords: ["divider", "hr", "rule", "line", "구분선", "区切り"], run: (e) => e.chain().focus().setHorizontalRule().run() },
     { key: "image", labelKey: "image", group: "media", icon: ImageIcon, keywords: ["image", "img", "photo", "이미지", "사진", "画像"], run: () => pickImage() },
     { key: "imageWide", labelKey: "imageWide", group: "media", icon: RectangleHorizontal, keywords: ["wide", "image", "cover", "hero", "banner", "와이드", "넓은", "배너", "ワイド"], run: () => pickImage({ width: "wide" }) },

@@ -42,6 +42,8 @@ import {
 import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-shortcuts";
 import { CodeMirrorBlock, insertCodeBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
+import { CalloutQuote } from "@/modules/blog/components/editor/callout-quote";
+import { convertCalloutContainers } from "@/modules/blog/lib/callout";
 import { CjkFriendlyMarkdown, MarkdownBold, MarkdownHardBreak, MarkdownHeading, MarkdownItalic, MarkdownStrike, MarkdownText } from "@/modules/blog/components/editor/markdown-serialization";
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
 import { TableHandles } from "@/modules/blog/components/editor/table-handles";
@@ -317,6 +319,7 @@ export function MarkdownEditor({
       StarterKit.configure({
         codeBlock: false,
         heading: false,
+        blockquote: false,
         hardBreak: false,
         text: false,
         bold: false,
@@ -327,6 +330,15 @@ export function MarkdownEditor({
       MarkdownText,
       MarkdownHardBreak,
       MarkdownHeading,
+      CalloutQuote.configure({
+        labels: {
+          note: t("callout.note"),
+          tip: t("callout.tip"),
+          important: t("callout.important"),
+          warning: t("callout.warning"),
+          caution: t("callout.caution"),
+        },
+      }),
       MarkdownBold,
       MarkdownItalic,
       MarkdownStrike,
@@ -351,6 +363,7 @@ export function MarkdownEditor({
     content: initialValue || "",
     editorProps: {
       attributes: { class: "tiptap focus:outline-none" },
+      transformPastedText: (text) => convertCalloutContainers(text),
       handlePaste: (_view, event) => {
         const items = event.clipboardData?.items;
         if (!items || !editor) return false;

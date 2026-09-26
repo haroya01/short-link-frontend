@@ -471,8 +471,19 @@
         "table": "Chèn một bảng",
         "imageWide": "Ảnh rộng hơn văn bản",
         "imagePair": "Hai ảnh cạnh nhau",
-        "place": "Thẻ địa điểm trên bản đồ"
-      }
+        "place": "Thẻ địa điểm trên bản đồ",
+        "calloutNote": "Thông tin bổ sung trong hộp",
+        "calloutTip": "Mẹo hữu ích",
+        "calloutImportant": "Điều người đọc cần biết",
+        "calloutWarning": "Điều cần chú ý",
+        "calloutCaution": "Rủi ro hoặc không thể hoàn tác"
+      },
+      "groupCallout": "Hộp",
+      "calloutNote": "Ghi chú",
+      "calloutTip": "Mẹo",
+      "calloutImportant": "Quan trọng",
+      "calloutWarning": "Lưu ý",
+      "calloutCaution": "Cảnh báo"
     },
     "slugLabel": "Slug URL của bài viết",
     "placeDialog": {
@@ -500,7 +511,14 @@
     "seriesCreateConflict": "Đã có series trùng tên. Hãy thử tên khác.",
     "seriesCreateError": "Không thể tạo series. Vui lòng thử lại.",
     "seriesLoadFailed": "Không tải được danh sách series.",
-    "revisionsLoadFailed": "Không tải được các phiên bản đã lưu."
+    "revisionsLoadFailed": "Không tải được các phiên bản đã lưu.",
+    "callout": {
+      "note": "Ghi chú",
+      "tip": "Mẹo",
+      "important": "Quan trọng",
+      "warning": "Lưu ý",
+      "caution": "Cảnh báo"
+    }
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -687,7 +705,14 @@
     },
     "publishedCelebration": "Bài viết đã được xuất bản",
     "followersList": "Người theo dõi",
-    "followingList": "Đang theo dõi"
+    "followingList": "Đang theo dõi",
+    "callout": {
+      "note": "Ghi chú",
+      "tip": "Mẹo",
+      "important": "Quan trọng",
+      "warning": "Lưu ý",
+      "caution": "Cảnh báo"
+    }
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",

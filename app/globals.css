@@ -1739,6 +1739,40 @@ body[data-cookie-consent="visible"] {
   padding: 0.1rem 0 0.1rem 1.1rem;
   color: #475569;
 }
+.tiptap blockquote[data-alert] {
+  border-left-width: 4px;
+  border-radius: 0.5rem;
+  padding: 0.9rem 1.25rem;
+  color: #334155;
+}
+.tiptap blockquote[data-alert]::before {
+  content: attr(data-label);
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 14px;
+  font-weight: 600;
+}
+.tiptap blockquote[data-alert="note"] { border-color: #7dd3fc; background: rgba(240, 249, 255, 0.7); }
+.tiptap blockquote[data-alert="note"]::before { color: #0369a1; }
+.tiptap blockquote[data-alert="tip"] { border-color: #67e8f9; background: rgba(236, 254, 255, 0.7); }
+.tiptap blockquote[data-alert="tip"]::before { color: #0e7490; }
+.tiptap blockquote[data-alert="important"] { border-color: #c4b5fd; background: rgba(245, 243, 255, 0.7); }
+.tiptap blockquote[data-alert="important"]::before { color: #6d28d9; }
+.tiptap blockquote[data-alert="warning"] { border-color: #fcd34d; background: rgba(255, 251, 235, 0.7); }
+.tiptap blockquote[data-alert="warning"]::before { color: #b45309; }
+.tiptap blockquote[data-alert="caution"] { border-color: #fda4af; background: rgba(255, 241, 242, 0.7); }
+.tiptap blockquote[data-alert="caution"]::before { color: #be123c; }
+.dark .tiptap blockquote[data-alert] { color: #cbd5e1; }
+.dark .tiptap blockquote[data-alert="note"] { border-color: rgba(14, 165, 233, 0.5); background: rgba(14, 165, 233, 0.1); }
+.dark .tiptap blockquote[data-alert="note"]::before { color: #7dd3fc; }
+.dark .tiptap blockquote[data-alert="tip"] { border-color: rgba(6, 182, 212, 0.5); background: rgba(6, 182, 212, 0.1); }
+.dark .tiptap blockquote[data-alert="tip"]::before { color: #67e8f9; }
+.dark .tiptap blockquote[data-alert="important"] { border-color: rgba(139, 92, 246, 0.5); background: rgba(139, 92, 246, 0.1); }
+.dark .tiptap blockquote[data-alert="important"]::before { color: #c4b5fd; }
+.dark .tiptap blockquote[data-alert="warning"] { border-color: rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.1); }
+.dark .tiptap blockquote[data-alert="warning"]::before { color: #fcd34d; }
+.dark .tiptap blockquote[data-alert="caution"] { border-color: rgba(244, 63, 94, 0.5); background: rgba(244, 63, 94, 0.1); }
+.dark .tiptap blockquote[data-alert="caution"]::before { color: #fda4af; }
 /* 발행본 구분선 블록(.section-divider)과 같은 모양. */
 .tiptap hr {
   border: 0;
