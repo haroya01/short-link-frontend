@@ -1898,3 +1898,39 @@ test("reopening a saved post shows its link cards and dividers as they will publ
   expect(look.height).toBeGreaterThan(0);
   expect(look.background).toContain("gradient");
 });
+
+test("slash menu makes a warning box that saves as an alert quote", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Warning\b/ }).click();
+  await page.keyboard.type("Mind the gap");
+
+  const box = page.locator('.tiptap blockquote[data-alert="warning"]');
+  await expect(box).toHaveAttribute("data-label", "Warning");
+  await expect(box).toContainText("Mind the gap");
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "QUOTE")?.content).toBe("[!WARNING]\nMind the gap");
+});
+
+test("pasting a Qiita note turns it into a box", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.evaluate(() => {
+    const data = new DataTransfer();
+    data.setData("text/plain", ":::note warn\n**Why?**\nRestart does not reload the config.\n:::");
+    document.querySelector(".tiptap")!.dispatchEvent(new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true }));
+  });
+
+  await expect(page.locator('.tiptap blockquote[data-alert="warning"]')).toContainText("Restart does not reload the config.");
+  await expect(page.locator(".tiptap")).not.toContainText(":::");
+  const blocks = await save(page, captured);
+  const quote = blocks.find((b) => b.type === "QUOTE")?.content ?? "";
+  expect(quote.startsWith("[!WARNING]\n**Why?**")).toBe(true);
+});

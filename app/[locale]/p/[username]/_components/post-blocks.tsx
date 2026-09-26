@@ -3,6 +3,8 @@ import { ArrowUpRight, MapPin } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 import { Markdown } from "@/modules/blog/components/markdown";
+import { CalloutBlock } from "@/modules/blog/components/callout-block";
+import { legacyCalloutKind, parseCallout } from "@/modules/blog/lib/callout";
 import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 import { KurlLinkCard } from "@/modules/blog/components/kurl-link-card";
 import { PostCode } from "@/modules/blog/components/post-code";
@@ -57,6 +59,12 @@ const THEMATIC_BREAK = /^\s*([-*_])(\s*\1){2,}\s*$/;
 
 const CALLOUT_LABEL = /^\s*\p{Extended_Pictographic}\uFE0F?\s*\*\*[^*\n]{1,12}\*\*\s*$/u;
 
+function legacyMultilineCallout(content: string) {
+  const [first, ...rest] = content.split("\n");
+  if (rest.length === 0 || !CALLOUT_LABEL.test(first)) return null;
+  return { kind: legacyCalloutKind(first), body: rest.join("\n").trim() };
+}
+
 function isCalloutLabel(block: PublicPostBlock, next?: PublicPostBlock): boolean {
   return (
     block.type === "QUOTE" &&
@@ -96,12 +104,7 @@ export function ArticleBody({
           // DOM 은 불변 → .prose-post > :first/last-child 여백 트림도 그대로다.
           <Fragment key={`block-${i}`}>
             {isCalloutLabel(block, next) ? (
-              <blockquote>
-                <p>
-                  <Markdown inline>{block.content as string}</Markdown>
-                </p>
-                <Markdown>{next.content as string}</Markdown>
-              </blockquote>
+              <CalloutBlock kind={legacyCalloutKind(block.content as string)} body={next.content as string} />
             ) : (
               <Block block={block} ranks={ranks} anchors={anchors} postId={postId} />
             )}
@@ -153,12 +156,16 @@ const BLOCK_RENDERERS: Record<string, BlockRenderer> = {
   H1: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} id={ctx.anchors.get(b)} />,
   H2: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} id={ctx.anchors.get(b)} />,
   H3: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} id={ctx.anchors.get(b)} />,
-  QUOTE: (b) =>
-    b.content ? (
+  QUOTE: (b) => {
+    if (!b.content) return null;
+    const callout = parseCallout(b.content) ?? legacyMultilineCallout(b.content);
+    if (callout) return <CalloutBlock kind={callout.kind} body={callout.body} />;
+    return (
       <blockquote>
         <Markdown inline>{b.content}</Markdown>
       </blockquote>
-    ) : null,
+    );
+  },
   DIVIDER: () => <div className="section-divider my-12" role="separator" />,
   LIST_BULLET: (b) => <ListBlock content={b.content} ordered={false} />,
   LIST_NUMBERED: (b) => <ListBlock content={b.content} ordered />,

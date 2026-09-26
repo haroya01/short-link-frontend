@@ -294,8 +294,15 @@ test("imported markdown renders cleanly and heading links stay short", async ({ 
   await expect(article.getByText("----")).toHaveCount(0);
   await expect(article.locator('[role="separator"]').last()).toBeAttached();
 
-  const callout = article.locator("blockquote", { hasText: "Note" });
-  await expect(callout).toContainText("バックプレッシャーとは？");
+  const note = article.locator('aside[data-callout="note"]');
+  await expect(note).toContainText("ノート");
+  await expect(note).toContainText("バックプレッシャーとは？");
+  await expect(article.getByText("ℹ️")).toHaveCount(0);
+
+  const tip = article.locator('aside[data-callout="tip"]');
+  await expect(tip).toContainText("ヒント");
+  await expect(tip.locator("code")).toHaveText("@Transactional");
+  await expect(tip).not.toContainText("[!TIP]");
 
   const id = await heading.getAttribute("id");
   const legacy = `#${encodeURIComponent("reactive-streams-バックプレッシャーのサポート")}`;

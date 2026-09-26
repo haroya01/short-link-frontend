@@ -471,8 +471,19 @@
         "table": "एक टेबल डालें",
         "imageWide": "पाठ से चौड़ी इमेज",
         "imagePair": "दो अग़ल-बग़ल",
-        "place": "मानचित्र स्थान कार्ड"
-      }
+        "place": "मानचित्र स्थान कार्ड",
+        "calloutNote": "बॉक्स में अतिरिक्त जानकारी",
+        "calloutTip": "काम का सुझाव",
+        "calloutImportant": "जो पाठक को ज़रूर जानना चाहिए",
+        "calloutWarning": "जिस पर ध्यान देना है",
+        "calloutCaution": "जोखिम भरा या वापस न होने वाला"
+      },
+      "groupCallout": "बॉक्स",
+      "calloutNote": "नोट",
+      "calloutTip": "सुझाव",
+      "calloutImportant": "महत्वपूर्ण",
+      "calloutWarning": "चेतावनी",
+      "calloutCaution": "सावधानी"
     },
     "slugLabel": "पोस्ट URL स्लग",
     "placeDialog": {
@@ -500,7 +511,14 @@
     "seriesCreateConflict": "इस नाम की सीरीज़ पहले से मौजूद है। कोई दूसरा नाम आज़माएँ।",
     "seriesCreateError": "सीरीज़ नहीं बन सकी। कृपया फिर से प्रयास करें।",
     "seriesLoadFailed": "सीरीज़ सूची लोड नहीं हो सकी।",
-    "revisionsLoadFailed": "सहेजे गए संस्करण लोड नहीं हो सके।"
+    "revisionsLoadFailed": "सहेजे गए संस्करण लोड नहीं हो सके।",
+    "callout": {
+      "note": "नोट",
+      "tip": "सुझाव",
+      "important": "महत्वपूर्ण",
+      "warning": "चेतावनी",
+      "caution": "सावधानी"
+    }
   },
   "savedLibrary": {
     "private": "इसे केवल आप देख सकते हैं।",
@@ -673,7 +691,14 @@
     },
     "publishedCelebration": "आपकी पोस्ट प्रकाशित हो गई",
     "followersList": "फ़ॉलोअर्स",
-    "followingList": "फ़ॉलो कर रहे"
+    "followingList": "फ़ॉलो कर रहे",
+    "callout": {
+      "note": "नोट",
+      "tip": "सुझाव",
+      "important": "महत्वपूर्ण",
+      "warning": "चेतावनी",
+      "caution": "सावधानी"
+    }
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",

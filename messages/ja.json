@@ -471,8 +471,19 @@
         "table": "テーブルを挿入",
         "imageWide": "本文より広い画像",
         "imagePair": "2枚を横並び",
-        "place": "地図の場所カード"
-      }
+        "place": "地図の場所カード",
+        "calloutNote": "補足をボックスで",
+        "calloutTip": "役立つヒント",
+        "calloutImportant": "必ず知っておくこと",
+        "calloutWarning": "気をつける点",
+        "calloutCaution": "危険・元に戻せないこと"
+      },
+      "groupCallout": "ボックス",
+      "calloutNote": "ノート",
+      "calloutTip": "ヒント",
+      "calloutImportant": "重要",
+      "calloutWarning": "注意",
+      "calloutCaution": "警告"
     },
     "slugLabel": "記事のURLスラッグ",
     "placeDialog": {
@@ -500,7 +511,14 @@
     "seriesCreateConflict": "同じ名前のシリーズがすでにあります。別の名前をお試しください。",
     "seriesCreateError": "シリーズを作成できませんでした。もう一度お試しください。",
     "seriesLoadFailed": "シリーズ一覧を読み込めませんでした。",
-    "revisionsLoadFailed": "保存されたバージョンを読み込めませんでした。"
+    "revisionsLoadFailed": "保存されたバージョンを読み込めませんでした。",
+    "callout": {
+      "note": "ノート",
+      "tip": "ヒント",
+      "important": "重要",
+      "warning": "注意",
+      "caution": "警告"
+    }
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
@@ -673,7 +691,14 @@
     },
     "publishedCelebration": "公開されました",
     "followersList": "フォロワー",
-    "followingList": "フォロー中"
+    "followingList": "フォロー中",
+    "callout": {
+      "note": "ノート",
+      "tip": "ヒント",
+      "important": "重要",
+      "warning": "注意",
+      "caution": "警告"
+    }
   },
   "imageCropper": {
     "title": "画像を切り抜く",

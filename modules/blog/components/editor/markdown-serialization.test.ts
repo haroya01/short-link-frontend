@@ -3,6 +3,7 @@ import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 import { fenceFor, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
+import { parseCallout } from "@/modules/blog/lib/callout";
 import { CjkFriendlyMarkdown, MarkdownBold, MarkdownHardBreak, MarkdownHeading, MarkdownItalic, MarkdownStrike, MarkdownText } from "./markdown-serialization";
 
 function roundTrip(md: string): string {
@@ -119,3 +120,55 @@ describe("editor markdown round trip keeps real posts intact", () => {
   });
 });
 
+
+describe("callout boxes in the editor", () => {
+  async function calloutRoundTrip(md: string) {
+    const { CalloutQuote } = await import("./callout-quote");
+    const editor = new Editor({
+      extensions: [
+        StarterKit.configure({ heading: false, blockquote: false, hardBreak: false, text: false, bold: false, italic: false, strike: false }),
+        MarkdownText,
+        MarkdownHardBreak,
+        MarkdownHeading,
+        CalloutQuote.configure({ labels: { note: "ノート", tip: "ヒント", important: "重要", warning: "注意", caution: "警告" } }),
+        MarkdownBold,
+        MarkdownItalic,
+        MarkdownStrike,
+        CjkFriendlyMarkdown,
+        Markdown.configure({ html: false, breaks: true }),
+      ],
+      content: md,
+    });
+    const html = editor.getHTML();
+    const out = (editor.storage as unknown as { markdown: { getMarkdown: () => string } }).markdown.getMarkdown();
+    return { editor, html, out };
+  }
+
+  it("opens an alert quote as a box and saves it back unchanged", async () => {
+    const md = "> [!WARNING]\n> **なぜ？**\n> 説明です。";
+    const { editor, html, out } = await calloutRoundTrip(md);
+    expect(html).toContain('data-alert="warning"');
+    expect(html).toContain('data-label="注意"');
+    expect(html).not.toContain("[!WARNING]");
+    expect(out).toBe("> [!WARNING]\n> **なぜ？**\\\n> 説明です。");
+    expect(parseCallout(markdownToBlocks(out)[0].content)?.kind).toBe("warning");
+    editor.destroy();
+  });
+
+  it("turns the current paragraph into a box and changes the kind in place", async () => {
+    const { editor } = await calloutRoundTrip("メモです");
+    editor.commands.setTextSelection(1);
+    editor.commands.setCallout("note");
+    expect((editor.storage as unknown as { markdown: { getMarkdown: () => string } }).markdown.getMarkdown()).toBe("> [!NOTE]\n> メモです");
+    editor.commands.setCallout("tip");
+    expect((editor.storage as unknown as { markdown: { getMarkdown: () => string } }).markdown.getMarkdown()).toBe("> [!TIP]\n> メモです");
+    editor.destroy();
+  });
+
+  it("leaves a plain quote as a plain quote", async () => {
+    const { editor, html, out } = await calloutRoundTrip("> ただの引用");
+    expect(html).not.toContain("data-alert");
+    expect(out).toBe("> ただの引用");
+    editor.destroy();
+  });
+});
