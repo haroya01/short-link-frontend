@@ -1372,8 +1372,7 @@ test("the editor visually styles marks and blocks (computed styles, not just pay
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 test("'#### ' does NOT create a broken h4 — the block model is H1–H3 only (A7)", async ({ page }) => {
-  // StarterKit is capped to levels [1,2,3]; a 4th-level heading node would serialize to literal
-  // `#### text` and round-trip as a PARAGRAPH (heading + TOC entry lost). Assert no h4 node forms.
+  // Only H1–H3 are block types, so typing `#### ` never makes an h4 (an h4 already in a post is kept).
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);

@@ -19,6 +19,7 @@ import {
   syntaxHighlighting,
 } from "@codemirror/language";
 import { languages } from "@codemirror/language-data";
+import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 import { tags as t } from "@lezer/highlight";
 
 const readerCodeColors = HighlightStyle.define([
@@ -347,6 +348,23 @@ export const CodeMirrorBlock = CodeBlock.extend<CodeMirrorBlockOptions>({
     return {
       ...this.parent?.(),
       languageLabel: "",
+    };
+  },
+  addStorage() {
+    return {
+      markdown: {
+        serialize(
+          state: { write: (s: string) => void; text: (s: string, escape?: boolean) => void; ensureNewLine: () => void; closeBlock: (n: PMNode) => void },
+          node: PMNode,
+        ) {
+          const fence = fenceFor(node.textContent);
+          state.write(fence + (node.attrs.language || "") + "\n");
+          state.text(node.textContent, false);
+          state.ensureNewLine();
+          state.write(fence);
+          state.closeBlock(node);
+        },
+      },
     };
   },
   addNodeView() {

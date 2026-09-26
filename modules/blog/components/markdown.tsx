@@ -2,6 +2,7 @@ import type { Element, Root } from "hast";
 import type { Parent as MdastParent, PhrasingContent, Root as MdastRoot } from "mdast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkCjkFriendly from "remark-cjk-friendly";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
@@ -82,7 +83,7 @@ const schema = {
 export function Markdown({ children, inline = false }: { children: string; inline?: boolean }) {
   return (
     <ReactMarkdown
-      remarkPlugins={[remarkGfm, remarkNewlineBreaks]}
+      remarkPlugins={[remarkGfm, remarkCjkFriendly, remarkNewlineBreaks]}
       rehypePlugins={
         inline
           ? [rehypeRaw, rehypeSafeStyle, [rehypeSanitize, schema]]
