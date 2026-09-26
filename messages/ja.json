@@ -313,7 +313,8 @@
       "embedPlaceholder": "https://…（リンク・YouTube・Vimeo）",
       "confirm": "確定",
       "cancel": "キャンセル",
-      "remove": "リンクを削除"
+      "remove": "リンクを削除",
+      "linkTextPlaceholder": "表示するテキスト（任意）"
     },
     "table": {
       "addColumn": "列を追加",
@@ -416,12 +417,12 @@
     "scheduledToast": "{when}に公開予約しました。",
     "scheduledFor": "{when} に公開予定",
     "cancelSchedule": "予約取消",
-    "addTopics": "トピックを追加",
+    "addTopics": "タグを追加",
     "tagsDone": "完了",
-    "tagsEdit": "トピックを編集",
+    "tagsEdit": "タグを編集",
     "coverFromBody": "本文の最初の画像を使う",
     "coverAuto": "本文の最初の画像",
-    "tagsRequired": "公開するにはトピック（タグ）を1つ以上追加してください",
+    "tagsRequired": "公開するにはタグを1つ以上追加してください",
     "boldMode": "太字",
     "toolbar": {
       "bold": "太字",
@@ -520,7 +521,8 @@
       "important": "重要",
       "warning": "注意",
       "caution": "警告"
-    }
+    },
+    "bodyPlaceholderTouch": "そのまま書き始めてください — 書式は上のツールバーから"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",

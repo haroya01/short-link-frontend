@@ -313,7 +313,8 @@
       "embedPlaceholder": "https://… (लिंक, YouTube, Vimeo)",
       "confirm": "जोड़ें",
       "cancel": "रद्द करें",
-      "remove": "लिंक हटाएँ"
+      "remove": "लिंक हटाएँ",
+      "linkTextPlaceholder": "दिखाने वाला टेक्स्ट (वैकल्पिक)"
     },
     "table": {
       "addColumn": "कॉलम जोड़ें",
@@ -416,12 +417,12 @@
     "scheduledToast": "{when} को प्रकाशन के लिए शेड्यूल किया गया।",
     "scheduledFor": "{when} को प्रकाशित होगी",
     "cancelSchedule": "शेड्यूल रद्द करें",
-    "addTopics": "विषय जोड़ें",
+    "addTopics": "टैग जोड़ें",
     "tagsDone": "पूर्ण",
-    "tagsEdit": "विषय संपादित करें",
+    "tagsEdit": "टैग संपादित करें",
     "coverFromBody": "पोस्ट की पहली इमेज इस्तेमाल करें",
     "coverAuto": "पोस्ट की पहली छवि",
-    "tagsRequired": "प्रकाशित करने के लिए कम से कम एक विषय (टैग) जोड़ें",
+    "tagsRequired": "प्रकाशित करने के लिए कम से कम एक टैग जोड़ें",
     "boldMode": "बोल्ड",
     "toolbar": {
       "bold": "बोल्ड",
@@ -520,7 +521,8 @@
       "important": "महत्वपूर्ण",
       "warning": "चेतावनी",
       "caution": "सावधानी"
-    }
+    },
+    "bodyPlaceholderTouch": "बस लिखना शुरू करें — फ़ॉर्मैटिंग ऊपर टूलबार में है"
   },
   "savedLibrary": {
     "private": "इसे केवल आप देख सकते हैं।",

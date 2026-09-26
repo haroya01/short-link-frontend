@@ -313,7 +313,8 @@
       "embedPlaceholder": "https://… (liên kết, YouTube, Vimeo)",
       "confirm": "Thêm",
       "cancel": "Hủy",
-      "remove": "Xóa liên kết"
+      "remove": "Xóa liên kết",
+      "linkTextPlaceholder": "Văn bản hiển thị (tùy chọn)"
     },
     "table": {
       "addColumn": "Thêm cột",
@@ -416,12 +417,12 @@
     "scheduledToast": "Đã lên lịch xuất bản vào {when}.",
     "scheduledFor": "Xuất bản {when}",
     "cancelSchedule": "Hủy lịch",
-    "addTopics": "Thêm chủ đề",
+    "addTopics": "Thêm thẻ",
     "tagsDone": "Xong",
-    "tagsEdit": "Sửa chủ đề",
+    "tagsEdit": "Sửa thẻ",
     "coverFromBody": "Dùng ảnh đầu tiên trong bài",
     "coverAuto": "Ảnh đầu tiên trong bài",
-    "tagsRequired": "Thêm ít nhất một chủ đề (thẻ) để xuất bản",
+    "tagsRequired": "Thêm ít nhất một thẻ để xuất bản",
     "boldMode": "Đậm",
     "toolbar": {
       "bold": "Đậm",
@@ -520,7 +521,8 @@
       "important": "Quan trọng",
       "warning": "Lưu ý",
       "caution": "Cảnh báo"
-    }
+    },
+    "bodyPlaceholderTouch": "Cứ bắt đầu viết — định dạng ở thanh công cụ phía trên"
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",

@@ -361,7 +361,9 @@ export function MarkdownEditor({
       TightTaskLists,
       // Show a hint on the empty body so it's obvious where to start writing (CSS at .tiptap
       // p.is-editor-empty::before renders this).
-      Placeholder.configure({ placeholder: t("bodyPlaceholder") }),
+      Placeholder.configure({
+        placeholder: window.matchMedia?.("(pointer: coarse)").matches ? t("bodyPlaceholderTouch") : t("bodyPlaceholder"),
+      }),
       // html:false — standard markdown only (no raw-HTML passthrough); GFM tables round-trip natively.
       Markdown.configure({ html: false, breaks: true, transformPastedText: true }),
     ],
@@ -537,13 +539,14 @@ export function MarkdownEditor({
         placeholder={urlDialog?.mode === "embed" ? t("urlDialog.embedPlaceholder") : t("urlDialog.linkPlaceholder")}
         initialValue={urlDialog?.initial ?? ""}
         allowRemove={urlDialog?.mode === "link" && !!urlDialog.initial}
+        askLabel={urlDialog?.mode === "link" && !urlDialog.initial && editor.state.selection.empty}
         // 닫힐 때 포커스를 에디터로 돌려놓는다 — 백드롭/Esc 로 닫으면 포커스가 body 로 떨어져
         // 다음 타이핑이 허공에 사라졌다(제출 경로는 이미 focus 를 잡으므로 무해한 중복).
         onClose={() => {
           setUrlDialog(null);
           editor.chain().focus().run();
         }}
-        onSubmit={(url) => {
+        onSubmit={(url, label) => {
           if (urlDialog?.mode === "embed") {
             // Insert a live link-preview card node (serializes back to the bare URL → EMBED block).
             editor.chain().focus().insertContent({ type: "linkCard", attrs: { url } }).run();
@@ -551,7 +554,7 @@ export function MarkdownEditor({
             editor
               .chain()
               .focus()
-              .insertContent({ type: "text", text: url, marks: [{ type: "link", attrs: { href: url } }] })
+              .insertContent({ type: "text", text: label || url, marks: [{ type: "link", attrs: { href: url } }] })
               .unsetMark("link")
               .run();
           } else {

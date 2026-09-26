@@ -1590,7 +1590,7 @@ test("canvas topics: the '+ Add topics' ghost expands and its chip shows in the 
   await setupMocks(page, captured);
   await openEditor(page);
   // With no tags, a quiet "+ Add topics" affordance sits under the title (not hidden behind 발행).
-  const addTopics = page.getByRole("button", { name: "Add topics" });
+  const addTopics = page.getByRole("button", { name: "Add tags" });
   await expect(addTopics).toBeVisible();
   await addTopics.click();
   // It expands into the SAME chip input. (Scoped by the tag placeholder — the title input is separate.)
@@ -1966,6 +1966,23 @@ test.describe("on a phone, bold and link are one tap away without selecting text
     const paragraph = blocks.find((b) => b.type === "PARAGRAPH")?.content ?? "";
     expect(paragraph).toContain("Plain **strong** and ");
     expect(paragraph).toContain("<https://kurl.me/docs> end");
+  });
+
+  test("the link dialog takes the words to show when nothing is selected", async ({ page }) => {
+    const captured: Captured = { blocks: null };
+    await setupMocks(page, captured);
+    await openEditor(page);
+
+    await page.locator(".tiptap").click();
+    await page.keyboard.type("Read ");
+    await page.getByTestId("editor-toolbar").getByRole("button", { name: "Link", exact: true }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.locator('input[type="url"]').fill("https://kurl.me/docs");
+    await dialog.getByRole("textbox", { name: "Text to show (optional)" }).fill("the docs");
+    await dialog.getByRole("textbox", { name: "Text to show (optional)" }).press("Enter");
+
+    const blocks = await save(page, captured);
+    expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain("Read [the docs](https://kurl.me/docs)");
   });
 });
 
