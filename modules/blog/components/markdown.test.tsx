@@ -40,3 +40,24 @@ describe("reader markdown images", () => {
     expect(image.getAttribute("src") ?? "").not.toContain("javascript:");
   });
 });
+
+describe("reader markdown line breaks", () => {
+  it("shows a single newline as a line break, like the editor", () => {
+    const root = render("**イベントループとは？**\n1つのスレッドでイベントを監視します。");
+    const p = root.querySelector("p")!;
+    expect(p.querySelectorAll("br")).toHaveLength(1);
+    expect(p.querySelector("strong")?.textContent).toBe("イベントループとは？");
+  });
+
+  it("keeps code blocks and inline code untouched", () => {
+    const root = render("```\nline 1\nline 2\n```\n\n`a` and `b`");
+    expect(root.querySelector("pre br")).toBeNull();
+    expect(root.querySelector("pre")?.textContent).toContain("line 1\nline 2");
+  });
+
+  it("still separates paragraphs on a blank line", () => {
+    const root = render("one\n\ntwo");
+    expect(root.querySelectorAll("p")).toHaveLength(2);
+    expect(root.querySelector("br")).toBeNull();
+  });
+});

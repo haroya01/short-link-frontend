@@ -1,4 +1,5 @@
 import type { Element, Root } from "hast";
+import type { Parent as MdastParent, PhrasingContent, Root as MdastRoot } from "mdast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -43,6 +44,27 @@ function rehypeSafeStyle() {
   };
 }
 
+function remarkNewlineBreaks() {
+  return (tree: MdastRoot) => {
+    const walk = (node: MdastParent) => {
+      const next: MdastParent["children"] = [];
+      for (const child of node.children) {
+        if (child.type === "text" && child.value.includes("\n")) {
+          child.value.split("\n").forEach((part, i) => {
+            if (i > 0) next.push({ type: "break" } as PhrasingContent);
+            if (part) next.push({ type: "text", value: part });
+          });
+          continue;
+        }
+        if ("children" in child) walk(child as MdastParent);
+        next.push(child);
+      }
+      node.children = next;
+    };
+    walk(tree);
+  };
+}
+
 // Allow span/mark to carry className (hljs spans) + a style (already value-filtered above);
 // keep className on code/pre for syntax highlighting. Everything else stays on the safe default.
 const schema = {
@@ -60,7 +82,7 @@ const schema = {
 export function Markdown({ children, inline = false }: { children: string; inline?: boolean }) {
   return (
     <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
+      remarkPlugins={[remarkGfm, remarkNewlineBreaks]}
       rehypePlugins={
         inline
           ? [rehypeRaw, rehypeSafeStyle, [rehypeSanitize, schema]]

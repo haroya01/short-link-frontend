@@ -1739,23 +1739,27 @@ body[data-cookie-consent="visible"] {
   padding: 0.1rem 0 0.1rem 1.1rem;
   color: #475569;
 }
-/* 발행본(.prose-post hr)의 애스터리즘 구분선과 동일. */
+/* 발행본 구분선 블록(.section-divider)과 같은 모양. */
 .tiptap hr {
   border: 0;
+  height: 1px;
   margin: 2.5rem 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(15, 23, 42, 0.08) 18%,
+    rgba(15, 23, 42, 0.08) 82%,
+    transparent 100%
+  );
 }
-.tiptap hr::before {
-  content: "✳ ✳ ✳";
-  font-size: 12px;
-  color: #cbd5e1;
-  letter-spacing: 0.5em;
-  margin-right: -0.5em;
-}
-.dark .tiptap hr::before {
-  color: #475569;
+.dark .tiptap hr {
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(148, 163, 184, 0.22) 18%,
+    rgba(148, 163, 184, 0.22) 82%,
+    transparent 100%
+  );
 }
 /* Inline marks — explicit so a Tailwind/preflight change can't flatten bold/italic/strike in the
    editor (the published .prose-post styles these too; keep them in lockstep). */
