@@ -42,6 +42,24 @@ jobs:
           echo "ok=false" >> "$GITHUB_OUTPUT"
           exit 1
 
+      - name: Smoke — fonts and blog home
+        run: |
+          fail=0
+          check() {
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$1")
+            echo "$code $1"
+            [ "$code" = "200" ] || fail=1
+          }
+          for host in https://kurl.me https://blog.kurl.me; do
+            css="$host/pretendard/pretendardvariable-dynamic-subset.min.css"
+            check "$css"
+            font=$(curl -s "$css" | grep -o 'url([^)]*\.woff2)' | head -1 | sed -E 's/url\((.*)\)/\1/; s#^(\.\./)+#/#')
+            if [ -z "$font" ]; then echo "no woff2 in $css"; fail=1; continue; fi
+            check "$host$font"
+          done
+          check https://blog.kurl.me/
+          exit $fail
+
       # Commit message / run URL go through `env:` so GitHub Actions injects them as shell
       # environment variables, not as raw text inside the inline shell script. The previous
       # `--arg msg "${{ github.event.head_commit.message }}"` interpolated the commit body
