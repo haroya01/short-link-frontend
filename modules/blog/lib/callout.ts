@@ -32,12 +32,28 @@ const CONTAINER_KIND: Record<string, CalloutKind> = {
 };
 
 export function convertCalloutContainers(markdown: string): string {
-  return markdown.replace(
-    /^:::[ \t]*(note|message)(?:[ \t]+(info|warn|alert))?[ \t]*\n([\s\S]*?)\n:::[ \t]*$/gm,
-    (_all, type: string, variant: string | undefined, body: string) => {
-      const kind = CONTAINER_KIND[variant ? `${type} ${variant}` : type] ?? "note";
-      const lines = body.split("\n").map((line) => (line.trim() === "" ? ">" : `> ${line}`));
-      return [`> ${calloutMarker(kind)}`, ...lines].join("\n");
-    },
-  );
+  if (!markdown.includes(":::")) return markdown;
+  const lines = markdown.split("\n");
+  const out: string[] = [];
+  let fence: string | null = null;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    const marker = trimmed.match(/^(`{3,}|~{3,})/)?.[1];
+    if (marker) {
+      if (fence === null) fence = marker;
+      else if (marker.startsWith(fence) && trimmed === marker) fence = null;
+      out.push(lines[i]);
+      continue;
+    }
+    const open = fence === null ? trimmed.match(/^:::[ \t]*(note|message)(?:[ \t]+(info|warn|alert))?[ \t]*$/) : null;
+    const close = open ? lines.findIndex((line, j) => j > i && line.trim() === ":::") : -1;
+    if (!open || close < 0) {
+      out.push(lines[i]);
+      continue;
+    }
+    const kind = CONTAINER_KIND[open[2] ? `${open[1]} ${open[2]}` : open[1]] ?? "note";
+    out.push(`> ${calloutMarker(kind)}`, ...lines.slice(i + 1, close).map((line) => (line.trim() === "" ? ">" : `> ${line}`)));
+    i = close;
+  }
+  return out.join("\n");
 }

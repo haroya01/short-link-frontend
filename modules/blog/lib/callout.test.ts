@@ -25,4 +25,10 @@ describe("callout", () => {
     expect(convertCalloutContainers(":::message alert\n危険\n:::")).toBe("> [!CAUTION]\n> 危険");
     expect(convertCalloutContainers(":::details 開く\n中身\n:::")).toBe(":::details 開く\n中身\n:::");
   });
+
+  it("leaves box syntax inside code alone", () => {
+    const md = "```markdown\n:::note warn\n例\n:::\n```";
+    expect(convertCalloutContainers(md)).toBe(md);
+  });
 });
+
