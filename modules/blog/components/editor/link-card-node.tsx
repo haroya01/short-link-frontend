@@ -7,7 +7,8 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowUpRight, Link2, MapPin, X } from "lucide-react";
 import { getLinkPreview, type LinkPreview } from "@/modules/blog/api/public-posts";
-import { planEmbed } from "@/modules/blog/lib/post-embed";
+import { isImageUrl, planEmbed } from "@/modules/blog/lib/post-embed";
+import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
 import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 
 /** A bare URL on its own line, pasted into the editor. */
@@ -58,7 +59,20 @@ export const LinkCardNode = Node.create({
           state.write(node.attrs.url || "");
           state.closeBlock(node);
         },
-        parse: {},
+        parse: {
+          updateDOM(element: HTMLElement) {
+            element.querySelectorAll(":scope > p").forEach((p) => {
+              const url = p.textContent?.trim() ?? "";
+              const onlyLink = Array.from(p.children).every((c) => c.tagName === "A" && c.getAttribute("href") === url);
+              if (!onlyLink || !LINK_CARD_URL_RE.test(url) || isImageUrl(url)) return;
+              if (!kurlShortCode(url) && !planEmbed(url)) return;
+              const card = element.ownerDocument.createElement("div");
+              card.setAttribute("data-link-card", "");
+              card.setAttribute("data-url", url);
+              p.replaceWith(card);
+            });
+          },
+        },
       },
     };
   },

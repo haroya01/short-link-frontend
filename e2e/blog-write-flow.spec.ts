@@ -1866,3 +1866,34 @@ test("Export .md downloads the post as markdown carrying the title and body", as
   expect(md, "frontmatter carries the title").toContain("My exportable post");
   expect(md, "the body rides along").toContain("The body that should ride along in the export.");
 });
+
+test("reopening a saved post shows its link cards and dividers as they will publish", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) =>
+    route.fulfill({
+      json: [
+        { id: 1, type: "PARAGRAPH", content: "before the card", blockOrder: 0 },
+        { id: 2, type: "EMBED", content: "https://docs.spring.io/spring-framework/reference/web/webflux.html", blockOrder: 1 },
+        { id: 3, type: "DIVIDER", content: null, blockOrder: 2 },
+        { id: 4, type: "PARAGRAPH", content: "https://example.com/inline and more text", blockOrder: 3 },
+      ],
+    }),
+  );
+  await openEditor(page);
+
+  const card = page.locator(".tiptap [data-link-card]");
+  await expect(card).toHaveCount(1);
+  await expect(card).toHaveAttribute("data-url", "https://docs.spring.io/spring-framework/reference/web/webflux.html");
+  await expect(page.locator(".tiptap p", { hasText: "https://docs.spring.io" })).toHaveCount(0);
+  await expect(page.locator(".tiptap p", { hasText: "and more text" })).toBeVisible();
+
+  const divider = page.locator(".tiptap hr");
+  await expect(divider).toHaveCount(1);
+  const look = await divider.evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { height: el.getBoundingClientRect().height, background: s.backgroundImage };
+  });
+  expect(look.height).toBeGreaterThan(0);
+  expect(look.background).toContain("gradient");
+});
