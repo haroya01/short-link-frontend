@@ -836,7 +836,7 @@ async function openPublishDialog(page: Page) {
 /** Add a topic (tag) in the dialog — going public requires ≥1, so publish/republish/schedule tests
  *  must seed one; otherwise the primary action nudges the tag field and fires no lifecycle call. */
 async function addDialogTag(dialog: Locator, name = "dev") {
-  const input = dialog.getByPlaceholder(/tag/i);
+  const input = dialog.getByRole("textbox", { name: /^tags$/i });
   await input.fill(name);
   await input.press("Enter");
 }
@@ -1782,6 +1782,7 @@ test("publish auto-shortens an in-body link through kurl and swaps the short URL
   await page.getByPlaceholder("https://example.com").fill("https://example.com/an-article");
   await page.getByRole("button", { name: "Add", exact: true }).click();
   await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("read this");
+  await expect(page.locator(".tiptap")).toBeFocused();
 
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog); // topic required to publish
@@ -1822,6 +1823,7 @@ test("publish: an in-post link toggled OFF keeps its original URL (not shortened
   await page.getByPlaceholder("https://example.com").fill("https://example.com/an-article");
   await page.getByRole("button", { name: "Add", exact: true }).click();
   await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("read this");
+  await expect(page.locator(".tiptap")).toBeFocused();
 
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog);
