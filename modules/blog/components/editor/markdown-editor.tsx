@@ -8,6 +8,7 @@ import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { ImageWithCaption } from "@/modules/blog/components/editor/image-with-caption";
 import Placeholder from "@tiptap/extension-placeholder";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { TableRow } from "@tiptap/extension-table-row";
 import {
   AlignableTable,
@@ -28,6 +29,7 @@ import {
   Italic,
   Link as LinkIcon,
   List,
+  ListChecks,
   ListOrdered,
   Minus,
   PanelTop,
@@ -44,7 +46,7 @@ import { CodeMirrorBlock, insertCodeBlock } from "@/modules/blog/components/edit
 import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
 import { CalloutQuote } from "@/modules/blog/components/editor/callout-quote";
 import { convertCalloutContainers } from "@/modules/blog/lib/callout";
-import { CjkFriendlyMarkdown, MarkdownBold, MarkdownHardBreak, MarkdownHeading, MarkdownItalic, MarkdownStrike, MarkdownText } from "@/modules/blog/components/editor/markdown-serialization";
+import { CjkFriendlyMarkdown, MarkdownBold, TightTaskLists, MarkdownHardBreak, MarkdownHeading, MarkdownItalic, MarkdownStrike, MarkdownText } from "@/modules/blog/components/editor/markdown-serialization";
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
 import { TableHandles } from "@/modules/blog/components/editor/table-handles";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
@@ -354,6 +356,9 @@ export function MarkdownEditor({
       TableRow,
       AlignableTableHeader,
       AlignableTableCell,
+      TaskList,
+      TaskItem.configure({ nested: true }),
+      TightTaskLists,
       // Show a hint on the empty body so it's obvious where to start writing (CSS at .tiptap
       // p.is-editor-empty::before renders this).
       Placeholder.configure({ placeholder: t("bodyPlaceholder") }),
@@ -587,6 +592,7 @@ function EditorToolbar({
       h3: editor.isActive("heading", { level: 3 }),
       bullet: editor.isActive("bulletList"),
       ordered: editor.isActive("orderedList"),
+      task: editor.isActive("taskList"),
       quote: editor.isActive("blockquote"),
       codeBlock: editor.isActive("codeBlock"),
       bold: editor.isActive("bold"),
@@ -606,6 +612,7 @@ function EditorToolbar({
       { icon: Heading3, label: t("slash.heading3"), active: a.h3, run: () => editor.chain().focus().toggleHeading({ level: 3 }).run() },
       { icon: List, label: t("slash.bulletList"), active: a.bullet, run: () => editor.chain().focus().toggleBulletList().run() },
       { icon: ListOrdered, label: t("slash.orderedList"), active: a.ordered, run: () => editor.chain().focus().toggleOrderedList().run() },
+      { icon: ListChecks, label: t("slash.taskList"), active: a.task, run: () => editor.chain().focus().toggleTaskList().run() },
       { icon: Quote, label: t("slash.quote"), active: a.quote, run: () => editor.chain().focus().toggleBlockquote().run() },
       { icon: SquareCode, label: t("slash.codeBlock"), active: a.codeBlock, run: () => insertCodeBlock(editor) },
     ],

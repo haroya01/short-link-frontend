@@ -641,6 +641,17 @@ mark.kurl-highlight--thread {
   /* 인용구에 italic 금지(재발 방지) — Pretendard 에 이탤릭 자형이 없어 한글/일본어가 합성 기울임
      (가짜 oblique)으로 찌그러진다. 구분은 왼쪽 그린 바 + 색이 담당하고, em(인라인 강조)만 이탤릭을
      유지한다. .prose-text-block blockquote 도 같은 이유로 non-italic. */
+  .prose-post ul.contains-task-list {
+    padding-left: 0.25rem;
+  }
+  .prose-post li.task-list-item {
+    list-style: none;
+  }
+  .prose-post li.task-list-item > input[type="checkbox"] {
+    margin: 0 0.5rem 0 0;
+    vertical-align: -0.1em;
+    accent-color: #059669;
+  }
   .prose-post blockquote {
     @apply my-7 border-l-[3px] border-accent-400 pl-5 text-[1.125rem] leading-relaxed text-slate-600 dark:text-slate-400;
   }
@@ -1773,6 +1784,26 @@ body[data-cookie-consent="visible"] {
 .dark .tiptap blockquote[data-alert="warning"]::before { color: #fcd34d; }
 .dark .tiptap blockquote[data-alert="caution"] { border-color: rgba(244, 63, 94, 0.5); background: rgba(244, 63, 94, 0.1); }
 .dark .tiptap blockquote[data-alert="caution"]::before { color: #fda4af; }
+.tiptap ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0.25rem;
+}
+.tiptap ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.tiptap ul[data-type="taskList"] li > label {
+  flex-shrink: 0;
+  margin-top: 0.3em;
+}
+.tiptap ul[data-type="taskList"] li > label input {
+  accent-color: #059669;
+}
+.tiptap ul[data-type="taskList"] li > div {
+  flex: 1;
+  min-width: 0;
+}
 /* 발행본 구분선 블록(.section-divider)과 같은 모양. */
 .tiptap hr {
   border: 0;

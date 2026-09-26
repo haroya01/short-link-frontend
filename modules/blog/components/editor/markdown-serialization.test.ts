@@ -4,7 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
 import { fenceFor, markdownToBlocks } from "@/modules/blog/lib/markdown-to-blocks";
 import { parseCallout } from "@/modules/blog/lib/callout";
-import { CjkFriendlyMarkdown, MarkdownBold, MarkdownHardBreak, MarkdownHeading, MarkdownItalic, MarkdownStrike, MarkdownText } from "./markdown-serialization";
+import { CjkFriendlyMarkdown, MarkdownBold, TightTaskLists, MarkdownHardBreak, MarkdownHeading, MarkdownItalic, MarkdownStrike, MarkdownText } from "./markdown-serialization";
 
 function roundTrip(md: string): string {
   const editor = new Editor({
@@ -172,3 +172,28 @@ describe("callout boxes in the editor", () => {
     editor.destroy();
   });
 });
+
+describe("checklists in the editor", () => {
+  it("opens and saves a checklist without changing it", async () => {
+    const { TaskItem, TaskList } = await import("@tiptap/extension-list");
+    const editor = new Editor({
+      extensions: [
+        StarterKit.configure({ hardBreak: false, text: false, bold: false, italic: false, strike: false }),
+        MarkdownText,
+        MarkdownHardBreak,
+        MarkdownBold,
+        TaskList,
+        TaskItem.configure({ nested: true }),
+        TightTaskLists,
+        Markdown.configure({ html: false, breaks: true }),
+      ],
+      content: "- [ ] 買い物\n- [x] **洗濯**",
+    });
+    expect(editor.getHTML()).toContain('data-type="taskList"');
+    const out = (editor.storage as unknown as { markdown: { getMarkdown: () => string } }).markdown.getMarkdown();
+    editor.destroy();
+    expect(out).toBe("- [ ] 買い物\n- [x] **洗濯**");
+    expect(markdownToBlocks(out)).toEqual([{ type: "LIST_BULLET", content: "- [ ] 買い物\n- [x] **洗濯**" }]);
+  });
+});
+

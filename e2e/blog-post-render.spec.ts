@@ -304,6 +304,11 @@ test("imported markdown renders cleanly and heading links stay short", async ({ 
   await expect(tip.locator("code")).toHaveText("@Transactional");
   await expect(tip).not.toContainText("[!TIP]");
 
+  const checks = article.locator('li.task-list-item input[type="checkbox"]');
+  await expect(checks).toHaveCount(2);
+  await expect(checks.nth(1)).toBeChecked();
+  await expect(article).not.toContainText("[ ]");
+
   const id = await heading.getAttribute("id");
   const legacy = `#${encodeURIComponent("reactive-streams-バックプレッシャーのサポート")}`;
   await page.goto(`/ja/p/dohyun/spring-tx-propagation${legacy}`);
