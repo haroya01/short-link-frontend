@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { convertCalloutContainers, legacyCalloutKind, parseCallout } from "./callout";
+import { convertCalloutContainers, legacyCalloutKind, parseCallout, upgradeLegacyCallouts } from "./callout";
 import { markdownToBlocks } from "./markdown-to-blocks";
 
 describe("callout", () => {
@@ -29,6 +29,22 @@ describe("callout", () => {
   it("leaves box syntax inside code alone", () => {
     const md = "```markdown\n:::note warn\n例\n:::\n```";
     expect(convertCalloutContainers(md)).toBe(md);
+  });
+
+  it("upgrades imported label boxes to alert quotes when a post is opened for editing", () => {
+    const blocks = [
+      { type: "PARAGRAPH", content: "前" },
+      { type: "QUOTE", content: "ℹ️ **Note**" },
+      { type: "PARAGRAPH", content: "**イベントループとは？**\n説明" },
+      { type: "QUOTE", content: "⚠️ **注意**\n**なぜ？**\n理由" },
+      { type: "QUOTE", content: "ただの引用" },
+    ];
+    expect(upgradeLegacyCallouts(blocks)).toEqual([
+      { type: "PARAGRAPH", content: "前" },
+      { type: "QUOTE", content: "[!NOTE]\n**イベントループとは？**\n説明" },
+      { type: "QUOTE", content: "[!WARNING]\n**なぜ？**\n理由" },
+      { type: "QUOTE", content: "ただの引用" },
+    ]);
   });
 });
 

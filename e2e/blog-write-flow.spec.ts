@@ -2002,3 +2002,31 @@ test("slash menu makes a checklist that saves as GitHub task items", async ({ pa
   const blocks = await save(page, captured);
   expect(blocks.find((b) => b.type === "LIST_BULLET")?.content).toBe("- [ ] Add the dependency\n- [x] Write the config");
 });
+
+test("opening an imported post turns its old Note label into a box that saves in the new format", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) => {
+    if (route.request().method() === "PUT") {
+      captured.blocks = route.request().postDataJSON()?.blocks ?? null;
+      return route.fulfill({ json: [] });
+    }
+    return route.fulfill({
+      json: [
+        { id: 1, type: "PARAGRAPH", content: "before", blockOrder: 0 },
+        { id: 2, type: "QUOTE", content: "ℹ️ **Note**", blockOrder: 1 },
+        { id: 3, type: "PARAGRAPH", content: "**Event loop?**\nOne thread watches events.", blockOrder: 2 },
+      ],
+    });
+  });
+  await openEditor(page);
+
+  await expect(page.locator('.tiptap blockquote[data-alert="note"]')).toContainText("One thread watches events.");
+  await expect(page.locator(".tiptap")).not.toContainText("ℹ️");
+  await page.locator(".tiptap p").first().click();
+  await page.keyboard.press("End");
+  await page.keyboard.type("!");
+  const blocks = await save(page, captured);
+  expect(blocks.map((b) => b.type)).toEqual(["PARAGRAPH", "QUOTE"]);
+  expect(blocks[1].content?.startsWith("[!NOTE]\n**Event loop?**")).toBe(true);
+});
