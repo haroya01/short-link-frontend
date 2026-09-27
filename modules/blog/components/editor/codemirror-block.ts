@@ -23,7 +23,7 @@ import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 import { tags as t } from "@lezer/highlight";
 
 const readerCodeColors = HighlightStyle.define([
-  { tag: [t.comment, t.quote], color: "#94a3b8", fontStyle: "italic" },
+  { tag: [t.comment, t.quote], color: "#9ca49f", fontStyle: "italic" },
   { tag: [t.keyword, t.bool, t.null, t.heading, t.link, t.modifier, t.operatorKeyword], color: "#93c5fd" },
   { tag: [t.string, t.special(t.string), t.attributeName, t.inserted], color: "#6ee7b7" },
   { tag: [t.number, t.standard(t.name), t.meta, t.annotation, t.atom], color: "#fca5a5" },
@@ -53,7 +53,7 @@ const LANGUAGES = [
 ];
 
 const cmTheme = CMView.theme({
-  "&": { backgroundColor: "transparent", color: "#e2e8f0", fontSize: "13.5px" },
+  "&": { backgroundColor: "transparent", color: "#e5e8e6", fontSize: "13.5px" },
   "&.cm-focused": { outline: "none" },
   ".cm-scroller": {
     fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",

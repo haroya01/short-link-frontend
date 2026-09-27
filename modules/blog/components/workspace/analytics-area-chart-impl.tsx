@@ -39,7 +39,7 @@ export function AnalyticsAreaChartImpl({ data }: { data: DailyPoint[] }) {
           <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 10, fill: "#94a3b8" }}
+            tick={{ fontSize: 10, fill: "#9ca49f" }}
             tickFormatter={(v: string) => v.slice(5)}
             tickLine={false}
             axisLine={false}
@@ -47,7 +47,7 @@ export function AnalyticsAreaChartImpl({ data }: { data: DailyPoint[] }) {
             minTickGap={24}
           />
           <YAxis
-            tick={{ fontSize: 10, fill: "#94a3b8" }}
+            tick={{ fontSize: 10, fill: "#9ca49f" }}
             tickLine={false}
             axisLine={false}
             allowDecimals={false}
@@ -61,7 +61,7 @@ export function AnalyticsAreaChartImpl({ data }: { data: DailyPoint[] }) {
               backgroundColor: "var(--chart-tooltip-bg)",
               color: "var(--chart-tooltip-text)",
               fontSize: 12,
-              boxShadow: "0 4px 16px rgba(15,23,42,0.08)",
+              boxShadow: "0 4px 16px rgba(19,26,22,0.08)",
               padding: "8px 12px",
             }}
             itemStyle={{ color: "var(--chart-tooltip-text)" }}

@@ -77,13 +77,11 @@ export function Nav() {
 
   return (
     <>
-    {/* 상시 유리 캡슐(§12) — 스크롤 상태 무관, 첫 화면부터 떠 있는 투명 카드로 보인다.
-        (스크롤 시에만 캡슐화되던 2장 크로스페이드를 단일 상태로 단순화) */}
     <header className="vt-app-header sticky top-0 z-30">
       <div className="relative">
         <div
           aria-hidden
-          className="glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] dark:border-slate-800/60"
+          className="glass-chrome absolute inset-0 border-b border-slate-200/80 dark:border-slate-800/80"
         />
       <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-7">
@@ -154,7 +152,7 @@ export function Nav() {
                 className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               />
               <Link href={loginHrefFor(pathname)}>
-                <Button size="sm" variant="default" className="rounded-full">
+                <Button size="sm" variant="outline">
                   {t("login")}
                 </Button>
               </Link>
@@ -169,7 +167,7 @@ export function Nav() {
             kurl's own entries (profile + blog switch stay in the top Nav / AppsGrid, not duplicated).
             Signed out: language + theme stay visible on the bar since there's no account menu yet. */}
         <div className="hidden shrink-0 items-center gap-2 sm:flex">
-          <AppsGrid />
+          <AppsGrid current="links" />
           {!ready ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
           ) : authenticated ? (
@@ -185,7 +183,7 @@ export function Nav() {
                 className="grid h-8 w-8 place-items-center rounded-md transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
               />
               <Link href={loginHrefFor(pathname)}>
-                <Button size="sm" variant="default" className="rounded-full">
+                <Button size="sm" variant="outline">
                   {t("login")}
                 </Button>
               </Link>

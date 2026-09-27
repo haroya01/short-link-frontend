@@ -2,7 +2,7 @@
 
 import { type ComponentProps } from "react";
 import { usePathname } from "next/navigation";
-import { LogIn, Menu, PenSquare, X, Bell } from "lucide-react";
+import { Menu, PenSquare, X, Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { blogHref, type Product } from "@/lib/host";
@@ -68,7 +68,7 @@ export function AppHeader({
 
   const loginButton = (
     <Button
-      variant="default"
+      variant="outline"
       size="sm"
       onClick={() => {
         // Route through kurl's own branded login screen (then Google) instead of bouncing straight
@@ -76,8 +76,7 @@ export function AppHeader({
         window.location.href = `${blogHref("/login")}?next=${encodeURIComponent(pathname)}`;
       }}
     >
-      <LogIn className="h-3.5 w-3.5" />
-      <span className="hidden sm:inline">{t("login")}</span>
+      {t("login")}
     </Button>
   );
   const { open, toggle } = useSidebarState();
@@ -87,7 +86,7 @@ export function AppHeader({
     <ChromeNavLink
       href={authed ? blogHref("/write/new") : `${blogHref("/login")}?next=${encodeURIComponent("/write/new")}`}
       aria-label={t("write")}
-      className="focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent-700 text-white transition-colors hover:bg-accent-800 sm:hidden"
+      className="focus-ring ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent-700 text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:hidden"
     >
       <PenSquare className="h-4 w-4" />
     </ChromeNavLink>
@@ -109,7 +108,7 @@ export function AppHeader({
       {authed && (
         <ChromeNavLink
           href={blogHref("/write/new")}
-          className="focus-ring hidden h-8 items-center gap-1.5 rounded-full bg-accent-700 px-3.5 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 sm:inline-flex"
+          className="focus-ring hidden h-8 items-center gap-1.5 rounded-lg bg-accent-700 px-3 text-[13px] font-medium text-white transition-colors hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:inline-flex"
         >
           <PenSquare className="h-3.5 w-3.5" />
           {t("write")}
@@ -142,11 +141,10 @@ export function AppHeader({
 
   return (
     <header className="vt-app-header sticky top-0 z-30">
-      {/* 상시 유리 캡슐 — nav.tsx 와 같은 §12 단일 상태. */}
       <div className="relative">
         <div
           aria-hidden
-          className="glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] dark:border-slate-800/60"
+          className="glass-chrome absolute inset-0 border-b border-slate-200/80 dark:border-slate-800/80"
         />
       <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
