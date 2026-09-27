@@ -23,7 +23,13 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
   if (verb === "POST" && p === "/api/v1/links") {
     const host = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
     const code = (++mockShortenSeq).toString(36).padStart(4, "0");
-    return { shortCode: code, shortUrl: `https://${host}/${code}`, claimToken: null };
+    const password = (body as { password?: string } | undefined)?.password;
+    return {
+      shortCode: code,
+      shortUrl: `https://${host}/${code}`,
+      claimToken: null,
+      passwordProtected: Boolean(password?.trim()),
+    };
   }
 
   if (p.startsWith("/api/v1/links/me/favorites") && verb !== "GET") {
