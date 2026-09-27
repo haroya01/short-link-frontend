@@ -13,6 +13,7 @@ import { buildDemoLinkStats } from "@/lib/demo-data";
  */
 let mockShortenSeq = 7000;
 let mockFavoriteCodes = ["saved-74", "spr1ng", "d0cs"];
+const mockVisitOptions = new Map<string, { openInBrowser: boolean }>();
 
 export function mockLinksResponse(path: string, method: string, body?: unknown): unknown | undefined {
   const verb = (method || "GET").toUpperCase();
@@ -55,6 +56,15 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
     };
     const codes = p.endsWith("/by-codes") ? new URLSearchParams(path.split("?")[1]).get("codes")?.split(",") ?? [] : mockFavoriteCodes;
     return { items: codes.flatMap((code) => page.items.filter((item) => item.shortCode === code)), hasMore: false, nextCursor: null };
+  }
+  const visitMatch = /^\/api\/v1\/links\/([^/]+)\/visit-options$/.exec(p);
+  if (verb === "PATCH" && visitMatch) {
+    const code = visitMatch[1];
+    const current = mockVisitOptions.get(code) ?? { openInBrowser: false };
+    const patch = (body ?? {}) as { openInBrowser?: boolean };
+    const next = { openInBrowser: patch.openInBrowser ?? current.openInBrowser };
+    mockVisitOptions.set(code, next);
+    return { shortCode: code, ...next };
   }
   if (verb !== "GET") return undefined;
 
@@ -120,6 +130,7 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
       tags: ["promo"],
       note: null,
       expiredMessage: null,
+      openInBrowser: mockVisitOptions.get(code)?.openInBrowser ?? false,
     };
   }
   return undefined;

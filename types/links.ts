@@ -77,6 +77,16 @@ export type LinkDetail = {
   tags: string[];
   note: string | null;
   expiredMessage: string | null;
+  openInBrowser?: boolean;
+};
+
+export type LinkVisitOptions = {
+  openInBrowser?: boolean;
+};
+
+export type LinkVisitOptionsResponse = {
+  shortCode: string;
+  openInBrowser: boolean;
 };
 
 export type OgOverrideRequest = {
