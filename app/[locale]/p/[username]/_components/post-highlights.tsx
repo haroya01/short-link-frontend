@@ -455,7 +455,7 @@ function HighlightVisibilityToggle({
   showLabel: string;
 }) {
   return (
-    <div className="mt-8 flex items-center gap-2 text-[12px] text-slate-400 dark:text-slate-500">
+    <div className="mt-8 flex items-center gap-2 text-[12px] text-slate-500 dark:text-slate-400">
       <Highlighter className="h-3.5 w-3.5 text-accent-600/70 dark:text-accent-500/70" aria-hidden />
       <span>{show ? shownLabel : hiddenLabel}</span>
       <span aria-hidden>·</span>
@@ -735,7 +735,7 @@ function HighlightThread({
             // 답글이 아직 없음 — 하이라이트는 이미 위(따옴표+작성자)에 있으므로, 이 자리는 "답글이 없다"만
             // 조용히 말한다. 예전 "첫 답글을 남겨보세요"는 큰 중앙 블록이라 "여기 비어 있다/하이라이트 없다"
             // 로 오독됐다(사장님 신고) — 왼쪽 정렬 muted 한 줄로 낮춰 답글에 한정된 상태임을 분명히 한다.
-            <p className="text-[13px] text-slate-400 dark:text-slate-500">
+            <p className="text-[13px] text-slate-500 dark:text-slate-400">
               {t("highlightThreadNoReplies")}
             </p>
           ) : (

@@ -127,7 +127,7 @@ function FloatingCta({ ctaHref }: { ctaHref: string }) {
         <Button
           variant="accent"
           size="xl"
-          className="font-medium shadow-cta"
+          className="font-medium"
         >
           {t("cta")}
           <ArrowRight className="h-4 w-4" aria-hidden />
@@ -564,7 +564,7 @@ function FinalCta({
         <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-accent-600">
           <QrCode className="h-6 w-6" aria-hidden />
         </div>
-        <p className="mt-6 font-mono text-[11px] uppercase tracking-tagline text-accent-400">
+        <p className="mt-6 text-[13px] font-semibold text-accent-400">
           {t("eyebrow")}
         </p>
         <h2 className="mt-3 text-headline-md font-semibold tracking-headline sm:text-headline-lg">
@@ -574,7 +574,7 @@ function FinalCta({
           <Link href={ctaHref}>
             <Button
               variant="accent"
-              className="h-14 rounded-lg px-10 text-[15px] font-semibold shadow-cta"
+              className="h-14 rounded-lg px-10 text-[15px] font-semibold"
             >
               {t("primary")}
               <ArrowRight className="h-5 w-5" aria-hidden />

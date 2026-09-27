@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { Ban, Download, SlidersHorizontal, Sparkles, Trash2, Undo2 } from "lucide-react";
+import { Ban, Download, Mail, SlidersHorizontal, Trash2, Undo2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -155,13 +155,13 @@ export default function ProfileLeadsPage() {
           {hasLeads ? (
             <Link href={blogPath("/leads/campaign")}>
               <Button variant="accent">
-                <Sparkles className="mr-1 h-4 w-4" />
+                <Mail className="mr-1 h-4 w-4" />
                 {t("buildCampaign")}
               </Button>
             </Link>
           ) : (
             <Button variant="accent" disabled title={t("emptyTitle")}>
-              <Sparkles className="mr-1 h-4 w-4" />
+              <Mail className="mr-1 h-4 w-4" />
               {t("buildCampaign")}
             </Button>
           )}

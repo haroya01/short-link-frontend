@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { ArrowLeft, Copy, Loader2, Send, Sparkles } from "lucide-react";
+import { ArrowLeft, Copy, Loader2, Mail, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useApiErrorMessage } from "@/lib/error-messages";
@@ -148,7 +148,7 @@ export default function ProfileLeadsCampaignPage() {
             </>
           ) : (
             <>
-              <Sparkles className="mr-1.5 h-4 w-4" />
+              <Mail className="mr-1.5 h-4 w-4" />
               {t("buildCta")}
             </>
           )}

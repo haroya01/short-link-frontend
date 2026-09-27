@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SHOWCASE_PROFILES } from "@/lib/landing-showcase-fixtures";
 import { EntryList } from "@/app/[locale]/u/[username]/_components/entry-list";
@@ -68,7 +68,6 @@ export default async function ShowcaseHandlePage({
           {/* min-w-0 + truncate keeps the banner to one line on narrow viewports —
               previously the long copy wrapped to two rows on phone. */}
           <span className="inline-flex min-w-0 items-center gap-1.5 font-medium text-amber-900 dark:text-amber-300">
-            <Sparkles className="h-3 w-3 shrink-0" />
             <span className="truncate">{t("sampleBanner")}</span>
           </span>
           <Link

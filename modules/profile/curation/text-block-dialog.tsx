@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles } from "lucide-react";
+import {  } from "lucide-react";
 import type { useTranslations } from "next-intl";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -124,7 +124,6 @@ export function TextBlockDialog({ open, initialContent, onOpenChange, onSubmit, 
           />
           <div className="flex items-center justify-between text-[11px]">
             <span className="flex items-center gap-1 text-slate-500">
-              <Sparkles className="h-3 w-3" />
               {t("textMarkdownHint")}
             </span>
             <span className={overLimit ? "text-red-600" : "text-slate-500"}>

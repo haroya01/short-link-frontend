@@ -40,10 +40,6 @@ export function LinksAuthGate({
     <div className="container flex min-h-[calc(100dvh-3.5rem)] max-w-md flex-col items-center justify-center gap-7 py-14 text-center">
       <div className="hero-stagger flex w-full flex-col items-center gap-6">
         <div className="relative" style={hi(0)}>
-          <div
-            aria-hidden
-            className="absolute -inset-6 -z-10 rounded-full bg-accent-200/45 blur-2xl dark:bg-accent-500/10"
-          />
           <Mark className="h-9 w-auto text-accent-600 dark:text-accent-500" />
         </div>
 

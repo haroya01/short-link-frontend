@@ -47,7 +47,7 @@ export function Section({
       <header className="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4 dark:border-slate-800">
         <div className="min-w-0 flex-1">
           {eyebrow && (
-            <p className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+            <p className="mb-1 text-[12px] font-semibold text-accent-700 dark:text-accent-400">
               {eyebrow}
             </p>
           )}

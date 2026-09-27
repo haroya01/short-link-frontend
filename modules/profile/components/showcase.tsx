@@ -48,7 +48,13 @@ export function ProfileShowcase() {
   const t = useTranslations("showcase");
   const scale = useDeviceScale();
   const autoplayRef = useRef(
-    AutoplayPlugin({ delay: 3500, stopOnInteraction: false, stopOnMouseEnter: true }),
+    AutoplayPlugin({
+      delay: 3500,
+      stopOnInteraction: false,
+      stopOnMouseEnter: true,
+      playOnInit:
+        typeof window === "undefined" || !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    }),
   );
   const [emblaRef] = useEmblaCarousel(
     { loop: true, dragFree: false, align: "center", containScroll: false },

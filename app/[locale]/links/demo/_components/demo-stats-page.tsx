@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useToast } from "@/components/ui/toast";
@@ -44,7 +44,6 @@ export function DemoStatsPage() {
           is intentionally low-weight so the eye lands on the charts. */}
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-accent-200 bg-accent-50/60 dark:border-accent-500/20 dark:bg-accent-500/10 px-4 py-2.5 text-[12px]">
         <span className="inline-flex min-w-0 items-center gap-2 font-medium text-accent-800 dark:text-accent-300">
-          <Sparkles className="h-3.5 w-3.5 shrink-0" />
           {t("sampleBanner")}
         </span>
         <Link

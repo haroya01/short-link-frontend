@@ -58,7 +58,7 @@ export function SharePanel({ event, onLinksChange }: { event: MyEvent; onLinksCh
 
   return (
     <section className="border-t border-slate-200 pt-6 dark:border-slate-800">
-      <h2 className="text-[11px] font-semibold uppercase tracking-widest text-accent-700 dark:text-accent-500">{t("title")}</h2>
+      <h2 className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">{t("title")}</h2>
       <p className="mt-1 text-[12px] leading-snug text-slate-500 dark:text-slate-400">
         {t("subtitle")}
       </p>

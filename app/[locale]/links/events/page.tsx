@@ -49,7 +49,7 @@ export default function EventsListPage() {
       {error ? (
         <p className="mt-8 text-[13px] text-red-600">{t("loadFailed")}</p>
       ) : events == null ? (
-        <p className="mt-8 text-[13px] text-slate-400">{t("loading")}</p>
+        <p className="mt-8 text-[13px] text-slate-500 dark:text-slate-400">{t("loading")}</p>
       ) : events.length === 0 ? (
         <EventsIntro mode="empty" />
       ) : (
@@ -90,20 +90,20 @@ function StatusBadge({ status }: { status: MyEvent["status"] }) {
   const t = useTranslations("events.status");
   if (status === "OPEN") {
     return (
-      <span className="shrink-0 rounded-full bg-accent-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-700 dark:bg-accent-900/60 dark:text-accent-300">
+      <span className="shrink-0 rounded-full bg-accent-100 px-2 py-0.5 text-[10px] font-semibold text-accent-700 dark:bg-accent-900/60 dark:text-accent-300">
         {t("open")}
       </span>
     );
   }
   if (status === "CLOSED") {
     return (
-      <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+      <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
         {t("closed")}
       </span>
     );
   }
   return (
-    <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-600 dark:bg-red-900/50 dark:text-red-300">
+    <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-600 dark:bg-red-900/50 dark:text-red-300">
       {t("canceled")}
     </span>
   );

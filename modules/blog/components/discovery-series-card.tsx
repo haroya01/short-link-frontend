@@ -23,12 +23,6 @@ import { SeriesSubscribeButton } from "@/modules/blog/components/series-subscrib
 // 이미지 없는 에피소드 페이지 = 라이트 "종이". 진초록 덱은 featured(오늘의 글) 타일과 같은
 // "크고 어두운 타일"이라 첫 화면에서 주인공 경합이 났다 — 흰 바탕 + 그린 액센트로 반전해
 // "오늘의 글 > 시리즈 추천" 위계를 세운다. 에피소드별로 틴트만 미묘하게 달라진다.
-const EP_GRADS = [
-  "from-white via-accent-50/70 to-accent-100/60",
-  "from-accent-50/80 via-white to-slate-50",
-  "from-white via-slate-50 to-accent-50/70",
-  "from-accent-50/60 via-white to-white",
-];
 const MAX = 4;
 const AUTOPLAY_MS = 3400;
 
@@ -151,12 +145,7 @@ export function DiscoverySeriesCard({
                   </>
                 ) : (
                   <>
-                    <div className={`absolute inset-0 bg-gradient-to-br ${EP_GRADS[i % EP_GRADS.length]} dark:opacity-[0.06]`} />
-                    {/* 소프트 그린 글로우 — 평면 틴트에 깊이(라이트 블룸이라 무거워지지 않음 → featured
-                        타일과의 주인공 경합 회피 결정 보존). 큰 회차 번호는 사진/종이 공통 모티프라 아래
-                        공유 블록으로 뺐다(통일성). */}
-                    <div aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-accent-300/30 blur-3xl dark:bg-accent-500/10" />
-                    <div aria-hidden className="absolute -bottom-16 -left-12 h-40 w-40 rounded-full bg-accent-200/30 blur-3xl dark:bg-accent-500/[0.06]" />
+                    <div className="absolute inset-0 bg-accent-50/70 dark:bg-accent-500/[0.05]" />
                   </>
                 ))}
                 {front && p.ogImageUrl && (
@@ -169,14 +158,14 @@ export function DiscoverySeriesCard({
                 )}
 
                 {/* 회차 번호 = 표지의 공통 주인공(사진/종이 통일): 같은 위치·크기, 필드에 따라 색만 —
-                    종이는 그린 그라디언트, 사진은 흰 번호(스크림 위, drop-shadow 가독). 빈 가운데를 채운다. */}
+                    종이는 그린 잉크, 사진은 흰 번호(스크림 위, drop-shadow 가독). 빈 가운데를 채운다. */}
                 {front && (
                   <div aria-hidden className="pointer-events-none absolute left-4 top-[15%] z-10 select-none font-mono font-bold leading-[0.8] tracking-tighter tabular-nums">
                     <span
                       className={
                         p.ogImageUrl
                           ? "text-[112px] text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]"
-                          : "bg-gradient-to-br from-accent-600 to-accent-300 bg-clip-text text-[112px] text-transparent dark:from-accent-400 dark:to-accent-600"
+                          : "text-[112px] text-accent-700 dark:text-accent-400"
                       }
                     >
                       {String(i + 1).padStart(2, "0")}
