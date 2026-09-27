@@ -27,7 +27,10 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  // same-origin(강)은 Apple 웹 로그인 팝업(web_message)의 opener 관계를 끊어 로그인 자체를
+  // 죽였다 — allow-popups 는 "남이 우리를 여는" XS-Leak 방어는 유지하면서 우리가 연 OAuth
+  // 팝업과의 postMessage 채널만 살린다(OAuth 팝업 표준 처방).
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
 ];
 
 /** @type {import('next').NextConfig} */
@@ -68,8 +71,26 @@ const nextConfig = {
     }));
   },
   async rewrites() {
-    if (!PROXY_BACKEND) return [];
+    // Pretendard 를 자사 도메인으로 프록시 — jsdelivr 서드파티 연결(DNS+TLS+RTT, 모바일
+    // 스로틀에서 ~0.6-0.9s)을 제거하고 폰트 도착 시점을 안정화한다(LCP 재기록 지터의 진범).
+    // CSS 안의 woff2 경로는 ../../../packages/pretendard/… 라 /pretendard/ 밖(/packages/…)으로 풀린다 —
+    // 그 경로도 같은 릴리스로 프록시해야 글꼴 파일이 404 없이 온다.
+    // jsdelivr 는 immutable 캐시 헤더를 주므로 Vercel 엣지가 그대로 캐시한다.
+    const fontProxy = [
+      {
+        source: "/pretendard/:path*",
+        destination:
+          "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/:path*",
+      },
+      {
+        source: "/packages/pretendard/:path*",
+        destination:
+          "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/:path*",
+      },
+    ];
+    if (!PROXY_BACKEND) return fontProxy;
     return [
+      ...fontProxy,
       { source: "/api/v1/:path*", destination: `${BACKEND}/api/v1/:path*` },
       { source: "/oauth2/:path*", destination: `${BACKEND}/oauth2/:path*` },
       { source: "/login/oauth2/:path*", destination: `${BACKEND}/login/oauth2/:path*` },

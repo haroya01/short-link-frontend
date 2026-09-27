@@ -70,8 +70,7 @@ test.describe("demo page artifacts", () => {
   test("heatmap renders accent cells (not all empty)", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    // Heatmap lives under the Overview tab on the dashboard's StatsBody, and Overview is the
-    // initial tab so no click needed. Locate the heatmap by its 168 button cells.
+    await page.getByRole("tab", { name: "클릭 추이" }).click();
     const cells = page.locator("button[aria-label]").filter({ hasNot: page.locator('[role="tab"]') });
     // The dashboard chrome has a Copy + QR button on the Header — they also match
     // button[aria-label], so the 168-cell expectation is "≥ 168", not exactly 168. Heatmap
@@ -123,10 +122,10 @@ test.describe("demo page artifacts", () => {
     await expect(page.getByText("샘플 데이터예요", { exact: false })).toBeVisible();
   });
 
-  test("both stats pills render (Overview / Settings)", async ({ page }) => {
+  test("all four stats tabs render", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    for (const label of ["개요", "설정"]) {
+    for (const label of ["개요", "클릭 추이", "유입 경로", "방문 환경"]) {
       const tab = page.getByRole("tab", { name: label });
       await expect(tab).toBeVisible();
     }
@@ -146,12 +145,12 @@ test.describe("demo page artifacts", () => {
     }
   });
 
-  test("Settings tab demo shows A/B + Webhook preview with disabled controls", async ({
+  test("link settings demo shows A/B + Webhook preview with disabled controls", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    await page.getByRole("tab", { name: "설정" }).click();
+    await page.getByRole("button", { name: "링크 설정" }).click();
 
     // A/B destinations mirror — title + sample rows visible
     const destSection = page.locator('section:has-text("A/B")').first();

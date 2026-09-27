@@ -6,6 +6,8 @@ import type {
   LinkDetail,
   LinkProtectionRequest,
   LinkProtectionResponse,
+  LinkVisitOptions,
+  LinkVisitOptionsResponse,
   MyLink,
   MyLinksPage,
   OgOverrideRequest,
@@ -145,6 +147,16 @@ export async function setLinkProtection(
   payload: LinkProtectionRequest,
 ): Promise<LinkProtectionResponse> {
   return request<LinkProtectionResponse>(`/api/v1/links/${shortCode}/protection`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+export async function setLinkVisitOptions(
+  shortCode: string,
+  payload: LinkVisitOptions,
+): Promise<LinkVisitOptionsResponse> {
+  return request<LinkVisitOptionsResponse>(`/api/v1/links/${shortCode}/visit-options`, {
     method: "PATCH",
     body: payload,
   });

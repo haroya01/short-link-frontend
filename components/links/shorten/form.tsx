@@ -1,18 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { ArrowRight, ChevronDown, Link2, Loader2, Lock, LockOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { ApiError, isValidUrl, shortenUrl } from "@/lib/api";
 import { prewarmPowToken } from "@/lib/pow";
 import { track } from "@/components/common/posthog-provider";
 import type { CreateLinkResponse } from "@/types";
+import { shortenPayload } from "./payload";
 
 type ShortenedItem = {
   res: CreateLinkResponse;
   originalUrl: string;
+  passwordRequested: boolean;
 };
 
 type Props = {
@@ -20,8 +23,8 @@ type Props = {
   ready: boolean;
   onShortened: (results: ShortenedItem[]) => void;
   /**
-   * 랜딩 폴드의 카드-폼 변형 — 바깥 카드(page.tsx)가 보더·포커스 링을 소유하므로
-   * 메인 입력은 무테로 키우고, 버튼은 카드 라운드에 맞춘다. 고급 옵션 필드는 무관.
+   * 랜딩 폴드의 캡슐 폼 변형 — 보더·포커스 링·에러 색은 캡슐 컨테이너가 소유하고
+   * 내부 입력은 무테. 고급 옵션 필드는 무관.
    */
   hero?: boolean;
   /** 답 줄 상태에서 "다른 주소도 줄이기"로 돌아온 빈 줄은 바로 받아쓸 수 있게 포커스. */
@@ -34,10 +37,14 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
   const [customCode, setCustomCode] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [lockOn, setLockOn] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** 히어로 성공 시 blur 용 — 모바일 키보드를 내려야 결과 카드가 실제 뷰포트에 들어온다. */
   const heroInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
   // Pre-warm one proof-of-work token while the user is typing so the first POST doesn't pay the
   // mining cost. Authenticated users skip PoW server-side, so don't bother computing. Wait for
@@ -48,6 +55,12 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
       prewarmPowToken();
     }
   }, [ready, authenticated]);
+
+  useEffect(() => {
+    if (!lockOn) return;
+    const frame = requestAnimationFrame(() => passwordInputRef.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(frame);
+  }, [lockOn]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -61,7 +74,7 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
    */
   function handleHeroPaste(e: React.ClipboardEvent<HTMLInputElement>) {
     if (!hero || busy) return;
-    if (url.trim() || showAdvanced || customCode.trim() || expiresAt) return;
+    if (url.trim() || showAdvanced || lockOn || customCode.trim() || expiresAt) return;
     const pasted = e.clipboardData.getData("text").trim();
     if (!isValidUrl(pasted)) return;
     e.preventDefault();
@@ -80,29 +93,37 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
       return;
     }
 
+    if (authenticated && lockOn && !password.trim()) {
+      setPasswordError(t("errors.passwordEmpty"));
+      passwordInputRef.current?.focus();
+      return;
+    }
+
     setBusy(true);
     try {
-      const codeForSingle =
-        authenticated && customCode.trim() ? customCode.trim() : undefined;
-      const expiry =
-        authenticated && expiresAt ? new Date(expiresAt).toISOString() : undefined;
-
-      const res = await shortenUrl({
+      const payload = shortenPayload({
         url: trimmed,
-        customCode: codeForSingle,
-        expiresAt: expiry,
+        authenticated,
+        customCode,
+        expiresAt,
+        lockOn,
+        password,
       });
+      const res = await shortenUrl(payload);
 
       track("link_shortened", {
         count: 1,
         authenticated,
-        has_custom_code: Boolean(codeForSingle),
-        has_expiry: Boolean(expiry),
+        has_custom_code: Boolean(payload.customCode),
+        has_expiry: Boolean(payload.expiresAt),
+        has_password: Boolean(payload.password),
       });
-      onShortened([{ res, originalUrl: trimmed }]);
+      onShortened([{ res, originalUrl: trimmed, passwordRequested: Boolean(payload.password) }]);
       setUrl("");
       setCustomCode("");
       setExpiresAt("");
+      setPassword("");
+      setLockOn(false);
       // 모바일: 키보드가 서 있으면 결과 카드가 가시 뷰포트 밖(키보드 뒤)에 깔린다 —
       // 성공했으니 입력의 소임은 끝, 키보드를 내리고 무대를 결과에 넘긴다(page 가 스크롤 인도).
       if (hero) heroInputRef.current?.blur();
@@ -116,23 +137,25 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       {hero ? (
-        /* 히어로 = 카드가 아니라 진짜 "한 줄" — 헤드라인(단축은 한 줄)과 같은 문장. 밑줄이
-           입력의 전부고, 포커스가 오면 밑줄만 초록으로 응답한다(초록=마커라는 kurl 문법).
-           버튼도 상자 없이 밑줄 위의 초록 글자 — ↵ 는 엔터로 끝난다는 힌트.
-           에러도 같은 줄의 문법 — 밑줄이 빨강으로 갈리고 메시지가 줄 바로 밑에 앉는다.
-           (다시 포커스하면 초록이 이겨 "고치는 중"이 보인다. 넛지는 메시지 행에만 —
-           입력 줄을 key 로 리마운트하면 타이핑 중 포커스가 날아간다.) */
+        /* 에러 중엔 빨강이 포커스(초록 링)보다 세다 — 제출 직후 포커스가 버튼(캡슐 안)에 남아
+           focus-within 초록이 이기면 빨간 메시지와 신호가 엇갈린다. 타이핑을 시작하면
+           onChange 가 에러를 걷어 초록 포커스로 자연 복귀. 캡슐을 key 로 리마운트하면
+           타이핑 중 포커스가 날아가므로 넛지는 메시지 행에만. */
         <div
           className={
-            "flex items-end gap-4 border-b-2 pb-2 transition-colors duration-200 " +
+            "relative flex items-center gap-2 overflow-hidden rounded-full border bg-white py-1.5 pl-4 pr-1.5 shadow-card transition-[border-color,box-shadow] duration-200 dark:bg-slate-900 sm:gap-3 sm:py-2 sm:pl-5 sm:pr-2 " +
             (error
-              ? // 에러 중엔 빨강이 포커스보다 세다 — 제출 직후 포커스가 버튼(줄 안)에 남아
-                // focus-within 초록이 이기면 빨간 메시지와 신호가 엇갈린다. 타이핑을 시작하면
-                // onChange 가 에러를 걷어 초록 포커스로 자연 복귀("고치는 중").
-                "border-red-500 dark:border-red-400"
-              : "border-slate-900/80 focus-within:border-accent-600 dark:border-slate-100/80 dark:focus-within:border-accent-500")
+              ? "border-red-400 dark:border-red-500/70"
+              : "border-slate-200 focus-within:border-accent-500 focus-within:shadow-lift focus-within:ring-4 focus-within:ring-accent-500/10 dark:border-slate-800 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
           }
         >
+          {/* 스크롤 연동 형광 스윕 — stage-sweep-host 조상(무대 on)일 때만 애니메이션.
+              캡슐 안에 두는 이유: 밖에 두면 알약 곡률과 어긋난 사각 밴드가 노출된다. */}
+          <span aria-hidden className="capsule-sweep" />
+          <Link2
+            aria-hidden
+            className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-500"
+          />
           <Input
             ref={heroInputRef}
             type="url"
@@ -141,29 +164,28 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
             value={url}
             onChange={(e) => {
               setUrl(e.target.value);
-              // 고치기 시작하면 에러는 소임을 다했다 — 빨간 줄을 들고 있지 않는다.
               if (error) setError(null);
             }}
             onPaste={handleHeroPaste}
             placeholder={t("placeholder")}
             disabled={busy}
             aria-invalid={!!error}
-            className="h-11 flex-1 rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-400 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-500 sm:h-12 sm:text-[19px]"
+            /* 16px 미만이면 iOS 사파리가 포커스 시 강제 줌 — 모바일은 16px 고정.
+               truncate: 좁은 폭에선 placeholder 가 원형 버튼에 닿기 전에 …로 접힌다. */
+            className="h-11 flex-1 truncate rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-500 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-400 sm:text-[17px]"
           />
           <button
             type="submit"
             disabled={busy}
             aria-label={t("submit")}
-            className="focus-ring mb-1.5 inline-flex shrink-0 items-baseline gap-1.5 text-[15px] font-extrabold tracking-tight text-accent-700 transition-colors hover:text-accent-800 disabled:opacity-60 dark:text-accent-400 dark:hover:text-accent-300 sm:text-base"
+            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-accent-700 px-4 text-[15px] font-bold text-white transition-[background-color,transform] duration-200 hover:bg-accent-800 active:scale-[0.98] disabled:opacity-60 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:h-10 sm:px-5"
           >
             {busy ? (
-              <Loader2 className="h-4 w-4 animate-spin self-center" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <>
-                {t("heroSubmit")}
-                <span aria-hidden className="text-[13px] font-semibold text-slate-400 dark:text-slate-500">
-                  ↵
-                </span>
+                <span>{t("heroSubmit")}</span>
+                <ArrowRight aria-hidden className="h-4 w-4" />
               </>
             )}
           </button>
@@ -211,18 +233,89 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
           surface honest about what's actually configurable. */}
       {authenticated && (
         <div>
-          <button
-            type="button"
-            onClick={() => setShowAdvanced((v) => !v)}
-            aria-expanded={showAdvanced}
-            aria-controls="shorten-advanced-section"
-            className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              aria-expanded={showAdvanced}
+              aria-controls="shorten-advanced-section"
+              className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
+            >
+              <ChevronDown
+                className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[var(--ease)] ${showAdvanced ? "rotate-180" : ""}`}
+              />
+              {t("advancedToggle")}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLockOn((v) => !v);
+                setPasswordError(null);
+              }}
+              aria-pressed={lockOn}
+              aria-controls="shorten-password-row"
+              className={`inline-flex items-center gap-1 text-xs transition-colors ${
+                lockOn
+                  ? "font-medium text-accent-700 dark:text-accent-400"
+                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+              }`}
+            >
+              {lockOn ? <Lock aria-hidden className="h-3.5 w-3.5" /> : <LockOpen aria-hidden className="h-3.5 w-3.5" />}
+              {t("passwordToggle")}
+            </button>
+          </div>
+          <div
+            id="shorten-password-row"
+            aria-hidden={!lockOn}
+            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[var(--ease)] motion-reduce:transition-none ${
+              lockOn ? "mt-2 grid-rows-[1fr] opacity-100" : "mt-0 grid-rows-[0fr] opacity-0"
+            }`}
           >
-            <ChevronDown
-              className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[var(--ease)] ${showAdvanced ? "rotate-180" : ""}`}
-            />
-            {t("advancedToggle")}
-          </button>
+            <div className="overflow-hidden">
+              <div className="space-y-1.5 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:p-5">
+                <label
+                  htmlFor="shorten-password"
+                  className="block text-[12px] font-medium text-slate-700 dark:text-slate-300"
+                >
+                  {t("passwordLabel")}
+                </label>
+                <div className="sm:max-w-sm">
+                  <PasswordInput
+                    key={lockOn ? "open" : "closed"}
+                    id="shorten-password"
+                    ref={passwordInputRef}
+                    autoComplete="new-password"
+                    maxLength={200}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (passwordError) setPasswordError(null);
+                    }}
+                    placeholder={t("passwordPlaceholder")}
+                    aria-invalid={!!passwordError}
+                    aria-describedby="shorten-password-note"
+                    className={`h-9 text-sm ${passwordError ? "border-red-400 focus-visible:ring-red-400 dark:border-red-500/70 dark:focus-visible:ring-red-500/70" : ""}`}
+                    disabled={busy || !lockOn}
+                  />
+                </div>
+                {passwordError ? (
+                  <p
+                    key={passwordError}
+                    id="shorten-password-note"
+                    role="alert"
+                    className="motion-safe:animate-[err-nudge_240ms_var(--ease)] flex items-center gap-2 text-[12px] font-medium text-red-600 dark:text-red-400"
+                  >
+                    <span aria-hidden className="h-[3px] w-3.5 shrink-0 rounded-full bg-red-500 dark:bg-red-400" />
+                    {passwordError}
+                  </p>
+                ) : (
+                  <p id="shorten-password-note" className="text-[12px] text-slate-500 dark:text-slate-400">
+                    {t("passwordHint")}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
           {/*
            * Grid-rows trick for "auto height" reveal animations: an outer grid container animates
            * between `grid-rows-[0fr]` (collapsed) and `grid-rows-[1fr]` (expanded), and the inner

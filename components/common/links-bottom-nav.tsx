@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BarChart3, Contact, Link2, Megaphone } from "lucide-react";
+import { BarChart3, CalendarDays, CircleUserRound, Contact, Link2, Megaphone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -12,7 +12,7 @@ const TAB =
 
 /**
  * Mobile-only bottom tab bar for the kurl (links) product. The tabs map to kurl's own features —
- * 단축(shortener) · 캠페인(QR) · 통계(short-link dashboard) · 프로필(online business card) — so it reads
+ * 단축(shortener) · 캠페인(QR) · 모집(events) · 통계(short-link dashboard) · 프로필(online business card) — so it reads
  * as a distinct app from the blog (only the session, via the `.kurl.me` refresh cookie, is shared).
  * Account + the blog↔kurl switch live in the top Nav on mobile, not here. All tabs are locale-aware
  * same-origin Links (NOT linksHref): an absolute apex URL without the locale, e.g.
@@ -52,36 +52,41 @@ export function LinksBottomNav() {
   // 프로필: view the public online business card (or showcase onboarding when there's no card yet).
   const username = me?.username;
   const profileHref = authenticated && username ? `/u/${username}` : "/showcase";
-  const tabs = [
-    { href: "/", label: t("shorten"), Icon: Link2, active: pathname === "/" },
-    {
-      href: authenticated ? "/campaigns" : "/qr-campaigns",
-      label: t("campaigns"),
-      Icon: Megaphone,
-      active: pathname.startsWith("/campaigns") || pathname.startsWith("/qr-campaigns"),
-    },
-    {
-      href: "/dashboard",
-      label: t("stats"),
-      Icon: BarChart3,
-      active: pathname.startsWith("/dashboard"),
-    },
-    {
-      href: profileHref,
-      label: t("profile"),
-      Icon: Contact,
-      active:
-        pathname.startsWith("/u/") ||
-        pathname.startsWith("/showcase") ||
-        pathname.startsWith("/settings/profile"),
-    },
-  ];
+  const tabs = authenticated
+    ? [
+        {
+          href: "/dashboard",
+          label: t("links"),
+          Icon: Link2,
+          active: pathname === "/" || pathname.startsWith("/dashboard") || pathname.startsWith("/stats/"),
+        },
+        { href: "/analytics", label: t("analytics"), Icon: BarChart3, active: pathname.startsWith("/analytics") },
+        {
+          href: "/settings",
+          label: t("account"),
+          Icon: CircleUserRound,
+          active:
+            pathname.startsWith("/settings") ||
+            pathname.startsWith("/campaigns") ||
+            pathname.startsWith("/events") ||
+            pathname.startsWith("/ctas"),
+        },
+      ]
+    : [
+        { href: "/", label: t("shorten"), Icon: Link2, active: pathname === "/" },
+        { href: "/qr-campaigns", label: t("campaigns"), Icon: Megaphone, active: pathname.startsWith("/qr-campaigns") },
+        { href: "/events", label: t("events"), Icon: CalendarDays, active: pathname.startsWith("/events") },
+        { href: profileHref, label: t("profile"), Icon: Contact, active: pathname.startsWith("/u/") || pathname.startsWith("/showcase") },
+      ];
 
   return (
     <nav
       className={cn(
-        "glass-chrome fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200/60 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
-        hidden && "translate-y-full",
+        /* 상단 Nav 와 같은 플로팅 글래스 캡슐(inset-x-3·rounded-2xl·보더·섀도우 동일 토큰).
+           safe-area 는 내부 패딩이 아니라 bottom 오프셋이 흡수 — 높이 계산은 globals.css
+           --bottom-nav-h 와 짝. 숨김은 100% 로는 오프셋+섀도우가 남아 200% 로 내린다. */
+        "vt-bottom-nav glass-chrome fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 flex rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] transition-transform duration-200 motion-reduce:transition-none dark:border-slate-800/60 sm:hidden",
+        hidden && "translate-y-[200%]",
       )}
     >
       {tabs.map(({ href, label, Icon, active }) => (

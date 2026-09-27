@@ -17,7 +17,6 @@ import {
   LogOut,
   Newspaper,
   Settings,
-  Sparkles,
   User,
   Webhook,
 } from "lucide-react";
@@ -193,7 +192,7 @@ export function AccountSheet({
               <User className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("profile")}
             </a>
-            {/* Reader's private library — bookmarks + likes, on the workspace curation page. */}
+            {/* Reader's library — saved posts, highlights, notes, and collections. */}
             <a href={blogHref("/curation")} className={ITEM}>
               <Bookmark className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("library")}
@@ -233,10 +232,6 @@ export function AccountSheet({
             <a href={blogHref("/leads")} className={ITEM}>
               <Inbox className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tBlog("leads")}
-            </a>
-            <a href={blogHref("/curation")} className={ITEM}>
-              <Sparkles className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {tBlog("curation")}
             </a>
             <a href={blogHref("/webhooks")} className={ITEM}>
               <Webhook className="h-5 w-5 text-slate-500 dark:text-slate-400" />

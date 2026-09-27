@@ -26,12 +26,14 @@ type Props = {
    * single-page hosts can omit it and the card falls back to in-page {@code scrollIntoView}.
    */
   onNavigate?: (section: string) => void;
+  /** Hosts with fewer breakdowns omit navigation affordances for unavailable sections. */
+  navigationTargets?: readonly string[];
 };
 
 /**
  * Six-up KPI grid that anchors the stats page. Hero (total clicks) is a {@code rounded-2xl}
  * flat card sized 1.5× the others so the eye lands there first; satellite cards are also
- * {@code rounded-2xl} per AGENTS §1 (16 px canonical corner token). Each card is clickable — jump-scrolls
+ * {@code rounded-2xl} per DESIGN.md §1 (16 px canonical corner token). Each card is clickable — jump-scrolls
  * to the matching detail section, turning the KPI grid into a navigation control rather than
  * dead chrome. Hover state lifts each card {@code -translate-y-0.5} + soft shadow; active state
  * snaps it back with a {@code scale(0.99)} press tactile.
@@ -45,8 +47,9 @@ export function StatsCards({
   timeToFirstClickMinutes,
   velocityRatio,
   dailySeries,
-  animate = true,
+  animate = false,
   onNavigate,
+  navigationTargets,
 }: Props) {
   const t = useTranslations("stats.kpi");
   const hasUnique = typeof unique === "number" && Number.isFinite(unique);
@@ -59,14 +62,16 @@ export function StatsCards({
   // empty-state CTA above. Strip the interactive affordances on the KPI cards so the cursor /
   // hover / focus signal doesn't promise navigation we can't deliver.
   const interactive = total > 0;
+  const canNavigate = (section: string) => interactive && (!navigationTargets || navigationTargets.includes(section));
 
   function jump(section: string) {
-    if (!interactive) return;
+    if (!canNavigate(section)) return;
     if (onNavigate) {
       onNavigate(section);
       return;
     }
-    document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(section)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
   }
 
   const humanRatio = total > 0 ? (human / total) * 100 : 0;
@@ -74,7 +79,9 @@ export function StatsCards({
   const uniqueRatio = hasUnique && human > 0 ? ((unique as number) / human) * 100 : 0;
   const profileRatio = showProfile && human > 0 ? ((profileClicks as number) / human) * 100 : 0;
 
-  const showVelocity = hasVelocity && (velocityRatio as number) > 0;
+  // 저표본 게이트 — lib/stats-journal 의 MIN_TOTAL_FOR_INSIGHTS(10)와 같은 문턱.
+  // 총 2클릭에 "클릭 가속 24.0x"가 뜨면 KPI 헤더가 과장으로 읽힌다.
+  const showVelocity = hasVelocity && (velocityRatio as number) >= 1.5 && human >= 30;
   const showLatency = !showVelocity && hasLatency;
 
   const animatedTotal = useCountUp(total, 900, animate);
@@ -97,11 +104,11 @@ export function StatsCards({
       <button
         type="button"
         onClick={() => jump("section-daily")}
-        disabled={!interactive}
-        aria-disabled={!interactive}
+        disabled={!canNavigate("section-daily")}
+        aria-disabled={!canNavigate("section-daily")}
         className={cn(
           "relative col-span-2 overflow-hidden rounded-2xl border border-accent-800 p-0 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[transform,box-shadow] duration-200 ease-[var(--ease)] sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:shadow-none",
-          interactive
+          canNavigate("section-daily")
             ? "group cursor-pointer hover:-translate-y-0.5 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
             : "cursor-default",
         )}
@@ -116,7 +123,7 @@ export function StatsCards({
         />
         {hasUnique && (
           <p className="bg-accent-900 px-5 pb-4 text-[11px] text-accent-100/70">
-            <span className="font-mono font-medium tabular-nums text-white">
+            <span className="font-medium tabular-nums text-white">
               {formatNumber(unique as number)}
             </span>{" "}
             {t("unique").toLowerCase()}{" "}
@@ -131,7 +138,7 @@ export function StatsCards({
         sub={`${humanRatio.toFixed(1)}%`}
         ratio={humanRatio / 100}
         animate={animate}
-        onJump={interactive ? () => jump("section-device") : undefined}
+        onJump={canNavigate("section-device") ? () => jump("section-device") : undefined}
       />
       <CountStat
         label={t("unique")}
@@ -139,7 +146,7 @@ export function StatsCards({
         sub={hasUnique ? t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) }) : undefined}
         ratio={hasUnique ? uniqueRatio / 100 : undefined}
         animate={animate}
-        onJump={interactive ? () => jump("section-daily") : undefined}
+        onJump={canNavigate("section-daily") ? () => jump("section-daily") : undefined}
       />
       <CountStat
         label={t("bot")}
@@ -148,7 +155,7 @@ export function StatsCards({
         ratio={botRatio / 100}
         muted
         animate={animate}
-        onJump={interactive ? () => jump("section-bots") : undefined}
+        onJump={canNavigate("section-bots") ? () => jump("section-bots") : undefined}
       />
       {showProfile && (
         <CountStat
@@ -157,7 +164,7 @@ export function StatsCards({
           ratio={profileRatio / 100}
           sub={t("profileSub", { ratio: profileRatio.toFixed(0) })}
           animate={animate}
-          onJump={interactive ? () => jump("section-sources") : undefined}
+          onJump={canNavigate("section-sources") ? () => jump("section-sources") : undefined}
         />
       )}
       <Stat
@@ -178,7 +185,7 @@ export function StatsCards({
               : "—"
         }
         sub={showVelocity ? t("vsBaseline") : showLatency ? t("afterCreation") : t("noData")}
-        onJump={interactive ? () => jump("section-hourly") : undefined}
+        onJump={(showVelocity || showLatency) && canNavigate("section-hourly") ? () => jump("section-hourly") : undefined}
       />
     </div>
   );
@@ -225,7 +232,7 @@ function Stat({
       >
         {label}
       </span>
-      <p className="mt-2 font-mono text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
+      <p className="mt-2 text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
         {value}
       </p>
       {sub && <p className="mt-2 truncate text-[11px] text-slate-500 dark:text-slate-400">{sub}</p>}

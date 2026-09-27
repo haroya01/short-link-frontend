@@ -1,4 +1,5 @@
 import { DATE_LOCALE } from "@/lib/date";
+import { serializeJsonLd } from "@/lib/json-ld";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
@@ -72,7 +73,11 @@ export default async function PublicSeriesPage({
   const result = await findPublicSeries(username, slug);
   const t = await getTranslations({ locale, namespace: "publicPost" });
   const tf = await getTranslations({ locale, namespace: "publicFeed" });
-  if (!result.ok) notFound();
+  // 순단("error")을 404 로 위장하지 않는다 — 진짜 404 만 notFound(), 나머지는 에러 경계로.
+  if (!result.ok) {
+    if (result.status !== 404) throw new Error(`public series fetch failed: ${username}/${slug}`);
+    notFound();
+  }
 
   const { author, series, posts } = result.data;
   const h = await headers();
@@ -208,11 +213,11 @@ export default async function PublicSeriesPage({
     <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 sm:py-16">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(seriesJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(seriesJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
       />
       <SeriesReadingShell
         leftRail={authorRail}

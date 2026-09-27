@@ -247,7 +247,7 @@ function HighlightFeedRow({ item, locale }: { item: HighlightFeedItem; locale: s
             // thread panel already open (?hl=…&thread=1). Falls back to a static count only when the
             // post author is unknown (no destination to open the thread on).
             <BlogLink
-              href={`${quoteHref(item.postAuthorUsername, item.postSlug, item.quote, locale)}&thread=1`}
+              href={`${quoteHref(item.postAuthorUsername, item.postSlug, item.quote, locale, item.id)}&thread=1`}
               className="focus-ring ml-auto rounded tabular-nums text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
             >
               {t("highlightReplyCount", { count: item.replyCount })}
@@ -263,7 +263,7 @@ function HighlightFeedRow({ item, locale }: { item: HighlightFeedItem; locale: s
           the source post at that sentence. Falls back to a plain post link when the author is unknown. */}
       {item.postAuthorUsername ? (
         <BlogLink
-          href={quoteHref(item.postAuthorUsername, item.postSlug, item.quote, locale)}
+          href={quoteHref(item.postAuthorUsername, item.postSlug, item.quote, locale, item.id)}
           className="focus-ring group mt-2.5 flex gap-3 rounded"
         >
           <QuoteBody item={item} />

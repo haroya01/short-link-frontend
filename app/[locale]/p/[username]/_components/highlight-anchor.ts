@@ -1,38 +1,38 @@
-/**
- * Pure DOM painting for reader highlights over the static `.prose-post` body — shared by the live
- * {@link PostHighlights} component and its tests (no React / next-intl, so it's unit-testable in jsdom).
- *
- * `wrapAtOffsets` is the precise path: it paints the exact stored span (block index + char offsets),
- * which hits the right occurrence when a phrase repeats and spans inline formatting. `wrapFirstQuote`
- * is the fallback for when those offsets drift (the post was edited after the highlight was made) — it
- * matches the quote across text nodes / inline formatting and tolerates whitespace differences.
- *
- * Every `<mark>` carries `data-hl-id` so a click can open that highlight's reply thread; a highlight
- * that already has a note or replies gets an accent underline (invite to read), and its note rides
- * along as a tooltip.
- */
+/** DOM anchors shared by highlight painting and source navigation. */
 export const MARK_CLASS = "kurl-highlight";
-// A highlight with a thread (an author note or at least one reply) gets an accent underline.
-// The fill/underline/text colors — and their dark-mode variants — live in globals.css keyed off these
-// classes (a `<mark>`'s UA default is a yellow fill + hardcoded dark text, both wrong here and
-// unreadable in dark mode), so the painter only decides *which* classes a span carries.
 const THREAD_CLASS = "kurl-highlight--thread";
 
-/** What a painted mark needs to know: which highlight it is, and whether it carries a conversation. */
 export type HighlightMeta = { id: number; note: string | null; replyCount: number };
+export type HighlightSpan = {
+  blockOrder: number;
+  endBlockOrder: number;
+  startOffset: number;
+  endOffset: number;
+  quote: string;
+};
 
-function styleMark(mark: HTMLElement, meta: HighlightMeta) {
-  const hasThread = !!meta.note || meta.replyCount > 0;
-  mark.className = hasThread ? `${MARK_CLASS} ${THREAD_CLASS}` : MARK_CLASS;
-  mark.dataset.hlId = String(meta.id);
-  if (meta.note) mark.title = meta.note;
-  // Keyboard-openable like the click target: a focusable button whose accessible name is the painted
-  // quote (its own text). The reader can Tab to it and press Enter/Space to open the thread.
+type TextPiece = { node: Text; start: number };
+type TextIndex = { full: string; pieces: TextPiece[]; blocks: { start: number; length: number }[] };
+type ResolvedRange = { index: TextIndex; start: number; end: number };
+
+function styleMark(mark: HTMLElement, metadata: HighlightMeta[]) {
+  mark.className = metadata.some((m) => !!m.note || m.replyCount > 0)
+    ? `${MARK_CLASS} ${THREAD_CLASS}` : MARK_CLASS;
+  mark.dataset.hlId = String(metadata[0].id);
+  mark.dataset.hlIds = metadata.map((m) => m.id).join(",");
+  mark.dataset.hlMeta = JSON.stringify(metadata);
+  const notes = metadata.flatMap((m) => m.note ? [m.note] : []);
+  if (notes.length) mark.title = notes.join("\n\n");
   mark.tabIndex = 0;
   mark.setAttribute("role", "button");
 }
 
-/** Unwrap every highlight `<mark>` (so the set can be repainted from scratch). */
+/** Every overlapping conversation remains addressable without nested/darker marks. */
+export function highlightIdsForMark(mark: HTMLElement): number[] {
+  return (mark.dataset.hlIds ?? mark.dataset.hlId ?? "").split(",")
+    .map(Number).filter((id) => Number.isSafeInteger(id) && id > 0);
+}
+
 export function clearMarks(root: HTMLElement) {
   root.querySelectorAll(`mark.${MARK_CLASS}`).forEach((mark) => {
     const parent = mark.parentNode;
@@ -43,179 +43,180 @@ export function clearMarks(root: HTMLElement) {
   });
 }
 
-/**
- * Precise paint: wrap exactly the stored span — `root.children[blockOrder]`, character range
- * [startOffset, endOffset) over that block's concatenated text. Unlike the quote search this hits the
- * right occurrence when a phrase repeats, and it paints across inline formatting (bold/links/code) by
- * wrapping each text-node slice the range touches (one `<mark>` per slice). Returns false — so the
- * caller can fall back to the quote search — when the block is gone or the offsets no longer fit.
- */
-export function wrapAtOffsets(
-  root: HTMLElement,
-  blockOrder: number,
-  startOffset: number,
-  endOffset: number,
-  meta: HighlightMeta,
-): boolean {
-  const block = root.children[blockOrder];
-  if (!block || startOffset >= endOffset) return false;
-  // Collect the slices first (don't mutate the tree while walking it).
-  const slices: { node: Text; from: number; to: number }[] = [];
-  const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT, {
-    acceptNode: (n) =>
-      n.parentElement?.closest(`mark.${MARK_CLASS}`) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
-  });
-  let count = 0;
-  for (let n = walker.nextNode() as Text | null; n; n = walker.nextNode() as Text | null) {
-    const len = n.data.length;
-    const from = Math.max(startOffset, count) - count;
-    const to = Math.min(endOffset, count + len) - count;
-    if (from < to) slices.push({ node: n, from, to });
-    count += len;
-    if (count >= endOffset) break;
-  }
-  if (slices.length === 0) return false;
-  for (const slice of slices) {
-    const range = document.createRange();
-    range.setStart(slice.node, slice.from);
-    range.setEnd(slice.node, slice.to);
-    const mark = document.createElement("mark");
-    styleMark(mark, meta);
-    try {
-      range.surroundContents(mark);
-    } catch {
-      /* a slice that somehow isn't a clean text range — skip it (the rest still paint) */
-    }
-  }
-  return true;
-}
-
-/** One text node's placement in a concatenated-text run: the node and where its text starts in that run. */
-type TextPiece = { node: Text; start: number };
-
-/** Every text node under `scope` not already inside a highlight, plus the concatenated text and each
- *  node's start offset within it — the basis for matching a quote that crosses nodes/inline formatting. */
-function collectText(scope: Node): { full: string; pieces: TextPiece[] } {
-  const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, {
-    acceptNode: (n) =>
-      n.parentElement?.closest(`mark.${MARK_CLASS}`) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
-  });
+/** Include already marked text in the coordinates. A newline separates DOM blocks. */
+function textIndex(root: HTMLElement): TextIndex {
   const pieces: TextPiece[] = [];
+  const blocks: TextIndex["blocks"] = [];
   let full = "";
-  for (let n = walker.nextNode() as Text | null; n; n = walker.nextNode() as Text | null) {
-    pieces.push({ node: n, start: full.length });
-    full += n.data;
+  for (const block of Array.from(root.children)) {
+    if (blocks.length) full += "\n";
+    const start = full.length;
+    const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode() as Text | null; node; node = walker.nextNode() as Text | null) {
+      pieces.push({ node, start: full.length });
+      full += node.data;
+    }
+    blocks.push({ start, length: full.length - start });
   }
-  return { full, pieces };
+  return { full, pieces, blocks };
 }
 
-/** Collapse runs of whitespace to a single space, keeping a map from each normalized-string index back
- *  to its source index in `raw` — so a match found in the normalized text can be mapped to a raw range. */
-function normalizeWithMap(raw: string): { norm: string; map: number[] } {
+function normalizeWithMap(raw: string, skip?: ReadonlySet<number>): { norm: string; map: number[] } {
   let norm = "";
   const map: number[] = [];
-  let prevSpace = false;
   for (let i = 0; i < raw.length; i++) {
-    const isSpace = /\s/.test(raw[i]);
-    if (isSpace) {
-      if (prevSpace) continue; // collapse the run
-      norm += " ";
-      map.push(i);
-      prevSpace = true;
-    } else {
-      norm += raw[i];
-      map.push(i);
-      prevSpace = false;
-    }
+    if (skip?.has(i)) continue;
+    const char = /\s/.test(raw[i]) ? " " : raw[i];
+    if (char === " " && norm.endsWith(" ")) continue;
+    norm += char;
+    map.push(i);
   }
   return { norm, map };
 }
 
-/** Wrap the raw text range [rawStart, rawEnd) across `pieces` in one `<mark>` per intersected node — the
- *  same per-slice approach as {@link wrapAtOffsets}, so a range that crosses inline formatting still paints. */
-function wrapRawRange(pieces: TextPiece[], rawStart: number, rawEnd: number, meta: HighlightMeta): boolean {
-  const slices: { node: Text; from: number; to: number }[] = [];
-  for (const p of pieces) {
-    const len = p.node.data.length;
-    const from = Math.max(rawStart, p.start) - p.start;
-    const to = Math.min(rawEnd, p.start + len) - p.start;
-    if (from < to) slices.push({ node: p.node, from, to });
-  }
-  if (slices.length === 0) return false;
-  let painted = false;
-  for (const slice of slices) {
-    const range = document.createRange();
-    range.setStart(slice.node, slice.from);
-    range.setEnd(slice.node, slice.to);
-    const mark = document.createElement("mark");
-    styleMark(mark, meta);
-    try {
-      range.surroundContents(mark);
-      painted = true;
-    } catch {
-      /* a slice that isn't a clean text range — skip it (the rest still paint) */
+function normalized(raw: string): string {
+  return normalizeWithMap(raw).norm.trim();
+}
+
+/** A moved quote is recoverable only when exactly one occurrence remains. */
+function uniqueQuote(index: TextIndex, quote: string): ResolvedRange | null {
+  const needle = normalized(quote);
+  if (!needle) return null;
+  // Selection text differs across engines: paragraph boundaries may be newlines or omitted.
+  // Try both representations, while retaining source offsets and rejecting distinct matches.
+  const boundaries = new Set(index.blocks.slice(1).map((block) => block.start - 1));
+  const candidates = new Map<string, ResolvedRange>();
+  for (const skip of [undefined, boundaries]) {
+    const { norm, map } = normalizeWithMap(index.full, skip);
+    let at = norm.indexOf(needle);
+    while (at >= 0) {
+      const start = map[at];
+      const end = map[at + needle.length - 1] + 1;
+      candidates.set(`${start}:${end}`, { index, start, end });
+      if (candidates.size > 1) return null;
+      at = norm.indexOf(needle, at + 1);
     }
   }
-  return painted;
+  return candidates.values().next().value ?? null;
 }
 
-/** Wrap the first occurrence of `quote` in a highlight `<mark>`. Fallback for when precise offsets drift
- *  (post edited after the highlight). Matches across text nodes and inline formatting, and tolerates
- *  whitespace differences (collapsed runs / newlines) between the stored quote and the rendered body. */
-export function wrapFirstQuote(root: HTMLElement, quote: string, meta: HighlightMeta) {
-  if (!quote.trim()) return;
-  const { full, pieces } = collectText(root);
-  if (pieces.length === 0) return;
-  const { norm, map } = normalizeWithMap(full);
-  const needle = normalizeWithMap(quote).norm.trim();
-  if (!needle) return;
-  const at = norm.indexOf(needle);
-  if (at < 0) return;
-  // Map the normalized match back to raw offsets: first char's source index, last char's source index + 1.
-  const rawStart = map[at];
-  const rawEnd = map[at + needle.length - 1] + 1;
-  wrapRawRange(pieces, rawStart, rawEnd, meta);
-}
-
-/** A highlight span — start in `blockOrder` at `startOffset`, end in `endBlockOrder` at `endOffset`
- *  (== blockOrder for a single-block highlight). */
-export type HighlightSpan = {
-  blockOrder: number;
-  endBlockOrder: number;
-  startOffset: number;
-  endOffset: number;
-  quote: string;
-};
-
-function blockTextLength(el: Element): number {
-  return el.textContent?.length ?? 0;
-}
-
-/**
- * Paint a highlight that may cross blocks: the start block from `startOffset` to its end, every block
- * in between whole, and the end block up to `endOffset`. The single-block case (`endBlockOrder ==
- * blockOrder`) is the common path. Every slice carries the same `meta` (id/note/replyCount), so a tap
- * anywhere in the span opens the one thread. Falls back to a quote search if nothing landed (the body
- * was edited after the highlight was made).
- */
-export function wrapHighlight(root: HTMLElement, span: HighlightSpan, meta: HighlightMeta) {
+/** Validate the stored quote before trusting coordinates, then recover a unique moved quote. */
+function resolveHighlight(root: HTMLElement, span: HighlightSpan): ResolvedRange | null {
+  const index = textIndex(root);
   const endBlock = span.endBlockOrder ?? span.blockOrder;
-  if (endBlock <= span.blockOrder) {
-    if (!wrapAtOffsets(root, span.blockOrder, span.startOffset, span.endOffset, meta)) {
-      wrapFirstQuote(root, span.quote, meta);
+  const first = index.blocks[span.blockOrder];
+  const last = index.blocks[endBlock];
+  if (first && last && endBlock >= span.blockOrder && span.startOffset >= 0 && span.endOffset >= 0
+    && span.startOffset <= first.length && span.endOffset <= last.length) {
+    const start = first.start + span.startOffset;
+    const end = last.start + span.endOffset;
+    const text = index.full.slice(start, end);
+    const boundaries = new Set(index.blocks.slice(1)
+      .map((block) => block.start - 1 - start).filter((at) => at >= 0 && at < text.length));
+    const quote = normalized(span.quote);
+    if (start < end && (normalized(text) === quote || normalizeWithMap(text, boundaries).norm.trim() === quote)) {
+      return { index, start, end };
     }
+  }
+  return uniqueQuote(index, span.quote);
+}
+
+function makeMark(text: string, metadata: HighlightMeta[]): HTMLElement {
+  const mark = document.createElement("mark");
+  styleMark(mark, metadata);
+  mark.textContent = text;
+  return mark;
+}
+
+/** Split an existing flat mark at overlap boundaries, keeping every original conversation ID. */
+function paintSlice(node: Text, from: number, to: number, meta: HighlightMeta) {
+  const parent = node.parentElement;
+  if (parent?.classList.contains(MARK_CLASS) && parent.childNodes.length === 1) {
+    const existing = JSON.parse(parent.dataset.hlMeta ?? "[]") as HighlightMeta[];
+    if (existing.some((m) => m.id === meta.id)) return;
+    const replacements: Node[] = [];
+    if (from > 0) replacements.push(makeMark(node.data.slice(0, from), existing));
+    replacements.push(makeMark(node.data.slice(from, to), [...existing, meta]));
+    if (to < node.length) replacements.push(makeMark(node.data.slice(to), existing));
+    parent.replaceWith(...replacements);
     return;
   }
-  let painted = false;
-  const first = root.children[span.blockOrder];
-  if (first) {
-    painted = wrapAtOffsets(root, span.blockOrder, span.startOffset, blockTextLength(first), meta) || painted;
-  }
-  for (let b = span.blockOrder + 1; b < endBlock; b++) {
-    const mid = root.children[b];
-    if (mid) painted = wrapAtOffsets(root, b, 0, blockTextLength(mid), meta) || painted;
-  }
-  const last = root.children[endBlock];
-  if (last) painted = wrapAtOffsets(root, endBlock, 0, span.endOffset, meta) || painted;
-  if (!painted) wrapFirstQuote(root, span.quote, meta);
+  const range = document.createRange();
+  range.setStart(node, from);
+  range.setEnd(node, to);
+  const mark = document.createElement("mark");
+  styleMark(mark, [meta]);
+  range.surroundContents(mark);
+}
+
+function paintRange(range: ResolvedRange, meta: HighlightMeta): boolean {
+  const slices = range.index.pieces.flatMap((piece) => {
+    const from = Math.max(range.start, piece.start) - piece.start;
+    const to = Math.min(range.end, piece.start + piece.node.length) - piece.start;
+    return from < to ? [{ node: piece.node, from, to }] : [];
+  });
+  for (const slice of slices) paintSlice(slice.node, slice.from, slice.to, meta);
+  return slices.length > 0;
+}
+
+/** Low-level exact paint; the quote-aware entry point is wrapHighlight. */
+export function wrapAtOffsets(
+  root: HTMLElement, blockOrder: number, startOffset: number, endOffset: number, meta: HighlightMeta,
+): boolean {
+  const index = textIndex(root);
+  const block = index.blocks[blockOrder];
+  if (!block || startOffset < 0 || startOffset >= endOffset || endOffset > block.length) return false;
+  return paintRange({ index, start: block.start + startOffset, end: block.start + endOffset }, meta);
+}
+
+/** Legacy export name; ambiguous quote-only anchors deliberately remain unpainted. */
+export function wrapFirstQuote(root: HTMLElement, quote: string, meta: HighlightMeta) {
+  const range = uniqueQuote(textIndex(root), quote);
+  if (range) paintRange(range, meta);
+}
+
+export function wrapHighlight(root: HTMLElement, span: HighlightSpan, meta: HighlightMeta) {
+  const range = resolveHighlight(root, span);
+  if (range) paintRange(range, meta);
+}
+
+/** Shared resolution handles multi-block/inline quotes, hidden marks, and ID-backed exact anchors. */
+export function findQuoteTarget(
+  root: HTMLElement, quote: string, span?: HighlightSpan,
+): HTMLElement | null {
+  const range = span ? resolveHighlight(root, span) : uniqueQuote(textIndex(root), quote);
+  if (!range) return null;
+  return range.index.pieces.find((p) => p.start + p.node.length > range.start && p.start < range.end)
+    ?.node.parentElement ?? null;
+}
+
+/** DOM Range endpoints can be text nodes or element boundaries (keyboard/select-all). */
+export function readHighlightSelection(root: HTMLElement): HighlightSpan | null {
+  const selection = root.ownerDocument.defaultView?.getSelection();
+  if (!selection || selection.isCollapsed || selection.rangeCount === 0) return null;
+  const range = selection.getRangeAt(0);
+  if (!root.contains(range.commonAncestorContainer)) return null;
+  const quote = selection.toString().trim();
+  if (!quote || quote.length > 1000) return null;
+  const directChild = (node: Node): Element | null => {
+    let current: Node | null = node;
+    while (current && current.parentNode !== root) current = current.parentNode;
+    return current?.nodeType === Node.ELEMENT_NODE ? current as Element : null;
+  };
+  const first = range.startContainer === root ? root.children[range.startOffset] : directChild(range.startContainer);
+  const last = range.endContainer === root ? root.children[range.endOffset - 1] : directChild(range.endContainer);
+  if (!first || !last) return null;
+  const blockOrder = Array.prototype.indexOf.call(root.children, first);
+  const endBlockOrder = Array.prototype.indexOf.call(root.children, last);
+  if (blockOrder < 0 || endBlockOrder < blockOrder) return null;
+  const offsetWithin = (block: Element, node: Node, offset: number) => {
+    const prefix = root.ownerDocument.createRange();
+    prefix.selectNodeContents(block);
+    prefix.setEnd(node, offset);
+    return prefix.toString().length;
+  };
+  const startOffset = range.startContainer === root ? 0 : offsetWithin(first, range.startContainer, range.startOffset);
+  const endOffset = range.endContainer === root ? (last.textContent?.length ?? 0) : offsetWithin(last, range.endContainer, range.endOffset);
+  if (blockOrder === endBlockOrder && endOffset <= startOffset) return null;
+  return { blockOrder, endBlockOrder, startOffset, endOffset, quote };
 }

@@ -157,6 +157,13 @@ export interface PublicFeedItem {
    * names the matched tag for TOPIC.
    */
   followReason?: FollowReason | null;
+  series?: FeedSeriesRef | null;
+}
+
+export interface FeedSeriesRef {
+  slug: string;
+  title: string;
+  postCount: number;
 }
 
 export interface FollowReason {

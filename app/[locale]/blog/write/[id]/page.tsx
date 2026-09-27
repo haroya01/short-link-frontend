@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/components/ui/toast";
 import { importPostImage, uploadPostImage } from "@/modules/blog/api/post-images";
 import { MarkdownEditor } from "@/modules/blog/components/editor/markdown-editor";
+import { EditorTitle } from "@/modules/blog/components/editor/editor-title";
 import { EditorHeader } from "@/modules/blog/components/editor/editor-header";
 import { PublishDialog } from "@/modules/blog/components/editor/publish-dialog";
 import { PreviewLinkButton } from "@/modules/blog/components/editor/preview-link-button";
@@ -23,6 +24,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const { toast } = useToast();
   const ed = usePostEditor(Number(params.id), { ready, authenticated, username: me?.username });
   const [publishOpen, setPublishOpen] = useState(false);
+  const focusBody = useRef<(() => void) | null>(null);
   // External links the author wrote in the body — offered for kurl auto-shortening in the publish
   // dialog. Computed before the early returns so the hook order stays stable.
   const bodyLinks = useMemo(() => extractExternalLinks(ed.markdown), [ed.markdown]);
@@ -95,21 +97,11 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         onDelete={ed.remove}
       />
 
-      <input
-        type="text"
+      <EditorTitle
         value={ed.title}
-        onChange={(e) => ed.setTitle(e.target.value)}
-        maxLength={200}
-        // Stop mobile Chrome from popping its autofill (address/card/wallet) bar over the keyboard
-        // on a plain post-title field. data-* opt password managers out too.
-        autoComplete="off"
-        data-1p-ignore
-        data-lpignore="true"
-        // Same headline token as the published post <h1> (text-headline-post→post-lg, font-bold,
-        // tracking-headline) so the title you type is the title that ships.
-        className="mt-6 w-full border-0 bg-transparent text-headline-post font-bold tracking-headline text-slate-900 outline-none placeholder:text-slate-300 dark:text-slate-100 dark:placeholder:text-slate-600 sm:text-headline-post-lg"
+        onChange={ed.setTitle}
+        onContinue={() => focusBody.current?.()}
         placeholder={t("titlePlaceholder")}
-        aria-label={t("titlePlaceholder")}
       />
       {/* Title length is capped at 200; surface the count only as it approaches the cap so the clean
           masthead isn't cluttered for a normal title. */}
@@ -132,7 +124,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           key={ed.reloadKey}
           initialValue={ed.markdown}
           onChange={ed.setMarkdown}
+          onEdit={ed.markDirty}
           liveMarkdownRef={ed.liveMarkdown}
+          focusEditorRef={focusBody}
           onUploadImage={(blob) => uploadPostImage(post.id, blob as File)}
           // Pasted-from-Notion images carry an external <img src> (expiring/CORS-locked) — re-host it.
           onImportImageUrl={(url) => importPostImage(post.id, url)}
@@ -168,7 +162,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         bodyLinks={bodyLinks}
         previewAction={
           post.status !== "PUBLISHED" ? (
-            <PreviewLinkButton postId={post.id} username={me?.username} slug={ed.slug} />
+            <PreviewLinkButton postId={post.id} username={me?.username} onSave={ed.save} />
           ) : null
         }
         error={ed.error}

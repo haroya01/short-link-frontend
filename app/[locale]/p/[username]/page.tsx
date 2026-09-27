@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
@@ -70,7 +71,11 @@ export default async function PublicProfileHomepage({
   const { locale, username } = await params;
   const { tag: rawTag } = await searchParams;
   const result = await listPublicPosts(username);
-  if (!result.ok) notFound();
+  // 순단("error")을 404 로 위장하지 않는다 — 진짜 404 만 notFound(), 나머지는 에러 경계로.
+  if (!result.ok) {
+    if (result.status !== 404) throw new Error(`public posts fetch failed: ${username}`);
+    notFound();
+  }
 
   const { author, posts } = result.data;
   const seriesResult = await listPublicSeries(username);
@@ -113,10 +118,10 @@ export default async function PublicProfileHomepage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(profileJsonLd) }}
       />
       <ReadingShell
-        className="mt-8"
+        className="mt-4 sm:mt-8"
         rail={
           posts.length > 0 ? (
             <AuthorRail
