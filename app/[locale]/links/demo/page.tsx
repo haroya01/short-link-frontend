@@ -23,10 +23,10 @@ export async function generateMetadata({
 
 /**
  * Public {@code /demo} route. Renders the dashboard's {@code /stats/[code]} surface verbatim
- * against synthetic data, so visitors can scroll through the exact 5 tabs (overview, traffic,
- * sources, audience, settings), the same Header, same StatsCards, same heatmap, with no
- * sign-up. A thin sample banner at the top is the only visible difference; everything below it
- * is byte-for-byte the components the real route uses (see {@code StatsBody}).
+ * against synthetic data, so visitors can scroll through the same Header, same masthead +
+ * link journal + detail tiles, same heatmap, with no sign-up. A thin sample banner at the top
+ * is the only visible difference; everything below it is byte-for-byte the components the real
+ * route uses (see {@code StatsBody}).
  */
 export default function DemoPage() {
   return <DemoStatsPage />;

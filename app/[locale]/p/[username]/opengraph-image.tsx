@@ -3,7 +3,7 @@ import { listPublicPosts } from "@/modules/blog/api/public-posts";
 import { OG, OgMark, loadAvatar, ogFonts } from "@/lib/og";
 
 export const runtime = "nodejs";
-export const alt = "blog.kurl";
+export const alt = "kurl log";
 export const size = OG.size;
 export const contentType = "image/png";
 
@@ -46,7 +46,7 @@ export default async function AuthorOgImage({
         <div style={{ display: "flex", alignItems: "center", gap: 26 }}>
           <OgMark width={104} id="author-mark" />
           <div style={{ display: "flex", fontFamily: "Pretendard", fontSize: 56, fontWeight: 700, letterSpacing: -1.5, color: OG.ink }}>
-            blog<span style={{ color: OG.faint }}>.kurl</span>
+            kurl<span style={{ color: OG.faint }}> log</span>
           </div>
         </div>
 

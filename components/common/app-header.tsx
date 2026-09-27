@@ -17,6 +17,7 @@ import { LanguageSwitcher } from "@/components/common/language-switcher";
 import { Logo } from "@/components/common/logo";
 import { useSidebarState } from "@/components/common/sidebar-state";
 import { useEditorDirty } from "@/modules/blog/lib/editor-dirty-store";
+import { cn } from "@/lib/utils";
 
 /**
  * A chrome link that normally soft-navigates (BlogChromeLink) but falls back to a plain <a> hard
@@ -140,8 +141,14 @@ export function AppHeader({
   );
 
   return (
-    <header className="vt-app-header sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80">
-      <div className="container flex h-14 items-center justify-between gap-2">
+    <header className="vt-app-header sticky top-0 z-30">
+      {/* 상시 유리 캡슐 — nav.tsx 와 같은 §12 단일 상태. */}
+      <div className="relative">
+        <div
+          aria-hidden
+          className="glass-chrome absolute inset-x-3 bottom-1.5 top-1.5 mx-auto max-w-[1248px] rounded-2xl border border-slate-200/60 shadow-[0_8px_28px_-16px_rgba(15,23,42,0.28)] dark:border-slate-800/60"
+        />
+      <div className="container relative flex h-14 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           {showMenu && (
             <button
@@ -160,7 +167,7 @@ export function AppHeader({
               모바일(<sm)에선 표면을 가리지 않고 마크만 — slim 공개 표면은 물론 워크스페이스도:
               워크스페이스는 우측 클러스터(검색·벨·전환 pill·아바타)가 모바일에서도 다 살아 있어
               풀 워드마크까지 들어가면 390px 에서 컨트롤들이 워드마크 위로 겹쳤다. */}
-          <ChromeNavLink href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable shrink-0">
+          <ChromeNavLink href={blogHref("/")} aria-label="kurl log" className="mark-hoverable shrink-0">
             <Logo variant="blog" animated showText={false} className="sm:hidden" />
             <Logo variant="blog" animated className="hidden sm:inline-flex" />
           </ChromeNavLink>
@@ -168,7 +175,7 @@ export function AppHeader({
 
         {/* Right cluster split into two zones: utilities for *this* surface (search + language) on
             the left, then a hairline divider, then the cross-product switcher + account on the right.
-            The divider stops the switcher's "kurl/blog.kurl" wordmark pill from reading as a second
+            The divider stops the switcher's "kurl/kurl log" wordmark pill from reading as a second
             brand mark beside the search field, and keeps the expanded search pill from sitting flush
             against the same-shaped switcher pill. */}
         {/* 모바일 글쓰기 — 하단 탭바 중앙 FAB 에서 이동: 스크롤 중 떠 있는 원형이 본문을 가리고
@@ -198,6 +205,7 @@ export function AppHeader({
             authCluster(showAuthed)
           )}
         </div>
+      </div>
       </div>
     </header>
   );

@@ -28,6 +28,8 @@ type Props = {
    * row where surrounding icons already establish the "copy / open / qr" vocabulary.
    */
   iconOnly?: boolean;
+  /** 속삭임 행(단축 답 줄 아래)용 텍스트 트리거 — 버튼 상자 없이 밑줄 글자만. */
+  textTrigger?: boolean;
 };
 
 type Palette = { id: string; dark: string; light: string };
@@ -77,6 +79,7 @@ export function QrButton({
   showSrcInput = true,
   defaultSrcHint = "",
   iconOnly = false,
+  textTrigger = false,
 }: Props) {
   const t = useTranslations("qr");
   const baseUrl = url ?? value ?? "";
@@ -84,7 +87,17 @@ export function QrButton({
 
   return (
     <>
-      {iconOnly ? (
+      {textTrigger ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          disabled={!baseUrl}
+          title={t("triggerAria")}
+          className="focus-ring rounded-sm text-slate-500 underline decoration-slate-300 decoration-1 underline-offset-[3px] transition-colors hover:text-slate-800 hover:decoration-slate-500 disabled:opacity-50 dark:text-slate-400 dark:decoration-slate-600 dark:hover:text-slate-200"
+        >
+          QR
+        </button>
+      ) : iconOnly ? (
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -96,7 +109,8 @@ export function QrButton({
           <QrCode className="h-3.5 w-3.5" />
         </button>
       ) : (
-        <Button variant="outline" size="sm" onClick={() => setOpen(true)} disabled={!baseUrl}>
+        <Button variant="outline" size="sm" onClick={() => setOpen(true)} disabled={!baseUrl}
+          aria-label={t("triggerAria")} title={t("triggerAria")}>
           <QrCode className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">QR</span>
         </Button>

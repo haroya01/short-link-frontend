@@ -4,9 +4,10 @@ import path from "node:path";
 /**
  * /demo page artifact + structural assertions.
  *
- * /demo renders the dashboard's {@code /stats/[code]} surface (Header + StatsCards + 5 tabs)
- * against synthetic data, so the tests here focus on the dashboard chrome — same Header, same
- * tab pills, heatmap fills with accent cells, no horizontal overflow on phones.
+ * /demo renders the dashboard's {@code /stats/[code]} surface (Header + masthead + journal +
+ * detail tiles, 개요/설정 pills) against synthetic data, so the tests here focus on the dashboard
+ * chrome — same Header, same pills, heatmap fills with accent cells, no horizontal overflow on
+ * phones. Chapter details (누가/언제/어디서) are reached via tile arrows.
  *
  * Visual drift is captured as PNG artifacts under {@code test-results/demo/<viewport>/} so
  * reviewers can scrub the full page across iPhone 13 / iPhone 11 Pro Max / laptop / desktop
@@ -35,9 +36,9 @@ test.describe("demo page artifacts", () => {
         animations: "disabled",
       });
 
-      // Walk each tab and capture a full-page PNG so reviewers can see Traffic / Sources /
-      // Audience / Settings the same way they would on the real /stats/[code] page.
-      for (const tab of ["traffic", "sources", "audience", "settings"] as const) {
+      // Walk each tab and capture a full-page PNG. The stats body ships two pills (개요/설정) —
+      // the chapter details (누가/언제/어디서) are reached via tile arrows, not tabs.
+      for (const tab of ["settings"] as const) {
         const button = page.getByRole("tab", { name: new RegExp(tab, "i") });
         if ((await button.count()) === 0) continue;
         await button.first().click();
@@ -69,8 +70,7 @@ test.describe("demo page artifacts", () => {
   test("heatmap renders accent cells (not all empty)", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    // Heatmap lives under the Overview tab on the dashboard's StatsBody, and Overview is the
-    // initial tab so no click needed. Locate the heatmap by its 168 button cells.
+    await page.getByRole("tab", { name: "클릭 추이" }).click();
     const cells = page.locator("button[aria-label]").filter({ hasNot: page.locator('[role="tab"]') });
     // The dashboard chrome has a Copy + QR button on the Header — they also match
     // button[aria-label], so the 168-cell expectation is "≥ 168", not exactly 168. Heatmap
@@ -97,47 +97,18 @@ test.describe("demo page artifacts", () => {
     expect(cells.count()).resolves.toBeGreaterThan(0);
   });
 
-  test("country table shows up under the Traffic tab", async ({ page }) => {
+  test("country tile arrow opens the where chapter with the full geo mirror", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    await page.getByRole("tab", { name: /traffic|트래픽/i }).first().click();
-    // {@code stats.section.country.title} = "국가" on ko; the dashboard's TrafficTab renders the
-    // CountryTable inside a Section keyed on this exact title.
+    // 개요 상세 그리드의 국가 타일 화살표(aria-label = 타일 라벨)가 어디서 챕터로 내려간다.
+    await page.getByRole("button", { name: "국가", exact: true }).click();
+    // {@code stats.section.country.title} = "국가"; the where chapter renders the CountryTable
+    // inside a Section keyed on this exact title.
     const countrySection = page.locator('section:has-text("국가")').first();
     await countrySection.scrollIntoViewIfNeeded();
     const rows = countrySection.locator("tbody tr");
     // Demo data ships 8 countries. If the renderer or fixture drifts this fails fast.
     expect(await rows.count()).toBeGreaterThanOrEqual(5);
-  });
-
-  test("sample banner is visible above the dashboard mirror", async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    await expect(page.getByText("샘플 데이터입니다", { exact: false })).toBeVisible();
-  });
-
-  test("all 5 stats tabs render (Overview / Traffic / Sources / Audience / Settings)", async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    for (const label of ["개요", "트래픽", "유입", "방문자", "설정"]) {
-      const tab = page.getByRole("tab", { name: label });
-      await expect(tab).toBeVisible();
-    }
-  });
-
-  test("Audience tab renders region + city + language + bot + ASN sections (100% mirror)", async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    await page.getByRole("tab", { name: "방문자" }).click();
-    // Section titles in ko — pulled from messages/ko.json stats.section.*
-    for (const title of ["지역", "도시", "언어", "봇 종류", "네트워크 / ASN"]) {
-      const section = page.locator(`section:has-text("${title}")`).first();
-      await expect(section).toBeVisible();
-    }
     // Region + city must show the leading KR metro entry, not be empty.
     const regionSection = page.locator('section:has-text("지역")').first();
     await expect(regionSection).toContainText("Seoul");
@@ -145,12 +116,41 @@ test.describe("demo page artifacts", () => {
     await expect(citySection).toContainText("Seoul");
   });
 
-  test("Settings tab demo shows A/B + Webhook preview with disabled controls", async ({
+  test("sample banner is visible above the dashboard mirror", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/ko/demo", { waitUntil: "networkidle" });
+    await expect(page.getByText("샘플 데이터예요", { exact: false })).toBeVisible();
+  });
+
+  test("all four stats tabs render", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/ko/demo", { waitUntil: "networkidle" });
+    for (const label of ["개요", "클릭 추이", "유입 경로", "방문 환경"]) {
+      const tab = page.getByRole("tab", { name: label });
+      await expect(tab).toBeVisible();
+    }
+  });
+
+  test("device tile arrow opens the who chapter with audience mirrors (100% mirror)", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/ko/demo", { waitUntil: "networkidle" });
-    await page.getByRole("tab", { name: "설정" }).click();
+    // 개요 상세 그리드의 디바이스 타일 화살표가 누가 챕터로 내려간다.
+    await page.getByRole("button", { name: "디바이스", exact: true }).click();
+    // Section titles in ko — pulled from messages/ko.json stats.section.*
+    for (const title of ["언어", "봇 종류", "네트워크 / ASN"]) {
+      const section = page.locator(`section:has-text("${title}")`).first();
+      await expect(section).toBeVisible();
+    }
+  });
+
+  test("link settings demo shows A/B + Webhook preview with disabled controls", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/ko/demo", { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "링크 설정" }).click();
 
     // A/B destinations mirror — title + sample rows visible
     const destSection = page.locator('section:has-text("A/B")').first();

@@ -16,18 +16,19 @@ import { Link } from "@/i18n/navigation";
  *    synthetic data. Same Header, same 5 tabs, same charts.
  *  - <b>profile</b> → {@code /showcase/dohyun.coffee}. One of the landing-carousel fixtures
  *    rendered as a full-screen public profile, identical to {@code /u/[username]}.
- *  - <b>domain</b> → {@code /pricing}. The TXT + CNAME verification flow ships under the PRO
- *    plan; pricing is the page that explains it.
+ *  - <b>domain</b> → {@code /settings}. The TXT + CNAME verification flow lives in the settings
+ *    page's custom-domain section. It's the one target behind the login gate — signed-out
+ *    visitors land on {@code /login} first, which is the next step to connect a domain anyway.
  *
  * A previous version of this strip had a fourth card ("viral / OG share card") but the live
  * OG-card-with-click-counter surface promised by the visual doesn't exist as a standalone
- * page yet. Pointing it at {@code /demo} or {@code /pricing} would either lie about what's
- * there or duplicate the stats card; per the "100% mirror" rule (cards point to real pages)
- * we dropped it until that surface ships.
+ * page yet. Pointing it at {@code /demo} would either lie about what's there or duplicate the
+ * stats card; per the "100% mirror" rule (cards point to real pages) we dropped it until that
+ * surface ships.
  *
- * Layout follows the AGENTS.md Information archetype: each card is a
+ * Layout follows the DESIGN.md Information archetype: each card is a
  * {@code .profile-card-static}-style surface with {@code rounded-2xl}, fixed padding rhythm,
- * and the brand-green accent token. Labels and descriptions follow the AGENTS.md typo scale
+ * and the brand-green accent token. Labels and descriptions follow the DESIGN.md typo scale
  * (level 5 title / level 3 desc) so the strip reads at the same density as the public-profile
  * feed below.
  */
@@ -55,7 +56,7 @@ export function LandingPreviews() {
     },
     {
       key: "domain",
-      href: "/pricing",
+      href: "/settings",
       label: t("previews.domain.title"),
       desc: t("previews.domain.desc"),
       visual: <DomainVisual />,
@@ -74,7 +75,7 @@ export function LandingPreviews() {
         </div>
         {/*
          * Asymmetric grid — featured card spans 2 columns on desktop, the remaining two stack to
-         * the right. Per AGENTS.md 1-primary rule we keep the same archetype (Information) but
+         * the right. Per DESIGN.md 1-primary rule we keep the same archetype (Information) but
          * grid-break the first card so the page stops reading as "three identical tiles" which
          * was the largest "AI slop" tell in the original layout. On mobile the cards collapse
          * to a single stack so nothing fights for width.
@@ -98,7 +99,7 @@ export function LandingPreviews() {
               >
                 <div
                   className={
-                    "relative w-full overflow-hidden rounded-xl border border-accent-100 bg-gradient-to-br from-accent-50 via-white to-white dark:from-accent-500/10 dark:via-slate-900 dark:to-slate-900 " +
+                    "relative w-full overflow-hidden rounded-2xl border border-accent-100 bg-gradient-to-br from-accent-50 via-white to-white dark:from-accent-500/10 dark:via-slate-900 dark:to-slate-900 " +
                     (i === 0 ? "h-44 sm:h-56" : "h-24 sm:h-28")
                   }
                 >

@@ -4,7 +4,7 @@ import { OG, OgMark, loadAvatar, ogFonts } from "@/lib/og";
 
 // nodejs (not edge): we fetch the post for its title/byline + load the brand font (>1 MB).
 export const runtime = "nodejs";
-export const alt = "blog.kurl";
+export const alt = "kurl log";
 export const size = OG.size;
 export const contentType = "image/png";
 
@@ -12,7 +12,7 @@ export const contentType = "image/png";
  * Per-post share card — dark, title-first. The post title is the hero (the one piece of text that
  * earns the click); byline = avatar + @handle. Everything else (excerpt, date, reading time) is
  * dropped on purpose — a clean, mark-forward card reads premium, not like a stuffed template. Also the
- * share-parity fallback for image-less posts (AGENTS §10.4): no cover → still a branded title card.
+ * share-parity fallback for image-less posts (DESIGN.md §10.4): no cover → still a branded title card.
  */
 export default async function PostOgImage({
   params,
@@ -21,7 +21,7 @@ export default async function PostOgImage({
 }) {
   const { username, slug } = await params;
 
-  let title = "blog.kurl";
+  let title = "kurl log";
   let handle = username;
   let avatar: string | null = null;
   try {
@@ -70,7 +70,7 @@ export default async function PostOgImage({
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
           <OgMark width={96} id="post-mark" />
           <div style={{ display: "flex", fontFamily: "Pretendard", fontSize: 50, fontWeight: 700, letterSpacing: -1.5, color: OG.ink }}>
-            blog<span style={{ color: OG.faint }}>.kurl</span>
+            kurl<span style={{ color: OG.faint }}> log</span>
           </div>
         </div>
 

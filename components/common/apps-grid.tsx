@@ -60,7 +60,7 @@ export function AppsGrid({ current }: { current?: Product }) {
     e.preventDefault();
     const href = dest.href();
     setWarp({ href, product: dest.key });
-    // 🔒 LOCKED — 제품 전환 warp 연출 (디자인 확정). 소유자 승인 없이 수정 금지. AGENTS.md §0 참고.
+    // 🔒 LOCKED — 제품 전환 warp 연출 (디자인 확정). 소유자 승인 없이 수정 금지. DESIGN.md §0 참고.
     // 850ms = 마크 draw(~0.4s) + 워드마크 fade. The white overlay stays up until the destination
     // paints, bridging the cross-origin reload.
     window.setTimeout(() => {
@@ -79,6 +79,7 @@ export function AppsGrid({ current }: { current?: Product }) {
       >
         <Mark className="h-3 text-accent-600" animated />
         <span
+          data-wordmark
           className="min-w-[2.5rem] text-[13px] font-bold leading-none tracking-[-0.04em]"
           aria-hidden={!dest}
         >
@@ -87,8 +88,8 @@ export function AppsGrid({ current }: { current?: Product }) {
         <ArrowUpRight className="h-3.5 w-3.5 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </a>
 
-      {/* 🔒 LOCKED — 제품 전환 warp 오버레이 (디자인 확정). 다른 세션의 AI/에이전트 포함, 소유자
-          승인 없이 수정 금지. 마크 draw-on + lockup 연출과 타이밍은 변경 대상이 아님. AGENTS.md §0. */}
+      {/* 🔒 LOCKED — 제품 전환 warp 오버레이 (디자인 확정). 소유자 승인 없이 수정 금지.
+          마크 draw-on + lockup 연출과 타이밍은 변경 대상이 아님. DESIGN.md §0. */}
       {warp &&
         typeof document !== "undefined" &&
         createPortal(
@@ -108,9 +109,9 @@ export function AppsGrid({ current }: { current?: Product }) {
                 fill="currentColor"
                 className="h-[72px] w-auto text-accent-600"
               >
-                <rect className="warp-stroke warp-stroke-1" x="6" y="1" width="20" height="3.4" rx="1.7" />
-                <rect className="warp-stroke warp-stroke-2" x="0" y="7.3" width="28" height="3.4" rx="1.7" />
-                <rect className="warp-stroke warp-stroke-3" x="9" y="13.6" width="17" height="3.4" rx="1.7" />
+                <rect className="warp-stroke warp-stroke-1" x="6" y="1" width="20" height="3.4" rx="1" />
+                <rect className="warp-stroke warp-stroke-2" x="0" y="7.3" width="28" height="3.4" rx="1" />
+                <rect className="warp-stroke warp-stroke-3" x="9" y="13.6" width="17" height="3.4" rx="1" />
               </svg>
               <span className="warp-word text-[22px] font-bold tracking-[-0.04em] text-slate-900">
                 <Wordmark product={warp.product} muted="text-slate-400" />

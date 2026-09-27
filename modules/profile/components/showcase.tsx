@@ -114,7 +114,7 @@ function ShowcaseCard({
     >
       <Link
         href={`/showcase/${profile.username}`}
-        className="focus-ring absolute inset-0 z-10 rounded-[2rem]"
+        className="focus-ring absolute inset-0 z-10 rounded-2xl"
         aria-label={`@${profile.username} — ${demoCta}`}
       >
         <span className="sr-only">{demoCta}</span>

@@ -87,7 +87,7 @@ export async function ContributionGraph({
                   title={`${fmt.format(cell.date)} · ${
                     cell.count === 0 ? t("activityNone") : t("activityCount", { count: cell.count })
                   }`}
-                  className={cn("h-[11px] w-[11px] rounded-[2px]", CELL[level(cell.count)])}
+                  className={cn("h-[11px] w-[11px] rounded-sm", CELL[level(cell.count)])}
                 />
               ))}
             </div>
@@ -97,7 +97,7 @@ export async function ContributionGraph({
       <div className="mt-2.5 flex items-center justify-end gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
         <span>{t("activityLess")}</span>
         {[0, 1, 2, 3].map((l) => (
-          <span key={l} className={cn("h-[11px] w-[11px] rounded-[2px]", CELL[l])} />
+          <span key={l} className={cn("h-[11px] w-[11px] rounded-sm", CELL[l])} />
         ))}
         <span>{t("activityMore")}</span>
       </div>

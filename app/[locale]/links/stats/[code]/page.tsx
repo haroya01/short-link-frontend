@@ -84,7 +84,6 @@ export default function StatsPage() {
   if (ready && !authenticated) {
     return (
       <LinksAuthGate
-        eyebrow="stats"
         title={t("loginRequired")}
         description={t("loginRequiredDesc")}
       />
@@ -110,7 +109,7 @@ export default function StatsPage() {
       </button>
 
       {loading ? (
-        <HeaderSkeleton />
+        <HeaderSkeleton shortCode={code} />
       ) : realError ? (
         <ErrorState message={realError} onRetry={() => refetch()} />
       ) : notFound || !data ? (

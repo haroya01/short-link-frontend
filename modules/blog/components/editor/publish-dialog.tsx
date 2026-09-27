@@ -280,7 +280,7 @@ export function PublishDialog({
             <p className="mb-2 text-[12px] font-medium text-slate-500 dark:text-slate-400">
               {t("previewCardLabel")}
             </p>
-            <div className="rounded-xl border border-slate-200 px-4 py-4 dark:border-slate-700">
+            <div className="rounded-2xl border border-slate-200 px-4 py-4 dark:border-slate-700">
               <input
                 ref={fileRef}
                 type="file"
@@ -328,7 +328,7 @@ export function PublishDialog({
                   </p>
                 </div>
                 {cover && (
-                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32">
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={cover} alt="" className="h-full w-full object-cover" />
                   </div>

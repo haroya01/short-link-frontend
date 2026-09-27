@@ -39,16 +39,16 @@ test.describe("landing previews — domain card edge cases", () => {
   for (const vp of VIEWPORTS) {
     test(`${vp.name} (${vp.gridCols}-col) — domain card no-wrap`, async ({ page }) => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
-      await page.goto("/ko", { waitUntil: "networkidle" });
+      await page.goto("/ko?stage=off", { waitUntil: "networkidle" });
 
       const previews = page.locator("ul.grid").first();
       await previews.scrollIntoViewIfNeeded();
       await page.waitForTimeout(200);
 
       const cards = previews.locator("> li");
-      await expect(cards).toHaveCount(4);
+      await expect(cards).toHaveCount(3);
 
-      const domainCard = cards.nth(3);
+      const domainCard = cards.nth(2);
       // {@code <a>} (card) → visual wrapper div ({@code h-24 relative ...}) → DomainVisual
       // root flex-col div ({@code absolute inset-0 flex flex-col gap-2}). Its direct children
       // are the two rows we care about.

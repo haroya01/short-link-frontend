@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { memo, Fragment, useState } from "react";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -18,7 +18,7 @@ const MOBILE_BUCKET_STARTS = Array.from(
 type Hover = { day: string; hour: number; count: number; span: number };
 type Selected = Hover;
 
-export function Heatmap({ data }: { data: HeatmapCell[] }) {
+function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
   const t = useTranslations("stats.heatmap");
   const tDay = useTranslations("stats.weekday");
   const tShared = useTranslations("stats");
@@ -83,15 +83,17 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
   return (
     <div>
       <div className="hidden md:block">
+        {/* xl 2열 그리드의 카드 내폭(~590px)보다 좁게 — 640 이면 카드 안에서 우측 시간대(21~23시)가
+            스크롤 뒤로 숨어 잘린 것처럼 보인다. */}
         <div className="overflow-x-auto">
-          <div className="min-w-[640px]">
+          <div className="min-w-[560px]">
             <div className="grid grid-cols-[36px_repeat(24,minmax(0,1fr))] gap-px">
               <div className="h-6" />
               {Array.from({ length: 24 }, (_, h) => (
                 <div
                   key={h}
                   className={cn(
-                    "text-center font-mono text-[10px]",
+                    "text-center tabular-nums text-[10px]",
                     h % 6 === 0 ? "text-slate-700 dark:text-slate-300 font-medium dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
                   )}
                   style={{ visibility: h % 3 === 0 ? "visible" : "hidden" }}
@@ -129,7 +131,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                           aria-label={t("tooltip", { day: tDay(day), hour: h, count })}
                           aria-pressed={isSel}
                           className={cn(
-                            "h-6 rounded-md transition-all duration-150 ease-out",
+                            "h-6 rounded-md transition-[transform,box-shadow,background-color] duration-150 ease-[var(--ease)]",
                             colorFor(count, max),
                             count === 0 && "ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/50",
                             isHover && "scale-110 ring-2 ring-accent-700 ring-offset-1 dark:ring-accent-400 dark:ring-offset-slate-950",
@@ -152,7 +154,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
           {MOBILE_BUCKET_STARTS.map((h) => (
             <div
               key={h}
-              className="text-center font-mono text-[10px] font-medium text-slate-700 dark:text-slate-200"
+              className="text-center tabular-nums text-[10px] font-medium text-slate-700 dark:text-slate-200"
             >
               {h}
             </div>
@@ -206,7 +208,7 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
                       })}
                       aria-pressed={isSel}
                       className={cn(
-                        "h-7 rounded-md transition-all duration-150 ease-out",
+                        "h-7 rounded-md transition-[transform,box-shadow,background-color] duration-150 ease-[var(--ease)]",
                         colorFor(count, mobileMax),
                         count === 0 && "ring-1 ring-inset ring-slate-200/70 dark:ring-slate-700/50",
                         isHover && "scale-105 ring-2 ring-accent-700 ring-offset-1",
@@ -234,11 +236,11 @@ export function Heatmap({ data }: { data: HeatmapCell[] }) {
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           <span>{t("less")}</span>
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-slate-50 dark:bg-slate-800/50 ring-1 ring-inset ring-slate-200 dark:bg-slate-800/60 dark:ring-slate-700/50" />
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-100" />
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-300" />
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-500" />
-          <div className="h-2.5 w-2.5 rounded-[3px] bg-accent-700" />
+          <div className="h-2.5 w-2.5 rounded-sm bg-slate-50 dark:bg-slate-800/50 ring-1 ring-inset ring-slate-200 dark:bg-slate-800/60 dark:ring-slate-700/50" />
+          <div className="h-2.5 w-2.5 rounded-sm bg-accent-100" />
+          <div className="h-2.5 w-2.5 rounded-sm bg-accent-300" />
+          <div className="h-2.5 w-2.5 rounded-sm bg-accent-500" />
+          <div className="h-2.5 w-2.5 rounded-sm bg-accent-700" />
           <span>{t("more")}</span>
         </div>
       </div>
@@ -291,7 +293,7 @@ function ActiveCellLabel({
     <div
       role={isSelected ? "status" : undefined}
       aria-live={isSelected ? "polite" : undefined}
-      className="flex min-w-0 items-center gap-2 font-mono"
+      className="flex min-w-0 items-center gap-2 tabular-nums"
     >
       <span className="truncate text-slate-700 dark:text-slate-200">{rangeLabel}</span>
       <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">
@@ -323,3 +325,6 @@ function ActiveCellLabel({
     </div>
   );
 }
+
+// 부모 상태 변화(라이브 틱·기간 프리셋)에 데이터가 같으면 재렌더 생략 — 개요 부드러움의 절반.
+export const Heatmap = memo(HeatmapImpl);

@@ -30,7 +30,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "publicFeed" });
-  const title = `${t("topics")} · blog.kurl`;
+  const title = `${t("topics")} · kurl log`;
   const description = t("topicsIntro");
   const url = `${BLOG_URL}/${locale}/tags`;
   const ogImage = `${BLOG_URL}/${locale}/blog/opengraph-image`;
@@ -49,7 +49,7 @@ export async function generateMetadata({
       description,
       url,
       type: "website",
-      siteName: "blog.kurl",
+      siteName: "kurl log",
       images: [{ url: ogImage, width: 2400, height: 1260, alt: title }],
     },
     twitter: { card: "summary_large_image", title, description, images: [ogImage] },

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { mockAnonymousShorten } from "./helpers/mock-shorten";
 
 /**
  * Regression coverage for the QR modal layout. The qrcode library used to write inline width/height
@@ -7,9 +8,13 @@ import { expect, test } from "@playwright/test";
  * flow (no auth needed) and asserts the canvas stays inside its wrapper.
  */
 test.describe("QR modal layout", () => {
+  test.beforeEach(async ({ page }) => {
+    await mockAnonymousShorten(page);
+  });
+
   test("canvas stays inside its wrapper", async ({ page }) => {
-    await page.goto("/");
-    await page.getByPlaceholder(/your-very-long-url/).fill("https://example.com/qr-layout-test");
+    await page.goto("/ko");
+    await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/qr-layout-test");
     await page.getByRole("button", { name: "단축하기" }).click();
 
     // Wait for the result card so the QR button is in the DOM. The button shows only the icon

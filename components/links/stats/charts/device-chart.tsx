@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useTranslations } from "next-intl";
 import type { DeviceClick } from "@/types";
 import { formatNumber } from "@/lib/utils";
@@ -13,7 +14,7 @@ const COLORS = ["#059669", "#047857", "#34D399", "#6EE7B7", "#A7F3D0"];
  * single 100% ratio bar with a legend, not a donut. The bar answers the share question at a glance;
  * the legend carries the exact counts + percentages in tabular figures.
  */
-export function DeviceChart({ data }: Props) {
+function DeviceChartImpl({ data }: Props) {
   const t = useTranslations("stats");
   if (data.length === 0) {
     return <p className="py-8 text-center text-xs text-slate-500 dark:text-slate-400">{t("noData")}</p>;
@@ -48,12 +49,12 @@ export function DeviceChart({ data }: Props) {
           <li key={d.device} className="flex items-center justify-between text-xs">
             <span className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
               <span
-                className="h-2.5 w-2.5 rounded-[3px]"
+                className="h-2.5 w-2.5 rounded-sm"
                 style={{ background: COLORS[i % COLORS.length] }}
               />
               {labelFor(d.device)}
             </span>
-            <span className="font-mono tabular-nums text-slate-600 dark:text-slate-300">
+            <span className="tabular-nums text-slate-600 dark:text-slate-300">
               {formatNumber(d.count)}
               <span className="ml-1.5 text-[10px] text-slate-500 dark:text-slate-400">
                 {((d.count / total) * 100).toFixed(0)}%
@@ -82,3 +83,6 @@ function deviceLabel(device: string, t: ReturnType<typeof useTranslations>): str
       return device;
   }
 }
+
+// 부모 상태 변화(라이브 틱·기간 프리셋)에 데이터가 같으면 재렌더 생략 — 개요 부드러움의 절반.
+export const DeviceChart = memo(DeviceChartImpl);

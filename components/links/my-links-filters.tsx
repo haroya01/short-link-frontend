@@ -9,6 +9,7 @@ import type { MyLinksFilters } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 type Props = {
+  className?: string;
   filters: MyLinksFilters;
   onChange: (next: MyLinksFilters) => void;
   tagOptions?: string[];
@@ -22,7 +23,7 @@ const EXPIRY_OPTIONS: NonNullable<MyLinksFilters["expiry"]>[] = [
   "EXPIRED",
 ];
 
-export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
+export function MyLinksFiltersBar({ className, filters, onChange, tagOptions }: Props) {
   const t = useTranslations("dashboard.filters");
   const [open, setOpen] = useState(false);
 
@@ -37,7 +38,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className={cn("space-y-3", className)}>
       <div className="flex flex-wrap items-center gap-2">
         <Button
           type="button"
@@ -96,7 +97,7 @@ export function MyLinksFiltersBar({ filters, onChange, tagOptions }: Props) {
       </div>
 
       {open && (
-        <div className="grid gap-3 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:grid-cols-2">
+        <div className="grid basis-full gap-3 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:grid-cols-2">
           <Field label={t("domain")}>
             <Input
               type="text"

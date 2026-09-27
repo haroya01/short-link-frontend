@@ -48,7 +48,7 @@ export default function BlogSettingsPage() {
   }
 
   const rowClass =
-    "focus-ring flex items-center justify-between gap-3 rounded-xl px-3 py-3 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60";
+    "focus-ring flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60";
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-10">

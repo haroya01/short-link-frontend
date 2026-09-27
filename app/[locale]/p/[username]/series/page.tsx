@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
@@ -47,7 +48,11 @@ export default async function PublicSeriesIndexPage({
   const { tag: rawTag } = await searchParams;
   const result = await listPublicSeries(username);
   const t = await getTranslations({ locale, namespace: "publicPost" });
-  if (!result.ok) notFound();
+  // 순단("error")을 404 로 위장하지 않는다 — 진짜 404 만 notFound(), 나머지는 에러 경계로.
+  if (!result.ok) {
+    if (result.status !== 404) throw new Error(`public series fetch failed: ${username}`);
+    notFound();
+  }
 
   const { author, series } = result.data;
   const seriesHome = authorHref(username, locale, "series");
@@ -90,10 +95,10 @@ export default async function PublicSeriesIndexPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(seriesListJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(seriesListJsonLd) }}
       />
       <ReadingShell
-        className="mt-8"
+        className="mt-4 sm:mt-8"
         rail={
           tags.length > 0 ? (
             <section>
@@ -160,7 +165,7 @@ export default async function PublicSeriesIndexPage({
                       {t("postCount", { count: s.postCount })}
                     </span>
                   </span>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-all group-hover:translate-x-0.5 group-hover:text-accent-600 dark:text-slate-600 dark:group-hover:text-accent-400" />
+                  <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-[color,transform] ease-[var(--ease)] group-hover:translate-x-0.5 group-hover:text-accent-600 dark:text-slate-600 dark:group-hover:text-accent-400" />
                 </BlogLink>
               </li>
             ))}

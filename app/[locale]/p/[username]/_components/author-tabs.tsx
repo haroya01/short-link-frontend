@@ -109,7 +109,7 @@ export function AuthorTabs({
   return (
     <nav
       ref={navRef}
-      className="relative mt-8 flex gap-1 overflow-x-auto border-b border-slate-100 text-[15px] font-medium [scrollbar-width:none] dark:border-slate-800 [&::-webkit-scrollbar]:hidden"
+      className="relative mt-6 flex gap-1 overflow-x-auto border-b sm:mt-8 border-slate-100 text-[15px] font-medium [scrollbar-width:none] dark:border-slate-800 [&::-webkit-scrollbar]:hidden"
     >
       {visible.map((tab, i) => (
         <BlogLink

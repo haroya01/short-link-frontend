@@ -337,7 +337,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                 {members.map((p, i) => (
                   <li
                     key={p.id}
-                    className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                    className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
                   >
                     <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-50 font-mono text-[12px] font-semibold tabular-nums text-accent-700 dark:bg-accent-500/15 dark:text-accent-300">
                       {String(i + 1).padStart(2, "0")}
@@ -395,13 +395,13 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     setPickSelected(new Set());
                   }}
                   disabled={busy}
-                  className="focus-ring inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-200 px-3 py-2 text-[13px] font-medium text-slate-500 transition-colors hover:border-accent-300 hover:bg-accent-50/50 hover:text-accent-700 disabled:opacity-50 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10 dark:hover:text-accent-300"
+                  className="focus-ring inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-slate-200 px-3 py-2 text-[13px] font-medium text-slate-500 transition-colors hover:border-accent-300 hover:bg-accent-50/50 hover:text-accent-700 disabled:opacity-50 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10 dark:hover:text-accent-300"
                 >
                   <Plus className="h-4 w-4" />
                   {t("seriesAddPost")}
                 </button>
               ) : (
-                <div className="rounded-xl border border-slate-200 dark:border-slate-800">
+                <div className="rounded-lg border border-slate-200 dark:border-slate-800">
                   <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2 dark:border-slate-800">
                     <Search className="h-4 w-4 shrink-0 text-slate-400" />
                     <input
@@ -493,7 +493,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
               <li key={p.id}>
                 <BlogLink
                   href={`${writeBase}/${p.id}`}
-                  className="focus-ring flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                  className="focus-ring flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
                 >
                   <span className="min-w-0 flex-1 truncate text-sm text-slate-800 dark:text-slate-200">
                     {p.title || p.slug}

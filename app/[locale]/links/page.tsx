@@ -5,9 +5,11 @@ import { ArrowRight, ChevronDown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { ShortenForm } from "@/components/links/shorten/form";
-import { ResultCard } from "@/components/links/shorten/result-card";
+import { ResultLine } from "@/components/links/shorten/result-line";
 import { FeatureCarousel } from "@/components/landing/feature-carousel";
 import { HomeCounters } from "@/components/landing/home-counters";
+import { StageScenes } from "@/components/landing/stage-scenes";
+import { useStageVariant } from "@/lib/stage-flag";
 import { usePublicTotals } from "@/lib/api/stats.queries";
 import { RecentLinks } from "@/components/links/recent-links";
 import { useAuth } from "@/lib/auth";
@@ -34,17 +36,23 @@ export default function HomePage() {
   const { authenticated, ready } = useAuth();
   const t = useTranslations("home");
   const locale = useLocale();
-  // headline2 가 ja 에서 「クリックの「いつ・どこから・誰が」を一目で」 23자로 늘어나
-  // 기본 sm:text-[60px] 컨테이너 (max-w-3xl) 를 초과해 wrap. ko/en 은 short copy
-  // (12/24자) 라 60px 유지 가능 — locale 별로 hero font scale 분기. mobile 도 동일
-  // 이유로 ja 만 base 24/26px 으로 축소.
+  // 무대(Stage)가 기본 랜딩(2026-07-23 졸업). ?stage=off(쿠키/비상 env)로만 레거시 구성이
+  // 남아 있다 — 완전 철거 전까지의 안전핀.
+  const stage = useStageVariant();
   const headlineSizeClass =
     locale === "ja"
-      ? "text-[32px] leading-[1.08] min-[390px]:text-[33px] sm:text-[40px] sm:leading-[1.15] [text-wrap:nowrap] sm:[text-wrap:balance]"
-      : "text-headline-md min-[390px]:text-headline-md sm:text-headline-xl";
+      ? "text-[28px] leading-[1.12] min-[390px]:text-[29px] sm:text-[46px]"
+      : locale === "en"
+        ? "text-[34px] leading-[1.08] min-[390px]:text-[36px] sm:text-[72px] sm:leading-[1.02]"
+        : locale === "vi"
+          ? "text-[30px] leading-[1.08] min-[390px]:text-[32px] sm:text-[72px] sm:leading-[1.02]"
+          : "text-[38px] leading-[1.08] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.02]";
   const [results, setResults] = useState<
-    { res: CreateLinkResponse; original: string }[] | null
+    { res: CreateLinkResponse; original: string; passwordRequested?: boolean }[] | null
   >(null);
+  /** 답 줄이 자리를 차지한 뒤 "다른 주소도 줄이기"로 빈 줄을 다시 불러온 상태. */
+  const [composing, setComposing] = useState(false);
+  const tResult = useTranslations("result");
   const recent = useRecentLinks();
   const { data: totals } = usePublicTotals();
   const showStats = totals != null && (totals.links > 0 || totals.clicks > 0);
@@ -63,32 +71,17 @@ export default function HomePage() {
        */}
       <section className="relative isolate overflow-hidden bg-white dark:bg-slate-950">
         <div className="container relative z-10 max-w-3xl py-20 sm:py-28">
-          <div className="hero-stagger mb-10 space-y-4 sm:mb-12">
-            <div
-              className="flex items-center justify-center gap-3 text-center"
-              style={{ ["--hi" as string]: 0 } as React.CSSProperties}
-            >
-              <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
-                {t("tagline")}
-              </p>
-              <span aria-hidden className="hidden h-px w-10 bg-accent-300/70 sm:block" />
-            </div>
+          {/* "kurl v1" 아이브로+헤어라인은 철거 — 버전 배지는 방문자에게 무의미한 크롬이었고,
+              폴드는 헤드라인·폼 카드 둘만 남길수록 강해진다. */}
+          <div className="hero-stagger mb-10 space-y-5 sm:mb-12">
             <h1
               data-testid="home-hero-heading"
-              className={`text-balance text-center font-semibold tracking-headline text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
+              className={`text-balance text-center font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
-              <span className="sm:hidden">
-                <span>{t("mobileHeadline1")}</span>
-                <br />
-                <span className="text-slate-500 dark:text-slate-400">{t("mobileHeadline2")}</span>
-              </span>
-              <span className="hidden sm:inline">
-                <span>{t("headline1")}</span>
-                <br />
-                <span className="text-slate-500 dark:text-slate-400">{t("headline2")}</span>
-              </span>
+              <span>{t("headline1")}</span>
+              <br />
+              <span className="text-slate-500 dark:text-slate-400">{t("headline2")}</span>
             </h1>
             <p
               data-testid="home-hero-subhead"
@@ -107,68 +100,77 @@ export default function HomePage() {
            * `profile-fade` keyframe gives it the same fade-in feel without the cascading delay.
            */}
           <div
-            className="profile-fade"
+            className={"profile-fade" + (stage === "on" ? " stage-sweep-host" : "")}
             style={{ ["--idx" as string]: 4 } as React.CSSProperties}
           >
-            <ShortenForm
-              authenticated={authenticated}
-              ready={ready}
-              onShortened={(items) => {
-                setResults(
-                  items.map((it) => ({
-                    res: it.res,
-                    original: it.originalUrl,
-                  })),
-                );
-                for (const it of items) {
-                  recordRecent({
-                    shortCode: it.res.shortCode,
-                    shortUrl: it.res.shortUrl,
-                    originalUrl: it.originalUrl,
-                    createdAt: Date.now(),
-                    claimToken: it.res.claimToken,
-                  });
-                }
-              }}
-            />
+            {/* 단축이 끝나면 입력 캡슐이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.
+                "다른 주소도 줄이기"를 누르면 빈 캡슐이 맨 위로 돌아오고 답들은
+                영수증처럼 아래로 밀린다. */}
+            <div className="mx-auto max-w-2xl">
+              {(!results || results.length === 0 || composing) && (
+                <ShortenForm
+                  hero
+                  heroAutoFocus={Boolean(results && results.length > 0)}
+                  authenticated={authenticated}
+                  ready={ready}
+                  onShortened={(items) => {
+                    setComposing(false);
+                    // 새 답이 맨 위로 — 이번 세션의 영수증 스택(최대 5줄, 전체는 최근 단축이 보관).
+                    setResults((prev) => {
+                      const next = items.map((it) => ({
+                        res: it.res,
+                        original: it.originalUrl,
+                        passwordRequested: it.passwordRequested,
+                      }));
+                      const seen = new Set(next.map((n) => n.res.shortCode));
+                      const kept = (prev ?? []).filter((p) => !seen.has(p.res.shortCode));
+                      return [...next, ...kept].slice(0, 5);
+                    });
+                    for (const it of items) {
+                      recordRecent({
+                        shortCode: it.res.shortCode,
+                        shortUrl: it.res.shortUrl,
+                        originalUrl: it.originalUrl,
+                        createdAt: Date.now(),
+                        claimToken: it.res.claimToken,
+                      });
+                    }
+                  }}
+                />
+              )}
+
+              {results && results.length > 0 && (
+                <div className={composing ? "mt-9 space-y-8" : "space-y-8"}>
+                  {results.map((r, i) => (
+                    <ResultLine
+                      key={r.res.shortCode}
+                      result={r.res}
+                      originalUrl={r.original}
+                      authenticated={authenticated}
+                      passwordRequested={r.passwordRequested}
+                      enterIndex={i}
+                    />
+                  ))}
+                  {!composing && (
+                    <button
+                      type="button"
+                      onClick={() => setComposing(true)}
+                      className="focus-ring result-enter inline-flex items-baseline gap-1.5 rounded-sm text-[14px] font-semibold text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+                      style={{ ["--idx" as string]: results.length + 1 } as React.CSSProperties}
+                    >
+                      {tResult("moreShorten")}
+                      <span aria-hidden className="text-[12px] text-slate-300 dark:text-slate-600">
+                        ↵
+                      </span>
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="mt-6 min-h-[64px]">
-            {results && results.length > 0 ? (
-              <div className="space-y-3">
-                {results.map((r) => (
-                  <ResultCard
-                    key={r.res.shortCode}
-                    result={r.res}
-                    originalUrl={r.original}
-                    authenticated={authenticated}
-                  />
-                ))}
-                {!authenticated ? (
-                  <Link
-                    href="/login"
-                    className="focus-ring group flex items-center justify-between rounded-lg bg-slate-900 dark:bg-white px-4 py-3 text-sm text-white dark:text-slate-900 transition hover:bg-slate-800 dark:hover:bg-slate-200"
-                  >
-                    <span>
-                      {t.rich("loginCta", {
-                        clickStats: (chunks: React.ReactNode) => (
-                          <span className="font-semibold text-accent-300">{chunks}</span>
-                        ),
-                      })}
-                    </span>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-accent-300 transition group-hover:translate-x-0.5" />
-                  </Link>
-                ) : (
-                  <Link
-                    href="/links"
-                    className="focus-ring group flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 transition hover:border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                  >
-                    <span>{t("ctaSeeLinks")}</span>
-                    <ArrowRight className="h-4 w-4 shrink-0 transition group-hover:translate-x-0.5" />
-                  </Link>
-                )}
-              </div>
-            ) : !authenticated ? (
+          <div className="mt-6 min-h-[64px] space-y-3">
+            {(!results || results.length === 0) && !authenticated ? (
               <div className="space-y-2 text-center">
                 <p className="text-xs text-slate-500 dark:text-slate-400">{t("anonymousHint")}</p>
                 <Link
@@ -195,11 +197,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      <LandingPreviews />
+      {/* 글리프 워밍업 — 무대 씬 제목의 한글 서브셋을 첫 페인트 창에 미리 당긴다.
+          늦게 오는 font-face 이벤트가 뷰포트 안 씬 h2 를 LCP 로 재기록하던 것(#710 메커니즘,
+          모바일 render delay ~2.9s)의 처방. visibility:hidden 은 폰트 로드를 트리거한다. */}
+      {stage === "on" && (
+        <div aria-hidden className="invisible absolute h-0 overflow-hidden">
+          <span className="text-headline-sm font-semibold">{t("stage.scene2Title")}</span>
+          <span className="text-headline-sm font-semibold">{t("stage.scene3Title")}</span>
+          <span>{t("stage.scene2Desc")}</span>
+          <span>{t("stage.scene3Desc")}</span>
+        </div>
+      )}
+
+      {/* 무대 on = "잉크 스파인 + 딥그린 클라이맥스" 여정이 프리뷰 카드·카운터·기능 캐러셀을
+          대체한다(vault kurl-web-stage-design). off = 기존 구성 그대로(롤백 계약). */}
+      {stage === "on" ? <StageScenes /> : <LandingPreviews />}
 
       {/* `ready` 게이트: /me 해석 전엔 렌더하지 않는다 — 로그인 사용자의 첫 렌더(authenticated=false)에
-          섹션이 잠깐 나타났다 사라지는 왕복 깜빡임을 막는다. */}
-      {ready && !authenticated && recent.length > 0 && (
+          섹션이 잠깐 나타났다 사라지는 왕복 깜빡임을 막는다.
+          stage on 은 여정으로 끝나는 한 편의 페이지 — 최근 링크·비교표·FAQ 꼬리를 달지 않는다. */}
+      {stage !== "on" && ready && !authenticated && recent.length > 0 && (
         <Section eyebrow={t("recentEyebrow")} title={t("recentTitle")} subhead={t("recentSubhead")}>
           <RecentLinks />
         </Section>
@@ -209,46 +226,54 @@ export default function HomePage() {
        * Counters always render so the layout doesn't shift when usePublicTotals resolves —
        * skeleton placeholders claim the same height as the final value, dropping CLS to ~0.
        */}
-      <Section
-        eyebrow={t("statsEyebrow")}
-        title={t("statsTitle")}
-        subhead={t("statsSubhead")}
-      >
-        {totals != null && showStats ? (
-          <HomeCounters totals={totals} />
-        ) : (
-          <dl className="grid grid-cols-2 divide-x divide-slate-100 dark:divide-slate-800 text-center" aria-hidden>
-            {[0, 1].map((i) => (
-              <div key={i} className="px-6 py-2">
-                <div className="mx-auto h-12 w-24 animate-pulse rounded bg-slate-100 dark:bg-slate-800 sm:h-14" />
-                <div className="mx-auto mt-2 h-3 w-16 rounded bg-slate-50 dark:bg-slate-800/50" />
-              </div>
-            ))}
-          </dl>
-        )}
-      </Section>
+      {stage !== "on" && (
+        <>
+          <Section
+            eyebrow={t("statsEyebrow")}
+            title={t("statsTitle")}
+            subhead={t("statsSubhead")}
+          >
+            {totals != null && showStats ? (
+              <HomeCounters totals={totals} />
+            ) : (
+              <dl className="grid grid-cols-2 divide-x divide-slate-100 dark:divide-slate-800 text-center" aria-hidden>
+                {[0, 1].map((i) => (
+                  <div key={i} className="px-6 py-2">
+                    <div className="mx-auto h-12 w-24 animate-pulse rounded bg-slate-100 dark:bg-slate-800 sm:h-14" />
+                    <div className="mx-auto mt-2 h-3 w-16 rounded bg-slate-50 dark:bg-slate-800/50" />
+                  </div>
+                ))}
+              </dl>
+            )}
+          </Section>
 
-      <Section
-        wide
-        eyebrow={t("featuresEyebrow")}
-        title={t("featuresTitle")}
-        subhead={t("featuresSubhead")}
-      >
-        <FeatureCarousel />
-      </Section>
+          <Section
+            wide
+            eyebrow={t("featuresEyebrow")}
+            title={t("featuresTitle")}
+            subhead={t("featuresSubhead")}
+          >
+            <FeatureCarousel />
+          </Section>
+        </>
+      )}
 
-      <Section
-        wide
-        eyebrow={t("whyEyebrow")}
-        title={t("whyTitle")}
-        subhead={t("whySubhead")}
-      >
-        <WhyKurl />
-      </Section>
+      {stage !== "on" && (
+        <>
+          <Section
+            wide
+            eyebrow={t("whyEyebrow")}
+            title={t("whyTitle")}
+            subhead={t("whySubhead")}
+          >
+            <WhyKurl />
+          </Section>
 
-      <Section>
-        <HomeFaq />
-      </Section>
+          <Section>
+            <HomeFaq />
+          </Section>
+        </>
+      )}
     </div>
   );
 }

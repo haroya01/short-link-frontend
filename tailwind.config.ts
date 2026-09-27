@@ -12,7 +12,16 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: "1.25rem",
+      // 화면이 넓어질수록 여백도 같이 넓어진다. 전 구간 20px 고정이던 시절엔 1024~1280 구간에서
+      // 내비바와 본문이 화면 모서리에 붙어 답답했고, 폰에서도 글이 가장자리까지 차 있었다.
+      // 헤더·푸터·본문이 모두 이 하나의 container 를 쓰므로 값만 키우면 세로 정렬은 그대로 유지된다
+      // (내비바에만 패딩을 주면 로고가 아래 본문보다 안쪽으로 밀려 어긋나 보인다).
+      //
+      // 폭이 커질 때의 증가분은 globals.css 에 둔다. 여기서 padding 을 브레이크포인트 객체로 줘도
+      // 무시되기 때문 — container 플러그인은 container.screens 를 기준으로 미디어쿼리를 만드는데,
+      // 아래 screens 가 2xl 하나로 덮여 있어 sm·lg 자체가 존재하지 않는다. screens 에 sm·lg 를
+      // 되살리면 그 폭에서 max-width 까지 같이 생겨 레이아웃이 바뀐다.
+      padding: "1.5rem",
       screens: { "2xl": "1280px" },
     },
     extend: {
@@ -29,6 +38,7 @@ const config: Config = {
           700: "#047857",
           800: "#065F46",
           900: "#064E3B",
+          950: "#022C22",
         },
       },
       fontFamily: {
@@ -133,9 +143,12 @@ const config: Config = {
         // 읽기·설정면의 정적 카드(발견 타일이 아님) — lift 없이 가장자리만 살짝 떼어놓는 near-flat.
         // browse 타일의 뜬(card) 그림자를 평평한 표면에 얹지 않도록 이 토큰으로 구분한다.
         "card-flat": "0 1px 2px rgba(15,23,42,0.04)",
-        // Browse(발견) 타일 hover lift — 읽기면 flat 철학의 명시적 예외(AGENTS §10.1)라서,
+        // Browse(발견) 타일 hover lift — 읽기면 flat 철학의 명시적 예외(DESIGN.md §10.1)라서,
         // 그 농도를 이 토큰 한 곳이 소유한다. 콜사이트에서 임의값으로 다시 들고 다니지 말 것.
         "card-hover": "0 18px 40px -12px rgba(15,23,42,0.28)",
+        // 대시보드(통계 등) 카드의 hover 리프트 — browse 타일(card-hover)보다 한참 얕다.
+        // 작업 화면의 카드는 떠오르는 연출이 아니라 "눌러진다"는 힌트만 필요해서 별도 농도.
+        lift: "0 4px 16px rgba(15,23,42,0.12)",
         cta: "0 8px 24px -8px rgba(5,150,105,0.45)", // brand-green CTA glow
         fab: "0 8px 24px -6px rgba(5,150,105,0.5)", // floating action button (slightly stronger)
       },

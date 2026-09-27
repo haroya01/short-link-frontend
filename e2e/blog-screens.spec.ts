@@ -18,8 +18,8 @@ const SERIES = "nextjs-deep-dive";
 /** Every screen must render real content, keep the app header, and show no error boundary. */
 async function rendersCleanly(page: Page) {
   await expect(page.locator("body")).toBeVisible();
-  // The shared app header (blog.kurl wordmark) survives on every blog surface.
-  await expect(page.getByRole("link", { name: /blog\.?kurl/i }).first()).toBeVisible();
+  // The shared app header (kurl log wordmark) survives on every blog surface.
+  await expect(page.getByRole("link", { name: /kurl ?log/i }).first()).toBeVisible();
   await expect(
     page.getByText(/Application error|client-side exception|Internal Server Error|This page could/i),
   ).toHaveCount(0);

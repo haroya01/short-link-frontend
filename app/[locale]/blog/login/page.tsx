@@ -56,7 +56,7 @@ function BlogLoginShell({ next }: { next: string | null }) {
       <div className="w-full max-w-sm">
         {/* Same entrance as the kurl.me login: a hero-stagger cascade (kicker → mark draws on →
             wordmark → subtitle), then the action block fades up. The 3-bar brand mark sweeps on
-            left-to-right (mark-draw-in) as its own reveal, and the blog.kurl wordmark lands under it —
+            left-to-right (mark-draw-in) as its own reveal, and the kurl log wordmark lands under it —
             branded and quiet, no peppy onboarding chrome. */}
         <div className="hero-stagger flex flex-col items-center space-y-5 text-center">
           <p
@@ -101,7 +101,7 @@ function BlogLoginShell({ next }: { next: string | null }) {
         <div className="profile-fade mt-10 space-y-3" style={{ ["--idx" as string]: 4 } as React.CSSProperties}>
           <Button
             variant="outline"
-            className="h-11 w-full justify-center rounded-xl"
+            className="h-11 w-full justify-center rounded-lg"
             onClick={onSignIn}
           >
             <GoogleIcon className="h-4 w-4" />

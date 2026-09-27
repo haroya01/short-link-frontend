@@ -60,7 +60,7 @@ export function PathReorder({
         </div>
       </div>
 
-      <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
+      <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
         {items.map((c, i) => (
           <li
             key={c.id}

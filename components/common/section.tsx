@@ -14,7 +14,7 @@ type Props = {
 
 /**
  * Stat / dashboard section surface. Refined Apple-style 16 px corner ({@code rounded-2xl}) sits
- * one tier above inner KPI / nested cards ({@code rounded-xl} 12 px) so radii read as concentric.
+ * above inner controls / nested boxes ({@code rounded-lg} 8 px) so radii read as concentric.
  * Header has a three-level hierarchy: optional eyebrow (uppercase tracking, accent — used as a
  * tiny brand mark on sections that need contextual labeling), title (semibold, tracking-tight,
  * 15 px), description (slate-500, leading-relaxed). The optional footnote slot lets sections

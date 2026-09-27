@@ -600,7 +600,7 @@ function FeedItemRow({
   };
   // Drop-zone indicator: a thin accent bar that hovers just above the target row. Positioned
   // absolutely so it takes *zero* layout space — earlier versions added `mt-4` to push rows apart,
-  // which combined with `transition-all` and the bubbling dragleave/dragover events made the row
+  // which combined with an all-property transition and the bubbling dragleave/dragover events made the row
   // animate open/closed at ~60Hz as the cursor crossed child elements ("엄청 깜빡거림"). The fix is
   // twofold: (1) drop the per-row onDragLeave handler at the call site so child-element traversal
   // no longer clears overIndex, (2) keep the indicator out of the layout flow so siblings don't

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, ExternalLink, Eye, FileText, Heart, Link2, MousePointerClick, TrendingUp, Users, UserPlus } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -8,12 +9,12 @@ import { useAuth } from "@/lib/auth";
 import { dateLocale } from "@/lib/date";
 import { blogPath, linksHref } from "@/lib/host";
 import { Mark } from "@/components/common/logo";
+import { ErrorState } from "@/components/common/error-state";
 import {
   getAuthorAnalyticsOverview,
   getPostAnalytics,
   getPostPerformance,
   getSeriesAnalytics,
-  type AuthorAnalyticsOverview,
   type PostAnalytics,
   type PostPerformanceSort,
   type SeriesAnalyticsRow,
@@ -69,10 +70,14 @@ function SectionTabs({
 export default function BlogAnalyticsPage() {
   const t = useTranslations("blogWorkspace");
   const locale = useLocale();
-  const { ready, authenticated } = useAuth();
+  const { ready, authenticated, me } = useAuth();
   const [days, setDays] = useState(30);
-  const [data, setData] = useState<AuthorAnalyticsOverview | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["blog", "analytics", me?.id, "overview", days],
+    queryFn: () => getAuthorAnalyticsOverview(days),
+    enabled: ready && authenticated,
+  });
+  const loading = !ready || isLoading;
   const [tab, setTab] = useState<AnalyticsTab>("referrers");
 
   const TABS: { key: AnalyticsTab; label: string }[] = [
@@ -81,15 +86,6 @@ export default function BlogAnalyticsPage() {
     { key: "links", label: t("analyticsTabLinks") },
     { key: "posts", label: t("analyticsTabPosts") },
   ];
-
-  useEffect(() => {
-    if (!ready || !authenticated) return;
-    setLoading(true);
-    getAuthorAnalyticsOverview(days)
-      .then(setData)
-      .catch(() => setData(null))
-      .finally(() => setLoading(false));
-  }, [ready, authenticated, days]);
 
   // 히어로 옆 한 줄 — 이 기간에서 가장 읽힌 하루. 새 데이터 없이 daily 에서 그대로 나온다.
   const peakPoint = (data?.daily ?? []).reduce<{ date: string; views: number } | null>(
@@ -130,6 +126,8 @@ export default function BlogAnalyticsPage() {
             <SkeletonRows count={5} />
           </div>
         </div>
+      ) : error ? (
+        <div className="mt-8"><ErrorState onRetry={() => void refetch()} /></div>
       ) : !data ? (
         <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">{t("analyticsEmpty")}</p>
       ) : (
@@ -192,7 +190,7 @@ export default function BlogAnalyticsPage() {
                   const max = data.referrers[0]?.views || 1;
                   const pct = Math.max(4, Math.round((r.views / max) * 100));
                   return (
-                    <li key={r.host} className="-mx-3 flex items-center gap-3 rounded-xl px-3 py-2">
+                    <li key={r.host} className="-mx-3 flex items-center gap-3 rounded-lg px-3 py-2">
                       <span className="w-5 shrink-0 text-center text-[13px] font-semibold tabular-nums text-slate-300 dark:text-slate-500">
                         {i + 1}
                       </span>
@@ -255,7 +253,7 @@ function ViewAllToggle({ expanded, onToggle }: { expanded: boolean; onToggle: ()
       type="button"
       onClick={onToggle}
       aria-expanded={expanded}
-      className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
+      className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
     >
       {expanded ? t("analyticsCollapse") : t("analyticsViewAll")}
       <ChevronDown className={`h-3.5 w-3.5 transition-transform ${expanded ? "rotate-180" : ""}`} />
@@ -280,10 +278,14 @@ function PostPerformanceList() {
   // Collapsed by default to 10 rows; '전체보기' activates the infinite-scroll sentinel.
   const [expanded, setExpanded] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const requestGeneration = useRef(0);
+  const requestInFlight = useRef(false);
 
   // Reset + load the first page whenever the sort changes (and on mount / retry).
   useEffect(() => {
     let alive = true;
+    const generation = ++requestGeneration.current;
+    requestInFlight.current = true;
     setItems([]);
     setNextPage(0);
     setHasNext(true);
@@ -298,26 +300,38 @@ function PostPerformanceList() {
         setNextPage(1);
       })
       .catch(() => alive && setError(true))
-      .finally(() => alive && setLoading(false));
+      .finally(() => {
+        if (!alive) return;
+        requestInFlight.current = false;
+        setLoading(false);
+      });
     return () => {
       alive = false;
+      requestGeneration.current = generation + 1;
     };
   }, [sort, reloadKey]);
 
   const loadMore = useCallback(async () => {
-    if (loading || !hasNext || nextPage === 0) return; // nextPage 0 = first page not in yet
+    if (requestInFlight.current || loading || !hasNext || nextPage === 0) return; // nextPage 0 = first page not in yet
+    requestInFlight.current = true;
+    const generation = requestGeneration.current;
     setLoading(true);
     setError(false);
     try {
       const res = await getPostPerformance(nextPage, 20, sort);
+      if (generation !== requestGeneration.current) return;
       setItems((prev) => [...prev, ...res.items]);
       setHasNext(res.hasNext);
       setNextPage((p) => p + 1);
     } catch {
+      if (generation !== requestGeneration.current) return;
       // hasNext 는 그대로 두고 error 로만 자동 로더를 멈춘다 — 재시도 버튼이 남아 다시 이어 받는다.
       setError(true);
     } finally {
-      setLoading(false);
+      if (generation === requestGeneration.current) {
+        requestInFlight.current = false;
+        setLoading(false);
+      }
     }
   }, [loading, hasNext, nextPage, sort]);
 
@@ -334,7 +348,7 @@ function PostPerformanceList() {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [loadMore, error]);
+  }, [loadMore, error, expanded]);
 
   return (
     <section className="mt-8">
@@ -366,7 +380,7 @@ function PostPerformanceList() {
           <button
             type="button"
             onClick={() => setReloadKey((k) => k + 1)}
-            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
+            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
           >
             {tc("retry")}
           </button>
@@ -379,7 +393,7 @@ function PostPerformanceList() {
           <li key={p.postId}>
             <Link
               href={blogPath(`/analytics/${p.postId}`)}
-              className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+              className="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
               <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
                 {p.title || p.slug}
@@ -417,7 +431,7 @@ function PostPerformanceList() {
           <button
             type="button"
             onClick={() => void loadMore()}
-            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
+            className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-4 py-2 text-[12px] font-medium text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-200"
           >
             {tc("retry")}
           </button>
@@ -452,7 +466,7 @@ function SeriesAnalyticsSection() {
           <li key={s.seriesId}>
             <Link
               href={blogPath(`/analytics/series/${s.seriesId}`)}
-              className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+              className="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
               <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-slate-900 group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-300">
                 {s.title}
@@ -549,7 +563,7 @@ function LinksBreakdownSection() {
           <li key={r.postId}>
             <Link
               href={blogPath(`/analytics/${r.postId}`)}
-              className="group -mx-3 flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
+              className="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
               <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-500">
                 {i + 1}

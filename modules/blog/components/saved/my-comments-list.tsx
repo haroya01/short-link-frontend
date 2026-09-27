@@ -72,7 +72,7 @@ export function MyCommentsList({ locale }: { locale: string }) {
         const url = postHref(c.postUsername, c.postSlug, locale);
         return (
           <li key={c.id} className="group border-b border-slate-100 last:border-b-0 dark:border-slate-800">
-            <div className="-mx-3 rounded-xl px-3 py-5 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40">
+            <div className="-mx-3 rounded-lg px-3 py-5 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-800/40">
               {/* The post this comment lives on — a quiet eyebrow that doubles as the link back. */}
               <BlogLink
                 href={url}

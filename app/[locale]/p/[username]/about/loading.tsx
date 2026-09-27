@@ -15,7 +15,7 @@ export default function AboutLoading() {
           <Skeleton key={i} className={`h-4 ${w}`} />
         ))}
       </div>
-      <Skeleton className="mt-10 h-32 w-full rounded-xl" />
+      <Skeleton className="mt-10 h-32 w-full rounded-2xl" />
     </div>
   );
 }

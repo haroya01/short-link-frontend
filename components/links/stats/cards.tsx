@@ -1,8 +1,8 @@
 "use client";
 
-import { Bot, Clock, IdCard, MousePointerClick, TrendingUp, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCountUp } from "@/lib/animations";
+import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { cn, formatNumber } from "@/lib/utils";
 
 type Props = {
@@ -18,18 +18,22 @@ type Props = {
   profileClicks?: number | null;
   timeToFirstClickMinutes?: number | null;
   velocityRatio?: number | null;
+  /** 일별 클릭 시계열(카운트만) — 있으면 히어로 카드에 자가-드로잉 스파크라인. */
+  dailySeries?: number[] | null;
   animate?: boolean;
   /**
    * Called when a card is clicked. Hosts on a tabbed surface use this to switch tab + scroll;
    * single-page hosts can omit it and the card falls back to in-page {@code scrollIntoView}.
    */
   onNavigate?: (section: string) => void;
+  /** Hosts with fewer breakdowns omit navigation affordances for unavailable sections. */
+  navigationTargets?: readonly string[];
 };
 
 /**
  * Six-up KPI grid that anchors the stats page. Hero (total clicks) is a {@code rounded-2xl}
  * flat card sized 1.5× the others so the eye lands there first; satellite cards are also
- * {@code rounded-2xl} per AGENTS §1 (16 px canonical corner token). Each card is clickable — jump-scrolls
+ * {@code rounded-2xl} per DESIGN.md §1 (16 px canonical corner token). Each card is clickable — jump-scrolls
  * to the matching detail section, turning the KPI grid into a navigation control rather than
  * dead chrome. Hover state lifts each card {@code -translate-y-0.5} + soft shadow; active state
  * snaps it back with a {@code scale(0.99)} press tactile.
@@ -42,8 +46,10 @@ export function StatsCards({
   profileClicks,
   timeToFirstClickMinutes,
   velocityRatio,
-  animate = true,
+  dailySeries,
+  animate = false,
   onNavigate,
+  navigationTargets,
 }: Props) {
   const t = useTranslations("stats.kpi");
   const hasUnique = typeof unique === "number" && Number.isFinite(unique);
@@ -56,14 +62,16 @@ export function StatsCards({
   // empty-state CTA above. Strip the interactive affordances on the KPI cards so the cursor /
   // hover / focus signal doesn't promise navigation we can't deliver.
   const interactive = total > 0;
+  const canNavigate = (section: string) => interactive && (!navigationTargets || navigationTargets.includes(section));
 
   function jump(section: string) {
-    if (!interactive) return;
+    if (!canNavigate(section)) return;
     if (onNavigate) {
       onNavigate(section);
       return;
     }
-    document.getElementById(section)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById(section)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
   }
 
   const humanRatio = total > 0 ? (human / total) * 100 : 0;
@@ -71,7 +79,9 @@ export function StatsCards({
   const uniqueRatio = hasUnique && human > 0 ? ((unique as number) / human) * 100 : 0;
   const profileRatio = showProfile && human > 0 ? ((profileClicks as number) / human) * 100 : 0;
 
-  const showVelocity = hasVelocity && (velocityRatio as number) > 0;
+  // 저표본 게이트 — lib/stats-journal 의 MIN_TOTAL_FOR_INSIGHTS(10)와 같은 문턱.
+  // 총 2클릭에 "클릭 가속 24.0x"가 뜨면 KPI 헤더가 과장으로 읽힌다.
+  const showVelocity = hasVelocity && (velocityRatio as number) >= 1.5 && human >= 30;
   const showLatency = !showVelocity && hasLatency;
 
   const animatedTotal = useCountUp(total, 900, animate);
@@ -82,42 +92,42 @@ export function StatsCards({
         // Mobile: 2-col so KPI cards stack densely on iPhone; the hero "total" card spans both
         // columns (col-span-2 below). Tablet: 3-col, hero spans 3. Desktop keeps the bespoke
         // explicit track widths so the hero is 1.5x the others (Apple nested-radius math).
-        "grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4",
+        // 모바일 2열에서 마지막 카드가 홀수로 남으면 고아 — 풀폭으로 펴서 구멍을 없앤다.
+        "grid grid-cols-2 gap-3 max-sm:[&>*:nth-child(even):last-child]:col-span-2 sm:grid-cols-3 sm:gap-4",
         showProfile
           ? "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr]"
           : "lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]",
       )}
     >
+      {/* 히어로 = 딥그린 시그니처 패널(StatsHeroCore) — 랜딩 무대 장면 3과 같은 컴포넌트.
+          랜딩이 약속하는 카드가 실제 화면의 이 카드다(과장광고 방지 계약). */}
       <button
         type="button"
         onClick={() => jump("section-daily")}
-        disabled={!interactive}
-        aria-disabled={!interactive}
+        disabled={!canNavigate("section-daily")}
+        aria-disabled={!canNavigate("section-daily")}
         className={cn(
-          "relative col-span-2 overflow-hidden rounded-2xl border border-accent-200 bg-white p-5 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-all duration-200 ease-out sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:bg-slate-900 dark:shadow-none",
-          interactive
-            ? "group cursor-pointer hover:-translate-y-0.5 hover:border-accent-300 hover:shadow-[0_4px_16px_rgba(15,23,42,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-accent-500/50"
+          "relative col-span-2 overflow-hidden rounded-2xl border border-accent-800 p-0 text-left shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[transform,box-shadow] duration-200 ease-[var(--ease)] sm:col-span-3 lg:col-span-1 dark:border-accent-500/30 dark:shadow-none",
+          canNavigate("section-daily")
+            ? "group cursor-pointer hover:-translate-y-0.5 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99]"
             : "cursor-default",
         )}
       >
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-semibold text-accent-700 dark:text-accent-300">
-            {t("totalClicks")}
-          </span>
-          <span className="grid h-7 w-7 place-items-center rounded-full bg-accent-700 text-white shadow-sm transition-transform duration-200 ease-out group-hover:scale-110">
-            <MousePointerClick className="h-3.5 w-3.5" />
-          </span>
-        </div>
-        <p className="mt-3 font-mono text-[34px] font-bold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
-          {formatNumber(animatedTotal)}
-        </p>
+        <StatsHeroCore
+          label={t("totalClicks")}
+          caption={`${t("human")} ${humanRatio.toFixed(0)}%`}
+          total={animatedTotal}
+          series={dailySeries}
+          draw={animate ? "mount" : "static"}
+          className="rounded-none"
+        />
         {hasUnique && (
-          <p className="mt-3 text-[11px] text-slate-600 dark:text-slate-400">
-            <span className="font-mono font-medium tabular-nums text-slate-900 dark:text-slate-100">
+          <p className="bg-accent-900 px-5 pb-4 text-[11px] text-accent-100/70">
+            <span className="font-medium tabular-nums text-white">
               {formatNumber(unique as number)}
             </span>{" "}
             {t("unique").toLowerCase()}{" "}
-            <span className="text-slate-400 dark:text-slate-500">· {t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) })}</span>
+            <span className="text-accent-300/70">· {t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) })}</span>
           </p>
         )}
       </button>
@@ -125,36 +135,36 @@ export function StatsCards({
       <CountStat
         label={t("human")}
         target={human}
-        icon={MousePointerClick}
         sub={`${humanRatio.toFixed(1)}%`}
+        ratio={humanRatio / 100}
         animate={animate}
-        onJump={interactive ? () => jump("section-device") : undefined}
+        onJump={canNavigate("section-device") ? () => jump("section-device") : undefined}
       />
       <CountStat
         label={t("unique")}
         target={hasUnique ? (unique as number) : null}
-        icon={Users}
         sub={hasUnique ? t("uniqueOfHuman", { ratio: uniqueRatio.toFixed(0) }) : undefined}
+        ratio={hasUnique ? uniqueRatio / 100 : undefined}
         animate={animate}
-        onJump={interactive ? () => jump("section-daily") : undefined}
+        onJump={canNavigate("section-daily") ? () => jump("section-daily") : undefined}
       />
       <CountStat
         label={t("bot")}
         target={bot}
-        icon={Bot}
         sub={`${botRatio.toFixed(1)}%`}
+        ratio={botRatio / 100}
         muted
         animate={animate}
-        onJump={interactive ? () => jump("section-bots") : undefined}
+        onJump={canNavigate("section-bots") ? () => jump("section-bots") : undefined}
       />
       {showProfile && (
         <CountStat
           label={t("profile")}
           target={profileClicks as number}
-          icon={IdCard}
+          ratio={profileRatio / 100}
           sub={t("profileSub", { ratio: profileRatio.toFixed(0) })}
           animate={animate}
-          onJump={interactive ? () => jump("section-sources") : undefined}
+          onJump={canNavigate("section-sources") ? () => jump("section-sources") : undefined}
         />
       )}
       <Stat
@@ -174,9 +184,8 @@ export function StatsCards({
               ? formatLatency(timeToFirstClickMinutes as number)
               : "—"
         }
-        icon={showVelocity && (velocityRatio as number) >= 1.5 ? TrendingUp : Clock}
         sub={showVelocity ? t("vsBaseline") : showLatency ? t("afterCreation") : t("noData")}
-        onJump={interactive ? () => jump("section-hourly") : undefined}
+        onJump={(showVelocity || showLatency) && canNavigate("section-hourly") ? () => jump("section-hourly") : undefined}
       />
     </div>
   );
@@ -186,14 +195,15 @@ function Stat({
   label,
   value,
   sub,
-  icon: Icon,
+  ratio,
   muted,
   onJump,
 }: {
   label: string;
   value: string;
   sub?: string;
-  icon: React.ComponentType<{ className?: string }>;
+  /** 0~1 — 카드 하단 미니 비율바(아이콘 제거 후의 데이터 드로잉). */
+  ratio?: number;
   muted?: boolean;
   onJump?: () => void;
 }) {
@@ -205,28 +215,41 @@ function Stat({
       disabled={!interactive}
       aria-disabled={!interactive}
       className={cn(
-        "flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-all duration-200 ease-out dark:shadow-none",
+        "flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 text-left shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-[transform,box-shadow,border-color] duration-200 ease-[var(--ease)] dark:shadow-none",
         interactive
-          ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-slate-700"
+          ? "group cursor-pointer hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lift focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.99] dark:hover:border-slate-700"
           : "cursor-default",
       )}
     >
-      <div className="flex items-center justify-between">
-        <span className="truncate text-[10px] font-semibold text-slate-500 dark:text-slate-400 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
-          {label}
-        </span>
-        <Icon
-          className={cn(
-            "h-3.5 w-3.5 shrink-0 transition-transform duration-200 ease-out",
-            muted ? "text-slate-400 dark:text-slate-500" : "text-slate-500 dark:text-slate-400",
-            interactive && "group-hover:scale-110",
-          )}
-        />
-      </div>
-      <p className="mt-2 font-mono text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
+      {/* 아이콘 배지 제거(아이덴티티 v2 절제 패스) — 라벨은 mono 소문자 톤, muted 는 라벨 색으로 표현. */}
+      <span
+        className={cn(
+          "truncate text-[10px] font-semibold transition-colors",
+          muted
+            ? "text-slate-400 dark:text-slate-500"
+            : "text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200",
+        )}
+      >
+        {label}
+      </span>
+      <p className="mt-2 text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
         {value}
       </p>
       {sub && <p className="mt-2 truncate text-[11px] text-slate-500 dark:text-slate-400">{sub}</p>}
+      {typeof ratio === "number" && Number.isFinite(ratio) && (
+        <span
+          aria-hidden
+          className="mt-3 block h-1 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
+        >
+          <span
+            className={cn(
+              "block h-full rounded-full",
+              muted ? "bg-slate-300 dark:bg-slate-600" : "bg-accent-500 dark:bg-accent-400",
+            )}
+            style={{ width: `${Math.round(Math.min(1, Math.max(0, ratio)) * 100)}%` }}
+          />
+        </span>
+      )}
     </button>
   );
 }
@@ -235,7 +258,7 @@ function CountStat({
   label,
   target,
   sub,
-  icon,
+  ratio,
   muted,
   onJump,
   animate = true,
@@ -243,7 +266,7 @@ function CountStat({
   label: string;
   target: number | null;
   sub?: string;
-  icon: React.ComponentType<{ className?: string }>;
+  ratio?: number;
   muted?: boolean;
   onJump?: () => void;
   animate?: boolean;
@@ -251,7 +274,7 @@ function CountStat({
   const animated = useCountUp(target ?? 0, 700, animate && target !== null);
   const display = target === null ? "—" : formatNumber(animated);
   return (
-    <Stat label={label} value={display} sub={sub} icon={icon} muted={muted} onJump={onJump} />
+    <Stat label={label} value={display} sub={sub} ratio={ratio} muted={muted} onJump={onJump} />
   );
 }
 

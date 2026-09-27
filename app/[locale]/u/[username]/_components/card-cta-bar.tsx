@@ -22,7 +22,7 @@ type Props = {
  * and an {@code ArrowRight} marker on the right. The marker uses {@code group-hover:translate-x-0.5}
  * for the forward-motion micro-interaction that signals "this opens a new page".
  *
- * <p>Per AGENTS.md §4 the bar is fixed at {@code px-4 py-2.5} — paired with {@code text-[13px]
+ * <p>Per DESIGN.md §4 the bar is fixed at {@code px-4 py-2.5} — paired with {@code text-[13px]
  * font-medium} for the CTA-tier typography step (smaller than card titles, larger than meta).
  */
 export function CardCtaBar({ href, label, colors, onClick, external = true }: Props) {

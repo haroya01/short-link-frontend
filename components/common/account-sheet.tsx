@@ -17,7 +17,6 @@ import {
   LogOut,
   Newspaper,
   Settings,
-  Sparkles,
   User,
   Webhook,
 } from "lucide-react";
@@ -37,7 +36,7 @@ import { ThemeToggle } from "@/components/common/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const ITEM =
-  "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
+  "flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-[15px] text-slate-700 transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 focus-visible:outline-none dark:text-slate-300 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60";
 
 /**
  * Mobile account bottom sheet. `product` slims it per surface:
@@ -143,11 +142,11 @@ export function AccountSheet({
             home indicator. */}
         <div className="overflow-y-auto pb-[max(env(safe-area-inset-bottom),0.75rem)]">
         {/* The blog brand lives here on mobile (it's dropped from the slim top bar so the screen leads
-            with the author/post). This anchors the sheet as "where blog.kurl + the product switch are."
+            with the author/post). This anchors the sheet as "where kurl log + the product switch are."
             On kurl the switch is in the top Nav, so the sheet leads straight with the account. */}
         {!isLinks && (
           <>
-            <a href={blogHref("/")} aria-label="blog.kurl" className="mark-hoverable flex items-center px-3 py-2">
+            <a href={blogHref("/")} aria-label="kurl log" className="mark-hoverable flex items-center px-3 py-2">
               <Logo variant="blog" />
             </a>
             <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
@@ -193,7 +192,7 @@ export function AccountSheet({
               <User className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("profile")}
             </a>
-            {/* Reader's private library — bookmarks + likes, on the workspace curation page. */}
+            {/* Reader's library — saved posts, highlights, notes, and collections. */}
             <a href={blogHref("/curation")} className={ITEM}>
               <Bookmark className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {t("library")}
@@ -233,10 +232,6 @@ export function AccountSheet({
             <a href={blogHref("/leads")} className={ITEM}>
               <Inbox className="h-5 w-5 text-slate-500 dark:text-slate-400" />
               {tBlog("leads")}
-            </a>
-            <a href={blogHref("/curation")} className={ITEM}>
-              <Sparkles className="h-5 w-5 text-slate-500 dark:text-slate-400" />
-              {tBlog("curation")}
             </a>
             <a href={blogHref("/webhooks")} className={ITEM}>
               <Webhook className="h-5 w-5 text-slate-500 dark:text-slate-400" />

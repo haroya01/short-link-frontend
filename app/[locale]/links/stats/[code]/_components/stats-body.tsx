@@ -1,28 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import type { LinkStats } from "@/types";
-import { StatsCards } from "@/components/links/stats/cards";
-import { InsightSummary } from "@/components/links/stats/insight-summary";
+import { fillDailyClicks } from "@/lib/stats-daily";
+import { StatsOverview } from "./overview";
+import { WhenChapter, type RangeDays } from "./chapters/when-chapter";
+import { WhereChapter } from "./chapters/where-chapter";
+import { WhoChapter } from "./chapters/who-chapter";
 import { Header } from "./header";
 import { StatsEmptyState } from "./stats-empty-state";
 import { TabBar } from "./tab-bar";
-import { AudienceTab } from "./tabs/audience-tab";
-import { OverviewTab } from "./tabs/overview-tab";
 import { SettingsTab } from "./tabs/settings-tab";
-import { SourcesTab } from "./tabs/sources-tab";
-import { TrafficTab } from "./tabs/traffic-tab";
 import { useTabHash, type TabKey } from "../_lib/use-tab-hash";
 
-// Each KPI card jumps to a section that lives inside a specific tab. Tab content is
-// conditionally rendered (StatsBody only mounts the active tab), so clicking a card has to
-// switch tabs first and then scroll once the section is in the DOM.
-const SECTION_TAB: Record<string, TabKey> = {
-  "section-daily": "traffic",
-  "section-hourly": "traffic",
-  "section-device": "audience",
-  "section-bots": "audience",
-  "section-sources": "sources",
+// Evidence links select a persistent analysis tab before scrolling to its section.
+const SECTION_CHAPTER: Record<string, TabKey> = {
+  "section-device": "who",
+  "section-bots": "who",
+  "section-client-app": "who",
+  "section-live": "when",
+  "section-heatmap": "when",
+  "section-daily": "when",
+  "section-hourly": "when",
+  "section-sources": "where",
+  "section-channel-depth": "where",
+  "section-fetch-site": "where",
+  "section-post-clicks": "where",
+  "chapter-who": "who",
+  "chapter-when": "when",
+  "chapter-where": "where",
 };
 
 /**
@@ -36,7 +43,7 @@ const SECTION_TAB: Record<string, TabKey> = {
  * see the chrome of every section without the page trying to authenticate or open an EventSource.
  */
 export function StatsBody({
-  data,
+  data: sourceData,
   shortUrl,
   shortCodeLabel,
   onCopy,
@@ -50,26 +57,43 @@ export function StatsBody({
   onTick: () => void;
   demo?: boolean;
 }) {
-  const [tab, setTab] = useTabHash();
+  const t = useTranslations("stats");
+  const data = useMemo(() => {
+    // Synthetic reports use a fixed snapshot date; live reports always end on today's report day.
+    const snapshot = demo || process.env.NEXT_PUBLIC_USE_MOCKS === "1";
+    const lastDate = sourceData.dailyClicks?.at(-1)?.date;
+    return {
+      ...sourceData,
+      dailyClicks: fillDailyClicks(sourceData.dailyClicks ?? [], {
+        timezone: sourceData.timezone,
+        now: snapshot && lastDate ? new Date(`${lastDate}T12:00:00Z`) : new Date(),
+      }),
+    };
+  }, [sourceData, demo]);
+  const [view, setView] = useTabHash();
   const [pendingScroll, setPendingScroll] = useState<string | null>(null);
+  const [rangeDays, setRangeDays] = useState<RangeDays>(30);
+  // Missing days are filled above so seven rows mean seven calendar days, including idle days.
+  const slicedDaily = useMemo(
+    () => (data.dailyClicks ?? []).slice(-rangeDays),
+    [data.dailyClicks, rangeDays],
+  );
 
   useEffect(() => {
     if (!pendingScroll) return;
-    // The target section only enters the DOM after the tab switch re-renders. requestAnimationFrame
-    // pushes the scroll to the next paint so the element exists when we look it up.
+    // 챕터 뷰가 렌더된 다음 페인트에 목적지 섹션이 생긴다 — rAF 로 한 박자 늦춰 스크롤.
     const id = pendingScroll;
     const raf = requestAnimationFrame(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
       setPendingScroll(null);
     });
     return () => cancelAnimationFrame(raf);
-  }, [pendingScroll, tab]);
+  }, [pendingScroll, view]);
 
   function handleNavigate(section: string) {
-    const targetTab = SECTION_TAB[section];
-    if (targetTab && targetTab !== tab) {
-      setTab(targetTab);
-    }
+    const target = SECTION_CHAPTER[section] ?? "when";
+    if (target !== view) setView(target);
     setPendingScroll(section);
   }
 
@@ -81,26 +105,23 @@ export function StatsBody({
         shortCodeLabel={shortCodeLabel}
         onCopy={onCopy}
         demo={demo}
+        onSettings={() => setView("settings")}
+        settingsActive={view === "settings"}
       />
-      {data.totalClicks === 0 && <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />}
-      <StatsCards
-        total={data.totalClicks}
-        human={data.humanClicks}
-        bot={data.botClicks}
-        unique={data.uniqueClicks}
-        profileClicks={data.profileClicks}
-        timeToFirstClickMinutes={data.timeToFirstClickMinutes}
-        velocityRatio={data.velocity?.ratio ?? 0}
-        animate={!demo}
-        onNavigate={handleNavigate}
-      />
-      <InsightSummary data={data} />
-      <TabBar active={tab} onSelect={setTab} />
-      {tab === "overview" && <OverviewTab data={data} onTick={onTick} demo={demo} />}
-      {tab === "traffic" && <TrafficTab data={data} />}
-      {tab === "sources" && <SourcesTab data={data} />}
-      {tab === "audience" && <AudienceTab data={data} />}
-      {tab === "settings" && <SettingsTab data={data} onTick={onTick} demo={demo} />}
+      {data.totalClicks === 0 && view !== "settings" && (
+        <StatsEmptyState shortUrl={shortUrl || `/${data.shortCode}`} />
+      )}
+      <TabBar active={view} onSelect={setView} items={["overview", "when", "where", "who"]} />
+      {view !== "settings" && (
+        <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">{t("scope.report", { tz: data.timezone })}</p>
+      )}
+      <div key={view} role="tabpanel" aria-label={view === "settings" ? t("linkSettings") : undefined} id={`stats-panel-${view}`} aria-labelledby={view === "settings" ? undefined : `stats-tab-${view}`} className="view-enter">
+        {view === "overview" && <StatsOverview data={data} slicedDaily={slicedDaily} range={rangeDays} onRange={setRangeDays} onNavigate={handleNavigate} onTick={onTick} demo={demo} />}
+        {view === "who" && <WhoChapter data={data} />}
+        {view === "when" && <WhenChapter data={data} dailyClicks={slicedDaily} range={rangeDays} onRange={setRangeDays} onTick={onTick} demo={demo} />}
+        {view === "where" && <WhereChapter data={data} />}
+        {view === "settings" && <SettingsTab data={data} onTick={onTick} demo={demo} />}
+      </div>
     </>
   );
 }

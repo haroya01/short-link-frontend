@@ -5,7 +5,9 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-150 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950 disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100",
+  // transition 은 실제 변하는 속성만 — all 은 폭이 바뀌는 버튼(로딩 라벨 교체 등)까지 미끄러뜨려
+  // 레이아웃이 출렁였다. 눌림 스케일(움직임)은 하우스 곡선 var(--ease) 를 탄다(§10.7).
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-150 ease-[var(--ease)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950 disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100",
   {
     variants: {
       variant: {
@@ -30,8 +32,8 @@ const buttonVariants = cva(
         md: "h-10 px-4",
         lg: "h-11 px-5",
         // Marketing hero / final CTA — qr-campaigns landing 의 hero CTA 매칭.
-        // h-12 + rounded-xl + 14px font, 일반 앱 화면엔 lg 까지가 적절.
-        xl: "h-12 rounded-xl px-7 text-[14px]",
+        // 반경은 베이스의 lg 그대로(컨트롤 티어 단일) — 크기만 키운다.
+        xl: "h-12 px-7 text-[14px]",
         icon: "h-9 w-9",
       },
     },

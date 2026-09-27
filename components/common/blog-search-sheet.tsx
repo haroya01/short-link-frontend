@@ -189,7 +189,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                       <a
                         href={authorHref(author.username, locale)}
                         onClick={() => onClose()}
-                        className="focus-ring flex items-center gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                        className="focus-ring flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
                       >
                         <Avatar src={author.avatarUrl} name={author.username} size="md" />
                         <span className="flex min-w-0 flex-col">
@@ -228,7 +228,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
                 <a
                   href={postHref(item.author.username, item.slug, locale)}
                   onClick={() => onClose()}
-                  className="focus-ring flex items-center gap-3 rounded-xl px-3 py-3"
+                  className="focus-ring flex items-center gap-3 rounded-lg px-3 py-3"
                 >
                   <span className="min-w-0 flex-1">
                     {item.tags[0] && (
@@ -252,7 +252,7 @@ export function BlogSearchSheet({ open, onClose }: { open: boolean; onClose: () 
           <button
             type="button"
             onClick={() => goToAll()}
-            className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl px-3 py-3 text-sm font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
+            className="focus-ring mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-3 text-sm font-medium text-accent-700 transition-colors hover:bg-accent-50 dark:text-accent-400 dark:hover:bg-accent-500/10"
           >
             {t("searchResultsFor", { q })}
             <ArrowRight className="h-4 w-4" />

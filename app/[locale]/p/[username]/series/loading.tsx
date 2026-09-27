@@ -13,7 +13,7 @@ export default function SeriesIndexLoading() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
-          className="flex items-center gap-3 rounded-xl border border-slate-100 p-4 dark:border-slate-800"
+          className="flex items-center gap-3 rounded-2xl border border-slate-100 p-4 dark:border-slate-800"
         >
           <Skeleton className="h-10 w-10 shrink-0 rounded-lg" />
           <div className="flex-1 space-y-2">

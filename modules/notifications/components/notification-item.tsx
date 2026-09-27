@@ -230,7 +230,7 @@ export function NotificationItem({
 
   const rowClass = cn(
     "relative block w-full rounded-lg text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60",
-    roomy ? "px-2 py-3.5 rounded-xl" : "px-3 py-2.5",
+    roomy ? "px-2 py-3.5" : "px-3 py-2.5",
   );
 
   // 행 전체의 기본 액션(타입별 타깃)은 내용 밑에 깔리는 스트레치 링크 — 아바타·행위자 이름만

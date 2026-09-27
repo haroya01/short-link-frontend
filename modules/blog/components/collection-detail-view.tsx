@@ -402,7 +402,7 @@ function CollectionEditor({
                 role="radio"
                 aria-checked={active}
                 onClick={() => setVisibility(key)}
-                className={`focus-ring flex items-start gap-3 rounded-xl border p-3.5 text-left transition-colors ${
+                className={`focus-ring flex items-start gap-3 rounded-lg border p-3.5 text-left transition-colors ${
                   active
                     ? "border-accent-600 bg-accent-50/50 dark:border-accent-500 dark:bg-accent-500/10"
                     : "border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800/50"
@@ -465,7 +465,7 @@ function CollectionEditor({
 
       {/* Danger zone — a separated, red-framed section at the bottom so an irreversible delete can't be
           fired by muscle memory next to Save. The confirm dialog still gates the actual delete. */}
-      <div className="mt-8 rounded-xl border border-red-200 p-4 dark:border-red-500/30">
+      <div className="mt-8 rounded-2xl border border-red-200 p-4 dark:border-red-500/30">
         <p className="text-[11px] font-bold uppercase tracking-wide text-red-600/80 dark:text-red-400/80">
           {t("dangerZone")}
         </p>
@@ -755,7 +755,7 @@ function ContinuityBar({
     <BlogLink
       href={href}
       onClick={onContinue}
-      className="focus-ring mt-3 flex items-center justify-between gap-3 rounded-xl border border-accent-100 bg-accent-50/60 px-4 py-3 transition-colors hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:bg-accent-500/15"
+      className="focus-ring mt-3 flex items-center justify-between gap-3 rounded-2xl border border-accent-100 bg-accent-50/60 px-4 py-3 transition-colors hover:bg-accent-50 dark:border-accent-500/25 dark:bg-accent-500/10 dark:hover:bg-accent-500/15"
     >
       <span className="min-w-0">
         <span className="block text-[12px] font-semibold text-accent-700 dark:text-accent-400">

@@ -48,7 +48,7 @@
     "loadMoreError": "読み込めませんでした",
     "feed": "フォロー中",
     "followingSignedOut": "フォローした作家の新着記事がここに集まります。",
-    "forYou": "For You",
+    "forYou": "おすすめ",
     "forYouSignedOutTitle": "あなたへのおすすめ",
     "forYouSignedOut": "ログインすると、読んだ記事や関心のあるトピックをもとにおすすめを表示します。",
     "forYouEmptyTitle": "まだおすすめできる記事がありません",
@@ -235,8 +235,9 @@
     "analyticsWindowFollows": "直近{days}日 +{count}",
     "linksByPost": "記事別クリック",
     "linksFullDashboard": "リンクダッシュボード全体",
-    "savedTitle": "保存した記事",
-    "savedSubtitle": "ブックマークといいねした記事をまとめて。",
+    "libraryCollections": "コレクション",
+    "savedTitle": "ライブラリ",
+    "savedSubtitle": "保存した記事や、覚えておきたい一節をもう一度。",
     "curationMockNote": "プレビュー — 保存はこのブラウザだけに残ります。",
     "curationPinned": "代表記事",
     "curationPinnedHint": "公開プロフィールの記事一覧の先頭にこの順で表示されます。",
@@ -247,7 +248,7 @@
     "curationMoveUp": "上へ",
     "curationMoveDown": "下へ",
     "curationUnpin": "固定を解除",
-    "curationReadingList": "読みたいリスト",
+    "curationReadingList": "保存した記事",
     "curationReadingListHint": "あとで読むために保存した記事。",
     "curationReadingListEmpty": "保存した記事がありません。",
     "curationRemoveBookmark": "リストから外す",
@@ -260,6 +261,7 @@
     "settingsDisplay": "表示",
     "settingsFeed": "フィード",
     "settingsDefaultTab": "デフォルトタブ — ブログホームを開いたときに最初に表示",
+    "settingsDefaultTabFailed": "保存できませんでした。しばらくしてからもう一度お試しください。",
     "settingsPrivacy": "公開範囲",
     "settingsHideFollowerCount": "フォロワー数を隠す",
     "settingsHideFollowerCountHint": "オンにすると、フォロワー・フォロー中の数が誰にも表示されません。フォローはそのまま使えます。",
@@ -268,8 +270,8 @@
     "rowDeleteFailed": "削除に失敗しました。",
     "curationLiked": "いいねした記事",
     "curationLikedHint": "あなたがいいねした記事。",
-    "curationHighlights": "マイ書斎",
-    "curationHighlightsHint": "引いた一節の記録。元の文へ戻れます。",
+    "curationHighlights": "ハイライト・メモ",
+    "curationHighlightsHint": "ハイライトした一節とメモ。選ぶと元の記事に戻れます。",
     "curationComments": "自分のコメント",
     "curationCommentsHint": "あなたが書いたコメント。",
     "curationLikedEmpty": "まだいいねした記事がありません。",
@@ -306,12 +308,13 @@
     },
     "urlDialog": {
       "linkTitle": "リンク",
-      "embedTitle": "埋め込み",
+      "embedTitle": "リンクカード・動画",
       "linkPlaceholder": "https://example.com",
-      "embedPlaceholder": "YouTube · Vimeo のリンクを貼り付け",
+      "embedPlaceholder": "https://…（リンク・YouTube・Vimeo）",
       "confirm": "確定",
       "cancel": "キャンセル",
-      "remove": "リンクを削除"
+      "remove": "リンクを削除",
+      "linkTextPlaceholder": "表示するテキスト（任意）"
     },
     "table": {
       "addColumn": "列を追加",
@@ -414,12 +417,12 @@
     "scheduledToast": "{when}に公開予約しました。",
     "scheduledFor": "{when} に公開予定",
     "cancelSchedule": "予約取消",
-    "addTopics": "トピックを追加",
+    "addTopics": "タグを追加",
     "tagsDone": "完了",
-    "tagsEdit": "トピックを編集",
+    "tagsEdit": "タグを編集",
     "coverFromBody": "本文の最初の画像を使う",
     "coverAuto": "本文の最初の画像",
-    "tagsRequired": "公開するにはトピック（タグ）を1つ以上追加してください",
+    "tagsRequired": "公開するにはタグを1つ以上追加してください",
     "boldMode": "太字",
     "toolbar": {
       "bold": "太字",
@@ -450,7 +453,7 @@
       "codeBlock": "コードブロック",
       "image": "画像",
       "divider": "区切り線",
-      "embed": "埋め込み (動画 / リンク)",
+      "embed": "リンクカード・動画",
       "table": "テーブル",
       "imageWide": "ワイド画像",
       "imagePair": "画像2枚 (横並び)",
@@ -465,12 +468,25 @@
         "codeBlock": "構文ハイライト",
         "image": "画像をアップロード",
         "divider": "横の区切り線",
-        "embed": "YouTube · Vimeo 埋め込み",
+        "embed": "URLをカードで、YouTube・Vimeoは再生",
         "table": "テーブルを挿入",
         "imageWide": "本文より広い画像",
         "imagePair": "2枚を横並び",
-        "place": "地図の場所カード"
-      }
+        "place": "地図の場所カード",
+        "calloutNote": "補足をボックスで",
+        "calloutTip": "役立つヒント",
+        "calloutImportant": "必ず知っておくこと",
+        "calloutWarning": "気をつける点",
+        "calloutCaution": "危険・元に戻せないこと",
+        "taskList": "☐ ToDoリスト"
+      },
+      "groupCallout": "ボックス",
+      "calloutNote": "ノート",
+      "calloutTip": "ヒント",
+      "calloutImportant": "重要",
+      "calloutWarning": "注意",
+      "calloutCaution": "警告",
+      "taskList": "チェックリスト"
     },
     "slugLabel": "記事のURLスラッグ",
     "placeDialog": {
@@ -498,7 +514,15 @@
     "seriesCreateConflict": "同じ名前のシリーズがすでにあります。別の名前をお試しください。",
     "seriesCreateError": "シリーズを作成できませんでした。もう一度お試しください。",
     "seriesLoadFailed": "シリーズ一覧を読み込めませんでした。",
-    "revisionsLoadFailed": "保存されたバージョンを読み込めませんでした。"
+    "revisionsLoadFailed": "保存されたバージョンを読み込めませんでした。",
+    "callout": {
+      "note": "ノート",
+      "tip": "ヒント",
+      "important": "重要",
+      "warning": "注意",
+      "caution": "警告"
+    },
+    "bodyPlaceholderTouch": "そのまま書き始めてください — 書式は上のツールバーから"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
@@ -532,7 +556,7 @@
     "clearHistoryCancel": "キャンセル",
     "forget": "履歴から削除",
     "loadMore": "もっと見る",
-    "highlightsSearch": "一節や記事タイトルで探す",
+    "highlightsSearch": "引用・メモ・記事タイトルで検索",
     "noResults": "該当する一節がありません。",
     "emptyFolder": "このフォルダは空です。",
     "saveFailed": "変更を保存できませんでした。もう一度お試しください。",
@@ -549,6 +573,15 @@
     "highlightNoteTitle": "メモを追加",
     "highlightNotePlaceholder": "この部分へのメモを残しましょう",
     "highlightNoteSave": "保存",
+    "highlightSourceUnavailable": "現在の記事で引用の位置を確認できないため、保存されたハイライトを開きました。",
+    "highlightPublicScope": "ハイライトとメモは、あなたの名前とともに公開されます。",
+    "highlightSaving": "保存中…",
+    "highlightChooseThread": "この箇所のメモ",
+    "highlightDiscardConfirm": "このメモを破棄しますか？",
+    "highlightDiscardBody": "未保存の内容は失われます。",
+    "highlightKeepEditing": "編集を続ける",
+    "highlightDiscard": "破棄する",
+    "highlightSelectionTooLong": "ハイライトは1,000文字まで選択できます。",
     "highlightNoteCancel": "キャンセル",
     "highlightThreadNoReplies": "まだ返信はありません",
     "highlightReplyPlaceholder": "返信を入力…",
@@ -567,7 +600,7 @@
     "highlightsHidden": "ハイライト非表示",
     "highlightsHide": "非表示",
     "highlightsShow": "表示",
-    "readingTime": "約{minutes}分",
+    "readingTime": "読了目安：約{minutes}分",
     "ogReadingTime": "{minutes}分で読めます",
     "previewBanner": "プレビュー — まだ公開されていない記事です。このリンクを知っている人だけが閲覧できます。",
     "editedOn": "更新 {date}",
@@ -609,9 +642,6 @@
     "aboutIntro": "自己紹介",
     "aboutSince": "{date}から活動",
     "aboutViewPosts": "記事をすべて見る",
-    "statPosts": "記事",
-    "statSeries": "シリーズ",
-    "statLikes": "共感",
     "activityHeading": "アクティビティ",
     "activitySummary": "直近1年で{count}件公開",
     "imageZoom": "画像を拡大",
@@ -663,7 +693,16 @@
       "COPYRIGHT": "著作権侵害",
       "OTHER": "その他"
     },
-    "publishedCelebration": "公開されました"
+    "publishedCelebration": "公開されました",
+    "followersList": "フォロワー",
+    "followingList": "フォロー中",
+    "callout": {
+      "note": "ノート",
+      "tip": "ヒント",
+      "important": "重要",
+      "warning": "注意",
+      "caution": "警告"
+    }
   },
   "imageCropper": {
     "title": "画像を切り抜く",
@@ -715,9 +754,15 @@
   },
   "cookieConsent": {
     "ariaLabel": "Cookieのお知らせ",
-    "message": "このサイトはログイン・機能維持のためのクッキーと、サービス改善のための製品分析を使用します。",
+    "message": "ログイン・機能維持に必要なクッキーは常に使用します。サービス改善のための利用分析は、同意いただいた場合のみ有効になります。",
     "accept": "同意する",
-    "learnMore": "プライバシーポリシー"
+    "reject": "同意しない",
+    "learnMore": "プライバシーポリシー",
+    "prefsTitle": "利用分析の同意",
+    "prefsDesc": "サービス改善のための利用分析をオン・オフできます。オフにすると、この端末に保存済みの分析用識別子も削除されます。ログイン維持に必要なクッキーはこの設定の影響を受けません。",
+    "stateOn": "現在の設定 — 利用分析はオンです。",
+    "stateOff": "現在の設定 — 利用分析はオフです。",
+    "stateUnset": "現在の設定 — 未選択です。分析はオフです。"
   },
   "meta": {
     "title": "kurl · URL短縮とクリック分析",
@@ -775,6 +820,7 @@
     "groupEarlier": "それ以前"
   },
   "nav": {
+    "events": "イベント",
     "notifications": "通知",
     "shorten": "短縮",
     "myLinks": "マイリンク",
@@ -788,14 +834,13 @@
     "myCollections": "マイコレクション",
     "showcase": "プロフィール",
     "campaigns": "QRキャンペーン",
-    "pricing": "料金",
     "settings": "設定",
     "login": "ログイン",
     "logout": "ログアウト",
     "account": "アカウント",
     "home": "ホーム",
     "search": "検索",
-    "explore": "探索",
+    "explore": "探す",
     "openMenu": "メニューを開く",
     "closeMenu": "メニューを閉じる",
     "menu": "メニュー",
@@ -809,7 +854,8 @@
       "linksHint": "短縮リンク・QR・キャンペーン・CTA・統計",
       "blogLabel": "Blog",
       "blogHint": "執筆・作家ページ・読者分析"
-    }
+    },
+    "links": "リンク"
   },
   "sidebar": {
     "blog": {
@@ -822,7 +868,7 @@
       "series": "シリーズ",
       "readers": "読者",
       "leads": "リード",
-      "curation": "保存した記事",
+      "curation": "ライブラリ",
       "webhooks": "Webhook",
       "moderation": "通報管理",
       "adminMetrics": "指標"
@@ -843,12 +889,10 @@
   "home": {
     "tagline": "kurl v1",
     "headline1": "短縮はひと行で",
-    "headline2": "クリックの「いつ・どこから・誰が」を一目で",
+    "headline2": "いつ・どこから押されたか",
     "subhead": "ライブクリックフィード・自動インサイト・ボット自動分離 — 他社の有料機能を、kurl は無料で",
-    "mobileHeadline1": "短縮はひと行",
-    "mobileHeadline2": "いつ・どこから・誰が分析",
     "mobileSubhead": "ライブクリック・自動分析・ボット分離まで無料",
-    "anonymousHint": "ログイン不要で短縮できます。統計はログイン後に確認できます。",
+    "anonymousHint": "ログイン不要で短縮できます。ログインすると統計を見たり、パスワードをかけたりできます。",
     "demoLink": "分析画面をデモで先に見る",
     "scrollHint": "下にスクロール",
     "previews": {
@@ -914,7 +958,17 @@
     "featuresSubhead": "ライブクリックフィード · 自動インサイト · A/B + 国別ルーティング。HMAC Webhook · 2FA TOTP · Google Safe Browsing は標準装備。",
     "whyEyebrow": "why kurl",
     "whyTitle": "なぜ他では出てこないのか",
-    "whySubhead": "通常は enterprise プランで提供される機能を、ここでは無料・標準装備で。"
+    "whySubhead": "通常は enterprise プランで提供される機能を、ここでは無料・標準装備で。",
+    "stage": {
+      "scene2Eyebrow": "共有",
+      "scene2Title": "貼った場所ごとに、クリックが返ってくる",
+      "scene2Desc": "Instagramのbio・X・YouTube・メール — どこから来たクリックかがリアルタイムでわかります。",
+      "scene3Eyebrow": "分析",
+      "scene3Title": "クリックの一つひとつが絵になる",
+      "scene3Desc": "誰が、いつ、どこから — 人とボットを分けて30日のリズムまで。他社の有料プラン級の深さを無料で。",
+      "scene3CtaDemo": "デモで先に見る",
+      "scene3CtaStart": "無料ではじめる"
+    }
   },
   "showcase": {
     "eyebrow": "公開プロフィール · 実例",
@@ -935,14 +989,20 @@
     }
   },
   "shortenForm": {
-    "placeholder": "https://your-very-long-url.com/path?with=query",
+    "placeholder": "長いURLをここに貼り付け",
     "submit": "短縮する",
+    "heroSubmit": "短縮",
     "advancedToggle": "詳細オプション",
     "customCodeLabel": "カスタムコード (3-16文字、英数字のみ)",
     "customCodePlaceholder": "myLink2026",
     "expiresAtLabel": "有効期限 (任意)",
+    "passwordToggle": "パスワードをかける",
+    "passwordLabel": "パスワード",
+    "passwordPlaceholder": "リンクを開く人が入力するパスワード",
+    "passwordHint": "パスワードを知っている人だけがリンク先に進めます。あとからリンク管理で変更・解除できます。",
     "errors": {
       "empty": "URLを入力してください。",
+      "passwordEmpty": "パスワードを入力してください。",
       "invalid": "http:// または https:// で始まる正しいURLが必要です。",
       "malicious": "悪性/フィッシングと判定されたため短縮できません。",
       "duplicate": "既に使用中のカスタムコードです。別の名前を試してください。",
@@ -951,6 +1011,9 @@
       "urlBlank": "URLを入力してください。",
       "urlGeneric": "正しいURLではありません。",
       "generic": "短縮に失敗しました。しばらくしてから再度お試しください。",
+      "selfReferencing": "kurl.me のリンクはこれ以上短縮できません — すでに短い URL です。",
+      "reservedCode": "そのコードは予約済みです。別のコードをお試しください。",
+      "quota": "リンクの上限に達しました。古いリンクを整理すると作成できます。",
       "validation": "入力値が正しくありません。"
     }
   },
@@ -958,10 +1021,14 @@
     "completed": "短縮完了",
     "nextStepHint": "コピー、表示、成果追跡までここから進められます。",
     "originalUrl": "元のURL",
+    "passwordProtected": "パスワード保護",
+    "passwordNotApplied": "パスワードがかかっていません。リンク管理でもう一度設定してください。",
     "copy": "コピー",
     "copied": "コピー済み",
     "open": "開く",
     "viewStats": "統計を見る",
+    "stats": "統計",
+    "moreShorten": "別のURLも短縮",
     "statsCta": "統計を追跡",
     "statsCtaDesc": "クリック・流入・端末の推移を確認",
     "profileCta": "プロフィールに追加",
@@ -986,7 +1053,8 @@
         "統計"
       ]
     },
-    "consent": "続行すると、<terms>利用規約</terms>および<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
+    "consent": "続行すると、<terms>利用規約</terms>および<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。",
+    "heading": "kurlにログイン"
   },
   "auth": {
     "signedIn": "ログインしました",
@@ -1042,11 +1110,11 @@
   "dashboard": {
     "label": "dashboard",
     "title": "マイリンク",
-    "subtitle": "短縮したリンク {count} 件。短縮コードをクリックすると統計を確認できます。",
+    "subtitle": "リンク{count}件 · 名前を押すと統計が開きます。",
     "newLink": "新規リンク",
     "loadMore": "もっと見る",
     "loadingMore": "読み込み中...",
-    "searchPlaceholder": "元のURLまたは短縮コードで検索",
+    "searchPlaceholder": "名前、元のURL、短縮コードで検索",
     "clearSearch": "検索をクリア",
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "マイリンクとクリック統計はログイン後に表示されます。",
@@ -1064,10 +1132,10 @@
       "expiring": "期限切れ予定"
     },
     "ops": {
-      "totalClicks": "総クリック",
-      "totalClicksHint": "一覧全体の累計",
-      "weekClicks": "直近7日",
-      "weekClicksHint": "直近の動き",
+      "totalClicks": "累計の人によるクリック",
+      "totalClicksHint": "全リンク · 自動アクセスを除く",
+      "weekClicks": "7日間の人によるクリック",
+      "weekClicksHint": "直近7日 · 自動アクセスを除く",
       "zeroClick": "未クリック",
       "zeroClickReview": "掲載場所・CTAを見直し",
       "zeroClickClear": "すべてのリンクにクリックがあります",
@@ -1075,12 +1143,13 @@
       "expiringReview": "延長または削除を検討",
       "expiringClear": "期限切れ間近はありません",
       "topLink": "トップリンク",
-      "vsMedian": "🔥 自分の中央値の ×{multiple}",
+      "weekDelta": "直近7日 +{count}",
       "topLinkEmpty": "まだ比較できるリンクがありません",
-      "clicks": "クリック",
+      "clicks": "人によるクリック",
       "copy": "コピー",
       "viewStats": "統計を見る",
-      "open": "開く"
+      "open": "開く",
+      "zeroClickHint": "自動クリックを含めて、クリックがないリンク"
     },
     "emptyTitle": "最初のリンクを作ってみませんか",
     "emptyDesc": "URL を 1 つ短縮するだけで、1 分以内にクリック・国・チャネル・デバイスのデータが揃い始めます。所要 30 秒。",
@@ -1096,21 +1165,28 @@
       "step3Title": "統計を確認",
       "step3Desc": "クリックが発生すると自動でチャネル/国/デバイス/時間帯を分析。",
       "primaryCta": "最初のリンクを作る",
-      "secondaryCta": "分析画面をデモで見る →"
+      "secondaryCta": "分析画面をデモで見る →",
+      "scene": {
+        "weekClicks": "今週のクリック"
+      }
     },
     "noResultTitle": "該当する結果がありません",
     "noResultDesc": "「{query}」と一致するリンクが見つかりませんでした。",
     "noResultDescFiltered": "現在の条件に一致するリンクがありません。フィルターを調整してみてください。",
     "table": {
-      "shortUrl": "短縮URL",
+      "shortUrl": "リンク名",
       "originalUrl": "元のURL",
       "createdAt": "作成日",
       "expiresAt": "有効期限",
-      "clicks": "クリック",
-      "actions": "操作"
+      "clicks": "人によるクリック",
+      "actions": "操作",
+      "sortAllClicks": "総クリック順",
+      "sortNewest": "作成順",
+      "sortAsc": "昇順",
+      "sortDesc": "降順"
     },
     "card": {
-      "week": "今週 {count}",
+      "week": "7日間の人によるクリック{count}回",
       "expiresToday": "本日期限",
       "expiresIn": "あと{days}日",
       "expired": "期限切れ"
@@ -1118,14 +1194,24 @@
     "actions": {
       "stats": "統計",
       "edit": "編集",
-      "delete": "削除"
+      "delete": "削除",
+      "more": "その他",
+      "openOriginal": "元のURLを開く"
     },
     "favorite": {
       "add": "お気に入りに追加",
       "remove": "お気に入りを解除",
       "filter": "お気に入り",
       "emptyTitle": "お気に入りのリンクはまだありません",
-      "emptyDesc": "リンクの星をタップするとお気に入りに追加され、一番上に固定されます。"
+      "emptyDesc": "全リンクで星を押すと、ここに保存されます。",
+      "syncedHint": "アカウントに保存され、アプリとウェブで同じリンクを確認できます。",
+      "saveFailed": "お気に入りを保存できませんでした。もう一度お試しください。",
+      "loadFailed": "お気に入りを読み込めませんでした。",
+      "orderTitle": "お気に入りの順序",
+      "orderDone": "並べ替えを完了",
+      "orderHint": "アプリとウェブに同じ順序で保存します。",
+      "moveUp": "{name}を上に移動",
+      "moveDown": "{name}を下に移動"
     },
     "deleteConfirmTitle": "このリンクを削除しますか？",
     "deleteConfirmDesc": "削除されたリンクは復旧できません。クリック統計も失われます。",
@@ -1178,15 +1264,27 @@
       "downloadResult": "結果CSVをダウンロード",
       "uploadAnother": "別のファイルをアップロード",
       "done": "完了"
-    }
+    },
+    "librarySubtitle": "リンクを探してコピーし、成果を確認できます。",
+    "loadFailed": "リンクを読み込めませんでした。もう一度お試しください。",
+    "overviewFailed": "アカウントの統計を読み込めませんでした。",
+    "accountScope": "アカウント全体 · {tz} · 自動アクセスを含む累計{total}回 · リストの絞り込みとは別に集計",
+    "libraryViews": "リンク一覧の選択",
+    "allLinks": "全リンク",
+    "copied": "リンクをコピーしました",
+    "subtitleCount": "リンク {count}件",
+    "toolCampaigns": "QRキャンペーン",
+    "toolEvents": "募集",
+    "selectMode": "選択",
+    "selectDone": "完了"
   },
   "edit": {
     "title": "リンク編集",
     "originalUrl": "元のURL",
     "expiresAt": "有効期限 (空欄なら無期限)",
-    "noteLabel": "メモ (任意)",
+    "noteLabel": "リンク名 / メモ（任意）",
     "notePlaceholder": "例: 春キャンペーン用 / Instagram ストーリーで使用",
-    "noteHint": "本人のみ閲覧可能。訪問者には非表示。",
+    "noteHint": "一覧とお気に入りに表示されます。訪問者には表示されません。",
     "expiredMessageLabel": "期限切れ時の案内 (任意)",
     "expiredMessagePlaceholder": "例: イベント終了。次のキャンペーンは example.com にて。",
     "expiredMessageHint": "期限切れ/閲覧上限到達時に既定の案内の代わりにこの文章を表示。",
@@ -1234,26 +1332,24 @@
     },
     "back": "戻る",
     "shortCode": "ショートコード",
+    "detailsTitle": "詳細",
     "tabs": {
       "aria": "統計セクション",
       "overview": "概要",
       "traffic": "トラフィック",
       "sources": "流入",
       "audience": "訪問者",
-      "settings": "設定",
-      "descriptions": {
-        "overview": "要点だけ — クリック品質 / ライブクリック / 曜日×時間ヒートマップ。",
-        "traffic": "トラフィックの動き — 日別トレンド・時間帯分布・国別分布。",
-        "sources": "どこから来たか — Referrer、UTM 4 種、チャネル/src タグ。",
-        "audience": "誰が来たか — デバイス・OS・ブラウザ・地域・言語・ボット。",
-        "settings": "このリンクの設定 — A/B 遷移先、Webhook 通知。"
-      }
+      "settings": "設定"
     },
     "live": {
       "title": "リアルタイムクリック",
       "connecting": "接続中…",
       "connected": "ライブ",
-      "waiting": "新しいクリックがここに表示されます。"
+      "waiting": "新しいクリックがここに表示されます。",
+      "scope": "この画面を開いてからのクリック · 端末のタイムゾーン",
+      "reconnecting": "切断 · 再接続中",
+      "disconnectedHint": "リアルタイム更新が途切れました。自動で再接続します。既存の統計は引き続き確認できます。",
+      "example": "サンプル"
     },
     "quality": {
       "title": "クリック品質",
@@ -1387,7 +1483,10 @@
       "blockedEmpty": "ブロック中の国はありません。",
       "blockedLoading": "読み込み中…",
       "blockedRemove": "ブロック解除",
-      "blockedFailed": "国別ブロックの更新に失敗しました。"
+      "blockedFailed": "国別ブロックの更新に失敗しました。",
+      "configuredShare": "設定 {pct}%",
+      "actualShare": "実際 {pct}%",
+      "blockedLoadFailed": "ブロック中の国を読み込めませんでした。"
     },
     "loginRequired": "ログインが必要です",
     "loginRequiredDesc": "統計はリンクの所有者のみ表示できます。",
@@ -1395,11 +1494,11 @@
     "notFoundDesc": "削除されたか存在しないリンクの可能性があります。",
     "backToDashboard": "マイリンクへ戻る",
     "kpi": {
-      "totalClicks": "総クリック",
-      "unique": "ユニーク",
-      "human": "人間",
-      "bot": "ボット",
-      "velocityHot": "🔥 クリック急増",
+      "totalClicks": "累計クリック",
+      "unique": "推定訪問者",
+      "human": "人によるクリック",
+      "bot": "自動アクセス比率",
+      "velocityHot": "クリック急増",
       "velocityHour": "直近1時間",
       "ttfc": "初回クリックまで",
       "noActivity": "未計測",
@@ -1416,7 +1515,7 @@
         "desc": "{tz} · 濃いほどクリック多"
       },
       "daily": {
-        "title": "日別クリック",
+        "title": "日別の人によるクリック",
         "desc": "直近30日 · {tz}"
       },
       "hourly": {
@@ -1463,10 +1562,30 @@
         "title": "UTM コンテンツ",
         "desc": "utm_content 別集計 (バナー / A-B 区分)"
       },
+      "utmTerm": {
+        "title": "UTM キーワード",
+        "desc": "utm_term 別集計（検索語・広告クリエイティブ）"
+      },
       "srcChannel": {
         "title": "共有チャネル (?src)",
         "desc": "短縮 URL に付与した ?src= パラメータで追跡（QR・LINE・オフラインなど referrer が空のチャネル）",
         "empty": "?src パラメータで来たクリックはありません"
+      },
+      "clientApp": {
+        "title": "アプリ内で開かれた",
+        "desc": "カカオトークや Instagram など、アプリ内ブラウザで開かれたクリック。ログインのリダイレクトやダウンロードがよく壊れる場所です。"
+      },
+      "fetchSite": {
+        "title": "どう開いたか",
+        "desc": "自分でアドレスを開いたのか、どこかのリンクをたどってきたのか。リファラーが消えたクリックも分かれます。"
+      },
+      "postClicks": {
+        "title": "どの記事から",
+        "desc": "このリンクを載せた記事ごとのクリック"
+      },
+      "channelDepth": {
+        "title": "チャネルの深さ",
+        "desc": "チャネルごとに、いつ最初に現れて、そのうち何%が戻ってきたか"
       },
       "bots": {
         "title": "ボット種別",
@@ -1493,6 +1612,31 @@
         "desc": "流入 IP の自律システム (ISP / クラウド) 分布。データセンター由来 {dc} 件は自動でボットとして分類されます。",
         "empty": "ASN データなし (GeoLite2-ASN 未導入)"
       }
+    },
+    "clientApp": {
+      "kakaotalk": "カカオトーク",
+      "instagram": "Instagram",
+      "line": "LINE",
+      "facebook": "Facebook",
+      "naver": "Naver",
+      "daum": "Daum",
+      "tiktok": "TikTok",
+      "twitter": "X（Twitter）"
+    },
+    "fetchSite": {
+      "direct": "自分で開いた",
+      "crossSite": "リンクをたどって",
+      "sameSite": "同じサイトから",
+      "sameOrigin": "同じページから"
+    },
+    "channelDepth": {
+      "channel": "チャネル",
+      "clicks": "クリック",
+      "firstSeen": "初回",
+      "returning": "再訪問"
+    },
+    "postClicks": {
+      "deleted": "削除された記事"
     },
     "noData": "データなし",
     "referrerNoData": "リファラーデータはありません",
@@ -1554,7 +1698,85 @@
     },
     "chart": {
       "peak": "ピーク"
-    }
+    },
+    "exportCsv": "CSVエクスポート",
+    "chapters": {
+      "who": "誰が",
+      "when": "いつ",
+      "where": "どこから"
+    },
+    "journal": {
+      "title": "注目の変化",
+      "evidence": "根拠",
+      "detail": "詳細を見る",
+      "newVisitors": "新規訪問",
+      "returningVisitors": "再訪問",
+      "velocity": "いま平常の{x}倍のペースでクリックされています",
+      "trendUp": "直近7日は前週より{percent}%増 — {count}クリック",
+      "trendDown": "直近7日は前週より{percent}%減 — {count}クリック",
+      "peakDay": "{date}にピーク — 1日{count}クリック",
+      "topSource": "{host}が流入の{percent}%を連れてきました",
+      "peakHour": "1日の中では{hour}時がいちばん賑わいます",
+      "returning": "訪れた人の{percent}%が戻ってきました",
+      "topCountry": "{country}から{percent}%が来ています",
+      "mobileHeavy": "モバイルが{percent}% — スマホで押されるリンクです",
+      "desktopHeavy": "デスクトップが{percent}% — 机の前で開かれるリンクです",
+      "botHigh": "自動アクセスは{percent}% · 人によるクリックは{human}回",
+      "botFiltered": "自動アクセス{percent}%を除くと、人によるクリックは{human}回",
+      "fastFirstClick": "作成から{minutes}分で最初のクリックが来ました",
+      "inAppBrowser": "{app}で開かれたのが{percent}% — アプリ内ブラウザの比率が高めです",
+      "channelLoyalty": "{host}から来た人の{percent}%が戻ってきました",
+      "showMore": "変化をあと{count}件表示",
+      "showLess": "折りたたむ"
+    },
+    "protection": {
+      "title": "保護",
+      "saved": "保護設定を保存しました。",
+      "failed": "保護設定を保存できませんでした。",
+      "loadFailed": "現在の保護設定を読み込めなかったため保存できません。再読み込みしてください。"
+    },
+    "visit": {
+      "title": "リンクが開かれたとき",
+      "openInBrowser": "カカオトーク・LINEでは標準ブラウザで開く",
+      "openInBrowserDesc": "アプリ内ブラウザではログイン・決済・ダウンロードがうまくいかないことがあります。オンにすると、カカオトークやLINEでタップした人を標準ブラウザに移します。",
+      "failed": "設定を変更できませんでした。",
+      "loadFailed": "設定を読み込めませんでした。再読み込みしてください。",
+      "splash": "移動の前にお知らせを表示",
+      "splashDesc": "リンク先へ移動する前に、お知らせとボタンを少しだけ表示します。画面をタップすると自動移動が止まります。",
+      "splashMessage": "お知らせ",
+      "splashMessagePlaceholder": "例：お会計でクーポン SPRING20 を入れると20%オフ",
+      "splashSeconds": "表示時間",
+      "splashSecondsValue": "{n}秒",
+      "splashCta": "ボタン（任意）",
+      "splashNoCta": "ボタンなし",
+      "splashManageCtas": "ボタンを作成・管理",
+      "splashMessageRequired": "お知らせを入力してください。",
+      "save": "保存",
+      "saved": "保存しました。",
+      "unsaved": "未保存の変更があります",
+      "schedule": "公開予約",
+      "scheduleDesc": "この日時より前に開いた人には「まだ公開前のリンクです」と表示します。プレビューカードはそのまま表示されます。",
+      "scheduleAt": "公開日時",
+      "scheduleInPast": "現在より後の日時を選んでください。"
+    },
+    "destinationHealth": {
+      "title": "リンク先が開けません。",
+      "missing": "ページがなくなったため（{status}）、訪問者にはエラーページが表示されています。",
+      "noHost": "ドメインが見つかりません。アドレスを確認してください。",
+      "fix": "リンク先を変更"
+    },
+    "analysisTabs": {
+      "when": "クリック推移",
+      "where": "流入元",
+      "who": "訪問環境"
+    },
+    "linkSettings": "リンク設定",
+    "scope": {
+      "report": "累計統計 · 日別グラフは選択期間の人によるクリック · {tz}",
+      "daily": "直近{days}日の人によるクリック · {tz}"
+    },
+    "trendTitle": "クリック推移",
+    "rangeDays": "{days}日"
   },
   "admin": {
     "label": "admin",
@@ -1790,7 +2012,6 @@
         "col": {
           "user": "ユーザー",
           "role": "権限",
-          "tier": "プラン",
           "links": "リンク",
           "joined": "登録日",
           "status": "状態"
@@ -1824,7 +2045,8 @@
         "clearFilter": "フィルター解除",
         "locked": "パスワード保護",
         "noResults": "該当するリンクがありません"
-      }
+      },
+      "blockedTab": "ブロックドメイン"
     },
     "detail": {
       "title": "リンク詳細",
@@ -1879,6 +2101,40 @@
         "clicks": "まだクリックがありません",
         "trending": "まだ人気のリンクはありません"
       }
+    },
+    "blocked": {
+      "title": "ブロックドメイン",
+      "subtitle": "ここに載せたドメインは新規短縮が拒否され、既存リンクもサブドメインを含めて即座にブロックページになります。ブロック時、所有者へ自動で警告が送られます。",
+      "addPlaceholder": "spam.example.com",
+      "reasonPlaceholder": "理由(任意)",
+      "add": "ブロック",
+      "empty": "ブロック中のドメインはありません。",
+      "col": {
+        "domain": "ドメイン",
+        "reason": "理由",
+        "blockedAt": "ブロック日時"
+      },
+      "unblock": "解除",
+      "unblockConfirm": "{domain} のブロックを解除しますか?このドメインへの短縮とリダイレクトが再び許可されます。",
+      "addFailed": "リクエストに失敗しました",
+      "warned": "リンク所有者 {count} 名に、それぞれの言語で警告を送りました。",
+      "warnedNone": "{domain} — アカウント所有のリンクがないため警告は送っていません。"
+    },
+    "enforce": {
+      "title": "不正対応",
+      "subtitle": "利用規約に違反するリンクへの対応です。",
+      "blockDomain": "{domain} をブロック",
+      "domainBlocked": "{domain} ブロック済み",
+      "blockConfirm": "{domain} をブロックしますか?このドメインへの既存リンクも即座に無効になり、新規短縮も拒否されます。リンク所有者には自動で警告が送られます。",
+      "warnTitle": "所有者に警告を送る",
+      "warnHint": "通知インボックスに残り、通知設定に関係なくプッシュされます。",
+      "warnPlaceholder": "例: 違法サイトの宣伝リンクは利用規約違反です。当該リンクはブロックされました。繰り返すとアカウントを停止します。",
+      "warnSend": "警告を送信",
+      "warnSent": "警告を送りました。",
+      "warnAnonymous": "匿名で作成されたリンクのため、警告を送るアカウントがありません。ドメインブロックで対応してください。",
+      "failed": "リクエストに失敗しました",
+      "blockShort": "ブロック",
+      "blockedShort": "ブロック済み"
     }
   },
   "common": {
@@ -1896,7 +2152,9 @@
     "close": "閉じる",
     "loginRequired": "ログインが必要です。",
     "errorPrefix": "エラー:",
-    "offline": "オフラインです。接続が戻ると自動的に再試行します。"
+    "offline": "オフラインです。接続が戻ると自動的に再試行します。",
+    "showPassword": "パスワードを表示",
+    "hidePassword": "パスワードを隠す"
   },
   "notFound": {
     "title": "ページが見つかりません",
@@ -1935,7 +2193,8 @@
       "badge": "デモ",
       "lockedToast": "デモ画面です。サインアップ後にご自身のリンクで実際に登録・編集できます。",
       "payloadPreview": "送信されるペイロードのプレビュー"
-    }
+    },
+    "createCta": "自分のリンクを作る"
   },
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",
@@ -2055,7 +2314,9 @@
       "thu": "木",
       "fri": "金",
       "sat": "土"
-    }
+    },
+    "loadFailed": "今週の分析を読み込めませんでした。",
+    "retry": "再試行"
   },
   "recent": {
     "title": "最近の短縮",
@@ -2137,7 +2398,6 @@
   "footer": {
     "copyright": "© {year} kurl",
     "about": "サービスについて",
-    "pricing": "料金",
     "terms": "利用規約",
     "privacy": "プライバシー",
     "github": "GitHub"
@@ -2181,52 +2441,15 @@
     },
     "q6": {
       "q": "有料ですか?",
-      "a": "コア機能はすべて無料です。URL短縮、分析、プロフィール名刺、8種類のブロック — すべて無料プランで使えます。\n\nPro プランはカスタムドメイン自動TLS、無制限リンク、統計の永久保存などパワーユーザー向け機能を提供します(料金ページ参照)。"
+      "a": "すべての機能が無料です。URL短縮、分析、プロフィール名刺、8種類のブロック、カスタムドメインまで無料で使えます。\n\n有料プランはなく、広告もありません。"
     },
     "ctaTitle": "今すぐ短縮してみる",
     "ctaSubtitle": "会員登録不要 — サインインで統計も永久保存",
     "ctaButton": "URL短縮を始める"
   },
-  "pricing": {
-    "title": "料金",
-    "lead": "Free でも短縮 + 全分析が無料。Pro はカスタムドメイン自動 TLS・無制限リンク・統計の永久保存。",
-    "ctaUpgrade": "Pro を始める",
-    "ctaManage": "決済を管理",
-    "ctaLogin": "サインインして始める",
-    "ctaFailed": "決済ページを開けませんでした。",
-    "freeTitle": "Free",
-    "freePrice": "¥0 / 月",
-    "freeFeature1": "リンク 200 件",
-    "freeFeature2": "8 種類のクリック分析 (時間 · デバイス · 国 · チャネル · OS · ブラウザ · UTM · ボット)",
-    "freeFeature3": "ライブクリックフィード (SSE)",
-    "freeFeature4": "A/B 振り分け + 国別ルーティング (リンクあたり 4 件)",
-    "freeFeature5": "HMAC 署名 Webhook (リンクあたり 5 件)",
-    "freeFeature6": "2FA TOTP + リカバリコード",
-    "paidTitle": "Pro",
-    "paidPrice": "¥700 / 月",
-    "paidFeature1": "リンク無制限",
-    "paidFeature2": "rate limit 10 倍",
-    "paidFeature3": "統計を永久保存 (Free: 90 日)",
-    "paidFeature4": "カスタムドメイン (例: go.yourcompany.com)",
-    "paidFeature5": "Webhook 50 件 / リンク (Free: 5 件)",
-    "paidFeature6": "CSV エクスポート 50 万行 (Free: 5 万)",
-    "rightsTitle": "ユーザー権利 (プラン無関係)",
-    "rightsLead": "GDPR / 個人情報保護法に基づく保証。プランに関係なく常に利用できます。",
-    "right1": "自分のデータをエクスポート (JSON)",
-    "right2": "アカウントの完全削除 + 関連データの cascade 削除",
-    "right3": "個人情報を第三者に販売しません",
-    "proHoldBadge": "近日公開",
-    "proHoldNotice": "Pro プランは決済システムの整備中のため、現在一時停止しています。Free プランの 200 リンク · 8 種類の分析 · Webhook 5 件 · 2FA はすべて引き続きお使いいただけます。",
-    "proHoldCta": "準備中",
-    "proEta": "リリース時にメールでお知らせします — まずは無料プランから。",
-    "meta": {
-      "title": "料金プラン · 短縮URL Pro 無制限 - kurl",
-      "description": "Free プランで短縮URLとクリック分析を無料で利用。Pro は無制限リンク・カスタムドメイン自動TLS・統計の永久保存。"
-    }
-  },
   "terms": {
     "title": "利用規約",
-    "updatedAt": "最終更新: 2026-06-26",
+    "updatedAt": "最終更新: 2026-07-21",
     "intro": "本規約は kurl(以下「本サービス」)の利用条件を定めます。本サービスを利用することで、本規約に同意したものとみなします。同意いただけない場合は本サービスを利用できません。",
     "sections": [
       {
@@ -2235,11 +2458,11 @@
       },
       {
         "h": "2. 利用資格とアカウント",
-        "p": "満14歳以上の方が利用できます(EU 居住者は満16歳、または居住国の法令で定める年齢)。本サービスを利用することで、ご自身がこの年齢以上であることを表明・保証します。アカウント情報は正確に保ち、アカウントのセキュリティおよびアカウント上の行為については利用者ご本人が責任を負います。"
+        "p": "満14歳以上の方が利用できます(EU 居住者は満16歳、または居住国の法令で定める年齢)。本サービスを利用することで、ご自身がこの年齢以上であることを表明・保証します。アカウント情報は正確に保ち、アカウントのセキュリティおよびアカウント上の行為については利用者ご本人が責任を負います。アカウントは1つであり、ウェブおよびkurlが提供するすべてのiOSアプリ(リンクアプリ・ブログアプリ)に共通して適用されます。アカウントを削除すると、第8条に従いウェブとアプリのすべてのデータが削除されます。"
       },
       {
         "h": "3. URL 短縮 — 許可される利用",
-        "p": "公開されている http/https URL のみ短縮でき、file:// など http/https 以外のリソースは拒否されます。プライベート/内部ネットワークアドレスへの短縮は推奨されず、リンクプレビューなど一部のサーバー機能が動作しない場合があります。悪性/フィッシング、スパム、著作権侵害、差別/ヘイト、本人同意のない個人情報の公開(ドキシング)を目的とする短縮は拒否または事後ブロックされます。"
+        "p": "公開されている http/https URL のみ短縮でき、file:// など http/https 以外のリソースは拒否されます。プライベート/内部ネットワークアドレスへの短縮は推奨されず、リンクプレビューなど一部のサーバー機能が動作しない場合があります。悪性/フィッシング、スパム、著作権侵害、差別/ヘイト、本人同意のない個人情報の公開(ドキシング)、特定の個人を同意なく追跡・監視することを目的とする短縮は拒否または事後ブロックされます。ログインせずに作成したリンクは24時間後に自動的に失効します。"
       },
       {
         "h": "4. 利用者コンテンツ — 権利と利用許諾",
@@ -2247,7 +2470,7 @@
       },
       {
         "h": "5. 禁止されるコンテンツおよび行為",
-        "p": "違法なコンテンツ、他者の権利侵害、ヘイト・嫌がらせ・差別、わいせつ物および児童性的搾取、スパム・マルウェアの配布、なりすまし、無断での個人情報の掲載、本サービスへの異常な自動収集や過負荷を与える行為を禁止します。"
+        "p": "違法なコンテンツ、暴力を助長・美化するコンテンツ、他者の権利侵害、ヘイト・嫌がらせ・差別、わいせつ物および児童性的搾取、スパム・マルウェアの配布、なりすまし、無断での個人情報の掲載、本サービスへの異常な自動収集や過負荷を与える行為を禁止します。"
       },
       {
         "h": "6. 通報と掲載停止",
@@ -2297,12 +2520,12 @@
   },
   "privacy": {
     "title": "プライバシーポリシー",
-    "updatedAt": "最終更新: 2026-07-18",
+    "updatedAt": "最終更新: 2026-07-21",
     "intro": "kurl はサービス提供に必要な最小限の個人情報のみを収集し、原則として匿名化して処理します。本ポリシーは大韓民国 個人情報保護法(PIPA)および EU GDPR(第13条)に従います。",
     "sections": [
       {
         "h": "1. 収集する項目",
-        "p": "ログイン時: メールアドレス(Apple ログイン時は非公開メールリレーを含む)、認証プロバイダ(Google または Apple)、登録日。短縮時: 元の URL、短縮コード、有効期限。コンテンツ作成時: 記事・コメント・プロフィール情報、アップロードした画像(撮影場所などの EXIF メタデータはアップロード時に除去されます)。プッシュ通知に同意した場合: APNs デバイストークン(iOS アプリ)またはウェブプッシュの購読情報。短縮リンクのクリック・記事の閲覧・公開プロフィールの訪問時: 時刻、User-Agent、Referer、流入チャネル(UTM など)、最後のオクテットをマスキングした IP、GeoIP による国/地域/都市、ブラウザの言語、端末の種類・OS・ブラウザ、ネットワーク事業者(ASN/組織名)。再訪問の統計のため、IP と User-Agent から一方向ハッシュ(仮名の識別子)を生成・保存しますが、生の IP 自体は保存しません。運用・セキュリティのため、リクエストログ(時刻・パス・応答コード・遅延、ログイン時は利用者識別子・短縮コード)を一定期間保管します。プロフィールのメール収集フォームに訪問者が入力した場合: 入力されたメールアドレスと IP ハッシュ。記事画面では、サービス改善のための読書行動イベント(スクロール到達深度、画面に表示されていた滞在時間、記事画面内でクリックした対象の種類)を収集します。これらのイベントは、タブを閉じると消える一時的なセッション ID と上記の仮名ハッシュのみで紐付けられ、トラッキングクッキーは使用せず、ブラウザが GPC(Global Privacy Control)信号を送信した場合は仮名ハッシュを作成しません。"
+        "p": "ログイン時: メールアドレス(Apple ログイン時は非公開メールリレーを含む)、認証プロバイダ(Google または Apple)、登録日。短縮時: 元の URL、短縮コード、有効期限。コンテンツ作成時: 記事・コメント・プロフィール情報、アップロードした画像(撮影場所などの EXIF メタデータはアップロード時に除去されます)。プッシュ通知に同意した場合: APNs デバイストークン(iOS アプリ)またはウェブプッシュの購読情報。短縮リンクのクリック・記事の閲覧・公開プロフィールの訪問時: 時刻、User-Agent、Referer、流入チャネル(UTM など)、最後のオクテットをマスキングした IP、GeoIP による国/地域/都市、ブラウザの言語、端末の種類・OS・ブラウザ、ネットワーク事業者(ASN/組織名)。再訪問の統計のため、IP と User-Agent から一方向ハッシュ(仮名の識別子)を生成・保存しますが、生の IP 自体は保存しません。運用・セキュリティのため、リクエストログ(時刻・パス・応答コード・遅延、ログイン時は利用者識別子・短縮コード)を一定期間保管します。プロフィールのメール収集フォームに訪問者が入力した場合: 入力されたメールアドレスと IP ハッシュ。記事画面では、サービス改善のための読書行動イベント(スクロール到達深度、画面に表示されていた滞在時間、記事画面内でクリックした対象の種類)を収集します。これらのイベントは、タブを閉じると消える一時的なセッション ID と上記の仮名ハッシュのみで紐付けられ、トラッキングクッキーは使用せず、ブラウザが GPC(Global Privacy Control)信号を送信した場合は仮名ハッシュを作成しません。コンテンツを読む/保存する場合: 閲覧履歴とブックマーク(保存リスト。ログイン時のみアカウントに保存)。どちらも本人のみ閲覧でき、いつでも削除できます。"
       },
       {
         "h": "2. 利用目的と処理の根拠",
@@ -2355,19 +2578,13 @@
     ]
   },
   "settings": {
-    "title": "設定",
+    "title": "アカウント",
     "tabs": {
       "aria": "設定セクション",
       "account": "アカウント",
       "security": "セキュリティ",
       "domains": "ドメイン",
-      "data": "データ",
-      "descriptions": {
-        "account": "メール / 登録日 / タイムゾーン / UI 言語。",
-        "security": "2FA TOTP + リカバリコード / API キーの発行・失効。",
-        "domains": "短縮 URL をご自身のドメイン（go.brand.com）から配信。",
-        "data": "データエクスポート (JSON) / アカウント完全削除。"
-      }
+      "data": "データ"
     },
     "profile": {
       "title": "公開プロフィール",
@@ -2760,7 +2977,7 @@
       "noLinks": "まだリンクがありません。",
       "toggleFailed": "変更に失敗しました。"
     },
-    "profileTitle": "プロフィール",
+    "profileTitle": "アカウント情報",
     "email": "メール",
     "provider": "ログイン方法",
     "joinedAt": "登録日",
@@ -2772,7 +2989,6 @@
     "saved": "保存しました",
     "saveFailed": "保存に失敗しました。",
     "interfaceLanguage": "インターフェース言語",
-    "languageHint": "ヘッダー右上の言語切替でも変更できます。",
     "dataTitle": "データ",
     "exportButton": "自分のデータをダウンロード (JSON)",
     "exportHint": "ユーザー情報 + すべてのリンク + クリックイベント (IPはマスク済み)。",
@@ -2876,6 +3092,17 @@
       "deleteFailed": "削除に失敗しました。",
       "dnsTxtHint": "ドメイン所有確認用 — DNS に TXT レコードを追加",
       "dnsCnameHint": "トラフィック転送用 — 同じ DNS に CNAME も追加"
+    },
+    "toolsTitle": "ツール",
+    "tools": {
+      "profile": "公開プロフィール",
+      "profileDesc": "リンクを1ページにまとめて表示",
+      "campaigns": "QRキャンペーン",
+      "campaignsDesc": "ポスター・チラシのQRを配布先ごとに比較",
+      "events": "募集",
+      "eventsDesc": "イベントの申し込みをリンク1つで受付",
+      "ctas": "CTAライブラリ",
+      "ctasDesc": "リンクに表示する案内バナーを管理"
     }
   },
   "homeStats": {
@@ -3245,7 +3472,12 @@
         }
       ],
       "createCta": "最初のQRキャンペーンを作成",
-      "createHint": "最初はキャンペーン名と終了時刻を決めるだけで始められます。"
+      "createHint": "最初はキャンペーン名と終了時刻を決めるだけで始められます。",
+      "scene": {
+        "scans": "スキャン",
+        "place1": "渋谷",
+        "place2": "新宿"
+      }
     }
   },
   "qrDownload": {
@@ -3617,5 +3849,256 @@
     "myCollectionsEmptyTitle": "まだコレクションがありません",
     "myCollectionsEmptyBody": "記事や一文を読みながら「つなぐ」で最初のコレクションを始めましょう。",
     "myCollectionsEmptyCta": "読む記事を探す"
+  },
+  "events": {
+    "intro": {
+      "eyebrow": "募集ページ",
+      "title": "リンク1つで参加申し込みを集めよう",
+      "subtitle": "勉強会・ミートアップ・サークル — 紹介ページ、申込フォーム、締切、どこから申し込みが来たかまで、リンク1つで完結。",
+      "step1": {
+        "title": "ページを作る",
+        "body": "タイトルと日時だけ。3分で完成します。"
+      },
+      "step2": {
+        "title": "グループチャットに貼る",
+        "body": "短いリンクとQRが自動で作られます。"
+      },
+      "step3": {
+        "title": "申し込みが集まる",
+        "body": "名簿も締切も自動。どのチャンネルから来たかも分かります。"
+      },
+      "ctaLogin": "無料ではじめる",
+      "ctaCreate": "最初の募集を作る",
+      "ctaHint": "参加者はログイン不要で申し込めます。",
+      "demo": {
+        "eventTitle": "ご近所読書会",
+        "eventDate": "8月5日(水) 19:00",
+        "eventPlace": "渋谷のカフェ2F",
+        "registerButton": "申し込む",
+        "chatShare": "今週の会、申し込み受付中!",
+        "reply1": "はい! 申し込みました🙌",
+        "reply2": "いま申し込み完了!",
+        "reply3": "私も行きます〜",
+        "badge": "参加7名 · 残り13席"
+      }
+    },
+    "public": {
+      "hostedBy": "主催",
+      "cta": "申し込む",
+      "attending": "参加 {count}名",
+      "addToCalendar": "Google カレンダーに追加",
+      "onlineLink": "オンライン参加リンク",
+      "full": "定員に達しました",
+      "spotsLeft": "残り {count} / {capacity} 席",
+      "formTitle": "参加申し込み",
+      "nameLabel": "お名前",
+      "namePlaceholder": "山田太郎",
+      "contactEmail": "メールアドレス",
+      "contactEmailPlaceholder": "you@example.com",
+      "contactPhone": "電話番号",
+      "contactPhonePlaceholder": "090-1234-5678",
+      "contactKakao": "カカオトークID",
+      "contactKakaoPlaceholder": "kakao_id",
+      "consent": "イベント運営のため、お名前・連絡先(回答を含む)を主催者に提供することに同意します。イベント終了30日後に自動削除されます。",
+      "submit": "申し込む",
+      "submitting": "送信中…",
+      "successTitle": "申し込み完了!",
+      "successBodyEmail": "確認メールをお送りしました。都合が悪くなったらメール内のリンクからキャンセルできます。",
+      "successBody": "都合が悪くなった場合のため、下のキャンセルリンクを保存してください。",
+      "copyCancelLink": "キャンセルリンクをコピー",
+      "cancelLinkCopied": "コピーしました",
+      "viralHook": "このページは3分で作られました。",
+      "viralCta": "自分の募集ページを作る →",
+      "canceledNotice": "このイベントは中止になりました。",
+      "fullNotice": "定員に達しました。キャンセルが出ると席が再び空くので、後ほどまたご確認ください。",
+      "closedNotice": "受付は終了しました。",
+      "cancelTitle": "申し込みキャンセル",
+      "cancelBody": "「{title}」の申し込みをキャンセルしますか？空いた席は他の方に回ります。",
+      "cancelConfirm": "キャンセルする",
+      "cancelDone": "キャンセルしました",
+      "cancelDoneBody": "またの機会に。同じ連絡先で再度申し込むこともできます。",
+      "cancelError": "キャンセルできませんでした。リンクが無効か、すでにキャンセル済みの可能性があります。",
+      "errors": {
+        "answerRequired": "「{label}」をご記入ください",
+        "choiceRequired": "「{label}」から1つお選びください",
+        "consentRequired": "個人情報の提供に同意してください",
+        "full": "たった今定員に達しました",
+        "alreadyRegistered": "この連絡先はすでに申し込み済みです",
+        "closed": "受付は終了しました",
+        "generic": "申し込みに失敗しました。しばらくしてから再度お試しください。",
+        "invalidEmail": "メールアドレスをご確認ください (例: hong@gmail.com)",
+        "invalidPhone": "電話番号をご確認ください (例: 090-1234-5678)",
+        "invalidKakao": "カカオトークIDをご確認ください (英数字2〜30文字)",
+        "invalidLine": "LINE IDの形式をご確認ください。",
+        "invalidInstagram": "Instagramハンドルをご確認ください。"
+      },
+      "metaDate": "日付",
+      "metaTime": "時間",
+      "metaPlace": "場所",
+      "metaOnline": "オンライン",
+      "metaAttendance": "定員",
+      "contactLine": "LINE ID",
+      "contactLinePlaceholder": "line_id",
+      "contactInstagram": "Instagramハンドル",
+      "contactInstagramPlaceholder": "@handle"
+    },
+    "list": {
+      "title": "イベント",
+      "new": "新規作成",
+      "loading": "読み込み中…",
+      "loadFailed": "読み込みに失敗しました。",
+      "emptyTitle": "最初の募集ページを作りましょう",
+      "emptyBody": "勉強会・ミートアップ・サークル — リンク1つで紹介・申し込み・締切・流入分析まで完結。",
+      "authTitle": "募集ページ",
+      "authDesc": "ログインすると募集ページの作成、参加者と流入元の確認ができます。"
+    },
+    "form": {
+      "authTitle": "募集ページ",
+      "authDesc": "ログインすると募集ページを作成できます。",
+      "newTitle": "新しい募集",
+      "newSubtitle": "3分で完成。公開すると短縮リンクとQRがすぐ使えます。",
+      "editTitle": "募集を編集",
+      "title": "タイトル",
+      "titlePlaceholder": "東京エンジニア勉強会 #3",
+      "description": "紹介文",
+      "descriptionHint": "Markdown が使えます (# 見出し、- リスト、**強調**)",
+      "descriptionPlaceholder": "どんな集まりか、誰に来てほしいかを書きましょう",
+      "whenTitle": "日時",
+      "startsAt": "開始",
+      "endsAt": "終了 (任意)",
+      "timezone": "タイムゾーン",
+      "whereTitle": "場所",
+      "locationText": "会場",
+      "locationPlaceholder": "渋谷○○コワーキング 3F",
+      "locationUrl": "地図リンク (任意)",
+      "locationUrlHint": "Googleマップ等のリンクで会場がクリック可能に",
+      "onlineUrl": "オンラインリンク (任意)",
+      "onlineUrlHint": "オンライン/ハイブリッドの場合の参加リンク",
+      "limitsTitle": "定員と締切",
+      "capacity": "定員 (任意)",
+      "capacityHint": "満席になると自動で締め切ります",
+      "capacityPlaceholder": "10",
+      "closeAt": "申込締切 (任意)",
+      "closeAtHint": "この時刻以降は受け付けません",
+      "formSectionTitle": "申し込みフォーム",
+      "contactField": "収集する連絡先",
+      "contactFieldHint": "メールを選ぶと確認・キャンセルメールが自動送信されます。電話・カカオトーク・LINE・Instagramは主催者が直接連絡する用です。",
+      "contactFields": {
+        "EMAIL": "メール",
+        "PHONE": "電話番号",
+        "KAKAO": "カカオトークID",
+        "LINE": "LINE ID",
+        "INSTAGRAM": "Instagram"
+      },
+      "questionsLocked": "申込者がいるため質問は変更できません。",
+      "questionPlaceholder": "例: 興味のあるテーマは?",
+      "questionLabel": "質問 {n}",
+      "questionType": "質問タイプ",
+      "typeShortText": "記述式",
+      "typeSingleChoice": "選択式",
+      "required": "必須",
+      "addQuestion": "質問を追加 (最大10)",
+      "removeQuestion": "質問を削除",
+      "optionPlaceholder": "選択肢 {n}",
+      "addOption": "+ 選択肢を追加",
+      "removeOption": "選択肢を削除",
+      "publish": "公開する",
+      "save": "保存",
+      "errors": {
+        "startRequired": "開始日時を入力してください",
+        "generic": "保存に失敗しました。入力内容をご確認ください。"
+      },
+      "optional": "任意",
+      "cover": "カバー画像",
+      "coverFailed": "アップロードに失敗しました。もう一度お試しください。",
+      "coverHint": "チャット・SNSのプレビューに大きく表示されます (JPG/PNG/WebP、2:1推奨)",
+      "coverReplace": "画像を変更",
+      "coverUpload": "画像を選択",
+      "coverUploading": "アップロード中…",
+      "descWrite": "書く",
+      "descPreview": "プレビュー",
+      "descPreviewEmpty": "まだ内容がありません — 「書く」タブでマークダウンを書くとここで確認できます。",
+      "useGoogleMaps": "「{place}」のGoogleマップリンクを作成",
+      "openMap": "地図を開く ↗"
+    },
+    "detail": {
+      "authTitle": "募集ページ",
+      "authDesc": "ログインすると参加者と流入元を確認できます。",
+      "loading": "読み込み中…",
+      "loadFailed": "読み込みに失敗しました。",
+      "createdBanner": "募集ページを公開しました! このリンクをグループチャットやSNSに貼りましょう。",
+      "edit": "編集",
+      "viewPublicPage": "公開ページを見る",
+      "manageTitle": "管理",
+      "close": "受付を締め切る",
+      "reopen": "受付を再開する",
+      "cancelEvent": "イベントを中止",
+      "canceledNote": "中止されたイベントです。",
+      "statusChanged": "変更しました",
+      "statusChangeFailed": "変更に失敗しました",
+      "cancelDialogTitle": "イベントを中止しますか?",
+      "cancelDialogBody": "公開ページに中止と表示され、受付が停止します。元に戻せません。新規受付だけ止める場合は「受付を締め切る」を使ってください。",
+      "cancelDialogConfirm": "中止する",
+      "heroCopy": "リンクをコピー",
+      "heroCopied": "コピーしました!"
+    },
+    "share": {
+      "copied": "コピー済み",
+      "qr": "QR",
+      "title": "共有リンク",
+      "subtitle": "チャンネル(グループLINE・X・Instagram)ごとに別のリンクを使うと、申込者の流入元が自動で分かれて表示されます。",
+      "copy": "リンクをコピー",
+      "downloadQr": "QRをダウンロード",
+      "aliasPlaceholder": "チャンネル名 (例: グループLINE用)",
+      "aliasLabel": "チャンネル名",
+      "addAlias": "リンク追加",
+      "aliasCreated": "チャンネルリンクを作成しました",
+      "aliasFailed": "リンク作成に失敗しました"
+    },
+    "analytics": {
+      "shareNudge": "まだクリックがありません。上の共有リンクをグループチャットやSNSに貼ると、ここに流入結果が表示されます。",
+      "title": "流入分析",
+      "totalClicks": "ページクリック",
+      "totalRegistrations": "申し込み",
+      "conversion": "転換率",
+      "registrationsByChannel": "チャンネル別申し込み",
+      "clicksByLink": "リンク別クリック",
+      "clicksByClientApp": "アプリ別クリック (LINE・Instagramアプリ内など)",
+      "noRegistrations": "まだ申し込みがありません",
+      "noClicks": "まだクリックがありません"
+    },
+    "attendees": {
+      "title": "申込者 {count}名",
+      "exportCsv": "CSVエクスポート",
+      "empty": "まだ申込者がいません。リンクをグループチャットでシェアしましょう!",
+      "name": "お名前",
+      "contact": "連絡先",
+      "channel": "流入元",
+      "status": "状態",
+      "confirmed": "確定",
+      "canceled": "キャンセル"
+    },
+    "status": {
+      "open": "受付中",
+      "closed": "締切",
+      "canceled": "中止"
+    }
+  },
+  "linkAnalytics": {
+    "title": "分析",
+    "loginTitle": "ログインするとすべてのリンクの成果をまとめて見られます",
+    "loginDesc": "人のクリック推移とよく押されたリンクをまとめて表示します。",
+    "loadFailed": "成果を読み込めませんでした。もう一度お試しください。",
+    "weekHumanClicks": "直近7日の人のクリック",
+    "todayAndLinks": "今日 {today} · リンク {links}件",
+    "scopeNote": "ボットのクリックは除外しています。時刻は{tz}基準です。",
+    "attention": "確認すること",
+    "zeroClick": "まだクリックのないリンク {count}件",
+    "expiring": "3日以内に期限切れになるリンク {count}件",
+    "topLinks": "よくクリックされたリンク",
+    "topLinksNote": "累計の人のクリック基準",
+    "humanClicks": "人のクリック",
+    "createFirst": "最初のリンクを作る",
+    "viewFewestClicks": "クリックの少ない順に見る"
   }
 }

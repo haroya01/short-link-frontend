@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   AUTOPLAY_MS,
   EASE,
@@ -40,6 +41,24 @@ export default function QrCampaignsLandingPage() {
 }
 
 /**
+ * prefers-reduced-motion 구독. {@link TopProgressBar} 의 인라인 keyframe 은 값이
+ * {@code AUTOPLAY_MS} 로 계산되는 인라인 style 이라 motion-reduce 클래스로 못 끄고
+ * (인라인 style 이 클래스를 이김) JS 에서 분기한다.
+ */
+function usePrefersReducedMotion() {
+  const [reduce, setReduce] = useState(false);
+  useEffect(() => {
+    if (!window.matchMedia) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduce(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return reduce;
+}
+
+/**
  * Top-of-viewport timeline showing which narrative section is on screen and how long until
  * autoplay moves on. One segment per section — finished ones stay filled, the active one fills
  * progressively over {@code AUTOPLAY_MS}. Both mobile and desktop see the same bar; the
@@ -50,6 +69,9 @@ export default function QrCampaignsLandingPage() {
  * CSS keyframe (no JS "play from 0").
  */
 function TopProgressBar({ count, active }: { count: number; active: number }) {
+  // reduce 면 fill 애니메이션 없이 활성 segment 를 정적으로 채움 — autoplay 도 같은 설정으로
+  // 멈추므로(StickyNarrative.autoplayPaused) 진행 중인 척하는 fill 은 오히려 거짓 신호.
+  const reduceMotion = usePrefersReducedMotion();
   if (active < 0) return null;
   return (
     <div
@@ -63,7 +85,12 @@ function TopProgressBar({ count, active }: { count: number; active: number }) {
             <div
               key={`top-bar-${active}`}
               className="absolute inset-0 origin-left bg-accent-600"
-              style={{ animation: `dot-progress ${AUTOPLAY_MS}ms linear forwards` }}
+              // dot-progress 는 scaleX(0)→1 keyframe — 애니메이션을 안 걸면 그대로 채워진 상태.
+              style={
+                reduceMotion
+                  ? undefined
+                  : { animation: `dot-progress ${AUTOPLAY_MS}ms linear forwards` }
+              }
             />
           )}
         </div>
@@ -74,9 +101,28 @@ function TopProgressBar({ count, active }: { count: number; active: number }) {
 
 function FloatingCta({ ctaHref }: { ctaHref: string }) {
   const t = useTranslations("qrCampaigns.hero");
-  // 어떤 § 에 있든 우하단 같은 자리. mount 직후 살짝 delay 후 fade-in.
+  // 페이지 끝(푸터)에 닿으면 물러난다. 이 버튼은 우하단 고정이고 푸터의 링크 줄도 우측 정렬이라,
+  // 바닥까지 스크롤하면 GitHub·개인정보처리방침 위에 그대로 앉아 클릭을 먹었다(감사에서 확인).
+  // 푸터가 보이는 동안엔 어차피 같은 행동을 하는 링크들이 화면에 있으니 CTA 는 비켜도 잃는 게 없다.
+  const [atFooter, setAtFooter] = useState(false);
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    if (!footer || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setAtFooter(e.isIntersecting), { rootMargin: "0px 0px -8px 0px" });
+    io.observe(footer);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className="fixed bottom-6 right-6 z-50 opacity-0 [animation:hero-fade_600ms_var(--ease)_800ms_forwards] sm:bottom-8 sm:right-8">
+    // bottom 은 --fab-bottom(globals) — 쿠키 배너가 떠 있으면 그 높이만큼 위로 올라간다. 고정 offset
+    // 이던 시절엔 이 버튼이 배너의 '확인' 버튼을 덮어, 이 페이지에선 배너를 닫을 수가 없었다.
+    <div
+      aria-hidden={atFooter}
+      className={cn(
+        "fixed bottom-[var(--fab-bottom,1.5rem)] right-6 z-50 opacity-0 [animation:hero-fade_600ms_var(--ease)_800ms_forwards] motion-reduce:[animation:none] motion-reduce:opacity-100 sm:right-8",
+        atFooter && "pointer-events-none !opacity-0 transition-opacity duration-200 ease-[var(--ease)]",
+      )}
+    >
       <Link href={ctaHref}>
         <Button
           variant="accent"
@@ -353,7 +399,10 @@ function StickyNarrative({ mock }: { mock: MockData }) {
         style={{ height: `${(SECTION_COUNT + 1) * 100}vh` }}
       >
         <div className="sticky top-0 h-screen">
-          <div className="flex h-full">
+          {/* 좌(목업)·우(설명) 한 쌍을 가운데로 묶는 상한. 예전엔 두 칸이 각각 뷰포트의 절반이라
+              2560 같은 초광폭에선 목업과 설명이 서로 멀어지고 오른쪽에 큰 공백이 남아, 설명 글이
+              화면 왼쪽으로 밀려 보였다(신고). 무대 폭을 사이트 컨테이너(1280)와 맞춰, 넓은 화면에서도 헤더·본문과 같은 축에 선다. */}
+          <div className="mx-auto flex h-full w-full max-w-[1280px]">
             <div className="relative w-1/2">
               {sections.map((s, i) => {
                 const isActive = i === active;
@@ -406,32 +455,37 @@ function StickyNarrative({ mock }: { mock: MockData }) {
   );
 }
 
+// 칩 3개의 stagger 진입 (delay 850/950/1050ms). Tailwind JIT 는 정적 문자열만 컴파일하므로
+// delay 별 클래스를 배열로 고정 — 인라인 style 이었을 땐 motion-reduce 로 끌 수 없었다.
+const CHIP_ANIMATION = [
+  "[animation:hero-fade_700ms_var(--ease)_850ms_forwards]",
+  "[animation:hero-fade_700ms_var(--ease)_950ms_forwards]",
+  "[animation:hero-fade_700ms_var(--ease)_1050ms_forwards]",
+] as const;
+
 function HeroBody({ s }: { s: HeroSpec }) {
   return (
     <>
-      <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards]">
+      <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards] motion-reduce:[animation:none] motion-reduce:opacity-100">
         {s.eyebrow}
       </p>
       <h1 className="mt-2 break-keep text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:mt-4 sm:text-headline-md lg:text-headline-xl">
-        <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards]">
+        <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards] motion-reduce:[animation:none] motion-reduce:translate-y-0 motion-reduce:opacity-100">
           {s.title1}
         </span>
         <br />
-        <span className="inline-block translate-y-4 text-accent-700 dark:text-accent-400 opacity-0 [animation:hero-rise_900ms_var(--ease)_420ms_forwards]">
+        <span className="inline-block translate-y-4 text-accent-700 dark:text-accent-400 opacity-0 [animation:hero-rise_900ms_var(--ease)_420ms_forwards] motion-reduce:[animation:none] motion-reduce:translate-y-0 motion-reduce:opacity-100">
           {s.title2}
         </span>
       </h1>
-      <p className="mt-2 max-w-md break-keep text-[13px] leading-tight text-slate-500 dark:text-slate-400 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] sm:mt-5 sm:text-[15px] sm:leading-relaxed">
+      <p className="mt-2 max-w-md break-keep text-[13px] leading-tight text-slate-500 dark:text-slate-400 opacity-0 [animation:hero-fade_700ms_var(--ease)_700ms_forwards] motion-reduce:[animation:none] motion-reduce:opacity-100 sm:mt-5 sm:text-[15px] sm:leading-relaxed">
         {s.sub}
       </p>
       <div className="mt-3 flex flex-wrap gap-2 sm:mt-6">
         {s.chips.map((chip, ci) => (
           <span
             key={ci}
-            className="inline-flex items-center whitespace-nowrap rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300 opacity-0"
-            style={{
-              animation: `hero-fade 700ms var(--ease) ${850 + ci * 100}ms forwards`,
-            }}
+            className={`inline-flex items-center whitespace-nowrap rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300 opacity-0 ${CHIP_ANIMATION[ci]} motion-reduce:[animation:none] motion-reduce:opacity-100`}
           >
             <span className="sm:hidden">{s.chipsShort[ci]}</span>
             <span className="hidden sm:inline">{chip}</span>
@@ -520,7 +574,7 @@ function FinalCta({
           <Link href={ctaHref}>
             <Button
               variant="accent"
-              className="h-14 rounded-xl px-10 text-[15px] font-semibold shadow-cta"
+              className="h-14 rounded-lg px-10 text-[15px] font-semibold shadow-cta"
             >
               {t("primary")}
               <ArrowRight className="h-5 w-5" aria-hidden />

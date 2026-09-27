@@ -133,7 +133,7 @@ async function openEditor(page: Page) {
 
 /** Title field (the only autocomplete-off text input — the URL dialog uses type=url). */
 function titleInput(page: Page) {
-  return page.locator('input[type="text"][autocomplete="off"]').first();
+  return page.locator('textarea[autocomplete="off"]').first();
 }
 
 /**
@@ -334,7 +334,7 @@ test("the embed dialog inserts a live link card that round-trips to an EMBED blo
 
   await page.locator(".tiptap").click();
   await page.keyboard.type("/");
-  await page.getByRole("option", { name: /^Embed\b/ }).click();
+  await page.getByRole("option", { name: /^Link card\b/ }).click();
 
   // The in-app URL dialog replaces window.prompt; type a YouTube link and confirm with Enter.
   const dialog = page.getByRole("dialog");
@@ -836,7 +836,7 @@ async function openPublishDialog(page: Page) {
 /** Add a topic (tag) in the dialog — going public requires ≥1, so publish/republish/schedule tests
  *  must seed one; otherwise the primary action nudges the tag field and fires no lifecycle call. */
 async function addDialogTag(dialog: Locator, name = "dev") {
-  const input = dialog.getByPlaceholder(/tag/i);
+  const input = dialog.getByRole("textbox", { name: /^tags$/i });
   await input.fill(name);
   await input.press("Enter");
 }
@@ -1372,8 +1372,7 @@ test("the editor visually styles marks and blocks (computed styles, not just pay
 // ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 test("'#### ' does NOT create a broken h4 — the block model is H1–H3 only (A7)", async ({ page }) => {
-  // StarterKit is capped to levels [1,2,3]; a 4th-level heading node would serialize to literal
-  // `#### text` and round-trip as a PARAGRAPH (heading + TOC entry lost). Assert no h4 node forms.
+  // Only H1–H3 are block types, so typing `#### ` never makes an h4 (an h4 already in a post is kept).
   const captured: Captured = { blocks: null };
   await setupMocks(page, captured);
   await openEditor(page);
@@ -1591,7 +1590,7 @@ test("canvas topics: the '+ Add topics' ghost expands and its chip shows in the 
   await setupMocks(page, captured);
   await openEditor(page);
   // With no tags, a quiet "+ Add topics" affordance sits under the title (not hidden behind 발행).
-  const addTopics = page.getByRole("button", { name: "Add topics" });
+  const addTopics = page.getByRole("button", { name: "Add tags" });
   await expect(addTopics).toBeVisible();
   await addTopics.click();
   // It expands into the SAME chip input. (Scoped by the tag placeholder — the title input is separate.)
@@ -1782,6 +1781,7 @@ test("publish auto-shortens an in-body link through kurl and swaps the short URL
   await page.getByPlaceholder("https://example.com").fill("https://example.com/an-article");
   await page.getByRole("button", { name: "Add", exact: true }).click();
   await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("read this");
+  await expect(page.locator(".tiptap")).toBeFocused();
 
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog); // topic required to publish
@@ -1822,6 +1822,7 @@ test("publish: an in-post link toggled OFF keeps its original URL (not shortened
   await page.getByPlaceholder("https://example.com").fill("https://example.com/an-article");
   await page.getByRole("button", { name: "Add", exact: true }).click();
   await expect(page.locator('.tiptap a[href="https://example.com/an-article"]')).toHaveText("read this");
+  await expect(page.locator(".tiptap")).toBeFocused();
 
   const dialog = await openPublishDialog(page);
   await addDialogTag(dialog);
@@ -1865,4 +1866,167 @@ test("Export .md downloads the post as markdown carrying the title and body", as
   const md = Buffer.concat(chunks).toString("utf8");
   expect(md, "frontmatter carries the title").toContain("My exportable post");
   expect(md, "the body rides along").toContain("The body that should ride along in the export.");
+});
+
+test("reopening a saved post shows its link cards and dividers as they will publish", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) =>
+    route.fulfill({
+      json: [
+        { id: 1, type: "PARAGRAPH", content: "before the card", blockOrder: 0 },
+        { id: 2, type: "EMBED", content: "https://docs.spring.io/spring-framework/reference/web/webflux.html", blockOrder: 1 },
+        { id: 3, type: "DIVIDER", content: null, blockOrder: 2 },
+        { id: 4, type: "PARAGRAPH", content: "https://example.com/inline and more text", blockOrder: 3 },
+      ],
+    }),
+  );
+  await openEditor(page);
+
+  const card = page.locator(".tiptap [data-link-card]");
+  await expect(card).toHaveCount(1);
+  await expect(card).toHaveAttribute("data-url", "https://docs.spring.io/spring-framework/reference/web/webflux.html");
+  await expect(page.locator(".tiptap p", { hasText: "https://docs.spring.io" })).toHaveCount(0);
+  await expect(page.locator(".tiptap p", { hasText: "and more text" })).toBeVisible();
+
+  const divider = page.locator(".tiptap hr");
+  await expect(divider).toHaveCount(1);
+  const look = await divider.evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { height: el.getBoundingClientRect().height, background: s.backgroundImage };
+  });
+  expect(look.height).toBeGreaterThan(0);
+  expect(look.background).toContain("gradient");
+});
+
+test("slash menu makes a warning box that saves as an alert quote", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Warning\b/ }).click();
+  await page.keyboard.type("Mind the gap");
+
+  const box = page.locator('.tiptap blockquote[data-alert="warning"]');
+  await expect(box).toHaveAttribute("data-label", "Warning");
+  await expect(box).toContainText("Mind the gap");
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "QUOTE")?.content).toBe("[!WARNING]\nMind the gap");
+});
+
+test("pasting a Qiita note turns it into a box", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.evaluate(() => {
+    const data = new DataTransfer();
+    data.setData("text/plain", ":::note warn\n**Why?**\nRestart does not reload the config.\n:::");
+    document.querySelector(".tiptap")!.dispatchEvent(new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true }));
+  });
+
+  await expect(page.locator('.tiptap blockquote[data-alert="warning"]')).toContainText("Restart does not reload the config.");
+  await expect(page.locator(".tiptap")).not.toContainText(":::");
+  const blocks = await save(page, captured);
+  const quote = blocks.find((b) => b.type === "QUOTE")?.content ?? "";
+  expect(quote.startsWith("[!WARNING]\n**Why?**")).toBe(true);
+});
+
+test.describe("on a phone, bold and link are one tap away without selecting text", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("toolbar bold and link work from an empty caret", async ({ page }) => {
+    const captured: Captured = { blocks: null };
+    await setupMocks(page, captured);
+    await openEditor(page);
+
+    const toolbar = page.getByTestId("editor-toolbar");
+    const bold = toolbar.getByRole("button", { name: "Bold", exact: true });
+    const link = toolbar.getByRole("button", { name: "Link", exact: true });
+    await expect(bold).toBeInViewport();
+    await expect(link).toBeInViewport();
+
+    await page.locator(".tiptap").click();
+    await page.keyboard.type("Plain ");
+    await bold.click();
+    await page.keyboard.type("strong");
+    await bold.click();
+    await page.keyboard.type(" and ");
+    await link.click();
+    const dialog = page.getByRole("dialog");
+    await dialog.locator('input[type="url"]').fill("https://kurl.me/docs");
+    await dialog.locator('input[type="url"]').press("Enter");
+    await expect(page.locator(".tiptap")).toBeFocused();
+    await page.keyboard.type(" end");
+
+    const blocks = await save(page, captured);
+    const paragraph = blocks.find((b) => b.type === "PARAGRAPH")?.content ?? "";
+    expect(paragraph).toContain("Plain **strong** and ");
+    expect(paragraph).toContain("<https://kurl.me/docs> end");
+  });
+
+  test("the link dialog takes the words to show when nothing is selected", async ({ page }) => {
+    const captured: Captured = { blocks: null };
+    await setupMocks(page, captured);
+    await openEditor(page);
+
+    await page.locator(".tiptap").click();
+    await page.keyboard.type("Read ");
+    await page.getByTestId("editor-toolbar").getByRole("button", { name: "Link", exact: true }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.locator('input[type="url"]').fill("https://kurl.me/docs");
+    await dialog.getByRole("textbox", { name: "Text to show (optional)" }).fill("the docs");
+    await dialog.getByRole("textbox", { name: "Text to show (optional)" }).press("Enter");
+
+    const blocks = await save(page, captured);
+    expect(blocks.find((b) => b.type === "PARAGRAPH")?.content).toContain("Read [the docs](https://kurl.me/docs)");
+  });
+});
+
+test("slash menu makes a checklist that saves as GitHub task items", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("/");
+  await page.getByRole("option", { name: /^Checklist\b/ }).click();
+  await page.keyboard.type("Add the dependency");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("Write the config");
+  await page.locator('.tiptap ul[data-type="taskList"] li').nth(1).locator('input[type="checkbox"]').check();
+
+  const blocks = await save(page, captured);
+  expect(blocks.find((b) => b.type === "LIST_BULLET")?.content).toBe("- [ ] Add the dependency\n- [x] Write the config");
+});
+
+test("opening an imported post turns its old Note label into a box that saves in the new format", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await page.route(`**/api/v1/posts/${POST_ID}/blocks`, (route) => {
+    if (route.request().method() === "PUT") {
+      captured.blocks = route.request().postDataJSON()?.blocks ?? null;
+      return route.fulfill({ json: [] });
+    }
+    return route.fulfill({
+      json: [
+        { id: 1, type: "PARAGRAPH", content: "before", blockOrder: 0 },
+        { id: 2, type: "QUOTE", content: "ℹ️ **Note**", blockOrder: 1 },
+        { id: 3, type: "PARAGRAPH", content: "**Event loop?**\nOne thread watches events.", blockOrder: 2 },
+      ],
+    });
+  });
+  await openEditor(page);
+
+  await expect(page.locator('.tiptap blockquote[data-alert="note"]')).toContainText("One thread watches events.");
+  await expect(page.locator(".tiptap")).not.toContainText("ℹ️");
+  await page.locator(".tiptap p").first().click();
+  await page.keyboard.press("End");
+  await page.keyboard.type("!");
+  const blocks = await save(page, captured);
+  expect(blocks.map((b) => b.type)).toEqual(["PARAGRAPH", "QUOTE"]);
+  expect(blocks[1].content?.startsWith("[!NOTE]\n**Event loop?**")).toBe(true);
 });

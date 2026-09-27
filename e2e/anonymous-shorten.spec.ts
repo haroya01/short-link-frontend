@@ -1,21 +1,29 @@
 import { expect, test } from "@playwright/test";
+import { mockAnonymousShorten } from "./helpers/mock-shorten";
 
 test.describe("anonymous shorten flow", () => {
+  test.beforeEach(async ({ page }) => {
+    await mockAnonymousShorten(page);
+  });
+
   test("home page renders hero and form", async ({ page }) => {
     await page.goto("/ko");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.getByPlaceholder(/your-very-long-url/)).toBeVisible();
+    await expect(page.getByPlaceholder(/긴 주소를 여기에/)).toBeVisible();
   });
 
-  test("shortens a valid URL and shows result card", async ({ page }) => {
+  test("shortens a valid URL and answers on the line", async ({ page }) => {
     await page.goto("/ko");
-    const input = page.getByPlaceholder(/your-very-long-url/);
+    const input = page.getByPlaceholder(/긴 주소를 여기에/);
     await input.fill("https://example.com/playwright-test");
     await page.getByRole("button", { name: "단축하기" }).click();
 
-    const resultLink = page.locator("a", { hasText: /\/[0-9A-Za-z]{7}/ }).first();
-    await expect(resultLink).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText("단축 완료")).toBeVisible();
+    // 답 줄 — 카드가 아니라 입력 줄 자리에 짧은 주소가 내려앉는다.
+    const line = page.getByTestId("result-line").first();
+    await expect(line).toBeVisible({ timeout: 10000 });
+    const resultLink = line.locator("a", { hasText: /\/[0-9A-Za-z]{7}/ }).first();
+    await expect(resultLink).toBeVisible();
+    await expect(page.getByRole("button", { name: "복사" }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: "열기" }).first()).toBeVisible();
 
     const href = await resultLink.getAttribute("href");
@@ -30,24 +38,20 @@ test.describe("anonymous shorten flow", () => {
 
   test("rejects non-http URL with inline error", async ({ page }) => {
     await page.goto("/ko");
-    await page.getByPlaceholder(/your-very-long-url/).fill("ftp://example.com");
+    await page.getByPlaceholder(/긴 주소를 여기에/).fill("ftp://example.com");
     await page.getByRole("button", { name: "단축하기" }).click();
     await expect(
       page.getByText(/http:\/\/ 또는 https:\/\/.*올바른 URL/),
     ).toBeVisible();
   });
 
-  test("shows login CTA below result for anonymous user", async ({ page }) => {
+  test("whispers expiry + signup for anonymous user", async ({ page }) => {
     await page.goto("/ko");
-    await page.getByPlaceholder(/your-very-long-url/).fill("https://example.com/cta-test");
+    await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/cta-test");
     await page.getByRole("button", { name: "단축하기" }).click();
-    await expect(page.getByText(/로그인하면.*클릭 통계/)).toBeVisible({ timeout: 10000 });
-  });
-
-  test("home counters render numbers", async ({ page }) => {
-    await page.goto("/ko");
-    await expect(page.getByText("단축된 링크")).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText("분석된 클릭")).toBeVisible();
+    // 속삭임 행 — 24h 만료 안내와 보관 유도가 답 줄 아래 한 줄로.
+    await expect(page.getByText(/24시간 후 만료/)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("link", { name: /가입하고 통계 보관하기/ })).toBeVisible();
   });
 
   test("advanced section is hidden for anonymous (auth-only customCode / expiry)", async ({
@@ -59,11 +63,11 @@ test.describe("anonymous shorten flow", () => {
   });
 
   test("FAQ accordion expands", async ({ page }) => {
-    await page.goto("/ko");
+    await page.goto("/ko?stage=off");
     const faq = page.getByRole("heading", { name: "자주 묻는 질문" });
     await expect(faq).toBeVisible();
     const firstQ = page.getByRole("button", { name: /단축 링크는 영구 보존되나요/ });
     await firstQ.click();
-    await expect(page.getByText(/24시간 후 자동 만료/)).toBeVisible();
+    await expect(page.getByText(/24시간 후 자동으로 만료/)).toBeVisible();
   });
 });

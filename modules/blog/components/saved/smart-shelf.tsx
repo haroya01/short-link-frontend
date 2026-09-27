@@ -326,7 +326,7 @@ function BulkBar({
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
         {menuOpen && (
-          <div className="absolute bottom-full right-0 mb-2 max-h-64 w-48 overflow-auto rounded-xl border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-900">
+          <div className="absolute bottom-full right-0 mb-2 max-h-64 w-48 overflow-auto rounded-2xl border border-slate-200 bg-white py-1 shadow-lg dark:border-slate-700 dark:bg-slate-900">
             <button type="button" onClick={() => onMove(null)} className={bulkMenuItem}>
               {t("unfiled")}
             </button>

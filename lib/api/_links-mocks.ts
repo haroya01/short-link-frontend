@@ -1,3 +1,5 @@
+import type { MyLinksPage, MyLink } from "@/types";
+import { buildDemoLinkStats } from "@/lib/demo-data";
 /**
  * Links-product mock layer (NEXT_PUBLIC_USE_MOCKS=1). The blog product mocks at its own API functions
  * (modules/blog/api/_mocks.ts) and short-circuits before `request()`; the links product calls
@@ -10,8 +12,12 @@
  * here as more links screens get covered. Mostly GET; the one mutation is the publish-time shorten.
  */
 let mockShortenSeq = 7000;
+let mockFavoriteCodes = ["saved-74", "spr1ng", "d0cs"];
+type MockSplash = { enabled: boolean; message: string | null; seconds: number; ctaId: number | null };
+const MOCK_SPLASH_OFF: MockSplash = { enabled: false, message: null, seconds: 3, ctaId: null };
+const mockVisitOptions = new Map<string, { openInBrowser: boolean; splash: MockSplash; opensAt: string | null }>();
 
-export function mockLinksResponse(path: string, method: string): unknown | undefined {
+export function mockLinksResponse(path: string, method: string, body?: unknown): unknown | undefined {
   const verb = (method || "GET").toUpperCase();
   const p = path.split("?")[0].replace(/\/+$/, "");
 
@@ -20,17 +26,75 @@ export function mockLinksResponse(path: string, method: string): unknown | undef
   if (verb === "POST" && p === "/api/v1/links") {
     const host = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
     const code = (++mockShortenSeq).toString(36).padStart(4, "0");
-    return { shortCode: code, shortUrl: `https://${host}/${code}`, claimToken: null };
+    const password = (body as { password?: string } | undefined)?.password;
+    return {
+      shortCode: code,
+      shortUrl: `https://${host}/${code}`,
+      claimToken: null,
+      passwordProtected: Boolean(password?.trim()),
+    };
   }
 
+  if (p.startsWith("/api/v1/links/me/favorites") && verb !== "GET") {
+    if (p.endsWith("/order") && verb === "PUT") {
+      const order = (body as { shortCodes?: string[] } | undefined)?.shortCodes;
+      if (order) mockFavoriteCodes = [...order];
+    } else {
+      const code = decodeURIComponent(p.split("/").at(-1)!);
+      if (verb === "PUT" && !mockFavoriteCodes.includes(code)) mockFavoriteCodes.push(code);
+      if (verb === "DELETE") mockFavoriteCodes = mockFavoriteCodes.filter((item) => item !== code);
+    }
+    return null;
+  }
+  if (verb === "GET" && ["/api/v1/links/me/favorites", "/api/v1/links/me/by-codes", "/api/v1/links/me/overview"].includes(p)) {
+    const page = mockLinksResponse("/api/v1/links/me?size=100", "GET") as MyLinksPage;
+    if (p.endsWith("/overview")) return {
+      humanClicks: page.items.reduce((sum, item) => sum + (item.humanClickCount ?? 0), 0),
+      totalLinks: page.items.length, totalClicks: page.items.reduce((sum, item) => sum + item.clickCount, 0),
+      clicks7d: page.items.reduce((sum, item) => sum + item.clicksLast7d.reduce((a, b) => a + b, 0), 0),
+      clicksToday: 0, zeroClickLinks: page.items.filter((item) => !item.clickCount).length,
+      expiringLinks: 0, timezone: "Asia/Seoul", updatedAt: new Date().toISOString(), dailyClicks: [],
+      topLinks: [...page.items].sort((a, b) => (b.humanClickCount ?? 0) - (a.humanClickCount ?? 0)).slice(0, 5),
+    };
+    const codes = p.endsWith("/by-codes") ? new URLSearchParams(path.split("?")[1]).get("codes")?.split(",") ?? [] : mockFavoriteCodes;
+    return { items: codes.flatMap((code) => page.items.filter((item) => item.shortCode === code)), hasMore: false, nextCursor: null };
+  }
+  const visitMatch = /^\/api\/v1\/links\/([^/]+)\/visit-options$/.exec(p);
+  if (verb === "PATCH" && visitMatch) {
+    const code = visitMatch[1];
+    const current = mockVisitOptions.get(code) ?? { openInBrowser: false, splash: MOCK_SPLASH_OFF, opensAt: null };
+    const patch = (body ?? {}) as { openInBrowser?: boolean; splash?: MockSplash; opensAt?: string; clearOpensAt?: boolean };
+    const next = {
+      openInBrowser: patch.openInBrowser ?? current.openInBrowser,
+      splash: patch.splash ? { ...MOCK_SPLASH_OFF, ...patch.splash } : current.splash,
+      opensAt: patch.clearOpensAt ? null : patch.opensAt ?? current.opensAt,
+    };
+    mockVisitOptions.set(code, next);
+    return { shortCode: code, ...next };
+  }
   if (verb !== "GET") return undefined;
 
   switch (p) {
-    // Dashboard — the viewer's links (paged) + their tags.
-    case "/api/v1/links/me":
-      return { items: [], nextCursor: null, hasMore: false };
+    // Dashboard — the viewer's links (paged) + their tags. 빈 배열이면 온보딩만 보여
+    // 목록·정렬·행 레이아웃 QA 가 불가능하다 — 길이·클릭수·태그가 갈리는 표본을 준다.
+    case "/api/v1/links/me": {
+      const qs = new URLSearchParams(path.split("?")[1]);
+      const term = qs.get("q")?.toLowerCase();
+      let rows = mockLibraryRows().filter((item) => !term || `${item.note} ${item.shortCode} ${item.originalUrl}`.toLowerCase().includes(term));
+      if (qs.get("sort") === "clickCount") rows.sort((a, b) => (a.clickCount - b.clickCount) * (qs.get("dir") === "asc" ? 1 : -1));
+      const start = Number(qs.get("after") ?? 0);
+      const size = Number(qs.get("size") ?? 50);
+      return { items: rows.slice(start, start + size), hasMore: start + size < rows.length, nextCursor: start + size < rows.length ? String(start + size) : null };
+    }
+    // 홈 히어로 라이브 티커 + 공개 카운터 — 목에서도 실값 모양으로.
+    case "/api/v1/public/stats":
+      return { links: 1128, clicks: 46214 };
     case "/api/v1/tags":
-      return [];
+      return [
+        { id: 1, name: "promo", color: null, linkCount: 2, createdAt: "2026-05-11T11:00:00Z" },
+        { id: 2, name: "instagram", color: null, linkCount: 1, createdAt: "2026-06-01T11:00:00Z" },
+        { id: 3, name: "offline", color: null, linkCount: 1, createdAt: "2026-07-01T11:00:00Z" },
+      ];
     // Campaigns / CTAs / QR campaigns lists.
     case "/api/v1/campaigns":
       return [];
@@ -47,8 +111,37 @@ export function mockLinksResponse(path: string, method: string): unknown | undef
     case "/api/v1/users/me/profile/stats":
       return mockProfileStats();
     default:
-      return undefined;
+      break;
   }
+  // per-link 통계·상세 — 통계 페이지(모프·보호 섹션 포함)를 목 모드에서 QA 가능하게.
+  // 데모 페이지와 같은 합성 통계를 그대로 쓴다(화면 계약 일치).
+  const linkMatch = /^\/api\/v1\/links\/([^/]+)\/(stats|detail)$/.exec(p);
+  if (linkMatch) {
+    const [, code, kind] = linkMatch;
+    if (kind === "stats") return { ...buildDemoLinkStats(), shortCode: code };
+    return {
+      shortCode: code,
+      originalUrl: "https://blog.example.com/2026/08/spring-sale-landing",
+      expiresAt: null,
+      ogTitle: null,
+      ogDescription: null,
+      ogImage: null,
+      ogTitleOverride: null,
+      ogDescriptionOverride: null,
+      ogImageOverride: null,
+      passwordProtected: false,
+      maxViews: null,
+      viewCount: 1284,
+      statsPublic: false,
+      tags: ["promo"],
+      note: null,
+      expiredMessage: null,
+      openInBrowser: mockVisitOptions.get(code)?.openInBrowser ?? false,
+      splash: mockVisitOptions.get(code)?.splash ?? MOCK_SPLASH_OFF,
+      opensAt: mockVisitOptions.get(code)?.opensAt ?? null,
+    };
+  }
+  return undefined;
 }
 
 function mockProfileStats(): unknown {
@@ -148,4 +241,61 @@ function mockWeeklyInsights(): unknown {
     },
     peak: { dayOfWeek: 4, hour: 21, clicks: 96 },
   };
+}
+function mockLibraryRows(): MyLink[] {
+  const base = [
+          {
+            shortCode: "spr1ng",
+            shortUrl: "https://kurl.me/spr1ng",
+            originalUrl: "https://blog.example.com/2026/08/spring-sale-landing?utm_source=instagram&utm_campaign=aug",
+            createdAt: "2026-08-01T09:00:00Z",
+            expiresAt: null,
+            clickCount: 1284,
+            tags: ["promo", "instagram"],
+            clicksLast7d: [102, 130, 121, 168, 190, 240, 333],
+          },
+          {
+            shortCode: "d0cs",
+            shortUrl: "https://kurl.me/d0cs",
+            originalUrl: "https://docs.example.com/handbook",
+            createdAt: "2026-07-21T05:30:00Z",
+            expiresAt: null,
+            clickCount: 342,
+            tags: [],
+            clicksLast7d: [30, 41, 22, 51, 44, 63, 48],
+          },
+          {
+            shortCode: "ev3nt",
+            shortUrl: "https://kurl.me/ev3nt",
+            originalUrl: "https://event.example.com/summer-meetup/2026/register",
+            createdAt: "2026-08-10T12:00:00Z",
+            expiresAt: "2026-08-30T15:00:00Z",
+            clickCount: 58,
+            tags: ["offline"],
+            clicksLast7d: [0, 2, 6, 9, 14, 12, 15],
+          },
+          {
+            shortCode: "r3sume",
+            shortUrl: "https://kurl.me/r3sume",
+            originalUrl: "https://drive.example.com/file/d/1a2b3c4d5e6f7g8h9i0j/view",
+            createdAt: "2026-06-02T01:00:00Z",
+            expiresAt: null,
+            clickCount: 7,
+            tags: [],
+            clicksLast7d: [1, 0, 2, 0, 1, 3, 0],
+          },
+          {
+            shortCode: "sh0p",
+            shortUrl: "https://kurl.me/sh0p",
+            originalUrl: "https://shop.example.com",
+            createdAt: "2026-05-11T11:00:00Z",
+            expiresAt: null,
+            clickCount: 0,
+            tags: ["promo"],
+            clicksLast7d: [0, 0, 0, 0, 0, 0, 0],
+          },
+        ];
+  return base.map((item, index) => ({ ...item, humanClickCount: item.clickCount, clickCount: Math.round(item.clickCount * 1.1), note: ["Summer campaign", "Team handbook", "Community event", "Portfolio", "Online shop"][index], timezone: "Asia/Seoul" })).concat(
+    Array.from({ length: 80 }, (_, index) => ({ shortCode: `saved-${index}`, shortUrl: `https://kurl.me/saved-${index}`, originalUrl: `https://example.com/project/${index}`, note: index === 74 ? "Launch brief" : `Project ${index + 1}`, createdAt: "2026-04-01T00:00:00Z", expiresAt: null, clickCount: index * 3, humanClickCount: index * 2, clicksLast7d: index === 0 ? [0, 0, 0, 0, 0, 0, 0] : [0, 0, 1, 0, 1, 0, 0], tags: [], timezone: "Asia/Seoul" }))
+  );
 }

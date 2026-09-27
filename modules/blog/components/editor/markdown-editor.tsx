@@ -8,6 +8,7 @@ import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { ImageWithCaption } from "@/modules/blog/components/editor/image-with-caption";
 import Placeholder from "@tiptap/extension-placeholder";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { TableRow } from "@tiptap/extension-table-row";
 import {
   AlignableTable,
@@ -28,20 +29,24 @@ import {
   Italic,
   Link as LinkIcon,
   List,
+  ListChecks,
   ListOrdered,
   Minus,
+  PanelTop,
   Plus,
   Quote,
   SquareCode,
   Strikethrough,
   Table as TableIcon,
   Trash2,
-  Video,
   type LucideIcon,
 } from "lucide-react";
 import { MarkdownShortcuts } from "@/modules/blog/components/editor/markdown-shortcuts";
 import { CodeMirrorBlock, insertCodeBlock } from "@/modules/blog/components/editor/codemirror-block";
 import { LinkCardNode, LINK_CARD_URL_RE } from "@/modules/blog/components/editor/link-card-node";
+import { CalloutQuote } from "@/modules/blog/components/editor/callout-quote";
+import { convertCalloutContainers } from "@/modules/blog/lib/callout";
+import { CjkFriendlyMarkdown, MarkdownBold, TightTaskLists, MarkdownHardBreak, MarkdownHeading, MarkdownItalic, MarkdownStrike, MarkdownText } from "@/modules/blog/components/editor/markdown-serialization";
 import { EditorBlockHandle } from "@/modules/blog/components/editor/editor-block-handle";
 import { TableHandles } from "@/modules/blog/components/editor/table-handles";
 import { SlashMenu } from "@/modules/blog/components/editor/tiptap-slash-menu";
@@ -161,13 +166,17 @@ const EnterSoftBreak = Extension.create({
 export function MarkdownEditor({
   initialValue,
   onChange,
+  onEdit,
   onUploadImage,
   onImportImageUrl,
   onUploadError,
   liveMarkdownRef,
+  focusEditorRef,
 }: {
   initialValue: string;
   onChange: (markdown: string) => void;
+  /** Mark an edit immediately; markdown serialization stays debounced for long documents. */
+  onEdit?: () => void;
   onUploadImage: (file: Blob) => Promise<string>;
   // Re-host an external image URL (e.g. pasted from Notion) to a kurl-owned URL. When absent, pasted
   // <img> HTML falls through to the default handler (which strips it).
@@ -176,6 +185,8 @@ export function MarkdownEditor({
   // Exposes a synchronous "serialize the doc to markdown right now" getter to the parent, so Save/
   // Publish can read the LATEST content instead of the debounced onChange state.
   liveMarkdownRef?: { current: (() => string) | null };
+  /** Lets the title move into the body without relying on editor DOM details. */
+  focusEditorRef?: { current: (() => void) | null };
 }) {
   const t = useTranslations("postEditor");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -188,6 +199,8 @@ export function MarkdownEditor({
   // last edit. onChangeRef keeps the latest callback without re-creating the editor.
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
+  const onEditRef = useRef(onEdit);
+  onEditRef.current = onEdit;
   const flushTimer = useRef<number | undefined>(undefined);
   useEffect(
     () => () => {
@@ -307,12 +320,31 @@ export function MarkdownEditor({
       // places the cursor instead of opening a tab.
       StarterKit.configure({
         codeBlock: false,
-        // Only H1–H3 exist in the block model (markdownToBlocks matches `#{1,3}`). Without this,
-        // typing `#### ` makes a real h4 node that serializes to `#### text` and round-trips as a
-        // literal-text PARAGRAPH — the heading (and its TOC entry) silently lost.
-        heading: { levels: [1, 2, 3] },
+        heading: false,
+        blockquote: false,
+        hardBreak: false,
+        text: false,
+        bold: false,
+        italic: false,
+        strike: false,
         link: { openOnClick: false, enableClickSelection: true },
       }),
+      MarkdownText,
+      MarkdownHardBreak,
+      MarkdownHeading,
+      CalloutQuote.configure({
+        labels: {
+          note: t("callout.note"),
+          tip: t("callout.tip"),
+          important: t("callout.important"),
+          warning: t("callout.warning"),
+          caution: t("callout.caution"),
+        },
+      }),
+      MarkdownBold,
+      MarkdownItalic,
+      MarkdownStrike,
+      CjkFriendlyMarkdown,
       EnterSoftBreak,
       // Convert markdown shortcuts (#, **, *, `, ~~, -, 1., >) the instant they're typed — including on
       // mobile keyboards, where ProseMirror's native input rules don't fire (see markdown-shortcuts.ts).
@@ -324,15 +356,21 @@ export function MarkdownEditor({
       TableRow,
       AlignableTableHeader,
       AlignableTableCell,
+      TaskList,
+      TaskItem.configure({ nested: true }),
+      TightTaskLists,
       // Show a hint on the empty body so it's obvious where to start writing (CSS at .tiptap
       // p.is-editor-empty::before renders this).
-      Placeholder.configure({ placeholder: t("bodyPlaceholder") }),
+      Placeholder.configure({
+        placeholder: window.matchMedia?.("(pointer: coarse)").matches ? t("bodyPlaceholderTouch") : t("bodyPlaceholder"),
+      }),
       // html:false — standard markdown only (no raw-HTML passthrough); GFM tables round-trip natively.
       Markdown.configure({ html: false, breaks: true, transformPastedText: true }),
     ],
     content: initialValue || "",
     editorProps: {
       attributes: { class: "tiptap focus:outline-none" },
+      transformPastedText: (text) => convertCalloutContainers(text),
       handlePaste: (_view, event) => {
         const items = event.clipboardData?.items;
         if (!items || !editor) return false;
@@ -406,6 +444,7 @@ export function MarkdownEditor({
       },
     },
     onUpdate: ({ editor }) => {
+      onEditRef.current?.();
       scheduleKeepCaret(caretRaf, editor, scrollerRef);
       window.clearTimeout(flushTimer.current);
       flushTimer.current = window.setTimeout(() => {
@@ -436,6 +475,12 @@ export function MarkdownEditor({
     };
   }, [editor, liveMarkdownRef]);
 
+  useEffect(() => {
+    if (!focusEditorRef) return;
+    focusEditorRef.current = editor ? () => { editor.commands.focus("start"); } : null;
+    return () => { focusEditorRef.current = null; };
+  }, [editor, focusEditorRef]);
+
   if (!editor) return <div className="h-full" />;
 
   return (
@@ -464,6 +509,9 @@ export function MarkdownEditor({
         editor={editor}
         onPickImage={pickImage}
         onPickEmbed={() => setUrlDialog({ mode: "embed", initial: "" })}
+        onPickLink={() =>
+          setUrlDialog({ mode: "link", initial: (editor.getAttributes("link").href as string | undefined) ?? "" })
+        }
       />
       {/* px-5 matches the page's px-5 so the body text lines up with the title above (the wrapper
           breaks out of that padding with -mx-5 to let «wide»/«full» images bleed wider than the text). */}
@@ -491,16 +539,24 @@ export function MarkdownEditor({
         placeholder={urlDialog?.mode === "embed" ? t("urlDialog.embedPlaceholder") : t("urlDialog.linkPlaceholder")}
         initialValue={urlDialog?.initial ?? ""}
         allowRemove={urlDialog?.mode === "link" && !!urlDialog.initial}
+        askLabel={urlDialog?.mode === "link" && !urlDialog.initial && editor.state.selection.empty}
         // 닫힐 때 포커스를 에디터로 돌려놓는다 — 백드롭/Esc 로 닫으면 포커스가 body 로 떨어져
         // 다음 타이핑이 허공에 사라졌다(제출 경로는 이미 focus 를 잡으므로 무해한 중복).
         onClose={() => {
           setUrlDialog(null);
           editor.chain().focus().run();
         }}
-        onSubmit={(url) => {
+        onSubmit={(url, label) => {
           if (urlDialog?.mode === "embed") {
             // Insert a live link-preview card node (serializes back to the bare URL → EMBED block).
             editor.chain().focus().insertContent({ type: "linkCard", attrs: { url } }).run();
+          } else if (editor.state.selection.empty && !editor.isActive("link")) {
+            editor
+              .chain()
+              .focus()
+              .insertContent({ type: "text", text: label || url, marks: [{ type: "link", attrs: { href: url } }] })
+              .unsetMark("link")
+              .run();
           } else {
             editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
           }
@@ -523,10 +579,12 @@ function EditorToolbar({
   editor,
   onPickImage,
   onPickEmbed,
+  onPickLink,
 }: {
   editor: Editor;
   onPickImage: (opts?: ImagePickOptions) => void;
   onPickEmbed: () => void;
+  onPickLink: () => void;
 }) {
   const t = useTranslations("postEditor");
   const a = useEditorState({
@@ -537,26 +595,34 @@ function EditorToolbar({
       h3: editor.isActive("heading", { level: 3 }),
       bullet: editor.isActive("bulletList"),
       ordered: editor.isActive("orderedList"),
+      task: editor.isActive("taskList"),
       quote: editor.isActive("blockquote"),
       codeBlock: editor.isActive("codeBlock"),
+      bold: editor.isActive("bold"),
+      link: editor.isActive("link"),
     }),
   });
 
   type Item = { icon: LucideIcon; label: string; active?: boolean; run: () => void };
   const groups: Item[][] = [
     [
+      { icon: Bold, label: t("toolbar.bold"), active: a.bold, run: () => editor.chain().focus().toggleBold().run() },
+      { icon: LinkIcon, label: t("toolbar.link"), active: a.link, run: onPickLink },
+    ],
+    [
       { icon: Heading1, label: t("slash.heading1"), active: a.h1, run: () => editor.chain().focus().toggleHeading({ level: 1 }).run() },
       { icon: Heading2, label: t("slash.heading2"), active: a.h2, run: () => editor.chain().focus().toggleHeading({ level: 2 }).run() },
       { icon: Heading3, label: t("slash.heading3"), active: a.h3, run: () => editor.chain().focus().toggleHeading({ level: 3 }).run() },
       { icon: List, label: t("slash.bulletList"), active: a.bullet, run: () => editor.chain().focus().toggleBulletList().run() },
       { icon: ListOrdered, label: t("slash.orderedList"), active: a.ordered, run: () => editor.chain().focus().toggleOrderedList().run() },
+      { icon: ListChecks, label: t("slash.taskList"), active: a.task, run: () => editor.chain().focus().toggleTaskList().run() },
       { icon: Quote, label: t("slash.quote"), active: a.quote, run: () => editor.chain().focus().toggleBlockquote().run() },
       { icon: SquareCode, label: t("slash.codeBlock"), active: a.codeBlock, run: () => insertCodeBlock(editor) },
     ],
     [
       { icon: ImageIcon, label: t("slash.image"), run: () => onPickImage() },
       { icon: TableIcon, label: t("slash.table"), run: () => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run() },
-      { icon: Video, label: t("slash.embed"), run: onPickEmbed },
+      { icon: PanelTop, label: t("slash.embed"), run: onPickEmbed },
       { icon: Minus, label: t("slash.divider"), run: () => editor.chain().focus().setHorizontalRule().run() },
     ],
   ];
@@ -585,10 +651,8 @@ function EditorToolbar({
                 title={it.label}
                 aria-pressed={it.active}
                 className={cls(it.active)}
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  it.run();
-                }}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={it.run}
               >
                 <it.icon className="h-4 w-4" />
               </button>
@@ -666,13 +730,9 @@ function BubbleBar({ editor, onEditLink }: { editor: Editor; onEditLink: (href: 
             aria-label={it.label}
             aria-pressed={it.active}
             className={btn(it.active)}
-            // onMouseDown + preventDefault (like the toolbar) so clicking doesn't blur the editor
-            // and collapse the selection before the command runs — a collapsed selection makes Link in
-            // particular a no-op (extendMarkRange finds no range), and weakens the mark toggles.
-            onMouseDown={(e) => {
-              e.preventDefault();
-              it.run();
-            }}
+            // Preserve the pointer selection on press; click also handles keyboard and assistive activation.
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={it.run}
           >
             <it.icon className="h-4 w-4" />
           </button>
@@ -746,10 +806,8 @@ function ImageBubble({ editor }: { editor: Editor }) {
         title={it.label}
         aria-pressed={it.active}
         className={btn(it.active)}
-        onMouseDown={(e) => {
-          e.preventDefault();
-          it.run();
-        }}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={it.run}
       >
         <it.icon className="h-4 w-4" />
       </button>
@@ -777,4 +835,3 @@ function ImageBubble({ editor }: { editor: Editor }) {
     </BubbleMenu>
   );
 }
-

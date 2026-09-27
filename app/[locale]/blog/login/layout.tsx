@@ -9,7 +9,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "blogLogin" });
   return {
-    title: `${t("title")} · blog.kurl`,
+    title: `${t("title")} · kurl log`,
     description: t("subtitle"),
     robots: { index: false, follow: true },
   };

@@ -3,6 +3,8 @@ import { ArrowUpRight, MapPin } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { staticMapUrl } from "@/modules/profile/lib/google-maps-static";
 import { Markdown } from "@/modules/blog/components/markdown";
+import { CalloutBlock } from "@/modules/blog/components/callout-block";
+import { isLegacyCalloutLabel, legacyCalloutKind, legacyMultilineCallout, parseCallout } from "@/modules/blog/lib/callout";
 import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
 import { KurlLinkCard } from "@/modules/blog/components/kurl-link-card";
 import { PostCode } from "@/modules/blog/components/post-code";
@@ -11,7 +13,7 @@ import type { TocHeading } from "@/modules/blog/components/post-toc";
 import type { ImageAlign, ImageWidth } from "@/modules/blog/lib/image-width";
 import { kurlShortCode } from "@/modules/blog/lib/kurl-link";
 import { planEmbed } from "@/modules/blog/lib/post-embed";
-import { slugify } from "@/modules/blog/lib/slugify";
+import { headingAnchors, headingPlainText, slugify } from "@/modules/blog/lib/slugify";
 import type { PublicCtaInfo, PublicPostBlock } from "@/modules/blog/api/public-posts";
 import { getLinkPreview } from "@/modules/blog/api/public-posts";
 
@@ -37,14 +39,31 @@ function headingRanks(blocks: PublicPostBlock[]): Map<number, number> {
  *  so the TOC indentation matches the rendered heading depth. */
 export function extractHeadings(blocks: PublicPostBlock[]): TocHeading[] {
   const ranks = headingRanks(blocks);
-  return blocks
-    .filter((b) => HEADING_TYPES.includes(b.type) && b.content?.trim())
-    .map((b) => ({
-      id: slugify(b.content as string),
-      text: (b.content as string).trim(),
-      level: (ranks.get(Number(b.type[1])) ?? 0) + 1,
-    }))
-    .filter((h) => h.id.length > 0);
+  const headings = blocks.filter((b) => HEADING_TYPES.includes(b.type) && b.content?.trim());
+  const anchors = headingAnchors(headings.map((b) => b.content as string));
+  return headings.map((b, i) => ({
+    id: anchors[i],
+    legacyId: slugify(b.content as string),
+    text: headingPlainText(b.content as string),
+    level: (ranks.get(Number(b.type[1])) ?? 0) + 1,
+  }));
+}
+
+function headingAnchorMap(blocks: PublicPostBlock[]): Map<PublicPostBlock, string> {
+  const headings = blocks.filter((b) => HEADING_TYPES.includes(b.type) && b.content?.trim());
+  const anchors = headingAnchors(headings.map((b) => b.content as string));
+  return new Map(headings.map((b, i) => [b, anchors[i]]));
+}
+
+const THEMATIC_BREAK = /^\s*([-*_])(\s*\1){2,}\s*$/;
+
+function isCalloutLabel(block: PublicPostBlock, next?: PublicPostBlock): boolean {
+  return (
+    block.type === "QUOTE" &&
+    isLegacyCalloutLabel(block.content) &&
+    next?.type === "PARAGRAPH" &&
+    !!next.content?.trim()
+  );
 }
 
 /**
@@ -64,16 +83,25 @@ export function ArticleBody({
   className?: string;
 }) {
   const ranks = headingRanks(blocks);
+  const anchors = headingAnchorMap(blocks);
   return (
     <div className={className ? `prose-post ${className}` : "prose-post"}>
-      {blocks.map((block, i) => (
-        // keyed Fragment 로 블록별 키 스코프를 세운다 — 서버 컴포넌트 출력이 평탄화되며 각
-        // 블록의 react-markdown 내부 키(p-0…)가 형제로 충돌하던 콘솔 오염의 근원. Fragment 라
-        // DOM 은 불변 → .prose-post > :first/last-child 여백 트림도 그대로다.
-        <Fragment key={`block-${i}`}>
-          <Block block={block} ranks={ranks} postId={postId} />
-        </Fragment>
-      ))}
+      {blocks.map((block, i) => {
+        if (i > 0 && isCalloutLabel(blocks[i - 1], block)) return null;
+        const next = blocks[i + 1];
+        return (
+          // keyed Fragment 로 블록별 키 스코프를 세운다 — 서버 컴포넌트 출력이 평탄화되며 각
+          // 블록의 react-markdown 내부 키(p-0…)가 형제로 충돌하던 콘솔 오염의 근원. Fragment 라
+          // DOM 은 불변 → .prose-post > :first/last-child 여백 트림도 그대로다.
+          <Fragment key={`block-${i}`}>
+            {isCalloutLabel(block, next) ? (
+              <CalloutBlock kind={legacyCalloutKind(block.content as string)} body={next.content as string} />
+            ) : (
+              <Block block={block} ranks={ranks} anchors={anchors} postId={postId} />
+            )}
+          </Fragment>
+        );
+      })}
     </div>
   );
 }
@@ -98,7 +126,11 @@ export function readingMinutes(blocks: PublicPostBlock[]): number {
   return Math.max(1, Math.round(chars / 500));
 }
 
-type BlockContext = { ranks: Map<number, number>; postId?: number };
+type BlockContext = {
+  ranks: Map<number, number>;
+  anchors: Map<PublicPostBlock, string>;
+  postId?: number;
+};
 type BlockRenderer = (block: PublicPostBlock, ctx: BlockContext) => ReactNode;
 
 /**
@@ -106,16 +138,25 @@ type BlockRenderer = (block: PublicPostBlock, ctx: BlockContext) => ReactNode;
  * one renderer here — the `Block` dispatcher below never changes (closed for modification).
  */
 const BLOCK_RENDERERS: Record<string, BlockRenderer> = {
-  PARAGRAPH: (b) => (b.content ? <Markdown>{b.content}</Markdown> : null),
-  H1: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} />,
-  H2: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} />,
-  H3: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} />,
-  QUOTE: (b) =>
-    b.content ? (
+  PARAGRAPH: (b) =>
+    !b.content ? null : THEMATIC_BREAK.test(b.content) ? (
+      <div className="section-divider my-12" role="separator" />
+    ) : (
+      <Markdown>{b.content}</Markdown>
+    ),
+  H1: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} id={ctx.anchors.get(b)} />,
+  H2: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} id={ctx.anchors.get(b)} />,
+  H3: (b, ctx) => <HeadingBlock block={b} ranks={ctx.ranks} id={ctx.anchors.get(b)} />,
+  QUOTE: (b) => {
+    if (!b.content) return null;
+    const callout = parseCallout(b.content) ?? legacyMultilineCallout(b.content);
+    if (callout) return <CalloutBlock kind={callout.kind} body={callout.body} />;
+    return (
       <blockquote>
         <Markdown inline>{b.content}</Markdown>
       </blockquote>
-    ) : null,
+    );
+  },
   DIVIDER: () => <div className="section-divider my-12" role="separator" />,
   LIST_BULLET: (b) => <ListBlock content={b.content} ordered={false} />,
   LIST_NUMBERED: (b) => <ListBlock content={b.content} ordered />,
@@ -129,23 +170,35 @@ const BLOCK_RENDERERS: Record<string, BlockRenderer> = {
 function Block({
   block,
   ranks,
+  anchors,
   postId,
 }: {
   block: PublicPostBlock;
   ranks: Map<number, number>;
+  anchors: Map<PublicPostBlock, string>;
   postId?: number;
 }) {
-  return BLOCK_RENDERERS[block.type]?.(block, { ranks, postId }) ?? null;
+  return BLOCK_RENDERERS[block.type]?.(block, { ranks, anchors, postId }) ?? null;
 }
 
 /** Heading (H1/H2/H3) → rank+2 (h2/h3/h4) so the outline never skips a level; self-linking deep anchor. */
-function HeadingBlock({ block, ranks }: { block: PublicPostBlock; ranks: Map<number, number> }) {
+function HeadingBlock({
+  block,
+  ranks,
+  id,
+}: {
+  block: PublicPostBlock;
+  ranks: Map<number, number>;
+  id?: string;
+}) {
   if (!block.content) return null;
   const Tag = `h${(ranks.get(Number(block.type[1])) ?? 0) + 2}` as "h2" | "h3" | "h4";
-  const id = slugify(block.content);
+  const text = block.content.trim().replace(/\[([^\]]*)\]\([^)]*\)/g, "$1");
   return (
     <Tag id={id}>
-      <a href={`#${id}`}>{block.content}</a>
+      <a href={`#${id}`}>
+        <Markdown inline>{text}</Markdown>
+      </a>
     </Tag>
   );
 }
@@ -408,7 +461,7 @@ async function CtaBlock({ cta, postId }: { cta: PublicCtaInfo | null; postId?: n
   }
   const primary = cta.style === "PRIMARY";
   const base =
-    "my-8 inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-[15px] font-semibold no-underline transition-colors";
+    "my-8 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-[15px] font-semibold no-underline transition-colors";
   const tone = primary
     ? "bg-accent-700 text-white hover:bg-accent-800"
     : "border border-slate-200 text-slate-900 hover:border-accent-300 hover:bg-accent-50/50 dark:border-slate-700 dark:text-slate-100 dark:hover:border-accent-500/40 dark:hover:bg-accent-500/10";

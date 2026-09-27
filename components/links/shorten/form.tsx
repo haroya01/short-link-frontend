@@ -1,34 +1,50 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ChevronDown, Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, ChevronDown, Link2, Loader2, Lock, LockOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { ApiError, isValidUrl, shortenUrl } from "@/lib/api";
 import { prewarmPowToken } from "@/lib/pow";
 import { track } from "@/components/common/posthog-provider";
 import type { CreateLinkResponse } from "@/types";
+import { shortenPayload } from "./payload";
 
 type ShortenedItem = {
   res: CreateLinkResponse;
   originalUrl: string;
+  passwordRequested: boolean;
 };
 
 type Props = {
   authenticated: boolean;
   ready: boolean;
   onShortened: (results: ShortenedItem[]) => void;
+  /**
+   * 랜딩 폴드의 캡슐 폼 변형 — 보더·포커스 링·에러 색은 캡슐 컨테이너가 소유하고
+   * 내부 입력은 무테. 고급 옵션 필드는 무관.
+   */
+  hero?: boolean;
+  /** 답 줄 상태에서 "다른 주소도 줄이기"로 돌아온 빈 줄은 바로 받아쓸 수 있게 포커스. */
+  heroAutoFocus?: boolean;
 };
 
-export function ShortenForm({ authenticated, ready, onShortened }: Props) {
+export function ShortenForm({ authenticated, ready, onShortened, hero = false, heroAutoFocus = false }: Props) {
   const t = useTranslations("shortenForm");
   const [url, setUrl] = useState("");
   const [customCode, setCustomCode] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [lockOn, setLockOn] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** 히어로 성공 시 blur 용 — 모바일 키보드를 내려야 결과 카드가 실제 뷰포트에 들어온다. */
+  const heroInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
   // Pre-warm one proof-of-work token while the user is typing so the first POST doesn't pay the
   // mining cost. Authenticated users skip PoW server-side, so don't bother computing. Wait for
@@ -40,10 +56,34 @@ export function ShortenForm({ authenticated, ready, onShortened }: Props) {
     }
   }, [ready, authenticated]);
 
+  useEffect(() => {
+    if (!lockOn) return;
+    const frame = requestAnimationFrame(() => passwordInputRef.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(frame);
+  }, [lockOn]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    await shorten(url.trim());
+  }
+
+  /**
+   * 히어로의 "붙여넣으면 바로 짧아진다" — 빈 한 줄에 유효한 URL 이 붙으면 제출까지 한 호흡.
+   * 고급 옵션(코드·만료)을 만지는 중이거나 이미 타이핑한 내용이 있으면 끼어들지 않는다 —
+   * 자동 제출은 의도가 명백한 경우(빈 필드 + 완결된 URL 붙여넣기)에만.
+   */
+  function handleHeroPaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    if (!hero || busy) return;
+    if (url.trim() || showAdvanced || lockOn || customCode.trim() || expiresAt) return;
+    const pasted = e.clipboardData.getData("text").trim();
+    if (!isValidUrl(pasted)) return;
+    e.preventDefault();
+    setUrl(pasted);
+    void shorten(pasted);
+  }
+
+  async function shorten(trimmed: string) {
     setError(null);
-    const trimmed = url.trim();
     if (!trimmed) {
       setError(t("errors.empty"));
       return;
@@ -53,29 +93,40 @@ export function ShortenForm({ authenticated, ready, onShortened }: Props) {
       return;
     }
 
+    if (authenticated && lockOn && !password.trim()) {
+      setPasswordError(t("errors.passwordEmpty"));
+      passwordInputRef.current?.focus();
+      return;
+    }
+
     setBusy(true);
     try {
-      const codeForSingle =
-        authenticated && customCode.trim() ? customCode.trim() : undefined;
-      const expiry =
-        authenticated && expiresAt ? new Date(expiresAt).toISOString() : undefined;
-
-      const res = await shortenUrl({
+      const payload = shortenPayload({
         url: trimmed,
-        customCode: codeForSingle,
-        expiresAt: expiry,
+        authenticated,
+        customCode,
+        expiresAt,
+        lockOn,
+        password,
       });
+      const res = await shortenUrl(payload);
 
       track("link_shortened", {
         count: 1,
         authenticated,
-        has_custom_code: Boolean(codeForSingle),
-        has_expiry: Boolean(expiry),
+        has_custom_code: Boolean(payload.customCode),
+        has_expiry: Boolean(payload.expiresAt),
+        has_password: Boolean(payload.password),
       });
-      onShortened([{ res, originalUrl: trimmed }]);
+      onShortened([{ res, originalUrl: trimmed, passwordRequested: Boolean(payload.password) }]);
       setUrl("");
       setCustomCode("");
       setExpiresAt("");
+      setPassword("");
+      setLockOn(false);
+      // 모바일: 키보드가 서 있으면 결과 카드가 가시 뷰포트 밖(키보드 뒤)에 깔린다 —
+      // 성공했으니 입력의 소임은 끝, 키보드를 내리고 무대를 결과에 넘긴다(page 가 스크롤 인도).
+      if (hero) heroInputRef.current?.blur();
     } catch (err) {
       setError(messageOf(err, t));
     } finally {
@@ -85,27 +136,96 @@ export function ShortenForm({ authenticated, ready, onShortened }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <Input
-          type="url"
-          inputMode="url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder={t("placeholder")}
-          disabled={busy}
-          aria-invalid={!!error}
-          className="h-12 sm:flex-1"
-        />
-        <Button
-          type="submit"
-          size="lg"
-          variant="accent"
-          disabled={busy}
-          className="h-12 w-full sm:h-11 sm:w-auto sm:min-w-32"
+      {hero ? (
+        /* 에러 중엔 빨강이 포커스(초록 링)보다 세다 — 제출 직후 포커스가 버튼(캡슐 안)에 남아
+           focus-within 초록이 이기면 빨간 메시지와 신호가 엇갈린다. 타이핑을 시작하면
+           onChange 가 에러를 걷어 초록 포커스로 자연 복귀. 캡슐을 key 로 리마운트하면
+           타이핑 중 포커스가 날아가므로 넛지는 메시지 행에만. */
+        <div
+          className={
+            "relative flex items-center gap-2 overflow-hidden rounded-full border bg-white py-1.5 pl-4 pr-1.5 shadow-card transition-[border-color,box-shadow] duration-200 dark:bg-slate-900 sm:gap-3 sm:py-2 sm:pl-5 sm:pr-2 " +
+            (error
+              ? "border-red-400 dark:border-red-500/70"
+              : "border-slate-200 focus-within:border-accent-500 focus-within:shadow-lift focus-within:ring-4 focus-within:ring-accent-500/10 dark:border-slate-800 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/15")
+          }
         >
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : t("submit")}
-        </Button>
-      </div>
+          {/* 스크롤 연동 형광 스윕 — stage-sweep-host 조상(무대 on)일 때만 애니메이션.
+              캡슐 안에 두는 이유: 밖에 두면 알약 곡률과 어긋난 사각 밴드가 노출된다. */}
+          <span aria-hidden className="capsule-sweep" />
+          <Link2
+            aria-hidden
+            className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-500"
+          />
+          <Input
+            ref={heroInputRef}
+            type="url"
+            inputMode="url"
+            autoFocus={heroAutoFocus}
+            value={url}
+            onChange={(e) => {
+              setUrl(e.target.value);
+              if (error) setError(null);
+            }}
+            onPaste={handleHeroPaste}
+            placeholder={t("placeholder")}
+            disabled={busy}
+            aria-invalid={!!error}
+            /* 16px 미만이면 iOS 사파리가 포커스 시 강제 줌 — 모바일은 16px 고정.
+               truncate: 좁은 폭에선 placeholder 가 원형 버튼에 닿기 전에 …로 접힌다. */
+            className="h-11 flex-1 truncate rounded-none border-0 bg-transparent px-0 text-[16px] shadow-none placeholder:text-slate-500 focus-visible:border-transparent focus-visible:ring-0 dark:bg-transparent dark:placeholder:text-slate-400 sm:text-[17px]"
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            aria-label={t("submit")}
+            className="focus-ring inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-accent-700 px-4 text-[15px] font-bold text-white transition-[background-color,transform] duration-200 hover:bg-accent-800 active:scale-[0.98] disabled:opacity-60 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400 sm:h-10 sm:px-5"
+          >
+            {busy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <span>{t("heroSubmit")}</span>
+                <ArrowRight aria-hidden className="h-4 w-4" />
+              </>
+            )}
+          </button>
+        </div>
+      ) : null}
+      {hero && error && (
+        /* 메시지는 줄 바로 밑 — 빨간 짧은 바(마커 문법의 에러 판)가 앞장서고, 행 전체가
+           옆으로 한 번 살짝 어긋났다 돌아온다(err-nudge 1회). key=문구라 같은 에러 재제출도 재발화. */
+        <p
+          key={error}
+          role="alert"
+          className="motion-safe:animate-[err-nudge_240ms_var(--ease)] flex items-center gap-2 text-[13px] font-medium text-red-600 dark:text-red-400"
+        >
+          <span aria-hidden className="h-[3px] w-3.5 shrink-0 rounded-full bg-red-500 dark:bg-red-400" />
+          {error}
+        </p>
+      )}
+      {!hero && (
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Input
+            type="url"
+            inputMode="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder={t("placeholder")}
+            disabled={busy}
+            aria-invalid={!!error}
+            className="h-12 sm:flex-1"
+          />
+          <Button
+            type="submit"
+            size="lg"
+            variant="accent"
+            disabled={busy}
+            className="h-12 w-full sm:h-11 sm:w-auto sm:min-w-32"
+          >
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : t("submit")}
+          </Button>
+        </div>
+      )}
 
       {/* Advanced section is auth-only — customCode + expiresAt require a logged-in account
           server-side, and anonymous visitors no longer have channel chips to expand into, so the
@@ -113,18 +233,89 @@ export function ShortenForm({ authenticated, ready, onShortened }: Props) {
           surface honest about what's actually configurable. */}
       {authenticated && (
         <div>
-          <button
-            type="button"
-            onClick={() => setShowAdvanced((v) => !v)}
-            aria-expanded={showAdvanced}
-            aria-controls="shorten-advanced-section"
-            className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              aria-expanded={showAdvanced}
+              aria-controls="shorten-advanced-section"
+              className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
+            >
+              <ChevronDown
+                className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[var(--ease)] ${showAdvanced ? "rotate-180" : ""}`}
+              />
+              {t("advancedToggle")}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLockOn((v) => !v);
+                setPasswordError(null);
+              }}
+              aria-pressed={lockOn}
+              aria-controls="shorten-password-row"
+              className={`inline-flex items-center gap-1 text-xs transition-colors ${
+                lockOn
+                  ? "font-medium text-accent-700 dark:text-accent-400"
+                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+              }`}
+            >
+              {lockOn ? <Lock aria-hidden className="h-3.5 w-3.5" /> : <LockOpen aria-hidden className="h-3.5 w-3.5" />}
+              {t("passwordToggle")}
+            </button>
+          </div>
+          <div
+            id="shorten-password-row"
+            aria-hidden={!lockOn}
+            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[var(--ease)] motion-reduce:transition-none ${
+              lockOn ? "mt-2 grid-rows-[1fr] opacity-100" : "mt-0 grid-rows-[0fr] opacity-0"
+            }`}
           >
-            <ChevronDown
-              className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[var(--ease)] ${showAdvanced ? "rotate-180" : ""}`}
-            />
-            {t("advancedToggle")}
-          </button>
+            <div className="overflow-hidden">
+              <div className="space-y-1.5 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:p-5">
+                <label
+                  htmlFor="shorten-password"
+                  className="block text-[12px] font-medium text-slate-700 dark:text-slate-300"
+                >
+                  {t("passwordLabel")}
+                </label>
+                <div className="sm:max-w-sm">
+                  <PasswordInput
+                    key={lockOn ? "open" : "closed"}
+                    id="shorten-password"
+                    ref={passwordInputRef}
+                    autoComplete="new-password"
+                    maxLength={200}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (passwordError) setPasswordError(null);
+                    }}
+                    placeholder={t("passwordPlaceholder")}
+                    aria-invalid={!!passwordError}
+                    aria-describedby="shorten-password-note"
+                    className={`h-9 text-sm ${passwordError ? "border-red-400 focus-visible:ring-red-400 dark:border-red-500/70 dark:focus-visible:ring-red-500/70" : ""}`}
+                    disabled={busy || !lockOn}
+                  />
+                </div>
+                {passwordError ? (
+                  <p
+                    key={passwordError}
+                    id="shorten-password-note"
+                    role="alert"
+                    className="motion-safe:animate-[err-nudge_240ms_var(--ease)] flex items-center gap-2 text-[12px] font-medium text-red-600 dark:text-red-400"
+                  >
+                    <span aria-hidden className="h-[3px] w-3.5 shrink-0 rounded-full bg-red-500 dark:bg-red-400" />
+                    {passwordError}
+                  </p>
+                ) : (
+                  <p id="shorten-password-note" className="text-[12px] text-slate-500 dark:text-slate-400">
+                    {t("passwordHint")}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
           {/*
            * Grid-rows trick for "auto height" reveal animations: an outer grid container animates
            * between `grid-rows-[0fr]` (collapsed) and `grid-rows-[1fr]` (expanded), and the inner
@@ -177,7 +368,8 @@ export function ShortenForm({ authenticated, ready, onShortened }: Props) {
         </div>
       )}
 
-      {error && (
+      {/* 히어로는 줄 밑에서 이미 말했다 — 여기(폼 꼬리)는 카드형 폼의 자리만. */}
+      {!hero && error && (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {error}
         </p>
@@ -190,11 +382,15 @@ function messageOf(err: unknown, t: (key: string) => string): string {
   if (err instanceof ApiError) {
     if (err.detail.code === "MALICIOUS_URL") return t("errors.malicious");
     if (err.detail.code === "DUPLICATE_SHORT_CODE") return t("errors.duplicate");
+    if (err.detail.code === "SELF_REFERENCING_URL") return t("errors.selfReferencing");
+    if (err.detail.code === "RESERVED_SHORT_CODE") return t("errors.reservedCode");
+    if (err.detail.code === "LINK_QUOTA_EXCEEDED") return t("errors.quota");
     if (err.detail.code === "VALIDATION_FAILED") {
       const fields = err.detail.errors?.map((e) => translateValidation(e.field, e.message, t));
       return fields?.join(", ") ?? t("errors.validation");
     }
-    return err.detail.detail ?? t("errors.generic");
+    // detail 은 서버의 영문 로그 원문 — 사용자 화면엔 매핑된 카피만 내보낸다.
+    return t("errors.generic");
   }
   if (err instanceof Error) return err.message;
   return t("errors.generic");

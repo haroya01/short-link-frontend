@@ -67,7 +67,7 @@ export function PublishCelebration({ slug }: { slug: string }) {
         STRIPS.map((s, i) => (
           <span
             key={i}
-            className={`absolute top-0 block rounded-[1px] ${s.cls}`}
+            className={`absolute top-0 block rounded-sm ${s.cls}`}
             style={{
               left: `${s.left}%`,
               width: s.w,

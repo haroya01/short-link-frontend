@@ -1,13 +1,16 @@
 import { DATE_LOCALE } from "@/lib/date";
 import type { ReactNode } from "react";
-import { Heart } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Library } from "lucide-react";
 import type { PublicFeedItem } from "@/modules/blog/api/public-posts";
-import { isRenderablePost, showLikes } from "@/modules/blog/lib/public-metrics";
+import { isRenderablePost } from "@/modules/blog/lib/public-metrics";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { Avatar as AuthorAvatar } from "@/modules/blog/components/avatar";
 import { FeedCardBookmark } from "@/modules/blog/components/feed-card-bookmark";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { CoverThumb } from "@/modules/blog/components/cover-thumb";
+import { PostBelongingLine } from "@/modules/blog/components/post-belonging-line";
+import { BelongingProvider } from "@/modules/blog/components/post-belonging-context";
 
 const BLOG_HOST = process.env.NEXT_PUBLIC_BLOG_HOST;
 
@@ -89,17 +92,6 @@ function MetaRow({
       <time dateTime={item.publishedAt} className="shrink-0">
         {formatDate(item.publishedAt, locale)}
       </time>
-      {/* Likes sit inline right after the date — same position on every card, never floated to a
-          column edge that shifts with the thumbnail. Demoted: a faint marker, only shown when > 0. */}
-      {showLikes(item.likeCount) && (
-        <>
-          <span aria-hidden>·</span>
-          <span className="flex shrink-0 items-center gap-1">
-            <Heart className="h-3 w-3 text-accent-600" />
-            {item.likeCount}
-          </span>
-        </>
-      )}
     </div>
   );
 }
@@ -110,7 +102,47 @@ function MetaRow({
  * card grid, so this is a narrow stacked column; the card's own bottom border draws the row dividers.
  */
 export function FeedList({ children }: { children: ReactNode }) {
-  return <ul className="flex max-w-2xl flex-col">{children}</ul>;
+  return (
+    <BelongingProvider>
+      <ul className="flex max-w-2xl flex-col">{children}</ul>
+    </BelongingProvider>
+  );
+}
+
+function SeriesLine({
+  item,
+  series,
+  locale,
+}: {
+  item: PublicFeedItem;
+  series: NonNullable<PublicFeedItem["series"]>;
+  locale: string;
+}) {
+  const t = useTranslations("publicFeed");
+  return (
+    <BlogLink
+      href={authorHref(item.author.username, locale, `series/${series.slug}`)}
+      data-testid="feed-card-series"
+      className="focus-ring -mx-1 mt-1.5 inline-flex max-w-full items-center gap-1.5 rounded px-1 py-1 text-[12px] text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+    >
+      <Library aria-hidden className="h-3.5 w-3.5 shrink-0" />
+      <span className="truncate">
+        {t("seriesEyebrow")} · {series.title}
+      </span>
+      <span aria-hidden>·</span>
+      <span className="shrink-0 tabular-nums">{t("seriesEpisodeCount", { count: series.postCount })}</span>
+    </BlogLink>
+  );
+}
+
+function ReasonLabel({ reason }: { reason: NonNullable<PublicFeedItem["followReason"]> }) {
+  const t = useTranslations("publicFeed");
+  if (reason.kind === "AUTHOR") return null;
+  return (
+    <span className="text-[12px] text-slate-500 dark:text-slate-400">
+      {reason.kind === "TOPIC" ? t("feedReasonTopic", { tag: reason.tag ?? "" }) : t("feedReasonSeries")}
+    </span>
+  );
 }
 
 /** Loading placeholder shaped like a {@link FeedCard} list row — used while a client feed (following,
@@ -127,7 +159,7 @@ export function FeedListSkeleton({ count = 4 }: { count?: number }) {
               <div className="h-3.5 w-full rounded bg-slate-100 dark:bg-slate-800" />
               <div className="h-3 w-28 rounded bg-slate-100 dark:bg-slate-800" />
             </div>
-            <div className="h-20 w-20 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32" />
+            <div className="h-20 w-20 shrink-0 rounded-2xl bg-slate-100 dark:bg-slate-800 sm:h-24 sm:w-32" />
           </div>
         </li>
       ))}
@@ -171,7 +203,7 @@ export function FeedCard({
   /** Above-fold row: load the thumbnail eagerly. Lazy thumbnails in the first viewport made the
    *  feed's LCP image wait for hydration — Lighthouse modeled that as LCP ≈ TTI. */
   eager?: boolean;
-  /** Mount fade + stagger (ms) for rows appended by the infinite scroll — mirrors DiscoveryCell.
+  /** Mount fade + stagger (ms) for rows appended by the infinite scroll.
    *  Left unset on the initial SSR rows so they never re-animate. */
   entranceDelay?: number;
 }) {
@@ -181,7 +213,7 @@ export function FeedCard({
   const hasImage = Boolean(item.ogImageUrl);
   const bookmarkable = showBookmark && typeof item.id === "number";
   // Representative tag = first DISPLAYABLE tag (skip junk — incomplete jamo, single-char, mash), so a
-  // reading-surface row never surfaces "#ㄴ" / "#dddd" as its eyebrow. Mirrors DiscoveryCard.
+  // reading-surface row never surfaces "#ㄴ" / "#dddd" as its eyebrow.
   const eyebrowTag = item.tags.find(isDisplayableTag);
 
   return (
@@ -226,7 +258,15 @@ export function FeedCard({
                 {featuredLabel}
               </span>
             ) : (
-              eyebrowTag && <TagEyebrow tag={eyebrowTag} />
+              (eyebrowTag || item.followReason) && (
+                <span className="flex items-center gap-1.5">
+                  {eyebrowTag && <TagEyebrow tag={eyebrowTag} />}
+                  {eyebrowTag && item.followReason && item.followReason.kind !== "AUTHOR" && (
+                    <span aria-hidden className="text-[12px] text-slate-300 dark:text-slate-600">·</span>
+                  )}
+                  {item.followReason && <ReasonLabel reason={item.followReason} />}
+                </span>
+              )
             )}
             <h2
               className={`mt-1 line-clamp-2 font-bold leading-[1.3] text-slate-900 transition-colors group-hover:text-accent-700 dark:text-slate-100 dark:group-hover:text-accent-400 ${
@@ -248,6 +288,10 @@ export function FeedCard({
             )}
           </BlogLink>
           <MetaRow item={item} locale={locale} hideAuthor={hideAuthor} />
+          {item.series && item.series.postCount > 1 && (
+            <SeriesLine item={item} series={item.series} locale={locale} />
+          )}
+          {typeof item.id === "number" && <PostBelongingLine postId={item.id} />}
         </div>
 
         {hasImage && (
@@ -257,7 +301,7 @@ export function FeedCard({
             tabIndex={-1}
             data-bhv="post"
             data-bhv-id={`${item.author.username}/${item.slug}`}
-            className={`block shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 ${
+            className={`block shrink-0 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 ${
               featured ? "h-24 w-24 sm:h-28 sm:w-[150px]" : "h-20 w-20 sm:h-24 sm:w-32"
             }`}
           >

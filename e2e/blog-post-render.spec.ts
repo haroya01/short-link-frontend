@@ -247,3 +247,76 @@ test("feed → post is a client-side navigation (so loading skeletons show, no f
     "the JS context survived → soft (client) navigation, not a full reload",
   ).toBe("alive");
 });
+
+test("feed home is one reading column and a series row opens its series", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/ko/blog");
+  await page.waitForLoadState("networkidle");
+
+  const rows = page.locator("main ul > li h2");
+  await expect(rows.first()).toBeVisible({ timeout: 15_000 });
+  const lefts = await rows.evaluateAll((els) => els.slice(0, 4).map((el) => Math.round(el.getBoundingClientRect().left)));
+  expect(new Set(lefts).size, "every post row starts at the same column edge").toBe(1);
+
+  const series = page.getByTestId("feed-card-series").first();
+  await expect(series).toBeVisible();
+  await expect(series).toHaveAttribute("href", /\/series\/nextjs-deep-dive$/);
+  await series.click();
+  await page.waitForURL(/\/series\/nextjs-deep-dive/, { timeout: 15_000 });
+});
+
+test("post header keeps like and bookmark on the right, on phones too", async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/ko/p/dohyun/nextjs-14-app-router-blog");
+    const header = page.locator("article header").first();
+    const like = header.getByRole("button", { name: /좋아요/ });
+    const bookmark = header.getByRole("button", { name: "북마크에 저장" });
+    await expect(like).toBeVisible();
+    await expect(bookmark).toBeVisible();
+    const cluster = await like.locator("xpath=..").boundingBox();
+    const box = await header.boundingBox();
+    expect(box!.x + box!.width - (cluster!.x + cluster!.width)).toBeLessThanOrEqual(2);
+  }
+});
+
+test("imported markdown renders cleanly and heading links stay short", async ({ page }) => {
+  await page.goto("/ja/p/dohyun/spring-tx-propagation");
+  const article = page.locator(".prose-post");
+  await expect(article).toBeVisible({ timeout: 30_000 });
+
+  const heading = article.getByRole("heading", { name: "Reactive Streams バックプレッシャーのサポート" });
+  await expect(heading).toBeVisible();
+  await expect(heading).not.toContainText("**");
+  await expect(heading).toHaveAttribute("id", /^section-\d+$/);
+  await expect(article.getByRole("heading", { name: /はどう動く/ }).locator("code")).toHaveText("@Transactional");
+
+  await expect(article.getByText("----")).toHaveCount(0);
+  await expect(article.locator('[role="separator"]').last()).toBeAttached();
+
+  const note = article.locator('aside[data-callout="note"]');
+  await expect(note).toContainText("ノート");
+  await expect(note).toContainText("バックプレッシャーとは？");
+  await expect(article.getByText("ℹ️")).toHaveCount(0);
+
+  const tip = article.locator('aside[data-callout="tip"]');
+  await expect(tip).toContainText("ヒント");
+  await expect(tip.locator("code")).toHaveText("@Transactional");
+  await expect(tip).not.toContainText("[!TIP]");
+
+  const checks = article.locator('li.task-list-item input[type="checkbox"]');
+  await expect(checks).toHaveCount(2);
+  await expect(checks.nth(1)).toBeChecked();
+  await expect(article).not.toContainText("[ ]");
+
+  const id = await heading.getAttribute("id");
+  const legacy = `#${encodeURIComponent("reactive-streams-バックプレッシャーのサポート")}`;
+  await page.goto(`/ja/p/dohyun/spring-tx-propagation${legacy}`);
+  await expect(page).toHaveURL(new RegExp(`#${id}$`));
+
+  const fresh = await page.context().newPage();
+  await fresh.goto(`/ja/p/dohyun/spring-tx-propagation${legacy}`);
+  await expect(fresh).toHaveURL(new RegExp(`#${id}$`));
+  await expect(fresh.locator(`#${id}`)).toBeInViewport();
+});
+

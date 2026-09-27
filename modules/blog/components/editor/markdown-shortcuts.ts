@@ -17,8 +17,9 @@ import type { MarkType } from "@tiptap/pm/model";
 
 // Block shortcuts — the marker sits at the very start of a paragraph and the caret is right after the
 // space that completes it. Capture group drives the level / list kind.
-const BLOCK: { re: RegExp; kind: "heading" | "bullet" | "ordered" | "quote" }[] = [
+const BLOCK: { re: RegExp; kind: "heading" | "bullet" | "ordered" | "quote" | "task" }[] = [
   { re: /^(#{1,3}) $/, kind: "heading" },
+  { re: /^(?:[-*] )?\[( |x)?\] $/i, kind: "task" },
   { re: /^([-*]) $/, kind: "bullet" },
   { re: /^(\d+)\. $/, kind: "ordered" },
   { re: /^(>) $/, kind: "quote" },
@@ -96,11 +97,17 @@ export const MarkdownShortcuts = Extension.create({
                   ? schema.nodes.blockquote
                   : kind === "bullet"
                     ? schema.nodes.bulletList
-                    : schema.nodes.orderedList;
+                    : kind === "task"
+                      ? schema.nodes.taskList
+                      : schema.nodes.orderedList;
               if (!wrapNode) return null;
               const range = tr.doc.resolve(from).blockRange();
-              const wrapping = range && findWrapping(range, wrapNode);
-              if (!wrapping) return null; // can't wrap here → leave the text untouched
+              const found = range && findWrapping(range, wrapNode);
+              const wrapping =
+                found && kind === "task"
+                  ? found.map((w) => (w.type === schema.nodes.taskItem ? { type: w.type, attrs: { checked: /x/i.test(m[1] ?? "") } } : w))
+                  : found;
+              if (!range || !wrapping) return null; // can't wrap here → leave the text untouched
               tr.wrap(range, wrapping);
               return tr.setMeta(KEY, true);
             }

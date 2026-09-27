@@ -80,7 +80,7 @@ export default function CampaignDetailPage() {
   }, [ready, authenticated, campaignId, reload, t]);
 
   if (ready && !authenticated) {
-    return <LinksAuthGate eyebrow="campaigns" title={t("loginRequired")} />;
+    return <LinksAuthGate title={t("loginRequired")} />;
   }
 
   return (
@@ -362,7 +362,7 @@ function PolicySummary({
         )}
       </div>
       {action === "EXPIRE" && (
-        <div className="mt-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 px-3 py-3">
+        <div className="mt-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 px-3 py-3">
           <div className="flex items-start justify-between gap-2">
             <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
               {t("policy.messageLabel")}
