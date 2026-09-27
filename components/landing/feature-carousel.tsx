@@ -171,7 +171,7 @@ export function FeatureCarousel() {
                 />
               ))}
             </div>
-            <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <p className="font-mono text-[10px] text-slate-500 dark:text-slate-400">
               {String(active + 1).padStart(2, "0")} / 0{FEATURES.length}
             </p>
           </div>
@@ -198,7 +198,7 @@ export function FeatureCarousel() {
           <div key={active} className="absolute inset-0 flex animate-fade-in flex-col p-6">
             <div className="mb-4 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
               <ActiveIcon className="h-3.5 w-3.5 text-accent-600 dark:text-accent-400" />
-              <span className="font-mono uppercase tracking-wider">
+              <span className="font-mono">
                 {t(`${current.key}.title`)}
               </span>
             </div>

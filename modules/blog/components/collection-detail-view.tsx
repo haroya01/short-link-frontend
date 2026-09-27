@@ -466,7 +466,7 @@ function CollectionEditor({
       {/* Danger zone — a separated, red-framed section at the bottom so an irreversible delete can't be
           fired by muscle memory next to Save. The confirm dialog still gates the actual delete. */}
       <div className="mt-8 rounded-2xl border border-red-200 p-4 dark:border-red-500/30">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-red-600/80 dark:text-red-400/80">
+        <p className="text-[11px] font-bold text-red-600/80 dark:text-red-400/80">
           {t("dangerZone")}
         </p>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
@@ -492,7 +492,7 @@ function CollectionEditor({
 function EditorSection({ label, children }: { label: string; children: ReactNode }) {
   return (
     <section className="mt-6 first:mt-0">
-      <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+      <p className="mb-2 text-[12px] font-bold text-slate-500 dark:text-slate-400">
         {label}
       </p>
       {children}

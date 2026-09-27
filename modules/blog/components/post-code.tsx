@@ -28,7 +28,7 @@ export function PostCode({ lang, code, children }: { lang: string; code: string;
   return (
     <div className="group relative">
       {lang && (
-        <span className="absolute left-4 top-2.5 z-10 select-none font-mono text-[11px] font-medium uppercase tracking-wide text-slate-500">
+        <span className="absolute left-4 top-2.5 z-10 select-none font-mono text-[11px] font-medium text-slate-500">
           {lang}
         </span>
       )}

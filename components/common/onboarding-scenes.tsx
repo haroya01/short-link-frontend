@@ -40,7 +40,7 @@ export function DashboardOnboardingScene() {
       >
         <div className="flex items-end justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[9px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
               {t("weekClicks")}
             </p>
             <p className="mt-0.5 font-mono text-xl font-semibold tabular-nums leading-none text-slate-900 dark:text-slate-100">
@@ -105,7 +105,7 @@ export function CampaignOnboardingScene() {
       </div>
 
       <div className="absolute left-[128px] right-4 top-1/2 -translate-y-1/2">
-        <p className="obs-rise text-[9px] font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500" style={{ animationDelay: "0.5s" }}>
+        <p className="obs-rise text-[10px] font-medium text-slate-500 dark:text-slate-400" style={{ animationDelay: "0.5s" }}>
           {t("scans")}
         </p>
         <p

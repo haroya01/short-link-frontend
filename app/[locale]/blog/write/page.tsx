@@ -248,12 +248,12 @@ export default function WriteIndexPage() {
                 aria-pressed={filter === s}
                 className={`focus-ring inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
                   filter === s
-                    ? "bg-accent-700 text-white"
-                    : "bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+                    ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                 }`}
               >
                 {s === "all" ? t("filterAll") : t(`status${s}`)}
-                <span className={filter === s ? "text-white/70" : "text-slate-500 dark:text-slate-500"}>{count(s)}</span>
+                <span className={filter === s ? "text-white/70 dark:text-slate-900/60" : "text-slate-500 dark:text-slate-400"}>{count(s)}</span>
               </button>
             ))}
           </div>

@@ -55,7 +55,7 @@ function SectionTabs({
             onClick={() => onChange(tabItem.key)}
             className={`focus-ring whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
               isActive
-                ? "bg-accent-700 text-white"
+                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
                 : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
@@ -364,7 +364,7 @@ function PostPerformanceList() {
               aria-pressed={sort === s}
               className={`focus-ring rounded-full px-2.5 py-1 text-[12px] font-medium transition-colors ${
                 sort === s
-                  ? "bg-accent-700 text-white"
+                  ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
                   : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
               }`}
             >

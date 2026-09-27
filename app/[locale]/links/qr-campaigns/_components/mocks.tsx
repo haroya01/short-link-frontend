@@ -52,7 +52,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
     >
       {/* Before kurl — 4 cells 중 3개가 "?" */}
       <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_4px_24px_rgba(15,23,42,0.06)]">
-        <div className="mb-2.5 inline-flex items-center rounded-md bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-rose-700">
+        <div className="mb-2.5 inline-flex items-center rounded-md bg-rose-50 px-2 py-1 text-[10px] font-semibold text-rose-700">
           {t("kpiBeforeKurl")}
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -91,7 +91,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
           transform: active ? "translateY(0)" : "translateY(12px)",
         }}
       >
-        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-accent-700 dark:text-accent-400">
+        <div className="mb-2.5 inline-flex items-center rounded-md bg-accent-100 px-2 py-1 text-[10px] font-semibold text-accent-700 dark:text-accent-400">
           {t("kpiAfterKurl")}
         </div>
         <div className="flex items-center justify-between gap-2">
@@ -137,7 +137,7 @@ function KpiCellMini({
   /* 셀마다 상자를 두르던 타일 그리드는 "AI 상자" 문법 — 헤어라인 분할의 플랫 스탯 행으로. */
   return (
     <div className="min-w-0 px-2 py-1 first:pl-0 last:pr-0">
-      <p className="truncate text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <p className="truncate text-[10px] font-medium text-slate-500 dark:text-slate-400">
         {label}
       </p>
       <p
@@ -173,7 +173,7 @@ export function MockBatch({ mock, active }: { mock: MockData; active: boolean })
           {t("batchAdd")}
         </span>
       </div>
-      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-5 py-2.5 text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <div className="grid grid-cols-[2fr_1fr_1.2fr_0.8fr_0.8fr] gap-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-5 py-2.5 text-[10px] font-medium text-slate-500 dark:text-slate-400">
         <span>{t("batchColName")}</span>
         <span>{t("batchColArea")}</span>
         <span>{t("batchColDist")}</span>
@@ -285,7 +285,7 @@ export function MockPoster({ active }: { mock: MockData; active: boolean }) {
               }}
             />
           ) : (
-            <div className="grid h-full w-full place-items-center text-[10px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
+            <div className="grid h-full w-full place-items-center text-[10px] font-medium text-accent-700 dark:text-accent-400">
               {t("posterBoxLabel")}
             </div>
           )}
@@ -364,7 +364,7 @@ export function MockBars({ mock, active }: { mock: MockData; active: boolean }) 
                     </span>
                     {isTop && (
                       <span
-                        className="rounded-md bg-accent-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent-700 dark:text-accent-400 transition-[opacity,transform] duration-[480ms] ease-[var(--ease)]"
+                        className="rounded-md bg-accent-100 px-1.5 py-0.5 text-[10px] font-semibold text-accent-700 dark:text-accent-400 transition-[opacity,transform] duration-[480ms] ease-[var(--ease)]"
                         style={{
                           transitionDelay: active ? `${delay + 900}ms` : "0ms",
                           opacity: active ? 1 : 0,
@@ -669,7 +669,7 @@ function PhoneScreen({
       </div>
       {isAfter && nextLabel && chipLabel ? (
         <div className="mt-auto flex flex-col items-start gap-1">
-          <span className="text-[10px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400">
+          <span className="text-[10px] font-medium text-accent-700 dark:text-accent-400">
             {nextLabel}
           </span>
           <span className="rounded-md bg-accent-700 px-1.5 py-0.5 text-[10px] font-medium text-white">

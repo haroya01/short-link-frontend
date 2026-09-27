@@ -55,7 +55,7 @@ export function WindowTabs({ days, onChange }: { days: number; onChange: (d: num
           aria-pressed={days === d}
           className={`focus-ring rounded-full px-3 py-1 text-[13px] font-medium transition-colors ${
             days === d
-              ? "bg-accent-700 text-white"
+              ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
               : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
           }`}
         >

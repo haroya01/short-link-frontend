@@ -35,7 +35,7 @@ export function BasicSection({
   return (
     <div className="space-y-3">
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("originalUrl")}
         </span>
         <Input
@@ -49,7 +49,7 @@ export function BasicSection({
         />
       </label>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("expiresAt")}
         </span>
         <div className="flex gap-2">
@@ -74,7 +74,7 @@ export function BasicSection({
         </div>
       </label>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("noteLabel")}
         </span>
         <Input
@@ -88,7 +88,7 @@ export function BasicSection({
         <p className="text-[10px] text-slate-500 dark:text-slate-500">{t("noteHint")}</p>
       </label>
       <label className="block space-y-1">
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
           {t("expiredMessageLabel")}
         </span>
         <Textarea

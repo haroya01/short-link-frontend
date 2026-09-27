@@ -212,7 +212,7 @@ function StatusBadge({ status }: { status: MyEvent["status"] }) {
   const label = status === "OPEN" ? t("open") : status === "CLOSED" ? t("closed") : t("canceled");
   return (
     <span
-      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${cls}`}
+      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}`}
     >
       {label}
     </span>

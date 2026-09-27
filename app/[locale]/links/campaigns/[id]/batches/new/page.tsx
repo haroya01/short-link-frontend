@@ -291,7 +291,7 @@ function RowsTable({
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
       {/* Desktop header */}
-      <div className="hidden grid-cols-[1.4fr_1fr_1fr_0.7fr_1.6fr_0.5fr] gap-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 lg:grid">
+      <div className="hidden grid-cols-[1.4fr_1fr_1fr_0.7fr_1.6fr_0.5fr] gap-2 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-4 py-2.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 lg:grid">
         <span>
           {t("fields.name")} <span className="text-accent-700 dark:text-accent-400">*</span>
         </span>
