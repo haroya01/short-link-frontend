@@ -1,6 +1,7 @@
 import { Download, Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/common/copy-button";
+import { DestinationHealthBanner } from "@/components/links/stats/destination-health-banner";
 import { PublicStatsToggle } from "@/components/links/stats/public-stats-toggle";
 import { QrButton } from "@/components/links/qr/button";
 import { Button } from "@/components/ui/button";
@@ -53,44 +54,47 @@ export function Header({ data, shortUrl, shortCodeLabel, onCopy, demo = false, o
     URL.revokeObjectURL(url);
   }
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="min-w-0">
-        <h1 className="line-clamp-2 text-2xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">
-          {title || display}
-        </h1>
-        {title && <p className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-sm">
-          <a
-            href={display}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={shortCodeLabel}
-            className="vt-link-code truncate font-medium text-accent-700 hover:underline dark:text-accent-400"
-          >
-            {display.replace(/^https?:\/\//, "")}
-          </a>
-          {destinationHost && (
-            <>
-              <span aria-hidden className="text-slate-300 dark:text-slate-600">→</span>
-              <span className="truncate text-slate-500 dark:text-slate-400">{destinationHost}</span>
-            </>
+    <div className="space-y-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="line-clamp-2 text-2xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">
+            {title || display}
+          </h1>
+          {title && <p className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-sm">
+            <a
+              href={display}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={shortCodeLabel}
+              className="vt-link-code truncate font-medium text-accent-700 hover:underline dark:text-accent-400"
+            >
+              {display.replace(/^https?:\/\//, "")}
+            </a>
+            {destinationHost && (
+              <>
+                <span aria-hidden className="text-slate-300 dark:text-slate-600">→</span>
+                <span className="truncate text-slate-500 dark:text-slate-400">{destinationHost}</span>
+              </>
+            )}
+          </p>}
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <CopyButton variant={demo ? "outline" : "accent"} size="sm" value={display} onCopied={onCopy} />
+          <QrButton value={display} filename={`${data.shortCode}.png`} />
+          {onSettings && (
+            <Button variant={settingsActive ? "subtle" : "ghost"} size="sm" className="min-h-9" onClick={onSettings} aria-pressed={settingsActive}>
+              <Settings2 className="h-4 w-4" />
+              {t("linkSettings")}
+            </Button>
           )}
-        </p>}
-      </div>
-      <div className="flex flex-wrap items-center gap-1.5">
-        <CopyButton variant={demo ? "outline" : "accent"} size="sm" value={display} onCopied={onCopy} />
-        <QrButton value={display} filename={`${data.shortCode}.png`} />
-        {onSettings && (
-          <Button variant={settingsActive ? "subtle" : "ghost"} size="sm" className="min-h-9" onClick={onSettings} aria-pressed={settingsActive}>
-            <Settings2 className="h-4 w-4" />
-            {t("linkSettings")}
+          {!demo && <PublicStatsToggle shortCode={data.shortCode} />}
+          <Button variant="ghost" size="sm" onClick={exportCsv} aria-label={t("exportCsv")} title={t("exportCsv")}>
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">CSV</span>
           </Button>
-        )}
-        {!demo && <PublicStatsToggle shortCode={data.shortCode} />}
-        <Button variant="ghost" size="sm" onClick={exportCsv} aria-label={t("exportCsv")} title={t("exportCsv")}>
-          <Download className="h-4 w-4" />
-          <span className="hidden sm:inline">CSV</span>
-        </Button>
+        </div>
       </div>
+      {!demo && detail && <DestinationHealthBanner detail={detail} shortUrl={display} />}
     </div>
   );
 }

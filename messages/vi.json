@@ -1758,6 +1758,12 @@
       "scheduleAt": "Mở lúc",
       "scheduleInPast": "Vui lòng chọn thời điểm trong tương lai."
     },
+    "destinationHealth": {
+      "title": "Trang đích không mở được.",
+      "missing": "Trang đã không còn ({status}), người truy cập đang thấy trang lỗi.",
+      "noHost": "Không tìm thấy tên miền. Hãy kiểm tra lại địa chỉ.",
+      "fix": "Đổi trang đích"
+    },
     "analysisTabs": {
       "when": "Xu hướng nhấp",
       "where": "Nguồn truy cập",

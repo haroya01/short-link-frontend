@@ -1758,6 +1758,12 @@
       "scheduleAt": "Opens at",
       "scheduleInPast": "Pick a time in the future."
     },
+    "destinationHealth": {
+      "title": "The destination is not opening.",
+      "missing": "The page is gone ({status}), so visitors land on an error.",
+      "noHost": "The domain no longer exists. Check the address.",
+      "fix": "Change destination"
+    },
     "analysisTabs": {
       "when": "Trends",
       "where": "Sources",

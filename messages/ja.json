@@ -1758,6 +1758,12 @@
       "scheduleAt": "公開日時",
       "scheduleInPast": "現在より後の日時を選んでください。"
     },
+    "destinationHealth": {
+      "title": "リンク先が開けません。",
+      "missing": "ページがなくなったため（{status}）、訪問者にはエラーページが表示されています。",
+      "noHost": "ドメインが見つかりません。アドレスを確認してください。",
+      "fix": "リンク先を変更"
+    },
     "analysisTabs": {
       "when": "クリック推移",
       "where": "流入元",

@@ -1758,6 +1758,12 @@
       "scheduleAt": "여는 시각",
       "scheduleInPast": "지금보다 뒤 시각을 골라 주세요."
     },
+    "destinationHealth": {
+      "title": "목적지가 열리지 않아요.",
+      "missing": "페이지가 사라져서({status}) 방문자가 오류 페이지를 보고 있어요.",
+      "noHost": "도메인을 찾을 수 없어요. 주소를 확인해 주세요.",
+      "fix": "목적지 바꾸기"
+    },
     "analysisTabs": {
       "when": "클릭 추이",
       "where": "유입 경로",
