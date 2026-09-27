@@ -259,13 +259,13 @@ export default async function RootLayout({
             <link
               rel="preload"
               as="style"
-              href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp-dynamic-subset.min.css"
+              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
             />
             <link
               rel="stylesheet"
               media="print"
               data-pretendard=""
-              href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp-dynamic-subset.min.css"
+              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
             />
           </>
         )}
@@ -287,7 +287,7 @@ export default async function RootLayout({
             // eslint-disable-next-line @next/next/no-css-tags
             <link
               rel="stylesheet"
-              href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp-dynamic-subset.min.css"
+              href="/pretendard/pretendardvariable-jp-dynamic-subset.min.css"
             />
           )}
         </noscript>
