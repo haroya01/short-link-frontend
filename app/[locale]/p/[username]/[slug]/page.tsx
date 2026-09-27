@@ -151,6 +151,7 @@ export default async function PublicPostPage({
       ? formatDate(post.lastEditedAt, locale)
       : null;
   const headings = extractHeadings(blocks);
+  const tocHeadings = headings.filter((h) => h.level <= 2);
   // 제목 위 조용한 eyebrow — 시리즈에 속하면 시리즈명, 아니면 대표 태그(tags[0]), 둘 다 없으면 없음.
   // 컬러 배지 없이 회색 muted 한 줄(피드 카드 TagEyebrow 와 같은 어휘) — 제목 앞에 맥락 한 겹만.
   const eyebrow = result.data.series ? result.data.series.title : (post.tags[0] ?? null);
@@ -450,14 +451,14 @@ export default async function PublicPostPage({
           breaking its centering. Below that, the floating button → bottom sheet takes over.
           반투명 블러 배경(헤더와 같은 언어): full-bleed 이미지가 TOC 뒤를 지나갈 때 텍스트가
           이미지와 섞이지 않게. wide 는 has-toc 폭 캡(globals.css)이 겹침 자체를 제거. */}
-      {headings.length >= 1 && (
+      {tocHeadings.length >= 1 && (
         <aside className="fixed left-[calc(50%_+_22.5rem)] top-[8.5rem] z-20 hidden max-h-[calc(100vh_-_10rem)] w-40 overflow-y-auto rounded-2xl bg-white/85 p-3 backdrop-blur-sm min-[1100px]:block xl:w-52 dark:bg-slate-950/85">
-          <PostToc headings={headings} />
+          <PostToc headings={tocHeadings} />
         </aside>
       )}
 
       {/* Phone / portrait-tablet (<1100px) get the TOC as a floating button → bottom sheet. */}
-      <PostTocMobile headings={headings} />
+      <PostTocMobile headings={tocHeadings} />
       <LegacyHeadingHash headings={headings} />
     </div>
   );
