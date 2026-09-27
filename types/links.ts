@@ -2,12 +2,14 @@ export type CreateLinkRequest = {
   url: string;
   customCode?: string;
   expiresAt?: string;
+  password?: string;
 };
 
 export type CreateLinkResponse = {
   shortCode: string;
   shortUrl: string;
   claimToken: string | null;
+  passwordProtected?: boolean;
 };
 
 export type ClaimResult = {

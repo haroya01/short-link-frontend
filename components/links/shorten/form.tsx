@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ChevronDown, Link2, Loader2 } from "lucide-react";
+import { ArrowRight, ChevronDown, Link2, Loader2, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,10 +9,12 @@ import { ApiError, isValidUrl, shortenUrl } from "@/lib/api";
 import { prewarmPowToken } from "@/lib/pow";
 import { track } from "@/components/common/posthog-provider";
 import type { CreateLinkResponse } from "@/types";
+import { shortenPayload } from "./payload";
 
 type ShortenedItem = {
   res: CreateLinkResponse;
   originalUrl: string;
+  passwordRequested: boolean;
 };
 
 type Props = {
@@ -34,6 +36,8 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
   const [customCode, setCustomCode] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [lockOn, setLockOn] = useState(false);
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** 히어로 성공 시 blur 용 — 모바일 키보드를 내려야 결과 카드가 실제 뷰포트에 들어온다. */
@@ -61,7 +65,7 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
    */
   function handleHeroPaste(e: React.ClipboardEvent<HTMLInputElement>) {
     if (!hero || busy) return;
-    if (url.trim() || showAdvanced || customCode.trim() || expiresAt) return;
+    if (url.trim() || showAdvanced || lockOn || customCode.trim() || expiresAt) return;
     const pasted = e.clipboardData.getData("text").trim();
     if (!isValidUrl(pasted)) return;
     e.preventDefault();
@@ -80,29 +84,36 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
       return;
     }
 
+    if (authenticated && lockOn && !password.trim()) {
+      setError(t("errors.passwordEmpty"));
+      return;
+    }
+
     setBusy(true);
     try {
-      const codeForSingle =
-        authenticated && customCode.trim() ? customCode.trim() : undefined;
-      const expiry =
-        authenticated && expiresAt ? new Date(expiresAt).toISOString() : undefined;
-
-      const res = await shortenUrl({
+      const payload = shortenPayload({
         url: trimmed,
-        customCode: codeForSingle,
-        expiresAt: expiry,
+        authenticated,
+        customCode,
+        expiresAt,
+        lockOn,
+        password,
       });
+      const res = await shortenUrl(payload);
 
       track("link_shortened", {
         count: 1,
         authenticated,
-        has_custom_code: Boolean(codeForSingle),
-        has_expiry: Boolean(expiry),
+        has_custom_code: Boolean(payload.customCode),
+        has_expiry: Boolean(payload.expiresAt),
+        has_password: Boolean(payload.password),
       });
-      onShortened([{ res, originalUrl: trimmed }]);
+      onShortened([{ res, originalUrl: trimmed, passwordRequested: Boolean(payload.password) }]);
       setUrl("");
       setCustomCode("");
       setExpiresAt("");
+      setPassword("");
+      setLockOn(false);
       // 모바일: 키보드가 서 있으면 결과 카드가 가시 뷰포트 밖(키보드 뒤)에 깔린다 —
       // 성공했으니 입력의 소임은 끝, 키보드를 내리고 무대를 결과에 넘긴다(page 가 스크롤 인도).
       if (hero) heroInputRef.current?.blur();
@@ -212,18 +223,57 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
           surface honest about what's actually configurable. */}
       {authenticated && (
         <div>
-          <button
-            type="button"
-            onClick={() => setShowAdvanced((v) => !v)}
-            aria-expanded={showAdvanced}
-            aria-controls="shorten-advanced-section"
-            className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
-          >
-            <ChevronDown
-              className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[var(--ease)] ${showAdvanced ? "rotate-180" : ""}`}
-            />
-            {t("advancedToggle")}
-          </button>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((v) => !v)}
+              aria-expanded={showAdvanced}
+              aria-controls="shorten-advanced-section"
+              className="inline-flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 transition-colors hover:text-slate-900 dark:hover:text-slate-100"
+            >
+              <ChevronDown
+                className={`h-3.5 w-3.5 transition-transform duration-[280ms] ease-[var(--ease)] ${showAdvanced ? "rotate-180" : ""}`}
+              />
+              {t("advancedToggle")}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLockOn((v) => !v);
+                if (error) setError(null);
+              }}
+              aria-pressed={lockOn}
+              aria-controls="shorten-password-row"
+              className={`inline-flex items-center gap-1 text-xs transition-colors ${
+                lockOn
+                  ? "font-medium text-accent-700 dark:text-accent-400"
+                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+              }`}
+            >
+              <Lock aria-hidden className="h-3.5 w-3.5" />
+              {t("passwordToggle")}
+            </button>
+          </div>
+          {lockOn && (
+            <div id="shorten-password-row" className="mt-2 space-y-1.5">
+              <Input
+                type="password"
+                autoComplete="new-password"
+                maxLength={200}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (error) setError(null);
+                }}
+                placeholder={t("passwordPlaceholder")}
+                aria-label={t("passwordPlaceholder")}
+                className="h-9 text-sm sm:max-w-sm"
+                disabled={busy}
+                autoFocus
+              />
+              <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("passwordHint")}</p>
+            </div>
+          )}
           {/*
            * Grid-rows trick for "auto height" reveal animations: an outer grid container animates
            * between `grid-rows-[0fr]` (collapsed) and `grid-rows-[1fr]` (expanded), and the inner

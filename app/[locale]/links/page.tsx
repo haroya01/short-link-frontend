@@ -48,7 +48,7 @@ export default function HomePage() {
           ? "text-[30px] leading-[1.08] min-[390px]:text-[32px] sm:text-[72px] sm:leading-[1.02]"
           : "text-[38px] leading-[1.08] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.02]";
   const [results, setResults] = useState<
-    { res: CreateLinkResponse; original: string }[] | null
+    { res: CreateLinkResponse; original: string; passwordRequested?: boolean }[] | null
   >(null);
   /** 답 줄이 자리를 차지한 뒤 "다른 주소도 줄이기"로 빈 줄을 다시 불러온 상태. */
   const [composing, setComposing] = useState(false);
@@ -117,7 +117,11 @@ export default function HomePage() {
                     setComposing(false);
                     // 새 답이 맨 위로 — 이번 세션의 영수증 스택(최대 5줄, 전체는 최근 단축이 보관).
                     setResults((prev) => {
-                      const next = items.map((it) => ({ res: it.res, original: it.originalUrl }));
+                      const next = items.map((it) => ({
+                        res: it.res,
+                        original: it.originalUrl,
+                        passwordRequested: it.passwordRequested,
+                      }));
                       const seen = new Set(next.map((n) => n.res.shortCode));
                       const kept = (prev ?? []).filter((p) => !seen.has(p.res.shortCode));
                       return [...next, ...kept].slice(0, 5);
@@ -143,6 +147,7 @@ export default function HomePage() {
                       result={r.res}
                       originalUrl={r.original}
                       authenticated={authenticated}
+                      passwordRequested={r.passwordRequested}
                       enterIndex={i}
                     />
                   ))}
