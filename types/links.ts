@@ -78,15 +78,25 @@ export type LinkDetail = {
   note: string | null;
   expiredMessage: string | null;
   openInBrowser?: boolean;
+  splash?: LinkSplash;
+};
+
+export type LinkSplash = {
+  enabled: boolean;
+  message: string | null;
+  seconds: number;
+  ctaId: number | null;
 };
 
 export type LinkVisitOptions = {
   openInBrowser?: boolean;
+  splash?: LinkSplash;
 };
 
 export type LinkVisitOptionsResponse = {
   shortCode: string;
   openInBrowser: boolean;
+  splash?: LinkSplash;
 };
 
 export type OgOverrideRequest = {

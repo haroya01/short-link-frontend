@@ -13,7 +13,9 @@ import { buildDemoLinkStats } from "@/lib/demo-data";
  */
 let mockShortenSeq = 7000;
 let mockFavoriteCodes = ["saved-74", "spr1ng", "d0cs"];
-const mockVisitOptions = new Map<string, { openInBrowser: boolean }>();
+type MockSplash = { enabled: boolean; message: string | null; seconds: number; ctaId: number | null };
+const MOCK_SPLASH_OFF: MockSplash = { enabled: false, message: null, seconds: 3, ctaId: null };
+const mockVisitOptions = new Map<string, { openInBrowser: boolean; splash: MockSplash }>();
 
 export function mockLinksResponse(path: string, method: string, body?: unknown): unknown | undefined {
   const verb = (method || "GET").toUpperCase();
@@ -60,9 +62,12 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
   const visitMatch = /^\/api\/v1\/links\/([^/]+)\/visit-options$/.exec(p);
   if (verb === "PATCH" && visitMatch) {
     const code = visitMatch[1];
-    const current = mockVisitOptions.get(code) ?? { openInBrowser: false };
-    const patch = (body ?? {}) as { openInBrowser?: boolean };
-    const next = { openInBrowser: patch.openInBrowser ?? current.openInBrowser };
+    const current = mockVisitOptions.get(code) ?? { openInBrowser: false, splash: MOCK_SPLASH_OFF };
+    const patch = (body ?? {}) as { openInBrowser?: boolean; splash?: MockSplash };
+    const next = {
+      openInBrowser: patch.openInBrowser ?? current.openInBrowser,
+      splash: patch.splash ? { ...MOCK_SPLASH_OFF, ...patch.splash } : current.splash,
+    };
     mockVisitOptions.set(code, next);
     return { shortCode: code, ...next };
   }
@@ -131,6 +136,7 @@ export function mockLinksResponse(path: string, method: string, body?: unknown):
       note: null,
       expiredMessage: null,
       openInBrowser: mockVisitOptions.get(code)?.openInBrowser ?? false,
+      splash: mockVisitOptions.get(code)?.splash ?? MOCK_SPLASH_OFF,
     };
   }
   return undefined;

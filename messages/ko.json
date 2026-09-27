@@ -1739,7 +1739,20 @@
       "openInBrowser": "카카오톡·LINE에선 기본 브라우저로 열기",
       "openInBrowserDesc": "앱 안 브라우저에선 로그인·결제·다운로드가 막힐 때가 있어요. 켜 두면 카카오톡·LINE에서 누른 사람을 기본 브라우저로 보내요.",
       "failed": "설정을 바꾸지 못했어요.",
-      "loadFailed": "설정을 불러오지 못했어요. 새로고침해 주세요."
+      "loadFailed": "설정을 불러오지 못했어요. 새로고침해 주세요.",
+      "splash": "잠깐 보여주기",
+      "splashDesc": "목적지로 가기 전에 안내와 버튼을 잠깐 보여줘요. 방문자가 화면을 누르면 자동 이동이 멈춰요.",
+      "splashMessage": "안내 문구",
+      "splashMessagePlaceholder": "예: 결제할 때 쿠폰 코드 SPRING20 을 넣으면 20% 할인돼요",
+      "splashSeconds": "보여줄 시간",
+      "splashSecondsValue": "{n}초",
+      "splashCta": "버튼 (선택)",
+      "splashNoCta": "버튼 없음",
+      "splashManageCtas": "버튼 만들기·관리",
+      "splashMessageRequired": "안내 문구를 입력해 주세요.",
+      "save": "저장",
+      "saved": "저장했어요.",
+      "unsaved": "저장하지 않은 변경이 있어요"
     },
     "analysisTabs": {
       "when": "클릭 추이",
