@@ -17,7 +17,7 @@ import { Link } from "@/i18n/navigation";
  *   (스파크라인 자가-드로잉·주간 막대 상승). kurl 의 "검정 무대"에 해당하는 유일한 색 필드.
  *
  * 데이터 드로잉은 전부 장식(aria-hidden) SVG/DOM — 수치·칩 라벨은 로케일 무관 데모 리터럴.
- * 스크롤 연동/폴백/reduced-motion 규칙은 globals.css stage-* 블록이 소유(AGENTS §11).
+ * 스크롤 연동/폴백/reduced-motion 규칙은 globals.css stage-* 블록이 소유(DESIGN.md §11).
  */
 
 // 장면 3 데모 시계열 — 실제 StatsHeroCore 가 그대로 그린다(우상향 11포인트).

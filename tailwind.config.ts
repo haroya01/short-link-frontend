@@ -143,7 +143,7 @@ const config: Config = {
         // 읽기·설정면의 정적 카드(발견 타일이 아님) — lift 없이 가장자리만 살짝 떼어놓는 near-flat.
         // browse 타일의 뜬(card) 그림자를 평평한 표면에 얹지 않도록 이 토큰으로 구분한다.
         "card-flat": "0 1px 2px rgba(15,23,42,0.04)",
-        // Browse(발견) 타일 hover lift — 읽기면 flat 철학의 명시적 예외(AGENTS §10.1)라서,
+        // Browse(발견) 타일 hover lift — 읽기면 flat 철학의 명시적 예외(DESIGN.md §10.1)라서,
         // 그 농도를 이 토큰 한 곳이 소유한다. 콜사이트에서 임의값으로 다시 들고 다니지 말 것.
         "card-hover": "0 18px 40px -12px rgba(15,23,42,0.28)",
         // 대시보드(통계 등) 카드의 hover 리프트 — browse 타일(card-hover)보다 한참 얕다.

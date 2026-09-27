@@ -1301,8 +1301,8 @@ body[data-cookie-consent="visible"] {
 }
 
 /*
- * 🔒 LOCKED — 제품 전환 warp 키프레임 (디자인 확정). 소유자 승인 없이 수정 금지. 다른 세션의
- * AI/에이전트 포함. 마커 컴포넌트: components/common/apps-grid.tsx. 상세: AGENTS.md §0.
+ * 🔒 LOCKED — 제품 전환 warp 키프레임 (디자인 확정). 소유자 승인 없이 수정 금지.
+ * 마커 컴포넌트: components/common/apps-grid.tsx. 상세: DESIGN.md §0.
  *
  * Product-switch warp. Jumping between kurl and kurl log is a cross-origin reload; this white
  * overlay covers the hard load with a branded motion built from the logo mark: the three lines
@@ -2014,7 +2014,7 @@ html[data-theme-vt] .vt-post-cover {
 }
 
 /*
- * ===== 무대(Stage) 모션 어휘 — AGENTS.md §11 =====
+ * ===== 무대(Stage) 모션 어휘 — DESIGN.md §11 =====
  * "한 번 보는 화면" 전용 연출 레이어. kurl_stage 플래그(lib/stage-flag.ts) 뒤에서만 마운트되고,
  * 전부 aria-hidden 장식이라 꺼져도(기본값) 정보 손실이 없다.
  *
@@ -2246,7 +2246,7 @@ html[data-theme-vt] .vt-post-cover {
 }
 
 /*
- * ===== 유리(Glass) 크롬 재질 — AGENTS.md §12 =====
+ * ===== 유리(Glass) 크롬 재질 — DESIGN.md §12 =====
  * iOS 확정 문법 "종이 본문, 액체 크롬"의 웹 쌍둥이. 유리는 크롬(항해·플로팅 바·배너·오버레이
  * 캡슐)에만 — 콘텐츠 카드에 바르면 §10 flat 철학 위반이자 가독성 사고(NN/g 경고).
  * 종전에 bg-white/85 + backdrop-blur 로 7곳에 흩어져 있던 유사-유리를 이 두 클래스가 소유한다.

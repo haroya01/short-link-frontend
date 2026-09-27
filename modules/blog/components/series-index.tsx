@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 /**
  * The single source of truth for how a series position renders across every surface — the feed series
  * card, the on-post banner, the series detail list, and the all-series index. A quiet `font-mono
- * tabular-nums` zero-padded number (the weblog-spine idiom from AGENTS.md), locale-agnostic so there's
+ * tabular-nums` zero-padded number (the weblog-spine idiom from DESIGN.md), locale-agnostic so there's
  * no 편 / Part / 回 drift between surfaces. `current` brightens + bolds it (the you-are-here episode
  * in the banner, the spotlit member in the feed card).
  *
