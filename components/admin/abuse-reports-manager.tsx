@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { ErrorState } from "@/components/common/error-state";
 import {
   listAbuseReports,
   resolveAbuseReport,
@@ -172,11 +173,7 @@ export function AbuseReportsManager() {
       </div>
 
       {loading && <p className="text-slate-500 dark:text-slate-400">{tc("loading")}</p>}
-      {error && (
-        <p className="text-red-600 dark:text-red-400">
-          {tc("errorPrefix")} {error}
-        </p>
-      )}
+      {error && <ErrorState message={error} onRetry={() => void load()} />}
 
       {!loading && !error && reports.length === 0 && (
         <p className="text-slate-500 dark:text-slate-400">{t("empty")}</p>

@@ -83,15 +83,17 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
   return (
     <div>
       <div className="hidden md:block">
+        {/* xl 2열 그리드의 카드 내폭(~590px)보다 좁게 — 640 이면 카드 안에서 우측 시간대(21~23시)가
+            스크롤 뒤로 숨어 잘린 것처럼 보인다. */}
         <div className="overflow-x-auto">
-          <div className="min-w-[640px]">
+          <div className="min-w-[560px]">
             <div className="grid grid-cols-[36px_repeat(24,minmax(0,1fr))] gap-px">
               <div className="h-6" />
               {Array.from({ length: 24 }, (_, h) => (
                 <div
                   key={h}
                   className={cn(
-                    "text-center font-mono text-[10px]",
+                    "text-center tabular-nums text-[10px]",
                     h % 6 === 0 ? "text-slate-700 dark:text-slate-300 font-medium dark:text-slate-200" : "text-slate-500 dark:text-slate-400",
                   )}
                   style={{ visibility: h % 3 === 0 ? "visible" : "hidden" }}
@@ -152,7 +154,7 @@ function HeatmapImpl({ data }: { data: HeatmapCell[] }) {
           {MOBILE_BUCKET_STARTS.map((h) => (
             <div
               key={h}
-              className="text-center font-mono text-[10px] font-medium text-slate-700 dark:text-slate-200"
+              className="text-center tabular-nums text-[10px] font-medium text-slate-700 dark:text-slate-200"
             >
               {h}
             </div>
@@ -291,7 +293,7 @@ function ActiveCellLabel({
     <div
       role={isSelected ? "status" : undefined}
       aria-live={isSelected ? "polite" : undefined}
-      className="flex min-w-0 items-center gap-2 font-mono"
+      className="flex min-w-0 items-center gap-2 tabular-nums"
     >
       <span className="truncate text-slate-700 dark:text-slate-200">{rangeLabel}</span>
       <span aria-hidden="true" className="text-slate-300 dark:text-slate-600">

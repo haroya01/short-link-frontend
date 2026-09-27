@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Eye, FileText, Heart, Layers, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams, usePathname } from "next/navigation";
@@ -8,15 +8,13 @@ import { useAuth } from "@/lib/auth";
 import {
   getSeriesDetail,
   getSeriesStats,
-  type SeriesAnalyticsDetail,
 } from "@/modules/blog/api/analytics";
-import { getSeries } from "@/modules/blog/api/series";
 import { AnalyticsAreaChart } from "@/modules/blog/components/workspace/analytics-area-chart";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { SeriesReadThrough, StatCard } from "@/modules/blog/components/workspace/analytics-bits";
 import { ProfileStatsDashboard } from "@/modules/profile/components/stats-dashboard";
 import { SkeletonRows, SkeletonStatCards } from "@/modules/blog/components/skeleton";
-import type { ProfileStats } from "@/types";
+import { ErrorState } from "@/components/common/error-state";
 
 /**
  * Per-series analytics — the subscriber trend (구독자 추이) + headline metrics on top, then the deep
@@ -28,34 +26,20 @@ export default function SeriesAnalyticsPage() {
   const params = useParams();
   const pathname = usePathname();
   const seriesId = Number(params.seriesId);
-  const { ready, authenticated } = useAuth();
-  const [title, setTitle] = useState("");
-  const [detail, setDetail] = useState<SeriesAnalyticsDetail | null>(null);
-  const [data, setData] = useState<ProfileStats | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!ready || !authenticated || !Number.isFinite(seriesId)) return;
-    setLoading(true);
-    // All-time subscriber trend (days=0) — the most meaningful "구독자가 이렇게 늘었다" view.
-    // detail 응답이 이미 제목을 담고 있으므로 성공 경로에선 여기서 제목을 세팅한다. detail 이 실패했을
-    // 때만 제목만이라도 별도로 확보하는 폴백으로 getSeries 를 쓴다(정상일 땐 중복 요청 없음).
-    getSeriesDetail(seriesId, 0)
-      .then((d) => {
-        setDetail(d);
-        if (d.series.title) setTitle(d.series.title);
-      })
-      .catch(() => {
-        setDetail(null);
-        getSeries(seriesId)
-          .then((d) => setTitle(d.series.title))
-          .catch(() => {});
-      })
-      .finally(() => setLoading(false));
-    getSeriesStats(seriesId)
-      .then(setData)
-      .catch(() => setData(null));
-  }, [ready, authenticated, seriesId]);
+  const { ready, authenticated, me } = useAuth();
+  const enabled = ready && authenticated && Number.isFinite(seriesId);
+  const { data: detail, isLoading: loading, error, refetch } = useQuery({
+    queryKey: ["blog", "analytics", me?.id, "series", seriesId, 0],
+    queryFn: () => getSeriesDetail(seriesId, 0),
+    enabled,
+  });
+  const statsQuery = useQuery({
+    queryKey: ["blog", "analytics", me?.id, "series-stats", seriesId, 30],
+    queryFn: () => getSeriesStats(seriesId),
+    enabled,
+  });
+  const title = detail?.series.title;
+  const data = statsQuery.data;
 
   if (!ready) return null;
   if (!authenticated) {
@@ -86,6 +70,8 @@ export default function SeriesAnalyticsPage() {
             <SkeletonRows count={4} />
           </div>
         </div>
+      ) : error ? (
+        <div className="mt-6"><ErrorState onRetry={() => void refetch()} /></div>
       ) : (
         <>
           {detail && (
@@ -128,7 +114,9 @@ export default function SeriesAnalyticsPage() {
           )}
 
           {/* 독자 분석 — 시리즈 멤버 글 전반의 reader 차원 분해. */}
-          {data && (
+          {statsQuery.error ? (
+            <div className="mt-8"><ErrorState onRetry={() => void statsQuery.refetch()} /></div>
+          ) : data && (
             <div className="mt-8">
               <h2 className="mb-4 text-sm font-semibold text-slate-700 dark:text-slate-200">{t("analyticsReaders")}</h2>
               <ProfileStatsDashboard data={data} />

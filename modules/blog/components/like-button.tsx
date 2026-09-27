@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { getLikeStatus, likePost, unlikePost } from "@/modules/blog/api/likes";
-import { showLikes } from "@/modules/blog/lib/public-metrics";
 import { useOptimisticToggle } from "@/modules/blog/lib/use-optimistic-toggle";
 
 /**
@@ -27,7 +26,6 @@ export function LikeButton({
   const [interacted, setInteracted] = useState(false);
   const {
     on: liked,
-    count,
     toggle,
   } = useOptimisticToggle({
     depKey: postId,
@@ -60,9 +58,6 @@ export function LikeButton({
       <span key={liked ? "on" : "off"} className={`inline-flex ${interacted ? "subscribe-pop" : ""}`}>
         <Heart className={`h-4 w-4 ${liked ? "fill-accent-600 text-accent-600" : ""}`} />
       </span>
-      {/* Hide a bare "0" — show the count only once the post has a like (or the viewer adds one).
-          aria-live so a screen reader hears the count change when the viewer toggles. */}
-      <span aria-live="polite">{showLikes(count ?? 0) ? count ?? 0 : ""}</span>
     </button>
   );
 }

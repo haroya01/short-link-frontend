@@ -1,25 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import type { CSSProperties } from "react";
-import { ArrowUpDown, BarChart3, Clock3, ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import type { ComponentType } from "react";
+import { ArrowUpDown, ExternalLink, MoreHorizontal, Pencil, Star, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { StatsMorphLink } from "@/components/links/stats-morph-link";
 import { Button } from "@/components/ui/button";
-import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { CopyButton } from "@/components/common/copy-button";
 import { ConfirmDialog } from "@/components/ui/dialog";
 import { EditLinkDialog } from "@/components/links/edit-link-dialog";
-import { Favicon } from "@/components/common/favicon";
-import { Sparkline } from "@/components/links/stats/sparkline";
+import { LiveDot } from "@/components/common/live-dot";
 import { useToast } from "@/components/ui/toast";
 import { deleteLink } from "@/lib/api";
 import { useApiErrorMessage } from "@/lib/error-messages";
-import { cn, formatDate, formatNumber, truncateMiddle } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
+import { linkDisplayName } from "@/lib/link-library-view";
 import type { MyLink } from "@/types";
 
 type SortKey = "createdAt" | "clickCount";
 type SortDir = "asc" | "desc";
+
+/**
+ * 라이브 클릭 가산분 — extra 는 서버 재조회가 실값을 실어올 때 0 으로 접히고, seq 는 세션 내
+ * 도착 횟수로 남아 도착 모션 재시동(홀짝 클래스)과 라이브 닷 유지의 키가 된다.
+ */
+export type LiveBump = { extra: number; seq: number };
 
 type Props = {
   items: MyLink[];
@@ -30,6 +35,10 @@ type Props = {
   onSortChange: (key: SortKey, dir: SortDir) => void;
   isFavorite: (shortCode: string) => boolean;
   onToggleFavorite: (shortCode: string) => void;
+  /** 계정 클릭 스트림이 실어온 행별 라이브 신호(없으면 정적 렌더). */
+  liveByCode?: Record<string, LiveBump>;
+  favoritesDisabled?: boolean;
+  sortingDisabled?: boolean;
 };
 
 export function LinksTable({
@@ -41,11 +50,15 @@ export function LinksTable({
   onSortChange,
   isFavorite,
   onToggleFavorite,
+  liveByCode,
+  favoritesDisabled = false,
+  sortingDisabled = false,
 }: Props) {
   const t = useTranslations("dashboard");
   const [confirmCode, setConfirmCode] = useState<string | null>(null);
   const [editing, setEditing] = useState<MyLink | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selectMode, setSelectMode] = useState(false);
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false);
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const { toast } = useToast();
@@ -56,6 +69,7 @@ export function LinksTable({
   const someSelected = !allSelected && allOnPage.some((c) => selected.has(c));
 
   function toggleSort(key: SortKey) {
+    if (sortingDisabled) return;
     if (sortKey !== key) {
       onSortChange(key, "desc");
     } else {
@@ -136,74 +150,67 @@ export function LinksTable({
         </div>
       )}
 
-      {/* Mobile card list — table columns don't fit a phone viewport, so each row becomes a
-          metric card: favicon tile + shortCode as the title, click count as the hero number,
-          the 7-day sparkline (desktop-only in the table) surfaced, and expiry as a status chip.
-          Desktop keeps the table view. */}
-      <div className="space-y-2.5 sm:hidden">
-        {items.map((item, index) => (
-          <MobileLinkCard
-            key={item.shortCode}
-            item={item}
-            index={index}
-            selected={selected.has(item.shortCode)}
-            favorite={isFavorite(item.shortCode)}
-            onToggleFavorite={() => onToggleFavorite(item.shortCode)}
-            onToggleSelect={() => toggleOne(item.shortCode)}
-            onTagClick={onTagClick}
-            onCopied={() => toast("✓", "success")}
-            onEdit={() => setEditing(item)}
-            onDelete={() => setConfirmCode(item.shortCode)}
-            t={t}
-          />
-        ))}
-      </div>
-
-      <div className="hidden overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 sm:block">
-        <Table>
-          <THead>
-            <TR>
-              <TH className="w-[1%]">
-                <input
-                  type="checkbox"
-                  aria-label={t("bulkSelectAll")}
-                  checked={allSelected}
-                  ref={(el) => {
-                    if (el) el.indeterminate = someSelected;
-                  }}
-                  onChange={toggleAll}
-                  className="h-3.5 w-3.5 cursor-pointer"
-                />
-              </TH>
-              <TH>{t("table.shortUrl")}</TH>
-              <TH>{t("table.originalUrl")}</TH>
-              <TH className="hidden md:table-cell">
-                <SortHeader
-                  active={sortKey === "createdAt"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("createdAt")}
-                >
-                  {t("table.createdAt")}
-                </SortHeader>
-              </TH>
-              <TH className="hidden lg:table-cell">{t("table.expiresAt")}</TH>
-              <TH className="text-right">
-                <SortHeader
-                  active={sortKey === "clickCount"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("clickCount")}
-                  align="right"
-                >
-                  {t("table.clicks")}
-                </SortHeader>
-              </TH>
-              <TH className="w-[1%] whitespace-nowrap text-right">{t("table.actions")}</TH>
-            </TR>
-          </THead>
-          <TBody>
-            {items.map((item) => (
-              <TR key={item.shortCode}>
-                <TD>
+      <div className="rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="flex items-center gap-3 border-b border-slate-100 px-3 py-1 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:px-4">
+          <label className={cn("h-11 w-5 cursor-pointer place-items-center sm:grid", selectMode ? "grid" : "hidden")}>
+            <input
+              type="checkbox"
+              aria-label={t("bulkSelectAll")}
+              checked={allSelected}
+              ref={(el) => {
+                if (el) el.indeterminate = someSelected;
+              }}
+              onChange={toggleAll}
+              className="h-3.5 w-3.5 cursor-pointer"
+            />
+          </label>
+          <div className="flex-1">
+            <SortHeader
+              disabled={sortingDisabled}
+              active={sortKey === "createdAt"}
+              dir={sortDir}
+              dirLabel={sortDir === "asc" ? t("table.sortAsc") : t("table.sortDesc")}
+              onClick={() => toggleSort("createdAt")}
+            >
+              {t("table.sortNewest")}
+            </SortHeader>
+          </div>
+          <SortHeader
+            disabled={sortingDisabled}
+            active={sortKey === "clickCount"}
+            dir={sortDir}
+            dirLabel={sortDir === "asc" ? t("table.sortAsc") : t("table.sortDesc")}
+            onClick={() => toggleSort("clickCount")}
+            align="right"
+          >
+            {t("table.sortAllClicks")}
+          </SortHeader>
+          <button
+            type="button"
+            onClick={() => {
+              if (selectMode) setSelected(new Set());
+              setSelectMode((v) => !v);
+            }}
+            className="focus-ring min-h-11 px-1 text-xs font-medium text-accent-700 dark:text-accent-400 sm:hidden"
+          >
+            {selectMode ? t("selectDone") : t("selectMode")}
+          </button>
+          <span className="hidden w-[136px] sm:block" aria-hidden />
+        </div>
+        <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+          {items.map((item) => {
+            const bump = liveByCode?.[item.shortCode];
+            const expiry = expiryState(item.expiresAt);
+            const favorite = isFavorite(item.shortCode);
+            return (
+              <li
+                key={item.shortCode}
+                className={cn(
+                  "group flex items-center gap-3 px-3 py-2.5 transition-colors last:rounded-b-2xl hover:bg-slate-50/70 dark:hover:bg-slate-800/40 sm:px-4",
+                  bump && (bump.seq % 2 ? "click-arrive-a" : "click-arrive-b"),
+                )}
+              >
+                <label className={cn("h-11 w-5 cursor-pointer place-items-center sm:grid", selectMode ? "grid" : "hidden")}>
                   <input
                     type="checkbox"
                     aria-label={t("bulkSelectRow", { code: item.shortCode })}
@@ -211,117 +218,79 @@ export function LinksTable({
                     onChange={() => toggleOne(item.shortCode)}
                     className="h-3.5 w-3.5 cursor-pointer"
                   />
-                </TD>
-                <TD>
-                  <div className="flex items-center gap-1.5">
-                    <FavoriteButton
-                      active={isFavorite(item.shortCode)}
-                      onToggle={() => onToggleFavorite(item.shortCode)}
-                      label={
-                        isFavorite(item.shortCode)
-                          ? t("favorite.remove")
-                          : t("favorite.add")
-                      }
-                    />
-                    <Link
-                      href={`/stats/${item.shortCode}`}
-                      className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100 hover:underline"
-                    >
-                      /{item.shortCode}
-                    </Link>
-                    <CopyButton
-                      size="sm"
-                      variant="ghost"
-                      label=""
-                      value={item.shortUrl}
-                      onCopied={() => toast("✓", "success")}
-                    />
-                  </div>
-                </TD>
-                <TD className="max-w-[260px]">
-                  <div className="flex flex-col gap-1">
-                    <a
-                      href={item.originalUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
-                      title={item.originalUrl}
-                    >
-                      <Favicon url={item.originalUrl} />
-                      <span className="truncate text-xs">
-                        {truncateMiddle(item.originalUrl, 42)}
-                      </span>
-                      <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
-                    </a>
-                    {item.tags && item.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {item.tags.map((tag) => (
-                          <TagFilterChip
-                            key={tag}
-                            tag={tag}
-                            onClick={() => onTagClick?.(tag)}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </TD>
-                <TD className="hidden whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 md:table-cell">
-                  {formatDate(item.createdAt)}
-                </TD>
-                <TD className="hidden whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 lg:table-cell">
-                  {item.expiresAt ? formatDate(item.expiresAt) : "—"}
-                </TD>
-                <TD className="whitespace-nowrap text-right">
-                  <div className="inline-flex items-center gap-2">
-                    <Sparkline
-                      values={item.clicksLast7d ?? []}
-                      className="hidden text-slate-400 dark:text-slate-500 lg:inline-block"
-                    />
-                    <span className="tabular-nums font-medium text-slate-900 dark:text-slate-100">
-                      {formatNumber(item.clickCount)}
+                </label>
+                <StatsMorphLink
+                  shortCode={item.shortCode}
+                  data-vt-link-scope
+                  className="focus-ring min-w-0 flex-1 rounded-md py-0.5"
+                >
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    <span className="truncate text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+                      {linkDisplayName(item)}
                     </span>
+                    {favorite && <Star aria-label={t("favorite.filter")} className="h-3 w-3 shrink-0 fill-current text-accent-600 dark:text-accent-400" />}
+                    {expiry?.kind === "expired" && (
+                      <span className="shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">{t("card.expired")}</span>
+                    )}
+                    {expiry?.kind === "soon" && (
+                      <span className="shrink-0 text-xs font-medium text-amber-700 dark:text-amber-400">
+                        {expiry.days === 0 ? t("card.expiresToday") : t("card.expiresIn", { days: expiry.days })}
+                      </span>
+                    )}
+                  </span>
+                  <span className="mt-0.5 flex min-w-0 items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
+                    <span data-vt-link-code className="shrink-0">/{item.shortCode}</span>
+                    {item.tags && item.tags.length > 0 && (
+                      <span className="shrink-0 lg:hidden">#{item.tags[0]}{item.tags.length > 1 ? ` +${item.tags.length - 1}` : ""}</span>
+                    )}
+                    {item.note?.trim() && (
+                      <>
+                        <span aria-hidden>·</span>
+                        <span className="truncate" title={item.originalUrl}>{hostOf(item.originalUrl)}</span>
+                      </>
+                    )}
+                  </span>
+                </StatsMorphLink>
+                {item.tags && item.tags.length > 0 && (
+                  <div className="hidden max-w-[180px] flex-wrap justify-end gap-1 lg:flex">
+                    {item.tags.slice(0, 3).map((tag) => (
+                      <TagFilterChip key={tag} tag={tag} compact onClick={() => onTagClick?.(tag)} />
+                    ))}
                   </div>
-                </TD>
-                <TD className="whitespace-nowrap text-right">
-                  <div className="inline-flex flex-nowrap items-center gap-0.5">
-                    <Link href={`/stats/${item.shortCode}`}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={t("actions.stats")}
-                        title={t("actions.stats")}
-                        className="h-8 w-8"
-                      >
-                        <BarChart3 className="h-3.5 w-3.5" />
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t("actions.edit")}
-                      title={t("actions.edit")}
-                      onClick={() => setEditing(item)}
-                      className="h-8 w-8"
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t("actions.delete")}
-                      title={t("actions.delete")}
-                      onClick={() => setConfirmCode(item.shortCode)}
-                      className="h-8 w-8 text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </TD>
-              </TR>
-            ))}
-          </TBody>
-        </Table>
+                )}
+                <div className="flex shrink-0 items-center gap-1.5 text-right">
+                  {bump && <LiveDot />}
+                  <span className="min-w-[3ch] text-[15px] font-semibold tabular-nums text-slate-900 dark:text-slate-100">
+                    {bump ? (
+                      <span key={bump.seq} className="count-bump">
+                        {formatNumber((item.humanClickCount ?? item.clickCount) + bump.extra)}
+                      </span>
+                    ) : (
+                      formatNumber(item.humanClickCount ?? item.clickCount)
+                    )}
+                  </span>
+                </div>
+                <div className="flex shrink-0 items-center">
+                  <CopyButton size="sm" variant="ghost" label="" value={item.shortUrl} onCopied={() => toast(t("copied"), "success")} />
+                  <RowMenu
+                    label={t("actions.more")}
+                    items={[
+                      {
+                        label: favorite ? t("favorite.remove") : t("favorite.add"),
+                        icon: Star,
+                        disabled: favoritesDisabled,
+                        onSelect: () => onToggleFavorite(item.shortCode),
+                      },
+                      { label: t("actions.openOriginal"), icon: ExternalLink, href: item.originalUrl },
+                      { label: t("actions.edit"), icon: Pencil, onSelect: () => setEditing(item) },
+                      { label: t("actions.delete"), icon: Trash2, destructive: true, onSelect: () => setConfirmCode(item.shortCode) },
+                    ]}
+                  />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       </div>
 
       <ConfirmDialog
@@ -365,6 +334,14 @@ type ExpiryState =
   | { kind: "later" }
   | null;
 
+function hostOf(url: string): string {
+  try {
+    return new URL(url).host.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
 function expiryState(expiresAt: string | null | undefined): ExpiryState {
   if (!expiresAt) return null;
   const expires = +new Date(expiresAt);
@@ -376,216 +353,116 @@ function expiryState(expiresAt: string | null | undefined): ExpiryState {
   return { kind: "later" };
 }
 
-function MobileLinkCard({
-  item,
-  index,
-  selected,
-  favorite,
-  onToggleFavorite,
-  onToggleSelect,
-  onTagClick,
-  onCopied,
-  onEdit,
-  onDelete,
-  t,
-}: {
-  item: MyLink;
-  index: number;
-  selected: boolean;
-  favorite: boolean;
-  onToggleFavorite: () => void;
-  onToggleSelect: () => void;
-  onTagClick?: (tag: string) => void;
-  onCopied: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-  t: ReturnType<typeof useTranslations<"dashboard">>;
-}) {
-  const last7d = item.clicksLast7d ?? [];
-  const weekClicks = last7d.reduce((sum, n) => sum + n, 0);
-  const expiry = expiryState(item.expiresAt);
-
-  return (
-    <div
-      className="profile-fade rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)] transition-transform duration-200 ease-[var(--ease)] active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100"
-      style={{ "--idx": Math.min(index, 8) } as CSSProperties}
-    >
-      <div className="flex items-start gap-2.5">
-        <input
-          type="checkbox"
-          aria-label={t("bulkSelectRow", { code: item.shortCode })}
-          checked={selected}
-          onChange={onToggleSelect}
-          className="mt-2.5 h-3.5 w-3.5 shrink-0 cursor-pointer"
-        />
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-50 dark:bg-slate-800/50">
-          <Favicon url={item.originalUrl} size={18} />
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1">
-            <Link
-              href={`/stats/${item.shortCode}`}
-              className="truncate font-mono text-[15px] font-semibold leading-tight text-slate-900 dark:text-slate-100 hover:underline"
-            >
-              /{item.shortCode}
-            </Link>
-            <CopyButton
-              size="sm"
-              variant="ghost"
-              label=""
-              value={item.shortUrl}
-              onCopied={onCopied}
-            />
-          </div>
-          <a
-            href={item.originalUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-0.5 flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
-            title={item.originalUrl}
-          >
-            <span className="truncate text-xs">{truncateMiddle(item.originalUrl, 40)}</span>
-            <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
-          </a>
-        </div>
-        <div className="shrink-0 text-right">
-          <p className="font-mono text-2xl font-semibold leading-none tabular-nums text-slate-900 dark:text-slate-100">
-            {formatNumber(item.clickCount)}
-          </p>
-          <p className="mt-1 text-[11px] leading-none text-slate-500 dark:text-slate-400">
-            {t("ops.clicks")}
-          </p>
-        </div>
-      </div>
-
-      {last7d.length > 0 && (
-        <div className="mt-3 flex items-center gap-2.5">
-          <Sparkline
-            values={last7d}
-            width={96}
-            height={22}
-            className="shrink-0 text-accent-600 dark:text-accent-400"
-          />
-          <span
-            className={cn(
-              "text-[12px]",
-              weekClicks > 0
-                ? "font-medium text-accent-700 dark:text-accent-400"
-                : "text-slate-500 dark:text-slate-400",
-            )}
-          >
-            {t("card.week", {
-              count: weekClicks > 0 ? `+${formatNumber(weekClicks)}` : "0",
-            })}
-          </span>
-        </div>
-      )}
-
-      {(expiry?.kind === "expired" || expiry?.kind === "soon" || (item.tags?.length ?? 0) > 0) && (
-        <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          {expiry?.kind === "expired" && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-700 dark:text-red-300">
-              <Clock3 className="h-2.5 w-2.5" />
-              {t("card.expired")}
-            </span>
-          )}
-          {expiry?.kind === "soon" && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-800 dark:text-amber-300">
-              <Clock3 className="h-2.5 w-2.5" />
-              {expiry.days === 0 ? t("card.expiresToday") : t("card.expiresIn", { days: expiry.days })}
-            </span>
-          )}
-          {item.tags?.map((tag) => (
-            <TagFilterChip
-              key={tag}
-              tag={tag}
-              onClick={() => onTagClick?.(tag)}
-            />
-          ))}
-        </div>
-      )}
-
-      <div className="mt-3 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-1.5">
-        <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">
-          {formatDate(item.createdAt)}
-          {expiry?.kind === "later" && item.expiresAt && (
-            <span className="ml-2 text-slate-500 dark:text-slate-400">→ {formatDate(item.expiresAt)}</span>
-          )}
-        </span>
-        <div className="inline-flex shrink-0 items-center gap-0.5">
-          <FavoriteButton
-            active={favorite}
-            onToggle={onToggleFavorite}
-            label={favorite ? t("favorite.remove") : t("favorite.add")}
-            className="h-9 w-9"
-          />
-          <Link href={`/stats/${item.shortCode}`}>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={t("actions.stats")}
-              title={t("actions.stats")}
-            >
-              <BarChart3 className="h-3.5 w-3.5" />
-            </Button>
-          </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={t("actions.edit")}
-            title={t("actions.edit")}
-            onClick={onEdit}
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={t("actions.delete")}
-            title={t("actions.delete")}
-            onClick={onDelete}
-            className="text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-600"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/**
- * 별표 토글 — 즐겨찾기한 링크를 목록 맨 위로 고정한다. 행/링크 클릭과 히트가 겹치지 않게 <button>
- * 으로 분리하고, 채움(브랜드 그린)/비움으로 상태를 나타낸다. 별칭 색은 §10.3 마커(accent-600).
- */
-function FavoriteButton({
-  active,
-  onToggle,
-  label,
-  className,
-}: {
-  active: boolean;
-  onToggle: () => void;
+type RowMenuItem = {
   label: string;
-  className?: string;
-}) {
+  icon: ComponentType<{ className?: string }>;
+  onSelect?: () => void;
+  href?: string;
+  destructive?: boolean;
+  disabled?: boolean;
+};
+
+function RowMenu({ label, items }: { label: string; items: RowMenuItem[] }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const items = () => Array.from(ref.current?.querySelectorAll<HTMLElement>('[role="menuitem"]:not([disabled])') ?? []);
+    items()[0]?.focus();
+    function onPointer(event: PointerEvent) {
+      if (!ref.current?.contains(event.target as Node)) setOpen(false);
+    }
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+        return;
+      }
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+      event.preventDefault();
+      const list = items();
+      const index = list.indexOf(document.activeElement as HTMLElement);
+      const next = event.key === "ArrowDown" ? (index + 1) % list.length : (index - 1 + list.length) % list.length;
+      list[next]?.focus();
+    }
+    function onFocus(event: FocusEvent) {
+      if (!ref.current?.contains(event.target as Node)) setOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("focusin", onFocus);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("focusin", onFocus);
+    };
+  }, [open]);
+
+  const itemClass = (destructive?: boolean) =>
+    cn(
+      "flex min-h-11 w-full items-center gap-2.5 rounded-md px-3 text-left text-sm transition-colors disabled:opacity-50",
+      destructive
+        ? "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
+        : "text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800",
+    );
+
   return (
-    <button
-      type="button"
-      aria-pressed={active}
-      aria-label={label}
-      title={label}
-      onClick={onToggle}
-      className={cn(
-        "focus-ring grid h-8 w-8 shrink-0 place-items-center rounded-md transition-colors",
-        active
-          ? "text-accent-600 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-500/10"
-          : "text-slate-400 dark:text-slate-500 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300",
-        className,
+    <div ref={ref} className="relative">
+      <Button
+        ref={triggerRef}
+        variant="ghost"
+        size="icon"
+        aria-label={label}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="h-11 w-11 text-slate-500 dark:text-slate-400"
+      >
+        <MoreHorizontal className="h-4 w-4" />
+      </Button>
+      {open && (
+        <div
+          role="menu"
+          aria-label={label}
+          className="absolute right-0 top-full z-20 mt-1 w-52 rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900"
+        >
+          {items.map(({ label: itemLabel, icon: Icon, onSelect, href, destructive, disabled }) =>
+            href ? (
+              <a
+                key={itemLabel}
+                role="menuitem"
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setOpen(false)}
+                className={itemClass(destructive)}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                {itemLabel}
+              </a>
+            ) : (
+              <button
+                key={itemLabel}
+                type="button"
+                role="menuitem"
+                disabled={disabled}
+                onClick={() => {
+                  setOpen(false);
+                  triggerRef.current?.focus();
+                  onSelect?.();
+                }}
+                className={itemClass(destructive)}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                {itemLabel}
+              </button>
+            ),
+          )}
+        </div>
       )}
-    >
-      <Star className={cn("h-3.5 w-3.5", active && "fill-current")} />
-    </button>
+    </div>
   );
 }
 
@@ -594,12 +471,24 @@ function FavoriteButton({
  * tokens (focus-ring, px-3 py-1.5, text-[13px] font-medium, accent hover) but rendered as a
  * <button> (not an anchor) because it applies a filter via onClick rather than navigating.
  */
-function TagFilterChip({ tag, onClick }: { tag: string; onClick: () => void }) {
+function TagFilterChip({
+  tag,
+  compact,
+  onClick,
+}: {
+  tag: string;
+  /** 압축 카드의 메타 행용 — 만료 칩과 같은 높이(text-[10px])로 줄인다. */
+  compact?: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="focus-ring inline-flex items-center rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400"
+      className={cn(
+        "focus-ring inline-flex items-center rounded-full font-medium transition-colors bg-slate-100 text-slate-600 hover:bg-accent-50 hover:text-accent-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-accent-500/15 dark:hover:text-accent-400",
+        compact ? "px-2 py-0.5 text-[10px]" : "px-3 py-1.5 text-[13px]",
+      )}
     >
       {tag}
     </button>
@@ -612,25 +501,31 @@ function SortHeader({
   onClick,
   align,
   children,
+  disabled,
+  dirLabel,
 }: {
   active: boolean;
   dir: SortDir;
   onClick: () => void;
   align?: "right";
+  disabled?: boolean;
   children: React.ReactNode;
+  dirLabel: string;
 }) {
+  if (disabled) return <span className="text-xs font-medium">{children}</span>;
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider hover:text-slate-900 dark:hover:text-slate-100",
+        "inline-flex min-h-11 items-center gap-1 text-xs font-medium hover:text-slate-900 dark:hover:text-slate-100",
         active ? "text-slate-900 dark:text-slate-100" : "text-slate-500 dark:text-slate-400",
         align === "right" && "ml-auto",
       )}
     >
       {children}
-      <ArrowUpDown className={cn("h-3 w-3", active && dir === "asc" && "rotate-180")} />
+      {active && <span className="sr-only">{dirLabel}</span>}
+      <ArrowUpDown aria-hidden className={cn("h-3 w-3", active && dir === "asc" && "rotate-180")} />
     </button>
   );
 }

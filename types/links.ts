@@ -2,12 +2,14 @@ export type CreateLinkRequest = {
   url: string;
   customCode?: string;
   expiresAt?: string;
+  password?: string;
 };
 
 export type CreateLinkResponse = {
   shortCode: string;
   shortUrl: string;
   claimToken: string | null;
+  passwordProtected?: boolean;
 };
 
 export type ClaimResult = {
@@ -22,6 +24,9 @@ export type BulkImportSummary = {
 };
 
 export type MyLink = {
+  note?: string | null;
+  timezone?: string;
+  humanClickCount?: number;
   shortCode: string;
   shortUrl: string;
   originalUrl: string;
@@ -48,6 +53,7 @@ export type MyLinksPage = {
 };
 
 export type UpdateLinkRequest = {
+  clearExpiresAt?: boolean;
   originalUrl?: string;
   expiresAt?: string | null;
   note?: string;
@@ -71,6 +77,39 @@ export type LinkDetail = {
   tags: string[];
   note: string | null;
   expiredMessage: string | null;
+  openInBrowser?: boolean;
+  splash?: LinkSplash;
+  opensAt?: string | null;
+  destinationHealth?: DestinationHealth | null;
+};
+
+export type DestinationHealth = {
+  broken: boolean;
+  failure: "NOT_FOUND" | "GONE" | "NO_HOST" | null;
+  httpStatus: number | null;
+  brokenSince: string | null;
+  checkedAt: string;
+};
+
+export type LinkSplash = {
+  enabled: boolean;
+  message: string | null;
+  seconds: number;
+  ctaId: number | null;
+};
+
+export type LinkVisitOptions = {
+  openInBrowser?: boolean;
+  splash?: LinkSplash;
+  opensAt?: string;
+  clearOpensAt?: boolean;
+};
+
+export type LinkVisitOptionsResponse = {
+  shortCode: string;
+  openInBrowser: boolean;
+  splash?: LinkSplash;
+  opensAt?: string | null;
 };
 
 export type OgOverrideRequest = {

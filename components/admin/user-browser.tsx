@@ -131,7 +131,6 @@ export function UserBrowser() {
                   <TR>
                     <TH>{t("browse.users.col.user")}</TH>
                     <TH>{t("browse.users.col.role")}</TH>
-                    <TH>{t("browse.users.col.tier")}</TH>
                     <TH className="text-right">{t("browse.users.col.links")}</TH>
                     <TH>{t("browse.users.col.joined")}</TH>
                     <TH>{t("browse.users.col.status")}</TH>
@@ -151,9 +150,6 @@ export function UserBrowser() {
                           role={u.role}
                           label={t(`browse.users.role.${u.role === "ADMIN" ? "admin" : "user"}`)}
                         />
-                      </TD>
-                      <TD className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                        {u.tier}
                       </TD>
                       <TD className="text-right tabular-nums">
                         {u.linkCount > 0 ? (

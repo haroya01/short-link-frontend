@@ -521,14 +521,9 @@ export function ProfileSection({ onDraft }: ProfileSectionProps = {}) {
     return <p className="px-1 text-xs text-slate-500">{t("loading")}</p>;
   }
 
-  // No username yet → just show the claim flow.
+  // No username yet → just show the claim flow. intro 는 페이지 헤더가 이미 말한다(중복 금지).
   if (!profile?.username) {
-    return (
-      <div className="space-y-5">
-        <p className="text-xs text-slate-500">{t("intro")}</p>
-        {metaForm}
-      </div>
-    );
+    return <div className="space-y-5">{metaForm}</div>;
   }
 
   return (

@@ -146,7 +146,7 @@ export async function request<T>(
 ): Promise<T> {
   // Mock mode: answer known links-product read endpoints locally so the app renders without a backend.
   if (MOCKS_ON) {
-    const mocked = mockLinksResponse(path, init.method ?? "GET");
+    const mocked = mockLinksResponse(path, init.method ?? "GET", init.body);
     if (mocked !== undefined) return mocked as T;
   }
   const res = await fetchWithAuth(path, init, retried);
@@ -249,7 +249,6 @@ const MOCK_ME: Me = {
   email: "dohyun@kurl.me",
   role: "USER",
   username: "dohyun",
-  tier: "FREE",
   createdAt: "2026-01-01T00:00:00Z",
   avatarUrl: "https://i.pravatar.cc/120?img=12",
 };

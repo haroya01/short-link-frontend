@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildDemoLinkStats } from "./demo-data";
+import { buildJournal } from "./stats-journal";
 
 /**
  * /demo renders the same {@code StatsBody} the dashboard's stats page does — 100% mirror, only
@@ -195,6 +196,23 @@ describe("buildDemoLinkStats", () => {
     expect(stats.languageClicks.length).toBeGreaterThan(0);
     expect(stats.asnClicks.length).toBeGreaterThan(0);
     expect(stats.velocity.ratio).toBeGreaterThan(0);
+  });
+
+  it("데모는 새 분석 5종을 전부 채운다 — 빈 섹션 규칙에 걸려 /demo 에서 사라지지 않게", () => {
+    const stats = buildDemoLinkStats();
+    expect(stats.clientAppClicks?.length).toBeGreaterThan(0);
+    expect(stats.fetchSiteClicks?.length).toBeGreaterThan(0);
+    expect(stats.postClicks?.length).toBeGreaterThan(0);
+    expect(stats.utmTermClicks?.length).toBeGreaterThan(0);
+    expect(stats.channelDepth?.length).toBeGreaterThan(0);
+    // 지워진 글 계약 — 제목만 null 이고 클릭 수는 남는다.
+    expect(stats.postClicks?.some((p) => p.title === null)).toBe(true);
+  });
+
+  it("데모 데이터로 링크 일지의 새 두 문장이 실제로 선다", () => {
+    const entries = buildJournal(buildDemoLinkStats());
+    expect(entries.find((e) => e.key === "inAppBrowser")).toBeDefined();
+    expect(entries.find((e) => e.key === "channelLoyalty")).toBeDefined();
   });
 });
 

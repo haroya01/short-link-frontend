@@ -187,7 +187,6 @@ export type AdminUserRow = {
   email: string;
   username: string | null;
   role: AdminUserRole;
-  tier: "FREE" | "PRO";
   deleted: boolean;
   createdAt: string;
   linkCount: number;
@@ -211,6 +210,17 @@ export type AdminLinkRow = {
 
 export type AdminUsersPage = { items: AdminUserRow[]; total: number };
 export type AdminLinksPage = { items: AdminLinkRow[]; total: number };
+
+/** Operator domain blocklist entry — blocks new shortens and kills existing redirects. */
+export type BlockedDomain = {
+  id: number;
+  domain: string;
+  reason: string | null;
+  blockedByUserId: number | null;
+  blockedAt: string;
+  /** Owners auto-warned by this block — present only on the block response, not on list rows. */
+  warnedOwners?: number;
+};
 
 export type AdminLinkSort = "recent" | "clicks";
 

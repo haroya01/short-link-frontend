@@ -49,7 +49,6 @@ export default function CampaignsPage() {
   if (ready && !authenticated) {
     return (
       <LinksAuthGate
-        eyebrow="campaigns"
         title={t("authTitle")}
         description={t("authDesc")}
         next="/campaigns"
@@ -64,13 +63,13 @@ export default function CampaignsPage() {
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {t("title")}
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            {items === null
-              ? t("subtitleLoading")
-              : t("subtitleCount", { count: items.length })}
-          </p>
+          {(items === null || items.length > 0) && (
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              {items === null ? t("subtitleLoading") : t("subtitleCount", { count: items.length })}
+            </p>
+          )}
         </div>
-        {items && items.length > 0 && (
+        {items && (
           <Link href="/campaigns/new">
             <Button variant="accent">
               <Plus className="h-4 w-4" aria-hidden /> {t("newCampaign")}

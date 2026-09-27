@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
 import { getTranslations } from "next-intl/server";
 import { marketingOg } from "@/lib/marketing-og";
 
@@ -57,7 +58,7 @@ export default async function QrCampaignsLayout({
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       {children}
     </>

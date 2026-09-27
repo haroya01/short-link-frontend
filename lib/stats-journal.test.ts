@@ -76,6 +76,77 @@ describe("buildJournal", () => {
     expect([...weights].sort((a, b) => b - a)).toEqual(weights);
   });
 
+  it("인앱 브라우저는 사람 클릭 대비 20% 문턱 — 앱 이름은 카탈로그 키로 넘긴다", () => {
+    const under = buildJournal(
+      stats({ humanClicks: 100, clientAppClicks: [{ app: "kakaotalk", count: 19 }] }),
+    );
+    expect(under.find((e) => e.key === "inAppBrowser")).toBeUndefined();
+
+    const over = buildJournal(
+      stats({
+        humanClicks: 100,
+        clientAppClicks: [
+          { app: "instagram", count: 9 },
+          { app: "kakaotalk", count: 12 },
+        ],
+      }),
+    );
+    const entry = over.find((e) => e.key === "inAppBrowser");
+    // 합이 21% 이고, 1등은 배열 첫 항목이 아니라 최다 클릭(kakaotalk).
+    expect(entry?.params).toEqual({ app: "clientApp.kakaotalk", percent: 21 });
+    expect(entry?.translatedParams).toEqual(["app"]);
+  });
+
+  it("모르는 인앱 앱은 번역을 시도하지 않고 원값 그대로", () => {
+    const entries = buildJournal(
+      stats({ humanClicks: 100, clientAppClicks: [{ app: "somenewapp", count: 40 }] }),
+    );
+    const entry = entries.find((e) => e.key === "inAppBrowser");
+    expect(entry?.params.app).toBe("somenewapp");
+    expect(entry?.translatedParams).toBeUndefined();
+  });
+
+  it("채널 충성도는 재방문율 1등을 집고, 표본 하한 미달은 무시한다", () => {
+    const entries = buildJournal(
+      stats({
+        channelDepth: [
+          // 재방문율은 제일 높지만 재방문자 4명 — 잡음이라 후보에서 뺀다.
+          { host: "tiny.example", count: 9, firstSeenAt: "", returningVisitors: 4, returnRatio: 0.9 },
+          { host: "notion.site", count: 120, firstSeenAt: "", returningVisitors: 41, returnRatio: 0.41 },
+          // 클릭 1등이지만 한 번 터지고 끝난 채널.
+          {
+            host: "instagram.com",
+            count: 400,
+            firstSeenAt: "",
+            returningVisitors: 38,
+            returnRatio: 0.11,
+          },
+        ],
+      }),
+    );
+    const entry = entries.find((e) => e.key === "channelLoyalty");
+    expect(entry?.params).toEqual({ host: "notion.site", percent: 41 });
+  });
+
+  it("채널 충성도가 서면 링크 전체 재방문 문장은 접는다 — 같은 이야기 두 줄 금지", () => {
+    const returnRate = { newVisitors: 60, returningVisitors: 40, ratio: 0.4 };
+    const loyal = {
+      host: "notion.site",
+      count: 120,
+      firstSeenAt: "",
+      returningVisitors: 41,
+      returnRatio: 0.41,
+    };
+    const withChannel = buildJournal(stats({ returnRate, channelDepth: [loyal] }));
+    expect(withChannel.find((e) => e.key === "returning")).toBeUndefined();
+
+    // 문턱 미달이면 채널 문장이 안 서므로 링크 전체 재방문 문장이 그대로 남는다.
+    const withoutChannel = buildJournal(
+      stats({ returnRate, channelDepth: [{ ...loyal, returnRatio: 0.12 }] }),
+    );
+    expect(withoutChannel.find((e) => e.key === "returning")).toBeDefined();
+  });
+
   it("피크 날짜는 MM-DD, 스파크는 피크까지의 조각", () => {
     const entries = buildJournal(
       stats({

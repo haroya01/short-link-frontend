@@ -12,7 +12,7 @@ export const contentType = "image/png";
  * Per-post share card — dark, title-first. The post title is the hero (the one piece of text that
  * earns the click); byline = avatar + @handle. Everything else (excerpt, date, reading time) is
  * dropped on purpose — a clean, mark-forward card reads premium, not like a stuffed template. Also the
- * share-parity fallback for image-less posts (AGENTS §10.4): no cover → still a branded title card.
+ * share-parity fallback for image-less posts (DESIGN.md §10.4): no cover → still a branded title card.
  */
 export default async function PostOgImage({
   params,
