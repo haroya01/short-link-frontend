@@ -39,16 +39,16 @@ export default function HomePage() {
   // 무대(Stage)가 기본 랜딩(2026-07-23 졸업). ?stage=off(쿠키/비상 env)로만 레거시 구성이
   // 남아 있다 — 완전 철거 전까지의 안전핀.
   const stage = useStageVariant();
-  // headline2 가 ja 에서 「クリックの「いつ・どこから・誰が」を一目で」 23자로 늘어나
-  // 기본 sm:text-[60px] 컨테이너 (max-w-3xl) 를 초과해 wrap. ko/en 은 short copy
-  // (12/24자) 라 60px 유지 가능 — locale 별로 hero font scale 분기. mobile 도 동일
-  // 이유로 ja 만 base 24/26px 으로 축소.
   const headlineSizeClass =
     locale === "ja"
-      ? "text-[33px] leading-[1.08] min-[390px]:text-[34px] sm:text-[46px] sm:leading-[1.12] [text-wrap:nowrap] sm:[text-wrap:balance]"
-      : "text-[38px] leading-[1.08] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.02]";
+      ? "text-[28px] leading-[1.12] min-[390px]:text-[29px] sm:text-[46px]"
+      : locale === "en"
+        ? "text-[34px] leading-[1.08] min-[390px]:text-[36px] sm:text-[72px] sm:leading-[1.02]"
+        : locale === "vi"
+          ? "text-[30px] leading-[1.08] min-[390px]:text-[32px] sm:text-[72px] sm:leading-[1.02]"
+          : "text-[38px] leading-[1.08] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.02]";
   const [results, setResults] = useState<
-    { res: CreateLinkResponse; original: string }[] | null
+    { res: CreateLinkResponse; original: string; passwordRequested?: boolean }[] | null
   >(null);
   /** 답 줄이 자리를 차지한 뒤 "다른 주소도 줄이기"로 빈 줄을 다시 불러온 상태. */
   const [composing, setComposing] = useState(false);
@@ -79,16 +79,9 @@ export default function HomePage() {
               className={`text-balance text-center font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
-              <span className="sm:hidden">
-                <span>{t("mobileHeadline1")}</span>
-                <br />
-                <span className="text-slate-500 dark:text-slate-400">{t("mobileHeadline2")}</span>
-              </span>
-              <span className="hidden sm:inline">
-                <span>{t("headline1")}</span>
-                <br />
-                <span className="text-slate-500 dark:text-slate-400">{t("headline2")}</span>
-              </span>
+              <span>{t("headline1")}</span>
+              <br />
+              <span className="text-slate-500 dark:text-slate-400">{t("headline2")}</span>
             </h1>
             <p
               data-testid="home-hero-subhead"
@@ -110,10 +103,10 @@ export default function HomePage() {
             className={"profile-fade" + (stage === "on" ? " stage-sweep-host" : "")}
             style={{ ["--idx" as string]: 4 } as React.CSSProperties}
           >
-            {/* 줄이 응답한다 — 단축이 끝나면 입력 줄이 사라지고 그 자리에 답 줄(ResultLine)이
-                내려앉는다. "다른 주소도 줄이기"를 누르면 빈 줄이 맨 위로 돌아오고 답들은
-                영수증처럼 아래로 밀린다. 카드·CTA 상자 문법은 폐지(§ 한 줄 미학). */}
-            <div className="mx-auto max-w-xl">
+            {/* 단축이 끝나면 입력 캡슐이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.
+                "다른 주소도 줄이기"를 누르면 빈 캡슐이 맨 위로 돌아오고 답들은
+                영수증처럼 아래로 밀린다. */}
+            <div className="mx-auto max-w-2xl">
               {(!results || results.length === 0 || composing) && (
                 <ShortenForm
                   hero
@@ -124,7 +117,11 @@ export default function HomePage() {
                     setComposing(false);
                     // 새 답이 맨 위로 — 이번 세션의 영수증 스택(최대 5줄, 전체는 최근 단축이 보관).
                     setResults((prev) => {
-                      const next = items.map((it) => ({ res: it.res, original: it.originalUrl }));
+                      const next = items.map((it) => ({
+                        res: it.res,
+                        original: it.originalUrl,
+                        passwordRequested: it.passwordRequested,
+                      }));
                       const seen = new Set(next.map((n) => n.res.shortCode));
                       const kept = (prev ?? []).filter((p) => !seen.has(p.res.shortCode));
                       return [...next, ...kept].slice(0, 5);
@@ -150,6 +147,7 @@ export default function HomePage() {
                       result={r.res}
                       originalUrl={r.original}
                       authenticated={authenticated}
+                      passwordRequested={r.passwordRequested}
                       enterIndex={i}
                     />
                   ))}
@@ -171,7 +169,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="mt-6 min-h-[64px]">
+          <div className="mt-6 min-h-[64px] space-y-3">
             {(!results || results.length === 0) && !authenticated ? (
               <div className="space-y-2 text-center">
                 <p className="text-xs text-slate-500 dark:text-slate-400">{t("anonymousHint")}</p>
@@ -198,6 +196,18 @@ export default function HomePage() {
           <ChevronDown className="h-4 w-4 motion-safe:animate-bounce" />
         </div>
       </section>
+
+      {/* 글리프 워밍업 — 무대 씬 제목의 한글 서브셋을 첫 페인트 창에 미리 당긴다.
+          늦게 오는 font-face 이벤트가 뷰포트 안 씬 h2 를 LCP 로 재기록하던 것(#710 메커니즘,
+          모바일 render delay ~2.9s)의 처방. visibility:hidden 은 폰트 로드를 트리거한다. */}
+      {stage === "on" && (
+        <div aria-hidden className="invisible absolute h-0 overflow-hidden">
+          <span className="text-headline-sm font-semibold">{t("stage.scene2Title")}</span>
+          <span className="text-headline-sm font-semibold">{t("stage.scene3Title")}</span>
+          <span>{t("stage.scene2Desc")}</span>
+          <span>{t("stage.scene3Desc")}</span>
+        </div>
+      )}
 
       {/* 무대 on = "잉크 스파인 + 딥그린 클라이맥스" 여정이 프리뷰 카드·카운터·기능 캐러셀을
           대체한다(vault kurl-web-stage-design). off = 기존 구성 그대로(롤백 계약). */}

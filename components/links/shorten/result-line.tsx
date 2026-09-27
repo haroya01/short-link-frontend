@@ -1,5 +1,6 @@
 "use client";
 
+import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/common/copy-button";
 import { ShareButton } from "@/components/common/share-button";
@@ -13,6 +14,7 @@ type Props = {
   result: CreateLinkResponse;
   originalUrl: string;
   authenticated: boolean;
+  passwordRequested?: boolean;
   /** 영수증 스택에서 몇 번째 줄인가 — 등장 계단(70ms)의 기준. */
   enterIndex?: number;
 };
@@ -26,7 +28,13 @@ const WHISPER_LINK =
  * 왼→오로 그어지며 남는다), 버튼은 복사 하나. 원본·통계·QR·공유·열기는 밑줄 아래 속삭임 한 줄.
  * 연속 단축은 이 줄이 영수증처럼 아래로 쌓인다(enterIndex 계단).
  */
-export function ResultLine({ result, originalUrl, authenticated, enterIndex = 0 }: Props) {
+export function ResultLine({
+  result,
+  originalUrl,
+  authenticated,
+  passwordRequested = false,
+  enterIndex = 0,
+}: Props) {
   const t = useTranslations("result");
   const { toast } = useToast();
   const display = result.shortUrl.replace(/^https?:\/\//, "");
@@ -72,6 +80,18 @@ export function ResultLine({ result, originalUrl, authenticated, enterIndex = 0 
         <span className="min-w-0 max-w-full truncate sm:max-w-[44ch]" title={originalUrl}>
           {truncateMiddle(originalUrl, 48)}
         </span>
+        {result.passwordProtected ? (
+          <span className="inline-flex items-center gap-1 font-medium text-accent-700 dark:text-accent-400">
+            <Lock aria-hidden className="h-3.5 w-3.5" />
+            {t("passwordProtected")}
+          </span>
+        ) : (
+          passwordRequested && (
+            <span role="status" className="font-medium text-red-600 dark:text-red-400">
+              {t("passwordNotApplied")}
+            </span>
+          )
+        )}
         {authenticated && (
           <Link href={`/stats/${result.shortCode}`} className={WHISPER_LINK}>
             {t("stats")}

@@ -52,7 +52,7 @@ function writeFollowCache(u: string, snap: FollowSnap) {
 export function FollowButton({
   username,
   initialFollowerCount,
-  showCount = true,
+  showCount = false,
   compact = false,
   sourcePostId,
 }: {
@@ -180,7 +180,6 @@ export function FollowButton({
           aria-pressed={following}
           // Curation framing, not broadcast: following a curator is following the path they weave, not
           // subscribing to a feed. Kept as the quiet hint so the pill itself stays a single word.
-          aria-label={following ? undefined : t("followCuratorHint")}
           title={following ? undefined : t("followCuratorHint")}
           className={`touch-target inline-flex shrink-0 items-center rounded-full border font-semibold transition-colors duration-200 focus-ring ${sizeCls} ${stateCls}`}
         >

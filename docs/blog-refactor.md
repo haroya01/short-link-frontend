@@ -8,7 +8,7 @@
 2. **변경 전 테스트.** 추출하는 로직은 vitest 특성화(characterization) 테스트로 현재 동작을 먼저 고정한다. 건드리는 UI 표면은 Playwright 시각 스냅샷(`visual-fixtures`)으로 픽셀을 먼저 잠근 뒤 손댄다.
 3. **repo 테스트 철학 존중.** `vitest.config.ts`에 명시된 대로 React 컴포넌트 렌더링은 단위테스트하지 않는다(@testing-library/react 미설치). 로직은 vitest, 시각은 Playwright. 리팩토링은 이 분담선을 강화하는 방향 — "컴포넌트에서 순수 로직을 빼내 vitest로 덮는다".
 4. **임의 수정 금지.** 동작·UX가 어색하거나 버그로 보여도 손대지 않는다. 아래 "관찰 메모"에 적고 넘어간다.
-5. **디자인 시스템 준수.** `AGENTS.md` §1~§10(카드 토큰, 4 아키타입, 1 primary CTA, 공유 primitive, §10 weblog `max-w-2xl`)을 그대로 따른다.
+5. **디자인 시스템 준수.** `DESIGN.md` §1~§10(카드 토큰, 4 아키타입, 1 primary CTA, 공유 primitive, §10 weblog `max-w-2xl`)을 그대로 따른다.
 
 ## 현황 (리팩토링 출발점)
 

@@ -42,7 +42,6 @@ async function rendersCleanly(page: Page, name: string, status: number | null) {
 // Canonical served URLs (the /links/* paths 308-redirect to these apex routes).
 const SCREENS: { name: string; path: string }[] = [
   // ── marketing (public) ──
-  { name: "marketing · pricing", path: "/ko/pricing" },
   { name: "marketing · about", path: "/ko/about" },
   { name: "marketing · learn", path: "/ko/learn" },
   { name: "marketing · privacy", path: "/ko/privacy" },

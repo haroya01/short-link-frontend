@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serializeJsonLd } from "@/lib/json-ld";
 import { getTranslations } from "next-intl/server";
 import { marketingOg } from "@/lib/marketing-og";
 import { Link } from "@/i18n/navigation";
@@ -60,7 +61,7 @@ export default async function LearnPage({
     <article className="container max-w-3xl space-y-10 py-16">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqJsonLd) }}
       />
       <header className="space-y-3">
         <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
@@ -88,7 +89,7 @@ export default async function LearnPage({
         </div>
         <Link
           href="/"
-          className="inline-flex shrink-0 items-center justify-center rounded-md bg-slate-900 dark:bg-white px-5 py-2 text-sm font-medium text-white dark:text-slate-900 transition hover:bg-slate-800 dark:hover:bg-slate-200"
+          className="inline-flex shrink-0 items-center justify-center rounded-md bg-accent-700 px-5 py-2 text-sm font-medium text-white transition hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
         >
           {t("ctaButton")}
         </Link>

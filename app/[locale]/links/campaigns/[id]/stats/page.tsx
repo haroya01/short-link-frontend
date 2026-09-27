@@ -102,7 +102,7 @@ export default function CampaignStatsPage() {
   }, [campaignId, compareWithId]);
 
   if (ready && !authenticated) {
-    return <LinksAuthGate eyebrow="campaigns" title={t("loginRequired")} />;
+    return <LinksAuthGate title={t("loginRequired")} />;
   }
 
   return (

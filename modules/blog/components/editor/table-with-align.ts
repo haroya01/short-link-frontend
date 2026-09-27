@@ -53,6 +53,8 @@ function separatorFor(align: ColumnAlign | null | undefined): string {
 
 // tiptap-markdown 직렬화 state(최소 표면만 사용). renderInline 은 셀의 인라인 내용을 스트림에 쓴다.
 type MdState = {
+  out: string;
+  inTable?: boolean;
   write: (s: string) => void;
   ensureNewLine: () => void;
   closeBlock: (n: unknown) => void;
@@ -70,12 +72,15 @@ export const AlignableTable = Table.extend({
       ...this.parent?.(),
       markdown: {
         serialize(state: MdState, node: PMNodeLike) {
+          state.inTable = true;
           node.forEach((row, _o, rowIndex) => {
             state.write("| ");
             row.forEach((cell, _c, colIndex) => {
               if (colIndex > 0) state.write(" | ");
               // 셀은 단일 문단을 담는다(GFM 셀=인라인). 그 인라인 내용만 스트림에 쓴다.
+              const start = state.out.length;
               state.renderInline(cell.firstChild ?? cell);
+              state.out = state.out.slice(0, start) + state.out.slice(start).replace(/(?<!\\)\|/g, "\\|");
             });
             state.write(" |");
             state.ensureNewLine();
@@ -86,6 +91,7 @@ export const AlignableTable = Table.extend({
               state.ensureNewLine();
             }
           });
+          state.inTable = false;
           state.closeBlock(node);
         },
         parse: {},

@@ -48,7 +48,7 @@
     "loadMoreError": "Không tải thêm được.",
     "feed": "Đang theo dõi",
     "followingSignedOut": "Bài viết mới từ các tác giả bạn theo dõi sẽ tụ về đây.",
-    "forYou": "Cho bạn",
+    "forYou": "Dành cho bạn",
     "forYouSignedOutTitle": "Chọn riêng cho bạn",
     "forYouSignedOut": "Đăng nhập và chúng tôi sẽ gợi ý bài viết dựa trên những gì bạn đọc và chủ đề bạn quan tâm.",
     "forYouEmptyTitle": "Chưa có gì để gợi ý",
@@ -235,8 +235,9 @@
     "analyticsWindowFollows": "+{count} trong {days} ngày",
     "linksByPost": "Lượt nhấp theo bài",
     "linksFullDashboard": "Bảng điều khiển liên kết đầy đủ",
-    "savedTitle": "Đã lưu",
-    "savedSubtitle": "Bài viết bạn đã đánh dấu và đã thích, gom về một chỗ.",
+    "libraryCollections": "Bộ sưu tập",
+    "savedTitle": "Thư viện",
+    "savedSubtitle": "Đọc lại bài viết đã lưu và những đoạn muốn ghi nhớ.",
     "curationMockNote": "Xem trước — hiện chỉ lưu trên trình duyệt này.",
     "curationPinned": "Bài ghim",
     "curationPinnedHint": "Hiển thị theo thứ tự này ở đầu trang công khai của bạn.",
@@ -247,7 +248,7 @@
     "curationMoveUp": "Lên trên",
     "curationMoveDown": "Xuống dưới",
     "curationUnpin": "Bỏ ghim",
-    "curationReadingList": "Danh sách đọc",
+    "curationReadingList": "Bài đã lưu",
     "curationReadingListHint": "Bài bạn đã lưu để đọc sau.",
     "curationReadingListEmpty": "Chưa có bài nào được lưu.",
     "curationRemoveBookmark": "Xóa khỏi danh sách",
@@ -260,16 +261,17 @@
     "settingsDisplay": "Hiển thị",
     "settingsFeed": "Dòng tin",
     "settingsDefaultTab": "Tab mặc định — mở đầu tiên khi bạn vào trang chủ blog",
+    "settingsDefaultTabFailed": "Không thể lưu. Vui lòng thử lại.",
     "settingsPrivacy": "Phạm vi hiển thị",
     "settingsHideFollowerCount": "Ẩn số người theo dõi",
     "settingsHideFollowerCountHint": "Khi bật, không ai thấy số người theo dõi hay đang theo dõi của bạn. Việc theo dõi vẫn hoạt động.",
     "rowDelete": "Xóa",
-    "rowDeleteConfirm": "Xóa '{title}'? Thao tác này không thể hoàn tác.",
+    "rowDeleteConfirm": "Xóa “{title}”? Thao tác này không thể hoàn tác.",
     "rowDeleteFailed": "Không xóa được.",
     "curationLiked": "Bài đã thích",
     "curationLikedHint": "Những bài bạn đã thích.",
-    "curationHighlights": "Thư viện của tôi",
-    "curationHighlightsHint": "Những đoạn bạn đã tô. Quay lại đúng câu trong bài gốc.",
+    "curationHighlights": "Đánh dấu & ghi chú",
+    "curationHighlightsHint": "Những đoạn đã đánh dấu và ghi chú. Chọn một mục để trở lại bài gốc.",
     "curationComments": "Bình luận của tôi",
     "curationCommentsHint": "Những bình luận bạn đã viết.",
     "curationLikedEmpty": "Chưa có bài nào được thích.",
@@ -306,12 +308,13 @@
     },
     "urlDialog": {
       "linkTitle": "Liên kết",
-      "embedTitle": "Nhúng",
+      "embedTitle": "Thẻ liên kết · Video",
       "linkPlaceholder": "https://example.com",
-      "embedPlaceholder": "Dán liên kết YouTube · Vimeo",
+      "embedPlaceholder": "https://… (liên kết, YouTube, Vimeo)",
       "confirm": "Thêm",
       "cancel": "Hủy",
-      "remove": "Xóa liên kết"
+      "remove": "Xóa liên kết",
+      "linkTextPlaceholder": "Văn bản hiển thị (tùy chọn)"
     },
     "table": {
       "addColumn": "Thêm cột",
@@ -414,12 +417,12 @@
     "scheduledToast": "Đã lên lịch xuất bản vào {when}.",
     "scheduledFor": "Xuất bản {when}",
     "cancelSchedule": "Hủy lịch",
-    "addTopics": "Thêm chủ đề",
+    "addTopics": "Thêm thẻ",
     "tagsDone": "Xong",
-    "tagsEdit": "Sửa chủ đề",
+    "tagsEdit": "Sửa thẻ",
     "coverFromBody": "Dùng ảnh đầu tiên trong bài",
     "coverAuto": "Ảnh đầu tiên trong bài",
-    "tagsRequired": "Thêm ít nhất một chủ đề (thẻ) để xuất bản",
+    "tagsRequired": "Thêm ít nhất một thẻ để xuất bản",
     "boldMode": "Đậm",
     "toolbar": {
       "bold": "Đậm",
@@ -450,7 +453,7 @@
       "codeBlock": "Khối mã",
       "image": "Ảnh",
       "divider": "Đường phân cách",
-      "embed": "Nhúng (video / liên kết)",
+      "embed": "Thẻ liên kết · Video",
       "table": "Bảng",
       "imageWide": "Ảnh rộng",
       "imagePair": "Hai ảnh (cạnh nhau)",
@@ -465,12 +468,25 @@
         "codeBlock": "Mã có tô màu cú pháp",
         "image": "Tải ảnh lên",
         "divider": "Đường kẻ ngang",
-        "embed": "Nhúng YouTube · Vimeo",
+        "embed": "Hiện URL thành thẻ, phát YouTube · Vimeo",
         "table": "Chèn một bảng",
         "imageWide": "Ảnh rộng hơn văn bản",
         "imagePair": "Hai ảnh cạnh nhau",
-        "place": "Thẻ địa điểm trên bản đồ"
-      }
+        "place": "Thẻ địa điểm trên bản đồ",
+        "calloutNote": "Thông tin bổ sung trong hộp",
+        "calloutTip": "Mẹo hữu ích",
+        "calloutImportant": "Điều người đọc cần biết",
+        "calloutWarning": "Điều cần chú ý",
+        "calloutCaution": "Rủi ro hoặc không thể hoàn tác",
+        "taskList": "☐ Danh sách việc cần làm"
+      },
+      "groupCallout": "Hộp",
+      "calloutNote": "Ghi chú",
+      "calloutTip": "Mẹo",
+      "calloutImportant": "Quan trọng",
+      "calloutWarning": "Lưu ý",
+      "calloutCaution": "Cảnh báo",
+      "taskList": "Danh sách kiểm"
     },
     "slugLabel": "Slug URL của bài viết",
     "placeDialog": {
@@ -498,7 +514,15 @@
     "seriesCreateConflict": "Đã có series trùng tên. Hãy thử tên khác.",
     "seriesCreateError": "Không thể tạo series. Vui lòng thử lại.",
     "seriesLoadFailed": "Không tải được danh sách series.",
-    "revisionsLoadFailed": "Không tải được các phiên bản đã lưu."
+    "revisionsLoadFailed": "Không tải được các phiên bản đã lưu.",
+    "callout": {
+      "note": "Ghi chú",
+      "tip": "Mẹo",
+      "important": "Quan trọng",
+      "warning": "Lưu ý",
+      "caution": "Cảnh báo"
+    },
+    "bodyPlaceholderTouch": "Cứ bắt đầu viết — định dạng ở thanh công cụ phía trên"
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -532,7 +556,7 @@
     "clearHistoryCancel": "Hủy",
     "forget": "Xóa khỏi lịch sử",
     "loadMore": "Xem thêm",
-    "highlightsSearch": "Tìm theo đoạn văn hoặc tiêu đề bài",
+    "highlightsSearch": "Tìm đoạn trích, ghi chú hoặc tiêu đề bài viết",
     "noResults": "Không có đoạn nào khớp.",
     "emptyFolder": "Thư mục này trống.",
     "saveFailed": "Không thể lưu thay đổi của bạn. Vui lòng thử lại.",
@@ -563,6 +587,15 @@
     "highlightNoteTitle": "Thêm ghi chú",
     "highlightNotePlaceholder": "Để lại ghi chú cho đoạn này",
     "highlightNoteSave": "Lưu",
+    "highlightSourceUnavailable": "Không tìm thấy vị trí đoạn trích trong bài viết hiện tại. Đoạn tô sáng đã lưu được hiển thị thay thế.",
+    "highlightPublicScope": "Đoạn tô sáng và ghi chú sẽ được công khai kèm tên của bạn.",
+    "highlightSaving": "Đang lưu…",
+    "highlightChooseThread": "Ghi chú về đoạn này",
+    "highlightDiscardConfirm": "Bỏ ghi chú này?",
+    "highlightDiscardBody": "Nội dung chưa lưu sẽ bị mất.",
+    "highlightKeepEditing": "Tiếp tục chỉnh sửa",
+    "highlightDiscard": "Bỏ",
+    "highlightSelectionTooLong": "Chọn tối đa 1.000 ký tự để tô sáng.",
     "highlightNoteCancel": "Hủy",
     "highlightThreadNoReplies": "Chưa có phản hồi",
     "highlightReplyPlaceholder": "Viết câu trả lời…",
@@ -623,9 +656,6 @@
     "aboutIntro": "Giới thiệu",
     "aboutSince": "Hoạt động từ {date}",
     "aboutViewPosts": "Xem tất cả bài viết",
-    "statPosts": "Bài viết",
-    "statSeries": "Series",
-    "statLikes": "Lượt thích",
     "activityHeading": "Hoạt động",
     "activitySummary": "Xuất bản {count} bài trong năm qua",
     "imageZoom": "Phóng to ảnh",
@@ -677,7 +707,16 @@
       "COPYRIGHT": "Vi phạm bản quyền",
       "OTHER": "Khác"
     },
-    "publishedCelebration": "Bài viết đã được xuất bản"
+    "publishedCelebration": "Bài viết đã được xuất bản",
+    "followersList": "Người theo dõi",
+    "followingList": "Đang theo dõi",
+    "callout": {
+      "note": "Ghi chú",
+      "tip": "Mẹo",
+      "important": "Quan trọng",
+      "warning": "Lưu ý",
+      "caution": "Cảnh báo"
+    }
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",
@@ -715,9 +754,15 @@
   },
   "cookieConsent": {
     "ariaLabel": "Thông báo cookie",
-    "message": "Trang này dùng cookie để giữ bạn đăng nhập và phân tích sản phẩm giúp cải thiện dịch vụ.",
-    "accept": "Đã hiểu",
-    "learnMore": "Chính sách quyền riêng tư"
+    "message": "Cookie cần thiết để giữ bạn đăng nhập luôn được bật. Phân tích sử dụng giúp cải thiện dịch vụ chỉ chạy khi bạn đồng ý.",
+    "accept": "Đồng ý",
+    "reject": "Từ chối",
+    "learnMore": "Chính sách quyền riêng tư",
+    "prefsTitle": "Phân tích sử dụng",
+    "prefsDesc": "Bật hoặc tắt phân tích sản phẩm. Khi tắt, mã định danh phân tích đã lưu trên thiết bị này cũng bị xoá. Cookie cần thiết để giữ bạn đăng nhập không bị ảnh hưởng.",
+    "stateOn": "Thiết lập hiện tại — phân tích đang bật.",
+    "stateOff": "Thiết lập hiện tại — phân tích đang tắt.",
+    "stateUnset": "Thiết lập hiện tại — bạn chưa chọn. Phân tích đang tắt."
   },
   "meta": {
     "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",
@@ -775,6 +820,7 @@
     "groupEarlier": "Trước đó"
   },
   "nav": {
+    "events": "Sự kiện",
     "notifications": "Thông báo",
     "shorten": "Rút gọn",
     "myLinks": "Liên kết của tôi",
@@ -788,7 +834,6 @@
     "myCollections": "Bộ sưu tập của tôi",
     "showcase": "Hồ sơ",
     "campaigns": "Chiến dịch QR",
-    "pricing": "Bảng giá",
     "settings": "Cài đặt",
     "login": "Đăng nhập",
     "logout": "Đăng xuất",
@@ -809,7 +854,8 @@
       "linksHint": "Liên kết ngắn · QR · Chiến dịch · CTA · Thống kê",
       "blogLabel": "Blog",
       "blogHint": "Viết · Trang tác giả · Phân tích độc giả"
-    }
+    },
+    "links": "Liên kết"
   },
   "sidebar": {
     "blog": {
@@ -822,7 +868,7 @@
       "series": "Series",
       "readers": "Độc giả",
       "leads": "Khách tiềm năng",
-      "curation": "Đã lưu",
+      "curation": "Thư viện",
       "webhooks": "Webhook",
       "moderation": "Kiểm duyệt",
       "adminMetrics": "Chỉ số"
@@ -843,12 +889,10 @@
   "home": {
     "tagline": "kurl v1",
     "headline1": "Rút gọn trong một dòng",
-    "headline2": "Phân tích ai, khi nào, ở đâu",
+    "headline2": "Khi nào, ở đâu",
     "subhead": "Dòng nhấp trực tiếp, thông tin tự động, lọc bot — phân tích mà các dịch vụ rút gọn khác khóa sau gói trả phí, ở đây miễn phí.",
-    "mobileHeadline1": "Rút gọn trong một dòng",
-    "mobileHeadline2": "Xem ai, khi nào, ở đâu",
     "mobileSubhead": "Lượt nhấp trực tiếp, thông tin và lọc bot miễn phí",
-    "anonymousHint": "Không cần đăng nhập. Đăng nhập nếu bạn muốn xem thống kê.",
+    "anonymousHint": "Không cần đăng nhập. Đăng nhập để xem thống kê và đặt mật khẩu cho liên kết.",
     "demoLink": "Xem trước bảng phân tích",
     "scrollHint": "Cuộn để xem thêm",
     "previews": {
@@ -952,8 +996,13 @@
     "customCodeLabel": "Mã tùy chỉnh (chỉ 3-16 chữ cái/chữ số)",
     "customCodePlaceholder": "lienKet2026",
     "expiresAtLabel": "Hết hạn lúc (tùy chọn)",
+    "passwordToggle": "Đặt mật khẩu",
+    "passwordLabel": "Mật khẩu",
+    "passwordPlaceholder": "Mật khẩu người mở liên kết phải nhập",
+    "passwordHint": "Chỉ người biết mật khẩu mới đến được trang đích. Bạn có thể đổi hoặc gỡ sau trong phần quản lý liên kết.",
     "errors": {
       "empty": "Vui lòng nhập URL.",
+      "passwordEmpty": "Vui lòng nhập mật khẩu.",
       "invalid": "URL phải bắt đầu bằng http:// hoặc https://.",
       "malicious": "URL này bị gắn cờ là độc hại hoặc lừa đảo.",
       "duplicate": "Mã tùy chỉnh này đã được dùng. Thử mã khác.",
@@ -972,6 +1021,8 @@
     "completed": "Liên kết ngắn của bạn đã sẵn sàng",
     "nextStepHint": "Sao chép, mở nó, và bắt đầu theo dõi hiệu quả.",
     "originalUrl": "URL gốc",
+    "passwordProtected": "Có mật khẩu",
+    "passwordNotApplied": "Chưa đặt được mật khẩu. Hãy đặt lại trong phần quản lý liên kết.",
     "copy": "Sao chép",
     "copied": "Đã sao chép",
     "open": "Mở",
@@ -1002,7 +1053,8 @@
         "Thông tin"
       ]
     },
-    "consent": "Khi tiếp tục, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>."
+    "consent": "Khi tiếp tục, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>.",
+    "heading": "Đăng nhập kurl"
   },
   "auth": {
     "signedIn": "Đã đăng nhập",
@@ -1058,11 +1110,11 @@
   "dashboard": {
     "label": "bảng điều khiển",
     "title": "Liên kết của tôi",
-    "subtitle": "{count} liên kết. Nhấp vào mã rút gọn để xem phân tích.",
+    "subtitle": "{count} liên kết · chọn tên để xem thống kê.",
     "newLink": "Liên kết mới",
     "loadMore": "Xem thêm",
     "loadingMore": "Đang tải...",
-    "searchPlaceholder": "Tìm theo URL gốc hoặc mã rút gọn",
+    "searchPlaceholder": "Tìm tên, URL gốc hoặc mã rút gọn",
     "clearSearch": "Xóa tìm kiếm",
     "loginRequired": "Cần đăng nhập",
     "loginRequiredDesc": "Liên kết và thống kê lượt nhấp của tôi chỉ hiển thị sau khi đăng nhập.",
@@ -1080,10 +1132,10 @@
       "expiring": "Sắp hết hạn"
     },
     "ops": {
-      "totalClicks": "Tổng lượt nhấp",
-      "totalClicksHint": "Tổng lượt nhấp toàn thời gian trong danh sách này",
-      "weekClicks": "7 ngày qua",
-      "weekClicksHint": "Diễn biến gần đây",
+      "totalClicks": "Lượt nhấp của người tích lũy",
+      "totalClicksHint": "Mọi liên kết · loại truy cập tự động",
+      "weekClicks": "Lượt nhấp của người trong 7 ngày",
+      "weekClicksHint": "7 ngày qua · loại truy cập tự động",
       "zeroClick": "Liên kết không có lượt nhấp",
       "zeroClickReview": "Xem lại vị trí đặt hoặc CTA",
       "zeroClickClear": "Mọi liên kết đều đã có lượt nhấp",
@@ -1091,12 +1143,13 @@
       "expiringReview": "Gia hạn hoặc dọn dẹp sớm",
       "expiringClear": "Không có hết hạn gấp",
       "topLink": "Liên kết hàng đầu",
-      "vsMedian": "🔥 ×{multiple} trung vị của bạn",
+      "weekDelta": "+{count} trong 7 ngày qua",
       "topLinkEmpty": "Chưa có liên kết để so sánh",
-      "clicks": "lượt nhấp",
+      "clicks": "lượt nhấp của người",
       "copy": "Sao chép",
       "viewStats": "Xem thống kê",
-      "open": "Mở"
+      "open": "Mở",
+      "zeroClickHint": "Liên kết chưa có lượt nhấp, kể cả lượt nhấp tự động"
     },
     "emptyTitle": "Tạo liên kết đầu tiên của bạn",
     "emptyDesc": "Rút gọn một URL và trong vòng một phút, các góc nhìn lượt nhấp / quốc gia / kênh / thiết bị sẽ được lấp đầy. Mất 30 giây.",
@@ -1112,21 +1165,28 @@
       "step3Title": "Xem thống kê",
       "step3Desc": "Lượt nhấp đến → kênh / quốc gia / thiết bị / thời điểm trong ngày tự động.",
       "primaryCta": "Tạo liên kết đầu tiên",
-      "secondaryCta": "Hoặc xem trước màn hình phân tích →"
+      "secondaryCta": "Hoặc xem trước màn hình phân tích →",
+      "scene": {
+        "weekClicks": "Lượt nhấp tuần này"
+      }
     },
     "noResultTitle": "Không có kết quả",
     "noResultDesc": "Không tìm thấy liên kết nào khớp với \"{query}\".",
     "noResultDescFiltered": "Không có liên kết nào khớp với bộ lọc hiện tại. Hãy thử điều chỉnh.",
     "table": {
-      "shortUrl": "URL ngắn",
+      "shortUrl": "Tên liên kết",
       "originalUrl": "URL gốc",
       "createdAt": "Tạo lúc",
       "expiresAt": "Hết hạn",
-      "clicks": "Lượt nhấp",
-      "actions": "Hành động"
+      "clicks": "Lượt nhấp của người",
+      "actions": "Hành động",
+      "sortAllClicks": "Xếp theo mọi lượt nhấp",
+      "sortNewest": "Mới nhất",
+      "sortAsc": "tăng dần",
+      "sortDesc": "giảm dần"
     },
     "card": {
-      "week": "{count} tuần này",
+      "week": "Lượt nhấp của người trong 7 ngày: {count}",
       "expiresToday": "Hết hạn hôm nay",
       "expiresIn": "Còn {days} ngày",
       "expired": "Đã hết hạn"
@@ -1134,14 +1194,24 @@
     "actions": {
       "stats": "Thống kê",
       "edit": "Chỉnh sửa",
-      "delete": "Xóa"
+      "delete": "Xóa",
+      "more": "Thêm",
+      "openOriginal": "Mở liên kết gốc"
     },
     "favorite": {
       "add": "Thêm vào mục yêu thích",
       "remove": "Bỏ khỏi mục yêu thích",
       "filter": "Yêu thích",
       "emptyTitle": "Chưa có liên kết yêu thích",
-      "emptyDesc": "Nhấn vào ngôi sao trên liên kết để thêm vào mục yêu thích và ghim lên đầu."
+      "emptyDesc": "Đánh dấu sao trong Tất cả liên kết để lưu vào đây.",
+      "syncedHint": "Đã lưu vào tài khoản, dùng chung trên ứng dụng và web.",
+      "saveFailed": "Không lưu được mục yêu thích. Vui lòng thử lại.",
+      "loadFailed": "Không tải được mục yêu thích.",
+      "orderTitle": "Thứ tự yêu thích",
+      "orderDone": "Xong sắp xếp",
+      "orderHint": "Lưu cùng thứ tự trên ứng dụng và web.",
+      "moveUp": "Chuyển {name} lên",
+      "moveDown": "Chuyển {name} xuống"
     },
     "deleteConfirmTitle": "Xóa liên kết này?",
     "deleteConfirmDesc": "Liên kết đã xóa không thể khôi phục. Thống kê lượt nhấp cũng mất theo.",
@@ -1194,15 +1264,27 @@
       "downloadResult": "Tải CSV kết quả",
       "uploadAnother": "Tải lên tệp khác",
       "done": "Xong"
-    }
+    },
+    "librarySubtitle": "Tìm và sao chép liên kết, rồi xem hiệu quả.",
+    "loadFailed": "Không tải được liên kết. Vui lòng thử lại.",
+    "overviewFailed": "Không tải được thống kê tài khoản.",
+    "accountScope": "Toàn tài khoản · {tz} · {total} lượt nhấp tích lũy gồm tự động · không phụ thuộc bộ lọc",
+    "libraryViews": "Chọn danh sách liên kết",
+    "allLinks": "Tất cả liên kết",
+    "copied": "Đã sao chép liên kết",
+    "subtitleCount": "{count} liên kết",
+    "toolCampaigns": "Chiến dịch QR",
+    "toolEvents": "Đăng ký",
+    "selectMode": "Chọn",
+    "selectDone": "Xong"
   },
   "edit": {
     "title": "Chỉnh sửa liên kết",
     "originalUrl": "URL gốc",
     "expiresAt": "Hết hạn lúc (để trống nếu không hết hạn)",
-    "noteLabel": "Ghi chú riêng (tùy chọn)",
+    "noteLabel": "Tên liên kết / ghi chú (tùy chọn)",
     "notePlaceholder": "ví dụ: Khuyến mãi xuân / dùng trong story Instagram",
-    "noteHint": "Chỉ mình bạn thấy. Không bao giờ hiển thị với khách.",
+    "noteHint": "Hiện trong danh sách và mục yêu thích, không hiện với khách.",
     "expiredMessageLabel": "Thông báo trang hết hạn (tùy chọn)",
     "expiredMessagePlaceholder": "ví dụ: Khuyến mãi đã kết thúc — xem đợt tiếp theo tại example.com",
     "expiredMessageHint": "Hiển thị thay cho trang hết hạn mặc định khi liên kết hết hạn hoặc đạt giới hạn lượt xem.",
@@ -1263,7 +1345,11 @@
       "title": "Lượt nhấp trực tiếp",
       "connecting": "Đang kết nối…",
       "connected": "Trực tiếp",
-      "waiting": "Lượt nhấp sẽ xuất hiện ở đây khi có."
+      "waiting": "Lượt nhấp sẽ xuất hiện ở đây khi có.",
+      "scope": "Lượt nhấp từ khi mở màn hình · giờ trên thiết bị",
+      "reconnecting": "Mất kết nối · đang kết nối lại",
+      "disconnectedHint": "Kết nối lượt nhấp trực tiếp bị ngắt. Đang tự động kết nối lại. Bạn vẫn có thể xem thống kê đã có.",
+      "example": "Ví dụ"
     },
     "quality": {
       "title": "Chất lượng lượt nhấp",
@@ -1399,7 +1485,8 @@
       "blockedRemove": "Bỏ chặn",
       "blockedFailed": "Không cập nhật được chặn theo quốc gia.",
       "configuredShare": "đặt {pct}%",
-      "actualShare": "thực tế {pct}%"
+      "actualShare": "thực tế {pct}%",
+      "blockedLoadFailed": "Không tải được danh sách quốc gia bị chặn."
     },
     "loginRequired": "Cần đăng nhập",
     "loginRequiredDesc": "Thống kê chỉ hiển thị cho chủ sở hữu liên kết.",
@@ -1408,9 +1495,9 @@
     "backToDashboard": "Quay lại liên kết của tôi",
     "kpi": {
       "totalClicks": "Tổng lượt nhấp",
-      "unique": "Riêng biệt",
-      "human": "Người",
-      "bot": "Bot",
+      "unique": "Khách ước tính",
+      "human": "Lượt nhấp của người",
+      "bot": "Truy cập tự động",
       "velocityHot": "Lượt nhấp tăng vọt",
       "velocityHour": "Giờ qua",
       "ttfc": "Lượt nhấp đầu sau",
@@ -1428,7 +1515,7 @@
         "desc": "{tz} · đậm hơn = nhiều lượt nhấp hơn"
       },
       "daily": {
-        "title": "Lượt nhấp hằng ngày",
+        "title": "Lượt nhấp của người hàng ngày",
         "desc": "30 ngày qua · {tz}"
       },
       "hourly": {
@@ -1619,7 +1706,7 @@
       "where": "Từ đâu"
     },
     "journal": {
-      "title": "Nhật ký liên kết",
+      "title": "Thay đổi đáng chú ý",
       "evidence": "bằng chứng",
       "detail": "Xem chi tiết",
       "newVisitors": "Khách mới",
@@ -1634,12 +1721,62 @@
       "topCountry": "{percent}% đến từ {country}",
       "mobileHeavy": "{percent}% trên di động — liên kết được bấm trên điện thoại",
       "desktopHeavy": "{percent}% trên máy tính — mở tại bàn làm việc",
-      "botHigh": "Bot chiếm {percent}% — người thật: {human}",
-      "botFiltered": "Bỏ {percent}% bot, còn {human} người thật đã ghé",
+      "botHigh": "Truy cập tự động chiếm {percent}% · {human} lượt nhấp của người",
+      "botFiltered": "Bỏ {percent}% truy cập tự động, còn {human} lượt nhấp của người",
       "fastFirstClick": "Lượt nhấn đầu tiên đến sau {minutes} phút",
       "inAppBrowser": "{percent}% mở trong {app} — tỷ lệ trình duyệt trong ứng dụng khá cao",
-      "channelLoyalty": "{percent}% người đến từ {host} đã quay lại"
-    }
+      "channelLoyalty": "{percent}% người đến từ {host} đã quay lại",
+      "showMore": "Xem thêm {count} thay đổi",
+      "showLess": "Thu gọn"
+    },
+    "protection": {
+      "title": "Bảo vệ",
+      "saved": "Đã lưu cài đặt bảo vệ.",
+      "failed": "Không thể lưu cài đặt bảo vệ.",
+      "loadFailed": "Không tải được cài đặt bảo vệ hiện tại nên không thể lưu. Hãy tải lại trang."
+    },
+    "visit": {
+      "title": "Khi có người mở liên kết",
+      "openInBrowser": "Mở bằng trình duyệt mặc định khi từ KakaoTalk và LINE",
+      "openInBrowserDesc": "Trình duyệt trong ứng dụng đôi khi chặn đăng nhập, thanh toán hoặc tải xuống. Khi bật, người nhấn liên kết trong KakaoTalk hoặc LINE sẽ được chuyển sang trình duyệt mặc định.",
+      "failed": "Không thể cập nhật cài đặt.",
+      "loadFailed": "Không thể tải cài đặt. Vui lòng tải lại trang.",
+      "splash": "Hiện thông báo trước",
+      "splashDesc": "Hiện một thông báo ngắn và một nút trước khi chuyển tiếp. Chạm vào trang sẽ tạm dừng đếm ngược.",
+      "splashMessage": "Thông báo",
+      "splashMessagePlaceholder": "VD: Nhập mã SPRING20 khi thanh toán để giảm 20%",
+      "splashSeconds": "Thời gian hiển thị",
+      "splashSecondsValue": "{n} giây",
+      "splashCta": "Nút (tùy chọn)",
+      "splashNoCta": "Không có nút",
+      "splashManageCtas": "Tạo hoặc quản lý nút",
+      "splashMessageRequired": "Vui lòng nhập thông báo.",
+      "save": "Lưu",
+      "saved": "Đã lưu.",
+      "unsaved": "Có thay đổi chưa lưu",
+      "schedule": "Hẹn giờ mở",
+      "scheduleDesc": "Trước thời điểm này, người mở sẽ thấy “Liên kết này chưa mở”. Thẻ xem trước vẫn hiển thị.",
+      "scheduleAt": "Mở lúc",
+      "scheduleInPast": "Vui lòng chọn thời điểm trong tương lai."
+    },
+    "destinationHealth": {
+      "title": "Trang đích không mở được.",
+      "missing": "Trang đã không còn ({status}), người truy cập đang thấy trang lỗi.",
+      "noHost": "Không tìm thấy tên miền. Hãy kiểm tra lại địa chỉ.",
+      "fix": "Đổi trang đích"
+    },
+    "analysisTabs": {
+      "when": "Xu hướng nhấp",
+      "where": "Nguồn truy cập",
+      "who": "Thiết bị truy cập"
+    },
+    "linkSettings": "Cài đặt liên kết",
+    "scope": {
+      "report": "Tổng tích lũy · biểu đồ hàng ngày là lượt nhấp của người trong khoảng đã chọn · {tz}",
+      "daily": "Lượt nhấp của người trong {days} ngày qua · {tz}"
+    },
+    "trendTitle": "Xu hướng nhấp",
+    "rangeDays": "{days} ngày"
   },
   "admin": {
     "label": "quản trị",
@@ -1875,7 +2012,6 @@
         "col": {
           "user": "Người dùng",
           "role": "Vai trò",
-          "tier": "Gói",
           "links": "Liên kết",
           "joined": "Ngày tham gia",
           "status": "Trạng thái"
@@ -1909,7 +2045,8 @@
         "clearFilter": "Xóa bộ lọc",
         "locked": "Được bảo vệ bằng mật khẩu",
         "noResults": "Không có liên kết phù hợp"
-      }
+      },
+      "blockedTab": "Tên miền bị chặn"
     },
     "detail": {
       "title": "Chi tiết liên kết",
@@ -1964,6 +2101,40 @@
         "clicks": "Chưa có lượt nhấp",
         "trending": "Chưa có gì thịnh hành"
       }
+    },
+    "blocked": {
+      "title": "Tên miền bị chặn",
+      "subtitle": "Tên miền trong danh sách này bị từ chối khi rút gọn mới, và mọi liên kết hiện có — kể cả tên miền phụ — lập tức hiển thị trang chặn. Khi chặn, chủ sở hữu liên kết bị ảnh hưởng sẽ nhận cảnh cáo tự động.",
+      "addPlaceholder": "spam.example.com",
+      "reasonPlaceholder": "Lý do (tùy chọn)",
+      "add": "Chặn",
+      "empty": "Chưa có tên miền nào bị chặn.",
+      "col": {
+        "domain": "Tên miền",
+        "reason": "Lý do",
+        "blockedAt": "Thời điểm chặn"
+      },
+      "unblock": "Bỏ chặn",
+      "unblockConfirm": "Bỏ chặn {domain}? Việc rút gọn và chuyển hướng tới tên miền này sẽ được cho phép trở lại.",
+      "addFailed": "Yêu cầu thất bại",
+      "warned": "Đã gửi cảnh cáo tới {count} chủ sở hữu liên kết bằng ngôn ngữ của họ.",
+      "warnedNone": "{domain} — không có liên kết thuộc tài khoản nào nên không gửi cảnh cáo."
+    },
+    "enforce": {
+      "title": "Xử lý vi phạm",
+      "subtitle": "Hành động đối với liên kết vi phạm điều khoản dịch vụ.",
+      "blockDomain": "Chặn {domain}",
+      "domainBlocked": "Đã chặn {domain}",
+      "blockConfirm": "Chặn {domain}? Mọi liên kết tới tên miền này (kể cả liên kết hiện có) sẽ chết ngay và việc rút gọn mới bị từ chối. Chủ sở hữu liên kết sẽ được cảnh cáo tự động.",
+      "warnTitle": "Gửi cảnh cáo cho chủ sở hữu",
+      "warnHint": "Lưu vào hộp thông báo và đẩy push bất kể cài đặt thông báo.",
+      "warnPlaceholder": "VD: Quảng bá trang web bất hợp pháp là vi phạm điều khoản. Liên kết đã bị chặn; tái phạm sẽ khiến tài khoản bị đình chỉ.",
+      "warnSend": "Gửi cảnh cáo",
+      "warnSent": "Đã gửi cảnh cáo.",
+      "warnAnonymous": "Liên kết được tạo ẩn danh — không có tài khoản để cảnh cáo. Hãy dùng chặn tên miền.",
+      "failed": "Yêu cầu thất bại",
+      "blockShort": "Chặn",
+      "blockedShort": "Đã chặn"
     }
   },
   "common": {
@@ -1981,7 +2152,9 @@
     "close": "Đóng",
     "loginRequired": "Vui lòng đăng nhập.",
     "errorPrefix": "Lỗi:",
-    "offline": "Bạn đang ngoại tuyến. Chúng tôi sẽ tự động kết nối lại."
+    "offline": "Bạn đang ngoại tuyến. Chúng tôi sẽ tự động kết nối lại.",
+    "showPassword": "Hiện mật khẩu",
+    "hidePassword": "Ẩn mật khẩu"
   },
   "notFound": {
     "title": "Không tìm thấy trang",
@@ -2020,7 +2193,8 @@
       "badge": "Demo",
       "lockedToast": "Đây là bản xem trước demo. Sau khi đăng ký bạn có thể đăng ký và chỉnh sửa những thứ này trên liên kết của riêng mình.",
       "payloadPreview": "Xem trước payload được gửi đi"
-    }
+    },
+    "createCta": "Tạo liên kết của tôi"
   },
   "publicProfile": {
     "empty": "Người dùng này chưa thêm liên kết nào.",
@@ -2140,7 +2314,9 @@
       "thu": "T5",
       "fri": "T6",
       "sat": "T7"
-    }
+    },
+    "loadFailed": "Không tải được phân tích tuần này.",
+    "retry": "Thử lại"
   },
   "recent": {
     "title": "Vừa rút gọn",
@@ -2222,7 +2398,6 @@
   "footer": {
     "copyright": "© {year} kurl",
     "about": "Giới thiệu",
-    "pricing": "Bảng giá",
     "terms": "Điều khoản",
     "privacy": "Quyền riêng tư",
     "github": "GitHub"
@@ -2266,48 +2441,11 @@
     },
     "q6": {
       "q": "Có tính phí không?",
-      "a": "Mọi tính năng cốt lõi đều miễn phí — rút gọn, phân tích, trang hồ sơ, cả tám loại khối.\n\nGói Pro bổ sung tên miền tùy chỉnh với tự động TLS, liên kết không giới hạn, và lưu thống kê vô thời hạn. Xem trang bảng giá để biết chi tiết."
+      "a": "Mọi tính năng đều miễn phí — rút gọn, phân tích, trang hồ sơ, cả tám loại khối, và tên miền tùy chỉnh.\n\nKhông có gói trả phí, cũng không có quảng cáo."
     },
     "ctaTitle": "Rút gọn một liên kết ngay",
     "ctaSubtitle": "Không cần đăng ký — đăng nhập để giữ thống kê mãi mãi",
     "ctaButton": "Bắt đầu rút gọn"
-  },
-  "pricing": {
-    "title": "Bảng giá",
-    "lead": "Gói miễn phí gồm rút gọn và phân tích đầy đủ. Pro bổ sung tên miền tùy chỉnh tự động TLS, liên kết không giới hạn, và thống kê vĩnh viễn.",
-    "ctaUpgrade": "Bắt đầu Pro",
-    "ctaManage": "Quản lý thanh toán",
-    "ctaLogin": "Đăng nhập để bắt đầu",
-    "ctaFailed": "Không mở được trang thanh toán.",
-    "freeTitle": "Miễn phí",
-    "freePrice": "0$ / tháng",
-    "freeFeature1": "Tối đa 200 liên kết",
-    "freeFeature2": "8 chiều phân tích lượt nhấp (thời gian / thiết bị / quốc gia / kênh / hệ điều hành / trình duyệt / UTM / bot)",
-    "freeFeature3": "Dòng nhấp trực tiếp (SSE)",
-    "freeFeature4": "Chia tách A/B + định tuyến vị trí (4 điểm đến mỗi liên kết)",
-    "freeFeature5": "Webhook ký HMAC (5 mỗi liên kết)",
-    "freeFeature6": "2FA TOTP + mã khôi phục",
-    "paidTitle": "Pro",
-    "paidPrice": "5$ / tháng",
-    "paidFeature1": "Liên kết không giới hạn",
-    "paidFeature2": "Giới hạn tốc độ gấp 10 lần",
-    "paidFeature3": "Lưu thống kê vĩnh viễn (Miễn phí: 90 ngày)",
-    "paidFeature4": "Tên miền tùy chỉnh (ví dụ go.congtycuaban.com)",
-    "paidFeature5": "50 webhook mỗi liên kết (Miễn phí: 5)",
-    "paidFeature6": "Xuất CSV 500k dòng (Miễn phí: 50k)",
-    "rightsTitle": "Quyền của người dùng (mọi gói)",
-    "rightsLead": "Bảo đảm GDPR / luật quyền riêng tư — dành cho mọi người dùng bất kể gói nào.",
-    "right1": "Xuất dữ liệu của tôi (JSON)",
-    "right2": "Xóa tài khoản vĩnh viễn + lan tỏa",
-    "right3": "Không bao giờ bán dữ liệu cá nhân của bạn",
-    "proHoldBadge": "Sắp có",
-    "proHoldNotice": "Pro đang tạm hoãn trong khi chúng tôi hoàn thiện quy trình thanh toán. Gói Miễn phí vẫn gồm 200 liên kết, 8 chiều phân tích, 5 webhook mỗi liên kết, và 2FA — mọi tính năng liệt kê bên dưới đều đang hoạt động hôm nay.",
-    "proHoldCta": "Chưa khả dụng",
-    "proEta": "Chúng tôi sẽ gửi email khi ra mắt — tạm thời cứ bắt đầu với Miễn phí.",
-    "meta": {
-      "title": "Bảng giá · Rút gọn URL miễn phí, Pro cho không giới hạn - kurl",
-      "description": "Bắt đầu miễn phí với rút gọn URL và phân tích lượt nhấp. Pro bổ sung liên kết không giới hạn, tự động TLS cho tên miền tùy chỉnh, và lưu thống kê vĩnh viễn."
-    }
   },
   "terms": {
     "title": "Điều khoản dịch vụ",
@@ -2440,19 +2578,13 @@
     ]
   },
   "settings": {
-    "title": "Cài đặt",
+    "title": "Tài khoản",
     "tabs": {
       "aria": "Các mục cài đặt",
       "account": "Tài khoản",
       "security": "Bảo mật",
       "domains": "Tên miền",
-      "data": "Dữ liệu",
-      "descriptions": {
-        "account": "Email / ngày tham gia / múi giờ / ngôn ngữ giao diện.",
-        "security": "2FA TOTP + mã khôi phục / cấp & thu hồi khóa API.",
-        "domains": "Định tuyến URL ngắn qua tên miền của riêng bạn (go.brand.com).",
-        "data": "Xuất dữ liệu (JSON) / xóa tài khoản vĩnh viễn."
-      }
+      "data": "Dữ liệu"
     },
     "profile": {
       "title": "Hồ sơ công khai",
@@ -2845,7 +2977,7 @@
       "noLinks": "Chưa có liên kết.",
       "toggleFailed": "Cập nhật thất bại."
     },
-    "profileTitle": "Hồ sơ",
+    "profileTitle": "Thông tin tài khoản",
     "email": "Email",
     "provider": "Nhà cung cấp đăng nhập",
     "joinedAt": "Tham gia",
@@ -2857,7 +2989,6 @@
     "saved": "Đã lưu",
     "saveFailed": "Lưu thất bại.",
     "interfaceLanguage": "Ngôn ngữ giao diện",
-    "languageHint": "Bạn cũng có thể đổi từ trình chuyển ngôn ngữ ở phần đầu trang.",
     "dataTitle": "Dữ liệu",
     "exportButton": "Tải dữ liệu của tôi (JSON)",
     "exportHint": "Thông tin người dùng + tất cả liên kết + sự kiện nhấp (IP đã được che).",
@@ -2961,6 +3092,17 @@
       "deleteFailed": "Xóa thất bại.",
       "dnsTxtHint": "Kiểm tra quyền sở hữu — thêm bản ghi TXT này tại nhà cung cấp DNS của bạn",
       "dnsCnameHint": "Định tuyến lưu lượng — thêm bản ghi CNAME này tại cùng nhà cung cấp"
+    },
+    "toolsTitle": "Công cụ",
+    "tools": {
+      "profile": "Hồ sơ công khai",
+      "profileDesc": "Gom liên kết vào một trang",
+      "campaigns": "Chiến dịch QR",
+      "campaignsDesc": "So sánh mã QR in theo vị trí",
+      "events": "Đăng ký",
+      "eventsDesc": "Nhận đăng ký sự kiện bằng một liên kết",
+      "ctas": "Thư viện CTA",
+      "ctasDesc": "Quản lý banner hiển thị trên liên kết"
     }
   },
   "homeStats": {
@@ -3330,7 +3472,12 @@
         }
       ],
       "createCta": "Tạo chiến dịch QR đầu tiên",
-      "createHint": "Với chiến dịch đầu tiên, bạn chỉ cần một cái tên và một thời điểm kết thúc."
+      "createHint": "Với chiến dịch đầu tiên, bạn chỉ cần một cái tên và một thời điểm kết thúc.",
+      "scene": {
+        "scans": "Lượt quét",
+        "place1": "Quận 1",
+        "place2": "Quận 3"
+      }
     }
   },
   "qrDownload": {
@@ -3483,7 +3630,7 @@
     "empty": "Chưa có CTA nào.",
     "edit": "Sửa",
     "delete": "Xóa",
-    "deleteConfirm": "Xóa CTA '{label}'? (xóa mềm; dữ liệu phân tích được giữ lại)",
+    "deleteConfirm": "Xóa CTA “{label}”? (xóa mềm; dữ liệu phân tích được giữ lại)",
     "editorTitleEdit": "Sửa CTA",
     "editorTitleNew": "CTA mới",
     "label": "Nhãn",
@@ -3702,5 +3849,256 @@
     "myCollectionsEmptyTitle": "Chưa có bộ sưu tập nào",
     "myCollectionsEmptyBody": "Khi đang đọc một bài hay một câu, hãy dùng “Kết nối” để bắt đầu bộ sưu tập đầu tiên.",
     "myCollectionsEmptyCta": "Tìm bài để đọc"
+  },
+  "events": {
+    "intro": {
+      "eyebrow": "Trang sự kiện",
+      "title": "Nhận đăng ký cho buổi gặp chỉ với một liên kết",
+      "subtitle": "Nhóm học, meetup, câu lạc bộ — trang giới thiệu, mẫu đăng ký, giới hạn chỗ và nguồn người đăng ký. Một liên kết là đủ.",
+      "step1": {
+        "title": "Tạo trang",
+        "body": "Chỉ cần tiêu đề và ngày giờ — xong trong 3 phút."
+      },
+      "step2": {
+        "title": "Dán liên kết vào nhóm chat",
+        "body": "Liên kết ngắn và QR được tạo tự động."
+      },
+      "step3": {
+        "title": "Đăng ký tự đến",
+        "body": "Danh sách tự cập nhật, tự đóng khi đủ chỗ, biết cả người đến từ kênh nào."
+      },
+      "ctaLogin": "Bắt đầu miễn phí",
+      "ctaCreate": "Tạo sự kiện đầu tiên",
+      "ctaHint": "Người tham gia đăng ký không cần tài khoản.",
+      "demo": {
+        "eventTitle": "CLB đọc sách khu phố",
+        "eventDate": "T4, 5/8 · 19:00",
+        "eventPlace": "Quán cà phê tầng 2, Shibuya",
+        "registerButton": "Đăng ký",
+        "chatShare": "Mở đăng ký buổi tuần này!",
+        "reply1": "Mình! Đăng ký rồi 🙌",
+        "reply2": "Vừa xong luôn!",
+        "reply3": "Mình cũng đi~",
+        "badge": "7 người · còn 13 chỗ"
+      }
+    },
+    "public": {
+      "hostedBy": "Tổ chức bởi",
+      "cta": "Đăng ký",
+      "attending": "{count} người tham gia",
+      "addToCalendar": "Thêm vào Google Calendar",
+      "onlineLink": "Liên kết tham gia trực tuyến",
+      "full": "Sự kiện đã đủ người",
+      "spotsLeft": "Còn {count} / {capacity} chỗ",
+      "formTitle": "Đăng ký tham gia",
+      "nameLabel": "Họ tên",
+      "namePlaceholder": "Nguyễn Văn A",
+      "contactEmail": "Email",
+      "contactEmailPlaceholder": "you@example.com",
+      "contactPhone": "Số điện thoại",
+      "contactPhonePlaceholder": "090-1234-5678",
+      "contactKakao": "KakaoTalk ID",
+      "contactKakaoPlaceholder": "kakao_id",
+      "consent": "Tôi đồng ý cho thu thập tên, liên hệ (gồm câu trả lời) và chia sẻ với người tổ chức để vận hành sự kiện; dữ liệu bị xóa 30 ngày sau khi kết thúc.",
+      "submit": "Đăng ký",
+      "submitting": "Đang gửi…",
+      "successTitle": "Đăng ký thành công!",
+      "successBodyEmail": "Chúng tôi đã gửi email xác nhận. Dùng liên kết trong email để hủy nếu bận.",
+      "successBody": "Hãy lưu liên kết hủy bên dưới phòng khi bạn bận.",
+      "copyCancelLink": "Sao chép liên kết hủy",
+      "cancelLinkCopied": "Đã sao chép",
+      "viralHook": "Trang này được tạo trong 3 phút.",
+      "viralCta": "Tạo trang sự kiện của bạn →",
+      "canceledNotice": "Sự kiện đã bị hủy.",
+      "fullNotice": "Sự kiện đã đủ người. Chỗ sẽ mở lại khi có người hủy — hãy quay lại sau.",
+      "closedNotice": "Đã đóng đăng ký.",
+      "cancelTitle": "Hủy đăng ký",
+      "cancelBody": "Hủy đăng ký \"{title}\"? Chỗ của bạn sẽ dành cho người khác.",
+      "cancelConfirm": "Hủy đăng ký",
+      "cancelDone": "Đã hủy",
+      "cancelDoneBody": "Hẹn gặp lần sau. Bạn có thể đăng ký lại với cùng liên hệ.",
+      "cancelError": "Không thể hủy. Liên kết có thể đã hết hạn hoặc đã được dùng.",
+      "errors": {
+        "answerRequired": "Vui lòng điền \"{label}\"",
+        "choiceRequired": "Vui lòng chọn một mục cho \"{label}\"",
+        "consentRequired": "Vui lòng đồng ý chia sẻ thông tin liên hệ",
+        "full": "Chỗ cuối cùng vừa được lấy",
+        "alreadyRegistered": "Liên hệ này đã đăng ký rồi",
+        "closed": "Đã đóng đăng ký",
+        "generic": "Đăng ký thất bại. Vui lòng thử lại.",
+        "invalidEmail": "Vui lòng kiểm tra lại email (VD: hong@gmail.com)",
+        "invalidPhone": "Vui lòng kiểm tra lại số điện thoại (VD: 090-1234-5678)",
+        "invalidKakao": "Vui lòng kiểm tra lại KakaoTalk ID (2–30 chữ/số)",
+        "invalidLine": "Vui lòng kiểm tra LINE ID.",
+        "invalidInstagram": "Vui lòng kiểm tra tên Instagram."
+      },
+      "metaDate": "Ngày",
+      "metaTime": "Giờ",
+      "metaPlace": "Địa điểm",
+      "metaOnline": "Trực tuyến",
+      "metaAttendance": "Chỗ",
+      "contactLine": "LINE ID",
+      "contactLinePlaceholder": "line_id",
+      "contactInstagram": "Tên Instagram",
+      "contactInstagramPlaceholder": "@handle"
+    },
+    "list": {
+      "title": "Sự kiện",
+      "new": "Sự kiện mới",
+      "loading": "Đang tải…",
+      "loadFailed": "Không tải được danh sách.",
+      "emptyTitle": "Tạo trang sự kiện đầu tiên",
+      "emptyBody": "Nhóm học, meetup, workshop — một liên kết lo cả trang, đăng ký, sĩ số và phân tích nguồn truy cập.",
+      "authTitle": "Trang sự kiện",
+      "authDesc": "Đăng nhập để tạo trang đăng ký và xem người tham gia, nguồn truy cập."
+    },
+    "form": {
+      "authTitle": "Trang sự kiện",
+      "authDesc": "Đăng nhập để tạo trang đăng ký.",
+      "newTitle": "Sự kiện mới",
+      "newSubtitle": "Chỉ mất 3 phút. Xuất bản xong có ngay liên kết ngắn và QR.",
+      "editTitle": "Sửa sự kiện",
+      "title": "Tiêu đề",
+      "titlePlaceholder": "Nhóm học lập trình Tokyo #3",
+      "description": "Giới thiệu",
+      "descriptionHint": "Hỗ trợ Markdown (# tiêu đề, - danh sách, **đậm**)",
+      "descriptionPlaceholder": "Buổi gặp này về gì, dành cho ai?",
+      "whenTitle": "Thời gian",
+      "startsAt": "Bắt đầu",
+      "endsAt": "Kết thúc (tùy chọn)",
+      "timezone": "Múi giờ",
+      "whereTitle": "Địa điểm",
+      "locationText": "Địa điểm",
+      "locationPlaceholder": "Shibuya ○○ Coworking, tầng 3",
+      "locationUrl": "Liên kết bản đồ (tùy chọn)",
+      "locationUrlHint": "Dán liên kết Google Maps để địa điểm nhấp được",
+      "onlineUrl": "Liên kết trực tuyến (tùy chọn)",
+      "onlineUrlHint": "Liên kết họp cho sự kiện online/hybrid",
+      "limitsTitle": "Sĩ số & hạn chót",
+      "capacity": "Sĩ số (tùy chọn)",
+      "capacityHint": "Tự động đóng khi đủ người",
+      "capacityPlaceholder": "10",
+      "closeAt": "Hạn đăng ký (tùy chọn)",
+      "closeAtHint": "Không nhận đăng ký sau thời điểm này",
+      "formSectionTitle": "Mẫu đăng ký",
+      "contactField": "Thông tin liên hệ thu thập",
+      "contactFieldHint": "Chọn email để tự động gửi mail xác nhận/hủy. Điện thoại, KakaoTalk, LINE, Instagram dùng khi bạn tự liên hệ.",
+      "contactFields": {
+        "EMAIL": "Email",
+        "PHONE": "Điện thoại",
+        "KAKAO": "KakaoTalk ID",
+        "LINE": "LINE ID",
+        "INSTAGRAM": "Instagram"
+      },
+      "questionsLocked": "Câu hỏi bị khóa vì đã có người đăng ký.",
+      "questionPlaceholder": "VD: Bạn quan tâm chủ đề nào?",
+      "questionLabel": "Câu hỏi {n}",
+      "questionType": "Loại câu hỏi",
+      "typeShortText": "Trả lời ngắn",
+      "typeSingleChoice": "Trắc nghiệm",
+      "required": "Bắt buộc",
+      "addQuestion": "Thêm câu hỏi (tối đa 10)",
+      "removeQuestion": "Xóa câu hỏi",
+      "optionPlaceholder": "Lựa chọn {n}",
+      "addOption": "+ Thêm lựa chọn",
+      "removeOption": "Xóa lựa chọn",
+      "publish": "Xuất bản",
+      "save": "Lưu",
+      "errors": {
+        "startRequired": "Vui lòng chọn thời gian bắt đầu",
+        "generic": "Không lưu được. Vui lòng kiểm tra lại."
+      },
+      "optional": "Tùy chọn",
+      "cover": "Ảnh bìa",
+      "coverFailed": "Tải lên thất bại. Vui lòng thử lại.",
+      "coverHint": "Hiển thị lớn trong bản xem trước chat/mạng xã hội (JPG/PNG/WebP, tỉ lệ 2:1)",
+      "coverReplace": "Đổi ảnh",
+      "coverUpload": "Chọn ảnh",
+      "coverUploading": "Đang tải lên…",
+      "descWrite": "Viết",
+      "descPreview": "Xem trước",
+      "descPreviewEmpty": "Chưa có nội dung — viết markdown ở tab Viết để xem trước tại đây.",
+      "useGoogleMaps": "Tạo liên kết Google Maps cho “{place}”",
+      "openMap": "Mở bản đồ ↗"
+    },
+    "detail": {
+      "authTitle": "Trang sự kiện",
+      "authDesc": "Đăng nhập để xem người tham gia và nguồn truy cập.",
+      "loading": "Đang tải…",
+      "loadFailed": "Không tải được.",
+      "createdBanner": "Trang sự kiện đã xuất bản! Dán liên kết này vào nhóm chat và mạng xã hội.",
+      "edit": "Sửa",
+      "viewPublicPage": "Xem trang công khai",
+      "manageTitle": "Quản lý",
+      "close": "Đóng đăng ký",
+      "reopen": "Mở lại đăng ký",
+      "cancelEvent": "Hủy sự kiện",
+      "canceledNote": "Sự kiện đã bị hủy.",
+      "statusChanged": "Đã cập nhật",
+      "statusChangeFailed": "Cập nhật thất bại",
+      "cancelDialogTitle": "Hủy sự kiện này?",
+      "cancelDialogBody": "Trang công khai sẽ hiển thị đã hủy và ngừng nhận đăng ký. Không thể hoàn tác. Nếu chỉ muốn ngừng nhận đăng ký mới, dùng 'Đóng đăng ký'.",
+      "cancelDialogConfirm": "Hủy sự kiện",
+      "heroCopy": "Sao chép liên kết",
+      "heroCopied": "Đã sao chép!"
+    },
+    "share": {
+      "copied": "Đã sao chép",
+      "qr": "QR",
+      "title": "Liên kết chia sẻ",
+      "subtitle": "Dùng liên kết riêng cho mỗi kênh (nhóm chat, Twitter, Instagram) và phân tích sẽ tự tách người đăng ký theo nguồn.",
+      "copy": "Sao chép liên kết",
+      "downloadQr": "Tải QR",
+      "aliasPlaceholder": "Tên kênh (VD: nhóm chat)",
+      "aliasLabel": "Tên kênh",
+      "addAlias": "Thêm liên kết",
+      "aliasCreated": "Đã tạo liên kết kênh",
+      "aliasFailed": "Không tạo được liên kết"
+    },
+    "analytics": {
+      "shareNudge": "Chưa có lượt nhấp. Dán liên kết chia sẻ vào nhóm chat hoặc mạng xã hội, kết quả sẽ hiện ở đây.",
+      "title": "Nguồn truy cập",
+      "totalClicks": "Lượt nhấp trang",
+      "totalRegistrations": "Lượt đăng ký",
+      "conversion": "Tỷ lệ chuyển đổi",
+      "registrationsByChannel": "Đăng ký theo kênh",
+      "clicksByLink": "Nhấp theo liên kết",
+      "clicksByClientApp": "Nhấp theo ứng dụng (KakaoTalk, Instagram in-app…)",
+      "noRegistrations": "Chưa có đăng ký",
+      "noClicks": "Chưa có lượt nhấp"
+    },
+    "attendees": {
+      "title": "{count} người đăng ký",
+      "exportCsv": "Xuất CSV",
+      "empty": "Chưa có ai đăng ký. Chia sẻ liên kết vào nhóm chat nhé!",
+      "name": "Họ tên",
+      "contact": "Liên hệ",
+      "channel": "Kênh",
+      "status": "Trạng thái",
+      "confirmed": "Đã xác nhận",
+      "canceled": "Đã hủy"
+    },
+    "status": {
+      "open": "Đang mở",
+      "closed": "Đã đóng",
+      "canceled": "Đã hủy"
+    }
+  },
+  "linkAnalytics": {
+    "title": "Phân tích",
+    "loginTitle": "Đăng nhập để xem hiệu quả của tất cả liên kết",
+    "loginDesc": "Xu hướng lượt nhấp thật và liên kết nổi bật ở một nơi.",
+    "loadFailed": "Không tải được số liệu. Vui lòng thử lại.",
+    "weekHumanClicks": "Lượt nhấp thật · 7 ngày qua",
+    "todayAndLinks": "Hôm nay {today} · {links} liên kết",
+    "scopeNote": "Đã loại trừ lượt nhấp của bot. Giờ theo {tz}.",
+    "attention": "Cần xem",
+    "zeroClick": "{count} liên kết chưa có lượt nhấp",
+    "expiring": "{count} liên kết hết hạn trong 3 ngày",
+    "topLinks": "Liên kết hàng đầu",
+    "topLinksNote": "Theo tổng lượt nhấp thật",
+    "humanClicks": "lượt nhấp thật",
+    "createFirst": "Tạo liên kết đầu tiên",
+    "viewFewestClicks": "Xem theo ít lượt nhấp nhất"
   }
 }

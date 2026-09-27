@@ -13,12 +13,25 @@ import {
 } from "@codemirror/view";
 import { defaultKeymap, indentWithTab } from "@codemirror/commands";
 import {
-  defaultHighlightStyle,
+  HighlightStyle,
   indentUnit,
   LanguageDescription,
   syntaxHighlighting,
 } from "@codemirror/language";
 import { languages } from "@codemirror/language-data";
+import { fenceFor } from "@/modules/blog/lib/markdown-to-blocks";
+import { tags as t } from "@lezer/highlight";
+
+const readerCodeColors = HighlightStyle.define([
+  { tag: [t.comment, t.quote], color: "#94a3b8", fontStyle: "italic" },
+  { tag: [t.keyword, t.bool, t.null, t.heading, t.link, t.modifier, t.operatorKeyword], color: "#93c5fd" },
+  { tag: [t.string, t.special(t.string), t.attributeName, t.inserted], color: "#6ee7b7" },
+  { tag: [t.number, t.standard(t.name), t.meta, t.annotation, t.atom], color: "#fca5a5" },
+  { tag: [t.typeName, t.className, t.function(t.variableName), t.function(t.propertyName), t.definition(t.function(t.variableName))], color: "#fcd34d" },
+  { tag: [t.variableName, t.tagName, t.special(t.variableName)], color: "#f9a8d4" },
+  { tag: t.emphasis, fontStyle: "italic" },
+  { tag: t.strong, fontWeight: "700" },
+]);
 
 /**
  * A Tiptap code-block node whose editing surface IS CodeMirror 6 — language-aware syntax highlighting
@@ -77,7 +90,7 @@ class CodeMirrorNodeView {
         drawSelection(),
         indentUnit.of("  "),
         CMView.lineWrapping,
-        syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+        syntaxHighlighting(readerCodeColors),
         this.langCompartment.of([]),
         CMView.updateListener.of((u) => {
           if (!this.updating) this.forwardUpdate(u);
@@ -335,6 +348,23 @@ export const CodeMirrorBlock = CodeBlock.extend<CodeMirrorBlockOptions>({
     return {
       ...this.parent?.(),
       languageLabel: "",
+    };
+  },
+  addStorage() {
+    return {
+      markdown: {
+        serialize(
+          state: { write: (s: string) => void; text: (s: string, escape?: boolean) => void; ensureNewLine: () => void; closeBlock: (n: PMNode) => void },
+          node: PMNode,
+        ) {
+          const fence = fenceFor(node.textContent);
+          state.write(fence + (node.attrs.language || "") + "\n");
+          state.text(node.textContent, false);
+          state.ensureNewLine();
+          state.write(fence);
+          state.closeBlock(node);
+        },
+      },
     };
   },
   addNodeView() {

@@ -127,9 +127,9 @@ interface PublicPostSeriesNav {
 
 type Me = {
   id: number; email: string; role: "USER" | "ADMIN";
-  username?: string | null; tier?: "FREE" | "PRO";
+  username?: string | null;
   provider?: string; oauthProvider?: string; timezone?: string;
-  createdAt: string; subscriptionCurrentPeriodEnd?: string | null;
+  createdAt: string;
 }
 ```
 

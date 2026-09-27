@@ -234,7 +234,7 @@ export default function middleware(req: NextRequest) {
   const localePathMatch = req.nextUrl.pathname.match(/^\/([a-z]{2})(\/.+)?$/);
   if (localePathMatch && localePathMatch[2]) {
     const sub = localePathMatch[2];
-    if (!sub.match(/^\/(links|blog|p|u|opengraph-image|twitter-image)(\/|$)/)) {
+    if (!sub.match(/^\/(links|blog|p|u|e|opengraph-image|twitter-image)(\/|$)/)) {
       const url = req.nextUrl.clone();
       url.pathname = `/${localePathMatch[1]}/links${sub}`;
       return NextResponse.rewrite(url);

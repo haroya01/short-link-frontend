@@ -2,6 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Meteors } from "@/components/landing/meteors";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Link } from "@/i18n/navigation";
@@ -16,7 +17,7 @@ import { Link } from "@/i18n/navigation";
  *   (스파크라인 자가-드로잉·주간 막대 상승). kurl 의 "검정 무대"에 해당하는 유일한 색 필드.
  *
  * 데이터 드로잉은 전부 장식(aria-hidden) SVG/DOM — 수치·칩 라벨은 로케일 무관 데모 리터럴.
- * 스크롤 연동/폴백/reduced-motion 규칙은 globals.css stage-* 블록이 소유(AGENTS §11).
+ * 스크롤 연동/폴백/reduced-motion 규칙은 globals.css stage-* 블록이 소유(DESIGN.md §11).
  */
 
 // 장면 3 데모 시계열 — 실제 StatsHeroCore 가 그대로 그린다(우상향 11포인트).
@@ -32,11 +33,21 @@ export function StageScenes() {
           컴포넌트 그대로(랜딩이 보여주는 것 = 실존 화면, StatsHeroCore 와 같은 계약). */}
       <section className="bg-white dark:bg-slate-950">
         <div className="container max-w-5xl pb-10 pt-16 sm:pb-14 sm:pt-24">
-          {/* grid-cols-1 명시 필수: 암시적 트랙은 min-content 폭이라 LiveClickFeedDemo 의 nowrap
-              행이 390px 뷰포트에서 섹션 전체를 우측으로 넘치게 했다(문장·카드 에지 절단). */}
-          <div className="grid grid-cols-1 items-center gap-10 sm:grid-cols-2 sm:gap-14">
-            <div className="space-y-4">
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+          <div className="relative grid items-center gap-10 sm:grid-cols-2 sm:gap-14">
+            {/* 결과 카드 → 라이브 피드로 나는 링크 칩 — "공유하면 클릭이 돌아온다"의 궤적.
+                데스크탑 전용 장식, reduced-motion 제거. */}
+            <span
+              aria-hidden
+              className="s2-fly pointer-events-none absolute left-[16%] top-[68%] z-10 hidden select-none items-center gap-1 rounded-full border border-accent-300/60 bg-white px-2.5 py-1 font-mono text-[11px] font-semibold text-accent-700 shadow-sm dark:border-accent-700/60 dark:bg-slate-950 dark:text-accent-400 sm:inline-flex"
+            >
+              kurl.me/demo01
+            </span>
+            {/* min-w-0: 그리드 아이템의 기본 min-width 는 auto 라 트랙이 콘텐츠의 min-content 아래로
+                못 줄어든다. 아래 카드의 긴 원본 URL 은 truncate(=nowrap) 라 min-content 가 449px 로
+                잡히고, 그게 1열 트랙을 469px 로 벌려 390 화면 전체를 79px 가로 스크롤시켰다
+                (헤더·쿠키바·하단탭이 같이 어긋남). truncate 는 줄일 수 있는 부모가 있어야 동작한다. */}
+            <div className="min-w-0 space-y-4">
+              <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
                 {t("scene2Eyebrow")}
               </p>
               <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
@@ -49,24 +60,12 @@ export function StageScenes() {
                 aria-hidden
                 className="select-none rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_16px_44px_-24px_rgba(5,150,105,0.4)] dark:border-slate-700 dark:bg-slate-900"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="min-w-0">
-                    <span className="block font-mono text-[16px] font-bold tracking-tight text-accent-700 dark:text-accent-400">
-                      kurl.me/demo01
-                    </span>
-                    <span className="mt-1 block truncate font-mono text-[11px] text-slate-400 dark:text-slate-500">
-                      https://your-very-long-url.com/path?with=query
-                    </span>
-                  </span>
-                  <span className="flex shrink-0 items-center gap-1.5">
-                    <span className="rounded-lg border border-slate-200 px-2.5 py-1.5 font-mono text-[10px] font-medium uppercase tracking-tagline text-slate-500 dark:border-slate-700 dark:text-slate-400">
-                      copy
-                    </span>
-                    <span className="rounded-lg border border-slate-200 px-2.5 py-1.5 font-mono text-[10px] font-medium uppercase tracking-tagline text-slate-500 dark:border-slate-700 dark:text-slate-400">
-                      qr
-                    </span>
-                  </span>
-                </div>
+                <span className="block font-mono text-[16px] font-bold tracking-tight text-accent-700 dark:text-accent-400">
+                  kurl.me/demo01
+                </span>
+                <span className="mt-1 block truncate text-xs text-slate-500 dark:text-slate-400">
+                  https://your-very-long-url.com/path?with=query
+                </span>
               </div>
             </div>
             {/* 실제 통계 화면의 라이브 피드가 그대로 — 행이 3.2초마다 실제로 도착한다 */}
@@ -79,11 +78,18 @@ export function StageScenes() {
 
       {/* ── 장면 3: 분석 클라이맥스 — 딥그린 필드 ─────────────────── */}
       <section className="bg-white pt-4 dark:bg-slate-950 sm:pt-8">
-        <div className="stage-rise bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
-          <div className="container max-w-5xl py-16 sm:py-24">
-            <div className="grid grid-cols-1 items-center gap-10 sm:grid-cols-2 sm:gap-12">
+        {/* 필드(딥그린 판)는 항상 완전 불투명 — 판 자체에 stage-rise 를 걸면 진입 내내
+            빛바랜 반투명 슬래브로 노출된다("물드는" 어색함). 종이처럼 그냥 스크롤되어
+            들어오고, 떠오르는 건 안의 콘텐츠만. */}
+        <div className="relative overflow-hidden bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
+          {/* 딥그린 필드의 유성층 — Magic UI Meteors 포팅. 콘텐츠 뒤에 깔린다. */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 hidden sm:block">
+            <Meteors number={6} className="text-accent-300" />
+          </div>
+          <div className="stage-rise container max-w-5xl py-16 sm:py-24">
+            <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
               <div className="space-y-4">
-                <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-300">
+                <p className="text-[13px] font-semibold text-accent-100/80">
                   {t("scene3Eyebrow")}
                 </p>
                 <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-white sm:text-headline-lg">
@@ -95,13 +101,13 @@ export function StageScenes() {
                 <div className="flex flex-wrap items-center gap-3 pt-2">
                   <Link
                     href="/demo"
-                    className="focus-ring inline-flex items-center gap-1.5 rounded-lg bg-white px-4 py-2.5 text-sm font-medium text-accent-900 transition hover:bg-accent-50"
+                    className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-sm font-medium text-accent-900 transition hover:bg-accent-50"
                   >
                     {t("scene3CtaDemo")} <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link
                     href="/login"
-                    className="focus-ring inline-flex items-center rounded-lg border border-accent-300/40 px-4 py-2.5 text-sm text-accent-100 transition hover:border-accent-300/70 hover:text-white"
+                    className="focus-ring inline-flex items-center rounded-full border border-accent-300/40 px-4 py-2.5 text-sm text-accent-100 transition hover:border-accent-300/70 hover:text-white"
                   >
                     {t("scene3CtaStart")}
                   </Link>

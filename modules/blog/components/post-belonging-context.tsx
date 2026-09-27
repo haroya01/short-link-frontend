@@ -25,7 +25,7 @@ import { onBelongingChanged } from "@/modules/blog/lib/consequence-events";
  * 50), then hands each card back its membership. So a viewport of N cards costs one request, not N —
  * and off-screen cards still cost nothing until they're scrolled to (the next batch picks them up).
  *
- * Placed inside {@link DiscoveryGrid}, so every grid feed (recent / following / for-you / series)
+ * Placed inside {@link FeedList}, so every post list (recent / following / for-you / tags / author)
  * inherits it with no per-feed wiring. A belonging line rendered outside a provider degrades to
  * "unknown" (renders nothing) rather than falling back to a per-post fetch.
  */

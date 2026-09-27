@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { routing } from "@/i18n/routing";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -6,28 +7,39 @@ const SITE_URL =
   "https://kurl.me";
 
 export default function robots(): MetadataRoute.Robots {
+  // Match workspace routes at their actual root/locale prefixes. A wildcard like
+  // /*/write also matches /@author/write-better (and /tags/write), hiding public content.
+  const privatePaths = [
+    "/dashboard",
+    "/admin",
+    "/settings",
+    "/stats/",
+    "/auth/",
+    "/login",
+    "/write",
+    "/drafts",
+    "/analytics",
+    "/notifications",
+    "/curation",
+    "/leads",
+    "/webhooks",
+  ];
+  const prefixes = [
+    "",
+    ...routing.locales.flatMap((locale) => [
+      `/${locale}`,
+      `/${locale}/blog`,
+      `/${locale}/links`,
+    ]),
+  ];
   return {
     rules: [
       {
         userAgent: "*",
         allow: ["/"],
         disallow: [
-          "/dashboard",
-          "/*/dashboard",
-          "/admin",
-          "/*/admin",
-          "/settings",
-          "/*/settings",
-          "/stats/",
-          "/*/stats/",
-          "/auth/",
-          "/*/auth/",
           "/api/",
-          // Auth surfaces have no informational value as search entry points and crowd brand
-          // sitelinks. Also noindex'd at the page layer (defense-in-depth) so a missed crawl
-          // rule still keeps them out of the index.
-          "/login",
-          "/*/login",
+          ...prefixes.flatMap((prefix) => privatePaths.map((path) => `${prefix}${path}`)),
         ],
       },
     ],

@@ -1,9 +1,12 @@
 import type { Element, Root } from "hast";
+import type { Parent as MdastParent, PhrasingContent, Root as MdastRoot } from "mdast";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkCjkFriendly from "remark-cjk-friendly";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
+import { parseImageAlt } from "@/modules/blog/lib/image-width";
 
 /**
  * Shared markdown renderer for the public reader. Post text blocks store raw markdown (the editor
@@ -42,6 +45,27 @@ function rehypeSafeStyle() {
   };
 }
 
+function remarkNewlineBreaks() {
+  return (tree: MdastRoot) => {
+    const walk = (node: MdastParent) => {
+      const next: MdastParent["children"] = [];
+      for (const child of node.children) {
+        if (child.type === "text" && child.value.includes("\n")) {
+          child.value.split("\n").forEach((part, i) => {
+            if (i > 0) next.push({ type: "break" } as PhrasingContent);
+            if (part) next.push({ type: "text", value: part });
+          });
+          continue;
+        }
+        if ("children" in child) walk(child as MdastParent);
+        next.push(child);
+      }
+      node.children = next;
+    };
+    walk(tree);
+  };
+}
+
 // Allow span/mark to carry className (hljs spans) + a style (already value-filtered above);
 // keep className on code/pre for syntax highlighting. Everything else stays on the safe default.
 const schema = {
@@ -59,25 +83,37 @@ const schema = {
 export function Markdown({ children, inline = false }: { children: string; inline?: boolean }) {
   return (
     <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
+      remarkPlugins={[remarkGfm, remarkCjkFriendly, remarkNewlineBreaks]}
       rehypePlugins={
         inline
           ? [rehypeRaw, rehypeSafeStyle, [rehypeSanitize, schema]]
           : [rehypeRaw, rehypeSafeStyle, rehypeHighlight, [rehypeSanitize, schema]]
       }
-      components={
-        inline
-          ? { p: ({ children }) => <>{children}</> }
+      components={{
+        // Legacy paragraphs and list items can contain markdown images without becoming IMAGE
+        // blocks. Give them the same intrinsic-size reservation and lazy loading as PostImage.
+        img: ({ src, alt = "", title, width, height }) => {
+          const parsed = parseImageAlt(alt);
+          const dims = parsed.dims && Number.isFinite(parsed.dims.w) && Number.isFinite(parsed.dims.h)
+            && parsed.dims.w > 0 && parsed.dims.h > 0 ? parsed.dims : undefined;
+          return (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={src} alt={parsed.alt} title={title} loading="lazy" decoding="async"
+              width={dims?.w ?? width} height={dims?.h ?? height} />
+          );
+        },
+        ...(inline
+          ? { p: ({ children }: { children?: React.ReactNode }) => <>{children}</> }
           : {
               // Wrap tables so a too-wide one scrolls within the reading column instead of squishing
               // its cells unreadably on a phone (the .prose-post table CSS only sets w-full).
-              table: ({ children, className }) => (
+              table: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
                 <div className="prose-table-wrap">
                   <table className={className}>{children}</table>
                 </div>
               ),
-            }
-      }
+            }),
+      }}
     >
       {children}
     </ReactMarkdown>

@@ -1,4 +1,5 @@
 import { DATE_LOCALE } from "@/lib/date";
+import { serializeJsonLd } from "@/lib/json-ld";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
@@ -10,7 +11,7 @@ import { ShareButton } from "@/modules/blog/components/share-button";
 import { ViewBeacon } from "@/modules/blog/components/view-beacon";
 import { ReadBeacon } from "@/modules/blog/components/read-beacon";
 import { ReadProgressBeacon } from "@/modules/blog/components/read-progress-beacon";
-import { PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
+import { LegacyHeadingHash, PostToc, PostTocMobile } from "@/modules/blog/components/post-toc";
 import { PostComments } from "@/modules/blog/components/comments";
 import { LikeButton } from "@/modules/blog/components/like-button";
 import { BookmarkButton } from "@/modules/blog/components/bookmark-button";
@@ -129,6 +130,9 @@ export default async function PublicPostPage({
   if (!result.ok) {
     // backend: UNPUBLISHED → 410, DRAFT/SCHEDULED/missing → 404. A bad preview token is a plain 404.
     if (result.status === 410) return <GonePage username={username} locale={locale} t={t} />;
+    // 네트워크/백엔드 순단("error")을 404 로 위장하면 살아있는 공유 링크가 "페이지 없음"으로
+    // 보인다 — 진짜 404 만 notFound(), 순단은 에러 경계(재시도 UI)로.
+    if (result.status !== 404) throw new Error(`public post fetch failed: ${username}/${slug}`);
     notFound();
   }
 
@@ -213,13 +217,13 @@ export default async function PublicPostPage({
       {articleJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleJsonLd) }}
         />
       )}
       {breadcrumbJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
         />
       )}
       {/* Left rail (xl+): a persistent author identity + follow that stays once the in-article header
@@ -261,7 +265,7 @@ export default async function PublicPostPage({
       {/* data-bhv-post: BehaviorTracker 의 클릭 위임이 읽는 페이지 컨텍스트 — 두 번째 행동이 어느 글에서
           났는지의 출처. */}
       <article
-        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-16 sm:py-20"
+        className="post-enter mx-auto w-full max-w-2xl pb-14 pt-8 sm:py-20"
         lang={post.languageTag}
         data-bhv-post={post.id}
       >
@@ -283,7 +287,7 @@ export default async function PublicPostPage({
 
       {/* 마스트헤드 아래 조용한 헤어라인(§10.1 border-slate-100 계열)으로 제목·메타를 하나의 블록으로
           닫는다 — xl 에선 헤더가 얇은 메타 한 줄뿐이라 닫는 선이 없으면 본문과 경계가 흐릿했다. */}
-      <header className="mb-12 border-b border-slate-100 pb-8 dark:border-slate-800">
+      <header className="mb-8 border-b border-slate-100 pb-6 dark:border-slate-800 sm:mb-12 sm:pb-8">
         {eyebrow && (
           <p className="mb-3 text-[12px] font-medium text-slate-500 dark:text-slate-400">{eyebrow}</p>
         )}
@@ -294,7 +298,7 @@ export default async function PublicPostPage({
         <h1 className="text-headline-post font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-post-lg">
           {post.title}
         </h1>
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 sm:mt-6">
           {/* <xl: full author identity + follow inline. xl: those move to the left rail, so the header
               keeps only date·reading time + share — no duplicated author/follow at the top. */}
           <a
@@ -320,7 +324,7 @@ export default async function PublicPostPage({
             {" · "}
             {t("readingTime", { minutes })}
           </p>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="ml-auto flex shrink-0 items-center gap-2">
             <span className="xl:hidden">
               <FollowButton
                 username={author.username}
@@ -454,6 +458,7 @@ export default async function PublicPostPage({
 
       {/* Phone / portrait-tablet (<1100px) get the TOC as a floating button → bottom sheet. */}
       <PostTocMobile headings={headings} />
+      <LegacyHeadingHash headings={headings} />
     </div>
   );
 }

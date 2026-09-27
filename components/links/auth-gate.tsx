@@ -21,14 +21,11 @@ const hi = (i: number): CSSProperties => ({ ["--hi" as string]: i }) as CSSPrope
  * way to actually sign in.
  */
 export function LinksAuthGate({
-  eyebrow,
   title,
   description,
   benefits,
   next,
 }: {
-  /** Mono uppercase label naming the surface, e.g. "dashboard". */
-  eyebrow: string;
   title: string;
   description?: string;
   /** Optional reasons to sign in; only the dashboard front door passes these. */
@@ -51,9 +48,6 @@ export function LinksAuthGate({
         </div>
 
         <div className="space-y-2.5" style={hi(1)}>
-          <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
-            {eyebrow}
-          </p>
           <h1 className="text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
             {title}
           </h1>

@@ -41,7 +41,7 @@ export function LinksChrome({ children }: { children: React.ReactNode }) {
   return (
     <AppProviders>
       <Nav />
-      <main className="flex-1 pb-16 sm:pb-0">{children}</main>
+      <main className="flex-1 pb-20 sm:pb-0">{children}</main>
       <Footer />
       <CookieConsent darkAware />
       <ClaimToastListener />

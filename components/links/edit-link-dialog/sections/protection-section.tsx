@@ -2,6 +2,7 @@
 
 import type { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 
 type Props = {
   password: string;
@@ -39,8 +40,7 @@ export function ProtectionSection({
         <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           {t("protection.passwordLabel")}
         </span>
-        <Input
-          type="password"
+        <PasswordInput
           value={password}
           onChange={(e) => {
             onPasswordChange(e.target.value);

@@ -55,7 +55,6 @@ export default function NewCampaignPage() {
   if (ready && !authenticated) {
     return (
       <LinksAuthGate
-        eyebrow="campaigns"
         title={t("loginRequired")}
         next="/campaigns/new"
       />

@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * The single source of truth for the blog's reading-column invariant (AGENTS.md §10.1): the body is a
+ * The single source of truth for the blog's reading-column invariant (DESIGN.md §10.1): the body is a
  * centered `max-w-2xl` column on every surface (feed home · post · author · tags), and an optional rail
  * lives in the margin **without shifting that column** — a symmetric 3-column grid (equal side gutters)
  * keeps the content in the exact page center. Rail shows at `xl+` only; below that the column simply
