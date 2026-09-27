@@ -3510,60 +3510,60 @@
   },
   "qrCampaigns": {
     "meta": {
-      "title": "QR Campaigns | Flyer & Poster QR Performance — kurl",
-      "description": "Track flyer, poster, coupon QRs split by area, vendor, or batch. Use clicks-per-100 to choose your next drop zone."
+      "title": "QR campaigns · Flyer QR click tracking · kurl",
+      "description": "Split flyer, poster, and coupon QRs by area, distributor, or batch and compare their clicks. Clicks per 100 flyers tell you where to hand out next."
     },
     "hero": {
       "eyebrow": "Offline QR campaigns",
       "title1": "Different QR per flyer —",
-      "title2": "instantly see which ones got scanned.",
-      "sub": "Auto-generate a different QR per area, exit, or distributor. Use clicks per 100 flyers to pick your next drop zone.",
-      "chip1": "5 minutes to first campaign",
+      "title2": "see where the response comes from.",
+      "sub": "Make a separate QR for each area, exit, or distributor, and use clicks per 100 flyers to choose where to hand out next.",
+      "chip1": "A QR for every batch",
       "chip2": "Canva / InDesign PDF supported",
-      "chip3": "Change destination anytime",
-      "chip1Short": "5-min start",
+      "chip3": "Change the destination anytime",
+      "chip1Short": "QR per batch",
       "chip2Short": "PDF ready",
-      "chip3Short": "Editable link",
+      "chip3Short": "Editable destination",
       "cta": "Create QRs"
     },
     "s1": {
-      "line1": "Flyers are out.",
-      "line2": "But where did they actually work?"
+      "line1": "Once the flyers are out,",
+      "line2": "it's hard to tell where they worked."
     },
     "s2": {
-      "line1": "By area, exit, vendor —",
+      "line1": "By area, exit, or distributor,",
       "line2": "split the QR.",
-      "aux": "Batch = a group of flyers sharing the same QR."
+      "aux": "A batch is a stack of flyers that share one QR."
     },
     "s3": {
-      "line1": "Same design,",
-      "line2": "auto-insert different QRs.",
-      "aux": "Bring a Canva / InDesign PDF. Mark where the QR goes."
+      "line1": "Keep the design,",
+      "line2": "and the QRs go in automatically.",
+      "aux": "Bring a Canva or InDesign PDF and mark where the QR goes."
     },
     "s4": {
       "line1": "Shibuya 142 clicks, Shinjuku 38.",
-      "line2": "Double down on Shibuya next round.",
-      "aux": "Where to drop next — the clicks tell you."
+      "line2": "Hand out more in Shibuya next time.",
+      "aux": "The clicks show where to hand out next."
     },
     "s5": {
       "line1": "Flyers, coupons, posters.",
-      "line2": "Same play across every industry.",
-      "aux": "Use cases — compare with the same method."
+      "line2": "It works the same in any industry.",
+      "aux": "Example: round 1 and round 2 compared the same way."
     },
     "s6": {
-      "line1": "Printed QR stays,",
-      "line2": "the linked page changes."
+      "line1": "The printed QR stays,",
+      "line2": "only the destination changes."
     },
     "cta": {
-      "eyebrow": "Start right now",
-      "title": "Where to drop next — the clicks tell you.",
+      "eyebrow": "QR campaigns",
+      "title": "Choose your next drop by clicks",
       "primary": "Create QR",
       "secondary": "Log in",
-      "note": "Your short links and stats share the same account."
+      "note": "Your short links and stats live in the same account."
     },
     "mock": {
-      "kpiBeforeKurl": "Before kurl",
-      "kpiAfterKurl": "After kurl",
+      "kpiBeforeKurl": "Before tracking",
+      "kpiAfterKurl": "After tracking",
       "kpiStatus": "Distributed but untracked",
       "kpiDistributed": "Distributed",
       "kpiClicks": "Clicks",
@@ -3592,7 +3592,7 @@
       "casesTitle": "Use cases",
       "casesBefore": "Before",
       "casesAfter": "After",
-      "casesFooter": "Example — auto-comparing two campaigns",
+      "casesFooter": "Example · two campaigns compared",
       "timelineExpired": "Expiry",
       "timelineNext": "Next page",
       "timelineChip": "Reserve / Menu",

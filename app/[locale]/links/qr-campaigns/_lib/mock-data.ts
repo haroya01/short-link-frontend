@@ -6,7 +6,6 @@ export type MockCase = {
   action: string;
   before: number;
   after: number;
-  multiplier: string;
 };
 
 export type MockData = {
@@ -44,9 +43,9 @@ export const MOCK_BY_LOCALE: Record<string, MockData> = {
     ],
     reco: "渋谷 +3,000 / 新宿 -2,000",
     cases: [
-      { biz: "ラーメン店 コロネ", area: "渋谷区", action: "1番出口集中", before: 28, after: 142, multiplier: "+5x" },
-      { biz: "美容室 アルプス", area: "新宿区", action: "動線変更", before: 47, after: 137, multiplier: "+3x" },
-      { biz: "学習塾 ZONE", area: "池袋", action: "バッチ再構成", before: 61, after: 119, multiplier: "+2x" },
+      { biz: "ラーメン店 コロネ", area: "渋谷区", action: "1番出口集中", before: 28, after: 142 },
+      { biz: "美容室 アルプス", area: "新宿区", action: "動線変更", before: 47, after: 137 },
+      { biz: "学習塾 ZONE", area: "池袋", action: "バッチ再構成", before: 61, after: 119 },
     ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
@@ -70,9 +69,9 @@ export const MOCK_BY_LOCALE: Record<string, MockData> = {
     ],
     reco: "강남 +750 / 신촌 -250",
     cases: [
-      { biz: "라멘집 코로네", area: "강남", action: "1출구 집중", before: 28, after: 142, multiplier: "+5x" },
-      { biz: "미용실 알프스", area: "신촌", action: "동선 변경", before: 47, after: 137, multiplier: "+3x" },
-      { biz: "학원 ZONE", area: "홍대", action: "묶음 재구성", before: 61, after: 119, multiplier: "+2x" },
+      { biz: "라멘집 코로네", area: "강남", action: "1출구 집중", before: 28, after: 142 },
+      { biz: "미용실 알프스", area: "신촌", action: "동선 변경", before: 47, after: 137 },
+      { biz: "학원 ZONE", area: "홍대", action: "묶음 재구성", before: 61, after: 119 },
     ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",
@@ -96,9 +95,9 @@ export const MOCK_BY_LOCALE: Record<string, MockData> = {
     ],
     reco: "Shibuya +3,000 / Shinjuku -2,000",
     cases: [
-      { biz: "Ramen · Korone", area: "Shibuya", action: "Exit 1 focus", before: 28, after: 142, multiplier: "+5x" },
-      { biz: "Salon · Alps", area: "Shinjuku", action: "Reroute foot traffic", before: 47, after: 137, multiplier: "+3x" },
-      { biz: "Cram · ZONE", area: "Ikebukuro", action: "Batch reshuffle", before: 61, after: 119, multiplier: "+2x" },
+      { biz: "Ramen · Korone", area: "Shibuya", action: "Exit 1 focus", before: 28, after: 142 },
+      { biz: "Salon · Alps", area: "Shinjuku", action: "Reroute foot traffic", before: 47, after: 137 },
+      { biz: "Cram · ZONE", area: "Ikebukuro", action: "Batch reshuffle", before: 61, after: 119 },
     ],
     startDate: "2026-05-25",
     endDate: "2026-05-27",

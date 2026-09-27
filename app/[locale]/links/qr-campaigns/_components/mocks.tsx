@@ -441,16 +441,11 @@ export function MockCases({ mock, active }: { mock: MockData; active: boolean })
               transform: active ? "translateY(0)" : "translateY(-10px)",
             }}
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[13px] font-medium text-slate-900 dark:text-slate-100">{c.biz}</p>
-                <p className="mt-0.5 truncate text-[10px] text-slate-500 dark:text-slate-400">
-                  {c.area} · {c.action}
-                </p>
-              </div>
-              <span className="flex-shrink-0 rounded-md bg-accent-50 dark:bg-accent-500/10 px-2 py-1 text-[14px] font-semibold tabular-nums leading-none tracking-headline text-accent-700 dark:text-accent-400">
-                {c.multiplier}
-              </span>
+            <div className="min-w-0">
+              <p className="truncate text-[13px] font-medium text-slate-900 dark:text-slate-100">{c.biz}</p>
+              <p className="mt-0.5 truncate text-[11px] text-slate-500 dark:text-slate-400">
+                {c.area} · {c.action}
+              </p>
             </div>
 
             <div className="mt-3 space-y-1.5">

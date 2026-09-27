@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, BarChart3, QrCode } from "lucide-react";
+import { ArrowRight, BarChart3 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
@@ -101,15 +101,26 @@ function TopProgressBar({ count, active }: { count: number; active: number }) {
 
 function FloatingCta({ ctaHref }: { ctaHref: string }) {
   const t = useTranslations("qrCampaigns.hero");
-  // 페이지 끝(푸터)에 닿으면 물러난다. 이 버튼은 우하단 고정이고 푸터의 링크 줄도 우측 정렬이라,
-  // 바닥까지 스크롤하면 GitHub·개인정보처리방침 위에 그대로 앉아 클릭을 먹었다(감사에서 확인).
-  // 푸터가 보이는 동안엔 어차피 같은 행동을 하는 링크들이 화면에 있으니 CTA 는 비켜도 잃는 게 없다.
+  // 마지막 CTA 띠나 푸터가 보이면 물러난다 — 띠에는 같은 버튼이 있고, 푸터에선 우하단 링크 줄
+  // (GitHub·개인정보처리방침) 위에 앉아 클릭을 먹었다.
   const [atFooter, setAtFooter] = useState(false);
   useEffect(() => {
-    const footer = document.querySelector("footer");
-    if (!footer || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(([e]) => setAtFooter(e.isIntersecting), { rootMargin: "0px 0px -8px 0px" });
-    io.observe(footer);
+    const targets = [document.getElementById("qr-final-cta"), document.querySelector("footer")].filter(
+      (el): el is HTMLElement => el != null,
+    );
+    if (targets.length === 0 || typeof IntersectionObserver === "undefined") return;
+    const visible = new Set<Element>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) visible.add(e.target);
+          else visible.delete(e.target);
+        }
+        setAtFooter(visible.size > 0);
+      },
+      { rootMargin: "0px 0px -8px 0px" },
+    );
+    for (const el of targets) io.observe(el);
     return () => io.disconnect();
   }, []);
 
@@ -466,15 +477,15 @@ const CHIP_ANIMATION = [
 function HeroBody({ s }: { s: HeroSpec }) {
   return (
     <>
-      <p className="text-[11px] font-medium uppercase tracking-wider text-accent-700 dark:text-accent-400 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards] motion-reduce:[animation:none] motion-reduce:opacity-100">
+      <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400 opacity-0 [animation:hero-fade_700ms_var(--ease)_120ms_forwards] motion-reduce:[animation:none] motion-reduce:opacity-100">
         {s.eyebrow}
       </p>
-      <h1 className="mt-2 break-keep text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:mt-4 sm:text-headline-md lg:text-headline-xl">
+      <h1 className="mt-2 break-keep text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:mt-4 sm:text-headline-md lg:text-headline-xl">
         <span className="inline-block translate-y-4 opacity-0 [animation:hero-rise_900ms_var(--ease)_220ms_forwards] motion-reduce:[animation:none] motion-reduce:translate-y-0 motion-reduce:opacity-100">
           {s.title1}
         </span>
         <br />
-        <span className="inline-block translate-y-4 text-accent-700 dark:text-accent-400 opacity-0 [animation:hero-rise_900ms_var(--ease)_420ms_forwards] motion-reduce:[animation:none] motion-reduce:translate-y-0 motion-reduce:opacity-100">
+        <span className="inline-block translate-y-4 font-medium opacity-0 [animation:hero-rise_900ms_var(--ease)_420ms_forwards] motion-reduce:[animation:none] motion-reduce:translate-y-0 motion-reduce:opacity-100">
           {s.title2}
         </span>
       </h1>
@@ -485,7 +496,7 @@ function HeroBody({ s }: { s: HeroSpec }) {
         {s.chips.map((chip, ci) => (
           <span
             key={ci}
-            className={`inline-flex items-center whitespace-nowrap rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300 opacity-0 ${CHIP_ANIMATION[ci]} motion-reduce:[animation:none] motion-reduce:opacity-100`}
+            className={`inline-flex items-center whitespace-nowrap rounded-md border border-slate-200 px-2.5 py-1 text-[12px] font-medium text-slate-700 dark:border-slate-700 dark:text-slate-300 opacity-0 ${CHIP_ANIMATION[ci]} motion-reduce:[animation:none] motion-reduce:opacity-100`}
           >
             <span className="sm:hidden">{s.chipsShort[ci]}</span>
             <span className="hidden sm:inline">{chip}</span>
@@ -499,7 +510,7 @@ function HeroBody({ s }: { s: HeroSpec }) {
 function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean }) {
   return (
     <>
-      <h2 className="break-keep text-headline-xs font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md lg:text-headline-lg">
+      <h2 className="break-keep text-headline-xs font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md lg:text-headline-lg">
         <span
           className="inline-block transition-opacity duration-700"
           style={{
@@ -511,7 +522,7 @@ function NarrativeBody({ s, isActive }: { s: NarrativeSpec; isActive: boolean })
         </span>
         <br />
         <span
-          className="inline-block text-slate-500 dark:text-slate-400 transition-opacity duration-700"
+          className="inline-block font-medium transition-opacity duration-700"
           style={{
             transitionTimingFunction: EASE,
             transitionDelay: isActive ? "180ms" : "0ms",
@@ -559,43 +570,33 @@ function FinalCta({
   const t = useTranslations("qrCampaigns.cta");
   const tRoot = useTranslations("qrCampaigns");
   return (
-    <section className="bg-slate-900 text-white">
-      <div className="container max-w-5xl py-24 text-center">
-        <div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-accent-600">
-          <QrCode className="h-6 w-6" aria-hidden />
-        </div>
-        <p className="mt-6 text-[13px] font-semibold text-accent-400">
-          {t("eyebrow")}
-        </p>
-        <h2 className="mt-3 text-headline-md font-semibold tracking-headline sm:text-headline-lg">
+    <section id="qr-final-cta" className="bg-accent-900 text-white">
+      <div className="container max-w-5xl py-20 sm:py-24">
+        <p className="text-[13px] font-semibold text-accent-200">{t("eyebrow")}</p>
+        <h2 className="mt-3 max-w-2xl text-balance text-headline-md font-bold tracking-headline sm:text-headline-lg">
           {t("title")}
         </h2>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Link href={ctaHref}>
-            <Button
-              variant="accent"
-              className="h-14 rounded-lg px-10 text-[15px] font-semibold"
-            >
-              {t("primary")}
-              <ArrowRight className="h-5 w-5" aria-hidden />
-            </Button>
+        <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Link
+            href={ctaHref}
+            className="focus-ring inline-flex h-12 items-center gap-1.5 rounded-lg bg-white px-6 text-[15px] font-semibold text-accent-900 transition-colors hover:bg-accent-50"
+          >
+            {t("primary")}
+            <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
           {!authenticated && (
-            <Link href="/login?next=/campaigns">
-              <Button
-                variant="ghost"
-                size="xl"
-                className="px-6 text-[13px] font-medium text-white hover:bg-white/10"
-              >
-                {t("secondary")}
-              </Button>
+            <Link
+              href="/login?next=/campaigns"
+              className="focus-ring rounded-sm text-[15px] font-medium text-accent-100 underline decoration-accent-300/50 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+            >
+              {t("secondary")}
             </Link>
           )}
         </div>
-        <p className="mt-8 text-[12px] text-slate-500 dark:text-slate-400">{t("note")}</p>
+        <p className="mt-8 text-[13px] text-accent-100/80">{t("note")}</p>
       </div>
       <div className="border-t border-white/10">
-        <div className="container max-w-5xl py-4 text-center text-[11px] text-slate-500 dark:text-slate-400">
+        <div className="container max-w-5xl py-4 text-[12px] text-accent-100/80">
           <Link href="/" className="hover:text-white">
             ← {tRoot("backLink")}
           </Link>

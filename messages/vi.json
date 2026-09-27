@@ -3510,60 +3510,60 @@
   },
   "qrCampaigns": {
     "meta": {
-      "title": "Chiến dịch QR | Hiệu quả QR tờ rơi & áp phích — kurl",
-      "description": "Theo dõi QR tờ rơi, áp phích, coupon chia theo khu vực, nhà cung cấp, hay đợt. Dùng lượt nhấp trên 100 để chọn khu phát tiếp theo."
+      "title": "Chiến dịch QR · Đo lượt nhấp QR trên tờ rơi · kurl",
+      "description": "Chia QR trên tờ rơi, áp phích, phiếu giảm giá theo khu vực, người phát hoặc lô và so sánh lượt nhấp. Lượt nhấp trên 100 tờ cho biết nên phát ở đâu tiếp theo."
     },
     "hero": {
-      "eyebrow": "Offline QR campaigns",
+      "eyebrow": "Chiến dịch QR ngoại tuyến",
       "title1": "QR khác nhau trên mỗi tờ rơi —",
-      "title2": "thấy ngay cái nào được quét.",
-      "sub": "Tự tạo QR khác nhau theo khu vực, cửa ra, hay người phát. Dùng lượt nhấp trên 100 tờ rơi để chọn khu phát tiếp theo.",
-      "chip1": "5 phút cho chiến dịch đầu tiên",
+      "title2": "xem phản hồi đến từ đâu.",
+      "sub": "Tạo QR riêng cho từng khu vực, lối ra hoặc người phát, rồi dùng lượt nhấp trên 100 tờ để chọn nơi phát tiếp theo.",
+      "chip1": "QR riêng cho từng lô",
       "chip2": "Hỗ trợ PDF Canva / InDesign",
-      "chip3": "Đổi đích bất cứ lúc nào",
-      "chip1Short": "Khởi động 5 phút",
+      "chip3": "Đổi đích đến bất cứ lúc nào",
+      "chip1Short": "QR theo lô",
       "chip2Short": "PDF sẵn sàng",
-      "chip3Short": "Liên kết chỉnh được",
+      "chip3Short": "Đổi đích đến",
       "cta": "Tạo QR"
     },
     "s1": {
-      "line1": "Tờ rơi đã phát.",
-      "line2": "Nhưng chúng thật sự hiệu quả ở đâu?"
+      "line1": "Phát tờ rơi xong,",
+      "line2": "khó biết nơi nào hiệu quả."
     },
     "s2": {
-      "line1": "Theo khu vực, cửa ra, nhà cung cấp —",
-      "line2": "chia QR.",
-      "aux": "Đợt = một nhóm tờ rơi dùng chung một QR."
+      "line1": "Theo khu vực, lối ra, người phát,",
+      "line2": "tách QR ra.",
+      "aux": "Một lô là nhóm tờ rơi dùng chung một QR."
     },
     "s3": {
-      "line1": "Cùng một thiết kế,",
-      "line2": "tự chèn QR khác nhau.",
-      "aux": "Mang một PDF Canva / InDesign. Đánh dấu nơi đặt QR."
+      "line1": "Giữ nguyên thiết kế,",
+      "line2": "QR được chèn tự động.",
+      "aux": "Chỉ cần đánh dấu vị trí QR trên PDF từ Canva hoặc InDesign."
     },
     "s4": {
       "line1": "Shibuya 142 lượt nhấp, Shinjuku 38.",
-      "line2": "Đợt sau dồn vào Shibuya.",
-      "aux": "Phát tiếp ở đâu — lượt nhấp sẽ mách bạn."
+      "line2": "Lần sau phát nhiều hơn ở Shibuya.",
+      "aux": "Lượt nhấp cho biết nên phát ở đâu tiếp theo."
     },
     "s5": {
       "line1": "Tờ rơi, coupon, áp phích.",
-      "line2": "Cùng một cách làm cho mọi ngành.",
-      "aux": "Trường hợp dùng — so sánh bằng cùng phương pháp."
+      "line2": "Ngành nào cũng dùng được như nhau.",
+      "aux": "Ví dụ: so sánh lần 1 và lần 2 theo cùng một cách."
     },
     "s6": {
-      "line1": "QR đã in giữ nguyên,",
-      "line2": "trang liên kết thay đổi."
+      "line1": "QR đã in vẫn giữ nguyên,",
+      "line2": "chỉ đổi đích đến."
     },
     "cta": {
-      "eyebrow": "Bắt đầu ngay bây giờ",
-      "title": "Phát tiếp ở đâu — lượt nhấp sẽ mách bạn.",
+      "eyebrow": "Chiến dịch QR",
+      "title": "Chọn nơi phát tiếp theo bằng lượt nhấp",
       "primary": "Tạo QR",
       "secondary": "Đăng nhập",
-      "note": "Liên kết ngắn và thống kê của bạn dùng chung tài khoản."
+      "note": "Liên kết rút gọn và thống kê dùng chung một tài khoản."
     },
     "mock": {
-      "kpiBeforeKurl": "Trước kurl",
-      "kpiAfterKurl": "Sau kurl",
+      "kpiBeforeKurl": "Trước khi đo",
+      "kpiAfterKurl": "Sau khi đo",
       "kpiStatus": "Đã phát nhưng không theo dõi",
       "kpiDistributed": "Đã phát",
       "kpiClicks": "Lượt nhấp",
@@ -3592,7 +3592,7 @@
       "casesTitle": "Trường hợp dùng",
       "casesBefore": "Trước",
       "casesAfter": "Sau",
-      "casesFooter": "Ví dụ — tự so sánh hai chiến dịch",
+      "casesFooter": "Ví dụ · so sánh hai chiến dịch",
       "timelineExpired": "Hết hạn",
       "timelineNext": "Trang tiếp theo",
       "timelineChip": "Đặt chỗ / Thực đơn",
