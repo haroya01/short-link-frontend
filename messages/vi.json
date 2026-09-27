@@ -2292,7 +2292,8 @@
       "goTo": "Đến thẻ {idx}",
       "openImage": "Mở ảnh",
       "imageN": "Ảnh {idx}"
-    }
+    },
+    "featured": "Nổi bật"
   },
   "weeklyInsights": {
     "eyebrow": "7 ngày qua",

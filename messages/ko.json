@@ -2292,7 +2292,8 @@
       "goTo": "{idx}번째로 이동",
       "openImage": "사진 크게 보기",
       "imageN": "{idx}번째 사진"
-    }
+    },
+    "featured": "대표 링크"
   },
   "weeklyInsights": {
     "eyebrow": "지난 7일 인사이트",

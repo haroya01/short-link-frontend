@@ -2292,7 +2292,8 @@
       "goTo": "{idx} 番目へ移動",
       "openImage": "写真を拡大",
       "imageN": "{idx} 番目の写真"
-    }
+    },
+    "featured": "おすすめ"
   },
   "weeklyInsights": {
     "eyebrow": "直近 7 日のインサイト",

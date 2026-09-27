@@ -2292,7 +2292,8 @@
       "goTo": "Go to card {idx}",
       "openImage": "Open image",
       "imageN": "Image {idx}"
-    }
+    },
+    "featured": "Featured"
   },
   "weeklyInsights": {
     "eyebrow": "Last 7 days",

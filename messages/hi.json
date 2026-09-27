@@ -2292,7 +2292,8 @@
       "goTo": "कार्ड {idx} पर जाएँ",
       "openImage": "इमेज खोलें",
       "imageN": "इमेज {idx}"
-    }
+    },
+    "featured": "ख़ास"
   },
   "weeklyInsights": {
     "eyebrow": "पिछले 7 दिन",

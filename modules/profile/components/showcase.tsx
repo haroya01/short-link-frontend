@@ -13,11 +13,10 @@ import { THEME_TABLE } from "@/app/[locale]/u/[username]/_lib/theme";
 import { cn } from "@/lib/utils";
 
 /**
- * Landing-page profile showcase. Renders the real {@link ProfileHeader} + {@link EntryList}
- * inside an iPhone 14 Pro frame (devices.css). The inner content tree exactly mirrors the
- * public {@code /u/[username]/page.tsx} layout — same banner aspect ratio, same mask-image
- * fade, same {@code -mt-12} container overlap — so what visitors see in the showcase is what
- * they'd see if they viewed the real profile page on their phone.
+ * Landing-page profile showcase. Renders the real {@link ProfileHeader} + {@link EntryList} on a
+ * phone-sized page (no device chrome). The inner content tree mirrors the public
+ * {@code /u/[username]/page.tsx} layout — same banner aspect ratio, same mask-image fade, same
+ * {@code -mt-12} container overlap — so the showcase shows the page itself.
  *
  * Carousel is Embla — touch-swipe on mobile, drag on desktop, autoplay that pauses on hover so
  * users can read a card without it sliding past.
@@ -132,39 +131,19 @@ function ShowcaseCard({
         }}
       >
         <div
-          className="device device-iphone-14-pro"
-          // transform-origin MUST be inline: the `origin-top-left` utility loses the cascade to
-          // devices.css's `.device` rule (equal specificity, loaded later) which forces a
-          // centered origin. With a centered origin scale() shrinks around the native 428px
-          // centre, so the device overflows this wrapper box — sized for top-left scaling — by
-          // (428-scaledW)/2 on each side, clipping the phone's right edge off-screen on mobile.
-          style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+          className={cn(
+            "pointer-events-none overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800",
+            colors.page,
+          )}
+          style={{
+            width: DEVICE_NATIVE_W,
+            height: DEVICE_NATIVE_H,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            ...(colors.pageBgHex ? { backgroundColor: colors.pageBgHex } : {}),
+          }}
         >
-          <div className="device-frame">
-            <div
-              className={cn(
-                "device-screen pointer-events-none overflow-y-auto",
-                colors.page,
-              )}
-              style={
-                // Inline backgroundColor beats devices.css's `.device .device-screen {
-                // background: #000 }` (0,2,0). Without it light/mono themes showed black —
-                // the page-color utility (0,1,0) wasn't specific enough to overturn the
-                // default. Gradient themes leave pageBgHex undefined so their bg utility
-                // (which paints a gradient, not a single color) keeps working unchanged.
-                colors.pageBgHex
-                  ? { backgroundColor: colors.pageBgHex }
-                  : undefined
-              }
-            >
-              <ProfilePreviewBody profile={profile} colors={colors} />
-            </div>
-          </div>
-          <div className="device-stripe" />
-          <div className="device-header" />
-          <div className="device-sensors" />
-          <div className="device-btns" />
-          <div className="device-power" />
+          <ProfilePreviewBody profile={profile} colors={colors} />
         </div>
       </div>
     </div>
@@ -180,8 +159,6 @@ function ProfilePreviewBody({
 }) {
   return (
     <div className="min-h-full">
-      <div aria-hidden className="h-12 w-full" />
-
       {profile.bannerUrl && (
         <div
           className="aspect-[3/1] w-full overflow-hidden"

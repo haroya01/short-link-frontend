@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Favicon } from "@/components/common/favicon";
 import type { PublicProfileEntry } from "@/types";
 import type { ThemeColors } from "../_lib/theme";
@@ -29,6 +30,7 @@ type Props = {
  * banner is more visually weighty than a thumbnail.
  */
 export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
+  const t = useTranslations("publicProfile");
   const originalUrl = entry.originalUrl ?? "";
   // src=profile-{username} so analytics can split profile-driven clicks from direct kurl.me hits.
   const href = `${entry.shortUrl}?src=profile-${username}`;
@@ -78,7 +80,9 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
               loading="lazy"
               className="h-full w-full object-cover"
             />
-            <CardFloatingChip position="top-left">★ Featured</CardFloatingChip>
+            <CardFloatingChip position="top-left" icon={<Star aria-hidden className="h-3 w-3 fill-current" />}>
+              {t("featured")}
+            </CardFloatingChip>
           </div>
           <div className="flex items-center gap-3 px-4 py-3">
             <Favicon url={originalUrl} size={20} className="shrink-0" />
