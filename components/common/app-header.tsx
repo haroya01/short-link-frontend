@@ -162,11 +162,11 @@ export function AppHeader({
           {/* Blog header → the logo returns to the blog home, not the links app root. blogHref keeps
               the right host (blog.kurl.me, or /blog-preview on apex); BlogChromeLink upgrades the hop
               to a client-side navigation when already on that origin, so the chrome stays mounted.
-              모바일(<sm)에선 표면을 가리지 않고 마크만 — slim 공개 표면은 물론 워크스페이스도:
-              워크스페이스는 우측 클러스터(검색·벨·전환 pill·아바타)가 모바일에서도 다 살아 있어
-              풀 워드마크까지 들어가면 390px 에서 컨트롤들이 워드마크 위로 겹쳤다. */}
+              모바일(<sm) 워크스페이스는 마크만 — 우측 클러스터(검색·벨·전환·아바타)가 모바일에서도
+              살아 있어 풀 워드마크까지 들어가면 390px 에서 컨트롤이 워드마크 위로 겹쳤다. slim 공개
+              표면은 우측이 글쓰기 버튼 하나라 워드마크까지 보인다. */}
           <ChromeNavLink href={blogHref("/")} aria-label="kurl log" className="mark-hoverable shrink-0">
-            <Logo variant="blog" animated showText={false} className="sm:hidden" />
+            <Logo variant="blog" animated showText={slimMobile} className="sm:hidden" />
             <Logo variant="blog" animated className="hidden sm:inline-flex" />
           </ChromeNavLink>
         </div>
