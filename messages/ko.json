@@ -16,7 +16,7 @@
     "deleteConfirm": "이 댓글을 삭제할까요?",
     "empty": "첫 댓글을 남겨보세요.",
     "loginPrompt": "로그인하고 댓글을 남겨보세요",
-    "like": "공감",
+    "like": "좋아요",
     "bold": "굵게",
     "italic": "기울임",
     "code": "코드",
@@ -47,19 +47,19 @@
     "retry": "다시 시도",
     "loadMoreError": "불러오지 못했어요",
     "feed": "팔로잉",
-    "followingSignedOut": "팔로우한 작가들의 새 글이 여기 모입니다.",
+    "followingSignedOut": "팔로우한 작가의 새 글이 여기에 모여요.",
     "forYou": "추천",
-    "forYouSignedOutTitle": "당신을 위한 추천",
+    "forYouSignedOutTitle": "읽은 글에 맞춘 추천",
     "forYouSignedOut": "로그인하면 읽은 글과 관심 주제를 바탕으로 맞춤 글을 추천해 드려요.",
     "forYouEmptyTitle": "아직 추천할 글이 없어요",
     "forYouEmpty": "주제를 팔로우하거나 글을 몇 편 읽으면 취향에 맞는 글이 모여요.",
     "followingSignedOutTitle": "팔로우한 작가의 글",
     "followingBrowseLatest": "최신 글",
-    "followingEmpty": "마음에 드는 작가를 팔로우하면 새 글이 여기 모입니다.",
+    "followingEmpty": "마음에 드는 작가를 팔로우하면 새 글이 여기에 모여요.",
     "signIn": "로그인",
     "topics": "주제",
-    "mastheadTagline": "읽고, 쓰고, 연결하다.",
-    "mastheadSub": "kurl 사람들이 쓴 글을 모았어요.",
+    "mastheadTagline": "kurl 사람들이 쓴 글",
+    "mastheadSub": "최신 글부터 차례로 모았어요.",
     "tagFeedSubtitle": "이 주제로 발행된 글을 모았어요.",
     "tagFollow": "팔로우",
     "tagFollowing": "팔로잉",
@@ -69,9 +69,9 @@
     "tagAllHiddenTitle": "숨긴 주제에 다 가려졌어요",
     "tagAllHiddenBody": "팔로우한 글 {count}개가 모두 숨긴 주제에 가려졌어요. 주제 설정에서 숨김을 해제하면 다시 보여요.",
     "myTags": "내 태그",
-    "metaDescription": "읽고, 쓰고, 연결하다. kurl의 공개 블로그.",
+    "metaDescription": "kurl 사람들이 쓴 글을 읽고, 밑줄 친 문장을 컬렉션으로 엮어 두는 블로그예요.",
     "emptyTitle": "아직 발행된 글이 없어요",
-    "emptyBody": "첫 글의 주인공이 되어 보세요.",
+    "emptyBody": "첫 글을 발행하면 여기에 가장 먼저 보여요.",
     "emptyFollowingTitle": "팔로우한 작가의 글이 없어요",
     "emptyTagTitle": "이 주제의 글이 없어요",
     "topicsIntro": "사람들이 무엇을 쓰는지 둘러보세요. 태그를 골라 들어가거나, 아래 최신 글부터 시작해도 좋아요.",
@@ -201,7 +201,7 @@
     "seriesAnalyticsTitle": "{title} · 시리즈 분석",
     "analyticsWindowViews": "{days}일 조회",
     "analyticsLifetimeViews": "총 조회",
-    "analyticsLifetimeLikes": "총 공감",
+    "analyticsLifetimeLikes": "총 좋아요",
     "analyticsPublished": "발행 글",
     "analyticsViews": "조회 {count}",
     "analyticsDays": "{days}일",
@@ -269,16 +269,16 @@
     "rowDeleteConfirm": "“{title}” 글을 삭제할까요? 되돌릴 수 없어요.",
     "rowDeleteFailed": "삭제에 실패했어요.",
     "curationLiked": "좋아요한 글",
-    "curationLikedHint": "내가 공감한 글 모음.",
+    "curationLikedHint": "내가 좋아요한 글 모음.",
     "curationHighlights": "하이라이트·메모",
     "curationHighlightsHint": "밑줄 친 구절과 남긴 메모예요. 누르면 원문으로 돌아가요.",
     "curationComments": "내 댓글",
     "curationCommentsHint": "내가 남긴 댓글 모음.",
     "curationLikedEmpty": "아직 좋아요한 글이 없어요.",
     "curationHistory": "읽기 기록",
-    "curationHistoryHint": "읽은 글이 기기를 넘어 이어집니다. 기록은 나만 봅니다.",
+    "curationHistoryHint": "읽은 글 기록은 다른 기기에서도 이어져요. 나만 볼 수 있어요.",
     "curationTags": "구독한 태그",
-    "curationTagsHint": "팔로우한 주제. 눌러서 그 주제의 글을 모아 봅니다.",
+    "curationTagsHint": "팔로우한 주제예요. 누르면 그 주제의 글을 모아 볼 수 있어요.",
     "curationTagsEmpty": "아직 팔로우한 태그가 없어요. 글이나 태그 페이지에서 관심 주제를 팔로우해 보세요.",
     "curationTagsManage": "태그 관리",
     "curationTagsBrowse": "태그 둘러보기",
@@ -296,7 +296,7 @@
   "postEditor": {
     "backToList": "글 목록",
     "titlePlaceholder": "제목",
-    "bodyPlaceholder": "'/' 를 입력해 블록 추가 — 또는 그냥 작성하세요",
+    "bodyPlaceholder": "'/'를 입력하면 블록을 넣을 수 있어요. 그냥 써도 돼요",
     "blockMenu": {
       "add": "아래에 블록 추가",
       "embedMedia": "임베드 미디어",
@@ -522,7 +522,7 @@
       "warning": "주의",
       "caution": "경고"
     },
-    "bodyPlaceholderTouch": "그냥 작성하세요 — 서식은 위 도구 막대에서"
+    "bodyPlaceholderTouch": "그냥 쓰면 돼요. 서식은 위 도구 막대에 있어요"
   },
   "savedLibrary": {
     "private": "본인만 볼 수 있어요.",
@@ -541,13 +541,13 @@
     "newFolderTo": "새 폴더로",
     "untagged": "태그 없음",
     "emptyBookmarks": "아직 담아둔 글이 없어요",
-    "emptyBookmarksBody": "나중에 다시 읽고 싶은 글을 북마크하면 여기에 모입니다.",
+    "emptyBookmarksBody": "나중에 다시 읽고 싶은 글을 북마크하면 여기에 모여요.",
     "emptyLiked": "아직 좋아요한 글이 없어요",
-    "emptyLikedBody": "마음에 드는 글에 좋아요를 누르면 여기에 모입니다.",
+    "emptyLikedBody": "마음에 드는 글에 좋아요를 누르면 여기에 모여요.",
     "emptyHighlights": "아직 그은 구절이 없어요",
-    "emptyHighlightsBody": "글을 읽다 마음에 닿은 문장을 그으면 여기에 모입니다.",
+    "emptyHighlightsBody": "글을 읽다가 마음에 닿은 문장에 밑줄을 그으면 여기에 모여요.",
     "emptyComments": "아직 남긴 댓글이 없어요",
-    "emptyCommentsBody": "글에 댓글을 남기면 여기에 모입니다.",
+    "emptyCommentsBody": "글에 댓글을 남기면 여기에 모여요.",
     "browseFeed": "피드 둘러보기",
     "emptyHistory": "아직 읽기 기록이 없어요.",
     "emptyHistoryBody": "글을 읽으면 여기에 기록돼요.",
@@ -706,7 +706,7 @@
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",
-    "description": "긴 URL을 한 줄로. 디바이스, 채널, 국가별 클릭 분석까지.",
+    "description": "긴 주소를 짧게 줄이고, 어느 기기·채널·나라에서 눌렸는지 봇을 빼고 보여 드려요.",
     "ogHeadlineTop": "URL 단축 +",
     "ogHeadlineBottom": "클릭 분석",
     "ogSubline": "디바이스 · 채널 · 국가 · 시간대 — 누가 어디서 클릭했는지 한눈에"
@@ -742,8 +742,8 @@
     "INVALID_CURSOR": "잘못된 페이지 커서예요.",
     "INVALID_EXPORT_DIMENSION": "지원하지 않는 내보내기 옵션이에요.",
     "INVALID_TIMEZONE": "잘못된 타임존이에요.",
-    "INVALID_USERNAME": "username 은 3~16 자 영문 소문자 / 숫자 / 언더스코어만 가능해요.",
-    "USERNAME_TAKEN": "이미 사용 중이거나 30일 이내 변경된 username 이에요.",
+    "INVALID_USERNAME": "사용자 이름은 3~16자 영문 소문자 / 숫자 / 언더스코어만 쓸 수 있어요.",
+    "USERNAME_TAKEN": "이미 쓰이고 있거나 30일 안에 바뀐 사용자 이름이에요.",
     "PROFILE_NOT_FOUND": "프로필을 찾을 수 없어요.",
     "INVALID_ACTIVE_PERIOD": "조회 기간이 올바르지 않아요.",
     "INVALID_WEBHOOK_URL": "웹훅 URL 은 http(s):// 로 시작하면서 외부에서 접근 가능한 호스트여야 해요.",
@@ -761,15 +761,15 @@
   },
   "cookieConsent": {
     "ariaLabel": "쿠키 안내",
-    "message": "로그인·기능 유지에 필요한 쿠키는 기본으로 씁니다. 서비스 개선을 위한 사용 분석은 동의하실 때만 켜요.",
+    "message": "로그인 유지처럼 꼭 필요한 쿠키만 기본으로 써요. 서비스 개선용 사용 분석은 동의할 때만 켜요.",
     "accept": "동의",
     "reject": "거부",
     "learnMore": "개인정보 처리방침",
     "prefsTitle": "사용 분석 동의",
-    "prefsDesc": "서비스 개선을 위한 사용 분석을 켜거나 끌 수 있어요. 끄면 이미 저장된 분석 식별자도 함께 지워집니다. 로그인·기능 유지에 필요한 쿠키는 이 설정과 무관하게 계속 사용해요.",
-    "stateOn": "현재 상태 — 사용 분석에 동의하셨어요.",
-    "stateOff": "현재 상태 — 사용 분석을 끄셨어요.",
-    "stateUnset": "현재 상태 — 아직 선택하지 않으셨어요. 분석은 꺼져 있어요."
+    "prefsDesc": "서비스 개선용 사용 분석을 켜거나 끌 수 있어요. 끄면 이 기기에 저장된 분석 식별자도 함께 지워져요. 로그인·기능 유지에 필요한 쿠키는 이 설정과 관계없이 계속 써요.",
+    "stateOn": "지금은 사용 분석에 동의한 상태예요.",
+    "stateOff": "지금은 사용 분석이 꺼져 있어요.",
+    "stateUnset": "아직 고르지 않았어요. 지금은 분석이 꺼져 있어요."
   },
   "notifications": {
     "webPushLabel": "브라우저 알림 받기",
@@ -783,15 +783,15 @@
     "loginRequired": "로그인이 필요해요",
     "loginCta": "로그인",
     "someone": "누군가",
-    "like": "<b>{actor}</b>님이 회원님의 글을 좋아합니다",
-    "comment": "<b>{actor}</b>님이 회원님의 글에 댓글을 남겼습니다",
-    "follow": "<b>{actor}</b>님이 회원님을 팔로우하기 시작했습니다",
-    "series_subscribe": "<b>{actor}</b>님이 회원님의 시리즈를 구독합니다",
-    "reply": "<b>{actor}</b>님이 회원님의 댓글에 답글을 남겼습니다",
-    "new_post": "<b>{actor}</b>님이 새 글을 발행했습니다",
-    "mention": "<b>{actor}</b>님이 댓글에서 회원님을 언급했습니다",
-    "connected": "<b>{actor}</b>님이 회원님의 글을 <c>{collection}</c>에 엮었어요",
-    "path_grew": "회원님이 엮인 <c>{collection}</c>에 새 글이 이어졌어요",
+    "like": "<b>{actor}</b>님이 내 글에 좋아요를 눌렀어요",
+    "comment": "<b>{actor}</b>님이 내 글에 댓글을 남겼어요",
+    "follow": "<b>{actor}</b>님이 나를 팔로우했어요",
+    "series_subscribe": "<b>{actor}</b>님이 내 시리즈를 구독했어요",
+    "reply": "<b>{actor}</b>님이 내 댓글에 답글을 남겼어요",
+    "new_post": "<b>{actor}</b>님이 새 글을 발행했어요",
+    "mention": "<b>{actor}</b>님이 댓글에서 나를 언급했어요",
+    "connected": "<b>{actor}</b>님이 내 글을 <c>{collection}</c>에 엮었어요",
+    "path_grew": "내 글이 엮인 <c>{collection}</c>에 새 글이 이어졌어요",
     "aCollection": "어느 컬렉션",
     "blogPrefsTitle": "알림 종류",
     "blogPrefsSubtitle": "받고 싶은 알림만 켜 두세요. 브라우저·앱 어디서든 같은 설정이 적용돼요.",
@@ -888,13 +888,12 @@
   },
   "home": {
     "tagline": "kurl v1",
-    "headline1": "단축은 한 줄",
+    "headline1": "단축은 <line>한 줄</line>",
     "headline2": "클릭은 언제, 어디서",
-    "subhead": "실시간 클릭 피드 · 자동 인사이트 · 봇 자동 분리 — 다른 단축기 유료 플랜의 분석 깊이를 무료로",
-    "mobileSubhead": "실시간 클릭 · 자동 인사이트 · 봇 분리까지 무료",
-    "anonymousHint": "로그인 없이도 단축 가능. 로그인하면 통계를 보고 비밀번호도 걸 수 있어요.",
-    "demoLink": "통계가 어떻게 보이는지 데모로 미리 보기",
-    "scrollHint": "아래로 스크롤",
+    "subhead": "긴 주소를 붙여 넣으면 바로 짧아져요. 누가 언제 어디서 눌렀는지 보여 드리고, 봇 클릭은 따로 걸러요.",
+    "mobileSubhead": "누가 언제 어디서 눌렀는지, 봇은 따로 걸러서 보여 드려요.",
+    "anonymousHint": "로그인 없이 무료로 줄일 수 있어요. 로그인하면 통계를 보고 비밀번호도 걸 수 있어요.",
+    "demoLink": "통계 화면 미리 보기",
     "previews": {
       "eyebrow": "단축 1분 안에 확인할 수 있는 화면들",
       "see": "보기",
@@ -961,31 +960,32 @@
     "whySubhead": "보통 엔터프라이즈 플랜에서나 주는 기능을, 여기선 무료로 기본 제공해요.",
     "stage": {
       "scene2Eyebrow": "공유",
-      "scene2Title": "붙여넣는 곳마다, 클릭이 돌아옵니다",
-      "scene2Desc": "인스타 바이오 · X · 유튜브 · 메일 — 어디에서 온 클릭인지 실시간으로 잡혀요.",
+      "scene2Title": "붙여 넣는 곳마다 클릭이 돌아와요",
+      "scene2Desc": "인스타그램 소개에 두든 메일에 넣든, 어디서 온 클릭인지 바로 보여요.",
       "scene3Eyebrow": "분석",
-      "scene3Title": "클릭 하나하나가 그림이 됩니다",
-      "scene3Desc": "누가, 언제, 어디서 — 사람과 봇을 갈라 30일 리듬까지. 다른 단축기 유료 플랜의 깊이를 무료로.",
-      "scene3CtaDemo": "데모로 미리 보기",
-      "scene3CtaStart": "무료로 시작하기"
+      "scene3Title": "클릭이 모여 선이 돼요",
+      "scene3Desc": "어느 나라, 어떤 기기, 어디서 왔는지 나눠 보고 봇 클릭은 따로 걸러요. 이 통계가 전부 무료예요.",
+      "scene3CtaDemo": "데모 통계 보기",
+      "scene3CtaStart": "로그인하고 시작하기",
+      "scene3Caption": "최근 30일 · 사람 {human}%"
     }
   },
   "showcase": {
-    "eyebrow": "공개 프로필 · 실제 예시",
-    "title": "내가 원하는 스타일대로",
-    "subhead": "내 일에 어울리는 프로필 한 페이지. 카페 사장·개발자·강사·사진작가·쇼핑몰 운영자·DJ까지, 링크를 공유하는 모두를 위해요.",
+    "eyebrow": "공개 프로필 · 예시",
+    "title": "하는 일에 맞춰 꾸민 프로필",
+    "subhead": "카페 메뉴, 강의 일정, 작업물처럼 하는 일에 맞는 블록을 골라 한 페이지에 담아요.",
     "demoCta": "전체 보기",
-    "ctaTitle": "내 프로필도 5분이면 완성돼요",
-    "ctaSubhead": "가입하고 원하는 이름만 정하면 시작이에요. 사진 · 링크 · 가게 주소 · 연락처를 넣으면 아래 예시처럼 채워집니다.",
+    "ctaTitle": "내 프로필도 이렇게 만들 수 있어요",
+    "ctaSubhead": "로그인하고 사용자 이름만 정하면 시작할 수 있어요. 사진, 링크, 가게 주소, 연락처를 넣으면 아래 예시처럼 채워져요.",
     "cta": "내 프로필 만들기",
     "metaSuffix": "예시",
     "metaFallbackTitle": "{handle} · kurl 예시",
-    "sampleBanner": "예시 페이지 · 가입 후 직접 만들 수 있어요",
+    "sampleBanner": "예시 페이지 · 로그인하면 직접 만들 수 있어요",
     "sampleCta": "내 프로필 만들기",
-    "scrollCue": "실제 예시 보기",
+    "scrollCue": "예시 보기",
     "meta": {
-      "title": "프로필 페이지 사례 모음 · 링크 인 바이오 - kurl",
-      "description": "카페·크리에이터·셀러·강사 등 다양한 직군의 프로필 페이지 사례. 링크 인 바이오 + QR 명함 + 클릭 분석을 한 페이지에서 운영하는 방법."
+      "title": "링크 인 바이오 프로필 예시 · kurl",
+      "description": "카페, 강사, 사진작가처럼 하는 일에 맞춰 꾸민 공개 프로필 예시예요. 링크, 명함, 지도, 상품 카드를 한 페이지에 담을 수 있어요."
     }
   },
   "shortenForm": {
@@ -1035,11 +1035,11 @@
     "profileCtaDesc": "공개 프로필 링크 블록으로 배치",
     "anonymousExpiryInline": "24시간 후 만료",
     "anonymousExpiryAt": "{when} 만료",
-    "anonymousExpirySignup": "가입하고 통계 보관하기"
+    "anonymousExpirySignup": "로그인하고 통계 보관하기"
   },
   "login": {
     "title": "로그인",
-    "subtitle": "로그인하면 내 링크 관리와 클릭 통계 분석 기능을 쓸 수 있어요.",
+    "subtitle": "로그인하면 만든 링크를 한 목록에서 관리하고, 누가 눌렀는지 통계로 볼 수 있어요.",
     "google": "Google 계정으로 로그인",
     "anonymousButton": "로그인 없이 단축만 사용하기",
     "rotation": {
@@ -1156,16 +1156,16 @@
     "emptyCta": "지금 단축하기",
     "onboarding": {
       "eyebrow": "처음 오신 걸 환영해요",
-      "title": "3 스텝이면 끝나요",
-      "subtitle": "단축 → 공유 → 통계 — 30초 안에 첫 클릭을 받을 수 있어요.",
-      "step1Title": "1 분 안에 단축",
-      "step1Desc": "홈에서 URL 붙여넣기 + 단축 버튼. 즉시 짧은 링크 생성.",
+      "title": "세 단계면 돼요",
+      "subtitle": "링크를 줄여 필요한 곳에 붙이면, 눌린 기록이 여기에 쌓여요.",
+      "step1Title": "링크 줄이기",
+      "step1Desc": "홈에서 긴 주소를 붙여 넣고 단축을 눌러요.",
       "step2Title": "공유하기",
-      "step2Desc": "Instagram bio, 카톡, 명함 어디든. QR 코드도 한 번에.",
+      "step2Desc": "인스타그램 소개, 카카오톡, 명함 어디든 붙여요. QR 코드도 받을 수 있어요.",
       "step3Title": "통계 확인",
-      "step3Desc": "클릭 들어오면 자동으로 채널/국가/디바이스/시간대 분석.",
+      "step3Desc": "클릭이 들어오면 채널·나라·기기·시간대별로 나눠 보여 드려요.",
       "primaryCta": "첫 링크 만들러 가기",
-      "secondaryCta": "통계 화면이 어떤지 데모로 보기 →",
+      "secondaryCta": "통계 화면이 어떤지 데모로 보기",
       "scene": {
         "weekClicks": "이번 주 클릭"
       }
@@ -2150,7 +2150,7 @@
     "copied": "복사됨",
     "copyFailed": "복사에 실패했어요",
     "close": "닫기",
-    "loginRequired": "로그인이 필요합니다.",
+    "loginRequired": "로그인이 필요해요.",
     "errorPrefix": "에러:",
     "offline": "오프라인 상태예요. 연결되면 자동으로 다시 시도해요.",
     "showPassword": "비밀번호 보기",
@@ -2160,7 +2160,7 @@
     "title": "이 페이지를 찾을 수 없어요",
     "description": "주소를 잘못 입력했거나, 단축 링크가 만료됐거나, 존재하지 않는 페이지일 수 있어요.",
     "cta": "홈으로 돌아가기",
-    "short": "페이지를 찾을 수 없습니다."
+    "short": "페이지를 찾을 수 없어요."
   },
   "qr": {
     "title": "qr code",
@@ -2181,17 +2181,17 @@
   },
   "demo": {
     "metaTitle": "kurl 데모 — 단축 후 무엇이 보이는지 직접 만져보기",
-    "metaDescription": "가입 없이 단축 링크 분석 화면을 그대로 보여드려요.",
-    "sampleBanner": "샘플 데이터예요. 가입하면 내 링크에도 똑같이 채워져요.",
+    "metaDescription": "로그인 없이 단축 링크 분석 화면을 그대로 보여 드려요.",
+    "sampleBanner": "샘플 데이터예요. 로그인하면 내 링크에도 똑같이 채워져요.",
     "sampleCta": "내 링크 만들기",
     "settingsNotice": {
-      "title": "설정은 가입 후에 만져볼 수 있어요",
-      "desc": "A/B 분배 도착지 · 웹훅은 본인 링크에서만 등록할 수 있어요. 가입 후 본인 링크의 통계 페이지에서 같은 화면이 열립니다.",
+      "title": "설정은 로그인한 뒤에 바꿀 수 있어요",
+      "desc": "A/B 분배 도착지와 웹훅은 내 링크에서만 등록할 수 있어요. 로그인하면 내 링크의 통계 페이지에서 같은 화면이 열려요.",
       "cta": "내 링크 만들기"
     },
     "settingsDemo": {
       "badge": "데모",
-      "lockedToast": "데모 화면입니다. 가입 후 본인 링크에서 실제로 등록·수정할 수 있어요.",
+      "lockedToast": "데모 화면이에요. 로그인하면 내 링크에서 직접 등록하고 고칠 수 있어요.",
       "payloadPreview": "전송되는 페이로드 미리보기"
     },
     "createCta": "내 링크 만들기"
@@ -2199,7 +2199,7 @@
   "publicProfile": {
     "empty": "이 사용자가 아직 공개한 링크가 없어요.",
     "viewBlog": "글 {count}편 보기",
-    "madeWith": "kurl.me 로 만들어진 페이지",
+    "madeWith": "kurl.me로 만든 페이지",
     "editFab": "편집",
     "share": {
       "x": "X 에 공유",
@@ -2237,7 +2237,7 @@
       "error": "등록에 실패했어요. 잠시 후 다시 시도해 주세요.",
       "defaultPlaceholder": "you@example.com",
       "defaultSuccess": "등록 완료. 감사합니다.",
-      "trustHint": "이 페이지 운영자에게만 전달돼요. 스팸은 보내지 않아요."
+      "trustHint": "이 페이지 운영자에게만 전달돼요."
     },
     "booking": {
       "defaultTitle": "예약하기",
@@ -2322,7 +2322,7 @@
     "title": "최근 단축",
     "empty": "아직 단축한 링크가 없어요. 위쪽에서 한번 만들어 보세요.",
     "viewStats": "통계 보기",
-    "claimCta": "가입하면 이 링크들을 내 계정에 계속 보관할 수 있어요.",
+    "claimCta": "로그인하면 이 링크들을 내 계정에 계속 보관할 수 있어요.",
     "anonymousNote": "익명 링크는 24시간 뒤 자동으로 만료돼요. 로그인하면 내 계정으로 자동 옮겨지고, 만료 없이 계속 보관돼요.",
     "claimedToast": "{count}개 링크를 계정에 저장했어요"
   },
@@ -2403,48 +2403,48 @@
     "github": "GitHub"
   },
   "about": {
-    "title": "kurl — 단축 URL · 클릭 분석",
-    "lead": "긴 URL을 한 줄로 줄이고, 누가 어디서 클릭하는지 분석합니다. 지금은 무료, 광고도 없습니다.",
+    "title": "kurl · 단축 URL과 클릭 분석",
+    "lead": "긴 주소를 짧게 줄이고, 누가 어디서 눌렀는지 보여 드려요. 지금은 무료이고 광고도 없어요.",
     "section1Title": "왜 만들었나요",
-    "section1Body": "기존 단축 서비스들은 분석이 빈약하거나 유료 플랜에서만 풀려요. kurl 은 디바이스·OS·브라우저·채널·국가·시간대까지 핵심 분석을 모두 무료로 줘요.",
+    "section1Body": "클릭 통계를 유료 기능으로 두지 않으려고 만들었어요. 기기, OS, 브라우저, 채널, 나라, 시간대별 통계를 모두 무료로 볼 수 있어요.",
     "section2Title": "어떻게 동작하나요",
-    "section2Body": "단축 URL에 접근하면 봇·악성 URL을 거른 뒤 원본으로 리다이렉트합니다. 모든 클릭은 익명화된 IP와 함께 분석에 최적화된 구조로 저장되어 통계 조회가 빠릅니다.",
+    "section2Body": "단축 주소를 열면 봇과 악성 URL을 먼저 거른 뒤 원래 주소로 보내요. 클릭은 IP 일부를 가린 채 저장해요.",
     "section3Title": "기술 스택",
-    "section3Body": "Spring Boot · MySQL · Redis · Next.js 14 · AWS ECS Fargate. 서비스 코드는 GitHub에서 공개됩니다.",
-    "ctaShorten": "지금 단축해보기"
+    "section3Body": "Spring Boot · MySQL · Redis · Next.js · AWS EC2 · Vercel. 서비스 코드는 GitHub에서 공개돼요.",
+    "ctaShorten": "주소 줄이기"
   },
   "learn": {
     "metaTitle": "숏링크 · URL 단축 · 링크 인 바이오 가이드 · kurl",
     "metaDescription": "URL 단축이란 무엇인지, 숏링크와 링크 인 바이오의 차이, 프로필 명함 만드는 법까지. kurl 사용법과 자주 묻는 질문.",
     "eyebrow": "가이드 · FAQ",
     "title": "숏링크 · 링크 인 바이오, 처음 쓰는 사람을 위한 안내서",
-    "lead": "URL 단축이 뭔지, kurl 은 어떤 서비스인지, 프로필 명함과는 어떻게 다른지 — 자주 묻는 질문을 한 페이지에 모았어요.",
+    "lead": "URL 단축이 뭔지, kurl은 어떤 서비스인지, 프로필 명함과는 어떻게 다른지처럼 자주 묻는 질문을 한 페이지에 모았어요.",
     "q1": {
       "q": "URL 단축이란 무엇인가요?",
-      "a": "URL 단축은 길고 복잡한 주소(예: https://example.com/very/long/path?utm_source=...)를 짧고 외우기 쉬운 주소(예: kurl.me/abc1234)로 바꾸는 기능입니다. 숏링크, 짧은 URL 모두 같은 의미예요.\n\nSNS 글자수 제한이 있거나, 명함·포스터처럼 손으로 입력해야 하는 곳에 긴 URL을 그대로 쓰기 부담스러울 때 씁니다. 또 단축 서비스 쪽에서 클릭 통계를 함께 제공하니까, 어떤 채널에서 사람들이 더 많이 들어오는지 분석할 수 있습니다."
+      "a": "URL 단축은 길고 복잡한 주소(예: https://example.com/very/long/path?utm_source=...)를 짧고 외우기 쉬운 주소(예: kurl.me/abc1234)로 바꾸는 기능이에요. 숏링크, 짧은 URL 모두 같은 뜻이에요.\n\nSNS 글자 수 제한이 있거나, 명함·포스터처럼 손으로 입력해야 하는 곳에 긴 URL을 그대로 쓰기 부담스러울 때 써요. 단축 서비스가 클릭 통계도 함께 보여 주니까, 어느 채널에서 사람들이 더 많이 들어오는지 알 수 있어요."
     },
     "q2": {
       "q": "숏링크와 링크 인 바이오는 어떻게 다른가요?",
-      "a": "숏링크는 '하나의 긴 URL → 짧은 URL' 1:1 매핑입니다. 인스타그램 댓글, 트위터 본문, 명함 한 줄처럼 한 곳을 가리킬 때 좋아요.\n\n링크 인 바이오는 '내 모든 링크를 모아둔 미니 페이지'입니다. 인스타그램 프로필 한 줄에는 URL을 하나밖에 못 넣으니까, kurl.me/한들 같은 주소 하나에 카카오톡·이메일·예약·인스타·블로그를 묶어 보여줍니다.\n\nkurl 은 둘 다 지원합니다 — 짧은 URL 도 만들고, 그 짧은 URL 들을 모은 프로필 명함 페이지도 만들어요."
+      "a": "숏링크는 '하나의 긴 URL → 짧은 URL' 1:1 매핑이에요. 인스타그램 댓글, 트위터 본문, 명함 한 줄처럼 한 곳을 가리킬 때 좋아요.\n\n링크 인 바이오는 '내 모든 링크를 모아 둔 작은 페이지'예요. 인스타그램 프로필에는 URL을 하나밖에 못 넣으니까, myname.kurl.me 같은 주소 하나에 카카오톡·이메일·예약·인스타·블로그를 묶어 보여 줘요.\n\nkurl은 둘 다 할 수 있어요. 짧은 URL도 만들고, 그 짧은 URL들을 모은 프로필 명함 페이지도 만들어요."
     },
     "q3": {
       "q": "컬(kurl)은 어떤 서비스인가요?",
-      "a": "kurl 은 한국어 사용자를 위한 무료 URL 단축 + 링크 인 바이오 서비스입니다. 광고 없고, 회원가입 없이도 단축 가능하고, 단축 후 디바이스·국가·유입 채널까지 분석을 무료로 보여줍니다.\n\n구글 OAuth 로 1초 가입하면 단축한 링크들이 영구 보존되고, 본인 프로필 명함 페이지 (kurl.me/내핸들) 도 5분이면 만들 수 있어요."
+      "a": "kurl은 무료 URL 단축과 링크 인 바이오 서비스예요. 광고가 없고, 로그인하지 않아도 링크를 줄일 수 있어요.\n\n로그인하면 기기·나라·유입 채널별 통계를 볼 수 있고, 만든 링크는 지우기 전까지 계속 보관돼요. myname.kurl.me 같은 주소로 프로필 명함 페이지도 만들 수 있어요."
     },
     "q4": {
       "q": "프로필 명함은 무엇을 담을 수 있나요?",
-      "a": "사진·자기소개·연락처(전화/이메일/주소)·SNS 링크·이벤트·갤러리·상품 카드·캘린더 등 8가지 블록을 자유롭게 조합합니다.\n\n예를 들어 카페 사장이라면: 위치 지도 + 영업시간 + 인스타·예약 링크 + 메뉴 갤러리. 강사라면: 워크샵 이벤트 + 1:1 예약 단축링크 + 포트폴리오. DJ라면: 다음 공연 일정 + Spotify Artist 링크 + 사진 등이 한 페이지에 모입니다."
+      "a": "사진, 자기소개, 연락처(전화/이메일/주소), SNS 링크, 이벤트, 갤러리, 상품 카드, 예약 같은 블록을 골라 조합해요.\n\n예를 들어 카페 사장이라면 위치 지도, 영업시간, 인스타·예약 링크, 메뉴 갤러리를 한 페이지에 둘 수 있어요. 강사라면 워크숍 이벤트, 1:1 예약 링크, 포트폴리오를, DJ라면 다음 공연 일정, Spotify Artist 링크, 사진을 모을 수 있어요."
     },
     "q5": {
       "q": "클릭 통계는 어디까지 보여주나요?",
-      "a": "단축 링크별로 총 클릭 · 사람 vs 봇 · 고유 방문자 · 일별/시간별 차트 · 요일×시간 히트맵 · 국가/도시 · 기기/브라우저/OS · 유입 도메인 · UTM 캠페인까지 보여줍니다. 무료 플랜에서도 동일합니다.\n\n프로필 방문 통계도 따로 있어 (/profile/stats) — 명함 페이지가 얼마나 자주 누구한테 보이는지 같은 차원으로 추적합니다."
+      "a": "단축 링크마다 총 클릭, 사람과 봇 클릭, 고유 방문자, 일별·시간별 차트, 요일×시간 히트맵, 국가·도시, 기기·브라우저·OS, 유입 도메인, UTM 캠페인까지 보여 드려요. 모두 무료예요.\n\n프로필 명함 페이지에도 방문 통계가 따로 있어요. 누가 얼마나 자주 보는지 같은 항목으로 볼 수 있어요."
     },
     "q6": {
       "q": "유료인가요?",
-      "a": "기본 기능은 전부 무료입니다. URL 단축, 통계, 프로필 명함, 8가지 블록, 커스텀 도메인까지 모두 무료로 쓸 수 있어요.\n\n유료 플랜은 없고, 광고도 없습니다."
+      "a": "모든 기능이 무료예요. URL 단축, 통계, 프로필 명함, 여러 블록, 커스텀 도메인까지 모두 무료로 쓸 수 있어요.\n\n유료 플랜과 광고는 없어요."
     },
-    "ctaTitle": "지금 바로 단축해보기",
-    "ctaSubtitle": "회원가입 없이 한 번에 — 가입하면 통계까지 평생 보관",
+    "ctaTitle": "긴 주소 줄여 보기",
+    "ctaSubtitle": "로그인하지 않아도 줄일 수 있어요. 로그인하면 통계도 계속 남아요.",
     "ctaButton": "URL 단축 시작"
   },
   "terms": {
@@ -2588,20 +2588,20 @@
     },
     "profile": {
       "title": "공개 프로필",
-      "intro": "내 단축 링크를 한 페이지로 모아 공유하세요. SNS bio 에 넣는 단 하나의 링크.",
-      "onboardingEyebrow": "환영합니다",
-      "onboardingTitle": "지금 바로 만들어보세요!",
-      "onboardingSubhead": "원하는 이름 (username) 만 정하면 시작이에요. 사진 · 링크 · 가게 주소 · 연락처를 차곡차곡 추가하면 명함이 완성됩니다.",
-      "onboardingStep1": "닉네임 정하기",
+      "intro": "내 링크를 한 페이지에 모아요. SNS 프로필에는 이 페이지 주소 하나만 넣으면 돼요.",
+      "onboardingEyebrow": "처음 설정",
+      "onboardingTitle": "주소에 들어갈 이름부터 정해요",
+      "onboardingSubhead": "사용자 이름이 페이지 주소에 들어가요. 사진, 링크, 가게 주소, 연락처는 나중에 하나씩 더해도 돼요.",
+      "onboardingStep1": "사용자 이름 정하기",
       "onboardingStep2": "자기소개나 프로필 사진 추가",
       "onboardingStep3": "첫 블록 추가 (링크, 사진, 무엇이든)",
-      "usernameLabel": "username",
+      "usernameLabel": "사용자 이름",
       "usernameHint": "3~16자 영문 소문자 / 숫자 / 언더스코어.",
-      "usernameInvalid": "username 은 3~16 자 영문 소문자 / 숫자 / 언더스코어만 가능해요.",
+      "usernameInvalid": "사용자 이름은 3~16자 영문 소문자 / 숫자 / 언더스코어만 쓸 수 있어요.",
       "usernameChangeHint": "변경 시 이전 URL은 30일간 자동 redirect 후 만료돼요.",
       "usernameChangeConfirm": "@{prev} → @{next} 로 변경할까요? 이전 URL은 30일간만 유효해요.",
       "usernameChangeAction": "변경",
-      "usernameUnsaved": "username 저장 안 됨",
+      "usernameUnsaved": "사용자 이름 저장 안 됨",
       "bioLabel": "한 줄 소개",
       "bioPlaceholder": "예: 풀스택 개발자 · 사이드 프로젝트 만드는 중",
       "themeLabel": "테마",
@@ -2621,7 +2621,7 @@
       "closePreview": "미리보기 닫기",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "한 줄 소개를 입력하면 여기에 보여요",
-      "profileInfoToggle": "프로필 정보 (username · 한 줄 소개 · 테마)",
+      "profileInfoToggle": "프로필 정보 (사용자 이름 · 한 줄 소개 · 테마)",
       "sectionProfile": "프로필",
       "sectionAddLink": "링크 추가",
       "sectionFeed": "공개 페이지 피드",
@@ -2640,7 +2640,7 @@
         "invalidUrl": "URL 은 http(s):// 또는 mailto: 로 시작해야 해요."
       },
       "save": "저장",
-      "claim": "username 등록",
+      "claim": "사용자 이름 등록",
       "saved": "저장됐어요",
       "saveFailed": "저장에 실패했어요.",
       "autosaving": "자동 저장 중...",
@@ -2857,7 +2857,7 @@
         "downloadCsv": "CSV 다운로드",
         "backToEditor": "편집으로 돌아가기",
         "emptyTitle": "아직 등록된 이메일이 없어요",
-        "emptyHint": "EMAIL_FORM 블록을 추가해 두면 방문자가 남긴 이메일이 여기 쌓입니다.",
+        "emptyHint": "프로필에 이메일 수집 블록을 추가하면 방문자가 남긴 이메일이 여기에 쌓여요.",
         "colEmail": "이메일",
         "colBlock": "블록",
         "colSubmittedAt": "제출일시",
@@ -3100,7 +3100,7 @@
       "campaigns": "QR 캠페인",
       "campaignsDesc": "포스터·전단 QR을 배포처별로 비교해요",
       "events": "모집",
-      "eventsDesc": "모임 신청을 링크 하나로 받아요",
+      "eventsDesc": "모임 신청을 링크로 받아요",
       "ctas": "CTA 라이브러리",
       "ctasDesc": "링크에 붙일 안내 배너를 관리해요"
     }
@@ -3154,7 +3154,7 @@
       "quantityUnit": "{count}장"
     },
     "new": {
-      "loginRequired": "로그인이 필요합니다",
+      "loginRequired": "로그인이 필요해요",
       "goToLogin": "로그인하러 가기",
       "created": "QR 캠페인이 만들어졌어요",
       "createFailed": "QR 캠페인 만들기 실패",
@@ -3190,7 +3190,7 @@
     },
     "detail": {
       "loadFailed": "불러오기 실패",
-      "loginRequired": "로그인이 필요합니다",
+      "loginRequired": "로그인이 필요해요",
       "backToList": "QR 캠페인 목록",
       "confirmEnd": "이 QR 캠페인을 지금 종료하시겠습니까?\n인쇄된 QR 에 종료 정책이 즉시 적용됩니다.",
       "ended": "QR 캠페인이 종료됐어요",
@@ -3247,7 +3247,7 @@
       "pasteAdded": "{count}개 행을 추가했어요",
       "created": "{count}개 배포 묶음을 만들었어요",
       "createFailed": "생성 실패",
-      "loginRequired": "로그인이 필요합니다",
+      "loginRequired": "로그인이 필요해요",
       "backToCampaign": "QR 캠페인으로",
       "title": "배포 묶음 추가",
       "introCampaign": "<name></name> 의 새 묶음들.",
@@ -3273,11 +3273,11 @@
         "defaultRequired": "필수 (기본값 없음)"
       },
       "errors": {
-        "nameRequired": "묶음 이름은 필수",
-        "quantityRequired": "수량 필수",
-        "quantityPositive": "양의 정수",
-        "destinationRequired": "캠페인 기본 URL 없음 — 필수",
-        "destinationUrl": "http:// 또는 https:// URL"
+        "nameRequired": "묶음 이름을 적어 주세요",
+        "quantityRequired": "수량을 적어 주세요",
+        "quantityPositive": "1 이상으로 적어 주세요",
+        "destinationRequired": "URL을 적어 주세요. 캠페인 기본 URL이 없어요.",
+        "destinationUrl": "http:// 또는 https://로 시작해야 해요"
       },
       "removeRow": "{index}번째 행 삭제",
       "pasteTitle": "스프레드시트 행 붙여넣기",
@@ -3299,17 +3299,17 @@
       "pdfReadFailed": "PDF 를 읽지 못했어요 — 손상된 파일일 수 있어요",
       "composed": "{count}개 페이지 합본 PDF 를 만들었어요",
       "composeFailed": "합성 실패",
-      "loginRequired": "로그인이 필요합니다",
+      "loginRequired": "로그인이 필요해요",
       "backToCampaign": "QR 캠페인으로",
       "title": "포스터에 QR 박기",
-      "introCampaign": "<name></name> · 캠페인의 모든 배포 묶음 ({count}개) 마다 PDF 페이지 복제 + 각자 다른 QR 박힘. 합본 PDF 로 다운로드.",
-      "toolHint": "Canva·인디자인·PowerPoint 같은 도구에서 디자인을 끝내고 PDF 로 내보낸 뒤 여기서 QR 위치만 정하세요. 우리는 디자인 도구가 아니라 좌표 합성기.",
+      "introCampaign": "<name></name> · 배포 묶음 {count}개마다 PDF 페이지를 복제해 각각 다른 QR을 넣고, 합본 PDF로 내려받아요.",
+      "toolHint": "디자인은 Canva·인디자인·PowerPoint에서 끝내고 PDF로 가져오세요. 여기서는 QR 자리만 정해요.",
       "targetLabel": "합성 대상",
       "targetSummary": "<strong>{count}개</strong> 배포 묶음 · 결과는 <strong>{pages}페이지</strong> PDF",
       "noBatchesHint": "먼저 배포 묶음을 추가하세요. (QR 캠페인 상세 → 배포 묶음 추가)",
       "composing": "합성 중...",
       "download": "합본 PDF 다운로드 ({count}페이지)",
-      "notSavedHint": "QR 위치는 저장하지 않습니다. 같은 PDF 로 다시 들어와도 박스를 다시 그려야 해요. 캠페인은 일회성 발주가 기본이라 영구 저장은 over.",
+      "notSavedHint": "QR 위치는 저장되지 않아요. 같은 PDF로 다시 오면 상자를 다시 그려 주세요.",
       "dropTitle": "PDF 끌어다 놓거나 클릭해서 업로드",
       "dropSubtitle": "1페이지 PDF · Canva/인디자인 export 권장",
       "removePdf": "PDF 제거",
@@ -3322,7 +3322,7 @@
     },
     "printSheet": {
       "loadFailed": "불러오기 실패",
-      "loginRequired": "로그인이 필요합니다",
+      "loginRequired": "로그인이 필요해요",
       "backToCampaign": "QR 캠페인으로",
       "title": "A4 QR 시트",
       "introCampaign": "<name></name> · 브라우저 인쇄로 PDF 저장 (Cmd/Ctrl + P).",
@@ -3349,7 +3349,7 @@
     },
     "campaignStats": {
       "loadFailed": "불러오기 실패",
-      "loginRequired": "로그인이 필요합니다",
+      "loginRequired": "로그인이 필요해요",
       "backToCampaign": "QR 캠페인으로",
       "title": "분석",
       "introCampaign": "<name></name> · 시작 이후 클릭만 집계. 봇/프리뷰 제외.",
@@ -3365,11 +3365,11 @@
       },
       "compare": {
         "title": "다른 캠페인과 비교",
-        "description": "1차 vs 2차, 또는 다른 시즌 캠페인의 효율을 같이 본다.",
+        "description": "1차와 2차, 또는 다른 시즌 캠페인의 효율을 나란히 봐요.",
         "none": "— 비교 안 함 —",
         "current": "현재",
         "comparison": "비교",
-        "selectHint": "위 dropdown 에서 비교할 캠페인을 선택하세요."
+        "selectHint": "위 목록에서 비교할 캠페인을 골라 주세요."
       },
       "kpi": {
         "totalClicks": "총 클릭",
@@ -3443,7 +3443,7 @@
     "ARCHIVED": "보관"
   },
   "campaignsApp": {
-    "authTitle": "로그인이 필요합니다",
+    "authTitle": "로그인이 필요해요",
     "authDesc": "QR 캠페인은 로그인된 사용자만 운영할 수 있어요.",
     "loginCta": "로그인하러 가기",
     "title": "QR 캠페인",
@@ -3605,11 +3605,12 @@
     "signIn": "로그인"
   },
   "blogLogin": {
-    "eyebrow": "로그인",
     "title": "로그인하고 글쓰기",
-    "subtitle": "내가 쓴 글과 임시저장, 시리즈가 여기에 있어요. 로그인하면 이어서 작성할 수 있어요.",
+    "subtitle": "로그인하면 쓰던 글과 임시저장, 시리즈를 이어서 쓸 수 있어요.",
     "google": "Google 계정으로 로그인",
-    "browse": "로그인 없이 둘러보기"
+    "browse": "로그인 없이 둘러보기",
+    "heading": "kurl log에 로그인",
+    "consent": "계속하면 <terms>이용약관</terms>과 <privacy>개인정보처리방침</privacy>에 동의하는 것으로 간주됩니다."
   },
   "postAnalytics": {
     "title": "분석",
@@ -3625,12 +3626,12 @@
   },
   "ctaLibrary": {
     "title": "CTA 라이브러리",
-    "description": "글에 박을 CTA 버튼을 한 곳에서 관리. 같은 CTA 를 여러 글에서 재사용 가능.",
+    "description": "글에 넣을 CTA 버튼을 여기서 관리해요. 같은 버튼을 여러 글에 쓸 수 있어요.",
     "new": "새 CTA",
-    "empty": "아직 생성된 CTA 가 없습니다.",
+    "empty": "아직 만든 CTA가 없어요.",
     "edit": "편집",
     "delete": "삭제",
-    "deleteConfirm": "“{label}” CTA 를 삭제할까요? (soft-delete, 분석 데이터는 보존)",
+    "deleteConfirm": "“{label}” CTA를 삭제할까요? 지금까지의 클릭 기록은 남아요.",
     "editorTitleEdit": "CTA 편집",
     "editorTitleNew": "새 CTA 만들기",
     "label": "라벨",
@@ -3853,11 +3854,11 @@
   "events": {
     "intro": {
       "eyebrow": "모집 페이지",
-      "title": "링크 하나로 모임 신청을 받아 보세요",
-      "subtitle": "스터디, 밋업, 소모임 — 소개 페이지와 신청 폼, 마감, 어디서 신청자가 왔는지까지 링크 하나로 끝나요.",
+      "title": "모임 신청을 링크로 받아요",
+      "subtitle": "스터디나 밋업, 소모임의 소개 페이지와 신청 폼을 만들어요. 정원이 차면 자동으로 마감되고, 신청자가 어디서 왔는지도 볼 수 있어요.",
       "step1": {
         "title": "페이지 만들기",
-        "body": "제목과 날짜만 적으면 3분 안에 완성돼요."
+        "body": "제목과 날짜만 적으면 페이지가 만들어져요."
       },
       "step2": {
         "title": "단톡에 링크 붙여넣기",
@@ -3867,7 +3868,7 @@
         "title": "신청이 쌓여요",
         "body": "명단 정리도, 마감도 자동. 어느 방에서 왔는지도 보여요."
       },
-      "ctaLogin": "무료로 시작하기",
+      "ctaLogin": "로그인하고 시작하기",
       "ctaCreate": "첫 모집 만들기",
       "ctaHint": "참가자는 로그인 없이 신청할 수 있어요.",
       "demo": {
@@ -3902,13 +3903,13 @@
       "consent": "주최자의 모임 운영을 위해 이름·연락처(신청 답변 포함)를 수집하고 주최자에게 제공하는 것에 동의합니다. 모임 종료 30일 후 자동 파기됩니다.",
       "submit": "신청하기",
       "submitting": "신청 중…",
-      "successTitle": "신청 완료!",
+      "successTitle": "신청했어요",
       "successBodyEmail": "확인 메일을 보냈어요. 참석이 어려워지면 메일 속 링크로 취소할 수 있어요.",
       "successBody": "참석이 어려워지면 아래 취소 링크로 취소할 수 있어요. 링크를 꼭 보관해 주세요.",
       "copyCancelLink": "취소 링크 복사",
       "cancelLinkCopied": "복사했어요",
-      "viralHook": "이 페이지, 3분 만에 만들어졌어요.",
-      "viralCta": "나도 모집 페이지 만들기 →",
+      "viralHook": "kurl로 만든 모집 페이지예요.",
+      "viralCta": "모집 페이지 만들기",
       "canceledNotice": "이 모임은 취소되었어요.",
       "fullNotice": "정원이 가득 찼어요. 취소가 나오면 자리가 다시 열리니 나중에 다시 확인해 주세요.",
       "closedNotice": "신청이 마감되었어요.",
@@ -3948,7 +3949,7 @@
       "loading": "불러오는 중…",
       "loadFailed": "목록을 불러오지 못했어요.",
       "emptyTitle": "첫 모집 페이지를 만들어 보세요",
-      "emptyBody": "스터디, 밋업, 소모임 — 링크 하나로 소개·신청·마감·유입 분석까지 끝나요.",
+      "emptyBody": "소개 페이지와 신청 폼을 만들면, 마감과 신청자 유입까지 여기서 관리할 수 있어요.",
       "authTitle": "모집 페이지",
       "authDesc": "로그인하면 신청 페이지를 만들고 신청자와 유입 채널을 볼 수 있어요."
     },
@@ -3956,7 +3957,7 @@
       "authTitle": "모집 페이지",
       "authDesc": "로그인하면 신청 페이지를 만들 수 있어요.",
       "newTitle": "새 모집 만들기",
-      "newSubtitle": "3분이면 충분해요. 발행하면 단축 링크와 QR이 바로 나와요.",
+      "newSubtitle": "발행하면 단축 링크와 QR이 바로 나와요.",
       "editTitle": "모집 수정",
       "title": "제목",
       "titlePlaceholder": "도쿄 개발자 스터디 3기 모집",
@@ -4026,7 +4027,7 @@
       "authDesc": "로그인하면 신청자와 유입 채널을 볼 수 있어요.",
       "loading": "불러오는 중…",
       "loadFailed": "불러오지 못했어요.",
-      "createdBanner": "모집 페이지가 발행됐어요! 이 링크를 단톡·SNS에 붙여넣으세요.",
+      "createdBanner": "모집 페이지를 발행했어요. 이 링크를 단톡이나 SNS에 올려 주세요.",
       "edit": "수정",
       "viewPublicPage": "공개 페이지 보기",
       "manageTitle": "관리",
@@ -4040,7 +4041,7 @@
       "cancelDialogBody": "공개 페이지에 취소로 표시되고 신청을 더 받지 않아요. 되돌릴 수 없어요. 새 신청만 막으려면 '신청 마감하기'를 쓰세요.",
       "cancelDialogConfirm": "모임 취소",
       "heroCopy": "링크 복사",
-      "heroCopied": "복사됨!"
+      "heroCopied": "복사됨"
     },
     "share": {
       "copied": "복사됨",
@@ -4070,7 +4071,7 @@
     "attendees": {
       "title": "신청자 {count}명",
       "exportCsv": "CSV 내보내기",
-      "empty": "아직 신청자가 없어요. 공유 링크를 단톡에 올려보세요!",
+      "empty": "아직 신청자가 없어요. 공유 링크를 단톡에 올려 보세요.",
       "name": "이름",
       "contact": "연락처",
       "channel": "유입 채널",

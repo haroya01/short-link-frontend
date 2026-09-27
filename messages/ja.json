@@ -49,7 +49,7 @@
     "feed": "フォロー中",
     "followingSignedOut": "フォローした作家の新着記事がここに集まります。",
     "forYou": "おすすめ",
-    "forYouSignedOutTitle": "あなたへのおすすめ",
+    "forYouSignedOutTitle": "読んだ記事にもとづくおすすめ",
     "forYouSignedOut": "ログインすると、読んだ記事や関心のあるトピックをもとにおすすめを表示します。",
     "forYouEmptyTitle": "まだおすすめできる記事がありません",
     "forYouEmpty": "トピックをフォローしたり記事をいくつか読むと、好みに合う記事が集まります。",
@@ -58,8 +58,8 @@
     "followingEmpty": "気になる作家をフォローすると、新着記事がここに集まります。",
     "signIn": "ログイン",
     "topics": "トピック",
-    "mastheadTagline": "読んで、書いて、つなぐ。",
-    "mastheadSub": "kurlの人たちが書いた記事を集めました。",
+    "mastheadTagline": "kurlの人たちが書いた記事",
+    "mastheadSub": "新しい順に並べています。",
     "tagFeedSubtitle": "このトピックで公開された記事です。",
     "tagFollow": "フォロー",
     "tagFollowing": "フォロー中",
@@ -69,9 +69,9 @@
     "tagAllHiddenTitle": "非表示のトピックですべて隠れています",
     "tagAllHiddenBody": "フォロー中の記事{count}件がすべて非表示のトピックで隠れています。トピック設定で非表示を解除すると再び表示されます。",
     "myTags": "マイタグ",
-    "metaDescription": "読んで、書いて、つなぐ。kurlの公開ブログ。",
+    "metaDescription": "kurlの人たちが書いた記事を読み、線を引いた一文をコレクションにまとめられるブログです。",
     "emptyTitle": "まだ公開された記事がありません",
-    "emptyBody": "最初の記事を投稿してみましょう。",
+    "emptyBody": "最初に公開した記事がここに表示されます。",
     "emptyFollowingTitle": "フォロー中の作家の記事がありません",
     "emptyTagTitle": "このトピックの記事はまだありません",
     "topicsIntro": "みんなが何について書いているかを見てみましょう。タグを選んで掘り下げても、下の最新記事から読み始めても。",
@@ -296,7 +296,7 @@
   "postEditor": {
     "backToList": "記事一覧",
     "titlePlaceholder": "タイトル",
-    "bodyPlaceholder": "'/' でブロック追加 — またはそのまま入力",
+    "bodyPlaceholder": "'/' でブロックを追加できます。そのまま書いても大丈夫です",
     "blockMenu": {
       "add": "下にブロックを追加",
       "embedMedia": "埋め込みメディア",
@@ -522,7 +522,7 @@
       "warning": "注意",
       "caution": "警告"
     },
-    "bodyPlaceholderTouch": "そのまま書き始めてください — 書式は上のツールバーから"
+    "bodyPlaceholderTouch": "そのまま書けます。書式は上のツールバーにあります"
   },
   "savedLibrary": {
     "private": "本人のみ表示できます。",
@@ -735,8 +735,8 @@
     "INVALID_CURSOR": "ページネーションのカーソルが不正です。",
     "INVALID_EXPORT_DIMENSION": "サポートされていないエクスポートオプションです。",
     "INVALID_TIMEZONE": "タイムゾーンが正しくありません。",
-    "INVALID_USERNAME": "username は 3〜16 文字の英小文字 / 数字 / アンダースコアのみ使えます。",
-    "USERNAME_TAKEN": "この username は使用中、または直近 30 日以内に変更されました。",
+    "INVALID_USERNAME": "ユーザー名は 3〜16 文字の英小文字 / 数字 / アンダースコアのみ使えます。",
+    "USERNAME_TAKEN": "このユーザー名は使用中、または直近 30 日以内に変更されました。",
     "PROFILE_NOT_FOUND": "プロフィールが見つかりません。",
     "INVALID_ACTIVE_PERIOD": "期間指定が正しくありません。",
     "INVALID_WEBHOOK_URL": "Webhook URL は http(s):// から始まり、外部から到達可能なホストを指している必要があります。",
@@ -760,13 +760,13 @@
     "learnMore": "プライバシーポリシー",
     "prefsTitle": "利用分析の同意",
     "prefsDesc": "サービス改善のための利用分析をオン・オフできます。オフにすると、この端末に保存済みの分析用識別子も削除されます。ログイン維持に必要なクッキーはこの設定の影響を受けません。",
-    "stateOn": "現在の設定 — 利用分析はオンです。",
-    "stateOff": "現在の設定 — 利用分析はオフです。",
-    "stateUnset": "現在の設定 — 未選択です。分析はオフです。"
+    "stateOn": "利用分析はオンです。",
+    "stateOff": "利用分析はオフです。",
+    "stateUnset": "未選択のため、分析はオフです。"
   },
   "meta": {
     "title": "kurl · URL短縮とクリック分析",
-    "description": "長い URL を一行に。デバイス・チャネル・国別までクリックを分析。",
+    "description": "長いURLを短くして、どの端末・チャネル・国から押されたかを、ボットを除いて表示します。",
     "ogHeadlineTop": "URL短縮 +",
     "ogHeadlineBottom": "クリック分析",
     "ogSubline": "デバイス・チャネル・国・時間 — どこから誰がクリックしたか、ひと目でわかる"
@@ -783,15 +783,15 @@
     "loginRequired": "ログインが必要です",
     "loginCta": "ログイン",
     "someone": "誰か",
-    "like": "<b>{actor}</b>さんがあなたの記事にいいねしました",
-    "comment": "<b>{actor}</b>さんがあなたの記事にコメントしました",
+    "like": "<b>{actor}</b>さんが記事にいいねしました",
+    "comment": "<b>{actor}</b>さんが記事にコメントしました",
     "follow": "<b>{actor}</b>さんがあなたをフォローしました",
-    "series_subscribe": "<b>{actor}</b>さんがあなたのシリーズを購読しました",
-    "reply": "<b>{actor}</b>さんがあなたのコメントに返信しました",
+    "series_subscribe": "<b>{actor}</b>さんがシリーズを購読しました",
+    "reply": "<b>{actor}</b>さんがコメントに返信しました",
     "new_post": "<b>{actor}</b>さんが新しい記事を公開しました",
     "mention": "<b>{actor}</b>さんがコメントであなたをメンションしました",
-    "connected": "<b>{actor}</b>さんがあなたの記事を<c>{collection}</c>につなげました",
-    "path_grew": "あなたの記事がある<c>{collection}</c>に新しい記事が加わりました",
+    "connected": "<b>{actor}</b>さんが記事を<c>{collection}</c>につなげました",
+    "path_grew": "自分の記事が入っている<c>{collection}</c>に新しい記事が加わりました",
     "aCollection": "あるコレクション",
     "blogPrefsTitle": "通知の種類",
     "blogPrefsSubtitle": "受け取りたい通知だけをオンにしておけます。ウェブでもアプリでも同じ設定が適用されます。",
@@ -888,13 +888,12 @@
   },
   "home": {
     "tagline": "kurl v1",
-    "headline1": "短縮はひと行で",
+    "headline1": "短縮は<line>ひと行</line>で",
     "headline2": "いつ・どこから押されたか",
-    "subhead": "ライブクリックフィード・自動インサイト・ボット自動分離 — 他社の有料機能を、kurl は無料で",
-    "mobileSubhead": "ライブクリック・自動分析・ボット分離まで無料",
-    "anonymousHint": "ログイン不要で短縮できます。ログインすると統計を見たり、パスワードをかけたりできます。",
-    "demoLink": "分析画面をデモで先に見る",
-    "scrollHint": "下にスクロール",
+    "subhead": "長いURLを貼るとすぐ短くなります。誰がいつどこから押したかを見せて、ボットのクリックは別に分けます。",
+    "mobileSubhead": "誰がいつどこから押したか、ボットは分けて見せます。",
+    "anonymousHint": "ログインなしで無料で短縮できます。ログインすると統計を見たり、パスワードをかけたりできます。",
+    "demoLink": "統計画面を先に見る",
     "previews": {
       "eyebrow": "短縮後 1 分以内に見える画面",
       "see": "見る",
@@ -961,31 +960,32 @@
     "whySubhead": "通常は enterprise プランで提供される機能を、ここでは無料・標準装備で。",
     "stage": {
       "scene2Eyebrow": "共有",
-      "scene2Title": "貼った場所ごとに、クリックが返ってくる",
-      "scene2Desc": "Instagramのbio・X・YouTube・メール — どこから来たクリックかがリアルタイムでわかります。",
+      "scene2Title": "貼った場所から、クリックが返ってくる",
+      "scene2Desc": "Instagramのプロフィールでもメールでも、どこから来たクリックかがすぐわかります。",
       "scene3Eyebrow": "分析",
-      "scene3Title": "クリックの一つひとつが絵になる",
-      "scene3Desc": "誰が、いつ、どこから — 人とボットを分けて30日のリズムまで。他社の有料プラン級の深さを無料で。",
-      "scene3CtaDemo": "デモで先に見る",
-      "scene3CtaStart": "無料ではじめる"
+      "scene3Title": "クリックが集まって線になる",
+      "scene3Desc": "国・端末・流入元ごとに分けて見られて、ボットのクリックは別に数えます。すべて無料です。",
+      "scene3CtaDemo": "デモの統計を見る",
+      "scene3CtaStart": "ログインしてはじめる",
+      "scene3Caption": "直近30日 · 人間 {human}%"
     }
   },
   "showcase": {
-    "eyebrow": "公開プロフィール · 実例",
-    "title": "あなたらしいスタイルで",
-    "subhead": "あなたの仕事にぴったりのプロフィール、ひとつ。カフェオーナー・開発者・講師・写真家・クリエイター・DJ — リンクを共有するすべての人のための 1 ページ。",
-    "demoCta": "実例を見る",
-    "ctaTitle": "あなたのプロフィールも 5 分で完成",
-    "ctaSubhead": "登録してお好きな名前を決めるだけ。写真 · リンク · お店の住所 · 連絡先を入れれば、下の例のように仕上がります。",
+    "eyebrow": "公開プロフィール · 作例",
+    "title": "仕事に合わせたプロフィール",
+    "subhead": "カフェのメニュー、講座の日程、作品など、仕事に合うブロックを選んで1ページにまとめます。",
+    "demoCta": "作例を見る",
+    "ctaTitle": "同じようにプロフィールを作れます",
+    "ctaSubhead": "ログインしてユーザー名を決めれば始められます。写真、リンク、お店の住所、連絡先を入れると、下の例のように仕上がります。",
     "cta": "プロフィールを作る",
     "metaSuffix": "サンプル",
     "metaFallbackTitle": "{handle} · kurl サンプル",
-    "sampleBanner": "サンプル · 登録後、ご自身のページも作れます",
+    "sampleBanner": "サンプル · ログインすると自分のページを作れます",
     "sampleCta": "プロフィールを作る",
-    "scrollCue": "実例を見る",
+    "scrollCue": "作例を見る",
     "meta": {
-      "title": "プロフィールページ事例集 · リンクインバイオ - kurl",
-      "description": "クリエイター・販売者・店舗・講師など、kurl で運営するプロフィールページの実例。リンクインバイオ + QR名刺 + クリック分析を一つのページで。"
+      "title": "リンクインバイオのプロフィール作例 · kurl",
+      "description": "カフェ、講師、写真家など、仕事に合わせて作ったプロフィールの作例です。リンク、名刺、地図、商品カードを1ページにまとめられます。"
     }
   },
   "shortenForm": {
@@ -1039,7 +1039,7 @@
   },
   "login": {
     "title": "ログイン",
-    "subtitle": "ログインすると、リンク管理とクリック分析がご利用いただけます。",
+    "subtitle": "ログインすると、作ったリンクをまとめて管理し、誰が押したかを統計で確認できます。",
     "google": "Googleで続ける",
     "anonymousButton": "ログインなしで短縮だけ使う",
     "rotation": {
@@ -1157,15 +1157,15 @@
     "onboarding": {
       "eyebrow": "ようこそ",
       "title": "3 ステップで完了",
-      "subtitle": "短縮 → 共有 → 統計確認。30 秒で最初のクリックが入ります。",
-      "step1Title": "1 分で短縮",
-      "step1Desc": "ホームで URL を貼り付け → 短縮ボタン。すぐに短縮 URL が生成。",
+      "subtitle": "リンクを短縮して貼れば、クリックの記録がここにたまります。",
+      "step1Title": "リンクを短縮",
+      "step1Desc": "ホームで長いURLを貼り付けて「短縮」を押します。",
       "step2Title": "リンクを共有",
-      "step2Desc": "Instagram bio、LINE、名刺などどこでも。QR コードもワンタップ。",
+      "step2Desc": "Instagramのプロフィール、LINE、名刺など、どこにでも貼れます。QRコードもダウンロードできます。",
       "step3Title": "統計を確認",
-      "step3Desc": "クリックが発生すると自動でチャネル/国/デバイス/時間帯を分析。",
+      "step3Desc": "クリックが入ると、チャネル・国・端末・時間帯別に分けて表示します。",
       "primaryCta": "最初のリンクを作る",
-      "secondaryCta": "分析画面をデモで見る →",
+      "secondaryCta": "分析画面をデモで見る",
       "scene": {
         "weekClicks": "今週のクリック"
       }
@@ -2181,17 +2181,17 @@
   },
   "demo": {
     "metaTitle": "kurl デモ — 短縮後に何が見えるかを実際に体験",
-    "metaDescription": "サインアップ不要で分析画面をそのままご覧いただけます。",
-    "sampleBanner": "サンプルデータです。サインアップすると、ご自身のリンクで同じ画面が表示されます。",
+    "metaDescription": "ログインなしで分析画面をそのまま見られます。",
+    "sampleBanner": "サンプルデータです。ログインすると、自分のリンクで同じ画面が表示されます。",
     "sampleCta": "リンクを作る",
     "settingsNotice": {
-      "title": "設定はサインアップ後にお試しいただけます",
-      "desc": "A/B 振り分けの配信先と Webhook は、ご自身のリンクでのみ登録できます。サインアップ後、ご自身のリンクの統計ページで同じ画面が開きます。",
+      "title": "設定はログイン後に変更できます",
+      "desc": "A/B 振り分けの配信先と Webhook は、自分のリンクでのみ登録できます。ログイン後、自分のリンクの統計ページで同じ画面が開きます。",
       "cta": "リンクを作る"
     },
     "settingsDemo": {
       "badge": "デモ",
-      "lockedToast": "デモ画面です。サインアップ後にご自身のリンクで実際に登録・編集できます。",
+      "lockedToast": "デモ画面です。ログイン後、自分のリンクで実際に登録・編集できます。",
       "payloadPreview": "送信されるペイロードのプレビュー"
     },
     "createCta": "自分のリンクを作る"
@@ -2199,7 +2199,7 @@
   "publicProfile": {
     "empty": "このユーザーはまだリンクを公開していません。",
     "viewBlog": "記事{count}件を見る",
-    "madeWith": "kurl.me でつくる",
+    "madeWith": "kurl.meで作成",
     "editFab": "編集",
     "share": {
       "x": "X で共有",
@@ -2237,7 +2237,7 @@
       "error": "登録に失敗しました。しばらくしてからお試しください。",
       "defaultPlaceholder": "you@example.com",
       "defaultSuccess": "登録完了。ありがとうございます。",
-      "trustHint": "このページのオーナーにのみ届きます。迷惑メールは送りません。"
+      "trustHint": "このページのオーナーにのみ届きます。"
     },
     "booking": {
       "defaultTitle": "予約する",
@@ -2322,7 +2322,7 @@
     "title": "最近の短縮",
     "empty": "まだありません。上のフォームから短縮してみてください。",
     "viewStats": "統計を見る",
-    "claimCta": "サインアップすると、これらのリンクをアカウントにずっと保存できます。",
+    "claimCta": "ログインすると、これらのリンクをアカウントに保存できます。",
     "anonymousNote": "匿名リンクは 24 時間後に自動で失効します。ログインすればアカウントに自動で引き継がれ、有効期限なしでずっと保存されます。",
     "claimedToast": "{count}件のリンクをアカウントに保存しました"
   },
@@ -2403,48 +2403,48 @@
     "github": "GitHub"
   },
   "about": {
-    "title": "kurl — URL短縮 + クリック分析",
-    "lead": "長い URL を一行に短縮し、誰がどこからクリックしたかを分析できます。無料で、現在は広告もありません。",
+    "title": "kurl · URL短縮とクリック分析",
+    "lead": "長いURLを短くして、誰がどこから押したかを表示します。いまは無料で、広告もありません。",
     "section1Title": "なぜ作ったか",
-    "section1Body": "既存サービスは分析が貧弱か、有料プランでしか使えません。kurl はデバイス・OS・ブラウザ・チャネル・国・時間帯まで主要分析をすべて無料で提供します。",
+    "section1Body": "クリック統計を有料機能にしないために作りました。端末・OS・ブラウザ・チャネル・国・時間帯別の統計をすべて無料で見られます。",
     "section2Title": "仕組み",
-    "section2Body": "短縮URLにアクセスするとボット・悪性URLを除外したうえで原URLへリダイレクト。すべてのクリックは匿名化IPと共に分析カラムに非正規化保存され、統計クエリが高速です。",
+    "section2Body": "短縮URLを開くと、ボットと悪性URLを除外したうえで元のURLへ移動します。クリックはIPの一部を伏せて保存します。",
     "section3Title": "技術スタック",
-    "section3Body": "Spring Boot · MySQL · Redis · Next.js 14 · AWS ECS Fargate。コードはGitHubで公開。",
-    "ctaShorten": "今すぐ短縮"
+    "section3Body": "Spring Boot · MySQL · Redis · Next.js · AWS EC2 · Vercel。コードはGitHubで公開しています。",
+    "ctaShorten": "URLを短縮"
   },
   "learn": {
     "metaTitle": "短縮URL · 短縮リンク · リンクインバイオ ガイド · kurl",
     "metaDescription": "URL短縮とは何か、短縮URLとリンクインバイオの違い、プロフィール名刺の作り方まで。kurl の使い方とよくある質問を1ページにまとめました。",
     "eyebrow": "ガイド · FAQ",
     "title": "短縮URLとリンクインバイオ、はじめての方へ",
-    "lead": "URL 短縮とは何か、kurl はどんなサービスか、プロフィールページとの違いは何か — よく検索される質問を 1 ページに集めました。",
+    "lead": "URL 短縮とは何か、kurl はどんなサービスか、プロフィールページとの違いなど、よくある質問を 1 ページにまとめました。",
     "q1": {
       "q": "URL短縮とは何ですか?",
       "a": "URL短縮は、長く複雑なアドレス(例: https://example.com/very/long/path?utm_source=...)を、短く覚えやすいアドレス(例: kurl.me/abc1234)に置き換える機能です。短縮URL、ショートリンクも同じ意味です。\n\nSNSの文字数制限がある場面、名刺やポスターのように手入力が必要な場面で活躍します。さらに短縮サービス側がクリック分析を提供してくれるので、どのチャネルから人が流入しているかが分かります。"
     },
     "q2": {
       "q": "短縮URLとリンクインバイオの違いは?",
-      "a": "短縮URLは「1つの長いURL → 1つの短いURL」の1対1マッピングです。Twitter投稿、Instagramコメント、名刺の1行など 1 か所だけにリンクするときに最適です。\n\nリンクインバイオは「自分の全リンクをまとめた1つのミニページ」です。Instagramのプロフィール欄にはURLを1つしか入れられないので、kurl.me/yourname のような1つのURLに、連絡先・予約・SNS・ブログ・店舗情報をまとめて見せます。\n\nkurl は両方できます — 短縮URLも作れて、それらをまとめたプロフィール名刺ページも作れます。"
+      "a": "短縮URLは「1つの長いURL → 1つの短いURL」の1対1マッピングです。Twitter投稿、Instagramコメント、名刺の1行など 1 か所だけにリンクするときに最適です。\n\nリンクインバイオは「自分の全リンクをまとめた1つのミニページ」です。Instagramのプロフィール欄にはURLを1つしか入れられないので、yourname.kurl.me のような1つのURLに、連絡先・予約・SNS・ブログ・店舗情報をまとめて見せます。\n\nkurl は両方できます。短縮URLも、それらをまとめたプロフィール名刺ページも作れます。"
     },
     "q3": {
       "q": "kurl とはどんなサービスですか?",
-      "a": "kurl は無料のURL短縮 + リンクインバイオサービスです。広告なし、会員登録なしで短縮でき、デバイス・国・流入チャネルなどの分析を無料で提供します。\n\nGoogle OAuth で1秒でサインインすると、短縮したリンクは永久保存され、自分のプロフィール名刺ページ (kurl.me/yourname) を5分で作れます。"
+      "a": "kurl は無料のURL短縮とリンクインバイオのサービスです。広告はなく、ログインしなくてもリンクを短縮できます。\n\nログインすると、端末・国・流入チャネル別の統計を見られます。リンクは削除するまで保存され、yourname.kurl.me のようなアドレスでプロフィール名刺ページも作れます。"
     },
     "q4": {
       "q": "プロフィールページに何を入れられますか?",
-      "a": "写真・自己紹介・連絡先(電話/メール/住所)・SNSリンク・イベント・ギャラリー・商品カード・カレンダーなど8種類のブロックを自由に組み合わせます。\n\n例えばカフェオーナー: 地図 + 営業時間 + Instagram/予約リンク + メニューギャラリー。講師: ワークショップイベント + 1:1予約短縮URL + ポートフォリオ。DJ: 次回のイベント + Spotify Artistリンク + 写真。1ページにまとまります。"
+      "a": "写真・自己紹介・連絡先(電話/メール/住所)・SNSリンク・イベント・ギャラリー・商品カード・予約などのブロックを組み合わせます。\n\n例えばカフェオーナーなら、地図・営業時間・Instagram/予約リンク・メニューギャラリー。講師なら、ワークショップのイベント・1:1予約リンク・ポートフォリオ。DJなら、次回の出演予定・Spotify Artistリンク・写真。1ページにまとまります。"
     },
     "q5": {
       "q": "クリック分析はどこまで見られますか?",
-      "a": "短縮リンクごとに、総クリック・人間 vs ボット・ユニーク訪問者・日別/時間別チャート・曜日×時間ヒートマップ・国/都市・デバイス/ブラウザ/OS・リファラドメイン・UTMキャンペーン まで提供します。無料プランでも同じです。\n\nプロフィール訪問統計も別途用意しています (/profile/stats) — 名刺ページがいつ誰に見られたかを同じ粒度で追跡できます。"
+      "a": "短縮リンクごとに、総クリック・人間 vs ボット・ユニーク訪問者・日別/時間別チャート・曜日×時間ヒートマップ・国/都市・デバイス/ブラウザ/OS・リファラドメイン・UTMキャンペーン まで見られます。すべて無料です。\n\nプロフィール名刺ページにも訪問統計があり、いつ誰に見られたかを同じ項目で確認できます。"
     },
     "q6": {
       "q": "有料ですか?",
-      "a": "すべての機能が無料です。URL短縮、分析、プロフィール名刺、8種類のブロック、カスタムドメインまで無料で使えます。\n\n有料プランはなく、広告もありません。"
+      "a": "すべての機能が無料です。URL短縮、分析、プロフィール名刺、各種ブロック、カスタムドメインまで無料で使えます。\n\n有料プランはなく、広告もありません。"
     },
-    "ctaTitle": "今すぐ短縮してみる",
-    "ctaSubtitle": "会員登録不要 — サインインで統計も永久保存",
+    "ctaTitle": "URLを短縮してみる",
+    "ctaSubtitle": "ログインなしで短縮できます。ログインすると統計も残ります。",
     "ctaButton": "URL短縮を始める"
   },
   "terms": {
@@ -2588,20 +2588,20 @@
     },
     "profile": {
       "title": "公開プロフィール",
-      "intro": "短縮リンクを 1 つのページにまとめて共有 — SNS の bio にぴったり。",
-      "onboardingEyebrow": "ようこそ",
-      "onboardingTitle": "今すぐ作ってみましょう！",
-      "onboardingSubhead": "お好きな username を決めるだけでスタートです。写真 · リンク · お店の住所 · 連絡先を順に入れていけば、自分らしい名刺が完成します。",
-      "onboardingStep1": "ニックネームを決める",
+      "intro": "リンクを1ページにまとめます。SNSのプロフィールには、このページのアドレスを載せるだけです。",
+      "onboardingEyebrow": "はじめに",
+      "onboardingTitle": "まず、アドレスに入る名前を決めます",
+      "onboardingSubhead": "ユーザー名がページのアドレスに入ります。写真、リンク、お店の住所、連絡先は、あとから一つずつ追加できます。",
+      "onboardingStep1": "ユーザー名を決める",
       "onboardingStep2": "自己紹介またはプロフィール写真を追加",
       "onboardingStep3": "最初のブロックを追加 (リンク・写真・何でも)",
-      "usernameLabel": "username",
+      "usernameLabel": "ユーザー名",
       "usernameHint": "3〜16 文字、英小文字/数字/アンダースコア。",
-      "usernameInvalid": "username は 3〜16 文字の英小文字 / 数字 / アンダースコアのみ使えます。",
+      "usernameInvalid": "ユーザー名は 3〜16 文字の英小文字 / 数字 / アンダースコアのみ使えます。",
       "usernameChangeHint": "変更すると、旧 URL は 30 日間自動 redirect された後に失効します。",
       "usernameChangeConfirm": "@{prev} → @{next} に変更しますか？旧 URL は 30 日間のみ有効です。",
       "usernameChangeAction": "変更",
-      "usernameUnsaved": "username が未保存です",
+      "usernameUnsaved": "ユーザー名が未保存です",
       "bioLabel": "自己紹介",
       "bioPlaceholder": "例: フルスタック開発者 · サイドプロジェクト開発中",
       "themeLabel": "テーマ",
@@ -2621,7 +2621,7 @@
       "closePreview": "プレビューを閉じる",
       "previewUsernamePlaceholder": "username",
       "previewBioPlaceholder": "ここに自己紹介が表示されます",
-      "profileInfoToggle": "プロフィール情報 (username · 自己紹介 · テーマ)",
+      "profileInfoToggle": "プロフィール情報 (ユーザー名 · 自己紹介 · テーマ)",
       "sectionProfile": "プロフィール",
       "sectionAddLink": "リンクを追加",
       "sectionFeed": "公開ページのフィード",
@@ -2640,7 +2640,7 @@
         "invalidUrl": "URL は http(s):// または mailto: で始まる必要があります。"
       },
       "save": "保存",
-      "claim": "username 登録",
+      "claim": "ユーザー名を登録",
       "saved": "保存しました",
       "saveFailed": "保存に失敗しました。",
       "autosaving": "自動保存中...",
@@ -3100,7 +3100,7 @@
       "campaigns": "QRキャンペーン",
       "campaignsDesc": "ポスター・チラシのQRを配布先ごとに比較",
       "events": "募集",
-      "eventsDesc": "イベントの申し込みをリンク1つで受付",
+      "eventsDesc": "イベントの申し込みをリンクで受付",
       "ctas": "CTAライブラリ",
       "ctasDesc": "リンクに表示する案内バナーを管理"
     }
@@ -3275,9 +3275,9 @@
       "errors": {
         "nameRequired": "バッチ名は必須です",
         "quantityRequired": "数量は必須です",
-        "quantityPositive": "正の整数",
-        "destinationRequired": "キャンペーンのデフォルト URL なし — 必須",
-        "destinationUrl": "http:// または https:// URL"
+        "quantityPositive": "1以上を入力してください",
+        "destinationRequired": "URLを入力してください。キャンペーンの既定URLがありません。",
+        "destinationUrl": "http:// または https:// で始めてください"
       },
       "removeRow": "{index}行目を削除",
       "pasteTitle": "スプレッドシート行を貼り付け",
@@ -3303,7 +3303,7 @@
       "backToCampaign": "QR キャンペーンへ",
       "title": "ポスターに QR を配置",
       "introCampaign": "<name></name> · 全配布バッチ ({count}個) ごとに PDF ページを複製し、それぞれ別 QR を配置して結合 PDF をダウンロードします。",
-      "toolHint": "Canva・InDesign・PowerPoint などでデザインを仕上げて PDF を書き出し、ここでは QR の位置だけ指定します。デザインツールではなく座標合成ツールです。",
+      "toolHint": "Canva・InDesign・PowerPoint などでデザインを仕上げて PDF を書き出し、ここでは QR の位置だけを決めます。",
       "targetLabel": "合成対象",
       "targetSummary": "<strong>{count}個</strong>の配布バッチ · 結果は<strong>{pages}ページ</strong>の PDF",
       "noBatchesHint": "先に配布バッチを追加してください。(QR キャンペーン詳細 → 配布バッチを追加)",
@@ -3605,11 +3605,12 @@
     "signIn": "ログイン"
   },
   "blogLogin": {
-    "eyebrow": "ログイン",
     "title": "ログインして書く",
-    "subtitle": "あなたの記事・下書き・シリーズはここに。ログインすると続きから書けます。",
+    "subtitle": "ログインすると、記事・下書き・シリーズの続きを書けます。",
     "google": "Googleでログイン",
-    "browse": "ログインせずに見る"
+    "browse": "ログインせずに見る",
+    "heading": "kurl logにログイン",
+    "consent": "続行すると、<terms>利用規約</terms>および<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
   },
   "postAnalytics": {
     "title": "分析",
@@ -3625,12 +3626,12 @@
   },
   "ctaLibrary": {
     "title": "CTA ライブラリ",
-    "description": "記事に埋め込む CTA ボタンを一か所で管理。同じ CTA を複数の記事で再利用できます。",
+    "description": "記事に入れる CTA ボタンをここで管理します。同じ CTA を複数の記事で使えます。",
     "new": "新しい CTA",
     "empty": "まだ CTA がありません。",
     "edit": "編集",
     "delete": "削除",
-    "deleteConfirm": "「{label}」CTA を削除しますか？（ソフト削除、分析データは保持されます）",
+    "deleteConfirm": "「{label}」CTA を削除しますか？これまでのクリック記録は残ります。",
     "editorTitleEdit": "CTA を編集",
     "editorTitleNew": "新しい CTA を作成",
     "label": "ラベル",
@@ -3853,11 +3854,11 @@
   "events": {
     "intro": {
       "eyebrow": "募集ページ",
-      "title": "リンク1つで参加申し込みを集めよう",
-      "subtitle": "勉強会・ミートアップ・サークル — 紹介ページ、申込フォーム、締切、どこから申し込みが来たかまで、リンク1つで完結。",
+      "title": "参加申し込みをリンクで受け付けます",
+      "subtitle": "勉強会やミートアップ、サークルの紹介ページと申込フォームを作れます。定員に達すると自動で締め切られ、どこから申し込みが来たかも確認できます。",
       "step1": {
         "title": "ページを作る",
-        "body": "タイトルと日時だけ。3分で完成します。"
+        "body": "タイトルと日時を入れればページができます。"
       },
       "step2": {
         "title": "グループチャットに貼る",
@@ -3867,7 +3868,7 @@
         "title": "申し込みが集まる",
         "body": "名簿も締切も自動。どのチャンネルから来たかも分かります。"
       },
-      "ctaLogin": "無料ではじめる",
+      "ctaLogin": "ログインしてはじめる",
       "ctaCreate": "最初の募集を作る",
       "ctaHint": "参加者はログイン不要で申し込めます。",
       "demo": {
@@ -3902,13 +3903,13 @@
       "consent": "イベント運営のため、お名前・連絡先(回答を含む)を主催者に提供することに同意します。イベント終了30日後に自動削除されます。",
       "submit": "申し込む",
       "submitting": "送信中…",
-      "successTitle": "申し込み完了!",
+      "successTitle": "申し込みました",
       "successBodyEmail": "確認メールをお送りしました。都合が悪くなったらメール内のリンクからキャンセルできます。",
       "successBody": "都合が悪くなった場合のため、下のキャンセルリンクを保存してください。",
       "copyCancelLink": "キャンセルリンクをコピー",
       "cancelLinkCopied": "コピーしました",
-      "viralHook": "このページは3分で作られました。",
-      "viralCta": "自分の募集ページを作る →",
+      "viralHook": "kurlで作った募集ページです。",
+      "viralCta": "募集ページを作る",
       "canceledNotice": "このイベントは中止になりました。",
       "fullNotice": "定員に達しました。キャンセルが出ると席が再び空くので、後ほどまたご確認ください。",
       "closedNotice": "受付は終了しました。",
@@ -3948,7 +3949,7 @@
       "loading": "読み込み中…",
       "loadFailed": "読み込みに失敗しました。",
       "emptyTitle": "最初の募集ページを作りましょう",
-      "emptyBody": "勉強会・ミートアップ・サークル — リンク1つで紹介・申し込み・締切・流入分析まで完結。",
+      "emptyBody": "紹介ページと申込フォームを作れば、締切や流入の確認までここで管理できます。",
       "authTitle": "募集ページ",
       "authDesc": "ログインすると募集ページの作成、参加者と流入元の確認ができます。"
     },
@@ -3956,7 +3957,7 @@
       "authTitle": "募集ページ",
       "authDesc": "ログインすると募集ページを作成できます。",
       "newTitle": "新しい募集",
-      "newSubtitle": "3分で完成。公開すると短縮リンクとQRがすぐ使えます。",
+      "newSubtitle": "公開すると短縮リンクとQRがすぐ使えます。",
       "editTitle": "募集を編集",
       "title": "タイトル",
       "titlePlaceholder": "東京エンジニア勉強会 #3",
@@ -4026,7 +4027,7 @@
       "authDesc": "ログインすると参加者と流入元を確認できます。",
       "loading": "読み込み中…",
       "loadFailed": "読み込みに失敗しました。",
-      "createdBanner": "募集ページを公開しました! このリンクをグループチャットやSNSに貼りましょう。",
+      "createdBanner": "募集ページを公開しました。このリンクをグループチャットやSNSに貼ってください。",
       "edit": "編集",
       "viewPublicPage": "公開ページを見る",
       "manageTitle": "管理",
@@ -4040,7 +4041,7 @@
       "cancelDialogBody": "公開ページに中止と表示され、受付が停止します。元に戻せません。新規受付だけ止める場合は「受付を締め切る」を使ってください。",
       "cancelDialogConfirm": "中止する",
       "heroCopy": "リンクをコピー",
-      "heroCopied": "コピーしました!"
+      "heroCopied": "コピーしました"
     },
     "share": {
       "copied": "コピー済み",
@@ -4070,7 +4071,7 @@
     "attendees": {
       "title": "申込者 {count}名",
       "exportCsv": "CSVエクスポート",
-      "empty": "まだ申込者がいません。リンクをグループチャットでシェアしましょう!",
+      "empty": "まだ申込者がいません。リンクをグループチャットで共有してみてください。",
       "name": "お名前",
       "contact": "連絡先",
       "channel": "流入元",

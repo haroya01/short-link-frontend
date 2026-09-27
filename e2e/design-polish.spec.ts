@@ -50,11 +50,11 @@ test.describe("design polish guards", () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/ko/showcase");
 
-    await expect(page.getByRole("heading", { name: /내 프로필도 5분이면 완성/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /내 프로필도 이렇게 만들 수 있어요/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /내 프로필 만들기/ })).toBeVisible();
 
     const examplesTop = await page
-      .getByRole("heading", { name: "내가 원하는 스타일대로" })
+      .getByRole("heading", { name: "하는 일에 맞춰 꾸민 프로필" })
       .evaluate((el) => el.getBoundingClientRect().top);
     expect(examplesTop).toBeLessThan(760);
 
@@ -63,7 +63,7 @@ test.describe("design polish guards", () => {
       .locator("> div")
       .boundingBox();
     const examplesBox = await page
-      .getByRole("heading", { name: "내가 원하는 스타일대로" })
+      .getByRole("heading", { name: "하는 일에 맞춰 꾸민 프로필" })
       .boundingBox();
     expect(
       cookieBox && examplesBox
@@ -78,7 +78,7 @@ test.describe("design polish guards", () => {
   test("login page explains what signing in unlocks", async ({ page }) => {
     await page.goto("/ko/login");
 
-    await expect(page.getByText("로그인하면 내 링크 관리와 클릭 통계 분석 기능을 쓸 수 있어요.")).toBeVisible();
+    await expect(page.getByText("로그인하면 만든 링크를 한 목록에서 관리하고, 누가 눌렀는지 통계로 볼 수 있어요.")).toBeVisible();
     await expect(page.getByRole("link", { name: "로그인 없이 단축만 사용하기" })).toBeVisible();
   });
 

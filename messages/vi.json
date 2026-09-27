@@ -34,7 +34,7 @@
     "allLanguages": "Tất cả",
     "seriesTab": "Series",
     "seriesTabEmptyTitle": "Chưa đăng ký series nào",
-    "seriesTabEmpty": "Đăng ký một series và những bài viết mới sẽ tụ về đây.",
+    "seriesTabEmpty": "Đăng ký một series và các bài viết mới sẽ hiện ở đây.",
     "seriesTabSignedOut": "Xem bài mới nhất từ các series bạn đăng ký.",
     "seriesTabSignIn": "Đăng nhập",
     "seriesTabFreshBadge": "Vừa cập nhật",
@@ -47,19 +47,19 @@
     "retry": "Thử lại",
     "loadMoreError": "Không tải thêm được.",
     "feed": "Đang theo dõi",
-    "followingSignedOut": "Bài viết mới từ các tác giả bạn theo dõi sẽ tụ về đây.",
+    "followingSignedOut": "Bài viết mới từ các tác giả bạn theo dõi sẽ hiện ở đây.",
     "forYou": "Dành cho bạn",
-    "forYouSignedOutTitle": "Chọn riêng cho bạn",
+    "forYouSignedOutTitle": "Gợi ý dựa trên những gì bạn đọc",
     "forYouSignedOut": "Đăng nhập và chúng tôi sẽ gợi ý bài viết dựa trên những gì bạn đọc và chủ đề bạn quan tâm.",
     "forYouEmptyTitle": "Chưa có gì để gợi ý",
     "forYouEmpty": "Theo dõi vài chủ đề hoặc đọc vài bài, dòng tin của bạn sẽ đầy ắp những lựa chọn dành riêng cho bạn.",
     "followingSignedOutTitle": "Bài viết từ các tác giả bạn theo dõi",
     "followingBrowseLatest": "Mới nhất",
-    "followingEmpty": "Theo dõi một tác giả và bài viết mới của họ sẽ tụ về đây.",
+    "followingEmpty": "Theo dõi một tác giả và bài viết mới của họ sẽ hiện ở đây.",
     "signIn": "Đăng nhập",
     "topics": "Chủ đề",
-    "mastheadTagline": "Đọc. Viết. Kết nối.",
-    "mastheadSub": "Bài viết từ những người dùng kurl.",
+    "mastheadTagline": "Bài viết của những người trên kurl",
+    "mastheadSub": "Bài mới nhất ở trên cùng.",
     "tagFeedSubtitle": "Bài viết được xuất bản trong chủ đề này.",
     "tagFollow": "Theo dõi",
     "tagFollowing": "Đang theo dõi",
@@ -69,7 +69,7 @@
     "tagAllHiddenTitle": "Đều bị ẩn bởi các chủ đề đã tắt tiếng",
     "tagAllHiddenBody": "Cả {count} bài từ những người bạn theo dõi đều bị ẩn bởi các chủ đề bạn đã tắt tiếng. Bỏ ẩn một chủ đề trong cài đặt chủ đề để xem lại.",
     "myTags": "Thẻ của tôi",
-    "metaDescription": "Đọc. Viết. Kết nối. Blog công khai của kurl.",
+    "metaDescription": "Blog của những người trên kurl, nơi bạn có thể gom các đoạn đã gạch chân vào bộ sưu tập.",
     "emptyTitle": "Chưa có bài viết nào được xuất bản",
     "emptyBody": "Hãy là người xuất bản đầu tiên.",
     "emptyFollowingTitle": "Chưa có bài từ các tác giả bạn theo dõi",
@@ -296,7 +296,7 @@
   "postEditor": {
     "backToList": "Bài viết",
     "titlePlaceholder": "Tiêu đề",
-    "bodyPlaceholder": "Gõ '/' để chèn khối — hoặc cứ bắt đầu viết",
+    "bodyPlaceholder": "Gõ '/' để chèn khối, hoặc cứ bắt đầu viết",
     "blockMenu": {
       "add": "Thêm khối bên dưới",
       "embedMedia": "Nội dung nhúng",
@@ -522,7 +522,7 @@
       "warning": "Lưu ý",
       "caution": "Cảnh báo"
     },
-    "bodyPlaceholderTouch": "Cứ bắt đầu viết — định dạng ở thanh công cụ phía trên"
+    "bodyPlaceholderTouch": "Cứ bắt đầu viết. Định dạng nằm ở thanh công cụ phía trên"
   },
   "savedLibrary": {
     "private": "Chỉ mình bạn thấy được.",
@@ -541,13 +541,13 @@
     "newFolderTo": "Vào thư mục mới",
     "untagged": "Chưa gắn thẻ",
     "emptyBookmarks": "Danh sách đọc của bạn trống",
-    "emptyBookmarksBody": "Đánh dấu những bài bạn muốn đọc lại và chúng sẽ tụ về đây.",
+    "emptyBookmarksBody": "Đánh dấu những bài bạn muốn đọc lại và chúng sẽ hiện ở đây.",
     "emptyLiked": "Chưa có bài nào được thích",
-    "emptyLikedBody": "Những bài bạn thích sẽ tụ về đây.",
+    "emptyLikedBody": "Những bài bạn thích sẽ hiện ở đây.",
     "emptyHighlights": "Chưa có đoạn nào được tô",
     "emptyHighlightsBody": "Tô một đoạn khi đọc và nó sẽ tụ lại ở đây.",
     "emptyComments": "Chưa có bình luận nào",
-    "emptyCommentsBody": "Bình luận bạn viết sẽ tụ về đây.",
+    "emptyCommentsBody": "Bình luận bạn viết sẽ hiện ở đây.",
     "browseFeed": "Duyệt dòng tin",
     "emptyHistory": "Chưa có lịch sử đọc.",
     "emptyHistoryBody": "Những bài bạn đọc sẽ hiện ở đây.",
@@ -760,13 +760,13 @@
     "learnMore": "Chính sách quyền riêng tư",
     "prefsTitle": "Phân tích sử dụng",
     "prefsDesc": "Bật hoặc tắt phân tích sản phẩm. Khi tắt, mã định danh phân tích đã lưu trên thiết bị này cũng bị xoá. Cookie cần thiết để giữ bạn đăng nhập không bị ảnh hưởng.",
-    "stateOn": "Thiết lập hiện tại — phân tích đang bật.",
-    "stateOff": "Thiết lập hiện tại — phân tích đang tắt.",
-    "stateUnset": "Thiết lập hiện tại — bạn chưa chọn. Phân tích đang tắt."
+    "stateOn": "Phân tích đang bật.",
+    "stateOff": "Phân tích đang tắt.",
+    "stateUnset": "Bạn chưa chọn. Phân tích đang tắt."
   },
   "meta": {
     "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",
-    "description": "Rút gọn URL dài và xem ai nhấp — theo thiết bị, kênh và quốc gia.",
+    "description": "Rút gọn một URL dài và xem mỗi lượt nhấp đến từ thiết bị, kênh và quốc gia nào, không tính bot.",
     "ogHeadlineTop": "URL ngắn +",
     "ogHeadlineBottom": "Phân tích lượt nhấp",
     "ogSubline": "Thiết bị · kênh · quốc gia · thời gian — xem mỗi lượt nhấp đến từ đâu, trong nháy mắt"
@@ -888,13 +888,12 @@
   },
   "home": {
     "tagline": "kurl v1",
-    "headline1": "Rút gọn trong một dòng",
+    "headline1": "Rút gọn trong <line>một dòng</line>",
     "headline2": "Khi nào, ở đâu",
-    "subhead": "Dòng nhấp trực tiếp, thông tin tự động, lọc bot — phân tích mà các dịch vụ rút gọn khác khóa sau gói trả phí, ở đây miễn phí.",
-    "mobileSubhead": "Lượt nhấp trực tiếp, thông tin và lọc bot miễn phí",
-    "anonymousHint": "Không cần đăng nhập. Đăng nhập để xem thống kê và đặt mật khẩu cho liên kết.",
-    "demoLink": "Xem trước bảng phân tích",
-    "scrollHint": "Cuộn để xem thêm",
+    "subhead": "Dán một liên kết dài là có ngay liên kết ngắn. Xem ai đã nhấp, khi nào và từ đâu, lượt nhấp của bot được tách riêng.",
+    "mobileSubhead": "Ai nhấp, khi nào, từ đâu. Bot được tách riêng.",
+    "anonymousHint": "Miễn phí, không cần đăng nhập. Đăng nhập để xem thống kê và đặt mật khẩu.",
+    "demoLink": "Xem trước trang thống kê",
     "previews": {
       "eyebrow": "Những gì bạn nhận được trong chưa đầy một phút",
       "see": "Xem",
@@ -962,30 +961,31 @@
     "stage": {
       "scene2Eyebrow": "Chia sẻ",
       "scene2Title": "Dán ở đâu, click quay về từ đó",
-      "scene2Desc": "Bio Instagram, X, YouTube, email — biết mỗi click đến từ đâu, theo thời gian thực.",
+      "scene2Desc": "Đặt trong bio Instagram hay trong email, bạn đều thấy ngay lượt nhấp đến từ đâu.",
       "scene3Eyebrow": "Phân tích",
-      "scene3Title": "Từng click trở thành một bức tranh",
-      "scene3Desc": "Ai, khi nào, từ đâu — tách người và bot, đến cả nhịp 30 ngày. Độ sâu nơi khác thu phí, ở đây miễn phí.",
-      "scene3CtaDemo": "Xem trước bản demo",
-      "scene3CtaStart": "Bắt đầu miễn phí"
+      "scene3Title": "Lượt nhấp gộp lại thành một đường",
+      "scene3Desc": "Xem theo quốc gia, thiết bị và nguồn truy cập, lượt nhấp của bot được tách riêng. Tất cả đều miễn phí.",
+      "scene3CtaDemo": "Xem thống kê demo",
+      "scene3CtaStart": "Đăng nhập để bắt đầu",
+      "scene3Caption": "30 ngày qua · {human}% người thật"
     }
   },
   "showcase": {
-    "eyebrow": "Hồ sơ công khai · ví dụ thật",
-    "title": "Biến nó thành của bạn",
-    "subhead": "Một hồ sơ hợp với việc bạn làm — dù bạn điều hành quán cà phê, viết code, dạy học, hay chỉ chia sẻ liên kết.",
+    "eyebrow": "Hồ sơ công khai · ví dụ",
+    "title": "Hồ sơ hợp với công việc của bạn",
+    "subhead": "Chọn các khối hợp với việc bạn làm, như thực đơn quán cà phê, lịch lớp học hay portfolio.",
     "demoCta": "Xem tất cả ví dụ",
-    "ctaTitle": "Hồ sơ của bạn, lên sóng trong 5 phút",
-    "ctaSubhead": "Đăng nhập và chọn một cái tên — rồi thả vào ảnh, liên kết, địa chỉ và thông tin liên hệ, đúng như các ví dụ bên dưới.",
+    "ctaTitle": "Bạn cũng có thể tạo hồ sơ như thế này",
+    "ctaSubhead": "Đăng nhập và chọn tên người dùng là có thể bắt đầu. Thêm ảnh, liên kết, địa chỉ và thông tin liên hệ, trang sẽ trông giống các ví dụ bên dưới.",
     "cta": "Tạo hồ sơ của bạn",
     "metaSuffix": "mẫu",
     "metaFallbackTitle": "{handle} · mẫu kurl",
     "sampleBanner": "Trang mẫu · đây cũng có thể là hồ sơ của bạn",
     "sampleCta": "Tạo hồ sơ của tôi",
-    "scrollCue": "Xem ví dụ thật",
+    "scrollCue": "Xem ví dụ",
     "meta": {
-      "title": "Ví dụ trang hồ sơ · Bộ sưu tập link in bio - kurl",
-      "description": "Cách những người sáng tạo, người bán, và doanh nghiệp nhỏ vận hành trang bio trên kurl. Link in bio + danh thiếp QR + phân tích lượt nhấp — một trang, mọi bề mặt."
+      "title": "Ví dụ hồ sơ link-in-bio · kurl",
+      "description": "Ví dụ hồ sơ cho quán cà phê, giảng viên, nhiếp ảnh gia và nhiều nghề khác. Liên kết, danh thiếp, bản đồ và thẻ sản phẩm nằm gọn trên một trang."
     }
   },
   "shortenForm": {
@@ -1039,7 +1039,7 @@
   },
   "login": {
     "title": "Đăng nhập",
-    "subtitle": "Đăng nhập để quản lý liên kết và xem phân tích.",
+    "subtitle": "Đăng nhập để quản lý các liên kết trong một danh sách và xem ai đã nhấp.",
     "google": "Tiếp tục với Google",
     "anonymousButton": "Rút gọn mà không cần đăng nhập",
     "rotation": {
@@ -1156,16 +1156,16 @@
     "emptyCta": "Rút gọn ngay",
     "onboarding": {
       "eyebrow": "Chào mừng",
-      "title": "Ba bước là xong",
-      "subtitle": "Rút gọn → chia sẻ → xem thống kê. Lượt nhấp đầu tiên trong vòng 60 giây là bình thường.",
-      "step1Title": "Rút gọn trong một phút",
-      "step1Desc": "Dán một URL ở trang chủ và nhấn Rút gọn. Nhận liên kết ngắn ngay.",
+      "title": "Ba bước",
+      "subtitle": "Rút gọn một liên kết rồi đăng ở nơi mọi người sẽ thấy. Lượt nhấp sẽ được ghi lại ở đây.",
+      "step1Title": "Rút gọn liên kết",
+      "step1Desc": "Dán một URL dài ở trang chủ rồi nhấn Rút gọn.",
       "step2Title": "Chia sẻ nó",
-      "step2Desc": "Bio Instagram, KakaoTalk, danh thiếp — bất cứ đâu. Mã QR chỉ với một cú nhấp.",
+      "step2Desc": "Đăng ở bio Instagram, KakaoTalk hay danh thiếp. Bạn cũng có thể tải mã QR.",
       "step3Title": "Xem thống kê",
-      "step3Desc": "Lượt nhấp đến → kênh / quốc gia / thiết bị / thời điểm trong ngày tự động.",
+      "step3Desc": "Lượt nhấp được chia theo kênh, quốc gia, thiết bị và khung giờ.",
       "primaryCta": "Tạo liên kết đầu tiên",
-      "secondaryCta": "Hoặc xem trước màn hình phân tích →",
+      "secondaryCta": "Hoặc xem trước màn hình phân tích",
       "scene": {
         "weekClicks": "Lượt nhấp tuần này"
       }
@@ -2181,17 +2181,17 @@
   },
   "demo": {
     "metaTitle": "kurl demo — xem chính xác bạn nhận được gì khi rút gọn một liên kết",
-    "metaDescription": "Xem trước trực tiếp bảng phân tích, không cần đăng ký.",
-    "sampleBanner": "Dữ liệu mẫu — các liên kết của riêng bạn sẽ được lấp vào cùng bố cục này.",
+    "metaDescription": "Xem trước bảng phân tích, không cần đăng nhập.",
+    "sampleBanner": "Dữ liệu mẫu. Sau khi đăng nhập, các liên kết của bạn sẽ hiện theo đúng bố cục này.",
     "sampleCta": "Tạo liên kết của tôi",
     "settingsNotice": {
-      "title": "Cài đặt mở khóa sau khi đăng ký",
-      "desc": "Điểm đến A/B và webhook được quản lý theo từng liên kết. Sau khi đăng ký, đúng tab này sẽ mở trên trang thống kê của liên kết của bạn.",
+      "title": "Bạn có thể đổi cài đặt sau khi đăng nhập",
+      "desc": "Điểm đến A/B và webhook được quản lý theo từng liên kết. Sau khi đăng nhập, tab này sẽ mở trên trang thống kê của liên kết của bạn.",
       "cta": "Tạo liên kết của tôi"
     },
     "settingsDemo": {
       "badge": "Demo",
-      "lockedToast": "Đây là bản xem trước demo. Sau khi đăng ký bạn có thể đăng ký và chỉnh sửa những thứ này trên liên kết của riêng mình.",
+      "lockedToast": "Đây là bản demo. Sau khi đăng nhập, bạn có thể thêm và chỉnh sửa những mục này trên liên kết của mình.",
       "payloadPreview": "Xem trước payload được gửi đi"
     },
     "createCta": "Tạo liên kết của tôi"
@@ -2236,8 +2236,8 @@
       "sendAgain": "Gửi lại",
       "error": "Không đăng ký được. Vui lòng thử lại.",
       "defaultPlaceholder": "ban@example.com",
-      "defaultSuccess": "Bạn đã đăng ký. Cảm ơn!",
-      "trustHint": "Chỉ gửi đến chủ trang này. Không spam."
+      "defaultSuccess": "Bạn đã đăng ký. Cảm ơn.",
+      "trustHint": "Chỉ gửi đến chủ trang này."
     },
     "booking": {
       "defaultTitle": "Đặt lịch",
@@ -2322,7 +2322,7 @@
     "title": "Vừa rút gọn",
     "empty": "Chưa có gì — rút gọn một liên kết ở trên.",
     "viewStats": "Xem thống kê",
-    "claimCta": "Đăng ký để lưu vĩnh viễn các liên kết này vào tài khoản của bạn.",
+    "claimCta": "Đăng nhập để giữ các liên kết này trong tài khoản của bạn.",
     "anonymousNote": "Liên kết ẩn danh tự hết hạn sau 24 giờ. Đăng nhập và chúng được lưu vào tài khoản của bạn — không hết hạn.",
     "claimedToast": "Đã lưu {count} liên kết vào tài khoản của bạn"
   },
@@ -2403,48 +2403,48 @@
     "github": "GitHub"
   },
   "about": {
-    "title": "kurl — Rút gọn URL kèm phân tích lượt nhấp",
+    "title": "kurl · Rút gọn URL kèm phân tích lượt nhấp",
     "lead": "Rút gọn URL dài và xem lượt nhấp của bạn đến từ đâu. Miễn phí, hiện chưa có quảng cáo.",
     "section1Title": "Vì sao",
-    "section1Body": "Hầu hết dịch vụ rút gọn giấu phân tích sau bức tường trả phí. kurl cho bạn phân tách theo thiết bị, hệ điều hành, trình duyệt, kênh, quốc gia và thời điểm trong ngày, miễn phí.",
+    "section1Body": "kurl được làm ra để thống kê lượt nhấp không phải là tính năng trả phí. Thống kê theo thiết bị, hệ điều hành, trình duyệt, kênh, quốc gia và giờ trong ngày đều miễn phí.",
     "section2Title": "Cách hoạt động",
-    "section2Body": "Mỗi lượt truy cập được kiểm tra bot và URL độc hại, rồi chuyển hướng. Dữ liệu lượt nhấp được lưu trong một lược đồ rộng, thân thiện với truy vấn nên biểu đồ tải nhanh ngay cả ở quy mô lớn.",
+    "section2Body": "Mỗi lượt truy cập được kiểm tra bot và URL độc hại trước, rồi chuyển đến URL gốc. Lượt nhấp được lưu với một phần IP đã được che.",
     "section3Title": "Công nghệ",
-    "section3Body": "Spring Boot · MySQL · Redis · Next.js 14 · AWS ECS Fargate. Mã nguồn trên GitHub.",
-    "ctaShorten": "Rút gọn một URL ngay"
+    "section3Body": "Spring Boot · MySQL · Redis · Next.js · AWS EC2 · Vercel. Mã nguồn trên GitHub.",
+    "ctaShorten": "Rút gọn một URL"
   },
   "learn": {
     "metaTitle": "Liên kết ngắn · Rút gọn URL · Hướng dẫn link in bio · kurl",
-    "metaDescription": "Rút gọn URL là gì, liên kết ngắn khác trang link-in-bio thế nào, và kurl kết hợp cả hai ra sao — giải đáp trong một nơi.",
+    "metaDescription": "Rút gọn URL là gì, liên kết ngắn khác trang link-in-bio thế nào, và kurl làm cả hai ra sao.",
     "eyebrow": "Hướng dẫn · FAQ",
     "title": "Liên kết ngắn và link-in-bio, giải thích cho người mới",
-    "lead": "Rút gọn URL là gì, kurl làm gì, trang hồ sơ khác một liên kết ngắn đơn lẻ thế nào — những câu hỏi người ta tìm kiếm, gói trong một trang.",
+    "lead": "Những câu hỏi thường gặp về rút gọn URL, về kurl, và về sự khác nhau giữa trang hồ sơ với một liên kết ngắn.",
     "q1": {
       "q": "Rút gọn URL là gì?",
-      "a": "Rút gọn URL thay một địa chỉ dài (ví dụ https://example.com/very/long/path?utm_source=...) bằng một địa chỉ ngắn (ví dụ kurl.me/abc1234). Liên kết ngắn và URL rút gọn cùng nghĩa.\n\nNó hữu ích ở những nơi giới hạn ký tự (bài đăng mạng xã hội), nơi người ta gõ URL bằng tay (danh thiếp, áp phích), và như một lớp phân bổ — hầu hết dịch vụ rút gọn theo dõi lượt nhấp để bạn thấy kênh nào thực sự mang lại lưu lượng."
+      "a": "Rút gọn URL thay một địa chỉ dài (ví dụ https://example.com/very/long/path?utm_source=...) bằng một địa chỉ ngắn (ví dụ kurl.me/abc1234). Liên kết ngắn và URL rút gọn cùng nghĩa.\n\nNó hữu ích ở những nơi giới hạn ký tự (bài đăng mạng xã hội) và nơi người ta gõ URL bằng tay (danh thiếp, áp phích). Dịch vụ rút gọn cũng đếm lượt nhấp, nên bạn thấy được kênh nào mang người đến."
     },
     "q2": {
       "q": "Liên kết ngắn khác trang link-in-bio thế nào?",
-      "a": "Liên kết ngắn là ánh xạ 1:1: một URL dài → một URL ngắn. Tốt nhất cho một điểm đến duy nhất — bài đăng Twitter, bình luận Instagram, danh thiếp.\n\nTrang link-in-bio gom nhiều liên kết sau một URL. Vì Instagram chỉ cho đặt một liên kết trong hồ sơ, người sáng tạo dùng kurl.me/tencuaban làm liên kết đó, dẫn khách tới một trang nhỏ gồm email, đặt lịch, cửa hàng, blog và mạng xã hội của họ.\n\nkurl làm cả hai — rút gọn từng URL, và dựng một trang hồ sơ gói chúng lại."
+      "a": "Liên kết ngắn là ánh xạ 1:1: một URL dài → một URL ngắn. Phù hợp nhất cho một điểm đến duy nhất, như bài đăng Twitter, bình luận Instagram hay danh thiếp.\n\nTrang link-in-bio gom nhiều liên kết sau một URL. Vì Instagram chỉ cho đặt một liên kết trong hồ sơ, người sáng tạo dùng tencuaban.kurl.me làm liên kết đó, dẫn khách tới một trang nhỏ gồm email, đặt lịch, cửa hàng, blog và mạng xã hội của họ.\n\nkurl làm được cả hai: rút gọn từng URL và dựng một trang hồ sơ gom chúng lại."
     },
     "q3": {
       "q": "kurl là gì?",
-      "a": "kurl là dịch vụ rút gọn URL + link-in-bio miễn phí. Không quảng cáo, không bắt buộc đăng ký để rút gọn, và phân tích miễn phí: thiết bị, quốc gia, kênh, thời điểm trong ngày.\n\nĐăng nhập bằng Google chỉ với một cú nhấp và các liên kết rút gọn của bạn được giữ lại, đồng thời bạn có thể dựng một trang hồ sơ tại kurl.me/tencuaban trong năm phút."
+      "a": "kurl là dịch vụ rút gọn URL và link-in-bio miễn phí. Không có quảng cáo, và bạn có thể rút gọn liên kết mà không cần đăng nhập.\n\nĐăng nhập để xem thống kê theo thiết bị, quốc gia và kênh. Liên kết được giữ cho đến khi bạn xoá, và bạn có thể tạo trang hồ sơ tại một địa chỉ như tencuaban.kurl.me."
     },
     "q4": {
       "q": "Một trang hồ sơ có thể chứa gì?",
-      "a": "Tám loại khối: ảnh + tiểu sử + liên hệ (điện thoại/email/địa chỉ) + mạng xã hội + sự kiện + thư viện ảnh + thẻ sản phẩm + nhúng lịch. Phối hợp tùy theo từng phong cách.\n\nChủ quán cà phê có thể hiện: bản đồ + giờ mở cửa + liên kết Instagram/đặt chỗ + thư viện ảnh thực đơn. Một giảng viên: sự kiện workshop + liên kết đặt lịch 1:1 + portfolio. Một DJ: các buổi diễn sắp tới + liên kết Spotify Artist + ảnh. Tất cả trên một trang."
+      "a": "Kết hợp các khối như ảnh, tiểu sử, liên hệ (điện thoại/email/địa chỉ), mạng xã hội, sự kiện, thư viện ảnh, thẻ sản phẩm và liên kết đặt lịch.\n\nChủ quán cà phê có thể đặt bản đồ, giờ mở cửa, liên kết Instagram và đặt chỗ, cùng thư viện ảnh thực đơn. Giảng viên: sự kiện workshop, liên kết đặt lịch 1:1 và portfolio. DJ: lịch diễn sắp tới, liên kết Spotify Artist và ảnh. Tất cả trên một trang."
     },
     "q5": {
       "q": "Phân tích sâu đến đâu?",
-      "a": "Theo từng liên kết ngắn: tổng số / người vs bot / khách riêng biệt / biểu đồ ngày + giờ / bản đồ nhiệt thứ × giờ / quốc gia + thành phố / thiết bị / trình duyệt / hệ điều hành / host giới thiệu / chiến dịch UTM. Sâu như Bitly Pro, nhưng miễn phí.\n\nTrang hồ sơ có một bảng /profile/stats song song cho số lượt truy cập và cùng các phân tách nhân khẩu học."
+      "a": "Với mỗi liên kết ngắn: tổng lượt nhấp, người và bot, khách riêng biệt, biểu đồ theo ngày và giờ, bản đồ nhiệt thứ × giờ, quốc gia và thành phố, thiết bị, trình duyệt, hệ điều hành, host giới thiệu và chiến dịch UTM. Tất cả đều miễn phí.\n\nTrang hồ sơ cũng có thống kê lượt truy cập riêng với cùng các mục phân tách."
     },
     "q6": {
       "q": "Có tính phí không?",
-      "a": "Mọi tính năng đều miễn phí — rút gọn, phân tích, trang hồ sơ, cả tám loại khối, và tên miền tùy chỉnh.\n\nKhông có gói trả phí, cũng không có quảng cáo."
+      "a": "Mọi tính năng đều miễn phí: rút gọn, phân tích, trang hồ sơ, mọi loại khối và tên miền tùy chỉnh.\n\nKhông có gói trả phí, cũng không có quảng cáo."
     },
-    "ctaTitle": "Rút gọn một liên kết ngay",
-    "ctaSubtitle": "Không cần đăng ký — đăng nhập để giữ thống kê mãi mãi",
+    "ctaTitle": "Rút gọn một URL",
+    "ctaSubtitle": "Không cần đăng nhập. Đăng nhập để giữ thống kê của bạn.",
     "ctaButton": "Bắt đầu rút gọn"
   },
   "terms": {
@@ -2588,10 +2588,10 @@
     },
     "profile": {
       "title": "Hồ sơ công khai",
-      "intro": "Gom các liên kết ngắn của bạn vào một trang chia sẻ được — hoàn hảo cho bio mạng xã hội.",
-      "onboardingEyebrow": "Chào mừng",
-      "onboardingTitle": "Bắt đầu dựng ngay!",
-      "onboardingSubhead": "Chọn tên người dùng bạn muốn là xong. Thêm ảnh, liên kết, địa chỉ cửa hàng, và thông tin liên hệ — nó tự dựng thành một thẻ chỉn chu khi bạn làm.",
+      "intro": "Gom các liên kết của bạn vào một trang. Hồ sơ mạng xã hội chỉ cần địa chỉ của trang này.",
+      "onboardingEyebrow": "Bắt đầu",
+      "onboardingTitle": "Trước tiên, chọn tên sẽ nằm trong địa chỉ của bạn",
+      "onboardingSubhead": "Tên người dùng sẽ nằm trong địa chỉ trang của bạn. Ảnh, liên kết, địa chỉ cửa hàng và thông tin liên hệ có thể thêm dần sau.",
       "onboardingStep1": "Nhận một tên người dùng",
       "onboardingStep2": "Thêm tiểu sử hoặc ảnh đại diện",
       "onboardingStep3": "Thả khối đầu tiên (liên kết, ảnh, bất cứ gì)",
@@ -3100,7 +3100,7 @@
       "campaigns": "Chiến dịch QR",
       "campaignsDesc": "So sánh mã QR in theo vị trí",
       "events": "Đăng ký",
-      "eventsDesc": "Nhận đăng ký sự kiện bằng một liên kết",
+      "eventsDesc": "Nhận đăng ký sự kiện qua liên kết",
       "ctas": "Thư viện CTA",
       "ctasDesc": "Quản lý banner hiển thị trên liên kết"
     }
@@ -3275,9 +3275,9 @@
       "errors": {
         "nameRequired": "Tên đợt là bắt buộc",
         "quantityRequired": "Số lượng là bắt buộc",
-        "quantityPositive": "Số nguyên dương",
-        "destinationRequired": "Không có URL mặc định của chiến dịch — bắt buộc",
-        "destinationUrl": "URL http:// hoặc https://"
+        "quantityPositive": "Nhập số từ 1 trở lên",
+        "destinationRequired": "Nhập URL. Chiến dịch này chưa có URL mặc định.",
+        "destinationUrl": "Phải bắt đầu bằng http:// hoặc https://"
       },
       "removeRow": "Xóa dòng {index}",
       "pasteTitle": "Dán các dòng bảng tính",
@@ -3303,7 +3303,7 @@
       "backToCampaign": "Quay lại chiến dịch QR",
       "title": "Thêm QR vào áp phích",
       "introCampaign": "<name></name> · Nhân bản PDF một lần cho mỗi đợt (tổng {count}), mỗi cái có QR riêng, rồi tải về một PDF gộp.",
-      "toolHint": "Hoàn thiện thiết kế trong Canva, InDesign, PowerPoint, hay công cụ khác, xuất một PDF, rồi chỉ đặt QR ở đây. Đây là công cụ ghép theo tọa độ, không phải công cụ thiết kế.",
+      "toolHint": "Hoàn thiện thiết kế trong Canva, InDesign hay PowerPoint rồi xuất PDF. Ở đây bạn chỉ đặt vị trí QR.",
       "targetLabel": "Mục tiêu ghép",
       "targetSummary": "<strong>{count}</strong> đợt · đầu ra là PDF <strong>{pages} trang</strong>",
       "noBatchesHint": "Thêm các đợt phát trước. (Chi tiết chiến dịch QR → Thêm đợt)",
@@ -3605,11 +3605,12 @@
     "signIn": "Đăng nhập"
   },
   "blogLogin": {
-    "eyebrow": "Đăng nhập",
     "title": "Đăng nhập để viết",
-    "subtitle": "Bài viết, bản nháp, và series của bạn nằm ở đây. Đăng nhập để tiếp tục từ chỗ bạn dừng lại.",
+    "subtitle": "Đăng nhập để viết tiếp bài viết, bản nháp và series của bạn.",
     "google": "Tiếp tục với Google",
-    "browse": "Duyệt mà không đăng nhập"
+    "browse": "Duyệt mà không đăng nhập",
+    "heading": "Đăng nhập kurl log",
+    "consent": "Khi tiếp tục, bạn đồng ý với <terms>Điều khoản dịch vụ</terms> và <privacy>Chính sách quyền riêng tư</privacy>."
   },
   "postAnalytics": {
     "title": "Phân tích",
@@ -3625,12 +3626,12 @@
   },
   "ctaLibrary": {
     "title": "Thư viện CTA",
-    "description": "Quản lý các nút CTA bạn nhúng vào bài viết ở một chỗ. Tái sử dụng cùng một CTA trên nhiều bài.",
+    "description": "Quản lý các nút CTA bạn thêm vào bài viết. Một CTA có thể dùng cho nhiều bài.",
     "new": "CTA mới",
     "empty": "Chưa có CTA nào.",
     "edit": "Sửa",
     "delete": "Xóa",
-    "deleteConfirm": "Xóa CTA “{label}”? (xóa mềm; dữ liệu phân tích được giữ lại)",
+    "deleteConfirm": "Xóa CTA “{label}”? Lịch sử lượt nhấp vẫn được giữ.",
     "editorTitleEdit": "Sửa CTA",
     "editorTitleNew": "CTA mới",
     "label": "Nhãn",
@@ -3772,14 +3773,14 @@
     "discoverTabHighlights": "Đánh dấu",
     "highlightReplyCount": "{count} phản hồi",
     "highlightsSignedOutTitle": "Những đoạn để đọc cùng",
-    "highlightsSignedOut": "Đăng nhập để những đoạn mà các nhà tuyển chọn bạn theo dõi gạch chân sẽ tụ về đây.",
+    "highlightsSignedOut": "Đăng nhập để những đoạn mà các nhà tuyển chọn bạn theo dõi gạch chân hiện ở đây.",
     "highlightsSignIn": "Đăng nhập",
     "highlightsRetry": "Thử lại",
     "highlightsLoadMore": "Xem thêm",
     "highlightsLoadingMore": "Đang tải thêm…",
     "highlightsLoadMoreError": "Không tải thêm được.",
     "highlightsEmptyTitle": "Chưa có đoạn nào được đánh dấu",
-    "highlightsEmptyBody": "Những đoạn mà các nhà tuyển chọn bạn theo dõi gạch chân trong bài viết sẽ tụ về đây.",
+    "highlightsEmptyBody": "Những đoạn mà các nhà tuyển chọn bạn theo dõi gạch chân trong bài viết sẽ hiện ở đây.",
     "highlightsEmptyCta": "Tìm tác giả để đọc",
     "discoverEntrancesTitle": "Lối đi đang mở",
     "discoverEntrancePieces": "{count} bài",
@@ -3853,11 +3854,11 @@
   "events": {
     "intro": {
       "eyebrow": "Trang sự kiện",
-      "title": "Nhận đăng ký cho buổi gặp chỉ với một liên kết",
-      "subtitle": "Nhóm học, meetup, câu lạc bộ — trang giới thiệu, mẫu đăng ký, giới hạn chỗ và nguồn người đăng ký. Một liên kết là đủ.",
+      "title": "Nhận đăng ký sự kiện qua một liên kết",
+      "subtitle": "Tạo trang giới thiệu và mẫu đăng ký cho nhóm học, meetup hay câu lạc bộ. Khi đủ chỗ, đăng ký tự đóng, và bạn xem được mỗi lượt đăng ký đến từ đâu.",
       "step1": {
         "title": "Tạo trang",
-        "body": "Chỉ cần tiêu đề và ngày giờ — xong trong 3 phút."
+        "body": "Chỉ cần tiêu đề và ngày giờ là có trang."
       },
       "step2": {
         "title": "Dán liên kết vào nhóm chat",
@@ -3867,7 +3868,7 @@
         "title": "Đăng ký tự đến",
         "body": "Danh sách tự cập nhật, tự đóng khi đủ chỗ, biết cả người đến từ kênh nào."
       },
-      "ctaLogin": "Bắt đầu miễn phí",
+      "ctaLogin": "Đăng nhập để bắt đầu",
       "ctaCreate": "Tạo sự kiện đầu tiên",
       "ctaHint": "Người tham gia đăng ký không cần tài khoản.",
       "demo": {
@@ -3902,13 +3903,13 @@
       "consent": "Tôi đồng ý cho thu thập tên, liên hệ (gồm câu trả lời) và chia sẻ với người tổ chức để vận hành sự kiện; dữ liệu bị xóa 30 ngày sau khi kết thúc.",
       "submit": "Đăng ký",
       "submitting": "Đang gửi…",
-      "successTitle": "Đăng ký thành công!",
+      "successTitle": "Bạn đã đăng ký",
       "successBodyEmail": "Chúng tôi đã gửi email xác nhận. Dùng liên kết trong email để hủy nếu bận.",
       "successBody": "Hãy lưu liên kết hủy bên dưới phòng khi bạn bận.",
       "copyCancelLink": "Sao chép liên kết hủy",
       "cancelLinkCopied": "Đã sao chép",
-      "viralHook": "Trang này được tạo trong 3 phút.",
-      "viralCta": "Tạo trang sự kiện của bạn →",
+      "viralHook": "Trang này được tạo bằng kurl.",
+      "viralCta": "Tạo trang sự kiện",
       "canceledNotice": "Sự kiện đã bị hủy.",
       "fullNotice": "Sự kiện đã đủ người. Chỗ sẽ mở lại khi có người hủy — hãy quay lại sau.",
       "closedNotice": "Đã đóng đăng ký.",
@@ -3948,7 +3949,7 @@
       "loading": "Đang tải…",
       "loadFailed": "Không tải được danh sách.",
       "emptyTitle": "Tạo trang sự kiện đầu tiên",
-      "emptyBody": "Nhóm học, meetup, workshop — một liên kết lo cả trang, đăng ký, sĩ số và phân tích nguồn truy cập.",
+      "emptyBody": "Tạo trang giới thiệu và mẫu đăng ký, rồi quản lý sĩ số và xem nguồn đăng ký ngay tại đây.",
       "authTitle": "Trang sự kiện",
       "authDesc": "Đăng nhập để tạo trang đăng ký và xem người tham gia, nguồn truy cập."
     },
@@ -3956,7 +3957,7 @@
       "authTitle": "Trang sự kiện",
       "authDesc": "Đăng nhập để tạo trang đăng ký.",
       "newTitle": "Sự kiện mới",
-      "newSubtitle": "Chỉ mất 3 phút. Xuất bản xong có ngay liên kết ngắn và QR.",
+      "newSubtitle": "Xuất bản xong là có liên kết ngắn và mã QR.",
       "editTitle": "Sửa sự kiện",
       "title": "Tiêu đề",
       "titlePlaceholder": "Nhóm học lập trình Tokyo #3",
@@ -4026,7 +4027,7 @@
       "authDesc": "Đăng nhập để xem người tham gia và nguồn truy cập.",
       "loading": "Đang tải…",
       "loadFailed": "Không tải được.",
-      "createdBanner": "Trang sự kiện đã xuất bản! Dán liên kết này vào nhóm chat và mạng xã hội.",
+      "createdBanner": "Trang sự kiện đã được xuất bản. Dán liên kết này vào nhóm chat và mạng xã hội.",
       "edit": "Sửa",
       "viewPublicPage": "Xem trang công khai",
       "manageTitle": "Quản lý",
@@ -4040,7 +4041,7 @@
       "cancelDialogBody": "Trang công khai sẽ hiển thị đã hủy và ngừng nhận đăng ký. Không thể hoàn tác. Nếu chỉ muốn ngừng nhận đăng ký mới, dùng 'Đóng đăng ký'.",
       "cancelDialogConfirm": "Hủy sự kiện",
       "heroCopy": "Sao chép liên kết",
-      "heroCopied": "Đã sao chép!"
+      "heroCopied": "Đã sao chép"
     },
     "share": {
       "copied": "Đã sao chép",
@@ -4070,7 +4071,7 @@
     "attendees": {
       "title": "{count} người đăng ký",
       "exportCsv": "Xuất CSV",
-      "empty": "Chưa có ai đăng ký. Chia sẻ liên kết vào nhóm chat nhé!",
+      "empty": "Chưa có ai đăng ký. Hãy chia sẻ liên kết vào nhóm chat.",
       "name": "Họ tên",
       "contact": "Liên hệ",
       "channel": "Kênh",
