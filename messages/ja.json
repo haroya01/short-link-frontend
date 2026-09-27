@@ -1739,7 +1739,20 @@
       "openInBrowser": "カカオトーク・LINEでは標準ブラウザで開く",
       "openInBrowserDesc": "アプリ内ブラウザではログイン・決済・ダウンロードがうまくいかないことがあります。オンにすると、カカオトークやLINEでタップした人を標準ブラウザに移します。",
       "failed": "設定を変更できませんでした。",
-      "loadFailed": "設定を読み込めませんでした。再読み込みしてください。"
+      "loadFailed": "設定を読み込めませんでした。再読み込みしてください。",
+      "splash": "移動の前にお知らせを表示",
+      "splashDesc": "リンク先へ移動する前に、お知らせとボタンを少しだけ表示します。画面をタップすると自動移動が止まります。",
+      "splashMessage": "お知らせ",
+      "splashMessagePlaceholder": "例：お会計でクーポン SPRING20 を入れると20%オフ",
+      "splashSeconds": "表示時間",
+      "splashSecondsValue": "{n}秒",
+      "splashCta": "ボタン（任意）",
+      "splashNoCta": "ボタンなし",
+      "splashManageCtas": "ボタンを作成・管理",
+      "splashMessageRequired": "お知らせを入力してください。",
+      "save": "保存",
+      "saved": "保存しました。",
+      "unsaved": "未保存の変更があります"
     },
     "analysisTabs": {
       "when": "クリック推移",

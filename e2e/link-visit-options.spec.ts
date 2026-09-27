@@ -23,6 +23,43 @@ test.describe("visit options", () => {
     expect(sent).toEqual({ openInBrowser: true });
   });
 
+  test("the owner writes a note that visitors see before moving on", async ({ page }) => {
+    let sent: { splash?: unknown } | undefined;
+    await signIn(page);
+    await mockBackend(page, {
+      "GET /api/v1/ctas": (route) =>
+        route.fulfill({
+          json: [
+            {
+              id: 9,
+              label: "앱 받기",
+              url: "https://apps.example.com/install",
+              style: "PRIMARY",
+              purpose: "DOWNLOAD",
+              deleted: false,
+              createdAt: "2026-09-01T00:00:00Z",
+              updatedAt: "2026-09-01T00:00:00Z",
+            },
+          ],
+        }),
+      [`PATCH /api/v1/links/${CODE}/visit-options`]: (route) => {
+        sent = JSON.parse(route.request().postData() ?? "{}");
+        return route.fulfill({ json: { shortCode: CODE, openInBrowser: false, splash: sent?.splash } });
+      },
+    });
+    await page.goto(`/ko/stats/${CODE}#settings`);
+
+    const section = page.locator("section", { hasText: "방문자가 열 때" });
+    await section.getByRole("switch", { name: "잠깐 보여주기" }).click();
+    await section.getByPlaceholder(/쿠폰 코드 SPRING20/).fill("쿠폰 SPRING20");
+    await section.getByRole("radio", { name: "5초" }).click();
+    await section.getByRole("combobox").selectOption({ label: "앱 받기" });
+    await section.getByRole("button", { name: "저장" }).click();
+
+    await expect(page.getByText("저장했어요.")).toBeVisible();
+    expect(sent).toEqual({ splash: { enabled: true, message: "쿠폰 SPRING20", seconds: 5, ctaId: 9 } });
+  });
+
   test("a failed save puts the switch back", async ({ page }) => {
     await signIn(page);
     await mockBackend(page, {

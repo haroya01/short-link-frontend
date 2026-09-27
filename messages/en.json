@@ -1739,7 +1739,20 @@
       "openInBrowser": "Open in the default browser from KakaoTalk and LINE",
       "openInBrowserDesc": "Sign-in, payments and downloads can fail inside in-app browsers. When on, people who tap the link in KakaoTalk or LINE continue in their default browser.",
       "failed": "Couldn’t update the setting.",
-      "loadFailed": "Couldn’t load the settings. Please refresh."
+      "loadFailed": "Couldn’t load the settings. Please refresh.",
+      "splash": "Show a note first",
+      "splashDesc": "Show a short note and a button before sending people on. Tapping the page pauses the countdown.",
+      "splashMessage": "Note",
+      "splashMessagePlaceholder": "e.g. Use code SPRING20 at checkout for 20% off",
+      "splashSeconds": "Show for",
+      "splashSecondsValue": "{n}s",
+      "splashCta": "Button (optional)",
+      "splashNoCta": "No button",
+      "splashManageCtas": "Create or manage buttons",
+      "splashMessageRequired": "Write a note first.",
+      "save": "Save",
+      "saved": "Saved.",
+      "unsaved": "Unsaved changes"
     },
     "analysisTabs": {
       "when": "Trends",

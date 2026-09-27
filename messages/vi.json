@@ -1739,7 +1739,20 @@
       "openInBrowser": "Mở bằng trình duyệt mặc định khi từ KakaoTalk và LINE",
       "openInBrowserDesc": "Trình duyệt trong ứng dụng đôi khi chặn đăng nhập, thanh toán hoặc tải xuống. Khi bật, người nhấn liên kết trong KakaoTalk hoặc LINE sẽ được chuyển sang trình duyệt mặc định.",
       "failed": "Không thể cập nhật cài đặt.",
-      "loadFailed": "Không thể tải cài đặt. Vui lòng tải lại trang."
+      "loadFailed": "Không thể tải cài đặt. Vui lòng tải lại trang.",
+      "splash": "Hiện thông báo trước",
+      "splashDesc": "Hiện một thông báo ngắn và một nút trước khi chuyển tiếp. Chạm vào trang sẽ tạm dừng đếm ngược.",
+      "splashMessage": "Thông báo",
+      "splashMessagePlaceholder": "VD: Nhập mã SPRING20 khi thanh toán để giảm 20%",
+      "splashSeconds": "Thời gian hiển thị",
+      "splashSecondsValue": "{n} giây",
+      "splashCta": "Nút (tùy chọn)",
+      "splashNoCta": "Không có nút",
+      "splashManageCtas": "Tạo hoặc quản lý nút",
+      "splashMessageRequired": "Vui lòng nhập thông báo.",
+      "save": "Lưu",
+      "saved": "Đã lưu.",
+      "unsaved": "Có thay đổi chưa lưu"
     },
     "analysisTabs": {
       "when": "Xu hướng nhấp",
