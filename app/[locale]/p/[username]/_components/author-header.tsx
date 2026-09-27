@@ -10,6 +10,7 @@ import { FollowCounts } from "@/modules/blog/components/follow-counts";
 import { TagChip } from "@/modules/blog/components/tag-chip";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 import { AuthorTabs } from "./author-tabs";
+import { HeaderBio } from "./header-bio";
 
 type Tab = "posts" | "series" | "collections" | "about";
 
@@ -91,16 +92,21 @@ export async function AuthorHeader({
           group) — under that crossfade the OLD page is held at full opacity, so the identical avatar /
           handle / bio stay visually static instead of dipping. (A named group did the opposite: it
           crossfaded old-out/new-in, and the new snapshot is pre-hydration, so the whole block blinked.) */}
-      <div className="flex items-start gap-5">
-        <Avatar src={author.avatarUrl} name={author.username} size="xl" eager />
-        <div className="min-w-0 flex-1 pt-1">
-          {/* 이름이 먼저 눈에 든다 — 크기가 아니라 무게로. semibold → bold 로 존재감만 키우고 크기 스텝은
-              그대로(headline-sm → md). */}
-          <h1 className="text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-md">
-            @{author.username}
-          </h1>
+      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4 gap-y-1 sm:items-start sm:gap-y-0 sm:gap-x-5">
+        <span className="sm:hidden">
+          <Avatar src={author.avatarUrl} name={author.username} size="lg" eager />
+        </span>
+        <span className="hidden sm:row-span-2 sm:block">
+          <Avatar src={author.avatarUrl} name={author.username} size="xl" eager />
+        </span>
+        {/* 이름이 먼저 눈에 든다 — 크기가 아니라 무게로. semibold → bold 로 존재감만 키우고 크기 스텝은
+            그대로(headline-sm → md). */}
+        <h1 className="min-w-0 truncate text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:pt-1 sm:text-headline-md">
+          @{author.username}
+        </h1>
+        <div className="col-span-2 min-w-0 sm:col-span-1 sm:col-start-2">
           {author.bio && (
-            <p className="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">{author.bio}</p>
+            <HeaderBio bio={author.bio} />
           )}
           {/* 대표 주제 — 이 사람이 주로 무엇을 쓰는지 한 줄. 레일 없는 모바일/태블릿에서도 정체성이
               "글 목록"이 아니라 "이 사람"으로 읽히게 하는 핵심. 라벨 없이 태그 자체가 말하게(§10 절제).

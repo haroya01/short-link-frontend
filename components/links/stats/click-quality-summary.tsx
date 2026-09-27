@@ -7,7 +7,7 @@ import type { LinkStats } from "@/types";
  * Compact "how is this link being used" summary that distills the data the page already has into
  * the four numbers people actually look at: returning ratio, clicks per unique, peak hour, and
  * social-preview hits separated from real clicks. Cards use {@code rounded-2xl} (16 px) —
- * matching the canonical slate card surface token (AGENTS §1).
+ * matching the canonical slate card surface token (DESIGN.md §1).
  */
 export function ClickQualitySummary({ data }: { data: LinkStats }) {
   const t = useTranslations("stats.quality");
@@ -60,7 +60,7 @@ export function ClickQualitySummary({ data }: { data: LinkStats }) {
             <div className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">
               {c.label}
             </div>
-            <div className="mt-1.5 font-mono text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
+            <div className="mt-1.5 text-[22px] font-semibold leading-none tracking-tight tabular-nums text-slate-900 dark:text-slate-100">
               {c.value}
             </div>
             {c.hint && <div className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">{c.hint}</div>}

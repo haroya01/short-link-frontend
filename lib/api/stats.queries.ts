@@ -27,9 +27,10 @@ export function usePublicLinkStats(shortCode: string) {
   });
 }
 
-export function usePublicTotals() {
+export function usePublicTotals(options?: { refetchInterval?: number }) {
   return useQuery({
     queryKey: statsKeys.publicTotals(),
     queryFn: getPublicTotals,
+    refetchInterval: options?.refetchInterval,
   });
 }

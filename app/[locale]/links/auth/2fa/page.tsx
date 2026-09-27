@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 export default function TwoFactorChallengePage() {
   const router = useRouter();
   const t = useTranslations("auth.twofa");
+  const tAuth = useTranslations("auth");
   const errorMessage = useApiErrorMessage();
   const [challenge, setChallenge] = useState<string | null>(null);
   const [code, setCode] = useState("");
@@ -55,7 +56,7 @@ export default function TwoFactorChallengePage() {
         <h1 className="text-xl font-semibold tracking-headline text-slate-900 dark:text-slate-100">{t("title")}</h1>
         <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
         <Link href="/login" className="mt-6 inline-block">
-          <Button variant="outline">{t("backToLogin")}</Button>
+          <Button variant="outline">{tAuth("backToLogin")}</Button>
         </Link>
       </div>
     );

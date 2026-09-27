@@ -15,7 +15,6 @@ import { DiscoveryRail } from "@/modules/blog/components/discovery-rail";
 import { FeedEmpty } from "@/modules/blog/components/feed-empty";
 import { FeedInfinite } from "@/modules/blog/components/feed-infinite";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
-import { FeedTabs } from "@/modules/blog/components/feed-tabs";
 import { TagFilterStrip } from "@/modules/blog/components/tag-filter-strip";
 import { TagFollowControls } from "@/modules/blog/components/tag-follow-controls";
 
@@ -100,13 +99,9 @@ export default async function TagFeedPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 pt-6 pb-24 sm:px-6 sm:py-8">
-      <header className="mx-auto flex w-full max-w-2xl items-center border-b border-slate-100 pb-3 dark:border-slate-800">
-        <FeedTabs locale={locale} />
-      </header>
-
       {/* Topic heading inside the centered reading column — aligns with the tabs + feed below,
           instead of a full-width masthead band that floated left of the centered content. */}
-      <div className="mx-auto mt-6 max-w-2xl">
+      <div className="mx-auto max-w-2xl">
         <h1 className="text-[22px] font-bold tracking-tight text-slate-900 dark:text-slate-100">{decoded}</h1>
         <p className="mt-1.5 text-[14px] leading-relaxed text-slate-500 dark:text-slate-400">{t("tagFeedSubtitle")}</p>
         <TagFollowControls tag={decoded} />

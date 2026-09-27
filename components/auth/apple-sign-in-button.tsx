@@ -81,10 +81,18 @@ export function AppleSignInButton({ successHref }: { successHref: string }) {
       // The verifier checks token.nonce === sha256(rawNonce). Apple JS echoes the init nonce into
       // the token verbatim, so we give it the hash and send the raw value to the server.
       const hashedNonce = await sha256Hex(rawNonce);
+      // popup(web_message) 응답은 redirectURI 의 origin 창으로만 돌아온다 — blog.kurl.me 에서
+      // kurl.me/login 고정값을 쓰면 Apple 이 결과를 전달할 창을 못 찾아 "요청을 완료할 수
+      // 없습니다"로 끝난다. 표면마다 제 origin 을 쓰되(콘솔 Return URLs 에 두 호스트의 /login
+      // 등록 필요), 미등록 호스트(로컬 등)는 env 값으로 폴백.
+      const origin = window.location.origin;
+      const redirectURI = /(^|\.)kurl\.me$/.test(window.location.hostname)
+        ? `${origin}/login`
+        : REDIRECT_URI!;
       window.AppleID!.auth.init({
         clientId: SERVICE_ID!,
         scope: "name email",
-        redirectURI: REDIRECT_URI!,
+        redirectURI,
         usePopup: true,
         nonce: hashedNonce,
       });

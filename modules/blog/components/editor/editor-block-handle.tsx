@@ -136,10 +136,8 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
                   key={it.label}
                   type="button"
                   role="menuitem"
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    turnInto(it.run);
-                  }}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => turnInto(it.run)}
                   className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                   <it.icon className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
@@ -150,7 +148,8 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
               <button
                 type="button"
                 role="menuitem"
-                onMouseDown={(e) => { e.preventDefault(); duplicate(); }}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={duplicate}
                 className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-[13px] text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
               >
                 <Copy className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
@@ -159,7 +158,8 @@ export function EditorBlockHandle({ editor }: { editor: Editor }) {
               <button
                 type="button"
                 role="menuitem"
-                onMouseDown={(e) => { e.preventDefault(); remove(); }}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={remove}
                 className="flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-[13px] text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10"
               >
                 <Trash2 className="h-4 w-4 shrink-0" />

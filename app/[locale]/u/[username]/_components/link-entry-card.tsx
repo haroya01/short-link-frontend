@@ -117,7 +117,7 @@ export function LinkEntryCard({ entry, username, colors, fadeStyle }: Props) {
               height={720}
               className="h-full w-full object-cover"
             />
-            {/* Play overlay sized to match the cross-card "video play" token in AGENTS.md §4
+            {/* Play overlay sized to match the cross-card "video play" token in DESIGN.md §4
                 (h-14 w-14 outer circle, Play h-6 w-6) so the YouTube LINK variant reads as a
                 sibling of EmbedEntryCard rather than a smaller off-brand variant. */}
             <span className="absolute inset-0 grid place-items-center">

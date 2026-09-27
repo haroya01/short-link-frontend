@@ -7,9 +7,8 @@ import { expect, test } from "@playwright/test";
  * don't need backend / DB, so the test runs in the no-backend visual CI workflow alongside the
  * snapshot suite.
  *
- * <p>Why a separate file: the existing {@code a11y.spec.ts} is in the backend-dependent suite
- * (gated by the e2e workflow + SUB_TOKEN). Fixture pages give us a cheap, always-running
- * baseline for component-level a11y regressions.
+ * <p>Why a separate file: {@code a11y.spec.ts} scans real pages in the e2e-mock lane; fixture
+ * pages give a cheap baseline for component-level a11y regressions.
  *
  * <p>Critical / serious violations fail the build; minor / moderate are surfaced but tolerated
  * — same threshold as the existing suite. {@code color-contrast} is disabled because the

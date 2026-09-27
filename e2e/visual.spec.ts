@@ -25,7 +25,6 @@ const PAGES = [
   { name: "home", path: "/" },
   { name: "login", path: "/login" },
   { name: "about", path: "/about" },
-  { name: "pricing", path: "/pricing" },
   { name: "privacy", path: "/privacy" },
   { name: "not-found", path: "/this-path-does-not-exist-zzz" },
 ];

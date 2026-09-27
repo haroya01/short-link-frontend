@@ -117,9 +117,9 @@ export async function AuthorRail({
           <RailHeading className="mb-3">{t("railArchive")}</RailHeading>
           <ul className="flex flex-col gap-1.5 text-[13px]">
             {archive.map(([key, count]) => (
-              <li key={key} className="flex items-baseline justify-between gap-3 px-2 text-slate-500">
+              <li key={key} className="flex items-baseline justify-between gap-3 px-2 text-slate-500 dark:text-slate-400">
                 <span>{monthLabel(key)}</span>
-                <span className="text-slate-500">{count}</span>
+                <span className="tabular-nums">{count}</span>
               </li>
             ))}
           </ul>

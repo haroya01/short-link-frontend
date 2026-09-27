@@ -75,7 +75,7 @@ export function EmailFormEntryCard({ id, content, colors, fadeStyle }: Props) {
         ) : (
           <>
             {/* Input + submit share the same h-10 rounded-lg shell so they read as one paired
-                control (matches the Primary CTA scale in AGENTS.md §1 — h-10 rounded-lg text-[13px]).
+                control (matches the Primary CTA scale in DESIGN.md §1 — h-10 rounded-lg text-[13px]).
                 Earlier rounded-md / no explicit height made the submit look like a generic ghost
                 button next to the input, breaking the Action archetype's voice. */}
             <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-2 sm:flex-row">

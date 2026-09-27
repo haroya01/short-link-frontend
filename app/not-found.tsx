@@ -1,3 +1,4 @@
+import { NotFoundThemeSync } from "@/components/common/not-found-theme-sync";
 import en from "@/messages/en.json";
 import hi from "@/messages/hi.json";
 import ja from "@/messages/ja.json";
@@ -35,10 +36,23 @@ const localeInitScript =
   "(function(){try{" +
   "var m=document.cookie.match(/(?:^|; )NEXT_LOCALE=(en|ja|vi|hi)/);" +
   "if(m){document.documentElement.lang=m[1];document.documentElement.setAttribute('data-nf-locale',m[1]);}" +
-  // 다크 패리티 — 이 페이지는 독립 <html> 이라 로케일 레이아웃의 테마 스크립트를 안 탄다. 라이트
-  // 하드코딩이면 다크 사용자가 만료 링크를 밟는 순간 흰 화면 플래시(적대 검증 r7). 블로그(theme)·
-  // 링크(kurl_theme) 어느 쪽 쿠키든 dark 면 pre-paint 로 .dark 를 단다(같은 no-FOUC 패턴).
-  "if(/(?:^|; )(?:theme|kurl_theme)=dark/.test(document.cookie)){document.documentElement.classList.add('dark');}" +
+  "}catch(e){}})()";
+
+/* No-FOUC 테마 — 이 문서는 로케일 레이아웃 밖에서 렌더돼 그쪽 테마 스크립트를 못 탄다.
+   빠뜨리면 다크 사용자가 404 를 라이트로 맞는다(만료 링크·오타 URL 이 흔한 진입).
+   쿠키 판정은 [locale]/layout.tsx 의 themeInitScript 와 동일(원본=lib/theme-cookie.ts) —
+   블로그 표면=공유 `theme`, kurl 표면=`kurl_theme`. */
+const PLATFORM_HOST = process.env.NEXT_PUBLIC_KURL_HOST ?? "kurl.me";
+const themeInitScript =
+  "(function(){try{" +
+  "var h=location.hostname,P=" +
+  JSON.stringify(PLATFORM_HOST) +
+  ",onP=(h===P||h.endsWith('.'+P));" +
+  "var seg=location.pathname.split('/')[2];" +
+  "var n=((onP&&h!==P)||seg==='blog'||seg==='p')?'theme':'kurl_theme';" +
+  "var m=document.cookie.match(new RegExp('(?:^|; )'+n+'=(dark|light)'));" +
+  "var t=m?m[1]:(onP?null:localStorage.getItem(n));" +
+  "if(t==='dark'){document.documentElement.classList.add('dark');}" +
   "}catch(e){}})()";
 
 export default function RootNotFound() {
@@ -47,10 +61,11 @@ export default function RootNotFound() {
       <head>
         <script
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: localeInitScript }}
+          dangerouslySetInnerHTML={{ __html: localeInitScript + ";" + themeInitScript }}
         />
       </head>
       <body className="bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
+        <NotFoundThemeSync />
         {LOCALES.map((locale) => {
           const t = COPY[locale];
           return (
@@ -65,7 +80,7 @@ export default function RootNotFound() {
               <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{t.description}</p>
               <a
                 href={`/${locale}`}
-                className="mt-8 inline-flex items-center justify-center rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+                className="mt-8 inline-flex items-center justify-center rounded-md bg-accent-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-800 dark:bg-accent-500 dark:text-slate-950 dark:hover:bg-accent-400"
               >
                 {t.cta}
               </a>

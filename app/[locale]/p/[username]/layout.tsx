@@ -1,3 +1,4 @@
+import { setRequestLocale } from "next-intl/server";
 import { Suspense, type ReactNode } from "react";
 import { AppHeader } from "@/components/common/app-header";
 import { AppProviders } from "@/components/common/app-providers";
@@ -20,13 +21,20 @@ import { ProfileChrome } from "./_components/profile-chrome";
  * whole page popped in at once. Streaming lets the post's own loading.tsx skeleton paint instantly
  * while the (tab-only) header fills in behind it.
  */
-export default function AuthorChromeLayout({
+export default async function AuthorChromeLayout({
   children,
   params,
 }: {
   children: ReactNode;
   params: Promise<{ locale: string; username: string }>;
 }) {
+  // blog.kurl.me/@{user} 는 미들웨어가 intlMiddleware 를 건너뛰고 곧장 rewrite 하는 유일한 경로라
+  // (apex /{locale}/p/… 는 intl 을 통과한다) getLocale() 이 URL 의 로케일 대신 기본값 ko 로 떨어진다.
+  // 그래서 같은 문서 안에서 서버 포맷 날짜는 "July 15, 2026" 인데 크롬 문구만 한국어로 나왔다.
+  // URL 이 진실원이므로 여기서 못박는다 — params await 은 데이터 페치가 아니라 아래 Suspense 스트리밍을
+  // 막지 않는다.
+  const { locale } = await params;
+  setRequestLocale(locale);
   return (
     <AppProviders>
       <SidebarStateProvider>

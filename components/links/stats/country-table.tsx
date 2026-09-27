@@ -50,13 +50,13 @@ export function CountryTable({ data }: Props) {
                     {known ? countryName(code, locale) : t("countryTable.unknown")}
                   </span>
                   {known && (
-                    <span className="hidden font-mono text-[11px] text-slate-500 dark:text-slate-400 sm:inline">
+                    <span className="hidden tabular-nums text-[11px] text-slate-500 dark:text-slate-400 sm:inline">
                       {code}
                     </span>
                   )}
                 </span>
               </TD>
-              <TD className="text-right font-mono text-[12px] tabular-nums sm:text-sm">
+              <TD className="text-right text-[12px] tabular-nums sm:text-sm">
                 {formatNumber(c.count)}
               </TD>
               <TD className="text-right">
@@ -77,7 +77,7 @@ export function CountryTable({ data }: Props) {
                       }}
                     />
                   </div>
-                  <span className="w-9 text-right font-mono text-[11px] tabular-nums text-slate-500 dark:text-slate-400 sm:w-10">
+                  <span className="w-9 text-right text-[11px] tabular-nums text-slate-500 dark:text-slate-400 sm:w-10">
                     {pct}%
                   </span>
                 </div>

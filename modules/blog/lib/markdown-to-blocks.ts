@@ -100,12 +100,12 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
     // markdown-like lines), so the line-based rules below can't tear it apart.
     const fence = line.match(/^(```+|~~~+)(.*)$/);
     if (fence) {
-      const marker = fence[1][0].repeat(3);
+      const closing = new RegExp(`^\\s*\\${fence[1][0]}{${fence[1].length},}\\s*$`);
       const lang = fence[2].trim().split(/\s+/)[0] || null;
       const code: string[] = [];
       i++;
       while (i < lines.length) {
-        if (lines[i].trimStart().startsWith(marker)) {
+        if (closing.test(lines[i])) {
           i++;
           break;
         }
@@ -211,11 +211,18 @@ export function markdownToBlocks(markdown: string): BlockInput[] {
     if (/^(?:[-*]|\d+\.)\s+/.test(line)) {
       const ordered = /^\d+\.\s+/.test(line);
       const listLines: string[] = [];
-      while (
-        i < lines.length &&
-        lines[i].trim() !== "" &&
-        (/^\s*(?:[-*]|\d+\.)\s+/.test(lines[i]) || /^\s+\S/.test(lines[i]))
-      ) {
+      while (i < lines.length) {
+        if (lines[i].trim() === "") {
+          let j = i;
+          while (j < lines.length && lines[j].trim() === "") j++;
+          if (j < lines.length && /^\s+\S/.test(lines[j]) && listLines.length > 0) {
+            listLines.push(...lines.slice(i, j));
+            i = j;
+            continue;
+          }
+          break;
+        }
+        if (!(/^\s*(?:[-*]|\d+\.)\s+/.test(lines[i]) || /^\s+\S/.test(lines[i]))) break;
         listLines.push(lines[i]);
         i++;
       }
