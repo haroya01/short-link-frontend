@@ -38,10 +38,12 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [lockOn, setLockOn] = useState(false);
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** 히어로 성공 시 blur 용 — 모바일 키보드를 내려야 결과 카드가 실제 뷰포트에 들어온다. */
   const heroInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
   // Pre-warm one proof-of-work token while the user is typing so the first POST doesn't pay the
   // mining cost. Authenticated users skip PoW server-side, so don't bother computing. Wait for
@@ -85,7 +87,8 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
     }
 
     if (authenticated && lockOn && !password.trim()) {
-      setError(t("errors.passwordEmpty"));
+      setPasswordError(t("errors.passwordEmpty"));
+      passwordInputRef.current?.focus();
       return;
     }
 
@@ -240,7 +243,7 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
               type="button"
               onClick={() => {
                 setLockOn((v) => !v);
-                if (error) setError(null);
+                setPasswordError(null);
               }}
               aria-pressed={lockOn}
               aria-controls="shorten-password-row"
@@ -257,21 +260,37 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
           {lockOn && (
             <div id="shorten-password-row" className="mt-2 space-y-1.5">
               <Input
+                ref={passwordInputRef}
                 type="password"
                 autoComplete="new-password"
                 maxLength={200}
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  if (error) setError(null);
+                  if (passwordError) setPasswordError(null);
                 }}
                 placeholder={t("passwordPlaceholder")}
                 aria-label={t("passwordPlaceholder")}
-                className="h-9 text-sm sm:max-w-sm"
+                aria-invalid={!!passwordError}
+                aria-describedby="shorten-password-note"
+                className={`h-9 text-sm sm:max-w-sm ${passwordError ? "border-red-400 focus-visible:ring-red-400 dark:border-red-500/70 dark:focus-visible:ring-red-500/70" : ""}`}
                 disabled={busy}
                 autoFocus
               />
-              <p className="text-[12px] text-slate-500 dark:text-slate-400">{t("passwordHint")}</p>
+              {passwordError ? (
+                <p
+                  id="shorten-password-note"
+                  role="alert"
+                  className="flex items-center gap-2 text-[12px] font-medium text-red-600 dark:text-red-400"
+                >
+                  <span aria-hidden className="h-[3px] w-3.5 shrink-0 rounded-full bg-red-500 dark:bg-red-400" />
+                  {passwordError}
+                </p>
+              ) : (
+                <p id="shorten-password-note" className="text-[12px] text-slate-500 dark:text-slate-400">
+                  {t("passwordHint")}
+                </p>
+              )}
             </div>
           )}
           {/*

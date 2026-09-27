@@ -56,6 +56,9 @@ test.describe("password while shortening", () => {
     await page.getByRole("button", { name: "단축하기" }).click();
 
     await expect(page.getByText("비밀번호를 입력해 주세요.")).toBeVisible();
+    await expect(page.getByPlaceholder("링크를 여는 사람이 입력할 비밀번호")).toHaveAttribute("aria-invalid", "true");
+    await expect(page.getByPlaceholder(/긴 주소를 여기에/)).toHaveAttribute("aria-invalid", "false");
+    await expect(page.getByPlaceholder("링크를 여는 사람이 입력할 비밀번호")).toBeFocused();
     expect(posts).toBe(0);
   });
 });
