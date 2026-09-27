@@ -702,7 +702,9 @@
       "important": "Important",
       "warning": "Warning",
       "caution": "Caution"
-    }
+    },
+    "activityPosts": "{count, plural, one {# post} other {# posts}}",
+    "activitySince": "since {date}"
   },
   "imageCropper": {
     "title": "Crop image",

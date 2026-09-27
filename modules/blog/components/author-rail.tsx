@@ -1,23 +1,16 @@
-import { DATE_LOCALE } from "@/lib/date";
 import { Rss } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { PublicPostListItem, PublicSeriesListItem } from "@/modules/blog/api/public-posts";
 import { authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
-import { TagChip } from "@/modules/blog/components/tag-chip";
 import { isDisplayableTag } from "@/modules/blog/lib/tag-normalize";
 
 const MAX_TAGS = 12;
-const MAX_ARCHIVE = 8;
 
 /**
- * The author page's right rail — the blog-native structure that makes an author's space feel like a
- * weblog rather than a flat post dump: their **series**, the **tags** they write under, and an
- * **archive** of how their writing has piled up over time. Series link to the series pages; tags link
- * to the topic feed; the archive is a quiet, non-interactive timeline (a sense of accumulation, the
- * thing a content feed loses). All author-scoped — the data that only makes sense here, not on the
- * cross-author home. Series come from the API; tags + archive are derived from the post list.
+ * The author page's right rail — their series and the tags they write under, both author-scoped
+ * (a tag narrows this author's posts). The dated archive lives in the main column (PostLedger).
  */
 export async function AuthorRail({
   username,
@@ -50,24 +43,6 @@ export async function AuthorRail({
   }
   const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, MAX_TAGS);
 
-  const monthCounts = new Map<string, number>();
-  for (const post of posts) {
-    const d = new Date(post.publishedAt);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    monthCounts.set(key, (monthCounts.get(key) ?? 0) + 1);
-  }
-  const archive = [...monthCounts.entries()]
-    .sort((a, b) => (a[0] < b[0] ? 1 : -1))
-    .slice(0, MAX_ARCHIVE);
-  const monthLabel = (key: string) => {
-    const [y, m] = key.split("-").map(Number);
-    return new Date(y, m - 1).toLocaleDateString(DATE_LOCALE[locale] ?? "ko-KR", {
-      year: "numeric",
-      month: "long",
-    timeZone: "Asia/Seoul",
-  });
-  };
-
   return (
     <div className="flex flex-col gap-6">
       {series.length > 0 && (
@@ -96,30 +71,21 @@ export async function AuthorRail({
       {tags.length > 0 && (
         <section>
           <RailHeading className="mb-3">{t("railTags")}</RailHeading>
-          <ul className="flex flex-wrap gap-2">
+          <ul className="flex flex-wrap gap-x-3 gap-y-1.5 px-2 text-[13px]">
             {tags.map(([tag, count]) => (
               <li key={tag}>
-                <TagChip
+                <BlogLink
                   href={tagHref(tag)}
-                  label={tag}
-                  count={count}
-                  active={tag === activeTag}
-                  ariaCurrent={tag === activeTag ? "true" : undefined}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {archive.length > 0 && (
-        <section>
-          <RailHeading className="mb-3">{t("railArchive")}</RailHeading>
-          <ul className="flex flex-col gap-1.5 text-[13px]">
-            {archive.map(([key, count]) => (
-              <li key={key} className="flex items-baseline justify-between gap-3 px-2 text-slate-500 dark:text-slate-400">
-                <span>{monthLabel(key)}</span>
-                <span className="tabular-nums">{count}</span>
+                  aria-current={tag === activeTag ? "true" : undefined}
+                  className={`focus-ring rounded-sm transition-colors ${
+                    tag === activeTag
+                      ? "font-semibold text-slate-900 dark:text-slate-100"
+                      : "text-slate-700 hover:text-accent-700 dark:text-slate-300 dark:hover:text-accent-400"
+                  }`}
+                >
+                  #{tag}
+                  <span className="ml-1 tabular-nums text-slate-500 dark:text-slate-400">{count}</span>
+                </BlogLink>
               </li>
             ))}
           </ul>

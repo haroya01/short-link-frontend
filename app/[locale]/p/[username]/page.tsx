@@ -8,6 +8,7 @@ import { MadeWithKurl } from "@/components/common/made-with-kurl";
 import { FeedCard, FeedList, authorHref } from "@/modules/blog/components/feed-card";
 import { BlogLink } from "@/modules/blog/components/blog-link";
 import { RailHeading } from "@/modules/blog/components/rail-heading";
+import { PostLedger } from "@/modules/blog/components/post-ledger";
 import { AuthorRail } from "@/modules/blog/components/author-rail";
 import { ReadingShell } from "@/modules/blog/components/reading-shell";
 import { AuthorContentTransition } from "@/modules/blog/components/author-content-transition";
@@ -154,43 +155,20 @@ export default async function PublicProfileHomepage({
           <p className="text-slate-500">{t("emptyPosts")}</p>
         ) : visiblePosts.length === 0 ? (
           <p className="text-slate-500 dark:text-slate-400">{t("tagFilterEmpty", { tag: activeTag ?? "" })}</p>
-        ) : pinnedPosts.length > 0 ? (
-          // 대표글 → 최근 글, each under a quiet label. The labels carry the top spacing, so no flushTop.
-          <div className="space-y-9">
-            <section>
-              <RailHeading className="mb-3">{t("featuredPosts")}</RailHeading>
-              <FeedList>
-                {pinnedPosts.map((p) => (
-                  <FeedCard key={p.slug} hideAuthor item={{ ...p, author, viewCount: 0 }} locale={locale} />
-                ))}
-              </FeedList>
-            </section>
-            {recentPosts.length > 0 && (
+        ) : (
+          <div className="space-y-10">
+            {pinnedPosts.length > 0 && (
               <section>
-                <RailHeading className="mb-3">{t("recentPosts")}</RailHeading>
+                <RailHeading className="mb-3">{t("featuredPosts")}</RailHeading>
                 <FeedList>
-                  {recentPosts.map((p) => (
+                  {pinnedPosts.map((p) => (
                     <FeedCard key={p.slug} hideAuthor item={{ ...p, author, viewCount: 0 }} locale={locale} />
                   ))}
                 </FeedList>
               </section>
             )}
+            {recentPosts.length > 0 && <PostLedger posts={recentPosts} username={author.username} locale={locale} />}
           </div>
-        ) : (
-          // No pins → the plain list. Same card + wrapper as the feed; single-author surface so the
-          // author is hidden. The first row gets flushTop so it sits tight under the tabs (with a tag
-          // filter the banner leads, so don't flush).
-          <FeedList>
-            {visiblePosts.map((p, i) => (
-              <FeedCard
-                key={p.slug}
-                hideAuthor
-                flushTop={i === 0 && !activeTag}
-                item={{ ...p, author, viewCount: 0 }}
-                locale={locale}
-              />
-            ))}
-          </FeedList>
         )}
 
         <footer className="mt-16 flex items-center justify-between border-t border-slate-100 pt-8 dark:border-slate-800">

@@ -702,7 +702,9 @@
       "important": "महत्वपूर्ण",
       "warning": "चेतावनी",
       "caution": "सावधानी"
-    }
+    },
+    "activityPosts": "{count} पोस्ट",
+    "activitySince": "{date} से"
   },
   "imageCropper": {
     "title": "इमेज क्रॉप करें",

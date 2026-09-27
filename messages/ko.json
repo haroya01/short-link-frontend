@@ -702,7 +702,9 @@
       "important": "중요",
       "warning": "주의",
       "caution": "경고"
-    }
+    },
+    "activityPosts": "글 {count}편",
+    "activitySince": "{date}부터"
   },
   "meta": {
     "title": "kurl · URL 단축과 클릭 분석",

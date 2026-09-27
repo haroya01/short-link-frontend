@@ -702,7 +702,9 @@
       "important": "重要",
       "warning": "注意",
       "caution": "警告"
-    }
+    },
+    "activityPosts": "記事 {count}本",
+    "activitySince": "{date}から"
   },
   "imageCropper": {
     "title": "画像を切り抜く",

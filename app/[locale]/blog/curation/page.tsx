@@ -52,7 +52,7 @@ function Library() {
             aria-current={active ? "page" : undefined}
             className={`focus-ring flex min-h-12 items-center justify-center border-b-2 px-2 py-3 text-center text-[13px] font-medium transition-colors ${
               active
-                ? "border-accent-600 text-accent-700 dark:border-accent-500 dark:text-accent-400"
+                ? "border-slate-900 text-slate-900 dark:border-slate-100 dark:text-slate-100"
                 : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
             }`}
           >

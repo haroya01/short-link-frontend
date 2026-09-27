@@ -716,7 +716,9 @@
       "important": "Quan trọng",
       "warning": "Lưu ý",
       "caution": "Cảnh báo"
-    }
+    },
+    "activityPosts": "{count} bài viết",
+    "activitySince": "từ {date}"
   },
   "errors": {
     "LINK_NOT_FOUND": "Không tìm thấy liên kết.",
