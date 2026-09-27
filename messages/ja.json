@@ -997,6 +997,7 @@
     "customCodePlaceholder": "myLink2026",
     "expiresAtLabel": "有効期限 (任意)",
     "passwordToggle": "パスワードをかける",
+    "passwordLabel": "パスワード",
     "passwordPlaceholder": "リンクを開く人が入力するパスワード",
     "passwordHint": "パスワードを知っている人だけがリンク先に進めます。あとからリンク管理で変更・解除できます。",
     "errors": {
@@ -2151,7 +2152,9 @@
     "close": "閉じる",
     "loginRequired": "ログインが必要です。",
     "errorPrefix": "エラー:",
-    "offline": "オフラインです。接続が戻ると自動的に再試行します。"
+    "offline": "オフラインです。接続が戻ると自動的に再試行します。",
+    "showPassword": "パスワードを表示",
+    "hidePassword": "パスワードを隠す"
   },
   "notFound": {
     "title": "ページが見つかりません",

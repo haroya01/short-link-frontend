@@ -30,14 +30,45 @@ test.describe("password while shortening", () => {
     });
     await page.goto("/ko?stage=off");
 
+    const password = page.getByPlaceholder("링크를 여는 사람이 입력할 비밀번호");
+    await expect(password).toBeHidden();
     await page.getByRole("button", { name: "비밀번호 걸기" }).click();
-    await page.getByPlaceholder("링크를 여는 사람이 입력할 비밀번호").fill("open-sesame");
+    await expect(password).toBeVisible();
+    await expect(password).toBeFocused();
+    await password.pressSequentially("open-sesame");
+    await expect(password).toHaveAttribute("type", "password");
+
+    await page.getByRole("button", { name: "비밀번호 보기" }).click();
+    await expect(password).toHaveAttribute("type", "text");
+    await expect(password).toHaveValue("open-sesame");
+    await expect(password).toBeFocused();
+    await page.getByRole("button", { name: "비밀번호 숨기기" }).click();
+    await expect(password).toHaveAttribute("type", "password");
+
     await page.getByPlaceholder(/긴 주소를 여기에/).fill("https://example.com/private-deck");
     await page.getByRole("button", { name: "단축하기" }).click();
 
     const line = page.getByTestId("result-line").first();
     await expect(line.getByText("비밀번호 걸림")).toBeVisible({ timeout: 10000 });
     expect(sent).toMatchObject({ url: "https://example.com/private-deck", password: "open-sesame" });
+    await expect(password).toBeHidden();
+  });
+
+  test("the password field in link settings can be revealed too", async ({ page }) => {
+    await signIn(page);
+    await mockBackend(page);
+    await page.goto("/ko/dashboard");
+
+    await page.getByRole("button", { name: "더보기" }).first().click();
+    await page.getByRole("menuitem", { name: "편집" }).click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByRole("button", { name: "보호", exact: true }).click();
+    const field = dialog.locator('input[autocomplete="new-password"]');
+    await field.fill("s3cret");
+    await expect(field).toHaveAttribute("type", "password");
+    await dialog.getByRole("button", { name: "비밀번호 보기" }).click();
+    await expect(field).toHaveAttribute("type", "text");
+    await expect(field).toHaveValue("s3cret");
   });
 
   test("an empty password is caught before anything is sent", async ({ page }) => {

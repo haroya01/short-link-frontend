@@ -997,6 +997,7 @@
     "customCodePlaceholder": "lienKet2026",
     "expiresAtLabel": "Hết hạn lúc (tùy chọn)",
     "passwordToggle": "Đặt mật khẩu",
+    "passwordLabel": "Mật khẩu",
     "passwordPlaceholder": "Mật khẩu người mở liên kết phải nhập",
     "passwordHint": "Chỉ người biết mật khẩu mới đến được trang đích. Bạn có thể đổi hoặc gỡ sau trong phần quản lý liên kết.",
     "errors": {
@@ -2151,7 +2152,9 @@
     "close": "Đóng",
     "loginRequired": "Vui lòng đăng nhập.",
     "errorPrefix": "Lỗi:",
-    "offline": "Bạn đang ngoại tuyến. Chúng tôi sẽ tự động kết nối lại."
+    "offline": "Bạn đang ngoại tuyến. Chúng tôi sẽ tự động kết nối lại.",
+    "showPassword": "Hiện mật khẩu",
+    "hidePassword": "Ẩn mật khẩu"
   },
   "notFound": {
     "title": "Không tìm thấy trang",
