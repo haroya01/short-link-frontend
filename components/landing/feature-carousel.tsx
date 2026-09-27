@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowUpRight, BarChart3, Globe2, Sparkles } from "lucide-react";
+import { ArrowUpRight, BarChart3, Globe2, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAutoSlide } from "@/hooks/use-auto-slide";
 
@@ -49,7 +49,7 @@ type Feature = {
  */
 const FEATURES: Feature[] = [
   { key: "realtime", icon: BarChart3, preview: RealtimePreview },
-  { key: "insights", icon: Sparkles, preview: InsightsPreview },
+  { key: "insights", icon: TrendingUp, preview: InsightsPreview },
   { key: "abtest", icon: Globe2, preview: AbTestPreview },
 ];
 

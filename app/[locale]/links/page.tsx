@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { ShortenForm } from "@/components/links/shorten/form";
@@ -43,10 +43,10 @@ export default function HomePage() {
     locale === "ja"
       ? "text-[28px] leading-[1.12] min-[390px]:text-[29px] sm:text-[46px]"
       : locale === "en"
-        ? "text-[34px] leading-[1.08] min-[390px]:text-[36px] sm:text-[72px] sm:leading-[1.02]"
+        ? "text-[34px] leading-[1.14] min-[390px]:text-[36px] sm:text-[72px] sm:leading-[1.1]"
         : locale === "vi"
-          ? "text-[30px] leading-[1.08] min-[390px]:text-[32px] sm:text-[72px] sm:leading-[1.02]"
-          : "text-[38px] leading-[1.08] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.02]";
+          ? "text-[30px] leading-[1.14] min-[390px]:text-[32px] sm:text-[72px] sm:leading-[1.1]"
+          : "text-[38px] leading-[1.14] min-[390px]:text-[40px] sm:text-[72px] sm:leading-[1.1]";
   const [results, setResults] = useState<
     { res: CreateLinkResponse; original: string; passwordRequested?: boolean }[] | null
   >(null);
@@ -59,33 +59,25 @@ export default function HomePage() {
 
   return (
     <div>
-      {/*
-       * Hero — flat white surface (no mesh, no noise) so the typography carries the page on its
-       * own. The earlier version layered `hero-mesh + hero-noise + grid-bg` over a centered
-       * eyebrow / h1 / subhead, and the cumulative ornament read as busy rather than refined.
-       * Luxury / refined surfaces work through restraint — type hierarchy + spacing carry the
-       * page. Headline is Pretendard semibold across both lines (single family, no display
-       * swap) — the contrast between solid slate-900 line one and slate-500 line two is the
-       * editorial moment. The hairline eyebrow on either side of the tagline stays as a subtle
-       * grid-break, and the cascade-in still fires through `.hero-stagger`, opacity-only.
-       */}
       <section className="relative isolate overflow-hidden bg-white dark:bg-slate-950">
-        <div className="container relative z-10 max-w-3xl py-20 sm:py-28">
-          {/* "kurl v1" 아이브로+헤어라인은 철거 — 버전 배지는 방문자에게 무의미한 크롬이었고,
-              폴드는 헤드라인·폼 카드 둘만 남길수록 강해진다. */}
-          <div className="hero-stagger mb-10 space-y-5 sm:mb-12">
+        <div className="container relative z-10 max-w-5xl pb-12 pt-14 sm:pb-16 sm:pt-24">
+          <div className="hero-stagger mb-9 max-w-3xl space-y-5 sm:mb-11 sm:space-y-6">
             <h1
               data-testid="home-hero-heading"
-              className={`text-balance text-center font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
+              className={`text-balance font-bold tracking-[-0.035em] text-slate-900 dark:text-slate-100 ${headlineSizeClass}`}
               style={{ ["--hi" as string]: 1 } as React.CSSProperties}
             >
-              <span>{t("headline1")}</span>
+              <span>
+                {t.rich("headline1", {
+                  line: (chunks) => <span className="brand-underline">{chunks}</span>,
+                })}
+              </span>
               <br />
-              <span className="text-slate-500 dark:text-slate-400">{t("headline2")}</span>
+              <span className="font-medium">{t("headline2")}</span>
             </h1>
             <p
               data-testid="home-hero-subhead"
-              className="mx-auto max-w-[320px] text-balance text-center text-[14px] leading-[1.7] text-slate-500 dark:text-slate-400 sm:max-w-md sm:text-[15px] sm:leading-relaxed"
+              className="max-w-xl text-pretty text-[15px] leading-[1.65] text-slate-600 dark:text-slate-300 sm:text-[17px]"
               style={{ ["--hi" as string]: 2 } as React.CSSProperties}
             >
               <span className="sm:hidden">{t("mobileSubhead")}</span>
@@ -103,10 +95,10 @@ export default function HomePage() {
             className={"profile-fade" + (stage === "on" ? " stage-sweep-host" : "")}
             style={{ ["--idx" as string]: 4 } as React.CSSProperties}
           >
-            {/* 단축이 끝나면 입력 캡슐이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.
-                "다른 주소도 줄이기"를 누르면 빈 캡슐이 맨 위로 돌아오고 답들은
+            {/* 단축이 끝나면 입력 칸이 사라지고 그 자리에 답 줄(ResultLine)이 내려앉는다.
+                "다른 주소도 줄이기"를 누르면 빈 칸이 맨 위로 돌아오고 답들은
                 영수증처럼 아래로 밀린다. */}
-            <div className="mx-auto max-w-2xl">
+            <div className="max-w-2xl">
               {(!results || results.length === 0 || composing) && (
                 <ShortenForm
                   hero
@@ -155,7 +147,7 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => setComposing(true)}
-                      className="focus-ring result-enter inline-flex items-baseline gap-1.5 rounded-sm text-[14px] font-semibold text-slate-400 transition-colors hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-400"
+                      className="focus-ring result-enter inline-flex items-baseline gap-1.5 rounded-sm text-[14px] font-semibold text-slate-500 transition-colors hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-400"
                       style={{ ["--idx" as string]: results.length + 1 } as React.CSSProperties}
                     >
                       {tResult("moreShorten")}
@@ -169,31 +161,19 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="mt-6 min-h-[64px] space-y-3">
+          <div className="mt-5 min-h-[44px] max-w-2xl">
             {(!results || results.length === 0) && !authenticated ? (
-              <div className="space-y-2 text-center">
-                <p className="text-xs text-slate-500 dark:text-slate-400">{t("anonymousHint")}</p>
+              <p className="text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
+                {t("anonymousHint")}{" "}
                 <Link
                   href="/demo"
-                  className="inline-flex items-center gap-1 text-xs text-accent-700 dark:text-accent-400 hover:text-accent-800"
+                  className="focus-ring inline-flex items-center gap-1 whitespace-nowrap rounded-sm font-medium text-accent-700 underline-offset-4 hover:underline dark:text-accent-400"
                 >
-                  {t("demoLink")} <ArrowRight className="h-3 w-3" />
+                  {t("demoLink")} <ArrowRight aria-hidden className="h-3 w-3" />
                 </Link>
-              </div>
+              </p>
             ) : null}
           </div>
-        </div>
-
-        {/* Scroll cue — animated chevron + label below the fold-anchored hero so first-time
-            visitors see that the page continues past the input. The element is `absolute` inside
-            the hero, so it scrolls off with the hero itself once the user starts moving — no
-            JS to fade it out. `motion-safe:animate-bounce` opts out for prefers-reduced-motion. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-4 hidden flex-col items-center gap-0.5 text-[11px] font-medium text-slate-500 dark:text-slate-400 sm:flex"
-        >
-          <span>{t("scrollHint")}</span>
-          <ChevronDown className="h-4 w-4 motion-safe:animate-bounce" />
         </div>
       </section>
 
@@ -306,7 +286,7 @@ function Section({
         {hasHeader && (
           <div className="mb-10 space-y-3 text-center sm:mb-14">
             {eyebrow && (
-              <p className="font-mono text-[11px] uppercase tracking-tagline text-accent-700 dark:text-accent-400">
+              <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
                 {eyebrow}
               </p>
             )}

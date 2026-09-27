@@ -74,7 +74,7 @@ export function ResultLine({
       </div>
 
       <div
-        className="result-beat mt-2 flex flex-wrap items-center gap-x-3.5 gap-y-1 text-[12.5px] text-slate-400 dark:text-slate-500"
+        className="result-beat mt-2 flex flex-wrap items-center gap-x-3.5 gap-y-1 text-[13px] text-slate-500 dark:text-slate-400"
         style={{ ["--beat" as string]: 1 } as React.CSSProperties}
       >
         <span className="min-w-0 max-w-full truncate sm:max-w-[44ch]" title={originalUrl}>

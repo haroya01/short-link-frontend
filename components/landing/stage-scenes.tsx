@@ -2,10 +2,10 @@
 
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Meteors } from "@/components/landing/meteors";
 import { StatsHeroCore } from "@/components/links/stats/hero-panel";
 import { LiveClickFeedDemo } from "@/components/links/stats/live-click-feed-demo";
 import { Link } from "@/i18n/navigation";
+import { buildDemoHeadline } from "@/lib/demo-data";
 
 /**
  * 무대 랜딩 여정 장면 2·3 (vault: kurl-web-stage-design P1 — "잉크 스파인 + 딥그린 클라이맥스").
@@ -13,119 +13,93 @@ import { Link } from "@/i18n/navigation";
  * stage-journey.tsx.
  *
  * 장면 2 — 공유: 제품 실물 듀엣(단축 결과 카드 + 실제 LiveClickFeedDemo) — 추상 다이어그램 기각(2026-07-23).
- * 장면 3 — 분석 클라이맥스: 풀블리드 딥그린(accent-900) 필드 위에 라이트그린 데이터 드로잉
- *   (스파크라인 자가-드로잉·주간 막대 상승). kurl 의 "검정 무대"에 해당하는 유일한 색 필드.
+ * 장면 3 — 분석: 풀블리드 딥그린(accent-900) 필드 위에 라이트그린 데이터 드로잉
+ *   (스파크라인 자가-드로잉). 랜딩에서 유일한 색 필드.
  *
- * 데이터 드로잉은 전부 장식(aria-hidden) SVG/DOM — 수치·칩 라벨은 로케일 무관 데모 리터럴.
+ * 데이터 드로잉은 전부 장식(aria-hidden) SVG/DOM — 수치는 /demo 와 같은 데모 데이터(lib/demo-data).
  * 스크롤 연동/폴백/reduced-motion 규칙은 globals.css stage-* 블록이 소유(DESIGN.md §11).
  */
 
-// 장면 3 데모 시계열 — 실제 StatsHeroCore 가 그대로 그린다(우상향 11포인트).
-const DEMO_SERIES = [12, 20, 17, 32, 28, 46, 41, 62, 58, 84, 96];
+const DEMO = buildDemoHeadline();
 
 export function StageScenes() {
   const t = useTranslations("home.stage");
+  const tLive = useTranslations("stats.live");
 
   return (
     <>
-      {/* ── 장면 2: 공유 → 클릭 회귀 — 추상 다이어그램 대신 제품 실물 듀엣.
-          왼쪽 = 카피 + 단축 결과 카드(장식 데모), 오른쪽 = 실제 통계 화면의 LiveClickFeedDemo
-          컴포넌트 그대로(랜딩이 보여주는 것 = 실존 화면, StatsHeroCore 와 같은 계약). */}
-      <section className="bg-white dark:bg-slate-950">
-        <div className="container max-w-5xl pb-10 pt-16 sm:pb-14 sm:pt-24">
-          <div className="relative grid items-center gap-10 sm:grid-cols-2 sm:gap-14">
-            {/* 결과 카드 → 라이브 피드로 나는 링크 칩 — "공유하면 클릭이 돌아온다"의 궤적.
-                데스크탑 전용 장식, reduced-motion 제거. */}
-            <span
-              aria-hidden
-              className="s2-fly pointer-events-none absolute left-[16%] top-[68%] z-10 hidden select-none items-center gap-1 rounded-full border border-accent-300/60 bg-white px-2.5 py-1 font-mono text-[11px] font-semibold text-accent-700 shadow-sm dark:border-accent-700/60 dark:bg-slate-950 dark:text-accent-400 sm:inline-flex"
-            >
-              kurl.me/demo01
-            </span>
+      <section className="border-t border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
+        <div className="container max-w-5xl py-16 sm:py-20">
+          <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-14">
             {/* min-w-0: 그리드 아이템의 기본 min-width 는 auto 라 트랙이 콘텐츠의 min-content 아래로
-                못 줄어든다. 아래 카드의 긴 원본 URL 은 truncate(=nowrap) 라 min-content 가 449px 로
+                못 줄어든다. 아래 원본 URL 은 truncate(=nowrap) 라 min-content 가 449px 로
                 잡히고, 그게 1열 트랙을 469px 로 벌려 390 화면 전체를 79px 가로 스크롤시켰다
                 (헤더·쿠키바·하단탭이 같이 어긋남). truncate 는 줄일 수 있는 부모가 있어야 동작한다. */}
             <div className="min-w-0 space-y-4">
-              <p className="text-[13px] font-semibold text-slate-500 dark:text-slate-400">
+              <p className="text-[13px] font-semibold text-accent-700 dark:text-accent-400">
                 {t("scene2Eyebrow")}
               </p>
-              <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
+              <h2 className="text-balance text-headline-sm font-bold tracking-headline text-slate-900 dark:text-slate-100 sm:text-headline-lg">
                 {t("scene2Title")}
               </h2>
-              <p className="max-w-md text-balance text-[14px] leading-relaxed text-slate-500 dark:text-slate-400 sm:text-[15px]">
+              <p className="max-w-md text-pretty text-[15px] leading-relaxed text-slate-600 dark:text-slate-300 sm:text-[16px]">
                 {t("scene2Desc")}
               </p>
-              <div
-                aria-hidden
-                className="select-none rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_16px_44px_-24px_rgba(5,150,105,0.4)] dark:border-slate-700 dark:bg-slate-900"
-              >
-                <span className="block font-mono text-[16px] font-bold tracking-tight text-accent-700 dark:text-accent-400">
-                  kurl.me/demo01
+              <div aria-hidden className="select-none border-l-2 border-accent-600 py-1 pl-4 dark:border-accent-500">
+                <span className="block font-mono text-[17px] font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+                  <span className="text-slate-400 dark:text-slate-500">kurl.me/</span>demo01
                 </span>
-                <span className="mt-1 block truncate text-xs text-slate-500 dark:text-slate-400">
+                <span className="mt-1 block truncate text-[13px] text-slate-500 dark:text-slate-400">
                   https://your-very-long-url.com/path?with=query
                 </span>
               </div>
             </div>
-            {/* 실제 통계 화면의 라이브 피드가 그대로 — 행이 3.2초마다 실제로 도착한다 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_20px_56px_-28px_rgba(15,23,42,0.28)] dark:border-slate-800 dark:bg-slate-900">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
               <LiveClickFeedDemo />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── 장면 3: 분석 클라이맥스 — 딥그린 필드 ─────────────────── */}
-      <section className="bg-white pt-4 dark:bg-slate-950 sm:pt-8">
-        {/* 필드(딥그린 판)는 항상 완전 불투명 — 판 자체에 stage-rise 를 걸면 진입 내내
-            빛바랜 반투명 슬래브로 노출된다("물드는" 어색함). 종이처럼 그냥 스크롤되어
-            들어오고, 떠오르는 건 안의 콘텐츠만. */}
-        <div className="relative overflow-hidden bg-accent-900 sm:mx-4 sm:rounded-2xl xl:mx-8">
-          {/* 딥그린 필드의 유성층 — Magic UI Meteors 포팅. 콘텐츠 뒤에 깔린다. */}
-          <div aria-hidden className="pointer-events-none absolute inset-0 hidden sm:block">
-            <Meteors number={6} className="text-accent-300" />
-          </div>
-          <div className="stage-rise container max-w-5xl py-16 sm:py-24">
-            <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
-              <div className="space-y-4">
-                <p className="text-[13px] font-semibold text-accent-100/80">
-                  {t("scene3Eyebrow")}
-                </p>
-                <h2 className="text-balance text-headline-sm font-semibold tracking-headline text-white sm:text-headline-lg">
-                  {t("scene3Title")}
-                </h2>
-                <p className="max-w-md text-balance text-[14px] leading-relaxed text-accent-100/80 sm:text-[15px]">
-                  {t("scene3Desc")}
-                </p>
-                <div className="flex flex-wrap items-center gap-3 pt-2">
-                  <Link
-                    href="/demo"
-                    className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2.5 text-sm font-medium text-accent-900 transition hover:bg-accent-50"
-                  >
-                    {t("scene3CtaDemo")} <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <Link
-                    href="/login"
-                    className="focus-ring inline-flex items-center rounded-full border border-accent-300/40 px-4 py-2.5 text-sm text-accent-100 transition hover:border-accent-300/70 hover:text-white"
-                  >
-                    {t("scene3CtaStart")}
-                  </Link>
-                </div>
+      <section className="bg-accent-900">
+        <div className="stage-rise container max-w-5xl py-16 sm:py-24">
+          <div className="grid items-center gap-10 sm:grid-cols-2 sm:gap-12">
+            <div className="space-y-4">
+              <p className="text-[13px] font-semibold text-accent-200">{t("scene3Eyebrow")}</p>
+              <h2 className="text-balance text-headline-sm font-bold tracking-headline text-white sm:text-headline-lg">
+                {t("scene3Title")}
+              </h2>
+              <p className="max-w-md text-pretty text-[15px] leading-relaxed text-accent-100/85 sm:text-[16px]">
+                {t("scene3Desc")}
+              </p>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-3">
+                <Link
+                  href="/demo"
+                  className="focus-ring inline-flex h-11 items-center gap-1.5 rounded-lg bg-white px-5 text-[15px] font-semibold text-accent-900 transition-colors hover:bg-accent-50"
+                >
+                  {t("scene3CtaDemo")} <ArrowRight aria-hidden className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/login"
+                  className="focus-ring rounded-sm text-[15px] font-medium text-accent-100 underline decoration-accent-300/50 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+                >
+                  {t("scene3CtaStart")}
+                </Link>
               </div>
+            </div>
 
-              {/* 통계 히어로 패널 — 실제 통계 화면(StatsCards 히어로)과 동일한 StatsHeroCore.
-                  랜딩이 보여주는 카드 = 제품에 실존하는 카드 (과장광고 방지 계약). */}
-              <div aria-hidden className="select-none">
-                <StatsHeroCore
-                  label={t("scene3Eyebrow")}
-                  caption="30d · human 92%"
-                  total={1247}
-                  series={DEMO_SERIES}
-                  draw="scroll"
-                  className="border border-accent-300/15 bg-accent-800/40"
-                />
-              </div>
+            {/* 통계 히어로 패널 — 실제 통계 화면(StatsCards 히어로)과 동일한 StatsHeroCore.
+                랜딩이 보여주는 카드 = 제품에 실존하는 카드 (과장광고 방지 계약). */}
+            <div aria-hidden className="select-none">
+              <StatsHeroCore
+                label={t("scene3Eyebrow")}
+                caption={t("scene3Caption", { human: Math.round(DEMO.humanRatio * 100) })}
+                total={DEMO.total}
+                series={DEMO.series}
+                draw="scroll"
+                badge={tLive("example")}
+                className="border border-accent-300/15 bg-accent-800/40"
+              />
             </div>
           </div>
         </div>

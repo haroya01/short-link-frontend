@@ -4,7 +4,7 @@ import { cn, formatNumber } from "@/lib/utils";
 type Props = {
   /** 좌상단 라벨 (호출부에서 로케일 처리) */
   label: string;
-  /** 우상단 mono 캡션 — 예: "30D · HUMAN 92%" */
+  /** 우상단 캡션 — 예: "최근 30일 · 사람 92%" */
   caption: string;
   /** 표시 수치 (카운트업이 필요하면 호출부에서 애니메이트된 값을 넘긴다) */
   total: number;
@@ -17,6 +17,8 @@ type Props = {
    *  static = 항상 완성 상태 (프리렌더/RM 폴백은 CSS 가 소유)
    */
   draw?: "mount" | "scroll" | "static";
+  /** 라벨 옆 표시 — 랜딩처럼 데모 수치를 보여 줄 때 "예시" */
+  badge?: string;
   className?: string;
 };
 
@@ -25,18 +27,19 @@ type Props = {
  * **같은 컴포넌트**를 렌더한다. 랜딩이 보여주는 카드 = 제품에 실존하는 카드라는 계약
  * (과장광고 방지)이므로, 이 파일을 고치면 두 표면이 함께 변한다는 걸 전제로 고칠 것.
  */
-function StatsHeroCoreImpl({ label, caption, total, series, draw = "static", className }: Props) {
+function StatsHeroCoreImpl({ label, caption, total, series, draw = "static", badge, className }: Props) {
   const gradId = useId();
   const points = buildPoints(series);
   return (
     <div className={cn("flex flex-col rounded-2xl bg-accent-900 p-5", className)}>
       <div className="flex items-baseline justify-between gap-3">
-        <span className="text-[10px] font-semibold uppercase tracking-tagline text-accent-300">
+        <span className="inline-flex items-center gap-2 text-[12px] font-semibold text-accent-200">
           {label}
+          {badge && (
+            <span className="rounded bg-accent-800 px-1.5 py-0.5 text-[11px] font-medium text-accent-100">{badge}</span>
+          )}
         </span>
-        <span className="tabular-nums text-[11px] uppercase tracking-tagline text-accent-300">
-          {caption}
-        </span>
+        <span className="tabular-nums text-[12px] text-accent-200/80">{caption}</span>
       </div>
       <p className="mt-3 text-[34px] font-bold leading-none tracking-tight tabular-nums text-white">
         {formatNumber(total)}
