@@ -1734,6 +1734,13 @@
       "failed": "Couldn't save protection settings.",
       "loadFailed": "Couldn’t load the current protection settings, so saving is disabled. Please refresh."
     },
+    "visit": {
+      "title": "When someone opens the link",
+      "openInBrowser": "Open in the default browser from KakaoTalk and LINE",
+      "openInBrowserDesc": "Sign-in, payments and downloads can fail inside in-app browsers. When on, people who tap the link in KakaoTalk or LINE continue in their default browser.",
+      "failed": "Couldn’t update the setting.",
+      "loadFailed": "Couldn’t load the settings. Please refresh."
+    },
     "analysisTabs": {
       "when": "Trends",
       "where": "Sources",
