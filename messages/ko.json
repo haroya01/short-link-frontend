@@ -1752,7 +1752,11 @@
       "splashMessageRequired": "안내 문구를 입력해 주세요.",
       "save": "저장",
       "saved": "저장했어요.",
-      "unsaved": "저장하지 않은 변경이 있어요"
+      "unsaved": "저장하지 않은 변경이 있어요",
+      "schedule": "공개 예약",
+      "scheduleDesc": "정한 시각 전에 연 사람에게는 ‘아직 열리지 않은 링크예요’를 보여줘요. 미리보기 카드는 그대로 보여요.",
+      "scheduleAt": "여는 시각",
+      "scheduleInPast": "지금보다 뒤 시각을 골라 주세요."
     },
     "analysisTabs": {
       "when": "클릭 추이",

@@ -12,6 +12,20 @@ import { getLinkDetail, setLinkVisitOptions } from "@/lib/api/links";
 import type { LinkSplash } from "@/types";
 
 const SPLASH_OFF: LinkSplash = { enabled: false, message: null, seconds: 3, ctaId: null };
+
+function toLocalInput(iso: string): string {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function tomorrowMorning(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(9, 0, 0, 0);
+  return toLocalInput(d.toISOString());
+}
+
 const SECONDS = [1, 2, 3, 5];
 const MESSAGE_MAX = 280;
 
@@ -24,9 +38,12 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
   const [busy, setBusy] = useState(false);
   const [splash, setSplash] = useState<LinkSplash>(SPLASH_OFF);
   const [draft, setDraft] = useState<LinkSplash>(SPLASH_OFF);
-  const [savingSplash, setSavingSplash] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [messageError, setMessageError] = useState(false);
   const [ctas, setCtas] = useState<CtaView[]>([]);
+  const [opensAt, setOpensAt] = useState<string | null>(null);
+  const [schedule, setSchedule] = useState({ on: false, local: "" });
+  const [scheduleError, setScheduleError] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -38,6 +55,8 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
         setOpenInBrowser(Boolean(detail.openInBrowser));
         setSplash(detail.splash ?? SPLASH_OFF);
         setDraft(detail.splash ?? SPLASH_OFF);
+        setOpensAt(detail.opensAt ?? null);
+        setSchedule({ on: Boolean(detail.opensAt), local: detail.opensAt ? toLocalInput(detail.opensAt) : "" });
       })
       .catch(() => active && setLoadFailed(true));
     listMyCtas()
@@ -64,29 +83,48 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
     }
   }
 
-  const dirty =
+  const splashDirty =
     draft.enabled !== splash.enabled ||
     (draft.message ?? "") !== (splash.message ?? "") ||
     draft.seconds !== splash.seconds ||
     draft.ctaId !== splash.ctaId;
+  const scheduleDirty =
+    schedule.on !== Boolean(opensAt) ||
+    (schedule.on && schedule.local !== (opensAt ? toLocalInput(opensAt) : ""));
+  const dirty = splashDirty || scheduleDirty;
 
-  async function saveSplash() {
-    if (savingSplash || !dirty) return;
-    if (draft.enabled && !draft.message?.trim()) {
+  async function saveChanges() {
+    if (saving || !dirty) return;
+    if (splashDirty && draft.enabled && !draft.message?.trim()) {
       setMessageError(true);
       return;
     }
-    setSavingSplash(true);
+    const opensAtValue = schedule.on && schedule.local ? new Date(schedule.local) : null;
+    if (scheduleDirty && schedule.on && (!opensAtValue || opensAtValue.getTime() <= Date.now())) {
+      setScheduleError(true);
+      return;
+    }
+    setSaving(true);
     try {
-      const saved = await setLinkVisitOptions(shortCode, { splash: draft });
+      const saved = await setLinkVisitOptions(shortCode, {
+        ...(splashDirty ? { splash: draft } : {}),
+        ...(scheduleDirty
+          ? schedule.on && opensAtValue
+            ? { opensAt: opensAtValue.toISOString() }
+            : { clearOpensAt: true }
+          : {}),
+      });
       const next = saved.splash ?? draft;
       setSplash(next);
       setDraft(next);
+      const nextOpensAt = saved.opensAt ?? null;
+      setOpensAt(nextOpensAt);
+      setSchedule({ on: Boolean(nextOpensAt), local: nextOpensAt ? toLocalInput(nextOpensAt) : "" });
       toast(t("saved"), "success");
     } catch (e) {
       toast(toMessage(e, t("failed")), "error");
     } finally {
-      setSavingSplash(false);
+      setSaving(false);
     }
   }
 
@@ -126,7 +164,7 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
           </div>
           <Switch
             checked={draft.enabled}
-            disabled={loading || savingSplash}
+            disabled={loading || saving}
             labelledBy="visit-splash"
             onToggle={() => setDraft((d) => ({ ...d, enabled: !d.enabled }))}
           />
@@ -143,7 +181,7 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
                 placeholder={t("splashMessagePlaceholder")}
                 aria-invalid={messageError}
                 aria-describedby="visit-splash-message-note"
-                disabled={savingSplash}
+                disabled={saving}
                 className={`mt-1 ${messageError ? "border-red-400 focus:ring-red-400 dark:border-red-500/70" : ""}`}
                 onChange={(e) => {
                   setDraft((d) => ({ ...d, message: e.target.value }));
@@ -175,7 +213,7 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
                     type="button"
                     role="radio"
                     aria-checked={draft.seconds === n}
-                    disabled={savingSplash}
+                    disabled={saving}
                     onClick={() => setDraft((d) => ({ ...d, seconds: n }))}
                     className={
                       "focus-ring rounded-md px-3 py-1 text-[12px] font-medium tabular-nums transition " +
@@ -195,7 +233,7 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
               <span className="mt-1 flex flex-wrap items-center gap-3">
                 <select
                   value={draft.ctaId ?? ""}
-                  disabled={savingSplash}
+                  disabled={saving}
                   onChange={(e) =>
                     setDraft((d) => ({ ...d, ctaId: e.target.value ? Number(e.target.value) : null }))
                   }
@@ -216,9 +254,56 @@ export function LinkVisitSection({ shortCode }: { shortCode: string }) {
           </div>
         )}
 
+      </div>
+
+      <div className="mt-4 border-t border-slate-100 pt-4 dark:border-slate-800">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p id="visit-schedule" className="text-[13px] font-medium text-slate-900 dark:text-slate-100">
+              {t("schedule")}
+            </p>
+            <p className="mt-1 text-[12px] leading-relaxed text-slate-500 dark:text-slate-400">
+              {t("scheduleDesc")}
+            </p>
+          </div>
+          <Switch
+            checked={schedule.on}
+            disabled={loading || saving}
+            labelledBy="visit-schedule"
+            onToggle={() => {
+              setScheduleError(false);
+              setSchedule((s) => ({ on: !s.on, local: s.local || tomorrowMorning() }));
+            }}
+          />
+        </div>
+        {schedule.on && (
+          <label className="mt-3 block">
+            <span className="text-[12px] font-medium text-slate-700 dark:text-slate-300">{t("scheduleAt")}</span>
+            <input
+              type="datetime-local"
+              value={schedule.local}
+              disabled={saving}
+              aria-invalid={scheduleError}
+              onChange={(e) => {
+                setSchedule((s) => ({ ...s, local: e.target.value }));
+                if (scheduleError) setScheduleError(false);
+              }}
+              className={
+                "mt-1 block h-9 rounded-md border bg-white px-2 text-[13px] text-slate-900 dark:bg-slate-900 dark:text-slate-100 dark:[color-scheme:dark] " +
+                (scheduleError ? "border-red-400 dark:border-red-500/70" : "border-slate-300 dark:border-slate-700")
+              }
+            />
+            {scheduleError && (
+              <span role="alert" className="mt-1 block text-[11px] text-red-600 dark:text-red-400">
+                {t("scheduleInPast")}
+              </span>
+            )}
+          </label>
+        )}
+
         <div className="mt-3 flex items-center justify-end gap-3">
           {dirty && <span className="text-[12px] text-slate-500 dark:text-slate-400">{t("unsaved")}</span>}
-          <Button variant="accent" size="sm" onClick={() => void saveSplash()} disabled={!dirty || savingSplash || loading}>
+          <Button variant="accent" size="sm" onClick={() => void saveChanges()} disabled={!dirty || saving || loading}>
             {t("save")}
           </Button>
         </div>

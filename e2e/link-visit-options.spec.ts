@@ -60,6 +60,26 @@ test.describe("visit options", () => {
     expect(sent).toEqual({ splash: { enabled: true, message: "쿠폰 SPRING20", seconds: 5, ctaId: 9 } });
   });
 
+  test("the owner schedules when the link opens", async ({ page }) => {
+    let sent: { opensAt?: string } | undefined;
+    await signIn(page);
+    await mockBackend(page, {
+      [`PATCH /api/v1/links/${CODE}/visit-options`]: (route) => {
+        sent = JSON.parse(route.request().postData() ?? "{}");
+        return route.fulfill({ json: { shortCode: CODE, openInBrowser: false, opensAt: sent?.opensAt ?? null } });
+      },
+    });
+    await page.goto(`/ko/stats/${CODE}#settings`);
+
+    const section = page.locator("section", { hasText: "방문자가 열 때" });
+    await section.getByRole("switch", { name: "공개 예약" }).click();
+    await section.getByLabel("여는 시각").fill("2099-05-01T10:30");
+    await section.getByRole("button", { name: "저장" }).click();
+
+    await expect(page.getByText("저장했어요.")).toBeVisible();
+    expect(sent?.opensAt).toBe(await page.evaluate(() => new Date("2099-05-01T10:30").toISOString()));
+  });
+
   test("a failed save puts the switch back", async ({ page }) => {
     await signIn(page);
     await mockBackend(page, {

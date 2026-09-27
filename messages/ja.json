@@ -1752,7 +1752,11 @@
       "splashMessageRequired": "お知らせを入力してください。",
       "save": "保存",
       "saved": "保存しました。",
-      "unsaved": "未保存の変更があります"
+      "unsaved": "未保存の変更があります",
+      "schedule": "公開予約",
+      "scheduleDesc": "この日時より前に開いた人には「まだ公開前のリンクです」と表示します。プレビューカードはそのまま表示されます。",
+      "scheduleAt": "公開日時",
+      "scheduleInPast": "現在より後の日時を選んでください。"
     },
     "analysisTabs": {
       "when": "クリック推移",
