@@ -1752,7 +1752,11 @@
       "splashMessageRequired": "Vui lòng nhập thông báo.",
       "save": "Lưu",
       "saved": "Đã lưu.",
-      "unsaved": "Có thay đổi chưa lưu"
+      "unsaved": "Có thay đổi chưa lưu",
+      "schedule": "Hẹn giờ mở",
+      "scheduleDesc": "Trước thời điểm này, người mở sẽ thấy “Liên kết này chưa mở”. Thẻ xem trước vẫn hiển thị.",
+      "scheduleAt": "Mở lúc",
+      "scheduleInPast": "Vui lòng chọn thời điểm trong tương lai."
     },
     "analysisTabs": {
       "when": "Xu hướng nhấp",

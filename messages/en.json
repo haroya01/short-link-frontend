@@ -1752,7 +1752,11 @@
       "splashMessageRequired": "Write a note first.",
       "save": "Save",
       "saved": "Saved.",
-      "unsaved": "Unsaved changes"
+      "unsaved": "Unsaved changes",
+      "schedule": "Schedule opening",
+      "scheduleDesc": "Before this time, people see “This link isn’t open yet”. Link previews still show the card.",
+      "scheduleAt": "Opens at",
+      "scheduleInPast": "Pick a time in the future."
     },
     "analysisTabs": {
       "when": "Trends",

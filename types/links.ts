@@ -79,6 +79,7 @@ export type LinkDetail = {
   expiredMessage: string | null;
   openInBrowser?: boolean;
   splash?: LinkSplash;
+  opensAt?: string | null;
 };
 
 export type LinkSplash = {
@@ -91,12 +92,15 @@ export type LinkSplash = {
 export type LinkVisitOptions = {
   openInBrowser?: boolean;
   splash?: LinkSplash;
+  opensAt?: string;
+  clearOpensAt?: boolean;
 };
 
 export type LinkVisitOptionsResponse = {
   shortCode: string;
   openInBrowser: boolean;
   splash?: LinkSplash;
+  opensAt?: string | null;
 };
 
 export type OgOverrideRequest = {
