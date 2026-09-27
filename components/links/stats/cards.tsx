@@ -33,7 +33,7 @@ type Props = {
 /**
  * Six-up KPI grid that anchors the stats page. Hero (total clicks) is a {@code rounded-2xl}
  * flat card sized 1.5× the others so the eye lands there first; satellite cards are also
- * {@code rounded-2xl} per AGENTS §1 (16 px canonical corner token). Each card is clickable — jump-scrolls
+ * {@code rounded-2xl} per DESIGN.md §1 (16 px canonical corner token). Each card is clickable — jump-scrolls
  * to the matching detail section, turning the KPI grid into a navigation control rather than
  * dead chrome. Hover state lifts each card {@code -translate-y-0.5} + soft shadow; active state
  * snaps it back with a {@code scale(0.99)} press tactile.

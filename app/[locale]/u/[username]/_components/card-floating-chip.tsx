@@ -4,7 +4,7 @@ type Position = "top-left" | "top-right";
 
 type Props = {
   position: Position;
-  /** Optional leading icon — sized at h-3 w-3 to match floating-chip rules in AGENTS.md §1. */
+  /** Optional leading icon — sized at h-3 w-3 to match floating-chip rules in DESIGN.md §1. */
   icon?: ReactNode;
   children: ReactNode;
 };
@@ -16,7 +16,7 @@ type Props = {
  * future Visual-first card that wants the same affordance.
  *
  * <p>Dark glass surface (`bg-black/60 backdrop-blur-sm`) reads consistently across the photo's
- * own color palette — a light chip would disappear over bright shots. AGENTS.md §4 calls this out
+ * own color palette — a light chip would disappear over bright shots. DESIGN.md §4 calls this out
  * as the standard for floating pills.
  */
 export function CardFloatingChip({ position, icon, children }: Props) {

@@ -187,7 +187,7 @@ export function EventEntryCard({ id, content, colors, fadeStyle }: Props) {
           ) : (
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
-                {/* Primary CTA shell uses the AGENTS.md §1 token (h-10 rounded-lg text-[13px]) so
+                {/* Primary CTA shell uses the DESIGN.md §1 token (h-10 rounded-lg text-[13px]) so
                     this button matches PlaceEntry 길찾기 / ContactCard 연락처 저장 / EmailForm
                     submit. Earlier rounded-md + py-2 made the event CTA half a notch shorter than
                     its siblings and visibly off-brand on a profile that mixed both archetypes. */}

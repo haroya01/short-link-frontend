@@ -26,9 +26,9 @@ import { Link } from "@/i18n/navigation";
  * stats card; per the "100% mirror" rule (cards point to real pages) we dropped it until that
  * surface ships.
  *
- * Layout follows the AGENTS.md Information archetype: each card is a
+ * Layout follows the DESIGN.md Information archetype: each card is a
  * {@code .profile-card-static}-style surface with {@code rounded-2xl}, fixed padding rhythm,
- * and the brand-green accent token. Labels and descriptions follow the AGENTS.md typo scale
+ * and the brand-green accent token. Labels and descriptions follow the DESIGN.md typo scale
  * (level 5 title / level 3 desc) so the strip reads at the same density as the public-profile
  * feed below.
  */
@@ -75,7 +75,7 @@ export function LandingPreviews() {
         </div>
         {/*
          * Asymmetric grid — featured card spans 2 columns on desktop, the remaining two stack to
-         * the right. Per AGENTS.md 1-primary rule we keep the same archetype (Information) but
+         * the right. Per DESIGN.md 1-primary rule we keep the same archetype (Information) but
          * grid-break the first card so the page stops reading as "three identical tiles" which
          * was the largest "AI slop" tell in the original layout. On mobile the cards collapse
          * to a single stack so nothing fights for width.

@@ -12,7 +12,7 @@ export function BrandTick() {
 /**
  * Section label used across the blog's rails and grouped sections (Writers / Topics / Series / Tags /
  * Archive / …). Deliberately not uppercase/tracked: that reads as Latin chrome and spaces Hangul/Kana
- * awkwardly (this is a ja/ko-first product). Radius/shadow untouched per the AGENTS.md design system.
+ * awkwardly (this is a ja/ko-first product). Radius/shadow untouched per the DESIGN.md design system.
  */
 export function RailHeading({ children, className }: { children: ReactNode; className?: string }) {
   return (
