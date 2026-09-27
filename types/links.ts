@@ -80,6 +80,15 @@ export type LinkDetail = {
   openInBrowser?: boolean;
   splash?: LinkSplash;
   opensAt?: string | null;
+  destinationHealth?: DestinationHealth | null;
+};
+
+export type DestinationHealth = {
+  broken: boolean;
+  failure: "NOT_FOUND" | "GONE" | "NO_HOST" | null;
+  httpStatus: number | null;
+  brokenSince: string | null;
+  checkedAt: string;
 };
 
 export type LinkSplash = {
