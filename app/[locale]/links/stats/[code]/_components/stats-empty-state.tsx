@@ -17,7 +17,7 @@ export function StatsEmptyState({ shortUrl }: { shortUrl: string }) {
       <p className="mt-5 border-l-2 border-accent-600 py-0.5 pl-3 font-mono text-[17px] font-semibold tracking-tight text-slate-900 dark:border-accent-500 dark:text-slate-100">
         {slash > 0 ? (
           <>
-            <span className="text-slate-400 dark:text-slate-500">{display.slice(0, slash + 1)}</span>
+            <span className="text-slate-500 dark:text-slate-400">{display.slice(0, slash + 1)}</span>
             {display.slice(slash + 1)}
           </>
         ) : (

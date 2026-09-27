@@ -47,7 +47,7 @@ export function StageScenes() {
               </p>
               <div aria-hidden className="select-none border-l-2 border-accent-600 py-1 pl-4 dark:border-accent-500">
                 <span className="block font-mono text-[17px] font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-                  <span className="text-slate-400 dark:text-slate-500">kurl.me/</span>demo01
+                  <span className="text-slate-500 dark:text-slate-400">kurl.me/</span>demo01
                 </span>
                 <span className="mt-1 block truncate text-[13px] text-slate-500 dark:text-slate-400">
                   https://your-very-long-url.com/path?with=query
