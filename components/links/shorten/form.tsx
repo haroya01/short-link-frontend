@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ChevronDown, Link2, Loader2, Lock } from "lucide-react";
+import { ArrowRight, ChevronDown, Link2, Loader2, Lock, LockOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { ApiError, isValidUrl, shortenUrl } from "@/lib/api";
 import { prewarmPowToken } from "@/lib/pow";
 import { track } from "@/components/common/posthog-provider";
@@ -54,6 +55,12 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
       prewarmPowToken();
     }
   }, [ready, authenticated]);
+
+  useEffect(() => {
+    if (!lockOn) return;
+    const frame = requestAnimationFrame(() => passwordInputRef.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(frame);
+  }, [lockOn]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -253,46 +260,62 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
                   : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
               }`}
             >
-              <Lock aria-hidden className="h-3.5 w-3.5" />
+              {lockOn ? <Lock aria-hidden className="h-3.5 w-3.5" /> : <LockOpen aria-hidden className="h-3.5 w-3.5" />}
               {t("passwordToggle")}
             </button>
           </div>
-          {lockOn && (
-            <div id="shorten-password-row" className="mt-2 space-y-1.5">
-              <Input
-                ref={passwordInputRef}
-                type="password"
-                autoComplete="new-password"
-                maxLength={200}
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (passwordError) setPasswordError(null);
-                }}
-                placeholder={t("passwordPlaceholder")}
-                aria-label={t("passwordPlaceholder")}
-                aria-invalid={!!passwordError}
-                aria-describedby="shorten-password-note"
-                className={`h-9 text-sm sm:max-w-sm ${passwordError ? "border-red-400 focus-visible:ring-red-400 dark:border-red-500/70 dark:focus-visible:ring-red-500/70" : ""}`}
-                disabled={busy}
-                autoFocus
-              />
-              {passwordError ? (
-                <p
-                  id="shorten-password-note"
-                  role="alert"
-                  className="flex items-center gap-2 text-[12px] font-medium text-red-600 dark:text-red-400"
+          <div
+            id="shorten-password-row"
+            aria-hidden={!lockOn}
+            className={`grid transition-[grid-template-rows,opacity] duration-[280ms] ease-[var(--ease)] motion-reduce:transition-none ${
+              lockOn ? "mt-2 grid-rows-[1fr] opacity-100" : "mt-0 grid-rows-[0fr] opacity-0"
+            }`}
+          >
+            <div className="overflow-hidden">
+              <div className="space-y-1.5 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:p-5">
+                <label
+                  htmlFor="shorten-password"
+                  className="block text-[12px] font-medium text-slate-700 dark:text-slate-300"
                 >
-                  <span aria-hidden className="h-[3px] w-3.5 shrink-0 rounded-full bg-red-500 dark:bg-red-400" />
-                  {passwordError}
-                </p>
-              ) : (
-                <p id="shorten-password-note" className="text-[12px] text-slate-500 dark:text-slate-400">
-                  {t("passwordHint")}
-                </p>
-              )}
+                  {t("passwordLabel")}
+                </label>
+                <div className="sm:max-w-sm">
+                  <PasswordInput
+                    key={lockOn ? "open" : "closed"}
+                    id="shorten-password"
+                    ref={passwordInputRef}
+                    autoComplete="new-password"
+                    maxLength={200}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (passwordError) setPasswordError(null);
+                    }}
+                    placeholder={t("passwordPlaceholder")}
+                    aria-invalid={!!passwordError}
+                    aria-describedby="shorten-password-note"
+                    className={`h-9 text-sm ${passwordError ? "border-red-400 focus-visible:ring-red-400 dark:border-red-500/70 dark:focus-visible:ring-red-500/70" : ""}`}
+                    disabled={busy || !lockOn}
+                  />
+                </div>
+                {passwordError ? (
+                  <p
+                    key={passwordError}
+                    id="shorten-password-note"
+                    role="alert"
+                    className="motion-safe:animate-[err-nudge_240ms_var(--ease)] flex items-center gap-2 text-[12px] font-medium text-red-600 dark:text-red-400"
+                  >
+                    <span aria-hidden className="h-[3px] w-3.5 shrink-0 rounded-full bg-red-500 dark:bg-red-400" />
+                    {passwordError}
+                  </p>
+                ) : (
+                  <p id="shorten-password-note" className="text-[12px] text-slate-500 dark:text-slate-400">
+                    {t("passwordHint")}
+                  </p>
+                )}
+              </div>
             </div>
-          )}
+          </div>
           {/*
            * Grid-rows trick for "auto height" reveal animations: an outer grid container animates
            * between `grid-rows-[0fr]` (collapsed) and `grid-rows-[1fr]` (expanded), and the inner

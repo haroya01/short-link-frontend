@@ -997,6 +997,7 @@
     "customCodePlaceholder": "myLink2026",
     "expiresAtLabel": "Expires at (optional)",
     "passwordToggle": "Add a password",
+    "passwordLabel": "Password",
     "passwordPlaceholder": "Password visitors must enter",
     "passwordHint": "Only people with the password reach the destination. You can change or remove it later in the link settings.",
     "errors": {
@@ -2151,7 +2152,9 @@
     "close": "Close",
     "loginRequired": "Please sign in.",
     "errorPrefix": "Error:",
-    "offline": "You're offline. We'll reconnect automatically."
+    "offline": "You're offline. We'll reconnect automatically.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "notFound": {
     "title": "Page not found",

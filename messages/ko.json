@@ -997,6 +997,7 @@
     "customCodePlaceholder": "myLink2026",
     "expiresAtLabel": "만료 일시 (선택)",
     "passwordToggle": "비밀번호 걸기",
+    "passwordLabel": "비밀번호",
     "passwordPlaceholder": "링크를 여는 사람이 입력할 비밀번호",
     "passwordHint": "비밀번호를 아는 사람만 목적지로 넘어가요. 나중에 링크 관리에서 바꾸거나 풀 수 있어요.",
     "errors": {
@@ -2151,7 +2152,9 @@
     "close": "닫기",
     "loginRequired": "로그인이 필요합니다.",
     "errorPrefix": "에러:",
-    "offline": "오프라인 상태예요. 연결되면 자동으로 다시 시도해요."
+    "offline": "오프라인 상태예요. 연결되면 자동으로 다시 시도해요.",
+    "showPassword": "비밀번호 보기",
+    "hidePassword": "비밀번호 숨기기"
   },
   "notFound": {
     "title": "이 페이지를 찾을 수 없어요",
