@@ -218,6 +218,8 @@ export default async function RootLayout({
     "if(m){document.cookie=n+'='+m[1]+'; path=/; max-age=31536000; samesite=lax'+(onP?'; domain=.'+P:'');}" +
     "if(navigator.share){document.documentElement.dataset.share='1';}" +
     authHintScript +
+    // 로그인한 사람의 링크 제품 홈은 대시보드 — 슬로건 화면을 그리기 전에 넘긴다(공유로 들어온 쿼리째).
+    "if(document.documentElement.dataset.authHint&&n==='kurl_theme'&&/^\\/[a-z]{2}\\/?$/.test(location.pathname)){location.replace(location.pathname.replace(/\\/?$/,'/dashboard')+location.search+location.hash);}" +
     "}catch(e){}})()";
 
   return (

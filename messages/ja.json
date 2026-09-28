@@ -973,9 +973,7 @@
     },
     "recentKept": "このブラウザに24時間保存されます",
     "recentClaim": "ログインするとこれらのリンクがアカウントに移り、期限なく残ります。",
-    "recentLogin": "ログイン",
-    "recentAll": "すべて見る",
-    "recentClicks": "クリック {count, number}"
+    "recentLogin": "ログイン"
   },
   "showcase": {
     "eyebrow": "公開プロフィール · 作例",
@@ -1166,12 +1164,11 @@
       "title": "3 ステップで完了",
       "subtitle": "リンクを短縮して貼れば、クリックの記録がここにたまります。",
       "step1Title": "リンクを短縮",
-      "step1Desc": "ホームで長いURLを貼り付けて「短縮」を押します。",
+      "step1Desc": "短縮欄に長いURLを貼り付け、必要ならコード・期限・パスワードを決めてから「短縮」を押します。",
       "step2Title": "リンクを共有",
       "step2Desc": "Instagramのプロフィール、LINE、名刺など、どこにでも貼れます。QRコードもダウンロードできます。",
       "step3Title": "統計を確認",
       "step3Desc": "クリックが入ると、チャネル・国・端末・時間帯別に分けて表示します。",
-      "primaryCta": "最初のリンクを作る",
       "secondaryCta": "分析画面をデモで見る",
       "scene": {
         "weekClicks": "今週のクリック",
@@ -4111,7 +4108,12 @@
     "placeholder": "長いURLを貼り付け",
     "submit": "短縮",
     "noUrl": "URLが見つかりません。httpで始まるアドレスを入れてください。",
-    "failed": "短縮できませんでした。もう一度お試しください。"
+    "failed": "短縮できませんでした。もう一度お試しください。",
+    "options": "短縮オプション",
+    "optionsTitle": "短縮オプション",
+    "optionsSet": "{count}件設定済み",
+    "done": "完了",
+    "codeInvalid": "コードは英数字3〜16文字にしてください。"
   },
   "linkSheet": {
     "created": "作成しました",
