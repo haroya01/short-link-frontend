@@ -23,6 +23,8 @@ export const ImageWithCaption = Image.extend({
         serialize(state: MdState, node: { attrs: Record<string, unknown> }) {
           const alt = typeof node.attrs.alt === "string" ? node.attrs.alt : "";
           const src = typeof node.attrs.src === "string" ? node.attrs.src : "";
+          // A local preview still uploading — its blob: URL means nothing outside this tab.
+          if (src.startsWith("blob:")) return;
           const title =
             typeof node.attrs.title === "string" && node.attrs.title.trim()
               ? ` "${node.attrs.title.trim().replace(/[\\"]/g, "\\$&")}"`
@@ -46,6 +48,13 @@ export const ImageWithCaption = Image.extend({
       img.src = current.attrs.src;
       img.alt = current.attrs.alt ?? "";
       figure.appendChild(img);
+      const markUploading = (src: string) => {
+        const uploading = src.startsWith("blob:");
+        figure.classList.toggle("is-uploading", uploading);
+        if (uploading) figure.setAttribute("aria-busy", "true");
+        else figure.removeAttribute("aria-busy");
+      };
+      markUploading(current.attrs.src ?? "");
 
       const cap = document.createElement("figcaption");
       cap.className = "tiptap-figcaption";
@@ -90,12 +99,16 @@ export const ImageWithCaption = Image.extend({
       return {
         dom: figure,
         // The figcaption is NOT ProseMirror content (it's a node attr), so keep PM out of its events/mutations.
-        ignoreMutation: (m) => m.target === cap || cap.contains(m.target as Node),
+        ignoreMutation: (m) =>
+          m.target === cap ||
+          cap.contains(m.target as Node) ||
+          (m.type === "attributes" && m.target === figure && (m.attributeName === "class" || m.attributeName === "aria-busy")),
         stopEvent: (e) => e.target === cap || cap.contains(e.target as Node),
         update: (updated) => {
           if (updated.type.name !== current.type.name) return false;
           current = updated;
           if (img.getAttribute("src") !== updated.attrs.src) img.src = updated.attrs.src;
+          markUploading(updated.attrs.src ?? "");
           img.alt = updated.attrs.alt ?? "";
           // Don't clobber the caret while the user is typing in the caption.
           if (document.activeElement !== cap) {

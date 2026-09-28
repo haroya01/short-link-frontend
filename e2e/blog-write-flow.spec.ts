@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { test, expect, type Page, type Locator } from "@playwright/test";
 
 /**
@@ -694,6 +695,70 @@ test("inserting an image saves an IMAGE block carrying the uploaded URL", async 
   await expect(page.locator(".tiptap img")).toBeVisible({ timeout: 10_000 });
   const blocks = await save(page, captured);
   expect(blocks.find((b) => b.type === "IMAGE")?.content).toContain(IMAGE_URL);
+});
+
+test("a '- ' typed after a single Enter turns that line into a list", async ({ page }) => {
+  // A single Enter is a soft line break in this editor, so the marker used to sit mid-paragraph and
+  // stay plain text — the reported "- doesn't render".
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("First paragraph");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("- one");
+  await expect(page.locator(".tiptap ul li")).toHaveText("one");
+  await expect(page.locator(".tiptap > p").first()).toHaveText("First paragraph");
+});
+
+test("a picked image shows at once while it uploads, then switches to the hosted URL", async ({ page }) => {
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  let finish!: () => void;
+  const committed = new Promise<void>((resolve) => (finish = resolve));
+  await page.route(`**/api/v1/posts/${POST_ID}/images/commit`, async (route) => {
+    await committed;
+    return route.fulfill({ json: { imageUrl: IMAGE_URL, key: "k" } });
+  });
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles({ name: "shot.png", mimeType: "image/png", buffer: Buffer.from("png-bytes") });
+  const figure = page.locator(".tiptap figure");
+  await expect(figure).toHaveClass(/is-uploading/, { timeout: 2_000 });
+  await expect(figure.locator("img")).toHaveAttribute("src", /^blob:/);
+  finish();
+  await expect(figure).not.toHaveClass(/is-uploading/, { timeout: 10_000 });
+  await expect(figure.locator("img")).toHaveAttribute("src", IMAGE_URL);
+});
+
+test("dragging an image and letting go leaves no drop line behind", async ({ page }) => {
+  // Selecting the dragged image mounts its bubble menu, which rebuilt the drop-cursor plugin mid-drag
+  // and orphaned the line it had drawn — it then sat across the page until a reload.
+  const captured: Captured = { blocks: null };
+  await setupMocks(page, captured);
+  const png = fs.readFileSync("e2e/visual.spec.ts-snapshots/contact-card-emerald.png");
+  await page.route("https://mock-s3.test/**", (route) =>
+    route.request().method() === "PUT"
+      ? route.fulfill({ status: 200, body: "" })
+      : route.fulfill({ status: 200, contentType: "image/png", body: png }),
+  );
+  await openEditor(page);
+  await page.locator(".tiptap").click();
+  await page.keyboard.type("before");
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Enter");
+  await page.locator('input[type="file"]').setInputFiles({ name: "shot.png", mimeType: "image/png", buffer: png });
+  const figure = page.locator(".tiptap figure");
+  await expect(figure).not.toHaveClass(/is-uploading/, { timeout: 10_000 });
+  const box = (await figure.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 3);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height + 60, { steps: 10 });
+  await page.mouse.move(box.x + box.width / 2, box.y - 40, { steps: 10 });
+  await page.mouse.up();
+  await expect(page.locator(".prosemirror-dropcursor-block, .prosemirror-dropcursor-inline")).toHaveCount(0);
 });
 
 test("typing in the image caption persists it into the IMAGE block", async ({ page }) => {
