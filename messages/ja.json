@@ -3851,18 +3851,20 @@
         "body": "名簿も締切も自動。どのチャンネルから来たかも分かります。"
       },
       "ctaLogin": "ログインしてはじめる",
-      "ctaCreate": "最初の募集を作る",
       "ctaHint": "参加者はログイン不要で申し込めます。",
       "demo": {
         "eventTitle": "ご近所読書会",
-        "eventDate": "8月5日(水) 19:00",
-        "eventPlace": "渋谷のカフェ2F",
+        "eventDate": "水曜日 19:00",
+        "eventPlace": "近所のカフェ2F",
         "registerButton": "申し込む",
-        "chatShare": "今週の会、申し込み受付中!",
-        "reply1": "はい! 申し込みました🙌",
-        "reply2": "いま申し込み完了!",
-        "reply3": "私も行きます〜",
-        "badge": "参加7名 · 残り13席"
+        "example": "例",
+        "byChannel": "チャネル別の申し込み",
+        "registered": "{count}/{capacity}名が申し込み",
+        "channels": {
+          "groupChat": "グループチャット",
+          "instagram": "Instagram",
+          "qrPoster": "QRポスター"
+        }
       }
     },
     "public": {
