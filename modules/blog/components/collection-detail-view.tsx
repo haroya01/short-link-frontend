@@ -410,7 +410,7 @@ function CollectionEditor({
               >
                 <Icon
                   className={`mt-0.5 h-4 w-4 shrink-0 ${
-                    active ? "text-accent-700 dark:text-accent-400" : "text-slate-400 dark:text-slate-500"
+                    active ? "text-accent-700 dark:text-accent-400" : "text-slate-400 dark:text-slate-400"
                   }`}
                 />
                 <span className="min-w-0 flex-1">
@@ -654,7 +654,7 @@ function PathWalk({
                     ? "bg-accent-700 text-white dark:bg-accent-500 dark:text-slate-950"
                     : isReached
                       ? "bg-accent-50 text-accent-700 dark:bg-accent-500/15 dark:text-accent-400"
-                      : "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500"
+                      : "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-400"
                 }`}
               >
                 {i + 1}
@@ -831,7 +831,7 @@ function RemoveConnectionButton({
       type="button"
       onClick={onRemove}
       disabled={disabled}
-      className="focus-ring mt-0.5 shrink-0 rounded-lg px-2 py-1 text-[12px] font-medium text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+      className="focus-ring mt-0.5 shrink-0 rounded-lg px-2 py-1 text-[12px] font-medium text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
     >
       {t("unlink")}
     </button>

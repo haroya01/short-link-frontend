@@ -96,7 +96,7 @@ export function HighlightsList({ username, locale }: { username: string; locale:
       <div className="relative mb-4 max-w-2xl">
         <Search
           aria-hidden
-          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500"
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-400"
         />
         <input
           type="search"

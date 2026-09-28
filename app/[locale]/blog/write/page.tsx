@@ -230,7 +230,7 @@ export default function WriteIndexPage() {
               className={`focus-ring inline-flex min-h-11 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition-colors ${
                 view === v
                   ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
-                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+                  : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
@@ -285,7 +285,7 @@ export default function WriteIndexPage() {
                   onClick={() => movePin(p.id, -1)}
                   disabled={i === 0}
                   aria-label={t("featuredMoveUp")}
-                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                 >
                   <ArrowUp className="h-4 w-4" />
                 </button>
@@ -294,7 +294,7 @@ export default function WriteIndexPage() {
                   onClick={() => movePin(p.id, 1)}
                   disabled={i === pinned.length - 1}
                   aria-label={t("featuredMoveDown")}
-                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                 >
                   <ArrowDown className="h-4 w-4" />
                 </button>
@@ -302,7 +302,7 @@ export default function WriteIndexPage() {
                   type="button"
                   onClick={() => togglePin(p)}
                   aria-label={t("featuredUnpin")}
-                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                  className="focus-ring grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -358,12 +358,12 @@ export default function WriteIndexPage() {
                       <div className="flex items-center gap-2 text-[12px]">
                         <PostStatusBadge status={p.status} />
                         {p.tags[0] && (
-                          <span className="truncate text-slate-500 dark:text-slate-500">{p.tags[0]}</span>
+                          <span className="truncate text-slate-500 dark:text-slate-400">{p.tags[0]}</span>
                         )}
                       </div>
                       <h3
                         className={`mt-1.5 line-clamp-2 text-[17px] font-semibold leading-snug transition-colors group-hover:text-accent-700 dark:group-hover:text-accent-300 ${
-                          titled ? "text-slate-900 dark:text-slate-100" : "italic text-slate-400 dark:text-slate-500"
+                          titled ? "text-slate-900 dark:text-slate-100" : "italic text-slate-500 dark:text-slate-400"
                         }`}
                       >
                         {titled || t("untitled")}
@@ -414,7 +414,7 @@ export default function WriteIndexPage() {
                         className={`focus-ring touch-target grid h-8 w-8 place-items-center rounded-lg border backdrop-blur transition-colors ${
                           p.pinOrder != null
                             ? "border-accent-300 bg-accent-50 text-accent-700 hover:bg-accent-100 dark:border-accent-500/40 dark:bg-accent-500/15 dark:text-accent-300"
-                            : "border-slate-200 bg-white/80 text-slate-400 hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-500 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
+                            : "border-slate-200 bg-white/80 text-slate-400 hover:border-accent-200 hover:text-accent-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-400 dark:hover:border-accent-500/40 dark:hover:text-accent-300"
                         }`}
                       >
                         <Pin className={`h-4 w-4 ${p.pinOrder != null ? "fill-current" : ""}`} />

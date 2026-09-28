@@ -228,7 +228,7 @@ function DomainVisual() {
   return (
     <div className="absolute inset-0 flex flex-col justify-center gap-2 px-4">
       <div className="flex min-w-0 items-center gap-2 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 py-1.5">
-        <LinkIcon className="h-3 w-3 shrink-0 text-slate-400 dark:text-slate-500" />
+        <LinkIcon className="h-3 w-3 shrink-0 text-slate-400 dark:text-slate-400" />
         <span className="min-w-0 flex-1 truncate font-mono text-[11px] font-medium text-slate-900 dark:text-slate-100">
           go.brand.com/spring
         </span>

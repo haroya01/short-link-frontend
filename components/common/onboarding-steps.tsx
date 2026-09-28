@@ -15,7 +15,7 @@ export function OnboardingSteps({ steps }: { steps: { title: string; desc: strin
           }
         >
           <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-            <span className="mr-1.5 tabular-nums text-slate-400 dark:text-slate-500">{index + 1}</span>
+            <span className="mr-1.5 tabular-nums text-slate-500 dark:text-slate-400">{index + 1}</span>
             {step.title}
           </p>
           <p className="mt-0.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">

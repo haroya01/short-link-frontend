@@ -52,7 +52,7 @@ export function MockKpi({ mock, active }: { mock: MockData; active: boolean }) {
           opacity: active ? 1 : 0,
         }}
       >
-        <ArrowDown className="h-4 w-4 text-slate-400 dark:text-slate-500" aria-hidden />
+        <ArrowDown className="h-4 w-4 text-slate-400 dark:text-slate-400" aria-hidden />
       </div>
 
       <div
@@ -105,7 +105,7 @@ function KpiCellMini({
         className={
           "mt-0.5 text-[14px] font-semibold tabular-nums leading-tight tracking-headline " +
           (muted
-            ? "text-slate-400 dark:text-slate-500"
+            ? "text-slate-500 dark:text-slate-400"
             : accent
               ? "text-accent-700 dark:text-accent-400"
               : "text-slate-900 dark:text-slate-100")

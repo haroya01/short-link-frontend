@@ -318,7 +318,7 @@ function DescriptionField({
           </div>
         </div>
       ) : null}
-      <p className="text-[11px] text-slate-400 dark:text-slate-500">{t("descriptionHint")}</p>
+      <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("descriptionHint")}</p>
     </div>
   );
 }
@@ -354,7 +354,7 @@ function CollapsibleSection({
     >
       <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[13px] font-semibold text-accent-700 dark:text-accent-400 [&::-webkit-details-marker]:hidden">
         {title}
-        <span className="flex items-center gap-1.5 text-[11px] font-medium normal-case tracking-normal text-slate-400 dark:text-slate-500">
+        <span className="flex items-center gap-1.5 text-[11px] font-medium normal-case tracking-normal text-slate-500 dark:text-slate-400">
           {t("optional")}
           <span className="text-slate-300 transition-transform group-open:rotate-180 dark:text-slate-600">
             ▾
@@ -418,7 +418,7 @@ function CoverField({ eventId, initialUrl }: { eventId: number; initialUrl: stri
       {error ? (
         <p className="text-[11px] text-red-500">{t("coverFailed")}</p>
       ) : (
-        <p className="text-[11px] text-slate-400 dark:text-slate-500">{t("coverHint")}</p>
+        <p className="text-[11px] text-slate-500 dark:text-slate-400">{t("coverHint")}</p>
       )}
     </div>
   );
@@ -444,7 +444,7 @@ function Field({
         {required ? <span className="ml-0.5 text-red-500">*</span> : null}
       </label>
       {children}
-      {hint ? <p className="text-[11px] text-slate-400 dark:text-slate-500">{hint}</p> : null}
+      {hint ? <p className="text-[11px] text-slate-500 dark:text-slate-400">{hint}</p> : null}
     </div>
   );
 }

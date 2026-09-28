@@ -137,7 +137,7 @@ export default function BlogAnalyticsPage() {
           <section className="mt-7">
             <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
               <div>
-                <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
+                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
                   <TrendingUp className="h-4 w-4" />
                   <span className="text-[12px] font-medium">
                     {days === 0 ? t("analyticsAllViews") : t("analyticsWindowViews", { days })}
@@ -190,7 +190,7 @@ export default function BlogAnalyticsPage() {
                   const pct = Math.max(4, Math.round((r.views / max) * 100));
                   return (
                     <li key={r.host} className="-mx-3 flex items-center gap-3 rounded-lg px-3 py-2">
-                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold tabular-nums text-slate-300 dark:text-slate-500">
+                      <span className="w-5 shrink-0 text-center text-[13px] font-semibold tabular-nums text-slate-300 dark:text-slate-400">
                         {i + 1}
                       </span>
                       <span className="min-w-0 flex-1">
@@ -457,7 +457,7 @@ function SeriesAnalyticsSection() {
   return (
     <section className="mt-8">
       <h2 className="mb-3 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
-        <Layers aria-hidden className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+        <Layers aria-hidden className="h-3.5 w-3.5 text-slate-400 dark:text-slate-400" />
         {t("analyticsSeries")}
       </h2>
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -544,7 +544,7 @@ function LinksBreakdownSection() {
     <section className="mt-8">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
-          <Link2 className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+          <Link2 className="h-4 w-4 text-slate-400 dark:text-slate-400" />
           {t("linksByPost")}
         </h2>
         <a
@@ -564,7 +564,7 @@ function LinksBreakdownSection() {
               href={blogPath(`/analytics/${r.postId}`)}
               className="group -mx-3 flex items-center gap-3 rounded-lg px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
-              <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-500">
+              <span className="w-5 shrink-0 text-center text-[13px] font-semibold text-slate-300 dark:text-slate-400">
                 {i + 1}
               </span>
               <span className="min-w-0 flex-1">

@@ -343,7 +343,7 @@ function DemoDestinationRow({
           <span className="text-slate-300 dark:text-slate-600">·</span>
           {share ? (
             <>
-              <span className="text-slate-400 dark:text-slate-500">
+              <span className="text-slate-500 dark:text-slate-400">
                 {t("configuredShare", { pct: share.configured.toFixed(0) })}
               </span>
               <span className="text-slate-300 dark:text-slate-600">·</span>

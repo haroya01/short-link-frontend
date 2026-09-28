@@ -86,7 +86,7 @@ export default function SeriesAnalyticsPage() {
               {/* 구독자 추이 — 현재까지 유지중인 구독자가 시간에 따라 누적된 곡선. */}
               <section className="mt-8 rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
                 <h2 className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                  <Users className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                  <Users className="h-4 w-4 text-slate-400 dark:text-slate-400" />
                   {t("analyticsSubscriberTrend")}
                 </h2>
                 <AnalyticsAreaChart data={detail.subscriberDaily} />
@@ -96,7 +96,7 @@ export default function SeriesAnalyticsPage() {
               {detail.members.length > 0 && (
                 <section className="mt-8 rounded-2xl border border-slate-200 p-5 dark:border-slate-800">
                   <h2 className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-700 dark:text-slate-200">
-                    <Layers className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                    <Layers className="h-4 w-4 text-slate-400 dark:text-slate-400" />
                     {t("analyticsMemberFunnel")}
                   </h2>
                   <p className="mb-3 mt-0.5 text-[12px] text-slate-500 dark:text-slate-400">

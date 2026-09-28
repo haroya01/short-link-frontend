@@ -148,7 +148,7 @@ export function CountryCombobox({
         <span className={cn("truncate", !selected && !(allowAny && !value) && "text-slate-500 dark:text-slate-400")}>
           {triggerText}
         </span>
-        <ChevronDown className="h-3 w-3 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden />
+        <ChevronDown className="h-3 w-3 shrink-0 text-slate-400 dark:text-slate-400" aria-hidden />
       </button>
 
       {open &&
@@ -167,7 +167,7 @@ export function CountryCombobox({
             }}
           >
             <div className="flex items-center gap-2 border-b border-slate-100 px-3 py-2 dark:border-slate-800">
-              <Search className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden />
+              <Search className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-400" aria-hidden />
               <input
                 ref={inputRef}
                 value={query}
@@ -216,7 +216,7 @@ export function CountryCombobox({
                       >
                         <span aria-hidden className="text-[15px] leading-none">{o.flag}</span>
                         <span className="flex-1 truncate text-slate-800 dark:text-slate-200">{o.name}</span>
-                        <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">{o.code}</span>
+                        <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">{o.code}</span>
                         {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-accent-600 dark:text-accent-400" aria-hidden />}
                       </button>
                     </li>

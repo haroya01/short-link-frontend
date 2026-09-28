@@ -151,7 +151,7 @@ export function ShortenForm({ authenticated, ready, onShortened, hero = false, h
         >
           <Link2
             aria-hidden
-            className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-500"
+            className="h-[18px] w-[18px] shrink-0 text-slate-400 dark:text-slate-400"
           />
           <Input
             ref={heroInputRef}

@@ -169,7 +169,7 @@ export function DiscoverySeriesCard({
                     >
                       {i + 1}
                     </span>
-                    <span className={`ml-1.5 align-top text-[22px] font-bold ${p.ogImageUrl ? "text-white/75" : "text-slate-400 dark:text-slate-500"}`}>
+                    <span className={`ml-1.5 align-top text-[22px] font-bold ${p.ogImageUrl ? "text-white/75" : "text-slate-500 dark:text-slate-400"}`}>
                       /{series.postCount}
                     </span>
                   </div>
@@ -250,7 +250,7 @@ export function DiscoverySeriesCard({
                     className={`absolute bottom-0 right-0 top-14 z-30 flex w-12 items-center justify-center transition-colors duration-300 ${
                       p.ogImageUrl
                         ? "text-white/85 hover:text-white"
-                        : "text-slate-400 hover:text-accent-700 dark:text-slate-500 dark:hover:text-accent-300"
+                        : "text-slate-400 hover:text-accent-700 dark:text-slate-400 dark:hover:text-accent-300"
                     }`}
                   >
                     <span

@@ -119,7 +119,7 @@ export default function ProfileEditPage() {
           </SwitchLink>
         ) : (
           <span
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-dashed border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-400 dark:border-slate-800 dark:text-slate-500"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-dashed border-slate-200 px-3.5 py-1.5 text-[13px] font-medium text-slate-400 dark:border-slate-800 dark:text-slate-400"
             title={t("leadsDisabledTitle")}
           >
             <Mail className="h-3.5 w-3.5" aria-hidden />
@@ -198,7 +198,7 @@ function OnboardingStep({
       >
         {done ? <Check className="h-3 w-3" /> : index}
       </span>
-      <span className={done ? "text-slate-400 dark:text-slate-500 line-through" : "text-slate-700 dark:text-slate-300"}>
+      <span className={done ? "text-slate-500 dark:text-slate-400 line-through" : "text-slate-700 dark:text-slate-300"}>
         {label}
         {required && !done && <span className="ml-1 text-accent-700 dark:text-accent-400">*</span>}
       </span>

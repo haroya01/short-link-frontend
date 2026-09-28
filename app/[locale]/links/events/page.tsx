@@ -47,7 +47,7 @@ export default function EventsListPage() {
       </div>
 
       {error ? (
-        <p className="mt-8 text-[13px] text-red-600">{t("loadFailed")}</p>
+        <p className="mt-8 text-[13px] text-red-600 dark:text-red-400">{t("loadFailed")}</p>
       ) : events == null ? (
         <p className="mt-8 text-[13px] text-slate-500 dark:text-slate-400">{t("loading")}</p>
       ) : events.length === 0 ? (

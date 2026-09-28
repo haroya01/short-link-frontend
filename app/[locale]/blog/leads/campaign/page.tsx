@@ -183,7 +183,7 @@ export default function ProfileLeadsCampaignPage() {
               <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                 {output.rows.map((row) => (
                   <li key={row.original} className="px-3 py-2 text-[11px]">
-                    <div className="truncate text-slate-400 dark:text-slate-500">{row.original}</div>
+                    <div className="truncate text-slate-500 dark:text-slate-400">{row.original}</div>
                     <div className="truncate font-medium text-slate-700 dark:text-slate-200">{row.shortUrl}</div>
                   </li>
                 ))}

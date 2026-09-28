@@ -332,7 +332,7 @@ function BulkBar({
             </button>
             {folders.map((f) => (
               <button key={f.id} type="button" onClick={() => onMove(f.id)} className={bulkMenuItem}>
-                <Folder className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+                <Folder className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-400" />
                 <span className="flex-1 truncate text-left">{f.name}</span>
               </button>
             ))}
@@ -408,7 +408,7 @@ function FolderPill({
     >
       {icon && <Folder className="h-3.5 w-3.5" />}
       {label}
-      <span className={active ? "text-white/70" : "text-slate-500 dark:text-slate-500"}>{count}</span>
+      <span className={active ? "text-white/70" : "text-slate-500 dark:text-slate-400"}>{count}</span>
     </button>
   );
 }
@@ -429,7 +429,7 @@ function Section({
       <h2 className="mb-4 flex items-center gap-1.5 text-[13px] font-bold text-slate-800 dark:text-slate-200">
         <span className="text-accent-600 dark:text-accent-400">{icon}</span>
         {title}
-        {hint && <span className="font-medium text-slate-500 dark:text-slate-500">· {hint}</span>}
+        {hint && <span className="font-medium text-slate-500 dark:text-slate-400">· {hint}</span>}
       </h2>
       <div className="flex flex-col gap-6">{children}</div>
     </section>

@@ -207,7 +207,7 @@ export default function ProfileLeadsPage() {
                   <td
                     className={
                       lead.optedOut
-                        ? "truncate px-4 py-2 font-medium text-slate-400 line-through dark:text-slate-500"
+                        ? "truncate px-4 py-2 font-medium text-slate-400 line-through dark:text-slate-400"
                         : "truncate px-4 py-2 font-medium text-slate-900 dark:text-slate-100"
                     }
                   >
@@ -245,7 +245,7 @@ export default function ProfileLeadsPage() {
                     <button
                       type="button"
                       onClick={() => handleDelete(lead.id)}
-                      className="text-slate-400 hover:text-red-600 dark:text-slate-500"
+                      className="text-slate-400 hover:text-red-600 dark:text-slate-400"
                       aria-label={t("delete")}
                     >
                       <Trash2 className="h-3.5 w-3.5" />

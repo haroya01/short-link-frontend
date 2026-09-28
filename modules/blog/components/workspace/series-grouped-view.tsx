@@ -240,7 +240,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       {series.length === 0 && ungrouped.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-500">
+        <p className="rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
           {t("seriesEmpty")}
         </p>
       )}
@@ -299,7 +299,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     href={`${analyticsBase}/series/${s.id}`}
                     aria-label={t("seriesAnalytics")}
                     title={t("seriesAnalytics")}
-                    className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-accent-300"
+                    className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-accent-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-accent-300"
                   >
                     <BarChart3 className="h-4 w-4" />
                   </BlogLink>
@@ -309,7 +309,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     disabled={busy}
                     aria-label={t("seriesRename")}
                     title={t("seriesRename")}
-                    className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-40 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                    className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
@@ -319,7 +319,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     disabled={busy}
                     aria-label={t("seriesDelete")}
                     title={t("seriesDelete")}
-                    className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                    className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -338,7 +338,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                     key={p.id}
                     className="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/40"
                   >
-                    <span className="w-6 shrink-0 text-right text-[13px] tabular-nums text-slate-400 dark:text-slate-500">
+                    <span className="w-6 shrink-0 text-right text-[13px] tabular-nums text-slate-500 dark:text-slate-400">
                       {i + 1}
                     </span>
                     <BlogLink
@@ -354,7 +354,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                         onClick={() => move(s.id, i, -1)}
                         disabled={busy || i === 0}
                         aria-label={t("curationMoveUp")}
-                        className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                        className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                       >
                         <ChevronUp className="h-4 w-4" />
                       </button>
@@ -363,7 +363,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                         onClick={() => move(s.id, i, 1)}
                         disabled={busy || i === members.length - 1}
                         aria-label={t("curationMoveDown")}
-                        className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                        className="focus-ring grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                       >
                         <ChevronDown className="h-4 w-4" />
                       </button>
@@ -373,7 +373,7 @@ export function SeriesGroupedView({ writeBase }: { writeBase: string }) {
                         disabled={busy}
                         aria-label={t("seriesRemoveFromSeries")}
                         title={t("seriesRemoveFromSeries")}
-                        className="focus-ring ml-0.5 grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-30 dark:text-slate-500 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                        className="focus-ring ml-0.5 grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-30 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
                       >
                         <X className="h-4 w-4" />
                       </button>

@@ -22,7 +22,7 @@ export function StatCard({
 }) {
   return (
     <div>
-      <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500">
+      <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
         {icon}
         <span className="text-[12px] font-medium">{label}</span>
       </div>
@@ -105,7 +105,7 @@ export function SeriesReadThrough({
                   className="inline-flex shrink-0 items-center gap-1 text-[13px] font-semibold tabular-nums text-slate-700 dark:text-slate-200"
                   title={t("analyticsUniqueReaders")}
                 >
-                  <Users className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+                  <Users className="h-3.5 w-3.5 text-slate-400 dark:text-slate-400" />
                   {m.uniqueReaders.toLocaleString()}
                 </span>
                 {/* 글별로 따로 분석 — 이 화의 per-post 분석으로 들어가는 드릴인임을 명시. */}

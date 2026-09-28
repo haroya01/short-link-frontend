@@ -82,14 +82,14 @@ export default function BlogSettingsPage() {
                 <User className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("settingsEditProfile")}
               </span>
-              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-500" />
+              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
             </a>
             <a href={linksHref(`/${locale}/settings`)} className={rowClass}>
               <span className="inline-flex items-center gap-2.5">
                 <Globe className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 {t("settingsAccountSettings")}
               </span>
-              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-500" />
+              <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
             </a>
             {username && (
               <a href={authorHref(username, locale)} className={rowClass}>
@@ -97,7 +97,7 @@ export default function BlogSettingsPage() {
                   <Newspaper className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                   {t("settingsViewBlog")}
                 </span>
-                <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-500" />
+                <ExternalLink className="h-4 w-4 text-slate-300 dark:text-slate-400" />
               </a>
             )}
           </div>

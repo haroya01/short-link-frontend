@@ -17,7 +17,7 @@ export function EmptyState({ icon: Icon = Inbox, title, description, action, cla
         className,
       )}
     >
-      <Icon aria-hidden className="mb-4 h-6 w-6 text-slate-400 dark:text-slate-500" strokeWidth={1.5} />
+      <Icon aria-hidden className="mb-4 h-6 w-6 text-slate-400 dark:text-slate-400" strokeWidth={1.5} />
       <p className="text-[15px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">{title}</p>
       {description && (
         <p className="mt-1.5 max-w-sm text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">{description}</p>

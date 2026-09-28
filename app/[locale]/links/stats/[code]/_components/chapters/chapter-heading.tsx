@@ -5,7 +5,7 @@
 export function ChapterHeading({ index, title }: { index: number; title: string }) {
   return (
     <div className="flex items-baseline gap-2.5 border-b border-slate-100 pb-2.5 dark:border-slate-800">
-      <span className="text-[13px] font-semibold tabular-nums text-slate-400 dark:text-slate-500">
+      <span className="text-[13px] font-semibold tabular-nums text-slate-500 dark:text-slate-400">
         {index}
       </span>
       <h2 className="text-[17px] font-semibold tracking-headline text-slate-900 dark:text-slate-100">

@@ -429,7 +429,7 @@ function ShareReadout({
       <span className="text-slate-300 dark:text-slate-600">·</span>
       {share ? (
         <>
-          <span className="text-slate-400 dark:text-slate-500">
+          <span className="text-slate-500 dark:text-slate-400">
             {t("configuredShare", { pct: share.configured.toFixed(0) })}
           </span>
           <span className="text-slate-300 dark:text-slate-600">·</span>
@@ -541,7 +541,7 @@ export function LinkBlockedCountriesSection({ shortCode }: { shortCode: string }
                   onClick={() => persist(codes.filter((x) => x !== c))}
                   disabled={busy}
                   aria-label={t("blockedRemove")}
-                  className="ml-0.5 text-slate-400 dark:text-slate-500 hover:text-red-600 disabled:opacity-50"
+                  className="ml-0.5 text-slate-400 dark:text-slate-400 hover:text-red-600 disabled:opacity-50"
                 >
                   ✕
                 </button>

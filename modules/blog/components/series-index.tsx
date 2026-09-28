@@ -23,7 +23,7 @@ export function SeriesIndex({
         "tabular-nums transition-colors",
         current
           ? "font-semibold text-slate-900 dark:text-slate-100"
-          : "text-slate-400 dark:text-slate-500",
+          : "text-slate-500 dark:text-slate-400",
         className,
       )}
     >

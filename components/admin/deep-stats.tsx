@@ -369,7 +369,7 @@ function RecentErrorsSection({ t }: { t: T }) {
                       {e.logger}
                     </p>
                   </div>
-                  <span className="mt-0.5 shrink-0 font-mono text-[10px] text-slate-400 dark:text-slate-500">
+                  <span className="mt-0.5 shrink-0 font-mono text-[10px] text-slate-400 dark:text-slate-400">
                     {isOpen ? "−" : "+"}
                   </span>
                 </button>

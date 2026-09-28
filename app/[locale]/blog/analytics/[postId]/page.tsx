@@ -151,7 +151,7 @@ export default function PostAnalyticsPage() {
               <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 dark:divide-slate-800 dark:border-slate-800">
                 {data.linkBreakdown.map((lc) => (
                   <li key={lc.shortCode} className="flex items-center gap-3 px-4 py-2.5">
-                    <Link2 className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-500" />
+                    <Link2 className="h-4 w-4 shrink-0 text-slate-400 dark:text-slate-400" />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[14px] text-slate-700 dark:text-slate-200">
                         {lc.destinationUrl}

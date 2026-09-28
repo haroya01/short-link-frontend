@@ -114,7 +114,7 @@ export default function NotificationsPage() {
         ) : (
           GROUP_ORDER.filter((key) => groups.has(key)).map((key) => (
             <section key={key} className="mt-5 first:mt-1" aria-label={t(key)}>
-              <h2 className="px-2 text-[12px] font-semibold tracking-wide text-slate-400 dark:text-slate-500">
+              <h2 className="px-2 text-[12px] font-semibold text-slate-500 dark:text-slate-400">
                 {t(key)}
               </h2>
               <ul className="mt-1.5">
